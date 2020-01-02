@@ -23,7 +23,7 @@ const GlobalHeaderRight: React.SFC<GlobalHeaderRightProps> = props => {
 
   return (
     <div className={className}>
-      <HeaderSearch
+      {/* <HeaderSearch
         className={`${styles.action} ${styles.search}`}
         placeholder="站内搜索"
         defaultValue="umi ui"
@@ -34,7 +34,7 @@ const GlobalHeaderRight: React.SFC<GlobalHeaderRightProps> = props => {
         onPressEnter={value => {
           console.log('enter', value);
         }}
-      />
+      /> */}
       <Tooltip title="使用文档">
         <a
           target="_blank"
