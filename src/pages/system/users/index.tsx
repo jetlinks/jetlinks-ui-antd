@@ -5,10 +5,11 @@ import { Divider, Card, Table, Modal, message, Button } from "antd";
 import { PageHeaderWrapper } from "@ant-design/pro-layout";
 import styles from '@/utils/table.less';
 import Search from "./search";
-import ConnectState, { Dispatch, Loading } from "@/models/connect";
+import { Dispatch, Loading, ConnectState } from "@/models/connect";
 import { connect } from "dva";
 import encodeQueryParam from "@/utils/encodeParam";
 import Save from "./save";
+import SettingAutz from "@/components/SettingAutz";
 interface Props {
     users: any;
     dispatch: Dispatch;
@@ -21,6 +22,7 @@ interface State {
     searchParam: any;
     saveVisible: boolean;
     currentItem: Partial<UserItem>;
+    autzVisible: boolean;
 }
 
 const UserList: React.FC<Props> = (props) => {
@@ -32,12 +34,14 @@ const UserList: React.FC<Props> = (props) => {
         data: result,
         searchParam: { pageSize: 10 },
         saveVisible: false,
-        currentItem: {}
+        currentItem: {},
+        autzVisible: false
     }
 
     const [searchParam, setSearchParam] = useState(initState.searchParam);
     const [saveVisible, setSaveVisible] = useState(initState.saveVisible);
     const [currentItem, setCurrentItem] = useState(initState.currentItem);
+    const [autzVisible, setAutzVisible] = useState(initState.autzVisible);
 
     const columns: ColumnProps<UserItem>[] = [
         {
@@ -58,8 +62,8 @@ const UserList: React.FC<Props> = (props) => {
             render: (text, record) => (
                 <Fragment>
                     <a onClick={() => edit(record)}>编辑</a>
-                    {/* <Divider type="vertical" /> */}
-                    {/* <a onClick={() => setting(record)}>赋权</a> */}
+                    <Divider type="vertical" />
+                    <a onClick={() => setting(record)}>赋权</a>
                 </Fragment>
             ),
         },
@@ -81,7 +85,7 @@ const UserList: React.FC<Props> = (props) => {
         setSaveVisible(true);
     }
     const setting = (record: UserItem) => {
-        setSaveVisible(true);
+        setAutzVisible(true);
     }
 
     const saveOrUpdate = (user: UserItem) => {
@@ -174,6 +178,14 @@ const UserList: React.FC<Props> = (props) => {
                     data={currentItem}
                     close={() => { setSaveVisible(false); setCurrentItem({}) }}
                     save={(user: UserItem) => { saveOrUpdate(user) }}
+                />
+            }
+            {
+                autzVisible &&
+                <SettingAutz
+                    settingId=""
+                    settingType=""
+                    close={() => { }}
                 />
             }
         </PageHeaderWrapper>
