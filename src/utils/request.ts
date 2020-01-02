@@ -4,6 +4,8 @@
  */
 import { extend } from 'umi-request';
 import { notification } from 'antd';
+import { getAccessToken } from './authority';
+import { router } from 'umi';
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -26,23 +28,54 @@ const codeMessage = {
 /**
  * 异常处理程序
  */
-const errorHandler = (error: { response: Response }): Response => {
-  const { response } = error;
-  if (response && response.status) {
-    const errorText = codeMessage[response.status] || response.statusText;
-    const { status, url } = response;
+const errorHandler = (error: { response: Response }): Response | undefined => {
+  const {
+    response: { status },
+    response,
+  } = error;
 
+  // if (response && response.status) {
+  // const errorText = codeMessage[response.status] || response.statusText;
+  // const { status, url } = response;
+
+  // notification.error({
+  //   message: `请求错误 ${status}: ${url}`,
+  //   description: errorText,
+  // });
+  if (status === 401) {
     notification.error({
-      message: `请求错误 ${status}: ${url}`,
-      description: errorText,
+      key: 'error',
+      message: '未登录或登录已过期，请重新登录。',
     });
-  } else if (!response) {
-    notification.error({
-      description: '您的网络发生异常，无法连接服务器',
-      message: '网络异常',
+    router.push('/user/login');
+    return;
+  } else if (status === 400) {
+    response.text().then(resp => {
+      if (resp) {
+        notification.error({
+          key: 'error',
+          message: resp,
+        });
+      } else {
+        response.json().then((res: any) => {
+          notification.error({
+            key: 'error',
+            message: `请求错误：${res.message}`,
+          });
+        });
+      }
     });
+    return response;
+  } else {
+    return;
   }
-  return response;
+  // } else if (!response) {
+  //   notification.error({
+  //     description: '您的网络发生异常，无法连接服务器',
+  //     message: '网络异常',
+  //   });
+  // }
+  // return response;
 };
 
 /**
@@ -53,4 +86,16 @@ const request = extend({
   credentials: 'include', // 默认请求是否带上cookie
 });
 
+request.interceptors.request.use((url, options) => {
+  return {
+    url: 'http://2.jetlinks.org:9010' + url.replace('/jetlinks', ''),
+    options: {
+      ...options,
+      headers: {
+        'X-Access-Token': getAccessToken(),
+      },
+      interceptors: true,
+    },
+  };
+});
 export default request;

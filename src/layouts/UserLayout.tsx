@@ -3,15 +3,15 @@ import { Helmet } from 'react-helmet';
 import Link from 'umi/link';
 import React from 'react';
 import { connect } from 'dva';
-import { formatMessage } from 'umi-plugin-react/locale';
-
 import SelectLang from '@/components/SelectLang';
 import { ConnectProps, ConnectState } from '@/models/connect';
 import logo from '../assets/logo.svg';
 import styles from './UserLayout.less';
 
 export interface UserLayoutProps extends ConnectProps {
-  breadcrumbNameMap: { [path: string]: MenuDataItem };
+  breadcrumbNameMap: {
+    [path: string]: MenuDataItem;
+  };
 }
 
 const UserLayout: React.FC<UserLayoutProps> = props => {
@@ -31,7 +31,6 @@ const UserLayout: React.FC<UserLayoutProps> = props => {
   const title = getPageTitle({
     pathname: location.pathname,
     breadcrumb,
-    formatMessage,
     ...props,
   });
   return (
@@ -50,10 +49,10 @@ const UserLayout: React.FC<UserLayoutProps> = props => {
             <div className={styles.header}>
               <Link to="/">
                 <img alt="logo" className={styles.logo} src={logo} />
-                <span className={styles.title}>Ant Design</span>
+                <span className={styles.title}>JetLinks Pro</span>
               </Link>
             </div>
-            <div className={styles.desc}>Ant Design 是西湖区最具影响力的 Web 设计规范</div>
+            <div className={styles.desc}>捷联物联网平台</div>
           </div>
           {children}
         </div>
@@ -63,6 +62,4 @@ const UserLayout: React.FC<UserLayoutProps> = props => {
   );
 };
 
-export default connect(({ settings }: ConnectState) => ({
-  ...settings,
-}))(UserLayout);
+export default connect(({ settings }: ConnectState) => ({ ...settings }))(UserLayout);

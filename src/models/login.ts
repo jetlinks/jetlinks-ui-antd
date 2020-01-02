@@ -1,14 +1,15 @@
 import { Reducer } from 'redux';
-import { Effect } from 'dva';
+import { Effect, routerRedux } from 'dva';
 import { stringify } from 'querystring';
 import router from 'umi/router';
 
-import { fakeAccountLogin, getFakeCaptcha } from '@/services/login';
-import { setAuthority } from '@/utils/authority';
+import { setAuthority, clearAutz, setAccessToken, setAutz } from '@/utils/authority';
 import { getPageQuery } from '@/utils/utils';
+import apis from '@/services';
+import { reloadAuthorized } from '@/utils/Authorized';
 
 export interface StateType {
-  status?: 'ok' | 'error';
+  status?: 200 | 400 | undefined;
   type?: string;
   currentAuthority?: 'user' | 'guest' | 'admin';
 }
@@ -18,7 +19,6 @@ export interface LoginModelType {
   state: StateType;
   effects: {
     login: Effect;
-    getCaptcha: Effect;
     logout: Effect;
   };
   reducers: {
@@ -34,14 +34,17 @@ const Model: LoginModelType = {
   },
 
   effects: {
-    *login({ payload }, { call, put }) {
-      const response = yield call(fakeAccountLogin, payload);
+    *login({ payload, callback }, { call, put }) {
+      const response = yield call(apis.login.login, payload);
       yield put({
         type: 'changeLoginStatus',
         payload: response,
       });
       // Login successfully
-      if (response.status === 'ok') {
+      if (response.status === 200) {
+        setAccessToken(response.result.token);
+        setAutz(response.result);
+        reloadAuthorized();
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
         let { redirect } = params as { redirect: string };
@@ -57,24 +60,36 @@ const Model: LoginModelType = {
             return;
           }
         }
+        // yield put(routerRedux.replace(redirect || '/'));
+        // console.log(redirect, 'login-S');
         router.replace(redirect || '/');
       }
     },
 
-    *getCaptcha({ payload }, { call }) {
-      yield call(getFakeCaptcha, payload);
-    },
-
-    logout() {
-      const { redirect } = getPageQuery();
-      // Note: There may be security issues, please note
-      if (window.location.pathname !== '/user/login' && !redirect) {
-        router.replace({
-          pathname: '/user/login',
-          search: stringify({
-            redirect: window.location.href,
-          }),
+    *logout(_, { call, put }) {
+      const response = yield call(apis.login.logout);
+      if (response.status === 200) {
+        yield put({
+          type: 'changeLoginStatus',
+          payload: {
+            status: response.status,
+            result: {
+              currentAuthority: 'guest',
+            },
+          },
         });
+        clearAutz();
+        reloadAuthorized();
+        const { redirect } = getPageQuery();
+        // Note: There may be security issues, please note
+        if (window.location.pathname !== '/user/login' && !redirect) {
+          router.replace({
+            pathname: '/user/login',
+            search: stringify({
+              redirect: window.location.href,
+            }),
+          });
+        }
       }
     },
   },

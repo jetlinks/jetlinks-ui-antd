@@ -176,11 +176,11 @@ export default {
     basePath: '/',
   },
   // chainWebpack: webpackPlugin,
-  // proxy: {
-  //   '/server/api/': {
-  //     target: 'https://preview.pro.ant.design/',
-  //     changeOrigin: true,
-  //     pathRewrite: { '^/server': '' },
-  //   },
-  // },
+  proxy: {
+    '/jetlinks': {
+      target: 'http://2.jetlinks.org:9010/',
+      changeOrigin: true,
+      pathRewrite: { '^/jetlinks': '' },
+    },
+  },
 } as IConfig;

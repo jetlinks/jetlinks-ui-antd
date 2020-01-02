@@ -4,7 +4,7 @@ import { RouterTypes } from 'umi';
 import { GlobalModelState } from './global';
 import { DefaultSettings as SettingModelState } from '../../config/defaultSettings';
 import { UserModelState } from './user';
-import { StateType } from './login';
+import { StateType } from '@/models/login';
 
 export { GlobalModelState, SettingModelState, UserModelState };
 

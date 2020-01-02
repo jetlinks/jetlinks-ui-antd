@@ -5,7 +5,9 @@ export async function query(): Promise<any> {
 }
 
 export async function queryCurrent(): Promise<any> {
-  return request('/api/currentUser');
+  return request('/jetlinks/authorize/me', {
+    method: 'GET',
+  });
 }
 
 export async function queryNotices(): Promise<any> {
