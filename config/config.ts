@@ -33,11 +33,11 @@ const plugins: IPlugin[] = [
       },
       pwa: pwa
         ? {
-            workboxPluginMode: 'InjectManifest',
-            workboxOptions: {
-              importWorkboxFrom: 'local',
-            },
-          }
+          workboxPluginMode: 'InjectManifest',
+          workboxOptions: {
+            importWorkboxFrom: 'local',
+          },
+        }
         : false, // default close dll, because issue https://github.com/ant-design/ant-design-pro/issues/4665
       // dll features https://webpack.js.org/plugins/dll-plugin/
       // dll: {
@@ -94,38 +94,231 @@ export default {
         {
           path: '/',
           component: '../layouts/BasicLayout',
-          authority: ['admin', 'user'],
+          Routes: ['src/pages/Authorized'],
           routes: [
             {
               path: '/',
-              redirect: '/welcome',
+              redirect: '/analysis',
             },
             {
-              path: '/welcome',
-              name: 'welcome',
+              name: '统计分析',
+              path: '/analysis',
+              icon: 'bar-chart',
+              component: './analysis',
+            },
+            {
+              path: 'system',
+              name: '系统设置',
+              icon: 'setting',
+              // authority: ['user', 'role', 'permission', 'dictionary'],
+              routes: [
+                {
+                  path: '/system/user',
+                  name: '用户管理',
+                  // authority: ['user'],
+                  component: './system/users',
+                },
+                {
+                  path: '/system/setting-autz',
+                  name: '功能权限管理',
+                  // authority: ['role'],
+                  component: './system/setting-autz',
+                },
+                {
+                  path: '/system/permission',
+                  name: '权限管理',
+                  // authority: ['permission'],
+                  component: './system/permission',
+                },
+                // {
+                //   path: '/system/dictionary',
+                //   name: 'dictionary',
+                //   // authority: ['dictionary'],
+                //   component: './system/dictionary',
+                // },
+                {
+                  path: '/system/open-api',
+                  name: 'OpenApi客户端',
+                  // authority: ['dictionary'],
+                  component: './system/open-api',
+                },
+              ],
+            },
+            {
+              path: 'device',
+              name: '设备管理',
+              icon: 'usb',
+              routes: [
+                {
+                  path: '/device/product',
+                  name: '设备型号',
+                  component: './device/product',
+                },
+                {
+                  hideInMenu: true,
+                  path: '/device/product/save/:id',
+                  name: '编辑设备型号',
+                  component: './device/product/save/Detail',
+                },
+                {
+                  hideInMenu: true,
+                  path: '/device/product/add',
+                  name: '添加设备型号',
+                  component: './device/product/save',
+                },
+                {
+                  path: '/device/instance',
+                  name: '设备实例',
+                  component: './device/instance',
+                },
+                {
+                  hideInMenu: true,
+                  path: '/device/instance/save/:id',
+                  name: '编辑设备型号',
+                  component: './device/instance/editor',
+                },
+                {
+                  hideInMenu: true,
+                  path: '/device/instance/add',
+                  name: '添加设备型号',
+                  component: './device/instance/editor',
+                },
+                {
+                  path: '/device/protocol',
+                  name: '协议管理',
+                  component: './device/protocol',
+                },
+              ],
+            },
+            {
+              path: 'network',
+              name: '网络组件',
+              icon: 'appstore',
+              hideInMenu: true,
+              routes: [
+                {
+                  path: '/network/certificate',
+                  name: '证书管理',
+                  icon: 'book',
+                  component: './network/certificate',
+                },
+                {
+                  path: '/network/mqtt-client',
+                  name: 'MQTT客户端',
+                  icon: 'bulb',
+                  component: './network/mqtt-client',
+                },
+                {
+                  path: '/network/tcp-client',
+                  name: 'TCP客户端',
+                  icon: 'fire',
+                  component: './network/tcp-client',
+                },
+                {
+                  path: '/network/coap-client',
+                  name: 'COAP客户端',
+                  icon: 'flag',
+                  component: './network/coap-client',
+                },
+                {
+                  path: '/network/http-client',
+                  name: 'HTTP客户端',
+                  icon: 'tag',
+                  component: './network/http-client',
+                },
+                {
+                  path: '/network/websocket-client',
+                  name: 'WebSocket客户端',
+                  icon: 'thunderbolt',
+                  component: './network/websocket-client',
+                },
+              ],
+            },
+            {
+              path: 'rule-engine',
+              name: '规则引擎',
+              icon: 'share-alt',
+              routes: [
+                {
+                  path: '/rule-engine/model',
+                  name: '规则模型',
+                  icon: 'appstore',
+                  component: './rule-engine/model',
+                },
+                {
+                  path: '/rule-engine/instance',
+                  name: '规则实例',
+                  icon: 'control',
+                  component: './rule-engine/instance',
+                },
+                // {
+                //   path: '/rule-engine/email',
+                //   name: 'email',
+                //   icon: 'mail',
+                //   component: './rule-engine/email',
+                // },
+                // {
+                //   path: '/rule-engine/sms',
+                //   name: 'sms',
+                //   icon: 'message',
+                //   component: './rule-engine/sms',
+                // },
+              ],
+            },
+            {
+              path: 'logger',
+              name: '日志管理',
+              icon: 'wallet',
+              routes: [
+                {
+                  path: './logger/access',
+                  name: '访问日志',
+                  icon: 'ordered-list',
+                  component: './logger/access',
+                },
+                {
+                  path: './logger/system',
+                  name: '系统日志',
+                  icon: 'bars',
+                  component: './logger/system',
+                },
+              ],
+            },
+            // {
+            //   name: 'paramter',
+            //   path: '/properties',
+            //   inco: 'bar-chart',
+            //   component: './script-demo',
+            // },
+            {
+              name: 'exception',
               icon: 'smile',
-              component: './Welcome',
+              path: '/exception',
+              hideInMenu: true,
+              routes: [
+                {
+                  path: './exception/500',
+                  name: '500',
+                  component: './exception/500',
+                },
+                {
+                  path: './exception/404',
+                  name: '404',
+                  component: './exception/404',
+                },
+                {
+                  path: './exception/403',
+                  name: '403',
+                  component: './exception/403',
+                }
+              ]
             },
-            {
-              path: '/admin',
-              name: 'admin',
-              icon: 'crown',
-              component: './Admin',
-              authority: ['admin'],
-            },
-            {
-              component: './404',
-            },
-          ],
+          ]
         },
         {
           component: './404',
         },
       ],
-    },
-
-    {
-      component: './404',
     },
   ],
   // Theme for antd: https://ant.design/docs/react/customize-theme-cn

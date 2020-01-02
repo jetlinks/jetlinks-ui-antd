@@ -1,0 +1,25 @@
+<svg width="128" height="56" 
+    xmlns="http://www.w3.org/2000/svg" 
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <rect id="b" x="0" y="0" width="120" height="48" rx="4"/>
+        <filter x="-8.8%" y="-10.4%" width="117.5%" height="129.2%" filterUnits="objectBoundingBox" id="a">
+            <feOffset dy="2" in="SourceAlpha" result="shadowOffsetOuter1"/>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"/>
+            <feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out" result="shadowBlurOuter1"/>
+            <feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.04 0" in="shadowBlurOuter1"/>
+        </filter>
+    </defs>
+    <g fill="none" fill-rule="evenodd">
+        <g transform="translate(4 2)">
+            <use fill="#000" filter="url(#a)" xlink:href="#b"/>
+            <use fill-opacity=".92" fill="#E6F7FF" xlink:href="#b"/>
+            <rect stroke="#1890FF" x=".5" y=".5" width="119" height="47" rx="4"/>
+        </g>
+        <text font-family="PingFangSC-Regular, PingFang SC" font-size="12" fill="#000" fill-opacity=".65" transform="translate(4 2)">
+            <tspan x="35" y="29">
+                数据转换
+            </tspan>
+        </text>
+    </g>
+</svg>

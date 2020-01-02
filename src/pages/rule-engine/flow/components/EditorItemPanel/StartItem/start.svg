@@ -1,0 +1,23 @@
+<svg width="80" height="80" 
+    xmlns="http://www.w3.org/2000/svg" 
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <circle id="b" cx="36" cy="36" r="36"/>
+        <filter x="-9.7%" y="-6.9%" width="119.4%" height="119.4%" filterUnits="objectBoundingBox" id="a">
+            <feOffset dy="2" in="SourceAlpha" result="shadowOffsetOuter1"/>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"/>
+            <feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out" result="shadowBlurOuter1"/>
+            <feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.04 0" in="shadowBlurOuter1"/>
+        </filter>
+    </defs>
+    <g fill="none" fill-rule="evenodd">
+        <g transform="translate(4 2)">
+            <use fill="#000" filter="url(#a)" xlink:href="#b"/>
+            <use fill-opacity=".92" fill="#FFE8E3" xlink:href="#b"/>
+            <circle stroke="#F66666" cx="36" cy="36" r="35.5"/>
+        </g>
+        <text font-family="PingFangSC-Regular, PingFang SC" font-size="12" fill="#000" fill-opacity=".65" transform="translate(4 2)">
+            <tspan x="23" y="41">启动</tspan>
+        </text>
+    </g>
+</svg>
