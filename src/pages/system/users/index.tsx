@@ -9,7 +9,7 @@ import { Dispatch, Loading, ConnectState } from "@/models/connect";
 import { connect } from "dva";
 import encodeQueryParam from "@/utils/encodeParam";
 import Save from "./save";
-import SettingAutz from "@/components/SettingAutz";
+import Authorization from "@/components/Authorization";
 interface Props {
     users: any;
     dispatch: Dispatch;
@@ -124,7 +124,7 @@ const UserList: React.FC<Props> = (props) => {
     }
 
 
-    const onTableChange = (pagination: PaginationConfig, filters: Record<keyof UserItem, string[]>, sorter: SorterResult<UserItem>, extra: any) => {
+    const onTableChange = (pagination: PaginationConfig, filters: any, sorter: SorterResult<any>, extra: any) => {
         handleSearch({
             pageIndex: Number(pagination.current) - 1,
             pageSize: pagination.pageSize,
@@ -182,10 +182,8 @@ const UserList: React.FC<Props> = (props) => {
             }
             {
                 autzVisible &&
-                <SettingAutz
-                    settingId=""
-                    settingType=""
-                    close={() => { }}
+                <Authorization
+                    close={() => setAutzVisible(false)}
                 />
             }
         </PageHeaderWrapper>

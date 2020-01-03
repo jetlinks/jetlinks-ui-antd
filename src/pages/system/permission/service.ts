@@ -1,5 +1,5 @@
 import request from '@/utils/request';
-import { AutzSetting } from '@/components/SettingAutz/AutzSetting';
+// import { AutzSetting } from '@/components/SettingAutz/AutzSetting';
 import { PermissionItem } from './data';
 
 export async function list(params?: any) {
@@ -10,7 +10,7 @@ export async function list(params?: any) {
 }
 
 export async function listNoPaging(params?: any) {
-  return request(`/jetlinks/permission/_query/no-paging`, {
+  return request(`/jetlinks/permission/_query/no-paging?paging=false`, {
     method: 'GET',
     params: params
   });
@@ -47,7 +47,7 @@ export async function autzSetting(params: { settingId: string; settingType: stri
   });
 }
 
-export async function setAutz(params: AutzSetting) {
+export async function setAutz(params: any) {
   return request(`/jetlinks/autz-setting`, {
     method: 'PATCH',
     data: params,

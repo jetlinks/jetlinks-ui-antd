@@ -88,7 +88,7 @@ const request = extend({
 
 request.interceptors.request.use((url, options) => {
   return {
-    url: 'http://2.jetlinks.org:9010' + url.replace('/jetlinks', ''),
+    // url: 'http://localhost:8000' + url.replace('/jetlinks', ''),
     options: {
       ...options,
       headers: {
