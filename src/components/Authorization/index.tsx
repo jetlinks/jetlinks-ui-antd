@@ -1,9 +1,13 @@
-import { Button, Checkbox, Drawer, Form, Icon, Input, Select, Table, Tabs } from "antd";
+import { Button, Checkbox, Drawer, Form, Icon, Input, Select, Table, Tabs, Divider } from "antd";
 import React, { Fragment, useState, useEffect } from "react";
 import apis from "@/services";
+import { DimensionsItem, DimensionType } from "@/pages/system/dimensions/data";
+import { groupBy } from "lodash";
 
 interface Props {
-  close: Function
+  close: Function,
+  targetId?: string,
+  targetType?: string,
 }
 interface State {
   dataAccessVisible: boolean;
@@ -11,6 +15,7 @@ interface State {
   checkPermission: any;
   permissionType: string;
   searchText: string;
+  dimensionList: any[];
 }
 const Authorization: React.FC<Props> = (props) => {
   const initState: State = {
@@ -19,12 +24,15 @@ const Authorization: React.FC<Props> = (props) => {
     checkPermission: {},
     permissionType: 'all',
     searchText: '',
+    dimensionList: [],
   }
   const [permissionList, setPermissionList] = useState(initState.permissionList);
   const [dataAccessVisible, setDataAccessVisible] = useState(initState.dataAccessVisible);
   const [checkPermission, setCheckPermission] = useState(initState.checkPermission);
   const [permissionType, setPermissionType] = useState(initState.permissionType);
   const [searchText, setSearchText] = useState(initState.searchText);
+  const [dimensionList, setDimensionList] = useState(initState.dimensionList);
+
 
   useEffect(() => {
     apis.permission.listNoPaging().then(response => {
@@ -34,7 +42,28 @@ const Authorization: React.FC<Props> = (props) => {
         setPermissionList(list);
       }
     });
-  }, [])
+    getDimensions();
+  }, []);
+
+  const getDimensions = () => {
+    apis.dimensions.typeList().then(e => {
+      if (e && e.status === 200) {
+        apis.dimensions.treeList().then(d => {
+          if (d.status === 200) {
+            const dimensionList = d.result.map((dr: DimensionsItem) => {
+              let type = e.result.find((t: DimensionType) => t.id === dr.typeId);
+              if (type) {
+                let typeName = type.name;
+                return { typeName, ...dr }
+              }
+              return dr;
+            });
+            setDimensionList(dimensionList);
+          }
+        });
+      }
+    });
+  }
 
   return (
     <Drawer
@@ -45,7 +74,21 @@ const Authorization: React.FC<Props> = (props) => {
     >
       <Form>
         <Form.Item label="被授权主体">
-          <Input />
+          <Select mode="multiple">
+            {Array.from(new Set<string>(dimensionList.map((item: any) => item.typeName))).map(type => {
+              const typeData = groupBy(dimensionList, item => item.typeName)[type];
+
+              return (
+                <Select.OptGroup label={type} key={type}>
+                  {
+                    typeData.map((e: any) => {
+                      return <Select.Option value={e.id} key={e.id}>{e.name}</Select.Option>
+                    })
+                  }
+                </Select.OptGroup>
+              );
+            })}
+          </Select>
         </Form.Item>
         <Form.Item label="选择权限">
           <Input.Group compact style={{ marginBottom: '10px' }}>
@@ -133,6 +176,7 @@ const Authorization: React.FC<Props> = (props) => {
           <Tabs defaultActiveKey="field">
             <Tabs.TabPane tab="字段权限" key="field">
               <Table
+                rowKey={'name'}
                 columns={[
                   {
                     dataIndex: 'name',
@@ -140,15 +184,21 @@ const Authorization: React.FC<Props> = (props) => {
                   },
                   {
                     title: '操作',
-                    render: () => (checkPermission.actions || [])
-                      .filter((item: any) =>
-                        ((item.properties || {}).supportDataAccess || '').indexOf('DENY_FIELDS') > -1)
-                      .map((e: { action: string, name: string }) =>
-                        <Checkbox value={e.action}>{e.name}</Checkbox>)
+                    render: (record) =>
+                      <Checkbox.Group
+                        onChange={}
+                        options={
+                          (checkPermission.actions || [])
+                            .filter((item: any) =>
+                              ((item.properties || {}).supportDataAccess || '').indexOf('DENY_FIELDS') > -1)
+                            .map((e: { action: string, name: string }) => { return { 'label': e.name, 'value': record.name + ':' + e.action } })
+                        } />
+
                   }
                 ]}
                 dataSource={checkPermission.optionalFields}
               />
+
             </Tabs.TabPane>
             <Tabs.TabPane tab="数据权限" key="data">
               <Table

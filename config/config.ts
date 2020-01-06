@@ -118,12 +118,12 @@ export default {
                   // authority: ['user'],
                   component: './system/users',
                 },
-                {
-                  path: '/system/setting-autz',
-                  name: '功能权限管理',
-                  // authority: ['role'],
-                  component: './system/setting-autz',
-                },
+                // {
+                //   path: '/system/setting-autz',
+                //   name: '功能权限管理',
+                //   // authority: ['role'],
+                //   component: './system/setting-autz',
+                // },
                 {
                   path: '/system/permission',
                   name: '权限管理',
@@ -149,6 +149,11 @@ export default {
               name: '设备管理',
               icon: 'usb',
               routes: [
+                {
+                  path: '/device/protocol',
+                  name: '协议管理',
+                  component: './device/protocol',
+                },
                 {
                   path: '/device/product',
                   name: '设备型号',
@@ -183,18 +188,13 @@ export default {
                   name: '添加设备型号',
                   component: './device/instance/editor',
                 },
-                {
-                  path: '/device/protocol',
-                  name: '协议管理',
-                  component: './device/protocol',
-                },
               ],
             },
             {
               path: 'network',
               name: '网络组件',
               icon: 'appstore',
-              hideInMenu: true,
+              // hideInMenu: true,
               routes: [
                 {
                   path: '/network/certificate',
@@ -233,6 +233,25 @@ export default {
                   component: './network/websocket-client',
                 },
               ],
+            },
+            {
+              path: 'notice',
+              name: '通知管理',
+              icon: 'sound',
+              routes: [
+                {
+                  path: '/notice/config',
+                  name: '通知配置',
+                  icon: 'setting',
+                  component: './notice/config',
+                },
+                {
+                  path: 'notice/template',
+                  name: '通知模版',
+                  icon: 'tags',
+                  component: './notice/template'
+                }
+              ]
             },
             {
               path: 'rule-engine',
@@ -371,8 +390,8 @@ export default {
   // chainWebpack: webpackPlugin,
   proxy: {
     '/jetlinks': {
-      target: 'http://192.168.3.35:8844/',
-      // target: 'http://2.jetlinks.org:9010/',
+      // target: 'http://192.168.3.35:8844/',
+      target: 'http://2.jetlinks.org:9010/',
       changeOrigin: true,
       pathRewrite: { '^/jetlinks': '' },
     },

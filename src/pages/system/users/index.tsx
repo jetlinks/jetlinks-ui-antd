@@ -86,6 +86,7 @@ const UserList: React.FC<Props> = (props) => {
     }
     const setting = (record: UserItem) => {
         setAutzVisible(true);
+        setCurrentItem(record);
     }
 
     const saveOrUpdate = (user: UserItem) => {
@@ -184,6 +185,8 @@ const UserList: React.FC<Props> = (props) => {
                 autzVisible &&
                 <Authorization
                     close={() => setAutzVisible(false)}
+                    targetId={currentItem.id}
+                    targetType='user'
                 />
             }
         </PageHeaderWrapper>

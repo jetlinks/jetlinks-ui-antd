@@ -1,6 +1,5 @@
 import request from "@/utils/request";
 import { DimensionType, DimensionsItem } from "./data";
-import { async } from "q";
 
 export async function treeList(params?: any) {
     return request(`/jetlinks/dimension/_query/tree`, {
