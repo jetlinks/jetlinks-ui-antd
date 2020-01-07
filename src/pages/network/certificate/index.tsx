@@ -47,29 +47,12 @@ const CertificateList: React.FC<Props> = (props) => {
         },
 
         {
-            title: 'HOST',
-            dataIndex: 'host',
+            title: '类型',
+            dataIndex: 'type',
         },
         {
-            title: '端口',
-            dataIndex: 'port',
-        },
-        {
-            title: '发件人',
-            dataIndex: 'sender',
-        },
-        {
-            title: '用户',
-            dataIndex: 'username',
-        },
-        {
-            title: '密码',
-            dataIndex: 'password',
-        },
-        {
-            title: '其他配置',
-            dataIndex: 'configuration',
-            render: (text) => JSON.stringify(text)
+            title: '描述',
+            dataIndex: 'describe',
         },
         {
             title: '操作',
@@ -135,7 +118,7 @@ const CertificateList: React.FC<Props> = (props) => {
     }
 
 
-    const onTableChange = (pagination: PaginationConfig, filters: Record<keyof MqttItem, string[]>, sorter: SorterResult<MqttItem>, extra: any) => {
+    const onTableChange = (pagination: PaginationConfig, filters: any, sorter: SorterResult<MqttItem>, extra: any) => {
         handleSearch({
             pageIndex: Number(pagination.current) - 1,
             pageSize: pagination.pageSize,
@@ -150,12 +133,12 @@ const CertificateList: React.FC<Props> = (props) => {
         >
             <Card bordered={false}>
                 <div className={styles.tableList}>
-                    <div className={styles.tableListForm}>
-                        <Search search={(params: any) => {
-                            setSearchParam(params);
-                            handleSearch({ terms: params, pageSize: 10 })
-                        }} />
-                    </div>
+                    {/* <div className={styles.tableListForm}> */}
+                    <Search search={(params: any) => {
+                        setSearchParam(params);
+                        handleSearch({ terms: params, pageSize: 10 })
+                    }} />
+                    {/* </div> */}
                     <div className={styles.tableListOperator}>
                         <Button
                             icon="plus"

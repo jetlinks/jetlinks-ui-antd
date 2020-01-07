@@ -68,6 +68,7 @@ const PermissionList: React.FC<Props> = (props) => {
             title: '操作',
             render: (text, record) => (
                 <Fragment>
+
                     <a onClick={() => edit(record)}>编辑</a>
                     {/* <Divider type="vertical" /> */}
                     {/* <a onClick={() => setAutz(record)}>赋权</a> */}

@@ -29,8 +29,8 @@ const Search: React.FC<Props> = (props) => {
             component: <Input placeholder="请输入" />,
         },
         {
-            label: "发件人",
-            key: "username$LIKE",
+            label: "类型",
+            key: "type$LIKE",
             component:
                 < Input placeholder="请输入" />,
         },
@@ -74,8 +74,21 @@ const Search: React.FC<Props> = (props) => {
         props.search(data);
     }
 
+
+    const formItemLayout = {
+        labelCol: {
+            xs: { span: 24 },
+            sm: { span: 4 }
+        },
+        wrapperCol: {
+            xs: { span: 24 },
+            sm: { span: 20 }
+        },
+    };
+
+
     return (
-        <Form >
+        <Form {...formItemLayout}>
             <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
                 {expandForm ? (
                     simpleItems.map(item => (
@@ -102,9 +115,9 @@ const Search: React.FC<Props> = (props) => {
                         <Button style={{ marginLeft: 8 }} onClick={() => { form.resetFields(); props.search() }}>
                             重置
                         </Button>
-                        <a style={{ marginLeft: 8 }} onClick={() => setExpandForm(!expandForm)}>
+                        {/* <a style={{ marginLeft: 8 }} onClick={() => setExpandForm(!expandForm)}>
                             {expandForm ? "展开" : "收起"} <Icon type={expandForm ? 'down' : 'up'} />
-                        </a>
+                        </a> */}
                     </div>
                 </Col>
             </Row>

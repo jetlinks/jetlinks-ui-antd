@@ -59,6 +59,7 @@ interface EditableTableState {
 
 const DataView: React.FC<EditableTableProps> = (props) => {
 
+    console.log(props, 'dataView');
 
     const initState: EditableTableState = {
         data: props.data,
@@ -196,7 +197,7 @@ const DataView: React.FC<EditableTableProps> = (props) => {
         <EditableContext.Provider value={props.form}>
             <Table
                 size="small"
-                rowKey="key"
+                rowKey="name"
                 components={components}
                 bordered
                 dataSource={data}

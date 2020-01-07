@@ -14,10 +14,10 @@ import * as protocol from "@/pages/device/protocol/service";
 import * as openApi from "@/pages/system/open-api/service";
 import * as mqttClient from '@/pages/network/mqtt-client/service';
 import * as certificate from "@/pages/network/certificate/service";
-import * as coapClient from '@/pages/network/coap-client/service';
-import * as httpClient from '@/pages/network/http-client/service';
-import * as tcpClient from '@/pages/network/tcp-client/service';
-import * as websocketClient from '@/pages/network/websocket-client/service';
+// import * as coapClient from '@/pages/network/coap-client/service';
+// import * as httpClient from '@/pages/network/http-client/service';
+// import * as tcpClient from '@/pages/network/tcp-client/service';
+// import * as websocketClient from '@/pages/network/websocket-client/service';
 import * as accessLogger from '@/pages/logger/access/service';
 import * as systemLogger from '@/pages/logger/system/service';
 const apis = {
@@ -37,10 +37,10 @@ const apis = {
   openApi,
   certificate,
   mqttClient,
-  coapClient,
-  httpClient,
-  tcpClient,
-  websocketClient,
+  // coapClient,
+  // httpClient,
+  // tcpClient,
+  // websocketClient,
   accessLogger,
   systemLogger,
 }

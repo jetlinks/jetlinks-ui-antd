@@ -186,7 +186,7 @@ const Authorization: React.FC<Props> = (props) => {
                     title: '操作',
                     render: (record) =>
                       <Checkbox.Group
-                        onChange={}
+                        onChange={(value) => { console.log(value, '字段权限') }}
                         options={
                           (checkPermission.actions || [])
                             .filter((item: any) =>
@@ -202,17 +202,23 @@ const Authorization: React.FC<Props> = (props) => {
             </Tabs.TabPane>
             <Tabs.TabPane tab="数据权限" key="data">
               <Table
+                rowKey='name'
                 columns={[
                   {
                     dataIndex: 'name',
                     title: '名称'
                   }, {
                     title: '操作',
-                    render: () => (checkPermission.actions || [])
-                      .filter((item: any) =>
-                        ((item.properties || {}).supportDataAccess || '').indexOf('org') > -1)
-                      .map((e: { action: string, name: string }) =>
-                        <Checkbox value={e.action}>{e.name}</Checkbox>)
+                    render: (record) =>
+                      <Checkbox.Group
+                        onChange={(value) => { console.log(value, '数据权限') }}
+                        options={
+                          (checkPermission.actions || [])
+                            .filter((item: any) =>
+                              ((item.properties || {}).supportDataAccess || '').indexOf('org') > -1)
+                            .map((e: { action: string, name: string }) => { return { 'label': e.name, 'value': 'org:' + e.action } })
+                        }
+                      />
                   }
                 ]}
                 dataSource={

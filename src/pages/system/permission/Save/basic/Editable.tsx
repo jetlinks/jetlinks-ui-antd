@@ -10,7 +10,7 @@ supportDataAccessTypeMap.set("DENY_FIELDS", "字段权限");
 supportDataAccessTypeMap.set("OWN_USER", "仅限本人");
 supportDataAccessTypeMap.set("POSITION_SCOPE", "仅限本人及下属");
 supportDataAccessTypeMap.set("DEPARTMENT_SCOPE", "所在部门");
-supportDataAccessTypeMap.set("ORG_SCOPE", "所在机构");
+supportDataAccessTypeMap.set("org", "机构");
 
 const EditableCell: React.FC = (props: any) => {
 
@@ -93,7 +93,7 @@ interface EditableTableState {
 
 const EditableTable: React.FC<EditableTableProps> = (props) => {
 
-    console.log(props.data, 'jsdd');
+    console.log(props.data, '权限信息');
 
     const initState: EditableTableState = {
         data: props.data || [],
@@ -128,20 +128,13 @@ const EditableTable: React.FC<EditableTableProps> = (props) => {
             editable: true,
         },
         {
-            title: '默认选中',
-            dataIndex: 'properties.defaultCheck',
-            width: '20%',
-            editable: true,
-            render: (text: boolean) => text === true ? '是' : text === false ? '否' : '',
-        },
-        {
             title: '支持数据权限',
             dataIndex: 'properties.supportDataAccess',
-            width: '20%',
+            width: '40%',
             editable: true,
-            render: (text: string[]) => {
+            render: (text: string) => {
                 if (text) {
-                    return text.map(e => {
+                    return (text.split(',')).map(e => {
                         return <Tag key={e} color={"blue"} style={{ width: 120, textAlign: "center", marginBottom: 4 }}>{supportDataAccessTypeMap.get(e)}</Tag>
                     });
                 } else {
