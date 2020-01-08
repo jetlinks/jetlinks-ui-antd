@@ -1,14 +1,18 @@
-import { Button, Checkbox, Drawer, Form, Icon, Input, Select, Table, Tabs, Divider } from "antd";
+import { Button, Checkbox, Drawer, Form, Input, Select, Table, message, } from "antd";
 import React, { Fragment, useState, useEffect } from "react";
 import apis from "@/services";
 import { DimensionsItem, DimensionType } from "@/pages/system/dimensions/data";
 import { groupBy } from "lodash";
+import { FormComponentProps } from "antd/es/form";
+import styles from './index.less';
+import DataAccess from "./DataAccess";
 
-interface Props {
+interface Props extends FormComponentProps {
   close: Function,
   targetId?: string,
   targetType?: string,
 }
+
 interface State {
   dataAccessVisible: boolean;
   permissionList: any[];
@@ -18,6 +22,7 @@ interface State {
   dimensionList: any[];
 }
 const Authorization: React.FC<Props> = (props) => {
+
   const initState: State = {
     dataAccessVisible: false,
     permissionList: [],
@@ -33,6 +38,7 @@ const Authorization: React.FC<Props> = (props) => {
   const [searchText, setSearchText] = useState(initState.searchText);
   const [dimensionList, setDimensionList] = useState(initState.dimensionList);
 
+  const { form: { getFieldDecorator }, form } = props;
 
   useEffect(() => {
     apis.permission.listNoPaging().then(response => {
@@ -74,21 +80,28 @@ const Authorization: React.FC<Props> = (props) => {
     >
       <Form>
         <Form.Item label="被授权主体">
-          <Select mode="multiple">
-            {Array.from(new Set<string>(dimensionList.map((item: any) => item.typeName))).map(type => {
-              const typeData = groupBy(dimensionList, item => item.typeName)[type];
+          {
+            getFieldDecorator('targetId', {
+              rules: [{ required: true }]
+            })(
+              <Select mode="multiple">
+                {Array.from(new Set<string>(dimensionList.map((item: any) => item.typeName))).map(type => {
+                  const typeData = groupBy(dimensionList, item => item.typeName)[type];
 
-              return (
-                <Select.OptGroup label={type} key={type}>
-                  {
-                    typeData.map((e: any) => {
-                      return <Select.Option value={e.id} key={e.id}>{e.name}</Select.Option>
-                    })
-                  }
-                </Select.OptGroup>
-              );
-            })}
-          </Select>
+                  return (
+                    <Select.OptGroup label={type} key={type}>
+                      {
+                        typeData.map((e: any) => {
+                          return <Select.Option value={e.id} key={e.id}>{e.name}</Select.Option>
+                        })
+                      }
+                    </Select.OptGroup>
+                  );
+                })}
+              </Select>
+            )
+          }
+
         </Form.Item>
         <Form.Item label="选择权限">
           <Input.Group compact style={{ marginBottom: '10px' }}>
@@ -115,8 +128,30 @@ const Authorization: React.FC<Props> = (props) => {
                 dataIndex: 'actions',
                 title: '权限操作',
                 render: (text: { action: string, name: string }[], record: any) => {
-                  return (text || []).map((e: { action: string, name: string }) => <Checkbox name={e.action} key={e.action}>{e.name}</Checkbox>)
+                  const id = record.id;
+                  return (
+                    <div className={styles.permissionForm}>
+                      <Form.Item >
+                        {getFieldDecorator(`permissions.${id}`, {
+
+                        })(
+                          <Checkbox.Group
+                            options={
+                              (text || []).
+                                map((e: { action: string, name: string }) => {
+                                  return { 'label': e.name, 'value': e.action }
+                                })
+                            }
+                          />
+                        )}
+                      </Form.Item>
+                    </div>
+
+                  )
                 }
+
+                // return (text || []).map((e: { action: string, name: string }) => <Checkbox name={e.action} key={e.action}>{e.name}</Checkbox>)
+                // }
               },
               {
                 dataIndex: 'properties',
@@ -161,96 +196,24 @@ const Authorization: React.FC<Props> = (props) => {
         <Button onClick={() => { props.close() }} style={{ marginRight: 8 }}>
           关闭
         </Button>
-        <Button onClick={() => { }} type="primary">
+        <Button onClick={() => { console.log(form.getFieldsValue()) }} type="primary">
           保存
         </Button>
       </div>
       {
         dataAccessVisible &&
-        <Drawer
-          visible
-          title="数据权限配置"
-          onClose={() => { setDataAccessVisible(false) }}
-          width={'30VW'}
-        >
-          <Tabs defaultActiveKey="field">
-            <Tabs.TabPane tab="字段权限" key="field">
-              <Table
-                rowKey={'name'}
-                columns={[
-                  {
-                    dataIndex: 'name',
-                    title: '字段名称',
-                  },
-                  {
-                    title: '操作',
-                    render: (record) =>
-                      <Checkbox.Group
-                        onChange={(value) => { console.log(value, '字段权限') }}
-                        options={
-                          (checkPermission.actions || [])
-                            .filter((item: any) =>
-                              ((item.properties || {}).supportDataAccess || '').indexOf('DENY_FIELDS') > -1)
-                            .map((e: { action: string, name: string }) => { return { 'label': e.name, 'value': record.name + ':' + e.action } })
-                        } />
-
-                  }
-                ]}
-                dataSource={checkPermission.optionalFields}
-              />
-
-            </Tabs.TabPane>
-            <Tabs.TabPane tab="数据权限" key="data">
-              <Table
-                rowKey='name'
-                columns={[
-                  {
-                    dataIndex: 'name',
-                    title: '名称'
-                  }, {
-                    title: '操作',
-                    render: (record) =>
-                      <Checkbox.Group
-                        onChange={(value) => { console.log(value, '数据权限') }}
-                        options={
-                          (checkPermission.actions || [])
-                            .filter((item: any) =>
-                              ((item.properties || {}).supportDataAccess || '').indexOf('org') > -1)
-                            .map((e: { action: string, name: string }) => { return { 'label': e.name, 'value': 'org:' + e.action } })
-                        }
-                      />
-                  }
-                ]}
-                dataSource={
-                  checkPermission.properties.supportDataAccessTypes.some((e: string) => e === 'org') ? [
-                    { name: '仅限所在组织架构数据' }
-                  ] : []
-                }
-              />
-            </Tabs.TabPane>
-          </Tabs>
-          <div
-            style={{
-              position: 'absolute',
-              right: 0,
-              bottom: 0,
-              width: '100%',
-              borderTop: '1px solid #e9e9e9',
-              padding: '10px 16px',
-              background: '#fff',
-              textAlign: 'right',
-            }}
-          >
-            <Button onClick={() => { setDataAccessVisible(false) }} style={{ marginRight: 8 }}>
-              关闭
-            </Button>
-            <Button onClick={() => { }} type="primary">
-              保存
-            </Button>
-          </div>
-        </Drawer>
+        <DataAccess
+          checkPermission={checkPermission}
+          close={() => setDataAccessVisible(false)}
+          save={(item: any) => {
+            // console.log({ ...checkPermission, ...item });
+            setCheckPermission({ ...checkPermission, ...item });
+            console.log(document.getElementById('permission-drawer'));
+            // message.success('保存成功');
+          }}
+        />
       }
     </Drawer>
   )
 }
-export default Authorization;
+export default Form.create<Props>()(Authorization);
