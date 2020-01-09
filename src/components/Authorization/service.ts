@@ -6,3 +6,10 @@ export async function list(params?: any) {
         params: params,
     });
 }
+
+export async function setAutz(params: any) {
+    return request(`/jetlinks/autz-setting`, {
+        method: 'PATCH',
+        data: params,
+    });
+}

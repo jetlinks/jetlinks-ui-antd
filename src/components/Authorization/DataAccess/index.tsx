@@ -38,16 +38,16 @@ const DataAccess: React.FC<Props> = (props) => {
             }
         }
         for (const key in tempDataAccess) {
-            const tempAction = (checkPermission.actions || [])
-                .filter((item: any) =>
-                    ((item.properties || {}).supportDataAccess || '').indexOf('org') > -1)
-                .map((e: { action: string, name: string }) => e.action)
+            // const tempAction = (checkPermission.actions || [])
+            //     .filter((item: any) =>
+            //         ((item.properties || {}).supportDataAccess || '').indexOf('org') > -1)
+            //     .map((e: { action: string, name: string }) => e.action)
             if (tempDataAccess.hasOwnProperty(key)) {
                 const element = tempDataAccess[key];
-                const action = subtract(tempAction, element);
-                if (action.size > 0) {
-                    dataAccess.push({ name: key, action: [...action] });
-                }
+                // const action = subtract(tempAction, element);
+                // if (action.size > 0) {
+                dataAccess.push({ name: key, action: [...element] });
+                // }
             }
         }
         props.save({ fieldAccess, dataAccess });

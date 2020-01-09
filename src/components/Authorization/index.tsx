@@ -89,11 +89,40 @@ const Authorization: React.FC<Props> = (props) => {
   }
 
   const saveDataAccess = (data: any) => {
+    console.log(data, 'daaaa');
     //删除原数据
     let temp = permissionList.filter(i => i.id !== checkPermission.id);
     //保存数据
     setPermissionList([...temp, data]);
     message.success('保存成功');
+    autzSetting(data)
+    //TODO 此处调用接口保存数据
+  }
+
+  const autzSetting = (authorization: any) => {
+    console.log(authorization, 'logs');
+    new Map<string, Set<string>>();
+    let tempAutz = {
+      permission: authorization.id,
+      dimensionType: props.targetType,
+      dimensionTypeName: '用户',
+      dimensionTarget: props.targetId,
+      dimensionTargetName: '用户名',
+      state: 1,
+      actions: (authorization.actions || []).map((i: any) => i.action),
+      id: 'test',
+      merge: true,
+      dataAccesses: (authorization.fieldAccess || []).map((i: any) => {
+        return {
+          action: i.name,
+          type: 'DENY_FIELDS',
+          describe: '不能操作字段',
+          config: {
+
+          }
+        }
+      })
+    }
   }
 
   return (
