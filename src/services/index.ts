@@ -20,6 +20,7 @@ import * as certificate from "@/pages/network/certificate/service";
 // import * as websocketClient from '@/pages/network/websocket-client/service';
 import * as accessLogger from '@/pages/logger/access/service';
 import * as systemLogger from '@/pages/logger/system/service';
+import * as authorization from '@/components/Authorization/service';
 const apis = {
   login,
   permission,
@@ -43,5 +44,6 @@ const apis = {
   // websocketClient,
   accessLogger,
   systemLogger,
+  authorization
 }
 export default apis;

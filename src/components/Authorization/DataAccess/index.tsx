@@ -1,22 +1,57 @@
-import React, { useState } from "react"
-import { Drawer, Tabs, Table, Checkbox, Button, Form, message } from "antd"
+import React from "react"
+import { Drawer, Tabs, Table, Checkbox, Button, Form } from "antd"
 import styles from '../index.less';
 import { FormComponentProps } from "antd/lib/form";
+import { subtract } from "@/utils/CollectionUtils";
 
 interface Props extends FormComponentProps {
     close: Function,
     save: Function,
     checkPermission: any;
 }
-interface State {
-    checkPermission: any;
-}
-
 const DataAccess: React.FC<Props> = (props) => {
 
-    const [checkPermission, setCheckPermission] = useState(props.checkPermission);
+    const { checkPermission } = props;
 
     const { form: { getFieldDecorator }, form } = props;
+
+    const dataAccesses = (checkPermission.autz || {}).dataAccesses || [];
+    console.log(dataAccesses, 'permission');
+
+    const getDataAccess = () => {
+        //组合数据，反向获取未勾选的数据
+        const data = form.getFieldsValue();
+        const tempFieldAccess = data.fieldAccess;
+        const tempDataAccess = data.dataAccess;
+        let fieldAccess: any[] = [];
+        let dataAccess: any[] = [];
+        for (const key in tempFieldAccess) {
+            const tempAction = (checkPermission.actions).filter((item: any) =>
+                ((item.properties || {}).supportDataAccess || '').indexOf('DENY_FIELDS') > -1)
+                .map((e: { action: string, name: string }) => e.action);
+            if (tempFieldAccess.hasOwnProperty(key)) {
+                const element = tempFieldAccess[key];
+                const action = subtract(tempAction, element);
+                if (action.size > 0) {
+                    fieldAccess.push({ name: key, action: [...action] });
+                }
+            }
+        }
+        for (const key in tempDataAccess) {
+            const tempAction = (checkPermission.actions || [])
+                .filter((item: any) =>
+                    ((item.properties || {}).supportDataAccess || '').indexOf('org') > -1)
+                .map((e: { action: string, name: string }) => e.action)
+            if (tempDataAccess.hasOwnProperty(key)) {
+                const element = tempDataAccess[key];
+                const action = subtract(tempAction, element);
+                if (action.size > 0) {
+                    dataAccess.push({ name: key, action: [...action] });
+                }
+            }
+        }
+        props.save({ fieldAccess, dataAccess });
+    }
 
     return (
         <Drawer
@@ -28,9 +63,11 @@ const DataAccess: React.FC<Props> = (props) => {
             <div id="permission-drawer">
 
                 <Tabs defaultActiveKey="field">
-                    <Tabs.TabPane tab="字段权限" key="field">
+                    <Tabs.TabPane tab="字段权限" key="field" forceRender={true}>
                         <Table
                             rowKey={'name'}
+                            pagination={false}
+                            style={{ height: '70vh', overflow: 'auto' }}
                             columns={[
                                 {
                                     dataIndex: 'name',
@@ -38,29 +75,45 @@ const DataAccess: React.FC<Props> = (props) => {
                                 },
                                 {
                                     title: '操作',
-                                    render: (record) =>
-                                        <div className={styles.permissionForm}>
-                                            <Form.Item >
-                                                {getFieldDecorator(`fieldAccess.${record.name}`, {
+                                    render: (record: any) => {
 
-                                                })(
-                                                    <Checkbox.Group
-                                                        options={
-                                                            (checkPermission.actions || [])
-                                                                .filter((item: any) =>
-                                                                    ((item.properties || {}).supportDataAccess || '').indexOf('DENY_FIELDS') > -1)
-                                                                .map((e: { action: string, name: string }) => { return { 'label': e.name, 'value': e.action } })
-                                                        } />
-                                                )}
-                                            </Form.Item>
-                                        </div>
+                                        //禁用的操作，(UI中取消勾选的操作)
+                                        let tempItem = (dataAccesses as any[])
+                                            .filter(item => item.type !== 'DENY-FIELDS')
+                                            .filter(item => (item.config.fields || [])
+                                                .some((e: string) => e === record.name))
+                                            .map(i => i.action);
+
+                                        //所有操作
+                                        let tempInit = (checkPermission.actions).filter((item: any) =>
+                                            ((item.properties || {}).supportDataAccess || '').indexOf('DENY_FIELDS') > -1)
+                                            .map((e: { action: string, name: string }) => e.action);
+
+                                        return (
+                                            <div className={styles.permissionForm}>
+                                                <Form.Item >
+                                                    {getFieldDecorator(`fieldAccess.${record.name}`, {
+                                                        initialValue: [...subtract(tempInit, tempItem)],
+                                                    })(
+                                                        <Checkbox.Group
+                                                            options={
+                                                                (checkPermission.actions || [])
+                                                                    .filter((item: any) =>
+                                                                        ((item.properties || {}).supportDataAccess || '').indexOf('DENY_FIELDS') > -1)
+                                                                    .map((e: { action: string, name: string }) => { return { 'label': e.name, 'value': e.action } })
+                                                            } />
+                                                    )}
+                                                </Form.Item>
+                                            </div>
+                                        )
+                                    }
                                 }
                             ]}
                             dataSource={checkPermission.optionalFields}
                         />
 
                     </Tabs.TabPane>
-                    <Tabs.TabPane tab="数据权限" key="data">
+                    <Tabs.TabPane tab="数据权限" key="data" forceRender={true}>
                         <Table
                             rowKey='name'
                             columns={[
@@ -69,24 +122,38 @@ const DataAccess: React.FC<Props> = (props) => {
                                     title: '名称'
                                 }, {
                                     title: '操作',
-                                    render: (record) =>
-                                        <div className={styles.permissionForm}>
-                                            <Form.Item>
-                                                {getFieldDecorator(`dataAccess.org`, {
+                                    render: (record) => {
 
-                                                })(
-                                                    <Checkbox.Group
-                                                        options={
-                                                            (checkPermission.actions || [])
-                                                                .filter((item: any) =>
-                                                                    ((item.properties || {}).supportDataAccess || '').indexOf('org') > -1)
-                                                                .map((e: { action: string, name: string }) => { return { 'label': e.name, 'value': e.action } })
-                                                        }
-                                                    />
-                                                )}
+                                        //禁用的操作，（UI中取消勾选的操作）
+                                        let tempItem = (dataAccesses as any[])
+                                            .filter(item => (item.config || {}).scopeType === 'org')
+                                            .map(i => i.action);
 
-                                            </Form.Item>
-                                        </div>
+                                        // let tempInit = (checkPermission.actions || [])
+                                        //     .filter((item: any) =>
+                                        //         ((item.properties || {}).supportDataAccess || '').indexOf('org') > -1)
+                                        //     .map((e: { action: string, name: string }) => e.action)
+
+                                        return (
+                                            <div className={styles.permissionForm}>
+                                                <Form.Item>
+                                                    {getFieldDecorator(`dataAccess.org`, {
+                                                        initialValue: tempItem
+                                                    })(
+                                                        <Checkbox.Group
+                                                            options={
+                                                                (checkPermission.actions || [])
+                                                                    .filter((item: any) =>
+                                                                        ((item.properties || {}).supportDataAccess || '').indexOf('org') > -1)
+                                                                    .map((e: { action: string, name: string }) => { return { 'label': e.name, 'value': e.action } })
+                                                            }
+                                                        />
+                                                    )}
+
+                                                </Form.Item>
+                                            </div>
+                                        )
+                                    }
 
                                 }
                             ]}
@@ -112,10 +179,10 @@ const DataAccess: React.FC<Props> = (props) => {
                 >
                     <Button onClick={() => { props.close() }} style={{ marginRight: 8 }}>
                         关闭
-               </Button>
-                    <Button onClick={() => { console.log(message.config); message.success('保存成功'); props.save(form.getFieldsValue()) }} type="primary">
+                    </Button>
+                    <Button onClick={() => { getDataAccess() }} type="primary">
                         保存
-               </Button>
+                    </Button>
                 </div>
             </div>
         </Drawer>

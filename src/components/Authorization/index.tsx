@@ -6,6 +6,7 @@ import { groupBy } from "lodash";
 import { FormComponentProps } from "antd/es/form";
 import styles from './index.less';
 import DataAccess from "./DataAccess";
+import encodeQueryParam from "@/utils/encodeParam";
 
 interface Props extends FormComponentProps {
   close: Function,
@@ -20,6 +21,7 @@ interface State {
   permissionType: string;
   searchText: string;
   dimensionList: any[];
+  targetAutz: any[];
 }
 const Authorization: React.FC<Props> = (props) => {
 
@@ -30,6 +32,7 @@ const Authorization: React.FC<Props> = (props) => {
     permissionType: 'all',
     searchText: '',
     dimensionList: [],
+    targetAutz: []
   }
   const [permissionList, setPermissionList] = useState(initState.permissionList);
   const [dataAccessVisible, setDataAccessVisible] = useState(initState.dataAccessVisible);
@@ -37,6 +40,7 @@ const Authorization: React.FC<Props> = (props) => {
   const [permissionType, setPermissionType] = useState(initState.permissionType);
   const [searchText, setSearchText] = useState(initState.searchText);
   const [dimensionList, setDimensionList] = useState(initState.dimensionList);
+  const [targetAutz, setTargetAutz] = useState(initState.targetAutz);
 
   const { form: { getFieldDecorator }, form } = props;
 
@@ -48,6 +52,19 @@ const Authorization: React.FC<Props> = (props) => {
         setPermissionList(list);
       }
     });
+    if (props.targetId) {
+      apis.authorization.list(encodeQueryParam({
+        'paging': false,
+        'terms': {
+          'dimensionTarget': props.targetId
+        }
+      })).then(response => {
+        if (response.status === 200) {
+          setTargetAutz(response.result);
+        }
+      })
+    }
+
     getDimensions();
   }, []);
 
@@ -69,6 +86,14 @@ const Authorization: React.FC<Props> = (props) => {
         });
       }
     });
+  }
+
+  const saveDataAccess = (data: any) => {
+    //删除原数据
+    let temp = permissionList.filter(i => i.id !== checkPermission.id);
+    //保存数据
+    setPermissionList([...temp, data]);
+    message.success('保存成功');
   }
 
   return (
@@ -129,11 +154,12 @@ const Authorization: React.FC<Props> = (props) => {
                 title: '权限操作',
                 render: (text: { action: string, name: string }[], record: any) => {
                   const id = record.id;
+                  const temp = targetAutz.find(item => item.permission === id) || {};
                   return (
                     <div className={styles.permissionForm}>
                       <Form.Item >
                         {getFieldDecorator(`permissions.${id}`, {
-
+                          initialValue: temp.actions,
                         })(
                           <Checkbox.Group
                             options={
@@ -149,21 +175,25 @@ const Authorization: React.FC<Props> = (props) => {
 
                   )
                 }
-
-                // return (text || []).map((e: { action: string, name: string }) => <Checkbox name={e.action} key={e.action}>{e.name}</Checkbox>)
-                // }
               },
               {
                 dataIndex: 'properties',
                 title: '操作',
-                render: (text, record: any) =>
-                  <Fragment>
-                    {
-                      (text && text.supportDataAccessTypes || [])
-                        .some((i: string) => i === 'DENY_FIELDS') &&
-                      <a onClick={() => { setDataAccessVisible(true); setCheckPermission(record) }}>数据权限</a>
-                    }
-                  </Fragment>
+                render: (text, record: any) => {
+                  const autz = targetAutz.find(item => item.permission === record.id);
+                  return (
+                    <Fragment>
+                      {
+                        (text && text.supportDataAccessTypes || [])
+                          .some((i: string) => i === 'DENY_FIELDS') &&
+                        <a onClick={() => {
+                          setDataAccessVisible(true);
+                          setCheckPermission({ ...record, autz })
+                        }}>数据权限</a>
+                      }
+                    </Fragment>
+                  )
+                }
               }
             ]}
             dataSource={
@@ -206,10 +236,7 @@ const Authorization: React.FC<Props> = (props) => {
           checkPermission={checkPermission}
           close={() => setDataAccessVisible(false)}
           save={(item: any) => {
-            // console.log({ ...checkPermission, ...item });
-            setCheckPermission({ ...checkPermission, ...item });
-            console.log(document.getElementById('permission-drawer'));
-            // message.success('保存成功');
+            saveDataAccess({ ...checkPermission, ...item });
           }}
         />
       }
