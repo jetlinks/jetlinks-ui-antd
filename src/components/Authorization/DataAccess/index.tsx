@@ -16,13 +16,13 @@ const DataAccess: React.FC<Props> = (props) => {
     const { form: { getFieldDecorator }, form } = props;
 
     const dataAccesses = (checkPermission.autz || {}).dataAccesses || [];
-    console.log(dataAccesses, 'permission');
 
-    const getDataAccess = () => {
+    const saveDataAccess = () => {
         //组合数据，反向获取未勾选的数据
         const data = form.getFieldsValue();
         const tempFieldAccess = data.fieldAccess;
         const tempDataAccess = data.dataAccess;
+        let permissionId = checkPermission.id;
         let fieldAccess: any[] = [];
         let dataAccess: any[] = [];
         for (const key in tempFieldAccess) {
@@ -46,11 +46,11 @@ const DataAccess: React.FC<Props> = (props) => {
                 const element = tempDataAccess[key];
                 // const action = subtract(tempAction, element);
                 // if (action.size > 0) {
-                dataAccess.push({ name: key, action: [...element] });
+                dataAccess.push({ type: key, action: [...element] });
                 // }
             }
         }
-        props.save({ fieldAccess, dataAccess });
+        props.save({ permissionId, fieldAccess, dataAccess });
     }
 
     return (
@@ -180,7 +180,7 @@ const DataAccess: React.FC<Props> = (props) => {
                     <Button onClick={() => { props.close() }} style={{ marginRight: 8 }}>
                         关闭
                     </Button>
-                    <Button onClick={() => { getDataAccess() }} type="primary">
+                    <Button onClick={() => { saveDataAccess() }} type="primary">
                         保存
                     </Button>
                 </div>
