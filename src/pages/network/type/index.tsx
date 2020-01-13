@@ -1,20 +1,31 @@
 import { PageHeaderWrapper } from "@ant-design/pro-layout"
-import React from "react";
-import { Card, Form, Row, Col, Select, Input, List, Tooltip, Icon, Dropdown, Avatar, Menu, Tag } from "antd";
+import React, { useEffect, useState } from "react";
+import { Card, Form, Row, Col, Select, Input, List, Tooltip, Icon, Dropdown, Avatar, Menu, Tag, Button } from "antd";
 import StandardFormRow from "./components/standard-form-row";
 import TagSelect from "./components/tag-select";
 import { FormComponentProps } from "antd/lib/form";
 import styles from './index.less';
 import { ChartCard, MiniArea } from "@/pages/analysis/components/Charts";
 import moment from "moment";
+import { ConnectState, Dispatch } from "@/models/connect";
+import { connect } from "dva";
+import Save from "./save";
 
 interface Props extends FormComponentProps {
-
+    dispatch: Dispatch;
+    networkType: any;
 }
 interface State {
-
+    saveVisible: boolean;
 }
+
 const Type: React.FC<Props> = (props) => {
+    const initState: State = {
+        saveVisible: false
+    }
+
+    const [saveVisible, setSaveVisible] = useState(initState.saveVisible);
+
     const { form: { getFieldDecorator } } = props;
 
     const formItemLayout = {
@@ -23,6 +34,17 @@ const Type: React.FC<Props> = (props) => {
             sm: { span: 16 },
         },
     };
+
+    const { dispatch, networkType: { result: { data } } } = props;
+
+    useEffect(() => {
+        dispatch({
+            type: 'networkType/query',
+            callback: (response: any) => {
+                console.log(response, 'res');
+            }
+        })
+    }, []);
 
     const itemMenu = (
         <Menu>
@@ -44,24 +66,6 @@ const Type: React.FC<Props> = (props) => {
         </Menu>
     );
 
-    const CardInfo: React.FC<{
-        activeUser: React.ReactNode;
-        newUser: React.ReactNode;
-    }> = ({ activeUser, newUser }) => (
-        <div
-            className={styles.cardInfo}
-        >
-            <div>
-                <p>配置名称</p>
-                <p>{activeUser}</p>
-            </div>
-            <div>
-                <p>当前状态</p>
-                <p style={{ color: 'red' }}>{newUser}</p>
-            </div>
-        </div >
-    );
-
     let visitData: any[] = [];
     const beginDay = new Date().getTime();
 
@@ -72,7 +76,6 @@ const Type: React.FC<Props> = (props) => {
             y: fakeY[i],
         });
     }
-    console.log(JSON.stringify(visitData));
     return (
         <PageHeaderWrapper
             title="组件管理"
@@ -138,131 +141,96 @@ const Type: React.FC<Props> = (props) => {
                     rowKey="id"
                     grid={{ gutter: 24, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }}
                     // loading={loading}
-                    dataSource={[
-                        {
-                            id: 1203191,
-                            type: 'TCP客户端',
-                            name: 'test-script',
-                            status: '已停止',
-                            describe: '说明'
-                        },
-                        {
-                            id: 1203192,
-                            type: 'TCP服务',
-                            name: 'tcp-script',
-                            status: '已停止',
-                            describe: '说明'
-                        },
-                        {
-                            id: 1203193,
-                            type: 'MQTT客户端',
-                            name: 'mqtt-script',
-                            status: '已停止',
-                            describe: '说明'
-                        },
-                        {
-                            id: 1203194,
-                            type: 'MQTT服务',
-                            name: 'test-script',
-                            status: '已停止',
-                            describe: '说明'
-                        },
-                        {
-                            id: 1203195,
-                            type: 'HTTP客户端',
-                            name: 'http-script',
-                            status: '已停止',
-                            describe: '说明'
-                        },
-                        {
-                            id: 1203196,
-                            type: 'TCP服务',
-                            name: 'tcp-script',
-                            status: '已停止',
-                            describe: '说明'
-                        },
-                        {
-                            id: 1203197,
-                            type: 'MQTT客户端',
-                            name: 'mqtt-script',
-                            status: '已停止',
-                            describe: '说明'
-                        },
-                        {
-                            id: 1203198,
-                            type: 'MQTT服务',
-                            name: 'test-script',
-                            status: '已停止',
-                            describe: '说明'
-                        },
-                        {
-                            id: 1203199,
-                            type: 'HTTP客户端',
-                            name: 'http-script',
-                            status: '已停止',
-                            describe: '说明'
-                        }
-                    ]}
-                    renderItem={item => (
-                        <List.Item key={item.id}>
-                            <Card
-                                hoverable
-                                bodyStyle={{ paddingBottom: 20 }}
-                                actions={[
-                                    <Tooltip key="download" title="下载">
-                                        <Icon type="download" />
-                                    </Tooltip>,
-                                    <Tooltip key="edit" title="编辑">
-                                        <Icon type="edit" />
-                                    </Tooltip>,
-                                    <Tooltip key="bug" title="调试" >
-                                        <Icon type="bug" />
-                                    </Tooltip>,
-                                    <Dropdown key="ellipsis" overlay={itemMenu}>
-                                        <Icon type="ellipsis" />
-                                    </Dropdown>,
-                                ]}
-                            >
-                                <Card.Meta avatar={<Avatar size="small" src={item.avatar} />} title={item.type} />
-                                <div
-                                    className={styles.cardItemContent}
-                                >
-                                    <CardInfo
-                                        activeUser={item.name}
-                                        newUser={item.status}
-                                    />
-                                </div>
-                                <ChartCard
-                                    bordered={false}
-                                    // loading={loading}
-                                    title='访问量'
-                                    action={
-                                        <Tooltip
-                                            title='访问量'
+                    dataSource={[{}, ...(data || [])]}
+                    renderItem={item => {
+                        if (item && item.id) {
+                            return (
+                                <List.Item key={item.id}>
+                                    <Card
+                                        hoverable
+                                        bodyStyle={{ paddingBottom: 20 }}
+                                        actions={[
+                                            <Tooltip key="download" title="下载">
+                                                <Icon type="download" />
+                                            </Tooltip>,
+                                            <Tooltip key="edit" title="编辑">
+                                                <Icon type="edit" />
+                                            </Tooltip>,
+                                            <Tooltip key="bug" title="调试" >
+                                                <Icon type="bug" />
+                                            </Tooltip>,
+                                            <Dropdown key="ellipsis" overlay={itemMenu}>
+                                                <Icon type="ellipsis" />
+                                            </Dropdown>,
+                                        ]}
+                                    >
+                                        <Card.Meta avatar={<Avatar size="small" src={item.avatar} />} title={item.type.name} />
+                                        <div
+                                            className={styles.cardItemContent}
                                         >
-                                            <Icon type="info-circle-o" />
-                                        </Tooltip>
-                                    }
-                                    // total={numeral(8846).format('0,0')}
-                                    // footer={
-                                    //     <Field
-                                    //         label={
-                                    //             <FormattedMessage id="analysis.analysis.day-visits" defaultMessage="Daily Visits" />
-                                    //         }
-                                    //         value={numeral(1234).format('0,0')}
-                                    //     />
-                                    // }
-                                    contentHeight={66}
-                                >
-                                    <MiniArea color="#589EFF" data={[{ "x": "2020-01-07", "y": 7 }, { "x": "2020-01-08", "y": 5 }, { "x": "2020-01-09", "y": 4 }, { "x": "2020-01-10", "y": 2 }, { "x": "2020-01-11", "y": 4 }, { "x": "2020-01-12", "y": 7 }, { "x": "2020-01-13", "y": 5 }, { "x": "2020-01-14", "y": 6 }, { "x": "2020-01-15", "y": 5 }, { "x": "2020-01-16", "y": 9 }, { "x": "2020-01-17", "y": 6 }, { "x": "2020-01-18", "y": 3 }, { "x": "2020-01-19", "y": 1 }, { "x": "2020-01-20", "y": 5 }, { "x": "2020-01-21", "y": 3 }, { "x": "2020-01-22", "y": 6 }, { "x": "2020-01-23", "y": 5 }]} />
-                                </ChartCard>
-                            </Card>
-                        </List.Item>
-                    )}
+                                            <div
+                                                className={styles.cardInfo}
+                                            >
+                                                <div>
+                                                    <p>配置名称</p>
+                                                    <p>{item.name}</p>
+                                                </div>
+                                                <div>
+                                                    <p>当前状态</p>
+                                                    <p style={{ color: 'red' }}>{item.state.text}</p>
+                                                </div>
+                                            </div >
+                                        </div>
+                                        <ChartCard
+                                            bordered={false}
+                                            // loading={loading}
+                                            title='访问量'
+                                            action={
+                                                <Tooltip
+                                                    title='访问量'
+                                                >
+                                                    <Icon type="info-circle-o" />
+                                                </Tooltip>
+                                            }
+                                            // total={numeral(8846).format('0,0')}
+                                            // footer={
+                                            //     <Field
+                                            //         label={
+                                            //             <FormattedMessage id="analysis.analysis.day-visits" defaultMessage="Daily Visits" />
+                                            //         }
+                                            //         value={numeral(1234).format('0,0')}
+                                            //     />
+                                            // }
+                                            contentHeight={66}
+                                        >
+                                            <MiniArea color="#589EFF" data={[{ "x": "2020-01-07", "y": 7 }, { "x": "2020-01-08", "y": 5 }, { "x": "2020-01-09", "y": 4 }, { "x": "2020-01-10", "y": 2 }, { "x": "2020-01-11", "y": 4 }, { "x": "2020-01-12", "y": 7 }, { "x": "2020-01-13", "y": 5 }, { "x": "2020-01-14", "y": 6 }, { "x": "2020-01-15", "y": 5 }, { "x": "2020-01-16", "y": 9 }, { "x": "2020-01-17", "y": 6 }, { "x": "2020-01-18", "y": 3 }, { "x": "2020-01-19", "y": 1 }, { "x": "2020-01-20", "y": 5 }, { "x": "2020-01-21", "y": 3 }, { "x": "2020-01-22", "y": 6 }, { "x": "2020-01-23", "y": 5 }]} />
+                                        </ChartCard>
+                                    </Card>
+                                </List.Item>
+                            )
+                        }
+                        return (
+                            <List.Item>
+                                <Button
+                                    type="dashed"
+                                    onClick={() => { setSaveVisible(true) }}
+                                    className={styles.newButton}>
+                                    <Icon type="plus" />新增组件
+                                </Button>
+                            </List.Item>
+                        )
+                    }}
                 />
             </div>
-
+            {
+                saveVisible &&
+                <Save />
+            }
         </PageHeaderWrapper>
     )
 }
-export default Form.create<Props>()(Type);
+// export default ;
+
+export default connect(({ networkType, loading }: ConnectState) => ({
+    networkType, loading
+}))(Form.create<Props>()(Type))

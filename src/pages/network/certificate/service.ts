@@ -1,5 +1,5 @@
 import request from '@/utils/request';
-import { MqttItem } from './data';
+// import { MqttItem } from './data';
 
 export async function list(params?: any) {
     return request(`/jetlinks/manager/mqtt/client/_query`, {
@@ -15,7 +15,7 @@ export async function listNoPaging(params?: any) {
     });
 }
 
-export async function saveOrUpdate(params: MqttItem) {
+export async function saveOrUpdate(params: any) {
     return request(`/jetlinks/manager/mqtt/client/`, {
         method: 'PATCH',
         data: params,
