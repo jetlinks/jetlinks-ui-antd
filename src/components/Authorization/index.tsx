@@ -10,7 +10,7 @@ import encodeQueryParam from "@/utils/encodeParam";
 
 interface Props extends FormComponentProps {
   close: Function,
-  targetId?: string,
+  target?: any,
   targetType?: string,
 }
 
@@ -55,11 +55,11 @@ const Authorization: React.FC<Props> = (props) => {
         setPermissionList(list);
       }
     });
-    if (props.targetId) {
+    if (props.target.targetId) {
       apis.authorization.list(encodeQueryParam({
         'paging': false,
         'terms': {
-          'dimensionTarget': props.targetId
+          'dimensionTarget': props.target.targetId
         }
       })).then(response => {
         if (response.status === 200) {
@@ -183,12 +183,12 @@ const Authorization: React.FC<Props> = (props) => {
         const element = permissions[key];
         if (element) {
           const access = tempAccess.find(i => i.permissionId === key);
-          tempAutz.push({ id: key, action: element, ...access })
+          tempAutz.push({ id: key, actions: element, ...access })
         }
       }
     }
     apis.authorization.saveAutz({
-      targetId: props.targetId,
+      targetId: props.target.targetId,
       targetType: props.targetType,
       permissionList: tempAutz
     }).then(response => {
@@ -244,23 +244,28 @@ const Authorization: React.FC<Props> = (props) => {
           {
             getFieldDecorator('targetId', {
               rules: [{ required: true }],
-              initialValue: props.targetId
+              initialValue: props.target.targetId
             })(
-              <Select mode="multiple">
-                {Array.from(new Set<string>(dimensionList.map((item: any) => item.typeName))).map(type => {
-                  const typeData = groupBy(dimensionList, item => item.typeName)[type];
+              <div>
+                {props.targetType === 'user' ?
+                  <Input value={props.target.name} readOnly /> :
+                  <Select mode="multiple">
+                    {Array.from(new Set<string>(dimensionList.map((item: any) => item.typeName))).map((type, index) => {
+                      const typeData = groupBy(dimensionList, item => item.typeName)[type];
+                      return (
+                        <Select.OptGroup label={type} key={index}>
+                          {
+                            typeData.map((e: any) => {
+                              return <Select.Option value={e.id} key={e.id}>{e.name}</Select.Option>
+                            })
+                          }
+                        </Select.OptGroup>
+                      );
+                    })}
+                  </Select>
+                }
+              </div>
 
-                  return (
-                    <Select.OptGroup label={type} key={type}>
-                      {
-                        typeData.map((e: any) => {
-                          return <Select.Option value={e.id} key={e.id}>{e.name}</Select.Option>
-                        })
-                      }
-                    </Select.OptGroup>
-                  );
-                })}
-              </Select>
             )
           }
 

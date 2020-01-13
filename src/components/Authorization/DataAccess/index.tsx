@@ -181,7 +181,7 @@ const DataAccess: React.FC<Props> = (props) => {
                         关闭
                     </Button>
                     <Button onClick={() => { saveDataAccess() }} type="primary">
-                        保存
+                        确认
                     </Button>
                 </div>
             </div>

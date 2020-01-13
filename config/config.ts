@@ -372,8 +372,8 @@ export default {
   // chainWebpack: webpackPlugin,
   proxy: {
     '/jetlinks': {
-      // target: 'http://192.168.3.35:8844/',
-      target: 'http://2.jetlinks.org:9010/',
+      target: 'http://192.168.3.110:8844/',
+      // target: 'http://2.jetlinks.org:9010/',
       changeOrigin: true,
       pathRewrite: { '^/jetlinks': '' },
     },

@@ -185,7 +185,7 @@ const UserList: React.FC<Props> = (props) => {
                 autzVisible &&
                 <Authorization
                     close={() => setAutzVisible(false)}
-                    targetId={currentItem.id}
+                    target={currentItem}
                     targetType='user'
                 />
             }
