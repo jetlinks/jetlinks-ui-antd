@@ -33,11 +33,11 @@ const plugins: IPlugin[] = [
       },
       pwa: pwa
         ? {
-          workboxPluginMode: 'InjectManifest',
-          workboxOptions: {
-            importWorkboxFrom: 'local',
-          },
-        }
+            workboxPluginMode: 'InjectManifest',
+            workboxOptions: {
+              importWorkboxFrom: 'local',
+            },
+          }
         : false, // default close dll, because issue https://github.com/ant-design/ant-design-pro/issues/4665
       // dll features https://webpack.js.org/plugins/dll-plugin/
       // dll: {
@@ -231,9 +231,9 @@ export default {
                   path: 'notice/template',
                   name: '通知模版',
                   icon: 'tags',
-                  component: './notice/template'
-                }
-              ]
+                  component: './notice/template',
+                },
+              ],
             },
             {
               path: 'rule-engine',
@@ -311,10 +311,10 @@ export default {
                   path: './exception/403',
                   name: '403',
                   component: './exception/403',
-                }
-              ]
+                },
+              ],
             },
-          ]
+          ],
         },
         {
           component: './404',
@@ -372,7 +372,7 @@ export default {
   // chainWebpack: webpackPlugin,
   proxy: {
     '/jetlinks': {
-      target: 'http://192.168.3.110:8844/',
+      target: 'http://localhost:8844/',
       // target: 'http://2.jetlinks.org:9010/',
       changeOrigin: true,
       pathRewrite: { '^/jetlinks': '' },
