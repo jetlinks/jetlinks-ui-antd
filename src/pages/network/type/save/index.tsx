@@ -1,16 +1,20 @@
 import React from "react";
-import { Modal, Form, Input } from "antd";
+import { Modal, Form, Input, Drawer, Button } from "antd";
 
 interface Props {
-
+    close: Function
 }
 interface State {
 
 }
 const Save: React.FC<Props> = (props) => {
     return (
-        <Modal title="编辑XXXX组件" visible>
-            <Form layout="horizontal">
+        <Drawer
+            title="编辑XXXX组件"
+            visible
+            width='30VW'
+        >
+            <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
                 <Form.Item label="名称">
                     <Input />
                 </Form.Item>
@@ -33,7 +37,27 @@ const Save: React.FC<Props> = (props) => {
                     <Input />
                 </Form.Item>
             </Form>
-        </Modal>
+
+            <div
+                style={{
+                    position: 'absolute',
+                    right: 0,
+                    bottom: 0,
+                    width: '100%',
+                    borderTop: '1px solid #e9e9e9',
+                    padding: '10px 16px',
+                    background: '#fff',
+                    textAlign: 'right',
+                }}
+            >
+                <Button onClick={() => { props.close() }} style={{ marginRight: 8 }}>
+                    关闭
+                </Button>
+                <Button onClick={() => { }} type="primary">
+                    保存
+                </Button>
+            </div>
+        </Drawer>
     )
 }
 export default Save;

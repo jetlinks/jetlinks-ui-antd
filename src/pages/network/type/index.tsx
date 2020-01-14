@@ -224,7 +224,9 @@ const Type: React.FC<Props> = (props) => {
             </div>
             {
                 saveVisible &&
-                <Save />
+                <Save
+                    close={() => setSaveVisible(false)}
+                />
             }
         </PageHeaderWrapper>
     )

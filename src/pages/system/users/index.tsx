@@ -98,6 +98,7 @@ const UserList: React.FC<Props> = (props) => {
                     message.success("添加成功");
                     setSaveVisible(false);
                     handleSearch(searchParam);
+                    setCurrentItem({})
                 }
             }
         })
@@ -184,7 +185,7 @@ const UserList: React.FC<Props> = (props) => {
             {
                 autzVisible &&
                 <Authorization
-                    close={() => setAutzVisible(false)}
+                    close={() => { setAutzVisible(false); setCurrentItem({}) }}
                     target={currentItem}
                     targetType='user'
                 />

@@ -106,7 +106,7 @@ const Save: React.FC<Props> = (props) => {
         <Modal
             visible
             width={640}
-            title={`${(props.data || {}).id}` ? '编辑协议' : '新增协议'}
+            title={`${props.data?.id ? '编辑' : '新增'}协议`}
             onOk={() => { submitData() }}
             onCancel={() => { props.close(); }}
         >
