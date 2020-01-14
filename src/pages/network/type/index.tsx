@@ -1,15 +1,15 @@
 import { PageHeaderWrapper } from "@ant-design/pro-layout"
 import React, { useEffect, useState } from "react";
-import { Card, Form, Row, Col, Select, Input, List, Tooltip, Icon, Dropdown, Avatar, Menu, Tag, Button } from "antd";
+import { Card, Form, Row, Col, Input, List, Tooltip, Icon, Avatar, Menu, Tag, Button, message, Popconfirm } from "antd";
 import StandardFormRow from "./components/standard-form-row";
 import TagSelect from "./components/tag-select";
 import { FormComponentProps } from "antd/lib/form";
 import styles from './index.less';
-import { ChartCard, MiniArea } from "@/pages/analysis/components/Charts";
-import moment from "moment";
 import { ConnectState, Dispatch } from "@/models/connect";
 import { connect } from "dva";
 import Save from "./save";
+import { response } from "express";
+import { downloadObject } from "@/utils/utils";
 
 interface Props extends FormComponentProps {
     dispatch: Dispatch;
@@ -17,14 +17,17 @@ interface Props extends FormComponentProps {
 }
 interface State {
     saveVisible: boolean;
+    currentItem: any;
 }
 
 const Type: React.FC<Props> = (props) => {
     const initState: State = {
-        saveVisible: false
+        saveVisible: false,
+        currentItem: {}
     }
 
     const [saveVisible, setSaveVisible] = useState(initState.saveVisible);
+    const [currentItem, setCurrentItem] = useState(initState.currentItem);
 
     const { form: { getFieldDecorator } } = props;
 
@@ -35,16 +38,41 @@ const Type: React.FC<Props> = (props) => {
         },
     };
 
-    const { dispatch, networkType: { result: { data } } } = props;
+    const { dispatch, networkType: { result } } = props;
 
     useEffect(() => {
+        handleSearch()
+    }, []);
+
+    const handleSearch = () => {
         dispatch({
             type: 'networkType/query',
+            payload: { paging: false },
+        })
+    }
+
+    const remove = (id: string) => {
+        dispatch({
+            type: 'networkType/remove',
+            payload: id,
             callback: (response: any) => {
-                console.log(response, 'res');
+                message.success('删除成功');
+                handleSearch();
             }
         })
-    }, []);
+    }
+
+    const insert = (data: any) => {
+        dispatch({
+            type: 'networkType/insert',
+            payload: data,
+            callback: (response: any) => {
+                message.success('保存成功');
+                setSaveVisible(false);
+                handleSearch();
+            }
+        })
+    }
 
     const itemMenu = (
         <Menu>
@@ -66,16 +94,6 @@ const Type: React.FC<Props> = (props) => {
         </Menu>
     );
 
-    let visitData: any[] = [];
-    const beginDay = new Date().getTime();
-
-    const fakeY = [7, 5, 4, 2, 4, 7, 5, 6, 5, 9, 6, 3, 1, 5, 3, 6, 5];
-    for (let i = 0; i < fakeY.length; i += 1) {
-        visitData.push({
-            x: moment(new Date(beginDay + 1000 * 60 * 60 * 24 * i)).format('YYYY-MM-DD'),
-            y: fakeY[i],
-        });
-    }
     return (
         <PageHeaderWrapper
             title="组件管理"
@@ -139,9 +157,9 @@ const Type: React.FC<Props> = (props) => {
                 <br />
                 <List<any>
                     rowKey="id"
-                    grid={{ gutter: 24, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }}
+                    grid={{ gutter: 24, xl: 4, lg: 3, md: 3, sm: 2, xs: 1 }}
                     // loading={loading}
-                    dataSource={[{}, ...(data || [])]}
+                    dataSource={[{}, ...result]}
                     renderItem={item => {
                         if (item && item.id) {
                             return (
@@ -151,20 +169,40 @@ const Type: React.FC<Props> = (props) => {
                                         bodyStyle={{ paddingBottom: 20 }}
                                         actions={[
                                             <Tooltip key="download" title="下载">
-                                                <Icon type="download" />
+                                                <Icon
+                                                    type="download"
+                                                    onClick={() => { downloadObject(item, '设备型号') }} />
                                             </Tooltip>,
                                             <Tooltip key="edit" title="编辑">
-                                                <Icon type="edit" />
+                                                <Icon
+                                                    type="edit"
+                                                    onClick={() => {
+                                                        setSaveVisible(true)
+                                                        setCurrentItem(item)
+                                                    }}
+                                                />
                                             </Tooltip>,
                                             <Tooltip key="bug" title="调试" >
-                                                <Icon type="bug" />
+                                                <Icon type="bug"
+                                                    onClick={() => { message.success('开发中...') }}
+                                                />
                                             </Tooltip>,
-                                            <Dropdown key="ellipsis" overlay={itemMenu}>
-                                                <Icon type="ellipsis" />
-                                            </Dropdown>,
+                                            <Tooltip key="delete" title="删除">
+                                                <Popconfirm
+                                                    placement="topRight"
+                                                    title="确定删除此组件吗？"
+                                                    onConfirm={() => { remove(item.id) }}>
+                                                    <Icon type="close" />
+                                                </Popconfirm>
+                                            </Tooltip>,
+
+
+                                            // <Dropdown key="ellipsis" overlay={itemMenu}>
+                                            //     <Icon type="ellipsis" />
+                                            // </Dropdown>,
                                         ]}
                                     >
-                                        <Card.Meta avatar={<Avatar size="small" src={item.avatar} />} title={item.type.name} />
+                                        <Card.Meta avatar={<Avatar size="small" src={item.avatar} />} title={item.name} />
                                         <div
                                             className={styles.cardItemContent}
                                         >
@@ -173,7 +211,7 @@ const Type: React.FC<Props> = (props) => {
                                             >
                                                 <div>
                                                     <p>配置名称</p>
-                                                    <p>{item.name}</p>
+                                                    <p>{item.type.name}</p>
                                                 </div>
                                                 <div>
                                                     <p>当前状态</p>
@@ -181,30 +219,6 @@ const Type: React.FC<Props> = (props) => {
                                                 </div>
                                             </div >
                                         </div>
-                                        <ChartCard
-                                            bordered={false}
-                                            // loading={loading}
-                                            title='访问量'
-                                            action={
-                                                <Tooltip
-                                                    title='访问量'
-                                                >
-                                                    <Icon type="info-circle-o" />
-                                                </Tooltip>
-                                            }
-                                            // total={numeral(8846).format('0,0')}
-                                            // footer={
-                                            //     <Field
-                                            //         label={
-                                            //             <FormattedMessage id="analysis.analysis.day-visits" defaultMessage="Daily Visits" />
-                                            //         }
-                                            //         value={numeral(1234).format('0,0')}
-                                            //     />
-                                            // }
-                                            contentHeight={66}
-                                        >
-                                            <MiniArea color="#589EFF" data={[{ "x": "2020-01-07", "y": 7 }, { "x": "2020-01-08", "y": 5 }, { "x": "2020-01-09", "y": 4 }, { "x": "2020-01-10", "y": 2 }, { "x": "2020-01-11", "y": 4 }, { "x": "2020-01-12", "y": 7 }, { "x": "2020-01-13", "y": 5 }, { "x": "2020-01-14", "y": 6 }, { "x": "2020-01-15", "y": 5 }, { "x": "2020-01-16", "y": 9 }, { "x": "2020-01-17", "y": 6 }, { "x": "2020-01-18", "y": 3 }, { "x": "2020-01-19", "y": 1 }, { "x": "2020-01-20", "y": 5 }, { "x": "2020-01-21", "y": 3 }, { "x": "2020-01-22", "y": 6 }, { "x": "2020-01-23", "y": 5 }]} />
-                                        </ChartCard>
                                     </Card>
                                 </List.Item>
                             )
@@ -225,13 +239,14 @@ const Type: React.FC<Props> = (props) => {
             {
                 saveVisible &&
                 <Save
-                    close={() => setSaveVisible(false)}
+                    close={() => { setSaveVisible(false); setCurrentItem({}) }}
+                    data={currentItem}
+                    save={(item: any) => { insert(item) }}
                 />
             }
         </PageHeaderWrapper>
     )
 }
-// export default ;
 
 export default connect(({ networkType, loading }: ConnectState) => ({
     networkType, loading

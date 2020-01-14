@@ -160,7 +160,7 @@ const DeviceModel: React.FC<Props> = (props) => {
         });
     }
 
-    const onTableChange = (pagination: PaginationConfig, filters: Record<keyof DeviceProduct, string[]>, sorter: SorterResult<DeviceProduct>, extra: any) => {
+    const onTableChange = (pagination: PaginationConfig, filters: any, sorter: SorterResult<DeviceProduct>, extra: any) => {
         handleSearch({
             pageIndex: Number(pagination.current) - 1,
             pageSize: pagination.pageSize,

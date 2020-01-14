@@ -12,6 +12,8 @@ export interface NetworkTypeType {
     state: NetworkTypeState;
     effects: {
         query: Effect;
+        remove: Effect;
+        insert: Effect;
     };
     reducers: {
         save: Reducer<any, any>;
@@ -21,24 +23,30 @@ export interface NetworkTypeType {
 const NetworkType: NetworkTypeType = {
     namespace: 'networkType',
     state: {
-        result: {},
+        result: [],
     },
     effects: {
         *query({ payload, callback }, { call, put }) {
             const response: any = yield call(apis.network.list, payload);
-            console.log(response, 'inter')
             yield put({
                 type: 'save',
                 payload: response.result,
             });
+        },
+        *remove({ payload, callback }, { call, put }) {
+            const response: any = yield call(apis.network.remove, payload);
             callback(response);
         },
+        *insert({ payload, callback }, { call, put }) {
+            const response: any = yield call(apis.network.save, payload);
+            callback(response);
+        }
     },
     reducers: {
         save(state, action) {
             return {
                 ...state,
-                result: { ...action.payload },
+                result: [...action.payload],
             }
         }
     }
