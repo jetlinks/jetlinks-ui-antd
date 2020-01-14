@@ -338,18 +338,18 @@ const FunctionDefin: React.FC<Props> = (props) => {
         >
 
             <Form className={styles.paramterForm}>
+                <Form.Item label="标识符">
+                  {getFieldDecorator('id', {
+                    rules: [{ required: true, message: '请输入标识符' }],
+                    initialValue: initState.data.id,
+                  })(
+                    <Input />
+                  )}
+                </Form.Item>
                 <Form.Item label="参数名称">
                     {getFieldDecorator('name', {
                         rules: [{ required: true, message: '请输入参数名称' }],
                         initialValue: initState.data.name,
-                    })(
-                        <Input />
-                    )}
-                </Form.Item>
-                <Form.Item label="标识符">
-                    {getFieldDecorator('id', {
-                        rules: [{ required: true, message: '请输入标识符' }],
-                        initialValue: initState.data.id,
                     })(
                         <Input />
                     )}
