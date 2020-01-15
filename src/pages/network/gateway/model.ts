@@ -3,13 +3,13 @@ import { Reducer } from 'react';
 import apis from '@/services';
 // import { SimpleResponse } from '@/utils/common';
 
-export interface NetworkTypeState {
+export interface GatewayModelState {
     result: any,
 }
 
-export interface NetworkTypeType {
+export interface GatewayModelType {
     namespace: string;
-    state: NetworkTypeState;
+    state: GatewayModelState;
     effects: {
         query: Effect;
         remove: Effect;
@@ -20,25 +20,25 @@ export interface NetworkTypeType {
     }
 }
 
-const NetworkType: NetworkTypeType = {
-    namespace: 'networkType',
+const GatewayModel: GatewayModelType = {
+    namespace: 'gateway',
     state: {
         result: {},
     },
     effects: {
         *query({ payload, callback }, { call, put }) {
-            const response: any = yield call(apis.network.list, payload);
+            const response: any = yield call(apis.gateway.list, payload);
             yield put({
                 type: 'save',
                 payload: response.result,
             });
         },
         *remove({ payload, callback }, { call, put }) {
-            const response: any = yield call(apis.network.remove, payload);
+            const response: any = yield call(apis.gateway.remove, payload);
             callback(response);
         },
         *insert({ payload, callback }, { call, put }) {
-            const response: any = yield call(apis.network.save, payload);
+            const response: any = yield call(apis.gateway.insert, payload);
             callback(response);
         }
     },
@@ -46,10 +46,10 @@ const NetworkType: NetworkTypeType = {
         save(state, action) {
             return {
                 ...state,
-                result: {},
+                result: { ...action.payload },
             }
         }
     }
 };
 
-export default NetworkType;
+export default GatewayModel;

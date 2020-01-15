@@ -5,31 +5,39 @@ import StandardFormRow from "./components/standard-form-row";
 import TagSelect from "./components/tag-select";
 import { FormComponentProps } from "antd/lib/form";
 import styles from './index.less';
-import { ConnectState, Dispatch } from "@/models/connect";
+import { ConnectState, Dispatch, Loading } from "@/models/connect";
 import { connect } from "dva";
 import Save from "./save";
-import { response } from "express";
 import { downloadObject } from "@/utils/utils";
+import apis from "@/services";
 
 interface Props extends FormComponentProps {
     dispatch: Dispatch;
     networkType: any;
+    loading: Loading
 }
 interface State {
     saveVisible: boolean;
     currentItem: any;
+    supportsType: any[];
+    filterType: string[];
+    filterName: string;
 }
 
 const Type: React.FC<Props> = (props) => {
     const initState: State = {
         saveVisible: false,
-        currentItem: {}
+        currentItem: {},
+        supportsType: [],
+        filterType: [],
+        filterName: ''
     }
 
     const [saveVisible, setSaveVisible] = useState(initState.saveVisible);
     const [currentItem, setCurrentItem] = useState(initState.currentItem);
-
-    const { form: { getFieldDecorator } } = props;
+    const [supportsType, setSupportsType] = useState(initState.supportsType);
+    const [filterType, setFilterType] = useState(initState.filterType);
+    const [filterName, setFilterName] = useState(initState.filterName);
 
     const formItemLayout = {
         wrapperCol: {
@@ -41,7 +49,10 @@ const Type: React.FC<Props> = (props) => {
     const { dispatch, networkType: { result } } = props;
 
     useEffect(() => {
-        handleSearch()
+        handleSearch();
+        apis.network.support().then(response => {
+            setSupportsType(response.result);
+        });
     }, []);
 
     const handleSearch = () => {
@@ -103,53 +114,23 @@ const Type: React.FC<Props> = (props) => {
 
                 <Card bordered={false}>
                     <Form layout="inline">
-                        <StandardFormRow title="所属类目" block style={{ paddingBottom: 11 }}>
+                        <StandardFormRow title="组件类型" block style={{ paddingBottom: 11 }}>
                             <Form.Item>
-                                {getFieldDecorator('category')(
-                                    <TagSelect expandable>
-                                        <TagSelect.Option value="cat1">TCP客户端</TagSelect.Option>
-                                        <TagSelect.Option value="cat2">TCP服务</TagSelect.Option>
-                                        <TagSelect.Option value="cat3">MQTT客户端</TagSelect.Option>
-                                        <TagSelect.Option value="cat4">MQTT服务</TagSelect.Option>
-                                        <TagSelect.Option value="cat5">COAP客户端</TagSelect.Option>
-                                        <TagSelect.Option value="cat6">COAP服务</TagSelect.Option>
-                                        <TagSelect.Option value="cat7">HTTP客户端</TagSelect.Option>
-                                        <TagSelect.Option value="cat8">HTTP服务</TagSelect.Option>
-                                        <TagSelect.Option value="cat9">WebSocket客户端</TagSelect.Option>
-                                        <TagSelect.Option value="cat10">WebSocket服务</TagSelect.Option>
-                                        <TagSelect.Option value="cat11">UDP支持</TagSelect.Option>
-                                    </TagSelect>,
-                                )}
+                                <TagSelect expandable onChange={(value: any[]) => { setFilterType(value) }}>
+                                    {
+                                        supportsType.map(item =>
+                                            <TagSelect.Option key={item.id} value={item.id}>{item.name}</TagSelect.Option>)
+                                    }
+                                </TagSelect>
                             </Form.Item>
                         </StandardFormRow>
                         <StandardFormRow title="其它选项" grid last>
                             <Row gutter={16}>
                                 <Col lg={8} md={10} sm={10} xs={24}>
                                     <Form.Item {...formItemLayout} label="配置名称">
-                                        {getFieldDecorator(
-                                            'author',
-                                            {},
-                                        )(
-                                            // <Select placeholder="不限" style={{ maxWidth: 200, width: '100%' }}>
-                                            //     <Select.Option value="lisa">王昭君</Select.Option>
-                                            // </Select>,
-                                            <Input />
-                                        )}
+                                        <Input onChange={(e) => { console.log(e.target.value) }} />
                                     </Form.Item>
                                 </Col>
-                                {/* <Col lg={8} md={10} sm={10} xs={24}>
-                                <Form.Item {...formItemLayout} label="好评度">
-                                    {getFieldDecorator(
-                                        'rate',
-                                        {},
-                                    )(
-                                        <Select placeholder="不限" style={{ maxWidth: 200, width: '100%' }}>
-                                            <Select.Option value="good">优秀</Select.Option>
-                                            <Select.Option value="normal">普通</Select.Option>
-                                        </Select>,
-                                    )}
-                                </Form.Item>
-                            </Col> */}
                             </Row>
                         </StandardFormRow>
                     </Form>
@@ -158,8 +139,14 @@ const Type: React.FC<Props> = (props) => {
                 <List<any>
                     rowKey="id"
                     grid={{ gutter: 24, xl: 4, lg: 3, md: 3, sm: 2, xs: 1 }}
-                    // loading={loading}
-                    dataSource={[{}, ...result]}
+                    loading={props.loading.global}
+                    dataSource={filterType.length > 0 ?
+                        JSON.parse(JSON.stringify(result))
+                            .filter((item: any) =>
+                                filterType.some(e => e === item.type.value)
+                            )
+
+                        : result}
                     renderItem={item => {
                         if (item && item.id) {
                             return (

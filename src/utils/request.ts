@@ -66,6 +66,13 @@ const errorHandler = (error: { response: Response }): Response | undefined => {
       }
     });
     return response;
+  } else if (status === 500) {
+    response.json().then((res: any) => {
+      notification.error({
+        key: 'error',
+        message: `${res.message}`,
+      });
+    });
   } else {
     return;
   }

@@ -22,6 +22,7 @@ import * as accessLogger from '@/pages/logger/access/service';
 import * as systemLogger from '@/pages/logger/system/service';
 import * as authorization from '@/components/Authorization/service';
 import * as network from '@/pages/network/type/service';
+import * as gateway from '@/pages/network/gateway/service';
 
 const apis = {
   login,
@@ -48,5 +49,6 @@ const apis = {
   systemLogger,
   authorization,
   network,
+  gateway
 }
 export default apis;

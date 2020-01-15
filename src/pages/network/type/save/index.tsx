@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Form, Input, Drawer, Button, Select, Radio, InputNumber } from "antd";
 import { FormComponentProps } from "antd/lib/form";
+import apis from "@/services";
+import { response } from "express";
 
 interface Props extends FormComponentProps {
     close: Function;
@@ -9,14 +11,25 @@ interface Props extends FormComponentProps {
 }
 interface State {
     dataType: string;
+    supportsType: any[]
 }
 const Save: React.FC<Props> = (props) => {
 
     const initState: State = {
         dataType: props.data.type?.value,
+        supportsType: []
     }
     const { form: { getFieldDecorator }, form } = props;
     const [dataType, setDataType] = useState(initState.dataType);
+    const [supportsType, setSupportsType] = useState(initState.supportsType);
+
+    useEffect(() => {
+        apis.network.support().then(response => {
+            if (response.status === 200) {
+                setSupportsType(response.result)
+            }
+        })
+    }, [])
     const renderForm = () => {
         switch (dataType) {
             case 'MQTT_SERVER':
@@ -771,17 +784,9 @@ const Save: React.FC<Props> = (props) => {
                             <Select
                                 onChange={(value: string) => { setDataType(value) }}
                             >
-                                <Select.Option value="TCP_CLIENT">TCP客户端</Select.Option>
-                                <Select.Option value="TCP_SERVER">TCP服务</Select.Option>
-                                <Select.Option value="MQTT_CLIENT">MQTT客户端</Select.Option>
-                                <Select.Option value="MQTT_SERVER">MQTT服务</Select.Option>
-                                <Select.Option value="COAP_CLIENT">COAP客户端</Select.Option>
-                                <Select.Option value="COAP_SERVER">COAP服务</Select.Option>
-                                <Select.Option value="HTTP_CLIENT">HTTP客户端</Select.Option>
-                                <Select.Option value="HTTP_SERVER">HTTP服务</Select.Option>
-                                <Select.Option value="WEB_SOCKET_CLIENT">WebSocket客户端</Select.Option>
-                                <Select.Option value="WEB_SOCKET_SERVER">WebSocket服务</Select.Option>
-                                <Select.Option value="UDP">UDP支持</Select.Option>
+                                {supportsType.map(item =>
+                                    <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
+                                )}
                             </Select>
                         )
                     }

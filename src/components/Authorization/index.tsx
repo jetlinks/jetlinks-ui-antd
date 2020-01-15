@@ -188,7 +188,7 @@ const Authorization: React.FC<Props> = (props) => {
       }
     }
     apis.authorization.saveAutz({
-      targetId: props.target.targetId,
+      targetId: props.target.id,
       targetType: props.targetType,
       permissionList: tempAutz
     }).then(response => {
@@ -232,6 +232,8 @@ const Authorization: React.FC<Props> = (props) => {
     // }
   }
 
+  console.log(props.target, 'tar');
+
   return (
     <Drawer
       title='授权'
@@ -244,28 +246,22 @@ const Authorization: React.FC<Props> = (props) => {
           {
             getFieldDecorator('targetId', {
               rules: [{ required: true }],
-              initialValue: props.target.targetId
+              initialValue: props.target.id ? props.target.name : ''
             })(
-              <div>
-                {props.targetType === 'user' ?
-                  <Input value={props.target.name} readOnly /> :
-                  <Select mode="multiple">
-                    {Array.from(new Set<string>(dimensionList.map((item: any) => item.typeName))).map((type, index) => {
-                      const typeData = groupBy(dimensionList, item => item.typeName)[type];
-                      return (
-                        <Select.OptGroup label={type} key={index}>
-                          {
-                            typeData.map((e: any) => {
-                              return <Select.Option value={e.id} key={e.id}>{e.name}</Select.Option>
-                            })
-                          }
-                        </Select.OptGroup>
-                      );
-                    })}
-                  </Select>
-                }
-              </div>
-
+              <Select mode="multiple" disabled={props.target.id}>
+                {Array.from(new Set<string>(dimensionList.map((item: any) => item.typeName))).map((type, index) => {
+                  const typeData = groupBy(dimensionList, item => item.typeName)[type];
+                  return (
+                    <Select.OptGroup label={type} key={index}>
+                      {
+                        typeData.map((e: any) => {
+                          return <Select.Option value={e.id} key={e.id}>{e.name}</Select.Option>
+                        })
+                      }
+                    </Select.OptGroup>
+                  );
+                })}
+              </Select>
             )
           }
 

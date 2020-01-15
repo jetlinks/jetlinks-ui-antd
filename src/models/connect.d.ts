@@ -25,6 +25,7 @@ import { WebsocketClientModelState } from '@/pages/network/websocket-client/mode
 import { AccessLoggerModelState } from '@/pages/logger/access/model';
 import { SystemLoggerModelState } from '@/pages/logger/system/model';
 import { NetworkTypeState } from '@/pages/network/type/model';
+import { GatewayState } from '@/pages/network/gateway/model';
 export { GlobalModelState, SettingModelState, UserModelState };
 
 export type Effect = (
@@ -70,6 +71,7 @@ export interface Loading {
     accessLogger?: boolean;
     systemLogger?: boolean;
     networkType?: boolean;
+    gateway?: boolean;
   };
 }
 
@@ -97,6 +99,7 @@ export interface ConnectState {
   accessLogger: AccessLoggerModelState;
   systemLogger: SystemLoggerModelState;
   networkType: NetworkTypeState;
+  gateway: GatewayModelState;
 }
 
 export interface Route extends MenuDataItem {

@@ -59,6 +59,7 @@
   ],
   "dependencies": {
     "@ant-design/pro-layout": "^4.10.0",
+    "@ant-design/pro-table": "^1.0.31",
     "@antv/data-set": "^0.10.2",
     "@loadable/component": "^5.11.0",
     "antd": "^3.23.6",
@@ -82,8 +83,8 @@
     "react-copy-to-clipboard": "^5.0.1",
     "react-dom": "^16.8.6",
     "react-fittext": "^1.0.0",
-    "react-monaco-editor": "^0.32.1",
     "react-helmet": "^5.2.1",
+    "react-monaco-editor": "^0.32.1",
     "redux": "^4.0.1",
     "umi": "^2.8.7",
     "umi-plugin-antd-theme": "^1.0.1",

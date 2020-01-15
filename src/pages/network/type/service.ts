@@ -19,3 +19,9 @@ export async function remove(id: string) {
         method: 'DELETE'
     })
 }
+
+export async function support() {
+    return request(`/jetlinks/network/config/supports`, {
+        method: 'GET'
+    })
+}
