@@ -231,9 +231,9 @@ export default {
                   path: 'notice/template',
                   name: '通知模版',
                   icon: 'tags',
-                  component: './notice/template'
-                }
-              ]
+                  component: './notice/template',
+                },
+              ],
             },
             {
               path: 'rule-engine',
@@ -311,10 +311,10 @@ export default {
                   path: './exception/403',
                   name: '403',
                   component: './exception/403',
-                }
-              ]
+                },
+              ],
             },
-          ]
+          ],
         },
         {
           component: './404',
