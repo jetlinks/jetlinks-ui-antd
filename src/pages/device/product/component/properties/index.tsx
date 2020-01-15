@@ -338,7 +338,7 @@ const PropertiesDefin: React.FC<Props> = (props) => {
                 <Form >
                     <Form.Item label='属性标识'>
                         {getFieldDecorator('id', {
-                            rules: [{ required: true, message: '请选择属性标识' }],
+                            rules: [{ required: true, message: '请输入属性标识' }],
                             initialValue: initState.data.id,
                         })(
                             <Input
@@ -349,7 +349,7 @@ const PropertiesDefin: React.FC<Props> = (props) => {
                     </Form.Item>
                     <Form.Item label='属性名称'>
                         {getFieldDecorator('name', {
-                            rules: [{ required: true, message: '请选择属性名称' }],
+                            rules: [{ required: true, message: '请输入属性名称' }],
                             initialValue: initState.data.name,
                         })(
                             <Input
