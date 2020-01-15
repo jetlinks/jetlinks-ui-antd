@@ -1,12 +1,12 @@
 import React from "react"
-import { Modal, Form, Input } from "antd"
+import { Modal, Form, Input, Select, Upload, Button, Icon } from "antd"
 import { FormComponentProps } from "antd/lib/form"
-import { MqttItem } from "../data";
+import { CertificateItem } from "../data";
 
 interface Props extends FormComponentProps {
     close: Function;
     save: Function;
-    data: Partial<MqttItem>;
+    data: Partial<CertificateItem>;
 }
 const Save: React.FC<Props> = (props) => {
     const { form: { getFieldDecorator }, form } = props;
@@ -21,7 +21,7 @@ const Save: React.FC<Props> = (props) => {
     return (
         <Modal
             visible
-            title={`${(props.data || {}).id}` ? '编辑mqtt客户端' : '新增mqtt客户端'}
+            title={`${props.data.id ? '编辑' : '新建'}证书`}
             onOk={() => { submitData() }}
             onCancel={() => { props.close(); }}
             width={800}
@@ -30,57 +30,61 @@ const Save: React.FC<Props> = (props) => {
 
                 <Form.Item
                     key="name"
-                    label="客户端名称"
+                    label="名称"
                 >
                     {getFieldDecorator('name', {
                         rules: [{ required: true }],
-                        initialValue: (props.data || {}).name,
+                        // initialValue: (props.data || {}).name,
                     })(<Input placeholder="请输入" />)}
                 </Form.Item>
                 <Form.Item
                     key="clientId"
-                    label="clientId"
+                    label="类型"
                 >
                     {getFieldDecorator('clientId', {
                         rules: [{ required: true }],
-                        initialValue: (props.data || {}).clientId,
-                    })(<Input placeholder="请输入" />)}
+                        // initialValue: (props.data || {}).clientId,
+                    })(<Select placeholder="请输入" />)}
                 </Form.Item>
                 <Form.Item
-                    key="host"
-                    label="host"
+                    key="keystoreBase64"
+                    label="密钥库"
                 >
-                    {getFieldDecorator('host', {
+                    {getFieldDecorator('keystoreBase64', {
                         rules: [{ required: true }],
-                        initialValue: (props.data || {}).host,
-                    })(<Input placeholder="请输入" />)}
+                        // initialValue: ((props.data || {}).secureConfiguration || {}).username,
+                    })(
+                        <Upload
+
+                            name="密钥库"
+                            action="/network/certificate/upload"
+                            listType="picture"
+                        >
+                            <Button style={{ width: '100%' }}>
+                                <Icon type="upload" />点击上传
+                            </Button>
+                        </Upload>
+                    )}
                 </Form.Item>
                 <Form.Item
-                    key="port"
-                    label="端口"
+                    key="trustKeyStoreBase64"
+                    label="信任库"
                 >
-                    {getFieldDecorator('port', {
+                    {getFieldDecorator('trustKeyStoreBase64', {
                         rules: [{ required: true }],
-                        initialValue: (props.data || {}).port,
-                    })(<Input />)}
-                </Form.Item>
-                <Form.Item
-                    key="secureConfiguration.username"
-                    label="用户名"
-                >
-                    {getFieldDecorator('secureConfiguration.username', {
-                        rules: [{ required: true }],
-                        initialValue: ((props.data || {}).secureConfiguration || {}).username,
-                    })(<Input />)}
-                </Form.Item>
-                <Form.Item
-                    key="secureConfiguration.password"
-                    label="密码"
-                >
-                    {getFieldDecorator('secureConfiguration.password', {
-                        rules: [{ required: true }],
-                        initialValue: ((props.data || {}).secureConfiguration || {}).password,
-                    })(<Input />)}
+                        // initialValue: ((props.data || {}).secureConfiguration || {}).password,
+                    })(
+                        <Upload
+
+                            name="密钥库"
+                            action="/network/certificate/upload"
+                            listType="picture"
+                        >
+                            <Button style={{ width: '100%' }}>
+                                <Icon type="upload" />点击上传
+                        </Button>
+                        </Upload>
+                    )}
                 </Form.Item>
                 <Form.Item
                     key="description"

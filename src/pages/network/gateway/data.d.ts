@@ -8,7 +8,7 @@ export interface GatewayItem {
     },
     networkId: string;
     configuration: any;
-    describe: string;
+    description: string;
 }
 
 export interface GatewayPagination {

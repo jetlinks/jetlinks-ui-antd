@@ -31,6 +31,7 @@ const Save: React.FC<Props> = (props) => {
         })
     }, [])
     const renderForm = () => {
+        console.log(props.data, props.data?.configuration?.ssl, 'ssl');
         switch (dataType) {
             case 'MQTT_SERVER':
                 return (
@@ -69,10 +70,10 @@ const Save: React.FC<Props> = (props) => {
                                     initialValue: props.data?.configuration?.ssl
                                 })(
                                     <Radio.Group>
-                                        <Radio value={true} >
+                                        <Radio value={'true'} >
                                             是
                                     </Radio>
-                                        <Radio value={false} >
+                                        <Radio value={'false'} >
                                             否
                                     </Radio>
                                     </Radio.Group>
@@ -96,7 +97,7 @@ const Save: React.FC<Props> = (props) => {
                         <Form.Item label="clientId">
                             {
                                 getFieldDecorator('configuration.clientId', {
-
+                                    initialValue: props.data?.configuration?.clientId
                                 })(
                                     <InputNumber min={1} style={{ width: '100%' }} />
 
@@ -106,7 +107,7 @@ const Save: React.FC<Props> = (props) => {
                         <Form.Item label="HOST">
                             {
                                 getFieldDecorator('configuration.host', {
-
+                                    initialValue: props.data?.configuration?.host
                                 })(
                                     <Input />
                                 )
@@ -115,7 +116,7 @@ const Save: React.FC<Props> = (props) => {
                         <Form.Item label="PORT">
                             {
                                 getFieldDecorator('configuration.port', {
-
+                                    initialValue: props.data?.configuration?.port
                                 })(
                                     <Input />
                                 )
@@ -124,15 +125,15 @@ const Save: React.FC<Props> = (props) => {
                         <Form.Item label="TLS">
                             {
                                 getFieldDecorator('configuration.ssl', {
-
+                                    initialValue: props.data?.configuration?.ssl
                                 })(
                                     <Radio.Group>
-                                        <Radio value={true} >
+                                        <Radio value={'true'} >
                                             是
-                        </Radio>
-                                        <Radio value={false} >
+                                        </Radio>
+                                        <Radio value={'false'} >
                                             否
-                        </Radio>
+                                        </Radio>
                                     </Radio.Group>
                                 )
                             }
@@ -140,7 +141,7 @@ const Save: React.FC<Props> = (props) => {
                         <Form.Item label="证书">
                             {
                                 getFieldDecorator('configuration.certId', {
-
+                                    initialValue: props.data?.configuration?.certId
                                 })(
                                     <Select />
                                 )
@@ -149,7 +150,7 @@ const Save: React.FC<Props> = (props) => {
                         <Form.Item label="用户名">
                             {
                                 getFieldDecorator('configuration.username', {
-
+                                    initialValue: props.data?.configuration?.username
                                 })(
                                     <Input />
                                 )
@@ -158,7 +159,7 @@ const Save: React.FC<Props> = (props) => {
                         <Form.Item label="密码">
                             {
                                 getFieldDecorator('configuration.password', {
-
+                                    initialValue: props.data?.configuration?.password
                                 })(
                                     <Input />
                                 )
@@ -172,7 +173,7 @@ const Save: React.FC<Props> = (props) => {
                         <Form.Item label="开启SSL">
                             {
                                 getFieldDecorator('configuration.ssl', {
-
+                                    initialValue: props.data?.configuration?.ssl
                                 })(
                                     <Radio.Group>
                                         <Radio value={true} >
@@ -188,7 +189,7 @@ const Save: React.FC<Props> = (props) => {
                         <Form.Item label="证书">
                             {
                                 getFieldDecorator('configuration.certId', {
-
+                                    initialValue: props.data?.configuration?.certId
                                 })(
                                     <Select />
                                 )
@@ -197,7 +198,7 @@ const Save: React.FC<Props> = (props) => {
                         <Form.Item label="HOST">
                             {
                                 getFieldDecorator('configuration.host', {
-
+                                    initialValue: props.data?.configuration?.host
                                 })(
                                     <Input />
                                 )
@@ -206,7 +207,7 @@ const Save: React.FC<Props> = (props) => {
                         <Form.Item label="PORT">
                             {
                                 getFieldDecorator('configuration.port', {
-
+                                    initialValue: props.data?.configuration?.port
                                 })(
                                     <Input />
                                 )
@@ -216,7 +217,7 @@ const Save: React.FC<Props> = (props) => {
                         <Form.Item label="解析方式">
                             {
                                 getFieldDecorator('configuration.parserType', {
-                                    initialValue: 'delimited'
+                                    initialValue: props.data?.configuration?.parserType
                                 })(
                                     <Select>
                                         <Select.Option value='delimited'>分隔符</Select.Option>
@@ -229,7 +230,7 @@ const Save: React.FC<Props> = (props) => {
                         <Form.Item label="长度值">
                             {
                                 getFieldDecorator('configuration.size', {
-
+                                    initialValue: props.data?.configuration?.size
                                 })(
                                     <Input />
                                 )
@@ -245,7 +246,7 @@ const Save: React.FC<Props> = (props) => {
                         <Form.Item label="开启SSL">
                             {
                                 getFieldDecorator('configuration.ssl', {
-
+                                    initialValue: props.data?.configuration?.ssl
                                 })(
                                     <Radio.Group>
                                         <Radio value={true} >
@@ -261,7 +262,7 @@ const Save: React.FC<Props> = (props) => {
                         <Form.Item label="证书">
                             {
                                 getFieldDecorator('configuration.certId', {
-
+                                    initialValue: props.data?.configuration?.certId
                                 })(
                                     <Select />
                                 )
@@ -270,7 +271,7 @@ const Save: React.FC<Props> = (props) => {
                         <Form.Item label="HOST">
                             {
                                 getFieldDecorator('configuration.host', {
-
+                                    initialValue: props.data?.configuration?.host
                                 })(
                                     <Input />
                                 )
@@ -279,7 +280,7 @@ const Save: React.FC<Props> = (props) => {
                         <Form.Item label="PORT">
                             {
                                 getFieldDecorator('configuration.port', {
-
+                                    initialValue: props.data?.configuration?.port
                                 })(
                                     <Input />
                                 )
@@ -289,7 +290,7 @@ const Save: React.FC<Props> = (props) => {
                         <Form.Item label="解析方式">
                             {
                                 getFieldDecorator('configuration.parserType', {
-                                    initialValue: 'delimited'
+                                    initialValue: props.data?.configuration?.parserType
                                 })(
                                     <Select>
                                         <Select.Option value='delimited'>分隔符</Select.Option>
@@ -302,7 +303,7 @@ const Save: React.FC<Props> = (props) => {
                         <Form.Item label="长度值">
                             {
                                 getFieldDecorator('configuration.size', {
-
+                                    initialValue: props.data?.configuration?.size
                                 })(
                                     <Input />
                                 )
@@ -424,7 +425,7 @@ const Save: React.FC<Props> = (props) => {
                         <Form.Item label="PORT">
                             {
                                 getFieldDecorator('configuration.port', {
-
+                                    initialValue: props.data?.configuration?.port
                                 })(
                                     <Input />
                                 )
@@ -433,7 +434,7 @@ const Save: React.FC<Props> = (props) => {
                         <Form.Item label="证书">
                             {
                                 getFieldDecorator('configuration.certId', {
-
+                                    initialValue: props.data?.configuration?.certId
                                 })(
                                     <Select />
                                 )
@@ -442,7 +443,7 @@ const Save: React.FC<Props> = (props) => {
                         <Form.Item label="开启SSL">
                             {
                                 getFieldDecorator('configuration.ssl', {
-
+                                    initialValue: props.data?.configuration?.ssl
                                 })(
                                     <Radio.Group>
                                         <Radio value={true} >

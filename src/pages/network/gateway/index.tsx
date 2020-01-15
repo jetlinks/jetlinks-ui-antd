@@ -3,7 +3,7 @@ import React, { useState, Fragment, useEffect } from "react";
 import { Divider, Button, Card, Table, message, Popconfirm } from "antd";
 import { GatewayItem } from "./data";
 import styles from '@/utils/table.less';
-import Search from "./Search";
+import Search from "./search";
 
 import Save from "./save";
 import ConnectState, { Dispatch, Loading } from "@/models/connect";
@@ -83,7 +83,7 @@ const Gateway: React.FC<Props> = (props) => {
                     }>编辑</a>
                     <Divider type="vertical" />
                     {
-                        record.state.value === 'disabled' &&
+                        record.state && record.state.value === 'disabled' &&
                         <>
                             <a onClick={() => { startUp(record) }}>启动</a>
                             <Divider type="vertical" />
@@ -94,7 +94,7 @@ const Gateway: React.FC<Props> = (props) => {
                         </>
                     }
                     {
-                        record.state.value === 'enabled' &&
+                        record.state && record.state.value === 'enabled' &&
                         <>
                             <a onClick={() => { paused(record) }}>暂停</a>
                             <Divider type="vertical" />
@@ -102,9 +102,12 @@ const Gateway: React.FC<Props> = (props) => {
                         </>
                     }
                     {
-                        record.state.value === 'paused' &&
+                        record.state && record.state.value === 'paused' &&
                         <a onClick={() => { startUp(record) }}>恢复</a>
                     }
+                    <Popconfirm title="确认删除？" onConfirm={() => removeItem(record)}>
+                        <a>删除</a>
+                    </Popconfirm>
                 </Fragment>
             )
         }
@@ -134,6 +137,18 @@ const Gateway: React.FC<Props> = (props) => {
         })
     }
 
+    const saveItem = (data: any) => {
+        dispatch({
+            type: 'gateway/insert',
+            payload: data,
+            callback: (response => {
+                setSaveVisible(false);
+                message.success('保存成功');
+                handleSearch()
+            })
+        })
+    }
+
 
     const onTableChange = (pagination: PaginationConfig, filters: any, sorter: SorterResult<GatewayItem>, extra: any) => {
         handleSearch({
@@ -146,14 +161,15 @@ const Gateway: React.FC<Props> = (props) => {
 
     return (
         <PageHeaderWrapper
+            title="设备网关"
         >
             <Card bordered={false}>
                 <div className={styles.tableList}>
                     <div >
-                        <Search search={(params: any) => {
+                        {/* <Search search={(params: any) => {
                             // setSearchParam({ pageSize: 10, terms: params });
                             // handleSearch({ terms: params, pageSize: 10 })
-                        }} />
+                        }} /> */}
                     </div>
                     <div className={styles.tableListOperator}>
                         <Button icon="plus" type="primary" onClick={() => { setSaveVisible(true) }}>
@@ -175,7 +191,7 @@ const Gateway: React.FC<Props> = (props) => {
             {
                 saveVisible &&
                 <Save
-                    save={(item: any) => { console.log(item) }}
+                    save={(item: any) => { saveItem(item) }}
                     close={() => {
                         setCurrentItem({})
                         setSaveVisible(false)

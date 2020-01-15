@@ -1,10 +1,10 @@
 import React, { Fragment, useEffect, useState } from "react"
 import { ColumnProps, PaginationConfig, SorterResult } from "antd/es/table";
-import { Divider, Card, Table, Modal, message, Button } from "antd";
+import { Divider, Card, Table, Modal, message, Button, Popconfirm } from "antd";
 import { PageHeaderWrapper } from "@ant-design/pro-layout";
 import styles from '@/utils/table.less';
 import Search from "./search";
-import { MqttItem } from "./data";
+import { CertificateItem } from "./data";
 import ConnectState, { Dispatch, Loading } from "@/models/connect";
 import { connect } from "dva";
 import encodeQueryParam from "@/utils/encodeParam";
@@ -20,12 +20,14 @@ interface State {
     data: any;
     searchParam: any;
     saveVisible: boolean;
-    current: Partial<MqttItem>;
+    current: Partial<CertificateItem>;
 }
 
 const CertificateList: React.FC<Props> = (props) => {
 
     const { dispatch } = props;
+
+    console.log(props.certificate, 'pros');
 
     const result = props.certificate.result;
 
@@ -40,7 +42,7 @@ const CertificateList: React.FC<Props> = (props) => {
     const [saveVisible, setSaveVisible] = useState(initState.saveVisible);
     const [current, setCurrent] = useState(initState.current);
 
-    const columns: ColumnProps<MqttItem>[] = [
+    const columns: ColumnProps<CertificateItem>[] = [
         {
             title: '名称',
             dataIndex: 'name',
@@ -48,11 +50,11 @@ const CertificateList: React.FC<Props> = (props) => {
 
         {
             title: '类型',
-            dataIndex: 'type',
+            dataIndex: 'instance',
         },
         {
             title: '描述',
-            dataIndex: 'describe',
+            dataIndex: 'description',
         },
         {
             title: '操作',
@@ -60,7 +62,9 @@ const CertificateList: React.FC<Props> = (props) => {
                 <Fragment>
                     <a onClick={() => edit(record)}>编辑</a>
                     <Divider type="vertical" />
-                    <a onClick={() => handleDelete(record)}>删除</a>
+                    <Popconfirm title="确认删除？" onConfirm={() => handleDelete(record)}>
+                        <a >删除</a>
+                    </Popconfirm>
                 </Fragment>
             ),
         },
@@ -77,15 +81,15 @@ const CertificateList: React.FC<Props> = (props) => {
         });
     }
 
-    const edit = (record: MqttItem) => {
+    const edit = (record: CertificateItem) => {
         setCurrent(record);
         setSaveVisible(true);
     }
-    const setting = (record: MqttItem) => {
+    const setting = (record: CertificateItem) => {
 
     }
 
-    const saveOrUpdate = (item: MqttItem) => {
+    const saveOrUpdate = (item: CertificateItem) => {
         dispatch({
             type: 'certificate/insert',
             payload: encodeQueryParam(item),
@@ -96,25 +100,14 @@ const CertificateList: React.FC<Props> = (props) => {
         })
     }
     const handleDelete = (params: any) => {
-        Modal.confirm({
-            title: '确定删除此配置吗？删除后无法恢复！',
-            okText: '删除',
-            okType: 'danger',
-            cancelText: '取消',
-            onOk() {
-                dispatch({
-                    type: 'certificate/remove',
-                    payload: params.id,
-                    callback: (response) => {
-                        message.success("删除成功");
-                        handleSearch();
-                    }
-                });
-            },
-            onCancel() {
+        dispatch({
+            type: 'certificate/remove',
+            payload: params.id,
+            callback: (response) => {
+                message.success("删除成功");
                 handleSearch();
             }
-        })
+        });
     }
 
 
@@ -174,7 +167,7 @@ const CertificateList: React.FC<Props> = (props) => {
                 <Save
                     data={current}
                     close={() => { setSaveVisible(false) }}
-                    save={(data: MqttItem) => { saveOrUpdate(data) }}
+                    save={(data: CertificateItem) => { saveOrUpdate(data) }}
                 />
             }
         </PageHeaderWrapper>

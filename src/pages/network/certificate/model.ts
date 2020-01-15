@@ -1,7 +1,7 @@
 import { Effect } from 'dva';
 import { Reducer } from 'react';
 import apis from '@/services';
-import { SimpleResponse } from '@/utils/common';
+// import { SimpleResponse } from '@/utils/common';
 
 export interface CertificateModelState {
     result: any,
@@ -28,22 +28,22 @@ const CertificateModel: CertificateModelType = {
     },
     effects: {
         *query({ payload, callback }, { call, put }) {
-            const response: SimpleResponse = yield call(apis.certificate.list, payload);
+            const response: any = yield call(apis.certificate.list, payload);
             yield put({
                 type: 'save',
                 payload: response.result,
             });
         },
         *queryById({ payload, callback }, { call }) {
-            const response: SimpleResponse = yield call(apis.certificate.list, payload);
+            const response: any = yield call(apis.certificate.list, payload);
             callback(response);
         },
         *insert({ payload, callback }, { call }) {
-            const response: SimpleResponse = yield call(apis.certificate.saveOrUpdate, payload);
+            const response: any = yield call(apis.certificate.saveOrUpdate, payload);
             callback(response);
         },
         *remove({ payload, callback }, { call, put }) {
-            const response: SimpleResponse = yield call(apis.certificate.remove, payload);
+            const response: any = yield call(apis.certificate.remove, payload);
             callback(response);
         }
     },

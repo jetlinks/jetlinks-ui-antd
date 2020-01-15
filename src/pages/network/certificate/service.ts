@@ -2,35 +2,35 @@ import request from '@/utils/request';
 // import { MqttItem } from './data';
 
 export async function list(params?: any) {
-    return request(`/jetlinks/manager/mqtt/client/_query`, {
+    return request(`/jetlinks/network/certificate/_query`, {
         method: 'GET',
         params: params,
     });
 }
 
 export async function listNoPaging(params?: any) {
-    return request(`/jetlinks/manager/mqtt/client/_query/no-paging`, {
+    return request(`/jetlinks/network/certificate/_query/no-paging`, {
         method: 'GET',
         params: params,
     });
 }
 
 export async function saveOrUpdate(params: any) {
-    return request(`/jetlinks/manager/mqtt/client/`, {
+    return request(`/jetlinks/network/certificate/`, {
         method: 'PATCH',
         data: params,
     });
 }
 
 export async function info(id: string) {
-    return request(`/jetlinks/manager/mqtt/client/${id}`, {
+    return request(`/jetlinks/network/certificate`, {
         method: 'GET',
     });
 }
 
 
 export async function remove(id: string) {
-    return request(`/jetlinks/manager/mqtt/client/${id}`, {
+    return request(`/jetlinks/network/certificate/${id}`, {
         method: 'DELETE',
     });
 }

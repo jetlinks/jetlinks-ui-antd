@@ -140,13 +140,7 @@ const Type: React.FC<Props> = (props) => {
                     rowKey="id"
                     grid={{ gutter: 24, xl: 4, lg: 3, md: 3, sm: 2, xs: 1 }}
                     loading={props.loading.global}
-                    dataSource={filterType.length > 0 ?
-                        JSON.parse(JSON.stringify(result))
-                            .filter((item: any) =>
-                                filterType.some(e => e === item.type.value)
-                            )
-
-                        : result}
+                    dataSource={[{}, ...result]}
                     renderItem={item => {
                         if (item && item.id) {
                             return (

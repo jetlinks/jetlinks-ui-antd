@@ -23,7 +23,7 @@ export interface NetworkTypeType {
 const NetworkType: NetworkTypeType = {
     namespace: 'networkType',
     state: {
-        result: {},
+        result: [],
     },
     effects: {
         *query({ payload, callback }, { call, put }) {
@@ -46,7 +46,7 @@ const NetworkType: NetworkTypeType = {
         save(state, action) {
             return {
                 ...state,
-                result: {},
+                result: action.payload,
             }
         }
     }

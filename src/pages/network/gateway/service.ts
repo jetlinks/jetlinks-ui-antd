@@ -14,8 +14,9 @@ export async function supports(params?: any) {
 }
 
 export async function insert(params?: any) {
-    return request(`/jetlinks/`, {
-        method: 'POST',
+    return request(`/jetlinks/gateway/device`, {
+        method: 'PATCH',
+        data: params
     })
 }
 
