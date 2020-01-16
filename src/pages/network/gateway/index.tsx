@@ -22,6 +22,8 @@ interface State {
     searchParam: any;
     saveVisible: boolean;
     currentItem: Partial<GatewayItem>;
+    providerList: any[];
+    networkList: any;
 }
 
 const Gateway: React.FC<Props> = (props) => {
@@ -31,11 +33,15 @@ const Gateway: React.FC<Props> = (props) => {
         searchParam: {},
         saveVisible: false,
         currentItem: {},
+        providerList: [],
+        networkList: []
     }
 
     const [saveVisible, setSaveVisible] = useState(initState.saveVisible);
     const [searchParam, setSearchParam] = useState(initState.searchParam);
     const [currentItem, setCurrentItem] = useState(initState.currentItem);
+    const [providerList, setProviderList] = useState(initState.providerList);
+    const [networkList, setNetworkList] = useState(initState.networkList);
 
     const handleSearch = (params?: any) => {
         dispatch({
@@ -46,6 +52,13 @@ const Gateway: React.FC<Props> = (props) => {
 
     useEffect(() => {
         handleSearch(searchParam);
+        apis.gateway.providers().then(response => {
+            setProviderList(response.result);
+        });
+
+        apis.network.list().then(response => {
+            setNetworkList(response.result);
+        })
     }, []);
 
 
@@ -56,11 +69,19 @@ const Gateway: React.FC<Props> = (props) => {
         },
         {
             title: '类型',
-            dataIndex: 'provider'
+            dataIndex: 'provider',
+            render: (text) => {
+                let temp = providerList.find((item: any) => item.id === text);
+                return temp ? temp.name : text;
+            }
         },
         {
             title: '网络组件',
             dataIndex: 'networkId',
+            render: (text) => {
+                let temp = networkList.find((item: any) => item.id === text);
+                return temp ? temp.type?.name : text;
+            }
         },
         {
             title: '状态',

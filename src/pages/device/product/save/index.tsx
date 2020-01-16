@@ -270,7 +270,7 @@ const Save: React.FC<Props> = props => {
     const { form } = props;
     form.validateFields((err, fileValue) => {
       if (err) return;
-      props.save(fileValue);
+      props.save({ state: 0, ...fileValue });
     });
   };
   return (
@@ -287,7 +287,7 @@ const Save: React.FC<Props> = props => {
             {basicForm.map(item => (
               <Col
                 key={item.key}
-                // {...item.styles}
+              // {...item.styles}
               >
                 <Form.Item label={item.label}>
                   {getFieldDecorator(item.key, item.options)(item.component)}
@@ -302,7 +302,7 @@ const Save: React.FC<Props> = props => {
               {configForm.map(item => (
                 <Col
                   key={item.key}
-                  // {...item.styles}
+                // {...item.styles}
                 >
                   <Form.Item label={item.label}>
                     {getFieldDecorator(item.key, item.options)(item.component)}
