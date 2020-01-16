@@ -59,8 +59,6 @@ interface EditableTableState {
 
 const DataView: React.FC<EditableTableProps> = (props) => {
 
-    console.log(props, 'dataView');
-
     const initState: EditableTableState = {
         data: props.data,
         editingKey: '',

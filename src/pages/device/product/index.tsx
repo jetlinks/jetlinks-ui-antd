@@ -113,7 +113,6 @@ const DeviceModel: React.FC<Props> = (props) => {
     }, []);
 
     const changeDeploy = (type: string, record: any) => {
-        console.log(type, 'type');
         dispatch({
             type: 'deviceProduct/changeDeploy',
             payload: {

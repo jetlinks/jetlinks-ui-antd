@@ -88,10 +88,8 @@ const Editor: React.FC<Props> = (props) => {
 
     const getDeviceState = () => {
         apis.deviceInstance.runInfo(id).then(response => {
-            if (response.status === 200) {
-                deviceState.runInfo = response.result;
-                setDeviceState({ ...deviceState });
-            }
+            deviceState.runInfo = response.result;
+            setDeviceState({ ...deviceState });
         });
         apis.deviceInstance.fireAlarm({ id }).then(response => {
             console.log(response, 'resp');
@@ -125,7 +123,7 @@ const Editor: React.FC<Props> = (props) => {
 
     const info = {
         info: <Info data={data} />,
-        status: <Status />,
+        status: <Status device={data} />,
         log: <Log
             data={logs}
             search={(param: any) => {

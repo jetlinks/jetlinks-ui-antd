@@ -67,7 +67,6 @@ const User: React.FC<Props> = (props) => {
                         userId: record.id,
                         dimensionId: props.dimensionId,
                     }).then(e => {
-                        console.log(e);
                         message.success("删除成功");
                     })
                 } else {
@@ -75,13 +74,11 @@ const User: React.FC<Props> = (props) => {
                     apis.dimensions.deleteByUserId({
                         userId: record.id,
                     }).then(e => {
-                        console.log(e);
                         message.success("删除成功");
                     })
                 }
             },
             onCancel() {
-                console.log('Cancel');
             },
         });
     }

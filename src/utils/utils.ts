@@ -99,5 +99,4 @@ export const downloadObject = (record: any, fileName: string) => {
   eleLink.click();
   // 然后移除
   document.body.removeChild(eleLink);
-  // console.log(html[0].outerHTML);
 };

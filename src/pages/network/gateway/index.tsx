@@ -88,10 +88,6 @@ const Gateway: React.FC<Props> = (props) => {
             dataIndex: 'state',
             render: (text) => text?.text
         },
-        // {
-        //     title: '备注',
-        //     dataIndex: 'describe'
-        // },
         {
             title: '操作',
             render: (text, record) => (

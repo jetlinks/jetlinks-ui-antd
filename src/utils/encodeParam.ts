@@ -25,7 +25,6 @@ export default function encodeQueryParam(params: any) {
     } else if (key === 'sorts') {
       //当前Ant Design排序只支持单字段排序
       if (Object.keys(sorts).length > 0) {
-        console.log(sorts, 'sorts');
         queryParam[`sorts[0].name`] = sorts.field;
         queryParam[`sorts[0].order`] = sorts.order.replace('end', '');
       }

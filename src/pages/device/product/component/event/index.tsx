@@ -57,7 +57,6 @@ const EventDefin: React.FC<Props> = (props) => {
             if (fieldValue.valueType.type === 'object') {
                 fieldValue.valueType.parameter = parameter;
             }
-            console.log({ ...fieldValue, id });
             props.save({ ...fieldValue, id });
         })
     }

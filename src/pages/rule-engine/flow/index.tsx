@@ -28,7 +28,6 @@ const RuleFlow: React.FC<Props> = (props) => {
 
     const saveModel = (item: any) => {
         const flowData = window.editor.getData();
-        // console.log('基本信息', { ...item, ...flowData });
         props.save(
             {
                 ...item,

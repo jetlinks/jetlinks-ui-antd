@@ -78,7 +78,7 @@ const CodeEditor: React.FC<Props> = (props) => {
                     </Col>
 
                     <Col span={2}>
-                        <Button onClick={() => { message.success(code); console.log(code) }}>获取代码</Button>
+                        <Button onClick={() => { message.success(code); }}>获取代码</Button>
                     </Col>
 
                 </Row>

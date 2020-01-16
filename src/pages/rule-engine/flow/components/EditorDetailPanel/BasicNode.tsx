@@ -238,7 +238,6 @@ const BasicNode: React.FC<Props> = (props) => {
             } else {
                 data.confg = currentItem.config;
             }
-            console.log(data, 'das');
             props.saveModel(data);
         });
     }

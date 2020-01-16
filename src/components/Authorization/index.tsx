@@ -232,8 +232,6 @@ const Authorization: React.FC<Props> = (props) => {
     // }
   }
 
-  console.log(props.target, 'tar');
-
   return (
     <Drawer
       title='授权'

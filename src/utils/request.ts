@@ -66,7 +66,7 @@ const errorHandler = (error: { response: Response }): Response | undefined => {
       }
     });
     return response;
-  } else if (status === 500) {
+  } else if (status === 500 || status === 504) {
     response.json().then((res: any) => {
       notification.error({
         key: 'error',

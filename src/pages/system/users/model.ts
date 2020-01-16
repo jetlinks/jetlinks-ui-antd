@@ -40,7 +40,6 @@ const UsersModel: UsersModelType = {
     },
     *insert({ payload, callback }, { call }) {
       const response: SimpleResponse = yield call(apis.users.saveOrUpdate, payload);
-      console.log(response, 'res');
       callback(response);
     },
     *remove({ payload, callback }, { call, put }) {

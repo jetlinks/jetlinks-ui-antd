@@ -42,7 +42,6 @@ const DeviceInstanceModel: DeviceInstanceModelType = {
             callback(response);
         },
         *queryLog({ payload, callback }, { call, put }) {
-            console.log('queryLog');
             const response: SimpleResponse = yield call(apis.deviceInstance.logs, payload);
             callback(response);
         }

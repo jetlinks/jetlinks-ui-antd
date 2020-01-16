@@ -24,7 +24,6 @@ const EditorConsole: React.FC<Props> = (props) => {
 
     useEffect(() => {
         PubSub.subscribe('rule-engine-log', (topic: any, data: LogItem) => {
-            console.log(data, 'rizhi');
             data.level === 'error' ?
                 logs.push(`<pre style="color:Red">${data.content}</pre>`) :
                 logs.push(`<pre >${data.content}</pre>`);

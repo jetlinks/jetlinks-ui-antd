@@ -51,7 +51,6 @@ class SQLScriptEditor extends Component<SQLScriptEditorProps, SQLScriptEditorSta
         const { config } = this.state;
 
         config.script = value;
-        console.log(config, 'config');
         this.setState({
             config,
         });

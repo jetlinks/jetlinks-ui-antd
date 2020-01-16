@@ -27,8 +27,6 @@ const CertificateList: React.FC<Props> = (props) => {
 
     const { dispatch } = props;
 
-    console.log(props.certificate, 'pros');
-
     const result = props.certificate.result;
 
     const initState: State = {

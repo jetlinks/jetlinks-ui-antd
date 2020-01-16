@@ -41,6 +41,12 @@ export async function runInfo(id: string) {
     });
 }
 
+export async function properties(productId: string, id: string) {
+    return request(`/jetlinks/device-instance/${productId}/${id}/properties`, {
+        method: 'GET',
+    });
+}
+
 export async function fireAlarm(params: any) {
     return request(`/jetlinks/device-product/${params.protocol}/event/fire_alarm`, {
         method: 'GET',
@@ -53,6 +59,7 @@ export async function changeDeploy(params: any) {
         method: 'POST'
     })
 }
+
 
 // export async function deployAll() {
 //     return request(`/jetlinks/device-instance/deploy`, {

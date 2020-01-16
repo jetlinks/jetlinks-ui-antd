@@ -42,7 +42,6 @@ class App extends React.Component {
 
     // 数据格式校验回调
     onValidate = list => {
-        console.log(list);
     };
 
     render() {

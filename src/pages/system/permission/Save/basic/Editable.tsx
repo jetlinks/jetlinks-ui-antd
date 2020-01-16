@@ -93,8 +93,6 @@ interface EditableTableState {
 
 const EditableTable: React.FC<EditableTableProps> = (props) => {
 
-    console.log(props.data, '权限信息');
-
     const initState: EditableTableState = {
         data: props.data || [],
         editingKey: '',

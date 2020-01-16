@@ -36,7 +36,6 @@ const Save: React.FC<Props> = (props) => {
     }
 
     const handleConfirmBlur = (event: any) => {
-        console.log(event, event.target, event.target.value, 'event');
         const value = event.target.value;
         setConfirmDirty(confirmDirty || !!value);
     }

@@ -29,7 +29,6 @@ const EmailList: React.FC<Props> = (props) => {
 
     const result = props.email.result;
 
-    console.log(props, 'email.props');
     const initState: State = {
         data: result,
         searchParam: { pageSize: 10 },

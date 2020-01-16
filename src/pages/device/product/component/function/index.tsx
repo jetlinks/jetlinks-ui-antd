@@ -56,11 +56,9 @@ const FunctionDefin: React.FC<Props> = (props) => {
         const id = props.data.id;
         form.validateFields((err: any, fieldValue: any) => {
             if (err) return;
-            // console.log({ ...fieldValue, id }, '保存数据');
             if (fieldValue.outputs.type === 'object') {
                 fieldValue.outputs.parameter = outputParameter;
             }
-            // console.log({ ...fieldValue, inputs, id }, '输出数据');
             props.save({ ...fieldValue, inputs, id });
         });
     }
@@ -339,12 +337,12 @@ const FunctionDefin: React.FC<Props> = (props) => {
 
             <Form className={styles.paramterForm}>
                 <Form.Item label="标识符">
-                  {getFieldDecorator('id', {
-                    rules: [{ required: true, message: '请输入标识符' }],
-                    initialValue: initState.data.id,
-                  })(
-                    <Input />
-                  )}
+                    {getFieldDecorator('id', {
+                        rules: [{ required: true, message: '请输入标识符' }],
+                        initialValue: initState.data.id,
+                    })(
+                        <Input />
+                    )}
                 </Form.Item>
                 <Form.Item label="参数名称">
                     {getFieldDecorator('name', {

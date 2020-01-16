@@ -36,7 +36,6 @@ const Dustbin: React.FC<DustbinProps> = ({
         }),
     })
 
-    console.log(dropResult, 'reuslt');
     const isActive = isOver && canDrop
     let backgroundColor = '#222'
     if (isActive) {

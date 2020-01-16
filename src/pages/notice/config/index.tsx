@@ -72,7 +72,6 @@ const Config: React.FC<Props> = (props) => {
             y: fakeY[i],
         });
     }
-    console.log(JSON.stringify(visitData));
     return (
         <PageHeaderWrapper
             title="组件管理"

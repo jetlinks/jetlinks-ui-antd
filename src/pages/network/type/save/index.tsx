@@ -35,7 +35,6 @@ const Save: React.FC<Props> = (props) => {
         });
     }, []);
     const renderForm = () => {
-        console.log(props.data, '2');
         switch (dataType) {
             case 'MQTT_SERVER':
                 return (

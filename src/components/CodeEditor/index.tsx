@@ -35,10 +35,6 @@ const CodeEditor: React.FC<Props> = (props) => {
     const [theme, setTheme] = useState(initState.theme);
 
 
-    const changeTheme = (theme: string) => {
-        setTheme(theme);
-        console.log(theme, '皮肤');
-    }
 
     const editorDidMountHandle = (editor: monacoEditor.editor.IStandaloneCodeEditor, monaco: typeof monacoEditor) => {
         //添加Groovy支持
@@ -55,7 +51,6 @@ const CodeEditor: React.FC<Props> = (props) => {
 
     const changeLanguage = (language: string) => {
         setLanguage(language);
-        console.log(language, '语言');
     }
 
     return (

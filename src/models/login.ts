@@ -61,7 +61,6 @@ const Model: LoginModelType = {
           }
         }
         // yield put(routerRedux.replace(redirect || '/'));
-        // console.log(redirect, 'login-S');
         router.replace(redirect || '/');
       }
     },

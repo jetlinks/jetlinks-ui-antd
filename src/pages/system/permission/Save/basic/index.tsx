@@ -14,8 +14,6 @@ interface Props extends FormComponentProps {
 const Basic: React.FC<Props> = (props) => {
     const { form: { getFieldDecorator }, data, form } = props;
 
-    console.log(data, 'data');
-
     const permissionType = [
         { id: 'default', text: '默认' },
         { id: 'system', text: '系统' },

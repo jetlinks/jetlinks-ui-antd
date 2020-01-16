@@ -70,7 +70,6 @@ const Properties: React.FC<Props> = (props: Props) => {
     }
 
     const deleteItem = (item: any) => {
-        // console.log(data.filter(e => e.id !== item.id), 'fileter');
         setData(data.filter(e => e.id !== item.id));
         props.save(data);
     }

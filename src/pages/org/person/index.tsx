@@ -52,7 +52,6 @@ class Person extends Component<PersonProps, PersonState> {
   };
   render() {
     const { checkedList } = this.state;
-    console.log(checkedList);
     return (
       <PageHeaderWrapper title="人员管理">
         <Card bordered={false}>

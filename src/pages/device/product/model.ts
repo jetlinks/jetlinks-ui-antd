@@ -42,7 +42,6 @@ const DeviceProductModel: DeviceProductModelType = {
             callback(response);
         },
         *insert({ payload, callback }, { call }) {
-            console.log('进入了insert方法');
             const response: SimpleResponse = yield call(apis.deviceProdcut.saveOrUpdate, payload);
             callback(response);
         },

@@ -78,13 +78,11 @@ const UserDimensions: React.FC<Porps> = (props) => {
                 apis.dimensions.deleteDimensionTypeById(id).then(response => {
                     if (response.status === 200) {
                         message.success('删除成功');
-                        console.log('刷新数据');
                         getDimensions();
                     }
                 })
             },
             onCancel() {
-                console.log('Cancel');
             },
         });
     }
@@ -124,13 +122,11 @@ const UserDimensions: React.FC<Porps> = (props) => {
                 apis.dimensions.deleteDimension(id).then(e => {
                     if (e.status === 200) {
                         message.success("删除成功");
-                        console.log('刷新')
                     }
                 });
 
             },
             onCancel() {
-                console.log('Cancel');
             },
         });
     }

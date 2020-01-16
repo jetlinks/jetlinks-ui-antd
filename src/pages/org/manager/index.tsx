@@ -13,13 +13,11 @@ interface ManagerState {
 class Manager extends Component<ManagerProps, ManagerState>{
 
     openNotification = () => {
-        console.log("ssss");
         notification.open({
             message: 'Notification Title',
             description:
                 'This is the content of the notification. This is the content of the notification. This is the content of the notification.',
             onClick: () => {
-                console.log('Notification Clicked!');
             },
         });
     };

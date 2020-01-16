@@ -43,10 +43,8 @@ const Save: React.FC<Props> = (props) => {
         },
         onChange(info: any) {
             if (info.file.status !== 'uploading') {
-                console.log(info.file, info.fileList);
             }
             if (info.file.status === 'done') {
-                console.log(info.file.response.result, 'info');
                 setJarLocation(info.file.response.result);
                 message.success(`${info.file.name} 上传成功`);
             } else if (info.file.status === 'error') {
