@@ -64,6 +64,10 @@ const Type: React.FC<Props> = (props) => {
                 sorts: {
                     field: 'id',
                     order: 'desc'
+                },
+                terms: {
+                    type$IN: filterType,
+                    name$LIKE: filterName,
                 }
             }),
         })
