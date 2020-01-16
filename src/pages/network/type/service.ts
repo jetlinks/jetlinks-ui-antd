@@ -25,3 +25,9 @@ export async function support() {
         method: 'GET'
     })
 }
+
+export async function changeStatus(id: string, type: string) {
+    return request(`/jetlinks/network/config/${id}/${type}`, {
+        method: 'POST'
+    });
+}

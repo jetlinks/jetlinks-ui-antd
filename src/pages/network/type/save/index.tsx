@@ -11,27 +11,31 @@ interface Props extends FormComponentProps {
 }
 interface State {
     dataType: string;
-    supportsType: any[]
+    supportsType: any[];
+    certificateList: any[];
 }
 const Save: React.FC<Props> = (props) => {
 
     const initState: State = {
         dataType: props.data.type?.value,
-        supportsType: []
+        supportsType: [],
+        certificateList: []
     }
     const { form: { getFieldDecorator }, form } = props;
     const [dataType, setDataType] = useState(initState.dataType);
     const [supportsType, setSupportsType] = useState(initState.supportsType);
+    const [certificateList, setCertificateList] = useState(initState.certificateList);
 
     useEffect(() => {
         apis.network.support().then(response => {
-            if (response.status === 200) {
-                setSupportsType(response.result)
-            }
+            setSupportsType(response.result)
         })
-    }, [])
+        apis.certificate.listNoPaging({ paging: false }).then(response => {
+            setCertificateList(response.result);
+        });
+    }, []);
     const renderForm = () => {
-        console.log(props.data, props.data?.configuration?.ssl, 'ssl');
+        console.log(props.data, '2');
         switch (dataType) {
             case 'MQTT_SERVER':
                 return (
@@ -85,7 +89,11 @@ const Save: React.FC<Props> = (props) => {
                                 getFieldDecorator('configuration.certId', {
                                     initialValue: props.data?.configuration?.certId
                                 })(
-                                    <Select />
+                                    <Select >
+                                        {
+                                            certificateList.map(item => <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>)
+                                        }
+                                    </Select>
                                 )
                             }
                         </Form.Item>
@@ -143,7 +151,11 @@ const Save: React.FC<Props> = (props) => {
                                 getFieldDecorator('configuration.certId', {
                                     initialValue: props.data?.configuration?.certId
                                 })(
-                                    <Select />
+                                    <Select >
+                                        {
+                                            certificateList.map(item => <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>)
+                                        }
+                                    </Select>
                                 )
                             }
                         </Form.Item>
@@ -191,7 +203,11 @@ const Save: React.FC<Props> = (props) => {
                                 getFieldDecorator('configuration.certId', {
                                     initialValue: props.data?.configuration?.certId
                                 })(
-                                    <Select />
+                                    <Select >
+                                        {
+                                            certificateList.map(item => <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>)
+                                        }
+                                    </Select>
                                 )
                             }
                         </Form.Item>
@@ -264,7 +280,11 @@ const Save: React.FC<Props> = (props) => {
                                 getFieldDecorator('configuration.certId', {
                                     initialValue: props.data?.configuration?.certId
                                 })(
-                                    <Select />
+                                    <Select >
+                                        {
+                                            certificateList.map(item => <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>)
+                                        }
+                                    </Select>
                                 )
                             }
                         </Form.Item>
@@ -364,7 +384,11 @@ const Save: React.FC<Props> = (props) => {
                                 getFieldDecorator('configuration.certId', {
                                     initialValue: props.data?.configuration?.certId
                                 })(
-                                    <Select />
+                                    <Select >
+                                        {
+                                            certificateList.map(item => <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>)
+                                        }
+                                    </Select>
                                 )
                             }
                         </Form.Item>
@@ -413,7 +437,11 @@ const Save: React.FC<Props> = (props) => {
                                 getFieldDecorator('configuration.certId', {
                                     initialValue: props.data?.configuration?.certId
                                 })(
-                                    <Select />
+                                    <Select >
+                                        {
+                                            certificateList.map(item => <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>)
+                                        }
+                                    </Select>
                                 )
                             }
                         </Form.Item>
@@ -436,7 +464,11 @@ const Save: React.FC<Props> = (props) => {
                                 getFieldDecorator('configuration.certId', {
                                     initialValue: props.data?.configuration?.certId
                                 })(
-                                    <Select />
+                                    <Select >
+                                        {
+                                            certificateList.map(item => <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>)
+                                        }
+                                    </Select>
                                 )
                             }
                         </Form.Item>
@@ -477,7 +509,11 @@ const Save: React.FC<Props> = (props) => {
                                     initialValue: props.data?.configuration?.certId
 
                                 })(
-                                    <Select />
+                                    <Select >
+                                        {
+                                            certificateList.map(item => <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>)
+                                        }
+                                    </Select>
                                 )
                             }
                         </Form.Item>
@@ -568,7 +604,11 @@ const Save: React.FC<Props> = (props) => {
                                 getFieldDecorator('configuration.certId', {
                                     initialValue: props.data?.configuration?.certId
                                 })(
-                                    <Select />
+                                    <Select >
+                                        {
+                                            certificateList.map(item => <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>)
+                                        }
+                                    </Select>
                                 )
                             }
                         </Form.Item>
@@ -643,7 +683,11 @@ const Save: React.FC<Props> = (props) => {
                                 getFieldDecorator('configuration.certId', {
                                     initialValue: props.data?.configuration?.certId
                                 })(
-                                    <Select />
+                                    <Select >
+                                        {
+                                            certificateList.map(item => <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>)
+                                        }
+                                    </Select>
                                 )
                             }
                         </Form.Item>
@@ -693,7 +737,11 @@ const Save: React.FC<Props> = (props) => {
                                 getFieldDecorator('configuration.certId', {
                                     initialValue: props.data?.configuration?.certId
                                 })(
-                                    <Select />
+                                    <Select >
+                                        {
+                                            certificateList.map(item => <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>)
+                                        }
+                                    </Select>
                                 )
                             }
                         </Form.Item>

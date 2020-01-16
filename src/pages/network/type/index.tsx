@@ -1,6 +1,6 @@
 import { PageHeaderWrapper } from "@ant-design/pro-layout"
 import React, { useEffect, useState } from "react";
-import { Card, Form, Row, Col, Input, List, Tooltip, Icon, Avatar, Menu, Tag, Button, message, Popconfirm } from "antd";
+import { Card, Form, Row, Col, Input, List, Tooltip, Icon, Avatar, Menu, Tag, Button, message, Popconfirm, Switch } from "antd";
 import StandardFormRow from "./components/standard-form-row";
 import TagSelect from "./components/tag-select";
 import { FormComponentProps } from "antd/lib/form";
@@ -10,6 +10,7 @@ import { connect } from "dva";
 import Save from "./save";
 import { downloadObject } from "@/utils/utils";
 import apis from "@/services";
+import encodeQueryParam from "@/utils/encodeParam";
 
 interface Props extends FormComponentProps {
     dispatch: Dispatch;
@@ -58,7 +59,13 @@ const Type: React.FC<Props> = (props) => {
     const handleSearch = () => {
         dispatch({
             type: 'networkType/query',
-            payload: { paging: false },
+            payload: encodeQueryParam({
+                paging: false,
+                sorts: {
+                    field: 'id',
+                    order: 'desc'
+                }
+            }),
         })
     }
 
@@ -85,25 +92,33 @@ const Type: React.FC<Props> = (props) => {
         })
     }
 
-    const itemMenu = (
-        <Menu>
-            <Menu.Item>
-                <a target="_blank" rel="noopener noreferrer" href="https://www.alipay.com/">
-                    1st menu item
-            </a>
-            </Menu.Item>
-            <Menu.Item>
-                <a target="_blank" rel="noopener noreferrer" href="https://www.taobao.com/">
-                    2nd menu item
-            </a>
-            </Menu.Item>
-            <Menu.Item>
-                <a target="_blank" rel="noopener noreferrer" href="https://www.tmall.com/">
-                    3d menu item
-            </a>
-            </Menu.Item>
-        </Menu>
-    );
+    const changeStatus = (item: any) => {
+        let type = item.state.value === 'disabled' ? '_start' : item.state.value === 'enabled' ? '_shutdown' : undefined;
+        if (!type) return;
+        apis.network.changeStatus(item.id, type).then(response => {
+            message.success('操作成功');
+            handleSearch();
+        });
+    }
+
+    const onSearch = (type?: string[], name?: string) => {
+        let tempType = type ? type : filterType;
+        let tempName = name ? name : filterName;
+        dispatch({
+            type: 'networkType/query',
+            payload: encodeQueryParam({
+                paging: false,
+                sorts: {
+                    field: 'id',
+                    order: 'desc'
+                },
+                terms: {
+                    type$IN: tempType,
+                    name$LIKE: tempName,
+                }
+            }),
+        })
+    }
 
     return (
         <PageHeaderWrapper
@@ -116,7 +131,7 @@ const Type: React.FC<Props> = (props) => {
                     <Form layout="inline">
                         <StandardFormRow title="组件类型" block style={{ paddingBottom: 11 }}>
                             <Form.Item>
-                                <TagSelect expandable onChange={(value: any[]) => { setFilterType(value) }}>
+                                <TagSelect expandable onChange={(value: any[]) => { setFilterType(value); onSearch(value, undefined) }}>
                                     {
                                         supportsType.map(item =>
                                             <TagSelect.Option key={item.id} value={item.id}>{item.name}</TagSelect.Option>)
@@ -128,7 +143,7 @@ const Type: React.FC<Props> = (props) => {
                             <Row gutter={16}>
                                 <Col lg={8} md={10} sm={10} xs={24}>
                                     <Form.Item {...formItemLayout} label="配置名称">
-                                        <Input onChange={(e) => { console.log(e.target.value) }} />
+                                        <Input onChange={(e) => { setFilterName(e.target.value); onSearch(undefined, e.target.value) }} />
                                     </Form.Item>
                                 </Col>
                             </Row>
@@ -191,12 +206,21 @@ const Type: React.FC<Props> = (props) => {
                                                 className={styles.cardInfo}
                                             >
                                                 <div>
-                                                    <p>配置名称</p>
+                                                    <p>组件类型</p>
                                                     <p>{item.type.name}</p>
                                                 </div>
                                                 <div>
-                                                    <p>当前状态</p>
-                                                    <p style={{ color: 'red' }}>{item.state.text}</p>
+                                                    <p>启动状态</p>
+                                                    <p style={{ color: 'red' }}>
+                                                        <Popconfirm
+                                                            title={`确认${item.state.value === 'disabled' ? '启动' : '停止'}`}
+                                                            onConfirm={() => { changeStatus(item) }}
+                                                        >
+                                                            <span>
+                                                                <Switch size="small" checked={item.state.value === 'disabled' ? false : item.state.value === 'enabled' ? true : false} />
+                                                            </span>
+                                                        </Popconfirm>
+                                                    </p>
                                                 </div>
                                             </div >
                                         </div>

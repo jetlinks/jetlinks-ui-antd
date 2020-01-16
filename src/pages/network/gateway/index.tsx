@@ -105,9 +105,6 @@ const Gateway: React.FC<Props> = (props) => {
                         record.state && record.state.value === 'paused' &&
                         <a onClick={() => { startUp(record) }}>恢复</a>
                     }
-                    <Popconfirm title="确认删除？" onConfirm={() => removeItem(record)}>
-                        <a>删除</a>
-                    </Popconfirm>
                 </Fragment>
             )
         }
