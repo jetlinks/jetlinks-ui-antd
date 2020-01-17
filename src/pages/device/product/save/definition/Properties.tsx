@@ -45,9 +45,9 @@ const Properties: React.FC<Props> = (props: Props) => {
         },
         {
             title: '是否只读',
-            dataIndex: 'expands',
+            dataIndex: 'expands.readOnly',
             render: (text) => {
-              return text.readOnly === "true" ? '是' : '否';
+              return text === "true" ? '是' : '否';
             },
         },
         {
