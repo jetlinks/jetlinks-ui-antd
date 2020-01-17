@@ -74,6 +74,9 @@ export default {
   targets: {
     ie: 11,
   },
+  history: 'hash',
+  base: './',
+  publicPath: "./",
   // umi routes: https://umijs.org/zh/guide/router.html
   routes: [
     {

@@ -91,9 +91,8 @@ const Editor: React.FC<Props> = (props) => {
             deviceState.runInfo = response.result;
             setDeviceState({ ...deviceState });
         });
-        apis.deviceInstance.fireAlarm({ id }).then(response => {
-            console.log(response, 'resp');
-        })
+        // apis.deviceInstance.fireAlarm({ id }).then(response => {
+        // })
     }
     const action = (
         <Fragment>

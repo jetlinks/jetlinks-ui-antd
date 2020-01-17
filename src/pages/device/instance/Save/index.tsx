@@ -87,7 +87,7 @@ const Save: React.FC<Props> = (props) => {
                     key="describe"
                     label="说明"
                 >
-                    {getFieldDecorator('说明', {
+                    {getFieldDecorator('describe', {
                         initialValue: props.data.describe
                     })(<Input.TextArea rows={4} placeholder="请输入至少五个字符" />)}
                 </Form.Item>

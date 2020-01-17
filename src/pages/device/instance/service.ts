@@ -1,6 +1,5 @@
 import request from "@/utils/request";
 import { DeviceInstance } from "./data";
-import { getAccessToken } from "@/utils/authority";
 
 export async function list(params: any) {
     return request(`/jetlinks/device-instance/_query`, {
@@ -60,6 +59,18 @@ export async function changeDeploy(params: any) {
     })
 }
 
+export async function property(id: string, type: string) {
+    return request(`/jetlinks/device/standard/${id}/property/${type}`, {
+        method: 'GET',
+    });
+}
+
+export async function eventData(id: string, event: string, params: any) {
+    return request(`/jetlinks/device-product/${id}/event/${event}`, {
+        method: 'GET',
+        params: params
+    })
+}
 
 // export async function deployAll() {
 //     return request(`/jetlinks/device-instance/deploy`, {

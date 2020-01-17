@@ -802,7 +802,8 @@ const Save: React.FC<Props> = (props) => {
     const saveData = () => {
         form.validateFields((err, fileValue) => {
             if (err) return;
-            props.save(fileValue);
+            let id = props.data.id;
+            props.save({ id, ...fileValue });
         });
     }
     return (

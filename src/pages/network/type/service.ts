@@ -9,7 +9,7 @@ export async function list(params?: any) {
 
 export async function save(params?: any) {
     return request(`/jetlinks/network/config/`, {
-        method: 'POST',
+        method: 'PATCH',
         data: params
     })
 }

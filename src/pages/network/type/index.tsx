@@ -97,7 +97,7 @@ const Type: React.FC<Props> = (props) => {
     }
 
     const changeStatus = (item: any) => {
-        let type = item.state.value === 'disabled' ? '_start' : item.state.value === 'enabled' ? '_shutdown' : undefined;
+        let type = item.state?.value === 'disabled' ? '_start' : item.state.value === 'enabled' ? '_shutdown' : undefined;
         if (!type) return;
         apis.network.changeStatus(item.id, type).then(response => {
             message.success('操作成功');
@@ -217,11 +217,11 @@ const Type: React.FC<Props> = (props) => {
                                                     <p>启动状态</p>
                                                     <p style={{ color: 'red' }}>
                                                         <Popconfirm
-                                                            title={`确认${item.state.value === 'disabled' ? '启动' : '停止'}`}
+                                                            title={`确认${item.state?.value === 'disabled' ? '启动' : '停止'}`}
                                                             onConfirm={() => { changeStatus(item) }}
                                                         >
                                                             <span>
-                                                                <Switch size="small" checked={item.state.value === 'disabled' ? false : item.state.value === 'enabled' ? true : false} />
+                                                                <Switch size="small" checked={item.state?.value === 'disabled' ? false : item.state?.value === 'enabled' ? true : false} />
                                                             </span>
                                                         </Popconfirm>
                                                     </p>
@@ -236,7 +236,7 @@ const Type: React.FC<Props> = (props) => {
                             <List.Item>
                                 <Button
                                     type="dashed"
-                                    onClick={() => { setSaveVisible(true) }}
+                                    onClick={() => { setCurrentItem({}); setSaveVisible(true) }}
                                     className={styles.newButton}>
                                     <Icon type="plus" />新增组件
                                 </Button>

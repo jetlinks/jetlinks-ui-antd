@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import styles from "@/utils/table.less";
 import { DeviceInstance } from "./data";
-import { Divider, Card, Table, Alert, Badge, Button, message, Modal, Popconfirm } from "antd";
+import { Divider, Card, Table, Alert, Badge, Button, message, Modal, Popconfirm, Upload } from "antd";
 import { router } from "umi";
 import { ColumnProps, PaginationConfig, SorterResult } from "antd/lib/table";
 import { FormComponentProps } from "antd/es/form";
@@ -149,7 +149,7 @@ const DeviceInstancePage: React.FC<Props> = (props) => {
             type: 'deviceInstance/update',
             payload: encodeQueryParam(item),
             callback: (response) => {
-                message.success("添加成功");
+                message.success("保存成功");
                 setAddvisible(false);
                 handleSearch(searchParam);
             }
@@ -163,7 +163,7 @@ const DeviceInstancePage: React.FC<Props> = (props) => {
         },
     }
 
-    const onTableChange = (pagination: PaginationConfig, filters: Record<keyof DeviceInstance, string[]>, sorter: SorterResult<DeviceInstance>, extra: any) => {
+    const onTableChange = (pagination: PaginationConfig, filters: any, sorter: SorterResult<DeviceInstance>, extra: any) => {
         handleSearch({
             pageIndex: Number(pagination.current) - 1,
             pageSize: pagination.pageSize,
@@ -182,6 +182,7 @@ const DeviceInstancePage: React.FC<Props> = (props) => {
             okType: 'primary',
             cancelText: '取消',
             onOk() {
+
                 startImport();
             }
         });
@@ -190,9 +191,11 @@ const DeviceInstancePage: React.FC<Props> = (props) => {
 
     const [eventSource, setSource] = useState();
     const startImport = () => {
-        const source = new EventSource(`${origin}/device-instance/deploy?:X_Access_Token=${getAccessToken()}`);
         let dt = 0;
-        // const source = new EventSource(`http://2.jetlinks.org:9010/device-instance/deploy?:X_Access_Token=b3a06868e4b702b56eafaae4d3c02aaa`);
+
+        setProcessVisible(true);
+        // const source = new EventSource(`${origin}/device-instance/deploy?:X_Access_Token=${getAccessToken()}`);
+        const source = new EventSource(`http://2.jetlinks.org:9010/device-instance/deploy?:X_Access_Token=${getAccessToken()}`);
         source.onmessage = (e) => {
             const temp = JSON.parse(e.data).total;
             dt = dt += temp;
@@ -204,7 +207,6 @@ const DeviceInstancePage: React.FC<Props> = (props) => {
         }
         source.onopen = (e) => {
             setFlag(true);
-            setProcessVisible(true);
         }
         setSource(source);
     }
@@ -227,6 +229,24 @@ const DeviceInstancePage: React.FC<Props> = (props) => {
                         <Button icon="plus" type="danger" onClick={() => activeDevice()}>
                             激活全部设备
                         </Button>
+                        {/* <Button href="./设备实例模版.xlsx" download>
+                            下载模版
+                        </Button>
+                        <Divider type="vertical" />
+                        <Button >
+                            导出实例
+                        </Button>
+
+                        <Upload action={''} showUploadList={false}>
+                            <Button >
+                                导入实例
+                            </Button>
+                        </Upload>
+
+                        <Button >
+                            同步设备状态
+                        </Button> */}
+
                         {
                             selectRows.length > 0 && <Button>
                                 同步状态

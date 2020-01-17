@@ -59,6 +59,10 @@ const menuDataRender = (menuList: MenuDataItem[]): MenuDataItem[] =>
   });
 
 const defaultFooterDom = (
+  <div></div>
+)
+
+const defaultFooterDom1 = (
   <DefaultFooter
     copyright="2019 蚂蚁金服体验技术部出品"
     links={[
