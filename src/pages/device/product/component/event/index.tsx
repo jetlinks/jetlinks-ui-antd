@@ -55,7 +55,7 @@ const EventDefin: React.FC<Props> = (props) => {
             if (err) return;
             //ToDo保存数据
             if (fieldValue.valueType.type === 'object') {
-                fieldValue.valueType.parameter = parameter;
+                fieldValue.valueType.properties = parameter;
             }
             props.save({ ...fieldValue, id });
         })

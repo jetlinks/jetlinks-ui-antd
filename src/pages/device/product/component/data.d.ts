@@ -35,7 +35,7 @@ export class ValueType {
     type: string;
     elements?: any[];
     description: string;
-    parameter?: Parameter[]
+    properties?: Parameter[]
 }
 
 export class PropertiesMeta {
@@ -59,6 +59,6 @@ export class EventsMeta {
         level: string;
         eventType: string;
     };
-    parameter: Parameter[];
+    properties: Parameter[];
     description: string;
 }

@@ -27,7 +27,7 @@ const PropertiesDefin: React.FC<Props> = (props) => {
         data: props.data,
         enumData: [],
         parameterVisible: false,
-        parameters: props.data.valueType?.parameter || [],
+        parameters: props.data.valueType?.properties || [],
         currentParameter: {}
     }
 
@@ -61,7 +61,7 @@ const PropertiesDefin: React.FC<Props> = (props) => {
                 fieldValue.valueType.elements = enumData;
             }
             if (dataType === 'object') {
-                fieldValue.valueType.parameter = parameters;
+                fieldValue.valueType.properties = parameters;
             }
             // console.log({ ...fieldValue, id });
             props.save({ ...fieldValue, id });

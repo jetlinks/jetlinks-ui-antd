@@ -37,7 +37,7 @@ const FunctionDefin: React.FC<Props> = (props) => {
         outputVisible: false,
         inputVisible: false,
         enumData: props.data.outputs?.elements || [],
-        outputParameter: props.data.outputs?.parameter || [],
+        outputParameter: props.data.outputs?.properties || [],
         inputs: [],
         currentParameter: {}
     }
@@ -57,7 +57,7 @@ const FunctionDefin: React.FC<Props> = (props) => {
         form.validateFields((err: any, fieldValue: any) => {
             if (err) return;
             if (fieldValue.outputs.type === 'object') {
-                fieldValue.outputs.parameter = outputParameter;
+                fieldValue.outputs.properties = outputParameter;
             }
             props.save({ ...fieldValue, inputs, id });
         });
