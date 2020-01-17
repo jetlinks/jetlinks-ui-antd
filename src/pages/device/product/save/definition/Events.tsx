@@ -9,10 +9,10 @@ interface Props {
 }
 
 let gradeText = {
-  "primar":"普通",
+  "ordinary":"普通",
   "warn":"警告",
-  "error":"紧急"
-}
+  "urgent":"紧急"
+};
 
 interface State {
     data: EventsMeta[];
@@ -46,7 +46,7 @@ const Events: React.FC<Props> = (props) => {
         },
         {
             title: '事件级别',
-            dataIndex: 'expands.grade',
+            dataIndex: 'expands.level',
             render: text => gradeText[text],
         },
         {

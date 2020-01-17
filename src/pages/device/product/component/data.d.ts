@@ -56,7 +56,7 @@ export class EventsMeta {
     type: string;
     valueType: ValueType;
     expands: {
-        grade: string;
+        level: string;
         eventType: string;
     };
     parameter: Parameter[];

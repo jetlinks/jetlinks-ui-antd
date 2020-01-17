@@ -364,14 +364,14 @@ const EventDefin: React.FC<Props> = (props) => {
                     )}
                 </Form.Item>
                 <Form.Item label="事件级别">
-                    {getFieldDecorator('expands.grade', {
+                    {getFieldDecorator('expands.level', {
                         rules: [{ required: true }],
-                        initialValue: initState.data.expands?.grade,
+                        initialValue: initState.data.expands?.level,
                     })(
                         <Radio.Group>
-                            <Radio value="primar">普通</Radio>
+                            <Radio value="ordinary">普通</Radio>
                             <Radio value="warn">警告</Radio>
-                            <Radio value="error">紧急</Radio>
+                            <Radio value="urgent">紧急</Radio>
                         </Radio.Group>
                     )}
                 </Form.Item>
