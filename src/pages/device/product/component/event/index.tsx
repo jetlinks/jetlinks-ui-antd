@@ -31,14 +31,14 @@ const EventDefin: React.FC<Props> = (props) => {
         data: props.data || {},
         dataType: props.data.valueType?.type || '',
         enumData: [],
-        parameter: props.data.valueType?.parameter || [],
+        properties: props.data.valueType?.properties || [],
         parameterVisible: false,
         currentParameter: {}
     }
 
     const [data, setData] = useState(initState.data);
     const [editVisible, setEditVisible] = useState(initState.editVisible);
-    const [parameter, setParameter] = useState(initState.parameter);
+    const [properties, setParameter] = useState(initState.properties);
     const [dataType, setDataType] = useState(initState.dataType);
     const [enumData, setEnumData] = useState(initState.enumData);
     const [parameterVisible, setParameterVisible] = useState(initState.parameterVisible);
@@ -55,7 +55,7 @@ const EventDefin: React.FC<Props> = (props) => {
             if (err) return;
             //ToDo保存数据
             if (fieldValue.valueType.type === 'object') {
-                fieldValue.valueType.parameter = parameter;
+                fieldValue.valueType.properties = properties;
             }
             props.save({ ...fieldValue, id });
         })
@@ -271,25 +271,25 @@ const EventDefin: React.FC<Props> = (props) => {
                     <Form.Item label='JSON对象'>
 
                         {/* {
-                            (parameter.length > 0) ? parameter.map((item, index) => {
+                            (properties.length > 0) ? properties.map((item, index) => {
                                 return <Input key={index} value={item.name + '--' + item.id} />
                             }) : ''
                         } */}
 
                         {
-                            (parameter.length > 0) &&
+                            (properties.length > 0) &&
                             <List
                                 bordered
-                                dataSource={parameter}
+                                dataSource={properties}
                                 renderItem={
                                     (item: any) => (
                                         <List.Item
                                             actions={[
                                                 <Button type="link" onClick={() => { setParameterVisible(true); setCurrentParameter(item) }}>编辑</Button>,
                                                 <Button type="link" onClick={() => {
-                                                    const index = parameter.findIndex((i: any) => i.id === item.id);
-                                                    parameter.splice(index, 1);
-                                                    setParameter([...parameter]);
+                                                    const index = properties.findIndex((i: any) => i.id === item.id);
+                                                    properties.splice(index, 1);
+                                                    setParameter([...properties]);
                                                 }}>删除</Button>
                                             ]}
                                         >
@@ -364,14 +364,14 @@ const EventDefin: React.FC<Props> = (props) => {
                     )}
                 </Form.Item>
                 <Form.Item label="事件级别">
-                    {getFieldDecorator('expands.grade', {
+                    {getFieldDecorator('expands.level', {
                         rules: [{ required: true }],
-                        initialValue: initState.data.expands?.grade,
+                        initialValue: initState.data.expands?.level,
                     })(
                         <Radio.Group>
-                            <Radio value="primar">普通</Radio>
+                            <Radio value="ordinary">普通</Radio>
                             <Radio value="warn">警告</Radio>
-                            <Radio value="error">紧急</Radio>
+                            <Radio value="urgent">紧急</Radio>
                         </Radio.Group>
                     )}
                 </Form.Item>
@@ -414,8 +414,8 @@ const EventDefin: React.FC<Props> = (props) => {
                 <Paramter
                     data={currentParameter}
                     save={(item) => {
-                        parameter.push(item);
-                        setParameter(parameter)
+                        properties.push(item);
+                        setParameter(properties)
                     }}
                     close={() => setParameterVisible(false)}
                 />

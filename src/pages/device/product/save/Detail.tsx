@@ -125,7 +125,7 @@ const Detail: React.FC<Props> = (props) => {
                             functionsData={functions}
                             propertyData={properties}
                             saveEvents={(data: any) => { setEvents(data); saveData() }}
-                            saveFunctions={(data: any) => { console.log(data, 'functions'); setFunctions(data); saveData() }}
+                            saveFunctions={(data: any) => { setFunctions(data); saveData() }}
                             saveProperty={(data: any) => { setProperties(data); saveData() }}
                         />
                     </Tabs.TabPane>
