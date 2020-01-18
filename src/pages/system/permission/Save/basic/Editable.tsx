@@ -125,25 +125,25 @@ const EditableTable: React.FC<EditableTableProps> = (props) => {
             width: '20%',
             editable: true,
         },
-        {
-            title: '支持数据权限',
-            dataIndex: 'properties.supportDataAccess',
-            width: '40%',
-            editable: true,
-            render: (text: string[], record: any) => {
-                if (text) {
-                    try {
-                        return (text).map(e => {
-                            return <Tag key={e} color={"blue"} style={{ width: 120, textAlign: "center", marginBottom: 4 }}>{supportDataAccessTypeMap.get(e)}</Tag>
-                        });
-                    } catch (error) {
-                        return null;
-                    }
-                } else {
-                    return text;
-                }
-            }
-        },
+        // {
+        //     title: '支持数据权限',
+        //     dataIndex: 'properties.supportDataAccess',
+        //     width: '40%',
+        //     editable: true,
+        //     render: (text: string[], record: any) => {
+        //         if (text) {
+        //             try {
+        //                 return (text).map(e => {
+        //                     return <Tag key={e} color={"blue"} style={{ width: 120, textAlign: "center", marginBottom: 4 }}>{supportDataAccessTypeMap.get(e)}</Tag>
+        //                 });
+        //             } catch (error) {
+        //                 return null;
+        //             }
+        //         } else {
+        //             return text;
+        //         }
+        //     }
+        // },
         {
             title: (
                 <span>
