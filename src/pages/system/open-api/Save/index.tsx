@@ -42,12 +42,12 @@ const Save: React.FC<Props> = (props) => {
 
                 <Form.Item
                     key="id"
-                    label="id"
+                    label="clientId"
                 >
                     {getFieldDecorator('id', {
                         rules: [{ required: true }],
                         initialValue: props.data.id ? props.data.id : id,
-                    })(<Input placeholder="请输入" />)}
+                    })(<Input placeholder="请输入" disabled="true" />)}
                 </Form.Item>
                 <Form.Item
                     key="clientName"
@@ -113,7 +113,7 @@ const Save: React.FC<Props> = (props) => {
 
                 <Form.Item
                     key="description"
-                    label="备注"
+                    label="描述"
                 >
                     {getFieldDecorator('description', {
                         initialValue: props.data.description
