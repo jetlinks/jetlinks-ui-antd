@@ -27,7 +27,7 @@ const PropertiesDefin: React.FC<Props> = (props) => {
         data: props.data,
         enumData: [],
         parameterVisible: false,
-        parameters: props.data.valueType?.properties || [],
+        properties: props.data.valueType?.properties || [],
         currentParameter: {}
     }
 
@@ -36,7 +36,7 @@ const PropertiesDefin: React.FC<Props> = (props) => {
     const [dataType, setDataType] = useState(initState.dataType);
     const [enumData, setEnumData] = useState(initState.enumData);
     const [parameterVisible, setParameterVisible] = useState(initState.parameterVisible);
-    const [parameters, setParameters] = useState(initState.parameters);
+    const [properties, setProperties] = useState(initState.properties);
     const [currentParameter, setCurrentParameter] = useState(initState.currentParameter);
 
 
@@ -54,14 +54,13 @@ const PropertiesDefin: React.FC<Props> = (props) => {
     const getFormData = () => {
         const { form } = props;
         const id = props.data.id;
-        console.log(parameters, 'params');
         form.validateFields((err: any, fieldValue: any) => {
             if (err) return;
             if (dataType === 'enum') {
                 fieldValue.valueType.elements = enumData;
             }
             if (dataType === 'object') {
-                fieldValue.valueType.properties = parameters;
+                fieldValue.valueType.properties = properties;
             }
             // console.log({ ...fieldValue, id });
             props.save({ ...fieldValue, id });
@@ -276,19 +275,19 @@ const PropertiesDefin: React.FC<Props> = (props) => {
                     <Form.Item label='JSON对象'>
 
                         {
-                            (parameters.length > 0) &&
+                            (properties.length > 0) &&
                             <List
                                 bordered
-                                dataSource={parameters}
+                                dataSource={properties}
                                 renderItem={
                                     (item: any) => (
                                         <List.Item
                                             actions={[
                                                 <Button type="link" onClick={() => { setParameterVisible(true); setCurrentParameter(item) }}>编辑</Button>,
                                                 <Button type="link" onClick={() => {
-                                                    const index = parameters.findIndex((i: any) => i.id === item.id);
-                                                    parameters.splice(index, 1);
-                                                    setParameters([...parameters]);
+                                                    const index = properties.findIndex((i: any) => i.id === item.id);
+                                                    properties.splice(index, 1);
+                                                    setProperties([...properties]);
                                                 }}>删除</Button>
                                             ]}
                                         >
@@ -443,9 +442,9 @@ const PropertiesDefin: React.FC<Props> = (props) => {
                     parameterVisible &&
                     <Paramter
                         save={(item) => {
-                            const index = parameters.findIndex((e: any) => e.id === item.id);
-                            index === -1 ? parameters.push(item) : parameters[index] = item;
-                            setParameters(parameters);
+                            const index = properties.findIndex((e: any) => e.id === item.id);
+                            index === -1 ? properties.push(item) : properties[index] = item;
+                            setProperties(properties);
                             message.success('保存成功');
                         }}
                         close={() => setParameterVisible(false)}
