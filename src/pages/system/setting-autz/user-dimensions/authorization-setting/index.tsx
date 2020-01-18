@@ -61,12 +61,16 @@ const AuthorizationSetting: React.FC<Props> = (props) => {
                             });
                             setPermissionList(temp);
                         }
+                    }).catch(() => {
+
                     });
                 } else {
                     setPermissionList(p.result);
                 }
                 setLoading(false);
             }
+        }).catch(() => {
+
         });
     }
 

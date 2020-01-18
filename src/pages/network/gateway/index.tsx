@@ -54,10 +54,14 @@ const Gateway: React.FC<Props> = (props) => {
         handleSearch(searchParam);
         apis.gateway.providers().then(response => {
             setProviderList(response.result);
+        }).catch(() => {
+
         });
 
         apis.network.list().then(response => {
             setNetworkList(response.result);
+        }).catch(() => {
+
         })
     }, []);
 
@@ -130,24 +134,32 @@ const Gateway: React.FC<Props> = (props) => {
     const startUp = (record: any) => {
         apis.gateway.startUp(record.id).then(response => {
             handleSearch();
+        }).catch(() => {
+
         });
     }
 
     const paused = (record: any) => {
         apis.gateway.pause(record.id).then(response => {
             handleSearch();
+        }).catch(() => {
+
         })
     }
 
     const shutdown = (record: any) => {
         apis.gateway.shutdown(record.id).then(response => {
             handleSearch();
+        }).catch(() => {
+
         })
     }
 
     const removeItem = (record: any) => {
         apis.gateway.remove(record.id).then(response => {
             handleSearch();
+        }).catch(() => {
+
         })
     }
 

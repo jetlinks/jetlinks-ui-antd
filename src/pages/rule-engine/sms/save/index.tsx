@@ -35,6 +35,8 @@ const Save: React.FC<Props> = (props) => {
     useEffect(() => {
         apis.sms.providerList().then(e => {
             setProviderList(e.result);
+        }).catch(() => {
+
         });
     }, []);
 

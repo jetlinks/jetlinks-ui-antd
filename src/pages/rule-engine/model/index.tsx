@@ -118,6 +118,8 @@ const RuleModelList: React.FC<Props> = (props) => {
                 message.success('发布成功');
                 handleSearch(searchParam);
             }
+        }).catch(() => {
+
         });
 
     }

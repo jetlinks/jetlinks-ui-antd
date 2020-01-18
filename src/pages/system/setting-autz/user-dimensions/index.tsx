@@ -64,6 +64,8 @@ const UserDimensions: React.FC<Porps> = (props) => {
                 });
                 setTypeList(tempType);
             }
+        }).catch(() => {
+
         });
     }
 
@@ -80,6 +82,8 @@ const UserDimensions: React.FC<Porps> = (props) => {
                         message.success('删除成功');
                         getDimensions();
                     }
+                }).catch(() => {
+
                 })
             },
             onCancel() {
@@ -96,6 +100,8 @@ const UserDimensions: React.FC<Porps> = (props) => {
             if (e.status === 200) {
                 message.success('保存成功');
             }
+        }).catch(() => {
+
         });
         getDimensions();
         setTypeVisible(false);
@@ -108,6 +114,8 @@ const UserDimensions: React.FC<Porps> = (props) => {
                 getDimensions();
                 setItemVisible(false);
             }
+        }).catch(() => {
+
         });
     }
 
@@ -123,6 +131,8 @@ const UserDimensions: React.FC<Porps> = (props) => {
                     if (e.status === 200) {
                         message.success("删除成功");
                     }
+                }).catch(() => {
+
                 });
 
             },

@@ -32,6 +32,8 @@ const Search: React.FC<Props> = (props) => {
             if (response.status === 200) {
                 setProtocolSupports(response.result);
             }
+        }).catch(() => {
+
         });
     }, []);
 

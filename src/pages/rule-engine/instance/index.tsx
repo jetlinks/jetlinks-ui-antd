@@ -95,6 +95,8 @@ const RuleInstanceList: React.FC<Props> = (props) => {
             if (response.status === 200) {
                 message.success('启动成功');
             }
+        }).catch(() => {
+
         })
     }
 
@@ -103,6 +105,8 @@ const RuleInstanceList: React.FC<Props> = (props) => {
             if (response.status === 200) {
                 message.success('创建成功');
             }
+        }).catch(() => {
+
         })
     }
 

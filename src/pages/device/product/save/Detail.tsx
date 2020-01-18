@@ -66,7 +66,9 @@ const Detail: React.FC<Props> = (props) => {
             if (reponse.status === 200) {
                 message.success('保存成功');
             }
-        })
+        }).catch(() => {
+
+        });
     }
 
     return (

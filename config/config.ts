@@ -118,7 +118,7 @@ export default {
                 {
                   path: '/system/user',
                   name: '用户管理',
-                  // authority: ['user'],
+                  authority: ['user'],
                   component: './system/users',
                 },
                 // {
@@ -130,7 +130,7 @@ export default {
                 {
                   path: '/system/permission',
                   name: '权限管理',
-                  // authority: ['permission'],
+                  authority: ['permission'],
                   component: './system/permission',
                 },
                 // {
@@ -142,7 +142,7 @@ export default {
                 {
                   path: '/system/open-api',
                   name: 'OpenApi客户端',
-                  // authority: ['dictionary'],
+                  authority: ['open-api'],
                   component: './system/open-api',
                 },
               ],
@@ -151,32 +151,38 @@ export default {
               path: 'device',
               name: '设备管理',
               icon: 'usb',
+              authority: ['device-product', 'device-instance'],
               routes: [
                 {
                   path: '/device/protocol',
                   name: '协议管理',
+                  authority: ['protocol'],
                   component: './device/protocol',
                 },
                 {
                   path: '/device/product',
                   name: '设备型号',
+                  authority: ['device-product'],
                   component: './device/product',
                 },
                 {
                   hideInMenu: true,
                   path: '/device/product/save/:id',
                   name: '编辑设备型号',
+                  // authority: ['device-product'],
                   component: './device/product/save/Detail',
                 },
                 {
                   hideInMenu: true,
                   path: '/device/product/add',
                   name: '添加设备型号',
+                  // authority: ['device-product'],
                   component: './device/product/save',
                 },
                 {
                   path: '/device/instance',
                   name: '设备实例',
+                  authority: ['device-instance'],
                   component: './device/instance',
                 },
                 {
@@ -197,24 +203,27 @@ export default {
               path: 'network',
               name: '网络组件',
               icon: 'appstore',
-              // hideInMenu: true,
+              authority: ['certificate', 'network-config', 'device-gateway'],
               routes: [
                 {
                   path: '/network/certificate',
                   name: '证书管理',
                   icon: 'book',
+                  authority: ['certificate'],
                   component: './network/certificate',
                 },
                 {
                   path: '/network/type',
                   name: '组件管理',
                   icon: 'flag',
+                  authority: ['network-config'],
                   component: './network/type',
                 },
                 {
                   path: '/network/gateway',
                   name: '设备网关',
                   icon: 'thunderbolt',
+                  authority: ['device-gateway'],
                   component: './network/gateway',
                 },
               ],
@@ -223,17 +232,20 @@ export default {
               path: 'notice',
               name: '通知管理',
               icon: 'sound',
+              authority: ['certificate', 'network-config', 'device-gateway'],
               routes: [
                 {
                   path: '/notice/config',
                   name: '通知配置',
                   icon: 'setting',
+                  authority: ['notifier'],
                   component: './notice/config',
                 },
                 {
                   path: 'notice/template',
                   name: '通知模版',
                   icon: 'tags',
+                  authority: ['template'],
                   component: './notice/template',
                 },
               ],
@@ -242,17 +254,20 @@ export default {
               path: 'rule-engine',
               name: '规则引擎',
               icon: 'share-alt',
+              authority: ['rule-model', 'rule-instance'],
               routes: [
                 {
                   path: '/rule-engine/model',
                   name: '规则模型',
                   icon: 'appstore',
+                  authority: ['rule-model'],
                   component: './rule-engine/model',
                 },
                 {
                   path: '/rule-engine/instance',
                   name: '规则实例',
                   icon: 'control',
+                  authority: ['rule-instance'],
                   component: './rule-engine/instance',
                 },
                 // {
@@ -273,17 +288,20 @@ export default {
               path: 'logger',
               name: '日志管理',
               icon: 'wallet',
+              authority: ['rule-logger', 'access-logger'],
               routes: [
                 {
                   path: './logger/access',
                   name: '访问日志',
                   icon: 'ordered-list',
+                  authority: ['rule-logger'],
                   component: './logger/access',
                 },
                 {
                   path: './logger/system',
                   name: '系统日志',
                   icon: 'bars',
+                  authority: ['access-logger'],
                   component: './logger/system',
                 },
               ],
@@ -301,17 +319,17 @@ export default {
               hideInMenu: true,
               routes: [
                 {
-                  path: './exception/500',
+                  path: './500',
                   name: '500',
                   component: './exception/500',
                 },
                 {
-                  path: './exception/404',
+                  path: './404',
                   name: '404',
                   component: './exception/404',
                 },
                 {
-                  path: './exception/403',
+                  path: './403',
                   name: '403',
                   component: './exception/403',
                 },

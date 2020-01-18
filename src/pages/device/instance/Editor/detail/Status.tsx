@@ -108,6 +108,8 @@ const Status: React.FC<Props> = (props) => {
                     const data = response.result;
                     eventData.push({ eventId: event.id, data })
                     setEventData([...eventData])
+                }).catch(() => {
+
                 });
             });
             setMetadata(metadata);
@@ -126,6 +128,8 @@ const Status: React.FC<Props> = (props) => {
                 }
                 setRunInfo(response.result);
                 setDeviceState(response.result);
+            }).catch(() => {
+
             });
     }
 
@@ -136,7 +140,9 @@ const Status: React.FC<Props> = (props) => {
                     response.result.loading = false;
                 }
                 setDeviceState(response.result);
-            })
+            }).catch(() => {
+
+            });
     }
 
     const loadProperties = () => {
@@ -177,6 +183,8 @@ const Status: React.FC<Props> = (props) => {
             // });
             // metadata.events = tempEvents;
             // setMetadata({ ...metadata });
+        }).catch(() => {
+
         });
     }
 
@@ -264,10 +272,11 @@ const Status: React.FC<Props> = (props) => {
             });
             metadata.events = tempEvents;
             setMetadata({ ...metadata });
+        }).catch(() => {
+
         });
     }
 
-    console.log(eventData, '事件数据');
 
     const refreshProperties = (item: any) => {
         const { properties } = metadata;

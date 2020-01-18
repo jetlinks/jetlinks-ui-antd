@@ -120,6 +120,8 @@ const DeviceInstancePage: React.FC<Props> = (props) => {
                 message.success('操作成功');
                 handleSearch(searchParam);
             }
+        }).catch(() => {
+
         });
     }
 
@@ -129,6 +131,8 @@ const DeviceInstancePage: React.FC<Props> = (props) => {
                 message.success('操作成功');
                 handleSearch(searchParam);
             }
+        }).catch(() => {
+
         });
     }
 

@@ -32,6 +32,8 @@ const Save: React.FC<Props> = (props) => {
             if (e.status === 200) {
                 setTypeList(e.result);
             }
+        }).catch(() => {
+
         });
     }, []);
 

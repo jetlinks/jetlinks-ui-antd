@@ -68,6 +68,8 @@ const User: React.FC<Props> = (props) => {
                         dimensionId: props.dimensionId,
                     }).then(e => {
                         message.success("删除成功");
+                    }).catch(() => {
+
                     })
                 } else {
                     //删除这个用户全部维度
@@ -75,6 +77,8 @@ const User: React.FC<Props> = (props) => {
                         userId: record.id,
                     }).then(e => {
                         message.success("删除成功");
+                    }).catch(() => {
+
                     })
                 }
             },

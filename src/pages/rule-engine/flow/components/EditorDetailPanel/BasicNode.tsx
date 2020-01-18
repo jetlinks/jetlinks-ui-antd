@@ -50,6 +50,8 @@ const BasicNode: React.FC<Props> = (props) => {
                 if (response.status === 200) {
                     setRunningNode(response.result);
                 }
+            }).catch(() => {
+
             });
             timingPollLog();
         }
@@ -172,6 +174,8 @@ const BasicNode: React.FC<Props> = (props) => {
                         printLog({ level: 'info', content: `error:${startResponse.message}` });
                     }
                 }, 500);//延迟500ms,在集群时，可能存在节点配置同步不及时的问题。
+            }).catch(() => {
+
             });
         });
     }
@@ -189,6 +193,8 @@ const BasicNode: React.FC<Props> = (props) => {
                 } else {
                     message.error('开启DEBUG失败');
                 }
+            }).catch(() => {
+
             })
         }
     }
@@ -224,6 +230,8 @@ const BasicNode: React.FC<Props> = (props) => {
                     printLog({ level: 'error', content: `关闭会话失败${response.message}` });
                 }
                 sessionStorage.removeItem('ruleEngineDebugSessionId');
+            }).catch(() => {
+
             });
         }
     }
@@ -253,6 +261,8 @@ const BasicNode: React.FC<Props> = (props) => {
                         call();
                     }
                 }
+            }).catch(() => {
+
             })
         });
     }

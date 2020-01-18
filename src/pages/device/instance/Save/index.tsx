@@ -38,6 +38,8 @@ const Save: React.FC<Props> = (props) => {
         //获取下拉框数据
         apis.deviceProdcut.queryNoPagin().then(response => {
             setProductList(response.result);
+        }).catch(() => {
+
         });
     }, []);
 

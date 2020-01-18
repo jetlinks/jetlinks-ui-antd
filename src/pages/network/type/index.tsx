@@ -53,6 +53,8 @@ const Type: React.FC<Props> = (props) => {
         handleSearch();
         apis.network.support().then(response => {
             setSupportsType(response.result);
+        }).catch(() => {
+
         });
     }, []);
 
@@ -102,6 +104,8 @@ const Type: React.FC<Props> = (props) => {
         apis.network.changeStatus(item.id, type).then(response => {
             message.success('操作成功');
             handleSearch();
+        }).catch(() => {
+
         });
     }
 

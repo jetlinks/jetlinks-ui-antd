@@ -130,6 +130,8 @@ const Association: React.FC<EditableTableProps> = (props) => {
     useEffect(() => {
         apis.permission.list().then(e => {
             setPermissions(e.result.data);
+        }).catch(() => {
+
         });
     }, []);
 

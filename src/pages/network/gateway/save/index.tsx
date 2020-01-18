@@ -48,11 +48,17 @@ const Save: React.FC<Props> = (props) => {
                     }
                 })).then(response => {
                     setNetworkList(response.result);
+                }).catch(() => {
+
                 })
             }
+        }).catch(() => {
+
         });
         apis.gateway.supports().then(response => {
             setSupportList(response.result);
+        }).catch(() => {
+
         });
     }, []);
 
@@ -66,6 +72,8 @@ const Save: React.FC<Props> = (props) => {
                 }
             })).then(response => {
                 setNetworkList(response.result);
+            }).catch(() => {
+
             })
         }
     }, [provider]);

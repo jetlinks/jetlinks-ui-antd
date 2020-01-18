@@ -54,6 +54,8 @@ const Authorization: React.FC<Props> = (props) => {
         const list = temp.filter(item => (item.actions || []).length > 0);
         setPermissionList(list);
       }
+    }).catch(() => {
+
     });
     if (props.target.id) {
       apis.authorization.list(encodeQueryParam({
@@ -65,6 +67,8 @@ const Authorization: React.FC<Props> = (props) => {
         if (response.status === 200) {
           setTargetAutz(response.result);
         }
+      }).catch(() => {
+
       })
     }
 
@@ -215,6 +219,8 @@ const Authorization: React.FC<Props> = (props) => {
       if (response.status === 200) {
         message.success('授权成功');
       }
+    }).catch(() => {
+
     });
     // console.log({
     //   targetId: props.targetId,

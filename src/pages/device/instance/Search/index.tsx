@@ -30,6 +30,8 @@ const Search: React.FC<Props> = (props) => {
         //获取下拉框数据
         apis.deviceProdcut.queryNoPagin().then(e => {
             setProductList(e.result);
+        }).catch(() => {
+            //
         });
     }, []);
 

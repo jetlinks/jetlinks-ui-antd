@@ -47,6 +47,8 @@ const EditorConsole: React.FC<Props> = (props) => {
                     printLog({ level: 'error', content: `关闭会话失败${response.message}` });
                 }
                 sessionStorage.removeItem('ruleEngineDebugSessionId');
+            }).catch(() => {
+
             })
         }
         //发布事件停止调试

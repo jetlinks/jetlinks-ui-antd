@@ -29,6 +29,8 @@ const Save: React.FC<Props> = (props) => {
     useEffect(() => {
         apis.users.listNoPaging().then(e => {
             setUserList(e.result);
+        }).catch(() => {
+
         });
         getDimensions();
     }, []);
@@ -41,6 +43,8 @@ const Save: React.FC<Props> = (props) => {
                 if (e.status === 200) {
                     message.success('保存成功');
                 }
+            }).catch(() => {
+
             });
         });
     }
@@ -76,9 +80,13 @@ const Save: React.FC<Props> = (props) => {
     const getDimensions = () => {
         apis.dimensions.treeList().then(e => {
             setDimensionList(e.result);
+        }).catch(() => {
+
         });
         apis.dimensions.typeList().then(e => {
             setTypeList(e.result);
+        }).catch(() => {
+
         });
     }
 

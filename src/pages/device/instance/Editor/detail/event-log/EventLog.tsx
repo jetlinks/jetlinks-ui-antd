@@ -42,6 +42,8 @@ const EventLog: React.FC<Props> = (props) => {
             })
         ).then(response => {
             setLogData(response.result)
+        }).catch(() => {
+
         });
     }, []);
 
@@ -56,6 +58,8 @@ const EventLog: React.FC<Props> = (props) => {
             })
         ).then(response => {
             setLogData(response.result)
+        }).catch(() => {
+
         });
     }
 

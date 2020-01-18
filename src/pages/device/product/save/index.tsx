@@ -46,6 +46,8 @@ const Save: React.FC<Props> = props => {
       if (response.status === 200) {
         setProtocolSupports(response.result);
       }
+    }).catch(() => {
+
     });
     if (props.data && props.data.messageProtocol) {
       onMessageProtocolChange(props.data.messageProtocol);
@@ -61,6 +63,8 @@ const Save: React.FC<Props> = props => {
       if (response.status === 200) {
         setProtocolTransports(response.result);
       }
+    }).catch(() => {
+
     });
   };
 
@@ -80,6 +84,8 @@ const Save: React.FC<Props> = props => {
           setConfigName(response.result.name);
         }
       }
+    }).catch(() => {
+
     });
   };
 

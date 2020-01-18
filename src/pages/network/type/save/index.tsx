@@ -29,9 +29,13 @@ const Save: React.FC<Props> = (props) => {
     useEffect(() => {
         apis.network.support().then(response => {
             setSupportsType(response.result)
+        }).catch(() => {
+
         })
         apis.certificate.listNoPaging({ paging: false }).then(response => {
             setCertificateList(response.result);
+        }).catch(() => {
+
         });
     }, []);
     const renderForm = () => {

@@ -85,6 +85,20 @@ const errorHandler = (error: { response: Response }): Response | undefined => {
     });
     return;
     // router.push('/user/login');
+  } else if (status === 403) {
+    response.json().then((res: any) => {
+      notification.error({
+        key: 'error',
+        message: `${res.message}`,
+      });
+    });
+    return;
+    // router.push('/exception/403');
+    // return;
+  } else if (status === 404) {
+    console.log(status, '状态');
+    router.push('/exception/404');
+    return;
   } else {
     notification.error({
       key: 'error',

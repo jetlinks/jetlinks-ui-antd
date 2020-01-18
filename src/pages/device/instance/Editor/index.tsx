@@ -159,13 +159,14 @@ const Editor: React.FC<Props> = (props) => {
             tabActiveKey={activeKey}
             onTabChange={(key: string) => {
 
-                if (key === 'log') {
-                    handleSearchLog({
-                        pageIndex: 0,
-                        pageSize: 10,
-                        terms: { 'deviceId': id }
-                    })
-                } else if (key === 'status') {
+                // if (key === 'log') {
+                //     handleSearchLog({
+                //         pageIndex: 0,
+                //         pageSize: 10,
+                //         terms: { 'deviceId': id }
+                //     })
+                // } else 
+                if (key === 'status') {
                     getDeviceState()
                 }
                 setActiveKey(key);

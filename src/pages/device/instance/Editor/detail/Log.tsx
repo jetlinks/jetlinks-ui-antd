@@ -19,14 +19,12 @@ interface State {
 
 const Log: React.FC<Props> = (props) => {
 
-    console.log(props.deviceId, 'tttt');
-
     const initState: State = {
         log: {}
     }
 
     const { form: { getFieldDecorator }, form } = props;
-    const [params, setParams] = useState({});
+    const [params, setParams] = useState({ deviceId: props.deviceId });
     const [log, setLog] = useState(initState.log);
 
     useEffect(() => {
@@ -35,15 +33,21 @@ const Log: React.FC<Props> = (props) => {
             pageSize: 10,
             terms: {
                 deviceId: props.deviceId,
+            },
+            sorts: {
+                field: 'createTime',
+                order: 'desc'
             }
         })
     }, []);
 
     const loadLogData = (param: any) => {
         apis.deviceInstance.logs(
-            encodeQueryParam(params)
+            encodeQueryParam(param)
         ).then(response => {
             setLog(response.result);
+        }).catch(() => {
+
         });
     }
 
@@ -89,14 +93,27 @@ const Log: React.FC<Props> = (props) => {
 
     const onSearch = () => {
         const params = form.getFieldsValue();
-        if (params.createTime$btw) {
-            const formatDate = params.createTime$btw.map((e: Moment) => moment(e).format('YYYY-MM-DD HH:mm:ss'))
-            params.createTime$btw = formatDate.join(',');
+        console.log(params, 'sou')
+        if (params.createTime$BTW) {
+            const formatDate = params.createTime$BTW.map((e: Moment) => moment(e).format('YYYY-MM-DD HH:mm:ss'))
+            params.createTime$BTW = formatDate.join(',');
         }
         if (params.type$IN) {
             params.type$IN = params.type$IN.join(',');
         }
-        setParams(params);
+        // setParams(params);
+        setParams({ ...params, deviceId: props.deviceId });
+        loadLogData({
+            pageSize: 10,
+            pageIndex: 0,
+            terms: { ...params, deviceId: props.deviceId },
+            sorts: {
+                field: 'createTime',
+                order: 'desc'
+            }
+        });
+
+
         // props.search({
         //     pageIndex: props.data.pageIndex,
         //     pageSize: props.data.pageSize,
@@ -105,12 +122,18 @@ const Log: React.FC<Props> = (props) => {
     }
 
     const resetSearch = () => {
-        const params = form.resetFields();
-        // props.search({
-        //     pageSize: props.data.pageSize,
-        //     pageIndex: props.data.pageIndex,
-        //     terms: params
-        // });
+        form.resetFields();
+        loadLogData({
+            pageIndex: 0,
+            pageSize: 10,
+            terms: {
+                deviceId: props.deviceId,
+            },
+            sorts: {
+                field: 'createTime',
+                order: 'desc'
+            }
+        })
     }
 
     const onTableChange = (pagination: PaginationConfig, filters: any, sorter: any, extra: any) => {
@@ -118,7 +141,10 @@ const Log: React.FC<Props> = (props) => {
             pageIndex: Number(pagination.current) - 1,
             pageSize: pagination.pageSize,
             terms: params,
-            sorts: sorter,
+            sorts: {
+                field: 'createTime',
+                order: 'desc'
+            },
         });
         // props.search({
         //     pageIndex: Number(pagination.current) - 1,
