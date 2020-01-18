@@ -156,7 +156,7 @@ export default {
                 {
                   path: '/device/protocol',
                   name: '协议管理',
-                  authority: ['protocol'],
+                  authority: ['protocol-supports'],
                   component: './device/protocol',
                 },
                 {
@@ -393,7 +393,7 @@ export default {
   // chainWebpack: webpackPlugin,
   proxy: {
     '/jetlinks': {
-      target: 'http://192.168.3.110:8848/',
+      target: 'http://192.168.3.89:8848/',
       // target: 'http://2.jetlinks.org:9010/',
       changeOrigin: true,
       pathRewrite: { '^/jetlinks': '' },

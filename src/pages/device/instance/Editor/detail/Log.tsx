@@ -93,7 +93,6 @@ const Log: React.FC<Props> = (props) => {
 
     const onSearch = () => {
         const params = form.getFieldsValue();
-        console.log(params, 'sou')
         if (params.createTime$BTW) {
             const formatDate = params.createTime$BTW.map((e: Moment) => moment(e).format('YYYY-MM-DD HH:mm:ss'))
             params.createTime$BTW = formatDate.join(',');
