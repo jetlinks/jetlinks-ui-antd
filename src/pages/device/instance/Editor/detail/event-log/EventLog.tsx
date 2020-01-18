@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { Table, Divider, Modal } from "antd";
 import { ColumnProps, PaginationConfig, SorterResult } from "antd/lib/table";
 import apis from "@/services";
@@ -18,8 +18,6 @@ interface State {
 
 const EventLog: React.FC<Props> = (props) => {
 
-    console.log(props.data, props.item, '数据');
-
     const initState: State = {
         eventColumns: props.item.valueType.properties.map((item: any) => {
             return {
@@ -27,22 +25,27 @@ const EventLog: React.FC<Props> = (props) => {
                 dataIndex: item.id
             }
         }),
-        logData: props.data
+        logData: {}
     }
 
     const [logData, setLogData] = useState(initState.logData);
 
 
+    useEffect(() => {
+        apis.deviceInstance.eventData(
+            props.type,
+            props.item.id,
+            encodeQueryParam({
+                terms: { deviceId: props.deviceId },
+                pageIndex: 0,
+                pageSize: 10,
+            })
+        ).then(response => {
+            setLogData(response.result)
+        });
+    }, []);
 
     const onTableChange = (pagination: PaginationConfig, filters: any, sorter: SorterResult<any>, extra: any) => {
-        // handleSearch({
-        //     pageIndex: Number(pagination.current) - 1,
-        //     pageSize: pagination.pageSize,
-        //     terms: searchParam,
-        //     sorts: sorter,
-        // });
-        // apis.deviceInstance.
-        //smoke001,fire_alarm,fa3j17
         apis.deviceInstance.eventData(
             props.type,
             props.item.id,

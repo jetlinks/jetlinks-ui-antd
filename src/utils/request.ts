@@ -67,16 +67,16 @@ const errorHandler = (error: { response: Response }): Response | undefined => {
     });
     return response;
   } else if (status === 500) {
-    try {
-      response.json().then((res: any) => {
-        notification.error({
-          key: 'error',
-          message: `${res.message}`,
-        });
+    // try {
+    response.json().then((res: any) => {
+      notification.error({
+        key: 'error',
+        message: `${res.message}`,
       });
-    } catch (error) {
-      router.push('/user/login');
-    }
+    });
+    // } catch (error) {
+    //   router.push('/user/login');
+    // }
     return;
   } else if (status === 504) {
     notification.error({

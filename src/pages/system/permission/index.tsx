@@ -14,7 +14,7 @@ interface Props {
     permission: any;
     dispatch: Dispatch;
     location: Location;
-    loading: Loading;
+    loading: boolean;
 }
 
 interface State {
@@ -156,7 +156,7 @@ const PermissionList: React.FC<Props> = (props) => {
                     </div>
                     <div className={styles.StandardTable}>
                         <Table
-                            loading={props.loading.global}
+                            loading={props.loading}
                             dataSource={(result || {}).data}
                             columns={columns}
                             rowKey={'id'}
@@ -195,5 +195,6 @@ const PermissionList: React.FC<Props> = (props) => {
     )
 }
 export default connect(({ permission, loading }: ConnectState) => ({
-    permission, loading
+    permission,
+    loading: loading.models.permission
 }))(PermissionList)

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, Fragment } from "react";
 import ChartCard from "@/pages/analysis/components/Charts/ChartCard";
-import { Tooltip, Icon, Row, Col, Tag, Badge, Spin } from "antd";
+import { Tooltip, Icon, Row, Col, Tag, Badge, Spin, message } from "antd";
 import { MiniArea, MiniProgress } from "@/pages/analysis/components/Charts";
 import { IVisitData } from "@/pages/analysis/data";
 import moment from "moment";
@@ -143,6 +143,8 @@ const Status: React.FC<Props> = (props) => {
         apis.deviceInstance.properties(props.device.productId, props.device.id)
             .then(response => {
                 setPropertiesData(response.result);
+            }).catch(response => {
+                // message.error(response.message)
             });
     }
 

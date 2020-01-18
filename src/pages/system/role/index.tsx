@@ -14,7 +14,7 @@ interface Props {
     role: any;
     dispatch: Dispatch;
     location: Location;
-    loading: Loading;
+    loading: boolean;
 }
 
 
@@ -149,7 +149,7 @@ const RoleList: React.FC<Props> = (props) => {
                     </div>
                     <div className={styles.StandardTable}>
                         <Table
-                            loading={props.loading.global}
+                            loading={props.loading}
                             dataSource={(result || {}).data}
                             columns={columns}
                             rowKey={'id'}
@@ -181,5 +181,5 @@ const RoleList: React.FC<Props> = (props) => {
 }
 
 export default connect(({ role, loading }: ConnectState) => ({
-    role, loading
+    role, loading: loading.models.role
 }))(RoleList);

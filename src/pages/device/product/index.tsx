@@ -23,7 +23,7 @@ interface Props {
     dispatch: Dispatch;
     deviceProduct: any;
     location: Location;
-    loading: Loading;
+    loading: boolean;
 }
 
 interface State {
@@ -214,7 +214,7 @@ const DeviceModel: React.FC<Props> = (props) => {
                     </div>
                     <div className={styles.StandardTable}>
                         <Table
-                            loading={props.loading.global}
+                            loading={props.loading}
                             dataSource={(result || {}).data}
                             columns={columns}
                             rowKey={'id'}
@@ -246,5 +246,5 @@ const DeviceModel: React.FC<Props> = (props) => {
 }
 export default connect(({ deviceProduct, loading }: ConnectState) => ({
     deviceProduct,
-    loading,
+    loading: loading.models.deviceProduct,
 }))(DeviceModel);

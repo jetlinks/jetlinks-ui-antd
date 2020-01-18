@@ -13,7 +13,7 @@ interface Props {
     certificate: any;
     dispatch: Dispatch;
     location: Location;
-    loading: Loading;
+    loading: boolean;
 }
 
 interface State {
@@ -140,7 +140,7 @@ const CertificateList: React.FC<Props> = (props) => {
                     </div>
                     <div className={styles.StandardTable}>
                         <Table
-                            // loading={props.loading.global}
+                            loading={props.loading}
                             dataSource={(result || {}).data}
                             columns={columns}
                             rowKey={'id'}
@@ -172,5 +172,5 @@ const CertificateList: React.FC<Props> = (props) => {
     )
 }
 export default connect(({ certificate, loading }: ConnectState) => ({
-    certificate, loading
+    certificate, loading: loading.models.certificate
 }))(CertificateList)

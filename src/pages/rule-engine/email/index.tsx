@@ -13,7 +13,7 @@ interface Props {
     email: any;
     dispatch: Dispatch;
     location: Location;
-    loading: Loading;
+    loading: boolean;
 }
 
 interface State {
@@ -132,7 +132,7 @@ const EmailList: React.FC<Props> = (props) => {
     }
 
 
-    const onTableChange = (pagination: PaginationConfig, filters: Record<keyof EmailItem, string[]>, sorter: SorterResult<EmailItem>, extra: any) => {
+    const onTableChange = (pagination: PaginationConfig, filters: any, sorter: SorterResult<EmailItem>, extra: any) => {
         handleSearch({
             pageIndex: Number(pagination.current) - 1,
             pageSize: pagination.pageSize,
@@ -163,7 +163,7 @@ const EmailList: React.FC<Props> = (props) => {
                     </div>
                     <div className={styles.StandardTable}>
                         <Table
-                            // loading={props.loading.global}
+                            loading={props.loading}
                             dataSource={(result || {}).data}
                             columns={columns}
                             rowKey={'id'}
@@ -195,5 +195,5 @@ const EmailList: React.FC<Props> = (props) => {
     )
 }
 export default connect(({ email, loading }: ConnectState) => ({
-    email, loading
+    email, loading: loading.models.email
 }))(EmailList)

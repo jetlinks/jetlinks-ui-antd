@@ -15,7 +15,7 @@ import apis from "@/services";
 interface Props {
     gateway: any;
     dispatch: Dispatch;
-    loading: Loading;
+    loading: boolean;
 }
 interface State {
     data: any;
@@ -192,7 +192,7 @@ const Gateway: React.FC<Props> = (props) => {
                     </div>
                     <div className={styles.StandardTable}>
                         <Table
-                            loading={props.loading.global}
+                            loading={props.loading}
                             dataSource={result.data}
                             columns={columns}
                             rowKey={'id'}
@@ -218,5 +218,5 @@ const Gateway: React.FC<Props> = (props) => {
 }
 
 export default connect(({ gateway, loading }: ConnectState) => ({
-    gateway, loading
+    gateway, loading: loading.models.gateway
 }))(Gateway);

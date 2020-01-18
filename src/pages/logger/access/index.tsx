@@ -14,7 +14,7 @@ interface Props {
     accessLogger: any;
     dispatch: Dispatch;
     location: Location;
-    loading: Loading;
+    loading: boolean;
 }
 
 interface State {
@@ -164,9 +164,9 @@ const AccessLoggerList: React.FC<Props> = (props) => {
                     </div>
                     <div className={styles.StandardTable}>
                         <Table
-                            // loading={props.loading.global}
                             dataSource={(result || {}).data}
                             columns={columns}
+                            loading={props.loading}
                             rowKey={'id'}
                             onChange={onTableChange}
                             pagination={{
@@ -196,5 +196,5 @@ const AccessLoggerList: React.FC<Props> = (props) => {
     )
 }
 export default connect(({ accessLogger, loading }: ConnectState) => ({
-    accessLogger, loading
+    accessLogger, loading: loading.models.accessLogger
 }))(AccessLoggerList);

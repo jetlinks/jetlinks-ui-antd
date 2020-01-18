@@ -15,7 +15,7 @@ import apis from "@/services";
 import { getAccessToken } from "@/utils/authority";
 
 interface Props extends FormComponentProps {
-    loading: Loading;
+    loading: boolean;
     dispatch: Dispatch;
     deviceInstance: any;
 }
@@ -273,7 +273,7 @@ const DeviceInstancePage: React.FC<Props> = (props) => {
                     </div>
                     <div className={styles.StandardTable}>
                         <Table
-                            loading={props.loading.global}
+                            loading={props.loading}
                             columns={columns}
                             dataSource={(result || {}).data}
                             rowKey='id'
@@ -323,5 +323,5 @@ const DeviceInstancePage: React.FC<Props> = (props) => {
 
 export default connect(({ deviceInstance, loading }: ConnectState) => ({
     deviceInstance,
-    loading,
+    loading: loading.models.deviceInstance,
 }))(DeviceInstancePage);

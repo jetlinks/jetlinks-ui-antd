@@ -13,7 +13,7 @@ interface Props {
   protocol: any;
   dispatch: Dispatch;
   location: Location;
-  loading: Loading;
+  loading: boolean;
 }
 
 interface State {
@@ -25,6 +25,7 @@ interface State {
 
 const ProtocolList: React.FC<Props> = props => {
   const { dispatch } = props;
+
 
   const result = props.protocol.result;
 
@@ -71,10 +72,10 @@ const ProtocolList: React.FC<Props> = props => {
               <a>取消发布</a>
             </Popconfirm>
           ) : (
-            <Popconfirm title="确认发布？" onConfirm={() => changeDeploy('_deploy', record)}>
-              <a>发布</a>
-            </Popconfirm>
-          )}
+              <Popconfirm title="确认发布？" onConfirm={() => changeDeploy('_deploy', record)}>
+                <a>发布</a>
+              </Popconfirm>
+            )}
         </Fragment>
       ),
     },
@@ -171,7 +172,7 @@ const ProtocolList: React.FC<Props> = props => {
           </div>
           <div className={styles.StandardTable}>
             <Table
-              // loading={props.loading.global}
+              loading={props.loading}
               dataSource={(result || {}).data}
               columns={columns}
               rowKey={'id'}
@@ -213,5 +214,5 @@ const ProtocolList: React.FC<Props> = props => {
 };
 export default connect(({ protocol, loading }: ConnectState) => ({
   protocol,
-  loading,
+  loading: loading.models.protocol,
 }))(ProtocolList);

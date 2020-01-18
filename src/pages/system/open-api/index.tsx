@@ -14,7 +14,7 @@ interface Props {
     openApi: any;
     dispatch: Dispatch;
     location: Location;
-    loading: Loading;
+    loading: boolean;
 }
 
 
@@ -160,7 +160,7 @@ const OpenApiList: React.FC<Props> = (props) => {
                     </div>
                     <div className={styles.StandardTable}>
                         <Table
-                            loading={props.loading.global}
+                            loading={props.loading}
                             dataSource={(result || {}).data}
                             columns={columns}
                             rowKey={'id'}
@@ -193,5 +193,5 @@ const OpenApiList: React.FC<Props> = (props) => {
 }
 
 export default connect(({ openApi, loading }: ConnectState) => ({
-    openApi, loading
+    openApi, loading: loading.models.openApi
 }))(OpenApiList);

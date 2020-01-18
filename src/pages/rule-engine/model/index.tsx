@@ -15,7 +15,7 @@ interface Props {
     ruleModel: any;
     dispatch: Dispatch;
     location: Location;
-    loading: Loading;
+    loading: boolean;
 }
 
 interface State {
@@ -148,7 +148,7 @@ const RuleModelList: React.FC<Props> = (props) => {
     }
 
 
-    const onTableChange = (pagination: PaginationConfig, filters: Record<keyof RuleModelItem, string[]>, sorter: SorterResult<RuleModelItem>, extra: any) => {
+    const onTableChange = (pagination: PaginationConfig, filters: any, sorter: SorterResult<RuleModelItem>, extra: any) => {
         handleSearch({
             pageIndex: Number(pagination.current) - 1,
             pageSize: pagination.pageSize,
@@ -179,8 +179,8 @@ const RuleModelList: React.FC<Props> = (props) => {
                     </div>
                     <div className={styles.StandardTable}>
                         <Table
-                            // loading={props.loading.global}
-                            dataSource={(result || {}).data}
+                            loading={props.loading}
+                            dataSource={result?.data}
                             columns={columns}
                             rowKey={'id'}
                             onChange={onTableChange}
@@ -211,5 +211,5 @@ const RuleModelList: React.FC<Props> = (props) => {
     )
 }
 export default connect(({ ruleModel, loading }: ConnectState) => ({
-    ruleModel, loading
+    ruleModel, loading: loading.models.ruleModel
 }))(RuleModelList)

@@ -48,30 +48,30 @@ export interface Loading {
   global: boolean;
   effects: { [key: string]: boolean | undefined };
   models: {
-    global?: boolean;
-    menu?: boolean;
-    setting?: boolean;
-    user?: boolean;//当前登录用户
-    users?: boolean;//用户管理
-    role?: boolean;
-    permission?: boolean;
-    deviceProduct?: boolean;
-    deviceInstance?: boolean;
-    email?: boolean;
-    sms?: boolean;
-    mqttClient?: boolean;
-    ruleInstance?: boolean;
-    ruleModel?: boolean;
-    protocol?: boolean;
-    openApi?: boolean;
-    certificate?: boolean;
-    coapClient?: boolean;
-    httpClient?: boolean;
-    websocketClient?: boolean;
-    accessLogger?: boolean;
-    systemLogger?: boolean;
-    networkType?: boolean;
-    gateway?: boolean;
+    global: boolean;
+    menu: boolean;
+    setting: boolean;
+    user: boolean;//当前登录用户
+    users: boolean;//用户管理
+    role: boolean;
+    permission: boolean;
+    deviceProduct: boolean;
+    deviceInstance: boolean;
+    email: boolean;
+    sms: boolean;
+    mqttClient: boolean;
+    ruleInstance: boolean;
+    ruleModel: boolean;
+    protocol: boolean;
+    openApi: boolean;
+    certificate: boolean;
+    coapClient: boolean;
+    httpClient: boolean;
+    websocketClient: boolean;
+    accessLogger: boolean;
+    systemLogger: boolean;
+    networkType: boolean;
+    gateway: boolean;
   };
 }
 

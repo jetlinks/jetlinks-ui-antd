@@ -15,7 +15,7 @@ import encodeQueryParam from "@/utils/encodeParam";
 interface Props extends FormComponentProps {
     dispatch: Dispatch;
     networkType: any;
-    loading: Loading
+    loading: boolean
 }
 interface State {
     saveVisible: boolean;
@@ -158,7 +158,7 @@ const Type: React.FC<Props> = (props) => {
                 <List<any>
                     rowKey="id"
                     grid={{ gutter: 24, xl: 4, lg: 3, md: 3, sm: 2, xs: 1 }}
-                    loading={props.loading.global}
+                    loading={props.loading}
                     dataSource={[{}, ...result]}
                     renderItem={item => {
                         if (item && item.id) {
@@ -258,5 +258,5 @@ const Type: React.FC<Props> = (props) => {
 }
 
 export default connect(({ networkType, loading }: ConnectState) => ({
-    networkType, loading
+    networkType, loading: loading.models.networkType
 }))(Form.create<Props>()(Type))

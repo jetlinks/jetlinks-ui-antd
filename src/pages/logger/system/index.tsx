@@ -14,7 +14,7 @@ interface Props {
     systemLogger: any;
     dispatch: Dispatch;
     location: Location;
-    loading: Loading;
+    loading: boolean;
 }
 
 interface State {
@@ -121,7 +121,7 @@ const SystemLoggerList: React.FC<Props> = (props) => {
     }
 
 
-    const onTableChange = (pagination: PaginationConfig, filters: Record<keyof SystemLoggerItem, string[]>, sorter: SorterResult<SystemLoggerItem>, extra: any) => {
+    const onTableChange = (pagination: PaginationConfig, filters: any, sorter: SorterResult<SystemLoggerItem>, extra: any) => {
         handleSearch({
             pageIndex: Number(pagination.current) - 1,
             pageSize: pagination.pageSize,
@@ -144,7 +144,7 @@ const SystemLoggerList: React.FC<Props> = (props) => {
                     </div>
                     <div className={styles.StandardTable}>
                         <Table
-                            // loading={props.loading.global}
+                            loading={props.loading}
                             dataSource={(result || {}).data}
                             columns={columns}
                             rowKey={'createTime'}
@@ -176,5 +176,5 @@ const SystemLoggerList: React.FC<Props> = (props) => {
     )
 }
 export default connect(({ systemLogger, loading }: ConnectState) => ({
-    systemLogger, loading
+    systemLogger, loading: loading.models.systemLogger
 }))(SystemLoggerList)

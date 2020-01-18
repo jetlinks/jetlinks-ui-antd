@@ -114,6 +114,12 @@ const Log: React.FC<Props> = (props) => {
     }
 
     const onTableChange = (pagination: PaginationConfig, filters: any, sorter: any, extra: any) => {
+        loadLogData({
+            pageIndex: Number(pagination.current) - 1,
+            pageSize: pagination.pageSize,
+            terms: params,
+            sorts: sorter,
+        });
         // props.search({
         //     pageIndex: Number(pagination.current) - 1,
         //     pageSize: pagination.pageSize,

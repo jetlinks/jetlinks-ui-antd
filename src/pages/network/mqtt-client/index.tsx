@@ -14,7 +14,7 @@ interface Props {
     mqttClient: any;
     dispatch: Dispatch;
     location: Location;
-    loading: Loading;
+    loading: boolean;
 }
 
 interface State {
@@ -136,7 +136,7 @@ const MqttClientList: React.FC<Props> = (props) => {
     }
 
 
-    const onTableChange = (pagination: PaginationConfig, filters: Record<keyof MqttItem, string[]>, sorter: SorterResult<MqttItem>, extra: any) => {
+    const onTableChange = (pagination: PaginationConfig, filters: any, sorter: SorterResult<MqttItem>, extra: any) => {
         handleSearch({
             pageIndex: Number(pagination.current) - 1,
             pageSize: pagination.pageSize,
@@ -167,7 +167,7 @@ const MqttClientList: React.FC<Props> = (props) => {
                     </div>
                     <div className={styles.StandardTable}>
                         <Table
-                            // loading={props.loading.global}
+                            loading={props.loading}
                             dataSource={(result || {}).data}
                             columns={columns}
                             rowKey={'id'}
@@ -203,5 +203,5 @@ const MqttClientList: React.FC<Props> = (props) => {
     )
 }
 export default connect(({ mqttClient, loading }: ConnectState) => ({
-    mqttClient, loading
+    mqttClient, loading: loading.models.mqttClient
 }))(MqttClientList)
