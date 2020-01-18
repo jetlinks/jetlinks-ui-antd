@@ -12,7 +12,7 @@ interface Props extends FormComponentProps {
 const Save: React.FC<Props> = (props) => {
     const { form: { getFieldDecorator }, form } = props;
     // const [data, setData] = useState(props.data);
-    const password = randomString(16);
+    //const password = randomString(16);
     const [id, setId] = useState(randomString(16));
     const [secureKey, setSecureKey] = useState(randomString(24));
     const submitData = () => {
@@ -21,9 +21,9 @@ const Save: React.FC<Props> = (props) => {
             if (!props.data.id) {
                 fileValue.status = 1;
             }
-            if (password === fileValue.password) {
+            /*if (password === fileValue.password) {
                 fileValue.password = undefined;
-            }
+            }*/
             props.save(fileValue);
         });
     }
@@ -83,8 +83,7 @@ const Save: React.FC<Props> = (props) => {
                     label="密码"
                 >
                     {getFieldDecorator('password', {
-                        rules: [{ required: true }],
-                        initialValue: password
+                        rules: [{ required: true }]
                     })(<Input.Password placeholder="请输入" />)}
                 </Form.Item>
                 <Form.Item
