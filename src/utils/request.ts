@@ -77,19 +77,20 @@ const errorHandler = (error: { response: Response }): Response | undefined => {
     } catch (error) {
       router.push('/user/login');
     }
+    return;
   } else if (status === 504) {
     notification.error({
       key: 'error',
       message: '服务器错误'
     });
-    return response;
+    return;
     // router.push('/user/login');
   } else {
     notification.error({
       key: 'error',
       message: '服务器内部错误',
     });
-    return response;
+    return;
   }
   // } else if (!response) {
   //   notification.error({

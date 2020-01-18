@@ -38,6 +38,7 @@ const Save: React.FC<Props> = (props) => {
         accept: '.jar',
         name: 'file',
         action: `/jetlinks/file/static`,
+        showUploadList: false,
         headers: {
             'X-Access-Token': getAccessToken(),
         },

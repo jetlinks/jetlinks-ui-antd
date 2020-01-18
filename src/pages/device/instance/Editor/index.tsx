@@ -124,10 +124,12 @@ const Editor: React.FC<Props> = (props) => {
         info: <Info data={data} />,
         status: <Status device={data} />,
         log: <Log
-            data={logs}
-            search={(param: any) => {
-                handleSearchLog(param)
-            }} />,
+            deviceId={id}
+        // data={logs}
+        // search={(param: any) => {
+        //     handleSearchLog(param)
+        // }} 
+        />,
         debugger: <Debugger />,
     }
 

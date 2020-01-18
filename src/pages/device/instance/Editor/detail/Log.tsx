@@ -4,17 +4,48 @@ import { Table, Divider, Card, Form, Row, Col, Input, Button, DatePicker, Modal,
 import { ColumnProps, PaginationConfig } from "antd/lib/table";
 import { FormComponentProps } from "antd/es/form";
 import moment, { Moment } from "moment";
-import MonacoEditor from "react-monaco-editor";
+import apis from "@/services";
+import encodeQueryParam from "@/utils/encodeParam";
 
 interface Props extends FormComponentProps {
-    data: any;
-    search: Function
+    deviceId: string;
+    // data: any;
+    // search: Function
+}
+interface State {
+    log: any;
 }
 
 
 const Log: React.FC<Props> = (props) => {
+
+    console.log(props.deviceId, 'tttt');
+
+    const initState: State = {
+        log: {}
+    }
+
     const { form: { getFieldDecorator }, form } = props;
     const [params, setParams] = useState({});
+    const [log, setLog] = useState(initState.log);
+
+    useEffect(() => {
+        loadLogData({
+            pageIndex: 0,
+            pageSize: 10,
+            terms: {
+                deviceId: props.deviceId,
+            }
+        })
+    }, []);
+
+    const loadLogData = (param: any) => {
+        apis.deviceInstance.logs(
+            encodeQueryParam(params)
+        ).then(response => {
+            setLog(response.result);
+        });
+    }
 
     const column: ColumnProps<any>[] = [
         {
@@ -66,29 +97,29 @@ const Log: React.FC<Props> = (props) => {
             params.type$IN = params.type$IN.join(',');
         }
         setParams(params);
-        props.search({
-            pageIndex: props.data.pageIndex,
-            pageSize: props.data.pageSize,
-            terms: params,
-        });
+        // props.search({
+        //     pageIndex: props.data.pageIndex,
+        //     pageSize: props.data.pageSize,
+        //     terms: params,
+        // });
     }
 
     const resetSearch = () => {
         const params = form.resetFields();
-        props.search({
-            pageSize: props.data.pageSize,
-            pageIndex: props.data.pageIndex,
-            terms: params
-        });
+        // props.search({
+        //     pageSize: props.data.pageSize,
+        //     pageIndex: props.data.pageIndex,
+        //     terms: params
+        // });
     }
 
     const onTableChange = (pagination: PaginationConfig, filters: any, sorter: any, extra: any) => {
-        props.search({
-            pageIndex: Number(pagination.current) - 1,
-            pageSize: pagination.pageSize,
-            terms: params,
-            sorts: sorter,
-        });
+        // props.search({
+        //     pageIndex: Number(pagination.current) - 1,
+        //     pageSize: pagination.pageSize,
+        //     terms: params,
+        //     sorts: sorter,
+        // });
     }
 
 
@@ -152,19 +183,19 @@ const Log: React.FC<Props> = (props) => {
                     </Form>
                 </div>
                 <Table
-                    rowKey={record => record.createTime}
+                    rowKey='id'
                     columns={column}
-                    dataSource={props.data.data}
+                    dataSource={log.data}
                     onChange={onTableChange}
                     pagination={{
-                        current: props.data.pageIndex + 1,
-                        total: props.data.total,
-                        pageSize: props.data.pageSize,
+                        current: log.pageIndex + 1,
+                        total: log.total,
+                        pageSize: log.pageSize,
                         showQuickJumper: true,
                         showSizeChanger: true,
                         pageSizeOptions: ['10', '20', '50', '100'],
                         showTotal: (total: number) => {
-                            return `共 ${total} 条记录 第  ` + (props.data.pageIndex + 1) + '/' + Math.ceil(props.data.total / props.data.pageSize) + '页';
+                            return `共 ${total} 条记录 第  ` + (log.pageIndex + 1) + '/' + Math.ceil(log.total / log.pageSize) + '页';
                         }
                     }}
                 />

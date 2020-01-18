@@ -243,16 +243,13 @@ const Status: React.FC<Props> = (props) => {
                 terms: { deviceId: props.device.id }
             })
         ).then(response => {
-            const tempEvent = response.result;
-            // tempEvent.total = 666666;
-            eventData.forEach(item => {
-                if (item.eventId === item.id) {
-                    item.data = tempEvent;
+            // const tempEvent = response.result;
+            eventData.forEach(i => {
+                if (i.eventId === item.id) {
+                    i.data = response.result;
                 }
             });
-            // console.log([...eventData], '刷新后');
             setEventData([...eventData])
-
 
             //关闭加载中状态
             const { events } = metadata;
@@ -267,6 +264,8 @@ const Status: React.FC<Props> = (props) => {
             setMetadata({ ...metadata });
         });
     }
+
+    console.log(eventData, '事件数据');
 
     const refreshProperties = (item: any) => {
         const { properties } = metadata;
