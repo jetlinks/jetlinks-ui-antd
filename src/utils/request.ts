@@ -66,15 +66,30 @@ const errorHandler = (error: { response: Response }): Response | undefined => {
       }
     });
     return response;
-  } else if (status === 500 || status === 504) {
-    response.json().then((res: any) => {
-      notification.error({
-        key: 'error',
-        message: `${res.message}`,
+  } else if (status === 500) {
+    try {
+      response.json().then((res: any) => {
+        notification.error({
+          key: 'error',
+          message: `${res.message}`,
+        });
       });
+    } catch (error) {
+      router.push('/user/login');
+    }
+  } else if (status === 504) {
+    notification.error({
+      key: 'error',
+      message: '服务器错误'
     });
+    return response;
+    // router.push('/user/login');
   } else {
-    return;
+    notification.error({
+      key: 'error',
+      message: '服务器内部错误',
+    });
+    return response;
   }
   // } else if (!response) {
   //   notification.error({

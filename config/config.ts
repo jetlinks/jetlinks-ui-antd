@@ -75,8 +75,8 @@ export default {
     ie: 11,
   },
   history: 'hash',
-  base: './',
-  publicPath: "./",
+  // base: './',
+  // publicPath: "./",
   // umi routes: https://umijs.org/zh/guide/router.html
   routes: [
     {
@@ -375,7 +375,7 @@ export default {
   // chainWebpack: webpackPlugin,
   proxy: {
     '/jetlinks': {
-      target: 'http://192.168.3.110:8844/',
+      target: 'http://192.168.3.110:8848/',
       // target: 'http://2.jetlinks.org:9010/',
       changeOrigin: true,
       pathRewrite: { '^/jetlinks': '' },

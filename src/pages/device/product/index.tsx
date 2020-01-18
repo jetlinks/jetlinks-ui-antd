@@ -173,6 +173,7 @@ const DeviceModel: React.FC<Props> = (props) => {
         headers: {
             'X-Access-Token': getAccessToken(),
         },
+        showUploadList: false,
         onChange(info) {
             if (info.file.status === 'done') {
                 const fileUrl = info.file.response.result;
@@ -182,6 +183,7 @@ const DeviceModel: React.FC<Props> = (props) => {
                         payload: e,
                         callback: (response: SimpleResponse) => {
                             message.success("导入成功");
+                            handleSearch(searchParam)
                         }
                     })
                 });

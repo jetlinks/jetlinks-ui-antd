@@ -62,6 +62,7 @@ const Model: LoginModelType = {
         }
         // yield put(routerRedux.replace(redirect || '/'));
         router.replace(redirect || '/');
+        // router.replace('/');
       }
     },
 

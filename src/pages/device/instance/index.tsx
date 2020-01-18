@@ -195,7 +195,7 @@ const DeviceInstancePage: React.FC<Props> = (props) => {
 
         setProcessVisible(true);
         // const source = new EventSource(`${origin}/device-instance/deploy?:X_Access_Token=${getAccessToken()}`);
-        const source = new EventSource(`http://2.jetlinks.org:9010/device-instance/deploy?:X_Access_Token=${getAccessToken()}`);
+        const source = new EventSource(`/jetlinks/device-instance/deploy?:X_Access_Token=${getAccessToken()}`);
         source.onmessage = (e) => {
             const temp = JSON.parse(e.data).total;
             dt = dt += temp;
