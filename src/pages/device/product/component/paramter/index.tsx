@@ -383,7 +383,7 @@ const Paramter: React.FC<Props> = (props) => {
                     </Select>
                 </Form.Item>
                 {renderDetailForm()}
-                <Form.Item label="是否只读">
+                {/*<Form.Item label="是否只读">
                     <Radio.Group value={data.ioType} onChange={(e) => {
                         data.ioType = e.target.value;
                         setData({ ...data });
@@ -400,7 +400,7 @@ const Paramter: React.FC<Props> = (props) => {
                         <Radio value={true}>是</Radio>
                         <Radio value={false}>否</Radio>
                     </Radio.Group>
-                </Form.Item>
+                </Form.Item>*/}
                 <Form.Item label="描述">
                     <Input.TextArea
                         value={data.description}
