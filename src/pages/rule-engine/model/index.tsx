@@ -36,7 +36,7 @@ const RuleModelList: React.FC<Props> = (props) => {
         searchParam: { pageSize: 10 },
         saveVisible: false,
         current: {},
-    }
+    };
 
     const [searchParam, setSearchParam] = useState(initState.searchParam);
     const [saveVisible, setSaveVisible] = useState(initState.saveVisible);
@@ -47,7 +47,6 @@ const RuleModelList: React.FC<Props> = (props) => {
             title: 'ID',
             dataIndex: 'id',
         },
-
         {
             title: '名称',
             dataIndex: 'name',
@@ -57,11 +56,13 @@ const RuleModelList: React.FC<Props> = (props) => {
             dataIndex: 'version',
         },
         {
-            title: '说明',
+            title: '描述',
             dataIndex: 'description',
         },
         {
             title: '操作',
+            width: '300px',
+            align: 'center',
             render: (text, record) => (
                 <Fragment>
                     <a onClick={() => edit(record)}>编辑</a>
@@ -92,7 +93,7 @@ const RuleModelList: React.FC<Props> = (props) => {
             type: 'ruleModel/query',
             payload: encodeQueryParam(params)
         });
-    }
+    };
 
     const edit = (record: RuleModelItem) => {
 
@@ -100,7 +101,7 @@ const RuleModelList: React.FC<Props> = (props) => {
         temp.option = 'update';
         setCurrent(temp);
         setSaveVisible(true);
-    }
+    };
 
     const copyModel = (record: RuleModelItem) => {
         //修改复制model的ID
@@ -109,7 +110,7 @@ const RuleModelList: React.FC<Props> = (props) => {
         temp.id = temp.id + 'copy';
         setCurrent(temp);
         setSaveVisible(true);
-    }
+    };
 
     const deploy = (record: RuleModelItem) => {
 
@@ -119,8 +120,7 @@ const RuleModelList: React.FC<Props> = (props) => {
                 handleSearch(searchParam);
             }
         });
-
-    }
+    };
 
     const saveOrUpdate = (item: RuleModelItem) => {
         dispatch({
@@ -134,8 +134,7 @@ const RuleModelList: React.FC<Props> = (props) => {
                 }
             }
         })
-
-    }
+    };
     const handleDelete = (params: any) => {
         dispatch({
             type: 'ruleModel/remove',
@@ -145,7 +144,7 @@ const RuleModelList: React.FC<Props> = (props) => {
                 handleSearch(searchParam);
             }
         });
-    }
+    };
 
 
     const onTableChange = (pagination: PaginationConfig, filters: Record<keyof RuleModelItem, string[]>, sorter: SorterResult<RuleModelItem>, extra: any) => {
@@ -155,7 +154,7 @@ const RuleModelList: React.FC<Props> = (props) => {
             terms: searchParam,
             sorts: sorter,
         });
-    }
+    };
 
     return (
         <PageHeaderWrapper
@@ -209,7 +208,7 @@ const RuleModelList: React.FC<Props> = (props) => {
             }
         </PageHeaderWrapper>
     )
-}
+};
 export default connect(({ ruleModel, loading }: ConnectState) => ({
     ruleModel, loading
 }))(RuleModelList)

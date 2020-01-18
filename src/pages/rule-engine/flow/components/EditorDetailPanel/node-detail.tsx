@@ -251,7 +251,7 @@ nodeConfigMap.set('sms-sender', [
             labelCol: { span: 24 },
         },
         component:
-            <Input.TextArea rows={3} placeholder="变量说明：${#attr[error_stack]},${#attr[error_message]},${#attr[error_type]} " />
+            <Input.TextArea rows={3} placeholder="变量描述：${#attr[error_stack]},${#attr[error_message]},${#attr[error_type]} " />
     }
 ]);
 

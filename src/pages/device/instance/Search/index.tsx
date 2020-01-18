@@ -17,9 +17,10 @@ interface State {
 const Search: React.FC<Props> = (props) => {
 
     const initState: State = {
-        expandForm: false,
+        expandForm: true,
         productList: [],
-    }
+    };
+
     const { form, form: { getFieldDecorator } } = props;
 
     const [expandForm, setExpandForm] = useState(initState.expandForm);
@@ -39,15 +40,16 @@ const Search: React.FC<Props> = (props) => {
             key: "name$LIKE",
             component: <Input placeholder="请输入" />,
         },
-        // {
-        //     label: "设备型号",
-        //     key: "deviceType$LIKE",
-        //     component:
-        //         <Select placeholder="请选择">
-        //             <Select.Option value="gateway">网关</Select.Option>
-        //             <Select.Option value="device">设备</Select.Option>
-        //         </Select>,
-        // },
+        {
+            label: "状态",
+            key: "state",
+            component:
+                <Select placeholder="请选择">
+                  <Select.Option value="notActive">未激活</Select.Option>
+                  <Select.Option value="offline">离线</Select.Option>
+                  <Select.Option value="online">在线</Select.Option>
+                </Select>,
+          }
     ];
 
     const advancedItems: FormItemConfig[] = [
@@ -56,15 +58,6 @@ const Search: React.FC<Props> = (props) => {
             key: "name$LIKE",
             component: <Input placeholder="请输入" />,
         },
-        // {
-        //     label: "设备类型",
-        //     key: "deviceType$LIKE",
-        //     component:
-        //         <Select placeholder="请选择">
-        //             <Select.Option value="gateway">网关</Select.Option>
-        //             <Select.Option value="device">设备</Select.Option>
-        //         </Select>,
-        // },
         {
             label: "状态",
             key: "state",
@@ -101,7 +94,7 @@ const Search: React.FC<Props> = (props) => {
         const data = form.getFieldsValue();
         //TODO 查询数据
         props.search(data);
-    }
+    };
 
     const formItemLayout = {
         labelCol: {
@@ -142,14 +135,14 @@ const Search: React.FC<Props> = (props) => {
                         <Button style={{ marginLeft: 8 }} onClick={() => { form.resetFields(); props.search() }}>
                             重置
                         </Button>
-                        {/* <a style={{ marginLeft: 8 }} onClick={() => setExpandForm(!expandForm)}>
+                        {<a style={{ marginLeft: 8 }} onClick={() => setExpandForm(!expandForm)}>
                             {expandForm ? "展开" : "收起"} <Icon type={expandForm ? 'down' : 'up'} />
-                        </a> */}
+                        </a>}
                     </div>
                 </Col>
             </Row>
         </Form >
     );
-}
+};
 
 export default Form.create<Props>()(Search);

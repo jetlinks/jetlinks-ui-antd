@@ -13,6 +13,8 @@ import encodeQueryParam from "@/utils/encodeParam";
 import Save from "./Save";
 import apis from "@/services";
 import { getAccessToken } from "@/utils/authority";
+import moment from "moment";
+import {doc} from "prettier";
 
 interface Props extends FormComponentProps {
     loading: Loading;
@@ -69,6 +71,13 @@ const DeviceInstancePage: React.FC<Props> = (props) => {
             dataIndex: 'productName',
         },
         {
+          title: '注册时间',
+          dataIndex: 'registryTime',
+          width: '200px',
+          render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
+          sorter: true,
+        },
+        {
             title: '状态',
             dataIndex: 'state',
             render: (record) => {
@@ -76,11 +85,13 @@ const DeviceInstancePage: React.FC<Props> = (props) => {
             }
         },
         {
-            title: '备注',
+            title: '描述',
             dataIndex: 'describe',
         },
         {
             title: '操作',
+            width: '200px',
+            align: 'center',
             render: (record: any) => {
                 return (
                     <Fragment>

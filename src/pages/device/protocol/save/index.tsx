@@ -137,7 +137,7 @@ const Save: React.FC<Props> = (props) => {
                 }
                 <Form.Item
                     key="description"
-                    label="说明"
+                    label="描述"
                 >
                     {
                         getFieldDecorator('description', {

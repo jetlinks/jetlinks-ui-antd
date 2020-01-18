@@ -86,7 +86,7 @@ const FieldAccess: React.FC<Props> = (props) => {
             onOk={() => { buildAccess() }}
         >
             <Alert
-                message='说明: 如果角色对当前对象设置了 "新建" 或 "导入" 权限，带*号的必填字段默认设置为“读写”，不可设置为“只读”或“不可见”，否则会造成新建/导入不成功'
+                message='描述: 如果角色对当前对象设置了 "新建" 或 "导入" 权限，带*号的必填字段默认设置为“读写”，不可设置为“只读”或“不可见”，否则会造成新建/导入不成功'
                 type="info" />
 
             <Divider type="horizontal" />

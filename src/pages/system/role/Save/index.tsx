@@ -43,7 +43,7 @@ const Save: React.FC<Props> = (props) => {
                 </Form.Item>
                 <Form.Item
                     key="describe"
-                    label="备注"
+                    label="描述"
                 >
                     {getFieldDecorator('describe', {
                     })(<Input.TextArea rows={3} />)}

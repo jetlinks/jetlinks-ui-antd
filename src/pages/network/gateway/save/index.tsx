@@ -197,7 +197,7 @@ const Save: React.FC<Props> = (props) => {
                     }
                 </Form.Item>
                 {renderForm()}
-                <Form.Item label="说明">
+                <Form.Item label="描述">
                     {
                         getFieldDecorator('description', {
                             initialValue: props.data?.description

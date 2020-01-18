@@ -55,6 +55,7 @@ const DeviceModel: React.FC<Props> = (props) => {
             {
                 title: 'ID',
                 dataIndex: 'id',
+                width: '250px',
             },
             {
                 title: '型号名称',
@@ -63,18 +64,23 @@ const DeviceModel: React.FC<Props> = (props) => {
             {
                 title: '类型',
                 dataIndex: 'deviceType',
+                width: '150px',
+                align: 'center',
                 render: (text: CommonEnum) => (text || {}).text,
                 sorter: true,
             },
             {
                 title: '创建时间',
                 dataIndex: 'createTime',
+                width: '200px',
+                align: 'center',
                 render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
                 sorter: true,
             },
             {
                 title: '发布状态',
                 dataIndex: 'state',
+                align: 'center',
                 render: (text: any) => {
                     let color = text === 0 ? 'red' : 'green';
                     let status = text === 0 ? '未发布' : '已发布';
@@ -83,6 +89,8 @@ const DeviceModel: React.FC<Props> = (props) => {
             },
             {
                 title: '操作',
+                width: '250px',
+                align: 'center',
                 render: (record: DeviceProduct) => (
                     <Fragment>
                         <a onClick={() => { router.push(`/device/product/save/${record.id}`) }}>查看</a>

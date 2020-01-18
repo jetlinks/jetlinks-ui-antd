@@ -21,7 +21,7 @@ class Dictionary extends Component {
             dataIndex: 'type',
         },
         {
-            title: '备注',
+            title: '描述',
             dataIndex: 'remark',
         },
         {

@@ -56,11 +56,13 @@ const RoleList: React.FC<Props> = (props) => {
             dataIndex: 'status',
         },
         {
-            title: '备注',
+            title: '描述',
             dataIndex: 'describe',
         },
         {
             title: '操作',
+            width: '250px',
+            align: 'center',
             render: (text, record) => (
                 <Fragment>
                     <a onClick={() => edit(record)}>编辑</a>

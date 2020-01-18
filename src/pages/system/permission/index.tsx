@@ -61,11 +61,13 @@ const PermissionList: React.FC<Props> = (props) => {
             render: (text) => text === 1 ? '正常' : '禁用',
         },
         {
-            title: '备注',
+            title: '描述',
             dataIndex: 'remark',
         },
         {
             title: '操作',
+            width: '250px',
+            align: 'center',
             render: (text, record) => (
                 <Fragment>
 

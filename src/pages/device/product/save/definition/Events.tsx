@@ -50,11 +50,13 @@ const Events: React.FC<Props> = (props) => {
             render: text => gradeText[text],
         },
         {
-            title: '说明',
+            title: '描述',
             dataIndex: 'description',
         },
         {
             title: '操作',
+            width: '250px',
+            align: 'center',
             render: (text, record) => (
                 <Fragment>
                     <a onClick={() => editItem(record)}>编辑</a>

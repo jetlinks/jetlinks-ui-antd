@@ -126,7 +126,7 @@ const Save: React.FC<Props> = (props) => {
 
                 <Form.Item
                     key="userId"
-                    label="说明：新添加的维度会与用户原有维度进行合并"
+                    label="描述：新添加的维度会与用户原有维度进行合并"
                 >
                     {getFieldDecorator('userId', {
                         rules: [{ required: true }]

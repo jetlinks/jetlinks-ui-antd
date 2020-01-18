@@ -66,11 +66,13 @@ const OpenApiList: React.FC<Props> = (props) => {
             render: (text) => <Tag color={text ? '#108ee9' : '#f50'}>{text ? text.text : '禁用'}</Tag>,
         },
         {
-            title: '说明',
+            title: '描述',
             dataIndex: 'description',
         },
         {
             title: '操作',
+            width: '250px',
+            align: 'center',
             render: (text, record) => (
                 <Fragment>
                     <a onClick={() => edit(record)}>编辑</a>
@@ -106,6 +108,7 @@ const OpenApiList: React.FC<Props> = (props) => {
             callback: (response) => {
                 message.success("保存成功");
                 setSaveVisible(false);
+                setCurrentItem({});
                 handleSearch(searchParam);
             }
         })

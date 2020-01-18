@@ -67,7 +67,7 @@ const AccessLoggerList: React.FC<Props> = (props) => {
                 </Fragment>
         },
         {
-            title: '说明',
+            title: '描述',
             dataIndex: 'describe',
             // ellipsis: true,
             render: (text, record) => {
@@ -105,6 +105,8 @@ const AccessLoggerList: React.FC<Props> = (props) => {
         },
         {
             title: '操作',
+            width: '250px',
+            align: 'center',
             render: (text, record) => (
                 <Fragment>
                     <a onClick={() => edit(record)}>详情</a>

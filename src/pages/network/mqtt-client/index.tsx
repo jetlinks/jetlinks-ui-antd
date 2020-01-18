@@ -72,6 +72,8 @@ const MqttClientList: React.FC<Props> = (props) => {
         },
         {
             title: '操作',
+            width: '250px',
+            align: 'center',
             render: (text, record) => (
                 <Fragment>
                     <a onClick={() => edit(record)}>编辑</a>

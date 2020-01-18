@@ -34,6 +34,8 @@ const Log: React.FC<Props> = (props) => {
         {
             dataIndex: 'option',
             title: '操作',
+            width: '250px',
+            align: 'center',
             render: (text, record) => {
                 let content = '';
                 try {

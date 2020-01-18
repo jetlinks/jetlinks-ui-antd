@@ -137,63 +137,63 @@ const Config: React.FC<Props> = (props) => {
                             type: 'TCP客户端',
                             name: 'test-script',
                             status: '已停止',
-                            describe: '说明'
+                            describe: '描述'
                         },
                         {
                             id: 1203192,
                             type: 'TCP服务',
                             name: 'tcp-script',
                             status: '已停止',
-                            describe: '说明'
+                            describe: '描述'
                         },
                         {
                             id: 1203193,
                             type: 'MQTT客户端',
                             name: 'mqtt-script',
                             status: '已停止',
-                            describe: '说明'
+                            describe: '描述'
                         },
                         {
                             id: 1203194,
                             type: 'MQTT服务',
                             name: 'test-script',
                             status: '已停止',
-                            describe: '说明'
+                            describe: '描述'
                         },
                         {
                             id: 1203195,
                             type: 'HTTP客户端',
                             name: 'http-script',
                             status: '已停止',
-                            describe: '说明'
+                            describe: '描述'
                         },
                         {
                             id: 1203196,
                             type: 'TCP服务',
                             name: 'tcp-script',
                             status: '已停止',
-                            describe: '说明'
+                            describe: '描述'
                         },
                         {
                             id: 1203197,
                             type: 'MQTT客户端',
                             name: 'mqtt-script',
                             status: '已停止',
-                            describe: '说明'
+                            describe: '描述'
                         },
                         {
                             id: 1203198,
                             type: 'MQTT服务',
                             name: 'test-script',
                             status: '已停止',
-                            describe: '说明'
+                            describe: '描述'
                         },
                         {
                             id: 1203199,
                             type: 'HTTP客户端',
                             name: 'http-script',
                             status: '已停止',
-                            describe: '说明'
+                            describe: '描述'
                         }
                     ]}
                     renderItem={item => (

@@ -99,7 +99,7 @@ const Detail: React.FC<Props> = (props) => {
                             <Descriptions.Item label="消息协议" span={1}>{basicInfo.messageProtocol}</Descriptions.Item>
                             <Descriptions.Item label="链接协议" span={1}>{basicInfo.transportProtocol}</Descriptions.Item>
                             <Descriptions.Item label="设备类型" span={1}>{(basicInfo.deviceType || {}).text}</Descriptions.Item>
-                            <Descriptions.Item label="说明" span={2}>{basicInfo.describe}</Descriptions.Item>
+                            <Descriptions.Item label="描述" span={2}>{basicInfo.describe}</Descriptions.Item>
                         </Descriptions>
                         {/* <Descriptions
                             style={{ marginBottom: 20 }}

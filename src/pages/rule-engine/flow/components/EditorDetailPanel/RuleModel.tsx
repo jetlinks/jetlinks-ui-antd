@@ -30,7 +30,7 @@ const RuleModel: React.FC<Props> = (props) => {
 
                     })(<Input />)}
                 </Form.Item> */}
-                <Form.Item label="说明" labelCol={{ span: 24 }} wrapperCol={{ span: 24 }}>
+                <Form.Item label="描述" labelCol={{ span: 24 }} wrapperCol={{ span: 24 }}>
                     {getFieldDecorator('describe', {
                         initialValue: props.data.describe
                     })(<Input.TextArea rows={3} />)}
