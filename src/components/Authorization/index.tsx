@@ -55,11 +55,11 @@ const Authorization: React.FC<Props> = (props) => {
         setPermissionList(list);
       }
     });
-    if (props.target.targetId) {
+    if (props.target.id) {
       apis.authorization.list(encodeQueryParam({
         'paging': false,
         'terms': {
-          'dimensionTarget': props.target.targetId
+          'dimensionTarget': props.target.id
         }
       })).then(response => {
         if (response.status === 200) {
@@ -162,11 +162,31 @@ const Authorization: React.FC<Props> = (props) => {
     });
 
     //修改数据
+
+    let item: any = {};
     const update = targetAutz.find(i => i.permission === data.permissionId);
-    update.dataAccesses = [...tempFiledAccess, ...tempDataAccess];
+    if (update) {
+      item = update;
+      item.dataAccesses = [...tempFiledAccess, ...tempDataAccess];
+    } else {
+      item = {
+        permission: data.permissionId,
+        dimensionType: props.targetType,
+        dimensionTypeName: '用户',
+        dimensionTarget: props.target.id,
+        dimensionTargetName: props.target.name,
+        state: 1,
+        dataAccesses: [...tempFiledAccess, ...tempDataAccess],
+        merge: 10,
+      }
+    }
+
+    //新增（查询出来的接口没有此权限）
+
     //删除修改的数据。
     let tempAutz = targetAutz.filter(i => i.permission !== data.permissionId);
-    setTargetAutz([...tempAutz, update]);
+    console.log(tempAutz, item, data, '更细的数据');
+    setTargetAutz([...tempAutz, item]);
     message.success('保存成功');
     // autzSetting(data)
     //TODO 此处调用接口保存数据
@@ -232,6 +252,7 @@ const Authorization: React.FC<Props> = (props) => {
     // }
   }
 
+  // console.log(targetAutz, 'autssss');
   return (
     <Drawer
       title='授权'
@@ -246,7 +267,7 @@ const Authorization: React.FC<Props> = (props) => {
               rules: [{ required: true }],
               initialValue: props.target.id ? props.target.name : ''
             })(
-              <Select mode="multiple" disabled={props.target.id}>
+              <Select mode="multiple" disabled={props.target.id ? true : false}>
                 {Array.from(new Set<string>(dimensionList.map((item: any) => item.typeName))).map((type, index) => {
                   const typeData = groupBy(dimensionList, item => item.typeName)[type];
                   return (
@@ -316,6 +337,7 @@ const Authorization: React.FC<Props> = (props) => {
                 dataIndex: 'properties',
                 title: '操作',
                 render: (text, record: any) => {
+
                   const autz = targetAutz.find(item => item.permission === record.id);
                   return (
                     <Fragment>

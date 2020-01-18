@@ -4,7 +4,6 @@ import { FormComponentProps } from "antd/lib/form";
 import { Input, Modal, Select } from "antd";
 import { ConnectState } from "@/models/connect";
 import { connect } from "dva";
-import { Dispatch } from "redux";
 import apis from "@/services";
 import { DeviceProduct } from "../../product/data";
 import { DeviceInstance } from "../data";
@@ -27,6 +26,10 @@ const Save: React.FC<Props> = (props) => {
     const submitData = () => {
         form.validateFields((err, fileValue) => {
             if (err) return;
+            const product = JSON.parse(fileValue.product);
+            fileValue.productId = product.productId;
+            fileValue.productName = product.productName;
+            fileValue.product = undefined;
             props.save(fileValue);
         })
     }
@@ -71,7 +74,7 @@ const Save: React.FC<Props> = (props) => {
                     key="productId"
                     label="设备型号"
                 >
-                    {getFieldDecorator('productId', {
+                    {getFieldDecorator('product', {
                         rules: [{ required: true }],
                         initialValue: props.data.productId
                     })(
