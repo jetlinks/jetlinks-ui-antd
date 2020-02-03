@@ -2,7 +2,8 @@ import React, { Fragment, useState } from 'react';
 import { FormComponentProps } from 'antd/es/form';
 import { Form, Card, Button, Table, Divider } from 'antd';
 import { ColumnProps } from 'antd/lib/table';
-import { PropertiesMeta } from '../../component/data';
+import { PropertiesMeta } from '../../component/data.d';
+
 import PropertiesDefin from '../../component/properties';
 
 interface Props extends FormComponentProps {
@@ -25,6 +26,16 @@ const Properties: React.FC<Props> = (props: Props) => {
   const [visible, setVisible] = useState(initState.visible);
   const [data, setData] = useState(initState.data);
   const [current, setCurrent] = useState(initState.current);
+
+  const editItem = (item: any) => {
+    setVisible(true);
+    setCurrent(item);
+  };
+
+  const deleteItem = (item: any) => {
+    setData(data.filter(e => e.id !== item.id));
+    props.save(data);
+  };
 
   const columns: ColumnProps<PropertiesMeta>[] = [
     {
@@ -61,22 +72,12 @@ const Properties: React.FC<Props> = (props: Props) => {
     },
   ];
 
-  const editItem = (item: any) => {
-    setVisible(true);
-    setCurrent(item);
-  };
-
-  const deleteItem = (item: any) => {
-    setData(data.filter(e => e.id !== item.id));
-    props.save(data);
-  };
-
   const savePropertiesData = (item: PropertiesMeta) => {
     if (!item.id) {
-      item = { ...item, id: (data.length + 1).toString() };
-      data.push(item);
+      const temp = { ...item, id: (data.length + 1).toString() };
+      data.push(temp);
     } else {
-      const i = data.findIndex(i => i.id === item.id);
+      const i = data.findIndex((j: any) => j.id === item.id);
       data[i] = item;
     }
     setVisible(false);
@@ -99,8 +100,8 @@ const Properties: React.FC<Props> = (props: Props) => {
       {visible && (
         <PropertiesDefin
           data={current}
-          save={(data: PropertiesMeta) => {
-            savePropertiesData(data);
+          save={(item: PropertiesMeta) => {
+            savePropertiesData(item);
           }}
           close={() => {
             setVisible(false);
