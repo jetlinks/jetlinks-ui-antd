@@ -260,7 +260,7 @@ const Save: React.FC<Props> = props => {
       ),
     },
     {
-      label: '说明',
+      label: '描述',
       key: 'describe',
       styles: {
         xl: { span: 24 },
@@ -271,7 +271,7 @@ const Save: React.FC<Props> = props => {
       options: {
         initialValue: props.data?.describe,
       },
-      component: <Input.TextArea rows={3} placeholder="请输入备注" />,
+      component: <Input.TextArea rows={3} placeholder="请输入描述" />,
     },
   ];
 

@@ -26,7 +26,6 @@ interface State {
 const ProtocolList: React.FC<Props> = props => {
   const { dispatch } = props;
 
-
   const result = props.protocol.result;
 
   const initState: State = {
@@ -45,20 +44,21 @@ const ProtocolList: React.FC<Props> = props => {
       title: '名称',
       dataIndex: 'name',
     },
-
+    {
+      title: '状态',
+      dataIndex: 'state',
+      align: 'center',
+      render: text =>
+        text === 1 ? <Tag color="#87d068">已发布</Tag> : <Tag color="#f50">未发布</Tag>,
+    },
     {
       title: '描述',
       dataIndex: 'description',
     },
     {
-      title: '状态',
-      dataIndex: 'state',
-      render: text =>
-        text === 1 ? <Tag color="#87d068">已发布</Tag> : <Tag color="#f50">未发布</Tag>,
-    },
-    {
       title: '操作',
-      width: '300px',
+      width: '250px',
+      align: 'center',
       render: (text, record) => (
         <Fragment>
           <a onClick={() => edit(record)}>编辑</a>
@@ -72,10 +72,10 @@ const ProtocolList: React.FC<Props> = props => {
               <a>取消发布</a>
             </Popconfirm>
           ) : (
-              <Popconfirm title="确认发布？" onConfirm={() => changeDeploy('_deploy', record)}>
-                <a>发布</a>
-              </Popconfirm>
-            )}
+            <Popconfirm title="确认发布？" onConfirm={() => changeDeploy('_deploy', record)}>
+              <a>发布</a>
+            </Popconfirm>
+          )}
         </Fragment>
       ),
     },
