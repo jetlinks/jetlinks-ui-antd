@@ -5,7 +5,7 @@ import { GlobalModelState } from './global';
 import { UserModelState } from './user';
 import { DefaultSettings as SettingModelState } from '../../config/defaultSettings';
 import { MenuDataItem } from '@ant-design/pro-layout';
-import { DeviceProductModelType, DeviceProductModelState } from '@/pages/device/product/model';
+import { DeviceProductModelState } from '@/pages/device/product/model';
 import { UsersModelState } from '@/pages/system/users/model';
 import { RoleModelState } from '@/pages/system/role/model';
 import { PermissionModelState } from '@/pages/system/permission/model';
@@ -14,7 +14,7 @@ import { EmailModelState } from '@/pages/rule-engine/email/model';
 import { SmsModelState } from '@/pages/rule-engine/sms/model';
 import { MqttClientModelState } from '@/pages/network/mqtt-client/model';
 import { RuleInstanceModelState } from '@/pages/rule-engine/instance/model';
-import { RuleModelItem } from '@/pages/rule-engine/model/data';
+// import { RuleModelItem } from '@/pages/rule-engine/model/data';
 import { RuleModelModelState } from '@/pages/rule-engine/model/model';
 import { ProtocolModelState } from '@/pages/device/protocol/model';
 import { OpenApiModelState } from '@/pages/system/open-api/model';
@@ -25,7 +25,8 @@ import { WebsocketClientModelState } from '@/pages/network/websocket-client/mode
 import { AccessLoggerModelState } from '@/pages/logger/access/model';
 import { SystemLoggerModelState } from '@/pages/logger/system/model';
 import { NetworkTypeState } from '@/pages/network/type/model';
-import { GatewayState } from '@/pages/network/gateway/model';
+// import { GatewayState } from '@/pages/network/gateway/model';
+
 export { GlobalModelState, SettingModelState, UserModelState };
 
 export type Effect = (
@@ -51,8 +52,8 @@ export interface Loading {
     global: boolean;
     menu: boolean;
     setting: boolean;
-    user: boolean;//当前登录用户
-    users: boolean;//用户管理
+    user: boolean; // 当前登录用户
+    users: boolean; // 用户管理
     role: boolean;
     permission: boolean;
     deviceProduct: boolean;
@@ -76,6 +77,7 @@ export interface Loading {
 }
 
 export interface ConnectState {
+  login: LoginModelType;
   global: GlobalModelState;
   loading: Loading;
   settings: SettingModelState;
@@ -114,4 +116,4 @@ export interface ConnectProps<T extends { [key: string]: any } = {}>
   dispatch?: Dispatch;
 }
 
-export default ConnectState;
+// export default ConnectState;

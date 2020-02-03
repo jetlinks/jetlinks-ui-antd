@@ -1,31 +1,19 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import styles from '@/utils/table.less';
-import { DeviceInstance } from './data';
-import {
-  Divider,
-  Card,
-  Table,
-  Alert,
-  Badge,
-  Button,
-  message,
-  Modal,
-  Popconfirm,
-  Upload,
-} from 'antd';
+import { Divider, Card, Table, Alert, Badge, Button, message, Modal, Popconfirm } from 'antd';
 import { router } from 'umi';
 import { ColumnProps, PaginationConfig, SorterResult } from 'antd/lib/table';
 import { FormComponentProps } from 'antd/es/form';
-import ConnectState, { Dispatch, Loading } from '@/models/connect';
+import ConnectState, { Dispatch } from '@/models/connect';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import Search from './Search';
 import { connect } from 'dva';
 import encodeQueryParam from '@/utils/encodeParam';
-import Save from './Save';
 import apis from '@/services';
 import { getAccessToken } from '@/utils/authority';
 import moment from 'moment';
-import { doc } from 'prettier';
+import Save from './Save';
+import Search from './Search';
+import { DeviceInstance } from './data.d';
 
 interface Props extends FormComponentProps {
   loading: boolean;
@@ -43,7 +31,7 @@ interface State {
 }
 
 const DeviceInstancePage: React.FC<Props> = props => {
-  const result = props.deviceInstance.result;
+  const { result } = props.deviceInstance;
   const initState: State = {
     data: result,
     searchParam: { pageSize: 10 },
@@ -67,96 +55,13 @@ const DeviceInstancePage: React.FC<Props> = props => {
   statusMap.set('离线', 'error');
   statusMap.set('未激活', 'processing');
 
-  const columns: ColumnProps<DeviceInstance>[] = [
-    {
-      title: 'ID',
-      dataIndex: 'id',
-    },
-    {
-      title: '设备名称',
-      dataIndex: 'name',
-    },
-    {
-      title: '设备型号',
-      dataIndex: 'productName',
-    },
-    {
-      title: '注册时间',
-      dataIndex: 'registryTime',
-      width: '200px',
-      render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
-      sorter: true,
-    },
-    {
-      title: '状态',
-      dataIndex: 'state',
-      render: record => {
-        return record ? <Badge status={statusMap.get(record.text)} text={record.text} /> : '';
-      },
-    },
-    {
-      title: '描述',
-      dataIndex: 'describe',
-    },
-    {
-      title: '操作',
-      width: '200px',
-      align: 'center',
-      render: (record: any) => {
-        return (
-          <Fragment>
-            <a
-              onClick={() => {
-                router.push(`/device/instance/save/${record.id}`);
-              }}
-            >
-              查看
-            </a>
-            <Divider type="vertical" />
-            <a
-              onClick={() => {
-                setCurrentItem(record);
-                setAddvisible(true);
-              }}
-            >
-              编辑
-            </a>
-            <Divider type="vertical" />
-            {record.state?.value === 'notActive' ? (
-              <span>
-                <Popconfirm
-                  title="确认激活？"
-                  onConfirm={() => {
-                    changeDeploy('deploy', record);
-                  }}
-                >
-                  <a>激活</a>
-                </Popconfirm>
-                <Divider type="vertical" />
-                <Popconfirm
-                  title="确认删除？"
-                  onConfirm={() => {
-                    delelteInstance(record);
-                  }}
-                >
-                  <a>删除</a>
-                </Popconfirm>
-              </span>
-            ) : (
-              <Popconfirm
-                title="确认取消激活？"
-                onConfirm={() => {
-                  changeDeploy('cancelDeploy', record);
-                }}
-              >
-                <a>取消激活</a>
-              </Popconfirm>
-            )}
-          </Fragment>
-        );
-      },
-    },
-  ];
+  const handleSearch = (params?: any) => {
+    setSearchParam(params);
+    dispatch({
+      type: 'deviceInstance/query',
+      payload: encodeQueryParam(params),
+    });
+  };
 
   const delelteInstance = (record: any) => {
     apis.deviceInstance
@@ -181,24 +86,103 @@ const DeviceInstancePage: React.FC<Props> = props => {
       })
       .catch(() => {});
   };
+  const columns: ColumnProps<DeviceInstance>[] = [
+    {
+      title: 'ID',
+      dataIndex: 'id',
+    },
+    {
+      title: '设备名称',
+      dataIndex: 'name',
+    },
+    {
+      title: '设备型号',
+      dataIndex: 'productName',
+    },
+    {
+      title: '注册时间',
+      dataIndex: 'registryTime',
+      width: '200px',
+      render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
+      sorter: true,
+    },
+    {
+      title: '状态',
+      dataIndex: 'state',
+      render: record =>
+        record ? <Badge status={statusMap.get(record.text)} text={record.text} /> : '',
+    },
+    {
+      title: '描述',
+      dataIndex: 'describe',
+    },
+    {
+      title: '操作',
+      width: '200px',
+      align: 'center',
+      render: (record: any) => (
+        <Fragment>
+          <a
+            onClick={() => {
+              router.push(`/device/instance/save/${record.id}`);
+            }}
+          >
+            查看
+          </a>
+          <Divider type="vertical" />
+          <a
+            onClick={() => {
+              setCurrentItem(record);
+              setAddvisible(true);
+            }}
+          >
+            编辑
+          </a>
+          <Divider type="vertical" />
+          {record.state?.value === 'notActive' ? (
+            <span>
+              <Popconfirm
+                title="确认激活？"
+                onConfirm={() => {
+                  changeDeploy('deploy', record);
+                }}
+              >
+                <a>激活</a>
+              </Popconfirm>
+              <Divider type="vertical" />
+              <Popconfirm
+                title="确认删除？"
+                onConfirm={() => {
+                  delelteInstance(record);
+                }}
+              >
+                <a>删除</a>
+              </Popconfirm>
+            </span>
+          ) : (
+            <Popconfirm
+              title="确认取消激活？"
+              onConfirm={() => {
+                changeDeploy('cancelDeploy', record);
+              }}
+            >
+              <a>取消激活</a>
+            </Popconfirm>
+          )}
+        </Fragment>
+      ),
+    },
+  ];
 
   useEffect(() => {
     handleSearch(searchParam);
   }, []);
 
-  const handleSearch = (params?: any) => {
-    setSearchParam(params);
-    dispatch({
-      type: 'deviceInstance/query',
-      payload: encodeQueryParam(params),
-    });
-  };
-
   const saveDeviceInstance = (item: any) => {
     dispatch({
       type: 'deviceInstance/update',
       payload: encodeQueryParam(item),
-      callback: response => {
+      callback: () => {
         message.success('保存成功');
         setAddvisible(false);
         handleSearch(searchParam);
@@ -206,18 +190,10 @@ const DeviceInstancePage: React.FC<Props> = props => {
     });
   };
 
-  const rowSelection = {
-    selectedRowKeys: selectRows,
-    onChange: (selectedRowKeys: string[] | number[], selectedRows: DeviceInstance[]) => {
-      setSelectRows(selectedRowKeys);
-    },
-  };
-
   const onTableChange = (
     pagination: PaginationConfig,
     filters: any,
     sorter: SorterResult<DeviceInstance>,
-    extra: any,
   ) => {
     handleSearch({
       pageIndex: Number(pagination.current) - 1,
@@ -230,19 +206,8 @@ const DeviceInstancePage: React.FC<Props> = props => {
   const [processVisible, setProcessVisible] = useState(false);
   const [flag, setFlag] = useState(false);
   const [count, setCount] = useState(initState.activeCount);
-  const activeDevice = () => {
-    Modal.confirm({
-      title: `确认激活全部设备`,
-      okText: '确定',
-      okType: 'primary',
-      cancelText: '取消',
-      onOk() {
-        startImport();
-      },
-    });
-  };
-
   const [eventSource, setSource] = useState();
+
   const startImport = () => {
     let dt = 0;
 
@@ -253,17 +218,30 @@ const DeviceInstancePage: React.FC<Props> = props => {
     );
     source.onmessage = e => {
       const temp = JSON.parse(e.data).total;
-      dt = dt += temp;
+      dt += temp;
+      // dt = dt += temp;
       setCount(dt);
     };
-    source.onerror = e => {
+    source.onerror = () => {
       setFlag(false);
       source.close();
     };
-    source.onopen = e => {
+    source.onopen = () => {
       setFlag(true);
     };
     setSource(source);
+  };
+
+  const activeDevice = () => {
+    Modal.confirm({
+      title: `确认激活全部设备`,
+      okText: '确定',
+      okType: 'primary',
+      cancelText: '取消',
+      onOk() {
+        startImport();
+      },
+    });
   };
 
   return (
@@ -337,15 +315,10 @@ const DeviceInstancePage: React.FC<Props> = props => {
                 showQuickJumper: true,
                 showSizeChanger: true,
                 pageSizeOptions: ['10', '20', '50', '100'],
-                showTotal: (total: number) => {
-                  return (
-                    `共 ${total} 条记录 第  ` +
-                    (result.pageIndex + 1) +
-                    '/' +
-                    Math.ceil(result.total / result.pageSize) +
-                    '页'
-                  );
-                },
+                showTotal: (total: number) =>
+                  `共 ${total} 条记录 第  ${result.pageIndex + 1}/${Math.ceil(
+                    result.total / result.pageSize,
+                  )}页`,
               }}
             />
           </div>

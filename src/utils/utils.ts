@@ -60,7 +60,7 @@ export const getRouteAuthority = (path: string, routeData: Route[]) => {
   return authorities;
 };
 
-//自己加的
+// 自己加的
 /**
  * 字符串替换
  * @param  {string} value    要被替换的字符串
@@ -68,19 +68,20 @@ export const getRouteAuthority = (path: string, routeData: Route[]) => {
  * @param  {string} replaceValue 用于替换的字符串
  * @return {string}        替换后的新字符串
  */
-const regReplace = (value: string, searchValue: string, replaceValue: string): string => {
-  searchValue = searchValue.replace(/[.\\[\]{}()|^$?*+]/g, '\\$&'); // 转义字符串中的元字符
-  let re = new RegExp(searchValue, 'g'); // 生成正则
-  return value.replace(re, replaceValue);
-};
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// const regReplace = (value: string, searchValue: string, replaceValue: string): string => {
+//   const tempReg = searchValue.replace(/[.\\[\]{}()|^$?*+]/g, '\\$&'); // 转义字符串中的元字符
+//   const re = new RegExp(tempReg, 'g'); // 生成正则
+//   return value.replace(re, replaceValue);
+// };
 
-//生成随机数
+// 生成随机数
 export const randomString = (length?: number) => {
-  length = length || 32;
-  let chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';
-  let maxPos = chars.length;
-  var pwd = '';
-  for (let i = 0; i < length; i++) {
+  const tempLength = length || 32;
+  const chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';
+  const maxPos = chars.length;
+  let pwd = '';
+  for (let i = 0; i < tempLength; i += 1) {
     pwd += chars.charAt(Math.floor(Math.random() * maxPos));
   }
   return pwd;
@@ -88,11 +89,11 @@ export const randomString = (length?: number) => {
 
 export const downloadObject = (record: any, fileName: string) => {
   // 创建隐藏的可下载链接
-  var eleLink = document.createElement('a');
+  const eleLink = document.createElement('a');
   eleLink.download = `${fileName}-${record.name || new Date()}.json`;
   eleLink.style.display = 'none';
   // 字符内容转变成blob地址
-  var blob = new Blob([JSON.stringify(record)]);
+  const blob = new Blob([JSON.stringify(record)]);
   eleLink.href = URL.createObjectURL(blob);
   // 触发点击
   document.body.appendChild(eleLink);

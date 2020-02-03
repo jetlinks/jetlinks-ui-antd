@@ -1,18 +1,18 @@
-import { Alert, Checkbox, Icon } from 'antd';
+import { Alert } from 'antd';
 import React, { Component } from 'react';
-import { CheckboxChangeEvent } from 'antd/es/checkbox';
+// import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { Dispatch, AnyAction } from 'redux';
 import { FormComponentProps } from 'antd/es/form';
-import Link from 'umi/link';
+// import Link from 'umi/link';
 import { connect } from 'dva';
 import { StateType } from '@/models/login';
 import LoginComponents from './components/Login';
 import styles from './style.less';
 // import { LoginParamsType } from '@/services/login';
 import { ConnectState } from '@/models/connect';
-import PubSub from 'pubsub-js';
+// import PubSub from 'pubsub-js';
 
-const { Tab, UserName, Password, Mobile, Captcha, Submit } = LoginComponents;
+const { UserName, Password, Submit } = LoginComponents;
 interface LoginProps {
   dispatch: Dispatch<AnyAction>;
   userLogin: StateType;
@@ -20,8 +20,8 @@ interface LoginProps {
 }
 interface LoginState {
   type: string;
-  autoLogin: boolean;
-  token_type: 'default';
+  // autoLogin: boolean;
+  tokenType: 'default';
 }
 
 class Login extends Component<LoginProps, LoginState> {
@@ -29,29 +29,29 @@ class Login extends Component<LoginProps, LoginState> {
 
   state: LoginState = {
     type: 'account',
-    autoLogin: true,
-    token_type: 'default',
+    // autoLogin: true,
+    tokenType: 'default',
   };
 
-  changeAutoLogin = (e: CheckboxChangeEvent) => {
-    this.setState({
-      autoLogin: e.target.checked,
-    });
-  };
+  // changeAutoLogin = (e: CheckboxChangeEvent) => {
+  //   this.setState({
+  //     autoLogin: e.target.checked,
+  //   });
+  // };
 
   handleSubmit = (err: unknown, values: any) => {
-    const { token_type } = this.state;
+    const { tokenType } = this.state;
 
     if (!err) {
       const { dispatch } = this.props;
       dispatch({
         type: 'login/login',
-        payload: { ...values, token_type },
-        callback: (response: string) => {
-          // if (response === 'loginSuccess') {
-          // PubSub.publish('login-success', 'login-success');
-          // }
-        },
+        payload: { ...values, tokenType },
+        // callback: (response: string) => {
+        // if (response === 'loginSuccess') {
+        // PubSub.publish('login-success', 'login-success');
+        // }
+        // },
       });
     }
   };
@@ -100,8 +100,8 @@ class Login extends Component<LoginProps, LoginState> {
 
   render() {
     const { userLogin = {}, submitting } = this.props;
-    const { status, type: loginType } = userLogin;
-    const { type, autoLogin } = this.state;
+    const { status } = userLogin;
+    const { type } = this.state;
     return (
       <div className={styles.main}>
         <LoginComponents
@@ -114,12 +114,12 @@ class Login extends Component<LoginProps, LoginState> {
         >
           {/* <Tab key="account" tab="账户密码登录"> */}
           {status === 400 &&
-            loginType === 'account' &&
+            // loginType === 'account' &&
             !submitting &&
-            this.renderMessage('账户或密码错误（admin/ant.design）')}
+            this.renderMessage('账户或密码错误')}
           <UserName
             name="username"
-            placeholder={'用户名'}
+            placeholder="用户名"
             rules={[
               {
                 required: true,
@@ -129,7 +129,7 @@ class Login extends Component<LoginProps, LoginState> {
           />
           <Password
             name="password"
-            placeholder={'密码'}
+            placeholder="密码"
             rules={[
               {
                 required: true,
