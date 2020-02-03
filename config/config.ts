@@ -33,11 +33,11 @@ const plugins: IPlugin[] = [
       },
       pwa: pwa
         ? {
-          workboxPluginMode: 'InjectManifest',
-          workboxOptions: {
-            importWorkboxFrom: 'local',
-          },
-        }
+            workboxPluginMode: 'InjectManifest',
+            workboxOptions: {
+              importWorkboxFrom: 'local',
+            },
+          }
         : false, // default close dll, because issue https://github.com/ant-design/ant-design-pro/issues/4665
       // dll features https://webpack.js.org/plugins/dll-plugin/
       // dll: {
@@ -113,7 +113,7 @@ export default {
               path: 'system',
               name: '系统设置',
               icon: 'setting',
-              // authority: ['user', 'role', 'permission', 'dictionary'],
+              authority: ['user', 'role', 'permission', 'dictionary'],
               routes: [
                 {
                   path: '/system/user',
@@ -393,8 +393,8 @@ export default {
   // chainWebpack: webpackPlugin,
   proxy: {
     '/jetlinks': {
-      target: 'http://192.168.3.89:8848/',
-      // target: 'http://2.jetlinks.org:9010/',
+      // target: 'http://192.168.3.89:8848/',
+      target: 'http://2.jetlinks.org:9010/',
       changeOrigin: true,
       pathRewrite: { '^/jetlinks': '' },
     },

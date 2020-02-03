@@ -19,7 +19,7 @@ import RightContent from '@/components/GlobalHeader/RightContent';
 import { ConnectState } from '@/models/connect';
 import { isAntDesignPro, getAuthorityFromRouter } from '@/utils/utils';
 import logo from '../assets/logo.svg';
-import PubSub from 'pubsub-js';
+// import PubSub from 'pubsub-js';
 
 const noMatch = (
   <Result
@@ -58,9 +58,7 @@ const menuDataRender = (menuList: MenuDataItem[]): MenuDataItem[] =>
     return Authorized.check(item.authority, localItem, null) as MenuDataItem;
   });
 
-const defaultFooterDom = (
-  <div></div>
-)
+const defaultFooterDom = <div></div>;
 
 const defaultFooterDom1 = (
   <DefaultFooter
@@ -188,11 +186,12 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
         return first ? (
           <Link to={paths.join('/')}>{route.breadcrumbName}</Link>
         ) : (
-            <span>{route.breadcrumbName}</span>
-          );
+          <span>{route.breadcrumbName}</span>
+        );
       }}
       footerRender={footerRender}
       menuDataRender={menuDataRender}
+      // menuDataRender={()=>menuData}
       rightContentRender={() => <RightContent />}
       {...props}
       {...settings}

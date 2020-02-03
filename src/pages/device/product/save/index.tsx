@@ -42,13 +42,14 @@ const Save: React.FC<Props> = props => {
   const [configForm, setConfigForm] = useState(initState.configForm);
 
   useEffect(() => {
-    apis.deviceProdcut.protocolSupport().then(response => {
-      if (response.status === 200) {
-        setProtocolSupports(response.result);
-      }
-    }).catch(() => {
-
-    });
+    apis.deviceProdcut
+      .protocolSupport()
+      .then(response => {
+        if (response.status === 200) {
+          setProtocolSupports(response.result);
+        }
+      })
+      .catch(() => {});
     if (props.data && props.data.messageProtocol) {
       onMessageProtocolChange(props.data.messageProtocol);
       if (!props.data.transportProtocol) return;
@@ -59,13 +60,14 @@ const Save: React.FC<Props> = props => {
   const onMessageProtocolChange = (value: string) => {
     setMessageProtocol(value);
     //获取链接协议
-    apis.deviceProdcut.protocolTransports(value).then(response => {
-      if (response.status === 200) {
-        setProtocolTransports(response.result);
-      }
-    }).catch(() => {
-
-    });
+    apis.deviceProdcut
+      .protocolTransports(value)
+      .then(response => {
+        if (response.status === 200) {
+          setProtocolTransports(response.result);
+        }
+      })
+      .catch(() => {});
   };
 
   const onTransportProtocol = (value: string) => {
@@ -74,19 +76,20 @@ const Save: React.FC<Props> = props => {
   };
 
   const getProtocolConfig = (messageProtocol: string, transType: string) => {
-    apis.deviceProdcut.protocolConfiguration(messageProtocol, transType).then(response => {
-      if (response.status === 200) {
-        if (response.result) {
-          setTransportConfig(response.result);
-          if (response.result.properties) {
-            parseConfig(response.result.properties);
+    apis.deviceProdcut
+      .protocolConfiguration(messageProtocol, transType)
+      .then(response => {
+        if (response.status === 200) {
+          if (response.result) {
+            setTransportConfig(response.result);
+            if (response.result.properties) {
+              parseConfig(response.result.properties);
+            }
+            setConfigName(response.result.name);
           }
-          setConfigName(response.result.name);
         }
-      }
-    }).catch(() => {
-
-    });
+      })
+      .catch(() => {});
   };
 
   const parseConfig = (configData: any[]) => {
@@ -285,7 +288,7 @@ const Save: React.FC<Props> = props => {
       title={`${props.data?.id ? '编辑' : '新增'}型号`}
       width={500}
       onClose={() => props.close()}
-      closable={true}
+      closable
     >
       <Form labelCol={{ span: 6 }} wrapperCol={{ span: 18 }}>
         <Card title="基本信息" style={{ marginBottom: 20 }} bordered={false}>
@@ -293,7 +296,7 @@ const Save: React.FC<Props> = props => {
             {basicForm.map(item => (
               <Col
                 key={item.key}
-              // {...item.styles}
+                // {...item.styles}
               >
                 <Form.Item label={item.label}>
                   {getFieldDecorator(item.key, item.options)(item.component)}
@@ -308,7 +311,7 @@ const Save: React.FC<Props> = props => {
               {configForm.map(item => (
                 <Col
                   key={item.key}
-                // {...item.styles}
+                  // {...item.styles}
                 >
                   <Form.Item label={item.label}>
                     {getFieldDecorator(item.key, item.options)(item.component)}
