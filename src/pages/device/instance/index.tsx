@@ -1,19 +1,22 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import styles from '@/utils/table.less';
-import { Divider, Card, Table, Alert, Badge, Button, message, Modal, Popconfirm } from 'antd';
+import { Divider, Card, Table, Badge, Button, message, Modal, Popconfirm, Upload } from 'antd';
 import { router } from 'umi';
 import { ColumnProps, PaginationConfig, SorterResult } from 'antd/lib/table';
 import { FormComponentProps } from 'antd/es/form';
-import ConnectState, { Dispatch } from '@/models/connect';
+import { Dispatch, ConnectState } from '@/models/connect';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { connect } from 'dva';
 import encodeQueryParam from '@/utils/encodeParam';
 import apis from '@/services';
 import { getAccessToken } from '@/utils/authority';
 import moment from 'moment';
+import { UploadProps } from 'antd/lib/upload';
 import Save from './Save';
 import Search from './Search';
 import { DeviceInstance } from './data.d';
+
+const template = require('./template.xlsx');
 
 interface Props extends FormComponentProps {
   loading: boolean;
@@ -23,7 +26,7 @@ interface Props extends FormComponentProps {
 interface State {
   data: any;
   searchParam: any;
-  selectRows: string[] | number[];
+  // selectRows: string[] | number[];
   addVisible: boolean;
   currentItem: Partial<DeviceInstance>;
   activeCount: number;
@@ -35,7 +38,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
   const initState: State = {
     data: result,
     searchParam: { pageSize: 10 },
-    selectRows: [],
+    // selectRows: [],
     addVisible: false,
     currentItem: {},
     activeCount: 0,
@@ -43,7 +46,6 @@ const DeviceInstancePage: React.FC<Props> = props => {
   };
 
   const [searchParam, setSearchParam] = useState(initState.searchParam);
-  const [selectRows, setSelectRows] = useState(initState.selectRows);
   const [addVisible, setAddvisible] = useState(initState.addVisible);
   const [currentItem, setCurrentItem] = useState(initState.currentItem);
   const { dispatch } = props;
@@ -208,6 +210,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
   const [count, setCount] = useState(initState.activeCount);
   const [eventSource, setSource] = useState();
 
+  // 激活全部设备
   const startImport = () => {
     let dt = 0;
 
@@ -219,6 +222,8 @@ const DeviceInstancePage: React.FC<Props> = props => {
     source.onmessage = e => {
       const temp = JSON.parse(e.data).total;
       dt += temp;
+      // console.log(e, 'resul');
+
       // dt = dt += temp;
       setCount(dt);
     };
@@ -232,6 +237,32 @@ const DeviceInstancePage: React.FC<Props> = props => {
     setSource(source);
   };
 
+  const startSync = () => {
+    let dt = 0;
+    setProcessVisible(true);
+    // http://2.jetlinks.org:9010/device-instance/state/_sync/?_=1&:X_Access_Token=96fcd43594a2cd467dc2b9581c49a79a
+    const source = new EventSource(
+      `/jetlinks/device-instance/state/_sync/?:X_Access_Token=${getAccessToken()}`,
+    );
+
+    source.onmessage = e => {
+      const temp = JSON.parse(e.data).total;
+      dt += temp;
+      setCount(dt);
+    };
+
+    source.onerror = () => {
+      setFlag(false);
+      source.close();
+    };
+
+    source.onopen = () => {
+      setFlag(true);
+    };
+
+    setSource(source);
+  };
+
   const activeDevice = () => {
     Modal.confirm({
       title: `确认激活全部设备`,
@@ -242,6 +273,77 @@ const DeviceInstancePage: React.FC<Props> = props => {
         startImport();
       },
     });
+  };
+
+  const syncDevice = () => {
+    Modal.confirm({
+      title: '确定同步设备真实状态?',
+      okText: '确定',
+      okType: 'primary',
+      cancelText: '取消',
+      onOk() {
+        // 同步设备
+        startSync();
+      },
+    });
+  };
+
+  const exportDevice = () => {
+    const formElement = document.createElement('form');
+    formElement.style.display = 'display:none;';
+    formElement.method = 'post';
+    formElement.action = `/jetlinks/device-instance/export?:X_Access_Token=${getAccessToken()}`;
+    const params = encodeQueryParam(searchParam);
+    Object.keys(params).forEach((key: string) => {
+      const inputElement = document.createElement('input');
+      inputElement.type = 'hidden';
+      inputElement.name = key;
+      inputElement.value = params[key];
+      formElement.appendChild(inputElement);
+    });
+    document.body.appendChild(formElement);
+    formElement.submit();
+    document.body.removeChild(formElement);
+  };
+
+  const uploadProps: UploadProps = {
+    accept: '.xlsx',
+    action: '/jetlinks/file/static',
+    headers: {
+      'X-Access-Token': getAccessToken(),
+    },
+    showUploadList: false,
+    onChange(info) {
+      if (info.file.status === 'done') {
+        let dt = 0;
+        const fileUrl = info.file.response.result;
+        const source = new EventSource(
+          `/jetlinks/device-instance/import?fileUrl=${fileUrl}&:X_Access_Token=${getAccessToken()}`,
+        );
+        source.onmessage = e => {
+          const temp = JSON.parse(e.data).total;
+          dt += temp;
+          setCount(dt);
+        };
+        source.onerror = () => {
+          // setFlag(false);
+          source.close();
+        };
+        source.onopen = () => {
+          // console.log('daoru open');
+          // setFlag(true);
+        };
+        // request(fileUrl, { method: 'GET' }).then(e => {
+        //   dispatch({
+        //     type: 'deviceProduct/insert',
+        //     payload: e,
+        //     callback: () => {
+        //       message.success('导入成功');
+        //     },
+        //   });
+        // });
+      }
+    },
   };
 
   return (
@@ -261,44 +363,25 @@ const DeviceInstancePage: React.FC<Props> = props => {
               新建
             </Button>
             <Divider type="vertical" />
+            <Button href={template} download="设备实例模版" icon="download">
+              下载模版
+            </Button>
+            <Divider type="vertical" />
+            <Button icon="download" type="default" onClick={() => exportDevice()}>
+              导出实例
+            </Button>
+            <Divider type="vertical" />
+            <Upload {...uploadProps}>
+              <Button icon="upload">导入实例</Button>
+            </Upload>
+            <Divider type="vertical" />
             <Button icon="plus" type="danger" onClick={() => activeDevice()}>
               激活全部设备
             </Button>
-            {/* <Button href="./设备实例模版.xlsx" download>
-                            下载模版
-                        </Button>
-                        <Divider type="vertical" />
-                        <Button >
-                            导出实例
-                        </Button>
-
-                        <Upload action={''} showUploadList={false}>
-                            <Button >
-                                导入实例
-                            </Button>
-                        </Upload>
-
-                        <Button >
-                            同步设备状态
-                        </Button> */}
-
-            {selectRows.length > 0 && <Button>同步状态</Button>}
-            {selectRows.length > 0 && (
-              <Alert
-                style={{ marginTop: 15 }}
-                message={
-                  <Fragment>
-                    已选择 <a style={{ fontWeight: 600 }}>{selectRows.length}</a> 项&nbsp;&nbsp;
-                    {/* 总计1000次 */}
-                    <a style={{ marginLeft: 24 }} onClick={() => setSelectRows([])}>
-                      清空
-                    </a>
-                  </Fragment>
-                }
-                type="info"
-                showIcon
-              />
-            )}
+            <Divider type="vertical" />
+            <Button icon="sync" type="danger" onClick={() => syncDevice()}>
+              同步设备状态
+            </Button>
           </div>
           <div className={styles.StandardTable}>
             <Table
@@ -306,7 +389,6 @@ const DeviceInstancePage: React.FC<Props> = props => {
               columns={columns}
               dataSource={(result || {}).data}
               rowKey="id"
-              // rowSelection={rowSelection}
               onChange={onTableChange}
               pagination={{
                 current: result.pageIndex + 1,
@@ -346,8 +428,12 @@ const DeviceInstancePage: React.FC<Props> = props => {
             eventSource.close();
           }}
         >
-          {flag ? '激活中' : '激活完成'}
-          总数量:{count}
+          {flag ? (
+            <Badge status="processing" text="进行中" />
+          ) : (
+            <Badge status="success" text="已完成" />
+          )}
+          <p>总数量:{count}</p>
         </Modal>
       )}
     </PageHeaderWrapper>
