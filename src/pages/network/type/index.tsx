@@ -319,7 +319,7 @@ const Type: React.FC<Props> = props => {
           }}
         />
       )}
-      {debuggerVisible && <Debugger close={() => setDebuggerVisible(false)} />}
+      {debuggerVisible && <Debugger close={() => setDebuggerVisible(false)} item={currentItem} />}
     </PageHeaderWrapper>
   );
 };
