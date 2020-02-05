@@ -1,6 +1,17 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import styles from '@/utils/table.less';
-import { Divider, Card, Table, Badge, Button, message, Modal, Popconfirm, Upload } from 'antd';
+import {
+  Divider,
+  Card,
+  Table,
+  Badge,
+  Button,
+  message,
+  Modal,
+  Popconfirm,
+  Upload,
+  Spin,
+} from 'antd';
 import { router } from 'umi';
 import { ColumnProps, PaginationConfig, SorterResult } from 'antd/lib/table';
 import { FormComponentProps } from 'antd/es/form';
@@ -26,11 +37,11 @@ interface Props extends FormComponentProps {
 interface State {
   data: any;
   searchParam: any;
-  // selectRows: string[] | number[];
   addVisible: boolean;
   currentItem: Partial<DeviceInstance>;
   activeCount: number;
   processVisible: boolean;
+  importLoading: boolean;
 }
 
 const DeviceInstancePage: React.FC<Props> = props => {
@@ -38,19 +49,18 @@ const DeviceInstancePage: React.FC<Props> = props => {
   const initState: State = {
     data: result,
     searchParam: { pageSize: 10 },
-    // selectRows: [],
     addVisible: false,
     currentItem: {},
     activeCount: 0,
     processVisible: false,
+    importLoading: false,
   };
 
   const [searchParam, setSearchParam] = useState(initState.searchParam);
   const [addVisible, setAddvisible] = useState(initState.addVisible);
   const [currentItem, setCurrentItem] = useState(initState.currentItem);
+  const [importLoading, setImportLoading] = useState(initState.importLoading);
   const { dispatch } = props;
-  // const statusMap = ['default', 'processing', 'success', 'error'];
-  // const status = ['未激活', '离线', '在线'];
 
   const statusMap = new Map();
   statusMap.set('在线', 'success');
@@ -222,9 +232,6 @@ const DeviceInstancePage: React.FC<Props> = props => {
     source.onmessage = e => {
       const temp = JSON.parse(e.data).total;
       dt += temp;
-      // console.log(e, 'resul');
-
-      // dt = dt += temp;
       setCount(dt);
     };
     source.onerror = () => {
@@ -246,7 +253,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
     );
 
     source.onmessage = e => {
-      const temp = JSON.parse(e.data).total;
+      const temp = parseInt(e.data, 10);
       dt += temp;
       setCount(dt);
     };
@@ -259,7 +266,6 @@ const DeviceInstancePage: React.FC<Props> = props => {
     source.onopen = () => {
       setFlag(true);
     };
-
     setSource(source);
   };
 
@@ -314,6 +320,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
     },
     showUploadList: false,
     onChange(info) {
+      setImportLoading(true);
       if (info.file.status === 'done') {
         let dt = 0;
         const fileUrl = info.file.response.result;
@@ -321,15 +328,21 @@ const DeviceInstancePage: React.FC<Props> = props => {
           `/jetlinks/device-instance/import?fileUrl=${fileUrl}&:X_Access_Token=${getAccessToken()}`,
         );
         source.onmessage = e => {
-          const temp = JSON.parse(e.data).total;
-          dt += temp;
-          setCount(dt);
+          const res = JSON.parse(e.data);
+          if (res.success) {
+            const temp = res.total;
+            dt += temp;
+            setCount(dt);
+          } else {
+            message.error(res.message);
+          }
         };
         source.onerror = () => {
-          // setFlag(false);
+          setImportLoading(false);
           source.close();
         };
         source.onopen = () => {
+          setImportLoading(true);
           // console.log('daoru open');
           // setFlag(true);
         };
@@ -384,25 +397,27 @@ const DeviceInstancePage: React.FC<Props> = props => {
             </Button>
           </div>
           <div className={styles.StandardTable}>
-            <Table
-              loading={props.loading}
-              columns={columns}
-              dataSource={(result || {}).data}
-              rowKey="id"
-              onChange={onTableChange}
-              pagination={{
-                current: result.pageIndex + 1,
-                total: result.total,
-                pageSize: result.pageSize,
-                showQuickJumper: true,
-                showSizeChanger: true,
-                pageSizeOptions: ['10', '20', '50', '100'],
-                showTotal: (total: number) =>
-                  `共 ${total} 条记录 第  ${result.pageIndex + 1}/${Math.ceil(
-                    result.total / result.pageSize,
-                  )}页`,
-              }}
-            />
+            <Spin spinning={importLoading} tip="导入中">
+              <Table
+                loading={props.loading}
+                columns={columns}
+                dataSource={(result || {}).data}
+                rowKey="id"
+                onChange={onTableChange}
+                pagination={{
+                  current: result.pageIndex + 1,
+                  total: result.total,
+                  pageSize: result.pageSize,
+                  showQuickJumper: true,
+                  showSizeChanger: true,
+                  pageSizeOptions: ['10', '20', '50', '100'],
+                  showTotal: (total: number) =>
+                    `共 ${total} 条记录 第  ${result.pageIndex + 1}/${Math.ceil(
+                      result.total / result.pageSize,
+                    )}页`,
+                }}
+              />
+            </Spin>
           </div>
         </div>
       </Card>
@@ -425,6 +440,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
           confirmLoading={flag}
           onCancel={() => {
             setProcessVisible(false);
+            setCount(0);
             eventSource.close();
           }}
         >
