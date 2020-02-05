@@ -91,10 +91,10 @@ if (pwa) {
   }
 }
 
-//============Lind
+// ============Lind
 declare global {
   interface Window {
-    __hsweb_autz: Authentication | undefined;
+    hsweb_autz: Authentication | undefined;
     onRuleEditorInited: undefined | any;
     editor: any;
   }

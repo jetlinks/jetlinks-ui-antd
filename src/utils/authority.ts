@@ -1,7 +1,7 @@
 import { reloadAuthorized } from './Authorized';
 
 // use localStorage to store the authority info, which might be sent from server in actual project.
-export function getAuthority(str?: string): string | string[] {
+export function getAuthority(): string | string[] {
   // const authorityString =
   //   typeof str === 'undefined' && localStorage ? localStorage.getItem('antd-pro-authority') : str;
   // // authorityString could be admin, "admin", ["admin"]
@@ -23,20 +23,19 @@ export function getAuthority(str?: string): string | string[] {
   // }
   // return authority;
 
-  const autz = sessionStorage.getItem('hsweb-autz');
+  const autz = localStorage.getItem('hsweb-autz');
 
   if (autz !== null) {
     // const authentication = new Authentication(
-    //   JSON.parse(sessionStorage.getItem('hsweb-autz') || '{}'),
+    //   JSON.parse(localStorage.getItem('hsweb-autz') || '{}'),
     // );
     // const authority = authentication.permissions.map(e => e.id);
     //
 
-    let authority = JSON.parse(sessionStorage.getItem('hsweb-autz') || '{}').currentAuthority || [];
+    const authority = JSON.parse(localStorage.getItem('hsweb-autz') || '{}').currentAuthority || [];
     return authority;
-  } else {
-    return ['admin'];
   }
+  return ['admin'];
 }
 
 export function setAuthority(authority: string | string[]): void {
@@ -46,11 +45,14 @@ export function setAuthority(authority: string | string[]): void {
   reloadAuthorized();
 }
 
-//用户
+// 用户
 export class User {
   public readonly id: string;
+
   public readonly name: string;
+
   public readonly username: string;
+
   public readonly ext: {};
 
   constructor({ id, name, username, ext = {} }: User) {
@@ -61,9 +63,10 @@ export class User {
   }
 }
 
-//角色
+// 角色
 export class Role {
   public readonly id: string;
+
   public readonly name: string;
 
   constructor({ id, name }: Role) {
@@ -72,11 +75,14 @@ export class Role {
   }
 }
 
-//权限
+// 权限
 export class Permission {
   public id: string;
+
   public name: string;
+
   public actions: string[];
+
   public dataAccesses: DataAcctessConfig[];
 
   constructor({ id, name, actions, dataAccesses }: Permission) {
@@ -91,25 +97,21 @@ export class Permission {
   }
 
   public hasAnyAction([...actionArr]): boolean {
-    return (
-      this.actions.filter(act => {
-        return actionArr.includes(act);
-      }).length > 0
-    );
+    return this.actions.filter(act => actionArr.includes(act)).length > 0;
   }
 
   public hasActions([...actionArr]): boolean {
-    const len = this.actions.filter(act => {
-      return actionArr.includes(act);
-    }).length;
+    const len = this.actions.filter(act => actionArr.includes(act)).length;
     return len === actionArr.length;
   }
 }
 
-//数据权限配置
+// 数据权限配置
 export class DataAcctessConfig {
   public action: string;
+
   public type: string;
+
   public config: any;
 
   constructor({ action, type, ...config }: DataAcctessConfig) {
@@ -121,7 +123,9 @@ export class DataAcctessConfig {
 
 export class Authentication {
   public user: User;
+
   public roles: Role[];
+
   public permissions: Permission[];
 
   constructor({ user, roles, permissions }: Authentication) {
@@ -156,34 +160,35 @@ export class Authentication {
 }
 
 export function getAccessToken(): string {
-  return sessionStorage.getItem('x-access-token') || new Date().getTime() + '';
+  return localStorage.getItem('x-access-token') || `${new Date().getTime()}`;
 }
 
 export function setAccessToken(token: string) {
-  sessionStorage.setItem('x-access-token', token);
+  localStorage.setItem('x-access-token', token);
 }
 
 export function getAutz(): Authentication | undefined {
-  if (!window.top.__hsweb_autz) {
-    const store = sessionStorage.getItem('hsweb-autz');
+  if (!window.top.hsweb_autz) {
+    const store = localStorage.getItem('hsweb-autz');
     if (store === null) {
       return undefined;
     }
     const authJson = JSON.parse(store);
     const autz = new Authentication(authJson);
-    window.top.__hsweb_autz = autz;
+    window.top.hsweb_autz = autz;
   }
-  return window.top.__hsweb_autz;
+  return window.top.hsweb_autz;
 }
 
 export function clearAutz() {
-  window.top.__hsweb_autz = undefined;
-  sessionStorage.removeItem('hsweb-autz');
-  sessionStorage.removeItem('x-access-token');
+  window.top.hsweb_autz = undefined;
+  localStorage.removeItem('hsweb-autz');
+  localStorage.removeItem('x-access-token');
 }
 
 export function setAutz(info: Authentication): Authentication {
-  const autz = (window.top.__hsweb_autz = new Authentication(info));
-  sessionStorage.setItem('hsweb-autz', JSON.stringify(info));
+  window.top.hsweb_autz = new Authentication(info);
+  const autz = new Authentication(info);
+  localStorage.setItem('hsweb-autz', JSON.stringify(info));
   return autz;
 }
