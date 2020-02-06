@@ -25,7 +25,10 @@ import Save from './save';
 import { downloadObject } from '@/utils/utils';
 import apis from '@/services';
 import encodeQueryParam from '@/utils/encodeParam';
-import Debugger from './debugger';
+import MqttClient from './debugger/mqtt-client';
+import MqttServer from './debugger/mqtt-server';
+import TcpClient from './debugger/tcp-client';
+import TcpServer from './debugger/tcp-server';
 
 interface Props extends FormComponentProps {
   dispatch: Dispatch;
@@ -154,6 +157,25 @@ const Type: React.FC<Props> = props => {
         },
       }),
     });
+  };
+
+  const renderDebug = () => {
+    const {
+      type: { value },
+    } = currentItem;
+    if (value === 'MQTT_CLIENT') {
+      return <MqttClient close={() => setDebuggerVisible(false)} item={currentItem} />;
+    }
+    if (value === 'MQTT_SERVER') {
+      return <MqttServer close={() => setDebuggerVisible(false)} item={currentItem} />;
+    }
+    if (value === 'TCP_CLIENT') {
+      return <TcpClient close={() => setDebuggerVisible(false)} item={currentItem} />;
+    }
+    if (value === 'TCP_SERVER') {
+      return <TcpServer close={() => setDebuggerVisible(false)} item={currentItem} />;
+    }
+    return null;
   };
 
   return (
@@ -319,7 +341,9 @@ const Type: React.FC<Props> = props => {
           }}
         />
       )}
-      {debuggerVisible && <Debugger close={() => setDebuggerVisible(false)} item={currentItem} />}
+      {debuggerVisible && renderDebug()
+      // <Debugger close={() => setDebuggerVisible(false)} item={currentItem} />
+      }
     </PageHeaderWrapper>
   );
 };
