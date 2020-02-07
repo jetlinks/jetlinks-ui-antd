@@ -31,6 +31,8 @@ import TcpClient from './debugger/tcp-client';
 import TcpServer from './debugger/tcp-server';
 import CoapServer from './debugger/coap-server';
 import CoapClient from './debugger/coap-client';
+import WebSocketServer from './debugger/websocket-server';
+import WebSocketClient from './debugger/websocket-client';
 
 interface Props extends FormComponentProps {
   dispatch: Dispatch;
@@ -182,6 +184,12 @@ const Type: React.FC<Props> = props => {
     }
     if (value === 'COAP_CLIENT') {
       return <CoapClient close={() => setDebuggerVisible(false)} item={currentItem} />;
+    }
+    if (value === 'WEB_SOCKET_SERVER') {
+      return <WebSocketServer close={() => setDebuggerVisible(false)} item={currentItem} />;
+    }
+    if (value === 'WEB_SOCKET_CLIENT') {
+      return <WebSocketClient close={() => setDebuggerVisible(false)} item={currentItem} />;
     }
     return null;
   };

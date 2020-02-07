@@ -46,9 +46,16 @@ export async function debugTcpClient(id: string, type: string, data: any) {
   });
 }
 
-export async function debugCoapClient(id: string, data) {
+export async function debugCoapClient(id: string, data: any) {
   // network / coap / client / 1214370069626740736 / _send
   return request(`/jetlinks/network/coap/client/${id}/_send`, {
+    method: 'POST',
+    data,
+  });
+}
+
+export async function debugWebSocketClient(id: string, type: string, data: any) {
+  return request(`/jetlinks/network/websocket/client/${id}/_publish/${type}`, {
     method: 'POST',
     data,
   });
