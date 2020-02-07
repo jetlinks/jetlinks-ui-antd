@@ -29,6 +29,8 @@ import MqttClient from './debugger/mqtt-client';
 import MqttServer from './debugger/mqtt-server';
 import TcpClient from './debugger/tcp-client';
 import TcpServer from './debugger/tcp-server';
+import CoapServer from './debugger/coap-server';
+import CoapClient from './debugger/coap-client';
 
 interface Props extends FormComponentProps {
   dispatch: Dispatch;
@@ -174,6 +176,12 @@ const Type: React.FC<Props> = props => {
     }
     if (value === 'TCP_SERVER') {
       return <TcpServer close={() => setDebuggerVisible(false)} item={currentItem} />;
+    }
+    if (value === 'COAP_SERVER') {
+      return <CoapServer close={() => setDebuggerVisible(false)} item={currentItem} />;
+    }
+    if (value === 'COAP_CLIENT') {
+      return <CoapClient close={() => setDebuggerVisible(false)} item={currentItem} />;
     }
     return null;
   };

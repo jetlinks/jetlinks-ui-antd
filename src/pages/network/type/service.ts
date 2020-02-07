@@ -45,3 +45,11 @@ export async function debugTcpClient(id: string, type: string, data: any) {
     data,
   });
 }
+
+export async function debugCoapClient(id: string, data) {
+  // network / coap / client / 1214370069626740736 / _send
+  return request(`/jetlinks/network/coap/client/${id}/_send`, {
+    method: 'POST',
+    data,
+  });
+}
