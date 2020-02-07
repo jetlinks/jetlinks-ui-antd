@@ -60,3 +60,10 @@ export async function debugWebSocketClient(id: string, type: string, data: any) 
     data,
   });
 }
+
+export async function debugUdpSupport(id: string, type: string, data: any) {
+  return request(`/jetlinks/network/upd/${id}/_send/${type}`, {
+    method: 'POST',
+    data,
+  });
+}
