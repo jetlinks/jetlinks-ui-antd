@@ -137,9 +137,8 @@ const WebSocketClient: React.FC<Props> = props => {
                 <Select.Option value="HEX">16进制</Select.Option>
               </Select>
             </Form.Item>
-            <Form.Item label="接收消息">
-              <Input.TextArea rows={4} value={logs} />
-            </Form.Item>
+            <Divider>调试日志</Divider>
+            <Input.TextArea rows={4} value={logs} />
           </Form>
         </Tabs.TabPane>
 

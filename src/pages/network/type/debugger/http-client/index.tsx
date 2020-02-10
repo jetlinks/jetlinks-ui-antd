@@ -505,7 +505,6 @@ const HttpClient: React.FC<Props> = props => {
 
         <Divider>调试日志</Divider>
         <Input.TextArea rows={4} value={logs} />
-        {/* </Form.Item> */}
       </Form>
     </Modal>
   );

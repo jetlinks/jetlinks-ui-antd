@@ -85,9 +85,8 @@ const TcpServer: React.FC<Props> = props => {
             <Select.Option value="HEX">16进制</Select.Option>
           </Select>
         </Form.Item>
-        <Form.Item label="调试日志">
-          <Input.TextArea rows={4} value={logs} placeholder="只会接收最新的客户端链接" />
-        </Form.Item>
+        <Divider>调试日志</Divider>
+        <Input.TextArea rows={4} value={logs} placeholder="只会接收最新的客户端链接" />
       </Form>
     </Modal>
   );
