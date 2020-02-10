@@ -34,6 +34,8 @@ import CoapClient from './debugger/coap-client';
 import WebSocketServer from './debugger/websocket-server';
 import WebSocketClient from './debugger/websocket-client';
 import UdpSupport from './debugger/udp-support';
+import HttpClient from './debugger/http-client';
+import HttpServer from './debugger/http-server';
 
 interface Props extends FormComponentProps {
   dispatch: Dispatch;
@@ -194,6 +196,12 @@ const Type: React.FC<Props> = props => {
     }
     if (value === 'UDP') {
       return <UdpSupport close={() => setDebuggerVisible(false)} item={currentItem} />;
+    }
+    if (value === 'HTTP_SERVER') {
+      return <HttpServer close={() => setDebuggerVisible(false)} item={currentItem} />;
+    }
+    if (value === 'HTTP_CLIENT') {
+      return <HttpClient close={() => setDebuggerVisible(false)} item={currentItem} />;
     }
     return null;
   };

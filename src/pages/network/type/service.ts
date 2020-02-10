@@ -67,3 +67,10 @@ export async function debugUdpSupport(id: string, type: string, data: any) {
     data,
   });
 }
+
+export async function debugHttpClient(id: string, data: any) {
+  return request(`/jetlinks/network/http/client/${id}/_send`, {
+    method: 'POST',
+    data,
+  });
+}
