@@ -3,8 +3,8 @@ import React from 'react';
 import { connect } from 'dva';
 import { ConnectProps, ConnectState } from '@/models/connect';
 import Avatar from './AvatarDropdown';
-import HeaderSearch from '../HeaderSearch';
-import SelectLang from '../SelectLang';
+// import HeaderSearch from '../HeaderSearch';
+// import SelectLang from '../SelectLang';
 import styles from './index.less';
 
 export type SiderTheme = 'light' | 'dark';
@@ -38,7 +38,7 @@ const GlobalHeaderRight: React.SFC<GlobalHeaderRightProps> = props => {
       <Tooltip title="使用文档">
         <a
           target="_blank"
-          href="https://pro.ant.design/docs/getting-started"
+          href="http://doc.jetlinks.cn"
           rel="noopener noreferrer"
           className={styles.action}
         >

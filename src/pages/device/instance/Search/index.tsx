@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Form, { FormComponentProps } from 'antd/lib/form';
-import { FormItemConfig } from '@/utils/common';
+// import { FormItemConfig } from '@/utils/common';
 import { Input, Select, Row, Col, Button, Icon } from 'antd';
 import apis from '@/services';
-import { DeviceProduct } from '../../product/data';
+import { DeviceProduct } from '../../product/data.d';
 
 interface Props extends FormComponentProps {
   search: Function;
@@ -29,7 +29,7 @@ const Search: React.FC<Props> = props => {
   const [productList, setProductList] = useState(initState.productList);
 
   useEffect(() => {
-    //获取下拉框数据
+    // 获取下拉框数据
     apis.deviceProdcut
       .queryNoPagin()
       .then(e => {
@@ -40,7 +40,7 @@ const Search: React.FC<Props> = props => {
       });
   }, []);
 
-  const simpleItems: FormItemConfig[] = [
+  const simpleItems: any[] = [
     {
       label: '设备名称',
       key: 'name$LIKE',
@@ -59,7 +59,7 @@ const Search: React.FC<Props> = props => {
     },
   ];
 
-  const advancedItems: FormItemConfig[] = [
+  const advancedItems: any[] = [
     {
       label: '型号名称',
       key: 'name$LIKE',
@@ -93,14 +93,15 @@ const Search: React.FC<Props> = props => {
     (expandForm ? simpleItems : advancedItems)
       .map(item => (item.styles ? item.styles.md : 8))
       .reduce((i, j) => {
-        if (!i) return;
-        if (!j) return;
-        return Number(i) + Number(j);
+        if (i && j) {
+          return Number(i) + Number(j);
+        }
+        return null;
       }) || 1;
 
   const search = () => {
     const data = form.getFieldsValue();
-    //TODO 查询数据
+    // TODO 查询数据
     props.search(data);
   };
 
@@ -122,7 +123,7 @@ const Search: React.FC<Props> = props => {
           ? simpleItems.map(item => (
               <Col md={8} sm={24} key={item.key}>
                 <Form.Item label={item.label}>
-                  {getFieldDecorator(item.key)(item.component)}
+                  {getFieldDecorator<string>(item.key)(item.component)}
                 </Form.Item>
               </Col>
             ))
@@ -134,7 +135,7 @@ const Search: React.FC<Props> = props => {
                 style={{ height: 56 }}
               >
                 <Form.Item label={item.label}>
-                  {getFieldDecorator(item.key, item.options)(item.component)}
+                  {getFieldDecorator<string>(item.key, item.options)(item.component)}
                 </Form.Item>
               </Col>
             ))}

@@ -372,7 +372,14 @@ const DeviceInstancePage: React.FC<Props> = props => {
             />
           </div>
           <div className={styles.tableListOperator}>
-            <Button icon="plus" type="primary" onClick={() => setAddvisible(true)}>
+            <Button
+              icon="plus"
+              type="primary"
+              onClick={() => {
+                setCurrentItem({});
+                setAddvisible(true);
+              }}
+            >
               新建
             </Button>
             <Divider type="vertical" />
