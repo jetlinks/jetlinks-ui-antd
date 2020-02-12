@@ -61,7 +61,7 @@ const Search: React.FC<Props> = props => {
 
   const advancedItems: FormItemConfig[] = [
     {
-      label: '型号名称',
+      label: '设备名称',
       key: 'name$LIKE',
       component: <Input placeholder="请输入" />,
     },
