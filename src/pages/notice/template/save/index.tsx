@@ -180,6 +180,20 @@ const Save: React.FC<Props> = props => {
             initialValue: item.name,
           })(<Input />)}
         </Form.Item>
+        <Form.Item label="通知类型">
+          {getFieldDecorator('type', {
+            rules: [{ required: true, message: '请输入通知类型' }],
+            initialValue: item.type,
+          })(
+            <Select onChange={e => setItem({ type: e })}>
+              {typeList.map(i => (
+                <Select.Option key={i.id} value={i.id}>
+                  {i.name}
+                </Select.Option>
+              ))}
+            </Select>,
+          )}
+        </Form.Item>
         <Form.Item label="服务商">
           {getFieldDecorator('provider', {
             rules: [{ required: true, message: '请选择服务商' }],

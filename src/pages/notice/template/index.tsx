@@ -1,16 +1,18 @@
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import React, { useEffect, useState, Fragment } from 'react';
-import { Card, Form, Col, Input, Row, Table, Divider, message } from 'antd';
+import { Card, Form, Col, Input, Row, Table, Divider, message, Button, Popconfirm } from 'antd';
 import apis from '@/services';
 import { Dispatch, ConnectState } from '@/models/connect';
 import { connect } from 'dva';
 import { FormComponentProps } from 'antd/es/form';
 import encodeQueryParam from '@/utils/encodeParam';
 import { downloadObject } from '@/utils/utils';
+import { PaginationConfig } from 'antd/lib/table';
 import Save from './save';
 import StandardFormRow from '../components/standard-form-row';
 import TagSelect from '../components/tag-select';
 import styles from '../index.less';
+import Debug from './debugger';
 
 interface Props extends FormComponentProps {
   dispatch: Dispatch;
@@ -25,6 +27,7 @@ interface State {
   searchParam: any;
   filterType: string[];
   filterName: string;
+  debugVisible: boolean;
 }
 
 const formItemLayout = {
@@ -45,6 +48,7 @@ const Template: React.FC<Props> = props => {
     searchParam: {},
     filterType: [],
     filterName: '',
+    debugVisible: false,
   };
   const [typeList, setTypeList] = useState(initState.typeList);
   // const [activeType, setActiveType] = useState(initState.activeType);
@@ -53,19 +57,25 @@ const Template: React.FC<Props> = props => {
   const [searchParam, setSearchParam] = useState(initState.searchParam);
   const [filterType, setFilterType] = useState(initState.filterType);
   const [filterName, setFilterName] = useState(initState.filterName);
+  const [debugVisible, setDebugVisible] = useState(initState.debugVisible);
 
   const handlerSearch = (params?: any) => {
+    const temp = params;
+    temp.sorts = {
+      field: 'id',
+      order: 'desc',
+    };
     dispatch({
       type: 'noticeTemplate/query',
-      payload: encodeQueryParam(params),
+      payload: encodeQueryParam(temp),
     });
-    setSearchParam(params);
+    setSearchParam(temp);
   };
 
   const onSearch = (type?: string[], name?: string) => {
     const tempType = type || filterType;
     const tempName = name || filterName;
-    // console.log(tempName, 'name');
+
     dispatch({
       type: 'noticeTemplate/query',
       payload: encodeQueryParam({
@@ -76,7 +86,7 @@ const Template: React.FC<Props> = props => {
         },
         terms: {
           type$IN: tempType,
-          name$LIKE: tempName,
+          name$LIKE: name === '' ? undefined : tempName,
         },
       }),
     });
@@ -105,8 +115,6 @@ const Template: React.FC<Props> = props => {
     });
   };
 
-  const debug = () => {};
-
   const saveData = (item: any) => {
     dispatch({
       type: 'noticeTemplate/insert',
@@ -116,6 +124,20 @@ const Template: React.FC<Props> = props => {
         setSaveVisible(false);
         handlerSearch(searchParam);
       },
+    });
+  };
+
+  const onTableChange = (
+    pagination: PaginationConfig,
+    filters: any,
+    sorter: any,
+    // extra: any,
+  ) => {
+    handlerSearch({
+      pageIndex: Number(pagination.current) - 1,
+      pageSize: pagination.pageSize,
+      terms: searchParam,
+      sorts: sorter,
     });
   };
 
@@ -147,8 +169,9 @@ const Template: React.FC<Props> = props => {
                   <Form.Item {...formItemLayout} label="配置名称">
                     <Input
                       onChange={e => {
-                        setFilterName(e.target.value);
-                        onSearch(undefined, e.target.value);
+                        const tempValue = e.target.value;
+                        setFilterName(tempValue);
+                        onSearch(undefined, tempValue === '' ? undefined : tempValue);
                       }}
                     />
                   </Form.Item>
@@ -159,8 +182,27 @@ const Template: React.FC<Props> = props => {
         </Card>
         <br />
         <Card>
+          <Button
+            onClick={() => {
+              setCurrentItem({});
+              setSaveVisible(true);
+            }}
+            type="primary"
+            style={{ marginBottom: 16 }}
+          >
+            新建
+          </Button>
+          <Divider type="vertical" />
+          <Button onClick={() => {}} style={{ marginBottom: 16 }}>
+            导出配置
+          </Button>
+          <Divider type="vertical" />
+          <Button onClick={() => {}} type="primary" style={{ marginBottom: 16 }}>
+            导入配置
+          </Button>
           <Table
             rowKey="id"
+            onChange={onTableChange}
             loading={loading}
             columns={[
               {
@@ -193,70 +235,44 @@ const Template: React.FC<Props> = props => {
                       编辑
                     </a>
                     <Divider type="vertical" />
-                    <a onClick={() => remove(record)}>删除</a>
+                    <Popconfirm
+                      title="确认删除？"
+                      onConfirm={() => {
+                        remove(record);
+                      }}
+                    >
+                      <a>删除</a>
+                    </Popconfirm>
                     <Divider type="vertical" />
                     <a onClick={() => downloadObject(record, '通知模版')}>下载配置</a>
                     <Divider type="vertical" />
-                    <a onClick={() => debug()}>调试</a>
+                    <a
+                      onClick={() => {
+                        setCurrentItem(record);
+                        setDebugVisible(true);
+                      }}
+                    >
+                      调试
+                    </a>
                   </Fragment>
                 ),
               },
             ]}
             dataSource={noticeTemplate.result?.data}
-            pagination={false}
+            pagination={{
+              current: noticeTemplate.result?.pageIndex + 1,
+              total: noticeTemplate.result?.total,
+              pageSize: noticeTemplate.result?.pageSize,
+              showQuickJumper: true,
+              showSizeChanger: true,
+              pageSizeOptions: ['10', '20', '50', '100'],
+              showTotal: (total: number) =>
+                `共 ${total} 条记录 第  ${noticeTemplate.result?.pageIndex + 1}/${Math.ceil(
+                  noticeTemplate.result?.total / noticeTemplate.result?.pageSize,
+                )}页`,
+            }}
           />
         </Card>
-        {/* <Card>
-                    <Tabs
-                        onChange={key => {
-                            setActiveType(key);
-                            handlerSearch({
-                                pageIndex: 0,
-                                pageSize: 10,
-                                terms: {
-                                    type: key,
-                                }
-                            })
-                        }}
-                        activeKey={activeType}
-                        tabPosition="left"
-                        style={{ height: '60VH' }}>
-                        {
-                            typeList.map(item =>
-                                <Tabs.TabPane
-                                    tab={<span>{item.name}</span>}
-                                    key={item.id}
-                                >
-                                    <Row>
-                                        <Col span={8}>
-                                            <Form.Item label="配置名称" labelCol={{ span: 4 }} wrapperCol={{ span: 16 }} >
-                                                <Input />
-                                            </Form.Item>
-                                        </Col>
-                                        <Col span={8}>
-                                            <Button type="primary" style={{ marginTop: 2, marginRight: 10 }}>查询</Button>
-                                            <Button style={{ marginTop: 2, marginRight: 10 }}>重置</Button>
-
-                                        </Col>
-                                    </Row>
-                                    <Row style={{ marginBottom: 15 }}>
-                                        <Button
-                                            type="primary"
-                                            style={{ marginTop: 2, marginRight: 10 }}
-                                            onClick={() => {
-                                                setCurrentItem({ type: activeType })
-                                                setSaveVisible(true);
-                                            }}
-                                        >新建</Button>
-                                        <Button style={{ marginTop: 2, marginRight: 10 }}>批量导出</Button>
-                                        <Button style={{ marginTop: 2, marginRight: 10 }}>导入配置</Button>
-                                    </Row>
-
-                                </Tabs.TabPane>
-                            )
-                        }
-                    </Tabs>
-                </Card> */}
       </div>
 
       {saveVisible && (
@@ -266,6 +282,7 @@ const Template: React.FC<Props> = props => {
           save={(item: any) => saveData(item)}
         />
       )}
+      {debugVisible && <Debug data={currentItem} close={() => setDebugVisible(false)} />}
     </PageHeaderWrapper>
   );
 };

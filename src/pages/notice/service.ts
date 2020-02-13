@@ -31,3 +31,10 @@ export async function remove(id: string) {
     method: 'DELETE',
   });
 }
+
+export async function config(params?: any) {
+  return request(`/jetlinks/notifier/config/_query`, {
+    method: 'GET',
+    params,
+  });
+}

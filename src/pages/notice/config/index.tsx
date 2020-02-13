@@ -14,7 +14,7 @@ import styles from '../index.less';
 
 interface Props extends FormComponentProps {
   dispatch: Dispatch;
-  noticeTemplate: any;
+  noticeConfig: any;
   loading: boolean;
 }
 interface State {
@@ -35,7 +35,7 @@ const formItemLayout = {
 };
 
 const Config: React.FC<Props> = props => {
-  const { noticeTemplate, loading, dispatch } = props;
+  const { noticeConfig, loading, dispatch } = props;
 
   const initState: State = {
     typeList: [],
@@ -56,7 +56,7 @@ const Config: React.FC<Props> = props => {
 
   const handlerSearch = (params?: any) => {
     dispatch({
-      type: 'noticeTemplate/query',
+      type: 'noticeConfig/query',
       payload: encodeQueryParam(params),
     });
     setSearchParam(params);
@@ -197,12 +197,12 @@ const Config: React.FC<Props> = props => {
                     <Divider type="vertical" />
                     <a onClick={() => downloadObject(record, '通知模版')}>下载配置</a>
                     <Divider type="vertical" />
-                    <a onClick={() => debug(record)}>调试</a>
+                    <a onClick={() => debug()}>调试</a>
                   </Fragment>
                 ),
               },
             ]}
-            dataSource={noticeTemplate.result?.data}
+            dataSource={noticeConfig.result?.data}
             pagination={false}
           />
         </Card>
@@ -270,7 +270,7 @@ const Config: React.FC<Props> = props => {
   );
 };
 
-export default connect(({ noticeTemplate, loading }: ConnectState) => ({
-  noticeTemplate,
-  loading: loading.models.noticeTemplate,
+export default connect(({ noticeConfig, loading }: ConnectState) => ({
+  noticeConfig,
+  loading: loading.models.noticeConfig,
 }))(Form.create<Props>()(Config));

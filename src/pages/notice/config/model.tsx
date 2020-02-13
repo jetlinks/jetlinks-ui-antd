@@ -2,12 +2,12 @@ import { Effect } from 'dva';
 import { Reducer } from 'react';
 import apis from '@/services';
 
-export interface NoticeTemplateState {
+export interface NoticeConfigState {
   result: any;
 }
-export interface NoticeTemplateType {
+export interface NoticeConfigType {
   namespace: string;
-  state: NoticeTemplateState;
+  state: NoticeConfigState;
   effects: {
     query: Effect;
     remove: Effect;
@@ -18,14 +18,14 @@ export interface NoticeTemplateType {
   };
 }
 
-const NoticeTemplate: NoticeTemplateType = {
+const NoticeConfig: NoticeConfigType = {
   namespace: 'noticeConfig',
   state: {
     result: [],
   },
   effects: {
     *query({ payload }, { call, put }) {
-      const response: any = yield call(apis.notifier.template, payload);
+      const response: any = yield call(apis.notifier.config, payload);
       yield put({
         type: 'save',
         payload: response.result,
@@ -50,4 +50,4 @@ const NoticeTemplate: NoticeTemplateType = {
   },
 };
 
-export default NoticeTemplate;
+export default NoticeConfig;

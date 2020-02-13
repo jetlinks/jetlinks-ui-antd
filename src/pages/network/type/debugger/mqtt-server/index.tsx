@@ -32,9 +32,10 @@ const MqttServer: React.FC<Props> = props => {
     };
     eventSource.onmessage = e => {
       message.success(e.data);
+      setLogs(`${logs}${e.data}\n`);
     };
     eventSource.onopen = () => {
-      message.error('关闭链接');
+      setLogs(`${logs}链接成功\n`);
     };
   };
   return (

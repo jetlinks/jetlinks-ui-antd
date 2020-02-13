@@ -21,7 +21,7 @@ export interface NoticeTemplateType {
 const NoticeTemplate: NoticeTemplateType = {
   namespace: 'noticeTemplate',
   state: {
-    result: [],
+    result: {},
   },
   effects: {
     *query({ payload }, { call, put }) {
