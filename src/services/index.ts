@@ -8,12 +8,12 @@ import * as dimensions from '@/pages/system/dimensions/service';
 import * as ruleEngine from '@/pages/rule-engine/service';
 import * as email from '@/pages/rule-engine/email/service';
 import * as sms from '@/pages/rule-engine/sms/service';
-import * as ruleInstance from "@/pages/rule-engine/instance/service";
-import * as ruleModel from "@/pages/rule-engine/model/service";
-import * as protocol from "@/pages/device/protocol/service";
-import * as openApi from "@/pages/system/open-api/service";
+import * as ruleInstance from '@/pages/rule-engine/instance/service';
+import * as ruleModel from '@/pages/rule-engine/model/service';
+import * as protocol from '@/pages/device/protocol/service';
+import * as openApi from '@/pages/system/open-api/service';
 import * as mqttClient from '@/pages/network/mqtt-client/service';
-import * as certificate from "@/pages/network/certificate/service";
+import * as certificate from '@/pages/network/certificate/service';
 // import * as coapClient from '@/pages/network/coap-client/service';
 // import * as httpClient from '@/pages/network/http-client/service';
 // import * as tcpClient from '@/pages/network/tcp-client/service';
@@ -23,6 +23,7 @@ import * as systemLogger from '@/pages/logger/system/service';
 import * as authorization from '@/components/Authorization/service';
 import * as network from '@/pages/network/type/service';
 import * as gateway from '@/pages/network/gateway/service';
+import * as notifier from '@/pages/notice/service';
 
 const apis = {
   login,
@@ -49,6 +50,7 @@ const apis = {
   systemLogger,
   authorization,
   network,
-  gateway
-}
+  gateway,
+  notifier,
+};
 export default apis;
