@@ -26,6 +26,19 @@ export async function saveOrUpdate(item: any) {
   });
 }
 
+export async function saveOrUpdateConfig(item: any) {
+  return request(`/jetlinks/notifier/config`, {
+    method: 'PATCH',
+    data: item,
+  });
+}
+
+export async function removeConfig(id: string) {
+  return request(`/jetlinks/notifier/config/${id}`, {
+    method: 'DELETE',
+  });
+}
+
 export async function remove(id: string) {
   return request(`/jetlinks/notifier/template/${id}`, {
     method: 'DELETE',

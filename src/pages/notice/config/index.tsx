@@ -1,6 +1,6 @@
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import React, { useEffect, useState, Fragment } from 'react';
-import { Card, Form, Col, Input, Row, Table, Divider, message, Button } from 'antd';
+import { Card, Form, Col, Input, Row, Table, Divider, message, Button, Popconfirm } from 'antd';
 import apis from '@/services';
 import { Dispatch, ConnectState } from '@/models/connect';
 import { connect } from 'dva';
@@ -15,6 +15,7 @@ import styles from '../index.less';
 import { getAccessToken } from '@/utils/authority';
 import request from '@/utils/request';
 import Debug from './debugger';
+import { PaginationConfig } from 'antd/lib/table';
 
 interface Props extends FormComponentProps {
   dispatch: Dispatch;
@@ -124,6 +125,20 @@ const Config: React.FC<Props> = props => {
     });
   };
 
+  const onTableChange = (
+    pagination: PaginationConfig,
+    filters: any,
+    sorter: any,
+    // extra: any,
+  ) => {
+    handlerSearch({
+      pageIndex: Number(pagination.current) - 1,
+      pageSize: pagination.pageSize,
+      terms: searchParam,
+      sorts: sorter,
+    });
+  };
+
   const uploadProps: UploadProps = {
     accept: '.json',
     action: '/jetlinks/file/static',
@@ -223,6 +238,7 @@ const Config: React.FC<Props> = props => {
           <Table
             rowKey="id"
             loading={loading}
+            onChange={onTableChange}
             columns={[
               {
                 dataIndex: 'id',
@@ -254,7 +270,14 @@ const Config: React.FC<Props> = props => {
                       编辑
                     </a>
                     <Divider type="vertical" />
-                    <a onClick={() => remove(record)}>删除</a>
+                    <Popconfirm
+                      title="确认删除？"
+                      onConfirm={() => {
+                        remove(record);
+                      }}
+                    >
+                      <a>删除</a>
+                    </Popconfirm>
                     <Divider type="vertical" />
                     <a onClick={() => downloadObject(record, '通知模版')}>下载配置</a>
                     <Divider type="vertical" />
@@ -271,7 +294,18 @@ const Config: React.FC<Props> = props => {
               },
             ]}
             dataSource={noticeConfig.result?.data}
-            pagination={false}
+            pagination={{
+              current: noticeConfig.result?.pageIndex + 1,
+              total: noticeConfig.result?.total,
+              pageSize: noticeConfig.result?.pageSize,
+              showQuickJumper: true,
+              showSizeChanger: true,
+              pageSizeOptions: ['10', '20', '50', '100'],
+              showTotal: (total: number) =>
+                `共 ${total} 条记录 第  ${noticeConfig.result?.pageIndex + 1}/${Math.ceil(
+                  noticeConfig.result?.total / noticeConfig.result?.pageSize,
+                )}页`,
+            }}
           />
         </Card>
       </div>

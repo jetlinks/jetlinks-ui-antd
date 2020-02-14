@@ -32,11 +32,11 @@ const NoticeConfig: NoticeConfigType = {
       });
     },
     *remove({ payload, callback }, { call }) {
-      const response: any = yield call(apis.notifier.remove, payload);
+      const response: any = yield call(apis.notifier.removeConfig, payload);
       callback(response);
     },
     *insert({ payload, callback }, { call }) {
-      const response: any = yield call(apis.notifier.saveOrUpdate, payload);
+      const response: any = yield call(apis.notifier.saveOrUpdateConfig, payload);
       callback(response);
     },
   },

@@ -9,6 +9,8 @@ import {
   Upload,
   Icon,
   Button,
+  Row,
+  Col,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { FormComponentProps } from 'antd/es/form';
@@ -255,43 +257,51 @@ const Save: React.FC<Props> = props => {
       onOk={() => {
         saveData();
       }}
-      width={800}
+      width={1000}
     >
-      <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
+      <Form labelCol={{ span: 2 }} wrapperCol={{ span: 22 }}>
         <Form.Item label="模版名称">
           {getFieldDecorator('name', {
             rules: [{ required: true, message: '请输入模版名称' }],
             initialValue: item.name,
           })(<Input />)}
         </Form.Item>
-        <Form.Item label="通知类型">
-          {getFieldDecorator('type', {
-            rules: [{ required: true, message: '请输入通知类型' }],
-            initialValue: item.type,
-          })(
-            <Select onChange={e => setItem({ type: e })}>
-              {typeList.map(i => (
-                <Select.Option key={i.id} value={i.id}>
-                  {i.name}
-                </Select.Option>
-              ))}
-            </Select>,
-          )}
-        </Form.Item>
-        <Form.Item label="服务商">
-          {getFieldDecorator('provider', {
-            rules: [{ required: true, message: '请选择服务商' }],
-            initialValue: item.provider,
-          })(
-            <Select>
-              {(typeList.find(i => i.id === item.type)?.providerInfos || []).map((e: any) => (
-                <Select.Option key={e.id} value={e.id}>
-                  {e.name}
-                </Select.Option>
-              ))}
-            </Select>,
-          )}
-        </Form.Item>
+        <Row>
+          {/* <Col span={2}></Col> */}
+          <Col span={12}>
+            <Form.Item label="通知类型" labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
+              {getFieldDecorator('type', {
+                rules: [{ required: true, message: '请输入通知类型' }],
+                initialValue: item.type,
+              })(
+                <Select onChange={e => setItem({ type: e })}>
+                  {typeList.map(i => (
+                    <Select.Option key={i.id} value={i.id}>
+                      {i.name}
+                    </Select.Option>
+                  ))}
+                </Select>,
+              )}
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item label="服务商" labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
+              {getFieldDecorator('provider', {
+                rules: [{ required: true, message: '请选择服务商' }],
+                initialValue: item.provider,
+              })(
+                <Select>
+                  {(typeList.find(i => i.id === item.type)?.providerInfos || []).map((e: any) => (
+                    <Select.Option key={e.id} value={e.id}>
+                      {e.name}
+                    </Select.Option>
+                  ))}
+                </Select>,
+              )}
+            </Form.Item>
+          </Col>
+        </Row>
+
         {renderConfig()}
       </Form>
     </Modal>

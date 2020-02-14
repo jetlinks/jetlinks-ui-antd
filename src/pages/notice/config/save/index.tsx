@@ -1,7 +1,8 @@
-import { Modal, Form, Input, Select } from 'antd';
+import { Modal, Form, Input, Select, Card, Col, Icon, Row } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { FormComponentProps } from 'antd/es/form';
 import apis from '@/services';
+import { randomString } from '@/utils/utils';
 
 interface Props extends FormComponentProps {
   data: any;
@@ -12,12 +13,26 @@ interface State {
   item: any;
   typeList: any[];
   metadata: any;
+  otherConfig: {
+    id: string;
+    name: string;
+    value: string;
+    description: string;
+  }[];
 }
 const Save: React.FC<Props> = props => {
   const initState: State = {
     item: props.data,
     typeList: [],
     metadata: {},
+    otherConfig: [
+      {
+        id: randomString(8),
+        name: '',
+        value: '',
+        description: '',
+      },
+    ],
   };
 
   const {
@@ -27,9 +42,10 @@ const Save: React.FC<Props> = props => {
   const [item, setItem] = useState(initState.item);
   const [typeList, setTypeList] = useState(initState.typeList);
   const [metadata, setMetadata] = useState(initState.metadata);
+  const [otherConfig, setOtherConfig] = useState(initState.otherConfig);
 
-  const getMetadata = () => {
-    apis.notifier.configMetadata(item.type, item.provider).then(res => {
+  const getMetadata = (provider?: string) => {
+    apis.notifier.configMetadata(item.type, provider || item.provider).then(res => {
       setMetadata(res.result);
     });
   };
@@ -51,10 +67,10 @@ const Save: React.FC<Props> = props => {
     });
   }, []);
 
-  const getDataType = (i: any) => {
+  const getDataType = (j: any) => {
     const {
       type: { type },
-    } = i;
+    } = j;
 
     switch (type) {
       case 'int':
@@ -62,6 +78,76 @@ const Save: React.FC<Props> = props => {
       case 'number':
       case 'password':
         return <Input />;
+      case 'array':
+        return (
+          <Card>
+            {otherConfig.map((i, index) => (
+              <Row key={i.id} style={{ marginBottom: 5 }}>
+                <Col span={6}>
+                  <Input
+                    value={i.name}
+                    onChange={e => {
+                      otherConfig[index].name = e.target.value;
+                      setOtherConfig([...otherConfig]);
+                    }}
+                    placeholder="key"
+                  />
+                </Col>
+                <Col span={2} style={{ textAlign: 'center' }}>
+                  <Icon type="double-right" />
+                </Col>
+                <Col span={6}>
+                  <Input
+                    value={i.value}
+                    onChange={e => {
+                      otherConfig[index].value = e.target.value;
+                      setOtherConfig([...otherConfig]);
+                    }}
+                    placeholder="value"
+                  />
+                </Col>
+                <Col span={2} style={{ textAlign: 'center' }}>
+                  <Icon type="double-right" />
+                </Col>
+                <Col span={6}>
+                  <Input
+                    value={i.description}
+                    onChange={e => {
+                      otherConfig[index].description = e.target.value;
+                      setOtherConfig([...otherConfig]);
+                    }}
+                    placeholder="说明"
+                  />
+                </Col>
+                <Col span={2} style={{ textAlign: 'center' }}>
+                  {index === 0 ? (
+                    <Icon
+                      type="plus"
+                      onClick={() => {
+                        otherConfig.push({
+                          id: randomString(8),
+                          name: '',
+                          value: '',
+                          description: '',
+                        });
+                        setOtherConfig([...otherConfig]);
+                      }}
+                    />
+                  ) : (
+                    <Icon
+                      type="minus"
+                      onClick={() => {
+                        const config = otherConfig.filter(temp => temp.id !== i.id);
+                        // debugData.headers.push({ id: randomString(8), key: '', value: '' });
+                        setOtherConfig([...config]);
+                      }}
+                    />
+                  )}
+                </Col>
+              </Row>
+            ))}
+          </Card>
+        );
       default:
         return <p>缺少</p>;
     }
@@ -72,7 +158,7 @@ const Save: React.FC<Props> = props => {
       return metadata.properties.map((i: any) => (
         <Form.Item label={i.name} key={i.property}>
           {form.getFieldDecorator(`configuration.${i.property}`, {
-            initialValue: item.configuration[i.property],
+            initialValue: item.configuration && item.configuration[i.property],
           })(getDataType(i))}
         </Form.Item>
       ));
@@ -83,6 +169,11 @@ const Save: React.FC<Props> = props => {
   const saveData = () => {
     const id = props.data?.id;
     const data = form.getFieldsValue();
+    const { configuration } = data;
+    if (data.type === 'email') {
+      configuration.properties = otherConfig;
+    }
+    data.configuration = configuration;
     data.template = JSON.stringify(data.template);
     props.save({ ...data, id });
   };
@@ -90,12 +181,12 @@ const Save: React.FC<Props> = props => {
   return (
     <Modal
       visible
-      title="编辑通知模版"
+      title="编辑通知配置"
       onCancel={() => props.close()}
       onOk={() => {
         saveData();
       }}
-      width={640}
+      width={840}
     >
       <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
         <Form.Item label="模版名称">
@@ -126,8 +217,8 @@ const Save: React.FC<Props> = props => {
             initialValue: item.provider,
           })(
             <Select
-              onChange={() => {
-                getMetadata();
+              onChange={(e: string) => {
+                getMetadata(e);
               }}
             >
               {(typeList.find(i => i.id === item.type)?.providerInfos || []).map((e: any) => (
