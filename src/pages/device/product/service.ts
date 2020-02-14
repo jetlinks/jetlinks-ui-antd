@@ -77,9 +77,17 @@ export async function protocolConfiguration(support: string, transport: string) 
 }
 
 //发布状态切换
-export async function changeDeploy(param: any) {
-    return request(`/jetlinks/device-product/${param.type}/${param.id}`, {
+export async function deploy(id: string) {
+    return request(`/jetlinks/device-product/${id}/deploy`, {
         method: 'POST',
         data: {}
     });
+}
+
+//发布状态切换
+export async function unDeploy(id: string) {
+  return request(`/jetlinks/device-product/${id}/undeploy`, {
+    method: 'POST',
+    data: {}
+  });
 }

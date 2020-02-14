@@ -54,8 +54,14 @@ export async function fireAlarm(params: any) {
   });
 }
 
-export async function changeDeploy(params: any) {
-  return request(`/jetlinks/device-instance/${params.type}/${params.id}`, {
+export async function changeDeploy(deviceId: string) {
+  return request(`/jetlinks//device-instance/${deviceId}/deploy`, {
+    method: 'POST',
+  });
+}
+
+export async function unDeploy(deviceId: string) {
+  return request(`/jetlinks//device-instance/${deviceId}/undeploy`, {
     method: 'POST',
   });
 }

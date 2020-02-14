@@ -117,7 +117,7 @@ const DeviceModel: React.FC<Props> = props => {
             <Popconfirm
               title="确认发布？"
               onConfirm={() => {
-                changeDeploy('deploy', record);
+                deploy(record);
               }}
             >
               <a>发布</a>
@@ -126,7 +126,7 @@ const DeviceModel: React.FC<Props> = props => {
             <Popconfirm
               title="确认停用"
               onConfirm={() => {
-                changeDeploy('cancelDeploy', record);
+                unDeploy(record);
               }}
             >
               <a>停用</a>
@@ -149,13 +149,20 @@ const DeviceModel: React.FC<Props> = props => {
     handleSearch(searchParam);
   }, []);
 
-  const changeDeploy = (type: string, record: any) => {
+  const deploy = (record: any) => {
     dispatch({
-      type: 'deviceProduct/changeDeploy',
-      payload: {
-        type,
-        id: record.id,
+      type: 'deviceProduct/deploy',
+      payload: record.id,
+      callback: response => {
+        message.success('操作成功');
+        handleSearch(searchParam);
       },
+    });
+  };
+  const unDeploy = (record: any) => {
+    dispatch({
+      type: 'deviceProduct/unDeploy',
+      payload: record.id,
       callback: response => {
         message.success('操作成功');
         handleSearch(searchParam);

@@ -49,8 +49,12 @@ const DeviceProductModel: DeviceProductModelType = {
             const response: SimpleResponse = yield call(apis.deviceProdcut.remove, payload);
             callback(response);
         },
-        *changeDeploy({ payload, callback }, { call, put }) {
-            const response: SimpleResponse = yield call(apis.deviceProdcut.changeDeploy, payload);
+        *deploy({ payload, callback }, { call, put }) {
+            const response: SimpleResponse = yield call(apis.deviceProdcut.deploy, payload);
+            callback(response);
+        },
+        *unDeploy({ payload, callback }, { call, put }) {
+            const response: SimpleResponse = yield call(apis.deviceProdcut.unDeploy, payload);
             callback(response);
         }
     },
