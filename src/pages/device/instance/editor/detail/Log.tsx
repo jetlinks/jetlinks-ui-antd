@@ -44,9 +44,9 @@ const Log: React.FC<Props> = props => {
     loadLogData({
       pageIndex: 0,
       pageSize: 10,
-      terms: {
+      /*terms: {
         deviceId: props.deviceId,
-      },
+      },*/
       sorts: {
         field: 'createTime',
         order: 'desc',
@@ -56,7 +56,7 @@ const Log: React.FC<Props> = props => {
 
   const loadLogData = (param: any) => {
     apis.deviceInstance
-      .logs(encodeQueryParam(param))
+      .logs(props.deviceId,encodeQueryParam(param))
       .then(response => {
         setLog(response.result);
       })

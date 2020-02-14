@@ -28,8 +28,8 @@ export async function remove(id: string) {
   });
 }
 
-export async function logs(params: any) {
-  return request(`/jetlinks/device-instance/operation/log`, {
+export async function logs(deviceId: string,params: any) {
+  return request(`/jetlinks/device-instance/${deviceId}/logs`, {
     method: 'GET',
     params,
   });
@@ -70,6 +70,13 @@ export async function eventData(id: string, event: string, params: any) {
   return request(`/jetlinks/device-product/${id}/event/${event}`, {
     method: 'GET',
     params,
+  });
+}
+
+export async function functionsData(id: string, functions: string, data: any) {
+  return request(`/jetlinks/device/invoked/${id}/function/${functions}`, {
+    method: 'POST',
+    data,
   });
 }
 
