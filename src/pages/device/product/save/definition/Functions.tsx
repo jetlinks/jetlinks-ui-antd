@@ -2,7 +2,7 @@ import React, { useState, Fragment } from 'react';
 import { Card, Button, Table, Divider } from 'antd';
 import { ColumnProps } from 'antd/es/table';
 import FunctionDefin from '../../component/function';
-import { FunctionMeta } from '../../component/data';
+import { FunctionMeta } from '../../component/data.d';
 
 interface Props {
   save: Function;
@@ -24,6 +24,16 @@ const Functions: React.FC<Props> = props => {
   const [visible, setVisible] = useState(initState.visible);
   const [current, setCurrent] = useState(initState.current);
   const [data, setData] = useState(initState.data);
+
+  const editItem = (item: any) => {
+    setVisible(true);
+    setCurrent(item);
+  };
+
+  const deleteItem = (item: any) => {
+    setData(data.filter(e => e.id !== item.id));
+    props.save(data);
+  };
 
   const columns: ColumnProps<FunctionMeta>[] = [
     {
@@ -57,22 +67,13 @@ const Functions: React.FC<Props> = props => {
     },
   ];
 
-  const editItem = (item: any) => {
-    setVisible(true);
-    setCurrent(item);
-  };
-
-  const deleteItem = (item: any) => {
-    setData(data.filter(e => e.id !== item.id));
-    props.save(data);
-  };
-
-  const saveFunctionData = (item: FunctionMeta) => {
+  const saveFunctionData = (items: FunctionMeta) => {
+    let item = items;
     if (!item.id) {
       item = { ...item, id: (data.length + 1).toString() };
       data.push(item);
     } else {
-      const i = data.findIndex(i => i.id === item.id);
+      const i = data.findIndex(j => j.id === item.id);
       data[i] = item;
     }
     setVisible(false);
@@ -96,8 +97,8 @@ const Functions: React.FC<Props> = props => {
       {visible && (
         <FunctionDefin
           data={current}
-          save={(data: FunctionMeta) => {
-            saveFunctionData(data);
+          save={(item: FunctionMeta) => {
+            saveFunctionData(item);
           }}
           close={() => {
             setVisible(false);

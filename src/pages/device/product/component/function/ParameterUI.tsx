@@ -1,10 +1,10 @@
-import { Modal, Form, Input, Radio, Select, Col, Empty } from 'antd';
+import { Modal, Form, Input, Radio, Select, Col, Row, Icon } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
-import styles from '../index.less';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { renderUnit } from '@/pages/device/public';
-import React from 'react';
-import { Parameter } from '../data';
+
+import styles from '../index.less';
+import { Parameter } from '../data.d';
 
 interface Props extends FormComponentProps {
   visible: boolean;
@@ -16,6 +16,7 @@ interface Props extends FormComponentProps {
 interface State {
   dataType: string | undefined;
   data: Partial<Parameter>;
+  enumData: any[];
 }
 
 const ParameterUI: React.FC<Props> = props => {
@@ -25,9 +26,11 @@ const ParameterUI: React.FC<Props> = props => {
   const initState: State = {
     dataType: props.data.dataType,
     data: props.data,
+    enumData: props.data.valueType?.properties || [{ key: '', value: '', id: 0 }],
   };
-  console.log(props.data, 'das');
+
   const [dataType, setDataType] = useState(initState.dataType);
+  const [enumData, setEnumData] = useState(initState.enumData);
 
   const dataTypeChange = (value: string) => {
     setDataType(value);
@@ -35,7 +38,7 @@ const ParameterUI: React.FC<Props> = props => {
 
   const saveData = () => {
     const { form } = props;
-    const id = props.data.id;
+    const { id } = props.data;
     form.validateFields((err: any, fieldValue: any) => {
       if (err) return;
       props.saveData({ ...fieldValue, id });
@@ -44,7 +47,6 @@ const ParameterUI: React.FC<Props> = props => {
   };
 
   const renderDetailForm = () => {
-    console.log(dataType, 'tyoe');
     switch (dataType) {
       case 'int':
       case 'double':
@@ -55,7 +57,7 @@ const ParameterUI: React.FC<Props> = props => {
               <Col span={11}>
                 {getFieldDecorator('valueType.min', {
                   rules: [{ required: true, message: '请输入最小值' }],
-                  initialValue: (initState.data.valueType || {}).min,
+                  initialValue: initState.data.valueType?.min,
                 })(<Input placeholder="最小值" />)}
               </Col>
               <Col span={2} push={1}>
@@ -65,7 +67,7 @@ const ParameterUI: React.FC<Props> = props => {
                 <Form.Item>
                   {getFieldDecorator('valueType.max', {
                     rules: [{ required: true, message: '请输入最大值' }],
-                    initialValue: (initState.data.valueType || {}).max,
+                    initialValue: initState.data.valueType?.max,
                   })(<Input placeholder="最大值" />)}
                 </Form.Item>
               </Col>
@@ -73,13 +75,13 @@ const ParameterUI: React.FC<Props> = props => {
             <Form.Item label="步长">
               {getFieldDecorator('valueType.step', {
                 rules: [{ required: true, message: '请选择步长' }],
-                initialValue: (initState.data.valueType || {}).step,
+                initialValue: initState.data.valueType?.step,
               })(<Input placeholder="请输入步长" />)}
             </Form.Item>
             <Form.Item label="单位">
               {getFieldDecorator('valueType.unit', {
                 rules: [{ required: true, message: '请选择单位' }],
-                initialValue: (initState.data.valueType || {}).unit,
+                initialValue: initState.data.valueType?.unit,
               })(renderUnit())}
             </Form.Item>
           </div>
@@ -91,7 +93,7 @@ const ParameterUI: React.FC<Props> = props => {
             <Form.Item label="数据长度">
               {getFieldDecorator('valueType.length', {
                 rules: [{ required: true, message: '请输入数据长度' }],
-                initialValue: (initState.data.valueType || {}).length,
+                initialValue: initState.data.valueType?.length,
               })(<Input addonAfter="字节" />)}
             </Form.Item>
           </div>
@@ -102,12 +104,12 @@ const ParameterUI: React.FC<Props> = props => {
             <Form.Item label="布尔值">
               {getFieldDecorator('valueType.true', {
                 rules: [{ required: true, message: '请输入对应数据' }],
-                initialValue: (initState.data.valueType || {}).true,
+                initialValue: initState.data.valueType?.true,
               })(<Input addonBefore="0" placeholder="如：关" />)}
               <Form.Item>
                 {getFieldDecorator('valueType.false', {
                   rules: [{ required: false }],
-                  initialValue: (initState.data.valueType || {}).false,
+                  initialValue: initState.data.valueType?.false,
                 })(<Input addonBefore="1" placeholder="如：开" />)}
               </Form.Item>
             </Form.Item>
@@ -118,7 +120,7 @@ const ParameterUI: React.FC<Props> = props => {
           <div>
             <Form.Item label="时间格式">
               {getFieldDecorator('valueType.dateTemplate', {
-                initialValue: (initState.data.valueType || {}).dateTemplate,
+                initialValue: initState.data.valueType?.dateTemplate,
               })(
                 <Select>
                   <Select.Option value="string">String类型的UTC时间戳 (毫秒)</Select.Option>
@@ -141,7 +143,7 @@ const ParameterUI: React.FC<Props> = props => {
             <Form.Item label="元素类型">
               {getFieldDecorator('arrayType', {
                 rules: [{ required: true }],
-                initialValue: (initState.data.valueType || {}).arrayType,
+                initialValue: initState.data.valueType?.arrayType,
               })(
                 <Radio.Group>
                   <Radio value="int32">int32</Radio>
@@ -157,24 +159,63 @@ const ParameterUI: React.FC<Props> = props => {
       case 'enum':
         return (
           <div>
-            <Empty description="暂未开发" />
-          </div>
-        );
-      case 'struct':
-        return (
-          <div>
-            {' '}
-            <Empty description="暂未开发" />
+            <Form.Item label="枚举项">
+              {enumData.map((item, index) => (
+                <Row key={item.id}>
+                  <Col span={10}>
+                    <Input
+                      placeholder="编号为：0"
+                      value={item.value}
+                      onChange={event => {
+                        enumData[index].value = event.target.value;
+                        setEnumData([...enumData]);
+                      }}
+                    />
+                  </Col>
+                  <Col span={2} style={{ textAlign: 'center' }}>
+                    <Icon type="arrow-right" />
+                  </Col>
+                  <Col span={10}>
+                    <Input
+                      placeholder="对该枚举项的描述"
+                      value={item.key}
+                      onChange={event => {
+                        enumData[index].key = event.target.value;
+                        setEnumData([...enumData]);
+                      }}
+                    />
+                  </Col>
+                  <Col span={2} style={{ textAlign: 'center' }}>
+                    {index === 0 ? (
+                      <Icon
+                        type="plus-circle"
+                        onClick={() => {
+                          setEnumData([...enumData, { id: enumData.length + 1 }]);
+                        }}
+                      />
+                    ) : (
+                      <Icon
+                        type="minus-circle"
+                        onClick={() => {
+                          enumData.splice(index, 1);
+                          setEnumData([...enumData]);
+                        }}
+                      />
+                    )}
+                  </Col>
+                </Row>
+              ))}
+            </Form.Item>
           </div>
         );
       default:
-        return;
+        return null;
     }
   };
 
   return (
     <Modal
-      visible={true}
+      visible
       title="编辑参数"
       onCancel={() => {
         props.closeVisible();

@@ -1,14 +1,15 @@
 import { Card, Table, Divider, Button } from 'antd';
 import React, { Fragment, useState } from 'react';
 import { ColumnProps } from 'antd/es/table';
-import { EventsMeta } from '../../component/data';
+import { EventsMeta } from '../../component/data.d';
 import EventDefin from '../../component/event';
+
 interface Props {
   save: Function;
   data: any[];
 }
 
-let gradeText = {
+const gradeText = {
   ordinary: '普通',
   warn: '警告',
   urgent: '紧急',
@@ -30,6 +31,16 @@ const Events: React.FC<Props> = props => {
   const [data, setData] = useState(initState.data);
   const [current, setCurrent] = useState(initState.current);
 
+  const editItem = (item: any) => {
+    setVisible(true);
+    setCurrent(item);
+  };
+
+  const deleteItem = (item: EventsMeta) => {
+    setData(data.filter(e => e.id !== item.id));
+    props.save(data);
+  };
+
   const columns: ColumnProps<EventsMeta>[] = [
     {
       title: '事件标识',
@@ -42,7 +53,7 @@ const Events: React.FC<Props> = props => {
     {
       title: '输出参数',
       dataIndex: 'parameters',
-      render: text => <a>查看</a>,
+      render: () => <a>查看</a>,
     },
     {
       title: '事件级别',
@@ -67,22 +78,13 @@ const Events: React.FC<Props> = props => {
     },
   ];
 
-  const editItem = (item: any) => {
-    setVisible(true);
-    setCurrent(item);
-  };
-
-  const deleteItem = (item: EventsMeta) => {
-    setData(data.filter(e => e.id !== item.id));
-    props.save(data);
-  };
-
-  const saveEventData = (item: EventsMeta) => {
+  const saveEventData = (items: EventsMeta) => {
+    let item = items;
     if (!item.id) {
       item = { ...item, id: (data.length + 1).toString() };
       data.push(item);
     } else {
-      const i = data.findIndex(i => i.id === item.id);
+      const i = data.findIndex(j => j.id === item.id);
       data[i] = item;
     }
     setVisible(false);
@@ -101,13 +103,13 @@ const Events: React.FC<Props> = props => {
           </Button>
         }
       >
-        <Table rowKey={'id'} columns={columns} dataSource={data} />
+        <Table rowKey="id" columns={columns} dataSource={data} />
       </Card>
       {visible && (
         <EventDefin
           data={current}
-          save={(data: EventsMeta) => {
-            saveEventData(data);
+          save={(item: EventsMeta) => {
+            saveEventData(item);
           }}
           close={() => {
             setVisible(false);

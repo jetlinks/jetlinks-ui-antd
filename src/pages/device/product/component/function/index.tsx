@@ -1,475 +1,465 @@
-import React, { useState, useEffect } from "react";
-import Form, { FormComponentProps } from "antd/lib/form";
+import React, { useState } from 'react';
+import Form, { FormComponentProps } from 'antd/lib/form';
+import { Input, Radio, Button, List, Select, Drawer, Col, Row, Icon } from 'antd';
 import styles from '../index.less';
-import { Input, Radio, Button, List, Modal, Select, Drawer, message, Col, Row, Icon } from "antd";
-import { Parameter, FunctionMeta } from "../data";
-import { renderUnit } from "@/pages/device/public";
-import Paramter from "../paramter";
+import { Parameter, FunctionMeta } from '../data.d';
+import { renderUnit } from '@/pages/device/public';
+import Paramter from '../paramter';
 
 interface Props extends FormComponentProps {
-    save: Function;
-    data: Partial<FunctionMeta>;
-    close: Function;
+  save: Function;
+  data: Partial<FunctionMeta>;
+  close: Function;
 }
 
 interface State {
-    editVisible: boolean;
-    currentItem: Partial<Parameter>;
-    currentTarget: string;
-    data: Partial<FunctionMeta>;
-    dataType: string;
-    outputVisible: boolean;
-    inputVisible: boolean;
-    enumData: any[];
-    outputParameter: Parameter[];
-    inputs: Parameter[];
-    currentParameter: any;
+  editVisible: boolean;
+  currentItem: Partial<Parameter>;
+  currentTarget: string;
+  data: Partial<FunctionMeta>;
+  dataType: string;
+  outputVisible: boolean;
+  inputVisible: boolean;
+  enumData: any[];
+  outputParameter: Parameter[];
+  inputs: Parameter[];
+  currentParameter: any;
 }
 
-const FunctionDefin: React.FC<Props> = (props) => {
+const FunctionDefin: React.FC<Props> = props => {
+  const initState: State = {
+    data: props.data,
+    editVisible: false,
+    currentItem: {},
+    currentTarget: '',
+    dataType: props.data.outputs?.type || '',
+    outputVisible: false,
+    inputVisible: false,
+    enumData: props.data.outputs?.elements || [],
+    outputParameter: props.data.outputs?.properties || [],
+    inputs: [],
+    currentParameter: {},
+  };
 
-    const initState: State = {
-        data: props.data,
-        editVisible: false,
-        currentItem: {},
-        currentTarget: '',
-        dataType: props.data.outputs?.type || '',
-        outputVisible: false,
-        inputVisible: false,
-        enumData: props.data.outputs?.elements || [],
-        outputParameter: props.data.outputs?.properties || [],
-        inputs: [],
-        currentParameter: {}
-    }
+  const {
+    form: { getFieldDecorator },
+  } = props;
+  const [inputs, setInputs] = useState(initState.data.inputs || []);
+  const [outputParameter, setOutputParameter] = useState(initState.outputParameter);
+  const [dataType, setDataType] = useState(initState.dataType);
+  const [enumData, setEnumData] = useState(initState.enumData);
+  const [outputVisible, setOutputVisible] = useState(initState.outputVisible);
+  const [inputVisible, setInputVisible] = useState(initState.inputVisible);
+  const [currentParameter, setCurrentParameter] = useState(initState.currentParameter);
 
-    const { form: { getFieldDecorator } } = props;
-    const [inputs, setInputs] = useState(initState.data.inputs || []);
-    const [outputParameter, setOutputParameter] = useState(initState.outputParameter);
-    const [dataType, setDataType] = useState(initState.dataType);
-    const [enumData, setEnumData] = useState(initState.enumData);
-    const [outputVisible, setOutputVisible] = useState(initState.outputVisible);
-    const [inputVisible, setInputVisible] = useState(initState.inputVisible);
-    const [currentParameter, setCurrentParameter] = useState(initState.currentParameter);
+  const saveData = () => {
+    const { form } = props;
+    const { id } = props.data;
+    form.validateFields((err: any, fieldValue: any) => {
+      if (err) return;
+      const {
+        outputs: { type },
+      } = fieldValue;
+      const data = fieldValue;
+      if (type === 'object') {
+        data.outputs.properties = outputParameter;
+      }
+      props.save({ ...data, inputs, id });
+    });
+  };
 
-    const saveData = () => {
-        const { form } = props;
-        const id = props.data.id;
-        form.validateFields((err: any, fieldValue: any) => {
-            if (err) return;
-            if (fieldValue.outputs.type === 'object') {
-                fieldValue.outputs.properties = outputParameter;
-            }
-            props.save({ ...fieldValue, inputs, id });
-        });
-    }
+  const renderDataType = () => {
+    switch (dataType) {
+      case 'float':
+      case 'double':
+      case 'int':
+        return (
+          <div>
+            <Form.Item label="取值范围" style={{ height: 69 }}>
+              <Col span={11}>
+                {getFieldDecorator('outputs.min', {
+                  rules: [{ required: true, message: '请输入最小值' }],
+                  initialValue: props.data.outputs?.min,
+                })(<Input placeholder="最小值" />)}
+              </Col>
+              <Col span={2} push={1}>
+                ~
+              </Col>
+              <Col span={11}>
+                <Form.Item>
+                  {getFieldDecorator('outputs.max', {
+                    rules: [{ required: true, message: '请输入最大值' }],
+                    initialValue: props.data.outputs?.max,
+                  })(<Input placeholder="最大值" />)}
+                </Form.Item>
+              </Col>
+            </Form.Item>
 
-
-    const renderDataType = () => {
-        const { form: { getFieldDecorator } } = props;
-        switch (dataType) {
-            case 'float':
-            case 'double':
-            case 'int':
-                return (
-                    <div>
-                        <Form.Item label='取值范围' style={{ height: 69 }}>
-
-                            <Col span={11}>
-                                {getFieldDecorator('outputs.min', {
-                                    rules: [{ required: true, message: '请输入最小值' }],
-                                    initialValue: props.data.outputs?.min,
-                                })(<Input
-                                    placeholder="最小值"
-                                />)}
-                            </Col>
-                            <Col span={2} push={1}>
-                                ~
-                             </Col>
-                            <Col span={11}>
-                                <Form.Item>
-                                    {getFieldDecorator('outputs.max', {
-                                        rules: [{ required: true, message: '请输入最大值' }],
-                                        initialValue: props.data.outputs?.max,
-                                    })(<Input
-                                        placeholder="最大值"
-                                    />)}
-                                </Form.Item>
-                            </Col>
-                        </Form.Item>
-
-                        <Form.Item label="步长">
-                            {getFieldDecorator('outputs.step', {
-                                rules: [{ required: true, message: '请输入步长' }],
-                                initialValue: props.data.outputs?.step,
-                            })(
-                                <Input placeholder="请输入步长" />
-                            )}
-                        </Form.Item>
-                        <Form.Item label="单位">
-                            {getFieldDecorator('outputs.unit', {
-                                rules: [{ required: true, message: '请选择单位' }],
-                                initialValue: props.data.outputs?.unit,
-                            })(
-                                renderUnit()
-                            )}
-                        </Form.Item>
-                    </div>
-                );
-            case 'string':
-                return (
-                    <div>
-                        <Form.Item label="数据长度">
-                            {getFieldDecorator('outputs.length', {
-                                rules: [{ required: true, message: '请输入数据长度' }],
-                                initialValue: props.data.outputs?.length,
-                            })(
-                                <Input addonAfter="字节" />
-                            )}
-                        </Form.Item>
-                    </div>
-                );
-            case 'bool':
-                return (
-                    <div>
-                        <Form.Item label="布尔值">
-                            {getFieldDecorator('outputs.true', {
-                                rules: [{ required: true, message: "请输入对应数据" }],
-                                initialValue: props.data.outputs?.true,
-                            })(
-                                <Input addonBefore="0" placeholder="如：关" />
-                            )}
-                            <Form.Item>
-                                {getFieldDecorator('outputs.false', {
-                                    rules: [{ required: false }],
-                                    initialValue: props.data.outputs?.false,
-                                })(
-                                    <Input addonBefore="1" placeholder="如：开" />
-                                )}
-                            </Form.Item>
-                        </Form.Item>
-                    </div>
-                )
-            case 'date':
-                return (
-                    <div>
-                        <Form.Item label="时间格式">
-                            {getFieldDecorator('outputs.dateTemplate', {
-                                initialValue: props.data.outputs?.dateTemplate,
-                            })(
-                                <Select>
-                                    <Select.Option value="string">String类型的UTC时间戳 (毫秒)</Select.Option>
-                                    <Select.Option value="yyyy-MM-dd">yyyy-MM-dd</Select.Option>
-                                    <Select.Option value="yyyy-MM-dd HH:mm:ss">yyyy-MM-dd HH:mm:ss</Select.Option>
-                                    <Select.Option value="yyyy-MM-dd HH:mm:ss EE">yyyy-MM-dd HH:mm:ss EE</Select.Option>
-                                    <Select.Option value="yyyy-MM-dd HH:mm:ss zzz">yyyy-MM-dd HH:mm:ss zzz</Select.Option>
-                                </Select>
-                            )}
-                        </Form.Item>
-                    </div>
-                )
-            case 'array':
-                return (
-                    <div>
-                        <Form.Item label="元素类型">
-                            {getFieldDecorator('outputs.arrayType', {
-                                rules: [{ required: true }],
-                                initialValue: props.data.outputs?.arrayType,
-                            })(
-                                <Radio.Group>
-                                    <Radio value="int32">int32(整数型)</Radio>
-                                    <Radio value="float">float(单精度）</Radio>
-                                    <Radio value="double">double(双精度)</Radio>
-                                    <Radio value="text">text(字符串)</Radio>
-                                    <Radio value="object">object(结构体)</Radio>
-                                </Radio.Group>
-                            )}
-                        </Form.Item>
-                        <Form.Item label="元素个数">
-                            {
-                                getFieldDecorator('outputs.elementNumber', {
-                                    rules: [{ required: true }],
-                                    initialValue: props.data.outputs?.elementNumber,
-                                })(
-                                    <Input />
-                                )
-                            }
-                        </Form.Item>
-                    </div>
-                )
-            case 'enum':
-                return (
-                    <div>
-                        <Form.Item label="枚举项">
-                            {
-                                enumData.length > 0 ? enumData.map((item, index) => {
-                                    return (
-                                        <Row key={index}>
-                                            <Col span={10} >
-                                                <Input placeholder="编号为：0" value={item.value} onChange={(event) => {
-                                                    enumData[index].value = event.target.value;
-                                                    setEnumData([...enumData]);
-                                                }} />
-                                            </Col>
-                                            <Col span={2} style={{ textAlign: 'center' }} >
-                                                <Icon type="arrow-right" />
-                                            </Col>
-                                            <Col span={10}>
-                                                <Input placeholder="对该枚举项的描述" value={item.key} onChange={(event) => {
-                                                    enumData[index].key = event.target.value;
-                                                    setEnumData([...enumData]);
-                                                }} />
-                                            </Col>
-                                            <Col span={2} style={{ textAlign: 'center' }} >
-                                                {index === 0 ?
-                                                    <Icon type="plus-circle" onClick={() => {
-                                                        setEnumData(
-                                                            [...enumData, { id: enumData.length + 1 }]
-                                                        );
-                                                    }} /> :
-                                                    <Icon type="minus-circle" onClick={() => {
-                                                        enumData.splice(index, 1)
-                                                        setEnumData([...enumData]);
-                                                    }} />}
-                                            </Col>
-                                        </Row>
-                                    )
-                                }) :
-                                    <Row justify="space-around" align="middle">
-                                        <Col span={10} >
-                                            <Input placeholder="编号为：0" onChange={(event) => {
-
-                                                enumData[0] = {
-                                                    value: event.target.value,
-                                                }
-                                                setEnumData([...enumData]);
-                                            }} />
-                                        </Col>
-                                        <Col span={2} style={{ textAlign: 'center' }} >
-                                            <Icon type="arrow-right" />
-                                        </Col>
-                                        <Col span={10}>
-                                            <Input placeholder="对该枚举项的描述" onChange={(event) => {
-                                                enumData[0] = {
-                                                    key: event.target.value,
-                                                }
-                                                setEnumData([...enumData]);
-                                            }} />
-                                        </Col>
-                                        <Col span={2} style={{ textAlign: 'center' }} >
-                                            <Icon type="plus-circle" onClick={() => {
-                                                setEnumData(
-                                                    [...enumData, { id: enumData.length + 1 }]
-                                                );
-                                            }} />
-                                        </Col>
-                                    </Row>
-                            }
-                        </Form.Item>
-                    </div>
-                )
-            case 'object':
-                return (
-                    <Form.Item label='JSON对象'>
-                        {/* {
-                            (outputParameter.length > 0) ? outputParameter.map((item, index) => {
-                                return <Input key={index} value={item.name + '--' + item.id} />
-                            }) : ''
-                        } */}
-                        {
-                            (outputParameter.length > 0) &&
-                            <List
-                                bordered
-                                dataSource={outputParameter}
-                                renderItem={
-                                    (item: any) => (
-                                        <List.Item
-                                            actions={[
-                                                <Button type="link" onClick={() => { setOutputVisible(true); setCurrentParameter(item) }}>编辑</Button>,
-                                                <Button type="link" onClick={() => {
-                                                    const index = outputParameter.findIndex((i: any) => i.id === item.id);
-                                                    outputParameter.splice(index, 1);
-                                                    setOutputParameter([...outputParameter]);
-                                                }}>删除</Button>
-                                            ]}
-                                        >
-                                            参数名称：{item.name}
-                                        </List.Item>
-                                    )
-                                }
-                            />
-                        }
-                        <Button type="link" onClick={() => { setOutputVisible(true) }}><Icon type='plus' />添加参数</Button>
-                    </Form.Item>
-                );
-            case 'file':
-                return (
-                    <Form.Item label="文件类型">
-                        {
-                            getFieldDecorator('outputs.fileType', {
-                                rules: [{ required: true }],
-                                initialValue: '',
-                            })(
-                                <Select>
-                                    <Select.Option value='url'>URL(链接)</Select.Option>
-                                    <Select.Option value='base64'>Base64(Base64编码)</Select.Option>
-                                    <Select.Option value='binary'>Binary(二进制)</Select.Option>
-                                </Select>
-                            )
-                        }
-                    </Form.Item>
-                )
-            default:
-                return;
-        }
-    }
-
-
-
-    return (
-        <Drawer
-            title="编辑功能定义"
-            placement="right"
-            closable={false}
-            onClose={() => props.close()}
-            visible
-            width={'30%'}
-        >
-
-            <Form className={styles.paramterForm}>
-                <Form.Item label="标识符">
-                    {getFieldDecorator('id', {
-                        rules: [{ required: true, message: '请输入标识符' }],
-                        initialValue: initState.data.id,
-                    })(
-                        <Input />
+            <Form.Item label="步长">
+              {getFieldDecorator('outputs.step', {
+                rules: [{ required: true, message: '请输入步长' }],
+                initialValue: props.data.outputs?.step,
+              })(<Input placeholder="请输入步长" />)}
+            </Form.Item>
+            <Form.Item label="单位">
+              {getFieldDecorator('outputs.unit', {
+                rules: [{ required: true, message: '请选择单位' }],
+                initialValue: props.data.outputs?.unit,
+              })(renderUnit())}
+            </Form.Item>
+          </div>
+        );
+      case 'string':
+        return (
+          <div>
+            <Form.Item label="数据长度">
+              {getFieldDecorator('outputs.length', {
+                rules: [{ required: true, message: '请输入数据长度' }],
+                initialValue: props.data.outputs?.length,
+              })(<Input addonAfter="字节" />)}
+            </Form.Item>
+          </div>
+        );
+      case 'bool':
+        return (
+          <div>
+            <Form.Item label="布尔值">
+              {getFieldDecorator('outputs.true', {
+                rules: [{ required: true, message: '请输入对应数据' }],
+                initialValue: props.data.outputs?.true,
+              })(<Input addonBefore="0" placeholder="如：关" />)}
+              <Form.Item>
+                {getFieldDecorator('outputs.false', {
+                  rules: [{ required: false }],
+                  initialValue: props.data.outputs?.false,
+                })(<Input addonBefore="1" placeholder="如：开" />)}
+              </Form.Item>
+            </Form.Item>
+          </div>
+        );
+      case 'date':
+        return (
+          <div>
+            <Form.Item label="时间格式">
+              {getFieldDecorator('outputs.dateTemplate', {
+                initialValue: props.data.outputs?.dateTemplate,
+              })(
+                <Select>
+                  <Select.Option value="string">String类型的UTC时间戳 (毫秒)</Select.Option>
+                  <Select.Option value="yyyy-MM-dd">yyyy-MM-dd</Select.Option>
+                  <Select.Option value="yyyy-MM-dd HH:mm:ss">yyyy-MM-dd HH:mm:ss</Select.Option>
+                  <Select.Option value="yyyy-MM-dd HH:mm:ss EE">
+                    yyyy-MM-dd HH:mm:ss EE
+                  </Select.Option>
+                  <Select.Option value="yyyy-MM-dd HH:mm:ss zzz">
+                    yyyy-MM-dd HH:mm:ss zzz
+                  </Select.Option>
+                </Select>,
+              )}
+            </Form.Item>
+          </div>
+        );
+      case 'array':
+        return (
+          <div>
+            <Form.Item label="元素类型">
+              {getFieldDecorator('outputs.arrayType', {
+                rules: [{ required: true }],
+                initialValue: props.data.outputs?.arrayType,
+              })(
+                <Radio.Group>
+                  <Radio value="int32">int32(整数型)</Radio>
+                  <Radio value="float">float(单精度）</Radio>
+                  <Radio value="double">double(双精度)</Radio>
+                  <Radio value="text">text(字符串)</Radio>
+                  <Radio value="object">object(结构体)</Radio>
+                </Radio.Group>,
+              )}
+            </Form.Item>
+            <Form.Item label="元素个数">
+              {getFieldDecorator('outputs.elementNumber', {
+                rules: [{ required: true }],
+                initialValue: props.data.outputs?.elementNumber,
+              })(<Input />)}
+            </Form.Item>
+          </div>
+        );
+      case 'enum':
+        return (
+          <div>
+            <Form.Item label="枚举项">
+              {enumData.map((item, index) => (
+                <Row key={item.id}>
+                  <Col span={10}>
+                    <Input
+                      placeholder="编号为：0"
+                      value={item.value}
+                      onChange={event => {
+                        enumData[index].value = event.target.value;
+                        setEnumData([...enumData]);
+                      }}
+                    />
+                  </Col>
+                  <Col span={2} style={{ textAlign: 'center' }}>
+                    <Icon type="arrow-right" />
+                  </Col>
+                  <Col span={10}>
+                    <Input
+                      placeholder="对该枚举项的描述"
+                      value={item.key}
+                      onChange={event => {
+                        enumData[index].key = event.target.value;
+                        setEnumData([...enumData]);
+                      }}
+                    />
+                  </Col>
+                  <Col span={2} style={{ textAlign: 'center' }}>
+                    {index === 0 ? (
+                      <Icon
+                        type="plus-circle"
+                        onClick={() => {
+                          setEnumData([...enumData, { id: enumData.length + 1 }]);
+                        }}
+                      />
+                    ) : (
+                      <Icon
+                        type="minus-circle"
+                        onClick={() => {
+                          enumData.splice(index, 1);
+                          setEnumData([...enumData]);
+                        }}
+                      />
                     )}
-                </Form.Item>
-                <Form.Item label="参数名称">
-                    {getFieldDecorator('name', {
-                        rules: [{ required: true, message: '请输入参数名称' }],
-                        initialValue: initState.data.name,
-                    })(
-                        <Input />
-                    )}
-                </Form.Item>
-                <Form.Item label="是否异步">
-                    {getFieldDecorator('isAsync', {
-                        rules: [{ required: true }],
-                        initialValue: initState.data.isAsync
-                    })(
-                        <Radio.Group>
-                            <Radio value={true}>是</Radio>
-                            <Radio value={false}>否</Radio>
-                        </Radio.Group>
-                    )}
-                </Form.Item>
-                <Form.Item label="输入参数">
-                    {
-                        (inputs.length > 0) &&
-                        <List
-                            bordered
-                            dataSource={inputs}
-                            renderItem={
-                                (item: any) => (
-                                    <List.Item
-                                        actions={[
-                                            <Button type="link" onClick={() => { setInputVisible(true); setCurrentParameter(item) }}>编辑</Button>,
-                                            <Button type="link" onClick={() => {
-                                                const index = inputs.findIndex((i: any) => i.id === item.id);
-                                                inputs.splice(index, 1);
-                                                setInputs([...inputs]);
-                                            }}>删除</Button>
-                                        ]}
-                                    >
-                                        参数名称：{item.name}
-                                    </List.Item>
-                                )
-                            }
-                        />
-                    }
-                    <Button type="link" icon="plus" onClick={() => setInputVisible(true)}>添加参数</Button>
-                </Form.Item>
-                <Form.Item label='输出参数'>
-                    {
-                        getFieldDecorator('outputs.type', {
-                            initialValue: initState.data.outputs?.type
-                        })(
-                            <Select
-                                placeholder="请选择"
-                                onChange={(value: string) => { setDataType(value) }}
-                            >
-                                <Select.OptGroup label="基本类型">
-                                    <Select.Option value="int">int(整数型)</Select.Option>
-                                    <Select.Option value="double">double(双精度浮点数)</Select.Option>
-                                    <Select.Option value="float">float(单精度浮点数)</Select.Option>
-                                    <Select.Option value="string">text(字符串)</Select.Option>
-                                    <Select.Option value="bool">bool(布尔型)</Select.Option>
-                                    <Select.Option value="date">date(时间型)</Select.Option>
-                                </Select.OptGroup>
-                                <Select.OptGroup label="其他类型">
-                                    <Select.Option value="enum">enum(枚举)</Select.Option>
-                                    <Select.Option value="array">array(数组)</Select.Option>
-                                    <Select.Option value="object">object(结构体)</Select.Option>
-                                </Select.OptGroup>
-                            </Select>
-                        )
-                    }
-
-                </Form.Item>
-                {renderDataType()}
-                <Form.Item label="描述">
-                    {getFieldDecorator('description', {
-                        initialValue: initState.data.description,
-                    })(
-                        <Input.TextArea rows={3} />
-                    )}
-                </Form.Item>
-            </Form>
-
-            <div
-                style={{
-                    position: 'absolute',
-                    right: 0,
-                    bottom: 0,
-                    width: '100%',
-                    borderTop: '1px solid #e9e9e9',
-                    padding: '10px 16px',
-                    background: '#fff',
-                    textAlign: 'right',
-                }}
+                  </Col>
+                </Row>
+              ))}
+            </Form.Item>
+          </div>
+        );
+      case 'object':
+        return (
+          <Form.Item label="JSON对象">
+            {outputParameter.length > 0 && (
+              <List
+                bordered
+                dataSource={outputParameter}
+                renderItem={(item: any) => (
+                  <List.Item
+                    actions={[
+                      <Button
+                        type="link"
+                        onClick={() => {
+                          setOutputVisible(true);
+                          setCurrentParameter(item);
+                        }}
+                      >
+                        编辑
+                      </Button>,
+                      <Button
+                        type="link"
+                        onClick={() => {
+                          const index = outputParameter.findIndex((i: any) => i.id === item.id);
+                          outputParameter.splice(index, 1);
+                          setOutputParameter([...outputParameter]);
+                        }}
+                      >
+                        删除
+                      </Button>,
+                    ]}
+                  >
+                    参数名称：{item.name}
+                  </List.Item>
+                )}
+              />
+            )}
+            <Button
+              type="link"
+              onClick={() => {
+                setOutputVisible(true);
+                setCurrentParameter({});
+              }}
             >
-                <Button onClick={() => { props.close() }} style={{ marginRight: 8 }}>
-                    关闭
-                </Button>
-                <Button onClick={() => { saveData() }} type="primary">
-                    保存
-                </Button>
-            </div>
-            {
-                outputVisible &&
-                <Paramter
-                    data={currentParameter}
-                    save={(item) => {
-                        outputParameter.push(item);
-                        setOutputParameter(outputParameter)
-                    }}
-                    close={() => setOutputVisible(false)}
-                />
-            }
-            {
-                inputVisible &&
-                <Paramter
-                    data={currentParameter}
-                    save={(item) => {
-                        inputs.push(item);
-                        setInputs(inputs);
-                    }}
-                    close={() => setInputVisible(false)}
-                />
-            }
-        </Drawer>
+              <Icon type="plus" />
+              添加参数
+            </Button>
+          </Form.Item>
+        );
+      case 'file':
+        return (
+          <Form.Item label="文件类型">
+            {getFieldDecorator('outputs.fileType', {
+              rules: [{ required: true }],
+              initialValue: '',
+            })(
+              <Select>
+                <Select.Option value="url">URL(链接)</Select.Option>
+                <Select.Option value="base64">Base64(Base64编码)</Select.Option>
+                <Select.Option value="binary">Binary(二进制)</Select.Option>
+              </Select>,
+            )}
+          </Form.Item>
+        );
+      default:
+        return null;
+    }
+  };
 
-    );
-}
+  return (
+    <Drawer
+      title="编辑功能定义"
+      placement="right"
+      closable={false}
+      onClose={() => props.close()}
+      visible
+      width="30%"
+    >
+      <Form className={styles.paramterForm}>
+        <Form.Item label="标识符">
+          {getFieldDecorator('id', {
+            rules: [{ required: true, message: '请输入标识符' }],
+            initialValue: initState.data.id,
+          })(<Input />)}
+        </Form.Item>
+        <Form.Item label="参数名称">
+          {getFieldDecorator('name', {
+            rules: [{ required: true, message: '请输入参数名称' }],
+            initialValue: initState.data.name,
+          })(<Input />)}
+        </Form.Item>
+        <Form.Item label="是否异步">
+          {getFieldDecorator('isAsync', {
+            rules: [{ required: true }],
+            initialValue: initState.data.isAsync,
+          })(
+            <Radio.Group>
+              <Radio value>是</Radio>
+              <Radio value={false}>否</Radio>
+            </Radio.Group>,
+          )}
+        </Form.Item>
+        <Form.Item label="输入参数">
+          {inputs.length > 0 && (
+            <List
+              bordered
+              dataSource={inputs}
+              renderItem={(item: any) => (
+                <List.Item
+                  actions={[
+                    <Button
+                      type="link"
+                      onClick={() => {
+                        setInputVisible(true);
+                        setCurrentParameter(item);
+                      }}
+                    >
+                      编辑
+                    </Button>,
+                    <Button
+                      type="link"
+                      onClick={() => {
+                        const index = inputs.findIndex((i: any) => i.id === item.id);
+                        inputs.splice(index, 1);
+                        setInputs([...inputs]);
+                      }}
+                    >
+                      删除
+                    </Button>,
+                  ]}
+                >
+                  参数名称：{item.name}
+                </List.Item>
+              )}
+            />
+          )}
+          <Button type="link" icon="plus" onClick={() => setInputVisible(true)}>
+            添加参数
+          </Button>
+        </Form.Item>
+        <Form.Item label="输出参数">
+          {getFieldDecorator('outputs.type', {
+            initialValue: initState.data.outputs?.type,
+          })(
+            <Select
+              placeholder="请选择"
+              onChange={(value: string) => {
+                setDataType(value);
+              }}
+            >
+              <Select.OptGroup label="基本类型">
+                <Select.Option value="int">int(整数型)</Select.Option>
+                <Select.Option value="double">double(双精度浮点数)</Select.Option>
+                <Select.Option value="float">float(单精度浮点数)</Select.Option>
+                <Select.Option value="string">text(字符串)</Select.Option>
+                <Select.Option value="bool">bool(布尔型)</Select.Option>
+                <Select.Option value="date">date(时间型)</Select.Option>
+              </Select.OptGroup>
+              <Select.OptGroup label="其他类型">
+                <Select.Option value="enum">enum(枚举)</Select.Option>
+                <Select.Option value="array">array(数组)</Select.Option>
+                <Select.Option value="object">object(结构体)</Select.Option>
+              </Select.OptGroup>
+            </Select>,
+          )}
+        </Form.Item>
+        {renderDataType()}
+        <Form.Item label="描述">
+          {getFieldDecorator('description', {
+            initialValue: initState.data.description,
+          })(<Input.TextArea rows={3} />)}
+        </Form.Item>
+      </Form>
+
+      <div
+        style={{
+          position: 'absolute',
+          right: 0,
+          bottom: 0,
+          width: '100%',
+          borderTop: '1px solid #e9e9e9',
+          padding: '10px 16px',
+          background: '#fff',
+          textAlign: 'right',
+        }}
+      >
+        <Button
+          onClick={() => {
+            props.close();
+          }}
+          style={{ marginRight: 8 }}
+        >
+          关闭
+        </Button>
+        <Button
+          onClick={() => {
+            saveData();
+          }}
+          type="primary"
+        >
+          保存
+        </Button>
+      </div>
+      {outputVisible && (
+        <Paramter
+          data={currentParameter}
+          save={item => {
+            const temp = outputParameter.filter(i => i.id !== item.id);
+            setOutputParameter([...temp, item]);
+          }}
+          close={() => setOutputVisible(false)}
+        />
+      )}
+      {inputVisible && (
+        <Paramter
+          data={currentParameter}
+          save={item => {
+            const temp = inputs.filter(i => i.id !== item.id);
+            setInputs([...temp, item]);
+          }}
+          close={() => setInputVisible(false)}
+        />
+      )}
+    </Drawer>
+  );
+};
 
 export default Form.create<Props>()(FunctionDefin);
