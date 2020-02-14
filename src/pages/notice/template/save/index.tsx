@@ -1,7 +1,23 @@
-import { Modal, Form, Input, Tooltip, InputNumber, Radio, Select } from 'antd';
+import {
+  Modal,
+  Form,
+  Input,
+  Tooltip,
+  InputNumber,
+  Radio,
+  Select,
+  Upload,
+  Icon,
+  Button,
+} from 'antd';
 import React, { useEffect, useState } from 'react';
 import { FormComponentProps } from 'antd/es/form';
 import apis from '@/services';
+import { getAccessToken } from '@/utils/authority';
+import { UploadProps } from 'antd/lib/upload';
+import BraftEditor from 'braft-editor';
+import 'braft-editor/dist/index.css';
+import styles from '../../index.less';
 
 interface Props extends FormComponentProps {
   data: any;
@@ -11,11 +27,15 @@ interface Props extends FormComponentProps {
 interface State {
   item: any;
   typeList: any[];
+  emailEditor: any;
+  fileList: any[];
 }
 const Save: React.FC<Props> = props => {
   const initState: State = {
     item: props.data,
     typeList: [],
+    emailEditor: null,
+    fileList: [],
   };
   const {
     form: { getFieldDecorator },
@@ -23,6 +43,30 @@ const Save: React.FC<Props> = props => {
   } = props;
   const [item, setItem] = useState(initState.item);
   const [typeList, setTypeList] = useState(initState.typeList);
+  const [emailEditor, setEmailEditor] = useState(initState.emailEditor);
+  const [fileList, setFileList] = useState(initState.fileList);
+
+  const uploadProps: UploadProps = {
+    action: '/jetlinks/file/static',
+    headers: {
+      'X-Access-Token': getAccessToken(),
+    },
+    // showUploadList: false,
+    onChange(info) {
+      if (info.file.status === 'done') {
+        fileList.push({
+          id: info.file.uid,
+          name: info.file.name,
+          location: info.file.response.result,
+        });
+        setFileList([...fileList]);
+      }
+    },
+    onRemove(info) {
+      const list = fileList.filter(e => e !== info.uid);
+      setFileList([...list]);
+    },
+  };
 
   useEffect(() => {
     if (item.id) {
@@ -86,7 +130,38 @@ const Save: React.FC<Props> = props => {
           </div>
         );
       case 'email':
-        return <Form.Item></Form.Item>;
+        return (
+          <div>
+            <Form.Item label="标题">
+              {getFieldDecorator('template.subject', {
+                initialValue: template.subject,
+              })(<Input />)}
+            </Form.Item>
+            <Form.Item label="收件人">
+              <Tooltip title="多个收件人以  ,  分隔">
+                {getFieldDecorator('template.sendTo', {
+                  initialValue: template.sendTo,
+                })(<Input.TextArea rows={3} placeholder="多个收件人以  ,  分隔" />)}
+              </Tooltip>
+            </Form.Item>
+            <Form.Item label="附件">
+              <Upload {...uploadProps}>
+                <Button>
+                  <Icon type="upload" /> 上传附件
+                </Button>
+              </Upload>
+            </Form.Item>
+            <Form.Item label="正文">
+              <BraftEditor
+                className={styles.emailEditor}
+                value={emailEditor}
+                onChange={e => {
+                  setEmailEditor(e);
+                }}
+              />
+            </Form.Item>
+          </div>
+        );
       case 'weixin':
         return (
           <div>
@@ -159,6 +234,15 @@ const Save: React.FC<Props> = props => {
   const saveData = () => {
     const id = props.data?.id;
     const data = form.getFieldsValue();
+    const { template } = data;
+    if (data.type === 'email') {
+      template.sendTo = (template.sendTo || '').split(',');
+      if (emailEditor !== null) {
+        template.text = emailEditor.toHTML();
+      }
+      template.attachments = fileList;
+      // 附件列表
+    }
     data.template = JSON.stringify(data.template);
     props.save({ ...data, id });
   };
@@ -171,7 +255,7 @@ const Save: React.FC<Props> = props => {
       onOk={() => {
         saveData();
       }}
-      width={640}
+      width={800}
     >
       <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
         <Form.Item label="模版名称">

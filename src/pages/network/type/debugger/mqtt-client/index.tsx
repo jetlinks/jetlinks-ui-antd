@@ -153,7 +153,7 @@ const MqttClient: React.FC<Props> = props => {
               <Input.TextArea
                 rows={4}
                 onChange={e => {
-                  publishData.topic = e.target.value;
+                  publishData.data = e.target.value;
                   setPublishData({ ...publishData });
                 }}
               />

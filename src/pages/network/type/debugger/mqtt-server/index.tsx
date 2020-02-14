@@ -31,8 +31,8 @@ const MqttServer: React.FC<Props> = props => {
       message.error('调试错误');
     };
     eventSource.onmessage = e => {
-      message.success(e.data);
-      setLogs(`${logs}${e.data}\n`);
+      // message.success(e.data);
+      setLogs(`${logs} ${e.data}\n`);
     };
     eventSource.onopen = () => {
       setLogs(`${logs}链接成功\n`);

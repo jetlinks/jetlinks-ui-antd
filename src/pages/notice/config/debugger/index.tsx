@@ -26,7 +26,7 @@ const Debug: React.FC<Props> = props => {
 
   useEffect(() => {
     apis.notifier
-      .config(
+      .template(
         encodeQueryParam({
           paging: false,
           terms: {
@@ -48,10 +48,8 @@ const Debug: React.FC<Props> = props => {
           template: data,
           context: JSON.parse(context || '{}'),
         })
-        .then(res => {
-          if (res) {
-            message.success('发送成功');
-          }
+        .then(() => {
+          message.success('发送成功');
         });
     } else {
       message.error('请选择通知配置！');

@@ -13,6 +13,9 @@ import StandardFormRow from '../components/standard-form-row';
 import TagSelect from '../components/tag-select';
 import styles from '../index.less';
 import Debug from './debugger';
+import { getAccessToken } from '@/utils/authority';
+import Upload, { UploadProps } from 'antd/lib/upload';
+import request from '@/utils/request';
 
 interface Props extends FormComponentProps {
   dispatch: Dispatch;
@@ -141,6 +144,37 @@ const Template: React.FC<Props> = props => {
     });
   };
 
+  const uploadProps: UploadProps = {
+    accept: '.json',
+    action: '/jetlinks/file/static',
+    headers: {
+      'X-Access-Token': getAccessToken(),
+    },
+    showUploadList: false,
+    onChange(info) {
+      if (info.file.status !== 'uploading') {
+        // console.log(info.file, info.fileList);
+      }
+      if (info.file.status === 'done') {
+        const fileUrl = info.file.response.result;
+        // request(fileUrl.replace('http://2.jetlinks.org:9000/', 'jetlinks'), { method: 'GET' }).then(e => {
+        request(fileUrl, { method: 'GET' }).then(e => {
+          dispatch({
+            type: 'noticeConfig/insert',
+            payload: e,
+            callback: () => {
+              message.success('导入成功');
+              // handleSearch(searchParam);
+            },
+          });
+        });
+      }
+      if (info.file.status === 'error') {
+        message.error(`${info.file.name} 导入失败.`);
+      }
+    },
+  };
+
   return (
     <PageHeaderWrapper title="通知模版">
       <div className={styles.filterCardList}>
@@ -193,13 +227,21 @@ const Template: React.FC<Props> = props => {
             新建
           </Button>
           <Divider type="vertical" />
-          <Button onClick={() => {}} style={{ marginBottom: 16 }}>
+          <Button
+            onClick={() => {
+              downloadObject(noticeTemplate.result?.data, '通知配置');
+            }}
+            style={{ marginBottom: 16 }}
+          >
             导出配置
           </Button>
           <Divider type="vertical" />
-          <Button onClick={() => {}} type="primary" style={{ marginBottom: 16 }}>
-            导入配置
-          </Button>
+          <Upload {...uploadProps}>
+            <Button type="primary" style={{ marginBottom: 16 }}>
+              导入配置
+            </Button>
+          </Upload>
+
           <Table
             rowKey="id"
             onChange={onTableChange}
