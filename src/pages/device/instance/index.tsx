@@ -87,9 +87,21 @@ const DeviceInstancePage: React.FC<Props> = props => {
       .catch(() => {});
   };
 
-  const changeDeploy = (type: string, record: any) => {
+  const changeDeploy = (record: any) => {
     apis.deviceInstance
-      .changeDeploy({ type, id: record.id })
+      .changeDeploy( record.id )
+      .then(response => {
+        if (response.status === 200) {
+          message.success('操作成功');
+          handleSearch(searchParam);
+        }
+      })
+      .catch(() => {});
+  };
+
+  const unDeploy = (record: any) => {
+    apis.deviceInstance
+      .unDeploy(record.id )
       .then(response => {
         if (response.status === 200) {
           message.success('操作成功');
@@ -156,7 +168,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
               <Popconfirm
                 title="确认激活？"
                 onConfirm={() => {
-                  changeDeploy('deploy', record);
+                  changeDeploy(record);
                 }}
               >
                 <a>激活</a>
@@ -175,7 +187,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
             <Popconfirm
               title="确认取消激活？"
               onConfirm={() => {
-                changeDeploy('cancelDeploy', record);
+                unDeploy(record);
               }}
             >
               <a>取消激活</a>

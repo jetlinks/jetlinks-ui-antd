@@ -28,8 +28,8 @@ export async function remove(id: string) {
   });
 }
 
-export async function logs(params: any) {
-  return request(`/jetlinks/device-instance/operation/log`, {
+export async function logs(deviceId: string,params: any) {
+  return request(`/jetlinks/device-instance/${deviceId}/logs`, {
     method: 'GET',
     params,
   });
@@ -54,8 +54,14 @@ export async function fireAlarm(params: any) {
   });
 }
 
-export async function changeDeploy(params: any) {
-  return request(`/jetlinks/device-instance/${params.type}/${params.id}`, {
+export async function changeDeploy(deviceId: string) {
+  return request(`/jetlinks//device-instance/${deviceId}/deploy`, {
+    method: 'POST',
+  });
+}
+
+export async function unDeploy(deviceId: string) {
+  return request(`/jetlinks//device-instance/${deviceId}/undeploy`, {
     method: 'POST',
   });
 }
@@ -70,6 +76,13 @@ export async function eventData(id: string, event: string, params: any) {
   return request(`/jetlinks/device-product/${id}/event/${event}`, {
     method: 'GET',
     params,
+  });
+}
+
+export async function functionsData(id: string, functions: string, data: any) {
+  return request(`/jetlinks/device/invoked/${id}/function/${functions}`, {
+    method: 'POST',
+    data,
   });
 }
 

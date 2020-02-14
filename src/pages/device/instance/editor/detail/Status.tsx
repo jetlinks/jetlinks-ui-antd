@@ -1,13 +1,13 @@
-import React, { useEffect, useState, Fragment } from "react";
-import ChartCard from "@/pages/analysis/components/Charts/ChartCard";
-import { Tooltip, Icon, Row, Col, Tag, Badge, Spin, message } from "antd";
-import { MiniArea, MiniProgress } from "@/pages/analysis/components/Charts";
-import { IVisitData } from "@/pages/analysis/data";
-import moment from "moment";
-import apis from "@/services";
-import EventLog from "./event-log/EventLog";
-import encodeQueryParam from "@/utils/encodeParam";
-import { response } from "express";
+import React, { useEffect, useState } from 'react';
+import ChartCard from '@/pages/analysis/components/Charts/ChartCard';
+import { Badge, Col, Icon, Row, Spin, Tag, Tooltip } from 'antd';
+import { MiniArea, MiniProgress } from '@/pages/analysis/components/Charts';
+import { IVisitData } from '@/pages/analysis/data';
+import moment from 'moment';
+import apis from '@/services';
+import EventLog from './event-log/EventLog';
+import encodeQueryParam from '@/utils/encodeParam';
+import { getAccessToken } from '@/utils/authority';
 
 interface Props {
     device: any
@@ -70,6 +70,8 @@ const Status: React.FC<Props> = (props) => {
     // const [currentEvent, setCurrentEvent] = useState(initState.currentEvent);
     // const [currentEventData, setCurrentEventData] = useState(initState.currentEventData);
 
+    const [flag, setFlag] = useState(false);
+
     useEffect(() => {
         loadRunInfo();
         loadProperties();
@@ -113,6 +115,45 @@ const Status: React.FC<Props> = (props) => {
                 });
             });
             setMetadata(metadata);
+
+          const list = [];
+          // eslint-disable-next-line func-names
+          metadata.properties.forEach(function(i) {
+            list.push({
+              "dashboard":"device",
+              "object":props.device.productId,
+              "measurement":i.id,
+              "dimension":"realTime",
+              "group":i.id,
+              "params":{
+                "deviceId":props.device.id,
+                "history":1
+              }
+            });
+          });
+          const source = new EventSource(
+            `/jetlinks/dashboard/_multi?:X_Access_Token=${getAccessToken()}&requestJson=${encodeURI(JSON.stringify(list))}`,
+          );
+          source.onmessage = e => {
+
+            const data = JSON.parse(e.data);
+
+            metadata.properties = properties.map((item: any) => {
+              if (item.id === data.group) {
+                // eslint-disable-next-line no-param-reassign
+                item.formatValue = data.data.value;
+              }
+              return item;
+            });
+            setMetadata({ ...metadata });
+          };
+          source.onerror = () => {
+            setFlag(false);
+            source.close();
+          };
+          source.onopen = () => {
+            setFlag(true);
+          };
         }
 
     }, [runInfo]);
@@ -131,7 +172,52 @@ const Status: React.FC<Props> = (props) => {
             }).catch(() => {
 
             });
-    }
+    };
+
+    /*const deviceEventSource = (deviceInfo) =>{
+
+      console.log(deviceInfo,"deviceInfo");
+      const { properties } = metadata;
+      const list = [];
+      // eslint-disable-next-line func-names
+      deviceInfo.properties.forEach(function(i) {
+        list.push({
+          "dashboard":"device",
+          "object":props.device.productId,
+          "measurement":i.id,
+          "dimension":"realTime",
+          "group":i.id,
+          "params":{
+            "deviceId":props.device.id
+          }
+        });
+      });
+      const source = new EventSource(
+        `/jetlinks/dashboard/_multi?:X_Access_Token=${getAccessToken()}&requestJson=${encodeURI(JSON.stringify(list))}`,
+      );
+      source.onmessage = e => {
+        console.log(JSON.parse(e));
+        console.log(JSON.parse(e.data));
+
+        const data = JSON.parse(e.data);
+        metadata.properties = properties.map((item: any) => {
+          console.log(item);
+          if (item.id === data.group) {
+            // eslint-disable-next-line no-param-reassign
+            item.formatValue = data.data.value;
+          }
+          return item;
+        });
+        setMetadata({ ...metadata });
+      };
+      source.onerror = () => {
+        setFlag(false);
+        source.close();
+      };
+      source.onopen = () => {
+        setFlag(true);
+      };
+    };*/
 
     const refresDeviceState = () => {
         apis.deviceInstance.runInfo(props.device.id)
@@ -143,7 +229,7 @@ const Status: React.FC<Props> = (props) => {
             }).catch(() => {
 
             });
-    }
+    };
 
     const loadProperties = () => {
         apis.deviceInstance.properties(props.device.productId, props.device.id)
@@ -152,7 +238,7 @@ const Status: React.FC<Props> = (props) => {
             }).catch(response => {
                 // message.error(response.message)
             });
-    }
+    };
 
     const loadEventData = (eventId: string) => {
         apis.deviceInstance.eventData(
@@ -282,7 +368,6 @@ const Status: React.FC<Props> = (props) => {
         const { properties } = metadata;
         apis.deviceInstance.property(props.device.id, item.id)
             .then((response: any) => {
-                console.log(response, 'resp[')
                 const tempResult = response?.result;
                 if (tempResult) {
                     // let result: any[] = [];
