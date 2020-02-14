@@ -5,6 +5,7 @@ import Info from './detail/Info';
 import Status from './detail/Status';
 import Log from './detail/Log';
 import Debugger from './detail/Debugger';
+import Functions from './detail/functions';
 import { router } from 'umi';
 import styles from './index.less';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
@@ -14,6 +15,7 @@ import { SimpleResponse } from '@/utils/common';
 import { DeviceInstance } from '../data';
 import encodeQueryParam from '@/utils/encodeParam';
 import apis from '@/services';
+import { response } from 'express';
 
 interface Props {
   dispatch: Dispatch;
@@ -25,6 +27,7 @@ interface State {
   activeKey: string;
   logs: any;
   deviceState: any;
+  deviceFunction: any;
 }
 
 const Editor: React.FC<Props> = props => {
@@ -38,12 +41,14 @@ const Editor: React.FC<Props> = props => {
     data: {},
     logs: {},
     deviceState: {},
+    deviceFunction: {},
   };
   const [activeKey, setActiveKey] = useState(initState.activeKey);
   const [data, setData] = useState(initState.data);
   const [logs, setLogs] = useState(initState.logs);
   const [id, setId] = useState();
   const [deviceState, setDeviceState] = useState(initState.deviceState);
+  const [deviceFunction, setDeviceFunction] = useState(initState.deviceFunction);
 
   const getInfo = (id: string) => {
     dispatch({
@@ -51,7 +56,16 @@ const Editor: React.FC<Props> = props => {
       payload: id,
       callback: (response: SimpleResponse) => {
         if (response.status === 200) {
-          setData(response.result);
+          let data = response.result;
+          // let deriveMetadata = JSON.parse(data.deriveMetadata);
+          // functions = deriveMetadata.functions;
+          // if (deriveMetadata.functions.length > 0){
+          //   tabList.splice(2, 0, {
+          //     key: 'functions',
+          //     tab: '设备功能',
+          //   });
+          // }
+          setData(data);
         }
       },
     });
@@ -95,6 +109,14 @@ const Editor: React.FC<Props> = props => {
     // apis.deviceInstance.fireAlarm({ id }).then(response => {
     // })
   };
+
+  const getDeviceFunctions = () => {
+    apis.deviceInstance.runInfo(id).then(response => {
+      deviceFunction.runInfo = response.result;
+      setDeviceFunction({ ...deviceFunction });
+    });
+  };
+
   const action = (
     <Fragment>
       {/* <Button>返回</Button> */}
@@ -112,6 +134,10 @@ const Editor: React.FC<Props> = props => {
       tab: '运行状态',
     },
     {
+      key: 'functions',
+      tab: '设备功能',
+    },
+    {
       key: 'log',
       tab: '日志管理',
     },
@@ -122,8 +148,9 @@ const Editor: React.FC<Props> = props => {
   ];
 
   const info = {
-    info: <Info data={data} />,
-    status: <Status device={data} />,
+    info: <Info data={data}/>,
+    status: <Status device={data}/>,
+    functions: <Functions device={data}/>,
     log: (
       <Log
         deviceId={id}
@@ -133,7 +160,7 @@ const Editor: React.FC<Props> = props => {
         // }}
       />
     ),
-    debugger: <Debugger />,
+    debugger: <Debugger/>,
   };
 
   const content = (
@@ -170,6 +197,8 @@ const Editor: React.FC<Props> = props => {
         // } else
         if (key === 'status') {
           getDeviceState();
+        } else if (key === "functions"){
+          getDeviceFunctions();
         }
         setActiveKey(key);
       }}
