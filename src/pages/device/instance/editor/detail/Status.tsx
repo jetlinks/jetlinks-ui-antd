@@ -126,19 +126,19 @@ const Status: React.FC<Props> = (props) => {
               "dimension":"realTime",
               "group":i.id,
               "params":{
-                "deviceId":props.device.id
+                "deviceId":props.device.id,
+                "history":1
               }
             });
           });
           const source = new EventSource(
-            `http://2.jetlinks.org:9010/dashboard/_multi?:X_Access_Token=${getAccessToken()}&requestJson=${encodeURI(JSON.stringify(list))}`,
+            `/jetlinks/dashboard/_multi?:X_Access_Token=${getAccessToken()}&requestJson=${encodeURI(JSON.stringify(list))}`,
           );
           source.onmessage = e => {
 
             const data = JSON.parse(e.data);
 
             metadata.properties = properties.map((item: any) => {
-              console.log(item);
               if (item.id === data.group) {
                 // eslint-disable-next-line no-param-reassign
                 item.formatValue = data.data.value;
