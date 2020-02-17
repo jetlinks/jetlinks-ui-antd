@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ChartCard from '@/pages/analysis/components/Charts/ChartCard';
-import { Badge, Col, Icon, Row, Spin, Tag, Tooltip } from 'antd';
+import { Badge, Col, Icon, Modal, Row, Spin, Tag, Tooltip } from 'antd';
 import { MiniArea, MiniProgress } from '@/pages/analysis/components/Charts';
 import { IVisitData } from '@/pages/analysis/data';
 import moment from 'moment';
@@ -72,7 +72,12 @@ const Status: React.FC<Props> = (props) => {
 
     const [flag, setFlag] = useState(false);
 
+    let source: EventSource | null = null;
+
     useEffect(() => {
+        if (source)
+          source.close();
+
         loadRunInfo();
         loadProperties();
     }, []);
@@ -131,7 +136,11 @@ const Status: React.FC<Props> = (props) => {
               }
             });
           });
-          const source = new EventSource(
+
+          if (source)
+            source.close();
+
+          source = new EventSource(
             `/jetlinks/dashboard/_multi?:X_Access_Token=${getAccessToken()}&requestJson=${encodeURI(JSON.stringify(list))}`,
           );
           source.onmessage = e => {
@@ -149,7 +158,6 @@ const Status: React.FC<Props> = (props) => {
           };
           source.onerror = () => {
             setFlag(false);
-            source.close();
           };
           source.onopen = () => {
             setFlag(true);
@@ -173,51 +181,6 @@ const Status: React.FC<Props> = (props) => {
 
             });
     };
-
-    /*const deviceEventSource = (deviceInfo) =>{
-
-      console.log(deviceInfo,"deviceInfo");
-      const { properties } = metadata;
-      const list = [];
-      // eslint-disable-next-line func-names
-      deviceInfo.properties.forEach(function(i) {
-        list.push({
-          "dashboard":"device",
-          "object":props.device.productId,
-          "measurement":i.id,
-          "dimension":"realTime",
-          "group":i.id,
-          "params":{
-            "deviceId":props.device.id
-          }
-        });
-      });
-      const source = new EventSource(
-        `/jetlinks/dashboard/_multi?:X_Access_Token=${getAccessToken()}&requestJson=${encodeURI(JSON.stringify(list))}`,
-      );
-      source.onmessage = e => {
-        console.log(JSON.parse(e));
-        console.log(JSON.parse(e.data));
-
-        const data = JSON.parse(e.data);
-        metadata.properties = properties.map((item: any) => {
-          console.log(item);
-          if (item.id === data.group) {
-            // eslint-disable-next-line no-param-reassign
-            item.formatValue = data.data.value;
-          }
-          return item;
-        });
-        setMetadata({ ...metadata });
-      };
-      source.onerror = () => {
-        setFlag(false);
-        source.close();
-      };
-      source.onopen = () => {
-        setFlag(true);
-      };
-    };*/
 
     const refresDeviceState = () => {
         apis.deviceInstance.runInfo(props.device.id)
@@ -448,7 +411,7 @@ const Status: React.FC<Props> = (props) => {
                                                 <Tooltip
                                                     title='刷新'
                                                 >
-                                                    <Icon type="sync" onClick={() => { refreshPropertyItem(item) }} />
+                                                    <Icon type="sync" onClick={() => { refreshPropertyItem(item) }}/>
                                                 </Tooltip>
                                             }
                                             total={item.formatValue || 0}

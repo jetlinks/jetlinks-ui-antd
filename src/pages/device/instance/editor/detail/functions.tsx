@@ -207,7 +207,7 @@ const Functions: React.FC<Props> = (props) => {
 
                 </Row>
                     :
-                    <Col {...topColResponsiveProps}></Col>
+                    <Col {...topColResponsiveProps}/>
             }
         </div>
     );
