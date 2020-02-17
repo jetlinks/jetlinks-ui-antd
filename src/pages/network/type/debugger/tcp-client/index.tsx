@@ -1,7 +1,8 @@
 import { Modal, Button, Divider, Tabs, Form, Input, Select } from 'antd';
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import { getAccessToken } from '@/utils/authority';
 import apis from '@/services';
+import { wrapAPI } from '@/utils/utils';
 
 interface Props {
   close: Function;
@@ -21,6 +22,8 @@ interface State {
 }
 
 const TcpClient: React.FC<Props> = props => {
+  let eventSource: EventSource | null = null;
+
   const { item } = props;
   const initState: State = {
     action: '_subscribe',
@@ -39,32 +42,47 @@ const TcpClient: React.FC<Props> = props => {
   const [subscribeData, setSubscribeData] = useState(initState.subscribeData);
   const [publishData, setPublishData] = useState(initState.publishData);
   const [logs, setLogs] = useState(initState.logs);
-  // const { item: { type: { text } } } = props;
+
+  let tempLogs: string = '';
+
+
   const debugMqttClient = () => {
-    setLogs(`${logs}开始订阅\n`);
+    tempLogs += '开始订阅\n';
+    setLogs(tempLogs);
     if (action === '_subscribe') {
-      // console.log('debugMqtt', data);
-      const eventSource = new EventSource(
+      eventSource = new EventSource(wrapAPI(
         `/jetlinks/network/mqtt/client/${item.id}/_subscribe/${
-          subscribeData.type
+        subscribeData.type
         }/?topics=${encodeURI(subscribeData.topics)}&:X_Access_Token=${getAccessToken()}`,
-      );
+      ));
       eventSource.onerror = () => {
         // console.log('error');
+        tempLogs += '调试断开\n';
+        setLogs(tempLogs);
       };
-      eventSource.onmessage = () => {
-        // console.log('message');
+      eventSource.onmessage = e => {
+        // 追加日志
+        tempLogs += `${e.data}\n`;
+        setLogs(tempLogs);
       };
+
       eventSource.onopen = () => {
-        // console.log('opne');
+        tempLogs += '开启推送\n';
+        setLogs(tempLogs);
       };
     } else if (action === '_publish') {
       apis.network
         .debugTcpClient(item.id, publishData.type, publishData.data)
-        .then(() => {})
-        .catch(() => {});
+        .then(() => { })
+        .catch(() => { });
     }
   };
+
+  useEffect(() => () => {
+    if (eventSource) {
+      eventSource.close();
+    }
+  }, [])
 
   return (
     <Modal
@@ -103,19 +121,19 @@ const TcpClient: React.FC<Props> = props => {
             </Button>
           </Fragment>
         ) : (
-          <Fragment>
-            <Button
-              type="primary"
-              onClick={() => {
-                debugMqttClient();
-              }}
-            >
-              提交
+            <Fragment>
+              <Button
+                type="primary"
+                onClick={() => {
+                  debugMqttClient();
+                }}
+              >
+                提交
             </Button>
-            <Divider type="vertical" />
-            <Button type="ghost">清空</Button>
-          </Fragment>
-        )
+              <Divider type="vertical" />
+              <Button type="ghost">清空</Button>
+            </Fragment>
+          )
       }
     >
       <Tabs defaultActiveKey={action} onChange={e => setAction(e)}>

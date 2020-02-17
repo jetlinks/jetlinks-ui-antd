@@ -1,7 +1,7 @@
 import { Reducer } from 'redux';
-import { Effect, routerRedux } from 'dva';
+import { Effect } from 'dva';
 import { stringify } from 'querystring';
-import router from 'umi/router';
+import { router } from 'umi';
 
 import { setAuthority, clearAutz, setAccessToken, setAutz } from '@/utils/authority';
 import { getPageQuery } from '@/utils/utils';
@@ -34,7 +34,7 @@ const Model: LoginModelType = {
   },
 
   effects: {
-    *login({ payload, callback }, { call, put }) {
+    *login({ payload }, { call, put }) {
       const response = yield call(apis.login.login, payload);
       yield put({
         type: 'changeLoginStatus',

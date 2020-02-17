@@ -8,6 +8,7 @@ import { FormComponentProps } from 'antd/es/form';
 import encodeQueryParam from '@/utils/encodeParam';
 import { downloadObject } from '@/utils/utils';
 import Upload, { UploadProps } from 'antd/lib/upload';
+import { PaginationConfig } from 'antd/lib/table';
 import Save from './save';
 import StandardFormRow from '../components/standard-form-row';
 import TagSelect from '../components/tag-select';
@@ -15,7 +16,6 @@ import styles from '../index.less';
 import { getAccessToken } from '@/utils/authority';
 import request from '@/utils/request';
 import Debug from './debugger';
-import { PaginationConfig } from 'antd/lib/table';
 
 interface Props extends FormComponentProps {
   dispatch: Dispatch;

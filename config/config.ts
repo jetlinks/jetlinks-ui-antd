@@ -2,12 +2,14 @@ import { IConfig, IPlugin } from 'umi-types';
 import defaultSettings from './defaultSettings'; // https://umijs.org/config/
 import slash from 'slash2';
 import themePluginConfig from './themePluginConfig';
+import proxy from './proxy';
+import webpackPlugin from './plugin.config';
 
 const { pwa } = defaultSettings;
 
 // preview.pro.ant.design only do not use in your production ;
 // preview.pro.ant.design 专用环境变量，请不要在你的项目中使用它。
-const { ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION } = process.env;
+const { ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION, REACT_APP_ENV } = process.env;
 const isAntDesignProPreview = ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION === 'site';
 
 const plugins: IPlugin[] = [
@@ -33,11 +35,11 @@ const plugins: IPlugin[] = [
       },
       pwa: pwa
         ? {
-            workboxPluginMode: 'InjectManifest',
-            workboxOptions: {
-              importWorkboxFrom: 'local',
-            },
-          }
+          workboxPluginMode: 'InjectManifest',
+          workboxOptions: {
+            importWorkboxFrom: 'local',
+          },
+        }
         : false, // default close dll, because issue https://github.com/ant-design/ant-design-pro/issues/4665
       // dll features https://webpack.js.org/plugins/dll-plugin/
       // dll: {
@@ -288,20 +290,20 @@ export default {
               path: 'logger',
               name: '日志管理',
               icon: 'wallet',
-              authority: ['system-logger', 'access-logger'],
+              authority: ['rule-logger', 'access-logger'],
               routes: [
                 {
                   path: './logger/access',
                   name: '访问日志',
                   icon: 'ordered-list',
-                  authority: ['access-logger'],
+                  authority: ['rule-logger'],
                   component: './logger/access',
                 },
                 {
                   path: './logger/system',
                   name: '系统日志',
                   icon: 'bars',
-                  authority: ['system-logger'],
+                  authority: ['access-logger'],
                   component: './logger/system',
                 },
               ],
@@ -348,6 +350,7 @@ export default {
     // ...darkTheme,
   },
   define: {
+    REACT_APP_ENV: REACT_APP_ENV || false,
     ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION:
       ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION || '', // preview.pro.ant.design only do not use in your production ; preview.pro.ant.design 专用环境变量，请不要在你的项目中使用它。
   },
@@ -390,13 +393,14 @@ export default {
   manifest: {
     basePath: '/',
   },
-  // chainWebpack: webpackPlugin,
-  proxy: {
-    '/jetlinks': {
-      // target: 'http://192.168.3.89:8848/',
-      target: 'http://2.jetlinks.org:9010/',
-      changeOrigin: true,
-      pathRewrite: { '^/jetlinks': '' },
-    },
-  },
+  proxy: proxy[REACT_APP_ENV || 'dev'],
+  chainWebpack: webpackPlugin,
+  // proxy: {
+  //   '/jetlinks': {
+  //     // target: 'http://192.168.3.89:8848/',
+  //     target: 'http://2.jetlinks.org:9010/',
+  //     changeOrigin: true,
+  //     pathRewrite: { '^/jetlinks': '' },
+  //   },
+  // },
 } as IConfig;

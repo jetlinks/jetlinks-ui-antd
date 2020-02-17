@@ -1,7 +1,8 @@
-import { Modal, Button, Divider, Form, Input, Select, message } from 'antd';
+import { Modal, Button, Divider, Form, Input, Select } from 'antd';
 
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import { getAccessToken } from '@/utils/authority';
+import { wrapAPI } from '@/utils/utils';
 
 interface Props {
   close: Function;
@@ -12,6 +13,8 @@ interface State {
   logs: string;
 }
 const TcpServer: React.FC<Props> = props => {
+
+  let eventSource: EventSource | null = null;
   const { item } = props;
   const initState: State = {
     type: 'JSON',
@@ -20,23 +23,36 @@ const TcpServer: React.FC<Props> = props => {
   const [type, setType] = useState(initState.type);
   const [logs, setLogs] = useState(initState.logs);
 
+  useEffect(() => () => {
+    if (eventSource) {
+      eventSource.close();
+    }
+  }, [])
+
+  let tempLogs: string = '';
+
   const debug = () => {
     setLogs(`${logs}开始调试\n`);
-    const eventSource = new EventSource(
-      `/jetlinks/network/tcp/server/${
-        item.id
-      }/_subscribe/${type}?:X_Access_Token=${getAccessToken()}`,
-    );
+    if (eventSource) {
+      eventSource.close();
+    }
+    tempLogs += '开始调试\n';
+    eventSource = new EventSource(wrapAPI(`/jetlinks/network/tcp/server/${item.id}/_subscribe/${type}?:X_Access_Token=${getAccessToken()}`));
+
     eventSource.onerror = () => {
-      message.error('调试错误');
+      tempLogs += '调试断开\n';
+      setLogs(tempLogs);
     };
+
     eventSource.onmessage = e => {
       // 追加日志
-      message.success(e.data);
+      tempLogs += `${e.data}\n`;
+      setLogs(tempLogs);
     };
+
     eventSource.onopen = () => {
-      setLogs(`${logs}开启推送`);
-      message.error('关闭链接');
+      tempLogs += '开启推送\n';
+      setLogs(tempLogs);
     };
   };
   return (

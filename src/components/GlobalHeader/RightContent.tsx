@@ -1,10 +1,12 @@
-import { Icon, Tooltip } from 'antd';
+import { Icon, Tooltip, Tag } from 'antd';
 import React from 'react';
 import { connect } from 'dva';
+import { formatMessage } from 'umi-plugin-react/locale';
 import { ConnectProps, ConnectState } from '@/models/connect';
+
 import Avatar from './AvatarDropdown';
-// import HeaderSearch from '../HeaderSearch';
-// import SelectLang from '../SelectLang';
+import HeaderSearch from '../HeaderSearch';
+import SelectLang from '../SelectLang';
 import styles from './index.less';
 
 export type SiderTheme = 'light' | 'dark';
@@ -12,6 +14,12 @@ export interface GlobalHeaderRightProps extends ConnectProps {
   theme?: SiderTheme;
   layout: 'sidemenu' | 'topmenu';
 }
+
+const ENVTagColor = {
+  dev: 'orange',
+  test: 'green',
+  pre: '#87d068',
+};
 
 const GlobalHeaderRight: React.SFC<GlobalHeaderRightProps> = props => {
   const { theme, layout } = props;
@@ -23,22 +31,34 @@ const GlobalHeaderRight: React.SFC<GlobalHeaderRightProps> = props => {
 
   return (
     <div className={className}>
-      {/* <HeaderSearch
+      <HeaderSearch
         className={`${styles.action} ${styles.search}`}
-        placeholder="站内搜索"
+        placeholder={formatMessage({
+          id: 'component.globalHeader.search',
+        })}
         defaultValue="umi ui"
-        dataSource={['搜索提示一', '搜索提示二', '搜索提示三']}
-        onSearch={value => {
-          console.log('input', value);
-        }}
-        onPressEnter={value => {
-          console.log('enter', value);
-        }}
-      /> */}
-      <Tooltip title="使用文档">
+        dataSource={[
+          formatMessage({
+            id: 'component.globalHeader.search.example1',
+          }),
+          formatMessage({
+            id: 'component.globalHeader.search.example2',
+          }),
+          formatMessage({
+            id: 'component.globalHeader.search.example3',
+          }),
+        ]}
+        onSearch={() => { }}
+        onPressEnter={() => { }}
+      />
+      <Tooltip
+        title={formatMessage({
+          id: 'component.globalHeader.help',
+        })}
+      >
         <a
           target="_blank"
-          href="http://doc.jetlinks.cn"
+          href="https://pro.ant.design/docs/getting-started"
           rel="noopener noreferrer"
           className={styles.action}
         >
@@ -46,7 +66,8 @@ const GlobalHeaderRight: React.SFC<GlobalHeaderRightProps> = props => {
         </a>
       </Tooltip>
       <Avatar />
-      {/* <SelectLang className={styles.action} /> */}
+      {REACT_APP_ENV && <Tag color={ENVTagColor[REACT_APP_ENV]}>{REACT_APP_ENV}</Tag>}
+      <SelectLang className={styles.action} />
     </div>
   );
 };
