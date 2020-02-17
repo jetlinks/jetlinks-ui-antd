@@ -74,19 +74,12 @@ const Status: React.FC<Props> = (props) => {
 
     const [flag, setFlag] = useState(false);
 
-    let visitData: IVisitData[] = [];
-
     let source: EventSource | null = null;
-    let statisticsSource: EventSource | null = null;
 
     useEffect(() => {
-        if (source)
-          source.close();
-
-        loadRunInfo();
-        loadProperties();
+      loadRunInfo();
+      loadProperties();
     }, []);
-
 
     useEffect(() => {
         //组装数据
@@ -144,8 +137,9 @@ const Status: React.FC<Props> = (props) => {
             i.visitData = [];
           });
 
-          if (source)
+          if (source) {
             source.close();
+          }
 
           source = new EventSource(
             wrapAPI(`/jetlinks/dashboard/_multi?:X_Access_Token=${getAccessToken()}&requestJson=${encodeURI(JSON.stringify(list))}`)
@@ -179,6 +173,12 @@ const Status: React.FC<Props> = (props) => {
             setFlag(true);
           };
         }
+
+      return () => {
+        if (source) {
+          source.close();
+        }
+      };
 
     }, [runInfo]);
 
