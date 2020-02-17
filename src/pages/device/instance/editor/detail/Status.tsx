@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import ChartCard from '@/pages/analysis/components/Charts/ChartCard';
 import { Badge, Col, Icon, Modal, Row, Spin, Tag, Tooltip } from 'antd';
-import { MiniArea, MiniProgress } from '@/pages/analysis/components/Charts';
+import { Field, MiniArea, MiniProgress } from '@/pages/analysis/components/Charts';
 import { IVisitData } from '@/pages/analysis/data';
 import moment from 'moment';
 import apis from '@/services';
 import EventLog from './event-log/EventLog';
 import encodeQueryParam from '@/utils/encodeParam';
 import { getAccessToken } from '@/utils/authority';
+import { FormattedMessage } from 'umi-plugin-react/locale';
+import { wrapAPI } from '@/utils/utils';
 
 interface Props {
     device: any
@@ -72,7 +74,10 @@ const Status: React.FC<Props> = (props) => {
 
     const [flag, setFlag] = useState(false);
 
+    let visitData: IVisitData[] = [];
+
     let source: EventSource | null = null;
+    let statisticsSource: EventSource | null = null;
 
     useEffect(() => {
         if (source)
@@ -122,8 +127,8 @@ const Status: React.FC<Props> = (props) => {
             setMetadata(metadata);
 
           const list = [];
-          // eslint-disable-next-line func-names
-          metadata.properties.forEach(function(i) {
+          // eslint-disable-next-line array-callback-return
+          metadata.properties = properties.map((i: any) => {
             list.push({
               "dashboard":"device",
               "object":props.device.productId,
@@ -132,16 +137,18 @@ const Status: React.FC<Props> = (props) => {
               "group":i.id,
               "params":{
                 "deviceId":props.device.id,
-                "history":1
+                "history":10
               }
             });
+            // eslint-disable-next-line no-param-reassign
+            i.visitData = [];
           });
 
           if (source)
             source.close();
 
           source = new EventSource(
-            `/jetlinks/dashboard/_multi?:X_Access_Token=${getAccessToken()}&requestJson=${encodeURI(JSON.stringify(list))}`,
+            wrapAPI(`/jetlinks/dashboard/_multi?:X_Access_Token=${getAccessToken()}&requestJson=${encodeURI(JSON.stringify(list))}`)
           );
           source.onmessage = e => {
 
@@ -150,7 +157,16 @@ const Status: React.FC<Props> = (props) => {
             metadata.properties = properties.map((item: any) => {
               if (item.id === data.group) {
                 // eslint-disable-next-line no-param-reassign
-                item.formatValue = data.data.value;
+                item.formatValue = data.data.value.formatValue;
+                if (item.visitData.length >= 15){
+                  item.visitData.splice(0,1);
+                }
+                item.visitData.push(
+                  {
+                    "x":data.data.timeString,
+                    "y":Number(data.data.value.value)
+                  }
+                )
               }
               return item;
             });
@@ -165,7 +181,6 @@ const Status: React.FC<Props> = (props) => {
         }
 
     }, [runInfo]);
-
 
     const loadRunInfo = () => {
         runInfo.loading = true;
@@ -408,16 +423,16 @@ const Status: React.FC<Props> = (props) => {
                                             bordered={false}
                                             title={item.name}
                                             action={
-                                                <Tooltip
-                                                    title='刷新'
-                                                >
+                                                <Tooltip title='刷新'>
                                                     <Icon type="sync" onClick={() => { refreshPropertyItem(item) }}/>
                                                 </Tooltip>
                                             }
                                             total={item.formatValue || 0}
                                             contentHeight={46}
                                         >
-                                            <span></span>
+                                            <span>
+                                              <MiniArea height={40} color="#975FE4" data={item.visitData} />
+                                            </span>
                                         </ChartCard>
                                     </Spin>
                                 </Col>
