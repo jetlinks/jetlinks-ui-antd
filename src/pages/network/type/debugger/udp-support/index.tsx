@@ -2,6 +2,7 @@ import { Modal, Button, Divider, Tabs, Form, Input, Select, message } from 'antd
 import React, { Fragment, useState } from 'react';
 import { getAccessToken } from '@/utils/authority';
 import apis from '@/services';
+import { wrapAPI } from '@/utils/utils';
 
 interface Props {
   close: Function;
@@ -39,25 +40,36 @@ const UdpSupport: React.FC<Props> = props => {
   const [subscribeData, setSubscribeData] = useState(initState.subscribeData);
   const [publishData, setPublishData] = useState(initState.publishData);
   const [logs, setLogs] = useState(initState.logs);
+
+  let tempLogs: string = '';
+
   // const { item: { type: { text } } } = props;
   const debugMqttClient = () => {
     if (action === '_subscribe') {
-      setLogs(`${logs}开始订阅\n`);
+      tempLogs += '开始订阅\n';
+      setLogs(tempLogs);
 
-      // console.log('debugMqtt', data);
       const eventSource = new EventSource(
-        `/jetlinks/network/upd/${item.id}/_subscribe/${
-          subscribeData.type
-        }?:X_Access_Token=${getAccessToken()}`,
+        wrapAPI(
+          `/jetlinks/network/upd/${item.id}/_subscribe/${
+            subscribeData.type
+          }?:X_Access_Token=${getAccessToken()}`,
+        ),
       );
       eventSource.onerror = () => {
-        // console.log('error');
+        tempLogs += '调试断开\n';
+        setLogs(tempLogs);
       };
-      eventSource.onmessage = () => {
-        // console.log('message');
+
+      eventSource.onmessage = e => {
+        // 追加日志
+        tempLogs += `${e.data}\n`;
+        setLogs(tempLogs);
       };
+
       eventSource.onopen = () => {
-        // console.log('opne');
+        tempLogs += '开启推送\n';
+        setLogs(tempLogs);
       };
     } else if (action === '_publish') {
       apis.network
