@@ -288,20 +288,20 @@ export default {
               path: 'logger',
               name: '日志管理',
               icon: 'wallet',
-              authority: ['rule-logger', 'access-logger'],
+              authority: ['system-logger', 'access-logger'],
               routes: [
                 {
                   path: './logger/access',
                   name: '访问日志',
                   icon: 'ordered-list',
-                  authority: ['rule-logger'],
+                  authority: ['access-logger'],
                   component: './logger/access',
                 },
                 {
                   path: './logger/system',
                   name: '系统日志',
                   icon: 'bars',
-                  authority: ['access-logger'],
+                  authority: ['system-logger'],
                   component: './logger/system',
                 },
               ],
