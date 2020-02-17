@@ -282,18 +282,19 @@ const Save: React.FC<Props> = props => {
               {getFieldDecorator('configuration.parserType', {
                 initialValue: props.data?.configuration?.parserType,
               })(
-                <Select>
+                <Select
+                  onChange={(e: string) => {
+                    setTcpServerParseType(e);
+                  }}
+                >
+                  <Select.Option value="DIRECT">不处理</Select.Option>
                   <Select.Option value="delimited">分隔符</Select.Option>
-                  <Select.Option value="script">固定长度</Select.Option>
-                  <Select.Option value="fixed_length">自定义脚本</Select.Option>
+                  <Select.Option value="script">自定义脚本</Select.Option>
+                  <Select.Option value="fixed_length">固定长度</Select.Option>
                 </Select>,
               )}
             </Form.Item>
-            <Form.Item label="长度值">
-              {getFieldDecorator('configuration.size', {
-                initialValue: props.data?.configuration?.size,
-              })(<Input />)}
-            </Form.Item>
+            {renderTcpServerParse()}
           </div>
         );
       case 'COAP_SERVER':
