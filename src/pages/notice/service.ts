@@ -31,3 +31,29 @@ export async function remove(id: string) {
     method: 'DELETE',
   });
 }
+
+export async function config(params?: any) {
+  return request(`/jetlinks/notifier/config/_query`, {
+    method: 'GET',
+    params,
+  });
+}
+
+export async function queryConfigById(id: string) {
+  return request(`/jetlinks/notifier/config/${id}`, {
+    method: 'GET',
+  });
+}
+
+export async function configMetadata(type: string, id: string) {
+  return request(`/jetlinks/notifier/config/${type}/${id}/metadata`, {
+    method: 'GET',
+  });
+}
+
+export async function debugTemplate(id: string, data: any) {
+  return request(`/jetlinks/notifier/${id}/_send`, {
+    method: 'POST',
+    data,
+  });
+}
