@@ -108,7 +108,7 @@ export const downloadObject = (record: any, fileName: string) => {
 
 export const wrapAPI = (url: string) => {
   if (REACT_APP_ENV === 'dev') {
-    return url.replace('/jetlinks', 'http://2.jetlinks.org:9010/')
+    return url.replace('/jetlinks', 'http://2.jetlinks.org:9010');
   }
   return url;
-}
+};
