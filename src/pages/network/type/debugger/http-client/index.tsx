@@ -36,15 +36,16 @@ interface State {
     headers: {
       id: string;
       key: string;
-      value: string;
+      value: string[];
       describe: string;
     }[];
-    queryParameters: {
+    tempParameters: {
       id: string;
       key: string;
       value: string;
       describe: string;
     }[];
+    queryParameters: any;
   };
 }
 const HttpClient: React.FC<Props> = props => {
@@ -68,7 +69,7 @@ const HttpClient: React.FC<Props> = props => {
           describe: '',
         },
       ],
-      queryParameters: [
+      tempParameters: [
         {
           id: randomString(8),
           key: '',
@@ -76,6 +77,7 @@ const HttpClient: React.FC<Props> = props => {
           describe: '',
         },
       ],
+      queryParameters: {},
     },
   };
   const [logs, setLogs] = useState(initState.logs);
@@ -88,6 +90,15 @@ const HttpClient: React.FC<Props> = props => {
     //   contentType: application / x - www - form - urlencoded
     setLogs(`${logs}开始订阅\n`);
 
+    if (debugData && debugData.tempParameters) {
+      const params = debugData.tempParameters;
+      const queryParameters = {};
+      params.forEach(i => {
+        queryParameters[i.key] = i.value;
+      });
+      debugData.queryParameters = queryParameters;
+    }
+    console.log(debugData, JSON.stringify(debugData.payload));
     apis.network
       .debugHttpClient(item.id, debugData)
       .then(response => {
@@ -243,7 +254,7 @@ const HttpClient: React.FC<Props> = props => {
             placeholder="JSON格式"
             value={typeof debugData.payload === 'string' ? debugData.payload : ''}
             onChange={e => {
-              debugData.payload = e.target.value;
+              debugData.payload = JSON.stringify(e.target.value);
               setDebugData({ ...debugData });
             }}
           />
@@ -341,7 +352,7 @@ const HttpClient: React.FC<Props> = props => {
                   <Input
                     value={i.value}
                     onChange={e => {
-                      debugData.headers[index].value = e.target.value;
+                      debugData.headers[index].value = [e.target.value];
                       setDebugData({ ...debugData });
                     }}
                     placeholder="value"
@@ -368,7 +379,7 @@ const HttpClient: React.FC<Props> = props => {
                         debugData.headers.push({
                           id: randomString(8),
                           key: '',
-                          value: '',
+                          value: [],
                           describe: '',
                         });
                         setDebugData({ ...debugData });
@@ -391,13 +402,13 @@ const HttpClient: React.FC<Props> = props => {
         </Form.Item>
         <Form.Item label="请求参数">
           <Card>
-            {debugData.queryParameters.map((i, index) => (
+            {debugData.tempParameters.map((i, index) => (
               <Row key={i.id} style={{ marginBottom: 5 }}>
                 <Col span={6}>
                   <Input
                     value={i.key}
                     onChange={e => {
-                      debugData.queryParameters[index].key = e.target.value;
+                      debugData.tempParameters[index].key = e.target.value;
                       setDebugData({ ...debugData });
                     }}
                     placeholder="key"
@@ -410,7 +421,7 @@ const HttpClient: React.FC<Props> = props => {
                   <Input
                     value={i.value}
                     onChange={e => {
-                      debugData.queryParameters[index].value = e.target.value;
+                      debugData.tempParameters[index].value = e.target.value;
                       setDebugData({ ...debugData });
                     }}
                     placeholder="value"
@@ -423,7 +434,7 @@ const HttpClient: React.FC<Props> = props => {
                   <Input
                     value={i.describe}
                     onChange={e => {
-                      debugData.queryParameters[index].describe = e.target.value;
+                      debugData.tempParameters[index].describe = e.target.value;
                       setDebugData({ ...debugData });
                     }}
                     placeholder="说明"
@@ -434,7 +445,7 @@ const HttpClient: React.FC<Props> = props => {
                     <Icon
                       type="plus"
                       onClick={() => {
-                        debugData.queryParameters.push({
+                        debugData.tempParameters.push({
                           id: randomString(8),
                           key: '',
                           value: '',
@@ -447,7 +458,7 @@ const HttpClient: React.FC<Props> = props => {
                     <Icon
                       type="minus"
                       onClick={() => {
-                        debugData.queryParameters = debugData.queryParameters.filter(
+                        debugData.tempParameters = debugData.tempParameters.filter(
                           temp => temp.id !== i.id,
                         );
                         // debugData.headers.push({ id: randomString(8), key: '', value: '' });
