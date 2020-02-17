@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Form, Input, Select } from 'antd';
 import { FormComponentProps } from 'antd/es/form';
-import { GatewayItem } from '../data';
+import { GatewayItem } from '../data.d';
 import apis from '@/services';
 import encodeQueryParam from '@/utils/encodeParam';
 
@@ -35,17 +35,17 @@ const Save: React.FC<Props> = props => {
   const [provider, setProvider] = useState(initState.provider);
   const [networkList, setNetworkList] = useState(initState.networkList);
   const [supportList, setSupportList] = useState(initState.supportList);
-  const [support, setSupport] = useState(initState.support);
+  // const [support, setSupport] = useState(initState.support);
 
   useEffect(() => {
     apis.gateway
       .providers()
       .then(response => {
         setProviderList(response.result);
-        let tempProvider = props.data?.provider;
+        const tempProvider = props.data?.provider;
         if (tempProvider) {
           const temp = response.result.find((item: any) => tempProvider === item.id);
-          //获取对应的网络组件
+          // 获取对应的网络组件
           apis.network
             .list(
               encodeQueryParam({
@@ -54,8 +54,8 @@ const Save: React.FC<Props> = props => {
                 },
               }),
             )
-            .then(response => {
-              setNetworkList(response.result);
+            .then(res => {
+              setNetworkList(res.result);
             })
             .catch(() => {});
         }
@@ -106,6 +106,7 @@ const Save: React.FC<Props> = props => {
           </div>
         );
       case 'MQTT_CLIENT':
+      case 'TCP_SERVER':
         return (
           <div>
             <Form.Item label="消息协议">
@@ -113,9 +114,9 @@ const Save: React.FC<Props> = props => {
                 initialValue: props.data.configuration?.protocol,
               })(
                 <Select
-                  onChange={(value: string) => {
-                    setSupport(value);
-                  }}
+                // onChange={(value: string) => {
+                // setSupport(value);
+                // }}
                 >
                   {supportList.map((item: any) => (
                     <Select.Option key={item.id} value={item.name}>
@@ -134,15 +135,15 @@ const Save: React.FC<Props> = props => {
           </div>
         );
       case 'MQTT_SERVER':
-        return <div></div>;
+        return null;
       default:
-        return <div></div>;
+        return null;
     }
   };
 
   const saveData = () => {
     const data = form.getFieldsValue();
-    let id = props.data.id;
+    const { id } = props.data;
     props.save({ id, ...data });
   };
 
@@ -188,10 +189,9 @@ const Save: React.FC<Props> = props => {
           })(
             <Select
               disabled={!provider}
-              onChange={(value: string) => {
-                setSupport(value);
-                console.log(value, 'value');
-              }}
+              // onChange={(value: string) => {
+              //   setSupport(value);
+              // }}
             >
               {networkList.map((item: any) => (
                 <Select.Option key={item.id} value={item.id}>

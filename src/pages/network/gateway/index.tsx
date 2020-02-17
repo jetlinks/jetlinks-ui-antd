@@ -1,12 +1,12 @@
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import React, { useState, Fragment, useEffect } from 'react';
 import { Divider, Button, Card, Table, message, Popconfirm } from 'antd';
-import { GatewayItem } from './data';
+import { GatewayItem } from './data.d';
 import styles from '@/utils/table.less';
-import Search from './search';
+// import Search from './search';
 
 import Save from './save';
-import ConnectState, { Dispatch, Loading } from '@/models/connect';
+import { Dispatch, ConnectState } from '@/models/connect';
 import { ColumnProps, PaginationConfig, SorterResult } from 'antd/es/table';
 import encodeQueryParam from '@/utils/encodeParam';
 import { connect } from 'dva';
@@ -51,6 +51,7 @@ const Gateway: React.FC<Props> = props => {
       type: 'gateway/query',
       payload: encodeQueryParam(params),
     });
+    setSearchParam(params);
   };
 
   useEffect(() => {
@@ -70,6 +71,81 @@ const Gateway: React.FC<Props> = props => {
       .catch(() => {});
   }, []);
 
+  const startUp = (record: any) => {
+    apis.gateway
+      .startUp(record.id)
+      .then(response => {
+        if (response) {
+          handleSearch();
+          message.success('操作成功');
+        }
+      })
+      .catch(() => {});
+  };
+
+  const paused = (record: any) => {
+    apis.gateway
+      .pause(record.id)
+      .then(response => {
+        if (response) {
+          handleSearch();
+          message.success('操作成功');
+        }
+      })
+      .catch(() => {});
+  };
+
+  const shutdown = (record: any) => {
+    apis.gateway
+      .shutdown(record.id)
+      .then(response => {
+        if (response) {
+          handleSearch();
+          message.success('操作成功');
+        }
+      })
+      .catch(() => {});
+  };
+
+  const removeItem = (record: any) => {
+    apis.gateway
+      .remove(record.id)
+      .then(response => {
+        if (response) {
+          handleSearch();
+          message.success('删除成功');
+        }
+      })
+      .catch(() => {});
+  };
+
+  const saveItem = (data: any) => {
+    dispatch({
+      type: 'gateway/insert',
+      payload: data,
+      callback: response => {
+        if (response) {
+          setSaveVisible(false);
+          message.success('保存成功');
+          handleSearch();
+        }
+      },
+    });
+  };
+
+  const onTableChange = (
+    pagination: PaginationConfig,
+    filters: any,
+    sorter: SorterResult<GatewayItem>,
+  ) => {
+    handleSearch({
+      pageIndex: Number(pagination.current) - 1,
+      pageSize: pagination.pageSize,
+      terms: searchParam,
+      sorts: sorter,
+    });
+  };
+
   const columns: ColumnProps<GatewayItem>[] = [
     {
       title: '名称',
@@ -79,7 +155,7 @@ const Gateway: React.FC<Props> = props => {
       title: '类型',
       dataIndex: 'provider',
       render: text => {
-        let temp = providerList.find((item: any) => item.id === text);
+        const temp = providerList.find((item: any) => item.id === text);
         return temp ? temp.name : text;
       },
     },
@@ -87,7 +163,7 @@ const Gateway: React.FC<Props> = props => {
       title: '网络组件',
       dataIndex: 'networkId',
       render: text => {
-        let temp = networkList.find((item: any) => item.id === text);
+        const temp = networkList.find((item: any) => item.id === text);
         return temp ? temp.type?.name : text;
       },
     },
@@ -159,68 +235,6 @@ const Gateway: React.FC<Props> = props => {
     },
   ];
 
-  const startUp = (record: any) => {
-    apis.gateway
-      .startUp(record.id)
-      .then(response => {
-        handleSearch();
-      })
-      .catch(() => {});
-  };
-
-  const paused = (record: any) => {
-    apis.gateway
-      .pause(record.id)
-      .then(response => {
-        handleSearch();
-      })
-      .catch(() => {});
-  };
-
-  const shutdown = (record: any) => {
-    apis.gateway
-      .shutdown(record.id)
-      .then(response => {
-        handleSearch();
-      })
-      .catch(() => {});
-  };
-
-  const removeItem = (record: any) => {
-    apis.gateway
-      .remove(record.id)
-      .then(response => {
-        handleSearch();
-      })
-      .catch(() => {});
-  };
-
-  const saveItem = (data: any) => {
-    dispatch({
-      type: 'gateway/insert',
-      payload: data,
-      callback: response => {
-        setSaveVisible(false);
-        message.success('保存成功');
-        handleSearch();
-      },
-    });
-  };
-
-  const onTableChange = (
-    pagination: PaginationConfig,
-    filters: any,
-    sorter: SorterResult<GatewayItem>,
-    extra: any,
-  ) => {
-    handleSearch({
-      pageIndex: Number(pagination.current) - 1,
-      pageSize: pagination.pageSize,
-      terms: searchParam,
-      sorts: sorter,
-    });
-  };
-
   return (
     <PageHeaderWrapper title="设备网关">
       <Card bordered={false}>
@@ -247,7 +261,7 @@ const Gateway: React.FC<Props> = props => {
               loading={props.loading}
               dataSource={result.data}
               columns={columns}
-              rowKey={'id'}
+              rowKey="id"
               onChange={onTableChange}
               pagination={false}
             />
