@@ -147,20 +147,22 @@ const Status: React.FC<Props> = (props) => {
           source.onmessage = e => {
 
             const data = JSON.parse(e.data);
-
+            const dataValue = data.data.value;
             metadata.properties = properties.map((item: any) => {
               if (item.id === data.group) {
                 // eslint-disable-next-line no-param-reassign
-                item.formatValue = data.data.value.formatValue;
-                if (item.visitData.length >= 15){
-                  item.visitData.splice(0,1);
-                }
-                item.visitData.push(
-                  {
-                    "x":data.data.timeString,
-                    "y":Number(data.data.value.value)
+                item.formatValue = dataValue.formatValue;
+                if (item.valueType.type === "int" || item.valueType.type === "float" || item.valueType.type === "double") {
+                  if (item.visitData.length >= 15){
+                    item.visitData.splice(0,1);
                   }
-                )
+                  item.visitData.push(
+                    {
+                      "x" : data.data.timeString,
+                      "y" : Math.floor(Number(dataValue.value) * 100) / 100
+                    }
+                  )
+                }
               }
               return item;
             });
