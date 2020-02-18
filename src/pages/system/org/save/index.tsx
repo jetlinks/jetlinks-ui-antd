@@ -8,38 +8,51 @@ interface Props extends FormComponentProps {
   data: any;
   parentId: string | null;
 }
-interface State {}
 
 const Save: React.FC<Props> = props => {
   const {
     form: { getFieldDecorator },
     form,
+    parentId,
+    data,
   } = props;
   const saveData = () => {
-    const data = form.getFieldsValue();
-    props.save({ parentId: props.parentId, typeId: 'org', ...data });
+    const value = form.getFieldsValue();
+    props.save({ parentId: props.parentId, typeId: 'org', ...value });
   };
+  const formateTitle = () => {
+    let title = '';
+    if (props.data.id) {
+      title += '编辑';
+    } else {
+      title += '添加';
+    }
+    if (parentId) {
+      title += `${parentId}子`;
+    }
+    title += '机构';
+    return title;
+  };
+
   return (
-    <Modal
-      title={props.parentId ? `添加${props.parentId}子机构` : '添加机构'}
-      visible
-      onOk={() => saveData()}
-      onCancel={() => props.close()}
-    >
+    <Modal title={formateTitle()} visible onOk={() => saveData()} onCancel={() => props.close()}>
       <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
         <Form.Item label="机构标识">
           {getFieldDecorator('id', {
             rules: [{ required: true }],
+            initialValue: data.id,
           })(<Input placeholder="机构标识" />)}
         </Form.Item>
         <Form.Item label="机构名称">
           {getFieldDecorator('name', {
             rules: [{ required: true }],
+            initialValue: data.name,
           })(<Input placeholder="机构名称" />)}
         </Form.Item>
         <Form.Item label="描述">
           {getFieldDecorator('description', {
             rules: [{ required: true }],
+            initialValue: data.description,
           })(<Input.TextArea placeholder="描述" />)}
         </Form.Item>
       </Form>

@@ -65,11 +65,6 @@ const OrgList: React.FC<Props> = props => {
     });
   }, []);
 
-  const edit = (record: OrgItem) => {
-    setCurrentItem(record);
-    setSaveVisible(true);
-  };
-
   const saveOrUpdate = (item: OrgItem) => {
     dispatch({
       type: 'org/insert',
@@ -125,10 +120,18 @@ const OrgList: React.FC<Props> = props => {
       title: '操作',
       render: (text, record) => (
         <Fragment>
-          <a onClick={() => edit(record)}>编辑</a>
+          <a
+            onClick={() => {
+              setCurrentItem(record);
+              setSaveVisible(true);
+            }}
+          >
+            编辑
+          </a>
           <Divider type="vertical" />
           <a
             onClick={() => {
+              setCurrentItem({});
               setSaveVisible(true);
               setParentId(record.id);
             }}
@@ -206,7 +209,10 @@ const OrgList: React.FC<Props> = props => {
           parentId={parentId}
           save={(item: any) => saveOrUpdate(item)}
           data={currentItem}
-          close={() => setSaveVisible(false)}
+          close={() => {
+            setSaveVisible(false);
+            setCurrentItem({});
+          }}
         />
       )}
       {autzVisible && (
