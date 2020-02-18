@@ -147,6 +147,18 @@ export default {
                   authority: ['open-api'],
                   component: './system/open-api',
                 },
+                {
+                  path: '/system/org',
+                  name: '机构管理',
+                  authority: ['dimension'],
+                  component: './system/org',
+                },
+                {
+                  path: '/system/role',
+                  name: '角色管理',
+                  authority: ['dimension'],
+                  component: './system/role',
+                },
               ],
             },
             {

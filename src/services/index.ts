@@ -24,6 +24,7 @@ import * as authorization from '@/components/Authorization/service';
 import * as network from '@/pages/network/type/service';
 import * as gateway from '@/pages/network/gateway/service';
 import * as notifier from '@/pages/notice/service';
+import * as org from '@/pages/system/org/service';
 
 const apis = {
   login,
@@ -52,5 +53,6 @@ const apis = {
   network,
   gateway,
   notifier,
+  org,
 };
 export default apis;
