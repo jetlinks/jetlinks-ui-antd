@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Form, Input, Drawer, Button, Select, Radio, InputNumber } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import apis from '@/services';
-import { response } from 'express';
 
 interface Props extends FormComponentProps {
   close: Function;
@@ -13,12 +12,14 @@ interface State {
   dataType: string;
   supportsType: any[];
   certificateList: any[];
+  tcpServerParseType: string;
 }
 const Save: React.FC<Props> = props => {
   const initState: State = {
     dataType: props.data.type?.value,
     supportsType: [],
     certificateList: [],
+    tcpServerParseType: props.data?.configuration?.parserType || 'DIRECT',
   };
   const {
     form: { getFieldDecorator },
@@ -27,6 +28,7 @@ const Save: React.FC<Props> = props => {
   const [dataType, setDataType] = useState(initState.dataType);
   const [supportsType, setSupportsType] = useState(initState.supportsType);
   const [certificateList, setCertificateList] = useState(initState.certificateList);
+  const [tcpServerParseType, setTcpServerParseType] = useState(initState.tcpServerParseType);
 
   useEffect(() => {
     apis.network
@@ -42,6 +44,49 @@ const Save: React.FC<Props> = props => {
       })
       .catch(() => {});
   }, []);
+
+  const renderTcpServerParse = () => {
+    switch (tcpServerParseType) {
+      case 'delimited':
+        return (
+          <Form.Item label="分隔符">
+            {getFieldDecorator('configuration.delimited', {
+              initialValue: props.data?.configuration?.delimited,
+            })(<Input />)}
+          </Form.Item>
+        );
+      case 'script':
+        return (
+          <>
+            <Form.Item label="脚本语言">
+              {getFieldDecorator('configuration.lang', {
+                initialValue: props.data?.configuration?.lang,
+              })(
+                <Radio.Group buttonStyle="solid">
+                  <Radio.Button value="javascript">JavaScript</Radio.Button>
+                  <Radio.Button value="groovy">Groovy</Radio.Button>
+                </Radio.Group>,
+              )}
+            </Form.Item>
+            <Form.Item label="解析脚本">
+              {getFieldDecorator('configuration.script', {
+                initialValue: props.data?.configuration?.script,
+              })(<Input.TextArea rows={3} />)}
+            </Form.Item>
+          </>
+        );
+      case 'fixed_length':
+        return (
+          <Form.Item label="长度值">
+            {getFieldDecorator('configuration.size', {
+              initialValue: props.data?.configuration?.size,
+            })(<Input />)}
+          </Form.Item>
+        );
+      default:
+        return null;
+    }
+  };
   const renderForm = () => {
     switch (dataType) {
       case 'MQTT_SERVER':
@@ -67,8 +112,8 @@ const Save: React.FC<Props> = props => {
                 initialValue: props.data?.configuration?.ssl,
               })(
                 <Radio.Group>
-                  <Radio value={'true'}>是</Radio>
-                  <Radio value={'false'}>否</Radio>
+                  <Radio value>是</Radio>
+                  <Radio value={false}>否</Radio>
                 </Radio.Group>,
               )}
             </Form.Item>
@@ -110,8 +155,8 @@ const Save: React.FC<Props> = props => {
                 initialValue: props.data?.configuration?.ssl,
               })(
                 <Radio.Group>
-                  <Radio value={'true'}>是</Radio>
-                  <Radio value={'false'}>否</Radio>
+                  <Radio value>是</Radio>
+                  <Radio value={false}>否</Radio>
                 </Radio.Group>,
               )}
             </Form.Item>
@@ -148,7 +193,7 @@ const Save: React.FC<Props> = props => {
                 initialValue: props.data?.configuration?.ssl,
               })(
                 <Radio.Group>
-                  <Radio value={true}>是</Radio>
+                  <Radio value>是</Radio>
                   <Radio value={false}>否</Radio>
                 </Radio.Group>,
               )}
@@ -181,18 +226,19 @@ const Save: React.FC<Props> = props => {
               {getFieldDecorator('configuration.parserType', {
                 initialValue: props.data?.configuration?.parserType,
               })(
-                <Select>
+                <Select
+                  onChange={(e: string) => {
+                    setTcpServerParseType(e);
+                  }}
+                >
+                  <Select.Option value="DIRECT">不处理</Select.Option>
                   <Select.Option value="delimited">分隔符</Select.Option>
-                  <Select.Option value="script">固定长度</Select.Option>
-                  <Select.Option value="fixed_length">自定义脚本</Select.Option>
+                  <Select.Option value="script">自定义脚本</Select.Option>
+                  <Select.Option value="fixed_length">固定长度</Select.Option>
                 </Select>,
               )}
             </Form.Item>
-            <Form.Item label="长度值">
-              {getFieldDecorator('configuration.size', {
-                initialValue: props.data?.configuration?.size,
-              })(<Input />)}
-            </Form.Item>
+            {renderTcpServerParse()}
           </div>
         );
       case 'TCP_CLIENT':
@@ -203,7 +249,7 @@ const Save: React.FC<Props> = props => {
                 initialValue: props.data?.configuration?.ssl,
               })(
                 <Radio.Group>
-                  <Radio value={true}>是</Radio>
+                  <Radio value>是</Radio>
                   <Radio value={false}>否</Radio>
                 </Radio.Group>,
               )}
@@ -236,18 +282,19 @@ const Save: React.FC<Props> = props => {
               {getFieldDecorator('configuration.parserType', {
                 initialValue: props.data?.configuration?.parserType,
               })(
-                <Select>
-                  <Select.Option value="delimited">分隔符</Select.Option>
-                  <Select.Option value="script">固定长度</Select.Option>
-                  <Select.Option value="fixed_length">自定义脚本</Select.Option>
+                <Select
+                  onChange={(e: string) => {
+                    setTcpServerParseType(e);
+                  }}
+                >
+                  <Select.Option value="DIRECT">不处理</Select.Option>
+                  <Select.Option value="DELIMITED">分隔符</Select.Option>
+                  <Select.Option value="SCRIPT">自定义脚本</Select.Option>
+                  <Select.Option value="FIXED_LENGTH">固定长度</Select.Option>
                 </Select>,
               )}
             </Form.Item>
-            <Form.Item label="长度值">
-              {getFieldDecorator('configuration.size', {
-                initialValue: props.data?.configuration?.size,
-              })(<Input />)}
-            </Form.Item>
+            {renderTcpServerParse()}
           </div>
         );
       case 'COAP_SERVER':
@@ -269,7 +316,7 @@ const Save: React.FC<Props> = props => {
                 initialValue: props.data?.configuration?.enableDtls,
               })(
                 <Radio.Group>
-                  <Radio value={true}>是</Radio>
+                  <Radio value>是</Radio>
                   <Radio value={false}>否</Radio>
                 </Radio.Group>,
               )}
@@ -313,7 +360,7 @@ const Save: React.FC<Props> = props => {
                 initialValue: props.data?.configuration?.enableDtls,
               })(
                 <Radio.Group>
-                  <Radio value={true}>是</Radio>
+                  <Radio value>是</Radio>
                   <Radio value={false}>否</Radio>
                 </Radio.Group>,
               )}
@@ -359,7 +406,7 @@ const Save: React.FC<Props> = props => {
                 initialValue: props.data?.configuration?.ssl,
               })(
                 <Radio.Group>
-                  <Radio value={true}>是</Radio>
+                  <Radio value>是</Radio>
                   <Radio value={false}>否</Radio>
                 </Radio.Group>,
               )}
@@ -392,7 +439,7 @@ const Save: React.FC<Props> = props => {
                 initialValue: props.data?.configuration?.ssl,
               })(
                 <Radio.Group>
-                  <Radio value={true}>是</Radio>
+                  <Radio value>是</Radio>
                   <Radio value={false}>否</Radio>
                 </Radio.Group>,
               )}
@@ -402,7 +449,7 @@ const Save: React.FC<Props> = props => {
                 initialValue: props.data?.configuration?.verifyHost,
               })(
                 <Radio.Group>
-                  <Radio value={true}>是</Radio>
+                  <Radio value>是</Radio>
                   <Radio value={false}>否</Radio>
                 </Radio.Group>,
               )}
@@ -412,7 +459,7 @@ const Save: React.FC<Props> = props => {
                 initialValue: props.data?.configuration?.trustAll,
               })(
                 <Radio.Group>
-                  <Radio value={true}>是</Radio>
+                  <Radio value>是</Radio>
                   <Radio value={false}>否</Radio>
                 </Radio.Group>,
               )}
@@ -432,7 +479,7 @@ const Save: React.FC<Props> = props => {
                 initialValue: props.data?.configuration?.ssl,
               })(
                 <Radio.Group>
-                  <Radio value={true}>是</Radio>
+                  <Radio value>是</Radio>
                   <Radio value={false}>否</Radio>
                 </Radio.Group>,
               )}
@@ -476,7 +523,7 @@ const Save: React.FC<Props> = props => {
                 initialValue: props.data?.configuration?.ssl,
               })(
                 <Radio.Group>
-                  <Radio value={true}>是</Radio>
+                  <Radio value>是</Radio>
                   <Radio value={false}>否</Radio>
                 </Radio.Group>,
               )}
@@ -486,7 +533,7 @@ const Save: React.FC<Props> = props => {
                 initialValue: props.data?.configuration?.verifyHost,
               })(
                 <Radio.Group>
-                  <Radio value={true}>是</Radio>
+                  <Radio value>是</Radio>
                   <Radio value={false}>否</Radio>
                 </Radio.Group>,
               )}
@@ -525,7 +572,7 @@ const Save: React.FC<Props> = props => {
                 initialValue: props.data?.configuration?.ssl,
               })(
                 <Radio.Group>
-                  <Radio value={true}>是</Radio>
+                  <Radio value>是</Radio>
                   <Radio value={false}>否</Radio>
                 </Radio.Group>,
               )}
@@ -581,7 +628,7 @@ const Save: React.FC<Props> = props => {
   const saveData = () => {
     form.validateFields((err, fileValue) => {
       if (err) return;
-      let id = props.data.id;
+      const { id } = props.data;
       props.save({ id, ...fileValue });
     });
   };
