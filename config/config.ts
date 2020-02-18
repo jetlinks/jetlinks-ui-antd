@@ -35,11 +35,11 @@ const plugins: IPlugin[] = [
       },
       pwa: pwa
         ? {
-          workboxPluginMode: 'InjectManifest',
-          workboxOptions: {
-            importWorkboxFrom: 'local',
-          },
-        }
+            workboxPluginMode: 'InjectManifest',
+            workboxOptions: {
+              importWorkboxFrom: 'local',
+            },
+          }
         : false, // default close dll, because issue https://github.com/ant-design/ant-design-pro/issues/4665
       // dll features https://webpack.js.org/plugins/dll-plugin/
       // dll: {
@@ -290,20 +290,20 @@ export default {
               path: 'logger',
               name: '日志管理',
               icon: 'wallet',
-              authority: ['rule-logger', 'access-logger'],
+              authority: ['system-logger', 'access-logger'],
               routes: [
                 {
                   path: './logger/access',
                   name: '访问日志',
                   icon: 'ordered-list',
-                  authority: ['rule-logger'],
+                  authority: ['access-logger'],
                   component: './logger/access',
                 },
                 {
                   path: './logger/system',
                   name: '系统日志',
                   icon: 'bars',
-                  authority: ['access-logger'],
+                  authority: ['system-logger'],
                   component: './logger/system',
                 },
               ],
