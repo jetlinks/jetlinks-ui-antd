@@ -60,8 +60,7 @@ const OrgList: React.FC<Props> = props => {
       terms: {
         typeId: 'org',
       },
-      pageIndex: 0,
-      pageSize: 10,
+      paging: false,
     });
   }, []);
 

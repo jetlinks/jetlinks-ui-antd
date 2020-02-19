@@ -238,7 +238,9 @@ const Save: React.FC<Props> = props => {
     const data = form.getFieldsValue();
     const { template } = data;
     if (data.type === 'email') {
-      template.sendTo = (template.sendTo || '').split(',');
+      if (typeof template.sendTo === 'string') {
+        template.sendTo = template.sendTo.split(',');
+      }
       if (emailEditor !== null) {
         template.text = emailEditor.toHTML();
       }
