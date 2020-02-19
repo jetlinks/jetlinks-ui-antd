@@ -42,7 +42,7 @@ export async function runInfo(id: string) {
 }
 
 export async function properties(productId: string, id: string) {
-  return request(`/jetlinks/device-instance/${productId}/${id}/properties`, {
+  return request(`/jetlinks/device-instance/${id}/properties/latest`, {
     method: 'GET',
   });
 }
