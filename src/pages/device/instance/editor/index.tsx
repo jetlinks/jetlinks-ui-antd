@@ -50,6 +50,31 @@ const Editor: React.FC<Props> = props => {
   const [deviceState, setDeviceState] = useState(initState.deviceState);
   const [deviceFunction, setDeviceFunction] = useState(initState.deviceFunction);
 
+  const [tableList,setTableList] = useState();
+
+  const tabList = [
+    {
+      key: 'info',
+      tab: '实例信息',
+    },
+    {
+      key: 'status',
+      tab: '运行状态',
+    },
+    /*{
+      key: 'functions',
+      tab: '设备功能',
+    },*/
+    {
+      key: 'log',
+      tab: '日志管理',
+    },
+    // {
+    //     key: 'debugger',
+    //     tab: '在线调试',
+    // },
+  ];
+
   const getInfo = (id: string) => {
     dispatch({
       type: 'deviceInstance/queryById',
@@ -57,14 +82,14 @@ const Editor: React.FC<Props> = props => {
       callback: (response: SimpleResponse) => {
         if (response.status === 200) {
           let data = response.result;
-          // let deriveMetadata = JSON.parse(data.deriveMetadata);
-          // functions = deriveMetadata.functions;
-          // if (deriveMetadata.functions.length > 0){
-          //   tabList.splice(2, 0, {
-          //     key: 'functions',
-          //     tab: '设备功能',
-          //   });
-          // }
+          let deriveMetadata = JSON.parse(data.deriveMetadata);
+          if (deriveMetadata.functions.length > 0){
+            tabList.splice(2, 0, {
+              key: 'functions',
+              tab: '设备功能',
+            });
+          }
+          setTableList(tabList);
           setData(data);
         }
       },
@@ -77,6 +102,7 @@ const Editor: React.FC<Props> = props => {
       getInfo(list[list.length - 1]);
       setId(list[list.length - 1]);
     }
+    setTableList(tabList);
   }, []);
 
   const handleSearchLog = (terms: any) => {
@@ -124,29 +150,6 @@ const Editor: React.FC<Props> = props => {
     </Fragment>
   );
 
-  const tabList = [
-    {
-      key: 'info',
-      tab: '实例信息',
-    },
-    {
-      key: 'status',
-      tab: '运行状态',
-    },
-    {
-      key: 'functions',
-      tab: '设备功能',
-    },
-    {
-      key: 'log',
-      tab: '日志管理',
-    },
-    // {
-    //     key: 'debugger',
-    //     tab: '在线调试',
-    // },
-  ];
-
   const info = {
     info: <Info data={data}/>,
     status: <Status device={data}/>,
@@ -185,7 +188,7 @@ const Editor: React.FC<Props> = props => {
       extra={action}
       content={content}
       extraContent={extra}
-      tabList={tabList}
+      tabList={tableList}
       tabActiveKey={activeKey}
       onTabChange={(key: string) => {
         // if (key === 'log') {
