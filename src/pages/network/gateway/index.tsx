@@ -141,7 +141,7 @@ const Gateway: React.FC<Props> = props => {
     handleSearch({
       pageIndex: Number(pagination.current) - 1,
       pageSize: pagination.pageSize,
-      terms: searchParam,
+      terms: searchParam.terms,
       sorts: sorter,
     });
   };

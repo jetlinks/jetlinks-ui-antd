@@ -27,6 +27,7 @@ import { SystemLoggerModelState } from '@/pages/logger/system/model';
 import { NetworkTypeState } from '@/pages/network/type/model';
 import { NoticeTemplateState } from '@/pages/notice/template/model';
 import { NoticeConfigState } from '@/pages/notice/config/model';
+import { OrgModelState } from '@/pages/system/org/model';
 // import { GatewayState } from '@/pages/network/gateway/model';
 
 export { GlobalModelState, SettingModelState, UserModelState };
@@ -77,6 +78,7 @@ export interface Loading {
     gateway: boolean;
     noticeTemplate: boolean;
     noticeConfig: boolean;
+    org: boolean;
   };
 }
 
@@ -108,6 +110,7 @@ export interface ConnectState {
   gateway: GatewayModelState;
   noticeTemplate: NoticeTemplateState;
   noticeConfig: NoticeConfigState;
+  org: OrgModelState;
 }
 
 export interface Route extends MenuDataItem {

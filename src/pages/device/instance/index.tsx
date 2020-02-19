@@ -89,7 +89,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
 
   const changeDeploy = (record: any) => {
     apis.deviceInstance
-      .changeDeploy( record.id )
+      .changeDeploy(record.id)
       .then(response => {
         if (response.status === 200) {
           message.success('操作成功');
@@ -101,7 +101,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
 
   const unDeploy = (record: any) => {
     apis.deviceInstance
-      .unDeploy(record.id )
+      .unDeploy(record.id)
       .then(response => {
         if (response.status === 200) {
           message.success('操作成功');
@@ -222,7 +222,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
     handleSearch({
       pageIndex: Number(pagination.current) - 1,
       pageSize: pagination.pageSize,
-      terms: searchParam,
+      terms: searchParam.terms,
       sorts: sorter,
     });
   };

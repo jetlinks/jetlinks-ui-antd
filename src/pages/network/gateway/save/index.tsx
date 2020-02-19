@@ -106,7 +106,6 @@ const Save: React.FC<Props> = props => {
           </div>
         );
       case 'MQTT_CLIENT':
-      case 'TCP_SERVER':
         return (
           <div>
             <Form.Item label="消息协议">
@@ -131,6 +130,24 @@ const Save: React.FC<Props> = props => {
               {getFieldDecorator('configuration.topics', {
                 initialValue: props.data.configuration?.topics,
               })(<Input.TextArea rows={3} placeholder="从MQTT服务订阅Topic.多个使用,分割" />)}
+            </Form.Item>
+          </div>
+        );
+      case 'TCP_SERVER':
+        return (
+          <div>
+            <Form.Item label="消息协议">
+              {getFieldDecorator('configuration.protocol', {
+                initialValue: props.data.configuration?.protocol,
+              })(
+                <Select>
+                  {supportList.map((item: any) => (
+                    <Select.Option key={item.id} value={item.name}>
+                      {item.name}
+                    </Select.Option>
+                  ))}
+                </Select>,
+              )}
             </Form.Item>
           </div>
         );
