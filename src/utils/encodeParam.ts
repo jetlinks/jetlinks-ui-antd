@@ -27,7 +27,7 @@ export default function encodeQueryParam(params: any) {
       if (!sorts) return;
       if (Object.keys(sorts).length > 0) {
         queryParam[`sorts[0].name`] = sorts.field;
-        queryParam[`sorts[0].order`] = sorts.order.replace('end', '');
+        queryParam[`sorts[0].order`] = (sorts.order || '').replace('end', '');
       }
     } else {
       queryParam[key] = params[key];
