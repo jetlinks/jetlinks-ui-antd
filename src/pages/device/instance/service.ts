@@ -93,6 +93,13 @@ export async function exportData(params: any) {
   });
 }
 
+export async function propertieInfo(deviceId: string, params: any) {
+  return request(`/jetlinks/device-instance/${deviceId}/properties/_query`, {
+    method: 'GET',
+    params,
+  });
+}
+
 // export async function deployAll() {
 //     return request(`/jetlinks/device-instance/deploy`, {
 //         method: 'GET',

@@ -3,9 +3,9 @@ import { Table, Divider, Modal } from "antd";
 import { ColumnProps, PaginationConfig, SorterResult } from "antd/lib/table";
 import apis from "@/services";
 import encodeQueryParam from "@/utils/encodeParam";
+import moment from 'moment';
 
 interface Props {
-    data: any;
     close: Function;
     item: any;
     type: string;
@@ -13,51 +13,57 @@ interface Props {
 }
 interface State {
     eventColumns: ColumnProps<any>[];
-    logData: any
+    propertieInfo: any
 }
 
-const EventLog: React.FC<Props> = (props) => {
+const PropertieInfo: React.FC<Props> = (props) => {
 
     const initState: State = {
-        eventColumns: props.item.valueType.properties.map((item: any) => {
-            return {
-                title: item.name,
-                dataIndex: item.id
-            }
-        }),
-        logData: {}
-    }
+        eventColumns: [{
+                title: "时间",
+                dataIndex: "timestamp",
+                render: text => moment(text).format('YYYY-MM-DD hh:mm:ss')
+            },{title:props.item.name,
+          dataIndex: "formatValue"}],
+        propertieInfo: {}
+    };
 
-    const [logData, setLogData] = useState(initState.logData);
+    const [propertieInfo, setPropertieInfo] = useState(initState.propertieInfo);
 
 
     useEffect(() => {
-        apis.deviceInstance.eventData(
-            props.type,
-            props.item.id,
+        apis.deviceInstance.propertieInfo(
+            props.deviceId,
             encodeQueryParam({
-                terms: { deviceId: props.deviceId },
                 pageIndex: 0,
                 pageSize: 10,
+                sorts: {
+                  field: 'timestamp',
+                  order: 'desc',
+                },
+                property:props.item.id
             })
         ).then(response => {
-            setLogData(response.result)
+            setPropertieInfo(response.result)
         }).catch(() => {
 
         });
     }, []);
 
-    const onTableChange = (pagination: PaginationConfig, filters: any, sorter: SorterResult<any>, extra: any) => {
-        apis.deviceInstance.eventData(
-            props.type,
-            props.item.id,
+    const onTableChange = (pagination: PaginationConfig) => {
+        apis.deviceInstance.propertieInfo(
+            props.deviceId,
             encodeQueryParam({
-                terms: { deviceId: props.deviceId },
                 pageIndex: Number(pagination.current) - 1,
                 pageSize: pagination.pageSize,
+                sorts: {
+                  field: 'timestamp',
+                  order: 'desc',
+                },
+                property:props.item.id
             })
         ).then(response => {
-            setLogData(response.result)
+            setPropertieInfo(response.result)
         }).catch(() => {
 
         });
@@ -66,7 +72,7 @@ const EventLog: React.FC<Props> = (props) => {
 
     return (
         <Modal
-            title="事件详情"
+            title="属性详情"
             visible
             onCancel={() => props.close()}
             onOk={() => props.close()}
@@ -74,24 +80,24 @@ const EventLog: React.FC<Props> = (props) => {
         >
             <Table
                 rowKey='createTime'
-                dataSource={logData.data}
+                dataSource={propertieInfo.data}
                 size="small"
                 onChange={onTableChange}
                 pagination={{
-                    current: logData.pageIndex + 1,
-                    total: logData.total,
-                    pageSize: logData.pageSize,
+                    current: propertieInfo.pageIndex + 1,
+                    total: propertieInfo.total,
+                    pageSize: propertieInfo.pageSize,
                     showQuickJumper: true,
                     showSizeChanger: true,
                     pageSizeOptions: ['10', '20', '50', '100'],
                     showTotal: (total: number) => {
-                        return `共 ${total} 条记录 第  ` + (logData.pageIndex + 1) + '/' + Math.ceil(logData.total / logData.pageSize) + '页';
+                        return `共 ${total} 条记录 第  ` + (propertieInfo.pageIndex + 1) + '/' + Math.ceil(propertieInfo.total / propertieInfo.pageSize) + '页';
                     }
                 }}
                 columns={initState.eventColumns}
             />
         </Modal>
     )
-}
+};
 
-export default EventLog;
+export default PropertieInfo;

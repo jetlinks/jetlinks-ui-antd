@@ -10,6 +10,7 @@ import encodeQueryParam from '@/utils/encodeParam';
 import { getAccessToken } from '@/utils/authority';
 import { FormattedMessage } from 'umi-plugin-react/locale';
 import { wrapAPI } from '@/utils/utils';
+import PropertieInfo from './propertie-data/propertieInfo';
 
 interface Props {
     device: any
@@ -19,6 +20,7 @@ interface State {
     runInfo: any;
     propertiesData: any[];
     eventVisible: boolean;
+    propertieVisible: boolean;
     metadata: any;
     eventData: any[];
     deviceState: any;
@@ -57,6 +59,7 @@ const Status: React.FC<Props> = (props) => {
         runInfo: {},
         propertiesData: [],
         eventVisible: false,
+        propertieVisible: false,
         metadata: {},
         eventData: [],
         deviceState: {}
@@ -71,7 +74,7 @@ const Status: React.FC<Props> = (props) => {
     const [deviceState, setDeviceState] = useState(initState.deviceState);
     // const [currentEvent, setCurrentEvent] = useState(initState.currentEvent);
     // const [currentEventData, setCurrentEventData] = useState(initState.currentEventData);
-
+    const [propertieVisible, setPropertieVisible] = useState(initState.propertieVisible);
     const [flag, setFlag] = useState(false);
 
     let source: EventSource | null = null;
@@ -145,7 +148,7 @@ const Status: React.FC<Props> = (props) => {
             source.onmessage = e => {
 
               const data = JSON.parse(e.data);
-              console.log(data);
+
               const dataValue = data.data.value;
               metadata.properties = properties.map((item: any) => {
                 if (item.id === data.group) {
@@ -423,8 +426,12 @@ const Status: React.FC<Props> = (props) => {
                                             bordered={false}
                                             title={item.name}
                                             action={
-                                                <Tooltip title='刷新'>
-                                                    <Icon type="sync" onClick={() => { refreshPropertyItem(item) }}/>
+                                                <Tooltip>
+                                                    <Icon title='刷新' type="sync" onClick={() => { refreshPropertyItem(item) }}/>
+                                                    <Icon title='详情' style={{ marginLeft: "10px" }} type="bars"
+                                                          onClick={() => {
+                                                            setPropertieVisible(true);
+                                                          }}/>
                                                 </Tooltip>
                                             }
                                             total={item.formatValue || 0}
@@ -435,6 +442,15 @@ const Status: React.FC<Props> = (props) => {
                                             </span>
                                         </ChartCard>
                                     </Spin>
+                                    {
+                                      propertieVisible &&
+                                      <PropertieInfo
+                                        item={item}
+                                        close={() => { setPropertieVisible(false) }}
+                                        type={props.device.productId}
+                                        deviceId={props.device.id}
+                                        />
+                                    }
                                 </Col>
                             )
                         }
