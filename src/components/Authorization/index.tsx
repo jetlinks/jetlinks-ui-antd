@@ -92,6 +92,8 @@ const Authorization: React.FC<Props> = props => {
         )
         .then(response => {
           if (response.status === 200) {
+            // const { result } = response;
+            // const resultTemp = result.map((item: any) => ({ id: item.permisseion, ...item }))
             setTargetAutz(response.result);
           }
         })
@@ -227,11 +229,14 @@ const Authorization: React.FC<Props> = props => {
     //     }
     //   }
     // }
+    console.log(targetAutz, 'auzet');
+    // const resultTemp = targetAutz.map((item: any) => ({ id: item.permisseion, ...item }));
+    const autzData = targetAutz.map(i => ({ id: i.permission, actions: i.actions }));
     apis.authorization
       .saveAutz({
         targetId: props.target.id,
         targetType: props.targetType,
-        permissionList: targetAutz, // 修复2324892缺陷 将tempAutz换成了targetAutz
+        permissionList: autzData, // 修复2324892缺陷 将tempAutz换成了targetAutz
       })
       .then(response => {
         if (response.status === 200) {
