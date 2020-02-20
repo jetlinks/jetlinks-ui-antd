@@ -171,7 +171,7 @@ const Editor: React.FC<Props> = props => {
       <Descriptions column={4}>
         <Descriptions.Item label="ID">{id}</Descriptions.Item>
         <Descriptions.Item label="型号">
-          <div>{data.name}</div>
+          <div>{data.productName}</div>
         </Descriptions.Item>
       </Descriptions>
     </div>
