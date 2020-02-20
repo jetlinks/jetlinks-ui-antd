@@ -253,7 +253,7 @@ const Template: React.FC<Props> = props => {
               },
               {
                 dataIndex: 'name',
-                title: '配置名称',
+                title: '模版名称',
               },
               {
                 dataIndex: 'type',

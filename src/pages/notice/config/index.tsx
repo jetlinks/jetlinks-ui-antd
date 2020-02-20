@@ -171,7 +171,7 @@ const Config: React.FC<Props> = props => {
   };
 
   return (
-    <PageHeaderWrapper title="通知模版">
+    <PageHeaderWrapper title="通知配置">
       <div className={styles.filterCardList}>
         <Card bordered={false}>
           <Form layout="inline">

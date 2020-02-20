@@ -9,6 +9,7 @@ import { ConnectState } from '@/models/connect';
 import encodeQueryParam from '@/utils/encodeParam';
 import Save from './save';
 import Authorization from '@/components/Authorization';
+import BindUser from './user';
 
 interface Props {
   org: any;
@@ -24,6 +25,7 @@ interface State {
   currentItem: Partial<OrgItem>;
   parentId: string | null;
   autzVisible: boolean;
+  userVisible: boolean;
 }
 
 const OrgList: React.FC<Props> = props => {
@@ -39,6 +41,7 @@ const OrgList: React.FC<Props> = props => {
     currentItem: {},
     parentId: null,
     autzVisible: false,
+    userVisible: false,
   };
 
   const [searchParam, setSearchParam] = useState(initState.searchParam);
@@ -46,6 +49,7 @@ const OrgList: React.FC<Props> = props => {
   const [currentItem, setCurrentItem] = useState(initState.currentItem);
   const [parentId, setParentId] = useState(initState.parentId);
   const [autzVisible, setAutzVisible] = useState(initState.autzVisible);
+  const [userVisible, setUserVisible] = useState(initState.userVisible);
 
   const handleSearch = (params?: any) => {
     dispatch({
@@ -147,6 +151,15 @@ const OrgList: React.FC<Props> = props => {
             权限分配
           </a>
           <Divider type="vertical" />
+          <a
+            onClick={() => {
+              setCurrentItem(record);
+              setUserVisible(true);
+            }}
+          >
+            绑定用户
+          </a>
+          <Divider type="vertical" />
           <Popconfirm
             title="确认删除此机构吗？"
             onConfirm={() => {
@@ -222,6 +235,14 @@ const OrgList: React.FC<Props> = props => {
           }}
           target={currentItem}
           targetType="org"
+        />
+      )}
+      {userVisible && (
+        <BindUser
+          data={currentItem}
+          close={() => {
+            setUserVisible(false);
+          }}
         />
       )}
     </PageHeaderWrapper>

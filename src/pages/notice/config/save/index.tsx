@@ -189,9 +189,9 @@ const Save: React.FC<Props> = props => {
       width={840}
     >
       <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
-        <Form.Item label="模版名称">
+        <Form.Item label="配置名称">
           {getFieldDecorator('name', {
-            rules: [{ required: true, message: '请输入模版名称' }],
+            rules: [{ required: true, message: '请输入配置名称' }],
             initialValue: item.name,
           })(<Input />)}
         </Form.Item>

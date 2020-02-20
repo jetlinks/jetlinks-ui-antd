@@ -1,28 +1,48 @@
-import request from "@/utils/request";
-import { RoleItem } from "./data";
+import request from '@/utils/request';
+import { RoleItem } from './data.d';
 
 export async function list(params: any) {
-    return request(`/jetlinks/role/_query`, {
-        method: 'GET',
-        params: params,
-    });
+  return request(`/jetlinks/dimension/_query`, {
+    method: 'GET',
+    params,
+  });
 }
 
 export async function remove(id: string) {
-    return request(`/jetlinks/role/${id}`, {
-        method: 'DELETE',
-    });
+  return request(`/jetlinks/dimension/${id}`, {
+    method: 'DELETE',
+  });
 }
 
 export async function add(params: RoleItem) {
-    return request(`/jetlinks/role`, {
-        method: 'POST',
-        data: params,
-    })
+  return request(`/jetlinks/dimension`, {
+    method: 'POST',
+    data: params,
+  });
 }
-export async function update(params: RoleItem) {
-    return request(`/jetlinks/role`, {
-        method: 'PATCH',
-        data: params,
-    })
+export async function saveOrUpdate(params: RoleItem) {
+  return request(`/jetlinks/dimension/${params.id}`, {
+    method: 'PUT',
+    data: params,
+  });
+}
+
+export async function bindUser(params: any) {
+  return request(`/jetlinks/dimension-user/_query/no-paging`, {
+    method: 'GET',
+    params,
+  });
+}
+
+export async function unBindUser(id: string) {
+  return request(`/jetlinks/dimension-user/${id}`, {
+    method: 'DELETE',
+  });
+}
+
+export async function bind(params: any) {
+  return request(`/jetlinks/dimension-user`, {
+    method: 'POST',
+    data: params,
+  });
 }

@@ -1,46 +1,55 @@
-import { Form, Modal, Input } from 'antd';
-import { FormComponentProps } from 'antd/es/form';
+import { Modal, Form, Input } from 'antd';
 import React from 'react';
+import { FormComponentProps } from 'antd/lib/form';
 
 interface Props extends FormComponentProps {
   close: Function;
   save: Function;
+  data: any;
 }
+
 const Save: React.FC<Props> = props => {
   const {
     form: { getFieldDecorator },
     form,
+    data,
   } = props;
-  const submitData = () => {
-    form.validateFields((err, fileValue) => {
-      if (err) return;
-      props.save(fileValue);
-    });
+  const saveData = () => {
+    const value = form.getFieldsValue();
+    props.save({ parentId: props.parentId, typeId: 'role', ...value });
   };
+  const formateTitle = () => {
+    let title = '';
+    if (props.data.id) {
+      title += '编辑';
+    } else {
+      title += '添加';
+    }
+
+    title += '角色';
+    return title;
+  };
+
   return (
-    <Modal
-      title="新建角色"
-      visible
-      okText="确定"
-      cancelText="取消"
-      onOk={() => {
-        submitData();
-      }}
-      onCancel={() => props.close()}
-    >
-      <Form labelCol={{ span: 6 }} wrapperCol={{ span: 18 }}>
-        <Form.Item key="id" label="角色标识（ID）">
+    <Modal title={formateTitle()} visible onOk={() => saveData()} onCancel={() => props.close()}>
+      <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
+        <Form.Item label="角色标识">
           {getFieldDecorator('id', {
             rules: [{ required: true }],
-          })(<Input placeholder="请输入" />)}
+            initialValue: data.id,
+          })(<Input placeholder="角色标识" />)}
         </Form.Item>
-        <Form.Item key="角色名称" label="用户名">
+        <Form.Item label="角色名称">
           {getFieldDecorator('name', {
             rules: [{ required: true }],
-          })(<Input placeholder="请输入" />)}
+            initialValue: data.name,
+          })(<Input placeholder="角色名称" />)}
         </Form.Item>
-        <Form.Item key="describe" label="描述">
-          {getFieldDecorator('describe', {})(<Input.TextArea rows={3} />)}
+        <Form.Item label="描述">
+          {getFieldDecorator('description', {
+            rules: [{ required: true }],
+            initialValue: data.description,
+          })(<Input.TextArea placeholder="描述" />)}
         </Form.Item>
       </Form>
     </Modal>

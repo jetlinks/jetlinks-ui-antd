@@ -26,3 +26,23 @@ export async function saveOrUpdate(params: OrgItem) {
     data: params,
   });
 }
+
+export async function bindUser(params: any) {
+  return request(`/jetlinks/dimension-user/_query/no-paging`, {
+    method: 'GET',
+    params,
+  });
+}
+
+export async function unBindUser(id: string) {
+  return request(`/jetlinks/dimension-user/${id}`, {
+    method: 'DELETE',
+  });
+}
+
+export async function bind(params: any) {
+  return request(`/jetlinks/dimension-user`, {
+    method: 'POST',
+    data: params,
+  });
+}
