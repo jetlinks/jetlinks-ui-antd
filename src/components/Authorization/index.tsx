@@ -46,7 +46,7 @@ const Authorization: React.FC<Props> = props => {
 
   const {
     form: { getFieldDecorator },
-    form,
+    // form,
   } = props;
 
   const getDimensions = () => {
@@ -215,25 +215,23 @@ const Authorization: React.FC<Props> = props => {
   };
 
   const autzSetting = () => {
-    // console.log(tempAccess, form.getFieldsValue(), 'list');
-    const { permissions } = form.getFieldsValue();
-    // console.log(permissions, 'perim');
-    const tempAutz: any[] = [];
-    // eslint-disable-next-line no-restricted-syntax
-    for (const key in permissions) {
-      if (permissions.hasOwnProperty(key)) {
-        const element = permissions[key];
-        if (element) {
-          const access = tempAccess.find(i => i.permissionId === key);
-          tempAutz.push({ id: key, actions: element, ...access });
-        }
-      }
-    }
+    // 注释原因：使用搜索过滤后，过滤前的数据无法获取。对应阿里云2324892缺陷
+    // const { permissions } = form.getFieldsValue();
+    // const tempAutz: any[] = [];
+    // for (const key in permissions) {
+    //   if (permissions.hasOwnProperty(key)) {
+    //     const element = permissions[key];
+    //     if (element) {
+    //       const access = tempAccess.find(i => i.permissionId === key);
+    //       tempAutz.push({ id: key, actions: element, ...access });
+    //     }
+    //   }
+    // }
     apis.authorization
       .saveAutz({
         targetId: props.target.id,
         targetType: props.targetType,
-        permissionList: tempAutz,
+        permissionList: targetAutz, // 修复2324892缺陷 将tempAutz换成了targetAutz
       })
       .then(response => {
         if (response.status === 200) {
@@ -277,7 +275,6 @@ const Authorization: React.FC<Props> = props => {
     // }
   };
 
-  // console.log(targetAutz, 'autssss');
   return (
     <Drawer title="授权" visible width="50VW" onClose={() => props.close()}>
       <Form>
@@ -340,6 +337,7 @@ const Authorization: React.FC<Props> = props => {
                 title: '权限操作',
                 render: (text: { action: string; name: string }[], record: any) => {
                   const { id } = record;
+
                   const temp = targetAutz.find(item => item.permission === id) || {};
                   return (
                     <div className={styles.permissionForm}>
@@ -348,6 +346,20 @@ const Authorization: React.FC<Props> = props => {
                           initialValue: temp.actions,
                         })(
                           <Checkbox.Group
+                            onChange={e => {
+                              if (!temp.permission) {
+                                targetAutz.push({
+                                  id: record.id,
+                                  permission: record.id,
+                                  actions: e,
+                                });
+                                setTargetAutz([...targetAutz]);
+                              } else {
+                                temp.actions = e;
+                                const t = targetAutz.filter(i => i.permission !== id);
+                                setTargetAutz([temp, ...t]);
+                              }
+                            }}
                             options={(text || []).map((e: { action: string; name: string }) => ({
                               label: e.name,
                               value: e.action,
