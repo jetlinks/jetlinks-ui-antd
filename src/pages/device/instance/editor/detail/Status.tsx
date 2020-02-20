@@ -92,6 +92,7 @@ const Status: React.FC<Props> = (props) => {
                 // if (!temp) return item;
                 item.loading = false;
                 item.formatValue = temp?.formatValue ? temp?.formatValue : '--';
+                item.visitData = [];
                 return item;
             });
 
@@ -119,69 +120,66 @@ const Status: React.FC<Props> = (props) => {
             });
             setMetadata(metadata);
 
-          const list = [];
-          // eslint-disable-next-line array-callback-return
-          metadata.properties = properties.map((i: any) => {
-            list.push({
-              "dashboard":"device",
-              "object":props.device.productId,
-              "measurement":i.id,
-              "dimension":"realTime",
-              "group":i.id,
-              "params":{
-                "deviceId":props.device.id,
-                "history":10
-              }
+            const list = [];
+            properties.map((i: any) => {
+              list.push({
+                "dashboard":"device",
+                "object":props.device.productId,
+                "measurement":i.id,
+                "dimension":"realTime",
+                "group":i.id,
+                "params":{
+                  "deviceId":props.device.id,
+                  "history":10
+                }
+              });
             });
-            // eslint-disable-next-line no-param-reassign
-            i.visitData = [];
-          });
 
+            if (source) {
+              source.close();
+            }
+
+            source = new EventSource(
+              wrapAPI(`/jetlinks/dashboard/_multi?:X_Access_Token=${getAccessToken()}&requestJson=${encodeURI(JSON.stringify(list))}`)
+            );
+            source.onmessage = e => {
+
+              const data = JSON.parse(e.data);
+              console.log(data);
+              const dataValue = data.data.value;
+              metadata.properties = properties.map((item: any) => {
+                if (item.id === data.group) {
+                  // eslint-disable-next-line no-param-reassign
+                  item.formatValue = dataValue?.formatValue ? dataValue.formatValue : "--";
+                  if (item.valueType.type === "int" || item.valueType.type === "float" || item.valueType.type === "double") {
+                    if (item.visitData.length >= 15){
+                      item.visitData.splice(0,1);
+                    }
+                    item.visitData.push(
+                      {
+                        "x" : data.data.timeString,
+                        "y" : Math.floor(Number(dataValue.value) * 100) / 100
+                      }
+                    )
+                  }
+                }
+                return item;
+              });
+              setMetadata({ ...metadata });
+            };
+            source.onerror = () => {
+              setFlag(false);
+            };
+            source.onopen = () => {
+              setFlag(true);
+            };
+        }
+
+        return () => {
           if (source) {
             source.close();
           }
-
-          source = new EventSource(
-            wrapAPI(`/jetlinks/dashboard/_multi?:X_Access_Token=${getAccessToken()}&requestJson=${encodeURI(JSON.stringify(list))}`)
-          );
-          source.onmessage = e => {
-
-            const data = JSON.parse(e.data);
-            const dataValue = data.data.value;
-            metadata.properties = properties.map((item: any) => {
-              if (item.id === data.group) {
-                // eslint-disable-next-line no-param-reassign
-                item.formatValue = dataValue.formatValue;
-                if (item.valueType.type === "int" || item.valueType.type === "float" || item.valueType.type === "double") {
-                  if (item.visitData.length >= 15){
-                    item.visitData.splice(0,1);
-                  }
-                  item.visitData.push(
-                    {
-                      "x" : data.data.timeString,
-                      "y" : Math.floor(Number(dataValue.value) * 100) / 100
-                    }
-                  )
-                }
-              }
-              return item;
-            });
-            setMetadata({ ...metadata });
-          };
-          source.onerror = () => {
-            setFlag(false);
-          };
-          source.onopen = () => {
-            setFlag(true);
-          };
-        }
-
-      return () => {
-        if (source) {
-          source.close();
-        }
-      };
-
+        };
     }, [runInfo]);
 
     const loadRunInfo = () => {
