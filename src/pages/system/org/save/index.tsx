@@ -39,19 +39,19 @@ const Save: React.FC<Props> = props => {
       <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
         <Form.Item label="机构标识">
           {getFieldDecorator('id', {
-            rules: [{ required: true }],
+            rules: [{ required: true, message: '请输入机构标识' }],
             initialValue: data.id,
           })(<Input placeholder="机构标识" />)}
         </Form.Item>
         <Form.Item label="机构名称">
           {getFieldDecorator('name', {
-            rules: [{ required: true }],
+            rules: [{ required: true, message: '请输入机构名称' }],
             initialValue: data.name,
           })(<Input placeholder="机构名称" />)}
         </Form.Item>
         <Form.Item label="描述">
           {getFieldDecorator('description', {
-            rules: [{ required: true }],
+            rules: [{ required: true, message: '请输入描述信息' }],
             initialValue: data.description,
           })(<Input.TextArea placeholder="描述" />)}
         </Form.Item>

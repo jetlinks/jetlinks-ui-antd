@@ -16,7 +16,7 @@ const Save: React.FC<Props> = props => {
   } = props;
   const saveData = () => {
     const value = form.getFieldsValue();
-    props.save({ parentId: props.parentId, typeId: 'role', ...value });
+    props.save({ typeId: 'role', ...value });
   };
   const formateTitle = () => {
     let title = '';
@@ -35,19 +35,19 @@ const Save: React.FC<Props> = props => {
       <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
         <Form.Item label="角色标识">
           {getFieldDecorator('id', {
-            rules: [{ required: true }],
+            rules: [{ required: true, message: '请输入角色标识' }],
             initialValue: data.id,
           })(<Input placeholder="角色标识" />)}
         </Form.Item>
         <Form.Item label="角色名称">
           {getFieldDecorator('name', {
-            rules: [{ required: true }],
+            rules: [{ required: true, message: '请输入角色名称' }],
             initialValue: data.name,
           })(<Input placeholder="角色名称" />)}
         </Form.Item>
         <Form.Item label="描述">
           {getFieldDecorator('description', {
-            rules: [{ required: true }],
+            rules: [{ required: true, message: '请输入描述信息' }],
             initialValue: data.description,
           })(<Input.TextArea placeholder="描述" />)}
         </Form.Item>
