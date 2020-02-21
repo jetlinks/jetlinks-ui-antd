@@ -138,7 +138,7 @@ const Save: React.FC<Props> = props => {
             <Form.Item label="clientId">
               {getFieldDecorator('configuration.clientId', {
                 initialValue: props.data?.configuration?.clientId,
-              })(<InputNumber min={1} style={{ width: '100%' }} />)}
+              })(<Input />)}
             </Form.Item>
             <Form.Item label="HOST">
               {getFieldDecorator('configuration.host', {
@@ -516,7 +516,7 @@ const Save: React.FC<Props> = props => {
             <Form.Item label="uri">
               {getFieldDecorator('configuration.uri', {
                 initialValue: props.data?.configuration?.uri,
-              })(<InputNumber min={1} style={{ width: '100%' }} />)}
+              })(<Input />)}
             </Form.Item>
             <Form.Item label="开启SSL">
               {getFieldDecorator('configuration.ssl', {
