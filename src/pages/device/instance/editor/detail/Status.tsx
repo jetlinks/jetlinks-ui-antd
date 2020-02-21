@@ -21,6 +21,7 @@ interface State {
     propertiesData: any[];
     eventVisible: boolean;
     propertieVisible: boolean;
+    propertieInfo: any;
     metadata: any;
     eventData: any[];
     deviceState: any;
@@ -60,6 +61,7 @@ const Status: React.FC<Props> = (props) => {
         propertiesData: [],
         eventVisible: false,
         propertieVisible: false,
+        propertieInfo: {},
         metadata: {},
         eventData: [],
         deviceState: {}
@@ -75,6 +77,7 @@ const Status: React.FC<Props> = (props) => {
     // const [currentEvent, setCurrentEvent] = useState(initState.currentEvent);
     // const [currentEventData, setCurrentEventData] = useState(initState.currentEventData);
     const [propertieVisible, setPropertieVisible] = useState(initState.propertieVisible);
+    const [propertieInfo, setPropertieInfo] = useState(initState.propertieInfo);
     const [flag, setFlag] = useState(false);
 
     let source: EventSource | null = null;
@@ -431,6 +434,7 @@ const Status: React.FC<Props> = (props) => {
                                                     <Icon title='详情' style={{ marginLeft: "10px" }} type="bars"
                                                           onClick={() => {
                                                             setPropertieVisible(true);
+                                                            setPropertieInfo(item);
                                                           }}/>
                                                 </Tooltip>
                                             }
@@ -442,21 +446,20 @@ const Status: React.FC<Props> = (props) => {
                                             </span>
                                         </ChartCard>
                                     </Spin>
-                                    {
-                                      propertieVisible &&
-                                      <PropertieInfo
-                                        item={item}
-                                        close={() => { setPropertieVisible(false) }}
-                                        type={props.device.productId}
-                                        deviceId={props.device.id}
-                                        />
-                                    }
                                 </Col>
                             )
                         }
                         )
                     }
-
+                    {
+                      propertieVisible &&
+                      <PropertieInfo
+                        item={propertieInfo}
+                        close={() => { setPropertieVisible(false) }}
+                        type={props.device.productId}
+                        deviceId={props.device.id}
+                      />
+                    }
                     {
                         (metadata.events).map((item: any) => {
                             let tempData = eventData.find(i => i.eventId === item.id);
