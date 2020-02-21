@@ -17,7 +17,15 @@ export default function encodeQueryParam(params: any) {
           } else if (k.indexOf('$END') > -1) {
             terms[k] = `${terms[k]}%`;
           }
-          queryParam[`terms[${index}].column`] = k;
+          if (k.indexOf('@') > -1) {
+            const temp = k.split('@');
+            // eslint-disable-next-line prefer-destructuring
+            queryParam[`terms[${index}].column`] = temp[0];
+            // eslint-disable-next-line prefer-destructuring
+            queryParam[`terms[${index}].type`] = temp[1];
+          } else {
+            queryParam[`terms[${index}].column`] = k;
+          }
           queryParam[`terms[${index}].value`] = terms[k];
           index += 1;
         }

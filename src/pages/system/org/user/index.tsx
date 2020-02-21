@@ -89,8 +89,6 @@ const BindUser: React.FC<Props> = props => {
     }),
   };
 
-  console.log(userList, 'list');
-
   return (
     <Drawer visible title="绑定用户" width="40VW" onClose={() => props.close()}>
       <Button
@@ -132,35 +130,10 @@ const BindUser: React.FC<Props> = props => {
         ]}
         dataSource={userList}
       />
-      {/* <List
-                className="demo-loadmore-list"
-                itemLayout="horizontal"
-                dataSource={userList}
-                renderItem={item => (
-                    <List.Item
-                        actions={[
-                            <Popconfirm
-                                title="确定删除该绑定关系？"
-                                onConfirm={() => {
-                                    remove(item);
-                                }}
-                            >
-                                <a key="list-loadmore-edit">删除</a>
-                            </Popconfirm>,
-                        ]}
-                    >
-                        <List.Item.Meta
-                            avatar={
-                                <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
-                            }
-                            title={<a>{item.userName}</a>}
-                        />
-                    </List.Item>
-                )}
-            /> */}
       {bindVisible && (
         <UserList
           data={props.data}
+          checkedUser={userList}
           close={() => {
             setBindVisible(false);
             handleSearch();

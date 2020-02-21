@@ -128,6 +128,7 @@ const BindUser: React.FC<Props> = props => {
       />
       {bindVisible && (
         <UserList
+          checkedUser={userList}
           data={props.data}
           close={() => {
             setBindVisible(false);
