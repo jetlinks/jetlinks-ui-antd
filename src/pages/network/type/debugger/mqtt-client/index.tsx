@@ -49,7 +49,7 @@ const MqttClient: React.FC<Props> = props => {
       const eventSource = new EventSource(
         `/jetlinks/network/mqtt/client/${item.id}/_subscribe/${
           subscribeData.type
-        }/?topics=${encodeURI(subscribeData.topics)}&:X_Access_Token=${getAccessToken()}`,
+        }/?topics=${encodeURIComponent(subscribeData.topics)}&:X_Access_Token=${getAccessToken()}`,
       );
       eventSource.onerror = () => {};
       eventSource.onmessage = () => {};

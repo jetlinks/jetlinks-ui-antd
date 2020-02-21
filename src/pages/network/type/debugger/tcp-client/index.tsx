@@ -45,16 +45,19 @@ const TcpClient: React.FC<Props> = props => {
 
   let tempLogs: string = '';
 
-
   const debugMqttClient = () => {
     tempLogs += '开始订阅\n';
     setLogs(tempLogs);
     if (action === '_subscribe') {
-      eventSource = new EventSource(wrapAPI(
-        `/jetlinks/network/mqtt/client/${item.id}/_subscribe/${
-        subscribeData.type
-        }/?topics=${encodeURI(subscribeData.topics)}&:X_Access_Token=${getAccessToken()}`,
-      ));
+      eventSource = new EventSource(
+        wrapAPI(
+          `/jetlinks/network/mqtt/client/${item.id}/_subscribe/${
+            subscribeData.type
+          }/?topics=${encodeURIComponent(
+            subscribeData.topics,
+          )}&:X_Access_Token=${getAccessToken()}`,
+        ),
+      );
       eventSource.onerror = () => {
         // console.log('error');
         tempLogs += '调试断开\n';
@@ -73,16 +76,19 @@ const TcpClient: React.FC<Props> = props => {
     } else if (action === '_publish') {
       apis.network
         .debugTcpClient(item.id, publishData.type, publishData.data)
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
     }
   };
 
-  useEffect(() => () => {
-    if (eventSource) {
-      eventSource.close();
-    }
-  }, [])
+  useEffect(
+    () => () => {
+      if (eventSource) {
+        eventSource.close();
+      }
+    },
+    [],
+  );
 
   return (
     <Modal
@@ -121,19 +127,19 @@ const TcpClient: React.FC<Props> = props => {
             </Button>
           </Fragment>
         ) : (
-            <Fragment>
-              <Button
-                type="primary"
-                onClick={() => {
-                  debugMqttClient();
-                }}
-              >
-                提交
+          <Fragment>
+            <Button
+              type="primary"
+              onClick={() => {
+                debugMqttClient();
+              }}
+            >
+              提交
             </Button>
-              <Divider type="vertical" />
-              <Button type="ghost">清空</Button>
-            </Fragment>
-          )
+            <Divider type="vertical" />
+            <Button type="ghost">清空</Button>
+          </Fragment>
+        )
       }
     >
       <Tabs defaultActiveKey={action} onChange={e => setAction(e)}>

@@ -118,7 +118,7 @@ const Save: React.FC<Props> = props => {
                 // }}
                 >
                   {supportList.map((item: any) => (
-                    <Select.Option key={item.id} value={item.name}>
+                    <Select.Option key={item.id} value={item.id}>
                       {item.name}
                     </Select.Option>
                   ))}
@@ -142,7 +142,7 @@ const Save: React.FC<Props> = props => {
               })(
                 <Select>
                   {supportList.map((item: any) => (
-                    <Select.Option key={item.id} value={item.name}>
+                    <Select.Option key={item.id} value={item.id}>
                       {item.name}
                     </Select.Option>
                   ))}
