@@ -39,9 +39,9 @@ const PropertieInfo: React.FC<Props> = (props) => {
                 pageSize: 10,
                 sorts: {
                   field: 'timestamp',
-                  order: 'desc',
+                  order: 'desc'
                 },
-                property:props.item.id
+                terms: { property:props.item.id }
             })
         ).then(response => {
             setPropertieInfo(response.result)
@@ -58,16 +58,16 @@ const PropertieInfo: React.FC<Props> = (props) => {
                 pageSize: pagination.pageSize,
                 sorts: {
                   field: 'timestamp',
-                  order: 'desc',
+                  order: 'desc'
                 },
-                property:props.item.id
+                terms: { property:props.item.id }
             })
         ).then(response => {
             setPropertieInfo(response.result)
         }).catch(() => {
 
         });
-    }
+    };
 
 
     return (
