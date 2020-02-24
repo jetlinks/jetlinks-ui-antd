@@ -21,7 +21,7 @@ const RuleModel: React.FC<Props> = props => {
         <Form.Item label="模型ID">
           {getFieldDecorator('id', {
             initialValue: props.data.id,
-          })(<Input disabled={props.data.option === 'update' ? true : false} />)}
+          })(<Input disabled={props.data.option === 'update'} />)}
         </Form.Item>
         <Form.Item label="模型名称">
           {getFieldDecorator('name', {

@@ -1,12 +1,12 @@
+import Form, { FormComponentProps } from 'antd/lib/form';
+import { Select, Input, Row, Col, Radio } from 'antd';
 import React from 'react';
-import { FormComponentProps } from 'antd/lib/form';
-import { Input, Form, Row, Col } from 'antd';
 import { NodeProps } from '../data';
 import styles from '../index.less';
 
 interface Props extends FormComponentProps, NodeProps {}
 
-const SpringEvent: React.FC<Props> = props => {
+const SqlExecutor: React.FC<Props> = props => {
   const {
     form: { getFieldDecorator },
     form,
@@ -22,32 +22,58 @@ const SpringEvent: React.FC<Props> = props => {
 
   const config: any[] = [
     {
-      label: '推送事件类型',
-      key: 'publishClass',
+      label: '数据源',
+      key: 'datasource',
       styles: {
         lg: { span: 24 },
         md: { span: 24 },
         sm: { span: 24 },
       },
-      formStyle: {
-        wrapperCol: { span: 24 },
-        labelCol: { span: 24 },
-      },
-      component: <Input.TextArea rows={3} placeholder="类全名" />,
+      component: (
+        <Select>
+          <Select.Option value="DEFAULT">默认数据源</Select.Option>
+        </Select>
+      ),
     },
     {
-      label: '监听事件类型',
-      key: 'subscribeClass',
+      label: '开启事务',
+      key: 'transcation',
       styles: {
         lg: { span: 24 },
         md: { span: 24 },
         sm: { span: 24 },
       },
-      formStyle: {
-        wrapperCol: { span: 24 },
-        labelCol: { span: 24 },
+      component: (
+        <Radio.Group>
+          <Radio.Button value>是</Radio.Button>
+          <Radio.Button value={false}>否</Radio.Button>
+        </Radio.Group>
+      ),
+    },
+    {
+      label: '流式结果',
+      key: 'stream',
+      styles: {
+        lg: { span: 24 },
+        md: { span: 24 },
+        sm: { span: 24 },
       },
-      component: <Input.TextArea rows={3} placeholder="类全名" />,
+      component: (
+        <Radio.Group>
+          <Radio.Button value>是</Radio.Button>
+          <Radio.Button value={false}>否</Radio.Button>
+        </Radio.Group>
+      ),
+    },
+    {
+      label: 'SQL',
+      key: 'sql',
+      styles: {
+        lg: { span: 24 },
+        md: { span: 24 },
+        sm: { span: 24 },
+      },
+      component: <Input.TextArea rows={3} />,
     },
   ];
 
@@ -79,4 +105,4 @@ const SpringEvent: React.FC<Props> = props => {
   );
 };
 
-export default Form.create<Props>()(SpringEvent);
+export default Form.create<Props>()(SqlExecutor);

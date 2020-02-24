@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Row, Col, Input, Button, Modal, message } from 'antd';
 import { FormComponentProps } from 'antd/es/form';
-// import { FormItemConfig } from "@/utils/common";
 import loadable from '@loadable/component';
 import PubSub from 'pubsub-js';
 import printLog from '../EditorConsole/printLog';
@@ -9,6 +8,7 @@ import apis from '@/services';
 import { getAccessToken } from '@/utils/authority';
 // import { NodeProps } from "./data";
 import styles from './index.less';
+import { wrapAPI } from '@/utils/utils';
 
 interface Props extends FormComponentProps {
   expandItem?: any[];
@@ -23,6 +23,7 @@ interface State {
   currentItem: any;
   runParam: any;
   contexts: string[];
+  editVisible: boolean;
 }
 
 const BasicNode: React.FC<Props> = props => {
@@ -40,7 +41,10 @@ const BasicNode: React.FC<Props> = props => {
     currentItem: props.model,
     runParam: '',
     contexts: [],
+    editVisible: false,
   };
+
+  const [editVisible, setEditVisible] = useState(initState.editVisible);
   const [paramVisible, setParamVisible] = useState(initState.paramVisible);
   const [polling, setPolling] = useState(initState.polling);
   const [runningNode, setRunningNode] = useState(initState.runningNode);
@@ -72,7 +76,9 @@ const BasicNode: React.FC<Props> = props => {
     if (polling) return;
     setPolling(true);
     const es = new EventSource(
-      `http://localhost:8844/rule-engine/debug/${debugSessionId}/logs/?:X_Access_Token=${getAccessToken()}`,
+      wrapAPI(
+        `/jetlinks/rule-engine/debug/${debugSessionId}/logs/?:X_Access_Token=${getAccessToken()}`,
+      ),
     );
     es.onmessage = (ev: any) => {
       const log = JSON.parse(ev.data);
@@ -295,16 +301,29 @@ const BasicNode: React.FC<Props> = props => {
           ))}
         </Row>
       </Form>
-      <NodeComponet
-        config={model.config}
-        fallback={<div>Loading</div>}
-        save={(values: any) => {
-          saveModelData(values);
+      {editVisible && (
+        <Modal title={model.label} visible width={640} onCancel={() => setEditVisible(false)}>
+          <NodeComponet
+            config={model.config}
+            fallback={<div>Loading</div>}
+            save={(values: any) => {
+              saveModelData(values);
+            }}
+          />
+        </Modal>
+      )}
+      <Button
+        style={{ width: '45%', marginBottom: '5px' }}
+        type="ghost"
+        onClick={() => {
+          setEditVisible(true);
         }}
-      />
+      >
+        编辑参数
+      </Button>
 
       <Button
-        style={{ width: '100%', marginBottom: '5px' }}
+        style={{ width: '45%', marginBottom: '5px', marginLeft: '10px' }}
         type="primary"
         onClick={() => {
           setParamVisible(true);

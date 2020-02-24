@@ -1,6 +1,6 @@
 import React from 'react';
 import { FormComponentProps } from 'antd/lib/form';
-import { Input, Form, Row, Col, Select } from 'antd';
+import { Form, Row, Col, Select } from 'antd';
 import { NodeProps } from '../data';
 import styles from '../index.less';
 
@@ -22,7 +22,7 @@ const MqttClient: React.FC<Props> = props => {
 
   const config: any[] = [
     {
-      label: 'MQTT连接',
+      label: 'TCP客户端',
       key: 'clientId',
       // styles: {
       //     lg: { span: 24 },
@@ -36,23 +36,8 @@ const MqttClient: React.FC<Props> = props => {
       ),
     },
     {
-      label: '操作',
-      key: 'clientType',
-      // styles: {
-      //     lg: { span: 24 },
-      //     md: { span: 24 },
-      //     sm: { span: 24 },
-      // },
-      component: (
-        <Select>
-          <Select.Option value="consumer">接收消息</Select.Option>
-          <Select.Option value="producer">发送消息</Select.Option>
-        </Select>
-      ),
-    },
-    {
-      label: '消息体类型',
-      key: 'payloadType',
+      label: '推送消息类型',
+      key: 'publish',
       // styles: {
       //     lg: { span: 24 },
       //     md: { span: 24 },
@@ -62,42 +47,41 @@ const MqttClient: React.FC<Props> = props => {
         <Select>
           <Select.Option value="JSON">JSON</Select.Option>
           <Select.Option value="STRING">字符串</Select.Option>
-          <Select.Option value="BINARY">BINARY</Select.Option>
+          <Select.Option value="BINARY">二进制</Select.Option>
           <Select.Option value="HEX">16进制字符</Select.Option>
         </Select>
       ),
     },
     {
-      label: '主题（Topic）',
-      key: 'topics',
-      styles: {
-        lg: { span: 24 },
-        md: { span: 24 },
-        sm: { span: 24 },
-      },
-      // formStyle: {
-      //     wrapperCol: { span: 24 },
-      //     labelCol: { span: 24 },
-      // },
-      component: <Input.TextArea rows={2} />,
-    },
-    {
-      label: '主题变量',
-      key: 'topicVariables',
-      styles: {
-        lg: { span: 24 },
-        md: { span: 24 },
-        sm: { span: 24 },
-      },
-      // formStyle: {
-      //     wrapperCol: { span: 24 },
-      //     labelCol: { span: 24 },
+      label: '订阅消息类型',
+      key: 'subscribe',
+      // styles: {
+      //     lg: { span: 24 },
+      //     md: { span: 24 },
+      //     sm: { span: 24 },
       // },
       component: (
-        <Input.TextArea
-          rows={3}
-          placeholder="接收消息时有效: 例:/topic/{deviceId}/{key},下游通过vars变量获取占位符对应的变量."
-        />
+        <Select>
+          <Select.Option value="JSON">JSON</Select.Option>
+          <Select.Option value="STRING">字符串</Select.Option>
+          <Select.Option value="BINARY">二进制</Select.Option>
+          <Select.Option value="HEX">16进制字符</Select.Option>
+        </Select>
+      ),
+    },
+    {
+      label: '操作',
+      key: 'action',
+      // styles: {
+      //     lg: { span: 24 },
+      //     md: { span: 24 },
+      //     sm: { span: 24 },
+      // },
+      component: (
+        <Select>
+          <Select.Option value="send">发送消息</Select.Option>
+          <Select.Option value="subscribe">订阅消息</Select.Option>
+        </Select>
       ),
     },
   ];

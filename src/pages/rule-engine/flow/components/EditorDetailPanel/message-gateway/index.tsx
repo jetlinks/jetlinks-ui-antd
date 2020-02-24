@@ -1,12 +1,12 @@
+import Form, { FormComponentProps } from 'antd/lib/form';
+import { Select, Input, Row, Col } from 'antd';
 import React from 'react';
-import { FormComponentProps } from 'antd/lib/form';
-import { Input, Form, Row, Col } from 'antd';
 import { NodeProps } from '../data';
 import styles from '../index.less';
 
 interface Props extends FormComponentProps, NodeProps {}
 
-const SpringEvent: React.FC<Props> = props => {
+const MessageGateway: React.FC<Props> = props => {
   const {
     form: { getFieldDecorator },
     form,
@@ -22,32 +22,43 @@ const SpringEvent: React.FC<Props> = props => {
 
   const config: any[] = [
     {
-      label: '推送事件类型',
-      key: 'publishClass',
+      label: '网关',
+      key: 'gateway',
       styles: {
         lg: { span: 24 },
         md: { span: 24 },
         sm: { span: 24 },
       },
-      formStyle: {
-        wrapperCol: { span: 24 },
-        labelCol: { span: 24 },
-      },
-      component: <Input.TextArea rows={3} placeholder="类全名" />,
+      component: (
+        <Select>
+          <Select.Option value="DEFAULT">系统默认</Select.Option>
+        </Select>
+      ),
     },
     {
-      label: '监听事件类型',
-      key: 'subscribeClass',
+      label: '类型',
+      key: 'type',
       styles: {
         lg: { span: 24 },
         md: { span: 24 },
         sm: { span: 24 },
       },
-      formStyle: {
-        wrapperCol: { span: 24 },
-        labelCol: { span: 24 },
+      component: (
+        <Select>
+          <Select.Option value="SUBSCRIBE">订阅消息</Select.Option>
+          <Select.Option value="PUBLISH">发送消息</Select.Option>
+        </Select>
+      ),
+    },
+    {
+      label: '主题Topic',
+      key: 'topic',
+      styles: {
+        lg: { span: 24 },
+        md: { span: 24 },
+        sm: { span: 24 },
       },
-      component: <Input.TextArea rows={3} placeholder="类全名" />,
+      component: <Input.TextArea rows={3} placeholder="支持通配符:/device/**,/device/*/event/*" />,
     },
   ];
 
@@ -79,4 +90,4 @@ const SpringEvent: React.FC<Props> = props => {
   );
 };
 
-export default Form.create<Props>()(SpringEvent);
+export default Form.create<Props>()(MessageGateway);

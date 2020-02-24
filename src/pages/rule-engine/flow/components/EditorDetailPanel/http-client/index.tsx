@@ -1,6 +1,6 @@
 import React from 'react';
 import { FormComponentProps } from 'antd/lib/form';
-import { Input, Form, Row, Col, Select } from 'antd';
+import { Form, Row, Col, Select, Input } from 'antd';
 import { NodeProps } from '../data';
 import styles from '../index.less';
 
@@ -22,7 +22,7 @@ const MqttClient: React.FC<Props> = props => {
 
   const config: any[] = [
     {
-      label: 'MQTT连接',
+      label: 'HTTP客户端',
       key: 'clientId',
       // styles: {
       //     lg: { span: 24 },
@@ -36,8 +36,18 @@ const MqttClient: React.FC<Props> = props => {
       ),
     },
     {
-      label: '操作',
-      key: 'clientType',
+      label: 'uri',
+      key: 'uri',
+      // styles: {
+      //     lg: { span: 24 },
+      //     md: { span: 24 },
+      //     sm: { span: 24 },
+      // },
+      component: <Input />,
+    },
+    {
+      label: '请求方式',
+      key: 'requestType',
       // styles: {
       //     lg: { span: 24 },
       //     md: { span: 24 },
@@ -45,19 +55,34 @@ const MqttClient: React.FC<Props> = props => {
       // },
       component: (
         <Select>
-          <Select.Option value="consumer">接收消息</Select.Option>
-          <Select.Option value="producer">发送消息</Select.Option>
+          <Select.Option value="POST">POST</Select.Option>
+          <Select.Option value="PUT">PUT</Select.Option>
+          <Select.Option value="GET">GET</Select.Option>
+          <Select.Option value="DELETE">DELETE</Select.Option>
+          <Select.Option value="PATCH">PATCH</Select.Option>
         </Select>
       ),
     },
     {
-      label: '消息体类型',
-      key: 'payloadType',
+      label: 'contentType',
+      key: 'contentType',
       // styles: {
       //     lg: { span: 24 },
       //     md: { span: 24 },
       //     sm: { span: 24 },
       // },
+      component: (
+        <Select>
+          <Select.Option value="APPLICATION_FORM_URLENCODED">
+            APPLICATION_FORM_URLENCODED
+          </Select.Option>
+          <Select.Option value="APPLICATION_JSON">APPLICATION_JSON</Select.Option>
+        </Select>
+      ),
+    },
+    {
+      label: '请求数据类型',
+      key: 'requestDataType',
       component: (
         <Select>
           <Select.Option value="JSON">JSON</Select.Option>
@@ -68,36 +93,15 @@ const MqttClient: React.FC<Props> = props => {
       ),
     },
     {
-      label: '主题（Topic）',
-      key: 'topics',
-      styles: {
-        lg: { span: 24 },
-        md: { span: 24 },
-        sm: { span: 24 },
-      },
-      // formStyle: {
-      //     wrapperCol: { span: 24 },
-      //     labelCol: { span: 24 },
-      // },
-      component: <Input.TextArea rows={2} />,
-    },
-    {
-      label: '主题变量',
-      key: 'topicVariables',
-      styles: {
-        lg: { span: 24 },
-        md: { span: 24 },
-        sm: { span: 24 },
-      },
-      // formStyle: {
-      //     wrapperCol: { span: 24 },
-      //     labelCol: { span: 24 },
-      // },
+      label: '响应数据类型',
+      key: 'responseDataType',
       component: (
-        <Input.TextArea
-          rows={3}
-          placeholder="接收消息时有效: 例:/topic/{deviceId}/{key},下游通过vars变量获取占位符对应的变量."
-        />
+        <Select>
+          <Select.Option value="JSON">JSON</Select.Option>
+          <Select.Option value="STRING">字符串</Select.Option>
+          <Select.Option value="BINARY">BINARY</Select.Option>
+          <Select.Option value="HEX">16进制字符</Select.Option>
+        </Select>
       ),
     },
   ];
