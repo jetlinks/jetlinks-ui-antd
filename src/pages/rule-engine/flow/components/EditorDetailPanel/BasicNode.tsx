@@ -89,7 +89,6 @@ const BasicNode: React.FC<Props> = props => {
       }
     };
     es.onerror = () => {
-      // console.error(ev);
       closeSession();
       es.close();
       setPolling(false);
@@ -302,15 +301,14 @@ const BasicNode: React.FC<Props> = props => {
         </Row>
       </Form>
       {editVisible && (
-        <Modal title={model.label} visible width={640} onCancel={() => setEditVisible(false)}>
-          <NodeComponet
-            config={model.config}
-            fallback={<div>Loading</div>}
-            save={(values: any) => {
-              saveModelData(values);
-            }}
-          />
-        </Modal>
+        <NodeComponet
+          config={model.config}
+          fallback={<div>Loading</div>}
+          save={(values: any) => {
+            saveModelData(values);
+          }}
+          close={() => setEditVisible(false)}
+        />
       )}
       <Button
         style={{ width: '45%', marginBottom: '5px' }}

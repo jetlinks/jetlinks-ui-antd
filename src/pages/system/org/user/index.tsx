@@ -97,7 +97,7 @@ const BindUser: React.FC<Props> = props => {
         icon="plus"
         onClick={() => setBindVisible(true)}
       >
-        新建
+        绑定
       </Button>
       {selectRow.length > 0 && (
         <Button

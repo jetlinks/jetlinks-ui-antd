@@ -1,6 +1,6 @@
 import React from 'react';
 import { FormComponentProps } from 'antd/lib/form';
-import { Form, Row, Col, Button } from 'antd';
+import { Form, Row, Col, Modal } from 'antd';
 import { NodeProps } from '../data';
 import styles from '../index.less';
 
@@ -21,43 +21,52 @@ const Route: React.FC<Props> = props => {
   };
 
   const config: any[] = [
-    {
-      label: '调度规则',
-      key: 'rule',
-      styles: {
-        lg: { span: 24 },
-        md: { span: 24 },
-        sm: { span: 24 },
-      },
-      component: <Button>编辑</Button>,
-    },
+    // {
+    //   label: '调度规则',
+    //   key: 'rule',
+    //   styles: {
+    //     lg: { span: 24 },
+    //     md: { span: 24 },
+    //     sm: { span: 24 },
+    //   },
+    //   component: <Button>编辑</Button>,
+    // },
   ];
 
   const saveModelData = () => {
     const temp = form.getFieldsValue();
     props.save(temp);
+    props.close();
   };
 
   return (
-    <Form {...inlineFormItemLayout} className={styles.configForm}>
-      <Row gutter={16}>
-        {config.map(item => (
-          <Col
-            key={item.key}
-            {...item.styles}
-            onBlur={() => {
-              saveModelData();
-            }}
-          >
-            <Form.Item label={item.label} {...item.formStyle}>
-              {getFieldDecorator<string>(item.key, {
-                initialValue: props.config ? props.config[item.key] : '',
-              })(item.component)}
-            </Form.Item>
-          </Col>
-        ))}
-      </Row>
-    </Form>
+    <Modal
+      title="编辑属性"
+      visible
+      width={640}
+      onCancel={() => props.close()}
+      onOk={() => saveModelData()}
+    >
+      <Form {...inlineFormItemLayout} className={styles.configForm}>
+        <Row gutter={16}>
+          {config.map(item => (
+            <Col
+              key={item.key}
+              {...item.styles}
+              onBlur={() => {
+                saveModelData();
+              }}
+            >
+              <Form.Item label={item.label} {...item.formStyle}>
+                {getFieldDecorator<string>(item.key, {
+                  initialValue: props.config ? props.config[item.key] : '',
+                })(item.component)}
+              </Form.Item>
+            </Col>
+          ))}
+        </Row>
+      </Form>
+    </Modal>
   );
 };
 

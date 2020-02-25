@@ -1,11 +1,16 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { FormComponentProps } from 'antd/lib/form';
-import { Form, Row, Col, Select, Input } from 'antd';
+import { Form, Row, Col, Select, Input, Modal } from 'antd';
 import { NodeProps } from '../data';
 import styles from '../index.less';
+import apis from '@/services';
+import encodeQueryParam from '@/utils/encodeParam';
 
 interface Props extends FormComponentProps, NodeProps {}
 
+interface State {
+  httpList: any[];
+}
 const MqttClient: React.FC<Props> = props => {
   const {
     form: { getFieldDecorator },
@@ -20,6 +25,27 @@ const MqttClient: React.FC<Props> = props => {
     },
   };
 
+  const initState: State = {
+    httpList: [],
+  };
+
+  const [httpList, setHttpList] = useState(initState.httpList);
+  useEffect(() => {
+    apis.ruleEngine
+      .networkList(
+        encodeQueryParam({
+          terms: {
+            type: 'HTTP_CLIENT',
+          },
+        }),
+      )
+      .then(response => {
+        if (response) {
+          setHttpList(response.result);
+        }
+      });
+  }, []);
+
   const config: any[] = [
     {
       label: 'HTTP客户端',
@@ -31,7 +57,11 @@ const MqttClient: React.FC<Props> = props => {
       // },
       component: (
         <Select>
-          <Select.Option value="ONLINE">开发中</Select.Option>
+          {httpList.map(i => (
+            <Select.Option value={i.id} key={i.id}>
+              {i.name}
+            </Select.Option>
+          ))}
         </Select>
       ),
     },
@@ -47,7 +77,7 @@ const MqttClient: React.FC<Props> = props => {
     },
     {
       label: '请求方式',
-      key: 'requestType',
+      key: 'httpMethod',
       // styles: {
       //     lg: { span: 24 },
       //     md: { span: 24 },
@@ -82,7 +112,7 @@ const MqttClient: React.FC<Props> = props => {
     },
     {
       label: '请求数据类型',
-      key: 'requestDataType',
+      key: 'requestPayloadType',
       component: (
         <Select>
           <Select.Option value="JSON">JSON</Select.Option>
@@ -94,7 +124,7 @@ const MqttClient: React.FC<Props> = props => {
     },
     {
       label: '响应数据类型',
-      key: 'responseDataType',
+      key: 'responsePayloadType',
       component: (
         <Select>
           <Select.Option value="JSON">JSON</Select.Option>
@@ -109,28 +139,37 @@ const MqttClient: React.FC<Props> = props => {
   const saveModelData = () => {
     const temp = form.getFieldsValue();
     props.save(temp);
+    props.close();
   };
 
   return (
-    <Form {...inlineFormItemLayout} className={styles.configForm}>
-      <Row gutter={16}>
-        {config.map(item => (
-          <Col
-            key={item.key}
-            {...item.styles}
-            onBlur={() => {
-              saveModelData();
-            }}
-          >
-            <Form.Item label={item.label} {...item.formStyle}>
-              {getFieldDecorator<string>(item.key, {
-                initialValue: props.config ? props.config[item.key] : '',
-              })(item.component)}
-            </Form.Item>
-          </Col>
-        ))}
-      </Row>
-    </Form>
+    <Modal
+      title="编辑属性"
+      visible
+      width={640}
+      onCancel={() => props.close()}
+      onOk={() => saveModelData()}
+    >
+      <Form {...inlineFormItemLayout} className={styles.configForm}>
+        <Row gutter={16}>
+          {config.map(item => (
+            <Col
+              key={item.key}
+              {...item.styles}
+              onBlur={() => {
+                saveModelData();
+              }}
+            >
+              <Form.Item label={item.label} {...item.formStyle}>
+                {getFieldDecorator<string>(item.key, {
+                  initialValue: props.config ? props.config[item.key] : '',
+                })(item.component)}
+              </Form.Item>
+            </Col>
+          ))}
+        </Row>
+      </Form>
+    </Modal>
   );
 };
 

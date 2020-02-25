@@ -56,7 +56,7 @@ const RuleItemPanel: React.FC<Props> = () => {
 
   return (
     <ItemPanel className={styles.itemPanel}>
-      <Collapse bordered={false} defaultActiveKey={['start']}>
+      <Collapse accordion bordered={false} defaultActiveKey={['start']}>
         {renderItems()}
       </Collapse>
     </ItemPanel>

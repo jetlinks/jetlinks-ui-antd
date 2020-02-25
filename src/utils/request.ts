@@ -4,26 +4,26 @@
  */
 import { extend } from 'umi-request';
 import { notification } from 'antd';
-import { getAccessToken } from './authority';
 import { router } from 'umi';
+import { getAccessToken } from './authority';
 
-const codeMessage = {
-  200: '服务器成功返回请求的数据。',
-  201: '新建或修改数据成功。',
-  202: '一个请求已经进入后台排队（异步任务）。',
-  204: '删除数据成功。',
-  400: '发出的请求有错误，服务器没有进行新建或修改数据的操作。',
-  401: '用户没有权限（令牌、用户名、密码错误）。',
-  403: '用户得到授权，但是访问是被禁止的。',
-  404: '发出的请求针对的是不存在的记录，服务器没有进行操作。',
-  406: '请求的格式不可得。',
-  410: '请求的资源被永久删除，且不会再得到的。',
-  422: '当创建一个对象时，发生一个验证错误。',
-  500: '服务器发生错误，请检查服务器。',
-  502: '网关错误。',
-  503: '服务不可用，服务器暂时过载或维护。',
-  504: '网关超时。',
-};
+// const codeMessage = {
+//   200: '服务器成功返回请求的数据。',
+//   201: '新建或修改数据成功。',
+//   202: '一个请求已经进入后台排队（异步任务）。',
+//   204: '删除数据成功。',
+//   400: '发出的请求有错误，服务器没有进行新建或修改数据的操作。',
+//   401: '用户没有权限（令牌、用户名、密码错误）。',
+//   403: '用户得到授权，但是访问是被禁止的。',
+//   404: '发出的请求针对的是不存在的记录，服务器没有进行操作。',
+//   406: '请求的格式不可得。',
+//   410: '请求的资源被永久删除，且不会再得到的。',
+//   422: '当创建一个对象时，发生一个验证错误。',
+//   500: '服务器发生错误，请检查服务器。',
+//   502: '网关错误。',
+//   503: '服务不可用，服务器暂时过载或维护。',
+//   504: '网关超时。',
+// };
 
 /**
  * 异常处理程序
@@ -48,7 +48,6 @@ const errorHandler = (error: { response: Response }): Response | undefined => {
       message: '未登录或登录已过期，请重新登录。',
     });
     router.push('/user/login');
-    return;
   } else if (status === 400) {
     response.text().then(resp => {
       if (resp) {
@@ -77,13 +76,12 @@ const errorHandler = (error: { response: Response }): Response | undefined => {
     // } catch (error) {
     //   router.push('/user/login');
     // }
-    return;
   } else if (status === 504) {
     notification.error({
       key: 'error',
-      message: '服务器错误'
+      message: '服务器错误',
     });
-    return;
+
     // router.push('/user/login');
   } else if (status === 403) {
     response.json().then((res: any) => {
@@ -92,20 +90,19 @@ const errorHandler = (error: { response: Response }): Response | undefined => {
         message: `${res.message}`,
       });
     });
-    return;
+
     // router.push('/exception/403');
     // return;
   } else if (status === 404) {
-    console.log(status, '状态');
+    // console.log(status, '状态');
     router.push('/exception/404');
-    return;
   } else {
     notification.error({
       key: 'error',
       message: '服务器内部错误',
     });
-    return;
   }
+  return response;
   // } else if (!response) {
   //   notification.error({
   //     description: '您的网络发生异常，无法连接服务器',
@@ -123,18 +120,16 @@ const request = extend({
   credentials: 'include', // 默认请求是否带上cookie
 });
 
-request.interceptors.request.use((url, options) => {
-  return {
-    // url: url.replace('jetlinks', 'mock'),//使用mock数据
-    // url: 'http://localhost:8000' + url.replace('/jetlinks', ''),
-    // url: 'http://2.jetlinks.org:9010' + url.replace('/jetlinks', ''),
-    options: {
-      ...options,
-      headers: {
-        'X-Access-Token': getAccessToken(),
-      },
-      interceptors: true,
+request.interceptors.request.use((url, options) => ({
+  // url: url.replace('jetlinks', 'mock'),//使用mock数据
+  // url: 'http://localhost:8000' + url.replace('/jetlinks', ''),
+  // url: 'http://2.jetlinks.org:9010' + url.replace('/jetlinks', ''),
+  options: {
+    ...options,
+    headers: {
+      'X-Access-Token': getAccessToken(),
     },
-  };
-});
+    interceptors: true,
+  },
+}));
 export default request;

@@ -1,5 +1,5 @@
 import Form, { FormComponentProps } from 'antd/lib/form';
-import { Select, Input, Row, Col, Radio } from 'antd';
+import { Input, Row, Col, Modal } from 'antd';
 import React from 'react';
 import { NodeProps } from '../data';
 import styles from '../index.less';
@@ -13,58 +13,58 @@ const SqlExecutor: React.FC<Props> = props => {
   } = props;
   const inlineFormItemLayout = {
     labelCol: {
-      sm: { span: 5 },
+      sm: { span: 3 },
     },
     wrapperCol: {
-      sm: { span: 19 },
+      sm: { span: 21 },
     },
   };
 
   const config: any[] = [
-    {
-      label: '数据源',
-      key: 'datasource',
-      styles: {
-        lg: { span: 24 },
-        md: { span: 24 },
-        sm: { span: 24 },
-      },
-      component: (
-        <Select>
-          <Select.Option value="DEFAULT">默认数据源</Select.Option>
-        </Select>
-      ),
-    },
-    {
-      label: '开启事务',
-      key: 'transcation',
-      styles: {
-        lg: { span: 24 },
-        md: { span: 24 },
-        sm: { span: 24 },
-      },
-      component: (
-        <Radio.Group>
-          <Radio.Button value>是</Radio.Button>
-          <Radio.Button value={false}>否</Radio.Button>
-        </Radio.Group>
-      ),
-    },
-    {
-      label: '流式结果',
-      key: 'stream',
-      styles: {
-        lg: { span: 24 },
-        md: { span: 24 },
-        sm: { span: 24 },
-      },
-      component: (
-        <Radio.Group>
-          <Radio.Button value>是</Radio.Button>
-          <Radio.Button value={false}>否</Radio.Button>
-        </Radio.Group>
-      ),
-    },
+    // {
+    //   label: '数据源',
+    //   key: 'datasource',
+    //   styles: {
+    //     lg: { span: 24 },
+    //     md: { span: 24 },
+    //     sm: { span: 24 },
+    //   },
+    //   component: (
+    //     <Select>
+    //       <Select.Option value="DEFAULT">默认数据源</Select.Option>
+    //     </Select>
+    //   ),
+    // },
+    // {
+    //   label: '开启事务',
+    //   key: 'transcation',
+    //   styles: {
+    //     lg: { span: 24 },
+    //     md: { span: 24 },
+    //     sm: { span: 24 },
+    //   },
+    //   component: (
+    //     <Radio.Group>
+    //       <Radio.Button value>是</Radio.Button>
+    //       <Radio.Button value={false}>否</Radio.Button>
+    //     </Radio.Group>
+    //   ),
+    // },
+    // {
+    //   label: '流式结果',
+    //   key: 'stream',
+    //   styles: {
+    //     lg: { span: 24 },
+    //     md: { span: 24 },
+    //     sm: { span: 24 },
+    //   },
+    //   component: (
+    //     <Radio.Group>
+    //       <Radio.Button value>是</Radio.Button>
+    //       <Radio.Button value={false}>否</Radio.Button>
+    //     </Radio.Group>
+    //   ),
+    // },
     {
       label: 'SQL',
       key: 'sql',
@@ -80,28 +80,37 @@ const SqlExecutor: React.FC<Props> = props => {
   const saveModelData = () => {
     const temp = form.getFieldsValue();
     props.save(temp);
+    props.close();
   };
 
   return (
-    <Form {...inlineFormItemLayout} className={styles.configForm}>
-      <Row gutter={16}>
-        {config.map(item => (
-          <Col
-            key={item.key}
-            {...item.styles}
-            onBlur={() => {
-              saveModelData();
-            }}
-          >
-            <Form.Item label={item.label} {...item.formStyle}>
-              {getFieldDecorator<string>(item.key, {
-                initialValue: props.config ? props.config[item.key] : '',
-              })(item.component)}
-            </Form.Item>
-          </Col>
-        ))}
-      </Row>
-    </Form>
+    <Modal
+      title="编辑属性"
+      visible
+      width={640}
+      onCancel={() => props.close()}
+      onOk={() => saveModelData()}
+    >
+      <Form {...inlineFormItemLayout} className={styles.configForm}>
+        <Row gutter={16}>
+          {config.map(item => (
+            <Col
+              key={item.key}
+              {...item.styles}
+              onBlur={() => {
+                saveModelData();
+              }}
+            >
+              <Form.Item label={item.label} {...item.formStyle}>
+                {getFieldDecorator<string>(item.key, {
+                  initialValue: props.config ? props.config[item.key] : '',
+                })(item.component)}
+              </Form.Item>
+            </Col>
+          ))}
+        </Row>
+      </Form>
+    </Modal>
   );
 };
 

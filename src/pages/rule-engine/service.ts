@@ -44,3 +44,16 @@ export async function stopNodeDebug(id: string, nodeId: string) {
     method: 'DELETE',
   });
 }
+
+export async function networkList(params: any) {
+  return request(`/jetlinks/network/config/_query/no-paging`, {
+    method: 'GET',
+    params,
+  });
+}
+
+export async function gatewayMessage() {
+  return request(`/jetlinks/gateway/message/all`, {
+    method: 'GET',
+  });
+}

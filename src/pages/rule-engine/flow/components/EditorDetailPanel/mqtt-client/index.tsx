@@ -1,11 +1,16 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FormComponentProps } from 'antd/lib/form';
-import { Input, Form, Row, Col, Select } from 'antd';
+import { Input, Form, Row, Col, Select, Modal } from 'antd';
 import { NodeProps } from '../data';
 import styles from '../index.less';
+import apis from '@/services';
+import encodeQueryParam from '@/utils/encodeParam';
 
 interface Props extends FormComponentProps, NodeProps {}
 
+interface State {
+  mqttList: any[];
+}
 const MqttClient: React.FC<Props> = props => {
   const {
     form: { getFieldDecorator },
@@ -20,6 +25,27 @@ const MqttClient: React.FC<Props> = props => {
     },
   };
 
+  const initState: State = {
+    mqttList: [],
+  };
+
+  const [mqttList, setMqttList] = useState(initState.mqttList);
+  useEffect(() => {
+    apis.ruleEngine
+      .networkList(
+        encodeQueryParam({
+          terms: {
+            type: 'MQTT_CLIENT',
+          },
+        }),
+      )
+      .then(response => {
+        if (response) {
+          setMqttList(response.result);
+        }
+      });
+  }, []);
+
   const config: any[] = [
     {
       label: 'MQTT连接',
@@ -31,7 +57,11 @@ const MqttClient: React.FC<Props> = props => {
       // },
       component: (
         <Select>
-          <Select.Option value="ONLINE">开发中</Select.Option>
+          {mqttList.map(i => (
+            <Select.Option value={i.id} key={i.id}>
+              {i.name}
+            </Select.Option>
+          ))}
         </Select>
       ),
     },
@@ -105,28 +135,37 @@ const MqttClient: React.FC<Props> = props => {
   const saveModelData = () => {
     const temp = form.getFieldsValue();
     props.save(temp);
+    props.close();
   };
 
   return (
-    <Form {...inlineFormItemLayout} className={styles.configForm}>
-      <Row gutter={16}>
-        {config.map(item => (
-          <Col
-            key={item.key}
-            {...item.styles}
-            onBlur={() => {
-              saveModelData();
-            }}
-          >
-            <Form.Item label={item.label} {...item.formStyle}>
-              {getFieldDecorator<string>(item.key, {
-                initialValue: props.config ? props.config[item.key] : '',
-              })(item.component)}
-            </Form.Item>
-          </Col>
-        ))}
-      </Row>
-    </Form>
+    <Modal
+      title="编辑属性"
+      visible
+      width={640}
+      onCancel={() => props.close()}
+      onOk={() => saveModelData()}
+    >
+      <Form {...inlineFormItemLayout} className={styles.configForm}>
+        <Row gutter={16}>
+          {config.map(item => (
+            <Col
+              key={item.key}
+              {...item.styles}
+              onBlur={() => {
+                saveModelData();
+              }}
+            >
+              <Form.Item label={item.label} {...item.formStyle}>
+                {getFieldDecorator<string>(item.key, {
+                  initialValue: props.config ? props.config[item.key] : '',
+                })(item.component)}
+              </Form.Item>
+            </Col>
+          ))}
+        </Row>
+      </Form>
+    </Modal>
   );
 };
 

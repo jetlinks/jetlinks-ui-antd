@@ -1,12 +1,19 @@
 import Form, { FormComponentProps } from 'antd/lib/form';
-import { Select, Input, Row, Col } from 'antd';
-import React from 'react';
+import { Select, Input, Row, Col, Modal } from 'antd';
+import React, { useState, useEffect } from 'react';
 import { NodeProps } from '../data';
 import styles from '../index.less';
+import apis from '@/services';
 
 interface Props extends FormComponentProps, NodeProps {}
 
+interface State {
+  gatewayList: any[];
+}
 const MessageGateway: React.FC<Props> = props => {
+  const initState: State = {
+    gatewayList: [],
+  };
   const {
     form: { getFieldDecorator },
     form,
@@ -20,10 +27,19 @@ const MessageGateway: React.FC<Props> = props => {
     },
   };
 
+  const [gatewayList, setGatewayList] = useState(initState.gatewayList);
+
+  useEffect(() => {
+    apis.ruleEngine.gatewayMessage().then(response => {
+      if (response) {
+        setGatewayList(response.result);
+      }
+    });
+  }, []);
   const config: any[] = [
     {
       label: '网关',
-      key: 'gateway',
+      key: 'gatewayId',
       styles: {
         lg: { span: 24 },
         md: { span: 24 },
@@ -31,7 +47,11 @@ const MessageGateway: React.FC<Props> = props => {
       },
       component: (
         <Select>
-          <Select.Option value="DEFAULT">系统默认</Select.Option>
+          {gatewayList.map(item => (
+            <Select.Option key={item.id} value={item.id}>
+              {item.name}
+            </Select.Option>
+          ))}
         </Select>
       ),
     },
@@ -45,14 +65,14 @@ const MessageGateway: React.FC<Props> = props => {
       },
       component: (
         <Select>
-          <Select.Option value="SUBSCRIBE">订阅消息</Select.Option>
-          <Select.Option value="PUBLISH">发送消息</Select.Option>
+          <Select.Option value="consumer">订阅消息</Select.Option>
+          <Select.Option value="producer">发送消息</Select.Option>
         </Select>
       ),
     },
     {
       label: '主题Topic',
-      key: 'topic',
+      key: 'topics',
       styles: {
         lg: { span: 24 },
         md: { span: 24 },
@@ -65,28 +85,31 @@ const MessageGateway: React.FC<Props> = props => {
   const saveModelData = () => {
     const temp = form.getFieldsValue();
     props.save(temp);
+    props.close();
   };
 
   return (
-    <Form {...inlineFormItemLayout} className={styles.configForm}>
-      <Row gutter={16}>
-        {config.map(item => (
-          <Col
-            key={item.key}
-            {...item.styles}
-            onBlur={() => {
-              saveModelData();
-            }}
-          >
-            <Form.Item label={item.label} {...item.formStyle}>
-              {getFieldDecorator<string>(item.key, {
-                initialValue: props.config ? props.config[item.key] : '',
-              })(item.component)}
-            </Form.Item>
-          </Col>
-        ))}
-      </Row>
-    </Form>
+    <Modal
+      title="编辑属性"
+      visible
+      width={640}
+      onCancel={() => props.close()}
+      onOk={() => saveModelData()}
+    >
+      <Form {...inlineFormItemLayout} className={styles.configForm}>
+        <Row gutter={16}>
+          {config.map(item => (
+            <Col key={item.key} {...item.styles}>
+              <Form.Item label={item.label} {...item.formStyle}>
+                {getFieldDecorator<string>(item.key, {
+                  initialValue: props.config ? props.config[item.key] : '',
+                })(item.component)}
+              </Form.Item>
+            </Col>
+          ))}
+        </Row>
+      </Form>
+    </Modal>
   );
 };
 

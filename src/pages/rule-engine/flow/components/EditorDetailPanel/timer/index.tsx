@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Input, Form, Row, Col } from 'antd';
+import { Input, Form, Row, Col, Modal } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
-import basicConfig from '../basicConfig';
 import { NodeProps } from '../data';
 
 interface Props extends FormComponentProps, NodeProps {}
@@ -32,7 +31,7 @@ const Timer: React.FC<Props> = props => {
   const config: any[] = [
     {
       label: 'cron表达式',
-      key: 'config.cron',
+      key: 'cron',
       styles: {
         lg: { span: 24 },
         md: { span: 24 },
@@ -42,7 +41,7 @@ const Timer: React.FC<Props> = props => {
     },
     {
       label: '执行参数（JSON）',
-      key: 'config.params',
+      key: 'dataJson',
       styles: {
         lg: { span: 24 },
         md: { span: 24 },
@@ -55,33 +54,42 @@ const Timer: React.FC<Props> = props => {
   const saveModelData = () => {
     const temp = form.getFieldsValue();
     props.save(temp);
+    props.close();
   };
 
   return (
-    <Form {...inlineFormItemLayout}>
-      <Row gutter={16}>
-        {[...basicConfig, ...config].map(item => (
-          <Col
-            key={item.key}
-            {...item.styles}
-            onBlur={() => {
-              saveModelData();
-            }}
-          >
-            <Form.Item label={item.label} {...item.formStyle}>
-              {getFieldDecorator<string>(item.key, {
-                initialValue:
-                  nodeData &&
-                  nodeData[item.key] &&
-                  (typeof nodeData[item.key] === 'string'
-                    ? nodeData[item.key]
-                    : nodeData.config && nodeData.config[item.key.replace('config.', '')]),
-              })(item.component)}
-            </Form.Item>
-          </Col>
-        ))}
-      </Row>
-    </Form>
+    <Modal
+      title="编辑属性"
+      visible
+      width={640}
+      onCancel={() => props.close()}
+      onOk={() => saveModelData()}
+    >
+      <Form {...inlineFormItemLayout}>
+        <Row gutter={16}>
+          {config.map(item => (
+            <Col
+              key={item.key}
+              {...item.styles}
+              // onBlur={() => {
+              //   saveModelData();
+              // }}
+            >
+              <Form.Item label={item.label} {...item.formStyle}>
+                {getFieldDecorator<string>(item.key, {
+                  initialValue: nodeData && nodeData[item.key],
+                  // nodeData &&
+                  // nodeData[item.key] &&
+                  // (typeof nodeData[item.key] === 'string'
+                  // ? nodeData[item.key]
+                  // : nodeData.config && nodeData.config[item.key.replace('config.', '')]),
+                })(item.component)}
+              </Form.Item>
+            </Col>
+          ))}
+        </Row>
+      </Form>
+    </Modal>
   );
 };
 export default Form.create<Props>()(Timer);

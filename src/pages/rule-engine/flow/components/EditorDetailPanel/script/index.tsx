@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FormComponentProps } from 'antd/lib/form';
-import { Form, Select } from 'antd';
+import { Form, Select, Modal } from 'antd';
 import MonacoEditor from 'react-monaco-editor';
 import { NodeProps } from '../data';
 import styles from '../index.less';
@@ -31,16 +31,23 @@ const Route: React.FC<Props> = props => {
 
   const saveModelData = () => {
     props.save({ lang, script });
+    props.close();
   };
 
   return (
-    <div>
+    <Modal
+      title="编辑属性"
+      visible
+      width={640}
+      onCancel={() => props.close()}
+      onOk={() => saveModelData()}
+    >
       <Form {...inlineFormItemLayout} className={styles.configForm}>
         <Form.Item label="脚本语言">
           <Select
+            value={lang}
             onChange={(value: string) => {
               setLang(value);
-              saveModelData();
             }}
           >
             <Select.Option value="groovy">Groovy</Select.Option>
@@ -63,7 +70,7 @@ const Route: React.FC<Props> = props => {
           />
         </Form.Item>
       </Form>
-    </div>
+    </Modal>
   );
 };
 
