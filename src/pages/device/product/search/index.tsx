@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Form, { FormComponentProps } from 'antd/lib/form';
-import { FormItemConfig } from '@/utils/common';
+// import { FormItemConfig } from '@/utils/common';
 import { Input, Select, Row, Col, Button, Icon } from 'antd';
 import apis from '@/services';
 
@@ -19,7 +19,7 @@ const Search: React.FC<Props> = props => {
     protocolSupports: [],
   };
 
-  //消息协议
+  // 消息协议
   const [protocolSupports, setProtocolSupports] = useState(initState.protocolSupports);
   const {
     form,
@@ -39,7 +39,7 @@ const Search: React.FC<Props> = props => {
       .catch(() => {});
   }, []);
 
-  const simpleItems: FormItemConfig[] = [
+  const simpleItems: any[] = [
     {
       label: '型号名称',
       key: 'name$LIKE',
@@ -57,7 +57,7 @@ const Search: React.FC<Props> = props => {
     },
   ];
 
-  const advancedItems: FormItemConfig[] = [
+  const advancedItems: any[] = [
     {
       label: '型号名称',
       key: 'name$LIKE',
@@ -86,17 +86,17 @@ const Search: React.FC<Props> = props => {
         </Select>
       ),
     },
-    {
-      label: '链接协议',
-      key: 'transportProtocol',
-      component: (
-        <Select placeholder="请选择">
-          <Select.Option value="MQTT">MQTT</Select.Option>
-          <Select.Option value="UDP">UDP</Select.Option>
-          <Select.Option value="DCP">DCP</Select.Option>
-        </Select>
-      ),
-    },
+    // {
+    //   label: '链接协议',
+    //   key: 'transportProtocol',
+    //   component: (
+    //     <Select placeholder="请选择">
+    //       <Select.Option value="MQTT">MQTT</Select.Option>
+    //       <Select.Option value="UDP">UDP</Select.Option>
+    //       <Select.Option value="DCP">DCP</Select.Option>
+    //     </Select>
+    //   ),
+    // },
   ];
 
   const colSize =
@@ -105,12 +105,13 @@ const Search: React.FC<Props> = props => {
       .reduce((i, j) => {
         if (!i) return;
         if (!j) return;
+        // eslint-disable-next-line consistent-return
         return Number(i) + Number(j);
       }) || 1;
 
   const search = () => {
     const data = form.getFieldsValue();
-    //TODO 查询数据
+    // TODO 查询数据
     props.search(data);
   };
 
@@ -131,7 +132,7 @@ const Search: React.FC<Props> = props => {
           ? simpleItems.map(item => (
               <Col md={8} sm={24} key={item.key}>
                 <Form.Item label={item.label}>
-                  {getFieldDecorator(item.key)(item.component)}
+                  {getFieldDecorator<string>(item.key)(item.component)}
                 </Form.Item>
               </Col>
             ))
@@ -143,7 +144,7 @@ const Search: React.FC<Props> = props => {
                 style={{ height: 56 }}
               >
                 <Form.Item label={item.label}>
-                  {getFieldDecorator(item.key, item.options)(item.component)}
+                  {getFieldDecorator<string>(item.key, item.options)(item.component)}
                 </Form.Item>
               </Col>
             ))}

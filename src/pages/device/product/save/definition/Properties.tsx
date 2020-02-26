@@ -73,13 +73,17 @@ const Properties: React.FC<Props> = (props: Props) => {
   ];
 
   const savePropertiesData = (item: PropertiesMeta) => {
-    if (!item.id) {
-      const temp = { ...item, id: (data.length + 1).toString() };
-      data.push(temp);
-    } else {
-      const i = data.findIndex((j: any) => j.id === item.id);
+    // if (!item.id) {
+    //   // const temp = { ...item, id: (data.length + 1).toString() };
+    //   data.push(item);
+    // } else {
+    const i = data.findIndex((j: any) => j.id === item.id);
+    if (i > -1) {
       data[i] = item;
+    } else {
+      data.push(item);
     }
+    // }
     setVisible(false);
     setData(data);
     props.save(data);

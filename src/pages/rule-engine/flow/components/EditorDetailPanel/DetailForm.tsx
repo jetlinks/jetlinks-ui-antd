@@ -5,9 +5,11 @@ import Form from 'antd/es/form';
 import { withPropsAPI } from 'gg-editor';
 import { NodeItem } from './data';
 import BasicNode from './BasicNode';
+import Edge from './Edge';
 
 interface Props extends FormComponentProps {
   propsAPI?: any;
+  type?: string;
 }
 interface State {
   model: Partial<NodeItem>;
@@ -35,17 +37,37 @@ const DetailForm: React.FC<Props> = props => {
     });
   };
 
+  const renderDetail = () => {
+    const { type } = props;
+    switch (type) {
+      case 'node':
+        return (
+          model.executor && (
+            <BasicNode
+              type={model.executor}
+              model={model}
+              saveModel={(data: any) => {
+                updateModel(data);
+              }}
+            />
+          )
+        );
+      case 'edge':
+        return (
+          <Edge
+            model={model}
+            save={(data: any) => {
+              updateModel(data);
+            }}
+          />
+        );
+      default:
+        return null;
+    }
+  };
   return (
     <Card type="inner" size="small" bordered={false}>
-      {model.executor && (
-        <BasicNode
-          type={model.executor}
-          model={model}
-          saveModel={(data: any) => {
-            updateModel(data);
-          }}
-        />
-      )}
+      {renderDetail()}
     </Card>
   );
 };

@@ -52,7 +52,7 @@ const EventDefin: React.FC<Props> = props => {
   const saveData = () => {
     const {
       form,
-      data: { id },
+      // data: { id },
     } = props;
     form.validateFields((err: any, fieldValue: any) => {
       if (err) return;
@@ -68,7 +68,7 @@ const EventDefin: React.FC<Props> = props => {
       } else if (type === 'enum') {
         data.valueType.properties = enumData;
       }
-      props.save({ ...data, id });
+      props.save({ ...data });
     });
   };
 
@@ -322,7 +322,13 @@ const EventDefin: React.FC<Props> = props => {
           {getFieldDecorator('id', {
             rules: [{ required: true, message: '请输入事件标识' }],
             initialValue: initState.data.id,
-          })(<Input placeholder="请输入事件标识" />)}
+          })(
+            <Input
+              disabled={!!initState.data.id}
+              style={{ width: '100%' }}
+              placeholder="请输入事件标识"
+            />,
+          )}
         </Form.Item>
         <Form.Item label="事件名称">
           {getFieldDecorator('name', {

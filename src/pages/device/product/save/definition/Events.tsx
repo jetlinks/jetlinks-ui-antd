@@ -78,14 +78,13 @@ const Events: React.FC<Props> = props => {
     },
   ];
 
-  const saveEventData = (items: EventsMeta) => {
-    let item = items;
-    if (!item.id) {
-      item = { ...item, id: (data.length + 1).toString() };
-      data.push(item);
-    } else {
-      const i = data.findIndex(j => j.id === item.id);
+  const saveEventData = (item: EventsMeta) => {
+    // let item = items;
+    const i = data.findIndex((j: any) => j.id === item.id);
+    if (i > -1) {
       data[i] = item;
+    } else {
+      data.push(item);
     }
     setVisible(false);
     setData(data);

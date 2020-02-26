@@ -1,4 +1,4 @@
-import { CanvasPanel, DetailPanel, NodePanel } from 'gg-editor';
+import { CanvasPanel, DetailPanel, NodePanel, EdgePanel } from 'gg-editor';
 
 import React from 'react';
 import DetailForm from './DetailForm';
@@ -12,8 +12,11 @@ interface Props {
 const FlowDetailPanel: React.FC<Props> = props => (
   <DetailPanel className={styles.detailPanel}>
     <NodePanel>
-      <DetailForm />
+      <DetailForm type="node" />
     </NodePanel>
+    <EdgePanel>
+      <DetailForm type="edge" />
+    </EdgePanel>
     {/* <NodePanel>
       <DetailForm type="node" />
     </NodePanel>

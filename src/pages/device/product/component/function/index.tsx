@@ -54,7 +54,7 @@ const FunctionDefin: React.FC<Props> = props => {
 
   const saveData = () => {
     const { form } = props;
-    const { id } = props.data;
+    // const { id } = props.data;
     form.validateFields((err: any, fieldValue: any) => {
       if (err) return;
       const {
@@ -64,7 +64,7 @@ const FunctionDefin: React.FC<Props> = props => {
       if (type === 'object') {
         data.outputs.properties = outputParameter;
       }
-      props.save({ ...data, inputs, id });
+      props.save({ ...data, inputs });
     });
   };
 
@@ -318,7 +318,13 @@ const FunctionDefin: React.FC<Props> = props => {
           {getFieldDecorator('id', {
             rules: [{ required: true, message: '请输入标识符' }],
             initialValue: initState.data.id,
-          })(<Input />)}
+          })(
+            <Input
+              disabled={!!initState.data.id}
+              style={{ width: '100%' }}
+              placeholder="请输入标识"
+            />,
+          )}
         </Form.Item>
         <Form.Item label="参数名称">
           {getFieldDecorator('name', {
