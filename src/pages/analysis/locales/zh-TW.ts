@@ -31,4 +31,6 @@ export default {
   'analysis.table.search-keyword': '搜索關鍵詞',
   'analysis.table.users': '用戶數',
   'analysis.table.weekly-range': '周漲幅',
+  'analysis.analysis.device-total': '设备总数',
+  'analysis.analysis.device-activation': '激活设备',
 };

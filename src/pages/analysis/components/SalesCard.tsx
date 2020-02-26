@@ -6,6 +6,7 @@ import Charts from './Charts';
 import { RangePickerValue } from 'antd/es/date-picker/interface';
 import { ISalesData } from '../data';
 import styles from '../style.less';
+import Withnegative from './Charts/Withnegative/index';
 
 const { Bar } = Charts;
 
@@ -69,78 +70,15 @@ const SalesCard = ({
             key="sales"
           >
             <Row>
-              <Col xl={16} lg={12} md={12} sm={24} xs={24}>
+              <Col>
                 <div className={styles.salesBar}>
-                  <Bar
-                    height={295}
+                  <Withnegative
+                    height={400}
                     title={
                       '连接数量'
                     }
                     data={salesData}
                   />
-                </div>
-              </Col>
-              <Col xl={8} lg={12} md={12} sm={24} xs={24}>
-                <div className={styles.salesRank}>
-                  <h4 className={styles.rankingTitle}>
-                    物联网设备连接排行
-                  </h4>
-                  <ul className={styles.rankingList}>
-                    {rankingListData.map((item, i) => (
-                      <li key={item.title}>
-                        <span className={`${styles.rankingItemNumber} ${i < 3 ? styles.active : ''}`}>
-                          {i + 1}
-                        </span>
-                        <span className={styles.rankingItemTitle} title={item.title}>
-                          {item.title}
-                        </span>
-                        <span className={styles.rankingItemValue}>
-                          {numeral(item.total).format('0,0')}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </Col>
-            </Row>
-          </TabPane>
-          <TabPane
-            tab={<FormattedMessage id="analysis.analysis.visits" defaultMessage="Visits" />}
-            key="views"
-          >
-            <Row>
-              <Col xl={16} lg={12} md={12} sm={24} xs={24}>
-                <div className={styles.salesBar}>
-                  <Bar
-                    height={292}
-                    title={
-                      <FormattedMessage
-                        id="analysis.analysis.visits-trend"
-                        defaultMessage="Visits Trend"
-                      />
-                    }
-                    data={salesData}
-                  />
-                </div>
-              </Col>
-              <Col xl={8} lg={12} md={12} sm={24} xs={24}>
-                <div className={styles.salesRank}>
-                  <h4 className={styles.rankingTitle}>
-                    物联网设备连接排行
-                  </h4>
-                  <ul className={styles.rankingList}>
-                    {rankingListData.map((item, i) => (
-                      <li key={item.title}>
-                        <span className={`${styles.rankingItemNumber} ${i < 3 ? styles.active : ''}`}>
-                          {i + 1}
-                        </span>
-                        <span className={styles.rankingItemTitle} title={item.title}>
-                          {item.title}
-                        </span>
-                        <span>{numeral(item.total).format('0,0')}</span>
-                      </li>
-                    ))}
-                  </ul>
                 </div>
               </Col>
             </Row>

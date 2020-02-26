@@ -5,30 +5,15 @@ import autoHeight from '../autoHeight';
 const { Arc, Html, Line } = Guide;
 
 export interface IGaugeProps {
-  title: React.ReactNode;
   color?: string;
   height?: number;
   bgColor?: number;
   percent: number;
+  memoryMax: number;
   forceFit?: boolean;
   style?: React.CSSProperties;
   formatter: (value: string) => string;
 }
-
-const defaultFormatter = (val: string): string => {
-  switch (val) {
-    case '2':
-      return '差';
-    case '4':
-      return '中';
-    case '6':
-      return '良';
-    case '8':
-      return '优';
-    default:
-      return '';
-  }
-};
 
 Shape.registerShape!('point', 'pointer', {
   drawShape(cfg: any, group: any) {
@@ -65,31 +50,29 @@ Shape.registerShape!('point', 'pointer', {
 class Gauge extends React.Component<IGaugeProps> {
   render() {
     const {
-      title,
       height = 1,
       percent,
+      memoryMax,
       forceFit = true,
-      formatter = defaultFormatter,
       color = '#2F9CFF',
       bgColor = '#F0F2F5',
     } = this.props;
     const cols = {
       value: {
-        type: 'linear',
         min: 0,
-        max: 10,
-        tickCount: 6,
-        nice: true,
+        max: memoryMax/1024,
+        tickInterval: 1,
+        nice: false,
       },
     };
     const renderHtml = () => `
     <div style="width: 300px;text-align: center;font-size: 12px!important;">
-      <p style="font-size: 14px; color: rgba(0,0,0,0.43);margin: 0;">${title}</p>
+
       <p style="font-size: 24px;color: rgba(0,0,0,0.85);margin: 0;">
-        ${(data[0].value * 10).toFixed(2)}%
+        ${(data[0].value).toFixed(2)} G
       </p>
     </div>`;
-    const data = [{ value: percent / 10 }];
+    const data = [{ value: percent/1024 }];
     const textStyle: {
       fontSize: number;
       fill: string;
@@ -100,18 +83,17 @@ class Gauge extends React.Component<IGaugeProps> {
       textAlign: 'center',
     };
     return (
-      <Chart height={height} data={data} scale={cols} padding={[-16, 0, 16, 0]} forceFit={forceFit}>
+      <Chart height={height} data={data} scale={cols} padding={[10, 0, 16, 0]} forceFit={forceFit}>
         <Coord type="polar" startAngle={-1.25 * Math.PI} endAngle={0.25 * Math.PI} radius={0.8} />
-        <Axis name="1" line={undefined} />
+        <Axis name="1" line={null} />
         <Axis
-          line={undefined}
+          line={null}
           tickLine={undefined}
           subTickLine={undefined}
           name="value"
           zIndex={2}
           label={{
             offset: -12,
-            formatter,
             textStyle: textStyle,
           }}
         />
@@ -145,7 +127,7 @@ class Gauge extends React.Component<IGaugeProps> {
           />
           <Arc
             start={[0, 0.965]}
-            end={[10, 0.965]}
+            end={[memoryMax/1024, 0.965]}
             style={{
               stroke: bgColor,
               lineWidth: 10,
