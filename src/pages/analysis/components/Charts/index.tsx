@@ -10,6 +10,8 @@ import MiniProgress from './MiniProgress';
 import WaterWave from './WaterWave';
 import TagCloud from './TagCloud';
 import TimelineChart from './TimelineChart';
+import GaugeColor from './GaugeColor/index';
+import Withnegative from './Withnegative/index';
 
 const yuan = (val: number | string) => `¥ ${numeral(val).format('0,0')}`;
 
@@ -26,6 +28,8 @@ const Charts = {
   WaterWave,
   TagCloud,
   TimelineChart,
+  GaugeColor,
+  Withnegative,
 };
 
 export {
@@ -42,4 +46,6 @@ export {
   WaterWave,
   TagCloud,
   TimelineChart,
+  GaugeColor,
+  Withnegative,
 };

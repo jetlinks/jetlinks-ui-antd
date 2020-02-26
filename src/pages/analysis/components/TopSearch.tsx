@@ -1,122 +1,79 @@
 import React from 'react';
-import { Row, Col, Table, Tooltip, Card, Icon } from 'antd';
+import { Card, Col, DatePicker, Row, Tabs } from 'antd';
 import { FormattedMessage } from 'umi-plugin-react/locale';
-import Charts from './Charts';
-import Trend from './Trend';
-import NumberInfo from './NumberInfo';
-import numeral from 'numeral';
 import styles from '../style.less';
-import { ISearchData, IVisitData2 } from '../data';
+import { ISalesData } from '../data';
+import { RangePickerValue } from 'antd/es/date-picker/interface';
+import Grouped from './Charts/Grouped/index';
 
-const { MiniArea } = Charts;
-
-const columns = [
-  {
-    title: <FormattedMessage id="analysis.table.rank" defaultMessage="Rank" />,
-    dataIndex: 'index',
-    key: 'index',
-  },
-  {
-    title: <FormattedMessage id="analysis.table.search-keyword" defaultMessage="Search keyword" />,
-    dataIndex: 'keyword',
-    key: 'keyword',
-    render: (text: React.ReactNode) => <a href="/">{text}</a>,
-  },
-  {
-    title: '在线时长（分钟）',
-    dataIndex: 'count',
-    key: 'count',
-    sorter: (a: { count: number }, b: { count: number }) => a.count - b.count,
-    className: styles.alignRight,
-  },
-  {
-    title: <FormattedMessage id="analysis.table.weekly-range" defaultMessage="Weekly Range" />,
-    dataIndex: 'range',
-    key: 'range',
-    sorter: (a: { range: number }, b: { range: number }) => a.range - b.range,
-    render: (text: React.ReactNode, record: { status: number }) => (
-      <Trend flag={record.status === 1 ? 'down' : 'up'}>
-        <span style={{ marginRight: 4 }}>{text}%</span>
-      </Trend>
-    ),
-  },
-];
+const { RangePicker } = DatePicker;
+const { TabPane } = Tabs;
 
 const TopSearch = ({
-  loading,
-  visitData2,
-  searchData,
-  dropdownGroup,
-}: {
+   rangePickerValue,
+   salesData,
+   isActive,
+   handleRangePickerChange,
+   loading,
+   selectDate,
+ }: {
+  rangePickerValue: RangePickerValue;
+  isActive: (key: 'today' | 'week' | 'month' | 'year') => string;
+  salesData: ISalesData[];
   loading: boolean;
-  visitData2: IVisitData2[];
-  dropdownGroup: React.ReactNode;
-  searchData: ISearchData[];
+  handleRangePickerChange: (dates: RangePickerValue, dateStrings: [string, string]) => void;
+  selectDate: (key: 'today' | 'week' | 'month' | 'year') => void;
 }) => (
-    <Card
-      loading={loading}
-      bordered={false}
-      title={
-        '设备在线时长（分钟）'
-      }
-      extra={dropdownGroup}
-      style={{ marginTop: 24 }}
-    >
-      <Row gutter={68}>
-        <Col sm={12} xs={24} style={{ marginBottom: 24 }}>
-          <NumberInfo
-            subTitle={
-              <span>
-                当月设备在线时长
-                <Tooltip
+  <Card loading={loading} bordered={false} bodyStyle={{ padding: 0,marginTop: 24 }}>
+    <div className={styles.salesCard}>
+      <Tabs
+        tabBarExtraContent={
+          <div className={styles.salesExtraWrap}>
+            <div className={styles.salesExtra}>
+              <a className={isActive('today')} onClick={() => selectDate('today')}>
+                <FormattedMessage id="analysis.analysis.all-day" defaultMessage="All Day"/>
+              </a>
+              <a className={isActive('week')} onClick={() => selectDate('week')}>
+                <FormattedMessage id="analysis.analysis.all-week" defaultMessage="All Week"/>
+              </a>
+              <a className={isActive('month')} onClick={() => selectDate('month')}>
+                <FormattedMessage id="analysis.analysis.all-month" defaultMessage="All Month"/>
+              </a>
+              <a className={isActive('year')} onClick={() => selectDate('year')}>
+                <FormattedMessage id="analysis.analysis.all-year" defaultMessage="All Year"/>
+              </a>
+            </div>
+            <RangePicker
+              value={rangePickerValue}
+              onChange={handleRangePickerChange}
+              style={{ width: 200 }}
+            />
+          </div>
+        }
+        size="large"
+        tabBarStyle={{ marginBottom: 24 }}
+      >
+        <TabPane
+          tab={'设备消息量'}
+          key="sales"
+        >
+          <Row>
+            <Col>
+              <div className={styles.salesBar}>
+                <Grouped
+                  height={400}
                   title={
-                    <FormattedMessage id="analysis.analysis.introduce" defaultMessage="introduce" />
+                    '连接数量'
                   }
-                >
-                  <Icon style={{ marginLeft: 8 }} type="info-circle-o" />
-                </Tooltip>
-              </span>
-            }
-            gap={8}
-            total={numeral(12321).format('0,0')}
-            status="up"
-            subTotal={17.1}
-          />
-          <MiniArea line height={45} data={visitData2} />
-        </Col>
-        <Col sm={12} xs={24} style={{ marginBottom: 24 }}>
-          <NumberInfo
-            subTitle={
-              <span>
-                本周设备在线时长
-                <Tooltip
-                  title={
-                    <FormattedMessage id="analysis.analysis.introduce" defaultMessage="introduce" />
-                  }
-                >
-                  <Icon style={{ marginLeft: 8 }} type="info-circle-o" />
-                </Tooltip>
-              </span>
-            }
-            total={2.7}
-            status="down"
-            subTotal={26.2}
-            gap={8}
-          />
-          <MiniArea line height={45} data={visitData2} />
-        </Col>
-      </Row>
-      <Table<any>
-        rowKey={record => record.index}
-        size="small"
-        columns={columns}
-        dataSource={searchData}
-        pagination={{
-          style: { marginBottom: 0 },
-          pageSize: 5,
-        }}
-      />
-    </Card>
-  );
+                  data={salesData}
+                />
+              </div>
+            </Col>
+          </Row>
+        </TabPane>
+      </Tabs>
+    </div>
+  </Card>
+);
 
 export default TopSearch;

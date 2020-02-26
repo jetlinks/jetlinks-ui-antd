@@ -1,6 +1,6 @@
 import React, { Component, Suspense } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Icon, Menu, Dropdown } from 'antd';
+import { Col, Row } from 'antd';
 import { RangePickerValue } from 'antd/es/date-picker/interface';
 import { getTimeDistance } from './utils/utils';
 import styles from './style.less';
@@ -123,6 +123,7 @@ class Analysis extends Component<analysisProps, analysisState> {
     const { analysis, loading } = this.props;
     const {
       visitData,
+      messageData,
       visitData2,
       salesData,
       searchData,
@@ -138,27 +139,13 @@ class Analysis extends Component<analysisProps, analysisState> {
     } else {
       salesPieData = salesType === 'online' ? salesTypeDataOnline : salesTypeDataOffline;
     }
-    const menu = (
-      <Menu>
-        <Menu.Item>操作一</Menu.Item>
-        <Menu.Item>操作二</Menu.Item>
-      </Menu>
-    );
-
-    const dropdownGroup = (
-      <span className={styles.iconGroup}>
-        <Dropdown overlay={menu} placement="bottomRight">
-          <Icon type="ellipsis" />
-        </Dropdown>
-      </span>
-    );
 
     const activeKey = currentTabKey || (offlineData[0] && offlineData[0].name);
     return (
       <GridContent>
         <React.Fragment>
           <Suspense fallback={<PageLoading />}>
-            <IntroduceRow loading={loading} visitData={visitData} />
+            <IntroduceRow loading={loading} visitData={visitData} messageData={messageData}/>
           </Suspense>
           <Suspense fallback={null}>
             <SalesCard
@@ -173,18 +160,7 @@ class Analysis extends Component<analysisProps, analysisState> {
           <Row gutter={24}>
             <Col xl={12} lg={24} md={24} sm={24} xs={24}>
               <Suspense fallback={null}>
-                <TopSearch
-                  loading={loading}
-                  visitData2={visitData2}
-                  searchData={searchData}
-                  dropdownGroup={dropdownGroup}
-                />
-              </Suspense>
-            </Col>
-            <Col xl={12} lg={24} md={24} sm={24} xs={24}>
-              <Suspense fallback={null}>
                 <ProportionSales
-                  dropdownGroup={dropdownGroup}
                   salesType={salesType}
                   loading={loading}
                   salesPieData={salesPieData}
@@ -192,16 +168,19 @@ class Analysis extends Component<analysisProps, analysisState> {
                 />
               </Suspense>
             </Col>
+            <Col xl={12} lg={24} md={24} sm={24} xs={24}>
+              <Suspense fallback={null}>
+                <TopSearch
+                  rangePickerValue={rangePickerValue}
+                  salesData={salesData}
+                  isActive={this.isActive}
+                  handleRangePickerChange={this.handleRangePickerChange}
+                  loading={loading}
+                  selectDate={this.selectDate}
+                />
+              </Suspense>
+            </Col>
           </Row>
-          <Suspense fallback={null}>
-            <OfflineData
-              activeKey={activeKey}
-              loading={loading}
-              offlineData={offlineData}
-              offlineChartData={offlineChartData}
-              handleTabChange={this.handleTabChange}
-            />
-          </Suspense>
         </React.Fragment>
       </GridContent>
     );

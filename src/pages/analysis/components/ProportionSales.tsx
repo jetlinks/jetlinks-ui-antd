@@ -1,23 +1,19 @@
 import React from 'react';
 import { Card, Radio } from 'antd';
 import Charts from './Charts';
-import { FormattedMessage } from 'umi-plugin-react/locale';
 import styles from '../style.less';
-import Yuan from '../utils/Yuan';
 import { RadioChangeEvent } from 'antd/es/radio';
 import { ISalesData } from '../data';
 
 const { Pie } = Charts;
 
 const ProportionSales = ({
-  dropdownGroup,
   salesType,
   loading,
   salesPieData,
   handleChangeSalesType,
 }: {
   loading: boolean;
-  dropdownGroup: React.ReactNode;
   salesType: 'all' | 'online' | 'stores';
   salesPieData: ISalesData[];
   handleChangeSalesType?: (e: RadioChangeEvent) => void;
@@ -33,17 +29,16 @@ const ProportionSales = ({
       bodyStyle={{ padding: 24 }}
       extra={
         <div className={styles.salesCardExtra}>
-          {dropdownGroup}
           <div className={styles.salesTypeRadio}>
             <Radio.Group value={salesType} onChange={handleChangeSalesType}>
               <Radio.Button value="all">
                 全部设备
               </Radio.Button>
               <Radio.Button value="online">
-                网关
+                在线
               </Radio.Button>
               <Radio.Button value="stores">
-                设备
+                离线
               </Radio.Button>
             </Radio.Group>
           </div>
