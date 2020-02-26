@@ -46,9 +46,8 @@ const Save: React.FC<Props> = props => {
           })(<Input placeholder="角色名称" />)}
         </Form.Item>
         <Form.Item label="描述">
-          {getFieldDecorator('description', {
-            rules: [{ required: true, message: '请输入描述信息' }],
-            initialValue: data.description,
+          {getFieldDecorator('describe', {
+            initialValue: data.describe,
           })(<Input.TextArea placeholder="描述" />)}
         </Form.Item>
       </Form>
