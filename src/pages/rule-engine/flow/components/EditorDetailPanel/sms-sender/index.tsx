@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { FormComponentProps } from 'antd/lib/form';
-import { Input, Form, Row, Col, Select } from 'antd';
+import { Input, Form, Row, Col, Modal } from 'antd';
 import { NodeProps } from '../data';
-import { FormItemConfig } from '@/utils/common';
 import styles from '../index.less';
 
 interface Props extends FormComponentProps, NodeProps {}
@@ -21,7 +20,7 @@ const SmsSender: React.FC<Props> = props => {
     },
   };
 
-  const config: FormItemConfig[] = [
+  const config: any[] = [
     {
       label: '发信人',
       key: 'senderId',
@@ -79,7 +78,7 @@ const SmsSender: React.FC<Props> = props => {
       component: (
         <Input.TextArea
           rows={3}
-          placeholder="变量描述：${#attr[error_stack]},${#attr[error_message]},${#attr[error_type]} "
+          placeholder="变量描述：$.{#attr[error_stack]},$.{#attr[error_message]},$.{#attr[error_type]} "
         />
       ),
     },
@@ -88,13 +87,20 @@ const SmsSender: React.FC<Props> = props => {
   const saveModelData = () => {
     const temp = form.getFieldsValue();
     props.save(temp);
+    props.close();
   };
 
   return (
-    <Form {...inlineFormItemLayout} className={styles.configForm}>
-      <Row gutter={16}>
-        {config.map(item => {
-          return (
+    <Modal
+      title="编辑属性"
+      visible
+      width={640}
+      onCancel={() => props.close()}
+      onOk={() => saveModelData()}
+    >
+      <Form {...inlineFormItemLayout} className={styles.configForm}>
+        <Row gutter={16}>
+          {config.map(item => (
             <Col
               key={item.key}
               {...item.styles}
@@ -103,15 +109,15 @@ const SmsSender: React.FC<Props> = props => {
               }}
             >
               <Form.Item label={item.label} {...item.formStyle}>
-                {getFieldDecorator(item.key, {
+                {getFieldDecorator<string>(item.key, {
                   initialValue: props.config ? props.config[item.key] : '',
                 })(item.component)}
               </Form.Item>
             </Col>
-          );
-        })}
-      </Row>
-    </Form>
+          ))}
+        </Row>
+      </Form>
+    </Modal>
   );
 };
 

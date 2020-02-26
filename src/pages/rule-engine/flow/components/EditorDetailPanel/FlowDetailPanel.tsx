@@ -1,4 +1,4 @@
-import { CanvasPanel, DetailPanel, EdgePanel, GroupPanel, MultiPanel, NodePanel } from 'gg-editor';
+import { CanvasPanel, DetailPanel, NodePanel } from 'gg-editor';
 
 import React from 'react';
 import DetailForm from './DetailForm';
@@ -7,9 +7,9 @@ import RuleModel from './RuleModel';
 
 interface Props {
   data: any;
-  save: Function
+  save: Function;
 }
-const FlowDetailPanel: React.FC<Props> = (props) => (
+const FlowDetailPanel: React.FC<Props> = props => (
   <DetailPanel className={styles.detailPanel}>
     <NodePanel>
       <DetailForm />
@@ -30,10 +30,7 @@ const FlowDetailPanel: React.FC<Props> = (props) => (
       <Card type="inner" size="small" title="模型信息" bordered={false} />
     </CanvasPanel> */}
     <CanvasPanel>
-      <RuleModel
-        data={props.data}
-        save={(item: any) => props.save(item)}
-      />
+      <RuleModel data={props.data} save={(item: any) => props.save(item)} />
     </CanvasPanel>
   </DetailPanel>
 );

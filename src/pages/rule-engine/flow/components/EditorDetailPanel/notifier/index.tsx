@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FormComponentProps } from 'antd/lib/form';
-import { Input, Form, Row, Col, Select, Modal } from 'antd';
+import { Form, Row, Col, Select, Modal } from 'antd';
 import { NodeProps } from '../data';
 import styles from '../index.less';
 import apis from '@/services';
@@ -9,7 +9,9 @@ import encodeQueryParam from '@/utils/encodeParam';
 interface Props extends FormComponentProps, NodeProps {}
 
 interface State {
-  mqttList: any[];
+  typeList: any[];
+  configList: any[];
+  templateList: any[];
 }
 const MqttClient: React.FC<Props> = props => {
   const {
@@ -26,39 +28,76 @@ const MqttClient: React.FC<Props> = props => {
   };
 
   const initState: State = {
-    mqttList: [],
+    typeList: [],
+    configList: [],
+    templateList: [],
   };
 
-  const [mqttList, setMqttList] = useState(initState.mqttList);
-  useEffect(() => {
-    apis.ruleEngine
-      .networkList(
+  const [typeList, setTypeList] = useState(initState.typeList);
+  const [configList, setConfigList] = useState(initState.configList);
+  const [templateList, setTemplateList] = useState(initState.templateList);
+  // const [type, setType] = useState(initState.type);
+
+  const getConfigLit = (e: string) => {
+    apis.notifier
+      .config(
         encodeQueryParam({
+          paging: false,
           terms: {
-            type: 'MQTT_CLIENT',
+            type: e,
           },
         }),
       )
       .then(response => {
         if (response) {
-          setMqttList(response.result);
+          setConfigList(response.result.data);
         }
       });
+  };
+
+  const getTemplate = (e: string) => {
+    apis.notifier
+      .template(
+        encodeQueryParam({
+          paging: false,
+          terms: {
+            type: e,
+          },
+        }),
+      )
+      .then(response => {
+        if (response) {
+          setTemplateList(response.result.data);
+        }
+      });
+  };
+
+  useEffect(() => {
+    apis.notifier.configType().then(response => {
+      if (response) {
+        setTypeList(response.result);
+      }
+    });
+    if (props.config && props.config.type) {
+      getConfigLit(props.config.type);
+      getTemplate(props.config.type);
+    }
   }, []);
 
   const config: any[] = [
     {
-      label: 'MQTT连接',
-      key: 'clientId',
-      // styles: {
-      //     lg: { span: 24 },
-      //     md: { span: 24 },
-      //     sm: { span: 24 },
-      // },
+      label: '通知类型',
+      key: 'notifyType',
       component: (
-        <Select>
-          {mqttList.map(i => (
-            <Select.Option value={i.id} key={i.id}>
+        <Select
+          onChange={(e: string) => {
+            form.resetFields();
+            getConfigLit(e);
+            getTemplate(e);
+          }}
+        >
+          {typeList.map(i => (
+            <Select.Option key={i.id} value={i.id}>
               {i.name}
             </Select.Option>
           ))}
@@ -66,8 +105,21 @@ const MqttClient: React.FC<Props> = props => {
       ),
     },
     {
-      label: '操作',
-      key: 'clientType',
+      label: '通知配置',
+      key: 'notifierId',
+      component: (
+        <Select>
+          {configList.map(e => (
+            <Select.Option key={e.id} value={e.id}>
+              {e.name}
+            </Select.Option>
+          ))}
+        </Select>
+      ),
+    },
+    {
+      label: '通知模版',
+      key: 'templateId',
       // styles: {
       //     lg: { span: 24 },
       //     md: { span: 24 },
@@ -75,59 +127,12 @@ const MqttClient: React.FC<Props> = props => {
       // },
       component: (
         <Select>
-          <Select.Option value="consumer">接收消息</Select.Option>
-          <Select.Option value="producer">发送消息</Select.Option>
+          {templateList.map(e => (
+            <Select.Option key={e.id} value={e.id}>
+              {e.name}
+            </Select.Option>
+          ))}
         </Select>
-      ),
-    },
-    {
-      label: '消息体类型',
-      key: 'payloadType',
-      // styles: {
-      //     lg: { span: 24 },
-      //     md: { span: 24 },
-      //     sm: { span: 24 },
-      // },
-      component: (
-        <Select>
-          <Select.Option value="JSON">JSON</Select.Option>
-          <Select.Option value="STRING">字符串</Select.Option>
-          <Select.Option value="BINARY">BINARY</Select.Option>
-          <Select.Option value="HEX">16进制字符</Select.Option>
-        </Select>
-      ),
-    },
-    {
-      label: '主题（Topic）',
-      key: 'topics',
-      styles: {
-        lg: { span: 24 },
-        md: { span: 24 },
-        sm: { span: 24 },
-      },
-      // formStyle: {
-      //     wrapperCol: { span: 24 },
-      //     labelCol: { span: 24 },
-      // },
-      component: <Input.TextArea rows={2} />,
-    },
-    {
-      label: '主题变量',
-      key: 'topicVariables',
-      styles: {
-        lg: { span: 24 },
-        md: { span: 24 },
-        sm: { span: 24 },
-      },
-      // formStyle: {
-      //     wrapperCol: { span: 24 },
-      //     labelCol: { span: 24 },
-      // },
-      component: (
-        <Input.TextArea
-          rows={3}
-          placeholder="接收消息时有效: 例:/topic/{deviceId}/{key},下游通过vars变量获取占位符对应的变量."
-        />
       ),
     },
   ];
@@ -152,9 +157,9 @@ const MqttClient: React.FC<Props> = props => {
             <Col
               key={item.key}
               {...item.styles}
-              onBlur={() => {
-                saveModelData();
-              }}
+              // onBlur={() => {
+              //   saveModelData();
+              // }}
             >
               <Form.Item label={item.label} {...item.formStyle}>
                 {getFieldDecorator<string>(item.key, {

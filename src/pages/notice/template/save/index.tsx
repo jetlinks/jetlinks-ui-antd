@@ -36,8 +36,10 @@ const Save: React.FC<Props> = props => {
   const initState: State = {
     item: props.data,
     typeList: [],
-    emailEditor: null,
-    fileList: [],
+    emailEditor: BraftEditor.createEditorState(
+      (props.data.template && JSON.parse(props.data.template).text) || null,
+    ),
+    fileList: (props.data.template && JSON.parse(props.data.template).attachments) || [],
   };
   const {
     form: { getFieldDecorator },
@@ -53,19 +55,26 @@ const Save: React.FC<Props> = props => {
     headers: {
       'X-Access-Token': getAccessToken(),
     },
+    // defaultFileList: [{
+    //   uid: "rc-upload-1582637182226-4",
+    //   name: "规则模型-新建模型.json",
+    //   url: "http://2.jetlinks.org:9000/upload/20200225/1232295983619620864.json",
+    //   size: 100, type: 'JSON'
+    // }],
+
+    defaultFileList: (props.data.template && JSON.parse(props.data.template).attachments) || [],
     // showUploadList: false,
     onChange(info) {
       if (info.file.status === 'done') {
-        fileList.push({
-          id: info.file.uid,
-          name: info.file.name,
-          location: info.file.response.result,
-        });
+        const tempFile: any = info.file;
+        tempFile.localtion = info.file.response.result;
+        fileList.push(tempFile);
         setFileList([...fileList]);
       }
     },
     onRemove(info) {
-      const list = fileList.filter(e => e !== info.uid);
+      const list = fileList.filter(e => e.uid !== info.uid);
+
       setFileList([...list]);
     },
   };
@@ -244,6 +253,7 @@ const Save: React.FC<Props> = props => {
       if (emailEditor !== null) {
         template.text = emailEditor.toHTML();
       }
+
       template.attachments = fileList;
       // 附件列表
     }

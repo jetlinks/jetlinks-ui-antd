@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FormComponentProps } from 'antd/lib/form';
-import { Input, Form, Row, Col, Select, Modal } from 'antd';
+import { Form, Row, Col, Select, Modal } from 'antd';
 import { NodeProps } from '../data';
 import styles from '../index.less';
 import apis from '@/services';
@@ -9,7 +9,7 @@ import encodeQueryParam from '@/utils/encodeParam';
 interface Props extends FormComponentProps, NodeProps {}
 
 interface State {
-  mqttList: any[];
+  tcpList: any[];
 }
 const MqttClient: React.FC<Props> = props => {
   const {
@@ -26,29 +26,29 @@ const MqttClient: React.FC<Props> = props => {
   };
 
   const initState: State = {
-    mqttList: [],
+    tcpList: [],
   };
 
-  const [mqttList, setMqttList] = useState(initState.mqttList);
+  const [tcpList, setTcpList] = useState(initState.tcpList);
   useEffect(() => {
     apis.ruleEngine
       .networkList(
         encodeQueryParam({
           terms: {
-            type: 'MQTT_CLIENT',
+            type: 'TCP_CLIENT',
           },
         }),
       )
       .then(response => {
         if (response) {
-          setMqttList(response.result);
+          setTcpList(response.result);
         }
       });
   }, []);
 
   const config: any[] = [
     {
-      label: 'MQTT连接',
+      label: 'TCP客户端',
       key: 'clientId',
       // styles: {
       //     lg: { span: 24 },
@@ -57,7 +57,7 @@ const MqttClient: React.FC<Props> = props => {
       // },
       component: (
         <Select>
-          {mqttList.map(i => (
+          {tcpList.map(i => (
             <Select.Option value={i.id} key={i.id}>
               {i.name}
             </Select.Option>
@@ -66,23 +66,8 @@ const MqttClient: React.FC<Props> = props => {
       ),
     },
     {
-      label: '操作',
-      key: 'clientType',
-      // styles: {
-      //     lg: { span: 24 },
-      //     md: { span: 24 },
-      //     sm: { span: 24 },
-      // },
-      component: (
-        <Select>
-          <Select.Option value="consumer">接收消息</Select.Option>
-          <Select.Option value="producer">发送消息</Select.Option>
-        </Select>
-      ),
-    },
-    {
-      label: '消息体类型',
-      key: 'payloadType',
+      label: '推送消息类型',
+      key: 'sendPayloadType',
       // styles: {
       //     lg: { span: 24 },
       //     md: { span: 24 },
@@ -92,42 +77,41 @@ const MqttClient: React.FC<Props> = props => {
         <Select>
           <Select.Option value="JSON">JSON</Select.Option>
           <Select.Option value="STRING">字符串</Select.Option>
-          <Select.Option value="BINARY">BINARY</Select.Option>
+          <Select.Option value="BINARY">二进制</Select.Option>
           <Select.Option value="HEX">16进制字符</Select.Option>
         </Select>
       ),
     },
     {
-      label: '主题（Topic）',
-      key: 'topics',
-      styles: {
-        lg: { span: 24 },
-        md: { span: 24 },
-        sm: { span: 24 },
-      },
-      // formStyle: {
-      //     wrapperCol: { span: 24 },
-      //     labelCol: { span: 24 },
-      // },
-      component: <Input.TextArea rows={2} />,
-    },
-    {
-      label: '主题变量',
-      key: 'topicVariables',
-      styles: {
-        lg: { span: 24 },
-        md: { span: 24 },
-        sm: { span: 24 },
-      },
-      // formStyle: {
-      //     wrapperCol: { span: 24 },
-      //     labelCol: { span: 24 },
+      label: '订阅消息类型',
+      key: 'subPayloadType',
+      // styles: {
+      //     lg: { span: 24 },
+      //     md: { span: 24 },
+      //     sm: { span: 24 },
       // },
       component: (
-        <Input.TextArea
-          rows={3}
-          placeholder="接收消息时有效: 例:/topic/{deviceId}/{key},下游通过vars变量获取占位符对应的变量."
-        />
+        <Select>
+          <Select.Option value="JSON">JSON</Select.Option>
+          <Select.Option value="STRING">字符串</Select.Option>
+          <Select.Option value="BINARY">二进制</Select.Option>
+          <Select.Option value="HEX">16进制字符</Select.Option>
+        </Select>
+      ),
+    },
+    {
+      label: '操作',
+      key: 'type',
+      // styles: {
+      //     lg: { span: 24 },
+      //     md: { span: 24 },
+      //     sm: { span: 24 },
+      // },
+      component: (
+        <Select>
+          <Select.Option value="producer">发送消息</Select.Option>
+          <Select.Option value="consumer">订阅消息</Select.Option>
+        </Select>
       ),
     },
   ];
