@@ -1,4 +1,4 @@
-import { Tabs, Drawer, Row, Descriptions, Col } from 'antd';
+import { Tabs, Drawer, Row, Col } from 'antd';
 import React, { useState } from 'react';
 import GGEditor, { Flow } from 'gg-editor';
 import styles from '../../flow/index.less';
@@ -18,8 +18,38 @@ const Detail: React.FC<Props> = props => {
     activeTab: 'model',
   };
   const [activeTab, setActiveTab] = useState(initState.activeTab);
+
+  const graphConfig = {
+    mode: 'readOnly',
+    modes: {
+      readOnly: [
+        'panBlank',
+        'hoverGroupActived',
+        'keydownCmdWheelZoom',
+        'clickEdgeSelected',
+        'clickNodeSelected',
+        'clickCanvasSelected',
+        'clickGroupSelected',
+        'hoverNodeActived',
+        'hoverEdgeActived',
+        'hoverButton',
+      ],
+    },
+  };
   return (
     <Drawer title="规则实例详情" onClose={() => props.close()} visible width="70VW">
+      <Row style={{ padding: 5 }}>
+        <Col span={4}>
+          <b>基本信息</b>:{props.data?.id}
+        </Col>
+        <Col span={4}>
+          <b>模型名称</b>:{props.data?.name}
+        </Col>
+        <Col span={16}>
+          <b>说明</b>:{props.data.description}
+        </Col>
+      </Row>
+
       <Tabs
         defaultActiveKey={activeTab}
         onChange={key => {
@@ -27,29 +57,13 @@ const Detail: React.FC<Props> = props => {
         }}
       >
         <Tabs.TabPane tab="模型" key="model">
-          <Row>
-            <Col span={20}>
-              <GGEditor className={styles.editor}>
-                <Flow className={styles.flow} data={JSON.parse(props.data.modelMeta)} />
-              </GGEditor>
-            </Col>
-            <Col span={4}>
-              <Descriptions title="基本信息" layout="vertical" bordered>
-                <Descriptions.Item span={3} label="ID">
-                  {props.data?.id}
-                </Descriptions.Item>
-                <Descriptions.Item span={3} label="模型名称">
-                  {props.data?.name}
-                </Descriptions.Item>
-                <Descriptions.Item span={3} label="运行方式">
-                  集群
-                </Descriptions.Item>
-                <Descriptions.Item span={3} label="说明">
-                  {props.data?.description}
-                </Descriptions.Item>
-              </Descriptions>
-            </Col>
-          </Row>
+          <GGEditor className={styles.editor}>
+            <Flow
+              graph={graphConfig}
+              className={styles.flow}
+              data={JSON.parse(props.data.modelMeta)}
+            />
+          </GGEditor>
         </Tabs.TabPane>
 
         <Tabs.TabPane tab="日志" key="log">

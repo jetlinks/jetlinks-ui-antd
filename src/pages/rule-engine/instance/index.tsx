@@ -41,17 +41,6 @@ const RuleInstanceList: React.FC<Props> = props => {
   const [saveVisible, setSaveVisible] = useState(initState.saveVisible);
   const [current, setCurrent] = useState(initState.current);
 
-  const startInstance = (record: any) => {
-    apis.ruleInstance
-      .start(record.id)
-      .then(response => {
-        if (response.status === 200) {
-          message.success('启动成功');
-        }
-      })
-      .catch(() => {});
-  };
-
   const createModel = (record: any) => {
     apis.ruleInstance
       .createModel(record)
@@ -75,6 +64,29 @@ const RuleInstanceList: React.FC<Props> = props => {
     handleSearch(searchParam);
   }, []);
 
+  const startInstance = (record: any) => {
+    apis.ruleInstance
+      .start(record.id)
+      .then(response => {
+        if (response.status === 200) {
+          message.success('启动成功');
+          handleSearch(searchParam);
+        }
+      })
+      .catch(() => {});
+  };
+
+  const stopInstance = (record: any) => {
+    apis.ruleInstance
+      .stop(record.id)
+      .then(response => {
+        if (response.status === 200) {
+          message.success('停止成功');
+          handleSearch(searchParam);
+        }
+      })
+      .catch(() => {});
+  };
   // const saveOrUpdate = (item: RuleInstanceItem) => {
   //     dispatch({
   //         type: 'ruleInstance/insert',
@@ -150,9 +162,16 @@ const RuleInstanceList: React.FC<Props> = props => {
             <a>删除</a>
           </Popconfirm>
           <Divider type="vertical" />
-          <Popconfirm title="确认启动？" onConfirm={() => startInstance(record)}>
-            <a>启动</a>
-          </Popconfirm>
+          {record.state?.value === 'stopped' && (
+            <Popconfirm title="确认启动？" onConfirm={() => startInstance(record)}>
+              <a>启动</a>
+            </Popconfirm>
+          )}
+          {record.state?.value === 'started' && (
+            <Popconfirm title="确认启动？" onConfirm={() => stopInstance(record)}>
+              <a>停止</a>
+            </Popconfirm>
+          )}
           <Divider type="vertical" />
           <Popconfirm title="确认生成模型？" onConfirm={() => createModel(record)}>
             <a>生成模型</a>

@@ -26,6 +26,7 @@ const Event: React.FC<Props> = props => {
       }
     });
   };
+
   useEffect(() => {
     handleSearch({
       pageIndex: 0,
@@ -74,7 +75,7 @@ const Event: React.FC<Props> = props => {
           title: '数据',
         },
       ]}
-      dataSource={list}
+      dataSource={list.data}
     />
   );
 };

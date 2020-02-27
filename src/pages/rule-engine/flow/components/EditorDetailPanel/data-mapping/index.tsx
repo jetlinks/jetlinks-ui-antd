@@ -32,7 +32,7 @@ const DataMapping: React.FC<Props> = props => {
 
   const initState: State = {
     httpList: [],
-    rules: props.config?.rules || [
+    rules: props.config?.mappings || [
       {
         id: randomString(8),
         source: '',

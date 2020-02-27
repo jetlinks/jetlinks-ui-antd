@@ -40,6 +40,12 @@ export async function start(id: string) {
   });
 }
 
+export async function stop(id: string) {
+  return request(`/jetlinks/rule-engine/instance/${id}/_stop`, {
+    method: 'POST',
+  });
+}
+
 export async function createModel(params: RuleInstanceItem) {
   return request(`/jetlinks/rule-engine/model`, {
     method: 'POST',
