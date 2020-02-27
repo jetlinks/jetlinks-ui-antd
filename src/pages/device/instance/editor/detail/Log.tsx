@@ -1,18 +1,5 @@
-import { Component, Fragment, useEffect, useState } from 'react';
-import React from 'react';
-import {
-  Table,
-  Divider,
-  Card,
-  Form,
-  Row,
-  Col,
-  Input,
-  Button,
-  DatePicker,
-  Modal,
-  Select,
-} from 'antd';
+import React, { Fragment, useEffect, useState } from 'react';
+import { Table, Card, Form, Row, Col, Button, DatePicker, Modal, Select } from 'antd';
 import { ColumnProps, PaginationConfig } from 'antd/lib/table';
 import { FormComponentProps } from 'antd/es/form';
 import moment, { Moment } from 'moment';
@@ -21,8 +8,6 @@ import encodeQueryParam from '@/utils/encodeParam';
 
 interface Props extends FormComponentProps {
   deviceId: string;
-  // data: any;
-  // search: Function
 }
 interface State {
   log: any;
@@ -40,28 +25,25 @@ const Log: React.FC<Props> = props => {
   const [params, setParams] = useState({ deviceId: props.deviceId });
   const [log, setLog] = useState(initState.log);
 
+  const loadLogData = (param: any) => {
+    apis.deviceInstance
+      .logs(props.deviceId, encodeQueryParam(param))
+      .then(response => {
+        setLog(response.result);
+      })
+      .catch(() => {});
+  };
+
   useEffect(() => {
     loadLogData({
       pageIndex: 0,
       pageSize: 10,
-      /*terms: {
-        deviceId: props.deviceId,
-      },*/
       sorts: {
         field: 'createTime',
         order: 'desc',
       },
     });
   }, []);
-
-  const loadLogData = (param: any) => {
-    apis.deviceInstance
-      .logs(props.deviceId,encodeQueryParam(param))
-      .then(response => {
-        setLog(response.result);
-      })
-      .catch(() => {});
-  };
 
   const column: ColumnProps<any>[] = [
     {
@@ -71,7 +53,7 @@ const Log: React.FC<Props> = props => {
     {
       dataIndex: 'createTime',
       title: '时间',
-      render: text => moment(text).format('YYYY-MM-DD hh:mm:ss'),
+      render: text => moment(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       dataIndex: 'content',
@@ -88,6 +70,7 @@ const Log: React.FC<Props> = props => {
         try {
           content = JSON.stringify(JSON.parse(record.content), null, 2);
         } catch (error) {
+          // eslint-disable-next-line prefer-destructuring
           content = record.content;
         }
         return (
@@ -112,6 +95,7 @@ const Log: React.FC<Props> = props => {
   ];
 
   const onSearch = () => {
+    // eslint-disable-next-line no-shadow
     const params = form.getFieldsValue();
     if (params.createTime$BTW) {
       const formatDate = params.createTime$BTW.map((e: Moment) =>
@@ -133,12 +117,6 @@ const Log: React.FC<Props> = props => {
         order: 'desc',
       },
     });
-
-    // props.search({
-    //     pageIndex: props.data.pageIndex,
-    //     pageSize: props.data.pageSize,
-    //     terms: params,
-    // });
   };
 
   const resetSearch = () => {
@@ -156,7 +134,7 @@ const Log: React.FC<Props> = props => {
     });
   };
 
-  const onTableChange = (pagination: PaginationConfig, filters: any, sorter: any, extra: any) => {
+  const onTableChange = (pagination: PaginationConfig) => {
     loadLogData({
       pageIndex: Number(pagination.current) - 1,
       pageSize: pagination.pageSize,
@@ -166,12 +144,6 @@ const Log: React.FC<Props> = props => {
         order: 'desc',
       },
     });
-    // props.search({
-    //     pageIndex: Number(pagination.current) - 1,
-    //     pageSize: pagination.pageSize,
-    //     terms: params,
-    //     sorts: sorter,
-    // });
   };
 
   return (
@@ -210,8 +182,6 @@ const Log: React.FC<Props> = props => {
                       showTime={{ format: 'HH:mm' }}
                       format="YYYY-MM-DD HH:mm"
                       placeholder={['开始时间', '结束时间']}
-                      // onChange={() => onChange}
-                      // onOk={() => onOk}
                     />,
                   )}
                 </Form.Item>
@@ -254,15 +224,10 @@ const Log: React.FC<Props> = props => {
             showQuickJumper: true,
             showSizeChanger: true,
             pageSizeOptions: ['10', '20', '50', '100'],
-            showTotal: (total: number) => {
-              return (
-                `共 ${total} 条记录 第  ` +
-                (log.pageIndex + 1) +
-                '/' +
-                Math.ceil(log.total / log.pageSize) +
-                '页'
-              );
-            },
+            showTotal: (total: number) =>
+              `共 ${total} 条记录 第  ${log.pageIndex + 1}/${Math.ceil(
+                log.total / log.pageSize,
+              )}页`,
           }}
         />
       </Card>

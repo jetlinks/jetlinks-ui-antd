@@ -1,90 +1,46 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Form, { FormComponentProps } from 'antd/lib/form';
-// import { FormItemConfig } from '@/utils/common';
-import { Input, Select, Row, Col, Button } from 'antd';
+import { Select, Row, Col, Button, DatePicker } from 'antd';
+
+const { RangePicker } = DatePicker;
 
 interface Props extends FormComponentProps {
   search: Function;
 }
 
-interface State {
-  expandForm: boolean;
-}
-
 const Search: React.FC<Props> = props => {
-  const initState: State = {
-    expandForm: true,
-  };
-
   const {
     form,
     form: { getFieldDecorator },
   } = props;
 
-  const [expandForm] = useState(initState.expandForm);
-
   const simpleItems: any[] = [
     {
-      label: '名称',
+      label: '时间',
       key: 'name$LIKE',
-      component: <Input placeholder="请输入" />,
-    },
-    {
-      label: '状态',
-      key: 'state$IN',
       component: (
-        <Select mode="multiple">
-          {[
-            { id: 'stopped', text: '已停止' },
-            { id: 'started', text: '已启动' },
-            { id: 'disable', text: '已禁用' },
-          ].map(item => (
-            <Select.Option key={item.id} value={item.id}>
-              {item.text}
-            </Select.Option>
-          ))}
-        </Select>
-      ),
-    },
-  ];
-
-  const advancedItems: any[] = [
-    {
-      label: '名称',
-      key: 'name$LIKE',
-      component: <Input placeholder="请输入" />,
-    },
-    {
-      label: '状态',
-      key: 'state$IN',
-      component: (
-        <Select mode="multiple">
-          {[
-            { id: 'stopped', text: '已停止' },
-            { id: 'started', text: '运行中' },
-            { id: 'disable', text: '已禁用' },
-          ].map(item => (
-            <Select.Option key={item.id} value={item.id}>
-              {item.text}
-            </Select.Option>
-          ))}
-        </Select>
+        <RangePicker
+          showTime={{ format: 'HH:mm' }}
+          format="YYYY-MM-DD HH:mm"
+          placeholder={['开始时间', '结束时间']}
+        />
       ),
     },
     {
-      label: '用户',
-      key: 'status$LIKE',
+      label: 'LEVEL',
+      key: 'level',
       component: (
         <Select placeholder="请选择">
-          <Select.Option value="mqtt">启用</Select.Option>
-          <Select.Option value="coap">禁用</Select.Option>
+          <Select.Option value="notActive">未激活</Select.Option>
+          <Select.Option value="offline">离线</Select.Option>
+          <Select.Option value="online">在线</Select.Option>
         </Select>
       ),
     },
   ];
 
   const colSize =
-    (expandForm ? simpleItems : advancedItems)
+    simpleItems
       .map(item => (item.styles ? item.styles.md : 8))
       .reduce((i, j) => {
         if (i && j) {
@@ -106,9 +62,10 @@ const Search: React.FC<Props> = props => {
     },
     wrapperCol: {
       xs: { span: 24 },
-      sm: { span: 18 },
+      sm: { span: 20 },
     },
   };
+
   return (
     <Form {...formItemLayout}>
       <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
