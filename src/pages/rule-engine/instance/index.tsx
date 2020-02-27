@@ -147,6 +147,7 @@ const RuleInstanceList: React.FC<Props> = props => {
     },
     {
       title: '操作',
+      width: '20%',
       render: (text, record) => (
         <Fragment>
           <a
