@@ -13,7 +13,7 @@ import moment from 'moment';
 const { ChartCard, MiniArea, MiniBar, MiniProgress, Field } = Charts;
 
 interface State {
-  cup: number;
+  cpu: number;
   memoryMax: number;
   memoryUsed: number;
   messageData: any;
@@ -34,7 +34,7 @@ const topColResponsiveProps = {
 
 const IntroduceRow = ({ loading, visitData, messageData}: { loading: boolean; visitData: IVisitData[];messageData: IVisitData[] }) => {
   const initState: State = {
-    cup: 0,
+    cpu: 0,
     memoryMax: 0,
     memoryUsed: 0,
     messageData: {},
@@ -46,7 +46,7 @@ const IntroduceRow = ({ loading, visitData, messageData}: { loading: boolean; vi
 
   const [flag, setFlag] = useState(false);
 
-  const [cup,setCpu] = useState(initState.cup);
+  const [cpu,setCpu] = useState(initState.cpu);
   const [memoryMax,setMemoryMax] = useState(initState.memoryMax);
   const [memoryUsed,setMemoryUsed] = useState(initState.memoryUsed);
   const [sameDay,setSameDay] = useState(initState.sameDay);
@@ -135,7 +135,7 @@ const IntroduceRow = ({ loading, visitData, messageData}: { loading: boolean; vi
         "group":"sameDay",
         "params":{
           "time":"1d",
-          "format":"YYYY-MM-dd HH:mm:ss",
+          "format":"yyyy-MM-dd HH:mm:ss",
         }
       },
       {
@@ -147,7 +147,7 @@ const IntroduceRow = ({ loading, visitData, messageData}: { loading: boolean; vi
         "params":{
           "limit":30,
           "time":"1d",
-          "format":"YYYY-MM-dd HH:mm:ss",
+          "format":"yyyy-MM-dd HH:mm:ss",
           "from":calculationDate()
         }
       },
@@ -159,7 +159,7 @@ const IntroduceRow = ({ loading, visitData, messageData}: { loading: boolean; vi
         "group":"month",
         "params":{
           "time":"30d",
-          "format":"YYYY-MM-dd HH:mm:ss",
+          "format":"yyyy-MM-dd HH:mm:ss",
           "from":calculationDate()
         }
       }
@@ -230,7 +230,7 @@ const IntroduceRow = ({ loading, visitData, messageData}: { loading: boolean; vi
         "params":{
           "limit":20,
           "time":"1d",
-          "format":"YYYY-MM-dd HH:mm:ss"
+          "format":"yyyy-MM-dd HH:mm:ss"
         }
       }
     ];
@@ -280,7 +280,7 @@ const IntroduceRow = ({ loading, visitData, messageData}: { loading: boolean; vi
               <Icon type="sync" onClick={() => {deviceStatus()}} />
             </Tooltip>
           }
-          total={deviceOnline}
+          total={numeral(deviceOnline).format('0,0')}
           footer={
             <div style={{ whiteSpace: 'nowrap', overflow: 'hidden' }}>
               <Field style={{ marginRight: 80 ,float:'left'}}
@@ -338,7 +338,7 @@ const IntroduceRow = ({ loading, visitData, messageData}: { loading: boolean; vi
           }
           contentHeight={120}
         >
-          <GaugeColor height={169} percent={cup} />
+          <GaugeColor height={169} percent={cpu} />
         </ChartCard>
       </Col>
       <Col {...topColResponsiveProps}>
