@@ -34,13 +34,17 @@ const Save: React.FC<Props> = props => {
     apis.network
       .support()
       .then(response => {
-        setSupportsType(response.result);
+        if (response.status === 200) {
+          setSupportsType(response.result || []);
+        }
       })
       .catch(() => {});
     apis.certificate
       .listNoPaging({ paging: false })
       .then(response => {
-        setCertificateList(response.result);
+        if (response.status === 200) {
+          setCertificateList(response.result || []);
+        }
       })
       .catch(() => {});
   }, []);
