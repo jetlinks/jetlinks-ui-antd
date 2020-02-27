@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Tabs, Descriptions, Card, Button, message } from 'antd';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { connect } from 'dva';
-import { DeviceProduct } from '../data';
+import { DeviceProduct } from '../data.d';
 import Definition from './definition';
 import { ConnectState, Dispatch } from '@/models/connect';
-import { SimpleResponse } from '@/utils/common';
+// import { SimpleResponse } from '@/utils/common';
 import apis from '@/services';
 import Save from '.';
 
@@ -34,7 +34,7 @@ const Detail: React.FC<Props> = props => {
   } = props;
   const [events, setEvents] = useState([]);
   const [functions, setFunctions] = useState([]);
-  const [properties, setProperties] = useState([]);
+  const [properties, setProperties] = useState<any[]>([]);
   const [basicInfo, setBasicInfo] = useState(initState.basicInfo);
   const [saveVisible, setSaveVisible] = useState(initState.saveVisible);
   const [config, setConfig] = useState(initState.config);
@@ -45,7 +45,7 @@ const Detail: React.FC<Props> = props => {
       dispatch({
         type: 'deviceProduct/queryById',
         payload: list[list.length - 1],
-        callback: (response: SimpleResponse) => {
+        callback: (response: any) => {
           const data = response.result;
           setBasicInfo(data);
           const metadata = JSON.parse(data.metadata);
@@ -73,6 +73,27 @@ const Detail: React.FC<Props> = props => {
     } else {
       data = { ...basicInfo, metadata };
     }
+    apis.deviceProdcut
+      .saveOrUpdate(data)
+      .then(reponse => {
+        if (reponse.status === 200) {
+          message.success('保存成功');
+        }
+      })
+      .catch(() => {});
+  };
+
+  const updateData = (type: string, item: any) => {
+    let metadata = JSON.stringify({ events, properties, functions });
+    if (type === 'event') {
+      metadata = JSON.stringify({ events: item, properties, functions });
+    } else if (type === 'properties') {
+      metadata = JSON.stringify({ events, properties: item, functions });
+    } else if (type === 'function') {
+      metadata = JSON.stringify({ events, properties, functions: item });
+    }
+
+    const data = { ...basicInfo, metadata };
     apis.deviceProdcut
       .saveOrUpdate(data)
       .then(reponse => {
@@ -161,15 +182,18 @@ const Detail: React.FC<Props> = props => {
               propertyData={properties}
               saveEvents={(data: any) => {
                 setEvents(data);
-                saveData();
+                // saveData();
+                updateData('event', data);
               }}
               saveFunctions={(data: any) => {
                 setFunctions(data);
-                saveData();
+                // saveData();
+                updateData('function', data);
               }}
-              saveProperty={(data: any) => {
+              saveProperty={(data: any[]) => {
                 setProperties(data);
-                saveData();
+                // saveData({});
+                updateData('properties', data);
               }}
             />
           </Tabs.TabPane>
