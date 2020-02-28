@@ -12,6 +12,7 @@ const { TabPane } = Tabs;
 
 export interface State {
   gatewayDataList: any[];
+  ticksDataList: any[];
   currentTime: string;
   time: string;
   selectionTime: string
@@ -30,12 +31,14 @@ const SalesCard = ({
   let gatewayMonitor: (from: string, to: string, time: string) => void;
   const initState: State = {
     gatewayDataList: [],
+    ticksDataList: [],
     currentTime: '',
     time: '',
     selectionTime: '',
   };
 
   const [gatewayData, setGatewayData] = useState(initState.gatewayDataList);
+  const [ticksDataList, setTicksDataList] = useState(initState.ticksDataList);
   const [time, setTime] = useState(initState.time);
   const [selectionTime, setSelectionTime] = useState(initState.selectionTime);
 
@@ -91,12 +94,17 @@ const SalesCard = ({
         const tempResult = response?.result;
         if (tempResult) {
           const dataList = [];
+          const ticksList = [];
           tempResult.forEach(item => {
             dataList.push({
               year: item.data.timeString,
               消息量: item.data.value,
             });
+            if (item.data.timestamp % 4 === 0 && item.data.timestamp !== 0){
+              ticksList.push(item.data.timeString)
+            }
           });
+          setTicksDataList(ticksList);
           setGatewayData(dataList);
         }
       });
@@ -172,8 +180,8 @@ const SalesCard = ({
                   <FormattedMessage id="analysis.analysis.all-month" defaultMessage="All Month"/>
                 </a>
               </div>
-              <DatePicker showTime defaultValue={moment(new Date(), 'yyyy-MM-dd HH:mm:ss')} placeholder="结束时间"
-                          onOk={onOk} format="YYYY-MM-DD HH:mm:ss"/>
+              <DatePicker showTime defaultValue={moment(new Date(), 'yyyy-MM-dd HH:mm:ss')}
+                          placeholder="结束时间" onOk={onOk} format="YYYY-MM-DD HH:mm:ss"/>
             </div>
           }
           size="large"
@@ -189,6 +197,7 @@ const SalesCard = ({
                   <Withnegative
                     height={400}
                     datas={gatewayData}
+                    ticks={ticksDataList}
                   />
                 </div>
               </Col>

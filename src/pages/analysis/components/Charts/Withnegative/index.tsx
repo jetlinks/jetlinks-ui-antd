@@ -8,6 +8,7 @@ export interface IGaugeProps {
     x: string;
     消息量: number;
   }>;
+  ticks:[];
   height?: number;
 }
 
@@ -15,7 +16,8 @@ class Withnegative extends React.Component<IGaugeProps> {
   render() {
     const {
       datas,
-      height
+      height,
+      ticks
     } = this.props;
     const { DataView } = DataSet;
 
@@ -31,7 +33,7 @@ class Withnegative extends React.Component<IGaugeProps> {
     const cols = {
       year: {
         range: [0, 1],
-        tickCount:15,
+        ticks:ticks
       },
 
     };
