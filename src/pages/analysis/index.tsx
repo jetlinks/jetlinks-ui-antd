@@ -14,6 +14,7 @@ import getFakeChartData from './mock-data';
 const IntroduceRow = React.lazy(() => import('./components/IntroduceRow'));
 const SalesCard = React.lazy(() => import('./components/SalesCard'));
 const TopSearch = React.lazy(() => import('./components/TopSearch'));
+const TestDemo = React.lazy(() => import('./components/TestDemo'));
 const ProportionSales = React.lazy(() => import('./components/ProportionSales'));
 const OfflineData = React.lazy(() => import('./components/OfflineData'));
 
@@ -149,8 +150,7 @@ class Analysis extends Component<analysisProps, analysisState> {
           </Suspense>
           <Suspense fallback={null}>
             <SalesCard
-              rangePickerValue={rangePickerValue}
-              salesData={salesData}
+             /* rangePickerValue={rangePickerValue}*/
               isActive={this.isActive}
               handleRangePickerChange={this.handleRangePickerChange}
               loading={loading}

@@ -1,9 +1,11 @@
 import moment from 'moment';
-import { IVisitData, IRadarData, IAnalysisData } from './data';
+import { IVisitData, IRadarData, IAnalysisData, ISalesData, IGatewayData } from './data';
 
 // mock data
 const visitData: IVisitData[] = [];
 const messageData :IVisitData[] = [];
+const gatewayData :IGatewayData[] = [];
+
 const beginDay = new Date().getTime();
 
 const visitData2 = [];
@@ -15,13 +17,13 @@ for (let i = 0; i < fakeY2.length; i += 1) {
   });
 }
 
-const salesData = [];
-for (let i = 0; i < 12; i += 1) {
+const salesData: ISalesData[] = [];
+/*for (let i = 0; i < 12; i += 1) {
   salesData.push({
     x: `${i + 1}月`,
     y: Math.floor(Math.random() * 1000) + 200,
   });
-}
+}*/
 const searchData = [];
 for (let i = 0; i < 50; i += 1) {
   searchData.push({
@@ -184,6 +186,7 @@ const getFakeChartData: IAnalysisData = {
   salesTypeDataOnline,
   salesTypeDataOffline,
   radarData,
+  gatewayData,
 };
 
 export default getFakeChartData;

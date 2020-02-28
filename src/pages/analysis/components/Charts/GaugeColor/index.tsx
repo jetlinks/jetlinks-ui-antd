@@ -69,7 +69,7 @@ class GaugeColor extends React.Component<IGaugeProps> {
     const renderHtml = () => `
     <div style="width: 300px;text-align: center;font-size: 12px!important;">
       <p style="font-size: 24px;color: rgba(0,0,0,0.85);margin: 0;">
-        ${(data[0].value * 10).toFixed(2)}%
+        ${(data[0].value * 10).toFixed(1)}%
       </p>
     </div>`;
     const data = [{ value: percent / 10 }];
