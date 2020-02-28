@@ -49,21 +49,21 @@ const errorHandler = (error: { response: Response }): Response | undefined => {
     });
     router.push('/user/login');
   } else if (status === 400) {
-    // response.text().then(resp => {
-    //   if (resp) {
-    //     notification.error({
-    //       key: 'error',
-    //       message: resp,
-    //     });
-    //   } else {
-    //     response.json().then((res: any) => {
-    //       notification.error({
-    //         key: 'error',
-    //         message: `请求错误：${res.message}`,
-    //       });
-    //     });
-    //   }
-    // });
+    response.text().then(resp => {
+      if (resp) {
+        notification.error({
+          key: 'error',
+          message: JSON.parse(resp).message,
+        });
+      } else {
+        response.json().then((res: any) => {
+          notification.error({
+            key: 'error',
+            message: `请求错误：${res.message}`,
+          });
+        });
+      }
+    });
     return response;
   } else if (status === 500) {
     // try {

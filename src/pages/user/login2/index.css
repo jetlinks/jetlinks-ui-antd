@@ -1,0 +1,211 @@
+* {
+  font-family: "微软雅黑";
+  font-size: 16px;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  color: #666;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+}
+
+body {
+  background: url(./img/banner.jpeg) repeat;
+  /* background-size: 100%; */
+}
+
+.bg1 {
+  width: 100%;
+  height: 237px;
+  background: #347ebc;
+  opacity: 0.6;
+  position: absolute;
+  left: 0;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  margin: auto;
+}
+
+.gyl {
+  width: 510px;
+  height: 237px;
+  color: #FFFFFF;
+  font-size: 72px;
+  position: absolute;
+  left: 15%;
+  top: 11%;
+
+  bottom: 0px;
+  margin: auto;
+}
+
+.gy2 {
+  color: #fff;
+  margin-left: 6px;
+  font-size: 18px;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.bg {
+  width: 375px;
+  height: 337px;
+  background: #fff;
+  position: relative;
+  position: absolute;
+  left: 56%;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  margin: auto;
+  z-index: 1;
+  box-shadow: 0px 0px 50px rgba(0, 0, 0, 0.4);
+  border-radius: 5px;
+}
+
+.password {
+  position: absolute;
+  top: 9.5rem;
+  right: 2.5rem;
+  display: flex;
+}
+
+.btn {
+  position: absolute;
+  top: 16rem;
+  right: 2.5rem;
+  border: none;
+  color: #fff;
+  width: 18.825rem;
+  text-align: center;
+  background-color: #347ebc;
+  text-indent: 0rem;
+}
+
+.img {
+  width: 100%;
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  z-index: -1;
+}
+
+.wel {
+  width: 375px;
+  height: 35px;
+  color: #347ebc;
+  font-size: 1.5rem;
+  position: absolute;
+  top: 2rem;
+  text-align: center;
+}
+
+input {
+  border-bottom: 0.0625rem solid #347ebc;
+  height: 2.5625rem;
+  width: 15.8125rem;
+  text-indent: 1.125rem;
+  outline: none;
+}
+
+.user {
+  position: absolute;
+  top: 6rem;
+  right: 2.5rem;
+  display: flex;
+
+}
+
+.rem {
+  position: absolute;
+  top: 12.5rem;
+  right: 17.2rem;
+  border: none;
+  color: #323333;
+}
+
+.rem input {
+  width: 0.8125rem;
+}
+
+.fg {
+  position: absolute;
+  top: 12.5rem;
+  right: 2.5rem;
+  border: none;
+  color: #323333;
+}
+
+.userLabel {
+  border-bottom: 1px solid #347ebc;
+  height: 41px;
+  line-height: 41px;
+}
+
+.reb {
+  margin-top: -33px;
+  margin-left: 20px;
+  font-size: 11px;
+}
+
+@media (min-width:1201px) and (max-width:1500px) {
+  .gyl {
+    width: 420px;
+    font-size: 60px;
+    top: 16%;
+  }
+}
+
+@media (min-width:800px) and (max-width:1200px) {
+  .bg {
+    width: 355px;
+    height: 300px;
+  }
+
+  .gyl {
+    font-size: 50px;
+  }
+
+  .wel {
+    width: 355px;
+  }
+
+  .user {
+    top: 5rem;
+    right: 3.5rem;
+  }
+
+  .password {
+    top: 8rem;
+    right: 3.5rem;
+  }
+
+  input {
+
+    width: 12rem;
+  }
+
+  .rem {
+    top: 11rem;
+    right: 14.3rem;
+  }
+
+  .fg {
+    top: 11rem;
+    right: 3.5rem;
+  }
+
+  .btn {
+    top: 14rem;
+    width: 15rem;
+  }
+
+}
