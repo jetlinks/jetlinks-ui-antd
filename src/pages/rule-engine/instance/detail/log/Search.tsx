@@ -1,6 +1,6 @@
 import React from 'react';
 import Form, { FormComponentProps } from 'antd/lib/form';
-import { Row, Col, Button, DatePicker, Input } from 'antd';
+import { Select, Row, Col, Button, DatePicker } from 'antd';
 import moment, { Moment } from 'moment';
 
 const { RangePicker } = DatePicker;
@@ -40,7 +40,7 @@ const Search: React.FC<Props> = props => {
   return (
     <Form {...formItemLayout}>
       <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-        <Col span={12}>
+        <Col span={10}>
           <Form.Item label="时间">
             {getFieldDecorator('createTime$btw')(
               <RangePicker
@@ -51,8 +51,16 @@ const Search: React.FC<Props> = props => {
             )}
           </Form.Item>
         </Col>
-        <Col span={6}>
-          <Form.Item label="事件">{getFieldDecorator('event')(<Input />)}</Form.Item>
+        <Col span={8}>
+          <Form.Item label="LEVEL">
+            {getFieldDecorator('level')(
+              <Select placeholder="请选择">
+                <Select.Option value="error">ERROR</Select.Option>
+                <Select.Option value="warning">WARNING</Select.Option>
+                <Select.Option value="debug">DEBUG</Select.Option>
+              </Select>,
+            )}
+          </Form.Item>
         </Col>
 
         <Col span={6}>

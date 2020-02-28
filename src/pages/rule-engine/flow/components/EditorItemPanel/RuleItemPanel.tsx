@@ -29,10 +29,21 @@ const RuleItemPanel: React.FC<Props> = () => {
     });
   }, []);
 
+  // const temps = items.forEach(type => {
+  //   type.items.forEach(item => supportNode.some(i => i === item.model.executor ? item : null))
+  // }
+  // );
+
   const renderItems = () =>
+    // const temp = items.filter(data => {
+    //   data.items = data.items.filter(item => supportNode.indexOf(item.model.executor) !== -1);
+    //   return data.items.length > 0;
+    // });
+    // console.log(temp, supportNode, 'items');
     items.map(
       type =>
-        type.items.length > 0 && (
+        type.items.length > 0 &&
+        type.items.filter(it => supportNode.indexOf(it.model.executor) !== -1).length > 0 && (
           <Panel header={type.title} key={type.key}>
             <div style={{ textAlign: 'center' }}>
               {type.items.length > 0 &&

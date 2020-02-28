@@ -83,12 +83,12 @@ export default {
   routes: [
     {
       path: '/user',
-      component: '../layouts/UserLayout',
+      // component: '../layouts/UserLayout',
       routes: [
         {
           name: 'login',
           path: '/user/login',
-          component: './user/login',
+          component: './user/login2',
         },
       ],
     },

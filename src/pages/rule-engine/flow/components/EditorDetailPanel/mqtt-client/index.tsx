@@ -152,9 +152,9 @@ const MqttClient: React.FC<Props> = props => {
             <Col
               key={item.key}
               {...item.styles}
-              onBlur={() => {
-                saveModelData();
-              }}
+              // onBlur={() => {
+              //   saveModelData();
+              // }}
             >
               <Form.Item label={item.label} {...item.formStyle}>
                 {getFieldDecorator<string>(item.key, {

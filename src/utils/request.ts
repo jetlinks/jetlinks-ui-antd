@@ -53,7 +53,7 @@ const errorHandler = (error: { response: Response }): Response | undefined => {
       if (resp) {
         notification.error({
           key: 'error',
-          message: resp,
+          message: JSON.parse(resp).message,
         });
       } else {
         response.json().then((res: any) => {

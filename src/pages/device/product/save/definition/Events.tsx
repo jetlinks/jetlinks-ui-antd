@@ -37,8 +37,9 @@ const Events: React.FC<Props> = props => {
   };
 
   const deleteItem = (item: EventsMeta) => {
-    setData(data.filter(e => e.id !== item.id));
-    props.save(data);
+    const temp = data.filter(e => e.id !== item.id);
+    setData(temp);
+    props.save(temp);
   };
 
   const columns: ColumnProps<EventsMeta>[] = [

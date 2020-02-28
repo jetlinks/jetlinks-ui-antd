@@ -221,8 +221,8 @@ const BasicNode: React.FC<Props> = props => {
       printLog({ level: 'info', content: `执行节点\t:\t${model.label} \t ${runParam} ...` });
       apis.ruleEngine
         .debugNode(debugSession, {
-          id: model.nodeId,
-          nodeId: model.nodeId,
+          id: model.id,
+          nodeId: model.id,
           executor: model.executor,
           configuration: model.config,
         })

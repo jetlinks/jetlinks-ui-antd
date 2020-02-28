@@ -1,10 +1,12 @@
-import { message } from 'antd';
+// import { message } from 'antd';
 
 export const dva = {
   config: {
     onError(err: ErrorEvent) {
       err.preventDefault();
-      message.error(err.message);
+      // eslint-disable-next-line no-console
+      console.error(err.message);
+      // message.error(err.message);
     },
   },
 };
