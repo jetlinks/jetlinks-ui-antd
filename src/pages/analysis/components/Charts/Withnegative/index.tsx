@@ -45,7 +45,7 @@ class Withnegative extends React.Component<IGaugeProps> {
             name="value"
             label={{
               formatter: val => {
-                return (val / 10000).toFixed(1) + "k";
+                return (val / 1000).toFixed(1) + "k";
               }
             }}
           />
