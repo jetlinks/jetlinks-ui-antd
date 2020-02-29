@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import style from './index.css';
+import style from './index.less';
 import { connect } from 'dva';
 import { Dispatch, ConnectState } from '@/models/connect';
 
@@ -22,6 +22,7 @@ const Login: React.FC<Props> = props => {
 
   return (
     <div
+      className={style.login}
       onKeyUp={e => {
         if (e.keyCode === 13) {
           handleSubmit();
@@ -38,13 +39,13 @@ const Login: React.FC<Props> = props => {
 
         <div className={style.user}>
           <div className={style.userLabel}>用户名</div>
-          <input onChange={e => setUsername(e.target.value)} value={username} type="text" />
+          <input style={{ borderStyle: 'none none solid none' }} onChange={e => setUsername(e.target.value)} value={username} type="text" />
         </div>
         <div className={style.password}>
           <div className={style.userLabel}>
             密<span style={{ marginLeft: '1em' }} />码
           </div>
-          <input onChange={e => setPassword(e.target.value)} value={password} type="password" />
+          <input style={{ borderStyle: 'none none solid none' }} onChange={e => setPassword(e.target.value)} value={password} type="password" />
         </div>
         <div className={style.rem}>
           <input type="checkbox" name="" id="" value="" />
