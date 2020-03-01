@@ -172,31 +172,6 @@ const SalesCard = ({
                     30天
                   </Radio.Button>
                 </Radio.Group>
-
-                {/*<a className={styles.currentDate} onClick={() => {
-                  deviceTime('1h');
-                  setTime(timeMap['1h']);
-                }}>
-                  <FormattedMessage id="analysis.analysis.anHour" defaultMessage="An Hour"/>
-                </a>
-                <a onClick={() => {
-                  deviceTime('1d');
-                  setTime(timeMap['1d']);
-                }}>
-                  <FormattedMessage id="analysis.analysis.all-day" defaultMessage="All Day"/>
-                </a>
-                <a onClick={() => {
-                  deviceTime('7d');
-                  setTime(timeMap['7d']);
-                }}>
-                  <FormattedMessage id="analysis.analysis.all-week" defaultMessage="All Week"/>
-                </a>
-                <a onClick={() => {
-                  deviceTime('30d');
-                  setTime(timeMap['30d']);
-                }}>
-                  <FormattedMessage id="analysis.analysis.all-month" defaultMessage="All Month"/>
-                </a>*/}
               </div>
               <DatePicker showTime defaultValue={moment(new Date(), 'yyyy-MM-dd HH:mm:ss')}
                           placeholder="结束时间" onOk={onOk} format="YYYY-MM-DD HH:mm:ss"/>
