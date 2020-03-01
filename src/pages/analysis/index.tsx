@@ -129,16 +129,8 @@ class Analysis extends Component<analysisProps, analysisState> {
       searchData,
       offlineData,
       offlineChartData,
-      salesTypeData,
-      salesTypeDataOnline,
-      salesTypeDataOffline,
+      salesPieData,
     } = getFakeChartData;
-    let salesPieData;
-    if (salesType === 'all') {
-      salesPieData = salesTypeData;
-    } else {
-      salesPieData = salesType === 'online' ? salesTypeDataOnline : salesTypeDataOffline;
-    }
 
     const activeKey = currentTabKey || (offlineData[0] && offlineData[0].name);
     return (
@@ -160,10 +152,7 @@ class Analysis extends Component<analysisProps, analysisState> {
             <Col xl={12} lg={24} md={24} sm={24} xs={24}>
               <Suspense fallback={null}>
                 <ProportionSales
-                  salesType={salesType}
                   loading={loading}
-                  salesPieData={salesPieData}
-                  handleChangeSalesType={this.handleChangeSalesType}
                 />
               </Suspense>
             </Col>

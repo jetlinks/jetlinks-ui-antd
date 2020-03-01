@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Col, DatePicker, Icon, Row, Tabs } from 'antd';
+import { Card, Col, DatePicker, Icon, Radio, Row, Tabs } from 'antd';
 import { FormattedMessage } from 'umi-plugin-react/locale';
 import Charts from './Charts';
 import styles from '../style.less';
@@ -56,9 +56,11 @@ const SalesCard = ({
   };
 
   useEffect(() => {
-    gatewayMonitor(calculationDate(30), calculationDate(0), '12h');
+    let da = new Date();
+    da.setHours(da.getHours() - 1);
+    gatewayMonitor(da, calculationDate(0), '1m');
     setSelectionTime(calculationDate(0));
-    setTime('12h');
+    setTime('1m');
   }, []);
 
   gatewayMonitor = (from: string, to: string, time: string) => {
@@ -67,10 +69,10 @@ const SalesCard = ({
 
     if (time === '1m') {
       formatData = 'HH时mm分';
-    }else if(time === "12h"){
-      formatData="MM月dd日HH时";
-    }else{
-      formatData="MM月dd日HH时mm分";
+    } else if (time === '12h') {
+      formatData = 'MM月dd日HH时';
+    } else {
+      formatData = 'MM月dd日HH时mm分';
     }
     const list = [
       {
@@ -100,8 +102,8 @@ const SalesCard = ({
               year: item.data.timeString,
               消息量: item.data.value,
             });
-            if (item.data.timestamp % 4 === 0 && item.data.timestamp !== 0){
-              ticksList.push(item.data.timeString)
+            if (item.data.timestamp % 4 === 0 && item.data.timestamp !== 0) {
+              ticksList.push(item.data.timeString);
             }
           });
           setTicksDataList(ticksList);
@@ -110,8 +112,9 @@ const SalesCard = ({
       });
   };
 
-  const deviceTime = (value: string) => {
-
+  function deviceTime(e) {
+    const value = e.target.value;
+    setTime(timeMap[value]);
     const dd = new Date(selectionTime);
 
     if (value === '1h') {
@@ -126,7 +129,7 @@ const SalesCard = ({
 
     gatewayMonitor(formatData(dd), formatData(new Date()), timeMap[value]);
     //setCurrentTime(dd);
-  };
+  }
 
   const formatData = (value: string) => {
     const dd = new Date(value);
@@ -155,7 +158,22 @@ const SalesCard = ({
           tabBarExtraContent={
             <div className={styles.salesExtraWrap}>
               <div className={styles.salesExtra}>
-                <a onClick={() => {
+                <Radio.Group defaultValue="1h" onChange={deviceTime}>
+                  <Radio.Button value="1h">
+                    1小时
+                  </Radio.Button>
+                  <Radio.Button value="1d">
+                    1天
+                  </Radio.Button>
+                  <Radio.Button value="7d">
+                    7天
+                  </Radio.Button>
+                  <Radio.Button value="30d">
+                    30天
+                  </Radio.Button>
+                </Radio.Group>
+
+                {/*<a className={styles.currentDate} onClick={() => {
                   deviceTime('1h');
                   setTime(timeMap['1h']);
                 }}>
@@ -173,12 +191,12 @@ const SalesCard = ({
                 }}>
                   <FormattedMessage id="analysis.analysis.all-week" defaultMessage="All Week"/>
                 </a>
-                <a className={styles.currentDate} onClick={() => {
+                <a onClick={() => {
                   deviceTime('30d');
                   setTime(timeMap['30d']);
                 }}>
                   <FormattedMessage id="analysis.analysis.all-month" defaultMessage="All Month"/>
-                </a>
+                </a>*/}
               </div>
               <DatePicker showTime defaultValue={moment(new Date(), 'yyyy-MM-dd HH:mm:ss')}
                           placeholder="结束时间" onOk={onOk} format="YYYY-MM-DD HH:mm:ss"/>
