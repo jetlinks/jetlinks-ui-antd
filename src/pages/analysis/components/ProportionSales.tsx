@@ -115,7 +115,7 @@ const ProportionSales = ({
       className={styles.salesCard}
       bordered={false}
       title={
-        '各类型设备占比'
+        '各型号设备占比'
       }
       bodyStyle={{ padding: 24 }}
       extra={
