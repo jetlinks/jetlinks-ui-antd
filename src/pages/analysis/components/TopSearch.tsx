@@ -44,13 +44,10 @@ const TopSearch = ({ loading }: { loading: boolean; }) => {
 
   const [productDataList, setProductDataList] = useState(initState.productDataList);
   const [defaultList, setDefaultList] = useState(initState.defaultList);
-  const [dataList, setDataList] = useState(initState.dataList);
-  const [stateType, setState] = useState(initState.state);
   const [productId, setProductId] = useState(initState.productId);
   const [productData, setProductData] = useState(initState.productData);
 
   const [gatewayData, setGatewayData] = useState(initState.gatewayDataList);
-  const [ticksDataList, setTicksDataList] = useState(initState.ticksDataList);
   const [time, setTime] = useState(initState.time);
   const [selectionTime, setSelectionTime] = useState(initState.selectionTime);
 
@@ -58,13 +55,6 @@ const TopSearch = ({ loading }: { loading: boolean; }) => {
     const dd = new Date();
     dd.setDate(dd.getDate() - val);
     return `${dd.getFullYear()}-${(dd.getMonth() + 1) < 10 ? `0${dd.getMonth() + 1}` : (dd.getMonth() + 1)}-${dd.getDate() < 10 ? `0${dd.getDate()}` : dd.getDate()} ${dd.getHours() < 10 ? `0${dd.getHours()}` : dd.getHours()}:${dd.getMinutes() < 10 ? `0${dd.getMinutes()}` : dd.getMinutes()}:${dd.getSeconds() < 10 ? `0${dd.getSeconds()}` : dd.getSeconds()}`;
-  };
-
-  const timeMap = {
-    '1h': '1m',
-    '1d': '24m',
-    '7d': '168m',
-    '30d': '12h',
   };
 
   useEffect(() => {
@@ -86,9 +76,9 @@ const TopSearch = ({ loading }: { loading: boolean; }) => {
           let da = new Date();
           da.setHours(da.getHours() - 1);
           setSelectionTime(calculationDate(0));
-          setTime('1m');
+          setTime('1d');
 
-          gatewayMonitor(formatData(da), calculationDate(0), '1m',defaultList);
+          gatewayMonitor(formatData(da), calculationDate(0), '1d',defaultList);
         }
       })
       .catch(() => {
@@ -96,16 +86,6 @@ const TopSearch = ({ loading }: { loading: boolean; }) => {
   }, []);
 
   gatewayMonitor = (from, to, time, productId) => {
-
-    let formatData = '';
-
-    if (time === '1m') {
-      formatData = 'HH时mm分';
-    } else if (time === '12h') {
-      formatData = 'MM月dd日HH时';
-    } else {
-      formatData = 'MM月dd日HH时mm分';
-    }
     const list = [];
     productId.forEach(item => {
       list.push({
@@ -116,8 +96,8 @@ const TopSearch = ({ loading }: { loading: boolean; }) => {
         'group': item,
         'params': {
           'productId': item,
-          'time': time || '1m',
-          'format': formatData,
+          'time': time || '1h',
+          'format': 'yyyy-MM-dd HH:mm:ss',
           'from': from,
           'to': to,
         },
@@ -152,7 +132,7 @@ const TopSearch = ({ loading }: { loading: boolean; }) => {
 
   function deviceTime(e) {
     const value = e.target.value;
-    setTime(timeMap[value]);
+    setTime(value);
     const dd = new Date(selectionTime);
 
     if (value === '1h') {
@@ -164,7 +144,7 @@ const TopSearch = ({ loading }: { loading: boolean; }) => {
     } else if (value === '30d') {
       dd.setDate(dd.getDate() - 30);
     }
-    gatewayMonitor(formatData(dd), formatData(new Date()), timeMap[value], productId);
+    gatewayMonitor(formatData(dd), formatData(new Date()), value, productId);
   }
 
   const formatData = (value: string) => {
@@ -175,13 +155,13 @@ const TopSearch = ({ loading }: { loading: boolean; }) => {
   function onOk(value) {
     setSelectionTime(value);
     const dd = new Date(value);
-    if (time === '1m') {
+    if (time === '1h') {
       dd.setHours(dd.getHours() - 1);
-    } else if (time === '24m') {
+    } else if (time === '1d') {
       dd.setDate(dd.getDate() - 1);
-    } else if (time === '168m') {
+    } else if (time === '7d') {
       dd.setDate(dd.getDate() - 7);
-    } else if (time === '12h') {
+    } else if (time === '30d') {
       dd.setDate(dd.getDate() - 30);
     }
     gatewayMonitor(formatData(dd), formatData(value), time, productId);
