@@ -7,7 +7,6 @@ import styles from './style.less';
 import PageLoading from './components/PageLoading';
 import { Dispatch } from 'redux';
 import { IAnalysisData } from './data.d';
-import { RadioChangeEvent } from 'antd/es/radio';
 import { GridContent } from '@ant-design/pro-layout';
 import getFakeChartData from './mock-data';
 
@@ -69,18 +68,6 @@ class Analysis extends Component<analysisProps, analysisState> {
     clearTimeout(this.timeoutId);
   }
 
-  handleChangeSalesType = (e: RadioChangeEvent) => {
-    this.setState({
-      salesType: e.target.value,
-    });
-  };
-
-  handleTabChange = (key: string) => {
-    this.setState({
-      currentTabKey: key,
-    });
-  };
-
   handleRangePickerChange = (rangePickerValue: RangePickerValue) => {
     const { dispatch } = this.props;
     this.setState({
@@ -119,28 +106,12 @@ class Analysis extends Component<analysisProps, analysisState> {
   };
 
   render() {
-    const { rangePickerValue, salesType, currentTabKey } = this.state;
-    const { analysis, loading } = this.props;
+    const { loading } = this.props;
     const {
       visitData,
       messageData,
-      visitData2,
-      salesData,
-      searchData,
-      offlineData,
-      offlineChartData,
-      salesTypeData,
-      salesTypeDataOnline,
-      salesTypeDataOffline,
     } = getFakeChartData;
-    let salesPieData;
-    if (salesType === 'all') {
-      salesPieData = salesTypeData;
-    } else {
-      salesPieData = salesType === 'online' ? salesTypeDataOnline : salesTypeDataOffline;
-    }
 
-    const activeKey = currentTabKey || (offlineData[0] && offlineData[0].name);
     return (
       <GridContent>
         <React.Fragment>
@@ -149,7 +120,6 @@ class Analysis extends Component<analysisProps, analysisState> {
           </Suspense>
           <Suspense fallback={null}>
             <SalesCard
-             /* rangePickerValue={rangePickerValue}*/
               isActive={this.isActive}
               handleRangePickerChange={this.handleRangePickerChange}
               loading={loading}
@@ -160,22 +130,14 @@ class Analysis extends Component<analysisProps, analysisState> {
             <Col xl={12} lg={24} md={24} sm={24} xs={24}>
               <Suspense fallback={null}>
                 <ProportionSales
-                  salesType={salesType}
                   loading={loading}
-                  salesPieData={salesPieData}
-                  handleChangeSalesType={this.handleChangeSalesType}
                 />
               </Suspense>
             </Col>
             <Col xl={12} lg={24} md={24} sm={24} xs={24}>
               <Suspense fallback={null}>
                 <TopSearch
-                  rangePickerValue={rangePickerValue}
-                  salesData={salesData}
-                  isActive={this.isActive}
-                  handleRangePickerChange={this.handleRangePickerChange}
                   loading={loading}
-                  selectDate={this.selectDate}
                 />
               </Suspense>
             </Col>
