@@ -5,6 +5,7 @@ import { IVisitData, IRadarData, IAnalysisData, ISalesData, IGatewayData } from 
 const visitData: IVisitData[] = [];
 const messageData :IVisitData[] = [];
 const gatewayData :IGatewayData[] = [];
+const salesPieData :ISalesData[] = [];
 
 const beginDay = new Date().getTime();
 
@@ -34,82 +35,6 @@ for (let i = 0; i < 50; i += 1) {
     status: Math.floor((Math.random() * 10) % 2),
   });
 }
-const salesTypeData = [
-  {
-    x: '智能门锁',
-    y: 4544,
-  },
-  {
-    x: '台灯',
-    y: 3321,
-  },
-  {
-    x: '网关',
-    y: 3113,
-  },
-  {
-    x: '空调',
-    y: 2341,
-  },
-  {
-    x: '烟感',
-    y: 1231,
-  },
-  {
-    x: '其他',
-    y: 1231,
-  },
-];
-
-const salesTypeDataOnline = [
-  {
-    x: '智能门锁',
-    y: 244,
-  },
-  {
-    x: '烟感设备',
-    y: 321,
-  },
-  {
-    x: '智能空调',
-    y: 311,
-  },
-  {
-    x: '蓝牙网关',
-    y: 41,
-  },
-  {
-    x: '智能音响',
-    y: 121,
-  },
-  {
-    x: '其他',
-    y: 111,
-  },
-];
-
-const salesTypeDataOffline = [
-  {
-    x: '智能台灯',
-    y: 99,
-  },
-  {
-    x: '烟感器',
-    y: 188,
-  },
-  {
-    x: '智能冰箱',
-    y: 344,
-  },
-  {
-    x: '智能插座',
-    y: 255,
-  },
-  {
-    x: '其他',
-    y: 65,
-  },
-];
 
 const offlineData = [];
 for (let i = 0; i < 10; i += 1) {
@@ -182,9 +107,7 @@ const getFakeChartData: IAnalysisData = {
   searchData,
   offlineData,
   offlineChartData,
-  salesTypeData,
-  salesTypeDataOnline,
-  salesTypeDataOffline,
+  salesPieData,
   radarData,
   gatewayData,
 };

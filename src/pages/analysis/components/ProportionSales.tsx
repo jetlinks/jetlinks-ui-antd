@@ -17,11 +17,7 @@ export interface State {
   productData:any;
 }
 
-const ProportionSales = ({
-                           loading,
-                         }: {
-  loading: boolean;
-}) => {
+const ProportionSales = ({ loading, }: { loading: boolean; }) => {
 
   const initState: State = {
     productDataList: [],
@@ -66,6 +62,7 @@ const ProportionSales = ({
       message.error('设备型号最多只能勾选6个');
       return false;
     }
+    setProductId(value);
     deviceStatus(value, stateType);
   }
 
@@ -139,11 +136,12 @@ const ProportionSales = ({
     >
       <div
         style={{
-          minHeight: 380,
+          minHeight: 360,
         }}
       >
         <div>
           <Select mode="tags" defaultValue={defaultList} maxTagTextLength={3}
+                  maxTagCount={3}
                   style={{ width: '50%', float: 'right', marginBottom: 32 }}
                   placeholder="设备型号" onChange={handleChange}>
             {productDataList}
@@ -153,25 +151,15 @@ const ProportionSales = ({
           <h4 style={{ marginTop: 8, marginBottom: 32, width: '40%' }}>
             数量统计
           </h4>
-          {
-            dataList.length > 0 ? <Pie
-              hasLegend
-              subTitle={'总设备数'}
-              total={() => <span>{dataList.reduce((pre, now) => now.y + pre, 0)}</span>}
-              data={dataList}
-              valueFormat={value => <span>{value}</span>}
-              height={248}
-              lineWidth={4}
-            /> : <Pie
-              hasLegend
-              subTitle={'总设备数'}
-              total={0}
-              data={dataList}
-              valueFormat={value => <span>{value}</span>}
-              height={248}
-              lineWidth={4}
-            />
-          }
+          <Pie
+            hasLegend
+            subTitle={'总设备数'}
+            total={() => <span>{dataList.reduce((pre, now) => now.y + pre, 0)}</span>}
+            data={dataList}
+            valueFormat={value => <span>{value}</span>}
+            height={280}
+            lineWidth={4}
+          />
         </div>
       </div>
     </Card>

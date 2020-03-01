@@ -1,55 +1,33 @@
-import React from "react";
-import {
-  G2,
-  Chart,
-  Geom,
-  Axis,
-  Tooltip,
-  Coord,
-  Label,
-  Legend,
-  View,
-  Guide,
-  Shape,
-  Facet,
-  Util
-} from "bizcharts";
-import DataSet from "@antv/data-set";
+import React from 'react';
+import { Axis, Chart, Coord, Geom, Legend, Tooltip } from 'bizcharts';
+import DataSet from '@antv/data-set';
+import autoHeight from '@/pages/analysis/components/Charts/autoHeight';
 
-class Grouped extends React.Component {
-  render() {
-    const data = [
-      {
-        label: "Monday",
-        series1: 2800,
-        series2: 2260
-      },
-      {
-        label: "Tuesday",
-        series1: 1800,
-        series2: 1300
-      },
-      {
-        label: "Wednesday",
-        series1: 950,
-        series2: 900
-      },
-      {
-        label: "Thursday",
-        series1: 500,
-        series2: 390
-      },
-      {
-        label: "Friday",
-        series1: 170,
-        series2: 100
-      }
-    ];
+export interface IGaugeProps {
+  color?: string;
+  height?: number;
+  bgColor?: number;
+  datas: Array<{
+    x: string;
+    消息量: number;
+  }>;
+  forceFit?: boolean;
+  style?: React.CSSProperties;
+  formatter: (value: string) => string;
+}
+
+class Grouped  extends React.Component<IGaugeProps> {
+    render() {
+      const {
+        data,
+        height = 1,
+      } = this.props;
+
     const ds = new DataSet();
     const dv = ds.createView().source(data);
     dv.transform({
       type: "fold",
-      fields: ["series1", "series2"],
+      fields: ["消息量"],
       // 展开字段集
       key: "type",
       // key字段
@@ -57,7 +35,7 @@ class Grouped extends React.Component {
     });
     return (
       <div>
-        <Chart height={385} data={dv} forceFit>
+        <Chart height={height} data={dv} forceFit>
           <Legend />
           <Coord transpose scale={[1, -1]} />
           <Axis
@@ -85,4 +63,4 @@ class Grouped extends React.Component {
   }
 }
 
-export default Grouped;
+export default autoHeight()(Grouped);

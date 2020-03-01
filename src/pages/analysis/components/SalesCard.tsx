@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Col, DatePicker, Icon, Radio, Row, Tabs } from 'antd';
-import { FormattedMessage } from 'umi-plugin-react/locale';
+import { Card, Col, DatePicker, Radio, Row, Tabs } from 'antd';
 import Charts from './Charts';
 import styles from '../style.less';
 import apis from '@/services';
 import moment from 'moment';
-import { RangePickerValue } from 'antd/es/date-picker/interface';
 
 const { Withnegative } = Charts;
 const { TabPane } = Tabs;
@@ -18,16 +16,7 @@ export interface State {
   selectionTime: string
 }
 
-const SalesCard = ({
-   loading,
-   isActive,
-   handleRangePickerChange,
- }: {
-   loading: boolean;
-   isActive: (key: '1h' | '1d' | '7d' | '30d') => string;
-   handleRangePickerChange: (dates: RangePickerValue, dateStrings: [string, string]) => void;
- },
-) => {
+const SalesCard = ({ loading }: { loading: boolean; }) => {
   let gatewayMonitor: (from: string, to: string, time: string) => void;
   const initState: State = {
     gatewayDataList: [],
@@ -58,7 +47,7 @@ const SalesCard = ({
   useEffect(() => {
     let da = new Date();
     da.setHours(da.getHours() - 1);
-    gatewayMonitor(da, calculationDate(0), '1m');
+    gatewayMonitor(formatData(da), calculationDate(0), '1m');
     setSelectionTime(calculationDate(0));
     setTime('1m');
   }, []);
@@ -82,7 +71,7 @@ const SalesCard = ({
         'dimension': 'agg',
         'group': 'sameDay',
         'params': {
-          'time': time || '12h',
+          'time': time || '1m',
           'limit': 60,
           'format': formatData,
           'from': from,
