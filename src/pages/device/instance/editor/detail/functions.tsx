@@ -1,11 +1,11 @@
-import React, { useEffect, useState, Fragment } from "react";
-import ChartCard from "@/pages/analysis/components/Charts/ChartCard";
-import { Tooltip, Icon, Row, Col, Tag, Badge, Spin, message } from "antd";
-import { IVisitData } from "@/pages/analysis/data";
-import moment from "moment";
-import apis from "@/services";
-import EventLog from "./event-log/EventLog";
-import encodeQueryParam from "@/utils/encodeParam";
+import React, { useEffect, useState } from 'react';
+import ChartCard from '@/pages/analysis/components/Charts/ChartCard';
+import { Col, Icon, Row, Spin, Tooltip } from 'antd';
+import { IVisitData } from '@/pages/analysis/data';
+import moment from 'moment';
+import apis from '@/services';
+import FunctionDebug from './function-debug/index';
+import encodeQueryParam from '@/utils/encodeParam';
 
 interface Props {
     device: any
@@ -18,8 +18,7 @@ interface State {
     metadata: any;
     functionsData: any[];
     deviceState: any;
-    // currentEvent: any;
-    // currentEventData: any;
+    functionsInfo: any;
 }
 const topColResponsiveProps = {
     xs: 24,
@@ -50,7 +49,8 @@ const Functions: React.FC<Props> = (props) => {
         functionsVisible: false,
         metadata: {},
         functionsData: [],
-        deviceState: {}
+        deviceState: {},
+        functionsInfo: {}
     };
 
     const [runInfo, setRunInfo] = useState(initState.runInfo);
@@ -58,6 +58,7 @@ const Functions: React.FC<Props> = (props) => {
     const [metadata, setMetadata] = useState(initState.metadata);
     const [functionsData, setFunctionsData] = useState(initState.functionsData);
     const [ setDeviceState] = useState(initState.deviceState);
+    const [ functonsInfo,setFunctionsInfo] = useState(initState.functionsInfo);
 
     useEffect(() => {
         loadRunInfo();
@@ -83,9 +84,11 @@ const Functions: React.FC<Props> = (props) => {
                 terms: { deviceId: props.device.id }
               })
             ).then(response => {
-              const data = response.result;
-              functionsData.push({ functionsId: fun.id, data });
-              setFunctionsData([...functionsData]);
+              const tempResult = response?.result;
+              if (tempResult) {
+                functionsData.push({ functionsId: fun.id, tempResult });
+                setFunctionsData([...functionsData]);
+              }
               fun.loading = false;
             }).catch(() => {
               fun.loading = false;
@@ -129,23 +132,15 @@ const Functions: React.FC<Props> = (props) => {
             terms: { deviceId: props.device.id }
         })
       ).then(response => {
-        functionsData.forEach(i => {
+        const tempResult = response?.result;
+        if (tempResult) {
+          functionsData.forEach(i => {
             if (i.functionsId === item.id) {
-                i.data = response.result;
+              i.data = tempResult;
             }
-        });
-        setFunctionsData([...functionsData]);
-
-        // //修改加载状态
-        // let tempFunctions = functions.map((i: any) => {
-        //   if (i.id === item.id) {
-        //     i.loading = false;
-        //   }
-        //   return i;
-        // });
-
-        metadata.functions = tempFunctions;
-        setMetadata({ ...metadata });
+          });
+          setFunctionsData([...functionsData]);
+        }
 
       }).catch(() => {
 
@@ -181,8 +176,9 @@ const Functions: React.FC<Props> = (props) => {
                                                     style={{ float: "right" }}
                                                     onClick={() => {
                                                         setFunctionsVisible(true);
+                                                        setFunctionsInfo(item);
                                                     }}>
-                                                    查看详情
+                                                    功能调试
                                                 </a>
                                             </span>
                                         </ChartCard>
@@ -191,11 +187,10 @@ const Functions: React.FC<Props> = (props) => {
 
                                     {
                                       functionsVisible &&
-                                        <EventLog
-                                            data={tempData?.data}
-                                            item={item}
+                                        <FunctionDebug
+                                            item={functonsInfo}
                                             close={() => { setFunctionsVisible(false) }}
-                                            type={props.device.productId}
+                                            type={functonsInfo.id}
                                             deviceId={props.device.id}
                                         />
                                     }
