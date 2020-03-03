@@ -53,7 +53,7 @@ const CoapClient: React.FC<Props> = props => {
     <Modal
       visible
       width={840}
-      title="调试TCP客户端"
+      title="调试COAP客户端"
       onCancel={() => props.close()}
       footer={
         <Fragment>

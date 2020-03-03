@@ -99,6 +99,12 @@ export async function propertieInfo(deviceId: string, params: any) {
     params,
   });
 }
+export async function invokedFunction(deviceId: string,functionId: string, data: any) {
+  return request(`/jetlinks/device/invoked/${deviceId}/function/${functionId}`, {
+    method: 'POST',
+    data,
+  });
+}
 
 // export async function deployAll() {
 //     return request(`/jetlinks/device-instance/deploy`, {
