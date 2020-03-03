@@ -63,8 +63,8 @@ const Save: React.FC<Props> = props => {
         return (
           <>
             <Form.Item label="脚本语言">
-              {getFieldDecorator('parserConfiguration.lang', {
-                initialValue: props.data?.parserConfiguration?.lang,
+              {getFieldDecorator('configuration.parserConfiguration.lang', {
+                initialValue: props.data?.configuration.parserConfiguration?.lang,
               })(
                 <Radio.Group buttonStyle="solid">
                   <Radio.Button value="javascript">JavaScript</Radio.Button>
@@ -73,8 +73,8 @@ const Save: React.FC<Props> = props => {
               )}
             </Form.Item>
             <Form.Item label="解析脚本">
-              {getFieldDecorator('parserConfiguration.script', {
-                initialValue: props.data?.parserConfiguration?.script,
+              {getFieldDecorator('configuration.parserConfiguration.script', {
+                initialValue: props.data?.configuration.parserConfiguration?.script,
               })(<Input.TextArea rows={3} />)}
             </Form.Item>
           </>
