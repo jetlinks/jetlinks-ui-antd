@@ -118,7 +118,7 @@ const Status: React.FC<Props> = (props) => {
                     })
                 ).then(response => {
                     const data = response.result;
-                    eventData.push({ eventId: event.id, data })
+                    eventData.push({ eventId: event.id, data });
                     setEventData([...eventData])
                 }).catch(() => {
 
@@ -126,35 +126,20 @@ const Status: React.FC<Props> = (props) => {
             });
             setMetadata(metadata);
 
-            const list = [];
-            properties.map((i: any) => {
-              list.push({
-                "dashboard":"device",
-                "object":props.device.productId,
-                "measurement":i.id,
-                "dimension":"realTime",
-                "group":i.id,
-                "params":{
-                  "deviceId":props.device.id,
-                  "history":10
-                }
-              });
-            });
-
             if (source) {
               source.close();
             }
 
             source = new EventSource(
-              wrapAPI(`/jetlinks/dashboard/_multi?:X_Access_Token=${getAccessToken()}&requestJson=${encodeURI(JSON.stringify(list))}`)
+              wrapAPI(`/jetlinks/dashboard/device/${props.device.productId}/properties/realTime?:X_Access_Token=${getAccessToken()}&deviceId=${props.device.id}&history=15`)
             );
             source.onmessage = e => {
 
-              const data = JSON.parse(e.data);
+             const data = JSON.parse(e.data);
 
-              const dataValue = data.data.value;
+              const dataValue = data.value;
               metadata.properties = properties.map((item: any) => {
-                if (item.id === data.group) {
+                if (item.id === dataValue.property) {
                   // eslint-disable-next-line no-param-reassign
                   item.formatValue = dataValue?.formatValue ? dataValue.formatValue : "--";
                   if (item.valueType.type === "int" || item.valueType.type === "float" || item.valueType.type === "double") {
@@ -163,7 +148,7 @@ const Status: React.FC<Props> = (props) => {
                     }
                     item.visitData.push(
                       {
-                        "x" : data.data.timeString,
+                        "x" : data.timeString,
                         "y" : Math.floor(Number(dataValue.value) * 100) / 100
                       }
                     )
