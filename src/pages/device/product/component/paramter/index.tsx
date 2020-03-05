@@ -320,7 +320,7 @@ const Paramter: React.FC<Props> = props => {
             </Button>
           </Form.Item>
         );
-      case 'geoPoint':
+      /*case 'geoPoint':
         return (
           <div>
             <Form.Item label="经度字段">
@@ -332,7 +332,7 @@ const Paramter: React.FC<Props> = props => {
                 }}
               />
             </Form.Item>
-            <Form.Item label="经度字段">
+            <Form.Item label="纬度字段">
               <Input
                 value={data.valueType.lonProperty}
                 onChange={event => {
@@ -342,7 +342,7 @@ const Paramter: React.FC<Props> = props => {
               />
             </Form.Item>
           </div>
-        );
+        );*/
       case 'password':
         return (
           <div>
@@ -427,7 +427,7 @@ const Paramter: React.FC<Props> = props => {
               <Select.Option value="enum">enum(枚举)</Select.Option>
               <Select.Option value="array">array(数组)</Select.Option>
               <Select.Option value="object">object(结构体)</Select.Option>
-              <Select.Option value="geoPoint">geoPoint(地里位置)</Select.Option>
+              <Select.Option value="geoPoint">geoPoint(地理位置)</Select.Option>
             </Select.OptGroup>
           </Select>
         </Form.Item>

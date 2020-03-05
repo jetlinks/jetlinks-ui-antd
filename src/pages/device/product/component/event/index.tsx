@@ -317,7 +317,7 @@ const EventDefin: React.FC<Props> = props => {
             )}
           </Form.Item>
         );
-      case 'geoPoint':
+      /*case 'geoPoint':
         return (
           <div>
             <Form.Item label="经度字段">
@@ -325,13 +325,13 @@ const EventDefin: React.FC<Props> = props => {
                 initialValue: initState.data.valueType?.latProperty,
               })(<Input placeholder="请输入经度字段" />)}
             </Form.Item>
-            <Form.Item label="维度字段">
+            <Form.Item label="纬度字段">
               {getFieldDecorator('valueType.lonProperty', {
                 initialValue: initState.data.valueType?.lonProperty,
-              })(<Input placeholder="请输入维度字段" />)}
+              })(<Input placeholder="请输入纬度字段" />)}
             </Form.Item>
           </div>
-        );
+        );*/
       case 'password':
         return (
           <div>
@@ -423,7 +423,7 @@ const EventDefin: React.FC<Props> = props => {
                 <Select.Option value="object">object(结构体)</Select.Option>
                 <Select.Option value="file">file(文件)</Select.Option>
                 <Select.Option value="password">password(密码)</Select.Option>
-                <Select.Option value="geoPoint">geoPoint(地里位置)</Select.Option>
+                <Select.Option value="geoPoint">geoPoint(地理位置)</Select.Option>
               </Select.OptGroup>
             </Select>,
           )}
