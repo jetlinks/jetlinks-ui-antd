@@ -23,7 +23,7 @@ const Paramter: React.FC<Props> = props => {
     dataType: props.data.valueType?.type || '',
     parameterVisible: false,
     data: { ...props.data },
-    enumData: props.data.valueType?.properties || [{ key: '', value: '', id: 0 }],
+    enumData: props.data.valueType?.properties || [{ text: '', value: '', id: 0 }],
     currentParameter: {},
   };
   const [dataType, setDataType] = useState(initState.dataType);
@@ -100,44 +100,71 @@ const Paramter: React.FC<Props> = props => {
             <Form.Item label="数据长度">
               <Input
                 addonAfter="字节"
-                value={data.length}
+                value={data.valueType.expands.maxLength}
                 onChange={event => {
-                  data.length = event.target.value;
+                  data.valueType.expands.maxLength = event.target.value;
                   setData({ ...data });
                 }}
               />
             </Form.Item>
           </div>
         );
-      case 'bool':
+      case 'boolean':
         return (
           <div>
-            <Form.Item label="布尔值">
-              <Input
-                addonBefore="0"
-                placeholder="如：关"
-                value={data.valueType.false}
-                onChange={event => {
-                  // const value = ;
-                  data.valueType.false = event.target.value;
-                  // data.valueType = value;
-                  setData({ ...data });
-                }}
-              />
-              <Form.Item>
+            <Form.Item label="布尔值" style={{ height: 69 }}>
+              <Col span={11}>
                 <Input
-                  addonBefore="1"
-                  placeholder="如：开"
-                  value={data.valueType.true}
+                  value={data.valueType.trueText}
+                  placeholder="trueText"
                   onChange={event => {
-                    // data.valueType = {
-                    //     true: event.target.value
-                    // };
-                    data.valueType.true = event.target.value;
+                    data.valueType.trueText = event.target.value;
                     setData({ ...data });
                   }}
                 />
-              </Form.Item>
+              </Col>
+              <Col span={2} push={1}>
+                ~
+              </Col>
+              <Col span={11}>
+                <Form.Item>
+                  <Input
+                    value={data.valueType.trueValue}
+                    placeholder="trueValue"
+                    onChange={event => {
+                      data.valueType.trueValue = event.target.value;
+                      setData({ ...data });
+                    }}
+                  />
+                </Form.Item>
+              </Col>
+            </Form.Item>
+            <Form.Item style={{ height: 69 }}>
+              <Col span={11}>
+                <Input
+                  value={data.valueType.falseText}
+                  placeholder="falseText"
+                  onChange={event => {
+                    data.valueType.falseText = event.target.value;
+                    setData({ ...data });
+                  }}
+                />
+              </Col>
+              <Col span={2} push={1}>
+                ~
+              </Col>
+              <Col span={11}>
+                <Form.Item>
+                  <Input
+                    value={data.valueType.falseValue}
+                    placeholder="falseValue"
+                    onChange={event => {
+                      data.valueType.falseValue = event.target.value;
+                      setData({ ...data });
+                    }}
+                  />
+                </Form.Item>
+              </Col>
             </Form.Item>
           </div>
         );
@@ -168,9 +195,9 @@ const Paramter: React.FC<Props> = props => {
           <div>
             <Form.Item label="元素类型">
               <Radio.Group
-                value={data.valueType.arrayType}
+                value={data.valueType.elementType}
                 onChange={e => {
-                  data.valueType.arrayType = e.target.value;
+                  data.valueType.elementType = e.target.value;
                   setData({ ...data });
                 }}
               >
@@ -214,9 +241,9 @@ const Paramter: React.FC<Props> = props => {
                   <Col span={10}>
                     <Input
                       placeholder="对该枚举项的描述"
-                      value={item.key}
+                      value={item.text}
                       onChange={event => {
-                        enumData[index].key = event.target.value;
+                        enumData[index].text = event.target.value;
                         setEnumData([...enumData]);
                       }}
                     />
@@ -293,6 +320,44 @@ const Paramter: React.FC<Props> = props => {
             </Button>
           </Form.Item>
         );
+      case 'geoPoint':
+        return (
+          <div>
+            <Form.Item label="经度字段">
+              <Input
+                value={data.valueType.latProperty}
+                onChange={event => {
+                  data.valueType.latProperty = event.target.value;
+                  setData({ ...data });
+                }}
+              />
+            </Form.Item>
+            <Form.Item label="经度字段">
+              <Input
+                value={data.valueType.lonProperty}
+                onChange={event => {
+                  data.valueType.lonProperty = event.target.value;
+                  setData({ ...data });
+                }}
+              />
+            </Form.Item>
+          </div>
+        );
+      case 'password':
+        return (
+          <div>
+            <Form.Item label="密码长度">
+              <Input
+                addonAfter="字节"
+                value={data.valueType.expands.maxLength}
+                onChange={event => {
+                  data.valueType.expands.maxLength = event.target.value;
+                  setData({ ...data });
+                }}
+              />
+            </Form.Item>
+          </div>
+        );
       default:
         return null;
     }
@@ -355,13 +420,14 @@ const Paramter: React.FC<Props> = props => {
               <Select.Option value="double">double(双精度浮点数)</Select.Option>
               <Select.Option value="float">float(单精度浮点数)</Select.Option>
               <Select.Option value="string">text(字符串)</Select.Option>
-              <Select.Option value="bool">bool(布尔型)</Select.Option>
+              <Select.Option value="boolean">bool(布尔型)</Select.Option>
               <Select.Option value="date">date(时间型)</Select.Option>
             </Select.OptGroup>
             <Select.OptGroup label="其他类型">
               <Select.Option value="enum">enum(枚举)</Select.Option>
               <Select.Option value="array">array(数组)</Select.Option>
               <Select.Option value="object">object(结构体)</Select.Option>
+              <Select.Option value="geoPoint">geoPoint(地里位置)</Select.Option>
             </Select.OptGroup>
           </Select>
         </Form.Item>

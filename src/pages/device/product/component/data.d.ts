@@ -7,7 +7,7 @@ export class FunctionMeta {
 
   inputs: Parameter[];
 
-  outputs: ValueType;
+  output: ValueType;
 
   isAsync: boolean | string;
 
@@ -39,15 +39,23 @@ export class ValueType {
 
   text?: string;
 
-  true?: string;
+  trueText?: string;
+
+  trueValue?: string;
+
+  falseText?: string;
+
+  falseValue?: string;
 
   length?: number;
 
-  false?: string;
+  latProperty:string;
+
+  lonProperty:string;
 
   dateTemplate?: string;
 
-  arrayType?: string;
+  elementType?: string;
 
   fileType?: string;
 
@@ -58,6 +66,12 @@ export class ValueType {
   elements?: any[];
 
   description: string;
+
+  expands: {
+    report: boolean;
+    readOnly: boolean;
+    maxLength:number;
+  };
 
   properties?: Parameter[];
 }

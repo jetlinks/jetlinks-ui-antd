@@ -32,11 +32,11 @@ const FunctionDefin: React.FC<Props> = props => {
     editVisible: false,
     currentItem: {},
     currentTarget: '',
-    dataType: props.data.outputs?.type || '',
+    dataType: props.data.output?.type || '',
     outputVisible: false,
     inputVisible: false,
-    enumData: props.data.outputs?.elements || [],
-    outputParameter: props.data.outputs?.properties || [],
+    enumData: props.data.output?.elements || [{ text: '', value: '', id: 0 }],
+    outputParameter: props.data.output?.properties || [],
     inputs: [],
     currentParameter: {},
   };
@@ -58,11 +58,11 @@ const FunctionDefin: React.FC<Props> = props => {
     form.validateFields((err: any, fieldValue: any) => {
       if (err) return;
       const {
-        outputs: { type },
+        output: { type },
       } = fieldValue;
       const data = fieldValue;
       if (type === 'object') {
-        data.outputs.properties = outputParameter;
+        data.output.properties = outputParameter;
       }
       props.save({ ...data, inputs });
     });
@@ -77,9 +77,8 @@ const FunctionDefin: React.FC<Props> = props => {
           <div>
             <Form.Item label="取值范围" style={{ height: 69 }}>
               <Col span={11}>
-                {getFieldDecorator('outputs.min', {
-                  rules: [{ required: true, message: '请输入最小值' }],
-                  initialValue: props.data.outputs?.min,
+                {getFieldDecorator('output.min', {
+                  initialValue: props.data.output?.min,
                 })(<Input placeholder="最小值" />)}
               </Col>
               <Col span={2} push={1}>
@@ -87,24 +86,21 @@ const FunctionDefin: React.FC<Props> = props => {
               </Col>
               <Col span={11}>
                 <Form.Item>
-                  {getFieldDecorator('outputs.max', {
-                    rules: [{ required: true, message: '请输入最大值' }],
-                    initialValue: props.data.outputs?.max,
+                  {getFieldDecorator('output.max', {
+                    initialValue: props.data.output?.max,
                   })(<Input placeholder="最大值" />)}
                 </Form.Item>
               </Col>
             </Form.Item>
 
             <Form.Item label="步长">
-              {getFieldDecorator('outputs.step', {
-                rules: [{ required: true, message: '请输入步长' }],
-                initialValue: props.data.outputs?.step,
+              {getFieldDecorator('output.step', {
+                initialValue: props.data.output?.step,
               })(<Input placeholder="请输入步长" />)}
             </Form.Item>
             <Form.Item label="单位">
-              {getFieldDecorator('outputs.unit', {
-                rules: [{ required: true, message: '请选择单位' }],
-                initialValue: props.data.outputs?.unit,
+              {getFieldDecorator('output.unit', {
+                initialValue: props.data.output?.unit,
               })(renderUnit())}
             </Form.Item>
           </div>
@@ -113,27 +109,48 @@ const FunctionDefin: React.FC<Props> = props => {
         return (
           <div>
             <Form.Item label="数据长度">
-              {getFieldDecorator('outputs.length', {
-                rules: [{ required: true, message: '请输入数据长度' }],
-                initialValue: props.data.outputs?.length,
+              {getFieldDecorator('output.expands.maxLength', {
+                initialValue: props.data.output?.expands.maxLength,
               })(<Input addonAfter="字节" />)}
             </Form.Item>
           </div>
         );
-      case 'bool':
+      case 'boolean':
         return (
           <div>
-            <Form.Item label="布尔值">
-              {getFieldDecorator('outputs.true', {
-                rules: [{ required: true, message: '请输入对应数据' }],
-                initialValue: props.data.outputs?.true,
-              })(<Input addonBefore="0" placeholder="如：关" />)}
-              <Form.Item>
-                {getFieldDecorator('outputs.false', {
-                  rules: [{ required: false }],
-                  initialValue: props.data.outputs?.false,
-                })(<Input addonBefore="1" placeholder="如：开" />)}
-              </Form.Item>
+            <Form.Item label="布尔值" style={{ height: 69 }}>
+              <Col span={11}>
+                {getFieldDecorator('output.trueText', {
+                  initialValue: initState.data.output?.trueText,
+                })(<Input placeholder="trueText" />)}
+              </Col>
+              <Col span={2} push={1}>
+                ~
+              </Col>
+              <Col span={11}>
+                <Form.Item>
+                  {getFieldDecorator('output.trueValue', {
+                    initialValue: initState.data.output?.trueValue,
+                  })(<Input placeholder="trueValue" />)}
+                </Form.Item>
+              </Col>
+            </Form.Item>
+            <Form.Item style={{ height: 69 }}>
+              <Col span={11}>
+                {getFieldDecorator('output.falseText', {
+                  initialValue: initState.data.output?.falseText,
+                })(<Input placeholder="falseText" />)}
+              </Col>
+              <Col span={2} push={1}>
+                ~
+              </Col>
+              <Col span={11}>
+                <Form.Item>
+                  {getFieldDecorator('output.falseValue', {
+                    initialValue: initState.data.output?.falseValue,
+                  })(<Input placeholder="falseValue" />)}
+                </Form.Item>
+              </Col>
             </Form.Item>
           </div>
         );
@@ -141,8 +158,8 @@ const FunctionDefin: React.FC<Props> = props => {
         return (
           <div>
             <Form.Item label="时间格式">
-              {getFieldDecorator('outputs.dateTemplate', {
-                initialValue: props.data.outputs?.dateTemplate,
+              {getFieldDecorator('output.dateTemplate', {
+                initialValue: props.data.output?.dateTemplate,
               })(
                 <Select>
                   <Select.Option value="string">String类型的UTC时间戳 (毫秒)</Select.Option>
@@ -163,9 +180,8 @@ const FunctionDefin: React.FC<Props> = props => {
         return (
           <div>
             <Form.Item label="元素类型">
-              {getFieldDecorator('outputs.arrayType', {
-                rules: [{ required: true }],
-                initialValue: props.data.outputs?.arrayType,
+              {getFieldDecorator('output.elementType', {
+                initialValue: props.data.output?.elementType,
               })(
                 <Radio.Group>
                   <Radio value="int32">int32(整数型)</Radio>
@@ -177,9 +193,8 @@ const FunctionDefin: React.FC<Props> = props => {
               )}
             </Form.Item>
             <Form.Item label="元素个数">
-              {getFieldDecorator('outputs.elementNumber', {
-                rules: [{ required: true }],
-                initialValue: props.data.outputs?.elementNumber,
+              {getFieldDecorator('output.elementNumber', {
+                initialValue: props.data.output?.elementNumber,
               })(<Input />)}
             </Form.Item>
           </div>
@@ -206,9 +221,9 @@ const FunctionDefin: React.FC<Props> = props => {
                   <Col span={10}>
                     <Input
                       placeholder="对该枚举项的描述"
-                      value={item.key}
+                      value={item.text}
                       onChange={event => {
-                        enumData[index].key = event.target.value;
+                        enumData[index].text = event.target.value;
                         setEnumData([...enumData]);
                       }}
                     />
@@ -287,8 +302,7 @@ const FunctionDefin: React.FC<Props> = props => {
       case 'file':
         return (
           <Form.Item label="文件类型">
-            {getFieldDecorator('outputs.fileType', {
-              rules: [{ required: true }],
+            {getFieldDecorator('output.fileType', {
               initialValue: '',
             })(
               <Select>
@@ -298,6 +312,31 @@ const FunctionDefin: React.FC<Props> = props => {
               </Select>,
             )}
           </Form.Item>
+        );
+      case 'geoPoint':
+        return (
+          <div>
+            <Form.Item label="经度字段">
+              {getFieldDecorator('output.latProperty', {
+                initialValue: initState.data.output?.latProperty,
+              })(<Input placeholder="请输入经度字段" />)}
+            </Form.Item>
+            <Form.Item label="维度字段">
+              {getFieldDecorator('output.lonProperty', {
+                initialValue: initState.data.output?.lonProperty,
+              })(<Input placeholder="请输入维度字段" />)}
+            </Form.Item>
+          </div>
+        );
+      case 'password':
+        return (
+          <div>
+            <Form.Item label="密码长度">
+              {getFieldDecorator('valueType.expands.maxLength', {
+                initialValue: initState.data.output?.expands.maxLength,
+              })(<Input addonAfter="字节" />)}
+            </Form.Item>
+          </div>
         );
       default:
         return null;
@@ -326,9 +365,9 @@ const FunctionDefin: React.FC<Props> = props => {
             />,
           )}
         </Form.Item>
-        <Form.Item label="参数名称">
+        <Form.Item label="功能名称">
           {getFieldDecorator('name', {
-            rules: [{ required: true, message: '请输入参数名称' }],
+            rules: [{ required: true, message: '请输入功能名称' }],
             initialValue: initState.data.name,
           })(<Input />)}
         </Form.Item>
@@ -382,8 +421,8 @@ const FunctionDefin: React.FC<Props> = props => {
           </Button>
         </Form.Item>
         <Form.Item label="输出参数">
-          {getFieldDecorator('outputs.type', {
-            initialValue: initState.data.outputs?.type,
+          {getFieldDecorator('output.type', {
+            initialValue: initState.data.output?.type,
           })(
             <Select
               placeholder="请选择"
@@ -396,13 +435,16 @@ const FunctionDefin: React.FC<Props> = props => {
                 <Select.Option value="double">double(双精度浮点数)</Select.Option>
                 <Select.Option value="float">float(单精度浮点数)</Select.Option>
                 <Select.Option value="string">text(字符串)</Select.Option>
-                <Select.Option value="bool">bool(布尔型)</Select.Option>
+                <Select.Option value="boolean">bool(布尔型)</Select.Option>
                 <Select.Option value="date">date(时间型)</Select.Option>
               </Select.OptGroup>
               <Select.OptGroup label="其他类型">
                 <Select.Option value="enum">enum(枚举)</Select.Option>
                 <Select.Option value="array">array(数组)</Select.Option>
                 <Select.Option value="object">object(结构体)</Select.Option>
+                <Select.Option value="file">file(文件)</Select.Option>
+                <Select.Option value="password">password(密码)</Select.Option>
+                <Select.Option value="geoPoint">geoPoint(地里位置)</Select.Option>
               </Select.OptGroup>
             </Select>,
           )}

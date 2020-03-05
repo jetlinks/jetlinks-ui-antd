@@ -50,12 +50,12 @@ const Events: React.FC<Props> = props => {
     {
       title: '名称',
       dataIndex: 'name',
-    },
+    }/*,
     {
       title: '输出参数',
       dataIndex: 'parameters',
       render: () => <a>查看</a>,
-    },
+    }*/,
     {
       title: '事件级别',
       dataIndex: 'expands.level',
