@@ -35,7 +35,6 @@ class Withnegative extends React.Component<IGaugeProps> {
         range: [0, 1],
         ticks:ticks
       },
-
     };
     return (
       <div>
@@ -44,9 +43,7 @@ class Withnegative extends React.Component<IGaugeProps> {
           <Axis
             name="value"
             label={{
-              formatter: val => {
-                return (val / 1000).toFixed(1) + "k";
-              }
+              formatter: val => parseFloat(val).toLocaleString()
             }}
           />
           <Legend />
