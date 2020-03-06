@@ -135,7 +135,7 @@ const IntroduceRow = ({ loading, visitData, messageData}: { loading: boolean; vi
         "group":"sameDay",
         "params":{
           "time":"1d",
-          "format":"yyyy-MM-dd HH:mm:ss",
+          "format":"yyyy-MM-dd",
         }
       },
       {
@@ -147,7 +147,7 @@ const IntroduceRow = ({ loading, visitData, messageData}: { loading: boolean; vi
         "params":{
           "limit":30,
           "time":"1d",
-          "format":"yyyy-MM-dd HH:mm:ss",
+          "format":"yyyy-MM-dd",
           "from":calculationDate()
         }
       },
@@ -159,7 +159,7 @@ const IntroduceRow = ({ loading, visitData, messageData}: { loading: boolean; vi
         "group":"month",
         "params":{
           "time":"30d",
-          "format":"yyyy-MM-dd HH:mm:ss",
+          "format":"yyyy-MM-dd",
           "from":calculationDate()
         }
       }
@@ -179,7 +179,7 @@ const IntroduceRow = ({ loading, visitData, messageData}: { loading: boolean; vi
               case 'sameMonth':
                 messageData.push(
                   {
-                    "x":moment(new Date(item.data.timeString)).format('YYYY-MM-DD'),
+                    "x":moment(new Date(item.data.timeString)).format('yyyy-MM-dd'),
                     "y":Number(item.data.value)
                   });
                 break;
@@ -230,7 +230,7 @@ const IntroduceRow = ({ loading, visitData, messageData}: { loading: boolean; vi
         "params":{
           "limit":20,
           "time":"1d",
-          "format":"yyyy-MM-dd HH:mm:ss"
+          "format":"yyyy-MM-dd"
         }
       }
     ];
@@ -243,7 +243,7 @@ const IntroduceRow = ({ loading, visitData, messageData}: { loading: boolean; vi
               case 'aggOnline':
                 visitData.push(
                   {
-                    "x":moment(new Date(item.data.timeString)).format('YYYY-MM-DD'),
+                    "x":moment(new Date(item.data.timeString)).format('yyyy-MM-dd'),
                     "y":Number(item.data.value)
                   });
                 break;

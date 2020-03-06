@@ -190,7 +190,7 @@ const TopSearch = ({ loading }: { loading: boolean; }) => {
                 </Radio.Group>
               </div>
               <DatePicker showTime defaultValue={moment(new Date(), 'yyyy-MM-dd HH:mm:ss')}
-                          placeholder="结束时间" onOk={onOk} format="YYYY-MM-DD HH:mm:ss"/>
+                          placeholder="结束时间" onOk={onOk} format="yyyy-MM-dd HH:mm:ss"/>
             </div>
           }
           size="large"

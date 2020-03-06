@@ -99,7 +99,7 @@ class MiniArea extends React.Component<IMiniAreaProps> {
                 grid={false}
                 {...yAxis}
               />
-              <Tooltip showTitle={false} crosshairs={false} />
+              <Tooltip showTitle={false} crosshairs={false}/>
               <Geom
                 type="area"
                 position="x*y"
