@@ -59,7 +59,7 @@ const Functions: React.FC<Props> = (props) => {
     });
   }, []);
 
-  const debugMqttClient = () => {
+  const debugFunction = () => {
     apis.deviceInstance
       .invokedFunction(props.device.id, functionId, JSON.parse(debugData))
       .then(response => {
@@ -73,7 +73,6 @@ const Functions: React.FC<Props> = (props) => {
   };
 
   return (
-
     <div>
       <Card style={{ marginBottom: 20 }} title="功能调试">
         <Form labelCol={{ span: 1 }} wrapperCol={{ span: 23 }}>
@@ -103,7 +102,7 @@ const Functions: React.FC<Props> = (props) => {
             <Button
               type="primary"
               onClick={() => {
-                debugMqttClient();
+                debugFunction();
               }}
             >
               执行
