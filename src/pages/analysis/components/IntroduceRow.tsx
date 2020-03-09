@@ -179,7 +179,7 @@ const IntroduceRow = ({ loading, visitData, messageData}: { loading: boolean; vi
               case 'sameMonth':
                 messageData.push(
                   {
-                    "x":moment(new Date(item.data.timeString)).format('yyyy-MM-dd'),
+                    "x":moment(new Date(item.data.timeString)).format('YYYY-MM-DD'),
                     "y":Number(item.data.value)
                   });
                 break;
@@ -243,7 +243,7 @@ const IntroduceRow = ({ loading, visitData, messageData}: { loading: boolean; vi
               case 'aggOnline':
                 visitData.push(
                   {
-                    "x":moment(new Date(item.data.timeString)).format('yyyy-MM-dd'),
+                    "x":moment(new Date(item.data.timeString)).format('YYYY-MM-DD'),
                     "y":Number(item.data.value)
                   });
                 break;
