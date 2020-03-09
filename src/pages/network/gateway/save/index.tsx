@@ -105,6 +105,7 @@ const Save: React.FC<Props> = props => {
             </Form.Item>
           </div>
         );
+      case 'UDP-DEVICE':
       case 'MQTT_CLIENT':
         return (
           <div>
