@@ -113,7 +113,7 @@ const Functions: React.FC<Props> = (props) => {
             </Button>
           </div>
 
-          <Form.Item label="调试日志：" style={{paddingTop:20}}>
+          <Form.Item label="调试结果：" style={{paddingTop:20}}>
             <Input.TextArea rows={4} value={logs}/>
           </Form.Item>
         </Form>
