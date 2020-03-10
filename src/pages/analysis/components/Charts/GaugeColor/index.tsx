@@ -6,13 +6,8 @@ import autoHeight from '../autoHeight';
 const { Html, Arc } = Guide;
 
 export interface IGaugeProps {
-  color?: string;
   height?: number;
-  bgColor?: number;
   percent: number;
-  forceFit?: boolean;
-  style?: React.CSSProperties;
-  formatter: (value: string) => string;
 }
 
 // 自定义Shape 部分
@@ -48,7 +43,7 @@ Shape.registerShape!('point', 'pointer', {
   },
 });
 
-const color = ['#4ECB73','#0086FA', '#FFBF00', '#F5222D'];
+const color = ['#4ECB73', '#FFBF00', '#F5222D'];
 const cols = {
   value: {
     min: 0,
@@ -108,7 +103,7 @@ class GaugeColor extends React.Component<IGaugeProps> {
               lineWidth: 10,
             }}
           />
-          {val >= 2 && <Arc
+          {val >= 5 && <Arc
             zIndex={1}
             start={[0, 0.965]}
             end={[val, 0.965]}
@@ -117,37 +112,37 @@ class GaugeColor extends React.Component<IGaugeProps> {
               lineWidth: 10,
             }}
           />}
-          { val >= 6 &&
+          { val >= 8 &&
           <Arc
             zIndex={1}
-            start={[2, 0.965]}
-            end={[6, 0.965]}
+            start={[5, 0.965]}
+            end={[8, 0.965]}
             style={{ // 底灰色
-              stroke: color[2],
+              stroke: color[1],
               lineWidth: 10,
             }}
           />}
-          { val >= 6 && val < 10 &&
+          { val >= 8 && val < 10 &&
           <Arc
             zIndex={1}
-            start={[6, 0.965]}
+            start={[8, 0.965]}
             end={[val, 0.965]}
             style={{ // 底灰色
               stroke: color[2],
               lineWidth: 10,
             }}
           />}
-          { val >= 2 && val < 6 &&
+          { val >= 5 && val < 8 &&
           <Arc
             zIndex={1}
-            start={[2, 0.965]}
+            start={[5, 0.965]}
             end={[val, 0.965]}
             style={{ // 底灰色
               stroke: color[1],
               lineWidth: 10,
             }}
           />}
-          { val < 2 &&
+          { val < 5 &&
           <Arc
             zIndex={1}
             start={[0, 0.965]}
