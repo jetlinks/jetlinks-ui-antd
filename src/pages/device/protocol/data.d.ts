@@ -5,7 +5,11 @@ export interface ProtocolItem {
     type: string;
     state: number;
     configuration: {
-        provider: string;
-        location: string;
+        provider?: string;
+        location?: string;
+        transport?: string[];
+        lang?: string;
+        protocol?: string;
+        script?: string
     }
 }

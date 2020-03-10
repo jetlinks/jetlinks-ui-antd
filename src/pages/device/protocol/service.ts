@@ -40,3 +40,23 @@ export async function changeDeploy(payload: any) {
         method: 'POST',
     })
 }
+
+export async function convert(data: any) {
+    return request(`/jetlinks/protocol/convert`, {
+        method: 'POST',
+        data
+    });
+}
+
+export async function optionCode(type: 'decode' | 'encode', data: any) {
+    return request(`/jetlinks/protocol/${type}`, {
+        method: 'POST',
+        data
+    });
+}
+
+export async function providers() {
+    return request(`/jetlinks/protocol/providers`, {
+        method: 'GET'
+    })
+}
