@@ -1,5 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Select, Upload, message, Button, Icon, Col, Row, Drawer, Tabs, Collapse, Radio } from 'antd';
+import {
+  Form,
+  Input,
+  Select,
+  Upload,
+  message,
+  Button,
+  Icon,
+  Col,
+  Row,
+  Drawer,
+  Tabs,
+  Collapse,
+  Radio,
+} from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import { ProtocolItem } from '../data';
 import { getAccessToken } from '@/utils/authority';
@@ -23,28 +37,15 @@ interface State {
     payloadType: string;
     transport: string;
     payload?: any;
-  }
+  };
+  debugLog: string;
+  activeKey: string;
 }
 const Save: React.FC<Props> = props => {
   const {
     form: { getFieldDecorator },
     form,
   } = props;
-  const submitData = () => {
-    form.validateFields((err, fileValue) => {
-      if (err) return;
-      const id = props.data.id;
-      let data = fileValue;
-      if (data.type === 'script') {
-        data.configuration.lang = 'script';
-        data.configuration.script = script;
-      }
-      props.save({
-        id,
-        ...fileValue,
-      });
-    });
-  };
 
   const initState: State = {
     protocolType: props.data?.type,
@@ -57,7 +58,9 @@ const Save: React.FC<Props> = props => {
       type: 'encode',
       payloadType: 'JSON',
       transport: '',
-    }
+    },
+    debugLog: '',
+    activeKey: 'mock',
   };
 
   const [jarLocation, setJarLocation] = useState(initState.jarLocation);
@@ -67,6 +70,24 @@ const Save: React.FC<Props> = props => {
   const [script, setScript] = useState(initState.script);
   const [debuggerTransports, setDebuggerTransports] = useState(initState.debuggerTransports);
   const [debuggerData, setDebuggerData] = useState(initState.debuggerData);
+  const [debugLog, setDebugLog] = useState(initState.debugLog);
+  const [activeKey, setActiveKey] = useState(initState.activeKey);
+
+  const submitData = () => {
+    form.validateFields((err, fileValue) => {
+      if (err) return;
+      const { id } = props.data;
+      const data = fileValue;
+      if (data.type === 'script') {
+        data.configuration.lang = 'script';
+        data.configuration.script = script;
+      }
+      props.save({
+        id,
+        ...fileValue,
+      });
+    });
+  };
 
   const uploadProps = {
     accept: '.jar',
@@ -77,8 +98,6 @@ const Save: React.FC<Props> = props => {
       'X-Access-Token': getAccessToken(),
     },
     onChange(info: any) {
-      if (info.file.status !== 'uploading') {
-      }
       if (info.file.status === 'done') {
         setJarLocation(info.file.response.result);
         message.success(`${info.file.name} 上传成功`);
@@ -88,10 +107,9 @@ const Save: React.FC<Props> = props => {
     },
   };
 
-
   useEffect(() => {
     apis.protocol.providers().then(response => {
-      setProviders(response.result)
+      setProviders(response.result);
     });
   }, []);
 
@@ -104,7 +122,7 @@ const Save: React.FC<Props> = props => {
               <Form.Item key="provider" label="类名">
                 {getFieldDecorator('configuration.provider', {
                   initialValue: props.data?.configuration?.provider,
-                  rules: [{ required: true, message: "请输入类名" }]
+                  rules: [{ required: true, message: '请输入类名' }],
                 })(<Input />)}
               </Form.Item>
             </Col>
@@ -114,10 +132,10 @@ const Save: React.FC<Props> = props => {
                   <Col span={14}>
                     {getFieldDecorator('configuration.location', {
                       initialValue: jarLocation,
-                      rules: [{ required: true, message: "请输入文件地址" }]
+                      rules: [{ required: true, message: '请输入文件地址' }],
                     })(<Input />)}
                   </Col>
-                  <Col span={2} >
+                  <Col span={2}>
                     <Upload {...uploadProps}>
                       <Button type="primary">
                         <Icon type="upload" /> 上传Jar包
@@ -131,7 +149,7 @@ const Save: React.FC<Props> = props => {
         </div>
       );
     }
-    else if (protocolType === 'script') {
+    if (protocolType === 'script') {
       return (
         <div>
           <Row>
@@ -139,7 +157,7 @@ const Save: React.FC<Props> = props => {
               <Form.Item key="protocol" label="协议标识">
                 {getFieldDecorator('configuration.protocol', {
                   initialValue: props.data?.configuration?.protocol,
-                  rules: [{ required: true, message: "请输入协议标识" }]
+                  rules: [{ required: true, message: '请输入协议标识' }],
                 })(<Input />)}
               </Form.Item>
             </Col>
@@ -147,7 +165,7 @@ const Save: React.FC<Props> = props => {
               <Form.Item key="transport" label="连接协议">
                 {getFieldDecorator('configuration.transport', {
                   initialValue: props.data?.configuration?.transport,
-                  rules: [{ required: true, message: "请输入连接协议" }]
+                  rules: [{ required: true, message: '请输入连接协议' }],
                 })(
                   <Select mode="multiple">
                     <Select.Option value="MQTT">MQTT</Select.Option>
@@ -156,13 +174,12 @@ const Save: React.FC<Props> = props => {
                     <Select.Option value="TCP">TCP</Select.Option>
                     <Select.Option value="HTTP">HTTP</Select.Option>
                     <Select.Option value="HTTPS">HTTPS</Select.Option>
-                  </Select>)}
+                  </Select>,
+                )}
               </Form.Item>
             </Col>
             <Col span={24}>
-              <Form.Item label="脚本"
-                labelCol={{ span: 3 }}
-                wrapperCol={{ span: 21 }}>
+              <Form.Item label="脚本" labelCol={{ span: 3 }} wrapperCol={{ span: 21 }}>
                 <MonacoEditor
                   value={script}
                   onChange={e => setScript(e)}
@@ -174,11 +191,10 @@ const Save: React.FC<Props> = props => {
             </Col>
           </Row>
         </div>
-      )
+      );
     }
-    else {
-      return null
-    }
+
+    return null;
   };
 
   useEffect(() => {
@@ -193,9 +209,24 @@ const Save: React.FC<Props> = props => {
         setDebuggerTransports(response.result?.transports);
       });
     }
-
   }, [activeDebugger]);
 
+  const startDebug = () => {
+    const entity = form.getFieldsValue();
+    if (entity.type === 'script') {
+      entity.configuration.lang = 'javascript';
+      entity.configuration.script = script;
+      entity.configuration.transport = entity.configuration.transport.join(',');
+    }
+    const data = {
+      request: debuggerData,
+      entity,
+    };
+    apis.protocol.optionCode(debuggerData.type, data).then(response => {
+      setDebugLog(response.result);
+      setActiveKey('result');
+    });
+  };
   return (
     <Drawer
       visible
@@ -225,7 +256,11 @@ const Save: React.FC<Props> = props => {
                     setProtocolType(value);
                   }}
                 >
-                  {providers.map(item => <Select.Option key={item} value={item}>{item}</Select.Option>)}
+                  {providers.map(item => (
+                    <Select.Option key={item} value={item}>
+                      {item}
+                    </Select.Option>
+                  ))}
                 </Select>,
               )}
             </Form.Item>
@@ -234,24 +269,20 @@ const Save: React.FC<Props> = props => {
 
         {renderTypeForm()}
 
-        <Form.Item key="description"
-          label="描述"
-          labelCol={{ span: 3 }}
-          wrapperCol={{ span: 21 }}>
+        <Form.Item key="description" label="描述" labelCol={{ span: 3 }} wrapperCol={{ span: 21 }}>
           {getFieldDecorator('description', {
             initialValue: props.data?.description,
           })(<Input />)}
         </Form.Item>
         <Collapse
           onChange={() => {
-            form.validateFields((err) => {
-              console.log(err, 'reeee');
+            form.validateFields(err => {
               if (!err) {
-                setActiveDebugger(activeDebugger !== 'debugger' ? 'debugger' : '')
+                setActiveDebugger(activeDebugger !== 'debugger' ? 'debugger' : '');
               } else {
                 setActiveDebugger('');
               }
-            })
+            });
           }}
           activeKey={activeDebugger}
           bordered={false}
@@ -266,31 +297,49 @@ const Save: React.FC<Props> = props => {
               marginBottom: 24,
               border: 0,
               overflow: 'hidden',
-            }}>
-            <Tabs>
+            }}
+          >
+            <Tabs activeKey={activeKey}>
               <Tabs.TabPane tab="模拟输入" key="mock">
                 <Row>
                   <Col span={6}>
                     <Form.Item key="action">
-                      <Radio.Group  >
-                        <Radio value='decode'>编码</Radio>
-                        <Radio value='encode'>解码</Radio>
+                      <Radio.Group
+                        onChange={e => {
+                          debuggerData.type = e.target.value;
+                          setDebuggerData({ ...debuggerData });
+                        }}
+                      >
+                        <Radio value="decode">编码</Radio>
+                        <Radio value="encode">解码</Radio>
                       </Radio.Group>
                     </Form.Item>
                   </Col>
-                  <Col span={8} >
-                    <Form.Item key="protocol" label="连接类型">
-                      <Select>
-                        {
-                          debuggerTransports.map(item => <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>)
-                        }
+                  <Col span={8}>
+                    <Form.Item key="transport" label="连接类型">
+                      <Select
+                        onChange={(e: string) => {
+                          debuggerData.transport = e;
+                          setDebuggerData({ ...debuggerData });
+                        }}
+                      >
+                        {debuggerTransports.map(item => (
+                          <Select.Option key={item.id} value={item.id}>
+                            {item.name}
+                          </Select.Option>
+                        ))}
                       </Select>
                     </Form.Item>
                   </Col>
 
                   <Col span={8} offset={2}>
-                    <Form.Item key="protocol" label="消息类型">
-                      <Select>
+                    <Form.Item key="payloadType" label="消息类型">
+                      <Select
+                        onChange={(e: string) => {
+                          debuggerData.payloadType = e;
+                          setDebuggerData({ ...debuggerData });
+                        }}
+                      >
                         <Select.Option value="JSON">JSON</Select.Option>
                         <Select.Option value="STRING">STRING</Select.Option>
                         <Select.Option value="HEX">HEX</Select.Option>
@@ -299,16 +348,23 @@ const Save: React.FC<Props> = props => {
                     </Form.Item>
                   </Col>
                 </Row>
-                <Input.TextArea rows={6} />
-                <Button type="danger">执行</Button>
+                <Input.TextArea
+                  rows={6}
+                  onChange={e => {
+                    debuggerData.payload = e.target.value;
+                    setDebuggerData({ ...debuggerData });
+                  }}
+                />
+                <Button type="danger" onClick={() => startDebug()}>
+                  执行
+                </Button>
               </Tabs.TabPane>
               <Tabs.TabPane tab="运行结果" key="result">
-                运行结果
-          </Tabs.TabPane>
+                <Input.TextArea rows={5} value={debugLog} />
+              </Tabs.TabPane>
             </Tabs>
           </Collapse.Panel>
         </Collapse>
-
       </Form>
       <div
         style={{
@@ -322,14 +378,24 @@ const Save: React.FC<Props> = props => {
           textAlign: 'right',
         }}
       >
-        <Button onClick={() => { props.close() }} style={{ marginRight: 8 }}>
+        <Button
+          onClick={() => {
+            props.close();
+          }}
+          style={{ marginRight: 8 }}
+        >
           关闭
         </Button>
-        <Button onClick={() => { submitData() }} type="primary">
+        <Button
+          onClick={() => {
+            submitData();
+          }}
+          type="primary"
+        >
           确认
         </Button>
       </div>
-    </Drawer >
+    </Drawer>
   );
 };
 export default Form.create<Props>()(Save);
