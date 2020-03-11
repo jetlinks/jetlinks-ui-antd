@@ -299,7 +299,7 @@ const Save: React.FC<Props> = props => {
               overflow: 'hidden',
             }}
           >
-            <Tabs activeKey={activeKey}>
+            <Tabs activeKey={activeKey} onChange={e => setActiveKey(e)}>
               <Tabs.TabPane tab="模拟输入" key="mock">
                 <Row>
                   <Col span={6}>
