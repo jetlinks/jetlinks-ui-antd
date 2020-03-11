@@ -309,9 +309,10 @@ const Save: React.FC<Props> = props => {
                           debuggerData.type = e.target.value;
                           setDebuggerData({ ...debuggerData });
                         }}
+                        defaultValue="encode"
                       >
-                        <Radio value="decode">编码</Radio>
-                        <Radio value="encode">解码</Radio>
+                        <Radio value="encode">编码</Radio>
+                        <Radio value="decode">解码</Radio>
                       </Radio.Group>
                     </Form.Item>
                   </Col>
@@ -322,6 +323,7 @@ const Save: React.FC<Props> = props => {
                           debuggerData.transport = e;
                           setDebuggerData({ ...debuggerData });
                         }}
+                        defaultValue={debuggerTransports[0] || null}
                       >
                         {debuggerTransports.map(item => (
                           <Select.Option key={item.id} value={item.id}>
@@ -339,6 +341,7 @@ const Save: React.FC<Props> = props => {
                           debuggerData.payloadType = e;
                           setDebuggerData({ ...debuggerData });
                         }}
+                        defaultValue="JSON"
                       >
                         <Select.Option value="JSON">JSON</Select.Option>
                         <Select.Option value="STRING">STRING</Select.Option>
