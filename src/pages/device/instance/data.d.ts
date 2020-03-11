@@ -34,6 +34,8 @@ export class DeviceInstance extends SimpleType {
   messageProtocol: string;
 
   orgId: string;
+
+  orgName:string;
 }
 
 export interface DeviceInstancePagination {

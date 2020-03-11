@@ -28,6 +28,7 @@ interface State {
   logs: any;
   deviceState: any;
   deviceFunction: any;
+  orgInfo:any;
 }
 
 const Editor: React.FC<Props> = props => {
@@ -42,6 +43,7 @@ const Editor: React.FC<Props> = props => {
     logs: {},
     deviceState: {},
     deviceFunction: {},
+    orgInfo: {},
   };
   const [activeKey, setActiveKey] = useState(initState.activeKey);
   const [data, setData] = useState(initState.data);
@@ -49,6 +51,8 @@ const Editor: React.FC<Props> = props => {
   const [id, setId] = useState();
   const [deviceState, setDeviceState] = useState(initState.deviceState);
   const [deviceFunction, setDeviceFunction] = useState(initState.deviceFunction);
+
+  const [orgInfo] = useState(initState.orgInfo);
 
   const [tableList,setTableList] = useState();
 
@@ -81,8 +85,9 @@ const Editor: React.FC<Props> = props => {
       payload: id,
       callback: (response: SimpleResponse) => {
         if (response.status === 200) {
-          let data = response.result;
-          let deriveMetadata = JSON.parse(data.deriveMetadata);
+          const data = response.result;
+          data.orgName = orgInfo[data.orgId];
+          const deriveMetadata = JSON.parse(data.deriveMetadata);
           if (deriveMetadata.functions.length > 0){
             tabList.splice(2, 0, {
               key: 'functions',
@@ -97,6 +102,18 @@ const Editor: React.FC<Props> = props => {
   };
 
   useEffect(() => {
+
+    apis.deviceProdcut
+      .queryOrganization()
+      .then(res => {
+        if (res.status === 200) {
+          res.result.map(e => (
+            orgInfo[e.id] = e.name
+          ));
+        }
+      }).catch(() => {
+    });
+
     if (pathname.indexOf('save') > 0) {
       const list = pathname.split('/');
       getInfo(list[list.length - 1]);
