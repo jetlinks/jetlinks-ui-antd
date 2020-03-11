@@ -20,12 +20,15 @@ interface State {
   basicInfo: Partial<DeviceProduct>;
   saveVisible: boolean;
   config: any;
+  orgInfo: any;
 }
+
 const Detail: React.FC<Props> = props => {
   const initState: State = {
     basicInfo: {},
     saveVisible: false,
     config: {},
+    orgInfo: {},
   };
   // const { dispatch, location: { pathname } } = props;
   const {
@@ -38,8 +41,20 @@ const Detail: React.FC<Props> = props => {
   const [basicInfo, setBasicInfo] = useState(initState.basicInfo);
   const [saveVisible, setSaveVisible] = useState(initState.saveVisible);
   const [config, setConfig] = useState(initState.config);
+  const [orgInfo] = useState(initState.orgInfo);
 
   useEffect(() => {
+    apis.deviceProdcut
+      .queryOrganization()
+      .then(res => {
+        if (res.status === 200) {
+          res.result.map(e => (
+            orgInfo[e.id] = e.name
+          ));
+        }
+      }).catch(() => {
+    });
+
     if (pathname.indexOf('save') > 0) {
       const list = pathname.split('/');
       dispatch({
@@ -47,6 +62,7 @@ const Detail: React.FC<Props> = props => {
         payload: list[list.length - 1],
         callback: (response: any) => {
           const data = response.result;
+          data.orgName = orgInfo[data.orgId];
           setBasicInfo(data);
           const metadata = JSON.parse(data.metadata);
           setEvents(metadata.events);
@@ -80,7 +96,8 @@ const Detail: React.FC<Props> = props => {
           message.success('保存成功');
         }
       })
-      .catch(() => {});
+      .catch(() => {
+      });
   };
 
   const updateData = (type: string, item: any) => {
@@ -101,7 +118,8 @@ const Detail: React.FC<Props> = props => {
           message.success('保存成功');
         }
       })
-      .catch(() => {});
+      .catch(() => {
+      });
   };
 
   return (
@@ -134,7 +152,7 @@ const Detail: React.FC<Props> = props => {
                 {basicInfo.name}
               </Descriptions.Item>
               <Descriptions.Item label="所属机构" span={1}>
-                {basicInfo.orgId}
+                {basicInfo.orgName}
               </Descriptions.Item>
               <Descriptions.Item label="消息协议" span={1}>
                 {basicInfo.messageProtocol}
@@ -167,11 +185,11 @@ const Detail: React.FC<Props> = props => {
                 }
               >
                 {config.properties &&
-                  config.properties.map((item: any) => (
-                    <Descriptions.Item label={item.property} span={1}>
-                      {basicInfo.configuration[item.property]}
-                    </Descriptions.Item>
-                  ))}
+                config.properties.map((item: any) => (
+                  <Descriptions.Item label={item.property} span={1}>
+                    {basicInfo.configuration[item.property]}
+                  </Descriptions.Item>
+                ))}
               </Descriptions>
             )}
           </Tabs.TabPane>

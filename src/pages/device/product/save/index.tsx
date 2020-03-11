@@ -5,6 +5,7 @@ import { Drawer, Card, Row, Col, Input, Select, Radio, Button } from 'antd';
 import { DeviceProduct } from '../data';
 import { FormItemConfig } from '@/utils/common';
 import apis from '@/services';
+import { response } from 'express';
 
 interface Props extends FormComponentProps {
   // interface Props {
@@ -16,6 +17,7 @@ interface Props extends FormComponentProps {
 interface State {
   protocolSupports: any[];
   protocolTransports: any[];
+  organizationList: any[];
   configForm: any[];
   configName: string;
 }
@@ -24,6 +26,7 @@ const Save: React.FC<Props> = props => {
   const initState: State = {
     protocolSupports: [],
     protocolTransports: [],
+    organizationList: [],
     configName: '',
     configForm: [],
   };
@@ -32,6 +35,8 @@ const Save: React.FC<Props> = props => {
   const [messageProtocol, setMessageProtocol] = useState<string>();
   //消息协议
   const [protocolSupports, setProtocolSupports] = useState(initState.protocolSupports);
+  //消息协议
+  const [organizationList, setOrganizationList] = useState(initState.organizationList);
   //传输协议
   const [protocolTransports, setProtocolTransports] = useState(initState.protocolTransports);
   //配置文件
@@ -49,7 +54,17 @@ const Save: React.FC<Props> = props => {
           setProtocolSupports(response.result);
         }
       })
-      .catch(() => {});
+      .catch(() => {
+      });
+
+    apis.deviceProdcut
+      .queryOrganization()
+      .then(res => {
+        if (res.status === 200){
+          setOrganizationList(res.result);
+        }
+      }).catch(() => {});
+
     if (props.data && props.data.messageProtocol) {
       onMessageProtocolChange(props.data.messageProtocol);
       if (!props.data.transportProtocol) return;
@@ -67,7 +82,8 @@ const Save: React.FC<Props> = props => {
           setProtocolTransports(response.result);
         }
       })
-      .catch(() => {});
+      .catch(() => {
+      });
   };
 
   const onTransportProtocol = (value: string) => {
@@ -89,7 +105,8 @@ const Save: React.FC<Props> = props => {
           }
         }
       })
-      .catch(() => {});
+      .catch(() => {
+      });
   };
 
   const parseConfig = (configData: any[]) => {
@@ -103,7 +120,7 @@ const Save: React.FC<Props> = props => {
       };
 
       if (componentType !== 'enum') {
-        component = <Input type={componentType === 'password' ? 'password' : 'text'} />;
+        component = <Input type={componentType === 'password' ? 'password' : 'text'}/>;
       } else {
         let options = item.type.elements;
         component = (
@@ -164,7 +181,7 @@ const Save: React.FC<Props> = props => {
         md: { span: 12 },
         sm: { span: 24 },
       },
-      component: <Input style={{ width: '100%' }} placeholder="请输入" />,
+      component: <Input style={{ width: '100%' }} placeholder="请输入"/>,
     },
     {
       label: '所属机构',
@@ -178,7 +195,13 @@ const Save: React.FC<Props> = props => {
         md: { span: 24 },
         sm: { span: 24 },
       },
-      component: <Select placeholder="请选择"></Select>,
+      component: <Select placeholder="请选择机构">
+        {organizationList.map(e => (
+          <Select.Option value={e.id} key={e.id}>
+            {e.name}
+          </Select.Option>
+        ))}
+      </Select>,
     },
     {
       label: '消息协议',
@@ -271,7 +294,7 @@ const Save: React.FC<Props> = props => {
       options: {
         initialValue: props.data?.describe,
       },
-      component: <Input.TextArea rows={3} placeholder="请输入描述" />,
+      component: <Input.TextArea rows={3} placeholder="请输入描述"/>,
     },
   ];
 

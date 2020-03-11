@@ -41,6 +41,8 @@ export class DeviceProduct {
   deviceSecret: string;
 
   orgId: string;
+
+  orgName: string;
 }
 
 export interface SecurityConfig {
