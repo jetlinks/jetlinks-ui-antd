@@ -73,7 +73,7 @@ export async function property(id: string, type: string) {
 }
 
 export async function eventData(id: string, event: string, params: any) {
-  return request(`/jetlinks/device-product/${id}/event/${event}`, {
+  return request(`/jetlinks/device/instance/${id}/event/${event}?format=true`, {
     method: 'GET',
     params,
   });

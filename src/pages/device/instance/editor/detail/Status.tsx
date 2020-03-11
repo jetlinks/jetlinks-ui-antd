@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import ChartCard from '@/pages/analysis/components/Charts/ChartCard';
-import { Badge, Col, Icon, Modal, Row, Spin, Tag, Tooltip } from 'antd';
-import { Field, MiniArea, MiniProgress } from '@/pages/analysis/components/Charts';
+import { Badge, Col, Icon, Row, Spin, Tag, Tooltip } from 'antd';
+import { MiniArea, MiniProgress } from '@/pages/analysis/components/Charts';
 import { IVisitData } from '@/pages/analysis/data';
 import moment from 'moment';
 import apis from '@/services';
 import EventLog from './event-log/EventLog';
 import encodeQueryParam from '@/utils/encodeParam';
 import { getAccessToken } from '@/utils/authority';
-import { FormattedMessage } from 'umi-plugin-react/locale';
 import { wrapAPI } from '@/utils/utils';
 import PropertieInfo from './propertie-data/propertieInfo';
 
@@ -109,12 +108,11 @@ const Status: React.FC<Props> = (props) => {
                 //加载数据
                 event.loading = false;
                 apis.deviceInstance.eventData(
-                    props.device.productId,
+                    props.device.id,
                     event.id,
                     encodeQueryParam({
                         pageIndex: 0,
                         pageSize: 10,
-                        terms: { deviceId: props.device.id }
                     })
                 ).then(response => {
                     const data = response.result;
@@ -211,7 +209,7 @@ const Status: React.FC<Props> = (props) => {
 
     const loadEventData = (eventId: string) => {
         apis.deviceInstance.eventData(
-            props.device.productId,
+            props.device.id,
             eventId,
             encodeQueryParam({
                 terms: { deviceId: props.device.id }
@@ -302,10 +300,9 @@ const Status: React.FC<Props> = (props) => {
         // setTimeout(() => loadEventData(item.id), 5000);
         // loadEventData(item.id);
         apis.deviceInstance.eventData(
-            props.device.productId,
+            props.device.id,
             item.id,
             encodeQueryParam({
-                terms: { deviceId: props.device.id }
             })
         ).then(response => {
             // const tempEvent = response.result;

@@ -1,211 +1,125 @@
 import React, { useEffect, useState } from 'react';
-import ChartCard from '@/pages/analysis/components/Charts/ChartCard';
-import { Col, Icon, Row, Spin, Tooltip } from 'antd';
-import { IVisitData } from '@/pages/analysis/data';
-import moment from 'moment';
+import { Button, Card, Divider, Form, Input, Select } from 'antd';
 import apis from '@/services';
-import FunctionDebug from './function-debug/index';
-import encodeQueryParam from '@/utils/encodeParam';
 
 interface Props {
-    device: any
+  device: any
 }
 
 interface State {
-    runInfo: any;
-    propertiesData: any[];
-    functionsVisible: boolean;
-    metadata: any;
-    functionsData: any[];
-    deviceState: any;
-    functionsInfo: any;
+  propertiesData: any[];
+  functionsSelectList: any[];
+  functionsInfo: any;
+  debugData: string;
+  logs: string;
+  functionId: string;
 }
+
 const topColResponsiveProps = {
-    xs: 24,
-    sm: 12,
-    md: 12,
-    lg: 12,
-    xl: 6,
-    style: { marginBottom: 24 },
+  xs: 24,
+  sm: 12,
+  md: 12,
+  lg: 12,
+  xl: 6,
+  style: { marginBottom: 24 },
 };
-
-// mock data
-const visitData: IVisitData[] = [];
-const beginDay = new Date().getTime();
-
-const fakeY = [7, 5, 4, 2, 4, 7, 5, 6, 5, 9, 6, 3, 1, 5, 3, 6, 5];
-for (let i = 0; i < fakeY.length; i += 1) {
-    visitData.push({
-        x: moment(new Date(beginDay + 1000 * 60 * 60 * 24 * i)).format('YYYY-MM-DD'),
-        y: fakeY[i],
-    });
-}
 
 const Functions: React.FC<Props> = (props) => {
 
-    const initState: State = {
-        runInfo: {},
-        propertiesData: [],
-        functionsVisible: false,
-        metadata: {},
-        functionsData: [],
-        deviceState: {},
-        functionsInfo: {}
-    };
+  const initState: State = {
+    propertiesData: [],
+    functionsSelectList: [],
+    functionsInfo: {},
+    debugData: '',
+    logs: '',
+    functionId: '',
+  };
 
-    const [runInfo, setRunInfo] = useState(initState.runInfo);
-    const [functionsVisible, setFunctionsVisible] = useState(initState.functionsVisible);
-    const [metadata, setMetadata] = useState(initState.metadata);
-    const [functionsData, setFunctionsData] = useState(initState.functionsData);
-    const [ setDeviceState] = useState(initState.deviceState);
-    const [ functonsInfo,setFunctionsInfo] = useState(initState.functionsInfo);
+  const [functionsSelectList, setFunctionsSelectList] = useState(initState.functionsSelectList);
+  const [functionsInfo, setFunctionsInfo] = useState(initState.functionsInfo);
+  const [debugData, setDebugData] = useState(initState.debugData);
+  const [logs, setLogs] = useState(initState.logs);
+  const [functionId, setFunctionId] = useState(initState.functionId);
 
-    useEffect(() => {
-        loadRunInfo();
-    }, []);
-
-
-    useEffect(() => {
-        //组装数据
-        if (runInfo && runInfo.metadata) {
-          const metadata = JSON.parse(runInfo.metadata);
-          const {functions } = metadata;
-
-          //设置event数据
-          functions.map((fun: any) => {
-              //加载数据
-            functions.loading = false;
-            apis.deviceInstance.functionsData(// eventData  调用的接口，功能接口出来后修改
-              props.device.id,
-              fun.id,
-              encodeQueryParam({
-                pageIndex: 0,
-                pageSize: 10,
-                terms: { deviceId: props.device.id }
-              })
-            ).then(response => {
-              const tempResult = response?.result;
-              if (tempResult) {
-                functionsData.push({ functionsId: fun.id, tempResult });
-                setFunctionsData([...functionsData]);
-              }
-              fun.loading = false;
-            }).catch(() => {
-              fun.loading = false;
-            });
-          });
-          setMetadata(metadata);
-      }
-    }, [runInfo]);
-
-    const loadRunInfo = () => {
-      runInfo.loading = true;
-      setRunInfo({ ...runInfo });
-      apis.deviceInstance.runInfo(props.device.id)
-        .then(response => {
-            if (response.result) {
-                response.result.loading = false;
-            }
-            setRunInfo(response.result);
-            setDeviceState(response.result);
-        }).catch(() => {
-
-        });
-    };
-
-    const refreshFunctionsItem = (item: any) => {
-      const { functions } = metadata;
-      //修改加载状态
-      let tempFunctions = functions.map((i: any) => {
-        if (i.id === item.id) {
-            i.loading = true;
-        }
-        return i;
-      });
-      metadata.functions = tempFunctions;
-      setMetadata({ ...metadata });
-      //为了显示Loading效果
-      apis.deviceInstance.functionsData (// eventData  刷新按钮调用的接口，功能接口出来后修改
-        props.device.id,
-        item.id,
-        encodeQueryParam({
-            terms: { deviceId: props.device.id }
-        })
-      ).then(response => {
+  useEffect(() => {
+    apis.deviceInstance.runInfo(props.device.id)
+      .then(response => {
         const tempResult = response?.result;
         if (tempResult) {
-          functionsData.forEach(i => {
-            if (i.functionsId === item.id) {
-              i.data = tempResult;
-            }
+          const {functions} = JSON.parse(tempResult.metadata);
+          let map = {};
+          functions.forEach(item => {
+            map[item.id] = item;
+            functionsSelectList.push(<Select.Option key={item.id}>{item.name}</Select.Option>);
           });
-          setFunctionsData([...functionsData]);
+          setFunctionsInfo(map);
         }
-
       }).catch(() => {
 
-      });
-    };
+    });
+  }, []);
 
-    return (
-        <div>
-            {
-                metadata && metadata.functions ? <Row gutter={24}>
-                    {
-                        (metadata.functions).map((item: any) => {
-                            let tempData = functionsData.find(i => i.functionsId === item.id);
-                            return (
-                                <Col {...topColResponsiveProps} key={item.id}>
-                                    <Spin spinning={item.loading}>
-                                        <ChartCard
-                                            bordered={false}
-                                            title={item.name}
-                                            action={
-                                                <Tooltip
-                                                    title='刷新'
-                                                >
-                                                    <Icon type="sync" onClick={() => { refreshFunctionsItem(item) }} />
-                                                </Tooltip>
-                                            }
+  const debugFunction = () => {
+    apis.deviceInstance
+      .invokedFunction(props.device.id, functionId, JSON.parse(debugData))
+      .then(response => {
+        const tempResult = response?.result;
+        if (tempResult) {
+          setLogs(tempResult);
+        }
+      }).catch(() => {
+        setLogs(`调试错误`);
+    });
+  };
 
-                                            total={`${tempData?.data.total || 0}次`}
-                                            contentHeight={46}
-                                        >
-                                            <span>
-                                                <a
-                                                    style={{ float: "right" }}
-                                                    onClick={() => {
-                                                        setFunctionsVisible(true);
-                                                        setFunctionsInfo(item);
-                                                    }}>
-                                                    功能调试
-                                                </a>
-                                            </span>
-                                        </ChartCard>
+  return (
+    <div>
+      <Card style={{ marginBottom: 20 }} title="功能调试">
+        <Form labelCol={{ span: 1 }} wrapperCol={{ span: 23 }}>
+          <Form.Item label="设备功能">
+            <Select placeholder="请选择设备功能" onChange={e => {
+              setFunctionId(e);
+              const map = {};
+              functionsInfo[e].inputs.forEach(item=>{
+                map[item.id] = item.name;
+              });
+              setDebugData(JSON.stringify(map,null,2))
+            }}>
+              {functionsSelectList}
+            </Select>
+          </Form.Item>
+          <Form.Item label="参数：">
+            <Input.TextArea
+              rows={4} style={{ height: '210px' }}
+              value={debugData}
+              onChange={e => {
+                setDebugData(e.target.value);
+              }}
+              placeholder="参数必须JSON格式"
+            />
+          </Form.Item>
+          <div style={{ textAlign: 'right' }}>
+            <Button
+              type="primary"
+              onClick={() => {
+                debugFunction();
+              }}
+            >
+              执行
+            </Button>
+            <Divider type="vertical"/>
+            <Button type="ghost" onClick={() => setLogs('')}>
+              清空
+            </Button>
+          </div>
 
-                                    </Spin>
-
-                                    {
-                                      functionsVisible &&
-                                        <FunctionDebug
-                                            item={functonsInfo}
-                                            close={() => { setFunctionsVisible(false) }}
-                                            type={functonsInfo.id}
-                                            deviceId={props.device.id}
-                                        />
-                                    }
-                                </Col>
-                            )
-                        }
-                        )
-                    }
-
-                </Row>
-                    :
-                    <Col {...topColResponsiveProps}/>
-            }
-        </div>
-    );
+          <Form.Item label="调试结果：" style={{paddingTop:20}}>
+            <Input.TextArea rows={4} value={logs}/>
+          </Form.Item>
+        </Form>
+      </Card>
+    </div>
+  );
 };
 
 export default Functions;

@@ -13,11 +13,14 @@ const Info: React.FC<Props> = props => (
         <Descriptions.Item label="设备名称" span={1}>
           {props.data.name}
         </Descriptions.Item>
-        <Descriptions.Item label="设备类型" span={1}>
+        <Descriptions.Item label="设备型号" span={1}>
           {props.data.productName}
         </Descriptions.Item>
         <Descriptions.Item label="设备类型" span={1}>
           {props.data.deviceType}
+        </Descriptions.Item>
+        <Descriptions.Item label="所属机构" span={1}>
+          {props.data.orgId}
         </Descriptions.Item>
         <Descriptions.Item label="链接协议" span={1}>
           {props.data.transportProtocol}

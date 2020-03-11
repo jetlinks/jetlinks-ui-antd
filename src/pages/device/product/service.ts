@@ -91,3 +91,10 @@ export async function unDeploy(id: string) {
     data: {}
   });
 }
+
+//获取机构
+export async function queryOrganization() {
+  return request(`/jetlinks/organization/_all`, {
+    method: 'get'
+  });
+}

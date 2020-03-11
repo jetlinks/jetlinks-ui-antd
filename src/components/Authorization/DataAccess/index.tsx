@@ -159,7 +159,7 @@ const DataAccess: React.FC<Props> = (props) => {
                             ]}
                             dataSource={
                                 checkPermission.properties.supportDataAccessTypes.some((e: string) => e === 'org') ? [
-                                    { name: '仅限所在组织架构数据' }
+                                    { name: '仅限所在机构的数据' }
                                 ] : []
                             }
                         />

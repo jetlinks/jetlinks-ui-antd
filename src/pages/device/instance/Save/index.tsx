@@ -16,12 +16,16 @@ interface Props extends FormComponentProps {
 
 interface State {
   productList: DeviceProduct[];
+  organizationList: any[];
 }
 const Save: React.FC<Props> = props => {
   const initState: State = {
     productList: [],
+    organizationList: [],
   };
   const [productList, setProductList] = useState(initState.productList);
+  //消息协议
+  const [organizationList, setOrganizationList] = useState(initState.organizationList);
   const {
     form: { getFieldDecorator },
     form,
@@ -52,6 +56,14 @@ const Save: React.FC<Props> = props => {
         setProductList(response.result);
       })
       .catch(() => {});
+
+    apis.deviceProdcut
+      .queryOrganization()
+      .then(res => {
+        if (res.status === 200){
+          setOrganizationList(res.result);
+        }
+      }).catch(() => {});
   }, []);
 
   return (
@@ -87,6 +99,22 @@ const Save: React.FC<Props> = props => {
               {(productList || []).map(item => (
                 <Select.Option
                   key={JSON.stringify({ productId: item.id, productName: item.name })}
+                  value={item.id}
+                >
+                  {item.name}
+                </Select.Option>
+              ))}
+            </Select>,
+          )}
+        </Form.Item>
+        <Form.Item key="orgId" label="所属机构">
+          {getFieldDecorator('orgId', {
+            initialValue: props.data.orgId,
+          })(
+            <Select placeholder="请输入设备型号">
+              {(organizationList || []).map(item => (
+                <Select.Option
+                  key={JSON.stringify({ orgId: item.id, productName: item.name })}
                   value={item.id}
                 >
                   {item.name}
