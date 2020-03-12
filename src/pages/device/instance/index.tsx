@@ -230,16 +230,25 @@ const DeviceInstancePage: React.FC<Props> = props => {
   const [processVisible, setProcessVisible] = useState(false);
   const [flag, setFlag] = useState(false);
   const [count, setCount] = useState(initState.activeCount);
-  const [eventSource, setSource] = useState();
+  const [eventSource, setSource] = useState<any>();
 
+  const getSearchParam = () => {
+    const data = encodeQueryParam(searchParam);
+    let temp = '';
+    Object.keys(data).forEach((i: string) => {
+      if (data[i] && i !== 'pageSize' && i !== 'pageIndex') {
+        temp += `${i}=${data[i]}&`;
+      }
+    });
+    return encodeURI(temp.replace(/%/g, '%25'));
+  };
   // 激活全部设备
   const startImport = () => {
     let dt = 0;
-
     setProcessVisible(true);
     // const source = new EventSource(`${origin}/device-instance/deploy?:X_Access_Token=${getAccessToken()}`);
     const source = new EventSource(
-      `/jetlinks/device-instance/deploy?:X_Access_Token=${getAccessToken()}`,
+      `/jetlinks/device-instance/deploy?${getSearchParam()}:X_Access_Token=${getAccessToken()} `,
     );
     source.onmessage = e => {
       const temp = JSON.parse(e.data).total;
@@ -261,7 +270,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
     setProcessVisible(true);
     // http://2.jetlinks.org:9010/device-instance/state/_sync/?_=1&:X_Access_Token=96fcd43594a2cd467dc2b9581c49a79a
     const source = new EventSource(
-      `/jetlinks/device-instance/state/_sync/?:X_Access_Token=${getAccessToken()}`,
+      `/jetlinks/device-instance/state/_sync/?${getSearchParam()}:X_Access_Token=${getAccessToken()}`,
     );
 
     source.onmessage = e => {
