@@ -466,11 +466,13 @@ const DeviceInstancePage: React.FC<Props> = props => {
           title="当前进度"
           visible
           confirmLoading={flag}
+          okText="确认"
           onOk={() => {
             setProcessVisible(false);
             setCount(0);
             eventSource.close();
           }}
+          cancelText="关闭"
           onCancel={() => {
             setProcessVisible(false);
             setCount(0);
