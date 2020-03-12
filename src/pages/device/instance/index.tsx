@@ -240,7 +240,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
         temp += `${i}=${data[i]}&`;
       }
     });
-    return encodeURI(temp.replace(/%/g, '%25'));
+    return encodeURI(temp.replace(/%/g, '%'));
   };
   // 激活全部设备
   const startImport = () => {
