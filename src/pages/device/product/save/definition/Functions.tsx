@@ -47,7 +47,7 @@ const Functions: React.FC<Props> = props => {
     },
     {
       title: '是否异步',
-      dataIndex: 'isAsync',
+      dataIndex: 'async',
       render: text => (text ? '是' : '否'),
     },
     {
