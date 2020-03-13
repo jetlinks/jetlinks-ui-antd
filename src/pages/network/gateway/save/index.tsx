@@ -105,6 +105,7 @@ const Save: React.FC<Props> = props => {
             </Form.Item>
           </div>
         );
+
       case 'MQTT_CLIENT':
         return (
           <div>
@@ -133,6 +134,7 @@ const Save: React.FC<Props> = props => {
             </Form.Item>
           </div>
         );
+      case 'UDP':
       case 'TCP_SERVER':
         return (
           <div>

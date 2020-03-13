@@ -28,7 +28,7 @@ interface State {
   logs: any;
   deviceState: any;
   deviceFunction: any;
-  orgInfo:any;
+  orgInfo: any;
 }
 
 const Editor: React.FC<Props> = props => {
@@ -54,7 +54,7 @@ const Editor: React.FC<Props> = props => {
 
   const [orgInfo] = useState(initState.orgInfo);
 
-  const [tableList,setTableList] = useState();
+  const [tableList, setTableList] = useState();
 
   const tabList = [
     {
@@ -65,18 +65,10 @@ const Editor: React.FC<Props> = props => {
       key: 'status',
       tab: '运行状态',
     },
-    /*{
-      key: 'functions',
-      tab: '设备功能',
-    },*/
     {
       key: 'log',
       tab: '日志管理',
     },
-    // {
-    //     key: 'debugger',
-    //     tab: '在线调试',
-    // },
   ];
 
   const getInfo = (id: string) => {
@@ -86,12 +78,12 @@ const Editor: React.FC<Props> = props => {
       callback: (response: SimpleResponse) => {
         if (response.status === 200) {
           const data = response.result;
-          if (data.orgId){
+          if (data.orgId) {
             data.orgName = orgInfo[data.orgId];
           }
-          if (data.deriveMetadata){
+          if (data.deriveMetadata) {
             const deriveMetadata = JSON.parse(data.deriveMetadata);
-            if (deriveMetadata.functions.length > 0){
+            if (deriveMetadata.functions.length > 0) {
               tabList.splice(2, 0, {
                 key: 'functions',
                 tab: '设备功能',
@@ -116,7 +108,7 @@ const Editor: React.FC<Props> = props => {
           ));
         }
       }).catch(() => {
-    });
+      });
 
     if (pathname.indexOf('save') > 0) {
       const list = pathname.split('/');
@@ -172,19 +164,19 @@ const Editor: React.FC<Props> = props => {
   );
 
   const info = {
-    info: <Info data={data}/>,
-    status: <Status device={data}/>,
-    functions: <Functions device={data}/>,
+    info: <Info data={data} />,
+    status: <Status device={data} />,
+    functions: <Functions device={data} />,
     log: (
       <Log
         deviceId={id}
-        // data={logs}
-        // search={(param: any) => {
-        //     handleSearchLog(param)
-        // }}
+      // data={logs}
+      // search={(param: any) => {
+      //     handleSearchLog(param)
+      // }}
       />
     ),
-    debugger: <Debugger/>,
+    debugger: <Debugger />,
   };
 
   const content = (
@@ -201,27 +193,21 @@ const Editor: React.FC<Props> = props => {
   const extra = (
     <div className={styles.moreInfo}>{/* <Statistic title="状态" value="未激活" /> */}</div>
   );
+
   return (
     <PageHeaderWrapper
       className={styles.instancePageHeader}
       style={{ marginTop: 0 }}
-      title={`设备：${data.name}`}
+      title={`设备:${data.name}`}
       extra={action}
       content={content}
       extraContent={extra}
       tabList={tableList}
       tabActiveKey={activeKey}
       onTabChange={(key: string) => {
-        // if (key === 'log') {
-        //     handleSearchLog({
-        //         pageIndex: 0,
-        //         pageSize: 10,
-        //         terms: { 'deviceId': id }
-        //     })
-        // } else
         if (key === 'status') {
           getDeviceState();
-        } else if (key === "functions"){
+        } else if (key === 'functions') {
           getDeviceFunctions();
         }
         setActiveKey(key);

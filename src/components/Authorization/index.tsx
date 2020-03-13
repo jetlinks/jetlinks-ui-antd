@@ -229,7 +229,6 @@ const Authorization: React.FC<Props> = props => {
     //     }
     //   }
     // }
-    console.log(targetAutz, 'auzet');
     // const resultTemp = targetAutz.map((item: any) => ({ id: item.permisseion, ...item }));
     const autzData = targetAutz.map(i => ({ id: i.permission, actions: i.actions }));
     apis.authorization
