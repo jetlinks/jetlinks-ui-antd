@@ -1,21 +1,17 @@
-import { useState, Fragment, useEffect } from 'react';
-import React from 'react';
-import { Button, Descriptions, Statistic, message } from 'antd';
+import React, { useState, Fragment, useEffect } from 'react';
+import { Descriptions } from 'antd';
+import { PageHeaderWrapper } from '@ant-design/pro-layout';
+import { connect } from 'dva';
 import Info from './detail/Info';
 import Status from './detail/Status';
 import Log from './detail/Log';
 import Debugger from './detail/Debugger';
 import Functions from './detail/functions';
-import { router } from 'umi';
 import styles from './index.less';
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import { connect } from 'dva';
-import ConnectState, { Dispatch } from '@/models/connect';
-import { SimpleResponse } from '@/utils/common';
-import { DeviceInstance } from '../data';
-import encodeQueryParam from '@/utils/encodeParam';
+import { Dispatch, ConnectState } from '@/models/connect';
+import { DeviceInstance } from '../data.d';
+// import encodeQueryParam from '@/utils/encodeParam';
 import apis from '@/services';
-import { response } from 'express';
 
 interface Props {
   dispatch: Dispatch;
@@ -28,6 +24,7 @@ interface State {
   logs: any;
   deviceState: any;
   deviceFunction: any;
+  id: string;
 }
 
 const Editor: React.FC<Props> = props => {
@@ -42,15 +39,16 @@ const Editor: React.FC<Props> = props => {
     logs: {},
     deviceState: {},
     deviceFunction: {},
+    id: '',
   };
   const [activeKey, setActiveKey] = useState(initState.activeKey);
   const [data, setData] = useState(initState.data);
-  const [logs, setLogs] = useState(initState.logs);
-  const [id, setId] = useState();
+  // const [logs, setLogs] = useState(initState.logs);
+  const [id, setId] = useState(initState.id);
   const [deviceState, setDeviceState] = useState(initState.deviceState);
   const [deviceFunction, setDeviceFunction] = useState(initState.deviceFunction);
 
-  const [tableList,setTableList] = useState();
+  const [tableList, setTableList] = useState<any>({});
 
   const tabList = [
     {
@@ -61,71 +59,54 @@ const Editor: React.FC<Props> = props => {
       key: 'status',
       tab: '运行状态',
     },
-    /*{
-      key: 'functions',
-      tab: '设备功能',
-    },*/
     {
       key: 'log',
       tab: '日志管理',
     },
-    // {
-    //     key: 'debugger',
-    //     tab: '在线调试',
-    // },
   ];
-
-  const getInfo = (id: string) => {
-    dispatch({
-      type: 'deviceInstance/queryById',
-      payload: id,
-      callback: (response: SimpleResponse) => {
-        if (response.status === 200) {
-          let data = response.result;
-          let deriveMetadata = JSON.parse(data.deriveMetadata);
-          if (deriveMetadata.functions.length > 0){
-            tabList.splice(2, 0, {
-              key: 'functions',
-              tab: '设备功能',
-            });
-          }
-          setTableList(tabList);
-          setData(data);
-        }
-      },
-    });
-  };
 
   useEffect(() => {
     if (pathname.indexOf('save') > 0) {
       const list = pathname.split('/');
-      getInfo(list[list.length - 1]);
-      setId(list[list.length - 1]);
+      const tempId = list[list.length - 1];
+      // getInfo();
+      dispatch({
+        type: 'deviceInstance/queryById',
+        payload: tempId,
+        callback: (response: any) => {
+          if (response.status === 200) {
+            const { result } = response;
+            const deriveMetadata = JSON.parse(result.deriveMetadata || '{}');
+            if (deriveMetadata.functions.length > 0) {
+              tabList.splice(2, 0, {
+                key: 'functions',
+                tab: '设备功能',
+              });
+            }
+            setTableList(tabList);
+            setData({ ...result });
+          }
+        },
+      });
+      setId(tempId);
     }
     setTableList(tabList);
   }, []);
 
-  const handleSearchLog = (terms: any) => {
-    terms.terms = { ...terms.terms, deviceId: id };
-    dispatch({
-      type: 'deviceInstance/queryLog',
-      payload: encodeQueryParam(terms),
-      // payload: encodeQueryParam({
-      //     terms: terms,
-      //     sorts: {
-      //         field: 'createTime',
-      //         order: 'desc'
-      //     },
-      //     pageIndex: 0,
-      //     pageSize: 10,
-      // }),
-      callback: (response: SimpleResponse) => {
-        if (response.status === 200) {
-          setLogs(response.result);
-        }
-      },
-    });
-  };
+  // const handleSearchLog = (param: any) => {
+  //   const params = param;
+  //   params.terms = { ...params.terms, deviceId: id };
+  //   dispatch({
+  //     type: 'deviceInstance/queryLog',
+  //     payload: encodeQueryParam(params),
+
+  //     callback: (response: any) => {
+  //       if (response.status === 200) {
+  //         setLogs(response.result);
+  //       }
+  //     },
+  //   });
+  // };
 
   const getDeviceState = () => {
     apis.deviceInstance.runInfo(id).then(response => {
@@ -151,9 +132,9 @@ const Editor: React.FC<Props> = props => {
   );
 
   const info = {
-    info: <Info data={data}/>,
-    status: <Status device={data}/>,
-    functions: <Functions device={data}/>,
+    info: <Info data={data} />,
+    status: <Status device={data} />,
+    functions: <Functions device={data} />,
     log: (
       <Log
         deviceId={id}
@@ -163,7 +144,7 @@ const Editor: React.FC<Props> = props => {
         // }}
       />
     ),
-    debugger: <Debugger/>,
+    debugger: <Debugger />,
   };
 
   const content = (
@@ -180,27 +161,21 @@ const Editor: React.FC<Props> = props => {
   const extra = (
     <div className={styles.moreInfo}>{/* <Statistic title="状态" value="未激活" /> */}</div>
   );
+
   return (
     <PageHeaderWrapper
       className={styles.instancePageHeader}
       style={{ marginTop: 0 }}
-      title="设备:温度传感器"
+      title={`设备:${data.name}`}
       extra={action}
       content={content}
       extraContent={extra}
       tabList={tableList}
       tabActiveKey={activeKey}
       onTabChange={(key: string) => {
-        // if (key === 'log') {
-        //     handleSearchLog({
-        //         pageIndex: 0,
-        //         pageSize: 10,
-        //         terms: { 'deviceId': id }
-        //     })
-        // } else
         if (key === 'status') {
           getDeviceState();
-        } else if (key === "functions"){
+        } else if (key === 'functions') {
           getDeviceFunctions();
         }
         setActiveKey(key);
