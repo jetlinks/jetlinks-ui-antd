@@ -165,7 +165,7 @@ const Editor: React.FC<Props> = props => {
     <PageHeaderWrapper
       className={styles.instancePageHeader}
       style={{ marginTop: 0 }}
-      title={`设备:${data.name}`}
+      title={`设备：${data.name}`}
       extra={action}
       content={content}
       extraContent={extra}
