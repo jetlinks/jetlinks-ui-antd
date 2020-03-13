@@ -111,7 +111,7 @@ const Save: React.FC<Props> = props => {
           {getFieldDecorator('orgId', {
             initialValue: props.data.orgId,
           })(
-            <Select placeholder="请输入设备型号">
+            <Select placeholder="请选择所属机构">
               {(organizationList || []).map(item => (
                 <Select.Option
                   key={JSON.stringify({ orgId: item.id, productName: item.name })}

@@ -24,7 +24,7 @@ interface State {
   logs: any;
   deviceState: any;
   deviceFunction: any;
-  id: string;
+  orgInfo: any;
 }
 
 const Editor: React.FC<Props> = props => {
@@ -39,7 +39,7 @@ const Editor: React.FC<Props> = props => {
     logs: {},
     deviceState: {},
     deviceFunction: {},
-    id: '',
+    orgInfo: {},
   };
   const [activeKey, setActiveKey] = useState(initState.activeKey);
   const [data, setData] = useState(initState.data);
@@ -48,7 +48,9 @@ const Editor: React.FC<Props> = props => {
   const [deviceState, setDeviceState] = useState(initState.deviceState);
   const [deviceFunction, setDeviceFunction] = useState(initState.deviceFunction);
 
-  const [tableList, setTableList] = useState<any>({});
+  const [orgInfo] = useState(initState.orgInfo);
+
+  const [tableList, setTableList] = useState();
 
   const tabList = [
     {
@@ -65,7 +67,45 @@ const Editor: React.FC<Props> = props => {
     },
   ];
 
+  const getInfo = (id: string) => {
+    dispatch({
+      type: 'deviceInstance/queryById',
+      payload: id,
+      callback: (response: SimpleResponse) => {
+        if (response.status === 200) {
+          const data = response.result;
+          if (data.orgId) {
+            data.orgName = orgInfo[data.orgId];
+          }
+          if (data.deriveMetadata) {
+            const deriveMetadata = JSON.parse(data.deriveMetadata);
+            if (deriveMetadata.functions.length > 0) {
+              tabList.splice(2, 0, {
+                key: 'functions',
+                tab: '设备功能',
+              });
+            }
+          }
+          setTableList(tabList);
+          setData(data);
+        }
+      },
+    });
+  };
+
   useEffect(() => {
+
+    apis.deviceProdcut
+      .queryOrganization()
+      .then(res => {
+        if (res.status === 200) {
+          res.result.map(e => (
+            orgInfo[e.id] = e.name
+          ));
+        }
+      }).catch(() => {
+      });
+
     if (pathname.indexOf('save') > 0) {
       const list = pathname.split('/');
       const tempId = list[list.length - 1];
@@ -138,10 +178,10 @@ const Editor: React.FC<Props> = props => {
     log: (
       <Log
         deviceId={id}
-        // data={logs}
-        // search={(param: any) => {
-        //     handleSearchLog(param)
-        // }}
+      // data={logs}
+      // search={(param: any) => {
+      //     handleSearchLog(param)
+      // }}
       />
     ),
     debugger: <Debugger />,

@@ -9,7 +9,7 @@ export class FunctionMeta {
 
   output: ValueType;
 
-  isAsync: boolean | string;
+  async: boolean | string;
 
   description: string;
 }

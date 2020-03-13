@@ -20,7 +20,7 @@ const Info: React.FC<Props> = props => (
           {props.data.deviceType}
         </Descriptions.Item>
         <Descriptions.Item label="所属机构" span={1}>
-          {props.data.orgId}
+          {props.data.orgName}
         </Descriptions.Item>
         <Descriptions.Item label="链接协议" span={1}>
           {props.data.transportProtocol}
