@@ -1,17 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import styles from '@/utils/table.less';
-import {
-  Divider,
-  Card,
-  Table,
-  Badge,
-  Button,
-  message,
-  Modal,
-  Popconfirm,
-  Upload,
-  Spin,
-} from 'antd';
+import { Divider, Card, Table, Badge, Button, message, Modal, Popconfirm, Upload } from 'antd';
 import { router } from 'umi';
 import { ColumnProps, PaginationConfig, SorterResult } from 'antd/lib/table';
 import { FormComponentProps } from 'antd/es/form';
@@ -26,6 +15,7 @@ import { UploadProps } from 'antd/lib/upload';
 import Save from './Save';
 import Search from './Search';
 import { DeviceInstance } from './data.d';
+import Process from './Process';
 
 const template = require('./template.xlsx');
 
@@ -39,9 +29,9 @@ interface State {
   searchParam: any;
   addVisible: boolean;
   currentItem: Partial<DeviceInstance>;
-  activeCount: number;
   processVisible: boolean;
   importLoading: boolean;
+  action: string;
 }
 
 const DeviceInstancePage: React.FC<Props> = props => {
@@ -51,15 +41,16 @@ const DeviceInstancePage: React.FC<Props> = props => {
     searchParam: { pageSize: 10 },
     addVisible: false,
     currentItem: {},
-    activeCount: 0,
     processVisible: false,
     importLoading: false,
+    action: '',
   };
 
   const [searchParam, setSearchParam] = useState(initState.searchParam);
   const [addVisible, setAddvisible] = useState(initState.addVisible);
   const [currentItem, setCurrentItem] = useState(initState.currentItem);
   const [importLoading, setImportLoading] = useState(initState.importLoading);
+  const [action, setAction] = useState(initState.action);
   const { dispatch } = props;
 
   const statusMap = new Map();
@@ -228,9 +219,8 @@ const DeviceInstancePage: React.FC<Props> = props => {
   };
 
   const [processVisible, setProcessVisible] = useState(false);
-  const [flag, setFlag] = useState(false);
-  const [count, setCount] = useState(initState.activeCount);
-  const [eventSource, setSource] = useState<any>();
+  // const [flag, setFlag] = useState(false);
+  const [api, setAPI] = useState<string>('');
 
   const getSearchParam = () => {
     const data = encodeQueryParam(searchParam);
@@ -244,50 +234,49 @@ const DeviceInstancePage: React.FC<Props> = props => {
   };
   // 激活全部设备
   const startImport = () => {
-    let dt = 0;
+    // let dt = 0;
     setProcessVisible(true);
     // const source = new EventSource(`${origin}/device-instance/deploy?:X_Access_Token=${getAccessToken()}`);
-    const source = new EventSource(
-      `/jetlinks/device-instance/deploy?${getSearchParam()}:X_Access_Token=${getAccessToken()} `,
-    );
-    source.onmessage = e => {
-      const temp = JSON.parse(e.data).total;
-      dt += temp;
-      setCount(dt);
-    };
-    source.onerror = () => {
-      setFlag(false);
-      source.close();
-    };
-    source.onopen = () => {
-      setFlag(true);
-    };
-    setSource(source);
+    const activeAPI = `/jetlinks/device-instance/deploy?${getSearchParam()}:X_Access_Token=${getAccessToken()} `;
+    setAPI(activeAPI);
+    setAction('active');
+
+    // source.onmessage = e => {
+    //   const temp = JSON.parse(e.data).total;
+    //   dt += temp;
+    //   setCount(dt);
+    // };
+    // source.onerror = () => {
+    //   setFlag(false);
+    //   source.close();
+    // };
+    // source.onopen = () => {
+    //   setFlag(true);
+    // };
+    // setSource(source);
   };
 
   const startSync = () => {
-    let dt = 0;
     setProcessVisible(true);
     // http://2.jetlinks.org:9010/device-instance/state/_sync/?_=1&:X_Access_Token=96fcd43594a2cd467dc2b9581c49a79a
-    const source = new EventSource(
-      `/jetlinks/device-instance/state/_sync/?${getSearchParam()}:X_Access_Token=${getAccessToken()}`,
-    );
+    const syncAPI = `/jetlinks/device-instance/state/_sync/?${getSearchParam()}:X_Access_Token=${getAccessToken()}`;
+    setAPI(syncAPI);
+    setAction('sync');
+    // source.onmessage = e => {
+    //   const temp = parseInt(e.data, 10);
+    //   dt += temp;
+    //   setCount(dt);
+    // };
 
-    source.onmessage = e => {
-      const temp = parseInt(e.data, 10);
-      dt += temp;
-      setCount(dt);
-    };
+    // source.onerror = () => {
+    //   setFlag(false);
+    //   source.close();
+    // };
 
-    source.onerror = () => {
-      setFlag(false);
-      source.close();
-    };
-
-    source.onopen = () => {
-      setFlag(true);
-    };
-    setSource(source);
+    // source.onopen = () => {
+    //   setFlag(true);
+    // };
+    // setSource(source);
   };
 
   const activeDevice = () => {
@@ -341,41 +330,13 @@ const DeviceInstancePage: React.FC<Props> = props => {
     },
     showUploadList: false,
     onChange(info) {
-      setImportLoading(true);
       if (info.file.status === 'done') {
-        let dt = 0;
         const fileUrl = info.file.response.result;
-        const source = new EventSource(
-          `/jetlinks/device-instance/import?fileUrl=${fileUrl}&:X_Access_Token=${getAccessToken()}`,
-        );
-        source.onmessage = e => {
-          const res = JSON.parse(e.data);
-          if (res.success) {
-            const temp = res.total;
-            dt += temp;
-            setCount(dt);
-          } else {
-            message.error(res.message);
-          }
-        };
-        source.onerror = () => {
-          setImportLoading(false);
-          source.close();
-        };
-        source.onopen = () => {
-          setImportLoading(true);
-          // console.log('daoru open');
-          // setFlag(true);
-        };
-        // request(fileUrl, { method: 'GET' }).then(e => {
-        //   dispatch({
-        //     type: 'deviceProduct/insert',
-        //     payload: e,
-        //     callback: () => {
-        //       message.success('导入成功');
-        //     },
-        //   });
-        // });
+        const url = `/jetlinks/device-instance/import?fileUrl=${fileUrl}&:X_Access_Token=${getAccessToken()}`;
+        setAPI(url);
+        setAction('import');
+        setImportLoading(true);
+        // setFlag(true);
       }
     },
   };
@@ -409,14 +370,14 @@ const DeviceInstancePage: React.FC<Props> = props => {
             </Button>
             <Divider type="vertical" />
             <Button icon="download" type="default" onClick={() => exportDevice()}>
-              导出实例
+              导出设备
             </Button>
             <Divider type="vertical" />
             <Upload {...uploadProps}>
-              <Button icon="upload">导入实例</Button>
+              <Button icon="upload">导入设备</Button>
             </Upload>
             <Divider type="vertical" />
-            <Button icon="plus" type="danger" onClick={() => activeDevice()}>
+            <Button icon="check-circle" type="danger" onClick={() => activeDevice()}>
               激活全部设备
             </Button>
             <Divider type="vertical" />
@@ -425,27 +386,25 @@ const DeviceInstancePage: React.FC<Props> = props => {
             </Button>
           </div>
           <div className={styles.StandardTable}>
-            <Spin spinning={importLoading} tip="导入中">
-              <Table
-                loading={props.loading}
-                columns={columns}
-                dataSource={(result || {}).data}
-                rowKey="id"
-                onChange={onTableChange}
-                pagination={{
-                  current: result.pageIndex + 1,
-                  total: result.total,
-                  pageSize: result.pageSize,
-                  showQuickJumper: true,
-                  showSizeChanger: true,
-                  pageSizeOptions: ['10', '20', '50', '100'],
-                  showTotal: (total: number) =>
-                    `共 ${total} 条记录 第  ${result.pageIndex + 1}/${Math.ceil(
-                      result.total / result.pageSize,
-                    )}页`,
-                }}
-              />
-            </Spin>
+            <Table
+              loading={props.loading}
+              columns={columns}
+              dataSource={(result || {}).data}
+              rowKey="id"
+              onChange={onTableChange}
+              pagination={{
+                current: result.pageIndex + 1,
+                total: result.total,
+                pageSize: result.pageSize,
+                showQuickJumper: true,
+                showSizeChanger: true,
+                pageSizeOptions: ['10', '20', '50', '100'],
+                showTotal: (total: number) =>
+                  `共 ${total} 条记录 第  ${result.pageIndex + 1}/${Math.ceil(
+                    result.total / result.pageSize,
+                  )}页`,
+              }}
+            />
           </div>
         </div>
       </Card>
@@ -461,31 +420,15 @@ const DeviceInstancePage: React.FC<Props> = props => {
           }}
         />
       )}
-      {processVisible && (
-        <Modal
-          title="当前进度"
-          visible
-          confirmLoading={flag}
-          okText="确认"
-          onOk={() => {
+      {(processVisible || importLoading) && (
+        <Process
+          api={api}
+          action={action}
+          closeVisible={() => {
             setProcessVisible(false);
-            setCount(0);
-            eventSource.close();
+            setImportLoading(false);
           }}
-          cancelText="关闭"
-          onCancel={() => {
-            setProcessVisible(false);
-            setCount(0);
-            eventSource.close();
-          }}
-        >
-          {flag ? (
-            <Badge status="processing" text="进行中" />
-          ) : (
-            <Badge status="success" text="已完成" />
-          )}
-          <p>总数量:{count}</p>
-        </Modal>
+        />
       )}
     </PageHeaderWrapper>
   );
