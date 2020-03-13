@@ -372,9 +372,9 @@ const FunctionDefin: React.FC<Props> = props => {
           })(<Input />)}
         </Form.Item>
         <Form.Item label="是否异步">
-          {getFieldDecorator('isAsync', {
+          {getFieldDecorator('async', {
             rules: [{ required: true }],
-            initialValue: initState.data.isAsync,
+            initialValue: initState.data.async,
           })(
             <Radio.Group>
               <Radio value>是</Radio>
