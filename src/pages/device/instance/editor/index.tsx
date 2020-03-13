@@ -86,13 +86,17 @@ const Editor: React.FC<Props> = props => {
       callback: (response: SimpleResponse) => {
         if (response.status === 200) {
           const data = response.result;
-          data.orgName = orgInfo[data.orgId];
-          const deriveMetadata = JSON.parse(data.deriveMetadata);
-          if (deriveMetadata.functions.length > 0){
-            tabList.splice(2, 0, {
-              key: 'functions',
-              tab: '设备功能',
-            });
+          if (data.orgId){
+            data.orgName = orgInfo[data.orgId];
+          }
+          if (data.deriveMetadata){
+            const deriveMetadata = JSON.parse(data.deriveMetadata);
+            if (deriveMetadata.functions.length > 0){
+              tabList.splice(2, 0, {
+                key: 'functions',
+                tab: '设备功能',
+              });
+            }
           }
           setTableList(tabList);
           setData(data);
