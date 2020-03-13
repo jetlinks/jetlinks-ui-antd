@@ -1,21 +1,17 @@
-import { useState, Fragment, useEffect } from 'react';
-import React from 'react';
-import { Button, Descriptions, Statistic, message } from 'antd';
+import React, { Fragment, useEffect, useState } from 'react';
+import { Descriptions } from 'antd';
 import Info from './detail/Info';
 import Status from './detail/Status';
 import Log from './detail/Log';
 import Debugger from './detail/Debugger';
 import Functions from './detail/functions';
-import { router } from 'umi';
 import styles from './index.less';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { connect } from 'dva';
 import ConnectState, { Dispatch } from '@/models/connect';
 import { SimpleResponse } from '@/utils/common';
 import { DeviceInstance } from '../data';
-import encodeQueryParam from '@/utils/encodeParam';
 import apis from '@/services';
-import { response } from 'express';
 
 interface Props {
   dispatch: Dispatch;
@@ -47,7 +43,6 @@ const Editor: React.FC<Props> = props => {
   };
   const [activeKey, setActiveKey] = useState(initState.activeKey);
   const [data, setData] = useState(initState.data);
-  const [logs, setLogs] = useState(initState.logs);
   const [id, setId] = useState();
   const [deviceState, setDeviceState] = useState(initState.deviceState);
   const [deviceFunction, setDeviceFunction] = useState(initState.deviceFunction);
@@ -118,35 +113,11 @@ const Editor: React.FC<Props> = props => {
     setTableList(tabList);
   }, []);
 
-  const handleSearchLog = (terms: any) => {
-    terms.terms = { ...terms.terms, deviceId: id };
-    dispatch({
-      type: 'deviceInstance/queryLog',
-      payload: encodeQueryParam(terms),
-      // payload: encodeQueryParam({
-      //     terms: terms,
-      //     sorts: {
-      //         field: 'createTime',
-      //         order: 'desc'
-      //     },
-      //     pageIndex: 0,
-      //     pageSize: 10,
-      // }),
-      callback: (response: SimpleResponse) => {
-        if (response.status === 200) {
-          setLogs(response.result);
-        }
-      },
-    });
-  };
-
   const getDeviceState = () => {
     apis.deviceInstance.runInfo(id).then(response => {
       deviceState.runInfo = response.result;
       setDeviceState({ ...deviceState });
     });
-    // apis.deviceInstance.fireAlarm({ id }).then(response => {
-    // })
   };
 
   const getDeviceFunctions = () => {
@@ -170,10 +141,6 @@ const Editor: React.FC<Props> = props => {
     log: (
       <Log
         deviceId={id}
-      // data={logs}
-      // search={(param: any) => {
-      //     handleSearchLog(param)
-      // }}
       />
     ),
     debugger: <Debugger />,
