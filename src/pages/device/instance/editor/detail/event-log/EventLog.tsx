@@ -25,6 +25,7 @@ const EventLog: React.FC<Props> = (props) => {
       return {
         title: item.name,
         dataIndex: `${item.id }_format`,
+        ellipsis : true
       };
     }),
     logData: {},
