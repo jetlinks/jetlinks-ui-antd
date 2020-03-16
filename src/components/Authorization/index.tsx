@@ -1,4 +1,4 @@
-import { Button, Checkbox, Drawer, Form, Input, Select, Table, message } from 'antd';
+import { Button, Checkbox, Drawer, Form, Input, Select, Table, message, Divider } from 'antd';
 import React, { Fragment, useState, useEffect } from 'react';
 import apis from '@/services';
 import { DimensionsItem, DimensionType } from '@/pages/system/dimensions/data';
@@ -382,17 +382,51 @@ const Authorization: React.FC<Props> = props => {
                   const autz = targetAutz.find(item => item.permission === record.id);
                   return (
                     <Fragment>
+                      {autz && autz.actions.length === record.actions.length ? (
+                        <a
+                          onClick={() => {
+                            const temp = targetAutz.filter(item => item.permission !== record.id);
+                            setTargetAutz([...temp]);
+                          }}
+                        >
+                          取消全选
+                        </a>
+                      ) : (
+                        <a
+                          onClick={() => {
+                            if (autz) {
+                              const temp = targetAutz.filter(item => item.permission !== record.id);
+                              autz.actions = record.actions.map((i: any) => i.action);
+                              setTargetAutz([...temp, autz]);
+                            } else {
+                              targetAutz.push({
+                                id: record.id,
+                                permission: record.id,
+                                actions: record.actions.map((i: any) => i.action),
+                              });
+                              setTargetAutz([...targetAutz]);
+                            }
+                          }}
+                        >
+                          全选
+                        </a>
+                      )}
+
                       {((text && text.supportDataAccessTypes) || []).some(
                         (i: string) => i === 'DENY_FIELDS',
                       ) && (
-                        <a
-                          onClick={() => {
-                            setDataAccessVisible(true);
-                            setCheckPermission({ ...record, autz });
-                          }}
-                        >
-                          数据权限
-                        </a>
+                        <>
+                          <Divider type="vertical" />
+
+                          <a
+                            onClick={() => {
+                              setDataAccessVisible(true);
+                              setCheckPermission({ ...record, autz });
+                            }}
+                          >
+                            数据权限
+                          </a>
+                        </>
                       )}
                     </Fragment>
                   );
