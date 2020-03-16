@@ -2,7 +2,7 @@ import { Button, Checkbox, Drawer, Form, Input, Select, Table, message, Divider 
 import React, { Fragment, useState, useEffect } from 'react';
 import apis from '@/services';
 import { DimensionsItem, DimensionType } from '@/pages/system/dimensions/data';
-import { groupBy } from 'lodash';
+import { groupBy, clone } from 'lodash';
 import { FormComponentProps } from 'antd/es/form';
 import styles from './index.less';
 import DataAccess from './DataAccess';
@@ -388,8 +388,7 @@ const Authorization: React.FC<Props> = props => {
                         <a
                           onClick={() => {
                             const temp = targetAutz.filter(item => item.permission !== record.id);
-                            setTargetAutz([...temp]);
-                            setPermissionList([...permissionList]);
+                            setTargetAutz(clone(temp));
                           }}
                         >
                           取消全选
@@ -400,14 +399,14 @@ const Authorization: React.FC<Props> = props => {
                             if (autz) {
                               const temp = targetAutz.filter(item => item.permission !== record.id);
                               autz.actions = record.actions.map((i: any) => i.action);
-                              setTargetAutz([...temp, autz]);
+                              setTargetAutz(clone([...temp, autz]));
                             } else {
                               targetAutz.push({
                                 id: record.id,
                                 permission: record.id,
                                 actions: record.actions.map((i: any) => i.action),
                               });
-                              setTargetAutz([...targetAutz]);
+                              setTargetAutz(clone(targetAutz));
                             }
                           }}
                         >
