@@ -281,6 +281,7 @@ const Authorization: React.FC<Props> = props => {
 
   return (
     <Drawer title="授权" visible width="50VW" onClose={() => props.close()}>
+      <div>{JSON.stringify(targetAutz)}</div>
       <Form>
         <Form.Item label="被授权主体">
           {getFieldDecorator('targetId', {
@@ -342,6 +343,7 @@ const Authorization: React.FC<Props> = props => {
                 render: (text: { action: string; name: string }[], record: any) => {
                   const { id } = record;
 
+                  const tempText = Object.assign([], text || []);
                   const temp = targetAutz.find(item => item.permission === id) || {};
                   return (
                     <div className={styles.permissionForm}>
@@ -364,7 +366,7 @@ const Authorization: React.FC<Props> = props => {
                                 setTargetAutz([temp, ...t]);
                               }
                             }}
-                            options={(text || []).map((e: { action: string; name: string }) => ({
+                            options={tempText.map((e: { action: string; name: string }) => ({
                               label: e.name,
                               value: e.action,
                             }))}
@@ -387,6 +389,7 @@ const Authorization: React.FC<Props> = props => {
                           onClick={() => {
                             const temp = targetAutz.filter(item => item.permission !== record.id);
                             setTargetAutz([...temp]);
+                            setPermissionList([...permissionList]);
                           }}
                         >
                           取消全选
