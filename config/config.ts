@@ -211,6 +211,12 @@ export default {
                   name: '添加设备型号',
                   component: './device/instance/editor',
                 },
+                {
+                  path: '/device/gateway',
+                  name: '网关设备',
+                  authority: ['device-gateway'],
+                  component: './device/gateway',
+                },
               ],
             },
             {
