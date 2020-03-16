@@ -77,7 +77,7 @@ const DeviceGatewayBind: React.FC<Props> = props => {
   };
 
   const rowSelection = {
-    onChange: (selectedRowKeys) => {
+    onChange: (selectedRowKeys:any) => {
       setDeviceId(selectedRowKeys);
     }
   };
