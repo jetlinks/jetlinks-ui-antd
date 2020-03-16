@@ -152,7 +152,7 @@ const DeviceGateway: React.FC<Props> = props => {
                       />}
                       action={
                         <Tooltip title='绑定子设备'>
-                          <Icon type="api" onClick={() => {
+                          <Icon type="plus" onClick={() => {
                             setGatewayId(item.id);
                             setBindVisible(true);
                           }}/>

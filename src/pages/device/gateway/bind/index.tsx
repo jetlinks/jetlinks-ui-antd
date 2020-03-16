@@ -128,7 +128,7 @@ const DeviceGatewayBind: React.FC<Props> = props => {
       onOk={() => {
         submitData();
       }}
-      width={1500}
+      width="60%"
       style={{ marginTop: -30 }}
       onCancel={() => props.close()}
     >
