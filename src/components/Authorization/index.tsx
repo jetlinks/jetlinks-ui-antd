@@ -45,7 +45,7 @@ const Authorization: React.FC<Props> = props => {
   const [tempAccess, setTempAccess] = useState(initState.tempAccess);
 
   const {
-    form: { getFieldDecorator },
+    form: { getFieldDecorator, setFieldsValue, getFieldValue },
     // form,
   } = props;
 
@@ -384,11 +384,13 @@ const Authorization: React.FC<Props> = props => {
                   const autz = targetAutz.find(item => item.permission === record.id);
                   return (
                     <Fragment>
-                      {autz && autz.actions.length === record.actions.length ? (
+                      {getFieldValue(`permissions.${record.id}`) &&
+                      getFieldValue(`permissions.${record.id}`).length === record.actions.length ? (
                         <a
                           onClick={() => {
                             const temp = targetAutz.filter(item => item.permission !== record.id);
                             setTargetAutz(cloneDeep(temp));
+                            setFieldsValue({ [`permissions.${record.id}`]: [] });
                           }}
                         >
                           取消全选
@@ -396,6 +398,11 @@ const Authorization: React.FC<Props> = props => {
                       ) : (
                         <a
                           onClick={() => {
+                            setFieldsValue({
+                              [`permissions.${record.id}`]: record.actions.map(
+                                (i: any) => i.action,
+                              ),
+                            });
                             if (autz) {
                               const temp = targetAutz.filter(item => item.permission !== record.id);
                               autz.actions = record.actions.map((i: any) => i.action);
