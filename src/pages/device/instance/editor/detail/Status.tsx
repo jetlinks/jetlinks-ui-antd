@@ -92,36 +92,40 @@ const Status: React.FC<Props> = (props) => {
             const metadata = JSON.parse(runInfo.metadata);
             const { properties, events } = metadata;
             //设置properties的值
-            const tempProperties = properties.map((item: any) => {
+            if (properties){
+              const tempProperties = properties.map((item: any) => {
                 const temp = propertiesData.find(i => i.property === item.id);
                 // if (!temp) return item;
                 item.loading = false;
                 item.formatValue = temp?.formatValue ? temp?.formatValue : '--';
                 item.visitData = [];
                 return item;
-            });
+              });
 
-            metadata.properties = tempProperties;
+              metadata.properties = tempProperties;
+            }
 
             //设置event数据
-            events.map((event: any) => {
+            if (events){
+              events.map((event: any) => {
                 //加载数据
                 event.loading = false;
                 apis.deviceInstance.eventData(
-                    props.device.id,
-                    event.id,
-                    encodeQueryParam({
-                        pageIndex: 0,
-                        pageSize: 10,
-                    })
+                  props.device.id,
+                  event.id,
+                  encodeQueryParam({
+                    pageIndex: 0,
+                    pageSize: 10,
+                  })
                 ).then(response => {
-                    const data = response.result;
-                    eventData.push({ eventId: event.id, data });
-                    setEventData([...eventData])
+                  const data = response.result;
+                  eventData.push({ eventId: event.id, data });
+                  setEventData([...eventData])
                 }).catch(() => {
 
                 });
-            });
+              });
+            }
             setMetadata(metadata);
 
             if (source) {
@@ -138,7 +142,6 @@ const Status: React.FC<Props> = (props) => {
               const dataValue = data.value;
               metadata.properties = properties.map((item: any) => {
                 if (item.id === dataValue.property) {
-                  // eslint-disable-next-line no-param-reassign
                   item.formatValue = dataValue?.formatValue ? dataValue.formatValue : "--";
                   if (item.valueType.type === "int" || item.valueType.type === "float" || item.valueType.type === "double") {
                     if (item.visitData.length >= 15){
