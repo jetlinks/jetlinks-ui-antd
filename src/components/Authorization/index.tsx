@@ -281,7 +281,6 @@ const Authorization: React.FC<Props> = props => {
 
   return (
     <Drawer title="授权" visible width="50VW" onClose={() => props.close()}>
-      <div>{JSON.stringify(targetAutz)}</div>
       <Form>
         <Form.Item label="被授权主体">
           {getFieldDecorator('targetId', {
