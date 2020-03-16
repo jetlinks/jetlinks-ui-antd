@@ -509,9 +509,9 @@ const Status: React.FC<Props> = (props) => {
                                 </Tooltip>
                             }
                             contentHeight={46}
-                            total={'设备未激活'}
+                            total='设备未激活'
                         >
-                            <span></span>
+                            <span/>
                         </ChartCard>
                     </Col>
             }
