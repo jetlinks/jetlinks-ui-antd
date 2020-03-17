@@ -5,7 +5,6 @@ import { connect } from 'dva';
 import { DeviceProduct } from '../data.d';
 import Definition from './definition';
 import { ConnectState, Dispatch } from '@/models/connect';
-// import { SimpleResponse } from '@/utils/common';
 import apis from '@/services';
 import Save from '.';
 
@@ -30,7 +29,6 @@ const Detail: React.FC<Props> = props => {
     config: {},
     orgInfo: {},
   };
-  // const { dispatch, location: { pathname } } = props;
   const {
     dispatch,
     location: { pathname },
@@ -38,6 +36,7 @@ const Detail: React.FC<Props> = props => {
   const [events, setEvents] = useState([]);
   const [functions, setFunctions] = useState([]);
   const [properties, setProperties] = useState<any[]>([]);
+  const [tags, setTags] = useState<any[]>([]);
   const [basicInfo, setBasicInfo] = useState(initState.basicInfo);
   const [saveVisible, setSaveVisible] = useState(initState.saveVisible);
   const [config, setConfig] = useState(initState.config);
@@ -68,7 +67,8 @@ const Detail: React.FC<Props> = props => {
           setEvents(metadata.events);
           setFunctions(metadata.functions);
           setProperties(metadata.properties);
-          // set 配置信息 Request URL: http://localhost:8000/jetlinks/protocol/jetlinks.v1.0/MQTT/configuration
+          setTags(metadata.tags);
+
           apis.deviceProdcut
             .protocolConfiguration(data.messageProtocol, data.transportProtocol)
             .then(resp => {
@@ -81,7 +81,7 @@ const Detail: React.FC<Props> = props => {
 
   const saveData = (item?: any) => {
     let data: Partial<DeviceProduct>;
-    const metadata = JSON.stringify({ events, properties, functions });
+    const metadata = JSON.stringify({ events, properties, functions, tags });
 
     // TODO 这个地方有疑惑，set数据之后此处数据还是未更新。原因待查
     if (item) {
@@ -101,13 +101,15 @@ const Detail: React.FC<Props> = props => {
   };
 
   const updateData = (type: string, item: any) => {
-    let metadata = JSON.stringify({ events, properties, functions });
+    let metadata = JSON.stringify({ events, properties, functions, tags });
     if (type === 'event') {
-      metadata = JSON.stringify({ events: item, properties, functions });
+      metadata = JSON.stringify({ events: item, properties, functions, tags });
     } else if (type === 'properties') {
-      metadata = JSON.stringify({ events, properties: item, functions });
+      metadata = JSON.stringify({ events, properties: item, functions, tags });
     } else if (type === 'function') {
-      metadata = JSON.stringify({ events, properties, functions: item });
+      metadata = JSON.stringify({ events, properties, functions: item, tags });
+    } else if(type === "tags"){
+      metadata = JSON.stringify({ events, properties, functions, tags:item });
     }
 
     const data = { ...basicInfo, metadata };
@@ -175,12 +177,6 @@ const Detail: React.FC<Props> = props => {
                 title={
                   <span>
                     {config.name}
-                    {/* <Button
-                                            icon="edit"
-                                            style={{ marginLeft: 20 }}
-                                            type="link">
-                                            编辑
-                                        </Button> */}
                   </span>
                 }
               >
@@ -198,6 +194,7 @@ const Detail: React.FC<Props> = props => {
               eventsData={events}
               functionsData={functions}
               propertyData={properties}
+              tagsData={tags}
               saveEvents={(data: any) => {
                 setEvents(data);
                 // saveData();
@@ -212,6 +209,11 @@ const Detail: React.FC<Props> = props => {
                 setProperties(data);
                 // saveData({});
                 updateData('properties', data);
+              }}
+              saveTags={(data: any[]) => {
+                setTags(data);
+                // saveData({});
+                updateData('tags', data);
               }}
             />
           </Tabs.TabPane>

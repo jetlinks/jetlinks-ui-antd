@@ -3,14 +3,17 @@ import { Tabs, Card } from 'antd';
 import Property from './Properties';
 import Functions from './Functions';
 import Events from './Events';
+import Tags from '@/pages/device/product/save/definition/Tags';
 
 interface Props {
   saveProperty: Function;
   saveFunctions: Function;
   saveEvents: Function;
+  saveTags: Function;
   propertyData: any;
   functionsData: any;
   eventsData: any;
+  tagsData: any;
 }
 
 const Definition: React.FC<Props> = props => (
@@ -37,6 +40,14 @@ const Definition: React.FC<Props> = props => (
           data={props.eventsData}
           save={(data: any) => {
             props.saveEvents(data);
+          }}
+        />
+      </Tabs.TabPane>
+      <Tabs.TabPane tab="标签定义" key="4">
+        <Tags
+          data={props.tagsData}
+          save={(data: any) => {
+            props.saveTags(data);
           }}
         />
       </Tabs.TabPane>
