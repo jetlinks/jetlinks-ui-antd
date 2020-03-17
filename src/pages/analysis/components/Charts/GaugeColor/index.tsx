@@ -79,7 +79,7 @@ class GaugeColor extends React.Component<IGaugeProps> {
     };
     const val = data[0].value;
     return (
-      <Chart height={height} data={data} scale={cols} padding={[10, 0, 16, 0]} forceFit>
+      <Chart height={height} data={data} scale={cols} padding={[26, 0, 0, 0]} forceFit>
         <Coord type="polar" startAngle={-9 / 8 * Math.PI} endAngle={1 / 8 * Math.PI} radius={0.75} />
         <Axis name="1" line={null} />
         <Axis
