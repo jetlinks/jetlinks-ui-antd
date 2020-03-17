@@ -1,15 +1,16 @@
 import { connect } from 'dva';
-import { Dispatch, ConnectState } from '@/models/connect';
+import { ConnectState, Dispatch } from '@/models/connect';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import React, { useState, Fragment, useEffect } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { ColumnProps, PaginationConfig, SorterResult } from 'antd/es/table';
-import { message, Card, Button, Table, Tag, Divider } from 'antd';
+import { Button, Card, Divider, message, Popconfirm, Table, Tag } from 'antd';
 import { OpenApiItem } from './data';
 import encodeQueryParam from '@/utils/encodeParam';
 import styles from '@/utils/table.less';
 import Search from './Search';
 import Save from './Save';
 import Authorization from '@/components/Authorization';
+import apis from '@/services';
 
 interface Props {
   openApi: any;
@@ -61,7 +62,7 @@ const OpenApiList: React.FC<Props> = props => {
     {
       title: '状态',
       dataIndex: 'status',
-      render: text => <Tag color={text ? '#108ee9' : '#f50'}>{text ? text.text : '禁用'}</Tag>,
+      render: text => <Tag color={text.value === 1 ? '#108ee9' : '#f50'}>{text.text}</Tag>,
     },
     {
       title: '说明',
@@ -88,6 +89,37 @@ const OpenApiList: React.FC<Props> = props => {
           >
             赋权
           </a>
+          <Divider type="vertical" />
+          {record.status.value !== 1 ? (
+            <span>
+              <Popconfirm
+                title= "确认启用？"
+                onConfirm={() => {
+                  enableOrDisable(record);
+                }}
+              >
+              <a>启用</a>
+              </Popconfirm>
+              <Divider type="vertical" />
+              <Popconfirm
+                title= "确认删除？"
+                onConfirm={() => {
+                  removeOpenApi(record.id);
+                }}
+              >
+                <a>删除</a>
+              </Popconfirm>
+            </span>
+          ) : (
+            <Popconfirm
+              title= "确认禁用？"
+              onConfirm={() => {
+                enableOrDisable(record);
+              }}
+            >
+              <a>禁用</a>
+            </Popconfirm>
+          )}
         </Fragment>
       ),
     },
@@ -104,14 +136,52 @@ const OpenApiList: React.FC<Props> = props => {
     handleSearch(searchParam);
   }, []);
 
+  const enableOrDisable = (record: OpenApiItem)=>{
+    apis.openApi.update(
+      {
+        id : record.id,
+        status : record.status.value === 1 ? 0 : 1 }
+    ).then(res => {
+        if (res.status === 200) {
+          if (record.status.value === 1){
+            message.success("禁用成功");
+          }else{
+            message.success("启用成功");
+          }
+          handleSearch(searchParam);
+        } else {
+          message.error(`操作失败，${res.message}`)
+        }
+      }
+    ).catch(() => {});
+  };
+
+  const removeOpenApi = (id: string)=>{
+    apis.openApi.remove( id ).then(res => {
+        if (res.status === 200) {
+            message.success("删除成功");
+          handleSearch(searchParam);
+        } else {
+          message.error(`操作失败，${res.message}`)
+        }
+      }
+    ).catch(() => {});
+  };
+
   const saveOrUpdate = (user: OpenApiItem) => {
     dispatch({
       type: 'openApi/insert',
       payload: encodeQueryParam(user),
-      callback: () => {
-        message.success('保存成功');
-        setSaveVisible(false);
-        handleSearch(searchParam);
+      callback: res => {
+        console.log(res)
+        if (res.status === 200){
+          message.success('保存成功');
+          setSaveVisible(false);
+          handleSearch(searchParam);
+        } else {
+          message.error(`添加失败`);
+          setSaveVisible(false);
+        }
       },
     });
   };

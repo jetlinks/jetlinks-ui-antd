@@ -1,15 +1,17 @@
-import React, { Fragment, useEffect, useState } from "react"
-import { ColumnProps, PaginationConfig, SorterResult } from "antd/es/table";
-import { UserItem } from "./data";
-import { Divider, Card, Table, Modal, message, Button } from "antd";
-import { PageHeaderWrapper } from "@ant-design/pro-layout";
+import React, { Fragment, useEffect, useState } from 'react';
+import { ColumnProps, PaginationConfig, SorterResult } from 'antd/es/table';
+import { UserItem } from './data';
+import { Button, Card, Divider, message, Modal, Popconfirm, Table, Tag } from 'antd';
+import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import styles from '@/utils/table.less';
-import Search from "./search";
-import { Dispatch, Loading, ConnectState } from "@/models/connect";
-import { connect } from "dva";
-import encodeQueryParam from "@/utils/encodeParam";
-import Save from "./save";
-import Authorization from "@/components/Authorization";
+import Search from './search';
+import { ConnectState, Dispatch } from '@/models/connect';
+import { connect } from 'dva';
+import encodeQueryParam from '@/utils/encodeParam';
+import Save from './save';
+import Authorization from '@/components/Authorization';
+import apis from '@/services';
+
 interface Props {
     users: any;
     dispatch: Dispatch;
@@ -36,7 +38,7 @@ const UserList: React.FC<Props> = (props) => {
         saveVisible: false,
         currentItem: {},
         autzVisible: false
-    }
+    };
 
     const [searchParam, setSearchParam] = useState(initState.searchParam);
     const [saveVisible, setSaveVisible] = useState(initState.saveVisible);
@@ -53,9 +55,9 @@ const UserList: React.FC<Props> = (props) => {
             dataIndex: 'username',
         },
         {
-            title: '是否启用',
+            title: '状态',
             dataIndex: 'status',
-            render: text => (text === 1 ? '是' : '否'),
+            render: text => <Tag color={text === 1 ? '#108ee9' : '#f50'}>{text === 1 ? '正常' : '已禁用'}</Tag>,
         },
         {
             title: '操作',
@@ -63,8 +65,33 @@ const UserList: React.FC<Props> = (props) => {
                 <Fragment>
                     <a onClick={() => edit(record)}>编辑</a>
                     <Divider type="vertical" />
+
                     <a onClick={() => setting(record)}>赋权</a>
-                </Fragment>
+                    <Divider type="vertical" />
+                    {record.status !== 1 ? (
+                      <span>
+                        <Popconfirm
+                          title= "确认启用此用户？"
+                          onConfirm={() => {
+                            enableOrDisable(record);
+                          }}
+                        >
+                        <a>启用</a>
+                      </Popconfirm>
+                        <Divider type="vertical" />
+                        <a onClick={() => handleDelete(record)}>删除</a>
+                      </span>
+                    ) : (
+                      <Popconfirm
+                        title= "确认禁用此用户？"
+                        onConfirm={() => {
+                          enableOrDisable(record);
+                        }}
+                      >
+                        <a>禁用</a>
+                      </Popconfirm>
+                    )}
+                  </Fragment>
             ),
         },
     ];
@@ -73,21 +100,39 @@ const UserList: React.FC<Props> = (props) => {
         handleSearch(searchParam);
     }, []);
 
+    const enableOrDisable = (record: UserItem)=>{
+      apis.users.saveOrUpdate(
+        {id:record.id,status:record.status===1?0:1}
+        ).then(res => {
+          if (res.status === 200) {
+            if (record.status === 1){
+              message.success("禁用成功");
+            }else{
+              message.success("启用成功");
+            }
+            handleSearch(searchParam);
+          } else {
+            message.error(`操作失败，${res.message}`)
+          }
+        }
+      ).catch(() => {});
+    };
+
     const handleSearch = (params?: any) => {
         dispatch({
             type: 'users/query',
             payload: encodeQueryParam(params)
         });
-    }
+    };
 
     const edit = (record: UserItem) => {
         setCurrentItem(record);
         setSaveVisible(true);
-    }
+    };
     const setting = (record: UserItem) => {
         setAutzVisible(true);
         setCurrentItem(record);
-    }
+    };
 
     const saveOrUpdate = (user: UserItem) => {
         dispatch({
@@ -99,10 +144,12 @@ const UserList: React.FC<Props> = (props) => {
                     setSaveVisible(false);
                     handleSearch(searchParam);
                     setCurrentItem({})
+                } else {
+                  message.error(`添加失败，${response.message}`);
                 }
             }
         })
-    }
+    };
     const handleDelete = (params: any) => {
         Modal.confirm({
             title: '确定删除此用户吗？',
@@ -113,17 +160,21 @@ const UserList: React.FC<Props> = (props) => {
                 dispatch({
                     type: 'users/remove',
                     payload: params.id,
-                    callback: (response) => {
+                    callback: response => {
+                      if (response.status === 200){
                         message.success("删除成功");
                         handleSearch();
+                      } else {
+                        message.error("删除失败");
+                      }
                     }
                 });
             },
             onCancel() {
-                handleSearch();
+
             }
         })
-    }
+    };
 
 
     const onTableChange = (pagination: PaginationConfig, filters: any, sorter: SorterResult<any>, extra: any) => {
@@ -133,7 +184,7 @@ const UserList: React.FC<Props> = (props) => {
             terms: searchParam,
             sorts: sorter,
         });
-    }
+    };
 
     return (
         <PageHeaderWrapper
@@ -192,7 +243,7 @@ const UserList: React.FC<Props> = (props) => {
             }
         </PageHeaderWrapper>
     )
-}
+};
 export default connect(({ users, loading }: ConnectState) => ({
     users,
     loading: loading.models.users

@@ -12,14 +12,14 @@ interface Props extends FormComponentProps {
 interface State {
     confirmDirty: boolean,
 }
-const Save: React.FC<Props> = (props) => {
+const Save: React.FC<Props> = props => {
 
     //随机一个默认密码
     const RandomPassword = (Math.random() * 20).toString();
 
     const initState: State = {
         confirmDirty: false,
-    }
+    };
     const [confirmDirty, setConfirmDirty] = useState(initState.confirmDirty);
 
     const { form: { getFieldDecorator }, form } = props;
@@ -31,14 +31,18 @@ const Save: React.FC<Props> = (props) => {
                 fileValue.confirm = undefined;
             }
             fileValue.id = props.data.id;
+
+            if (!props.data.id){
+              fileValue.status = 0;
+            }
             props.save(fileValue);
         });
-    }
+    };
 
     const handleConfirmBlur = (event: any) => {
         const value = event.target.value;
         setConfirmDirty(confirmDirty || !!value);
-    }
+    };
 
     const compareToFirstPassword = (rule, value, callback) => {
         if (value && value !== form.getFieldValue('password')) {
@@ -46,14 +50,14 @@ const Save: React.FC<Props> = (props) => {
         } else {
             callback();
         }
-    }
+    };
 
     const validateToNextPassword = (rule, value, callback) => {
         if (value && confirmDirty) {
             form.validateFields(['confirm'], { force: true });
         }
         callback();
-    }
+    };
 
     return (
         <Modal
@@ -75,15 +79,24 @@ const Save: React.FC<Props> = (props) => {
                         initialValue: props.data.name
                     })(<Input placeholder="请输入" />)}
                 </Form.Item>
-                <Form.Item
-                    key="username"
-                    label="用户名"
+              {
+                props.data.id ? (<Form.Item
+                  key="username"
+                  label="用户名"
                 >
-                    {getFieldDecorator('username', {
-                        rules: [{ required: true, message: '请输入用户名' }],
-                        initialValue: props.data.username,
-                    })(<Input placeholder="请输入" />)}
-                </Form.Item>
+                  {getFieldDecorator('username', {
+                    initialValue: props.data.username,
+                  })(<Input placeholder="请输入" disabled="true"/>)}
+                </Form.Item>):(<Form.Item
+                  key="username"
+                  label="用户名"
+                >
+                  {getFieldDecorator('username', {
+                    rules: [{ required: true, message: '请输入用户名' }],
+                    initialValue: props.data.username,
+                  })(<Input placeholder="请输入"/>)}
+                </Form.Item>)
+              }
                 <Form.Item
                     key="password"
                     label="密码"
@@ -123,5 +136,5 @@ const Save: React.FC<Props> = (props) => {
             </Form>
         </Modal>
     );
-}
+};
 export default Form.create<Props>()(Save);
