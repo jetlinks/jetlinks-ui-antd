@@ -1,6 +1,17 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import styles from '@/utils/table.less';
-import { Divider, Card, Table, Badge, Button, message, Modal, Popconfirm, Upload } from 'antd';
+import {
+  Divider,
+  Card,
+  Table,
+  Badge,
+  Button,
+  message,
+  Modal,
+  Popconfirm,
+  Upload,
+  Spin,
+} from 'antd';
 import { router } from 'umi';
 import { ColumnProps, PaginationConfig, SorterResult } from 'antd/lib/table';
 import { FormComponentProps } from 'antd/es/form';
@@ -304,6 +315,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
     });
   };
 
+  const [uploading, setUploading] = useState(false);
   const exportDevice = () => {
     const formElement = document.createElement('form');
     formElement.style.display = 'display:none;';
@@ -331,6 +343,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
     showUploadList: false,
     onChange(info) {
       if (info.file.status === 'done') {
+        setUploading(false);
         const fileUrl = info.file.response.result;
         const url = `/jetlinks/device-instance/import?fileUrl=${fileUrl}&:X_Access_Token=${getAccessToken()}`;
         setAPI(url);
@@ -338,98 +351,105 @@ const DeviceInstancePage: React.FC<Props> = props => {
         setImportLoading(true);
         // setFlag(true);
       }
+      if (info.file.status === 'uploading') {
+        setUploading(true);
+      }
     },
   };
 
   return (
     <PageHeaderWrapper title="设备实例">
-      <Card bordered={false}>
-        <div className={styles.tableList}>
-          <div className={styles.tableListForm}>
-            <Search
-              search={(params: any) => {
-                setSearchParam(params);
-                handleSearch({ terms: params, pageSize: 10 });
-              }}
-            />
+      <Spin spinning={uploading} tip="上传中...">
+        <Card bordered={false}>
+          <div className={styles.tableList}>
+            <div className={styles.tableListForm}>
+              <Search
+                search={(params: any) => {
+                  setSearchParam(params);
+                  handleSearch({ terms: params, pageSize: 10 });
+                }}
+              />
+            </div>
+            <div className={styles.tableListOperator}>
+              <Button
+                icon="plus"
+                type="primary"
+                onClick={() => {
+                  setCurrentItem({});
+                  setAddvisible(true);
+                }}
+              >
+                新建
+              </Button>
+
+              <Divider type="vertical" />
+
+              <Button href={template} download="设备实例模版" icon="download">
+                下载模版
+              </Button>
+              <Divider type="vertical" />
+              <Button icon="download" type="default" onClick={() => exportDevice()}>
+                导出设备
+              </Button>
+              <Divider type="vertical" />
+              <Upload {...uploadProps}>
+                <Button icon="upload">导入设备</Button>
+              </Upload>
+              <Divider type="vertical" />
+              <Button icon="check-circle" type="danger" onClick={() => activeDevice()}>
+                激活全部设备
+              </Button>
+              <Divider type="vertical" />
+              <Button icon="sync" type="danger" onClick={() => syncDevice()}>
+                同步设备状态
+              </Button>
+            </div>
+            <div className={styles.StandardTable}>
+              <Table
+                loading={props.loading}
+                columns={columns}
+                dataSource={(result || {}).data}
+                rowKey="id"
+                onChange={onTableChange}
+                pagination={{
+                  current: result.pageIndex + 1,
+                  total: result.total,
+                  pageSize: result.pageSize,
+                  showQuickJumper: true,
+                  showSizeChanger: true,
+                  pageSizeOptions: ['10', '20', '50', '100'],
+                  showTotal: (total: number) =>
+                    `共 ${total} 条记录 第  ${result.pageIndex + 1}/${Math.ceil(
+                      result.total / result.pageSize,
+                    )}页`,
+                }}
+              />
+            </div>
           </div>
-          <div className={styles.tableListOperator}>
-            <Button
-              icon="plus"
-              type="primary"
-              onClick={() => {
-                setCurrentItem({});
-                setAddvisible(true);
-              }}
-            >
-              新建
-            </Button>
-            <Divider type="vertical" />
-            <Button href={template} download="设备实例模版" icon="download">
-              下载模版
-            </Button>
-            <Divider type="vertical" />
-            <Button icon="download" type="default" onClick={() => exportDevice()}>
-              导出设备
-            </Button>
-            <Divider type="vertical" />
-            <Upload {...uploadProps}>
-              <Button icon="upload">导入设备</Button>
-            </Upload>
-            <Divider type="vertical" />
-            <Button icon="check-circle" type="danger" onClick={() => activeDevice()}>
-              激活全部设备
-            </Button>
-            <Divider type="vertical" />
-            <Button icon="sync" type="danger" onClick={() => syncDevice()}>
-              同步设备状态
-            </Button>
-          </div>
-          <div className={styles.StandardTable}>
-            <Table
-              loading={props.loading}
-              columns={columns}
-              dataSource={(result || {}).data}
-              rowKey="id"
-              onChange={onTableChange}
-              pagination={{
-                current: result.pageIndex + 1,
-                total: result.total,
-                pageSize: result.pageSize,
-                showQuickJumper: true,
-                showSizeChanger: true,
-                pageSizeOptions: ['10', '20', '50', '100'],
-                showTotal: (total: number) =>
-                  `共 ${total} 条记录 第  ${result.pageIndex + 1}/${Math.ceil(
-                    result.total / result.pageSize,
-                  )}页`,
-              }}
-            />
-          </div>
-        </div>
-      </Card>
-      {addVisible && (
-        <Save
-          data={currentItem}
-          close={() => {
-            setAddvisible(false);
-            setCurrentItem({});
-          }}
-          save={(item: any) => {
-            saveDeviceInstance(item);
-          }}
-        />
-      )}
-      {(processVisible || importLoading) && (
-        <Process
-          api={api}
-          action={action}
-          closeVisible={() => {
-            setProcessVisible(false);
-            setImportLoading(false);
-          }}
-        />
-      )}
+        </Card>
+        {addVisible && (
+          <Save
+            data={currentItem}
+            close={() => {
+              setAddvisible(false);
+              setCurrentItem({});
+            }}
+            save={(item: any) => {
+              saveDeviceInstance(item);
+            }}
+          />
+        )}
+        {(processVisible || importLoading) && (
+          <Process
+            api={api}
+            action={action}
+            closeVisible={() => {
+              setProcessVisible(false);
+              setImportLoading(false);
+            }}
+          />
+        )}
+      </Spin>
     </PageHeaderWrapper>
   );
 };
