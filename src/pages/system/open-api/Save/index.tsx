@@ -62,19 +62,29 @@ const Save: React.FC<Props> = props => {
             initialValue: props.data.id ? props.data.secureKey : secureKey,
           })(<Input placeholder="请输入" />)}
         </Form.Item>
+        {
+          props.data.id?(<Form.Item key="username" label="用户名">
+            {getFieldDecorator('username', {
+              initialValue: props.data.username,
+            })(<Input placeholder="请输入" disabled="true"/>)}
+          </Form.Item>):(<Form.Item key="username" label="用户名">
+            {getFieldDecorator('username', {
+              rules: [{ required: true }],
+              initialValue: props.data.username,
+            })(<Input placeholder="请输入" />)}
+          </Form.Item>)
+        }
+        {
+          props.data.id?(<Form.Item key="password" label="密码">
+            {getFieldDecorator('password', {
+            })(<Input.Password placeholder="请输入" disabled="true"/>)}
+          </Form.Item>):(<Form.Item key="password" label="密码">
+            {getFieldDecorator('password', {
+              rules: [{ required: true }],
+            })(<Input.Password placeholder="请输入" />)}
+          </Form.Item>)
+        }
 
-        <Form.Item key="username" label="用户名">
-          {getFieldDecorator('username', {
-            rules: [{ required: true }],
-            initialValue: props.data.username,
-          })(<Input placeholder="请输入" />)}
-        </Form.Item>
-
-        <Form.Item key="password" label="密码">
-          {getFieldDecorator('password', {
-            rules: [{ required: true }],
-          })(<Input.Password placeholder="请输入" />)}
-        </Form.Item>
         <Form.Item key="signature" label="签名方式">
           {getFieldDecorator('signature', {
             rules: [{ required: true }],
