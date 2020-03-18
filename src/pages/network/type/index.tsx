@@ -148,8 +148,6 @@ const Type: React.FC<Props> = props => {
   };
 
   const onSearch = (type?: string[], name?: string) => {
-    const tempType = type || filterType;
-    const tempName = name || filterName;
     dispatch({
       type: 'networkType/query',
       payload: encodeQueryParam({
@@ -159,8 +157,8 @@ const Type: React.FC<Props> = props => {
           order: 'desc',
         },
         terms: {
-          type$IN: tempType,
-          name$LIKE: tempName,
+          type$IN: type,
+          name$LIKE: name,
         },
       }),
     });
