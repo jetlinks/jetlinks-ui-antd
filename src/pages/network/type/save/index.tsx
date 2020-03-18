@@ -55,7 +55,7 @@ const Save: React.FC<Props> = props => {
         return (
           <Form.Item label="分隔符">
             {getFieldDecorator('configuration.parserConfiguration.delimited', {
-              initialValue: props.data?.configuration?.parserConfiguration.delimited,
+              initialValue: props.data?.configuration?.parserConfiguration?.delimited,
             })(<Input />)}
           </Form.Item>
         );
@@ -64,7 +64,7 @@ const Save: React.FC<Props> = props => {
           <>
             <Form.Item label="脚本语言">
               {getFieldDecorator('configuration.parserConfiguration.lang', {
-                initialValue: props.data?.configuration.parserConfiguration?.lang,
+                initialValue: props.data?.configuration?.parserConfiguration?.lang,
               })(
                 <Radio.Group buttonStyle="solid">
                   <Radio.Button value="javascript">JavaScript</Radio.Button>
@@ -74,7 +74,7 @@ const Save: React.FC<Props> = props => {
             </Form.Item>
             <Form.Item label="解析脚本">
               {getFieldDecorator('configuration.parserConfiguration.script', {
-                initialValue: props.data?.configuration.parserConfiguration?.script,
+                initialValue: props.data?.configuration?.parserConfiguration?.script,
               })(<Input.TextArea rows={3} />)}
             </Form.Item>
           </>
@@ -83,7 +83,7 @@ const Save: React.FC<Props> = props => {
         return (
           <Form.Item label="长度值">
             {getFieldDecorator('configuration.parserConfiguration.size', {
-              initialValue: props.data?.configuration?.parserConfiguration.size,
+              initialValue: props.data?.configuration?.parserConfiguration?.size,
             })(<Input />)}
           </Form.Item>
         );
