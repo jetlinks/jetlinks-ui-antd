@@ -54,8 +54,8 @@ const Save: React.FC<Props> = props => {
       case 'delimited':
         return (
           <Form.Item label="分隔符">
-            {getFieldDecorator('configuration.delimited', {
-              initialValue: props.data?.configuration?.delimited,
+            {getFieldDecorator('configuration.parserConfiguration.delimited', {
+              initialValue: props.data?.configuration?.parserConfiguration.delimited,
             })(<Input />)}
           </Form.Item>
         );
@@ -82,8 +82,8 @@ const Save: React.FC<Props> = props => {
       case 'fixed_length':
         return (
           <Form.Item label="长度值">
-            {getFieldDecorator('configuration.size', {
-              initialValue: props.data?.configuration?.size,
+            {getFieldDecorator('configuration.parserConfiguration.size', {
+              initialValue: props.data?.configuration?.parserConfiguration.size,
             })(<Input />)}
           </Form.Item>
         );
