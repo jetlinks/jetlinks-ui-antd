@@ -1,5 +1,5 @@
-import React, { Fragment, useEffect, useState } from 'react';
-import { Descriptions } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Badge, Descriptions, Divider, Icon, message, Row, Tooltip } from 'antd';
 import Info from './detail/Info';
 import Status from './detail/Status';
 import Log from './detail/Log';
@@ -12,6 +12,7 @@ import ConnectState, { Dispatch } from '@/models/connect';
 import { SimpleResponse } from '@/utils/common';
 import { DeviceInstance } from '../data';
 import apis from '@/services';
+import { router } from 'umi';
 
 interface Props {
   dispatch: Dispatch;
@@ -25,6 +26,7 @@ interface State {
   deviceState: any;
   deviceFunction: any;
   orgInfo: any;
+  config: any;
 }
 
 const Editor: React.FC<Props> = props => {
@@ -40,13 +42,14 @@ const Editor: React.FC<Props> = props => {
     deviceState: {},
     deviceFunction: {},
     orgInfo: {},
+    config: {},
   };
   const [activeKey, setActiveKey] = useState(initState.activeKey);
   const [data, setData] = useState(initState.data);
   const [id, setId] = useState();
   const [deviceState, setDeviceState] = useState(initState.deviceState);
   const [deviceFunction, setDeviceFunction] = useState(initState.deviceFunction);
-
+  const [config, setConfig] = useState(initState.config);
   const [orgInfo] = useState(initState.orgInfo);
 
   const [tableList, setTableList] = useState();
@@ -85,12 +88,23 @@ const Editor: React.FC<Props> = props => {
               });
             }
           }
+
+          apis.deviceProdcut
+            .protocolConfiguration(data.protocol, data.transport)
+            .then(resp => {
+              setConfig(resp.result);
+            }).catch();
           setTableList(tabList);
           setData(data);
         }
       },
     });
   };
+
+  const statusMap = new Map();
+  statusMap.set('在线', 'success');
+  statusMap.set('离线', 'error');
+  statusMap.set('未激活', 'processing');
 
   useEffect(() => {
 
@@ -127,15 +141,25 @@ const Editor: React.FC<Props> = props => {
     });
   };
 
+  const disconnectDevice = (deviceId:string) => {
+    apis.deviceInstance.disconnectDevice(deviceId).then(response => {
+      if (response.status === 200){
+        message.success("断开连接成功");
+        getInfo(deviceId);
+      }else{
+        message.error("断开连接失败");
+      }
+    }).catch();
+  };
+
   const action = (
-    <Fragment>
-      {/* <Button>返回</Button> */}
-      {/* <Button type='primary'>刷新</Button> */}
-    </Fragment>
+    <Tooltip title='刷新'>
+      <Icon type="sync" style={{fontSize:20}} onClick={() => { getInfo(data.id) }}/>
+    </Tooltip>
   );
 
   const info = {
-    info: <Info data={data} />,
+    info: <Info data={data} configuration={config}/>,
     status: <Status device={data} />,
     functions: <Functions device={data} />,
     log: (
@@ -151,21 +175,44 @@ const Editor: React.FC<Props> = props => {
       <Descriptions column={4}>
         <Descriptions.Item label="ID">{id}</Descriptions.Item>
         <Descriptions.Item label="型号">
-          <div>{data.productName}</div>
+          <div>
+            {data.productName}
+            <a style={{marginLeft:10}}
+              onClick={() => {
+                router.push(`/device/product/save/${data.productId}`);
+              }}
+            >查看</a>
+          </div>
         </Descriptions.Item>
       </Descriptions>
     </div>
   );
 
+  const titleInfo = (
+      <Row>
+        <div>
+          <span>
+            设备：{data.name}
+          </span>
+          <Divider type="vertical" />
+          <Badge status={statusMap.get(data.state?.text)} text={data.state?.text}/>
+          <Divider type="vertical" />
+          {data.state?.value === "online"?(
+            <a style={{fontSize:15}} onClick={() => { disconnectDevice(data.id) }}>断开连接</a>
+          ):(<span/>)}
+        </div>
+      </Row>
+  );
+
   const extra = (
-    <div className={styles.moreInfo}>{/* <Statistic title="状态" value="未激活" /> */}</div>
+    <div className={styles.moreInfo}>{ /*<Statistic title="状态" value="未激活" />*/ }</div>
   );
 
   return (
     <PageHeaderWrapper
       className={styles.instancePageHeader}
       style={{ marginTop: 0 }}
-      title={`设备：${data.name}`}
+      title={titleInfo}
       extra={action}
       content={content}
       extraContent={extra}

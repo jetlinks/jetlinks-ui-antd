@@ -1,6 +1,7 @@
 import request from '@/utils/request';
 import { DeviceInstance } from './data.d';
 import { getAccessToken } from '@/utils/authority';
+import { UserItem } from '@/pages/system/users/data';
 
 export async function list(params: any) {
   return request(`/jetlinks/device-instance/_query`, {
@@ -10,7 +11,7 @@ export async function list(params: any) {
 }
 
 export async function info(id: string) {
-  return request(`/jetlinks/device-instance/info/${id}`, {
+  return request(`/jetlinks/device/instance/${id}/detail`, {
     method: 'GET',
   });
 }
@@ -103,6 +104,19 @@ export async function invokedFunction(deviceId: string,functionId: string, data:
   return request(`/jetlinks/device/invoked/${deviceId}/function/${functionId}`, {
     method: 'POST',
     data,
+  });
+}
+
+export async function disconnectDevice(deviceId: string) {
+  return request(`/jetlinks//device/instance/${deviceId}/disconnect`, {
+    method: 'POST',
+  });
+}
+
+export async function update(deviceId:string,params: DeviceInstance) {
+  return request(`/jetlinks/device/instance/${deviceId}`, {
+    method: 'PUT',
+    data: params,
   });
 }
 

@@ -1,4 +1,4 @@
-import { CommonEnum, SimpleType } from '@/utils/common';
+import { SimpleType } from '@/utils/common';
 
 export class DeviceInstance extends SimpleType {
   id: string;
@@ -15,7 +15,10 @@ export class DeviceInstance extends SimpleType {
 
   deriveMetadata: string;
 
-  state: CommonEnum;
+  state: {
+    value: string,
+    text: string,
+  };
 
   creatorId: string;
 
@@ -27,7 +30,10 @@ export class DeviceInstance extends SimpleType {
 
   disabled?: boolean;
 
-  deviceType: string;
+  deviceType: {
+    value: string,
+    text: string,
+  };
 
   transportProtocol: string;
 
@@ -35,7 +41,19 @@ export class DeviceInstance extends SimpleType {
 
   orgId: string;
 
-  orgName:string;
+  orgName: string;
+
+  configuration:any;
+
+  transport:string;
+
+  protocol:string;
+
+  address:string;
+
+  registerTime:string;
+
+  onlineTime:string;
 }
 
 export interface DeviceInstancePagination {

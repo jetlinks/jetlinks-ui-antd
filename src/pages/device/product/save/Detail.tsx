@@ -182,7 +182,7 @@ const Detail: React.FC<Props> = props => {
               >
                 {config.properties &&
                 config.properties.map((item: any) => (
-                  <Descriptions.Item label={item.property} span={1}>
+                  <Descriptions.Item label={item.property} span={1} key={item.property}>
                     {basicInfo.configuration[item.property]}
                   </Descriptions.Item>
                 ))}
