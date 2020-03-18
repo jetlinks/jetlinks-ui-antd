@@ -194,11 +194,9 @@ const Editor: React.FC<Props> = props => {
           <span>
             设备：{data.name}
           </span>
-          <Divider type="vertical" />
-          <Badge status={statusMap.get(data.state?.text)} text={data.state?.text}/>
-          <Divider type="vertical" />
+          <Badge style={{marginLeft:20}} status={statusMap.get(data.state?.text)} text={data.state?.text}/>
           {data.state?.value === "online"?(
-            <a style={{fontSize:15}} onClick={() => { disconnectDevice(data.id) }}>断开连接</a>
+            <a style={{fontSize:15,marginLeft:20}} onClick={() => { disconnectDevice(data.id) }}>断开连接</a>
           ):(<span/>)}
         </div>
       </Row>
