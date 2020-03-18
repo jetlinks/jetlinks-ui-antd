@@ -163,16 +163,13 @@ const UserList: React.FC<Props> = (props) => {
                     callback: response => {
                       if (response.status === 200){
                         message.success("删除成功");
-                        handleSearch();
+                        handleSearch(searchParam);
                       } else {
                         message.error("删除失败");
                       }
                     }
                 });
             },
-            onCancel() {
-
-            }
         })
     };
 

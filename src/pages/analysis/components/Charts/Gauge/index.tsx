@@ -83,8 +83,8 @@ class Gauge extends React.Component<IGaugeProps> {
       textAlign: 'center',
     };
     return (
-      <Chart height={height} data={data} scale={cols} padding={[10, 0, 16, 0]} forceFit={forceFit}>
-        <Coord type="polar" startAngle={-1.25 * Math.PI} endAngle={0.25 * Math.PI} radius={0.8} />
+      <Chart height={height} data={data} scale={cols} padding={[26, 0, 0, 0]} forceFit={forceFit}>
+        <Coord type="polar" startAngle={-9 / 8 * Math.PI} endAngle={1 / 8 * Math.PI} radius={0.75} />
         <Axis name="1" line={null} />
         <Axis
           line={null}

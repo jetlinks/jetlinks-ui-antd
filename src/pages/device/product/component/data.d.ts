@@ -93,6 +93,23 @@ export class PropertiesMeta {
   };
 }
 
+export class TagsMeta {
+  id: string;
+
+  name: string;
+
+  type: string;
+
+  valueType: ValueType;
+
+  description?: string;
+
+  expands: {
+    report: boolean;
+    readOnly: boolean;
+  };
+}
+
 export class EventsMeta {
   id: string;
 
