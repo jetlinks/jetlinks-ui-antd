@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Badge, Descriptions, Icon, message, Row, Spin, Tooltip } from 'antd';
+import { Badge, Descriptions, Icon, message, Modal, Popconfirm, Row, Spin, Tooltip } from 'antd';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { connect } from 'dva';
 import { router } from 'umi';
@@ -151,10 +151,27 @@ const Editor: React.FC<Props> = props => {
       if (response.status === 200){
         message.success("断开连接成功");
         getInfo(deviceId);
-      }else{
+      } else {
         message.error("断开连接失败");
+        setSpinning(false);
       }
     }).catch();
+  };
+
+  const changeDeploy = (deviceId:string) => {
+    setSpinning(true);
+    apis.deviceInstance
+      .changeDeploy(deviceId)
+      .then(response => {
+        if (response.status === 200) {
+          message.success('激活成功');
+          getInfo(deviceId);
+        } else {
+          message.error("激活失败");
+          setSpinning(false);
+        }
+      })
+      .catch(() => {});
   };
 
   const action = (
@@ -201,8 +218,19 @@ const Editor: React.FC<Props> = props => {
           </span>
           <Badge style={{marginLeft:20}} status={statusMap.get(data.state?.text)} text={data.state?.text}/>
           {data.state?.value === "online"?(
-            <a style={{fontSize:15,marginLeft:20}} onClick={() => { disconnectDevice(data.id) }}>断开连接</a>
-          ):(<span/>)}
+            <Popconfirm title="确认让此设备断开连接？" onConfirm={() => {
+                disconnectDevice(data.id)
+            }}>
+              <a style={{fontSize:12,marginLeft:20}}>断开连接</a>
+            </Popconfirm>
+          ):(data.state?.value === "notActive"?(
+            <Popconfirm title="确认激活此设备？"
+              onConfirm={() => {
+                changeDeploy(data.id)
+            }}>
+              <a style={{fontSize:12,marginLeft:20}}>激活设备</a>
+            </Popconfirm>
+          ):(<span/>))}
         </div>
       </Row>
   );

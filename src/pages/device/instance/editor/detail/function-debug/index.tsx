@@ -51,7 +51,7 @@ const FunctionDebug: React.FC<Props> = props => {
               debugMqttClient();
             }}
           >
-            提交
+            执行
           </Button>
           <Divider type="vertical" />
           <Button type="ghost" onClick={() => setLogs('')}>
