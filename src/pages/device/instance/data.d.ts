@@ -54,6 +54,8 @@ export class DeviceInstance extends SimpleType {
   registerTime:string;
 
   onlineTime:string;
+
+  tags:any;
 }
 
 export interface DeviceInstancePagination {

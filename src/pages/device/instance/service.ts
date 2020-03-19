@@ -120,6 +120,19 @@ export async function update(deviceId:string,params: DeviceInstance) {
   });
 }
 
+export async function saveDeviceTags(deviceId:string,params: any) {
+  return request(`/jetlinks/device/instance/${deviceId}/tag`, {
+    method: 'PATCH',
+    data: params,
+  });
+}
+
+export async function removeTags(deviceId: string,tagId: string) {
+  return request(`/jetlinks//device/instance/${deviceId}/tag/${tagId}`, {
+    method: 'DELETE',
+  });
+}
+
 // export async function deployAll() {
 //     return request(`/jetlinks/device-instance/deploy`, {
 //         method: 'GET',

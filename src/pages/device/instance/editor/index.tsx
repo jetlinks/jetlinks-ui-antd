@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { Badge, Descriptions, Divider, Icon, message, Row, Tooltip } from 'antd';
+import { Badge, Descriptions, Icon, message, Row, Spin, Tooltip } from 'antd';
+import { PageHeaderWrapper } from '@ant-design/pro-layout';
+import { connect } from 'dva';
+import { router } from 'umi';
 import Info from './detail/Info';
 import Status from './detail/Status';
 import Log from './detail/Log';
 import Debugger from './detail/Debugger';
 import Functions from './detail/functions';
 import styles from './index.less';
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import { connect } from 'dva';
 import ConnectState, { Dispatch } from '@/models/connect';
 import { SimpleResponse } from '@/utils/common';
 import { DeviceInstance } from '../data';
 import apis from '@/services';
-import { router } from 'umi';
 
 interface Props {
   dispatch: Dispatch;
@@ -27,6 +27,7 @@ interface State {
   deviceFunction: any;
   orgInfo: any;
   config: any;
+  spinning:boolean;
 }
 
 const Editor: React.FC<Props> = props => {
@@ -43,6 +44,7 @@ const Editor: React.FC<Props> = props => {
     deviceFunction: {},
     orgInfo: {},
     config: {},
+    spinning:true,
   };
   const [activeKey, setActiveKey] = useState(initState.activeKey);
   const [data, setData] = useState(initState.data);
@@ -51,7 +53,7 @@ const Editor: React.FC<Props> = props => {
   const [deviceFunction, setDeviceFunction] = useState(initState.deviceFunction);
   const [config, setConfig] = useState(initState.config);
   const [orgInfo] = useState(initState.orgInfo);
-
+  const [spinning, setSpinning] = useState(initState.spinning);
   const [tableList, setTableList] = useState();
 
   const tabList = [
@@ -70,6 +72,7 @@ const Editor: React.FC<Props> = props => {
   ];
 
   const getInfo = (id: string) => {
+    setSpinning(true);
     dispatch({
       type: 'deviceInstance/queryById',
       payload: id,
@@ -96,6 +99,7 @@ const Editor: React.FC<Props> = props => {
             }).catch();
           setTableList(tabList);
           setData(data);
+          setSpinning(false);
         }
       },
     });
@@ -142,6 +146,7 @@ const Editor: React.FC<Props> = props => {
   };
 
   const disconnectDevice = (deviceId:string) => {
+    setSpinning(true);
     apis.deviceInstance.disconnectDevice(deviceId).then(response => {
       if (response.status === 200){
         message.success("断开连接成功");
@@ -159,7 +164,7 @@ const Editor: React.FC<Props> = props => {
   );
 
   const info = {
-    info: <Info data={data} configuration={config}/>,
+    info: <Info data={data} configuration={config} refresh={()=>{getInfo(data.id)}}/>,
     status: <Status device={data} />,
     functions: <Functions device={data} />,
     log: (
@@ -207,26 +212,28 @@ const Editor: React.FC<Props> = props => {
   );
 
   return (
-    <PageHeaderWrapper
-      className={styles.instancePageHeader}
-      style={{ marginTop: 0 }}
-      title={titleInfo}
-      extra={action}
-      content={content}
-      extraContent={extra}
-      tabList={tableList}
-      tabActiveKey={activeKey}
-      onTabChange={(key: string) => {
-        if (key === 'status') {
-          getDeviceState();
-        } else if (key === 'functions') {
-          getDeviceFunctions();
-        }
-        setActiveKey(key);
-      }}
-    >
-      {info[activeKey]}
-    </PageHeaderWrapper>
+    <Spin tip="加载中..." spinning={spinning}>
+      <PageHeaderWrapper
+        className={styles.instancePageHeader}
+        style={{ marginTop: 0 }}
+        title={titleInfo}
+        extra={action}
+        content={content}
+        extraContent={extra}
+        tabList={tableList}
+        tabActiveKey={activeKey}
+        onTabChange={(key: string) => {
+          /*if (key === 'status') {
+            getDeviceState();
+          } else if (key === 'functions') {
+            getDeviceFunctions();
+          }*/
+          setActiveKey(key);
+        }}
+      >
+        {info[activeKey]}
+      </PageHeaderWrapper>
+    </Spin>
   );
 };
 
