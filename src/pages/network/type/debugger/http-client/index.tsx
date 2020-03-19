@@ -14,7 +14,6 @@ import {
 } from 'antd';
 
 import React, { Fragment, useState } from 'react';
-// import { getAccessToken } from '@/utils/authority';
 import apis from '@/services';
 import { randomString } from '@/utils/utils';
 
@@ -65,7 +64,7 @@ const HttpClient: React.FC<Props> = props => {
         {
           id: randomString(8),
           key: '',
-          value: '',
+          value: [],
           describe: '',
         },
       ],
@@ -98,7 +97,6 @@ const HttpClient: React.FC<Props> = props => {
       });
       debugData.queryParameters = queryParameters;
     }
-    console.log(debugData, JSON.stringify(debugData.payload));
     apis.network
       .debugHttpClient(item.id, debugData)
       .then(response => {
@@ -515,7 +513,9 @@ const HttpClient: React.FC<Props> = props => {
         </Form.Item>
 
         <Divider>调试日志</Divider>
-        <Input.TextArea rows={4} value={logs} />
+        <div style={{ height: 350, overflow: 'auto' }}>
+          <pre>{logs.join('\n')}</pre>
+        </div>
       </Form>
     </Modal>
   );

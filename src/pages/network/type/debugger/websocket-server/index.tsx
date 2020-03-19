@@ -1,7 +1,8 @@
-import { Modal, Button, Divider, Form, Input, Select, message } from 'antd';
+import { Modal, Button, Divider, Form, Select } from 'antd';
 
 import React, { Fragment, useState } from 'react';
 import { getAccessToken } from '@/utils/authority';
+import { wrapAPI } from '@/utils/utils';
 
 interface Props {
   close: Function;
@@ -9,34 +10,39 @@ interface Props {
 }
 interface State {
   type: string;
-  logs: string;
+  logs: any[];
 }
 const WebSocketServer: React.FC<Props> = props => {
   const { item } = props;
   const initState: State = {
     type: 'JSON',
-    logs: '',
+    logs: [],
   };
   const [type, setType] = useState(initState.type);
   const [logs, setLogs] = useState(initState.logs);
+  const [sourceState, setSourceState] = useState<any>();
 
   const debug = () => {
-    setLogs(`${logs}开始调试\n`);
+    logs.push('开始调试');
+    setLogs([...logs]);
     const eventSource = new EventSource(
-      `/jetlinks/network/websocket/server/${
-        item.id
-      }/_subscribe/${type}?:X_Access_Token=${getAccessToken()}`,
+      wrapAPI(
+        `/jetlinks/network/websocket/server/${
+          item.id
+        }/_subscribe/${type}?:X_Access_Token=${getAccessToken()}`,
+      ),
     );
+    setSourceState(eventSource);
     eventSource.onerror = () => {
-      message.error('调试错误');
+      setLogs([...logs, '断开连接']);
     };
     eventSource.onmessage = e => {
       // 追加日志
-      message.success(e.data);
+      setLogs(l => [...l, e.data]);
     };
     eventSource.onopen = () => {
-      setLogs(`${logs}开启推送`);
-      message.error('关闭链接');
+      // setLogs(`${logs}开启推送`);
+      // message.error('关闭链接');
     };
   };
   return (
@@ -59,13 +65,21 @@ const WebSocketServer: React.FC<Props> = props => {
           <Button
             type="danger"
             onClick={() => {
-              setLogs(`${logs}结束调试\n`);
+              logs.push('结束调试');
+              setLogs([...logs]);
+              if (sourceState) sourceState.close();
             }}
           >
             结束
           </Button>
           <Divider type="vertical" />
-          <Button type="ghost" onClick={() => setLogs('')}>
+          <Button
+            type="ghost"
+            onClick={() => {
+              logs.splice(0, logs.length);
+              setLogs([]);
+            }}
+          >
             清空
           </Button>
         </Fragment>
@@ -86,7 +100,9 @@ const WebSocketServer: React.FC<Props> = props => {
           </Select>
         </Form.Item>
         <Divider>调试日志</Divider>
-        <Input.TextArea rows={4} value={logs} placeholder="只会接收最新的客户端链接" />
+        <div style={{ height: 350, overflow: 'auto' }}>
+          <pre>{logs.join('\n')}</pre>
+        </div>
       </Form>
     </Modal>
   );

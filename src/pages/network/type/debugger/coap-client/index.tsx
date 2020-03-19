@@ -32,12 +32,7 @@ const CoapClient: React.FC<Props> = props => {
 
   const [debugData, setDebugData] = useState(initState.debugData);
   const [logs, setLogs] = useState(initState.logs);
-  // url: "coap://127.0.0.1:1234"
-  // options: "123123"
-  // method: "GET"
-  // payload: "123123"
-  // payloadType: "JSON"
-  // const { item: { type: { text } } } = props;
+
   const debugMqttClient = () => {
     apis.network
       .debugCoapClient(item.id, debugData)
@@ -66,7 +61,9 @@ const CoapClient: React.FC<Props> = props => {
             提交
           </Button>
           <Divider type="vertical" />
-          <Button type="ghost">清空</Button>
+          <Button type="ghost" onClick={() => setLogs('')}>
+            清空
+          </Button>
         </Fragment>
       }
     >
