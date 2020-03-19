@@ -1,13 +1,14 @@
-import React, { Fragment, useEffect, useState } from 'react';
-import { Descriptions } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Badge, Descriptions, Icon, message, Modal, Popconfirm, Row, Spin, Tooltip } from 'antd';
+import { PageHeaderWrapper } from '@ant-design/pro-layout';
+import { connect } from 'dva';
+import { router } from 'umi';
 import Info from './detail/Info';
 import Status from './detail/Status';
 import Log from './detail/Log';
 import Debugger from './detail/Debugger';
 import Functions from './detail/functions';
 import styles from './index.less';
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import { connect } from 'dva';
 import ConnectState, { Dispatch } from '@/models/connect';
 import { SimpleResponse } from '@/utils/common';
 import { DeviceInstance } from '../data';
@@ -25,6 +26,8 @@ interface State {
   deviceState: any;
   deviceFunction: any;
   orgInfo: any;
+  config: any;
+  spinning:boolean;
 }
 
 const Editor: React.FC<Props> = props => {
@@ -40,15 +43,17 @@ const Editor: React.FC<Props> = props => {
     deviceState: {},
     deviceFunction: {},
     orgInfo: {},
+    config: {},
+    spinning:true,
   };
   const [activeKey, setActiveKey] = useState(initState.activeKey);
   const [data, setData] = useState(initState.data);
   const [id, setId] = useState();
   const [deviceState, setDeviceState] = useState(initState.deviceState);
   const [deviceFunction, setDeviceFunction] = useState(initState.deviceFunction);
-
+  const [config, setConfig] = useState(initState.config);
   const [orgInfo] = useState(initState.orgInfo);
-
+  const [spinning, setSpinning] = useState(initState.spinning);
   const [tableList, setTableList] = useState();
 
   const tabList = [
@@ -67,6 +72,7 @@ const Editor: React.FC<Props> = props => {
   ];
 
   const getInfo = (id: string) => {
+    setSpinning(true);
     dispatch({
       type: 'deviceInstance/queryById',
       payload: id,
@@ -85,12 +91,24 @@ const Editor: React.FC<Props> = props => {
               });
             }
           }
+
+          apis.deviceProdcut
+            .protocolConfiguration(data.protocol, data.transport)
+            .then(resp => {
+              setConfig(resp.result);
+            }).catch();
           setTableList(tabList);
           setData(data);
+          setSpinning(false);
         }
       },
     });
   };
+
+  const statusMap = new Map();
+  statusMap.set('在线', 'success');
+  statusMap.set('离线', 'error');
+  statusMap.set('未激活', 'processing');
 
   useEffect(() => {
 
@@ -127,15 +145,43 @@ const Editor: React.FC<Props> = props => {
     });
   };
 
+  const disconnectDevice = (deviceId:string) => {
+    setSpinning(true);
+    apis.deviceInstance.disconnectDevice(deviceId).then(response => {
+      if (response.status === 200){
+        message.success("断开连接成功");
+        getInfo(deviceId);
+      } else {
+        message.error("断开连接失败");
+        setSpinning(false);
+      }
+    }).catch();
+  };
+
+  const changeDeploy = (deviceId:string) => {
+    setSpinning(true);
+    apis.deviceInstance
+      .changeDeploy(deviceId)
+      .then(response => {
+        if (response.status === 200) {
+          message.success('激活成功');
+          getInfo(deviceId);
+        } else {
+          message.error("激活失败");
+          setSpinning(false);
+        }
+      })
+      .catch(() => {});
+  };
+
   const action = (
-    <Fragment>
-      {/* <Button>返回</Button> */}
-      {/* <Button type='primary'>刷新</Button> */}
-    </Fragment>
+    <Tooltip title='刷新'>
+      <Icon type="sync" style={{fontSize:20}} onClick={() => { getInfo(data.id) }}/>
+    </Tooltip>
   );
 
   const info = {
-    info: <Info data={data} />,
+    info: <Info data={data} configuration={config} refresh={()=>{getInfo(data.id)}}/>,
     status: <Status device={data} />,
     functions: <Functions device={data} />,
     log: (
@@ -151,37 +197,71 @@ const Editor: React.FC<Props> = props => {
       <Descriptions column={4}>
         <Descriptions.Item label="ID">{id}</Descriptions.Item>
         <Descriptions.Item label="型号">
-          <div>{data.productName}</div>
+          <div>
+            {data.productName}
+            <a style={{marginLeft:10}}
+              onClick={() => {
+                router.push(`/device/product/save/${data.productId}`);
+              }}
+            >查看</a>
+          </div>
         </Descriptions.Item>
       </Descriptions>
     </div>
   );
 
+  const titleInfo = (
+      <Row>
+        <div>
+          <span>
+            设备：{data.name}
+          </span>
+          <Badge style={{marginLeft:20}} status={statusMap.get(data.state?.text)} text={data.state?.text}/>
+          {data.state?.value === "online"?(
+            <Popconfirm title="确认让此设备断开连接？" onConfirm={() => {
+                disconnectDevice(data.id)
+            }}>
+              <a style={{fontSize:12,marginLeft:20}}>断开连接</a>
+            </Popconfirm>
+          ):(data.state?.value === "notActive"?(
+            <Popconfirm title="确认激活此设备？"
+              onConfirm={() => {
+                changeDeploy(data.id)
+            }}>
+              <a style={{fontSize:12,marginLeft:20}}>激活设备</a>
+            </Popconfirm>
+          ):(<span/>))}
+        </div>
+      </Row>
+  );
+
   const extra = (
-    <div className={styles.moreInfo}>{/* <Statistic title="状态" value="未激活" /> */}</div>
+    <div className={styles.moreInfo}>{ /*<Statistic title="状态" value="未激活" />*/ }</div>
   );
 
   return (
-    <PageHeaderWrapper
-      className={styles.instancePageHeader}
-      style={{ marginTop: 0 }}
-      title={`设备：${data.name}`}
-      extra={action}
-      content={content}
-      extraContent={extra}
-      tabList={tableList}
-      tabActiveKey={activeKey}
-      onTabChange={(key: string) => {
-        if (key === 'status') {
-          getDeviceState();
-        } else if (key === 'functions') {
-          getDeviceFunctions();
-        }
-        setActiveKey(key);
-      }}
-    >
-      {info[activeKey]}
-    </PageHeaderWrapper>
+    <Spin tip="加载中..." spinning={spinning}>
+      <PageHeaderWrapper
+        className={styles.instancePageHeader}
+        style={{ marginTop: 0 }}
+        title={titleInfo}
+        extra={action}
+        content={content}
+        extraContent={extra}
+        tabList={tableList}
+        tabActiveKey={activeKey}
+        onTabChange={(key: string) => {
+          /*if (key === 'status') {
+            getDeviceState();
+          } else if (key === 'functions') {
+            getDeviceFunctions();
+          }*/
+          setActiveKey(key);
+        }}
+      >
+        {info[activeKey]}
+      </PageHeaderWrapper>
+    </Spin>
   );
 };
 

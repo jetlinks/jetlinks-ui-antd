@@ -202,13 +202,13 @@ export default {
                 {
                   hideInMenu: true,
                   path: '/device/instance/save/:id',
-                  name: '编辑设备型号',
+                  name: '编辑设备实例',
                   component: './device/instance/editor',
                 },
                 {
                   hideInMenu: true,
                   path: '/device/instance/add',
-                  name: '添加设备型号',
+                  name: '添加设备实例',
                   component: './device/instance/editor',
                 },
                 {

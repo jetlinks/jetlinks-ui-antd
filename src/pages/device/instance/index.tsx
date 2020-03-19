@@ -211,7 +211,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
       callback: () => {
         message.success('保存成功');
         setAddvisible(false);
-        handleSearch(searchParam);
+        router.push(`/device/instance/save/${item.id}`);
       },
     });
   };

@@ -3,33 +3,21 @@ import styles from '@/utils/table.less';
 import { DeviceProduct } from './data';
 import Search from './search';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import {
-  Card,
-  Table,
-  Divider,
-  Button,
-  message,
-  Modal,
-  Badge,
-  Icon,
-  Upload,
-  Popconfirm,
-} from 'antd';
+import { Badge, Button, Card, Divider, Icon, message, Popconfirm, Table, Upload } from 'antd';
 import { ColumnProps, PaginationConfig } from 'antd/lib/table';
 import { CommonEnum, SimpleResponse } from '@/utils/common';
 import moment from 'moment';
 import { connect } from 'dva';
-import ConnectState, { Dispatch, Loading } from '@/models/connect';
+import ConnectState, { Dispatch } from '@/models/connect';
 import { router } from 'umi';
 import encodeQueryParam from '@/utils/encodeParam';
 import { SorterResult } from 'antd/es/table';
 import { UploadProps } from 'antd/lib/upload';
 import { getAccessToken } from '@/utils/authority';
 import request from '@/utils/request';
-import apis from '@/services';
 import Save from './save';
-import Detail from './save/Detail';
 import { downloadObject } from '@/utils/utils';
+
 interface Props {
   dispatch: Dispatch;
   deviceProduct: any;
@@ -178,7 +166,7 @@ const DeviceModel: React.FC<Props> = props => {
         if (response.status === 200) {
           setSaveVisible(false);
           message.success('保存成功');
-          handleSearch(searchParam);
+          router.push(`/device/product/save/${record.id}`);
         }
       },
     });
