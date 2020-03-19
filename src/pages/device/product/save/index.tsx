@@ -160,10 +160,12 @@ const Save: React.FC<Props> = props => {
       },
       options: {
         initialValue: props.data?.id,
+        rules: [{ required: true, message: '请输入型号ID' }],
       },
+
       component: (
         <Input
-          placeholder="请输入型号ID，不输入则系统自动生成"
+          placeholder="请输入型号ID "
           disabled={props.data?.id ? true : false}
         />
       ),

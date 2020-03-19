@@ -63,11 +63,13 @@ const Detail: React.FC<Props> = props => {
           const data = response.result;
           data.orgName = orgInfo[data.orgId];
           setBasicInfo(data);
-          const metadata = JSON.parse(data.metadata);
-          setEvents(metadata.events);
-          setFunctions(metadata.functions);
-          setProperties(metadata.properties);
-          setTags(metadata.tags);
+          if (data.metadata){
+            const metadata = JSON.parse(data.metadata);
+            setEvents(metadata.events);
+            setFunctions(metadata.functions);
+            setProperties(metadata.properties);
+            setTags(metadata.tags);
+          }
 
           apis.deviceProdcut
             .protocolConfiguration(data.messageProtocol, data.transportProtocol)
