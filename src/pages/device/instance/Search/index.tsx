@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import Form, { FormComponentProps } from 'antd/lib/form';
 // import { FormItemConfig } from '@/utils/common';
-import { Input, Select, Row, Col, Button, Icon } from 'antd';
+import { Input, Select, Row, Col, Button, Icon, Form } from 'antd';
 import apis from '@/services';
+import { FormComponentProps } from 'antd/lib/form';
 import { DeviceProduct } from '../../product/data.d';
+import { getPageQuery } from '@/utils/utils';
 
 interface Props extends FormComponentProps {
   search: Function;
@@ -38,6 +39,17 @@ const Search: React.FC<Props> = props => {
       .catch(() => {
         //
       });
+  }, []);
+
+  const search = () => {
+    const data = form.getFieldsValue();
+    // TODO 查询数据
+    props.search(data);
+  };
+
+  useEffect(() => {
+    const query = getPageQuery();
+    form.setFieldsValue(query, () => search());
   }, []);
 
   const simpleItems: any[] = [
@@ -98,12 +110,6 @@ const Search: React.FC<Props> = props => {
         }
         return null;
       }) || 1;
-
-  const search = () => {
-    const data = form.getFieldsValue();
-    // TODO 查询数据
-    props.search(data);
-  };
 
   const formItemLayout = {
     labelCol: {
