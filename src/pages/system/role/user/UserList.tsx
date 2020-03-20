@@ -53,7 +53,7 @@ const UserList: React.FC<Props> = props => {
         }),
       )
       .then(response => {
-        if (response) {
+        if (response.status === 200) {
           setList(response.result.data);
         }
       });

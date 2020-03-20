@@ -8,8 +8,8 @@
 export default {
   dev: {
     '/jetlinks': {
-      target: 'http://192.168.3.90:8844/',
-      // target: 'http://2.jetlinks.org:9010/',
+      // target: 'http://192.168.3.90:8844/',
+      target: 'http://2.jetlinks.org:9010/',
       changeOrigin: true,
       pathRewrite: { '^/jetlinks': '' },
     },

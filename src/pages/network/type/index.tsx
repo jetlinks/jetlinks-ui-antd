@@ -102,9 +102,11 @@ const Type: React.FC<Props> = props => {
     apis.network
       .support()
       .then(response => {
-        setSupportsType(response.result);
+        if (response.status === 200) {
+          setSupportsType(response.result);
+        }
       })
-      .catch(() => { });
+      .catch(() => {});
   }, []);
 
   const remove = (id: string) => {
@@ -144,7 +146,7 @@ const Type: React.FC<Props> = props => {
         message.success('操作成功');
         handleSearch();
       })
-      .catch(() => { });
+      .catch(() => {});
   };
 
   const onSearch = (type?: string[], name?: string) => {
@@ -368,7 +370,7 @@ const Type: React.FC<Props> = props => {
         />
       )}
       {debuggerVisible && renderDebug()
-        // <Debugger close={() => setDebuggerVisible(false)} item={currentItem} />
+      // <Debugger close={() => setDebuggerVisible(false)} item={currentItem} />
       }
     </PageHeaderWrapper>
   );
