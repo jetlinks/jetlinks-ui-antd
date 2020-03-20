@@ -71,7 +71,7 @@ const Editor: React.FC<Props> = props => {
     },
   ];
 
-  const getInfo = (id: string) => {
+  const getInfo = (id: string | undefined) => {
     setSpinning(true);
     dispatch({
       type: 'deviceInstance/queryById',
@@ -131,23 +131,10 @@ const Editor: React.FC<Props> = props => {
     setTableList(tabList);
   }, []);
 
-  const getDeviceState = () => {
-    apis.deviceInstance.runInfo(id).then(response => {
-      deviceState.runInfo = response.result;
-      setDeviceState({ ...deviceState });
-    });
-  };
-
-  const getDeviceFunctions = () => {
-    apis.deviceInstance.runInfo(id).then(response => {
-      deviceFunction.runInfo = response.result;
-      setDeviceFunction({ ...deviceFunction });
-    });
-  };
-
-  const disconnectDevice = (deviceId:string) => {
+  const disconnectDevice = (deviceId: string | undefined) => {
     setSpinning(true);
-    apis.deviceInstance.disconnectDevice(deviceId).then(response => {
+    apis.deviceInstance.disconnectDevice(deviceId)
+      .then(response => {
       if (response.status === 200){
         message.success("断开连接成功");
         getInfo(deviceId);
@@ -158,7 +145,7 @@ const Editor: React.FC<Props> = props => {
     }).catch();
   };
 
-  const changeDeploy = (deviceId:string) => {
+  const changeDeploy = (deviceId: string | undefined) => {
     setSpinning(true);
     apis.deviceInstance
       .changeDeploy(deviceId)
@@ -236,7 +223,7 @@ const Editor: React.FC<Props> = props => {
   );
 
   const extra = (
-    <div className={styles.moreInfo}>{ /*<Statistic title="状态" value="未激活" />*/ }</div>
+    <div className={styles.moreInfo}/>
   );
 
   return (
@@ -251,11 +238,6 @@ const Editor: React.FC<Props> = props => {
         tabList={tableList}
         tabActiveKey={activeKey}
         onTabChange={(key: string) => {
-          /*if (key === 'status') {
-            getDeviceState();
-          } else if (key === 'functions') {
-            getDeviceFunctions();
-          }*/
           setActiveKey(key);
         }}
       >
