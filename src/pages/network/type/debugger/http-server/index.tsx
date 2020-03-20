@@ -1,8 +1,8 @@
-import { Modal, Button, Divider, Form, Input, Select, message, Card, Row, Col, Icon } from 'antd';
+import { Modal, Button, Divider, Form, Input, Select, Card, Row, Col, Icon } from 'antd';
 
 import React, { Fragment, useState } from 'react';
 import { getAccessToken } from '@/utils/authority';
-import { randomString } from '@/utils/utils';
+import { randomString, wrapAPI } from '@/utils/utils';
 
 interface Props {
   close: Function;
@@ -10,7 +10,7 @@ interface Props {
 }
 interface State {
   type: string;
-  logs: string;
+  logs: string[];
   debugData: {
     status: string;
     payload: string;
@@ -27,7 +27,7 @@ const HttpServer: React.FC<Props> = props => {
   const { item } = props;
   const initState: State = {
     type: 'JSON',
-    logs: '',
+    logs: [],
     debugData: {
       status: '200',
       payload: '',
@@ -45,27 +45,28 @@ const HttpServer: React.FC<Props> = props => {
   const [type, setType] = useState(initState.type);
   const [logs, setLogs] = useState(initState.logs);
   const [debugData, setDebugData] = useState(initState.debugData);
+  const [sourceState, setSourceState] = useState<any>();
 
   const debug = () => {
-    // status: 200
-    // payload:
-    // headers: JTVCJTdCJTIybmFtZSUyMjolMjIxJTIyLCUyMnZhbHVlJTIyOiU1QiUyMjIlMjIlNUQlN0QsJTdCJTIybmFtZSUyMjolMjIxMiUyMiwlMjJ2YWx1ZSUyMjolNUIlMjIyMSUyMiU1RCU3RCU1RA ==
-    //   contentType: application / x - www - form - urlencoded
-
-    setLogs(`${logs}开始订阅\n`);
+    logs.push('开始订阅');
+    setLogs([...logs]);
     const eventSource = new EventSource(
-      `/jetlinks/network/mqtt/server/${
-        item.id
-      }/_subscribe/${type}?:X_Access_Token=${getAccessToken()}`,
+      wrapAPI(
+        `/jetlinks/network/mqtt/server/${
+          item.id
+        }/_subscribe/${type}?:X_Access_Token=${getAccessToken()}`,
+      ),
     );
+    setSourceState(eventSource);
+
     eventSource.onerror = () => {
-      message.error('调试错误');
+      setLogs([...logs, '断开连接']);
     };
     eventSource.onmessage = e => {
-      message.success(e.data);
+      setLogs(l => [...l, e.data]);
     };
     eventSource.onopen = () => {
-      message.error('关闭链接');
+      // message.error('关闭链接');
     };
   };
   return (
@@ -88,7 +89,9 @@ const HttpServer: React.FC<Props> = props => {
           <Button
             type="danger"
             onClick={() => {
-              setLogs(`${logs}关闭订阅\n`);
+              logs.push('结束调试');
+              setLogs([...logs]);
+              if (sourceState) sourceState.close();
             }}
           >
             结束
@@ -97,7 +100,8 @@ const HttpServer: React.FC<Props> = props => {
           <Button
             type="ghost"
             onClick={() => {
-              setLogs('');
+              logs.splice(0, logs.length);
+              setLogs([]);
             }}
           >
             清空
@@ -221,7 +225,9 @@ const HttpServer: React.FC<Props> = props => {
           />
         </Form.Item>
         <Divider>调试日志</Divider>
-        <Input.TextArea rows={4} value={logs} />
+        <div style={{ height: 350, overflow: 'auto' }}>
+          <pre>{logs.join('\n')}</pre>
+        </div>
       </Form>
     </Modal>
   );

@@ -1,8 +1,8 @@
-import { Button, Checkbox, Drawer, Form, Input, Select, Table, message } from 'antd';
+import { Button, Checkbox, Drawer, Form, Input, Select, Table, message, Divider } from 'antd';
 import React, { Fragment, useState, useEffect } from 'react';
 import apis from '@/services';
 import { DimensionsItem, DimensionType } from '@/pages/system/dimensions/data';
-import { groupBy } from 'lodash';
+import { groupBy, cloneDeep } from 'lodash';
 import { FormComponentProps } from 'antd/es/form';
 import styles from './index.less';
 import DataAccess from './DataAccess';
@@ -45,7 +45,7 @@ const Authorization: React.FC<Props> = props => {
   const [tempAccess, setTempAccess] = useState(initState.tempAccess);
 
   const {
-    form: { getFieldDecorator },
+    form: { getFieldDecorator, setFieldsValue, getFieldValue },
     // form,
   } = props;
 
@@ -342,6 +342,7 @@ const Authorization: React.FC<Props> = props => {
                 render: (text: { action: string; name: string }[], record: any) => {
                   const { id } = record;
 
+                  const tempText = Object.assign([], text || []);
                   const temp = targetAutz.find(item => item.permission === id) || {};
                   return (
                     <div className={styles.permissionForm}>
@@ -357,14 +358,14 @@ const Authorization: React.FC<Props> = props => {
                                   permission: record.id,
                                   actions: e,
                                 });
-                                setTargetAutz([...targetAutz]);
+                                setTargetAutz(cloneDeep([...targetAutz]));
                               } else {
                                 temp.actions = e;
                                 const t = targetAutz.filter(i => i.permission !== id);
-                                setTargetAutz([temp, ...t]);
+                                setTargetAutz(cloneDeep([temp, ...t]));
                               }
                             }}
-                            options={(text || []).map((e: { action: string; name: string }) => ({
+                            options={tempText.map((e: { action: string; name: string }) => ({
                               label: e.name,
                               value: e.action,
                             }))}
@@ -382,17 +383,58 @@ const Authorization: React.FC<Props> = props => {
                   const autz = targetAutz.find(item => item.permission === record.id);
                   return (
                     <Fragment>
+                      {getFieldValue(`permissions.${record.id}`) &&
+                      getFieldValue(`permissions.${record.id}`).length === record.actions.length ? (
+                        <a
+                          onClick={() => {
+                            const temp = targetAutz.filter(item => item.permission !== record.id);
+                            setTargetAutz(cloneDeep(temp));
+                            setFieldsValue({ [`permissions.${record.id}`]: [] });
+                          }}
+                        >
+                          取消全选
+                        </a>
+                      ) : (
+                        <a
+                          onClick={() => {
+                            setFieldsValue({
+                              [`permissions.${record.id}`]: record.actions.map(
+                                (i: any) => i.action,
+                              ),
+                            });
+                            if (autz) {
+                              const temp = targetAutz.filter(item => item.permission !== record.id);
+                              autz.actions = record.actions.map((i: any) => i.action);
+                              setTargetAutz(cloneDeep([...temp, autz]));
+                            } else {
+                              targetAutz.push({
+                                id: record.id,
+                                permission: record.id,
+                                actions: record.actions.map((i: any) => i.action),
+                              });
+                              setTargetAutz(cloneDeep(targetAutz));
+                            }
+                          }}
+                        >
+                          全选
+                        </a>
+                      )}
+
                       {((text && text.supportDataAccessTypes) || []).some(
                         (i: string) => i === 'DENY_FIELDS',
                       ) && (
-                        <a
-                          onClick={() => {
-                            setDataAccessVisible(true);
-                            setCheckPermission({ ...record, autz });
-                          }}
-                        >
-                          数据权限
-                        </a>
+                        <>
+                          <Divider type="vertical" />
+
+                          <a
+                            onClick={() => {
+                              setDataAccessVisible(true);
+                              setCheckPermission({ ...record, autz });
+                            }}
+                          >
+                            数据权限
+                          </a>
+                        </>
                       )}
                     </Fragment>
                   );

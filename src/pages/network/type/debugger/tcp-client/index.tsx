@@ -18,7 +18,7 @@ interface State {
     type: string;
     data: string;
   };
-  logs: string;
+  logs: any[];
 }
 
 const TcpClient: React.FC<Props> = props => {
@@ -35,19 +35,18 @@ const TcpClient: React.FC<Props> = props => {
       type: 'JSON',
       data: '',
     },
-    logs: '',
+    logs: [],
   };
 
   const [action, setAction] = useState(initState.action);
   const [subscribeData, setSubscribeData] = useState(initState.subscribeData);
   const [publishData, setPublishData] = useState(initState.publishData);
   const [logs, setLogs] = useState(initState.logs);
-
-  let tempLogs: string = '';
+  const [sourceState, setSourceState] = useState<any>();
 
   const debugMqttClient = () => {
-    tempLogs += '开始订阅\n';
-    setLogs(tempLogs);
+    logs.push('开始调试');
+    setLogs([...logs]);
     if (action === '_subscribe') {
       eventSource = new EventSource(
         wrapAPI(
@@ -58,20 +57,17 @@ const TcpClient: React.FC<Props> = props => {
           )}&:X_Access_Token=${getAccessToken()}`,
         ),
       );
+      setSourceState(eventSource);
       eventSource.onerror = () => {
-        // console.log('error');
-        tempLogs += '调试断开\n';
-        setLogs(tempLogs);
+        setLogs([...logs, '断开连接']);
       };
       eventSource.onmessage = e => {
-        // 追加日志
-        tempLogs += `${e.data}\n`;
-        setLogs(tempLogs);
+        setLogs(l => [...l, e.data]);
       };
 
       eventSource.onopen = () => {
-        tempLogs += '开启推送\n';
-        setLogs(tempLogs);
+        // tempLogs += '开启推送\n';
+        // setLogs(tempLogs);
       };
     } else if (action === '_publish') {
       apis.network
@@ -111,7 +107,9 @@ const TcpClient: React.FC<Props> = props => {
             <Button
               type="danger"
               onClick={() => {
-                setLogs(`${logs}关闭订阅\n`);
+                logs.push('结束调试');
+                setLogs([...logs]);
+                if (sourceState) sourceState.close();
               }}
             >
               关闭
@@ -120,7 +118,8 @@ const TcpClient: React.FC<Props> = props => {
             <Button
               type="ghost"
               onClick={() => {
-                setLogs('');
+                logs.splice(0, logs.length);
+                setLogs([]);
               }}
             >
               清空
@@ -137,7 +136,15 @@ const TcpClient: React.FC<Props> = props => {
               提交
             </Button>
             <Divider type="vertical" />
-            <Button type="ghost">清空</Button>
+            <Button
+              type="ghost"
+              onClick={() => {
+                logs.splice(0, logs.length);
+                setLogs([]);
+              }}
+            >
+              清空
+            </Button>
           </Fragment>
         )
       }
@@ -160,7 +167,9 @@ const TcpClient: React.FC<Props> = props => {
               </Select>
             </Form.Item>
             <Divider>调试日志</Divider>
-            <Input.TextArea rows={4} value={logs} />
+            <div style={{ height: 350, overflow: 'auto' }}>
+              <pre>{logs.join('\n')}</pre>
+            </div>
           </Form>
         </Tabs.TabPane>
 

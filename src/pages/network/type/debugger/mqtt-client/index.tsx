@@ -2,6 +2,7 @@ import { Modal, Button, Divider, Tabs, Form, Input, Select, message } from 'antd
 import React, { Fragment, useState } from 'react';
 import { getAccessToken } from '@/utils/authority';
 import apis from '@/services';
+import { wrapAPI } from '@/utils/utils';
 
 interface Props {
   close: Function;
@@ -18,7 +19,7 @@ interface State {
     type: string;
     data: string;
   };
-  logs: string;
+  logs: any[];
 }
 
 const MqttClient: React.FC<Props> = props => {
@@ -34,7 +35,7 @@ const MqttClient: React.FC<Props> = props => {
       type: 'JSON',
       data: '',
     },
-    logs: '',
+    logs: [],
   };
 
   const [action, setAction] = useState(initState.action);
@@ -44,15 +45,25 @@ const MqttClient: React.FC<Props> = props => {
   // const { item: { type: { text } } } = props;
   const debugMqttClient = () => {
     if (action === '_subscribe') {
-      setLogs(`${logs}开始订阅: ${subscribeData.topics}\n`);
+      logs.push(`开始订阅: ${subscribeData.topics}`);
+      setLogs([...logs]);
+      // setLogs(`${logs}开始订阅: ${subscribeData.topics}\n`);
       // console.log('debugMqtt', data);
       const eventSource = new EventSource(
-        `/jetlinks/network/mqtt/client/${item.id}/_subscribe/${
-          subscribeData.type
-        }/?topics=${encodeURIComponent(subscribeData.topics)}&:X_Access_Token=${getAccessToken()}`,
+        wrapAPI(
+          `/jetlinks/network/mqtt/client/${item.id}/_subscribe/${
+            subscribeData.type
+          }/?topics=${encodeURIComponent(
+            subscribeData.topics,
+          )}&:X_Access_Token=${getAccessToken()}`,
+        ),
       );
-      eventSource.onerror = () => {};
-      eventSource.onmessage = () => {};
+      eventSource.onerror = () => {
+        setLogs([...logs, '断开连接']);
+      };
+      eventSource.onmessage = e => {
+        setLogs(l => [...l, e.data]);
+      };
       eventSource.onopen = () => {};
     } else if (action === '_publish') {
       apis.network
@@ -86,7 +97,8 @@ const MqttClient: React.FC<Props> = props => {
           <Button
             type="ghost"
             onClick={() => {
-              setLogs('');
+              logs.splice(0, logs.length);
+              setLogs([]);
             }}
           >
             清空
@@ -121,7 +133,9 @@ const MqttClient: React.FC<Props> = props => {
               </Select>
             </Form.Item>
             <Divider>调试日志</Divider>
-            <Input.TextArea rows={4} value={logs} />
+            <div style={{ height: 350, overflow: 'auto' }}>
+              <pre>{logs.join('\n')}</pre>
+            </div>
           </Form>
         </Tabs.TabPane>
 

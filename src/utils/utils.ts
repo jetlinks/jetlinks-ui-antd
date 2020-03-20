@@ -1,6 +1,7 @@
 import { parse } from 'querystring';
 import pathRegexp from 'path-to-regexp';
 import { Route } from '@/models/connect';
+import proxy from '../../config/proxy';
 
 /* eslint no-useless-escape:0 import/prefer-default-export:0 */
 const reg = /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+(?::\d+)?|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)$/;
@@ -108,7 +109,7 @@ export const downloadObject = (record: any, fileName: string) => {
 
 export const wrapAPI = (url: string) => {
   if (REACT_APP_ENV === 'dev') {
-    return url.replace('/jetlinks', 'http://2.jetlinks.org:9010');
+    return url.replace('/jetlinks/', proxy.dev['/jetlinks'].target);
   }
   return url;
 };

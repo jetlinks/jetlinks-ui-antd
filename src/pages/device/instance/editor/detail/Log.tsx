@@ -29,7 +29,9 @@ const Log: React.FC<Props> = props => {
     apis.deviceInstance
       .logs(props.deviceId, encodeQueryParam(param))
       .then(response => {
-        setLog(response.result);
+        if (response.status === 200) {
+          setLog(response.result);
+        }
       })
       .catch(() => {});
   };

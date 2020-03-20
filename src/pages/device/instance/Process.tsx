@@ -15,8 +15,9 @@ const Process: React.FC<Props> = props => {
     source: {},
   };
   const [eventSource, setSource] = useState<any>(initState.source);
-  const [count, setCount] = useState<number>();
+  const [count, setCount] = useState<number>(0);
   const [flag, setFlag] = useState<boolean>(true);
+  const [errMessage, setErrMessage] = useState<string>('');
   const { action } = props;
 
   const getData = () => {
@@ -41,6 +42,8 @@ const Process: React.FC<Props> = props => {
             const temp = res.result.total;
             dt += temp;
             setCount(dt);
+          } else {
+            setErrMessage(res.message);
           }
           break;
         default:
@@ -80,6 +83,7 @@ const Process: React.FC<Props> = props => {
         <Badge status="success" text="已完成" />
       )}
       <p>总数量:{count}</p>
+      <p style={{ color: 'red' }}>{errMessage}</p>
     </Modal>
   );
 };

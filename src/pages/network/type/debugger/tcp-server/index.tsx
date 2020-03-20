@@ -1,4 +1,4 @@
-import { Modal, Button, Divider, Form, Input, Select } from 'antd';
+import { Modal, Button, Divider, Form, Select, message } from 'antd';
 
 import React, { Fragment, useState, useEffect } from 'react';
 import { getAccessToken } from '@/utils/authority';
@@ -10,51 +10,68 @@ interface Props {
 }
 interface State {
   type: string;
-  logs: string;
+  logs: any[];
 }
 const TcpServer: React.FC<Props> = props => {
-
-  let eventSource: EventSource | null = null;
+  let eventSource: EventSource | null;
   const { item } = props;
   const initState: State = {
-    type: 'JSON',
-    logs: '',
+    type: 'HEX',
+    logs: [],
   };
+
   const [type, setType] = useState(initState.type);
   const [logs, setLogs] = useState(initState.logs);
+  const [sourceState, setSourceState] = useState<any>();
 
-  useEffect(() => () => {
+  const closeEventSource = () => {
     if (eventSource) {
       eventSource.close();
+      message.success('关闭链接');
     }
-  }, [])
+  };
 
-  let tempLogs: string = '';
+  useEffect(
+    () => () => {
+      closeEventSource();
+    },
+    [],
+  );
 
   const debug = () => {
-    setLogs(`${logs}开始调试\n`);
+    logs.push('开始调试');
+    setLogs([...logs]);
+    // setClear(false);
     if (eventSource) {
       eventSource.close();
     }
-    tempLogs += '开始调试\n';
-    eventSource = new EventSource(wrapAPI(`/jetlinks/network/tcp/server/${item.id}/_subscribe/${type}?:X_Access_Token=${getAccessToken()}`));
-
+    eventSource = new EventSource(
+      wrapAPI(
+        `/jetlinks/network/tcp/server/${
+          item.id
+        }/_subscribe/${type}?:X_Access_Token=${getAccessToken()}`,
+      ),
+    );
+    setSourceState(eventSource);
     eventSource.onerror = () => {
-      tempLogs += '调试断开\n';
-      setLogs(tempLogs);
+      setLogs([...logs, '断开连接']);
     };
 
     eventSource.onmessage = e => {
-      // 追加日志
-      tempLogs += `${e.data}\n`;
-      setLogs(tempLogs);
+      setLogs(l => [...l, e.data]);
     };
 
     eventSource.onopen = () => {
-      tempLogs += '开启推送\n';
-      setLogs(tempLogs);
+      // tempLogs += '开启推送\n';
+      // setLogs(tempLogs);
     };
   };
+
+  const clearLog = () => {
+    logs.splice(0, logs.length);
+    setLogs([]);
+  };
+
   return (
     <Modal
       visible
@@ -75,13 +92,15 @@ const TcpServer: React.FC<Props> = props => {
           <Button
             type="danger"
             onClick={() => {
-              setLogs(`${logs}结束调试\n`);
+              logs.push('结束调试');
+              setLogs([...logs]);
+              if (sourceState) sourceState.close();
             }}
           >
             结束
           </Button>
           <Divider type="vertical" />
-          <Button type="ghost" onClick={() => setLogs('')}>
+          <Button type="ghost" onClick={clearLog}>
             清空
           </Button>
         </Fragment>
@@ -102,7 +121,9 @@ const TcpServer: React.FC<Props> = props => {
           </Select>
         </Form.Item>
         <Divider>调试日志</Divider>
-        <Input.TextArea rows={4} value={logs} placeholder="只会接收最新的客户端链接" />
+        <div style={{ height: 350, overflow: 'auto' }}>
+          <pre>{logs.join('\n')}</pre>
+        </div>
       </Form>
     </Modal>
   );
