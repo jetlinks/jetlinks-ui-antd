@@ -15,15 +15,6 @@ interface State {
   functionId: string;
 }
 
-const topColResponsiveProps = {
-  xs: 24,
-  sm: 12,
-  md: 12,
-  lg: 12,
-  xl: 6,
-  style: { marginBottom: 24 },
-};
-
 const Functions: React.FC<Props> = (props) => {
 
   const initState: State = {
@@ -35,7 +26,7 @@ const Functions: React.FC<Props> = (props) => {
     functionId: '',
   };
 
-  const [functionsSelectList, setFunctionsSelectList] = useState(initState.functionsSelectList);
+  const [functionsSelectList] = useState(initState.functionsSelectList);
   const [functionsInfo, setFunctionsInfo] = useState(initState.functionsInfo);
   const [debugData, setDebugData] = useState(initState.debugData);
   const [logs, setLogs] = useState(initState.logs);
@@ -45,10 +36,10 @@ const Functions: React.FC<Props> = (props) => {
     apis.deviceInstance.runInfo(props.device.id)
       .then(response => {
         const tempResult = response?.result;
-        if (tempResult) {
+        if (response.status === 200) {
           const {functions} = JSON.parse(tempResult.metadata);
-          let map = {};
-          functions.forEach(item => {
+          const map = {};
+          functions.forEach((item:any) => {
             map[item.id] = item;
             functionsSelectList.push(<Select.Option key={item.id}>{item.name}</Select.Option>);
           });
@@ -64,7 +55,7 @@ const Functions: React.FC<Props> = (props) => {
       .invokedFunction(props.device.id, functionId, JSON.parse(debugData))
       .then(response => {
         const tempResult = response?.result;
-        if (tempResult) {
+        if (response.status === 200) {
           setLogs(tempResult);
         }
       }).catch(() => {
@@ -77,10 +68,10 @@ const Functions: React.FC<Props> = (props) => {
       <Card style={{ marginBottom: 20 }} title="功能调试">
         <Form labelCol={{ span: 1 }} wrapperCol={{ span: 23 }}>
           <Form.Item label="设备功能">
-            <Select placeholder="请选择设备功能" onChange={e => {
+            <Select placeholder="请选择设备功能" onChange={(e:any) => {
               setFunctionId(e);
               const map = {};
-              functionsInfo[e].inputs.forEach(item=>{
+              functionsInfo[e].inputs.forEach((item:any)=>{
                 map[item.id] = item.name;
               });
               setDebugData(JSON.stringify(map,null,2))

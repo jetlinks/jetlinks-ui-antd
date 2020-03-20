@@ -29,8 +29,10 @@ const FunctionDebug: React.FC<Props> = props => {
       .invokedFunction(props.deviceId, props.type,JSON.parse(debugData))
       .then(response => {
         const tempResult = response?.result;
-        if (tempResult) {
+        if (response.status === 200) {
           setLogs(tempResult);
+        }else{
+          setLogs("调试错误");
         }
       }).catch(() => {
         setLogs(`调试错误`);

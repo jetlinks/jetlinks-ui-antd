@@ -92,9 +92,7 @@ const IntroduceRow = ({ loading, visitData, messageData}: { loading: boolean; vi
       wrapAPI(`/jetlinks/dashboard/_multi?:X_Access_Token=${getAccessToken()}&requestJson=${encodeURI(JSON.stringify(list))}`)
     );
     source.onmessage = e => {
-
       const data = JSON.parse(e.data);
-
       if (data.group === "cpu"){
         setCpu(data.data.value);
       }else if (data.group === "memory"){
@@ -167,7 +165,7 @@ const IntroduceRow = ({ loading, visitData, messageData}: { loading: boolean; vi
     apis.analysis.getMulti(list)
       .then((response: any) => {
         const tempResult = response?.result;
-        if (tempResult) {
+        if (response.status === 200) {
           tempResult.forEach(item => {
             switch (item.group) {
               case 'sameDay':
@@ -237,7 +235,7 @@ const IntroduceRow = ({ loading, visitData, messageData}: { loading: boolean; vi
     apis.analysis.getMulti(list)
       .then((response: any) => {
         const tempResult = response?.result;
-        if (tempResult) {
+        if (response.status === 200) {
           tempResult.forEach(item => {
             switch (item.group) {
               case 'aggOnline':

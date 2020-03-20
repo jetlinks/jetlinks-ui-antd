@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Avatar, Badge, Card, Col, Form, Icon, Input, List, message, Popconfirm, Row, Spin, Tooltip } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import { connect } from 'dva';
-import { router }  from 'umi';
+import { router } from 'umi';
 import styles from './index.less';
 import { ConnectState, Dispatch } from '@/models/connect';
 import Bind from './bind';
@@ -32,7 +32,7 @@ const DeviceGateway: React.FC<Props> = props => {
     bindVisible: false,
     currentItem: {},
     hasMore: true,
-    gatewayId: "",
+    gatewayId: '',
   };
 
   const [bindVisible, setBindVisible] = useState(initState.bindVisible);
@@ -64,6 +64,11 @@ const DeviceGateway: React.FC<Props> = props => {
     dispatch({
       type: 'deviceGateway/query',
       payload: encodeQueryParam({ paging: false }),
+      callback: (response: any) => {
+        if (response.status !== 200) {
+          message.error("查询错误")
+        }
+      }
     });
   };
 
@@ -96,6 +101,11 @@ const DeviceGateway: React.FC<Props> = props => {
           name$LIKE: name,
         },
       }),
+      callback: (response: any) => {
+        if (response.status === 200) {
+          message.success('保存成功');
+        }
+      },
     });
   };
 
@@ -152,11 +162,11 @@ const DeviceGateway: React.FC<Props> = props => {
                       />}
                       action={
                         <Tooltip title='绑定子设备'>
-                          <Icon type="plus" style={{fontSize:20}}
+                          <Icon type="plus" style={{ fontSize: 20 }}
                                 onClick={() => {
-                            setGatewayId(item.id);
-                            setBindVisible(true);
-                          }}/>
+                                  setGatewayId(item.id);
+                                  setBindVisible(true);
+                                }}/>
                         </Tooltip>
                       }
                       total={() =>
@@ -178,7 +188,7 @@ const DeviceGateway: React.FC<Props> = props => {
                           <List
                             itemLayout="horizontal"
                             dataSource={item.children}
-                            renderItem={dev => (
+                            renderItem={(dev:any) => (
                               <List.Item>
                                 <List.Item.Meta
                                   avatar={<Avatar shape="square" size="small" src={device}/>}
@@ -186,7 +196,7 @@ const DeviceGateway: React.FC<Props> = props => {
                                     onClick={() => {
                                       router.push(`/device/instance/save/${dev.id}`);
                                     }}
-                                  >{dev.name.length > 12 ? dev.name.substring(0, 12) + '······' : dev.name}</a>}
+                                  >{dev.name.length > 12 ? `${dev.name.substring(0, 12)}······` : dev.name}</a>}
                                   style={{ height: 20 }}
                                 />
                                 <div><Badge status={statusMap.get(dev.state.text)} text={dev.state.text}/></div>

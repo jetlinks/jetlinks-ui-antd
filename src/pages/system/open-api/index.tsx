@@ -141,7 +141,7 @@ const OpenApiList: React.FC<Props> = props => {
       {
         id : record.id,
         status : record.status.value === 1 ? 0 : 1 }
-    ).then(res => {
+    ).then((res:any) => {
         if (res.status === 200) {
           if (record.status.value === 1){
             message.success("禁用成功");
@@ -173,7 +173,6 @@ const OpenApiList: React.FC<Props> = props => {
       type: 'openApi/insert',
       payload: encodeQueryParam(user),
       callback: res => {
-        console.log(res)
         if (res.status === 200){
           message.success('保存成功');
           setSaveVisible(false);

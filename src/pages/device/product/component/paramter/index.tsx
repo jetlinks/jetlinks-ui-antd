@@ -39,7 +39,123 @@ const Paramter: React.FC<Props> = props => {
   const renderDetailForm = () => {
     switch (dataType) {
       case 'int':
+        return (
+          <div>
+            <Form.Item label="取值范围" style={{ height: 69 }}>
+              <Col span={11}>
+                <Input
+                  value={data.valueType.min}
+                  placeholder="最小值"
+                  onChange={event => {
+                    data.valueType.min = event.target.value;
+                    setData({ ...data });
+                  }}
+                />
+              </Col>
+              <Col span={2} push={1}>
+                ~
+              </Col>
+              <Col span={11}>
+                <Form.Item>
+                  <Input
+                    value={data.valueType.max}
+                    placeholder="最大值"
+                    onChange={event => {
+                      data.valueType.max = event.target.value;
+                      setData({ ...data });
+                    }}
+                  />
+                </Form.Item>
+              </Col>
+            </Form.Item>
+            <Form.Item label="单位">
+              <Select
+                onChange={(value: string) => {
+                  data.valueType.unit = value;
+                  setData({ ...data });
+                }}
+                value={data.valueType.unit}
+              >
+                {Array.from(new Set<string>(units.map(unit => unit.typeText))).map(type => {
+                  const typeData = groupBy(units, unit => unit.typeText)[type];
+                  return (
+                    <Select.OptGroup label={type} key={type}>
+                      {typeData.map((e: Unit) => (
+                        <Select.Option value={e.id} key={e.id}>
+                          {e.name} / {e.symbol}
+                        </Select.Option>
+                      ))}
+                    </Select.OptGroup>
+                  );
+                })}
+              </Select>
+            </Form.Item>
+          </div>
+        );
       case 'double':
+        return (
+          <div>
+            <Form.Item label="取值范围" style={{ height: 69 }}>
+              <Col span={11}>
+                <Input
+                  value={data.valueType.min}
+                  placeholder="最小值"
+                  onChange={event => {
+                    data.valueType.min = event.target.value;
+                    setData({ ...data });
+                  }}
+                />
+              </Col>
+              <Col span={2} push={1}>
+                ~
+              </Col>
+              <Col span={11}>
+                <Form.Item>
+                  <Input
+                    value={data.valueType.max}
+                    placeholder="最大值"
+                    onChange={event => {
+                      data.valueType.max = event.target.value;
+                      setData({ ...data });
+                    }}
+                  />
+                </Form.Item>
+              </Col>
+            </Form.Item>
+            <Form.Item label="精度" style={{ height: 69 }}>
+              <Input
+                value={data.valueType.scale}
+                placeholder="精度"
+                onChange={event => {
+                  data.valueType.scale = event.target.value;
+                  setData({ ...data });
+                }}
+              />
+            </Form.Item>
+            <Form.Item label="单位">
+              <Select
+                onChange={(value: string) => {
+                  data.valueType.unit = value;
+                  setData({ ...data });
+                }}
+                value={data.valueType.unit}
+              >
+                {Array.from(new Set<string>(units.map(unit => unit.typeText))).map(type => {
+                  const typeData = groupBy(units, unit => unit.typeText)[type];
+                  return (
+                    <Select.OptGroup label={type} key={type}>
+                      {typeData.map((e: Unit) => (
+                        <Select.Option value={e.id} key={e.id}>
+                          {e.name} / {e.symbol}
+                        </Select.Option>
+                      ))}
+                    </Select.OptGroup>
+                  );
+                })}
+              </Select>
+            </Form.Item>
+          </div>
+        );
       case 'float':
         return (
           <div>
@@ -69,6 +185,16 @@ const Paramter: React.FC<Props> = props => {
                   />
                 </Form.Item>
               </Col>
+            </Form.Item>
+            <Form.Item label="精度" style={{ height: 69 }}>
+              <Input
+                value={data.valueType.scale}
+                placeholder="精度"
+                onChange={event => {
+                  data.valueType.scale = event.target.value;
+                  setData({ ...data });
+                }}
+              />
             </Form.Item>
             <Form.Item label="单位">
               <Select

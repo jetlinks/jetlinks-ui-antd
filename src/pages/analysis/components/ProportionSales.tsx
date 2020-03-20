@@ -38,7 +38,7 @@ const ProportionSales = ({ loading, }: { loading: boolean; }) => {
       .queryNoPagin()
       .then(response => {
         const tempResult = response?.result;
-        if (tempResult) {
+        if (response.status === 200) {
           let list = [];
           for (let i = 0; i < tempResult.length; i++) {
             productData[tempResult[i].id] = tempResult[i].name;
@@ -93,7 +93,7 @@ const ProportionSales = ({ loading, }: { loading: boolean; }) => {
     apis.analysis.getMulti(list)
       .then((response: any) => {
         const tempResult = response?.result;
-        if (tempResult) {
+        if (response.status === 200) {
           const list = [];
           tempResult.forEach(item => {
             list.push({

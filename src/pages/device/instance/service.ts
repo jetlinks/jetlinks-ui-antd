@@ -55,7 +55,7 @@ export async function fireAlarm(params: any) {
   });
 }
 
-export async function changeDeploy(deviceId: string) {
+export async function changeDeploy(deviceId: string | undefined) {
   return request(`/jetlinks//device-instance/${deviceId}/deploy`, {
     method: 'POST',
   });
@@ -107,27 +107,27 @@ export async function invokedFunction(deviceId: string,functionId: string, data:
   });
 }
 
-export async function disconnectDevice(deviceId: string) {
+export async function disconnectDevice(deviceId: string | undefined) {
   return request(`/jetlinks//device/instance/${deviceId}/disconnect`, {
     method: 'POST',
   });
 }
 
-export async function update(deviceId:string,params: DeviceInstance) {
+export async function update(deviceId: string | undefined, params: DeviceInstance) {
   return request(`/jetlinks/device/instance/${deviceId}`, {
     method: 'PUT',
     data: params,
   });
 }
 
-export async function saveDeviceTags(deviceId:string,params: any) {
+export async function saveDeviceTags(deviceId: string | undefined, params: any) {
   return request(`/jetlinks/device/instance/${deviceId}/tag`, {
     method: 'PATCH',
     data: params,
   });
 }
 
-export async function removeTags(deviceId: string,tagId: string) {
+export async function removeTags(deviceId: string | undefined, tagId: string) {
   return request(`/jetlinks//device/instance/${deviceId}/tag/${tagId}`, {
     method: 'DELETE',
   });

@@ -118,9 +118,11 @@ const Status: React.FC<Props> = (props) => {
                     pageSize: 10,
                   })
                 ).then(response => {
-                  const data = response.result;
-                  eventData.push({ eventId: event.id, data });
-                  setEventData([...eventData])
+                  if (response.status === 200) {
+                    const data = response.result;
+                    eventData.push({ eventId: event.id, data });
+                    setEventData([...eventData])
+                  }
                 }).catch(() => {
 
                 });
@@ -179,11 +181,13 @@ const Status: React.FC<Props> = (props) => {
         setRunInfo({ ...runInfo });
         apis.deviceInstance.runInfo(props.device.id)
             .then(response => {
+              if (response.status === 200) {
                 if (response.result) {
-                    response.result.loading = false;
+                  response.result.loading = false;
                 }
                 setRunInfo(response.result);
                 setDeviceState(response.result);
+              }
             }).catch(() => {
 
             });
@@ -192,7 +196,7 @@ const Status: React.FC<Props> = (props) => {
     const refresDeviceState = () => {
         apis.deviceInstance.runInfo(props.device.id)
             .then(response => {
-                if (response.result) {
+              if (response.status === 200) {
                     response.result.loading = false;
                 }
                 setDeviceState(response.result);
@@ -204,8 +208,10 @@ const Status: React.FC<Props> = (props) => {
     const loadProperties = () => {
         apis.deviceInstance.properties(props.device.productId, props.device.id)
             .then(response => {
+              if (response.status === 200) {
                 setPropertiesData(response.result);
-            }).catch(response => {
+              }
+            }).catch(() => {
                 // message.error(response.message)
             });
     };
@@ -218,15 +224,16 @@ const Status: React.FC<Props> = (props) => {
                 terms: { deviceId: props.device.id }
             })
         ).then(response => {
+          if (response.status === 200) {
             const tempEvent = response.result;
             // tempEvent.total = 666666;
             eventData.forEach(item => {
-                if (item.eventId === eventId) {
-                    item.data = tempEvent;
-                }
+              if (item.eventId === eventId) {
+                item.data = tempEvent;
+              }
             });
             setEventData([...eventData])
-
+          }
 
             // //关闭加载中状态
             // const { events } = metadata;
@@ -309,24 +316,26 @@ const Status: React.FC<Props> = (props) => {
             })
         ).then(response => {
             // const tempEvent = response.result;
+          if (response.status === 200) {
             eventData.forEach(i => {
-                if (i.eventId === item.id) {
-                    i.data = response.result;
-                }
+              if (i.eventId === item.id) {
+                i.data = response.result;
+              }
             });
-            setEventData([...eventData])
+            setEventData([...eventData]);
 
             //关闭加载中状态
             const { events } = metadata;
             //修改加载状态
             let tempEvents = events.map((i: any) => {
-                if (i.id === item.id) {
-                    i.loading = false;
-                }
-                return i;
+              if (i.id === item.id) {
+                i.loading = false;
+              }
+              return i;
             });
             metadata.events = tempEvents;
             setMetadata({ ...metadata });
+          }
         }).catch(() => {
 
         });
@@ -338,42 +347,43 @@ const Status: React.FC<Props> = (props) => {
         apis.deviceInstance.property(props.device.id, item.id)
             .then((response: any) => {
                 const tempResult = response?.result;
+              if (response.status === 200) {
                 if (tempResult) {
-                    // let result: any[] = [];
+                  // let result: any[] = [];
 
-                    // for (const key in tempResult) {
-                    //     if (tempResult.hasOwnProperty(key)) {
-                    //         const element = tempResult[key];
-                    //         result.push({ key: Object.keys(element)[0], value: Object.values(element)[0] })
-                    //     }
-                    // }
-                    const temp = properties.map((item: any) => {
-                        // if (!item) return;
-                        // const temp = result.find((i: any) => i.key === item.id);
-                        // if (!temp) return item;
-                        // console.log(item, tempResult, 'ssss');
-                        if (item.id === tempResult.property) {
-                            item.formatValue = tempResult.formatValue;
-                        }
-                        item.loading = false;
-                        return item;
-                    });
+                  // for (const key in tempResult) {
+                  //     if (tempResult.hasOwnProperty(key)) {
+                  //         const element = tempResult[key];
+                  //         result.push({ key: Object.keys(element)[0], value: Object.values(element)[0] })
+                  //     }
+                  // }
+                  const temp = properties.map((item: any) => {
+                    // if (!item) return;
+                    // const temp = result.find((i: any) => i.key === item.id);
+                    // if (!temp) return item;
+                    // console.log(item, tempResult, 'ssss');
+                    if (item.id === tempResult.property) {
+                      item.formatValue = tempResult.formatValue;
+                    }
+                    item.loading = false;
+                    return item;
+                  });
 
-                    metadata.properties = temp;
+                  metadata.properties = temp;
                 } else {
-                    const temp = properties.map((item: any) => {
-                        // if (!item) return;
-                        // const temp = result.find((i: any) => i.key === item.id);
-                        // if (!temp) return item;
-                        // item.formatValue = temp.value;
-                        item.loading = false;
-                        return item;
-                    });
+                  const temp = properties.map((item: any) => {
+                    // if (!item) return;
+                    // const temp = result.find((i: any) => i.key === item.id);
+                    // if (!temp) return item;
+                    // item.formatValue = temp.value;
+                    item.loading = false;
+                    return item;
+                  });
 
-                    metadata.properties = temp;
+                  metadata.properties = temp;
                 }
                 setMetadata({ ...metadata });
-
+              }
             });
 
     }
@@ -517,6 +527,6 @@ const Status: React.FC<Props> = (props) => {
             }
         </div>
     );
-}
+};
 
 export default Status;

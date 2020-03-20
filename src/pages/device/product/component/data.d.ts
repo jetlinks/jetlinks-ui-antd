@@ -37,6 +37,8 @@ export class ValueType {
 
   step?: number;
 
+  scale?: number;
+
   text?: string;
 
   trueText?: string;

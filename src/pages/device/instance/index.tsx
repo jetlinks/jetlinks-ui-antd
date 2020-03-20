@@ -1,21 +1,10 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import styles from '@/utils/table.less';
-import {
-  Divider,
-  Card,
-  Table,
-  Badge,
-  Button,
-  message,
-  Modal,
-  Popconfirm,
-  Upload,
-  Spin,
-} from 'antd';
+import { Badge, Button, Card, Divider, message, Modal, Popconfirm, Spin, Table, Upload } from 'antd';
 import { router } from 'umi';
 import { ColumnProps, PaginationConfig, SorterResult } from 'antd/lib/table';
 import { FormComponentProps } from 'antd/es/form';
-import { Dispatch, ConnectState } from '@/models/connect';
+import { ConnectState, Dispatch } from '@/models/connect';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { connect } from 'dva';
 import encodeQueryParam from '@/utils/encodeParam';
@@ -188,12 +177,12 @@ const DeviceInstancePage: React.FC<Props> = props => {
             </span>
           ) : (
             <Popconfirm
-              title="确认取消激活？"
+              title="确认注销设备？"
               onConfirm={() => {
                 unDeploy(record);
               }}
             >
-              <a>取消激活</a>
+              <a>注销</a>
             </Popconfirm>
           )}
         </Fragment>
