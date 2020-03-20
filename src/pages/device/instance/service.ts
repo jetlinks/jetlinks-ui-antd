@@ -1,10 +1,16 @@
 import request from '@/utils/request';
 import { DeviceInstance } from './data.d';
 import { getAccessToken } from '@/utils/authority';
-import { UserItem } from '@/pages/system/users/data';
 
 export async function list(params: any) {
   return request(`/jetlinks/device-instance/_query`, {
+    method: 'GET',
+    params,
+  });
+}
+
+export async function count(params: any) {
+  return request(`/jetlinks/device-instance/_count`, {
     method: 'GET',
     params,
   });
