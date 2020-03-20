@@ -6,6 +6,8 @@ import { extend } from 'umi-request';
 import { notification } from 'antd';
 import { router } from 'umi';
 import { getAccessToken } from './authority';
+import { getPageQuery } from './utils';
+import { stringify } from 'qs';
 
 // const codeMessage = {
 //   200: '服务器成功返回请求的数据。',
@@ -47,7 +49,17 @@ const errorHandler = (error: { response: Response }): Response | undefined => {
       key: 'error',
       message: '未登录或登录已过期，请重新登录。',
     });
-    router.push('/user/login');
+    const { redirect } = getPageQuery();
+    if (window.location.pathname !== '/user/login' && !redirect) {
+      router.replace({
+        pathname: '/user/login',
+        search: stringify({
+          redirect: window.location.href,
+        }),
+      });
+    } else {
+      router.push('/user/login');
+    }
   } else if (status === 400) {
     response.text().then(resp => {
       if (resp) {
