@@ -52,7 +52,9 @@ const DeviceGatewayBind: React.FC<Props> = props => {
     apis.deviceInstance.list(
       encodeQueryParam(params),
     ).then(response => {
-      setDeviceData(response.result);
+      if (response.status === 200) {
+        setDeviceData(response.result);
+      }
     }).catch(() => {
 
     });
@@ -70,7 +72,9 @@ const DeviceGatewayBind: React.FC<Props> = props => {
         sorts: sorter,
       }),
     ).then(response => {
-      setDeviceData(response.result);
+      if (response.status === 200) {
+        setDeviceData(response.result);
+      }
     }).catch(() => {
 
     });
