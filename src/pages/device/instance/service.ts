@@ -55,7 +55,7 @@ export async function fireAlarm(params: any) {
   });
 }
 
-export async function changeDeploy(deviceId: string) {
+export async function changeDeploy(deviceId: string | undefined) {
   return request(`/jetlinks//device-instance/${deviceId}/deploy`, {
     method: 'POST',
   });
@@ -107,7 +107,7 @@ export async function invokedFunction(deviceId: string,functionId: string, data:
   });
 }
 
-export async function disconnectDevice(deviceId: string) {
+export async function disconnectDevice(deviceId: string | undefined) {
   return request(`/jetlinks//device/instance/${deviceId}/disconnect`, {
     method: 'POST',
   });
