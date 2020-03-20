@@ -75,7 +75,83 @@ const EventDefin: React.FC<Props> = props => {
   const renderDataType = () => {
     switch (dataType) {
       case 'float':
+        return (
+          <div>
+            <Form.Item label="取值范围" style={{ height: 69 }}>
+              <Col span={11}>
+                {getFieldDecorator('valueType.min', {
+                  initialValue: initState.data.valueType?.min,
+                })(<Input placeholder="最小值" />)}
+              </Col>
+              <Col span={2} push={1}>
+                ~
+              </Col>
+              <Col span={11}>
+                <Form.Item>
+                  {getFieldDecorator('valueType.max', {
+                    initialValue: initState.data.valueType?.max,
+                  })(<Input placeholder="最大值" />)}
+                </Form.Item>
+              </Col>
+            </Form.Item>
+
+            <Form.Item label="步长">
+              {getFieldDecorator('valueType.step', {
+                initialValue: initState.data.valueType?.step,
+              })(<Input placeholder="请输入步长" />)}
+            </Form.Item>
+            <Form.Item label="精度">
+              {getFieldDecorator('valueType.scale', {
+                initialValue: initState.data.valueType?.scale,
+              })(<Input placeholder="请输入精度" />)}
+            </Form.Item>
+            <Form.Item label="单位">
+              {getFieldDecorator('valueType.unit', {
+                initialValue: initState.data.valueType?.unit,
+              })(renderUnit())}
+            </Form.Item>
+          </div>
+        );
       case 'double':
+        return (
+          <div>
+            <Form.Item label="取值范围" style={{ height: 69 }}>
+              <Col span={11}>
+                {getFieldDecorator('valueType.min', {
+                  initialValue: initState.data.valueType?.min,
+                })(<Input placeholder="最小值" />)}
+              </Col>
+              <Col span={2} push={1}>
+                ~
+              </Col>
+              <Col span={11}>
+                <Form.Item>
+                  {getFieldDecorator('valueType.max', {
+                    initialValue: initState.data.valueType?.max,
+                  })(<Input placeholder="最大值" />)}
+                </Form.Item>
+              </Col>
+            </Form.Item>
+
+            <Form.Item label="步长">
+              {getFieldDecorator('valueType.step', {
+                initialValue: initState.data.valueType?.step,
+              })(<Input placeholder="请输入步长" />)}
+            </Form.Item>
+
+            <Form.Item label="精度">
+              {getFieldDecorator('valueType.scale', {
+                initialValue: initState.data.valueType?.scale,
+              })(<Input placeholder="请输入精度" />)}
+            </Form.Item>
+
+            <Form.Item label="单位">
+              {getFieldDecorator('valueType.unit', {
+                initialValue: initState.data.valueType?.unit,
+              })(renderUnit())}
+            </Form.Item>
+          </div>
+        );
       case 'int':
         return (
           <div>
