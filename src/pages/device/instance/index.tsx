@@ -176,12 +176,12 @@ const DeviceInstancePage: React.FC<Props> = props => {
             </span>
           ) : (
             <Popconfirm
-              title="确认取消激活？"
+              title="确认注销设备？"
               onConfirm={() => {
                 unDeploy(record);
               }}
             >
-              <a>取消激活</a>
+              <a>注销</a>
             </Popconfirm>
           )}
         </Fragment>
