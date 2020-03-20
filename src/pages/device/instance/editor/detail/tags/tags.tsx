@@ -71,7 +71,7 @@ const Tags: React.FC<Props> = props => {
       <Spin tip="操作中..." spinning={spinning}>
         <Form>
           <Form.Item key="item">
-            {tagsData.map((item, index) => (
+            {tagsData.map((item:any, index) => (
               <Row key={item._id}>
                 <Col span={5}>
                   <Input placeholder="请输入标签key"
@@ -84,9 +84,7 @@ const Tags: React.FC<Props> = props => {
                          }}
                   />
                 </Col>
-                <Col span={1} style={{ textAlign: 'center' }}>
-                  {/*<Icon type="arrow-right"/>*/}
-                </Col>
+                <Col span={1} style={{ textAlign: 'center' }}/>
                 <Col span={5}>
                   <Input placeholder="请输入标签名称"
                          key="name"
@@ -97,9 +95,7 @@ const Tags: React.FC<Props> = props => {
                          }}
                   />
                 </Col>
-                <Col span={1} style={{ textAlign: 'center' }}>
-                  {/*<Icon type="arrow-right"/>*/}
-                </Col>
+                <Col span={1} style={{ textAlign: 'center' }}/>
                 <Col span={10}>
                   <Input placeholder="请输入标签value"
                          value={item.value}
