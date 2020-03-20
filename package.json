@@ -68,7 +68,7 @@
     "@loadable/component": "^5.11.0",
     "@types/loadable__component": "^5.10.0",
     "@types/pubsub-js": "^1.5.18",
-    "antd": "^3.26.12",
+    "antd": "^4.0.3",
     "bizcharts": "^3.5.6",
     "bizcharts-plugin-slider": "^2.1.1-beta.1",
     "braft-editor": "^2.3.8",
