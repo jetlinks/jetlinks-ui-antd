@@ -137,7 +137,9 @@ const Editor: React.FC<Props> = props => {
       .then(response => {
       if (response.status === 200){
         message.success("断开连接成功");
-        getInfo(deviceId);
+        data.state={value:'offline',text:'离线'};
+        setData(data);
+        setSpinning(false);
       } else {
         message.error("断开连接失败");
         setSpinning(false);
@@ -152,7 +154,9 @@ const Editor: React.FC<Props> = props => {
       .then(response => {
         if (response.status === 200) {
           message.success('激活成功');
-          getInfo(deviceId);
+          data.state={value:'offline',text:'离线'};
+          setData(data);
+          setSpinning(false);
         } else {
           message.error("激活失败");
           setSpinning(false);
