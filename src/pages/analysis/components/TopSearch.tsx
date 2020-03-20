@@ -62,7 +62,7 @@ const TopSearch = ({ loading }: { loading: boolean; }) => {
       .queryNoPagin()
       .then(response => {
         const tempResult = response?.result;
-        if (tempResult) {
+        if (response.status === 200) {
           let list = [];
           for (let i = 0; i < tempResult.length; i++) {
             productData[tempResult[i].id] = tempResult[i].name;
@@ -107,7 +107,7 @@ const TopSearch = ({ loading }: { loading: boolean; }) => {
     apis.analysis.getMulti(list)
       .then((response: any) => {
         const tempResult = response?.result;
-        if (tempResult) {
+        if (response.status === 200) {
           const dataList = [];
           tempResult.forEach(item => {
             dataList.push({
@@ -172,8 +172,8 @@ const TopSearch = ({ loading }: { loading: boolean; }) => {
       <div className={styles.salesCard}>
         <Tabs
           tabBarExtraContent={
-            <div className={styles.salesExtraWrap}>
-              <div className={styles.salesExtra}>
+            <Row>
+              <div className={styles.salesExtraWrap}>
                 <Radio.Group defaultValue="1h" onChange={deviceTime}>
                   <Radio.Button value="1h">
                     1小时
@@ -188,10 +188,10 @@ const TopSearch = ({ loading }: { loading: boolean; }) => {
                     30天
                   </Radio.Button>
                 </Radio.Group>
+                <DatePicker showTime defaultValue={moment(new Date(), 'YYYY-MM-DD HH:mm:ss')}
+                            placeholder="结束时间" onOk={onOk} format="YYYY-MM-DD HH:mm:ss"/>
               </div>
-              <DatePicker showTime defaultValue={moment(new Date(), 'YYYY-MM-DD HH:mm:ss')}
-                          placeholder="结束时间" onOk={onOk} format="YYYY-MM-DD HH:mm:ss"/>
-            </div>
+            </Row>
           }
           size="large"
           tabBarStyle={{ marginBottom: 24 }}

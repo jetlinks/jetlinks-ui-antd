@@ -83,7 +83,7 @@ const SalesCard = ({ loading }: { loading: boolean; }) => {
     apis.analysis.getMulti(list)
       .then((response: any) => {
         const tempResult = response?.result;
-        if (tempResult) {
+        if (response.status === 200) {
           const dataList = [];
           const ticksList = [];
           tempResult.forEach(item => {
