@@ -1,6 +1,17 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import styles from '@/utils/table.less';
-import { Badge, Button, Card, Divider, message, Modal, Popconfirm, Spin, Table, Upload } from 'antd';
+import {
+  Badge,
+  Button,
+  Card,
+  Divider,
+  message,
+  Modal,
+  Popconfirm,
+  Spin,
+  Table,
+  Upload,
+} from 'antd';
 import { router } from 'umi';
 import { ColumnProps, PaginationConfig, SorterResult } from 'antd/lib/table';
 import { FormComponentProps } from 'antd/es/form';
@@ -440,6 +451,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
             closeVisible={() => {
               setProcessVisible(false);
               setImportLoading(false);
+              handleSearch(searchParam);
             }}
           />
         )}
