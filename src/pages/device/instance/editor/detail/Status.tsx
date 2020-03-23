@@ -202,7 +202,6 @@ const Status: React.FC<Props> = (props) => {
                 runInfo.loading = false;
                 setDeviceState({state:response.result});
               }
-
             }).catch(() => {
 
             });
