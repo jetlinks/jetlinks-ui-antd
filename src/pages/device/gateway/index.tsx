@@ -36,7 +36,6 @@ interface Props extends FormComponentProps {
 
 interface State {
   bindVisible: boolean;
-  currentItem: any;
   hasMore: boolean;
   gatewayId: string;
 }
@@ -44,13 +43,11 @@ interface State {
 const DeviceGateway: React.FC<Props> = props => {
   const initState: State = {
     bindVisible: false,
-    currentItem: {},
     hasMore: true,
     gatewayId: '',
   };
 
   const [bindVisible, setBindVisible] = useState(initState.bindVisible);
-  const [currentItem, setCurrentItem] = useState(initState.currentItem);
   const [gatewayId, setGatewayId] = useState(initState.gatewayId);
 
   const {
@@ -255,12 +252,10 @@ const DeviceGateway: React.FC<Props> = props => {
         <Bind
           close={() => {
             setBindVisible(false);
-            setCurrentItem({});
           }}
           save={(item: any) => {
             insert(item);
           }}
-          data={currentItem}
         />
       )}
     </PageHeaderWrapper>
