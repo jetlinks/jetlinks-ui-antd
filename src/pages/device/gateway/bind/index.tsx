@@ -15,7 +15,6 @@ import encodeQueryParam from '@/utils/encodeParam';
 interface Props extends FormComponentProps {
   close: Function;
   save: Function;
-  data: [];
 }
 
 interface State {
@@ -47,9 +46,7 @@ const DeviceGatewayBind: React.FC<Props> = props => {
       if (response.status === 200) {
         setDeviceData(response.result);
       }
-    }).catch(() => {
-
-    });
+    }).catch(() => {});
   };
 
   useEffect(() => {
