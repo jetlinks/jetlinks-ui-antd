@@ -48,6 +48,12 @@ export async function runInfo(id: string) {
   });
 }
 
+export async function refreshState(deviceId: string) {
+  return request(`/jetlinks/device/instance/${deviceId}/state`, {
+    method: 'GET',
+  });
+}
+
 export async function properties(productId: string, id: string) {
   return request(`/jetlinks/device-instance/${id}/properties/latest`, {
     method: 'GET',

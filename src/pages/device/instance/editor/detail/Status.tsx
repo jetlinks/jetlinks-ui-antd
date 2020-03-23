@@ -66,7 +66,7 @@ const Status: React.FC<Props> = (props) => {
         deviceState: {}
         // currentEvent: {},
         // currentEventData: {}
-    }
+    };
     const [runInfo, setRunInfo] = useState(initState.runInfo);
     const [propertiesData, setPropertiesData] = useState(initState.propertiesData);
     const [eventVisible, setEventVisible] = useState(initState.eventVisible);
@@ -162,7 +162,6 @@ const Status: React.FC<Props> = (props) => {
               setMetadata({ ...metadata });
             };
             source.onerror = () => {
-              runInfo.loading = false;
               setFlag(false);
             };
             source.onopen = () => {
@@ -196,12 +195,14 @@ const Status: React.FC<Props> = (props) => {
     };
 
     const refresDeviceState = () => {
-        apis.deviceInstance.runInfo(props.device.id)
+      runInfo.loading = true;
+        apis.deviceInstance.refreshState(props.device.id)
             .then(response => {
               if (response.status === 200) {
-                    response.result.loading = false;
-                }
-                setDeviceState(response.result);
+                runInfo.loading = false;
+                setDeviceState({state:response.result});
+              }
+
             }).catch(() => {
 
             });
@@ -385,10 +386,16 @@ const Status: React.FC<Props> = (props) => {
                   metadata.properties = temp;
                 }
                 setMetadata({ ...metadata });
+              } else {
+                const temp = properties.map((item: any) => {
+                  item.loading = false;
+                  return item;
+                });
+                metadata.properties = temp;
+                setMetadata({ ...metadata });
               }
             });
-
-    }
+    };
 
     return (
         <div>
