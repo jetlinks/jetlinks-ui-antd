@@ -16,7 +16,6 @@ import Save from './Save';
 import Search from './Search';
 import { DeviceInstance } from './data.d';
 import Process from './Process';
-import { getPageQuery } from '@/utils/utils';
 
 const template = require('./template.xlsx');
 
@@ -194,18 +193,16 @@ const DeviceInstancePage: React.FC<Props> = props => {
     handleSearch(searchParam);
   }, []);
 
-  useEffect(() => {
-    console.log(getPageQuery(), 'pageQuery');
-  }, []);
-
   const saveDeviceInstance = (item: any) => {
     dispatch({
       type: 'deviceInstance/update',
       payload: encodeQueryParam(item),
-      callback: () => {
-        message.success('保存成功');
-        setAddvisible(false);
-        router.push(`/device/instance/save/${item.id}`);
+      callback: (response:any) => {
+        if (response.status === 200) {
+          message.success('保存成功');
+          setAddvisible(false);
+          router.push(`/device/instance/save/${item.id}`);
+        }
       },
     });
   };

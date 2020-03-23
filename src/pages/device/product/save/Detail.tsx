@@ -8,6 +8,7 @@ import Definition from './definition';
 import { ConnectState, Dispatch } from '@/models/connect';
 import apis from '@/services';
 import Save from '.';
+import encodeQueryParam from '@/utils/encodeParam';
 
 interface Props {
   dispatch: Dispatch;
@@ -88,7 +89,7 @@ const Detail: React.FC<Props> = props => {
         },
       });
 
-      apis.deviceInstance.count({ 'productId': list[list.length - 1] })
+      apis.deviceInstance.count(encodeQueryParam({terms:{ 'productId': list[list.length - 1] }}))
         .then(res => {
           if (res.status === 200) {
             setDeviceCount(res.result);
