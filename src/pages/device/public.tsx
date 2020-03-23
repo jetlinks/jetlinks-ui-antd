@@ -8,7 +8,7 @@ export function renderUnit(): ReactNode {
     const grouped = groupBy(units, unit => unit.typeText);
     const types = Array.from(new Set<string>(units.map(unit => unit.typeText)));
     return (
-        <Select >
+        <Select allowClear={true}>
             {
                 types.map(type => {
                     const typeData = grouped[type];

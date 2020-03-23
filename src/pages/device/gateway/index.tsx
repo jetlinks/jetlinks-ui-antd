@@ -100,17 +100,12 @@ const DeviceGateway: React.FC<Props> = props => {
         terms: {
           name$LIKE: name,
         },
-      }),
-      callback: (response: any) => {
-        if (response.status === 200) {
-          message.success('保存成功');
-        }
-      },
+      })
     });
   };
 
   const insert = (data: any) => {
-    apis.deviceGateway.bind(gatewayId, data.deviceId).then(response => {
+    apis.deviceGateway.bind(gatewayId, data).then(response => {
       if (response.status === 200) {
         message.success('保存成功');
         setBindVisible(false);

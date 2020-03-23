@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-// import { FormItemConfig } from '@/utils/common';
 import { Input, Select, Row, Col, Button, Icon, Form } from 'antd';
 import apis from '@/services';
 import { FormComponentProps } from 'antd/lib/form';
@@ -17,7 +16,7 @@ interface State {
 
 const Search: React.FC<Props> = props => {
   const initState: State = {
-    expandForm: true,
+    expandForm: false,
     productList: [],
   };
 
@@ -49,6 +48,9 @@ const Search: React.FC<Props> = props => {
 
   useEffect(() => {
     const query = getPageQuery();
+    if (!query.hasOwnProperty("productId$LIKE")){
+      setExpandForm(true);
+    }
     form.setFieldsValue(query, () => search());
   }, []);
 

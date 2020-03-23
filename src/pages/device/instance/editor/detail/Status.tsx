@@ -66,7 +66,7 @@ const Status: React.FC<Props> = (props) => {
         deviceState: {}
         // currentEvent: {},
         // currentEventData: {}
-    }
+    };
     const [runInfo, setRunInfo] = useState(initState.runInfo);
     const [propertiesData, setPropertiesData] = useState(initState.propertiesData);
     const [eventVisible, setEventVisible] = useState(initState.eventVisible);
@@ -172,6 +172,7 @@ const Status: React.FC<Props> = (props) => {
         return () => {
           if (source) {
             source.close();
+            runInfo.loading = false;
           }
         };
     }, [runInfo]);
@@ -194,12 +195,13 @@ const Status: React.FC<Props> = (props) => {
     };
 
     const refresDeviceState = () => {
-        apis.deviceInstance.runInfo(props.device.id)
+      runInfo.loading = true;
+        apis.deviceInstance.refreshState(props.device.id)
             .then(response => {
               if (response.status === 200) {
-                    response.result.loading = false;
-                }
-                setDeviceState(response.result);
+                runInfo.loading = false;
+                setDeviceState({state:response.result});
+              }
             }).catch(() => {
 
             });
@@ -249,7 +251,7 @@ const Status: React.FC<Props> = (props) => {
         }).catch(() => {
 
         });
-    }
+    };
 
 
     const renderMiniChart = (item: any) => {
@@ -293,7 +295,7 @@ const Status: React.FC<Props> = (props) => {
         //为了显示Loading效果
         refreshProperties(item);
 
-    }
+    };
 
     const refreshEventItem = (item: any) => {
         const { events } = metadata;
@@ -339,7 +341,7 @@ const Status: React.FC<Props> = (props) => {
         }).catch(() => {
 
         });
-    }
+    };
 
 
     const refreshProperties = (item: any) => {
@@ -383,10 +385,16 @@ const Status: React.FC<Props> = (props) => {
                   metadata.properties = temp;
                 }
                 setMetadata({ ...metadata });
+              } else {
+                const temp = properties.map((item: any) => {
+                  item.loading = false;
+                  return item;
+                });
+                metadata.properties = temp;
+                setMetadata({ ...metadata });
               }
             });
-
-    }
+    };
 
     return (
         <div>

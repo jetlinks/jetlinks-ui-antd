@@ -17,6 +17,7 @@ import { getAccessToken } from '@/utils/authority';
 import request from '@/utils/request';
 import Save from './save';
 import { downloadObject } from '@/utils/utils';
+import apis from '@/services';
 
 interface Props {
   dispatch: Dispatch;
@@ -85,7 +86,7 @@ const DeviceModel: React.FC<Props> = props => {
     },
     {
       title: '操作',
-      width: '250px',
+      width: '300px',
       align: 'center',
       render: (record: DeviceProduct) => (
         <Fragment>
@@ -97,19 +98,21 @@ const DeviceModel: React.FC<Props> = props => {
             查看
           </a>
           <Divider type="vertical" />
-          <Popconfirm title="确定删除？" onConfirm={() => handleDelete(record)}>
-            <a>删除</a>
-          </Popconfirm>
-          <Divider type="vertical" />
           {record.state === 0 ? (
-            <Popconfirm
-              title="确认发布？"
-              onConfirm={() => {
-                deploy(record);
-              }}
-            >
-              <a>发布</a>
-            </Popconfirm>
+            <span>
+              <Popconfirm
+                title="确认发布？"
+                onConfirm={() => {
+                  deploy(record);
+                }}
+              >
+                <a>发布</a>
+              </Popconfirm>
+              <Divider type="vertical" />
+              <Popconfirm title="确定删除？" onConfirm={() => handleDelete(record)}>
+                <a>删除</a>
+              </Popconfirm>
+            </span>
           ) : (
             <Popconfirm
               title="确认停用"
@@ -128,6 +131,14 @@ const DeviceModel: React.FC<Props> = props => {
           >
             下载配置
           </a>
+          <Divider type="vertical" />
+          <a
+            onClick={() => {
+              router.push(`/device/instance?productId$LIKE=${record.id}`);
+            }}
+          >
+            查看设备
+          </a>
         </Fragment>
       ),
     },
@@ -142,8 +153,10 @@ const DeviceModel: React.FC<Props> = props => {
       type: 'deviceProduct/deploy',
       payload: record.id,
       callback: response => {
-        message.success('操作成功');
-        handleSearch(searchParam);
+        if (response.status === 200) {
+          message.success('操作成功');
+          handleSearch(searchParam);
+        }
       },
     });
   };
@@ -152,8 +165,10 @@ const DeviceModel: React.FC<Props> = props => {
       type: 'deviceProduct/unDeploy',
       payload: record.id,
       callback: response => {
-        message.success('操作成功');
-        handleSearch(searchParam);
+        if (response.status === 200) {
+          message.success('操作成功');
+          handleSearch(searchParam);
+        }
       },
     });
   };
@@ -177,8 +192,10 @@ const DeviceModel: React.FC<Props> = props => {
       type: 'deviceProduct/remove',
       payload: params.id,
       callback: response => {
-        message.success('删除成功');
-        handleSearch(searchParam);
+        if (response.status === 200) {
+          message.success('删除成功');
+          handleSearch(searchParam);
+        }
       },
     });
   };
@@ -219,8 +236,10 @@ const DeviceModel: React.FC<Props> = props => {
             type: 'deviceProduct/insert',
             payload: e,
             callback: (response: SimpleResponse) => {
-              message.success('导入成功');
-              handleSearch(searchParam);
+              if (response.status === 200) {
+                message.success('导入成功');
+                handleSearch(searchParam);
+              }
             },
           });
         });

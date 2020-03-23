@@ -13,6 +13,7 @@ import ConnectState, { Dispatch } from '@/models/connect';
 import { SimpleResponse } from '@/utils/common';
 import { DeviceInstance } from '../data';
 import apis from '@/services';
+import Gateway from './detail/gateway';
 
 interface Props {
   dispatch: Dispatch;
@@ -92,6 +93,13 @@ const Editor: React.FC<Props> = props => {
             }
           }
 
+          if (data.deviceType.value === "gateway"){
+            tabList.push({
+              key: 'gateway',
+              tab: '网关设备',
+            });
+          }
+
           apis.deviceProdcut
             .protocolConfiguration(data.protocol, data.transport)
             .then(resp => {
@@ -137,7 +145,9 @@ const Editor: React.FC<Props> = props => {
       .then(response => {
       if (response.status === 200){
         message.success("断开连接成功");
-        getInfo(deviceId);
+        data.state={value:'offline',text:'离线'};
+        setData(data);
+        setSpinning(false);
       } else {
         message.error("断开连接失败");
         setSpinning(false);
@@ -152,7 +162,9 @@ const Editor: React.FC<Props> = props => {
       .then(response => {
         if (response.status === 200) {
           message.success('激活成功');
-          getInfo(deviceId);
+          data.state={value:'offline',text:'离线'};
+          setData(data);
+          setSpinning(false);
         } else {
           message.error("激活失败");
           setSpinning(false);
@@ -177,6 +189,7 @@ const Editor: React.FC<Props> = props => {
       />
     ),
     debugger: <Debugger />,
+    gateway: <Gateway deviceId={data.id} loading={false}/>,
   };
 
   const content = (
