@@ -70,7 +70,7 @@ const Functions: React.FC<Props> = (props) => {
 
   return (
     <div>
-      <Spin tip="操作中..." spinning={spinning}>
+      <Spin spinning={spinning}>
         <Card style={{ marginBottom: 20 }} title="功能调试">
           <Form labelCol={{ span: 1 }} wrapperCol={{ span: 23 }}>
             <Form.Item label="设备功能">

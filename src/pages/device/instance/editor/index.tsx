@@ -13,6 +13,7 @@ import ConnectState, { Dispatch } from '@/models/connect';
 import { SimpleResponse } from '@/utils/common';
 import { DeviceInstance } from '../data';
 import apis from '@/services';
+import Gateway from './detail/gateway';
 
 interface Props {
   dispatch: Dispatch;
@@ -90,6 +91,13 @@ const Editor: React.FC<Props> = props => {
                 tab: '设备功能',
               });
             }
+          }
+
+          if (data.deviceType.value === "gateway"){
+            tabList.push({
+              key: 'gateway',
+              tab: '网关设备',
+            });
           }
 
           apis.deviceProdcut
@@ -181,6 +189,7 @@ const Editor: React.FC<Props> = props => {
       />
     ),
     debugger: <Debugger />,
+    gateway: <Gateway deviceId={data.id} loading={false}/>,
   };
 
   const content = (
