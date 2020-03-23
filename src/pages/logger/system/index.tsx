@@ -102,6 +102,7 @@ const SystemLoggerList: React.FC<Props> = props => {
       type: 'systemLogger/query',
       payload: encodeQueryParam(params),
     });
+    setSearchParam(params);
   };
 
   useEffect(() => {
