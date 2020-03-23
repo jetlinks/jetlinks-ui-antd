@@ -162,6 +162,7 @@ const Status: React.FC<Props> = (props) => {
               setMetadata({ ...metadata });
             };
             source.onerror = () => {
+              runInfo.loading = false;
               setFlag(false);
             };
             source.onopen = () => {
@@ -172,6 +173,7 @@ const Status: React.FC<Props> = (props) => {
         return () => {
           if (source) {
             source.close();
+            runInfo.loading = false;
           }
         };
     }, [runInfo]);
@@ -249,7 +251,7 @@ const Status: React.FC<Props> = (props) => {
         }).catch(() => {
 
         });
-    }
+    };
 
 
     const renderMiniChart = (item: any) => {
@@ -293,7 +295,7 @@ const Status: React.FC<Props> = (props) => {
         //为了显示Loading效果
         refreshProperties(item);
 
-    }
+    };
 
     const refreshEventItem = (item: any) => {
         const { events } = metadata;
@@ -339,7 +341,7 @@ const Status: React.FC<Props> = (props) => {
         }).catch(() => {
 
         });
-    }
+    };
 
 
     const refreshProperties = (item: any) => {
