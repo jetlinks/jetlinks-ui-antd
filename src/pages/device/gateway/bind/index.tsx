@@ -35,16 +35,8 @@ const DeviceGatewayBind: React.FC<Props> = props => {
   const [deviceData, setDeviceData] = useState(initState.deviceData);
   const [deviceId, setDeviceId] = useState(initState.deviceId);
 
-  const { form } = props;
-
   const submitData = () => {
-    form.validateFields((err, fileValue) => {
-      if (err) return;
-      props.save({
-        ...fileValue,
-        deviceId
-      });
-    });
+    props.save(deviceId);
   };
 
   const handleSearch = (params?: any) => {
