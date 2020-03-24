@@ -32,10 +32,12 @@ const DeviceInstanceModel: DeviceInstanceModelType = {
         },
         *query({ payload, callback }, { call, put }) {
             const response: SimpleResponse = yield call(apis.deviceInstance.list, payload);
-            yield put({
+            if (response.status === 200){
+              yield put({
                 type: 'save',
                 payload: response.result,
-            });
+              });
+            }
         },
         *queryById({ payload, callback }, { call, put }) {
             const response: SimpleResponse = yield call(apis.deviceInstance.info, payload);

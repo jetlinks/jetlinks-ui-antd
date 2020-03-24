@@ -57,14 +57,14 @@ const Search: React.FC<Props> = props => {
   const simpleItems: any[] = [
     {
       label: '设备名称',
-      key: 'name$LIKE',
+      key: 'name$like',
       component: <Input placeholder="请输入" />,
     },
     {
       label: '状态',
       key: 'state',
       component: (
-        <Select placeholder="请选择">
+        <Select placeholder="请选择" allowClear>
           <Select.Option value="notActive">未激活</Select.Option>
           <Select.Option value="offline">离线</Select.Option>
           <Select.Option value="online">在线</Select.Option>
@@ -76,14 +76,14 @@ const Search: React.FC<Props> = props => {
   const advancedItems: any[] = [
     {
       label: '设备名称',
-      key: 'name$LIKE',
+      key: 'name$like',
       component: <Input placeholder="请输入" />,
     },
     {
       label: '状态',
       key: 'state',
       component: (
-        <Select placeholder="请选择">
+        <Select placeholder="请选择" allowClear>
           <Select.Option value="notActive">未激活</Select.Option>
           <Select.Option value="offline">离线</Select.Option>
           <Select.Option value="online">在线</Select.Option>
@@ -94,7 +94,7 @@ const Search: React.FC<Props> = props => {
       label: '设备型号',
       key: 'productId$LIKE',
       component: (
-        <Select placeholder="请选择">
+        <Select placeholder="请选择" allowClear showSearch>
           {productList.map(item => (
             <Select.Option key={item.id}>{item.name}</Select.Option>
           ))}

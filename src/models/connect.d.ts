@@ -28,7 +28,7 @@ import { NetworkTypeState } from '@/pages/network/type/model';
 import { NoticeTemplateState } from '@/pages/notice/template/model';
 import { NoticeConfigState } from '@/pages/notice/config/model';
 import { OrgModelState } from '@/pages/system/org/model';
-// import { GatewayState } from '@/pages/network/gateway/model';
+import { DeviceGatewayState } from '@/pages/device/gateway/model';
 
 export { GlobalModelState, SettingModelState, UserModelState };
 
@@ -76,6 +76,7 @@ export interface Loading {
     systemLogger: boolean;
     networkType: boolean;
     gateway: boolean;
+    deviceGateway: boolean;
     noticeTemplate: boolean;
     noticeConfig: boolean;
     org: boolean;
@@ -108,6 +109,7 @@ export interface ConnectState {
   systemLogger: SystemLoggerModelState;
   networkType: NetworkTypeState;
   gateway: GatewayModelState;
+  deviceGateway: DeviceGatewayState;
   noticeTemplate: NoticeTemplateState;
   noticeConfig: NoticeConfigState;
   org: OrgModelState;

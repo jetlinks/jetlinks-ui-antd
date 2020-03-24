@@ -43,7 +43,7 @@ const Save: React.FC<Props> = props => {
       props.save({
         ...fileValue,
         productName: product.name,
-        state: { text: '离线', value: 'offline' },
+        state: { text: "未激活", value: "notActive" },
       });
     });
   };
