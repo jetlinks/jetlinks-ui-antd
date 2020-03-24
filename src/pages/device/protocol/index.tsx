@@ -88,9 +88,11 @@ const ProtocolList: React.FC<Props> = props => {
         id: record.id,
         type,
       },
-      callback: response => {
-        message.success('操作成功');
-        handleSearch();
+      callback: (response:any) => {
+        if (response.status === 200) {
+          message.success('操作成功');
+          handleSearch();
+        }
       },
     });
   };
@@ -115,9 +117,11 @@ const ProtocolList: React.FC<Props> = props => {
     dispatch({
       type: 'protocol/insert',
       payload: encodeQueryParam(item),
-      callback: response => {
-        setSaveVisible(false);
-        handleSearch(searchParam);
+      callback: (response:any) => {
+        if (response.status === 200){
+          setSaveVisible(false);
+          handleSearch(searchParam);
+        }
       },
     });
   };
@@ -126,8 +130,10 @@ const ProtocolList: React.FC<Props> = props => {
       type: 'protocol/remove',
       payload: params.id,
       callback: response => {
-        message.success('删除成功');
-        handleSearch();
+        if (response.status === 200) {
+          message.success('删除成功');
+          handleSearch();
+        }
       },
     });
   };
