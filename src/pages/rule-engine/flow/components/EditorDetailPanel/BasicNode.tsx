@@ -9,6 +9,8 @@ import { getAccessToken } from '@/utils/authority';
 // import { NodeProps } from "./data";
 import styles from './index.less';
 import { wrapAPI } from '@/utils/utils';
+import { EventSourcePolyfill } from 'event-source-polyfill';
+
 
 interface Props extends FormComponentProps {
   expandItem?: any[];
@@ -67,7 +69,7 @@ const BasicNode: React.FC<Props> = props => {
           }
           localStorage.removeItem('ruleEngineDebugSessionId');
         })
-        .catch(() => {});
+        .catch(() => { });
     }
   };
 
@@ -75,7 +77,7 @@ const BasicNode: React.FC<Props> = props => {
     if (debugSessionId === null) return;
     if (polling) return;
     setPolling(true);
-    const es = new EventSource(
+    const es = new EventSourcePolyfill(
       wrapAPI(
         `/jetlinks/rule-engine/debug/${debugSessionId}/logs/?:X_Access_Token=${getAccessToken()}`,
       ),
@@ -105,7 +107,7 @@ const BasicNode: React.FC<Props> = props => {
             setRunningNode(response.result);
           }
         })
-        .catch(() => {});
+        .catch(() => { });
       timingPollLog();
     }
 
@@ -212,7 +214,7 @@ const BasicNode: React.FC<Props> = props => {
             message.error('开启DEBUG失败');
           }
         })
-        .catch(() => {});
+        .catch(() => { });
     }
   };
 
@@ -243,7 +245,7 @@ const BasicNode: React.FC<Props> = props => {
             }
           }, 500); // 延迟500ms,在集群时，可能存在节点配置同步不及时的问题。
         })
-        .catch(() => {});
+        .catch(() => { });
     });
   };
 
@@ -273,7 +275,7 @@ const BasicNode: React.FC<Props> = props => {
             call();
           }
         })
-        .catch(() => {});
+        .catch(() => { });
     });
   };
 

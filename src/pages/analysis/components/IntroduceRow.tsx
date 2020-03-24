@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Col, Icon, Row, Tag, Tooltip } from 'antd';
 import { FormattedMessage } from 'umi-plugin-react/locale';
-import Charts, { Gauge} from './Charts';
+import { EventSourcePolyfill } from 'event-source-polyfill';
+import Charts, { Gauge } from './Charts';
 import numeral from 'numeral';
 import { IVisitData } from '../data.d';
 import GaugeColor from './Charts/GaugeColor/index';
@@ -10,6 +11,7 @@ import { getAccessToken } from '@/utils/authority';
 import apis from '@/services';
 import moment from 'moment';
 
+
 const { ChartCard, MiniArea, MiniBar, MiniProgress, Field } = Charts;
 
 interface State {
@@ -17,8 +19,8 @@ interface State {
   memoryMax: number;
   memoryUsed: number;
   messageData: any;
-  sameDay:number;
-  month:number;
+  sameDay: number;
+  month: number;
   metadata: any;
   eventData: any[];
 }
@@ -32,30 +34,30 @@ const topColResponsiveProps = {
   style: { marginBottom: 24 },
 };
 
-const IntroduceRow = ({ loading, visitData, messageData}: { loading: boolean; visitData: IVisitData[];messageData: IVisitData[] }) => {
+const IntroduceRow = ({ loading, visitData, messageData }: { loading: boolean; visitData: IVisitData[]; messageData: IVisitData[] }) => {
   const initState: State = {
     cpu: 0,
     memoryMax: 0,
     memoryUsed: 0,
     messageData: {},
-    sameDay:0,
-    month:0,
+    sameDay: 0,
+    month: 0,
     metadata: {},
     eventData: []
   };
 
   const [flag, setFlag] = useState(false);
 
-  const [cpu,setCpu] = useState(initState.cpu);
-  const [memoryMax,setMemoryMax] = useState(initState.memoryMax);
-  const [memoryUsed,setMemoryUsed] = useState(initState.memoryUsed);
-  const [sameDay,setSameDay] = useState(initState.sameDay);
-  const [month,setMonth] = useState(initState.month);
-  const [deviceOnline,setDeviceOnline] = useState(initState.month);
-  const [deviceCount,setDeviceCount] = useState(initState.month);
-  const [deviceNotActive,setDeviceNotActive] = useState(initState.month);
+  const [cpu, setCpu] = useState(initState.cpu);
+  const [memoryMax, setMemoryMax] = useState(initState.memoryMax);
+  const [memoryUsed, setMemoryUsed] = useState(initState.memoryUsed);
+  const [sameDay, setSameDay] = useState(initState.sameDay);
+  const [month, setMonth] = useState(initState.month);
+  const [deviceOnline, setDeviceOnline] = useState(initState.month);
+  const [deviceCount, setDeviceCount] = useState(initState.month);
+  const [deviceNotActive, setDeviceNotActive] = useState(initState.month);
 
-  let source: EventSource | null = null;
+  let source: EventSourcePolyfill;
 
   useEffect(() => {
 
@@ -64,22 +66,22 @@ const IntroduceRow = ({ loading, visitData, messageData}: { loading: boolean; vi
 
     const list = [
       {
-        "dashboard":"jvmMonitor",
-        "object":"memory",
-        "measurement":"info",
-        "dimension":"realTime",
-        "group":"memory",
-        "params":{
-          "history":1
+        "dashboard": "jvmMonitor",
+        "object": "memory",
+        "measurement": "info",
+        "dimension": "realTime",
+        "group": "memory",
+        "params": {
+          "history": 1
         }
-      },{
-        "dashboard":"systemMonitor",
-        "object":"cpu",
-        "measurement":"usage",
-        "dimension":"realTime",
-        "group":"cpu",
-        "params":{
-          "history":1
+      }, {
+        "dashboard": "systemMonitor",
+        "object": "cpu",
+        "measurement": "usage",
+        "dimension": "realTime",
+        "group": "cpu",
+        "params": {
+          "history": 1
         }
       }
     ];
@@ -88,14 +90,14 @@ const IntroduceRow = ({ loading, visitData, messageData}: { loading: boolean; vi
       source.close();
     }
 
-    source = new EventSource(
+    source = new EventSourcePolyfill(
       wrapAPI(`/jetlinks/dashboard/_multi?:X_Access_Token=${getAccessToken()}&requestJson=${encodeURI(JSON.stringify(list))}`)
     );
     source.onmessage = e => {
       const data = JSON.parse(e.data);
-      if (data.group === "cpu"){
+      if (data.group === "cpu") {
         setCpu(data.data.value);
-      }else if (data.group === "memory"){
+      } else if (data.group === "memory") {
         setMemoryMax(data.data.value.max);
         setMemoryUsed(data.data.value.used);
       }
@@ -114,51 +116,51 @@ const IntroduceRow = ({ loading, visitData, messageData}: { loading: boolean; vi
     };
   }, []);
 
-  const calculationDate = () =>{
+  const calculationDate = () => {
     const dd = new Date();
-    dd.setDate(dd.getDate()-30);
+    dd.setDate(dd.getDate() - 30);
     const y = dd.getFullYear();
-    const m = (dd.getMonth()+1)<10?`0${dd.getMonth()+1}`:(dd.getMonth()+1);
-    const d = dd.getDate()<10?`0${dd.getDate()}`:dd.getDate();
+    const m = (dd.getMonth() + 1) < 10 ? `0${dd.getMonth() + 1}` : (dd.getMonth() + 1);
+    const d = dd.getDate() < 10 ? `0${dd.getDate()}` : dd.getDate();
     return `${y}-${m}-${d} 00:00:00`;
   };
 
   const deviceMessage = () => {
     const list = [
       {
-        "dashboard":"device",
-        "object":"message",
-        "measurement":"quantity",
-        "dimension":"agg",
-        "group":"sameDay",
-        "params":{
-          "time":"1d",
-          "format":"yyyy-MM-dd",
+        "dashboard": "device",
+        "object": "message",
+        "measurement": "quantity",
+        "dimension": "agg",
+        "group": "sameDay",
+        "params": {
+          "time": "1d",
+          "format": "yyyy-MM-dd",
         }
       },
       {
-        "dashboard":"device",
-        "object":"message",
-        "measurement":"quantity",
-        "dimension":"agg",
-        "group":"sameMonth",
-        "params":{
-          "limit":30,
-          "time":"1d",
-          "format":"yyyy-MM-dd",
-          "from":calculationDate()
+        "dashboard": "device",
+        "object": "message",
+        "measurement": "quantity",
+        "dimension": "agg",
+        "group": "sameMonth",
+        "params": {
+          "limit": 30,
+          "time": "1d",
+          "format": "yyyy-MM-dd",
+          "from": calculationDate()
         }
       },
       {
-        "dashboard":"device",
-        "object":"message",
-        "measurement":"quantity",
-        "dimension":"agg",
-        "group":"month",
-        "params":{
-          "time":"30d",
-          "format":"yyyy-MM-dd",
-          "from":calculationDate()
+        "dashboard": "device",
+        "object": "message",
+        "measurement": "quantity",
+        "dimension": "agg",
+        "group": "month",
+        "params": {
+          "time": "30d",
+          "format": "yyyy-MM-dd",
+          "from": calculationDate()
         }
       }
     ];
@@ -177,8 +179,8 @@ const IntroduceRow = ({ loading, visitData, messageData}: { loading: boolean; vi
               case 'sameMonth':
                 messageData.push(
                   {
-                    "x":moment(new Date(item.data.timeString)).format('YYYY-MM-DD'),
-                    "y":Number(item.data.value)
+                    "x": moment(new Date(item.data.timeString)).format('YYYY-MM-DD'),
+                    "y": Number(item.data.value)
                   });
                 break;
               default:
@@ -193,42 +195,42 @@ const IntroduceRow = ({ loading, visitData, messageData}: { loading: boolean; vi
     const list = [
       //设备状态信息-在线
       {
-        "dashboard":"device",
-        "object":"status",
-        "measurement":"record",
-        "dimension":"current",
-        "group":"deviceOnline",
-        "params":{
-          "state":"online"
+        "dashboard": "device",
+        "object": "status",
+        "measurement": "record",
+        "dimension": "current",
+        "group": "deviceOnline",
+        "params": {
+          "state": "online"
         }
       },//设备状态信息-总数
       {
-        "dashboard":"device",
-        "object":"status",
-        "measurement":"record",
-        "dimension":"current",
-        "group":"deviceCount",
+        "dashboard": "device",
+        "object": "status",
+        "measurement": "record",
+        "dimension": "current",
+        "group": "deviceCount",
       },//设备状态信息-未激活
       {
-        "dashboard":"device",
-        "object":"status",
-        "measurement":"record",
-        "dimension":"current",
-        "group":"deviceNotActive",
-        "params":{
-          "state":"notActive"
+        "dashboard": "device",
+        "object": "status",
+        "measurement": "record",
+        "dimension": "current",
+        "group": "deviceNotActive",
+        "params": {
+          "state": "notActive"
         }
       },//设备状态信息-历史在线
       {
-        "dashboard":"device",
-        "object":"status",
-        "measurement":"record",
-        "dimension":"aggOnline",
-        "group":"aggOnline",
-        "params":{
-          "limit":20,
-          "time":"1d",
-          "format":"yyyy-MM-dd"
+        "dashboard": "device",
+        "object": "status",
+        "measurement": "record",
+        "dimension": "aggOnline",
+        "group": "aggOnline",
+        "params": {
+          "limit": 20,
+          "time": "1d",
+          "format": "yyyy-MM-dd"
         }
       }
     ];
@@ -241,8 +243,8 @@ const IntroduceRow = ({ loading, visitData, messageData}: { loading: boolean; vi
               case 'aggOnline':
                 visitData.push(
                   {
-                    "x":moment(new Date(item.data.timeString)).format('YYYY-MM-DD'),
-                    "y":Number(item.data.value)
+                    "x": moment(new Date(item.data.timeString)).format('YYYY-MM-DD'),
+                    "y": Number(item.data.value)
                   });
                 break;
               case 'deviceOnline':
@@ -275,13 +277,13 @@ const IntroduceRow = ({ loading, visitData, messageData}: { loading: boolean; vi
             <Tooltip
               title='刷新'
             >
-              <Icon type="sync" onClick={() => {deviceStatus()}} />
+              <Icon type="sync" onClick={() => { deviceStatus() }} />
             </Tooltip>
           }
           total={numeral(deviceOnline).format('0,0')}
           footer={
             <div style={{ whiteSpace: 'nowrap', overflow: 'hidden' }}>
-              <Field style={{ marginRight: 80 ,float:'left'}}
+              <Field style={{ marginRight: 80, float: 'left' }}
                 label={
                   <FormattedMessage id="analysis.analysis.device-total" defaultMessage="设备总量" />
                 }
@@ -310,7 +312,7 @@ const IntroduceRow = ({ loading, visitData, messageData}: { loading: boolean; vi
             <Tooltip
               title='刷新'
             >
-              <Icon type="sync" onClick={() => {deviceMessage()}} />
+              <Icon type="sync" onClick={() => { deviceMessage() }} />
             </Tooltip>
           }
           total={numeral(sameDay).format('0,0')}

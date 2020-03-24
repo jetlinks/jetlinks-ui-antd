@@ -3,6 +3,7 @@ import { Modal, Button, Divider, Form, Input, Select, Card, Row, Col, Icon } fro
 import React, { Fragment, useState } from 'react';
 import { getAccessToken } from '@/utils/authority';
 import { randomString, wrapAPI } from '@/utils/utils';
+import { EventSourcePolyfill } from 'event-source-polyfill';
 
 interface Props {
   close: Function;
@@ -50,10 +51,10 @@ const HttpServer: React.FC<Props> = props => {
   const debug = () => {
     logs.push('开始订阅');
     setLogs([...logs]);
-    const eventSource = new EventSource(
+    const eventSource = new EventSourcePolyfill(
       wrapAPI(
         `/jetlinks/network/mqtt/server/${
-          item.id
+        item.id
         }/_subscribe/${type}?:X_Access_Token=${getAccessToken()}`,
       ),
     );
@@ -165,15 +166,15 @@ const HttpServer: React.FC<Props> = props => {
                       }}
                     />
                   ) : (
-                    <Icon
-                      type="minus"
-                      onClick={() => {
-                        debugData.headers = debugData.headers.filter(temp => temp.id !== i.id);
-                        // debugData.headers.push({ id: randomString(8), key: '', value: '' });
-                        setDebugData({ ...debugData });
-                      }}
-                    />
-                  )}
+                      <Icon
+                        type="minus"
+                        onClick={() => {
+                          debugData.headers = debugData.headers.filter(temp => temp.id !== i.id);
+                          // debugData.headers.push({ id: randomString(8), key: '', value: '' });
+                          setDebugData({ ...debugData });
+                        }}
+                      />
+                    )}
                 </Col>
               </Row>
             ))}

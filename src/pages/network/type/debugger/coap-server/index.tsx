@@ -3,6 +3,7 @@ import { Modal, Button, Divider, Form, Input, Select } from 'antd';
 import React, { Fragment, useState } from 'react';
 import { getAccessToken } from '@/utils/authority';
 import { wrapAPI } from '@/utils/utils';
+import { EventSourcePolyfill } from 'event-source-polyfill';
 
 interface Props {
   close: Function;
@@ -37,10 +38,10 @@ const CoapServer: React.FC<Props> = props => {
     logs.push('开始调试');
     setLogs([...logs]);
 
-    const eventSource = new EventSource(
+    const eventSource = new EventSourcePolyfill(
       wrapAPI(
         `/jetlinks/network/coap/server/${item.id}/_subscribe?options=${debugData.options}&payload=${
-          debugData.payload
+        debugData.payload
         }&code=CONTENT&payloadType=${debugData.payloadType}&:X_Access_Token=${getAccessToken()}`,
       ),
     );

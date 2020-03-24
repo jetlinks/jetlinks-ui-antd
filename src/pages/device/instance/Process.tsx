@@ -1,6 +1,8 @@
 import { wrapAPI } from '@/utils/utils';
 import { Modal, Badge } from 'antd';
 import React, { useState, useEffect } from 'react';
+import { EventSourcePolyfill } from 'event-source-polyfill';
+
 
 interface Props {
   api: string;
@@ -22,7 +24,8 @@ const Process: React.FC<Props> = props => {
 
   const getData = () => {
     let dt = 0;
-    const source = new EventSource(wrapAPI(props.api));
+
+    const source = new EventSourcePolyfill(wrapAPI(props.api));
     setSource(source);
     source.onmessage = e => {
       const res = JSON.parse(e.data);
@@ -54,7 +57,7 @@ const Process: React.FC<Props> = props => {
       setFlag(false);
       source.close();
     };
-    source.onopen = () => {};
+    source.onopen = () => { };
   };
   useEffect(() => {
     getData();
@@ -80,8 +83,8 @@ const Process: React.FC<Props> = props => {
       {flag ? (
         <Badge status="processing" text="进行中" />
       ) : (
-        <Badge status="success" text="已完成" />
-      )}
+          <Badge status="success" text="已完成" />
+        )}
       <p>总数量:{count}</p>
       <p style={{ color: 'red' }}>{errMessage}</p>
     </Modal>

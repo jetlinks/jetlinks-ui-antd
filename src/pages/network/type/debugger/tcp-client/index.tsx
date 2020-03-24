@@ -3,6 +3,7 @@ import React, { Fragment, useState, useEffect } from 'react';
 import { getAccessToken } from '@/utils/authority';
 import apis from '@/services';
 import { wrapAPI } from '@/utils/utils';
+import { EventSourcePolyfill } from 'event-source-polyfill';
 
 interface Props {
   close: Function;
@@ -22,7 +23,7 @@ interface State {
 }
 
 const TcpClient: React.FC<Props> = props => {
-  let eventSource: EventSource | null = null;
+  let eventSource: EventSourcePolyfill | null = null;
 
   const { item } = props;
   const initState: State = {
@@ -48,10 +49,10 @@ const TcpClient: React.FC<Props> = props => {
     logs.push('开始调试');
     setLogs([...logs]);
     if (action === '_subscribe') {
-      eventSource = new EventSource(
+      eventSource = new EventSourcePolyfill(
         wrapAPI(
           `/jetlinks/network/mqtt/client/${item.id}/_subscribe/${
-            subscribeData.type
+          subscribeData.type
           }/?topics=${encodeURIComponent(
             subscribeData.topics,
           )}&:X_Access_Token=${getAccessToken()}`,
@@ -72,8 +73,8 @@ const TcpClient: React.FC<Props> = props => {
     } else if (action === '_publish') {
       apis.network
         .debugTcpClient(item.id, publishData.type, publishData.data)
-        .then(() => {})
-        .catch(() => {});
+        .then(() => { })
+        .catch(() => { });
     }
   };
 
@@ -126,27 +127,27 @@ const TcpClient: React.FC<Props> = props => {
             </Button>
           </Fragment>
         ) : (
-          <Fragment>
-            <Button
-              type="primary"
-              onClick={() => {
-                debugMqttClient();
-              }}
-            >
-              提交
+            <Fragment>
+              <Button
+                type="primary"
+                onClick={() => {
+                  debugMqttClient();
+                }}
+              >
+                提交
             </Button>
-            <Divider type="vertical" />
-            <Button
-              type="ghost"
-              onClick={() => {
-                logs.splice(0, logs.length);
-                setLogs([]);
-              }}
-            >
-              清空
+              <Divider type="vertical" />
+              <Button
+                type="ghost"
+                onClick={() => {
+                  logs.splice(0, logs.length);
+                  setLogs([]);
+                }}
+              >
+                清空
             </Button>
-          </Fragment>
-        )
+            </Fragment>
+          )
       }
     >
       <Tabs defaultActiveKey={action} onChange={e => setAction(e)}>

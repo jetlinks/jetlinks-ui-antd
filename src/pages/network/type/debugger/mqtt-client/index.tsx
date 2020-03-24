@@ -3,6 +3,8 @@ import React, { Fragment, useState } from 'react';
 import { getAccessToken } from '@/utils/authority';
 import apis from '@/services';
 import { wrapAPI } from '@/utils/utils';
+import { EventSourcePolyfill } from 'event-source-polyfill';
+
 
 interface Props {
   close: Function;
@@ -49,10 +51,10 @@ const MqttClient: React.FC<Props> = props => {
       setLogs([...logs]);
       // setLogs(`${logs}开始订阅: ${subscribeData.topics}\n`);
       // console.log('debugMqtt', data);
-      const eventSource = new EventSource(
+      const eventSource = new EventSourcePolyfill(
         wrapAPI(
           `/jetlinks/network/mqtt/client/${item.id}/_subscribe/${
-            subscribeData.type
+          subscribeData.type
           }/?topics=${encodeURIComponent(
             subscribeData.topics,
           )}&:X_Access_Token=${getAccessToken()}`,
@@ -64,7 +66,7 @@ const MqttClient: React.FC<Props> = props => {
       eventSource.onmessage = e => {
         setLogs(l => [...l, e.data]);
       };
-      eventSource.onopen = () => {};
+      eventSource.onopen = () => { };
     } else if (action === '_publish') {
       apis.network
         .debugMqttClient(item.id, action, publishData.type, publishData)
@@ -73,7 +75,7 @@ const MqttClient: React.FC<Props> = props => {
             message.success('推送成功');
           }
         })
-        .catch(() => {});
+        .catch(() => { });
     }
   };
 

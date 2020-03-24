@@ -3,6 +3,7 @@ import React, { Fragment, useState } from 'react';
 import { getAccessToken } from '@/utils/authority';
 import apis from '@/services';
 import { wrapAPI } from '@/utils/utils';
+import { EventSourcePolyfill } from 'event-source-polyfill';
 
 interface Props {
   close: Function;
@@ -45,10 +46,10 @@ const WebSocketClient: React.FC<Props> = props => {
     logs.push('开始调试');
     if (action === '_subscribe') {
       // console.log('debugMqtt', data);
-      const eventSource = new EventSource(
+      const eventSource = new EventSourcePolyfill(
         wrapAPI(
           `/jetlinks/network/websocket/client/${item.id}/_subscribe/${
-            subscribeData.type
+          subscribeData.type
           }/?:X_Access_Token=${getAccessToken()}`,
         ),
       );
@@ -71,7 +72,7 @@ const WebSocketClient: React.FC<Props> = props => {
             message.success('推送成功');
           }
         })
-        .catch(() => {});
+        .catch(() => { });
     }
   };
 
@@ -115,27 +116,27 @@ const WebSocketClient: React.FC<Props> = props => {
             </Button>
           </Fragment>
         ) : (
-          <Fragment>
-            <Button
-              type="primary"
-              onClick={() => {
-                debugMqttClient();
-              }}
-            >
-              提交
+            <Fragment>
+              <Button
+                type="primary"
+                onClick={() => {
+                  debugMqttClient();
+                }}
+              >
+                提交
             </Button>
-            <Divider type="vertical" />
-            <Button
-              type="ghost"
-              onClick={() => {
-                logs.splice(0, logs.length);
-                setLogs([]);
-              }}
-            >
-              清空
+              <Divider type="vertical" />
+              <Button
+                type="ghost"
+                onClick={() => {
+                  logs.splice(0, logs.length);
+                  setLogs([]);
+                }}
+              >
+                清空
             </Button>
-          </Fragment>
-        )
+            </Fragment>
+          )
       }
     >
       <Tabs defaultActiveKey={action} onChange={e => setAction(e)}>

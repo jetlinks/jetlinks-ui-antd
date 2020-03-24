@@ -3,6 +3,7 @@ import { Modal, Button, Divider, Form, Select, message } from 'antd';
 import React, { Fragment, useState } from 'react';
 import { getAccessToken } from '@/utils/authority';
 import { wrapAPI } from '@/utils/utils';
+import { EventSourcePolyfill } from 'event-source-polyfill';
 
 interface Props {
   close: Function;
@@ -25,10 +26,10 @@ const MqttServer: React.FC<Props> = props => {
   const debug = () => {
     logs.push('开始订阅');
     setLogs([...logs]);
-    const eventSource = new EventSource(
+    const eventSource = new EventSourcePolyfill(
       wrapAPI(
         `/jetlinks/network/mqtt/server/${
-          item.id
+        item.id
         }/_subscribe/${type}?:X_Access_Token=${getAccessToken()}`,
       ),
     );

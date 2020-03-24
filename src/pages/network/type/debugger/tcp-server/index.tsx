@@ -3,6 +3,7 @@ import { Modal, Button, Divider, Form, Select } from 'antd';
 import React, { Fragment, useState, useEffect } from 'react';
 import { getAccessToken } from '@/utils/authority';
 import { wrapAPI } from '@/utils/utils';
+import { EventSourcePolyfill } from 'event-source-polyfill';
 
 interface Props {
   close: Function;
@@ -13,7 +14,7 @@ interface State {
   logs: any[];
 }
 const TcpServer: React.FC<Props> = props => {
-  let eventSource: EventSource | null;
+  let eventSource: EventSourcePolyfill | null;
   const { item } = props;
   const initState: State = {
     type: 'HEX',
@@ -45,10 +46,10 @@ const TcpServer: React.FC<Props> = props => {
     if (eventSource) {
       eventSource.close();
     }
-    eventSource = new EventSource(
+    eventSource = new EventSourcePolyfill(
       wrapAPI(
         `/jetlinks/network/tcp/server/${
-          item.id
+        item.id
         }/_subscribe/${type}?:X_Access_Token=${getAccessToken()}`,
       ),
     );
