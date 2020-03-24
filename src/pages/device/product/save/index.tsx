@@ -197,7 +197,7 @@ const Save: React.FC<Props> = props => {
         md: { span: 24 },
         sm: { span: 24 },
       },
-      component: <Select placeholder="请选择所属机构" allowClear={true}>
+      component: <Select placeholder="请选择所属机构" allowClear>
         {organizationList.map(e => (
           <Select.Option value={e.id} key={e.id}>
             {e.name}
