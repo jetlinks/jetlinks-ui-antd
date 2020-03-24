@@ -25,7 +25,7 @@ interface State {
 
 const DeviceGatewayBind: React.FC<Props> = props => {
   const initState: State = {
-    searchParam: { pageSize: 10,terms:{parentId$isnull:1} },
+    searchParam: { pageSize: 10, terms: { parentId$isnull: 1 } },
     deviceData: {},
     deviceId: [],
   };
@@ -40,13 +40,14 @@ const DeviceGatewayBind: React.FC<Props> = props => {
 
   const handleSearch = (params?: any) => {
     setSearchParam(params);
-    apis.deviceInstance.list(
-      encodeQueryParam(params),
-    ).then(response => {
-      if (response.status === 200) {
-        setDeviceData(response.result);
-      }
-    }).catch(() => {});
+    apis.deviceInstance
+      .list(encodeQueryParam(params))
+      .then(response => {
+        if (response.status === 200) {
+          setDeviceData(response.result);
+        }
+      })
+      .catch(() => {});
   };
 
   useEffect(() => {
@@ -54,25 +55,26 @@ const DeviceGatewayBind: React.FC<Props> = props => {
   }, []);
 
   const onTableChange = (pagination: PaginationConfig, filters: any, sorter: SorterResult<any>) => {
-    apis.deviceInstance.list(
-      encodeQueryParam({
-        pageIndex: Number(pagination.current) - 1,
-        pageSize: pagination.pageSize,
-        sorts: sorter,
-      }),
-    ).then(response => {
-      if (response.status === 200) {
-        setDeviceData(response.result);
-      }
-    }).catch(() => {
-
-    });
+    apis.deviceInstance
+      .list(
+        encodeQueryParam({
+          pageIndex: Number(pagination.current) - 1,
+          pageSize: pagination.pageSize,
+          sorts: sorter,
+        }),
+      )
+      .then(response => {
+        if (response.status === 200) {
+          setDeviceData(response.result);
+        }
+      })
+      .catch(() => {});
   };
 
   const rowSelection = {
-    onChange: (selectedRowKeys:any) => {
+    onChange: (selectedRowKeys: any) => {
       setDeviceId(selectedRowKeys);
-    }
+    },
   };
 
   const statusMap = new Map();
@@ -104,7 +106,7 @@ const DeviceGatewayBind: React.FC<Props> = props => {
       title: '状态',
       dataIndex: 'state',
       render: record =>
-        record ? <Badge status={statusMap.get(record.text)} text={record.text}/> : '',
+        record ? <Badge status={statusMap.get(record.text)} text={record.text} /> : '',
     },
     {
       title: '描述',
@@ -130,7 +132,7 @@ const DeviceGatewayBind: React.FC<Props> = props => {
           <Search
             search={(params: any) => {
               setSearchParam(params);
-              handleSearch({ terms: params, pageSize: 10});
+              handleSearch({ terms: params, pageSize: 10 });
             }}
           />
         </div>
@@ -142,8 +144,8 @@ const DeviceGatewayBind: React.FC<Props> = props => {
             rowKey="id"
             onChange={onTableChange}
             rowSelection={{
-              type:'checkbox',
-              ...rowSelection
+              type: 'checkbox',
+              ...rowSelection,
             }}
             pagination={{
               current: deviceData.pageIndex + 1,

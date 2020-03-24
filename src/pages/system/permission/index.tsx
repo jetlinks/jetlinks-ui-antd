@@ -51,6 +51,7 @@ const PermissionList: React.FC<Props> = props => {
       type: 'permission/query',
       payload: encodeQueryParam(params),
     });
+    setSearchParam(params);
   };
 
   useEffect(() => {

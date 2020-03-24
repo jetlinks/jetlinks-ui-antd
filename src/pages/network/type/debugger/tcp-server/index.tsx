@@ -1,4 +1,4 @@
-import { Modal, Button, Divider, Form, Select, message } from 'antd';
+import { Modal, Button, Divider, Form, Select } from 'antd';
 
 import React, { Fragment, useState, useEffect } from 'react';
 import { getAccessToken } from '@/utils/authority';
@@ -27,7 +27,7 @@ const TcpServer: React.FC<Props> = props => {
   const closeEventSource = () => {
     if (eventSource) {
       eventSource.close();
-      message.success('关闭链接');
+      // message.success('关闭链接');
     }
   };
 

@@ -128,6 +128,7 @@ const AccessLoggerList: React.FC<Props> = props => {
       type: 'accessLogger/query',
       payload: encodeQueryParam(params),
     });
+    setSearchParam(params);
   };
 
   useEffect(() => {

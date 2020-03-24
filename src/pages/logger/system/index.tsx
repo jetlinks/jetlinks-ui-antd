@@ -42,12 +42,12 @@ const SystemLoggerList: React.FC<Props> = props => {
   const [current, setCurrent] = useState(initState.current);
 
   const columns: ColumnProps<SystemLoggerItem>[] = [
-    {
-      title: '序号',
-      dataIndex: 'id',
-      width: 60,
-      render: (_, __, index) => index + 1,
-    },
+    // {
+    //   title: '序号',
+    //   dataIndex: 'id',
+    //   width: 60,
+    //   render: (_, __, index) => index + 1,
+    // },
 
     {
       title: '线程',
@@ -102,6 +102,7 @@ const SystemLoggerList: React.FC<Props> = props => {
       type: 'systemLogger/query',
       payload: encodeQueryParam(params),
     });
+    setSearchParam(params);
   };
 
   useEffect(() => {
@@ -151,7 +152,7 @@ const SystemLoggerList: React.FC<Props> = props => {
               loading={props.loading}
               dataSource={(result || {}).data}
               columns={columns}
-              rowKey="createTime"
+              rowKey="id"
               onChange={onTableChange}
               pagination={{
                 current: result.pageIndex + 1,

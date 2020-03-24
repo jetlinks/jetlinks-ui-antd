@@ -1,6 +1,20 @@
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import React, { useEffect, useState } from 'react';
-import { Avatar, Badge, Card, Col, Form, Icon, Input, List, message, Popconfirm, Row, Spin, Tooltip } from 'antd';
+import {
+  Avatar,
+  Badge,
+  Card,
+  Col,
+  Form,
+  Icon,
+  Input,
+  List,
+  message,
+  Popconfirm,
+  Row,
+  Spin,
+  Tooltip,
+} from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import { connect } from 'dva';
 import { router } from 'umi';
@@ -22,8 +36,8 @@ interface Props extends FormComponentProps {
 
 interface State {
   bindVisible: boolean;
-  hasMore: boolean,
-  gatewayId: string,
+  hasMore: boolean;
+  gatewayId: string;
 }
 
 const DeviceGateway: React.FC<Props> = props => {
@@ -63,9 +77,9 @@ const DeviceGateway: React.FC<Props> = props => {
       payload: encodeQueryParam({ paging: false }),
       callback: (response: any) => {
         if (response.status !== 200) {
-          message.error("查询错误")
+          message.error('查询错误');
         }
-      }
+      },
     });
   };
 
@@ -79,14 +93,15 @@ const DeviceGateway: React.FC<Props> = props => {
   statusMap.set('未激活', 'processing');
 
   const unBindGateway = (id: string, deviceId: string) => {
-    apis.deviceGateway.unBind(id, deviceId)
+    apis.deviceGateway
+      .unBind(id, deviceId)
       .then(response => {
         if (response.status === 200) {
           message.success('解绑成功');
           handleSearch();
         }
-      }).catch(() => {
-    });
+      })
+      .catch(() => {});
   };
 
   const onSearch = (name?: string) => {
@@ -97,19 +112,21 @@ const DeviceGateway: React.FC<Props> = props => {
         terms: {
           name$LIKE: name,
         },
-      })
+      }),
     });
   };
 
   const insert = (data: any) => {
-    apis.deviceGateway.bind(gatewayId, data).then(response => {
-      if (response.status === 200) {
-        message.success('保存成功');
-        setBindVisible(false);
-        handleSearch();
-      }
-    }).catch(() => {
-    });
+    apis.deviceGateway
+      .bind(gatewayId, data)
+      .then(response => {
+        if (response.status === 200) {
+          message.success('保存成功');
+          setBindVisible(false);
+          handleSearch();
+        }
+      })
+      .catch(() => {});
   };
 
   return (
@@ -132,7 +149,7 @@ const DeviceGateway: React.FC<Props> = props => {
             </StandardFormRow>
           </Form>
         </Card>
-        <br/>
+        <br />
         <List<any>
           rowKey="id"
           grid={{ gutter: 24, xl: 4, lg: 3, md: 3, sm: 2, xs: 1 }}
@@ -147,55 +164,73 @@ const DeviceGateway: React.FC<Props> = props => {
                     <ChartCard
                       bordered={false}
                       title={item.id}
-                      avatar={<img
-                        style={{ width: 56, height: 56 }}
-                        src={gateway}
-                        alt="indicator"
-                      />}
+                      avatar={
+                        <img style={{ width: 56, height: 56 }} src={gateway} alt="indicator" />
+                      }
                       action={
-                        <Tooltip title='绑定子设备'>
-                          <Icon type="plus" style={{ fontSize: 20 }}
-                                onClick={() => {
-                                  setGatewayId(item.id);
-                                  setBindVisible(true);
-                                }}/>
+                        <Tooltip title="绑定子设备">
+                          <Icon
+                            type="plus"
+                            style={{ fontSize: 20 }}
+                            onClick={() => {
+                              setGatewayId(item.id);
+                              setBindVisible(true);
+                            }}
+                          />
                         </Tooltip>
                       }
-                      total={() =>
+                      total={() => (
                         <div>
                           <span style={{ fontSize: 20 }}>
-                            <a onClick={() => {
-                              router.push(`/device/instance/save/${item.id}`);
-                            }}>
+                            <a
+                              onClick={() => {
+                                router.push(`/device/instance/save/${item.id}`);
+                              }}
+                            >
                               {item.name}
                             </a>
                           </span>
                           <span style={{ paddingLeft: 70 }}>
-                            <Badge status={statusMap.get(item.state.text)} text={item.state.text}/>
+                            <Badge status={statusMap.get(item.state.text)} text={item.state.text} />
                           </span>
-                        </div>}
+                        </div>
+                      )}
                     >
                       <span>
                         <div className={styles.StandardTable} style={{ paddingTop: 10 }}>
                           <List
                             itemLayout="horizontal"
                             dataSource={item.children}
-                            renderItem={(dev:any) => (
+                            renderItem={(dev: any) => (
                               <List.Item>
                                 <List.Item.Meta
-                                  avatar={<Avatar shape="square" size="small" src={device}/>}
-                                  title={<a
-                                    onClick={() => {
-                                      router.push(`/device/instance/save/${dev.id}`);
-                                    }}
-                                  >{dev.name.length > 12 ? `${dev.name.substring(0, 12)}······` : dev.name}</a>}
+                                  avatar={<Avatar shape="square" size="small" src={device} />}
+                                  title={
+                                    <a
+                                      onClick={() => {
+                                        router.push(`/device/instance/save/${dev.id}`);
+                                      }}
+                                    >
+                                      {dev.name.length > 12
+                                        ? `${dev.name.substring(0, 12)}······`
+                                        : dev.name}
+                                    </a>
+                                  }
                                   style={{ height: 20 }}
                                 />
-                                <div><Badge status={statusMap.get(dev.state.text)} text={dev.state.text}/></div>
+                                <div>
+                                  <Badge
+                                    status={statusMap.get(dev.state.text)}
+                                    text={dev.state.text}
+                                  />
+                                </div>
                                 <div style={{ paddingLeft: 15 }}>
-                                  <Popconfirm title="确认解绑该设备？" onConfirm={() => {
-                                    unBindGateway(item.id, dev.id);
-                                  }}>
+                                  <Popconfirm
+                                    title="确认解绑该设备？"
+                                    onConfirm={() => {
+                                      unBindGateway(item.id, dev.id);
+                                    }}
+                                  >
                                     <a>解绑</a>
                                   </Popconfirm>
                                 </div>
@@ -209,7 +244,7 @@ const DeviceGateway: React.FC<Props> = props => {
                 </Col>
               );
             }
-            return ('');
+            return '';
           }}
         />
       </div>
