@@ -8,6 +8,8 @@ import encodeQueryParam from '@/utils/encodeParam';
 import apis from '@/services';
 import Bind from '@/pages/device/gateway/bind';
 import Save from '@/pages/device/instance/Save';
+import styles from '@/utils/table.less';
+import Search from '@/pages/device/instance/Search';
 
 interface Props {
   deviceId: string;
@@ -47,15 +49,15 @@ const Gateway: React.FC<Props> = (props) => {
       .then((response:any) => {
         if (response.status === 200) {
           setData(response.result)
-        } else {
-          message.error("查询错误")
         }
+        setSpinning(false);
       }
     ).catch(()=>{});
 
   };
 
   useEffect(() => {
+    setSpinning(true);
     handleSearch({
       pageSize: 10,
       terms: {
@@ -65,6 +67,7 @@ const Gateway: React.FC<Props> = (props) => {
   }, []);
 
   const changeDeploy = (record: any) => {
+    setSpinning(true);
     apis.deviceInstance
       .changeDeploy(record.id)
       .then(response => {
@@ -77,6 +80,7 @@ const Gateway: React.FC<Props> = (props) => {
   };
 
   const unDeploy = (record: any) => {
+    setSpinning(true);
     apis.deviceInstance
       .unDeploy(record.id)
       .then(response => {
@@ -197,33 +201,30 @@ const Gateway: React.FC<Props> = (props) => {
           message.success('解绑成功');
           handleSearch(searchParam);
         }
-        setSpinning(false);
-      }).catch(() => {
-    });
+      }).catch(() => {});
   };
 
   const saveDeviceInstance = (item: any) => {
+    setSpinning(true);
     apis.deviceInstance.saveOrUpdate(item)
       .then((response:any) => {
         if (response.status === 200) {
           message.success('保存成功');
           setAddVisible(false);
-          router.push(`/device/instance/save/${item.id}`);
+          handleSearch(searchParam);
         }
-      }).catch();
+      }).catch(() => {});
   };
 
   const insert = (data:any) => {
+    setBindVisible(false);
     setSpinning(true);
     apis.deviceGateway.bind(props.deviceId, data).then(response => {
       if (response.status === 200) {
         message.success('保存成功');
-        setBindVisible(false);
         handleSearch(searchParam);
       }
-      setSpinning(false);
-    }).catch(() => {
-    });
+    }).catch(() => {});
   };
 
   const action = (
@@ -235,7 +236,16 @@ const Gateway: React.FC<Props> = (props) => {
   return (
     <div>
       <Spin spinning={spinning}>
-        <Card style={{ marginBottom: 20 }} title="功能调试" extra={action}>
+        <Card style={{ marginBottom: 20 }} title="子设备列表" extra={action}>
+          <div className={styles.tableListForm}>
+            <Search
+              search={(params: any) => {
+                setSearchParam(params);
+                params.parentId=props.deviceId;
+                handleSearch({ terms: params, pageSize: 10 });
+              }}
+            />
+          </div>
           <Table
             loading={props.loading}
             columns={columns}
@@ -273,12 +283,10 @@ const Gateway: React.FC<Props> = (props) => {
           <Bind
             close={() => {
               setBindVisible(false);
-              setCurrentItem({});
             }}
             save={(item: any) => {
               insert(item);
             }}
-            data={currentItem}
           />
         )}
       </Spin>

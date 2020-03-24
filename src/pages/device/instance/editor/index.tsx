@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Badge, Descriptions, Icon, message, Modal, Popconfirm, Row, Spin, Tooltip } from 'antd';
+import { Badge, Descriptions, Icon, message, Popconfirm, Row, Spin, Tooltip } from 'antd';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { connect } from 'dva';
 import { router } from 'umi';
@@ -9,9 +9,9 @@ import Log from './detail/Log';
 import Debugger from './detail/Debugger';
 import Functions from './detail/functions';
 import styles from './index.less';
-import ConnectState, { Dispatch } from '@/models/connect';
+import { ConnectState, Dispatch } from '@/models/connect';
 import { SimpleResponse } from '@/utils/common';
-import { DeviceInstance } from '../data';
+import { DeviceInstance } from '@/pages/device/instance/data';
 import apis from '@/services';
 import Gateway from './detail/gateway';
 
@@ -24,8 +24,6 @@ interface State {
   data: Partial<DeviceInstance>;
   activeKey: string;
   logs: any;
-  deviceState: any;
-  deviceFunction: any;
   orgInfo: any;
   config: any;
   spinning:boolean;
@@ -41,8 +39,6 @@ const Editor: React.FC<Props> = props => {
     activeKey: 'info',
     data: {},
     logs: {},
-    deviceState: {},
-    deviceFunction: {},
     orgInfo: {},
     config: {},
     spinning:true,
@@ -50,8 +46,6 @@ const Editor: React.FC<Props> = props => {
   const [activeKey, setActiveKey] = useState(initState.activeKey);
   const [data, setData] = useState(initState.data);
   const [id, setId] = useState();
-  const [deviceState, setDeviceState] = useState(initState.deviceState);
-  const [deviceFunction, setDeviceFunction] = useState(initState.deviceFunction);
   const [config, setConfig] = useState(initState.config);
   const [orgInfo] = useState(initState.orgInfo);
   const [spinning, setSpinning] = useState(initState.spinning);
@@ -119,7 +113,7 @@ const Editor: React.FC<Props> = props => {
   statusMap.set('未激活', 'processing');
 
   useEffect(() => {
-
+    setActiveKey("info");
     apis.deviceProdcut
       .queryOrganization()
       .then(res => {
@@ -137,7 +131,7 @@ const Editor: React.FC<Props> = props => {
       setId(list[list.length - 1]);
     }
     setTableList(tabList);
-  }, []);
+  }, [window.location.hash]);
 
   const disconnectDevice = (deviceId: string | undefined) => {
     setSpinning(true);
@@ -189,7 +183,7 @@ const Editor: React.FC<Props> = props => {
       />
     ),
     debugger: <Debugger />,
-    gateway: <Gateway deviceId={data.id} loading={false}/>,
+    gateway: <Gateway deviceId={id} loading={false}/>,
   };
 
   const content = (
