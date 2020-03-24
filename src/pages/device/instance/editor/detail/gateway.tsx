@@ -210,14 +210,12 @@ const Gateway: React.FC<Props> = (props) => {
       .then((response:any) => {
         if (response.status === 200) {
           message.success('保存成功');
-          setAddVisible(false);
           handleSearch(searchParam);
         }
       }).catch(() => {});
   };
 
   const insert = (data:any) => {
-    setBindVisible(false);
     setSpinning(true);
     apis.deviceGateway.bind(props.deviceId, data).then(response => {
       if (response.status === 200) {
@@ -274,6 +272,7 @@ const Gateway: React.FC<Props> = (props) => {
               setCurrentItem({});
             }}
             save={(item: any) => {
+              setAddVisible(false);
               saveDeviceInstance(item);
             }}
           />
@@ -285,6 +284,7 @@ const Gateway: React.FC<Props> = (props) => {
               setBindVisible(false);
             }}
             save={(item: any) => {
+              setBindVisible(false);
               insert(item);
             }}
           />

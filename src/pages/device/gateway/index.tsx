@@ -113,7 +113,6 @@ const DeviceGateway: React.FC<Props> = props => {
       .then(response => {
         if (response.status === 200) {
           message.success('保存成功');
-          setBindVisible(false);
           handleSearch();
         }
       }).catch(() => {
@@ -144,8 +143,7 @@ const DeviceGateway: React.FC<Props> = props => {
           <br/>
           <List<any>
             rowKey="id" grid={{ gutter: 24, xl: 4, lg: 3, md: 3, sm: 2, xs: 1 }}
-            loading={props.loading} dataSource={result}
-            className={styles.filterCardList}
+            dataSource={result} className={styles.filterCardList}
             renderItem={item => {
               if (item && item.id) {
                 return (
@@ -209,7 +207,6 @@ const DeviceGateway: React.FC<Props> = props => {
                         </div>
                       </span>
                     </ChartCard>
-
                   </Col>
                 );
               }
@@ -224,6 +221,7 @@ const DeviceGateway: React.FC<Props> = props => {
             setBindVisible(false);
           }}
           save={(item: any) => {
+            setBindVisible(false);
             insert(item);
           }}
         />
