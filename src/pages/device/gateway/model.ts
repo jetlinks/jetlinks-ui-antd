@@ -27,6 +27,7 @@ const DeviceGateway: DeviceGatewayType = {
     effects: {
         *query({ payload, callback }, { call, put }) {
             const response: any = yield call(apis.deviceGateway.list, payload);
+            callback(response);
             yield put({
                 type: 'save',
                 payload: response.result.data,
