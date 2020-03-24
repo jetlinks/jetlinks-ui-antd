@@ -57,7 +57,7 @@ const Search: React.FC<Props> = props => {
   const simpleItems: any[] = [
     {
       label: '设备名称',
-      key: 'name$LIKE',
+      key: 'name$link',
       component: <Input placeholder="请输入" />,
     },
     {
