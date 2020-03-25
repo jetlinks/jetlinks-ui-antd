@@ -66,19 +66,19 @@ const Editor: React.FC<Props> = props => {
     },
   ];
 
-  const getInfo = (id: string | undefined) => {
+  const getInfo = (deviceId: string | undefined) => {
     setSpinning(true);
     dispatch({
       type: 'deviceInstance/queryById',
-      payload: id,
+      payload: deviceId,
       callback: (response: SimpleResponse) => {
         if (response.status === 200) {
-          const data = response.result;
-          if (data.orgId) {
-            data.orgName = orgInfo[data.orgId];
+          const deviceData = response.result;
+          if (deviceData.orgId) {
+            deviceData.orgName = orgInfo[deviceData.orgId];
           }
-          if (data.deriveMetadata) {
-            const deriveMetadata = JSON.parse(data.deriveMetadata);
+          if (deviceData.metadata) {
+            const deriveMetadata = JSON.parse(deviceData.metadata);
             if (deriveMetadata.functions.length > 0) {
               tabList.splice(2, 0, {
                 key: 'functions',
@@ -87,20 +87,19 @@ const Editor: React.FC<Props> = props => {
             }
           }
 
-          if (data.deviceType.value === "gateway"){
+          if (deviceData.deviceType.value === "gateway"){
             tabList.push({
               key: 'gateway',
               tab: '网关设备',
             });
           }
 
-          apis.deviceProdcut
-            .protocolConfiguration(data.protocol, data.transport)
+          apis.deviceProdcut.protocolConfiguration(deviceData.protocol, deviceData.transport)
             .then(resp => {
               setConfig(resp.result);
             }).catch();
           setTableList(tabList);
-          setData(data);
+          setData(deviceData);
           setSpinning(false);
         }
       },
@@ -177,11 +176,7 @@ const Editor: React.FC<Props> = props => {
     info: <Info data={data} configuration={config} refresh={()=>{getInfo(data.id)}}/>,
     status: <Status device={data} />,
     functions: <Functions device={data} />,
-    log: (
-      <Log
-        deviceId={id}
-      />
-    ),
+    log: <Log deviceId={id}/>,
     debugger: <Debugger />,
     gateway: <Gateway deviceId={id} loading={false}/>,
   };

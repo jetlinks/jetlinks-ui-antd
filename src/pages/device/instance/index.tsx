@@ -1,17 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import styles from '@/utils/table.less';
-import {
-  Badge,
-  Button,
-  Card,
-  Divider,
-  message,
-  Modal,
-  Popconfirm,
-  Spin,
-  Table,
-  Upload,
-} from 'antd';
+import { Badge, Button, Card, Divider, message, Modal, Popconfirm, Spin, Table, Upload } from 'antd';
 import { router } from 'umi';
 import { ColumnProps, PaginationConfig, SorterResult } from 'antd/lib/table';
 import { FormComponentProps } from 'antd/es/form';
@@ -232,7 +221,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
   };
 
   const [processVisible, setProcessVisible] = useState(false);
-  // const [flag, setFlag] = useState(false);
+
   const [api, setAPI] = useState<string>('');
 
   const getSearchParam = () => {
@@ -249,47 +238,16 @@ const DeviceInstancePage: React.FC<Props> = props => {
   const startImport = () => {
     // let dt = 0;
     setProcessVisible(true);
-    // const source = new EventSource(`${origin}/device-instance/deploy?:X_Access_Token=${getAccessToken()}`);
     const activeAPI = `/jetlinks/device-instance/deploy?${getSearchParam()}:X_Access_Token=${getAccessToken()} `;
     setAPI(activeAPI);
     setAction('active');
-
-    // source.onmessage = e => {
-    //   const temp = JSON.parse(e.data).total;
-    //   dt += temp;
-    //   setCount(dt);
-    // };
-    // source.onerror = () => {
-    //   setFlag(false);
-    //   source.close();
-    // };
-    // source.onopen = () => {
-    //   setFlag(true);
-    // };
-    // setSource(source);
   };
 
   const startSync = () => {
     setProcessVisible(true);
-    // http://2.jetlinks.org:9010/device-instance/state/_sync/?_=1&:X_Access_Token=96fcd43594a2cd467dc2b9581c49a79a
     const syncAPI = `/jetlinks/device-instance/state/_sync/?${getSearchParam()}:X_Access_Token=${getAccessToken()}`;
     setAPI(syncAPI);
     setAction('sync');
-    // source.onmessage = e => {
-    //   const temp = parseInt(e.data, 10);
-    //   dt += temp;
-    //   setCount(dt);
-    // };
-
-    // source.onerror = () => {
-    //   setFlag(false);
-    //   source.close();
-    // };
-
-    // source.onopen = () => {
-    //   setFlag(true);
-    // };
-    // setSource(source);
   };
 
   const activeDevice = () => {
@@ -351,7 +309,6 @@ const DeviceInstancePage: React.FC<Props> = props => {
         setAPI(url);
         setAction('import');
         setImportLoading(true);
-        // setFlag(true);
       }
       if (info.file.status === 'uploading') {
         setUploading(true);

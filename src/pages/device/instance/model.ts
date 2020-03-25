@@ -26,7 +26,7 @@ const DeviceInstanceModel: DeviceInstanceModelType = {
         result: {},
     },
     effects: {
-        *update({ payload, callback }, { call, put }) {
+        *update({ payload, callback }, { call }) {
             const response: SimpleResponse = yield call(apis.deviceInstance.saveOrUpdate, payload);
             callback(response);
         },
@@ -39,11 +39,11 @@ const DeviceInstanceModel: DeviceInstanceModelType = {
               });
             }
         },
-        *queryById({ payload, callback }, { call, put }) {
+        *queryById({ payload, callback }, { call }) {
             const response: SimpleResponse = yield call(apis.deviceInstance.info, payload);
             callback(response);
         },
-        *queryLog({ payload, callback }, { call, put }) {
+        *queryLog({ payload, callback }, { call }) {
             const response: SimpleResponse = yield call(apis.deviceInstance.logs, payload);
             callback(response);
         }

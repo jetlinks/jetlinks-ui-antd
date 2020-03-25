@@ -24,7 +24,7 @@ const Save: React.FC<Props> = props => {
     organizationList: [],
   };
   const [productList, setProductList] = useState(initState.productList);
-  //消息协议
+  // 消息协议
   const [organizationList, setOrganizationList] = useState(initState.organizationList);
   const {
     form: { getFieldDecorator },

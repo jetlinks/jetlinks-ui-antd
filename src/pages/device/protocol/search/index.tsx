@@ -24,15 +24,15 @@ const Search: React.FC<Props> = (props) => {
     const colSize = simpleItems
         .map(item => item.styles ? item.styles.md : 8)
         .reduce((i, j) => {
-            if (!i) return;
-            if (!j) return;
+            if (!i) return false;
+            if (!j) return false;
             return Number(i) + Number(j);
         }) || 1;
 
 
     const search = () => {
         const data = form.getFieldsValue();
-        //TODO 查询数据
+        // TODO 查询数据
         props.search(data);
     }
 

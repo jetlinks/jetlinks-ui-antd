@@ -11,8 +11,6 @@ export interface DeviceGatewayType {
     state: DeviceGatewayState;
     effects: {
         query: Effect;
-        remove: Effect;
-        insert: Effect;
     };
     reducers: {
         save: Reducer<any, any>;
@@ -32,18 +30,6 @@ const DeviceGateway: DeviceGatewayType = {
                 type: 'save',
                 payload: response.result.data,
             });
-        },
-        *remove({ payload, callback }, { call, put }) {
-            const response: any = yield call(apis.deviceGateway.remove, payload);
-            callback(response);
-        },
-        *insert({ payload, callback }, { call, put }) {
-            const response: any = yield call(apis.deviceGateway.save, payload);
-            callback(response);
-        },
-        *bind({ payload, callback }, { call, put }) {
-          const response: any = yield call(apis.deviceGateway.bind, payload);
-          callback(response);
         },
     },
     reducers: {

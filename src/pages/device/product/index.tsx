@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import styles from '@/utils/table.less';
-import { DeviceProduct } from './data';
+import { DeviceProduct } from '@/pages/device/product/data';
 import Search from './search';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { Badge, Button, Card, Divider, Icon, message, Popconfirm, Table, Upload } from 'antd';
@@ -8,7 +8,7 @@ import { ColumnProps, PaginationConfig } from 'antd/lib/table';
 import { CommonEnum, SimpleResponse } from '@/utils/common';
 import moment from 'moment';
 import { connect } from 'dva';
-import ConnectState, { Dispatch } from '@/models/connect';
+import { ConnectState, Dispatch } from '@/models/connect';
 import { router } from 'umi';
 import encodeQueryParam from '@/utils/encodeParam';
 import { SorterResult } from 'antd/es/table';
@@ -17,7 +17,6 @@ import { getAccessToken } from '@/utils/authority';
 import request from '@/utils/request';
 import Save from './save';
 import { downloadObject } from '@/utils/utils';
-import apis from '@/services';
 
 interface Props {
   dispatch: Dispatch;
@@ -30,23 +29,66 @@ interface State {
   data: any;
   searchParam: any;
   saveVisible: boolean;
-  currentItem: any;
 }
 
 const DeviceModel: React.FC<Props> = props => {
-  const result = props.deviceProduct.result;
+  const {result} = props.deviceProduct;
   const initState: State = {
     data: result,
     searchParam: { pageSize: 10 },
     saveVisible: false,
-    currentItem: {},
   };
 
   const [searchParam, setSearchParam] = useState(initState.searchParam);
   const [saveVisible, setSaveVisible] = useState(initState.saveVisible);
-  const [currentItem, setCurrentItem] = useState(initState.currentItem);
 
   const { dispatch } = props;
+
+  const handleSearch = (params?: any) => {
+    setSearchParam(params);
+    dispatch({
+      type: 'deviceProduct/query',
+      payload: encodeQueryParam(params),
+    });
+  };
+
+  const deploy = (record: any) => {
+    dispatch({
+      type: 'deviceProduct/deploy',
+      payload: record.id,
+      callback: response => {
+        if (response.status === 200) {
+          message.success('操作成功');
+          handleSearch(searchParam);
+        }
+      },
+    });
+  };
+  const unDeploy = (record: any) => {
+    dispatch({
+      type: 'deviceProduct/unDeploy',
+      payload: record.id,
+      callback: response => {
+        if (response.status === 200) {
+          message.success('操作成功');
+          handleSearch(searchParam);
+        }
+      },
+    });
+  };
+
+  const handleDelete = (params: any) => {
+    dispatch({
+      type: 'deviceProduct/remove',
+      payload: params.id,
+      callback: response => {
+        if (response.status === 200) {
+          message.success('删除成功');
+          handleSearch(searchParam);
+        }
+      },
+    });
+  };
 
   const columns: ColumnProps<DeviceProduct>[] = [
     {
@@ -79,8 +121,8 @@ const DeviceModel: React.FC<Props> = props => {
       dataIndex: 'state',
       align: 'center',
       render: (text: any) => {
-        let color = text === 0 ? 'red' : 'green';
-        let status = text === 0 ? '未发布' : '已发布';
+        const color = text === 0 ? 'red' : 'green';
+        const status = text === 0 ? '未发布' : '已发布';
         return <Badge color={color} text={status} />;
       },
     },
@@ -148,31 +190,6 @@ const DeviceModel: React.FC<Props> = props => {
     handleSearch(searchParam);
   }, []);
 
-  const deploy = (record: any) => {
-    dispatch({
-      type: 'deviceProduct/deploy',
-      payload: record.id,
-      callback: response => {
-        if (response.status === 200) {
-          message.success('操作成功');
-          handleSearch(searchParam);
-        }
-      },
-    });
-  };
-  const unDeploy = (record: any) => {
-    dispatch({
-      type: 'deviceProduct/unDeploy',
-      payload: record.id,
-      callback: response => {
-        if (response.status === 200) {
-          message.success('操作成功');
-          handleSearch(searchParam);
-        }
-      },
-    });
-  };
-
   const handeSave = (record: any) => {
     dispatch({
       type: 'deviceProduct/insert',
@@ -187,32 +204,10 @@ const DeviceModel: React.FC<Props> = props => {
     });
   };
 
-  const handleDelete = (params: any) => {
-    dispatch({
-      type: 'deviceProduct/remove',
-      payload: params.id,
-      callback: response => {
-        if (response.status === 200) {
-          message.success('删除成功');
-          handleSearch(searchParam);
-        }
-      },
-    });
-  };
-
-  const handleSearch = (params?: any) => {
-    setSearchParam(params);
-    dispatch({
-      type: 'deviceProduct/query',
-      payload: encodeQueryParam(params),
-    });
-  };
-
   const onTableChange = (
     pagination: PaginationConfig,
     filters: any,
-    sorter: SorterResult<DeviceProduct>,
-    extra: any,
+    sorter: SorterResult<DeviceProduct>
   ) => {
     handleSearch({
       pageIndex: Number(pagination.current) - 1,
@@ -275,7 +270,7 @@ const DeviceModel: React.FC<Props> = props => {
               loading={props.loading}
               dataSource={(result || {}).data}
               columns={columns}
-              rowKey={'id'}
+              rowKey='id'
               onChange={onTableChange}
               pagination={{
                 current: result.pageIndex + 1,
@@ -284,15 +279,13 @@ const DeviceModel: React.FC<Props> = props => {
                 showQuickJumper: true,
                 showSizeChanger: true,
                 pageSizeOptions: ['10', '20', '50', '100'],
-                showTotal: (total: number) => {
-                  return (
-                    `共 ${total} 条记录 第  ` +
-                    (result.pageIndex + 1) +
-                    '/' +
-                    Math.ceil(result.total / result.pageSize) +
-                    '页'
-                  );
-                },
+                showTotal: (total: number) => (
+                    `共 ${total} 条记录 第  ${
+                    result.pageIndex + 1
+                    }/${
+                    Math.ceil(result.total / result.pageSize)
+                    }页`
+                  ),
               }}
             />
           </div>

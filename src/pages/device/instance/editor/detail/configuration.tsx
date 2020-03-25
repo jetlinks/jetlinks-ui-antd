@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FormComponentProps } from 'antd/lib/form';
 import Form from 'antd/es/form';
 import { Card, Col, Input, Modal, Row, Select } from 'antd';
-import { DeviceProduct } from '../data';
+import { DeviceProduct } from '@/pages/device/product/data';
 
 interface Props extends FormComponentProps {
   data?: Partial<DeviceProduct>;
@@ -29,35 +29,30 @@ const Configuration: React.FC<Props> = props => {
   };
 
   const { getFieldDecorator } = props.form;
-  //配置名称
+  // 配置名称
   const [configName, setConfigName] = useState(initState.configName);
-  //配置表单
+  // 配置表单
   const [configForm, setConfigForm] = useState(initState.configForm);
-
-  useEffect(() => {
-    setConfigName(props.configuration.name);
-    parseConfig(props.configuration.properties)
-  }, []);
 
   const parseConfig = (configData: any[]) => {
     const config = configData.map(item => {
-      let label = item.name;
-      let key = `configuration.${item.property}`;
-      let componentType = item.type.id;
+      const label = item.name;
+      const key = `configuration.${item.property}`;
+      const componentType = item.type.id;
       let component = null;
-      let options = {
+      const options = {
         initialValue: props.data?.configuration[item.property],
       };
 
       if (componentType !== 'enum') {
         component = <Input type={componentType === 'password' ? 'password' : 'text'}/>;
       } else {
-        let options = item.type.elements;
+        const o = item.type.elements;
         component = (
           <Select>
-            {(options || []).map((item: any) => (
-              <Select.Option key={item.value} value={item.value}>
-                {item.text}
+            {(o || []).map((e: any) => (
+              <Select.Option key={e.value} value={e.value}>
+                {e.text}
               </Select.Option>
             ))}
           </Select>
@@ -78,6 +73,12 @@ const Configuration: React.FC<Props> = props => {
     });
     setConfigForm(config);
   };
+
+  useEffect(() => {
+    setConfigName(props.configuration.name);
+    parseConfig(props.configuration.properties)
+  }, []);
+
 
   const saveData = () => {
     const { form } = props;

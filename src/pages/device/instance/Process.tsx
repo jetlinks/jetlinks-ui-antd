@@ -27,7 +27,7 @@ const Process: React.FC<Props> = props => {
 
     const source = new EventSourcePolyfill(wrapAPI(props.api));
     setSource(source);
-    source.onmessage = e => {
+    source.onmessage = (e:any) => {
       const res = JSON.parse(e.data);
       switch (action) {
         case 'active':

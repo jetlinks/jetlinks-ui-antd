@@ -18,7 +18,7 @@ interface State {
   logData: any
 }
 
-const EventLog: React.FC<Props> = (props) => {
+const EventLog: React.FC<Props> = props => {
 
   const initState: State = {
     eventColumns: props.item.valueType.properties.map((item: any) => {
@@ -92,9 +92,7 @@ const EventLog: React.FC<Props> = (props) => {
           showQuickJumper: true,
           showSizeChanger: true,
           pageSizeOptions: ['10', '20', '50', '100'],
-          showTotal: (total: number) => {
-            return `共 ${total} 条记录 第  ` + (logData.pageIndex + 1) + '/' + Math.ceil(logData.total / logData.pageSize) + '页';
-          },
+          showTotal: (total: number) => `共 ${total} 条记录 第  ${  logData.pageIndex + 1  }/${  Math.ceil(logData.total / logData.pageSize)  }页`,
         }}
         columns={initState.eventColumns}
       />

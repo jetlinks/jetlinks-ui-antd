@@ -13,10 +13,10 @@ interface Props {
 }
 interface State {
   eventColumns: ColumnProps<any>[];
-  propertieInfo: any;
+  propertiesInfo: any;
 }
 
-const PropertieInfo: React.FC<Props> = props => {
+const PropertiesInfo: React.FC<Props> = props => {
   const initState: State = {
     eventColumns: [
       {
@@ -29,10 +29,10 @@ const PropertieInfo: React.FC<Props> = props => {
         dataIndex: 'formatValue',
       },
     ],
-    propertieInfo: {},
+    propertiesInfo: {},
   };
 
-  const [propertieInfo, setPropertieInfo] = useState(initState.propertieInfo);
+  const [propertiesInfo, setPropertiesInfo] = useState(initState.propertiesInfo);
 
   useEffect(() => {
     apis.deviceInstance
@@ -49,7 +49,7 @@ const PropertieInfo: React.FC<Props> = props => {
         }),
       )
       .then(response => {
-        setPropertieInfo(response.result);
+        setPropertiesInfo(response.result);
       })
       .catch(() => {});
   }, []);
@@ -69,7 +69,7 @@ const PropertieInfo: React.FC<Props> = props => {
         }),
       )
       .then(response => {
-        setPropertieInfo(response.result);
+        setPropertiesInfo(response.result);
       })
       .catch(() => {});
   };
@@ -84,19 +84,19 @@ const PropertieInfo: React.FC<Props> = props => {
     >
       <Table
         rowKey="createTime"
-        dataSource={propertieInfo.data}
+        dataSource={propertiesInfo.data}
         size="small"
         onChange={onTableChange}
         pagination={{
-          current: propertieInfo.pageIndex + 1,
-          total: propertieInfo.total,
-          pageSize: propertieInfo.pageSize,
+          current: propertiesInfo.pageIndex + 1,
+          total: propertiesInfo.total,
+          pageSize: propertiesInfo.pageSize,
           showQuickJumper: true,
           showSizeChanger: true,
           pageSizeOptions: ['10', '20', '50', '100'],
           showTotal: (total: number) =>
-            `共 ${total} 条记录 第  ${propertieInfo.pageIndex + 1}/${Math.ceil(
-              propertieInfo.total / propertieInfo.pageSize,
+            `共 ${total} 条记录 第  ${propertiesInfo.pageIndex + 1}/${Math.ceil(
+              propertiesInfo.total / propertiesInfo.pageSize,
             )}页`,
         }}
         columns={initState.eventColumns}
@@ -105,4 +105,4 @@ const PropertieInfo: React.FC<Props> = props => {
   );
 };
 
-export default PropertieInfo;
+export default PropertiesInfo;

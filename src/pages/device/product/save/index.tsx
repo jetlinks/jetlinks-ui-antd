@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { FormComponentProps } from 'antd/lib/form';
 import Form from 'antd/es/form';
-import { Drawer, Card, Row, Col, Input, Select, Radio, Button } from 'antd';
+import { Button, Card, Col, Drawer, Input, Radio, Row, Select } from 'antd';
 import { DeviceProduct } from '../data';
 import { FormItemConfig } from '@/utils/common';
 import apis from '@/services';
-import { response } from 'express';
 
 interface Props extends FormComponentProps {
   // interface Props {
@@ -33,76 +32,26 @@ const Save: React.FC<Props> = props => {
 
   const { getFieldDecorator } = props.form;
   const [messageProtocol, setMessageProtocol] = useState<string>();
-  //消息协议
+  // 消息协议
   const [protocolSupports, setProtocolSupports] = useState(initState.protocolSupports);
-  //消息协议
+  // 消息协议
   const [organizationList, setOrganizationList] = useState(initState.organizationList);
-  //传输协议
+  // 传输协议
   const [protocolTransports, setProtocolTransports] = useState(initState.protocolTransports);
-  //配置文件
-  const [transportConfig, setTransportConfig] = useState<any>();
-  //配置名称
+
+  // 配置名称
   const [configName, setConfigName] = useState(initState.configName);
-  //配置表单
+  // 配置表单
   const [configForm, setConfigForm] = useState(initState.configForm);
-
-  useEffect(() => {
-    apis.deviceProdcut
-      .protocolSupport()
-      .then(response => {
-        if (response.status === 200) {
-          setProtocolSupports(response.result);
-        }
-      })
-      .catch(() => {
-      });
-
-    apis.deviceProdcut
-      .queryOrganization()
-      .then(res => {
-        if (res.status === 200){
-          setOrganizationList(res.result);
-        }
-      }).catch(() => {});
-
-    if (props.data && props.data.messageProtocol) {
-      onMessageProtocolChange(props.data.messageProtocol);
-      if (!props.data.transportProtocol) return;
-      getProtocolConfig(props.data.messageProtocol, props.data.transportProtocol);
-    }
-  }, []);
 
   const onMessageProtocolChange = (value: string) => {
     setMessageProtocol(value);
-    //获取链接协议
+    // 获取链接协议
     apis.deviceProdcut
       .protocolTransports(value)
-      .then(response => {
-        if (response.status === 200) {
-          setProtocolTransports(response.result);
-        }
-      })
-      .catch(() => {
-      });
-  };
-
-  const onTransportProtocol = (value: string) => {
-    if (!(messageProtocol && value)) return;
-    getProtocolConfig(messageProtocol, value);
-  };
-
-  const getProtocolConfig = (messageProtocol: string, transType: string) => {
-    apis.deviceProdcut
-      .protocolConfiguration(messageProtocol, transType)
-      .then(response => {
-        if (response.status === 200) {
-          if (response.result) {
-            setTransportConfig(response.result);
-            if (response.result.properties) {
-              parseConfig(response.result.properties);
-            }
-            setConfigName(response.result.name);
-          }
+      .then(e => {
+        if (e.status === 200) {
+          setProtocolTransports(e.result);
         }
       })
       .catch(() => {
@@ -111,23 +60,23 @@ const Save: React.FC<Props> = props => {
 
   const parseConfig = (configData: any[]) => {
     const config = configData.map(item => {
-      let label = item.name;
-      let key = `configuration.${item.property}`;
-      let componentType = item.type.id;
+      const label = item.name;
+      const key = `configuration.${item.property}`;
+      const componentType = item.type.id;
       let component = null;
-      let options = {
+      const options = {
         initialValue: props.data?.configuration[item.property],
       };
 
       if (componentType !== 'enum') {
         component = <Input type={componentType === 'password' ? 'password' : 'text'}/>;
       } else {
-        let options = item.type.elements;
+        const element = item.type.elements;
         component = (
           <Select>
-            {(options || []).map((item: any) => (
-              <Select.Option key={item.value} value={item.value}>
-                {item.text}
+            {(element || []).map((e: any) => (
+              <Select.Option key={e.value} value={e.value}>
+                {e.text}
               </Select.Option>
             ))}
           </Select>
@@ -149,6 +98,55 @@ const Save: React.FC<Props> = props => {
     setConfigForm(config);
   };
 
+  const getProtocolConfig = (messageProtocol: string, transType: string) => {
+    apis.deviceProdcut
+      .protocolConfiguration(messageProtocol, transType)
+      .then(e => {
+        if (e.status === 200) {
+          if (e.result) {
+            if (e.result.properties) {
+              parseConfig(e.result.properties);
+            }
+            setConfigName(e.result.name);
+          }
+        }
+      })
+      .catch(() => {
+      });
+  };
+
+  useEffect(() => {
+    apis.deviceProdcut
+      .protocolSupport()
+      .then(e => {
+        if (e.status === 200) {
+          setProtocolSupports(e.result);
+        }
+      })
+      .catch(() => {
+      });
+
+    apis.deviceProdcut
+      .queryOrganization()
+      .then(res => {
+        if (res.status === 200){
+          setOrganizationList(res.result);
+        }
+      }).catch(() => {});
+
+    if (props.data && props.data.messageProtocol) {
+      onMessageProtocolChange(props.data.messageProtocol);
+      if (!props.data.transportProtocol) return;
+      getProtocolConfig(props.data.messageProtocol, props.data.transportProtocol);
+    }
+  }, []);
+
+  const onTransportProtocol = (value: string) => {
+    if (!(messageProtocol && value)) return;
+    getProtocolConfig(messageProtocol, value);
+  };
+
+
   const basicForm: FormItemConfig[] = [
     {
       label: '型号ID',
@@ -166,7 +164,7 @@ const Save: React.FC<Props> = props => {
       component: (
         <Input
           placeholder="请输入型号ID "
-          disabled={props.data?.id ? true : false}
+          disabled={!!props.data?.id}
         />
       ),
     },

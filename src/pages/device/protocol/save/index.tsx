@@ -1,21 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import {
-  Form,
-  Input,
-  Select,
-  Upload,
-  message,
-  Button,
-  Icon,
-  Col,
-  Row,
-  Drawer,
-  Tabs,
-  Collapse,
-  Radio,
-} from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Button, Col, Collapse, Drawer, Form, Icon, Input, message, Radio, Row, Select, Tabs, Upload } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
-import { ProtocolItem } from '../data';
+import { ProtocolItem } from '@/pages/device/protocol/data';
 import { getAccessToken } from '@/utils/authority';
 import MonacoEditor from 'react-monaco-editor';
 import apis from '@/services';

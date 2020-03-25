@@ -43,11 +43,11 @@ const ProtocolModel: ProtocolModelType = {
             const response: SimpleResponse = yield call(apis.protocol.saveOrUpdate, payload);
             callback(response);
         },
-        *remove({ payload, callback }, { call, put }) {
+        *remove({ payload, callback }, { call }) {
             const response: SimpleResponse = yield call(apis.protocol.remove, payload);
             callback(response);
         },
-        *changeDeploy({ payload, callback }, { call, put }) {
+        *changeDeploy({ payload, callback }, { call }) {
             const response: SimpleResponse = yield call(apis.protocol.changeDeploy, payload);
             callback(response);
         }

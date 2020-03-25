@@ -96,12 +96,19 @@ const DeviceGateway: React.FC<Props> = props => {
   };
 
   const onSearch = (name?: string) => {
+    setSpinning(true);
     dispatch({
       type: 'deviceGateway/query',
       payload: encodeQueryParam({
         paging: false,
         terms: {
           name$LIKE: name,
+        },
+        callback: (response: any) => {
+          if (response.status !== 200) {
+            message.error('查询错误');
+          }
+          setSpinning(false);
         },
       }),
     });
