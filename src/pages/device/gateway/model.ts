@@ -3,43 +3,43 @@ import { Reducer } from "react";
 import apis from "@/services";
 
 export interface DeviceGatewayState {
-    result: any,
+  result: any,
 }
 
 export interface DeviceGatewayType {
-    namespace: string;
-    state: DeviceGatewayState;
-    effects: {
-        query: Effect;
-    };
-    reducers: {
-        save: Reducer<any, any>;
-    }
+  namespace: string;
+  state: DeviceGatewayState;
+  effects: {
+    query: Effect;
+  };
+  reducers: {
+    save: Reducer<any, any>;
+  }
 }
 
 const DeviceGateway: DeviceGatewayType = {
-    namespace: 'deviceGateway',
-    state: {
-        result: [],
+  namespace: 'deviceGateway',
+  state: {
+    result: {},
+  },
+  effects: {
+    *query({ payload, callback }, { call, put }) {
+      const response: any = yield call(apis.deviceGateway.list, payload);
+      callback(response);
+      yield put({
+        type: 'save',
+        payload: response.result,
+      });
     },
-    effects: {
-        *query({ payload, callback }, { call, put }) {
-            const response: any = yield call(apis.deviceGateway.list, payload);
-            callback(response);
-            yield put({
-                type: 'save',
-                payload: response.result.data,
-            });
-        },
-    },
-    reducers: {
-        save(state, action) {
-            return {
-                ...state,
-                result: action.payload,
-            }
-        }
+  },
+  reducers: {
+    save(state, action) {
+      return {
+        ...state,
+        result: action.payload,
+      }
     }
+  }
 };
 
 export default DeviceGateway;

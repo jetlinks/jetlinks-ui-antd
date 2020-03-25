@@ -27,6 +27,7 @@ interface State {
   eventData: any[];
   deviceState: any;
 }
+
 const topColResponsiveProps = {
   xs: 24,
   sm: 12,
@@ -49,9 +50,9 @@ for (let i = 0; i < fakeY.length; i += 1) {
 }
 
 const eventLevel = new Map();
-eventLevel.set('ordinary', <Badge status="processing" text="普通" />);
-eventLevel.set('warn', <Badge status="warning" text="警告" />);
-eventLevel.set('urgent', <Badge status="error" text="紧急" />);
+eventLevel.set('ordinary', <Badge status="processing" text="普通"/>);
+eventLevel.set('warn', <Badge status="warning" text="警告"/>);
+eventLevel.set('urgent', <Badge status="error" text="紧急"/>);
 
 const Status: React.FC<Props> = (props) => {
 
@@ -63,7 +64,7 @@ const Status: React.FC<Props> = (props) => {
     propertiesInfo: {},
     metadata: {},
     eventData: [],
-    deviceState: {}
+    deviceState: {},
   };
   const [runInfo, setRunInfo] = useState(initState.runInfo);
   const [propertiesData, setPropertiesData] = useState(initState.propertiesData);
@@ -98,7 +99,6 @@ const Status: React.FC<Props> = (props) => {
   useEffect(() => {
     // 组装数据
     if (runInfo && runInfo.metadata) {
-      console.log(runInfo)
       const metadata = JSON.parse(runInfo.metadata);
       const { properties, events } = metadata;
       // 设置properties的值
@@ -124,12 +124,12 @@ const Status: React.FC<Props> = (props) => {
             encodeQueryParam({
               pageIndex: 0,
               pageSize: 10,
-            })
+            }),
           ).then(response => {
             if (response.status === 200) {
               const data = response.result;
               eventData.push({ eventId: event.id, data });
-              setEventData([...eventData])
+              setEventData([...eventData]);
             }
           }).catch(() => {
 
@@ -143,26 +143,26 @@ const Status: React.FC<Props> = (props) => {
       }
 
       source = new EventSourcePolyfill(
-        wrapAPI(`/jetlinks/dashboard/device/${props.device.productId}/properties/realTime?:X_Access_Token=${getAccessToken()}&deviceId=${props.device.id}&history=15`)
+        wrapAPI(`/jetlinks/dashboard/device/${props.device.productId}/properties/realTime?:X_Access_Token=${getAccessToken()}&deviceId=${props.device.id}&history=15`),
       );
-      source.onmessage = (e:any) => {
+      source.onmessage = (e: any) => {
 
         const data = JSON.parse(e.data);
 
         const dataValue = data.value;
         metadata.properties = properties.map((item: any) => {
           if (item.id === dataValue.property) {
-            item.formatValue = dataValue?.formatValue ? dataValue.formatValue : "--";
-            if (item.valueType.type === "int" || item.valueType.type === "float" || item.valueType.type === "double") {
+            item.formatValue = dataValue?.formatValue ? dataValue.formatValue : '--';
+            if (item.valueType.type === 'int' || item.valueType.type === 'float' || item.valueType.type === 'double') {
               if (item.visitData.length >= 15) {
                 item.visitData.splice(0, 1);
               }
               item.visitData.push(
                 {
-                  "x": data.timeString,
-                  "y": Math.floor(Number(dataValue.value) * 100) / 100
-                }
-              )
+                  'x': data.timeString,
+                  'y': Math.floor(Number(dataValue.value) * 100) / 100,
+                },
+              );
             }
           }
           return item;
@@ -263,7 +263,7 @@ const Status: React.FC<Props> = (props) => {
     // loadEventData(item.id);
     apis.deviceInstance.eventData(
       props.device.id, item.id,
-      encodeQueryParam({})
+      encodeQueryParam({}),
     ).then(response => {
       // const tempEvent = response.result;
       if (response.status === 200) {
@@ -303,7 +303,9 @@ const Status: React.FC<Props> = (props) => {
                     <Tooltip
                       title='刷新'
                     >
-                      <Icon type="sync" onClick={() => { refresDeviceState() }} />
+                      <Icon type="sync" onClick={() => {
+                        refresDeviceState();
+                      }}/>
                     </Tooltip>
                   }
                   contentHeight={46}
@@ -326,32 +328,36 @@ const Status: React.FC<Props> = (props) => {
                           title={item.name}
                           action={
                             <div>
-                              <Icon title='刷新' type="sync" onClick={() => { refreshPropertyItem(item) }} />
-                              <Icon title='详情' style={{ marginLeft: "10px" }} type="bars"
+                              <Icon title='刷新' type="sync" onClick={() => {
+                                refreshPropertyItem(item);
+                              }}/>
+                              <Icon title='详情' style={{ marginLeft: '10px' }} type="bars"
                                     onClick={() => {
                                       setPropertiesVisible(true);
                                       setPropertiesInfo(item);
-                                    }} />
+                                    }}/>
                             </div>
                           }
                           total={item.formatValue || 0}
                           contentHeight={46}
                         >
                       <span>
-                        <MiniArea height={40} color="#975FE4" data={item.visitData} />
+                        <MiniArea height={40} color="#975FE4" data={item.visitData}/>
                       </span>
                         </ChartCard>
                       </Spin>
                     </Col>
-                  )
-                }
+                  );
+                },
               )
             }
             {
               propertiesVisible &&
               <PropertiesInfo
                 item={propertiesInfo}
-                close={() => { setPropertiesVisible(false) }}
+                close={() => {
+                  setPropertiesVisible(false);
+                }}
                 type={props.device.productId}
                 deviceId={props.device.id}
               />
@@ -369,7 +375,9 @@ const Status: React.FC<Props> = (props) => {
                             <Tooltip
                               title='刷新'
                             >
-                              <Icon type="sync" onClick={() => { refreshEventItem(item) }} />
+                              <Icon type="sync" onClick={() => {
+                                refreshEventItem(item);
+                              }}/>
                             </Tooltip>
                           }
 
@@ -379,7 +387,7 @@ const Status: React.FC<Props> = (props) => {
                       <span>
                         {eventLevel.get(item.expands?.level)}
                         <a
-                          style={{ float: "right" }}
+                          style={{ float: 'right' }}
                           onClick={() => {
                             setEventVisible(true);
                           }}>
@@ -395,35 +403,41 @@ const Status: React.FC<Props> = (props) => {
                         <EventLog
                           data={tempData?.data}
                           item={item}
-                          close={() => { setEventVisible(false) }}
+                          close={() => {
+                            setEventVisible(false);
+                          }}
                           type={props.device.productId}
                           deviceId={props.device.id}
                         />
                       }
                     </Col>
-                  )
-                }
+                  );
+                },
               )
             }
 
           </Row>
           :
           <Col {...topColResponsiveProps}>
-            <ChartCard
-              bordered={false}
-              title='设备状态'
-              action={
-                <Tooltip
-                  title='刷新'
-                >
-                  <Icon type="sync" />
-                </Tooltip>
-              }
-              contentHeight={46}
-              total={runInfo.state?.text}
-            >
-              <span />
-            </ChartCard>
+            <Spin spinning={runInfo.loading}>
+              <ChartCard
+                bordered={false}
+                title='设备状态'
+                action={
+                  <Tooltip
+                    title='刷新'
+                  >
+                    <Icon type="sync" onClick={() => {
+                      refresDeviceState();
+                    }}/>
+                  </Tooltip>
+                }
+                contentHeight={46}
+                total={runInfo.state?.text}
+              >
+                <span/>
+              </ChartCard>
+            </Spin>
           </Col>
       }
     </div>

@@ -49,7 +49,9 @@ const PropertiesInfo: React.FC<Props> = props => {
         }),
       )
       .then(response => {
-        setPropertiesInfo(response.result);
+        if (response.status === 200) {
+          setPropertiesInfo(response.result);
+        }
       })
       .catch(() => {});
   }, []);
