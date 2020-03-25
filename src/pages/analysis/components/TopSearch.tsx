@@ -42,10 +42,10 @@ const TopSearch = ({ loading }: { loading: boolean; }) => {
     productData: {},
   };
 
-  const [productDataList, setProductDataList] = useState(initState.productDataList);
+  const [productDataList] = useState(initState.productDataList);
   const [defaultList, setDefaultList] = useState(initState.defaultList);
   const [productId, setProductId] = useState(initState.productId);
-  const [productData, setProductData] = useState(initState.productData);
+  const [productData] = useState(initState.productData);
 
   const [gatewayData, setGatewayData] = useState(initState.gatewayDataList);
   const [time, setTime] = useState(initState.time);
@@ -73,7 +73,7 @@ const TopSearch = ({ loading }: { loading: boolean; }) => {
             }
           }
           setProductId(list);
-          let da = new Date();
+          const da = new Date();
           da.setHours(da.getHours() - 1);
           setSelectionTime(calculationDate(0));
           setTime('1d');
@@ -120,7 +120,7 @@ const TopSearch = ({ loading }: { loading: boolean; }) => {
       });
   };
 
-  function handleChange(value) {
+  function handleChange(value:any) {
     if (value.length > 6) {
       message.error('设备型号最多只能勾选6个');
       return false;
@@ -130,8 +130,8 @@ const TopSearch = ({ loading }: { loading: boolean; }) => {
     gatewayMonitor(formatData(dd), formatData(new Date()), time, value);
   }
 
-  function deviceTime(e) {
-    const value = e.target.value;
+  function deviceTime(e:any) {
+    const {value} = e.target;
     setTime(value);
     const dd = new Date(selectionTime);
 
@@ -147,12 +147,12 @@ const TopSearch = ({ loading }: { loading: boolean; }) => {
     gatewayMonitor(formatData(dd), formatData(new Date()), value, productId);
   }
 
-  const formatData = (value: string) => {
+  const formatData = (value: any) => {
     const dd = new Date(value);
     return `${dd.getFullYear()}-${(dd.getMonth() + 1) < 10 ? `0${dd.getMonth() + 1}` : (dd.getMonth() + 1)}-${dd.getDate() < 10 ? `0${dd.getDate()}` : dd.getDate()} ${dd.getHours() < 10 ? `0${dd.getHours()}` : dd.getHours()}:${dd.getMinutes() < 10 ? `0${dd.getMinutes()}` : dd.getMinutes()}:${dd.getSeconds() < 10 ? `0${dd.getSeconds()}` : dd.getSeconds()}`;
   };
 
-  function onOk(value) {
+  function onOk(value:any) {
     setSelectionTime(value);
     const dd = new Date(value);
     if (time === '1h') {
@@ -196,10 +196,7 @@ const TopSearch = ({ loading }: { loading: boolean; }) => {
           size="large"
           tabBarStyle={{ marginBottom: 24 }}
         >
-          <TabPane
-            tab={'设备消息量'}
-            key="sales"
-          >
+          <TabPane tab='设备消息量' key="sales">
             <Row>
               <div>
                 <Select mode="tags" defaultValue={defaultList} maxTagTextLength={3}
@@ -211,13 +208,7 @@ const TopSearch = ({ loading }: { loading: boolean; }) => {
               </div>
               <Col>
                 <div className={styles.salesBar} style={{ marginTop: 30 }}>
-                  <Grouped
-                    height={300}
-                    title={
-                      '连接数量'
-                    }
-                    data={gatewayData}
-                  />
+                  <Grouped height={300} data={gatewayData}/>
                 </div>
               </Col>
             </Row>

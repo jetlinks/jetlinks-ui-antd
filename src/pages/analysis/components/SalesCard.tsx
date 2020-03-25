@@ -45,7 +45,7 @@ const SalesCard = ({ loading }: { loading: boolean; }) => {
   };
 
   useEffect(() => {
-    let da = new Date();
+    const da = new Date();
     da.setHours(da.getHours() - 1);
     gatewayMonitor(formatData(da), calculationDate(0), '1m');
     setSelectionTime(calculationDate(0));
@@ -86,7 +86,7 @@ const SalesCard = ({ loading }: { loading: boolean; }) => {
         if (response.status === 200) {
           const dataList = [];
           const ticksList = [];
-          tempResult.forEach(item => {
+          tempResult.forEach((item:any) => {
             dataList.push({
               year: item.data.timeString,
               消息量: item.data.value,
@@ -117,7 +117,6 @@ const SalesCard = ({ loading }: { loading: boolean; }) => {
     }
 
     gatewayMonitor(formatData(dd), formatData(new Date()), timeMap[value]);
-    //setCurrentTime(dd);
   }
 
   const formatData = (value: string) => {
@@ -169,10 +168,7 @@ const SalesCard = ({ loading }: { loading: boolean; }) => {
           size="large"
           tabBarStyle={{ marginBottom: 24 }}
         >
-          <TabPane
-            tab={'设备消息'}
-            key="sales"
-          >
+          <TabPane tab='设备消息' key="sales">
             <Row>
               <Col>
                 <div className={styles.salesBar}>

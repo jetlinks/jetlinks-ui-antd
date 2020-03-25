@@ -7,7 +7,7 @@ export interface IGaugeProps {
   color?: string;
   height?: number;
   bgColor?: number;
-  datas: Array<{
+  data: Array<{
     x: string;
     消息量: number;
   }>;
@@ -49,7 +49,7 @@ class Grouped  extends React.Component<IGaugeProps> {
           <Geom
             type="interval"
             position="label*value"
-            color={"type"}
+            color="type"
             adjust={[
               {
                 type: "dodge",
