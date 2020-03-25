@@ -48,7 +48,7 @@ const Search: React.FC<Props> = props => {
 
   useEffect(() => {
     const query = getPageQuery();
-    if (!query.hasOwnProperty("productId$LIKE")){
+    if (!query.hasOwnProperty("productId")){
       setExpandForm(true);
     }
     form.setFieldsValue(query, () => search());
@@ -92,7 +92,7 @@ const Search: React.FC<Props> = props => {
     },
     {
       label: '设备型号',
-      key: 'productId$LIKE',
+      key: 'productId',
       component: (
         <Select placeholder="请选择" allowClear showSearch>
           {productList.map(item => (
