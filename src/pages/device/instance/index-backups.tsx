@@ -1,23 +1,6 @@
-import React, { FC, Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import styles from '@/utils/table.less';
-import {
-  Badge,
-  Button,
-  Card,
-  Col,
-  Divider,
-  Dropdown,
-  Icon,
-  Menu,
-  message,
-  Modal,
-  Popconfirm,
-  Row,
-  Select,
-  Spin,
-  Table,
-  Upload,
-} from 'antd';
+import { Badge, Button, Card, Divider, message, Modal, Popconfirm, Spin, Table, Upload } from 'antd';
 import { router } from 'umi';
 import { ColumnProps, PaginationConfig, SorterResult } from 'antd/lib/table';
 import { FormComponentProps } from 'antd/es/form';
@@ -33,7 +16,6 @@ import Save from './Save';
 import Search from './Search';
 import { DeviceInstance } from './data.d';
 import Process from './Process';
-import { DeviceProduct } from '@/pages/device/product/data';
 
 const template = require('./template.xlsx');
 
@@ -42,7 +24,6 @@ interface Props extends FormComponentProps {
   dispatch: Dispatch;
   deviceInstance: any;
 }
-
 interface State {
   data: any;
   searchParam: any;
@@ -51,9 +32,6 @@ interface State {
   processVisible: boolean;
   importLoading: boolean;
   action: string;
-  deviceCount: any;
-  productList: DeviceProduct[];
-  product: string;
 }
 
 const DeviceInstancePage: React.FC<Props> = props => {
@@ -66,27 +44,13 @@ const DeviceInstancePage: React.FC<Props> = props => {
     processVisible: false,
     importLoading: false,
     action: '',
-    deviceCount: {
-      notActiveCount: 0,
-      offlineCount: 0,
-      onlineCount: 0,
-      deviceTotal: 0,
-    },
-    productList: [],
-    product: '',
-
   };
 
   const [searchParam, setSearchParam] = useState(initState.searchParam);
-  const [addVisible, setAddVisible] = useState(initState.addVisible);
+  const [addVisible, setAddvisible] = useState(initState.addVisible);
   const [currentItem, setCurrentItem] = useState(initState.currentItem);
   const [importLoading, setImportLoading] = useState(initState.importLoading);
   const [action, setAction] = useState(initState.action);
-  const [productList, setProductList] = useState(initState.productList);
-  const [product, setProduct] = useState(initState.product);
-
-  const [deviceCount, setDeviceCount] = useState(initState.deviceCount);
-
   const { dispatch } = props;
 
   const statusMap = new Map();
@@ -100,47 +64,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
       type: 'deviceInstance/query',
       payload: encodeQueryParam(params),
     });
-    stateCount();
   };
-
-  const stateCount = () => {
-    console.log(product, 'productId');
-    for (let i = 0; i < 3; i++) {
-      let val = '';
-      if (i === 0) {
-        val = 'notActive';
-      } else if (i === 1) {
-        val = 'offline';
-      } else {
-        val = 'online';
-      }
-      apis.deviceInstance.count(encodeQueryParam({
-        terms: {
-          state: val,
-          productId: product,
-        },
-      }))
-        .then(res => {
-          if (res.status === 200) {
-            if (i === 0) {
-              deviceCount.notActiveCount = res.result;
-            } else if (i === 1) {
-              deviceCount.offlineCount = res.result;
-            } else {
-              deviceCount.onlineCount = res.result;
-            }
-          }
-        }).catch();
-    }
-
-    apis.deviceInstance.count(encodeQueryParam({ terms: { productId: product } }))
-      .then(res => {
-        if (res.status === 200) {
-          deviceCount.deviceTotal = res.result;
-        }
-      }).catch();
-  };
-
 
   const delelteInstance = (record: any) => {
     apis.deviceInstance
@@ -151,8 +75,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
           handleSearch(searchParam);
         }
       })
-      .catch(() => {
-      });
+      .catch(() => {});
   };
 
   const changeDeploy = (record: any) => {
@@ -164,8 +87,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
           handleSearch(searchParam);
         }
       })
-      .catch(() => {
-      });
+      .catch(() => {});
   };
 
   const unDeploy = (record: any) => {
@@ -177,8 +99,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
           handleSearch(searchParam);
         }
       })
-      .catch(() => {
-      });
+      .catch(() => {});
   };
   const columns: ColumnProps<DeviceInstance>[] = [
     {
@@ -203,23 +124,8 @@ const DeviceInstancePage: React.FC<Props> = props => {
     {
       title: '状态',
       dataIndex: 'state',
-      width: '90px',
-      render: record => record ? <Badge status={statusMap.get(record.text)} text={record.text}/> : '',
-      filters: [
-        {
-          text: '未激活',
-          value: 'notActive',
-        },
-        {
-          text: '离线',
-          value: 'offline',
-        },
-        {
-          text: '在线',
-          value: 'online',
-        },
-      ],
-      filterMultiple: false,
+      render: record =>
+        record ? <Badge status={statusMap.get(record.text)} text={record.text} /> : '',
     },
     {
       title: '描述',
@@ -238,16 +144,16 @@ const DeviceInstancePage: React.FC<Props> = props => {
           >
             查看
           </a>
-          <Divider type="vertical"/>
+          <Divider type="vertical" />
           <a
             onClick={() => {
               setCurrentItem(record);
-              setAddVisible(true);
+              setAddvisible(true);
             }}
           >
             编辑
           </a>
-          <Divider type="vertical"/>
+          <Divider type="vertical" />
           {record.state?.value === 'notActive' ? (
             <span>
               <Popconfirm
@@ -258,7 +164,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
               >
                 <a>激活</a>
               </Popconfirm>
-              <Divider type="vertical"/>
+              <Divider type="vertical" />
               <Popconfirm
                 title="确认删除？"
                 onConfirm={() => {
@@ -285,25 +191,16 @@ const DeviceInstancePage: React.FC<Props> = props => {
 
   useEffect(() => {
     handleSearch(searchParam);
-    // 获取下拉框数据
-    apis.deviceProdcut
-      .queryNoPagin()
-      .then(e => {
-        setProductList(e.result);
-      })
-      .catch(() => {
-        //
-      });
   }, []);
 
   const saveDeviceInstance = (item: any) => {
     dispatch({
       type: 'deviceInstance/update',
       payload: encodeQueryParam(item),
-      callback: (response: any) => {
+      callback: (response:any) => {
         if (response.status === 200) {
           message.success('保存成功');
-          setAddVisible(false);
+          setAddvisible(false);
           router.push(`/device/instance/save/${item.id}`);
         }
       },
@@ -315,14 +212,10 @@ const DeviceInstancePage: React.FC<Props> = props => {
     filters: any,
     sorter: SorterResult<DeviceInstance>,
   ) => {
-    const { terms } = searchParam;
-    if (filters.state) {
-      terms.state = filters.state[0];
-    }
     handleSearch({
       pageIndex: Number(pagination.current) - 1,
       pageSize: pagination.pageSize,
-      terms,
+      terms: searchParam.terms,
       sorts: sorter,
     });
   };
@@ -382,27 +275,6 @@ const DeviceInstancePage: React.FC<Props> = props => {
     });
   };
 
-  const onDeviceProduct = (value: string) => {
-    setProduct(()=> value);
-    let { terms } = searchParam;
-    console.log(value, 'value');
-    if (terms) {
-      terms['productId'] = value;
-    } else {
-      terms = {
-        productId: value,
-      };
-    }
-
-    handleSearch({
-      pageIndex: searchParam.pageIndex,
-      pageSize: searchParam.pageSize,
-      terms,
-      sorts: searchParam.sorter,
-    });
-
-  };
-
   const [uploading, setUploading] = useState(false);
   const exportDevice = () => {
     const formElement = document.createElement('form');
@@ -444,157 +316,99 @@ const DeviceInstancePage: React.FC<Props> = props => {
     },
   };
 
-  const Info: FC<{
-    title: React.ReactNode;
-    value: React.ReactNode;
-  }> = ({ title, value }) => (
-    <div>
-      <span>{title}</span>
-      <p style={{ fontSize: '26px' }}>{value}</p>
-    </div>
-  );
-
-  const menu = (
-    <Menu>
-      <Menu.Item key="1">
-        <Button icon="download" type="default" onClick={() => exportDevice()}>
-          批量导出设备
-        </Button>
-      </Menu.Item>
-      <Menu.Item key="2">
-        <Upload {...uploadProps}>
-          <Button icon="upload">批量导入设备</Button>
-        </Upload>
-      </Menu.Item>
-      <Menu.Item key="3">
-        <Button icon="check-circle" type="danger" onClick={() => activeDevice()}>
-          激活全部设备
-        </Button>
-      </Menu.Item>
-      <Menu.Item key="4">
-        <Button icon="sync" type="danger" onClick={() => syncDevice()}>
-          同步设备状态
-        </Button>
-      </Menu.Item>
-    </Menu>
-  );
-
   return (
     <PageHeaderWrapper title="设备实例">
       <Spin spinning={uploading} tip="上传中...">
-        <div className={styles.standardList}>
-          <Card bordered={false} style={{ height: 95 }}>
-            <Row>
-              <Col sm={8} xs={24}>
-                <Select placeholder="请选择设备型号" allowClear style={{ width: 300, marginTop: 7 }}
-                        onChange={(value: string) => {
-                          onDeviceProduct(value);
-                        }}
-                >
-                  {productList.map(item => (
-                    <Select.Option key={item.id}>{item.name}</Select.Option>
-                  ))}
-                </Select>
-              </Col>
-              <Col sm={4} xs={24}>
-                <Info title="全部设备" value={deviceCount.deviceTotal}/>
-              </Col>
-              <Col sm={4} xs={24}>
-                <Info title={<Badge status={statusMap.get('在线')} text="在线"/>} value={deviceCount.onlineCount}/>
-              </Col>
-              <Col sm={4} xs={24}>
-                <Info title={<Badge status={statusMap.get('离线')} text="离线"/>} value={deviceCount.offlineCount}/>
-              </Col>
-              <Col sm={4} xs={24}>
-                <Info title={<Badge status={statusMap.get('未激活')} text="未激活"/>} value={deviceCount.notActiveCount}/>
-              </Col>
-            </Row>
-          </Card>
-          <br/>
-          <Card bordered={false}>
-            <div className={styles.tableList}>
-              <div className={styles.tableListForm}>
-                <Search
-                  search={(params: any) => {
-                    console.log(product, 'params');
-                    if (product) {
-                      params.productId = product;
-                    }
-                    handleSearch({ terms: params, pageSize: 10 });
-                  }}
-                />
-              </div>
-              <div className={styles.tableListOperator}>
-                <Button
-                  icon="plus"
-                  type="primary"
-                  onClick={() => {
-                    setCurrentItem({});
-                    setAddVisible(true);
-                  }}
-                >
-                  添加设备
-                </Button>
-
-                <Divider type="vertical"/>
-
-                <Dropdown overlay={menu}>
-                  <Button>
-                    其他操作<Icon type="down"/>
-                  </Button>
-                </Dropdown>
-
-                {/*<Button href={template} download="设备实例模版" icon="download">
-                  下载模版
-                </Button>*/}
-              </div>
-              <div className={styles.StandardTable}>
-                <Table
-                  loading={props.loading}
-                  columns={columns}
-                  dataSource={(result || {}).data}
-                  rowKey="id"
-                  onChange={onTableChange}
-                  pagination={{
-                    current: result.pageIndex + 1,
-                    total: result.total,
-                    pageSize: result.pageSize,
-                    showQuickJumper: true,
-                    showSizeChanger: true,
-                    pageSizeOptions: ['10', '20', '50', '100'],
-                    showTotal: (total: number) =>
-                      `共 ${total} 条记录 第  ${result.pageIndex + 1}/${Math.ceil(
-                        result.total / result.pageSize,
-                      )}页`,
-                  }}
-                />
-              </div>
+        <Card bordered={false}>
+          <div className={styles.tableList}>
+            <div className={styles.tableListForm}>
+              <Search
+                search={(params: any) => {
+                  setSearchParam(params);
+                  handleSearch({ terms: params, pageSize: 10 });
+                }}
+              />
             </div>
-          </Card>
-          {addVisible && (
-            <Save
-              data={currentItem}
-              close={() => {
-                setAddVisible(false);
-                setCurrentItem({});
-              }}
-              save={(item: any) => {
-                saveDeviceInstance(item);
-              }}
-            />
-          )}
-          {(processVisible || importLoading) && (
-            <Process
-              api={api}
-              action={action}
-              closeVisible={() => {
-                setProcessVisible(false);
-                setImportLoading(false);
-                handleSearch(searchParam);
-              }}
-            />
-          )}
-        </div>
+            <div className={styles.tableListOperator}>
+              <Button
+                icon="plus"
+                type="primary"
+                onClick={() => {
+                  setCurrentItem({});
+                  setAddvisible(true);
+                }}
+              >
+                新建
+              </Button>
+
+              <Divider type="vertical" />
+
+              <Button href={template} download="设备实例模版" icon="download">
+                下载模版
+              </Button>
+              <Divider type="vertical" />
+              <Button icon="download" type="default" onClick={() => exportDevice()}>
+                导出设备
+              </Button>
+              <Divider type="vertical" />
+              <Upload {...uploadProps}>
+                <Button icon="upload">导入设备</Button>
+              </Upload>
+              <Divider type="vertical" />
+              <Button icon="check-circle" type="danger" onClick={() => activeDevice()}>
+                激活全部设备
+              </Button>
+              <Divider type="vertical" />
+              <Button icon="sync" type="danger" onClick={() => syncDevice()}>
+                同步设备状态
+              </Button>
+            </div>
+            <div className={styles.StandardTable}>
+              <Table
+                loading={props.loading}
+                columns={columns}
+                dataSource={(result || {}).data}
+                rowKey="id"
+                onChange={onTableChange}
+                pagination={{
+                  current: result.pageIndex + 1,
+                  total: result.total,
+                  pageSize: result.pageSize,
+                  showQuickJumper: true,
+                  showSizeChanger: true,
+                  pageSizeOptions: ['10', '20', '50', '100'],
+                  showTotal: (total: number) =>
+                    `共 ${total} 条记录 第  ${result.pageIndex + 1}/${Math.ceil(
+                      result.total / result.pageSize,
+                    )}页`,
+                }}
+              />
+            </div>
+          </div>
+        </Card>
+        {addVisible && (
+          <Save
+            data={currentItem}
+            close={() => {
+              setAddvisible(false);
+              setCurrentItem({});
+            }}
+            save={(item: any) => {
+              saveDeviceInstance(item);
+            }}
+          />
+        )}
+        {(processVisible || importLoading) && (
+          <Process
+            api={api}
+            action={action}
+            closeVisible={() => {
+              setProcessVisible(false);
+              setImportLoading(false);
+              handleSearch(searchParam);
+            }}
+          />
+        )}
       </Spin>
     </PageHeaderWrapper>
   );
