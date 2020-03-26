@@ -1,5 +1,5 @@
 import { Modal, Button, Divider, Tabs, Form, Input, Select, message } from 'antd';
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import { getAccessToken } from '@/utils/authority';
 import apis from '@/services';
 import { wrapAPI } from '@/utils/utils';
@@ -36,12 +36,26 @@ const UdpSupport: React.FC<Props> = props => {
     },
     logs: [],
   };
-
+  let eventSource: EventSourcePolyfill;
   const [action, setAction] = useState(initState.action);
   const [subscribeData, setSubscribeData] = useState(initState.subscribeData);
   const [publishData, setPublishData] = useState(initState.publishData);
   const [logs, setLogs] = useState(initState.logs);
   const [sourceState, setSourceState] = useState<any>();
+
+  const closeEventSource = () => {
+    if (eventSource) {
+      eventSource.close();
+      // message.success('关闭链接');
+    }
+  };
+
+  useEffect(
+    () => () => {
+      closeEventSource();
+    },
+    [],
+  );
 
   // const { item: { type: { text } } } = props;
   const debugMqttClient = () => {
@@ -49,10 +63,10 @@ const UdpSupport: React.FC<Props> = props => {
       logs.push('开始调试');
       setLogs([...logs]);
 
-      const eventSource = new EventSourcePolyfill(
+      eventSource = new EventSourcePolyfill(
         wrapAPI(
           `/jetlinks/network/upd/${item.id}/_subscribe/${
-          subscribeData.type
+            subscribeData.type
           }?:X_Access_Token=${getAccessToken()}`,
         ),
       );
@@ -61,7 +75,7 @@ const UdpSupport: React.FC<Props> = props => {
         setLogs([...logs, '断开连接']);
       };
 
-      eventSource.onmessage = e => {
+      eventSource.onmessage = (e: any) => {
         setLogs(l => [...l, e.data]);
       };
 
@@ -77,7 +91,7 @@ const UdpSupport: React.FC<Props> = props => {
             message.success('推送成功');
           }
         })
-        .catch(() => { });
+        .catch(() => {});
     }
   };
 
@@ -121,27 +135,27 @@ const UdpSupport: React.FC<Props> = props => {
             </Button>
           </Fragment>
         ) : (
-            <Fragment>
-              <Button
-                type="primary"
-                onClick={() => {
-                  debugMqttClient();
-                }}
-              >
-                提交
+          <Fragment>
+            <Button
+              type="primary"
+              onClick={() => {
+                debugMqttClient();
+              }}
+            >
+              提交
             </Button>
-              <Divider type="vertical" />
-              <Button
-                type="ghost"
-                onClick={() => {
-                  logs.splice(0, logs.length);
-                  setLogs([]);
-                }}
-              >
-                清空
+            <Divider type="vertical" />
+            <Button
+              type="ghost"
+              onClick={() => {
+                logs.splice(0, logs.length);
+                setLogs([]);
+              }}
+            >
+              清空
             </Button>
-            </Fragment>
-          )
+          </Fragment>
+        )
       }
     >
       <Tabs defaultActiveKey={action} onChange={e => setAction(e)}>

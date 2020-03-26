@@ -95,17 +95,6 @@ const Save: React.FC<Props> = props => {
       networkType = (temp.networkType || {}).value;
     }
     switch (networkType) {
-      case 'COAP_SERVER':
-        return (
-          <div>
-            <Form.Item label="Option">
-              {getFieldDecorator('configuration.clientOptionNumber', {
-                initialValue: props.data.configuration?.clientOptionNumber,
-              })(<Input placeholder="设备唯一标识Option,默认: 2100" />)}
-            </Form.Item>
-          </div>
-        );
-
       case 'MQTT_CLIENT':
         return (
           <div>
@@ -135,6 +124,7 @@ const Save: React.FC<Props> = props => {
           </div>
         );
       case 'UDP':
+      case 'COAP_SERVER':
       case 'TCP_SERVER':
         return (
           <div>

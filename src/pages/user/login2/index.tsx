@@ -12,11 +12,12 @@ const Login: React.FC<Props> = props => {
 
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [expires, setExpires] = useState<number>(3600000);
 
   const handleSubmit = () => {
     dispatch({
       type: 'login/login',
-      payload: { username, password, tokenType: 'default' },
+      payload: { username, password, expires, tokenType: 'default' },
     });
   };
 
@@ -58,7 +59,13 @@ const Login: React.FC<Props> = props => {
           />
         </div>
         <div className={style.rem}>
-          <input type="checkbox" name="" id="" value="" />
+          <input
+            type="checkbox"
+            checked={expires === -1}
+            onChange={() => {
+              setExpires(expires === -1 ? 3600000 : -1);
+            }}
+          />
           <div className={style.reb}>记住密码</div>
         </div>
         <div className={style.fg}>
