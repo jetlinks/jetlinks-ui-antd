@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Col, Icon, Row, Tag, Tooltip } from 'antd';
+import { Col, Icon, Row, Tooltip } from 'antd';
 import { FormattedMessage } from 'umi-plugin-react/locale';
 import { EventSourcePolyfill } from 'event-source-polyfill';
 import Charts, { Gauge } from './Charts';
@@ -12,13 +12,13 @@ import apis from '@/services';
 import moment from 'moment';
 
 
-const { ChartCard, MiniArea, MiniBar, MiniProgress, Field } = Charts;
+const { ChartCard, MiniArea, MiniBar, Field } = Charts;
 
 interface State {
   cpu: number;
   memoryMax: number;
   memoryUsed: number;
-  messageData: any;
+  messageData: any[];
   sameDay: number;
   month: number;
   metadata: any;
@@ -34,19 +34,17 @@ const topColResponsiveProps = {
   style: { marginBottom: 24 },
 };
 
-const IntroduceRow = ({ loading, visitData, messageData }: { loading: boolean; visitData: IVisitData[]; messageData: IVisitData[] }) => {
+const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVisitData[]}) => {
   const initState: State = {
     cpu: 0,
     memoryMax: 0,
     memoryUsed: 0,
-    messageData: {},
+    messageData: [],
     sameDay: 0,
     month: 0,
     metadata: {},
     eventData: []
   };
-
-  const [flag, setFlag] = useState(false);
 
   const [cpu, setCpu] = useState(initState.cpu);
   const [memoryMax, setMemoryMax] = useState(initState.memoryMax);
@@ -56,65 +54,9 @@ const IntroduceRow = ({ loading, visitData, messageData }: { loading: boolean; v
   const [deviceOnline, setDeviceOnline] = useState(initState.month);
   const [deviceCount, setDeviceCount] = useState(initState.month);
   const [deviceNotActive, setDeviceNotActive] = useState(initState.month);
+  const [messageData] = useState(initState.messageData);
 
   let source: EventSourcePolyfill;
-
-  useEffect(() => {
-
-    deviceStatus();
-    deviceMessage();
-
-    const list = [
-      {
-        "dashboard": "jvmMonitor",
-        "object": "memory",
-        "measurement": "info",
-        "dimension": "realTime",
-        "group": "memory",
-        "params": {
-          "history": 1
-        }
-      }, {
-        "dashboard": "systemMonitor",
-        "object": "cpu",
-        "measurement": "usage",
-        "dimension": "realTime",
-        "group": "cpu",
-        "params": {
-          "history": 1
-        }
-      }
-    ];
-
-    if (source) {
-      source.close();
-    }
-
-    source = new EventSourcePolyfill(
-      wrapAPI(`/jetlinks/dashboard/_multi?:X_Access_Token=${getAccessToken()}&requestJson=${encodeURI(JSON.stringify(list))}`)
-    );
-    source.onmessage = e => {
-      const data = JSON.parse(e.data);
-      if (data.group === "cpu") {
-        setCpu(data.data.value);
-      } else if (data.group === "memory") {
-        setMemoryMax(data.data.value.max);
-        setMemoryUsed(data.data.value.used);
-      }
-    };
-    source.onerror = () => {
-      setFlag(false);
-    };
-    source.onopen = () => {
-      setFlag(true);
-    };
-
-    return () => {
-      if (source) {
-        source.close();
-      }
-    };
-  }, []);
 
   const calculationDate = () => {
     const dd = new Date();
@@ -168,7 +110,7 @@ const IntroduceRow = ({ loading, visitData, messageData }: { loading: boolean; v
       .then((response: any) => {
         const tempResult = response?.result;
         if (response.status === 200) {
-          tempResult.forEach(item => {
+          tempResult.forEach((item:any) => {
             switch (item.group) {
               case 'sameDay':
                 setSameDay(item.data.value);
@@ -193,7 +135,7 @@ const IntroduceRow = ({ loading, visitData, messageData }: { loading: boolean; v
 
   const deviceStatus = () => {
     const list = [
-      //设备状态信息-在线
+      // 设备状态信息-在线
       {
         "dashboard": "device",
         "object": "status",
@@ -203,14 +145,14 @@ const IntroduceRow = ({ loading, visitData, messageData }: { loading: boolean; v
         "params": {
           "state": "online"
         }
-      },//设备状态信息-总数
+      },// 设备状态信息-总数
       {
         "dashboard": "device",
         "object": "status",
         "measurement": "record",
         "dimension": "current",
         "group": "deviceCount",
-      },//设备状态信息-未激活
+      },// 设备状态信息-未激活
       {
         "dashboard": "device",
         "object": "status",
@@ -220,7 +162,7 @@ const IntroduceRow = ({ loading, visitData, messageData }: { loading: boolean; v
         "params": {
           "state": "notActive"
         }
-      },//设备状态信息-历史在线
+      },// 设备状态信息-历史在线
       {
         "dashboard": "device",
         "object": "status",
@@ -238,7 +180,7 @@ const IntroduceRow = ({ loading, visitData, messageData }: { loading: boolean; v
       .then((response: any) => {
         const tempResult = response?.result;
         if (response.status === 200) {
-          tempResult.forEach(item => {
+          tempResult.forEach((item:any) => {
             switch (item.group) {
               case 'aggOnline':
                 visitData.push(
@@ -264,15 +206,67 @@ const IntroduceRow = ({ loading, visitData, messageData }: { loading: boolean; v
       });
   };
 
+  useEffect(() => {
+    deviceStatus();
+    deviceMessage();
+
+    const list = [
+      {
+        "dashboard": "jvmMonitor",
+        "object": "memory",
+        "measurement": "info",
+        "dimension": "realTime",
+        "group": "memory",
+        "params": {
+          "history": 1
+        }
+      }, {
+        "dashboard": "systemMonitor",
+        "object": "cpu",
+        "measurement": "usage",
+        "dimension": "realTime",
+        "group": "cpu",
+        "params": {
+          "history": 1
+        }
+      }
+    ];
+
+    if (source) {
+      source.close();
+    }
+
+    source = new EventSourcePolyfill(
+      wrapAPI(`/jetlinks/dashboard/_multi?:X_Access_Token=${getAccessToken()}&requestJson=${encodeURI(JSON.stringify(list))}`)
+    );
+    source.onmessage = (e:any) => {
+      const data = JSON.parse(e.data);
+      if (data.group === "cpu") {
+        setCpu(data.data.value);
+      } else if (data.group === "memory") {
+        setMemoryMax(data.data.value.max);
+        setMemoryUsed(data.data.value.used);
+      }
+    };
+    source.onerror = () => {
+    };
+    source.onopen = () => {
+    };
+
+    return () => {
+      if (source) {
+        source.close();
+      }
+    };
+  }, []);
+
   return (
     <Row gutter={24}>
       <Col {...topColResponsiveProps}>
         <ChartCard
           loading={loading}
           bordered={false}
-          title={
-            '当前在线'
-          }
+          title='当前在线'
           action={
             <Tooltip
               title='刷新'
@@ -333,9 +327,7 @@ const IntroduceRow = ({ loading, visitData, messageData }: { loading: boolean; v
         <ChartCard
           loading={loading}
           bordered={false}
-          title={
-            'CPU使用率'
-          }
+          title='CPU使用率'
           contentHeight={120}
         >
           <GaugeColor height={169} percent={cpu} />
@@ -345,9 +337,7 @@ const IntroduceRow = ({ loading, visitData, messageData }: { loading: boolean; v
         <ChartCard
           loading={loading}
           bordered={false}
-          title={
-            'JVM内存'
-          }
+          title='JVM内存'
           contentHeight={120}
         >
           <Gauge height={169} percent={memoryUsed} memoryMax={memoryMax} />

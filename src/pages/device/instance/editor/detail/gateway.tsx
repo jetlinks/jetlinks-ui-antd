@@ -92,6 +92,17 @@ const Gateway: React.FC<Props> = (props) => {
       .catch(() => {});
   };
 
+  const unBindGateway = (id: string, deviceId: string) => {
+    setSpinning(true);
+    apis.deviceGateway.unBind(id, deviceId)
+      .then(response => {
+        if (response.status === 200) {
+          message.success('解绑成功');
+          handleSearch(searchParam);
+        }
+      }).catch(() => {});
+  };
+
   const statusMap = new Map();
   statusMap.set('在线', 'success');
   statusMap.set('离线', 'error');
@@ -193,17 +204,6 @@ const Gateway: React.FC<Props> = (props) => {
     });
   };
 
-  const unBindGateway = (id: string, deviceId: string) => {
-    setSpinning(true);
-    apis.deviceGateway.unBind(id, deviceId)
-      .then(response => {
-        if (response.status === 200) {
-          message.success('解绑成功');
-          handleSearch(searchParam);
-        }
-      }).catch(() => {});
-  };
-
   const saveDeviceInstance = (item: any) => {
     setSpinning(true);
     apis.deviceInstance.saveOrUpdate(item)
@@ -215,9 +215,9 @@ const Gateway: React.FC<Props> = (props) => {
       }).catch(() => {});
   };
 
-  const insert = (data:any) => {
+  const insert = (deviceData:any) => {
     setSpinning(true);
-    apis.deviceGateway.bind(props.deviceId, data).then(response => {
+    apis.deviceGateway.bind(props.deviceId, deviceData).then(response => {
       if (response.status === 200) {
         message.success('保存成功');
         handleSearch(searchParam);
@@ -239,7 +239,7 @@ const Gateway: React.FC<Props> = (props) => {
             <Search
               search={(params: any) => {
                 setSearchParam(params);
-                params.parentId=props.deviceId;
+                params.parentId = props.deviceId;
                 handleSearch({ terms: params, pageSize: 10 });
               }}
             />

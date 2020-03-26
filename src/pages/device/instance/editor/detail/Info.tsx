@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Card, Descriptions, message } from 'antd';
 import moment from 'moment';
-import { DeviceInstance } from '../../data';
+import { DeviceInstance } from '@/pages/device/instance/data';
 import Configuration from './configuration';
 import Tags from './tags/tags';
 import apis from '@/services';
@@ -15,7 +15,7 @@ interface State {
   updateVisible:boolean;
   tagsVisible:boolean;
 }
-const Info: React.FC<Props> = props => {
+const Info: React.FC<Props> = (props) => {
   const initState: State = {
     updateVisible:false,
     tagsVisible:false,

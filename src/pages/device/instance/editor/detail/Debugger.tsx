@@ -6,7 +6,7 @@ import styles from '../index.less';
 
 interface Props {
 
-} 
+}
 const Debugger: React.FC<Props> = (props) => {
     const logColumn: ColumnProps<any>[] = [
         {
@@ -167,6 +167,6 @@ const Debugger: React.FC<Props> = (props) => {
                 </Row>
             </div >
     );
-} 
+}
 
 export default Debugger;

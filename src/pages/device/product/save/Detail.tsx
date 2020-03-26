@@ -182,7 +182,7 @@ const Detail: React.FC<Props> = props => {
             {deviceCount}
             <a style={{ marginLeft: 10 }}
                onClick={() => {
-                 router.push(`/device/instance?productId$LIKE=${basicInfo.id}`);
+                 router.push(`/device/instance?productId=${basicInfo.id}`);
                }}
             >查看</a>
           </div>

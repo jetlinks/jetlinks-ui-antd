@@ -60,8 +60,5 @@ export interface IAnalysisData {
   searchData: ISearchData[];
   offlineData: IOfflineData[];
   offlineChartData: IOfflineChartData[];
-  salesTypeData: ISalesTypeData[];
-  salesTypeDataOnline: ISalesTypeDataOnline[];
-  salesTypeDataOffline: ISalesTypeDataOffline[];
   radarData: IRadarData[];
 }

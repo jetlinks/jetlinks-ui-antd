@@ -94,7 +94,7 @@ class Gauge extends React.Component<IGaugeProps> {
           zIndex={2}
           label={{
             offset: -12,
-            textStyle: textStyle,
+            textStyle,
           }}
         />
         <Guide>

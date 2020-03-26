@@ -25,24 +25,25 @@ interface State {
   bindVisible: boolean;
   hasMore: boolean,
   gatewayId: string,
+  searchParam:any,
+  deviceGateway:any,
 }
 
-const DeviceGateway: React.FC<Props> = props => {
+const DeviceGateway: React.FC<Props> = () => {
   const initState: State = {
     spinning: false,
     bindVisible: false,
     hasMore: true,
     gatewayId: '',
+    searchParam: { pageSize: 8 },
+    deviceGateway:{},
   };
 
+  const [searchParam, setSearchParam] = useState(initState.searchParam);
   const [bindVisible, setBindVisible] = useState(initState.bindVisible);
   const [gatewayId, setGatewayId] = useState(initState.gatewayId);
   const [spinning, setSpinning] = useState(initState.spinning);
-
-  const {
-    dispatch,
-    deviceGateway: { result },
-  } = props;
+  const [deviceGateway, setDeviceGateway] = useState(initState.deviceGateway);
 
   const formItemLayout = {
     wrapperCol: {
@@ -60,22 +61,21 @@ const DeviceGateway: React.FC<Props> = props => {
     style: { marginBottom: 10 },
   };
 
-  const handleSearch = () => {
-    dispatch({
-      type: 'deviceGateway/query',
-      payload: encodeQueryParam({ paging: false }),
-      callback: (response: any) => {
-        if (response.status !== 200) {
-          message.error('查询错误');
+  const handleSearch = (params?: any) => {
+    setSearchParam(params);
+    apis.deviceGateway.list(encodeQueryParam(params))
+      .then((response:any)=>{
+        if (response.status === 200) {
+          setDeviceGateway(response.result);
         }
         setSpinning(false);
-      },
-    });
+      })
+      .catch();
   };
 
   useEffect(() => {
     setSpinning(true);
-    handleSearch();
+    handleSearch(searchParam);
   }, []);
 
   const statusMap = new Map();
@@ -89,21 +89,32 @@ const DeviceGateway: React.FC<Props> = props => {
       .then(response => {
         if (response.status === 200) {
           message.success('解绑成功');
-          handleSearch();
+          handleSearch(searchParam);
+        } else {
+          setSpinning(false);
         }
       }).catch(() => {
     });
   };
 
   const onSearch = (name?: string) => {
-    dispatch({
-      type: 'deviceGateway/query',
-      payload: encodeQueryParam({
-        paging: false,
-        terms: {
-          name$LIKE: name,
-        },
-      }),
+    setSpinning(true);
+    handleSearch({ terms: { name$LIKE: name, }, pageSize: 8 });
+  };
+
+  const onChange = (page:number, pageSize:number)=>{
+    handleSearch({
+      pageIndex: page - 1,
+      pageSize,
+      terms: searchParam.terms,
+    });
+  };
+
+  const onShowSizeChange = (current:number, size:number)=>{
+    handleSearch({
+      pageIndex: current - 1,
+      pageSize:size,
+      terms: searchParam.terms,
     });
   };
 
@@ -113,7 +124,9 @@ const DeviceGateway: React.FC<Props> = props => {
       .then(response => {
         if (response.status === 200) {
           message.success('保存成功');
-          handleSearch();
+          handleSearch(searchParam);
+        } else {
+          setSpinning(false);
         }
       }).catch(() => {
     });
@@ -141,28 +154,43 @@ const DeviceGateway: React.FC<Props> = props => {
             </Form>
           </Card>
           <br/>
-          <List<any>
-            rowKey="id" grid={{ gutter: 24, xl: 4, lg: 3, md: 3, sm: 2, xs: 1 }}
-            dataSource={result} className={styles.filterCardList}
-            renderItem={item => {
-              if (item && item.id) {
-                return (
-                  <Col {...topColResponsiveProps} key={item.id} style={{ minHeight: 400 }}
-                       xxl={6} xl={8} lg={12} md={24}>
-                    <ChartCard
-                      bordered={false} title={item.id}
-                      avatar={<img style={{ width: 48, height: 48 }} src={gateway} alt="indicator"/>}
-                      action={
-                        <Tooltip title='绑定子设备'>
-                          <Icon type="plus" style={{ fontSize: 20 }}
-                                onClick={() => {
-                                  setGatewayId(item.id);
-                                  setBindVisible(true);
-                                }}/>
-                        </Tooltip>
-                      }
-                      total={() =>
-                        <Row>
+          {deviceGateway && deviceGateway.pageSize && (
+            <List<any>
+              pagination={{
+                current: deviceGateway.pageIndex + 1,
+                total: deviceGateway.total,
+                pageSize: deviceGateway.pageSize,
+                showQuickJumper: true,
+                showSizeChanger: true,
+                pageSizeOptions: ['8', '16', '40', '80'],
+                showTotal: (total: number) =>
+                  `共 ${total} 条记录 第  ${deviceGateway.pageIndex + 1}/${Math.ceil(
+                    deviceGateway.total / deviceGateway.pageSize,
+                  )}页`,
+                onChange,
+                onShowSizeChange,
+              }}
+              rowKey="id" grid={{ gutter: 24, xl: 4, lg: 3, md: 3, sm: 2, xs: 1 }}
+              dataSource={deviceGateway.data} className={styles.filterCardList}
+              renderItem={item => {
+                if (item && item.id) {
+                  return (
+                    <Col {...topColResponsiveProps} key={item.id} style={{ minHeight: 400 }}
+                         xxl={6} xl={8} lg={12} md={24}>
+                      <ChartCard
+                        bordered={false} title={item.id}
+                        avatar={<img style={{ width: 48, height: 48 }} src={gateway} alt="indicator"/>}
+                        action={
+                          <Tooltip title='绑定子设备'>
+                            <Icon type="plus" style={{ fontSize: 20 }}
+                                  onClick={() => {
+                                    setGatewayId(item.id);
+                                    setBindVisible(true);
+                                  }}/>
+                          </Tooltip>
+                        }
+                        total={() =>
+                          <Row>
                           <span>
                             <a style={{ fontSize: 18 }} onClick={() => {
                               router.push(`/device/instance/save/${item.id}`);
@@ -172,8 +200,8 @@ const DeviceGateway: React.FC<Props> = props => {
                             <Badge style={{ marginLeft: 20 }} status={statusMap.get(item.state.text)}
                                    text={item.state.text}/>
                           </span>
-                        </Row>}
-                    >
+                          </Row>}
+                      >
                       <span>
                         <div className={styles.StandardTable} style={{ paddingTop: 10 }}>
                           <List
@@ -206,13 +234,14 @@ const DeviceGateway: React.FC<Props> = props => {
                           />
                         </div>
                       </span>
-                    </ChartCard>
-                  </Col>
-                );
-              }
-              return ('');
-            }}
-          />
+                      </ChartCard>
+                    </Col>
+                  );
+                }
+                return ('');
+              }}
+            />
+          )}
         </div>
       </Spin>
       {bindVisible && (

@@ -8,7 +8,7 @@ export interface IGaugeProps {
     x: string;
     消息量: number;
   }>;
-  ticks:[];
+  ticks:any[];
   height?: number;
 }
 
@@ -33,7 +33,7 @@ class Withnegative extends React.Component<IGaugeProps> {
     const cols = {
       year: {
         range: [0, 1],
-        ticks:ticks
+        ticks
       },
     };
     return (

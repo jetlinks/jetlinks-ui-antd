@@ -1,14 +1,15 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { ColumnProps, PaginationConfig, SorterResult } from 'antd/es/table';
-import { Divider, Card, Table, Modal, message, Button, Tag, Popconfirm } from 'antd';
+import { Divider, Card, Table, message, Button, Tag, Popconfirm } from 'antd';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import styles from '@/utils/table.less';
-import Search from './search';
-import { ProtocolItem } from './data';
-import ConnectState, { Dispatch, Loading } from '@/models/connect';
 import { connect } from 'dva';
+import Search from './search';
+import { ProtocolItem } from '@/pages/device/protocol/data';
+import { ConnectState,Dispatch } from '@/models/connect';
 import encodeQueryParam from '@/utils/encodeParam';
 import Save from './save';
+
 interface Props {
   protocol: any;
   dispatch: Dispatch;
@@ -26,7 +27,7 @@ interface State {
 const ProtocolList: React.FC<Props> = props => {
   const { dispatch } = props;
 
-  const result = props.protocol.result;
+  const {result} = props.protocol;
 
   const initState: State = {
     data: result,
@@ -38,6 +39,47 @@ const ProtocolList: React.FC<Props> = props => {
   const [searchParam, setSearchParam] = useState(initState.searchParam);
   const [saveVisible, setSaveVisible] = useState(initState.saveVisible);
   const [current, setCurrent] = useState(initState.current);
+
+  const handleSearch = (params?: any) => {
+    dispatch({
+      type: 'protocol/query',
+      payload: encodeQueryParam(params),
+    });
+  };
+
+  const edit = (record: ProtocolItem) => {
+    setCurrent(record);
+    setSaveVisible(true);
+  };
+
+  const handleDelete = (params: any) => {
+    dispatch({
+      type: 'protocol/remove',
+      payload: params.id,
+      callback: response => {
+        if (response.status === 200) {
+          message.success('删除成功');
+          handleSearch();
+        }
+      },
+    });
+  };
+
+  const changeDeploy = (type: string, record: ProtocolItem) => {
+    dispatch({
+      type: 'protocol/changeDeploy',
+      payload: {
+        id: record.id,
+        type,
+      },
+      callback: (response:any) => {
+        if (response.status === 200) {
+          message.success('操作成功');
+          handleSearch();
+        }
+      },
+    });
+  };
 
   const columns: ColumnProps<ProtocolItem>[] = [
     {
@@ -81,37 +123,9 @@ const ProtocolList: React.FC<Props> = props => {
     },
   ];
 
-  const changeDeploy = (type: string, record: ProtocolItem) => {
-    dispatch({
-      type: 'protocol/changeDeploy',
-      payload: {
-        id: record.id,
-        type,
-      },
-      callback: (response:any) => {
-        if (response.status === 200) {
-          message.success('操作成功');
-          handleSearch();
-        }
-      },
-    });
-  };
-
   useEffect(() => {
     handleSearch(searchParam);
   }, []);
-
-  const handleSearch = (params?: any) => {
-    dispatch({
-      type: 'protocol/query',
-      payload: encodeQueryParam(params),
-    });
-  };
-
-  const edit = (record: ProtocolItem) => {
-    setCurrent(record);
-    setSaveVisible(true);
-  };
 
   const saveOrUpdate = (item: ProtocolItem) => {
     dispatch({
@@ -125,24 +139,11 @@ const ProtocolList: React.FC<Props> = props => {
       },
     });
   };
-  const handleDelete = (params: any) => {
-    dispatch({
-      type: 'protocol/remove',
-      payload: params.id,
-      callback: response => {
-        if (response.status === 200) {
-          message.success('删除成功');
-          handleSearch();
-        }
-      },
-    });
-  };
 
   const onTableChange = (
     pagination: PaginationConfig,
     filters: any,
     sorter: SorterResult<ProtocolItem>,
-    extra: any,
   ) => {
     handleSearch({
       pageIndex: Number(pagination.current) - 1,
@@ -181,7 +182,7 @@ const ProtocolList: React.FC<Props> = props => {
               loading={props.loading}
               dataSource={(result || {}).data}
               columns={columns}
-              rowKey={'id'}
+              rowKey='id'
               onChange={onTableChange}
               pagination={{
                 current: result.pageIndex + 1,
@@ -190,15 +191,13 @@ const ProtocolList: React.FC<Props> = props => {
                 showQuickJumper: true,
                 showSizeChanger: true,
                 pageSizeOptions: ['10', '20', '50', '100'],
-                showTotal: (total: number) => {
-                  return (
-                    `共 ${total} 条记录 第  ` +
-                    (result.pageIndex + 1) +
-                    '/' +
-                    Math.ceil(result.total / result.pageSize) +
-                    '页'
-                  );
-                },
+                showTotal: (total: number) => (
+                    `共 ${total} 条记录 第  ${
+                    result.pageIndex + 1
+                    }/${
+                    Math.ceil(result.total / result.pageSize)
+                    }页`
+                  ),
               }}
             />
           </div>

@@ -36,21 +36,13 @@ const Functions: React.FC<Props> = (props) => {
   const [spinning, setSpinning] = useState(initState.spinning);
 
   useEffect(() => {
-    apis.deviceInstance.runInfo(props.device.id)
-      .then(response => {
-        const tempResult = response?.result;
-        if (response.status === 200) {
-          const { functions } = JSON.parse(tempResult.metadata);
-          const map = {};
-          functions.forEach((item: any) => {
-            map[item.id] = item;
-            functionsSelectList.push(<Select.Option key={item.id}>{item.name}</Select.Option>);
-          });
-          setFunctionsInfo(map);
-        }
-      }).catch(() => {
-
+    const { functions } = JSON.parse(props.device.metadata);
+    const map = {};
+    functions.forEach((item: any) => {
+      map[item.id] = item;
+      functionsSelectList.push(<Select.Option key={item.id}>{item.name}</Select.Option>);
     });
+    setFunctionsInfo(map);
   }, []);
 
   const debugFunction = () => {
