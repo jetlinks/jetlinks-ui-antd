@@ -140,7 +140,7 @@ export async function saveDeviceTags(deviceId: string | undefined, params: any) 
 }
 
 export async function removeTags(deviceId: string | undefined, tagId: string) {
-  return request(`/jetlinks//device/instance/${deviceId}/tag/${tagId}`, {
+  return request(`/jetlinks/device/instance/${deviceId}/tag/${tagId}`, {
     method: 'DELETE',
   });
 }

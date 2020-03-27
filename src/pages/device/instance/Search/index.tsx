@@ -20,7 +20,7 @@ const Search: React.FC<Props> = props => {
   const simpleItems: any[] = [
     {
       key: 'parameter',
-      style:{width:150},
+      style:{width:'10%'},
       component: (
         <Select placeholder="请选择">
           <Select.Option value="id" key="id">设备ID</Select.Option>
@@ -30,7 +30,6 @@ const Search: React.FC<Props> = props => {
     },
     {
       key: 'value',
-      style:{width:500},
       component: <Input placeholder="请输入"/>,
     }
   ];
@@ -55,16 +54,14 @@ const Search: React.FC<Props> = props => {
   };
 
   return (
-    <Form>
+    <Form {...formItemLayout}>
       <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
         {simpleItems.map(item => (
-          <Col md={8} sm={24} key={item.key}>
-            <Form.Item style={item.style}>
+          <Col md={8} sm={24} key={item.key} style={item.style}>
               {getFieldDecorator<string>(item.key)(item.component)}
-            </Form.Item>
           </Col>
         ))}
-        <Col push={16 - (Number(16) % 24)} md={8} sm={24}>
+        <Col push={16 - (Number(16) % 24)} md={12} sm={24}>
           <div style={{ float: 'right', marginBottom: 24 }}>
             <Button type="primary" onClick={() => {search();}}>
               查询

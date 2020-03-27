@@ -95,7 +95,7 @@ const Save: React.FC<Props> = props => {
             rules: [{ required: true }],
             initialValue: props.data.productId,
           })(
-            <Select placeholder="请输入设备型号">
+            <Select placeholder="请选择设备型号">
               {(productList || []).map(item => (
                 <Select.Option
                   key={JSON.stringify({ productId: item.id, productName: item.name })}

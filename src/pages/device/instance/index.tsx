@@ -14,9 +14,7 @@ import {
   Popconfirm,
   Row,
   Select,
-  Spin,
   Table,
-  Upload,
 } from 'antd';
 import { router } from 'umi';
 import { ColumnProps, PaginationConfig, SorterResult } from 'antd/lib/table';
@@ -28,14 +26,13 @@ import encodeQueryParam from '@/utils/encodeParam';
 import apis from '@/services';
 import { getAccessToken } from '@/utils/authority';
 import moment from 'moment';
-import { UploadProps } from 'antd/lib/upload';
 import Save from './Save';
 import Search from './Search';
 import { DeviceInstance } from './data.d';
 import Process from './Process';
+import Import from './operation/import';
+import Export from './operation/export';
 import { DeviceProduct } from '@/pages/device/product/data';
-
-const template = require('./template.xlsx');
 
 interface Props extends FormComponentProps {
   loading: boolean;
@@ -71,6 +68,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
       offlineCount: 0,
       onlineCount: 0,
       deviceTotal: 0,
+      loading: true,
     },
     productList: [],
     product: '',
@@ -84,8 +82,9 @@ const DeviceInstancePage: React.FC<Props> = props => {
   const [action, setAction] = useState(initState.action);
   const [productList, setProductList] = useState(initState.productList);
   const [product, setProduct] = useState(initState.product);
-
   const [deviceCount, setDeviceCount] = useState(initState.deviceCount);
+  const [deviceImport, setDeviceImport] = useState(false);
+  const [deviceExport, setDeviceExport] = useState(false);
 
   const { dispatch } = props;
 
@@ -100,47 +99,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
       type: 'deviceInstance/query',
       payload: encodeQueryParam(params),
     });
-    stateCount();
   };
-
-  const stateCount = () => {
-    console.log(product, 'productId');
-    for (let i = 0; i < 3; i++) {
-      let val = '';
-      if (i === 0) {
-        val = 'notActive';
-      } else if (i === 1) {
-        val = 'offline';
-      } else {
-        val = 'online';
-      }
-      apis.deviceInstance.count(encodeQueryParam({
-        terms: {
-          state: val,
-          productId: product,
-        },
-      }))
-        .then(res => {
-          if (res.status === 200) {
-            if (i === 0) {
-              deviceCount.notActiveCount = res.result;
-            } else if (i === 1) {
-              deviceCount.offlineCount = res.result;
-            } else {
-              deviceCount.onlineCount = res.result;
-            }
-          }
-        }).catch();
-    }
-
-    apis.deviceInstance.count(encodeQueryParam({ terms: { productId: product } }))
-      .then(res => {
-        if (res.status === 200) {
-          deviceCount.deviceTotal = res.result;
-        }
-      }).catch();
-  };
-
 
   const delelteInstance = (record: any) => {
     apis.deviceInstance
@@ -296,6 +255,53 @@ const DeviceInstancePage: React.FC<Props> = props => {
       });
   }, []);
 
+  useEffect(() => {
+    const map = {
+      notActiveCount: 0,
+      offlineCount: 0,
+      onlineCount: 0,
+      deviceTotal: 0,
+      loading: true,
+    };
+    for (let i = 0; i < 3; i++) {
+      let val = '';
+      if (i === 0) {
+        val = 'notActive';
+      } else if (i === 1) {
+        val = 'offline';
+      } else {
+        val = 'online';
+      }
+      apis.deviceInstance.count(encodeQueryParam({
+        terms: {
+          state: val,
+          productId: product,
+        },
+      }))
+        .then(res => {
+          if (res.status === 200) {
+            if (i === 0) {
+              map.notActiveCount = res.result;
+            } else if (i === 1) {
+              map.offlineCount = res.result;
+            } else {
+              map.onlineCount = res.result;
+            }
+          }
+        }).catch();
+    }
+
+    apis.deviceInstance.count(encodeQueryParam({ terms: { productId: product } }))
+      .then(res => {
+        if (res.status === 200) {
+          map.deviceTotal = res.result;
+          map.loading = false;
+          setDeviceCount(map);
+        }
+      }).catch();
+
+  }, [product]);
+
   const saveDeviceInstance = (item: any) => {
     dispatch({
       type: 'deviceInstance/update',
@@ -383,11 +389,9 @@ const DeviceInstancePage: React.FC<Props> = props => {
   };
 
   const onDeviceProduct = (value: string) => {
-    setProduct(()=> value);
     let { terms } = searchParam;
-    console.log(value, 'value');
     if (terms) {
-      terms['productId'] = value;
+      terms.productId = value;
     } else {
       terms = {
         productId: value,
@@ -400,48 +404,6 @@ const DeviceInstancePage: React.FC<Props> = props => {
       terms,
       sorts: searchParam.sorter,
     });
-
-  };
-
-  const [uploading, setUploading] = useState(false);
-  const exportDevice = () => {
-    const formElement = document.createElement('form');
-    formElement.style.display = 'display:none;';
-    formElement.method = 'post';
-    formElement.action = `/jetlinks/device-instance/export?:X_Access_Token=${getAccessToken()}`;
-    const params = encodeQueryParam(searchParam);
-    Object.keys(params).forEach((key: string) => {
-      const inputElement = document.createElement('input');
-      inputElement.type = 'hidden';
-      inputElement.name = key;
-      inputElement.value = params[key];
-      formElement.appendChild(inputElement);
-    });
-    document.body.appendChild(formElement);
-    formElement.submit();
-    document.body.removeChild(formElement);
-  };
-
-  const uploadProps: UploadProps = {
-    accept: '.xlsx',
-    action: '/jetlinks/file/static',
-    headers: {
-      'X-Access-Token': getAccessToken(),
-    },
-    showUploadList: false,
-    onChange(info) {
-      if (info.file.status === 'done') {
-        setUploading(false);
-        const fileUrl = info.file.response.result;
-        const url = `/jetlinks/device-instance/import?fileUrl=${fileUrl}&:X_Access_Token=${getAccessToken()}`;
-        setAPI(url);
-        setAction('import');
-        setImportLoading(true);
-      }
-      if (info.file.status === 'uploading') {
-        setUploading(true);
-      }
-    },
   };
 
   const Info: FC<{
@@ -457,14 +419,16 @@ const DeviceInstancePage: React.FC<Props> = props => {
   const menu = (
     <Menu>
       <Menu.Item key="1">
-        <Button icon="download" type="default" onClick={() => exportDevice()}>
+        <Button icon="download" type="default" onClick={() => {
+          setDeviceExport(true);
+        }}>
           批量导出设备
         </Button>
       </Menu.Item>
       <Menu.Item key="2">
-        <Upload {...uploadProps}>
-          <Button icon="upload">批量导入设备</Button>
-        </Upload>
+        <Button icon="upload" onClick={() => {
+          setDeviceImport(true);
+        }}>批量导入设备</Button>
       </Menu.Item>
       <Menu.Item key="3">
         <Button icon="check-circle" type="danger" onClick={() => activeDevice()}>
@@ -481,121 +445,135 @@ const DeviceInstancePage: React.FC<Props> = props => {
 
   return (
     <PageHeaderWrapper title="设备实例">
-      <Spin spinning={uploading} tip="上传中...">
-        <div className={styles.standardList}>
-          <Card bordered={false} style={{ height: 95 }}>
-            <Row>
-              <Col sm={8} xs={24}>
-                <Select placeholder="请选择设备型号" allowClear style={{ width: 300, marginTop: 7 }}
-                        onChange={(value: string) => {
-                          onDeviceProduct(value);
-                        }}
-                >
-                  {productList.map(item => (
-                    <Select.Option key={item.id}>{item.name}</Select.Option>
-                  ))}
-                </Select>
-              </Col>
-              <Col sm={4} xs={24}>
-                <Info title="全部设备" value={deviceCount.deviceTotal}/>
-              </Col>
-              <Col sm={4} xs={24}>
-                <Info title={<Badge status={statusMap.get('在线')} text="在线"/>} value={deviceCount.onlineCount}/>
-              </Col>
-              <Col sm={4} xs={24}>
-                <Info title={<Badge status={statusMap.get('离线')} text="离线"/>} value={deviceCount.offlineCount}/>
-              </Col>
-              <Col sm={4} xs={24}>
-                <Info title={<Badge status={statusMap.get('未激活')} text="未激活"/>} value={deviceCount.notActiveCount}/>
-              </Col>
-            </Row>
-          </Card>
-          <br/>
-          <Card bordered={false}>
-            <div className={styles.tableList}>
-              <div className={styles.tableListForm}>
-                <Search
-                  search={(params: any) => {
-                    console.log(product, 'params');
-                    if (product) {
-                      params.productId = product;
-                    }
-                    handleSearch({ terms: params, pageSize: 10 });
-                  }}
-                />
-              </div>
-              <div className={styles.tableListOperator}>
-                <Button
-                  icon="plus"
-                  type="primary"
-                  onClick={() => {
-                    setCurrentItem({});
-                    setAddVisible(true);
-                  }}
-                >
-                  添加设备
-                </Button>
-
-                <Divider type="vertical"/>
-
-                <Dropdown overlay={menu}>
-                  <Button>
-                    其他操作<Icon type="down"/>
-                  </Button>
-                </Dropdown>
-
-                {/*<Button href={template} download="设备实例模版" icon="download">
-                  下载模版
-                </Button>*/}
-              </div>
-              <div className={styles.StandardTable}>
-                <Table
-                  loading={props.loading}
-                  columns={columns}
-                  dataSource={(result || {}).data}
-                  rowKey="id"
-                  onChange={onTableChange}
-                  pagination={{
-                    current: result.pageIndex + 1,
-                    total: result.total,
-                    pageSize: result.pageSize,
-                    showQuickJumper: true,
-                    showSizeChanger: true,
-                    pageSizeOptions: ['10', '20', '50', '100'],
-                    showTotal: (total: number) =>
-                      `共 ${total} 条记录 第  ${result.pageIndex + 1}/${Math.ceil(
-                        result.total / result.pageSize,
-                      )}页`,
-                  }}
-                />
-              </div>
+      <div className={styles.standardList}>
+        <Card bordered={false} style={{ height: 95 }} loading={deviceCount.loading}>
+          <Row>
+            <Col sm={8} xs={24}>
+              <Select placeholder="请选择设备型号" allowClear style={{ width: 300, marginTop: 7 }}
+                      onChange={(value: string) => {
+                        setProduct(() => value);
+                        onDeviceProduct(value);
+                      }}
+              >
+                {productList.map(item => (
+                  <Select.Option key={item.id}>{item.name}</Select.Option>
+                ))}
+              </Select>
+            </Col>
+            <Col sm={4} xs={24}>
+              <Info title="全部设备" value={deviceCount.deviceTotal}/>
+            </Col>
+            <Col sm={4} xs={24}>
+              <Info title={<Badge status={statusMap.get('在线')} text="在线"/>} value={deviceCount.onlineCount}/>
+            </Col>
+            <Col sm={4} xs={24}>
+              <Info title={<Badge status={statusMap.get('离线')} text="离线"/>} value={deviceCount.offlineCount}/>
+            </Col>
+            <Col sm={4} xs={24}>
+              <Info title={<Badge status={statusMap.get('未激活')} text="未激活"/>} value={deviceCount.notActiveCount}/>
+            </Col>
+          </Row>
+        </Card>
+        <br/>
+        <Card bordered={false}>
+          <div className={styles.tableList}>
+            <div className={styles.tableListForm}>
+              <Search
+                search={(params: any) => {
+                  if (product) {
+                    params.productId = product;
+                  }
+                  handleSearch({ terms: params, pageSize: 10 });
+                }}
+              />
             </div>
-          </Card>
-          {addVisible && (
-            <Save
-              data={currentItem}
-              close={() => {
-                setAddVisible(false);
-                setCurrentItem({});
-              }}
-              save={(item: any) => {
-                saveDeviceInstance(item);
-              }}
-            />
-          )}
-          {(processVisible || importLoading) && (
-            <Process
-              api={api}
-              action={action}
-              closeVisible={() => {
-                setProcessVisible(false);
-                setImportLoading(false);
-                handleSearch(searchParam);
-              }}
-            />
-          )}
-        </div>
-      </Spin>
+            <div className={styles.tableListOperator}>
+              <Button
+                icon="plus"
+                type="primary"
+                onClick={() => {
+                  setCurrentItem({});
+                  setAddVisible(true);
+                }}
+              >
+                添加设备
+              </Button>
+
+              <Divider type="vertical"/>
+
+              <Dropdown overlay={menu}>
+                <Button>
+                  其他操作<Icon type="down"/>
+                </Button>
+              </Dropdown>
+
+            </div>
+            <div className={styles.StandardTable}>
+              <Table
+                loading={props.loading}
+                columns={columns}
+                dataSource={(result || {}).data}
+                rowKey="id"
+                onChange={onTableChange}
+                pagination={{
+                  current: result.pageIndex + 1,
+                  total: result.total,
+                  pageSize: result.pageSize,
+                  showQuickJumper: true,
+                  showSizeChanger: true,
+                  pageSizeOptions: ['10', '20', '50', '100'],
+                  showTotal: (total: number) =>
+                    `共 ${total} 条记录 第  ${result.pageIndex + 1}/${Math.ceil(
+                      result.total / result.pageSize,
+                    )}页`,
+                }}
+              />
+            </div>
+          </div>
+        </Card>
+        {addVisible && (
+          <Save
+            data={currentItem}
+            close={() => {
+              setAddVisible(false);
+              setCurrentItem({});
+            }}
+            save={(item: any) => {
+              saveDeviceInstance(item);
+            }}
+          />
+        )}
+        {(processVisible || importLoading) && (
+          <Process
+            api={api}
+            action={action}
+            closeVisible={() => {
+              setProcessVisible(false);
+              setImportLoading(false);
+              handleSearch(searchParam);
+            }}
+          />
+        )}
+        {deviceImport && (
+          <Import
+            productId={product}
+            close={() => {
+              setDeviceImport(false);
+              handleSearch(searchParam);
+            }}
+          />
+        )}
+        {deviceExport && (
+          <Export
+            productId={product}
+            searchParam={searchParam}
+            close={() => {
+              setDeviceExport(false);
+              handleSearch(searchParam);
+            }}
+          />
+        )}
+      </div>
     </PageHeaderWrapper>
   );
 };
