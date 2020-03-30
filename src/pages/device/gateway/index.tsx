@@ -13,6 +13,7 @@ import gateway from './img/gateway.svg';
 import device from './img/device.svg';
 import apis from '@/services';
 import ChartCard from '@/pages/analysis/components/Charts/ChartCard';
+import LineWrap from '@/pages/device/gateway/LineWrap';
 
 interface Props extends FormComponentProps {
   dispatch: Dispatch;
@@ -25,8 +26,8 @@ interface State {
   bindVisible: boolean;
   hasMore: boolean,
   gatewayId: string,
-  searchParam:any,
-  deviceGateway:any,
+  searchParam: any,
+  deviceGateway: any,
 }
 
 const DeviceGateway: React.FC<Props> = () => {
@@ -36,7 +37,7 @@ const DeviceGateway: React.FC<Props> = () => {
     hasMore: true,
     gatewayId: '',
     searchParam: { pageSize: 8 },
-    deviceGateway:{},
+    deviceGateway: {},
   };
 
   const [searchParam, setSearchParam] = useState(initState.searchParam);
@@ -64,7 +65,7 @@ const DeviceGateway: React.FC<Props> = () => {
   const handleSearch = (params?: any) => {
     setSearchParam(params);
     apis.deviceGateway.list(encodeQueryParam(params))
-      .then((response:any)=>{
+      .then((response: any) => {
         if (response.status === 200) {
           setDeviceGateway(response.result);
         }
@@ -99,10 +100,10 @@ const DeviceGateway: React.FC<Props> = () => {
 
   const onSearch = (name?: string) => {
     setSpinning(true);
-    handleSearch({ terms: { name$LIKE: name, }, pageSize: 8 });
+    handleSearch({ terms: { name$LIKE: name }, pageSize: 8 });
   };
 
-  const onChange = (page:number, pageSize:number)=>{
+  const onChange = (page: number, pageSize: number) => {
     handleSearch({
       pageIndex: page - 1,
       pageSize,
@@ -110,10 +111,10 @@ const DeviceGateway: React.FC<Props> = () => {
     });
   };
 
-  const onShowSizeChange = (current:number, size:number)=>{
+  const onShowSizeChange = (current: number, size: number) => {
     handleSearch({
       pageIndex: current - 1,
-      pageSize:size,
+      pageSize: size,
       terms: searchParam.terms,
     });
   };
@@ -135,114 +136,112 @@ const DeviceGateway: React.FC<Props> = () => {
   return (
     <PageHeaderWrapper title="网关设备">
       <Spin spinning={spinning}>
-        <div className={styles.filterCardList}>
-          <Card bordered={false}>
-            <Form layout="inline">
-              <StandardFormRow grid last>
-                <Row gutter={16}>
-                  <Col lg={8} md={10} sm={10} xs={24}>
-                    <Form.Item {...formItemLayout} label="设备名称">
-                      <Input
-                        onChange={e => {
-                          onSearch(e.target.value);
-                        }}
-                      />
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </StandardFormRow>
-            </Form>
-          </Card>
-          <br/>
-          {deviceGateway && deviceGateway.pageSize && (
-            <List<any>
-              pagination={{
-                current: deviceGateway.pageIndex + 1,
-                total: deviceGateway.total,
-                pageSize: deviceGateway.pageSize,
-                showQuickJumper: true,
-                showSizeChanger: true,
-                pageSizeOptions: ['8', '16', '40', '80'],
-                showTotal: (total: number) =>
-                  `共 ${total} 条记录 第  ${deviceGateway.pageIndex + 1}/${Math.ceil(
-                    deviceGateway.total / deviceGateway.pageSize,
-                  )}页`,
-                onChange,
-                onShowSizeChange,
-              }}
-              rowKey="id" grid={{ gutter: 24, xl: 4, lg: 3, md: 3, sm: 2, xs: 1 }}
-              dataSource={deviceGateway.data} className={styles.filterCardList}
-              renderItem={item => {
-                if (item && item.id) {
-                  return (
-                    <Col {...topColResponsiveProps} key={item.id} style={{ minHeight: 400 }}
-                         xxl={6} xl={8} lg={12} md={24}>
-                      <ChartCard
-                        bordered={false} title={item.id}
-                        avatar={<img style={{ width: 48, height: 48 }} src={gateway} alt="indicator"/>}
-                        action={
-                          <Tooltip title='绑定子设备'>
-                            <Icon type="plus" style={{ fontSize: 20 }}
-                                  onClick={() => {
-                                    setGatewayId(item.id);
-                                    setBindVisible(true);
-                                  }}/>
-                          </Tooltip>
-                        }
-                        total={() =>
-                          <Row>
+        <Card bordered={false}>
+          <Form layout="inline">
+            <StandardFormRow grid last>
+              <Row gutter={16}>
+                <Col lg={8} md={10} sm={10} xs={24}>
+                  <Form.Item {...formItemLayout} label="设备名称">
+                    <Input
+                      onChange={e => {
+                        onSearch(e.target.value);
+                      }}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+            </StandardFormRow>
+          </Form>
+        </Card>
+        {deviceGateway && deviceGateway.pageSize && (
+          <List<any>
+            style={{ paddingBottom: 20, paddingTop: 10 }}
+            pagination={{
+              current: deviceGateway.pageIndex + 1,
+              total: deviceGateway.total,
+              pageSize: deviceGateway.pageSize,
+              showQuickJumper: true,
+              showSizeChanger: true,
+              pageSizeOptions: ['8', '16', '40', '80'],
+              style: { marginTop: -20 },
+              showTotal: (total: number) =>
+                `共 ${total} 条记录 第  ${deviceGateway.pageIndex + 1}/${Math.ceil(
+                  deviceGateway.total / deviceGateway.pageSize,
+                )}页`,
+              onChange,
+              onShowSizeChange,
+            }}
+            rowKey="id" grid={{ gutter: 24, xl: 4, lg: 3, md: 3, sm: 2, xs: 1 }}
+            dataSource={deviceGateway.data} className={styles.filterCardList}
+            renderItem={item => {
+              if (item && item.id) {
+                return (
+                  <Col {...topColResponsiveProps} key={item.id} style={{ minHeight: 350 }}
+                       xxl={6} xl={8} lg={12} md={24}>
+                    <ChartCard
+                      bordered={false} title={item.id}
+                      avatar={<img style={{ width: 48, height: 48 }} src={gateway} alt="indicator"/>}
+                      action={
+                        <Tooltip title='绑定子设备'>
+                          <Icon type="plus" style={{ fontSize: 20 }}
+                                onClick={() => {
+                                  setGatewayId(item.id);
+                                  setBindVisible(true);
+                                }}/>
+                        </Tooltip>
+                      }
+                      total={() =>
+                        <Row>
                           <span>
-                            <a style={{ fontSize: 18 }} onClick={() => {
+                            <a style={{ fontSize: 18}} onClick={() => {
                               router.push(`/device/instance/save/${item.id}`);
                             }}>
-                              {item.name}
+                              <LineWrap title={item.name} height={30}/>
                             </a>
-                            <Badge style={{ marginLeft: 20 }} status={statusMap.get(item.state.text)}
+                            <Badge style={{ marginLeft: 20}} status={statusMap.get(item.state.text)}
                                    text={item.state.text}/>
                           </span>
-                          </Row>}
-                      >
+                        </Row>}
+                    >
                       <span>
                         <div className={styles.StandardTable} style={{ paddingTop: 10 }}>
-                          <List
-                            itemLayout="horizontal" dataSource={item.children} style={{ minHeight: 270 }}
-                            pagination={{
-                              pageSize: 4,
-                              size: 'small',
-                              hideOnSinglePage: true,
-                            }}
-                            renderItem={(dev: any) => (
-                              <List.Item
-                                actions={[<Badge status={statusMap.get(dev.state.text)} text={dev.state.text}/>,
-                                  <Popconfirm title="确认解绑该设备？" onConfirm={() => {
-                                    unBindGateway(item.id, dev.id);
-                                  }}>
-                                    <a>解绑</a>
-                                  </Popconfirm>]}
-                              >
-                                <List.Item.Meta
-                                  avatar={<Avatar shape="square" size="small" src={device}/>}
-                                  title={<a
-                                    onClick={() => {
-                                      router.push(`/device/instance/save/${dev.id}`);
-                                    }}
-                                  >{dev.name}</a>}
-                                  style={{ minHeight: 20 }}
-                                />
-                              </List.Item>
-                            )}
+                          <List size='small'
+                                itemLayout="horizontal" dataSource={item.children} style={{ minHeight: 220 }}
+                                pagination={{
+                                  pageSize: 4,
+                                  size: 'small',
+                                  hideOnSinglePage: true,
+                                }}
+                                renderItem={(dev: any) => (
+                                  <List.Item
+                                    actions={[<Badge status={statusMap.get(dev.state.text)} text={dev.state.text}/>,
+                                      <Popconfirm title="确认解绑该设备？" onConfirm={() => {
+                                        unBindGateway(item.id, dev.id);
+                                      }}>
+                                        <a>解绑</a>
+                                      </Popconfirm>]}
+                                  >
+                                    <List.Item.Meta
+                                      avatar={<Avatar shape="square" size="small" src={device}/>}
+                                      title={<a
+                                        onClick={() => {
+                                          router.push(`/device/instance/save/${dev.id}`);
+                                        }}
+                                      ><LineWrap title={dev.name} height={15} /></a>}
+                                    />
+                                  </List.Item>
+                                )}
                           />
                         </div>
                       </span>
-                      </ChartCard>
-                    </Col>
-                  );
-                }
-                return ('');
-              }}
-            />
-          )}
-        </div>
+                    </ChartCard>
+                  </Col>
+                );
+              }
+              return ('');
+            }}
+          />
+        )}
       </Spin>
       {bindVisible && (
         <Bind
