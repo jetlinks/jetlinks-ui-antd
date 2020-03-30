@@ -10,7 +10,6 @@ import Debugger from './detail/Debugger';
 import Functions from './detail/functions';
 import styles from './index.less';
 import { ConnectState, Dispatch } from '@/models/connect';
-import { SimpleResponse } from '@/utils/common';
 import { DeviceInstance } from '@/pages/device/instance/data';
 import apis from '@/services';
 import Gateway from './detail/gateway';
@@ -71,7 +70,7 @@ const Editor: React.FC<Props> = props => {
     dispatch({
       type: 'deviceInstance/queryById',
       payload: deviceId,
-      callback: (response: SimpleResponse) => {
+      callback: (response: any) => {
         if (response.status === 200) {
           const deviceData = response.result;
           if (deviceData.orgId) {
@@ -117,7 +116,7 @@ const Editor: React.FC<Props> = props => {
       .queryOrganization()
       .then(res => {
         if (res.status === 200) {
-          res.result.map(e => (
+          res.result.map((e:any) => (
             orgInfo[e.id] = e.name
           ));
         }

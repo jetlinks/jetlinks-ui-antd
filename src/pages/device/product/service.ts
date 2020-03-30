@@ -98,3 +98,9 @@ export async function queryOrganization() {
     method: 'get'
   });
 }
+
+export async function units() {
+  return request(`/jetlinks/protocol/units`, {
+    method: 'get'
+  });
+}

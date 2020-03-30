@@ -5,7 +5,6 @@ import Search from './search';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { Badge, Button, Card, Divider, Icon, message, Popconfirm, Table, Upload } from 'antd';
 import { ColumnProps, PaginationConfig } from 'antd/lib/table';
-import { CommonEnum, SimpleResponse } from '@/utils/common';
 import moment from 'moment';
 import { connect } from 'dva';
 import { ConnectState, Dispatch } from '@/models/connect';
@@ -105,7 +104,7 @@ const DeviceModel: React.FC<Props> = props => {
       dataIndex: 'deviceType',
       width: '150px',
       align: 'center',
-      render: (text: CommonEnum) => (text || {}).text,
+      render: (text: any) => (text || {}).text,
       sorter: true,
     },
     {
@@ -230,7 +229,7 @@ const DeviceModel: React.FC<Props> = props => {
           dispatch({
             type: 'deviceProduct/insert',
             payload: e,
-            callback: (response: SimpleResponse) => {
+            callback: (response: any) => {
               if (response.status === 200) {
                 message.success('导入成功');
                 handleSearch(searchParam);

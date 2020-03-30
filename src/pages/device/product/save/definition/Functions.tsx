@@ -7,6 +7,7 @@ import { FunctionMeta } from '../../component/data.d';
 interface Props {
   save: Function;
   data: any[];
+  unitsData: any;
 }
 
 interface State {
@@ -97,6 +98,7 @@ const Functions: React.FC<Props> = props => {
       {visible && (
         <FunctionDefin
           data={current}
+          unitsData={props.unitsData}
           save={(item: FunctionMeta) => {
             saveFunctionData(item);
           }}

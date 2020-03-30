@@ -1,13 +1,14 @@
-import { Form, Input, Select, Col, Button, Radio, Drawer, Icon, Row, List, message } from 'antd';
+import { Button, Col, Drawer, Form, Icon, Input, List, message, Radio, Row, Select } from 'antd';
 import React, { useState } from 'react';
 import styles from '../index.less';
 import { groupBy } from 'lodash';
-import { units, Unit } from '@/utils/unit';
+import { Unit } from '@/utils/unit';
 
 interface Props {
   save: (data: any) => void;
   close: Function;
   data: any;
+  unitsData: any;
 }
 
 interface State {
@@ -76,8 +77,10 @@ const Paramter: React.FC<Props> = props => {
                 }}
                 value={data.valueType.unit}
               >
-                {Array.from(new Set<string>(units.map(unit => unit.typeText))).map(type => {
-                  const typeData = groupBy(units, unit => unit.typeText)[type];
+                {Array.from(new Set<string>(props.unitsData.map((unit:any) => {
+                  return unit.type;
+                }))).map(type => {
+                  const typeData = groupBy(props.unitsData, unit => unit.type)[type];
                   return (
                     <Select.OptGroup label={type} key={type}>
                       {typeData.map((e: Unit) => (
@@ -140,8 +143,10 @@ const Paramter: React.FC<Props> = props => {
                 }}
                 value={data.valueType.unit}
               >
-                {Array.from(new Set<string>(units.map(unit => unit.typeText))).map(type => {
-                  const typeData = groupBy(units, unit => unit.typeText)[type];
+                {Array.from(new Set<string>(props.unitsData.map((unit:any) => {
+                  return unit.type;
+                }))).map(type => {
+                  const typeData = groupBy(props.unitsData, unit => unit.type)[type];
                   return (
                     <Select.OptGroup label={type} key={type}>
                       {typeData.map((e: Unit) => (
@@ -204,8 +209,10 @@ const Paramter: React.FC<Props> = props => {
                 }}
                 value={data.valueType.unit}
               >
-                {Array.from(new Set<string>(units.map(unit => unit.typeText))).map(type => {
-                  const typeData = groupBy(units, unit => unit.typeText)[type];
+                {Array.from(new Set<string>(props.unitsData.map((unit:any) => {
+                  return unit.type;
+                }))).map(type => {
+                  const typeData = groupBy(props.unitsData, unit => unit.type)[type];
                   return (
                     <Select.OptGroup label={type} key={type}>
                       {typeData.map((e: Unit) => (
@@ -601,6 +608,7 @@ const Paramter: React.FC<Props> = props => {
       {parameterVisible && (
         <Paramter
           data={currentParameter}
+          unitsData={props.unitsData}
           save={item => {
             if (!data.valueType.parameters) {
               data.valueType.parameters = [];

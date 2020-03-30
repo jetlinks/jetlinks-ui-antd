@@ -7,6 +7,7 @@ import EventDefin from '../../component/event';
 interface Props {
   save: Function;
   data: any[];
+  unitsData: any;
 }
 
 const gradeText = {
@@ -108,6 +109,7 @@ const Events: React.FC<Props> = props => {
       {visible && (
         <EventDefin
           data={current}
+          unitsData={props.unitsData}
           save={(item: EventsMeta) => {
             saveEventData(item);
           }}

@@ -10,6 +10,7 @@ interface Props extends FormComponentProps {
   save: Function;
   data: Partial<FunctionMeta>;
   close: Function;
+  unitsData: any;
 }
 
 interface State {
@@ -106,7 +107,7 @@ const FunctionDefin: React.FC<Props> = props => {
             <Form.Item label="单位">
               {getFieldDecorator('output.unit', {
                 initialValue: initState.data.output?.unit,
-              })(renderUnit())}
+              })(renderUnit(props.unitsData))}
             </Form.Item>
           </div>
         );
@@ -146,7 +147,7 @@ const FunctionDefin: React.FC<Props> = props => {
             <Form.Item label="单位">
               {getFieldDecorator('output.unit', {
                 initialValue: initState.data.output?.unit,
-              })(renderUnit())}
+              })(renderUnit(props.unitsData))}
             </Form.Item>
           </div>
         );
@@ -179,7 +180,7 @@ const FunctionDefin: React.FC<Props> = props => {
             <Form.Item label="单位">
               {getFieldDecorator('output.unit', {
                 initialValue: props.data.output?.unit,
-              })(renderUnit())}
+              })(renderUnit(props.unitsData))}
             </Form.Item>
           </div>
         );
@@ -567,6 +568,7 @@ const FunctionDefin: React.FC<Props> = props => {
       {outputVisible && (
         <Paramter
           data={currentParameter}
+          unitsData={props.unitsData}
           save={item => {
             const temp = outputParameter.filter(i => i.id !== item.id);
             setOutputParameter([...temp, item]);
@@ -576,6 +578,7 @@ const FunctionDefin: React.FC<Props> = props => {
       )}
       {inputVisible && (
         <Paramter
+          unitsData={props.unitsData}
           data={currentParameter}
           save={item => {
             const temp = inputs.filter(i => i.id !== item.id);

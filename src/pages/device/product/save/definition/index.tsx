@@ -10,6 +10,7 @@ interface Props {
   saveFunctions: Function;
   saveEvents: Function;
   saveTags: Function;
+  unitsData: Function;
   propertyData: any;
   functionsData: any;
   eventsData: any;
@@ -22,6 +23,7 @@ const Definition: React.FC<Props> = props => (
       <Tabs.TabPane tab="属性定义" key="1">
         <Property
           data={props.propertyData}
+          unitsData={props.unitsData}
           save={(data: any) => {
             props.saveProperty(data);
           }}
@@ -30,6 +32,7 @@ const Definition: React.FC<Props> = props => (
       <Tabs.TabPane tab="功能定义" key="2">
         <Functions
           data={props.functionsData}
+          unitsData={props.unitsData}
           save={(data: any) => {
             props.saveFunctions(data);
           }}
@@ -38,6 +41,7 @@ const Definition: React.FC<Props> = props => (
       <Tabs.TabPane tab="事件定义" key="3">
         <Events
           data={props.eventsData}
+          unitsData={props.unitsData}
           save={(data: any) => {
             props.saveEvents(data);
           }}
@@ -46,6 +50,7 @@ const Definition: React.FC<Props> = props => (
       <Tabs.TabPane tab="标签定义" key="4">
         <Tags
           data={props.tagsData}
+          unitsData={props.unitsData}
           save={(data: any) => {
             props.saveTags(data);
           }}

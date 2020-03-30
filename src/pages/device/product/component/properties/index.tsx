@@ -7,6 +7,7 @@ import Paramter from '../paramter';
 
 interface Props extends FormComponentProps {
   data: Partial<PropertiesMeta>;
+  unitsData: any;
   save: Function;
   close: Function;
 }
@@ -109,7 +110,7 @@ const PropertiesDefin: React.FC<Props> = props => {
             <Form.Item label="单位">
               {getFieldDecorator('valueType.unit', {
                 initialValue: initState.data.valueType?.unit,
-              })(renderUnit())}
+              })(renderUnit(props.unitsData))}
             </Form.Item>
           </div>
         );
@@ -149,7 +150,7 @@ const PropertiesDefin: React.FC<Props> = props => {
             <Form.Item label="单位">
               {getFieldDecorator('valueType.unit', {
                 initialValue: initState.data.valueType?.unit,
-              })(renderUnit())}
+              })(renderUnit(props.unitsData))}
             </Form.Item>
           </div>
         );
@@ -182,7 +183,7 @@ const PropertiesDefin: React.FC<Props> = props => {
             <Form.Item label="单位">
               {getFieldDecorator('valueType.unit', {
                 initialValue: initState.data.valueType?.unit,
-              })(renderUnit())}
+              })(renderUnit(props.unitsData))}
             </Form.Item>
           </div>
         );
@@ -554,6 +555,7 @@ const PropertiesDefin: React.FC<Props> = props => {
               }
               setProperties(properties);
             }}
+            unitsData={props.unitsData}
             close={() => setParameterVisible(false)}
             data={currentParameter}
           />

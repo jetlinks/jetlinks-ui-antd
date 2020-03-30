@@ -24,6 +24,7 @@ interface State {
   orgInfo: any;
   deviceCount: number;
   spinning:boolean;
+  units:any;
 }
 
 const Detail: React.FC<Props> = props => {
@@ -34,6 +35,7 @@ const Detail: React.FC<Props> = props => {
     orgInfo: {},
     deviceCount: 0,
     spinning:true,
+    units:{},
   };
   const {
     dispatch,
@@ -49,18 +51,25 @@ const Detail: React.FC<Props> = props => {
   const [orgInfo] = useState(initState.orgInfo);
   const [deviceCount, setDeviceCount] = useState(initState.deviceCount);
   const [spinning, setSpinning] = useState(initState.spinning);
+  const [units, setUnits] = useState(initState.units);
 
   useEffect(() => {
     apis.deviceProdcut
       .queryOrganization()
       .then(res => {
         if (res.status === 200) {
-          res.result.map(e => (
+          res.result.map((e:any) => (
             orgInfo[e.id] = e.name
           ));
         }
       }).catch(() => {
     });
+
+    apis.deviceProdcut.units().then((response: any) => {
+      if (response.status === 200) {
+        setUnits(response.result)
+      }
+    }).catch(()=>{});
 
     if (pathname.indexOf('save') > 0) {
       const list = pathname.split('/');
@@ -288,6 +297,7 @@ const Detail: React.FC<Props> = props => {
                 functionsData={functions}
                 propertyData={properties}
                 tagsData={tags}
+                unitsData={units}
                 saveEvents={(data: any) => {
                   setEvents(data);
                   updateData('event', data);

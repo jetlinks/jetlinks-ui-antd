@@ -9,6 +9,7 @@ import PropertiesDefin from '../../component/properties';
 interface Props extends FormComponentProps {
   save: Function;
   data: any[];
+  unitsData: any;
 }
 interface State {
   data: PropertiesMeta[];
@@ -105,6 +106,7 @@ const Properties: React.FC<Props> = (props: Props) => {
       {visible && (
         <PropertiesDefin
           data={current}
+          unitsData={props.unitsData}
           save={(item: PropertiesMeta) => {
             savePropertiesData(item);
           }}

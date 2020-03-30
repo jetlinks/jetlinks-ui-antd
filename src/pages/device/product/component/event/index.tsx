@@ -10,6 +10,7 @@ interface Props extends FormComponentProps {
   save: Function;
   data: Partial<EventsMeta>;
   close: Function;
+  unitsData: any;
 }
 
 interface State {
@@ -108,7 +109,7 @@ const EventDefin: React.FC<Props> = props => {
             <Form.Item label="单位">
               {getFieldDecorator('valueType.unit', {
                 initialValue: initState.data.valueType?.unit,
-              })(renderUnit())}
+              })(renderUnit(props.unitsData))}
             </Form.Item>
           </div>
         );
@@ -148,7 +149,7 @@ const EventDefin: React.FC<Props> = props => {
             <Form.Item label="单位">
               {getFieldDecorator('valueType.unit', {
                 initialValue: initState.data.valueType?.unit,
-              })(renderUnit())}
+              })(renderUnit(props.unitsData))}
             </Form.Item>
           </div>
         );
@@ -181,7 +182,7 @@ const EventDefin: React.FC<Props> = props => {
             <Form.Item label="单位">
               {getFieldDecorator('valueType.unit', {
                 initialValue: initState.data.valueType?.unit,
-              })(renderUnit())}
+              })(renderUnit(props.unitsData))}
             </Form.Item>
           </div>
         );
@@ -514,6 +515,7 @@ const EventDefin: React.FC<Props> = props => {
       {parameterVisible && (
         <Paramter
           data={currentParameter}
+          unitsData={props.unitsData}
           save={item => {
             const temp = properties.filter(i => i.id !== item.id);
             setParameter([...temp, item]);

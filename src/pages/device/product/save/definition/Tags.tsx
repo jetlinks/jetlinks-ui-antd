@@ -8,6 +8,7 @@ import TagsDefin from '../../component/tags';
 interface Props extends FormComponentProps {
   save: Function;
   data: any[];
+  unitsData: any;
 }
 interface State {
   data: TagsMeta[];
@@ -100,6 +101,7 @@ const Tags: React.FC<Props> = (props: Props) => {
       {visible && (
         <TagsDefin
           data={current}
+          unitsData={props.unitsData}
           save={(item: TagsMeta) => {
             saveTagsData(item);
           }}
