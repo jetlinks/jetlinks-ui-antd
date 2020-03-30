@@ -66,13 +66,13 @@ const Login: React.FC<Props> = props => {
               setExpires(expires === -1 ? 3600000 : -1);
             }}
           />
-          <div className={style.reb}>记住密码</div>
+          <div className={style.reb}>记住我</div>
         </div>
         <div className={style.fg}>
           <div style={{ fontSize: '11px', marginTop: '11px' }}>
-            <a style={{ fontSize: '11px' }} href="#">
+            {/*<a style={{ fontSize: '11px' }} href="#">
               忘记密码？
-            </a>
+            </a>*/}
           </div>
         </div>
 
