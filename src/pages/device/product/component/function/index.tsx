@@ -265,7 +265,7 @@ const FunctionDefin: React.FC<Props> = props => {
                   <Radio value="int32">int32(整数型)</Radio>
                   <Radio value="float">float(单精度）</Radio>
                   <Radio value="double">double(双精度)</Radio>
-                  <Radio value="text">text(字符串)</Radio>
+                  <Radio value="string">text(字符串)</Radio>
                   <Radio value="object">object(结构体)</Radio>
                 </Radio.Group>,
               )}

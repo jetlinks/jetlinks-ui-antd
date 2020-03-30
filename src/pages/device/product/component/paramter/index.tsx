@@ -330,7 +330,7 @@ const Paramter: React.FC<Props> = props => {
                 <Radio value="int32">int32</Radio>
                 <Radio value="float">float</Radio>
                 <Radio value="double">double</Radio>
-                <Radio value="text">text</Radio>
+                <Radio value="string">text</Radio>
                 <Radio value="struct">struct</Radio>
               </Radio.Group>
             </Form.Item>
