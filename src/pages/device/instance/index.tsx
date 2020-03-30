@@ -33,6 +33,7 @@ import Process from './Process';
 import Import from './operation/import';
 import Export from './operation/export';
 import { DeviceProduct } from '@/pages/device/product/data';
+import { getPageQuery } from '@/utils/utils';
 
 interface Props extends FormComponentProps {
   loading: boolean;
@@ -243,7 +244,6 @@ const DeviceInstancePage: React.FC<Props> = props => {
   ];
 
   useEffect(() => {
-    handleSearch(searchParam);
     // 获取下拉框数据
     apis.deviceProdcut
       .queryNoPagin()
@@ -253,6 +253,20 @@ const DeviceInstancePage: React.FC<Props> = props => {
       .catch(() => {
         //
       });
+
+    const query:any = getPageQuery();
+    if (query.hasOwnProperty("productId")){
+      const { productId } = query;
+      setProduct(productId);
+      handleSearch({
+        terms:{
+          productId:query.productId
+        },
+        pageSize: 10
+      });
+    } else {
+      handleSearch(searchParam);
+    }
   }, []);
 
   useEffect(() => {
@@ -449,7 +463,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
         <Card bordered={false} style={{ height: 95 }} loading={deviceCount.loading}>
           <Row>
             <Col sm={8} xs={24}>
-              <Select placeholder="请选择设备型号" allowClear style={{ width: 300, marginTop: 7 }}
+              <Select placeholder="请选择设备型号" allowClear style={{ width: 300, marginTop: 7 }} defaultValue={product}
                       onChange={(value: string) => {
                         setProduct(() => value);
                         onDeviceProduct(value);
