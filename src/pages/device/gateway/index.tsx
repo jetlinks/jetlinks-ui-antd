@@ -176,7 +176,7 @@ const DeviceGateway: React.FC<Props> = () => {
             renderItem={item => {
               if (item && item.id) {
                 return (
-                  <Col {...topColResponsiveProps} key={item.id} style={{ minHeight: 350 }}
+                  <Col {...topColResponsiveProps} key={item.id} style={{ minHeight: 365 }}
                        xxl={6} xl={8} lg={12} md={24}>
                     <ChartCard
                       bordered={false} title={item.id}
@@ -206,7 +206,7 @@ const DeviceGateway: React.FC<Props> = () => {
                       <span>
                         <div className={styles.StandardTable} style={{ paddingTop: 10 }}>
                           <List size='small'
-                                itemLayout="horizontal" dataSource={item.children} style={{ minHeight: 220 }}
+                                itemLayout="horizontal" dataSource={item.children} style={{ minHeight: 235 }}
                                 pagination={{
                                   pageSize: 4,
                                   size: 'small',
@@ -227,7 +227,7 @@ const DeviceGateway: React.FC<Props> = () => {
                                         onClick={() => {
                                           router.push(`/device/instance/save/${dev.id}`);
                                         }}
-                                      ><LineWrap title={dev.name} height={15} /></a>}
+                                      ><LineWrap title={dev.name} height={20}/></a>}
                                     />
                                   </List.Item>
                                 )}
