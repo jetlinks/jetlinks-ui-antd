@@ -335,9 +335,15 @@ const DeviceInstancePage: React.FC<Props> = props => {
     filters: any,
     sorter: SorterResult<DeviceInstance>,
   ) => {
-    const { terms } = searchParam;
+    let { terms } = searchParam;
     if (filters.state) {
-      terms.state = filters.state[0];
+      if (terms){
+        terms.state = filters.state[0];
+      } else {
+        terms = {
+          state:filters.state[0]
+        }
+      }
     }
     handleSearch({
       pageIndex: Number(pagination.current) - 1,
