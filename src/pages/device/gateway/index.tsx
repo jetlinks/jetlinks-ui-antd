@@ -153,7 +153,7 @@ const DeviceGateway: React.FC<Props> = () => {
             </StandardFormRow>
           </Form>
         </Card>
-        {deviceGateway && deviceGateway.pageSize && (
+        {deviceGateway && deviceGateway.pageSize > 0 && (
           <List<any>
             style={{ paddingBottom: 20, paddingTop: 10 }}
             pagination={{
