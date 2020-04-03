@@ -226,16 +226,18 @@ const DeviceModel: React.FC<Props> = props => {
       if (info.file.status === 'done') {
         const fileUrl = info.file.response.result;
         request(fileUrl, { method: 'GET' }).then(e => {
-          dispatch({
-            type: 'deviceProduct/insert',
-            payload: e,
-            callback: (response: any) => {
-              if (response.status === 200) {
-                message.success('导入成功');
-                handleSearch(searchParam);
-              }
-            },
-          });
+          if (e || e !== null ){
+            dispatch({
+              type: 'deviceProduct/insert',
+              payload: e,
+              callback: (response: any) => {
+                if (response.status === 200) {
+                  message.success('导入成功');
+                  handleSearch(searchParam);
+                }
+              },
+            });
+          }
         });
       }
     },
