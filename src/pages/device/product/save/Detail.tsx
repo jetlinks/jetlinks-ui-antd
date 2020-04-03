@@ -23,8 +23,8 @@ interface State {
   config: any;
   orgInfo: any;
   deviceCount: number;
-  spinning:boolean;
-  units:any;
+  spinning: boolean;
+  units: any;
 }
 
 const Detail: React.FC<Props> = props => {
@@ -34,8 +34,8 @@ const Detail: React.FC<Props> = props => {
     config: {},
     orgInfo: {},
     deviceCount: 0,
-    spinning:true,
-    units:{},
+    spinning: true,
+    units: {},
   };
   const {
     dispatch,
@@ -58,7 +58,7 @@ const Detail: React.FC<Props> = props => {
       .queryOrganization()
       .then(res => {
         if (res.status === 200) {
-          res.result.map((e:any) => (
+          res.result.map((e: any) => (
             orgInfo[e.id] = e.name
           ));
         }
@@ -67,9 +67,10 @@ const Detail: React.FC<Props> = props => {
 
     apis.deviceProdcut.units().then((response: any) => {
       if (response.status === 200) {
-        setUnits(response.result)
+        setUnits(response.result);
       }
-    }).catch(()=>{});
+    }).catch(() => {
+    });
 
     if (pathname.indexOf('save') > 0) {
       const list = pathname.split('/');
@@ -98,14 +99,14 @@ const Detail: React.FC<Props> = props => {
         },
       });
 
-      apis.deviceInstance.count(encodeQueryParam({terms:{ 'productId': list[list.length - 1] }}))
+      apis.deviceInstance.count(encodeQueryParam({ terms: { 'productId': list[list.length - 1] } }))
         .then(res => {
           if (res.status === 200) {
             setDeviceCount(res.result);
           }
         }).catch();
     }
-  }, [basicInfo.id]);
+  }, []);
 
   const saveData = (item?: any) => {
     let data: Partial<DeviceProduct>;
@@ -208,16 +209,16 @@ const Detail: React.FC<Props> = props => {
           </span>
         <Badge style={{ marginLeft: 20 }} color={basicInfo.state === 1 ? 'green' : 'red'}
                text={basicInfo.state === 1 ? '已发布' : '未发布'}/>
-        {basicInfo.state === 1?(
+        {basicInfo.state === 1 ? (
           <Popconfirm title="确认停用？" onConfirm={() => {
             unDeploy(basicInfo);
           }}>
-            <a style={{fontSize:12,marginLeft:20}}>停用</a>
+            <a style={{ fontSize: 12, marginLeft: 20 }}>停用</a>
           </Popconfirm>
-        ):(<Popconfirm title="确认发布？" onConfirm={() => {
-            deploy(basicInfo);
-          }}>
-          <a style={{fontSize:12,marginLeft:20}}>发布</a>
+        ) : (<Popconfirm title="确认发布？" onConfirm={() => {
+          deploy(basicInfo);
+        }}>
+          <a style={{ fontSize: 12, marginLeft: 20 }}>发布</a>
         </Popconfirm>)}
       </div>
     </Row>
@@ -285,7 +286,7 @@ const Detail: React.FC<Props> = props => {
                   {config.properties &&
                   config.properties.map((item: any) => (
                     <Descriptions.Item label={item.property} span={1} key={item.property}>
-                      {basicInfo.configuration[item.property]}
+                      {basicInfo.configuration ? basicInfo.configuration[item.property] : null}
                     </Descriptions.Item>
                   ))}
                 </Descriptions>
