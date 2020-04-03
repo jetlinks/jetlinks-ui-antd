@@ -51,7 +51,6 @@ interface State {
   action: string;
   deviceCount: any;
   productList: DeviceProduct[];
-  product: string;
 }
 
 const DeviceInstancePage: React.FC<Props> = props => {
@@ -72,8 +71,6 @@ const DeviceInstancePage: React.FC<Props> = props => {
       loading: true,
     },
     productList: [],
-    product: '',
-
   };
 
   const [searchParam, setSearchParam] = useState(initState.searchParam);
@@ -82,7 +79,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
   const [importLoading, setImportLoading] = useState(initState.importLoading);
   const [action, setAction] = useState(initState.action);
   const [productList, setProductList] = useState(initState.productList);
-  const [product, setProduct] = useState(initState.product);
+  const [product, setProduct] = useState("");
   const [deviceCount, setDeviceCount] = useState(initState.deviceCount);
   const [deviceImport, setDeviceImport] = useState(false);
   const [deviceExport, setDeviceExport] = useState(false);
@@ -243,33 +240,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
     },
   ];
 
-  useEffect(() => {
-    // 获取下拉框数据
-    apis.deviceProdcut
-      .queryNoPagin()
-      .then(e => {
-        setProductList(e.result);
-      })
-      .catch(() => {
-        //
-      });
-
-    const query:any = getPageQuery();
-    if (query.hasOwnProperty("productId")){
-      const { productId } = query;
-      setProduct(productId);
-      handleSearch({
-        terms:{
-          productId:query.productId
-        },
-        pageSize: 10
-      });
-    } else {
-      handleSearch(searchParam);
-    }
-  }, []);
-
-  useEffect(() => {
+  const stateCount = (productId: string) => {
     const map = {
       notActiveCount: 0,
       offlineCount: 0,
@@ -289,7 +260,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
       apis.deviceInstance.count(encodeQueryParam({
         terms: {
           state: val,
-          productId: product,
+          productId: productId,
         },
       }))
         .then(res => {
@@ -305,7 +276,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
         }).catch();
     }
 
-    apis.deviceInstance.count(encodeQueryParam({ terms: { productId: product } }))
+    apis.deviceInstance.count(encodeQueryParam({ terms: { productId: productId } }))
       .then(res => {
         if (res.status === 200) {
           map.deviceTotal = res.result;
@@ -313,8 +284,32 @@ const DeviceInstancePage: React.FC<Props> = props => {
           setDeviceCount(map);
         }
       }).catch();
+  };
 
-  }, [product]);
+  useEffect(() => {
+    // 获取下拉框数据
+    apis.deviceProdcut
+      .queryNoPagin()
+      .then(e => {
+        setProductList(e.result);
+      })
+      .catch(() => {});
+
+    const query:any = getPageQuery();
+    if (query.hasOwnProperty("productId")){
+      const { productId } = query;
+      setProduct(productId);
+      handleSearch({
+        terms:{
+          productId:query.productId
+        },
+        pageSize: 10
+      });
+      stateCount(productId);
+    } else {
+      handleSearch(searchParam);
+    }
+  }, []);
 
   const saveDeviceInstance = (item: any) => {
     dispatch({
@@ -424,6 +419,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
       terms,
       sorts: searchParam.sorter,
     });
+    stateCount(value);
   };
 
   const Info: FC<{
