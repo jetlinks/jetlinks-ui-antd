@@ -32,7 +32,7 @@ import { stringify } from 'qs';
  */
 const errorHandler = (error: { response: Response }): Response | undefined => {
   const {
-    response: { status },
+    // response: { status },
     response,
   } = error;
 
@@ -44,74 +44,81 @@ const errorHandler = (error: { response: Response }): Response | undefined => {
   //   message: `请求错误 ${status}: ${url}`,
   //   description: errorText,
   // });
-  if (status === 401) {
-    notification.error({
-      key: 'error',
-      message: '未登录或登录已过期，请重新登录。',
-    });
-    const { redirect } = getPageQuery();
-    if (window.location.pathname !== '/user/login' && !redirect) {
-      router.replace({
-        pathname: '/user/login',
-        search: stringify({
-          redirect: window.location.href,
-        }),
+  if (response) {
+    if (response.status === 401) {
+      notification.error({
+        key: 'error',
+        message: '未登录或登录已过期，请重新登录。',
       });
-    } else {
-      router.push('/user/login');
-    }
-  } else if (status === 400) {
-    response.text().then(resp => {
-      if (resp) {
-        notification.error({
-          key: 'error',
-          message: JSON.parse(resp).message,
+      const { redirect } = getPageQuery();
+      if (window.location.pathname !== '/user/login' && !redirect) {
+        router.replace({
+          pathname: '/user/login',
+          search: stringify({
+            redirect: window.location.href,
+          }),
         });
       } else {
-        response.json().then((res: any) => {
+        router.push('/user/login');
+      }
+    } else if (response.status === 400) {
+      response.text().then(resp => {
+        if (resp) {
           notification.error({
             key: 'error',
-            message: `请求错误：${res.message}`,
+            message: JSON.parse(resp).message,
           });
+        } else {
+          response.json().then((res: any) => {
+            notification.error({
+              key: 'error',
+              message: `请求错误：${res.message}`,
+            });
+          });
+        }
+      });
+      return response;
+    } else if (response.status === 500) {
+      // try {
+      response.json().then((res: any) => {
+        notification.error({
+          key: 'error',
+          message: `${res.message}`,
         });
-      }
-    });
-    return response;
-  } else if (status === 500) {
-    // try {
-    response.json().then((res: any) => {
+      });
+      // } catch (error) {
+      //   router.push('/user/login');
+      // }
+    } else if (response.status === 504) {
       notification.error({
         key: 'error',
-        message: `${res.message}`,
+        message: '服务器错误',
       });
-    });
-    // } catch (error) {
-    //   router.push('/user/login');
-    // }
-  } else if (status === 504) {
-    notification.error({
-      key: 'error',
-      message: '服务器错误',
-    });
 
-    // router.push('/user/login');
-  } else if (status === 403) {
-    response.json().then((res: any) => {
+      // router.push('/user/login');
+    } else if (response.status === 403) {
+      response.json().then((res: any) => {
+        notification.error({
+          key: 'error',
+          message: `${res.message}`,
+        });
+      });
+
+      // router.push('/exception/403');
+      // return;
+    } else if (response.status === 404) {
+      // console.log(status, '状态');
+      router.push('/exception/404');
+    } else {
       notification.error({
         key: 'error',
-        message: `${res.message}`,
+        message: '服务器内部错误',
       });
-    });
-
-    // router.push('/exception/403');
-    // return;
-  } else if (status === 404) {
-    // console.log(status, '状态');
-    router.push('/exception/404');
+    }
   } else {
     notification.error({
       key: 'error',
-      message: '服务器内部错误',
+      message: '服务器内部错误,请检测您的配置',
     });
   }
   return response;
