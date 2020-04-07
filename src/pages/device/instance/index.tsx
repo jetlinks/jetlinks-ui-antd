@@ -272,18 +272,17 @@ const DeviceInstancePage: React.FC<Props> = props => {
             } else {
               map.onlineCount = res.result;
             }
+            apis.deviceInstance.count(encodeQueryParam({ terms: { productId: productId } }))
+              .then(res => {
+                if (res.status === 200) {
+                  map.deviceTotal = res.result;
+                  map.loading = false;
+                  setDeviceCount(map);
+                }
+              }).catch();
           }
         }).catch();
     }
-
-    apis.deviceInstance.count(encodeQueryParam({ terms: { productId: productId } }))
-      .then(res => {
-        if (res.status === 200) {
-          map.deviceTotal = res.result;
-          map.loading = false;
-          setDeviceCount(map);
-        }
-      }).catch();
   };
 
   useEffect(() => {
@@ -308,6 +307,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
       stateCount(productId);
     } else {
       handleSearch(searchParam);
+      stateCount("");
     }
   }, []);
 
@@ -519,7 +519,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
 
               <Dropdown overlay={menu}>
                 <Button>
-                  其他操作<Icon type="down"/>
+                  其他批量操作<Icon type="down"/>
                 </Button>
               </Dropdown>
 
