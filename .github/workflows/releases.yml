@@ -4,7 +4,7 @@ on:
         branches:
             - 1.1
         tags:
-            - 1.0-RELEASES
+            - 1.0-RELEASE
 jobs:
     build-and-deploy:
         runs-on: ubuntu-latest
