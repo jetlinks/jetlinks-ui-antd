@@ -74,7 +74,9 @@ const Tags: React.FC<Props> = (props: Props) => {
   ];
 
   const saveTagsData = (item: TagsMeta) => {
-
+    if (!data){
+      setData([]);
+    }
     const i = data.findIndex((j: any) => j.id === item.id);
     if (i > -1) {
       data[i] = item;
