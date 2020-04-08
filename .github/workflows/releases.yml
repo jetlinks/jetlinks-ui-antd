@@ -1,4 +1,4 @@
-name: build App
+name: build Tag
 on: 
     push:
         branches:
