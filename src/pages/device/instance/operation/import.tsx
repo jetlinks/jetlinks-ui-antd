@@ -16,7 +16,6 @@ interface Props extends FormComponentProps {
 
 interface State {
   productList: DeviceProduct[];
-  fileUrl: string;
   product: string;
   fileType: string;
   fileInfo: any;
@@ -26,7 +25,6 @@ interface State {
 const Import: React.FC<Props> = props => {
   const initState: State = {
     productList: [],
-    fileUrl: '',
     product: '',
     fileType: '.xlsx',
     fileInfo: {},
@@ -35,7 +33,6 @@ const Import: React.FC<Props> = props => {
   const [productList, setProductList] = useState(initState.productList);
   const [uploading, setUploading] = useState(false);
   const [importLoading, setImportLoading] = useState(false);
-  const [fileUrl, setFileUrl] = useState(initState.fileUrl);
   const [product, setProduct] = useState(initState.product);
   const [fileType, setFileType] = useState(initState.fileType);
   const [flag, setFlag] = useState<boolean>(true);
@@ -63,7 +60,7 @@ const Import: React.FC<Props> = props => {
   }, []);
 
 
-  const submitData = () => {
+  const submitData = (fileUrl :string) => {
     if (fileUrl) {
       setImportLoading(true);
       let dt = 0;
@@ -82,7 +79,6 @@ const Import: React.FC<Props> = props => {
         }
       };
       source.onerror = () => {
-        setFileUrl("");
         setFlag(false);
         source.close();
       };
@@ -106,9 +102,10 @@ const Import: React.FC<Props> = props => {
       setImportLoading(false);
       setUploading(true);
       if (info.file.status === 'done') {
-        setFileUrl(info.file.response.result);
+        // setFileUrl(info.file.response.result);
         setUploading(false);
         message.success('文件上传成功');
+        submitData(info.file.response.result);
       }
     },
   };
@@ -132,14 +129,18 @@ const Import: React.FC<Props> = props => {
     <Modal
       title='批量导入设备'
       visible
-      okText="确定"
+      okText=""
       cancelText="取消"
       onOk={() => {
-        setCount(0);
+        /*setCount(0);
         setErrMessage('');
         setFlag(true);
         setImportLoading(false);
-        submitData();
+        submitData();*/
+        props.close();
+        if (JSON.stringify(eventSource) !== '{}'){
+          eventSource.close();
+        }
       }}
       onCancel={() => {
         props.close();
@@ -178,7 +179,7 @@ const Import: React.FC<Props> = props => {
               </Form.Item>
               <Form.Item label="文件上传">
                 <Upload {...uploadProps}>
-                  <Button icon="upload">批量导入设备</Button>
+                  <Button icon="upload">上传文件</Button>
                 </Upload>
                 <span style={{ marginLeft: 10 }}>
                   下载模版
