@@ -145,6 +145,22 @@ export async function removeTags(deviceId: string | undefined, tagId: string) {
   });
 }
 
+
+export async function getMulti(data: any) {
+  return request(`/jetlinks/dashboard/_multi?:X_Access_Token=${getAccessToken()}`, {
+    method: 'POST',
+    data,
+  });
+}
+
+export async function propertiesRealTime(data:any) {
+  //return request(`/jetlinks/dashboard/device/${productId}/properties/history`, {
+  return request(`/jetlinks/dashboard/_multi?:X_Access_Token=${getAccessToken()}`, {
+    method: 'POST',
+    data
+  });
+}
+
 // export async function deployAll() {
 //     return request(`/jetlinks/device-instance/deploy`, {
 //         method: 'GET',

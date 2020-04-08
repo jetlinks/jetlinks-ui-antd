@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import ChartCard from '@/pages/analysis/components/Charts/ChartCard';
 import { Badge, Col, Icon, Row, Spin, Tooltip } from 'antd';
 import { MiniArea } from '@/pages/analysis/components/Charts';
-import { IVisitData } from '@/pages/analysis/data';
 import { EventSourcePolyfill } from 'event-source-polyfill';
 import moment from 'moment';
 import apis from '@/services';
@@ -12,14 +11,12 @@ import { getAccessToken } from '@/utils/authority';
 import { wrapAPI } from '@/utils/utils';
 import PropertiesInfo from './properties-data/propertiesInfo';
 
-
 interface Props {
   device: any
 }
 
 interface State {
   runInfo: any;
-  propertiesData: any[];
   eventVisible: boolean;
   propertiesVisible: boolean;
   propertiesInfo: any;
@@ -37,18 +34,6 @@ const topColResponsiveProps = {
   style: { marginBottom: 24 },
 };
 
-// mock data
-const visitData: IVisitData[] = [];
-const beginDay = new Date().getTime();
-
-const fakeY = [7, 5, 4, 2, 4, 7, 5, 6, 5, 9, 6, 3, 1, 5, 3, 6, 5];
-for (let i = 0; i < fakeY.length; i += 1) {
-  visitData.push({
-    x: moment(new Date(beginDay + 1000 * 60 * 60 * 24 * i)).format('YYYY-MM-DD'),
-    y: fakeY[i],
-  });
-}
-
 const eventLevel = new Map();
 eventLevel.set('ordinary', <Badge status="processing" text="普通"/>);
 eventLevel.set('warn', <Badge status="warning" text="警告"/>);
@@ -58,7 +43,6 @@ const Status: React.FC<Props> = (props) => {
 
   const initState: State = {
     runInfo: {},
-    propertiesData: [],
     eventVisible: false,
     propertiesVisible: false,
     propertiesInfo: {},
@@ -67,25 +51,16 @@ const Status: React.FC<Props> = (props) => {
     deviceState: {},
   };
   const [runInfo, setRunInfo] = useState(initState.runInfo);
-  const [propertiesData, setPropertiesData] = useState(initState.propertiesData);
   const [eventVisible, setEventVisible] = useState(initState.eventVisible);
   const [metadata, setMetadata] = useState(initState.metadata);
   const [eventData, setEventData] = useState(initState.eventData);
   const [deviceState, setDeviceState] = useState(initState.deviceState);
   const [propertiesVisible, setPropertiesVisible] = useState(initState.propertiesVisible);
   const [propertiesInfo, setPropertiesInfo] = useState(initState.propertiesInfo);
+  const [propertyData, setPropertyData] = useState({});
+  const [spinning, setSpinning] = useState(true);
 
   let source: EventSourcePolyfill | null = null;
-
-  const loadProperties = () => {
-    apis.deviceInstance.properties(props.device.productId, props.device.id)
-      .then(response => {
-        if (response.status === 200) {
-          setPropertiesData(response.result);
-        }
-      }).catch(() => {
-    });
-  };
 
   useEffect(() => {
     runInfo.loading = true;
@@ -93,7 +68,37 @@ const Status: React.FC<Props> = (props) => {
     props.device.loading = false;
     setRunInfo(props.device);
     setDeviceState(props.device);
-    loadProperties();
+
+    const list = [{
+      'dashboard': 'device',
+      'object': props.device.productId,
+      'measurement': 'properties',
+      'dimension': 'history',
+      'params': {
+        'deviceId': props.device.id,
+        'history': 15,
+      },
+    }];
+
+    apis.deviceInstance.propertiesRealTime(list)
+      .then(response => {
+        setSpinning(false);
+        if (response.status === 200){
+          const tempResult = response?.result;
+          tempResult.forEach((item:any) => {
+            propertyData[item.data.value.property].formatValue = item.data.value?.formatValue ? item.data.value.formatValue : '--';
+            if (propertyData[item.data.value.property].visitData.length >= 15) {
+              propertyData[item.data.value.property].visitData.splice(0, 1);
+            }
+            propertyData[item.data.value.property].visitData.push({
+              'x': item.data.timeString,
+              'y': Math.floor(Number(item.data.value.value) * 100) / 100,
+            });
+          });
+          setPropertyData(propertyData);
+        }
+      }).catch();
+
   }, []);
 
   useEffect(() => {
@@ -104,11 +109,12 @@ const Status: React.FC<Props> = (props) => {
       // 设置properties的值
       if (properties) {
         metadata.properties = properties.map((item: any) => {
-          const temp = propertiesData.find(i => i.property === item.id);
-          // if (!temp) return item;
           item.loading = false;
-          item.formatValue = temp?.formatValue ? temp?.formatValue : '--';
-          item.visitData = [];
+          propertyData[item.id] = {
+            formatValue: '--',
+            visitData: [],
+            type: item.valueType.type,
+          };
           return item;
         });
       }
@@ -136,49 +142,46 @@ const Status: React.FC<Props> = (props) => {
           });
         });
       }
-      setMetadata(metadata);
+
+      setMetadata({ ...metadata });
+
 
       if (source) {
         source.close();
       }
 
       source = new EventSourcePolyfill(
-        wrapAPI(`/jetlinks/dashboard/device/${props.device.productId}/properties/realTime?:X_Access_Token=${getAccessToken()}&deviceId=${props.device.id}&history=15`),
+        wrapAPI(`/jetlinks/dashboard/device/${props.device.productId}/properties/realTime?:X_Access_Token=${getAccessToken()}&deviceId=${props.device.id}&history=1`),
       );
+
+      source.onopen = () => {};
+
       source.onmessage = (e: any) => {
 
         const data = JSON.parse(e.data);
-
         const dataValue = data.value;
-        metadata.properties = properties.map((item: any) => {
-          if (item.id === dataValue.property) {
-            item.formatValue = dataValue?.formatValue ? dataValue.formatValue : '--';
-            if (item.valueType.type === 'int' || item.valueType.type === 'float' || item.valueType.type === 'double') {
-              if (item.visitData.length >= 15) {
-                item.visitData.splice(0, 1);
-              }
-              item.visitData.push(
-                {
-                  'x': data.timeString,
-                  'y': Math.floor(Number(dataValue.value) * 100) / 100,
-                },
-              );
-            }
+
+        propertyData[dataValue.property].formatValue = dataValue?.formatValue ? dataValue.formatValue : '--';
+
+        if (propertyData[dataValue.property].type === 'int' || propertyData[dataValue.property].type === 'float'
+          || propertyData[dataValue.property].type === 'double') {
+
+          if (propertyData[dataValue.property].visitData.length >= 15) {
+            propertyData[dataValue.property].visitData.splice(0, 1);
           }
-          return item;
-        });
-        setMetadata({ ...metadata });
+          propertyData[dataValue.property].visitData.push({
+            'x': data.timeString,
+            'y': Math.floor(Number(dataValue.value) * 100) / 100,
+          });
+        }
+        setPropertyData({...propertyData});
       };
-      source.onerror = () => {
-      };
-      source.onopen = () => {
-      };
+      source.onerror = () => {};
     }
 
     return () => {
       if (source) {
         source.close();
-        runInfo.loading = false;
       }
     };
   }, [runInfo]);
@@ -191,50 +194,12 @@ const Status: React.FC<Props> = (props) => {
           runInfo.loading = false;
           setDeviceState({ state: response.result });
         }
-      }).catch(() => {
-
-    });
-  };
-
-  const refreshProperties = (item: any) => {
-    const { properties } = metadata;
-    apis.deviceInstance.property(props.device.id, item.id)
-      .then((response: any) => {
-        const tempResult = response?.result;
-        if (response.status === 200) {
-          if (tempResult) {
-            const temp = properties.map((e: any) => {
-              if (e.id === tempResult.property) {
-                e.formatValue = tempResult.formatValue;
-              }
-              e.loading = false;
-              return e;
-            });
-            metadata.properties = temp;
-          } else {
-            const temp = properties.map((e: any) => {
-              e.loading = false;
-              return e;
-            });
-            metadata.properties = temp;
-          }
-          setMetadata({ ...metadata });
-        } else {
-          const temp = properties.map((e: any) => {
-            e.loading = false;
-            return e;
-          });
-          metadata.properties = temp;
-          setMetadata({ ...metadata });
-        }
-      });
+      }).catch(() => {});
   };
 
   const refreshPropertyItem = (item: any) => {
     const { properties } = metadata;
     // 先修改加载状态
-    // const temp = properties.find(i => i.id !== item.id);
-    // item.loading = true;
     metadata.properties = properties.map((i: any) => {
       if (i.id === item.id) {
         i.loading = true;
@@ -242,10 +207,7 @@ const Status: React.FC<Props> = (props) => {
       return i;
     });
     setMetadata({ ...metadata });
-
     // 为了显示Loading效果
-    refreshProperties(item);
-
   };
 
   const refreshEventItem = (item: any) => {
@@ -259,8 +221,6 @@ const Status: React.FC<Props> = (props) => {
     });
     setMetadata({ ...metadata });
     // 为了显示Loading效果
-    // setTimeout(() => loadEventData(item.id), 5000);
-    // loadEventData(item.id);
     apis.deviceInstance.eventData(
       props.device.id, item.id,
       encodeQueryParam({}),
@@ -286,12 +246,12 @@ const Status: React.FC<Props> = (props) => {
         setMetadata({ ...metadata });
       }
     }).catch(() => {
-
     });
   };
 
   return (
     <div>
+      <Spin tip="加载中..." spinning={spinning}>
       {
         metadata && metadata.properties ? <Row gutter={24}>
             <Col {...topColResponsiveProps}>
@@ -338,12 +298,12 @@ const Status: React.FC<Props> = (props) => {
                                     }}/>
                             </div>
                           }
-                          total={item.formatValue || 0}
+                          total={...propertyData[item.id]?.formatValue || '--'}
                           contentHeight={46}
                         >
-                      <span>
-                        <MiniArea height={40} color="#975FE4" data={item.visitData}/>
-                      </span>
+                          <span>
+                            <MiniArea height={40} color="#975FE4" data={...propertyData[item.id]?.visitData}/>
+                          </span>
                         </ChartCard>
                       </Spin>
                     </Col>
@@ -440,6 +400,7 @@ const Status: React.FC<Props> = (props) => {
             </Spin>
           </Col>
       }
+      </Spin>
     </div>
   );
 };
