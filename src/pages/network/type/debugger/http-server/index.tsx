@@ -17,8 +17,8 @@ interface State {
     payload: string;
     headers: {
       id: string;
-      key: string;
-      value: string;
+      name: string;
+      value: string[];
       describe: string;
     }[];
     contentType: string;
@@ -35,8 +35,8 @@ const HttpServer: React.FC<Props> = props => {
       headers: [
         {
           id: randomString(8),
-          key: '',
-          value: '',
+          name: '',
+          value: [],
           describe: '',
         },
       ],
@@ -53,9 +53,13 @@ const HttpServer: React.FC<Props> = props => {
     setLogs([...logs]);
     const eventSource = new EventSourcePolyfill(
       wrapAPI(
-        `/jetlinks/network/mqtt/server/${
-        item.id
-        }/_subscribe/${type}?:X_Access_Token=${getAccessToken()}`,
+        `/jetlinks/network/http/server/${item.id}/_subscribe/${type}?status=${
+          debugData.status
+        }&contentType=${debugData.contentType}&payload=${
+          debugData.payload
+        }&headers=${encodeURIComponent(
+          JSON.stringify(debugData.headers),
+        )}&:X_Access_Token=${getAccessToken()}`,
       ),
     );
     setSourceState(eventSource);
@@ -63,7 +67,7 @@ const HttpServer: React.FC<Props> = props => {
     eventSource.onerror = () => {
       setLogs([...logs, '断开连接']);
     };
-    eventSource.onmessage = e => {
+    eventSource.onmessage = (e: any) => {
       setLogs(l => [...l, e.data]);
     };
     eventSource.onopen = () => {
@@ -117,9 +121,9 @@ const HttpServer: React.FC<Props> = props => {
               <Row key={i.id} style={{ marginBottom: 5 }}>
                 <Col span={6}>
                   <Input
-                    value={i.key}
+                    value={i.name}
                     onChange={e => {
-                      debugData.headers[index].key = e.target.value;
+                      debugData.headers[index].name = e.target.value;
                       setDebugData({ ...debugData });
                     }}
                     placeholder="key"
@@ -132,7 +136,7 @@ const HttpServer: React.FC<Props> = props => {
                   <Input
                     value={i.value}
                     onChange={e => {
-                      debugData.headers[index].value = e.target.value;
+                      debugData.headers[index].value = [e.target.value];
                       setDebugData({ ...debugData });
                     }}
                     placeholder="value"
@@ -158,23 +162,23 @@ const HttpServer: React.FC<Props> = props => {
                       onClick={() => {
                         debugData.headers.push({
                           id: randomString(8),
-                          key: '',
-                          value: '',
+                          name: '',
+                          value: [],
                           describe: '',
                         });
                         setDebugData({ ...debugData });
                       }}
                     />
                   ) : (
-                      <Icon
-                        type="minus"
-                        onClick={() => {
-                          debugData.headers = debugData.headers.filter(temp => temp.id !== i.id);
-                          // debugData.headers.push({ id: randomString(8), key: '', value: '' });
-                          setDebugData({ ...debugData });
-                        }}
-                      />
-                    )}
+                    <Icon
+                      type="minus"
+                      onClick={() => {
+                        debugData.headers = debugData.headers.filter(temp => temp.id !== i.id);
+                        // debugData.headers.push({ id: randomString(8), key: '', value: '' });
+                        setDebugData({ ...debugData });
+                      }}
+                    />
+                  )}
                 </Col>
               </Row>
             ))}
