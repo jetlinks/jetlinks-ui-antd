@@ -53,6 +53,8 @@ const Export: React.FC<Props> = props => {
     } else {
       formElement.action = `/jetlinks//device/instance/export.${fileType}`;
     }
+    delete props.searchParam.pageSize;
+    delete props.searchParam.pageIndex;
     const params = encodeQueryParam(props.searchParam);
     Object.keys(params).forEach((key: string) => {
       const inputElement = document.createElement('input');
