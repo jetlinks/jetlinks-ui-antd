@@ -69,35 +69,47 @@ const Status: React.FC<Props> = (props) => {
     setRunInfo(props.device);
     setDeviceState(props.device);
 
-    const list = [{
-      'dashboard': 'device',
-      'object': props.device.productId,
-      'measurement': 'properties',
-      'dimension': 'history',
-      'params': {
-        'deviceId': props.device.id,
-        'history': 15,
-      },
-    }];
+    const metadata = JSON.parse(props.device.metadata);
+    const { properties } = metadata;
+    // 设置properties的值
+    if (properties) {
+      properties.map((item: any) => {
+        propertyData[item.id] = {
+          formatValue: '--',
+          visitData: [],
+          type: item.valueType.type,
+        };
+      });
+      const list = [{
+        'dashboard': 'device',
+        'object': props.device.productId,
+        'measurement': 'properties',
+        'dimension': 'history',
+        'params': {
+          'deviceId': props.device.id,
+          'history': 15,
+        },
+      }];
 
-    apis.deviceInstance.propertiesRealTime(list)
-      .then(response => {
-        setSpinning(false);
-        if (response.status === 200){
-          const tempResult = response?.result;
-          tempResult.forEach((item:any) => {
-            propertyData[item.data.value.property].formatValue = item.data.value?.formatValue ? item.data.value.formatValue : '--';
-            if (propertyData[item.data.value.property].visitData.length >= 15) {
-              propertyData[item.data.value.property].visitData.splice(0, 1);
-            }
-            propertyData[item.data.value.property].visitData.push({
-              'x': item.data.timeString,
-              'y': Math.floor(Number(item.data.value.value) * 100) / 100,
+      apis.deviceInstance.propertiesRealTime(list)
+        .then(response => {
+          setSpinning(false);
+          if (response.status === 200){
+            const tempResult = response?.result;
+            tempResult.forEach((item:any) => {
+              propertyData[item.data.value.property].formatValue = item.data.value?.formatValue ? item.data.value.formatValue : '--';
+              if (propertyData[item.data.value.property].visitData.length >= 15) {
+                propertyData[item.data.value.property].visitData.splice(0, 1);
+              }
+              propertyData[item.data.value.property].visitData.push({
+                'x': item.data.timeString,
+                'y': Math.floor(Number(item.data.value.value) * 100) / 100,
+              });
             });
-          });
-          setPropertyData(propertyData);
-        }
-      }).catch();
+            setPropertyData(propertyData);
+          }
+        }).catch();
+    }
 
   }, []);
 
@@ -110,11 +122,6 @@ const Status: React.FC<Props> = (props) => {
       if (properties) {
         metadata.properties = properties.map((item: any) => {
           item.loading = false;
-          propertyData[item.id] = {
-            formatValue: '--',
-            visitData: [],
-            type: item.valueType.type,
-          };
           return item;
         });
       }
@@ -144,7 +151,6 @@ const Status: React.FC<Props> = (props) => {
       }
 
       setMetadata({ ...metadata });
-
 
       if (source) {
         source.close();
