@@ -66,7 +66,11 @@ const Search: React.FC<Props> = props => {
             <Button type="primary" onClick={() => {search();}}>
               查询
             </Button>
-            <Button style={{ marginLeft: 8 }} onClick={() => {form.resetFields();props.search();}}>
+            <Button style={{ marginLeft: 8 }} onClick={() => {
+              form.resetFields();
+              form.setFieldsValue({parameter:'id'});
+              props.search({});
+            }}>
               重置
             </Button>
           </div>

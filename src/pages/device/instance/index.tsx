@@ -93,7 +93,6 @@ const DeviceInstancePage: React.FC<Props> = props => {
 
   const handleSearch = (params?: any) => {
     setSearchParam(params);
-    console.log(params);
     dispatch({
       type: 'deviceInstance/query',
       payload: encodeQueryParam(params),
@@ -155,7 +154,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
       title: '注册时间',
       dataIndex: 'registryTime',
       width: '200px',
-      render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
+      render: (text: any) => text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/',
       sorter: true,
     },
     {
@@ -459,7 +458,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
         <Card bordered={false} style={{ height: 95 }} loading={deviceCount.loading}>
           <Row>
             <Col sm={7} xs={24}>
-              <Select placeholder="请选择设备型号" allowClear style={{ width: 300, marginTop: 7 }} defaultValue={product}
+              <Select placeholder="选择设备型号" allowClear style={{ width: 300, marginTop: 7 }} defaultValue={product}
                       onChange={(value: string) => {
                         setProduct(() => value);
                         setDeviceCount({ loading: true });
