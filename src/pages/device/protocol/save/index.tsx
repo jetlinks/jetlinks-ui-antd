@@ -95,7 +95,9 @@ const Save: React.FC<Props> = props => {
 
   useEffect(() => {
     apis.protocol.providers().then(response => {
-      setProviders(response.result);
+      if (response.status === 200) {
+        setProviders(response.result);
+      }
     });
   }, []);
 
@@ -192,7 +194,11 @@ const Save: React.FC<Props> = props => {
         data.configuration.transport = data.configuration.transport.join(',');
       }
       apis.protocol.convert(data).then(response => {
-        setDebuggerTransports(response.result?.transports);
+        if (response.status === 200){
+          setDebuggerTransports(response.result?.transports);
+        } else {
+          setActiveDebugger('');
+        }
       });
     }
   }, [activeDebugger]);
@@ -209,8 +215,10 @@ const Save: React.FC<Props> = props => {
       entity,
     };
     apis.protocol.optionCode(debuggerData.type, data).then(response => {
-      setDebugLog(response.result);
-      setActiveKey('result');
+      if (response.status === 200){
+        setDebugLog(response.result);
+        setActiveKey('result');
+      }
     });
   };
   return (
