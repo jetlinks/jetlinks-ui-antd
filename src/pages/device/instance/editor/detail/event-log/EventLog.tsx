@@ -78,7 +78,7 @@ const EventLog: React.FC<Props> = props => {
       visible
       onCancel={() => props.close()}
       onOk={() => props.close()}
-      width={1600}
+      width="70%"
     >
       <Table
         rowKey='createTime'
