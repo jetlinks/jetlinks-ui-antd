@@ -197,9 +197,44 @@ const Status: React.FC<Props> = (props) => {
       }).catch(() => {});
   };
 
+  const refreshProperties = (item: any) => {
+    const { properties } = metadata;
+    apis.deviceInstance.property(props.device.id, item.id)
+      .then((response: any) => {
+        const tempResult = response?.result;
+        if (response.status === 200) {
+          if (tempResult) {
+            const temp = properties.map((e: any) => {
+              if (e.id === tempResult.property) {
+                e.formatValue = tempResult.formatValue;
+              }
+              e.loading = false;
+              return e;
+            });
+            metadata.properties = temp;
+          } else {
+            const temp = properties.map((e: any) => {
+              e.loading = false;
+              return e;
+            });
+            metadata.properties = temp;
+          }
+          setMetadata({ ...metadata });
+        } else {
+          const temp = properties.map((e: any) => {
+            e.loading = false;
+            return e;
+          });
+          metadata.properties = temp;
+          setMetadata({ ...metadata });
+        }
+      });
+  };
+
   const refreshPropertyItem = (item: any) => {
     const { properties } = metadata;
     // 先修改加载状态
+
     metadata.properties = properties.map((i: any) => {
       if (i.id === item.id) {
         i.loading = true;
@@ -208,6 +243,7 @@ const Status: React.FC<Props> = (props) => {
     });
     setMetadata({ ...metadata });
     // 为了显示Loading效果
+    refreshProperties(item);
   };
 
   const refreshEventItem = (item: any) => {

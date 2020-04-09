@@ -175,7 +175,7 @@ const DeviceModel: React.FC<Props> = props => {
           <Divider type="vertical" />
           <a
             onClick={() => {
-              router.push(`/device/instance?productId$LIKE=${record.id}`);
+              router.push(`/device/instance?productId=${record.id}`);
             }}
           >
             查看设备

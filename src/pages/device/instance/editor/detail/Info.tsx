@@ -66,7 +66,7 @@ const Info: React.FC<Props> = (props) => {
           <Descriptions.Item label="所属机构" span={1}>
             {props.data.orgName}
           </Descriptions.Item>
-          <Descriptions.Item label="链接协议" span={1}>
+          <Descriptions.Item label="连接协议" span={1}>
             {props.data.transport}
           </Descriptions.Item>
           <Descriptions.Item label="消息协议" span={1}>
