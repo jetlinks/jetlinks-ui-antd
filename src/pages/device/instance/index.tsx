@@ -14,7 +14,7 @@ import {
   Popconfirm,
   Row,
   Select,
-  Table,
+  Table, Tooltip,
 } from 'antd';
 import { router } from 'umi';
 import { ColumnProps, PaginationConfig, SorterResult } from 'antd/lib/table';
@@ -79,7 +79,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
   const [importLoading, setImportLoading] = useState(initState.importLoading);
   const [action, setAction] = useState(initState.action);
   const [productList, setProductList] = useState(initState.productList);
-  const [product, setProduct] = useState("");
+  const [product, setProduct] = useState();
   const [deviceCount, setDeviceCount] = useState(initState.deviceCount);
   const [deviceImport, setDeviceImport] = useState(false);
   const [deviceExport, setDeviceExport] = useState(false);
@@ -93,6 +93,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
 
   const handleSearch = (params?: any) => {
     setSearchParam(params);
+    console.log(params);
     dispatch({
       type: 'deviceInstance/query',
       payload: encodeQueryParam(params),
@@ -248,41 +249,33 @@ const DeviceInstancePage: React.FC<Props> = props => {
       deviceTotal: 0,
       loading: true,
     };
-    for (let i = 0; i < 3; i++) {
-      let val = '';
-      if (i === 0) {
-        val = 'notActive';
-      } else if (i === 1) {
-        val = 'offline';
-      } else {
-        val = 'online';
-      }
-      apis.deviceInstance.count(encodeQueryParam({
-        terms: {
-          state: val,
-          productId: productId,
-        },
-      }))
-        .then(res => {
-          if (res.status === 200) {
-            if (i === 0) {
-              map.notActiveCount = res.result;
-            } else if (i === 1) {
-              map.offlineCount = res.result;
-            } else {
-              map.onlineCount = res.result;
-            }
-            apis.deviceInstance.count(encodeQueryParam({ terms: { productId: productId } }))
-              .then(res => {
-                if (res.status === 200) {
-                  map.deviceTotal = res.result;
-                  map.loading = false;
-                  setDeviceCount(map);
-                }
-              }).catch();
-          }
-        }).catch();
-    }
+
+    apis.deviceInstance.count(encodeQueryParam({ terms: { state: 'notActive', productId: productId } }))
+      .then(res => {
+        if (res.status === 200) {
+          map.notActiveCount = res.result;
+          apis.deviceInstance.count(encodeQueryParam({ terms: { state: 'offline', productId: productId } }))
+            .then(res => {
+              if (res.status === 200) {
+                map.offlineCount = res.result;
+                apis.deviceInstance.count(encodeQueryParam({ terms: { state: 'online', productId: productId } }))
+                  .then(res => {
+                    if (res.status === 200) {
+                      map.onlineCount = res.result;
+                      apis.deviceInstance.count(encodeQueryParam({ terms: { productId: productId } }))
+                        .then(res => {
+                          if (res.status === 200) {
+                            map.deviceTotal = res.result;
+                            map.loading = false;
+                            setDeviceCount(map);
+                          }
+                        }).catch();
+                    }
+                  }).catch();
+              }
+            }).catch();
+        }
+      }).catch();
   };
 
   useEffect(() => {
@@ -292,22 +285,23 @@ const DeviceInstancePage: React.FC<Props> = props => {
       .then(e => {
         setProductList(e.result);
       })
-      .catch(() => {});
+      .catch(() => {
+      });
 
-    const query:any = getPageQuery();
-    if (query.hasOwnProperty("productId")){
+    const query: any = getPageQuery();
+    if (query.hasOwnProperty('productId')) {
       const { productId } = query;
       setProduct(productId);
       handleSearch({
-        terms:{
-          productId:query.productId
+        terms: {
+          productId: query.productId,
         },
-        pageSize: 10
+        pageSize: 10,
       });
       stateCount(productId);
     } else {
       handleSearch(searchParam);
-      stateCount("");
+      stateCount('');
     }
   }, []);
 
@@ -332,12 +326,12 @@ const DeviceInstancePage: React.FC<Props> = props => {
   ) => {
     let { terms } = searchParam;
     if (filters.state) {
-      if (terms){
+      if (terms) {
         terms.state = filters.state[0];
       } else {
         terms = {
-          state:filters.state[0]
-        }
+          state: filters.state[0],
+        };
       }
     }
     handleSearch({
@@ -464,14 +458,15 @@ const DeviceInstancePage: React.FC<Props> = props => {
       <div className={styles.standardList}>
         <Card bordered={false} style={{ height: 95 }} loading={deviceCount.loading}>
           <Row>
-            <Col sm={8} xs={24}>
+            <Col sm={7} xs={24}>
               <Select placeholder="请选择设备型号" allowClear style={{ width: 300, marginTop: 7 }} defaultValue={product}
                       onChange={(value: string) => {
                         setProduct(() => value);
+                        setDeviceCount({ loading: true });
                         onDeviceProduct(value);
                       }}
               >
-                {productList.map(item => (
+                {productList?.map(item => (
                   <Select.Option key={item.id}>{item.name}</Select.Option>
                 ))}
               </Select>
@@ -488,6 +483,14 @@ const DeviceInstancePage: React.FC<Props> = props => {
             <Col sm={4} xs={24}>
               <Info title={<Badge status={statusMap.get('未激活')} text="未激活"/>} value={deviceCount.notActiveCount}/>
             </Col>
+            <Col sm={1} xs={24}>
+              <Tooltip title='刷新'>
+                <Icon type="sync" style={{ fontSize: 20 }} onClick={() => {
+                  setDeviceCount({ loading: true });
+                  stateCount(product);
+                }}/>
+              </Tooltip>
+            </Col>
           </Row>
         </Card>
         <br/>
@@ -499,7 +502,8 @@ const DeviceInstancePage: React.FC<Props> = props => {
                   if (product) {
                     params.productId = product;
                   }
-                  handleSearch({ terms: params, pageSize: 10 });
+                  params.state = searchParam.terms?.state;
+                  handleSearch({ terms: params, pageSize: 10, sorts: searchParam.sorts });
                 }}
               />
             </div>
@@ -514,15 +518,12 @@ const DeviceInstancePage: React.FC<Props> = props => {
               >
                 添加设备
               </Button>
-
               <Divider type="vertical"/>
-
               <Dropdown overlay={menu}>
                 <Button>
                   其他批量操作<Icon type="down"/>
                 </Button>
               </Dropdown>
-
             </div>
             <div className={styles.StandardTable}>
               <Table
