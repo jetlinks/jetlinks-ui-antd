@@ -126,6 +126,7 @@ const Save: React.FC<Props> = props => {
       case 'UDP':
       case 'COAP_SERVER':
       case 'TCP_SERVER':
+      case 'HTTP_SERVER':
         return (
           <div>
             <Form.Item label="消息协议">
