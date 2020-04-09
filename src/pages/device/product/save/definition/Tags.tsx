@@ -93,7 +93,10 @@ const Tags: React.FC<Props> = (props: Props) => {
         title="标签定义"
         style={{ marginBottom: 20 }}
         extra={
-          <Button type="primary" onClick={() => setVisible(true)}>
+          <Button type="primary" onClick={() => {
+            setCurrent({});
+            setVisible(true);
+          }}>
             添加
           </Button>
         }
