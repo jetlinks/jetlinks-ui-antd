@@ -57,6 +57,7 @@ const Status: React.FC<Props> = (props) => {
   const [deviceState, setDeviceState] = useState(initState.deviceState);
   const [propertiesVisible, setPropertiesVisible] = useState(initState.propertiesVisible);
   const [propertiesInfo, setPropertiesInfo] = useState(initState.propertiesInfo);
+  const [eventInfo, setEventInfo] = useState({});
   const [propertyData, setPropertyData] = useState({});
   const [spinning, setSpinning] = useState(true);
 
@@ -275,11 +276,10 @@ const Status: React.FC<Props> = (props) => {
           }
         });
         setEventData([...eventData]);
-
         // 关闭加载中状态
-        const { eventsInfo } = metadata;
+        const { events } = metadata;
         // 修改加载状态
-        metadata.events = eventsInfo.map((i: any) => {
+        metadata.events = events.map((i: any) => {
           if (i.id === item.id) {
             i.loading = false;
           }
@@ -391,33 +391,30 @@ const Status: React.FC<Props> = (props) => {
                         <a
                           style={{ float: 'right' }}
                           onClick={() => {
+                            setEventInfo(item);
                             setEventVisible(true);
                           }}>
                           查看详情
                         </a>
                       </span>
                         </ChartCard>
-
                       </Spin>
-
-                      {
-                        eventVisible &&
-                        <EventLog
-                          data={tempData?.data}
-                          item={item}
-                          close={() => {
-                            setEventVisible(false);
-                          }}
-                          type={props.device.productId}
-                          deviceId={props.device.id}
-                        />
-                      }
                     </Col>
                   );
                 },
               )
             }
-
+            {
+              eventVisible &&
+              <EventLog
+                item={eventInfo}
+                close={() => {
+                  setEventVisible(false);
+                }}
+                type={props.device.productId}
+                deviceId={props.device.id}
+              />
+            }
           </Row>
           :
           <Col {...topColResponsiveProps}>

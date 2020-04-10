@@ -6,7 +6,6 @@ import encodeQueryParam from '@/utils/encodeParam';
 import moment from 'moment';
 
 interface Props {
-  data: any;
   close: Function;
   item: any;
   type: string;
@@ -21,13 +20,17 @@ interface State {
 const EventLog: React.FC<Props> = props => {
 
   const initState: State = {
-    eventColumns: props.item.valueType.properties.map((item: any) => {
+    eventColumns: props.item.valueType.type === "object" ? props.item.valueType.properties?.map((item: any) => {
       return {
         title: item.name,
         dataIndex: `${item.id }_format`,
         ellipsis : true
       };
-    }),
+    }):[{
+      title: "数据",
+      dataIndex: `value`,
+      ellipsis : true
+    }],
     logData: {},
   };
   initState.eventColumns.push({
