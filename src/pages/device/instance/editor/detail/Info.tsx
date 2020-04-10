@@ -79,10 +79,10 @@ const Info: React.FC<Props> = (props) => {
             {moment(props.data.createTime).format('YYYY-MM-DD HH:mm:ss')}
           </Descriptions.Item>
           <Descriptions.Item label="注册时间" span={1}>
-            {moment(props.data.registerTime).format('YYYY-MM-DD HH:mm:ss')}
+            {props.data.state?.value !== "notActive" ? moment(props.data.registerTime).format('YYYY-MM-DD HH:mm:ss') : "/"}
           </Descriptions.Item>
           <Descriptions.Item label="最后上线时间" span={1}>
-            {moment(props.data.onlineTime).format('YYYY-MM-DD HH:mm:ss')}
+            {props.data.state?.value !== "notActive" ? moment(props.data.onlineTime).format('YYYY-MM-DD HH:mm:ss') : "/"}
           </Descriptions.Item>
           <Descriptions.Item label="说明" span={3}>
             {props.data.describe}
