@@ -233,8 +233,11 @@ const Paramter: React.FC<Props> = props => {
             <Form.Item label="数据长度">
               <Input
                 addonAfter="字节"
-                value={data.valueType.expands.maxLength}
+                value={data.valueType?.expands?.maxLength}
                 onChange={event => {
+                  if (!data.valueType.expands){
+                    data.valueType.expands = {};
+                  }
                   data.valueType.expands.maxLength = event.target.value;
                   setData({ ...data });
                 }}
