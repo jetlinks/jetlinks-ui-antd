@@ -227,7 +227,7 @@ const Paramter: React.FC<Props> = props => {
             </Form.Item>
           </div>
         );
-      case 'text':
+      case 'string':
         return (
           <div>
             <Form.Item label="数据长度">
