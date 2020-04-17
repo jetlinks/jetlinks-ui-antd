@@ -27,6 +27,7 @@ import * as deviceGateway from '@/pages/device/gateway/service';
 import * as notifier from '@/pages/notice/service';
 import * as org from '@/pages/system/org/service';
 import * as analysis from '@/pages/analysis/service';
+import * as deviceAlarm from '@/pages/device/alarm/service';
 
 const apis = {
   login,
@@ -58,5 +59,6 @@ const apis = {
   notifier,
   org,
   analysis,
+  deviceAlarm,
 };
 export default apis;

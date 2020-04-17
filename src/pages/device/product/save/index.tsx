@@ -302,6 +302,9 @@ const Save: React.FC<Props> = props => {
     const { form } = props;
     form.validateFields((err, fileValue) => {
       if (err) return;
+      if (!fileValue.orgId){
+        fileValue.orgId = "";
+      }
       props.save({ state: 0, ...fileValue });
     });
   };

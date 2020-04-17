@@ -9,6 +9,7 @@ import { ConnectState, Dispatch } from '@/models/connect';
 import apis from '@/services';
 import Save from '.';
 import encodeQueryParam from '@/utils/encodeParam';
+import Alarm from '@/pages/device/alarm';
 
 interface Props {
   dispatch: Dispatch;
@@ -53,6 +54,40 @@ const Detail: React.FC<Props> = props => {
   const [spinning, setSpinning] = useState(initState.spinning);
   const [units, setUnits] = useState(initState.units);
 
+  const handleSearch = (id:string) => {
+    dispatch({
+      type: 'deviceProduct/queryById',
+      payload: id,
+      callback: (r: any) => {
+        if (r.status === 200) {
+          const data = r.result;
+          data.orgName = orgInfo[data.orgId];
+          setBasicInfo(data);
+          setSpinning(false);
+          if (data.metadata) {
+            const metadata = JSON.parse(data.metadata);
+            setEvents(metadata.events);
+            setFunctions(metadata.functions);
+            setProperties(metadata.properties);
+            setTags(metadata.tags);
+          }
+          apis.deviceProdcut
+            .protocolConfiguration(data.messageProtocol, data.transportProtocol)
+            .then(resp => {
+              setConfig(resp.result);
+            });
+        }
+      },
+    });
+
+    apis.deviceInstance.count(encodeQueryParam({ terms: { 'productId': id } }))
+      .then(res => {
+        if (res.status === 200) {
+          setDeviceCount(res.result);
+        }
+      }).catch();
+  };
+
   useEffect(() => {
     apis.deviceProdcut
       .queryOrganization()
@@ -74,37 +109,7 @@ const Detail: React.FC<Props> = props => {
 
     if (pathname.indexOf('save') > 0) {
       const list = pathname.split('/');
-      dispatch({
-        type: 'deviceProduct/queryById',
-        payload: list[list.length - 1],
-        callback: (r: any) => {
-          if (r.status === 200) {
-            const data = r.result;
-            data.orgName = orgInfo[data.orgId];
-            setBasicInfo(data);
-            setSpinning(false);
-            if (data.metadata) {
-              const metadata = JSON.parse(data.metadata);
-              setEvents(metadata.events);
-              setFunctions(metadata.functions);
-              setProperties(metadata.properties);
-              setTags(metadata.tags);
-            }
-            apis.deviceProdcut
-              .protocolConfiguration(data.messageProtocol, data.transportProtocol)
-              .then(resp => {
-                setConfig(resp.result);
-              });
-          }
-        },
-      });
-
-      apis.deviceInstance.count(encodeQueryParam({ terms: { 'productId': list[list.length - 1] } }))
-        .then(res => {
-          if (res.status === 200) {
-            setDeviceCount(res.result);
-          }
-        }).catch();
+      handleSearch(list[list.length - 1]);
     }
   }, []);
 
@@ -123,6 +128,8 @@ const Detail: React.FC<Props> = props => {
       .then(r => {
         if (r.status === 200) {
           message.success('保存成功');
+          const list = pathname.split('/');
+          handleSearch(list[list.length - 1]);
         }
       })
       .catch(() => {
@@ -205,7 +212,7 @@ const Detail: React.FC<Props> = props => {
     <Row>
       <div>
           <span>
-            型号：{basicInfo.name}
+            产品：{basicInfo.name}
           </span>
         <Badge style={{ marginLeft: 20 }} color={basicInfo.state === 1 ? 'green' : 'red'}
                text={basicInfo.state === 1 ? '已发布' : '未发布'}/>
@@ -231,14 +238,14 @@ const Detail: React.FC<Props> = props => {
       >
         <Card>
           <Tabs>
-            <Tabs.TabPane tab="型号信息" key="info">
+            <Tabs.TabPane tab="产品信息" key="info">
               <Descriptions
                 style={{ marginBottom: 20 }}
                 bordered
                 column={2}
                 title={
                   <span>
-                    型号信息
+                    产品信息
                     <Button
                       icon="edit"
                       style={{ marginLeft: 20 }}
@@ -292,7 +299,7 @@ const Detail: React.FC<Props> = props => {
                 </Descriptions>
               )}
             </Tabs.TabPane>
-            <Tabs.TabPane tab="功能定义" key="metadata">
+            <Tabs.TabPane tab="物模型" key="metadata">
               <Definition
                 eventsData={events}
                 functionsData={functions}
@@ -316,6 +323,9 @@ const Detail: React.FC<Props> = props => {
                   updateData('tags', data);
                 }}
               />
+            </Tabs.TabPane>
+            <Tabs.TabPane tab="告警设置" key="metadata1">
+              <Alarm target="product" productId={""} targetId={basicInfo.id} metaData={basicInfo.metadata} name={basicInfo.name}/>
             </Tabs.TabPane>
           </Tabs>
         </Card>
