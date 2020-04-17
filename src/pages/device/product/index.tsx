@@ -175,7 +175,7 @@ const DeviceModel: React.FC<Props> = props => {
           <Divider type="vertical" />
           <a
             onClick={() => {
-              router.push(`/device/instance?productId$LIKE=${record.id}`);
+              router.push(`/device/instance?productId=${record.id}`);
             }}
           >
             查看设备
@@ -250,8 +250,7 @@ const DeviceModel: React.FC<Props> = props => {
           <div>
             <Search
               search={(params: any) => {
-                setSearchParam(params);
-                handleSearch({ terms: params, pageSize: 10 });
+                handleSearch({ terms: params, pageSize: 10, sorts: searchParam.sorts });
               }}
             />
           </div>

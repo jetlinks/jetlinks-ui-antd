@@ -100,7 +100,7 @@ const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVi
         "dimension": "agg",
         "group": "month",
         "params": {
-          "time": "30d",
+          "time": "1M",
           "format": "yyyy-MM-dd",
           "from": calculationDate()
         }

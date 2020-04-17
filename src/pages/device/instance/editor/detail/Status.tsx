@@ -57,6 +57,7 @@ const Status: React.FC<Props> = (props) => {
   const [deviceState, setDeviceState] = useState(initState.deviceState);
   const [propertiesVisible, setPropertiesVisible] = useState(initState.propertiesVisible);
   const [propertiesInfo, setPropertiesInfo] = useState(initState.propertiesInfo);
+  const [eventInfo, setEventInfo] = useState({});
   const [propertyData, setPropertyData] = useState({});
   const [spinning, setSpinning] = useState(true);
 
@@ -69,35 +70,47 @@ const Status: React.FC<Props> = (props) => {
     setRunInfo(props.device);
     setDeviceState(props.device);
 
-    const list = [{
-      'dashboard': 'device',
-      'object': props.device.productId,
-      'measurement': 'properties',
-      'dimension': 'history',
-      'params': {
-        'deviceId': props.device.id,
-        'history': 15,
-      },
-    }];
+    const metadata = JSON.parse(props.device.metadata);
+    const { properties } = metadata;
+    // 设置properties的值
+    if (properties) {
+      properties.map((item: any) => {
+        propertyData[item.id] = {
+          formatValue: '--',
+          visitData: [],
+          type: item.valueType.type,
+        };
+      });
+      const list = [{
+        'dashboard': 'device',
+        'object': props.device.productId,
+        'measurement': 'properties',
+        'dimension': 'history',
+        'params': {
+          'deviceId': props.device.id,
+          'history': 15,
+        },
+      }];
 
-    apis.deviceInstance.propertiesRealTime(list)
-      .then(response => {
-        setSpinning(false);
-        if (response.status === 200){
-          const tempResult = response?.result;
-          tempResult.forEach((item:any) => {
-            propertyData[item.data.value.property].formatValue = item.data.value?.formatValue ? item.data.value.formatValue : '--';
-            if (propertyData[item.data.value.property].visitData.length >= 15) {
-              propertyData[item.data.value.property].visitData.splice(0, 1);
-            }
-            propertyData[item.data.value.property].visitData.push({
-              'x': item.data.timeString,
-              'y': Math.floor(Number(item.data.value.value) * 100) / 100,
+      apis.deviceInstance.propertiesRealTime(list)
+        .then(response => {
+          setSpinning(false);
+          if (response.status === 200){
+            const tempResult = response?.result;
+            tempResult.forEach((item:any) => {
+              propertyData[item.data.value.property].formatValue = item.data.value?.formatValue ? item.data.value.formatValue : '--';
+              if (propertyData[item.data.value.property].visitData.length >= 15) {
+                propertyData[item.data.value.property].visitData.splice(0, 1);
+              }
+              propertyData[item.data.value.property].visitData.push({
+                'x': item.data.timeString,
+                'y': Math.floor(Number(item.data.value.value) * 100) / 100,
+              });
             });
-          });
-          setPropertyData(propertyData);
-        }
-      }).catch();
+            setPropertyData(propertyData);
+          }
+        }).catch();
+    }
 
   }, []);
 
@@ -110,11 +123,6 @@ const Status: React.FC<Props> = (props) => {
       if (properties) {
         metadata.properties = properties.map((item: any) => {
           item.loading = false;
-          propertyData[item.id] = {
-            formatValue: '--',
-            visitData: [],
-            type: item.valueType.type,
-          };
           return item;
         });
       }
@@ -144,7 +152,6 @@ const Status: React.FC<Props> = (props) => {
       }
 
       setMetadata({ ...metadata });
-
 
       if (source) {
         source.close();
@@ -197,9 +204,44 @@ const Status: React.FC<Props> = (props) => {
       }).catch(() => {});
   };
 
+  const refreshProperties = (item: any) => {
+    const { properties } = metadata;
+    apis.deviceInstance.property(props.device.id, item.id)
+      .then((response: any) => {
+        const tempResult = response?.result;
+        if (response.status === 200) {
+          if (tempResult) {
+            const temp = properties.map((e: any) => {
+              if (e.id === tempResult.property) {
+                e.formatValue = tempResult.formatValue;
+              }
+              e.loading = false;
+              return e;
+            });
+            metadata.properties = temp;
+          } else {
+            const temp = properties.map((e: any) => {
+              e.loading = false;
+              return e;
+            });
+            metadata.properties = temp;
+          }
+          setMetadata({ ...metadata });
+        } else {
+          const temp = properties.map((e: any) => {
+            e.loading = false;
+            return e;
+          });
+          metadata.properties = temp;
+          setMetadata({ ...metadata });
+        }
+      });
+  };
+
   const refreshPropertyItem = (item: any) => {
     const { properties } = metadata;
     // 先修改加载状态
+
     metadata.properties = properties.map((i: any) => {
       if (i.id === item.id) {
         i.loading = true;
@@ -208,6 +250,7 @@ const Status: React.FC<Props> = (props) => {
     });
     setMetadata({ ...metadata });
     // 为了显示Loading效果
+    refreshProperties(item);
   };
 
   const refreshEventItem = (item: any) => {
@@ -233,11 +276,10 @@ const Status: React.FC<Props> = (props) => {
           }
         });
         setEventData([...eventData]);
-
         // 关闭加载中状态
-        const { eventsInfo } = metadata;
+        const { events } = metadata;
         // 修改加载状态
-        metadata.events = eventsInfo.map((i: any) => {
+        metadata.events = events.map((i: any) => {
           if (i.id === item.id) {
             i.loading = false;
           }
@@ -349,33 +391,30 @@ const Status: React.FC<Props> = (props) => {
                         <a
                           style={{ float: 'right' }}
                           onClick={() => {
+                            setEventInfo(item);
                             setEventVisible(true);
                           }}>
                           查看详情
                         </a>
                       </span>
                         </ChartCard>
-
                       </Spin>
-
-                      {
-                        eventVisible &&
-                        <EventLog
-                          data={tempData?.data}
-                          item={item}
-                          close={() => {
-                            setEventVisible(false);
-                          }}
-                          type={props.device.productId}
-                          deviceId={props.device.id}
-                        />
-                      }
                     </Col>
                   );
                 },
               )
             }
-
+            {
+              eventVisible &&
+              <EventLog
+                item={eventInfo}
+                close={() => {
+                  setEventVisible(false);
+                }}
+                type={props.device.productId}
+                deviceId={props.device.id}
+              />
+            }
           </Row>
           :
           <Col {...topColResponsiveProps}>

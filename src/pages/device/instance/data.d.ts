@@ -15,6 +15,8 @@ export class DeviceInstance extends SimpleType {
 
   deriveMetadata: string;
 
+  metadata: string;
+
   state: {
     value: string,
     text: string,

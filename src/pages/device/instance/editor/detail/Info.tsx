@@ -66,7 +66,7 @@ const Info: React.FC<Props> = (props) => {
           <Descriptions.Item label="所属机构" span={1}>
             {props.data.orgName}
           </Descriptions.Item>
-          <Descriptions.Item label="链接协议" span={1}>
+          <Descriptions.Item label="连接协议" span={1}>
             {props.data.transport}
           </Descriptions.Item>
           <Descriptions.Item label="消息协议" span={1}>
@@ -79,10 +79,10 @@ const Info: React.FC<Props> = (props) => {
             {moment(props.data.createTime).format('YYYY-MM-DD HH:mm:ss')}
           </Descriptions.Item>
           <Descriptions.Item label="注册时间" span={1}>
-            {moment(props.data.registerTime).format('YYYY-MM-DD HH:mm:ss')}
+            {props.data.state?.value !== "notActive" ? moment(props.data.registerTime).format('YYYY-MM-DD HH:mm:ss') : "/"}
           </Descriptions.Item>
           <Descriptions.Item label="最后上线时间" span={1}>
-            {moment(props.data.onlineTime).format('YYYY-MM-DD HH:mm:ss')}
+            {props.data.state?.value !== "notActive" ? moment(props.data.onlineTime).format('YYYY-MM-DD HH:mm:ss') : "/"}
           </Descriptions.Item>
           <Descriptions.Item label="说明" span={3}>
             {props.data.describe}

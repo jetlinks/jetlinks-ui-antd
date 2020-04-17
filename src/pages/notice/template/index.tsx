@@ -112,7 +112,7 @@ const Template: React.FC<Props> = props => {
       type: 'noticeTemplate/remove',
       payload: record.id,
       callback: () => {
-        message.error('删除成功');
+        message.success('删除成功');
         handlerSearch(searchParam);
       },
     });

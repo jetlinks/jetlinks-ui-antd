@@ -54,7 +54,6 @@ class MiniArea extends React.Component<IMiniAreaProps> {
         ...scale!.x,
       },
       y: {
-        min: 0,
         ...scale!.y,
       },
     };

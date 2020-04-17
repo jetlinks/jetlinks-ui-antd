@@ -143,7 +143,7 @@ const SystemLoggerList: React.FC<Props> = props => {
             <Search
               search={(params: any) => {
                 setSearchParam(params);
-                handleSearch({ terms: params, pageSize: 10 });
+                handleSearch({ terms: params, pageSize: 10, sorts: searchParam.sorts });
               }}
             />
           </div>

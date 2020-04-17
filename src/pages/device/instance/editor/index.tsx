@@ -13,6 +13,7 @@ import { ConnectState, Dispatch } from '@/models/connect';
 import { DeviceInstance } from '@/pages/device/instance/data';
 import apis from '@/services';
 import Gateway from './detail/gateway';
+import Alarm from '@/pages/device/alarm';
 
 interface Props {
   dispatch: Dispatch;
@@ -62,6 +63,10 @@ const Editor: React.FC<Props> = props => {
     {
       key: 'log',
       tab: '日志管理',
+    },
+    {
+      key: 'alarm',
+      tab: '告警设置',
     },
   ];
 
@@ -178,6 +183,7 @@ const Editor: React.FC<Props> = props => {
     log: <Log deviceId={id}/>,
     debugger: <Debugger />,
     gateway: <Gateway deviceId={id} loading={false}/>,
+    alarm: <Alarm target="device" productId={data.productId} targetId={data.id} metaData={data.metadata} name={data.name}/>,
   };
 
   const content = (

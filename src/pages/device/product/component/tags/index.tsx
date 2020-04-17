@@ -22,7 +22,7 @@ interface State {
   properties: any[];
 }
 
-const PropertiesDefin: React.FC<Props> = props => {
+const TagsDefin: React.FC<Props> = props => {
   const initState: State = {
     dataType: props.data.valueType?.type || '',
     data: props.data,
@@ -565,4 +565,4 @@ const PropertiesDefin: React.FC<Props> = props => {
   );
 };
 
-export default Form.create<Props>()(PropertiesDefin);
+export default Form.create<Props>()(TagsDefin);

@@ -113,7 +113,7 @@ const Tags: React.FC<Props> = props => {
                       type="plus-circle"
                       title="新增标签"
                       onClick={() => {
-                        setTagsData([...tagsData, { _id: tagsData.length + 1 }]);
+                        setTagsData([...tagsData, { _id: Math.round(Math.random() * 100000) }]);
                       }}
                     />
                       <Icon style={{marginLeft:5}}
