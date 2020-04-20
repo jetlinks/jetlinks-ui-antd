@@ -64,10 +64,12 @@ const Save: React.FC<Props> = props => {
       const key = `configuration.${item.property}`;
       const componentType = item.type.id;
       let component = null;
-      const options = {
-        initialValue: props.data?.configuration[item.property],
-      };
-
+      let options: any = {};
+      if (props.data?.configuration) {
+        options = {
+          initialValue: props.data?.configuration[item.property],
+        };
+      }
       if (componentType !== 'enum') {
         component = <Input type={componentType === 'password' ? 'password' : 'text'}/>;
       } else {
@@ -95,6 +97,7 @@ const Save: React.FC<Props> = props => {
         component,
       };
     });
+
     setConfigForm(config);
   };
 
@@ -129,10 +132,11 @@ const Save: React.FC<Props> = props => {
     apis.deviceProdcut
       .queryOrganization()
       .then(res => {
-        if (res.status === 200){
+        if (res.status === 200) {
           setOrganizationList(res.result);
         }
-      }).catch(() => {});
+      }).catch(() => {
+    });
 
     if (props.data && props.data.messageProtocol) {
       onMessageProtocolChange(props.data.messageProtocol);
@@ -302,8 +306,8 @@ const Save: React.FC<Props> = props => {
     const { form } = props;
     form.validateFields((err, fileValue) => {
       if (err) return;
-      if (!fileValue.orgId){
-        fileValue.orgId = "";
+      if (!fileValue.orgId) {
+        fileValue.orgId = '';
       }
       props.save({ state: 0, ...fileValue });
     });
