@@ -35,6 +35,7 @@ const Save: React.FC<Props> = props => {
   const [data] = useState(initState.data);
   const [properties, setProperties] = useState(initState.properties);
   const [trigger, setTrigger] = useState(initState.trigger);
+  const [triggerData, setTriggerData] = useState(initState.trigger);
   const [action, setAction] = useState(initState.action);
 
   const submitData = () => {
@@ -100,16 +101,15 @@ const Save: React.FC<Props> = props => {
     >
       <div style={{ maxHeight: 750, overflowY: 'auto', overflowX: 'hidden' }} key={Math.round(Math.random() * 100000)}>
         <Form wrapperCol={{ span: 24 }} key={Math.round(Math.random() * 100000)}>
-          <Card style={{ marginBottom: 10 }} bordered={false} size="small"  key={Math.round(Math.random() * 100000)}>
+          <Card style={{ marginBottom: 10 }} bordered={false} size="small" key={Math.round(Math.random() * 100000)}>
             <p style={{ fontSize: 16 }}>触发条件
-              <Tooltip title="触发器可为空，消息只要满足触发条件中任意一个即可触发">
+              <Tooltip title="消息只要满足触发条件中任意一个即可触发">
                 <Icon type="question-circle-o" style={{ paddingLeft: 10 }}/>
               </Tooltip>
             </p>
             {trigger.map((item: any, index) => (
-              <Triggers save={(triggerData: any) => {
-                trigger.splice(index, 1, triggerData);
-                //setTrigger([...trigger]);
+              <Triggers save={(data: any) => {
+                trigger.splice(index, 1, data);
               }} trigger={item} metaData={props.metaData} position={index} remove={(position: number) => {
                 trigger.splice(position, 1);
                 setTrigger([...trigger]);
@@ -137,7 +137,8 @@ const Save: React.FC<Props> = props => {
               paddingTop: 10,
             }} key={Math.round(Math.random() * 100000)}>
               {properties.map((item: any, index) => (
-                <Row key={Math.round(Math.random() * 100000)} gutter={16} style={{ paddingBottom: 10, marginLeft: 13, marginRight: 3 }}>
+                <Row key={Math.round(Math.random() * 100000)} gutter={16}
+                     style={{ paddingBottom: 10, marginLeft: 13, marginRight: 3 }}>
                   <Col span={6}>
                     <Input placeholder="请输入属性" key={Math.round(Math.random() * 100000)} value={item.property}
                            onChange={event => {
@@ -155,7 +156,12 @@ const Save: React.FC<Props> = props => {
                     />
                   </Col>
                   <Col span={12} style={{ textAlign: 'right', marginTop: 6, paddingRight: 15 }}>
-                    {index === 0 ? (
+                    <a style={{ paddingTop: 7 }}
+                       onClick={() => {
+                         removeProperties(index);
+                       }}
+                    >删除</a>
+                    {/*{index === 0 ? (
                       <Row key={Math.round(Math.random() * 100000)}>
                         <a onClick={() => {
                           setProperties([...properties, { _id: Math.round(Math.random() * 100000) }]);
@@ -172,10 +178,15 @@ const Save: React.FC<Props> = props => {
                            removeProperties(index);
                          }}
                       >删除</a>
-                    )}
+                    )}*/}
                   </Col>
                 </Row>
               ))}
+              <Col span={24} style={{ marginLeft: 20 }}>
+                <a onClick={() => {
+                  setProperties([...properties, { _id: Math.round(Math.random() * 100000) }]);
+                }}>添加</a>
+              </Col>
             </div>
           </Card>
 
@@ -184,7 +195,6 @@ const Save: React.FC<Props> = props => {
             {action.map((item: any, index) => (
               <ActionAssembly save={(actionAata: any) => {
                 action.splice(index, 1, actionAata);
-                //setAction([...action]);
               }} action={item} position={index} remove={(position: number) => {
                 action.splice(position, 1);
                 setAction([...action]);

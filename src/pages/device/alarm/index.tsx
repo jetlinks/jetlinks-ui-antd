@@ -90,8 +90,6 @@ const Alarm: React.FC<Props> = props => {
         if (response.status === 200) {
           message.success('保存成功');
           setSaveVisible(false);
-        } else {
-          message.error(`保存失败，失败原因：${response.message}`);
         }
         setSpinning(false);
       })
@@ -107,7 +105,6 @@ const Alarm: React.FC<Props> = props => {
           getProductAlarms();
         } else {
           setSpinning(false);
-          message.error('启动失败:' + response.message);
         }
       })
       .catch();
@@ -121,7 +118,6 @@ const Alarm: React.FC<Props> = props => {
           getProductAlarms();
         } else {
           setSpinning(false);
-          message.error(`停止失败:${response.message}`);
         }
       })
       .catch();
@@ -134,7 +130,6 @@ const Alarm: React.FC<Props> = props => {
           getProductAlarms();
         } else {
           setSpinning(false);
-          message.error(`删除失败：${response.message}`);
         }
       })
       .catch(() => {

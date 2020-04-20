@@ -48,7 +48,6 @@ export class AlarmTrigger {
   parameters: AlarmParameters[];
   modelId: string;
   filters: AlarmConditionFilter[];
-  columns: any[];
 }
 
 export class AlarmConditionFilter {
