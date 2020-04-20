@@ -35,11 +35,11 @@ const Save: React.FC<Props> = props => {
   const [data] = useState(initState.data);
   const [properties, setProperties] = useState(initState.properties);
   const [trigger, setTrigger] = useState(initState.trigger);
-  const [triggerData, setTriggerData] = useState(initState.trigger);
   const [action, setAction] = useState(initState.action);
+  const [alarmName, setAlarmName] = useState('');
 
   const submitData = () => {
-    data.name = props.name;
+    data.name = alarmName;
     data.target = props.target;
     data.targetId = props.targetId;
     if (props.name === 'device') {
@@ -101,9 +101,20 @@ const Save: React.FC<Props> = props => {
     >
       <div style={{ maxHeight: 750, overflowY: 'auto', overflowX: 'hidden' }} key={Math.round(Math.random() * 100000)}>
         <Form wrapperCol={{ span: 24 }} key={Math.round(Math.random() * 100000)}>
+          <Row key={Math.round(Math.random() * 100000)} gutter={16}
+               style={{ marginLeft: '0.1%' }}>
+            <Col span={8}>
+              <label style={{ fontSize: 16 }}>告警名称：</label>
+              <Input placeholder="请输入别名" defaultValue={props.data.name} key={Math.round(Math.random() * 100000)}
+                     style={{ width: '80%' }}
+                     onBlur={event => {
+                       setAlarmName(event.target.value);
+                     }}/>
+            </Col>
+          </Row>
           <Card style={{ marginBottom: 10 }} bordered={false} size="small" key={Math.round(Math.random() * 100000)}>
             <p style={{ fontSize: 16 }}>触发条件
-              <Tooltip title="消息只要满足触发条件中任意一个即可触发">
+              <Tooltip title="触发条件满足条件中任意一个即可触发">
                 <Icon type="question-circle-o" style={{ paddingLeft: 10 }}/>
               </Tooltip>
             </p>

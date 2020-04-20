@@ -138,7 +138,7 @@ const Alarm: React.FC<Props> = props => {
 
   const columns: ColumnProps<alarm>[] = [
     {
-      title: '属性/事件名称',
+      title: '告警名称',
       dataIndex: 'name',
     },
     {
@@ -325,7 +325,7 @@ const Alarm: React.FC<Props> = props => {
             <Card title={
               <Button
                 icon="plus"
-                type="link"
+                type="primary"
                 onClick={() => {
                   setSaveAlarmData({});
                   setSaveVisible(true);
