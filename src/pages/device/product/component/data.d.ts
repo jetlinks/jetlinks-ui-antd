@@ -53,9 +53,9 @@ export class ValueType {
 
   latProperty:string;
 
-  lonProperty:string;
-
   dateTemplate?: string;
+
+  format?: string;
 
   elementType?: string;
 

@@ -240,8 +240,8 @@ const TagsDefin: React.FC<Props> = props => {
         return (
           <div>
             <Form.Item label="时间格式">
-              {getFieldDecorator('dateTemplate', {
-                initialValue: initState.data.valueType?.dateTemplate,
+              {getFieldDecorator('format', {
+                initialValue: initState.data.valueType?.format,
               })(
                 <Select>
                   <Select.Option value="string">String类型的UTC时间戳 (毫秒)</Select.Option>

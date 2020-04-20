@@ -309,9 +309,9 @@ const Paramter: React.FC<Props> = props => {
           <div>
             <Form.Item label="时间格式">
               <Select
-                value={data.valueType.dateFormat}
+                value={data.valueType.format}
                 onChange={(value: string) => {
-                  data.valueType.dateFormat = value;
+                  data.valueType.format = value;
                   setData({ ...data });
                 }}
               >

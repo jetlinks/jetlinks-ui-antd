@@ -237,8 +237,8 @@ const FunctionDefin: React.FC<Props> = props => {
         return (
           <div>
             <Form.Item label="时间格式">
-              {getFieldDecorator('output.dateTemplate', {
-                initialValue: props.data.output?.dateTemplate,
+              {getFieldDecorator('output.format', {
+                initialValue: props.data.output?.format,
               })(
                 <Select>
                   <Select.Option value="string">String类型的UTC时间戳 (毫秒)</Select.Option>
