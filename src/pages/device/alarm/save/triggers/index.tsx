@@ -178,7 +178,7 @@ const Trigger: React.FC<Props> = props => {
             </Col>
             <Col span={24}>
               {filters.map((item: any, index) => (
-                <div key={Math.round(Math.random() * 100000)}>
+                <div key={Math.round(Math.random() * 100000)} className="ant-row">
                   <Col span={6} style={{ paddingLeft: -1, paddingRight: 12, paddingBottom: 10 }}>
                     <AutoComplete dataSource={dataSource} placeholder="过滤条件KEY" children={item.key}
                                   defaultValue={item.key}
@@ -376,7 +376,7 @@ const Trigger: React.FC<Props> = props => {
             )}
             <Col span={24}>
               {filters.map((item: any, index) => (
-                <div key={Math.round(Math.random() * 100000)}>
+                <div key={Math.round(Math.random() * 100000)} className="ant-row">
                   <Col span={6} style={{ paddingLeft: -1, paddingRight: 12, paddingBottom: 10 }}>
                     <AutoComplete dataSource={dataSource} placeholder="过滤条件KEY" children={item.key}
                                   defaultValue={item.key}
