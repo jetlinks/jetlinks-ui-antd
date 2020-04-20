@@ -42,23 +42,25 @@ const Trigger: React.FC<Props> = props => {
     setTriggerType(trigger.trigger);
     setMessageType(trigger.type);
 
-    let data: any = {};
-    let metadata = JSON.parse(props.metaData);
-    if (trigger.type === 'event') {
-      data = metadata['events'];
-    } else if (trigger.type === 'function') {
-      data = metadata['functions'];
-    } else {
-      data = metadata[trigger.type];
-    }
-    if (data) {
-      dataSource.length = 0;
-      dataSource.push(trigger.modelId);
-      data.map((item: any) => {
-        if (item.id === trigger.modelId) {
-          setDataSourceValue(trigger.type, item, trigger.modelId);
-        }
-      });
+    let data: any;
+    if (props.metaData) {
+      let metadata = JSON.parse(props.metaData);
+      if (trigger.type === 'event') {
+        data = metadata['events'];
+      } else if (trigger.type === 'function') {
+        data = metadata['functions'];
+      } else {
+        data = metadata[trigger.type];
+      }
+      if (data) {
+        dataSource.length = 0;
+        dataSource.push(trigger.modelId);
+        data.map((item: any) => {
+          if (item.id === trigger.modelId) {
+            setDataSourceValue(trigger.type, item, trigger.modelId);
+          }
+        });
+      }
     }
   }, []);
 
