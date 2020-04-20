@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Badge, Button, Card, Descriptions, message, Popconfirm, Row, Spin, Tabs } from 'antd';
+import { Badge, Button, Card, Descriptions, message, Popconfirm, Row, Spin, Tabs, Tooltip } from 'antd';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { connect } from 'dva';
 import { router } from 'umi';
@@ -54,7 +54,7 @@ const Detail: React.FC<Props> = props => {
   const [spinning, setSpinning] = useState(initState.spinning);
   const [units, setUnits] = useState(initState.units);
 
-  const handleSearch = (id:string) => {
+  const handleSearch = (id: string) => {
     dispatch({
       type: 'deviceProduct/queryById',
       payload: id,
@@ -231,10 +231,23 @@ const Detail: React.FC<Props> = props => {
     </Row>
   );
 
+  const action = (
+    <Tooltip title="编辑产品信息后请重新应用配置">
+      <Popconfirm title="确认重新应用该配置？" onConfirm={() => {
+        deploy(basicInfo);
+      }}>
+        <Button icon="sync" type="primary">
+          应用配置
+        </Button>
+      </Popconfirm>
+    </Tooltip>
+  );
+
   return (
     <Spin tip="加载中..." spinning={spinning}>
       <PageHeaderWrapper title={titleInfo}
                          content={content}
+                         extra={action}
       >
         <Card>
           <Tabs>
@@ -325,7 +338,8 @@ const Detail: React.FC<Props> = props => {
               />
             </Tabs.TabPane>
             <Tabs.TabPane tab="告警设置" key="metadata1">
-              <Alarm target="product" productId={""} targetId={basicInfo.id} metaData={basicInfo.metadata} name={basicInfo.name}/>
+              <Alarm target="product" productId={''} targetId={basicInfo.id} metaData={basicInfo.metadata}
+                     name={basicInfo.name}/>
             </Tabs.TabPane>
           </Tabs>
         </Card>
