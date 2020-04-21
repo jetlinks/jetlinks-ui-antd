@@ -65,7 +65,6 @@ const Save: React.FC<Props> = props => {
         properties: properties,
       };
     }
-    data.state = { text: '已停止', value: 'stopped' };
     props.save({ ...data });
   };
 
