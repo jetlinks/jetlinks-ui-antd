@@ -51,6 +51,7 @@ interface State {
   action: string;
   deviceCount: any;
   productList: DeviceProduct[];
+  deviceIdList: any[];
 }
 
 const DeviceInstancePage: React.FC<Props> = props => {
@@ -71,6 +72,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
       loading: true,
     },
     productList: [],
+    deviceIdList: [],
   };
 
   const [searchParam, setSearchParam] = useState(initState.searchParam);
@@ -83,6 +85,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
   const [deviceCount, setDeviceCount] = useState(initState.deviceCount);
   const [deviceImport, setDeviceImport] = useState(false);
   const [deviceExport, setDeviceExport] = useState(false);
+  const [deviceIdList, setDeviceIdLIst] = useState(initState.deviceIdList);
 
   const { dispatch } = props;
 
@@ -415,6 +418,78 @@ const DeviceInstancePage: React.FC<Props> = props => {
     stateCount(value);
   };
 
+  const rowSelection = {
+    onChange: (selectedRowKeys: any) => {
+      setDeviceIdLIst(selectedRowKeys);
+    },
+  };
+
+  const _delete = (deviceId: any[]) => {
+    Modal.confirm({
+      title: `确认删除选中设备`,
+      okText: '确定',
+      okType: 'primary',
+      cancelText: '取消',
+      onOk() {
+        apis.deviceInstance
+          ._delete(deviceId)
+          .then(response => {
+            if (response.status === 200) {
+              message.success('成功删除选中设备');
+              setDeviceIdLIst(deviceIdList.splice(0, deviceIdList.length));
+              handleSearch(searchParam);
+            }
+          })
+          .catch(() => {
+          });
+      },
+    });
+  };
+
+  const _unDeploy = (deviceId: any[]) => {
+    Modal.confirm({
+      title: `确认注销选中设备`,
+      okText: '确定',
+      okType: 'primary',
+      cancelText: '取消',
+      onOk() {
+        apis.deviceInstance
+          ._unDeploy(deviceId)
+          .then(response => {
+            if (response.status === 200) {
+              message.success('成功注销选中设备');
+              setDeviceIdLIst(deviceIdList.splice(0, deviceIdList.length));
+              handleSearch(searchParam);
+            }
+          })
+          .catch(() => {
+          });
+      },
+    });
+  };
+
+  const _deploy = (deviceId: any[]) => {
+    Modal.confirm({
+      title: `确认激活选中设备`,
+      okText: '确定',
+      okType: 'primary',
+      cancelText: '取消',
+      onOk() {
+        apis.deviceInstance
+          ._deploy(deviceId)
+          .then(response => {
+            if (response.status === 200) {
+              message.success('成功激活选中设备');
+              setDeviceIdLIst(deviceIdList.splice(0, deviceIdList.length));
+              handleSearch(searchParam);
+            }
+          })
+          .catch(() => {
+          });
+      },
+    });
+  };
+
   const Info: FC<{
     title: React.ReactNode;
     value: React.ReactNode;
@@ -439,12 +514,40 @@ const DeviceInstancePage: React.FC<Props> = props => {
           setDeviceImport(true);
         }}>批量导入设备</Button>
       </Menu.Item>
-      <Menu.Item key="3">
-        <Button icon="check-circle" type="danger" onClick={() => activeDevice()}>
-          激活全部设备
-        </Button>
-      </Menu.Item>
-      <Menu.Item key="4">
+      {deviceIdList.length > 0 && (
+        <Menu.Item key="3">
+          <Button icon="delete" onClick={() => {
+            _delete(deviceIdList);
+          }}>
+            删除选中设备
+          </Button>
+        </Menu.Item>
+      )}
+      {deviceIdList.length > 0 && (
+        <Menu.Item key="6">
+          <Button icon="stop" onClick={() => {
+            _unDeploy(deviceIdList);
+          }}>
+            注销选中设备
+          </Button>
+        </Menu.Item>
+      )}
+
+      {deviceIdList.length > 0 ? (
+        <Menu.Item key="4">
+          <Button icon="check-circle" type="danger" onClick={() => _deploy(deviceIdList)}>
+            激活选中设备
+          </Button>
+        </Menu.Item>
+      ) : (
+        <Menu.Item key="4">
+          <Button icon="check-circle" type="danger" onClick={() => activeDevice()}>
+            激活全部设备
+          </Button>
+        </Menu.Item>
+      )}
+
+      <Menu.Item key="5">
         <Button icon="sync" type="danger" onClick={() => syncDevice()}>
           同步设备状态
         </Button>
@@ -531,6 +634,11 @@ const DeviceInstancePage: React.FC<Props> = props => {
                 dataSource={(result || {}).data}
                 rowKey="id"
                 onChange={onTableChange}
+                rowSelection={{
+                  type: 'checkbox',
+                  ...rowSelection,
+                  selections: deviceIdList,
+                }}
                 pagination={{
                   current: result.pageIndex + 1,
                   total: result.total,
