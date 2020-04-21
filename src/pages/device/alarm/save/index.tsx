@@ -216,7 +216,7 @@ const Save: React.FC<Props> = props => {
                       setAction([...action, { _id: Math.round(Math.random() * 100000) }]);
                     }}
             >
-              新增触发器
+              执行动作
             </Button>
           </Card>
         </Form>
