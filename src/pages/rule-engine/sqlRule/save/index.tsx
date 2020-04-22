@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Col, Drawer, Form, Input, Row, Select } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import { SqlRule } from '../data';
@@ -86,6 +86,10 @@ const Save: React.FC<Props> = props => {
     }
   };
 
+  useEffect(() => {
+
+  }, []);
+
   return (
     <Drawer
       visible
@@ -135,7 +139,7 @@ const Save: React.FC<Props> = props => {
                 wrapEnabled
                 highlightActiveLine  //突出活动线
                 enableSnippets  //启用代码段
-                style={{ width: '100%', height: 500 }}
+                style={{ width: '100%', height: 300 }}
                 setOptions={{
                   enableBasicAutocompletion: true,   //启用基本自动完成功能
                   enableLiveAutocompletion: true,   //启用实时自动完成功能 （比如：智能代码提示）
