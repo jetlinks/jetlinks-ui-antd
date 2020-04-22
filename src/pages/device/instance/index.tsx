@@ -622,7 +622,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
               </Button>
               <Divider type="vertical"/>
               <Dropdown overlay={menu}>
-                <Button>
+                <Button icon="menu">
                   其他批量操作<Icon type="down"/>
                 </Button>
               </Dropdown>
