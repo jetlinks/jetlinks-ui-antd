@@ -115,7 +115,7 @@ const Info: React.FC<Props> = (props) => {
                                 changeDeploy(props.data.id);
                               }}>
                     <Button icon="check" type="link">应用配置</Button>
-                    <Tooltip title="修改配置后虚重新应用后才能生效。">
+                    <Tooltip title="修改配置后需重新应用后才能生效。">
                       <Icon type="question-circle-o"/>
                     </Tooltip>
                   </Popconfirm>
