@@ -157,7 +157,7 @@ const AccessLoggerList: React.FC<Props> = props => {
       pageIndex: Number(pagination.current) - 1,
       pageSize: pagination.pageSize,
       terms: searchParam.terms,
-      sorts: sorter,
+      sorts: sorter.field ? sorter :searchParam.sorts,
     });
   };
 
@@ -168,7 +168,6 @@ const AccessLoggerList: React.FC<Props> = props => {
           <div>
             <Search
               search={(params: any) => {
-                setSearchParam(params);
                 handleSearch({ terms: params, pageSize: 10, sorts: searchParam.sorts });
               }}
             />

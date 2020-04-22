@@ -131,7 +131,7 @@ const SystemLoggerList: React.FC<Props> = props => {
       pageIndex: Number(pagination.current) - 1,
       pageSize: pagination.pageSize,
       terms: searchParam.terms,
-      sorts: sorter,
+      sorts: sorter.field ? sorter :searchParam.sorts,
     });
   };
 
