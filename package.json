@@ -60,6 +60,7 @@
     "not ie <= 10"
   ],
   "dependencies": {
+    "@ant-design/icons": "^4.0.0",
     "@ant-design/pro-layout": "^4.10.13",
     "@ant-design/pro-table": "^1.0.31",
     "@antv/data-set": "^0.11.0",
@@ -67,6 +68,7 @@
     "@formily/antd-components": "^1.0.4",
     "@loadable/component": "^5.11.0",
     "@types/loadable__component": "^5.10.0",
+    "@types/react-grid-layout": "^0.17.1",
     "@types/pubsub-js": "^1.5.18",
     "antd": "^3.26.12",
     "bizcharts": "^3.5.6",
@@ -93,6 +95,11 @@
     "react-fittext": "^1.0.0",
     "react-helmet": "^5.2.1",
     "react-monaco-editor": "^0.32.1",
+    "react-grid-layout": "^0.18.3",
+    "react-helmet-async": "^1.0.4",
+    "react-resizable": "^1.10.1",
+    "react-sortable-pane": "^1.1.0",
+    "rxjs": "^6.5.5",
     "redux": "^4.0.1",
     "umi": "^2.13.0",
     "umi-plugin-antd-theme": "^1.0.1",

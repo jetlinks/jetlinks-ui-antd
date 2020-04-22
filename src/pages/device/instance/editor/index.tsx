@@ -14,6 +14,7 @@ import { DeviceInstance } from '@/pages/device/instance/data';
 import apis from '@/services';
 import Gateway from './detail/gateway';
 import Alarm from '@/pages/device/alarm';
+import Visualization from '../../visualization';
 
 interface Props {
   dispatch: Dispatch;
@@ -26,7 +27,7 @@ interface State {
   logs: any;
   orgInfo: any;
   config: any;
-  spinning:boolean;
+  spinning: boolean;
 }
 
 const Editor: React.FC<Props> = props => {
@@ -41,7 +42,7 @@ const Editor: React.FC<Props> = props => {
     logs: {},
     orgInfo: {},
     config: {},
-    spinning:true,
+    spinning: true,
   };
   const [activeKey, setActiveKey] = useState(initState.activeKey);
   const [data, setData] = useState(initState.data);
@@ -68,6 +69,10 @@ const Editor: React.FC<Props> = props => {
       key: 'alarm',
       tab: '告警设置',
     },
+    {
+      key: 'visualization',
+      tab: '可视化'
+    }
   ];
 
   const getInfo = (deviceId: string | undefined) => {
@@ -91,7 +96,7 @@ const Editor: React.FC<Props> = props => {
             }
           }
 
-          if (deviceData.deviceType.value === "gateway"){
+          if (deviceData.deviceType.value === "gateway") {
             tabList.push({
               key: 'gateway',
               tab: '网关设备',
@@ -121,7 +126,7 @@ const Editor: React.FC<Props> = props => {
       .queryOrganization()
       .then(res => {
         if (res.status === 200) {
-          res.result.map((e:any) => (
+          res.result.map((e: any) => (
             orgInfo[e.id] = e.name
           ));
         }
@@ -140,16 +145,16 @@ const Editor: React.FC<Props> = props => {
     setSpinning(true);
     apis.deviceInstance.disconnectDevice(deviceId)
       .then(response => {
-      if (response.status === 200){
-        message.success("断开连接成功");
-        data.state={value:'offline',text:'离线'};
-        setData(data);
-        setSpinning(false);
-      } else {
-        message.error("断开连接失败");
-        setSpinning(false);
-      }
-    }).catch();
+        if (response.status === 200) {
+          message.success("断开连接成功");
+          data.state = { value: 'offline', text: '离线' };
+          setData(data);
+          setSpinning(false);
+        } else {
+          message.error("断开连接失败");
+          setSpinning(false);
+        }
+      }).catch();
   };
 
   const changeDeploy = (deviceId: string | undefined) => {
@@ -159,7 +164,7 @@ const Editor: React.FC<Props> = props => {
       .then(response => {
         if (response.status === 200) {
           message.success('激活成功');
-          data.state={value:'offline',text:'离线'};
+          data.state = { value: 'offline', text: '离线' };
           setData(data);
           setSpinning(false);
         } else {
@@ -167,23 +172,24 @@ const Editor: React.FC<Props> = props => {
           setSpinning(false);
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   };
 
   const action = (
     <Tooltip title='刷新'>
-      <Icon type="sync" style={{fontSize:20}} onClick={() => { getInfo(data.id) }}/>
+      <Icon type="sync" style={{ fontSize: 20 }} onClick={() => { getInfo(data.id) }} />
     </Tooltip>
   );
 
   const info = {
-    info: <Info data={data} configuration={config} refresh={()=>{getInfo(data.id)}}/>,
+    info: <Info data={data} configuration={config} refresh={() => { getInfo(data.id) }} />,
     status: <Status device={data} />,
     functions: <Functions device={data} />,
-    log: <Log deviceId={id}/>,
+    log: <Log deviceId={id} />,
     debugger: <Debugger />,
-    gateway: <Gateway deviceId={id} loading={false}/>,
-    alarm: <Alarm target="device" productId={data.productId} targetId={data.id} metaData={data.metadata} name={data.name}/>,
+    gateway: <Gateway deviceId={id} loading={false} />,
+    alarm: <Alarm target="device" productId={data.productId} targetId={data.id} metaData={data.metadata} name={data.name} />,
+    visualization: <Visualization type="device" target={data.id} name={data.name} />
   };
 
   const content = (
@@ -193,7 +199,7 @@ const Editor: React.FC<Props> = props => {
         <Descriptions.Item label="型号">
           <div>
             {data.productName}
-            <a style={{marginLeft:10}}
+            <a style={{ marginLeft: 10 }}
               onClick={() => {
                 router.push(`/device/product/save/${data.productId}`);
               }}
@@ -205,32 +211,32 @@ const Editor: React.FC<Props> = props => {
   );
 
   const titleInfo = (
-      <Row>
-        <div>
-          <span>
-            设备：{data.name}
-          </span>
-          <Badge style={{marginLeft:20}} status={statusMap.get(data.state?.text)} text={data.state?.text}/>
-          {data.state?.value === "online"?(
-            <Popconfirm title="确认让此设备断开连接？" onConfirm={() => {
-                disconnectDevice(data.id)
+    <Row>
+      <div>
+        <span>
+          设备：{data.name}
+        </span>
+        <Badge style={{ marginLeft: 20 }} status={statusMap.get(data.state?.text)} text={data.state?.text} />
+        {data.state?.value === "online" ? (
+          <Popconfirm title="确认让此设备断开连接？" onConfirm={() => {
+            disconnectDevice(data.id)
+          }}>
+            <a style={{ fontSize: 12, marginLeft: 20 }}>断开连接</a>
+          </Popconfirm>
+        ) : (data.state?.value === "notActive" ? (
+          <Popconfirm title="确认激活此设备？"
+            onConfirm={() => {
+              changeDeploy(data.id)
             }}>
-              <a style={{fontSize:12,marginLeft:20}}>断开连接</a>
-            </Popconfirm>
-          ):(data.state?.value === "notActive"?(
-            <Popconfirm title="确认激活此设备？"
-              onConfirm={() => {
-                changeDeploy(data.id)
-            }}>
-              <a style={{fontSize:12,marginLeft:20}}>激活设备</a>
-            </Popconfirm>
-          ):(<span/>))}
-        </div>
-      </Row>
+            <a style={{ fontSize: 12, marginLeft: 20 }}>激活设备</a>
+          </Popconfirm>
+        ) : (<span />))}
+      </div>
+    </Row>
   );
 
   const extra = (
-    <div className={styles.moreInfo}/>
+    <div className={styles.moreInfo} />
   );
 
   return (
