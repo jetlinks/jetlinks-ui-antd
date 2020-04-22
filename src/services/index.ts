@@ -29,6 +29,7 @@ import * as notifier from '@/pages/notice/service';
 import * as org from '@/pages/system/org/service';
 import * as analysis from '@/pages/analysis/service';
 import * as deviceAlarm from '@/pages/device/alarm/service';
+import * as visualization from '@/pages/device/visualization/service';
 
 const apis = {
   login,
@@ -62,5 +63,6 @@ const apis = {
   analysis,
   deviceAlarm,
   sqlRule,
+  visualization
 };
 export default apis;
