@@ -72,12 +72,12 @@ const Save: React.FC<Props> = props => {
     switch (sqlRuleType) {
       case 'timer':
         return (
-          <Col span={12} key={`col_${Math.round(Math.random() * 100000)}`}>
-            <Form.Item key={`cron_${Math.round(Math.random() * 100000)}`} label="cron表达式">
+          <Col span={12}>
+            <Form.Item label="cron表达式">
               {getFieldDecorator('cron', {
                 rules: [{ required: true, message: 'cron表达式' }],
                 initialValue: props.data?.cron,
-              })(<Input placeholder="输入cron表达式" key={`cron_${Math.round(Math.random() * 100000)}`}/>)}
+              })(<Input placeholder="输入cron表达式"/>)}
             </Form.Item>
           </Col>
         );
@@ -97,25 +97,24 @@ const Save: React.FC<Props> = props => {
       onClose={() => props.close()}
       title={`${props.data?.id ? '编辑' : '新增'}数据转发`}
     >
-      <Form labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} style={{ paddingBottom: 20 }}
-            key={`form_${Math.round(Math.random() * 100000)}`}>
-        <Row key={`_${Math.round(Math.random() * 100000)}`}>
-          <Col span={12} key={`col_${Math.round(Math.random() * 100000)}`}>
-            <Form.Item key={`name_${Math.round(Math.random() * 100000)}`} label="名称">
+      <Form labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} style={{ paddingBottom: 20 }}>
+        <Row>
+          <Col span={12}>
+            <Form.Item label="名称">
               {getFieldDecorator('name', {
                 rules: [{ required: true, message: '名称' }],
                 initialValue: props.data?.name,
-              })(<Input placeholder="请输入名称" key={`name_${Math.round(Math.random() * 100000)}`}/>)}
+              })(<Input placeholder="请输入名称"/>)}
             </Form.Item>
           </Col>
-          <Col span={12} key={`col_${Math.round(Math.random() * 100000)}`}>
-            <Form.Item key={`_type_${Math.round(Math.random() * 100000)}`} label="类型">
+          <Col span={12}>
+            <Form.Item label="类型">
               {getFieldDecorator('type', {
                 rules: [{ required: true, message: '类型' }],
                 initialValue: props.data?.type,
               })(<Select placeholder="请选择类型" onChange={(value: string) => {
                 setSqlRuleType(value);
-              }} key={`type_${Math.round(Math.random() * 100000)}`}>
+              }}>
                 <Select.Option value="timer" key='timer'>定时</Select.Option>
                 <Select.Option value="realTime" key='realTime'>实时</Select.Option>
               </Select>)}
@@ -150,9 +149,8 @@ const Save: React.FC<Props> = props => {
               />
             </Form.Item>
           </Col>
-          <Col span={24} key={`col_${Math.round(Math.random() * 100000)}`}>
-            <Form.Item label="执行动作" key={`_actions_${Math.round(Math.random() * 100000)}`}
-                       labelCol={{ span: 3 }} wrapperCol={{ span: 21 }}>
+          <Col span={24}>
+            <Form.Item label="执行动作" labelCol={{ span: 3 }} wrapperCol={{ span: 21 }}>
               {actions.map((item: any, index: number) => (
                   <Action save={(data: any) => {
                     actions.splice(index, 1, data);
@@ -162,7 +160,7 @@ const Save: React.FC<Props> = props => {
                   }} position={index} action={item}/>
                 ),
               )}
-              <Button icon="plus" type="link" key={`button_${Math.round(Math.random() * 100000)}`}
+              <Button icon="plus" type="link"
                       onClick={() => {
                         setActions([...actions, { _id: Math.round(Math.random() * 100000) }]);
                       }}
@@ -171,9 +169,8 @@ const Save: React.FC<Props> = props => {
               </Button>
             </Form.Item>
           </Col>
-          <Col span={24} key={`col_${Math.round(Math.random() * 100000)}`}>
-            <Form.Item label="失败执行动作" key={`_whenErrorThen_${Math.round(Math.random() * 100000)}`}
-                       labelCol={{ span: 3 }} wrapperCol={{ span: 21 }}>
+          <Col span={24}>
+            <Form.Item label="失败执行动作" labelCol={{ span: 3 }} wrapperCol={{ span: 21 }}>
               {whenErrorThen.map((item: any, index: number) => (
                   <Action save={(data: any) => {
                     whenErrorThen.splice(index, 1, data);
@@ -183,7 +180,7 @@ const Save: React.FC<Props> = props => {
                   }} position={index} action={item}/>
                 ),
               )}
-              <Button icon="plus" type="link" key={`button_${Math.round(Math.random() * 100000)}`}
+              <Button icon="plus" type="link"
                       onClick={() => {
                         setWhenErrorThen([...whenErrorThen, { _id: Math.round(Math.random() * 100000) }]);
                       }}
@@ -205,10 +202,8 @@ const Save: React.FC<Props> = props => {
           background: '#fff',
           textAlign: 'right',
         }}
-        key={`div_${Math.round(Math.random() * 100000)}`}
       >
         <Button
-          key={`button_${Math.round(Math.random() * 100000)}`}
           onClick={() => {
             props.close();
           }}
@@ -217,7 +212,6 @@ const Save: React.FC<Props> = props => {
           关闭
         </Button>
         <Button
-          key={`button_${Math.round(Math.random() * 100000)}`}
           onClick={() => {
             submitData();
           }}
