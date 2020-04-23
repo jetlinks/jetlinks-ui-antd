@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Form, { FormComponentProps } from 'antd/lib/form';
-import { Input, Radio, Button, List, Select, Drawer, Col, Row, Icon } from 'antd';
+import { Input, Radio, Button, List, Select, Drawer, Col, Row, Icon, AutoComplete } from 'antd';
 import styles from '../index.less';
 import { Parameter, FunctionMeta } from '../data.d';
 import { renderUnit } from '@/pages/device/public';
@@ -68,6 +68,8 @@ const FunctionDefin: React.FC<Props> = props => {
       props.save({ ...data, inputs });
     });
   };
+
+  let dataSource = [{text:'String类型的UTC时间戳 (毫秒)',value:'string'},'yyyy-MM-dd','yyyy-MM-dd HH:mm:ss','yyyy-MM-dd HH:mm:ss EE','yyyy-MM-dd HH:mm:ss zzz'];
 
   const renderDataType = () => {
     switch (dataType) {
@@ -240,17 +242,11 @@ const FunctionDefin: React.FC<Props> = props => {
               {getFieldDecorator('output.format', {
                 initialValue: props.data.output?.format,
               })(
-                <Select>
-                  <Select.Option value="string">String类型的UTC时间戳 (毫秒)</Select.Option>
-                  <Select.Option value="yyyy-MM-dd">yyyy-MM-dd</Select.Option>
-                  <Select.Option value="yyyy-MM-dd HH:mm:ss">yyyy-MM-dd HH:mm:ss</Select.Option>
-                  <Select.Option value="yyyy-MM-dd HH:mm:ss EE">
-                    yyyy-MM-dd HH:mm:ss EE
-                  </Select.Option>
-                  <Select.Option value="yyyy-MM-dd HH:mm:ss zzz">
-                    yyyy-MM-dd HH:mm:ss zzz
-                  </Select.Option>
-                </Select>,
+                <AutoComplete dataSource={dataSource} placeholder="默认格式：String类型的UTC时间戳 (毫秒)"
+                              filterOption={(inputValue, option) =>
+                                option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
+                              }
+                />
               )}
             </Form.Item>
           </div>
