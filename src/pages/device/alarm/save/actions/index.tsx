@@ -66,7 +66,7 @@ const Action: React.FC<Props> = props => {
   }, [actionType]);
 
   useEffect(() => {
-    findNotifier({ type: notifyType });
+    findNotifier({ id: notifyType });
   }, [notifyType]);
 
   const findNotifier = (value: any) => {
@@ -74,7 +74,7 @@ const Action: React.FC<Props> = props => {
       encodeQueryParam({
         paging: false,
         terms: {
-          type: value.type,
+          type: value.id,
         },
       }))
       .then((response: any) => {
