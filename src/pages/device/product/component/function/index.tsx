@@ -191,7 +191,7 @@ const FunctionDefin: React.FC<Props> = props => {
           <div>
             <Form.Item label="数据长度">
               {getFieldDecorator('output.expands.maxLength', {
-                initialValue: props.data.output?.expands.maxLength,
+                initialValue: props.data.output?.expands?.maxLength,
               })(<Input addonAfter="字节" />)}
             </Form.Item>
           </div>
