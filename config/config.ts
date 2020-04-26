@@ -277,26 +277,26 @@ export default {
               authority: ['rule-model', 'rule-instance', 'sql-rule'],
               routes: [
                 {
+                  path: '/rule-engine/model',
+                  name: '规则模型',
+                  icon: 'appstore',
+                  authority: ['rule-model'],
+                  component: './rule-engine/model',
+                },
+                {
+                  path: '/rule-engine/instance',
+                  name: '规则实例',
+                  icon: 'control',
+                  authority: ['rule-instance'],
+                  component: './rule-engine/instance',
+                },
+                {
                   path: './rule-engine/sqlRule',
                   name: '数据转发',
                   icon: 'control',
                   authority: ['rule-instance'],
                   component: './rule-engine/sqlRule',
                 },
-                // {
-                //   path: '/rule-engine/model',
-                //   name: '规则模型',
-                //   icon: 'appstore',
-                //   authority: ['rule-model'],
-                //   component: './rule-engine/model',
-                // },
-                // {
-                //   path: '/rule-engine/instance',
-                //   name: '规则实例',
-                //   icon: 'control',
-                //   authority: ['rule-instance'],
-                //   component: './rule-engine/instance',
-                // },
                 // {
                 //   path: '/rule-engine/email',
                 //   name: 'email',
