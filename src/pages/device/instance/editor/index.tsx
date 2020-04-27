@@ -189,7 +189,12 @@ const Editor: React.FC<Props> = props => {
     debugger: <Debugger />,
     gateway: <Gateway deviceId={id} loading={false} />,
     alarm: <Alarm target="device" productId={data.productId} targetId={data.id} metaData={data.metadata} name={data.name} />,
-    visualization: <Visualization type="device" target={data.id} name={data.name} />
+    visualization: <Visualization
+      type="device"
+      target={data.id}
+      name={data.name}
+      productId={data.productId}
+      metaData={data.metadata} />
   };
 
   const content = (

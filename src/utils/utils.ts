@@ -113,3 +113,9 @@ export const wrapAPI = (url: string) => {
   }
   return url;
 };
+/**
+ * form 方法受控组件减少不必要渲染
+ * @param prevProps
+ * @param nextProps
+ */
+export const propsAreEqual = (prevProps: any, nextProps: any) => isEqual(prevProps.value, nextProps.value);

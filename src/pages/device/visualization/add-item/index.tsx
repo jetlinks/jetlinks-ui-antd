@@ -1,131 +1,116 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import 'antd/dist/antd.css';
 
-import { List, Modal, Drawer } from 'antd';
-import { SchemaForm, FormButtonGroup, Submit, Reset } from '@formily/antd';
-import {
-  Input,
-  Radio,
-  Checkbox,
-  Select,
-  DatePicker,
-  NumberPicker,
-  TimePicker,
-  Upload,
-  Switch,
-  Range,
-  Transfer,
-  Rating,
-} from '@formily/antd-components';
+import { List, Modal, Row, Col } from 'antd';
 
+import loadable from '@loadable/component';
 import styles from './index.less';
 import { ChartsConfig } from '../config';
 
 interface Props {
   close: Function;
   save: Function;
+  metaData: any;
+  current: any
+}
+
+export interface EditProps {
+  save: Function;
+  metadata: any;
+  data: any;
 }
 
 const AddItem = (props: Props) => {
-  const components = {
-    Input,
-    Radio: Radio.Group,
-    Checkbox: Checkbox.Group,
-    TextArea: Input.TextArea,
-    NumberPicker,
-    Select,
-    Switch,
-    DatePicker,
-    DateRangePicker: DatePicker.RangePicker,
-    YearPicker: DatePicker.YearPicker,
-    MonthPicker: DatePicker.MonthPicker,
-    WeekPicker: DatePicker.WeekPicker,
-    TimePicker,
-    Upload,
-    Range,
-    Rating,
-    Transfer,
-  };
 
+  // 父组件直接调用子组件方法感觉不太友好。可以给子组件传个state，子组件useEffect监听改变后触发操作
+  // 如果用redux的话，数据放redux里，父组件直接dispatch就行
   const [type, setType] = useState<any>();
+
+  let submit: Function;
+  const renderEdit = (t: string) => {
+    const EditComponent = loadable<EditProps>(() => import(`./edit/${t}Edit`));
+
+    return (
+      <EditComponent
+        data={props.current}
+        save={(onSubmit: Function) => { submit = onSubmit }}
+        metadata={props.metaData}
+      />
+    )
+  }
+
+  const getConfigData = () => {
+    const data = submit();
+    if (props.current?.id) {
+      props.save({ component: type, ...data, id: props.current.id });
+    } else {
+      props.save({ component: type, ...data });
+    }
+  }
+
+  useEffect(() => {
+    setType(props.current?.config?.component);
+
+  }, []);
+
   return (
-    <div>
-      {type ? (
-        <Drawer
-          title="新增xxx"
-          visible={!!type}
-          onClose={() => {
-            setType(undefined);
-            props.close();
-          }}
-          width="60vw"
-        >
-          <SchemaForm
-            onSubmit={values => {
-              props.save({ config: values, component: type });
-              // console.log(values, 'values');
-            }}
-            labelCol={{ span: 8 }}
-            wrapperCol={{ span: 6 }}
-            components={components}
-            schema={ChartsConfig.find(item => item.id === type)?.properties}
+
+    <Modal
+      visible
+      title="新增"
+      width="80vw"
+      onCancel={() => props.close()}
+      onOk={() => getConfigData()}
+    >
+      <Row>
+
+        <Col xs={12} sm={14} md={16} lg={16} xl={16}>
+          <div
+            className={styles.basicinfo}
           >
-            <div
-              style={{
-                position: 'absolute',
-                right: 0,
-                bottom: 0,
-                width: '100%',
-                borderTop: '1px solid #e9e9e9',
-                padding: '10px 16px',
-                background: '#fff',
-                textAlign: 'right',
+            <Row style={{ paddingBottom: 15 }}>选择图表</Row>
+            <List
+              grid={{
+                gutter: 16,
+                xs: 1,
+                sm: 2,
+                md: 4,
+                lg: 4,
+                xl: 6,
+                xxl: 4,
               }}
-            >
-              <FormButtonGroup offset={8} sticky>
-                <Submit>提交</Submit>
-                <Reset>重置</Reset>
-              </FormButtonGroup>
-            </div>
-          </SchemaForm>
-        </Drawer>
-      ) : (
-        <Modal visible title="新增" width="70vw" onCancel={() => props.close()}>
-          <List
-            grid={{
-              gutter: 16,
-              xs: 1,
-              sm: 2,
-              md: 4,
-              lg: 4,
-              xl: 6,
-              xxl: 4,
-            }}
-            dataSource={ChartsConfig}
-            renderItem={item => (
-              <List.Item
-                key={item.id}
-                onClick={() => {
-                  setType(item.id);
-                }}
-              >
-                <div
-                  style={{
-                    textAlign: 'center',
-                    height: 180,
-                    width: 180,
-                    paddingTop: 10,
+              dataSource={ChartsConfig}
+              renderItem={item => (
+                <List.Item
+                  key={item.id}
+                  onClick={() => {
+                    setType(item.id);
                   }}
-                  className={styles.item}
                 >
-                  <img height={150} width={150} src={item.preview} alt="" />
-                </div>
-              </List.Item>
-            )}
-          />
-        </Modal>
-      )}
-    </div>
+                  <div
+                    style={{
+                      textAlign: 'center',
+                      height: 180,
+                      width: 180,
+                      paddingTop: 10,
+                    }}
+                    className={item.id === type ? styles.checked : styles.item}
+                  >
+                    <img height={150} width={150} src={item.preview} alt="" />
+                  </div>
+                </List.Item>
+              )}
+            />
+          </div>
+
+        </Col>
+
+        <Col xs={12} sm={10} md={8} lg={8} xl={8}>
+          <Row style={{ paddingBottom: 15 }}>基本信息</Row>
+          {type && renderEdit(type)}
+        </Col>
+      </Row>
+    </Modal >
   );
 };
 export default AddItem;
