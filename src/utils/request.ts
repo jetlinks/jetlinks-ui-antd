@@ -79,10 +79,18 @@ const errorHandler = (error: { response: Response }): Response | undefined => {
       });
       return response;
     } else if (response.status === 500) {
-      notification.error({
-        key: 'error',
-        message: `请求错误：${response.statusText}`,
-      });
+      response.json().then((res: any) => {
+        notification.error({
+          key: 'error',
+          message: `${res.message}`,
+        });
+      }).catch(() => {
+        notification.error({
+          key: 'error',
+          message: response.statusText,
+        });
+      })
+
     } else if (response.status === 504) {
       notification.error({
         key: 'error',
