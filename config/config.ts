@@ -274,7 +274,7 @@ export default {
               path: 'rule-engine',
               name: '规则引擎',
               icon: 'share-alt',
-              authority: ['rule-model', 'rule-instance'],
+              authority: ['rule-model', 'rule-instance', 'sql-rule'],
               routes: [
                 {
                   path: '/rule-engine/model',
@@ -289,6 +289,13 @@ export default {
                   icon: 'control',
                   authority: ['rule-instance'],
                   component: './rule-engine/instance',
+                },
+                {
+                  path: './rule-engine/sqlRule',
+                  name: '数据转发',
+                  icon: 'control',
+                  authority: ['rule-instance'],
+                  component: './rule-engine/sqlRule',
                 },
                 // {
                 //   path: '/rule-engine/email',

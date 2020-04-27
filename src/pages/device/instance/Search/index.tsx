@@ -63,7 +63,10 @@ const Search: React.FC<Props> = props => {
         ))}
         <Col push={16 - (Number(16) % 24)} md={12} sm={24}>
           <div style={{ float: 'right', marginBottom: 24 }}>
-            <Button type="primary" onClick={() => {search();}}>
+            {/*<Button type="primary" onClick={() => {search();}}>
+              其他条件
+            </Button>*/}
+            <Button type="primary" style={{ marginLeft: 8 }} onClick={() => {search();}}>
               查询
             </Button>
             <Button style={{ marginLeft: 8 }} onClick={() => {

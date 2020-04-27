@@ -79,16 +79,10 @@ const errorHandler = (error: { response: Response }): Response | undefined => {
       });
       return response;
     } else if (response.status === 500) {
-      // try {
-      response.json().then((res: any) => {
-        notification.error({
-          key: 'error',
-          message: `${res.message}`,
-        });
+      notification.error({
+        key: 'error',
+        message: `请求错误：${response.statusText}`,
       });
-      // } catch (error) {
-      //   router.push('/user/login');
-      // }
     } else if (response.status === 504) {
       notification.error({
         key: 'error',

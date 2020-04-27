@@ -1,5 +1,5 @@
 import Form, { FormComponentProps } from 'antd/es/form';
-import { Input, Button, Radio, Drawer, Select, Col, Row, Icon, List } from 'antd';
+import { Input, Button, Radio, Drawer, Select, Col, Row, Icon, List, AutoComplete } from 'antd';
 import React, { useState } from 'react';
 import { EventsMeta, Parameter } from '../data.d';
 import styles from '../index.less';
@@ -72,6 +72,8 @@ const EventDefin: React.FC<Props> = props => {
       props.save({ ...data });
     });
   };
+
+  let dataSource = [{text:'String类型的UTC时间戳 (毫秒)',value:'string'},'yyyy-MM-dd','yyyy-MM-dd HH:mm:ss','yyyy-MM-dd HH:mm:ss EE','yyyy-MM-dd HH:mm:ss zzz'];
 
   const renderDataType = () => {
     switch (dataType) {
@@ -191,7 +193,7 @@ const EventDefin: React.FC<Props> = props => {
           <div>
             <Form.Item label="数据长度">
               {getFieldDecorator('valueType.expands.maxLength', {
-                initialValue: initState.data.valueType?.expands.maxLength,
+                initialValue: initState.data.valueType?.expands?.maxLength,
               })(<Input addonAfter="字节" />)}
             </Form.Item>
           </div>
@@ -239,20 +241,14 @@ const EventDefin: React.FC<Props> = props => {
         return (
           <div>
             <Form.Item label="时间格式">
-              {getFieldDecorator('format', {
+              {getFieldDecorator('valueType.format', {
                 initialValue: initState.data.valueType?.format,
               })(
-                <Select>
-                  <Select.Option value="string">String类型的UTC时间戳 (毫秒)</Select.Option>
-                  <Select.Option value="yyyy-MM-dd">yyyy-MM-dd</Select.Option>
-                  <Select.Option value="yyyy-MM-dd HH:mm:ss">yyyy-MM-dd HH:mm:ss</Select.Option>
-                  <Select.Option value="yyyy-MM-dd HH:mm:ss EE">
-                    yyyy-MM-dd HH:mm:ss EE
-                  </Select.Option>
-                  <Select.Option value="yyyy-MM-dd HH:mm:ss zzz">
-                    yyyy-MM-dd HH:mm:ss zzz
-                  </Select.Option>
-                </Select>,
+                <AutoComplete dataSource={dataSource} placeholder="默认格式：String类型的UTC时间戳 (毫秒)"
+                              filterOption={(inputValue, option) =>
+                                option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
+                              }
+                />
               )}
             </Form.Item>
           </div>

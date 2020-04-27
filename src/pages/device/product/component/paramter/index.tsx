@@ -1,4 +1,4 @@
-import { Button, Col, Drawer, Form, Icon, Input, List, message, Radio, Row, Select } from 'antd';
+import { AutoComplete, Button, Col, Drawer, Form, Icon, Input, List, message, Radio, Row, Select } from 'antd';
 import React, { useState } from 'react';
 import styles from '../index.less';
 import { groupBy } from 'lodash';
@@ -36,6 +36,11 @@ const Paramter: React.FC<Props> = props => {
   const dataTypeChange = (value: string) => {
     setDataType(value);
   };
+
+  let dataSource = [{
+    text: 'String类型的UTC时间戳 (毫秒)',
+    value: 'string',
+  }, 'yyyy-MM-dd', 'yyyy-MM-dd HH:mm:ss', 'yyyy-MM-dd HH:mm:ss EE', 'yyyy-MM-dd HH:mm:ss zzz'];
 
   const renderDetailForm = () => {
     switch (dataType) {
@@ -77,7 +82,7 @@ const Paramter: React.FC<Props> = props => {
                 }}
                 value={data.valueType.unit}
               >
-                {Array.from(new Set<string>(props.unitsData.map((unit:any) => {
+                {Array.from(new Set<string>(props.unitsData.map((unit: any) => {
                   return unit.type;
                 }))).map(type => {
                   const typeData = groupBy(props.unitsData, unit => unit.type)[type];
@@ -143,7 +148,7 @@ const Paramter: React.FC<Props> = props => {
                 }}
                 value={data.valueType.unit}
               >
-                {Array.from(new Set<string>(props.unitsData.map((unit:any) => {
+                {Array.from(new Set<string>(props.unitsData.map((unit: any) => {
                   return unit.type;
                 }))).map(type => {
                   const typeData = groupBy(props.unitsData, unit => unit.type)[type];
@@ -209,7 +214,7 @@ const Paramter: React.FC<Props> = props => {
                 }}
                 value={data.valueType.unit}
               >
-                {Array.from(new Set<string>(props.unitsData.map((unit:any) => {
+                {Array.from(new Set<string>(props.unitsData.map((unit: any) => {
                   return unit.type;
                 }))).map(type => {
                   const typeData = groupBy(props.unitsData, unit => unit.type)[type];
@@ -235,7 +240,7 @@ const Paramter: React.FC<Props> = props => {
                 addonAfter="字节"
                 value={data.valueType?.expands?.maxLength}
                 onChange={event => {
-                  if (!data.valueType.expands){
+                  if (!data.valueType.expands) {
                     data.valueType.expands = {};
                   }
                   data.valueType.expands.maxLength = event.target.value;
@@ -308,21 +313,16 @@ const Paramter: React.FC<Props> = props => {
         return (
           <div>
             <Form.Item label="时间格式">
-              <Select
-                value={data.valueType.format}
-                onChange={(value: string) => {
-                  data.valueType.format = value;
-                  setData({ ...data });
-                }}
-              >
-                <Select.Option value="string">String类型的UTC时间戳 (毫秒)</Select.Option>
-                <Select.Option value="yyyy-MM-dd">yyyy-MM-dd</Select.Option>
-                <Select.Option value="yyyy-MM-dd HH:mm:ss">yyyy-MM-dd HH:mm:ss</Select.Option>
-                <Select.Option value="yyyy-MM-dd HH:mm:ss EE">yyyy-MM-dd HH:mm:ss EE</Select.Option>
-                <Select.Option value="yyyy-MM-dd HH:mm:ss zzz">
-                  yyyy-MM-dd HH:mm:ss zzz
-                </Select.Option>
-              </Select>
+              <AutoComplete dataSource={dataSource} placeholder="默认格式：String类型的UTC时间戳 (毫秒)"
+                            value={data.valueType.format}
+                            onChange={value => {
+                              data.valueType.format = value;
+                              setData({ ...data });
+                            }}
+                            filterOption={(inputValue, option) =>
+                              option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
+                            }
+              />
             </Form.Item>
           </div>
         );
@@ -372,7 +372,7 @@ const Paramter: React.FC<Props> = props => {
                     />
                   </Col>
                   <Col span={2} style={{ textAlign: 'center' }}>
-                    <Icon type="arrow-right" />
+                    <Icon type="arrow-right"/>
                   </Col>
                   <Col span={10}>
                     <Input
@@ -451,7 +451,7 @@ const Paramter: React.FC<Props> = props => {
                 setParameterVisible(true);
               }}
             >
-              <Icon type="plus" />
+              <Icon type="plus"/>
               添加参数
             </Button>
           </Form.Item>

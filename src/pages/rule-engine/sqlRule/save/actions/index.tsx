@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Form, { FormComponentProps } from 'antd/lib/form';
 import { Card, Col, Popconfirm, Row, Select } from 'antd';
-import { AlarmAction } from '@/pages/device/alarm/data';
+import { AlarmAction } from '../../data';
 import apis from '@/services';
 import encodeQueryParam from '@/utils/encodeParam';
-import { valid } from '@antv/data-set/lib/util/statistics';
 
 interface Props extends FormComponentProps {
   action: Partial<AlarmAction>;
@@ -53,15 +52,6 @@ const Action: React.FC<Props> = props => {
           setNotifyTypeConfig(res.result);
         }
       });
-
-      /*apis.notifier.config(encodeQueryParam({ paging: false}))
-        .then((response: any) => {
-          if (response.status === 200) {
-            setMessageConfig(response.result.data);
-          }
-        })
-        .catch(() => {
-        });*/
     }
   }, [actionType]);
 
@@ -114,8 +104,8 @@ const Action: React.FC<Props> = props => {
     switch (actionType) {
       case 'notifier':
         return (
-          <div>
-            <Col span={4}>
+          <div key={`div_${Math.round(Math.random() * 100000)}`}>
+            <Col span={4} key={`_${Math.round(Math.random() * 100000)}`}>
               <Select placeholder="选择通知类型" value={actionData.configuration?.notifyType}
                       onChange={(value: string, event: any) => {
                         findNotifier(event.props.data);
@@ -126,13 +116,14 @@ const Action: React.FC<Props> = props => {
                         setActionData({ ...actionData });
                         submitData();
                       }}
+                      key={`_${Math.round(Math.random() * 100000)}`}
               >
-                {notifyTypeConfig.length > 0 && notifyTypeConfig.map((item: any) => (
+                {notifyTypeConfig && notifyTypeConfig.length > 0 && notifyTypeConfig.map((item: any) => (
                   <Select.Option key={item.id} data={item}>{item.name}</Select.Option>
                 ))}
               </Select>
             </Col>
-            <Col span={6}>
+            <Col span={6} key={`_${Math.round(Math.random() * 100000)}`}>
               <Select placeholder="选择通知配置" value={actionData.configuration?.notifierId}
                       onChange={(value: string, event: any) => {
                         findTemplate(event.props.data);
@@ -143,13 +134,14 @@ const Action: React.FC<Props> = props => {
                         setActionData({ ...actionData });
                         submitData();
                       }}
+                      key={`_${Math.round(Math.random() * 100000)}`}
               >
-                {messageConfig.length > 0 && messageConfig.map((item: any) => (
+                {messageConfig && messageConfig.length > 0 && messageConfig.map((item: any) => (
                   <Select.Option key={item.id} data={item}>{item.name}</Select.Option>
                 ))}
               </Select>
             </Col>
-            <Col span={6}>
+            <Col span={6} key={`_${Math.round(Math.random() * 100000)}`}>
               <Select placeholder="选择通知模板" value={actionData.configuration?.templateId}
                       onChange={(value: string) => {
                         if (!actionData.configuration) {
@@ -159,8 +151,9 @@ const Action: React.FC<Props> = props => {
                         setActionData({ ...actionData });
                         submitData();
                       }}
+                      key={`_${Math.round(Math.random() * 100000)}`}
               >
-                {templateConfig.length > 0 && templateConfig.map((item: any) => (
+                {templateConfig && templateConfig.length > 0 && templateConfig.map((item: any) => (
                   <Select.Option key={item.id}>{item.name}</Select.Option>
                 ))}
               </Select>
@@ -173,19 +166,20 @@ const Action: React.FC<Props> = props => {
   };
 
   return (
-    <div style={{ paddingBottom: 5 }}>
+    <div style={{ paddingBottom: 5 }} key={`div_${Math.round(Math.random() * 100000)}`}>
       <Card size="small" bordered={false} style={{ backgroundColor: '#F5F5F6' }}>
-        <Row>
-          <span>执行动作: {props.position + 1}</span>
+        <Row key={`_${Math.round(Math.random() * 100000)}`}>
+          <span key={`_${Math.round(Math.random() * 100000)}`}>执行动作: {props.position + 1}</span>
           <Popconfirm title="确认删除此执行动作？"
                       onConfirm={() => props.remove(props.position)}
+                      key={`_${Math.round(Math.random() * 100000)}`}
           >
-            <a style={{ paddingLeft: 30 }}>删除</a>
+            <a style={{ paddingLeft: 30 }} key={`_${Math.round(Math.random() * 100000)}`}>删除</a>
           </Popconfirm>
         </Row>
 
         <Row gutter={16} key={props.position + 1} style={{ paddingLeft: 10 }}>
-          <Col span={4}>
+          <Col span={4} key={`_${Math.round(Math.random() * 100000)}`}>
             <Select placeholder="选择动作类型" value={actionData.executor} key="trigger"
                     onChange={(value: string) => {
                       setActionType(value);
@@ -194,7 +188,7 @@ const Action: React.FC<Props> = props => {
                       submitData();
                     }}
             >
-              <Select.Option value="notifier">消息通知</Select.Option>
+              <Select.Option value="notifier" key='notifier'>消息通知</Select.Option>
             </Select>
           </Col>
           {renderActionType()}
