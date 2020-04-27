@@ -5,7 +5,6 @@ import { DeviceInstance } from '@/pages/device/instance/data';
 import Configuration from './configuration';
 import Tags from './tags/tags';
 import apis from '@/services';
-import Pie from '@/pages/analysis/components/Charts/Pie';
 
 interface Props {
   data: Partial<DeviceInstance>;
@@ -68,7 +67,7 @@ const Info: React.FC<Props> = (props) => {
     <div>
       <Card style={{ marginBottom: 20 }}>
         <Descriptions style={{ marginBottom: 20 }} bordered column={3} size="small"
-                      title={<span>型号信息</span>}>
+                      title={<span>设备信息</span>}>
           <Descriptions.Item label="设备型号" span={1}>
             {props.data.productName}
           </Descriptions.Item>
