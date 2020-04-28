@@ -3,6 +3,7 @@ import { Chart, Axis, Geom, Tooltip } from "bizcharts";
 import { message } from "antd";
 import { ComponentProps } from "..";
 import apis from "@/services";
+import styles from '../index.less';
 
 interface Props extends ComponentProps {
     config: any;
@@ -56,7 +57,7 @@ const LineChart = (props: Props) => {
             params = [{
                 "dashboard": 'device',
                 "object": props.productId,
-                "measurement": "temperature", // 物模型属性ID
+                "measurement": props.config.measurement, // 物模型属性ID
                 "dimension": props.config.dimension, // 固定
                 "params": { "history": 10, "deviceId": props.deviceId }
             }];
@@ -65,7 +66,7 @@ const LineChart = (props: Props) => {
             params = [{
                 "dashboard": 'device',
                 "object": props.productId,
-                "measurement": "temperature", // 物模型属性ID
+                "measurement": props.config.measurement, // 物模型属性ID
                 "dimension": props.config.dimension, // 固定
                 "params": {
                     "limit": props.config.limit,
@@ -96,6 +97,9 @@ const LineChart = (props: Props) => {
             forceFit
             placeholder
         >
+            <h4 className={styles.subTitle}>
+                {config.name || ''}
+            </h4>
             <Axis name="year"
                 label={{ autoRotate: false }}
                 title={{
