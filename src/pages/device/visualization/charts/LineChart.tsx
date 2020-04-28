@@ -46,9 +46,7 @@ const LineChart = (props: Props) => {
         if (props.edit) {
             props.edit(() => props.config);
         }
-        if (props.preview) {
-            props.preview(() => 'https://www.baidu.com/link?url=kuSzeluGn9dkOqcDvPcvU5g1gh-DMms6auTTUACJkdPm559tFM6GRDYkHE7p8fSHDl-RSOc5KeDGQBCictIOZsdgBL5Ds_kDaZCu1qgx99BitlSq6ocOJp3htq0bW7IoATv4Y0I33tKGyQL-bBDOuAqHvqsLeQiWlDuR0KCJiA3u-SswRJhJQHgREuKPOHszUZ0L_9oieMXOwCY0HYUDGsIKBjIMNoV3x6CFP4h63kPC3rmMwKTs-0WtEa1VceLscigtzPQiQmqZqlctYr1JX1IWLbR6r6rNcvQvP2o8NqaHqfzcG0tTiE6y7fSgM9D2N1E9ON8yyBf8iRnPOIzjfc6p2FPMmuM6_Rc6cBFhhPC_ujQWj4kc_CveBLiapyLMDS4E1KVznYHYWSz_OiK-DZIvGqriXnBUCz5j25CgJFm_mMK-LrwLAXkHY_2BzRr4WQFBMoOzesktllvUaOmzlkircgLMGRVKQZRubOzkJ0ocCySDlUKSyNeIX01yGRGGOZ5EEBoPD6BVVUFCKKUUEEp6NEj-6vVN_Jihgk-_W1J--9a9PKRuXKuS0EbKjvySdY3f5ink5eax6jvSvv7GNywDh1E6slJqj8rHTBQO32niX9mPlD9vfLrbOxSUcTBO_GUmwK6K7OIZSCUChT3Lpuwv38Lr8vlFbuUdZIB2tSO1lDLjDshWgPlic54ECPb4TLsGMdlJg8p8q_BLL4Qdly75nte91d1jYcb3EbEbFViLVewOfeOspKTyimZFT-G0Qe15r1klAAZvt7dD5LBqu_Nh89uLs4_ZZ4jhQJKBSLm&timg=&click_t=1587465382772&s_info=1622_978&wd=&eqid=e5c3ddcc00000e74000000065e9ecca5')
-        }
+
     }, []);
 
     useEffect(() => {
@@ -86,7 +84,6 @@ const LineChart = (props: Props) => {
             if (response.status === 200) {
                 const { result } = response;
                 const tempData = result.map((item: any) => ({ year: item.data.timeString, value: item.data.value.value }));
-                console.log(tempData, 'das');
                 setData(tempData);
             }
         })
@@ -96,29 +93,36 @@ const LineChart = (props: Props) => {
             height={height}
             data={data}
             scale={defaultCols}
-            forceFit>
-            <Axis name="year" title={{
-                position: 'end',
-                offset: 15,
-                textStyle: {
-                    fontSize: '12',
-                    textAlign: 'center',
-                    fill: '#999',
-                    fontWeight: 'bold',
-                    rotate: 0,
-                }
-            }} />
-            <Axis name="value" title={{
-                position: 'end',
-                offset: 5.5,
-                textStyle: {
-                    fontSize: '12',
-                    textAlign: 'right',
-                    fill: '#999',
-                    fontWeight: 'bold',
-                    rotate: 0
-                }
-            }} />
+            forceFit
+            placeholder
+        >
+            <Axis name="year"
+                label={{ autoRotate: false }}
+                title={{
+                    position: 'end',
+                    offset: 15,
+                    textStyle: {
+                        fontSize: '12',
+                        textAlign: 'center',
+                        fill: '#999',
+                        fontWeight: 'bold',
+                        rotate: 0,
+                        autoRotate: true
+                    }
+                }} />
+            <Axis name="value"
+                label={{ autoRotate: false }}
+                title={{
+                    position: 'end',
+                    offset: 5.5,
+                    textStyle: {
+                        fontSize: '12',
+                        textAlign: 'right',
+                        fill: '#999',
+                        fontWeight: 'bold',
+                        rotate: 0
+                    }
+                }} />
             <Tooltip
                 crosshairs={{
                     type: "y"
