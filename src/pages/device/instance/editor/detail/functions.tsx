@@ -64,7 +64,7 @@ const Functions: React.FC<Props> = (props) => {
     <div>
       <Spin spinning={spinning}>
         <Card style={{ marginBottom: 20 }} title="功能调试">
-          <Form labelCol={{ span: 1 }} wrapperCol={{ span: 23 }}>
+          <Form labelCol={{ span: 2 }} wrapperCol={{ span: 22 }}>
             <Form.Item label="设备功能">
               <Select placeholder="请选择设备功能" onChange={(e: any) => {
                 setFunctionId(e);

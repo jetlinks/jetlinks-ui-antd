@@ -202,7 +202,7 @@ export default {
                 {
                   hideInMenu: true,
                   path: '/device/instance/save/:id',
-                  name: '编辑设备实例',
+                  name: '设备详情',
                   component: './device/instance/editor',
                 },
                 {
@@ -216,6 +216,12 @@ export default {
                   name: '网关设备',
                   authority: ['device-gateway'],
                   component: './device/gateway',
+                },
+                {
+                  path: '/device/location',
+                  name: '位置查询',
+                  authority: ['geo-manager'],
+                  component: './device/location',
                 },
               ],
             },

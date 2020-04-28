@@ -92,6 +92,7 @@
     "re-resizable": "^6.3.2",
     "react": "^16.8.6",
     "react-ace": "^8.1.0",
+    "react-amap": "^1.2.8",
     "react-copy-to-clipboard": "^5.0.1",
     "react-dom": "^16.8.6",
     "react-fittext": "^1.0.0",
