@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Form, Input, Select, Col, Row } from "antd";
+import { Form, Input, Select, Col, Row, Tooltip, InputNumber } from "antd";
 import { FormComponentProps } from "antd/lib/form";
 import styles from '../index.less';
 
@@ -30,6 +30,7 @@ const ColumnChartEdit = (props: Props) => {
     }, []);
 
 
+
     const renderType = () => {
         if (type === 'history') {
             return (
@@ -39,9 +40,9 @@ const ColumnChartEdit = (props: Props) => {
                             label="数据量"
                         >
                             {getFieldDecorator('history', {
-                                initialValue: config?.history
+                                initialValue: config?.history || 30
                             })(
-                                <Input />
+                                <InputNumber style={{ width: '100%' }} />
                             )}
                         </Form.Item>
                     </Col>
@@ -57,33 +58,35 @@ const ColumnChartEdit = (props: Props) => {
                         </Form.Item>
                     </Col>
                     <Col xl={{ span: 22, offset: 2 }} lg={{ span: 8 }} md={{ span: 12 }} sm={24}>
-                        <Form.Item
-                            label="时间范围"
-                            style={{ marginBottom: 0 }}>
-
+                        <Tooltip title="now表示当前时间，如：now-30d">
                             <Form.Item
+                                label="时间范围"
+                                style={{ marginBottom: 0 }}>
 
-                                style={{ display: 'inline-block', width: 'calc(50% - 12px)' }}
-                            >
-                                {getFieldDecorator('from', {
-                                    initialValue: config?.from
-                                })(
-                                    <Input />
-                                )}
+                                <Form.Item
 
+                                    style={{ display: 'inline-block', width: 'calc(50% - 12px)' }}
+                                >
+                                    {getFieldDecorator('from', {
+                                        initialValue: config?.from
+                                    })(
+                                        <Input />
+                                    )}
+
+                                </Form.Item>
+                                <span style={{ display: 'inline-block', width: '24px', textAlign: 'center' }}>-</span>
+                                <Form.Item
+                                    // label="  "
+                                    style={{ display: 'inline-block', width: 'calc(50% - 12px)' }}
+                                >
+                                    {getFieldDecorator('to', {
+                                        initialValue: config?.to
+                                    })(
+                                        <Input />
+                                    )}
+                                </Form.Item>
                             </Form.Item>
-                            <span style={{ display: 'inline-block', width: '24px', textAlign: 'center' }}>-</span>
-                            <Form.Item
-                                // label="  "
-                                style={{ display: 'inline-block', width: 'calc(50% - 12px)' }}
-                            >
-                                {getFieldDecorator('to', {
-                                    initialValue: config?.to
-                                })(
-                                    <Input />
-                                )}
-                            </Form.Item>
-                        </Form.Item>
+                        </Tooltip>
                     </Col>
                 </>
             );
@@ -95,9 +98,9 @@ const ColumnChartEdit = (props: Props) => {
                             label="数据量"
                         >
                             {getFieldDecorator('limit', {
-                                initialValue: config?.limit
+                                initialValue: config?.limit || 30
                             })(
-                                <Input />
+                                <InputNumber style={{ width: '100%' }} />
                             )}
                         </Form.Item>
                     </Col>
@@ -106,7 +109,7 @@ const ColumnChartEdit = (props: Props) => {
                             label="聚合类型"
                         >
                             {getFieldDecorator('agg', {
-                                initialValue: config?.agg
+                                initialValue: config?.agg || 'avg'
                             })(
                                 <Select>
                                     <Select.Option value="avg">AVG</Select.Option>
@@ -120,50 +123,53 @@ const ColumnChartEdit = (props: Props) => {
                     </Col>
 
                     <Col xl={{ span: 22, offset: 2 }} lg={{ span: 8 }} md={{ span: 12 }} sm={24}>
-                        <Form.Item
-                            label="时间范围"
-                            style={{ marginBottom: 0 }}>
-
+                        <Tooltip title="now表示当前时间，如：now-30d">
                             <Form.Item
+                                label="时间范围"
+                                style={{ marginBottom: 0 }}>
 
-                                style={{ display: 'inline-block', width: 'calc(50% - 12px)' }}
-                            >
-                                {getFieldDecorator('from', {
-                                    initialValue: config?.from
-                                })(
-                                    <Input />
-                                )}
+                                <Form.Item
 
+                                    style={{ display: 'inline-block', width: 'calc(50% - 12px)' }}
+                                >
+                                    {getFieldDecorator('from', {
+                                        initialValue: config?.from || 'now-30d'
+                                    })(
+                                        <Input />
+                                    )}
+
+                                </Form.Item>
+                                <span style={{ display: 'inline-block', width: '24px', textAlign: 'center' }}>-</span>
+                                <Form.Item
+                                    style={{ display: 'inline-block', width: 'calc(50% - 12px)' }}
+                                >
+                                    {getFieldDecorator('to', {
+                                        initialValue: config?.to || 'now'
+                                    })(
+                                        <Input />
+                                    )}
+                                </Form.Item>
                             </Form.Item>
-                            <span style={{ display: 'inline-block', width: '24px', textAlign: 'center' }}>-</span>
-                            <Form.Item
-                                // label="  "
-                                style={{ display: 'inline-block', width: 'calc(50% - 12px)' }}
-                            >
-                                {getFieldDecorator('to', {
-                                    initialValue: config?.to
-                                })(
-                                    <Input />
-                                )}
-                            </Form.Item>
-                        </Form.Item>
+                        </Tooltip>
                     </Col>
 
                     <Col xl={{ span: 10, offset: 2 }} lg={{ span: 8 }} md={{ span: 12 }} sm={24}>
-                        <Form.Item label="时间间隔">
-                            {getFieldDecorator('time', {
-                                initialValue: config?.time
-                            })(
-                                <Input />
-                            )}
-                        </Form.Item>
+                        <Tooltip title="M:月、d:天、h:小时、m:分钟、">
+                            <Form.Item label="时间间隔">
+                                {getFieldDecorator('time', {
+                                    initialValue: config?.time || '1d'
+                                })(
+                                    <Input />
+                                )}
+                            </Form.Item>
+                        </Tooltip>
                     </Col>
                     <Col xl={{ span: 10, offset: 2 }} lg={{ span: 10 }} md={{ span: 24 }} sm={24}>
                         <Form.Item
                             label="时间格式"
                         >
                             {getFieldDecorator('format', {
-                                initialValue: config?.format
+                                initialValue: config?.format || 'yyyy-MM-dd'
                             })(
                                 <Input />
                             )}
@@ -193,9 +199,9 @@ const ColumnChartEdit = (props: Props) => {
                         label="X轴"
                     >
                         {getFieldDecorator('x', {
-                            initialValue: config?.x
+                            initialValue: config?.x || '时间'
                         })(
-                            <Input />
+                            <Input placeholder="X轴名称" />
                         )}
                     </Form.Item>
                 </Col>
@@ -204,9 +210,9 @@ const ColumnChartEdit = (props: Props) => {
                         label="Y轴"
                     >
                         {getFieldDecorator('y', {
-                            initialValue: config?.y
+                            initialValue: config?.y || '值'
                         })(
-                            <Input />
+                            <Input placeholder="Y轴名称" />
                         )}
                     </Form.Item>
                 </Col>
@@ -242,6 +248,7 @@ const ColumnChartEdit = (props: Props) => {
             {renderType()}
 
         </Form>
+
     )
 }
 export default Form.create<any>()(ColumnChartEdit)

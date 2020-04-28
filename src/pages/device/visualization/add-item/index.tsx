@@ -73,10 +73,10 @@ const AddItem = (props: Props) => {
               grid={{
                 gutter: 16,
                 xs: 1,
-                sm: 2,
-                md: 4,
-                lg: 4,
-                xl: 6,
+                sm: 1,
+                md: 2,
+                lg: 3,
+                xl: 3,
                 xxl: 4,
               }}
               dataSource={ChartsConfig}
@@ -105,7 +105,7 @@ const AddItem = (props: Props) => {
 
         </Col>
 
-        <Col xs={12} sm={10} md={8} lg={8} xl={8}>
+        <Col xs={12} sm={10} md={8} lg={8} xl={8} style={{ paddingLeft: 20 }}>
           <Row style={{ paddingBottom: 15 }}>基本信息</Row>
           {type && renderEdit(type)}
         </Col>

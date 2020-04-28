@@ -1,5 +1,4 @@
 import React, { useState, Fragment, useEffect, useRef } from 'react';
-import GridLayout from "react-grid-layout";
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import loadable from '@loadable/component';
@@ -7,12 +6,14 @@ import { Button, Divider, Card, Tooltip, message, Icon } from 'antd';
 import { CloseCircleOutlined, EditOutlined, SaveOutlined, PlusOutlined, SyncOutlined } from '@ant-design/icons';
 import * as rxjs from 'rxjs';
 import { map, toArray, } from 'rxjs/operators';
+import { Responsive, WidthProvider } from 'react-grid-layout';
 import styles from './index.less';
 import AddItem from './add-item';
 import { VisualizationItem } from './data';
 import apis from '@/services';
 import { randomString } from '@/utils/utils';
 
+const ResponsiveGridLayout = WidthProvider(Responsive);
 interface Props {
     type: string;
     target?: string;
@@ -125,7 +126,9 @@ const Visualization: React.FC<Props> = props => {
     const renderGridLayout = () =>
         (
             <>
-                <GridLayout
+                <ResponsiveGridLayout
+                    breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+                    cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
                     onLayoutChange={(item: any) => {
                         layoutChange(item)
                     }}
@@ -139,7 +142,6 @@ const Visualization: React.FC<Props> = props => {
                     }}
                     className="layout"
                     layout={layout}
-                    cols={12}
                     rowHeight={30}
                     width={1800}>
                     {layout.map((item: any) => {
@@ -149,13 +151,11 @@ const Visualization: React.FC<Props> = props => {
                         }
                         return (
                             <Card
+                                style={{ overflow: "hidden" }}
                                 key={item.i}
                                 id={item.i}
                             >
-                                <div style={{ marginBottom: 50 }}>
-                                    <div style={{ float: 'left' }}>
-                                        {item.title}
-                                    </div>
+                                <div style={{ position: 'absolute', right: 15, top: 5, }}>
                                     <div style={{ float: 'right' }}>
                                         <Fragment>
                                             {edit && (
@@ -184,6 +184,7 @@ const Visualization: React.FC<Props> = props => {
                                 </div>
                                 {item.config?.component && ChartComponent !== null ?
                                     <ChartComponent
+                                        style={{ padding: 10 }}
                                         {...item.props}
                                         ySize={item.y}
                                         config={item.config}
@@ -194,7 +195,7 @@ const Visualization: React.FC<Props> = props => {
                             </Card>)
                     })}
 
-                </GridLayout>
+                </ResponsiveGridLayout>
                 <div className={styles.optionGroup}>
                     {edit ?
                         <div style={{ float: 'right' }}>
