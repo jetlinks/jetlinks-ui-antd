@@ -95,9 +95,9 @@ const Status: React.FC<Props> = (props) => {
       apis.deviceInstance.propertiesRealTime(list)
         .then(response => {
           setSpinning(false);
-          if (response.status === 200){
+          if (response.status === 200) {
             const tempResult = response?.result;
-            tempResult.forEach((item:any) => {
+            tempResult.forEach((item: any) => {
               propertyData[item.data.value.property].formatValue = item.data.value?.formatValue ? item.data.value.formatValue : '--';
               if (propertyData[item.data.value.property].visitData.length >= 15) {
                 propertyData[item.data.value.property].visitData.splice(0, 1);
@@ -161,12 +161,15 @@ const Status: React.FC<Props> = (props) => {
         wrapAPI(`/jetlinks/dashboard/device/${props.device.productId}/properties/realTime?:X_Access_Token=${getAccessToken()}&deviceId=${props.device.id}&history=1`),
       );
 
-      source.onopen = () => {};
+      source.onopen = () => {
+      };
 
       source.onmessage = (e: any) => {
 
         const data = JSON.parse(e.data);
         const dataValue = data.value;
+
+        if (!propertyData[dataValue.property]) return;
 
         propertyData[dataValue.property].formatValue = dataValue?.formatValue ? dataValue.formatValue : '--';
 
@@ -181,9 +184,10 @@ const Status: React.FC<Props> = (props) => {
             'y': Math.floor(Number(dataValue.value) * 100) / 100,
           });
         }
-        setPropertyData({...propertyData});
+        setPropertyData({ ...propertyData });
       };
-      source.onerror = () => {};
+      source.onerror = () => {
+      };
     }
 
     return () => {
@@ -201,7 +205,8 @@ const Status: React.FC<Props> = (props) => {
           runInfo.loading = false;
           setDeviceState({ state: response.result });
         }
-      }).catch(() => {});
+      }).catch(() => {
+    });
   };
 
   const refreshProperties = (item: any) => {
@@ -294,8 +299,129 @@ const Status: React.FC<Props> = (props) => {
   return (
     <div>
       <Spin tip="加载中..." spinning={spinning}>
-      {
-        metadata && metadata.properties ? <Row gutter={24}>
+        {
+          metadata && metadata.properties ? <Row gutter={24}>
+              <Col {...topColResponsiveProps}>
+                <Spin spinning={runInfo.loading}>
+                  <ChartCard
+                    bordered={false}
+                    title='设备状态'
+                    action={
+                      <Tooltip
+                        title='刷新'
+                      >
+                        <Icon type="sync" onClick={() => {
+                          refresDeviceState();
+                        }}/>
+                      </Tooltip>
+                    }
+                    contentHeight={46}
+                    total={deviceState?.state?.text}
+                  >
+                    <span>上线时间：{moment(runInfo?.onlineTime).format('YYYY-MM-DD HH:mm:ss')}</span>
+                  </ChartCard>
+                </Spin>
+
+              </Col>
+
+              {
+                (metadata.properties).map((item: any) => {
+                    if (!item) return false;
+                    return (
+                      <Col {...topColResponsiveProps} key={item.id}>
+                        <Spin spinning={item.loading}>
+                          <ChartCard
+                            bordered={false}
+                            title={item.name}
+                            action={
+                              <div>
+                                <Icon title='刷新' type="sync" onClick={() => {
+                                  refreshPropertyItem(item);
+                                }}/>
+                                <Icon title='详情' style={{ marginLeft: '10px' }} type="bars"
+                                      onClick={() => {
+                                        setPropertiesVisible(true);
+                                        setPropertiesInfo(item);
+                                      }}/>
+                              </div>
+                            }
+                            total={...propertyData[item.id]?.formatValue || '--'}
+                            contentHeight={46}
+                          >
+                          <span>
+                            <MiniArea height={40} color="#975FE4" data={...propertyData[item.id]?.visitData}/>
+                          </span>
+                          </ChartCard>
+                        </Spin>
+                      </Col>
+                    );
+                  },
+                )
+              }
+              {
+                propertiesVisible &&
+                <PropertiesInfo
+                  item={propertiesInfo}
+                  close={() => {
+                    setPropertiesVisible(false);
+                  }}
+                  type={props.device.productId}
+                  deviceId={props.device.id}
+                />
+              }
+              {
+                (metadata.events).map((item: any) => {
+                    const tempData = eventData.find(i => i.eventId === item.id);
+                    return (
+                      <Col {...topColResponsiveProps} key={item.id}>
+                        <Spin spinning={item.loading}>
+                          <ChartCard
+                            bordered={false}
+                            title={item.name}
+                            action={
+                              <Tooltip
+                                title='刷新'
+                              >
+                                <Icon type="sync" onClick={() => {
+                                  refreshEventItem(item);
+                                }}/>
+                              </Tooltip>
+                            }
+
+                            total={`${tempData?.data.total || 0}次`}
+                            contentHeight={46}
+                          >
+                      <span>
+                        {eventLevel.get(item.expands?.level)}
+                        <a
+                          style={{ float: 'right' }}
+                          onClick={() => {
+                            setEventInfo(item);
+                            setEventVisible(true);
+                          }}>
+                          查看详情
+                        </a>
+                      </span>
+                          </ChartCard>
+                        </Spin>
+                      </Col>
+                    );
+                  },
+                )
+              }
+              {
+                eventVisible &&
+                <EventLog
+                  item={eventInfo}
+                  close={() => {
+                    setEventVisible(false);
+                  }}
+                  type={props.device.productId}
+                  deviceId={props.device.id}
+                />
+              }
+            </Row>
+            :
             <Col {...topColResponsiveProps}>
               <Spin spinning={runInfo.loading}>
                 <ChartCard
@@ -311,134 +437,13 @@ const Status: React.FC<Props> = (props) => {
                     </Tooltip>
                   }
                   contentHeight={46}
-                  total={deviceState?.state?.text}
+                  total={runInfo.state?.text}
                 >
-                  <span>上线时间：{moment(runInfo?.onlineTime).format('YYYY-MM-DD HH:mm:ss')}</span>
+                  <span/>
                 </ChartCard>
               </Spin>
-
             </Col>
-
-            {
-              (metadata.properties).map((item: any) => {
-                  if (!item) return false;
-                  return (
-                    <Col {...topColResponsiveProps} key={item.id}>
-                      <Spin spinning={item.loading}>
-                        <ChartCard
-                          bordered={false}
-                          title={item.name}
-                          action={
-                            <div>
-                              <Icon title='刷新' type="sync" onClick={() => {
-                                refreshPropertyItem(item);
-                              }}/>
-                              <Icon title='详情' style={{ marginLeft: '10px' }} type="bars"
-                                    onClick={() => {
-                                      setPropertiesVisible(true);
-                                      setPropertiesInfo(item);
-                                    }}/>
-                            </div>
-                          }
-                          total={...propertyData[item.id]?.formatValue || '--'}
-                          contentHeight={46}
-                        >
-                          <span>
-                            <MiniArea height={40} color="#975FE4" data={...propertyData[item.id]?.visitData}/>
-                          </span>
-                        </ChartCard>
-                      </Spin>
-                    </Col>
-                  );
-                },
-              )
-            }
-            {
-              propertiesVisible &&
-              <PropertiesInfo
-                item={propertiesInfo}
-                close={() => {
-                  setPropertiesVisible(false);
-                }}
-                type={props.device.productId}
-                deviceId={props.device.id}
-              />
-            }
-            {
-              (metadata.events).map((item: any) => {
-                  const tempData = eventData.find(i => i.eventId === item.id);
-                  return (
-                    <Col {...topColResponsiveProps} key={item.id}>
-                      <Spin spinning={item.loading}>
-                        <ChartCard
-                          bordered={false}
-                          title={item.name}
-                          action={
-                            <Tooltip
-                              title='刷新'
-                            >
-                              <Icon type="sync" onClick={() => {
-                                refreshEventItem(item);
-                              }}/>
-                            </Tooltip>
-                          }
-
-                          total={`${tempData?.data.total || 0}次`}
-                          contentHeight={46}
-                        >
-                      <span>
-                        {eventLevel.get(item.expands?.level)}
-                        <a
-                          style={{ float: 'right' }}
-                          onClick={() => {
-                            setEventInfo(item);
-                            setEventVisible(true);
-                          }}>
-                          查看详情
-                        </a>
-                      </span>
-                        </ChartCard>
-                      </Spin>
-                    </Col>
-                  );
-                },
-              )
-            }
-            {
-              eventVisible &&
-              <EventLog
-                item={eventInfo}
-                close={() => {
-                  setEventVisible(false);
-                }}
-                type={props.device.productId}
-                deviceId={props.device.id}
-              />
-            }
-          </Row>
-          :
-          <Col {...topColResponsiveProps}>
-            <Spin spinning={runInfo.loading}>
-              <ChartCard
-                bordered={false}
-                title='设备状态'
-                action={
-                  <Tooltip
-                    title='刷新'
-                  >
-                    <Icon type="sync" onClick={() => {
-                      refresDeviceState();
-                    }}/>
-                  </Tooltip>
-                }
-                contentHeight={46}
-                total={runInfo.state?.text}
-              >
-                <span/>
-              </ChartCard>
-            </Spin>
-          </Col>
-      }
+        }
       </Spin>
     </div>
   );
