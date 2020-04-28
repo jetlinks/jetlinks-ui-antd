@@ -6,14 +6,15 @@ import { Button, Divider, Card, Tooltip, message, Icon } from 'antd';
 import { CloseCircleOutlined, EditOutlined, SaveOutlined, PlusOutlined, SyncOutlined } from '@ant-design/icons';
 import * as rxjs from 'rxjs';
 import { map, toArray, } from 'rxjs/operators';
-import { Responsive, WidthProvider } from 'react-grid-layout';
+// import { Responsive, WidthProvider } from 'react-grid-layout';
 import styles from './index.less';
 import AddItem from './add-item';
 import { VisualizationItem } from './data';
 import apis from '@/services';
 import { randomString } from '@/utils/utils';
+import ReactGridLayout from 'react-grid-layout';
 
-const ResponsiveGridLayout = WidthProvider(Responsive);
+// const ResponsiveGridLayout = WidthProvider(Responsive);
 interface Props {
     type: string;
     target?: string;
@@ -126,9 +127,9 @@ const Visualization: React.FC<Props> = props => {
     const renderGridLayout = () =>
         (
             <>
-                <ResponsiveGridLayout
-                    breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
-                    cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+                <ReactGridLayout
+                    // breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+                    // cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
                     onLayoutChange={(item: any) => {
                         layoutChange(item)
                     }}
@@ -195,7 +196,7 @@ const Visualization: React.FC<Props> = props => {
                             </Card>)
                     })}
 
-                </ResponsiveGridLayout>
+                </ReactGridLayout>
                 <div className={styles.optionGroup}>
                     {edit ?
                         <div style={{ float: 'right' }}>
