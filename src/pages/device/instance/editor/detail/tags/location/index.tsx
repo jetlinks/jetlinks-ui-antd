@@ -68,7 +68,7 @@ const Location: React.FC<Props> = props => {
       click: (ins: any) => {
         form.setFieldsValue({ value: ins.lnglat.getLng() + ',' + ins.lnglat.getLat() });
         if (mapCreated.getAllOverlays('marker').length <= 0) {
-          newMarker(ins, [ins.lnglat.getLng(), ins.lnglat.getLat()]);
+          newMarker(mapCreated, [ins.lnglat.getLng(), ins.lnglat.getLat()]);
         } else {
           mapMarker.setPosition([ins.lnglat.getLng(), ins.lnglat.getLat()]);
         }
@@ -77,11 +77,15 @@ const Location: React.FC<Props> = props => {
 
     const newMarker = (map: any, coordinate: any[]) => {
       let marker = new window.AMap.Marker({
-        position: coordinate,
         offset: new window.AMap.Pixel(-10, -30),
       });
       marker.setMap(map);
       setMapMarker(marker);
+      upMarker(marker,coordinate);
+    };
+
+    const upMarker = (map: any,coordinate: any[]) => {
+      map.setPosition(coordinate);
     };
 
     return (
