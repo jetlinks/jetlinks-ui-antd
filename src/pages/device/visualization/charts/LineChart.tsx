@@ -1,16 +1,15 @@
-import React, { useState, useEffect, memo, forwardRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Chart, Axis, Geom, Tooltip } from "bizcharts";
 import { message } from "antd";
 import { ComponentProps } from "..";
 import apis from "@/services";
-import lodash from 'lodash';
 import styles from '../index.less';
 
 interface Props extends ComponentProps {
     config: any;
 }
 
-const LineChart = (props: Props, ref: any) => {
+const LineChart = (props: Props) => {
     const { config } = props;
     const defaultData: any[] = [];
 
@@ -158,4 +157,4 @@ const LineChart = (props: Props, ref: any) => {
     );
 
 }
-export default memo<Props>(forwardRef(LineChart), (prevProps: any, nextProps: any) => lodash.isEqual(prevProps.value, nextProps.value));
+export default LineChart;

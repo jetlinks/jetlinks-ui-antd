@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Chart, Geom, Axis, Tooltip, Legend } from 'bizcharts';
-import { Button, message, Drawer, Form } from 'antd';
+import { message } from 'antd';
 import { ComponentProps } from '..';
 import apis from '@/services';
 
