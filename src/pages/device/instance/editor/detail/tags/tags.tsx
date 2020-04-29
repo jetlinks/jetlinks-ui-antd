@@ -3,6 +3,7 @@ import { FormComponentProps } from 'antd/lib/form';
 import Form from 'antd/es/form';
 import { Col, Icon, Input, message, Modal, Row, Spin } from 'antd';
 import apis from '@/services';
+import Location from './location/index';
 
 interface Props extends FormComponentProps {
   data?: any;
@@ -13,24 +14,31 @@ interface Props extends FormComponentProps {
 
 interface State {
   tagsData: any[];
-  spinning:boolean;
+  spinning: boolean;
+  tagInfo: any;
+  tagSequence: number;
 }
 
 const Tags: React.FC<Props> = props => {
   const initState: State = {
     tagsData: props.data.length > 0 ? props.data : [{ key: '', value: '', name: '', _id: 0 }],
-    spinning:true
+    spinning: true,
+    tagInfo: {},
+    tagSequence: -1,
   };
 
   const [tagsData, setTagsData] = useState(initState.tagsData);
   const [spinning, setSpinning] = useState(initState.spinning);
+  const [location, setLocation] = useState(false);
+  const [tagInfo, setTagInfo] = useState(initState.tagInfo);
+  const [tagSequence, setTagSequence] = useState(initState.tagSequence);
 
   useEffect(() => {
     setSpinning(false);
   }, []);
 
   const saveData = () => {
-    if (tagsData.length > 0){
+    if (tagsData.length > 0) {
       props.save(tagsData);
     } else {
       props.close();
@@ -40,7 +48,7 @@ const Tags: React.FC<Props> = props => {
   const removeTags = (val: number) => {
     setSpinning(true);
     if (tagsData[val].id) {
-      apis.deviceInstance.removeTags(props.deviceId, tagsData[val].id).then((res:any) => {
+      apis.deviceInstance.removeTags(props.deviceId, tagsData[val].id).then((res: any) => {
         if (res.status === 200) {
           setSpinning(false);
           message.success('删除成功');
@@ -71,11 +79,10 @@ const Tags: React.FC<Props> = props => {
       <Spin tip="操作中..." spinning={spinning}>
         <Form>
           <Form.Item key="item">
-            {tagsData.map((item:any, index) => (
-              <Row key={item._id}>
+            {tagsData.map((item: any, index) => (
+              <Row>
                 <Col span={5}>
                   <Input placeholder="请输入标签key"
-                         key="key"
                          value={item.key}
                          disabled={!!item.id}
                          onChange={event => {
@@ -87,7 +94,6 @@ const Tags: React.FC<Props> = props => {
                 <Col span={1} style={{ textAlign: 'center' }}/>
                 <Col span={5}>
                   <Input placeholder="请输入标签名称"
-                         key="name"
                          value={item.name}
                          onChange={event => {
                            tagsData[index].name = event.target.value;
@@ -97,47 +103,62 @@ const Tags: React.FC<Props> = props => {
                 </Col>
                 <Col span={1} style={{ textAlign: 'center' }}/>
                 <Col span={10}>
-                  <Input placeholder="请输入标签value"
-                         value={item.value}
-                         key="value"
-                         onChange={event => {
-                           tagsData[index].value = event.target.value;
-                           setTagsData([...tagsData]);
-                         }}
-                  />
-                </Col>
-                <Col span={2} style={{ textAlign: 'center' }}>
-                  {index === 0 ? (
-                    <Row>
-                    <Icon
-                      type="plus-circle"
-                      title="新增标签"
-                      onClick={() => {
-                        setTagsData([...tagsData, { _id: Math.round(Math.random() * 100000) }]);
-                      }}
-                    />
-                      <Icon style={{marginLeft:5}}
-                        type="minus-circle"
-                        title="删除标签"
-                        onClick={() => {
-                          removeTags(index);
-                        }}
-                      />
-                    </Row>
+                  {item.type === 'geoPoint' ? (
+                    <Input addonAfter={<Icon onClick={() => {
+                      setTagInfo(item);
+                      setTagSequence(index);
+                      setLocation(true);
+                    }
+                    } type="environment" title="点击选择经纬度"/>}
+                           placeholder="请输入标签value"
+                           value={item.value}
+                           onChange={event => {
+                             tagsData[index].value = event.target.value;
+                             setTagsData([...tagsData]);
+                           }} defaultValue="mysite"/>
                   ) : (
-                    <Icon
-                      type="minus-circle"
-                      title="删除标签"
-                      onClick={() => {
-                        removeTags(index);
-                      }}
+                    <Input placeholder="请输入标签value"
+                           value={item.value}
+                           onChange={event => {
+                             tagsData[index].value = event.target.value;
+                             setTagsData([...tagsData]);
+                           }}
                     />
                   )}
                 </Col>
+                <Col span={2} style={{ textAlign: 'center' }}>
+                  <Icon
+                    type="minus-circle"
+                    title="删除标签"
+                    onClick={() => {
+                      removeTags(index);
+                    }}
+                  />
+                </Col>
               </Row>
             ))}
+            <Col span={24}>
+              <div>
+                <a onClick={() => {
+                  setTagsData([...tagsData, { _id: Math.round(Math.random() * 100000) }]);
+                }}>添加</a>
+              </div>
+            </Col>
           </Form.Item>
         </Form>
+        {location && (
+          <Location close={() => {
+            setLocation(false);
+            setTagInfo({});
+            setTagSequence(-1);
+          }} save={(tagsInfo: any, sequence: number) => {
+            tagsData[sequence].value = tagsInfo.value;
+            setTagsData([...tagsData]);
+            setLocation(false);
+            setTagInfo({});
+            setTagSequence(-1);
+          }} tagInfo={tagInfo} tagSequence={tagSequence}/>
+        )}
       </Spin>
     </Modal>
   );
