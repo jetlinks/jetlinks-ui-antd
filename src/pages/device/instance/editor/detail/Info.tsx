@@ -29,10 +29,8 @@ const Info: React.FC<Props> = (props) => {
       .update(props.data.id,item)
       .then((response:any) => {
         if (response.status === 200) {
-          props.refresh();
           message.success('配置信息修改成功');
-        } else {
-          message.error("配置信息修改失败")
+          props.refresh();
         }
       })
       .catch(() => {});
@@ -44,10 +42,8 @@ const Info: React.FC<Props> = (props) => {
     saveDeviceTags(props.data.id,item)
       .then((res:any) => {
         if (res.status === 200) {
-          props.refresh();
           message.success('标签信息保存成功');
-        } else {
-          message.error("标签信息保存失败")
+          props.refresh();
         }
     }).catch(()=>{});
   };

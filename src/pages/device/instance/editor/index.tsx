@@ -192,7 +192,7 @@ const Editor: React.FC<Props> = props => {
     log: <Log deviceId={id}/>,
     debugger: <Debugger/>,
     gateway: <Gateway deviceId={id} loading={false}/>,
-    alarm: <Alarm target="device" productId={data.productId} targetId={data.id} metaData={data.metadata}
+    alarm: <Alarm target="device" productId={data.productId} productName={data.productName} targetId={data.id} metaData={data.metadata}
                   name={data.name}/>,
     visualization: <Visualization
       type="device"

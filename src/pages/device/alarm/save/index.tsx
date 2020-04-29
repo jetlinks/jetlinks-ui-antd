@@ -14,6 +14,8 @@ interface Props extends FormComponentProps {
   targetId: string | undefined;
   metaData: string | undefined;
   name: string | undefined;
+  productName: string | undefined;
+  productId: string | undefined;
 }
 
 interface State {
@@ -49,6 +51,8 @@ const Save: React.FC<Props> = props => {
         triggers: trigger,
         actions: action,
         properties: properties,
+        productId: props.productId,
+        productName: props.productName,
       };
     } else {
       data.alarmRule = {
