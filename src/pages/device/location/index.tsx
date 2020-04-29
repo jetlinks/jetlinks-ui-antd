@@ -159,7 +159,8 @@ const Location: React.FC<Props> = props => {
                   alwaysRender: false,
                   useCluster: true,
                 });
-                /*var marker = new window.AMap.Marker({ content: ' ', map: ins, useCluster: true });*/
+
+                new window.AMap.Marker({ content: ' ', map: ins, useCluster: true });
 
                 mass.on('click', function(e: any) {
                   openInfo(ins, e.data);
