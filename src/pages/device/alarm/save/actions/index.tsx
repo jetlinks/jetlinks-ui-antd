@@ -4,7 +4,6 @@ import { Card, Col, Popconfirm, Row, Select } from 'antd';
 import { AlarmAction } from '@/pages/device/alarm/data';
 import apis from '@/services';
 import encodeQueryParam from '@/utils/encodeParam';
-import { valid } from '@antv/data-set/lib/util/statistics';
 
 interface Props extends FormComponentProps {
   action: Partial<AlarmAction>;

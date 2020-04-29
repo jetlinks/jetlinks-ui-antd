@@ -231,7 +231,7 @@ const Trigger: React.FC<Props> = props => {
                        onClick={() => {
                          filters.splice(index, 1);
                          setFilters([...filters]);
-                         trigger.filters = parameters;
+                         trigger.filters = filters;
                          setTrigger({ ...trigger });
                          submitData();
                        }}
@@ -435,8 +435,10 @@ const Trigger: React.FC<Props> = props => {
                        onClick={() => {
                          filters.splice(index, 1);
                          setFilters([...filters]);
-                         trigger.filters = parameters;
-                         setTrigger({ ...trigger });
+                         if (filters.length > 0) {
+                           trigger.filters = filters;
+                           setTrigger({ ...trigger });
+                         }
                          submitData();
                        }}
                     >删除</a>

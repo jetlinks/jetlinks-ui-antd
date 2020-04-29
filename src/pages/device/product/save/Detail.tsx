@@ -338,7 +338,7 @@ const Detail: React.FC<Props> = props => {
               />
             </Tabs.TabPane>
             <Tabs.TabPane tab="告警设置" key="metadata1">
-              <Alarm target="product" productId={''} targetId={basicInfo.id} metaData={basicInfo.metadata}
+              <Alarm target="product" productId={basicInfo.id} productName={basicInfo.name} targetId={basicInfo.id} metaData={basicInfo.metadata}
                      name={basicInfo.name}/>
             </Tabs.TabPane>
           </Tabs>

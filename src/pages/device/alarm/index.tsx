@@ -17,7 +17,7 @@ interface Props extends FormComponentProps {
   metaData: string | undefined;
   name: string | undefined;
   productId: string | undefined;
-
+  productName: string | undefined;
 }
 
 interface State {
@@ -90,6 +90,7 @@ const Alarm: React.FC<Props> = props => {
         if (response.status === 200) {
           message.success('保存成功');
           setSaveVisible(false);
+          getProductAlarms();
         }
         setSpinning(false);
       })
@@ -232,7 +233,7 @@ const Alarm: React.FC<Props> = props => {
       render: (record: any) => (
         <Fragment>
           <a onClick={() => {
-            let content = '';
+            let content: string;
             try {
               content = JSON.stringify(record.alarmData, null, 2);
             } catch (error) {
@@ -383,7 +384,9 @@ const Alarm: React.FC<Props> = props => {
                             }}
                             data={saveAlarmData} targetId={props.targetId}
                             target={props.target} metaData={props.metaData}
-                            name={props.name}/>}
+                            name={props.name} productName={props.productName}
+                            productId={props.productId}
+      />}
     </Spin>
   );
 };
