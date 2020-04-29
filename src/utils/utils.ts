@@ -1,6 +1,7 @@
 import { parse } from 'querystring';
 import pathRegexp from 'path-to-regexp';
 import { Route } from '@/models/connect';
+import { isEqual } from 'lodash';
 import proxy from '../../config/proxy';
 
 /* eslint no-useless-escape:0 import/prefer-default-export:0 */
@@ -118,4 +119,7 @@ export const wrapAPI = (url: string) => {
  * @param prevProps
  * @param nextProps
  */
-export const propsAreEqual = (prevProps: any, nextProps: any) => isEqual(prevProps.value, nextProps.value);
+export const propsAreEqual = (prevProps: any, nextProps: any) => {
+  console.log(prevProps, nextProps, 'props');
+  return isEqual(prevProps.value, nextProps.value);
+};

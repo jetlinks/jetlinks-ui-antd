@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, memo, forwardRef } from "react";
 import { Chart, Axis, Geom, Tooltip } from "bizcharts";
 import { message } from "antd";
 import { ComponentProps } from "..";
 import apis from "@/services";
+import lodash from 'lodash';
 import styles from '../index.less';
 
 interface Props extends ComponentProps {
     config: any;
 }
 
-const LineChart = (props: Props) => {
+const LineChart = (props: Props, ref: any) => {
     const { config } = props;
     const defaultData: any[] = [];
 
@@ -88,7 +89,7 @@ const LineChart = (props: Props) => {
                 setData(tempData);
             }
         })
-    }, []);
+    }, [props.deviceId]);
     return (
         <Chart
             height={height}
@@ -157,4 +158,4 @@ const LineChart = (props: Props) => {
     );
 
 }
-export default LineChart;
+export default memo<Props>(forwardRef(LineChart), (prevProps: any, nextProps: any) => lodash.isEqual(prevProps.value, nextProps.value));
