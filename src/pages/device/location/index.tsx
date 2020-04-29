@@ -92,6 +92,9 @@ const Location: React.FC<Props> = props => {
         }
 
         newMassMarks(mapCreated, {
+          'shape': {
+            'objectId': fileValue.region,
+          },
           'filter': {
             'where': where.join(' and '),
           },
@@ -313,28 +316,30 @@ const Location: React.FC<Props> = props => {
             }}>
               <Form labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} key="form">
                 <Form.Item key="region" label="查看区域" style={{ marginBottom: 14 }}>
-                  <Select placeholder="选择查看区域，可输入查询" showSearch={true} allowClear={true}
-                          filterOption={(inputValue, option) =>
-                            option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
-                          }
-                          onChange={(valie: string, data: any) => {
-                            if (valie) {
-                              setCenterScale({ center: data.props.data.data.properties.center });
+                  {getFieldDecorator('region', {})(
+                    <Select placeholder="选择查看区域，可输入查询" showSearch={true} allowClear={true}
+                            filterOption={(inputValue, option) =>
+                              option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
                             }
-                            queryArea({
-                              'shape': {
-                                'objectId': valie,
-                              },
-                              'filter': {
-                                'where': 'objectType not device',
-                              },
-                            }, 'old');
-                          }}
-                  >
-                    {(regionList || []).map(item => (
-                      <Select.Option value={item.value} data={item}>{item.text}</Select.Option>
-                    ))}
-                  </Select>
+                            onChange={(valie: string, data: any) => {
+                              if (valie) {
+                                setCenterScale({ center: data.props.data.data.properties.center });
+                              }
+                              queryArea({
+                                'shape': {
+                                  'objectId': valie,
+                                },
+                                'filter': {
+                                  'where': 'objectType not device',
+                                },
+                              }, 'old');
+                            }}
+                    >
+                      {(regionList || []).map(item => (
+                        <Select.Option value={item.value} data={item}>{item.text}</Select.Option>
+                      ))}
+                    </Select>,
+                  )}
                 </Form.Item>
                 <Form.Item key="productId" label="产品名称" style={{ marginBottom: 14 }}>
                   {getFieldDecorator('productId', {
