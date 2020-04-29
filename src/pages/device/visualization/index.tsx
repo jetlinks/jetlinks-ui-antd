@@ -7,13 +7,14 @@ import { CloseCircleOutlined, EditOutlined, SaveOutlined, PlusOutlined, SyncOutl
 import * as rxjs from 'rxjs';
 import { map, toArray, } from 'rxjs/operators';
 // import { Responsive, WidthProvider } from 'react-grid-layout';
+import RGL, { WidthProvider } from 'react-grid-layout';
 import styles from './index.less';
 import AddItem from './add-item';
 import { VisualizationItem } from './data';
 import apis from '@/services';
 import { randomString } from '@/utils/utils';
-import ReactGridLayout from 'react-grid-layout';
 
+const ReactGridLayout = WidthProvider(RGL);
 // const ResponsiveGridLayout = WidthProvider(Responsive);
 interface Props {
     type: string;
@@ -144,7 +145,7 @@ const Visualization: React.FC<Props> = props => {
                     className="layout"
                     layout={layout}
                     rowHeight={30}
-                    width={1800}>
+                >
                     {layout.map((item: any) => {
                         let ChartComponent = null;
                         if (item.config?.component) {
@@ -261,7 +262,7 @@ const Visualization: React.FC<Props> = props => {
     }
 
     return (
-        <div>
+        <>
             {layout.length > 0 ? renderGridLayout() : (
 
                 <Button
@@ -287,7 +288,7 @@ const Visualization: React.FC<Props> = props => {
                     }}
                 />
             )}
-        </div >
+        </ >
 
     )
 }
