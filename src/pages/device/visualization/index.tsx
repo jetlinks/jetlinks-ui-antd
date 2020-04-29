@@ -135,18 +135,17 @@ const Visualization: React.FC<Props> = props => {
             const index = layout.findIndex((i: any) => i.i === current.i);
             current.config = item;
             layout[index] = current;
+            setLayout(layout);
         } else {
-            layout.push({
+            setLayout([{
                 i: id,
-                x: Infinity,
+                x: 0,
                 y: Infinity,
                 config: item,
                 h: 5,
                 w: 5,
-            });
+            }, ...layout]);
         }
-
-        setLayout([...layout]);
         setAddItem(false);
     }
 

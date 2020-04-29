@@ -41,10 +41,13 @@ const AddItem = (props: Props) => {
 
   const getConfigData = () => {
     const data = submit();
-    if (props.current?.id) {
-      props.save({ component: type, ...data, id: props.current.id });
-    } else {
-      props.save({ component: type, ...data });
+    console.log(data, 'ddd')
+    if (data) {
+      if (props.current?.id) {
+        props.save({ component: type, ...data, id: props.current.id });
+      } else {
+        props.save({ component: type, ...data });
+      }
     }
   }
 
