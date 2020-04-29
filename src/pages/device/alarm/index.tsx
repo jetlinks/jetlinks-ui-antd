@@ -90,6 +90,7 @@ const Alarm: React.FC<Props> = props => {
         if (response.status === 200) {
           message.success('保存成功');
           setSaveVisible(false);
+          getProductAlarms();
         }
         setSpinning(false);
       })

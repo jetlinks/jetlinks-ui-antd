@@ -36,19 +36,16 @@ const Save: React.FC<Props> = props => {
   const [properties, setProperties] = useState(initState.properties);
   const [trigger, setTrigger] = useState(initState.trigger);
   const [action, setAction] = useState(initState.action);
-  const [alarmName, setAlarmName] = useState('');
 
   const submitData = () => {
-    data.name = alarmName;
+    data.name = props.data.name;
     data.target = props.target;
     data.targetId = props.targetId;
-    if (props.name === 'device') {
+    if (props.target === 'device') {
       data.alarmRule = {
         name: props.name,
         deviceId: props.targetId,
         deviceName: props.name,
-        productId: '',
-        productName: '',
         triggers: trigger,
         actions: action,
         properties: properties,
@@ -56,8 +53,6 @@ const Save: React.FC<Props> = props => {
     } else {
       data.alarmRule = {
         name: props.name,
-        deviceId: '',
-        deviceName: '',
         productId: props.targetId,
         productName: props.name,
         triggers: trigger,
@@ -69,6 +64,7 @@ const Save: React.FC<Props> = props => {
   };
 
   useEffect(() => {
+
     if (props.data.alarmRule) {
       setTrigger(props.data.alarmRule.triggers.length > 0 ? [...props.data.alarmRule.triggers] : [{ _id: 0 }]);
       setAction(props.data.alarmRule.actions.length > 0 ? [...props.data.alarmRule.actions] : [{ _id: 0 }]);
@@ -104,10 +100,11 @@ const Save: React.FC<Props> = props => {
                style={{ marginLeft: '0.1%' }}>
             <Col span={8}>
               <label style={{ fontSize: 16 }}>告警名称：</label>
-              <Input placeholder="请输入别名" defaultValue={props.data.name} key={Math.round(Math.random() * 100000)}
+              <Input placeholder="输入告警名称" defaultValue={props.data.name} key={Math.round(Math.random() * 100000)}
                      style={{ width: '80%' }}
                      onBlur={event => {
-                       setAlarmName(event.target.value);
+                       props.data.name = event.target.value;
+                       //setAlarmName(event.target.value);
                      }}/>
             </Col>
           </Row>
