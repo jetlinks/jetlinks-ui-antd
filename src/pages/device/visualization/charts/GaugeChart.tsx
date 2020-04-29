@@ -11,7 +11,7 @@ interface Props extends ComponentProps {
 const GaugeChart = (props: Props) => {
     const { config } = props;
     const defaultData: any[] = [
-        { value: 0 },
+        { value: 0, formatValue: 0 },
     ];
 
     const [data, setData] = useState<any[]>(defaultData);
@@ -24,8 +24,6 @@ const GaugeChart = (props: Props) => {
             nice: false,
         },
     };
-
-    console.log(props, cols, (config.max / 10), config.max, typeof config.max, 'clols');
 
     // 修改高度
     const [height, setHeight] = useState<number>(300);
@@ -61,7 +59,7 @@ const GaugeChart = (props: Props) => {
         apis.visualization.getDashboardData(params).then(response => {
             if (response.status === 200) {
                 const { result } = response;
-                const tempData = result.map((item: any) => ({ value: item.data.value.value }));
+                const tempData = result.map((item: any) => ({ value: item.data.value.value, formatValue: item.data.value.formatValue }));
                 setData(tempData);
             }
         })
@@ -126,7 +124,7 @@ const GaugeChart = (props: Props) => {
                 />
                 <Html
                     position={['50%', '90%']}
-                    html={`<div style="width: 300px;text-align: center;font-size: 12px!important;"><p style="font-size: 1.75em; color: rgba(0,0,0,0.43);margin: 0;">${config.name}</p><p style="font-size: 3em;color: rgba(0,0,0,0.85);margin: 0;">${data[0].value}℃</p></div>`}
+                    html={`<div style="width: 300px;text-align: center;font-size: 12px!important;"><p style="font-size: 1.75em; color: rgba(0,0,0,0.43);margin: 0;">${config.name}</p><p style="font-size: 3em;color: rgba(0,0,0,0.85);margin: 0;">${data[0].formatValue}</p></div>`}
                 />
             </Guide>
             <Geom

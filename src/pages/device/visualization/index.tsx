@@ -6,14 +6,16 @@ import { Button, Divider, Card, Tooltip, message, Icon } from 'antd';
 import { CloseCircleOutlined, EditOutlined, SaveOutlined, PlusOutlined, SyncOutlined } from '@ant-design/icons';
 import * as rxjs from 'rxjs';
 import { map, toArray, } from 'rxjs/operators';
-import { Responsive, WidthProvider } from 'react-grid-layout';
+// import { Responsive, WidthProvider } from 'react-grid-layout';
+import RGL, { WidthProvider } from 'react-grid-layout';
 import styles from './index.less';
 import AddItem from './add-item';
 import { VisualizationItem } from './data';
 import apis from '@/services';
 import { randomString } from '@/utils/utils';
 
-const ResponsiveGridLayout = WidthProvider(Responsive);
+const ReactGridLayout = WidthProvider(RGL);
+// const ResponsiveGridLayout = WidthProvider(Responsive);
 interface Props {
     type: string;
     target?: string;
@@ -126,9 +128,9 @@ const Visualization: React.FC<Props> = props => {
     const renderGridLayout = () =>
         (
             <>
-                <ResponsiveGridLayout
-                    breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
-                    cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+                <ReactGridLayout
+                    // breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+                    // cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
                     onLayoutChange={(item: any) => {
                         layoutChange(item)
                     }}
@@ -143,7 +145,7 @@ const Visualization: React.FC<Props> = props => {
                     className="layout"
                     layout={layout}
                     rowHeight={30}
-                    width={1800}>
+                >
                     {layout.map((item: any) => {
                         let ChartComponent = null;
                         if (item.config?.component) {
@@ -195,7 +197,7 @@ const Visualization: React.FC<Props> = props => {
                             </Card>)
                     })}
 
-                </ResponsiveGridLayout>
+                </ReactGridLayout>
                 <div className={styles.optionGroup}>
                     {edit ?
                         <div style={{ float: 'right' }}>
@@ -260,7 +262,7 @@ const Visualization: React.FC<Props> = props => {
     }
 
     return (
-        <div>
+        <>
             {layout.length > 0 ? renderGridLayout() : (
 
                 <Button
@@ -286,7 +288,7 @@ const Visualization: React.FC<Props> = props => {
                     }}
                 />
             )}
-        </div >
+        </ >
 
     )
 }
