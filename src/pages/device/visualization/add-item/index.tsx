@@ -41,7 +41,6 @@ const AddItem = (props: Props) => {
 
   const getConfigData = () => {
     const data = submit();
-    console.log(data, 'ddd')
     if (data) {
       if (props.current?.id) {
         props.save({ component: type, ...data, id: props.current.id });
@@ -64,6 +63,8 @@ const AddItem = (props: Props) => {
       width="80vw"
       onCancel={() => props.close()}
       onOk={() => getConfigData()}
+      okText="确定"
+      cancelText="关闭"
     >
       <Row>
 

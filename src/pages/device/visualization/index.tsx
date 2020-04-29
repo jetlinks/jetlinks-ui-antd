@@ -1,7 +1,7 @@
 import React, { useState, Fragment, useEffect, useRef } from 'react';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
-import { Button, Divider, Card, Tooltip, message } from 'antd';
+import { Button, Divider, Card, Tooltip, message, Icon } from 'antd';
 import { CloseCircleOutlined, EditOutlined, SaveOutlined, PlusOutlined, SyncOutlined } from '@ant-design/icons';
 import * as rxjs from 'rxjs';
 import { map, toArray, } from 'rxjs/operators';
@@ -149,66 +149,88 @@ const Visualization: React.FC<Props> = props => {
         setAddItem(false);
     }
 
+    const renderGridLayout = () =>
+        (
+            <>
+                <ReactGridLayout
+                    onLayoutChange={(item: any) => {
+                        layoutChange(item)
+                    }}
+                    // cols={{ md: 12 }}
+                    isResizable={edit}
+                    isDraggable={edit}
+                    onDragStop={() => {
+                        setLayout([...layout])
+                    }}
+                    onResizeStop={() => {
+                        setLayout([...layout])
+                    }}
+                    className="layout"
+                    layout={layout}
+                    rowHeight={30}
+                >
+                    {layout.map((item: any) => (
+                        <Card
+                            style={{ overflow: "hidden" }}
+                            key={item.i}
+                            id={item.i}
+                        >
+
+                            <div style={{ position: 'absolute', right: 15, top: 5, }}>
+                                <div style={{ float: 'right' }}>
+                                    <Fragment>
+                                        {edit && (
+                                            <>
+                                                <Tooltip title="删除">
+                                                    <CloseCircleOutlined onClick={() => removeCard(item)} />
+                                                </Tooltip>
+                                                <Divider type="vertical" />
+                                                <Tooltip title="编辑">
+                                                    <EditOutlined onClick={() => {
+                                                        setAddItem(true);
+                                                        setCurrent(item)
+                                                    }} />
+                                                </Tooltip>
+                                            </>)}
+                                        {item.doReady &&
+                                            <>
+                                                <Divider type="vertical" />
+                                                <Tooltip title="刷新">
+                                                    <SyncOutlined onClick={() => { item.doReady() }} />
+                                                </Tooltip>
+
+                                            </>}
+                                    </Fragment>
+                                </div>
+                            </div>
+                            <GridCard
+                                {...item}
+                                productId={props.productId}
+                                deviceId={props.target} />
+                        </Card>))}
+
+                </ReactGridLayout>
+            </>
+        )
+
+
     return (
         <>
-            <ReactGridLayout
-                onLayoutChange={(item: any) => {
-                    layoutChange(item)
-                }}
-                // cols={{ md: 12 }}
-                isResizable={edit}
-                isDraggable={edit}
-                onDragStop={() => {
-                    setLayout([...layout])
-                }}
-                onResizeStop={() => {
-                    setLayout([...layout])
-                }}
-                className="layout"
-                layout={layout}
-                rowHeight={30}
-            >
-                {layout.map((item: any) => (
-                    <Card
-                        style={{ overflow: "hidden" }}
-                        key={item.i}
-                        id={item.i}
-                    >
+            {layout.length > 0 ? renderGridLayout() : (
+                <Button
+                    style={{ width: '300px', height: '200px' }}
+                    type="dashed"
+                    onClick={() => {
+                        setCurrent(undefined);
+                        setEdit(true)
+                        setAddItem(true);
+                    }}
+                >
+                    <Icon type="plus" />
+                   新增
+                </Button>
+            )}
 
-                        <div style={{ position: 'absolute', right: 15, top: 5, }}>
-                            <div style={{ float: 'right' }}>
-                                <Fragment>
-                                    {edit && (
-                                        <>
-                                            <Tooltip title="删除">
-                                                <CloseCircleOutlined onClick={() => removeCard(item)} />
-                                            </Tooltip>
-                                            <Divider type="vertical" />
-                                            <Tooltip title="编辑">
-                                                <EditOutlined onClick={() => {
-                                                    setAddItem(true);
-                                                    setCurrent(item)
-                                                }} />
-                                            </Tooltip>
-                                        </>)}
-                                    {item.doReady &&
-                                        <>
-                                            <Divider type="vertical" />
-                                            <Tooltip title="刷新">
-                                                <SyncOutlined onClick={() => { item.doReady() }} />
-                                            </Tooltip>
-
-                                        </>}
-                                </Fragment>
-                            </div>
-                        </div>
-                        <GridCard
-                            {...item}
-                            productId={props.productId}
-                            deviceId={props.target} />
-                    </Card>))}
-
-            </ReactGridLayout>
             <div className={styles.optionGroup}>
                 {edit ?
                     <div style={{ float: 'right' }}>
