@@ -1,6 +1,6 @@
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import React, { Fragment, useEffect, useState } from 'react';
-import { AutoComplete, Button, Card, Divider, Form, Input, Select, Switch, Table } from 'antd';
+import { AutoComplete, Button, Card, Divider, Form, Input, Select, Spin, Switch, Table } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import { Map, Polygon } from 'react-amap';
 import { ColumnProps } from 'antd/lib/table';
@@ -59,6 +59,7 @@ const Location: React.FC<Props> = props => {
     const [satelliteLayer, setSatelliteLayer] = useState(initState.satelliteLayer);
     const [roadNetLayer, setRoadNetLayer] = useState(initState.roadNetLayer);
     const [panelData, setPanelData] = useState(true);
+    const [spinning, setSpinning] = useState(true);
 
     useEffect(() => {
       apis.deviceProdcut
@@ -173,6 +174,7 @@ const Location: React.FC<Props> = props => {
               } else {
                 massMarksCreated.setData(markerList);
               }
+              setSpinning(false);
             }
           },
         )
@@ -220,6 +222,7 @@ const Location: React.FC<Props> = props => {
 
     const queryArea = (params: any, type: string) => {
       pathPolygon.splice(0, pathPolygon.length);
+      newMassMarks(mapCreated, { shape: params.shape }, 'old');
       apis.location._search_geo_json(params)
         .then(response => {
             if (response.status === 200) {
@@ -237,6 +240,7 @@ const Location: React.FC<Props> = props => {
                 });
               });
             }
+            setSpinning(false);
           },
         )
         .catch(() => {
@@ -262,166 +266,173 @@ const Location: React.FC<Props> = props => {
 
     return (
       <PageHeaderWrapper title="位置查询">
-        <div style={{ width: '100%', height: '79vh' }}>
-          <Map resizeEnable events={mapEvents} center={centerScale.center} rotateEnable={true}>
-            {pathPolygon.length > 0 && (
-              <Polygon visible={true} path={pathPolygon}
-                       style={{ fillOpacity: 0, strokeOpacity: 1, strokeColor: '#C86A79', strokeWeight: 3 }}/>
-            )}
-          </Map>
-        </div>
-
-        <div style={{
-          width: '30%', height: '79vh', float: 'right',
-          marginTop: '-79vh', paddingTop: 5, paddingRight: 5,
-        }}>
-          <div style={{ textAlign: 'right' }}>
-            <Card>
-              {satelliteLayer.CLASS_NAME && (
-                <span>
-                  路网：<Switch checkedChildren="开" unCheckedChildren="关" onChange={(value) => {
-                  if (value) {
-                    let roadNetLayer = new window.AMap.TileLayer.RoadNet();
-                    setRoadNetLayer(roadNetLayer);
-                    mapCreated.add(roadNetLayer);
-                  } else {
-                    mapCreated.remove(roadNetLayer);
-                    setRoadNetLayer({});
-                  }
-                }}/>
-                  &nbsp;&nbsp;
-                </span>
+        <Spin tip="加载中..." spinning={spinning}>
+          <div style={{ width: '100%', height: '79vh' }}>
+            <Map resizeEnable events={mapEvents} center={centerScale.center} rotateEnable={true}>
+              {pathPolygon.length > 0 && (
+                <Polygon visible={true} path={pathPolygon}
+                         style={{ fillOpacity: 0, strokeOpacity: 1, strokeColor: '#C86A79', strokeWeight: 3 }}/>
               )}
-              卫星：<Switch checkedChildren="开" unCheckedChildren="关" onChange={(value) => {
-              if (value) {
-                let satelliteLayer = new window.AMap.TileLayer.Satellite();
-                setSatelliteLayer(satelliteLayer);
-                mapCreated.add(satelliteLayer);
-              } else {
-                mapCreated.remove(satelliteLayer);
-                setSatelliteLayer({});
-              }
-            }}/>
-              &nbsp;&nbsp;
-              信息面板：<Switch checkedChildren="开" unCheckedChildren="关" defaultChecked
-                           onChange={(value) => {
-                             setPanelData(value);
-                           }}/>
-            </Card>
+            </Map>
           </div>
-          {panelData && (
-            <Card bordered={false} style={{
-              height: '70vh', maxHeight: '71vh', overflowY: 'auto',
-              overflowX: 'hidden', marginTop: 5,
-            }}>
-              <Form labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} key="form">
-                <Form.Item key="region" label="查看区域" style={{ marginBottom: 14 }}>
-                  {getFieldDecorator('region', {})(
-                    <Select placeholder="选择查看区域，可输入查询" showSearch={true} allowClear={true}
-                            filterOption={(inputValue, option) =>
-                              option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
-                            }
-                            onChange={(valie: string, data: any) => {
-                              if (valie) {
-                                setCenterScale({ center: data.props.data.data.properties.center });
+
+          <div style={{
+            width: '30%', height: '79vh', float: 'right',
+            marginTop: '-79vh', paddingTop: 5, paddingRight: 5,
+          }}>
+            <div style={{ textAlign: 'right' }}>
+              <Card>
+                {satelliteLayer.CLASS_NAME && (
+                  <span>
+                  路网：<Switch checkedChildren="开" unCheckedChildren="关" onChange={(value) => {
+                    if (value) {
+                      let roadNetLayer = new window.AMap.TileLayer.RoadNet();
+                      setRoadNetLayer(roadNetLayer);
+                      mapCreated.add(roadNetLayer);
+                    } else {
+                      mapCreated.remove(roadNetLayer);
+                      setRoadNetLayer({});
+                    }
+                  }}/>
+                    &nbsp;&nbsp;
+                </span>
+                )}
+                卫星：<Switch checkedChildren="开" unCheckedChildren="关" onChange={(value) => {
+                if (value) {
+                  let satelliteLayer = new window.AMap.TileLayer.Satellite();
+                  setSatelliteLayer(satelliteLayer);
+                  mapCreated.add(satelliteLayer);
+                } else {
+                  mapCreated.remove(satelliteLayer);
+                  setSatelliteLayer({});
+                }
+              }}/>
+                &nbsp;&nbsp;
+                信息面板：<Switch checkedChildren="开" unCheckedChildren="关" defaultChecked
+                             onChange={(value) => {
+                               setPanelData(value);
+                             }}/>
+              </Card>
+            </div>
+            {panelData && (
+              <Card bordered={false} style={{
+                height: '70vh', maxHeight: '71vh', overflowY: 'auto',
+                overflowX: 'hidden', marginTop: 5,
+              }}>
+                <Form labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} key="form">
+                  <Form.Item key="region" label="查看区域" style={{ marginBottom: 14 }}>
+                    {getFieldDecorator('region', {})(
+                      <Select placeholder="选择查看区域，可输入查询" showSearch={true} allowClear={true}
+                              filterOption={(inputValue, option) =>
+                                option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
                               }
-                              queryArea({
-                                'shape': {
-                                  'objectId': valie,
-                                },
-                                'filter': {
-                                  'where': 'objectType not device',
-                                },
-                              }, 'old');
-                            }}
-                    >
-                      {(regionList || []).map(item => (
-                        <Select.Option value={item.value} data={item}>{item.text}</Select.Option>
-                      ))}
-                    </Select>,
-                  )}
-                </Form.Item>
-                <Form.Item key="productId" label="产品名称" style={{ marginBottom: 14 }}>
-                  {getFieldDecorator('productId', {
-                    initialValue: undefined,
-                  })(
-                    <AutoComplete dataSource={productList} placeholder="选择产品，可输入查询"
-                                  filterOption={(inputValue, option) =>
-                                    option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
-                                  }
-                    />,
-                  )}
-                </Form.Item>
-                <Form.Item key="device" label="设备信息" style={{ marginBottom: 14 }}>
-                  <Input.Group compact>
-                    {getFieldDecorator('device.key', {
-                      initialValue: 'deviceId',
-                    })(
-                      <Select style={{ width: 100 }} id="key">
-                        <Select.Option value="deviceId">设备ID</Select.Option>
-                        <Select.Option value="deviceName">设备名称</Select.Option>
+                              onChange={(valie: string, data: any) => {
+                                if (valie) {
+                                  setCenterScale({ center: data.props.data.data.properties.center });
+                                }
+                                setSpinning(true);
+                                queryArea({
+                                  'shape': {
+                                    'objectId': valie,
+                                  },
+                                  'filter': {
+                                    'where': 'objectType not device',
+                                  },
+                                }, 'old');
+                              }}
+                      >
+                        {(regionList || []).map(item => (
+                          <Select.Option value={item.value} data={item}>{item.text}</Select.Option>
+                        ))}
                       </Select>,
                     )}
-                    {getFieldDecorator('device.value', {
+                  </Form.Item>
+                  <Form.Item key="productId" label="产品名称" style={{ marginBottom: 14 }}>
+                    {getFieldDecorator('productId', {
                       initialValue: undefined,
                     })(
-                      <Input id="value" style={{ width: 'calc(100% - 100px)' }} placeholder="输入设备信息"/>,
+                      <AutoComplete dataSource={productList} placeholder="选择产品，可输入查询"
+                                    filterOption={(inputValue, option) =>
+                                      option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
+                                    }
+                      />,
                     )}
-                  </Input.Group>
-                </Form.Item>
-                <div style={{ textAlign: 'right' }}>
-                  <Button type="primary" ghost={false} onClick={() => onValidateForm()}>
-                    查询
-                  </Button>
-                  <Button style={{ marginLeft: 8 }} onClick={() => {
-                    form.resetFields();
-                    newMassMarks(mapCreated, {}, 'new');
-                  }}>
-                    重置
-                  </Button>
-                </div>
-              </Form>
-              <Divider style={{ margin: '20px 0' }}/>
-              <div style={{ paddingBottom: 15, marginTop: -8 }}>
+                  </Form.Item>
+                  <Form.Item key="device" label="设备信息" style={{ marginBottom: 14 }}>
+                    <Input.Group compact>
+                      {getFieldDecorator('device.key', {
+                        initialValue: 'deviceId',
+                      })(
+                        <Select style={{ width: 100 }} id="key">
+                          <Select.Option value="deviceId">设备ID</Select.Option>
+                          <Select.Option value="deviceName">设备名称</Select.Option>
+                        </Select>,
+                      )}
+                      {getFieldDecorator('device.value', {
+                        initialValue: undefined,
+                      })(
+                        <Input id="value" style={{ width: 'calc(100% - 100px)' }} placeholder="输入设备信息"/>,
+                      )}
+                    </Input.Group>
+                  </Form.Item>
+                  <div style={{ textAlign: 'right' }}>
+                    <Button type="primary" ghost={false} onClick={() => {
+                      setSpinning(true);
+                      onValidateForm();
+                    }}>
+                      查询
+                    </Button>
+                    <Button style={{ marginLeft: 8 }} onClick={() => {
+                      setSpinning(true);
+                      form.resetFields();
+                      newMassMarks(mapCreated, {}, 'new');
+                    }}>
+                      重置
+                    </Button>
+                  </div>
+                </Form>
+                <Divider style={{ margin: '20px 0' }}/>
+                <div style={{ paddingBottom: 15, marginTop: -8 }}>
                 <span style={{ fontSize: 14 }}>
                   <b>位置记录
                     <span style={{ fontSize: 20 }}>{markersList.length}</span>
                     条
                   </b>
                 </span>
-              </div>
-              <div>
-                <Table
-                  loading={props.loading}
-                  columns={columns}
-                  bordered={false}
-                  size='middle'
-                  dataSource={(markersList || {})}
-                  rowKey="deviceInfo.objectId"
-                  key="deviceInfo.objectId"
-                  onRow={record => {
-                    return {
-                      onDoubleClick: () => {
-                        setCenterScale({ center: record.lnglat });
-                      },
-                    };
-                  }}
-                  pagination={{
-                    pageSize: 10,
-                    size: 'small',
-                    hideOnSinglePage: true,
-                  }}
-                />
-              </div>
-            </Card>
+                </div>
+                <div>
+                  <Table
+                    loading={props.loading}
+                    columns={columns}
+                    bordered={false}
+                    size='middle'
+                    dataSource={(markersList || {})}
+                    rowKey="deviceInfo.objectId"
+                    key="deviceInfo.objectId"
+                    onRow={record => {
+                      return {
+                        onDoubleClick: () => {
+                          setCenterScale({ center: record.lnglat });
+                        },
+                      };
+                    }}
+                    pagination={{
+                      pageSize: 10,
+                      size: 'small',
+                      hideOnSinglePage: true,
+                    }}
+                  />
+                </div>
+              </Card>
+            )}
+          </div>
+          {queryInfo && deviceId !== '' && (
+            <DeviceInfo deviceId={deviceId} close={() => {
+              setQueryInfo(false);
+              setDeviceId('');
+            }}/>
           )}
-        </div>
-        {queryInfo && deviceId !== '' && (
-          <DeviceInfo deviceId={deviceId} close={() => {
-            setQueryInfo(false);
-            setDeviceId('');
-          }}/>
-        )}
+        </Spin>
       </PageHeaderWrapper>
     );
   }
