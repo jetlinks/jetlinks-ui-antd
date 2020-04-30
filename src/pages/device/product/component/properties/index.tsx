@@ -293,7 +293,7 @@ const PropertiesDefin: React.FC<Props> = props => {
                       }}
                     />
                   </Col>
-                  <Col span={2} style={{ textAlign: 'center' }}>
+                  <Col span={1} style={{ textAlign: 'center' }}>
                     <Icon type="arrow-right"/>
                   </Col>
                   <Col span={10}>
@@ -306,22 +306,46 @@ const PropertiesDefin: React.FC<Props> = props => {
                       }}
                     />
                   </Col>
-                  <Col span={2} style={{ textAlign: 'center' }}>
+                  <Col span={3} style={{ textAlign: 'center' }}>
                     {index === 0 ? (
-                      <Icon
-                        type="plus-circle"
-                        onClick={() => {
-                          setEnumData([...enumData, { id: enumData.length + 1 }]);
-                        }}
-                      />
+                      (enumData.length - 1) === 0 ? (
+                        <Icon type="plus-circle"
+                              onClick={() => {
+                                setEnumData([...enumData, { id: enumData.length + 1 }]);
+                              }}
+                        />
+                      ) : (
+                        <Icon type="minus-circle"
+                              onClick={() => {
+                                enumData.splice(index, 1);
+                                setEnumData([...enumData]);
+                              }}
+                        />
+                      )
                     ) : (
-                      <Icon
-                        type="minus-circle"
-                        onClick={() => {
-                          enumData.splice(index, 1);
-                          setEnumData([...enumData]);
-                        }}
-                      />
+                      index === (enumData.length - 1) ? (
+                        <Row>
+                          <Icon type="plus-circle"
+                                onClick={() => {
+                                  setEnumData([...enumData, { id: enumData.length + 1 }]);
+                                }}
+                          />
+                          <Icon style={{ paddingLeft: 10 }}
+                                type="minus-circle"
+                                onClick={() => {
+                                  enumData.splice(index, 1);
+                                  setEnumData([...enumData]);
+                                }}
+                          />
+                        </Row>
+                      ) : (
+                        <Icon type="minus-circle"
+                              onClick={() => {
+                                enumData.splice(index, 1);
+                                setEnumData([...enumData]);
+                              }}
+                        />
+                      )
                     )}
                   </Col>
                 </Row>

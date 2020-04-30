@@ -73,7 +73,10 @@ const EventDefin: React.FC<Props> = props => {
     });
   };
 
-  let dataSource = [{text:'String类型的UTC时间戳 (毫秒)',value:'string'},'yyyy-MM-dd','yyyy-MM-dd HH:mm:ss','yyyy-MM-dd HH:mm:ss EE','yyyy-MM-dd HH:mm:ss zzz'];
+  let dataSource = [{
+    text: 'String类型的UTC时间戳 (毫秒)',
+    value: 'string',
+  }, 'yyyy-MM-dd', 'yyyy-MM-dd HH:mm:ss', 'yyyy-MM-dd HH:mm:ss EE', 'yyyy-MM-dd HH:mm:ss zzz'];
 
   const renderDataType = () => {
     switch (dataType) {
@@ -84,7 +87,7 @@ const EventDefin: React.FC<Props> = props => {
               <Col span={11}>
                 {getFieldDecorator('valueType.min', {
                   initialValue: initState.data.valueType?.min,
-                })(<Input placeholder="最小值" />)}
+                })(<Input placeholder="最小值"/>)}
               </Col>
               <Col span={2} push={1}>
                 ~
@@ -93,7 +96,7 @@ const EventDefin: React.FC<Props> = props => {
                 <Form.Item>
                   {getFieldDecorator('valueType.max', {
                     initialValue: initState.data.valueType?.max,
-                  })(<Input placeholder="最大值" />)}
+                  })(<Input placeholder="最大值"/>)}
                 </Form.Item>
               </Col>
             </Form.Item>
@@ -101,12 +104,12 @@ const EventDefin: React.FC<Props> = props => {
             <Form.Item label="步长">
               {getFieldDecorator('valueType.step', {
                 initialValue: initState.data.valueType?.step,
-              })(<Input placeholder="请输入步长" />)}
+              })(<Input placeholder="请输入步长"/>)}
             </Form.Item>
             <Form.Item label="精度">
               {getFieldDecorator('valueType.scale', {
                 initialValue: initState.data.valueType?.scale,
-              })(<Input placeholder="请输入精度" />)}
+              })(<Input placeholder="请输入精度"/>)}
             </Form.Item>
             <Form.Item label="单位">
               {getFieldDecorator('valueType.unit', {
@@ -122,7 +125,7 @@ const EventDefin: React.FC<Props> = props => {
               <Col span={11}>
                 {getFieldDecorator('valueType.min', {
                   initialValue: initState.data.valueType?.min,
-                })(<Input placeholder="最小值" />)}
+                })(<Input placeholder="最小值"/>)}
               </Col>
               <Col span={2} push={1}>
                 ~
@@ -131,7 +134,7 @@ const EventDefin: React.FC<Props> = props => {
                 <Form.Item>
                   {getFieldDecorator('valueType.max', {
                     initialValue: initState.data.valueType?.max,
-                  })(<Input placeholder="最大值" />)}
+                  })(<Input placeholder="最大值"/>)}
                 </Form.Item>
               </Col>
             </Form.Item>
@@ -139,13 +142,13 @@ const EventDefin: React.FC<Props> = props => {
             <Form.Item label="步长">
               {getFieldDecorator('valueType.step', {
                 initialValue: initState.data.valueType?.step,
-              })(<Input placeholder="请输入步长" />)}
+              })(<Input placeholder="请输入步长"/>)}
             </Form.Item>
 
             <Form.Item label="精度">
               {getFieldDecorator('valueType.scale', {
                 initialValue: initState.data.valueType?.scale,
-              })(<Input placeholder="请输入精度" />)}
+              })(<Input placeholder="请输入精度"/>)}
             </Form.Item>
 
             <Form.Item label="单位">
@@ -162,7 +165,7 @@ const EventDefin: React.FC<Props> = props => {
               <Col span={11}>
                 {getFieldDecorator('valueType.min', {
                   initialValue: initState.data.valueType?.min,
-                })(<Input placeholder="最小值" />)}
+                })(<Input placeholder="最小值"/>)}
               </Col>
               <Col span={2} push={1}>
                 ~
@@ -171,7 +174,7 @@ const EventDefin: React.FC<Props> = props => {
                 <Form.Item>
                   {getFieldDecorator('valueType.max', {
                     initialValue: initState.data.valueType?.max,
-                  })(<Input placeholder="最大值" />)}
+                  })(<Input placeholder="最大值"/>)}
                 </Form.Item>
               </Col>
             </Form.Item>
@@ -179,7 +182,7 @@ const EventDefin: React.FC<Props> = props => {
             <Form.Item label="步长">
               {getFieldDecorator('valueType.step', {
                 initialValue: initState.data.valueType?.step,
-              })(<Input placeholder="请输入步长" />)}
+              })(<Input placeholder="请输入步长"/>)}
             </Form.Item>
             <Form.Item label="单位">
               {getFieldDecorator('valueType.unit', {
@@ -194,7 +197,7 @@ const EventDefin: React.FC<Props> = props => {
             <Form.Item label="数据长度">
               {getFieldDecorator('valueType.expands.maxLength', {
                 initialValue: initState.data.valueType?.expands?.maxLength,
-              })(<Input addonAfter="字节" />)}
+              })(<Input addonAfter="字节"/>)}
             </Form.Item>
           </div>
         );
@@ -205,7 +208,7 @@ const EventDefin: React.FC<Props> = props => {
               <Col span={11}>
                 {getFieldDecorator('valueType.trueText', {
                   initialValue: initState.data.valueType?.trueText,
-                })(<Input placeholder="trueText" />)}
+                })(<Input placeholder="trueText"/>)}
               </Col>
               <Col span={2} push={1}>
                 ~
@@ -214,7 +217,7 @@ const EventDefin: React.FC<Props> = props => {
                 <Form.Item>
                   {getFieldDecorator('valueType.trueValue', {
                     initialValue: initState.data.valueType?.trueValue,
-                  })(<Input placeholder="trueValue" />)}
+                  })(<Input placeholder="trueValue"/>)}
                 </Form.Item>
               </Col>
             </Form.Item>
@@ -222,7 +225,7 @@ const EventDefin: React.FC<Props> = props => {
               <Col span={11}>
                 {getFieldDecorator('valueType.falseText', {
                   initialValue: initState.data.valueType?.falseText,
-                })(<Input placeholder="falseText" />)}
+                })(<Input placeholder="falseText"/>)}
               </Col>
               <Col span={2} push={1}>
                 ~
@@ -231,7 +234,7 @@ const EventDefin: React.FC<Props> = props => {
                 <Form.Item>
                   {getFieldDecorator('valueType.falseValue', {
                     initialValue: initState.data.valueType?.falseValue,
-                  })(<Input placeholder="falseValue" />)}
+                  })(<Input placeholder="falseValue"/>)}
                 </Form.Item>
               </Col>
             </Form.Item>
@@ -248,7 +251,7 @@ const EventDefin: React.FC<Props> = props => {
                               filterOption={(inputValue, option) =>
                                 option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
                               }
-                />
+                />,
               )}
             </Form.Item>
           </div>
@@ -272,7 +275,7 @@ const EventDefin: React.FC<Props> = props => {
             <Form.Item label="元素个数">
               {getFieldDecorator('valueType.elementNumber', {
                 initialValue: initState.data.valueType?.elementNumber,
-              })(<Input />)}
+              })(<Input/>)}
             </Form.Item>
           </div>
         );
@@ -292,8 +295,8 @@ const EventDefin: React.FC<Props> = props => {
                       }}
                     />
                   </Col>
-                  <Col span={2} style={{ textAlign: 'center' }}>
-                    <Icon type="arrow-right" />
+                  <Col span={1} style={{ textAlign: 'center' }}>
+                    <Icon type="arrow-right"/>
                   </Col>
                   <Col span={10}>
                     <Input
@@ -305,22 +308,46 @@ const EventDefin: React.FC<Props> = props => {
                       }}
                     />
                   </Col>
-                  <Col span={2} style={{ textAlign: 'center' }}>
+                  <Col span={3} style={{ textAlign: 'center' }}>
                     {index === 0 ? (
-                      <Icon
-                        type="plus-circle"
-                        onClick={() => {
-                          setEnumData([...enumData, { id: enumData.length + 1 }]);
-                        }}
-                      />
+                      (enumData.length - 1) === 0 ? (
+                        <Icon type="plus-circle"
+                          onClick={() => {
+                            setEnumData([...enumData, { id: enumData.length + 1 }]);
+                          }}
+                        />
+                      ) : (
+                        <Icon type="minus-circle"
+                              onClick={() => {
+                                enumData.splice(index, 1);
+                                setEnumData([...enumData]);
+                              }}
+                        />
+                      )
                     ) : (
-                      <Icon
-                        type="minus-circle"
-                        onClick={() => {
-                          enumData.splice(index, 1);
-                          setEnumData([...enumData]);
-                        }}
-                      />
+                      index === (enumData.length - 1) ? (
+                        <Row>
+                          <Icon type="plus-circle"
+                            onClick={() => {
+                              setEnumData([...enumData, { id: enumData.length + 1 }]);
+                            }}
+                          />
+                          <Icon style={{ paddingLeft: 10 }}
+                                type="minus-circle"
+                                onClick={() => {
+                                  enumData.splice(index, 1);
+                                  setEnumData([...enumData]);
+                                }}
+                          />
+                        </Row>
+                      ) : (
+                        <Icon type="minus-circle"
+                          onClick={() => {
+                            enumData.splice(index, 1);
+                            setEnumData([...enumData]);
+                          }}
+                        />
+                      )
                     )}
                   </Col>
                 </Row>
@@ -371,7 +398,7 @@ const EventDefin: React.FC<Props> = props => {
                 setCurrentParameter({});
               }}
             >
-              <Icon type="plus" />
+              <Icon type="plus"/>
               添加参数
             </Button>
           </Form.Item>
@@ -411,7 +438,7 @@ const EventDefin: React.FC<Props> = props => {
             <Form.Item label="密码长度">
               {getFieldDecorator('valueType.expands.maxLength', {
                 initialValue: initState.data.valueType?.expands.maxLength,
-              })(<Input addonAfter="字节" />)}
+              })(<Input addonAfter="字节"/>)}
             </Form.Item>
           </div>
         );
@@ -446,7 +473,7 @@ const EventDefin: React.FC<Props> = props => {
           {getFieldDecorator('name', {
             rules: [{ required: true, message: '请输入事件名称' }],
             initialValue: initState.data.name,
-          })(<Input placeholder="请输入事件名称" />)}
+          })(<Input placeholder="请输入事件名称"/>)}
         </Form.Item>
         <Form.Item label="事件类型">
           {getFieldDecorator('expands.eventType', {
@@ -505,7 +532,7 @@ const EventDefin: React.FC<Props> = props => {
         <Form.Item label="描述">
           {getFieldDecorator('description', {
             initialValue: initState.data.description,
-          })(<Input.TextArea rows={3} />)}
+          })(<Input.TextArea rows={3}/>)}
         </Form.Item>
       </Form>
       {parameterVisible && (
