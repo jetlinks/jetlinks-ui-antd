@@ -14,7 +14,8 @@ import {
   Popconfirm,
   Row,
   Select,
-  Table, Tooltip,
+  Table,
+  Tooltip,
 } from 'antd';
 import { router } from 'umi';
 import { ColumnProps, PaginationConfig, SorterResult } from 'antd/lib/table';
