@@ -17,7 +17,7 @@ interface Props extends FormComponentProps {
   metaData: string | undefined;
   name: string | undefined;
   productId: string | undefined;
-
+  productName: string | undefined;
 }
 
 interface State {
@@ -90,8 +90,7 @@ const Alarm: React.FC<Props> = props => {
         if (response.status === 200) {
           message.success('保存成功');
           setSaveVisible(false);
-        } else {
-          message.error(`保存失败，失败原因：${response.message}`);
+          getProductAlarms();
         }
         setSpinning(false);
       })
@@ -107,7 +106,6 @@ const Alarm: React.FC<Props> = props => {
           getProductAlarms();
         } else {
           setSpinning(false);
-          message.error('启动失败:' + response.message);
         }
       })
       .catch();
@@ -121,7 +119,6 @@ const Alarm: React.FC<Props> = props => {
           getProductAlarms();
         } else {
           setSpinning(false);
-          message.error(`停止失败:${response.message}`);
         }
       })
       .catch();
@@ -134,7 +131,6 @@ const Alarm: React.FC<Props> = props => {
           getProductAlarms();
         } else {
           setSpinning(false);
-          message.error(`删除失败：${response.message}`);
         }
       })
       .catch(() => {
@@ -143,7 +139,7 @@ const Alarm: React.FC<Props> = props => {
 
   const columns: ColumnProps<alarm>[] = [
     {
-      title: '属性/事件名称',
+      title: '告警名称',
       dataIndex: 'name',
     },
     {
@@ -237,7 +233,7 @@ const Alarm: React.FC<Props> = props => {
       render: (record: any) => (
         <Fragment>
           <a onClick={() => {
-            let content = '';
+            let content: string;
             try {
               content = JSON.stringify(record.alarmData, null, 2);
             } catch (error) {
@@ -330,7 +326,7 @@ const Alarm: React.FC<Props> = props => {
             <Card title={
               <Button
                 icon="plus"
-                type="link"
+                type="primary"
                 onClick={() => {
                   setSaveAlarmData({});
                   setSaveVisible(true);
@@ -388,7 +384,9 @@ const Alarm: React.FC<Props> = props => {
                             }}
                             data={saveAlarmData} targetId={props.targetId}
                             target={props.target} metaData={props.metaData}
-                            name={props.name}/>}
+                            name={props.name} productName={props.productName}
+                            productId={props.productId}
+      />}
     </Spin>
   );
 };

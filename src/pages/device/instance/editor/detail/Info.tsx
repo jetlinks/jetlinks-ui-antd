@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Card, Descriptions, message } from 'antd';
+import { Button, Card, Descriptions, Icon, message, Popconfirm, Tooltip } from 'antd';
 import moment from 'moment';
 import { DeviceInstance } from '@/pages/device/instance/data';
 import Configuration from './configuration';
@@ -29,10 +29,8 @@ const Info: React.FC<Props> = (props) => {
       .update(props.data.id,item)
       .then((response:any) => {
         if (response.status === 200) {
-          props.refresh();
           message.success('配置信息修改成功');
-        } else {
-          message.error("配置信息修改失败")
+          props.refresh();
         }
       })
       .catch(() => {});
@@ -44,19 +42,28 @@ const Info: React.FC<Props> = (props) => {
     saveDeviceTags(props.data.id,item)
       .then((res:any) => {
         if (res.status === 200) {
-          props.refresh();
           message.success('标签信息保存成功');
-        } else {
-          message.error("标签信息保存失败")
+          props.refresh();
         }
     }).catch(()=>{});
+  };
+
+  const changeDeploy = (deviceId: string | undefined) => {
+    apis.deviceInstance
+      .changeDeploy(deviceId)
+      .then(response => {
+        if (response.status === 200) {
+          message.success('应用成功');
+        }
+      })
+      .catch(() => {});
   };
 
   return (
     <div>
       <Card style={{ marginBottom: 20 }}>
         <Descriptions style={{ marginBottom: 20 }} bordered column={3} size="small"
-                      title={<span>型号信息</span>}>
+                      title={<span>设备信息</span>}>
           <Descriptions.Item label="设备型号" span={1}>
             {props.data.productName}
           </Descriptions.Item>
@@ -97,6 +104,17 @@ const Info: React.FC<Props> = (props) => {
                 <Button icon="edit" style={{ marginLeft: 20 }} type="link"
                   onClick={() => setUpdateVisible(true)}
                 >编辑</Button>
+                {props.data.state?.value != "notActive" && (
+                  <Popconfirm title="确认重新应用该配置？"
+                              onConfirm={() => {
+                                changeDeploy(props.data.id);
+                              }}>
+                    <Button icon="check" type="link">应用配置</Button>
+                    <Tooltip title="修改配置后需重新应用后才能生效。">
+                      <Icon type="question-circle-o"/>
+                    </Tooltip>
+                  </Popconfirm>
+                )}
               </span>
             }>
             {props.configuration.properties &&

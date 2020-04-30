@@ -68,13 +68,13 @@ export async function fireAlarm(params: any) {
 }
 
 export async function changeDeploy(deviceId: string | undefined) {
-  return request(`/jetlinks//device-instance/${deviceId}/deploy`, {
+  return request(`/jetlinks/device-instance/${deviceId}/deploy`, {
     method: 'POST',
   });
 }
 
 export async function unDeploy(deviceId: string) {
-  return request(`/jetlinks//device-instance/${deviceId}/undeploy`, {
+  return request(`/jetlinks/device-instance/${deviceId}/undeploy`, {
     method: 'POST',
   });
 }
@@ -120,7 +120,7 @@ export async function invokedFunction(deviceId: string,functionId: string, data:
 }
 
 export async function disconnectDevice(deviceId: string | undefined) {
-  return request(`/jetlinks//device/instance/${deviceId}/disconnect`, {
+  return request(`/jetlinks/device/instance/${deviceId}/disconnect`, {
     method: 'POST',
   });
 }
@@ -154,10 +154,30 @@ export async function getMulti(data: any) {
 }
 
 export async function propertiesRealTime(data:any) {
-  //return request(`/jetlinks/dashboard/device/${productId}/properties/history`, {
   return request(`/jetlinks/dashboard/_multi?:X_Access_Token=${getAccessToken()}`, {
     method: 'POST',
     data
+  });
+}
+
+export async function _delete( params: any) {
+  return request(`/jetlinks/device/instance/batch/_delete`, {
+    method: 'PUT',
+    data: params,
+  });
+}
+
+export async function _unDeploy( params: any) {
+  return request(`/jetlinks/device/instance/batch/_unDeploy`, {
+    method: 'PUT',
+    data: params,
+  });
+}
+
+export async function _deploy( params: any) {
+  return request(`/jetlinks/device/instance/batch/_deploy`, {
+    method: 'PUT',
+    data: params,
   });
 }
 

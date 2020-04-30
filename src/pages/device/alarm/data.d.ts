@@ -8,11 +8,11 @@ export class alarm extends SimpleType {
   description: string;
   createTime: number;
   alarmRule: {
-    productId: string | undefined;
+    productId?: string | undefined;
     name: string | undefined;
-    deviceId: string | undefined;
-    deviceName: string | undefined;
-    productName: string | undefined;
+    deviceId?: string | undefined;
+    deviceName?: string | undefined;
+    productName?: string | undefined;
     actions: any[];
     triggers: any[];
     properties: any[]
@@ -47,8 +47,7 @@ export class AlarmTrigger {
   };
   parameters: AlarmParameters[];
   modelId: string;
-  filters: AlarmConditionFilter[];
-  columns: any[];
+  filters?: AlarmConditionFilter[];
 }
 
 export class AlarmConditionFilter {

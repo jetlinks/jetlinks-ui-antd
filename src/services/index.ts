@@ -14,6 +14,8 @@ import * as protocol from '@/pages/device/protocol/service';
 import * as openApi from '@/pages/system/open-api/service';
 import * as mqttClient from '@/pages/network/mqtt-client/service';
 import * as certificate from '@/pages/network/certificate/service';
+import * as sqlRule from '@/pages/rule-engine/sqlRule/service';
+import * as location from '@/pages/device/location/service';
 // import * as coapClient from '@/pages/network/coap-client/service';
 // import * as httpClient from '@/pages/network/http-client/service';
 // import * as tcpClient from '@/pages/network/tcp-client/service';
@@ -28,6 +30,7 @@ import * as notifier from '@/pages/notice/service';
 import * as org from '@/pages/system/org/service';
 import * as analysis from '@/pages/analysis/service';
 import * as deviceAlarm from '@/pages/device/alarm/service';
+import * as visualization from '@/pages/device/visualization/service';
 
 const apis = {
   login,
@@ -60,5 +63,8 @@ const apis = {
   org,
   analysis,
   deviceAlarm,
+  sqlRule,
+  visualization,
+  location
 };
 export default apis;

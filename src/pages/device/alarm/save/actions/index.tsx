@@ -4,7 +4,6 @@ import { Card, Col, Popconfirm, Row, Select } from 'antd';
 import { AlarmAction } from '@/pages/device/alarm/data';
 import apis from '@/services';
 import encodeQueryParam from '@/utils/encodeParam';
-import { valid } from '@antv/data-set/lib/util/statistics';
 
 interface Props extends FormComponentProps {
   action: Partial<AlarmAction>;
@@ -66,7 +65,7 @@ const Action: React.FC<Props> = props => {
   }, [actionType]);
 
   useEffect(() => {
-    findNotifier({ type: notifyType });
+    findNotifier({ id: notifyType });
   }, [notifyType]);
 
   const findNotifier = (value: any) => {
@@ -74,7 +73,7 @@ const Action: React.FC<Props> = props => {
       encodeQueryParam({
         paging: false,
         terms: {
-          type: value.type,
+          type: value.id,
         },
       }))
       .then((response: any) => {

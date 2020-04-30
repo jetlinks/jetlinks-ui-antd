@@ -79,16 +79,18 @@ const errorHandler = (error: { response: Response }): Response | undefined => {
       });
       return response;
     } else if (response.status === 500) {
-      // try {
       response.json().then((res: any) => {
         notification.error({
           key: 'error',
           message: `${res.message}`,
         });
-      });
-      // } catch (error) {
-      //   router.push('/user/login');
-      // }
+      }).catch(() => {
+        notification.error({
+          key: 'error',
+          message: response.statusText,
+        });
+      })
+
     } else if (response.status === 504) {
       notification.error({
         key: 'error',

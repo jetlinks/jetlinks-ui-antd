@@ -152,14 +152,13 @@ const Config: React.FC<Props> = props => {
       }
       if (info.file.status === 'done') {
         const fileUrl = info.file.response.result;
-        // request(fileUrl.replace('http://2.jetlinks.org:9000/', 'jetlinks'), { method: 'GET' }).then(e => {
         request(fileUrl, { method: 'GET' }).then(e => {
           dispatch({
             type: 'noticeConfig/insert',
             payload: e,
             callback: () => {
               message.success('导入成功');
-              // handleSearch(searchParam);
+              handlerSearch(searchParam);
             },
           });
         });
@@ -279,7 +278,7 @@ const Config: React.FC<Props> = props => {
                       <a>删除</a>
                     </Popconfirm>
                     <Divider type="vertical" />
-                    <a onClick={() => downloadObject(record, '通知模版')}>下载配置</a>
+                    <a onClick={() => downloadObject(record, '通知配置')}>下载配置</a>
                     <Divider type="vertical" />
                     <a
                       onClick={() => {
