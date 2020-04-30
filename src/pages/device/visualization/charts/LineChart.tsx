@@ -88,7 +88,7 @@ const LineChart = (props: Props) => {
                 setData(tempData);
             }
         })
-    }, []);
+    }, [props.deviceId]);
     return (
         <Chart
             height={height}

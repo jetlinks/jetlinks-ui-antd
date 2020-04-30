@@ -20,10 +20,20 @@ const GaugeChartEdit = (props: Props) => {
 
     // 历史数据：数据量、时间范围
     // 聚合数据：数据量、时间范围、聚合类型、时间周期
+    const getData = () => {
+        let data: any;
+        form.validateFields((err, fileValue) => {
+            if (err) {
+                return;
+            }
+            data = fileValue;
+        });
+        return data;
+    }
     useEffect(() => {
         // 加载后执行
         if (props.save) {
-            props.save(() => form.getFieldsValue())
+            props.save(() => getData())
         }
         if (props.data) {
             setType(props.data?.config?.dimension);
@@ -38,7 +48,9 @@ const GaugeChartEdit = (props: Props) => {
                         label="名称"
                     >
                         {getFieldDecorator('name', {
-                            initialValue: config?.name
+                            initialValue: config?.name,
+                            rules: [{ required: true, message: '请输入名称' }]
+
                         })(
                             <Input />)}
                     </Form.Item>
@@ -48,7 +60,8 @@ const GaugeChartEdit = (props: Props) => {
                         label="属性"
                     >
                         {getFieldDecorator('measurement', {
-                            initialValue: config?.measurement
+                            initialValue: config?.measurement,
+                            rules: [{ required: true, message: '选择属性' }]
                         })(
                             <Select style={{ width: "100%" }}>
                                 {properties.map((i: any) => <Select.Option key={i.id} value={i.id}>{i.name}</Select.Option>)}

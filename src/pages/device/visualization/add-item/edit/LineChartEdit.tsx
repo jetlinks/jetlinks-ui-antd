@@ -15,14 +15,23 @@ const LineChartEdit = (props: Props) => {
     const { form, form: { getFieldDecorator, }, metadata } = props;
     const { properties } = JSON.parse(metadata);
     const [type, setType] = useState<string>();
-
     const config = props.data?.config;
     // 历史数据：数据量、时间范围
     // 聚合数据：数据量、时间范围、聚合类型、时间周期
+    const getData = () => {
+        let data: any;
+        form.validateFields((err, fileValue) => {
+            if (err) {
+                return;
+            }
+            data = fileValue;
+        });
+        return data;
+    }
     useEffect(() => {
         // 加载后执行
         if (props.save) {
-            props.save(() => form.getFieldsValue())
+            props.save(() => getData())
         }
         if (props.data) {
             setType(props.data?.config?.dimension);
@@ -40,7 +49,8 @@ const LineChartEdit = (props: Props) => {
                             label="数据量"
                         >
                             {getFieldDecorator('history', {
-                                initialValue: config?.history || 30
+                                initialValue: config?.history || 30,
+                                rules: [{ required: true, message: '请输入数据量' }]
                             })(
                                 <InputNumber style={{ width: '100%' }} />
                             )}
@@ -51,7 +61,9 @@ const LineChartEdit = (props: Props) => {
                             label="时间格式"
                         >
                             {getFieldDecorator('timeFormat', {
-                                initialValue: config?.timeFormat
+                                initialValue: config?.timeFormat || 'yyyy-MM-dd',
+                                rules: [{ required: true, message: '请输入时间格式' }]
+
                             })(
                                 <Input />
                             )}
@@ -68,7 +80,9 @@ const LineChartEdit = (props: Props) => {
                                     style={{ display: 'inline-block', width: 'calc(50% - 12px)' }}
                                 >
                                     {getFieldDecorator('from', {
-                                        initialValue: config?.from
+                                        initialValue: config?.from || 'now-7d',
+                                        rules: [{ required: true }]
+
                                     })(
                                         <Input />
                                     )}
@@ -80,7 +94,7 @@ const LineChartEdit = (props: Props) => {
                                     style={{ display: 'inline-block', width: 'calc(50% - 12px)' }}
                                 >
                                     {getFieldDecorator('to', {
-                                        initialValue: config?.to
+                                        initialValue: config?.to,
                                     })(
                                         <Input />
                                     )}
@@ -98,7 +112,9 @@ const LineChartEdit = (props: Props) => {
                             label="数据量"
                         >
                             {getFieldDecorator('limit', {
-                                initialValue: config?.limit || 30
+                                initialValue: config?.limit || 30,
+                                rules: [{ required: true, message: '请输入数据量' }]
+
                             })(
                                 <InputNumber style={{ width: '100%' }} />
                             )}
@@ -109,7 +125,9 @@ const LineChartEdit = (props: Props) => {
                             label="聚合类型"
                         >
                             {getFieldDecorator('agg', {
-                                initialValue: config?.agg || 'avg'
+                                initialValue: config?.agg || 'avg',
+                                rules: [{ required: true }]
+
                             })(
                                 <Select>
                                     <Select.Option value="avg">AVG</Select.Option>
@@ -133,7 +151,7 @@ const LineChartEdit = (props: Props) => {
                                     style={{ display: 'inline-block', width: 'calc(50% - 12px)' }}
                                 >
                                     {getFieldDecorator('from', {
-                                        initialValue: config?.from || 'now-30d'
+                                        initialValue: config?.from || 'now-30d',
                                     })(
                                         <Input />
                                     )}
@@ -157,7 +175,9 @@ const LineChartEdit = (props: Props) => {
                         <Tooltip title="M:月、d:天、h:小时、m:分钟、">
                             <Form.Item label="时间间隔">
                                 {getFieldDecorator('time', {
-                                    initialValue: config?.time || '1d'
+                                    initialValue: config?.time || '1d',
+                                    rules: [{ required: true, message: '请输入时间间隔' }]
+
                                 })(
                                     <Input />
                                 )}
@@ -169,7 +189,9 @@ const LineChartEdit = (props: Props) => {
                             label="时间格式"
                         >
                             {getFieldDecorator('format', {
-                                initialValue: config?.format || 'yyyy-MM-dd'
+                                initialValue: config?.format || 'yyyy-MM-dd',
+                                rules: [{ required: true, message: '请输入时间格式' }]
+
                             })(
                                 <Input />
                             )}
@@ -189,7 +211,9 @@ const LineChartEdit = (props: Props) => {
                         label="名称"
                     >
                         {getFieldDecorator('name', {
-                            initialValue: config?.name
+                            initialValue: config?.name,
+                            rules: [{ required: true, message: '请输入名称' }]
+
                         })(
                             <Input />)}
                     </Form.Item>
@@ -199,7 +223,9 @@ const LineChartEdit = (props: Props) => {
                         label="X轴"
                     >
                         {getFieldDecorator('x', {
-                            initialValue: config?.x || '时间'
+                            initialValue: config?.x || '时间',
+                            rules: [{ required: true, message: '请输入X轴名称' }]
+
                         })(
                             <Input placeholder="X轴名称" />
                         )}
@@ -210,7 +236,9 @@ const LineChartEdit = (props: Props) => {
                         label="Y轴"
                     >
                         {getFieldDecorator('y', {
-                            initialValue: config?.y || '值'
+                            initialValue: config?.y || '值',
+                            rules: [{ required: true, message: '请输入Y轴名称' }]
+
                         })(
                             <Input placeholder="Y轴名称" />
                         )}
@@ -221,7 +249,9 @@ const LineChartEdit = (props: Props) => {
                         label="属性"
                     >
                         {getFieldDecorator('measurement', {
-                            initialValue: config?.measurement
+                            initialValue: config?.measurement,
+                            rules: [{ required: true, message: '请选择属性' }]
+
                         })(
                             <Select style={{ width: "100%" }}>
                                 {properties.map((i: any) => <Select.Option key={i.id} value={i.id}>{i.name}</Select.Option>)}
@@ -234,7 +264,9 @@ const LineChartEdit = (props: Props) => {
                         label="类型"
                     >
                         {getFieldDecorator('dimension', {
-                            initialValue: config?.dimension
+                            initialValue: config?.dimension,
+                            rules: [{ required: true, message: '请选择数据类型' }]
+
                         })(
                             <Select onChange={(e: string) => setType(e)}>
                                 <Select.Option value='history'>历史数据</Select.Option>
@@ -248,6 +280,7 @@ const LineChartEdit = (props: Props) => {
             {renderType()}
 
         </Form>
+
     )
 }
 export default Form.create<Props>()(LineChartEdit);

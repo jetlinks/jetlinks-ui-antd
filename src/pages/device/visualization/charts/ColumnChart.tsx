@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Chart, Geom, Axis, Tooltip, Legend } from 'bizcharts';
-import { Button, message, Drawer, Form } from 'antd';
+import { message } from 'antd';
 import { ComponentProps } from '..';
 import apis from '@/services';
 
@@ -73,14 +73,16 @@ const ColumnCharts = (props: Props) => {
             }];
         }
 
+        if (props.config.dimension) {
+            apis.visualization.getDashboardData(params).then(response => {
+                if (response.status === 200) {
+                    const { result } = response;
+                    const tempData = result.map((item: any) => ({ genre: item.data.timeString, sold: item.data.value.value }));
+                    setData(tempData);
+                }
+            });
+        }
 
-        apis.visualization.getDashboardData(params).then(response => {
-            if (response.status === 200) {
-                const { result } = response;
-                const tempData = result.map((item: any) => ({ genre: item.data.timeString, sold: item.data.value.value }));
-                setData(tempData);
-            }
-        })
     }, []);
     return (
         <Chart height={height} data={data} scale={defaultCols} forceFit>

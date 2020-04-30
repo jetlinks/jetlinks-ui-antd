@@ -2,7 +2,6 @@ import React from 'react';
 import { Chart, Axis, Coord, Geom, Guide, View } from 'bizcharts';
 
 const { Text } = Guide;
-interface Props { }
 const GaugeTickChart = () => {
 
     const data1 = [];

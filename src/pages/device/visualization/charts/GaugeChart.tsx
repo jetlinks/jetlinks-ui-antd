@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Chart, Axis, Coord, Geom, Guide, Shape } from 'bizcharts';
+import { Chart, Axis, Coord, Geom, Guide } from 'bizcharts';
 import { ComponentProps } from '..';
 import { message } from 'antd';
 import apis from '@/services';
