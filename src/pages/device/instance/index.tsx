@@ -101,6 +101,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
       type: 'deviceInstance/query',
       payload: encodeQueryParam(params),
     });
+    deviceIdList.splice(0, deviceIdList.length);
   };
 
   const delelteInstance = (record: any) => {
@@ -638,7 +639,6 @@ const DeviceInstancePage: React.FC<Props> = props => {
                 rowSelection={{
                   type: 'checkbox',
                   ...rowSelection,
-                  selections: deviceIdList,
                 }}
                 pagination={{
                   current: result.pageIndex + 1,
