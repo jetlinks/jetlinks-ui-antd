@@ -8,7 +8,7 @@ import ProLayout, {
   BasicLayoutProps as ProLayoutProps,
   Settings,
 } from '@ant-design/pro-layout';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useMemo, useCallback } from 'react';
 import { Link } from 'umi';
 import { Dispatch } from 'redux';
 import { connect } from 'dva';
@@ -17,7 +17,11 @@ import Authorized from '@/utils/Authorized';
 import RightContent from '@/components/GlobalHeader/RightContent';
 import { ConnectState } from '@/models/connect';
 import { isAntDesignPro, getAuthorityFromRouter } from '@/utils/utils';
+import useWebSocket, { ReadyState } from 'react-use-websocket';
 import logo from '../assets/logo.svg';
+import { getAccessToken } from '@/utils/authority';
+import WebSocketOption, { handleWebsocket } from '@/pages/WebSocketOption';
+
 // import PubSub from 'pubsub-js';
 
 const noMatch = (
@@ -47,6 +51,7 @@ export type BasicLayoutContext = { [K in 'location']: BasicLayoutProps[K] } & {
     [path: string]: MenuDataItem;
   };
 };
+
 /**
  * use Authorized check all menu item
  */
@@ -134,7 +139,6 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
     //   getUser();
     // })
   }, []);
-
   // const getUser = () => {
   //   dispatch({
   //     type: 'user/fetchCurrent',
@@ -152,6 +156,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
       });
     }
   }; // get children authority
+
 
   const authorized = getAuthorityFromRouter(props.route.routes, location.pathname || '/') || {
     authority: undefined,

@@ -2,9 +2,10 @@ import React from 'react';
 import { connect } from 'dva';
 import { PageLoading } from '@ant-design/pro-layout';
 import { Redirect } from 'umi';
-// import { stringify } from 'querystring';
+import { stringify } from 'querystring';
 import { ConnectState, ConnectProps } from '@/models/connect';
 import { CurrentUser } from '@/models/user';
+import WebSocketOption from '@/pages/WebSocketOption';
 // import { getAccessToken } from '@/utils/authority';
 
 interface SecurityLayoutProps extends ConnectProps {
@@ -39,19 +40,24 @@ class SecurityLayout extends React.Component<SecurityLayoutProps, SecurityLayout
     // You can replace it to your authentication rule (such as check token exists)
     // 你可以把它替换成你自己的登录认证规则（比如判断 token 是否存在）
     const isLogin = !!localStorage.getItem('x-access-token');
-    // const queryString = stringify({
-    //   redirect: window.location.href,
-    // });
+    const queryString = stringify({
+      redirect: window.location.href,
+    });
 
     if ((!isLogin && loading) || !isReady) {
       return <PageLoading />;
     }
     if (!isLogin) {
       // TODO 此处应使用注释的代码。但跳转存在问题，
-      // return <Redirect to={`/user/login?${queryString}`}></Redirect>;
-      return <Redirect to="/user/login"></Redirect>;
+      return <Redirect to={`/user/login?${queryString}`} />;
+      // return <Redirect to="/user/login"></Redirect>;
     }
-    return children;
+    return (
+      <>
+        <WebSocketOption />
+        {children}
+      </>
+    );
   }
 }
 

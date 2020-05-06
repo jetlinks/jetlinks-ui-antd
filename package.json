@@ -102,6 +102,7 @@
     "react-monaco-editor": "^0.32.1",
     "react-resizable": "^1.10.1",
     "react-sortable-pane": "^1.1.0",
+    "react-use-websocket": "^2.0.1",
     "redux": "^4.0.1",
     "rxjs": "^6.5.5",
     "umi": "^2.13.0",
