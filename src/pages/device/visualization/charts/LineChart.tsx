@@ -3,7 +3,9 @@ import { Chart, Axis, Geom, Tooltip } from "bizcharts";
 import { message } from "antd";
 import { ComponentProps } from "..";
 import apis from "@/services";
+import _ from 'lodash';
 import styles from '../index.less';
+import getWebsocket from "@/layouts/GlobalWebSocket";
 
 interface Props extends ComponentProps {
     config: any;
@@ -53,16 +55,17 @@ const LineChart = (props: Props) => {
     useEffect(() => {
         // 获取数据
         let params: any[] = [];
-        if (props.config.dimension === 'history') {
+        const { dimension } = props.config;
+        if (dimension === 'history') {
             params = [{
                 "dashboard": 'device',
                 "object": props.productId,
                 "measurement": props.config.measurement, // 物模型属性ID
                 "dimension": props.config.dimension, // 固定
-                "params": { "history": 10, "deviceId": props.deviceId }
+                "params": { "history": props.config.history, "deviceId": props.deviceId }
             }];
 
-        } else if (props.config.dimension === 'agg') {
+        } else if (dimension === 'agg') {
             params = [{
                 "dashboard": 'device',
                 "object": props.productId,
@@ -78,16 +81,43 @@ const LineChart = (props: Props) => {
                     "to": props.config.to // 时间止,不填就是当前时间.
                 }
             }];
+        } else if (dimension === 'realTime') {
+            getWebsocket().send(JSON.stringify({
+                "id": `${props.productId}-${props.deviceId}-${props.config.measurement}`,
+                "type": "sub",
+                "topic": `/dashboard/device/${props.productId}/${props.config.measurement}/realTime`,
+                "parameter": {
+                    "deviceId": props.deviceId,
+                    "history": props.config.history
+                }
+            }));
+            getWebsocket().onmessage = (event: MessageEvent) => {
+
+                const messageData: {
+                    payload: any,
+                    requestId: string;
+                    topic: string;
+                    type: string;
+                } = JSON.parse(event.data);
+                const { payload, requestId, topic, type } = messageData;
+                if (requestId === `${props.productId}-${props.deviceId}-${props.config.measurement}`) {
+                    data.push({ year: payload.timeString, value: payload.value.value });
+                    if (data.length > 30) data.shift();
+                    setData([...data]);
+                }
+            }
         }
 
+        if (dimension !== 'realTime') {
+            apis.visualization.getDashboardData(params).then(response => {
+                if (response.status === 200) {
+                    const { result } = response;
+                    const tempData = result.map((item: any) => ({ year: item.data.timeString, value: item.data.value.value }));
+                    setData(tempData);
+                }
+            })
+        }
 
-        apis.visualization.getDashboardData(params).then(response => {
-            if (response.status === 200) {
-                const { result } = response;
-                const tempData = result.map((item: any) => ({ year: item.data.timeString, value: item.data.value.value }));
-                setData(tempData);
-            }
-        })
     }, [props.deviceId]);
     return (
         <Chart
