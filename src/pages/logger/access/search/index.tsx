@@ -3,7 +3,6 @@ import Form, { FormComponentProps } from 'antd/lib/form';
 // import { FormItemConfig } from "@/utils/common";
 import { Input, Row, Col, Button, Icon, DatePicker } from 'antd';
 import moment, { Moment } from 'moment';
-import { handleWebsocket } from '@/pages/WebSocketOption';
 
 interface Props extends FormComponentProps {
   search: Function;
@@ -153,14 +152,13 @@ const Search: React.FC<Props> = props => {
             >
               重置
             </Button>
-            <Button onClick={() => handleWebsocket.sendMessage('11111')}>webSocket</Button>
             <a style={{ marginLeft: 8 }} onClick={() => setExpandForm(!expandForm)}>
               {expandForm ? '展开' : '收起'} <Icon type={expandForm ? 'down' : 'up'} />
             </a>
           </div>
         </Col>
       </Row>
-    </Form>
+    </Form >
   );
 };
 

@@ -5,7 +5,7 @@ import { Redirect } from 'umi';
 import { stringify } from 'querystring';
 import { ConnectState, ConnectProps } from '@/models/connect';
 import { CurrentUser } from '@/models/user';
-import WebSocketOption from '@/pages/WebSocketOption';
+import getWebsocket from './GlobalWebSocket';
 // import { getAccessToken } from '@/utils/authority';
 
 interface SecurityLayoutProps extends ConnectProps {
@@ -43,6 +43,9 @@ class SecurityLayout extends React.Component<SecurityLayoutProps, SecurityLayout
     const queryString = stringify({
       redirect: window.location.href,
     });
+    if (isLogin) {
+      getWebsocket();
+    }
 
     if ((!isLogin && loading) || !isReady) {
       return <PageLoading />;
@@ -52,12 +55,7 @@ class SecurityLayout extends React.Component<SecurityLayoutProps, SecurityLayout
       return <Redirect to={`/user/login?${queryString}`} />;
       // return <Redirect to="/user/login"></Redirect>;
     }
-    return (
-      <>
-        <WebSocketOption />
-        {children}
-      </>
-    );
+    return children;
   }
 }
 
