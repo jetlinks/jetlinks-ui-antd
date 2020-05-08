@@ -153,7 +153,7 @@ const Save: React.FC<Props> = props => {
             <Col span={12}>
               <Form.Item key="transport" label="连接协议">
                 {getFieldDecorator('configuration.transport', {
-                  initialValue: (props.data?.configuration?.transport || "").split(","),
+                  initialValue: props.data?.configuration?.transport?.split(","),
                   rules: [{ required: true, message: '请输入连接协议' }],
                 })(
                   <Select mode="multiple">
