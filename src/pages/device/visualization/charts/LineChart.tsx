@@ -3,7 +3,6 @@ import { Chart, Axis, Geom, Tooltip } from "bizcharts";
 import { message } from "antd";
 import { ComponentProps } from "..";
 import apis from "@/services";
-import _ from 'lodash';
 import styles from '../index.less';
 import getWebsocket from "@/layouts/GlobalWebSocket";
 
@@ -82,29 +81,34 @@ const LineChart = (props: Props) => {
                 }
             }];
         } else if (dimension === 'realTime') {
-            getWebsocket().send(JSON.stringify({
-                "id": `${props.productId}-${props.deviceId}-${props.config.measurement}`,
-                "type": "sub",
-                "topic": `/dashboard/device/${props.productId}/${props.config.measurement}/realTime`,
-                "parameter": {
-                    "deviceId": props.deviceId,
-                    "history": props.config.history
-                }
-            }));
-            getWebsocket().onmessage = (event: MessageEvent) => {
+            const websocket = getWebsocket();
+            if (websocket) {
+                websocket.send(JSON.stringify({
+                    "id": `${props.id}-${props.productId}-${props.deviceId}-${props.config.measurement}`,
+                    "type": "sub",
+                    "topic": `/dashboard/device/${props.productId}/${props.config.measurement}/realTime`,
+                    "parameter": {
+                        "deviceId": props.deviceId,
+                        "history": props.config.history
+                    }
+                }));
+                websocket.onmessage = (event: MessageEvent) => {
 
-                const messageData: {
-                    payload: any,
-                    requestId: string;
-                    topic: string;
-                    type: string;
-                } = JSON.parse(event.data);
-                const { payload, requestId, topic, type } = messageData;
-                if (requestId === `${props.productId}-${props.deviceId}-${props.config.measurement}`) {
-                    data.push({ year: payload.timeString, value: payload.value.value });
-                    if (data.length > 30) data.shift();
-                    setData([...data]);
+                    const messageData: {
+                        payload: any,
+                        requestId: string;
+                        topic: string;
+                        type: string;
+                    } = JSON.parse(event.data);
+                    const { payload, requestId, topic, type } = messageData;
+                    if (requestId === `${props.id}-${props.productId}-${props.deviceId}-${props.config.measurement}`) {
+                        data.push({ year: payload.timeString, value: payload.value.value });
+                        if (data.length > 30) data.shift();
+                        setData([...data]);
+                    }
                 }
+            } else {
+                message.error('websocket链接未创建！')
             }
         }
 

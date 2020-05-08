@@ -3,6 +3,7 @@ import { Chart, Geom, Axis, Tooltip, Legend } from 'bizcharts';
 import { message } from 'antd';
 import { ComponentProps } from '..';
 import apis from '@/services';
+import getWebsocket from '@/layouts/GlobalWebSocket';
 
 interface Props extends ComponentProps {
     config: any;
@@ -46,21 +47,22 @@ const ColumnCharts = (props: Props) => {
     useEffect(() => {
         // 获取数据
         let params: any[] = [];
-        if (props.config.dimension === 'history') {
+        const { dimension } = props.config;
+        if (dimension === 'history') {
             params = [{
                 "dashboard": 'device',
                 "object": props.productId,
                 "measurement": "temperature", // 物模型属性ID
-                "dimension": props.config.dimension, // 固定
+                "dimension": dimension, // 固定
                 "params": { "history": 10, "deviceId": props.deviceId }
             }];
 
-        } else if (props.config.dimension === 'agg') {
+        } else if (dimension === 'agg') {
             params = [{
                 "dashboard": 'device',
                 "object": props.productId,
                 "measurement": "temperature", // 物模型属性ID
-                "dimension": props.config.dimension, // 固定
+                "dimension": dimension, // 固定
                 "params": {
                     "limit": props.config.limit,
                     "deviceId": props.deviceId,
@@ -71,9 +73,45 @@ const ColumnCharts = (props: Props) => {
                     "to": props.config.to // 时间止,不填就是当前时间.
                 }
             }];
+        } else if (dimension === 'realTime') {
+            console.log(config, 'confi');
+            const websocket = getWebsocket();
+            if (websocket) {
+
+                websocket.send(JSON.stringify({
+                    "id": `${props.id}-${props.productId}-${props.deviceId}-${props.config.measurement}`,
+                    "type": "sub",
+                    "topic": `/dashboard/device/${props.productId}/${props.config.measurement}/realTime`,
+                    "parameter": {
+                        "deviceId": props.deviceId,
+                        "history": props.config.history
+                    }
+                }));
+                console.log('消息ID', `${props.id}-${props.productId}-${props.deviceId}-${props.config.measurement}`);
+                websocket.onmessage = (event: MessageEvent) => {
+                    console.log('sss发送消息');
+                    const messageData: {
+                        payload: any,
+                        requestId: string;
+                        topic: string;
+                        type: string;
+                    } = JSON.parse(event.data);
+                    const { payload, requestId, topic, type } = messageData;
+                    console.log(requestId, `${props.id}-${props.productId}-${props.deviceId}-${props.config.measurement}`, 'ID 对比');
+                    if (requestId === `${props.id}-${props.productId}-${props.deviceId}-${props.config.measurement}`) {
+                        data.push({ genre: payload.timeString, sold: payload.value.value });
+                        if (data.length > config.history) data.shift();
+                        console.log('正确时', data);
+
+                        setData([...data]);
+                    }
+                }
+            } else {
+                message.error('websocket链接未创建！')
+            }
         }
 
-        if (props.config.dimension) {
+        if (dimension !== 'realTime') {
             apis.visualization.getDashboardData(params).then(response => {
                 if (response.status === 200) {
                     const { result } = response;
