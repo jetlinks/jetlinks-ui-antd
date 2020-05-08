@@ -64,7 +64,7 @@ const Save: React.FC<Props> = props => {
       if (err) return;
       const { id } = props.data;
       const data = fileValue;
-      if (data.type === 'js') {
+      if (data.type === 'Script') {
         data.configuration.lang = 'js';
         data.configuration.script = script;
         data.configuration.transport = data.configuration.transport.join(',');
@@ -138,7 +138,7 @@ const Save: React.FC<Props> = props => {
         </div>
       );
     }
-    if (protocolType === 'script') {
+    if (protocolType === 'Script') {
       return (
         <div>
           <Row>
@@ -189,7 +189,7 @@ const Save: React.FC<Props> = props => {
   useEffect(() => {
     if (activeDebugger === 'debugger') {
       const data = form.getFieldsValue();
-      if (data.type === 'script') {
+      if (data.type === 'Script') {
         data.configuration.lang = 'js';
         data.configuration.script = script;
         data.configuration.transport = data.configuration.transport.join(',');
@@ -206,7 +206,7 @@ const Save: React.FC<Props> = props => {
 
   const startDebug = () => {
     const entity = form.getFieldsValue();
-    if (entity.type === 'script') {
+    if (entity.type === 'Script') {
       entity.configuration.lang = 'js';
       entity.configuration.script = script;
       entity.configuration.transport = entity.configuration.transport.join(',');
@@ -251,8 +251,8 @@ const Save: React.FC<Props> = props => {
                     setProtocolType(value);
                   }}
                 >
-                  <Select.Option value="script">
-                    script
+                  <Select.Option value="Script">
+                    Script
                     </Select.Option>
                   <Select.Option value="jar">
                     jar
