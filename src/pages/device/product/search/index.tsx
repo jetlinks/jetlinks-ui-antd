@@ -36,7 +36,7 @@ const Search: React.FC<Props> = props => {
           setProtocolSupports(response.result);
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   const simpleItems: any[] = [
@@ -49,7 +49,7 @@ const Search: React.FC<Props> = props => {
       label: '设备类型',
       key: 'deviceType$LIKE',
       component: (
-        <Select placeholder="请选择">
+        <Select placeholder="请选择" style={{ width: 150 }}>
           <Select.Option value="gateway">网关</Select.Option>
           <Select.Option value="device">设备</Select.Option>
         </Select>
@@ -67,17 +67,17 @@ const Search: React.FC<Props> = props => {
       label: '设备类型',
       key: 'deviceType',
       component: (
-        <Select placeholder="请选择">
+        <Select placeholder="请选择" style={{ width: 150 }}>
           <Select.Option value="gateway">网关</Select.Option>
           <Select.Option value="device">设备</Select.Option>
-        </Select>
+        </Select >
       ),
     },
     {
       label: '消息协议',
       key: 'messageProtocol',
       component: (
-        <Select placeholder="请选择">
+        <Select placeholder="请选择" style={{ width: 150 }}>
           {protocolSupports.map(e => (
             <Select.Option value={e.id} key={e.id}>
               {e.name}
@@ -115,64 +115,79 @@ const Search: React.FC<Props> = props => {
     props.search(data);
   };
 
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 4 },
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 20 },
-    },
-  };
+  // const formItemLayout = {
+  //   labelCol: {
+  //     xs: { span: 24 },
+  //     sm: { span: 4 },
+  //   },
+  //   wrapperCol: {
+  //     xs: { span: 24 },
+  //     sm: { span: 20 },
+  //   },
+  // };
   return (
-    <Form {...formItemLayout}>
+    <Form layout="inline">
       <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
         {expandForm
           ? simpleItems.map(item => (
-              <Col md={8} sm={24} key={item.key}>
-                <Form.Item label={item.label}>
-                  {getFieldDecorator<string>(item.key)(item.component)}
-                </Form.Item>
-              </Col>
-            ))
+            <Col md={8} sm={24} key={item.key}>
+              <Form.Item label={item.label}>
+                {getFieldDecorator<string>(item.key)(item.component)}
+              </Form.Item>
+            </Col>
+          ))
           : advancedItems.map(item => (
-              <Col
-                md={item.styles ? item.styles.md : 8}
-                sm={item.styles ? item.styles.sm : 24}
-                key={item.key}
-                style={{ height: 56 }}
-              >
-                <Form.Item label={item.label}>
-                  {getFieldDecorator<string>(item.key, item.options)(item.component)}
-                </Form.Item>
-              </Col>
-            ))}
+            <Col
+              // md={item.styles ? item.styles.md : 8}
+              // sm={item.styles ? item.styles.sm : 24}
+              // key={item.key}
+              // style={{ height: 56 }}
+              md={8} sm={24}
+            >
+              <Form.Item label={item.label}>
+                {getFieldDecorator<string>(item.key, item.options)(item.component)}
+              </Form.Item>
+            </Col>
+          ))}
+        <div
+          style={{
+            float: 'right',
+            marginBottom: 24,
+            marginRight: 30,
+            marginTop: expandForm ? 0 : 20
+          }}
 
-        <Col push={16 - (Number(colSize) % 24)} md={8} sm={24}>
+        >
+          <Button
+            type="primary"
+            onClick={() => {
+              search();
+            }}
+          >
+            查询
+            </Button>
+          <Button
+            style={{ marginLeft: 8 }}
+            onClick={() => {
+              form.resetFields();
+              props.search();
+            }}
+          >
+            重置
+            </Button>
+          <a style={{ marginLeft: 8 }} onClick={() => setExpandForm(!expandForm)}>
+            {expandForm ? '展开' : '收起'} <Icon type={expandForm ? 'down' : 'up'} />
+          </a>
+        </div>
+
+        {/* <Col push={16 - (Number(colSize) % 24)} md={8} sm={24}>
           <div style={{ float: 'right', marginBottom: 24 }}>
-            <Button
-              type="primary"
-              onClick={() => {
-                search();
-              }}
-            >
-              查询
-            </Button>
-            <Button
-              style={{ marginLeft: 8 }}
-              onClick={() => {
-                form.resetFields();
-                props.search();
-              }}
-            >
-              重置
-            </Button>
+
             <a style={{ marginLeft: 8 }} onClick={() => setExpandForm(!expandForm)}>
               {expandForm ? '展开' : '收起'} <Icon type={expandForm ? 'down' : 'up'} />
             </a>
           </div>
-        </Col>
+        </Col> */}
       </Row>
     </Form>
   );

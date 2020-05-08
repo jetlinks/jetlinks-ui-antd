@@ -67,6 +67,7 @@ const Search: React.FC<Props> = props => {
       key: 'createTime$btw',
       component: (
         <DatePicker.RangePicker
+
           showTime={{ format: 'HH:mm' }}
           format="YYYY-MM-DD HH:mm:ss"
           placeholder={['开始时间', '结束时间']}
@@ -104,11 +105,11 @@ const Search: React.FC<Props> = props => {
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
-      sm: { span: 4 },
+      sm: { span: 5 },
     },
     wrapperCol: {
       xs: { span: 24 },
-      sm: { span: 18 },
+      sm: { span: 19 },
     },
   };
 
@@ -117,24 +118,24 @@ const Search: React.FC<Props> = props => {
       <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
         {expandForm
           ? simpleItems.map(item => (
-              <Col md={8} sm={24} key={item.key}>
-                <Form.Item label={item.label}>
-                  {getFieldDecorator(item.key)(item.component)}
-                </Form.Item>
-              </Col>
-            ))
+            <Col md={8} sm={24} key={item.key}>
+              <Form.Item label={item.label}>
+                {getFieldDecorator(item.key)(item.component)}
+              </Form.Item>
+            </Col>
+          ))
           : advancedItems.map(item => (
-              <Col
-                md={item.styles ? item.styles.md : 8}
-                sm={item.styles ? item.styles.sm : 24}
-                key={item.key}
-                style={{ height: 56 }}
-              >
-                <Form.Item label={item.label}>
-                  {getFieldDecorator(item.key, item.options)(item.component)}
-                </Form.Item>
-              </Col>
-            ))}
+            <Col
+              md={item.styles ? item.styles.md : 8}
+              sm={item.styles ? item.styles.sm : 24}
+              key={item.key}
+              style={{ height: 56 }}
+            >
+              <Form.Item label={item.label}>
+                {getFieldDecorator(item.key, item.options)(item.component)}
+              </Form.Item>
+            </Col>
+          ))}
 
         <Col push={16 - (Number(colSize) % 24)} md={8} sm={24}>
           <div style={{ float: 'right', marginBottom: 24 }}>
