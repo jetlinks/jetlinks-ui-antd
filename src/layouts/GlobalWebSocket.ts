@@ -2,17 +2,11 @@ import { getAccessToken } from "@/utils/authority";
 import { Observable } from "rxjs";
 import { } from "rxjs/operators";
 
-import proxy from "../../config/proxy";
-
-
 let ws: WebSocket | undefined;
 let count = 0;
 const subs = {};
 const initWebSocket = () => {
     const wsUrl = `ws://${document.location.host}/jetlinks/messaging/${getAccessToken()}`;
-    // if (REACT_APP_ENV === 'dev') {
-    //     return wsUrl.replace('/jetlinks/', proxy.dev['/jetlinks'].ws);
-    // }
     if (!ws && count < 5) {
         try {
             count += 1;
