@@ -94,7 +94,7 @@ const Trigger: React.FC<Props> = props => {
       case 'properties':
         return (
           <Col span={6} style={{ paddingBottom: 10, paddingLeft: 3, paddingRight: 9 }}>
-            <Select placeholder="物模型属性" defaultValue={trigger.modelId} key={Math.round(Math.random() * 100000)}
+            <Select placeholder="物模型属性" defaultValue={trigger.modelId}
                     onChange={(value: string, data: any) => {
                       setDataSourceValue('properties', data.props.data, value);
                       trigger.modelId = value;
@@ -111,7 +111,7 @@ const Trigger: React.FC<Props> = props => {
       case 'event':
         return (
           <Col span={6} style={{ paddingBottom: 10, paddingLeft: 3, paddingRight: 9 }}>
-            <Select placeholder="物模型事件" defaultValue={trigger.modelId} key={Math.round(Math.random() * 100000)}
+            <Select placeholder="物模型事件" defaultValue={trigger.modelId}
                     onChange={(value: string, data: any) => {
                       setDataSourceValue('event', data.props.data, value);
                       trigger.modelId = value;
@@ -128,7 +128,7 @@ const Trigger: React.FC<Props> = props => {
       case 'function':
         return (
           <Col span={6} style={{ paddingBottom: 10, paddingLeft: 3, paddingRight: 9 }}>
-            <Select placeholder="物模型功能" defaultValue={trigger.modelId} key={Math.round(Math.random() * 100000)}
+            <Select placeholder="物模型功能" defaultValue={trigger.modelId}
                     onChange={(value: string, data: any) => {
                       setDataSourceValue('function', data.props.data, value);
                       trigger.modelId = value;
@@ -151,10 +151,10 @@ const Trigger: React.FC<Props> = props => {
     switch (triggerType) {
       case 'device':
         return (
-          <div key={Math.round(Math.random() * 100000)}>
+          <div>
             <Col span={24}>
               <Col span={6} style={{ paddingBottom: 10, paddingLeft: -1, paddingRight: 12 }}>
-                <Select placeholder="选择类型，如：属性/事件" defaultValue={trigger.type} key={Math.round(Math.random() * 100000)}
+                <Select placeholder="选择类型，如：属性/事件" defaultValue={trigger.type}
                         onChange={(value: string) => {
                           setMessageType(() => value);
                           trigger.type = value;
@@ -178,7 +178,7 @@ const Trigger: React.FC<Props> = props => {
             </Col>
             <Col span={24}>
               {filters.map((item: any, index) => (
-                <div key={Math.round(Math.random() * 100000)} className="ant-row">
+                <div className="ant-row">
                   <Col span={6} style={{ paddingLeft: -1, paddingRight: 12, paddingBottom: 10 }}>
                     <AutoComplete dataSource={dataSource} placeholder="过滤条件KEY" children={item.key}
                                   defaultValue={item.key}
@@ -200,7 +200,7 @@ const Trigger: React.FC<Props> = props => {
                     />
                   </Col>
                   <Col span={6} style={{ paddingLeft: 3, paddingRight: 9, paddingBottom: 10 }}>
-                    <Select placeholder="操作符" defaultValue={item.operator} key={Math.round(Math.random() * 100000)}
+                    <Select placeholder="操作符" defaultValue={item.operator}
                             onChange={(value: string) => {
                               filters[index].operator = value;
                               trigger.filters = filters;
@@ -217,7 +217,7 @@ const Trigger: React.FC<Props> = props => {
                     </Select>
                   </Col>
                   <Col span={7} style={{ paddingLeft: 7, paddingRight: 3, paddingBottom: 10 }}>
-                    <Input placeholder="过滤条件值" defaultValue={item.value} key={Math.round(Math.random() * 100000)}
+                    <Input placeholder="过滤条件值" defaultValue={item.value}
                            onChange={event => {
                              filters[index].value = event.target.value;
                              trigger.filters = filters;
@@ -273,7 +273,7 @@ const Trigger: React.FC<Props> = props => {
         );
       case 'timer':
         return (
-          <div key={Math.round(Math.random() * 100000)}>
+          <div>
             <Col span={6} style={{ paddingBottom: 10 }}>
               <Input placeholder="cron表达式" defaultValue={trigger.cron} key="cron"
                      onBlur={event => {
@@ -290,7 +290,7 @@ const Trigger: React.FC<Props> = props => {
             </Col>
             <Col span={24}>
               <Col span={6} style={{ paddingBottom: 10, paddingLeft: -1, paddingRight: 12 }}>
-                <Select placeholder="选择类型，如：属性/事件" defaultValue={trigger.type} key={Math.round(Math.random() * 100000)}
+                <Select placeholder="选择类型，如：属性/事件" defaultValue={trigger.type}
                         onChange={(value: string) => {
                           setMessageType(() => value);
                           trigger.type = value;
@@ -313,9 +313,9 @@ const Trigger: React.FC<Props> = props => {
             {triggerType === 'timer' && messageType === 'function' && (
               <Col span={24} style={{ backgroundColor: '#F5F5F6', paddingBottom: 10 }}>
                 {parameters.map((item: any, index) => (
-                  <Row key={Math.round(Math.random() * 100000)} style={{ paddingBottom: 5, paddingTop: 5 }}>
+                  <Row style={{ paddingBottom: 5, paddingTop: 5 }}>
                     <Col span={7}>
-                      <Input placeholder="请输入属性" key={Math.round(Math.random() * 100000)} value={item.property}
+                      <Input placeholder="请输入属性" value={item.property}
                              onChange={event => {
                                parameters[index].property = event.target.value;
                                setParameters([...parameters]);
@@ -327,7 +327,7 @@ const Trigger: React.FC<Props> = props => {
                     </Col>
                     <Col span={1} style={{ textAlign: 'center' }}/>
                     <Col span={7}>
-                      <Input placeholder="请输入别名" value={item.alias} key={Math.round(Math.random() * 100000)}
+                      <Input placeholder="请输入别名" value={item.alias}
                              onChange={event => {
                                parameters[index].alias = event.target.value;
                                setParameters([...parameters]);
@@ -376,7 +376,7 @@ const Trigger: React.FC<Props> = props => {
             )}
             <Col span={24}>
               {filters.map((item: any, index) => (
-                <div key={Math.round(Math.random() * 100000)} className="ant-row">
+                <div className="ant-row">
                   <Col span={6} style={{ paddingLeft: -1, paddingRight: 12, paddingBottom: 10 }}>
                     <AutoComplete dataSource={dataSource} placeholder="过滤条件KEY" children={item.key}
                                   defaultValue={item.key}
@@ -398,7 +398,7 @@ const Trigger: React.FC<Props> = props => {
                     />
                   </Col>
                   <Col span={6} style={{ paddingLeft: 3, paddingRight: 9, paddingBottom: 10 }}>
-                    <Select placeholder="操作符" defaultValue={item.operator} key={Math.round(Math.random() * 100000)}
+                    <Select placeholder="操作符" defaultValue={item.operator}
                             onChange={(value: string) => {
                               filters[index].operator = value;
                               trigger.filters = filters;
@@ -415,7 +415,7 @@ const Trigger: React.FC<Props> = props => {
                     </Select>
                   </Col>
                   <Col span={7} style={{ paddingLeft: 7, paddingRight: 3, paddingBottom: 10 }}>
-                    <Input placeholder="过滤条件值" defaultValue={item.value} key={Math.round(Math.random() * 100000)}
+                    <Input placeholder="过滤条件值" defaultValue={item.value}
                            onBlur={event => {
                              filters[index].value = event.target.value;
                              trigger.filters = filters;
@@ -483,9 +483,9 @@ const Trigger: React.FC<Props> = props => {
   };
 
   return (
-    <div style={{ paddingBottom: 5 }} key={Math.round(Math.random() * 100000)}>
+    <div style={{ paddingBottom: 5 }}>
       <Card size="small" bordered={false} style={{ backgroundColor: '#F5F5F6' }}>
-        <Row style={{ marginLeft: -2 }} key={Math.round(Math.random() * 100000)}>
+        <Row style={{ marginLeft: -2 }}>
           <span>触发器: {props.position + 1}</span>
           <Popconfirm title="确认删除此触发器？"
                       onConfirm={() => props.remove(props.position)}
@@ -494,9 +494,9 @@ const Trigger: React.FC<Props> = props => {
           </Popconfirm>
         </Row>
 
-        <Row gutter={16} key={Math.round(Math.random() * 100000)} style={{ paddingLeft: 10 }}>
+        <Row gutter={16} style={{ paddingLeft: 10 }}>
           <Col span={6} style={{ paddingBottom: 10 }}>
-            <Select placeholder="选择触发器类型" value={trigger.trigger} key={Math.round(Math.random() * 100000)}
+            <Select placeholder="选择触发器类型" value={trigger.trigger}
                     onChange={(value: string) => {
                       setTriggerType(() => value);
                       trigger.trigger = value;
