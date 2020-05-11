@@ -52,7 +52,6 @@ const GaugeChart = (props: Props) => {
         // 获取数据
         const { dimension } = props.config;
         let subs: any;
-        console.log(dimension, 'dimes');
         if (dimension === 'history') {
             const params = [{
                 "dashboard": 'device',

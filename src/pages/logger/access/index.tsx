@@ -52,6 +52,7 @@ const AccessLoggerList: React.FC<Props> = props => {
     {
       title: 'IP',
       dataIndex: 'ip',
+      ellipsis: true
     },
     // {
     //     title: '请求方法',
@@ -60,7 +61,7 @@ const AccessLoggerList: React.FC<Props> = props => {
     {
       title: '请求路径',
       dataIndex: 'url',
-      // ellipsis: true,
+      ellipsis: true,
       render: (text, record) => (
         <Fragment>
           <Tag color="#87d068">{record.httpMethod}</Tag>
@@ -71,7 +72,7 @@ const AccessLoggerList: React.FC<Props> = props => {
     {
       title: '说明',
       dataIndex: 'describe',
-      // ellipsis: true,
+      ellipsis: true,
       render: (text, record) => {
         const action = record.action ? <Tag color="volcano">{record.action}</Tag> : '';
         const describe = record.describe ? <Tag color="#2db7f5">{record.describe}</Tag> : '';
@@ -92,6 +93,7 @@ const AccessLoggerList: React.FC<Props> = props => {
       title: '请求时间',
       dataIndex: 'requestTime',
       sorter: true,
+      ellipsis: true,
       render: text => moment(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
@@ -157,7 +159,7 @@ const AccessLoggerList: React.FC<Props> = props => {
       pageIndex: Number(pagination.current) - 1,
       pageSize: pagination.pageSize,
       terms: searchParam.terms,
-      sorts: sorter.field ? sorter :searchParam.sorter,
+      sorts: sorter.field ? sorter : searchParam.sorter,
     });
   };
 

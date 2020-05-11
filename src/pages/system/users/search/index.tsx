@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import Form, { FormComponentProps } from "antd/lib/form";
-import { FormItemConfig } from "@/utils/common";
-import { Input, Select, Row, Col, Button, Icon, message } from "antd";
+import { Input, Row, Col, Button } from "antd";
+
+import styles from './index.less';
 
 interface Props extends FormComponentProps {
     search: Function;
@@ -12,7 +13,7 @@ const Search: React.FC<Props> = props => {
 
     const { form, form: { getFieldDecorator } } = props;
 
-    const simpleItems: FormItemConfig[] = [
+    const simpleItems: any[] = [
         {
             label: "姓名",
             key: "name$LIKE",
@@ -34,7 +35,7 @@ const Search: React.FC<Props> = props => {
     }
 
     return (
-        <Form layout="inline">
+        <Form className={styles.antAdvancedSearchForm}>
             <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
                 {
                     simpleItems.map(item => (

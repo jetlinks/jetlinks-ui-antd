@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import Form, { FormComponentProps } from 'antd/lib/form';
-import { FormItemConfig } from '@/utils/common';
 import { Input, Select, Row, Col, Button, Icon, DatePicker } from 'antd';
 import moment, { Moment } from 'moment';
+
+import styles from '../../index.less';
 
 interface Props extends FormComponentProps {
   search: Function;
@@ -24,7 +25,7 @@ const Search: React.FC<Props> = props => {
 
   const [expandForm, setExpandForm] = useState(initState.expandForm);
 
-  const simpleItems: FormItemConfig[] = [
+  const simpleItems: any[] = [
     {
       label: '名称',
       key: 'name$LIKE',
@@ -44,7 +45,7 @@ const Search: React.FC<Props> = props => {
     },
   ];
 
-  const advancedItems: FormItemConfig[] = [
+  const advancedItems: any[] = [
     {
       label: '名称',
       key: 'name$LIKE',
@@ -67,7 +68,7 @@ const Search: React.FC<Props> = props => {
       key: 'createTime$btw',
       component: (
         <DatePicker.RangePicker
-
+          style={{ width: '100%' }}
           showTime={{ format: 'HH:mm' }}
           format="YYYY-MM-DD HH:mm:ss"
           placeholder={['开始时间', '结束时间']}
@@ -81,18 +82,9 @@ const Search: React.FC<Props> = props => {
     },
   ];
 
-  const colSize =
-    (expandForm ? simpleItems : advancedItems)
-      .map(item => (item.styles ? item.styles.md : 8))
-      .reduce((i, j) => {
-        if (!i) return;
-        if (!j) return;
-        return Number(i) + Number(j);
-      }) || 1;
-
   const search = () => {
     const data = form.getFieldsValue();
-    //TODO 查询数据
+    // TODO 查询数据
     if (data.createTime$btw) {
       const formatDate = data.createTime$btw.map((e: Moment) =>
         moment(e).format('YYYY-MM-DD HH:mm:ss'),
@@ -102,65 +94,61 @@ const Search: React.FC<Props> = props => {
     props.search(data);
   };
 
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 5 },
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 19 },
-    },
-  };
+
 
   return (
-    <Form {...formItemLayout}>
+    <Form className={styles.antAdvancedSearchForm} >
       <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
         {expandForm
           ? simpleItems.map(item => (
-            <Col md={8} sm={24} key={item.key}>
+            <Col style={{ height: 56 }} md={8} sm={24} key={item.key}>
               <Form.Item label={item.label}>
-                {getFieldDecorator(item.key)(item.component)}
+                {getFieldDecorator<string>(item.key)(item.component)}
               </Form.Item>
             </Col>
           ))
           : advancedItems.map(item => (
             <Col
-              md={item.styles ? item.styles.md : 8}
-              sm={item.styles ? item.styles.sm : 24}
+              md={8} sm={24}
               key={item.key}
               style={{ height: 56 }}
             >
               <Form.Item label={item.label}>
-                {getFieldDecorator(item.key, item.options)(item.component)}
+                {getFieldDecorator<string>(item.key, item.options)(item.component)}
               </Form.Item>
             </Col>
           ))}
 
-        <Col push={16 - (Number(colSize) % 24)} md={8} sm={24}>
-          <div style={{ float: 'right', marginBottom: 24 }}>
-            <Button
-              type="primary"
-              onClick={() => {
-                search();
-              }}
-            >
-              查询
-            </Button>
-            <Button
-              style={{ marginLeft: 8 }}
-              onClick={() => {
-                form.resetFields();
-                props.search();
-              }}
-            >
-              重置
-            </Button>
-            <a style={{ marginLeft: 8 }} onClick={() => setExpandForm(!expandForm)}>
-              {expandForm ? '展开' : '收起'} <Icon type={expandForm ? 'down' : 'up'} />
-            </a>
-          </div>
-        </Col>
+        <div
+          style={{
+            float: 'right',
+            // marginBottom: 24,
+            // marginRight: 0,
+            marginTop: 4
+          }}
+
+        >
+          <Button
+            type="primary"
+            onClick={() => {
+              search();
+            }}
+          >
+            查询
+          </Button>
+          <Button
+            style={{ marginLeft: 8 }}
+            onClick={() => {
+              form.resetFields();
+              props.search();
+            }}
+          >
+            重置
+          </Button>
+          <a style={{ marginLeft: 8 }} onClick={() => setExpandForm(!expandForm)}>
+            {expandForm ? '展开' : '收起'} <Icon type={expandForm ? 'down' : 'up'} />
+          </a>
+        </div>
       </Row>
     </Form>
   );

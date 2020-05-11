@@ -52,6 +52,7 @@ const SystemLoggerList: React.FC<Props> = props => {
     {
       title: '线程',
       dataIndex: 'threadName',
+      ellipsis: true
     },
     {
       title: '名称',
@@ -73,12 +74,14 @@ const SystemLoggerList: React.FC<Props> = props => {
       title: '服务名',
       dataIndex: 'context.server',
       width: 150,
+      ellipsis: true
     },
     {
       title: '创建时间',
       dataIndex: 'createTime',
       width: 200,
       sorter: true,
+      ellipsis: true,
       render: text => moment(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
@@ -131,7 +134,7 @@ const SystemLoggerList: React.FC<Props> = props => {
       pageIndex: Number(pagination.current) - 1,
       pageSize: pagination.pageSize,
       terms: searchParam.terms,
-      sorts: sorter.field ? sorter :searchParam.sorter,
+      sorts: sorter.field ? sorter : searchParam.sorter,
     });
   };
 

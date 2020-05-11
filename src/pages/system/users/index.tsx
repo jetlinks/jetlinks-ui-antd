@@ -69,29 +69,29 @@ const UserList: React.FC<Props> = (props) => {
                     <a onClick={() => setting(record)}>赋权</a>
                     <Divider type="vertical" />
                     {record.status !== 1 ? (
-                      <span>
-                        <Popconfirm
-                          title= "确认启用此用户？"
-                          onConfirm={() => {
-                            enableOrDisable(record);
-                          }}
-                        >
-                        <a>启用</a>
-                      </Popconfirm>
-                        <Divider type="vertical" />
-                        <a onClick={() => handleDelete(record)}>删除</a>
-                      </span>
+                        <span>
+                            <Popconfirm
+                                title="确认启用此用户？"
+                                onConfirm={() => {
+                                    enableOrDisable(record);
+                                }}
+                            >
+                                <a>启用</a>
+                            </Popconfirm>
+                            <Divider type="vertical" />
+                            <a onClick={() => handleDelete(record)}>删除</a>
+                        </span>
                     ) : (
-                      <Popconfirm
-                        title= "确认禁用此用户？"
-                        onConfirm={() => {
-                          enableOrDisable(record);
-                        }}
-                      >
-                        <a>禁用</a>
-                      </Popconfirm>
-                    )}
-                  </Fragment>
+                            <Popconfirm
+                                title="确认禁用此用户？"
+                                onConfirm={() => {
+                                    enableOrDisable(record);
+                                }}
+                            >
+                                <a>禁用</a>
+                            </Popconfirm>
+                        )}
+                </Fragment>
             ),
         },
     ];
@@ -100,22 +100,22 @@ const UserList: React.FC<Props> = (props) => {
         handleSearch(searchParam);
     }, []);
 
-    const enableOrDisable = (record: UserItem)=>{
-      apis.users.saveOrUpdate(
-        {id:record.id,status:record.status===1?0:1}
+    const enableOrDisable = (record: UserItem) => {
+        apis.users.saveOrUpdate(
+            { id: record.id, status: record.status === 1 ? 0 : 1 }
         ).then(res => {
-          if (res.status === 200) {
-            if (record.status === 1){
-              message.success("禁用成功");
-            }else{
-              message.success("启用成功");
+            if (res.status === 200) {
+                if (record.status === 1) {
+                    message.success("禁用成功");
+                } else {
+                    message.success("启用成功");
+                }
+                handleSearch(searchParam);
+            } else {
+                message.error(`操作失败，${res.message}`)
             }
-            handleSearch(searchParam);
-          } else {
-            message.error(`操作失败，${res.message}`)
-          }
         }
-      ).catch(() => {});
+        ).catch(() => { });
     };
 
     const handleSearch = (params?: any) => {
@@ -145,7 +145,7 @@ const UserList: React.FC<Props> = (props) => {
                     handleSearch(searchParam);
                     setCurrentItem({})
                 } else {
-                  message.error(`添加失败，${response.message}`);
+                    message.error(`添加失败，${response.message}`);
                 }
             }
         })
@@ -161,12 +161,12 @@ const UserList: React.FC<Props> = (props) => {
                     type: 'users/remove',
                     payload: params.id,
                     callback: response => {
-                      if (response.status === 200){
-                        message.success("删除成功");
-                        handleSearch(searchParam);
-                      } else {
-                        message.error("删除失败");
-                      }
+                        if (response.status === 200) {
+                            message.success("删除成功");
+                            handleSearch(searchParam);
+                        } else {
+                            message.error("删除失败");
+                        }
                     }
                 });
             },
