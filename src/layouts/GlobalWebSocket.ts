@@ -9,8 +9,10 @@ let ws: WebSocket | undefined;
 let count = 0;
 const subs = {};
 const initWebSocket = () => {
-    const wsUrl = `${proxy.dev["/jetlinks"].ws || '/jetlinks'}/messaging/${getAccessToken()}`;
-    console.log(wsUrl, 'wsrulr');
+    const wsUrl = `/jetlinks/messaging/${getAccessToken()}`;
+    if (REACT_APP_ENV === 'dev') {
+        return wsUrl.replace('/jetlinks/', proxy.dev['/jetlinks'].ws);
+    }
     if (!ws && count < 5) {
         try {
             count += 1;
