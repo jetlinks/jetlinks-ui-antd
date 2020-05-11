@@ -9,7 +9,7 @@ let ws: WebSocket | undefined;
 let count = 0;
 const subs = {};
 const initWebSocket = () => {
-    const wsUrl = `ws://${document.location.host}/messaging/${getAccessToken()}`;
+    const wsUrl = `/jetlinks/messaging/${getAccessToken()}`;
     // if (REACT_APP_ENV === 'dev') {
     //     return wsUrl.replace('/jetlinks/', proxy.dev['/jetlinks'].ws);
     // }
