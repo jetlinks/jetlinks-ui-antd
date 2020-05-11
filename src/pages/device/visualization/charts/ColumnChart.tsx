@@ -3,7 +3,7 @@ import { Chart, Geom, Axis, Tooltip, Legend } from 'bizcharts';
 import { message } from 'antd';
 import { ComponentProps } from '..';
 import apis from '@/services';
-import getWebsocket from '@/layouts/GlobalWebSocket';
+import { getWebsocket } from '@/layouts/GlobalWebSocket';
 
 interface Props extends ComponentProps {
     config: any;
@@ -26,8 +26,17 @@ const ColumnCharts = (props: Props) => {
     }, [props.ySize]);
 
     const defaultCols = {
-        sold: { alias: config.x || '销售量' },
-        genre: { alias: config.y || '游戏种类' }
+        sold: {
+            alias: config.x || '销售量',
+            // range: [0, 1],
+            tickCount: (config.history && config.history > 9) ? Math.ceil(config.history / 2) : 10,
+        },
+        genre: {
+            alias: config.y || '游戏种类',
+            type: "cat",
+            range: [1 / (config.history - 1), 1 - 1 / (config.history - 1)],
+            tickCount: 5,
+        }
     }
 
     useEffect(() => {
@@ -47,6 +56,7 @@ const ColumnCharts = (props: Props) => {
     useEffect(() => {
         // 获取数据
         let params: any[] = [];
+        let subs: any;
         const { dimension } = props.config;
         if (dimension === 'history') {
             params = [{
@@ -54,7 +64,7 @@ const ColumnCharts = (props: Props) => {
                 "object": props.productId,
                 "measurement": "temperature", // 物模型属性ID
                 "dimension": dimension, // 固定
-                "params": { "history": 10, "deviceId": props.deviceId }
+                "params": { "history": config.history, "deviceId": props.deviceId }
             }];
 
         } else if (dimension === 'agg') {
@@ -74,41 +84,21 @@ const ColumnCharts = (props: Props) => {
                 }
             }];
         } else if (dimension === 'realTime') {
-            console.log(config, 'confi');
-            const websocket = getWebsocket();
-            if (websocket) {
-
-                websocket.send(JSON.stringify({
-                    "id": `${props.id}-${props.productId}-${props.deviceId}-${props.config.measurement}`,
-                    "type": "sub",
-                    "topic": `/dashboard/device/${props.productId}/${props.config.measurement}/realTime`,
-                    "parameter": {
-                        "deviceId": props.deviceId,
-                        "history": props.config.history
-                    }
-                }));
-                console.log('消息ID', `${props.id}-${props.productId}-${props.deviceId}-${props.config.measurement}`);
-                websocket.onmessage = (event: MessageEvent) => {
-                    console.log('sss发送消息');
-                    const messageData: {
-                        payload: any,
-                        requestId: string;
-                        topic: string;
-                        type: string;
-                    } = JSON.parse(event.data);
-                    const { payload, requestId, topic, type } = messageData;
-                    console.log(requestId, `${props.id}-${props.productId}-${props.deviceId}-${props.config.measurement}`, 'ID 对比');
-                    if (requestId === `${props.id}-${props.productId}-${props.deviceId}-${props.config.measurement}`) {
-                        data.push({ genre: payload.timeString, sold: payload.value.value });
-                        if (data.length > config.history) data.shift();
-                        console.log('正确时', data);
-
-                        setData([...data]);
-                    }
+            subs = getWebsocket(
+                `${props.id}-${props.productId}-${props.deviceId}-${props.config.measurement}`,
+                `/dashboard/device/${props.productId}/${props.config.measurement}/realTime`,
+                {
+                    "deviceId": props.deviceId,
+                    "history": props.config.history
                 }
-            } else {
-                message.error('websocket链接未创建！')
-            }
+            ).subscribe(
+                (resp: any) => {
+                    const { payload } = resp;
+                    data.push({ genre: payload.timeString, sold: payload.value.value });
+                    if (data.length > props.config.history) data.shift();
+                    setData([...data]);
+                }
+            );
         }
 
         if (dimension !== 'realTime') {
@@ -120,13 +110,24 @@ const ColumnCharts = (props: Props) => {
                 }
             });
         }
-
+        return () => subs.unsubscribe();
     }, []);
     return (
-        <Chart height={height} data={data} scale={defaultCols} forceFit>
-            <Axis name="genre" title />
+        <Chart
+            height={height}
+            data={data}
+            renderer='svg'
+            scale={defaultCols}
+            forceFit>
+            <Axis name="genre" title
+                label={{
+                    autoRotate: true,
+                    formatter(text) {
+                        return text;
+                    },
+                }} />
             <Axis name="sold" title />
-            <Legend position="top" />
+            {/* <Legend position="top" /> */}
             <Tooltip />
             <Geom type="interval" position="genre*sold" color="genre" />
         </Chart>

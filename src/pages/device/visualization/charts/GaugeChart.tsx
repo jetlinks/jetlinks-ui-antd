@@ -3,7 +3,7 @@ import { Chart, Axis, Coord, Geom, Guide } from 'bizcharts';
 import { ComponentProps } from '..';
 import { message } from 'antd';
 import apis from '@/services';
-import getWebsocket from '@/layouts/GlobalWebSocket';
+import { getWebsocket } from '@/layouts/GlobalWebSocket';
 
 const { Html, Arc } = Guide;
 interface Props extends ComponentProps {
@@ -51,7 +51,7 @@ const GaugeChart = (props: Props) => {
     useEffect(() => {
         // 获取数据
         const { dimension } = props.config;
-
+        let subs: any;
         if (dimension !== 'realTime') {
             const params = [{
                 "dashboard": 'device',
@@ -68,36 +68,23 @@ const GaugeChart = (props: Props) => {
                 }
             })
         } else {
-            const websocket = getWebsocket();
-            if (websocket) {
-                websocket.send(JSON.stringify({
-                    "id": `${props.id}-${props.productId}-${props.deviceId}-${props.config.measurement}`,
-                    "type": "sub",
-                    "topic": `/dashboard/device/${props.productId}/${props.config.measurement}/realTime`,
-                    "parameter": {
-                        "deviceId": props.deviceId,
-                        "history": props.config.history
-                    }
-                }));
-                websocket.onmessage = (event: MessageEvent) => {
-
-                    const messageData: {
-                        payload: any,
-                        requestId: string;
-                        topic: string;
-                        type: string;
-                    } = JSON.parse(event.data);
-                    const { payload, requestId, topic, type } = messageData;
-                    if (requestId === `${props.id}-${props.productId}-${props.deviceId}-${props.config.measurement}`) {
-                        data.push({ year: payload.timeString, value: payload.value.value });
-                        if (data.length > 30) data.shift();
-                        setData([...data]);
-                    }
+            subs = getWebsocket(
+                `${props.id}-${props.productId}-${props.deviceId}-${props.config.measurement}`,
+                `/dashboard/device/${props.productId}/${props.config.measurement}/realTime`,
+                {
+                    "deviceId": props.deviceId,
+                    "history": props.config.history
                 }
-            } else {
-                message.error('websocket链接未创建！')
-            }
+            ).subscribe(
+                (resp: any) => {
+                    const { payload } = resp;
+                    data.push({ year: payload.timeString, value: payload.value.value });
+                    if (data.length > 30) data.shift();
+                    setData([...data]);
+                }
+            );
         }
+        return () => subs.unsubscribe();
     }, []);
 
     return (
