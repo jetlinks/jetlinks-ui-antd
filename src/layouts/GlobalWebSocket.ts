@@ -9,14 +9,14 @@ let ws: WebSocket | undefined;
 let count = 0;
 const subs = {};
 const initWebSocket = () => {
-    const wsUrl = `/jetlinks/messaging/${getAccessToken()}`;
-    if (REACT_APP_ENV === 'dev') {
-        return wsUrl.replace('/jetlinks/', proxy.dev['/jetlinks'].ws);
-    }
+    const wsUrl = `ws://${document.location.host}/messaging/${getAccessToken()}`;
+    // if (REACT_APP_ENV === 'dev') {
+    //     return wsUrl.replace('/jetlinks/', proxy.dev['/jetlinks'].ws);
+    // }
     if (!ws && count < 5) {
         try {
             count += 1;
-            ws = new WebSocket(`ws://${wsUrl}`);
+            ws = new WebSocket(wsUrl);
             ws.onclose = () => {
                 ws = undefined;
                 setTimeout(initWebSocket, 5000 * count);
