@@ -16,7 +16,7 @@ const initWebSocket = () => {
     if (!ws && count < 5) {
         try {
             count += 1;
-            ws = new WebSocket(wsUrl);
+            ws = new WebSocket(`ws://${wsUrl}`);
             ws.onclose = () => {
                 ws = undefined;
                 setTimeout(initWebSocket, 5000 * count);
