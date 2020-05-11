@@ -64,7 +64,7 @@ const Save: React.FC<Props> = props => {
       if (err) return;
       const { id } = props.data;
       const data = fileValue;
-      if (data.type === 'js') {
+      if (data.type === 'script') {
         data.configuration.lang = 'js';
         data.configuration.script = script;
         data.configuration.transport = data.configuration.transport.join(',');
