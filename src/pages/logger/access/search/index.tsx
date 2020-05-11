@@ -110,7 +110,7 @@ const Search: React.FC<Props> = props => {
     },
   };
   return (
-    <Form {...formItemLayout}>
+    <Form layout="inline">
       <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
         {expandForm
           ? simpleItems.map(item => (
@@ -122,10 +122,11 @@ const Search: React.FC<Props> = props => {
           ))
           : advancedItems.map(item => (
             <Col
-              md={item.styles ? item.styles.md : 8}
-              sm={item.styles ? item.styles.sm : 24}
-              key={item.key}
-              style={{ height: 56 }}
+              // md={item.styles ? item.styles.md : 8}
+              // sm={item.styles ? item.styles.sm : 24}
+              // key={item.key}
+              // style={{ height: 56 }}
+              md={8} sm={24}
             >
               <Form.Item label={item.label}>
                 {getFieldDecorator<string>(item.key, item.options)(item.component)}

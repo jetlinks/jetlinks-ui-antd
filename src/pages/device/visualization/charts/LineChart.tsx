@@ -3,9 +3,8 @@ import { Chart, Axis, Geom, Tooltip } from "bizcharts";
 import { message } from "antd";
 import { ComponentProps } from "..";
 import apis from "@/services";
-import _ from 'lodash';
 import styles from '../index.less';
-import getWebsocket from "@/layouts/GlobalWebSocket";
+import { getWebsocket } from "@/layouts/GlobalWebSocket";
 
 interface Props extends ComponentProps {
     config: any;
@@ -14,21 +13,8 @@ interface Props extends ComponentProps {
 const LineChart = (props: Props) => {
     const { config } = props;
     const defaultData: any[] = [];
-
     const [data, setData] = useState<any[]>(defaultData);
-
-    const defaultCols = {
-        year: {
-            min: 0,
-            range: [0, 0.93],
-            alias: config.x || '次',
-            type: 'cat'
-        },
-        value: {
-            range: [0, 0.9],
-            alias: config.y || '时间'
-        }
-    };
+    const [width, setWidth] = useState<number>(1000);
 
     // 修改高度
     const [height, setHeight] = useState<number>(300);
@@ -36,6 +22,7 @@ const LineChart = (props: Props) => {
         const div = document.getElementById(props.id);
         if (div) {
             setHeight(div.offsetHeight - 50);
+            setWidth(div.offsetWidth);
         }
     }, [props.ySize]);
 
@@ -55,6 +42,7 @@ const LineChart = (props: Props) => {
     useEffect(() => {
         // 获取数据
         let params: any[] = [];
+        let subs: any;
         const { dimension } = props.config;
         if (dimension === 'history') {
             params = [{
@@ -82,30 +70,21 @@ const LineChart = (props: Props) => {
                 }
             }];
         } else if (dimension === 'realTime') {
-            getWebsocket().send(JSON.stringify({
-                "id": `${props.productId}-${props.deviceId}-${props.config.measurement}`,
-                "type": "sub",
-                "topic": `/dashboard/device/${props.productId}/${props.config.measurement}/realTime`,
-                "parameter": {
+            subs = getWebsocket(
+                `${props.id}-${props.productId}-${props.deviceId}-${props.config.measurement}`,
+                `/dashboard/device/${props.productId}/${props.config.measurement}/realTime`,
+                {
                     "deviceId": props.deviceId,
                     "history": props.config.history
                 }
-            }));
-            getWebsocket().onmessage = (event: MessageEvent) => {
-
-                const messageData: {
-                    payload: any,
-                    requestId: string;
-                    topic: string;
-                    type: string;
-                } = JSON.parse(event.data);
-                const { payload, requestId, topic, type } = messageData;
-                if (requestId === `${props.productId}-${props.deviceId}-${props.config.measurement}`) {
-                    data.push({ year: payload.timeString, value: payload.value.value });
-                    if (data.length > 30) data.shift();
+            ).subscribe(
+                (resp: any) => {
+                    const { payload } = resp;
+                    data.push({ year: payload.timestamp, value: payload.value.value });
+                    if (data.length > props.config.history) data.shift();
                     setData([...data]);
                 }
-            }
+            );
         }
 
         if (dimension !== 'realTime') {
@@ -117,13 +96,28 @@ const LineChart = (props: Props) => {
                 }
             })
         }
-
+        return () => subs.unsubscribe();
     }, [props.deviceId]);
     return (
         <Chart
             height={height}
             data={data}
-            scale={defaultCols}
+            scale={{
+                year: {
+                    alias: config.x || '次',
+                    type: 'time',
+                    mask: 'MM:ss',
+                    tickCount: 10,
+                    nice: false
+                },
+                value: {
+                    range: [0, 0.9],
+                    alias: config.y || '时间'
+                },
+                type: {
+                    type: "cat"
+                }
+            }}
             forceFit
             placeholder
         >
@@ -131,18 +125,25 @@ const LineChart = (props: Props) => {
                 {config.name || ''}
             </h4>
             <Axis name="year"
-                label={{ autoRotate: false }}
+                label={{
+                    autoRotate: false,
+                    // formatter(text) {
+                    //     const date = text.split(' ');
+                    //     return `${date[1]}`;
+                    // },
+                }}
                 title={{
                     position: 'end',
                     offset: 15,
+                    autoRotate: true,
                     textStyle: {
                         fontSize: '12',
                         textAlign: 'center',
                         fill: '#999',
                         fontWeight: 'bold',
                         rotate: 0,
-                        autoRotate: true
                     }
+
                 }} />
             <Axis name="value"
                 label={{ autoRotate: false }}

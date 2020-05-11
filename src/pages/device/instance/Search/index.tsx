@@ -38,7 +38,7 @@ const Search: React.FC<Props> = props => {
           setOrganizationList(res.result);
         }
       }).catch(() => {
-    });
+      });
 
   }, []);
 
@@ -56,7 +56,7 @@ const Search: React.FC<Props> = props => {
         return (
           <Col md={8} sm={24} key='value'>
             {getFieldDecorator('value', {})(
-              <Input placeholder="请输入"/>,
+              <Input placeholder="请输入" />,
             )}
           </Col>
         );
@@ -64,7 +64,7 @@ const Search: React.FC<Props> = props => {
         return (
           <Col md={8} sm={24} key='value'>
             {getFieldDecorator('value', {})(
-              <Input placeholder="请输入"/>,
+              <Input placeholder="请输入" />,
             )}
           </Col>
         );
@@ -73,9 +73,9 @@ const Search: React.FC<Props> = props => {
           <Col md={8} sm={24} key='value'>
             {getFieldDecorator('value', {})(
               <Select placeholder="所属机构，可输入查询" showSearch={true} allowClear={true}
-                      filterOption={(inputValue, option) =>
-                        option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
-                      }
+                filterOption={(inputValue, option) =>
+                  option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
+                }
               >
                 {(organizationList || []).map(item => (
                   <Select.Option
@@ -112,9 +112,12 @@ const Search: React.FC<Props> = props => {
           {getFieldDecorator('parameter', {
             initialValue: 'id',
           })(
-            <Select placeholder="请选择" onChange={(value: string) => {
-              setParameterType(value);
-            }}>
+            <Select
+              style={{ width: 100 }}
+              placeholder="请选择"
+              onChange={(value: string) => {
+                setParameterType(value);
+              }}>
               <Select.Option value="id" key="id">设备ID</Select.Option>
               <Select.Option value="name$like" key="name$like">设备名称</Select.Option>
               <Select.Option value="orgId" key="orgId">所属机构</Select.Option>

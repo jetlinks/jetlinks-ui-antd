@@ -1,34 +1,17 @@
 import React from "react";
 import Form, { FormComponentProps } from "antd/lib/form";
-import { FormItemConfig } from "@/utils/common";
 import { Input, Row, Col, Button } from "antd";
+
+import styles from '../index.less';
 
 interface Props extends FormComponentProps {
     search: Function;
 
 }
 
-const Search: React.FC<Props> = (props) => {
+const Search: React.FC<Props> = props => {
 
     const { form, form: { getFieldDecorator } } = props;
-
-    const simpleItems: FormItemConfig[] = [
-        {
-            label: "协议名称",
-            key: "name$LIKE",
-            component: <Input placeholder="请输入" />,
-        },
-    ];
-
-
-    const colSize = simpleItems
-        .map(item => item.styles ? item.styles.md : 8)
-        .reduce((i, j) => {
-            if (!i) return false;
-            if (!j) return false;
-            return Number(i) + Number(j);
-        }) || 1;
-
 
     const search = () => {
         const data = form.getFieldsValue();
@@ -37,42 +20,29 @@ const Search: React.FC<Props> = (props) => {
     }
 
 
-    const formItemLayout = {
-        labelCol: {
-            xs: { span: 24 },
-            sm: { span: 4 }
-        },
-        wrapperCol: {
-            xs: { span: 24 },
-            sm: { span: 20 }
-        },
-    };
-
     return (
-        <Form {...formItemLayout}>
+        <Form layout="inline">
             <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-                {
-                    simpleItems.map(item => (
-                        <Col md={8} sm={24} key={item.key}>
-                            <Form.Item label={item.label}>
-                                {getFieldDecorator(item.key)(item.component)}
-                            </Form.Item>
-                        </Col>
-                    ))
-                }
-                <Col push={16 - (Number(colSize) % 24)} md={8} sm={24}>
-                    <div style={{ float: 'right', marginBottom: 24 }}>
+                <Col md={12} sm={18} key="name$LIKE">
+                    <Form.Item label="协议名称">
+                        {getFieldDecorator("name$LIKE")(<Input placeholder="请输入" />)}
+                    </Form.Item>
+                </Col>
+
+                <div style={{ float: 'right', marginBottom: 24, marginRight: 15 }}>
+                    <span className={styles.submitButtons}>
                         <Button type="primary" onClick={() => { search() }}>
                             查询
-                        </Button>
+                            </Button>
                         <Button style={{ marginLeft: 8 }} onClick={() => { form.resetFields(); props.search() }}>
                             重置
                         </Button>
-                    </div>
-                </Col>
+                    </span>
+                </div>
             </Row>
         </Form >
-    );
+    )
+
 }
 
 export default Form.create<Props>()(Search);

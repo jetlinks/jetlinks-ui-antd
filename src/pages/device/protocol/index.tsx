@@ -6,7 +6,7 @@ import styles from '@/utils/table.less';
 import { connect } from 'dva';
 import Search from './search';
 import { ProtocolItem } from '@/pages/device/protocol/data';
-import { ConnectState,Dispatch } from '@/models/connect';
+import { ConnectState, Dispatch } from '@/models/connect';
 import encodeQueryParam from '@/utils/encodeParam';
 import Save from './save';
 
@@ -27,7 +27,7 @@ interface State {
 const ProtocolList: React.FC<Props> = props => {
   const { dispatch } = props;
 
-  const {result} = props.protocol;
+  const { result } = props.protocol;
 
   const initState: State = {
     data: result,
@@ -72,7 +72,7 @@ const ProtocolList: React.FC<Props> = props => {
         id: record.id,
         type,
       },
-      callback: (response:any) => {
+      callback: (response: any) => {
         if (response.status === 200) {
           message.success('操作成功');
           handleSearch();
@@ -114,10 +114,10 @@ const ProtocolList: React.FC<Props> = props => {
               <a>取消发布</a>
             </Popconfirm>
           ) : (
-            <Popconfirm title="确认发布？" onConfirm={() => changeDeploy('_deploy', record)}>
-              <a>发布</a>
-            </Popconfirm>
-          )}
+              <Popconfirm title="确认发布？" onConfirm={() => changeDeploy('_deploy', record)}>
+                <a>发布</a>
+              </Popconfirm>
+            )}
         </Fragment>
       ),
     },
@@ -131,8 +131,8 @@ const ProtocolList: React.FC<Props> = props => {
     dispatch({
       type: 'protocol/insert',
       payload: encodeQueryParam(item),
-      callback: (response:any) => {
-        if (response.status === 200){
+      callback: (response: any) => {
+        if (response.status === 200) {
           setSaveVisible(false);
           handleSearch(searchParam);
         }
@@ -157,7 +157,7 @@ const ProtocolList: React.FC<Props> = props => {
     <PageHeaderWrapper title="协议管理">
       <Card bordered={false}>
         <div className={styles.tableList}>
-          <div>
+          <div className={styles.tableListForm}>
             <Search
               search={(params: any) => {
                 setSearchParam(params);
@@ -192,12 +192,12 @@ const ProtocolList: React.FC<Props> = props => {
                 showSizeChanger: true,
                 pageSizeOptions: ['10', '20', '50', '100'],
                 showTotal: (total: number) => (
-                    `共 ${total} 条记录 第  ${
-                    result.pageIndex + 1
-                    }/${
-                    Math.ceil(result.total / result.pageSize)
-                    }页`
-                  ),
+                  `共 ${total} 条记录 第  ${
+                  result.pageIndex + 1
+                  }/${
+                  Math.ceil(result.total / result.pageSize)
+                  }页`
+                ),
               }}
             />
           </div>
