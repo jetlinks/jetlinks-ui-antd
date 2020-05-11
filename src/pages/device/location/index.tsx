@@ -1,12 +1,15 @@
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import React, { Fragment, useEffect, useState } from 'react';
-import { AutoComplete, Button, Card, Divider, Form, Input, Select, Spin, Switch, Table } from 'antd';
+import { AutoComplete, Button, Card, Divider, Dropdown, Form, Input, Menu, Select, Spin, Switch, Table } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import { Map, Polygon } from 'react-amap';
 import { ColumnProps } from 'antd/lib/table';
 import { DeviceInstance } from '@/pages/device/instance/data';
 import apis from '@/services';
 import DeviceInfo from '@/pages/device/location/info/index';
+import Content from '@/pages/device/location/save/content';
+import mark_b from './img/mark_b.png';
+import ManageRegion from '@/pages/device/location/region';
 
 interface Props extends FormComponentProps {
   deviceGateway: any;
@@ -24,6 +27,7 @@ interface State {
   regionInfo: any;
   satelliteLayer: any;
   roadNetLayer: any;
+  contentInfo: any[];
 }
 
 const Location: React.FC<Props> = props => {
@@ -40,6 +44,7 @@ const Location: React.FC<Props> = props => {
       regionInfo: {},
       satelliteLayer: {},
       roadNetLayer: {},
+      contentInfo: ['bg', 'road', 'point', 'building'],
     };
 
     const {
@@ -60,6 +65,9 @@ const Location: React.FC<Props> = props => {
     const [roadNetLayer, setRoadNetLayer] = useState(initState.roadNetLayer);
     const [panelData, setPanelData] = useState(true);
     const [spinning, setSpinning] = useState(true);
+    const [contentMap, setContentMap] = useState(false);
+    const [manageRegion, setManageRegion] = useState(false);
+    const [contentInfo, setContentInfo] = useState(initState.contentInfo);
 
     useEffect(() => {
       apis.deviceProdcut
@@ -150,7 +158,7 @@ const Location: React.FC<Props> = props => {
 
               if (ins.getAllOverlays('marker').length <= 0) {
                 var style = [{
-                  url: 'https://webapi.amap.com/theme/v1.3/markers/n/mark_b.png',
+                  url: mark_b,
                   anchor: new window.AMap.Pixel(10, 30),
                   size: new window.AMap.Size(19, 31),
                 }];
@@ -196,18 +204,18 @@ const Location: React.FC<Props> = props => {
 
             let html = `<div style="width: 300px">
               <div style="padding:7px 0px 0px 0px;">
-                <div style="text-align: center;">
-                  <h3>
-                    <b>设备信息</b>
-                  </h3>
-                </div>
-                <p class="input-item">&nbsp;I&nbsp;&nbsp;D&nbsp; ：&nbsp;${data.deviceInfo.objectId}</p>
-                <p class="input-item">名称 ：&nbsp;${data.deviceInfo.deviceName}</p>
-                <p class="input-item">产品 ：&nbsp;${data.deviceInfo.productName}</p>
-                <p class="input-item">状态 ：&nbsp;${response.result.text}</p>
-                <a onclick="window.seeDetails('${data.deviceInfo.objectId}')">查看详情</a>
-              </div>
-            </div>`;
+                            <div style="text-align: center;">
+                              <h3>
+                                <b>设备信息</b>
+                              </h3>
+                            </div>
+                            <p class="input-item">&nbsp;I&nbsp;&nbsp;D&nbsp; ：&nbsp;${data.deviceInfo.objectId}</p>
+                            <p class="input-item">名称 ：&nbsp;${data.deviceInfo.deviceName}</p>
+                            <p class="input-item">产品 ：&nbsp;${data.deviceInfo.productName}</p>
+                            <p class="input-item">状态 ：&nbsp;${response.result.text}</p>
+                            <a onclick="window.seeDetails('${data.deviceInfo.objectId}')">查看详情</a>
+                          </div>
+                </div>`;
 
             let infoWindow = new AMap.InfoWindow({
               content: html,  //使用默认信息窗体框样式，显示信息内容
@@ -221,7 +229,6 @@ const Location: React.FC<Props> = props => {
     };
 
     const queryArea = (params: any, type: string) => {
-      pathPolygon.splice(0, pathPolygon.length);
       newMassMarks(mapCreated, { shape: params.shape }, 'old');
       apis.location._search_geo_json(params)
         .then(response => {
@@ -236,8 +243,8 @@ const Location: React.FC<Props> = props => {
                 }
                 item.geometry.coordinates.map((path: any) => {
                   pathPolygon.push(path[0]);
-                  setPathPolygon([...pathPolygon]);
                 });
+                setPathPolygon([...pathPolygon]);
               });
             }
             setSpinning(false);
@@ -256,6 +263,7 @@ const Location: React.FC<Props> = props => {
             'where': 'objectType = device',
           },
         }, 'new');
+        pathPolygon.splice(0, pathPolygon.length);
         queryArea({
           'filter': {
             'where': 'objectType not device',
@@ -264,11 +272,29 @@ const Location: React.FC<Props> = props => {
       },
     };
 
+    const menu = (
+      <Menu>
+        <Menu.Item key="1">
+          <Button icon="plus" type="default" onClick={() => {
+            setManageRegion(true);
+          }}>
+            管理区域
+          </Button>
+        </Menu.Item>
+        <Menu.Item key="2">
+          <Button icon="tool" onClick={() => {
+            setContentMap(true);
+          }}>地图要素</Button>
+        </Menu.Item>
+      </Menu>
+    );
+
     return (
       <PageHeaderWrapper title="位置查询">
         <Spin tip="加载中..." spinning={spinning}>
           <div style={{ width: '100%', height: '79vh' }}>
-            <Map resizeEnable events={mapEvents} center={centerScale.center} rotateEnable={true}>
+            <Map resizeEnable events={mapEvents} center={centerScale.center} rotateEnable={true}
+                 features={contentInfo}>
               {pathPolygon.length > 0 && (
                 <Polygon visible={true} path={pathPolygon}
                          style={{ fillOpacity: 0, strokeOpacity: 1, strokeColor: '#C86A79', strokeWeight: 3 }}/>
@@ -284,7 +310,7 @@ const Location: React.FC<Props> = props => {
               <Card>
                 {satelliteLayer.CLASS_NAME && (
                   <span>
-                  路网：<Switch checkedChildren="开" unCheckedChildren="关" onChange={(value) => {
+                  路网：<Switch key="routeGrid" checkedChildren="开" unCheckedChildren="关" onChange={(value) => {
                     if (value) {
                       let roadNetLayer = new window.AMap.TileLayer.RoadNet();
                       setRoadNetLayer(roadNetLayer);
@@ -297,7 +323,7 @@ const Location: React.FC<Props> = props => {
                     &nbsp;&nbsp;
                 </span>
                 )}
-                卫星：<Switch checkedChildren="开" unCheckedChildren="关" onChange={(value) => {
+                卫星：<Switch key="satellite" checkedChildren="开" unCheckedChildren="关" onChange={(value) => {
                 if (value) {
                   let satelliteLayer = new window.AMap.TileLayer.Satellite();
                   setSatelliteLayer(satelliteLayer);
@@ -308,18 +334,24 @@ const Location: React.FC<Props> = props => {
                 }
               }}/>
                 &nbsp;&nbsp;
-                信息面板：<Switch checkedChildren="开" unCheckedChildren="关" defaultChecked
+                信息面板：<Switch key="panelInfo" checkedChildren="开" unCheckedChildren="关" defaultChecked
                              onChange={(value) => {
                                setPanelData(value);
                              }}/>
+                &nbsp;&nbsp;
+                <Dropdown overlay={menu}>
+                  <Button icon="menu">
+                    其他操作
+                  </Button>
+                </Dropdown>
               </Card>
             </div>
             {panelData && (
               <Card bordered={false} style={{
-                height: '70vh', maxHeight: '71vh', overflowY: 'auto',
+                height: '69vh', maxHeight: '70vh', overflowY: 'auto',
                 overflowX: 'hidden', marginTop: 5,
               }}>
-                <Form labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} key="form">
+                <Form labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} key="query">
                   <Form.Item key="region" label="查看区域" style={{ marginBottom: 14 }}>
                     {getFieldDecorator('region', {})(
                       <Select placeholder="选择查看区域，可输入查询" showSearch={true} allowClear={true}
@@ -327,8 +359,14 @@ const Location: React.FC<Props> = props => {
                                 option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
                               }
                               onChange={(valie: string, data: any) => {
+                                pathPolygon.splice(0, pathPolygon.length);
                                 if (valie) {
                                   setCenterScale({ center: data.props.data.data.properties.center });
+
+                                  data.props.data.data.geometry.coordinates.map((path: any) => {
+                                    pathPolygon.push(path[0]);
+                                    setPathPolygon([...pathPolygon]);
+                                  });
                                 }
                                 setSpinning(true);
                                 queryArea({
@@ -385,7 +423,17 @@ const Location: React.FC<Props> = props => {
                     <Button style={{ marginLeft: 8 }} onClick={() => {
                       setSpinning(true);
                       form.resetFields();
-                      newMassMarks(mapCreated, {}, 'new');
+                      newMassMarks(mapCreated, {
+                        'filter': {
+                          'where': 'objectType = device',
+                        },
+                      }, 'new');
+                      pathPolygon.splice(0, pathPolygon.length);
+                      queryArea({
+                        'filter': {
+                          'where': 'objectType not device',
+                        },
+                      }, 'old');
                     }}>
                       重置
                     </Button>
@@ -393,12 +441,12 @@ const Location: React.FC<Props> = props => {
                 </Form>
                 <Divider style={{ margin: '20px 0' }}/>
                 <div style={{ paddingBottom: 15, marginTop: -8 }}>
-                <span style={{ fontSize: 14 }}>
-                  <b>位置记录
-                    <span style={{ fontSize: 20 }}>{markersList.length}</span>
-                    条
-                  </b>
-                </span>
+                  <span style={{ fontSize: 14 }}>
+                    <b>位置记录
+                      <span style={{ fontSize: 20 }}>{markersList.length}</span>
+                      条
+                    </b>
+                  </span>
                 </div>
                 <div>
                   <Table
@@ -430,6 +478,21 @@ const Location: React.FC<Props> = props => {
             <DeviceInfo deviceId={deviceId} close={() => {
               setQueryInfo(false);
               setDeviceId('');
+            }}/>
+          )}
+
+          {contentMap && (
+            <Content data={contentInfo} save={(data: any[]) => {
+              setContentInfo(data);
+              setContentMap(false);
+            }} close={() => {
+              setContentMap(false);
+            }}/>
+          )}
+
+          {manageRegion && (
+            <ManageRegion close={() => {
+              setManageRegion(false);
             }}/>
           )}
         </Spin>

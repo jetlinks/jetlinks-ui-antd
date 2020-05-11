@@ -17,6 +17,8 @@ const Save: React.FC<Props> = props => {
   return (
     <Drawer
       visible
+      /*placement='bottom'
+      height='90vh'*/
       width='60%'
       onClose={() => props.close()}
       title='设备详情'
