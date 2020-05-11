@@ -53,7 +53,6 @@ const getWebsocket = (id: string, topic: string, parameter: any): Observable<any
         const thisWs = ws || initWebSocket();
         thisWs!.send(msg);
         return () => {
-            console.log('取消订阅', topic)
             const unsub = JSON.stringify({ id, type: "unsub" });
             delete subs[id];
             thisWs!.send(unsub)

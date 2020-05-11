@@ -52,7 +52,8 @@ const GaugeChart = (props: Props) => {
         // 获取数据
         const { dimension } = props.config;
         let subs: any;
-        if (dimension !== 'realTime') {
+        console.log(dimension, 'dimes');
+        if (dimension === 'history') {
             const params = [{
                 "dashboard": 'device',
                 "object": props.productId,
@@ -78,13 +79,11 @@ const GaugeChart = (props: Props) => {
             ).subscribe(
                 (resp: any) => {
                     const { payload } = resp;
-                    data.push({ year: payload.timeString, value: payload.value.value });
-                    if (data.length > 30) data.shift();
-                    setData([...data]);
+                    setData([{ formatValue: payload.value.formatValue, value: payload.value.value }]);
                 }
             );
         }
-        return () => subs.unsubscribe();
+        return () => subs && subs.unsubscribe();
     }, []);
 
     return (

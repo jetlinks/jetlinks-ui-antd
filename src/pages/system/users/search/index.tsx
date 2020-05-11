@@ -8,19 +8,9 @@ interface Props extends FormComponentProps {
 
 }
 
-interface State {
-    expandForm: boolean;
-}
-
 const Search: React.FC<Props> = props => {
 
-    const initState: State = {
-        expandForm: true,
-    }
-
     const { form, form: { getFieldDecorator } } = props;
-
-    const [expandForm, setExpandForm] = useState(initState.expandForm);
 
     const simpleItems: FormItemConfig[] = [
         {
@@ -36,37 +26,6 @@ const Search: React.FC<Props> = props => {
         },
     ];
 
-    const advancedItems: FormItemConfig[] = [
-        {
-            label: "姓名",
-            key: "name$LIKE",
-            component: <Input placeholder="请输入" />,
-        },
-        {
-            label: "用户名",
-            key: "username$LIKE",
-            component:
-                < Input placeholder="请输入" />,
-        },
-        // {
-        //     label: "状态",
-        //     key: "status",
-        //     component:
-        //         <Select placeholder="请选择">
-        //             <Select.Option value={1}>启用</Select.Option>
-        //             <Select.Option value={0}>禁用</Select.Option>
-        //         </Select>,
-        // }
-    ];
-
-    const colSize = (expandForm ? simpleItems : advancedItems)
-        .map(item => item.styles ? item.styles.md : 8)
-        .reduce((i, j) => {
-            if (!i) return;
-            if (!j) return;
-            return Number(i) + Number(j);
-        }) || 1;
-
 
     const search = () => {
         const data = form.getFieldsValue();
@@ -74,41 +33,17 @@ const Search: React.FC<Props> = props => {
         props.search(data);
     }
 
-    // const formItemLayout = {
-    //     labelCol: {
-    //         xs: { span: 24 },
-    //         sm: { span: 4 }
-    //     },
-    //     wrapperCol: {
-    //         xs: { span: 24 },
-    //         sm: { span: 20 }
-    //     },
-    // };
-
     return (
         <Form layout="inline">
             <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-                {expandForm ? (
+                {
                     simpleItems.map(item => (
                         <Col md={8} sm={24} key={item.key}>
                             <Form.Item label={item.label}>
                                 {getFieldDecorator<string>(item.key)(item.component)}
                             </Form.Item>
                         </Col>
-                    ))) : (
-                        advancedItems.map(item => (
-                            <Col
-                                // md={item.styles ? item.styles.md : 8}
-                                // sm={item.styles ? item.styles.sm : 24}
-                                // key={item.key} style={{ height: 56 }}
-                                md={8}
-                                sm={24}
-                            >
-                                <Form.Item label={item.label}>
-                                    {getFieldDecorator<string>(item.key, item.options)(item.component)}
-                                </Form.Item>
-                            </Col>
-                        )))
+                    ))
                 }
                 <div
                     style={{
@@ -136,12 +71,7 @@ const Search: React.FC<Props> = props => {
                     >
                         重置
                     </Button>
-                    {/* <a style={{ marginLeft: 8 }} onClick={() => setExpandForm(!expandForm)}>
-                        {expandForm ? '展开' : '收起'} <Icon type={expandForm ? 'down' : 'up'} />
-                    </a> */}
                 </div>
-
-
             </Row >
         </Form >
     );

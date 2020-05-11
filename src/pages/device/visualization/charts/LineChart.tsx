@@ -96,7 +96,7 @@ const LineChart = (props: Props) => {
                 }
             })
         }
-        return () => subs.unsubscribe();
+        return () => subs && subs.unsubscribe();
     }, [props.deviceId]);
     return (
         <Chart

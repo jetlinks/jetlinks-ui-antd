@@ -110,7 +110,7 @@ const ColumnCharts = (props: Props) => {
                 }
             });
         }
-        return () => subs.unsubscribe();
+        return () => subs && subs.unsubscribe();
     }, []);
     return (
         <Chart
