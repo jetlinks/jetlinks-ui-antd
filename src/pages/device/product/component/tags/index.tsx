@@ -26,7 +26,7 @@ const TagsDefin: React.FC<Props> = props => {
   const initState: State = {
     dataType: props.data.valueType?.type || '',
     data: props.data,
-    enumData: props.data.valueType?.properties || [{ text: '', value: '', id: 0 }],
+    enumData: props.data.valueType?.elements || [{ text: '', value: '', id: 0 }],
     parameterVisible: false,
     properties: props.data.valueType?.properties || [],
     currentParameter: {},
@@ -45,7 +45,7 @@ const TagsDefin: React.FC<Props> = props => {
 
   useEffect(() => {
     if (dataType === 'enum') {
-      const elements = props.data.valueType?.elements || [];
+      const elements = props.data.valueType?.enums || [];
       setEnumData(elements);
     }
   }, []);

@@ -60,7 +60,7 @@ class Gauge extends React.Component<IGaugeProps> {
     const cols = {
       value: {
         min: 0,
-        max: memoryMax/1024,
+        max: memoryMax / 1024,
         tickInterval: 1,
         nice: false,
       },
@@ -72,7 +72,7 @@ class Gauge extends React.Component<IGaugeProps> {
         ${(data[0].value).toFixed(2)} G
       </p>
     </div>`;
-    const data = [{ value: percent/1024 }];
+    const data = [{ value: percent / 1024 }];
     const textStyle: {
       fontSize: number;
       fill: string;
@@ -84,8 +84,8 @@ class Gauge extends React.Component<IGaugeProps> {
     };
     return (
       <Chart height={height} data={data} scale={cols} padding={[26, 0, 0, 0]} forceFit={forceFit}>
-        <Coord type="polar" startAngle={-9 / 8 * Math.PI} endAngle={1 / 8 * Math.PI} radius={0.75} />
-        <Axis name="1" line={null} />
+        <Coord type="polar" startAngle={-9 / 8 * Math.PI} endAngle={1 / 8 * Math.PI} radius={0.75}/>
+        <Axis name="1" line={null}/>
         <Axis
           line={null}
           tickLine={undefined}
@@ -127,7 +127,7 @@ class Gauge extends React.Component<IGaugeProps> {
           />
           <Arc
             start={[0, 0.965]}
-            end={[memoryMax/1024, 0.965]}
+            end={[memoryMax / 1024, 0.965]}
             style={{
               stroke: bgColor,
               lineWidth: 10,
@@ -141,7 +141,7 @@ class Gauge extends React.Component<IGaugeProps> {
               lineWidth: 10,
             }}
           />
-          <Html position={['50%', '95%']} html={renderHtml()} />
+          <Html position={['50%', '95%']} html={renderHtml()}/>
         </Guide>
         <Geom
           line={false}

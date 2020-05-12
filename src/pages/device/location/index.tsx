@@ -10,6 +10,7 @@ import DeviceInfo from '@/pages/device/location/info/index';
 import Content from '@/pages/device/location/save/content';
 import mark_b from './img/mark_b.png';
 import ManageRegion from '@/pages/device/location/region';
+import Status from '@/pages/device/location/info/Status';
 
 interface Props extends FormComponentProps {
   deviceGateway: any;
@@ -27,6 +28,7 @@ interface State {
   regionInfo: any;
   satelliteLayer: any;
   roadNetLayer: any;
+  deviceData: any;
   contentInfo: any[];
 }
 
@@ -44,6 +46,7 @@ const Location: React.FC<Props> = props => {
       regionInfo: {},
       satelliteLayer: {},
       roadNetLayer: {},
+      deviceData: {},
       contentInfo: ['bg', 'road', 'point', 'building'],
     };
 
@@ -67,6 +70,8 @@ const Location: React.FC<Props> = props => {
     const [spinning, setSpinning] = useState(true);
     const [contentMap, setContentMap] = useState(false);
     const [manageRegion, setManageRegion] = useState(false);
+    const [deviceStatus, setDeviceStatus] = useState(false);
+    const [deviceData, setDeviceData] = useState(initState.deviceData);
     const [contentInfo, setContentInfo] = useState(initState.contentInfo);
 
     useEffect(() => {
@@ -169,14 +174,28 @@ const Location: React.FC<Props> = props => {
                   cursor: 'pointer',
                   style: style,
                   alwaysRender: false,
-                  useCluster: true,
                 });
-
-                new window.AMap.Marker({ content: ' ', map: ins, useCluster: true });
 
                 mass.on('click', function(e: any) {
                   openInfo(ins, e.data);
                 });
+
+                let mouseWindow = new window.AMap.InfoWindow({
+                  offset: new window.AMap.Pixel(0, -20),  //信息窗体显示位置偏移量
+                  content: '',  //使用默认信息窗体框样式，显示信息内容
+                  retainWhenClose: true, //信息窗体关闭时，是否将其Dom元素从页面中移除
+                });
+
+                mass.on('mouseover', function(e: any) {
+                  let html = `<div>${e.data.deviceInfo.deviceName}</div>`;
+                  mouseWindow.setContent(html);
+                  mouseWindow.open(ins, e.data.lnglat);
+                });
+
+                mass.on('mouseout', function(e: any) {
+                  mouseWindow.close();
+                });
+
                 mass.setMap(ins);
                 setMassMarksCreated(mass);
               } else {
@@ -197,35 +216,38 @@ const Location: React.FC<Props> = props => {
 
     //在指定位置打开信息窗体
     const openInfo = (ins: any, data: any) => {
-      //构建信息窗体中显示的内容
-      apis.deviceInstance.refreshState(data.deviceInfo.objectId)
-        .then(response => {
+
+      apis.deviceInstance.info(data.deviceInfo.objectId)
+        .then((response: any) => {
           if (response.status === 200) {
+            const deviceData = response.result;
+            setDeviceData(deviceData);
+            setDeviceStatus(true);
 
-            let html = `<div style="width: 300px">
-              <div style="padding:7px 0px 0px 0px;">
-                            <div style="text-align: center;">
-                              <h3>
-                                <b>设备信息</b>
-                              </h3>
-                            </div>
-                            <p class="input-item">&nbsp;I&nbsp;&nbsp;D&nbsp; ：&nbsp;${data.deviceInfo.objectId}</p>
-                            <p class="input-item">名称 ：&nbsp;${data.deviceInfo.deviceName}</p>
-                            <p class="input-item">产品 ：&nbsp;${data.deviceInfo.productName}</p>
-                            <p class="input-item">状态 ：&nbsp;${response.result.text}</p>
-                            <a onclick="window.seeDetails('${data.deviceInfo.objectId}')">查看详情</a>
-                          </div>
-                </div>`;
-
-            let infoWindow = new AMap.InfoWindow({
-              content: html,  //使用默认信息窗体框样式，显示信息内容
+            let infoWindow = new window.AMap.InfoWindow({
+              content: '',  //使用默认信息窗体框样式，显示信息内容
               retainWhenClose: true, //信息窗体关闭时，是否将其Dom元素从页面中移除
               closeWhenClickMap: true,  // 点击地图是否关闭窗体
             });
+            let deviceStatus = document.getElementById('deviceStatus');
+            infoWindow.on('open', function(e: any) {
+              let div = document.createElement('div');
+
+              div.style.width = '400px';
+              div.append(deviceStatus);
+
+              infoWindow.setContent(div);
+            });
             infoWindow.open(ins, data.lnglat);
+
+            infoWindow.on('close', function(e: any) {
+              setDeviceData({});
+              setDeviceStatus(true);
+            });
           }
-        }).catch(() => {
-      });
+        })
+        .catch(() => {
+        });
     };
 
     const queryArea = (params: any, type: string) => {
@@ -495,6 +517,12 @@ const Location: React.FC<Props> = props => {
               setManageRegion(false);
             }}/>
           )}
+
+          <div hidden={true}>
+            {deviceStatus && (
+              <Status device={deviceData}/>
+            )}
+          </div>
         </Spin>
       </PageHeaderWrapper>
     );

@@ -64,6 +64,8 @@ const FunctionDefin: React.FC<Props> = props => {
       const data = fieldValue;
       if (type === 'object') {
         data.output.properties = outputParameter;
+      } else if (type === 'enum') {
+        data.valueType.elements = enumData;
       }
       props.save({ ...data, inputs });
     });

@@ -11,6 +11,7 @@ interface Props {
   type: string;
   deviceId: string;
 }
+
 interface State {
   eventColumns: ColumnProps<any>[];
   propertiesInfo: any;
@@ -27,6 +28,7 @@ const PropertiesInfo: React.FC<Props> = props => {
       {
         title: props.item.name,
         dataIndex: 'formatValue',
+        ellipsis: true,
       },
     ],
     propertiesInfo: {},
@@ -53,7 +55,8 @@ const PropertiesInfo: React.FC<Props> = props => {
           setPropertiesInfo(response.result);
         }
       })
-      .catch(() => {});
+      .catch(() => {
+      });
   }, []);
 
   const onTableChange = (pagination: PaginationConfig) => {
@@ -73,7 +76,8 @@ const PropertiesInfo: React.FC<Props> = props => {
       .then(response => {
         setPropertiesInfo(response.result);
       })
-      .catch(() => {});
+      .catch(() => {
+      });
   };
 
   return (
