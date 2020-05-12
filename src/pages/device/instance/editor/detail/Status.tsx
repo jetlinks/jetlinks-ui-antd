@@ -8,6 +8,7 @@ import EventLog from './event-log/EventLog';
 import encodeQueryParam from '@/utils/encodeParam';
 import PropertiesInfo from './properties-data/propertiesInfo';
 import { getWebsocket } from '@/layouts/GlobalWebSocket';
+import AutoHide from '@/pages/device/location/info/autoHide';
 
 interface Props {
   device: any
@@ -165,7 +166,7 @@ const Status: React.FC<Props> = (props) => {
 
             if (!propertyData[dataValue.property]) return;
 
-            propertyData[dataValue.property].formatValue = dataValue?.formatValue ? dataValue.formatValue : '--';
+            propertyData[dataValue.property].formatValue = dataValue?.formatValue ? dataValue.formatValue : '/';
 
             if (propertyData[dataValue.property].type === 'int' || propertyData[dataValue.property].type === 'float'
               || propertyData[dataValue.property].type === 'double') {
@@ -337,7 +338,8 @@ const Status: React.FC<Props> = (props) => {
                                       }}/>
                               </div>
                             }
-                            total={...propertyData[item.id]?.formatValue || '--'}
+                            total={<AutoHide title={...propertyData[item.id]?.formatValue || '/'}
+                                             style={{ width: '313%' }}/>}
                             contentHeight={46}
                           >
                           <span>
@@ -379,8 +381,7 @@ const Status: React.FC<Props> = (props) => {
                                 }}/>
                               </Tooltip>
                             }
-
-                            total={`${tempData?.data.total || 0}次`}
+                            total={<AutoHide title={`${tempData?.data.total || 0}次`} style={{ width: '313%' }}/>}
                             contentHeight={46}
                           >
                       <span>
