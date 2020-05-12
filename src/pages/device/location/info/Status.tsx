@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import ChartCard from '@/pages/analysis/components/Charts/ChartCard';
 import { Avatar, Badge, Card, Col, Row, Spin } from 'antd';
-import { EventSourcePolyfill } from 'event-source-polyfill';
 import apis from '@/services';
 import encodeQueryParam from '@/utils/encodeParam';
-import { getAccessToken } from '@/utils/authority';
-import { wrapAPI } from '@/utils/utils';
 import gateway from '@/pages/device/gateway/img/gateway.svg';
 import AutoHide from '@/pages/device/location/info/autoHide';
 import { getWebsocket } from '@/layouts/GlobalWebSocket';

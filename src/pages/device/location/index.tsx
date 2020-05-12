@@ -9,7 +9,6 @@ import apis from '@/services';
 import DeviceInfo from '@/pages/device/location/info/index';
 import Content from '@/pages/device/location/save/content';
 import mark_b from './img/mark_b.png';
-import deviceImg from './img/device.png';
 import ManageRegion from '@/pages/device/location/region';
 import Status from '@/pages/device/location/info/Status';
 
