@@ -45,14 +45,14 @@ const AccessLoggerList: React.FC<Props> = props => {
     {
       title: '序号',
       dataIndex: 'id',
-      width: 60,
+      // width: 60,
       render: (text, record, index) => index + 1,
     },
 
     {
       title: 'IP',
       dataIndex: 'ip',
-      ellipsis: true
+      // ellipsis: true
     },
     // {
     //     title: '请求方法',
@@ -61,7 +61,7 @@ const AccessLoggerList: React.FC<Props> = props => {
     {
       title: '请求路径',
       dataIndex: 'url',
-      ellipsis: true,
+      // ellipsis: true,
       render: (text, record) => (
         <Fragment>
           <Tag color="#87d068">{record.httpMethod}</Tag>
@@ -72,7 +72,7 @@ const AccessLoggerList: React.FC<Props> = props => {
     {
       title: '说明',
       dataIndex: 'describe',
-      ellipsis: true,
+      // ellipsis: true,
       render: (text, record) => {
         const action = record.action ? <Tag color="volcano">{record.action}</Tag> : '';
         const describe = record.describe ? <Tag color="#2db7f5">{record.describe}</Tag> : '';
@@ -93,12 +93,12 @@ const AccessLoggerList: React.FC<Props> = props => {
       title: '请求时间',
       dataIndex: 'requestTime',
       sorter: true,
-      ellipsis: true,
+      // ellipsis: true,
       render: text => moment(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '请求耗时',
-      width: 100,
+      // width: 100,
       render: (record: AccessLoggerItem) => (
         <Tag color="purple">{record.responseTime - record.requestTime}ms</Tag>
       ),

@@ -91,7 +91,7 @@ const LineChart = (props: Props) => {
             apis.visualization.getDashboardData(params).then(response => {
                 if (response.status === 200) {
                     const { result } = response;
-                    const tempData = result.map((item: any) => ({ year: item.data.timeString, value: item.data.value.value }));
+                    const tempData = result.map((item: any) => ({ year: item.data.timestamp, value: item.data.value.value }));
                     setData(tempData);
                 }
             })
