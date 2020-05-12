@@ -94,7 +94,7 @@ const ColumnCharts = (props: Props) => {
             ).subscribe(
                 (resp: any) => {
                     const { payload } = resp;
-                    data.push({ genre: payload.timeString, sold: payload.value.value });
+                    data.push({ genre: payload.timestamp, sold: payload.value.value });
                     if (data.length > props.config.history) data.shift();
                     setData([...data]);
                 }
