@@ -2,14 +2,12 @@ import React, { useEffect, useState } from 'react';
 import ChartCard from '@/pages/analysis/components/Charts/ChartCard';
 import { Badge, Col, Icon, Row, Spin, Tooltip } from 'antd';
 import { MiniArea } from '@/pages/analysis/components/Charts';
-import { EventSourcePolyfill } from 'event-source-polyfill';
 import moment from 'moment';
 import apis from '@/services';
 import EventLog from './event-log/EventLog';
 import encodeQueryParam from '@/utils/encodeParam';
-import { getAccessToken } from '@/utils/authority';
-import { wrapAPI } from '@/utils/utils';
 import PropertiesInfo from './properties-data/propertiesInfo';
+import { getWebsocket } from '@/layouts/GlobalWebSocket';
 
 interface Props {
   device: any
@@ -60,8 +58,6 @@ const Status: React.FC<Props> = (props) => {
   const [eventInfo, setEventInfo] = useState({});
   const [propertyData, setPropertyData] = useState({});
   const [spinning, setSpinning] = useState(true);
-
-  let source: EventSourcePolyfill | null = null;
 
   useEffect(() => {
     runInfo.loading = true;
@@ -115,6 +111,7 @@ const Status: React.FC<Props> = (props) => {
   }, []);
 
   useEffect(() => {
+    let subs: any;
     // 组装数据
     if (runInfo && runInfo.metadata) {
       const metadata = JSON.parse(runInfo.metadata);
@@ -153,47 +150,42 @@ const Status: React.FC<Props> = (props) => {
 
       setMetadata({ ...metadata });
 
-      if (source) {
-        source.close();
-      }
+      subs = getWebsocket(
+        `instance-info-property-${props.device.id}-${props.device.productId}`,
+        `/dashboard/device/${props.device.productId}/properties/realTime`,
+        {
+          deviceId: props.device.id,
+          history: 1,
+        },
+      ).subscribe(
+        (resp: any) => {
+          const { payload } = resp;
+          if (resp.requestId === `instance-info-property-${props.device.id}-${props.device.productId}`) {
+            const dataValue = payload.value;
 
-      source = new EventSourcePolyfill(
-        wrapAPI(`/jetlinks/dashboard/device/${props.device.productId}/properties/realTime?:X_Access_Token=${getAccessToken()}&deviceId=${props.device.id}&history=1`),
-      );
+            if (!propertyData[dataValue.property]) return;
 
-      source.onopen = () => {
-      };
+            propertyData[dataValue.property].formatValue = dataValue?.formatValue ? dataValue.formatValue : '--';
 
-      source.onmessage = (e: any) => {
+            if (propertyData[dataValue.property].type === 'int' || propertyData[dataValue.property].type === 'float'
+              || propertyData[dataValue.property].type === 'double') {
 
-        const data = JSON.parse(e.data);
-        const dataValue = data.value;
-
-        if (!propertyData[dataValue.property]) return;
-
-        propertyData[dataValue.property].formatValue = dataValue?.formatValue ? dataValue.formatValue : '--';
-
-        if (propertyData[dataValue.property].type === 'int' || propertyData[dataValue.property].type === 'float'
-          || propertyData[dataValue.property].type === 'double') {
-
-          if (propertyData[dataValue.property].visitData.length >= 15) {
-            propertyData[dataValue.property].visitData.splice(0, 1);
+              if (propertyData[dataValue.property].visitData.length >= 15) {
+                propertyData[dataValue.property].visitData.splice(0, 1);
+              }
+              propertyData[dataValue.property].visitData.push({
+                'x': payload.timeString,
+                'y': Math.floor(Number(dataValue.value) * 100) / 100,
+              });
+            }
+            setPropertyData({ ...propertyData });
           }
-          propertyData[dataValue.property].visitData.push({
-            'x': data.timeString,
-            'y': Math.floor(Number(dataValue.value) * 100) / 100,
-          });
-        }
-        setPropertyData({ ...propertyData });
-      };
-      source.onerror = () => {
-      };
+        },
+      );
     }
 
     return () => {
-      if (source) {
-        source.close();
-      }
+      subs && subs.unsubscribe();
     };
   }, [runInfo]);
 
