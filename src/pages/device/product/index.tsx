@@ -16,6 +16,8 @@ import { getAccessToken } from '@/utils/authority';
 import request from '@/utils/request';
 import Save from './save';
 import { downloadObject } from '@/utils/utils';
+import SearchForm from '@/components/SearchForm';
+import apis from '@/services';
 
 interface Props {
   dispatch: Dispatch;
@@ -31,7 +33,7 @@ interface State {
 }
 
 const DeviceModel: React.FC<Props> = props => {
-  const {result} = props.deviceProduct;
+  const { result } = props.deviceProduct;
   const initState: State = {
     data: result,
     searchParam: { pageSize: 10 },
@@ -155,15 +157,15 @@ const DeviceModel: React.FC<Props> = props => {
               </Popconfirm>
             </span>
           ) : (
-            <Popconfirm
-              title="确认停用"
-              onConfirm={() => {
-                unDeploy(record);
-              }}
-            >
-              <a>停用</a>
-            </Popconfirm>
-          )}
+              <Popconfirm
+                title="确认停用"
+                onConfirm={() => {
+                  unDeploy(record);
+                }}
+              >
+                <a>停用</a>
+              </Popconfirm>
+            )}
           <Divider type="vertical" />
           <a
             onClick={() => {
@@ -226,7 +228,7 @@ const DeviceModel: React.FC<Props> = props => {
       if (info.file.status === 'done') {
         const fileUrl = info.file.response.result;
         request(fileUrl, { method: 'GET' }).then(e => {
-          if (e || e !== null ){
+          if (e || e !== null) {
             dispatch({
               type: 'deviceProduct/insert',
               payload: e,
@@ -243,15 +245,60 @@ const DeviceModel: React.FC<Props> = props => {
     },
   };
 
+
+  // 消息协议
+  const [protocolSupports, setProtocolSupports] = useState([]);
+
+  useEffect(() => {
+    apis.deviceProdcut
+      .protocolSupport()
+      .then(response => {
+        if (response.status === 200) {
+          setProtocolSupports(response.result.map((i: any) => ({ id: i.id, name: i.name })));
+        }
+      })
+      .catch(() => { });
+  }, []);
+
   return (
     <PageHeaderWrapper title="设备型号">
       <Card bordered={false}>
         <div className={styles.tableList}>
           <div>
-            <Search
+            {/* <Search
               search={(params: any) => {
                 handleSearch({ terms: params, pageSize: 10, sorts: searchParam.sorts });
               }}
+            /> */}
+
+            <SearchForm
+              search={(params: any) => {
+                handleSearch({ terms: params, pageSize: 10, sorts: searchParam.sorts });
+              }}
+              formItems={[{
+                label: '型号名称',
+                key: 'name$LIKE',
+                type: 'string',
+              },
+              {
+                label: '设备类型',
+                key: 'deviceType',
+                type: 'list',
+                props: {
+                  data: [
+                    { id: 'gateway', name: '网关' },
+                    { id: 'device', name: '设备' }
+                  ]
+                }
+              },
+              {
+                label: '消息协议',
+                key: 'messageProtocol',
+                type: 'list',
+                props: {
+                  data: protocolSupports
+                }
+              },]}
             />
           </div>
           <div className={styles.tableListOperator}>
@@ -280,12 +327,12 @@ const DeviceModel: React.FC<Props> = props => {
                 showSizeChanger: true,
                 pageSizeOptions: ['10', '20', '50', '100'],
                 showTotal: (total: number) => (
-                    `共 ${total} 条记录 第  ${
-                    result.pageIndex + 1
-                    }/${
-                    Math.ceil(result.total / result.pageSize)
-                    }页`
-                  ),
+                  `共 ${total} 条记录 第  ${
+                  result.pageIndex + 1
+                  }/${
+                  Math.ceil(result.total / result.pageSize)
+                  }页`
+                ),
               }}
             />
           </div>

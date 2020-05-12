@@ -4,13 +4,13 @@ import { UserItem } from './data';
 import { Button, Card, Divider, message, Modal, Popconfirm, Table, Tag } from 'antd';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import styles from '@/utils/table.less';
-import Search from './search';
 import { ConnectState, Dispatch } from '@/models/connect';
 import { connect } from 'dva';
 import encodeQueryParam from '@/utils/encodeParam';
 import Save from './save';
 import Authorization from '@/components/Authorization';
 import apis from '@/services';
+import SearchForm from '@/components/SearchForm';
 
 interface Props {
     users: any;
@@ -27,10 +27,10 @@ interface State {
     autzVisible: boolean;
 }
 
-const UserList: React.FC<Props> = (props) => {
+const UserList: React.FC<Props> = props => {
 
     const { dispatch } = props;
-    const result = props.users.result;
+    const { result } = props.users;
 
     const initState: State = {
         data: result,
@@ -96,6 +96,14 @@ const UserList: React.FC<Props> = (props) => {
         },
     ];
 
+
+    const handleSearch = (params?: any) => {
+        dispatch({
+            type: 'users/query',
+            payload: encodeQueryParam(params)
+        });
+    };
+
     useEffect(() => {
         handleSearch(searchParam);
     }, []);
@@ -118,12 +126,6 @@ const UserList: React.FC<Props> = (props) => {
         ).catch(() => { });
     };
 
-    const handleSearch = (params?: any) => {
-        dispatch({
-            type: 'users/query',
-            payload: encodeQueryParam(params)
-        });
-    };
 
     const edit = (record: UserItem) => {
         setCurrentItem(record);
@@ -190,10 +192,28 @@ const UserList: React.FC<Props> = (props) => {
             <Card bordered={false}>
                 <div className={styles.tableList}>
                     <div >
-                        <Search search={(params: any) => {
+                        <SearchForm
+                            search={(params: any) => {
+                                setSearchParam(params);
+                                handleSearch({ terms: params, pageSize: 10 })
+                            }}
+                            formItems={[
+                                {
+                                    label: "姓名",
+                                    key: "name$LIKE",
+                                    type: 'string'
+                                },
+                                {
+                                    label: "用户名",
+                                    key: "username$LIKE",
+                                    type: 'string'
+                                },
+                            ]}
+                        />
+                        {/* <Search search={(params: any) => {
                             setSearchParam(params);
                             handleSearch({ terms: params, pageSize: 10 })
-                        }} />
+                        }} /> */}
                     </div>
                     <div className={styles.tableListOperator}>
                         <Button icon="plus" type="primary" onClick={() => { setSaveVisible(true) }}>
@@ -205,7 +225,7 @@ const UserList: React.FC<Props> = (props) => {
                             loading={props.loading}
                             dataSource={(result || {}).data}
                             columns={columns}
-                            rowKey={'id'}
+                            rowKey="id"
                             onChange={onTableChange}
                             pagination={{
                                 current: result.pageIndex + 1,
@@ -214,9 +234,7 @@ const UserList: React.FC<Props> = (props) => {
                                 showQuickJumper: true,
                                 showSizeChanger: true,
                                 pageSizeOptions: ['10', '20', '50', '100'],
-                                showTotal: (total: number) => {
-                                    return `共 ${total} 条记录 第  ` + (result.pageIndex + 1) + '/' + Math.ceil(result.total / result.pageSize) + '页';
-                                }
+                                showTotal: (total: number) => `共 ${total} 条记录 第  ${result.pageIndex + 1}/${Math.ceil(result.total / result.pageSize)}页`
                             }}
                         />
                     </div>

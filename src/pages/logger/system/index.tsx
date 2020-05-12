@@ -10,6 +10,7 @@ import { SystemLoggerItem } from './data.d';
 import { Dispatch, ConnectState } from '@/models/connect';
 import encodeQueryParam from '@/utils/encodeParam';
 import Save from './save';
+import SearchForm from '@/components/SearchForm';
 
 interface Props {
   systemLogger: any;
@@ -143,11 +144,42 @@ const SystemLoggerList: React.FC<Props> = props => {
       <Card bordered={false}>
         <div className={styles.tableList}>
           <div>
-            <Search
+            {/* <Search
               search={(params: any) => {
                 setSearchParam(params);
                 handleSearch({ terms: params, pageSize: 10, sorts: searchParam.sorts });
               }}
+            /> */}
+            <SearchForm
+              search={(params: any) => {
+                setSearchParam(params);
+                handleSearch({ terms: params, pageSize: 10, sorts: searchParam.sorts });
+              }}
+              formItems={[
+                {
+                  label: '名称',
+                  key: 'name$LIKE',
+                  type: 'string',
+                },
+                {
+                  label: '日志级别',
+                  key: 'level',
+                  type: 'list',
+                  props: {
+                    data: ['ERROR', 'INFO', 'WARN', 'DEBUG']
+                  }
+                },
+                {
+                  label: '日志时间',
+                  key: 'createTime$btw',
+                  type: 'time',
+                },
+                {
+                  label: '日志内容',
+                  key: 'message$LIKE',
+                  type: 'string'
+                },
+              ]}
             />
           </div>
           <div className={styles.StandardTable}>

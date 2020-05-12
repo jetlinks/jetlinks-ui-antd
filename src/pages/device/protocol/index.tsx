@@ -4,11 +4,11 @@ import { Divider, Card, Table, message, Button, Tag, Popconfirm } from 'antd';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import styles from '@/utils/table.less';
 import { connect } from 'dva';
-import Search from './search';
 import { ProtocolItem } from '@/pages/device/protocol/data';
 import { ConnectState, Dispatch } from '@/models/connect';
 import encodeQueryParam from '@/utils/encodeParam';
 import Save from './save';
+import SearchForm from '@/components/SearchForm';
 
 interface Props {
   protocol: any;
@@ -158,7 +158,15 @@ const ProtocolList: React.FC<Props> = props => {
       <Card bordered={false}>
         <div className={styles.tableList}>
           <div className={styles.tableListForm}>
-            <Search
+
+            <SearchForm
+              formItems={[
+                {
+                  label: '协议名称',
+                  key: 'name$LIKE',
+                  type: 'string'
+                }
+              ]}
               search={(params: any) => {
                 setSearchParam(params);
                 handleSearch({ terms: params, pageSize: 10 });
