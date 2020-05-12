@@ -31,7 +31,7 @@ const EventDefin: React.FC<Props> = props => {
     current: {},
     data: props.data || {},
     dataType: props.data.valueType?.type || '',
-    enumData: props.data.valueType?.properties || [{ text: '', value: '', id: 0 }],
+    enumData: props.data.valueType?.elements || [{ text: '', value: '', id: 0 }],
     properties: props.data.valueType?.properties || [],
     parameterVisible: false,
     currentParameter: {},
@@ -67,7 +67,7 @@ const EventDefin: React.FC<Props> = props => {
       if (type === 'object') {
         data.valueType.properties = properties;
       } else if (type === 'enum') {
-        data.valueType.properties = enumData;
+        data.valueType.elements = enumData;
       }
       props.save({ ...data });
     });
