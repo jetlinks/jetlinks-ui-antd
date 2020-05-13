@@ -120,3 +120,17 @@ export const wrapAPI = (url: string) => {
  * @param nextProps
  */
 export const propsAreEqual = (prevProps: any, nextProps: any) => isEqual(prevProps.value, nextProps.value);
+
+/**
+ * 转换对象KEY
+ * @param data 原始对象
+ * @param keyMap 原始KEY与转换KEY
+ */
+export const converObjectKey = (data: any, keyMap: any) => {
+  const tempData = {};
+  Object.keys(data).forEach(i => {
+    const tempKey = keyMap[i] || i;
+    tempData[tempKey] = data[i]
+  })
+  return tempData;
+}

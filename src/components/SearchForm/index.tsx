@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Input, DatePicker, InputNumber, Form, Row, Col, Button, Icon, message, Select } from "antd";
+import { Input, DatePicker, InputNumber, Form, Row, Col, Button, Icon, Select } from "antd";
 import { FormComponentProps } from "antd/lib/form";
 import moment, { Moment } from "moment";
 
@@ -50,7 +50,7 @@ const SearchForm = (props: Props) => {
             const list = itemProps?.data || [];
             return (
                 <Select mode={itemProps?.mode || 'multiple'}>
-                    {list.map((item: any) => <Select.Option value={item.id}>{item.name}</Select.Option>)}
+                    {list.map((item: any) => <Select.Option value={item.id} key={item.id}>{item.name}</Select.Option>)}
                 </Select>
             )
         }
@@ -103,6 +103,7 @@ const SearchForm = (props: Props) => {
                         style={{ height: 56 }}
                         md={8}
                         sm={24}
+                        key={item.key}
                     >
                         <Form.Item
                             label={item.label}
