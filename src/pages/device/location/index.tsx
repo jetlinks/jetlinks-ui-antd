@@ -392,7 +392,7 @@ const Location: React.FC<Props> = props => {
     );
 
     return (
-      <PageHeaderWrapper title="位置查询">
+      <PageHeaderWrapper title="地理位置">
         <Spin tip="加载中..." spinning={spinning}>
           <div style={{ width: '100%', height: '79vh' }}>
             <Map resizeEnable events={mapEvents} center={centerScale.center} rotateEnable={true}
