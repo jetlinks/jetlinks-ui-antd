@@ -537,6 +537,7 @@ const Location: React.FC<Props> = props => {
                         },
                       }, 'old');
                       handleSearch({ pageSize: 10, sorts: { field: 'alarmTime', order: 'desc' } });
+                      mapCreated.remove(infoWindow);
                     }}>
                       重置
                     </Button>
