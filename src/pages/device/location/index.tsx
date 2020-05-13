@@ -41,6 +41,7 @@ interface State {
   regionList: any[];
   productList: any[];
   mapCreated: any;
+  infoWindow: any;
   massMarksCreated: any;
   centerScale: any;
   regionInfo: any;
@@ -59,6 +60,7 @@ const Location: React.FC<Props> = props => {
       regionList: [],
       productList: [],
       mapCreated: {},
+      infoWindow: {},
       massMarksCreated: {},
       centerScale: {
         center: [106.57, 29.52],
@@ -82,6 +84,7 @@ const Location: React.FC<Props> = props => {
     const [regionList] = useState(initState.regionList);
     const [productList] = useState(initState.productList);
     const [mapCreated, setMapCreated] = useState(initState.mapCreated);
+    const [infoWindow, setInfoWindow] = useState(initState.infoWindow);
     const [massMarksCreated, setMassMarksCreated] = useState(initState.massMarksCreated);
     const [queryInfo, setQueryInfo] = useState(false);
     const [deviceId, setDeviceId] = useState('');
@@ -147,6 +150,8 @@ const Location: React.FC<Props> = props => {
           where.push('tags.deviceName=' + fileValue.device.value);
           searchParam.terms.deviceName = fileValue.device.value;
         }
+
+        mapCreated.remove(infoWindow);
 
         handleSearch(searchParam);
 
@@ -303,6 +308,8 @@ const Location: React.FC<Props> = props => {
               retainWhenClose: true, //信息窗体关闭时，是否将其Dom元素从页面中移除
               closeWhenClickMap: true,  // 点击地图是否关闭窗体
             });
+
+            setInfoWindow(infoWindow);
 
             let deviceStatusInfo = document.getElementById('deviceStatus');
             infoWindow.on('open', function(e: any) {
