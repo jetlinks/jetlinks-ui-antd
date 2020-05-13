@@ -1,6 +1,7 @@
 import { getAccessToken } from "@/utils/authority";
 import { Observable } from "rxjs";
 import { } from "rxjs/operators";
+import { message } from "antd";
 
 let ws: WebSocket | undefined;
 let count = 0;
@@ -51,7 +52,11 @@ const getWebsocket = (id: string, topic: string, parameter: any): Observable<any
         });
         const msg = JSON.stringify({ id, topic, parameter, type: 'sub' });
         const thisWs = ws || initWebSocket();
-        thisWs!.send(msg);
+        try {
+            thisWs!.send(msg);
+        } catch (error) {
+            message.error({ key: 'ws', content: 'websocket服务连接失败' });
+        }
         return () => {
             const unsub = JSON.stringify({ id, type: "unsub" });
             delete subs[id];

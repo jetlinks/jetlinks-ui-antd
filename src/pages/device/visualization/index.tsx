@@ -6,7 +6,7 @@ import { CloseCircleOutlined, EditOutlined, SaveOutlined, PlusOutlined, SyncOutl
 import * as rxjs from 'rxjs';
 import { map, toArray, } from 'rxjs/operators';
 // import { Responsive, WidthProvider } from 'react-grid-layout';
-import RGL, { WidthProvider, Responsive } from 'react-grid-layout';
+import RGL, { WidthProvider } from 'react-grid-layout';
 import styles from './index.less';
 import AddItem from './add-item';
 import { VisualizationItem } from './data';
@@ -100,7 +100,7 @@ const Visualization: React.FC<Props> = props => {
             setLayout([]);
         })
 
-        return () => subscription.unsubscribe();
+        return () => subscription && subscription.unsubscribe();
     }, []);
 
 

@@ -226,7 +226,6 @@ const DeviceModel: React.FC<Props> = props => {
       terms: { ...searchParam, ...tempFilter },
       sorts: sorter,
     });
-    console.log('充值', filterData);
   };
   const uploadProps: UploadProps = {
     accept: '.json',
