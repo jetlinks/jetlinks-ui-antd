@@ -337,7 +337,7 @@ const Paramter: React.FC<Props> = props => {
                   setData({ ...data });
                 }}
               >
-                <Radio value="int32">int32</Radio>
+                <Radio value="int">int32</Radio>
                 <Radio value="float">float</Radio>
                 <Radio value="double">double</Radio>
                 <Radio value="string">text</Radio>
