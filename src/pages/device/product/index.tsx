@@ -1,7 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import styles from '@/utils/table.less';
 import { DeviceProduct } from '@/pages/device/product/data';
-import Search from './search';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { Badge, Button, Card, Divider, Icon, message, Popconfirm, Table, Upload } from 'antd';
 import { ColumnProps, PaginationConfig } from 'antd/lib/table';
@@ -15,7 +14,7 @@ import { UploadProps } from 'antd/lib/upload';
 import { getAccessToken } from '@/utils/authority';
 import request from '@/utils/request';
 import Save from './save';
-import { downloadObject } from '@/utils/utils';
+import { downloadObject, converObjectKey } from '@/utils/utils';
 import SearchForm from '@/components/SearchForm';
 import apis from '@/services';
 
@@ -42,7 +41,7 @@ const DeviceModel: React.FC<Props> = props => {
 
   const [searchParam, setSearchParam] = useState(initState.searchParam);
   const [saveVisible, setSaveVisible] = useState(initState.saveVisible);
-
+  const [filterData, setFilterData] = useState({});
   const { dispatch } = props;
 
   const handleSearch = (params?: any) => {
@@ -121,6 +120,13 @@ const DeviceModel: React.FC<Props> = props => {
       title: '发布状态',
       dataIndex: 'state',
       align: 'center',
+      filters: [{
+        value: '0',
+        text: '未发布'
+      }, {
+        value: '1',
+        text: '已发布'
+      }],
       render: (text: any) => {
         const color = text === 0 ? 'red' : 'green';
         const status = text === 0 ? '未发布' : '已发布';
@@ -205,17 +211,22 @@ const DeviceModel: React.FC<Props> = props => {
     });
   };
 
+
+
   const onTableChange = (
     pagination: PaginationConfig,
     filters: any,
     sorter: SorterResult<DeviceProduct>
   ) => {
+    const tempFilter = converObjectKey(filters, { state: 'state$IN' });
+    setFilterData(tempFilter);
     handleSearch({
       pageIndex: Number(pagination.current) - 1,
       pageSize: pagination.pageSize,
-      terms: searchParam,
+      terms: { ...searchParam, ...tempFilter },
       sorts: sorter,
     });
+    console.log('充值', filterData);
   };
   const uploadProps: UploadProps = {
     accept: '.json',
@@ -265,15 +276,13 @@ const DeviceModel: React.FC<Props> = props => {
       <Card bordered={false}>
         <div className={styles.tableList}>
           <div>
-            {/* <Search
-              search={(params: any) => {
-                handleSearch({ terms: params, pageSize: 10, sorts: searchParam.sorts });
-              }}
-            /> */}
-
             <SearchForm
               search={(params: any) => {
-                handleSearch({ terms: params, pageSize: 10, sorts: searchParam.sorts });
+                handleSearch({
+                  terms: { ...params, ...filterData },
+                  pageSize: 10,
+                  sorts: searchParam.sorts
+                });
               }}
               formItems={[{
                 label: '型号名称',
