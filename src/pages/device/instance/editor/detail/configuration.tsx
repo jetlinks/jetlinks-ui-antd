@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { FormComponentProps } from 'antd/lib/form';
 import Form from 'antd/es/form';
 import { Card, Col, Input, Modal, Row, Select } from 'antd';
-import { DeviceProduct } from '@/pages/device/product/data';
+import { DeviceInstance } from '@/pages/device/instance/data';
 
 interface Props extends FormComponentProps {
-  data?: Partial<DeviceProduct>;
+  data?: Partial<DeviceInstance>;
   configuration?: any;
   close: Function;
-  save: (data: Partial<DeviceProduct>) => void;
+  save: (data: Partial<DeviceInstance>) => void;
 }
 
 interface State {
