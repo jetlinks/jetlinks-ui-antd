@@ -9,16 +9,18 @@ import apis from '@/services';
 interface Props {
   data: Partial<DeviceInstance>;
   configuration: any;
-  refresh:Function;
+  refresh: Function;
 }
+
 interface State {
-  updateVisible:boolean;
-  tagsVisible:boolean;
+  updateVisible: boolean;
+  tagsVisible: boolean;
 }
+
 const Info: React.FC<Props> = (props) => {
   const initState: State = {
-    updateVisible:false,
-    tagsVisible:false,
+    updateVisible: false,
+    tagsVisible: false,
   };
   const [updateVisible, setUpdateVisible] = useState(initState.updateVisible);
   const [tagsVisible, setTagsVisible] = useState(initState.tagsVisible);
@@ -26,26 +28,27 @@ const Info: React.FC<Props> = (props) => {
   const updateData = (item?: any) => {
     setUpdateVisible(false);
     apis.deviceInstance
-      .update(props.data.id,item)
-      .then((response:any) => {
+      .update(props.data.id, item)
+      .then((response: any) => {
         if (response.status === 200) {
           message.success('配置信息修改成功');
           props.refresh();
         }
       })
-      .catch(() => {});
+      .catch(() => {
+      });
   };
 
-  const saveTags = (item?:any) =>{
+  const saveTags = (item?: any) => {
     setTagsVisible(false);
-    apis.deviceInstance.
-    saveDeviceTags(props.data.id,item)
-      .then((res:any) => {
+    apis.deviceInstance.saveDeviceTags(props.data.id, item)
+      .then((res: any) => {
         if (res.status === 200) {
           message.success('标签信息保存成功');
           props.refresh();
         }
-    }).catch(()=>{});
+      }).catch(() => {
+    });
   };
 
   const changeDeploy = (deviceId: string | undefined) => {
@@ -56,7 +59,21 @@ const Info: React.FC<Props> = (props) => {
           message.success('应用成功');
         }
       })
-      .catch(() => {});
+      .catch(() => {
+      });
+  };
+
+  const configurationReset = (deviceId: string | undefined) => {
+    apis.deviceInstance
+      .configurationReset(deviceId)
+      .then(response => {
+        if (response.status === 200) {
+          message.success('恢复默认配置成功');
+          props.refresh();
+        }
+      })
+      .catch(() => {
+      });
   };
 
   return (
@@ -86,10 +103,10 @@ const Info: React.FC<Props> = (props) => {
             {moment(props.data.createTime).format('YYYY-MM-DD HH:mm:ss')}
           </Descriptions.Item>
           <Descriptions.Item label="注册时间" span={1}>
-            {props.data.state?.value !== "notActive" ? moment(props.data.registerTime).format('YYYY-MM-DD HH:mm:ss') : "/"}
+            {props.data.state?.value !== 'notActive' ? moment(props.data.registerTime).format('YYYY-MM-DD HH:mm:ss') : '/'}
           </Descriptions.Item>
           <Descriptions.Item label="最后上线时间" span={1}>
-            {props.data.state?.value !== "notActive" ? moment(props.data.onlineTime).format('YYYY-MM-DD HH:mm:ss') : "/"}
+            {props.data.state?.value !== 'notActive' ? moment(props.data.onlineTime).format('YYYY-MM-DD HH:mm:ss') : '/'}
           </Descriptions.Item>
           <Descriptions.Item label="说明" span={3}>
             {props.data.describe}
@@ -98,25 +115,37 @@ const Info: React.FC<Props> = (props) => {
 
         {props.configuration && props.configuration.name && (
           <Descriptions style={{ marginBottom: 20 }} bordered size="small" column={3}
-            title={
-              <span>
+                        title={
+                          <span>
                 {props.configuration.name}
-                <Button icon="edit" style={{ marginLeft: 20 }} type="link"
-                  onClick={() => setUpdateVisible(true)}
-                >编辑</Button>
-                {props.data.state?.value != "notActive" && (
-                  <Popconfirm title="确认重新应用该配置？"
-                              onConfirm={() => {
-                                changeDeploy(props.data.id);
-                              }}>
-                    <Button icon="check" type="link">应用配置</Button>
-                    <Tooltip title="修改配置后需重新应用后才能生效。">
-                      <Icon type="question-circle-o"/>
-                    </Tooltip>
-                  </Popconfirm>
-                )}
+                            <Button icon="edit" style={{ marginLeft: 20 }} type="link"
+                                    onClick={() => setUpdateVisible(true)}
+                            >编辑</Button>
+                            {props.data.state?.value != 'notActive' && (
+                              <Popconfirm title="确认重新应用该配置？"
+                                          onConfirm={() => {
+                                            changeDeploy(props.data.id);
+                                          }}>
+                                <Button icon="check" type="link">应用配置</Button>
+                                <Tooltip title="修改配置后需重新应用后才能生效。">
+                                  <Icon type="question-circle-o"/>
+                                </Tooltip>
+                              </Popconfirm>
+                            )}
+
+                            {props.data.aloneConfiguration && (
+                              <Popconfirm title="确认恢复默认配置？"
+                                          onConfirm={() => {
+                                            configurationReset(props.data.id);
+                                          }}>
+                                <Button icon="undo" type="link">恢复默认</Button>
+                                <Tooltip title={`该设备单独编辑过${props.configuration.name}，点击此将恢复成默认的配置信息，请谨慎操作。`}>
+                                  <Icon type="question-circle-o"/>
+                                </Tooltip>
+                              </Popconfirm>
+                            )}
               </span>
-            }>
+                        }>
             {props.configuration.properties &&
             props.configuration.properties.map((item: any) => (
               <Descriptions.Item label={item.property} span={1} key={item.property}>
@@ -126,14 +155,14 @@ const Info: React.FC<Props> = (props) => {
           </Descriptions>
         )}
         <Descriptions style={{ marginBottom: 20 }} bordered column={3} size="small"
-          title={
-            <span>
+                      title={
+                        <span>
             {'标签'}
-              <Button icon="edit" style={{ marginLeft: 20 }} type="link"
-                      onClick={() => setTagsVisible(true)}
-              >编辑</Button>
+                          <Button icon="edit" style={{ marginLeft: 20 }} type="link"
+                                  onClick={() => setTagsVisible(true)}
+                          >编辑</Button>
             </span>
-          }>
+                      }>
           {props.data.tags && props.data.tags?.map((item: any) => (
             <Descriptions.Item label={`${item.name}（${item.key})`} span={1} key={item.key}>
               {item.value}
@@ -143,29 +172,29 @@ const Info: React.FC<Props> = (props) => {
       </Card>
       {updateVisible && (
         <Configuration data={props.data} configuration={props.configuration}
-          close={() => {
-            setUpdateVisible(false);
-            props.refresh();
-          }}
-          save={(item: any) => {
-            updateData(item);
-          }}
+                       close={() => {
+                         setUpdateVisible(false);
+                         props.refresh();
+                       }}
+                       save={(item: any) => {
+                         updateData(item);
+                       }}
         />
       )}
 
       {tagsVisible && (
         <Tags data={props.data.tags} deviceId={props.data.id}
-          close={() => {
-            setTagsVisible(false);
-            props.refresh();
-          }}
-          save={(item: any) => {
-            saveTags(item);
-          }}
+              close={() => {
+                setTagsVisible(false);
+                props.refresh();
+              }}
+              save={(item: any) => {
+                saveTags(item);
+              }}
         />
       )}
     </div>
-  )
+  );
 };
 
 export default Info;

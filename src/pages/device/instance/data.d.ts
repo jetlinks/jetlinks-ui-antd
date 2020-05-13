@@ -32,6 +32,8 @@ export class DeviceInstance extends SimpleType {
 
   disabled?: boolean;
 
+  aloneConfiguration?: boolean;
+
   deviceType: {
     value: string,
     text: string,

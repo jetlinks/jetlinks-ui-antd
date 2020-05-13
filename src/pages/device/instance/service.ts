@@ -35,7 +35,7 @@ export async function remove(id: string) {
   });
 }
 
-export async function logs(deviceId: string,params: any) {
+export async function logs(deviceId: string, params: any) {
   return request(`/jetlinks/device-instance/${deviceId}/logs`, {
     method: 'GET',
     params,
@@ -112,7 +112,8 @@ export async function propertieInfo(deviceId: string, params: any) {
     params,
   });
 }
-export async function invokedFunction(deviceId: string,functionId: string, data: any) {
+
+export async function invokedFunction(deviceId: string, functionId: string, data: any) {
   return request(`/jetlinks/device/invoked/${deviceId}/function/${functionId}`, {
     method: 'POST',
     data,
@@ -153,31 +154,37 @@ export async function getMulti(data: any) {
   });
 }
 
-export async function propertiesRealTime(data:any) {
+export async function propertiesRealTime(data: any) {
   return request(`/jetlinks/dashboard/_multi?:X_Access_Token=${getAccessToken()}`, {
     method: 'POST',
-    data
+    data,
   });
 }
 
-export async function _delete( params: any) {
+export async function _delete(params: any) {
   return request(`/jetlinks/device/instance/batch/_delete`, {
     method: 'PUT',
     data: params,
   });
 }
 
-export async function _unDeploy( params: any) {
+export async function _unDeploy(params: any) {
   return request(`/jetlinks/device/instance/batch/_unDeploy`, {
     method: 'PUT',
     data: params,
   });
 }
 
-export async function _deploy( params: any) {
+export async function _deploy(params: any) {
   return request(`/jetlinks/device/instance/batch/_deploy`, {
     method: 'PUT',
     data: params,
+  });
+}
+
+export async function configurationReset(deviceId: string | undefined) {
+  return request(`/jetlinks/device/instance/${deviceId}/configuration/_reset`, {
+    method: 'PUT',
   });
 }
 

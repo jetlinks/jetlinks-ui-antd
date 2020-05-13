@@ -224,7 +224,7 @@ const SaveRegion: React.FC<Props> = props => {
       style={{ marginTop: '-3%' }}
       onCancel={() => props.close()}
     >
-      <Form labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} key="form">
+      <Form labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} key="regionForm">
         <Row key="geoJsonRow">
           <Col span={12}>
             <Form.Item key="id" label="区域标识">

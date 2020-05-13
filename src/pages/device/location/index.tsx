@@ -1,6 +1,21 @@
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import React, { Fragment, useEffect, useState } from 'react';
-import { AutoComplete, Button, Card, Divider, Dropdown, Form, Input, Menu, Select, Spin, Switch, Table } from 'antd';
+import {
+  AutoComplete,
+  Button,
+  Card,
+  Dropdown,
+  Form,
+  Input,
+  List,
+  Menu,
+  Modal,
+  Select,
+  Spin,
+  Switch,
+  Table,
+  Tabs,
+} from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import { Map, Polygon } from 'react-amap';
 import { ColumnProps } from 'antd/lib/table';
@@ -11,6 +26,9 @@ import Content from '@/pages/device/location/save/content';
 import mark_b from './img/mark_b.png';
 import ManageRegion from '@/pages/device/location/region';
 import Status from '@/pages/device/location/info/Status';
+import encodeQueryParam from '@/utils/encodeParam';
+import moment from 'moment';
+import AutoHide from '@/pages/device/location/info/autoHide';
 
 interface Props extends FormComponentProps {
   deviceGateway: any;
@@ -23,6 +41,7 @@ interface State {
   regionList: any[];
   productList: any[];
   mapCreated: any;
+  infoWindow: any;
   massMarksCreated: any;
   centerScale: any;
   regionInfo: any;
@@ -30,6 +49,8 @@ interface State {
   roadNetLayer: any;
   deviceData: any;
   contentInfo: any[];
+  alarmLogData: any;
+  searchParam: any;
 }
 
 const Location: React.FC<Props> = props => {
@@ -39,6 +60,7 @@ const Location: React.FC<Props> = props => {
       regionList: [],
       productList: [],
       mapCreated: {},
+      infoWindow: {},
       massMarksCreated: {},
       centerScale: {
         center: [106.57, 29.52],
@@ -48,6 +70,8 @@ const Location: React.FC<Props> = props => {
       roadNetLayer: {},
       deviceData: {},
       contentInfo: ['bg', 'road', 'point', 'building'],
+      alarmLogData: {},
+      searchParam: { pageSize: 10, sorts: { field: 'alarmTime', order: 'desc' } },
     };
 
     const {
@@ -60,6 +84,7 @@ const Location: React.FC<Props> = props => {
     const [regionList] = useState(initState.regionList);
     const [productList] = useState(initState.productList);
     const [mapCreated, setMapCreated] = useState(initState.mapCreated);
+    const [infoWindow, setInfoWindow] = useState(initState.infoWindow);
     const [massMarksCreated, setMassMarksCreated] = useState(initState.massMarksCreated);
     const [queryInfo, setQueryInfo] = useState(false);
     const [deviceId, setDeviceId] = useState('');
@@ -70,9 +95,10 @@ const Location: React.FC<Props> = props => {
     const [spinning, setSpinning] = useState(true);
     const [contentMap, setContentMap] = useState(false);
     const [manageRegion, setManageRegion] = useState(false);
-    const [deviceStatus, setDeviceStatus] = useState(false);
     const [deviceData, setDeviceData] = useState(initState.deviceData);
     const [contentInfo, setContentInfo] = useState(initState.contentInfo);
+    const [alarmLogData, setAlarmLogData] = useState(initState.alarmLogData);
+    const [searchParam, setSearchParam] = useState(initState.searchParam);
 
     useEffect(() => {
       apis.deviceProdcut
@@ -89,21 +115,45 @@ const Location: React.FC<Props> = props => {
         })
         .catch(() => {
         });
+
     }, []);
+
+    const handleSearch = (params?: any) => {
+      setSearchParam(params);
+      apis.deviceAlarm.findAlarmLog(encodeQueryParam(params))
+        .then((response: any) => {
+          if (response.status === 200) {
+            setAlarmLogData(response.result);
+          }
+        })
+        .catch(() => {
+        });
+    };
 
     const onValidateForm = async () => {
       form.validateFields((err, fileValue) => {
         if (err) return;
 
+        if (!searchParam.terms) {
+          searchParam.terms = {};
+        }
+
         let where = ['objectType = device'];
         if (fileValue.productId) {
           where.push('tags.productId=' + fileValue.productId);
+          searchParam.terms.productId = fileValue.productId;
         }
         if (fileValue.device.key === 'deviceId' && fileValue.device.value) {
           where.push('objectId=' + fileValue.device.value);
+          searchParam.terms.deviceId = fileValue.device.value;
         } else if (fileValue.device.key === 'deviceName' && fileValue.device.value) {
           where.push('tags.deviceName=' + fileValue.device.value);
+          searchParam.terms.deviceName = fileValue.device.value;
         }
+
+        mapCreated.remove(infoWindow);
+
+        handleSearch(searchParam);
 
         newMassMarks(mapCreated, {
           'shape': {
@@ -142,6 +192,34 @@ const Location: React.FC<Props> = props => {
       },
     ];
 
+    const onTabsAlarmLog = () => {
+      form.validateFields((err, fileValue) => {
+        if (err) return;
+
+        if (!searchParam.terms) {
+          searchParam.terms = {};
+        }
+        if (fileValue.productId) {
+          searchParam.terms.productId = fileValue.productId;
+        }
+        if (fileValue.device.key === 'deviceId' && fileValue.device.value) {
+          searchParam.terms.deviceId = fileValue.device.value;
+        } else if (fileValue.device.key === 'deviceName' && fileValue.device.value) {
+          searchParam.terms.deviceName = fileValue.device.value;
+        }
+        handleSearch(searchParam);
+      });
+    };
+
+    const onListChange = (page: number, pageSize: number) => {
+      handleSearch({
+        pageIndex: (page - 1),
+        pageSize: pageSize,
+        terms: searchParam.terms,
+        sorts: searchParam.sorts,
+      });
+    };
+
     const newMassMarks = (ins: any, params: any, type: string) => {
       let markerList: any[] = [];
       apis.location._search_geo_json(params)
@@ -161,7 +239,7 @@ const Location: React.FC<Props> = props => {
 
               setMarkersList(markerList);
 
-              if (ins.getAllOverlays('marker').length <= 0) {
+              if (!massMarksCreated.CLASS_NAME) {
                 var style = [{
                   url: mark_b,
                   anchor: new window.AMap.Pixel(10, 30),
@@ -180,20 +258,21 @@ const Location: React.FC<Props> = props => {
                   openInfo(ins, e.data);
                 });
 
-                let mouseWindow = new window.AMap.InfoWindow({
-                  offset: new window.AMap.Pixel(0, -20),  //信息窗体显示位置偏移量
-                  content: '',  //使用默认信息窗体框样式，显示信息内容
-                  retainWhenClose: true, //信息窗体关闭时，是否将其Dom元素从页面中移除
+                let marker = new window.AMap.Marker({
+                  offset: new window.AMap.Pixel(-10, -50),
                 });
 
                 mass.on('mouseover', function(e: any) {
-                  let html = `<div>${e.data.deviceInfo.deviceName}</div>`;
-                  mouseWindow.setContent(html);
-                  mouseWindow.open(ins, e.data.lnglat);
+                  marker.setPosition(e.data.lnglat);
+                  marker.setLabel({
+                    content: `<div style="height: 31px;line-height:31px;text-align:center;margin:-3px;color: #fff;background-color: #25A5F7;"><span style="padding: 0 8px 0 8px">${e.data.deviceInfo.deviceName}</span></div>`,
+                    direction: 'center',
+                  });
+                  ins.add(marker);
                 });
 
                 mass.on('mouseout', function(e: any) {
-                  mouseWindow.close();
+                  ins.remove(marker);
                 });
 
                 mass.setMap(ins);
@@ -222,27 +301,28 @@ const Location: React.FC<Props> = props => {
           if (response.status === 200) {
             const deviceData = response.result;
             setDeviceData(deviceData);
-            setDeviceStatus(true);
 
             let infoWindow = new window.AMap.InfoWindow({
+              offset: new window.AMap.Pixel(-1, -20),  //信息窗体显示位置偏移量
               content: '',  //使用默认信息窗体框样式，显示信息内容
               retainWhenClose: true, //信息窗体关闭时，是否将其Dom元素从页面中移除
               closeWhenClickMap: true,  // 点击地图是否关闭窗体
             });
-            let deviceStatus = document.getElementById('deviceStatus');
+
+            setInfoWindow(infoWindow);
+
+            let deviceStatusInfo = document.getElementById('deviceStatus');
             infoWindow.on('open', function(e: any) {
               let div = document.createElement('div');
-
               div.style.width = '400px';
-              div.append(deviceStatus);
-
+              div.append(deviceStatusInfo);
               infoWindow.setContent(div);
             });
+
             infoWindow.open(ins, data.lnglat);
 
             infoWindow.on('close', function(e: any) {
-              setDeviceData({});
-              setDeviceStatus(true);
+
             });
           }
         })
@@ -332,7 +412,7 @@ const Location: React.FC<Props> = props => {
               <Card>
                 {satelliteLayer.CLASS_NAME && (
                   <span>
-                  路网：<Switch key="routeGrid" checkedChildren="开" unCheckedChildren="关" onChange={(value) => {
+                  路网：<Switch key="routeGridSwitch" checkedChildren="开" unCheckedChildren="关" onChange={(value) => {
                     if (value) {
                       let roadNetLayer = new window.AMap.TileLayer.RoadNet();
                       setRoadNetLayer(roadNetLayer);
@@ -345,7 +425,7 @@ const Location: React.FC<Props> = props => {
                     &nbsp;&nbsp;
                 </span>
                 )}
-                卫星：<Switch key="satellite" checkedChildren="开" unCheckedChildren="关" onChange={(value) => {
+                卫星：<Switch key="satelliteSwitch" checkedChildren="开" unCheckedChildren="关" onChange={(value) => {
                 if (value) {
                   let satelliteLayer = new window.AMap.TileLayer.Satellite();
                   setSatelliteLayer(satelliteLayer);
@@ -356,7 +436,7 @@ const Location: React.FC<Props> = props => {
                 }
               }}/>
                 &nbsp;&nbsp;
-                信息面板：<Switch key="panelInfo" checkedChildren="开" unCheckedChildren="关" defaultChecked
+                信息面板：<Switch key="panelInfoSwitch" checkedChildren="开" unCheckedChildren="关" defaultChecked
                              onChange={(value) => {
                                setPanelData(value);
                              }}/>
@@ -373,7 +453,7 @@ const Location: React.FC<Props> = props => {
                 height: '69vh', maxHeight: '70vh', overflowY: 'auto',
                 overflowX: 'hidden', marginTop: 5,
               }}>
-                <Form labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} key="query">
+                <Form labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} key="queryForm">
                   <Form.Item key="region" label="查看区域" style={{ marginBottom: 14 }}>
                     {getFieldDecorator('region', {})(
                       <Select placeholder="选择查看区域，可输入查询" showSearch={true} allowClear={true}
@@ -456,43 +536,105 @@ const Location: React.FC<Props> = props => {
                           'where': 'objectType not device',
                         },
                       }, 'old');
+                      handleSearch({ pageSize: 10, sorts: { field: 'alarmTime', order: 'desc' } });
+                      mapCreated.remove(infoWindow);
                     }}>
                       重置
                     </Button>
                   </div>
                 </Form>
-                <Divider style={{ margin: '20px 0' }}/>
-                <div style={{ paddingBottom: 15, marginTop: -8 }}>
-                  <span style={{ fontSize: 14 }}>
-                    <b>位置记录
-                      <span style={{ fontSize: 20 }}>{markersList.length}</span>
-                      条
-                    </b>
-                  </span>
-                </div>
-                <div>
-                  <Table
-                    loading={props.loading}
-                    columns={columns}
-                    bordered={false}
-                    size='middle'
-                    dataSource={(markersList || {})}
-                    rowKey="deviceInfo.objectId"
-                    key="deviceInfo.objectId"
-                    onRow={record => {
-                      return {
-                        onDoubleClick: () => {
-                          setCenterScale({ center: record.lnglat });
-                        },
-                      };
-                    }}
-                    pagination={{
-                      pageSize: 10,
-                      size: 'small',
-                      hideOnSinglePage: true,
-                    }}
-                  />
-                </div>
+                <Tabs defaultActiveKey="basic" onChange={(key: string) => {
+                  if (key === 'deviceAlarm') {
+                    setAlarmLogData({});
+                    onTabsAlarmLog();
+                  }
+                }}>
+                  <Tabs.TabPane tab="设备列表" key="deviceList">
+                    <div style={{ paddingBottom: 15 }}>
+                      <span style={{ fontSize: 14 }}>
+                        <b>设备记录&nbsp;
+                          <span style={{ fontSize: 20 }}>{markersList.length}</span>
+                          &nbsp;条
+                        </b>
+                      </span>
+                    </div>
+                    <div>
+                      <Table
+                        loading={props.loading}
+                        columns={columns}
+                        bordered={false}
+                        size='middle'
+                        dataSource={(markersList || {})}
+                        rowKey="deviceInfo.objectId"
+                        key="deviceInfo.objectId"
+                        onRow={record => {
+                          return {
+                            onDoubleClick: () => {
+                              setCenterScale({ center: record.lnglat });
+                              openInfo(mapCreated, record);
+                            },
+                          };
+                        }}
+                        pagination={{
+                          pageSize: 10,
+                          size: 'small',
+                          hideOnSinglePage: true,
+                        }}
+                      />
+                    </div>
+                  </Tabs.TabPane>
+                  <Tabs.TabPane tab='设备告警' key="deviceAlarm">
+                    <div style={{ paddingBottom: 15 }}>
+                      <span style={{ fontSize: 14 }}>
+                        <b>告警记录&nbsp;
+                          <span style={{ fontSize: 20 }}>{alarmLogData.total ? alarmLogData.total : 0}</span>
+                          &nbsp;条
+                        </b>
+                      </span>
+                    </div>
+                    <div>
+                      {alarmLogData.data && (
+                        <List size='small'
+                              itemLayout="horizontal" dataSource={alarmLogData.data}
+                              header={<span>设备ID/设备名称/告警名称/告警时间</span>}
+                              pagination={{
+                                current: alarmLogData.pageIndex + 1,
+                                total: alarmLogData.total,
+                                pageSize: alarmLogData.pageSize,
+                                size: 'small',
+                                hideOnSinglePage: true,
+                                onChange: onListChange,
+                              }}
+                              renderItem={(dev: any) => (
+                                <List.Item>
+                                  <List.Item.Meta
+                                    title={<a
+                                      onClick={() => {
+                                        let content: string;
+                                        try {
+                                          content = JSON.stringify(dev.alarmData, null, 2);
+                                        } catch (error) {
+                                          content = dev.alarmData;
+                                        }
+                                        Modal.confirm({
+                                          width: '30VW',
+                                          title: '告警数据',
+                                          content: <pre>{content}</pre>,
+                                          okText: '确定',
+                                          cancelText: '关闭',
+                                        });
+                                      }}
+                                    ><AutoHide
+                                      title={`${dev.deviceId}/${dev.deviceName}/${dev.alarmName}/${moment(dev.alarmTime).format('YYYY-MM-DD HH:mm:ss')}`}
+                                      style={{ width: 415 }}/></a>}
+                                  />
+                                </List.Item>
+                              )}
+                        />
+                      )}
+                    </div>
+                  </Tabs.TabPane>
+                </Tabs>
               </Card>
             )}
           </div>
@@ -518,11 +660,9 @@ const Location: React.FC<Props> = props => {
             }}/>
           )}
 
-          <div hidden={true}>
-            {deviceStatus && (
-              <Status device={deviceData}/>
-            )}
-          </div>
+          {<div hidden={true}>
+            <Status device={deviceData}/>
+          </div>}
         </Spin>
       </PageHeaderWrapper>
     );
