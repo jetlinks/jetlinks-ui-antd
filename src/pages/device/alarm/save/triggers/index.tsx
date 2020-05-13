@@ -73,14 +73,21 @@ const Trigger: React.FC<Props> = props => {
   const setDataSourceValue = (type: string, data: any, value: string) => {
     dataSource.length = 0;
     dataSource.push(value);
-    if (type !== 'function') {
-      if (data.valueType.type === 'object') {
+    if (type === 'function') {
+      if (data.output.type === 'object') {
         data.valueType.properties.map((p: any) => {
           dataSource.push(`${value}.${p.id}`);
         });
       }
-    } else {
-      if (data.output.type === 'object') {
+    } else if (type === 'event') {
+      dataSource.push('this');
+      if (data.valueType.type === 'object') {
+        data.valueType.properties.map((p: any) => {
+          dataSource.push(`${p.id}`);
+        });
+      }
+    } else if (type === 'properties') {
+      if (data.valueType.type === 'object') {
         data.valueType.properties.map((p: any) => {
           dataSource.push(`${value}.${p.id}`);
         });
@@ -236,28 +243,6 @@ const Trigger: React.FC<Props> = props => {
                          submitData();
                        }}
                     >删除</a>
-                    {/*{index === 0 ? (
-                      <Row key={Math.round(Math.random() * 100000)}>
-                        <a onClick={() => {
-                          setFilters([...filters, { _id: Math.round(Math.random() * 100000) }]);
-                        }}>添加</a>
-                        <a style={{ paddingLeft: 10, paddingTop: 7 }}
-                           onClick={() => {
-                             filters.splice(index, 1);
-                             trigger.filters = filters;
-                             submitData();
-                           }}
-                        >删除</a>
-                      </Row>
-                    ) : (
-                      <a style={{ paddingLeft: 10, paddingTop: 7 }}
-                         onClick={() => {
-                           filters.splice(index, 1);
-                           trigger.filters = filters;
-                           submitData();
-                         }}
-                      >删除</a>
-                    )}*/}
                   </Col>
                 </div>
               ))}
@@ -442,28 +427,6 @@ const Trigger: React.FC<Props> = props => {
                          submitData();
                        }}
                     >删除</a>
-                    {/*{index === 0 ? (
-                      <Row key={Math.round(Math.random() * 100000)}>
-                        <a onClick={() => {
-                          setFilters([...filters, { _id: Math.round(Math.random() * 100000) }]);
-                        }}>添加</a>
-                        <a style={{ paddingLeft: 10, paddingTop: 7 }}
-                           onClick={() => {
-                             filters.splice(index, 1);
-                             trigger.filters = filters;
-                             submitData();
-                           }}
-                        >删除</a>
-                      </Row>
-                    ) : (
-                      <a style={{ paddingLeft: 10, paddingTop: 7 }}
-                         onClick={() => {
-                           filters.splice(index, 1);
-                           trigger.filters = filters;
-                           submitData();
-                         }}
-                      >删除</a>
-                    )}*/}
                   </Col>
                 </div>
               ))}
