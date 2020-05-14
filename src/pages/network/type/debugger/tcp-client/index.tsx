@@ -1,9 +1,6 @@
-import { Modal, Button, Divider, Tabs, Form, Input, Select } from 'antd';
+import { Modal, Button, Divider, Tabs, Form, Input } from 'antd';
 import React, { Fragment, useState, useEffect } from 'react';
-import { getAccessToken } from '@/utils/authority';
-import apis from '@/services';
-import { wrapAPI } from '@/utils/utils';
-import { EventSourcePolyfill } from 'event-source-polyfill';
+import { getWebsocket } from '@/layouts/GlobalWebSocket';
 
 interface Props {
   close: Function;
@@ -23,7 +20,6 @@ interface State {
 }
 
 const TcpClient: React.FC<Props> = props => {
-  let eventSource: EventSourcePolyfill | null = null;
 
   const { item } = props;
   const initState: State = {
@@ -40,48 +36,62 @@ const TcpClient: React.FC<Props> = props => {
   };
 
   const [action, setAction] = useState(initState.action);
-  const [subscribeData, setSubscribeData] = useState(initState.subscribeData);
-  const [publishData, setPublishData] = useState(initState.publishData);
   const [logs, setLogs] = useState(initState.logs);
-  const [sourceState, setSourceState] = useState<any>();
+  const [sendLogs, setSendLogs] = useState<any[]>([]);
 
+  const [requestData, setRequestData] = useState<any>();
+  const [responseData, setResponseData] = useState<any>();
+  const [subs, setSubs] = useState<any>();
+
+  const [sends, setSends] = useState<any>();
   const debugMqttClient = () => {
-    logs.push('开始调试');
-    setLogs([...logs]);
-    if (action === '_subscribe') {
-      eventSource = new EventSourcePolyfill(
-        wrapAPI(
-          `/jetlinks/network/mqtt/client/${item.id}/_subscribe/${
-          subscribeData.type
-          }/?topics=${encodeURIComponent(
-            subscribeData.topics,
-          )}&:X_Access_Token=${getAccessToken()}`,
-        ),
-      );
-      setSourceState(eventSource);
-      eventSource.onerror = () => {
-        setLogs([...logs, '断开连接']);
-      };
-      eventSource.onmessage = e => {
-        setLogs(l => [...l, e.data]);
-      };
 
-      eventSource.onopen = () => {
-        // tempLogs += '开启推送\n';
-        // setLogs(tempLogs);
-      };
+    if (action === '_subscribe') {
+      logs.push('开始调试');
+      setLogs([...logs]);
+      if (subs) {
+        subs.unsubscribe()
+      }
+      const ws = getWebsocket(
+        `tcp-client-debug-subscribe`,
+        `/network/tcp/client/${item.id}/_subscribe`,
+        {
+          response: responseData
+        }
+      ).subscribe(
+        (resp: any) => {
+          const { payload } = resp;
+          setLogs(l => [...l, payload, '\n']);
+        }
+      );
+      setSubs(ws);
     } else if (action === '_publish') {
-      apis.network
-        .debugTcpClient(item.id, publishData.type, publishData.data)
-        .then(() => { })
-        .catch(() => { });
+      if (sends) {
+        sends.unsubscribe()
+      }
+      const ws = getWebsocket(
+        `tcp-client-debug-send`,
+        `/network/tcp/client/${item.id}/_send`,
+        {
+          request: requestData
+        }
+      ).subscribe(
+        (resp: any) => {
+          const { payload } = resp;
+          setSendLogs(l => [...l, payload, '\n']);
+        }
+      );
+      setSends(ws);
     }
   };
 
   useEffect(
     () => () => {
-      if (eventSource) {
-        eventSource.close();
+      if (subs) {
+        subs.unsubscribe()
+      }
+      if (sends) {
+        sends.unsubscribe()
       }
     },
     [],
@@ -110,7 +120,12 @@ const TcpClient: React.FC<Props> = props => {
               onClick={() => {
                 logs.push('结束调试');
                 setLogs([...logs]);
-                if (sourceState) sourceState.close();
+                if (subs) {
+                  subs.unsubscribe()
+                }
+                if (sends) {
+                  sends.unsubscribe()
+                }
               }}
             >
               关闭
@@ -121,6 +136,7 @@ const TcpClient: React.FC<Props> = props => {
               onClick={() => {
                 logs.splice(0, logs.length);
                 setLogs([]);
+                setSendLogs([]);
               }}
             >
               清空
@@ -153,19 +169,16 @@ const TcpClient: React.FC<Props> = props => {
       <Tabs defaultActiveKey={action} onChange={e => setAction(e)}>
         <Tabs.TabPane tab="订阅消息" key="_subscribe">
           <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
-            <Form.Item label="数据类型">
-              <Select
-                defaultValue={subscribeData.type}
-                onChange={(e: string) => {
-                  subscribeData.type = e;
-                  setSubscribeData({ ...subscribeData });
+            <Form.Item label="响应数据">
+              <Input.TextArea
+                rows={8}
+                placeholder="16进制请使用0x开头"
+                onChange={e => {
+                  setResponseData(e.target.value);
+                  localStorage.setItem('tcp-client-debug-response', e.target.value);
                 }}
-              >
-                <Select.Option value="JSON">JSON</Select.Option>
-                <Select.Option value="BINARY">二进制</Select.Option>
-                <Select.Option value="STRING">字符串</Select.Option>
-                <Select.Option value="HEX">16进制</Select.Option>
-              </Select>
+                value={responseData}
+              />
             </Form.Item>
             <Divider>调试日志</Divider>
             <div style={{ height: 350, overflow: 'auto' }}>
@@ -176,29 +189,21 @@ const TcpClient: React.FC<Props> = props => {
 
         <Tabs.TabPane tab="推送消息" key="_publish">
           <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
-            <Form.Item label="数据类型">
-              <Select
-                defaultValue={publishData.type}
-                onChange={(e: string) => {
-                  publishData.type = e;
-                  setPublishData({ ...publishData });
-                }}
-              >
-                <Select.Option value="JSON">JSON</Select.Option>
-                <Select.Option value="BINARY">二进制</Select.Option>
-                <Select.Option value="STRING">字符串</Select.Option>
-                <Select.Option value="HEX">16进制</Select.Option>
-              </Select>
-            </Form.Item>
-            <Form.Item label="推送数据">
+            <Form.Item label="请求数据">
               <Input.TextArea
-                rows={4}
+                rows={8}
+                placeholder="16进制请使用0x开头"
                 onChange={e => {
-                  publishData.data = e.target.value;
-                  setPublishData({ ...publishData });
+                  setRequestData(e.target.value);
+                  localStorage.setItem('tcp-client-debug-request', e.target.value);
                 }}
+                value={requestData}
               />
             </Form.Item>
+            <Divider>调试日志</Divider>
+            <div style={{ height: 350, overflow: 'auto' }}>
+              <pre>{sendLogs.join('\n')}</pre>
+            </div>
           </Form>
         </Tabs.TabPane>
       </Tabs>
