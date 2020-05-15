@@ -92,8 +92,8 @@ const Save: React.FC<Props> = props => {
     const { type } = item;
     const template = item.template ? JSON.parse(item.template) : {};
     const typeMap = new Map();
-    typeMap.set('MQTT_CLIENT', 'POST http://[host]:[port]/api\nContent-Type: application/json\n\n${T(com.alibaba.fastjson.JSON).toJSONString(#this)}');
-    typeMap.set('HTTP_CLIENT', 'qos1 /device/${#deviceId}\n${T(com.alibaba.fastjson.JSON).toJSONString(#this)}');
+    typeMap.set('HTTP_CLIENT', 'POST http://[host]:[port]/api\nContent-Type: application/json\n\n${T(com.alibaba.fastjson.JSON).toJSONString(#this)}');
+    typeMap.set('MQTT_CLIENT', 'qos1 /device/${#deviceId}\n${T(com.alibaba.fastjson.JSON).toJSONString(#this)}');
     switch (type) {
       case 'sms':
         return (
