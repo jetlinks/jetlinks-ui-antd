@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { FormComponentProps } from 'antd/es/form';
 import apis from '@/services';
 import { randomString } from '@/utils/utils';
+import encodeQueryParam from '@/utils/encodeParam';
 
 interface Props extends FormComponentProps {
   data: any;
@@ -43,11 +44,25 @@ const Save: React.FC<Props> = props => {
   const [typeList, setTypeList] = useState(initState.typeList);
   const [metadata, setMetadata] = useState(initState.metadata);
   const [otherConfig, setOtherConfig] = useState(initState.otherConfig);
-
+  const [networkList, setNetworkList] = useState<any[]>([]);
   const getMetadata = (provider?: string) => {
     apis.notifier.configMetadata(item.type, provider || item.provider).then(res => {
       setMetadata(res.result);
     });
+    apis.network.list(encodeQueryParam({
+      paging: false,
+      sorts: {
+        field: 'id',
+        order: 'desc'
+      },
+      terms: {
+        type: provider || item.provider
+      }
+    })).then(resp => {
+      if (resp.status === 200) {
+        setNetworkList(resp.result);
+      }
+    })
   };
 
   useEffect(() => {
@@ -69,6 +84,7 @@ const Save: React.FC<Props> = props => {
 
   const getDataType = (j: any) => {
     const {
+      property,
       type: { type },
     } = j;
 
@@ -77,6 +93,13 @@ const Save: React.FC<Props> = props => {
       case 'string':
       case 'number':
       case 'password':
+        if (property === 'networkId') {
+          return (
+            <Select>
+              {networkList.map(i => <Select.Option key={i.id} value={i.id}>{i.name}</Select.Option>)}
+            </Select>
+          )
+        }
         return <Input />;
       case 'array':
         return (
@@ -134,15 +157,15 @@ const Save: React.FC<Props> = props => {
                       }}
                     />
                   ) : (
-                    <Icon
-                      type="minus"
-                      onClick={() => {
-                        const config = otherConfig.filter(temp => temp.id !== i.id);
-                        // debugData.headers.push({ id: randomString(8), key: '', value: '' });
-                        setOtherConfig([...config]);
-                      }}
-                    />
-                  )}
+                      <Icon
+                        type="minus"
+                        onClick={() => {
+                          const config = otherConfig.filter(temp => temp.id !== i.id);
+                          // debugData.headers.push({ id: randomString(8), key: '', value: '' });
+                          setOtherConfig([...config]);
+                        }}
+                      />
+                    )}
                 </Col>
               </Row>
             ))}
