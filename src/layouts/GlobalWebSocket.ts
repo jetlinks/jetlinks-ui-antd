@@ -1,7 +1,7 @@
 import { getAccessToken } from "@/utils/authority";
 import { Observable } from "rxjs";
 import { } from "rxjs/operators";
-import { message } from "antd";
+import { message, notification } from "antd";
 
 let ws: WebSocket | undefined;
 let count = 0;
@@ -16,8 +16,12 @@ const initWebSocket = () => {
                 ws = undefined;
                 setTimeout(initWebSocket, 5000 * count);
             }
-            ws.onmessage = (message: any) => {
-                const data = JSON.parse(message.data);
+            ws.onmessage = (msg: any) => {
+
+                const data = JSON.parse(msg.data);
+                if (data.type === 'error') {
+                    notification.error({ key: 'wserr', message: data.message });
+                }
                 if (subs[data.requestId]) {
                     if (data.type === 'complete') {
                         subs[data.requestId].forEach((element: any) => {

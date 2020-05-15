@@ -1,9 +1,7 @@
-import { Modal, Button, Divider, Form, Select, message } from 'antd';
+import { Modal, Button, Divider, Form, Select } from 'antd';
 
 import React, { Fragment, useState } from 'react';
-import { getAccessToken } from '@/utils/authority';
-import { wrapAPI } from '@/utils/utils';
-import { EventSourcePolyfill } from 'event-source-polyfill';
+import { getWebsocket } from '@/layouts/GlobalWebSocket';
 
 interface Props {
   close: Function;
@@ -21,29 +19,46 @@ const MqttServer: React.FC<Props> = props => {
   };
   const [type, setType] = useState(initState.type);
   const [logs, setLogs] = useState(initState.logs);
-  const [sourceState, setSourceState] = useState<any>();
+  // const [sourceState, setSourceState] = useState<any>();
 
+  const [subs, setSubs] = useState<any>();
+
+  // useEffect(() => () => subs && subs.unsubscribe());
   const debug = () => {
     logs.push('开始订阅');
     setLogs([...logs]);
-    const eventSource = new EventSourcePolyfill(
-      wrapAPI(
-        `/jetlinks/network/mqtt/server/${
-        item.id
-        }/_subscribe/${type}?:X_Access_Token=${getAccessToken()}`,
-      ),
+
+    if (subs) {
+      subs.unsubscribe()
+    }
+    const ws = getWebsocket(
+      `mqtt-server-debug`,
+      `/network/mqtt/server/${item.id}/_subscribe/${type}`,
+      {}
+    ).subscribe(
+      (resp: any) => {
+        const { payload } = resp;
+        setLogs(l => [...l, JSON.stringify(payload)]);
+      }
     );
-    setSourceState(eventSource);
-    eventSource.onerror = () => {
-      message.error('调试错误');
-    };
-    eventSource.onmessage = e => {
-      // message.success(e.data);
-      setLogs(l => [...l, e.data]);
-    };
-    eventSource.onopen = () => {
-      // setLogs(`${logs}链接成功\n`);
-    };
+
+    setSubs(ws);
+
+    // const eventSource = new EventSourcePolyfill(
+    //   wrapAPI(
+    //     `/jetlinks/network/mqtt/server/${item.id}/_subscribe/${type}?:X_Access_Token=${getAccessToken()}`,
+    //   ));
+    // setSourceState(eventSource);
+    // eventSource.onerror = () => {
+    //   message.error('调试错误');
+    // };
+    // eventSource.onmessage = e => {
+    //   // message.success(e.data);
+    //   setLogs(l => [...l, e.data]);
+    // };
+    // eventSource.onopen = () => {
+    //   // setLogs(`${logs}链接成功\n`);
+    // };
   };
   return (
     <Modal
@@ -67,7 +82,7 @@ const MqttServer: React.FC<Props> = props => {
             onClick={() => {
               logs.push('结束调试');
               setLogs([...logs]);
-              if (sourceState) sourceState.close();
+              if (subs) subs.unsubscribe()
             }}
           >
             结束

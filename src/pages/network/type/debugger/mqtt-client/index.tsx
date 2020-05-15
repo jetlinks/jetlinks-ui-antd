@@ -1,9 +1,6 @@
-import { Modal, Button, Divider, Tabs, Form, Input, Select, message } from 'antd';
+import { Modal, Button, Divider, Tabs, Form, Input, Select } from 'antd';
 import React, { Fragment, useState } from 'react';
-import { getAccessToken } from '@/utils/authority';
-import apis from '@/services';
-import { wrapAPI } from '@/utils/utils';
-import { EventSourcePolyfill } from 'event-source-polyfill';
+import { getWebsocket } from '@/layouts/GlobalWebSocket';
 
 
 interface Props {
@@ -45,37 +42,86 @@ const MqttClient: React.FC<Props> = props => {
   const [publishData, setPublishData] = useState(initState.publishData);
   const [logs, setLogs] = useState(initState.logs);
   // const { item: { type: { text } } } = props;
+
+  const [subs, setSubs] = useState<any>();
+  // let subs: any = 1;
+  const [publishSub, setPublishSub] = useState<any>();
+  // useEffect(() => () => subs && subs.unsubscribe());
+  // useEffect(() => () => publishSub && publishSub.unsubscribe());
+
   const debugMqttClient = () => {
     if (action === '_subscribe') {
       logs.push(`开始订阅: ${subscribeData.topics}`);
       setLogs([...logs]);
+
+      if (subs) {
+
+        subs.unsubscribe()
+      }
+      const ws = getWebsocket(
+        `mqtt-client-debug-subscribe`,
+        `/network/mqtt/client/${item.id}/_subscribe/${subscribeData.type}`,
+        {
+          topics: subscribeData.topics
+        }
+      ).subscribe(
+        (resp: any) => {
+          const { payload } = resp;
+          setLogs(l => [...l, JSON.stringify(payload)]);
+        }
+      );
+
+      setSubs(ws);
       // setLogs(`${logs}开始订阅: ${subscribeData.topics}\n`);
       // console.log('debugMqtt', data);
-      const eventSource = new EventSourcePolyfill(
-        wrapAPI(
-          `/jetlinks/network/mqtt/client/${item.id}/_subscribe/${
-          subscribeData.type
-          }/?topics=${encodeURIComponent(
-            subscribeData.topics,
-          )}&:X_Access_Token=${getAccessToken()}`,
-        ),
-      );
-      eventSource.onerror = () => {
-        setLogs([...logs, '断开连接']);
-      };
-      eventSource.onmessage = e => {
-        setLogs(l => [...l, e.data]);
-      };
-      eventSource.onopen = () => { };
+      // const eventSource = new EventSourcePolyfill(
+      //   wrapAPI(
+      //     `/jetlinks/network/mqtt/client/${item.id}/_subscribe/${
+      //     subscribeData.type
+      //     }/?topics=${encodeURIComponent(
+      //       subscribeData.topics,
+      //     )}&:X_Access_Token=${getAccessToken()}`,
+      //   ),
+      // );
+      // eventSource.onerror = () => {
+      //   setLogs([...logs, '断开连接']);
+      // };
+      // eventSource.onmessage = e => {
+      //   setLogs(l => [...l, e.data]);
+      // };
+      // eventSource.onopen = () => { };
+
+
+
+
     } else if (action === '_publish') {
-      apis.network
-        .debugMqttClient(item.id, action, publishData.type, publishData)
-        .then(response => {
-          if (response) {
-            message.success('推送成功');
-          }
-        })
-        .catch(() => { });
+
+      if (publishSub) {
+        publishSub.unsubscribe()
+      }
+
+      const ws = getWebsocket(
+        `mqtt-client-debug-publish`,
+        `/network/mqtt/client/${item.id}/_publish/${subscribeData.type}`,
+        {
+          topic: publishData.topic,
+          data: publishData.data
+        }
+      ).subscribe(
+        (resp: any) => {
+          const { payload } = resp;
+          setLogs(l => [...l, payload]);
+        }
+      );
+      setPublishSub(ws);
+      // apis.network
+      //   .debugMqttClient(item.id, action, publishData.type, publishData)
+      //   .then(response => {
+      //     if (response) {
+      //       message.success('推送成功');
+      //     }
+      //   })
+      //   .catch(() => { });
     }
   };
 
@@ -135,7 +181,7 @@ const MqttClient: React.FC<Props> = props => {
               </Select>
             </Form.Item>
             <Divider>调试日志</Divider>
-            <div style={{ height: 350, overflow: 'auto' }}>
+            <div style={{ height: 250, overflow: 'auto' }}>
               <pre>{logs.join('\n')}</pre>
             </div>
           </Form>
@@ -175,6 +221,10 @@ const MqttClient: React.FC<Props> = props => {
               />
             </Form.Item>
           </Form>
+          <Divider>调试日志</Divider>
+          <div style={{ height: 250, overflow: 'auto' }}>
+            <pre>{logs.join('\n')}</pre>
+          </div>
         </Tabs.TabPane>
       </Tabs>
     </Modal>
