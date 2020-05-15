@@ -21,14 +21,16 @@ import { Map, Polygon } from 'react-amap';
 import { ColumnProps } from 'antd/lib/table';
 import { DeviceInstance } from '@/pages/device/instance/data';
 import apis from '@/services';
-import DeviceInfo from '@/pages/device/location/info/index';
+import DeviceInfo from '@/pages/device/location/info';
 import Content from '@/pages/device/location/save/content';
 import mark_b from './img/mark_b.png';
+import mark_r from './img/mark_r.png';
 import ManageRegion from '@/pages/device/location/region';
 import Status from '@/pages/device/location/info/Status';
 import encodeQueryParam from '@/utils/encodeParam';
 import moment from 'moment';
 import AutoHide from '@/pages/device/location/info/autoHide';
+import { getWebsocket } from '@/layouts/GlobalWebSocket';
 
 interface Props extends FormComponentProps {
   deviceGateway: any;
@@ -37,7 +39,7 @@ interface Props extends FormComponentProps {
 
 interface State {
   pathPolygon: any[];
-  markersList: any[];
+  markersDataList: any[];
   regionList: any[];
   productList: any[];
   mapCreated: any;
@@ -51,12 +53,13 @@ interface State {
   contentInfo: any[];
   alarmLogData: any;
   searchParam: any;
+  labelsLayer: any;
 }
 
 const Location: React.FC<Props> = props => {
     const initState: State = {
       pathPolygon: [],
-      markersList: [],
+      markersDataList: [],
       regionList: [],
       productList: [],
       mapCreated: {},
@@ -72,6 +75,7 @@ const Location: React.FC<Props> = props => {
       contentInfo: ['bg', 'road', 'point', 'building'],
       alarmLogData: {},
       searchParam: { pageSize: 10, sorts: { field: 'alarmTime', order: 'desc' } },
+      labelsLayer: {},
     };
 
     const {
@@ -80,7 +84,7 @@ const Location: React.FC<Props> = props => {
     } = props;
 
     const [pathPolygon, setPathPolygon] = useState(initState.pathPolygon);
-    const [markersList, setMarkersList] = useState(initState.markersList);
+    const [markersDataList, setMarkersDataList] = useState(initState.markersDataList);
     const [regionList] = useState(initState.regionList);
     const [productList] = useState(initState.productList);
     const [mapCreated, setMapCreated] = useState(initState.mapCreated);
@@ -100,7 +104,10 @@ const Location: React.FC<Props> = props => {
     const [alarmLogData, setAlarmLogData] = useState(initState.alarmLogData);
     const [searchParam, setSearchParam] = useState(initState.searchParam);
 
+    let deviceStatus: any;
+
     useEffect(() => {
+
       apis.deviceProdcut
         .queryNoPagin()
         .then(response => {
@@ -116,6 +123,9 @@ const Location: React.FC<Props> = props => {
         .catch(() => {
         });
 
+      return () => {
+        deviceStatus && deviceStatus.unsubscribe();
+      };
     }, []);
 
     const handleSearch = (params?: any) => {
@@ -221,71 +231,112 @@ const Location: React.FC<Props> = props => {
     };
 
     const newMassMarks = (ins: any, params: any, type: string) => {
-      let markerList: any[] = [];
+      let markersDataList: any[] = [];
+      let labelsData: any[] = [];
+
+      // /device-current-state
+
       apis.location._search_geo_json(params)
         .then(response => {
             if (response.status === 200) {
-              response.result.features.map((item: any) => {
+              response.result.features.map((item: any, index: number) => {
                 if (item.geometry.type === 'Point') {
                   if (type === 'old') {
                     setCenterScale({ center: item.geometry.coordinates });
                   }
-                  markerList.push({
+                  markersDataList.push({
                     lnglat: item.geometry.coordinates,
                     deviceInfo: item.properties,
+                  });
+                  labelsData.push({
+                    name: item.properties.objectId,
+                    position: item.geometry.coordinates,
+                    zooms: [3, 20],
+                    opacity: 1,
+                    // zIndex: 100,
+                    rank: index,
+                    icon: {
+                      type: 'image',
+                      image: mark_b,
+                      size: [32, 34],
+                      anchor: 'bottom-center',
+                    },
+                    text: {
+                      content: item.properties.deviceName,
+                      direction: 'top',
+                      offset: [0, -2],
+                      deviceInfo: item.properties,
+                      lnglat: item.geometry.coordinates,
+                      style: {
+                        fontSize: 12,
+                        fontWeight: 'normal',
+                        fillColor: '#FFFFFF',
+                        padding: '6 10 6 10',
+                        backgroundColor: '#5C5C5C',
+                      },
+                    },
                   });
                 }
               });
 
-              setMarkersList(markerList);
+              setMarkersDataList(markersDataList);
 
-              if (!massMarksCreated.CLASS_NAME) {
-                var style = [{
-                  url: mark_b,
-                  anchor: new window.AMap.Pixel(10, 30),
-                  size: new window.AMap.Size(19, 31),
-                }];
+              let layer = new window.AMap.LabelsLayer({
+                zooms: [3, 20],
+                visible: true,
+              });
 
-                let mass = new window.AMap.MassMarks(markerList, {
-                  opacity: 0.8,
-                  zIndex: 111,
-                  cursor: 'pointer',
-                  style: style,
-                  alwaysRender: false,
+              ins.add(layer);
+              let labelMarker = {};
+              labelsData.map((item: any) => {
+                labelMarker = new window.AMap.LabelMarker(item);
+                labelMarker.on('click', function(e: any) {
+                  openInfo(ins, e.data.opts.text);
                 });
 
-                mass.on('click', function(e: any) {
-                  openInfo(ins, e.data);
-                });
+                massMarksCreated[item.name] = labelMarker;
+                layer.add(labelMarker);
+              });
 
-                let marker = new window.AMap.Marker({
-                  offset: new window.AMap.Pixel(-10, -50),
-                });
+              console.log(layer);
 
-                mass.on('mouseover', function(e: any) {
-                  marker.setPosition(e.data.lnglat);
-                  marker.setLabel({
-                    content: `<div style="height: 31px;line-height:31px;text-align:center;margin:-3px;color: #fff;background-color: #25A5F7;"><span style="padding: 0 8px 0 8px">${e.data.deviceInfo.deviceName}</span></div>`,
-                    direction: 'center',
-                  });
-                  ins.add(marker);
-                });
+              deviceWebSocket(layer);
 
-                mass.on('mouseout', function(e: any) {
-                  ins.remove(marker);
-                });
-
-                mass.setMap(ins);
-                setMassMarksCreated(mass);
-              } else {
-                massMarksCreated.setData(markerList);
-              }
               setSpinning(false);
             }
           },
         )
         .catch(() => {
         });
+    };
+
+    const deviceWebSocket = (layer: any) => {
+      deviceStatus = getWebsocket(
+        `location-info-status-all`,
+        `/dashboard/device/status/change/realTime`,
+        {
+          deviceId: '*',
+        },
+      ).subscribe(
+        (resp: any) => {
+          const { payload } = resp;
+          if (payload.value.type === 'online') {
+            massMarksCreated[payload.value.deviceId].setIcon({
+              type: 'image',
+              image: mark_b,
+              size: [32, 34],
+              anchor: 'bottom-cent er',
+            });
+          } else {
+            massMarksCreated[payload.value.deviceId].setIcon({
+              type: 'image',
+              image: mark_r,
+              size: [32, 34],
+              anchor: 'bottom-cent er',
+            });
+          }
+        },
+      );
     };
 
     window.seeDetails = function(deviceId: string) {
@@ -295,7 +346,6 @@ const Location: React.FC<Props> = props => {
 
     //在指定位置打开信息窗体
     const openInfo = (ins: any, data: any) => {
-
       apis.deviceInstance.info(data.deviceInfo.objectId)
         .then((response: any) => {
           if (response.status === 200) {
@@ -303,7 +353,7 @@ const Location: React.FC<Props> = props => {
             setDeviceData(deviceData);
 
             let infoWindow = new window.AMap.InfoWindow({
-              offset: new window.AMap.Pixel(-1, -20),  //信息窗体显示位置偏移量
+              offset: new window.AMap.Pixel(0, -30),  //信息窗体显示位置偏移量
               content: '',  //使用默认信息窗体框样式，显示信息内容
               retainWhenClose: true, //信息窗体关闭时，是否将其Dom元素从页面中移除
               closeWhenClickMap: true,  // 点击地图是否关闭窗体
@@ -395,8 +445,7 @@ const Location: React.FC<Props> = props => {
       <PageHeaderWrapper title="地理位置">
         <Spin tip="加载中..." spinning={spinning}>
           <div style={{ width: '100%', height: '79vh' }}>
-            <Map resizeEnable events={mapEvents} center={centerScale.center} rotateEnable={true}
-                 features={contentInfo}>
+            <Map version="1.4.15" resizeEnable events={mapEvents} center={centerScale.center} features={contentInfo}>
               {pathPolygon.length > 0 && (
                 <Polygon visible={true} path={pathPolygon}
                          style={{ fillOpacity: 0, strokeOpacity: 1, strokeColor: '#C86A79', strokeWeight: 3 }}/>
@@ -553,7 +602,7 @@ const Location: React.FC<Props> = props => {
                     <div style={{ paddingBottom: 15 }}>
                       <span style={{ fontSize: 14 }}>
                         <b>设备记录&nbsp;
-                          <span style={{ fontSize: 20 }}>{markersList.length}</span>
+                          <span style={{ fontSize: 20 }}>{markersDataList.length}</span>
                           &nbsp;条
                         </b>
                       </span>
@@ -564,7 +613,7 @@ const Location: React.FC<Props> = props => {
                         columns={columns}
                         bordered={false}
                         size='middle'
-                        dataSource={(markersList || {})}
+                        dataSource={(markersDataList || {})}
                         rowKey="deviceInfo.objectId"
                         key="deviceInfo.objectId"
                         onRow={record => {
