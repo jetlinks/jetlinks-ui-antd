@@ -147,9 +147,7 @@ const Config: React.FC<Props> = props => {
     },
     showUploadList: false,
     onChange(info) {
-      if (info.file.status !== 'uploading') {
-        // console.log(info.file, info.fileList);
-      }
+
       if (info.file.status === 'done') {
         const fileUrl = info.file.response.result;
         request(fileUrl, { method: 'GET' }).then(e => {
