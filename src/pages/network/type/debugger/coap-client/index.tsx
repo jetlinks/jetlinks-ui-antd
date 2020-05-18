@@ -1,6 +1,6 @@
-import { Modal, Button, Divider, Form, Input, Select, Radio } from 'antd';
+import { Modal, Button, Divider, Form, Input } from 'antd';
 import React, { Fragment, useState } from 'react';
-import apis from '@/services';
+import { getWebsocket } from '@/layouts/GlobalWebSocket';
 
 interface Props {
   close: Function;
@@ -14,7 +14,7 @@ interface State {
     payload: string;
     payloadType: string;
   };
-  logs: string;
+  logs: string[];
 }
 
 const CoapClient: React.FC<Props> = props => {
@@ -27,21 +27,33 @@ const CoapClient: React.FC<Props> = props => {
       payload: '',
       payloadType: 'JSON',
     },
-    logs: '',
+    logs: [],
   };
 
-  const [debugData, setDebugData] = useState(initState.debugData);
+  const [debugData, setDebugData] = useState<string>(localStorage.getItem('coap-client-debug-data') || 'GET coap://host:port/uri\nContent-Format: application/json\n\n{}');
   const [logs, setLogs] = useState(initState.logs);
+  const [subs, setSubs] = useState<any>();
 
   const debugMqttClient = () => {
-    apis.network
-      .debugCoapClient(item.id, debugData)
-      .then(() => {
-        setLogs(`${logs}开始订阅\n`);
-      })
-      .catch(() => {
-        setLogs(`调试错误`);
-      });
+    logs.push('开始调试');
+    setLogs([...logs]);
+
+    if (subs) {
+      subs.unsubscribe()
+    }
+    const ws = getWebsocket(
+      `coap-client-debug`,
+      `/network/coap/client/${item.id}/_send`,
+      {
+        request: debugData
+      }
+    ).subscribe(
+      (resp: any) => {
+        const { payload } = resp;
+        setLogs(l => [...l, payload, '\n']);
+      }
+    );
+    setSubs(ws);
   };
 
   return (
@@ -61,74 +73,28 @@ const CoapClient: React.FC<Props> = props => {
             提交
           </Button>
           <Divider type="vertical" />
-          <Button type="ghost" onClick={() => setLogs('')}>
+          <Button type="ghost" onClick={() => setLogs([])}>
             清空
           </Button>
         </Fragment>
       }
     >
       <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
-        <Form.Item label="URL">
-          <Input
-            value={debugData.url}
-            onChange={e => {
-              debugData.url = e.target.value;
-              setDebugData({ ...debugData });
-            }}
-          />
-        </Form.Item>
-        <Form.Item label="Option">
+        <Form.Item label="CoAP请求">
           <Input.TextArea
-            rows={4}
-            value={debugData.options}
+            rows={8}
             onChange={e => {
-              debugData.options = e.target.value;
-              setDebugData({ ...debugData });
+              setDebugData(e.target.value);
+              localStorage.setItem('coap-client-debug-data', e.target.value);
             }}
+            value={debugData}
+
           />
-        </Form.Item>
-        <Form.Item label="Method">
-          <Radio.Group
-            onChange={e => {
-              debugData.method = e.target.value;
-              setDebugData({ ...debugData });
-            }}
-            value={debugData.method}
-            buttonStyle="solid"
-          >
-            <Radio.Button value="GET">GET</Radio.Button>
-            <Radio.Button value="POST">POST</Radio.Button>
-            <Radio.Button value="PUT">PUT</Radio.Button>
-            <Radio.Button value="PATCH">PATCH</Radio.Button>
-            <Radio.Button value="DELETE">DELETE</Radio.Button>
-          </Radio.Group>
-        </Form.Item>
-        <Form.Item label="消息体">
-          <Input.TextArea
-            rows={4}
-            value={debugData.payload}
-            onChange={e => {
-              debugData.payload = e.target.value;
-              setDebugData({ ...debugData });
-            }}
-          />
-        </Form.Item>
-        <Form.Item label="数据类型">
-          <Select
-            defaultValue={debugData.payloadType}
-            onChange={(e: string) => {
-              debugData.payloadType = e;
-              setDebugData({ ...debugData });
-            }}
-          >
-            <Select.Option value="JSON">JSON</Select.Option>
-            <Select.Option value="BINARY">二进制</Select.Option>
-            <Select.Option value="STRING">字符串</Select.Option>
-            <Select.Option value="HEX">16进制</Select.Option>
-          </Select>
         </Form.Item>
         <Divider>调试日志</Divider>
-        <Input.TextArea rows={4} value={logs} />
+        <div style={{ height: 350, overflow: 'auto' }}>
+          <pre>{logs.join('\n')}</pre>
+        </div>
       </Form>
     </Modal>
   );

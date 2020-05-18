@@ -49,19 +49,13 @@ const Save: React.FC<Props> = props => {
   const [typeList, setTypeList] = useState(initState.typeList);
   const [emailEditor, setEmailEditor] = useState(initState.emailEditor);
   const [fileList, setFileList] = useState(initState.fileList);
+  const [provider, setProvider] = useState<string>('');
 
   const uploadProps: UploadProps = {
     action: '/jetlinks/file/static',
     headers: {
       'X-Access-Token': getAccessToken(),
     },
-    // defaultFileList: [{
-    //   uid: "rc-upload-1582637182226-4",
-    //   name: "规则模型-新建模型.json",
-    //   url: "http://2.jetlinks.org:9000/upload/20200225/1232295983619620864.json",
-    //   size: 100, type: 'JSON'
-    // }],
-
     defaultFileList: (props.data.template && JSON.parse(props.data.template).attachments) || [],
     // showUploadList: false,
     onChange(info) {
@@ -97,6 +91,9 @@ const Save: React.FC<Props> = props => {
   const renderConfig = () => {
     const { type } = item;
     const template = item.template ? JSON.parse(item.template) : {};
+    const typeMap = new Map();
+    typeMap.set('HTTP_CLIENT', 'POST http://[host]:[port]/api\nContent-Type: application/json\n\n${T(com.alibaba.fastjson.JSON).toJSONString(#this)}');
+    typeMap.set('MQTT_CLIENT', 'qos1 /device/${#deviceId}\n${T(com.alibaba.fastjson.JSON).toJSONString(#this)}');
     switch (type) {
       case 'sms':
         return (
@@ -238,6 +235,16 @@ const Save: React.FC<Props> = props => {
             </Form.Item>
           </div>
         );
+      case 'network':
+        return (
+          <div>
+            <Form.Item label="消息">
+              {getFieldDecorator('template.text', {
+                initialValue: template.text || typeMap.get(provider) || '',
+              })(<Input.TextArea rows={6} />)}
+            </Form.Item>
+          </div>
+        )
       default:
         return null;
     }
@@ -302,7 +309,7 @@ const Save: React.FC<Props> = props => {
                 rules: [{ required: true, message: '请选择服务商' }],
                 initialValue: item.provider,
               })(
-                <Select>
+                <Select onChange={e => setProvider(e)}>
                   {(typeList.find(i => i.id === item.type)?.providerInfos || []).map((e: any) => (
                     <Select.Option key={e.id} value={e.id}>
                       {e.name}

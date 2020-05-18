@@ -9,6 +9,7 @@ import { CertificateItem } from './data.d';
 import { Dispatch, ConnectState } from '@/models/connect';
 import encodeQueryParam from '@/utils/encodeParam';
 import Save from './save';
+import SearchForm from '@/components/SearchForm';
 
 interface Props {
   certificate: any;
@@ -122,14 +123,35 @@ const CertificateList: React.FC<Props> = props => {
     <PageHeaderWrapper title="证书管理">
       <Card bordered={false}>
         <div className={styles.tableList}>
-          {/* <div className={styles.tableListForm}> */}
-          <Search
+          {/* <Search
             search={(params: any) => {
               setSearchParam(params);
               handleSearch({ terms: params, pageSize: 10 });
             }}
+          /> */}
+
+          <SearchForm
+            search={(params: any) => {
+              setSearchParam(params);
+              handleSearch({ terms: params, pageSize: 10 });
+            }}
+            formItems={[
+              {
+                label: '名称',
+                key: 'name$LIKE',
+                type: 'string'
+              },
+              {
+                label: '类型',
+                key: 'instance$IN',
+                type: 'list',
+                props: {
+                  mode: 'multiple',
+                  data: ['PFX', 'JKS', 'PEM']
+                }
+              },
+            ]}
           />
-          {/* </div> */}
           <div className={styles.tableListOperator}>
             <Button
               icon="plus"

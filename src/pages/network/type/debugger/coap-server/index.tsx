@@ -1,9 +1,7 @@
-import { Modal, Button, Divider, Form, Input, Select } from 'antd';
+import { Modal, Button, Divider, Form, Input } from 'antd';
 
 import React, { Fragment, useState } from 'react';
-import { getAccessToken } from '@/utils/authority';
-import { wrapAPI } from '@/utils/utils';
-import { EventSourcePolyfill } from 'event-source-polyfill';
+import { getWebsocket } from '@/layouts/GlobalWebSocket';
 
 interface Props {
   close: Function;
@@ -31,33 +29,29 @@ const CoapServer: React.FC<Props> = props => {
     },
   };
   const [logs, setLogs] = useState(initState.logs);
-  const [debugData, setDebugData] = useState(initState.debugData);
-  const [sourceState, setSourceState] = useState<any>();
+  const [debugData, setDebugData] = useState<string>(localStorage.getItem('coap-server-debug-data') || 'CREATE 2.02\nContent-Format: application/json\n\n{"success":true}');
+  const [subs, setSubs] = useState<any>();
 
   const debug = () => {
     logs.push('开始调试');
     setLogs([...logs]);
 
-    const eventSource = new EventSourcePolyfill(
-      wrapAPI(
-        `/jetlinks/network/coap/server/${item.id}/_subscribe?options=${debugData.options}&payload=${
-        debugData.payload
-        }&code=CONTENT&payloadType=${debugData.payloadType}&:X_Access_Token=${getAccessToken()}`,
-      ),
+    if (subs) {
+      subs.unsubscribe()
+    }
+    const ws = getWebsocket(
+      `coap-server-debug`,
+      `/network/coap/server/${item.id}/_subscribe`,
+      {
+        request: debugData
+      }
+    ).subscribe(
+      (resp: any) => {
+        const { payload } = resp;
+        setLogs(l => [...l, payload, '\n']);
+      }
     );
-    setSourceState(eventSource);
-    eventSource.onerror = () => {
-      setLogs([...logs, '断开连接']);
-    };
-    eventSource.onmessage = e => {
-      // 追加日志
-      // message.success(e.data);
-      setLogs(l => [...l, e.data]);
-    };
-    eventSource.onopen = () => {
-      // setLogs(`${logs}开启推送`);
-      // message.error('关闭链接');
-    };
+    setSubs(ws);
   };
   return (
     <Modal
@@ -81,7 +75,7 @@ const CoapServer: React.FC<Props> = props => {
             onClick={() => {
               logs.push('结束调试');
               setLogs([...logs]);
-              if (sourceState) sourceState.close();
+              if (subs) subs.unsubscribe();
             }}
           >
             结束
@@ -100,39 +94,15 @@ const CoapServer: React.FC<Props> = props => {
       }
     >
       <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
-        <Form.Item label="数据类型">
-          <Select
-            defaultValue={debugData.payloadType}
-            onChange={(e: string) => {
-              debugData.payloadType = e;
-              setDebugData({ ...debugData });
-            }}
-          >
-            <Select.Option value="JSON">JSON</Select.Option>
-            <Select.Option value="BINARY">二进制</Select.Option>
-            <Select.Option value="STRING">字符串</Select.Option>
-            <Select.Option value="HEX">16进制</Select.Option>
-          </Select>
-        </Form.Item>
-        <Form.Item label="回复内容">
-          <Input
-            value={debugData.payload}
-            onChange={e => {
-              debugData.payload = e.target.value;
-              setDebugData({ ...debugData });
-            }}
-            placeholder="自动回复的内容"
-          />
-        </Form.Item>
-        <Form.Item label="Option">
+        <Form.Item label="CoAP请求">
           <Input.TextArea
-            value={debugData.options}
+            rows={8}
             onChange={e => {
-              debugData.options = e.target.value;
-              setDebugData({ ...debugData });
+              setDebugData(e.target.value);
+              localStorage.setItem('coap-server-debug-data', e.target.value);
             }}
-            rows={3}
-            placeholder="e.g.option: value 以换行符分割"
+            value={debugData}
+
           />
         </Form.Item>
         <Divider>调试日志</Divider>

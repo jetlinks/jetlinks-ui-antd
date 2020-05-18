@@ -4,13 +4,13 @@ import { UserItem } from './data';
 import { Button, Card, Divider, message, Modal, Popconfirm, Table, Tag } from 'antd';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import styles from '@/utils/table.less';
-import Search from './search';
 import { ConnectState, Dispatch } from '@/models/connect';
 import { connect } from 'dva';
 import encodeQueryParam from '@/utils/encodeParam';
 import Save from './save';
 import Authorization from '@/components/Authorization';
 import apis from '@/services';
+import SearchForm from '@/components/SearchForm';
 
 interface Props {
     users: any;
@@ -27,10 +27,10 @@ interface State {
     autzVisible: boolean;
 }
 
-const UserList: React.FC<Props> = (props) => {
+const UserList: React.FC<Props> = props => {
 
     const { dispatch } = props;
-    const result = props.users.result;
+    const { result } = props.users;
 
     const initState: State = {
         data: result,
@@ -69,54 +69,33 @@ const UserList: React.FC<Props> = (props) => {
                     <a onClick={() => setting(record)}>赋权</a>
                     <Divider type="vertical" />
                     {record.status !== 1 ? (
-                      <span>
-                        <Popconfirm
-                          title= "确认启用此用户？"
-                          onConfirm={() => {
-                            enableOrDisable(record);
-                          }}
-                        >
-                        <a>启用</a>
-                      </Popconfirm>
-                        <Divider type="vertical" />
-                        <a onClick={() => handleDelete(record)}>删除</a>
-                      </span>
+                        <span>
+                            <Popconfirm
+                                title="确认启用此用户？"
+                                onConfirm={() => {
+                                    enableOrDisable(record);
+                                }}
+                            >
+                                <a>启用</a>
+                            </Popconfirm>
+                            <Divider type="vertical" />
+                            <a onClick={() => handleDelete(record)}>删除</a>
+                        </span>
                     ) : (
-                      <Popconfirm
-                        title= "确认禁用此用户？"
-                        onConfirm={() => {
-                          enableOrDisable(record);
-                        }}
-                      >
-                        <a>禁用</a>
-                      </Popconfirm>
-                    )}
-                  </Fragment>
+                            <Popconfirm
+                                title="确认禁用此用户？"
+                                onConfirm={() => {
+                                    enableOrDisable(record);
+                                }}
+                            >
+                                <a>禁用</a>
+                            </Popconfirm>
+                        )}
+                </Fragment>
             ),
         },
     ];
 
-    useEffect(() => {
-        handleSearch(searchParam);
-    }, []);
-
-    const enableOrDisable = (record: UserItem)=>{
-      apis.users.saveOrUpdate(
-        {id:record.id,status:record.status===1?0:1}
-        ).then(res => {
-          if (res.status === 200) {
-            if (record.status === 1){
-              message.success("禁用成功");
-            }else{
-              message.success("启用成功");
-            }
-            handleSearch(searchParam);
-          } else {
-            message.error(`操作失败，${res.message}`)
-          }
-        }
-      ).catch(() => {});
-    };
 
     const handleSearch = (params?: any) => {
         dispatch({
@@ -124,6 +103,29 @@ const UserList: React.FC<Props> = (props) => {
             payload: encodeQueryParam(params)
         });
     };
+
+    useEffect(() => {
+        handleSearch(searchParam);
+    }, []);
+
+    const enableOrDisable = (record: UserItem) => {
+        apis.users.saveOrUpdate(
+            { id: record.id, status: record.status === 1 ? 0 : 1 }
+        ).then(res => {
+            if (res.status === 200) {
+                if (record.status === 1) {
+                    message.success("禁用成功");
+                } else {
+                    message.success("启用成功");
+                }
+                handleSearch(searchParam);
+            } else {
+                message.error(`操作失败，${res.message}`)
+            }
+        }
+        ).catch(() => { });
+    };
+
 
     const edit = (record: UserItem) => {
         setCurrentItem(record);
@@ -145,7 +147,7 @@ const UserList: React.FC<Props> = (props) => {
                     handleSearch(searchParam);
                     setCurrentItem({})
                 } else {
-                  message.error(`添加失败，${response.message}`);
+                    message.error(`添加失败，${response.message}`);
                 }
             }
         })
@@ -161,12 +163,12 @@ const UserList: React.FC<Props> = (props) => {
                     type: 'users/remove',
                     payload: params.id,
                     callback: response => {
-                      if (response.status === 200){
-                        message.success("删除成功");
-                        handleSearch(searchParam);
-                      } else {
-                        message.error("删除失败");
-                      }
+                        if (response.status === 200) {
+                            message.success("删除成功");
+                            handleSearch(searchParam);
+                        } else {
+                            message.error("删除失败");
+                        }
                     }
                 });
             },
@@ -190,10 +192,28 @@ const UserList: React.FC<Props> = (props) => {
             <Card bordered={false}>
                 <div className={styles.tableList}>
                     <div >
-                        <Search search={(params: any) => {
+                        <SearchForm
+                            search={(params: any) => {
+                                setSearchParam(params);
+                                handleSearch({ terms: params, pageSize: 10 })
+                            }}
+                            formItems={[
+                                {
+                                    label: "姓名",
+                                    key: "name$LIKE",
+                                    type: 'string'
+                                },
+                                {
+                                    label: "用户名",
+                                    key: "username$LIKE",
+                                    type: 'string'
+                                },
+                            ]}
+                        />
+                        {/* <Search search={(params: any) => {
                             setSearchParam(params);
                             handleSearch({ terms: params, pageSize: 10 })
-                        }} />
+                        }} /> */}
                     </div>
                     <div className={styles.tableListOperator}>
                         <Button icon="plus" type="primary" onClick={() => { setSaveVisible(true) }}>
@@ -205,7 +225,7 @@ const UserList: React.FC<Props> = (props) => {
                             loading={props.loading}
                             dataSource={(result || {}).data}
                             columns={columns}
-                            rowKey={'id'}
+                            rowKey="id"
                             onChange={onTableChange}
                             pagination={{
                                 current: result.pageIndex + 1,
@@ -214,9 +234,7 @@ const UserList: React.FC<Props> = (props) => {
                                 showQuickJumper: true,
                                 showSizeChanger: true,
                                 pageSizeOptions: ['10', '20', '50', '100'],
-                                showTotal: (total: number) => {
-                                    return `共 ${total} 条记录 第  ` + (result.pageIndex + 1) + '/' + Math.ceil(result.total / result.pageSize) + '页';
-                                }
+                                showTotal: (total: number) => `共 ${total} 条记录 第  ${result.pageIndex + 1}/${Math.ceil(result.total / result.pageSize)}页`
                             }}
                         />
                     </div>

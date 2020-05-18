@@ -38,7 +38,7 @@ const Save: React.FC<Props> = props => {
           setSupportsType(response.result || []);
         }
       })
-      .catch(() => {});
+      .catch(() => { });
     apis.certificate
       .listNoPaging({ paging: false })
       .then(response => {
@@ -46,7 +46,7 @@ const Save: React.FC<Props> = props => {
           setCertificateList(response.result || []);
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   const renderTcpServerParse = () => {
@@ -304,20 +304,20 @@ const Save: React.FC<Props> = props => {
       case 'COAP_SERVER':
         return (
           <div>
-            <Form.Item label="address">
+            <Form.Item label="本地IP">
               {getFieldDecorator('configuration.address', {
-                initialValue: props.data?.configuration?.address,
-              })(<Input />)}
+                initialValue: props.data?.configuration?.address || '0.0.0.0',
+              })(<Input placeholder="0.0.0.0" />)}
             </Form.Item>
-            <Form.Item label="PORT">
+            <Form.Item label="端口">
               {getFieldDecorator('configuration.port', {
                 initialValue: props.data?.configuration?.port,
               })(<Input />)}
             </Form.Item>
 
-            <Form.Item label="开启DTSL">
+            <Form.Item label="开启DTLS">
               {getFieldDecorator('configuration.enableDtls', {
-                initialValue: props.data?.configuration?.enableDtls,
+                initialValue: props.data?.configuration?.enableDtls || false,
               })(
                 <Radio.Group>
                   <Radio value>是</Radio>

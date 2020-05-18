@@ -24,7 +24,7 @@ const Paramter: React.FC<Props> = props => {
     dataType: props.data.valueType?.type || '',
     parameterVisible: false,
     data: { ...props.data },
-    enumData: props.data.valueType?.properties || [{ text: '', value: '', id: 0 }],
+    enumData: props.data.valueType?.elements || [{ text: '', value: '', id: 0 }],
     currentParameter: {},
   };
   const [dataType, setDataType] = useState(initState.dataType);
@@ -337,7 +337,7 @@ const Paramter: React.FC<Props> = props => {
                   setData({ ...data });
                 }}
               >
-                <Radio value="int32">int32</Radio>
+                <Radio value="int">int32</Radio>
                 <Radio value="float">float</Radio>
                 <Radio value="double">double</Radio>
                 <Radio value="string">text</Radio>
@@ -526,7 +526,7 @@ const Paramter: React.FC<Props> = props => {
   function saveData() {
     // 递归保存数据
     if (data.valueType.type === 'enum') {
-      data.valueType.properties = enumData;
+      data.valueType.elements = enumData;
     }
     props.save(data);
     message.success('保存成功');

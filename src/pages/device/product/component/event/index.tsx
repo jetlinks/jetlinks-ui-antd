@@ -31,7 +31,7 @@ const EventDefin: React.FC<Props> = props => {
     current: {},
     data: props.data || {},
     dataType: props.data.valueType?.type || '',
-    enumData: props.data.valueType?.properties || [{ text: '', value: '', id: 0 }],
+    enumData: props.data.valueType?.elements || [{ text: '', value: '', id: 0 }],
     properties: props.data.valueType?.properties || [],
     parameterVisible: false,
     currentParameter: {},
@@ -67,7 +67,7 @@ const EventDefin: React.FC<Props> = props => {
       if (type === 'object') {
         data.valueType.properties = properties;
       } else if (type === 'enum') {
-        data.valueType.properties = enumData;
+        data.valueType.elements = enumData;
       }
       props.save({ ...data });
     });
@@ -264,7 +264,7 @@ const EventDefin: React.FC<Props> = props => {
                 initialValue: initState.data.valueType?.elementType,
               })(
                 <Radio.Group>
-                  <Radio value="int32">int32(整数型)</Radio>
+                  <Radio value="int">int32(整数型)</Radio>
                   <Radio value="float">float(单精度）</Radio>
                   <Radio value="double">double(双精度)</Radio>
                   <Radio value="string">text(字符串)</Radio>

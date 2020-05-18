@@ -3,6 +3,7 @@ import { Chart, Axis, Coord, Geom, Guide } from 'bizcharts';
 import { ComponentProps } from '..';
 import { message } from 'antd';
 import apis from '@/services';
+import { getWebsocket } from '@/layouts/GlobalWebSocket';
 
 const { Html, Arc } = Guide;
 interface Props extends ComponentProps {
@@ -49,20 +50,39 @@ const GaugeChart = (props: Props) => {
 
     useEffect(() => {
         // 获取数据
-        const params = [{
-            "dashboard": 'device',
-            "object": props.productId,
-            "measurement": props.config.measurement, // 物模型属性ID
-            "dimension": 'history', // 固定
-            "params": { "history": 1, "deviceId": props.deviceId }
-        }];
-        apis.visualization.getDashboardData(params).then(response => {
-            if (response.status === 200) {
-                const { result } = response;
-                const tempData = result.map((item: any) => ({ value: item.data.value.value, formatValue: item.data.value.formatValue }));
-                setData(tempData);
-            }
-        })
+        const { dimension } = props.config;
+        let subs: any;
+        if (dimension === 'history') {
+            const params = [{
+                "dashboard": 'device',
+                "object": props.productId,
+                "measurement": props.config.measurement, // 物模型属性ID
+                "dimension": 'history', // 固定
+                "params": { "history": 1, "deviceId": props.deviceId }
+            }];
+            apis.visualization.getDashboardData(params).then(response => {
+                if (response.status === 200) {
+                    const { result } = response;
+                    const tempData = result.map((item: any) => ({ value: item.data.value.value, formatValue: item.data.value.formatValue }));
+                    setData(tempData);
+                }
+            })
+        } else {
+            subs = getWebsocket(
+                `${props.id}-${props.productId}-${props.deviceId}-${props.config.measurement}`,
+                `/dashboard/device/${props.productId}/${props.config.measurement}/realTime`,
+                {
+                    "deviceId": props.deviceId,
+                    "history": props.config.history
+                }
+            ).subscribe(
+                (resp: any) => {
+                    const { payload } = resp;
+                    setData([{ formatValue: payload.value.formatValue, value: payload.value.value }]);
+                }
+            );
+        }
+        return () => subs && subs.unsubscribe();
     }, []);
 
     return (

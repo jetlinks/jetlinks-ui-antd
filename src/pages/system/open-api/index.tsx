@@ -7,10 +7,10 @@ import { Button, Card, Divider, message, Popconfirm, Table, Tag } from 'antd';
 import { OpenApiItem } from './data';
 import encodeQueryParam from '@/utils/encodeParam';
 import styles from '@/utils/table.less';
-import Search from './Search';
 import Save from './Save';
 import Authorization from '@/components/Authorization';
 import apis from '@/services';
+import SearchForm from '@/components/SearchForm';
 
 interface Props {
   openApi: any;
@@ -93,16 +93,16 @@ const OpenApiList: React.FC<Props> = props => {
           {record.status.value !== 1 ? (
             <span>
               <Popconfirm
-                title= "确认启用？"
+                title="确认启用？"
                 onConfirm={() => {
                   enableOrDisable(record);
                 }}
               >
-              <a>启用</a>
+                <a>启用</a>
               </Popconfirm>
               <Divider type="vertical" />
               <Popconfirm
-                title= "确认删除？"
+                title="确认删除？"
                 onConfirm={() => {
                   removeOpenApi(record.id);
                 }}
@@ -111,15 +111,15 @@ const OpenApiList: React.FC<Props> = props => {
               </Popconfirm>
             </span>
           ) : (
-            <Popconfirm
-              title= "确认禁用？"
-              onConfirm={() => {
-                enableOrDisable(record);
-              }}
-            >
-              <a>禁用</a>
-            </Popconfirm>
-          )}
+              <Popconfirm
+                title="确认禁用？"
+                onConfirm={() => {
+                  enableOrDisable(record);
+                }}
+              >
+                <a>禁用</a>
+              </Popconfirm>
+            )}
         </Fragment>
       ),
     },
@@ -136,36 +136,37 @@ const OpenApiList: React.FC<Props> = props => {
     handleSearch(searchParam);
   }, []);
 
-  const enableOrDisable = (record: OpenApiItem)=>{
+  const enableOrDisable = (record: OpenApiItem) => {
     apis.openApi.update(
       {
-        id : record.id,
-        status : record.status.value === 1 ? 0 : 1 }
-    ).then((res:any) => {
-        if (res.status === 200) {
-          if (record.status.value === 1){
-            message.success("禁用成功");
-          }else{
-            message.success("启用成功");
-          }
-          handleSearch(searchParam);
-        } else {
-          message.error(`操作失败，${res.message}`)
-        }
+        id: record.id,
+        status: record.status.value === 1 ? 0 : 1
       }
-    ).catch(() => {});
+    ).then((res: any) => {
+      if (res.status === 200) {
+        if (record.status.value === 1) {
+          message.success("禁用成功");
+        } else {
+          message.success("启用成功");
+        }
+        handleSearch(searchParam);
+      } else {
+        message.error(`操作失败，${res.message}`)
+      }
+    }
+    ).catch(() => { });
   };
 
-  const removeOpenApi = (id: string)=>{
-    apis.openApi.remove( id ).then(res => {
-        if (res.status === 200) {
-            message.success("删除成功");
-          handleSearch(searchParam);
-        } else {
-          message.error(`操作失败，${res.message}`)
-        }
+  const removeOpenApi = (id: string) => {
+    apis.openApi.remove(id).then(res => {
+      if (res.status === 200) {
+        message.success("删除成功");
+        handleSearch(searchParam);
+      } else {
+        message.error(`操作失败，${res.message}`)
       }
-    ).catch(() => {});
+    }
+    ).catch(() => { });
   };
 
   const saveOrUpdate = (user: OpenApiItem) => {
@@ -173,7 +174,7 @@ const OpenApiList: React.FC<Props> = props => {
       type: 'openApi/insert',
       payload: encodeQueryParam(user),
       callback: res => {
-        if (res.status === 200){
+        if (res.status === 200) {
           message.success('保存成功');
           setSaveVisible(false);
           handleSearch(searchParam);
@@ -202,11 +203,21 @@ const OpenApiList: React.FC<Props> = props => {
       <Card bordered={false}>
         <div className={styles.tableList}>
           <div className={styles.tableListForm}>
-            <Search
+            <SearchForm
               search={(params: any) => {
                 setSearchParam(params);
                 handleSearch({ terms: params, pageSize: 10 });
               }}
+              formItems={[{
+                label: "名称",
+                key: "name$LIKE",
+                type: 'string',
+              },
+              {
+                label: "标识",
+                key: "id$LIKE",
+                type: 'string'
+              }]}
             />
           </div>
           <div className={styles.tableListOperator}>

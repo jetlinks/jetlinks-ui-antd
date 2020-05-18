@@ -11,6 +11,7 @@ import encodeQueryParam from '@/utils/encodeParam';
 import RuleFlow from '../flow';
 import apis from '@/services';
 import { downloadObject } from '@/utils/utils';
+import SearchForm from '@/components/SearchForm';
 
 interface Props {
   ruleModel: any;
@@ -79,7 +80,7 @@ const RuleModelList: React.FC<Props> = props => {
           handleSearch(searchParam);
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   };
 
   const saveOrUpdate = (item: RuleModelItem) => {
@@ -165,12 +166,21 @@ const RuleModelList: React.FC<Props> = props => {
       <Card bordered={false}>
         <div className={styles.tableList}>
           <div>
-            <Search
+
+            <SearchForm
+              formItems={[
+                {
+                  label: '名称',
+                  key: 'name$LIKE',
+                  type: 'string'
+                },
+              ]}
               search={(params: any) => {
                 setSearchParam(params);
                 handleSearch({ terms: params, pageSize: 10 });
               }}
             />
+
           </div>
           <div className={styles.tableListOperator}>
             <Button

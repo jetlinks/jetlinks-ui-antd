@@ -219,7 +219,7 @@ export default {
                 },
                 {
                   path: '/device/location',
-                  name: '位置查询',
+                  name: '地理位置',
                   authority: ['geo-manager'],
                   component: './device/location',
                 },

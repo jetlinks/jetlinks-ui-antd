@@ -3,6 +3,7 @@ import { Chart, Geom, Axis, Tooltip, Legend } from 'bizcharts';
 import { message } from 'antd';
 import { ComponentProps } from '..';
 import apis from '@/services';
+import { getWebsocket } from '@/layouts/GlobalWebSocket';
 
 interface Props extends ComponentProps {
     config: any;
@@ -25,8 +26,17 @@ const ColumnCharts = (props: Props) => {
     }, [props.ySize]);
 
     const defaultCols = {
-        sold: { alias: config.x || '销售量' },
-        genre: { alias: config.y || '游戏种类' }
+        sold: {
+            alias: config.x || '销售量',
+            // range: [0, 1],
+            tickCount: (config.history && config.history > 9) ? Math.ceil(config.history / 2) : 10,
+        },
+        genre: {
+            alias: config.y || '游戏种类',
+            type: "cat",
+            range: [1 / (config.history - 1), 1 - 1 / (config.history - 1)],
+            tickCount: 5,
+        }
     }
 
     useEffect(() => {
@@ -46,21 +56,23 @@ const ColumnCharts = (props: Props) => {
     useEffect(() => {
         // 获取数据
         let params: any[] = [];
-        if (props.config.dimension === 'history') {
+        let subs: any;
+        const { dimension } = props.config;
+        if (dimension === 'history') {
             params = [{
                 "dashboard": 'device',
                 "object": props.productId,
                 "measurement": "temperature", // 物模型属性ID
-                "dimension": props.config.dimension, // 固定
-                "params": { "history": 10, "deviceId": props.deviceId }
+                "dimension": dimension, // 固定
+                "params": { "history": config.history, "deviceId": props.deviceId }
             }];
 
-        } else if (props.config.dimension === 'agg') {
+        } else if (dimension === 'agg') {
             params = [{
                 "dashboard": 'device',
                 "object": props.productId,
                 "measurement": "temperature", // 物模型属性ID
-                "dimension": props.config.dimension, // 固定
+                "dimension": dimension, // 固定
                 "params": {
                     "limit": props.config.limit,
                     "deviceId": props.deviceId,
@@ -71,9 +83,25 @@ const ColumnCharts = (props: Props) => {
                     "to": props.config.to // 时间止,不填就是当前时间.
                 }
             }];
+        } else if (dimension === 'realTime') {
+            subs = getWebsocket(
+                `${props.id}-${props.productId}-${props.deviceId}-${props.config.measurement}`,
+                `/dashboard/device/${props.productId}/${props.config.measurement}/realTime`,
+                {
+                    "deviceId": props.deviceId,
+                    "history": props.config.history
+                }
+            ).subscribe(
+                (resp: any) => {
+                    const { payload } = resp;
+                    data.push({ genre: payload.timestamp, sold: payload.value.value });
+                    if (data.length > props.config.history) data.shift();
+                    setData([...data]);
+                }
+            );
         }
 
-        if (props.config.dimension) {
+        if (dimension !== 'realTime') {
             apis.visualization.getDashboardData(params).then(response => {
                 if (response.status === 200) {
                     const { result } = response;
@@ -82,13 +110,24 @@ const ColumnCharts = (props: Props) => {
                 }
             });
         }
-
+        return () => subs && subs.unsubscribe();
     }, []);
     return (
-        <Chart height={height} data={data} scale={defaultCols} forceFit>
-            <Axis name="genre" title />
+        <Chart
+            height={height}
+            data={data}
+            renderer='svg'
+            scale={defaultCols}
+            forceFit>
+            <Axis name="genre" title
+                label={{
+                    autoRotate: true,
+                    formatter(text) {
+                        return text;
+                    },
+                }} />
             <Axis name="sold" title />
-            <Legend position="top" />
+            {/* <Legend position="top" /> */}
             <Tooltip />
             <Geom type="interval" position="genre*sold" color="genre" />
         </Chart>

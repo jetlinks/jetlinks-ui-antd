@@ -8,7 +8,7 @@ export interface ProtocolItem {
   configuration: {
     provider?: string;
     location?: string;
-    transport?: string[];
+    transport?: string;
     lang?: string;
     protocol?: string;
     script?: string

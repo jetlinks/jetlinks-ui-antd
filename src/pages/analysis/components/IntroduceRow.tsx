@@ -10,6 +10,7 @@ import { wrapAPI } from '@/utils/utils';
 import { getAccessToken } from '@/utils/authority';
 import apis from '@/services';
 import moment from 'moment';
+import { getWebsocket } from '@/layouts/GlobalWebSocket';
 
 
 const { ChartCard, MiniArea, MiniBar, Field } = Charts;
@@ -34,7 +35,7 @@ const topColResponsiveProps = {
   style: { marginBottom: 24 },
 };
 
-const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVisitData[]}) => {
+const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVisitData[] }) => {
   const initState: State = {
     cpu: 0,
     memoryMax: 0,
@@ -43,7 +44,7 @@ const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVi
     sameDay: 0,
     month: 0,
     metadata: {},
-    eventData: []
+    eventData: [],
   };
 
   const [cpu, setCpu] = useState(initState.cpu);
@@ -70,47 +71,47 @@ const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVi
   const deviceMessage = () => {
     const list = [
       {
-        "dashboard": "device",
-        "object": "message",
-        "measurement": "quantity",
-        "dimension": "agg",
-        "group": "sameDay",
-        "params": {
-          "time": "1d",
-          "format": "yyyy-MM-dd",
-        }
+        'dashboard': 'device',
+        'object': 'message',
+        'measurement': 'quantity',
+        'dimension': 'agg',
+        'group': 'sameDay',
+        'params': {
+          'time': '1d',
+          'format': 'yyyy-MM-dd',
+        },
       },
       {
-        "dashboard": "device",
-        "object": "message",
-        "measurement": "quantity",
-        "dimension": "agg",
-        "group": "sameMonth",
-        "params": {
-          "limit": 30,
-          "time": "1d",
-          "format": "yyyy-MM-dd",
-          "from": calculationDate()
-        }
+        'dashboard': 'device',
+        'object': 'message',
+        'measurement': 'quantity',
+        'dimension': 'agg',
+        'group': 'sameMonth',
+        'params': {
+          'limit': 30,
+          'time': '1d',
+          'format': 'yyyy-MM-dd',
+          'from': calculationDate(),
+        },
       },
       {
-        "dashboard": "device",
-        "object": "message",
-        "measurement": "quantity",
-        "dimension": "agg",
-        "group": "month",
-        "params": {
-          "time": "1M",
-          "format": "yyyy-MM-dd",
-          "from": calculationDate()
-        }
-      }
+        'dashboard': 'device',
+        'object': 'message',
+        'measurement': 'quantity',
+        'dimension': 'agg',
+        'group': 'month',
+        'params': {
+          'time': '1M',
+          'format': 'yyyy-MM-dd',
+          'from': calculationDate(),
+        },
+      },
     ];
     apis.analysis.getMulti(list)
       .then((response: any) => {
         const tempResult = response?.result;
         if (response.status === 200) {
-          tempResult.forEach((item:any) => {
+          tempResult.forEach((item: any) => {
             switch (item.group) {
               case 'sameDay':
                 setSameDay(item.data.value);
@@ -121,8 +122,8 @@ const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVi
               case 'sameMonth':
                 messageData.push(
                   {
-                    "x": moment(new Date(item.data.timeString)).format('YYYY-MM-DD'),
-                    "y": Number(item.data.value)
+                    'x': moment(new Date(item.data.timeString)).format('YYYY-MM-DD'),
+                    'y': Number(item.data.value),
                   });
                 break;
               default:
@@ -137,56 +138,56 @@ const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVi
     const list = [
       // 设备状态信息-在线
       {
-        "dashboard": "device",
-        "object": "status",
-        "measurement": "record",
-        "dimension": "current",
-        "group": "deviceOnline",
-        "params": {
-          "state": "online"
-        }
+        'dashboard': 'device',
+        'object': 'status',
+        'measurement': 'record',
+        'dimension': 'current',
+        'group': 'deviceOnline',
+        'params': {
+          'state': 'online',
+        },
       },// 设备状态信息-总数
       {
-        "dashboard": "device",
-        "object": "status",
-        "measurement": "record",
-        "dimension": "current",
-        "group": "deviceCount",
+        'dashboard': 'device',
+        'object': 'status',
+        'measurement': 'record',
+        'dimension': 'current',
+        'group': 'deviceCount',
       },// 设备状态信息-未激活
       {
-        "dashboard": "device",
-        "object": "status",
-        "measurement": "record",
-        "dimension": "current",
-        "group": "deviceNotActive",
-        "params": {
-          "state": "notActive"
-        }
+        'dashboard': 'device',
+        'object': 'status',
+        'measurement': 'record',
+        'dimension': 'current',
+        'group': 'deviceNotActive',
+        'params': {
+          'state': 'notActive',
+        },
       },// 设备状态信息-历史在线
       {
-        "dashboard": "device",
-        "object": "status",
-        "measurement": "record",
-        "dimension": "aggOnline",
-        "group": "aggOnline",
-        "params": {
-          "limit": 20,
-          "time": "1d",
-          "format": "yyyy-MM-dd"
-        }
-      }
+        'dashboard': 'device',
+        'object': 'status',
+        'measurement': 'record',
+        'dimension': 'aggOnline',
+        'group': 'aggOnline',
+        'params': {
+          'limit': 20,
+          'time': '1d',
+          'format': 'yyyy-MM-dd',
+        },
+      },
     ];
     apis.analysis.getMulti(list)
       .then((response: any) => {
         const tempResult = response?.result;
         if (response.status === 200) {
-          tempResult.forEach((item:any) => {
+          tempResult.forEach((item: any) => {
             switch (item.group) {
               case 'aggOnline':
                 visitData.push(
                   {
-                    "x": moment(new Date(item.data.timeString)).format('YYYY-MM-DD'),
-                    "y": Number(item.data.value)
+                    'x': moment(new Date(item.data.timeString)).format('YYYY-MM-DD'),
+                    'y': Number(item.data.value),
                   });
                 break;
               case 'deviceOnline':
@@ -209,54 +210,71 @@ const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVi
   useEffect(() => {
     deviceStatus();
     deviceMessage();
+    let cupSubs: any;
+    let jvmSubs: any;
 
     const list = [
       {
-        "dashboard": "jvmMonitor",
-        "object": "memory",
-        "measurement": "info",
-        "dimension": "realTime",
-        "group": "memory",
-        "params": {
-          "history": 1
-        }
+        'dashboard': 'jvmMonitor',
+        'object': 'memory',
+        'measurement': 'info',
+        'dimension': 'realTime',
+        'group': 'memory',
+        'params': {
+          'history': 1,
+        },
       }, {
-        "dashboard": "systemMonitor",
-        "object": "cpu",
-        "measurement": "usage",
-        "dimension": "realTime",
-        "group": "cpu",
-        "params": {
-          "history": 1
-        }
-      }
+        'dashboard': 'systemMonitor',
+        'object': 'cpu',
+        'measurement': 'usage',
+        'dimension': 'realTime',
+        'group': 'cpu',
+        'params': {
+          'history': 1,
+        },
+      },
     ];
 
-    if (source) {
-      source.close();
-    }
-
-    source = new EventSourcePolyfill(
-      wrapAPI(`/jetlinks/dashboard/_multi?:X_Access_Token=${getAccessToken()}&requestJson=${encodeURI(JSON.stringify(list))}`)
+    cupSubs = getWebsocket(
+      `home-page-statistics-cpu-realTime`,
+      `/dashboard/systemMonitor/cpu/usage/realTime`,
+      {
+        params: {
+          'history': 1,
+        },
+      },
+    ).subscribe(
+      (resp: any) => {
+        const { payload } = resp;
+        if (resp.requestId === `home-page-statistics-cpu-realTime`) {
+          const dataValue = payload.value;
+          setCpu(dataValue);
+        }
+      },
     );
-    source.onmessage = (e:any) => {
-      const data = JSON.parse(e.data);
-      if (data.group === "cpu") {
-        setCpu(data.data.value);
-      } else if (data.group === "memory") {
-        setMemoryMax(data.data.value.max);
-        setMemoryUsed(data.data.value.used);
-      }
-    };
-    source.onerror = () => {
-    };
-    source.onopen = () => {
-    };
+
+    jvmSubs = getWebsocket(
+      `home-page-statistics-jvm-realTime`,
+      `/dashboard/jvmMonitor/memory/info/realTime`,
+      {
+        params: {
+          'history': 1,
+        },
+      },
+    ).subscribe(
+      (resp: any) => {
+        const { payload } = resp;
+        if (resp.requestId === `home-page-statistics-jvm-realTime`) {
+          const dataValue = payload.value;
+          setMemoryMax(dataValue.max);
+          setMemoryUsed(dataValue.used);
+        }
+      },
+    );
 
     return () => {
-      if (source) {
-        source.close();
-      }
+      cupSubs && cupSubs.unsubscribe();
+      jvmSubs && jvmSubs.unsubscribe();
     };
   }, []);
 
@@ -271,21 +289,23 @@ const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVi
             <Tooltip
               title='刷新'
             >
-              <Icon type="sync" onClick={() => { deviceStatus() }} />
+              <Icon type="sync" onClick={() => {
+                deviceStatus();
+              }}/>
             </Tooltip>
           }
           total={numeral(deviceOnline).format('0,0')}
           footer={
             <div style={{ whiteSpace: 'nowrap', overflow: 'hidden' }}>
               <Field style={{ marginRight: 80, float: 'left' }}
-                label={
-                  <FormattedMessage id="analysis.analysis.device-total" defaultMessage="设备总量" />
-                }
-                value={numeral(deviceCount).format('0,0')}
+                     label={
+                       <FormattedMessage id="analysis.analysis.device-total" defaultMessage="设备总量"/>
+                     }
+                     value={numeral(deviceCount).format('0,0')}
               />
               <Field
                 label={
-                  <FormattedMessage id="analysis.analysis.device-activation" defaultMessage="未激活设备" />
+                  <FormattedMessage id="analysis.analysis.device-activation" defaultMessage="未激活设备"/>
                 }
                 value={numeral(deviceNotActive).format('0,0')}
               />
@@ -293,7 +313,7 @@ const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVi
           }
           contentHeight={46}
         >
-          <MiniBar data={visitData} />
+          <MiniBar data={visitData}/>
         </ChartCard>
       </Col>
 
@@ -301,26 +321,28 @@ const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVi
         <ChartCard
           bordered={false}
           loading={loading}
-          title={<FormattedMessage id="analysis.analysis.device-day-visits" defaultMessage="日访消息量" />}
+          title={<FormattedMessage id="analysis.analysis.device-day-visits" defaultMessage="日访消息量"/>}
           action={
             <Tooltip
               title='刷新'
             >
-              <Icon type="sync" onClick={() => { deviceMessage() }} />
+              <Icon type="sync" onClick={() => {
+                deviceMessage();
+              }}/>
             </Tooltip>
           }
           total={numeral(sameDay).format('0,0')}
           footer={
             <Field
               label={
-                <FormattedMessage id="analysis.analysis.device-visits" defaultMessage="当月设备消息量" />
+                <FormattedMessage id="analysis.analysis.device-visits" defaultMessage="当月设备消息量"/>
               }
               value={numeral(month).format('0,0')}
             />
           }
           contentHeight={46}
         >
-          <MiniArea color="#975FE4" data={messageData} />
+          <MiniArea color="#975FE4" data={messageData}/>
         </ChartCard>
       </Col>
       <Col {...topColResponsiveProps}>
@@ -330,7 +352,7 @@ const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVi
           title='CPU使用率'
           contentHeight={120}
         >
-          <GaugeColor height={169} percent={cpu} />
+          <GaugeColor height={169} percent={cpu}/>
         </ChartCard>
       </Col>
       <Col {...topColResponsiveProps}>
@@ -340,7 +362,7 @@ const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVi
           title='JVM内存'
           contentHeight={120}
         >
-          <Gauge height={169} percent={memoryUsed} memoryMax={memoryMax} />
+          <Gauge height={169} percent={memoryUsed} memoryMax={memoryMax}/>
         </ChartCard>
       </Col>
     </Row>

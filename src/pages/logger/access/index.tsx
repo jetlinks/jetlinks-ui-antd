@@ -10,6 +10,7 @@ import { AccessLoggerItem } from './data.d';
 import { Dispatch, ConnectState } from '@/models/connect';
 import encodeQueryParam from '@/utils/encodeParam';
 import Save from './save';
+import SearchForm from '@/components/SearchForm';
 
 interface Props {
   accessLogger: any;
@@ -45,13 +46,14 @@ const AccessLoggerList: React.FC<Props> = props => {
     {
       title: '序号',
       dataIndex: 'id',
-      width: 60,
+      // width: 60,
       render: (text, record, index) => index + 1,
     },
 
     {
       title: 'IP',
       dataIndex: 'ip',
+      // ellipsis: true
     },
     // {
     //     title: '请求方法',
@@ -92,11 +94,12 @@ const AccessLoggerList: React.FC<Props> = props => {
       title: '请求时间',
       dataIndex: 'requestTime',
       sorter: true,
+      // ellipsis: true,
       render: text => moment(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '请求耗时',
-      width: 100,
+      // width: 100,
       render: (record: AccessLoggerItem) => (
         <Tag color="purple">{record.responseTime - record.requestTime}ms</Tag>
       ),
@@ -157,7 +160,7 @@ const AccessLoggerList: React.FC<Props> = props => {
       pageIndex: Number(pagination.current) - 1,
       pageSize: pagination.pageSize,
       terms: searchParam.terms,
-      sorts: sorter.field ? sorter :searchParam.sorter,
+      sorts: sorter.field ? sorter : searchParam.sorter,
     });
   };
 
@@ -166,11 +169,44 @@ const AccessLoggerList: React.FC<Props> = props => {
       <Card bordered={false}>
         <div className={styles.tableList}>
           <div>
-            <Search
+            <SearchForm
               search={(params: any) => {
                 setSearchParam(params);
                 handleSearch({ terms: params, pageSize: 10, sorts: searchParam.sorts });
               }}
+              formItems={[
+                {
+                  label: '请求路径',
+                  key: 'url$LIKE',
+                  type: 'string',
+                },
+                {
+                  label: 'IP',
+                  key: 'ip',
+                  type: 'string',
+                },
+
+                {
+                  label: '操作',
+                  key: 'action',
+                  type: 'string',
+                },
+                {
+                  label: '请求ID',
+                  key: 'id',
+                  type: 'string',
+                },
+                {
+                  label: '日志时间',
+                  key: 'requestTime$btw',
+                  type: 'dateTimeRange',
+                  props: {
+                    showTime: { format: 'HH:mm' },
+                    format: "YYYY-MM-DD HH:mm",
+                    placeholder: ['开始时间', '结束时间'],
+                  }
+                },
+              ]}
             />
           </div>
           <div className={styles.StandardTable}>

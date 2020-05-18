@@ -65,8 +65,9 @@ const Save: React.FC<Props> = props => {
       const { id } = props.data;
       const data = fileValue;
       if (data.type === 'script') {
-        data.configuration.lang = 'script';
+        data.configuration.lang = 'js';
         data.configuration.script = script;
+        data.configuration.transport = data.configuration.transport.join(',');
       }
       props.save({
         id,
@@ -152,7 +153,7 @@ const Save: React.FC<Props> = props => {
             <Col span={12}>
               <Form.Item key="transport" label="连接协议">
                 {getFieldDecorator('configuration.transport', {
-                  initialValue: props.data?.configuration?.transport,
+                  initialValue: props.data?.configuration?.transport?.split(","),
                   rules: [{ required: true, message: '请输入连接协议' }],
                 })(
                   <Select mode="multiple">
@@ -189,12 +190,12 @@ const Save: React.FC<Props> = props => {
     if (activeDebugger === 'debugger') {
       const data = form.getFieldsValue();
       if (data.type === 'script') {
-        data.configuration.lang = 'javascript';
+        data.configuration.lang = 'js';
         data.configuration.script = script;
         data.configuration.transport = data.configuration.transport.join(',');
       }
       apis.protocol.convert(data).then(response => {
-        if (response.status === 200){
+        if (response.status === 200) {
           setDebuggerTransports(response.result?.transports);
         } else {
           setActiveDebugger('');
@@ -206,7 +207,7 @@ const Save: React.FC<Props> = props => {
   const startDebug = () => {
     const entity = form.getFieldsValue();
     if (entity.type === 'script') {
-      entity.configuration.lang = 'javascript';
+      entity.configuration.lang = 'js';
       entity.configuration.script = script;
       entity.configuration.transport = entity.configuration.transport.join(',');
     }
@@ -215,7 +216,7 @@ const Save: React.FC<Props> = props => {
       entity,
     };
     apis.protocol.optionCode(debuggerData.type, data).then(response => {
-      if (response.status === 200){
+      if (response.status === 200) {
         setDebugLog(response.result);
         setActiveKey('result');
       }
@@ -250,11 +251,12 @@ const Save: React.FC<Props> = props => {
                     setProtocolType(value);
                   }}
                 >
-                  {providers.map(item => (
-                    <Select.Option key={item} value={item}>
-                      {item}
+                  <Select.Option value="script">
+                    script
                     </Select.Option>
-                  ))}
+                  <Select.Option value="jar">
+                    jar
+                    </Select.Option>
                 </Select>,
               )}
             </Form.Item>

@@ -200,6 +200,23 @@ const ColumnChartEdit = (props: Props) => {
                     </Col>
                 </>
             );
+        } if (type === 'realTime') {
+            return (
+                <>
+                    <Col xl={{ span: 22, offset: 2 }} lg={{ span: 8 }} md={{ span: 12 }} sm={24}>
+                        <Form.Item
+                            label="数据量"
+                        >
+                            {getFieldDecorator('history', {
+                                initialValue: config?.history || 30,
+                                rules: [{ required: true, message: '请输入数据量' }]
+                            })(
+                                <InputNumber style={{ width: '100%' }} />
+                            )}
+                        </Form.Item>
+                    </Col>
+                </>
+            )
         }
         return null;
 
@@ -272,6 +289,7 @@ const ColumnChartEdit = (props: Props) => {
                             <Select onChange={(e: string) => setType(e)}>
                                 <Select.Option value='history'>历史数据</Select.Option>
                                 <Select.Option value='agg'>聚合数据</Select.Option>
+                                <Select.Option value='realTime'>实时数据</Select.Option>
                             </Select>
                         )}
                     </Form.Item>

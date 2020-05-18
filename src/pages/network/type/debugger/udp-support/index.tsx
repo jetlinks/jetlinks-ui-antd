@@ -1,9 +1,7 @@
-import { Modal, Button, Divider, Tabs, Form, Input, Select, message } from 'antd';
+import { Modal, Button, Divider, Tabs, Form, Input } from 'antd';
 import React, { Fragment, useState, useEffect } from 'react';
-import { getAccessToken } from '@/utils/authority';
-import apis from '@/services';
-import { wrapAPI } from '@/utils/utils';
-import { EventSourcePolyfill } from 'event-source-polyfill';
+
+import { getWebsocket } from '@/layouts/GlobalWebSocket';
 
 interface Props {
   close: Function;
@@ -36,18 +34,19 @@ const UdpSupport: React.FC<Props> = props => {
     },
     logs: [],
   };
-  let eventSource: EventSourcePolyfill;
   const [action, setAction] = useState(initState.action);
-  const [subscribeData, setSubscribeData] = useState(initState.subscribeData);
-  const [publishData, setPublishData] = useState(initState.publishData);
   const [logs, setLogs] = useState(initState.logs);
-  const [sourceState, setSourceState] = useState<any>();
+
+  const [sendLogs, setSendLogs] = useState<any[]>([]);
+  const [requestData, setRequestData] = useState<any>(localStorage.getItem('udp-debug-data') || '127.0.0.1:1234\n\n{"success":true}');
+
+  const [subs, setSubs] = useState<any>();
+
+  const [sends, setSends] = useState<any>();
 
   const closeEventSource = () => {
-    if (eventSource) {
-      eventSource.close();
-      // message.success('关闭链接');
-    }
+    if (subs) subs.unsubscribe();
+    if (sends) sends.unsubscribe();
   };
 
   useEffect(
@@ -57,41 +56,43 @@ const UdpSupport: React.FC<Props> = props => {
     [],
   );
 
-  // const { item: { type: { text } } } = props;
   const debugMqttClient = () => {
     if (action === '_subscribe') {
       logs.push('开始调试');
       setLogs([...logs]);
 
-      eventSource = new EventSourcePolyfill(
-        wrapAPI(
-          `/jetlinks/network/upd/${item.id}/_subscribe/${
-            subscribeData.type
-          }?:X_Access_Token=${getAccessToken()}`,
-        ),
+      if (subs) {
+        subs.unsubscribe()
+      }
+      const ws = getWebsocket(
+        `udp-debug-subscribe`,
+        `/network/udp/${item.id}/_subscribe`,
+        {
+        }
+      ).subscribe(
+        (resp: any) => {
+          const { payload } = resp;
+          setLogs(l => [...l, payload, '\n']);
+        }
       );
-      setSourceState(sourceState);
-      eventSource.onerror = () => {
-        setLogs([...logs, '断开连接']);
-      };
-
-      eventSource.onmessage = (e: any) => {
-        setLogs(l => [...l, e.data]);
-      };
-
-      eventSource.onopen = () => {
-        // tempLogs += '开启推送\n';
-        // setLogs(tempLogs);
-      };
+      setSubs(ws);
     } else if (action === '_publish') {
-      apis.network
-        .debugUdpSupport(item.id, publishData.type, publishData)
-        .then(response => {
-          if (response) {
-            message.success('推送成功');
-          }
-        })
-        .catch(() => {});
+      if (sends) {
+        sends.unsubscribe()
+      }
+      const ws = getWebsocket(
+        `udp-debug-send`,
+        `/network/udp/${item.id}/_send`,
+        {
+          request: requestData
+        }
+      ).subscribe(
+        (resp: any) => {
+          const { payload } = resp;
+          setSendLogs(l => [...l, payload, '\n']);
+        }
+      );
+      setSends(ws);
     }
   };
 
@@ -118,7 +119,8 @@ const UdpSupport: React.FC<Props> = props => {
               onClick={() => {
                 logs.push('结束调试');
                 setLogs([...logs]);
-                if (sourceState) sourceState.close();
+                closeEventSource();
+                // if (sourceState) sourceState.close();
               }}
             >
               关闭
@@ -135,46 +137,32 @@ const UdpSupport: React.FC<Props> = props => {
             </Button>
           </Fragment>
         ) : (
-          <Fragment>
-            <Button
-              type="primary"
-              onClick={() => {
-                debugMqttClient();
-              }}
-            >
-              提交
+            <Fragment>
+              <Button
+                type="primary"
+                onClick={() => {
+                  debugMqttClient();
+                }}
+              >
+                提交
             </Button>
-            <Divider type="vertical" />
-            <Button
-              type="ghost"
-              onClick={() => {
-                logs.splice(0, logs.length);
-                setLogs([]);
-              }}
-            >
-              清空
+              <Divider type="vertical" />
+              <Button
+                type="ghost"
+                onClick={() => {
+                  logs.splice(0, logs.length);
+                  setLogs([]);
+                }}
+              >
+                清空
             </Button>
-          </Fragment>
-        )
+            </Fragment>
+          )
       }
     >
       <Tabs defaultActiveKey={action} onChange={e => setAction(e)}>
         <Tabs.TabPane tab="订阅消息" key="_subscribe">
           <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
-            <Form.Item label="数据类型">
-              <Select
-                defaultValue={subscribeData.type}
-                onChange={(e: string) => {
-                  subscribeData.type = e;
-                  setSubscribeData({ ...subscribeData });
-                }}
-              >
-                <Select.Option value="JSON">JSON</Select.Option>
-                <Select.Option value="BINARY">二进制</Select.Option>
-                <Select.Option value="STRING">字符串</Select.Option>
-                <Select.Option value="HEX">16进制</Select.Option>
-              </Select>
-            </Form.Item>
             <Divider>调试日志</Divider>
             <div style={{ height: 350, overflow: 'auto' }}>
               <pre>{logs.join('\n')}</pre>
@@ -184,29 +172,21 @@ const UdpSupport: React.FC<Props> = props => {
 
         <Tabs.TabPane tab="推送消息" key="_publish">
           <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
-            <Form.Item label="数据类型">
-              <Select
-                defaultValue={publishData.type}
-                onChange={(e: string) => {
-                  publishData.type = e;
-                  setPublishData({ ...publishData });
-                }}
-              >
-                <Select.Option value="JSON">JSON</Select.Option>
-                <Select.Option value="BINARY">二进制</Select.Option>
-                <Select.Option value="STRING">字符串</Select.Option>
-                <Select.Option value="HEX">16进制</Select.Option>
-              </Select>
-            </Form.Item>
-            <Form.Item label="推送数据">
+            <Form.Item label="请求数据">
               <Input.TextArea
-                rows={4}
+                rows={8}
+                placeholder="16进制请使用0x开头"
                 onChange={e => {
-                  publishData.message = e.target.value;
-                  setPublishData({ ...publishData });
+                  setRequestData(e.target.value);
+                  localStorage.setItem('udp-debug-request', e.target.value);
                 }}
+                value={requestData}
               />
             </Form.Item>
+            <Divider>调试日志</Divider>
+            <div style={{ height: 350, overflow: 'auto' }}>
+              <pre>{sendLogs.join('\n')}</pre>
+            </div>
           </Form>
         </Tabs.TabPane>
       </Tabs>

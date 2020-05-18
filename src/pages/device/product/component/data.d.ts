@@ -67,6 +67,8 @@ export class ValueType {
 
   elements?: any[];
 
+  enums?: any[];
+
   description: string;
 
   expands: {
