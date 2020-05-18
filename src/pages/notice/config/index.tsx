@@ -129,7 +129,6 @@ const Config: React.FC<Props> = props => {
     pagination: PaginationConfig,
     filters: any,
     sorter: any,
-    // extra: any,
   ) => {
     handlerSearch({
       pageIndex: Number(pagination.current) - 1,
