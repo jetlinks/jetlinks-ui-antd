@@ -105,6 +105,7 @@ const Location: React.FC<Props> = props => {
     const [searchParam, setSearchParam] = useState(initState.searchParam);
 
     let deviceStatus: any;
+    let deviceArray: any;
 
     useEffect(() => {
 
@@ -123,8 +124,36 @@ const Location: React.FC<Props> = props => {
         .catch(() => {
         });
 
+      deviceStatus = getWebsocket(
+        `location-info-status-all`,
+        `/dashboard/device/status/change/realTime`,
+        {
+          deviceId: '*',
+        },
+      ).subscribe(
+        (resp: any) => {
+          const { payload } = resp;
+          if (payload.value.type === 'online') {
+            massMarksCreated[payload.value.deviceId].setIcon({
+              type: 'image',
+              image: mark_b,
+              size: [32, 34],
+              anchor: 'bottom-cent er',
+            });
+          } else {
+            massMarksCreated[payload.value.deviceId].setIcon({
+              type: 'image',
+              image: mark_r,
+              size: [32, 34],
+              anchor: 'bottom-cent er',
+            });
+          }
+        },
+      );
+
       return () => {
         deviceStatus && deviceStatus.unsubscribe();
+        deviceArray && deviceArray.unsubscribe();
       };
     }, []);
 
@@ -233,8 +262,7 @@ const Location: React.FC<Props> = props => {
     const newMassMarks = (ins: any, params: any, type: string) => {
       let markersDataList: any[] = [];
       let labelsData: any[] = [];
-
-      // /device-current-state
+      let deviceIdList: any[] = [];
 
       apis.location._search_geo_json(params)
         .then(response => {
@@ -248,12 +276,12 @@ const Location: React.FC<Props> = props => {
                     lnglat: item.geometry.coordinates,
                     deviceInfo: item.properties,
                   });
+                  deviceIdList.push(item.properties.objectId);
                   labelsData.push({
                     name: item.properties.objectId,
                     position: item.geometry.coordinates,
                     zooms: [3, 20],
                     opacity: 1,
-                    // zIndex: 100,
                     rank: index,
                     icon: {
                       type: 'image',
@@ -298,11 +326,7 @@ const Location: React.FC<Props> = props => {
                 layer.add(labelMarker);
               });
 
-              console.log(layer);
-
-              deviceWebSocket(layer);
-
-              setSpinning(false);
+              deviceWebSocket(deviceIdList);
             }
           },
         )
@@ -310,33 +334,37 @@ const Location: React.FC<Props> = props => {
         });
     };
 
-    const deviceWebSocket = (layer: any) => {
-      deviceStatus = getWebsocket(
-        `location-info-status-all`,
-        `/dashboard/device/status/change/realTime`,
+    const deviceWebSocket = (deviceIdList: any[]) => {
+      deviceArray = getWebsocket(
+        `location-info-status-by-array-deviceId`,
+        `/device-current-state`,
         {
-          deviceId: '*',
+          deviceId: deviceIdList,
         },
       ).subscribe(
         (resp: any) => {
           const { payload } = resp;
-          if (payload.value.type === 'online') {
-            massMarksCreated[payload.value.deviceId].setIcon({
-              type: 'image',
-              image: mark_b,
-              size: [32, 34],
-              anchor: 'bottom-cent er',
-            });
-          } else {
-            massMarksCreated[payload.value.deviceId].setIcon({
-              type: 'image',
-              image: mark_r,
-              size: [32, 34],
-              anchor: 'bottom-cent er',
-            });
+
+          for (let key in payload) {
+            if (payload[key] === 'online') {
+              massMarksCreated[key].setIcon({
+                type: 'image',
+                image: mark_b,
+                size: [32, 34],
+                anchor: 'bottom-center',
+              });
+            } else {
+              massMarksCreated[key].setIcon({
+                type: 'image',
+                image: mark_r,
+                size: [32, 34],
+                anchor: 'bottom-center',
+              });
+            }
           }
         },
       );
+      setSpinning(false);
     };
 
     window.seeDetails = function(deviceId: string) {
