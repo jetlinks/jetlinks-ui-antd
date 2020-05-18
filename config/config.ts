@@ -159,6 +159,12 @@ export default {
                   authority: ['dimension'],
                   component: './system/role',
                 },
+                {
+                  path: '/system/config',
+                  name: '系统配置',
+                  authority: ['system-config'],
+                  component: './system/config',
+                },
               ],
             },
             {

@@ -6,7 +6,6 @@ export const dva = {
       err.preventDefault();
       // eslint-disable-next-line no-console
       console.error(err.message);
-      // message.error(err.message);
     },
   },
 };

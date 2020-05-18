@@ -21,6 +21,7 @@ import useWebSocket, { ReadyState } from 'react-use-websocket';
 import logo from '../assets/logo.svg';
 import { getAccessToken } from '@/utils/authority';
 import WebSocketOption, { handleWebsocket } from '@/pages/WebSocketOption';
+import apis from '@/services';
 
 // import PubSub from 'pubsub-js';
 
@@ -128,6 +129,17 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
   /**
    * constructor
    */
+  useEffect(() => {
+
+    apis.systemConfig.list().then(response => {
+      if (response.status === 200) {
+        localStorage.setItem('systemConfig', JSON.stringify(response.result));
+      }
+    });
+
+    document.getElementById('title-icon')!.href = JSON.parse(localStorage.getItem('systemConfig') || "{}").titleIcon;
+
+  }, []);
 
   useEffect(() => {
     if (dispatch) {

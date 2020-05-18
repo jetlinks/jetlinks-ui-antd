@@ -1,7 +1,7 @@
 import { MenuDataItem, getMenuData, getPageTitle } from '@ant-design/pro-layout';
 import { Helmet } from 'react-helmet';
 import { Link } from 'umi';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'dva';
 import { ConnectProps, ConnectState } from '@/models/connect';
 import logo from '../assets/logo.svg';
@@ -32,6 +32,8 @@ const UserLayout: React.FC<UserLayoutProps> = props => {
     breadcrumb,
     ...props,
   });
+
+
   return (
     <>
       <Helmet>
