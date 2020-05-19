@@ -1,12 +1,14 @@
 import { Reducer } from 'redux';
 import { Effect } from 'dva';
 import defaultSettings, { DefaultSettings } from '../../config/defaultSettings';
+import apis from '@/services';
 
 export interface SettingModelType {
   namespace: 'settings';
-  state: DefaultSettings;
+  state: Partial<DefaultSettings>;
   effects: {
-    settingData: Effect
+    settingData: Effect;
+    fetchConfig: Effect;
   },
   reducers: {
     changeSetting: Reducer<DefaultSettings>;
@@ -22,20 +24,32 @@ const updateColorWeak: (colorWeak: boolean) => void = colorWeak => {
 
 const SettingModel: SettingModelType = {
   namespace: 'settings',
-  state: defaultSettings,
+  state: {},
   effects: {
-    *settingData({ payload }, { put }) {
-      console.log('触发');
-      yield put({
-        type: 'changeSetting',
-        payload
-      })
+    *fetchConfig({ payload, callback }, { call, put }) {
+      const response: any = yield call(apis.systemConfig.list);
+      callback(response.result);
+      if (response.status === 200) {
+        yield put({
+          type: 'changeSetting',
+          payload: response.result
+        })
+      }
+    },
+    *settingData({ payload }, { call, put }) {
+      const response: any = yield call(apis.systemConfig.update, payload);
+      if (response.status === 200) {
+        document.getElementById('title-icon')!.href = payload.titleIcon;
+        yield put({
+          type: 'changeSetting',
+          payload
+        });
+      }
     }
   },
   reducers: {
     changeSetting(state, { payload }) {
       const { colorWeak, contentWidth } = payload;
-      console.log(payload, state, 'steee');
       if (state && state.contentWidth !== contentWidth && window.dispatchEvent) {
         window.dispatchEvent(new Event('resize'));
       }

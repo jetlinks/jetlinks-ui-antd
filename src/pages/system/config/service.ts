@@ -15,7 +15,7 @@ export async function add(params: any) {
 }
 export async function update(params: any) {
     return request(`/jetlinks/system/config/front`, {
-        method: 'PATCH',
+        method: 'POST',
         data: params,
     })
 }

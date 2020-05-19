@@ -1,4 +1,4 @@
-import { MenuDataItem, getMenuData, getPageTitle } from '@ant-design/pro-layout';
+import { MenuDataItem, getMenuData, getPageTitle, Settings } from '@ant-design/pro-layout';
 import { Helmet } from 'react-helmet';
 import { Link } from 'umi';
 import React, { useEffect } from 'react';
@@ -11,6 +11,7 @@ export interface UserLayoutProps extends ConnectProps {
   breadcrumbNameMap: {
     [path: string]: MenuDataItem;
   };
+  settings: Settings;
 }
 
 const UserLayout: React.FC<UserLayoutProps> = props => {
@@ -18,6 +19,7 @@ const UserLayout: React.FC<UserLayoutProps> = props => {
     route = {
       routes: [],
     },
+    settings,
   } = props;
   const { routes = [] } = route;
   const {
@@ -32,7 +34,6 @@ const UserLayout: React.FC<UserLayoutProps> = props => {
     breadcrumb,
     ...props,
   });
-
 
   return (
     <>
