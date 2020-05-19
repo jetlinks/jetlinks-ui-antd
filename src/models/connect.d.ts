@@ -80,6 +80,7 @@ export interface Loading {
     noticeTemplate: boolean;
     noticeConfig: boolean;
     org: boolean;
+    settings: boolean
   };
 }
 
@@ -113,6 +114,7 @@ export interface ConnectState {
   noticeTemplate: NoticeTemplateState;
   noticeConfig: NoticeConfigState;
   org: OrgModelState;
+  settings: SettingModelState
 }
 
 export interface Route extends MenuDataItem {

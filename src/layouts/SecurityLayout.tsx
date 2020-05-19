@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'dva';
-import { PageLoading } from '@ant-design/pro-layout';
+import { PageLoading, Settings } from '@ant-design/pro-layout';
 import { Redirect } from 'umi';
 import { stringify } from 'querystring';
 import { ConnectState, ConnectProps } from '@/models/connect';
@@ -11,38 +11,46 @@ import { initWebSocket } from './GlobalWebSocket';
 interface SecurityLayoutProps extends ConnectProps {
   loading?: boolean;
   currentUser?: CurrentUser;
+  children?: any;
+  settings: Settings;
 }
 
-interface SecurityLayoutState {
-  isReady: boolean;
-}
+const SecurityLayout = (props: SecurityLayoutProps) => {
 
-class SecurityLayout extends React.Component<SecurityLayoutProps, SecurityLayoutState> {
-  state: SecurityLayoutState = {
-    isReady: false,
-  };
-
-  componentDidMount() {
-    this.setState({
-      isReady: true,
-    });
-    const { dispatch } = this.props;
+  const { dispatch, settings } = props;
+  const [isReady, setIsReady] = useState(false);
+  const { children, loading } = props;
+  // You can replace it to your authentication rule (such as check token exists)
+  // 你可以把它替换成你自己的登录认证规则（比如判断 token 是否存在）
+  const isLogin = !!localStorage.getItem('x-access-token');
+  const queryString = stringify({
+    redirect: window.location.href,
+  });
+  useEffect(() => {
+    setIsReady(true);
     if (dispatch) {
       dispatch({
         type: 'user/fetchCurrent',
       });
     }
-  }
+  }, []);
 
-  render() {
-    const { isReady } = this.state;
-    const { children, loading } = this.props;
-    // You can replace it to your authentication rule (such as check token exists)
-    // 你可以把它替换成你自己的登录认证规则（比如判断 token 是否存在）
-    const isLogin = !!localStorage.getItem('x-access-token');
-    const queryString = stringify({
-      redirect: window.location.href,
-    });
+  /**
+ * constructor
+ */
+  useEffect(() => {
+    if (dispatch) {
+      dispatch({
+        type: 'settings/fetchConfig',
+        callback: () => {
+          document.getElementById('title-icon')!.href = settings.titleIcon;
+          setIsReady(true);
+        }
+      });
+    }
+  }, []);
+
+  const render = () => {
     if (isLogin) {
       initWebSocket()
     }
@@ -57,9 +65,11 @@ class SecurityLayout extends React.Component<SecurityLayoutProps, SecurityLayout
     }
     return children;
   }
+  return render();
 }
 
-export default connect(({ user, loading }: ConnectState) => ({
+export default connect(({ user, settings, loading }: ConnectState) => ({
   currentUser: user.currentUser,
+  settings,
   loading: loading.models.user,
 }))(SecurityLayout);
