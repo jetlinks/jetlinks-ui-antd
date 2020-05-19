@@ -517,7 +517,10 @@ const FunctionDefin: React.FC<Props> = props => {
               )}
             />
           )}
-          <Button type="link" icon="plus" onClick={() => setInputVisible(true)}>
+          <Button type="link" icon="plus" onClick={() => {
+            setCurrentParameter({});
+            setInputVisible(true)
+          }}>
             添加参数
           </Button>
         </Form.Item>
