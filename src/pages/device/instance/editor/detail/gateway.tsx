@@ -20,9 +20,9 @@ interface State {
   data: any;
   searchParam: any;
   currentItem: any;
-  spinning:boolean;
-  bindVisible:boolean;
-  addVisible:boolean;
+  spinning: boolean;
+  bindVisible: boolean;
+  addVisible: boolean;
 }
 
 const Gateway: React.FC<Props> = (props) => {
@@ -31,9 +31,9 @@ const Gateway: React.FC<Props> = (props) => {
     data: {},
     searchParam: { pageSize: 10 },
     currentItem: {},
-    spinning:false,
-    bindVisible:false,
-    addVisible:false,
+    spinning: false,
+    bindVisible: false,
+    addVisible: false,
   };
 
   const [searchParam, setSearchParam] = useState(initState.searchParam);
@@ -46,13 +46,14 @@ const Gateway: React.FC<Props> = (props) => {
   const handleSearch = (params?: any) => {
     setSearchParam(params);
     apis.deviceInstance.list(encodeQueryParam(params))
-      .then((response:any) => {
-        if (response.status === 200) {
-          setData(response.result)
-        }
-        setSpinning(false);
-      }
-    ).catch(()=>{});
+      .then((response: any) => {
+          if (response.status === 200) {
+            setData(response.result);
+          }
+          setSpinning(false);
+        },
+      ).catch(() => {
+    });
 
   };
 
@@ -63,7 +64,7 @@ const Gateway: React.FC<Props> = (props) => {
       terms: {
         parentId: props.deviceId,
       },
-    })
+    });
   }, []);
 
   const changeDeploy = (record: any) => {
@@ -76,7 +77,8 @@ const Gateway: React.FC<Props> = (props) => {
           handleSearch(searchParam);
         }
       })
-      .catch(() => {});
+      .catch(() => {
+      });
   };
 
   const unDeploy = (record: any) => {
@@ -89,7 +91,8 @@ const Gateway: React.FC<Props> = (props) => {
           handleSearch(searchParam);
         }
       })
-      .catch(() => {});
+      .catch(() => {
+      });
   };
 
   const unBindGateway = (id: string, deviceId: string) => {
@@ -100,7 +103,8 @@ const Gateway: React.FC<Props> = (props) => {
           message.success('解绑成功');
           handleSearch(searchParam);
         }
-      }).catch(() => {});
+      }).catch(() => {
+    });
   };
 
   const statusMap = new Map();
@@ -132,7 +136,7 @@ const Gateway: React.FC<Props> = (props) => {
       title: '状态',
       dataIndex: 'state',
       render: record =>
-        record ? <Badge status={statusMap.get(record.text)} text={record.text} /> : '',
+        record ? <Badge status={statusMap.get(record.text)} text={record.text}/> : '',
     },
     {
       title: '操作',
@@ -147,7 +151,7 @@ const Gateway: React.FC<Props> = (props) => {
           >
             查看
           </a>
-          <Divider type="vertical" />
+          <Divider type="vertical"/>
           <a
             onClick={() => {
               setCurrentItem(record);
@@ -156,16 +160,16 @@ const Gateway: React.FC<Props> = (props) => {
           >
             编辑
           </a>
-          <Divider type="vertical" />
+          <Divider type="vertical"/>
           {record.state?.value === 'notActive' ? (
-              <Popconfirm
-                title="确认激活？"
-                onConfirm={() => {
-                  changeDeploy(record);
-                }}
-              >
-                <a>激活</a>
-              </Popconfirm>
+            <Popconfirm
+              title="确认激活？"
+              onConfirm={() => {
+                changeDeploy(record);
+              }}
+            >
+              <a>激活</a>
+            </Popconfirm>
           ) : (
             <Popconfirm
               title="确认注销设备？"
@@ -177,11 +181,11 @@ const Gateway: React.FC<Props> = (props) => {
             </Popconfirm>
           )}
 
-          <Divider type="vertical" />
+          <Divider type="vertical"/>
           <Popconfirm
             title="确认解绑？"
             onConfirm={() => {
-              unBindGateway(props.deviceId,record.id);
+              unBindGateway(props.deviceId, record.id);
             }}
           >
             <a>解绑</a>
@@ -207,22 +211,24 @@ const Gateway: React.FC<Props> = (props) => {
   const saveDeviceInstance = (item: any) => {
     setSpinning(true);
     apis.deviceInstance.saveOrUpdate(item)
-      .then((response:any) => {
+      .then((response: any) => {
         if (response.status === 200) {
           message.success('保存成功');
           handleSearch(searchParam);
         }
-      }).catch(() => {});
+      }).catch(() => {
+    });
   };
 
-  const insert = (deviceData:any) => {
+  const insert = (deviceData: any) => {
     setSpinning(true);
     apis.deviceGateway.bind(props.deviceId, deviceData).then(response => {
       if (response.status === 200) {
         message.success('保存成功');
         handleSearch(searchParam);
       }
-    }).catch(() => {});
+    }).catch(() => {
+    });
   };
 
   const action = (
@@ -279,14 +285,14 @@ const Gateway: React.FC<Props> = (props) => {
         )}
 
         {bindVisible && (
-          <Bind
-            close={() => {
-              setBindVisible(false);
-            }}
-            save={(item: any) => {
-              setBindVisible(false);
-              insert(item);
-            }}
+          <Bind selectionType='checkbox'
+                close={() => {
+                  setBindVisible(false);
+                }}
+                save={(item: any) => {
+                  setBindVisible(false);
+                  insert(item);
+                }}
           />
         )}
       </Spin>

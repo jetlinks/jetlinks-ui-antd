@@ -115,7 +115,7 @@ const Tags: React.FC<Props> = props => {
                            onChange={event => {
                              tagsData[index].value = event.target.value;
                              setTagsData([...tagsData]);
-                           }} defaultValue="mysite"/>
+                           }}/>
                   ) : (
                     <Input placeholder="请输入标签value"
                            value={item.value}
