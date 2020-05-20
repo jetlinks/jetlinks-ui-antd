@@ -98,6 +98,7 @@ const UserList: React.FC<Props> = props => {
 
 
     const handleSearch = (params?: any) => {
+        setSearchParam(params);
         dispatch({
             type: 'users/query',
             payload: encodeQueryParam(params)
@@ -210,10 +211,6 @@ const UserList: React.FC<Props> = props => {
                                 },
                             ]}
                         />
-                        {/* <Search search={(params: any) => {
-                            setSearchParam(params);
-                            handleSearch({ terms: params, pageSize: 10 })
-                        }} /> */}
                     </div>
                     <div className={styles.tableListOperator}>
                         <Button icon="plus" type="primary" onClick={() => { setSaveVisible(true) }}>
