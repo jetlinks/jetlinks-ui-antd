@@ -11,9 +11,3 @@ export const dva = {
 };
 
 localStorage.setItem('umi_locale', 'zh-CN');
-// export function onRouteChange({ location }: { location: Location }) {
-//     location.query = qs.parse(qs.stringify(location.query), { plainObjects: true });
-//     location.state = {
-//         ...location.state || {}
-//     }
-// }

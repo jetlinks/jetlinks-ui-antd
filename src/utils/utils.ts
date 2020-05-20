@@ -134,3 +134,11 @@ export const converObjectKey = (data: any, keyMap: any) => {
   })
   return tempData;
 }
+
+export const converFilter = (data: any, flag: string) => {
+  const tempData = {};
+  Object.keys(data).forEach(i => {
+    tempData[`${i}${flag}`] = data[i]
+  });
+  return tempData;
+}
