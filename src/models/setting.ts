@@ -30,9 +30,10 @@ const SettingModel: SettingModelType = {
       const response: any = yield call(apis.systemConfig.list);
       callback(response.result);
       if (response.status === 200) {
+        const tempSetting = Object.keys(response.result).length === 0 ? defaultSettings : response.result;
         yield put({
           type: 'changeSetting',
-          payload: response.result
+          payload: tempSetting
         })
       }
     },
