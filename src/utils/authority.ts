@@ -22,8 +22,8 @@ export function getAuthority(): string | string[] {
   //   return ['admin'];
   // }
   // return authority;
-
-  const autz = JSON.parse(localStorage.getItem('hsweb-autz') || '{}');
+  const storage = localStorage.getItem('hsweb-autz');
+  const autz = storage ? JSON.parse(storage) : null;
 
   if (autz !== null) {
     const authority = autz.currentAuthority || [];
