@@ -193,12 +193,12 @@ const DeviceGateway: React.FC<Props> = () => {
                       total={() =>
                         <Row>
                           <span>
-                            <a style={{ fontSize: 18}} onClick={() => {
+                            <a style={{ fontSize: 18 }} onClick={() => {
                               router.push(`/device/instance/save/${item.id}`);
                             }}>
                               <LineWrap title={item.name} height={30}/>
                             </a>
-                            <Badge style={{ marginLeft: 20}} status={statusMap.get(item.state.text)}
+                            <Badge style={{ marginLeft: 20 }} status={statusMap.get(item.state.text)}
                                    text={item.state.text}/>
                           </span>
                         </Row>}
@@ -244,14 +244,14 @@ const DeviceGateway: React.FC<Props> = () => {
         )}
       </Spin>
       {bindVisible && (
-        <Bind
-          close={() => {
-            setBindVisible(false);
-          }}
-          save={(item: any) => {
-            setBindVisible(false);
-            insert(item);
-          }}
+        <Bind selectionType='checkbox'
+              close={() => {
+                setBindVisible(false);
+              }}
+              save={(item: any) => {
+                setBindVisible(false);
+                insert(item);
+              }}
         />
       )}
     </PageHeaderWrapper>

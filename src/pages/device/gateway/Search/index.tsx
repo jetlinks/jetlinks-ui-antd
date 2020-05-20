@@ -28,7 +28,6 @@ const Search: React.FC<Props> = props => {
 
   const search = () => {
     const data = form.getFieldsValue();
-    data.parentId$isnull = 1;
     // TODO 查询数据
     props.search(data);
   };

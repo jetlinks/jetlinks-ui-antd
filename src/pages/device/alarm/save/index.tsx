@@ -98,13 +98,13 @@ const Save: React.FC<Props> = props => {
       width="70%"
       onCancel={() => props.close()}
     >
-      <div style={{ maxHeight: 750, overflowY: 'auto', overflowX: 'hidden' }} key={Math.round(Math.random() * 100000)}>
-        <Form wrapperCol={{ span: 24 }} key={Math.round(Math.random() * 100000)}>
-          <Row key={Math.round(Math.random() * 100000)} gutter={16}
+      <div style={{ maxHeight: 750, overflowY: 'auto', overflowX: 'hidden' }}>
+        <Form wrapperCol={{ span: 24 }} key='addAlarmForm'>
+          <Row gutter={16}
                style={{ marginLeft: '0.1%' }}>
             <Col span={8}>
               <label style={{ fontSize: 16 }}>告警名称：</label>
-              <Input placeholder="输入告警名称" defaultValue={props.data.name} key={Math.round(Math.random() * 100000)}
+              <Input placeholder="输入告警名称" defaultValue={props.data.name}
                      style={{ width: '80%' }}
                      onBlur={event => {
                        props.data.name = event.target.value;
@@ -112,7 +112,7 @@ const Save: React.FC<Props> = props => {
                      }}/>
             </Col>
           </Row>
-          <Card style={{ marginBottom: 10 }} bordered={false} size="small" key={Math.round(Math.random() * 100000)}>
+          <Card style={{ marginBottom: 10 }} bordered={false} size="small">
             <p style={{ fontSize: 16 }}>触发条件
               <Tooltip title="触发条件满足条件中任意一个即可触发">
                 <Icon type="question-circle-o" style={{ paddingLeft: 10 }}/>
@@ -134,7 +134,7 @@ const Save: React.FC<Props> = props => {
               新增触发器
             </Button>
           </Card>
-          <Card style={{ marginBottom: 10 }} bordered={false} size="small" key={Math.round(Math.random() * 100000)}>
+          <Card style={{ marginBottom: 10 }} bordered={false} size="small">
             <p style={{ fontSize: 16 }}>转换
               <Tooltip title="将内置的结果字段转换为自定义字段，例如：deviceId 转为 id">
                 <Icon type="question-circle-o" style={{ paddingLeft: 10 }}/>
@@ -148,10 +148,10 @@ const Save: React.FC<Props> = props => {
               paddingTop: 10,
             }} key={Math.round(Math.random() * 100000)}>
               {properties.map((item: any, index) => (
-                <Row key={Math.round(Math.random() * 100000)} gutter={16}
+                <Row gutter={16}
                      style={{ paddingBottom: 10, marginLeft: 13, marginRight: 3 }}>
                   <Col span={6}>
-                    <Input placeholder="请输入属性" key={Math.round(Math.random() * 100000)} value={item.property}
+                    <Input placeholder="请输入属性" value={item.property}
                            onChange={event => {
                              properties[index].property = event.target.value;
                              setProperties([...properties]);
@@ -159,7 +159,7 @@ const Save: React.FC<Props> = props => {
                     />
                   </Col>
                   <Col span={6}>
-                    <Input placeholder="请输入别名" value={item.alias} key={Math.round(Math.random() * 100000)}
+                    <Input placeholder="请输入别名" value={item.alias}
                            onChange={event => {
                              properties[index].alias = event.target.value;
                              setProperties([...properties]);
@@ -172,24 +172,6 @@ const Save: React.FC<Props> = props => {
                          removeProperties(index);
                        }}
                     >删除</a>
-                    {/*{index === 0 ? (
-                      <Row key={Math.round(Math.random() * 100000)}>
-                        <a onClick={() => {
-                          setProperties([...properties, { _id: Math.round(Math.random() * 100000) }]);
-                        }}>添加</a>
-                        <a style={{ paddingLeft: 10, paddingTop: 7 }}
-                           onClick={() => {
-                             removeProperties(index);
-                           }}
-                        >删除</a>
-                      </Row>
-                    ) : (
-                      <a style={{ paddingTop: 7 }}
-                         onClick={() => {
-                           removeProperties(index);
-                         }}
-                      >删除</a>
-                    )}*/}
                   </Col>
                 </Row>
               ))}
@@ -201,11 +183,11 @@ const Save: React.FC<Props> = props => {
             </div>
           </Card>
 
-          <Card bordered={false} size="small" key={Math.round(Math.random() * 100000)}>
+          <Card bordered={false} size="small">
             <p style={{ fontSize: 16 }}>执行动作</p>
             {action.map((item: any, index) => (
-              <ActionAssembly save={(actionAata: any) => {
-                action.splice(index, 1, actionAata);
+              <ActionAssembly save={(actionData: any) => {
+                action.splice(index, 1, actionData);
               }} action={item} position={index} remove={(position: number) => {
                 action.splice(position, 1);
                 setAction([...action]);
