@@ -115,7 +115,7 @@ export default {
               path: 'system',
               name: '系统设置',
               icon: 'setting',
-              authority: ['user', 'role', 'permission', 'dictionary'],
+              authority: ['user', 'role', 'permission', 'dictionary', 'admin'],
               routes: [
                 {
                   path: '/system/user',
