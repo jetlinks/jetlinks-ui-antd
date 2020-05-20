@@ -9,7 +9,7 @@ export default function encodeQueryParam(params: any) {
       let index = 0;
       if (!terms) return;
       Object.keys(terms).forEach((k: string) => {
-        if (!(terms[k] === '' || terms[k] === undefined)) {
+        if (!(terms[k] === '' || terms[k] === undefined || terms[k].length === 0 || terms[k] === {})) {
           if (k.indexOf('$LIKE') > -1 && terms[k].toString().indexOf('%') === -1) {
             terms[k] = `%${terms[k]}%`;
           } else if (k.indexOf('$START') > -1) {
