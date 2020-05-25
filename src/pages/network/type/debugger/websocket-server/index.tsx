@@ -100,20 +100,6 @@ const WebSocketServer: React.FC<Props> = props => {
       }
     >
       <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
-        {/* <Form.Item label="数据类型">
-          <Select
-            defaultValue={type}
-            onChange={(e: string) => {
-              setType(e);
-            }}
-          >
-            <Select.Option value="JSON">JSON</Select.Option>
-            <Select.Option value="BINARY">二进制</Select.Option>
-            <Select.Option value="STRING">字符串</Select.Option>
-            <Select.Option value="HEX">16进制</Select.Option>
-          </Select>
-        </Form.Item> */}
-
         <Form.Item label="响应数据">
           <Input.TextArea
             rows={8}
