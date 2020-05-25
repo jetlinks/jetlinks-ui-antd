@@ -33,7 +33,6 @@ const Save: React.FC<Props> = props => {
     form,
     data,
   } = props;
-  console.log(data, 'rrrrr');
   const [providerList, setProviderList] = useState(initState.providerList);
   const [provider, setProvider] = useState(initState.provider);
   const [networkList, setNetworkList] = useState(initState.networkList);
@@ -130,8 +129,6 @@ const Save: React.FC<Props> = props => {
       case 'UDP':
       case 'COAP_SERVER':
       case 'TCP_SERVER':
-      case 'HTTP_SERVER':
-
         return (
           <div>
             <Form.Item label="消息协议">
@@ -150,6 +147,7 @@ const Save: React.FC<Props> = props => {
           </div>
         );
       case 'WEB_SOCKET_SERVER':
+      case 'HTTP_SERVER':
         return (
           <Fragment>
             <Form.Item label="协议路由">
@@ -226,7 +224,7 @@ const Save: React.FC<Props> = props => {
   const saveData = () => {
     const tempData = form.getFieldsValue();
     const { id } = props.data;
-    if (tempData.provider === 'websocket-server') {
+    if (tempData.provider === 'websocket-server' || tempData.provider === 'http-server-gateway') {
       props.save({ id, ...tempData, configuration: { routes: routesData } });
     } else {
       props.save({ id, ...tempData });
