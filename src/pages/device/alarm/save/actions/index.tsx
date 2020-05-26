@@ -59,7 +59,7 @@ const Action: React.FC<Props> = props => {
     setActionType(actionData.executor);
     if (actionData.configuration) {
       setNotifyType(actionData.configuration.notifyType);
-      if (actionData.configuration.notifyType === 'notifier') {
+      if (actionData.executor === 'notifier') {
         findNotifier({ id: notifyType });
       } else if (actionData.configuration.deviceId) {
         findDeviceById(actionData.configuration.deviceId);
