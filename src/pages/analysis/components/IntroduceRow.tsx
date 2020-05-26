@@ -57,8 +57,6 @@ const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVi
   const [deviceNotActive, setDeviceNotActive] = useState(initState.month);
   const [messageData] = useState(initState.messageData);
 
-  let source: EventSourcePolyfill;
-
   const calculationDate = () => {
     const dd = new Date();
     dd.setDate(dd.getDate() - 30);
@@ -207,11 +205,11 @@ const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVi
       });
   };
 
+  const [cupSubs, setCupSubs] = useState<any>();
+  const [jvmSubs, setJvmSubs] = useState<any>();
   useEffect(() => {
     deviceStatus();
     deviceMessage();
-    let cupSubs: any;
-    let jvmSubs: any;
 
     const list = [
       {
@@ -235,7 +233,7 @@ const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVi
       },
     ];
 
-    cupSubs = getWebsocket(
+    const tempCup = getWebsocket(
       `home-page-statistics-cpu-realTime`,
       `/dashboard/systemMonitor/cpu/usage/realTime`,
       {
@@ -253,7 +251,7 @@ const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVi
       },
     );
 
-    jvmSubs = getWebsocket(
+    const tempJvm = getWebsocket(
       `home-page-statistics-jvm-realTime`,
       `/dashboard/jvmMonitor/memory/info/realTime`,
       {
@@ -272,9 +270,15 @@ const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVi
       },
     );
 
+    setJvmSubs(tempJvm);
+    setCupSubs(tempCup);
     return () => {
-      cupSubs && cupSubs.unsubscribe();
-      jvmSubs && jvmSubs.unsubscribe();
+      if (cupSubs) {
+        cupSubs.unsubscribe();
+      }
+      if (jvmSubs) {
+        jvmSubs.unsubscribe();
+      }
     };
   }, []);
 
@@ -291,21 +295,21 @@ const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVi
             >
               <Icon type="sync" onClick={() => {
                 deviceStatus();
-              }}/>
+              }} />
             </Tooltip>
           }
           total={numeral(deviceOnline).format('0,0')}
           footer={
             <div style={{ whiteSpace: 'nowrap', overflow: 'hidden' }}>
               <Field style={{ marginRight: 80, float: 'left' }}
-                     label={
-                       <FormattedMessage id="analysis.analysis.device-total" defaultMessage="设备总量"/>
-                     }
-                     value={numeral(deviceCount).format('0,0')}
+                label={
+                  <FormattedMessage id="analysis.analysis.device-total" defaultMessage="设备总量" />
+                }
+                value={numeral(deviceCount).format('0,0')}
               />
               <Field
                 label={
-                  <FormattedMessage id="analysis.analysis.device-activation" defaultMessage="未激活设备"/>
+                  <FormattedMessage id="analysis.analysis.device-activation" defaultMessage="未激活设备" />
                 }
                 value={numeral(deviceNotActive).format('0,0')}
               />
@@ -313,7 +317,7 @@ const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVi
           }
           contentHeight={46}
         >
-          <MiniBar data={visitData}/>
+          <MiniBar data={visitData} />
         </ChartCard>
       </Col>
 
@@ -321,28 +325,28 @@ const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVi
         <ChartCard
           bordered={false}
           loading={loading}
-          title={<FormattedMessage id="analysis.analysis.device-day-visits" defaultMessage="日访消息量"/>}
+          title={<FormattedMessage id="analysis.analysis.device-day-visits" defaultMessage="日访消息量" />}
           action={
             <Tooltip
               title='刷新'
             >
               <Icon type="sync" onClick={() => {
                 deviceMessage();
-              }}/>
+              }} />
             </Tooltip>
           }
           total={numeral(sameDay).format('0,0')}
           footer={
             <Field
               label={
-                <FormattedMessage id="analysis.analysis.device-visits" defaultMessage="当月设备消息量"/>
+                <FormattedMessage id="analysis.analysis.device-visits" defaultMessage="当月设备消息量" />
               }
               value={numeral(month).format('0,0')}
             />
           }
           contentHeight={46}
         >
-          <MiniArea color="#975FE4" data={messageData}/>
+          <MiniArea color="#975FE4" data={messageData} />
         </ChartCard>
       </Col>
       <Col {...topColResponsiveProps}>
@@ -352,7 +356,7 @@ const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVi
           title='CPU使用率'
           contentHeight={120}
         >
-          <GaugeColor height={169} percent={cpu}/>
+          <GaugeColor height={169} percent={cpu} />
         </ChartCard>
       </Col>
       <Col {...topColResponsiveProps}>
@@ -362,7 +366,7 @@ const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVi
           title='JVM内存'
           contentHeight={120}
         >
-          <Gauge height={169} percent={memoryUsed} memoryMax={memoryMax}/>
+          <Gauge height={169} percent={memoryUsed} memoryMax={memoryMax} />
         </ChartCard>
       </Col>
     </Row>
