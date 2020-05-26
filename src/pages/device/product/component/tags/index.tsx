@@ -72,7 +72,10 @@ const TagsDefin: React.FC<Props> = props => {
     });
   };
 
-  let dataSource = [{text:'String类型的UTC时间戳 (毫秒)',value:'string'},'yyyy-MM-dd','yyyy-MM-dd HH:mm:ss','yyyy-MM-dd HH:mm:ss EE','yyyy-MM-dd HH:mm:ss zzz'];
+  let dataSource = [{
+    text: 'String类型的UTC时间戳 (毫秒)',
+    value: 'string',
+  }, 'yyyy-MM-dd', 'yyyy-MM-dd HH:mm:ss', 'yyyy-MM-dd HH:mm:ss EE', 'yyyy-MM-dd HH:mm:ss zzz'];
 
   const renderDataType = () => {
     switch (dataType) {
@@ -249,7 +252,7 @@ const TagsDefin: React.FC<Props> = props => {
                               filterOption={(inputValue, option) =>
                                 option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
                               }
-                />
+                />,
               )}
             </Form.Item>
           </div>
@@ -576,7 +579,10 @@ const TagsDefin: React.FC<Props> = props => {
               setProperties(properties);
             }}
             unitsData={props.unitsData}
-            close={() => setParameterVisible(false)}
+            close={() => {
+              setCurrentParameter({});
+              setParameterVisible(false);
+            }}
             data={currentParameter}
           />
         )}
