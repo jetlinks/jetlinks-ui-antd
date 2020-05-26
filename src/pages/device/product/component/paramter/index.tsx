@@ -472,6 +472,7 @@ const Paramter: React.FC<Props> = props => {
             <Button
               type="link"
               onClick={() => {
+                setCurrentParameter({});
                 setParameterVisible(true);
               }}
             >
@@ -649,7 +650,10 @@ const Paramter: React.FC<Props> = props => {
             setData({ ...data });
             // props.close();
           }}
-          close={() => setParameterVisible(false)}
+          close={() => {
+            setCurrentParameter({});
+            setParameterVisible(false);
+          }}
         />
       )}
     </Drawer>
