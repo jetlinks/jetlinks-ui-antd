@@ -57,11 +57,24 @@ const getWebsocket = (id: string, topic: string, parameter: any): Observable<any
         });
         const msg = JSON.stringify({ id, topic, parameter, type: 'sub' });
         const thisWs = initWebSocket();
+        const tempQueue: any[] = [];
+
         if (thisWs) {
             try {
-                thisWs!.send(msg);
+                if (thisWs.readyState === 1) {
+                    thisWs.send(msg);
+                } else {
+                    tempQueue.push(msg);
+                }
+
+                if (tempQueue.length > 0 && thisWs.readyState === 1) {
+                    tempQueue.forEach((i: any, index: number) => {
+                        thisWs.send(i);
+                        tempQueue.splice(index, 1);
+                    });
+                }
             } catch (error) {
-                console.log(error, 'erroo122');
+                console.log(error, thisWs, 'erroo122');
                 message.error({ key: 'ws', content: 'websocket服务连接失败' });
             }
         } else {
