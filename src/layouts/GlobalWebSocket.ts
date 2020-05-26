@@ -35,6 +35,7 @@ const initWebSocket = () => {
                 }
             }
         } catch (error) {
+            console.error(error, 'error');
             setTimeout(initWebSocket, 5000 * count);
         }
     }
@@ -55,16 +56,25 @@ const getWebsocket = (id: string, topic: string, parameter: any): Observable<any
             }
         });
         const msg = JSON.stringify({ id, topic, parameter, type: 'sub' });
-        const thisWs = ws || initWebSocket();
-        try {
-            thisWs!.send(msg);
-        } catch (error) {
-            message.error({ key: 'ws', content: 'websocket服务连接失败' });
+        const thisWs = initWebSocket();
+        if (thisWs) {
+            try {
+                thisWs!.send(msg);
+            } catch (error) {
+                console.log(error, 'erroo122');
+                message.error({ key: 'ws', content: 'websocket服务连接失败' });
+            }
+        } else {
+            console.log(thisWs, 'websocket');
         }
+
         return () => {
             const unsub = JSON.stringify({ id, type: "unsub" });
             delete subs[id];
-            thisWs!.send(unsub)
+            if (thisWs) {
+                thisWs.send(unsub);
+            }
+            // thisWs!.send(unsub)
         }
     });
 export { getWebsocket, initWebSocket };
