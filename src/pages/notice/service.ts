@@ -70,3 +70,18 @@ export async function debugTemplate(id: string, data: any) {
     data,
   });
 }
+
+async function list(params: any) {
+  return request(`/jetlinks/notify/history/_query`, {
+    method: 'GET',
+    params
+  })
+}
+
+async function detail(id: string) {
+  return request(`/jetlinks/notify/history/${id}`, {
+    method: 'GET'
+  })
+}
+
+export const history = { list, detail };

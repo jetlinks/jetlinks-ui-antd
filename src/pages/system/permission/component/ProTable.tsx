@@ -4,12 +4,13 @@ import { PaginationConfig, SorterResult } from "antd/lib/table";
 import { converFilter } from "@/utils/utils";
 
 interface Props {
-    loading: boolean;
+    loading?: boolean;
     dataSource: any[];
     columns: any[];
     rowKey: string;
     onSearch: Function;
     paginationConfig: any;
+    size?: 'small' | 'middle' | 'default'
 }
 const ProTable = (props: Props) => {
     const { loading, dataSource, columns, rowKey, onSearch, paginationConfig } = props;
@@ -28,6 +29,7 @@ const ProTable = (props: Props) => {
     }
     return (
         <Table
+            size={props.size}
             loading={loading}
             dataSource={dataSource}
             columns={columns}
