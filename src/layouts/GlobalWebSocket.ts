@@ -35,7 +35,6 @@ const initWebSocket = () => {
                 }
             }
         } catch (error) {
-            console.error(error, 'error');
             setTimeout(initWebSocket, 5000 * count);
         }
     }
@@ -74,11 +73,8 @@ const getWebsocket = (id: string, topic: string, parameter: any): Observable<any
                     });
                 }
             } catch (error) {
-                console.log(error, thisWs, 'erroo122');
                 message.error({ key: 'ws', content: 'websocket服务连接失败' });
             }
-        } else {
-            console.log(thisWs, 'websocket');
         }
 
         return () => {
@@ -87,7 +83,6 @@ const getWebsocket = (id: string, topic: string, parameter: any): Observable<any
             if (thisWs) {
                 thisWs.send(unsub);
             }
-            // thisWs!.send(unsub)
         }
     });
 export { getWebsocket, initWebSocket };
