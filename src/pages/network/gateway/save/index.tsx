@@ -162,7 +162,7 @@ const Save: React.FC<Props> = props => {
                             routesData[index].url = e.target.value;
                             setRoutesData([...routesData]);
                           }}
-                          placeholder="key"
+                          placeholder="/**"
                         />
                       </Col>
                       <Col span={2} style={{ textAlign: 'center' }}>
