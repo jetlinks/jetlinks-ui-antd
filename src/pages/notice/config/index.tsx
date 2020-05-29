@@ -181,7 +181,7 @@ const Config: React.FC<Props> = props => {
                     onSearch(value, undefined);
                   }}
                 >
-                  {typeList.map(item => (
+                  {(typeList || []).map(item => (
                     <TagSelect.Option key={item.id} value={item.id}>
                       {item.name}
                     </TagSelect.Option>
