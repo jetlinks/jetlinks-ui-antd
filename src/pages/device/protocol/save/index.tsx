@@ -3,7 +3,6 @@ import { Button, Col, Collapse, Drawer, Form, Icon, Input, message, Radio, Row, 
 import { FormComponentProps } from 'antd/lib/form';
 import { ProtocolItem } from '@/pages/device/protocol/data';
 import { getAccessToken } from '@/utils/authority';
-import MonacoEditor from 'react-monaco-editor';
 import apis from '@/services';
 import AceEditor from 'react-ace';
 import 'ace-builds/src-noconflict/mode-javascript';
@@ -33,6 +32,7 @@ interface State {
   };
   debugLog: string;
   activeKey: string;
+  payload: string;
 }
 
 const Save: React.FC<Props> = props => {
@@ -46,7 +46,19 @@ const Save: React.FC<Props> = props => {
     jarLocation: props.data?.configuration?.location,
     providers: [],
     activeDebugger: '',
-    script: props.data?.configuration?.script,
+    script: props.data?.configuration?.script ? props.data.configuration?.script : '//解码,收到设备上行消息时\n' +
+      'codec.decoder(function (context) {\n' +
+      '  var message = context.getMessage();\n' +
+      '  return {\n' +
+      '    messageType:"REPORT_PROPERTY"//消息类型\n' +
+      '  };\n' +
+      '});\n' +
+      '\n' +
+      '//编码读取设备属性消息\n' +
+      'codec.encoder("READ_PROPERTY",function(context){\n' +
+      '  var message = context.getMessage();\n' +
+      '  var properties = message.properties;\n' +
+      '})',
     debuggerTransports: [],
     debuggerData: {
       type: 'encode',
@@ -55,6 +67,7 @@ const Save: React.FC<Props> = props => {
     },
     debugLog: '',
     activeKey: 'mock',
+    payload: '',
   };
 
   const [jarLocation, setJarLocation] = useState(initState.jarLocation);
@@ -66,6 +79,7 @@ const Save: React.FC<Props> = props => {
   const [debuggerData, setDebuggerData] = useState(initState.debuggerData);
   const [debugLog, setDebugLog] = useState(initState.debugLog);
   const [activeKey, setActiveKey] = useState(initState.activeKey);
+  const [payload, setPayload] = useState<string>(localStorage.getItem('protocol-payload-debug-data') || '');
 
   const submitData = () => {
     form.validateFields((err, fileValue) => {
@@ -177,12 +191,28 @@ const Save: React.FC<Props> = props => {
             </Col>
             <Col span={24}>
               <Form.Item label="脚本" labelCol={{ span: 3 }} wrapperCol={{ span: 21 }}>
-                <MonacoEditor
+                <AceEditor
+                  mode='javascript'
+                  theme="eclipse"
+                  name="app_code_editor"
+                  fontSize={14}
+                  showPrintMargin
+                  showGutter
+                  onChange={value => {
+                    setScript(value);
+                  }}
                   value={script}
-                  onChange={e => setScript(e)}
-                  language="javascript"
-                  height={500}
-                  theme="vs-dark"
+                  wrapEnabled
+                  highlightActiveLine  //突出活动线
+                  enableSnippets  //启用代码段
+                  style={{ width: '100%', height: 500 }}
+                  setOptions={{
+                    enableBasicAutocompletion: true,   //启用基本自动完成功能
+                    enableLiveAutocompletion: true,   //启用实时自动完成功能 （比如：智能代码提示）
+                    enableSnippets: true,  //启用代码段
+                    showLineNumbers: true,
+                    tabSize: 2,
+                  }}
                 />
               </Form.Item>
             </Col>
@@ -311,19 +341,6 @@ const Save: React.FC<Props> = props => {
                       <Radio.Group
                         onChange={e => {
                           debuggerData.type = e.target.value;
-                          if (e.target.value === 'encode') {
-                            debuggerData.payload = 'codec.decoder(function (context) {\n' +
-                              '    var message = context.getMessage();\n' +
-                              '    return {\n' +
-                              '         messageType:"REPORT_PROPERTY"//消息类型\n' +
-                              '    };\n' +
-                              '});';
-                          } else {
-                            debuggerData.payload = 'codec.encoder("READ_PROPERTY",function(context){\n' +
-                              '  var message = context.getMessage();\n' +
-                              '  var properties = message.properties;\n' +
-                              '})';
-                          }
                           setDebuggerData({ ...debuggerData });
                         }}
                         defaultValue="encode"
@@ -378,14 +395,10 @@ const Save: React.FC<Props> = props => {
                   onChange={value => {
                     debuggerData.payload = value;
                     setDebuggerData({ ...debuggerData });
+                    setPayload(value);
+                    localStorage.setItem('protocol-payload-debug-data', value);
                   }}
-                  value={debuggerData.payload}
-                  defaultValue={'codec.decoder(function (context) {\n' +
-                  '    var message = context.getMessage();\n' +
-                  '    return {\n' +
-                  '         messageType:"REPORT_PROPERTY"//消息类型\n' +
-                  '    };\n' +
-                  '});'}
+                  value={payload}
                   wrapEnabled
                   highlightActiveLine  //突出活动线
                   enableSnippets  //启用代码段
