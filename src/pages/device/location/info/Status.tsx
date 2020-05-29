@@ -37,10 +37,23 @@ const Status: React.FC<Props> = (props) => {
   const [spinning, setSpinning] = useState(true);
   const [statusType, setStatusType] = useState('');
 
+  let subs: any;
+  let deviceStatus: any;
+
+  useEffect(
+    () => () => {
+      if (subs) {
+        subs.unsubscribe()
+      }
+      if (deviceStatus) {
+        deviceStatus.unsubscribe()
+      }
+    },
+    [],
+  );
+
   useEffect(() => {
     setStatusType(props.device.state?.value);
-    let subs: any;
-    let deviceStatus: any;
 
     deviceStatus = getWebsocket(
       `location-info-status-${props.device.id}`,
@@ -120,11 +133,6 @@ const Status: React.FC<Props> = (props) => {
 
       setSpinning(false);
     }
-
-    return () => {
-      subs && subs.unsubscribe();
-      deviceStatus && deviceStatus.unsubscribe();
-    };
   }, [props.device]);
 
   const statusMap = new Map();
