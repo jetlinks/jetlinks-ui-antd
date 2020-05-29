@@ -79,7 +79,12 @@ const Save: React.FC<Props> = props => {
   const [debuggerData, setDebuggerData] = useState(initState.debuggerData);
   const [debugLog, setDebugLog] = useState(initState.debugLog);
   const [activeKey, setActiveKey] = useState(initState.activeKey);
-  const [payload, setPayload] = useState<string>(localStorage.getItem('protocol-payload-debug-data') || '');
+  const [payload, setPayload] = useState<string>(localStorage.getItem(`protocol-payload-encode-debug-data-${props.data.id}`) || '{\n' +
+    '  "messageType":"READ_PROPERTY",\n' +
+    '  "properties":[\n' +
+    '    \n' +
+    '  ]\n' +
+    '}');
 
   const submitData = () => {
     form.validateFields((err, fileValue) => {
@@ -342,6 +347,41 @@ const Save: React.FC<Props> = props => {
                         onChange={e => {
                           debuggerData.type = e.target.value;
                           setDebuggerData({ ...debuggerData });
+                          if (e.target.value === 'encode') {
+                            setPayload(localStorage.getItem(`protocol-payload-encode-debug-data-${props.data.id}`) || '{\n' +
+                              '  "messageType":"READ_PROPERTY",\n' +
+                              '  "properties":[\n' +
+                              '    \n' +
+                              '  ]\n' +
+                              '}');
+                          } else {
+                            if (`protocol-payload-decode-debug-data${props.data.id}` || payload === '') {
+                              switch (debuggerData.transport) {
+                                case 'HTTP':
+                                  setPayload(localStorage.getItem(`protocol-payload-decode-debug-data-${props.data.id}`) || 'POST /url\n' +
+                                    'Content-Type: application/json\n' +
+                                    '\n' +
+                                    '{}');
+                                  break;
+                                case 'MQTT':
+                                  setPayload(localStorage.getItem(`protocol-payload-decode-debug-data-${props.data.id}`) || 'QoS0 /topic\n' +
+                                    '\n' +
+                                    '{}');
+                                  break;
+                                case 'CoAP':
+                                  setPayload(localStorage.getItem(`protocol-payload-decode-debug-data-${props.data.id}`) || 'POST /url\n' +
+                                    'Content-Format: application/json\n' +
+                                    '\n' +
+                                    '{}');
+                                  break;
+                                default:
+                                  setPayload(localStorage.getItem(`protocol-payload-decode-debug-data-${props.data.id}`) || '');
+                                  return;
+                              }
+                            } else {
+                              setPayload(localStorage.getItem(`protocol-payload-decode-debug-data-${props.data.id}`) || '');
+                            }
+                          }
                         }}
                         defaultValue="encode"
                       >
@@ -356,6 +396,30 @@ const Save: React.FC<Props> = props => {
                         onChange={(e: string) => {
                           debuggerData.transport = e;
                           setDebuggerData({ ...debuggerData });
+                          if (debuggerData.type === 'decode') {
+                            switch (e) {
+                              case 'HTTP':
+                                setPayload(localStorage.getItem(`protocol-payload-decode-debug-data-${props.data.id}`) || 'POST /url\n' +
+                                  'Content-Type: application/json\n' +
+                                  '\n' +
+                                  '{}');
+                                break;
+                              case 'MQTT':
+                                setPayload(localStorage.getItem(`protocol-payload-decode-debug-data-${props.data.id}`) || 'QoS0 /topic\n' +
+                                  '\n' +
+                                  '{}');
+                                break;
+                              case 'CoAP':
+                                setPayload(localStorage.getItem(`protocol-payload-decode-debug-data-${props.data.id}`) || 'POST /url\n' +
+                                  'Content-Format: application/json\n' +
+                                  '\n' +
+                                  '{}');
+                                break;
+                              default:
+                                setPayload(localStorage.getItem(`protocol-payload-decode-debug-data-${props.data.id}`) || '');
+                                return;
+                            }
+                          }
                         }}
                         defaultValue={debuggerTransports[0] || null}
                       >
@@ -396,7 +460,11 @@ const Save: React.FC<Props> = props => {
                     debuggerData.payload = value;
                     setDebuggerData({ ...debuggerData });
                     setPayload(value);
-                    localStorage.setItem('protocol-payload-debug-data', value);
+                    if (debuggerData.type === 'decode') {
+                      localStorage.setItem(`protocol-payload-decode-debug-data-${props.data.id}`, value);
+                    } else {
+                      localStorage.setItem(`protocol-payload-encode-debug-data-${props.data.id}`, value);
+                    }
                   }}
                   value={payload}
                   wrapEnabled
