@@ -146,7 +146,7 @@ const Save: React.FC<Props> = props => {
               overflowX: 'hidden',
               backgroundColor: '#F5F5F6',
               paddingTop: 10,
-            }} key={Math.round(Math.random() * 100000)}>
+            }}>
               {properties.map((item: any, index) => (
                 <Row gutter={16}
                      style={{ paddingBottom: 10, marginLeft: 13, marginRight: 3 }}>
