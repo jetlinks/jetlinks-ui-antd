@@ -16,6 +16,7 @@ import styles from '../index.less';
 import { getAccessToken } from '@/utils/authority';
 import request from '@/utils/request';
 import Debug from './debugger';
+import Logger from './log';
 
 interface Props extends FormComponentProps {
   dispatch: Dispatch;
@@ -61,7 +62,7 @@ const Config: React.FC<Props> = props => {
   const [filterType, setFilterType] = useState(initState.filterType);
   const [filterName, setFilterName] = useState(initState.filterName);
   const [debugVisible, setDebugVisible] = useState(initState.debugVisible);
-
+  const [logVisible, setLogVisible] = useState(false);
   const handlerSearch = (params?: any) => {
     dispatch({
       type: 'noticeConfig/query',
@@ -180,7 +181,7 @@ const Config: React.FC<Props> = props => {
                     onSearch(value, undefined);
                   }}
                 >
-                  {typeList.map(item => (
+                  {(typeList || []).map(item => (
                     <TagSelect.Option key={item.id} value={item.id}>
                       {item.name}
                     </TagSelect.Option>
@@ -285,6 +286,15 @@ const Config: React.FC<Props> = props => {
                     >
                       调试
                     </a>
+                    <Divider type="vertical" />
+                    <a
+                      onClick={() => {
+                        setCurrentItem(record);
+                        setLogVisible(true);
+                      }}
+                    >
+                      通知记录
+                    </a>
                   </Fragment>
                 ),
               },
@@ -314,6 +324,7 @@ const Config: React.FC<Props> = props => {
         />
       )}
       {debugVisible && <Debug data={currentItem} close={() => setDebugVisible(false)} />}
+      {logVisible && <Logger close={() => setLogVisible(false)} data={currentItem} />}
     </PageHeaderWrapper>
   );
 };

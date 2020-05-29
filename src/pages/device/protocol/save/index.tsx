@@ -3,14 +3,20 @@ import { Button, Col, Collapse, Drawer, Form, Icon, Input, message, Radio, Row, 
 import { FormComponentProps } from 'antd/lib/form';
 import { ProtocolItem } from '@/pages/device/protocol/data';
 import { getAccessToken } from '@/utils/authority';
-import MonacoEditor from 'react-monaco-editor';
 import apis from '@/services';
+import AceEditor from 'react-ace';
+import 'ace-builds/src-noconflict/mode-javascript';
+import 'ace-builds/src-noconflict/mode-java';
+import 'ace-builds/src-noconflict/ext-language_tools';
+import 'ace-builds/src-noconflict/ext-searchbox';
+import 'ace-builds/src-noconflict/theme-eclipse';
 
 interface Props extends FormComponentProps {
   close: Function;
   save: Function;
   data: Partial<ProtocolItem>;
 }
+
 interface State {
   protocolType?: string;
   jarLocation?: string;
@@ -26,7 +32,9 @@ interface State {
   };
   debugLog: string;
   activeKey: string;
+  payload: string;
 }
+
 const Save: React.FC<Props> = props => {
   const {
     form: { getFieldDecorator },
@@ -38,7 +46,19 @@ const Save: React.FC<Props> = props => {
     jarLocation: props.data?.configuration?.location,
     providers: [],
     activeDebugger: '',
-    script: props.data?.configuration?.script,
+    script: props.data?.configuration?.script ? props.data.configuration?.script : '//解码,收到设备上行消息时\n' +
+      'codec.decoder(function (context) {\n' +
+      '  var message = context.getMessage();\n' +
+      '  return {\n' +
+      '    messageType:"REPORT_PROPERTY"//消息类型\n' +
+      '  };\n' +
+      '});\n' +
+      '\n' +
+      '//编码读取设备属性消息\n' +
+      'codec.encoder("READ_PROPERTY",function(context){\n' +
+      '  var message = context.getMessage();\n' +
+      '  var properties = message.properties;\n' +
+      '})',
     debuggerTransports: [],
     debuggerData: {
       type: 'encode',
@@ -47,6 +67,7 @@ const Save: React.FC<Props> = props => {
     },
     debugLog: '',
     activeKey: 'mock',
+    payload: '',
   };
 
   const [jarLocation, setJarLocation] = useState(initState.jarLocation);
@@ -58,6 +79,12 @@ const Save: React.FC<Props> = props => {
   const [debuggerData, setDebuggerData] = useState(initState.debuggerData);
   const [debugLog, setDebugLog] = useState(initState.debugLog);
   const [activeKey, setActiveKey] = useState(initState.activeKey);
+  const [payload, setPayload] = useState<string>(localStorage.getItem(`protocol-payload-encode-debug-data-${props.data.id}`) || '{\n' +
+    '  "messageType":"READ_PROPERTY",\n' +
+    '  "properties":[\n' +
+    '    \n' +
+    '  ]\n' +
+    '}');
 
   const submitData = () => {
     form.validateFields((err, fileValue) => {
@@ -112,7 +139,7 @@ const Save: React.FC<Props> = props => {
                 {getFieldDecorator('configuration.provider', {
                   initialValue: props.data?.configuration?.provider,
                   rules: [{ required: true, message: '请输入类名' }],
-                })(<Input />)}
+                })(<Input/>)}
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -122,12 +149,12 @@ const Save: React.FC<Props> = props => {
                     {getFieldDecorator('configuration.location', {
                       initialValue: jarLocation,
                       rules: [{ required: true, message: '请输入文件地址' }],
-                    })(<Input />)}
+                    })(<Input/>)}
                   </Col>
                   <Col span={2}>
                     <Upload {...uploadProps}>
                       <Button type="primary">
-                        <Icon type="upload" /> 上传Jar包
+                        <Icon type="upload"/> 上传Jar包
                       </Button>
                     </Upload>
                   </Col>
@@ -147,13 +174,13 @@ const Save: React.FC<Props> = props => {
                 {getFieldDecorator('configuration.protocol', {
                   initialValue: props.data?.configuration?.protocol,
                   rules: [{ required: true, message: '请输入协议标识' }],
-                })(<Input />)}
+                })(<Input/>)}
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item key="transport" label="连接协议">
                 {getFieldDecorator('configuration.transport', {
-                  initialValue: props.data?.configuration?.transport?.split(","),
+                  initialValue: props.data?.configuration?.transport?.split(','),
                   rules: [{ required: true, message: '请输入连接协议' }],
                 })(
                   <Select mode="multiple">
@@ -169,12 +196,28 @@ const Save: React.FC<Props> = props => {
             </Col>
             <Col span={24}>
               <Form.Item label="脚本" labelCol={{ span: 3 }} wrapperCol={{ span: 21 }}>
-                <MonacoEditor
+                <AceEditor
+                  mode='javascript'
+                  theme="eclipse"
+                  name="app_code_editor"
+                  fontSize={14}
+                  showPrintMargin
+                  showGutter
+                  onChange={value => {
+                    setScript(value);
+                  }}
                   value={script}
-                  onChange={e => setScript(e)}
-                  language="javascript"
-                  height={500}
-                  theme="vs-dark"
+                  wrapEnabled
+                  highlightActiveLine  //突出活动线
+                  enableSnippets  //启用代码段
+                  style={{ width: '100%', height: 500 }}
+                  setOptions={{
+                    enableBasicAutocompletion: true,   //启用基本自动完成功能
+                    enableLiveAutocompletion: true,   //启用实时自动完成功能 （比如：智能代码提示）
+                    enableSnippets: true,  //启用代码段
+                    showLineNumbers: true,
+                    tabSize: 2,
+                  }}
                 />
               </Form.Item>
             </Col>
@@ -198,7 +241,7 @@ const Save: React.FC<Props> = props => {
         if (response.status === 200) {
           setDebuggerTransports(response.result?.transports);
         } else {
-          setActiveDebugger('');
+          setActiveDebugger('debugger');
         }
       });
     }
@@ -236,7 +279,7 @@ const Save: React.FC<Props> = props => {
               {getFieldDecorator('name', {
                 rules: [{ required: true, message: '协议名称' }],
                 initialValue: props.data?.name,
-              })(<Input placeholder="请输入协议名称" />)}
+              })(<Input placeholder="请输入协议名称"/>)}
             </Form.Item>
           </Col>
           <Col span={12}>
@@ -253,10 +296,10 @@ const Save: React.FC<Props> = props => {
                 >
                   <Select.Option value="script">
                     script
-                    </Select.Option>
+                  </Select.Option>
                   <Select.Option value="jar">
                     jar
-                    </Select.Option>
+                  </Select.Option>
                 </Select>,
               )}
             </Form.Item>
@@ -268,7 +311,7 @@ const Save: React.FC<Props> = props => {
         <Form.Item key="description" label="描述" labelCol={{ span: 3 }} wrapperCol={{ span: 21 }}>
           {getFieldDecorator('description', {
             initialValue: props.data?.description,
-          })(<Input />)}
+          })(<Input/>)}
         </Form.Item>
         <Collapse
           onChange={() => {
@@ -282,7 +325,7 @@ const Save: React.FC<Props> = props => {
           }}
           activeKey={activeDebugger}
           bordered={false}
-          expandIcon={({ isActive }) => <Icon type="caret-right" rotate={isActive ? 90 : 0} />}
+          expandIcon={({ isActive }) => <Icon type="caret-right" rotate={isActive ? 90 : 0}/>}
         >
           <Collapse.Panel
             header="调试"
@@ -304,6 +347,41 @@ const Save: React.FC<Props> = props => {
                         onChange={e => {
                           debuggerData.type = e.target.value;
                           setDebuggerData({ ...debuggerData });
+                          if (e.target.value === 'encode') {
+                            setPayload(localStorage.getItem(`protocol-payload-encode-debug-data-${props.data.id}`) || '{\n' +
+                              '  "messageType":"READ_PROPERTY",\n' +
+                              '  "properties":[\n' +
+                              '    \n' +
+                              '  ]\n' +
+                              '}');
+                          } else {
+                            if (`protocol-payload-decode-debug-data${props.data.id}` || payload === '') {
+                              switch (debuggerData.transport) {
+                                case 'HTTP':
+                                  setPayload(localStorage.getItem(`protocol-payload-decode-debug-data-${props.data.id}`) || 'POST /url\n' +
+                                    'Content-Type: application/json\n' +
+                                    '\n' +
+                                    '{}');
+                                  break;
+                                case 'MQTT':
+                                  setPayload(localStorage.getItem(`protocol-payload-decode-debug-data-${props.data.id}`) || 'QoS0 /topic\n' +
+                                    '\n' +
+                                    '{}');
+                                  break;
+                                case 'CoAP':
+                                  setPayload(localStorage.getItem(`protocol-payload-decode-debug-data-${props.data.id}`) || 'POST /url\n' +
+                                    'Content-Format: application/json\n' +
+                                    '\n' +
+                                    '{}');
+                                  break;
+                                default:
+                                  setPayload(localStorage.getItem(`protocol-payload-decode-debug-data-${props.data.id}`) || '');
+                                  return;
+                              }
+                            } else {
+                              setPayload(localStorage.getItem(`protocol-payload-decode-debug-data-${props.data.id}`) || '');
+                            }
+                          }
                         }}
                         defaultValue="encode"
                       >
@@ -318,6 +396,30 @@ const Save: React.FC<Props> = props => {
                         onChange={(e: string) => {
                           debuggerData.transport = e;
                           setDebuggerData({ ...debuggerData });
+                          if (debuggerData.type === 'decode') {
+                            switch (e) {
+                              case 'HTTP':
+                                setPayload(localStorage.getItem(`protocol-payload-decode-debug-data-${props.data.id}`) || 'POST /url\n' +
+                                  'Content-Type: application/json\n' +
+                                  '\n' +
+                                  '{}');
+                                break;
+                              case 'MQTT':
+                                setPayload(localStorage.getItem(`protocol-payload-decode-debug-data-${props.data.id}`) || 'QoS0 /topic\n' +
+                                  '\n' +
+                                  '{}');
+                                break;
+                              case 'CoAP':
+                                setPayload(localStorage.getItem(`protocol-payload-decode-debug-data-${props.data.id}`) || 'POST /url\n' +
+                                  'Content-Format: application/json\n' +
+                                  '\n' +
+                                  '{}');
+                                break;
+                              default:
+                                setPayload(localStorage.getItem(`protocol-payload-decode-debug-data-${props.data.id}`) || '');
+                                return;
+                            }
+                          }
                         }}
                         defaultValue={debuggerTransports[0] || null}
                       >
@@ -347,11 +449,34 @@ const Save: React.FC<Props> = props => {
                     </Form.Item>
                   </Col>
                 </Row>
-                <Input.TextArea
-                  rows={6}
-                  onChange={e => {
-                    debuggerData.payload = e.target.value;
+                <AceEditor
+                  mode='javascript'
+                  theme="eclipse"
+                  name="app_code_editor"
+                  fontSize={14}
+                  showPrintMargin
+                  showGutter
+                  onChange={value => {
+                    debuggerData.payload = value;
                     setDebuggerData({ ...debuggerData });
+                    setPayload(value);
+                    if (debuggerData.type === 'decode') {
+                      localStorage.setItem(`protocol-payload-decode-debug-data-${props.data.id}`, value);
+                    } else {
+                      localStorage.setItem(`protocol-payload-encode-debug-data-${props.data.id}`, value);
+                    }
+                  }}
+                  value={payload}
+                  wrapEnabled
+                  highlightActiveLine  //突出活动线
+                  enableSnippets  //启用代码段
+                  style={{ width: '100%', height: 300 }}
+                  setOptions={{
+                    enableBasicAutocompletion: true,   //启用基本自动完成功能
+                    enableLiveAutocompletion: true,   //启用实时自动完成功能 （比如：智能代码提示）
+                    enableSnippets: true,  //启用代码段
+                    showLineNumbers: true,
+                    tabSize: 2,
                   }}
                 />
                 <Button type="danger" onClick={() => startDebug()}>
@@ -359,7 +484,7 @@ const Save: React.FC<Props> = props => {
                 </Button>
               </Tabs.TabPane>
               <Tabs.TabPane tab="运行结果" key="result">
-                <Input.TextArea rows={5} value={debugLog} />
+                <Input.TextArea rows={5} value={debugLog}/>
               </Tabs.TabPane>
             </Tabs>
           </Collapse.Panel>

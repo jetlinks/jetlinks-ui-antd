@@ -5,14 +5,14 @@ import { PermissionItem } from './data';
 export async function list(params?: any) {
   return request(`/jetlinks/permission/_query`, {
     method: 'GET',
-    params: params,
+    params,
   });
 }
 
 export async function listNoPaging(params?: any) {
   return request(`/jetlinks/permission/_query/no-paging?paging=false`, {
     method: 'GET',
-    params: params
+    params
   });
 }
 

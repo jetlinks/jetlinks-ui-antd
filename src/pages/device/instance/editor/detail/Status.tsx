@@ -34,11 +34,11 @@ const topColResponsiveProps = {
 };
 
 const eventLevel = new Map();
-eventLevel.set('ordinary', <Badge status="processing" text="普通"/>);
-eventLevel.set('warn', <Badge status="warning" text="警告"/>);
-eventLevel.set('urgent', <Badge status="error" text="紧急"/>);
+eventLevel.set('ordinary', <Badge status="processing" text="普通" />);
+eventLevel.set('warn', <Badge status="warning" text="警告" />);
+eventLevel.set('urgent', <Badge status="error" text="紧急" />);
 
-const Status: React.FC<Props> = (props) => {
+const Status: React.FC<Props> = props => {
 
   const initState: State = {
     runInfo: {},
@@ -60,6 +60,7 @@ const Status: React.FC<Props> = (props) => {
   const [propertyData, setPropertyData] = useState({});
   const [spinning, setSpinning] = useState(true);
 
+  const [subs, setSubs] = useState<any>();
   useEffect(() => {
     runInfo.loading = true;
     setRunInfo({ ...runInfo });
@@ -112,7 +113,7 @@ const Status: React.FC<Props> = (props) => {
   }, []);
 
   useEffect(() => {
-    let subs: any;
+    // let subs: any;
     // 组装数据
     if (runInfo && runInfo.metadata) {
       const metadata = JSON.parse(runInfo.metadata);
@@ -151,7 +152,7 @@ const Status: React.FC<Props> = (props) => {
 
       setMetadata({ ...metadata });
 
-      subs = getWebsocket(
+      const tempSubs = getWebsocket(
         `instance-info-property-${props.device.id}-${props.device.productId}`,
         `/dashboard/device/${props.device.productId}/properties/realTime`,
         {
@@ -183,10 +184,14 @@ const Status: React.FC<Props> = (props) => {
           }
         },
       );
+
+      setSubs(tempSubs)
     }
 
     return () => {
-      subs && subs.unsubscribe();
+      if (subs) {
+        subs.unsubscribe();
+      }
     };
   }, [runInfo]);
 
@@ -199,7 +204,7 @@ const Status: React.FC<Props> = (props) => {
           setDeviceState({ state: response.result });
         }
       }).catch(() => {
-    });
+      });
   };
 
   const refreshProperties = (item: any) => {
@@ -294,126 +299,126 @@ const Status: React.FC<Props> = (props) => {
       <Spin tip="加载中..." spinning={spinning}>
         {
           metadata && metadata.properties ? <Row gutter={24}>
-              <Col {...topColResponsiveProps}>
-                <Spin spinning={runInfo.loading}>
-                  <ChartCard
-                    bordered={false}
-                    title='设备状态'
-                    action={
-                      <Tooltip
-                        title='刷新'
+            <Col {...topColResponsiveProps}>
+              <Spin spinning={runInfo.loading}>
+                <ChartCard
+                  bordered={false}
+                  title='设备状态'
+                  action={
+                    <Tooltip
+                      title='刷新'
+                    >
+                      <Icon type="sync" onClick={() => {
+                        refresDeviceState();
+                      }} />
+                    </Tooltip>
+                  }
+                  contentHeight={46}
+                  total={deviceState?.state?.text}
+                >
+                  <span>上线时间：{moment(runInfo?.onlineTime).format('YYYY-MM-DD HH:mm:ss')}</span>
+                </ChartCard>
+              </Spin>
+
+            </Col>
+
+            {
+              (metadata.properties).map((item: any) => {
+                if (!item) return false;
+                return (
+                  <Col {...topColResponsiveProps} key={item.id}>
+                    <Spin spinning={item.loading}>
+                      <ChartCard
+                        bordered={false}
+                        title={item.name}
+                        action={
+                          <div>
+                            <Icon title='刷新' type="sync" onClick={() => {
+                              refreshPropertyItem(item);
+                            }} />
+                            <Icon title='详情' style={{ marginLeft: '10px' }} type="bars"
+                              onClick={() => {
+                                setPropertiesVisible(true);
+                                setPropertiesInfo(item);
+                              }} />
+                          </div>
+                        }
+                        total={<AutoHide title={...propertyData[item.id]?.formatValue || '/'}
+                          style={{ width: '313%' }} />}
+                        contentHeight={46}
                       >
-                        <Icon type="sync" onClick={() => {
-                          refresDeviceState();
-                        }}/>
-                      </Tooltip>
-                    }
-                    contentHeight={46}
-                    total={deviceState?.state?.text}
-                  >
-                    <span>上线时间：{moment(runInfo?.onlineTime).format('YYYY-MM-DD HH:mm:ss')}</span>
-                  </ChartCard>
-                </Spin>
-
-              </Col>
-
-              {
-                (metadata.properties).map((item: any) => {
-                    if (!item) return false;
-                    return (
-                      <Col {...topColResponsiveProps} key={item.id}>
-                        <Spin spinning={item.loading}>
-                          <ChartCard
-                            bordered={false}
-                            title={item.name}
-                            action={
-                              <div>
-                                <Icon title='刷新' type="sync" onClick={() => {
-                                  refreshPropertyItem(item);
-                                }}/>
-                                <Icon title='详情' style={{ marginLeft: '10px' }} type="bars"
-                                      onClick={() => {
-                                        setPropertiesVisible(true);
-                                        setPropertiesInfo(item);
-                                      }}/>
-                              </div>
-                            }
-                            total={<AutoHide title={...propertyData[item.id]?.formatValue || '/'}
-                                             style={{ width: '313%' }}/>}
-                            contentHeight={46}
+                        <span>
+                          <MiniArea height={40} color="#975FE4" data={...propertyData[item.id]?.visitData} />
+                        </span>
+                      </ChartCard>
+                    </Spin>
+                  </Col>
+                );
+              },
+              )
+            }
+            {
+              propertiesVisible &&
+              <PropertiesInfo
+                item={propertiesInfo}
+                close={() => {
+                  setPropertiesVisible(false);
+                }}
+                type={props.device.productId}
+                deviceId={props.device.id}
+              />
+            }
+            {
+              (metadata.events).map((item: any) => {
+                const tempData = eventData.find(i => i.eventId === item.id);
+                return (
+                  <Col {...topColResponsiveProps} key={item.id}>
+                    <Spin spinning={item.loading}>
+                      <ChartCard
+                        bordered={false}
+                        title={item.name}
+                        action={
+                          <Tooltip
+                            title='刷新'
                           >
-                          <span>
-                            <MiniArea height={40} color="#975FE4" data={...propertyData[item.id]?.visitData}/>
-                          </span>
-                          </ChartCard>
-                        </Spin>
-                      </Col>
-                    );
-                  },
-                )
-              }
-              {
-                propertiesVisible &&
-                <PropertiesInfo
-                  item={propertiesInfo}
-                  close={() => {
-                    setPropertiesVisible(false);
-                  }}
-                  type={props.device.productId}
-                  deviceId={props.device.id}
-                />
-              }
-              {
-                (metadata.events).map((item: any) => {
-                    const tempData = eventData.find(i => i.eventId === item.id);
-                    return (
-                      <Col {...topColResponsiveProps} key={item.id}>
-                        <Spin spinning={item.loading}>
-                          <ChartCard
-                            bordered={false}
-                            title={item.name}
-                            action={
-                              <Tooltip
-                                title='刷新'
-                              >
-                                <Icon type="sync" onClick={() => {
-                                  refreshEventItem(item);
-                                }}/>
-                              </Tooltip>
-                            }
-                            total={<AutoHide title={`${tempData?.data.total || 0}次`} style={{ width: '313%' }}/>}
-                            contentHeight={46}
-                          >
-                      <span>
-                        {eventLevel.get(item.expands?.level)}
-                        <a
-                          style={{ float: 'right' }}
-                          onClick={() => {
-                            setEventInfo(item);
-                            setEventVisible(true);
-                          }}>
-                          查看详情
+                            <Icon type="sync" onClick={() => {
+                              refreshEventItem(item);
+                            }} />
+                          </Tooltip>
+                        }
+                        total={<AutoHide title={`${tempData?.data.total || 0}次`} style={{ width: '313%' }} />}
+                        contentHeight={46}
+                      >
+                        <span>
+                          {eventLevel.get(item.expands?.level)}
+                          <a
+                            style={{ float: 'right' }}
+                            onClick={() => {
+                              setEventInfo(item);
+                              setEventVisible(true);
+                            }}>
+                            查看详情
                         </a>
-                      </span>
-                          </ChartCard>
-                        </Spin>
-                      </Col>
-                    );
-                  },
-                )
-              }
-              {
-                eventVisible &&
-                <EventLog
-                  item={eventInfo}
-                  close={() => {
-                    setEventVisible(false);
-                  }}
-                  type={props.device.productId}
-                  deviceId={props.device.id}
-                />
-              }
-            </Row>
+                        </span>
+                      </ChartCard>
+                    </Spin>
+                  </Col>
+                );
+              },
+              )
+            }
+            {
+              eventVisible &&
+              <EventLog
+                item={eventInfo}
+                close={() => {
+                  setEventVisible(false);
+                }}
+                type={props.device.productId}
+                deviceId={props.device.id}
+              />
+            }
+          </Row>
             :
             <Col {...topColResponsiveProps}>
               <Spin spinning={runInfo.loading}>
@@ -426,13 +431,13 @@ const Status: React.FC<Props> = (props) => {
                     >
                       <Icon type="sync" onClick={() => {
                         refresDeviceState();
-                      }}/>
+                      }} />
                     </Tooltip>
                   }
                   contentHeight={46}
                   total={runInfo.state?.text}
                 >
-                  <span/>
+                  <span />
                 </ChartCard>
               </Spin>
             </Col>

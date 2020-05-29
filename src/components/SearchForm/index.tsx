@@ -29,12 +29,22 @@ const SearchForm = (props: Props) => {
 
     const search = () => {
         const data = form.getFieldsValue();
-        if (data.requestTime$btw) {
-            const formatDate = data.requestTime$btw.map((e: Moment) =>
-                moment(e).format('YYYY-MM-DD HH:mm:ss'),
-            );
-            data.requestTime$btw = formatDate.join(',');
-        }
+        // 找到时间字段
+        Object.keys(data).forEach(i => {
+            if (i.indexOf('$btw') !== -1 || i.indexOf('$BTW') !== -1) {
+                if (data[i]) {
+                    const formatDate = data[i].map((e: Moment) =>
+                        moment(e).format('YYYY-MM-DD HH:mm:ss'));
+                    data[i] = formatDate.join(',');
+                }
+            }
+        })
+        // if (data.requestTime$btw) {
+        //     const formatDate = data.requestTime$btw.map((e: Moment) =>
+        //         moment(e).format('YYYY-MM-DD HH:mm:ss'),
+        //     );
+        //     data.requestTime$btw = formatDate.join(',');
+        // }
         props.search(data);
     };
 

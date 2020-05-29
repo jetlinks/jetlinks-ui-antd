@@ -71,7 +71,10 @@ const FunctionDefin: React.FC<Props> = props => {
     });
   };
 
-  let dataSource = [{text:'String类型的UTC时间戳 (毫秒)',value:'string'},'yyyy-MM-dd','yyyy-MM-dd HH:mm:ss','yyyy-MM-dd HH:mm:ss EE','yyyy-MM-dd HH:mm:ss zzz'];
+  let dataSource = [{
+    text: 'String类型的UTC时间戳 (毫秒)',
+    value: 'string',
+  }, 'yyyy-MM-dd', 'yyyy-MM-dd HH:mm:ss', 'yyyy-MM-dd HH:mm:ss EE', 'yyyy-MM-dd HH:mm:ss zzz'];
 
   const renderDataType = () => {
     switch (dataType) {
@@ -82,7 +85,7 @@ const FunctionDefin: React.FC<Props> = props => {
               <Col span={11}>
                 {getFieldDecorator('output.min', {
                   initialValue: initState.data.output?.min,
-                })(<Input placeholder="最小值" />)}
+                })(<Input placeholder="最小值"/>)}
               </Col>
               <Col span={2} push={1}>
                 ~
@@ -91,7 +94,7 @@ const FunctionDefin: React.FC<Props> = props => {
                 <Form.Item>
                   {getFieldDecorator('output.max', {
                     initialValue: initState.data.output?.max,
-                  })(<Input placeholder="最大值" />)}
+                  })(<Input placeholder="最大值"/>)}
                 </Form.Item>
               </Col>
             </Form.Item>
@@ -99,13 +102,13 @@ const FunctionDefin: React.FC<Props> = props => {
             <Form.Item label="步长">
               {getFieldDecorator('output.step', {
                 initialValue: initState.data.output?.step,
-              })(<Input placeholder="请输入步长" />)}
+              })(<Input placeholder="请输入步长"/>)}
             </Form.Item>
 
             <Form.Item label="精度">
               {getFieldDecorator('output.scale', {
                 initialValue: initState.data.output?.scale,
-              })(<Input placeholder="请输入精度" />)}
+              })(<Input placeholder="请输入精度"/>)}
             </Form.Item>
 
             <Form.Item label="单位">
@@ -122,7 +125,7 @@ const FunctionDefin: React.FC<Props> = props => {
               <Col span={11}>
                 {getFieldDecorator('output.min', {
                   initialValue: initState.data.output?.min,
-                })(<Input placeholder="最小值" />)}
+                })(<Input placeholder="最小值"/>)}
               </Col>
               <Col span={2} push={1}>
                 ~
@@ -131,7 +134,7 @@ const FunctionDefin: React.FC<Props> = props => {
                 <Form.Item>
                   {getFieldDecorator('output.max', {
                     initialValue: initState.data.output?.max,
-                  })(<Input placeholder="最大值" />)}
+                  })(<Input placeholder="最大值"/>)}
                 </Form.Item>
               </Col>
             </Form.Item>
@@ -139,13 +142,13 @@ const FunctionDefin: React.FC<Props> = props => {
             <Form.Item label="步长">
               {getFieldDecorator('output.step', {
                 initialValue: initState.data.output?.step,
-              })(<Input placeholder="请输入步长" />)}
+              })(<Input placeholder="请输入步长"/>)}
             </Form.Item>
 
             <Form.Item label="精度">
               {getFieldDecorator('output.scale', {
                 initialValue: initState.data.output?.scale,
-              })(<Input placeholder="请输入精度" />)}
+              })(<Input placeholder="请输入精度"/>)}
             </Form.Item>
 
             <Form.Item label="单位">
@@ -162,7 +165,7 @@ const FunctionDefin: React.FC<Props> = props => {
               <Col span={11}>
                 {getFieldDecorator('output.min', {
                   initialValue: props.data.output?.min,
-                })(<Input placeholder="最小值" />)}
+                })(<Input placeholder="最小值"/>)}
               </Col>
               <Col span={2} push={1}>
                 ~
@@ -171,7 +174,7 @@ const FunctionDefin: React.FC<Props> = props => {
                 <Form.Item>
                   {getFieldDecorator('output.max', {
                     initialValue: props.data.output?.max,
-                  })(<Input placeholder="最大值" />)}
+                  })(<Input placeholder="最大值"/>)}
                 </Form.Item>
               </Col>
             </Form.Item>
@@ -179,7 +182,7 @@ const FunctionDefin: React.FC<Props> = props => {
             <Form.Item label="步长">
               {getFieldDecorator('output.step', {
                 initialValue: props.data.output?.step,
-              })(<Input placeholder="请输入步长" />)}
+              })(<Input placeholder="请输入步长"/>)}
             </Form.Item>
             <Form.Item label="单位">
               {getFieldDecorator('output.unit', {
@@ -194,7 +197,7 @@ const FunctionDefin: React.FC<Props> = props => {
             <Form.Item label="数据长度">
               {getFieldDecorator('output.expands.maxLength', {
                 initialValue: props.data.output?.expands?.maxLength,
-              })(<Input addonAfter="字节" />)}
+              })(<Input addonAfter="字节"/>)}
             </Form.Item>
           </div>
         );
@@ -205,7 +208,7 @@ const FunctionDefin: React.FC<Props> = props => {
               <Col span={11}>
                 {getFieldDecorator('output.trueText', {
                   initialValue: initState.data.output?.trueText,
-                })(<Input placeholder="trueText" />)}
+                })(<Input placeholder="trueText"/>)}
               </Col>
               <Col span={2} push={1}>
                 ~
@@ -214,7 +217,7 @@ const FunctionDefin: React.FC<Props> = props => {
                 <Form.Item>
                   {getFieldDecorator('output.trueValue', {
                     initialValue: initState.data.output?.trueValue,
-                  })(<Input placeholder="trueValue" />)}
+                  })(<Input placeholder="trueValue"/>)}
                 </Form.Item>
               </Col>
             </Form.Item>
@@ -222,7 +225,7 @@ const FunctionDefin: React.FC<Props> = props => {
               <Col span={11}>
                 {getFieldDecorator('output.falseText', {
                   initialValue: initState.data.output?.falseText,
-                })(<Input placeholder="falseText" />)}
+                })(<Input placeholder="falseText"/>)}
               </Col>
               <Col span={2} push={1}>
                 ~
@@ -231,7 +234,7 @@ const FunctionDefin: React.FC<Props> = props => {
                 <Form.Item>
                   {getFieldDecorator('output.falseValue', {
                     initialValue: initState.data.output?.falseValue,
-                  })(<Input placeholder="falseValue" />)}
+                  })(<Input placeholder="falseValue"/>)}
                 </Form.Item>
               </Col>
             </Form.Item>
@@ -248,7 +251,7 @@ const FunctionDefin: React.FC<Props> = props => {
                               filterOption={(inputValue, option) =>
                                 option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
                               }
-                />
+                />,
               )}
             </Form.Item>
           </div>
@@ -272,7 +275,7 @@ const FunctionDefin: React.FC<Props> = props => {
             <Form.Item label="元素个数">
               {getFieldDecorator('output.elementNumber', {
                 initialValue: props.data.output?.elementNumber,
-              })(<Input />)}
+              })(<Input/>)}
             </Form.Item>
           </div>
         );
@@ -293,7 +296,7 @@ const FunctionDefin: React.FC<Props> = props => {
                     />
                   </Col>
                   <Col span={1} style={{ textAlign: 'center' }}>
-                    <Icon type="arrow-right" />
+                    <Icon type="arrow-right"/>
                   </Col>
                   <Col span={10}>
                     <Input
@@ -395,7 +398,7 @@ const FunctionDefin: React.FC<Props> = props => {
                 setCurrentParameter({});
               }}
             >
-              <Icon type="plus" />
+              <Icon type="plus"/>
               添加参数
             </Button>
           </Form.Item>
@@ -435,7 +438,7 @@ const FunctionDefin: React.FC<Props> = props => {
             <Form.Item label="密码长度">
               {getFieldDecorator('valueType.expands.maxLength', {
                 initialValue: initState.data.output?.expands.maxLength,
-              })(<Input addonAfter="字节" />)}
+              })(<Input addonAfter="字节"/>)}
             </Form.Item>
           </div>
         );
@@ -470,7 +473,7 @@ const FunctionDefin: React.FC<Props> = props => {
           {getFieldDecorator('name', {
             rules: [{ required: true, message: '请输入功能名称' }],
             initialValue: initState.data.name,
-          })(<Input />)}
+          })(<Input/>)}
         </Form.Item>
         <Form.Item label="是否异步">
           {getFieldDecorator('async', {
@@ -517,7 +520,10 @@ const FunctionDefin: React.FC<Props> = props => {
               )}
             />
           )}
-          <Button type="link" icon="plus" onClick={() => setInputVisible(true)}>
+          <Button type="link" icon="plus" onClick={() => {
+            setCurrentParameter({});
+            setInputVisible(true);
+          }}>
             添加参数
           </Button>
         </Form.Item>
@@ -554,7 +560,7 @@ const FunctionDefin: React.FC<Props> = props => {
         <Form.Item label="描述">
           {getFieldDecorator('description', {
             initialValue: initState.data.description,
-          })(<Input.TextArea rows={3} />)}
+          })(<Input.TextArea rows={3}/>)}
         </Form.Item>
       </Form>
 
@@ -606,7 +612,10 @@ const FunctionDefin: React.FC<Props> = props => {
             const temp = inputs.filter(i => i.id !== item.id);
             setInputs([...temp, item]);
           }}
-          close={() => setInputVisible(false)}
+          close={() => {
+            setCurrentParameter({});
+            setInputVisible(false);
+          }}
         />
       )}
     </Drawer>

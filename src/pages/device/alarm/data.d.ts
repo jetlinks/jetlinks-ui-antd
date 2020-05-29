@@ -71,7 +71,7 @@ export class AlarmProperty {
 
 export class AlarmAction {
   executor: string;
-  configuration: any;
+  configuration?: any;
 }
 
 export class AlarmLog {

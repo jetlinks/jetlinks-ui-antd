@@ -11,6 +11,7 @@ import Save from './save';
 import Authorization from '@/components/Authorization';
 import apis from '@/services';
 import SearchForm from '@/components/SearchForm';
+import Service from '@/services/crud';
 
 interface Props {
     users: any;
@@ -98,6 +99,7 @@ const UserList: React.FC<Props> = props => {
 
 
     const handleSearch = (params?: any) => {
+        setSearchParam(params);
         dispatch({
             type: 'users/query',
             payload: encodeQueryParam(params)
@@ -105,6 +107,10 @@ const UserList: React.FC<Props> = props => {
     };
 
     useEffect(() => {
+        // const tem = new Service<UserItem, 'user'>().save({}).subscribe(
+        //     (data: any) => console.log(data.response.result),
+        // );
+        // console.log(tem, 'temp');
         handleSearch(searchParam);
     }, []);
 
@@ -210,10 +216,6 @@ const UserList: React.FC<Props> = props => {
                                 },
                             ]}
                         />
-                        {/* <Search search={(params: any) => {
-                            setSearchParam(params);
-                            handleSearch({ terms: params, pageSize: 10 })
-                        }} /> */}
                     </div>
                     <div className={styles.tableListOperator}>
                         <Button icon="plus" type="primary" onClick={() => { setSaveVisible(true) }}>

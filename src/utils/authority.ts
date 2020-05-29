@@ -22,20 +22,18 @@ export function getAuthority(): string | string[] {
   //   return ['admin'];
   // }
   // return authority;
-
-  const autz = localStorage.getItem('hsweb-autz');
+  const storage = localStorage.getItem('hsweb-autz');
+  const autz = storage ? JSON.parse(storage) : null;
 
   if (autz !== null) {
-    // const authentication = new Authentication(
-    //   JSON.parse(localStorage.getItem('hsweb-autz') || '{}'),
-    // );
-    // const authority = authentication.permissions.map(e => e.id);
-    //
-
-    const authority = JSON.parse(localStorage.getItem('hsweb-autz') || '{}').currentAuthority || [];
+    const authority = autz.currentAuthority || [];
+    if (autz.user.username === 'admin') {
+      return ['admin'];
+    }
     return authority;
+
   }
-  return ['admin'];
+  return ['guest'];
 }
 
 export function setAuthority(authority: string | string[]): void {

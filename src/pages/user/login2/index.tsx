@@ -70,9 +70,9 @@ const Login: React.FC<Props> = props => {
         </div>
         <div className={style.fg}>
           <div style={{ fontSize: '11px', marginTop: '11px' }}>
-            {/*<a style={{ fontSize: '11px' }} href="#">
+            {/* <a style={{ fontSize: '11px' }} href="#">
               忘记密码？
-            </a>*/}
+            </a> */}
           </div>
         </div>
 

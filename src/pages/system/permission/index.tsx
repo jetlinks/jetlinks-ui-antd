@@ -1,14 +1,14 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { ColumnProps, PaginationConfig, SorterResult } from 'antd/es/table';
-import { Divider, Card, Table, message, Button, Popconfirm } from 'antd';
+import { Divider, Card, message, Button, Popconfirm } from 'antd';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import styles from '@/utils/table.less';
 import { connect } from 'dva';
-import Search from './Search';
 import { Dispatch, ConnectState } from '@/models/connect';
 import { PermissionItem } from './data.d';
 import encodeQueryParam from '@/utils/encodeParam';
 import Save from './Save';
+import SearchForm from '@/components/SearchForm';
+import ProTable from './component/ProTable';
 // import SettingAutz from "../setting-autz";
 interface Props {
   permission: any;
@@ -43,15 +43,14 @@ const PermissionList: React.FC<Props> = props => {
   const [searchParam, setSearchParam] = useState(initState.searchParam);
   const [saveVisible, setSaveVisible] = useState(initState.saveVisible);
   const [saveLoading, setSaveLoading] = useState(initState.saveLoading);
-  // const [autzVisible, setAutzVisible] = useState(initState.autzVisible);
 
   const handleSearch = (params?: any) => {
-    setSearchParam(params);
+    const temp = { ...searchParam, ...params };
+    setSearchParam(temp);
     dispatch({
       type: 'permission/query',
-      payload: encodeQueryParam(params),
+      payload: encodeQueryParam(temp),
     });
-    setSearchParam(params);
   };
 
   useEffect(() => {
@@ -62,10 +61,6 @@ const PermissionList: React.FC<Props> = props => {
     setSaveVisible(true);
     setCurrentItem(record);
   };
-
-  // const setAutz = (record: PermissionItem) => {
-  //     setAutzVisible(true);
-  // }
 
   const saveOrUpdate = (permission: PermissionItem) => {
     setSaveLoading(true);
@@ -78,6 +73,7 @@ const PermissionList: React.FC<Props> = props => {
           setSaveLoading(false);
           message.success('添加成功');
           setSaveVisible(false);
+          handleSearch(setSearchParam);
         }
       },
     });
@@ -93,20 +89,7 @@ const PermissionList: React.FC<Props> = props => {
     });
   };
 
-  const onTableChange = (
-    pagination: PaginationConfig,
-    filters: any,
-    sorter: SorterResult<PermissionItem>,
-  ) => {
-    handleSearch({
-      pageIndex: Number(pagination.current) - 1,
-      pageSize: pagination.pageSize,
-      terms: searchParam,
-      sorts: sorter,
-    });
-  };
-
-  const columns: ColumnProps<PermissionItem>[] = [
+  const columns: any[] = [
     {
       title: 'ID',
       dataIndex: 'id',
@@ -118,19 +101,23 @@ const PermissionList: React.FC<Props> = props => {
     {
       title: '状态',
       dataIndex: 'status',
-      render: text => (text === 1 ? '正常' : '禁用'),
-    },
-    {
-      title: '备注',
-      dataIndex: 'remark',
+      filters: [
+        {
+          text: '启用',
+          value: 1
+        },
+        {
+          text: '禁用',
+          value: 0,
+        }
+      ],
+      render: (text: any) => (text === 1 ? '启用' : '禁用'),
     },
     {
       title: '操作',
-      render: (text, record) => (
+      render: (text: any, record: any) => (
         <Fragment>
           <a onClick={() => edit(record)}>编辑</a>
-          {/* <Divider type="vertical" /> */}
-          {/* <a onClick={() => setAutz(record)}>赋权</a> */}
           <Divider type="vertical" />
           <Popconfirm
             title="确定删除此权限吗？"
@@ -149,11 +136,23 @@ const PermissionList: React.FC<Props> = props => {
       <Card bordered={false}>
         <div className={styles.tableList}>
           <div>
-            <Search
+            <SearchForm
               search={(params: any) => {
-                setSearchParam({ pageSize: 10, terms: params });
-                handleSearch({ terms: params, pageSize: 10 });
+                setSearchParam({ pageSize: 10, terms: { ...params, ...searchParam.terms } });
+                handleSearch({ terms: { ...params, ...searchParam.terms }, pageSize: 10 });
               }}
+              formItems={[
+                {
+                  label: "ID",
+                  key: "id$LIKE",
+                  type: 'string'
+                },
+                {
+                  label: "名称",
+                  key: "name$LIKE",
+                  type: 'string'
+                }
+              ]}
             />
           </div>
           <div className={styles.tableListOperator}>
@@ -168,24 +167,15 @@ const PermissionList: React.FC<Props> = props => {
             </Button>
           </div>
           <div className={styles.StandardTable}>
-            <Table
+            <ProTable
               loading={props.loading}
-              dataSource={(result || {}).data}
+              dataSource={result?.data}
               columns={columns}
               rowKey="id"
-              onChange={onTableChange}
-              pagination={{
-                current: result.pageIndex + 1,
-                total: result.total,
-                pageSize: result.pageSize,
-                showQuickJumper: true,
-                showSizeChanger: true,
-                pageSizeOptions: ['10', '20', '50', '100'],
-                showTotal: (total: number) =>
-                  `共 ${total} 条记录 第  ${result.pageIndex + 1}/${Math.ceil(
-                    result.total / result.pageSize,
-                  )}页`,
+              onSearch={(params: any) => {
+                handleSearch(params);
               }}
+              paginationConfig={result}
             />
           </div>
         </div>

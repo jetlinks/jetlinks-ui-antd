@@ -13,6 +13,7 @@ import moment from 'moment';
 import encodeQueryParam from '@/utils/encodeParam';
 
 interface Props extends FormComponentProps {
+  selectionType: string;
   close: Function;
   save: Function;
 }
@@ -25,7 +26,7 @@ interface State {
 
 const DeviceGatewayBind: React.FC<Props> = props => {
   const initState: State = {
-    searchParam: { pageSize: 10, terms: { parentId$isnull: 1 } },
+    searchParam: { pageSize: 10 },
     deviceData: {},
     deviceId: [],
   };
@@ -47,10 +48,14 @@ const DeviceGatewayBind: React.FC<Props> = props => {
           setDeviceData(response.result);
         }
       })
-      .catch(() => {});
+      .catch(() => {
+      });
   };
 
   useEffect(() => {
+    if (props.selectionType === 'checkbox') {
+      searchParam.terms = { parentId$isnull: 1 };
+    }
     handleSearch(searchParam);
   }, []);
 
@@ -68,7 +73,8 @@ const DeviceGatewayBind: React.FC<Props> = props => {
           setDeviceData(response.result);
         }
       })
-      .catch(() => {});
+      .catch(() => {
+      });
   };
 
   const rowSelection = {
@@ -106,7 +112,7 @@ const DeviceGatewayBind: React.FC<Props> = props => {
       title: '状态',
       dataIndex: 'state',
       render: record =>
-        record ? <Badge status={statusMap.get(record.text)} text={record.text} /> : '',
+        record ? <Badge status={statusMap.get(record.text)} text={record.text}/> : '',
     },
     {
       title: '描述',
@@ -116,7 +122,7 @@ const DeviceGatewayBind: React.FC<Props> = props => {
 
   return (
     <Modal
-      title="网关绑定子设备"
+      title="选择设备"
       visible
       okText="确定"
       cancelText="取消"
@@ -132,7 +138,10 @@ const DeviceGatewayBind: React.FC<Props> = props => {
           <Search
             search={(params: any) => {
               setSearchParam(params);
-              handleSearch({ terms: params, pageSize: 10 });
+              if (props.selectionType === 'checkbox') {
+                params.parentId$isnull = 1;
+              }
+              handleSearch({ terms: params, sorter: searchParam.sorter, pageSize: 10 });
             }}
           />
         </div>
@@ -144,7 +153,7 @@ const DeviceGatewayBind: React.FC<Props> = props => {
             rowKey="id"
             onChange={onTableChange}
             rowSelection={{
-              type: 'checkbox',
+              type: props.selectionType,
               ...rowSelection,
             }}
             pagination={{

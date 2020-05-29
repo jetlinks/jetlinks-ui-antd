@@ -543,7 +543,10 @@ const EventDefin: React.FC<Props> = props => {
             const temp = properties.filter(i => i.id !== item.id);
             setParameter([...temp, item]);
           }}
-          close={() => setParameterVisible(false)}
+          close={() => {
+            setCurrentParameter({});
+            setParameterVisible(false)
+          }}
         />
       )}
       <div

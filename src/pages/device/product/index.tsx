@@ -250,6 +250,8 @@ const DeviceModel: React.FC<Props> = props => {
               },
             });
           }
+        }).catch(() => {
+          message.error('导入配置失败');
         });
       }
     },

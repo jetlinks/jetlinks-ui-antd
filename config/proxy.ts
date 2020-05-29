@@ -8,10 +8,10 @@
 export default {
   dev: {
     '/jetlinks': {
-      target: 'http://192.168.3.110:8844/',
-      ws: 'ws://192.168.3.110:8844/',
-      // ws: 'ws://2.jetlinks.org:9010',
-      // target: 'http://2.jetlinks.org:9010/',
+      // target: 'http://192.168.3.110:8844/',
+      // ws: 'ws://192.168.3.110:8844/',
+      ws: 'ws://2.jetlinks.org:9010',
+      target: 'http://2.jetlinks.org:9010/',
       changeOrigin: true,
       pathRewrite: { '^/jetlinks': '' },
     },

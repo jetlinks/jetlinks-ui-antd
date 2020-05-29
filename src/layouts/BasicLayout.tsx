@@ -8,7 +8,7 @@ import ProLayout, {
   BasicLayoutProps as ProLayoutProps,
   Settings,
 } from '@ant-design/pro-layout';
-import React, { useEffect, useRef, useMemo, useCallback } from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'umi';
 import { Dispatch } from 'redux';
 import { connect } from 'dva';
@@ -17,10 +17,7 @@ import Authorized from '@/utils/Authorized';
 import RightContent from '@/components/GlobalHeader/RightContent';
 import { ConnectState } from '@/models/connect';
 import { isAntDesignPro, getAuthorityFromRouter } from '@/utils/utils';
-import useWebSocket, { ReadyState } from 'react-use-websocket';
 import logo from '../assets/logo.svg';
-import { getAccessToken } from '@/utils/authority';
-import WebSocketOption, { handleWebsocket } from '@/pages/WebSocketOption';
 
 // import PubSub from 'pubsub-js';
 
@@ -62,33 +59,7 @@ const menuDataRender = (menuList: MenuDataItem[]): MenuDataItem[] =>
     return Authorized.check(item.authority, localItem, null) as MenuDataItem;
   });
 
-const defaultFooterDom = <div></div>;
-
-// const defaultFooterDom1 = (
-//   <DefaultFooter
-//     copyright="2019 蚂蚁金服体验技术部出品"
-//     links={[
-//       {
-//         key: 'Ant Design Pro',
-//         title: 'Ant Design Pro',
-//         href: 'https://pro.ant.design',
-//         blankTarget: true,
-//       },
-//       {
-//         key: 'github',
-//         title: <Icon type="github" />,
-//         href: 'https://github.com/ant-design/ant-design-pro',
-//         blankTarget: true,
-//       },
-//       {
-//         key: 'Ant Design',
-//         title: 'Ant Design',
-//         href: 'https://ant.design',
-//         blankTarget: true,
-//       },
-//     ]}
-//   />
-// );
+const defaultFooterDom = <div />;
 
 const footerRender: BasicLayoutProps['footerRender'] = () => {
   if (!isAntDesignPro()) {
@@ -125,9 +96,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
       pathname: '/',
     },
   } = props;
-  /**
-   * constructor
-   */
+
 
   useEffect(() => {
     if (dispatch) {
@@ -135,18 +104,8 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
         type: 'user/fetchCurrent',
       });
     }
-    // PubSub.subscribe('login-success', () => {
-    //   getUser();
-    // })
   }, []);
-  // const getUser = () => {
-  //   dispatch({
-  //     type: 'user/fetchCurrent',
-  //   });
-  // }
-  /**
-   * init variables
-   */
+
 
   const handleMenuCollapse = (payload: boolean): void => {
     if (dispatch) {
@@ -161,9 +120,11 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
   const authorized = getAuthorityFromRouter(props.route.routes, location.pathname || '/') || {
     authority: undefined,
   };
+
   return (
     <ProLayout
-      logo={logo}
+      // logo={logo}
+      logo={settings.titleIcon || logo}
       menuHeaderRender={(logoDom, titleDom) => (
         <Link to="/">
           {logoDom}
