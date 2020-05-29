@@ -4,7 +4,7 @@ interface ListData<T> {
     pageSize: number;
     total: number;
 }
-interface ApiResponse<T> {
+export interface ApiResponse<T> {
     code: string,
     result: ListData<T> | any,
     status: number

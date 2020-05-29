@@ -3,6 +3,7 @@ import Service from '@/services/crud';
 import { from, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { RoleItem } from './data';
+import { ApiResponse } from '@/services/response';
 
 class RoleService<T> extends Service<T> {
   public bindUser = (params: any) => from(request(`/jetlinks/dimension-user/_query/no-paging`, {
