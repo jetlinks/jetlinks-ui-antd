@@ -5,9 +5,9 @@
 import { extend } from 'umi-request';
 import { notification } from 'antd';
 import { router } from 'umi';
+import { stringify } from 'qs';
 import { getAccessToken } from './authority';
 import { getPageQuery } from './utils';
-import { stringify } from 'qs';
 
 // const codeMessage = {
 //   200: '服务器成功返回请求的数据。',

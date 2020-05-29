@@ -1,43 +1,57 @@
-import { async } from "rxjs/internal/scheduler/async";
-import request from "@/utils/request";
-import { ajax } from 'rxjs/ajax';
+
 import { map, catchError } from 'rxjs/operators';
-import { of, Observable } from "rxjs";
-import { getAccessToken } from "@/utils/authority";
+import { of, Observable, from } from "rxjs";
+import request from '@/utils/request';
 
 interface BaseServie<T> {
-    query(params: any): T[];
-    save(params: T): any;
-    update(params: Partial<T>): any;
-    remove(ids: string[]): any;
+    query(params: any): Observable<any>;
+    save(params: T): Observable<any>;
+    remove(id: string): Observable<any>;
+    update(params: Partial<T>): Observable<any>;
 }
+/**
+ * T 实体
+ * U 接口
+ */
+class Service<T> implements BaseServie<T>{
 
-class Service<T, U> {
+    protected uri: string;
 
-    public save = (params: any) => ajax({
-        url: 'http://demo.jetlinks.cn/jetlinks/user/_query',
+    constructor(uri: string) {
+        this.uri = `/jetlinks/${uri}`
+    }
+
+    public query = (params: any) => from(request(`${this.uri}/_query`, {
         method: 'GET',
-        headers: {
-            'X-Access-Token': getAccessToken(),
-        },
-        body: JSON.stringify(params)
-    })
-        .pipe(map((reponse: any) => reponse),
-            catchError(error =>
-                // console.log(error);
-                of(error)
-            ))
+        params
+    })).pipe(map((response: ApiResponse<T>) => response)
+        , catchError(error => of(error)));
 
-    // query(params: any): T[] {
-    //     throw new Error("Method not implemented.");
-    // }
+    public save = (params: Partial<T>) => from(request(this.uri, {
+        method: 'POST',
+        data: params
+    })).pipe(map((response: ApiResponse<T>) => response),
+        catchError(error => of(error)));
 
-    // update(params: Partial<T>) {
-    //     throw new Error("Method not implemented.");
-    // }
-    // remove(ids: string[]) {
-    //     throw new Error("Method not implemented.");
-    // }
+    public remove = (id: string) => from(request(`${this.uri}/${id}`, {
+        method: 'DELETE',
+    })).pipe(map((response: ApiResponse<T>) => {
+        if (response.status === 200) {
+            return response
+        }
+        console.log(response)
+
+    }),
+        catchError(error => of(error)));
+
+    public update = (params: Partial<T>) => from(request(this.uri, {
+        method: 'PUT',
+        data: params
+    })).pipe(map((response: ApiResponse<T>) => response),
+        catchError(error => of(error)));
+
+    public saveOrUpdate = (params: Partial<T>) =>
+        params && params.id ? this.update(params) : this.save(params);
 
 }
 
