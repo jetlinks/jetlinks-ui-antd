@@ -79,7 +79,7 @@ const Authorization: React.FC<Props> = props => {
           setPermissionList(list);
         }
       })
-      .catch(() => {});
+      .catch(() => { });
     if (props.target.id) {
       apis.authorization
         .list(
@@ -97,7 +97,7 @@ const Authorization: React.FC<Props> = props => {
             setTargetAutz(response.result);
           }
         })
-        .catch(() => {});
+        .catch(() => { });
     }
 
     // apis.authorization.autzDetail({ type: props.targetType, id: props.targetId }).then(response => {
@@ -242,7 +242,7 @@ const Authorization: React.FC<Props> = props => {
           message.success('授权成功');
         }
       })
-      .catch(() => {});
+      .catch(() => { });
     // console.log({
     //   targetId: props.targetId,
     //   targetType: props.targetType,
@@ -288,7 +288,7 @@ const Authorization: React.FC<Props> = props => {
             initialValue: props.target.id ? props.target.name : '',
           })(
             <Select mode="multiple" disabled={!!props.target.id}>
-              {Array.from(new Set<string>(dimensionList.map((item: any) => item.typeName))).map(
+              {Array.from(new Set<string>(dimensionList.filter((item: any) => item.typeName).map((item: any) => item.typeName))).map(
                 type => {
                   const typeData = groupBy(dimensionList, item => item.typeName)[type];
                   return (
@@ -384,58 +384,58 @@ const Authorization: React.FC<Props> = props => {
                   return (
                     <Fragment>
                       {getFieldValue(`permissions.${record.id}`) &&
-                      getFieldValue(`permissions.${record.id}`).length === record.actions.length ? (
-                        <a
-                          onClick={() => {
-                            const temp = targetAutz.filter(item => item.permission !== record.id);
-                            setTargetAutz(cloneDeep(temp));
-                            setFieldsValue({ [`permissions.${record.id}`]: [] });
-                          }}
-                        >
-                          取消全选
-                        </a>
-                      ) : (
-                        <a
-                          onClick={() => {
-                            setFieldsValue({
-                              [`permissions.${record.id}`]: record.actions.map(
-                                (i: any) => i.action,
-                              ),
-                            });
-                            if (autz) {
+                        getFieldValue(`permissions.${record.id}`).length === record.actions.length ? (
+                          <a
+                            onClick={() => {
                               const temp = targetAutz.filter(item => item.permission !== record.id);
-                              autz.actions = record.actions.map((i: any) => i.action);
-                              setTargetAutz(cloneDeep([...temp, autz]));
-                            } else {
-                              targetAutz.push({
-                                id: record.id,
-                                permission: record.id,
-                                actions: record.actions.map((i: any) => i.action),
+                              setTargetAutz(cloneDeep(temp));
+                              setFieldsValue({ [`permissions.${record.id}`]: [] });
+                            }}
+                          >
+                            取消全选
+                          </a>
+                        ) : (
+                          <a
+                            onClick={() => {
+                              setFieldsValue({
+                                [`permissions.${record.id}`]: record.actions.map(
+                                  (i: any) => i.action,
+                                ),
                               });
-                              setTargetAutz(cloneDeep(targetAutz));
-                            }
-                          }}
-                        >
-                          全选
-                        </a>
-                      )}
+                              if (autz) {
+                                const temp = targetAutz.filter(item => item.permission !== record.id);
+                                autz.actions = record.actions.map((i: any) => i.action);
+                                setTargetAutz(cloneDeep([...temp, autz]));
+                              } else {
+                                targetAutz.push({
+                                  id: record.id,
+                                  permission: record.id,
+                                  actions: record.actions.map((i: any) => i.action),
+                                });
+                                setTargetAutz(cloneDeep(targetAutz));
+                              }
+                            }}
+                          >
+                            全选
+                          </a>
+                        )}
 
                       {((text && text.supportDataAccessTypes) || []).some(
                         (i: string) => i === 'DENY_FIELDS',
                       ) && (
-                        <>
-                          <Divider type="vertical" />
+                          <>
+                            <Divider type="vertical" />
 
-                          <a
-                            onClick={() => {
-                              setDataAccessVisible(true);
-                              setCheckPermission({ ...record, autz });
-                            }}
-                          >
-                            数据权限
+                            <a
+                              onClick={() => {
+                                setDataAccessVisible(true);
+                                setCheckPermission({ ...record, autz });
+                              }}
+                            >
+                              数据权限
                           </a>
-                        </>
-                      )}
+                          </>
+                        )}
                     </Fragment>
                   );
                 },
@@ -446,16 +446,16 @@ const Authorization: React.FC<Props> = props => {
               permissionType !== 'all'
                 ? searchText.length > 0
                   ? JSON.parse(JSON.stringify(permissionList))
-                      .filter((item: any) => (item.properties || {}).type === permissionType)
-                      .filter((item: any) => item.name.indexOf(searchText) > -1)
+                    .filter((item: any) => (item.properties || {}).type === permissionType)
+                    .filter((item: any) => item.name.indexOf(searchText) > -1)
                   : JSON.parse(JSON.stringify(permissionList)).filter(
-                      (item: any) => (item.properties || {}).type === permissionType,
-                    )
+                    (item: any) => (item.properties || {}).type === permissionType,
+                  )
                 : searchText.length > 0
-                ? JSON.parse(JSON.stringify(permissionList)).filter(
+                  ? JSON.parse(JSON.stringify(permissionList)).filter(
                     (item: any) => item.name.indexOf(searchText) > -1,
                   )
-                : permissionList
+                  : permissionList
             }
           />
         </Form.Item>
