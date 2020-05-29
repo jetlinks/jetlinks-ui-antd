@@ -206,7 +206,7 @@ const Editor: React.FC<Props> = props => {
     <div style={{ marginTop: 30 }}>
       <Descriptions column={4}>
         <Descriptions.Item label="ID">{id}</Descriptions.Item>
-        <Descriptions.Item label="型号">
+        <Descriptions.Item label="产品">
           <div>
             {data.productName}
             <a style={{ marginLeft: 10 }}

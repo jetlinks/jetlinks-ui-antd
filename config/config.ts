@@ -216,6 +216,16 @@ export default {
                   name: '地理位置',
                   authority: ['geo-manager', 'admin'],
                   component: './device/location',
+                },{
+                  path: '/device/firmware',
+                  name: '固件升级',
+                  authority: ['firmware-manager', 'admin'],
+                  component: './device/firmware',
+                },{
+                  hideInMenu: true,
+                  path: '/device/firmware/save/:id',
+                  name: '固件详情',
+                  component: './device/firmware/editor',
                 },
               ],
             },
