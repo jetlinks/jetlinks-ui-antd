@@ -38,18 +38,20 @@ const Debug: React.FC<Props> = props => {
       .then(res => {
         setConfigList(res.result?.data);
       })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   const start = () => {
     if (configId) {
       apis.notifier
-        .debugTemplate(configId, {
-          template: data,
+        .debugTemplate(data.id, {
+          template: configList.find(i => i.id === configId),
           context: JSON.parse(context || '{}'),
         })
-        .then(() => {
-          message.success('发送成功');
+        .then((response: any) => {
+          if (response.status === 200) {
+            message.success('发送成功');
+          }
         });
     } else {
       message.error('请选择通知配置！');
