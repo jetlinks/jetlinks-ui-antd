@@ -139,7 +139,7 @@ const Location: React.FC<Props> = props => {
                 type: 'image',
                 image: mark_b,
                 size: [32, 34],
-                anchor: 'bottom-cent er',
+                anchor: 'bottom-center',
               });
             }
           } else {
@@ -148,7 +148,7 @@ const Location: React.FC<Props> = props => {
                 type: 'image',
                 image: mark_r,
                 size: [32, 34],
-                anchor: 'bottom-cent er',
+                anchor: 'bottom-center',
               });
             }
           }
