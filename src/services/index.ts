@@ -17,6 +17,7 @@ import * as certificate from '@/pages/network/certificate/service';
 import * as sqlRule from '@/pages/rule-engine/sqlRule/service';
 import * as location from '@/pages/device/location/service';
 import * as firmware from '@/pages/device/firmware/service';
+import * as deviceGroup from '@/pages/device/group/service';
 // import * as coapClient from '@/pages/network/coap-client/service';
 // import * as httpClient from '@/pages/network/http-client/service';
 // import * as tcpClient from '@/pages/network/tcp-client/service';
@@ -70,5 +71,6 @@ const apis = {
   location,
   systemConfig,
   firmware,
+  deviceGroup,
 };
 export default apis;
