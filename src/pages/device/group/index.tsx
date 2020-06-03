@@ -171,7 +171,7 @@ const DeviceGroup: React.FC<Props> = props => {
                     <List.Item key={item.id}>
                       <ChartCard
                         bordered={false} title={item.id}
-                        /*avatar={<img style={{width: 48, height: 48}} src={item.avatar} alt="indicator"/>}*/
+                        avatar={<Avatar size="small" src={item.avatar}/>}
                         action={
                           <div>
                             <Tooltip key="edit" title="编辑">
