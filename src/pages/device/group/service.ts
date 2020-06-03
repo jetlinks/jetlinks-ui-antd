@@ -7,14 +7,14 @@ export async function list(params?: any) {
   });
 }
 
-export async function save(params?: any) {
+export async function save(params: any) {
   return request(`/jetlinks/device/group`, {
     method: 'POST',
     data: params,
   });
 }
 
-export async function saveOrUpdate(params?: any) {
+export async function saveOrUpdate(params: any) {
   return request(`/jetlinks/device/group`, {
     method: 'PATCH',
     data: params,
