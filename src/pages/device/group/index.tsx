@@ -96,7 +96,21 @@ const DeviceGroup: React.FC<Props> = props => {
       })
       .catch(() => {
       })
+  };
 
+  const _unbindAll = (groupId: string) => {
+    setSpinning(true);
+    apis.deviceGroup._unbindAll(groupId)
+      .then((response: any) => {
+        if (response.status === 200) {
+          message.success('删除成功');
+          handleSearch(searchParam);
+        } else {
+          setSpinning(false);
+        }
+      })
+      .catch(() => {
+      })
   };
 
   const onSearch = (name?: string) => {
@@ -189,6 +203,17 @@ const DeviceGroup: React.FC<Props> = props => {
                                 title="确定删除此分组吗？"
                                 onConfirm={() => {
                                   groupRemove(item.id);
+                                }}
+                              >
+                                <Icon type="delete" style={{marginLeft: '15px'}}/>
+                              </Popconfirm>
+                            </Tooltip>
+                            <Tooltip key="delete" title="解绑所有设备">
+                              <Popconfirm
+                                placement="topRight"
+                                title="确定该分组解绑所有设备？谨慎操作"
+                                onConfirm={() => {
+                                  _unbindAll(item.id);
                                 }}
                               >
                                 <Icon type="close" style={{marginLeft: '15px'}}/>
