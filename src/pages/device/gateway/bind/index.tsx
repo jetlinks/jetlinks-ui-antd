@@ -129,11 +129,11 @@ const DeviceGatewayBind: React.FC<Props> = props => {
       onOk={() => {
         submitData();
       }}
-      width="70%"
+      width="60%"
       style={{ marginTop: -30 }}
       onCancel={() => props.close()}
     >
-      <div className={styles.tableList}>
+      <div className={styles.tableList} style={{ maxHeight: 600, overflowY: 'auto', overflowX: 'hidden' }}>
         <div className={styles.tableListForm}>
           <Search
             search={(params: any) => {
