@@ -67,8 +67,8 @@ const Save: React.FC<Props> = props => {
   const [taskStatus, setTaskStatus] = useState(initState.taskStatus);
   const [spinning, setSpinning] = useState(false);
   const [pushOrSuspend, setPushOrSuspend] = useState(false);
+  const [taskByIdPush, setTaskByIdPush] = useState<any>();
 
-  let taskByIdPush: any;
 
   useEffect(() => {
     return () => {
@@ -210,17 +210,18 @@ const Save: React.FC<Props> = props => {
     if (taskByIdPush) {
       taskByIdPush.unsubscribe();
     }
-    taskByIdPush = getWebsocket(
+    let taskPush = getWebsocket(
       `firmware-push-upgrade-by-taskId`,
       `/device-firmware/publish`,
       {
         taskId: upgradeData.id,
       },
-    ).subscribe(resp => {
+    ).subscribe(() => {
       taskStatus.processing = (taskStatus.processing + 1);
       taskStatus.waiting = (taskStatus.waiting - 1);
       setTaskStatus({...taskStatus});
     });
+    setTaskByIdPush(taskPush);
   };
 
   return (
