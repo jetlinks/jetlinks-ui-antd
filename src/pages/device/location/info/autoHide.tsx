@@ -5,7 +5,7 @@ import Styles from './index.less';
 
 export default class AutoHide extends PureComponent {
   static propTypes = {
-    title: PropTypes.string,
+    title: PropTypes.any,
     style: PropTypes.any,
   };
 
