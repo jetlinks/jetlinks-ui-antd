@@ -8,7 +8,7 @@ interface Props extends FormComponentProps {
   save: Function;
   remove: Function;
   position: number;
-  metaData: string;
+  metaData?: string;
 }
 
 interface State {
