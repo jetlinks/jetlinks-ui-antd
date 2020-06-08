@@ -33,7 +33,7 @@ const Save: React.FC<Props> = props => {
     data: props.data,
     trigger: [],
     action: [],
-    shakeLimit: props.data.alarmRule?.shakeLimit || {},
+    shakeLimit: {},
   };
 
   const [data] = useState(initState.data);
@@ -75,6 +75,7 @@ const Save: React.FC<Props> = props => {
   useEffect(() => {
 
     if (props.data.alarmRule) {
+      setShakeLimit(props.data.alarmRule?.shakeLimit);
       setTrigger(props.data.alarmRule.triggers.length > 0 ? [...props.data.alarmRule.triggers] : [{_id: 0}]);
       setAction(props.data.alarmRule.actions.length > 0 ? [...props.data.alarmRule.actions] : [{_id: 0}]);
       setProperties(props.data.alarmRule.properties.length > 0 ? [...props.data.alarmRule.properties] : [{_id: 0}]);
@@ -131,7 +132,8 @@ const Save: React.FC<Props> = props => {
               />
               {shakeLimit.enabled && (
                 <>
-                  <Input style={{width: 80}} size='small' key='shakeLimit.time' defaultValue={shakeLimit.time}
+                  <Input style={{width: 80, marginLeft: 3}} size='small' key='shakeLimit.time'
+                         defaultValue={shakeLimit.time}
                          onBlur={event => {
                            shakeLimit.time = event.target.value;
                          }}
