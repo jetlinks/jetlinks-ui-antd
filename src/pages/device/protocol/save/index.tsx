@@ -279,7 +279,7 @@ const Save: React.FC<Props> = props => {
               {getFieldDecorator('id', {
                 rules: [{required: true, message: '协议标识'}],
                 initialValue: props.data?.id,
-              })(<Input placeholder="请输入协议ID"/>)}
+              })(<Input placeholder="请输入协议ID" disabled={!!props.data.id}/>)}
             </Form.Item>
           </Col>
           <Col span={12}>
