@@ -218,7 +218,7 @@ const Save: React.FC<Props> = props => {
       },
     ).subscribe(resp => {
       taskStatus.processing = (taskStatus.processing + 1);
-      taskStatus.waiting = (taskStatus.waiting + 1);
+      taskStatus.waiting = (taskStatus.waiting - 1);
       setTaskStatus({...taskStatus});
     });
   };
@@ -316,14 +316,9 @@ const Save: React.FC<Props> = props => {
                       </a>
                       {upgradeData.mode?.value === 'push' && pushOrSuspend ? (
                         <Popconfirm title="确定暂停此次推送任务？请谨慎操作" onConfirm={() => {
-                          if (taskByIdPush) {
-                            taskByIdPush.unsubscribe();
-                            setPushOrSuspend(false);
-                            message.success('已暂停，请稍后');
-                          } else {
-                            setPushOrSuspend(false);
-                            message.error('暂无推送任务，请勿操作');
-                          }
+                          taskByIdPush && taskByIdPush.unsubscribe();
+                          setPushOrSuspend(false);
+                          message.success('已暂停');
                         }}>
                           <a style={{float: 'right'}}>
                             暂停推送
