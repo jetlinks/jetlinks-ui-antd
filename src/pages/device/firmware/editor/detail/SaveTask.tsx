@@ -69,12 +69,11 @@ const Save: React.FC<Props> = props => {
   const [pushOrSuspend, setPushOrSuspend] = useState(false);
   const [taskByIdPush, setTaskByIdPush] = useState<any>();
 
-
   useEffect(() => {
     return () => {
       taskByIdPush && taskByIdPush.unsubscribe();
     };
-  }, []);
+  }, [taskByIdPush]);
 
   const taskStatusProcessing = () => {
     apis.firmware._count(
