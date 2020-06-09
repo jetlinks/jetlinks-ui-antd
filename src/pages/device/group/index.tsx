@@ -197,6 +197,17 @@ const DeviceGroup: React.FC<Props> = props => {
                                 }}
                               />
                             </Tooltip>
+                            <Tooltip key="delete" title="解绑所有设备">
+                              <Popconfirm
+                                placement="topRight"
+                                title="确定该分组解绑所有设备？谨慎操作"
+                                onConfirm={() => {
+                                  _unbindAll(item.id);
+                                }}
+                              >
+                                <Icon type="disconnect" style={{marginLeft: '15px'}}/>
+                              </Popconfirm>
+                            </Tooltip>
                             <Tooltip key="delete" title="删除">
                               <Popconfirm
                                 placement="topRight"
@@ -206,17 +217,6 @@ const DeviceGroup: React.FC<Props> = props => {
                                 }}
                               >
                                 <Icon type="delete" style={{marginLeft: '15px'}}/>
-                              </Popconfirm>
-                            </Tooltip>
-                            <Tooltip key="delete" title="解绑所有设备">
-                              <Popconfirm
-                                placement="topRight"
-                                title="确定该分组解绑所有设备？谨慎操作"
-                                onConfirm={() => {
-                                  _unbindAll(item.id);
-                                }}
-                              >
-                                <Icon type="close" style={{marginLeft: '15px'}}/>
                               </Popconfirm>
                             </Tooltip>
                           </div>
