@@ -75,7 +75,12 @@ const Save: React.FC<Props> = props => {
   useEffect(() => {
 
     if (props.data.alarmRule) {
-      setShakeLimit(props.data.alarmRule?.shakeLimit);
+      setShakeLimit(props.data.alarmRule.shakeLimit ? props.data.alarmRule.shakeLimit : {
+        enabled: false,
+        time: undefined,
+        threshold: undefined,
+        alarmFirst: true
+      });
       setTrigger(props.data.alarmRule.triggers.length > 0 ? [...props.data.alarmRule.triggers] : [{_id: 0}]);
       setAction(props.data.alarmRule.actions.length > 0 ? [...props.data.alarmRule.actions] : [{_id: 0}]);
       setProperties(props.data.alarmRule.properties.length > 0 ? [...props.data.alarmRule.properties] : [{_id: 0}]);
@@ -123,7 +128,7 @@ const Save: React.FC<Props> = props => {
                 <Icon type="question-circle-o" style={{paddingLeft: 10}}/>
               </Tooltip>
               <Switch key='shakeLimit.enabled' checkedChildren="开启防抖" unCheckedChildren="关闭防抖"
-                      defaultChecked={shakeLimit.enabled}
+                      defaultChecked={shakeLimit.enabled ? shakeLimit.enabled : false}
                       style={{marginLeft: 20}}
                       onChange={(value: boolean) => {
                         shakeLimit.enabled = value;
