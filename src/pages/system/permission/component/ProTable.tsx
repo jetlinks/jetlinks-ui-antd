@@ -9,8 +9,9 @@ interface Props {
     columns: any[];
     rowKey: string;
     onSearch: Function;
-    paginationConfig: any;
-    size?: 'small' | 'middle' | 'default'
+    paginationConfig: any | boolean;
+    size?: 'small' | 'middle' | 'default';
+    rowSelection?: any;
 }
 const ProTable = (props: Props) => {
     const { loading, dataSource, columns, rowKey, onSearch, paginationConfig } = props;
@@ -29,13 +30,14 @@ const ProTable = (props: Props) => {
     }
     return (
         <Table
+            {...props}
             size={props.size}
-            loading={loading}
-            dataSource={dataSource}
-            columns={columns}
-            rowKey={rowKey}
+            // loading={loading}
+            // dataSource={dataSource}
+            // columns={columns}
+            // rowKey={rowKey}
             onChange={onTableChange}
-            pagination={{
+            pagination={typeof paginationConfig === "boolean" ? paginationConfig : {
                 current: paginationConfig.pageIndex + 1,
                 total: paginationConfig.total,
                 pageSize: paginationConfig.pageSize,

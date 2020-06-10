@@ -1,9 +1,12 @@
 
 import { map, catchError } from 'rxjs/operators';
-import { of, Observable, from } from "rxjs";
-import request from '@/utils/request';
+import { of, Observable, from, defer } from "rxjs";
+import { getAccessToken } from '@/utils/authority';
+import request from 'umi-request';
+import { ApiResponse } from './response';
+import { ajax } from 'rxjs/ajax';
 
-interface BaseServie<T> {
+interface BaseServieImpl<T> {
     query(params: any): Observable<any>;
     save(params: T): Observable<any>;
     remove(id: string): Observable<any>;
@@ -11,48 +14,105 @@ interface BaseServie<T> {
 }
 /**
  * T 实体
- * U 接口
+ * uri 接口
  */
-class Service<T> implements BaseServie<T>{
+class BaseService<T> implements BaseServieImpl<T>{
 
     protected uri: string;
+
+    protected headers = {
+        'X-Access-Token': getAccessToken()
+    };
 
     constructor(uri: string) {
         this.uri = `/jetlinks/${uri}`
     }
 
-    public query = (params: any) => from(request(`${this.uri}/_query`, {
+    public list = (params: any) => defer(() => from(request(
+        `${this.uri}/_query/`,
+        {
+            method: 'GET',
+            params
+        }
+    ))).pipe(
+        map(resp => resp.result),
+    );
+
+    // return request(`/jetlinks/dimension/_query`, {
+    //     method: 'GET',
+    //     params,
+    //   });
+
+    public query = (params: any) => defer(() => from(request(`${this.uri}/_query/`, {
         method: 'GET',
         params
-    })).pipe(map((response: ApiResponse<T>) => response)
-        , catchError(error => of(error)));
+    }))).pipe(
+        map(resp => resp.result),
+        catchError(error => of(error))
+    );
 
-    public save = (params: Partial<T>) => from(request(this.uri, {
+    // public query = (params: any) => ajax({
+    //     url: `${this.uri}/_query/`,
+    //     method: 'GET',
+    //     headers: this.headers,
+    //     body: params
+    // }).pipe(
+    //     map(resp => (resp.response as ApiResponse<T>).result),
+    // );
+
+    public save = (params: Partial<T>) => defer(() => from(request(this.uri, {
         method: 'POST',
         data: params
-    })).pipe(map((response: ApiResponse<T>) => response),
-        catchError(error => of(error)));
+    }))).pipe(
+        map(resp => resp.result),
+        catchError(error => of(error))
+    )
 
-    public remove = (id: string) => from(request(`${this.uri}/${id}`, {
+    // public save = (params: Partial<T>) => ajax({
+    //     url: this.uri,
+    //     method: 'POST',
+    //     headers: this.headers,
+    //     body: JSON.stringify(params)
+    // }).pipe(
+    //     map(resp => (resp.response as ApiResponse<T>).result),
+    //     catchError(error => of(error)));
+
+
+    public remove = (id: string) => defer(() => request(`${this.uri}/${id}`, {
         method: 'DELETE',
-    })).pipe(map((response: ApiResponse<T>) => {
-        if (response.status === 200) {
-            return response
-        }
-        console.log(response)
+    })).pipe(
+        map(resp => resp.result),
+        catchError(error => of(error))
+    )
 
-    }),
-        catchError(error => of(error)));
+    // public remove = (id: string) => ajax({
+    //     url: `${this.uri}/${id}`,
+    //     method: 'DELETE',
+    //     headers: this.headers,
+    // }).pipe(
+    //     map(resp => (resp.response as ApiResponse<T>).result),
+    //     catchError(error => of(error)));
 
-    public update = (params: Partial<T>) => from(request(this.uri, {
+
+    public update = (params: Partial<T>) => defer(() => request(`${this.uri}/${params.id}`, {
         method: 'PUT',
         data: params
-    })).pipe(map((response: ApiResponse<T>) => response),
+    })).pipe(
+        map(resp => resp.result),
         catchError(error => of(error)));
+
+    // public update = (params: Partial<T>) => ajax({
+    //     url: `${this.uri}/${params.id}`,
+    //     method: 'PUT',
+    //     headers: this.headers,
+    //     body: JSON.stringify(params)
+    // }).pipe(
+    //     map(resp => (resp.response as ApiResponse<T>).result),
+    //     catchError(error => of(error)));
 
     public saveOrUpdate = (params: Partial<T>) =>
         params && params.id ? this.update(params) : this.save(params);
 
 }
 
-export default Service;
+export default BaseService;

@@ -1,4 +1,4 @@
-interface ListData<T> {
+export interface ListData<T> {
     data: T[];
     pageIndex: number;
     pageSize: number;

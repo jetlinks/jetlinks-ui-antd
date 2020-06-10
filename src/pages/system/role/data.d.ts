@@ -1,4 +1,5 @@
 export class RoleItem {
+
   id: string;
 
   parentId: string;

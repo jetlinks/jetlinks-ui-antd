@@ -153,6 +153,19 @@ export default {
                   authority: ['system-config', 'admin'],
                   component: './system/config',
                 },
+                {
+                  path: 'system/tenant',
+                  name: '租户管理',
+                  // authority: ['tenant', 'admin'],
+                  component: './system/tenant'
+                },
+                {
+                  hideInMenu: true,
+                  path: '/system/tenant/detail/:id',
+                  name: '租户详情',
+                  // authority: ['device-product'],
+                  component: './system/tenant/detail',
+                },
               ],
             },
             {
@@ -216,12 +229,12 @@ export default {
                   name: '地理位置',
                   authority: ['geo-manager', 'admin'],
                   component: './device/location',
-                },{
+                }, {
                   path: '/device/firmware',
                   name: '固件升级',
                   authority: ['firmware-manager', 'admin'],
                   component: './device/firmware',
-                },{
+                }, {
                   hideInMenu: true,
                   path: '/device/firmware/save/:id',
                   name: '固件详情',

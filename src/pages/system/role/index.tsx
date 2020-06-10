@@ -1,7 +1,7 @@
 import React, { useEffect, useState, Fragment } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import styles from '@/utils/table.less';
-import { Card, Button, Table, message, Divider, Popconfirm } from 'antd';
+import { Card, Button, Table, message, Divider, Popconfirm, Spin } from 'antd';
 import { Dispatch, connect } from 'dva';
 import { PaginationConfig, ColumnProps } from 'antd/lib/table';
 import { RoleItem } from './data.d';
@@ -10,6 +10,9 @@ import encodeQueryParam from '@/utils/encodeParam';
 import Save from './save';
 import Authorization from '@/components/Authorization';
 import BindUser from './user';
+import RoleService from './service';
+import ProTable from '../permission/component/ProTable';
+import { ListData } from '@/services/response';
 
 interface Props {
   role: any;
@@ -28,13 +31,13 @@ interface State {
 }
 
 const RoleList: React.FC<Props> = props => {
-  const {
-    dispatch,
-    role: { result },
-  } = props;
+  // const {
+  //   dispatch,
+  //   role: { result },
+  // } = props;
 
   const initState: State = {
-    data: result,
+    // data: result,
     searchParam: { pageSize: 10 },
     saveVisible: false,
     currentItem: {},
@@ -42,25 +45,34 @@ const RoleList: React.FC<Props> = props => {
     userVisible: false,
   };
 
+  const service = new RoleService<RoleItem>('dimension');
   const [searchParam, setSearchParam] = useState(initState.searchParam);
   const [saveVisible, setSaveVisible] = useState(initState.saveVisible);
   const [currentItem, setCurrentItem] = useState(initState.currentItem);
   const [autzVisible, setAutzVisible] = useState(initState.autzVisible);
   const [userVisible, setUserVisible] = useState(initState.userVisible);
+  const [result, setResult] = useState<ListData<RoleItem>>();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleSearch = (params?: any) => {
-    dispatch({
-      type: 'role/query',
-      payload: encodeQueryParam(params),
+    // dispatch({
+    //   type: 'role/query',
+    //   payload: encodeQueryParam(params),
+    // });
+    console.log(encodeQueryParam(params), 'par');
+    service.list(encodeQueryParam(params)).subscribe(data => {
+      setResult(data);
+      console.log(data, 'dat');
+      setLoading(false);
     });
     setSearchParam(params);
   };
 
   useEffect(() => {
     handleSearch({
-      terms: {
-        typeId: 'role',
-      },
+      // terms: {
+      //   typeId: 'role',
+      // },
       paging: false,
       pageIndex: 0,
       pageSize: 10,
@@ -68,29 +80,29 @@ const RoleList: React.FC<Props> = props => {
   }, []);
 
   const saveOrUpdate = (item: RoleItem) => {
-    dispatch({
-      type: 'role/insert',
-      payload: encodeQueryParam(item),
-      callback: (response: any) => {
-        if (response) {
-          message.success('保存成功');
-          setSaveVisible(false);
-          handleSearch(searchParam);
-        }
-      },
-    });
+    // dispatch({
+    //   type: 'role/insert',
+    //   payload: encodeQueryParam(item),
+    //   callback: (response: any) => {
+    //     if (response) {
+    //       message.success('保存成功');
+    //       setSaveVisible(false);
+    //       handleSearch(searchParam);
+    //     }
+    //   },
+    // });
   };
   const handleDelete = (item: any) => {
-    dispatch({
-      type: 'role/remove',
-      payload: item.id,
-      callback: (response: any) => {
-        if (response) {
-          message.success('删除成功');
-          handleSearch(searchParam);
-        }
-      },
-    });
+    // dispatch({
+    //   type: 'role/remove',
+    //   payload: item.id,
+    //   callback: (response: any) => {
+    //     if (response) {
+    //       message.success('删除成功');
+    //       handleSearch(searchParam);
+    //     }
+    //   },
+    // });
   };
 
   const onTableChange = (pagination: PaginationConfig, filters: any, sorter: any) => {
@@ -161,6 +173,7 @@ const RoleList: React.FC<Props> = props => {
       ),
     },
   ];
+
   return (
     <PageHeaderWrapper title="角色管理">
       <Card bordered={false}>
@@ -184,7 +197,22 @@ const RoleList: React.FC<Props> = props => {
             </Button>
           </div>
           <div className={styles.StandardTable}>
-            <Table
+            <Spin spinning={loading}>
+              {result && (
+                <ProTable
+                  dataSource={result?.data || []}
+                  loading={loading}
+                  columns={columns}
+                  rowKey="id"
+                  onSearch={(params: any) => {
+                    handleSearch(params);
+                  }}
+                  paginationConfig={result}
+                />
+              )}
+            </Spin>
+
+            {/* <Table
               loading={props.loading}
               dataSource={result.data}
               columns={columns}
@@ -202,7 +230,7 @@ const RoleList: React.FC<Props> = props => {
                     result.total / result.pageSize,
                   )}页`,
               }}
-            />
+            /> */}
           </div>
         </div>
       </Card>
