@@ -134,19 +134,23 @@ const Location: React.FC<Props> = props => {
         (resp: any) => {
           const { payload } = resp;
           if (payload.value.type === 'online') {
-            massMarksCreated[payload.value.deviceId].setIcon({
-              type: 'image',
-              image: mark_b,
-              size: [32, 34],
-              anchor: 'bottom-cent er',
-            });
+            if (massMarksCreated[payload.value.deviceId]){
+              massMarksCreated[payload.value.deviceId].setIcon({
+                type: 'image',
+                image: mark_b,
+                size: [32, 34],
+                anchor: 'bottom-center',
+              });
+            }
           } else {
-            massMarksCreated[payload.value.deviceId].setIcon({
-              type: 'image',
-              image: mark_r,
-              size: [32, 34],
-              anchor: 'bottom-cent er',
-            });
+            if (massMarksCreated[payload.value.deviceId]){
+              massMarksCreated[payload.value.deviceId].setIcon({
+                type: 'image',
+                image: mark_r,
+                size: [32, 34],
+                anchor: 'bottom-center',
+              });
+            }
           }
         },
       );

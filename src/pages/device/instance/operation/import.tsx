@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { FormComponentProps } from 'antd/lib/form';
+import React, {useEffect, useState} from 'react';
+import {FormComponentProps} from 'antd/lib/form';
 import Form from 'antd/es/form';
-import { Badge, Button, message, Modal, Radio, Select, Spin, Upload } from 'antd';
+import {Badge, Button, message, Modal, Radio, Select, Spin, Upload} from 'antd';
 import apis from '@/services';
-import { DeviceProduct } from '@/pages/device/product/data';
-import { UploadProps } from 'antd/lib/upload';
-import { getAccessToken } from '@/utils/authority';
-import { EventSourcePolyfill } from "event-source-polyfill";
-import { wrapAPI } from '@/utils/utils';
+import {DeviceProduct} from '@/pages/device/product/data';
+import {UploadProps} from 'antd/lib/upload';
+import {getAccessToken} from '@/utils/authority';
+import {EventSourcePolyfill} from "event-source-polyfill";
+import {wrapAPI} from '@/utils/utils';
 
 interface Props extends FormComponentProps {
   productId: string;
@@ -53,22 +53,23 @@ const Import: React.FC<Props> = props => {
       .catch(() => {
       });
     return () => {
-      if (JSON.stringify(eventSource) !== '{}'){
+      if (JSON.stringify(eventSource) !== '{}') {
         eventSource.close();
       }
     };
   }, []);
 
 
-  const submitData = (fileUrl :string) => {
+  const submitData = (fileUrl: string) => {
     if (fileUrl) {
       setImportLoading(true);
       let dt = 0;
+      // todo:后期需优化，更换为：websocket
       const source = new EventSourcePolyfill(
         wrapAPI(`/jetlinks/device/instance/${product}/import?fileUrl=${fileUrl}&:X_Access_Token=${getAccessToken()}`)
       );
       setSource(source);
-      source.onmessage = (e:any) => {
+      source.onmessage = (e: any) => {
         const res = JSON.parse(e.data);
         if (res.success) {
           const temp = res.result.total;
@@ -82,8 +83,9 @@ const Import: React.FC<Props> = props => {
         setFlag(false);
         source.close();
       };
-      source.onopen = () => { };
-    }else{
+      source.onopen = () => {
+      };
+    } else {
       message.error("请先上传文件");
     }
   };
@@ -138,19 +140,19 @@ const Import: React.FC<Props> = props => {
         setImportLoading(false);
         submitData();*/
         props.close();
-        if (JSON.stringify(eventSource) !== '{}'){
+        if (JSON.stringify(eventSource) !== '{}') {
           eventSource.close();
         }
       }}
       onCancel={() => {
         props.close();
-        if (JSON.stringify(eventSource) !== '{}'){
+        if (JSON.stringify(eventSource) !== '{}') {
           eventSource.close();
         }
       }}
     >
       <Spin spinning={uploading} tip="上传中...">
-        <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
+        <Form labelCol={{span: 4}} wrapperCol={{span: 20}}>
           <Form.Item key="productId" label="设备型号">
             <Select placeholder="请选择设备型号" defaultValue={props.productId}
                     disabled={!!props.productId}
@@ -159,7 +161,7 @@ const Import: React.FC<Props> = props => {
                     }}>
               {(productList || []).map(item => (
                 <Select.Option
-                  key={JSON.stringify({ productId: item.id, productName: item.name })}
+                  key={JSON.stringify({productId: item.id, productName: item.name})}
                   value={item.id}
                 >
                   {item.name}
@@ -181,21 +183,21 @@ const Import: React.FC<Props> = props => {
                 <Upload {...uploadProps}>
                   <Button icon="upload">上传文件</Button>
                 </Upload>
-                <span style={{ marginLeft: 10 }}>
+                <span style={{marginLeft: 10}}>
                   下载模版
-                  <a style={{ marginLeft: 10 }} onClick={() => downloadTemplate('xlsx')}>.xlsx</a>
-                  <a style={{ marginLeft: 10 }} onClick={() => downloadTemplate('csv')}>.csv</a>
+                  <a style={{marginLeft: 10}} onClick={() => downloadTemplate('xlsx')}>.xlsx</a>
+                  <a style={{marginLeft: 10}} onClick={() => downloadTemplate('csv')}>.csv</a>
                 </span>
                 <br/>
                 {importLoading && (
                   <div>
                     {flag ? (
-                      <Badge status="processing" text="进行中" />
+                      <Badge status="processing" text="进行中"/>
                     ) : (
-                      <Badge status="success" text="已完成" />
+                      <Badge status="success" text="已完成"/>
                     )}
-                    <span style={{marginLeft:15}}>总数量:{count}</span>
-                    <p style={{ color: 'red' }}>{errMessage}</p>
+                    <span style={{marginLeft: 15}}>总数量:{count}</span>
+                    <p style={{color: 'red'}}>{errMessage}</p>
                   </div>
                 )}
               </Form.Item>

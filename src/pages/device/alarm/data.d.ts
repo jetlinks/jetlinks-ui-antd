@@ -1,4 +1,4 @@
-import { SimpleType } from '@/utils/common';
+import {SimpleType} from '@/utils/common';
 
 export class alarm extends SimpleType {
   id: string;
@@ -15,7 +15,13 @@ export class alarm extends SimpleType {
     productName?: string | undefined;
     actions: any[];
     triggers: any[];
-    properties: any[]
+    properties: any[];
+    shakeLimit: {
+      enabled: boolean; //是否开启
+      time: number;  //时间
+      threshold: number; // 次数阈值
+      alarmFirst: boolean; //为true时 第一次，false时最后一次。
+    }
   };
   state: {
     value: string,

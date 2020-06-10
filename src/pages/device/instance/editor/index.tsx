@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { Badge, Descriptions, Icon, message, Popconfirm, Row, Spin, Tooltip } from 'antd';
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import { connect } from 'dva';
-import { router } from 'umi';
+import React, {useEffect, useState} from 'react';
+import {Badge, Descriptions, Icon, message, Popconfirm, Row, Spin, Tooltip} from 'antd';
+import {PageHeaderWrapper} from '@ant-design/pro-layout';
+import {connect} from 'dva';
+import {router} from 'umi';
 import Info from './detail/Info';
 import Status from './detail/Status';
 import Log from './detail/Log';
 import Debugger from './detail/Debugger';
 import Functions from './detail/functions';
 import styles from './index.less';
-import { ConnectState, Dispatch } from '@/models/connect';
-import { DeviceInstance } from '@/pages/device/instance/data';
+import {ConnectState, Dispatch} from '@/models/connect';
+import {DeviceInstance} from '@/pages/device/instance/data';
 import apis from '@/services';
 import Gateway from './detail/gateway';
 import Alarm from '@/pages/device/alarm';
@@ -33,7 +33,7 @@ interface State {
 const Editor: React.FC<Props> = props => {
   const {
     dispatch,
-    location: { pathname },
+    location: {pathname},
   } = props;
 
   const initState: State = {
@@ -86,7 +86,7 @@ const Editor: React.FC<Props> = props => {
           }
           if (deviceData.metadata) {
             const deriveMetadata = JSON.parse(deviceData.metadata);
-            if (deriveMetadata.functions.length > 0) {
+            if ((deriveMetadata.functions || []).length > 0) {
               tabList.splice(2, 0, {
                 key: 'functions',
                 tab: '设备功能',
@@ -111,6 +111,8 @@ const Editor: React.FC<Props> = props => {
         }
       })
       .catch(() => {
+        setSpinning(false);
+        message.error("物模型数据错误");
       });
   };
 
@@ -146,7 +148,7 @@ const Editor: React.FC<Props> = props => {
       .then(response => {
         if (response.status === 200) {
           message.success('断开连接成功');
-          data.state = { value: 'offline', text: '离线' };
+          data.state = {value: 'offline', text: '离线'};
           setData(data);
           setSpinning(false);
         } else {
@@ -163,7 +165,7 @@ const Editor: React.FC<Props> = props => {
       .then(response => {
         if (response.status === 200) {
           message.success('激活成功');
-          data.state = { value: 'offline', text: '离线' };
+          data.state = {value: 'offline', text: '离线'};
           setData(data);
           setSpinning(false);
         } else {
@@ -177,7 +179,7 @@ const Editor: React.FC<Props> = props => {
 
   const action = (
     <Tooltip title='刷新'>
-      <Icon type="sync" style={{ fontSize: 20 }} onClick={() => {
+      <Icon type="sync" style={{fontSize: 20}} onClick={() => {
         getInfo(data.id);
       }}/>
     </Tooltip>
@@ -192,7 +194,8 @@ const Editor: React.FC<Props> = props => {
     log: <Log deviceId={id}/>,
     debugger: <Debugger/>,
     gateway: <Gateway deviceId={id} loading={false}/>,
-    alarm: <Alarm target="device" productId={data.productId} productName={data.productName} targetId={data.id} metaData={data.metadata}
+    alarm: <Alarm target="device" productId={data.productId} productName={data.productName} targetId={data.id}
+                  metaData={data.metadata}
                   name={data.name}/>,
     visualization: <Visualization
       type="device"
@@ -203,13 +206,13 @@ const Editor: React.FC<Props> = props => {
   };
 
   const content = (
-    <div style={{ marginTop: 30 }}>
+    <div style={{marginTop: 30}}>
       <Descriptions column={4}>
         <Descriptions.Item label="ID">{id}</Descriptions.Item>
         <Descriptions.Item label="产品">
           <div>
             {data.productName}
-            <a style={{ marginLeft: 10 }}
+            <a style={{marginLeft: 10}}
                onClick={() => {
                  router.push(`/device/product/save/${data.productId}`);
                }}
@@ -226,19 +229,19 @@ const Editor: React.FC<Props> = props => {
         <span>
           设备：{data.name}
         </span>
-        <Badge style={{ marginLeft: 20 }} status={statusMap.get(data.state?.text)} text={data.state?.text}/>
+        <Badge style={{marginLeft: 20}} status={statusMap.get(data.state?.text)} text={data.state?.text}/>
         {data.state?.value === 'online' ? (
           <Popconfirm title="确认让此设备断开连接？" onConfirm={() => {
             disconnectDevice(data.id);
           }}>
-            <a style={{ fontSize: 12, marginLeft: 20 }}>断开连接</a>
+            <a style={{fontSize: 12, marginLeft: 20}}>断开连接</a>
           </Popconfirm>
         ) : (data.state?.value === 'notActive' ? (
           <Popconfirm title="确认激活此设备？"
                       onConfirm={() => {
                         changeDeploy(data.id);
                       }}>
-            <a style={{ fontSize: 12, marginLeft: 20 }}>激活设备</a>
+            <a style={{fontSize: 12, marginLeft: 20}}>激活设备</a>
           </Popconfirm>
         ) : (<span/>))}
       </div>
@@ -253,7 +256,7 @@ const Editor: React.FC<Props> = props => {
     <Spin tip="加载中..." spinning={spinning}>
       <PageHeaderWrapper
         className={styles.instancePageHeader}
-        style={{ marginTop: 0, backgroundColor: '#F0F2F5', paddingBottom: 10 }}
+        style={{marginTop: 0, backgroundColor: '#F0F2F5', paddingBottom: 10}}
         title={titleInfo}
         extra={action}
         content={content}
@@ -270,7 +273,7 @@ const Editor: React.FC<Props> = props => {
   );
 };
 
-export default connect(({ deviceInstance, loading }: ConnectState) => ({
+export default connect(({deviceInstance, loading}: ConnectState) => ({
   deviceInstance,
   loading,
 }))(Editor);

@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import Form from 'antd/es/form';
-import { FormComponentProps } from 'antd/lib/form';
-import { Button, Card, Col, Icon, Input, Modal, Row, Tooltip } from 'antd';
-import { alarm } from '../data';
+import {FormComponentProps} from 'antd/lib/form';
+import {Button, Card, Col, Icon, Input, Modal, Row, Radio, Switch, Tooltip} from 'antd';
+import {alarm} from '../data';
 import Triggers from '@/pages/device/alarm/save/triggers/index';
 import ActionAssembly from '@/pages/device/alarm/save/actions/index';
 
@@ -11,11 +11,11 @@ interface Props extends FormComponentProps {
   save: Function;
   data: Partial<alarm>;
   target: string;
-  targetId: string | undefined;
-  metaData: string | undefined;
-  name: string | undefined;
-  productName: string | undefined;
-  productId: string | undefined;
+  targetId?: string;
+  metaData?: string;
+  name?: string;
+  productName?: string;
+  productId?: string;
 }
 
 interface State {
@@ -23,6 +23,7 @@ interface State {
   data: Partial<alarm>;
   trigger: any[];
   action: any[];
+  shakeLimit: any;
 }
 
 const Save: React.FC<Props> = props => {
@@ -32,12 +33,14 @@ const Save: React.FC<Props> = props => {
     data: props.data,
     trigger: [],
     action: [],
+    shakeLimit: {},
   };
 
   const [data] = useState(initState.data);
   const [properties, setProperties] = useState(initState.properties);
   const [trigger, setTrigger] = useState(initState.trigger);
   const [action, setAction] = useState(initState.action);
+  const [shakeLimit, setShakeLimit] = useState(initState.shakeLimit);
 
   const submitData = () => {
     data.name = props.data.name;
@@ -53,6 +56,7 @@ const Save: React.FC<Props> = props => {
         properties: properties,
         productId: props.productId,
         productName: props.productName,
+        shakeLimit: shakeLimit,
       };
     } else {
       data.alarmRule = {
@@ -62,21 +66,28 @@ const Save: React.FC<Props> = props => {
         triggers: trigger,
         actions: action,
         properties: properties,
+        shakeLimit: shakeLimit,
       };
     }
-    props.save({ ...data });
+    props.save({...data});
   };
 
   useEffect(() => {
 
     if (props.data.alarmRule) {
-      setTrigger(props.data.alarmRule.triggers.length > 0 ? [...props.data.alarmRule.triggers] : [{ _id: 0 }]);
-      setAction(props.data.alarmRule.actions.length > 0 ? [...props.data.alarmRule.actions] : [{ _id: 0 }]);
-      setProperties(props.data.alarmRule.properties.length > 0 ? [...props.data.alarmRule.properties] : [{ _id: 0 }]);
+      setShakeLimit(props.data.alarmRule.shakeLimit ? props.data.alarmRule.shakeLimit : {
+        enabled: false,
+        time: undefined,
+        threshold: undefined,
+        alarmFirst: true
+      });
+      setTrigger(props.data.alarmRule.triggers.length > 0 ? [...props.data.alarmRule.triggers] : [{_id: 0}]);
+      setAction(props.data.alarmRule.actions.length > 0 ? [...props.data.alarmRule.actions] : [{_id: 0}]);
+      setProperties(props.data.alarmRule.properties.length > 0 ? [...props.data.alarmRule.properties] : [{_id: 0}]);
     } else {
-      setTrigger([{ _id: 0 }]);
-      setAction([{ _id: 0 }]);
-      setProperties([{ _id: 0 }]);
+      setTrigger([{_id: 0}]);
+      setAction([{_id: 0}]);
+      setProperties([{_id: 0}]);
     }
   }, []);
 
@@ -94,29 +105,60 @@ const Save: React.FC<Props> = props => {
       onOk={() => {
         submitData();
       }}
-      style={{ marginTop: '-3%' }}
+      style={{marginTop: '-3%'}}
       width="70%"
       onCancel={() => props.close()}
     >
-      <div style={{ maxHeight: 750, overflowY: 'auto', overflowX: 'hidden' }}>
-        <Form wrapperCol={{ span: 24 }} key='addAlarmForm'>
+      <div style={{maxHeight: 750, overflowY: 'auto', overflowX: 'hidden'}}>
+        <Form wrapperCol={{span: 24}} key='addAlarmForm'>
           <Row gutter={16}
-               style={{ marginLeft: '0.1%' }}>
+               style={{marginLeft: '0.1%'}}>
             <Col span={8}>
-              <label style={{ fontSize: 16 }}>告警名称：</label>
+              <label style={{fontSize: 16}}>告警名称：</label>
               <Input placeholder="输入告警名称" defaultValue={props.data.name}
-                     style={{ width: '80%' }}
+                     style={{width: '80%'}}
                      onBlur={event => {
                        props.data.name = event.target.value;
-                       //setAlarmName(event.target.value);
                      }}/>
             </Col>
           </Row>
-          <Card style={{ marginBottom: 10 }} bordered={false} size="small">
-            <p style={{ fontSize: 16 }}>触发条件
+          <Card style={{marginBottom: 10}} bordered={false} size="small">
+            <p style={{fontSize: 16}}>触发条件
               <Tooltip title="触发条件满足条件中任意一个即可触发">
-                <Icon type="question-circle-o" style={{ paddingLeft: 10 }}/>
+                <Icon type="question-circle-o" style={{paddingLeft: 10}}/>
               </Tooltip>
+              <Switch key='shakeLimit.enabled' checkedChildren="开启防抖" unCheckedChildren="关闭防抖"
+                      defaultChecked={shakeLimit.enabled ? shakeLimit.enabled : false}
+                      style={{marginLeft: 20}}
+                      onChange={(value: boolean) => {
+                        shakeLimit.enabled = value;
+                        setShakeLimit({...shakeLimit})
+                      }}
+              />
+              {shakeLimit.enabled && (
+                <>
+                  <Input style={{width: 80, marginLeft: 3}} size='small' key='shakeLimit.time'
+                         defaultValue={shakeLimit.time}
+                         onBlur={event => {
+                           shakeLimit.time = event.target.value;
+                         }}
+                  />秒内发生
+                  <Input style={{width: 80}} size='small' key='shakeLimit.threshold' defaultValue={shakeLimit.threshold}
+                         onBlur={event => {
+                           shakeLimit.threshold = event.target.value;
+                         }}
+                  />次及以上时，处理
+                  <Radio.Group defaultValue={shakeLimit.alarmFirst} key='shakeLimit.alarmFirst' size='small'
+                               buttonStyle="solid"
+                               onChange={event => {
+                                 shakeLimit.alarmFirst = Boolean(event.target.value);
+                               }}
+                  >
+                    <Radio.Button value={true}>第一次</Radio.Button>
+                    <Radio.Button value={false}>最后一次</Radio.Button>
+                  </Radio.Group>
+                </>
+              )}
             </p>
             {trigger.map((item: any, index) => (
               <Triggers save={(data: any) => {
@@ -128,16 +170,16 @@ const Save: React.FC<Props> = props => {
             ))}
             <Button icon="plus" type="link"
                     onClick={() => {
-                      setTrigger([...trigger, { _id: Math.round(Math.random() * 100000) }]);
+                      setTrigger([...trigger, {_id: Math.round(Math.random() * 100000)}]);
                     }}
             >
               新增触发器
             </Button>
           </Card>
-          <Card style={{ marginBottom: 10 }} bordered={false} size="small">
-            <p style={{ fontSize: 16 }}>转换
+          <Card style={{marginBottom: 10}} bordered={false} size="small">
+            <p style={{fontSize: 16}}>转换
               <Tooltip title="将内置的结果字段转换为自定义字段，例如：deviceId 转为 id">
-                <Icon type="question-circle-o" style={{ paddingLeft: 10 }}/>
+                <Icon type="question-circle-o" style={{paddingLeft: 10}}/>
               </Tooltip>
             </p>
             <div style={{
@@ -149,7 +191,7 @@ const Save: React.FC<Props> = props => {
             }}>
               {properties.map((item: any, index) => (
                 <Row gutter={16}
-                     style={{ paddingBottom: 10, marginLeft: 13, marginRight: 3 }}>
+                     style={{paddingBottom: 10, marginLeft: 13, marginRight: 3}}>
                   <Col span={6}>
                     <Input placeholder="请输入属性" value={item.property}
                            onChange={event => {
@@ -166,8 +208,8 @@ const Save: React.FC<Props> = props => {
                            }}
                     />
                   </Col>
-                  <Col span={12} style={{ textAlign: 'right', marginTop: 6, paddingRight: 15 }}>
-                    <a style={{ paddingTop: 7 }}
+                  <Col span={12} style={{textAlign: 'right', marginTop: 6, paddingRight: 15}}>
+                    <a style={{paddingTop: 7}}
                        onClick={() => {
                          removeProperties(index);
                        }}
@@ -175,16 +217,16 @@ const Save: React.FC<Props> = props => {
                   </Col>
                 </Row>
               ))}
-              <Col span={24} style={{ marginLeft: 20 }}>
+              <Col span={24} style={{marginLeft: 20}}>
                 <a onClick={() => {
-                  setProperties([...properties, { _id: Math.round(Math.random() * 100000) }]);
+                  setProperties([...properties, {_id: Math.round(Math.random() * 100000)}]);
                 }}>添加</a>
               </Col>
             </div>
           </Card>
 
           <Card bordered={false} size="small">
-            <p style={{ fontSize: 16 }}>执行动作</p>
+            <p style={{fontSize: 16}}>执行动作</p>
             {action.map((item: any, index) => (
               <ActionAssembly save={(actionData: any) => {
                 action.splice(index, 1, actionData);
@@ -195,7 +237,7 @@ const Save: React.FC<Props> = props => {
             ))}
             <Button icon="plus" type="link"
                     onClick={() => {
-                      setAction([...action, { _id: Math.round(Math.random() * 100000) }]);
+                      setAction([...action, {_id: Math.round(Math.random() * 100000)}]);
                     }}
             >
               执行动作

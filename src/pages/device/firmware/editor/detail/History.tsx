@@ -1,10 +1,10 @@
-import React, { Fragment, useEffect, useState } from 'react';
-import { Badge, Card, Divider, message, Modal, Popconfirm, Spin, Table } from 'antd';
-import { ColumnProps, PaginationConfig, SorterResult } from 'antd/lib/table';
+import React, {useEffect, useState} from 'react';
+import {Badge, Card, Spin, Table} from 'antd';
+import {ColumnProps, PaginationConfig, SorterResult} from 'antd/lib/table';
 import moment from 'moment';
 import encodeQueryParam from '@/utils/encodeParam';
 import apis from '@/services';
-import { UpgradeHistoryData } from '@/pages/device/firmware/data';
+import {UpgradeHistoryData} from '@/pages/device/firmware/data';
 import styles from '@/utils/table.less';
 import SearchForm from '@/components/SearchForm';
 
@@ -100,42 +100,6 @@ const UpgradeHistory: React.FC<Props> = (props) => {
       render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
       sorter: true,
     },
-    {
-      title: '操作',
-      width: '260px',
-      align: 'center',
-      render: (text, record) => {
-        let content = '';
-        try {
-          content = JSON.stringify(JSON.parse(record.errorReason), null, 2);
-        } catch (error) {
-          content = record.errorReason;
-        }
-        return (
-          <Fragment>
-            <a
-              onClick={() =>
-                Modal.confirm({
-                  width: '50VW',
-                  title: '失败原因',
-                  content: <pre>{content}</pre>,
-                  okText: '确定',
-                  cancelText: '关闭',
-                })
-              }
-            >
-              查看
-            </a>
-            <Divider type="vertical"/>
-            <Popconfirm title="确定删除此设备升级记录吗？请谨慎操作" onConfirm={() => removeUpgradeHistory(record)}>
-              <a>
-                删除
-              </a>
-            </Popconfirm>
-          </Fragment>
-        );
-      },
-    },
   ];
 
   const onTableChange = (
@@ -150,19 +114,6 @@ const UpgradeHistory: React.FC<Props> = (props) => {
       sorts: sorter,
     });
   };
-
-  const removeUpgradeHistory = (item: any) => {
-    setSpinning(true);
-    apis.firmware.removeUpgradeHistory(item.id)
-      .then((response: any) => {
-        if (response.status === 200) {
-          message.success('删除成功');
-          handleSearch(searchParam);
-        }
-      }).catch(() => {
-    });
-  };
-
 
   return (
     <div>

@@ -1,23 +1,23 @@
-import React, { Fragment, useEffect, useState } from 'react';
-import { Badge, Button, Card, Divider, message, Modal, Popconfirm, Select, Spin, Table, Tabs } from 'antd';
+import React, {Fragment, useEffect, useState} from 'react';
+import {Badge, Button, Card, Divider, message, Modal, Popconfirm, Select, Spin, Table, Tabs} from 'antd';
 import apis from '@/services';
-import { ColumnProps, SorterResult } from 'antd/es/table';
-import { alarm, AlarmLog } from '@/pages/device/alarm/data';
+import {ColumnProps, SorterResult} from 'antd/es/table';
+import {alarm, AlarmLog} from '@/pages/device/alarm/data';
 import moment from 'moment';
 import Save from '@/pages/device/alarm/save';
 import Form from 'antd/es/form';
-import { FormComponentProps } from 'antd/lib/form';
-import { PaginationConfig } from 'antd/lib/table';
+import {FormComponentProps} from 'antd/lib/form';
+import {PaginationConfig} from 'antd/lib/table';
 import encodeQueryParam from '@/utils/encodeParam';
 import styles from '@/utils/table.less';
 
 interface Props extends FormComponentProps {
   target: string;
-  targetId: string | undefined;
-  metaData: string | undefined;
-  name: string | undefined;
-  productId: string | undefined;
-  productName: string | undefined;
+  targetId?: string;
+  metaData?: string;
+  name?: string;
+  productId?: string;
+  productName?: string;
 }
 
 interface State {
@@ -32,7 +32,7 @@ const Alarm: React.FC<Props> = props => {
   const initState: State = {
     data: [],
     saveAlarmData: {},
-    searchParam: { pageSize: 10 },
+    searchParam: {pageSize: 10},
     alarmLogData: {},
     alarmDataList: [],
   };
@@ -56,7 +56,7 @@ const Alarm: React.FC<Props> = props => {
       .then((response: any) => {
         if (response.status === 200) {
           setData(response.result);
-          response.result.map((item:any) => {
+          response.result.map((item: any) => {
             alarmDataList.push(item);
           });
           setAlarmDataList([...alarmDataList]);
@@ -69,7 +69,7 @@ const Alarm: React.FC<Props> = props => {
       apis.deviceAlarm.getProductAlarms('product', props.productId)
         .then((response: any) => {
           if (response.status === 200) {
-            response.result.map((item:any) => {
+            response.result.map((item: any) => {
               alarmDataList.push(item);
             });
             setAlarmDataList([...alarmDataList]);
@@ -265,7 +265,7 @@ const Alarm: React.FC<Props> = props => {
   };
 
   const onAlarmProduct = (value: string) => {
-    let { terms } = searchParam;
+    let {terms} = searchParam;
     if (terms) {
       terms.alarmId = value;
     } else {
@@ -340,17 +340,17 @@ const Alarm: React.FC<Props> = props => {
           </Tabs.TabPane>
           <Tabs.TabPane tab="告警记录" key="logList">
             <div>
-              <Select placeholder="选择设告警设置" allowClear style={{ width: 300}} defaultValue={alarmLogId}
+              <Select placeholder="选择设告警设置" allowClear style={{width: 300}} defaultValue={alarmLogId}
                       onChange={(value: string) => {
                         onAlarmProduct(value);
                       }}
               >
-                {alarmDataList.length>0 && alarmDataList.map(item => (
+                {alarmDataList.length > 0 && alarmDataList.map(item => (
                   <Select.Option key={item.id}>{item.name}</Select.Option>
                 ))}
               </Select>
             </div>
-            <div className={styles.StandardTable} style={{ marginTop: 10 }}>
+            <div className={styles.StandardTable} style={{marginTop: 10}}>
               <Table
                 dataSource={alarmLogData.data}
                 columns={alarmLogColumns}
@@ -377,15 +377,20 @@ const Alarm: React.FC<Props> = props => {
         </Tabs>
       </Card>
 
-      {saveVisible && <Save close={() => setSaveVisible(false)}
-                            save={(data: any) => {
-                              setSpinning(true);
-                              submitData(data);
-                            }}
-                            data={saveAlarmData} targetId={props.targetId}
-                            target={props.target} metaData={props.metaData}
-                            name={props.name} productName={props.productName}
-                            productId={props.productId}
+      {saveVisible && <Save
+        close={() => {
+          setSaveAlarmData({});
+          setSaveVisible(false);
+          getProductAlarms();
+        }}
+        save={(data: any) => {
+          setSpinning(true);
+          submitData(data);
+        }}
+        data={saveAlarmData} targetId={props.targetId}
+        target={props.target} metaData={props.metaData}
+        name={props.name} productName={props.productName}
+        productId={props.productId}
       />}
     </Spin>
   );
