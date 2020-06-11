@@ -60,7 +60,7 @@ const SearchForm = (props: Props) => {
             const list = itemProps?.data || [];
             return (
                 <Select mode={itemProps?.mode || 'multiple'}>
-                    {list.map((item: any) => <Select.Option value={item.id} key={item.id}>{item.name}</Select.Option>)}
+                    {list.map((item: any) => <Select.Option value={item.id || item} key={item.id || item}>{item.name || item}</Select.Option>)}
                 </Select>
             )
         }

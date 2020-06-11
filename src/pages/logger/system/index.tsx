@@ -5,7 +5,6 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import styles from '@/utils/table.less';
 import { connect } from 'dva';
 import moment from 'moment';
-import Search from './search';
 import { SystemLoggerItem } from './data.d';
 import { Dispatch, ConnectState } from '@/models/connect';
 import encodeQueryParam from '@/utils/encodeParam';
