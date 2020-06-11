@@ -248,7 +248,7 @@ const DeviceGroup: React.FC<Props> = props => {
                           </div>
                         }
                         total={() =>
-                          <a style={{fontSize: 18}}>
+                          <a style={{fontSize: 16}}>
                             <AutoHide title={item.name} style={{width: '100%'}}/>
                           </a>
                         }

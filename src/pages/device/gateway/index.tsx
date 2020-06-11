@@ -194,7 +194,7 @@ const DeviceGateway: React.FC<Props> = () => {
                       total={() =>
                         <Row>
                           <span>
-                            <a style={{fontSize: 18}} onClick={() => {
+                            <a style={{fontSize: 16}} onClick={() => {
                               router.push(`/device/instance/save/${item.id}`);
                             }}>
                               <LineWrap title={item.name} height={30}/>
