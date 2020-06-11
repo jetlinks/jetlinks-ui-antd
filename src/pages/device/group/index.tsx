@@ -240,7 +240,7 @@ const DeviceGroup: React.FC<Props> = props => {
                         }
                         total={() =>
                           <a style={{fontSize: 16}}>
-                            <AutoHide title={item.name} style={{width: '100%'}}/>
+                            <AutoHide title={item.name} style={{width: 180}}/>
                           </a>
                         }
                       >
@@ -262,14 +262,14 @@ const DeviceGroup: React.FC<Props> = props => {
                                     <a>解绑</a>
                                   </Popconfirm>]}
                               >
-                                <List.Item.Meta
+                                <List.Item.Meta style={{width:'50%'}}
                                   avatar={<Avatar shape="square" size="small" src={device}/>}
                                   title={<a
                                     onClick={() => {
                                       setDeviceInfo(true);
                                       setGroupDeviceId(dev.id);
                                     }}
-                                  ><AutoHide title={dev.name} style={{width: '100%'}}/></a>}
+                                  ><AutoHide title={dev.name} style={{width: '80%'}}/></a>}
                                 />
                               </List.Item>
                             )}

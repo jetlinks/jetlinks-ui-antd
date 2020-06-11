@@ -215,7 +215,7 @@ const DeviceGateway: React.FC<Props> = () => {
                                   </Popconfirm>]}
                               >
                                 <List.Item.Meta
-                                  style={{width: '10%'}}
+                                  style={{width: '50%'}}
                                   avatar={<Avatar shape="square" size="small" src={device}/>}
                                   title={<a
                                     onClick={() => {
