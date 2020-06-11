@@ -1,11 +1,11 @@
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import React, { useEffect, useState } from 'react';
-import { Avatar, Badge, Card, Col, Form, Icon, Input, List, message, Popconfirm, Row, Spin, Tooltip } from 'antd';
-import { FormComponentProps } from 'antd/lib/form';
-import { connect } from 'dva';
-import { router } from 'umi';
+import {PageHeaderWrapper} from '@ant-design/pro-layout';
+import React, {useEffect, useState} from 'react';
+import {Avatar, Badge, Card, Col, Form, Icon, Input, List, message, Popconfirm, Row, Spin, Tooltip} from 'antd';
+import {FormComponentProps} from 'antd/lib/form';
+import {connect} from 'dva';
+import {router} from 'umi';
 import styles from './index.less';
-import { ConnectState, Dispatch } from '@/models/connect';
+import {ConnectState, Dispatch} from '@/models/connect';
 import Bind from './bind';
 import encodeQueryParam from '@/utils/encodeParam';
 import StandardFormRow from '@/pages/network/type/components/standard-form-row';
@@ -36,7 +36,7 @@ const DeviceGateway: React.FC<Props> = () => {
     bindVisible: false,
     hasMore: true,
     gatewayId: '',
-    searchParam: { pageSize: 8 },
+    searchParam: {pageSize: 8},
     deviceGateway: {},
   };
 
@@ -48,18 +48,9 @@ const DeviceGateway: React.FC<Props> = () => {
 
   const formItemLayout = {
     wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 16 },
+      xs: {span: 24},
+      sm: {span: 16},
     },
-  };
-
-  const topColResponsiveProps = {
-    xs: 24,
-    sm: 12,
-    md: 12,
-    lg: 12,
-    xl: 6,
-    style: { marginBottom: 10 },
   };
 
   const handleSearch = (params?: any) => {
@@ -100,7 +91,7 @@ const DeviceGateway: React.FC<Props> = () => {
 
   const onSearch = (name?: string) => {
     setSpinning(true);
-    handleSearch({ terms: { name$LIKE: name }, pageSize: 8 });
+    handleSearch({terms: {name$LIKE: name}, pageSize: 8});
   };
 
   const onChange = (page: number, pageSize: number) => {
@@ -155,7 +146,7 @@ const DeviceGateway: React.FC<Props> = () => {
         </Card>
         {deviceGateway && deviceGateway.pageSize > 0 && (
           <List<any>
-            style={{ paddingBottom: 20, paddingTop: 10 }}
+            style={{paddingBottom: 20, paddingTop: 10}}
             pagination={{
               current: deviceGateway.pageIndex + 1,
               total: deviceGateway.total,
@@ -163,7 +154,7 @@ const DeviceGateway: React.FC<Props> = () => {
               showQuickJumper: true,
               showSizeChanger: true,
               pageSizeOptions: ['8', '16', '40', '80'],
-              style: { marginTop: -20 },
+              style: {marginTop: -20},
               showTotal: (total: number) =>
                 `共 ${total} 条记录 第  ${deviceGateway.pageIndex + 1}/${Math.ceil(
                   deviceGateway.total / deviceGateway.pageSize,
@@ -171,66 +162,69 @@ const DeviceGateway: React.FC<Props> = () => {
               onChange,
               onShowSizeChange,
             }}
-            rowKey="id" grid={{ gutter: 24, xl: 4, lg: 3, md: 3, sm: 2, xs: 1 }}
+            rowKey="id" grid={{gutter: 24, xl: 4, lg: 3, md: 3, sm: 2, xs: 1}}
             dataSource={deviceGateway.data} className={styles.filterCardList}
             renderItem={item => {
               if (item && item.id) {
                 return (
-                  <Col {...topColResponsiveProps} key={item.id} style={{ minHeight: 365 }}
+                  <Col key={item.id} style={{minHeight: 365, paddingTop: 10}}
                        xxl={6} xl={8} lg={12} md={24}>
                     <ChartCard
                       bordered={false} title={item.id}
-                      avatar={<img style={{ width: 48, height: 48 }} src={gateway} alt="indicator"/>}
+                      avatar={<img style={{width: 48, height: 48}} src={gateway} alt="indicator"/>}
                       action={
                         <Tooltip title='绑定子设备'>
-                          <Icon type="plus" style={{ fontSize: 20 }}
-                                onClick={() => {
-                                  setGatewayId(item.id);
-                                  setBindVisible(true);
-                                }}/>
+                          <Icon
+                            type="plus" style={{fontSize: 20}}
+                            onClick={() => {
+                              setGatewayId(item.id);
+                              setBindVisible(true);
+                            }}/>
                         </Tooltip>
                       }
                       total={() =>
                         <Row>
                           <span>
-                            <a style={{ fontSize: 18 }} onClick={() => {
+                            <a style={{fontSize: 16}} onClick={() => {
                               router.push(`/device/instance/save/${item.id}`);
                             }}>
                               <LineWrap title={item.name} height={30}/>
                             </a>
-                            <Badge style={{ marginLeft: 20 }} status={statusMap.get(item.state.text)}
+                            <Badge style={{marginLeft: 20}} status={statusMap.get(item.state.text)}
                                    text={item.state.text}/>
                           </span>
                         </Row>}
                     >
                       <span>
-                        <div className={styles.StandardTable} style={{ paddingTop: 10 }}>
-                          <List size='small'
-                                itemLayout="horizontal" dataSource={item.children} style={{ minHeight: 235 }}
-                                pagination={{
-                                  pageSize: 4,
-                                  size: 'small',
-                                  hideOnSinglePage: true,
-                                }}
-                                renderItem={(dev: any) => (
-                                  <List.Item
-                                    actions={[<Badge status={statusMap.get(dev.state.text)} text={dev.state.text}/>,
-                                      <Popconfirm title="确认解绑该设备？" onConfirm={() => {
-                                        unBindGateway(item.id, dev.id);
-                                      }}>
-                                        <a>解绑</a>
-                                      </Popconfirm>]}
-                                  >
-                                    <List.Item.Meta
-                                      avatar={<Avatar shape="square" size="small" src={device}/>}
-                                      title={<a
-                                        onClick={() => {
-                                          router.push(`/device/instance/save/${dev.id}`);
-                                        }}
-                                      ><LineWrap title={dev.name} height={20}/></a>}
-                                    />
-                                  </List.Item>
-                                )}
+                        <div className={styles.StandardTable} style={{paddingTop: 10}}>
+                          <List
+                            size='small'
+                            itemLayout="horizontal" dataSource={item.children} style={{minHeight: 254}}
+                            pagination={{
+                              pageSize: 4,
+                              size: 'small',
+                              hideOnSinglePage: true,
+                            }}
+                            renderItem={(dev: any) => (
+                              <List.Item
+                                actions={[<Badge status={statusMap.get(dev.state.text)} text={dev.state.text}/>,
+                                  <Popconfirm title="确认解绑该设备？" onConfirm={() => {
+                                    unBindGateway(item.id, dev.id);
+                                  }}>
+                                    <a>解绑</a>
+                                  </Popconfirm>]}
+                              >
+                                <List.Item.Meta
+                                  style={{width: '50%'}}
+                                  avatar={<Avatar shape="square" size="small" src={device}/>}
+                                  title={<a
+                                    onClick={() => {
+                                      router.push(`/device/instance/save/${dev.id}`);
+                                    }}
+                                  ><LineWrap title={dev.name} height={20}/></a>}
+                                />
+                              </List.Item>
+                            )}
                           />
                         </div>
                       </span>
@@ -258,7 +252,7 @@ const DeviceGateway: React.FC<Props> = () => {
   );
 };
 
-export default connect(({ deviceGateway, loading }: ConnectState) => ({
+export default connect(({deviceGateway, loading}: ConnectState) => ({
   deviceGateway,
   loading: loading.models.deviceGateway,
 }))(Form.create<Props>()(DeviceGateway));

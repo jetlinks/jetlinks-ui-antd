@@ -1,16 +1,31 @@
 import {PageHeaderWrapper} from '@ant-design/pro-layout';
 import React, {useEffect, useState} from 'react';
-import {Avatar, Badge, Button, Card, Form, Icon, Input, List, message, Popconfirm, Row, Spin, Tooltip,} from 'antd';
+import {
+  Avatar,
+  Badge,
+  Button,
+  Card,
+  Col,
+  Form,
+  Icon,
+  Input,
+  List,
+  message,
+  Popconfirm,
+  Row,
+  Spin,
+  Tooltip,
+} from 'antd';
 import {FormComponentProps} from 'antd/lib/form';
 import styles from './index.less';
 import {Dispatch} from '@/models/connect';
 import apis from '@/services';
 import encodeQueryParam from '@/utils/encodeParam';
-import LineWrap from "@/pages/device/gateway/LineWrap";
 import Save from "@/pages/device/group/save/groupSave";
 import device from "@/pages/device/gateway/img/device.svg";
 import ChartCard from "@/pages/analysis/components/Charts/ChartCard";
 import GroupOnDeviceInfo from "@/pages/device/group/info";
+import AutoHide from "@/pages/device/location/info/autoHide";
 
 interface Props extends FormComponentProps {
   dispatch: Dispatch;
@@ -148,19 +163,20 @@ const DeviceGroup: React.FC<Props> = props => {
             </Button>
             <span style={{marginLeft: 20}}>
               <label>分组名称：</label>
-              <Input style={{width: '20%'}} placeholder="输入名称后自动查询"
-                     onChange={e => {
-                       onSearch(e.target.value);
-                     }}
+              <Input
+                style={{width: '20%'}} placeholder="输入名称后自动查询"
+                onChange={e => {
+                  onSearch(e.target.value);
+                }}
               />
             </span>
           </Row>
         </Card>
-        <br/>
+
         <Spin spinning={spinning}>
           {deviceGroup && deviceGroup.pageSize > 0 && (
             <List<any>
-              style={{paddingBottom: 20, paddingTop: -10}}
+              style={{paddingBottom: 20, paddingTop: 10}}
               pagination={{
                 current: deviceGroup.pageIndex + 1,
                 total: deviceGroup.total,
@@ -182,7 +198,8 @@ const DeviceGroup: React.FC<Props> = props => {
               renderItem={item => {
                 if (item && item.id) {
                   return (
-                    <List.Item key={item.id}>
+                    <Col key={item.id} style={{minHeight: 368, paddingTop: 10}}
+                         xxl={6} xl={8} lg={12} md={24}>
                       <ChartCard
                         bordered={false} title={item.id}
                         avatar={<Avatar size={40} src={item.avatar}/>}
@@ -197,7 +214,7 @@ const DeviceGroup: React.FC<Props> = props => {
                                 }}
                               />
                             </Tooltip>
-                            <Tooltip key="delete" title="解绑所有设备">
+                            <Tooltip key="allUnbound" title="解绑所有设备">
                               <Popconfirm
                                 placement="topRight"
                                 title="确定该分组解绑所有设备？谨慎操作"
@@ -222,44 +239,44 @@ const DeviceGroup: React.FC<Props> = props => {
                           </div>
                         }
                         total={() =>
-                          <a style={{fontSize: 18}}>
-                            <LineWrap title={item.name} height={30}/>
+                          <a style={{fontSize: 16}}>
+                            <AutoHide title={item.name} style={{width: 180}}/>
                           </a>
                         }
                       >
                         <div className={styles.StandardTable} style={{paddingTop: 10}}>
-                          <List size='small'
-                                itemLayout="horizontal" dataSource={item.devices} style={{minHeight: 235}}
-                                pagination={{
-                                  pageSize: 4,
-                                  size: 'small',
-                                  hideOnSinglePage: true,
-                                }}
-                                renderItem={(dev: any) => (
-                                  <List.Item
-                                    actions={[<Badge status={statusMap.get(dev.state.text)} text={dev.state.text}/>,
-                                      <Popconfirm title="确认解绑该设备？" onConfirm={() => {
-                                        groupUnBind(item.id, dev.id);
-                                      }}>
-                                        <a>解绑</a>
-                                      </Popconfirm>]}
-                                  >
-                                    <List.Item.Meta
-                                      avatar={<Avatar shape="square" size="small" src={device}/>}
-                                      title={<a
-                                        onClick={() => {
-                                          setDeviceInfo(true);
-                                          setGroupDeviceId(dev.id);
-                                          // router.push(`/device/instance/save/${dev.id}`);
-                                        }}
-                                      ><LineWrap title={dev.name} height={20}/></a>}
-                                    />
-                                  </List.Item>
-                                )}
+                          <List
+                            size='small'
+                            itemLayout="horizontal" dataSource={item.devices} style={{minHeight: 254}}
+                            pagination={{
+                              pageSize: 4,
+                              size: 'small',
+                              hideOnSinglePage: true,
+                            }}
+                            renderItem={(dev: any) => (
+                              <List.Item
+                                actions={[<Badge status={statusMap.get(dev.state.text)} text={dev.state.text}/>,
+                                  <Popconfirm title="确认解绑该设备？" onConfirm={() => {
+                                    groupUnBind(item.id, dev.id);
+                                  }}>
+                                    <a>解绑</a>
+                                  </Popconfirm>]}
+                              >
+                                <List.Item.Meta style={{width:'50%'}}
+                                  avatar={<Avatar shape="square" size="small" src={device}/>}
+                                  title={<a
+                                    onClick={() => {
+                                      setDeviceInfo(true);
+                                      setGroupDeviceId(dev.id);
+                                    }}
+                                  ><AutoHide title={dev.name} style={{width: '80%'}}/></a>}
+                                />
+                              </List.Item>
+                            )}
                           />
                         </div>
                       </ChartCard>
-                    </List.Item>
+                    </Col>
                   );
                 }
                 return ('');
