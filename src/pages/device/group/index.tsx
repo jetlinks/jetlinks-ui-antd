@@ -223,7 +223,7 @@ const DeviceGroup: React.FC<Props> = props => {
                                 }}
                               />
                             </Tooltip>
-                            <Tooltip key="delete" title="解绑所有设备">
+                            <Tooltip key="allUnbound" title="解绑所有设备">
                               <Popconfirm
                                 placement="topRight"
                                 title="确定该分组解绑所有设备？谨慎操作"
