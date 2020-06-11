@@ -149,15 +149,6 @@ const DeviceGroup: React.FC<Props> = props => {
     });
   };
 
-  const topColResponsiveProps = {
-    xs: 24,
-    sm: 12,
-    md: 12,
-    lg: 12,
-    xl: 6,
-    style: {marginBottom: 10},
-  };
-
   return (
     <PageHeaderWrapper title="设备分组管理">
       <div className={styles.filterCardList}>
@@ -181,11 +172,11 @@ const DeviceGroup: React.FC<Props> = props => {
             </span>
           </Row>
         </Card>
-        <br/>
+
         <Spin spinning={spinning}>
           {deviceGroup && deviceGroup.pageSize > 0 && (
             <List<any>
-              style={{paddingBottom: 20, paddingTop: -10}}
+              style={{paddingBottom: 20, paddingTop: 10}}
               pagination={{
                 current: deviceGroup.pageIndex + 1,
                 total: deviceGroup.total,
@@ -207,7 +198,7 @@ const DeviceGroup: React.FC<Props> = props => {
               renderItem={item => {
                 if (item && item.id) {
                   return (
-                    <Col {...topColResponsiveProps} key={item.id} style={{minHeight: 368, paddingTop: 10}}
+                    <Col key={item.id} style={{minHeight: 368, paddingTop: 10}}
                          xxl={6} xl={8} lg={12} md={24}>
                       <ChartCard
                         bordered={false} title={item.id}

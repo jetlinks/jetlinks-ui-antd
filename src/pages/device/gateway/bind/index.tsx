@@ -92,32 +92,33 @@ const DeviceGatewayBind: React.FC<Props> = props => {
     {
       title: 'ID',
       dataIndex: 'id',
+      ellipsis: true,
     },
     {
       title: '设备名称',
       dataIndex: 'name',
+      ellipsis: true,
     },
     {
       title: '设备型号',
       dataIndex: 'productName',
+      ellipsis: true,
     },
     {
       title: '注册时间',
       dataIndex: 'registryTime',
       width: '200px',
+      ellipsis: true,
       render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
       sorter: true,
     },
     {
       title: '状态',
       dataIndex: 'state',
+      width: '80px',
       render: record =>
         record ? <Badge status={statusMap.get(record.text)} text={record.text}/> : '',
-    },
-    {
-      title: '描述',
-      dataIndex: 'describe',
-    },
+    }
   ];
 
   return (

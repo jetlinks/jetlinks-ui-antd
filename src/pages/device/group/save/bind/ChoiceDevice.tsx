@@ -75,14 +75,17 @@ const ChoiceDevice: React.FC<Props> = props => {
     {
       title: 'ID',
       dataIndex: 'id',
+      ellipsis: true,
     },
     {
       title: '设备名称',
       dataIndex: 'name',
+      ellipsis: true,
     },
     {
       title: '设备型号',
       dataIndex: 'productName',
+      ellipsis: true,
     },
     {
       title: '注册时间',
@@ -90,10 +93,12 @@ const ChoiceDevice: React.FC<Props> = props => {
       width: '200px',
       render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
       sorter: true,
+      ellipsis: true,
     },
     {
       title: '状态',
       dataIndex: 'state',
+      width: '80px',
       render: record =>
         record ? <Badge status={statusMap.get(record.text)} text={record.text}/> : '',
     },

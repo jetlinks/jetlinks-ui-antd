@@ -53,15 +53,6 @@ const DeviceGateway: React.FC<Props> = () => {
     },
   };
 
-  const topColResponsiveProps = {
-    xs: 24,
-    sm: 12,
-    md: 12,
-    lg: 12,
-    xl: 6,
-    style: {marginBottom: 10},
-  };
-
   const handleSearch = (params?: any) => {
     setSearchParam(params);
     apis.deviceGateway.list(encodeQueryParam(params))
@@ -176,7 +167,7 @@ const DeviceGateway: React.FC<Props> = () => {
             renderItem={item => {
               if (item && item.id) {
                 return (
-                  <Col {...topColResponsiveProps} key={item.id} style={{minHeight: 365, paddingTop: 10}}
+                  <Col key={item.id} style={{minHeight: 365, paddingTop: 10}}
                        xxl={6} xl={8} lg={12} md={24}>
                     <ChartCard
                       bordered={false} title={item.id}
