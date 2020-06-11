@@ -1,16 +1,31 @@
 import {PageHeaderWrapper} from '@ant-design/pro-layout';
 import React, {useEffect, useState} from 'react';
-import {Avatar, Badge, Button, Card, Form, Icon, Input, List, message, Popconfirm, Row, Spin, Tooltip,} from 'antd';
+import {
+  Avatar,
+  Badge,
+  Button,
+  Card,
+  Col,
+  Form,
+  Icon,
+  Input,
+  List,
+  message,
+  Popconfirm,
+  Row,
+  Spin,
+  Tooltip,
+} from 'antd';
 import {FormComponentProps} from 'antd/lib/form';
 import styles from './index.less';
 import {Dispatch} from '@/models/connect';
 import apis from '@/services';
 import encodeQueryParam from '@/utils/encodeParam';
-import LineWrap from "@/pages/device/gateway/LineWrap";
 import Save from "@/pages/device/group/save/groupSave";
 import device from "@/pages/device/gateway/img/device.svg";
 import ChartCard from "@/pages/analysis/components/Charts/ChartCard";
 import GroupOnDeviceInfo from "@/pages/device/group/info";
+import AutoHide from "@/pages/device/location/info/autoHide";
 
 interface Props extends FormComponentProps {
   dispatch: Dispatch;
@@ -134,6 +149,15 @@ const DeviceGroup: React.FC<Props> = props => {
     });
   };
 
+  const topColResponsiveProps = {
+    xs: 24,
+    sm: 12,
+    md: 12,
+    lg: 12,
+    xl: 6,
+    style: {marginBottom: 10},
+  };
+
   return (
     <PageHeaderWrapper title="设备分组管理">
       <div className={styles.filterCardList}>
@@ -148,10 +172,11 @@ const DeviceGroup: React.FC<Props> = props => {
             </Button>
             <span style={{marginLeft: 20}}>
               <label>分组名称：</label>
-              <Input style={{width: '20%'}} placeholder="输入名称后自动查询"
-                     onChange={e => {
-                       onSearch(e.target.value);
-                     }}
+              <Input
+                style={{width: '20%'}} placeholder="输入名称后自动查询"
+                onChange={e => {
+                  onSearch(e.target.value);
+                }}
               />
             </span>
           </Row>
@@ -182,7 +207,8 @@ const DeviceGroup: React.FC<Props> = props => {
               renderItem={item => {
                 if (item && item.id) {
                   return (
-                    <List.Item key={item.id}>
+                    <Col {...topColResponsiveProps} key={item.id} style={{minHeight: 368, paddingTop: 10}}
+                         xxl={6} xl={8} lg={12} md={24}>
                       <ChartCard
                         bordered={false} title={item.id}
                         avatar={<Avatar size={40} src={item.avatar}/>}
@@ -223,43 +249,43 @@ const DeviceGroup: React.FC<Props> = props => {
                         }
                         total={() =>
                           <a style={{fontSize: 18}}>
-                            <LineWrap title={item.name} height={30}/>
+                            <AutoHide title={item.name} style={{width: '100%'}}/>
                           </a>
                         }
                       >
                         <div className={styles.StandardTable} style={{paddingTop: 10}}>
-                          <List size='small'
-                                itemLayout="horizontal" dataSource={item.devices} style={{minHeight: 235}}
-                                pagination={{
-                                  pageSize: 4,
-                                  size: 'small',
-                                  hideOnSinglePage: true,
-                                }}
-                                renderItem={(dev: any) => (
-                                  <List.Item
-                                    actions={[<Badge status={statusMap.get(dev.state.text)} text={dev.state.text}/>,
-                                      <Popconfirm title="确认解绑该设备？" onConfirm={() => {
-                                        groupUnBind(item.id, dev.id);
-                                      }}>
-                                        <a>解绑</a>
-                                      </Popconfirm>]}
-                                  >
-                                    <List.Item.Meta
-                                      avatar={<Avatar shape="square" size="small" src={device}/>}
-                                      title={<a
-                                        onClick={() => {
-                                          setDeviceInfo(true);
-                                          setGroupDeviceId(dev.id);
-                                          // router.push(`/device/instance/save/${dev.id}`);
-                                        }}
-                                      ><LineWrap title={dev.name} height={20}/></a>}
-                                    />
-                                  </List.Item>
-                                )}
+                          <List
+                            size='small'
+                            itemLayout="horizontal" dataSource={item.devices} style={{minHeight: 254}}
+                            pagination={{
+                              pageSize: 4,
+                              size: 'small',
+                              hideOnSinglePage: true,
+                            }}
+                            renderItem={(dev: any) => (
+                              <List.Item
+                                actions={[<Badge status={statusMap.get(dev.state.text)} text={dev.state.text}/>,
+                                  <Popconfirm title="确认解绑该设备？" onConfirm={() => {
+                                    groupUnBind(item.id, dev.id);
+                                  }}>
+                                    <a>解绑</a>
+                                  </Popconfirm>]}
+                              >
+                                <List.Item.Meta
+                                  avatar={<Avatar shape="square" size="small" src={device}/>}
+                                  title={<a
+                                    onClick={() => {
+                                      setDeviceInfo(true);
+                                      setGroupDeviceId(dev.id);
+                                    }}
+                                  ><AutoHide title={dev.name} style={{width: '100%'}}/></a>}
+                                />
+                              </List.Item>
+                            )}
                           />
                         </div>
                       </ChartCard>
-                    </List.Item>
+                    </Col>
                   );
                 }
                 return ('');
