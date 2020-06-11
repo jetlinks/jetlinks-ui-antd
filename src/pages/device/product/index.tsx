@@ -33,16 +33,17 @@ interface State {
 
 const DeviceModel: React.FC<Props> = props => {
   const { result } = props.deviceProduct;
+  const { dispatch, location } = props;
+
   const initState: State = {
     data: result,
-    searchParam: { pageSize: 10 },
+    searchParam: { pageSize: 10, terms: location?.query?.terms },
     saveVisible: false,
   };
 
   const [searchParam, setSearchParam] = useState(initState.searchParam);
   const [saveVisible, setSaveVisible] = useState(initState.saveVisible);
   const [filterData, setFilterData] = useState({});
-  const { dispatch } = props;
 
   const handleSearch = (params?: any) => {
     setSearchParam(params);
@@ -223,7 +224,7 @@ const DeviceModel: React.FC<Props> = props => {
     handleSearch({
       pageIndex: Number(pagination.current) - 1,
       pageSize: pagination.pageSize,
-      terms: { ...searchParam, ...tempFilter },
+      terms: { ...searchParam.terms, ...tempFilter },
       sorts: sorter,
     });
   };

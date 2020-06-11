@@ -51,7 +51,18 @@ const Product = () => {
                 className={styles.card}
                 actions={[
                     <Tooltip title="查看">
-                        <Icon type="eye" onClick={() => router.push(`/device/product`)} />
+                        <Icon type="eye" onClick={() => router.push({
+                            pathname: `/device/product`,
+                            query: {
+                                terms: {
+                                    id$assets: JSON.stringify({
+                                        tenantId: data?.id,
+                                        assetType: 'product',
+                                        // not: true,
+                                    })
+                                }
+                            }
+                        })} />
                     </Tooltip>,
                     <Tooltip title="编辑">
                         <Icon type="edit" onClick={() => setVisible(true)} />
