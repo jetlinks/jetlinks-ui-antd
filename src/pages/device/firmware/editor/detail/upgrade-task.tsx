@@ -6,7 +6,6 @@ import encodeQueryParam from '@/utils/encodeParam';
 import apis from '@/services';
 import { UpgradeTaskData } from '@/pages/device/firmware/data';
 import styles from '@/utils/table.less';
-import Save from '@/pages/device/firmware/editor/detail/save';
 
 interface Props {
   firmwareId?: string;
@@ -33,8 +32,6 @@ const UpgradeTask: React.FC<Props> = (props) => {
   const [searchParam, setSearchParam] = useState(initState.searchParam);
   const [data, setData] = useState(initState.data);
   const [spinning, setSpinning] = useState(initState.spinning);
-  const [saveVisible, setSaveVisible] = useState(false);
-  const [saveUpgradeTaskData, setSaveUpgradeTaskData] = useState(initState.saveUpgradeTaskData);
 
   const handleSearch = (params?: any) => {
     setSearchParam(params);
@@ -91,8 +88,6 @@ const UpgradeTask: React.FC<Props> = (props) => {
       render: (record: any) => (
         <Fragment>
           <a onClick={() => {
-            /*setSaveUpgradeTaskData(record);
-            setSaveVisible(true);*/
             props.jumpPedal(record);
           }}
           >
@@ -140,8 +135,6 @@ const UpgradeTask: React.FC<Props> = (props) => {
         <Card style={{ marginBottom: 20 }}>
           <div className={styles.tableListOperator} style={{ paddingBottom: 20 }}>
             <Button icon="plus" type="primary" onClick={() => {
-              /*setSaveUpgradeTaskData({});
-              setSaveVisible(true);*/
               props.jumpPedal({});
             }}>
               新建
@@ -168,11 +161,6 @@ const UpgradeTask: React.FC<Props> = (props) => {
             />
           </div>
         </Card>
-        {/*{saveVisible && (
-          <Save data={saveUpgradeTaskData} close={() => {
-            setSaveVisible(false);
-          }} productId={props.productId} firmwareId={props.firmwareId}/>
-        )}*/}
       </Spin>
     </div>
   );

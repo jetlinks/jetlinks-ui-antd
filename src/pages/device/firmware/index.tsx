@@ -130,18 +130,6 @@ const Firmware: React.FC<Props> = props => {
           >
             编辑
           </a>
-          {/*<Divider type="vertical"/>
-          <Popconfirm title="确定全部设备开始升级此固件？" onConfirm={() => {
-            handleDelete(record);
-          }}>
-            <a>批量升级</a>
-          </Popconfirm>
-          <Divider type="vertical"/>
-          <Popconfirm title="确定开始升级此固件？" onConfirm={() => {
-            handleDelete(record);
-          }}>
-            <a>指定升级</a>
-          </Popconfirm>*/}
           <Divider type="vertical"/>
           <Popconfirm title="确定删除？" onConfirm={() => {
             handleDelete(record);
