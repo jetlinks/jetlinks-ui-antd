@@ -1,19 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { Col, Icon, Row, Tooltip } from 'antd';
-import { FormattedMessage } from 'umi-plugin-react/locale';
-import { EventSourcePolyfill } from 'event-source-polyfill';
-import Charts, { Gauge } from './Charts';
+import React, {useEffect, useState} from 'react';
+import {Col, Icon, Row, Tooltip} from 'antd';
+import {FormattedMessage} from 'umi-plugin-react/locale';
+import Charts, {Gauge} from './Charts';
 import numeral from 'numeral';
-import { IVisitData } from '../data.d';
+import {IVisitData} from '../data.d';
 import GaugeColor from './Charts/GaugeColor/index';
-import { wrapAPI } from '@/utils/utils';
-import { getAccessToken } from '@/utils/authority';
 import apis from '@/services';
 import moment from 'moment';
-import { getWebsocket } from '@/layouts/GlobalWebSocket';
+import {getWebsocket} from '@/layouts/GlobalWebSocket';
 
 
-const { ChartCard, MiniArea, MiniBar, Field } = Charts;
+const {ChartCard, MiniArea, MiniBar, Field} = Charts;
 
 interface State {
   cpu: number;
@@ -32,10 +29,10 @@ const topColResponsiveProps = {
   md: 12,
   lg: 12,
   xl: 6,
-  style: { marginBottom: 24 },
+  style: {marginBottom: 24},
 };
 
-const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVisitData[] }) => {
+const IntroduceRow = ({loading, visitData}: { loading: boolean; visitData: IVisitData[] }) => {
   const initState: State = {
     cpu: 0,
     memoryMax: 0,
@@ -205,35 +202,11 @@ const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVi
       });
   };
 
-  const [cupSubs, setCupSubs] = useState<any>();
-  const [jvmSubs, setJvmSubs] = useState<any>();
   useEffect(() => {
     deviceStatus();
     deviceMessage();
 
-    const list = [
-      {
-        'dashboard': 'jvmMonitor',
-        'object': 'memory',
-        'measurement': 'info',
-        'dimension': 'realTime',
-        'group': 'memory',
-        'params': {
-          'history': 1,
-        },
-      }, {
-        'dashboard': 'systemMonitor',
-        'object': 'cpu',
-        'measurement': 'usage',
-        'dimension': 'realTime',
-        'group': 'cpu',
-        'params': {
-          'history': 1,
-        },
-      },
-    ];
-
-    const tempCup = getWebsocket(
+    let tempCup = getWebsocket(
       `home-page-statistics-cpu-realTime`,
       `/dashboard/systemMonitor/cpu/usage/realTime`,
       {
@@ -243,15 +216,12 @@ const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVi
       },
     ).subscribe(
       (resp: any) => {
-        const { payload } = resp;
-        if (resp.requestId === `home-page-statistics-cpu-realTime`) {
-          const dataValue = payload.value;
-          setCpu(dataValue);
-        }
+        const {payload} = resp;
+        setCpu(payload.value);
       },
     );
 
-    const tempJvm = getWebsocket(
+    let tempJvm = getWebsocket(
       `home-page-statistics-jvm-realTime`,
       `/dashboard/jvmMonitor/memory/info/realTime`,
       {
@@ -261,24 +231,15 @@ const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVi
       },
     ).subscribe(
       (resp: any) => {
-        const { payload } = resp;
-        if (resp.requestId === `home-page-statistics-jvm-realTime`) {
-          const dataValue = payload.value;
-          setMemoryMax(dataValue.max);
-          setMemoryUsed(dataValue.used);
-        }
+        const {payload} = resp;
+        setMemoryMax(payload.value.max);
+        setMemoryUsed(payload.value.used);
       },
     );
 
-    setJvmSubs(tempJvm);
-    setCupSubs(tempCup);
     return () => {
-      if (cupSubs) {
-        cupSubs.unsubscribe();
-      }
-      if (jvmSubs) {
-        jvmSubs.unsubscribe();
-      }
+      tempCup && tempCup.unsubscribe();
+      tempJvm && tempJvm.unsubscribe();
     };
   }, []);
 
@@ -295,21 +256,21 @@ const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVi
             >
               <Icon type="sync" onClick={() => {
                 deviceStatus();
-              }} />
+              }}/>
             </Tooltip>
           }
           total={numeral(deviceOnline).format('0,0')}
           footer={
-            <div style={{ whiteSpace: 'nowrap', overflow: 'hidden' }}>
-              <Field style={{ marginRight: 80, float: 'left' }}
-                label={
-                  <FormattedMessage id="analysis.analysis.device-total" defaultMessage="设备总量" />
-                }
-                value={numeral(deviceCount).format('0,0')}
+            <div style={{whiteSpace: 'nowrap', overflow: 'hidden'}}>
+              <Field style={{marginRight: 80, float: 'left'}}
+                     label={
+                       <FormattedMessage id="analysis.analysis.device-total" defaultMessage="设备总量"/>
+                     }
+                     value={numeral(deviceCount).format('0,0')}
               />
               <Field
                 label={
-                  <FormattedMessage id="analysis.analysis.device-activation" defaultMessage="未激活设备" />
+                  <FormattedMessage id="analysis.analysis.device-activation" defaultMessage="未激活设备"/>
                 }
                 value={numeral(deviceNotActive).format('0,0')}
               />
@@ -317,7 +278,7 @@ const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVi
           }
           contentHeight={46}
         >
-          <MiniBar data={visitData} />
+          <MiniBar data={visitData}/>
         </ChartCard>
       </Col>
 
@@ -325,28 +286,28 @@ const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVi
         <ChartCard
           bordered={false}
           loading={loading}
-          title={<FormattedMessage id="analysis.analysis.device-day-visits" defaultMessage="日访消息量" />}
+          title={<FormattedMessage id="analysis.analysis.device-day-visits" defaultMessage="日访消息量"/>}
           action={
             <Tooltip
               title='刷新'
             >
               <Icon type="sync" onClick={() => {
                 deviceMessage();
-              }} />
+              }}/>
             </Tooltip>
           }
           total={numeral(sameDay).format('0,0')}
           footer={
             <Field
               label={
-                <FormattedMessage id="analysis.analysis.device-visits" defaultMessage="当月设备消息量" />
+                <FormattedMessage id="analysis.analysis.device-visits" defaultMessage="当月设备消息量"/>
               }
               value={numeral(month).format('0,0')}
             />
           }
           contentHeight={46}
         >
-          <MiniArea color="#975FE4" data={messageData} />
+          <MiniArea color="#975FE4" data={messageData}/>
         </ChartCard>
       </Col>
       <Col {...topColResponsiveProps}>
@@ -356,7 +317,7 @@ const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVi
           title='CPU使用率'
           contentHeight={120}
         >
-          <GaugeColor height={169} percent={cpu} />
+          <GaugeColor height={169} percent={cpu}/>
         </ChartCard>
       </Col>
       <Col {...topColResponsiveProps}>
@@ -366,7 +327,7 @@ const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVi
           title='JVM内存'
           contentHeight={120}
         >
-          <Gauge height={169} percent={memoryUsed} memoryMax={memoryMax} />
+          <Gauge height={169} percent={memoryUsed} memoryMax={memoryMax}/>
         </ChartCard>
       </Col>
     </Row>
