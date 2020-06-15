@@ -40,6 +40,7 @@ interface Props extends FormComponentProps {
   loading: boolean;
   dispatch: Dispatch;
   deviceInstance: any;
+  location: Location
 }
 
 interface State {
@@ -57,9 +58,11 @@ interface State {
 
 const DeviceInstancePage: React.FC<Props> = props => {
   const { result } = props.deviceInstance;
+
+  const { location } = props;
   const initState: State = {
     data: result,
-    searchParam: { pageSize: 10 },
+    searchParam: { pageSize: 10, terms: location?.query?.terms },
     addVisible: false,
     currentItem: {},
     processVisible: false,
@@ -254,19 +257,19 @@ const DeviceInstancePage: React.FC<Props> = props => {
       loading: true,
     };
 
-    apis.deviceInstance.count(encodeQueryParam({ terms: { state: 'notActive', productId: productId } }))
+    apis.deviceInstance.count(encodeQueryParam({ terms: { state: 'notActive', productId } }))
       .then(res => {
         if (res.status === 200) {
           map.notActiveCount = res.result;
-          apis.deviceInstance.count(encodeQueryParam({ terms: { state: 'offline', productId: productId } }))
+          apis.deviceInstance.count(encodeQueryParam({ terms: { state: 'offline', productId } }))
             .then(res => {
               if (res.status === 200) {
                 map.offlineCount = res.result;
-                apis.deviceInstance.count(encodeQueryParam({ terms: { state: 'online', productId: productId } }))
+                apis.deviceInstance.count(encodeQueryParam({ terms: { state: 'online', productId } }))
                   .then(res => {
                     if (res.status === 200) {
                       map.onlineCount = res.result;
-                      apis.deviceInstance.count(encodeQueryParam({ terms: { productId: productId } }))
+                      apis.deviceInstance.count(encodeQueryParam({ terms: { productId } }))
                         .then(res => {
                           if (res.status === 200) {
                             map.deviceTotal = res.result;
@@ -607,7 +610,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
                     params.productId = product;
                   }
                   params.state = searchParam.terms?.state;
-                  handleSearch({ terms: params, pageSize: 10, sorts: searchParam.sorts });
+                  handleSearch({ terms: { ...params, ...searchParam.terms }, pageSize: 10, sorts: searchParam.sorts });
                 }}
               />
             </div>

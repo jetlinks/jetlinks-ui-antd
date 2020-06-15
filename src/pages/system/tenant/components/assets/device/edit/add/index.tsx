@@ -81,7 +81,7 @@ const Add = (props: Props) => {
             <Form.Item label="选择成员">
                 <Select
                     mode="tags"
-                    placeholder="Please select"
+                    placeholder="选择成员"
                     onChange={(value: string[]) => { setCheckedUserList(value) }}
                     style={{ width: '100%', marginBottom: 10 }}
                 >

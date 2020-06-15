@@ -1,7 +1,7 @@
 import React, { Fragment, useState, useEffect } from "react";
 import ProTable from "@/pages/system/permission/component/ProTable";
 import { ColumnProps } from "antd/lib/table";
-import { Divider, Button, Tag, message, Popconfirm } from "antd";
+import { Button, Tag, message, Popconfirm } from "antd";
 import SearchForm from "@/components/SearchForm";
 import Save from "./save";
 import { TenantItem } from "../../data";
@@ -18,24 +18,32 @@ const Member = (props: Props) => {
     const [visible, setVisible] = useState(false);
     const [userList, setUserList] = useState<ListData<any>>();
     const [loading, setLoading] = useState<boolean>(false);
+    const [searchParam, setSearchParam] = useState<any>({
+        pageIndex: 0,
+        pageSize: 10,
+    });
     const id = props.data?.id;
 
-    useEffect(() => {
+    const handleSearch = (params: any) => {
+        setSearchParam(params);
         if (id) {
-            service.member.query(id, encodeQueryParam({
-                pageIndex: 0,
-                pageSize: 10,
-            })).subscribe(resp => {
+            service.member.query(id, encodeQueryParam(params)).subscribe(resp => {
                 setUserList(resp);
                 setLoading(false);
             })
         }
+    }
+
+    useEffect(() => {
+        handleSearch(searchParam)
     }, []);
+
 
     const unBind = (data: any) => {
         if (id) {
             service.member.unBind(id, [data.id]).subscribe(() => {
                 message.success('解绑成功');
+                handleSearch(searchParam);
             })
         }
     }
@@ -74,21 +82,23 @@ const Member = (props: Props) => {
         <div>
             <SearchForm
                 search={(params: any) => {
-                    // handleSearch()
+                    searchParam.terms = params;
+                    handleSearch(searchParam);
                 }}
                 formItems={[{
-                    label: '型号名称',
+                    label: '名称',
                     key: 'name$LIKE',
                     type: 'string',
                 },
                 {
-                    label: '设备类型',
-                    key: 'deviceType',
+                    label: '状态',
+                    key: 'state',
                     type: 'list',
                     props: {
+                        mode: 'default',
                         data: [
-                            { id: 'gateway', name: '网关' },
-                            { id: 'device', name: '设备' }
+                            { id: 'enabled', name: '启用' },
+                            { id: 'disenabled', name: '禁用' }
                         ]
                     }
                 }]}
@@ -104,7 +114,7 @@ const Member = (props: Props) => {
                 columns={columns}
                 dataSource={userList?.data || []}
                 rowKey="id"
-                onSearch={(data: any) => { console.log(data) }}
+                onSearch={(data: any) => { handleSearch(data) }}
                 paginationConfig={userList || {}}
             />
 
