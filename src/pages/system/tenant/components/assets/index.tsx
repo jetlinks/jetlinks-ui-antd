@@ -6,9 +6,9 @@ import Device from "./device";
 
 const Assets = () => (
     <div>
-        <div style={{ marginBottom: 50, marginTop: 20 }}>
+        {/* <div style={{ marginBottom: 50, marginTop: 20 }}>
             <Input.Search />
-        </div>
+        </div> */}
         <div className={styles.cardList}>
 
             <List<Partial<any>>
