@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import Form from 'antd/es/form';
-import { FormComponentProps } from 'antd/lib/form';
-import { Button, Col, Icon, Input, message, Modal, Row, Select, Tabs, Tooltip } from 'antd';
+import {FormComponentProps} from 'antd/lib/form';
+import {Button, Col, Icon, Input, message, Modal, Row, Select, Tabs, Tooltip} from 'antd';
 import apis from '@/services';
-import { Map } from 'react-amap';
+import {Map} from 'react-amap';
 import styles from '@/utils/table.less';
 
 interface Props extends FormComponentProps {
@@ -32,7 +32,7 @@ const SaveRegion: React.FC<Props> = props => {
   };
 
   const {
-    form: { getFieldDecorator },
+    form: {getFieldDecorator},
     form,
   } = props;
 
@@ -191,22 +191,21 @@ const SaveRegion: React.FC<Props> = props => {
     // 缩放地图到合适的视野级别
     mapCreated.setFitView([polygon]);
 
-    mapCreated.plugin('AMap.PolyEditor', function() {
+    mapCreated.plugin('AMap.PolyEditor', function () {
       let polyEditor = new window.AMap.PolyEditor(mapCreated, polygon);
 
       setPolyEditor(polyEditor);
-      polyEditor.on('addnode', function(event: any) {
+      polyEditor.on('addnode', function (event: any) {
       });
 
-      polyEditor.on('adjust', function(event: any) {
+      polyEditor.on('adjust', function (event: any) {
       });
 
-      polyEditor.on('removenode', function(event: any) {
+      polyEditor.on('removenode', function (event: any) {
       });
 
-      polyEditor.on('end', function(event: any) {
-
-        setGeoJsonPoint(event.target.Ge.path);
+      polyEditor.on('end', function (event: any) {
+        setGeoJsonPoint(event.target.Ce.path);
       });
     });
   };
@@ -221,15 +220,15 @@ const SaveRegion: React.FC<Props> = props => {
         onValidateForm();
       }}
       width='50%'
-      style={{ marginTop: '-3%' }}
+      style={{marginTop: '-3%'}}
       onCancel={() => props.close()}
     >
-      <Form labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} key="regionForm">
+      <Form labelCol={{span: 6}} wrapperCol={{span: 18}} key="region_form">
         <Row key="geoJsonRow">
           <Col span={12}>
             <Form.Item key="id" label="区域标识">
               {getFieldDecorator('id', {
-                rules: [{ required: true, message: '区域标识必填' }],
+                rules: [{required: true, message: '区域标识必填'}],
                 initialValue: props.data.properties?.id,
               })(<Input placeholder="请输入区域标识"/>)}
             </Form.Item>
@@ -237,7 +236,7 @@ const SaveRegion: React.FC<Props> = props => {
           <Col span={12}>
             <Form.Item key="name" label="区域名称">
               {getFieldDecorator('name', {
-                rules: [{ required: true, message: '区域名称必填' }],
+                rules: [{required: true, message: '区域名称必填'}],
                 initialValue: props.data.properties?.name,
               })(<Input placeholder="请输入区域名称"/>)}
             </Form.Item>
@@ -245,7 +244,7 @@ const SaveRegion: React.FC<Props> = props => {
           <Col span={12}>
             <Form.Item key="objectType" label="区域类型">
               {getFieldDecorator('objectType', {
-                rules: [{ required: true, message: '区域类型必填' }],
+                rules: [{required: true, message: '区域类型必填'}],
                 initialValue: props.data.properties?.objectType,
               })(<Input placeholder="请输入区域类型"/>)}
             </Form.Item>
@@ -285,10 +284,10 @@ const SaveRegion: React.FC<Props> = props => {
                 </a>
               </span>
             }>
-              <Icon type="question-circle-o" style={{ paddingLeft: 10 }}/>
+              <Icon type="question-circle-o" style={{paddingLeft: 10}}/>
             </Tooltip>
           </span>
-          } labelCol={{ span: 3 }} wrapperCol={{ span: 21 }}>
+          } labelCol={{span: 3}} wrapperCol={{span: 21}}>
             {getFieldDecorator('geoJson', {
               initialValue: JSON.stringify(props.data),
             })(
@@ -300,23 +299,23 @@ const SaveRegion: React.FC<Props> = props => {
           <span>
             绘制区域
             <Tooltip title='绘制区域时请点击“开始绘制”，切记绘制完成后请点击“结束绘制”'>
-              <Icon type="question-circle-o" style={{ paddingLeft: 10 }}/>
+              <Icon type="question-circle-o" style={{paddingLeft: 10}}/>
             </Tooltip>
           </span>
         } key="draw">
-          <div className={styles.tableListOperator} key="drawButton">
+          <div className={styles.tableListOperator}>
             <Button type="primary"
                     onClick={() => {
-                      if (!polyEditor.hb) {
+                      if (!polyEditor.kb) {
                         polyEditor.open();
                       }
                     }}
             >
               开始绘制
             </Button>
-            <Button style={{ marginLeft: 10 }} type="primary"
+            <Button style={{marginLeft: 10}} type="primary"
                     onClick={() => {
-                      if (polyEditor.hb) {
+                      if (polyEditor.kb) {
                         polyEditor.close();
                       }
                     }}
@@ -324,7 +323,7 @@ const SaveRegion: React.FC<Props> = props => {
               结束绘制
             </Button>
           </div>
-          <div style={{ width: '100%', height: 500, paddingTop: 5 }} key="drawMap">
+          <div style={{width: '100%', height: 500, paddingTop: 5}}>
             <Map resizeEnable events={mapEvents} rotateEnable={true}/>
           </div>
         </Tabs.TabPane>

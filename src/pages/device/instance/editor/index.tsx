@@ -15,6 +15,7 @@ import apis from '@/services';
 import Gateway from './detail/gateway';
 import Alarm from '@/pages/device/alarm';
 import Visualization from '../../visualization';
+import {getWebsocket} from "@/layouts/GlobalWebSocket";
 
 interface Props {
   dispatch: Dispatch;
@@ -31,10 +32,7 @@ interface State {
 }
 
 const Editor: React.FC<Props> = props => {
-  const {
-    dispatch,
-    location: {pathname},
-  } = props;
+  const {location: {pathname},} = props;
 
   const initState: State = {
     activeKey: 'info',
@@ -51,7 +49,7 @@ const Editor: React.FC<Props> = props => {
   const [orgInfo] = useState(initState.orgInfo);
   const [spinning, setSpinning] = useState(initState.spinning);
   const [tableList, setTableList] = useState();
-
+  const [deviceStatus, setDeviceStatus] = useState<any>();
   const tabList = [
     {
       key: 'info',
@@ -75,6 +73,30 @@ const Editor: React.FC<Props> = props => {
     },
   ];
 
+  const subscribeDeviceState = (deviceData: any, deviceId: string) => {
+
+    deviceStatus && deviceStatus.unsubscribe();
+
+    let status = getWebsocket(
+      `instance-editor-info-status-${deviceId}`,
+      `/dashboard/device/status/change/realTime`,
+      {
+        deviceId: deviceId,
+      },
+    ).subscribe(
+      (resp: any) => {
+        const {payload} = resp;
+        deviceData.state = payload.value.type === 'online' ? {value: 'online', text: '在线'} : {
+          value: 'offline',
+          text: '离线'
+        };
+        deviceData.onlineTime = payload.timestamp;
+        setData({...deviceData});
+      },
+    );
+    setDeviceStatus(status);
+  };
+
   const getInfo = (deviceId: string) => {
     setSpinning(true);
     apis.deviceInstance.info(deviceId)
@@ -84,6 +106,8 @@ const Editor: React.FC<Props> = props => {
           if (deviceData.orgId) {
             deviceData.orgName = orgInfo[deviceData.orgId];
           }
+          setData(deviceData);
+          subscribeDeviceState(deviceData, deviceId);
           if (deviceData.metadata) {
             const deriveMetadata = JSON.parse(deviceData.metadata);
             if ((deriveMetadata.functions || []).length > 0) {
@@ -106,7 +130,6 @@ const Editor: React.FC<Props> = props => {
               setConfig(resp.result);
             }).catch();
           setTableList(tabList);
-          setData(deviceData);
           setSpinning(false);
         }
       })
@@ -117,9 +140,9 @@ const Editor: React.FC<Props> = props => {
   };
 
   const statusMap = new Map();
-  statusMap.set('在线', 'success');
-  statusMap.set('离线', 'error');
-  statusMap.set('未激活', 'processing');
+  statusMap.set('online', <Badge status='success' text={'在线'}/>);
+  statusMap.set('offline', <Badge status='error' text={'离线'}/>);
+  statusMap.set('notActive', <Badge status='processing' text={'未激活'}/>);
 
   useEffect(() => {
     setActiveKey('info');
@@ -140,9 +163,12 @@ const Editor: React.FC<Props> = props => {
       setId(list[list.length - 1]);
     }
     setTableList(tabList);
+    return () => {
+      deviceStatus && deviceStatus.unsubscribe();
+    };
   }, [window.location.hash]);
 
-  const disconnectDevice = (deviceId: string | undefined) => {
+  const disconnectDevice = (deviceId?: string) => {
     setSpinning(true);
     apis.deviceInstance.disconnectDevice(deviceId)
       .then(response => {
@@ -158,7 +184,7 @@ const Editor: React.FC<Props> = props => {
       }).catch();
   };
 
-  const changeDeploy = (deviceId: string | undefined) => {
+  const changeDeploy = (deviceId?: string) => {
     setSpinning(true);
     apis.deviceInstance
       .changeDeploy(deviceId)
@@ -189,7 +215,9 @@ const Editor: React.FC<Props> = props => {
     info: <Info data={data} configuration={config} refresh={() => {
       getInfo(data.id);
     }}/>,
-    status: <Status device={data}/>,
+    status: <Status device={data} refresh={() => {
+      getInfo(data.id);
+    }}/>,
     functions: <Functions device={data}/>,
     log: <Log deviceId={id}/>,
     debugger: <Debugger/>,
@@ -223,25 +251,30 @@ const Editor: React.FC<Props> = props => {
     </div>
   );
 
+  const deviceStateStyle = {
+    style: {
+      fontSize: 12, marginLeft: 20
+    }
+  };
   const titleInfo = (
     <Row>
       <div>
-        <span>
+        <span style={{paddingRight: 20}}>
           设备：{data.name}
         </span>
-        <Badge style={{marginLeft: 20}} status={statusMap.get(data.state?.text)} text={data.state?.text}/>
+        {statusMap.get(data.state?.value)}
         {data.state?.value === 'online' ? (
           <Popconfirm title="确认让此设备断开连接？" onConfirm={() => {
             disconnectDevice(data.id);
           }}>
-            <a style={{fontSize: 12, marginLeft: 20}}>断开连接</a>
+            <a {...deviceStateStyle}>断开连接</a>
           </Popconfirm>
         ) : (data.state?.value === 'notActive' ? (
           <Popconfirm title="确认激活此设备？"
                       onConfirm={() => {
                         changeDeploy(data.id);
                       }}>
-            <a style={{fontSize: 12, marginLeft: 20}}>激活设备</a>
+            <a {...deviceStateStyle}>激活设备</a>
           </Popconfirm>
         ) : (<span/>))}
       </div>
