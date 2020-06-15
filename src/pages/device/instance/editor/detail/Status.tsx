@@ -225,7 +225,7 @@ const Status: React.FC<Props> = props => {
     };
   }, [runInfo]);
 
-  const refreshDeviceState = () => {
+/*  const refreshDeviceState = () => {
     runInfo.loading = true;
     apis.deviceInstance.refreshState(props.device.id)
       .then(response => {
@@ -235,7 +235,7 @@ const Status: React.FC<Props> = props => {
         }
       }).catch(() => {
     });
-  };
+  };*/
 
   const refreshProperties = (item: any) => {
     const {properties} = metadata;
