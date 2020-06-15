@@ -65,8 +65,7 @@ const Logger = (props: Props) => {
     }];
 
     const { data } = props
-    const [result, setResult] = useState<any>({});
-    const [searchParam, setSearchParam] = useState<any>({
+    const initParam = {
         pageIndex: 0,
         pageSize: 10,
         terms: { notifierId: data.id },
@@ -74,11 +73,15 @@ const Logger = (props: Props) => {
             field: 'notifyTime',
             order: 'desc'
         }
-    });
+    };
+    const [result, setResult] = useState<any>({});
+    const [searchParam, setSearchParam] = useState<any>(initParam);
 
     const handleSearch = async (params?: any) => {
-        const temp = { ...searchParam, ...params };
+        const temp = { ...params, ...searchParam, };
+        temp.terms = { ...params.terms, ...initParam.terms };
         setSearchParam(temp);
+
         await apis.notifier.history.list(encodeQueryParam(temp)).then(response => {
             if (response.status === 200) {
                 setResult(response.result)
