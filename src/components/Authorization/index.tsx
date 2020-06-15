@@ -12,6 +12,9 @@ interface Props extends FormComponentProps {
   close: Function;
   target?: any;
   targetType?: string;
+  type?: string;
+  height?: string;
+  showTarget?: boolean
 }
 
 interface State {
@@ -279,10 +282,12 @@ const Authorization: React.FC<Props> = props => {
     // }
   };
 
-  return (
-    <Drawer title="授权" visible width="50VW" onClose={() => props.close()}>
+
+  const renderAccess = () => (
+    <div>
       <Form>
-        <Form.Item label="被授权主体">
+
+        <Form.Item label="被授权主体" style={props.showTarget ? { display: 'none' } : {}}>
           {getFieldDecorator('targetId', {
             rules: [{ required: true }],
             initialValue: props.target.id ? props.target.name : '',
@@ -305,6 +310,8 @@ const Authorization: React.FC<Props> = props => {
             </Select>,
           )}
         </Form.Item>
+
+
         <Form.Item label="选择权限">
           <Input.Group compact style={{ marginBottom: '10px' }}>
             <Select
@@ -329,7 +336,7 @@ const Authorization: React.FC<Props> = props => {
           </Input.Group>
           <Table
             rowKey="id"
-            style={{ height: '65vh', overflow: 'auto' }}
+            style={{ height: props.height || '65vh', overflow: 'auto' }}
             pagination={false}
             columns={[
               {
@@ -472,22 +479,40 @@ const Authorization: React.FC<Props> = props => {
           textAlign: 'right',
         }}
       >
-        <Button
-          onClick={() => {
-            props.close();
-          }}
-          style={{ marginRight: 8 }}
-        >
-          关闭
+        {
+          props.type !== 'simple' ? (
+            <div>
+              <Button
+                onClick={() => {
+                  props.close();
+                }}
+                style={{ marginRight: 8 }}
+              >
+                关闭
+          </Button>
+              <Button
+                onClick={() => {
+                  autzSetting();
+                }}
+                type="primary"
+              >
+                保存
+          </Button>
+            </div>
+          ) : (
+              <div>
+                <Button
+                  onClick={() => {
+                    autzSetting();
+                  }}
+                  type="primary"
+                >
+                  更新权限信息
         </Button>
-        <Button
-          onClick={() => {
-            autzSetting();
-          }}
-          type="primary"
-        >
-          保存
-        </Button>
+              </div>
+            )
+        }
+
       </div>
       {dataAccessVisible && (
         <DataAccess
@@ -498,7 +523,20 @@ const Authorization: React.FC<Props> = props => {
           }}
         />
       )}
-    </Drawer>
+    </div>
+  )
+
+
+  const renderRoot = () =>
+    props.type !== 'simple' ? (
+      <Drawer title="授权" visible width="50VW" onClose={() => props.close()}>
+        {renderAccess()}
+      </Drawer>
+    ) : renderAccess();
+
+
+  return (
+    renderRoot()
   );
 };
 export default Form.create<Props>()(Authorization);

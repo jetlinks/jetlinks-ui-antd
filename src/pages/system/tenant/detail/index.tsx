@@ -43,7 +43,7 @@ const Detail = (props: Props) => {
                             <Member data={data} />
                         </Tabs.TabPane>
                         <Tabs.TabPane tab="查看权限" key="permission">
-                            <Permission />
+                            <Permission data={data} />
                         </Tabs.TabPane>
                     </Tabs>
                 </TenantContext.Provider>
