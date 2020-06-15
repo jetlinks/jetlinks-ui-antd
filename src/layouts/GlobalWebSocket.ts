@@ -7,7 +7,7 @@ let ws: WebSocket | undefined;
 let count = 0;
 const subs = {};
 const initWebSocket = () => {
-    const wsUrl = `${document.location.protocol.replace('http','ws')}//${document.location.host}/jetlinks/messaging/${getAccessToken()}`;
+    const wsUrl = `${document.location.protocol.replace('http', 'ws')}//${document.location.host}/jetlinks/messaging/${getAccessToken()}`;
     if (!ws && count < 5) {
         try {
             count += 1;
@@ -35,6 +35,7 @@ const initWebSocket = () => {
                 }
             }
         } catch (error) {
+            console.log(error, 'rrrr');
             setTimeout(initWebSocket, 5000 * count);
         }
     }
@@ -73,6 +74,7 @@ const getWebsocket = (id: string, topic: string, parameter: any): Observable<any
                     });
                 }
             } catch (error) {
+                initWebSocket();
                 message.error({ key: 'ws', content: 'websocket服务连接失败' });
             }
         }
