@@ -8,9 +8,9 @@ import { OpenApiItem } from './data';
 import encodeQueryParam from '@/utils/encodeParam';
 import styles from '@/utils/table.less';
 import Save from './Save';
-import Authorization from '@/components/Authorization';
 import apis from '@/services';
 import SearchForm from '@/components/SearchForm';
+import Auth from './Auth';
 
 interface Props {
   openApi: any;
@@ -266,7 +266,7 @@ const OpenApiList: React.FC<Props> = props => {
           }}
         />
       )}
-      {autzVisible && (
+      {/* {autzVisible && (
         <Authorization
           close={() => {
             setAutzVisible(false);
@@ -275,7 +275,12 @@ const OpenApiList: React.FC<Props> = props => {
           target={{ id: currentItem.userId, name: currentItem.username }}
           targetType="user"
         />
-      )}
+      )} */}
+      {
+        autzVisible && (
+          <Auth current={currentItem} close={() => setAutzVisible(false)} />
+        )
+      }
     </PageHeaderWrapper>
   );
 };
