@@ -96,7 +96,7 @@ const Tenant = () => {
         setLoading(true);
         const data = item;
         data.state = state;
-        service.update(data).subscribe((resp) => {
+        service.update(data).subscribe(() => {
             setLoading(false);
             message.success('操作成功');
             handleSearch(searchParam);
