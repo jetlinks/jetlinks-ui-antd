@@ -94,13 +94,16 @@ const Status: React.FC<Props> = props => {
             const tempResult = response?.result;
             tempResult.forEach((item: any) => {
               propertyData[item.data.value.property].formatValue = item.data.value?.formatValue ? item.data.value.formatValue : '--';
-              if (propertyData[item.data.value.property].visitData.length >= 15) {
-                propertyData[item.data.value.property].visitData.splice(0, 1);
+              if (propertyData[item.data.value.property].type === 'int' || propertyData[item.data.value.property].type === 'float'
+                || propertyData[item.data.value.property].type === 'double') {
+                if (propertyData[item.data.value.property].visitData.length >= 15) {
+                  propertyData[item.data.value.property].visitData.splice(0, 1);
+                }
+                propertyData[item.data.value.property].visitData.push({
+                  'x': item.data.timeString,
+                  'y': Math.floor(Number(item.data.value.value) * 100) / 100,
+                });
               }
-              propertyData[item.data.value.property].visitData.push({
-                'x': item.data.timeString,
-                'y': Math.floor(Number(item.data.value.value) * 100) / 100,
-              });
             });
             setPropertyData({...propertyData});
           }
