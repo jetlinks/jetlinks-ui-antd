@@ -21,7 +21,6 @@ interface State {
   propertiesVisible: boolean;
   propertiesInfo: any;
   metadata: any;
-  eventData: any[];
   deviceState: any;
 }
 
@@ -47,22 +46,19 @@ const Status: React.FC<Props> = props => {
     propertiesVisible: false,
     propertiesInfo: {},
     metadata: {},
-    eventData: [],
     deviceState: {},
   };
   const [runInfo, setRunInfo] = useState(initState.runInfo);
   const [eventVisible, setEventVisible] = useState(initState.eventVisible);
   const [metadata, setMetadata] = useState(initState.metadata);
-  const [eventData, setEventData] = useState(initState.eventData);
   const [deviceState, setDeviceState] = useState(initState.deviceState);
   const [propertiesVisible, setPropertiesVisible] = useState(initState.propertiesVisible);
   const [propertiesInfo, setPropertiesInfo] = useState(initState.propertiesInfo);
   const [eventInfo, setEventInfo] = useState({});
   const [propertyData, setPropertyData] = useState({});
   const [spinning, setSpinning] = useState(true);
+  const [eventDataCount, setEventDataCount] = useState({});
 
-  const [subs, setSubs] = useState<any>();
-  const [deviceStatus, setDeviceStatus] = useState<any>();
   useEffect(() => {
     runInfo.loading = true;
     props.device.loading = false;
@@ -98,54 +94,59 @@ const Status: React.FC<Props> = props => {
             const tempResult = response?.result;
             tempResult.forEach((item: any) => {
               propertyData[item.data.value.property].formatValue = item.data.value?.formatValue ? item.data.value.formatValue : '--';
-              if (propertyData[item.data.value.property].visitData.length >= 15) {
-                propertyData[item.data.value.property].visitData.splice(0, 1);
+              if (propertyData[item.data.value.property].type === 'int' || propertyData[item.data.value.property].type === 'float'
+                || propertyData[item.data.value.property].type === 'double') {
+                if (propertyData[item.data.value.property].visitData.length >= 15) {
+                  propertyData[item.data.value.property].visitData.splice(0, 1);
+                }
+                propertyData[item.data.value.property].visitData.push({
+                  'x': item.data.timeString,
+                  'y': Math.floor(Number(item.data.value.value) * 100) / 100,
+                });
               }
-              propertyData[item.data.value.property].visitData.push({
-                'x': item.data.timeString,
-                'y': Math.floor(Number(item.data.value.value) * 100) / 100,
-              });
             });
             setPropertyData({...propertyData});
           }
         }).catch();
     }
 
-    deviceStatus && deviceStatus.unsubscribe();
-    let status = getWebsocket(
-      `instance-info-status-${props.device.id}`,
-      `/dashboard/device/status/change/realTime`,
-      {
-        deviceId: props.device.id,
-      },
-    ).subscribe(
-      (resp: any) => {
-        const {payload} = resp;
-        setDeviceState({
-          state: payload.value.type === 'online' ? {value: 'online', text: '在线'} : {
-            value: 'offline',
-            text: '离线'
-          },
-        });
-        if (payload.value.type === 'online'){
-          runInfo.onlineTime = payload.timestamp;
-          runInfo.loading = false;
-          setRunInfo({...runInfo});
-        }
-      },
-    );
-    setDeviceStatus(status);
-
-    return () => {
-      subs && subs.unsubscribe();
-      deviceStatus && deviceStatus.unsubscribe();
-    };
-
   }, []);
 
   useEffect(() => {
+    let statusRealTime: any;
+    let propertySubs: any;
+    let eventSubs: any;
     // 组装数据
     if (runInfo && runInfo.metadata) {
+
+      statusRealTime && statusRealTime.unsubscribe();
+      statusRealTime = getWebsocket(
+        `instance-info-status-${props.device.id}`,
+        `/dashboard/device/status/change/realTime`,
+        {
+          deviceId: props.device.id,
+        },
+      ).subscribe(
+        (resp: any) => {
+          const {payload} = resp;
+          setDeviceState({
+            state: payload.value.type === 'online' ? {value: 'online', text: '在线'} : {
+              value: 'offline',
+              text: '离线'
+            },
+          });
+          if (payload.value.type === 'online') {
+            runInfo.onlineTime = payload.timestamp;
+            runInfo.loading = false;
+            setRunInfo({...runInfo});
+          } else {
+            runInfo.offlineTime = payload.timestamp;
+            runInfo.loading = false;
+            setRunInfo({...runInfo});
+          }
+        },
+      );
+
       const metadata = JSON.parse(runInfo.metadata);
       const {properties, events} = metadata;
       // 设置properties的值
@@ -171,8 +172,8 @@ const Status: React.FC<Props> = props => {
           ).then(response => {
             if (response.status === 200) {
               const data = response.result;
-              eventData.push({eventId: event.id, data});
-              setEventData([...eventData]);
+              eventDataCount[event.id] = data.total;
+              setEventDataCount({...eventDataCount});
             }
           }).catch(() => {
 
@@ -182,8 +183,8 @@ const Status: React.FC<Props> = props => {
 
       setMetadata({...metadata});
 
-      subs && subs.unsubscribe();
-      let propertySubs = getWebsocket(
+      propertySubs && propertySubs.unsubscribe();
+      propertySubs = getWebsocket(
         `instance-info-property-${props.device.id}-${props.device.productId}`,
         `/dashboard/device/${props.device.productId}/properties/realTime`,
         {
@@ -193,49 +194,61 @@ const Status: React.FC<Props> = props => {
       ).subscribe(
         (resp: any) => {
           const {payload} = resp;
-          if (resp.requestId === `instance-info-property-${props.device.id}-${props.device.productId}`) {
-            const dataValue = payload.value;
+          const dataValue = payload.value;
 
-            if (!propertyData[dataValue.property]) return;
+          if (!propertyData[dataValue.property]) return;
 
-            propertyData[dataValue.property].formatValue = dataValue?.formatValue ? dataValue.formatValue : '/';
+          propertyData[dataValue.property].formatValue = dataValue?.formatValue ? dataValue.formatValue : '/';
 
-            if (propertyData[dataValue.property].type === 'int' || propertyData[dataValue.property].type === 'float'
-              || propertyData[dataValue.property].type === 'double') {
+          if (propertyData[dataValue.property].type === 'int' || propertyData[dataValue.property].type === 'float'
+            || propertyData[dataValue.property].type === 'double') {
 
-              if (propertyData[dataValue.property].visitData.length >= 15) {
-                propertyData[dataValue.property].visitData.splice(0, 1);
-              }
-              propertyData[dataValue.property].visitData.push({
-                'x': payload.timeString,
-                'y': Math.floor(Number(dataValue.value) * 100) / 100,
-              });
+            if (propertyData[dataValue.property].visitData.length >= 15) {
+              propertyData[dataValue.property].visitData.splice(0, 1);
             }
-            setPropertyData({...propertyData});
+            propertyData[dataValue.property].visitData.push({
+              'x': payload.timeString,
+              'y': Math.floor(Number(dataValue.value) * 100) / 100,
+            });
           }
+          setPropertyData({...propertyData});
         },
       );
 
-      setSubs(propertySubs)
+      eventSubs && eventSubs.unsubscribe();
+      eventSubs = getWebsocket(
+        `instance-info-event-${props.device.id}-${props.device.productId}`,
+        `/dashboard/device/${props.device.productId}/events/realTime`,
+        {
+          deviceId: props.device.id,
+        },
+      ).subscribe(
+        (resp: any) => {
+          const {payload} = resp;
+          eventDataCount[payload.value.event] = (eventDataCount[payload.value.event] + 1);
+          setEventDataCount({...eventDataCount});
+        },
+      );
     }
 
     return () => {
-      subs && subs.unsubscribe();
-      deviceStatus && deviceStatus.unsubscribe();
+      statusRealTime && statusRealTime.unsubscribe();
+      propertySubs && propertySubs.unsubscribe();
+      eventSubs && eventSubs.unsubscribe();
     };
   }, [runInfo]);
 
-/*  const refreshDeviceState = () => {
-    runInfo.loading = true;
-    apis.deviceInstance.refreshState(props.device.id)
-      .then(response => {
-        if (response.status === 200) {
-          runInfo.loading = false;
-          setDeviceState({state: response.result});
-        }
-      }).catch(() => {
-    });
-  };*/
+  /*  const refreshDeviceState = () => {
+      runInfo.loading = true;
+      apis.deviceInstance.refreshState(props.device.id)
+        .then(response => {
+          if (response.status === 200) {
+            runInfo.loading = false;
+            setDeviceState({state: response.result});
+          }
+        }).catch(() => {
+      });
+    };*/
 
   const refreshProperties = (item: any) => {
     const {properties} = metadata;
@@ -303,12 +316,8 @@ const Status: React.FC<Props> = props => {
     ).then(response => {
       // const tempEvent = response.result;
       if (response.status === 200) {
-        eventData.forEach(i => {
-          if (i.eventId === item.id) {
-            i.data = response.result;
-          }
-        });
-        setEventData([...eventData]);
+        eventDataCount[item.id] = response.result.total;
+        setEventDataCount({...eventDataCount});
         // 关闭加载中状态
         const {events} = metadata;
         // 修改加载状态
@@ -346,10 +355,13 @@ const Status: React.FC<Props> = props => {
                     contentHeight={46}
                     total={deviceState?.state?.text}
                   >
-                    <span>上线时间：{moment(runInfo?.onlineTime).format('YYYY-MM-DD HH:mm:ss')}</span>
+                    {deviceState?.state?.value === 'online' ? (
+                      <span>上线时间：{moment(runInfo?.onlineTime).format('YYYY-MM-DD HH:mm:ss')}</span>
+                    ) : (
+                      <span>离线时间：{moment(runInfo?.offlineTime).format('YYYY-MM-DD HH:mm:ss')}</span>
+                    )}
                   </ChartCard>
                 </Spin>
-
               </Col>
 
               {
@@ -400,7 +412,6 @@ const Status: React.FC<Props> = props => {
               }
               {
                 (metadata.events).map((item: any) => {
-                    const tempData = eventData.find(i => i.eventId === item.id);
                     return (
                       <Col {...topColResponsiveProps} key={item.id}>
                         <Spin spinning={item.loading}>
@@ -416,7 +427,7 @@ const Status: React.FC<Props> = props => {
                                 }}/>
                               </Tooltip>
                             }
-                            total={<AutoHide title={`${tempData?.data.total || 0}次`} style={{width: '313%'}}/>}
+                            total={<AutoHide title={`${eventDataCount[item.id] || 0}次`} style={{width: '313%'}}/>}
                             contentHeight={46}
                           >
                         <span>
