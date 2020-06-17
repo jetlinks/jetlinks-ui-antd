@@ -8,7 +8,10 @@ import Edit from "./edit";
 import { TenantContext } from "../../../detail";
 import Service from "../../../service";
 
-const Product = () => {
+interface Props {
+    user: any
+}
+const Product = (props: Props) => {
     const [visible, setVisible] = useState<boolean>(false);
     const data = useContext(TenantContext);
 
@@ -24,7 +27,7 @@ const Product = () => {
                 id$assets: JSON.stringify({
                     tenantId: data?.id,
                     assetType: 'product',
-
+                    memberId: props.user,
                 }),
                 state: 1
             }
@@ -36,7 +39,7 @@ const Product = () => {
                 id$assets: JSON.stringify({
                     tenantId: data?.id,
                     assetType: 'product',
-
+                    memberId: props.user,
                 }),
                 state: 0
             }
@@ -46,7 +49,7 @@ const Product = () => {
     }
     useEffect(() => {
         getData();
-    }, [])
+    }, [props.user])
     return (
         <List.Item style={{ paddingRight: '10px' }}>
             <Card

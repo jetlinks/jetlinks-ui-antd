@@ -1,7 +1,7 @@
 import React, { Fragment, useState, useEffect } from "react";
 import ProTable from "@/pages/system/permission/component/ProTable";
 import { ColumnProps } from "antd/lib/table";
-import { Button, Tag, message, Popconfirm } from "antd";
+import { Button, Tag, message, Popconfirm, Divider } from "antd";
 import SearchForm from "@/components/SearchForm";
 import encodeQueryParam from "@/utils/encodeParam";
 import { ListData } from "@/services/response";
@@ -10,7 +10,8 @@ import { TenantItem } from "../../data";
 import Service from "../../service";
 
 interface Props {
-    data: Partial<TenantItem>
+    data: Partial<TenantItem>;
+    openAssets: Function;
 }
 const Member = (props: Props) => {
     const service = new Service('tenant');
@@ -64,15 +65,14 @@ const Member = (props: Props) => {
             align: 'center',
             render: (record: any) => (
                 <Fragment>
-                    {/* <a
+                    <a
                         onClick={() => {
+                            props.openAssets(record);
                         }}
                     >
                         查看资产
                     </a>
                     <Divider type="vertical" />
-                    <a>禁用</a>
-                    <Divider type="vertical" /> */}
                     <Popconfirm title="确认解绑吗？" onConfirm={() => unBind(record)}>
                         <a >解绑</a>
                     </Popconfirm>
