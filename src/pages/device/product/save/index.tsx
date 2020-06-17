@@ -205,7 +205,7 @@ const Save: React.FC<Props> = props => {
       component: <TreeSelect
         allowClear treeDataSimpleMode showSearch
         placeholder="所属机构" treeData={organizationList}
-        treeNodeFilterProp='title'
+        treeNodeFilterProp='title' searchPlaceholder='根据机构名称模糊查询'
       />,
     },
     {
