@@ -86,7 +86,7 @@ const Member = (props: Props) => {
                     handleSearch(searchParam);
                 }}
                 formItems={[{
-                    label: '名称',
+                    label: '姓名',
                     key: 'name$LIKE',
                     type: 'string',
                 },
