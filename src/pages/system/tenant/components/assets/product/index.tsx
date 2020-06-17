@@ -1,15 +1,14 @@
 import React, { useState, useContext, useEffect } from "react";
 import { List, Card, Tooltip, Icon } from "antd";
 import { router } from "umi";
+import encodeQueryParam from "@/utils/encodeParam";
+import IconFont from "@/components/IconFont";
 import styles from '../index.less';
 import Edit from "./edit";
 import { TenantContext } from "../../../detail";
 import Service from "../../../service";
-import encodeQueryParam from "@/utils/encodeParam";
-import IconFont from "@/components/IconFont";
 
 const Product = () => {
-    const avatar = 'https://tse2-mm.cn.bing.net/th/id/OIP.T1lmAIkITnIiwRmQMiUnjAAAAA?pid=Api&rs=1';
     const [visible, setVisible] = useState<boolean>(false);
     const data = useContext(TenantContext);
 
@@ -18,7 +17,7 @@ const Product = () => {
     const [pub, setPub] = useState(0);
     const [unPub, setUnPub] = useState(0)
 
-    useEffect(() => {
+    const getData = () => {
 
         service.assets.productCount(encodeQueryParam({
             terms: {
@@ -44,6 +43,9 @@ const Product = () => {
         })).subscribe(resp => {
             setUnPub(resp)
         })
+    }
+    useEffect(() => {
+        getData();
     }, [])
     return (
         <List.Item style={{ paddingRight: '10px' }}>
@@ -88,7 +90,10 @@ const Product = () => {
 
                 <Edit
                     data={data}
-                    close={() => setVisible(false)} />
+                    close={() => {
+                        setVisible(false);
+                        getData();
+                    }} />
             )}
         </List.Item>
     )

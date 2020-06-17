@@ -34,7 +34,6 @@ const Add = (props: Props) => {
 
         service.member.query(data.id, {}).subscribe(resp => {
             setUserList(resp.data);
-            console.log(resp, 'res');
         });
     }, []);
 
@@ -48,10 +47,10 @@ const Add = (props: Props) => {
             assetIdList: selectedAssetsId,
             allPermission: true,
         }));
-        console.log(selectedAssetsId, checkedUserList, 'dddata');
-        service.assets.bind(data.id, bindData).subscribe(resp => {
+        service.assets.bind(data.id, bindData).subscribe(() => {
             setLoading(false);
-            message.success('绑定成功')
+            message.success('绑定成功');
+            props.close();
         });
     }
     const rowSelection = {

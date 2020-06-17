@@ -48,11 +48,17 @@ const Add = (props: Props) => {
             assetIdList: selectedAssetsId,
             allPermission: true,
         }));
-        console.log(selectedAssetsId, checkedUserList, 'dddata');
-        service.assets.bind(data.id, bindData).subscribe(resp => {
+        console.log(checkedUserList.length, bindData, 'jjj');
+        if (checkedUserList.length === 0) {
+            message.error('请选择成员');
             setLoading(false);
-            message.success('绑定成功')
-        });
+        } else {
+            service.assets.bind(data.id, bindData).subscribe(resp => {
+                setLoading(false);
+                message.success('添加成功')
+                props.close();
+            });
+        }
     }
     const rowSelection = {
         onChange: (selectedRowKeys: any[], selectedRows: any[]) => {
