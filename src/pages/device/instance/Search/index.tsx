@@ -34,7 +34,7 @@ const Search: React.FC<Props> = props => {
     apis.deviceProdcut.queryOrganization()
       .then(res => {
         if (res.status === 200) {
-          let orgList:any = [];
+          let orgList: any = [];
           res.result.map((item: any) => {
             orgList.push({id: item.id, pId: item.parentId, value: item.id, title: item.name})
           });
@@ -75,8 +75,10 @@ const Search: React.FC<Props> = props => {
         return (
           <Col md={8} sm={24} key='value'>
             {getFieldDecorator('value', {})(
-              <TreeSelect allowClear treeDataSimpleMode
+              <TreeSelect
+                allowClear treeDataSimpleMode showSearch
                 placeholder="所属机构" treeData={organizationList}
+                treeNodeFilterProp='title'
               />
             )}
           </Col>

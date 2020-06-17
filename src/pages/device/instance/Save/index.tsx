@@ -115,8 +115,9 @@ const Save: React.FC<Props> = props => {
             initialValue: props.data.orgId,
           })(
             <TreeSelect
-              allowClear treeDataSimpleMode
+              allowClear treeDataSimpleMode showSearch
               placeholder="所属机构" treeData={organizationList}
+              treeNodeFilterProp='title'
             />
           )}
         </Form.Item>

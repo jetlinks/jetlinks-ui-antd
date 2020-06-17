@@ -202,7 +202,11 @@ const Save: React.FC<Props> = props => {
         md: {span: 24},
         sm: {span: 24},
       },
-      component: <TreeSelect allowClear treeDataSimpleMode placeholder="所属机构" treeData={organizationList}/>,
+      component: <TreeSelect
+        allowClear treeDataSimpleMode showSearch
+        placeholder="所属机构" treeData={organizationList}
+        treeNodeFilterProp='title'
+      />,
     },
     {
       label: '消息协议',
