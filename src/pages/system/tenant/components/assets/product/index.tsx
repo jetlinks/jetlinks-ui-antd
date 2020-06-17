@@ -6,6 +6,7 @@ import Edit from "./edit";
 import { TenantContext } from "../../../detail";
 import Service from "../../../service";
 import encodeQueryParam from "@/utils/encodeParam";
+import IconFont from "@/components/IconFont";
 
 const Product = () => {
     const avatar = 'https://tse2-mm.cn.bing.net/th/id/OIP.T1lmAIkITnIiwRmQMiUnjAAAAA?pid=Api&rs=1';
@@ -69,7 +70,7 @@ const Product = () => {
                     </Tooltip>]}
             >
                 <Card.Meta
-                    avatar={<img alt="" className={styles.cardAvatar} src={avatar} />}
+                    avatar={<IconFont type="icon-chanpin" style={{ fontSize: 45 }} />}
                     title={<a>产品</a>}
                 />
                 <div className={styles.cardInfo}>

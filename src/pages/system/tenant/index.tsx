@@ -1,6 +1,6 @@
 import { PageHeaderWrapper } from "@ant-design/pro-layout"
 import React, { useState, useEffect } from "react"
-import { Card, Button, List, Radio, Input, Avatar, Tag, message, Spin } from "antd";
+import { Card, Button, List, Radio, Input, Avatar, Tag, message, Spin, Popconfirm } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import moment from "moment";
 import { TenantItem } from "./data";
@@ -8,7 +8,6 @@ import styles from './index.less';
 import Service from "./service";
 import { ListData } from "@/services/response";
 import Save from "./save";
-import Detail from "./detail";
 import { router } from "umi";
 
 
@@ -25,14 +24,14 @@ const ListContent = ({
         <div className={styles.listContent}>
             <div className={styles.listContentItem}>
                 <span>状态</span>
-                <p><Tag color="#f50">{state.text}</Tag></p>
+                <p><Tag color={state.value === 'enabled' ? '#87d068' : '#F50'}>{state.text}</Tag></p>
             </div>
             <div className={styles.listContentItem}>
                 <span>成员数</span>
-                <p><Tag color="#f50">{members}</Tag></p>
+                <p><Tag color="#87d068">{members}</Tag></p>
             </div>
             <div className={styles.listContentItem}>
-                <span>开始时间</span>
+                <span>创建时间</span>
                 <p>{moment(new Date()).format('YYYY-MM-DD HH:mm')}</p>
             </div>
         </div>
@@ -93,6 +92,17 @@ const Tenant = () => {
         });
     }
 
+    const changeState = (item: any, state: string) => {
+        setLoading(true);
+        const data = item;
+        data.state = state;
+        service.update(data).subscribe(() => {
+            setLoading(false);
+            message.success('操作成功');
+            handleSearch(searchParam);
+        });
+    }
+
     return (
         <PageHeaderWrapper>
             <Spin spinning={tloading}>
@@ -125,25 +135,42 @@ const Tenant = () => {
                             renderItem={(item: TenantItem) => (
                                 <List.Item
                                     actions={[
-                                        <a
-                                            key="edit"
-                                            onClick={e => {
-                                                e.preventDefault();
-                                            }}
-                                        >
-                                            禁用
-                                    </a>,
-                                        <a>删除</a>,
                                         <a onClick={e => {
                                             e.preventDefault();
                                             router.push(`/system/tenant/detail/${item.id}`)
                                         }}>查看</a>,
+                                        <>
+                                            {
+                                                item.state.value === 'enabled' ?
+                                                    (
+                                                        <Popconfirm title="确认禁用此租户？"
+                                                            onConfirm={() => {
+                                                                changeState(item, 'disabled');
+                                                            }}>
+                                                            <a key="edit">
+                                                                禁用
+                                                            </a>
+                                                        </Popconfirm>) :
+                                                    (
+                                                        <Popconfirm title="确认禁用此租户？"
+                                                            onConfirm={() => {
+                                                                changeState(item, 'enabled');
+                                                            }}>
+                                                            <a key="edit">
+                                                                启用
+                                                            </a>
+                                                        </Popconfirm>
+                                                    )
+                                            }
+                                        </>,
+                                        // <a>删除</a>,
+
                                     ]}
                                 >
                                     <List.Item.Meta
                                         avatar={<Avatar src={item.photo || defualtImg} shape="square" size="large" />}
                                         title={<a >{item.name}</a>}
-                                        description='描述信息描述信息描述信息描述信息描述信息描述信息'
+                                        description={item.description}
                                     />
                                     <ListContent data={item} />
                                 </List.Item>

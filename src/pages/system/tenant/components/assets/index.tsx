@@ -3,12 +3,14 @@ import { List, Input } from "antd";
 import styles from './index.less';
 import Product from "./product";
 import Device from "./device";
+import IconFont from "@/components/IconFont";
 
 const Assets = () => (
     <div>
         {/* <div style={{ marginBottom: 50, marginTop: 20 }}>
             <Input.Search />
         </div> */}
+
         <div className={styles.cardList}>
 
             <List<Partial<any>>
@@ -21,6 +23,6 @@ const Assets = () => (
                 <Device />
             </List>
         </div>
-    </div>
+    </div >
 )
 export default Assets;

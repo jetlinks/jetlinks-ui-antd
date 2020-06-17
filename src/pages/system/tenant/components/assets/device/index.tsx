@@ -6,6 +6,7 @@ import Edit from "./edit";
 import { TenantContext } from "../../../detail";
 import Service from "../../../service";
 import encodeQueryParam from "@/utils/encodeParam";
+import IconFont from "@/components/IconFont";
 
 
 const Device = () => {
@@ -68,7 +69,7 @@ const Device = () => {
                     </Tooltip>]}
             >
                 <Card.Meta
-                    avatar={<img alt="" className={styles.cardAvatar} src={avatar} />}
+                    avatar={<IconFont type="icon-device" style={{ fontSize: 45 }} />}
                     title={<a>设备</a>}
                 />
                 <div className={styles.cardInfo}>
