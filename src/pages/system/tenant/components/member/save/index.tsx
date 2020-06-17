@@ -1,8 +1,9 @@
 import { Drawer, Button, Table, Switch, Input, message } from "antd";
 import React, { useState, useEffect } from "react";
+import encodeQueryParam from "@/utils/encodeParam";
+import { zip } from "rxjs";
 import Service from "../../../service";
 import { TenantItem } from "../../../data";
-import encodeQueryParam from "@/utils/encodeParam";
 
 interface Props {
     close: Function;
@@ -15,18 +16,28 @@ const Save = (props: Props) => {
 
     const [loading, setLoading] = useState<boolean>(true);
     const [userList, setUserList] = useState<any[]>();
+    const [selectedRow, setSelectedRow] = useState<any[]>([]);
 
+    const { data: { id } } = props;
     const handleSearch = (params: any) => {
-        service.member.userlist(encodeQueryParam(params)).subscribe(resp => {
-            setLoading(false);
-            setUserList(resp);
-        });
+        if (id) {
+            zip(service.member.userlist(encodeQueryParam(params)),
+                service.member.query(id, {})).subscribe(data => {
+                    setLoading(false);
+                    const all: any[] = data[0];
+                    const checked: any[] = data[1].data.map((i: any) => i.userId);
+
+                    const unchecked = all.filter(item => !checked.includes(item.id));
+                    setLoading(false);
+                    setUserList(unchecked);
+                })
+
+        }
     }
 
     useEffect(() => {
         handleSearch({});
-    }, [])
-    const [selectedRow, setSelectedRow] = useState<any[]>([]);
+    }, []);
     const rowSelection = {
         selectedRowKeys: selectedRow.map(item => item.id),
         onChange: (selectedRowKeys: any[], selectedRows: any[]) => {
@@ -40,12 +51,13 @@ const Save = (props: Props) => {
     const saveData = () => {
         setLoading(true);
         const tempData = selectedRow.map(item => ({ name: item.name, userId: item.id, admin: adminMap.get(item.id) || false }))
-        const id = props.data?.id;
-        if (id) {
-            service.member.bind(id, tempData).subscribe(() => {
+        const tempId = props.data?.id;
+        if (tempId) {
+            service.member.bind(tempId, tempData).subscribe(() => {
                 setLoading(false);
                 message.success('保存成功');
                 setSelectedRow([]);
+                props.close();
             })
         }
     }

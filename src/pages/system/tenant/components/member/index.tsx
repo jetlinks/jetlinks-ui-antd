@@ -3,11 +3,11 @@ import ProTable from "@/pages/system/permission/component/ProTable";
 import { ColumnProps } from "antd/lib/table";
 import { Button, Tag, message, Popconfirm } from "antd";
 import SearchForm from "@/components/SearchForm";
+import encodeQueryParam from "@/utils/encodeParam";
+import { ListData } from "@/services/response";
 import Save from "./save";
 import { TenantItem } from "../../data";
-import { ListData } from "@/services/response";
 import Service from "../../service";
-import encodeQueryParam from "@/utils/encodeParam";
 
 interface Props {
     data: Partial<TenantItem>
@@ -121,7 +121,10 @@ const Member = (props: Props) => {
             {visible && (
                 <Save
                     data={props.data}
-                    close={() => setVisible(false)}
+                    close={() => {
+                        setVisible(false);
+                        handleSearch(searchParam)
+                    }}
                 />
             )}
         </div>
