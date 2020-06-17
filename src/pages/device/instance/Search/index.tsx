@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import Form, { FormComponentProps } from 'antd/lib/form';
-import { Button, Col, Input, Row, Select } from 'antd';
+import React, {useEffect, useState} from 'react';
+import Form, {FormComponentProps} from 'antd/lib/form';
+import {Button, Col, Input, Row, Select, TreeSelect} from 'antd';
 import apis from '@/services';
 
 interface Props extends FormComponentProps {
@@ -16,7 +16,7 @@ const Search: React.FC<Props> = props => {
 
   const {
     form,
-    form: { getFieldDecorator },
+    form: {getFieldDecorator},
   } = props;
 
   const initState: State = {
@@ -29,16 +29,19 @@ const Search: React.FC<Props> = props => {
 
   useEffect(() => {
     setParameterType('id');
-    form.setFieldsValue({ parameter: 'id' });
+    form.setFieldsValue({parameter: 'id'});
 
-    apis.deviceProdcut
-      .queryOrganization()
+    apis.deviceProdcut.queryOrganization()
       .then(res => {
         if (res.status === 200) {
-          setOrganizationList(res.result);
+          let orgList: any = [];
+          res.result.map((item: any) => {
+            orgList.push({id: item.id, pId: item.parentId, value: item.id, title: item.name})
+          });
+          setOrganizationList(orgList);
         }
       }).catch(() => {
-      });
+    });
 
   }, []);
 
@@ -56,7 +59,7 @@ const Search: React.FC<Props> = props => {
         return (
           <Col md={8} sm={24} key='value'>
             {getFieldDecorator('value', {})(
-              <Input placeholder="请输入" />,
+              <Input placeholder="请输入"/>,
             )}
           </Col>
         );
@@ -64,7 +67,7 @@ const Search: React.FC<Props> = props => {
         return (
           <Col md={8} sm={24} key='value'>
             {getFieldDecorator('value', {})(
-              <Input placeholder="请输入" />,
+              <Input placeholder="请输入"/>,
             )}
           </Col>
         );
@@ -72,20 +75,11 @@ const Search: React.FC<Props> = props => {
         return (
           <Col md={8} sm={24} key='value'>
             {getFieldDecorator('value', {})(
-              <Select placeholder="所属机构，可输入查询" showSearch={true} allowClear={true}
-                filterOption={(inputValue, option) =>
-                  option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
-                }
-              >
-                {(organizationList || []).map(item => (
-                  <Select.Option
-                    key={JSON.stringify({ orgId: item.id, productName: item.name })}
-                    value={item.id}
-                  >
-                    {item.name}
-                  </Select.Option>
-                ))}
-              </Select>,
+              <TreeSelect
+                allowClear treeDataSimpleMode showSearch
+                placeholder="所属机构" treeData={organizationList}
+                treeNodeFilterProp='title' searchPlaceholder='根据机构名称模糊查询'
+              />
             )}
           </Col>
         );
@@ -96,24 +90,24 @@ const Search: React.FC<Props> = props => {
 
   const formItemLayout = {
     labelCol: {
-      xs: { span: 24 },
-      sm: { span: 4 },
+      xs: {span: 24},
+      sm: {span: 4},
     },
     wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 20 },
+      xs: {span: 24},
+      sm: {span: 20},
     },
   };
 
   return (
     <Form {...formItemLayout}>
-      <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
+      <Row gutter={{md: 8, lg: 24, xl: 48}}>
         <Col md={3} sm={24} key='parameter'>
           {getFieldDecorator('parameter', {
             initialValue: 'id',
           })(
             <Select
-              style={{ width: 100 }}
+              style={{width: 100}}
               placeholder="请选择"
               onChange={(value: string) => {
                 setParameterType(value);
@@ -126,15 +120,15 @@ const Search: React.FC<Props> = props => {
         </Col>
         {renderType()}
         <Col push={16 - (Number(16) % 24)} md={12} sm={24}>
-          <div style={{ float: 'right', marginBottom: 24 }}>
-            <Button type="primary" style={{ marginLeft: 8 }} onClick={() => {
+          <div style={{float: 'right', marginBottom: 24}}>
+            <Button type="primary" style={{marginLeft: 8}} onClick={() => {
               search();
             }}>
               查询
             </Button>
-            <Button style={{ marginLeft: 8 }} onClick={() => {
+            <Button style={{marginLeft: 8}} onClick={() => {
               form.resetFields();
-              form.setFieldsValue({ parameter: 'id' });
+              form.setFieldsValue({parameter: 'id'});
               setParameterType('id');
               props.search({});
             }}>

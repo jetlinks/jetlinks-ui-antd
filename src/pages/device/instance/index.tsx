@@ -59,10 +59,9 @@ interface State {
 const DeviceInstancePage: React.FC<Props> = props => {
   const { result } = props.deviceInstance;
 
-  const { location } = props;
   const initState: State = {
     data: result,
-    searchParam: { pageSize: 10, terms: location?.query?.terms },
+    searchParam: { pageSize: 10 },
     addVisible: false,
     currentItem: {},
     processVisible: false,
@@ -610,7 +609,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
                     params.productId = product;
                   }
                   params.state = searchParam.terms?.state;
-                  handleSearch({ terms: { ...params, ...searchParam.terms }, pageSize: 10, sorts: searchParam.sorts });
+                  handleSearch({ terms: params, pageSize: 10, sorts: searchParam.sorts });
                 }}
               />
             </div>

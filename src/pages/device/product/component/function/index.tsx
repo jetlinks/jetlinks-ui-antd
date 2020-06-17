@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import Form, { FormComponentProps } from 'antd/lib/form';
-import { Input, Radio, Button, List, Select, Drawer, Col, Row, Icon, AutoComplete } from 'antd';
+import React, {useState} from 'react';
+import Form, {FormComponentProps} from 'antd/lib/form';
+import {Input, Radio, Button, List, Select, Drawer, Col, Row, Icon, AutoComplete} from 'antd';
 import styles from '../index.less';
-import { Parameter, FunctionMeta } from '../data.d';
-import { renderUnit } from '@/pages/device/public';
+import {Parameter, FunctionMeta} from '../data.d';
+import {renderUnit} from '@/pages/device/public';
 import Paramter from '../paramter';
 
 interface Props extends FormComponentProps {
@@ -36,14 +36,14 @@ const FunctionDefin: React.FC<Props> = props => {
     dataType: props.data.output?.type || '',
     outputVisible: false,
     inputVisible: false,
-    enumData: props.data.output?.elements || [{ text: '', value: '', id: 0 }],
+    enumData: props.data.output?.elements || [{text: '', value: '', id: 0}],
     outputParameter: props.data.output?.properties || [],
     inputs: [],
     currentParameter: {},
   };
 
   const {
-    form: { getFieldDecorator },
+    form: {getFieldDecorator},
   } = props;
   const [inputs, setInputs] = useState(initState.data.inputs || []);
   const [outputParameter, setOutputParameter] = useState(initState.outputParameter);
@@ -54,12 +54,12 @@ const FunctionDefin: React.FC<Props> = props => {
   const [currentParameter, setCurrentParameter] = useState(initState.currentParameter);
 
   const saveData = () => {
-    const { form } = props;
+    const {form} = props;
     // const { id } = props.data;
     form.validateFields((err: any, fieldValue: any) => {
       if (err) return;
       const {
-        output: { type },
+        output: {type},
       } = fieldValue;
       const data = fieldValue;
       if (type === 'object') {
@@ -67,7 +67,7 @@ const FunctionDefin: React.FC<Props> = props => {
       } else if (type === 'enum') {
         data.valueType.elements = enumData;
       }
-      props.save({ ...data, inputs });
+      props.save({...data, inputs});
     });
   };
 
@@ -79,49 +79,10 @@ const FunctionDefin: React.FC<Props> = props => {
   const renderDataType = () => {
     switch (dataType) {
       case 'float':
-        return (
-          <div>
-            <Form.Item label="取值范围" style={{ height: 69 }}>
-              <Col span={11}>
-                {getFieldDecorator('output.min', {
-                  initialValue: initState.data.output?.min,
-                })(<Input placeholder="最小值"/>)}
-              </Col>
-              <Col span={2} push={1}>
-                ~
-              </Col>
-              <Col span={11}>
-                <Form.Item>
-                  {getFieldDecorator('output.max', {
-                    initialValue: initState.data.output?.max,
-                  })(<Input placeholder="最大值"/>)}
-                </Form.Item>
-              </Col>
-            </Form.Item>
-
-            <Form.Item label="步长">
-              {getFieldDecorator('output.step', {
-                initialValue: initState.data.output?.step,
-              })(<Input placeholder="请输入步长"/>)}
-            </Form.Item>
-
-            <Form.Item label="精度">
-              {getFieldDecorator('output.scale', {
-                initialValue: initState.data.output?.scale,
-              })(<Input placeholder="请输入精度"/>)}
-            </Form.Item>
-
-            <Form.Item label="单位">
-              {getFieldDecorator('output.unit', {
-                initialValue: initState.data.output?.unit,
-              })(renderUnit(props.unitsData))}
-            </Form.Item>
-          </div>
-        );
       case 'double':
         return (
           <div>
-            <Form.Item label="取值范围" style={{ height: 69 }}>
+            <Form.Item label="取值范围" style={{height: 69}}>
               <Col span={11}>
                 {getFieldDecorator('output.min', {
                   initialValue: initState.data.output?.min,
@@ -159,9 +120,10 @@ const FunctionDefin: React.FC<Props> = props => {
           </div>
         );
       case 'int':
+      case 'long':
         return (
           <div>
-            <Form.Item label="取值范围" style={{ height: 69 }}>
+            <Form.Item label="取值范围" style={{height: 69}}>
               <Col span={11}>
                 {getFieldDecorator('output.min', {
                   initialValue: props.data.output?.min,
@@ -204,7 +166,7 @@ const FunctionDefin: React.FC<Props> = props => {
       case 'boolean':
         return (
           <div>
-            <Form.Item label="布尔值" style={{ height: 69 }}>
+            <Form.Item label="布尔值" style={{height: 69}}>
               <Col span={11}>
                 {getFieldDecorator('output.trueText', {
                   initialValue: initState.data.output?.trueText,
@@ -221,7 +183,7 @@ const FunctionDefin: React.FC<Props> = props => {
                 </Form.Item>
               </Col>
             </Form.Item>
-            <Form.Item style={{ height: 69 }}>
+            <Form.Item style={{height: 69}}>
               <Col span={11}>
                 {getFieldDecorator('output.falseText', {
                   initialValue: initState.data.output?.falseText,
@@ -295,7 +257,7 @@ const FunctionDefin: React.FC<Props> = props => {
                       }}
                     />
                   </Col>
-                  <Col span={1} style={{ textAlign: 'center' }}>
+                  <Col span={1} style={{textAlign: 'center'}}>
                     <Icon type="arrow-right"/>
                   </Col>
                   <Col span={10}>
@@ -308,12 +270,12 @@ const FunctionDefin: React.FC<Props> = props => {
                       }}
                     />
                   </Col>
-                  <Col span={3} style={{ textAlign: 'center' }}>
+                  <Col span={3} style={{textAlign: 'center'}}>
                     {index === 0 ? (
                       (enumData.length - 1) === 0 ? (
                         <Icon type="plus-circle"
                               onClick={() => {
-                                setEnumData([...enumData, { id: enumData.length + 1 }]);
+                                setEnumData([...enumData, {id: enumData.length + 1}]);
                               }}
                         />
                       ) : (
@@ -329,10 +291,10 @@ const FunctionDefin: React.FC<Props> = props => {
                         <Row>
                           <Icon type="plus-circle"
                                 onClick={() => {
-                                  setEnumData([...enumData, { id: enumData.length + 1 }]);
+                                  setEnumData([...enumData, {id: enumData.length + 1}]);
                                 }}
                           />
-                          <Icon style={{ paddingLeft: 10 }}
+                          <Icon style={{paddingLeft: 10}}
                                 type="minus-circle"
                                 onClick={() => {
                                   enumData.splice(index, 1);
@@ -459,25 +421,25 @@ const FunctionDefin: React.FC<Props> = props => {
       <Form className={styles.paramterForm}>
         <Form.Item label="标识符">
           {getFieldDecorator('id', {
-            rules: [{ required: true, message: '请输入标识符' }],
+            rules: [{required: true, message: '请输入标识符'}],
             initialValue: initState.data.id,
           })(
             <Input
               disabled={!!initState.data.id}
-              style={{ width: '100%' }}
+              style={{width: '100%'}}
               placeholder="请输入标识"
             />,
           )}
         </Form.Item>
         <Form.Item label="功能名称">
           {getFieldDecorator('name', {
-            rules: [{ required: true, message: '请输入功能名称' }],
+            rules: [{required: true, message: '请输入功能名称'}],
             initialValue: initState.data.name,
           })(<Input/>)}
         </Form.Item>
         <Form.Item label="是否异步">
           {getFieldDecorator('async', {
-            rules: [{ required: true }],
+            rules: [{required: true}],
             initialValue: initState.data.async,
           })(
             <Radio.Group>
@@ -539,6 +501,7 @@ const FunctionDefin: React.FC<Props> = props => {
             >
               <Select.OptGroup label="基本类型">
                 <Select.Option value="int">int(整数型)</Select.Option>
+                <Select.Option value="long">long(长整数型)</Select.Option>
                 <Select.Option value="double">double(双精度浮点数)</Select.Option>
                 <Select.Option value="float">float(单精度浮点数)</Select.Option>
                 <Select.Option value="string">text(字符串)</Select.Option>
@@ -580,7 +543,7 @@ const FunctionDefin: React.FC<Props> = props => {
           onClick={() => {
             props.close();
           }}
-          style={{ marginRight: 8 }}
+          style={{marginRight: 8}}
         >
           关闭
         </Button>

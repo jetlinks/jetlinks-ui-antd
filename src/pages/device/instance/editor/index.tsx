@@ -49,7 +49,8 @@ const Editor: React.FC<Props> = props => {
   const [orgInfo] = useState(initState.orgInfo);
   const [spinning, setSpinning] = useState(initState.spinning);
   const [tableList, setTableList] = useState();
-  const [deviceStatus, setDeviceStatus] = useState<any>();
+  let deviceStatus: any;
+
   const tabList = [
     {
       key: 'info',
@@ -77,7 +78,7 @@ const Editor: React.FC<Props> = props => {
 
     deviceStatus && deviceStatus.unsubscribe();
 
-    let status = getWebsocket(
+    deviceStatus = getWebsocket(
       `instance-editor-info-status-${deviceId}`,
       `/dashboard/device/status/change/realTime`,
       {
@@ -90,11 +91,14 @@ const Editor: React.FC<Props> = props => {
           value: 'offline',
           text: '离线'
         };
-        deviceData.onlineTime = payload.timestamp;
+        if (payload.value.type === 'online') {
+          deviceData.onlineTime = payload.timestamp;
+        } else {
+          deviceData.offlineTime = payload.timestamp;
+        }
         setData({...deviceData});
       },
     );
-    setDeviceStatus(status);
   };
 
   const getInfo = (deviceId: string) => {
@@ -106,7 +110,7 @@ const Editor: React.FC<Props> = props => {
           if (deviceData.orgId) {
             deviceData.orgName = orgInfo[deviceData.orgId];
           }
-          setData(deviceData);
+          setData({...deviceData});
           subscribeDeviceState(deviceData, deviceId);
           if (deviceData.metadata) {
             const deriveMetadata = JSON.parse(deviceData.metadata);
@@ -145,9 +149,7 @@ const Editor: React.FC<Props> = props => {
   statusMap.set('notActive', <Badge status='processing' text={'未激活'}/>);
 
   useEffect(() => {
-    setActiveKey('info');
-    apis.deviceProdcut
-      .queryOrganization()
+    apis.deviceProdcut.queryOrganization()
       .then(res => {
         if (res.status === 200) {
           res.result.map((e: any) => (
@@ -157,15 +159,20 @@ const Editor: React.FC<Props> = props => {
       }).catch(() => {
     });
 
+    return () => {
+      deviceStatus && deviceStatus.unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    setActiveKey('info');
+
     if (pathname.indexOf('save') > 0) {
       const list = pathname.split('/');
       getInfo(list[list.length - 1]);
       setId(list[list.length - 1]);
     }
     setTableList(tabList);
-    return () => {
-      deviceStatus && deviceStatus.unsubscribe();
-    };
   }, [window.location.hash]);
 
   const disconnectDevice = (deviceId?: string) => {

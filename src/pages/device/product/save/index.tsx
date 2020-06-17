@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { FormComponentProps } from 'antd/lib/form';
+import React, {useEffect, useState} from 'react';
+import {FormComponentProps} from 'antd/lib/form';
 import Form from 'antd/es/form';
-import { Button, Card, Col, Drawer, Input, Radio, Row, Select } from 'antd';
-import { DeviceProduct } from '../data';
-import { FormItemConfig } from '@/utils/common';
+import {Button, Card, Col, Drawer, Input, Radio, Row, Select, TreeSelect} from 'antd';
+import {DeviceProduct} from '../data';
+import {FormItemConfig} from '@/utils/common';
 import apis from '@/services';
 
 interface Props extends FormComponentProps {
@@ -30,7 +30,7 @@ const Save: React.FC<Props> = props => {
     configForm: [],
   };
 
-  const { getFieldDecorator } = props.form;
+  const {getFieldDecorator} = props.form;
   const [messageProtocol, setMessageProtocol] = useState<string>();
   // 消息协议
   const [protocolSupports, setProtocolSupports] = useState(initState.protocolSupports);
@@ -88,10 +88,10 @@ const Save: React.FC<Props> = props => {
         label,
         key,
         styles: {
-          xl: { span: 8 },
-          lg: { span: 8 },
-          md: { span: 12 },
-          sm: { span: 24 },
+          xl: {span: 8},
+          lg: {span: 8},
+          md: {span: 12},
+          sm: {span: 24},
         },
         options,
         component,
@@ -129,11 +129,14 @@ const Save: React.FC<Props> = props => {
       .catch(() => {
       });
 
-    apis.deviceProdcut
-      .queryOrganization()
-      .then(res => {
+    apis.deviceProdcut.queryOrganization()
+      .then((res: any) => {
         if (res.status === 200) {
-          setOrganizationList(res.result);
+          let orgList: any = [];
+          res.result.map((item: any) => {
+            orgList.push({id: item.id, pId: item.parentId, value: item.id, title: item.name})
+          });
+          setOrganizationList(orgList);
         }
       }).catch(() => {
     });
@@ -156,13 +159,13 @@ const Save: React.FC<Props> = props => {
       label: '型号ID',
       key: 'id',
       styles: {
-        lg: { span: 8 },
-        md: { span: 12 },
-        sm: { span: 24 },
+        lg: {span: 8},
+        md: {span: 12},
+        sm: {span: 24},
       },
       options: {
         initialValue: props.data?.id,
-        rules: [{ required: true, message: '请输入型号ID' }],
+        rules: [{required: true, message: '请输入型号ID'}],
       },
 
       component: (
@@ -176,16 +179,16 @@ const Save: React.FC<Props> = props => {
       label: '型号名称',
       key: 'name',
       options: {
-        rules: [{ required: true, message: '请选择型号名称' }],
+        rules: [{required: true, message: '请选择型号名称'}],
         initialValue: props.data?.name,
       },
       styles: {
-        xl: { span: 8 },
-        lg: { span: 8 },
-        md: { span: 12 },
-        sm: { span: 24 },
+        xl: {span: 8},
+        lg: {span: 8},
+        md: {span: 12},
+        sm: {span: 24},
       },
-      component: <Input style={{ width: '100%' }} placeholder="请输入"/>,
+      component: <Input style={{width: '100%'}} placeholder="请输入"/>,
     },
     {
       label: '所属机构',
@@ -194,31 +197,29 @@ const Save: React.FC<Props> = props => {
         initialValue: props.data?.orgId,
       },
       styles: {
-        xl: { span: 8 },
-        lg: { span: 10 },
-        md: { span: 24 },
-        sm: { span: 24 },
+        xl: {span: 8},
+        lg: {span: 10},
+        md: {span: 24},
+        sm: {span: 24},
       },
-      component: <Select placeholder="请选择所属机构" allowClear>
-        {organizationList.map(e => (
-          <Select.Option value={e.id} key={e.id}>
-            {e.name}
-          </Select.Option>
-        ))}
-      </Select>,
+      component: <TreeSelect
+        allowClear treeDataSimpleMode showSearch
+        placeholder="所属机构" treeData={organizationList}
+        treeNodeFilterProp='title' searchPlaceholder='根据机构名称模糊查询'
+      />,
     },
     {
       label: '消息协议',
       key: 'messageProtocol',
       options: {
-        rules: [{ required: true, message: '请选择消息协议' }],
+        rules: [{required: true, message: '请选择消息协议'}],
         initialValue: props.data?.messageProtocol,
       },
       styles: {
-        xl: { span: 8 },
-        lg: { span: 8 },
-        md: { span: 12 },
-        sm: { span: 24 },
+        xl: {span: 8},
+        lg: {span: 8},
+        md: {span: 12},
+        sm: {span: 24},
       },
       component: (
         <Select
@@ -239,14 +240,14 @@ const Save: React.FC<Props> = props => {
       label: '传输协议',
       key: 'transportProtocol',
       options: {
-        rules: [{ required: true, message: '请选择传输协议' }],
+        rules: [{required: true, message: '请选择传输协议'}],
         initialValue: props.data?.transportProtocol,
       },
       styles: {
-        xl: { span: 8 },
-        lg: { span: 10 },
-        md: { span: 24 },
-        sm: { span: 24 },
+        xl: {span: 8},
+        lg: {span: 10},
+        md: {span: 24},
+        sm: {span: 24},
       },
       component: (
         <Select
@@ -268,16 +269,16 @@ const Save: React.FC<Props> = props => {
       label: '设备类型',
       key: 'deviceType',
       options: {
-        rules: [{ required: true, message: '请选择设备类型' }],
+        rules: [{required: true, message: '请选择设备类型'}],
         initialValue:
           typeof props.data?.deviceType === 'string'
             ? props.data?.deviceType
             : (props.data?.deviceType || {}).value,
       },
       styles: {
-        lg: { span: 8 },
-        md: { span: 12 },
-        sm: { span: 24 },
+        lg: {span: 8},
+        md: {span: 12},
+        sm: {span: 24},
       },
       component: (
         <Radio.Group>
@@ -290,10 +291,10 @@ const Save: React.FC<Props> = props => {
       label: '描述',
       key: 'describe',
       styles: {
-        xl: { span: 24 },
-        lg: { span: 24 },
-        md: { span: 24 },
-        sm: { span: 24 },
+        xl: {span: 24},
+        lg: {span: 24},
+        md: {span: 24},
+        sm: {span: 24},
       },
       options: {
         initialValue: props.data?.describe,
@@ -303,13 +304,13 @@ const Save: React.FC<Props> = props => {
   ];
 
   const saveData = () => {
-    const { form } = props;
+    const {form} = props;
     form.validateFields((err, fileValue) => {
       if (err) return;
       if (!fileValue.orgId) {
         fileValue.orgId = '';
       }
-      props.save({ state: 0, ...fileValue });
+      props.save({state: 0, ...fileValue});
     });
   };
   return (
@@ -320,8 +321,8 @@ const Save: React.FC<Props> = props => {
       onClose={() => props.close()}
       closable
     >
-      <Form labelCol={{ span: 6 }} wrapperCol={{ span: 18 }}>
-        <Card title="基本信息" style={{ marginBottom: 20 }} bordered={false}>
+      <Form labelCol={{span: 6}} wrapperCol={{span: 18}}>
+        <Card title="基本信息" style={{marginBottom: 20}} bordered={false}>
           <Row gutter={16}>
             {basicForm.map(item => (
               <Col
@@ -336,7 +337,7 @@ const Save: React.FC<Props> = props => {
           </Row>
         </Card>
         {configName && (
-          <Card title={configName} style={{ marginBottom: 20 }} bordered={false}>
+          <Card title={configName} style={{marginBottom: 20}} bordered={false}>
             <Row gutter={16}>
               {configForm.map(item => (
                 <Col
@@ -369,7 +370,7 @@ const Save: React.FC<Props> = props => {
           onClick={() => {
             props.close();
           }}
-          style={{ marginRight: 8 }}
+          style={{marginRight: 8}}
         >
           关闭
         </Button>
