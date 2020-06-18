@@ -49,6 +49,9 @@ const Search: React.FC<Props> = props => {
     const data = form.getFieldsValue();
     // TODO 查询数据
     const map = {};
+    if (data.parameter === 'orgId$in') {
+      data.value = JSON.stringify(data.value).replace(/[\[\]"]/g, '');
+    }
     map[data.parameter] = data.value;
     props.search(map);
   };
@@ -71,12 +74,12 @@ const Search: React.FC<Props> = props => {
             )}
           </Col>
         );
-      case 'orgId':
+      case 'orgId$in':
         return (
           <Col md={8} sm={24} key='value'>
             {getFieldDecorator('value', {})(
               <TreeSelect
-                allowClear treeDataSimpleMode showSearch
+                allowClear treeDataSimpleMode showSearch multiple
                 placeholder="所属机构" treeData={organizationList}
                 treeNodeFilterProp='title' searchPlaceholder='根据机构名称模糊查询'
               />
@@ -114,7 +117,7 @@ const Search: React.FC<Props> = props => {
               }}>
               <Select.Option value="id" key="id">设备ID</Select.Option>
               <Select.Option value="name$like" key="name$like">设备名称</Select.Option>
-              <Select.Option value="orgId" key="orgId">所属机构</Select.Option>
+              <Select.Option value="orgId$in" key="orgId$in">所属机构</Select.Option>
             </Select>,
           )}
         </Col>

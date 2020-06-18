@@ -1,13 +1,17 @@
 import React, {useEffect, useState} from 'react';
 import {FormComponentProps} from 'antd/lib/form';
 import Form from 'antd/es/form';
-import {Button, Card, Col, Drawer, Input, Radio, Row, Select, TreeSelect} from 'antd';
+import {Avatar, Button, Card, Col, Drawer, Input, message, Radio, Row, Select, TreeSelect, Upload} from 'antd';
 import {DeviceProduct} from '../data';
 import {FormItemConfig} from '@/utils/common';
 import apis from '@/services';
+import styles from "@/pages/device/product/save/style.less";
+import productImg from "@/pages/device/product/img/product.png";
+import {UploadProps} from "antd/lib/upload";
+import {getAccessToken} from "@/utils/authority";
+import {UploadOutlined} from "@ant-design/icons/lib";
 
 interface Props extends FormComponentProps {
-  // interface Props {
   data?: Partial<DeviceProduct>;
   close: Function;
   save: (data: Partial<DeviceProduct>) => void;
@@ -43,6 +47,8 @@ const Save: React.FC<Props> = props => {
   const [configName, setConfigName] = useState(initState.configName);
   // 配置表单
   const [configForm, setConfigForm] = useState(initState.configForm);
+
+  const [photoUrl, setPhotoUrl] = useState(props.data?.photoUrl);
 
   const onMessageProtocolChange = (value: string) => {
     setMessageProtocol(value);
@@ -310,9 +316,24 @@ const Save: React.FC<Props> = props => {
       if (!fileValue.orgId) {
         fileValue.orgId = '';
       }
-      props.save({state: 0, ...fileValue});
+      props.save({state: 0, ...fileValue, photoUrl});
     });
   };
+
+  const uploadProps: UploadProps = {
+    action: '/jetlinks/file/static',
+    headers: {
+      'X-Access-Token': getAccessToken(),
+    },
+    showUploadList: false,
+    onChange(info) {
+      if (info.file.status === 'done') {
+        setPhotoUrl(info.file.response.result);
+        message.success('上传成功');
+      }
+    },
+  };
+
   return (
     <Drawer
       visible
@@ -323,11 +344,23 @@ const Save: React.FC<Props> = props => {
     >
       <Form labelCol={{span: 6}} wrapperCol={{span: 18}}>
         <Card title="基本信息" style={{marginBottom: 20}} bordered={false}>
+          <Form.Item label='图标'>
+            <>
+              <div className={styles.avatar}>
+                <Avatar size={80} src={photoUrl || props.data?.photoUrl || productImg}/>
+              </div>
+              <Upload {...uploadProps} showUploadList={false}>
+                <Button>
+                  <UploadOutlined/>
+                  更换图片
+                </Button>
+              </Upload>
+            </>
+          </Form.Item>
           <Row gutter={16}>
             {basicForm.map(item => (
               <Col
                 key={item.key}
-                // {...item.styles}
               >
                 <Form.Item label={item.label}>
                   {getFieldDecorator(item.key, item.options)(item.component)}
@@ -342,7 +375,6 @@ const Save: React.FC<Props> = props => {
               {configForm.map(item => (
                 <Col
                   key={item.key}
-                  // {...item.styles}
                 >
                   <Form.Item label={item.label}>
                     {getFieldDecorator(item.key, item.options)(item.component)}
