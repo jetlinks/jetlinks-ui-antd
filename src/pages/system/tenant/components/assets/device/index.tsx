@@ -1,29 +1,30 @@
 import React, { useState, useContext, useEffect } from "react";
 import { List, Card, Tooltip, Icon } from "antd";
 import { router } from "umi";
+import encodeQueryParam from "@/utils/encodeParam";
+import IconFont from "@/components/IconFont";
 import styles from '../index.less';
 import Edit from "./edit";
 import { TenantContext } from "../../../detail";
 import Service from "../../../service";
-import encodeQueryParam from "@/utils/encodeParam";
-import IconFont from "@/components/IconFont";
 
-
-const Device = () => {
-    const avatar = 'https://tse2-mm.cn.bing.net/th/id/OIP.T1lmAIkITnIiwRmQMiUnjAAAAA?pid=Api&rs=1';
+interface Props {
+    user: any
+}
+const Device = (props: Props) => {
     const [visible, setVisible] = useState<boolean>(false);
     const data = useContext(TenantContext);
     const service = new Service('tenant');
 
     const [active, setActive] = useState(0);
     const [notActive, setNotActive] = useState(0);
-    useEffect(() => {
+    const getData = () => {
         service.assets.deviceCount(encodeQueryParam({
             terms: {
                 id$assets: JSON.stringify({
                     tenantId: data?.id,
                     assetType: 'device',
-
+                    memberId: props.user,
                 }),
                 state: 'notActive'
             }
@@ -35,14 +36,17 @@ const Device = () => {
                 id$assets: JSON.stringify({
                     tenantId: data?.id,
                     assetType: 'device',
-
+                    memberId: props.user,
                 }),
                 state: 'active'
             }
         })).subscribe(resp => {
             setActive(resp)
         })
-    }, []);
+    }
+    useEffect(() => {
+        getData();
+    }, [props.user]);
 
     return (
         <List.Item style={{ paddingRight: '10px' }}>
@@ -86,7 +90,10 @@ const Device = () => {
             {visible && (
                 <Edit
                     data={data}
-                    close={() => setVisible(false)} />
+                    close={() => {
+                        setVisible(false);
+                        getData();
+                    }} />
             )}
         </List.Item>
     )

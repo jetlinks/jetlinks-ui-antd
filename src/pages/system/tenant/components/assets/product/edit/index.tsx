@@ -19,8 +19,8 @@ const Edit = (props: Props) => {
     const [cat, setCat] = useState<boolean>(false);
     const [asset, setAsset] = useState();
     const { data } = props;
-    useEffect(() => {
-        console.log(data, 'dddd');
+
+    const handleSearch = () => {
         service.assets.product(encodeQueryParam({
             terms: {
                 id$assets: JSON.stringify({
@@ -32,6 +32,9 @@ const Edit = (props: Props) => {
         })).subscribe(resp => {
             setList(resp);
         })
+    }
+    useEffect(() => {
+        handleSearch()
     }, []);
     const rowSelection = {
         onChange: (selectedRowKeys: any[], selectedRows: any[]) => {
@@ -85,7 +88,10 @@ const Edit = (props: Props) => {
                     }
                 ]}
             />
-            <Button onClick={() => setAdd(true)}>添加</Button>
+            <Button
+                type="primary"
+                style={{ marginBottom: 10 }}
+                onClick={() => setAdd(true)}>添加</Button>
             <Table
                 rowKey="id"
                 rowSelection={rowSelection}
@@ -111,16 +117,22 @@ const Edit = (props: Props) => {
                 >
                     关闭
                 </Button>
-                <Button
+                {/* <Button
                     onClick={() => {
                         // autzSetting();
                     }}
                     type="primary"
                 >
                     保存
-                </Button>
+                </Button> */}
             </div>
-            {add && <Add data={data} close={() => setAdd(false)} />}
+            {add && (
+                <Add data={data}
+                    close={() => {
+                        setAdd(false);
+                        handleSearch();
+                    }} />
+            )}
             {cat && <User asset={asset} close={() => setCat(false)} />}
         </Drawer>
     )

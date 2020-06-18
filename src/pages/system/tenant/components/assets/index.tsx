@@ -1,28 +1,60 @@
-import React from "react";
-import { List, Input } from "antd";
+import React, { useEffect, useState } from "react";
+import { List, Input, Select } from "antd";
+import encodeQueryParam from "@/utils/encodeParam";
 import styles from './index.less';
 import Product from "./product";
 import Device from "./device";
-import IconFont from "@/components/IconFont";
+import Service from "../../service";
 
-const Assets = () => (
-    <div>
-        {/* <div style={{ marginBottom: 50, marginTop: 20 }}>
-            <Input.Search />
-        </div> */}
+interface Props {
+    data: any;
+    user?: any;
+}
+const Assets = (props: Props) => {
+    const service = new Service('tenant');
 
-        <div className={styles.cardList}>
+    const { data: { id }, user } = props;
 
-            <List<Partial<any>>
-                rowKey="id"
-                loading={false}
-                grid={{ gutter: 24, lg: 4, md: 2, sm: 1, xs: 1 }}
-            >
+    const [userList, setUserList] = useState([]);
+    const [current, setCurrent] = useState();
+    useEffect(() => {
+        service.member.query(id, encodeQueryParam({})).subscribe(resp => {
+            const temp = resp.data.map((item: any) => ({
+                id: item.userId,
+                name: item.name
+            }));
+            setUserList(temp);
+        });
+        if (user) {
+            setCurrent(user.userId);
+        }
+    }, [user?.userId]);
+    return (
 
-                <Product />
-                <Device />
-            </List>
-        </div>
-    </div >
-)
+
+        <div>
+            <div style={{ marginBottom: 20, marginTop: 20 }}>
+                <Select
+                    style={{ width: '100%' }}
+                    value={current}
+                    onChange={(e: any) => setCurrent(e)}>
+                    {userList.map((item: any) => <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>)}
+                </Select>
+            </div>
+
+            <div className={styles.cardList}>
+
+                <List<Partial<any>>
+                    rowKey="id"
+                    loading={false}
+                    grid={{ gutter: 24, lg: 4, md: 2, sm: 1, xs: 1 }}
+                >
+
+                    <Product user={current} />
+                    <Device user={current} />
+                </List>
+            </div>
+        </div >
+    )
+}
 export default Assets;
