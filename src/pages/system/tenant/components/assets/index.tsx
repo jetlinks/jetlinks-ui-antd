@@ -5,6 +5,7 @@ import styles from './index.less';
 import Product from "./product";
 import Device from "./device";
 import Service from "../../service";
+import Protocol from "./protocol";
 
 interface Props {
     data: any;
@@ -52,6 +53,7 @@ const Assets = (props: Props) => {
 
                     <Product user={current} />
                     <Device user={current} />
+                    <Protocol user={current} />
                 </List>
             </div>
         </div >

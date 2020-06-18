@@ -135,6 +135,22 @@ class Service extends BaseService<TenantItem>{
                 filter(resp => resp.status === 200),
                 map(resp => resp.result)
             )),
+        protocol: (params: any) => defer(() => from(
+            request(`/jetlinks/protocol/_query`, {
+                method: 'GET',
+                params
+            })).pipe(
+                filter(resp => resp.status === 200),
+                map(resp => resp.result)
+            )),
+        protocolCount: (params: any) => defer(() => from(
+            request(`/jetlinks/protocol/_count`, {
+                method: 'GET',
+                params
+            })).pipe(
+                filter(resp => resp.status === 200),
+                map(resp => resp.result)
+            )),
         members: (tenantId: string, assetType: string, assetId: string) => defer(() => from(
             request(`/jetlinks/tenant/${tenantId}/asset/${assetType}/${assetId}/members`, {
                 method: 'GET',
