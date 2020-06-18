@@ -74,7 +74,7 @@ const Protocol = (props: Props) => {
                     </Tooltip>]}
             >
                 <Card.Meta
-                    avatar={<IconFont type="icon-anzhuangbaoguanli" style={{ fontSize: 50 }} />}
+                    avatar={<IconFont type="icon-anzhuangbaoguanli" style={{ fontSize: 45 }} />}
                     title={<a>协议</a>}
                 />
                 <div className={styles.cardInfo}>
