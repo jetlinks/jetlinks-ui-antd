@@ -62,7 +62,7 @@ const Device = (props: Props) => {
                                     id$assets: JSON.stringify({
                                         tenantId: data?.id,
                                         assetType: 'device',
-                                        // not: true,
+                                        memberId: props.user,
                                     })
                                 }
                             }
@@ -89,6 +89,7 @@ const Device = (props: Props) => {
             </Card>
             {visible && (
                 <Edit
+                    user={props.user}
                     data={data}
                     close={() => {
                         setVisible(false);

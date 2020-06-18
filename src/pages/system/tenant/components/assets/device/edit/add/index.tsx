@@ -7,6 +7,7 @@ import encodeQueryParam from "@/utils/encodeParam";
 interface Props {
     close: Function
     data: any
+    user: any
 }
 const Add = (props: Props) => {
     const service = new Service('tenant');
@@ -15,7 +16,7 @@ const Add = (props: Props) => {
     const [loading, setLoading] = useState<boolean>(true);
     const [userList, setUserList] = useState();
     const { data } = props;
-    const [checkedUserList, setCheckedUserList] = useState<string[]>([]);
+    const [checkedUserList, setCheckedUserList] = useState<string[]>([props.user]);
     const [selectedAssetsId, setSelectedAssetsId] = useState<string[]>([]);
 
     useEffect(() => {
@@ -25,6 +26,7 @@ const Add = (props: Props) => {
                     tenantId: data?.id,
                     assetType: 'device',
                     not: true,
+                    memberId: props.user,
                 })
             }
         })).subscribe(resp => {
@@ -79,6 +81,7 @@ const Add = (props: Props) => {
         >
             <Form.Item label="选择成员">
                 <Select
+                    value={checkedUserList}
                     mode="tags"
                     placeholder="选择成员"
                     onChange={(value: string[]) => { setCheckedUserList(value) }}

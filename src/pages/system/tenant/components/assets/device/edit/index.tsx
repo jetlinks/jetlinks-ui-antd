@@ -10,6 +10,7 @@ import User from "./user";
 interface Props {
     close: Function;
     data: any;
+    user: any;
 }
 const Edit = (props: Props) => {
     const service = new Service('tenant');
@@ -25,6 +26,7 @@ const Edit = (props: Props) => {
                 id$assets: JSON.stringify({
                     tenantId: data?.id,
                     assetType: 'device',
+                    memberId: props.user,
                     // not: true,
                 })
             }
@@ -126,7 +128,9 @@ const Edit = (props: Props) => {
             </div>
             {add && (
                 <Add
-                    data={data} close={() => {
+                    user={props.user}
+                    data={data}
+                    close={() => {
                         setAdd(false);
                         handleSearch();
                     }} />

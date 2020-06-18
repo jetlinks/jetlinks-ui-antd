@@ -10,6 +10,7 @@ import User from "./user";
 interface Props {
     close: Function;
     data: any;
+    user: any
 }
 const Edit = (props: Props) => {
     const service = new Service('tenant');
@@ -26,6 +27,7 @@ const Edit = (props: Props) => {
                 id$assets: JSON.stringify({
                     tenantId: data?.id,
                     assetType: 'product',
+                    memberId: props.user,
                     // not: true,
                 })
             }
@@ -117,17 +119,11 @@ const Edit = (props: Props) => {
                 >
                     关闭
                 </Button>
-                {/* <Button
-                    onClick={() => {
-                        // autzSetting();
-                    }}
-                    type="primary"
-                >
-                    保存
-                </Button> */}
             </div>
             {add && (
-                <Add data={data}
+                <Add
+                    user={props.user}
+                    data={data}
                     close={() => {
                         setAdd(false);
                         handleSearch();
