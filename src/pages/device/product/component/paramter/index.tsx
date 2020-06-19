@@ -1,4 +1,18 @@
-import {AutoComplete, Button, Col, Drawer, Form, Icon, Input, List, message, Radio, Row, Select} from 'antd';
+import {
+  AutoComplete,
+  Button,
+  Col,
+  Drawer,
+  Form,
+  Icon,
+  Input,
+  InputNumber,
+  List,
+  message,
+  Radio,
+  Row,
+  Select
+} from 'antd';
 import React, {useState} from 'react';
 import styles from '../index.less';
 import {groupBy} from 'lodash';
@@ -50,11 +64,11 @@ const Paramter: React.FC<Props> = props => {
           <div>
             <Form.Item label="取值范围" style={{height: 69}}>
               <Col span={11}>
-                <Input
+                <InputNumber style={{width:'100%'}}
                   value={data.valueType.min}
                   placeholder="最小值"
-                  onChange={event => {
-                    data.valueType.min = event.target.value;
+                  onChange={value => {
+                    data.valueType.min = value;
                     setData({...data});
                   }}
                 />
@@ -64,11 +78,11 @@ const Paramter: React.FC<Props> = props => {
               </Col>
               <Col span={11}>
                 <Form.Item>
-                  <Input
+                  <InputNumber style={{width:'100%'}}
                     value={data.valueType.max}
                     placeholder="最大值"
-                    onChange={event => {
-                      data.valueType.max = event.target.value;
+                    onChange={value => {
+                      data.valueType.max = value;
                       setData({...data});
                     }}
                   />
@@ -107,11 +121,11 @@ const Paramter: React.FC<Props> = props => {
           <div>
             <Form.Item label="取值范围" style={{height: 69}}>
               <Col span={11}>
-                <Input
+                <InputNumber style={{width:'100%'}}
                   value={data.valueType.min}
                   placeholder="最小值"
-                  onChange={event => {
-                    data.valueType.min = event.target.value;
+                  onChange={value => {
+                    data.valueType.min = value;
                     setData({...data});
                   }}
                 />
@@ -121,11 +135,11 @@ const Paramter: React.FC<Props> = props => {
               </Col>
               <Col span={11}>
                 <Form.Item>
-                  <Input
+                  <InputNumber style={{width:'100%'}}
                     value={data.valueType.max}
                     placeholder="最大值"
-                    onChange={event => {
-                      data.valueType.max = event.target.value;
+                    onChange={value => {
+                      data.valueType.max = value;
                       setData({...data});
                     }}
                   />
@@ -133,11 +147,12 @@ const Paramter: React.FC<Props> = props => {
               </Col>
             </Form.Item>
             <Form.Item label="精度" style={{height: 69}}>
-              <Input
+              <InputNumber
+                min={0} step={1} placeholder="请输入精度"
                 value={data.valueType.scale}
-                placeholder="精度"
-                onChange={event => {
-                  data.valueType.scale = event.target.value;
+                style={{width:'100%'}}
+                onChange={value => {
+                  data.valueType.scale = value;
                   setData({...data});
                 }}
               />

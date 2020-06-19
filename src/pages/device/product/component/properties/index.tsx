@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Form, Input, Select, Radio, Col, Drawer, Button, Row, Icon, List, AutoComplete} from 'antd';
+import {Form, Input, Select, Radio, Col, Drawer, Button, Row, Icon, List, AutoComplete, InputNumber} from 'antd';
 import {FormComponentProps} from 'antd/lib/form';
 import {renderUnit} from '@/pages/device/public';
 import {PropertiesMeta} from '../data.d';
@@ -87,7 +87,7 @@ const PropertiesDefin: React.FC<Props> = props => {
               <Col span={11}>
                 {getFieldDecorator('valueType.min', {
                   initialValue: initState.data.valueType?.min,
-                })(<Input placeholder="最小值"/>)}
+                })(<InputNumber style={{width:'100%'}} placeholder="最小值"/>)}
               </Col>
               <Col span={2} push={1}>
                 ~
@@ -96,7 +96,7 @@ const PropertiesDefin: React.FC<Props> = props => {
                 <Form.Item>
                   {getFieldDecorator('valueType.max', {
                     initialValue: initState.data.valueType?.max,
-                  })(<Input placeholder="最大值"/>)}
+                  })(<InputNumber style={{width:'100%'}} placeholder="最大值"/>)}
                 </Form.Item>
               </Col>
             </Form.Item>
@@ -104,13 +104,13 @@ const PropertiesDefin: React.FC<Props> = props => {
             <Form.Item label="步长">
               {getFieldDecorator('valueType.step', {
                 initialValue: initState.data.valueType?.step,
-              })(<Input placeholder="请输入步长"/>)}
+              })(<InputNumber style={{width:'100%'}} placeholder="请输入步长"/>)}
             </Form.Item>
 
             <Form.Item label="精度">
               {getFieldDecorator('valueType.scale', {
                 initialValue: initState.data.valueType?.scale,
-              })(<Input placeholder="请输入精度"/>)}
+              })(<InputNumber min={0} step={1} placeholder="请输入精度" style={{width:'100%'}}/>)}
             </Form.Item>
 
             <Form.Item label="单位">
@@ -128,7 +128,7 @@ const PropertiesDefin: React.FC<Props> = props => {
               <Col span={11}>
                 {getFieldDecorator('valueType.min', {
                   initialValue: initState.data.valueType?.min,
-                })(<Input placeholder="最小值"/>)}
+                })(<InputNumber style={{width:'100%'}} placeholder="最小值"/>)}
               </Col>
               <Col span={2} push={1}>
                 ~
@@ -137,7 +137,7 @@ const PropertiesDefin: React.FC<Props> = props => {
                 <Form.Item>
                   {getFieldDecorator('valueType.max', {
                     initialValue: initState.data.valueType?.max,
-                  })(<Input placeholder="最大值"/>)}
+                  })(<InputNumber style={{width:'100%'}} placeholder="最大值"/>)}
                 </Form.Item>
               </Col>
             </Form.Item>
@@ -145,7 +145,7 @@ const PropertiesDefin: React.FC<Props> = props => {
             <Form.Item label="步长">
               {getFieldDecorator('valueType.step', {
                 initialValue: initState.data.valueType?.step,
-              })(<Input placeholder="请输入步长"/>)}
+              })(<InputNumber style={{width:'100%'}} placeholder="请输入步长"/>)}
             </Form.Item>
             <Form.Item label="单位">
               {getFieldDecorator('valueType.unit', {
