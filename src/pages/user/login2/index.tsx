@@ -1,18 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import style from './index.less';
 import { connect } from 'dva';
 import { Dispatch, ConnectState } from '@/models/connect';
+import { Settings } from '@ant-design/pro-layout';
+import { Spin } from 'antd';
 
 interface Props {
   dispatch: Dispatch;
+  settings: Settings;
 }
 
 const Login: React.FC<Props> = props => {
-  const { dispatch } = props;
+  const { dispatch, settings } = props;
 
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [expires, setExpires] = useState<number>(3600000);
+  const [isReady, setIsReady] = useState(false);
 
   const handleSubmit = () => {
     dispatch({
@@ -21,8 +25,22 @@ const Login: React.FC<Props> = props => {
     });
   };
 
-  return (
+  useEffect(() => {
+    if (dispatch) {
+      dispatch({
+        type: 'settings/fetchConfig',
+        callback: () => {
+          document.getElementById('title-icon')!.href = settings.titleIcon;
+          document.getElementById('sys-title')!.textContent = settings.title;
+          setIsReady(true);
+        }
+      });
+    }
+  }, [settings.title]);
+
+  const renderLogin = () => (
     <div className={style.login}>
+
       <div className={style.bg1} />
       <div className={style.gyl}>
         物联网平台
@@ -86,10 +104,13 @@ const Login: React.FC<Props> = props => {
           value="登录"
         />
       </div>
+
     </div>
-  );
+  )
+  return isReady ? renderLogin() : <Spin spinning={isReady} />;
 };
-export default connect(({ login, loading }: ConnectState) => ({
+export default connect(({ login, loading, settings }: ConnectState) => ({
   userLogin: login,
   submitting: loading.effects['login/login'],
+  settings
 }))(Login);
