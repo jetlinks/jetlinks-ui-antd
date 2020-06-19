@@ -43,6 +43,7 @@ const SecurityLayout = (props: SecurityLayoutProps) => {
       dispatch({
         type: 'settings/fetchConfig',
         callback: () => {
+
           document.getElementById('title-icon')!.href = settings.titleIcon;
           setIsReady(true);
         }
