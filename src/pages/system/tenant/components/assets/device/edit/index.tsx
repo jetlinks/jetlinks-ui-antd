@@ -70,7 +70,7 @@ const Edit = (props: Props) => {
             assetIdList: selected.map(item => item.id),
             assetType: 'device'
         }]).subscribe(() => {
-            message.error('解绑成功');
+            message.success('解绑成功');
             handleSearch();
         })
     }
