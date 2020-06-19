@@ -1,5 +1,5 @@
-import { Form, Drawer, Select, Divider, Button, Table, message } from "antd";
-import React, { useState, useEffect, Fragment } from "react";
+import { Form, Drawer, Select, Divider, Button, message } from "antd";
+import React, { useState, useEffect } from "react";
 import { ListData } from "@/services/response";
 import Service from "@/pages/system/tenant/service";
 import encodeQueryParam from "@/utils/encodeParam";
@@ -75,7 +75,7 @@ const Add = (props: Props) => {
                     message.error('请选择成员');
                     setLoading(false);
                 } else {
-                    service.assets.bind(data.id, bindData).subscribe(resp => {
+                    service.assets.bind(data.id, bindData).subscribe(() => {
                         setLoading(false);
                         message.success('添加成功')
                         props.close();
@@ -123,6 +123,7 @@ const Add = (props: Props) => {
                         initialValue: checkedUserList
                     })(
                         <Select
+                            allowClear
                             value={checkedUserList}
                             mode="tags"
                             placeholder="选择成员"
