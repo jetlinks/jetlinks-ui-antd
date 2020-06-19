@@ -8,6 +8,7 @@ import styles from './index.less';
 import { getAccessToken } from "@/utils/authority";
 import { TenantItem } from "../../data";
 import Service from "../../service";
+import defaultimg from '@/assets/default.png';
 
 interface Props extends FormComponentProps {
     data: Partial<TenantItem>
@@ -107,7 +108,7 @@ const BasicInfo = (props: Props) => {
                                 头像
                         </div>
                             <div className={styles.avatar}>
-                                <img src={photo || data?.photo || 'https://tse4-mm.cn.bing.net/th/id/OIP.i6S22Yg6VCAJ6xaUX5WWZQAAAA?pid=Api&rs=1'} alt="avatar" />
+                                <img src={photo || data?.photo || defaultimg} alt="avatar" />
                             </div>
                             <Upload {...uploadProps} showUploadList={false}>
                                 <div className={styles.button_view}>
