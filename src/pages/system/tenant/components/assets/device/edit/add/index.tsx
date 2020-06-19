@@ -16,7 +16,7 @@ const Add = (props: Props) => {
     const [loading, setLoading] = useState<boolean>(true);
     const [userList, setUserList] = useState();
     const { data } = props;
-    const [checkedUserList, setCheckedUserList] = useState<string[]>([props.user]);
+    const [checkedUserList, setCheckedUserList] = useState<string[]>(props.user ? [props.user] : []);
     const [selectedAssetsId, setSelectedAssetsId] = useState<string[]>([]);
 
     useEffect(() => {

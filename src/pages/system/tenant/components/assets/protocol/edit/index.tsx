@@ -1,4 +1,4 @@
-import { Drawer, Button, Table, Select } from "antd";
+import { Drawer, Button, Table, Select, message } from "antd";
 import React, { useState, useEffect, Fragment } from "react";
 import Service from "@/pages/system/tenant/service";
 import { ListData } from "@/services/response";
@@ -19,6 +19,8 @@ const Edit = (props: Props) => {
     const [add, setAdd] = useState<boolean>(false);
     const [cat, setCat] = useState<boolean>(false);
     const [asset, setAsset] = useState();
+    const [selected, setSelected] = useState<any[]>([]);
+
     const { data } = props;
 
     const handleSearch = () => {
@@ -40,7 +42,7 @@ const Edit = (props: Props) => {
     }, []);
     const rowSelection = {
         onChange: (selectedRowKeys: any[], selectedRows: any[]) => {
-            console.log(selectedRows);
+            setSelected(selectedRows);
         },
         getCheckboxProps: (record: any) => ({
             name: record.name,
@@ -63,7 +65,16 @@ const Edit = (props: Props) => {
                     }}>查看</a>
                 </Fragment>
             )
-        }]
+        }];
+    const unbind = () => {
+        service.assets.unbind(data.id, [{
+            assetIdList: selected.map(item => item.id),
+            assetType: 'protocol'
+        }]).subscribe(() => {
+            message.error('解绑成功');
+            handleSearch();
+        })
+    }
 
     return (
         <Drawer
@@ -94,6 +105,16 @@ const Edit = (props: Props) => {
                 type="primary"
                 style={{ marginBottom: 10 }}
                 onClick={() => setAdd(true)}>添加</Button>
+            {
+                selected.length > 0 && (
+                    <Button
+                        type="danger"
+                        style={{ marginBottom: 10, marginLeft: 10 }}
+                        onClick={() => { unbind() }}>
+                        {`解绑${selected.length}项`}
+                    </Button>
+                )
+            }
             <Table
                 rowKey="id"
                 rowSelection={rowSelection}

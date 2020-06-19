@@ -1,4 +1,4 @@
-import { Drawer, Button, Table, Select } from "antd";
+import { Drawer, Button, Table, message } from "antd";
 import React, { useState, useEffect, Fragment } from "react";
 import Service from "@/pages/system/tenant/service";
 import { ListData } from "@/services/response";
@@ -20,6 +20,7 @@ const Edit = (props: Props) => {
     const [cat, setCat] = useState<boolean>(false);
     const [asset, setAsset] = useState();
     const { data } = props;
+    const [selected, setSelected] = useState<any[]>([]);
 
     const handleSearch = () => {
         service.assets.product(encodeQueryParam({
@@ -40,7 +41,7 @@ const Edit = (props: Props) => {
     }, []);
     const rowSelection = {
         onChange: (selectedRowKeys: any[], selectedRows: any[]) => {
-            console.log(selectedRows);
+            setSelected(selectedRows)
         },
         getCheckboxProps: (record: any) => ({
             name: record.name,
@@ -65,6 +66,15 @@ const Edit = (props: Props) => {
             )
         }]
 
+    const unbind = () => {
+        service.assets.unbind(data.id, [{
+            assetIdList: selected.map(item => item.id),
+            assetType: 'product'
+        }]).subscribe(() => {
+            message.error('解绑成功');
+            handleSearch();
+        })
+    }
     return (
         <Drawer
             title="编辑产品资产"
@@ -94,6 +104,16 @@ const Edit = (props: Props) => {
                 type="primary"
                 style={{ marginBottom: 10 }}
                 onClick={() => setAdd(true)}>添加</Button>
+            {
+                selected.length > 0 && (
+                    <Button
+                        type="danger"
+                        style={{ marginBottom: 10, marginLeft: 10 }}
+                        onClick={() => { unbind() }}>
+                        {`解绑${selected.length}项`}
+                    </Button>
+                )
+            }
             <Table
                 rowKey="id"
                 rowSelection={rowSelection}

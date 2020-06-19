@@ -16,7 +16,7 @@ const Add = (props: Props) => {
     const [loading, setLoading] = useState<boolean>(true);
     const [userList, setUserList] = useState();
     const { data } = props;
-    const [checkedUserList, setCheckedUserList] = useState<string[]>([props.user]);
+    const [checkedUserList, setCheckedUserList] = useState<string[]>(props.user ? [props.user] : []);
     const [selectedAssetsId, setSelectedAssetsId] = useState<string[]>([]);
 
     useEffect(() => {
@@ -35,7 +35,6 @@ const Add = (props: Props) => {
 
         service.member.query(data.id, {}).subscribe(resp => {
             setUserList(resp.data);
-            console.log(resp, 'res');
         });
     }, []);
 
@@ -49,7 +48,6 @@ const Add = (props: Props) => {
             assetIdList: selectedAssetsId,
             allPermission: true,
         }));
-        console.log(checkedUserList.length, bindData, 'jjj');
         if (checkedUserList.length === 0) {
             message.error('请选择成员');
             setLoading(false);

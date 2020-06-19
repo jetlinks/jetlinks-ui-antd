@@ -92,7 +92,7 @@ class Service extends BaseService<TenantItem>{
                 map(resp => resp)
             )),
         unbind: (id: string, data: {
-            userId: string,
+            userId?: string,
             assetType: string,
             assetIdList: string[]
         }[]) => defer(() => from(

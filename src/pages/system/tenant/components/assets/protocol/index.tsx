@@ -62,7 +62,7 @@ const Protocol = (props: Props) => {
                                 terms: {
                                     id$assets: JSON.stringify({
                                         tenantId: data?.id,
-                                        assetType: 'device',
+                                        assetType: 'protocol',
                                         memberId: props.user,
                                     })
                                 }
