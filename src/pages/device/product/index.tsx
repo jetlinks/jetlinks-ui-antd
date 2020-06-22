@@ -224,8 +224,9 @@ const DeviceModel: React.FC<Props> = props => {
                     type: 'list',
                     props: {
                       data: [
-                        {id: 'gateway', name: '网关'},
-                        {id: 'device', name: '设备'}
+                        {id: 'device', name: '直连设备'},
+                        {id: 'childrenDevice', name: '网关子设备'},
+                        {id: 'gateway', name: '网关设备'},
                       ],
                       mode: 'tags',
                     }
