@@ -200,7 +200,7 @@ const DeviceModel: React.FC<Props> = props => {
   };
 
   return (
-    <PageHeaderWrapper title="设备型号">
+    <PageHeaderWrapper title="设备产品">
       <Spin spinning={spinning}>
         <Card bordered={false}>
           <div>
@@ -214,12 +214,12 @@ const DeviceModel: React.FC<Props> = props => {
                   });
                 }}
                 formItems={[{
-                  label: '型号名称',
+                  label: '产品名称',
                   key: 'name$LIKE',
                   type: 'string',
                 },
                   {
-                    label: '设备类型',
+                    label: '产品类型',
                     key: 'deviceType',
                     type: 'list',
                     props: {
@@ -309,7 +309,7 @@ const DeviceModel: React.FC<Props> = props => {
                                 <Icon
                                   type="download"
                                   onClick={() => {
-                                    downloadObject(item, '设备型号');
+                                    downloadObject(item, '设备产品');
                                   }}
                                 />
                               </Tooltip>,
@@ -367,8 +367,8 @@ const DeviceModel: React.FC<Props> = props => {
                           <div className={cardStyles.cardInfo}>
                             <div>
                               <Spin spinning={!deviceCount[item.id]}>
-                                <p>设备数量</p>
-                                <p>
+                                <p style={{fontSize: 14}}>设备数量</p>
+                                <p style={{fontSize: 14}}>
                                   <Tooltip key="findDevice" title="点击查看设备">
                                     <a onClick={() => {
                                       router.push(`/device/instance?productId=${item.id}`);
@@ -379,14 +379,14 @@ const DeviceModel: React.FC<Props> = props => {
                               </Spin>
                             </div>
                             <div>
-                              <p>发布状态</p>
+                              <p style={{fontSize: 14}}>发布状态</p>
                               <p>
                                 <Badge color={item.state === 0 ? 'red' : 'green'}
                                        text={item.state === 0 ? '未发布' : '已发布'}/>
                               </p>
                             </div>
                             <div>
-                              <p>产品类型</p>
+                              <p style={{fontSize: 14}}>产品类型</p>
                               <p style={{fontSize: 14}}>{item.deviceType.text}</p>
                             </div>
                           </div>

@@ -108,7 +108,7 @@ const Save: React.FC<Props> = props => {
 
   const basicForm: FormItemConfig[] = [
     {
-      label: '型号ID',
+      label: '产品ID',
       key: 'id',
       styles: {
         lg: {span: 8},
@@ -117,21 +117,20 @@ const Save: React.FC<Props> = props => {
       },
       options: {
         initialValue: props.data?.id,
-        rules: [{required: true, message: '请输入型号ID'}],
+        rules: [{required: true, message: '请输入产品ID'}],
       },
-
       component: (
         <Input
-          placeholder="请输入型号ID "
+          placeholder="请输入产品ID "
           disabled={!!props.data?.id}
         />
       ),
     },
     {
-      label: '型号名称',
+      label: '产品名称',
       key: 'name',
       options: {
-        rules: [{required: true, message: '请选择型号名称'}],
+        rules: [{required: true, message: '请选择产品名称'}],
         initialValue: props.data?.name,
       },
       styles: {
@@ -146,7 +145,7 @@ const Save: React.FC<Props> = props => {
       label: '所属品类',
       key: 'classified',
       options: {
-        rules: [{required: true, message: '请选择型号名称'}],
+        rules: [{required: true, message: '请选择所属品类'}],
         initialValue: categoryId,
       },
       styles: {
