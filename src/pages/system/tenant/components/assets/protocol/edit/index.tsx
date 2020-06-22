@@ -20,14 +20,14 @@ const Edit = (props: Props) => {
     const [add, setAdd] = useState<boolean>(false);
     const [cat, setCat] = useState<boolean>(false);
     const [asset, setAsset] = useState();
-    const { data } = props;
     const [selected, setSelected] = useState<any[]>([]);
+    const { data } = props;
 
     const initSearch = {
         terms: {
             id$assets: JSON.stringify({
                 tenantId: data?.id,
-                assetType: 'product',
+                assetType: 'protocol',
                 memberId: props.user,
                 // not: true,
             })
@@ -51,16 +51,17 @@ const Edit = (props: Props) => {
             tempSearch = initSearch
         }
         setSearchParam(tempSearch);
-        service.assets.product(encodeQueryParam(tempSearch)).subscribe(resp => {
+        service.assets.protocol(encodeQueryParam(tempSearch)).subscribe(resp => {
             setList(resp);
         })
     }
+
     useEffect(() => {
-        handleSearch(searchParam);
+        handleSearch(searchParam)
     }, []);
     const rowSelection = {
         onChange: (selectedRowKeys: any[], selectedRows: any[]) => {
-            setSelected(selectedRows)
+            setSelected(selectedRows);
         },
         getCheckboxProps: (record: any) => ({
             name: record.name,
@@ -83,20 +84,20 @@ const Edit = (props: Props) => {
                     }}>查看</a>
                 </Fragment>
             )
-        }]
-
+        }];
     const unbind = () => {
         service.assets.unbind(data.id, [{
             assetIdList: selected.map(item => item.id),
-            assetType: 'product'
+            assetType: 'protocol'
         }]).subscribe(() => {
             message.success('解绑成功');
             handleSearch(searchParam);
         })
     }
+
     return (
         <Drawer
-            title="编辑产品资产"
+            title="编辑协议资产"
             visible
             width='75VW'
             onClose={() => props.close()}
@@ -141,7 +142,6 @@ const Edit = (props: Props) => {
                 onSearch={(searchData: any) => handleSearch(searchData)}
                 paginationConfig={list || {}}
             />
-
             <div
                 style={{
                     position: 'absolute',

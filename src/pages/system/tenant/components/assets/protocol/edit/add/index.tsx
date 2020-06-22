@@ -26,7 +26,7 @@ const Add = (props: Props) => {
         terms: {
             id$assets: JSON.stringify({
                 tenantId: data?.id,
-                assetType: 'product',
+                assetType: 'protocol',
                 not: true,
             })
         },
@@ -34,6 +34,7 @@ const Add = (props: Props) => {
         pageSize: 10,
     }
     const [searchParam, setSearchParam] = useState<any>(initSearch);
+
     const handleSearch = (params: any) => {
         const tempParam = { ...searchParam, ...params, };
         const defaultItem = searchParam.terms;
@@ -47,13 +48,14 @@ const Add = (props: Props) => {
             tempSearch = initSearch
         }
         setSearchParam(tempSearch);
-        service.assets.product(encodeQueryParam(tempSearch)).subscribe(resp => {
+        service.assets.protocol(encodeQueryParam(tempSearch)).subscribe(resp => {
             setList(resp);
             setLoading(false);
         });
     }
     useEffect(() => {
-        handleSearch(searchParam)
+        handleSearch(searchParam);
+
         service.member.query(data.id, {}).subscribe(resp => {
             setUserList(resp.data);
         });
@@ -67,7 +69,7 @@ const Add = (props: Props) => {
             if (!error) {
                 checkedUserList.forEach(id => bindData.push({
                     userId: id,
-                    assetType: 'product',
+                    assetType: 'protocol',
                     assetIdList: selectedAssetsId,
                     allPermission: true,
                 }));
@@ -114,7 +116,8 @@ const Add = (props: Props) => {
 
                 <Form.Item label="选择成员"
                     labelCol={{ xl: 2, xs: 4, lg: 3, md: 3 }}
-                    wrapperCol={{ xl: 22, xs: 20, lg: 21, md: 21 }}>
+                    wrapperCol={{ xl: 22, xs: 20, lg: 21, md: 21 }}
+                >
                     {getFieldDecorator('checkUser', {
                         rules: [{
                             required: true,

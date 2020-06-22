@@ -58,7 +58,7 @@ const BindUser: React.FC<Props> = props => {
           if (response) {
             count += 1;
             if (count === selectRow.length) {
-              message.error('解绑成功');
+              message.success('解绑成功');
               setLoading(false);
               setSelectRow([]);
               handleSearch();

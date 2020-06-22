@@ -11,37 +11,38 @@ import Service from "../../../service";
 interface Props {
     user: any
 }
-const Device = (props: Props) => {
+const Protocol = (props: Props) => {
     const [visible, setVisible] = useState<boolean>(false);
     const data = useContext(TenantContext);
     const service = new Service('tenant');
 
-    const [active, setActive] = useState(0);
-    const [notActive, setNotActive] = useState(0);
+    const [deploy, setDeploy] = useState(0);
+    const [unDeploy, setUndeploy] = useState(0);
     const getData = () => {
-        service.assets.deviceCount(encodeQueryParam({
+        service.assets.protocolCount(encodeQueryParam({
             terms: {
                 id$assets: JSON.stringify({
                     tenantId: data?.id,
-                    assetType: 'device',
+                    assetType: 'protocol',
                     memberId: props.user,
                 }),
-                state: 'notActive'
+                state: 1 // 已发布
             }
         })).subscribe(resp => {
-            setNotActive(resp)
+            setDeploy(resp)
         });
-        service.assets.deviceCount(encodeQueryParam({
+        service.assets.protocolCount(encodeQueryParam({
             terms: {
                 id$assets: JSON.stringify({
                     tenantId: data?.id,
-                    assetType: 'device',
+                    assetType: 'protocol',
                     memberId: props.user,
                 }),
-                state: 'active'
+                state: 0 // 未发布
             }
         })).subscribe(resp => {
-            setActive(resp)
+            setUndeploy(resp);
+            // setActive(resp)
         })
     }
     useEffect(() => {
@@ -56,12 +57,12 @@ const Device = (props: Props) => {
                 actions={[
                     <Tooltip title="查看">
                         <Icon type="eye" onClick={() => router.push({
-                            pathname: `/device/instance`,
+                            pathname: `/device/protocol`,
                             query: {
                                 terms: {
                                     id$assets: JSON.stringify({
                                         tenantId: data?.id,
-                                        assetType: 'device',
+                                        assetType: 'protocol',
                                         memberId: props.user,
                                     })
                                 }
@@ -73,17 +74,17 @@ const Device = (props: Props) => {
                     </Tooltip>]}
             >
                 <Card.Meta
-                    avatar={<IconFont type="icon-device" style={{ fontSize: 45 }} />}
-                    title={<a>设备</a>}
+                    avatar={<IconFont type="icon-anzhuangbaoguanli" style={{ fontSize: 45 }} />}
+                    title={<a>协议</a>}
                 />
                 <div className={styles.cardInfo}>
                     <div>
-                        <p>在线</p>
-                        <p>{active}</p>
+                        <p>发布</p>
+                        <p>{deploy}</p>
                     </div>
                     <div>
-                        <p>离线</p>
-                        <p>{notActive}</p>
+                        <p>未发布</p>
+                        <p>{unDeploy}</p>
                     </div>
                 </div>
             </Card>
@@ -99,4 +100,4 @@ const Device = (props: Props) => {
         </List.Item>
     )
 }
-export default Device;
+export default Protocol;

@@ -92,7 +92,7 @@ class Service extends BaseService<TenantItem>{
                 map(resp => resp)
             )),
         unbind: (id: string, data: {
-            userId: string,
+            userId?: string,
             assetType: string,
             assetIdList: string[]
         }[]) => defer(() => from(
@@ -129,6 +129,22 @@ class Service extends BaseService<TenantItem>{
             )),
         productCount: (params: any) => defer(() => from(
             request(`/jetlinks/device-product/_count`, {
+                method: 'GET',
+                params
+            })).pipe(
+                filter(resp => resp.status === 200),
+                map(resp => resp.result)
+            )),
+        protocol: (params: any) => defer(() => from(
+            request(`/jetlinks/protocol/_query`, {
+                method: 'GET',
+                params
+            })).pipe(
+                filter(resp => resp.status === 200),
+                map(resp => resp.result)
+            )),
+        protocolCount: (params: any) => defer(() => from(
+            request(`/jetlinks/protocol/_count`, {
                 method: 'GET',
                 params
             })).pipe(

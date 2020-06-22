@@ -1,15 +1,17 @@
-import { Drawer, Button, Table, } from "antd";
+import { Drawer, Button, message, } from "antd";
 import React, { useEffect, useState, Fragment } from "react";
 import Service from "@/pages/system/tenant/service";
 import encodeQueryParam from "@/utils/encodeParam";
 import SearchForm from "@/components/SearchForm";
 import { ListData } from "@/services/response";
+import ProTable from "@/pages/system/permission/component/ProTable";
 import Add from "./add";
 import User from "./user";
 
 interface Props {
     close: Function;
     data: any;
+    user: any;
 }
 const Edit = (props: Props) => {
     const service = new Service('tenant');
@@ -19,25 +21,45 @@ const Edit = (props: Props) => {
     const { data } = props;
     const [cat, setCat] = useState<boolean>(false);
     const [asset, setAsset] = useState();
-    const handleSearch = () => {
-        service.assets.device(encodeQueryParam({
-            terms: {
-                id$assets: JSON.stringify({
-                    tenantId: data?.id,
-                    assetType: 'device',
-                    // not: true,
-                })
-            }
-        })).subscribe(resp => {
+    const [selected, setSelected] = useState<any[]>([]);
+    const initSearch = {
+        terms: {
+            id$assets: JSON.stringify({
+                tenantId: data?.id,
+                assetType: 'device',
+                memberId: props.user,
+                // not: true,
+            })
+        },
+        pageIndex: 0,
+        pageSize: 10,
+    }
+    const [searchParam, setSearchParam] = useState<any>(initSearch);
+
+    const handleSearch = (params: any) => {
+        const tempParam = { ...searchParam, ...params, };
+        const defaultItem = searchParam.terms;
+        const tempTerms = params?.terms;
+        const terms = tempTerms ? { ...defaultItem, ...tempTerms } : initSearch;
+        let tempSearch = {};
+
+        if (tempTerms) {
+            tempParam.terms = terms;
+            tempSearch = tempParam
+        } else {
+            tempSearch = initSearch
+        }
+        setSearchParam(tempSearch);
+        service.assets.device(encodeQueryParam(tempSearch)).subscribe(resp => {
             setList(resp);
         })
     }
     useEffect(() => {
-        handleSearch();
+        handleSearch(searchParam);
     }, []);
     const rowSelection = {
         onChange: (selectedRowKeys: any[], selectedRows: any[]) => {
-            console.log(selectedRows);
+            setSelected(selectedRows);
         },
         getCheckboxProps: (record: any) => ({
             name: record.name,
@@ -60,18 +82,27 @@ const Edit = (props: Props) => {
                     }}>查看</a>
                 </Fragment>
             )
-        }]
+        }];
+    const unbind = () => {
+        service.assets.unbind(data.id, [{
+            assetIdList: selected.map(item => item.id),
+            assetType: 'device'
+        }]).subscribe(() => {
+            message.success('解绑成功');
+            handleSearch(searchParam);
+        })
+    }
     return (
         <Drawer
             title="编辑设备资产"
             visible
-            width='60VW'
+            width='75VW'
             onClose={() => props.close()}
         >
 
             <SearchForm
                 search={(params: any) => {
-                    console.log(params, 'parsm')
+                    handleSearch({ terms: params })
                 }}
                 formItems={[
                     {
@@ -90,11 +121,25 @@ const Edit = (props: Props) => {
                 type="primary"
                 style={{ marginBottom: 10 }}
                 onClick={() => setAdd(true)}>添加</Button>
-            <Table
+            {
+                selected.length > 0 && (
+                    <Button
+                        type="danger"
+                        style={{ marginBottom: 10, marginLeft: 10 }}
+                        onClick={() => { unbind() }}>
+                        {`解绑${selected.length}项`}
+                    </Button>
+                )
+            }
+            <ProTable
                 rowKey="id"
                 rowSelection={rowSelection}
                 columns={columns}
-                dataSource={list?.data} />,
+                dataSource={list?.data || []}
+                onSearch={(searchData: any) => handleSearch(searchData)}
+                paginationConfig={list || {}}
+            />
+
             <div
                 style={{
                     position: 'absolute',
@@ -115,20 +160,14 @@ const Edit = (props: Props) => {
                 >
                     关闭
                 </Button>
-                {/* <Button
-                    onClick={() => {
-                        // autzSetting();
-                    }}
-                    type="primary"
-                >
-                    保存
-                </Button> */}
             </div>
             {add && (
                 <Add
-                    data={data} close={() => {
+                    user={props.user}
+                    data={data}
+                    close={() => {
                         setAdd(false);
-                        handleSearch();
+                        handleSearch(searchParam);
                     }} />
             )}
             {cat && <User asset={asset} close={() => setCat(false)} />}

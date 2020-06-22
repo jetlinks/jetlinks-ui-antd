@@ -285,7 +285,7 @@ const Authorization: React.FC<Props> = props => {
 
   const renderAccess = () => (
     <div>
-      <Form>
+      <Form style={{ paddingBottom: 20 }}>
 
         <Form.Item label="被授权主体" style={props.showTarget ? { display: 'none' } : {}}>
           {getFieldDecorator('targetId', {
@@ -342,6 +342,7 @@ const Authorization: React.FC<Props> = props => {
               {
                 dataIndex: 'name',
                 title: '权限名称',
+                width: 150,
               },
               {
                 dataIndex: 'actions',
@@ -386,6 +387,7 @@ const Authorization: React.FC<Props> = props => {
               {
                 dataIndex: 'properties',
                 title: '操作',
+                width: 180,
                 render: (text, record: any) => {
                   const autz = targetAutz.find(item => item.permission === record.id);
                   return (

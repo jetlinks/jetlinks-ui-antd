@@ -64,6 +64,7 @@ const Product = (props: Props) => {
                                     id$assets: JSON.stringify({
                                         tenantId: data?.id,
                                         assetType: 'product',
+                                        memberId: props.user,
                                         // not: true,
                                     })
                                 }
@@ -93,6 +94,7 @@ const Product = (props: Props) => {
 
                 <Edit
                     data={data}
+                    user={props.user}
                     close={() => {
                         setVisible(false);
                         getData();

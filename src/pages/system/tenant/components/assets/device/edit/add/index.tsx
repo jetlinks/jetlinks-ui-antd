@@ -3,35 +3,59 @@ import React, { useState, useEffect } from "react";
 import { ListData } from "@/services/response";
 import Service from "@/pages/system/tenant/service";
 import encodeQueryParam from "@/utils/encodeParam";
+import ProTable from "@/pages/system/permission/component/ProTable";
+import SearchForm from "@/components/SearchForm";
+import { FormComponentProps } from "antd/es/form";
 
-interface Props {
-    close: Function
-    data: any
+interface Props extends FormComponentProps {
+    close: Function;
+    data: any;
+    user: any;
+
 }
 const Add = (props: Props) => {
+
     const service = new Service('tenant');
 
     const [list, setList] = useState<ListData<any>>();
     const [loading, setLoading] = useState<boolean>(true);
     const [userList, setUserList] = useState();
-    const { data } = props;
-    const [checkedUserList, setCheckedUserList] = useState<string[]>([]);
+    const { data, form: { getFieldDecorator, validateFields } } = props;
+    const [checkedUserList, setCheckedUserList] = useState<string[]>(props.user ? [props.user] : []);
     const [selectedAssetsId, setSelectedAssetsId] = useState<string[]>([]);
-
-    useEffect(() => {
-        service.assets.device(encodeQueryParam({
-            terms: {
-                id$assets: JSON.stringify({
-                    tenantId: data?.id,
-                    assetType: 'device',
-                    not: true,
-                })
-            }
-        })).subscribe(resp => {
+    const initSearch = {
+        terms: {
+            id$assets: JSON.stringify({
+                tenantId: data?.id,
+                assetType: 'device',
+                not: true,
+                memberId: props.user,
+            })
+        },
+        pageIndex: 0,
+        pageSize: 10
+    };
+    const [searchParam, setSearchParam] = useState<any>(initSearch);
+    const handleSearch = (params: any) => {
+        const tempParam = { ...searchParam, ...params, };
+        const defaultItem = searchParam.terms;
+        const tempTerms = params?.terms;
+        const terms = tempTerms ? { ...defaultItem, ...tempTerms } : initSearch;
+        let tempSearch = {};
+        if (tempTerms) {
+            tempParam.terms = terms;
+            tempSearch = tempParam
+        } else {
+            tempSearch = initSearch
+        }
+        setSearchParam(tempSearch);
+        service.assets.device(encodeQueryParam(tempSearch)).subscribe(resp => {
             setList(resp);
             setLoading(false);
         });
-
+    }
+    useEffect(() => {
+        handleSearch(searchParam);
         service.member.query(data.id, {}).subscribe(resp => {
             setUserList(resp.data);
         });
@@ -40,17 +64,23 @@ const Add = (props: Props) => {
     const bind = () => {
         setLoading(true);
         const bindData: any[] = []
+        validateFields((error) => {
+            if (!error) {
+                checkedUserList.forEach(id => bindData.push({
+                    userId: id,
+                    assetType: 'device',
+                    assetIdList: selectedAssetsId,
+                    allPermission: true,
+                }));
 
-        checkedUserList.forEach(id => bindData.push({
-            userId: id,
-            assetType: 'device',
-            assetIdList: selectedAssetsId,
-            allPermission: true,
-        }));
-        service.assets.bind(data.id, bindData).subscribe(() => {
+                service.assets.bind(data.id, bindData).subscribe(() => {
+                    setLoading(false);
+                    message.success('绑定成功');
+                    props.close();
+                });
+            }
             setLoading(false);
-            message.success('绑定成功');
-            props.close();
+
         });
     }
     const rowSelection = {
@@ -74,26 +104,65 @@ const Add = (props: Props) => {
         <Drawer
             title="添加设备资产"
             visible
-            width='60VW'
+            width='70VW'
             onClose={() => props.close()}
         >
-            <Form.Item label="选择成员">
-                <Select
-                    mode="tags"
-                    placeholder="选择成员"
-                    onChange={(value: string[]) => { setCheckedUserList(value) }}
-                    style={{ width: '100%', marginBottom: 10 }}
-                >
-                    {(userList || []).map((item: any) => <Select.Option key={item.id} value={item.userId}>{item.name}</Select.Option>)}
-                </Select>
-            </Form.Item>
+            <Form layout="horizontal">
+
+                <Form.Item label="选择成员"
+                    labelCol={{ xl: 2, xs: 4, lg: 3, md: 3 }}
+                    wrapperCol={{ xl: 22, xs: 20, lg: 21, md: 21 }}>
+                    {getFieldDecorator('checkUser', {
+                        rules: [{
+                            required: true,
+                            message: '请选择成员'
+                        }],
+                        initialValue: checkedUserList
+                    })(
+                        <Select
+                            allowClear
+                            mode="tags"
+                            placeholder="选择成员"
+                            onChange={(value: string[]) => { setCheckedUserList(value) }}
+                            style={{ width: '100%', marginBottom: 10 }}
+                        >
+                            {(userList || []).map((item: any) => <Select.Option key={item.id} value={item.userId}>{item.name}</Select.Option>)}
+                        </Select>
+                    )}
+                </Form.Item>
+            </Form>
             <Divider />
-            <Table
+            <SearchForm
+                search={(searchData: any) => {
+                    setLoading(true)
+                    handleSearch({ terms: searchData });
+                }}
+                formItems={[
+                    {
+                        label: "ID",
+                        key: "id$LIKE",
+                        type: 'string'
+                    },
+                    {
+                        label: "名称",
+                        key: "name$LIKE",
+                        type: 'string'
+                    }
+                ]}
+            />
+            <ProTable
                 loading={loading}
                 rowKey="id"
                 rowSelection={rowSelection}
                 columns={columns}
-                dataSource={list?.data} />,
+                dataSource={list?.data || []}
+                onSearch={(params: any) => {
+                    setLoading(true);
+                    handleSearch(params)
+                }}
+                paginationConfig={list || {}}
+            />
+
             <div
                 style={{
                     position: 'absolute',
@@ -118,12 +187,13 @@ const Add = (props: Props) => {
                     onClick={() => {
                         bind()
                     }}
+                    disabled={selectedAssetsId.length === 0}
                     type="primary"
                 >
-                    保存
+                    {selectedAssetsId.length === 0 ? '添加' : `添加${selectedAssetsId.length}项`}
                 </Button>
             </div>
         </Drawer>
     )
 }
-export default Add;
+export default Form.create<Props>()(Add);

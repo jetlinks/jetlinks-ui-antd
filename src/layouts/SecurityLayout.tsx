@@ -48,7 +48,7 @@ const SecurityLayout = (props: SecurityLayoutProps) => {
         }
       });
     }
-  }, []);
+  }, [settings.title]);
 
   const render = () => {
     if (isLogin) {
