@@ -28,6 +28,7 @@ import Save from './save';
 import {downloadObject} from '@/utils/utils';
 import SearchForm from '@/components/SearchForm';
 import apis from '@/services';
+import AutoHide from "@/pages/device/location/info/autoHide";
 
 interface Props {
   dispatch: Dispatch;
@@ -54,6 +55,7 @@ const DeviceModel: React.FC<Props> = props => {
 
   // 消息协议
   const [protocolSupports, setProtocolSupports] = useState([]);
+  const [categoryList, setCategoryList] = useState([]);
   const [searchParam, setSearchParam] = useState(initState.searchParam);
   const [saveVisible, setSaveVisible] = useState(initState.saveVisible);
   const [deviceCount, setDeviceCount] = useState({});
@@ -112,6 +114,19 @@ const DeviceModel: React.FC<Props> = props => {
       .then(response => {
         if (response.status === 200) {
           setProtocolSupports(response.result.map((i: any) => ({id: i.id, name: i.name})));
+        }
+      })
+      .catch(() => {
+      });
+
+    apis.deviceProdcut.deviceCategory()
+      .then((response: any) => {
+        if (response.status === 200) {
+          let category: any = [];
+          response.result.map((item: any, index: number) => {
+            category.push({id: item.id, pId: item.parentId, value: item.id, title: item.name})
+          });
+          setCategoryList(category);
         }
       })
       .catch(() => {
@@ -199,6 +214,11 @@ const DeviceModel: React.FC<Props> = props => {
     },
   };
 
+  const cardInfoTitle = {
+    fontSize: 14,
+    color: 'rgba(0, 0, 0, 0.85)'
+  };
+
   return (
     <PageHeaderWrapper title="设备产品">
       <Spin spinning={spinning}>
@@ -218,6 +238,15 @@ const DeviceModel: React.FC<Props> = props => {
                   key: 'name$LIKE',
                   type: 'string',
                 },
+                  {
+                    label: '所属品类',
+                    key: 'classifiedId$LIKE',
+                    type: 'treeSelect',
+                    props: {
+                      data: categoryList,
+                      dropdownStyle: {maxHeight: 500}
+                    }
+                  },
                   {
                     label: '产品类型',
                     key: 'deviceType',
@@ -244,8 +273,6 @@ const DeviceModel: React.FC<Props> = props => {
             </div>
             <div>
               <Button icon="plus" type="primary" onClick={() => {
-                /*setBasicInfo({});
-                setSaveVisible(true)*/
                 router.push('/device/product/add');
               }}>
                 新建
@@ -273,11 +300,12 @@ const DeviceModel: React.FC<Props> = props => {
                 pageSize: result?.pageSize,
                 showQuickJumper: true,
                 showSizeChanger: true,
+                hideOnSinglePage: true,
                 pageSizeOptions: ['8', '16', '40', '80'],
                 style: {marginTop: -20},
                 showTotal: (total: number) =>
-                  `共 ${total} 条记录 第  ${result?.pageIndex + 1}/${Math.ceil(
-                    result?.total / result?.pageSize,
+                  `共 ${total} 条记录 第  ${result.pageIndex + 1}/${Math.ceil(
+                    result.total / result.pageSize,
                   )}页`,
                 onChange,
                 onShowSizeChange,
@@ -360,14 +388,14 @@ const DeviceModel: React.FC<Props> = props => {
                       >
                         <Card.Meta
                           avatar={<Avatar size={40} src={item.photoUrl || productImg}/>}
-                          title={item.name}
-                          description={item.id}
+                          title={<AutoHide title={item.name} style={{width: '95%'}}/>}
+                          description={<AutoHide title={item.id} style={{width: '95%'}}/>}
                         />
                         <div className={cardStyles.cardItemContent}>
                           <div className={cardStyles.cardInfo}>
                             <div>
                               <Spin spinning={!deviceCount[item.id]}>
-                                <p style={{fontSize: 14}}>设备数量</p>
+                                <p style={cardInfoTitle}>设备数量</p>
                                 <p style={{fontSize: 14}}>
                                   <Tooltip key="findDevice" title="点击查看设备">
                                     <a onClick={() => {
@@ -379,14 +407,14 @@ const DeviceModel: React.FC<Props> = props => {
                               </Spin>
                             </div>
                             <div>
-                              <p style={{fontSize: 14}}>发布状态</p>
+                              <p style={cardInfoTitle}>发布状态</p>
                               <p>
                                 <Badge color={item.state === 0 ? 'red' : 'green'}
                                        text={item.state === 0 ? '未发布' : '已发布'}/>
                               </p>
                             </div>
                             <div>
-                              <p style={{fontSize: 14}}>产品类型</p>
+                              <p style={cardInfoTitle}>产品类型</p>
                               <p style={{fontSize: 14}}>{item.deviceType.text}</p>
                             </div>
                           </div>

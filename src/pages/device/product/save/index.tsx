@@ -22,7 +22,7 @@ interface State {
   protocolSupports: any[];
   protocolTransports: any[];
   organizationList: any[];
-  configName: string;
+  categoryLIst: any[];
 }
 
 const Save: React.FC<Props> = props => {
