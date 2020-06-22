@@ -71,18 +71,19 @@ const Add = (props: Props) => {
                     assetIdList: selectedAssetsId,
                     allPermission: true,
                 }));
-                if (checkedUserList.length === 0) {
-                    message.error('请选择成员');
+                // if (checkedUserList.length === 0) {
+                //     message.error('请选择成员');
+                //     setLoading(false);
+                // } else {
+                service.assets.bind(data.id, bindData).subscribe(() => {
                     setLoading(false);
-                } else {
-                    service.assets.bind(data.id, bindData).subscribe(() => {
-                        setLoading(false);
-                        message.success('添加成功')
-                        props.close();
-                    });
-                }
-                setLoading(false);
+                    message.success('添加成功')
+                    props.close();
+                });
+                // }
             }
+            setLoading(false);
+
         });
 
     }
@@ -192,9 +193,10 @@ const Add = (props: Props) => {
                     onClick={() => {
                         bind()
                     }}
+                    disabled={selectedAssetsId.length === 0}
                     type="primary"
                 >
-                    保存
+                    {selectedAssetsId.length === 0 ? '添加' : `添加${selectedAssetsId.length}项`}
                 </Button>
             </div>
         </Drawer>
