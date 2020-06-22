@@ -41,7 +41,7 @@
     "test:component": "umi test ./src/components",
     "tsc": "tsc",
     "ui": "umi ui",
-    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -w -r 0"
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
   },
   "husky": {
     "hooks": {
