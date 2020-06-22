@@ -47,7 +47,6 @@ const Classified: React.FC<Props> = props => {
                 categoryAllLIst.push(i);
               }
             });
-            setCategoryAllLIst([...categoryAllLIst]);
           });
           setSpinning(false);
         }
@@ -57,21 +56,22 @@ const Classified: React.FC<Props> = props => {
   }, []);
 
   const assemblyData = () => {
+    let list: any[] = [];
     categoryLIst.map((item: any) => {
       item.children?.map((i: any) => {
         if (i.children) {
           i.children.map((data: any) => {
             data['parentName'] = i.name;
             data['categoryId'] = [item.id, i.id, data.id];
-            categoryAllLIst.push(data);
+            list.push(data);
           })
         } else {
           i['parentName'] = item.name;
           i['categoryId'] = [item, i.id];
-          categoryAllLIst.push(i);
+          list.push(i);
         }
       });
-      setCategoryAllLIst([...categoryAllLIst]);
+      setCategoryAllLIst(list);
     });
   };
 
@@ -82,20 +82,20 @@ const Classified: React.FC<Props> = props => {
     } else {
       const category: Partial<any> =
         categoryLIst.find(i => i.id === value) || {};
-
+      let list: any[] = [];
       category.children?.map((i: any) => {
         if (i.children) {
           i.children.map((data: any) => {
             data['parentName'] = i.name;
             data['categoryId'] = [value, i.id, data.id];
-            categoryAllLIst.push(data);
+            list.push(data);
           })
         } else {
           i['parentName'] = category.name;
           i['categoryId'] = [value, i.id];
-          categoryAllLIst.push(i);
+          list.push(i);
         }
-        setCategoryAllLIst([...categoryAllLIst]);
+        setCategoryAllLIst(list);
       });
     }
   };
@@ -105,8 +105,14 @@ const Classified: React.FC<Props> = props => {
       categoryAllLIst.splice(0, categoryAllLIst.length);
       assemblyData();
     } else {
-      console.log(value);
-      console.log(categoryAllLIst);
+      let list: any[] = [];
+      categoryAllLIst.map((item: any) => {
+        if (item.name.indexOf(value) !== -1 || item.parentName.indexOf(value) !== -1) {
+          list.push(item);
+        }
+      });
+      categoryAllLIst.splice(0, categoryAllLIst.length);
+      setCategoryAllLIst(list);
     }
   };
 
@@ -168,6 +174,11 @@ const Classified: React.FC<Props> = props => {
             allowClear
             placeholder="请输入品类名称或者所属场景"
             enterButton
+            onChange={(event: any) => {
+              if (event.target.value === '') {
+                assemblyData();
+              }
+            }}
             onSearch={value => {
               findCategoryByVague(value);
             }}

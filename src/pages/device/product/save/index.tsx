@@ -1,7 +1,21 @@
 import React, {useEffect, useState} from 'react';
 import {FormComponentProps} from 'antd/lib/form';
 import Form from 'antd/es/form';
-import {Avatar, Button, Card, Col, Drawer, Input, message, Radio, Row, Select, TreeSelect, Upload} from 'antd';
+import {
+  Avatar,
+  Button,
+  Card,
+  Cascader,
+  Col,
+  Drawer,
+  Input,
+  message,
+  Radio,
+  Row,
+  Select,
+  TreeSelect,
+  Upload
+} from 'antd';
 import {DeviceProduct} from '../data';
 import {FormItemConfig} from '@/utils/common';
 import apis from '@/services';
@@ -11,9 +25,10 @@ import {UploadProps} from "antd/lib/upload";
 import {getAccessToken} from "@/utils/authority";
 import {UploadOutlined} from "@ant-design/icons/lib";
 import {ProtocolItem} from "@/pages/device/protocol/data";
+import Classified from "@/pages/device/product/save/add/classified";
 
 interface Props extends FormComponentProps {
-  data?: Partial<DeviceProduct>;
+  data: Partial<DeviceProduct>;
   close: Function;
   save: (data: Partial<DeviceProduct>) => void;
 }
@@ -23,6 +38,7 @@ interface State {
   protocolTransports: any[];
   organizationList: any[];
   categoryLIst: any[];
+  classifiedData: any;
 }
 
 const Save: React.FC<Props> = props => {
@@ -31,6 +47,7 @@ const Save: React.FC<Props> = props => {
     protocolTransports: [],
     organizationList: [],
     categoryLIst: [],
+    classifiedData: {},
   };
 
   const {getFieldDecorator} = props.form;
@@ -40,10 +57,11 @@ const Save: React.FC<Props> = props => {
   const [organizationList, setOrganizationList] = useState(initState.organizationList);
   // 传输协议
   const [protocolTransports, setProtocolTransports] = useState(initState.protocolTransports);
-
   const [categoryLIst, setCategoryLIst] = useState(initState.categoryLIst);
-
+  const [categoryId, setCategoryId] = useState(initState.categoryLIst);
   const [photoUrl, setPhotoUrl] = useState(props.data?.photoUrl);
+  const [classifiedVisible, setClassifiedVisible] = useState(false);
+  const [classifiedData, setClassifiedData] = useState(initState.classifiedData);
 
   const onMessageProtocolChange = (value: string) => {
     // 获取链接协议
@@ -59,6 +77,23 @@ const Save: React.FC<Props> = props => {
   };
 
   useEffect(() => {
+    if (props.data.classifiedId) {
+      setClassifiedData({id: props.data.classifiedId, name: props.data.classifiedName});
+      let classified = props.data?.classifiedId.split('|').filter(function (s: string) {
+        return s && s.trim();
+      });
+      let list: any[] = [];
+      classified.map((item: any, index: number) => {
+        if (index === 0) {
+          list.push('|' + item + '|')
+        } else if (index === 1) {
+          list.push(list[0] + item + '|')
+        }
+      });
+      list.push(props.data.classifiedId);
+      setCategoryId(list);
+    }
+
     apis.deviceProdcut
       .protocolSupport()
       .then(e => {
@@ -81,7 +116,7 @@ const Save: React.FC<Props> = props => {
       }).catch(() => {
     });
 
-    apis.deviceProdcut.deviceCategory()
+    apis.deviceProdcut.deviceCategoryTree()
       .then((response: any) => {
         if (response.status === 200) {
           setCategoryLIst(response.result);
@@ -133,10 +168,10 @@ const Save: React.FC<Props> = props => {
       component: <Input style={{width: '100%'}} placeholder="请输入"/>,
     },
     {
-      label: '所属分类',
-      key: 'classified',
+      label: '所属品类',
+      key: 'classifiedId',
       options: {
-        initialValue: props.data?.classifiedId,
+        initialValue: categoryId,
       },
       styles: {
         xl: {span: 8},
@@ -145,13 +180,14 @@ const Save: React.FC<Props> = props => {
         sm: {span: 24},
       },
       component: (
-        <Select disabled>
-          {categoryLIst.map((e:any) => (
-            <Select.Option value={e.id} key={e.id}>
-              {e.name}
-            </Select.Option>
-          ))}
-        </Select>
+        <Cascader
+          fieldNames={{label: 'name', value: 'id', children: 'children'}}
+          options={categoryLIst}
+          popupVisible={false}
+          onClick={() => {
+            setClassifiedVisible(true);
+          }}
+          placeholder="点击选择品类"/>
       ),
     },
     {
@@ -274,7 +310,12 @@ const Save: React.FC<Props> = props => {
       const protocol: Partial<ProtocolItem> =
         protocolSupports.find(i => i.id === fileValue.messageProtocol) || {};
 
-      props.save({state: 0, ...fileValue, photoUrl,protocolName: protocol.name});
+      props.save({
+        ...fileValue, photoUrl,
+        protocolName: protocol.name,
+        classifiedId: classifiedData.id,
+        classifiedName: classifiedData.name
+      });
     });
   };
 
@@ -358,6 +399,17 @@ const Save: React.FC<Props> = props => {
           保存
         </Button>
       </div>
+      {classifiedVisible && <Classified choice={(item: any) => {
+        /*console.log(item);
+        console.log(item.split('|').filter(function (s: string) {
+          return s && s.trim();
+        }));*/
+        setCategoryId(item.categoryId);
+        setClassifiedData(item);
+        setClassifiedVisible(false);
+      }} close={() => {
+        setClassifiedVisible(false);
+      }} data={classifiedData}/>}
     </Drawer>
   );
 };

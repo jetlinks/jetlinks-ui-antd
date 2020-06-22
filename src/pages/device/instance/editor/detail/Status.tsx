@@ -71,7 +71,7 @@ const Status: React.FC<Props> = props => {
     if (properties) {
       properties.map((item: any) => {
         propertyData[item.id] = {
-          formatValue: '--',
+          formatValue: '/',
           visitData: [],
           type: item.valueType.type,
         };
@@ -93,9 +93,16 @@ const Status: React.FC<Props> = props => {
           if (response.status === 200) {
             const tempResult = response?.result;
             tempResult.forEach((item: any) => {
-              propertyData[item.data.value.property].formatValue = item.data.value?.formatValue ? item.data.value.formatValue : '--';
+
+              if (typeof item.data.value?.formatValue === 'string') {
+                propertyData[item.data.value.property].formatValue = item.data.value?.formatValue ? item.data.value.formatValue : '/';
+              } else {
+                propertyData[item.data.value.property].formatValue = item.data.value?.formatValue ? JSON.stringify(item.data.value.formatValue) : '/';
+              }
+
               if (propertyData[item.data.value.property].type === 'int' || propertyData[item.data.value.property].type === 'float'
                 || propertyData[item.data.value.property].type === 'double') {
+
                 if (propertyData[item.data.value.property].visitData.length >= 15) {
                   propertyData[item.data.value.property].visitData.splice(0, 1);
                 }
@@ -198,7 +205,11 @@ const Status: React.FC<Props> = props => {
 
           if (!propertyData[dataValue.property]) return;
 
-          propertyData[dataValue.property].formatValue = dataValue?.formatValue ? dataValue.formatValue : '/';
+          if (typeof dataValue.formatValue === 'string') {
+            propertyData[dataValue.property].formatValue = dataValue.formatValue ? dataValue.formatValue : '/';
+          } else {
+            propertyData[dataValue.property].formatValue = dataValue.formatValue ? JSON.stringify(dataValue.formatValue) : '/';
+          }
 
           if (propertyData[dataValue.property].type === 'int' || propertyData[dataValue.property].type === 'float'
             || propertyData[dataValue.property].type === 'double') {
@@ -385,12 +396,15 @@ const Status: React.FC<Props> = props => {
                                       }}/>
                               </div>
                             }
-                            total={<AutoHide title={...propertyData[item.id]?.formatValue || '/'}
-                                             style={{width: '313%'}}/>}
+                            total={
+                              <AutoHide title={...propertyData[item.id]?.formatValue || '/'}/>
+                            }
                             contentHeight={46}
                           >
                         <span>
-                          <MiniArea height={40} color="#975FE4" data={...propertyData[item.id]?.visitData}/>
+                          {propertyData[item.id]?.visitData.length > 0 && (
+                            <MiniArea height={40} color="#975FE4" data={...propertyData[item.id]?.visitData}/>
+                          )}
                         </span>
                           </ChartCard>
                         </Spin>
@@ -427,7 +441,7 @@ const Status: React.FC<Props> = props => {
                                 }}/>
                               </Tooltip>
                             }
-                            total={<AutoHide title={`${eventDataCount[item.id] || 0}次`} style={{width: '313%'}}/>}
+                            total={<AutoHide title={`${eventDataCount[item.id] || 0}次`}/>}
                             contentHeight={46}
                           >
                         <span>
