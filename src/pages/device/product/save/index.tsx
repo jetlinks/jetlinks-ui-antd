@@ -22,7 +22,7 @@ interface State {
   protocolSupports: any[];
   protocolTransports: any[];
   organizationList: any[];
-  configName: string;
+  categoryLIst: any[];
 }
 
 const Save: React.FC<Props> = props => {
@@ -98,7 +98,7 @@ const Save: React.FC<Props> = props => {
 
   const basicForm: FormItemConfig[] = [
     {
-      label: '型号ID',
+      label: '产品ID',
       key: 'id',
       styles: {
         lg: {span: 8},
@@ -107,21 +107,21 @@ const Save: React.FC<Props> = props => {
       },
       options: {
         initialValue: props.data?.id,
-        rules: [{required: true, message: '请输入型号ID'}],
+        rules: [{required: true, message: '请输入产品ID'}],
       },
 
       component: (
         <Input
-          placeholder="请输入型号ID "
+          placeholder="请输入产品ID "
           disabled={!!props.data?.id}
         />
       ),
     },
     {
-      label: '型号名称',
+      label: '产品名称',
       key: 'name',
       options: {
-        rules: [{required: true, message: '请选择型号名称'}],
+        rules: [{required: true, message: '请选择产品名称'}],
         initialValue: props.data?.name,
       },
       styles: {
@@ -295,7 +295,7 @@ const Save: React.FC<Props> = props => {
   return (
     <Drawer
       visible
-      title={`${props.data?.id ? '编辑' : '新增'}型号`}
+      title={`${props.data?.id ? '编辑' : '新增'}产品`}
       width={500}
       onClose={() => props.close()}
       closable
