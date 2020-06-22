@@ -1,16 +1,19 @@
 import React, {useEffect, useState} from 'react';
 import {FormComponentProps} from 'antd/lib/form';
 import Form from 'antd/es/form';
-import {Avatar, Button, Card, Col, Drawer, Input, message, Radio, Row, Select, TreeSelect, Upload} from 'antd';
-import {DeviceProduct} from '../data';
+import {Avatar, Button, Card, Cascader, Col, Input, message, Radio, Row, Select, Spin, TreeSelect, Upload} from 'antd';
+import {DeviceProduct} from '../../data';
 import {FormItemConfig} from '@/utils/common';
 import apis from '@/services';
-import styles from "@/pages/device/product/save/style.less";
+import styles from "@/pages/device/product/save/add/index.less";
 import productImg from "@/pages/device/product/img/product.png";
 import {UploadProps} from "antd/lib/upload";
 import {getAccessToken} from "@/utils/authority";
 import {UploadOutlined} from "@ant-design/icons/lib";
+import {PageHeaderWrapper} from "@ant-design/pro-layout";
+import Classified from '@/pages/device/product/save/add/classified';
 import {ProtocolItem} from "@/pages/device/protocol/data";
+import {router} from "umi";
 
 interface Props extends FormComponentProps {
   data?: Partial<DeviceProduct>;
@@ -22,7 +25,10 @@ interface State {
   protocolSupports: any[];
   protocolTransports: any[];
   organizationList: any[];
+  configForm: any[];
   configName: string;
+  classified: any[];
+  classifiedData: any;
 }
 
 const Save: React.FC<Props> = props => {
@@ -30,7 +36,10 @@ const Save: React.FC<Props> = props => {
     protocolSupports: [],
     protocolTransports: [],
     organizationList: [],
-    categoryLIst: [],
+    configName: '',
+    configForm: [],
+    classified: [],
+    classifiedData: {},
   };
 
   const {getFieldDecorator} = props.form;
@@ -40,10 +49,12 @@ const Save: React.FC<Props> = props => {
   const [organizationList, setOrganizationList] = useState(initState.organizationList);
   // 传输协议
   const [protocolTransports, setProtocolTransports] = useState(initState.protocolTransports);
-
-  const [categoryLIst, setCategoryLIst] = useState(initState.categoryLIst);
+  const [classified, setClassified] = useState(initState.classified);
+  const [classifiedData, setClassifiedData] = useState(initState.classifiedData);
+  const [categoryId, setCategoryId] = useState(initState.configName);
 
   const [photoUrl, setPhotoUrl] = useState(props.data?.photoUrl);
+  const [classifiedVisible, setClassifiedVisible] = useState(false);
 
   const onMessageProtocolChange = (value: string) => {
     // 获取链接协议
@@ -69,6 +80,15 @@ const Save: React.FC<Props> = props => {
       .catch(() => {
       });
 
+    apis.deviceProdcut.deviceCategoryTree()
+      .then((response: any) => {
+        if (response.status === 200) {
+          setClassified(response.result);
+        }
+      })
+      .catch(() => {
+      });
+
     apis.deviceProdcut.queryOrganization()
       .then((res: any) => {
         if (res.status === 200) {
@@ -81,20 +101,10 @@ const Save: React.FC<Props> = props => {
       }).catch(() => {
     });
 
-    apis.deviceProdcut.deviceCategory()
-      .then((response: any) => {
-        if (response.status === 200) {
-          setCategoryLIst(response.result);
-        }
-      })
-      .catch(() => {
-      });
-
     if (props.data && props.data.messageProtocol) {
       onMessageProtocolChange(props.data.messageProtocol);
     }
   }, []);
-
 
   const basicForm: FormItemConfig[] = [
     {
@@ -133,10 +143,11 @@ const Save: React.FC<Props> = props => {
       component: <Input style={{width: '100%'}} placeholder="请输入"/>,
     },
     {
-      label: '所属分类',
+      label: '所属品类',
       key: 'classified',
       options: {
-        initialValue: props.data?.classifiedId,
+        rules: [{required: true, message: '请选择型号名称'}],
+        initialValue: categoryId,
       },
       styles: {
         xl: {span: 8},
@@ -144,15 +155,15 @@ const Save: React.FC<Props> = props => {
         md: {span: 12},
         sm: {span: 24},
       },
-      component: (
-        <Select disabled>
-          {categoryLIst.map((e:any) => (
-            <Select.Option value={e.id} key={e.id}>
-              {e.name}
-            </Select.Option>
-          ))}
-        </Select>
-      ),
+      component:
+        <Cascader
+          fieldNames={{label: 'name', value: 'id', children: 'children'}}
+          options={classified}
+          popupVisible={false}
+          onClick={() => {
+            setClassifiedVisible(true);
+          }}
+          placeholder="点击选择品类"/>,
     },
     {
       label: '所属机构',
@@ -214,8 +225,7 @@ const Save: React.FC<Props> = props => {
         sm: {span: 24},
       },
       component: (
-        <Select
-          placeholder="请选择">
+        <Select placeholder="请选择">
           {protocolTransports.map(e => (
             <Select.Option value={e.id} key={e.id}>
               {e.name}
@@ -260,7 +270,7 @@ const Save: React.FC<Props> = props => {
       options: {
         initialValue: props.data?.describe,
       },
-      component: <Input.TextArea rows={3} placeholder="请输入描述"/>,
+      component: <Input.TextArea rows={4} placeholder="请输入描述"/>,
     },
   ];
 
@@ -271,10 +281,26 @@ const Save: React.FC<Props> = props => {
       if (!fileValue.orgId) {
         fileValue.orgId = '';
       }
+
       const protocol: Partial<ProtocolItem> =
         protocolSupports.find(i => i.id === fileValue.messageProtocol) || {};
 
-      props.save({state: 0, ...fileValue, photoUrl,protocolName: protocol.name});
+      apis.deviceProdcut.saveDeviceProduct({
+        state: 0,
+        ...fileValue,
+        photoUrl,
+        protocolName: protocol.name,
+        classifiedId: classifiedData.id,
+        classifiedName: classifiedData.name
+      })
+        .then((response: any) => {
+          if (response.status === 200) {
+            message.success('保存成功');
+            router.push(`/device/product/save/${response.result.id}`);
+          }
+        })
+        .catch(() => {
+        })
     });
   };
 
@@ -293,72 +319,89 @@ const Save: React.FC<Props> = props => {
   };
 
   return (
-    <Drawer
-      visible
-      title={`${props.data?.id ? '编辑' : '新增'}型号`}
-      width={500}
-      onClose={() => props.close()}
-      closable
-    >
-      <Form labelCol={{span: 6}} wrapperCol={{span: 18}}>
-        <Card title="基本信息" style={{marginBottom: 20}} bordered={false}>
-          <Form.Item label='图标'>
-            <>
-              <div className={styles.avatar}>
-                <Avatar size={80} src={photoUrl || props.data?.photoUrl || productImg}/>
+    <PageHeaderWrapper>
+      <Card title="基本信息" bordered={false}>
+        <div className={styles.right}>
+          <Spin spinning={false}>
+            <div className={styles.baseView}>
+              <div className={styles.left}>
+                <Form labelCol={{span: 5}} wrapperCol={{span: 16}}>
+                  <Row gutter={16}>
+                    {basicForm.map(item => (
+                      <Col key={item.key}>
+                        <Form.Item label={item.label}>
+                          {getFieldDecorator(item.key, item.options)(item.component)}
+                        </Form.Item>
+                      </Col>
+                    ))}
+                  </Row>
+                </Form>
               </div>
-              <Upload {...uploadProps} showUploadList={false}>
-                <Button>
-                  <UploadOutlined/>
-                  更换图片
-                </Button>
-              </Upload>
-            </>
-          </Form.Item>
-          <Row gutter={16}>
-            {basicForm.map(item => (
-              <Col
-                key={item.key}
+              <div className={styles.right}>
+                <>
+                  <div className={styles.avatar_title}>
+                    图标
+                  </div>
+                  <div className={styles.avatar}>
+                    <Avatar size={144} src={photoUrl || props.data?.photoUrl || productImg}/>
+                  </div>
+                  <Upload {...uploadProps} showUploadList={false}>
+                    <div className={styles.button_view}>
+                      <Button>
+                        <UploadOutlined/>
+                        更换图片
+                      </Button>
+                    </div>
+                  </Upload>
+                </>
+              </div>
+            </div>
+            <div
+              style={{
+                position: 'absolute',
+                right: 0,
+                bottom: 0,
+                height: 32,
+                lineHeight: 4,
+                width: '100%',
+                borderTop: '1px solid #e9e9e9',
+                paddingRight: 16,
+                background: '#fff',
+                textAlign: 'right',
+              }}
+            >
+              <Button
+                onClick={() => {
+                  props.close();
+                }}
+                style={{marginRight: 8}}
               >
-                <Form.Item label={item.label}>
-                  {getFieldDecorator(item.key, item.options)(item.component)}
-                </Form.Item>
-              </Col>
-            ))}
-          </Row>
-        </Card>
-      </Form>
-
-      <div
-        style={{
-          position: 'absolute',
-          right: 0,
-          bottom: 0,
-          width: '100%',
-          borderTop: '1px solid #e9e9e9',
-          padding: '10px 16px',
-          background: '#fff',
-          textAlign: 'right',
-        }}
-      >
-        <Button
-          onClick={() => {
-            props.close();
-          }}
-          style={{marginRight: 8}}
-        >
-          关闭
-        </Button>
-        <Button
-          onClick={() => {
-            saveData();
-          }}
-          type="primary"
-        >
-          保存
-        </Button>
-      </div>
-    </Drawer>
+                关闭
+              </Button>
+              <Button
+                onClick={() => {
+                  saveData();
+                }}
+                type="primary"
+              >
+                保存
+              </Button>
+            </div>
+          </Spin>
+        </div>
+      </Card>
+      {classifiedVisible && <Classified choice={(item: any) => {
+        /*console.log(item);
+        console.log(item.split('|').filter(function (s: string) {
+          return s && s.trim();
+        }));*/
+        setCategoryId(item.categoryId);
+        setClassifiedData(item);
+        setClassifiedVisible(false);
+      }} close={() => {
+        setClassifiedVisible(false);
+      }} data={classifiedData}/>}
+    </PageHeaderWrapper>
   );
 };
 
