@@ -73,11 +73,18 @@ const Add = (props: Props) => {
                     allPermission: true,
                 }));
 
-                service.assets.bind(data.id, bindData).subscribe(() => {
-                    setLoading(false);
-                    message.success('绑定成功');
-                    props.close();
-                });
+                service.assets.bind(data.id, bindData).subscribe(
+                    () => {
+                        setLoading(false);
+                        message.success('绑定成功');
+                        props.close();
+                    },
+                    () => {
+                        message.error('绑定失败');
+                    },
+                    () => {
+                        setLoading(false);
+                    });
             }
             setLoading(false);
 
