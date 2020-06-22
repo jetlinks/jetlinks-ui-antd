@@ -3,13 +3,13 @@ import React, { useState, useEffect } from "react"
 import { Card, Button, List, Radio, Input, Avatar, Tag, message, Spin, Popconfirm } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import moment from "moment";
+import { ListData } from "@/services/response";
+import { router } from "umi";
+import defaultImg from '@/assets/default.png';
 import { TenantItem } from "./data";
 import styles from './index.less';
 import Service from "./service";
-import { ListData } from "@/services/response";
 import Save from "./save";
-import { router } from "umi";
-
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -40,7 +40,7 @@ const ListContent = ({
 
 const Tenant = () => {
 
-    const defualtImg = 'https://tse2-mm.cn.bing.net/th/id/OIP.O9TfOiCrUHdOyEE92JtfBQAAAA?pid=Api&rs=1';
+    // const defualtImg = 'https://tse2-mm.cn.bing.net/th/id/OIP.O9TfOiCrUHdOyEE92JtfBQAAAA?pid=Api&rs=1';
     const service = new Service('tenant');
     const [loading, setLoading] = useState<boolean>(false);
     const [tloading, setTloading] = useState<boolean>(false);
@@ -168,7 +168,7 @@ const Tenant = () => {
                                     ]}
                                 >
                                     <List.Item.Meta
-                                        avatar={<Avatar src={item.photo || defualtImg} shape="square" size="large" />}
+                                        avatar={<Avatar src={item.photo || defaultImg} shape="square" size="large" />}
                                         title={<a >{item.name}</a>}
                                         description={item.description}
                                     />

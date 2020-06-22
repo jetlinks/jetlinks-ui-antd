@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Modal, Form, Input, Upload, Icon } from "antd"
 import { FormComponentProps } from "antd/lib/form";
 import { UploadProps } from "antd/lib/upload";
-import { TenantItem } from "../data";
 import { getAccessToken } from "@/utils/authority";
+import { TenantItem } from "../data";
 
 interface Props extends FormComponentProps {
     save: Function;
@@ -37,7 +37,8 @@ const Save = (props: Props) => {
             if (info.file.status === 'done') {
                 const fileUrl: string = info.file.response.result;
                 setLoading(false);
-                setImageUrl(fileUrl.replace('localhost', '192.168.3.110'));
+                setImageUrl(fileUrl);
+                // setImageUrl(fileUrl.replace('localhost', '192.168.3.110'));
             }
             if (info.file.status === 'uploading') {
                 setLoading(true);
@@ -99,7 +100,7 @@ const Save = (props: Props) => {
                             { required: true, message: '请输入新密码' },
                             { validator: validateToNextPassword }
                         ],
-                    })(<Input placeholder="请输入新密码" />)}
+                    })(<Input.Password placeholder="请输入新密码" />)}
                 </Form.Item>
                 <Form.Item label="确认密码">
                     {getFieldDecorator('confirmPassword', {
@@ -108,7 +109,7 @@ const Save = (props: Props) => {
                             {
                                 validator: compareToFirstPassword
                             }],
-                    })(<Input placeholder="请输入确认密码" onBlur={handleConfirmBlur} />)}
+                    })(<Input.Password placeholder="请输入确认密码" onBlur={handleConfirmBlur} />)}
                 </Form.Item>
                 <Form.Item label="头像">
                     <Upload

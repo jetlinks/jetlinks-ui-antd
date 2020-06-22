@@ -433,7 +433,7 @@ const Authorization: React.FC<Props> = props => {
                         (i: string) => i === 'DENY_FIELDS',
                       ) && (
                           <>
-                            <Divider type="vertical" />
+                            {/* <Divider type="vertical" />
 
                             <a
                               onClick={() => {
@@ -442,7 +442,7 @@ const Authorization: React.FC<Props> = props => {
                               }}
                             >
                               数据权限
-                          </a>
+                          </a> */}
                           </>
                         )}
                     </Fragment>

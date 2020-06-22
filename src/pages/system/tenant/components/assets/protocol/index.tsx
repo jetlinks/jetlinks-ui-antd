@@ -79,7 +79,7 @@ const Protocol = (props: Props) => {
                 />
                 <div className={styles.cardInfo}>
                     <div>
-                        <p>发布</p>
+                        <p>已发布</p>
                         <p>{deploy}</p>
                     </div>
                     <div>
