@@ -189,7 +189,7 @@ export default {
                 {
                   hideInMenu: true,
                   path: '/device/product/save/:id',
-                  name: '编辑设备型号',
+                  name: '设备型号详情',
                   // authority: ['device-product'],
                   component: './device/product/save/Detail',
                 },
@@ -198,7 +198,7 @@ export default {
                   path: '/device/product/add',
                   name: '添加设备型号',
                   // authority: ['device-product'],
-                  component: './device/product/save',
+                  component: './device/product/save/add/index.tsx',
                 },
                 {
                   path: '/device/instance',

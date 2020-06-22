@@ -1,20 +1,31 @@
-import React, { Fragment, useEffect, useState } from 'react';
-import styles from '@/utils/table.less';
-import { DeviceProduct } from '@/pages/device/product/data';
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import { Badge, Button, Card, Divider, Icon, message, Popconfirm, Table, Upload } from 'antd';
-import { ColumnProps, PaginationConfig } from 'antd/lib/table';
-import moment from 'moment';
-import { connect } from 'dva';
-import { ConnectState, Dispatch } from '@/models/connect';
-import { router } from 'umi';
+import React, {useEffect, useState} from 'react';
+import {PageHeaderWrapper} from '@ant-design/pro-layout';
+import {
+  Avatar,
+  Badge,
+  Button,
+  Card,
+  Divider,
+  Dropdown,
+  Icon,
+  List, Menu,
+  message,
+  Popconfirm,
+  Spin,
+  Tooltip,
+  Upload
+} from 'antd';
+import {connect} from 'dva';
+import {ConnectState, Dispatch} from '@/models/connect';
+import {router} from 'umi';
 import encodeQueryParam from '@/utils/encodeParam';
-import { SorterResult } from 'antd/es/table';
-import { UploadProps } from 'antd/lib/upload';
-import { getAccessToken } from '@/utils/authority';
+import {UploadProps} from 'antd/lib/upload';
+import {getAccessToken} from '@/utils/authority';
 import request from '@/utils/request';
+import cardStyles from './index.less';
+import productImg from "@/pages/device/product/img/product.png";
 import Save from './save';
-import { downloadObject, converObjectKey } from '@/utils/utils';
+import {downloadObject} from '@/utils/utils';
 import SearchForm from '@/components/SearchForm';
 import apis from '@/services';
 
@@ -32,18 +43,22 @@ interface State {
 }
 
 const DeviceModel: React.FC<Props> = props => {
-  const { result } = props.deviceProduct;
-  const { dispatch, location } = props;
+  const {result} = props.deviceProduct;
+  const {dispatch, location} = props;
 
   const initState: State = {
     data: result,
-    searchParam: { pageSize: 10, terms: location?.query?.terms },
+    searchParam: {pageSize: 8, terms: location?.query?.terms, sorts: {field: 'id', order: 'desc'}},
     saveVisible: false,
   };
 
+  // 消息协议
+  const [protocolSupports, setProtocolSupports] = useState([]);
   const [searchParam, setSearchParam] = useState(initState.searchParam);
   const [saveVisible, setSaveVisible] = useState(initState.saveVisible);
-  const [filterData, setFilterData] = useState({});
+  const [deviceCount, setDeviceCount] = useState({});
+  const [spinning, setSpinning] = useState(true);
+  const [basicInfo, setBasicInfo] = useState<any>();
 
   const handleSearch = (params?: any) => {
     setSearchParam(params);
@@ -91,114 +106,38 @@ const DeviceModel: React.FC<Props> = props => {
     });
   };
 
-  const columns: ColumnProps<DeviceProduct>[] = [
-    {
-      title: 'ID',
-      dataIndex: 'id',
-      width: '250px',
-    },
-    {
-      title: '型号名称',
-      dataIndex: 'name',
-    },
-    {
-      title: '类型',
-      dataIndex: 'deviceType',
-      width: '150px',
-      align: 'center',
-      render: (text: any) => (text || {}).text,
-      sorter: true,
-    },
-    {
-      title: '创建时间',
-      dataIndex: 'createTime',
-      width: '200px',
-      align: 'center',
-      render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
-      sorter: true,
-    },
-    {
-      title: '发布状态',
-      dataIndex: 'state',
-      align: 'center',
-      filters: [{
-        value: '0',
-        text: '未发布'
-      }, {
-        value: '1',
-        text: '已发布'
-      }],
-      render: (text: any) => {
-        const color = text === 0 ? 'red' : 'green';
-        const status = text === 0 ? '未发布' : '已发布';
-        return <Badge color={color} text={status} />;
-      },
-    },
-    {
-      title: '操作',
-      width: '300px',
-      align: 'center',
-      render: (record: DeviceProduct) => (
-        <Fragment>
-          <a
-            onClick={() => {
-              router.push(`/device/product/save/${record.id}`);
-            }}
-          >
-            查看
-          </a>
-          <Divider type="vertical" />
-          {record.state === 0 ? (
-            <span>
-              <Popconfirm
-                title="确认发布？"
-                onConfirm={() => {
-                  deploy(record);
-                }}
-              >
-                <a>发布</a>
-              </Popconfirm>
-              <Divider type="vertical" />
-              <Popconfirm title="确定删除？" onConfirm={() => handleDelete(record)}>
-                <a>删除</a>
-              </Popconfirm>
-            </span>
-          ) : (
-              <Popconfirm
-                title="确认停用"
-                onConfirm={() => {
-                  unDeploy(record);
-                }}
-              >
-                <a>停用</a>
-              </Popconfirm>
-            )}
-          <Divider type="vertical" />
-          <a
-            onClick={() => {
-              downloadObject(record, '设备型号');
-            }}
-          >
-            下载配置
-          </a>
-          <Divider type="vertical" />
-          <a
-            onClick={() => {
-              router.push(`/device/instance?productId=${record.id}`);
-            }}
-          >
-            查看设备
-          </a>
-        </Fragment>
-      ),
-    },
-  ];
-
   useEffect(() => {
+    apis.deviceProdcut
+      .protocolSupport()
+      .then(response => {
+        if (response.status === 200) {
+          setProtocolSupports(response.result.map((i: any) => ({id: i.id, name: i.name})));
+        }
+      })
+      .catch(() => {
+      });
+
     handleSearch(searchParam);
   }, []);
 
-  const handeSave = (record: any) => {
+  useEffect(() => {
+    result.data?.map((item: any) => {
+      apis.deviceInstance.count(encodeQueryParam({terms: {'productId': item.id}}))
+        .then(res => {
+          if (res.status === 200) {
+            deviceCount[item.id] = String(res.result);
+            setDeviceCount({...deviceCount});
+          } else {
+            deviceCount[item.id] = '/';
+            setDeviceCount({...deviceCount});
+          }
+        }).catch();
+    });
+
+    setSpinning(false)
+  }, [result]);
+
+  const handleSave = (record: any) => {
     dispatch({
       type: 'deviceProduct/insert',
       payload: record,
@@ -212,22 +151,24 @@ const DeviceModel: React.FC<Props> = props => {
     });
   };
 
-
-
-  const onTableChange = (
-    pagination: PaginationConfig,
-    filters: any,
-    sorter: SorterResult<DeviceProduct>
-  ) => {
-    const tempFilter = converObjectKey(filters, { state: 'state$IN' });
-    setFilterData(tempFilter);
+  const onChange = (page: number, pageSize: number) => {
     handleSearch({
-      pageIndex: Number(pagination.current) - 1,
-      pageSize: pagination.pageSize,
-      terms: { ...searchParam.terms, ...tempFilter },
-      sorts: sorter,
+      pageIndex: page - 1,
+      pageSize,
+      terms: searchParam.terms,
+      sorts: searchParam.sorts,
     });
   };
+
+  const onShowSizeChange = (current: number, size: number) => {
+    handleSearch({
+      pageIndex: current - 1,
+      pageSize: size,
+      terms: searchParam.terms,
+      sorts: searchParam.sorts,
+    });
+  };
+
   const uploadProps: UploadProps = {
     accept: '.json',
     action: '/jetlinks/file/static',
@@ -238,7 +179,7 @@ const DeviceModel: React.FC<Props> = props => {
     onChange(info) {
       if (info.file.status === 'done') {
         const fileUrl = info.file.response.result;
-        request(fileUrl, { method: 'GET' }).then(e => {
+        request(fileUrl, {method: 'GET'}).then(e => {
           if (e || e !== null) {
             dispatch({
               type: 'deviceProduct/insert',
@@ -258,102 +199,216 @@ const DeviceModel: React.FC<Props> = props => {
     },
   };
 
-
-  // 消息协议
-  const [protocolSupports, setProtocolSupports] = useState([]);
-
-  useEffect(() => {
-    apis.deviceProdcut
-      .protocolSupport()
-      .then(response => {
-        if (response.status === 200) {
-          setProtocolSupports(response.result.map((i: any) => ({ id: i.id, name: i.name })));
-        }
-      })
-      .catch(() => { });
-  }, []);
-
   return (
     <PageHeaderWrapper title="设备型号">
-      <Card bordered={false}>
-        <div className={styles.tableList}>
+      <Spin spinning={spinning}>
+        <Card bordered={false}>
           <div>
-            <SearchForm
-              search={(params: any) => {
-                handleSearch({
-                  terms: { ...params, ...filterData },
-                  pageSize: 10,
-                  sorts: searchParam.sorts
-                });
-              }}
-              formItems={[{
-                label: '型号名称',
-                key: 'name$LIKE',
-                type: 'string',
-              },
-              {
-                label: '设备类型',
-                key: 'deviceType',
-                type: 'list',
-                props: {
-                  data: [
-                    { id: 'gateway', name: '网关' },
-                    { id: 'device', name: '设备' }
-                  ]
-                }
-              },
-              {
-                label: '消息协议',
-                key: 'messageProtocol',
-                type: 'list',
-                props: {
-                  data: protocolSupports
-                }
-              },]}
-            />
-          </div>
-          <div className={styles.tableListOperator}>
-            <Button icon="plus" type="primary" onClick={() => setSaveVisible(true)}>
-              新建
-            </Button>
-            <Divider type="vertical" />
-            <Upload {...uploadProps}>
-              <Button>
-                <Icon type="upload" /> 导入配置
+            <div>
+              <SearchForm
+                search={(params: any) => {
+                  handleSearch({
+                    terms: {...params},
+                    pageSize: 8,
+                    sorts: searchParam.sorts
+                  });
+                }}
+                formItems={[{
+                  label: '型号名称',
+                  key: 'name$LIKE',
+                  type: 'string',
+                },
+                  {
+                    label: '设备类型',
+                    key: 'deviceType',
+                    type: 'list',
+                    props: {
+                      data: [
+                        {id: 'device', name: '直连设备'},
+                        {id: 'childrenDevice', name: '网关子设备'},
+                        {id: 'gateway', name: '网关设备'},
+                      ],
+                      mode: 'tags',
+                    }
+                  },
+                  {
+                    label: '消息协议',
+                    key: 'messageProtocol',
+                    type: 'list',
+                    props: {
+                      data: protocolSupports,
+                      mode: 'tags',
+                    }
+                  },]}
+              />
+            </div>
+            <div>
+              <Button icon="plus" type="primary" onClick={() => {
+                /*setBasicInfo({});
+                setSaveVisible(true)*/
+                router.push('/device/product/add');
+              }}>
+                新建
               </Button>
-            </Upload>
+              <Divider type="vertical"/>
+              <Upload {...uploadProps}>
+                <Button>
+                  <Icon type="upload"/> 导入配置
+                </Button>
+              </Upload>
+            </div>
           </div>
-          <div className={styles.StandardTable}>
-            <Table
+        </Card>
+        <br/>
+        <div className={cardStyles.filterCardList}>
+          {result.data && (
+            <List<any>
+              rowKey="id"
               loading={props.loading}
+              grid={{gutter: 24, xl: 4, lg: 3, md: 3, sm: 2, xs: 1}}
               dataSource={(result || {}).data}
-              columns={columns}
-              rowKey='id'
-              onChange={onTableChange}
               pagination={{
-                current: result.pageIndex + 1,
-                total: result.total,
-                pageSize: result.pageSize,
+                current: result?.pageIndex + 1,
+                total: result?.total,
+                pageSize: result?.pageSize,
                 showQuickJumper: true,
                 showSizeChanger: true,
-                pageSizeOptions: ['10', '20', '50', '100'],
-                showTotal: (total: number) => (
-                  `共 ${total} 条记录 第  ${
-                  result.pageIndex + 1
-                  }/${
-                  Math.ceil(result.total / result.pageSize)
-                  }页`
-                ),
+                pageSizeOptions: ['8', '16', '40', '80'],
+                style: {marginTop: -20},
+                showTotal: (total: number) =>
+                  `共 ${total} 条记录 第  ${result?.pageIndex + 1}/${Math.ceil(
+                    result?.total / result?.pageSize,
+                  )}页`,
+                onChange,
+                onShowSizeChange,
+              }}
+              renderItem={item => {
+                if (item && item.id) {
+                  return (
+                    <List.Item key={item.id}>
+                      <Card hoverable bodyStyle={{paddingBottom: 20}}
+                            actions={[
+                              <Tooltip key="seeProduct" title="查看">
+                                <Icon
+                                  type="eye"
+                                  onClick={() => {
+                                    router.push(`/device/product/save/${item.id}`);
+                                  }}
+                                />
+                              </Tooltip>,
+                              <Tooltip key="update" title='编辑'>
+                                <Icon
+                                  type="edit"
+                                  onClick={() => {
+                                    setBasicInfo(item);
+                                    setSaveVisible(true);
+                                  }}
+                                />
+                              </Tooltip>,
+                              <Tooltip key="download" title="下载">
+                                <Icon
+                                  type="download"
+                                  onClick={() => {
+                                    downloadObject(item, '设备型号');
+                                  }}
+                                />
+                              </Tooltip>,
+                              <Tooltip key="more_actions" title="更多操作">
+                                <Dropdown overlay={
+                                  <Menu>
+                                    <Menu.Item key="1">
+                                      <Popconfirm
+                                        placement="topRight"
+                                        title={item.state !== 0 ? '确定停用此组件吗？' : '确定发布此组件吗？'}
+                                        onConfirm={() => {
+                                          if (item.state === 0) {
+                                            deploy(item);
+                                          } else {
+                                            unDeploy(item);
+                                          }
+                                        }}
+                                      >
+                                        <Button icon={item.state !== 0 ? 'close' : 'check'} type="link">
+                                          {item.state !== 0 ? '停用' : '发布'}
+                                        </Button>
+                                      </Popconfirm>
+                                    </Menu.Item>
+                                    <Menu.Item key="2">
+                                      <Popconfirm
+                                        disabled={item.state === 1 ? true : (deviceCount[item.id] !== '0')}
+                                        placement="topRight"
+                                        title="确定删除此组件吗？"
+                                        onConfirm={() => {
+                                          if (item.state === 0 && deviceCount[item.id] === '0') {
+                                            handleDelete(item);
+                                          } else {
+                                            message.error('产品以发布，无法删除');
+                                          }
+                                        }}
+                                      >
+                                        <Button icon="delete" type="link">
+                                          删除
+                                        </Button>
+                                      </Popconfirm>
+                                    </Menu.Item>
+                                  </Menu>
+                                }>
+                                  <Icon type="ellipsis"/>
+                                </Dropdown>
+                              </Tooltip>,
+                            ]}
+                      >
+                        <Card.Meta
+                          avatar={<Avatar size={40} src={item.photoUrl || productImg}/>}
+                          title={item.name}
+                          description={item.id}
+                        />
+                        <div className={cardStyles.cardItemContent}>
+                          <div className={cardStyles.cardInfo}>
+                            <div>
+                              <Spin spinning={!deviceCount[item.id]}>
+                                <p>设备数量</p>
+                                <p>
+                                  <Tooltip key="findDevice" title="点击查看设备">
+                                    <a onClick={() => {
+                                      router.push(`/device/instance?productId=${item.id}`);
+                                    }}
+                                    >{deviceCount[item.id]}</a>
+                                  </Tooltip>
+                                </p>
+                              </Spin>
+                            </div>
+                            <div>
+                              <p>发布状态</p>
+                              <p>
+                                <Badge color={item.state === 0 ? 'red' : 'green'}
+                                       text={item.state === 0 ? '未发布' : '已发布'}/>
+                              </p>
+                            </div>
+                            <div>
+                              <p>产品类型</p>
+                              <p style={{fontSize: 14}}>{item.deviceType.text}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </Card>
+                    </List.Item>
+                  );
+                }
+                return '';
               }}
             />
-          </div>
+          )}
         </div>
-      </Card>
-      {saveVisible && <Save close={() => setSaveVisible(false)} save={item => handeSave(item)} />}
+      </Spin>
+      {saveVisible && <Save data={basicInfo} close={() => {
+        setBasicInfo({});
+        setSaveVisible(false)
+      }} save={item => handleSave(item)}/>}
     </PageHeaderWrapper>
   );
 };
-export default connect(({ deviceProduct, loading }: ConnectState) => ({
+export default connect(({deviceProduct, loading}: ConnectState) => ({
   deviceProduct,
   loading: loading.models.deviceProduct,
 }))(DeviceModel);
