@@ -314,25 +314,29 @@ const Save: React.FC<Props> = props => {
                          }}>
                         查看
                       </a>
-                      {upgradeData.mode?.value === 'push' && pushOrSuspend ? (
-                        <Popconfirm title="确定暂停此次推送任务？请谨慎操作" onConfirm={() => {
-                          taskByIdPush && taskByIdPush.unsubscribe();
-                          setPushOrSuspend(false);
-                          message.success('已暂停');
-                        }}>
-                          <a style={{float: 'right'}}>
-                            暂停推送
-                          </a>
-                        </Popconfirm>
-                      ) : (
-                        <Popconfirm title="确定推送此升级任务至设备？请谨慎操作" onConfirm={() => {
-                          setPushOrSuspend(true);
-                          taskPush();
-                        }}>
-                          <a style={{float: 'right'}}>
-                            推送升级
-                          </a>
-                        </Popconfirm>
+                      {upgradeData.mode?.value === 'push' && (
+                        <>
+                          {pushOrSuspend ? (
+                            <Popconfirm title="确定暂停此次推送任务？请谨慎操作" onConfirm={() => {
+                              taskByIdPush && taskByIdPush.unsubscribe();
+                              setPushOrSuspend(false);
+                              message.success('已暂停');
+                            }}>
+                              <a style={{float: 'right'}}>
+                                暂停推送
+                              </a>
+                            </Popconfirm>
+                          ) : (
+                            <Popconfirm title="确定推送此升级任务至设备？请谨慎操作" onConfirm={() => {
+                              setPushOrSuspend(true);
+                              taskPush();
+                            }}>
+                              <a style={{float: 'right'}}>
+                                推送升级
+                              </a>
+                            </Popconfirm>
+                          )}
+                        </>
                       )}
                     </ChartCard>
                   </Spin>
