@@ -175,12 +175,6 @@ export default {
               authority: ['device-product', 'device-instance', 'admin'],
               routes: [
                 {
-                  path: '/device/protocol',
-                  name: '协议管理',
-                  authority: ['protocol-supports', 'admin'],
-                  component: './device/protocol',
-                },
-                {
                   path: '/device/product',
                   name: '设备产品',
                   authority: ['device-product', 'admin'],
@@ -250,7 +244,7 @@ export default {
             },
             {
               path: 'network',
-              name: '网络组件',
+              name: '设备接入',
               icon: 'appstore',
               authority: ['certificate', 'network-config', 'device-gateway', 'admin'],
               routes: [
@@ -262,8 +256,14 @@ export default {
                   component: './network/certificate',
                 },
                 {
+                  path: '/device/protocol',
+                  name: '协议管理',
+                  authority: ['protocol-supports', 'admin'],
+                  component: './device/protocol',
+                },
+                {
                   path: '/network/type',
-                  name: '组件管理',
+                  name: '网络组件',
                   icon: 'flag',
                   authority: ['network-config', 'admin'],
                   component: './network/type',
