@@ -83,7 +83,7 @@ const ChoiceDevice: React.FC<Props> = props => {
       dataIndex: 'name',
     },
     {
-      title: '设备型号',
+      title: '设备产品',
       dataIndex: 'productName',
     },
     {

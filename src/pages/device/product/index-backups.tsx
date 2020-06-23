@@ -97,7 +97,7 @@ const DeviceModel: React.FC<Props> = props => {
       width: '250px',
     },
     {
-      title: '型号名称',
+      title: '产品名称',
       dataIndex: 'name',
     },
     {
@@ -175,7 +175,7 @@ const DeviceModel: React.FC<Props> = props => {
           <Divider type="vertical" />
           <a
             onClick={() => {
-              downloadObject(record, '设备型号');
+              downloadObject(record, '设备产品');
             }}
           >
             下载配置
@@ -273,7 +273,7 @@ const DeviceModel: React.FC<Props> = props => {
   }, []);
 
   return (
-    <PageHeaderWrapper title="设备型号">
+    <PageHeaderWrapper title="设备产品">
       <Card bordered={false}>
         <div className={styles.tableList}>
           <div>
@@ -286,7 +286,7 @@ const DeviceModel: React.FC<Props> = props => {
                 });
               }}
               formItems={[{
-                label: '型号名称',
+                label: '产品名称',
                 key: 'name$LIKE',
                 type: 'string',
               },
