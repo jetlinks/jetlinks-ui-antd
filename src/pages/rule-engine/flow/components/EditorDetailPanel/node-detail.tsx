@@ -297,7 +297,7 @@ nodeConfigMap.set('data-mapping', [
 
 nodeConfigMap.set('device-message-consumer', [
   {
-    label: '设备型号',
+    label: '设备产品',
     key: 'config.deviceModelId',
     styles: {
       lg: { span: 24 },

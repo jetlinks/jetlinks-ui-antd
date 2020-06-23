@@ -91,7 +91,7 @@ const ProportionSales = ({ loading, }: { loading: boolean; }) => {
 
   function handleChange(value:any) {
     if (value.length > 6){
-      message.error('设备型号最多只能勾选6个');
+      message.error('设备产品最多只能勾选6个');
       return false;
     }
     setProductId(value);
@@ -112,7 +112,7 @@ const ProportionSales = ({ loading, }: { loading: boolean; }) => {
       loading={loading}
       className={styles.salesCard}
       bordered={false}
-      title='各型号设备占比'
+      title='各产品设备占比'
       bodyStyle={{ padding: 24 }}
       extra={
         <div className={styles.salesCardExtra}>
@@ -142,7 +142,7 @@ const ProportionSales = ({ loading, }: { loading: boolean; }) => {
           <Select mode="tags" defaultValue={defaultList} maxTagTextLength={3}
                   maxTagCount={3}
                   style={{ width: '50%', float: 'right', marginBottom: 32 }}
-                  placeholder="设备型号" onChange={handleChange}>
+                  placeholder="设备产品" onChange={handleChange}>
             {productDataList}
           </Select>
         </div>

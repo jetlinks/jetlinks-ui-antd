@@ -93,12 +93,12 @@ const Save: React.FC<Props> = props => {
             initialValue: props.data.name,
           })(<Input placeholder="请输入设备名称"/>)}
         </Form.Item>
-        <Form.Item key="productId" label="设备型号">
+        <Form.Item key="productId" label="设备产品">
           {getFieldDecorator('productId', {
             rules: [{required: true}],
             initialValue: props.data.productId,
           })(
-            <Select placeholder="请选择设备型号">
+            <Select placeholder="请选择设备产品">
               {(productList || []).map(item => (
                 <Select.Option
                   key={JSON.stringify({productId: item.id, productName: item.name})}
