@@ -114,7 +114,7 @@ export async function removeTags(deviceId: string | undefined, tagId: string) {
 }
 
 export async function propertiesRealTime(data: any) {
-  return request(`/jetlinks/dashboard/_multi?:X_Access_Token=${getAccessToken()}`, {
+  return request(`/jetlinks/dashboard/_multi`, {
     method: 'POST',
     data,
   });
