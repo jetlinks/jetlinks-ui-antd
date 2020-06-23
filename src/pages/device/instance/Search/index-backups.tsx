@@ -91,7 +91,7 @@ const Search: React.FC<Props> = props => {
       ),
     },
     {
-      label: '设备型号',
+      label: '设备产品',
       key: 'productId',
       component: (
         <Select placeholder="请选择" allowClear showSearch>
