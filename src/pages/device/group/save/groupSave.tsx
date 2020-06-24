@@ -124,7 +124,7 @@ const groupSave: React.FC<Props> = props => {
               {getFieldDecorator('id', {
                 rules: [{required: true, message: '分组标识必填'}],
                 initialValue: props.data?.id,
-              })(<Input placeholder="输入ID"/>)}
+              })(<Input placeholder="输入ID" disabled={!!props.data.id}/>)}
             </Form.Item>
             <Form.Item key="name" label="分组名称">
               {getFieldDecorator('name', {

@@ -78,9 +78,9 @@ const Tags: React.FC<Props> = props => {
     >
       <Spin tip="操作中..." spinning={spinning}>
         <Form key='tags_form'>
-          <Form.Item key="item">
+          <Form.Item key="tags_item">
             {tagsData.map((item: any, index) => (
-              <Row key={item._id || item.id}>
+              <Row key={item._id}>
                 <Col span={5}>
                   <Input placeholder="请输入标签key"
                          value={item.key}
@@ -138,11 +138,9 @@ const Tags: React.FC<Props> = props => {
               </Row>
             ))}
             <Col span={24}>
-              <div>
-                <a onClick={() => {
-                  setTagsData([...tagsData, {_id: Math.round(Math.random() * 100000)}]);
-                }}>添加</a>
-              </div>
+              <a onClick={() => {
+                setTagsData([...tagsData, {_id: Math.round(Math.random() * 100000)}]);
+              }}>添加</a>
             </Col>
           </Form.Item>
         </Form>
