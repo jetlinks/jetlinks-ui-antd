@@ -1,5 +1,5 @@
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import React, { Fragment, useEffect, useState } from 'react';
+import {PageHeaderWrapper} from '@ant-design/pro-layout';
+import React, {Fragment, useEffect, useState} from 'react';
 import {
   AutoComplete,
   Button,
@@ -16,10 +16,10 @@ import {
   Table,
   Tabs,
 } from 'antd';
-import { FormComponentProps } from 'antd/lib/form';
-import { Map, Polygon } from 'react-amap';
-import { ColumnProps } from 'antd/lib/table';
-import { DeviceInstance } from '@/pages/device/instance/data';
+import {FormComponentProps} from 'antd/lib/form';
+import {Map, Polygon} from 'react-amap';
+import {ColumnProps} from 'antd/lib/table';
+import {DeviceInstance} from '@/pages/device/instance/data';
 import apis from '@/services';
 import DeviceInfo from '@/pages/device/location/info';
 import Content from '@/pages/device/location/save/content';
@@ -30,7 +30,7 @@ import Status from '@/pages/device/location/info/Status';
 import encodeQueryParam from '@/utils/encodeParam';
 import moment from 'moment';
 import AutoHide from '@/pages/device/location/info/autoHide';
-import { getWebsocket } from '@/layouts/GlobalWebSocket';
+import {getWebsocket} from '@/layouts/GlobalWebSocket';
 
 interface Props extends FormComponentProps {
   deviceGateway: any;
@@ -74,12 +74,12 @@ const Location: React.FC<Props> = props => {
       deviceData: {},
       contentInfo: ['bg', 'road', 'point', 'building'],
       alarmLogData: {},
-      searchParam: { pageSize: 10, sorts: { field: 'alarmTime', order: 'desc' } },
+      searchParam: {pageSize: 10, sorts: {field: 'alarmTime', order: 'desc'}},
       labelsLayer: {},
     };
 
     const {
-      form: { getFieldDecorator },
+      form: {getFieldDecorator},
       form,
     } = props;
 
@@ -132,9 +132,9 @@ const Location: React.FC<Props> = props => {
         },
       ).subscribe(
         (resp: any) => {
-          const { payload } = resp;
+          const {payload} = resp;
           if (payload.value.type === 'online') {
-            if (massMarksCreated[payload.value.deviceId]){
+            if (massMarksCreated[payload.value.deviceId]) {
               massMarksCreated[payload.value.deviceId].setIcon({
                 type: 'image',
                 image: mark_b,
@@ -143,7 +143,7 @@ const Location: React.FC<Props> = props => {
               });
             }
           } else {
-            if (massMarksCreated[payload.value.deviceId]){
+            if (massMarksCreated[payload.value.deviceId]) {
               massMarksCreated[payload.value.deviceId].setIcon({
                 type: 'image',
                 image: mark_r,
@@ -274,7 +274,7 @@ const Location: React.FC<Props> = props => {
               response.result.features.map((item: any, index: number) => {
                 if (item.geometry.type === 'Point') {
                   if (type === 'old') {
-                    setCenterScale({ center: item.geometry.coordinates });
+                    setCenterScale({center: item.geometry.coordinates});
                   }
                   markersDataList.push({
                     lnglat: item.geometry.coordinates,
@@ -322,7 +322,7 @@ const Location: React.FC<Props> = props => {
               let labelMarker = {};
               labelsData.map((item: any) => {
                 labelMarker = new window.AMap.LabelMarker(item);
-                labelMarker.on('click', function(e: any) {
+                labelMarker.on('click', function (e: any) {
                   openInfo(ins, e.data.opts.text);
                 });
 
@@ -347,7 +347,7 @@ const Location: React.FC<Props> = props => {
         },
       ).subscribe(
         (resp: any) => {
-          const { payload } = resp;
+          const {payload} = resp;
 
           for (let key in payload) {
             if (payload[key] === 'online') {
@@ -371,7 +371,7 @@ const Location: React.FC<Props> = props => {
       setSpinning(false);
     };
 
-    window.seeDetails = function(deviceId: string) {
+    window.seeDetails = function (deviceId: string) {
       setQueryInfo(true);
       setDeviceId(deviceId);
     };
@@ -394,7 +394,7 @@ const Location: React.FC<Props> = props => {
             setInfoWindow(infoWindow);
 
             let deviceStatusInfo = document.getElementById('deviceStatus');
-            infoWindow.on('open', function(e: any) {
+            infoWindow.on('open', function (e: any) {
               let div = document.createElement('div');
               div.style.width = '400px';
               div.append(deviceStatusInfo);
@@ -403,7 +403,7 @@ const Location: React.FC<Props> = props => {
 
             infoWindow.open(ins, data.lnglat);
 
-            infoWindow.on('close', function(e: any) {
+            infoWindow.on('close', function (e: any) {
 
             });
           }
@@ -413,11 +413,19 @@ const Location: React.FC<Props> = props => {
     };
 
     const queryArea = (params: any, type: string) => {
-      newMassMarks(mapCreated, { shape: params.shape }, 'old');
+      newMassMarks(mapCreated, {shape: params.shape}, 'old');
       apis.location._search_geo_json(params)
         .then(response => {
             if (response.status === 200) {
-              response.result.features.map((item: any) => {
+              response.result.features.map((item: any, index: number) => {
+                if (index === 0) {
+                  if (item.properties.center) {
+                    setCenterScale({center: item.properties.center});
+                  } else {
+                    // 区域不存在中心点时将取区域线条的第一个坐标点为中心点
+                    setCenterScale({center: item.geometry.coordinates[0][0][0]});
+                  }
+                }
                 if (type === 'new') {
                   regionList.push({
                     value: item.properties.id,
@@ -476,11 +484,11 @@ const Location: React.FC<Props> = props => {
     return (
       <PageHeaderWrapper title="地理位置">
         <Spin tip="加载中..." spinning={spinning}>
-          <div style={{ width: '100%', height: '79vh' }}>
+          <div style={{width: '100%', height: '79vh'}}>
             <Map version="1.4.15" resizeEnable events={mapEvents} center={centerScale.center} features={contentInfo}>
               {pathPolygon.length > 0 && (
                 <Polygon visible={true} path={pathPolygon}
-                         style={{ fillOpacity: 0, strokeOpacity: 1, strokeColor: '#C86A79', strokeWeight: 3 }}/>
+                         style={{fillOpacity: 0, strokeOpacity: 1, strokeColor: '#C86A79', strokeWeight: 3}}/>
               )}
             </Map>
           </div>
@@ -489,7 +497,7 @@ const Location: React.FC<Props> = props => {
             width: '30%', height: '79vh', float: 'right',
             marginTop: '-79vh', paddingTop: 5, paddingRight: 5,
           }}>
-            <div style={{ textAlign: 'right' }}>
+            <div style={{textAlign: 'right'}}>
               <Card>
                 {satelliteLayer.CLASS_NAME && (
                   <span>
@@ -534,8 +542,8 @@ const Location: React.FC<Props> = props => {
                 height: '69vh', maxHeight: '70vh', overflowY: 'auto',
                 overflowX: 'hidden', marginTop: 5,
               }}>
-                <Form labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} key="queryForm">
-                  <Form.Item key="region" label="查看区域" style={{ marginBottom: 14 }}>
+                <Form labelCol={{span: 5}} wrapperCol={{span: 19}} key="queryForm">
+                  <Form.Item key="region" label="查看区域" style={{marginBottom: 14}}>
                     {getFieldDecorator('region', {})(
                       <Select placeholder="选择查看区域，可输入查询" showSearch={true} allowClear={true}
                               filterOption={(inputValue, option) =>
@@ -544,7 +552,7 @@ const Location: React.FC<Props> = props => {
                               onChange={(valie: string, data: any) => {
                                 pathPolygon.splice(0, pathPolygon.length);
                                 if (valie) {
-                                  setCenterScale({ center: data.props.data.data.properties.center });
+                                  setCenterScale({center: data.props.data.data.properties.center});
 
                                   data.props.data.data.geometry.coordinates.map((path: any) => {
                                     pathPolygon.push(path[0]);
@@ -568,7 +576,7 @@ const Location: React.FC<Props> = props => {
                       </Select>,
                     )}
                   </Form.Item>
-                  <Form.Item key="productId" label="产品名称" style={{ marginBottom: 14 }}>
+                  <Form.Item key="productId" label="产品名称" style={{marginBottom: 14}}>
                     {getFieldDecorator('productId', {
                       initialValue: undefined,
                     })(
@@ -579,12 +587,12 @@ const Location: React.FC<Props> = props => {
                       />,
                     )}
                   </Form.Item>
-                  <Form.Item key="device" label="设备信息" style={{ marginBottom: 14 }}>
+                  <Form.Item key="device" label="设备信息" style={{marginBottom: 14}}>
                     <Input.Group compact>
                       {getFieldDecorator('device.key', {
                         initialValue: 'deviceId',
                       })(
-                        <Select style={{ width: 100 }} id="key">
+                        <Select style={{width: 100}} id="key">
                           <Select.Option value="deviceId">设备ID</Select.Option>
                           <Select.Option value="deviceName">设备名称</Select.Option>
                         </Select>,
@@ -592,18 +600,18 @@ const Location: React.FC<Props> = props => {
                       {getFieldDecorator('device.value', {
                         initialValue: undefined,
                       })(
-                        <Input id="value" style={{ width: 'calc(100% - 100px)' }} placeholder="输入设备信息"/>,
+                        <Input id="value" style={{width: 'calc(100% - 100px)'}} placeholder="输入设备信息"/>,
                       )}
                     </Input.Group>
                   </Form.Item>
-                  <div style={{ textAlign: 'right' }}>
+                  <div style={{textAlign: 'right'}}>
                     <Button type="primary" ghost={false} onClick={() => {
                       setSpinning(true);
                       onValidateForm();
                     }}>
                       查询
                     </Button>
-                    <Button style={{ marginLeft: 8 }} onClick={() => {
+                    <Button style={{marginLeft: 8}} onClick={() => {
                       setSpinning(true);
                       form.resetFields();
                       newMassMarks(mapCreated, {
@@ -617,7 +625,7 @@ const Location: React.FC<Props> = props => {
                           'where': 'objectType not device',
                         },
                       }, 'old');
-                      handleSearch({ pageSize: 10, sorts: { field: 'alarmTime', order: 'desc' } });
+                      handleSearch({pageSize: 10, sorts: {field: 'alarmTime', order: 'desc'}});
                       mapCreated.remove(infoWindow);
                     }}>
                       重置
@@ -631,10 +639,10 @@ const Location: React.FC<Props> = props => {
                   }
                 }}>
                   <Tabs.TabPane tab="设备列表" key="deviceList">
-                    <div style={{ paddingBottom: 15 }}>
-                      <span style={{ fontSize: 14 }}>
+                    <div style={{paddingBottom: 15}}>
+                      <span style={{fontSize: 14}}>
                         <b>设备记录&nbsp;
-                          <span style={{ fontSize: 20 }}>{markersDataList.length}</span>
+                          <span style={{fontSize: 20}}>{markersDataList.length}</span>
                           &nbsp;条
                         </b>
                       </span>
@@ -651,7 +659,7 @@ const Location: React.FC<Props> = props => {
                         onRow={record => {
                           return {
                             onDoubleClick: () => {
-                              setCenterScale({ center: record.lnglat });
+                              setCenterScale({center: record.lnglat});
                               openInfo(mapCreated, record);
                             },
                           };
@@ -665,10 +673,10 @@ const Location: React.FC<Props> = props => {
                     </div>
                   </Tabs.TabPane>
                   <Tabs.TabPane tab='设备告警' key="deviceAlarm">
-                    <div style={{ paddingBottom: 15 }}>
-                      <span style={{ fontSize: 14 }}>
+                    <div style={{paddingBottom: 15}}>
+                      <span style={{fontSize: 14}}>
                         <b>告警记录&nbsp;
-                          <span style={{ fontSize: 20 }}>{alarmLogData.total ? alarmLogData.total : 0}</span>
+                          <span style={{fontSize: 20}}>{alarmLogData.total ? alarmLogData.total : 0}</span>
                           &nbsp;条
                         </b>
                       </span>
@@ -707,7 +715,7 @@ const Location: React.FC<Props> = props => {
                                       }}
                                     ><AutoHide
                                       title={`${dev.deviceId}/${dev.deviceName}/${dev.alarmName}/${moment(dev.alarmTime).format('YYYY-MM-DD HH:mm:ss')}`}
-                                      style={{ width: 415 }}/></a>}
+                                      style={{width: 415}}/></a>}
                                   />
                                 </List.Item>
                               )}
