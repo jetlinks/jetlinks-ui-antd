@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import style from './index.less';
 import { connect } from 'dva';
 import { Dispatch, ConnectState } from '@/models/connect';
 import { Settings } from '@ant-design/pro-layout';
 import { Spin } from 'antd';
+import style from './index.less';
 
 interface Props {
   dispatch: Dispatch;

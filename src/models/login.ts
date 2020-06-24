@@ -7,6 +7,7 @@ import { setAuthority, clearAutz, setAccessToken, setAutz } from '@/utils/author
 import { getPageQuery } from '@/utils/utils';
 import apis from '@/services';
 import { reloadAuthorized } from '@/utils/Authorized';
+import { systemVersion } from '@/services/user';
 
 export interface StateType {
   status?: 200 | 400 | undefined;
@@ -45,6 +46,10 @@ const Model: LoginModelType = {
         setAccessToken(response.result.token);
         setAutz(response.result);
         reloadAuthorized();
+        const version = yield call(systemVersion);
+        if (version) {
+          localStorage.setItem('system-version', version?.result?.edition);
+        }
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
         let { redirect } = params as { redirect: string };
