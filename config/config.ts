@@ -252,7 +252,7 @@ export default {
               path: 'network',
               name: '设备接入',
               icon: 'appstore',
-              authority: ['certificate', 'network-config', 'device-gateway', 'admin'],
+              authority: ['certificate', 'network-config', 'device-gateway', 'protocol-supports', 'admin'],
               routes: [
                 {
                   path: '/network/certificate',
@@ -262,7 +262,7 @@ export default {
                   component: './network/certificate',
                 },
                 {
-                  path: '/device/protocol',
+                  path: '/network/protocol',
                   name: '协议管理',
                   authority: ['protocol-supports', 'admin'],
                   component: './device/protocol',
