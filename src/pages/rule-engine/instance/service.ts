@@ -66,3 +66,10 @@ export async function event(id: string, params: any) {
     params,
   });
 }
+
+export async function create(params: any) {
+  return request(`/jetlinks/rule-editor/flows/_create`, {
+    method: 'POST',
+    data: params
+  });
+}
