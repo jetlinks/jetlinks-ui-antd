@@ -30,8 +30,14 @@ const Login: React.FC<Props> = props => {
       dispatch({
         type: 'settings/fetchConfig',
         callback: () => {
-          document.getElementById('title-icon')!.href = settings.titleIcon;
-          document.getElementById('sys-title')!.textContent = settings.title;
+          const title = document.getElementById('sys-title');
+          const icon = document.getElementById('title-icon');
+          if (title) {
+            title.textContent = settings.title;
+          }
+          if (icon) {
+            icon.href = settings.titleIcon;
+          }
           setIsReady(true);
         }
       });
