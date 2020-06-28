@@ -1,8 +1,8 @@
 import BaseService from "@/services/crud";
-import { TenantItem } from "./data";
 import { defer, from } from "rxjs";
 import request from "@/utils/request";
 import { map, filter } from "rxjs/operators";
+import { TenantItem } from "./data";
 
 class Service extends BaseService<TenantItem>{
     public create = (params: any) => defer(() => from(request(`/jetlinks/tenant/_create`, {

@@ -2,6 +2,7 @@ import { Effect } from 'dva';
 import { Reducer } from 'redux';
 
 import { queryCurrent, query as queryUsers } from '@/services/user';
+import { router } from 'umi';
 
 export interface CurrentUser {
   avatar?: string;
@@ -56,6 +57,8 @@ const UserModel: UserModelType = {
           type: 'saveCurrentUser',
           payload: response.result.user,
         });
+      } else {
+        router.push('/user/login');
       }
     },
   },

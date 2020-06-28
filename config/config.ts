@@ -1,15 +1,15 @@
-import {IConfig, IPlugin} from 'umi-types';
+import { IConfig, IPlugin } from 'umi-types';
 import defaultSettings from './defaultSettings'; // https://umijs.org/config/
 import slash from 'slash2';
 import themePluginConfig from './themePluginConfig';
 import proxy from './proxy';
 import webpackPlugin from './plugin.config';
 
-const {pwa} = defaultSettings;
+const { pwa } = defaultSettings;
 
 // preview.pro.ant.design only do not use in your production ;
 // preview.pro.ant.design 专用环境变量，请不要在你的项目中使用它。
-const {ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION, REACT_APP_ENV} = process.env;
+const { ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION, REACT_APP_ENV } = process.env;
 const isAntDesignProPreview = ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION === 'site';
 
 const plugins: IPlugin[] = [
@@ -133,6 +133,7 @@ export default {
                   path: '/system/open-api',
                   name: 'OpenApi客户端',
                   authority: ['open-api', 'admin'],
+                  version: 'pro',
                   component: './system/open-api',
                 },
                 {
@@ -156,14 +157,16 @@ export default {
                 {
                   path: 'system/tenant',
                   name: '租户管理',
-                  // authority: ['tenant', 'admin'],
+                  authority: ['tenant', 'admin'],
+                  version: 'pro',
                   component: './system/tenant'
                 },
                 {
                   hideInMenu: true,
                   path: '/system/tenant/detail/:id',
                   name: '租户详情',
-                  // authority: ['device-product'],
+                  authority: ['device-product'],
+                  version: 'pro',
                   component: './system/tenant/detail',
                 },
               ],
@@ -210,6 +213,7 @@ export default {
                   path: '/device/group',
                   name: '设备分组',
                   authority: ['device-group', 'admin'],
+                  version: 'pro',
                   component: './device/group',
                 },
                 {
@@ -228,11 +232,13 @@ export default {
                   path: '/device/location',
                   name: '地理位置',
                   authority: ['geo-manager', 'admin'],
+                  version: 'pro',
                   component: './device/location',
                 }, {
                   path: '/device/firmware',
                   name: '固件升级',
                   authority: ['firmware-manager', 'admin'],
+                  version: 'pro',
                   component: './device/firmware',
                 }, {
                   hideInMenu: true,
@@ -310,6 +316,7 @@ export default {
                   name: '规则模型',
                   icon: 'appstore',
                   authority: ['rule-model', 'admin'],
+                  version: 'pro',
                   component: './rule-engine/model',
                 },
                 {
@@ -317,6 +324,7 @@ export default {
                   name: '规则实例',
                   icon: 'control',
                   authority: ['rule-instance', 'admin'],
+                  version: 'pro',
                   component: './rule-engine/instance',
                 },
                 {
