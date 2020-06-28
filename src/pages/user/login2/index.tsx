@@ -32,10 +32,10 @@ const Login: React.FC<Props> = props => {
         callback: () => {
           const title = document.getElementById('sys-title');
           const icon = document.getElementById('title-icon');
-          if (title) {
+          if (title && settings.title) {
             title.textContent = settings.title;
           }
-          if (icon) {
+          if (icon && settings.titleIcon) {
             icon.href = settings.titleIcon;
           }
           setIsReady(true);
