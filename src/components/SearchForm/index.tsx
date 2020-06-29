@@ -170,6 +170,6 @@ const SearchForm = (props: Props) => {
             </Row>
         </Form>
     )
-}
+};
 
 export default Form.create<Props>()(SearchForm);
