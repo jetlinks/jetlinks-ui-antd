@@ -165,7 +165,7 @@ export default {
                   hideInMenu: true,
                   path: '/system/tenant/detail/:id',
                   name: '租户详情',
-                  authority: ['device-product'],
+                  authority: ['tenant', 'admin'],
                   version: 'pro',
                   component: './system/tenant/detail',
                 },
