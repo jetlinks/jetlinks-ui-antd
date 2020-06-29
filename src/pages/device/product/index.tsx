@@ -112,11 +112,12 @@ const DeviceModel: React.FC<Props> = props => {
     apis.deviceProdcut.deviceCategory()
       .then((response: any) => {
         if (response.status === 200) {
-          let category: any = [];
-          response.result.map((item: any) => {
-            category.push({id: item.id, pId: item.parentId, value: item.id, title: item.name})
-          });
-          setCategoryList(category);
+          setCategoryList(response.result.map((item: any) => ({
+            id: item.id,
+            pId: item.parentId,
+            value: item.id,
+            title: item.name
+          })))
         }
       })
       .catch(() => {
