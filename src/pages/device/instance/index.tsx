@@ -13,7 +13,8 @@ import {
   Modal,
   Popconfirm,
   Row,
-  Select, Spin,
+  Select,
+  Spin,
   Table,
   Tooltip,
 } from 'antd';
@@ -310,20 +311,6 @@ const DeviceInstancePage: React.FC<Props> = props => {
       stateCount('');
     }
   }, []);
-
-  const saveDeviceInstance = (item: any) => {
-    dispatch({
-      type: 'deviceInstance/update',
-      payload: encodeQueryParam(item),
-      callback: (response: any) => {
-        if (response.status === 200) {
-          message.success('保存成功');
-          setAddVisible(false);
-          router.push(`/device/instance/save/${item.id}`);
-        }
-      },
-    });
-  };
 
   const onTableChange = (
     pagination: PaginationConfig,
@@ -665,9 +652,6 @@ const DeviceInstancePage: React.FC<Props> = props => {
             close={() => {
               setAddVisible(false);
               setCurrentItem({});
-            }}
-            save={(item: any) => {
-              saveDeviceInstance(item);
             }}
           />
         )}
