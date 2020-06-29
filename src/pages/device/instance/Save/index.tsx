@@ -1,16 +1,16 @@
 import React, {useEffect, useState} from 'react';
 import Form from 'antd/es/form';
 import {FormComponentProps} from 'antd/lib/form';
-import {Input, Modal, Select, TreeSelect} from 'antd';
+import {Input, message, Modal, Select, TreeSelect} from 'antd';
 import {ConnectState} from '@/models/connect';
 import {connect} from 'dva';
 import apis from '@/services';
 import {DeviceProduct} from '../../product/data.d';
 import {DeviceInstance} from '../data.d';
+import {router} from "umi";
 
 interface Props extends FormComponentProps {
   close: Function;
-  save: Function;
   data: Partial<DeviceInstance>;
 }
 
@@ -38,12 +38,38 @@ const Save: React.FC<Props> = props => {
       const product: Partial<DeviceProduct> =
         productList.find(i => i.id === fileValue.productId) || {};
 
-      props.save({
+      preservation({
         ...fileValue,
         productName: product.name,
         state: {text: "未激活", value: "notActive"},
       });
     });
+  };
+
+  const preservation = (item: any) => {
+    if (props.data.id) {
+      apis.deviceInstance.saveOrUpdate(item)
+        .then((response: any) => {
+          if (response.status === 200) {
+            message.success('保存成功');
+            props.close();
+            router.push(`/device/instance/save/${item.id}`);
+          }
+        })
+        .catch(() => {
+        });
+    } else {
+      apis.deviceInstance.saveDevice(item)
+        .then((response: any) => {
+          if (response.status === 200) {
+            message.success('保存成功');
+            props.close();
+            router.push(`/device/instance/save/${item.id}`);
+          }
+        })
+        .catch(() => {
+        });
+    }
   };
 
   useEffect(() => {
@@ -57,9 +83,9 @@ const Save: React.FC<Props> = props => {
       });
 
     apis.deviceProdcut.queryOrganization()
-      .then((res:any) => {
+      .then((res: any) => {
         if (res.status === 200) {
-          let orgList:any = [];
+          let orgList: any = [];
           res.result.map((item: any) => {
             orgList.push({id: item.id, pId: item.parentId, value: item.id, title: item.name})
           });
