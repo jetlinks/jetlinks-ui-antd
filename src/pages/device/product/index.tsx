@@ -109,24 +109,24 @@ const DeviceModel: React.FC<Props> = props => {
   };
 
   useEffect(() => {
-    apis.deviceProdcut
-      .protocolSupport()
-      .then(response => {
+    apis.deviceProdcut.deviceCategory()
+      .then((response: any) => {
         if (response.status === 200) {
-          setProtocolSupports(response.result.map((i: any) => ({id: i.id, name: i.name})));
+          let category: any = [];
+          response.result.map((item: any) => {
+            category.push({id: item.id, pId: item.parentId, value: item.id, title: item.name})
+          });
+          setCategoryList(category);
         }
       })
       .catch(() => {
       });
 
-    apis.deviceProdcut.deviceCategory()
-      .then((response: any) => {
+    apis.deviceProdcut
+      .protocolSupport()
+      .then(response => {
         if (response.status === 200) {
-          let category: any = [];
-          response.result.map((item: any, index: number) => {
-            category.push({id: item.id, pId: item.parentId, value: item.id, title: item.name})
-          });
-          setCategoryList(category);
+          setProtocolSupports(response.result.map((i: any) => ({id: i.id, name: i.name})));
         }
       })
       .catch(() => {
