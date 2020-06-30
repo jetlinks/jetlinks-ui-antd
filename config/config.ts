@@ -157,7 +157,7 @@ export default {
                 {
                   path: 'system/tenant',
                   name: '租户管理',
-                  authority: ['tenant', 'admin'],
+                  authority: ['tenant-side-manager', 'tenant-manager', 'admin'],
                   version: 'pro',
                   component: './system/tenant'
                 },
@@ -165,7 +165,7 @@ export default {
                   hideInMenu: true,
                   path: '/system/tenant/detail/:id',
                   name: '租户详情',
-                  authority: ['tenant', 'admin'],
+                  authority: ['tenant-side-manager', 'tenant-manager', 'admin'],
                   version: 'pro',
                   component: './system/tenant/detail',
                 },
