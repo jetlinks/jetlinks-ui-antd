@@ -53,7 +53,7 @@ const Import: React.FC<Props> = props => {
       .catch(() => {
       });
     return () => {
-      if (JSON.stringify(eventSource) !== '{}') {
+      if (Object.keys(eventSource).length !== 0) {
         eventSource.close();
       }
     };
@@ -140,13 +140,13 @@ const Import: React.FC<Props> = props => {
         setImportLoading(false);
         submitData();*/
         props.close();
-        if (JSON.stringify(eventSource) !== '{}') {
+        if (Object.keys(eventSource).length !== 0) {
           eventSource.close();
         }
       }}
       onCancel={() => {
         props.close();
-        if (JSON.stringify(eventSource) !== '{}') {
+        if (Object.keys(eventSource).length !== 0) {
           eventSource.close();
         }
       }}
