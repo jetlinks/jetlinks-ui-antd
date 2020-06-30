@@ -104,7 +104,6 @@ const DeviceInstancePage: React.FC<Props> = props => {
       type: 'deviceInstance/query',
       payload: encodeQueryParam(params),
     });
-    deviceIdList.splice(0, deviceIdList.length);
   };
 
   const delelteInstance = (record: any) => {
@@ -113,6 +112,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
       .then(response => {
         if (response.status === 200) {
           message.success('操作成功');
+          deviceIdList.splice(0, deviceIdList.length);
           handleSearch(searchParam);
         }
       })
@@ -126,6 +126,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
       .then(response => {
         if (response.status === 200) {
           message.success('操作成功');
+          deviceIdList.splice(0, deviceIdList.length);
           handleSearch(searchParam);
         }
       })
@@ -139,6 +140,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
       .then(response => {
         if (response.status === 200) {
           message.success('操作成功');
+          deviceIdList.splice(0, deviceIdList.length);
           handleSearch(searchParam);
         }
       })
@@ -411,6 +413,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
   const rowSelection = {
     onChange: (selectedRowKeys: any) => {
       setDeviceIdLIst(selectedRowKeys);
+      console.log(deviceIdList);
     },
   };
 
@@ -593,6 +596,9 @@ const DeviceInstancePage: React.FC<Props> = props => {
             <div className={styles.tableListForm}>
               <Search
                 search={(params: any) => {
+                  if (Object.keys(params).length === 0) {
+                    deviceIdList.splice(0, deviceIdList.length);
+                  }
                   if (product) {
                     params.productId = product;
                   }
