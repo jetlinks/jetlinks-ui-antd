@@ -304,6 +304,10 @@ const Editor: React.FC<Props> = props => {
         tabList={tableList}
         tabActiveKey={activeKey}
         onTabChange={(key: string) => {
+          if (!data.metadata){
+            message.error('产品物模型数据错误');
+            return;
+          }
           setActiveKey(key);
         }}
       >
