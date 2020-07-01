@@ -52,6 +52,7 @@ const Alarm: React.FC<Props> = props => {
   statusMap.set('已停止', 'error');
 
   const getProductAlarms = () => {
+    alarmDataList.splice(0, alarmDataList.length);
     apis.deviceAlarm.getProductAlarms(props.target, props.targetId)
       .then((response: any) => {
         if (response.status === 200) {
