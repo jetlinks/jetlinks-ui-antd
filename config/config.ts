@@ -1,15 +1,15 @@
-import { IConfig, IPlugin } from 'umi-types';
+import {IConfig, IPlugin} from 'umi-types';
 import defaultSettings from './defaultSettings'; // https://umijs.org/config/
 import slash from 'slash2';
 import themePluginConfig from './themePluginConfig';
 import proxy from './proxy';
 import webpackPlugin from './plugin.config';
 
-const { pwa } = defaultSettings;
+const {pwa} = defaultSettings;
 
 // preview.pro.ant.design only do not use in your production ;
 // preview.pro.ant.design 专用环境变量，请不要在你的项目中使用它。
-const { ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION, REACT_APP_ENV } = process.env;
+const {ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION, REACT_APP_ENV} = process.env;
 const isAntDesignProPreview = ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION === 'site';
 
 const plugins: IPlugin[] = [
@@ -231,16 +231,18 @@ export default {
                 {
                   path: '/device/location',
                   name: '地理位置',
-                  authority: ['geo-manager', 'admin'],
+                  authority: ['geo-manager'],
                   version: 'pro',
                   component: './device/location',
-                }, {
+                },
+                {
                   path: '/device/firmware',
                   name: '固件升级',
-                  authority: ['firmware-manager', 'admin'],
+                  authority: ['firmware-manager'],
                   version: 'pro',
                   component: './device/firmware',
-                }, {
+                },
+                {
                   hideInMenu: true,
                   path: '/device/firmware/save/:id',
                   name: '固件详情',
