@@ -139,7 +139,7 @@ const Editor: React.FC<Props> = props => {
       })
       .catch(() => {
         setSpinning(false);
-        message.error("物模型数据错误");
+        message.error("产品物模型数据错误");
       });
   };
 
