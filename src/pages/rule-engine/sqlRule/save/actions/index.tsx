@@ -172,25 +172,39 @@ const Action: React.FC<Props> = props => {
         </Col>
       );
     } else if (properties.valueType.type === 'boolean') {
-      return (
-        <Col span={6} style={{ paddingBottom: 10 }}>
-          <Select placeholder="选择属性值"
-                  defaultValue={actionData.configuration.message?.properties[propertiesData.id][properties.id] || undefined}
-                  onChange={(value: string) => {
-                    actionData.configuration.message.properties[propertiesData.id][properties.id] = value;
-                    setActionData({ ...actionData });
-                    submitData();
-                  }}
-          >
-            <Select.Option key={properties.valueType.trueValue}>
-              {`${properties.valueType.trueText}（${properties.valueType.trueValue}）`}
-            </Select.Option>
-            <Select.Option key={properties.valueType.falseValue}>
-              {`${properties.valueType.falseText}（${properties.valueType.falseValue}）`}
-            </Select.Option>
-          </Select>
-        </Col>
-      );
+      if (!propertiesData.valueType.trueValue || !propertiesData.valueType.falseValue) {
+        return (
+          <Col span={6} style={{paddingBottom: 10}}>
+            <Input key='value' placeholder='填写属性值'
+                   defaultValue={actionData.configuration.message?.properties[propertiesData.id][properties.id] || undefined}
+                   onChange={(event: any) => {
+                     actionData.configuration.message.properties[propertiesData.id][properties.id] = event.target.value;
+                     setActionData({ ...actionData });
+                     submitData();
+                   }}/>
+          </Col>
+        )
+      } else {
+        return (
+          <Col span={6} style={{ paddingBottom: 10 }}>
+            <Select placeholder="选择属性值"
+                    defaultValue={actionData.configuration.message?.properties[propertiesData.id][properties.id] || undefined}
+                    onChange={(value: string) => {
+                      actionData.configuration.message.properties[propertiesData.id][properties.id] = value;
+                      setActionData({ ...actionData });
+                      submitData();
+                    }}
+            >
+              <Select.Option key={properties.valueType.trueValue}>
+                {`${properties.valueType.trueText}（${properties.valueType.trueValue}）`}
+              </Select.Option>
+              <Select.Option key={properties.valueType.falseValue}>
+                {`${properties.valueType.falseText}（${properties.valueType.falseValue}）`}
+              </Select.Option>
+            </Select>
+          </Col>
+        );
+      }
     } else {
       return (
         <Col span={6} style={{ paddingBottom: 10 }}>
@@ -303,25 +317,39 @@ const Action: React.FC<Props> = props => {
         </Col>
       );
     } else if (propertiesData.valueType.type === 'boolean') {
-      return (
-        <Col span={6} style={{ paddingBottom: 10 }}>
-          <Select placeholder="选择属性值"
-                  defaultValue={actionData.configuration.message?.properties[propertiesData.id] || undefined}
-                  onChange={(value: string) => {
-                    actionData.configuration.message.properties[propertiesData.id] = value;
-                    setActionData({ ...actionData });
-                    submitData();
-                  }}
-          >
-            <Select.Option key={propertiesData.valueType.trueValue}>
-              {`${propertiesData.valueType.trueText}（${propertiesData.valueType.trueValue}）`}
-            </Select.Option>
-            <Select.Option key={propertiesData.valueType.falseValue}>
-              {`${propertiesData.valueType.falseText}（${propertiesData.valueType.falseValue}）`}
-            </Select.Option>
-          </Select>
-        </Col>
-      );
+      if (!propertiesData.valueType.trueValue || !propertiesData.valueType.falseValue) {
+        return (
+          <Col span={6} style={{paddingBottom: 10}}>
+            <Input key='value' placeholder='填写属性值'
+                   defaultValue={actionData.configuration.message?.properties[propertiesData.id] || undefined}
+                   onChange={(event: any) => {
+                     actionData.configuration.message.properties[propertiesData.id] = event.target.value;
+                     setActionData({...actionData});
+                     submitData();
+                   }}/>
+          </Col>
+        )
+      } else {
+        return (
+          <Col span={6} style={{ paddingBottom: 10 }}>
+            <Select placeholder="选择属性值"
+                    defaultValue={actionData.configuration.message?.properties[propertiesData.id] || undefined}
+                    onChange={(value: string) => {
+                      actionData.configuration.message.properties[propertiesData.id] = value;
+                      setActionData({ ...actionData });
+                      submitData();
+                    }}
+            >
+              <Select.Option key={propertiesData.valueType.trueValue}>
+                {`${propertiesData.valueType.trueText}（${propertiesData.valueType.trueValue}）`}
+              </Select.Option>
+              <Select.Option key={propertiesData.valueType.falseValue}>
+                {`${propertiesData.valueType.falseText}（${propertiesData.valueType.falseValue}）`}
+              </Select.Option>
+            </Select>
+          </Col>
+        );
+      }
     } else if (propertiesData.valueType.type === 'object') {
       return (
         propertiesData.valueType.properties?.map((item: any, index: number) => (

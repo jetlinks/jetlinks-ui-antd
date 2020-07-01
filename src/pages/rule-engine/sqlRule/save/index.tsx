@@ -97,7 +97,7 @@ const Save: React.FC<Props> = props => {
       onClose={() => props.close()}
       title={`${props.data?.id ? '编辑' : '新增'}数据转发`}
     >
-      <Form labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} style={{ paddingBottom: 20 }}>
+      <Form labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} style={{ paddingBottom: 20 }} key='sqlRule_form'>
         <Row>
           <Col span={12}>
             <Form.Item label="名称">

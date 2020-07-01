@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import Form, { FormComponentProps } from 'antd/lib/form';
-import { Card, Col, Icon, Input, message, Popconfirm, Row, Select } from 'antd';
-import { AlarmAction } from '@/pages/device/alarm/data';
+import React, {useEffect, useState} from 'react';
+import Form, {FormComponentProps} from 'antd/lib/form';
+import {Card, Col, Icon, Input, message, Popconfirm, Row, Select} from 'antd';
+import {AlarmAction} from '@/pages/device/alarm/data';
 import apis from '@/services';
 import encodeQueryParam from '@/utils/encodeParam';
 import Bind from '@/pages/device/gateway/bind';
@@ -52,7 +52,7 @@ const Action: React.FC<Props> = props => {
   const [arrayData, setArrayData] = useState(initState.arrayData);
 
   const submitData = () => {
-    props.save({ ...actionData });
+    props.save({...actionData});
   };
 
   useEffect(() => {
@@ -60,7 +60,7 @@ const Action: React.FC<Props> = props => {
     if (actionData.configuration) {
       setNotifyType(actionData.configuration.notifyType);
       if (actionData.executor === 'notifier') {
-        findNotifier({ id: notifyType });
+        findNotifier({id: notifyType});
       } else if (actionData.configuration.deviceId) {
         findDeviceById(actionData.configuration.deviceId);
       }
@@ -143,7 +143,7 @@ const Action: React.FC<Props> = props => {
           }
           actionData.configuration.deviceId = deviceId;
           actionData.configuration.productId = response.result?.productId;
-          setActionData({ ...actionData });
+          setActionData({...actionData});
           submitData();
         }
       }).catch(() => {
@@ -156,12 +156,12 @@ const Action: React.FC<Props> = props => {
     }
     if (properties.valueType.type === 'enum') {
       return (
-        <Col span={6} style={{ paddingBottom: 10 }}>
+        <Col span={6} style={{paddingBottom: 10}}>
           <Select placeholder="选择属性值"
                   defaultValue={actionData.configuration.message?.properties[propertiesData.id][properties.id] || undefined}
                   onChange={(value: string) => {
                     actionData.configuration.message.properties[propertiesData.id][properties.id] = value;
-                    setActionData({ ...actionData });
+                    setActionData({...actionData});
                     submitData();
                   }}
           >
@@ -173,12 +173,12 @@ const Action: React.FC<Props> = props => {
       );
     } else if (properties.valueType.type === 'boolean') {
       return (
-        <Col span={6} style={{ paddingBottom: 10 }}>
+        <Col span={6} style={{paddingBottom: 10}}>
           <Select placeholder="选择属性值"
                   defaultValue={actionData.configuration.message?.properties[propertiesData.id][properties.id] || undefined}
                   onChange={(value: string) => {
                     actionData.configuration.message.properties[propertiesData.id][properties.id] = value;
-                    setActionData({ ...actionData });
+                    setActionData({...actionData});
                     submitData();
                   }}
           >
@@ -193,12 +193,12 @@ const Action: React.FC<Props> = props => {
       );
     } else {
       return (
-        <Col span={6} style={{ paddingBottom: 10 }}>
+        <Col span={6} style={{paddingBottom: 10}}>
           <Input key='value' placeholder='填写属性值'
                  defaultValue={actionData.configuration.message?.properties[propertiesData.id][properties.id] || undefined}
                  onChange={(event: any) => {
                    actionData.configuration.message.properties[propertiesData.id][properties.id] = event.target.value;
-                   setActionData({ ...actionData });
+                   setActionData({...actionData});
                    submitData();
                  }}/>
         </Col>
@@ -213,12 +213,12 @@ const Action: React.FC<Props> = props => {
 
     if (propertiesData.valueType.type === 'enum') {
       return (
-        <Col span={6} style={{ paddingBottom: 10 }}>
+        <Col span={6} style={{paddingBottom: 10}}>
           <Select placeholder="选择属性值"
                   defaultValue={actionData.configuration.message?.properties[propertiesData.id] || undefined}
                   onChange={(value: string) => {
                     actionData.configuration.message.properties[propertiesData.id] = value;
-                    setActionData({ ...actionData });
+                    setActionData({...actionData});
                     submitData();
                   }}
           >
@@ -232,26 +232,26 @@ const Action: React.FC<Props> = props => {
       return (
         <Col span={24}>
           {arrayData[0] && arrayData.map((value: string, index: number) => (
-            <Row key={`array_${index}`} style={{ paddingBottom: 10 }}>
+            <Row key={`array_${index}`} style={{paddingBottom: 10}}>
               <Col span={4}>
                 <Input
                   defaultValue={value}
                   onChange={event => {
                     arrayData.splice(index, 1, event.target.value);
                     actionData.configuration.message.properties[propertiesData.id] = arrayData;
-                    setActionData({ ...actionData });
+                    setActionData({...actionData});
                     submitData();
                   }}
                 />
               </Col>
-              <Col span={2} style={{ textAlign: 'center', paddingTop: 10 }}>
+              <Col span={2} style={{textAlign: 'center', paddingTop: 10}}>
                 {index === 0 ? (
                   (arrayData.length - 1) === 0 ? (
                     <Icon type="plus-circle"
                           onClick={() => {
                             arrayData.push(undefined);
                             actionData.configuration.message.properties[propertiesData.id] = arrayData;
-                            setActionData({ ...actionData });
+                            setActionData({...actionData});
                             submitData();
                           }}
                     />
@@ -260,7 +260,7 @@ const Action: React.FC<Props> = props => {
                           onClick={() => {
                             arrayData.splice(index, 1);
                             actionData.configuration.message.properties[propertiesData.id] = arrayData;
-                            setActionData({ ...actionData });
+                            setActionData({...actionData});
                             submitData();
                           }}
                     />
@@ -272,16 +272,16 @@ const Action: React.FC<Props> = props => {
                             onClick={() => {
                               arrayData.push(undefined);
                               actionData.configuration.message.properties[propertiesData.id] = arrayData;
-                              setActionData({ ...actionData });
+                              setActionData({...actionData});
                               submitData();
                             }}
                       />
-                      <Icon style={{ paddingLeft: 10 }}
+                      <Icon style={{paddingLeft: 10}}
                             type="minus-circle"
                             onClick={() => {
                               arrayData.splice(index, 1);
                               actionData.configuration.message.properties[propertiesData.id] = arrayData;
-                              setActionData({ ...actionData });
+                              setActionData({...actionData});
                               submitData();
                             }}
                       />
@@ -291,7 +291,7 @@ const Action: React.FC<Props> = props => {
                           onClick={() => {
                             arrayData.splice(index, 1);
                             actionData.configuration.message.properties[propertiesData.id] = arrayData;
-                            setActionData({ ...actionData });
+                            setActionData({...actionData});
                             submitData();
                           }}
                     />
@@ -303,29 +303,43 @@ const Action: React.FC<Props> = props => {
         </Col>
       );
     } else if (propertiesData.valueType.type === 'boolean') {
-      return (
-        <Col span={6} style={{ paddingBottom: 10 }}>
-          <Select placeholder="选择属性值"
-                  defaultValue={actionData.configuration.message?.properties[propertiesData.id] || undefined}
-                  onChange={(value: string) => {
-                    actionData.configuration.message.properties[propertiesData.id] = value;
-                    setActionData({ ...actionData });
-                    submitData();
-                  }}
-          >
-            <Select.Option key={propertiesData.valueType.trueValue}>
-              {`${propertiesData.valueType.trueText}（${propertiesData.valueType.trueValue}）`}
-            </Select.Option>
-            <Select.Option key={propertiesData.valueType.falseValue}>
-              {`${propertiesData.valueType.falseText}（${propertiesData.valueType.falseValue}）`}
-            </Select.Option>
-          </Select>
-        </Col>
-      );
+      if (!propertiesData.valueType.trueValue || !propertiesData.valueType.falseValue) {
+        return (
+          <Col span={6} style={{paddingBottom: 10}}>
+            <Input key='value' placeholder='填写属性值'
+                   defaultValue={actionData.configuration.message?.properties[propertiesData.id] || undefined}
+                   onChange={(event: any) => {
+                     actionData.configuration.message.properties[propertiesData.id] = event.target.value;
+                     setActionData({...actionData});
+                     submitData();
+                   }}/>
+          </Col>
+        )
+      } else {
+        return (
+          <Col span={6} style={{paddingBottom: 10}}>
+            <Select placeholder="选择属性值"
+                    defaultValue={actionData.configuration.message?.properties[propertiesData.id] || undefined}
+                    onChange={(value: string) => {
+                      actionData.configuration.message.properties[propertiesData.id] = value;
+                      setActionData({...actionData});
+                      submitData();
+                    }}
+            >
+              <Select.Option key={propertiesData.valueType.trueValue}>
+                {`${propertiesData.valueType.trueText}（${propertiesData.valueType.trueValue}）`}
+              </Select.Option>
+              <Select.Option key={propertiesData.valueType.falseValue}>
+                {`${propertiesData.valueType.falseText}（${propertiesData.valueType.falseValue}）`}
+              </Select.Option>
+            </Select>
+          </Col>
+        );
+      }
     } else if (propertiesData.valueType.type === 'object') {
       return (
         propertiesData.valueType.properties?.map((item: any, index: number) => (
-          <Col span={24} style={{ marginLeft: -8 }}>
+          <Col span={24} style={{marginLeft: -8}}>
             <div key={`object${item.id}_${index}`}>
               <Col span={4}>
                 <Input value={`${item.name}(${item.id})`} disabled={true}/>
@@ -337,12 +351,12 @@ const Action: React.FC<Props> = props => {
       );
     } else {
       return (
-        <Col span={6} style={{ paddingBottom: 10 }}>
+        <Col span={6} style={{paddingBottom: 10}}>
           <Input key='value' placeholder='填写属性值'
                  defaultValue={actionData.configuration.message?.properties[propertiesData.id] || undefined}
                  onChange={(event: any) => {
                    actionData.configuration.message.properties[propertiesData.id] = event.target.value;
-                   setActionData({ ...actionData });
+                   setActionData({...actionData});
                    submitData();
                  }}/>
         </Col>
@@ -355,12 +369,12 @@ const Action: React.FC<Props> = props => {
       actionData.configuration.message.inputs = [];
     }
     if (item.valueType.type === 'enum') {
-      return (<Col span={6} style={{ paddingBottom: 10 }}>
+      return (<Col span={6} style={{paddingBottom: 10}}>
         <Select placeholder="选择调用参数"
                 defaultValue={actionData.configuration.message?.inputs[index]?.value || undefined}
                 onChange={(value: string) => {
-                  actionData.configuration.message.inputs.splice(index, 1, { name: item.id, value: value });
-                  setActionData({ ...actionData });
+                  actionData.configuration.message.inputs.splice(index, 1, {name: item.id, value: value});
+                  setActionData({...actionData});
                   submitData();
                 }}
         >
@@ -370,12 +384,12 @@ const Action: React.FC<Props> = props => {
         </Select>
       </Col>);
     } else if (item.valueType.type === 'boolean') {
-      return (<Col span={6} style={{ paddingBottom: 10 }}>
+      return (<Col span={6} style={{paddingBottom: 10}}>
         <Select placeholder="选择调用参数"
                 defaultValue={actionData.configuration.message?.inputs[index]?.value || undefined}
                 onChange={(value: string) => {
-                  actionData.configuration.message.inputs.splice(index, 1, { name: item.id, value: value });
-                  setActionData({ ...actionData });
+                  actionData.configuration.message.inputs.splice(index, 1, {name: item.id, value: value});
+                  setActionData({...actionData});
                   submitData();
                 }}
         >
@@ -389,7 +403,7 @@ const Action: React.FC<Props> = props => {
       </Col>);
     } else {
       return (
-        <Col span={6} style={{ paddingBottom: 10 }}>
+        <Col span={6} style={{paddingBottom: 10}}>
           <Input key='value' placeholder='填写调用参数'
                  defaultValue={actionData.configuration.message?.inputs[index]?.value || undefined}
                  onChange={(event: any) => {
@@ -397,7 +411,7 @@ const Action: React.FC<Props> = props => {
                      name: item.id,
                      value: event.target.value,
                    });
-                   setActionData({ ...actionData });
+                   setActionData({...actionData});
                    submitData();
                  }}/>
         </Col>
@@ -410,7 +424,7 @@ const Action: React.FC<Props> = props => {
       case 'WRITE_PROPERTY':
         return (
           <div>
-            <Col span={6} style={{ paddingBottom: 10 }}>
+            <Col span={6} style={{paddingBottom: 10}}>
               <Select placeholder="物模型属性"
                       defaultValue={actionData.configuration.message?.properties ? Object.keys(actionData.configuration.message?.properties)[0] : undefined}
                       onChange={(value: string, data: any) => {
@@ -429,13 +443,13 @@ const Action: React.FC<Props> = props => {
       case 'INVOKE_FUNCTION':
         return (
           <div>
-            <Col span={6} style={{ paddingBottom: 10 }}>
+            <Col span={6} style={{paddingBottom: 10}}>
               <Select placeholder="物模型功能"
                       defaultValue={actionData.configuration.message.function || undefined}
                       onChange={(value: string, data: any) => {
                         setFunctionData(data.props.data);
                         actionData.configuration.message.function = value;
-                        setActionData({ ...actionData });
+                        setActionData({...actionData});
                         submitData();
                       }}
               >
@@ -446,7 +460,7 @@ const Action: React.FC<Props> = props => {
             </Col>
             {functionData.id && functionData.inputs.map((item: any, index: number) => {
               return (
-                <Col span={24} style={{ marginLeft: -8 }}>
+                <Col span={24} style={{marginLeft: -8}}>
                   <div key={`function_${item.id}_${index}`}>
                     <Col span={4}>
                       <Input value={`${item.name}(${item.id})`} disabled={true}/>
@@ -480,7 +494,7 @@ const Action: React.FC<Props> = props => {
                       onChange={(value: string, event: any) => {
                         findNotifier(event.props.data);
                         actionData.configuration.notifyType = value;
-                        setActionData({ ...actionData });
+                        setActionData({...actionData});
                         submitData();
                       }}
               >
@@ -494,7 +508,7 @@ const Action: React.FC<Props> = props => {
                       onChange={(value: string, event: any) => {
                         findTemplate(event.props.data);
                         actionData.configuration.notifierId = value;
-                        setActionData({ ...actionData });
+                        setActionData({...actionData});
                         submitData();
                       }}
               >
@@ -507,7 +521,7 @@ const Action: React.FC<Props> = props => {
               <Select placeholder="选择通知模板" value={actionData.configuration?.templateId || undefined}
                       onChange={(value: string) => {
                         actionData.configuration.templateId = value;
-                        setActionData({ ...actionData });
+                        setActionData({...actionData});
                         submitData();
                       }}
               >
@@ -534,7 +548,7 @@ const Action: React.FC<Props> = props => {
                         onChange={(value: string) => {
                           setMessageType(() => value);
                           actionData.configuration.message.messageType = value;
-                          setActionData({ ...actionData });
+                          setActionData({...actionData});
                           submitData();
                         }}>
                   <Select.Option value="WRITE_PROPERTY">设置属性</Select.Option>
@@ -551,24 +565,24 @@ const Action: React.FC<Props> = props => {
   };
 
   return (
-    <div style={{ paddingBottom: 5 }}>
-      <Card size="small" bordered={false} style={{ backgroundColor: '#F5F5F6' }}>
+    <div style={{paddingBottom: 5}}>
+      <Card size="small" bordered={false} style={{backgroundColor: '#F5F5F6'}}>
         <Row>
           <span>执行动作: {props.position + 1}</span>
           <Popconfirm title="确认删除此执行动作？"
                       onConfirm={() => props.remove(props.position)}
           >
-            <a style={{ paddingLeft: 30 }}>删除</a>
+            <a style={{paddingLeft: 30}}>删除</a>
           </Popconfirm>
         </Row>
 
-        <Row gutter={16} key={props.position + 1} style={{ paddingLeft: 10 }}>
+        <Row gutter={16} key={props.position + 1} style={{paddingLeft: 10}}>
           <Col span={4}>
             <Select placeholder="选择动作类型" value={actionData.executor} key="trigger"
                     onChange={(value: string) => {
                       setActionType(value);
                       actionData.executor = value;
-                      setActionData({ ...actionData });
+                      setActionData({...actionData});
                       submitData();
                     }}
             >
