@@ -191,7 +191,7 @@ const IntroduceRow = ({loading, visitData}: { loading: boolean; visitData: IVisi
               case 'deviceCount':
                 setDeviceCount(item.data.value);
                 break;
-              case 'notActive':
+              case 'deviceNotActive':
                 setDeviceNotActive(item.data.value);
                 break;
               default:
