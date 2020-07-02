@@ -1,12 +1,12 @@
-import React, { Fragment, useEffect, useState } from 'react';
-import { ColumnProps, PaginationConfig, SorterResult } from 'antd/es/table';
-import { Card, Table, Tag } from 'antd';
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
+import React, {Fragment, useEffect, useState} from 'react';
+import {ColumnProps, PaginationConfig, SorterResult} from 'antd/es/table';
+import {Card, Table, Tag} from 'antd';
+import {PageHeaderWrapper} from '@ant-design/pro-layout';
 import styles from '@/utils/table.less';
-import { connect } from 'dva';
+import {connect} from 'dva';
 import moment from 'moment';
-import { SystemLoggerItem } from './data.d';
-import { Dispatch, ConnectState } from '@/models/connect';
+import {SystemLoggerItem} from './data.d';
+import {ConnectState, Dispatch} from '@/models/connect';
 import encodeQueryParam from '@/utils/encodeParam';
 import Save from './save';
 import SearchForm from '@/components/SearchForm';
@@ -26,13 +26,13 @@ interface State {
 }
 
 const SystemLoggerList: React.FC<Props> = props => {
-  const { dispatch } = props;
+  const {dispatch} = props;
 
-  const { result } = props.systemLogger;
+  const {result} = props.systemLogger;
 
   const initState: State = {
     data: result,
-    searchParam: { pageSize: 10, sorts: { order: 'desc', field: 'createTime' } },
+    searchParam: {pageSize: 10},
     saveVisible: false,
     current: {},
   };
@@ -82,6 +82,7 @@ const SystemLoggerList: React.FC<Props> = props => {
       width: 200,
       sorter: true,
       ellipsis: true,
+      defaultSortOrder: 'descend',
       render: text => moment(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
@@ -152,7 +153,7 @@ const SystemLoggerList: React.FC<Props> = props => {
             <SearchForm
               search={(params: any) => {
                 setSearchParam(params);
-                handleSearch({ terms: params, pageSize: 10, sorts: searchParam.sorts });
+                handleSearch({terms: params, pageSize: 10, sorts: searchParam.sorts});
               }}
               formItems={[
                 {
@@ -218,7 +219,7 @@ const SystemLoggerList: React.FC<Props> = props => {
     </PageHeaderWrapper>
   );
 };
-export default connect(({ systemLogger, loading }: ConnectState) => ({
+export default connect(({systemLogger, loading}: ConnectState) => ({
   systemLogger,
   loading: loading.models.systemLogger,
 }))(SystemLoggerList);
