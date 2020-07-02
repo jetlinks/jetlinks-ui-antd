@@ -413,7 +413,6 @@ const DeviceInstancePage: React.FC<Props> = props => {
   const rowSelection = {
     onChange: (selectedRowKeys: any) => {
       setDeviceIdLIst(selectedRowKeys);
-      console.log(deviceIdList);
     },
   };
 
