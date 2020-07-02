@@ -1,15 +1,15 @@
-import {IConfig, IPlugin} from 'umi-types';
+import { IConfig, IPlugin } from 'umi-types';
 import defaultSettings from './defaultSettings'; // https://umijs.org/config/
 import slash from 'slash2';
 import themePluginConfig from './themePluginConfig';
 import proxy from './proxy';
 import webpackPlugin from './plugin.config';
 
-const {pwa} = defaultSettings;
+const { pwa } = defaultSettings;
 
 // preview.pro.ant.design only do not use in your production ;
 // preview.pro.ant.design 专用环境变量，请不要在你的项目中使用它。
-const {ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION, REACT_APP_ENV} = process.env;
+const { ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION, REACT_APP_ENV } = process.env;
 const isAntDesignProPreview = ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION === 'site';
 
 const plugins: IPlugin[] = [
@@ -104,34 +104,38 @@ export default {
             {
               path: '/',
               redirect: '/analysis',
+
             },
             {
               name: '统计分析',
               path: '/analysis',
-              icon: 'bar-chart',
+              iconfont: 'icon-tongjifenxi',
               component: './analysis',
             },
             {
               path: 'system',
               name: '系统设置',
-              icon: 'setting',
+              iconfont: 'icon-shezhi',
               authority: ['user', 'role', 'permission', 'dictionary', 'admin'],
               routes: [
                 {
                   path: '/system/user',
                   name: '用户管理',
+                  iconfont: 'icon-yonghuguanli',
                   authority: ['user', 'admin'],
                   component: './system/users',
                 },
                 {
                   path: '/system/permission',
                   name: '权限管理',
+                  iconfont: 'icon-quanxianguanli',
                   authority: ['permission', 'admin'],
                   component: './system/permission',
                 },
                 {
                   path: '/system/open-api',
                   name: 'OpenApi客户端',
+                  iconfont: 'icon-APIguanli',
                   authority: ['open-api', 'admin'],
                   version: 'pro',
                   component: './system/open-api',
@@ -139,24 +143,28 @@ export default {
                 {
                   path: '/system/org',
                   name: '机构管理',
+                  iconfont: 'icon-jigoubianzhi',
                   authority: ['dimension', 'admin'],
                   component: './system/org',
                 },
                 {
                   path: '/system/role',
                   name: '角色管理',
+                  iconfont: 'icon-jiaoseguanli1',
                   authority: ['dimension', 'admin'],
                   component: './system/role',
                 },
                 {
                   path: '/system/config',
                   name: '系统配置',
+                  iconfont: 'icon-xitongpeizhi',
                   authority: ['system-config', 'admin'],
                   component: './system/config',
                 },
                 {
                   path: 'system/tenant',
                   name: '租户管理',
+                  iconfont: 'icon-erji-zuhuguanli',
                   authority: ['tenant-side-manager', 'tenant-manager', 'admin'],
                   version: 'pro',
                   component: './system/tenant'
@@ -174,12 +182,13 @@ export default {
             {
               path: 'device',
               name: '设备管理',
-              icon: 'usb',
+              iconfont: 'icon-device-manage',
               authority: ['device-product', 'device-instance', 'admin'],
               routes: [
                 {
                   path: '/device/product',
                   name: '设备产品',
+                  iconfont: 'icon-shebei',
                   authority: ['device-product', 'admin'],
                   component: './device/product',
                 },
@@ -187,6 +196,7 @@ export default {
                   hideInMenu: true,
                   path: '/device/product/save/:id',
                   name: '设备产品详情',
+                  iconfont: 'icon-shebei',
                   // authority: ['device-product'],
                   component: './device/product/save/Detail',
                 },
@@ -194,12 +204,14 @@ export default {
                   hideInMenu: true,
                   path: '/device/product/add',
                   name: '添加设备产品',
+                  iconfont: 'icon-shebei',
                   // authority: ['device-product'],
                   component: './device/product/save/add/index.tsx',
                 },
                 {
                   path: '/device/instance',
                   name: '设备实例',
+                  iconfont: 'icon-shebei1',
                   authority: ['device-instance', 'admin'],
                   component: './device/instance',
                 },
@@ -207,6 +219,7 @@ export default {
                   hideInMenu: true,
                   path: '/device/instance/save/:id',
                   name: '设备详情',
+                  iconfont: 'icon-shebei1',
                   component: './device/instance/editor',
                 },
                 {
@@ -214,17 +227,20 @@ export default {
                   name: '设备分组',
                   authority: ['device-group', 'admin'],
                   version: 'pro',
+                  iconfont: 'icon-shebeifenzuguanli',
                   component: './device/group',
                 },
                 {
                   hideInMenu: true,
                   path: '/device/instance/add',
                   name: '添加设备实例',
+                  iconfont: 'icon-shebeifenzuguanli',
                   component: './device/instance/editor',
                 },
                 {
                   path: '/device/gateway',
                   name: '网关设备',
+                  iconfont: 'icon-Group',
                   authority: ['device-gateway', 'admin'],
                   component: './device/gateway',
                 },
@@ -233,6 +249,7 @@ export default {
                   name: '地理位置',
                   authority: ['geo-manager'],
                   version: 'pro',
+                  iconfont: 'icon-diliweizhi',
                   component: './device/location',
                 },
                 {
@@ -240,12 +257,14 @@ export default {
                   name: '固件升级',
                   authority: ['firmware-manager'],
                   version: 'pro',
+                  iconfont: 'icon-gujianshengji',
                   component: './device/firmware',
                 },
                 {
                   hideInMenu: true,
                   path: '/device/firmware/save/:id',
                   name: '固件详情',
+                  iconfont: 'icon-gujianshengji',
                   component: './device/firmware/editor',
                 },
               ],
@@ -253,33 +272,34 @@ export default {
             {
               path: 'network',
               name: '设备接入',
-              icon: 'appstore',
+              iconfont: 'icon-shebei',
               authority: ['certificate', 'network-config', 'device-gateway', 'protocol-supports', 'admin'],
               routes: [
                 {
                   path: '/network/certificate',
                   name: '证书管理',
-                  icon: 'book',
+                  iconfont: 'icon-zhengshuguanli-',
                   authority: ['certificate', 'admin'],
                   component: './network/certificate',
                 },
                 {
                   path: '/network/protocol',
                   name: '协议管理',
+                  iconfont: 'icon-xieyiguanli',
                   authority: ['protocol-supports', 'admin'],
                   component: './device/protocol',
                 },
                 {
                   path: '/network/type',
                   name: '网络组件',
-                  icon: 'flag',
+                  iconfont: 'icon-zujian',
                   authority: ['network-config', 'admin'],
                   component: './network/type',
                 },
                 {
                   path: '/network/gateway',
                   name: '设备网关',
-                  icon: 'thunderbolt',
+                  iconfont: 'icon-shebei',
                   authority: ['device-gateway', 'admin'],
                   component: './network/gateway',
                 },
@@ -288,20 +308,20 @@ export default {
             {
               path: 'notice',
               name: '通知管理',
-              icon: 'sound',
+              iconfont: 'icon-tongzhiguanli',
               authority: ['certificate', 'network-config', 'device-gateway', 'admin'],
               routes: [
                 {
                   path: '/notice/config',
                   name: '通知配置',
-                  icon: 'setting',
+                  iconfont: 'icon-SUI_tongzhipeizhi',
                   authority: ['notifier', 'admin'],
                   component: './notice/config',
                 },
                 {
                   path: 'notice/template',
                   name: '通知模版',
-                  icon: 'tags',
+                  iconfont: 'icon-tongzhiguanli',
                   authority: ['template', 'admin'],
                   component: './notice/template',
                 },
@@ -310,13 +330,13 @@ export default {
             {
               path: 'rule-engine',
               name: '规则引擎',
-              icon: 'share-alt',
+              iconfont: 'icon-guizeyinqing',
               authority: ['rule-model', 'rule-instance', 'sql-rule', 'admin'],
               routes: [
                 {
                   path: '/rule-engine/model',
                   name: '规则模型',
-                  icon: 'appstore',
+                  iconfont: 'icon-xian-buguize-moxing',
                   authority: ['rule-model', 'admin'],
                   version: 'pro',
                   component: './rule-engine/model',
@@ -324,7 +344,7 @@ export default {
                 {
                   path: '/rule-engine/instance',
                   name: '规则实例',
-                  icon: 'control',
+                  iconfont: 'icon-hangweiguizeshili',
                   authority: ['rule-instance', 'admin'],
                   version: 'pro',
                   component: './rule-engine/instance',
@@ -332,7 +352,7 @@ export default {
                 {
                   path: './rule-engine/sqlRule',
                   name: '数据转发',
-                  icon: 'control',
+                  iconfont: 'icon-datatransfer',
                   authority: ['rule-instance', 'admin'],
                   component: './rule-engine/sqlRule',
                 },
@@ -353,20 +373,20 @@ export default {
             {
               path: 'logger',
               name: '日志管理',
-              icon: 'wallet',
+              iconfont: 'icon-rizhiguanli',
               authority: ['system-logger', 'access-logger', 'admin'],
               routes: [
                 {
                   path: './logger/access',
                   name: '访问日志',
-                  icon: 'ordered-list',
+                  iconfont: 'icon-yonghufangwenrizhi',
                   authority: ['access-logger', 'admin'],
                   component: './logger/access',
                 },
                 {
                   path: './logger/system',
                   name: '系统日志',
-                  icon: 'bars',
+                  iconfont: 'icon-xitongrizhi',
                   authority: ['system-logger', 'admin'],
                   component: './logger/system',
                 },
