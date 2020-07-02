@@ -249,6 +249,8 @@ const Template: React.FC<Props> = props => {
               {
                 dataIndex: 'id',
                 title: 'ID',
+
+                defaultSortOrder: 'descend',
               },
               {
                 dataIndex: 'name',
