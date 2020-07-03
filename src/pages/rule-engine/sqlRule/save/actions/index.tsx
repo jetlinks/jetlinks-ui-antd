@@ -459,10 +459,10 @@ const Action: React.FC<Props> = props => {
           <div>
             <Col span={6} style={{ paddingBottom: 10 }}>
               <Select placeholder="物模型功能"
-                      defaultValue={actionData.configuration.message.function || undefined}
+                      defaultValue={actionData.configuration.message.functionId || undefined}
                       onChange={(value: string, data: any) => {
                         setFunctionData(data.props.data);
-                        actionData.configuration.message.function = value;
+                        actionData.configuration.message.functionId = value;
                         setActionData({ ...actionData });
                         submitData();
                       }}
