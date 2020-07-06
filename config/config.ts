@@ -247,7 +247,7 @@ export default {
                 {
                   path: '/device/location',
                   name: '地理位置',
-                  authority: ['geo-manager'],
+                  authority: ['geo-manager', 'admin'],
                   version: 'pro',
                   iconfont: 'icon-diliweizhi',
                   component: './device/location',
@@ -255,7 +255,7 @@ export default {
                 {
                   path: '/device/firmware',
                   name: '固件升级',
-                  authority: ['firmware-manager'],
+                  authority: ['firmware-manager', 'admin'],
                   version: 'pro',
                   iconfont: 'icon-gujianshengji',
                   component: './device/firmware',

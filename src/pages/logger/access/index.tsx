@@ -1,13 +1,12 @@
-import React, { Fragment, useEffect, useState } from 'react';
-import { ColumnProps, PaginationConfig, SorterResult } from 'antd/es/table';
-import { Card, Table, Tag } from 'antd';
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
+import React, {Fragment, useEffect, useState} from 'react';
+import {ColumnProps, PaginationConfig, SorterResult} from 'antd/es/table';
+import {Card, Table, Tag} from 'antd';
+import {PageHeaderWrapper} from '@ant-design/pro-layout';
 import styles from '@/utils/table.less';
-import { connect } from 'dva';
+import {connect} from 'dva';
 import moment from 'moment';
-import Search from './search';
-import { AccessLoggerItem } from './data.d';
-import { Dispatch, ConnectState } from '@/models/connect';
+import {AccessLoggerItem} from './data.d';
+import {ConnectState, Dispatch} from '@/models/connect';
 import encodeQueryParam from '@/utils/encodeParam';
 import Save from './save';
 import SearchForm from '@/components/SearchForm';
@@ -27,13 +26,13 @@ interface State {
 }
 
 const AccessLoggerList: React.FC<Props> = props => {
-  const { dispatch } = props;
+  const {dispatch} = props;
 
-  const { result } = props.accessLogger;
+  const {result} = props.accessLogger;
 
   const initState: State = {
     data: result,
-    searchParam: { pageSize: 10, sorts: { order: 'desc', field: 'requestTime' } },
+    searchParam: {pageSize: 10},
     saveVisible: false,
     current: {},
   };
@@ -94,6 +93,7 @@ const AccessLoggerList: React.FC<Props> = props => {
       title: '请求时间',
       dataIndex: 'requestTime',
       sorter: true,
+      defaultSortOrder: 'descend',
       // ellipsis: true,
       render: text => moment(text).format('YYYY-MM-DD HH:mm:ss'),
     },
@@ -172,7 +172,7 @@ const AccessLoggerList: React.FC<Props> = props => {
             <SearchForm
               search={(params: any) => {
                 setSearchParam(params);
-                handleSearch({ terms: params, pageSize: 10, sorts: searchParam.sorts });
+                handleSearch({terms: params, pageSize: 10, sorts: searchParam.sorts});
               }}
               formItems={[
                 {
@@ -201,7 +201,7 @@ const AccessLoggerList: React.FC<Props> = props => {
                   key: 'requestTime$btw',
                   type: 'dateTimeRange',
                   props: {
-                    showTime: { format: 'HH:mm' },
+                    showTime: {format: 'HH:mm'},
                     format: "YYYY-MM-DD HH:mm",
                     placeholder: ['开始时间', '结束时间'],
                   }
@@ -246,7 +246,7 @@ const AccessLoggerList: React.FC<Props> = props => {
     </PageHeaderWrapper>
   );
 };
-export default connect(({ accessLogger, loading }: ConnectState) => ({
+export default connect(({accessLogger, loading}: ConnectState) => ({
   accessLogger,
   loading: loading.models.accessLogger,
 }))(AccessLoggerList);

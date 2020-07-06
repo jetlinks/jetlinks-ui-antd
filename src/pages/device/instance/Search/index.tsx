@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import Form, {FormComponentProps} from 'antd/lib/form';
-import {Button, Col, Icon, Input, Row, Select, TreeSelect} from 'antd';
+import {Button, Col, Input, Row, Select, TreeSelect} from 'antd';
 import apis from '@/services';
 import SearchTags from "@/pages/device/instance/Search/tags/tags";
 
@@ -63,7 +63,7 @@ const Search: React.FC<Props> = props => {
       data.value = JSON.stringify(tagsData);
     }
     map[data.parameter] = data.value;
-    console.log(map);
+
     props.search(map);
   };
 

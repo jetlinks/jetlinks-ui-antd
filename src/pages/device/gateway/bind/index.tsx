@@ -111,6 +111,7 @@ const DeviceGatewayBind: React.FC<Props> = props => {
       ellipsis: true,
       render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
       sorter: true,
+      defaultSortOrder: 'descend',
     },
     {
       title: '状态',

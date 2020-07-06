@@ -38,7 +38,7 @@ const Device = (props: Props) => {
                     assetType: 'device',
                     memberId: props.user,
                 }),
-                state: 'active'
+                state: 'online'
             }
         })).subscribe(resp => {
             setActive(resp)

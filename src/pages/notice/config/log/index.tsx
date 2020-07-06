@@ -23,6 +23,7 @@ const Logger = (props: Props) => {
         dataIndex: 'notifyTime',
         title: '时间',
         sorter: true,
+        defaultSortOrder: 'descend',
         render: (text: any) => text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/',
     },
     {

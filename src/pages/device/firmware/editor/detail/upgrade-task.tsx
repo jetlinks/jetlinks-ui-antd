@@ -80,6 +80,7 @@ const UpgradeTask: React.FC<Props> = (props) => {
       width: '200px',
       render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
       sorter: true,
+      defaultSortOrder: 'descend',
     },
     {
       title: '操作',
