@@ -60,7 +60,7 @@ const menuDataRender = (menuList: MenuDataItem[]): MenuDataItem[] => {
   return menuList.map(item => {
     const localItem: any = {
       ...item,
-      icon: <MenuFont type={item.iconfont} />,
+      // icon: <MenuFont type={item.iconfont} />,
       children: item.children ? menuDataRender(item.children) : []
     };
     return localItem?.version && version === 'community' ? [] : Authorized.check(item.authority, localItem, null) as MenuDataItem;
