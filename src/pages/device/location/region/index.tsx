@@ -1,9 +1,9 @@
-import React, { Fragment, useEffect, useState } from 'react';
-import { FormComponentProps } from 'antd/lib/form';
+import React, {Fragment, useEffect, useState} from 'react';
+import {FormComponentProps} from 'antd/lib/form';
 import Form from 'antd/es/form';
-import { Button, Divider, Drawer, message, Popconfirm, Spin, Table } from 'antd';
+import {Button, Divider, Drawer, message, Popconfirm, Spin, Table} from 'antd';
 import styles from '@/utils/table.less';
-import { ColumnProps } from 'antd/lib/table';
+import {ColumnProps} from 'antd/lib/table';
 import apis from '@/services';
 import SaveRegion from '@/pages/device/location/save/region';
 
@@ -46,8 +46,9 @@ const ManageRegion: React.FC<Props> = props => {
 
   useEffect(() => {
     handleSearch({
-      'filter': {
-        'where': 'objectType not device',
+      filter: {
+        where: 'objectType not device',
+        pageSize: 1000
       },
     });
   }, []);
@@ -146,7 +147,7 @@ const ManageRegion: React.FC<Props> = props => {
             新建
           </Button>
         </div>
-        <div className={styles.StandardTable} style={{ paddingTop: 20 }}>
+        <div className={styles.StandardTable} style={{paddingTop: 20}}>
           <Table
             dataSource={regionList}
             columns={columns}
@@ -171,7 +172,7 @@ const ManageRegion: React.FC<Props> = props => {
           onClick={() => {
             props.close();
           }}
-          style={{ marginRight: 8 }}
+          style={{marginRight: 8}}
         >
           关闭
         </Button>
