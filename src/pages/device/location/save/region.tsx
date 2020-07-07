@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import Form from 'antd/es/form';
 import {FormComponentProps} from 'antd/lib/form';
-import {Button, Col, Icon, Input, message, Modal, Row, Select, Tabs, Tooltip} from 'antd';
+import {Button, Col, Icon, Input, message, Modal, Row, Tabs, Tooltip, TreeSelect} from 'antd';
 import apis from '@/services';
 import {Map} from 'react-amap';
 import styles from '@/utils/table.less';
@@ -57,19 +57,23 @@ const SaveRegion: React.FC<Props> = props => {
   useEffect(() => {
     setRegionType('geoJsonInfo');
     apis.location._search_geo_json({
-      'filter': {
-        'where': 'objectType not device',
+      filter: {
+        where: 'objectType not device',
+        pageSize:1000
       },
     })
       .then(response => {
           if (response.status === 200) {
+            let region: any = [];
             response.result.features.map((item: any) => {
-              regionList.push({
+              region.push({
+                id: item.properties.id,
+                pId: item.properties.parentId,
                 value: item.properties.id,
-                text: item.properties.name,
-              });
+                title: item.properties.name
+              })
             });
-            setRegionList([...regionList]);
+            setRegionList(region);
           }
         },
       )
@@ -254,15 +258,11 @@ const SaveRegion: React.FC<Props> = props => {
               {getFieldDecorator('parentId', {
                 initialValue: props.data.properties?.parentId,
               })(
-                <Select placeholder="选择上级区域，可输入查询" showSearch={true} allowClear={true}
-                        filterOption={(inputValue, option) =>
-                          option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
-                        }
-                >
-                  {regionList.map(item => (
-                    <Select.Option value={item.value}>{item.text}</Select.Option>
-                  ))}
-                </Select>,
+                  <TreeSelect
+                      allowClear treeDataSimpleMode showSearch
+                      placeholder="上级区域" treeData={regionList}
+                      treeNodeFilterProp='title' searchPlaceholder='选择查看区域，可输入查询'
+                  />
               )}
             </Form.Item>
           </Col>
