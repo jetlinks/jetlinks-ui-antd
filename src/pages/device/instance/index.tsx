@@ -428,7 +428,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
           .then(response => {
             if (response.status === 200) {
               message.success('成功删除选中设备');
-              setDeviceIdLIst(deviceIdList.splice(0, deviceIdList.length));
+              deviceIdList.splice(0, deviceIdList.length);
               handleSearch(searchParam);
             }
           })
@@ -450,7 +450,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
           .then(response => {
             if (response.status === 200) {
               message.success('成功注销选中设备');
-              setDeviceIdLIst(deviceIdList.splice(0, deviceIdList.length));
+              deviceIdList.splice(0, deviceIdList.length);
               handleSearch(searchParam);
             }
           })
@@ -472,7 +472,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
           .then(response => {
             if (response.status === 200) {
               message.success('成功激活选中设备');
-              setDeviceIdLIst(deviceIdList.splice(0, deviceIdList.length));
+              deviceIdList.splice(0, deviceIdList.length);
               handleSearch(searchParam);
             }
           })
