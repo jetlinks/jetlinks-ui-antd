@@ -14,34 +14,59 @@ interface Props extends FormComponentProps {
 interface State {
   regionList: any[];
   regionData: any;
+  regionAllData: any;
 }
 
 const ManageRegion: React.FC<Props> = props => {
   const initState: State = {
     regionList: [],
     regionData: {},
+    regionAllData: {},
   };
 
   const [regionList, setRegionList] = useState(initState.regionList);
   const [regionData, setRegionData] = useState(initState.regionData);
+  const [regionAllData] = useState(initState.regionAllData);
   const [saveRegion, setSaveRegion] = useState(false);
   const [spinning, setSpinning] = useState(true);
-  const [regionIndex, setRegionIndex] = useState(-1);
 
   const handleSearch = (params?: any) => {
     regionList.splice(0, regionList.length);
     apis.location._search_geo_json(params)
       .then(response => {
           if (response.status === 200) {
+            let list: any[] = [];
             response.result.features.map((item: any) => {
-              regionList.push(item);
+              list.push(item.properties);
+              regionAllData[item.properties.id] = item;
             });
-            setRegionList([...regionList]);
-            setSpinning(false);
+            setTreeData(list);
           }
         },
       ).catch(() => {
     });
+  };
+
+
+  const setTreeData = (arr: any[]) => {
+    arr.forEach(function (item) {
+      delete item.children;
+    });
+    let map = {};
+    arr.forEach(i => {
+      map[i.id] = i;
+    });
+    let treeData: any[] = [];
+    arr.forEach(child => {
+      const mapItem = map[child.parentId];
+      if (mapItem) {
+        (mapItem.children || (mapItem.children = [])).push(child);
+      } else {
+        treeData.push(child);
+      }
+    });
+    setRegionList(treeData);
+    setSpinning(false);
   };
 
   useEffect(() => {
@@ -53,35 +78,35 @@ const ManageRegion: React.FC<Props> = props => {
     });
   }, []);
 
-  const saveByGeoJson = (data: any, index: number) => {
+  const saveByGeoJson = (data: any) => {
     apis.location.saveByGeoJson(data)
       .then((response: any) => {
         if (response.status === 200) {
           message.success('区域信息保存成功');
-          if (index === -1) {
-            data.features.map((item: any) => {
-              regionList.push(item);
-            });
-            setRegionList([...regionList]);
-          } else {
-            regionList.splice(index, 1, data.features[0]);
-            setRegionList([...regionList]);
-          }
+          handleSearch({
+            filter: {
+              where: 'objectType not device',
+              pageSize: 1000
+            },
+          });
         }
       })
       .catch(() => {
       });
   };
 
-  const _delete = (record: any, index: number) => {
+  const _delete = (record: any) => {
     apis.location._delete(record.properties.id)
       .then(response => {
           if (response.status === 200) {
             message.success('删除成功');
-            regionList.splice(index, 1);
-            setRegionList([...regionList]);
+            handleSearch({
+              filter: {
+                where: 'objectType not device',
+                pageSize: 1000
+              },
+            });
           }
-          setSpinning(false);
         },
       ).catch(() => {
     });
@@ -90,22 +115,23 @@ const ManageRegion: React.FC<Props> = props => {
   const columns: ColumnProps<any>[] = [
     {
       title: '区域标识',
-      dataIndex: 'properties.id',
+      dataIndex: 'id',
+      width: '50%',
     },
     {
       title: '区域名称',
-      dataIndex: 'properties.name',
+      dataIndex: 'name',
+      width: '30%',
     },
     {
       title: '操作',
       width: '20%',
-      render: (text, record, index: number) => (
+      render: (text, record) => (
         <Fragment>
           <a
             onClick={() => {
-              setRegionIndex(index);
               setSaveRegion(true);
-              setRegionData(record);
+              setRegionData(regionAllData[record.id]);
             }}
           >
             编辑
@@ -115,7 +141,7 @@ const ManageRegion: React.FC<Props> = props => {
             title="确认删除此区域吗？"
             onConfirm={() => {
               setSpinning(true);
-              _delete(record, index);
+              _delete(record);
             }}
           >
             <a>删除</a>
@@ -139,7 +165,6 @@ const ManageRegion: React.FC<Props> = props => {
             icon="plus"
             type="primary"
             onClick={() => {
-              setRegionIndex(-1);
               setSaveRegion(true);
               setRegionData({});
             }}
@@ -178,11 +203,10 @@ const ManageRegion: React.FC<Props> = props => {
         </Button>
       </div>
       {saveRegion && (
-        <SaveRegion data={regionData} regionIndex={regionIndex} save={(data: any, index: number) => {
-          saveByGeoJson(data, index);
+        <SaveRegion data={regionData} save={(data: any) => {
+          saveByGeoJson(data);
           setSaveRegion(false);
         }} close={() => {
-          setRegionIndex(-1);
           setSaveRegion(false);
         }}/>
       )}
