@@ -60,7 +60,7 @@ const Search: React.FC<Props> = props => {
     if (data.parameter === 'orgId$in') {
       data.value = JSON.stringify(data.value).replace(/[\[\]"]/g, '');
     } else if (data.parameter === 'id$dev-tag') {
-      data.value = JSON.stringify(tagsData);
+      data.value = tagsData.length > 0 ? JSON.stringify(tagsData) : undefined;
     }
     map[data.parameter] = data.value;
 
