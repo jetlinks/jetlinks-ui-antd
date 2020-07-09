@@ -116,7 +116,7 @@ const DeviceGatewayBind: React.FC<Props> = props => {
     {
       title: '状态',
       dataIndex: 'state',
-      width: '80px',
+      width: '120px',
       render: record =>
         record ? <Badge status={statusMap.get(record.text)} text={record.text}/> : '',
     }
