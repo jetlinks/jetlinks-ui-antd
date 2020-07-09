@@ -6,7 +6,9 @@ import { message, notification } from "antd";
 let ws: WebSocket | undefined;
 let count = 0;
 const subs = {};
+let timer: any = {};
 const initWebSocket = () => {
+    clearInterval(timer);
     const wsUrl = `${document.location.protocol.replace('http', 'ws')}//${document.location.host}/jetlinks/messaging/${getAccessToken()}`;
     if (!ws && count < 5) {
         try {
@@ -39,6 +41,7 @@ const initWebSocket = () => {
             setTimeout(initWebSocket, 5000 * count);
         }
     }
+    timer = setInterval(() => ws?.send(JSON.stringify({ "type": "ping" })), 60000);
     return ws;
 }
 
