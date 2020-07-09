@@ -362,24 +362,25 @@ const DeviceModel: React.FC<Props> = props => {
                                         </Button>
                                       </Popconfirm>
                                     </Menu.Item>
-                                    <Menu.Item key="2">
-                                      <Popconfirm
-                                        disabled={item.state === 1 ? true : (deviceCount[item.id] !== '0')}
-                                        placement="topRight"
-                                        title="确定删除此组件吗？"
-                                        onConfirm={() => {
-                                          if (item.state === 0 && deviceCount[item.id] === '0') {
-                                            handleDelete(item);
-                                          } else {
-                                            message.error('产品以发布，无法删除');
-                                          }
-                                        }}
-                                      >
-                                        <Button icon="delete" type="link">
-                                          删除
-                                        </Button>
-                                      </Popconfirm>
-                                    </Menu.Item>
+                                    {item.state === 0 && (deviceCount[item.id] === '0') && (
+                                      <Menu.Item key="2">
+                                        <Popconfirm
+                                          placement="topRight"
+                                          title="确定删除此组件吗？"
+                                          onConfirm={() => {
+                                            if (item.state === 0 && deviceCount[item.id] === '0') {
+                                              handleDelete(item);
+                                            } else {
+                                              message.error('产品以发布，无法删除');
+                                            }
+                                          }}
+                                        >
+                                          <Button icon="delete" type="link">
+                                            删除
+                                          </Button>
+                                        </Popconfirm>
+                                      </Menu.Item>
+                                    )}
                                   </Menu>
                                 }>
                                   <Icon type="ellipsis"/>
