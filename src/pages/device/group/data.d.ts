@@ -8,5 +8,7 @@ export class GroupData extends SimpleType {
 
   deviceId: any[];
 
+  devices: any[];
+
   description: string;
 }

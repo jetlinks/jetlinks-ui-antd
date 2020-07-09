@@ -152,7 +152,7 @@ const DeviceGroup: React.FC<Props> = props => {
   };
 
   return (
-    <PageHeaderWrapper title="设备分组管理">
+    <PageHeaderWrapper title="设备分组">
       <div className={styles.filterCardList}>
         <Card bordered={false}>
           <Row>
