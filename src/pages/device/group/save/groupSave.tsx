@@ -38,7 +38,6 @@ const groupSave: React.FC<Props> = props => {
   let taskByIdPush: any;
 
   useEffect(() => {
-    console.log(props.data.devices);
     props.data.devices?.map((item: any) => {
       deviceId.push(item.id);
     });
