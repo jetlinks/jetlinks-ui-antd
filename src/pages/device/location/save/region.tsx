@@ -10,7 +10,6 @@ interface Props extends FormComponentProps {
   close: Function;
   save: Function;
   data: any;
-  regionIndex: number;
 }
 
 interface State {
@@ -97,7 +96,7 @@ const SaveRegion: React.FC<Props> = props => {
               item.properties.objectType = fileValue.objectType;
               return item;
             });
-            props.save(geoJson, props.regionIndex);
+            props.save(geoJson);
           } else {
             message.error('区域GeoJson，仅支持单个区域数据');
             return;
@@ -112,7 +111,7 @@ const SaveRegion: React.FC<Props> = props => {
           props.save({
             type: 'FeatureCollection',
             features: [geoJson],
-          }, props.regionIndex);
+          });
         }
       } else {
         if (geoJsonPoint.length === 0) {
@@ -158,7 +157,7 @@ const SaveRegion: React.FC<Props> = props => {
                 coordinates: pointList,
               },
             }],
-          }, props.regionIndex);
+          });
       }
     });
   };
@@ -234,7 +233,7 @@ const SaveRegion: React.FC<Props> = props => {
               {getFieldDecorator('id', {
                 rules: [{required: true, message: '区域标识必填'}],
                 initialValue: props.data.properties?.id,
-              })(<Input placeholder="请输入区域标识"/>)}
+              })(<Input placeholder="请输入区域标识" disabled={!!props.data?.properties?.id}/>)}
             </Form.Item>
           </Col>
           <Col span={12}>

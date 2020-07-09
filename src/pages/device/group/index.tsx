@@ -134,6 +134,7 @@ const DeviceGroup: React.FC<Props> = props => {
   };
 
   const onChange = (page: number, pageSize: number) => {
+    setSpinning(true);
     handleSearch({
       pageIndex: page - 1,
       pageSize,
@@ -142,6 +143,7 @@ const DeviceGroup: React.FC<Props> = props => {
   };
 
   const onShowSizeChange = (current: number, size: number) => {
+    setSpinning(true);
     handleSearch({
       pageIndex: current - 1,
       pageSize: size,
@@ -262,14 +264,14 @@ const DeviceGroup: React.FC<Props> = props => {
                                     <a>解绑</a>
                                   </Popconfirm>]}
                               >
-                                <List.Item.Meta style={{width:'50%'}}
-                                  avatar={<Avatar shape="square" size="small" src={device}/>}
-                                  title={<a
-                                    onClick={() => {
-                                      setDeviceInfo(true);
-                                      setGroupDeviceId(dev.id);
-                                    }}
-                                  ><AutoHide title={dev.name} style={{width: '80%'}}/></a>}
+                                <List.Item.Meta style={{width: '50%'}}
+                                                avatar={<Avatar shape="square" size="small" src={device}/>}
+                                                title={<a
+                                                  onClick={() => {
+                                                    setDeviceInfo(true);
+                                                    setGroupDeviceId(dev.id);
+                                                  }}
+                                                ><AutoHide title={dev.name} style={{width: '80%'}}/></a>}
                                 />
                               </List.Item>
                             )}
@@ -287,6 +289,7 @@ const DeviceGroup: React.FC<Props> = props => {
       </div>
       {saveVisible && (
         <Save data={groupData} close={() => {
+          setSpinning(true);
           handleSearch(searchParam);
           setSaveVisible(false);
         }}/>

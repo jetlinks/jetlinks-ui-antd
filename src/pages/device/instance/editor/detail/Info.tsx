@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Button, Card, Descriptions, Icon, message, Popconfirm, Tooltip } from 'antd';
+import React, {useState} from 'react';
+import {Button, Card, Descriptions, Icon, message, Popconfirm, Tooltip} from 'antd';
 import moment from 'moment';
-import { DeviceInstance } from '@/pages/device/instance/data';
+import {DeviceInstance} from '@/pages/device/instance/data';
 import Configuration from './configuration';
 import Tags from './tags/tags';
 import apis from '@/services';
@@ -78,8 +78,8 @@ const Info: React.FC<Props> = (props) => {
 
   return (
     <div>
-      <Card style={{ marginBottom: 20 }}>
-        <Descriptions style={{ marginBottom: 20 }} bordered column={3} size="small"
+      <Card style={{marginBottom: 20}}>
+        <Descriptions style={{marginBottom: 20}} bordered column={3} size="small"
                       title={<span>设备信息</span>}>
           <Descriptions.Item label="设备产品" span={1}>
             {props.data.productName}
@@ -94,7 +94,7 @@ const Info: React.FC<Props> = (props) => {
             {props.data.transport}
           </Descriptions.Item>
           <Descriptions.Item label="消息协议" span={1}>
-            {props.data.protocol}
+            {props.data.protocolName || props.data.protocol}
           </Descriptions.Item>
           <Descriptions.Item label="IP地址" span={1}>
             {props.data.address}
@@ -114,11 +114,11 @@ const Info: React.FC<Props> = (props) => {
         </Descriptions>
 
         {props.configuration && props.configuration.name && (
-          <Descriptions style={{ marginBottom: 20 }} bordered size="small" column={3}
+          <Descriptions style={{marginBottom: 20}} bordered size="small" column={3}
                         title={
                           <span>
                 {props.configuration.name}
-                            <Button icon="edit" style={{ marginLeft: 20 }} type="link"
+                            <Button icon="edit" style={{marginLeft: 20}} type="link"
                                     onClick={() => setUpdateVisible(true)}
                             >编辑</Button>
                             {props.data.state?.value != 'notActive' && (
@@ -154,11 +154,11 @@ const Info: React.FC<Props> = (props) => {
             ))}
           </Descriptions>
         )}
-        <Descriptions style={{ marginBottom: 20 }} bordered column={3} size="small"
+        <Descriptions style={{marginBottom: 20}} bordered column={3} size="small"
                       title={
                         <span>
             {'标签'}
-                          <Button icon="edit" style={{ marginLeft: 20 }} type="link"
+                          <Button icon="edit" style={{marginLeft: 20}} type="link"
                                   onClick={() => setTagsVisible(true)}
                           >编辑</Button>
             </span>

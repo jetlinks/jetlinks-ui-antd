@@ -60,7 +60,7 @@ const Search: React.FC<Props> = props => {
     if (data.parameter === 'orgId$in') {
       data.value = JSON.stringify(data.value).replace(/[\[\]"]/g, '');
     } else if (data.parameter === 'id$dev-tag') {
-      data.value = JSON.stringify(tagsData);
+      data.value = tagsData.length > 0 ? JSON.stringify(tagsData) : undefined;
     }
     map[data.parameter] = data.value;
 
@@ -85,8 +85,8 @@ const Search: React.FC<Props> = props => {
               <TreeSelect
                 style={{width: 'calc(100% - 100px)'}}
                 allowClear treeDataSimpleMode showSearch multiple
-                placeholder="所属机构" treeData={organizationList}
-                treeNodeFilterProp='title' searchPlaceholder='根据机构名称模糊查询'
+                placeholder="所属机构，可根据机构名称模糊查询" treeData={organizationList}
+                treeNodeFilterProp='title'
               />
             )}
           </>

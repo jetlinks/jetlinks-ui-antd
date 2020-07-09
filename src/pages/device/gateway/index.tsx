@@ -95,6 +95,7 @@ const DeviceGateway: React.FC<Props> = () => {
   };
 
   const onChange = (page: number, pageSize: number) => {
+    setSpinning(true);
     handleSearch({
       pageIndex: page - 1,
       pageSize,
@@ -103,6 +104,7 @@ const DeviceGateway: React.FC<Props> = () => {
   };
 
   const onShowSizeChange = (current: number, size: number) => {
+    setSpinning(true);
     handleSearch({
       pageIndex: current - 1,
       pageSize: size,
@@ -111,7 +113,6 @@ const DeviceGateway: React.FC<Props> = () => {
   };
 
   const insert = (data: any) => {
-    setSpinning(true);
     apis.deviceGateway.bind(gatewayId, data)
       .then(response => {
         if (response.status === 200) {
@@ -244,6 +245,7 @@ const DeviceGateway: React.FC<Props> = () => {
               }}
               save={(item: any) => {
                 setBindVisible(false);
+                setSpinning(true);
                 insert(item);
               }}
         />
