@@ -12,6 +12,7 @@ import encodeQueryParam from '@/utils/encodeParam';
 
 interface Props extends FormComponentProps {
   save: Function;
+  deviceList: any[];
 }
 
 interface State {
@@ -125,6 +126,7 @@ const ChoiceDevice: React.FC<Props> = props => {
             rowSelection={{
               type: 'checkbox',
               ...rowSelection,
+              selectedRowKeys: props.deviceList
             }}
             size='middle'
             pagination={{

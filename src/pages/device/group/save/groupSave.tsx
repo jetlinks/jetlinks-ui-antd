@@ -38,6 +38,10 @@ const groupSave: React.FC<Props> = props => {
   let taskByIdPush: any;
 
   useEffect(() => {
+    props.data.devices?.map((item: any) => {
+      deviceId.push(item.id);
+    });
+
     return () => {
       taskByIdPush && taskByIdPush.unsubscribe();
     };
@@ -143,7 +147,7 @@ const groupSave: React.FC<Props> = props => {
         {currentStep === 1 && (
           <div>
             <Card style={{maxHeight: 500, overflowY: 'auto', overflowX: 'hidden'}}>
-              <ChoiceDevice save={(item: any[]) => {
+              <ChoiceDevice deviceList={deviceId} save={(item: any[]) => {
                 setDeviceId(item);
               }}/>
             </Card>
