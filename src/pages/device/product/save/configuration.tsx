@@ -45,7 +45,7 @@ const Configuration: React.FC<Props> = props => {
       };
 
       if (componentType !== 'enum') {
-        component = <Input type={componentType === 'password' ? 'password' : 'text'}/>;
+        component = componentType === 'password' ? <Input.Password/> : <Input type={'text'}/>;
       } else {
         const o = item.type.elements;
         component = (
