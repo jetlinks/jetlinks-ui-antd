@@ -301,7 +301,7 @@ const Detail: React.FC<Props> = props => {
                   {basicInfo.orgName}
                 </Descriptions.Item>
                 <Descriptions.Item label="消息协议" span={1}>
-                  {basicInfo.protocolName}
+                  {basicInfo.protocolName || basicInfo.protocolId}
                 </Descriptions.Item>
                 <Descriptions.Item label="链接协议" span={1}>
                   {basicInfo.transportProtocol}
@@ -335,7 +335,10 @@ const Detail: React.FC<Props> = props => {
                   {config.properties &&
                   config.properties.map((item: any) => (
                     <Descriptions.Item label={item.property} span={1} key={item.property}>
-                      {basicInfo.configuration ? basicInfo.configuration[item.property] : null}
+                      {basicInfo.configuration ? (
+                        item.type.type === 'password' ? '••••••' :
+                          basicInfo.configuration[item.property]
+                      ) : null}
                     </Descriptions.Item>
                   ))}
                 </Descriptions>
