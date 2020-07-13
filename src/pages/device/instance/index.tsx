@@ -1,4 +1,4 @@
-import React, {FC, Fragment, useEffect, useState} from 'react';
+import React, { FC, Fragment, useEffect, useState } from 'react';
 import styles from '@/utils/table.less';
 import {
   Badge,
@@ -18,24 +18,24 @@ import {
   Table,
   Tooltip,
 } from 'antd';
-import {router} from 'umi';
-import {ColumnProps, PaginationConfig, SorterResult} from 'antd/lib/table';
-import {FormComponentProps} from 'antd/es/form';
-import {ConnectState, Dispatch} from '@/models/connect';
-import {PageHeaderWrapper} from '@ant-design/pro-layout';
-import {connect} from 'dva';
+import { router } from 'umi';
+import { ColumnProps, PaginationConfig, SorterResult } from 'antd/lib/table';
+import { FormComponentProps } from 'antd/es/form';
+import { ConnectState, Dispatch } from '@/models/connect';
+import { PageHeaderWrapper } from '@ant-design/pro-layout';
+import { connect } from 'dva';
 import encodeQueryParam from '@/utils/encodeParam';
 import apis from '@/services';
-import {getAccessToken} from '@/utils/authority';
+import { getAccessToken } from '@/utils/authority';
 import moment from 'moment';
 import Save from './Save';
 import Search from './Search';
-import {DeviceInstance} from './data.d';
+import { DeviceInstance } from './data.d';
 import Process from './Process';
 import Import from './operation/import';
 import Export from './operation/export';
-import {DeviceProduct} from '@/pages/device/product/data';
-import {getPageQuery} from '@/utils/utils';
+import { DeviceProduct } from '@/pages/device/product/data';
+import { getPageQuery } from '@/utils/utils';
 
 interface Props extends FormComponentProps {
   loading: boolean;
@@ -58,11 +58,12 @@ interface State {
 }
 
 const DeviceInstancePage: React.FC<Props> = props => {
-  const {result} = props.deviceInstance;
+  const { result } = props.deviceInstance;
+  const { dispatch, location } = props;
 
   const initState: State = {
     data: result,
-    searchParam: {pageSize: 10},
+    searchParam: { pageSize: 10, terms: location?.query?.terms, },
     addVisible: false,
     currentItem: {},
     processVisible: false,
@@ -90,8 +91,6 @@ const DeviceInstancePage: React.FC<Props> = props => {
   const [deviceImport, setDeviceImport] = useState(false);
   const [deviceExport, setDeviceExport] = useState(false);
   const [deviceIdList, setDeviceIdLIst] = useState(initState.deviceIdList);
-
-  const {dispatch} = props;
 
   const statusMap = new Map();
   statusMap.set('在线', 'success');
@@ -171,7 +170,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
       title: '状态',
       dataIndex: 'state',
       width: '90px',
-      render: record => record ? <Badge status={statusMap.get(record.text)} text={record.text}/> : '',
+      render: record => record ? <Badge status={statusMap.get(record.text)} text={record.text} /> : '',
       filters: [
         {
           text: '未激活',
@@ -205,7 +204,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
           >
             查看
           </a>
-          <Divider type="vertical"/>
+          <Divider type="vertical" />
           <a
             onClick={() => {
               setCurrentItem(record);
@@ -214,7 +213,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
           >
             编辑
           </a>
-          <Divider type="vertical"/>
+          <Divider type="vertical" />
           {record.state?.value === 'notActive' ? (
             <span>
               <Popconfirm
@@ -225,7 +224,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
               >
                 <a>激活</a>
               </Popconfirm>
-              <Divider type="vertical"/>
+              <Divider type="vertical" />
               <Popconfirm
                 title="确认删除？"
                 onConfirm={() => {
@@ -236,15 +235,15 @@ const DeviceInstancePage: React.FC<Props> = props => {
               </Popconfirm>
             </span>
           ) : (
-            <Popconfirm
-              title="确认注销设备？"
-              onConfirm={() => {
-                unDeploy(record);
-              }}
-            >
-              <a>注销</a>
-            </Popconfirm>
-          )}
+              <Popconfirm
+                title="确认注销设备？"
+                onConfirm={() => {
+                  unDeploy(record);
+                }}
+              >
+                <a>注销</a>
+              </Popconfirm>
+            )}
         </Fragment>
       ),
     },
@@ -259,19 +258,19 @@ const DeviceInstancePage: React.FC<Props> = props => {
       loading: true,
     };
 
-    apis.deviceInstance.count(encodeQueryParam({terms: {state: 'notActive', productId}}))
+    apis.deviceInstance.count(encodeQueryParam({ terms: { state: 'notActive', productId, ...location?.query?.terms, } }))
       .then(res => {
         if (res.status === 200) {
           map.notActiveCount = res.result;
-          apis.deviceInstance.count(encodeQueryParam({terms: {state: 'offline', productId}}))
+          apis.deviceInstance.count(encodeQueryParam({ terms: { state: 'offline', productId, ...location?.query?.terms, } }))
             .then(res => {
               if (res.status === 200) {
                 map.offlineCount = res.result;
-                apis.deviceInstance.count(encodeQueryParam({terms: {state: 'online', productId}}))
+                apis.deviceInstance.count(encodeQueryParam({ terms: { state: 'online', productId, ...location?.query?.terms, } }))
                   .then(res => {
                     if (res.status === 200) {
                       map.onlineCount = res.result;
-                      apis.deviceInstance.count(encodeQueryParam({terms: {productId}}))
+                      apis.deviceInstance.count(encodeQueryParam({ terms: { productId, ...location?.query?.terms, } }))
                         .then(res => {
                           if (res.status === 200) {
                             map.deviceTotal = res.result;
@@ -299,7 +298,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
 
     const query: any = getPageQuery();
     if (query.hasOwnProperty('productId')) {
-      const {productId} = query;
+      const { productId } = query;
       setProduct(productId);
       handleSearch({
         terms: {
@@ -319,7 +318,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
     filters: any,
     sorter: SorterResult<DeviceInstance>,
   ) => {
-    let {terms} = searchParam;
+    let { terms } = searchParam;
     if (filters.state) {
       if (terms) {
         terms.state = filters.state[0];
@@ -392,7 +391,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
   };
 
   const onDeviceProduct = (value: string) => {
-    let {terms} = searchParam;
+    let { terms } = searchParam;
     if (terms) {
       terms.productId = value;
     } else {
@@ -485,10 +484,10 @@ const DeviceInstancePage: React.FC<Props> = props => {
   const Info: FC<{
     title: React.ReactNode;
     value: React.ReactNode;
-  }> = ({title, value}) => (
+  }> = ({ title, value }) => (
     <div>
       <span>{title}</span>
-      <p style={{fontSize: '26px'}}>{value}</p>
+      <p style={{ fontSize: '26px' }}>{value}</p>
     </div>
   );
 
@@ -532,12 +531,12 @@ const DeviceInstancePage: React.FC<Props> = props => {
           </Button>
         </Menu.Item>
       ) : (
-        <Menu.Item key="4">
-          <Button icon="check-circle" type="danger" onClick={() => activeDevice()}>
-            激活全部设备
+          <Menu.Item key="4">
+            <Button icon="check-circle" type="danger" onClick={() => activeDevice()}>
+              激活全部设备
           </Button>
-        </Menu.Item>
-      )}
+          </Menu.Item>
+        )}
 
       <Menu.Item key="5">
         <Button icon="sync" type="danger" onClick={() => syncDevice()}>
@@ -550,16 +549,16 @@ const DeviceInstancePage: React.FC<Props> = props => {
   return (
     <PageHeaderWrapper title="设备实例">
       <div className={styles.standardList}>
-        <Card bordered={false} style={{height: 95}}>
+        <Card bordered={false} style={{ height: 95 }}>
           <Spin spinning={deviceCount.loading}>
             <Row>
               <Col sm={7} xs={24}>
-                <Select placeholder="选择设备产品" allowClear style={{width: '70%', marginTop: 7}} value={product}
-                        onChange={(value: string) => {
-                          setProduct(() => value);
-                          setDeviceCount({loading: true});
-                          onDeviceProduct(value);
-                        }}
+                <Select placeholder="选择设备产品" allowClear style={{ width: '70%', marginTop: 7 }} value={product}
+                  onChange={(value: string) => {
+                    setProduct(() => value);
+                    setDeviceCount({ loading: true });
+                    onDeviceProduct(value);
+                  }}
                 >
                   {productList?.map(item => (
                     <Select.Option key={item.id}>{item.name}</Select.Option>
@@ -567,29 +566,29 @@ const DeviceInstancePage: React.FC<Props> = props => {
                 </Select>
               </Col>
               <Col sm={4} xs={24}>
-                <Info title="全部设备" value={deviceCount.deviceTotal}/>
+                <Info title="全部设备" value={deviceCount.deviceTotal} />
               </Col>
               <Col sm={4} xs={24}>
-                <Info title={<Badge status={statusMap.get('在线')} text="在线"/>} value={deviceCount.onlineCount}/>
+                <Info title={<Badge status={statusMap.get('在线')} text="在线" />} value={deviceCount.onlineCount} />
               </Col>
               <Col sm={4} xs={24}>
-                <Info title={<Badge status={statusMap.get('离线')} text="离线"/>} value={deviceCount.offlineCount}/>
+                <Info title={<Badge status={statusMap.get('离线')} text="离线" />} value={deviceCount.offlineCount} />
               </Col>
               <Col sm={4} xs={24}>
-                <Info title={<Badge status={statusMap.get('未激活')} text="未激活"/>} value={deviceCount.notActiveCount}/>
+                <Info title={<Badge status={statusMap.get('未激活')} text="未激活" />} value={deviceCount.notActiveCount} />
               </Col>
               <Col sm={1} xs={24}>
                 <Tooltip title='刷新'>
-                  <Icon type="sync" style={{fontSize: 20}} onClick={() => {
-                    setDeviceCount({loading: true});
+                  <Icon type="sync" style={{ fontSize: 20 }} onClick={() => {
+                    setDeviceCount({ loading: true });
                     stateCount(product);
-                  }}/>
+                  }} />
                 </Tooltip>
               </Col>
             </Row>
           </Spin>
         </Card>
-        <br/>
+        <br />
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>
@@ -602,7 +601,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
                     params.productId = product;
                   }
                   params.state = searchParam.terms?.state;
-                  handleSearch({terms: params, pageSize: 10, sorts: searchParam.sorts});
+                  handleSearch({ terms: params, pageSize: 10, sorts: searchParam.sorts });
                 }}
               />
             </div>
@@ -617,10 +616,10 @@ const DeviceInstancePage: React.FC<Props> = props => {
               >
                 添加设备
               </Button>
-              <Divider type="vertical"/>
+              <Divider type="vertical" />
               <Dropdown overlay={menu}>
                 <Button icon="menu">
-                  其他批量操作<Icon type="down"/>
+                  其他批量操作<Icon type="down" />
                 </Button>
               </Dropdown>
             </div>
@@ -695,7 +694,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
   );
 };
 
-export default connect(({deviceInstance, loading}: ConnectState) => ({
+export default connect(({ deviceInstance, loading }: ConnectState) => ({
   deviceInstance,
   loading: loading.models.deviceInstance,
 }))(DeviceInstancePage);
