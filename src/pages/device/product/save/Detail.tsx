@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Badge, Button, Card, Descriptions, message, Popconfirm, Row, Spin, Tabs, Tooltip} from 'antd';
+import {Badge, Button, Card, Descriptions, Input, message, Popconfirm, Row, Spin, Tabs, Tooltip} from 'antd';
 import {PageHeaderWrapper} from '@ant-design/pro-layout';
 import {connect} from 'dva';
 import {router} from 'umi';
@@ -301,7 +301,7 @@ const Detail: React.FC<Props> = props => {
                   {basicInfo.orgName}
                 </Descriptions.Item>
                 <Descriptions.Item label="消息协议" span={1}>
-                  {basicInfo.protocolName}
+                  {basicInfo.protocolName || basicInfo.protocolId}
                 </Descriptions.Item>
                 <Descriptions.Item label="链接协议" span={1}>
                   {basicInfo.transportProtocol}
@@ -335,7 +335,14 @@ const Detail: React.FC<Props> = props => {
                   {config.properties &&
                   config.properties.map((item: any) => (
                     <Descriptions.Item label={item.property} span={1} key={item.property}>
-                      {basicInfo.configuration ? basicInfo.configuration[item.property] : null}
+                      {basicInfo.configuration ? (
+                        item.type.type === 'password' ?
+                          /*(<Input.Password style={{width: '25%'}} readOnly={true}
+                                           value={basicInfo.configuration[item.property]}/>)*/
+                          '••••••'
+                          :
+                          basicInfo.configuration[item.property]
+                      ) : null}
                     </Descriptions.Item>
                   ))}
                 </Descriptions>

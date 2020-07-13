@@ -32,7 +32,12 @@ const Alarm: React.FC<Props> = props => {
   const initState: State = {
     data: [],
     saveAlarmData: {},
-    searchParam: {pageSize: 10},
+    searchParam: {
+      pageSize: 10, sorts: {
+        order: "descend",
+        field: "alarmTime"
+      }
+    },
     alarmLogData: {},
     alarmDataList: [],
   };
@@ -279,7 +284,10 @@ const Alarm: React.FC<Props> = props => {
       pageIndex: searchParam.pageIndex,
       pageSize: searchParam.pageSize,
       terms,
-      sorts: searchParam.sorter,
+      sorts: searchParam.sorter || {
+        order: "descend",
+        field: "alarmTime"
+      },
     });
   };
 

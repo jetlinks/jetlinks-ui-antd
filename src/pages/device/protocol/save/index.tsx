@@ -254,6 +254,7 @@ const Save: React.FC<Props> = props => {
       entity.configuration.script = script;
       entity.configuration.transport = entity.configuration.transport.join(',');
     }
+    debuggerData.payload = debuggerData.payload ? debuggerData.payload : payload;
     const data = {
       request: debuggerData,
       entity,

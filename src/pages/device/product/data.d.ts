@@ -19,6 +19,8 @@ export class DeviceProduct {
 
   protocolName: string;
 
+  protocolId: string;
+
   configuration: any;
 
   metadata: string;
