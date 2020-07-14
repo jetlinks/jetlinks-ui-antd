@@ -34,6 +34,7 @@ const Search: React.FC<Props> = props => {
   const [tagsVisible, setTagsVisible] = useState(false);
   const [tagsValue, setTagsValue] = useState(initState.tagsValue);
   const [tagsData, setTagsData] = useState(initState.tagsData);
+  const [categoryList, setCategoryList] = useState([]);
 
   useEffect(() => {
     setParameterType('id');
@@ -50,6 +51,20 @@ const Search: React.FC<Props> = props => {
         }
       }).catch(() => {
     });
+
+    apis.deviceProdcut.deviceCategory()
+      .then((response: any) => {
+        if (response.status === 200) {
+          setCategoryList(response.result.map((item: any) => ({
+            id: item.id,
+            pId: item.parentId,
+            value: item.id,
+            title: item.name
+          })))
+        }
+      })
+      .catch(() => {
+      });
 
   }, []);
 
@@ -103,6 +118,20 @@ const Search: React.FC<Props> = props => {
             )}
           </>
         );
+      case 'productId$dev-prod-cat':
+        return (
+          <>
+            {getFieldDecorator('value', {})(
+              <TreeSelect
+                style={{width: 'calc(100% - 100px)'}}
+                dropdownStyle={{maxHeight: 500}}
+                allowClear treeDataSimpleMode showSearch multiple
+                placeholder="所属品类，可根据品类名称模糊查询" treeData={categoryList}
+                treeNodeFilterProp='title'
+              />
+            )}
+          </>
+        );
       default:
         return null;
     }
@@ -135,6 +164,7 @@ const Search: React.FC<Props> = props => {
                 <Select.Option value="name$like" key="name$like">设备名称</Select.Option>
                 <Select.Option value="orgId$in" key="orgId$in">所属机构</Select.Option>
                 <Select.Option value="id$dev-tag" key="id$dev-tag">设备标签</Select.Option>
+                <Select.Option value="productId$dev-prod-cat" key="productId$dev-prod-cat">所属品类</Select.Option>
               </Select>,
             )}
             {renderType()}
