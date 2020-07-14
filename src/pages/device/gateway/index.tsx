@@ -126,7 +126,7 @@ const DeviceGateway: React.FC<Props> = () => {
   };
 
   return (
-    <PageHeaderWrapper title="网关设备">
+    <PageHeaderWrapper title="子设备管理">
       <Spin spinning={spinning}>
         <Card bordered={false}>
           <Form layout="inline">
