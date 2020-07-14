@@ -25,7 +25,7 @@ const Auth = (props: Props) => {
         const selected: string[] = [];
         zip(service.permission.auth(encodeQueryParam({
             terms: {
-                dimensionTarget: props.current.userId,
+                dimensionTarget: props.current.id,
             }
         })),
             service.permission.query({})).pipe(
@@ -81,7 +81,7 @@ const Auth = (props: Props) => {
 
     const updateAuth = () => {
         service.permission.save({
-            targetId: props.current.userId,
+            targetId: props.current.id,
             targetType: 'open-api',
             permissionList: permissions,
         }).subscribe(() => {
