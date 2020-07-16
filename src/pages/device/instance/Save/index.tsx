@@ -109,13 +109,20 @@ const Save: React.FC<Props> = props => {
       <Form labelCol={{span: 4}} wrapperCol={{span: 20}}>
         <Form.Item key="id" label="设备id">
           {getFieldDecorator('id', {
-            rules: [{required: true}],
+            rules: [
+              {required: true, message: '请输入设备id'},
+              {max: 64, message: '设备ID不超过64个字符'},
+              {pattern: new RegExp(/^[0-9a-zA-Z_\-]+$/, "g"), message: '产品ID只能由数字、字母、下划线、中划线组成'}
+            ],
             initialValue: props.data.id,
           })(<Input placeholder="请输入设备名称" disabled={!!props.data.id}/>)}
         </Form.Item>
         <Form.Item key="name" label="设备名称">
           {getFieldDecorator('name', {
-            rules: [{required: true}],
+            rules: [
+              {required: true, message: '请输入设备名称'},
+              {max: 200, message: '设备名称不超过200个字符'}
+            ],
             initialValue: props.data.name,
           })(<Input placeholder="请输入设备名称"/>)}
         </Form.Item>

@@ -495,7 +495,7 @@ const Paramter: React.FC<Props> = props => {
       width="30%"
     >
       <Form className={styles.paramterForm}>
-        <Form.Item label="标识符">
+        <Form.Item label="参数标识">
           <Input
             disabled={!!props.data.id}
             value={data.id}

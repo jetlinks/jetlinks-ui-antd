@@ -126,13 +126,20 @@ const groupSave: React.FC<Props> = props => {
           <Form labelCol={{span: 5}} wrapperCol={{span: 15}} key="groupForm">
             <Form.Item key="id" label="分组标识">
               {getFieldDecorator('id', {
-                rules: [{required: true, message: '分组标识必填'}],
+                rules: [
+                  {required: true, message: '请输入分组标识'},
+                  {max: 64, message: '分组标识不超过64个字符'},
+                  {pattern: new RegExp(/^[0-9a-zA-Z_\-]+$/, "g"), message: '分组标识只能由数字、字母、下划线、中划线组成'}
+                ],
                 initialValue: props.data?.id,
-              })(<Input placeholder="输入ID" disabled={!!props.data.id}/>)}
+              })(<Input placeholder="输入分组ID" disabled={!!props.data.id}/>)}
             </Form.Item>
             <Form.Item key="name" label="分组名称">
               {getFieldDecorator('name', {
-                rules: [{required: true, message: '分组名称必填'}],
+                rules: [
+                  {required: true, message: '请输入分组名称'},
+                  {max: 200, message: '分组名称不超过200个字符'}
+                ],
                 initialValue: props.data?.name,
               })(<Input placeholder="输入分组名称"/>)}
             </Form.Item>
