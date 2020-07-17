@@ -149,7 +149,12 @@ const Info: React.FC<Props> = (props) => {
             {props.configuration.properties &&
             props.configuration.properties.map((item: any) => (
               <Descriptions.Item label={item.property} span={1} key={item.property}>
-                {props.data.configuration[item.property]}
+                {props.data.configuration ? (
+                  item.type.type === 'password' ? (
+                      props.data.configuration[item.property].length > 0 ? '••••••' : null
+                    ) :
+                    props.data.configuration[item.property]
+                ) : null}
               </Descriptions.Item>
             ))}
           </Descriptions>
