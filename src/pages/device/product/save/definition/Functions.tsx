@@ -1,8 +1,9 @@
-import React, { useState, Fragment } from 'react';
+import React, {useState, Fragment, useContext, useEffect} from 'react';
 import { Card, Button, Table, Divider } from 'antd';
 import { ColumnProps } from 'antd/es/table';
 import FunctionDefin from '../../component/function';
 import { FunctionMeta } from '../../component/data.d';
+import {TenantContext} from "@/pages/device/product/save/definition/index";
 
 interface Props {
   save: Function;
@@ -17,6 +18,8 @@ interface State {
 }
 
 const Functions: React.FC<Props> = props => {
+  const tenantContextData = useContext(TenantContext);
+
   const initState: State = {
     data: props.data,
     current: {},
@@ -25,6 +28,10 @@ const Functions: React.FC<Props> = props => {
   const [visible, setVisible] = useState(initState.visible);
   const [current, setCurrent] = useState(initState.current);
   const [data, setData] = useState(initState.data);
+
+  useEffect(() => {
+    setData(tenantContextData.functions)
+  }, [tenantContextData]);
 
   const editItem = (item: any) => {
     setVisible(true);
@@ -70,7 +77,6 @@ const Functions: React.FC<Props> = props => {
   ];
 
   const saveFunctionData = (item: FunctionMeta) => {
-    // let item = items;
     const i = data.findIndex((j: any) => j.id === item.id);
     if (i > -1) {
       data[i] = item;
