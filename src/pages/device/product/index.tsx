@@ -8,7 +8,8 @@ import {
   Divider,
   Dropdown,
   Icon,
-  List, Menu,
+  List,
+  Menu,
   message,
   Popconfirm,
   Spin,
@@ -19,9 +20,6 @@ import {connect} from 'dva';
 import {ConnectState, Dispatch} from '@/models/connect';
 import {router} from 'umi';
 import encodeQueryParam from '@/utils/encodeParam';
-import {UploadProps} from 'antd/lib/upload';
-import {getAccessToken} from '@/utils/authority';
-import request from '@/utils/request';
 import cardStyles from './index.less';
 import productImg from "@/pages/device/product/img/product.png";
 import Save from './save';
