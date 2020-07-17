@@ -10,6 +10,7 @@ import { TenantItem } from "./data";
 import styles from './index.less';
 import Service from "./service";
 import Save from "./save";
+import { PaginationConfig } from "antd/lib/pagination";
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -17,7 +18,7 @@ const { Search } = Input;
 
 
 const ListContent = ({
-    data: { members, state, },
+    data: { members, state, createTime },
 }: {
     data: TenantItem;
 }) => (
@@ -32,7 +33,7 @@ const ListContent = ({
             </div>
             <div className={styles.listContentItem}>
                 <span>创建时间</span>
-                <p>{moment(new Date()).format('YYYY-MM-DD HH:mm')}</p>
+                <p>{moment(createTime).format('YYYY-MM-DD HH:mm')}</p>
             </div>
         </div>
     );
@@ -40,14 +41,13 @@ const ListContent = ({
 
 const Tenant = () => {
 
-    // const defualtImg = 'https://tse2-mm.cn.bing.net/th/id/OIP.O9TfOiCrUHdOyEE92JtfBQAAAA?pid=Api&rs=1';
     const service = new Service('tenant');
     const [loading, setLoading] = useState<boolean>(false);
     const [tloading, setTloading] = useState<boolean>(false);
     const [visible, setVisible] = useState<boolean>(false);
     const [current, setCurrent] = useState<Partial<TenantItem>>({});
     const [list, setList] = useState<ListData<TenantItem>>();
-    const [searchParam, setSearchParam] = useState();
+    const [searchParam, setSearchParam] = useState({});
 
 
     const handleSearch = (params: any) => {
@@ -64,10 +64,11 @@ const Tenant = () => {
     }, []);
 
 
-    const paginationProps = {
+    const paginationProps: PaginationConfig = {
         showQuickJumper: true,
         pageSize: 5,
         total: list?.total || 0,
+        onChange: page => handleSearch({ pageIndex: page - 1, pageSize: 5 }),
     };
 
     const extraContent = (
@@ -163,8 +164,6 @@ const Tenant = () => {
                                                     )
                                             }
                                         </>,
-                                        // <a>删除</a>,
-
                                     ]}
                                 >
                                     <List.Item.Meta
