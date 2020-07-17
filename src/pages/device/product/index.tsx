@@ -185,7 +185,19 @@ const DeviceModel: React.FC<Props> = props => {
     });
   };
 
-  const uploadProps: UploadProps = {
+  const uploadProps = (item: any) => {
+    dispatch({
+      type: 'deviceProduct/insert',
+      payload: item,
+      callback: (response: any) => {
+        if (response.status === 200) {
+          message.success('导入成功');
+          handleSearch(searchParam);
+        }
+      },
+    });
+  };
+  /*  const uploadProps: UploadProps = {
     accept: '.json',
     action: '/jetlinks/file/static',
     headers: {
@@ -213,7 +225,7 @@ const DeviceModel: React.FC<Props> = props => {
         });
       }
     },
-  };
+  };*/
 
   const cardInfoTitle = {
     fontSize: 14,
@@ -279,9 +291,23 @@ const DeviceModel: React.FC<Props> = props => {
                 新建
               </Button>
               <Divider type="vertical"/>
-              <Upload {...uploadProps}>
+
+              <Upload
+                showUploadList={false} accept='.json'
+                beforeUpload={(file) => {
+                  const reader = new FileReader();
+                  reader.readAsText(file);
+                  reader.onload = (result) => {
+                    try {
+                      uploadProps(JSON.parse(result.target.result));
+                    } catch (error) {
+                      message.error('文件格式错误');
+                    }
+                  }
+                }}
+              >
                 <Button>
-                  <Icon type="upload"/> 导入配置
+                  <Icon type="upload"/>快速导入
                 </Button>
               </Upload>
             </div>
