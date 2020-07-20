@@ -1,8 +1,8 @@
 import {PageHeaderWrapper} from '@ant-design/pro-layout';
-import React, {useEffect, useState, Fragment} from 'react';
-import {Card, Form, Col, Input, Row, Table, Divider, message, Button, Popconfirm, Icon} from 'antd';
+import React, {Fragment, useEffect, useState} from 'react';
+import {Button, Card, Col, Divider, Form, Icon, Input, message, Popconfirm, Row, Table} from 'antd';
 import apis from '@/services';
-import {Dispatch, ConnectState} from '@/models/connect';
+import {ConnectState, Dispatch} from '@/models/connect';
 import {connect} from 'dva';
 import {FormComponentProps} from 'antd/es/form';
 import encodeQueryParam from '@/utils/encodeParam';
@@ -13,9 +13,7 @@ import StandardFormRow from '../components/standard-form-row';
 import TagSelect from '../components/tag-select';
 import styles from '../index.less';
 import Debug from './debugger';
-import {getAccessToken} from '@/utils/authority';
-import Upload, {UploadProps} from 'antd/lib/upload';
-import request from '@/utils/request';
+import Upload from 'antd/lib/upload';
 
 interface Props extends FormComponentProps {
   dispatch: Dispatch;
