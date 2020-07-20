@@ -1,19 +1,19 @@
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import React, { useEffect, useState, Fragment } from 'react';
-import { Card, Form, Col, Input, Row, Table, Divider, message, Button, Popconfirm } from 'antd';
+import {PageHeaderWrapper} from '@ant-design/pro-layout';
+import React, {useEffect, useState, Fragment} from 'react';
+import {Card, Form, Col, Input, Row, Table, Divider, message, Button, Popconfirm, Icon} from 'antd';
 import apis from '@/services';
-import { Dispatch, ConnectState } from '@/models/connect';
-import { connect } from 'dva';
-import { FormComponentProps } from 'antd/es/form';
+import {Dispatch, ConnectState} from '@/models/connect';
+import {connect} from 'dva';
+import {FormComponentProps} from 'antd/es/form';
 import encodeQueryParam from '@/utils/encodeParam';
-import { downloadObject } from '@/utils/utils';
-import Upload, { UploadProps } from 'antd/lib/upload';
-import { PaginationConfig } from 'antd/lib/table';
+import {downloadObject} from '@/utils/utils';
+import Upload, {UploadProps} from 'antd/lib/upload';
+import {PaginationConfig} from 'antd/lib/table';
 import Save from './save';
 import StandardFormRow from '../components/standard-form-row';
 import TagSelect from '../components/tag-select';
 import styles from '../index.less';
-import { getAccessToken } from '@/utils/authority';
+import {getAccessToken} from '@/utils/authority';
 import request from '@/utils/request';
 import Debug from './debugger';
 import Logger from './log';
@@ -23,6 +23,7 @@ interface Props extends FormComponentProps {
   noticeConfig: any;
   loading: boolean;
 }
+
 interface State {
   typeList: any[];
   // activeType: string;
@@ -36,13 +37,13 @@ interface State {
 
 const formItemLayout = {
   wrapperCol: {
-    xs: { span: 24 },
-    sm: { span: 16 },
+    xs: {span: 24},
+    sm: {span: 16},
   },
 };
 
 const Config: React.FC<Props> = props => {
-  const { noticeConfig, loading, dispatch } = props;
+  const {noticeConfig, loading, dispatch} = props;
 
   const initState: State = {
     typeList: [],
@@ -139,7 +140,18 @@ const Config: React.FC<Props> = props => {
     });
   };
 
-  const uploadProps: UploadProps = {
+  const uploadProps = (item: any) => {
+    dispatch({
+      type: 'noticeConfig/insert',
+      payload: item,
+      callback: () => {
+        message.success('导入成功');
+        handlerSearch(searchParam);
+      },
+    });
+  };
+
+  /*const uploadProps: UploadProps = {
     accept: '.json',
     action: '/jetlinks/file/static',
     headers: {
@@ -165,14 +177,14 @@ const Config: React.FC<Props> = props => {
         message.error(`${info.file.name} 导入失败.`);
       }
     },
-  };
+  };*/
 
   return (
     <PageHeaderWrapper title="通知配置">
       <div className={styles.filterCardList}>
         <Card bordered={false}>
           <Form layout="inline">
-            <StandardFormRow title="组件类型" block style={{ paddingBottom: 11 }}>
+            <StandardFormRow title="组件类型" block style={{paddingBottom: 11}}>
               <Form.Item>
                 <TagSelect
                   expandable
@@ -205,7 +217,7 @@ const Config: React.FC<Props> = props => {
             </StandardFormRow>
           </Form>
         </Card>
-        <br />
+        <br/>
         <Card>
           <Button
             onClick={() => {
@@ -213,23 +225,41 @@ const Config: React.FC<Props> = props => {
               setSaveVisible(true);
             }}
             type="primary"
-            style={{ marginBottom: 16 }}
+            style={{marginBottom: 16}}
           >
             新建
           </Button>
-          <Divider type="vertical" />
+          <Divider type="vertical"/>
           <Button
             onClick={() => {
               downloadObject(noticeConfig.result?.data, '通知配置');
             }}
-            style={{ marginBottom: 16 }}
+            style={{marginBottom: 16}}
           >
             导出配置
           </Button>
-          <Divider type="vertical" />
-          <Upload {...uploadProps}>
+          <Divider type="vertical"/>
+          {/*<Upload {...uploadProps}>
             <Button type="primary" style={{ marginBottom: 16 }}>
               导入配置
+            </Button>
+          </Upload>*/}
+          <Upload
+            showUploadList={false} accept='.json'
+            beforeUpload={(file) => {
+              const reader = new FileReader();
+              reader.readAsText(file);
+              reader.onload = (result) => {
+                try {
+                  uploadProps(JSON.parse(result.target.result));
+                } catch (error) {
+                  message.error('文件格式错误');
+                }
+              }
+            }}
+          >
+            <Button>
+              <Icon type="upload"/>导入配置
             </Button>
           </Upload>
           <Table
@@ -267,7 +297,7 @@ const Config: React.FC<Props> = props => {
                     >
                       编辑
                     </a>
-                    <Divider type="vertical" />
+                    <Divider type="vertical"/>
                     <Popconfirm
                       title="确认删除？"
                       onConfirm={() => {
@@ -276,9 +306,9 @@ const Config: React.FC<Props> = props => {
                     >
                       <a>删除</a>
                     </Popconfirm>
-                    <Divider type="vertical" />
+                    <Divider type="vertical"/>
                     <a onClick={() => downloadObject(record, '通知配置')}>下载配置</a>
-                    <Divider type="vertical" />
+                    <Divider type="vertical"/>
                     <a
                       onClick={() => {
                         setCurrentItem(record);
@@ -287,7 +317,7 @@ const Config: React.FC<Props> = props => {
                     >
                       调试
                     </a>
-                    <Divider type="vertical" />
+                    <Divider type="vertical"/>
                     <a
                       onClick={() => {
                         setCurrentItem(record);
@@ -324,13 +354,13 @@ const Config: React.FC<Props> = props => {
           save={(item: any) => saveData(item)}
         />
       )}
-      {debugVisible && <Debug data={currentItem} close={() => setDebugVisible(false)} />}
-      {logVisible && <Logger close={() => setLogVisible(false)} data={currentItem} />}
+      {debugVisible && <Debug data={currentItem} close={() => setDebugVisible(false)}/>}
+      {logVisible && <Logger close={() => setLogVisible(false)} data={currentItem}/>}
     </PageHeaderWrapper>
   );
 };
 
-export default connect(({ noticeConfig, loading }: ConnectState) => ({
+export default connect(({noticeConfig, loading}: ConnectState) => ({
   noticeConfig,
   loading: loading.models.noticeConfig,
 }))(Form.create<Props>()(Config));
