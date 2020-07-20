@@ -8,6 +8,7 @@ import Definition from './definition';
 import {ConnectState, Dispatch} from '@/models/connect';
 import apis from '@/services';
 import Save from '.';
+import numeral from 'numeral';
 import encodeQueryParam from '@/utils/encodeParam';
 import Alarm from '@/pages/device/alarm';
 import Configuration from "@/pages/device/product/save/configuration";
@@ -214,7 +215,7 @@ const Detail: React.FC<Props> = props => {
       <Descriptions column={4}>
         <Descriptions.Item label="设备数量">
           <div>
-            {deviceCount}
+            {numeral(deviceCount).format('0,0')}
             <a style={{marginLeft: 10}}
                onClick={() => {
                  router.push(`/device/instance?productId=${basicInfo.id}`);
