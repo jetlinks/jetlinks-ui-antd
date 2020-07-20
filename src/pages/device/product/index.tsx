@@ -26,6 +26,7 @@ import Save from './save';
 import {downloadObject} from '@/utils/utils';
 import SearchForm from '@/components/SearchForm';
 import apis from '@/services';
+import numeral from 'numeral';
 import AutoHide from "@/pages/device/location/info/autoHide";
 
 interface Props {
@@ -427,7 +428,7 @@ const DeviceModel: React.FC<Props> = props => {
                                     <a onClick={() => {
                                       router.push(`/device/instance?productId=${item.id}`);
                                     }}
-                                    >{deviceCount[item.id]}</a>
+                                    >{numeral(deviceCount[item.id]).format('0,0')}</a>
                                   </Tooltip>
                                 </p>
                               </Spin>
