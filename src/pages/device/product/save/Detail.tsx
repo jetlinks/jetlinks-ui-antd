@@ -338,7 +338,7 @@ const Detail: React.FC<Props> = props => {
                     <Descriptions.Item label={item.property} span={1} key={item.property}>
                       {basicInfo.configuration ? (
                         item.type.type === 'password' ? (
-                            basicInfo.configuration[item.property].length > 0 ? '••••••' : null
+                            basicInfo.configuration[item.property]?.length > 0 ? '••••••' : null
                           ) :
                           basicInfo.configuration[item.property]
                       ) : null}

@@ -151,7 +151,7 @@ const Info: React.FC<Props> = (props) => {
               <Descriptions.Item label={item.property} span={1} key={item.property}>
                 {props.data.configuration ? (
                   item.type.type === 'password' ? (
-                      props.data.configuration[item.property].length > 0 ? '••••••' : null
+                      props.data.configuration[item.property]?.length > 0 ? '••••••' : null
                     ) :
                     props.data.configuration[item.property]
                 ) : null}
