@@ -34,6 +34,7 @@ import { DeviceInstance } from './data.d';
 import Process from './Process';
 import Import from './operation/import';
 import Export from './operation/export';
+import numeral from 'numeral';
 import { DeviceProduct } from '@/pages/device/product/data';
 import { getPageQuery } from '@/utils/utils';
 
@@ -566,16 +567,16 @@ const DeviceInstancePage: React.FC<Props> = props => {
                 </Select>
               </Col>
               <Col sm={4} xs={24}>
-                <Info title="全部设备" value={deviceCount.deviceTotal} />
+                <Info title="全部设备" value={numeral(deviceCount.deviceTotal).format('0,0')} />
               </Col>
               <Col sm={4} xs={24}>
-                <Info title={<Badge status={statusMap.get('在线')} text="在线" />} value={deviceCount.onlineCount} />
+                <Info title={<Badge status={statusMap.get('在线')} text="在线" />} value={numeral(deviceCount.onlineCount).format('0,0')} />
               </Col>
               <Col sm={4} xs={24}>
-                <Info title={<Badge status={statusMap.get('离线')} text="离线" />} value={deviceCount.offlineCount} />
+                <Info title={<Badge status={statusMap.get('离线')} text="离线" />} value={numeral(deviceCount.offlineCount).format('0,0')} />
               </Col>
               <Col sm={4} xs={24}>
-                <Info title={<Badge status={statusMap.get('未激活')} text="未激活" />} value={deviceCount.notActiveCount} />
+                <Info title={<Badge status={statusMap.get('未激活')} text="未激活" />} value={numeral(deviceCount.notActiveCount).format('0,0')} />
               </Col>
               <Col sm={1} xs={24}>
                 <Tooltip title='刷新'>

@@ -35,11 +35,11 @@ const Search: React.FC<Props> = props => {
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
-      sm: { span: 4 },
+      sm: { span: 7 },
     },
     wrapperCol: {
       xs: { span: 24 },
-      sm: { span: 20 },
+      sm: { span: 17 },
     },
   };
 

@@ -252,7 +252,7 @@ export default {
                 },
                 {
                   path: '/device/gateway',
-                  name: '网关设备',
+                  name: '子设备管理',
                   icon: 'global',
                   iconfont: 'icon-Group',
                   authority: ['device-gateway', 'admin'],

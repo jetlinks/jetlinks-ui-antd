@@ -8,7 +8,8 @@ import {
   Divider,
   Dropdown,
   Icon,
-  List, Menu,
+  List,
+  Menu,
   message,
   Popconfirm,
   Spin,
@@ -19,15 +20,13 @@ import {connect} from 'dva';
 import {ConnectState, Dispatch} from '@/models/connect';
 import {router} from 'umi';
 import encodeQueryParam from '@/utils/encodeParam';
-import {UploadProps} from 'antd/lib/upload';
-import {getAccessToken} from '@/utils/authority';
-import request from '@/utils/request';
 import cardStyles from './index.less';
 import productImg from "@/pages/device/product/img/product.png";
 import Save from './save';
 import {downloadObject} from '@/utils/utils';
 import SearchForm from '@/components/SearchForm';
 import apis from '@/services';
+import numeral from 'numeral';
 import AutoHide from "@/pages/device/location/info/autoHide";
 
 interface Props {
@@ -185,7 +184,19 @@ const DeviceModel: React.FC<Props> = props => {
     });
   };
 
-  const uploadProps: UploadProps = {
+  const uploadProps = (item: any) => {
+    dispatch({
+      type: 'deviceProduct/insert',
+      payload: item,
+      callback: (response: any) => {
+        if (response.status === 200) {
+          message.success('导入成功');
+          handleSearch(searchParam);
+        }
+      },
+    });
+  };
+  /*  const uploadProps: UploadProps = {
     accept: '.json',
     action: '/jetlinks/file/static',
     headers: {
@@ -213,7 +224,7 @@ const DeviceModel: React.FC<Props> = props => {
         });
       }
     },
-  };
+  };*/
 
   const cardInfoTitle = {
     fontSize: 14,
@@ -279,9 +290,23 @@ const DeviceModel: React.FC<Props> = props => {
                 新建
               </Button>
               <Divider type="vertical"/>
-              <Upload {...uploadProps}>
+
+              <Upload
+                showUploadList={false} accept='.json'
+                beforeUpload={(file) => {
+                  const reader = new FileReader();
+                  reader.readAsText(file);
+                  reader.onload = (result) => {
+                    try {
+                      uploadProps(JSON.parse(result.target.result));
+                    } catch (error) {
+                      message.error('文件格式错误');
+                    }
+                  }
+                }}
+              >
                 <Button>
-                  <Icon type="upload"/> 导入配置
+                  <Icon type="upload"/>快速导入
                 </Button>
               </Upload>
             </div>
@@ -403,7 +428,7 @@ const DeviceModel: React.FC<Props> = props => {
                                     <a onClick={() => {
                                       router.push(`/device/instance?productId=${item.id}`);
                                     }}
-                                    >{deviceCount[item.id]}</a>
+                                    >{numeral(deviceCount[item.id]).format('0,0')}</a>
                                   </Tooltip>
                                 </p>
                               </Spin>

@@ -58,7 +58,7 @@ const SaveRegion: React.FC<Props> = props => {
     apis.location._search_geo_json({
       filter: {
         where: 'objectType not device',
-        pageSize:1000
+        pageSize: 1000
       },
     })
       .then(response => {
@@ -231,7 +231,11 @@ const SaveRegion: React.FC<Props> = props => {
           <Col span={12}>
             <Form.Item key="id" label="区域标识">
               {getFieldDecorator('id', {
-                rules: [{required: true, message: '区域标识必填'}],
+                rules: [
+                  {required: true, message: '请输入区域标识'},
+                  {max: 64, message: '区域标识不超过64个字符'},
+                  {pattern: new RegExp(/^[0-9a-zA-Z_\-]+$/, "g"), message: '区域标识只能由数字、字母、下划线、中划线组成'}
+                ],
                 initialValue: props.data.properties?.id,
               })(<Input placeholder="请输入区域标识" disabled={!!props.data?.properties?.id}/>)}
             </Form.Item>
@@ -239,7 +243,10 @@ const SaveRegion: React.FC<Props> = props => {
           <Col span={12}>
             <Form.Item key="name" label="区域名称">
               {getFieldDecorator('name', {
-                rules: [{required: true, message: '区域名称必填'}],
+                rules: [
+                  {required: true, message: '请输入区域名称'},
+                  {max: 200, message: '区域名称不超过200个字符'}
+                ],
                 initialValue: props.data.properties?.name,
               })(<Input placeholder="请输入区域名称"/>)}
             </Form.Item>
@@ -257,11 +264,11 @@ const SaveRegion: React.FC<Props> = props => {
               {getFieldDecorator('parentId', {
                 initialValue: props.data.properties?.parentId,
               })(
-                  <TreeSelect
-                      allowClear treeDataSimpleMode showSearch
-                      placeholder="上级区域" treeData={regionList}
-                      treeNodeFilterProp='title' searchPlaceholder='选择查看区域，可输入查询'
-                  />
+                <TreeSelect
+                  allowClear treeDataSimpleMode showSearch
+                  placeholder="上级区域" treeData={regionList}
+                  treeNodeFilterProp='title' searchPlaceholder='选择查看区域，可输入查询'
+                />
               )}
             </Form.Item>
           </Col>

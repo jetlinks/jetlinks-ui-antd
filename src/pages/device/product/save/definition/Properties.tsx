@@ -1,16 +1,17 @@
-import React, { Fragment, useState } from 'react';
-import { FormComponentProps } from 'antd/es/form';
-import { Form, Card, Button, Table, Divider } from 'antd';
-import { ColumnProps } from 'antd/lib/table';
-import { PropertiesMeta } from '../../component/data.d';
-
+import React, {Fragment, useContext, useEffect, useState} from 'react';
+import {FormComponentProps} from 'antd/es/form';
+import {Button, Card, Divider, Form, Table} from 'antd';
+import {ColumnProps} from 'antd/lib/table';
+import {PropertiesMeta} from '../../component/data.d';
 import PropertiesDefin from '../../component/properties';
+import {TenantContext} from "@/pages/device/product/save/definition/index";
 
 interface Props extends FormComponentProps {
   save: Function;
   data: any[];
   unitsData: any;
 }
+
 interface State {
   data: PropertiesMeta[];
   current: Partial<PropertiesMeta>;
@@ -18,6 +19,8 @@ interface State {
 }
 
 const Properties: React.FC<Props> = (props: Props) => {
+  const tenantContextData = useContext(TenantContext);
+
   const initState: State = {
     data: props.data,
     current: {},
@@ -27,6 +30,10 @@ const Properties: React.FC<Props> = (props: Props) => {
   const [visible, setVisible] = useState(initState.visible);
   const [data, setData] = useState(initState.data);
   const [current, setCurrent] = useState(initState.current);
+
+  useEffect(() => {
+    setData(tenantContextData.properties)
+  }, [tenantContextData]);
 
   const editItem = (item: any) => {
     setVisible(true);
@@ -67,7 +74,7 @@ const Properties: React.FC<Props> = (props: Props) => {
       render: (text, record) => (
         <Fragment>
           <a onClick={() => editItem(record)}>编辑</a>
-          <Divider type="vertical" />
+          <Divider type="vertical"/>
           <a onClick={() => deleteItem(record)}>删除</a>
         </Fragment>
       ),
@@ -75,10 +82,6 @@ const Properties: React.FC<Props> = (props: Props) => {
   ];
 
   const savePropertiesData = (item: PropertiesMeta) => {
-    // if (!item.id) {
-    //   // const temp = { ...item, id: (data.length + 1).toString() };
-    //   data.push(item);
-    // } else {
     const i = data.findIndex((j: any) => j.id === item.id);
     if (i > -1) {
       data[i] = item;
@@ -94,7 +97,7 @@ const Properties: React.FC<Props> = (props: Props) => {
     <div>
       <Card
         title="属性定义"
-        style={{ marginBottom: 20 }}
+        style={{marginBottom: 20}}
         extra={
           <Button type="primary" onClick={() => {
             setCurrent({});
@@ -104,7 +107,7 @@ const Properties: React.FC<Props> = (props: Props) => {
           </Button>
         }
       >
-        <Table rowKey="id" columns={columns} dataSource={data} />
+        <Table rowKey="id" columns={columns} dataSource={data}/>
       </Card>
       {visible && (
         <PropertiesDefin

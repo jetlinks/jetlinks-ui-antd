@@ -79,8 +79,8 @@ const Logger = (props: Props) => {
     const [searchParam, setSearchParam] = useState<any>(initParam);
 
     const handleSearch = async (params?: any) => {
-        const temp = { ...params, ...searchParam, };
-        temp.terms = { ...params.terms, ...initParam.terms };
+        const temp = { ...searchParam, ...params };
+        temp.terms = { ...initParam.terms, ...params.terms, };
         setSearchParam(temp);
 
         await apis.notifier.history.list(encodeQueryParam(temp)).then(response => {

@@ -117,7 +117,11 @@ const Save: React.FC<Props> = props => {
       },
       options: {
         initialValue: props.data?.id,
-        rules: [{required: true, message: '请输入产品ID'}],
+        rules: [
+          {required: true, message: '请输入产品ID'},
+          {max: 64, message: '产品ID不超过64个字符'},
+          {pattern: new RegExp(/^[0-9a-zA-Z_\-]+$/, "g"), message: '产品ID只能由数字、字母、下划线、中划线组成'}
+        ],
       },
       component: (
         <Input
@@ -130,7 +134,10 @@ const Save: React.FC<Props> = props => {
       label: '产品名称',
       key: 'name',
       options: {
-        rules: [{required: true, message: '请选择产品名称'}],
+        rules: [
+          {required: true, message: '请选择产品名称'},
+          {max: 200, message: '产品名称不超过200个字符'}
+        ],
         initialValue: props.data?.name,
       },
       styles: {
@@ -139,7 +146,7 @@ const Save: React.FC<Props> = props => {
         md: {span: 12},
         sm: {span: 24},
       },
-      component: <Input style={{width: '100%'}} placeholder="请输入"/>,
+      component: <Input style={{width: '100%'}} maxLength={200} placeholder="请输入"/>,
     },
     {
       label: '所属品类',

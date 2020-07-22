@@ -1,7 +1,22 @@
 import React, {useEffect, useState} from 'react';
 import Form from 'antd/es/form';
 import {FormComponentProps} from 'antd/lib/form';
-import {Badge, Button, Card, Col, Icon, Input, message, Popconfirm, Radio, Row, Select, Spin, Steps} from 'antd';
+import {
+  Badge,
+  Button,
+  Card,
+  Col,
+  Icon,
+  Input,
+  InputNumber,
+  message,
+  Popconfirm,
+  Radio,
+  Row,
+  Select,
+  Spin,
+  Steps
+} from 'antd';
 import {UpgradeTaskData} from '../../data';
 import styles from './style.less';
 import apis from '@/services';
@@ -236,15 +251,18 @@ const Save: React.FC<Props> = props => {
             <Form labelCol={{span: 9}} wrapperCol={{span: 7}} key="firmwareForm">
               <Form.Item key="name" label="任务名称">
                 {getFieldDecorator('name', {
-                  rules: [{required: true, message: '任务名称必填'}],
+                  rules: [
+                    {required: true, message: '请输入任务名称'},
+                    {max: 200, message: '任务名称不超过200个字符'}
+                  ],
                   initialValue: upgradeData.name,
                 })(<Input placeholder="输入任务名称"/>)}
               </Form.Item>
               <Form.Item key="timeoutSeconds" label="超时时间">
                 {getFieldDecorator('timeoutSeconds', {
-                  rules: [{required: true, message: '超时时间必填'}],
+                  rules: [{required: true, message: '请输入超时时间'}],
                   initialValue: upgradeData.timeoutSeconds,
-                })(<Input placeholder="输入超时时间/秒"/>)}
+                })(<InputNumber min={0} step={1} style={{width:'100%'}} placeholder="请输入超时时间"/>)}
               </Form.Item>
               <Form.Item key="mode" label="推送方式">
                 {getFieldDecorator('mode', {

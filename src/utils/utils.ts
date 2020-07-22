@@ -3,6 +3,7 @@ import pathRegexp from 'path-to-regexp';
 import { Route } from '@/models/connect';
 import { isEqual } from 'lodash';
 import proxy from '../../config/proxy';
+import moment from "moment";
 
 /* eslint no-useless-escape:0 import/prefer-default-export:0 */
 const reg = /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+(?::\d+)?|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)$/;
@@ -96,7 +97,7 @@ export const randomString = (length?: number) => {
 export const downloadObject = (record: any, fileName: string) => {
   // 创建隐藏的可下载链接
   const eleLink = document.createElement('a');
-  eleLink.download = `${fileName}-${record.name || new Date()}.json`;
+  eleLink.download = `${fileName}-${record.name || moment(new Date()).format('YYYY/MM/DD HH:mm:ss')}.json`;
   eleLink.style.display = 'none';
   // 字符内容转变成blob地址
   const blob = new Blob([JSON.stringify(record)]);

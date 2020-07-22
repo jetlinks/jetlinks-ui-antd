@@ -125,7 +125,7 @@ const Editor: React.FC<Props> = props => {
           if (deviceData.deviceType.value === 'gateway') {
             tabList.push({
               key: 'gateway',
-              tab: '网关设备',
+              tab: '子设备管理',
             });
           }
 
