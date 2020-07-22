@@ -41,7 +41,6 @@ const ProtocolList: React.FC<Props> = props => {
   const [current, setCurrent] = useState(initState.current);
 
   const handleSearch = (params?: any) => {
-    console.log(params, location, 'rrrr');
     dispatch({
       type: 'protocol/query',
       payload: encodeQueryParam(params),

@@ -47,7 +47,6 @@ const BaseView: React.FC<Props> = (props) => {
     const update = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const data = { ...getFieldsValue(), avatar };
-        console.log(data, 'dddd');
         service.save(data).subscribe(() => {
             message.success('保存成功!');
         }, () => {

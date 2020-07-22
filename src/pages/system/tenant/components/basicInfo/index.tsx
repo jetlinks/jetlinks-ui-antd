@@ -44,7 +44,6 @@ const BasicInfo = (props: Props) => {
         setLoading(true);
         const temp = getFieldsValue();
         service.update({ ...data, ...temp, photo }).subscribe(response => {
-            console.log(response, 'res');
             setLoading(false);
         });
     }

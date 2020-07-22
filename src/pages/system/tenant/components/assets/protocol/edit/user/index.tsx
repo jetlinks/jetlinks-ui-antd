@@ -17,7 +17,6 @@ const User = (props: Props) => {
     const [selected, setSelected] = useState<string[]>([]);
     useEffect(() => {
         service.assets.members(data.id, 'product', asset.id).subscribe(resp => {
-            console.log(resp, 'respp');
             const bindId = resp.filter((item: any) => item.binding === true).map((i: any) => i.userId);
             setSelected(bindId);
             setList(resp);
@@ -58,7 +57,7 @@ const User = (props: Props) => {
 
             setSelected(selectedRowKeys);
 
-            console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+            // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
         },
     };
     return (

@@ -62,7 +62,6 @@ const Save: React.FC<Props> = (props) => {
                     targetId: productId
                 }
             })).subscribe(resp => {
-                console.log(resp?.data, 'dddd');
                 setAlarms(resp?.data);
             });
         }

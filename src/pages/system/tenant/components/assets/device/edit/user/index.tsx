@@ -17,7 +17,6 @@ const User = (props: Props) => {
     const [selected, setSelected] = useState<string[]>([]);
     useEffect(() => {
         service.assets.members(data.id, 'device', asset.id).subscribe(resp => {
-            console.log(resp, 'respp');
             const bindId = resp.filter((item: any) => item.binding === true).map((i: any) => i.userId);
             setSelected(bindId);
             setList(resp);
@@ -31,7 +30,6 @@ const User = (props: Props) => {
             assetIdList: [asset.id],
             allPermission: true,
         }]).subscribe(resp => {
-            console.log(resp, '绑定资产')
             message.success('绑定成功');
         })
     }
@@ -41,7 +39,6 @@ const User = (props: Props) => {
             assetType: 'device',
             assetIdList: [asset.id],
         }]).subscribe(resp => {
-            console.log(resp, '解绑资产');
             message.success('解绑成功');
         })
     }
@@ -62,7 +59,7 @@ const User = (props: Props) => {
 
             setSelected(selectedRowKeys);
 
-            console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+            // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
         },
     };
     return (

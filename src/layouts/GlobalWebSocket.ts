@@ -41,7 +41,6 @@ const initWebSocket = () => {
         }
     }
     timer = setInterval(() => {
-        console.log('websocket');
         try {
             ws?.send(JSON.stringify({ "type": "ping" }))
         } catch (error) {

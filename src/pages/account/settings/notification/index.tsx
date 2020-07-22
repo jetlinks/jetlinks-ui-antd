@@ -79,7 +79,6 @@ const NotificationView = () => {
         <div>
             <SearchForm
                 search={(params: any) => {
-                    console.log(params, 'paa');
                 }}
                 formItems={[{
                     label: '订阅名称',
