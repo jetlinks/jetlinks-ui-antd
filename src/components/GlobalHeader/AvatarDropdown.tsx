@@ -40,21 +40,19 @@ class AvatarDropdown extends React.Component<GlobalHeaderRightProps> {
       },
       menu,
     } = this.props;
+
+    console.log(menu, 'meun');
     const menuHeaderDropdown = (
       <Menu className={styles.menu} selectedKeys={[]} onClick={this.onMenuClick}>
-        {menu && (
-          <Menu.Item key="center">
-            <Icon type="user" />
+        <Menu.Item key="center">
+          <Icon type="user" />
             个人中心
           </Menu.Item>
-        )}
-        {menu && (
-          <Menu.Item key="settings">
-            <Icon type="setting" />
+        <Menu.Item key="settings">
+          <Icon type="setting" />
             个人设置
           </Menu.Item>
-        )}
-        {menu && <Menu.Divider />}
+        <Menu.Divider />
 
         <Menu.Item key="logout">
           <Icon type="logout" />
@@ -70,14 +68,14 @@ class AvatarDropdown extends React.Component<GlobalHeaderRightProps> {
         </span>
       </HeaderDropdown>
     ) : (
-      <Spin
-        size="small"
-        style={{
-          marginLeft: 8,
-          marginRight: 8,
-        }}
-      />
-    );
+        <Spin
+          size="small"
+          style={{
+            marginLeft: 8,
+            marginRight: 8,
+          }}
+        />
+      );
   }
 }
 

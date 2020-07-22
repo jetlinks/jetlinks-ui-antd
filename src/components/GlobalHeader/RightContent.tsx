@@ -8,6 +8,7 @@ import Avatar from './AvatarDropdown';
 // import HeaderSearch from '../HeaderSearch';
 // import SelectLang from '../SelectLang';
 import styles from './index.less';
+import NoticeIconView from './NoticeIconView';
 
 export type SiderTheme = 'light' | 'dark';
 export interface GlobalHeaderRightProps extends ConnectProps {
@@ -61,6 +62,7 @@ const GlobalHeaderRight: React.SFC<GlobalHeaderRightProps> = props => {
           <Icon type="question-circle-o" />
         </a>
       </Tooltip>
+      <NoticeIconView />
       <Avatar />
       {REACT_APP_ENV && <Tag color={ENVTagColor[REACT_APP_ENV]}>{REACT_APP_ENV}</Tag>}
       {/* <SelectLang className={styles.action} /> */}
