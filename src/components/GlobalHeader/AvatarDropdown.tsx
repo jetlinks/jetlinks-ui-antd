@@ -38,10 +38,8 @@ class AvatarDropdown extends React.Component<GlobalHeaderRightProps> {
         avatar: '',
         name: '',
       },
-      menu,
     } = this.props;
 
-    console.log(menu, 'meun');
     const menuHeaderDropdown = (
       <Menu className={styles.menu} selectedKeys={[]} onClick={this.onMenuClick}>
         <Menu.Item key="center">
