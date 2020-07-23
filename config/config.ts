@@ -170,7 +170,7 @@ export default {
                   component: './system/config',
                 },
                 {
-                  path: 'system/tenant',
+                  path: '/system/tenant',
                   name: '租户管理',
                   icon: 'team',
                   iconfont: 'icon-erji-zuhuguanli',
@@ -342,7 +342,7 @@ export default {
                   component: './notice/config',
                 },
                 {
-                  path: 'notice/template',
+                  path: '/notice/template',
                   name: '通知模版',
                   icon: 'bell',
                   iconfont: 'icon-tongzhiguanli',
@@ -377,7 +377,7 @@ export default {
                   component: './rule-engine/instance',
                 },
                 {
-                  path: './rule-engine/sqlRule',
+                  path: '/rule-engine/sqlRule',
                   name: '数据转发',
                   icon: 'rise',
                   iconfont: 'icon-datatransfer',
@@ -406,7 +406,7 @@ export default {
               authority: ['system-logger', 'access-logger', 'admin'],
               routes: [
                 {
-                  path: './logger/access',
+                  path: '/logger/access',
                   name: '访问日志',
                   icon: 'dash',
                   iconfont: 'icon-yonghufangwenrizhi',
@@ -414,7 +414,7 @@ export default {
                   component: './logger/access',
                 },
                 {
-                  path: './logger/system',
+                  path: '/logger/system',
                   name: '系统日志',
                   icon: 'ordered-list',
                   iconfont: 'icon-xitongrizhi',
@@ -422,6 +422,31 @@ export default {
                   component: './logger/system',
                 },
               ],
+            },
+            {
+              path: 'account',
+              name: '个人中心',
+              icon: 'user',
+              routes: [
+                {
+                  path: '/account/center',
+                  name: '个人中心',
+                  icon: 'smile',
+                  component: './account/center'
+                },
+                {
+                  path: '/account/settings',
+                  name: '个人设置',
+                  icon: 'setting',
+                  component: './account/settings'
+                },
+                {
+                  path: '/account/notification',
+                  name: '通知订阅',
+                  icon: 'bell',
+                  component: './account/notification'
+                }
+              ]
             },
             // {
             //   name: 'paramter',

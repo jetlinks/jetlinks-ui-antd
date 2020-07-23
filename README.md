@@ -9,9 +9,9 @@ $ npm start         # visit http://localhost:8000
 
 ### 本地开发环境要求
 
-- nodeJs v12.14
-- npm v6.13
-- Chrome v80.0
+- nodeJs v12.x
+- npm v6.x
+- Chrome v80.0+
 
 本地开发项目建议使用如下命令启动项目
 

@@ -61,7 +61,8 @@ const errorHandler = (error: { response: Response }): Response | undefined => {
       } else {
         router.push('/user/login');
       }
-    } else if (response.status === 400) {
+    }
+    else if (response.status === 400) {
       response.text().then(resp => {
         if (resp) {
           notification.error({
@@ -78,7 +79,8 @@ const errorHandler = (error: { response: Response }): Response | undefined => {
         }
       });
       return response;
-    } else if (response.status === 500) {
+    }
+    else if (response.status === 500) {
       response.json().then((res: any) => {
         notification.error({
           key: 'error',
