@@ -11,7 +11,6 @@ import Save from './save';
 import Authorization from '@/components/Authorization';
 import apis from '@/services';
 import SearchForm from '@/components/SearchForm';
-import Service from '@/services/crud';
 
 interface Props {
     users: any;
