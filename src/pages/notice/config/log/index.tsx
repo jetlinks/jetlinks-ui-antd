@@ -51,7 +51,7 @@ const Logger = (props: Props) => {
     {
         dataIndex: 'option',
         title: '操作',
-        render: (text, record: any) => (
+        render: (_, record: any) => (
             <Fragment>
                 <a
                     onClick={() => {

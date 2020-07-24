@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Tag, message } from 'antd';
+import { message, notification, Icon, Button } from 'antd';
 import { connect } from 'dva';
 import groupBy from 'lodash/groupBy';
 import moment from 'moment';
@@ -8,6 +8,9 @@ import NoticeIcon from '../NoticeIcon';
 import { CurrentUser } from '@/models/user';
 import { ConnectProps, ConnectState } from '@/models/connect';
 import styles from './index.less';
+import { getWebsocket } from '@/layouts/GlobalWebSocket';
+import Service from '@/pages/account/notification/service';
+import encodeQueryParam from '@/utils/encodeParam';
 
 export interface GlobalHeaderRightProps extends ConnectProps {
   notices?: NoticeItem[];
@@ -16,22 +19,60 @@ export interface GlobalHeaderRightProps extends ConnectProps {
   onNoticeVisibleChange?: (visible: boolean) => void;
   onNoticeClear?: (tabName?: string) => void;
 }
-
+interface State {
+  noticeList: any[];
+}
 class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
+
+  state: State = {
+    noticeList: [],
+  }
+  service = new Service('notifications');
+  private ws: any;
   componentDidMount() {
     const { dispatch } = this.props;
 
     if (dispatch) {
       dispatch({
         type: 'global/fetchNotices',
+        payload: encodeQueryParam({
+          terms: { state: 'unread' }
+        })
       });
     }
+    this.ws = getWebsocket(
+      `notification`,
+      `/notifications`,
+      {}
+    ).subscribe(
+      (resp: any) => {
+        notification.open({
+          message: resp?.payload?.topicName,
+          description: resp?.payload?.message,
+          key: resp.payload.id,
+          btn: <Button
+            type="primary"
+            onClick={() => {
+              this.service
+                .read(resp.payload.id)
+                .subscribe(() => {
+                  notification.close(resp.payload.id)
+                });
+            }}
+          >标记已读</Button>,
+          icon: <Icon type="exclamation-circle" style={{ color: '#E23D38' }} />,
+        });
+      }
+    );
+  }
+
+  componentWillUnmount() {
+    this.ws.unsubscribe();
   }
 
   changeReadState = (clickedItem: NoticeItem): void => {
     const { id } = clickedItem;
     const { dispatch } = this.props;
-
     if (dispatch) {
       dispatch({
         type: 'global/changeNoticeReadState',
@@ -43,11 +84,13 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
   handleNoticeClear = (title: string, key: string) => {
     const { dispatch } = this.props;
     message.success(`${'清空了'} ${title}`);
+    const clearIds = (this.getNoticeData().user).map(item => item.id);
 
+    // console.log(title, key, 'sss');
     if (dispatch) {
       dispatch({
         type: 'global/clearNotices',
-        payload: key,
+        payload: clearIds,
       });
     }
   };
@@ -56,44 +99,28 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
     [key: string]: NoticeItem[];
   } => {
     const { notices = [] } = this.props;
-
     if (notices.length === 0) {
       return {};
     }
 
     const newNotices = notices.map(notice => {
       const newNotice = { ...notice };
-
-      if (newNotice.datetime) {
-        newNotice.datetime = moment(notice.datetime as string).fromNow();
+      if (newNotice.notifyTime) {
+        newNotice.notifyTime = moment(notice.notifyTime as string).fromNow();
       }
 
       if (newNotice.id) {
         newNotice.key = newNotice.id;
       }
 
-      if (newNotice.extra && newNotice.status) {
-        const color = {
-          todo: '',
-          processing: 'blue',
-          urgent: 'red',
-          doing: 'gold',
-        }[newNotice.status];
-        newNotice.extra = (
-          <Tag
-            color={color}
-            style={{
-              marginRight: 0,
-            }}
-          >
-            {newNotice.extra}
-          </Tag>
-        );
-      }
+      newNotice.avatar = 'https://gw.alipayobjects.com/zos/rmsportal/fcHMVNCjPOsbUGdEduuv.jpeg';
+      newNotice.title = notice.topicName;
+      newNotice.description = notice.message;
 
       return newNotice;
     });
-    return groupBy(newNotices, 'type');
+
+    return groupBy(newNotices, 'subscriberType');
   };
 
   getUnreadData = (noticeData: { [key: string]: NoticeItem[] }) => {
@@ -133,30 +160,30 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
         onViewMore={() => message.info('Click on view more')}
         clearClose
       >
-        <NoticeIcon.Tab
+        {/* <NoticeIcon.Tab
           tabKey="notification"
           count={unreadMsg.notification}
           list={noticeData.notification}
           title="通知"
           emptyText="你已查看所有通知"
           showViewMore
-        />
+        /> */}
         <NoticeIcon.Tab
-          tabKey="message"
-          count={unreadMsg.message}
-          list={noticeData.message}
+          tabKey="user"
+          count={unreadMsg.user}
+          list={noticeData.user}
           title="消息"
           emptyText="您已读完所有消息"
           showViewMore
         />
-        <NoticeIcon.Tab
+        {/* <NoticeIcon.Tab
           tabKey="event"
           title="待办"
           emptyText="你已完成所有待办"
           count={unreadMsg.event}
           list={noticeData.event}
           showViewMore
-        />
+        /> */}
       </NoticeIcon>
     );
   }

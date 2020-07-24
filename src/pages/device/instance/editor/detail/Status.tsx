@@ -164,13 +164,14 @@ const Status: React.FC<Props> = props => {
           const dataValue = payload.value;
 
           if (!propertyData[dataValue.property]) return;
-
+ 
           if (dataValue?.formatValue && typeof dataValue?.formatValue === 'object') {
             propertyData[dataValue.property].formatValue = dataValue?.formatValue ? JSON.stringify(dataValue.formatValue) : '/';
           } else if (dataValue?.formatValue) {
             propertyData[dataValue.property].formatValue = dataValue?.formatValue ? dataValue.formatValue : '/';
           } else {
             propertyData[dataValue.property].formatValue = '/';
+ 
           }
 
           if (propertyData[dataValue.property].type === 'int' || propertyData[dataValue.property].type === 'float'
