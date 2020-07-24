@@ -5,6 +5,16 @@ import request from "@/utils/request";
 class Service extends BaseService<any>{
 
     public read = (id: string) => defer(() => request(`/jetlinks/notifications/${id}/read`));
+
+    public unReadNotices = (data: string[]) => defer(() => request(`/jetlinks/notifications/_unread`, {
+        method: 'POST',
+        data
+    }));
+
+    public readNotices = (data: string[]) => defer(() => request(`/jetlinks/notifications/_read`, {
+        method: 'POST',
+        data
+    }));
 }
 export default Service;
 

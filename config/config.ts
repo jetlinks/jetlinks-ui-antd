@@ -428,12 +428,12 @@ export default {
               name: '个人中心',
               icon: 'user',
               routes: [
-                {
-                  path: '/account/center',
-                  name: '个人中心',
-                  icon: 'smile',
-                  component: './account/center'
-                },
+                // {
+                //   path: '/account/center',
+                //   name: '个人中心',
+                //   icon: 'smile',
+                //   component: './account/center'
+                // },
                 {
                   path: '/account/settings',
                   name: '个人设置',
