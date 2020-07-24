@@ -42,6 +42,7 @@ const ManageRegion: React.FC<Props> = props => {
             });
             setTreeData(list);
           }
+          setSpinning(false);
         },
       ).catch(() => {
     });
@@ -83,12 +84,14 @@ const ManageRegion: React.FC<Props> = props => {
       .then((response: any) => {
         if (response.status === 200) {
           message.success('区域信息保存成功');
-          handleSearch({
-            filter: {
-              where: 'objectType not device',
-              pageSize: 1000
-            },
-          });
+          setTimeout(function () {
+            handleSearch({
+              filter: {
+                where: 'objectType not device',
+                pageSize: 1000
+              },
+            });
+          }, 1000);
         }
       })
       .catch(() => {
@@ -96,16 +99,18 @@ const ManageRegion: React.FC<Props> = props => {
   };
 
   const _delete = (record: any) => {
-    apis.location._delete(record.properties.id)
+    apis.location._delete(record.id)
       .then(response => {
           if (response.status === 200) {
             message.success('删除成功');
-            handleSearch({
-              filter: {
-                where: 'objectType not device',
-                pageSize: 1000
-              },
-            });
+            setTimeout(function () {
+              handleSearch({
+                filter: {
+                  where: 'objectType not device',
+                  pageSize: 1000
+                },
+              });
+            }, 1000);
           }
         },
       ).catch(() => {
@@ -204,9 +209,17 @@ const ManageRegion: React.FC<Props> = props => {
       </div>
       {saveRegion && (
         <SaveRegion data={regionData} save={(data: any) => {
+          setSpinning(true);
           saveByGeoJson(data);
           setSaveRegion(false);
         }} close={() => {
+          setSpinning(true);
+          handleSearch({
+            filter: {
+              where: 'objectType not device',
+              pageSize: 1000
+            },
+          });
           setSaveRegion(false);
         }}/>
       )}

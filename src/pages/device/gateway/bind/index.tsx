@@ -124,7 +124,7 @@ const DeviceGatewayBind: React.FC<Props> = props => {
 
   return (
     <Modal
-      title="选择设备"
+      title="绑定子设备"
       visible
       okText="确定"
       cancelText="取消"

@@ -88,7 +88,7 @@ const EventDefin: React.FC<Props> = props => {
               <Col span={11}>
                 {getFieldDecorator('valueType.min', {
                   initialValue: initState.data.valueType?.min,
-                })(<InputNumber placeholder="最小值" style={{width:'100%'}}/>)}
+                })(<InputNumber placeholder="最小值" style={{width: '100%'}}/>)}
               </Col>
               <Col span={2} push={1}>
                 ~
@@ -97,7 +97,7 @@ const EventDefin: React.FC<Props> = props => {
                 <Form.Item>
                   {getFieldDecorator('valueType.max', {
                     initialValue: initState.data.valueType?.max,
-                  })(<InputNumber placeholder="最大值" style={{width:'100%'}}/>)}
+                  })(<InputNumber placeholder="最大值" style={{width: '100%'}}/>)}
                 </Form.Item>
               </Col>
             </Form.Item>
@@ -105,13 +105,13 @@ const EventDefin: React.FC<Props> = props => {
             <Form.Item label="步长">
               {getFieldDecorator('valueType.step', {
                 initialValue: initState.data.valueType?.step,
-              })(<InputNumber placeholder="请输入步长" style={{width:'100%'}}/>)}
+              })(<InputNumber placeholder="请输入步长" style={{width: '100%'}}/>)}
             </Form.Item>
 
             <Form.Item label="精度">
               {getFieldDecorator('valueType.scale', {
                 initialValue: initState.data.valueType?.scale,
-              })(<InputNumber min={0} step={1} placeholder="请输入精度" style={{width:'100%'}}/>)}
+              })(<InputNumber min={0} step={1} placeholder="请输入精度" style={{width: '100%'}}/>)}
             </Form.Item>
 
             <Form.Item label="单位">
@@ -129,7 +129,7 @@ const EventDefin: React.FC<Props> = props => {
               <Col span={11}>
                 {getFieldDecorator('valueType.min', {
                   initialValue: initState.data.valueType?.min,
-                })(<InputNumber placeholder="最小值" style={{width:'100%'}}/>)}
+                })(<InputNumber placeholder="最小值" style={{width: '100%'}}/>)}
               </Col>
               <Col span={2} push={1}>
                 ~
@@ -138,7 +138,7 @@ const EventDefin: React.FC<Props> = props => {
                 <Form.Item>
                   {getFieldDecorator('valueType.max', {
                     initialValue: initState.data.valueType?.max,
-                  })(<InputNumber placeholder="最大值" style={{width:'100%'}}/>)}
+                  })(<InputNumber placeholder="最大值" style={{width: '100%'}}/>)}
                 </Form.Item>
               </Col>
             </Form.Item>
@@ -146,7 +146,7 @@ const EventDefin: React.FC<Props> = props => {
             <Form.Item label="步长">
               {getFieldDecorator('valueType.step', {
                 initialValue: initState.data.valueType?.step,
-              })(<InputNumber placeholder="请输入步长" style={{width:'100%'}}/>)}
+              })(<InputNumber placeholder="请输入步长" style={{width: '100%'}}/>)}
             </Form.Item>
 
             <Form.Item label="单位">
@@ -424,7 +424,11 @@ const EventDefin: React.FC<Props> = props => {
       <Form className={styles.paramterForm}>
         <Form.Item label="事件标识">
           {getFieldDecorator('id', {
-            rules: [{required: true, message: '请输入事件标识'}],
+            rules: [
+              {required: true, message: '请输入事件标识'},
+              {max: 64, message: '事件标识不超过64个字符'},
+              {pattern: new RegExp(/^[0-9a-zA-Z_\-]+$/, "g"), message: '事件标识只能由数字、字母、下划线、中划线组成'}
+            ],
             initialValue: initState.data.id,
           })(
             <Input
@@ -436,7 +440,10 @@ const EventDefin: React.FC<Props> = props => {
         </Form.Item>
         <Form.Item label="事件名称">
           {getFieldDecorator('name', {
-            rules: [{required: true, message: '请输入事件名称'}],
+            rules: [
+              {required: true, message: '请输入事件名称'},
+              {max: 200, message: '事件名称不超过200个字符'}
+            ],
             initialValue: initState.data.name,
           })(<Input placeholder="请输入事件名称"/>)}
         </Form.Item>

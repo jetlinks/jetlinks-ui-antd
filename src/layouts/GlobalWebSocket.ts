@@ -37,11 +37,16 @@ const initWebSocket = () => {
                 }
             }
         } catch (error) {
-            console.log(error, 'rrrr');
             setTimeout(initWebSocket, 5000 * count);
         }
     }
-    timer = setInterval(() => ws?.send(JSON.stringify({ "type": "ping" })), 60000);
+    timer = setInterval(() => {
+        try {
+            ws?.send(JSON.stringify({ "type": "ping" }))
+        } catch (error) {
+            console.error(error, '发送心跳错误');
+        }
+    }, 2000);
     return ws;
 }
 

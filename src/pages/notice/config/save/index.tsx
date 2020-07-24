@@ -102,75 +102,80 @@ const Save: React.FC<Props> = props => {
         }
         return <Input />;
       case 'array':
-        return (
-          <Card>
-            {otherConfig.map((i, index) => (
-              <Row key={i.id} style={{ marginBottom: 5 }}>
-                <Col span={6}>
-                  <Input
-                    value={i.name}
-                    onChange={e => {
-                      otherConfig[index].name = e.target.value;
-                      setOtherConfig([...otherConfig]);
-                    }}
-                    placeholder="key"
-                  />
-                </Col>
-                <Col span={2} style={{ textAlign: 'center' }}>
-                  <Icon type="double-right" />
-                </Col>
-                <Col span={6}>
-                  <Input
-                    value={i.value}
-                    onChange={e => {
-                      otherConfig[index].value = e.target.value;
-                      setOtherConfig([...otherConfig]);
-                    }}
-                    placeholder="value"
-                  />
-                </Col>
-                <Col span={2} style={{ textAlign: 'center' }}>
-                  <Icon type="double-right" />
-                </Col>
-                <Col span={6}>
-                  <Input
-                    value={i.description}
-                    onChange={e => {
-                      otherConfig[index].description = e.target.value;
-                      setOtherConfig([...otherConfig]);
-                    }}
-                    placeholder="说明"
-                  />
-                </Col>
-                <Col span={2} style={{ textAlign: 'center' }}>
-                  {index === 0 ? (
-                    <Icon
-                      type="plus"
-                      onClick={() => {
-                        otherConfig.push({
-                          id: randomString(8),
-                          name: '',
-                          value: '',
-                          description: '',
-                        });
-                        setOtherConfig([...otherConfig]);
-                      }}
-                    />
-                  ) : (
-                      <Icon
-                        type="minus"
-                        onClick={() => {
-                          const config = otherConfig.filter(temp => temp.id !== i.id);
-                          // debugData.headers.push({ id: randomString(8), key: '', value: '' });
-                          setOtherConfig([...config]);
+        if (property && property === 'properties') {
+          const properties = item?.configuration?.properties || otherConfig;
+          return (
+            <Card>
+              {properties.map((i, index) => {
+                return (
+                  <Row key={i.id} style={{ marginBottom: 5 }}>
+                    <Col span={6}>
+                      <Input
+                        value={i.name}
+                        onChange={e => {
+                          otherConfig[index].name = e.target.value;
+                          setOtherConfig([...otherConfig]);
                         }}
+                        placeholder="key"
                       />
-                    )}
-                </Col>
-              </Row>
-            ))}
-          </Card>
-        );
+                    </Col>
+                    <Col span={2} style={{ textAlign: 'center' }}>
+                      <Icon type="double-right" />
+                    </Col>
+                    <Col span={6}>
+                      <Input
+                        value={i.value}
+                        onChange={e => {
+                          otherConfig[index].value = e.target.value;
+                          setOtherConfig([...otherConfig]);
+                        }}
+                        placeholder="value"
+                      />
+                    </Col>
+                    <Col span={2} style={{ textAlign: 'center' }}>
+                      <Icon type="double-right" />
+                    </Col>
+                    <Col span={6}>
+                      <Input
+                        value={i.description}
+                        onChange={e => {
+                          otherConfig[index].description = e.target.value;
+                          setOtherConfig([...otherConfig]);
+                        }}
+                        placeholder="说明"
+                      />
+                    </Col>
+                    <Col span={2} style={{ textAlign: 'center' }}>
+                      {index === 0 ? (
+                        <Icon
+                          type="plus"
+                          onClick={() => {
+                            otherConfig.push({
+                              id: randomString(8),
+                              name: '',
+                              value: '',
+                              description: '',
+                            });
+                            setOtherConfig([...otherConfig]);
+                          }}
+                        />
+                      ) : (
+                          <Icon
+                            type="minus"
+                            onClick={() => {
+                              const config = otherConfig.filter(temp => temp.id !== i.id);
+                              // debugData.headers.push({ id: randomString(8), key: '', value: '' });
+                              setOtherConfig([...config]);
+                            }}
+                          />
+                        )}
+                    </Col>
+                  </Row>
+                )
+              })}
+            </Card>
+          );
+        }
       default:
         return <p>缺少</p>;
     }
@@ -191,14 +196,19 @@ const Save: React.FC<Props> = props => {
 
   const saveData = () => {
     const id = props.data?.id;
-    const data = form.getFieldsValue();
-    const { configuration } = data;
-    if (data.type === 'email') {
-      configuration.properties = otherConfig;
-    }
-    data.configuration = configuration;
-    data.template = JSON.stringify(data.template);
-    props.save({ ...data, id });
+    // const data = form.getFieldsValue();
+
+    form.validateFields((err, fileValue) => {
+      const data = fileValue;
+      if (err) return;
+      const { configuration } = data;
+      if (data.type === 'email') {
+        configuration.properties = otherConfig;
+      }
+      data.configuration = configuration;
+      data.template = JSON.stringify(data.template);
+      props.save({ ...data, id });
+    });
   };
 
   return (

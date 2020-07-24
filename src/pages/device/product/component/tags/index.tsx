@@ -423,7 +423,11 @@ const TagsDefin: React.FC<Props> = props => {
         <Form>
           <Form.Item label="标签标识">
             {getFieldDecorator('id', {
-              rules: [{required: true, message: '请输入标签标识'}],
+              rules: [
+                {required: true, message: '请输入标签标识'},
+                {max: 64, message: '标签标识不超过64个字符'},
+                {pattern: new RegExp(/^[0-9a-zA-Z_\-]+$/, "g"), message: '标签标识只能由数字、字母、下划线、中划线组成'}
+              ],
               initialValue: initState.data.id,
             })(
               <Input
@@ -435,7 +439,10 @@ const TagsDefin: React.FC<Props> = props => {
           </Form.Item>
           <Form.Item label="标签名称">
             {getFieldDecorator('name', {
-              rules: [{required: true, message: '请输入标签名称'}],
+              rules: [
+                {required: true, message: '请输入标签名称'},
+                {max: 200, message: '标签名称不超过200个字符'}
+              ],
               initialValue: initState.data.name,
             })(<Input style={{width: '100%'}} placeholder="请输入标签名称"/>)}
           </Form.Item>

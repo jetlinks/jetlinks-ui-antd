@@ -98,10 +98,12 @@ const Status: React.FC<Props> = props => {
             const tempResult = response?.result;
             tempResult.forEach((item: any) => {
 
-              if (typeof item.data.value?.formatValue === 'object') {
+              if (item.data.value?.formatValue && typeof item.data.value?.formatValue === 'object') {
                 propertyData[item.data.value.property].formatValue = item.data.value?.formatValue ? JSON.stringify(item.data.value.formatValue) : '/';
-              } else {
+              } else if (item.data.value?.formatValue) {
                 propertyData[item.data.value.property].formatValue = item.data.value?.formatValue ? item.data.value.formatValue : '/';
+              } else {
+                propertyData[item.data.value.property].formatValue = '/';
               }
 
               if (propertyData[item.data.value.property].type === 'int' || propertyData[item.data.value.property].type === 'float'
@@ -162,13 +164,14 @@ const Status: React.FC<Props> = props => {
           const dataValue = payload.value;
 
           if (!propertyData[dataValue.property]) return;
-
-
-          if (typeof dataValue.formatValue === 'object') {
-            propertyData[dataValue.property].formatValue = dataValue.formatValue ? JSON.stringify(dataValue.formatValue) : '/';
+ 
+          if (dataValue?.formatValue && typeof dataValue?.formatValue === 'object') {
+            propertyData[dataValue.property].formatValue = dataValue?.formatValue ? JSON.stringify(dataValue.formatValue) : '/';
+          } else if (dataValue?.formatValue) {
+            propertyData[dataValue.property].formatValue = dataValue?.formatValue ? dataValue.formatValue : '/';
           } else {
-            propertyData[dataValue.property].formatValue = dataValue.formatValue ? dataValue.formatValue : '/';
-
+            propertyData[dataValue.property].formatValue = '/';
+ 
           }
 
           if (propertyData[dataValue.property].type === 'int' || propertyData[dataValue.property].type === 'float'

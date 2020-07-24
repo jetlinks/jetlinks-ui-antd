@@ -86,7 +86,7 @@ const FunctionDefin: React.FC<Props> = props => {
               <Col span={11}>
                 {getFieldDecorator('output.min', {
                   initialValue: initState.data.output?.min,
-                })(<InputNumber style={{width:'100%'}} placeholder="最小值"/>)}
+                })(<InputNumber style={{width: '100%'}} placeholder="最小值"/>)}
               </Col>
               <Col span={2} push={1}>
                 ~
@@ -95,7 +95,7 @@ const FunctionDefin: React.FC<Props> = props => {
                 <Form.Item>
                   {getFieldDecorator('output.max', {
                     initialValue: initState.data.output?.max,
-                  })(<InputNumber style={{width:'100%'}} placeholder="最大值"/>)}
+                  })(<InputNumber style={{width: '100%'}} placeholder="最大值"/>)}
                 </Form.Item>
               </Col>
             </Form.Item>
@@ -103,13 +103,13 @@ const FunctionDefin: React.FC<Props> = props => {
             <Form.Item label="步长">
               {getFieldDecorator('output.step', {
                 initialValue: initState.data.output?.step,
-              })(<InputNumber style={{width:'100%'}} placeholder="请输入步长"/>)}
+              })(<InputNumber style={{width: '100%'}} placeholder="请输入步长"/>)}
             </Form.Item>
 
             <Form.Item label="精度">
               {getFieldDecorator('output.scale', {
                 initialValue: initState.data.output?.scale,
-              })(<InputNumber min={0} step={1} placeholder="请输入精度" style={{width:'100%'}}/>)}
+              })(<InputNumber min={0} step={1} placeholder="请输入精度" style={{width: '100%'}}/>)}
             </Form.Item>
 
             <Form.Item label="单位">
@@ -127,7 +127,7 @@ const FunctionDefin: React.FC<Props> = props => {
               <Col span={11}>
                 {getFieldDecorator('output.min', {
                   initialValue: props.data.output?.min,
-                })(<InputNumber style={{width:'100%'}} placeholder="最小值"/>)}
+                })(<InputNumber style={{width: '100%'}} placeholder="最小值"/>)}
               </Col>
               <Col span={2} push={1}>
                 ~
@@ -136,7 +136,7 @@ const FunctionDefin: React.FC<Props> = props => {
                 <Form.Item>
                   {getFieldDecorator('output.max', {
                     initialValue: props.data.output?.max,
-                  })(<InputNumber style={{width:'100%'}} placeholder="最大值"/>)}
+                  })(<InputNumber style={{width: '100%'}} placeholder="最大值"/>)}
                 </Form.Item>
               </Col>
             </Form.Item>
@@ -144,7 +144,7 @@ const FunctionDefin: React.FC<Props> = props => {
             <Form.Item label="步长">
               {getFieldDecorator('output.step', {
                 initialValue: props.data.output?.step,
-              })(<InputNumber style={{width:'100%'}} placeholder="请输入步长"/>)}
+              })(<InputNumber style={{width: '100%'}} placeholder="请输入步长"/>)}
             </Form.Item>
             <Form.Item label="单位">
               {getFieldDecorator('output.unit', {
@@ -419,21 +419,28 @@ const FunctionDefin: React.FC<Props> = props => {
       width="30%"
     >
       <Form className={styles.paramterForm}>
-        <Form.Item label="标识符">
+        <Form.Item label="功能标识">
           {getFieldDecorator('id', {
-            rules: [{required: true, message: '请输入标识符'}],
+            rules: [
+              {required: true, message: '请输入功能标识'},
+              {max: 64, message: '功能标识不超过64个字符'},
+              {pattern: new RegExp(/^[0-9a-zA-Z_\-]+$/, "g"), message: '功能标识只能由数字、字母、下划线、中划线组成'}
+            ],
             initialValue: initState.data.id,
           })(
             <Input
               disabled={!!initState.data.id}
               style={{width: '100%'}}
-              placeholder="请输入标识"
+              placeholder="请输入功能标识"
             />,
           )}
         </Form.Item>
         <Form.Item label="功能名称">
           {getFieldDecorator('name', {
-            rules: [{required: true, message: '请输入功能名称'}],
+            rules: [
+              {required: true, message: '请输入功能名称'},
+              {max: 200, message: '功能名称不超过200个字符'}
+            ],
             initialValue: initState.data.name,
           })(<Input/>)}
         </Form.Item>

@@ -17,7 +17,6 @@ const Demo = () => {
     const renderList = (params: Observable<any>) => {
         params
             .subscribe(user => {
-                console.log(user, 'ureee');
                 setData(user);
             })
 

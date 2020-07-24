@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Badge, Button, Card, Descriptions, Input, message, Popconfirm, Row, Spin, Tabs, Tooltip} from 'antd';
+import {Badge, Button, Card, Descriptions, message, Popconfirm, Row, Spin, Tabs, Tooltip} from 'antd';
 import {PageHeaderWrapper} from '@ant-design/pro-layout';
 import {connect} from 'dva';
 import {router} from 'umi';
@@ -8,6 +8,7 @@ import Definition from './definition';
 import {ConnectState, Dispatch} from '@/models/connect';
 import apis from '@/services';
 import Save from '.';
+import numeral from 'numeral';
 import encodeQueryParam from '@/utils/encodeParam';
 import Alarm from '@/pages/device/alarm';
 import Configuration from "@/pages/device/product/save/configuration";
@@ -43,8 +44,8 @@ const Detail: React.FC<Props> = props => {
     dispatch,
     location: {pathname},
   } = props;
-  const [events, setEvents] = useState([]);
-  const [functions, setFunctions] = useState([]);
+  const [events, setEvents] = useState<any[]>([]);
+  const [functions, setFunctions] = useState<any[]>([]);
   const [properties, setProperties] = useState<any[]>([]);
   const [tags, setTags] = useState<any[]>([]);
   const [basicInfo, setBasicInfo] = useState(initState.basicInfo);
@@ -214,7 +215,7 @@ const Detail: React.FC<Props> = props => {
       <Descriptions column={4}>
         <Descriptions.Item label="设备数量">
           <div>
-            {deviceCount}
+            {numeral(deviceCount).format('0,0')}
             <a style={{marginLeft: 10}}
                onClick={() => {
                  router.push(`/device/instance?productId=${basicInfo.id}`);
@@ -336,11 +337,9 @@ const Detail: React.FC<Props> = props => {
                   config.properties.map((item: any) => (
                     <Descriptions.Item label={item.property} span={1} key={item.property}>
                       {basicInfo.configuration ? (
-                        item.type.type === 'password' ?
-                          /*(<Input.Password style={{width: '25%'}} readOnly={true}
-                                           value={basicInfo.configuration[item.property]}/>)*/
-                          '••••••'
-                          :
+                        item.type.type === 'password' ? (
+                            basicInfo.configuration[item.property]?.length > 0 ? '••••••' : null
+                          ) :
                           basicInfo.configuration[item.property]
                       ) : null}
                     </Descriptions.Item>
@@ -350,6 +349,7 @@ const Detail: React.FC<Props> = props => {
             </Tabs.TabPane>
             <Tabs.TabPane tab="物模型" key="metadata">
               <Definition
+                basicInfo={basicInfo}
                 eventsData={events}
                 functionsData={functions}
                 propertyData={properties}

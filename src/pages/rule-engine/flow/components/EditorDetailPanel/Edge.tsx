@@ -28,7 +28,6 @@ const Edge: React.FC<Props> = props => {
     // props.close();
   };
   const renderEventItem = () => {
-    console.log(type, props.model?._type);
     if ((type || props.model?._type) === 'event') {
       return (
         <Form.Item label="事件">

@@ -1,15 +1,17 @@
-import React, { Fragment, useState } from 'react';
-import { FormComponentProps } from 'antd/es/form';
-import { Form, Card, Button, Table, Divider } from 'antd';
-import { ColumnProps } from 'antd/lib/table';
-import { TagsMeta } from '../../component/data.d';
+import React, {Fragment, useContext, useEffect, useState} from 'react';
+import {FormComponentProps} from 'antd/es/form';
+import {Button, Card, Divider, Form, Table} from 'antd';
+import {ColumnProps} from 'antd/lib/table';
+import {TagsMeta} from '../../component/data.d';
 import TagsDefin from '../../component/tags';
+import {TenantContext} from "@/pages/device/product/save/definition/index";
 
 interface Props extends FormComponentProps {
   save: Function;
   data: any[];
   unitsData: any;
 }
+
 interface State {
   data: TagsMeta[];
   current: Partial<TagsMeta>;
@@ -17,6 +19,7 @@ interface State {
 }
 
 const Tags: React.FC<Props> = (props: Props) => {
+  const tenantContextData = useContext(TenantContext);
   const initState: State = {
     data: props.data,
     current: {},
@@ -27,6 +30,9 @@ const Tags: React.FC<Props> = (props: Props) => {
   const [data, setData] = useState(initState.data);
   const [current, setCurrent] = useState(initState.current);
 
+  useEffect(() => {
+    setData(tenantContextData.tags)
+  }, [tenantContextData]);
   const editItem = (item: any) => {
     setVisible(true);
     setCurrent(item);
@@ -66,7 +72,7 @@ const Tags: React.FC<Props> = (props: Props) => {
       render: (text, record) => (
         <Fragment>
           <a onClick={() => editItem(record)}>编辑</a>
-          <Divider type="vertical" />
+          <Divider type="vertical"/>
           <a onClick={() => deleteItem(record)}>删除</a>
         </Fragment>
       ),
@@ -74,7 +80,7 @@ const Tags: React.FC<Props> = (props: Props) => {
   ];
 
   const saveTagsData = (item: TagsMeta) => {
-    if (!data){
+    if (!data) {
       setData([]);
     }
     const i = data.findIndex((j: any) => j.id === item.id);
@@ -91,7 +97,7 @@ const Tags: React.FC<Props> = (props: Props) => {
     <div>
       <Card
         title="标签定义"
-        style={{ marginBottom: 20 }}
+        style={{marginBottom: 20}}
         extra={
           <Button type="primary" onClick={() => {
             setCurrent({});
@@ -101,7 +107,7 @@ const Tags: React.FC<Props> = (props: Props) => {
           </Button>
         }
       >
-        <Table rowKey="id" columns={columns} dataSource={data} />
+        <Table rowKey="id" columns={columns} dataSource={data}/>
       </Card>
       {visible && (
         <TagsDefin
