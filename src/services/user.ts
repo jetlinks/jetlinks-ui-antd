@@ -13,3 +13,10 @@ export async function queryCurrent(): Promise<any> {
 export async function systemVersion(): Promise<any> {
   return request(`/jetlinks/system/version`);
 }
+
+export async function queryNotices(params: any): Promise<any> {
+  return request(`/jetlinks/notifications/_query`, {
+    method: "GET",
+    params,
+  });
+}
