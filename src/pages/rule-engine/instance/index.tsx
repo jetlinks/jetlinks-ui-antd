@@ -1,6 +1,5 @@
-import React, {Fragment, useEffect, useState} from 'react';
-import {ColumnProps, PaginationConfig, SorterResult} from 'antd/es/table';
-import {Button, Card, Divider, message, Popconfirm, Table} from 'antd';
+import React, {useEffect, useState} from 'react';
+import {Avatar, Badge, Button, Card, Dropdown, Icon, List, Menu, message, Popconfirm, Tooltip} from 'antd';
 import {PageHeaderWrapper} from '@ant-design/pro-layout';
 import styles from '@/utils/table.less';
 import {connect} from 'dva';
@@ -10,7 +9,13 @@ import apis from '@/services';
 import SearchForm from '@/components/SearchForm';
 import {RuleInstanceItem} from './data.d';
 import Save from './save';
-import moment from "moment";
+import SqlRuleSave from '@/pages/rule-engine/sqlRule/save/index';
+import cardStyles from "@/pages/device/product/index.less";
+import DeviceAlarm from "@/pages/rule-engine/instance/img/DeviceAlarm.png";
+import NodeRed from "@/pages/rule-engine/instance/img/NodeRed.png";
+import SqlServer from "@/pages/rule-engine/instance/img/SqlServer.png";
+import AutoHide from "@/pages/device/location/info/autoHide";
+import AlarmSave from "@/pages/device/alarm/save/index";
 
 interface Props {
   ruleInstance: any;
@@ -24,6 +29,8 @@ interface State {
   searchParam: any;
   saveVisible: boolean;
   current: Partial<RuleInstanceItem>;
+  deviceAlarm: any;
+  deviceMateData: string;
 }
 
 const RuleInstanceList: React.FC<Props> = props => {
@@ -34,30 +41,25 @@ const RuleInstanceList: React.FC<Props> = props => {
   const initState: State = {
     data: result,
     searchParam: {
-      pageSize: 10, sorts: {
+      pageSize: 8, sorts: {
         order: "descend",
         field: "createTime"
       }
     },
     saveVisible: false,
     current: {},
+    deviceAlarm: {},
+    deviceMateData: "",
   };
 
   const [searchParam, setSearchParam] = useState(initState.searchParam);
   const [saveVisible, setSaveVisible] = useState(initState.saveVisible);
+  const [saveSqlRuleVisible, setSaveSqlRuleVisible] = useState(false);
+  const [saveAlarmVisible, setSaveAlarmVisible] = useState(false);
   const [current, setCurrent] = useState(initState.current);
-
-  const createModel = (record: any) => {
-    apis.ruleInstance
-      .createModel(record)
-      .then(response => {
-        if (response.status === 200) {
-          message.success('创建成功');
-        }
-      })
-      .catch(() => {
-      });
-  };
+  const [ruleData, setRuleData] = useState(initState.current);
+  const [deviceAlarm, setDeviceAlarm] = useState(initState.deviceAlarm);
+  const [deviceMateData, setDeviceMateData] = useState(initState.deviceMateData);
 
   const handleSearch = (params?: any) => {
     setSearchParam(params);
@@ -96,16 +98,7 @@ const RuleInstanceList: React.FC<Props> = props => {
       .catch(() => {
       });
   };
-  // const saveOrUpdate = (item: RuleInstanceItem) => {
-  //     dispatch({
-  //         type: 'ruleInstance/insert',
-  //         payload: encodeQueryParam(item),
-  //         callback: () => {
-  //             setSaveVisible(false);
-  //             handleSearch(searchParam);
-  //         }
-  //     })
-  // }
+
   const handleDelete = (params: any) => {
     dispatch({
       type: 'ruleInstance/remove',
@@ -117,97 +110,92 @@ const RuleInstanceList: React.FC<Props> = props => {
     });
   };
 
-  const onTableChange = (
-    pagination: PaginationConfig,
-    filters: any,
-    sorter: SorterResult<RuleInstanceItem>,
-  ) => {
+  const onChange = (page: number, pageSize: number) => {
     handleSearch({
-      pageIndex: Number(pagination.current) - 1,
-      pageSize: pagination.pageSize,
-      terms: searchParam,
-      sorts: sorter,
+      pageIndex: page - 1,
+      pageSize,
+      terms: searchParam.terms,
+      sorts: searchParam.sorts,
     });
   };
 
-  const columns: ColumnProps<RuleInstanceItem>[] = [
-    {
-      title: 'id',
-      dataIndex: 'id',
-    },
+  const onShowSizeChange = (current: number, size: number) => {
+    handleSearch({
+      pageIndex: current - 1,
+      pageSize: size,
+      terms: searchParam.terms,
+      sorts: searchParam.sorts,
+    });
+  };
 
-    {
-      title: '名称',
-      dataIndex: 'name',
-    },
-    {
-      title: '模型版本',
-      dataIndex: 'modelVersion',
-    },
-    {
-      title: '创建时间',
-      dataIndex: 'createTime',
-      render: (text: any) => text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/',
-      sorter: true,
-      defaultSortOrder: 'descend',
-    },
-    {
-      title: '说明',
-      dataIndex: 'description',
-      ellipsis: true
-    },
+  const saveOrUpdate = (item: RuleInstanceItem) => {
+    apis.sqlRule.saveOrUpdate(item)
+      .then((response: any) => {
+        if (response.status === 200) {
+          message.success('保存成功');
+          setSaveSqlRuleVisible(false);
+          setCurrent({});
+          handleSearch(searchParam);
+        }
+      })
+      .catch(() => {
+      });
+  };
 
-    {
-      title: '状态',
-      dataIndex: 'state',
-      render: text => text.text,
-    },
-    {
-      title: '操作',
-      width: '20%',
-      render: (text, record) => (
-        <Fragment>
-
-          {
-            record.modelType === 'node-red' ?
-              <>
-                <a
-                  onClick={() => {
-                    window.open(`/jetlinks/rule-editor/index.html#flow/${record.id}`)
-                  }}
-                >
-                  详情
-                </a>< Divider type="vertical"/>
-              </> : <></>
+  const updateDeviceAlarm = (item: any) => {
+    let data: any;
+    try {
+      data = JSON.parse(item.modelMeta);
+    } catch (error) {
+      message.error("数据结构异常");
+      return;
+    }
+    if (data.target === 'product') {
+      apis.deviceProdcut.info(data.targetId)
+        .then((response: any) => {
+          if (response.status === 200 && response.result) {
+            setDeviceMateData(response.result.metadata);
+            setDeviceAlarm(data);
+            setSaveAlarmVisible(true);
+          } else {
+            message.error("告警相关设备产品不存在。");
           }
-
-
-          <Popconfirm title="确认删除？" onConfirm={() => handleDelete(record)}>
-            <a>删除</a>
-          </Popconfirm>
-          <Divider type="vertical"/>
-          {
-            record.state?.value === 'stopped' && (
-              <Popconfirm title="确认启动？" onConfirm={() => startInstance(record)}>
-                <a>启动</a>
-              </Popconfirm>
-            )
+        })
+        .catch(() => {
+        })
+    } else {
+      apis.deviceInstance.info(data.targetId)
+        .then((response: any) => {
+          if (response.status === 200 && response.result) {
+            setDeviceMateData(response.result.metadata);
+            setDeviceAlarm(data);
+            setSaveAlarmVisible(true);
+          } else {
+            message.error("告警相关设备不存在。");
           }
-          {
-            record.state?.value === 'started' && (
-              <Popconfirm title="确认启动？" onConfirm={() => stopInstance(record)}>
-                <a>停止</a>
-              </Popconfirm>
-            )
-          }
-          {/* <Divider type="vertical" />
-          <Popconfirm title="确认生成模型？" onConfirm={() => createModel(record)}>
-            <a>生成模型</a>
-          </Popconfirm> */}
-        </Fragment>
-      ),
-    },
-  ];
+        })
+        .catch(() => {
+        })
+    }
+  };
+
+  const submitData = (data: any) => {
+    apis.deviceAlarm.saveProductAlarms(deviceAlarm.target, deviceAlarm.targetId, data)
+      .then((response: any) => {
+        if (response.status === 200) {
+          message.success('保存成功');
+          setSaveAlarmVisible(false);
+          handleSearch(searchParam);
+        }
+      })
+      .catch(() => {
+      });
+  };
+
+  const cardInfoTitle = {
+    fontSize: 14,
+    color: 'rgba(0, 0, 0, 0.85)'
+  };
 
   return (
     <PageHeaderWrapper title="规则实例">
@@ -237,7 +225,7 @@ const RuleInstanceList: React.FC<Props> = props => {
               search={(params: any) => {
                 setSearchParam(params);
                 handleSearch({
-                  terms: params, pageSize: 10, sorts: searchParam.sorts || {
+                  terms: params, pageSize: 8, sorts: searchParam.sorts || {
                     order: "descend",
                     field: "createTime"
                   }
@@ -255,41 +243,195 @@ const RuleInstanceList: React.FC<Props> = props => {
               创建规则
             </Button>
           </div>
-          <div className={styles.StandardTable}>
-            <Table
-              loading={props.loading}
-              dataSource={result?.data}
-              columns={columns}
-              rowKey="id"
-              onChange={onTableChange}
-              pagination={{
-                current: result.pageIndex + 1,
-                total: result.total,
-                pageSize: result.pageSize,
-                showQuickJumper: true,
-                showSizeChanger: true,
-                pageSizeOptions: ['10', '20', '50', '100'],
-                showTotal: (total: number) =>
-                  `共 ${total} 条记录 第  ${result.pageIndex + 1}/${Math.ceil(
-                    result.total / result.pageSize,
-                  )}页`,
-              }}
-            />
-          </div>
         </div>
       </Card>
+      <br/>
+      <div className={cardStyles.filterCardList}>
+        {result.data && (
+          <List<any>
+            rowKey="id"
+            loading={props.loading}
+            grid={{gutter: 24, xl: 4, lg: 3, md: 3, sm: 2, xs: 1}}
+            dataSource={(result || {}).data}
+            pagination={{
+              current: result?.pageIndex + 1,
+              total: result?.total,
+              pageSize: result?.pageSize,
+              showQuickJumper: true,
+              showSizeChanger: true,
+              hideOnSinglePage: true,
+              pageSizeOptions: ['8', '16', '40', '80'],
+              style: {marginTop: -20},
+              showTotal: (total: number) =>
+                `共 ${total} 条记录 第  ${result.pageIndex + 1}/${Math.ceil(
+                  result.total / result.pageSize,
+                )}页`,
+              onChange,
+              onShowSizeChange,
+            }}
+            renderItem={item => {
+              if (item && item.id) {
+                return (
+                  <List.Item key={item.id}>
+                    <Card hoverable bodyStyle={{paddingBottom: 20}}
+                          actions={[
+                            <Tooltip key="seeProduct" title="查看">
+                              <Icon
+                                type="eye"
+                                onClick={() => {
+                                  message.warn('该功能规划中，敬请期待');
+                                }}
+                              />
+                            </Tooltip>,
+                            <Tooltip key="update" title='编辑'>
+                              <Icon
+                                type="edit"
+                                onClick={() => {
+                                  if (item.modelType === 'node-red') {
+                                    window.open(`/jetlinks/rule-editor/index.html#flow/${item.id}`)
+                                  } else if (item.modelType === 'sql_rule') {
+                                    try {
+                                      let data = JSON.parse(item.modelMeta);
+                                      data['id'] = item.id;
+                                      setCurrent(data);
+                                      setSaveSqlRuleVisible(true);
+                                    } catch (error) {
+                                      message.error('数据异常，请至数据转发界面检查数据');
+                                    }
+                                  } else if (item.modelType === 'device_alarm') {
+                                    updateDeviceAlarm(item);
+                                  }
+                                }}
+                              />
+                            </Tooltip>,
+                            <Tooltip key="more_actions" title=''>
+                              <Dropdown overlay={
+                                <Menu>
+                                  <Menu.Item key="1">
+                                    <Popconfirm
+                                      placement="topRight"
+                                      title={item.state?.value === 'stopped' ? '确认启动？' : '确认停止？'}
+                                      onConfirm={() => {
+                                        if (item.state?.value === 'stopped') {
+                                          startInstance(item);
+                                        } else {
+                                          stopInstance(item);
+                                        }
+                                      }}
+                                    >
+                                      <Button icon={item.state?.value === 'stopped' ? 'check' : 'close'} type="link">
+                                        {item.state?.value === 'stopped' ? '启动' : '停止'}
+                                      </Button>
+                                    </Popconfirm>
+                                  </Menu.Item>
+                                  {item.modelType === 'node-red' && (
+                                    <Menu.Item key="3">
+                                      <Button icon="copy" type="link"
+                                              onClick={() => {
+                                                setRuleData(item);
+                                                setSaveVisible(true);
+                                              }}>
+                                        复制
+                                      </Button>
+                                    </Menu.Item>
+                                  )}
+                                  {item.state?.value === 'stopped' && (
+                                    <Menu.Item key="2">
+                                      <Popconfirm
+                                        placement="topRight"
+                                        title="确定删除此组件吗？"
+                                        onConfirm={() => {
+                                          handleDelete(item);
+                                        }}
+                                      >
+                                        <Button icon="delete" type="link">
+                                          删除
+                                        </Button>
+                                      </Popconfirm>
+                                    </Menu.Item>
+                                  )}
+                                </Menu>
+                              }>
+                                <Icon type="ellipsis"/>
+                              </Dropdown>
+                            </Tooltip>,
+                          ]}
+                    >
+                      <Card.Meta
+                        avatar={item.modelType === 'device_alarm' ?
+                          <Avatar size={40} src={DeviceAlarm}/> : (item.modelType === 'sql_rule' ?
+                            <Avatar size={40} src={SqlServer}/> :
+                            <Avatar size={40} src={NodeRed}/>)}
+                        title={<AutoHide title={item.name} style={{width: '95%'}}/>}
+                        description={<AutoHide title={item.id} style={{width: '95%'}}/>}
+                      />
+                      <div className={cardStyles.cardItemContent}>
+                        <div className={cardStyles.cardInfo}>
+                          <div>
+                            <p style={cardInfoTitle}>模型版本</p>
+                            <p style={{fontSize: 14}}>{item.modelVersion}</p>
+                          </div>
+                          <div>
+                            <p style={cardInfoTitle}>启动状态</p>
+                            <p>
+                              <Badge color={item.state?.value === 'stopped' ? 'red' : 'green'}
+                                     text={item.state?.value === 'stopped' ? '已停止' : '已启动'}/>
+                            </p>
+                          </div>
+                          <div>
+                            <p style={cardInfoTitle}>模型类型</p>
+                            <p style={{fontSize: 14}}>
+                              {item.modelType === 'device_alarm' ? '设备告警' : (item.modelType === 'sql_rule' ? '数据转发' : '规则引擎')}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  </List.Item>
+                );
+              }
+              return '';
+            }}
+          />
+        )}
+      </div>
       {saveVisible && (
         <Save
-          save={() => {
-            // tod
-          }}
-          // data={current}
+          data={ruleData}
           close={() => {
             setSaveVisible(false);
-            setCurrent({});
+            setRuleData({});
+            handleSearch(searchParam);
           }}
         />
       )}
+
+      {saveSqlRuleVisible && (
+        <SqlRuleSave
+          data={current}
+          close={() => {
+            setSaveSqlRuleVisible(false);
+            setCurrent({});
+          }}
+          save={(item: RuleInstanceItem) => {
+            saveOrUpdate(item);
+          }}
+        />
+      )}
+      {saveAlarmVisible && <AlarmSave
+        close={() => {
+          setDeviceAlarm({});
+          setDeviceMateData("");
+          setSaveAlarmVisible(false);
+        }}
+        save={(data: any) => {
+          submitData(data);
+        }}
+        data={deviceAlarm} targetId={deviceAlarm.targetId}
+        target={deviceAlarm.target} metaData={deviceMateData}
+        name={deviceAlarm.name} productName={deviceAlarm.alarmRule.productName}
+        productId={deviceAlarm.alarmRule.productId}
+      />}
     </PageHeaderWrapper>
   );
 };
