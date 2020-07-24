@@ -1,10 +1,10 @@
 import React, { useEffect, useState, Fragment } from 'react';
-import { Modal, Form, Input, Select, Card, Row, Col, Icon } from 'antd';
+import { Modal, Form, Input, Select, Card, Row, Col, Icon, message, Divider } from 'antd';
 import { FormComponentProps } from 'antd/es/form';
-import { GatewayItem } from '../data.d';
 import apis from '@/services';
 import encodeQueryParam from '@/utils/encodeParam';
 import { randomString } from '@/utils/utils';
+import { GatewayItem } from '../data.d';
 
 interface Props extends FormComponentProps {
   data: Partial<GatewayItem>;
@@ -38,7 +38,6 @@ const Save: React.FC<Props> = props => {
   const [networkList, setNetworkList] = useState(initState.networkList);
   const [supportList, setSupportList] = useState(initState.supportList);
   const [routesData, setRoutesData] = useState<{ id: string, url: string, protocol: string }[]>(data.configuration?.routes || [{ id: '1001', url: '', protocol: '' }]);
-
 
   useEffect(() => {
     apis.gateway
@@ -152,10 +151,10 @@ const Save: React.FC<Props> = props => {
           <Fragment>
             <Form.Item label="协议路由">
               <Card>
-                {(routesData).map((i, index) => {
+                {(routesData.length > 0 ? routesData : [{ id: '1001', url: '', protocol: '' }]).map((i, index) => {
                   return (
                     <Row key={i.id} style={{ marginBottom: 5 }}>
-                      <Col span={10}>
+                      <Col span={9}>
                         <Input
                           value={i.url}
                           onChange={e => {
@@ -168,9 +167,9 @@ const Save: React.FC<Props> = props => {
                       <Col span={2} style={{ textAlign: 'center' }}>
                         <Icon type="right" />
                       </Col>
-                      <Col span={10}>
+                      <Col span={9}>
                         <Select
-                          value={routesData[index].protocol}
+                          value={routesData[index]?.protocol}
                           onChange={(e: string) => {
                             routesData[index].protocol = e;
                             setRoutesData([...routesData]);
@@ -184,25 +183,35 @@ const Save: React.FC<Props> = props => {
                         </Select>
                       </Col>
 
-                      <Col span={2} style={{ textAlign: 'center' }}>
+                      <Col span={4} style={{ textAlign: 'center' }}>
                         {index === 0 ? (
-                          <Icon
-                            type="plus"
-                            onClick={() => {
-                              routesData.push({
-                                id: randomString(8),
-                                url: '',
-                                protocol: '',
-                              });
-                              setRoutesData([...routesData]);
-                            }}
-                          />
+                          <>
+                            <Icon
+                              type="minus"
+                              onClick={() => {
+                                const tempData = routesData.filter(temp => temp.id !== i.id);
+                                setRoutesData([...tempData]);
+                              }}
+                            />
+                            <Divider type="vertical" />
+                            <Icon
+                              type="plus"
+                              onClick={() => {
+                                routesData.push({
+                                  id: randomString(8),
+                                  url: '',
+                                  protocol: '',
+                                });
+                                setRoutesData([...routesData]);
+                              }}
+                            />
+                          </>
                         ) : (
                             <Icon
                               type="minus"
                               onClick={() => {
                                 const tempData = routesData.filter(temp => temp.id !== i.id);
-                                setRoutesData({ ...tempData });
+                                setRoutesData([...tempData]);
                               }}
                             />
                           )}

@@ -57,7 +57,7 @@ const Protocol = (props: Props) => {
                 actions={[
                     <Tooltip title="查看">
                         <Icon type="eye" onClick={() => router.push({
-                            pathname: `/device/protocol`,
+                            pathname: `/network/protocol`,
                             query: {
                                 terms: {
                                     id$assets: JSON.stringify({
@@ -79,7 +79,7 @@ const Protocol = (props: Props) => {
                 />
                 <div className={styles.cardInfo}>
                     <div>
-                        <p>发布</p>
+                        <p>已发布</p>
                         <p>{deploy}</p>
                     </div>
                     <div>

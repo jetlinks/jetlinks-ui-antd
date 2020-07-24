@@ -7,6 +7,13 @@ export async function _search(data?: any) {
   });
 }
 
+export async function _search_page(data?: any) {
+  return request(`/jetlinks/geo/object/_search/_page`, {
+    method: 'POST',
+    data,
+  });
+}
+
 export async function _search_geo_json(data?: any) {
   return request(`/jetlinks/geo/object/_search/geo.json`, {
     method: 'POST',

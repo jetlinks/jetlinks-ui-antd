@@ -83,7 +83,7 @@ const ChoiceDevice: React.FC<Props> = props => {
       dataIndex: 'name',
     },
     {
-      title: '设备型号',
+      title: '设备产品',
       dataIndex: 'productName',
     },
     {
@@ -92,6 +92,7 @@ const ChoiceDevice: React.FC<Props> = props => {
       width: '200px',
       render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
       sorter: true,
+      defaultSortOrder: 'descend',
     },
     {
       title: '状态',

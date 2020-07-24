@@ -262,7 +262,7 @@ const Type: React.FC<Props> = props => {
                         <Icon
                           type="download"
                           onClick={() => {
-                            downloadObject(item, '设备型号');
+                            downloadObject(item, '设备产品');
                           }}
                         />
                       </Tooltip>,

@@ -1,9 +1,10 @@
-import { Drawer, Button, Table, Select, message } from "antd";
+import { Drawer, Button, message } from "antd";
 import React, { useState, useEffect, Fragment } from "react";
 import Service from "@/pages/system/tenant/service";
 import { ListData } from "@/services/response";
 import encodeQueryParam from "@/utils/encodeParam";
 import SearchForm from "@/components/SearchForm";
+import ProTable from "@/pages/system/permission/component/ProTable";
 import Add from "./add";
 import User from "./user";
 
@@ -20,25 +21,43 @@ const Edit = (props: Props) => {
     const [cat, setCat] = useState<boolean>(false);
     const [asset, setAsset] = useState();
     const [selected, setSelected] = useState<any[]>([]);
-
     const { data } = props;
 
-    const handleSearch = () => {
-        service.assets.protocol(encodeQueryParam({
-            terms: {
-                id$assets: JSON.stringify({
-                    tenantId: data?.id,
-                    assetType: 'protocol',
-                    memberId: props.user,
-                    // not: true,
-                })
-            }
-        })).subscribe(resp => {
+    const initSearch = {
+        terms: {
+            id$assets: JSON.stringify({
+                tenantId: data?.id,
+                assetType: 'protocol',
+                memberId: props.user,
+                // not: true,
+            })
+        },
+        pageIndex: 0,
+        pageSize: 10,
+    }
+    const [searchParam, setSearchParam] = useState<any>(initSearch);
+
+    const handleSearch = (params: any) => {
+        const tempParam = { ...searchParam, ...params, };
+        const defaultItem = searchParam.terms;
+        const tempTerms = params?.terms;
+        const terms = tempTerms ? { ...defaultItem, ...tempTerms } : initSearch;
+        let tempSearch = {};
+
+        if (tempTerms) {
+            tempParam.terms = terms;
+            tempSearch = tempParam
+        } else {
+            tempSearch = initSearch
+        }
+        setSearchParam(tempSearch);
+        service.assets.protocol(encodeQueryParam(tempSearch)).subscribe(resp => {
             setList(resp);
         })
     }
+
     useEffect(() => {
-        handleSearch()
+        handleSearch(searchParam)
     }, []);
     const rowSelection = {
         onChange: (selectedRowKeys: any[], selectedRows: any[]) => {
@@ -71,8 +90,8 @@ const Edit = (props: Props) => {
             assetIdList: selected.map(item => item.id),
             assetType: 'protocol'
         }]).subscribe(() => {
-            message.error('解绑成功');
-            handleSearch();
+            message.success('解绑成功');
+            handleSearch(searchParam);
         })
     }
 
@@ -80,13 +99,13 @@ const Edit = (props: Props) => {
         <Drawer
             title="编辑协议资产"
             visible
-            width='60VW'
+            width='75VW'
             onClose={() => props.close()}
         >
 
             <SearchForm
                 search={(params: any) => {
-                    console.log(params, 'parsm')
+                    handleSearch({ terms: params });
                 }}
                 formItems={[
                     {
@@ -115,11 +134,14 @@ const Edit = (props: Props) => {
                     </Button>
                 )
             }
-            <Table
+            <ProTable
                 rowKey="id"
                 rowSelection={rowSelection}
                 columns={columns}
-                dataSource={list?.data} />,
+                dataSource={list?.data || []}
+                onSearch={(searchData: any) => handleSearch(searchData)}
+                paginationConfig={list || {}}
+            />
             <div
                 style={{
                     position: 'absolute',
@@ -147,7 +169,7 @@ const Edit = (props: Props) => {
                     data={data}
                     close={() => {
                         setAdd(false);
-                        handleSearch();
+                        handleSearch(searchParam);
                     }} />
             )}
             {cat && <User asset={asset} close={() => setCat(false)} />}

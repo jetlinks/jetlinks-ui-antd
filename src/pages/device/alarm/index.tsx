@@ -32,7 +32,12 @@ const Alarm: React.FC<Props> = props => {
   const initState: State = {
     data: [],
     saveAlarmData: {},
-    searchParam: {pageSize: 10},
+    searchParam: {
+      pageSize: 10, sorts: {
+        order: "descend",
+        field: "alarmTime"
+      }
+    },
     alarmLogData: {},
     alarmDataList: [],
   };
@@ -52,6 +57,7 @@ const Alarm: React.FC<Props> = props => {
   statusMap.set('已停止', 'error');
 
   const getProductAlarms = () => {
+    alarmDataList.splice(0, alarmDataList.length);
     apis.deviceAlarm.getProductAlarms(props.target, props.targetId)
       .then((response: any) => {
         if (response.status === 200) {
@@ -225,6 +231,7 @@ const Alarm: React.FC<Props> = props => {
       width: '300px',
       render: (text: any) => text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/',
       sorter: true,
+      defaultSortOrder: 'descend'
     },
     {
       title: '操作',
@@ -277,7 +284,10 @@ const Alarm: React.FC<Props> = props => {
       pageIndex: searchParam.pageIndex,
       pageSize: searchParam.pageSize,
       terms,
-      sorts: searchParam.sorter,
+      sorts: searchParam.sorter || {
+        order: "descend",
+        field: "alarmTime"
+      },
     });
   };
 

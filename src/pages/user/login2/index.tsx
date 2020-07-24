@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import style from './index.less';
 import { connect } from 'dva';
 import { Dispatch, ConnectState } from '@/models/connect';
 import { Settings } from '@ant-design/pro-layout';
 import { Spin } from 'antd';
+import style from './index.less';
 
 interface Props {
   dispatch: Dispatch;
@@ -30,8 +30,14 @@ const Login: React.FC<Props> = props => {
       dispatch({
         type: 'settings/fetchConfig',
         callback: () => {
-          document.getElementById('title-icon')!.href = settings.titleIcon;
-          document.getElementById('sys-title')!.textContent = settings.title;
+          const title = document.getElementById('sys-title');
+          const icon = document.getElementById('title-icon');
+          if (title && settings.title) {
+            title.textContent = settings.title;
+          }
+          if (icon && settings.titleIcon) {
+            icon.href = settings.titleIcon;
+          }
           setIsReady(true);
         }
       });

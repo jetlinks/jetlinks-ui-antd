@@ -1,7 +1,21 @@
 import React, {useEffect, useState} from 'react';
 import {FormComponentProps} from 'antd/lib/form';
 import Form from 'antd/es/form';
-import {Avatar, Button, Card, Col, Drawer, Input, message, Radio, Row, Select, TreeSelect, Upload} from 'antd';
+import {
+  Avatar,
+  Button,
+  Card,
+  Cascader,
+  Col,
+  Drawer,
+  Input,
+  message,
+  Radio,
+  Row,
+  Select,
+  TreeSelect,
+  Upload
+} from 'antd';
 import {DeviceProduct} from '../data';
 import {FormItemConfig} from '@/utils/common';
 import apis from '@/services';
@@ -10,9 +24,11 @@ import productImg from "@/pages/device/product/img/product.png";
 import {UploadProps} from "antd/lib/upload";
 import {getAccessToken} from "@/utils/authority";
 import {UploadOutlined} from "@ant-design/icons/lib";
+import {ProtocolItem} from "@/pages/device/protocol/data";
+import Classified from "@/pages/device/product/save/add/classified";
 
 interface Props extends FormComponentProps {
-  data?: Partial<DeviceProduct>;
+  data: Partial<DeviceProduct>;
   close: Function;
   save: (data: Partial<DeviceProduct>) => void;
 }
@@ -21,8 +37,8 @@ interface State {
   protocolSupports: any[];
   protocolTransports: any[];
   organizationList: any[];
-  configForm: any[];
-  configName: string;
+  categoryLIst: any[];
+  classifiedData: any;
 }
 
 const Save: React.FC<Props> = props => {
@@ -30,28 +46,24 @@ const Save: React.FC<Props> = props => {
     protocolSupports: [],
     protocolTransports: [],
     organizationList: [],
-    configName: '',
-    configForm: [],
+    categoryLIst: [],
+    classifiedData: {},
   };
 
   const {getFieldDecorator} = props.form;
-  const [messageProtocol, setMessageProtocol] = useState<string>();
   // 消息协议
   const [protocolSupports, setProtocolSupports] = useState(initState.protocolSupports);
   // 消息协议
   const [organizationList, setOrganizationList] = useState(initState.organizationList);
   // 传输协议
   const [protocolTransports, setProtocolTransports] = useState(initState.protocolTransports);
-
-  // 配置名称
-  const [configName, setConfigName] = useState(initState.configName);
-  // 配置表单
-  const [configForm, setConfigForm] = useState(initState.configForm);
-
+  const [categoryLIst, setCategoryLIst] = useState(initState.categoryLIst);
+  const [categoryId, setCategoryId] = useState(initState.categoryLIst);
   const [photoUrl, setPhotoUrl] = useState(props.data?.photoUrl);
+  const [classifiedVisible, setClassifiedVisible] = useState(false);
+  const [classifiedData, setClassifiedData] = useState(initState.classifiedData);
 
   const onMessageProtocolChange = (value: string) => {
-    setMessageProtocol(value);
     // 获取链接协议
     apis.deviceProdcut
       .protocolTransports(value)
@@ -64,67 +76,24 @@ const Save: React.FC<Props> = props => {
       });
   };
 
-  const parseConfig = (configData: any[]) => {
-    const config = configData.map(item => {
-      const label = item.name;
-      const key = `configuration.${item.property}`;
-      const componentType = item.type.id;
-      let component = null;
-      let options: any = {};
-      if (props.data?.configuration) {
-        options = {
-          initialValue: props.data?.configuration[item.property],
-        };
-      }
-      if (componentType !== 'enum') {
-        component = <Input type={componentType === 'password' ? 'password' : 'text'}/>;
-      } else {
-        const element = item.type.elements;
-        component = (
-          <Select>
-            {(element || []).map((e: any) => (
-              <Select.Option key={e.value} value={e.value}>
-                {e.text}
-              </Select.Option>
-            ))}
-          </Select>
-        );
-      }
-      return {
-        label,
-        key,
-        styles: {
-          xl: {span: 8},
-          lg: {span: 8},
-          md: {span: 12},
-          sm: {span: 24},
-        },
-        options,
-        component,
-      };
-    });
-
-    setConfigForm(config);
-  };
-
-  const getProtocolConfig = (messageProtocol: string, transType: string) => {
-    apis.deviceProdcut
-      .protocolConfiguration(messageProtocol, transType)
-      .then(e => {
-        if (e.status === 200) {
-          if (e.result) {
-            if (e.result.properties) {
-              parseConfig(e.result.properties);
-            }
-            setConfigName(e.result.name);
-          }
-        }
-      })
-      .catch(() => {
-      });
-  };
-
   useEffect(() => {
+    if (props.data.classifiedId) {
+      setClassifiedData({id: props.data.classifiedId, name: props.data.classifiedName});
+      let classified = props.data?.classifiedId.split('|').filter(function (s: string) {
+        return s && s.trim();
+      });
+      let list: any[] = [];
+      classified.map((item: any, index: number) => {
+        if (index === 0) {
+          list.push('|' + item + '|')
+        } else if (index === 1) {
+          list.push(list[0] + item + '|')
+        }
+      });
+      list.push(props.data.classifiedId);
+      setCategoryId(list);
+    }
+
     apis.deviceProdcut
       .protocolSupport()
       .then(e => {
@@ -147,22 +116,24 @@ const Save: React.FC<Props> = props => {
       }).catch(() => {
     });
 
+    apis.deviceProdcut.deviceCategoryTree()
+      .then((response: any) => {
+        if (response.status === 200) {
+          setCategoryLIst(response.result);
+        }
+      })
+      .catch(() => {
+      });
+
     if (props.data && props.data.messageProtocol) {
       onMessageProtocolChange(props.data.messageProtocol);
-      if (!props.data.transportProtocol) return;
-      getProtocolConfig(props.data.messageProtocol, props.data.transportProtocol);
     }
   }, []);
-
-  const onTransportProtocol = (value: string) => {
-    if (!(messageProtocol && value)) return;
-    getProtocolConfig(messageProtocol, value);
-  };
 
 
   const basicForm: FormItemConfig[] = [
     {
-      label: '型号ID',
+      label: '产品ID',
       key: 'id',
       styles: {
         lg: {span: 8},
@@ -171,21 +142,21 @@ const Save: React.FC<Props> = props => {
       },
       options: {
         initialValue: props.data?.id,
-        rules: [{required: true, message: '请输入型号ID'}],
+        rules: [{required: true, message: '请输入产品ID'}],
       },
 
       component: (
         <Input
-          placeholder="请输入型号ID "
+          placeholder="请输入产品ID "
           disabled={!!props.data?.id}
         />
       ),
     },
     {
-      label: '型号名称',
+      label: '产品名称',
       key: 'name',
       options: {
-        rules: [{required: true, message: '请选择型号名称'}],
+        rules: [{required: true, message: '请选择产品名称'}],
         initialValue: props.data?.name,
       },
       styles: {
@@ -195,6 +166,29 @@ const Save: React.FC<Props> = props => {
         sm: {span: 24},
       },
       component: <Input style={{width: '100%'}} placeholder="请输入"/>,
+    },
+    {
+      label: '所属品类',
+      key: 'classifiedId',
+      options: {
+        initialValue: categoryId,
+      },
+      styles: {
+        xl: {span: 8},
+        lg: {span: 8},
+        md: {span: 12},
+        sm: {span: 24},
+      },
+      component: (
+        <Cascader
+          fieldNames={{label: 'name', value: 'id', children: 'children'}}
+          options={categoryLIst}
+          popupVisible={false}
+          onClick={() => {
+            setClassifiedVisible(true);
+          }}
+          placeholder="点击选择品类"/>
+      ),
     },
     {
       label: '所属机构',
@@ -257,11 +251,7 @@ const Save: React.FC<Props> = props => {
       },
       component: (
         <Select
-          placeholder="请选择"
-          onChange={(value: string) => {
-            onTransportProtocol(value);
-          }}
-        >
+          placeholder="请选择">
           {protocolTransports.map(e => (
             <Select.Option value={e.id} key={e.id}>
               {e.name}
@@ -288,8 +278,9 @@ const Save: React.FC<Props> = props => {
       },
       component: (
         <Radio.Group>
-          <Radio value="device">设备</Radio>
-          <Radio value="gateway">网关</Radio>
+          <Radio value="device">直连设备</Radio>
+          <Radio value="childrenDevice">网关子设备</Radio>
+          <Radio value="gateway">网关设备</Radio>
         </Radio.Group>
       ),
     },
@@ -316,7 +307,15 @@ const Save: React.FC<Props> = props => {
       if (!fileValue.orgId) {
         fileValue.orgId = '';
       }
-      props.save({state: 0, ...fileValue, photoUrl});
+      const protocol: Partial<ProtocolItem> =
+        protocolSupports.find(i => i.id === fileValue.messageProtocol) || {};
+
+      props.save({
+        ...fileValue, photoUrl,
+        protocolName: protocol.name,
+        classifiedId: classifiedData.id,
+        classifiedName: classifiedData.name
+      });
     });
   };
 
@@ -337,7 +336,7 @@ const Save: React.FC<Props> = props => {
   return (
     <Drawer
       visible
-      title={`${props.data?.id ? '编辑' : '新增'}型号`}
+      title={`${props.data?.id ? '编辑' : '新增'}产品`}
       width={500}
       onClose={() => props.close()}
       closable
@@ -369,21 +368,6 @@ const Save: React.FC<Props> = props => {
             ))}
           </Row>
         </Card>
-        {configName && (
-          <Card title={configName} style={{marginBottom: 20}} bordered={false}>
-            <Row gutter={16}>
-              {configForm.map(item => (
-                <Col
-                  key={item.key}
-                >
-                  <Form.Item label={item.label}>
-                    {getFieldDecorator(item.key, item.options)(item.component)}
-                  </Form.Item>
-                </Col>
-              ))}
-            </Row>
-          </Card>
-        )}
       </Form>
 
       <div
@@ -415,6 +399,17 @@ const Save: React.FC<Props> = props => {
           保存
         </Button>
       </div>
+      {classifiedVisible && <Classified choice={(item: any) => {
+        /*console.log(item);
+        console.log(item.split('|').filter(function (s: string) {
+          return s && s.trim();
+        }));*/
+        setCategoryId(item.categoryId);
+        setClassifiedData(item);
+        setClassifiedVisible(false);
+      }} close={() => {
+        setClassifiedVisible(false);
+      }} data={classifiedData}/>}
     </Drawer>
   );
 };

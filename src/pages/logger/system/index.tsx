@@ -6,7 +6,7 @@ import styles from '@/utils/table.less';
 import { connect } from 'dva';
 import moment from 'moment';
 import { SystemLoggerItem } from './data.d';
-import { Dispatch, ConnectState } from '@/models/connect';
+import { ConnectState, Dispatch } from '@/models/connect';
 import encodeQueryParam from '@/utils/encodeParam';
 import Save from './save';
 import SearchForm from '@/components/SearchForm';
@@ -32,7 +32,13 @@ const SystemLoggerList: React.FC<Props> = props => {
 
   const initState: State = {
     data: result,
-    searchParam: { pageSize: 10, sorts: { order: 'desc', field: 'createTime' } },
+    searchParam: {
+      pageSize: 10,
+      sorts: {
+        field: 'createTime',
+        order: 'desc',
+      },
+    },
     saveVisible: false,
     current: {},
   };
@@ -82,6 +88,7 @@ const SystemLoggerList: React.FC<Props> = props => {
       width: 200,
       sorter: true,
       ellipsis: true,
+      defaultSortOrder: 'descend',
       render: text => moment(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {

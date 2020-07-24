@@ -60,6 +60,10 @@ const Status: React.FC<Props> = props => {
   const [eventDataCount, setEventDataCount] = useState({});
 
   useEffect(() => {
+    let statusRealTime: any;
+    let propertySubs: any;
+    let eventSubs: any;
+
     runInfo.loading = true;
     props.device.loading = false;
     setRunInfo(props.device);
@@ -94,10 +98,10 @@ const Status: React.FC<Props> = props => {
             const tempResult = response?.result;
             tempResult.forEach((item: any) => {
 
-              if (typeof item.data.value?.formatValue === 'string') {
-                propertyData[item.data.value.property].formatValue = item.data.value?.formatValue ? item.data.value.formatValue : '/';
-              } else {
+              if (typeof item.data.value?.formatValue === 'object') {
                 propertyData[item.data.value.property].formatValue = item.data.value?.formatValue ? JSON.stringify(item.data.value.formatValue) : '/';
+              } else {
+                propertyData[item.data.value.property].formatValue = item.data.value?.formatValue ? item.data.value.formatValue : '/';
               }
 
               if (propertyData[item.data.value.property].type === 'int' || propertyData[item.data.value.property].type === 'float'
@@ -115,16 +119,6 @@ const Status: React.FC<Props> = props => {
             setPropertyData({...propertyData});
           }
         }).catch();
-    }
-
-  }, []);
-
-  useEffect(() => {
-    let statusRealTime: any;
-    let propertySubs: any;
-    let eventSubs: any;
-    // 组装数据
-    if (runInfo && runInfo.metadata) {
 
       statusRealTime && statusRealTime.unsubscribe();
       statusRealTime = getWebsocket(
@@ -154,42 +148,6 @@ const Status: React.FC<Props> = props => {
         },
       );
 
-      const metadata = JSON.parse(runInfo.metadata);
-      const {properties, events} = metadata;
-      // 设置properties的值
-      if (properties) {
-        metadata.properties = properties.map((item: any) => {
-          item.loading = false;
-          return item;
-        });
-      }
-
-      // 设置event数据
-      if (events) {
-        events.map((event: any) => {
-          // 加载数据
-          event.loading = false;
-          apis.deviceInstance.eventData(
-            props.device.id,
-            event.id,
-            encodeQueryParam({
-              pageIndex: 0,
-              pageSize: 10,
-            }),
-          ).then(response => {
-            if (response.status === 200) {
-              const data = response.result;
-              eventDataCount[event.id] = data.total;
-              setEventDataCount({...eventDataCount});
-            }
-          }).catch(() => {
-
-          });
-        });
-      }
-
-      setMetadata({...metadata});
-
       propertySubs && propertySubs.unsubscribe();
       propertySubs = getWebsocket(
         `instance-info-property-${props.device.id}-${props.device.productId}`,
@@ -205,10 +163,12 @@ const Status: React.FC<Props> = props => {
 
           if (!propertyData[dataValue.property]) return;
 
-          if (typeof dataValue.formatValue === 'string') {
-            propertyData[dataValue.property].formatValue = dataValue.formatValue ? dataValue.formatValue : '/';
-          } else {
+
+          if (typeof dataValue.formatValue === 'object') {
             propertyData[dataValue.property].formatValue = dataValue.formatValue ? JSON.stringify(dataValue.formatValue) : '/';
+          } else {
+            propertyData[dataValue.property].formatValue = dataValue.formatValue ? dataValue.formatValue : '/';
+
           }
 
           if (propertyData[dataValue.property].type === 'int' || propertyData[dataValue.property].type === 'float'
@@ -247,6 +207,48 @@ const Status: React.FC<Props> = props => {
       propertySubs && propertySubs.unsubscribe();
       eventSubs && eventSubs.unsubscribe();
     };
+  }, []);
+
+  useEffect(() => {
+    // 组装数据
+    if (runInfo && runInfo.metadata) {
+
+      const metadata = JSON.parse(runInfo.metadata);
+      const {properties, events} = metadata;
+      // 设置properties的值
+      if (properties) {
+        metadata.properties = properties.map((item: any) => {
+          item.loading = false;
+          return item;
+        });
+      }
+
+      // 设置event数据
+      if (events) {
+        events.map((event: any) => {
+          // 加载数据
+          event.loading = false;
+          apis.deviceInstance.eventData(
+            props.device.id,
+            event.id,
+            encodeQueryParam({
+              pageIndex: 0,
+              pageSize: 10,
+            }),
+          ).then(response => {
+            if (response.status === 200) {
+              const data = response.result;
+              eventDataCount[event.id] = data.total;
+              setEventDataCount({...eventDataCount});
+            }
+          }).catch(() => {
+
+          });
+        });
+      }
+
+      setMetadata({...metadata});
+    }
   }, [runInfo]);
 
   /*  const refreshDeviceState = () => {

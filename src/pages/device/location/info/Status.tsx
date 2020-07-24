@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import ChartCard from '@/pages/analysis/components/Charts/ChartCard';
-import { Avatar, Badge, Card, Col, Row, Spin } from 'antd';
+import {Avatar, Badge, Card, Col, Row, Spin} from 'antd';
 import apis from '@/services';
 import encodeQueryParam from '@/utils/encodeParam';
 import gateway from '@/pages/device/gateway/img/gateway.svg';
 import AutoHide from '@/pages/device/location/info/autoHide';
-import { getWebsocket } from '@/layouts/GlobalWebSocket';
+import {getWebsocket} from '@/layouts/GlobalWebSocket';
 
 interface Props {
   device: any
@@ -13,7 +13,6 @@ interface Props {
 
 interface State {
   metadata: any;
-  eventData: any[];
 }
 
 const topColResponsiveProps = {
@@ -22,58 +21,51 @@ const topColResponsiveProps = {
   md: 12,
   lg: 8,
   xl: 8,
-  style: { paddingRight: 0, paddingBottom: 5 },
+  style: {paddingRight: 0, paddingBottom: 5},
 };
 
 const Status: React.FC<Props> = (props) => {
 
   const initState: State = {
     metadata: {},
-    eventData: [],
   };
+
   const [metadata, setMetadata] = useState(initState.metadata);
-  const [eventData, setEventData] = useState(initState.eventData);
   const [propertyData, setPropertyData] = useState({});
   const [spinning, setSpinning] = useState(true);
   const [statusType, setStatusType] = useState('');
+  const [eventDataCount, setEventDataCount] = useState({});
 
-  let subs: any;
+  let subsProperties: any;
   let deviceStatus: any;
-
-  useEffect(
-    () => () => {
-      if (subs) {
-        subs.unsubscribe()
-      }
-      if (deviceStatus) {
-        deviceStatus.unsubscribe()
-      }
-    },
-    [],
-  );
+  let eventSubs: any;
 
   useEffect(() => {
-    setStatusType(props.device.state?.value);
-
-    deviceStatus = getWebsocket(
-      `location-info-status-${props.device.id}`,
-      `/dashboard/device/status/change/realTime`,
-      {
-        deviceId: props.device.id,
-      },
-    ).subscribe(
-      (resp: any) => {
-        const { payload } = resp;
-        if (resp.requestId === `location-info-status-${props.device.id}`) {
-          setStatusType(payload.value.type);
-        }
-      },
-    );
 
     // 组装数据
     if (props.device && props.device.metadata) {
+
+      setStatusType(props.device.state?.value);
+
+      deviceStatus && deviceStatus.unsubscribe();
+
+      deviceStatus = getWebsocket(
+        `location-info-status-${props.device.id}`,
+        `/dashboard/device/status/change/realTime`,
+        {
+          deviceId: props.device.id,
+        },
+      ).subscribe(
+        (resp: any) => {
+          const {payload} = resp;
+          if (resp.requestId === `location-info-status-${props.device.id}`) {
+            setStatusType(payload.value.type);
+          }
+        },
+      );
+
       const metadata = JSON.parse(props.device.metadata);
-      const { properties, events } = metadata;
+      const {properties, events} = metadata;
       // 设置properties的值
       if (properties) {
         metadata.properties = properties.map((item: any) => {
@@ -86,7 +78,6 @@ const Status: React.FC<Props> = (props) => {
 
       // 设置event数据
       if (events) {
-        eventData.splice(0, eventData.length);
         events.map((event: any) => {
           // 加载数据
           apis.deviceInstance.eventData(
@@ -99,8 +90,8 @@ const Status: React.FC<Props> = (props) => {
           ).then(response => {
             if (response.status === 200) {
               const data = response.result;
-              eventData.push({ eventId: event.id, data });
-              setEventData([...eventData]);
+              eventDataCount[event.id] = data.total;
+              setEventDataCount({...eventDataCount});
             }
           }).catch(() => {
 
@@ -108,8 +99,11 @@ const Status: React.FC<Props> = (props) => {
         });
       }
 
-      setMetadata({ ...metadata });
-      subs = getWebsocket(
+      setMetadata({...metadata});
+
+      subsProperties && subsProperties.unsubscribe();
+
+      subsProperties = getWebsocket(
         `location-info-property-${props.device.id}`,
         `/dashboard/device/${props.device.productId}/properties/realTime`,
         {
@@ -118,21 +112,39 @@ const Status: React.FC<Props> = (props) => {
         },
       ).subscribe(
         (resp: any) => {
-          const { payload } = resp;
-          if (resp.requestId === `location-info-property-${props.device.id}`) {
-            const dataValue = payload.value;
+          const {payload} = resp;
+          const dataValue = payload.value;
+          if (!propertyData[dataValue.property]) return;
 
-            if (!propertyData[dataValue.property]) return;
+          propertyData[dataValue.property].formatValue = dataValue?.formatValue ? dataValue.formatValue : '/';
+          setPropertyData({...propertyData});
+        },
+      );
 
-            propertyData[dataValue.property].formatValue = dataValue?.formatValue ? dataValue.formatValue : '/';
+      eventSubs && eventSubs.unsubscribe();
 
-            setPropertyData({ ...propertyData });
-          }
+      eventSubs = getWebsocket(
+        `location-info-event-${props.device.id}-${props.device.productId}`,
+        `/dashboard/device/${props.device.productId}/events/realTime`,
+        {
+          deviceId: props.device.id,
+        },
+      ).subscribe(
+        (resp: any) => {
+          const {payload} = resp;
+          eventDataCount[payload.value.event] = (eventDataCount[payload.value.event] + 1);
+          setEventDataCount({...eventDataCount});
         },
       );
 
       setSpinning(false);
     }
+
+    return () => {
+      subsProperties && subsProperties.unsubscribe();
+      deviceStatus && deviceStatus.unsubscribe();
+      eventSubs && eventSubs.unsubscribe();
+    };
   }, [props.device]);
 
   const statusMap = new Map();
@@ -153,9 +165,9 @@ const Status: React.FC<Props> = (props) => {
       <Spin tip="加载中..." spinning={spinning}>
         <ChartCard bordered={false}
                    avatar={
-                     <Avatar src={gateway} style={{ width: 48, height: 48 }}/>
+                     <Avatar src={gateway} style={{width: 48, height: 48}}/>
                    }
-                   title={<b style={{ fontSize: 16 }}><AutoHide title={props.device.name} style={{ width: 250 }}/></b>}
+                   title={<b style={{fontSize: 16}}><AutoHide title={props.device.name} style={{width: 250}}/></b>}
                    action={
                      <div>
                        {statusMap.get(statusType)}
@@ -163,25 +175,25 @@ const Status: React.FC<Props> = (props) => {
                    }
                    total={
                      <Row>
-                      <span style={{ fontSize: 14 }}>
-                        <AutoHide title={`ID：${props.device.id}`} style={{ width: 140 }}/>
-                        <AutoHide title={`产品：${props.device.productName}`} style={{ width: 140 }}/>
+                      <span style={{fontSize: 14}}>
+                        <AutoHide title={`ID：${props.device.id}`} style={{width: 140}}/>
+                        <AutoHide title={`产品：${props.device.productName}`} style={{width: 140}}/>
                       </span>
                      </Row>
                    }>
-          {metadata && metadata.properties ? <Row gutter={24} style={{ paddingTop: 10 }}>
+          {metadata && metadata.properties ? <Row gutter={24} style={{paddingTop: 10}}>
               {
                 (metadata.properties).map((item: any) => {
                     if (!item) return false;
                     return (
                       <Col {...topColResponsiveProps} key={item.id}>
-                        <Card style={{ backgroundColor: '#FBFBFB', height: 50 }}
-                              bodyStyle={{ padding: 2, paddingLeft: 8, height: 50 }}>
-                          <span style={{ fontSize: 12 }}>{item.name}</span>
+                        <Card style={{backgroundColor: '#FBFBFB', height: 50}}
+                              bodyStyle={{padding: 2, paddingLeft: 8, height: 50}}>
+                          <span style={{fontSize: 12}}>{item.name}</span>
                           <div>
                             <b>
                               <AutoHide title={...propertyData[item.id]?.formatValue || '/'}
-                                        style={{ width: 100, height: 20 }}/>
+                                        style={{width: 100, height: 20}}/>
                             </b>
                           </div>
                         </Card>
@@ -192,16 +204,15 @@ const Status: React.FC<Props> = (props) => {
               }
               {
                 (metadata.events).map((item: any) => {
-                    const tempData = eventData.find(i => i.eventId === item.id);
                     return (
                       <Col {...topColResponsiveProps} key={item.id}>
-                        <Card style={{ backgroundColor: '#FBFBFB', height: 50 }}
-                              bodyStyle={{ padding: 2, paddingLeft: 8, height: 50 }}>
-                          <span style={{ fontSize: 12 }}>{eventLevel.get(item.expands?.level)}{item.name}</span>
+                        <Card style={{backgroundColor: '#FBFBFB', height: 50}}
+                              bodyStyle={{padding: 2, paddingLeft: 8, height: 50}}>
+                          <span style={{fontSize: 12}}>{eventLevel.get(item.expands?.level)}{item.name}</span>
                           <div>
                             <b>
-                              <AutoHide title={`${tempData?.data.total || 0}次`}
-                                        style={{ width: 100, height: 20 }}/>
+                              <AutoHide title={`${eventDataCount[item.id] || 0}次`}
+                                        style={{width: 100, height: 20}}/>
                             </b>
                           </div>
                         </Card>

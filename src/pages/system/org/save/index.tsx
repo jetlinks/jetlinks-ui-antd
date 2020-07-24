@@ -13,9 +13,9 @@ const Save: React.FC<Props> = props => {
   const {
     form: { getFieldDecorator },
     form,
-    // parentId,
+    parentId,
     data,
-    data: { parentId }
+    // data: { parentId }
   } = props;
   const saveData = () => {
     const value = form.getFieldsValue();

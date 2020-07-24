@@ -1,15 +1,16 @@
-import React, { Fragment, useEffect, useState } from 'react';
-import { ColumnProps, PaginationConfig, SorterResult } from 'antd/es/table';
-import { Divider, Card, Table, message, Popconfirm } from 'antd';
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
+import React, {Fragment, useEffect, useState} from 'react';
+import {ColumnProps, PaginationConfig, SorterResult} from 'antd/es/table';
+import {Button, Card, Divider, message, Popconfirm, Table} from 'antd';
+import {PageHeaderWrapper} from '@ant-design/pro-layout';
 import styles from '@/utils/table.less';
-import { connect } from 'dva';
-import Search from './search';
-import { RuleInstanceItem } from './data.d';
-import { Dispatch, ConnectState } from '@/models/connect';
+import {connect} from 'dva';
+import {ConnectState, Dispatch} from '@/models/connect';
 import encodeQueryParam from '@/utils/encodeParam';
 import apis from '@/services';
-import Detail from './detail';
+import SearchForm from '@/components/SearchForm';
+import {RuleInstanceItem} from './data.d';
+import Save from './save';
+import moment from "moment";
 
 interface Props {
   ruleInstance: any;
@@ -26,13 +27,18 @@ interface State {
 }
 
 const RuleInstanceList: React.FC<Props> = props => {
-  const { dispatch } = props;
+  const {dispatch} = props;
 
-  const { result } = props.ruleInstance;
+  const {result} = props.ruleInstance;
 
   const initState: State = {
     data: result,
-    searchParam: { pageSize: 10 },
+    searchParam: {
+      pageSize: 10, sorts: {
+        order: "descend",
+        field: "createTime"
+      }
+    },
     saveVisible: false,
     current: {},
   };
@@ -49,7 +55,8 @@ const RuleInstanceList: React.FC<Props> = props => {
           message.success('创建成功');
         }
       })
-      .catch(() => {});
+      .catch(() => {
+      });
   };
 
   const handleSearch = (params?: any) => {
@@ -73,7 +80,8 @@ const RuleInstanceList: React.FC<Props> = props => {
           handleSearch(searchParam);
         }
       })
-      .catch(() => {});
+      .catch(() => {
+      });
   };
 
   const stopInstance = (record: any) => {
@@ -85,7 +93,8 @@ const RuleInstanceList: React.FC<Props> = props => {
           handleSearch(searchParam);
         }
       })
-      .catch(() => {});
+      .catch(() => {
+      });
   };
   // const saveOrUpdate = (item: RuleInstanceItem) => {
   //     dispatch({
@@ -103,7 +112,7 @@ const RuleInstanceList: React.FC<Props> = props => {
       payload: params.id,
       callback: () => {
         message.success('删除成功');
-        handleSearch();
+        handleSearch(searchParam);
       },
     });
   };
@@ -136,8 +145,16 @@ const RuleInstanceList: React.FC<Props> = props => {
       dataIndex: 'modelVersion',
     },
     {
+      title: '创建时间',
+      dataIndex: 'createTime',
+      render: (text: any) => text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/',
+      sorter: true,
+      defaultSortOrder: 'descend',
+    },
+    {
       title: '说明',
       dataIndex: 'description',
+      ellipsis: true
     },
 
     {
@@ -150,33 +167,43 @@ const RuleInstanceList: React.FC<Props> = props => {
       width: '20%',
       render: (text, record) => (
         <Fragment>
-          <a
-            onClick={() => {
-              setSaveVisible(true);
-              setCurrent(record);
-            }}
-          >
-            详情
-          </a>
-          <Divider type="vertical" />
+
+          {
+            record.modelType === 'node-red' ?
+              <>
+                <a
+                  onClick={() => {
+                    window.open(`/jetlinks/rule-editor/index.html#flow/${record.id}`)
+                  }}
+                >
+                  详情
+                </a>< Divider type="vertical"/>
+              </> : <></>
+          }
+
+
           <Popconfirm title="确认删除？" onConfirm={() => handleDelete(record)}>
             <a>删除</a>
           </Popconfirm>
-          <Divider type="vertical" />
-          {record.state?.value === 'stopped' && (
-            <Popconfirm title="确认启动？" onConfirm={() => startInstance(record)}>
-              <a>启动</a>
-            </Popconfirm>
-          )}
-          {record.state?.value === 'started' && (
-            <Popconfirm title="确认启动？" onConfirm={() => stopInstance(record)}>
-              <a>停止</a>
-            </Popconfirm>
-          )}
-          <Divider type="vertical" />
+          <Divider type="vertical"/>
+          {
+            record.state?.value === 'stopped' && (
+              <Popconfirm title="确认启动？" onConfirm={() => startInstance(record)}>
+                <a>启动</a>
+              </Popconfirm>
+            )
+          }
+          {
+            record.state?.value === 'started' && (
+              <Popconfirm title="确认启动？" onConfirm={() => stopInstance(record)}>
+                <a>停止</a>
+              </Popconfirm>
+            )
+          }
+          {/* <Divider type="vertical" />
           <Popconfirm title="确认生成模型？" onConfirm={() => createModel(record)}>
             <a>生成模型</a>
-          </Popconfirm>
+          </Popconfirm> */}
         </Fragment>
       ),
     },
@@ -187,21 +214,47 @@ const RuleInstanceList: React.FC<Props> = props => {
       <Card bordered={false}>
         <div className={styles.tableList}>
           <div>
-            <Search
+            <SearchForm
+              formItems={[
+                {
+                  label: '名称',
+                  key: 'name$LIKE',
+                  type: 'string',
+                },
+                {
+                  label: '状态',
+                  key: 'state$IN',
+                  type: 'list',
+                  props: {
+                    data: [
+                      {id: 'stopped', name: '已停止'},
+                      {id: 'started', name: '运行中'},
+                      {id: 'disable', name: '已禁用'},
+                    ]
+                  }
+                },
+              ]}
               search={(params: any) => {
                 setSearchParam(params);
-                handleSearch({ terms: params, pageSize: 10 });
+                handleSearch({
+                  terms: params, pageSize: 10, sorts: searchParam.sorts || {
+                    order: "descend",
+                    field: "createTime"
+                  }
+                });
               }}
             />
           </div>
-          {/* <div className={styles.tableListOperator}>
-                        <Button
-                            icon="plus"
-                            type="primary"
-                            onClick={() => { setCurrent({}); setSaveVisible(true) }}>
-                            新建
-                        </Button>
-                    </div> */}
+          <div className={styles.tableListOperator}>
+            <Button
+              icon="plus"
+              type="primary"
+              onClick={() => {
+                setSaveVisible(true)
+              }}>
+              创建规则
+            </Button>
+          </div>
           <div className={styles.StandardTable}>
             <Table
               loading={props.loading}
@@ -226,11 +279,11 @@ const RuleInstanceList: React.FC<Props> = props => {
         </div>
       </Card>
       {saveVisible && (
-        <Detail
+        <Save
           save={() => {
             // tod
           }}
-          data={current}
+          // data={current}
           close={() => {
             setSaveVisible(false);
             setCurrent({});
@@ -240,7 +293,7 @@ const RuleInstanceList: React.FC<Props> = props => {
     </PageHeaderWrapper>
   );
 };
-export default connect(({ ruleInstance, loading }: ConnectState) => ({
+export default connect(({ruleInstance, loading}: ConnectState) => ({
   ruleInstance,
   loading: loading.models.ruleInstance,
 }))(RuleInstanceList);

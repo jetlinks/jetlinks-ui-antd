@@ -5,9 +5,8 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import styles from '@/utils/table.less';
 import { connect } from 'dva';
 import moment from 'moment';
-import Search from './search';
 import { AccessLoggerItem } from './data.d';
-import { Dispatch, ConnectState } from '@/models/connect';
+import { ConnectState, Dispatch } from '@/models/connect';
 import encodeQueryParam from '@/utils/encodeParam';
 import Save from './save';
 import SearchForm from '@/components/SearchForm';
@@ -33,7 +32,13 @@ const AccessLoggerList: React.FC<Props> = props => {
 
   const initState: State = {
     data: result,
-    searchParam: { pageSize: 10, sorts: { order: 'desc', field: 'requestTime' } },
+    searchParam: {
+      pageSize: 10,
+      sorts: {
+        field: 'requestTime',
+        order: 'desc',
+      },
+    },
     saveVisible: false,
     current: {},
   };
@@ -94,6 +99,7 @@ const AccessLoggerList: React.FC<Props> = props => {
       title: '请求时间',
       dataIndex: 'requestTime',
       sorter: true,
+      defaultSortOrder: 'descend',
       // ellipsis: true,
       render: text => moment(text).format('YYYY-MM-DD HH:mm:ss'),
     },

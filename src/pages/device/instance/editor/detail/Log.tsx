@@ -55,6 +55,7 @@ const Log: React.FC<Props> = props => {
     {
       dataIndex: 'createTime',
       title: '时间',
+      defaultSortOrder: 'descend',
       render: text => moment(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {

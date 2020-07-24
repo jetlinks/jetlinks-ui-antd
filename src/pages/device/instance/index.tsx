@@ -14,6 +14,7 @@ import {
   Popconfirm,
   Row,
   Select,
+  Spin,
   Table,
   Tooltip,
 } from 'antd';
@@ -58,10 +59,11 @@ interface State {
 
 const DeviceInstancePage: React.FC<Props> = props => {
   const { result } = props.deviceInstance;
+  const { dispatch, location } = props;
 
   const initState: State = {
     data: result,
-    searchParam: { pageSize: 10 },
+    searchParam: { pageSize: 10, terms: location?.query?.terms, },
     addVisible: false,
     currentItem: {},
     processVisible: false,
@@ -90,8 +92,6 @@ const DeviceInstancePage: React.FC<Props> = props => {
   const [deviceExport, setDeviceExport] = useState(false);
   const [deviceIdList, setDeviceIdLIst] = useState(initState.deviceIdList);
 
-  const { dispatch } = props;
-
   const statusMap = new Map();
   statusMap.set('在线', 'success');
   statusMap.set('离线', 'error');
@@ -103,7 +103,6 @@ const DeviceInstancePage: React.FC<Props> = props => {
       type: 'deviceInstance/query',
       payload: encodeQueryParam(params),
     });
-    deviceIdList.splice(0, deviceIdList.length);
   };
 
   const delelteInstance = (record: any) => {
@@ -112,6 +111,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
       .then(response => {
         if (response.status === 200) {
           message.success('操作成功');
+          deviceIdList.splice(0, deviceIdList.length);
           handleSearch(searchParam);
         }
       })
@@ -125,6 +125,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
       .then(response => {
         if (response.status === 200) {
           message.success('操作成功');
+          deviceIdList.splice(0, deviceIdList.length);
           handleSearch(searchParam);
         }
       })
@@ -138,6 +139,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
       .then(response => {
         if (response.status === 200) {
           message.success('操作成功');
+          deviceIdList.splice(0, deviceIdList.length);
           handleSearch(searchParam);
         }
       })
@@ -154,7 +156,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
       dataIndex: 'name',
     },
     {
-      title: '设备型号',
+      title: '设备产品',
       dataIndex: 'productName',
     },
     {
@@ -256,19 +258,19 @@ const DeviceInstancePage: React.FC<Props> = props => {
       loading: true,
     };
 
-    apis.deviceInstance.count(encodeQueryParam({ terms: { state: 'notActive', productId } }))
+    apis.deviceInstance.count(encodeQueryParam({ terms: { state: 'notActive', productId, ...location?.query?.terms, } }))
       .then(res => {
         if (res.status === 200) {
           map.notActiveCount = res.result;
-          apis.deviceInstance.count(encodeQueryParam({ terms: { state: 'offline', productId } }))
+          apis.deviceInstance.count(encodeQueryParam({ terms: { state: 'offline', productId, ...location?.query?.terms, } }))
             .then(res => {
               if (res.status === 200) {
                 map.offlineCount = res.result;
-                apis.deviceInstance.count(encodeQueryParam({ terms: { state: 'online', productId } }))
+                apis.deviceInstance.count(encodeQueryParam({ terms: { state: 'online', productId, ...location?.query?.terms, } }))
                   .then(res => {
                     if (res.status === 200) {
                       map.onlineCount = res.result;
-                      apis.deviceInstance.count(encodeQueryParam({ terms: { productId } }))
+                      apis.deviceInstance.count(encodeQueryParam({ terms: { productId, ...location?.query?.terms, } }))
                         .then(res => {
                           if (res.status === 200) {
                             map.deviceTotal = res.result;
@@ -311,20 +313,6 @@ const DeviceInstancePage: React.FC<Props> = props => {
     }
   }, []);
 
-  const saveDeviceInstance = (item: any) => {
-    dispatch({
-      type: 'deviceInstance/update',
-      payload: encodeQueryParam(item),
-      callback: (response: any) => {
-        if (response.status === 200) {
-          message.success('保存成功');
-          setAddVisible(false);
-          router.push(`/device/instance/save/${item.id}`);
-        }
-      },
-    });
-  };
-
   const onTableChange = (
     pagination: PaginationConfig,
     filters: any,
@@ -364,7 +352,6 @@ const DeviceInstancePage: React.FC<Props> = props => {
   };
   // 激活全部设备
   const startImport = () => {
-    // let dt = 0;
     setProcessVisible(true);
     const activeAPI = `/jetlinks/device-instance/deploy?${getSearchParam()}:X_Access_Token=${getAccessToken()} `;
     setAPI(activeAPI);
@@ -440,7 +427,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
           .then(response => {
             if (response.status === 200) {
               message.success('成功删除选中设备');
-              setDeviceIdLIst(deviceIdList.splice(0, deviceIdList.length));
+              deviceIdList.splice(0, deviceIdList.length);
               handleSearch(searchParam);
             }
           })
@@ -462,7 +449,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
           .then(response => {
             if (response.status === 200) {
               message.success('成功注销选中设备');
-              setDeviceIdLIst(deviceIdList.splice(0, deviceIdList.length));
+              deviceIdList.splice(0, deviceIdList.length);
               handleSearch(searchParam);
             }
           })
@@ -484,7 +471,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
           .then(response => {
             if (response.status === 200) {
               message.success('成功激活选中设备');
-              setDeviceIdLIst(deviceIdList.splice(0, deviceIdList.length));
+              deviceIdList.splice(0, deviceIdList.length);
               handleSearch(searchParam);
             }
           })
@@ -562,42 +549,44 @@ const DeviceInstancePage: React.FC<Props> = props => {
   return (
     <PageHeaderWrapper title="设备实例">
       <div className={styles.standardList}>
-        <Card bordered={false} style={{ height: 95 }} loading={deviceCount.loading}>
-          <Row>
-            <Col sm={7} xs={24}>
-              <Select placeholder="选择设备型号" allowClear style={{ width: 200, marginTop: 7 }} defaultValue={product}
-                onChange={(value: string) => {
-                  setProduct(() => value);
-                  setDeviceCount({ loading: true });
-                  onDeviceProduct(value);
-                }}
-              >
-                {productList?.map(item => (
-                  <Select.Option key={item.id}>{item.name}</Select.Option>
-                ))}
-              </Select>
-            </Col>
-            <Col sm={4} xs={24}>
-              <Info title="全部设备" value={deviceCount.deviceTotal} />
-            </Col>
-            <Col sm={4} xs={24}>
-              <Info title={<Badge status={statusMap.get('在线')} text="在线" />} value={deviceCount.onlineCount} />
-            </Col>
-            <Col sm={4} xs={24}>
-              <Info title={<Badge status={statusMap.get('离线')} text="离线" />} value={deviceCount.offlineCount} />
-            </Col>
-            <Col sm={4} xs={24}>
-              <Info title={<Badge status={statusMap.get('未激活')} text="未激活" />} value={deviceCount.notActiveCount} />
-            </Col>
-            <Col sm={1} xs={24}>
-              <Tooltip title='刷新'>
-                <Icon type="sync" style={{ fontSize: 20 }} onClick={() => {
-                  setDeviceCount({ loading: true });
-                  stateCount(product);
-                }} />
-              </Tooltip>
-            </Col>
-          </Row>
+        <Card bordered={false} style={{ height: 95 }}>
+          <Spin spinning={deviceCount.loading}>
+            <Row>
+              <Col sm={7} xs={24}>
+                <Select placeholder="选择设备产品" allowClear style={{ width: '70%', marginTop: 7 }} value={product}
+                  onChange={(value: string) => {
+                    setProduct(() => value);
+                    setDeviceCount({ loading: true });
+                    onDeviceProduct(value);
+                  }}
+                >
+                  {productList?.map(item => (
+                    <Select.Option key={item.id}>{item.name}</Select.Option>
+                  ))}
+                </Select>
+              </Col>
+              <Col sm={4} xs={24}>
+                <Info title="全部设备" value={deviceCount.deviceTotal} />
+              </Col>
+              <Col sm={4} xs={24}>
+                <Info title={<Badge status={statusMap.get('在线')} text="在线" />} value={deviceCount.onlineCount} />
+              </Col>
+              <Col sm={4} xs={24}>
+                <Info title={<Badge status={statusMap.get('离线')} text="离线" />} value={deviceCount.offlineCount} />
+              </Col>
+              <Col sm={4} xs={24}>
+                <Info title={<Badge status={statusMap.get('未激活')} text="未激活" />} value={deviceCount.notActiveCount} />
+              </Col>
+              <Col sm={1} xs={24}>
+                <Tooltip title='刷新'>
+                  <Icon type="sync" style={{ fontSize: 20 }} onClick={() => {
+                    setDeviceCount({ loading: true });
+                    stateCount(product);
+                  }} />
+                </Tooltip>
+              </Col>
+            </Row>
+          </Spin>
         </Card>
         <br />
         <Card bordered={false}>
@@ -605,6 +594,9 @@ const DeviceInstancePage: React.FC<Props> = props => {
             <div className={styles.tableListForm}>
               <Search
                 search={(params: any) => {
+                  if (Object.keys(params).length === 0) {
+                    deviceIdList.splice(0, deviceIdList.length);
+                  }
                   if (product) {
                     params.productId = product;
                   }
@@ -664,9 +656,6 @@ const DeviceInstancePage: React.FC<Props> = props => {
             close={() => {
               setAddVisible(false);
               setCurrentItem({});
-            }}
-            save={(item: any) => {
-              saveDeviceInstance(item);
             }}
           />
         )}

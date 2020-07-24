@@ -5,11 +5,21 @@ export class DeviceProduct {
 
   name: string;
 
+  photoUrl: string;
+
+  classifiedId: string;
+
+  classifiedName: string;
+
   describe: string;
 
   classifiedId: string;
 
   messageProtocol: string;
+
+  protocolName: string;
+
+  protocolId: string;
 
   configuration: any;
 
@@ -70,7 +80,8 @@ export interface DeviceProductListParams {
   currentPage: number;
 }
 
-export interface ProductEvents {}
+export interface ProductEvents {
+}
 
 export interface ProductFunctions {
   id: string;

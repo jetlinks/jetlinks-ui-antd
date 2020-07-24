@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Input, DatePicker, InputNumber, Form, Row, Col, Button, Icon, Select } from "antd";
+import {Input, DatePicker, InputNumber, Form, Row, Col, Button, Icon, Select, TreeSelect} from "antd";
 import { FormComponentProps } from "antd/lib/form";
 import moment, { Moment } from "moment";
 
@@ -97,8 +97,19 @@ const SearchForm = (props: Props) => {
                     placeholder={`请输入${label}`} />
             )
         }
+        if (type === 'treeSelect') {
+          return (
+            <TreeSelect
+              dropdownStyle={itemProps?.dropdownStyle}
+              allowClear treeDataSimpleMode showSearch={itemProps?.showSearch || false}
+              multiple={itemProps?.multiple || false}
+              placeholder={`${label}`} treeData={itemProps?.data || []}
+              treeNodeFilterProp='title'
+            />
+          )
+        }
         return <Input />
-    }
+    };
     return (
         <Form
             onKeyDown={e => {
@@ -159,6 +170,6 @@ const SearchForm = (props: Props) => {
             </Row>
         </Form>
     )
-}
+};
 
 export default Form.create<Props>()(SearchForm);

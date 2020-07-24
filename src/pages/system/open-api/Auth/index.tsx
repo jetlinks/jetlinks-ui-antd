@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Drawer, Tree } from "antd";
+import { Drawer, Tree, Button, message } from "antd";
 import { zip } from "rxjs";
 import { map } from "rxjs/operators";
-import Service from "../service";
 import encodeQueryParam from "@/utils/encodeParam";
+import Service from "../service";
 
 interface Props {
     close: Function;
@@ -19,11 +19,13 @@ const Auth = (props: Props) => {
     const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
     const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);
 
+    const [permissions, setPermissions] = useState<any[]>();
+
     useEffect(() => {
         const selected: string[] = [];
         zip(service.permission.auth(encodeQueryParam({
             terms: {
-                dimensionTarget: props.current.userId,
+                dimensionTarget: props.current.id,
             }
         })),
             service.permission.query({})).pipe(
@@ -43,15 +45,14 @@ const Auth = (props: Props) => {
                 )
             ).subscribe(data => {
                 setTreeData(data);
+                setExpandedKeys(data.map(item => item.key));
                 setCheckedKeys(selected);
             });
     }, [])
 
 
     const onExpand = expandedKeys => {
-        console.log('onExpand', expandedKeys);
-        // if not set autoExpandParent to false, if children expanded, parent can not collapse.
-        // or, you can remove all expanded children keys.
+
         setExpandedKeys(expandedKeys);
         setAutoExpandParent(false);
     };
@@ -69,37 +70,23 @@ const Auth = (props: Props) => {
                 list.push({ id, actions: [action] });
             }
         });
-        console.log(list, 'fff');
-        service.permission.save({
-            targetId: props.current.userId,
-            targetType: 'open-api',
-            permissionList: list,
-        }).subscribe(() => {
-            console.log('成功');
-        })
+        setPermissions(list);
+
     };
 
     const onSelect = (selectedKeys, info) => {
-        console.log('onSelect', info);
         setSelectedKeys(selectedKeys);
     };
 
 
-    const save = () => {
-        // jetlinks/autz-setting/detail/_save
-        const json = {
-            "targetId": "1270664441306820608",
-            "targetType": "user",
-            "permissionList": [
-                { "id": "protocol-supports", "actions": ["query", "save", "delete"] },
-                { "id": "tenant-manager", "actions": ["query", "save"] },
-                { "id": "organization", "actions": ["query", "save", "delete"] },
-                { "id": "user", "actions": ["query", "save", "delete"] },
-                { "id": "dimension", "actions": ["query", "save", "delete"] },
-                { "id": "device-firmware-manager", "actions": ["publish", "query", "save", "delete"] }
-            ]
-        };
-
+    const updateAuth = () => {
+        service.permission.save({
+            targetId: props.current.id,
+            targetType: 'open-api',
+            permissionList: permissions,
+        }).subscribe(() => {
+            message.success('保存成功');
+        })
     }
     return (
         <Drawer
@@ -109,6 +96,7 @@ const Auth = (props: Props) => {
             onClose={() => props.close()}
         >
             <Tree
+                defaultExpandAll
                 checkable
                 onExpand={onExpand}
                 expandedKeys={expandedKeys}
@@ -119,6 +107,35 @@ const Auth = (props: Props) => {
                 selectedKeys={selectedKeys}
                 treeData={treeData}
             />
+            <div
+                style={{
+                    position: 'absolute',
+                    right: 0,
+                    bottom: 0,
+                    width: '100%',
+                    borderTop: '1px solid #e9e9e9',
+                    padding: '10px 16px',
+                    background: '#fff',
+                    textAlign: 'right',
+                }}
+            >
+                <Button
+                    onClick={() => {
+                        props.close();
+                    }}
+                    style={{ marginRight: 8 }}
+                >
+                    关闭
+                </Button>
+                <Button
+                    onClick={() => {
+                        updateAuth()
+                    }}
+                    type="primary"
+                >
+                    保存
+                </Button>
+            </div>
         </Drawer>
     )
 }

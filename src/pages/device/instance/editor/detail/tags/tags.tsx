@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { FormComponentProps } from 'antd/lib/form';
+import React, {useEffect, useState} from 'react';
+import {FormComponentProps} from 'antd/lib/form';
 import Form from 'antd/es/form';
-import { Col, Icon, Input, message, Modal, Row, Spin } from 'antd';
+import {Col, Icon, Input, message, Modal, Row, Spin} from 'antd';
 import apis from '@/services';
 import Location from './location/index';
 
@@ -21,7 +21,7 @@ interface State {
 
 const Tags: React.FC<Props> = props => {
   const initState: State = {
-    tagsData: props.data.length > 0 ? props.data : [{ key: '', value: '', name: '', _id: 0 }],
+    tagsData: props.data.length > 0 ? props.data : [{key: '', value: '', name: '', _id: 0}],
     spinning: true,
     tagInfo: {},
     tagSequence: -1,
@@ -77,10 +77,10 @@ const Tags: React.FC<Props> = props => {
       onCancel={() => props.close()}
     >
       <Spin tip="操作中..." spinning={spinning}>
-        <Form>
-          <Form.Item key="item">
+        <Form key='tags_form'>
+          <Form.Item key="tags_item">
             {tagsData.map((item: any, index) => (
-              <Row>
+              <Row key={item._id}>
                 <Col span={5}>
                   <Input placeholder="请输入标签key"
                          value={item.key}
@@ -91,7 +91,7 @@ const Tags: React.FC<Props> = props => {
                          }}
                   />
                 </Col>
-                <Col span={1} style={{ textAlign: 'center' }}/>
+                <Col span={1} style={{textAlign: 'center'}}/>
                 <Col span={5}>
                   <Input placeholder="请输入标签名称"
                          value={item.name}
@@ -101,7 +101,7 @@ const Tags: React.FC<Props> = props => {
                          }}
                   />
                 </Col>
-                <Col span={1} style={{ textAlign: 'center' }}/>
+                <Col span={1} style={{textAlign: 'center'}}/>
                 <Col span={10}>
                   {item.type === 'geoPoint' ? (
                     <Input addonAfter={<Icon onClick={() => {
@@ -126,7 +126,7 @@ const Tags: React.FC<Props> = props => {
                     />
                   )}
                 </Col>
-                <Col span={2} style={{ textAlign: 'center' }}>
+                <Col span={2} style={{textAlign: 'center'}}>
                   <Icon
                     type="minus-circle"
                     title="删除标签"
@@ -138,11 +138,9 @@ const Tags: React.FC<Props> = props => {
               </Row>
             ))}
             <Col span={24}>
-              <div>
-                <a onClick={() => {
-                  setTagsData([...tagsData, { _id: Math.round(Math.random() * 100000) }]);
-                }}>添加</a>
-              </div>
+              <a onClick={() => {
+                setTagsData([...tagsData, {_id: Math.round(Math.random() * 100000)}]);
+              }}>添加</a>
             </Col>
           </Form.Item>
         </Form>

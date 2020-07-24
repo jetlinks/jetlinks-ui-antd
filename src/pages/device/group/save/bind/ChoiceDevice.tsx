@@ -12,6 +12,7 @@ import encodeQueryParam from '@/utils/encodeParam';
 
 interface Props extends FormComponentProps {
   save: Function;
+  deviceList: any[];
 }
 
 interface State {
@@ -83,7 +84,7 @@ const ChoiceDevice: React.FC<Props> = props => {
       ellipsis: true,
     },
     {
-      title: '设备型号',
+      title: '设备产品',
       dataIndex: 'productName',
       ellipsis: true,
     },
@@ -93,6 +94,7 @@ const ChoiceDevice: React.FC<Props> = props => {
       width: '200px',
       render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
       sorter: true,
+      defaultSortOrder: 'descend',
       ellipsis: true,
     },
     {
@@ -124,6 +126,7 @@ const ChoiceDevice: React.FC<Props> = props => {
             rowSelection={{
               type: 'checkbox',
               ...rowSelection,
+              selectedRowKeys: props.deviceList
             }}
             size='middle'
             pagination={{

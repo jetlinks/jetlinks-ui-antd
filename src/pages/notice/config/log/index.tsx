@@ -23,6 +23,7 @@ const Logger = (props: Props) => {
         dataIndex: 'notifyTime',
         title: '时间',
         sorter: true,
+        defaultSortOrder: 'descend',
         render: (text: any) => text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/',
     },
     {
@@ -50,7 +51,7 @@ const Logger = (props: Props) => {
     {
         dataIndex: 'option',
         title: '操作',
-        render: (text, record: any) => (
+        render: (_, record: any) => (
             <Fragment>
                 <a
                     onClick={() => {
@@ -78,8 +79,8 @@ const Logger = (props: Props) => {
     const [searchParam, setSearchParam] = useState<any>(initParam);
 
     const handleSearch = async (params?: any) => {
-        const temp = { ...params, ...searchParam, };
-        temp.terms = { ...params.terms, ...initParam.terms };
+        const temp = { ...searchParam, ...params };
+        temp.terms = { ...initParam.terms, ...params.terms, };
         setSearchParam(temp);
 
         await apis.notifier.history.list(encodeQueryParam(temp)).then(response => {

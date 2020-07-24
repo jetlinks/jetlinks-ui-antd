@@ -1,6 +1,5 @@
 import request from '@/utils/request';
-import { DeviceInstance } from './data.d';
-import { getAccessToken } from '@/utils/authority';
+import {DeviceInstance} from './data.d';
 
 export async function list(params: any) {
   return request(`/jetlinks/device-instance/_query`, {
@@ -25,6 +24,13 @@ export async function info(id: string) {
 export async function saveOrUpdate(params: DeviceInstance) {
   return request(`/jetlinks/device-instance`, {
     method: 'PATCH',
+    data: params,
+  });
+}
+
+export async function saveDevice(params: DeviceInstance) {
+  return request(`/jetlinks/device-instance`, {
+    method: 'POST',
     data: params,
   });
 }
@@ -114,7 +120,7 @@ export async function removeTags(deviceId: string | undefined, tagId: string) {
 }
 
 export async function propertiesRealTime(data: any) {
-  return request(`/jetlinks/dashboard/_multi?:X_Access_Token=${getAccessToken()}`, {
+  return request(`/jetlinks/dashboard/_multi`, {
     method: 'POST',
     data,
   });

@@ -139,7 +139,7 @@ const Editor: React.FC<Props> = props => {
       })
       .catch(() => {
         setSpinning(false);
-        message.error("物模型数据错误");
+        message.error("产品物模型数据错误");
       });
   };
 
@@ -304,6 +304,10 @@ const Editor: React.FC<Props> = props => {
         tabList={tableList}
         tabActiveKey={activeKey}
         onTabChange={(key: string) => {
+          if (!data.metadata) {
+            message.error('请检查设备产品物模型');
+            return;
+          }
           setActiveKey(key);
         }}
       >

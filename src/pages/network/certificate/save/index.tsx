@@ -16,14 +16,14 @@ interface State {
 }
 const Save: React.FC<Props> = props => {
   const {
-    form: { getFieldDecorator },
+    form: { getFieldDecorator, setFieldsValue },
     form,
   } = props;
 
   const initState: State = {
     instance: props.data?.instance || 'PEM',
-    keystoreBase64: '',
-    trustKeyStoreBase64: '',
+    keystoreBase64: props.data?.configs?.keystoreBase64 || '',
+    trustKeyStoreBase64: props.data?.configs?.trustKeyStoreBase64 || '',
   };
 
   const [instance, setInstance] = useState(initState.instance);
@@ -100,6 +100,7 @@ const Save: React.FC<Props> = props => {
                 if (response.status === 200) {
                   message.success('上传成功');
                   setKeystoreBase64(response.result);
+                  setFieldsValue({ 'configs.keystoreBase64': response.result });
                 }
                 // setUploading(false)
               } else if (info.file.status === 'error') {
@@ -115,7 +116,7 @@ const Save: React.FC<Props> = props => {
           </Upload>
           {getFieldDecorator('configs.keystoreBase64', {
             rules: [{ required: true }],
-            initialValue: props.data?.configs?.keystoreBase64 || keystoreBase64,
+            initialValue: keystoreBase64,
           })(<Input.TextArea rows={3} />)}
         </Form.Item>
         {instance !== 'PEM' && (
@@ -145,6 +146,7 @@ const Save: React.FC<Props> = props => {
                 if (response.status === 200) {
                   message.success('上传成功');
                   setTrustKeyStoreBase64(response.result);
+                  setFieldsValue({ 'configs.trustKeyStoreBase64': response.result })
                 }
                 // setUploading(false)
               } else if (info.file.status === 'error') {
@@ -159,7 +161,7 @@ const Save: React.FC<Props> = props => {
           </Upload>
           {getFieldDecorator('configs.trustKeyStoreBase64', {
             rules: [{ required: true }],
-            initialValue: props.data?.configs?.trustKeyStoreBase64 || trustKeyStoreBase64,
+            initialValue: trustKeyStoreBase64,
           })(<Input.TextArea rows={3} />)}
         </Form.Item>
         {instance !== 'PEM' && (

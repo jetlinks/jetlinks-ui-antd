@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { Badge, Button, Card, Descriptions, message, Popconfirm, Row, Spin, Tabs, Tooltip } from 'antd';
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import { connect } from 'dva';
-import { router } from 'umi';
-import { DeviceProduct } from '../data.d';
+import React, {useEffect, useState} from 'react';
+import {Badge, Button, Card, Descriptions, Input, message, Popconfirm, Row, Spin, Tabs, Tooltip} from 'antd';
+import {PageHeaderWrapper} from '@ant-design/pro-layout';
+import {connect} from 'dva';
+import {router} from 'umi';
+import {DeviceProduct} from '../data.d';
 import Definition from './definition';
-import { ConnectState, Dispatch } from '@/models/connect';
+import {ConnectState, Dispatch} from '@/models/connect';
 import apis from '@/services';
 import Save from '.';
 import encodeQueryParam from '@/utils/encodeParam';
 import Alarm from '@/pages/device/alarm';
+import Configuration from "@/pages/device/product/save/configuration";
 
 interface Props {
   dispatch: Dispatch;
@@ -40,7 +41,7 @@ const Detail: React.FC<Props> = props => {
   };
   const {
     dispatch,
-    location: { pathname },
+    location: {pathname},
   } = props;
   const [events, setEvents] = useState([]);
   const [functions, setFunctions] = useState([]);
@@ -53,6 +54,7 @@ const Detail: React.FC<Props> = props => {
   const [deviceCount, setDeviceCount] = useState(initState.deviceCount);
   const [spinning, setSpinning] = useState(initState.spinning);
   const [units, setUnits] = useState(initState.units);
+  const [updateVisible, setUpdateVisible] = useState(false);
 
   const handleSearch = (id: string) => {
     dispatch({
@@ -80,7 +82,7 @@ const Detail: React.FC<Props> = props => {
       },
     });
 
-    apis.deviceInstance.count(encodeQueryParam({ terms: { 'productId': id } }))
+    apis.deviceInstance.count(encodeQueryParam({terms: {'productId': id}}))
       .then(res => {
         if (res.status === 200) {
           setDeviceCount(res.result);
@@ -115,18 +117,19 @@ const Detail: React.FC<Props> = props => {
 
   const saveData = (item?: any) => {
     let data: Partial<DeviceProduct>;
-    const metadata = JSON.stringify({ events, properties, functions, tags });
+    const metadata = JSON.stringify({events, properties, functions, tags});
 
     // TODO 这个地方有疑惑，set数据之后此处数据还是未更新。原因待查
     if (item) {
-      data = { ...item, metadata };
+      data = {...item, metadata};
     } else {
-      data = { ...basicInfo, metadata };
+      data = {...basicInfo, metadata};
     }
     apis.deviceProdcut
       .saveOrUpdate(data)
       .then(r => {
         if (r.status === 200) {
+          setSaveVisible(false);
           message.success('保存成功');
           const list = pathname.split('/');
           handleSearch(list[list.length - 1]);
@@ -137,18 +140,18 @@ const Detail: React.FC<Props> = props => {
   };
 
   const updateData = (type: string, item: any) => {
-    let metadata = JSON.stringify({ events, properties, functions, tags });
+    let metadata = JSON.stringify({events, properties, functions, tags});
     if (type === 'event') {
-      metadata = JSON.stringify({ events: item, properties, functions, tags });
+      metadata = JSON.stringify({events: item, properties, functions, tags});
     } else if (type === 'properties') {
-      metadata = JSON.stringify({ events, properties: item, functions, tags });
+      metadata = JSON.stringify({events, properties: item, functions, tags});
     } else if (type === 'function') {
-      metadata = JSON.stringify({ events, properties, functions: item, tags });
+      metadata = JSON.stringify({events, properties, functions: item, tags});
     } else if (type === 'tags') {
-      metadata = JSON.stringify({ events, properties, functions, tags: item });
+      metadata = JSON.stringify({events, properties, functions, tags: item});
     }
 
-    const data = { ...basicInfo, metadata };
+    const data = {...basicInfo, metadata};
     apis.deviceProdcut
       .saveOrUpdate(data)
       .then((re: any) => {
@@ -191,13 +194,28 @@ const Detail: React.FC<Props> = props => {
     });
   };
 
+  const updateInfo = (item?: any) => {
+    apis.deviceProdcut
+      .update(item, basicInfo.id)
+      .then((response: any) => {
+        if (response.status === 200) {
+          message.success('配置信息修改成功');
+          setUpdateVisible(false);
+          const list = pathname.split('/');
+          handleSearch(list[list.length - 1]);
+        }
+      })
+      .catch(() => {
+      });
+  };
+
   const content = (
-    <div style={{ marginTop: 30 }}>
+    <div style={{marginTop: 30}}>
       <Descriptions column={4}>
         <Descriptions.Item label="设备数量">
           <div>
             {deviceCount}
-            <a style={{ marginLeft: 10 }}
+            <a style={{marginLeft: 10}}
                onClick={() => {
                  router.push(`/device/instance?productId=${basicInfo.id}`);
                }}
@@ -214,18 +232,18 @@ const Detail: React.FC<Props> = props => {
           <span>
             产品：{basicInfo.name}
           </span>
-        <Badge style={{ marginLeft: 20 }} color={basicInfo.state === 1 ? 'green' : 'red'}
+        <Badge style={{marginLeft: 20}} color={basicInfo.state === 1 ? 'green' : 'red'}
                text={basicInfo.state === 1 ? '已发布' : '未发布'}/>
         {basicInfo.state === 1 ? (
           <Popconfirm title="确认停用？" onConfirm={() => {
             unDeploy(basicInfo);
           }}>
-            <a style={{ fontSize: 12, marginLeft: 20 }}>停用</a>
+            <a style={{fontSize: 12, marginLeft: 20}}>停用</a>
           </Popconfirm>
         ) : (<Popconfirm title="确认发布？" onConfirm={() => {
           deploy(basicInfo);
         }}>
-          <a style={{ fontSize: 12, marginLeft: 20 }}>发布</a>
+          <a style={{fontSize: 12, marginLeft: 20}}>发布</a>
         </Popconfirm>)}
       </div>
     </Row>
@@ -253,15 +271,15 @@ const Detail: React.FC<Props> = props => {
           <Tabs>
             <Tabs.TabPane tab="产品信息" key="info">
               <Descriptions
-                style={{ marginBottom: 20 }}
+                style={{marginBottom: 20}}
                 bordered
-                column={2}
+                column={3}
                 title={
                   <span>
                     产品信息
                     <Button
                       icon="edit"
-                      style={{ marginLeft: 20 }}
+                      style={{marginLeft: 20}}
                       type="link"
                       onClick={() => setSaveVisible(true)}
                     >
@@ -273,14 +291,17 @@ const Detail: React.FC<Props> = props => {
                 <Descriptions.Item label="产品ID" span={1}>
                   {basicInfo.id}
                 </Descriptions.Item>
-                <Descriptions.Item label="产品名称" span={1}>
+                {/*<Descriptions.Item label="产品名称" span={1}>
                   {basicInfo.name}
+                </Descriptions.Item>*/}
+                <Descriptions.Item label="所属品类" span={1}>
+                  {basicInfo.classifiedName}
                 </Descriptions.Item>
                 <Descriptions.Item label="所属机构" span={1}>
                   {basicInfo.orgName}
                 </Descriptions.Item>
                 <Descriptions.Item label="消息协议" span={1}>
-                  {basicInfo.messageProtocol}
+                  {basicInfo.protocolName || basicInfo.protocolId}
                 </Descriptions.Item>
                 <Descriptions.Item label="链接协议" span={1}>
                   {basicInfo.transportProtocol}
@@ -294,19 +315,34 @@ const Detail: React.FC<Props> = props => {
               </Descriptions>
               {config && config.name && (
                 <Descriptions
-                  style={{ marginBottom: 20 }}
+                  style={{marginBottom: 20}}
                   bordered
                   column={2}
                   title={
                     <span>
                       {config.name}
+                      <Button
+                        icon="edit"
+                        style={{marginLeft: 20}}
+                        type="link"
+                        onClick={() => setUpdateVisible(true)}
+                      >
+                      编辑
+                    </Button>
                     </span>
                   }
                 >
                   {config.properties &&
                   config.properties.map((item: any) => (
                     <Descriptions.Item label={item.property} span={1} key={item.property}>
-                      {basicInfo.configuration ? basicInfo.configuration[item.property] : null}
+                      {basicInfo.configuration ? (
+                        item.type.type === 'password' ?
+                          /*(<Input.Password style={{width: '25%'}} readOnly={true}
+                                           value={basicInfo.configuration[item.property]}/>)*/
+                          '••••••'
+                          :
+                          basicInfo.configuration[item.property]
+                      ) : null}
                     </Descriptions.Item>
                   ))}
                 </Descriptions>
@@ -338,7 +374,8 @@ const Detail: React.FC<Props> = props => {
               />
             </Tabs.TabPane>
             <Tabs.TabPane tab="告警设置" key="metadata1">
-              <Alarm target="product" productId={basicInfo.id} productName={basicInfo.name} targetId={basicInfo.id} metaData={basicInfo.metadata}
+              <Alarm target="product" productId={basicInfo.id} productName={basicInfo.name} targetId={basicInfo.id}
+                     metaData={basicInfo.metadata}
                      name={basicInfo.name}/>
             </Tabs.TabPane>
           </Tabs>
@@ -354,11 +391,24 @@ const Detail: React.FC<Props> = props => {
             }}
           />
         )}
+
+        {updateVisible && (
+          <Configuration
+            data={basicInfo}
+            configuration={config}
+            close={() => {
+              setUpdateVisible(false);
+            }}
+            save={(item: any) => {
+              updateInfo(item);
+            }}
+          />
+        )}
       </PageHeaderWrapper>
     </Spin>
   );
 };
-export default connect(({ deviceProduct, loading }: ConnectState) => ({
+export default connect(({deviceProduct, loading}: ConnectState) => ({
   deviceProduct,
   loading,
 }))(Detail);

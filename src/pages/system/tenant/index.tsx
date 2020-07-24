@@ -3,13 +3,15 @@ import React, { useState, useEffect } from "react"
 import { Card, Button, List, Radio, Input, Avatar, Tag, message, Spin, Popconfirm } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import moment from "moment";
+import { ListData } from "@/services/response";
+import { router } from "umi";
+import defaultImg from '@/assets/default.png';
 import { TenantItem } from "./data";
 import styles from './index.less';
 import Service from "./service";
-import { ListData } from "@/services/response";
 import Save from "./save";
-import { router } from "umi";
-
+import { PaginationConfig } from "antd/lib/pagination";
+import encodeQueryParam from "@/utils/encodeParam";
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -17,7 +19,7 @@ const { Search } = Input;
 
 
 const ListContent = ({
-    data: { members, state, },
+    data: { members, state, createTime },
 }: {
     data: TenantItem;
 }) => (
@@ -32,7 +34,7 @@ const ListContent = ({
             </div>
             <div className={styles.listContentItem}>
                 <span>创建时间</span>
-                <p>{moment(new Date()).format('YYYY-MM-DD HH:mm')}</p>
+                <p>{moment(createTime).format('YYYY-MM-DD HH:mm')}</p>
             </div>
         </div>
     );
@@ -40,14 +42,13 @@ const ListContent = ({
 
 const Tenant = () => {
 
-    const defualtImg = 'https://tse2-mm.cn.bing.net/th/id/OIP.O9TfOiCrUHdOyEE92JtfBQAAAA?pid=Api&rs=1';
     const service = new Service('tenant');
     const [loading, setLoading] = useState<boolean>(false);
     const [tloading, setTloading] = useState<boolean>(false);
     const [visible, setVisible] = useState<boolean>(false);
     const [current, setCurrent] = useState<Partial<TenantItem>>({});
     const [list, setList] = useState<ListData<TenantItem>>();
-    const [searchParam, setSearchParam] = useState();
+    const [searchParam, setSearchParam] = useState({});
 
 
     const handleSearch = (params: any) => {
@@ -64,20 +65,21 @@ const Tenant = () => {
     }, []);
 
 
-    const paginationProps = {
+    const paginationProps: PaginationConfig = {
         showQuickJumper: true,
         pageSize: 5,
         total: list?.total || 0,
+        onChange: page => handleSearch({ pageIndex: page - 1, pageSize: 5 }),
     };
 
     const extraContent = (
         <div className={styles.extraContent}>
-            <RadioGroup defaultValue="all">
-                <RadioButton value="all">全部</RadioButton>
-                <RadioButton value="progress">正常</RadioButton>
-                <RadioButton value="waiting">禁用</RadioButton>
+            <RadioGroup defaultValue="all" onChange={(e) => handleSearch(encodeQueryParam({ terms: { state: e.target.value } }))}>
+                <RadioButton value="">全部</RadioButton>
+                <RadioButton value="enabled">正常</RadioButton>
+                <RadioButton value="disabled">禁用</RadioButton>
             </RadioGroup>
-            <Search className={styles.extraContentSearch} placeholder="请输入" onSearch={() => ({})} />
+            {/* <Search className={styles.extraContentSearch} placeholder="请输入" onSearch={() => ({})} /> */}
         </div>
     );
 
@@ -163,12 +165,10 @@ const Tenant = () => {
                                                     )
                                             }
                                         </>,
-                                        // <a>删除</a>,
-
                                     ]}
                                 >
                                     <List.Item.Meta
-                                        avatar={<Avatar src={item.photo || defualtImg} shape="square" size="large" />}
+                                        avatar={<Avatar src={item.photo || defaultImg} shape="square" size="large" />}
                                         title={<a >{item.name}</a>}
                                         description={item.description}
                                     />

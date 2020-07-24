@@ -18,6 +18,7 @@ import RightContent from '@/components/GlobalHeader/RightContent';
 import { ConnectState } from '@/models/connect';
 import { isAntDesignPro, getAuthorityFromRouter } from '@/utils/utils';
 import logo from '../assets/logo.svg';
+import MenuFont from '@/components/MenuFont';
 
 // import PubSub from 'pubsub-js';
 
@@ -53,11 +54,18 @@ export type BasicLayoutContext = { [K in 'location']: BasicLayoutProps[K] } & {
  * use Authorized check all menu item
  */
 
-const menuDataRender = (menuList: MenuDataItem[]): MenuDataItem[] =>
-  menuList.map(item => {
-    const localItem = { ...item, children: item.children ? menuDataRender(item.children) : [] };
-    return Authorized.check(item.authority, localItem, null) as MenuDataItem;
+const menuDataRender = (menuList: MenuDataItem[]): MenuDataItem[] => {
+  const version = localStorage.getItem('system-version');
+
+  return menuList.map(item => {
+    const localItem: any = {
+      ...item,
+      // icon: <MenuFont type={item.iconfont} />,
+      children: item.children ? menuDataRender(item.children) : []
+    };
+    return localItem?.version && version === 'community' ? [] : Authorized.check(item.authority, localItem, null) as MenuDataItem;
   });
+}
 
 const defaultFooterDom = <div />;
 

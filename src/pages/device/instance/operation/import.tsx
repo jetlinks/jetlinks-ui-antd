@@ -53,7 +53,7 @@ const Import: React.FC<Props> = props => {
       .catch(() => {
       });
     return () => {
-      if (JSON.stringify(eventSource) !== '{}') {
+      if (Object.keys(eventSource).length !== 0) {
         eventSource.close();
       }
     };
@@ -140,21 +140,21 @@ const Import: React.FC<Props> = props => {
         setImportLoading(false);
         submitData();*/
         props.close();
-        if (JSON.stringify(eventSource) !== '{}') {
+        if (Object.keys(eventSource).length !== 0) {
           eventSource.close();
         }
       }}
       onCancel={() => {
         props.close();
-        if (JSON.stringify(eventSource) !== '{}') {
+        if (Object.keys(eventSource).length !== 0) {
           eventSource.close();
         }
       }}
     >
       <Spin spinning={uploading} tip="上传中...">
         <Form labelCol={{span: 4}} wrapperCol={{span: 20}}>
-          <Form.Item key="productId" label="设备型号">
-            <Select placeholder="请选择设备型号" defaultValue={props.productId}
+          <Form.Item key="productId" label="设备产品">
+            <Select placeholder="请选择设备产品" defaultValue={props.productId}
                     disabled={!!props.productId}
                     onChange={(event: string) => {
                       setProduct(event);

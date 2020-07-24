@@ -11,6 +11,8 @@ export class DeviceInstance extends SimpleType {
 
   productName: string;
 
+  protocolName: string;
+
   security: any;
 
   deriveMetadata: string;
