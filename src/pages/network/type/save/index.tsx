@@ -103,7 +103,7 @@ const Save: React.FC<Props> = props => {
             </Form.Item>
             <Form.Item label="HOST">
               {getFieldDecorator('configuration.host', {
-                initialValue: props.data?.configuration?.host,
+                initialValue: props.data?.configuration?.host || '0.0.0.0',
               })(<Input />)}
             </Form.Item>
             <Form.Item label="PORT">
@@ -146,7 +146,7 @@ const Save: React.FC<Props> = props => {
             </Form.Item>
             <Form.Item label="HOST">
               {getFieldDecorator('configuration.host', {
-                initialValue: props.data?.configuration?.host,
+                initialValue: props.data?.configuration?.host || '0.0.0.0',
               })(<Input />)}
             </Form.Item>
             <Form.Item label="PORT">
@@ -217,7 +217,7 @@ const Save: React.FC<Props> = props => {
             </Form.Item>
             <Form.Item label="HOST">
               {getFieldDecorator('configuration.host', {
-                initialValue: props.data?.configuration?.host,
+                initialValue: props.data?.configuration?.host || '0.0.0.0',
               })(<Input />)}
             </Form.Item>
             <Form.Item label="PORT">
@@ -273,7 +273,7 @@ const Save: React.FC<Props> = props => {
             </Form.Item>
             <Form.Item label="HOST">
               {getFieldDecorator('configuration.host', {
-                initialValue: props.data?.configuration?.host,
+                initialValue: props.data?.configuration?.host || '0.0.0.0',
               })(<Input />)}
             </Form.Item>
             <Form.Item label="PORT">
@@ -504,7 +504,7 @@ const Save: React.FC<Props> = props => {
 
             <Form.Item label="HOST">
               {getFieldDecorator('configuration.host', {
-                initialValue: props.data?.configuration?.host,
+                initialValue: props.data?.configuration?.host || '0.0.0.0',
               })(<Input />)}
             </Form.Item>
             <Form.Item label="PORT">
@@ -558,7 +558,7 @@ const Save: React.FC<Props> = props => {
 
             <Form.Item label="HOST">
               {getFieldDecorator('configuration.host', {
-                initialValue: props.data?.configuration?.host,
+                initialValue: props.data?.configuration?.host || '0.0.0.0',
               })(<Input />)}
             </Form.Item>
             <Form.Item label="PORT">
