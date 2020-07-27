@@ -53,10 +53,6 @@ const Notification: React.FC<Props> = (props) => {
 
     const columns: any[] = [
         {
-            dataIndex: 'id',
-            title: 'ID',
-        },
-        {
             title: '主题',
             dataIndex: 'topicName'
         },
@@ -72,8 +68,9 @@ const Notification: React.FC<Props> = (props) => {
 
         {
             title: '操作',
-            dataIndex: 'state',
-            render: (state: { text: string, value: string }, record: any) => {
+            // dataIndex: 'state',
+            render: (_, record: any) => {
+                const state = record.state;
                 return (
                     <>
                         <a onClick={() => {

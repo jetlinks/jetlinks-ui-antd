@@ -11,6 +11,7 @@ import styles from './index.less';
 import { getWebsocket } from '@/layouts/GlobalWebSocket';
 import Service from '@/pages/account/notification/service';
 import encodeQueryParam from '@/utils/encodeParam';
+import { router } from 'umi';
 
 export interface GlobalHeaderRightProps extends ConnectProps {
   notices?: NoticeItem[];
@@ -31,12 +32,11 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
   private ws: any;
   componentDidMount() {
     const { dispatch } = this.props;
-
     if (dispatch) {
       dispatch({
         type: 'global/fetchNotices',
         payload: encodeQueryParam({
-          terms: { state: 'unread' }
+          // terms: { state: 'unread' }
         })
       });
     }
@@ -64,6 +64,7 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
         });
       }
     );
+
   }
 
   componentWillUnmount() {
@@ -71,22 +72,24 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
   }
 
   changeReadState = (clickedItem: NoticeItem): void => {
-    const { id } = clickedItem;
-    const { dispatch } = this.props;
-    if (dispatch) {
-      dispatch({
-        type: 'global/changeNoticeReadState',
-        payload: id,
-      });
+    const { id, state } = clickedItem;
+    if (state === 'unread') {
+      const { dispatch } = this.props;
+      if (dispatch) {
+        dispatch({
+          type: 'global/changeNoticeReadState',
+          payload: id,
+        });
+      }
     }
   };
 
   handleNoticeClear = (title: string, key: string) => {
     const { dispatch } = this.props;
     message.success(`${'清空了'} ${title}`);
-    const clearIds = (this.getNoticeData().user).map(item => item.id);
+    console.log(this.getNoticeData(), key, 'noticesa');
+    const clearIds = (this.getNoticeData().key || []).map(item => item.id);
 
-    // console.log(title, key, 'sss');
     if (dispatch) {
       dispatch({
         type: 'global/clearNotices',
@@ -120,7 +123,9 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
       return newNotice;
     });
 
-    return groupBy(newNotices, 'subscriberType');
+    // console.log(groupBy(newNotices, 'state.value'), 'group-state');
+    // return groupBy(newNotices, 'subscriberType');
+    return groupBy(newNotices.map(item => ({ ...item, state: item.state.value })), 'state');
   };
 
   getUnreadData = (noticeData: { [key: string]: NoticeItem[] }) => {
@@ -130,14 +135,19 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
     Object.keys(noticeData).forEach(key => {
       const value = noticeData[key];
 
+      // console.log(key, 'kley');
       if (!unreadMsg[key]) {
         unreadMsg[key] = 0;
       }
 
       if (Array.isArray(value)) {
-        unreadMsg[key] = value.filter(item => !item.read).length;
+        unreadMsg[key] = value.length;
+        // console.log(value, value.filter(item => !item.read).length, key, 'value');
+        // unreadMsg[key] = value.filter(item => !item.read).length;
+        // unreadMsg[key] = value.filter(item => item.state === 'unread').length;
       }
     });
+    console.log(unreadMsg, 'mseg');
     return unreadMsg;
   };
 
@@ -157,7 +167,7 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
         viewMoreText="查看更多"
         onClear={this.handleNoticeClear}
         onPopupVisibleChange={onNoticeVisibleChange}
-        onViewMore={() => message.info('Click on view more')}
+        onViewMore={() => router.push('/account/notification')}
         clearClose
       >
         {/* <NoticeIcon.Tab
@@ -168,22 +178,24 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
           emptyText="你已查看所有通知"
           showViewMore
         /> */}
+
         <NoticeIcon.Tab
-          tabKey="user"
-          count={unreadMsg.user}
-          list={noticeData.user}
-          title="消息"
+          tabKey="read"
+          count={unreadMsg.unread}
+          list={noticeData.unread}
+          title="未读消息"
           emptyText="您已读完所有消息"
           showViewMore
         />
-        {/* <NoticeIcon.Tab
-          tabKey="event"
-          title="待办"
-          emptyText="你已完成所有待办"
-          count={unreadMsg.event}
-          list={noticeData.event}
+        <NoticeIcon.Tab
+          tabKey="unread"
+          title="已读消息"
+          emptyText="暂无消息"
+          count={unreadMsg.read}
+          list={noticeData.read}
           showViewMore
-        /> */}
+        />
+
       </NoticeIcon>
     );
   }

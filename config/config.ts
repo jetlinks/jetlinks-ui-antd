@@ -427,6 +427,7 @@ export default {
               path: 'account',
               name: '个人中心',
               icon: 'user',
+              hideInMenu: true,
               routes: [
                 // {
                 //   path: '/account/center',
