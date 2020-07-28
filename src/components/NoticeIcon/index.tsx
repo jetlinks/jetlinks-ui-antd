@@ -41,11 +41,11 @@ export default class NoticeIcon extends Component<NoticeIconProps> {
   public static Tab: typeof NoticeList = NoticeList;
 
   static defaultProps = {
-    onItemClick: (): void => {},
-    onPopupVisibleChange: (): void => {},
-    onTabChange: (): void => {},
-    onClear: (): void => {},
-    onViewMore: (): void => {},
+    onItemClick: (): void => { },
+    onPopupVisibleChange: (): void => { },
+    onTabChange: (): void => { },
+    onClear: (): void => { },
+    onViewMore: (): void => { },
     loading: false,
     clearClose: false,
     emptyImage: 'https://gw.alipayobjects.com/zos/rmsportal/wAhyIChODzsoKIOBHcBk.svg',

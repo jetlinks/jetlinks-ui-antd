@@ -9,10 +9,7 @@ import { readNotice, readNotices } from '@/pages/account/notification/service';
 export interface NoticeItem extends NoticeIconData {
   id: string;
   type: string;
-  state: {
-    text: string,
-    value: string,
-  };
+  state: any;
   message: string;
   dataId: string;
   notifyTime: number | string;
@@ -61,12 +58,13 @@ const GlobalModel: GlobalModelType = {
         payload: data,
       });
       const unreadCount: number = yield select(
-        (state: ConnectState) => state.global.notices.filter(item => !item.read).length,
+        (state: ConnectState) =>
+          state.global.notices.filter(item => item.state.value === 'unread').length
       );
       yield put({
         type: 'user/changeNotifyCount',
         payload: {
-          totalCount: data.length,
+          totalCount: resp.result.total,
           unreadCount,
         },
       });
@@ -94,31 +92,35 @@ const GlobalModel: GlobalModelType = {
       }
     },
     *changeNoticeReadState({ payload }, { call, put, select }) {
-      const reps = yield call(readNotice, payload);
-      if (reps) {
-        const notices: NoticeItem[] = yield select((state: ConnectState) =>
-          state.global.notices.map(item => {
-            const notice = { ...item };
-            if (notice.id === payload) {
-              notice.read = true;
-            }
-            return notice;
-          }),
-        );
+      // const reps = yield call(readNotice, payload);
+      // if (reps) {
+      const notices: NoticeItem[] = yield select((state: ConnectState) =>
+        state.global.notices.map(item => {
+          const notice = { ...item };
+          if (notice.id === payload) {
+            notice.read = true;
+            notice.state = { text: '已读', value: 'read' };
+          }
+          return notice;
+        }),
+      );
 
-        yield put({
-          type: 'saveNotices',
-          payload: notices,
-        });
+      console.log(notices, payload, 'notic');
 
-        yield put({
-          type: 'user/changeNotifyCount',
-          payload: {
-            totalCount: notices.length,
-            unreadCount: notices.filter(item => !item.read).length,
-          },
-        });
-      }
+      console.log(notices.filter(item => !item.read).length, '111');
+      yield put({
+        type: 'saveNotices',
+        payload: notices,
+      });
+
+      yield put({
+        type: 'user/changeNotifyCount',
+        payload: {
+          totalCount: notices.length,
+          unreadCount: notices.filter(item => !item.read).length,
+        },
+      });
+      // }
     },
   },
 
