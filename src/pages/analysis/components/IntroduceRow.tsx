@@ -262,7 +262,7 @@ const IntroduceRow = ({loading, visitData}: { loading: boolean; visitData: IVisi
           total={numeral(deviceOnline).format('0,0')}
           footer={
             <div style={{whiteSpace: 'nowrap', overflow: 'hidden'}}>
-              <Field style={{marginRight: 80, float: 'left'}}
+              <Field style={{marginRight: 40, float: 'left'}}
                      label={
                        <FormattedMessage id="analysis.analysis.device-total" defaultMessage="设备总量"/>
                      }
