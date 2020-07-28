@@ -92,6 +92,7 @@ const Edit = (props: Props) => {
         }]).subscribe(() => {
             message.success('解绑成功');
             handleSearch(searchParam);
+            setSelected([]);
         })
     }
     return (

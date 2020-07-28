@@ -89,6 +89,7 @@ const Edit = (props: Props) => {
             assetType: 'device'
         }]).subscribe(() => {
             message.success('解绑成功');
+            setSelected([]);
             handleSearch(searchParam);
         })
     }
