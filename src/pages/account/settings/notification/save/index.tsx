@@ -78,6 +78,7 @@ const Save: React.FC<Props> = (props) => {
                                     initialValue: data?.topicConfig?.productId
                                 })(
                                     <Select onChange={(e: string) => setProductId(e)}>
+                                        <Select.Option value="*">全部</Select.Option>
                                         {
                                             products.map((item: any) => <Select.Option value={item.id}>{item.name}</Select.Option>)
                                         }
@@ -92,6 +93,7 @@ const Save: React.FC<Props> = (props) => {
                                     initialValue: data?.topicConfig?.deviceId
                                 })(
                                     <Select onChange={(e: string) => setDeviceId(e)}>
+                                        <Select.Option value="*">全部</Select.Option>
                                         {
                                             devices.map((item: any) => <Select.Option value={item.id}>{item.name}</Select.Option>)
                                         }
@@ -106,6 +108,7 @@ const Save: React.FC<Props> = (props) => {
                                     initialValue: data?.topicConfig?.alarmId
                                 })(
                                     <Select>
+                                        <Select.Option value="*">全部</Select.Option>
                                         {
                                             alarms.map((item: any) => <Select.Option value={item.id}>{item.name}</Select.Option>)
                                         }
