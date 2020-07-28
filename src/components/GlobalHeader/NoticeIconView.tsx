@@ -87,7 +87,6 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
   handleNoticeClear = (title: string, key: string) => {
     const { dispatch } = this.props;
     message.success(`${'清空了'} ${title}`);
-    console.log(this.getNoticeData(), key, 'noticesa');
     const clearIds = (this.getNoticeData().key || []).map(item => item.id);
 
     if (dispatch) {
@@ -147,7 +146,6 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
         // unreadMsg[key] = value.filter(item => item.state === 'unread').length;
       }
     });
-    console.log(unreadMsg, 'mseg');
     return unreadMsg;
   };
 

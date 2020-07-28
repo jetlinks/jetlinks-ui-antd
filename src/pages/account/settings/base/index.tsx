@@ -8,12 +8,15 @@ import { UserDetail } from "../data";
 import { getAccessToken } from "@/utils/authority";
 import { UploadProps } from "antd/lib/upload";
 import defaultImg from '@/assets/default.png';
+import { connect } from "dva";
+import { ConnectState } from '@/models/connect';
+
 interface Props extends FormComponentProps {
 
 }
 
 const BaseView: React.FC<Props> = (props) => {
-    const { form: { getFieldDecorator, getFieldsValue } } = props;
+    const { form: { getFieldDecorator, getFieldsValue }, dispatch } = props;
     const service = new Service('user/detail');
     const [user, setUser] = useState<Partial<UserDetail>>({});
     const [loading, setLoading] = useState<boolean>(false);
@@ -49,6 +52,14 @@ const BaseView: React.FC<Props> = (props) => {
         const data = { ...getFieldsValue(), avatar };
         service.save(data).subscribe(() => {
             message.success('保存成功!');
+            if (dispatch) {
+                dispatch({
+                    type: 'user/saveCurrentUser',
+                    payload: {
+                        avatar: avatar,
+                    }
+                });
+            }
         }, () => {
             message.error('保存失败');
         })
@@ -115,4 +126,7 @@ const BaseView: React.FC<Props> = (props) => {
 
     )
 }
-export default Form.create<Props>()(BaseView);
+export default connect(({ user, global }: ConnectState) => ({
+    currentUser: user.currentUser,
+    notices: global.notices,
+}))(Form.create<Props>()(BaseView));
