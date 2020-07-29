@@ -297,6 +297,7 @@ const Save: React.FC<Props> = props => {
         state: 0,
         ...fileValue,
         photoUrl,
+        metadata: '{"events":[],"properties":[],"functions":[],"tags":[]}',
         protocolName: protocol.name,
         classifiedId: classifiedData.id,
         classifiedName: classifiedData.name
