@@ -125,6 +125,8 @@ const Location: React.FC<Props> = props => {
         .catch(() => {
         });
 
+      handleSearch({pageSize: 10, sorts: {field: 'alarmTime', order: 'desc'}});
+
       deviceStatus && deviceStatus.unsubscribe();
 
       let deviceStatusAll = getWebsocket(
@@ -468,6 +470,13 @@ const Location: React.FC<Props> = props => {
                   title: item.properties.name,
                   data: item
                 });
+                /*if (item.geometry.type === 'MultiPolygon') {
+                  item.geometry.coordinates.map((path: any) => {
+                    pathPolygon.push(path[0]);
+                  });
+                } else {
+                  pathPolygon.push(item.geometry.coordinates);
+                }*/
                 item.geometry.coordinates.map((path: any) => {
                   pathPolygon.push(path[0]);
                 });
@@ -795,7 +804,15 @@ const Location: React.FC<Props> = props => {
               setManageRegion(false);
               setSpinning(true);
               mapCreated.remove(labelsLayer);
+              resetPathPolygon();
+              queryArea({
+                filter: {
+                  where: 'objectType not device',
+                  pageSize: pageSize
+                },
+              }, 'new');
               onValidateForm();
+              handleSearch({pageSize: 10, sorts: {field: 'alarmTime', order: 'desc'}});
             }}/>
           )}
 
