@@ -66,7 +66,6 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = (props) => {
         </Menu.Item>
     </Menu>
   );
-  console.log(currentUser, 'uu');
   return currentUser && currentUser.name ? (
     <HeaderDropdown overlay={menuHeaderDropdown}>
       <span className={`${styles.action} ${styles.account}`}>

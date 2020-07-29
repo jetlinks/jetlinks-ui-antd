@@ -15,10 +15,10 @@ const Save: React.FC<Props> = (props) => {
     const service = new Service('notifications/subscribe');
     const [provider, setProvider] = useState<NotificationProvider[]>([]);
     const [products, setProducts] = useState<any[]>([]);
-    const [productId, setProductId] = useState<string>('');
+    const [productId, setProductId] = useState<string>(data?.topicConfig?.productId);
 
     const [devices, setDevices] = useState<any[]>([]);
-    const [deviceId, setDeviceId] = useState<string>('');
+    const [deviceId, setDeviceId] = useState<string>(data?.topicConfig?.deviceId);
 
     const [alarms, setAlarms] = useState<any[]>([]);
     const [type, setType] = useState<string>(data?.topicProvider);
@@ -28,8 +28,8 @@ const Save: React.FC<Props> = (props) => {
             .subscribe(resp => setProvider(resp));
     }, []);
     const save = () => {
-        const data = getFieldsValue();
-        service.saveSubscribe(data).subscribe((resp) => {
+        const formData = getFieldsValue();
+        service.saveSubscribe({ ...formData, id: data.id }).subscribe((resp) => {
             message.success('保存成功');
             props.close();
         })
@@ -42,7 +42,7 @@ const Save: React.FC<Props> = (props) => {
         });
     }, []);
     useEffect(() => {
-        setFieldsValue({ 'topicConfig.deviceId': '' });
+        // setFieldsValue({ 'topicConfig.deviceId': '' });
         if (productId) {
             apis.deviceInstance.list(encodeQueryParam({
                 terms: {
@@ -67,6 +67,7 @@ const Save: React.FC<Props> = (props) => {
         }
     }, [productId, deviceId]);
     const renderConfig = () => {
+        console.log(data, '数据');
         switch (type) {
             case 'device_alarm':
                 return (
@@ -77,10 +78,10 @@ const Save: React.FC<Props> = (props) => {
                                     rules: [{ required: true }],
                                     initialValue: data?.topicConfig?.productId
                                 })(
-                                    <Select onChange={(e: string) => setProductId(e)}>
+                                    <Select onChange={(e: string) => { setProductId(e); setFieldsValue({ 'topicConfig.deviceId': '' }); }}>
                                         <Select.Option value="*">全部</Select.Option>
                                         {
-                                            products.map((item: any) => <Select.Option value={item.id}>{item.name}</Select.Option>)
+                                            products.map((item: any) => <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>)
                                         }
                                     </Select>
                                 )
@@ -95,7 +96,7 @@ const Save: React.FC<Props> = (props) => {
                                     <Select onChange={(e: string) => setDeviceId(e)}>
                                         <Select.Option value="*">全部</Select.Option>
                                         {
-                                            devices.map((item: any) => <Select.Option value={item.id}>{item.name}</Select.Option>)
+                                            devices.map((item: any) => <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>)
                                         }
                                     </Select>
                                 )
@@ -110,7 +111,7 @@ const Save: React.FC<Props> = (props) => {
                                     <Select>
                                         <Select.Option value="*">全部</Select.Option>
                                         {
-                                            alarms.map((item: any) => <Select.Option value={item.id}>{item.name}</Select.Option>)
+                                            alarms.map((item: any) => <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>)
                                         }
                                     </Select>
                                 )
@@ -122,6 +123,7 @@ const Save: React.FC<Props> = (props) => {
                 return <div />
         }
     }
+    console.log(provider, 'vider');
     return (
         <Modal
             title='添加订阅'
@@ -139,7 +141,7 @@ const Save: React.FC<Props> = (props) => {
                         initialValue: data?.topicProvider
                     })(
                         <Select onChange={(e: string) => setType(e)}>
-                            {provider.map(item => <Select.Option value={item.id}>{item.name}</Select.Option>)}
+                            {provider.map(item => <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>)}
                         </Select>
                     )}
                 </Form.Item>

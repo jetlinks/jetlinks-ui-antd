@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { ColumnProps } from "antd/es/table";
 import SearchForm from "@/components/SearchForm";
-import { Table, Button } from "antd";
+import { Table, Button, Divider, message, Popconfirm } from "antd";
 import Service from "../service";
 import Save from "./save";
 import encodeQueryParam from "@/utils/encodeParam";
+import { Notification } from '../data.d';
 
 
 const NotificationView = () => {
@@ -33,6 +34,19 @@ const NotificationView = () => {
     useEffect(() => {
         handleSearch(searchParam);
     }, []);
+
+    const remove = (id: string) => {
+        setLoading(true);
+        service.notification.remove(id).subscribe(() => {
+            message.success('删除成功');
+        }, () => {
+            message.error('删除失败');
+        }, () => {
+            setLoading(false);
+            handleSearch(searchParam);
+        })
+    }
+
     const columns: ColumnProps<Notification>[] = [
         {
             title: '订阅类型',
@@ -45,7 +59,7 @@ const NotificationView = () => {
             dataIndex: 'subscribeName'
         }, {
             title: '状态',
-            dataIndex: 'state'
+            dataIndex: 'state.text'
         }, {
             title: '操作',
             render: (_, record) => {
@@ -55,6 +69,47 @@ const NotificationView = () => {
                             setSaveVisible(true);
                             setCurrent(record);
                         }}>配置</a>
+                        <Divider type="vertical" />
+                        {record.state?.value !== 'enabled' ?
+                            (
+                                <>
+                                    <a onClick={
+                                        () => {
+                                            setLoading(true);
+                                            service.notification.open(record.id).subscribe(() => {
+                                                message.success('开启订阅成功');
+                                            }, () => {
+                                                message.error('操作失败');
+                                            }, () => {
+                                                setLoading(false);
+                                                handleSearch(searchParam);
+                                            })
+                                        }
+                                    }>
+                                        开启
+                                    </a>
+                                    <Divider type="vertical" />
+                                </>
+                            ) :
+                            <>
+                                <a onClick={
+                                    () => {
+                                        setLoading(true);
+                                        service.notification.close(record.id).subscribe(() => {
+                                            message.success('关闭订阅成功');
+                                        }, () => {
+                                            message.error('操作失败');
+                                        }, () => {
+                                            setLoading(false);
+                                            handleSearch(searchParam);
+                                        })
+                                    }}>关闭</a>
+                                <Divider type="vertical" />
+                            </>
+                        }
+                        <Popconfirm title="删除此订阅？" onConfirm={() => remove(record.id)}>
+                            <a>删除</a>
+                        </Popconfirm>
                     </>
                 )
             }
@@ -89,7 +144,10 @@ const NotificationView = () => {
             <div style={{ margin: 10 }}>
                 <Button
                     type="primary"
-                    onClick={() => setSaveVisible(true)}
+                    onClick={() => {
+                        setCurrent({})
+                        setSaveVisible(true);
+                    }}
                 >
                     添加订阅
                 </Button>
