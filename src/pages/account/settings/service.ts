@@ -3,7 +3,6 @@ import { UserDetail } from "./data";
 import { defer, from } from "rxjs";
 import request from "@/utils/request";
 import { map, filter } from "rxjs/operators";
-import { result } from "lodash";
 
 class Service extends BaseService<UserDetail>{
 
@@ -61,6 +60,26 @@ class Service extends BaseService<UserDetail>{
     )).pipe(
         map(resp => resp.result)
     );
+
+    public notification = {
+        close: (id: string) => defer(() => from(
+            request(`/jetlinks/notifications/subscription/${id}/_disabled`, {
+                method: 'PUT',
+            })
+        )),
+
+        open: (id: string) => defer(() => from(
+            request(`/jetlinks/notifications/subscription/${id}/_enabled`, {
+                method: 'PUT',
+            })
+        )),
+
+        remove: (id: string) => defer(() => from(
+            request(`/jetlinks/notifications/subscription/${id}`, {
+                method: 'DELETE',
+            })
+        )),
+    }
 }
 
 export default Service;
