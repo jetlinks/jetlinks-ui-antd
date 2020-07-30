@@ -245,7 +245,7 @@ const Alarm: React.FC<Props> = props => {
       title: '处理状态',
       dataIndex: 'state',
       align: 'center',
-      width: '10px',
+      width: '100px',
       render: text => text === 'solve' ? <Tag color="#87d068">已处理</Tag> : <Tag color="#f50">未处理</Tag>,
     },
     {
