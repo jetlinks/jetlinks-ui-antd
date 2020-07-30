@@ -1,5 +1,5 @@
 import React, {Fragment, useEffect, useState} from 'react';
-import {Badge, Button, Card, Divider, message, Modal, Popconfirm, Select, Spin, Table, Tabs} from 'antd';
+import {Badge, Button, Card, Divider, Input, message, Modal, Popconfirm, Select, Spin, Table, Tabs, Tag} from 'antd';
 import apis from '@/services';
 import {ColumnProps, SorterResult} from 'antd/es/table';
 import {alarm, AlarmLog} from '@/pages/device/alarm/data';
@@ -29,6 +29,12 @@ interface State {
 }
 
 const Alarm: React.FC<Props> = props => {
+
+  const {
+    form: {getFieldDecorator},
+    form,
+  } = props;
+
   const initState: State = {
     data: [],
     saveAlarmData: {},
@@ -45,9 +51,11 @@ const Alarm: React.FC<Props> = props => {
   const [data, setData] = useState(initState.data);
   const [spinning, setSpinning] = useState(true);
   const [saveVisible, setSaveVisible] = useState(false);
+  const [solveVisible, setSolveVisible] = useState(false);
   const [saveAlarmData, setSaveAlarmData] = useState(initState.saveAlarmData);
   const [alarmActiveKey, setAlarmActiveKey] = useState('');
   const [alarmLogId, setAlarmId] = useState();
+  const [solveAlarmLogId, setSolveAlarmLogId] = useState();
   const [searchParam, setSearchParam] = useState(initState.searchParam);
   const [alarmLogData, setAlarmLogData] = useState(initState.alarmLogData);
   const [alarmDataList, setAlarmDataList] = useState(initState.alarmDataList);
@@ -234,8 +242,15 @@ const Alarm: React.FC<Props> = props => {
       defaultSortOrder: 'descend'
     },
     {
+      title: '处理状态',
+      dataIndex: 'state',
+      align: 'center',
+      width: '100px',
+      render: text => text === 'solve' ? <Tag color="#87d068">已处理</Tag> : <Tag color="#f50">未处理</Tag>,
+    },
+    {
       title: '操作',
-      width: '250px',
+      width: '120px',
       align: 'center',
       render: (record: any) => (
         <Fragment>
@@ -249,15 +264,51 @@ const Alarm: React.FC<Props> = props => {
             Modal.confirm({
               width: '40VW',
               title: '告警数据',
-              content: <pre>{content}</pre>,
+              content: <pre>{content}
+                {record.state === 'solve' && (
+                  <>
+                    <br/><br/>
+                    <span style={{fontSize: 16}}>处理结果：</span>
+                    <br/>
+                    <p>{record.description}</p>
+                  </>
+                )}
+                       </pre>,
               okText: '确定',
               cancelText: '关闭',
             })
           }}>详情</a>
+          <Divider type="vertical"/>
+          {
+            record.state !== 'solve' && (
+              <a onClick={() => {
+                setSolveAlarmLogId(record.id);
+                setSolveVisible(true);
+              }}>处理</a>
+            )
+          }
         </Fragment>
       )
     },
   ];
+
+  const alarmSolve = () => {
+    form.validateFields((err, fileValue) => {
+      if (err) return;
+
+      apis.deviceAlarm.alarmLogSolve(solveAlarmLogId, fileValue.description)
+        .then((response: any) => {
+          if (response.status === 200) {
+            message.success('保存成功');
+            setSolveAlarmLogId(undefined);
+            setSolveVisible(false);
+            handleSearch(searchParam);
+          }
+        })
+        .catch(() => {
+        })
+    });
+  };
 
   const handleSearch = (params?: any) => {
     setSearchParam(params);
@@ -402,6 +453,36 @@ const Alarm: React.FC<Props> = props => {
         name={props.name} productName={props.productName}
         productId={props.productId}
       />}
+
+      {solveVisible && (
+        <Modal
+          title='告警处理结果'
+          visible
+          okText="确定"
+          cancelText="取消"
+          width='700px'
+          onOk={() => {
+            alarmSolve();
+          }}
+          onCancel={() => {
+            setSolveVisible(false);
+            setSolveAlarmLogId(undefined);
+          }}
+        >
+          <Form labelCol={{span: 3}} wrapperCol={{span: 21}} key="solve_form">
+            <Form.Item key="description" label="处理结果">
+              {getFieldDecorator('description', {
+                rules: [
+                  {required: true, message: '请输入处理结果'},
+                  {max: 2000, message: '处理结果不超过2000个字符'}
+                ],
+              })(
+                <Input.TextArea rows={8} placeholder="请输入处理结果"/>,
+              )}
+            </Form.Item>
+          </Form>
+        </Modal>
+      )}
     </Spin>
   );
 };

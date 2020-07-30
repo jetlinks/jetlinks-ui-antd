@@ -37,3 +37,10 @@ export async function findAlarmLog(params: any) {
     params,
   });
 }
+
+export async function alarmLogSolve(id: string, data: any) {
+  return request(`/jetlinks/device/alarm/history/${id}/_solve`, {
+    method: 'PUT',
+    data,
+  });
+}
