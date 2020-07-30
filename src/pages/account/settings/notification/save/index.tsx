@@ -67,7 +67,6 @@ const Save: React.FC<Props> = (props) => {
         }
     }, [productId, deviceId]);
     const renderConfig = () => {
-        console.log(data, '数据');
         switch (type) {
             case 'device_alarm':
                 return (
@@ -123,7 +122,6 @@ const Save: React.FC<Props> = (props) => {
                 return <div />
         }
     }
-    console.log(provider, 'vider');
     return (
         <Modal
             title='添加订阅'

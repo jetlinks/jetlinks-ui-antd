@@ -104,10 +104,6 @@ const GlobalModel: GlobalModelType = {
           return notice;
         }),
       );
-
-      console.log(notices, payload, 'notic');
-
-      console.log(notices.filter(item => !item.read).length, '111');
       yield put({
         type: 'saveNotices',
         payload: notices,

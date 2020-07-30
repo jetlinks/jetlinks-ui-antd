@@ -45,6 +45,7 @@ const Model: LoginModelType = {
       if (response.status === 200) {
         setAccessToken(response.result.token);
         setAutz(response.result);
+        localStorage.setItem('tenants-admin', response.result?.user?.tenants[0]?.adminMember);
         reloadAuthorized();
         const version = yield call(systemVersion);
         if (version) {

@@ -56,7 +56,6 @@ export type BasicLayoutContext = { [K in 'location']: BasicLayoutProps[K] } & {
 const menuDataRender = (menuList: MenuDataItem[]): MenuDataItem[] => {
   const version = localStorage.getItem('system-version');
   const tenant = localStorage.getItem('tenants-admin');
-  console.log(tenant, menuList, 'hhhh');
   if (tenant === 'true') {
     return menuList.filter(j => j.tenant).filter(i => i.tenant.indexOf('admin') > -1).map(item => {
       const localItem: any = {

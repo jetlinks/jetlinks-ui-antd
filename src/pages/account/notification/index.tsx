@@ -83,7 +83,6 @@ const Notification: React.FC<Props> = (props) => {
                                 content: record.message,
                                 okText: '关闭',
                                 onOk: () => {
-                                    console.log('123');
                                     if (state.value !== 'read') {
                                         setRead([record.id]);
                                     }

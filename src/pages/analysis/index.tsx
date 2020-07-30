@@ -1,102 +1,18 @@
-import React, { Component, Suspense } from 'react';
-import { connect } from 'dva';
-import { Col, Row } from 'antd';
-import { RangePickerValue } from 'antd/es/date-picker/interface';
-import { Dispatch } from 'redux';
-import { GridContent } from '@ant-design/pro-layout';
-import { getTimeDistance } from './utils/utils';
-import PageLoading from './components/PageLoading';
-import { IAnalysisData } from './data.d';
-import getFakeChartData from './mock-data';
+import React from "react";
+import AdminAnalysis from "./AdminAnalysis";
+import TenantAnalysis from "./Tenant";
 
-const IntroduceRow = React.lazy(() => import('./components/IntroduceRow'));
-const SalesCard = React.lazy(() => import('./components/SalesCard'));
-const TopSearch = React.lazy(() => import('./components/TopSearch'));
-const ProportionSales = React.lazy(() => import('./components/ProportionSales'));
+interface Props { }
 
-interface analysisProps {
-  analysis: IAnalysisData;
-  dispatch: Dispatch<any>;
-  loading: boolean;
-}
-
-interface analysisState {
-  salesType: 'all' | 'online' | 'stores';
-  currentTabKey: string;
-  rangePickerValue: RangePickerValue;
-}
-
-@connect(
-  ({
-    analysis,
-    loading,
-  }: {
-    analysis: any;
-    loading: {
-      effects: { [key: string]: boolean };
-    };
-  }) => ({
-    analysis,
-    loading: loading.effects['analysis/fetch'],
-  }),
-)
-class Analysis extends Component<analysisProps, analysisState> {
-  state: analysisState = {
-    salesType: 'all',
-    currentTabKey: '',
-    rangePickerValue: getTimeDistance('year'),
-  };
-  reqRef!: number;
-  timeoutId!: number;
-  componentDidMount() {
-    const { dispatch } = this.props;
-    this.reqRef = requestAnimationFrame(() => {
-      dispatch({
-        type: 'analysis/fetch',
-      });
-    });
+const Analysis: React.FC<Props> = (props) => {
+  const render = () => {
+    const tenant = localStorage.getItem('tenants-admin');
+    if (tenant !== 'undefined') {
+      return <TenantAnalysis />
+    } else {
+      return <AdminAnalysis />
+    }
   }
-
-  componentWillUnmount() {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'analysis/clear',
-    });
-    cancelAnimationFrame(this.reqRef);
-    clearTimeout(this.timeoutId);
-  }
-
-  render() {
-    const { loading } = this.props;
-    const {
-      visitData,
-    } = getFakeChartData;
-
-    return (
-      <GridContent>
-        <React.Fragment>
-          <Suspense fallback={<PageLoading />}>
-            <IntroduceRow loading={loading} visitData={visitData}/>
-          </Suspense>
-          <Suspense fallback={null}>
-            <SalesCard loading={loading}/>
-          </Suspense>
-          <Row gutter={24}>
-            <Col xl={10} lg={24} md={24} sm={24} xs={24}>
-              <Suspense fallback={null}>
-                <ProportionSales loading={loading}/>
-              </Suspense>
-            </Col>
-            <Col xl={14} lg={24} md={24} sm={24} xs={24}>
-              <Suspense fallback={null}>
-                <TopSearch loading={loading}/>
-              </Suspense>
-            </Col>
-          </Row>
-        </React.Fragment>
-      </GridContent>
-    );
-  }
+  return render();
 }
-
 export default Analysis;

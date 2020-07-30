@@ -59,10 +59,8 @@ const RoleList: React.FC<Props> = props => {
     //   type: 'role/query',
     //   payload: encodeQueryParam(params),
     // });
-    console.log(encodeQueryParam(params), 'par');
     service.list(encodeQueryParam(params)).subscribe(data => {
       setResult(data);
-      console.log(data, 'dat');
       setLoading(false);
     });
     setSearchParam(params);
