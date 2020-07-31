@@ -381,11 +381,11 @@ const Save: React.FC<Props> = props => {
             >
               <Button
                 onClick={() => {
-                  props.close();
+                  router.push(`/device/product`);
                 }}
                 style={{marginRight: 8}}
               >
-                关闭
+                返回
               </Button>
               <Button
                 onClick={() => {
