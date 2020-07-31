@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Col, Icon, Row, Tooltip} from 'antd';
+import {Col, Icon, Row, Spin, Tooltip} from 'antd';
 import {FormattedMessage} from 'umi-plugin-react/locale';
 import Charts, {Gauge} from './Charts';
 import numeral from 'numeral';
@@ -53,6 +53,8 @@ const IntroduceRow = ({loading, visitData}: { loading: boolean; visitData: IVisi
   const [deviceCount, setDeviceCount] = useState(initState.month);
   const [deviceNotActive, setDeviceNotActive] = useState(initState.month);
   const [messageData] = useState(initState.messageData);
+  const [deviceCountSpinning, setDeviceCountSpinning] = useState(true);
+  const [deviceMessageSpinning, setDeviceMessageSpinning] = useState(true);
 
   const calculationDate = () => {
     const dd = new Date();
@@ -126,6 +128,7 @@ const IntroduceRow = ({loading, visitData}: { loading: boolean; visitData: IVisi
             }
           });
         }
+        setDeviceMessageSpinning(false);
       });
   };
 
@@ -199,6 +202,7 @@ const IntroduceRow = ({loading, visitData}: { loading: boolean; visitData: IVisi
             }
           });
         }
+        setDeviceCountSpinning(false);
       });
   };
 
@@ -246,70 +250,76 @@ const IntroduceRow = ({loading, visitData}: { loading: boolean; visitData: IVisi
   return (
     <Row gutter={24}>
       <Col {...topColResponsiveProps}>
-        <ChartCard
-          loading={loading}
-          bordered={false}
-          title='当前在线'
-          action={
-            <Tooltip
-              title='刷新'
-            >
-              <Icon type="sync" onClick={() => {
-                deviceStatus();
-              }}/>
-            </Tooltip>
-          }
-          total={numeral(deviceOnline).format('0,0')}
-          footer={
-            <div style={{whiteSpace: 'nowrap', overflow: 'hidden'}}>
-              <Field style={{marginRight: 40, float: 'left'}}
-                     label={
-                       <FormattedMessage id="analysis.analysis.device-total" defaultMessage="设备总量"/>
-                     }
-                     value={numeral(deviceCount).format('0,0')}
-              />
-              <Field
-                label={
-                  <FormattedMessage id="analysis.analysis.device-activation" defaultMessage="未激活设备"/>
-                }
-                value={numeral(deviceNotActive).format('0,0')}
-              />
-            </div>
-          }
-          contentHeight={46}
-        >
-          <MiniBar data={visitData}/>
-        </ChartCard>
+        <Spin spinning={deviceCountSpinning}>
+          <ChartCard
+            bordered={false}
+            title='当前在线'
+            action={
+              <Tooltip
+                title='刷新'
+              >
+                <Icon type="sync" onClick={() => {
+                  setDeviceCountSpinning(true);
+                  deviceStatus();
+                }}/>
+              </Tooltip>
+            }
+            total={numeral(deviceOnline).format('0,0')}
+            footer={
+              <div style={{whiteSpace: 'nowrap', overflow: 'hidden'}}>
+                <Field style={{marginRight: 40, float: 'left'}}
+                       label={
+                         <FormattedMessage id="analysis.analysis.device-total" defaultMessage="设备总量"/>
+                       }
+                       value={numeral(deviceCount).format('0,0')}
+                />
+                <Field
+                  label={
+                    <FormattedMessage id="analysis.analysis.device-activation" defaultMessage="未激活设备"/>
+                  }
+                  value={numeral(deviceNotActive).format('0,0')}
+                />
+              </div>
+            }
+            contentHeight={46}
+          >
+            <MiniBar data={visitData}/>
+          </ChartCard>
+        </Spin>
       </Col>
 
       <Col {...topColResponsiveProps}>
-        <ChartCard
-          bordered={false}
-          loading={loading}
-          title={<FormattedMessage id="analysis.analysis.device-day-visits" defaultMessage="日访消息量"/>}
-          action={
-            <Tooltip
-              title='刷新'
-            >
-              <Icon type="sync" onClick={() => {
-                deviceMessage();
-              }}/>
-            </Tooltip>
-          }
-          total={numeral(sameDay).format('0,0')}
-          footer={
-            <Field
-              label={
-                <FormattedMessage id="analysis.analysis.device-visits" defaultMessage="当月设备消息量"/>
-              }
-              value={numeral(month).format('0,0')}
-            />
-          }
-          contentHeight={46}
-        >
-          <MiniArea color="#975FE4" data={messageData}/>
-        </ChartCard>
+        <Spin spinning={deviceMessageSpinning}>
+          <ChartCard
+            bordered={false}
+            loading={loading}
+            title={<FormattedMessage id="analysis.analysis.device-day-visits" defaultMessage="日访消息量"/>}
+            action={
+              <Tooltip
+                title='刷新'
+              >
+                <Icon type="sync" onClick={() => {
+                  setDeviceMessageSpinning(true);
+                  deviceMessage();
+                }}/>
+              </Tooltip>
+            }
+            total={numeral(sameDay).format('0,0')}
+            footer={
+              <Field
+                label={
+                  <FormattedMessage id="analysis.analysis.device-visits" defaultMessage="当月设备消息量"/>
+                }
+                value={numeral(month).format('0,0')}
+              />
+            }
+            contentHeight={46}
+          >
+            <MiniArea color="#975FE4" data={messageData}/>
+          </ChartCard>
+        </Spin>
       </Col>
+
       <Col {...topColResponsiveProps}>
         <ChartCard
           loading={loading}
@@ -320,6 +330,7 @@ const IntroduceRow = ({loading, visitData}: { loading: boolean; visitData: IVisi
           <GaugeColor height={169} percent={cpu}/>
         </ChartCard>
       </Col>
+
       <Col {...topColResponsiveProps}>
         <ChartCard
           loading={loading}

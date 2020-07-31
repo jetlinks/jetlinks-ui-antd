@@ -22,7 +22,7 @@ const Search: React.FC<Props> = props => {
   } = props;
 
   const initState: State = {
-    parameterType: 'id',
+    parameterType: 'id$like',
     organizationList: [],
     tagsData: [],
   };
@@ -34,8 +34,8 @@ const Search: React.FC<Props> = props => {
   const [categoryList, setCategoryList] = useState([]);
 
   useEffect(() => {
-    setParameterType('id');
-    form.setFieldsValue({parameter: 'id'});
+    setParameterType('id$like');
+    form.setFieldsValue({parameter: 'id$like'});
 
     apis.deviceProdcut.queryOrganization()
       .then(res => {
@@ -81,7 +81,7 @@ const Search: React.FC<Props> = props => {
 
   const renderType = () => {
     switch (parameterType) {
-      case 'id':
+      case 'id$like':
       case 'name$like':
         return (
           <>
@@ -156,7 +156,7 @@ const Search: React.FC<Props> = props => {
                         setFieldsValue({'value': undefined});
                         setParameterType(value);
                       }}>
-                <Select.Option value="id" key="id">设备ID</Select.Option>
+                <Select.Option value="id$like" key="id$like">设备ID</Select.Option>
                 <Select.Option value="name$like" key="name$like">设备名称</Select.Option>
                 <Select.Option value="orgId$in" key="orgId$in">所属机构</Select.Option>
                 <Select.Option value="id$dev-tag" key="id$dev-tag">设备标签</Select.Option>
@@ -180,8 +180,8 @@ const Search: React.FC<Props> = props => {
           </Button>
           <Button style={{marginLeft: 8}} onClick={() => {
             form.resetFields();
-            form.setFieldsValue({parameter: 'id', value: undefined});
-            setParameterType('id');
+            form.setFieldsValue({parameter: 'id$like', value: undefined});
+            setParameterType('id$like');
             setFieldsValue({'value': undefined});
             setTagsData([]);
             props.search({});
