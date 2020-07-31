@@ -87,6 +87,7 @@ const Model: LoginModelType = {
             },
           },
         });
+        localStorage.removeItem('tenants-admin');
         clearAutz();
         reloadAuthorized();
         const { redirect } = getPageQuery();
