@@ -36,7 +36,7 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
       dispatch({
         type: 'global/fetchNotices',
         payload: encodeQueryParam({
-          // terms: { state: 'unread' }
+          terms: { state: 'unread' }
         })
       });
     }
@@ -140,7 +140,7 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
       }
 
       if (Array.isArray(value)) {
-        unreadMsg[key] = value.length;
+        // unreadMsg[key] = value.length;
         // console.log(value, value.filter(item => !item.read).length, key, 'value');
         // unreadMsg[key] = value.filter(item => !item.read).length;
         // unreadMsg[key] = value.filter(item => item.state === 'unread').length;
@@ -186,11 +186,11 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
           showViewMore
         />
         <NoticeIcon.Tab
-          tabKey="unread"
-          title="已读消息"
+          tabKey="handle"
+          title="待办消息"
           emptyText="暂无消息"
-          count={unreadMsg.read}
-          list={noticeData.read}
+          count={unreadMsg.handle}
+          list={noticeData.handle}
           showViewMore
         />
 

@@ -5,6 +5,7 @@ import { NoticeIconData } from '@/components/NoticeIcon';
 import { queryNotices } from '@/services/user';
 import { ConnectState } from './connect.d';
 import { readNotice, readNotices } from '@/pages/account/notification/service';
+import encodeQueryParam from '@/utils/encodeParam';
 
 export interface NoticeItem extends NoticeIconData {
   id: string;
@@ -65,7 +66,10 @@ const GlobalModel: GlobalModelType = {
         type: 'user/changeNotifyCount',
         payload: {
           totalCount: resp.result.total,
-          unreadCount,
+          unreadCount: resp.result.total,
+          // totalCount: 44,
+          // unreadCount: 88,
+
         },
       });
     },
@@ -92,30 +96,37 @@ const GlobalModel: GlobalModelType = {
       }
     },
     *changeNoticeReadState({ payload }, { call, put, select }) {
-      // const reps = yield call(readNotice, payload);
+      const reps = yield call(readNotice, payload);
+      if (reps) {
+        yield put({
+          type: 'fetchNotices',
+          payload: encodeQueryParam({
+            terms: { state: 'unread' }
+          }),
+        })
+      }
       // if (reps) {
-      const notices: NoticeItem[] = yield select((state: ConnectState) =>
-        state.global.notices.map(item => {
-          const notice = { ...item };
-          if (notice.id === payload) {
-            notice.read = true;
-            notice.state = { text: '已读', value: 'read' };
-          }
-          return notice;
-        }),
-      );
-      yield put({
-        type: 'saveNotices',
-        payload: notices,
-      });
-
-      yield put({
-        type: 'user/changeNotifyCount',
-        payload: {
-          totalCount: notices.length,
-          unreadCount: notices.filter(item => !item.read).length,
-        },
-      });
+      // const notices: NoticeItem[] = yield select((state: ConnectState) =>
+      //   state.global.notices.map(item => {
+      //     const notice = { ...item };
+      //     if (notice.id === payload) {
+      //       notice.read = true;
+      //       notice.state = { text: '已读', value: 'read' };
+      //     }
+      //     return notice;
+      //   }),
+      // );
+      // yield put({
+      //   type: 'saveNotices',
+      //   payload: notices,
+      // });
+      // yield put({
+      //   type: 'user/changeNotifyCount',
+      //   payload: {
+      //     totalCount: notices.length,
+      //     unreadCount: notices.filter(item => !item.read).length,
+      //   },
+      // });
       // }
     },
   },

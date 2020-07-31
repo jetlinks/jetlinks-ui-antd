@@ -1,12 +1,12 @@
-import React, {Component, Suspense} from 'react';
-import {connect} from 'dva';
-import {Col, Row} from 'antd';
-import {RangePickerValue} from 'antd/es/date-picker/interface';
-import {Dispatch} from 'redux';
-import {GridContent} from '@ant-design/pro-layout';
-import {getTimeDistance} from './utils/utils';
+import React, { Component, Suspense } from 'react';
+import { connect } from 'dva';
+import { Col, Row } from 'antd';
+import { RangePickerValue } from 'antd/es/date-picker/interface';
+import { Dispatch } from 'redux';
+import { GridContent } from '@ant-design/pro-layout';
+import { getTimeDistance } from './utils/utils';
 import PageLoading from './components/PageLoading';
-import {IAnalysisData} from './data.d';
+import { IAnalysisData } from './data.d';
 import getFakeChartData from './mock-data';
 
 const IntroduceRow = React.lazy(() => import('./components/IntroduceRow'));
@@ -28,9 +28,9 @@ interface analysisState {
 
 @connect(
   ({
-     analysis,
-     loading,
-   }: {
+    analysis,
+    loading,
+  }: {
     analysis: any;
     loading: {
       effects: { [key: string]: boolean };
@@ -51,8 +51,7 @@ class AdminAnalysis extends Component<analysisProps, analysisState> {
   tenant = localStorage.getItem('tenants-amdin');
 
   componentDidMount() {
-    console.log(this.tenant, 'ttt');
-    const {dispatch} = this.props;
+    const { dispatch } = this.props;
     this.reqRef = requestAnimationFrame(() => {
       dispatch({
         type: 'analysis/fetch',
@@ -61,7 +60,7 @@ class AdminAnalysis extends Component<analysisProps, analysisState> {
   }
 
   componentWillUnmount() {
-    const {dispatch} = this.props;
+    const { dispatch } = this.props;
     dispatch({
       type: 'analysis/clear',
     });
@@ -70,7 +69,7 @@ class AdminAnalysis extends Component<analysisProps, analysisState> {
   }
 
   render() {
-    const {loading} = this.props;
+    const { loading } = this.props;
     const {
       visitData,
     } = getFakeChartData;
@@ -78,21 +77,21 @@ class AdminAnalysis extends Component<analysisProps, analysisState> {
     return (
       <GridContent>
         <React.Fragment>
-          <Suspense fallback={<PageLoading/>}>
-            <IntroduceRow loading={loading} visitData={visitData}/>
+          <Suspense fallback={<PageLoading />}>
+            <IntroduceRow loading={loading} visitData={visitData} />
           </Suspense>
           <Suspense fallback={null}>
-            <SalesCard loading={loading}/>
+            <SalesCard loading={loading} />
           </Suspense>
           <Row gutter={24}>
             <Col xl={10} lg={24} md={24} sm={24} xs={24}>
               <Suspense fallback={null}>
-                <ProportionSales loading={loading}/>
+                <ProportionSales loading={loading} />
               </Suspense>
             </Col>
             <Col xl={14} lg={24} md={24} sm={24} xs={24}>
               <Suspense fallback={null}>
-                <TopSearch loading={loading}/>
+                <TopSearch loading={loading} />
               </Suspense>
             </Col>
           </Row>
