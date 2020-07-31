@@ -38,6 +38,13 @@ export async function findAlarmLog(params: any) {
   });
 }
 
+export async function findAlarmLogCount(params: any) {
+  return request(`/jetlinks/device/alarm/history/_count`, {
+    method: 'GET',
+    params,
+  });
+}
+
 export async function alarmLogSolve(id: string, data: any) {
   return request(`/jetlinks/device/alarm/history/${id}/_solve`, {
     method: 'PUT',

@@ -13,7 +13,7 @@ const Analysis: React.FC<Props> = (props) => {
     } else {
       return <TenantAnalysis />
     }
-  }
+  };
   return render();
-}
+};
 export default Analysis;

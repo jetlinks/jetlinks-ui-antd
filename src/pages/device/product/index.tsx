@@ -367,7 +367,7 @@ const DeviceModel: React.FC<Props> = props => {
                                   }}
                                 />
                               </Tooltip>,
-                              <Tooltip key="more_actions" title="更多操作">
+                              <Tooltip key="more_actions" title="">
                                 <Dropdown overlay={
                                   <Menu>
                                     <Menu.Item key="1">
