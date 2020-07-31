@@ -28,6 +28,7 @@ export const routes = [
                         name: '统计分析',
                         path: '/analysis',
                         icon: 'dashboard',
+                        tenant: ['admin', 'member'],
                         iconfont: 'icon-tongjifenxi',
                         component: './analysis',
                     },
