@@ -103,7 +103,7 @@ const Functions: React.FC<Props> = (props) => {
             </div>
 
             <Form.Item label="调试结果：" style={{ paddingTop: 20 }}>
-              <Input.TextArea rows={4} value={logs}/>
+              <Input.TextArea rows={4} value={logs} readOnly/>
             </Form.Item>
           </Form>
         </Card>
