@@ -193,7 +193,7 @@ export const routes = [
                                 path: '/device/location',
                                 name: '地理位置',
                                 icon: 'compass',
-                                tenant: ['admin', 'member'],
+                                tenant: ['admin'],
                                 authority: ['geo-manager', 'admin'],
                                 version: 'pro',
                                 iconfont: 'icon-diliweizhi',
