@@ -2,6 +2,8 @@ import React, {useEffect, useState} from 'react';
 import Form from 'antd/es/form';
 import {FormComponentProps} from 'antd/lib/form';
 import {Modal} from 'antd';
+import 'ace-builds';
+import 'ace-builds/webpack-resolver';
 import AceEditor from "react-ace";
 import 'ace-builds/src-noconflict/mode-json';
 import 'ace-builds/src-noconflict/snippets/json';

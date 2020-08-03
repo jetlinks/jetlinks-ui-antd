@@ -4,6 +4,8 @@ import {FormComponentProps} from 'antd/lib/form';
 import {ProtocolItem} from '@/pages/device/protocol/data';
 import {getAccessToken} from '@/utils/authority';
 import apis from '@/services';
+import 'ace-builds';
+import 'ace-builds/webpack-resolver';
 import AceEditor from 'react-ace';
 import 'ace-builds/src-noconflict/mode-html';
 import 'ace-builds/src-noconflict/mode-text';
