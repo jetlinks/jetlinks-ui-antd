@@ -71,6 +71,7 @@ const Add = (props: Props) => {
                     assetIdList: selectedAssetsId,
                     allPermission: true,
                 }));
+
                 // if (checkedUserList.length === 0) {
                 //     message.error('请选择成员');
                 //     setLoading(false);
@@ -125,7 +126,6 @@ const Add = (props: Props) => {
                     })(
                         <Select
                             allowClear
-                            value={checkedUserList}
                             mode="tags"
                             placeholder="选择成员"
                             onChange={(value: string[]) => { setCheckedUserList(value) }}

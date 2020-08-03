@@ -127,7 +127,6 @@ const Add = (props: Props) => {
                     })(
                         <Select
                             allowClear
-                            value={checkedUserList}
                             mode="tags"
                             placeholder="选择成员"
                             onChange={(value: string[]) => { setCheckedUserList(value) }}
