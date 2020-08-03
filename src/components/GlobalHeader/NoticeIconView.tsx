@@ -12,6 +12,7 @@ import { getWebsocket } from '@/layouts/GlobalWebSocket';
 import Service from '@/pages/account/notification/service';
 import encodeQueryParam from '@/utils/encodeParam';
 import { router } from 'umi';
+import { debounceTime, throttleTime, windowCount, windowTime } from 'rxjs/operators';
 
 export interface GlobalHeaderRightProps extends ConnectProps {
   notices?: NoticeItem[];
@@ -44,12 +45,16 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
       `notification`,
       `/notifications`,
       {}
+    ).pipe(
+      throttleTime(2000),
     ).subscribe(
       (resp: any) => {
+        console.log('subscribe noticication');
         notification.open({
           message: resp?.payload?.topicName,
           description: resp?.payload?.message,
           key: resp.payload.id,
+          top: 60,
           btn: <Button
             type="primary"
             onClick={() => {
