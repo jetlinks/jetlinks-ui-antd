@@ -66,7 +66,7 @@ const Tags: React.FC<Props> = props => {
 
   return (
     <Modal
-      title='编辑配置'
+      title='编辑标签'
       visible
       okText="确定"
       cancelText="取消"
