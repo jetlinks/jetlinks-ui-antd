@@ -110,16 +110,16 @@ const Save: React.FC<Props> = props => {
       onCancel={() => props.close()}
     >
       <div style={{maxHeight: 750, overflowY: 'auto', overflowX: 'hidden'}}>
-        <Form wrapperCol={{span: 24}} key='addAlarmForm'>
+        <Form wrapperCol={{span: 20}} labelCol={{span:4}} key='addAlarmForm'>
           <Row gutter={16}
                style={{marginLeft: '0.1%'}}>
-            <Col span={8}>
-              <label style={{fontSize: 16}}>告警名称：</label>
-              <Input placeholder="输入告警名称" defaultValue={props.data.name}
-                     style={{width: '80%'}}
-                     onBlur={event => {
-                       props.data.name = event.target.value;
-                     }}/>
+            <Col span={12}>
+              <Form.Item key="name" label="告警名称">
+                <Input placeholder="输入告警名称" defaultValue={props.data.name}
+                       onBlur={event => {
+                         props.data.name = event.target.value;
+                       }}/>
+              </Form.Item>
             </Col>
           </Row>
           <Card style={{marginBottom: 10}} bordered={false} size="small">
