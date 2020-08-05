@@ -85,8 +85,8 @@ const SalesCard = ({loading}: { loading: boolean; }) => {
       .then((response: any) => {
         const tempResult = response?.result;
         if (response.status === 200) {
-          const dataList:any[] = [];
-          const ticksList:any[] = [];
+          const dataList: any[] = [];
+          const ticksList: any[] = [];
           tempResult.forEach((item: any) => {
             dataList.push({
               year: item.data.timeString,
@@ -103,7 +103,7 @@ const SalesCard = ({loading}: { loading: boolean; }) => {
       });
   };
 
-  function deviceTime(e) {
+  function deviceTime(e: any) {
     const value = e.target.value;
     setTime(timeMap[value]);
     const dd = new Date(selectionTime);
@@ -126,7 +126,7 @@ const SalesCard = ({loading}: { loading: boolean; }) => {
     return `${dd.getFullYear()}-${(dd.getMonth() + 1) < 10 ? `0${dd.getMonth() + 1}` : (dd.getMonth() + 1)}-${dd.getDate() < 10 ? `0${dd.getDate()}` : dd.getDate()} ${dd.getHours() < 10 ? `0${dd.getHours()}` : dd.getHours()}:${dd.getMinutes() < 10 ? `0${dd.getMinutes()}` : dd.getMinutes()}:${dd.getSeconds() < 10 ? `0${dd.getSeconds()}` : dd.getSeconds()}`;
   };
 
-  function onOk(value) {
+  function onOk(value: any) {
     setSelectionTime(value);
     const dd = new Date(value);
     if (time === '1m') {
