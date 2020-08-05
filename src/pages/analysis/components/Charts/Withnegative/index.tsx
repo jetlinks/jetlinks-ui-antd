@@ -12,6 +12,8 @@ export interface IGaugeProps {
   ticks: any[];
   height: number;
   display: string;
+  color:string;
+  lineSize:number
 }
 
 class Withnegative extends React.Component<IGaugeProps> {
@@ -20,7 +22,9 @@ class Withnegative extends React.Component<IGaugeProps> {
       data,
       height,
       ticks,
-      display
+      display,
+      color,
+      lineSize
     } = this.props;
     const {DataView} = DataSet;
 
@@ -51,8 +55,8 @@ class Withnegative extends React.Component<IGaugeProps> {
           />
           <Legend/>
           <Tooltip />
-          <Geom type="area" position="year*value" color="type"/>
-          <Geom type="line" position="year*value" size={2} color="type"/>
+          <Geom type="area" position="year*value" color={color}/>
+          <Geom type="line" position="year*value" size={lineSize} color={color}/>
         </Chart>
       </div>
     );

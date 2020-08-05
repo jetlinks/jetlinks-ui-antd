@@ -179,6 +179,8 @@ const SalesCard = ({loading}: { loading: boolean; }) => {
                     data={gatewayData}
                     ticks={ticksDataList}
                     display='消息量'
+                    color='#1890ff'
+                    lineSize={2}
                   />
                 </div>
               </Col>
