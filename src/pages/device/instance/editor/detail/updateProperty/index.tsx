@@ -13,7 +13,6 @@ import 'ace-builds/src-noconflict/snippets/json';
 import 'ace-builds/src-noconflict/ext-language_tools';
 import 'ace-builds/src-noconflict/ext-searchbox';
 import 'ace-builds/src-noconflict/theme-eclipse';
-import {stringify} from "qs";
 
 interface Props extends FormComponentProps {
   data?: any;
