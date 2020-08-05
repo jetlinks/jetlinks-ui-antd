@@ -1,13 +1,12 @@
-import React, {useEffect, useState} from 'react';
-import {Card, Col, DatePicker, Radio, Row, Tabs} from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Card, Col, DatePicker, Radio, Row, Tabs } from 'antd';
 import Charts from './Charts';
 import styles from '../style.less';
 import apis from '@/services';
 import moment from 'moment';
-import numeral from "numeral";
 
-const {Withnegative} = Charts;
-const {TabPane} = Tabs;
+const { Withnegative } = Charts;
+const { TabPane } = Tabs;
 
 export interface State {
   gatewayDataList: any[];
@@ -17,7 +16,7 @@ export interface State {
   selectionTime: string
 }
 
-const SalesCard = ({loading}: { loading: boolean; }) => {
+const SalesCard = ({ loading }: { loading: boolean; }) => {
   let gatewayMonitor: (from: string, to: string, time: string) => void;
   const initState: State = {
     gatewayDataList: [],
@@ -85,13 +84,12 @@ const SalesCard = ({loading}: { loading: boolean; }) => {
       .then((response: any) => {
         const tempResult = response?.result;
         if (response.status === 200) {
-          const dataList: any[] = [];
-          const ticksList: any[] = [];
-          tempResult.forEach((item: any) => {
+          const dataList = [];
+          const ticksList = [];
+          tempResult.forEach((item:any) => {
             dataList.push({
               year: item.data.timeString,
-              value: item.data.value,
-              type: numeral(item.data.value).format('0,0')
+              消息量: item.data.value,
             });
             if (item.data.timestamp % 4 === 0 && item.data.timestamp !== 0) {
               ticksList.push(item.data.timeString);
@@ -103,7 +101,7 @@ const SalesCard = ({loading}: { loading: boolean; }) => {
       });
   };
 
-  function deviceTime(e: any) {
+  function deviceTime(e) {
     const value = e.target.value;
     setTime(timeMap[value]);
     const dd = new Date(selectionTime);
@@ -126,7 +124,7 @@ const SalesCard = ({loading}: { loading: boolean; }) => {
     return `${dd.getFullYear()}-${(dd.getMonth() + 1) < 10 ? `0${dd.getMonth() + 1}` : (dd.getMonth() + 1)}-${dd.getDate() < 10 ? `0${dd.getDate()}` : dd.getDate()} ${dd.getHours() < 10 ? `0${dd.getHours()}` : dd.getHours()}:${dd.getMinutes() < 10 ? `0${dd.getMinutes()}` : dd.getMinutes()}:${dd.getSeconds() < 10 ? `0${dd.getSeconds()}` : dd.getSeconds()}`;
   };
 
-  function onOk(value: any) {
+  function onOk(value) {
     setSelectionTime(value);
     const dd = new Date(value);
     if (time === '1m') {
@@ -142,7 +140,7 @@ const SalesCard = ({loading}: { loading: boolean; }) => {
   }
 
   return (
-    <Card loading={loading} bordered={false} bodyStyle={{padding: 0}}>
+    <Card loading={loading} bordered={false} bodyStyle={{ padding: 0 }}>
       <div className={styles.salesCard}>
         <Tabs
           tabBarExtraContent={
@@ -168,7 +166,7 @@ const SalesCard = ({loading}: { loading: boolean; }) => {
             </div>
           }
           size="large"
-          tabBarStyle={{marginBottom: 24}}
+          tabBarStyle={{ marginBottom: 24 }}
         >
           <TabPane tab='设备消息' key="sales">
             <Row>
@@ -176,11 +174,8 @@ const SalesCard = ({loading}: { loading: boolean; }) => {
                 <div className={styles.salesBar}>
                   <Withnegative
                     height={400}
-                    data={gatewayData}
+                    datas={gatewayData}
                     ticks={ticksDataList}
-                    display='消息量'
-                    color='#1890ff'
-                    lineSize={2}
                   />
                 </div>
               </Col>

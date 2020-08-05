@@ -1,41 +1,34 @@
 import React from "react";
-import {Axis, Chart, Geom, Legend, Tooltip} from "bizcharts";
+import { Chart, Geom, Axis, Tooltip, Legend } from "bizcharts";
 import autoHeight from '../autoHeight';
 import DataSet from "@antv/data-set";
 
 export interface IGaugeProps {
-  data: Array<{
-    year: string;
-    value: number;
-    type: string
+  datas: Array<{
+    x: string;
+    消息量: number;
   }>;
-  ticks: any[];
-  height: number;
-  display: string;
-  color:string;
-  lineSize:number
+  ticks:any[];
+  height?: number;
 }
 
 class Withnegative extends React.Component<IGaugeProps> {
   render() {
     const {
-      data,
+      datas,
       height,
-      ticks,
-      display,
-      color,
-      lineSize
+      ticks
     } = this.props;
-    const {DataView} = DataSet;
+    const { DataView } = DataSet;
 
-    const dv = new DataView().source(data);
+    const dv = new DataView().source(datas);
     dv.transform({
       type: "fold",
-      fields: [display],
+      fields: ["消息量"],
       // 展开字段集
       key: "type",
       // key字段
-      value: display // value字段
+      value: "value" // value字段
     });
     const cols = {
       year: {
@@ -46,17 +39,17 @@ class Withnegative extends React.Component<IGaugeProps> {
     return (
       <div>
         <Chart height={height} data={dv} scale={cols} forceFit>
-          <Axis name="year"/>
+          <Axis name="year" />
           <Axis
             name="value"
             label={{
               formatter: val => parseFloat(val).toLocaleString()
             }}
           />
-          <Legend/>
+          <Legend />
           <Tooltip />
-          <Geom type="area" position="year*value" color={color}/>
-          <Geom type="line" position="year*value" size={lineSize} color={color}/>
+          <Geom type="area" position="year*value" color="type" />
+          <Geom type="line" position="year*value" size={2} color="type" />
         </Chart>
       </div>
     );
