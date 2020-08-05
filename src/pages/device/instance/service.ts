@@ -165,3 +165,10 @@ export async function saveDeviceShadow(deviceId: string, data: string) {
     data
   });
 }
+
+export async function updateProperty(deviceId: string, data: any) {
+  return request(`/jetlinks/device/instance/${deviceId}/property`, {
+    method: 'PUT',
+    data
+  });
+}
