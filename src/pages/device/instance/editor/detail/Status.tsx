@@ -112,7 +112,7 @@ const Status: React.FC<Props> = props => {
               }
 
               if (propertyData[item.data.value.property].type === 'int' || propertyData[item.data.value.property].type === 'float'
-                || propertyData[item.data.value.property].type === 'double') {
+                || propertyData[item.data.value.property].type === 'double' || propertyData[item.data.value.property].type === 'long') {
 
                 if (propertyData[item.data.value.property].visitData.length >= 15) {
                   propertyData[item.data.value.property].visitData.splice(0, 1);
@@ -179,7 +179,7 @@ const Status: React.FC<Props> = props => {
           }
 
           if (propertyData[dataValue.property].type === 'int' || propertyData[dataValue.property].type === 'float'
-            || propertyData[dataValue.property].type === 'double') {
+            || propertyData[dataValue.property].type === 'double' || propertyData[dataValue.property].type === 'long') {
 
             if (propertyData[dataValue.property].visitData.length >= 15) {
               propertyData[dataValue.property].visitData.splice(0, 1);
@@ -451,7 +451,6 @@ const Status: React.FC<Props> = props => {
                   close={() => {
                     setPropertiesVisible(false);
                   }}
-                  type={props.device.productId}
                   deviceId={props.device.id}
                 />
               }
