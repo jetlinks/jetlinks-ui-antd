@@ -50,6 +50,10 @@ const Save = (props: Props) => {
   };
 
   const saveData = () => {
+    if (selectedRow.length <= 0) {
+      message.error('请勾选绑定用户');
+      return;
+    }
     setLoading(true);
     const tempData = selectedRow.map(item => ({
       name: item.name,
