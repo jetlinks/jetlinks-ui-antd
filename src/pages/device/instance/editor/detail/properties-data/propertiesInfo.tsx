@@ -26,6 +26,7 @@ interface State {
   labelMarkerList: any[];
   labelsDataList: any[];
   marksCreated: any;
+  markerPosition: any[];
   mapCreated: any;
 }
 
@@ -56,6 +57,7 @@ const PropertiesInfo: React.FC<Props> = props => {
     labelMarkerList: [],
     labelsDataList: [],
     mapCenter: [106.57, 29.52],
+    markerPosition: [],
     mapCreated: {},
   };
 
@@ -71,6 +73,7 @@ const PropertiesInfo: React.FC<Props> = props => {
   const [mapCreated, setMapCreated] = useState(initState.mapCreated);
   const [labelMarkerList] = useState(initState.labelMarkerList);
   const [labelsDataList, setLabelsDataList] = useState(initState.labelMarkerList);
+  const [markerPosition, setMarkerPosition] = useState(initState.markerPosition);
   const [labelsLayer, setLabelsLayer] = useState<any>();
 
   const handleSearch = (params?: any) => {
@@ -135,6 +138,7 @@ const PropertiesInfo: React.FC<Props> = props => {
           response.result.data.map((item: any, index: number) => {
             if (index === 0) {
               setMapCenter([item.geoValue.lon, item.geoValue.lat]);
+              setMarkerPosition([item.geoValue.lon, item.geoValue.lat]);
             }
             list.push([item.geoValue.lon, item.geoValue.lat]);
             labelsData.push({
@@ -232,7 +236,7 @@ const PropertiesInfo: React.FC<Props> = props => {
 
       let marker = new window.AMap.Marker({
         map: ins,
-        position: mapCenter,
+        position: markerPosition,
         icon: img26,
         offset: new window.AMap.Pixel(-13, -13),
         autoRotation: true,
@@ -244,7 +248,6 @@ const PropertiesInfo: React.FC<Props> = props => {
       new window.AMap.Polyline({
         map: ins,
         path: lineArr,
-        lineJoin:'round',
         showDir: true,
         strokeColor: "#f5222d",  //线颜色
         // strokeOpacity: 1,     //线透明度
@@ -406,7 +409,7 @@ const PropertiesInfo: React.FC<Props> = props => {
           )}
 
           {props.item.valueType.type === 'geoPoint' && (
-            <Tabs.TabPane tab="轨迹" key="3">
+            <Tabs.TabPane tab='轨迹' key="3">
               <div style={{width: '100%', height: '60vh'}}>
                 <Map version="1.4.15" resizeEnable events={mapEvents} center={mapCenter}/>
               </div>
@@ -414,7 +417,11 @@ const PropertiesInfo: React.FC<Props> = props => {
                 <Card style={{width: 240}}>
                   <Button type="primary"
                           onClick={() => {
-                            marksCreated.moveAlong(lineArr, 200);
+                            marksCreated.moveAlong(lineArr, 5000,
+                              function (k: any) {
+                                return k
+                              }
+                              , true);
                           }}
                   >
                     开始动画
