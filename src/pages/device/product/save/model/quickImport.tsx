@@ -15,6 +15,7 @@ import 'ace-builds/src-noconflict/ext-searchbox';
 import 'ace-builds/src-noconflict/theme-eclipse';
 import apis from "@/services";
 import {DeviceProduct} from "@/pages/device/product/data";
+import encodeQueryParam from "@/utils/encodeParam";
 
 interface Props extends FormComponentProps {
   close: Function;
@@ -44,7 +45,7 @@ const QuickImport: React.FC<Props> = props => {
   useEffect(() => {
     // 获取下拉框数据
     apis.deviceProdcut
-      .queryNoPagin()
+      .queryNoPagin(encodeQueryParam({paging: false}))
       .then(response => {
         setProductList(response.result);
       })
@@ -97,7 +98,11 @@ const QuickImport: React.FC<Props> = props => {
             <Form.Item key="productId" label="选择产品">
               {getFieldDecorator('productId', {
                 rules: [{required: true, message: '请输入选择产品'}],
-              })(<Select placeholder="请选择产品">
+              })(<Select placeholder="请选择产品" showSearch
+                         filterOption={(inputValue, option) =>
+                           option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
+                         }
+              >
                 {(productList || []).map(item => (
                   <Select.Option
                     key={JSON.stringify({productId: item.id, productName: item.name})}
