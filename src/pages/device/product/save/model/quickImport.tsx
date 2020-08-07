@@ -97,7 +97,7 @@ const QuickImport: React.FC<Props> = props => {
             <Form.Item key="productId" label="选择产品">
               {getFieldDecorator('productId', {
                 rules: [{required: true, message: '请输入选择产品'}],
-              })(<Select placeholder="请选择设备产品">
+              })(<Select placeholder="请选择产品">
                 {(productList || []).map(item => (
                   <Select.Option
                     key={JSON.stringify({productId: item.id, productName: item.name})}

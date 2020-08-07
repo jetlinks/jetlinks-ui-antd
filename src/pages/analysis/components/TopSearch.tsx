@@ -122,7 +122,7 @@ const TopSearch = ({ loading }: { loading: boolean; }) => {
 
   function handleChange(value:any) {
     if (value.length > 6) {
-      message.error('设备产品最多只能勾选6个');
+      message.error('产品最多只能勾选6个');
       return false;
     }
     setProductId(value);
@@ -202,7 +202,7 @@ const TopSearch = ({ loading }: { loading: boolean; }) => {
                 <Select mode="tags" defaultValue={defaultList} maxTagTextLength={3}
                         maxTagCount={3}
                         style={{ width: '50%', float: 'right', marginBottom: 32, marginRight: 25 }}
-                        placeholder="设备产品" onChange={handleChange}>
+                        placeholder="产品" onChange={handleChange}>
                   {productDataList}
                 </Select>
               </div>

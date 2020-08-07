@@ -36,7 +36,7 @@ const MetaData: React.FC<Props> = props => {
       okText='导出模型文件'
       cancelText="取消"
       onOk={() => {
-        downloadObject(JSON.parse(props.data), `设备产品-物模型`);
+        downloadObject(JSON.parse(props.data), `产品-物模型`);
       }}
       onCancel={() => props.close()}
     >

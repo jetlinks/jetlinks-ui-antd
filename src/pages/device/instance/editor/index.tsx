@@ -311,7 +311,7 @@ const Editor: React.FC<Props> = props => {
         tabActiveKey={activeKey}
         onTabChange={(key: string) => {
           if (!data.metadata) {
-            message.error('请检查设备产品物模型');
+            message.error('请检查产品物模型');
             return;
           }
           setActiveKey(key);

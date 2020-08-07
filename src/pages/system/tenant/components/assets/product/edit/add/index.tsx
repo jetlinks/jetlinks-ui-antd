@@ -108,7 +108,7 @@ const Add = (props: Props) => {
         }];
     return (
         <Drawer
-            title="添加产品资产"
+            title="添加产品"
             visible
             width='70VW'
             onClose={() => props.close()}

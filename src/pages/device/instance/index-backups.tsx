@@ -111,7 +111,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
       dataIndex: 'name',
     },
     {
-      title: '设备产品',
+      title: '产品名称',
       dataIndex: 'productName',
     },
     {
@@ -318,7 +318,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
   };
 
   return (
-    <PageHeaderWrapper title="设备实例">
+    <PageHeaderWrapper title="设备管理">
       <Spin spinning={uploading} tip="上传中...">
         <Card bordered={false}>
           <div className={styles.tableList}>
@@ -344,7 +344,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
 
               <Divider type="vertical" />
 
-              <Button href={template} download="设备实例模版" icon="download">
+              <Button href={template} download="设备模版" icon="download">
                 下载模版
               </Button>
               <Divider type="vertical" />

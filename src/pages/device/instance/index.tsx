@@ -157,7 +157,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
       dataIndex: 'name',
     },
     {
-      title: '设备产品',
+      title: '产品名称',
       dataIndex: 'productName',
     },
     {
@@ -551,13 +551,13 @@ const DeviceInstancePage: React.FC<Props> = props => {
   );
 
   return (
-    <PageHeaderWrapper title="设备实例">
+    <PageHeaderWrapper title="设备管理">
       <div className={styles.standardList}>
         <Card bordered={false} style={{height: 95}}>
           <Spin spinning={deviceCount.loading}>
             <Row>
               <Col sm={7} xs={24}>
-                <Select placeholder="选择设备产品" allowClear style={{width: '70%', marginTop: 7}} value={product}
+                <Select placeholder="选择产品" allowClear style={{width: '70%', marginTop: 7}} value={product}
                         onChange={(value: string) => {
                           setProduct(() => value);
                           setDeviceCount({loading: true});

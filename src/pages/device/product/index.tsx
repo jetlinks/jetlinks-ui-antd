@@ -232,7 +232,7 @@ const DeviceModel: React.FC<Props> = props => {
   };
 
   return (
-    <PageHeaderWrapper title="设备产品">
+    <PageHeaderWrapper title="产品管理">
       <Spin spinning={spinning}>
         <Card bordered={false}>
           <div>
@@ -363,7 +363,7 @@ const DeviceModel: React.FC<Props> = props => {
                                 <Icon
                                   type="download"
                                   onClick={() => {
-                                    downloadObject(item, '设备产品');
+                                    downloadObject(item, '产品');
                                   }}
                                 />
                               </Tooltip>,
@@ -408,7 +408,7 @@ const DeviceModel: React.FC<Props> = props => {
                                         </Menu.Item>
                                       ) : (
                                         <Menu.Item key="2">
-                                          <Tooltip placement="bottom" title='存在设备实例，无法删除'>
+                                          <Tooltip placement="bottom" title='存在设备，无法删除'>
                                             <Button icon="stop" type="link">
                                               禁用
                                             </Button>

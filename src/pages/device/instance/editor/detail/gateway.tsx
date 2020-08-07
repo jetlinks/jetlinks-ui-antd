@@ -122,7 +122,7 @@ const Gateway: React.FC<Props> = (props) => {
       dataIndex: 'name',
     },
     {
-      title: '设备产品',
+      title: '产品名称',
       dataIndex: 'productName',
     },
     {
