@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import {Card, Col, DatePicker, Radio, Row, Tabs} from 'antd';
-import {Withnegative} from './Charts';
 import styles from '../style.less';
 import apis from '@/services';
 import moment from 'moment';
@@ -177,6 +176,7 @@ const SalesCard = ({loading}: { loading: boolean; }) => {
                     height={400}
                     data={gatewayData}
                     scale={{
+                      value: {min: 0},
                       year: {
                         range: [0, 1],
                         ticks: ticksDataList,

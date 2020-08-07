@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Card, Col, DatePicker, Form, Modal, Row, Spin, Table, Tabs} from 'antd';
+import {Button, Card, Col, DatePicker, Form, Icon, Modal, Row, Spin, Table, Tabs, Tooltip as AntdTooltip} from 'antd';
 import {ColumnProps, PaginationConfig} from 'antd/lib/table';
 import apis from '@/services';
 import encodeQueryParam from '@/utils/encodeParam';
@@ -105,7 +105,7 @@ const PropertiesInfo: React.FC<Props> = props => {
           response.result.data.forEach((item: any, index: number) => {
             dataList.push({
               year: moment(item.timestamp).format('YYYY-MM-DD HH:mm:ss'),
-              value: item.value,
+              value: Number(item.value),
               type: props.item.name
             });
             if (index % 3 === 0 && index !== 0) {
@@ -370,6 +370,7 @@ const PropertiesInfo: React.FC<Props> = props => {
                 height={400}
                 data={gatewayData}
                 scale={{
+                  value: {min: 0},
                   year: {
                     range: [0, 1],
                     ticks: ticksDataList,
@@ -386,30 +387,36 @@ const PropertiesInfo: React.FC<Props> = props => {
                 <Legend/>
                 <Tooltip crosshairs={{type: 'y'}}/>
                 <Geom type="line" position="year*value" size={2} tooltip={[
-                  "year*value",
-                  (year, value) => ({
+                  "year*value*type",
+                  (year, value, type) => ({
                     title: moment(year).format('HH:mm:ss'),
-                    name: props.item.name,
+                    name: type,
                     value: value
                   })
                 ]}/>
                 <Geom type="area" position="year*value" shape={'circle'}
                       tooltip={[
-                        "year*value",
-                        (year, value) => ({
+                        "year*value*type",
+                        (year, value, type) => ({
                           title: moment(year).format('HH:mm:ss'),
-                          name: props.item.name,
+                          name: type,
                           value: value
                         })
                       ]}
                 />
               </Chart>
-
             </Tabs.TabPane>
           )}
 
           {props.item.valueType.type === 'geoPoint' && (
-            <Tabs.TabPane tab='轨迹' key="3">
+            <Tabs.TabPane tab={
+              <span>
+                轨迹
+                <AntdTooltip title='默认启动循环执行动画'>
+                  <Icon type="question-circle-o" style={{paddingLeft: 10}}/>
+                </AntdTooltip>
+              </span>
+            } key="3">
               <div style={{width: '100%', height: '60vh'}}>
                 <Map version="1.4.15" resizeEnable events={mapEvents} center={mapCenter}/>
               </div>
@@ -417,11 +424,14 @@ const PropertiesInfo: React.FC<Props> = props => {
                 <Card style={{width: 240}}>
                   <Button type="primary"
                           onClick={() => {
-                            marksCreated.moveAlong(lineArr, 5000,
-                              function (k: any) {
+                            marksCreated.moveAlong(
+                              lineArr, // 路径坐标串
+                              200, // 指定速度，单位：千米/小时，不可为0
+                              function (k: any) { // 回调函数f为变化曲线函数，缺省为function(k){return k}
                                 return k
-                              }
-                              , true);
+                              },
+                              true // true表明是否循环执行动画，默认为false
+                            );
                           }}
                   >
                     开始动画
