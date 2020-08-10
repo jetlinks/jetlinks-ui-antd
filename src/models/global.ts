@@ -76,7 +76,9 @@ const GlobalModel: GlobalModelType = {
     *clearNotices({ payload }, { call, put, select }) {
       const resp = yield call(readNotices, payload);
       if (resp) {
-        const all = yield call(queryNotices, payload);
+        const all = yield call(queryNotices, encodeQueryParam({
+          terms: { state: 'unread' }
+        }));
         yield put({
           type: 'saveClearedNotices',
           payload: {
