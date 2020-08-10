@@ -70,7 +70,7 @@ const Status: React.FC<Props> = (props) => {
       if (properties) {
         metadata.properties = properties.map((item: any) => {
           propertyData[item.id] = {
-            formatValue: '--',
+            formatValue: '/',
           };
           return item;
         });
@@ -116,7 +116,13 @@ const Status: React.FC<Props> = (props) => {
           const dataValue = payload.value;
           if (!propertyData[dataValue.property]) return;
 
-          propertyData[dataValue.property].formatValue = dataValue?.formatValue ? dataValue.formatValue : '/';
+          if (dataValue?.formatValue && typeof dataValue?.formatValue === 'object') {
+            propertyData[dataValue.property].formatValue = dataValue?.formatValue ? JSON.stringify(dataValue.formatValue) : '/';
+          } else if (dataValue?.formatValue) {
+            propertyData[dataValue.property].formatValue = dataValue?.formatValue ? dataValue.formatValue : '/';
+          } else {
+            propertyData[dataValue.property].formatValue = '/';
+          }
           setPropertyData({...propertyData});
         },
       );
