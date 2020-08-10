@@ -20,7 +20,6 @@ interface State {
   eventColumns: ColumnProps<any>[];
   propertiesInfo: any;
   gatewayDataList: any[];
-  ticksDataList: any[];
   mapCenter: any[];
   lineArr: any[];
   labelMarkerList: any[];
@@ -28,6 +27,7 @@ interface State {
   marksCreated: any;
   markerPosition: any[];
   mapCreated: any;
+  tabsType: string;
 }
 
 const PropertiesInfo: React.FC<Props> = props => {
@@ -52,13 +52,13 @@ const PropertiesInfo: React.FC<Props> = props => {
     propertiesInfo: {},
     marksCreated: {},
     gatewayDataList: [],
-    ticksDataList: [],
     lineArr: [],
     labelMarkerList: [],
     labelsDataList: [],
     mapCenter: [106.57, 29.52],
     markerPosition: [],
     mapCreated: {},
+    tabsType: '1',
   };
 
 
@@ -66,7 +66,6 @@ const PropertiesInfo: React.FC<Props> = props => {
   const [mapCenter, setMapCenter] = useState(initState.mapCenter);
   const [propertiesInfo, setPropertiesInfo] = useState(initState.propertiesInfo);
   const [gatewayData, setGatewayData] = useState(initState.gatewayDataList);
-  const [ticksDataList, setTicksDataList] = useState(initState.ticksDataList);
   const [lineArr, setLineArr] = useState(initState.lineArr);
   const [spinning, setSpinning] = useState(true);
   const [statistics, setStatistics] = useState(false);
@@ -74,7 +73,10 @@ const PropertiesInfo: React.FC<Props> = props => {
   const [labelMarkerList] = useState(initState.labelMarkerList);
   const [labelsDataList, setLabelsDataList] = useState(initState.labelMarkerList);
   const [markerPosition, setMarkerPosition] = useState(initState.markerPosition);
+  const [tabsType, setTabsType] = useState(initState.tabsType);
   const [labelsLayer, setLabelsLayer] = useState<any>();
+  const [drawPolyline, setDrawPolyline] = useState<any>();
+  const [passedPolyline, setPassedPolyline] = useState<any>();
 
   const handleSearch = (params?: any) => {
     apis.deviceInstance.propertieInfo(props.deviceId, encodeQueryParam(params))
@@ -88,31 +90,18 @@ const PropertiesInfo: React.FC<Props> = props => {
       });
   };
 
-  const statisticsChart = () => {
-    apis.deviceInstance.propertieInfo(props.deviceId, encodeQueryParam({
-      pageIndex: 0,
-      pageSize: 30,
-      sorts: {
-        field: 'timestamp',
-        order: 'desc',
-      },
-      terms: {property: props.item.id},
-    }))
+  const statisticsChart = (params?: any) => {
+    apis.deviceInstance.propertieInfo(props.deviceId, encodeQueryParam(params))
       .then((response: any) => {
         if (response.status === 200) {
           const dataList: any[] = [];
-          const ticksList: any[] = [];
-          response.result.data.forEach((item: any, index: number) => {
+          response.result.data.forEach((item: any) => {
             dataList.push({
               year: moment(item.timestamp).format('YYYY-MM-DD HH:mm:ss'),
               value: Number(item.value),
               type: props.item.name
             });
-            if (index % 3 === 0 && index !== 0) {
-              ticksList.push(item.timestamp);
-            }
           });
-          setTicksDataList(ticksList);
           setGatewayData(dataList);
         }
         setSpinning(false);
@@ -121,24 +110,18 @@ const PropertiesInfo: React.FC<Props> = props => {
       });
   };
 
-  const trajectory = () => {
-    apis.deviceInstance.propertieInfo(props.deviceId, encodeQueryParam({
-      pageIndex: 0,
-      pageSize: 1000,
-      sorts: {
-        field: 'timestamp',
-        order: 'asc',
-      },
-      terms: {property: props.item.id},
-    }))
+  const trajectory = (params?: any) => {
+    apis.deviceInstance.propertieInfo(props.deviceId, encodeQueryParam(params))
       .then((response: any) => {
         if (response.status === 200) {
           let list: any[] = [];
           let labelsData: any[] = [];
-          response.result.data.map((item: any, index: number) => {
+          let position: any[] = [];
+          response.result.data?.map((item: any, index: number) => {
             if (index === 0) {
               setMapCenter([item.geoValue.lon, item.geoValue.lat]);
               setMarkerPosition([item.geoValue.lon, item.geoValue.lat]);
+              position = [item.geoValue.lon, item.geoValue.lat];
             }
             list.push([item.geoValue.lon, item.geoValue.lat]);
             labelsData.push({
@@ -167,10 +150,13 @@ const PropertiesInfo: React.FC<Props> = props => {
                 },
               },
             });
-
           });
-          setLineArr(list);
-          setLabelsDataList(labelsData);
+
+          setLineArr([...list]);
+          setLabelsDataList([...labelsData]);
+          if (Object.keys(mapCreated).length != 0) {
+            mapElement(mapCreated, position, list, labelsData);
+          }
         }
         setSpinning(false);
       })
@@ -194,11 +180,27 @@ const PropertiesInfo: React.FC<Props> = props => {
     });
 
     if (props.item.valueType.type === 'geoPoint') {
-      trajectory();
+      trajectory({
+          pageIndex: 0,
+          pageSize: 1000,
+          sorts: {
+            field: 'timestamp',
+            order: 'asc',
+          },
+          terms: {property: props.item.id},
+        }
+      );
     }
   }, []);
 
   const onTableChange = (pagination: PaginationConfig) => {
+    const params = form.getFieldsValue();
+    if (params.timestamp$BTW) {
+      const formatDate = params.timestamp$BTW.map((e: Moment) =>
+        moment(e).format('YYYY-MM-DD HH:mm:ss'),
+      );
+      params.timestamp$BTW = formatDate.join(',');
+    }
     handleSearch({
       pageIndex: Number(pagination.current) - 1,
       pageSize: pagination.pageSize,
@@ -206,7 +208,7 @@ const PropertiesInfo: React.FC<Props> = props => {
         field: 'timestamp',
         order: 'desc',
       },
-      terms: {property: props.item.id},
+      terms: {...params, property: props.item.id},
     });
   };
 
@@ -218,14 +220,104 @@ const PropertiesInfo: React.FC<Props> = props => {
       );
       params.timestamp$BTW = formatDate.join(',');
     }
-    handleSearch({
-      pageIndex: 0,
-      pageSize: 10,
-      sorts: {
-        field: 'timestamp',
-        order: 'desc',
-      },
-      terms: {...params, property: props.item.id},
+    if (tabsType === '1') {
+      handleSearch({
+        pageIndex: 0,
+        pageSize: 10,
+        sorts: {
+          field: 'timestamp',
+          order: 'desc',
+        },
+        terms: {...params, property: props.item.id},
+      });
+    } else if (tabsType === '2') {
+      statisticsChart(
+        {
+          pageIndex: 0,
+          pageSize: 60,
+          sorts: {
+            field: 'timestamp',
+            order: 'desc',
+          },
+          terms: {...params, property: props.item.id},
+        }
+      );
+    } else {
+      if (Object.keys(mapCreated).length != 0) {
+        mapCreated.remove([marksCreated, labelsLayer, passedPolyline, drawPolyline]);
+        labelsLayer.clear();
+      }
+      setLineArr([]);
+      setLabelsDataList([]);
+      setMarkerPosition([]);
+      trajectory({
+          pageIndex: 0,
+          pageSize: 1000,
+          sorts: {
+            field: 'timestamp',
+            order: 'asc',
+          },
+          terms: {...params, property: props.item.id},
+        }
+      );
+    }
+  };
+
+  const mapElement = (ins: any, position: any, line: any, labelsData: any) => {
+
+    let marker = new window.AMap.Marker({
+      map: ins,
+      position: position,
+      icon: img26,
+      offset: new window.AMap.Pixel(-13, -13),
+      autoRotation: true,
+      angle: -90,
+    });
+    setMarksCreated(marker);
+
+    // 绘制轨迹
+    let draw = new window.AMap.Polyline({
+      map: ins,
+      path: line,
+      showDir: true,
+      strokeColor: "#f5222d",  //线颜色
+      // strokeOpacity: 1,     //线透明度
+      strokeWeight: 6,      //线宽
+      // strokeStyle: "solid"  //线样式
+    });
+    setDrawPolyline(draw);
+    // 运动轨迹
+    let passed = new window.AMap.Polyline({
+      map: ins,
+      // path: lineArr,
+      strokeColor: "#AF5",  //线颜色
+      // strokeOpacity: 1,     //线透明度
+      strokeWeight: 6,      //线宽
+      // strokeStyle: "solid"  //线样式
+    });
+    setPassedPolyline(passed);
+    marker.on('moving', function (e: any) {
+      passed.setPath(e.passedPath);
+    });
+
+    // 创建轨迹上的点位
+    let layer = new window.AMap.LabelsLayer({
+      zooms: [3, 20],
+      visible: true,
+      collision: false,
+    });
+
+    layer.remove(labelMarkerList);
+    setLabelsLayer(layer);
+    ins.add(layer);
+
+    labelMarkerList.splice(0, labelMarkerList.length);
+    let labelMarker = {};
+    labelsData.map((item: any) => {
+      labelMarker = new window.AMap.LabelMarker(item);
+
+      labelMarkerList.push(labelMarker);
+      layer.add(labelMarker);
     });
   };
 
@@ -233,59 +325,7 @@ const PropertiesInfo: React.FC<Props> = props => {
   const mapEvents = {
     created: (ins: any) => {
       setMapCreated(ins);
-
-      let marker = new window.AMap.Marker({
-        map: ins,
-        position: markerPosition,
-        icon: img26,
-        offset: new window.AMap.Pixel(-13, -13),
-        autoRotation: true,
-        angle: -90,
-      });
-      setMarksCreated(marker);
-
-      // 绘制轨迹
-      new window.AMap.Polyline({
-        map: ins,
-        path: lineArr,
-        showDir: true,
-        strokeColor: "#f5222d",  //线颜色
-        // strokeOpacity: 1,     //线透明度
-        strokeWeight: 6,      //线宽
-        // strokeStyle: "solid"  //线样式
-      });
-
-      var passedPolyline = new window.AMap.Polyline({
-        map: ins,
-        // path: lineArr,
-        strokeColor: "#AF5",  //线颜色
-        // strokeOpacity: 1,     //线透明度
-        strokeWeight: 6,      //线宽
-        // strokeStyle: "solid"  //线样式
-      });
-      marker.on('moving', function (e: any) {
-        passedPolyline.setPath(e.passedPath);
-      });
-
-      // 创建轨迹上的点位
-      let layer = new window.AMap.LabelsLayer({
-        zooms: [3, 20],
-        visible: true,
-        collision: false,
-      });
-
-      layer.remove(labelMarkerList);
-      setLabelsLayer(layer);
-      ins.add(layer);
-
-      labelMarkerList.splice(0, labelMarkerList.length);
-      let labelMarker = {};
-      labelsDataList.map((item: any) => {
-        labelMarker = new window.AMap.LabelMarker(item);
-
-        labelMarkerList.push(labelMarker);
-        layer.add(labelMarker);
-      });
+      mapElement(ins, markerPosition, lineArr, labelsDataList);
     },
   };
 
@@ -298,12 +338,44 @@ const PropertiesInfo: React.FC<Props> = props => {
       width="70%"
     >
       <Spin spinning={spinning}>
+        <Form labelCol={{span: 0}} wrapperCol={{span: 18}}>
+          <Row gutter={{md: 8, lg: 4, xl: 48}}>
+            <Col md={10} sm={24}>
+              <Form.Item>
+                {getFieldDecorator('timestamp$BTW')(
+                  <DatePicker.RangePicker
+                    showTime={{format: 'HH:mm:ss'}}
+                    format="YYYY-MM-DD HH:mm:ss"
+                    placeholder={['开始时间', '结束时间']}
+                    onChange={(value: any[]) => {
+                      if (value.length === 0) {
+                        handleSearch({
+                          pageIndex: 0,
+                          pageSize: 10,
+                          sorts: {
+                            field: 'timestamp',
+                            order: 'desc',
+                          },
+                          terms: {property: props.item.id},
+                        });
+                      }
+                    }}
+                    onOk={onSearch}
+                  />,
+                )}
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
         <Tabs defaultActiveKey="1" tabPosition="top" type="card"
               onTabClick={(value: string) => {
-                if (value === "1") {
-                  mapCreated.remove(labelsLayer);
-                  labelsLayer.clear();
+                setTabsType(value);
 
+                if (value === "1") {
+                  if (Object.keys(mapCreated).length != 0) {
+                    mapCreated.remove(labelsLayer);
+                    labelsLayer.clear();
+                  }
                   setSpinning(true);
                   handleSearch({
                     pageIndex: 0,
@@ -315,40 +387,21 @@ const PropertiesInfo: React.FC<Props> = props => {
                     terms: {property: props.item.id},
                   });
                 } else if (value === '2') {
-                  statisticsChart();
+                  statisticsChart(
+                    {
+                      pageIndex: 0,
+                      pageSize: 60,
+                      sorts: {
+                        field: 'timestamp',
+                        order: 'desc',
+                      },
+                      terms: {property: props.item.id},
+                    }
+                  );
                 }
               }}
         >
           <Tabs.TabPane tab="列表" key="1">
-            <Form labelCol={{span: 0}} wrapperCol={{span: 18}} style={{paddingBottom: -20}}>
-              <Row gutter={{md: 8, lg: 4, xl: 48}}>
-                <Col md={10} sm={24}>
-                  <Form.Item>
-                    {getFieldDecorator('timestamp$BTW')(
-                      <DatePicker.RangePicker
-                        showTime={{format: 'HH:mm:ss'}}
-                        format="YYYY-MM-DD HH:mm:ss"
-                        placeholder={['开始时间', '结束时间']}
-                        onChange={(value: any[]) => {
-                          if (value.length === 0) {
-                            handleSearch({
-                              pageIndex: 0,
-                              pageSize: 10,
-                              sorts: {
-                                field: 'timestamp',
-                                order: 'desc',
-                              },
-                              terms: {property: props.item.id},
-                            });
-                          }
-                        }}
-                        onOk={onSearch}
-                      />,
-                    )}
-                  </Form.Item>
-                </Col>
-              </Row>
-            </Form>
             <Table
               rowKey="timestamp"
               dataSource={propertiesInfo.data}
@@ -373,14 +426,12 @@ const PropertiesInfo: React.FC<Props> = props => {
                   value: {min: 0},
                   year: {
                     range: [0, 1],
-                    ticks: ticksDataList,
+                    type: 'timeCat'
                   },
                 }}
                 forceFit
               >
-                <Axis name="year" label={{
-                  formatter: val => moment(val).format('YYYY-MM-DD')
-                }}/>
+                <Axis name="year"/>
                 <Axis name="value" label={{
                   formatter: val => parseFloat(val).toLocaleString()
                 }}/>
@@ -389,20 +440,19 @@ const PropertiesInfo: React.FC<Props> = props => {
                 <Geom type="line" position="year*value" size={2} tooltip={[
                   "year*value*type",
                   (year, value, type) => ({
-                    title: moment(year).format('HH:mm:ss'),
+                    title: moment(year).format('YYYY-MM-DD HH:mm:ss'),
                     name: type,
                     value: value
                   })
                 ]}/>
-                <Geom type="area" position="year*value" shape={'circle'}
-                      tooltip={[
-                        "year*value*type",
-                        (year, value, type) => ({
-                          title: moment(year).format('HH:mm:ss'),
-                          name: type,
-                          value: value
-                        })
-                      ]}
+                <Geom type="area" position="year*value" shape={'circle'} tooltip={[
+                  "year*value*type",
+                  (year, value, type) => ({
+                    title: moment(year).format('YYYY-MM-DD HH:mm:ss'),
+                    name: type,
+                    value: value
+                  })
+                ]}
                 />
               </Chart>
             </Tabs.TabPane>
@@ -412,7 +462,7 @@ const PropertiesInfo: React.FC<Props> = props => {
             <Tabs.TabPane tab={
               <span>
                 轨迹
-                <AntdTooltip title='默认启动循环执行动画'>
+                <AntdTooltip title='默认启动循环执行动画，运动速度为：200km/h'>
                   <Icon type="question-circle-o" style={{paddingLeft: 10}}/>
                 </AntdTooltip>
               </span>
