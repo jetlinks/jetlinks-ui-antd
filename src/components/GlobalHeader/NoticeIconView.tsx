@@ -23,15 +23,20 @@ export interface GlobalHeaderRightProps extends ConnectProps {
 }
 interface State {
   noticeList: any[];
+  loading: boolean;
 }
 class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
 
   state: State = {
     noticeList: [],
+    loading: false,
   }
+
+
+
   service = new Service('notifications');
   private ws: any;
-  componentDidMount() {
+  getNotice = () => {
     const { dispatch } = this.props;
     if (dispatch) {
       dispatch({
@@ -41,6 +46,9 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
         })
       });
     }
+  }
+  componentDidMount() {
+    this.getNotice();
     this.ws = getWebsocket(
       `notification`,
       `/notifications`,
@@ -49,7 +57,7 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
       throttleTime(2000),
     ).subscribe(
       (resp: any) => {
-        console.log('subscribe noticication');
+        this.getNotice();
         notification.open({
           message: resp?.payload?.topicName,
           description: resp?.payload?.message,
@@ -62,6 +70,7 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
                 .read(resp.payload.id)
                 .subscribe(() => {
                   notification.close(resp.payload.id)
+                  this.getNotice();
                 });
             }}
           >标记已读</Button>,
@@ -99,6 +108,12 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
         type: 'global/clearNotices',
         payload: clearIds,
       });
+      // dispatch({
+      //   type: 'global/fetchNotices',
+      //   payload: encodeQueryParam({
+      //     terms: { state: 'unread' }
+      //   })
+      // });
     }
   };
 

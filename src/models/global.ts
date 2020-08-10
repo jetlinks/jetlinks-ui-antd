@@ -76,15 +76,17 @@ const GlobalModel: GlobalModelType = {
     *clearNotices({ payload }, { call, put, select }) {
       const resp = yield call(readNotices, payload);
       if (resp) {
+        const all = yield call(queryNotices, payload);
         yield put({
           type: 'saveClearedNotices',
-          payload: payload,
+          payload: {
+            notices: all.result.data,
+          },
         });
         const count: number = yield select((state: ConnectState) => state.global.notices.length);
         const unreadCount: number = yield select(
           (state: ConnectState) => state.global.notices.filter(item => !item.read).length,
         );
-        const all = yield call(queryNotices, payload);
 
         yield put({
           type: 'user/changeNotifyCount',
@@ -95,6 +97,13 @@ const GlobalModel: GlobalModelType = {
             // unreadCount,
           },
         });
+
+        yield put({
+          type: 'fetchNotices',
+          payload: encodeQueryParam({
+            terms: { state: 'unread' }
+          })
+        })
       }
     },
     *changeNoticeReadState({ payload }, { call, put, select }) {
@@ -152,7 +161,7 @@ const GlobalModel: GlobalModelType = {
         collapsed: false,
         ...state,
         // notices: state.notices.filter((item): boolean => item.type !== payload),
-        notices: [],
+        notices: state.notices,
       };
     },
   },
