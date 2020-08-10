@@ -59,8 +59,8 @@ const NoticeList: React.SFC<NoticeIconTabProps> = ({
             typeof item.avatar === 'string' ? (
               <Avatar className={styles.avatar} src={item.avatar} />
             ) : (
-              <span className={styles.iconElement}>{item.avatar}</span>
-            )
+                <span className={styles.iconElement}>{item.avatar}</span>
+              )
           ) : null;
 
           return (
@@ -92,7 +92,7 @@ const NoticeList: React.SFC<NoticeIconTabProps> = ({
       <div className={styles.bottomBar}>
         {showClear ? (
           <div onClick={onClear}>
-            {clearText} {title}
+            {clearText}
           </div>
         ) : null}
         {showViewMore ? (

@@ -92,7 +92,7 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
   handleNoticeClear = (title: string, key: string) => {
     const { dispatch } = this.props;
     message.success(`${'清空了'} ${title}`);
-    const clearIds = (this.getNoticeData().key || []).map(item => item.id);
+    const clearIds = (this.getNoticeData().unread || []).map(item => item.id);
 
     if (dispatch) {
       dispatch({
@@ -166,7 +166,7 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
           this.changeReadState(item as NoticeItem);
         }}
         loading={fetchingNotices}
-        clearText="清空"
+        clearText="当前标记为已读"
         viewMoreText="查看更多"
         onClear={this.handleNoticeClear}
         onPopupVisibleChange={onNoticeVisibleChange}
