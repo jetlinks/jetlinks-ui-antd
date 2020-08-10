@@ -2,14 +2,20 @@ import React, {useEffect, useState} from 'react';
 import Form from 'antd/es/form';
 import {FormComponentProps} from 'antd/lib/form';
 import {Button, Icon, message, Modal, Select, Tabs, Tooltip, Upload} from 'antd';
+import 'ace-builds';
+import 'ace-builds/webpack-resolver';
 import AceEditor from "react-ace";
 import 'ace-builds/src-noconflict/mode-json';
+import 'ace-builds/src-noconflict/mode-json5';
+import 'ace-builds/src-noconflict/mode-hjson';
+import 'ace-builds/src-noconflict/mode-jsoniq';
 import 'ace-builds/src-noconflict/snippets/json';
 import 'ace-builds/src-noconflict/ext-language_tools';
 import 'ace-builds/src-noconflict/ext-searchbox';
 import 'ace-builds/src-noconflict/theme-eclipse';
 import apis from "@/services";
 import {DeviceProduct} from "@/pages/device/product/data";
+import encodeQueryParam from "@/utils/encodeParam";
 
 interface Props extends FormComponentProps {
   close: Function;
@@ -39,7 +45,7 @@ const QuickImport: React.FC<Props> = props => {
   useEffect(() => {
     // 获取下拉框数据
     apis.deviceProdcut
-      .queryNoPagin()
+      .queryNoPagin(encodeQueryParam({paging: false}))
       .then(response => {
         setProductList(response.result);
       })
@@ -92,7 +98,11 @@ const QuickImport: React.FC<Props> = props => {
             <Form.Item key="productId" label="选择产品">
               {getFieldDecorator('productId', {
                 rules: [{required: true, message: '请输入选择产品'}],
-              })(<Select placeholder="请选择设备产品">
+              })(<Select placeholder="请选择产品" showSearch
+                         filterOption={(inputValue, option) =>
+                           option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
+                         }
+              >
                 {(productList || []).map(item => (
                   <Select.Option
                     key={JSON.stringify({productId: item.id, productName: item.name})}

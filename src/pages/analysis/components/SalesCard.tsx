@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { Card, Col, DatePicker, Radio, Row, Tabs } from 'antd';
-import Charts from './Charts';
+import React, {useEffect, useState} from 'react';
+import {Card, Col, DatePicker, Radio, Row, Tabs} from 'antd';
 import styles from '../style.less';
 import apis from '@/services';
 import moment from 'moment';
+import {Axis, Chart, Geom, Legend, Tooltip} from "bizcharts";
 
-const { Withnegative } = Charts;
-const { TabPane } = Tabs;
+const {TabPane} = Tabs;
 
 export interface State {
   gatewayDataList: any[];
@@ -16,7 +15,7 @@ export interface State {
   selectionTime: string
 }
 
-const SalesCard = ({ loading }: { loading: boolean; }) => {
+const SalesCard = ({loading}: { loading: boolean; }) => {
   let gatewayMonitor: (from: string, to: string, time: string) => void;
   const initState: State = {
     gatewayDataList: [],
@@ -84,12 +83,13 @@ const SalesCard = ({ loading }: { loading: boolean; }) => {
       .then((response: any) => {
         const tempResult = response?.result;
         if (response.status === 200) {
-          const dataList = [];
-          const ticksList = [];
-          tempResult.forEach((item:any) => {
+          const dataList: any[] = [];
+          const ticksList: any[] = [];
+          tempResult.forEach((item: any) => {
             dataList.push({
               year: item.data.timeString,
-              消息量: item.data.value,
+              value: item.data.value,
+              type: '消息量'
             });
             if (item.data.timestamp % 4 === 0 && item.data.timestamp !== 0) {
               ticksList.push(item.data.timeString);
@@ -101,7 +101,7 @@ const SalesCard = ({ loading }: { loading: boolean; }) => {
       });
   };
 
-  function deviceTime(e) {
+  function deviceTime(e: any) {
     const value = e.target.value;
     setTime(timeMap[value]);
     const dd = new Date(selectionTime);
@@ -124,7 +124,7 @@ const SalesCard = ({ loading }: { loading: boolean; }) => {
     return `${dd.getFullYear()}-${(dd.getMonth() + 1) < 10 ? `0${dd.getMonth() + 1}` : (dd.getMonth() + 1)}-${dd.getDate() < 10 ? `0${dd.getDate()}` : dd.getDate()} ${dd.getHours() < 10 ? `0${dd.getHours()}` : dd.getHours()}:${dd.getMinutes() < 10 ? `0${dd.getMinutes()}` : dd.getMinutes()}:${dd.getSeconds() < 10 ? `0${dd.getSeconds()}` : dd.getSeconds()}`;
   };
 
-  function onOk(value) {
+  function onOk(value: any) {
     setSelectionTime(value);
     const dd = new Date(value);
     if (time === '1m') {
@@ -140,7 +140,7 @@ const SalesCard = ({ loading }: { loading: boolean; }) => {
   }
 
   return (
-    <Card loading={loading} bordered={false} bodyStyle={{ padding: 0 }}>
+    <Card loading={loading} bordered={false} bodyStyle={{padding: 0}}>
       <div className={styles.salesCard}>
         <Tabs
           tabBarExtraContent={
@@ -166,17 +166,54 @@ const SalesCard = ({ loading }: { loading: boolean; }) => {
             </div>
           }
           size="large"
-          tabBarStyle={{ marginBottom: 24 }}
+          tabBarStyle={{marginBottom: 24}}
         >
           <TabPane tab='设备消息' key="sales">
             <Row>
               <Col>
                 <div className={styles.salesBar}>
-                  <Withnegative
+                  <Chart
                     height={400}
-                    datas={gatewayData}
-                    ticks={ticksDataList}
-                  />
+                    data={gatewayData}
+                    scale={{
+                      value: {min: 0},
+                      year: {
+                        range: [0, 1],
+                        ticks: ticksDataList,
+                      },
+                    }}
+                    forceFit
+                  >
+                    <Axis name="year"/>
+                    <Axis name="value" label={{
+                      formatter: val => parseFloat(val).toLocaleString()
+                    }}/>
+                    <Legend/>
+                    <Tooltip crosshairs={{type: 'y'}}/>
+                    <Geom type="line" position="year*value*type" size={2}
+                          tooltip={[
+                            "year*value*type",
+                            (year, value, type) => ({
+                              title: year,
+                              name: type,
+                              value: parseFloat(value).toLocaleString()
+                            })
+                          ]}
+                    />
+                    <Geom
+                      type="area"
+                      position="year*value*type"
+                      shape={'circle'}
+                      tooltip={[
+                        "year*value*type",
+                        (year, value, type) => ({
+                          title: year,
+                          name: type,
+                          value: parseFloat(value).toLocaleString()
+                        })
+                      ]}
+                    />
+                  </Chart>
                 </div>
               </Col>
             </Row>

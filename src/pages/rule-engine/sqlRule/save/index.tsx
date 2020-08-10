@@ -3,6 +3,8 @@ import { Button, Col, Drawer, Form, Input, Row, Select } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import { SqlRule } from '../data';
 import Action from '@/pages/rule-engine/sqlRule/save/actions';
+import 'ace-builds';
+import 'ace-builds/webpack-resolver';
 import AceEditor from 'react-ace';
 import 'ace-builds/src-noconflict/mode-sql';
 import 'ace-builds/src-noconflict/mode-mysql';

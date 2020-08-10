@@ -93,7 +93,7 @@ export async function invokedFunction(deviceId: string, functionId: string, data
   });
 }
 
-export async function disconnectDevice(deviceId?: string ) {
+export async function disconnectDevice(deviceId?: string) {
   return request(`/jetlinks/device/instance/${deviceId}/disconnect`, {
     method: 'POST',
   });
@@ -150,5 +150,25 @@ export async function _deploy(params: any) {
 export async function configurationReset(deviceId?: string) {
   return request(`/jetlinks/device/instance/${deviceId}/configuration/_reset`, {
     method: 'PUT',
+  });
+}
+
+export async function getDeviceShadow(deviceId: string) {
+  return request(`/jetlinks/device/instance/${deviceId}/shadow`, {
+    method: 'GET',
+  });
+}
+
+export async function saveDeviceShadow(deviceId: string, data: string) {
+  return request(`/jetlinks/device/instance/${deviceId}/shadow`, {
+    method: 'PUT',
+    data
+  });
+}
+
+export async function updateProperty(deviceId: string, data: any) {
+  return request(`/jetlinks/device/instance/${deviceId}/property`, {
+    method: 'PUT',
+    data
   });
 }

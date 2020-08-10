@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import ChartCard from '@/pages/analysis/components/Charts/ChartCard';
-import {Badge, Col, Icon, Row, Spin, Tooltip} from 'antd';
+import {Badge, Col, Icon, message, Row, Spin, Tooltip} from 'antd';
 import {MiniArea} from '@/pages/analysis/components/Charts';
 import moment from 'moment';
 import apis from '@/services';
@@ -9,6 +9,7 @@ import encodeQueryParam from '@/utils/encodeParam';
 import PropertiesInfo from './properties-data/propertiesInfo';
 import {getWebsocket} from '@/layouts/GlobalWebSocket';
 import AutoHide from '@/pages/device/location/info/autoHide';
+import UpdateProperty from "@/pages/device/instance/editor/detail/updateProperty";
 
 interface Props {
   refresh: Function;
@@ -22,6 +23,7 @@ interface State {
   propertiesInfo: any;
   metadata: any;
   deviceState: any;
+  updatePropertiesData: any;
 }
 
 const topColResponsiveProps = {
@@ -47,6 +49,7 @@ const Status: React.FC<Props> = props => {
     propertiesInfo: {},
     metadata: {},
     deviceState: {},
+    updatePropertiesData: {},
   };
   const [runInfo, setRunInfo] = useState(initState.runInfo);
   const [eventVisible, setEventVisible] = useState(initState.eventVisible);
@@ -58,6 +61,8 @@ const Status: React.FC<Props> = props => {
   const [propertyData, setPropertyData] = useState({});
   const [spinning, setSpinning] = useState(true);
   const [eventDataCount, setEventDataCount] = useState({});
+  const [updateProperties, setUpdateProperties] = useState(false);
+  const [updatePropertiesData, setUpdatePropertiesData] = useState(initState.updatePropertiesData);
 
   useEffect(() => {
     let statusRealTime: any;
@@ -107,7 +112,7 @@ const Status: React.FC<Props> = props => {
               }
 
               if (propertyData[item.data.value.property].type === 'int' || propertyData[item.data.value.property].type === 'float'
-                || propertyData[item.data.value.property].type === 'double') {
+                || propertyData[item.data.value.property].type === 'double' || propertyData[item.data.value.property].type === 'long') {
 
                 if (propertyData[item.data.value.property].visitData.length >= 15) {
                   propertyData[item.data.value.property].visitData.splice(0, 1);
@@ -164,18 +169,17 @@ const Status: React.FC<Props> = props => {
           const dataValue = payload.value;
 
           if (!propertyData[dataValue.property]) return;
- 
+
           if (dataValue?.formatValue && typeof dataValue?.formatValue === 'object') {
             propertyData[dataValue.property].formatValue = dataValue?.formatValue ? JSON.stringify(dataValue.formatValue) : '/';
           } else if (dataValue?.formatValue) {
             propertyData[dataValue.property].formatValue = dataValue?.formatValue ? dataValue.formatValue : '/';
           } else {
             propertyData[dataValue.property].formatValue = '/';
- 
           }
 
           if (propertyData[dataValue.property].type === 'int' || propertyData[dataValue.property].type === 'float'
-            || propertyData[dataValue.property].type === 'double') {
+            || propertyData[dataValue.property].type === 'double' || propertyData[dataValue.property].type === 'long') {
 
             if (propertyData[dataValue.property].visitData.length >= 15) {
               propertyData[dataValue.property].visitData.splice(0, 1);
@@ -254,18 +258,6 @@ const Status: React.FC<Props> = props => {
     }
   }, [runInfo]);
 
-  /*  const refreshDeviceState = () => {
-      runInfo.loading = true;
-      apis.deviceInstance.refreshState(props.device.id)
-        .then(response => {
-          if (response.status === 200) {
-            runInfo.loading = false;
-            setDeviceState({state: response.result});
-          }
-        }).catch(() => {
-      });
-    };*/
-
   const refreshProperties = (item: any) => {
     const {properties} = metadata;
     apis.deviceInstance.property(props.device.id, item.id)
@@ -273,28 +265,25 @@ const Status: React.FC<Props> = props => {
         const tempResult = response?.result;
         if (response.status === 200) {
           if (tempResult) {
-            const temp = properties.map((e: any) => {
+            metadata.properties = properties.map((e: any) => {
               if (e.id === tempResult.property) {
                 e.formatValue = tempResult.formatValue;
               }
               e.loading = false;
               return e;
             });
-            metadata.properties = temp;
           } else {
-            const temp = properties.map((e: any) => {
+            metadata.properties = properties.map((e: any) => {
               e.loading = false;
               return e;
             });
-            metadata.properties = temp;
           }
           setMetadata({...metadata});
         } else {
-          const temp = properties.map((e: any) => {
+          metadata.properties = properties.map((e: any) => {
             e.loading = false;
             return e;
           });
-          metadata.properties = temp;
           setMetadata({...metadata});
         }
       });
@@ -349,6 +338,18 @@ const Status: React.FC<Props> = props => {
     });
   };
 
+  const updateProperty = (item: any) => {
+    apis.deviceInstance.updateProperty(props.device.id, item)
+      .then((response: any) => {
+        if (response.status === 200) {
+          message.success('操作成功');
+          setUpdateProperties(false);
+        }
+      })
+      .catch(() => {
+      })
+  };
+
   return (
     <div>
       <Spin tip="加载中..." spinning={spinning}>
@@ -391,9 +392,21 @@ const Status: React.FC<Props> = props => {
                             title={item.name}
                             action={
                               <div>
-                                <Icon title='刷新' type="sync" onClick={() => {
-                                  refreshPropertyItem(item);
-                                }}/>
+                                {item.expands.readOnly === 'false' && (
+                                  <Tooltip placement="top" title='设置属性至设备'>
+                                    <Icon title='编辑' type="edit" onClick={() => {
+                                      setUpdateProperties(true);
+                                      item.formatValue = propertyData[item.id]?.formatValue || '/';
+                                      setUpdatePropertiesData(item);
+                                    }}/>
+                                  </Tooltip>
+                                )}
+                                <Tooltip placement="top" title='从设备端获取属性值'>
+                                  <Icon title='刷新' style={{marginLeft: '10px'}} type="sync"
+                                        onClick={() => {
+                                          refreshPropertyItem(item);
+                                        }}/>
+                                </Tooltip>
                                 <Icon title='详情' style={{marginLeft: '10px'}} type="bars"
                                       onClick={() => {
                                         setPropertiesVisible(true);
@@ -402,7 +415,7 @@ const Status: React.FC<Props> = props => {
                               </div>
                             }
                             total={
-                              <AutoHide title={...propertyData[item.id]?.formatValue || '/'}/>
+                              <AutoHide title={...propertyData[item.id]?.formatValue || '/'} style={{width: '100%'}}/>
                             }
                             contentHeight={46}
                           >
@@ -419,13 +432,25 @@ const Status: React.FC<Props> = props => {
                 )
               }
               {
+                updateProperties &&
+                <UpdateProperty
+                  data={updatePropertiesData}
+                  save={(item: any) => {
+                    updateProperty(item);
+                  }}
+                  close={() => {
+                    setUpdateProperties(false);
+                    setUpdatePropertiesData({});
+                  }}
+                />
+              }
+              {
                 propertiesVisible &&
                 <PropertiesInfo
                   item={propertiesInfo}
                   close={() => {
                     setPropertiesVisible(false);
                   }}
-                  type={props.device.productId}
                   deviceId={props.device.id}
                 />
               }
@@ -446,7 +471,7 @@ const Status: React.FC<Props> = props => {
                                 }}/>
                               </Tooltip>
                             }
-                            total={<AutoHide title={`${eventDataCount[item.id] || 0}次`}/>}
+                            total={<AutoHide title={`${eventDataCount[item.id] || 0}次`} style={{width: '100%'}}/>}
                             contentHeight={46}
                           >
                         <span>

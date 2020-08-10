@@ -176,7 +176,7 @@ const DeviceModel: React.FC<Props> = props => {
           <Divider type="vertical" />
           <a
             onClick={() => {
-              downloadObject(record, '设备产品');
+              downloadObject(record, '产品');
             }}
           >
             下载配置
@@ -274,7 +274,7 @@ const DeviceModel: React.FC<Props> = props => {
   }, []);
 
   return (
-    <PageHeaderWrapper title="设备产品">
+    <PageHeaderWrapper title="产品管理">
       <Card bordered={false}>
         <div className={styles.tableList}>
           <div>

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Form, Input, Drawer, Button, Select, Radio, InputNumber } from 'antd';
-import { FormComponentProps } from 'antd/lib/form';
+import React, {useState, useEffect} from 'react';
+import {Form, Input, Drawer, Button, Select, Radio, InputNumber} from 'antd';
+import {FormComponentProps} from 'antd/lib/form';
 import apis from '@/services';
 
 interface Props extends FormComponentProps {
@@ -8,12 +8,14 @@ interface Props extends FormComponentProps {
   data: any;
   save: Function;
 }
+
 interface State {
   dataType: string;
   supportsType: any[];
   certificateList: any[];
   tcpServerParseType: string;
 }
+
 const Save: React.FC<Props> = props => {
   const initState: State = {
     dataType: props.data.type?.value,
@@ -22,7 +24,7 @@ const Save: React.FC<Props> = props => {
     tcpServerParseType: props.data?.configuration?.parserType || 'DIRECT',
   };
   const {
-    form: { getFieldDecorator },
+    form: {getFieldDecorator},
     form,
   } = props;
   const [dataType, setDataType] = useState(initState.dataType);
@@ -38,15 +40,17 @@ const Save: React.FC<Props> = props => {
           setSupportsType(response.result || []);
         }
       })
-      .catch(() => { });
+      .catch(() => {
+      });
     apis.certificate
-      .listNoPaging({ paging: false })
+      .listNoPaging({paging: false})
       .then(response => {
         if (response.status === 200) {
           setCertificateList(response.result || []);
         }
       })
-      .catch(() => { });
+      .catch(() => {
+      });
   }, []);
 
   const renderTcpServerParse = () => {
@@ -56,7 +60,7 @@ const Save: React.FC<Props> = props => {
           <Form.Item label="分隔符">
             {getFieldDecorator('configuration.parserConfiguration.delimited', {
               initialValue: props.data?.configuration?.parserConfiguration?.delimited,
-            })(<Input />)}
+            })(<Input/>)}
           </Form.Item>
         );
       case 'script':
@@ -75,7 +79,7 @@ const Save: React.FC<Props> = props => {
             <Form.Item label="解析脚本">
               {getFieldDecorator('configuration.parserConfiguration.script', {
                 initialValue: props.data?.configuration?.parserConfiguration?.script,
-              })(<Input.TextArea rows={3} />)}
+              })(<Input.TextArea rows={3}/>)}
             </Form.Item>
           </>
         );
@@ -84,7 +88,7 @@ const Save: React.FC<Props> = props => {
           <Form.Item label="长度值">
             {getFieldDecorator('configuration.parserConfiguration.size', {
               initialValue: props.data?.configuration?.parserConfiguration?.size,
-            })(<Input />)}
+            })(<Input/>)}
           </Form.Item>
         );
       default:
@@ -99,17 +103,17 @@ const Save: React.FC<Props> = props => {
             <Form.Item label="线程数">
               {getFieldDecorator('configuration.instance', {
                 initialValue: props.data?.configuration?.instance,
-              })(<InputNumber min={1} style={{ width: '100%' }} />)}
+              })(<InputNumber min={1} style={{width: '100%'}}/>)}
             </Form.Item>
             <Form.Item label="HOST">
               {getFieldDecorator('configuration.host', {
                 initialValue: props.data?.configuration?.host || '0.0.0.0',
-              })(<Input />)}
+              })(<Input/>)}
             </Form.Item>
             <Form.Item label="PORT">
               {getFieldDecorator('configuration.port', {
                 initialValue: props.data?.configuration?.port,
-              })(<Input />)}
+              })(<Input/>)}
             </Form.Item>
             <Form.Item label="TLS">
               {getFieldDecorator('configuration.ssl', {
@@ -134,6 +138,11 @@ const Save: React.FC<Props> = props => {
                 </Select>,
               )}
             </Form.Item>
+            <Form.Item label="最大消息长度">
+              {getFieldDecorator('configuration.maxMessageSize', {
+                initialValue: props.data?.configuration?.maxMessageSize || 8096,
+              })(<InputNumber style={{width: '100%'}}/>)}
+            </Form.Item>
           </div>
         );
       case 'MQTT_CLIENT':
@@ -142,17 +151,17 @@ const Save: React.FC<Props> = props => {
             <Form.Item label="clientId">
               {getFieldDecorator('configuration.clientId', {
                 initialValue: props.data?.configuration?.clientId,
-              })(<Input />)}
+              })(<Input/>)}
             </Form.Item>
             <Form.Item label="HOST">
               {getFieldDecorator('configuration.host', {
                 initialValue: props.data?.configuration?.host || '0.0.0.0',
-              })(<Input />)}
+              })(<Input/>)}
             </Form.Item>
             <Form.Item label="PORT">
               {getFieldDecorator('configuration.port', {
                 initialValue: props.data?.configuration?.port,
-              })(<Input />)}
+              })(<Input/>)}
             </Form.Item>
             <Form.Item label="TLS">
               {getFieldDecorator('configuration.ssl', {
@@ -180,12 +189,17 @@ const Save: React.FC<Props> = props => {
             <Form.Item label="用户名">
               {getFieldDecorator('configuration.username', {
                 initialValue: props.data?.configuration?.username,
-              })(<Input />)}
+              })(<Input/>)}
             </Form.Item>
             <Form.Item label="密码">
               {getFieldDecorator('configuration.password', {
                 initialValue: props.data?.configuration?.password,
-              })(<Input />)}
+              })(<Input/>)}
+            </Form.Item>
+            <Form.Item label="最大消息长度">
+              {getFieldDecorator('configuration.maxMessageSize', {
+                initialValue: props.data?.configuration?.maxMessageSize || 8096,
+              })(<InputNumber style={{width: '100%'}}/>)}
             </Form.Item>
           </div>
         );
@@ -218,12 +232,12 @@ const Save: React.FC<Props> = props => {
             <Form.Item label="HOST">
               {getFieldDecorator('configuration.host', {
                 initialValue: props.data?.configuration?.host || '0.0.0.0',
-              })(<Input />)}
+              })(<Input/>)}
             </Form.Item>
             <Form.Item label="PORT">
               {getFieldDecorator('configuration.port', {
                 initialValue: props.data?.configuration?.port,
-              })(<Input />)}
+              })(<Input/>)}
             </Form.Item>
 
             <Form.Item label="解析方式">
@@ -274,12 +288,12 @@ const Save: React.FC<Props> = props => {
             <Form.Item label="HOST">
               {getFieldDecorator('configuration.host', {
                 initialValue: props.data?.configuration?.host || '0.0.0.0',
-              })(<Input />)}
+              })(<Input/>)}
             </Form.Item>
             <Form.Item label="PORT">
               {getFieldDecorator('configuration.port', {
                 initialValue: props.data?.configuration?.port,
-              })(<Input />)}
+              })(<Input/>)}
             </Form.Item>
 
             <Form.Item label="解析方式">
@@ -307,12 +321,12 @@ const Save: React.FC<Props> = props => {
             <Form.Item label="本地IP">
               {getFieldDecorator('configuration.address', {
                 initialValue: props.data?.configuration?.address || '0.0.0.0',
-              })(<Input placeholder="0.0.0.0" />)}
+              })(<Input placeholder="0.0.0.0"/>)}
             </Form.Item>
             <Form.Item label="端口">
               {getFieldDecorator('configuration.port', {
                 initialValue: props.data?.configuration?.port,
-              })(<Input />)}
+              })(<Input/>)}
             </Form.Item>
 
             <Form.Item label="开启DTLS">
@@ -328,7 +342,7 @@ const Save: React.FC<Props> = props => {
             <Form.Item label="私钥别名">
               {getFieldDecorator('configuration.privateKeyAlias', {
                 initialValue: props.data?.configuration?.privateKeyAlias,
-              })(<Input />)}
+              })(<Input/>)}
             </Form.Item>
             <Form.Item label="证书">
               {getFieldDecorator('configuration.certId', {
@@ -351,12 +365,12 @@ const Save: React.FC<Props> = props => {
             <Form.Item label="URL">
               {getFieldDecorator('configuration.url', {
                 initialValue: props.data?.configuration?.url,
-              })(<Input />)}
+              })(<Input/>)}
             </Form.Item>
             <Form.Item label="超时时间">
               {getFieldDecorator('configuration.timeout', {
                 initialValue: props.data?.configuration?.timeout,
-              })(<Input />)}
+              })(<Input/>)}
             </Form.Item>
 
             <Form.Item label="开启DTSL">
@@ -390,7 +404,7 @@ const Save: React.FC<Props> = props => {
             <Form.Item label="PORT">
               {getFieldDecorator('configuration.port', {
                 initialValue: props.data?.configuration?.port,
-              })(<Input />)}
+              })(<Input/>)}
             </Form.Item>
             <Form.Item label="证书">
               {getFieldDecorator('configuration.certId', {
@@ -423,7 +437,7 @@ const Save: React.FC<Props> = props => {
             <Form.Item label="baseUrl">
               {getFieldDecorator('configuration.baseUrl', {
                 initialValue: props.data?.configuration?.baseUrl,
-              })(<Input />)}
+              })(<Input/>)}
             </Form.Item>
             <Form.Item label="证书">
               {getFieldDecorator('configuration.certId', {
@@ -476,7 +490,7 @@ const Save: React.FC<Props> = props => {
             <Form.Item label="线程数">
               {getFieldDecorator('configuration.instance', {
                 initialValue: props.data?.configuration?.instance,
-              })(<InputNumber min={1} style={{ width: '100%' }} />)}
+              })(<InputNumber min={1} style={{width: '100%'}}/>)}
             </Form.Item>
             <Form.Item label="开启SSL">
               {getFieldDecorator('configuration.ssl', {
@@ -505,12 +519,12 @@ const Save: React.FC<Props> = props => {
             <Form.Item label="HOST">
               {getFieldDecorator('configuration.host', {
                 initialValue: props.data?.configuration?.host || '0.0.0.0',
-              })(<Input />)}
+              })(<Input/>)}
             </Form.Item>
             <Form.Item label="PORT">
               {getFieldDecorator('configuration.port', {
                 initialValue: props.data?.configuration?.port,
-              })(<Input />)}
+              })(<Input/>)}
             </Form.Item>
           </div>
         );
@@ -520,7 +534,7 @@ const Save: React.FC<Props> = props => {
             <Form.Item label="uri">
               {getFieldDecorator('configuration.uri', {
                 initialValue: props.data?.configuration?.uri,
-              })(<Input />)}
+              })(<Input/>)}
             </Form.Item>
             <Form.Item label="开启SSL">
               {getFieldDecorator('configuration.ssl', {
@@ -559,12 +573,12 @@ const Save: React.FC<Props> = props => {
             <Form.Item label="HOST">
               {getFieldDecorator('configuration.host', {
                 initialValue: props.data?.configuration?.host || '0.0.0.0',
-              })(<Input />)}
+              })(<Input/>)}
             </Form.Item>
             <Form.Item label="PORT">
               {getFieldDecorator('configuration.port', {
                 initialValue: props.data?.configuration?.port,
-              })(<Input />)}
+              })(<Input/>)}
             </Form.Item>
           </div>
         );
@@ -598,29 +612,29 @@ const Save: React.FC<Props> = props => {
             <Form.Item label="私钥别名">
               {getFieldDecorator('configuration.privateKeyAlias', {
                 initialValue: props.data?.configuration?.privateKeyAlias,
-              })(<Input />)}
+              })(<Input/>)}
             </Form.Item>
             <Form.Item label="远程地址">
               {getFieldDecorator('configuration.remoteAddress', {
                 initialValue: props.data?.configuration?.remoteAddress,
-              })(<Input />)}
+              })(<Input/>)}
             </Form.Item>
 
             <Form.Item label="远程端口">
               {getFieldDecorator('configuration.remotePort', {
                 initialValue: props.data?.configuration?.remotePort,
-              })(<Input />)}
+              })(<Input/>)}
             </Form.Item>
             <Form.Item label="本地地址">
               {getFieldDecorator('configuration.localAddress', {
                 initialValue: props.data?.configuration?.localAddress,
-              })(<Input />)}
+              })(<Input/>)}
             </Form.Item>
 
             <Form.Item label="本地端口">
               {getFieldDecorator('configuration.localPort', {
                 initialValue: props.data?.configuration?.localPort,
-              })(<Input />)}
+              })(<Input/>)}
             </Form.Item>
           </div>
         );
@@ -632,8 +646,8 @@ const Save: React.FC<Props> = props => {
   const saveData = () => {
     form.validateFields((err, fileValue) => {
       if (err) return;
-      const { id } = props.data;
-      props.save({ id, ...fileValue });
+      const {id} = props.data;
+      props.save({id, ...fileValue});
     });
   };
   return (
@@ -643,16 +657,16 @@ const Save: React.FC<Props> = props => {
       onClose={() => props.close()}
       width="30VW"
     >
-      <Form labelCol={{ span: 6 }} wrapperCol={{ span: 18 }}>
+      <Form labelCol={{span: 6}} wrapperCol={{span: 18}}>
         <Form.Item label="组件名称">
           {getFieldDecorator('name', {
-            rules: [{ required: true, message: '请输入组件名称' }],
+            rules: [{required: true, message: '请输入组件名称'}],
             initialValue: props.data?.name,
-          })(<Input />)}
+          })(<Input/>)}
         </Form.Item>
         <Form.Item label="组件类型">
           {getFieldDecorator('type', {
-            rules: [{ required: true, message: '请选择组件类型' }],
+            rules: [{required: true, message: '请选择组件类型'}],
             initialValue: props.data?.type?.value,
           })(
             <Select
@@ -671,7 +685,7 @@ const Save: React.FC<Props> = props => {
 
         {renderForm()}
         <Form.Item label="描述">
-          {getFieldDecorator('describe', {})(<Input.TextArea rows={3} />)}
+          {getFieldDecorator('describe', {})(<Input.TextArea rows={3}/>)}
         </Form.Item>
       </Form>
 
@@ -691,7 +705,7 @@ const Save: React.FC<Props> = props => {
           onClick={() => {
             props.close();
           }}
-          style={{ marginRight: 8 }}
+          style={{marginRight: 8}}
         >
           关闭
         </Button>

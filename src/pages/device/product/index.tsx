@@ -232,7 +232,7 @@ const DeviceModel: React.FC<Props> = props => {
   };
 
   return (
-    <PageHeaderWrapper title="设备产品">
+    <PageHeaderWrapper title="产品管理">
       <Spin spinning={spinning}>
         <Card bordered={false}>
           <div>
@@ -363,7 +363,7 @@ const DeviceModel: React.FC<Props> = props => {
                                 <Icon
                                   type="download"
                                   onClick={() => {
-                                    downloadObject(item, '设备产品');
+                                    downloadObject(item, '产品');
                                   }}
                                 />
                               </Tooltip>,
@@ -387,23 +387,41 @@ const DeviceModel: React.FC<Props> = props => {
                                         </Button>
                                       </Popconfirm>
                                     </Menu.Item>
-                                    {item.state === 0 && (deviceCount[item.id] === '0') && (
+                                    {item.state === 0 ? (
+                                      deviceCount[item.id] === '0' ? (
+                                        <Menu.Item key="2">
+                                          <Popconfirm
+                                            placement="topRight"
+                                            title="确定删除此组件吗？"
+                                            onConfirm={() => {
+                                              if (item.state === 0 && deviceCount[item.id] === '0') {
+                                                handleDelete(item);
+                                              } else {
+                                                message.error('产品以发布，无法删除');
+                                              }
+                                            }}
+                                          >
+                                            <Button icon="delete" type="link">
+                                              删除
+                                            </Button>
+                                          </Popconfirm>
+                                        </Menu.Item>
+                                      ) : (
+                                        <Menu.Item key="2">
+                                          <Tooltip placement="bottom" title='存在设备，无法删除'>
+                                            <Button icon="stop" type="link">
+                                              禁用
+                                            </Button>
+                                          </Tooltip>
+                                        </Menu.Item>
+                                      )
+                                    ) : (
                                       <Menu.Item key="2">
-                                        <Popconfirm
-                                          placement="topRight"
-                                          title="确定删除此组件吗？"
-                                          onConfirm={() => {
-                                            if (item.state === 0 && deviceCount[item.id] === '0') {
-                                              handleDelete(item);
-                                            } else {
-                                              message.error('产品以发布，无法删除');
-                                            }
-                                          }}
-                                        >
-                                          <Button icon="delete" type="link">
-                                            删除
+                                        <Tooltip placement="bottom" title='该产品已发布，无法删除'>
+                                          <Button icon="stop" type="link">
+                                            禁用
                                           </Button>
-                                        </Popconfirm>
+                                        </Tooltip>
                                       </Menu.Item>
                                     )}
                                   </Menu>

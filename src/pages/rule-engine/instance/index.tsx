@@ -158,7 +158,7 @@ const RuleInstanceList: React.FC<Props> = props => {
             setDeviceAlarm(data);
             setSaveAlarmVisible(true);
           } else {
-            message.error("告警相关设备产品不存在。");
+            message.error("告警相关产品不存在。");
           }
         })
         .catch(() => {

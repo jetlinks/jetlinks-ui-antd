@@ -28,11 +28,12 @@ const Add = (props: Props) => {
                 tenantId: data?.id,
                 assetType: 'product',
                 not: true,
+                memberId: props.user,
             })
         },
         pageIndex: 0,
         pageSize: 10,
-    }
+    };
     const [searchParam, setSearchParam] = useState<any>(initSearch);
     const handleSearch = (params: any) => {
         const tempParam = { ...searchParam, ...params, };
@@ -51,9 +52,9 @@ const Add = (props: Props) => {
             setList(resp);
             setLoading(false);
         });
-    }
+    };
     useEffect(() => {
-        handleSearch(searchParam)
+        handleSearch(searchParam);
         service.member.query(data.id, {}).subscribe(resp => {
             setUserList(resp.data);
         });
@@ -71,13 +72,14 @@ const Add = (props: Props) => {
                     assetIdList: selectedAssetsId,
                     allPermission: true,
                 }));
+
                 // if (checkedUserList.length === 0) {
                 //     message.error('请选择成员');
                 //     setLoading(false);
                 // } else {
                 service.assets.bind(data.id, bindData).subscribe(() => {
                     setLoading(false);
-                    message.success('添加成功')
+                    message.success('添加成功');
                     props.close();
                 });
                 // }
@@ -85,8 +87,8 @@ const Add = (props: Props) => {
             setLoading(false);
 
         });
+    };
 
-    }
     const rowSelection = {
         onChange: (selectedRowKeys: any[], selectedRows: any[]) => {
             // selectedAssetsId = selectedRowKeys;
@@ -103,10 +105,10 @@ const Add = (props: Props) => {
         }, {
             title: '名称',
             dataIndex: 'name'
-        }]
+        }];
     return (
         <Drawer
-            title="添加产品资产"
+            title="添加产品"
             visible
             width='70VW'
             onClose={() => props.close()}
@@ -125,7 +127,6 @@ const Add = (props: Props) => {
                     })(
                         <Select
                             allowClear
-                            value={checkedUserList}
                             mode="tags"
                             placeholder="选择成员"
                             onChange={(value: string[]) => { setCheckedUserList(value) }}
@@ -140,7 +141,7 @@ const Add = (props: Props) => {
             <Divider />
             <SearchForm
                 search={(searchData: any) => {
-                    setLoading(true)
+                    setLoading(true);
                     handleSearch({ terms: searchData });
                 }}
                 formItems={[
@@ -201,5 +202,5 @@ const Add = (props: Props) => {
             </div>
         </Drawer>
     )
-}
+};
 export default Form.create<Props>()(Add);

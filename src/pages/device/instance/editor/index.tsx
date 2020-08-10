@@ -16,6 +16,7 @@ import Gateway from './detail/gateway';
 import Alarm from '@/pages/device/alarm';
 import Visualization from '../../visualization';
 import {getWebsocket} from "@/layouts/GlobalWebSocket";
+import Shadow from "@/pages/device/instance/editor/detail/Shadow";
 
 interface Props {
   dispatch: Dispatch;
@@ -71,6 +72,10 @@ const Editor: React.FC<Props> = props => {
     {
       key: 'visualization',
       tab: '可视化',
+    },
+    {
+      key: 'shadow',
+      tab: '设备影子',
     },
   ];
 
@@ -232,6 +237,7 @@ const Editor: React.FC<Props> = props => {
     alarm: <Alarm target="device" productId={data.productId} productName={data.productName} targetId={data.id}
                   metaData={data.metadata}
                   name={data.name}/>,
+    shadow: <Shadow deviceId={data.id}/>,
     visualization: <Visualization
       type="device"
       target={data.id}
@@ -305,7 +311,7 @@ const Editor: React.FC<Props> = props => {
         tabActiveKey={activeKey}
         onTabChange={(key: string) => {
           if (!data.metadata) {
-            message.error('请检查设备产品物模型');
+            message.error('请检查产品物模型');
             return;
           }
           setActiveKey(key);

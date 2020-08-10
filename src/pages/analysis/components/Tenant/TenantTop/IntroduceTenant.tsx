@@ -233,7 +233,7 @@ const IntroduceTenant = ({}: {}) => {
                 }}/>
               </Tooltip>
             }
-            total={<AutoHide title={numeral(deviceCount.online).format('0,0')} style={{width: '98%'}}/>}
+            total={<AutoHide title={numeral(deviceCount.onlineCount).format('0,0')} style={{width: '98%'}}/>}
             footer={
               <div style={{whiteSpace: 'nowrap', overflow: 'hidden'}}>
                 <div style={{float: 'left', width: '50%'}}>

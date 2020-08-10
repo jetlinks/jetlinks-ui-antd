@@ -2,6 +2,8 @@ import React, {useEffect, useState} from 'react';
 import Form from 'antd/es/form';
 import {FormComponentProps} from 'antd/lib/form';
 import {Modal} from 'antd';
+import 'ace-builds';
+import 'ace-builds/webpack-resolver';
 import AceEditor from "react-ace";
 import 'ace-builds/src-noconflict/mode-json';
 import 'ace-builds/src-noconflict/snippets/json';
@@ -34,14 +36,14 @@ const MetaData: React.FC<Props> = props => {
       okText='导出模型文件'
       cancelText="取消"
       onOk={() => {
-        downloadObject(JSON.parse(props.data), `设备产品-物模型`);
+        downloadObject(JSON.parse(props.data), `产品-物模型`);
       }}
       onCancel={() => props.close()}
     >
       <div style={{background: 'rgb(236, 237, 238)'}}>
         <p style={{padding: 10}}>
           物模型是对设备在云端的功能描述，包括设备的属性、服务和事件。物联网平台通过定义一种物的描述语言来描述物模型，称之为 TSL（即 Thing Specification Language），采用 JSON 格式，您可以根据
-          TSL 组装上报设备的数据。您可以导出完整物模型，用于云端应用开发；您也可以只导出精简物模型，配合设备端 SDK 实现设备开发。
+          TSL 组装上报设备的数据。您可以导出完整物模型，用于云端应用开发。
         </p>
       </div>
       <div style={{border: '1px solid #E9E9E9', marginTop: 20}}>

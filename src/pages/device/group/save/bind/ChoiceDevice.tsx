@@ -84,7 +84,7 @@ const ChoiceDevice: React.FC<Props> = props => {
       ellipsis: true,
     },
     {
-      title: '设备产品',
+      title: '产品名称',
       dataIndex: 'productName',
       ellipsis: true,
     },

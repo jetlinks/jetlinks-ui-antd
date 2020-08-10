@@ -88,8 +88,8 @@ const Export: React.FC<Props> = props => {
       }}
     >
       <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
-        <Form.Item key="productId" label="设备产品">
-          <Select placeholder="请选择设备产品" defaultValue={props.productId}
+        <Form.Item key="productId" label="产品">
+          <Select placeholder="请选择产品" defaultValue={props.productId}
                   disabled={!!props.productId}
                   onChange={(event: string) => {
                     setProduct(event);
