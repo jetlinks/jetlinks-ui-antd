@@ -105,6 +105,10 @@ const Status: React.FC<Props> = props => {
 
               if (item.data.value?.formatValue && typeof item.data.value?.formatValue === 'object') {
                 propertyData[item.data.value.property].formatValue = item.data.value?.formatValue ? JSON.stringify(item.data.value.formatValue) : '/';
+              } else if (propertyData[item.data.value.property].type === 'int' || propertyData[item.data.value.property].type === 'float'
+                || propertyData[item.data.value.property].type === 'double' || propertyData[item.data.value.property].type === 'long') {
+                propertyData[item.data.value.property].formatValue = item.data.value?.formatValue ? item.data.value.formatValue : '/';
+                propertyData[item.data.value.property].value = item.data.value?.value ? item.data.value.value : 0;
               } else if (item.data.value?.formatValue) {
                 propertyData[item.data.value.property].formatValue = item.data.value?.formatValue ? item.data.value.formatValue : '/';
               } else {
@@ -172,6 +176,10 @@ const Status: React.FC<Props> = props => {
 
           if (dataValue?.formatValue && typeof dataValue?.formatValue === 'object') {
             propertyData[dataValue.property].formatValue = dataValue?.formatValue ? JSON.stringify(dataValue.formatValue) : '/';
+          } else if (propertyData[dataValue.property].type === 'int' || propertyData[dataValue.property].type === 'float'
+            || propertyData[dataValue.property].type === 'double' || propertyData[dataValue.property].type === 'long') {
+            propertyData[dataValue.property].formatValue = dataValue?.formatValue ? dataValue.formatValue : '/';
+            propertyData[dataValue.property].value = dataValue?.value ? dataValue.value : 0;
           } else if (dataValue?.formatValue) {
             propertyData[dataValue.property].formatValue = dataValue?.formatValue ? dataValue.formatValue : '/';
           } else {
@@ -396,7 +404,11 @@ const Status: React.FC<Props> = props => {
                                   <Tooltip placement="top" title='设置属性至设备'>
                                     <Icon title='编辑' type="edit" onClick={() => {
                                       setUpdateProperties(true);
-                                      item.formatValue = propertyData[item.id]?.formatValue || '/';
+                                      if (propertyData[item.id].value) {
+                                        item.formatValue = propertyData[item.id]?.value || 0;
+                                      } else {
+                                        item.formatValue = propertyData[item.id]?.formatValue || '/';
+                                      }
                                       setUpdatePropertiesData(item);
                                     }}/>
                                   </Tooltip>
