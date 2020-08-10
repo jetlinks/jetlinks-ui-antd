@@ -9,6 +9,7 @@ import apis from '@/services';
 import SearchForm from '@/components/SearchForm';
 import {RuleInstanceItem} from './data.d';
 import Save from './save';
+import Detail from './save/detail';
 import SqlRuleSave from '@/pages/rule-engine/sqlRule/save/index';
 import cardStyles from "@/pages/device/product/index.less";
 import DeviceAlarm from "@/pages/rule-engine/instance/img/DeviceAlarm.png";
@@ -28,9 +29,11 @@ interface State {
   data: any;
   searchParam: any;
   saveVisible: boolean;
+  detailVisible: boolean,
   current: Partial<RuleInstanceItem>;
   deviceAlarm: any;
   deviceMateData: string;
+  detailData: any;
 }
 
 const RuleInstanceList: React.FC<Props> = props => {
@@ -47,13 +50,17 @@ const RuleInstanceList: React.FC<Props> = props => {
       }
     },
     saveVisible: false,
+    detailVisible: false,
     current: {},
     deviceAlarm: {},
     deviceMateData: "",
+    detailData: {},
   };
 
   const [searchParam, setSearchParam] = useState(initState.searchParam);
   const [saveVisible, setSaveVisible] = useState(initState.saveVisible);
+  const [detailVisible, setDetailVisible] = useState(initState.detailVisible);
+  const [detailData, setDetailData] = useState(initState.detailData);
   const [saveSqlRuleVisible, setSaveSqlRuleVisible] = useState(false);
   const [saveAlarmVisible, setSaveAlarmVisible] = useState(false);
   const [current, setCurrent] = useState(initState.current);
@@ -279,7 +286,9 @@ const RuleInstanceList: React.FC<Props> = props => {
                               <Icon
                                 type="eye"
                                 onClick={() => {
-                                  message.warn('该功能规划中，敬请期待');
+                                  setDetailVisible(true);
+                                  setDetailData(item);
+                                  // message.warn('该功能规划中，敬请期待');
                                 }}
                               />
                             </Tooltip>,
@@ -405,7 +414,15 @@ const RuleInstanceList: React.FC<Props> = props => {
           }}
         />
       )}
-
+      {detailVisible && (
+        <Detail
+          data={detailData}
+          close={() => {
+            setDetailVisible(false);
+            setDetailData({});
+          }}
+        />
+      )}
       {saveSqlRuleVisible && (
         <SqlRuleSave
           data={current}
