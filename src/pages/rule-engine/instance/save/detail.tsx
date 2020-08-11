@@ -197,6 +197,7 @@ const Detail: React.FC<Props> = props => {
   }
 
   useEffect(() => {
+    // console.log(props.data)
     getNode(props.data.id as string);
     getDataLogs(searchParam);
     getDataEvents(searchParam);
@@ -254,7 +255,7 @@ const Detail: React.FC<Props> = props => {
   return (
     <Modal width="1000px"
            visible
-           title="测试告警"
+           title={`${props.data.name}日志`}
            onCancel={() => props.close()}
            onOk={() => props.close()}
     >
