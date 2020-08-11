@@ -322,7 +322,7 @@ const Authorization: React.FC<Props> = props => {
               <Select.Option value="all">全部</Select.Option>
               <Select.Option value="default">默认</Select.Option>
               <Select.Option value="system">系统</Select.Option>
-              <Select.Option value="biz">业务功能</Select.Option>
+              <Select.Option value="business">业务功能</Select.Option>
               <Select.Option value="open-api">OpenAPI</Select.Option>
             </Select>
             <Input.Search
@@ -455,10 +455,10 @@ const Authorization: React.FC<Props> = props => {
               permissionType !== 'all'
                 ? searchText.length > 0
                   ? JSON.parse(JSON.stringify(permissionList))
-                    .filter((item: any) => (item.properties || {}).type === permissionType)
+                    .filter((item: any) => ((item.properties || {}).type || []).includes(permissionType))
                     .filter((item: any) => item.name.indexOf(searchText) > -1)
                   : JSON.parse(JSON.stringify(permissionList)).filter(
-                    (item: any) => (item.properties || {}).type === permissionType,
+                    (item: any) => ((item.properties || {}).type || []).includes(permissionType),
                   )
                 : searchText.length > 0
                   ? JSON.parse(JSON.stringify(permissionList)).filter(
