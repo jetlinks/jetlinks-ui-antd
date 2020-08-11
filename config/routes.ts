@@ -120,7 +120,7 @@ export const routes = [
                         routes: [
                             {
                                 path: '/device/product',
-                                name: '产品管理',
+                                name: '产品',
                                 icon: 'laptop',
                                 iconfont: 'icon-shebei',
                                 tenant: ['admin', 'member'],
@@ -147,7 +147,7 @@ export const routes = [
                             },
                             {
                                 path: '/device/instance',
-                                name: '设备管理',
+                                name: '设备',
                                 icon: 'desktop',
                                 tenant: ['admin', 'member'],
                                 iconfont: 'icon-shebei1',
@@ -164,7 +164,7 @@ export const routes = [
                             },
                             {
                                 path: '/device/group',
-                                name: '设备分组',
+                                name: '分组',
                                 icon: 'gold',
                                 tenant: ['admin', 'member'],
                                 authority: ['device-group', 'admin'],
@@ -182,7 +182,7 @@ export const routes = [
                             },
                             {
                                 path: '/device/gateway',
-                                name: '子设备管理',
+                                name: '网关',
                                 icon: 'global',
                                 tenant: ['admin', 'member'],
                                 iconfont: 'icon-Group',
