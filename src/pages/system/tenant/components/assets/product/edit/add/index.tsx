@@ -1,4 +1,4 @@
-import { Form, Drawer, Select, Divider, Button, message, Checkbox } from "antd";
+import { Form, Drawer, Select, Divider, Button, message } from "antd";
 import React, { useState, useEffect } from "react";
 import { ListData } from "@/services/response";
 import Service from "@/pages/system/tenant/service";
@@ -18,7 +18,7 @@ const Add = (props: Props) => {
     const [list, setList] = useState<ListData<any>>();
     const [loading, setLoading] = useState<boolean>(true);
     const [userList, setUserList] = useState();
-    const { data, form: { getFieldDecorator, validateFields } } = props;
+    const { data, form: { validateFields } } = props;
     const [checkedUserList, setCheckedUserList] = useState<string[]>(props.user ? [props.user] : []);
     const [selectedAssetsId, setSelectedAssetsId] = useState<string[]>([]);
 

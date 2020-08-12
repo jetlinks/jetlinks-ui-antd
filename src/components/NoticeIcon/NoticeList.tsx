@@ -1,4 +1,4 @@
-import { Avatar, List } from 'antd';
+import { List } from 'antd';
 
 import React from 'react';
 import classNames from 'classnames';
@@ -55,13 +55,13 @@ const NoticeList: React.SFC<NoticeIconTabProps> = ({
             [styles.read]: item.read,
           });
           // eslint-disable-next-line no-nested-ternary
-          const leftIcon = item.avatar ? (
-            typeof item.avatar === 'string' ? (
-              <Avatar className={styles.avatar} src={item.avatar} />
-            ) : (
-                <span className={styles.iconElement}>{item.avatar}</span>
-              )
-          ) : null;
+          // const leftIcon = item.avatar ? (
+          //   typeof item.avatar === 'string' ? (
+          //     <Avatar className={styles.avatar} src={item.avatar} />
+          //   ) : (
+          //       <span className={styles.iconElement}>{item.avatar}</span>
+          //     )
+          // ) : null;
 
           return (
             <List.Item
@@ -71,7 +71,7 @@ const NoticeList: React.SFC<NoticeIconTabProps> = ({
             >
               <List.Item.Meta
                 className={styles.meta}
-                avatar={leftIcon}
+                // avatar={leftIcon}
                 title={
                   <div className={styles.title}>
                     {item.title}

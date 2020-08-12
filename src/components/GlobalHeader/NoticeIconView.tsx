@@ -12,7 +12,7 @@ import { getWebsocket } from '@/layouts/GlobalWebSocket';
 import Service from '@/pages/account/notification/service';
 import encodeQueryParam from '@/utils/encodeParam';
 import { router } from 'umi';
-import { debounceTime, throttleTime, windowCount, windowTime } from 'rxjs/operators';
+import { throttleTime, } from 'rxjs/operators';
 
 export interface GlobalHeaderRightProps extends ConnectProps {
   notices?: NoticeItem[];
