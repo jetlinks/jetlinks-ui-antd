@@ -1,4 +1,4 @@
-import { Form, Drawer, Select, Divider, Button, message } from "antd";
+import { Form, Drawer, Select, Divider, Button, message, Checkbox } from "antd";
 import React, { useState, useEffect } from "react";
 import { ListData } from "@/services/response";
 import Service from "@/pages/system/tenant/service";
@@ -106,6 +106,8 @@ const Add = (props: Props) => {
             title: '名称',
             dataIndex: 'name'
         }];
+    const [selectMode, setSelectMode] = useState<'tags' | 'default'>('tags');
+    const [checked, setChecked] = useState(checkedUserList);
     return (
         <Drawer
             title="添加产品"
@@ -118,23 +120,54 @@ const Add = (props: Props) => {
                 <Form.Item label="选择成员"
                     labelCol={{ xl: 2, xs: 4, lg: 3, md: 3 }}
                     wrapperCol={{ xl: 22, xs: 20, lg: 21, md: 21 }}>
-                    {getFieldDecorator('checkUser', {
+                    {/* {getFieldDecorator('checkUser', {
                         rules: [{
                             required: true,
                             message: '请选择成员'
                         }],
                         initialValue: checkedUserList
-                    })(
-                        <Select
-                            allowClear
-                            mode="tags"
-                            placeholder="选择成员"
-                            onChange={(value: string[]) => { setCheckedUserList(value) }}
-                            style={{ width: '100%', marginBottom: 10 }}
-                        >
-                            {(userList || []).map((item: any) => <Select.Option key={item.id} value={item.userId}>{item.name}</Select.Option>)}
-                        </Select>
-                    )}
+                    })( */}
+                    <Select
+                        value={checked}
+                        allowClear
+                        mode={selectMode}
+                        placeholder="选择成员"
+                        onInputKeyDown={(e) => { e.preventDefault() }}
+                        onChange={(value: string[]) => {
+                            setCheckedUserList(value);
+                            if (value.includes('*')) {
+                                setSelectMode('default');
+                                setChecked(['*']);
+                            } else {
+                                setChecked(value);
+                                setSelectMode('tags');
+                            }
+                        }}
+                        style={{ width: '100%', marginBottom: 10 }}
+                    // dropdownRender={menu => (
+                    //     <div>
+                    //         {menu}
+                    //         <Divider style={{ margin: '2px 0' }} />
+                    //         <div
+                    //             style={{ padding: '4px 8px 8px 8px', cursor: 'pointer' }}
+                    //             onMouseDown={e => e.preventDefault()}
+                    //         >
+                    //             <Checkbox
+                    //                 checked={checkAll}
+                    //                 onChange={e => {
+                    //                     setCheckAll(e.target.checked);
+                    //                     console.log(e, 'eeee');
+                    //                     message.success(e);
+                    //                 }}>
+                    //                 全选</Checkbox>
+                    //         </div>
+                    //     </div>
+                    // )}
+                    >
+                        <Select.Option value="*">全体成员</Select.Option>
+                        {(userList || []).map((item: any) => <Select.Option key={item.id} value={item.userId}>{item.name}</Select.Option>)}
+                    </Select>
+                    {/* )} */}
 
                 </Form.Item>
             </Form>
