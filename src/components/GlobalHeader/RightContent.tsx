@@ -1,5 +1,5 @@
-import { Icon, Tooltip, Tag } from 'antd';
-import React from 'react';
+import { Icon, Tooltip, Tag, message } from 'antd';
+import React, { useEffect } from 'react';
 import { connect } from 'dva';
 // import { formatMessage } from 'umi-plugin-react/locale';
 import { ConnectProps, ConnectState } from '@/models/connect';
@@ -9,6 +9,7 @@ import Avatar from './AvatarDropdown';
 // import SelectLang from '../SelectLang';
 import styles from './index.less';
 import NoticeIconView from './NoticeIconView';
+import encodeQueryParam from '@/utils/encodeParam';
 
 export type SiderTheme = 'light' | 'dark';
 export interface GlobalHeaderRightProps extends ConnectProps {
@@ -23,13 +24,22 @@ const ENVTagColor = {
 };
 
 const GlobalHeaderRight: React.SFC<GlobalHeaderRightProps> = props => {
-  const { theme, layout } = props;
+  const { theme, layout, dispatch } = props;
   let className = styles.right;
 
   if (theme === 'dark' && layout === 'topmenu') {
     className = `${styles.right}  ${styles.dark}`;
   }
-
+  const fetchData = () => {
+    if (dispatch) {
+      dispatch({
+        type: 'global/fetchNotices',
+        payload: encodeQueryParam({
+          terms: { state: 'unread' }
+        })
+      });
+    }
+  }
   return (
     <div className={className}>
       {/* <HeaderSearch
@@ -62,7 +72,9 @@ const GlobalHeaderRight: React.SFC<GlobalHeaderRightProps> = props => {
           <Icon type="question-circle-o" />
         </a>
       </Tooltip>
-      <NoticeIconView />
+      <span onClick={() => { fetchData() }}>
+        <NoticeIconView />
+      </span>
       <Avatar />
       {REACT_APP_ENV && <Tag color={ENVTagColor[REACT_APP_ENV]}>{REACT_APP_ENV}</Tag>}
       {/* <SelectLang className={styles.action} /> */}
