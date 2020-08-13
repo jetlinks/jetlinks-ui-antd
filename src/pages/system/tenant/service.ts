@@ -42,6 +42,14 @@ class Service extends BaseService<TenantItem>{
                 filter(resp => resp.status === 200),
                 map(resp => resp.result)
             )),
+        queryNoPaging: (id: string, params: any) => defer(() => from(
+            request(`/jetlinks/tenant/${id}/members/_query/no-paging?paging=false`, {
+                method: 'GET',
+                params
+            })).pipe(
+                filter(resp => resp.status === 200),
+                map(resp => resp.result)
+            )),
         bind: (id: string, data: { name: string, userId: string, admin: boolean }[]) => defer(
             () => from(
                 request(`/jetlinks/tenant/${id}/members/_bind`, {
@@ -121,6 +129,14 @@ class Service extends BaseService<TenantItem>{
             )),
         product: (params: any) => defer(() => from(
             request(`/jetlinks/device-product/_query`, {
+                method: 'GET',
+                params
+            })).pipe(
+                filter(resp => resp.status === 200),
+                map(resp => resp.result)
+            )),
+        productNopaging: (params: any) => defer(() => from(
+            request(`/jetlinks/device-product/_query/no-paging?paging=false`, {
                 method: 'GET',
                 params
             })).pipe(
