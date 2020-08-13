@@ -5,6 +5,7 @@ import { Card, Divider, message, Tag, Modal } from "antd";
 import SearchForm from "@/components/SearchForm";
 import ProTable from "@/pages/system/permission/component/ProTable";
 import Service from "./service";
+import moment from 'moment';
 import encodeQueryParam from "@/utils/encodeParam";
 
 interface Props {
@@ -54,20 +55,32 @@ const Notification: React.FC<Props> = (props) => {
     const columns: any[] = [
         {
             title: '主题',
-            dataIndex: 'topicName'
+            dataIndex: 'topicName',
+            align: 'center'
         },
         {
             title: '消息',
-            dataIndex: 'message'
+            dataIndex: 'message',
+            align: 'center'
+        },
+        {
+          title: '通知时间',
+          dataIndex: 'notifyTime',
+          align: 'center',
+          sorter: true,
+          defaultSortOrder: 'descend',
+          render:(text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss')
         },
         {
             title: '状态',
             dataIndex: 'state',
+            align: 'center',
             render: (text: any) => <Tag color={text.value === 'read' ? '#87d068' : '#f50'}>{text.text}</Tag>
         },
 
         {
             title: '操作',
+            align: 'center',
             // dataIndex: 'state',
             render: (_, record: any) => {
                 const state = record.state;

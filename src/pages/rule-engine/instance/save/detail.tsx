@@ -11,7 +11,7 @@ import { getWebsocket } from '@/layouts/GlobalWebSocket';
 const { TabPane } = Tabs;
 
 
-interface Props{
+interface Props {
   data: Partial<RuleInstanceItem>
   close: Function
 }
@@ -23,28 +23,31 @@ interface State {
   realTimeDataEvents: any[]
   dataLogs: any[]
   dataEvents: any[]
-  createTime: ''
 }
-
 const columnsRealTime: ColumnProps<RuleInstanceItem>[] = [
   {
-    key: 'time',
     title: '时间',
     dataIndex: 'time',
     align: 'center',
+    width: 200,
     render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss')
   },
   {
-    key: 'message',
     title: '内容',
     align: 'center',
-    dataIndex: 'message'
+    width: 150,
+    ellipsis: true,
+    dataIndex: 'message',
+    render: (message: string) => {
+      return (
+        <Tooltip placement="topRight" arrowPointAtCenter title={message}>{message}</Tooltip>
+      )
+    }
   }
 ]
 
 const columns: ColumnProps<RuleInstanceItem>[] = [
   {
-    key: 'time',
     title: '时间',
     dataIndex: 'time',
     align: 'center',
@@ -52,13 +55,11 @@ const columns: ColumnProps<RuleInstanceItem>[] = [
     render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
   },
   {
-    key: 'nodeId',
     title: '节点',
     align: 'center',
     dataIndex: 'nodeId'
   },
   {
-    key: 'level',
     title: '水平',
     align: 'center',
     dataIndex: 'level',
@@ -77,7 +78,6 @@ const columns: ColumnProps<RuleInstanceItem>[] = [
     }
   },
   {
-    key: 'message',
     title: '内容',
     align: 'center',
     ellipsis: true,
@@ -85,7 +85,7 @@ const columns: ColumnProps<RuleInstanceItem>[] = [
     dataIndex: 'message',
     render: (message: string) => {
       return (
-        <Tooltip title={message}>{message}</Tooltip>
+        <Tooltip placement="topRight" arrowPointAtCenter title={message}>{message}</Tooltip>
       )
     }
   }
@@ -93,7 +93,6 @@ const columns: ColumnProps<RuleInstanceItem>[] = [
 
 const columnsEvents: ColumnProps<RuleInstanceItem>[] = [
   {
-    key: 'time',
     title: '时间',
     dataIndex: 'time',
     width: 200,
@@ -101,13 +100,11 @@ const columnsEvents: ColumnProps<RuleInstanceItem>[] = [
     render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
   },
   {
-    key: 'nodeId',
     title: '节点',
     align: 'center',
     dataIndex: 'nodeId'
   },
   {
-    key: 'message',
     title: '内容',
     width: 200,
     align: 'center',
@@ -115,14 +112,14 @@ const columnsEvents: ColumnProps<RuleInstanceItem>[] = [
     dataIndex: 'message',
     render: (message: string) => {
       return (
-        <Tooltip title={message}>{message}</Tooltip>
+        <Tooltip placement="topRight" arrowPointAtCenter title={message}>{message}</Tooltip>
       )
     }
   }
 ]
 const Detail: React.FC<Props> = props => {
 
-  const nodeMap: any = new Map();
+  let nodeMap = new Map();
 
   const initState: State = {
     searchParam: {
@@ -132,7 +129,6 @@ const Detail: React.FC<Props> = props => {
         field: "createTime"
       }
     },
-    createTime: '',
     realTimeDataLogs: [],
     realTimeDataEvents: [],
     dataLogs: [],
@@ -145,22 +141,25 @@ const Detail: React.FC<Props> = props => {
   const [dataLogs, setDataLogs] = useState(initState.dataLogs);
   const [dataEvents, setDataEvents] = useState(initState.dataEvents);
 
-  const getNode = (instanceId: string) => {
-    if (instanceId !== '') {
-      apis.ruleInstance.node(instanceId, {}).then(resp => {
+  const getNode = new Promise((resolve, reject) => {
+    if (props.data.id as string !== '') {
+      apis.ruleInstance.node(props.data.id as string, {}).then(resp => {
         if (resp.status === 200) {
-          resp.result.forEach((item: { id: any; name: any; }) => {
-            nodeMap.set(item.id, item.name)
-          });
+          resp.result.map((i: any) => {
+            nodeMap.set(i.id, i.name)
+          })
+          resolve();
         }
-      }).catch(() => {
+      }).catch((err) => {
+        reject(err);
       })
     }
-  }
+  })
   const getDataLogs = (params?: any) => {
     const temp = { ...searchParam, ...params };
     setSearchParam(temp);
     apis.ruleInstance.log(props.data.id as string, encodeQueryParam(temp)).then(resp => {
+      // console.log(nodeMap)
       if (resp.status === 200) {
         let datalist: any = [];
         resp.result.data.map((item: any) => {
@@ -171,7 +170,6 @@ const Detail: React.FC<Props> = props => {
             level: item.level
           })
         });
-        // console.log(datalist)
         setDataLogs(datalist)
       }
     })
@@ -180,11 +178,10 @@ const Detail: React.FC<Props> = props => {
     const temp = { ...searchParam, ...params };
     setSearchParam(temp);
     apis.ruleInstance.event(props.data.id as string, encodeQueryParam(temp)).then(resp => {
+      // console.log(nodeMap)
       if (resp.status === 200) {
         let datalist: any = [];
         resp.result.data.map((item: any) => {
-          // console.log(nodeMap.get(item.nodeId))
-          // console.log(item.nodeId)
           datalist.push({
             time: item.createTime,
             nodeId: nodeMap.get(item.nodeId) || '--',
@@ -197,10 +194,13 @@ const Detail: React.FC<Props> = props => {
   }
 
   useEffect(() => {
-    getNode(props.data.id as string);
-    getDataLogs(searchParam);
-    getDataEvents(searchParam);
+    getNode.then(res => {
+      getDataLogs(searchParam);
+      getDataEvents(searchParam);
+    })
+  }, [])
 
+  useEffect(() => {
     let tempLogs = getWebsocket(
       `rule-engine-realTime-logs${props.data.id}`,
       `/rule-engine/${props.data.id}/*/logger/*`,
@@ -208,20 +208,17 @@ const Detail: React.FC<Props> = props => {
     ).subscribe(
       (resp: any) => {
         const { payload } = resp;
-        let arr: any = {
-          message: payload.message,
-          time: payload.timestamp
-        }
-
-        if(payload.message !== undefined || payload.timestamp !== undefined){
+        if (payload.message !== undefined || payload.timestamp !== undefined) {
+          let arr: any = {
+            message: payload.message,
+            time: payload.timestamp
+          }
           setRealTimeDataLogs(prev => ([arr, ...prev]));
         }
-        if(realTimeDataLogs.length >= 10){
-          // console.log('eeee')
-          setRealTimeDataLogs(prev => ([...prev.slice(0,10)]))
+        if (realTimeDataLogs.length >= 10) {
+          setRealTimeDataLogs(prev => ([...prev.slice(0, 10)]))
         }
-        // console.log(realTimeDataLogs)
-      },
+      }
     )
     let tempEvents = getWebsocket(
       `rule-engine-realTime-events${props.data.id}`,
@@ -230,33 +227,31 @@ const Detail: React.FC<Props> = props => {
     ).subscribe(
       (resp: any) => {
         const { payload } = resp;
-        let arr: any = {
-          message: payload.message,
-          time: payload.timestamp
-        }
-        if(payload.message !== undefined || payload.timestamp !== undefined){
+        if (payload.data !== undefined) {
+          let arr: any = {
+            time: new Date(),
+            message: JSON.stringify(payload.data)
+          }
           setRealTimeDataEvents(prev => ([arr, ...prev]));
         }
-        if(realTimeDataEvents.length >= 10){
-          // console.log('cccc')
-          setRealTimeDataEvents(prev => ([...prev.slice(0,10)]))
+        if (realTimeDataEvents.length >= 10) {
+          setRealTimeDataEvents(prev => ([...prev.slice(0, 10)]))
         }
-        // console.log(realTimeDataEvents)
-      },
+      }
     )
 
     return () => {
       tempLogs && tempLogs.unsubscribe();
       tempEvents && tempEvents.unsubscribe();
     };
-  }, [realTimeDataLogs,realTimeDataEvents])
+  }, [realTimeDataLogs, realTimeDataEvents])
 
   return (
     <Modal width="1000px"
-           visible
-           title="测试告警"
-           onCancel={() => props.close()}
-           onOk={() => props.close()}
+      visible
+      title={`${props.data.name}日志`}
+      onCancel={() => props.close()}
+      onOk={() => props.close()}
     >
       <Tabs defaultActiveKey="1">
         <TabPane tab="运行日志" key="1">
@@ -267,7 +262,7 @@ const Detail: React.FC<Props> = props => {
                   formItems={[
                     {
                       label: '',
-                      key: 'createTime$LIKE'
+                      key: 'createTime$btw'
                     }
                   ]}
                   search={(params: any) => {
@@ -280,7 +275,7 @@ const Detail: React.FC<Props> = props => {
             </div>
             <div className={styles.boxRight}>
               <h4>运行日志：</h4>
-              <Table dataSource={(realTimeDataLogs || {})} rowKey="id" columns={columnsRealTime} pagination={false}/>
+              <Table dataSource={(realTimeDataLogs || {})} rowKey="id" columns={columnsRealTime} pagination={false} />
             </div>
           </div>
         </TabPane>
@@ -292,7 +287,7 @@ const Detail: React.FC<Props> = props => {
                   formItems={[
                     {
                       label: '',
-                      key: 'createTime$LIKE'
+                      key: 'createTime$btw'
                     }
                   ]}
                   search={(params: any) => {
@@ -305,7 +300,7 @@ const Detail: React.FC<Props> = props => {
             </div>
             <div className={styles.boxRight}>
               <h4>运行日志：</h4>
-              <Table dataSource={(realTimeDataEvents || {})} rowKey="id" columns={columnsRealTime} pagination={false}/>
+              <Table dataSource={(realTimeDataEvents || {})} rowKey="id" columns={columnsRealTime} pagination={false} />
             </div>
           </div>
         </TabPane>
