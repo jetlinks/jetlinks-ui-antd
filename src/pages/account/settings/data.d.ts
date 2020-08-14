@@ -6,6 +6,9 @@ export interface UserDetail {
     avatar: string;
     description: string;
     createTime: number;
+    tenants: {
+        tenantId?: string
+    }[];
 }
 
 export interface Notification {

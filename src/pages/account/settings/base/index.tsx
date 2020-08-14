@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styles from './index.less';
-import { Form, Input, Upload, Button, message, Spin } from "antd";
+import { Form, Input, Upload, Button, message, Spin, Select } from "antd";
 import { FormComponentProps } from "antd/lib/form";
 import { UploadOutlined } from "@ant-design/icons";
 import Service from "../service";
@@ -49,7 +49,10 @@ const BaseView: React.FC<Props> = (props) => {
 
     const update = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const data = { ...getFieldsValue(), avatar };
+        const data: any = { ...getFieldsValue(), avatar };
+        if (data && data.mainTenant) {
+            service.setMainTenant(data.mainTenant).subscribe();
+        }
         service.save(data).subscribe(() => {
             message.success('保存成功!');
             if (dispatch) {
@@ -79,6 +82,19 @@ const BaseView: React.FC<Props> = (props) => {
                                 <Input />
                             )}
                         </Form.Item>
+                        {
+                            user.tenants && user.tenants.length > 0 && (
+                                <Form.Item label="主租户">
+                                    {getFieldDecorator('mainTenant', {
+                                        initialValue: user.tenants.find((i: any) => i.mainTenant === true)?.tenantId,
+                                    })(
+                                        <Select allowClear>
+                                            {user.tenants.map((item: any) => <Select.Option key={item.tenantId} value={item.tenantId}>{item.tenantName}</Select.Option>)}
+                                        </Select>
+                                    )}
+                                </Form.Item>
+                            )
+                        }
                         <Form.Item label="邮箱">
                             {getFieldDecorator('email', {
                                 initialValue: user.email,

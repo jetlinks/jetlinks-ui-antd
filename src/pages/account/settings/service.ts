@@ -29,6 +29,13 @@ class Service extends BaseService<UserDetail>{
             map(resp => resp.reuslt)
         ));
 
+    public setMainTenant = (tenant: string) => defer(() => from(
+        request(`/jetlinks/tenant/${tenant}/_main`, {
+            method: 'PUT'
+        })).pipe(
+            map(resp => resp.result)
+        ));
+
     public savePassword = (data: { oldPassword: string, newPassword: string }) => defer(() => from(
         request('/user/passwd', {
             method: 'PUT',
