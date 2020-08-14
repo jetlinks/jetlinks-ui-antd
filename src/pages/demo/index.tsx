@@ -2,35 +2,12 @@ import React, { useEffect } from "react";
 import { Table } from "antd";
 import Service from "../system/tenant/service";
 import encodeQueryParam from "@/utils/encodeParam";
-import { map, flatMap } from "rxjs/operators";
-import { of, from } from "rxjs";
-import { pipeFromArray } from "rxjs/internal/util/pipe";
+import { map, flatMap, toArray, groupBy, mergeMap } from "rxjs/operators";
+import { from } from "rxjs";
 import apis from "@/services";
 
 const Demo = () => {
 
-    const column: any[] = [
-        {
-            dataIndex: 'member',
-            title: '成员',
-        },
-        {
-            dataIndex: 'product',
-            title: '产品'
-        },
-        {
-            dataIndex: 'online',
-            title: '设备在线'
-        },
-        {
-            dataIndex: 'offline',
-            title: '设备离线'
-        },
-        {
-            dataIndex: 'log',
-            title: '告警记录'
-        }
-    ];
     const service = new Service('');
     useEffect(() => {
         // todo 查询租户
@@ -38,8 +15,6 @@ const Demo = () => {
             .pipe(// 
                 flatMap(from),
                 flatMap((i: any) => {
-                    // [1, 2, 3]
-                    console.log(i);
                     return service.assets.productNopaging(encodeQueryParam({
                         terms: {
                             id$assets: JSON.stringify({
@@ -49,11 +24,31 @@ const Demo = () => {
                             }),
                         }
                     })).pipe(
-                        map(t => ({ i: i, data: t }))
+                        flatMap(from),
+                        flatMap((t: any) => {
+                            return service.assets.instanceNopaging(
+                                encodeQueryParam({
+                                    terms: {
+                                        productId: t.id,
+                                        id$assets: JSON.stringify({
+                                            tenantId: '83fb056bdf5515704852a60ae4f7cd3d',
+                                            assetType: 'device',
+                                            memberId: i.userId,
+                                        }),
+                                    }
+                                })).pipe(
+                                    groupBy(item => item.state),
+                                    mergeMap(val => val.pipe(toArray())),
+                                    map(p => ({ t: t, list: p }))
+                                )
+                        }),
+                        toArray(),
+                        map(a => ({ i: i, data: a })),
                     )
                 }),
+                toArray(),
             ).subscribe((result) => {
-                console.log(result, 'result');
+                console.log(JSON.stringify(result), 'result');
             });
 
         apis.deviceInstance.count({})
@@ -74,8 +69,8 @@ const Demo = () => {
 
     const columns = [
         {
-            title: 'Name',
-            dataIndex: 'name',
+            title: '成员',
+            dataIndex: 'member',
             render: (text, row, index) => {
                 if (index < 4) {
                     return <a>{text}</a>;
@@ -89,14 +84,14 @@ const Demo = () => {
             },
         },
         {
-            title: 'Age',
-            dataIndex: 'age',
+            title: '产品',
+            dataIndex: 'product',
             render: renderContent,
         },
         {
-            title: 'Home phone',
+            title: '设备在线',
             colSpan: 2,
-            dataIndex: 'tel',
+            dataIndex: 'online',
             render: (value, row, index) => {
                 const obj = {
                     children: value,
@@ -118,14 +113,14 @@ const Demo = () => {
             },
         },
         {
-            title: 'Phone',
+            title: '设备离线',
             colSpan: 0,
-            dataIndex: 'phone',
+            dataIndex: 'offline',
             render: renderContent,
         },
         {
-            title: 'Address',
-            dataIndex: 'address',
+            dataIndex: 'log',
+            title: '告警记录',
             render: renderContent,
         },
     ];
@@ -133,41 +128,41 @@ const Demo = () => {
     const data = [
         {
             key: '1',
-            name: 'John Brown',
-            age: 32,
-            tel: '0571-22098909',
+            member: '测试555',
+            product: '演示设备',
+            online: 324,
             phone: 18889898989,
             address: 'New York No. 1 Lake Park',
         },
         {
             key: '2',
-            name: 'Jim Green',
-            tel: '0571-22098333',
-            phone: 18889898888,
+            member: 'pro',
+            product: '演示UDP',
+            online: 188,
             age: 42,
             address: 'London No. 1 Lake Park',
         },
         {
             key: '3',
-            name: 'Joe Black',
-            age: 32,
-            tel: '0575-22098909',
+            member: 'hhh',
+            product: 'NB-IOT-v1',
+            online: 243,
             phone: 18900010002,
             address: 'Sidney No. 1 Lake Park',
         },
         {
             key: '4',
-            name: 'Jim Red',
-            age: 18,
-            tel: '0575-22098909',
+            member: '测试租户1',
+            product: 'TCP test',
+            online: 421,
             phone: 18900010002,
             address: 'London No. 2 Lake Park',
         },
         {
             key: '5',
-            name: 'Jake White',
-            age: 18,
-            tel: '0575-22098909',
+            member: '"特使通55"',
+            product: '测试网关',
+            online: 134,
             phone: 18900010002,
             address: 'Dublin No. 2 Lake Park',
         },

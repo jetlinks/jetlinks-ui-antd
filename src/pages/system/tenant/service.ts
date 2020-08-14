@@ -151,6 +151,14 @@ class Service extends BaseService<TenantItem>{
                 filter(resp => resp.status === 200),
                 map(resp => resp.result)
             )),
+        instanceNopaging: (params: any) => defer(() => from(
+            request(`/jetlinks/device-instance/_query/no-paging?paging=false`, {
+                method: 'GET',
+                params
+            })).pipe(
+                filter(resp => resp.status === 200),
+                map(resp => resp.result)
+            )),
         protocol: (params: any) => defer(() => from(
             request(`/jetlinks/protocol/_query`, {
                 method: 'GET',
