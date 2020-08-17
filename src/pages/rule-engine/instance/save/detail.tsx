@@ -274,7 +274,7 @@ const Detail: React.FC<Props> = props => {
               <Table dataSource={(dataLogs || {})} rowKey="id" columns={columns} showHeader={false} />
             </div>
             <div className={styles.boxRight}>
-              <h4>运行日志：</h4>
+              <h4>实时日志：</h4>
               <Table dataSource={(realTimeDataLogs || {})} rowKey="id" columns={columnsRealTime} pagination={false} />
             </div>
           </div>
@@ -299,7 +299,7 @@ const Detail: React.FC<Props> = props => {
               <Table dataSource={(dataEvents || {})} rowKey="id" columns={columnsEvents} showHeader={false} />
             </div>
             <div className={styles.boxRight}>
-              <h4>运行日志：</h4>
+              <h4>实时数据：</h4>
               <Table dataSource={(realTimeDataEvents || {})} rowKey="id" columns={columnsRealTime} pagination={false} />
             </div>
           </div>
