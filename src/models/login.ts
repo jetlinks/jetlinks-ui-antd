@@ -47,7 +47,10 @@ const Model: LoginModelType = {
         setAutz(response.result);
         const tenants = response.result?.user?.tenants;
         if (tenants && tenants[0]) {
-          localStorage.setItem('tenants-admin', response.result?.user?.tenants[0]?.adminMember);
+          localStorage.removeItem('tenants-admin');
+          //找到主租户
+          const temp = (response.result?.user?.tenants || []).find((i: any) => i.mainTenant).adminMember;
+          localStorage.setItem('tenants-admin', temp);
         }
         reloadAuthorized();
         const version = yield call(systemVersion);
