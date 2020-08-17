@@ -64,31 +64,61 @@ const Add = (props: Props) => {
     const bind = () => {
         setLoading(true);
         const bindData: any[] = []
-        validateFields((error) => {
-            if (!error) {
-                checkedUserList.forEach(id => bindData.push({
-                    userId: id,
-                    assetType: 'device',
-                    assetIdList: selectedAssetsId,
-                    allPermission: true,
-                }));
 
-                service.assets.bind(data.id, bindData).subscribe(
-                    () => {
-                        setLoading(false);
-                        message.success('绑定成功');
-                        props.close();
-                    },
-                    () => {
-                        message.error('绑定失败');
-                    },
-                    () => {
-                        setLoading(false);
-                    });
-            }
-            setLoading(false);
+        if (checkedUserList.includes('*')) {
+            (userList || []).forEach((user: any) => bindData.push({
+                userId: user.userId,
+                assetType: 'device',
+                assetIdList: selectedAssetsId,
+                allPermission: true,
+            }))
+        } else {
+            checkedUserList.forEach(id => bindData.push({
+                userId: id,
+                assetType: 'device',
+                assetIdList: selectedAssetsId,
+                allPermission: true,
+            }));
+        }
+        service.assets.bind(data.id, bindData).subscribe(
+            () => {
+                setLoading(false);
+                message.success('绑定成功');
+                props.close();
+            },
+            () => {
+                message.error('绑定失败');
+            },
+            () => {
+                setLoading(false);
+            });
+        setLoading(false);
 
-        });
+        // validateFields((error) => {
+        //     if (!error) {
+        //         checkedUserList.forEach(id => bindData.push({
+        //             userId: id,
+        //             assetType: 'device',
+        //             assetIdList: selectedAssetsId,
+        //             allPermission: true,
+        //         }));
+
+        //         service.assets.bind(data.id, bindData).subscribe(
+        //             () => {
+        //                 setLoading(false);
+        //                 message.success('绑定成功');
+        //                 props.close();
+        //             },
+        //             () => {
+        //                 message.error('绑定失败');
+        //             },
+        //             () => {
+        //                 setLoading(false);
+        //             });
+        //     }
+        //     setLoading(false);
+
+        // });
     }
     const rowSelection = {
         onChange: (selectedRowKeys: any[], selectedRows: any[]) => {
@@ -107,6 +137,8 @@ const Add = (props: Props) => {
             title: '名称',
             dataIndex: 'name'
         }]
+    const [selectMode, setSelectMode] = useState<'tags' | 'default'>('tags');
+    const [checked, setChecked] = useState(checkedUserList);
     return (
         <Drawer
             title="添加设备"
@@ -119,23 +151,31 @@ const Add = (props: Props) => {
                 <Form.Item label="选择成员"
                     labelCol={{ xl: 2, xs: 4, lg: 3, md: 3 }}
                     wrapperCol={{ xl: 22, xs: 20, lg: 21, md: 21 }}>
-                    {getFieldDecorator('checkUser', {
-                        rules: [{
-                            required: true,
-                            message: '请选择成员'
-                        }],
-                        initialValue: checkedUserList
-                    })(
-                        <Select
-                            allowClear
-                            mode="tags"
-                            placeholder="选择成员"
-                            onChange={(value: string[]) => { setCheckedUserList(value) }}
-                            style={{ width: '100%', marginBottom: 10 }}
-                        >
-                            {(userList || []).map((item: any) => <Select.Option key={item.id} value={item.userId}>{item.name}</Select.Option>)}
-                        </Select>
-                    )}
+                    <Select
+                        value={checked}
+                        allowClear
+                        mode={selectMode}
+                        placeholder="选择成员"
+                        onInputKeyDown={(e) => {
+                            e.preventDefault()
+                        }}
+                        onChange={(value: string[]) => {
+                            setCheckedUserList(value);
+                            if (value.includes('*')) {
+                                setSelectMode('default');
+                                setChecked(['*']);
+                            } else {
+                                setChecked(value);
+                                setSelectMode('tags');
+                            }
+                        }}
+                        style={{ width: '100%', marginBottom: 10 }}
+                    >
+                        <Select.Option value="*">全体成员</Select.Option>
+                        {(userList || []).map((item: any) => <Select.Option key={item.id}
+                            value={item.userId}>{item.name}</Select.Option>)}
+                    </Select>
+
                 </Form.Item>
             </Form>
             <Divider />
