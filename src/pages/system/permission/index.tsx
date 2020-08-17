@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { Divider, Card, message, Button, Popconfirm } from 'antd';
+import { Divider, Card, message, Button, Popconfirm, Icon, Upload, Spin } from 'antd';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import styles from '@/utils/table.less';
 import { connect } from 'dva';
@@ -9,6 +9,8 @@ import encodeQueryParam from '@/utils/encodeParam';
 import Save from './Save';
 import SearchForm from '@/components/SearchForm';
 import ProTable from './component/ProTable';
+import apis from '@/services';
+import { downloadObject } from '@/utils/utils';
 // import SettingAutz from "../setting-autz";
 interface Props {
   permission: any;
@@ -43,7 +45,7 @@ const PermissionList: React.FC<Props> = props => {
   const [searchParam, setSearchParam] = useState(initState.searchParam);
   const [saveVisible, setSaveVisible] = useState(initState.saveVisible);
   const [saveLoading, setSaveLoading] = useState(initState.saveLoading);
-
+  const [loading, setLoading] = useState(false);
   const handleSearch = (params?: any) => {
     const temp = { ...searchParam, ...params };
     setSearchParam(temp);
@@ -165,18 +167,60 @@ const PermissionList: React.FC<Props> = props => {
             >
               新建
             </Button>
+            <Button
+              onClick={() => {
+                apis.permission.listNoPaging({}).then((resp) => {
+                  if (resp.status === 200) {
+                    downloadObject(resp.result, '权限数据');
+                    message.success('导出成功');
+                  } else {
+                    message.error('导出错误');
+                  }
+                })
+              }}
+            >
+              <Icon type="export" /> 导出
+            </Button>
+            <Upload
+              showUploadList={false} accept='.json'
+              beforeUpload={(file) => {
+                setLoading(true);
+                const reader = new FileReader();
+                reader.readAsText(file);
+                reader.onload = (result: any) => {
+                  try {
+                    let data = JSON.parse(result.target.result);
+                    apis.permission.add(data).then(resp => {
+                      if (resp.status === 200) {
+                        message.success('导入成功');
+                        setLoading(false);
+                      }
+                    })
+                  } catch (error) {
+                    message.error('导入失败，请重试！');
+                    setLoading(false);
+                  }
+                }
+              }}
+            >
+              <Button>
+                <Icon type="upload" />导入
+            </Button>
+            </Upload>
           </div>
           <div className={styles.StandardTable}>
-            <ProTable
-              loading={props.loading}
-              dataSource={result?.data}
-              columns={columns}
-              rowKey="id"
-              onSearch={(params: any) => {
-                handleSearch(params);
-              }}
-              paginationConfig={result}
-            />
+            <Spin spinning={loading}>
+              <ProTable
+                loading={props.loading}
+                dataSource={result?.data}
+                columns={columns}
+                rowKey="id"
+                onSearch={(params: any) => {
+                  handleSearch(params);
+                }}
+                paginationConfig={result}
+              />
+            </Spin>
           </div>
         </div>
       </Card>
