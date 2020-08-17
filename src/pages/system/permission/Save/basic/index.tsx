@@ -19,6 +19,7 @@ const Basic: React.FC<Props> = (props) => {
         { id: 'system', text: '系统' },
         { id: 'business', text: '业务功能' },
         { id: 'api', text: 'API接口' },
+        { id: 'tenant', text: '多租户' }
     ];
 
     var defaultActionData: PermissionAction[] = [
