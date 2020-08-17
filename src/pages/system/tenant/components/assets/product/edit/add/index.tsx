@@ -1,9 +1,9 @@
-import {Form, Drawer, Select, Divider, Button, message} from "antd";
-import React, {useState, useEffect} from "react";
-import {ListData} from "@/services/response";
+import { Form, Drawer, Select, Divider, Button, message } from "antd";
+import React, { useState, useEffect } from "react";
+import { ListData } from "@/services/response";
 import Service from "@/pages/system/tenant/service";
 import encodeQueryParam from "@/utils/encodeParam";
-import {FormComponentProps} from "antd/es/form";
+import { FormComponentProps } from "antd/es/form";
 import SearchForm from "@/components/SearchForm";
 import ProTable from "@/pages/system/permission/component/ProTable";
 
@@ -19,7 +19,7 @@ const Add = (props: Props) => {
   const [list, setList] = useState<ListData<any>>();
   const [loading, setLoading] = useState<boolean>(true);
   const [userList, setUserList] = useState();
-  const {data, form: {validateFields}} = props;
+  const { data, form: { validateFields } } = props;
   const [checkedUserList, setCheckedUserList] = useState<string[]>(props.user ? [props.user] : []);
   const [selectedAssetsId, setSelectedAssetsId] = useState<string[]>([]);
 
@@ -37,10 +37,10 @@ const Add = (props: Props) => {
   };
   const [searchParam, setSearchParam] = useState<any>(initSearch);
   const handleSearch = (params: any) => {
-    const tempParam = {...searchParam, ...params,};
+    const tempParam = { ...searchParam, ...params, };
     const defaultItem = searchParam.terms;
     const tempTerms = params?.terms;
-    const terms = tempTerms ? {...defaultItem, ...tempTerms} : initSearch;
+    const terms = tempTerms ? { ...defaultItem, ...tempTerms } : initSearch;
     let tempSearch = {};
     if (tempTerms) {
       tempParam.terms = terms;
@@ -65,24 +65,45 @@ const Add = (props: Props) => {
     setLoading(true);
     const bindData: any[] = [];
 
-    validateFields((error) => {
-      if (!error) {
-        checkedUserList.forEach(id => bindData.push({
-          userId: id,
-          assetType: 'product',
-          assetIdList: selectedAssetsId,
-          allPermission: true,
-        }));
-
-        service.assets.bind(data.id, bindData).subscribe(() => {
-          setLoading(false);
-          message.success('添加成功');
-          props.close();
-        });
-      }
+    if (checkedUserList.includes("*")) {
+      (userList || []).forEach((user: any) => bindData.push({
+        userId: user.userId,
+        assetType: 'product',
+        assetIdList: selectedAssetsId,
+        allPermission: true,
+      }))
+    } else {
+      checkedUserList.forEach(id => bindData.push({
+        userId: id,
+        assetType: 'product',
+        assetIdList: selectedAssetsId,
+        allPermission: true,
+      }));
+    }
+    service.assets.bind(data.id, bindData).subscribe(() => {
       setLoading(false);
-
+      message.success('添加成功');
+      props.close();
     });
+    setLoading(false);
+
+    // validateFields((error) => {
+    //   if (!error) {
+    //     checkedUserList.forEach(id => bindData.push({
+    //       userId: id,
+    //       assetType: 'product',
+    //       assetIdList: selectedAssetsId,
+    //       allPermission: true,
+    //     }));
+
+    //     service.assets.bind(data.id, bindData).subscribe(() => {
+    //       setLoading(false);
+    //       message.success('添加成功');
+    //       props.close();
+    //     });
+    //   }
+
+    // });
   };
 
   const rowSelection = {
@@ -113,8 +134,8 @@ const Add = (props: Props) => {
       <Form layout="horizontal">
 
         <Form.Item label="选择成员"
-                   labelCol={{xl: 2, xs: 4, lg: 3, md: 3}}
-                   wrapperCol={{xl: 22, xs: 20, lg: 21, md: 21}}>
+          labelCol={{ xl: 2, xs: 4, lg: 3, md: 3 }}
+          wrapperCol={{ xl: 22, xs: 20, lg: 21, md: 21 }}>
           <Select
             value={checked}
             allowClear
@@ -133,20 +154,20 @@ const Add = (props: Props) => {
                 setSelectMode('tags');
               }
             }}
-            style={{width: '100%', marginBottom: 10}}
+            style={{ width: '100%', marginBottom: 10 }}
           >
             <Select.Option value="*">全体成员</Select.Option>
             {(userList || []).map((item: any) => <Select.Option key={item.id}
-                                                                value={item.userId}>{item.name}</Select.Option>)}
+              value={item.userId}>{item.name}</Select.Option>)}
           </Select>
 
         </Form.Item>
       </Form>
-      <Divider/>
+      <Divider />
       <SearchForm
         search={(searchData: any) => {
           setLoading(true);
-          handleSearch({terms: searchData});
+          handleSearch({ terms: searchData });
         }}
         formItems={[
           {
@@ -190,7 +211,7 @@ const Add = (props: Props) => {
           onClick={() => {
             props.close();
           }}
-          style={{marginRight: 8}}
+          style={{ marginRight: 8 }}
         >
           关闭
         </Button>
