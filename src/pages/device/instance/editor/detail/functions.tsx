@@ -13,7 +13,7 @@ interface State {
   debugData: string;
   logs: string;
   functionId: string;
-  spinning:boolean;
+  spinning: boolean;
 }
 
 const Functions: React.FC<Props> = (props) => {
@@ -25,7 +25,7 @@ const Functions: React.FC<Props> = (props) => {
     debugData: '',
     logs: '',
     functionId: '',
-    spinning:false,
+    spinning: false,
   };
 
   const [functionsSelectList] = useState(initState.functionsSelectList);
@@ -52,12 +52,13 @@ const Functions: React.FC<Props> = (props) => {
       .then(response => {
         const tempResult = response?.result;
         if (response.status === 200) {
-          setLogs(tempResult);
+          typeof tempResult === 'object' ? setLogs(JSON.stringify(tempResult)) : setLogs(tempResult);
+          // setLogs(tempResult);
         }
         setSpinning(false);
       }).catch(() => {
-      setLogs(`调试错误`);
-    });
+        setLogs(`调试错误`);
+      });
   };
 
   return (
@@ -96,14 +97,14 @@ const Functions: React.FC<Props> = (props) => {
               >
                 执行
               </Button>
-              <Divider type="vertical"/>
+              <Divider type="vertical" />
               <Button type="ghost" onClick={() => setLogs('')}>
                 清空
               </Button>
             </div>
 
             <Form.Item label="调试结果：" style={{ paddingTop: 20 }}>
-              <Input.TextArea rows={4} value={logs} readOnly/>
+              <Input.TextArea rows={4} value={logs} readOnly />
             </Form.Item>
           </Form>
         </Card>
