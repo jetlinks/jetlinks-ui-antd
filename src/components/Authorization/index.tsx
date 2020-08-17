@@ -32,7 +32,7 @@ const Authorization: React.FC<Props> = props => {
     dataAccessVisible: false,
     permissionList: [],
     checkPermission: {},
-    permissionType: 'all',
+    permissionType: props.targetType === 'tenant' ? 'tenant' : 'all',
     searchText: '',
     dimensionList: [],
     targetAutz: [],
@@ -316,14 +316,16 @@ const Authorization: React.FC<Props> = props => {
           <Input.Group compact style={{ marginBottom: '10px' }}>
             <Select
               style={{ width: '15%' }}
-              defaultValue="all"
+              defaultValue={props.targetType === 'tenant' ? 'tenant' : 'all'}
               onChange={(value: string) => setPermissionType(value)}
+              disabled={props.targetType === 'tenant'}
             >
               <Select.Option value="all">全部</Select.Option>
               <Select.Option value="default">默认</Select.Option>
               <Select.Option value="system">系统</Select.Option>
               <Select.Option value="business">业务功能</Select.Option>
               <Select.Option value="open-api">OpenAPI</Select.Option>
+              <Select.Option value="tenant">多租户</Select.Option>
             </Select>
             <Input.Search
               style={{ width: '85%' }}
