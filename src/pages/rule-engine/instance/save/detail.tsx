@@ -17,12 +17,12 @@ interface Props {
 }
 
 interface State {
-  nodeData: any[]
   searchParam: any
   realTimeDataLogs: any[]
   realTimeDataEvents: any[]
-  dataLogs: any[]
-  dataEvents: any[]
+  dataLogs: any
+  dataEvents: any,
+  nodeData: any[]
 }
 const columnsRealTime: ColumnProps<RuleInstanceItem>[] = [
   {
@@ -40,7 +40,7 @@ const columnsRealTime: ColumnProps<RuleInstanceItem>[] = [
     dataIndex: 'message',
     render: (message: string) => {
       return (
-        <Tooltip placement="topRight" arrowPointAtCenter title={message}>{message}</Tooltip>
+        <Tooltip placement="left" arrowPointAtCenter title={message}>{message}</Tooltip>
       )
     }
   }
@@ -85,7 +85,7 @@ const columns: ColumnProps<RuleInstanceItem>[] = [
     dataIndex: 'message',
     render: (message: string) => {
       return (
-        <Tooltip placement="topRight" arrowPointAtCenter title={message}>{message}</Tooltip>
+        <Tooltip placement="left" arrowPointAtCenter title={message}>{message}</Tooltip>
       )
     }
   }
@@ -112,11 +112,12 @@ const columnsEvents: ColumnProps<RuleInstanceItem>[] = [
     dataIndex: 'message',
     render: (message: string) => {
       return (
-        <Tooltip placement="topRight" arrowPointAtCenter title={message}>{message}</Tooltip>
+        <Tooltip placement="left" arrowPointAtCenter title={message}>{message}</Tooltip>
       )
     }
   }
 ]
+
 const Detail: React.FC<Props> = props => {
 
   let nodeMap = new Map();
@@ -131,8 +132,8 @@ const Detail: React.FC<Props> = props => {
     },
     realTimeDataLogs: [],
     realTimeDataEvents: [],
-    dataLogs: [],
-    dataEvents: [],
+    dataLogs: {},
+    dataEvents: {},
     nodeData: []
   }
   const [searchParam, setSearchParam] = useState(initState.searchParam);
@@ -140,37 +141,56 @@ const Detail: React.FC<Props> = props => {
   const [realTimeDataEvents, setRealTimeDataEvents] = useState(initState.realTimeDataEvents);
   const [dataLogs, setDataLogs] = useState(initState.dataLogs);
   const [dataEvents, setDataEvents] = useState(initState.dataEvents);
-
-  const getNode = new Promise((resolve, reject) => {
-    if (props.data.id as string !== '') {
-      apis.ruleInstance.node(props.data.id as string, {}).then(resp => {
-        if (resp.status === 200) {
-          resp.result.map((i: any) => {
-            nodeMap.set(i.id, i.name)
-          })
-          resolve();
-        }
-      }).catch((err) => {
-        reject(err);
-      })
-    }
-  })
+  const [nodeData, setNodeData] = useState(initState.nodeData)
+  const getNode = () =>{
+    return new Promise((resolve, reject) => {
+      if (props.data.id as string !== '') {
+        apis.ruleInstance.node(props.data.id as string, {}).then(resp => {
+          if (resp.status === 200) {
+            let data: any[] = []
+            resp.result.map((i: any) => {
+              nodeMap.set(i.id, i.name)
+              data.push({id: i.realTimeDataEvents, name: i.name})
+            })
+            setNodeData(data)
+            resolve();
+          }
+        }).catch((err) => {
+          reject(err);
+        })
+      }
+    })
+  }
+  
   const getDataLogs = (params?: any) => {
     const temp = { ...searchParam, ...params };
     setSearchParam(temp);
     apis.ruleInstance.log(props.data.id as string, encodeQueryParam(temp)).then(resp => {
-      // console.log(nodeMap)
       if (resp.status === 200) {
-        let datalist: any = [];
+        let datalist: any[] = [];
         resp.result.data.map((item: any) => {
-          datalist.push({
-            time: item.createTime,
-            nodeId: nodeMap.get(item.nodeId) || '--',
-            message: item.message,
-            level: item.level
-          })
+          if(nodeData.length > 0){
+            datalist.push({
+              time: item.createTime,
+              nodeId: nodeData.filter((x: any) => x.id === item.nodeData).map((i: any) => i.name),
+              message: item.message,
+              level: item.level
+            })
+          }else{
+            datalist.push({
+              time: item.createTime,
+              nodeId: nodeMap.get(item.nodeId) || '--',
+              message: item.message,
+              level: item.level
+            })
+          }
         });
-        setDataLogs(datalist)
+        setDataLogs({
+          datalist,
+          pageIndex: resp.result.pageIndex,
+          pageSize: resp.result.pageSize,
+          total: resp.result.total
+        })
       }
     })
   }
@@ -178,23 +198,58 @@ const Detail: React.FC<Props> = props => {
     const temp = { ...searchParam, ...params };
     setSearchParam(temp);
     apis.ruleInstance.event(props.data.id as string, encodeQueryParam(temp)).then(resp => {
-      // console.log(nodeMap)
       if (resp.status === 200) {
-        let datalist: any = [];
+        let datalist: any[] = [];
         resp.result.data.map((item: any) => {
-          datalist.push({
-            time: item.createTime,
-            nodeId: nodeMap.get(item.nodeId) || '--',
-            message: JSON.stringify(JSON.parse(item.ruleData).data)
-          })
+          if(nodeData.length > 0){
+            datalist.push({
+              time: item.createTime,
+              nodeId: nodeData.filter((x: any) => x.id === item.nodeData).map((i: any) => i.name),
+              message: JSON.stringify(JSON.parse(item.ruleData).data)
+            })
+          }else{
+            datalist.push({
+              time: item.createTime,
+              nodeId: nodeMap.get(item.nodeId) || '--',
+              message: JSON.stringify(JSON.parse(item.ruleData).data)
+            })
+          }
         });
-        setDataEvents(datalist)
+        setDataEvents({
+          datalist,
+          pageIndex: resp.result.pageIndex,
+          pageSize: resp.result.pageSize,
+          total: resp.result.total
+        })
       }
     })
   }
-
+  const eventsChange = (
+    pagination: any,
+    filters: any,
+    sorter: any,
+  ) => {
+    getDataEvents({
+      pageIndex: Number(pagination.current) - 1,
+      pageSize: pagination.pageSize,
+      terms: searchParam.terms,
+      sorts: sorter.field ? sorter : searchParam.sorter,
+    });
+  };
+  const logsChange = (
+    pagination: any,
+    filters: any,
+    sorter: any,
+  ) => {
+    getDataLogs({
+      pageIndex: Number(pagination.current) - 1,
+      pageSize: pagination.pageSize,
+      terms: searchParam.terms,
+      sorts: sorter.field ? sorter : searchParam.sorter,
+    });
+  };
   useEffect(() => {
-    getNode.then(res => {
+    getNode().then(res => {
       getDataLogs(searchParam);
       getDataEvents(searchParam);
     })
@@ -271,10 +326,21 @@ const Detail: React.FC<Props> = props => {
                   }}
                 />
               </div>
-              <Table dataSource={(dataLogs || {})} rowKey="id" columns={columns} showHeader={false} />
+              <Table
+                dataSource={dataLogs.datalist || []}
+                rowKey="id" 
+                columns={columns}
+                showHeader={false}
+                onChange={logsChange}
+                pagination={{
+                  current: dataLogs.pageIndex + 1,
+                  total: dataLogs.total,
+                  pageSize: dataLogs.pageSize
+                }}
+              />
             </div>
             <div className={styles.boxRight}>
-              <h4>实时日志：</h4>
+              <h4>运行日志：</h4>
               <Table dataSource={(realTimeDataLogs || {})} rowKey="id" columns={columnsRealTime} pagination={false} />
             </div>
           </div>
@@ -296,10 +362,21 @@ const Detail: React.FC<Props> = props => {
                   }}
                 />
               </div>
-              <Table dataSource={(dataEvents || {})} rowKey="id" columns={columnsEvents} showHeader={false} />
+              <Table
+                onChange={eventsChange}
+                dataSource={dataEvents.datalist || []}
+                rowKey="id"
+                columns={columnsEvents}
+                showHeader={false}
+                pagination={{
+                  current: dataEvents.pageIndex + 1,
+                  total: dataEvents.total,
+                  pageSize: dataEvents.pageSize
+                }}
+              />
             </div>
             <div className={styles.boxRight}>
-              <h4>实时数据：</h4>
+              <h4>运行日志：</h4>
               <Table dataSource={(realTimeDataEvents || {})} rowKey="id" columns={columnsRealTime} pagination={false} />
             </div>
           </div>
