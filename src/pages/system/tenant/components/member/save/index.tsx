@@ -1,9 +1,9 @@
-import {Drawer, Button, Table, Switch, Input, message} from "antd";
-import React, {useState, useEffect} from "react";
+import { Drawer, Button, Table, Switch, Input, message } from "antd";
+import React, { useState, useEffect, useRef } from "react";
 import encodeQueryParam from "@/utils/encodeParam";
-import {zip} from "rxjs";
+import { zip } from "rxjs";
 import Service from "../../../service";
-import {TenantItem} from "../../../data";
+import { TenantItem } from "../../../data";
 
 interface Props {
   close: Function;
@@ -13,25 +13,24 @@ interface Props {
 const Save = (props: Props) => {
   const service = new Service('tenant');
 
-  const adminMap: any = new Map();
-
+  const [tempMap, setTempMap] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [userList, setUserList] = useState<any[]>();
   const [selectedRow, setSelectedRow] = useState<any[]>([]);
 
-  const {data: {id}} = props;
+  const { data: { id } } = props;
   const handleSearch = (params: any) => {
     if (id) {
       zip(service.member.userlist(encodeQueryParam(params)),
         service.member.query(id, {})).subscribe(data => {
-        setLoading(false);
-        const all: any[] = data[0];
-        const checked: any[] = data[1].data.map((i: any) => i.userId);
+          setLoading(false);
+          const all: any[] = data[0];
+          const checked: any[] = data[1].data.map((i: any) => i.userId);
 
-        const unchecked = all.filter(item => !checked.includes(item.id));
-        setLoading(false);
-        setUserList(unchecked);
-      })
+          const unchecked = all.filter(item => !checked.includes(item.id));
+          setLoading(false);
+          setUserList(unchecked);
+        })
 
     }
   };
@@ -58,7 +57,7 @@ const Save = (props: Props) => {
     const tempData = selectedRow.map(item => ({
       name: item.name,
       userId: item.id,
-      admin: adminMap.get(item.id) || false
+      admin: tempMap.find((i: { id: string }) => i.id === item.id)?.tag || false
     }));
     const tempId = props.data?.id;
     if (tempId) {
@@ -86,8 +85,15 @@ const Save = (props: Props) => {
       render: (text: string) =>
         <Switch
           onChange={(e: boolean) => {
-            adminMap.set(text, e);
-          }}/>
+            if (e === false) {
+              //移除
+              const t = tempMap.filter((i: { id: string }) => i.id !== text);
+              setTempMap(t);
+            } else {
+              tempMap.push({ 'id': text, 'tag': e })
+              setTempMap(tempMap);
+            }
+          }} />
     },
   ];
 
@@ -99,7 +105,7 @@ const Save = (props: Props) => {
       title="添加用户"
       onClose={() => props.close()}
     >
-      <Input.Search style={{marginBottom: 10}}/>
+      <Input.Search style={{ marginBottom: 10 }} />
 
       <Table
         size="small"
@@ -125,7 +131,7 @@ const Save = (props: Props) => {
           onClick={() => {
             props.close();
           }}
-          style={{marginRight: 8}}
+          style={{ marginRight: 8 }}
         >
           关闭
         </Button>
