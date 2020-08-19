@@ -1,22 +1,30 @@
-import { Drawer, Button, message } from "antd";
+import { Drawer, Button, message, Tag, Avatar } from "antd";
 import React, { useState, useEffect, Fragment } from "react";
 import Service from "@/pages/system/tenant/service";
-import { ListData } from "@/services/response";
 import encodeQueryParam from "@/utils/encodeParam";
 import SearchForm from "@/components/SearchForm";
 import ProTable from "@/pages/system/permission/component/ProTable";
 import Add from "./add";
 import User from "./user";
+import {router} from 'umi';
+import productImg from "@/pages/device/product/img/product.png";
 
 interface Props {
     close: Function;
     data: any;
     user: any
 }
+interface State {
+    list: []
+}
 const Edit = (props: Props) => {
     const service = new Service('tenant');
 
-    const [list, setList] = useState<ListData<any>>();
+    const initState: State = {
+        list: []
+    };
+
+    const [list, setList] = useState(initState.list);
     const [add, setAdd] = useState<boolean>(false);
     const [cat, setCat] = useState<boolean>(false);
     const [asset, setAsset] = useState();
@@ -37,6 +45,32 @@ const Edit = (props: Props) => {
     }
     const [searchParam, setSearchParam] = useState<any>(initSearch);
 
+    let product = (tempSearch: any, datalist: any[]) => {
+        return new Promise((resolve, reject) => {
+            service.assets.product(encodeQueryParam(tempSearch)).subscribe(res => {
+                res.data.forEach(value => {
+                    service.assets.members(data.id, 'product', value.id).subscribe(resp => {
+                        datalist.push({
+                            id: value.id,
+                            name: value.name,
+                            photoUrl: value.photoUrl || productImg,
+                            tenant: resp.filter((item: any) => item.binding === true).map((i: any) => i.userName)
+                        })
+                        if (datalist.length == res.data.length) {
+                            resolve({
+                                pageIndex: res.pageIndex,
+                                pageSize: res.pageSize,
+                                total: res.total,
+                                data: datalist
+                            })
+                        }
+                    });
+                })
+            })
+        })
+    }
+
+
     const handleSearch = (params: any) => {
         const tempParam = { ...searchParam, ...params, };
         const defaultItem = searchParam.terms;
@@ -51,8 +85,9 @@ const Edit = (props: Props) => {
             tempSearch = initSearch
         }
         setSearchParam(tempSearch);
-        service.assets.product(encodeQueryParam(tempSearch)).subscribe(resp => {
-            setList(resp);
+        let datalist: any = [];
+        product(tempSearch, datalist).then(res => {
+            setList(res)
         })
     }
     useEffect(() => {
@@ -70,20 +105,41 @@ const Edit = (props: Props) => {
         {
             title: 'ID',
             dataIndex: 'id',
-        }, {
+            align: 'center',
+        }, 
+        {
             title: '名称',
-            dataIndex: 'name'
-        }, {
+            render: (text: any, record: any) => <div><Avatar shape="square" src={record.photoUrl || productImg} /><span>{record.name}</span> </div>
+        },
+        {
+            title: '租户名称',
+            ellipsis: true,
+            align: 'center',
+            width: 400,
+            render: (record: any) => (
+                <div onClick={() => {setAsset(record); setCat(true);}}>
+                    {
+                        record.tenant.length > 0 ? 
+                        record.tenant.map(i => {
+                            return (
+                                <Tag color="purple" key={i}>{i}</Tag>
+                            )
+                        })
+                        :<span>--</span>
+                    }
+                </div>
+            )
+        }, 
+        {
             title: '操作',
+            align: 'center',
             render: (_: string, record: any) => (
                 <Fragment>
-                    <a onClick={() => {
-                        setAsset(record);
-                        setCat(true);
-                    }}>查看</a>
+                    <a onClick={() => { router.push(`/device/product/save/${record.id}`); }}>查看</a>
                 </Fragment>
             )
-        }]
+        }
+    ]
 
     const unbind = () => {
         service.assets.unbind(data.id, [{
@@ -142,7 +198,6 @@ const Edit = (props: Props) => {
                 onSearch={(searchData: any) => handleSearch(searchData)}
                 paginationConfig={list || {}}
             />
-
             <div
                 style={{
                     position: 'absolute',

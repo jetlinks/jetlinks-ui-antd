@@ -1,4 +1,4 @@
-import { Drawer, Button, message, } from "antd";
+import { Drawer, Button, message, Tag, } from "antd";
 import React, { useEffect, useState, Fragment } from "react";
 import Service from "@/pages/system/tenant/service";
 import encodeQueryParam from "@/utils/encodeParam";
@@ -7,16 +7,24 @@ import { ListData } from "@/services/response";
 import ProTable from "@/pages/system/permission/component/ProTable";
 import Add from "./add";
 import User from "./user";
+import { router } from 'umi';
 
 interface Props {
     close: Function;
     data: any;
     user: any;
 }
+interface State {
+    list: []
+}
 const Edit = (props: Props) => {
     const service = new Service('tenant');
 
-    const [list, setList] = useState<ListData<any>>();
+    const initState: State = {
+        list: []
+    };
+
+    const [list, setList] = useState(initState.list);
     const [add, setAdd] = useState<boolean>(false);
     const { data } = props;
     const [cat, setCat] = useState<boolean>(false);
@@ -36,6 +44,30 @@ const Edit = (props: Props) => {
     }
     const [searchParam, setSearchParam] = useState<any>(initSearch);
 
+    let device = (tempSearch: any, datalist: any[]) => {
+        return new Promise((resolve, reject) => {
+            service.assets.device(encodeQueryParam(tempSearch)).subscribe(res => {
+                res.data.forEach(value => {
+                    service.assets.members(data.id, 'device', value.id).subscribe(resp => {
+                        datalist.push({
+                            id: value.id,
+                            name: value.name,
+                            tenant: resp.filter((item: any) => item.binding === true).map((i: any) => i.userName)
+                        })
+                        if (datalist.length == res.data.length) {
+                            resolve({
+                                pageIndex: res.pageIndex,
+                                pageSize: res.pageSize,
+                                total: res.total,
+                                data: datalist
+                            })
+                        }
+                    });
+                })
+            })
+        })
+    }
+
     const handleSearch = (params: any) => {
         const tempParam = { ...searchParam, ...params, };
         const defaultItem = searchParam.terms;
@@ -50,10 +82,12 @@ const Edit = (props: Props) => {
             tempSearch = initSearch
         }
         setSearchParam(tempSearch);
-        service.assets.device(encodeQueryParam(tempSearch)).subscribe(resp => {
-            setList(resp);
+        let datalist: any = [];
+        device(tempSearch, datalist).then(res => {
+            setList(res)
         })
     }
+
     useEffect(() => {
         handleSearch(searchParam);
     }, []);
@@ -69,20 +103,41 @@ const Edit = (props: Props) => {
         {
             title: 'ID',
             dataIndex: 'id',
+            align: 'center'
         }, {
             title: '名称',
-            dataIndex: 'name'
-        }, {
+            dataIndex: 'name',
+            align: 'center',
+        },
+        {
+            title: '租户名称',
+            ellipsis: true,
+            align: 'center',
+            width: 400,
+            render: (record: any) => (
+                <div onClick={() => {setAsset(record); setCat(true);}}>
+                    {
+                        record.tenant.length > 0 ? 
+                        record.tenant.map(i => {
+                            return (
+                                <Tag color="purple" key={i}>{i}</Tag>
+                            )
+                        })
+                        :<span>--</span>
+                    }
+                </div>
+            )
+        },
+        {
             title: '操作',
+            align: 'center',
             render: (_: string, record: any) => (
                 <Fragment>
-                    <a onClick={() => {
-                        setAsset(record);
-                        setCat(true);
-                    }}>查看</a>
+                    <a onClick={() => { router.push(`/device/instance/save/${record.id}`); }}>查看</a>
                 </Fragment>
             )
-        }];
+        }
+    ];
     const unbind = () => {
         service.assets.unbind(data.id, [{
             assetIdList: selected.map(item => item.id),
