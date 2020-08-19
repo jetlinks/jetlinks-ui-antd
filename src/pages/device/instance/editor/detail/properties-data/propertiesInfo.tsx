@@ -1,14 +1,26 @@
-import React, {useEffect, useState} from 'react';
-import {Button, Card, Col, DatePicker, Form, Icon, Modal, Row, Spin, Table, Tabs, Tooltip as AntdTooltip} from 'antd';
-import {ColumnProps, PaginationConfig} from 'antd/lib/table';
+import React, { useEffect, useState } from 'react';
+import { Button, Card, Col, DatePicker, Form, Icon, Modal, Row, Spin, Table, Tabs, Tooltip as AntdTooltip, message } from 'antd';
+import { ColumnProps, PaginationConfig } from 'antd/lib/table';
 import apis from '@/services';
 import encodeQueryParam from '@/utils/encodeParam';
-import moment, {Moment} from 'moment';
-import {FormComponentProps} from "antd/es/form";
-import {Axis, Chart, Geom, Legend, Tooltip} from "bizcharts";
-import {Map} from "react-amap";
+import moment, { Moment } from 'moment';
+import { FormComponentProps } from "antd/es/form";
+import { Axis, Chart, Geom, Legend, Tooltip } from "bizcharts";
+import { Map } from "react-amap";
 import img26 from './img/img-26.png';
 import mark_b from "@/pages/device/location/img/mark_b.png";
+import CopyToClipboard from 'react-copy-to-clipboard';
+import 'ace-builds';
+import 'ace-builds/webpack-resolver';
+import AceEditor from "react-ace";
+import 'ace-builds/src-noconflict/mode-json';
+import 'ace-builds/src-noconflict/mode-json5';
+import 'ace-builds/src-noconflict/mode-hjson';
+import 'ace-builds/src-noconflict/mode-jsoniq';
+import 'ace-builds/src-noconflict/snippets/json';
+import 'ace-builds/src-noconflict/ext-language_tools';
+import 'ace-builds/src-noconflict/ext-searchbox';
+import 'ace-builds/src-noconflict/theme-eclipse';
 
 interface Props extends FormComponentProps {
   close: Function;
@@ -33,7 +45,7 @@ interface State {
 const PropertiesInfo: React.FC<Props> = props => {
 
   const {
-    form: {getFieldDecorator},
+    form: { getFieldDecorator },
     form,
   } = props;
   const initState: State = {
@@ -44,10 +56,58 @@ const PropertiesInfo: React.FC<Props> = props => {
         render: text => moment(text).format('YYYY-MM-DD HH:mm:ss'),
       },
       {
-        title: props.item.name,
+        title: `${props.item.name}(点击可复制)`,
         dataIndex: 'formatValue',
         ellipsis: true,
+        render: text => (
+          <CopyToClipboard text={text} onCopy={() => message.success('已复制')}>
+            <span>{text}<Icon type="copy" /></span>
+          </CopyToClipboard>
+        )
       },
+      {
+        title: '操作',
+        dataIndex: 'value',
+        render: (text) => (
+          <>
+            <a onClick={() => {
+              Modal.info({
+                title: '详情',
+                width: 850,
+                content: (
+                  <Form.Item wrapperCol={{ span: 20 }} labelCol={{ span: 4 }} label={props.item.name}>
+                    <AceEditor
+                      value={JSON.stringify(JSON.parse(text), null, 2)}
+                      mode='json'
+                      theme="eclipse"
+                      name="app_code_editor"
+                      key='deviceShadow'
+                      fontSize={14}
+                      showPrintMargin
+                      showGutter
+                      wrapEnabled
+                      highlightActiveLine  //突出活动线
+                      enableSnippets  //启用代码段
+                      style={{ width: '100%', height: '50vh' }}
+                      setOptions={{
+                        enableBasicAutocompletion: true,   //启用基本自动完成功能
+                        enableLiveAutocompletion: true,   //启用实时自动完成功能 （比如：智能代码提示）
+                        enableSnippets: true,  //启用代码段
+                        showLineNumbers: true,
+                        tabSize: 2,
+                      }}
+                    />
+                  </Form.Item>
+                ),
+                okText: '关闭',
+                onOk() {
+                  console.log('OK');
+                },
+              });
+            }}>详情</a>
+          </>
+        )
+      }
     ],
     propertiesInfo: {},
     marksCreated: {},
@@ -176,19 +236,19 @@ const PropertiesInfo: React.FC<Props> = props => {
         field: 'timestamp',
         order: 'desc',
       },
-      terms: {property: props.item.id},
+      terms: { property: props.item.id },
     });
 
     if (props.item.valueType.type === 'geoPoint') {
       trajectory({
-          pageIndex: 0,
-          pageSize: 1000,
-          sorts: {
-            field: 'timestamp',
-            order: 'asc',
-          },
-          terms: {property: props.item.id},
-        }
+        pageIndex: 0,
+        pageSize: 1000,
+        sorts: {
+          field: 'timestamp',
+          order: 'asc',
+        },
+        terms: { property: props.item.id },
+      }
       );
     }
   }, []);
@@ -208,7 +268,7 @@ const PropertiesInfo: React.FC<Props> = props => {
         field: 'timestamp',
         order: 'desc',
       },
-      terms: {...params, property: props.item.id},
+      terms: { ...params, property: props.item.id },
     });
   };
 
@@ -228,7 +288,7 @@ const PropertiesInfo: React.FC<Props> = props => {
           field: 'timestamp',
           order: 'desc',
         },
-        terms: {...params, property: props.item.id},
+        terms: { ...params, property: props.item.id },
       });
     } else if (tabsType === '2') {
       statisticsChart(
@@ -239,7 +299,7 @@ const PropertiesInfo: React.FC<Props> = props => {
             field: 'timestamp',
             order: 'desc',
           },
-          terms: {...params, property: props.item.id},
+          terms: { ...params, property: props.item.id },
         }
       );
     } else {
@@ -251,14 +311,14 @@ const PropertiesInfo: React.FC<Props> = props => {
       setLabelsDataList([]);
       setMarkerPosition([]);
       trajectory({
-          pageIndex: 0,
-          pageSize: 1000,
-          sorts: {
-            field: 'timestamp',
-            order: 'asc',
-          },
-          terms: {...params, property: props.item.id},
-        }
+        pageIndex: 0,
+        pageSize: 1000,
+        sorts: {
+          field: 'timestamp',
+          order: 'asc',
+        },
+        terms: { ...params, property: props.item.id },
+      }
       );
     }
   };
@@ -338,13 +398,13 @@ const PropertiesInfo: React.FC<Props> = props => {
       width="70%"
     >
       <Spin spinning={spinning}>
-        <Form labelCol={{span: 0}} wrapperCol={{span: 18}}>
-          <Row gutter={{md: 8, lg: 4, xl: 48}}>
+        <Form labelCol={{ span: 0 }} wrapperCol={{ span: 18 }}>
+          <Row gutter={{ md: 8, lg: 4, xl: 48 }}>
             <Col md={10} sm={24}>
               <Form.Item>
                 {getFieldDecorator('timestamp$BTW')(
                   <DatePicker.RangePicker
-                    showTime={{format: 'HH:mm:ss'}}
+                    showTime={{ format: 'HH:mm:ss' }}
                     format="YYYY-MM-DD HH:mm:ss"
                     placeholder={['开始时间', '结束时间']}
                     onChange={(value: any[]) => {
@@ -356,7 +416,7 @@ const PropertiesInfo: React.FC<Props> = props => {
                             field: 'timestamp',
                             order: 'desc',
                           },
-                          terms: {property: props.item.id},
+                          terms: { property: props.item.id },
                         });
                       }
                     }}
@@ -368,38 +428,38 @@ const PropertiesInfo: React.FC<Props> = props => {
           </Row>
         </Form>
         <Tabs defaultActiveKey="1" tabPosition="top" type="card"
-              onTabClick={(value: string) => {
-                setTabsType(value);
+          onTabClick={(value: string) => {
+            setTabsType(value);
 
-                if (value === "1") {
-                  if (Object.keys(mapCreated).length != 0) {
-                    mapCreated.remove(labelsLayer);
-                    labelsLayer.clear();
-                  }
-                  setSpinning(true);
-                  handleSearch({
-                    pageIndex: 0,
-                    pageSize: 10,
-                    sorts: {
-                      field: 'timestamp',
-                      order: 'desc',
-                    },
-                    terms: {property: props.item.id},
-                  });
-                } else if (value === '2') {
-                  statisticsChart(
-                    {
-                      pageIndex: 0,
-                      pageSize: 60,
-                      sorts: {
-                        field: 'timestamp',
-                        order: 'desc',
-                      },
-                      terms: {property: props.item.id},
-                    }
-                  );
+            if (value === "1") {
+              if (Object.keys(mapCreated).length != 0) {
+                mapCreated.remove(labelsLayer);
+                labelsLayer.clear();
+              }
+              setSpinning(true);
+              handleSearch({
+                pageIndex: 0,
+                pageSize: 10,
+                sorts: {
+                  field: 'timestamp',
+                  order: 'desc',
+                },
+                terms: { property: props.item.id },
+              });
+            } else if (value === '2') {
+              statisticsChart(
+                {
+                  pageIndex: 0,
+                  pageSize: 60,
+                  sorts: {
+                    field: 'timestamp',
+                    order: 'desc',
+                  },
+                  terms: { property: props.item.id },
                 }
-              }}
+              );
+            }
+          }}
         >
           <Tabs.TabPane tab="列表" key="1">
             <Table
@@ -423,7 +483,7 @@ const PropertiesInfo: React.FC<Props> = props => {
                 height={400}
                 data={gatewayData}
                 scale={{
-                  value: {min: 0},
+                  value: { min: 0 },
                   year: {
                     range: [0, 1],
                     type: 'timeCat'
@@ -431,12 +491,12 @@ const PropertiesInfo: React.FC<Props> = props => {
                 }}
                 forceFit
               >
-                <Axis name="year"/>
+                <Axis name="year" />
                 <Axis name="value" label={{
                   formatter: val => parseFloat(val).toLocaleString()
-                }}/>
-                <Legend/>
-                <Tooltip crosshairs={{type: 'y'}}/>
+                }} />
+                <Legend />
+                <Tooltip crosshairs={{ type: 'y' }} />
                 <Geom type="line" position="year*value" size={2} tooltip={[
                   "year*value*type",
                   (year, value, type) => ({
@@ -444,7 +504,7 @@ const PropertiesInfo: React.FC<Props> = props => {
                     name: type,
                     value: value
                   })
-                ]}/>
+                ]} />
                 <Geom type="area" position="year*value" shape={'circle'} tooltip={[
                   "year*value*type",
                   (year, value, type) => ({
@@ -463,33 +523,33 @@ const PropertiesInfo: React.FC<Props> = props => {
               <span>
                 轨迹
                 <AntdTooltip title='默认启动循环执行动画，运动速度为：200km/h'>
-                  <Icon type="question-circle-o" style={{paddingLeft: 10}}/>
+                  <Icon type="question-circle-o" style={{ paddingLeft: 10 }} />
                 </AntdTooltip>
               </span>
             } key="3">
-              <div style={{width: '100%', height: '60vh'}}>
-                <Map version="1.4.15" resizeEnable events={mapEvents} center={mapCenter}/>
+              <div style={{ width: '100%', height: '60vh' }}>
+                <Map version="1.4.15" resizeEnable events={mapEvents} center={mapCenter} />
               </div>
-              <div style={{marginTop: '-6.4%', paddingRight: 2, textAlign: 'right', float: 'right'}}>
-                <Card style={{width: 240}}>
+              <div style={{ marginTop: '-6.4%', paddingRight: 2, textAlign: 'right', float: 'right' }}>
+                <Card style={{ width: 240 }}>
                   <Button type="primary"
-                          onClick={() => {
-                            marksCreated.moveAlong(
-                              lineArr, // 路径坐标串
-                              200, // 指定速度，单位：千米/小时，不可为0
-                              function (k: any) { // 回调函数f为变化曲线函数，缺省为function(k){return k}
-                                return k
-                              },
-                              true // true表明是否循环执行动画，默认为false
-                            );
-                          }}
+                    onClick={() => {
+                      marksCreated.moveAlong(
+                        lineArr, // 路径坐标串
+                        200, // 指定速度，单位：千米/小时，不可为0
+                        function (k: any) { // 回调函数f为变化曲线函数，缺省为function(k){return k}
+                          return k
+                        },
+                        true // true表明是否循环执行动画，默认为false
+                      );
+                    }}
                   >
                     开始动画
                   </Button>
-                  <Button style={{marginLeft: 10}} type="primary"
-                          onClick={() => {
-                            marksCreated.stopMove();
-                          }}
+                  <Button style={{ marginLeft: 10 }} type="primary"
+                    onClick={() => {
+                      marksCreated.stopMove();
+                    }}
                   >
                     停止动画
                   </Button>
