@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Table } from "antd";
 import Service from "../system/tenant/service";
 import encodeQueryParam from "@/utils/encodeParam";
-import { map, flatMap, toArray, groupBy, mergeMap } from "rxjs/operators";
+import { map, flatMap, toArray, groupBy, mergeMap, reduce, filter } from "rxjs/operators";
 import { from } from "rxjs";
 import apis from "@/services";
 
@@ -14,38 +14,43 @@ const Demo = () => {
         service.member.queryNoPaging('83fb056bdf5515704852a60ae4f7cd3d', {})
             .pipe(// 
                 flatMap(from),
-                flatMap((i: any) => {
-                    return service.assets.productNopaging(encodeQueryParam({
-                        terms: {
-                            id$assets: JSON.stringify({
-                                tenantId: '83fb056bdf5515704852a60ae4f7cd3d',
-                                assetType: 'product',
-                                memberId: i.userId,
-                            }),
-                        }
-                    })).pipe(
-                        flatMap(from),
-                        flatMap((t: any) => {
-                            return service.assets.instanceNopaging(
-                                encodeQueryParam({
-                                    terms: {
-                                        productId: t.id,
-                                        id$assets: JSON.stringify({
-                                            tenantId: '83fb056bdf5515704852a60ae4f7cd3d',
-                                            assetType: 'device',
-                                            memberId: i.userId,
-                                        }),
-                                    }
-                                })).pipe(
-                                    groupBy(item => item.state),
-                                    mergeMap(val => val.pipe(toArray())),
-                                    map(p => ({ t: t, list: p }))
-                                )
+                flatMap((i: any) => service.assets.productNopaging(encodeQueryParam({
+                    terms: {
+                        id$assets: JSON.stringify({
+                            tenantId: '83fb056bdf5515704852a60ae4f7cd3d',
+                            assetType: 'product',
+                            memberId: i.userId,
                         }),
-                        toArray(),
-                        map(a => ({ i: i, data: a })),
-                    )
-                }),
+                    }
+                })).pipe(
+                    flatMap(from),
+                    flatMap((t: any) => {
+                        return service.assets.instanceNopaging(
+                            encodeQueryParam({
+                                terms: {
+                                    productId: t.id,
+                                    id$assets: JSON.stringify({
+                                        tenantId: '83fb056bdf5515704852a60ae4f7cd3d',
+                                        assetType: 'device',
+                                        memberId: i.userId,
+                                    }),
+                                }
+                            })).pipe(
+                                filter(item => item.length > 0),
+                                flatMap(from),
+                                groupBy(item => item.state),
+                                mergeMap(val$ => {
+                                    console.log(val$, 'vals');
+                                    return val$.pipe(reduce((acc, cur) => [...acc, cur], [`${val$.key?.value}`]))
+
+                                }),
+                                // map(p => ({ t: t, list: p }))
+                            )
+                    }),
+                    toArray(),
+                    map(a => ({ i: i, data: a })),
+                )
+                ),
                 toArray(),
             ).subscribe((result) => {
                 console.log(JSON.stringify(result), 'result');
