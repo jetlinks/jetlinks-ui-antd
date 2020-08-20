@@ -27,7 +27,7 @@ export function getAuthority(): string | string[] {
 
   if (autz !== null) {
     const authority = autz.currentAuthority || [];
-    if (autz.user.username === 'admin') {
+    if (autz.user?.username === 'admin') {
       return ['admin'];
     }
     return authority;
