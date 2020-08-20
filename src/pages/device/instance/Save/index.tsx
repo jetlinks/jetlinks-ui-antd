@@ -1,13 +1,14 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import Form from 'antd/es/form';
-import {FormComponentProps} from 'antd/lib/form';
-import {Input, message, Modal, Select, TreeSelect} from 'antd';
-import {ConnectState} from '@/models/connect';
-import {connect} from 'dva';
+import { FormComponentProps } from 'antd/lib/form';
+import { Input, message, Modal, Select, TreeSelect } from 'antd';
+import { ConnectState } from '@/models/connect';
+import { connect } from 'dva';
 import apis from '@/services';
-import {DeviceProduct} from '../../product/data.d';
-import {DeviceInstance} from '../data.d';
-import {router} from "umi";
+import { DeviceProduct } from '../../product/data.d';
+import { DeviceInstance } from '../data.d';
+import { router } from "umi";
+import encodeQueryParam from '@/utils/encodeParam';
 
 interface Props extends FormComponentProps {
   close: Function;
@@ -28,7 +29,7 @@ const Save: React.FC<Props> = props => {
   // 消息协议
   const [organizationList, setOrganizationList] = useState(initState.organizationList);
   const {
-    form: {getFieldDecorator},
+    form: { getFieldDecorator },
     form,
   } = props;
   const submitData = () => {
@@ -41,7 +42,7 @@ const Save: React.FC<Props> = props => {
       preservation({
         ...fileValue,
         productName: product.name,
-        state: {text: "未激活", value: "notActive"},
+        state: { text: "未激活", value: "notActive" },
       });
     });
   };
@@ -75,7 +76,9 @@ const Save: React.FC<Props> = props => {
   useEffect(() => {
     // 获取下拉框数据
     apis.deviceProdcut
-      .queryNoPagin()
+      .queryNoPagin(encodeQueryParam({
+        paging: false
+      }))
       .then(response => {
         setProductList(response.result);
       })
@@ -87,12 +90,12 @@ const Save: React.FC<Props> = props => {
         if (res.status === 200) {
           let orgList: any = [];
           res.result.map((item: any) => {
-            orgList.push({id: item.id, pId: item.parentId, value: item.id, title: item.name})
+            orgList.push({ id: item.id, pId: item.parentId, value: item.id, title: item.name })
           });
           setOrganizationList(orgList);
         }
       }).catch(() => {
-    });
+      });
   }, []);
 
   return (
@@ -106,35 +109,35 @@ const Save: React.FC<Props> = props => {
       }}
       onCancel={() => props.close()}
     >
-      <Form labelCol={{span: 4}} wrapperCol={{span: 20}}>
+      <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
         <Form.Item key="id" label="设备id">
           {getFieldDecorator('id', {
             rules: [
-              {required: true, message: '请输入设备id'},
-              {max: 64, message: '设备ID不超过64个字符'},
-              {pattern: new RegExp(/^[0-9a-zA-Z_\-]+$/, "g"), message: '产品ID只能由数字、字母、下划线、中划线组成'}
+              { required: true, message: '请输入设备id' },
+              { max: 64, message: '设备ID不超过64个字符' },
+              { pattern: new RegExp(/^[0-9a-zA-Z_\-]+$/, "g"), message: '产品ID只能由数字、字母、下划线、中划线组成' }
             ],
             initialValue: props.data.id,
-          })(<Input placeholder="请输入设备id" disabled={!!props.data.id}/>)}
+          })(<Input placeholder="请输入设备id" disabled={!!props.data.id} />)}
         </Form.Item>
         <Form.Item key="name" label="设备名称">
           {getFieldDecorator('name', {
             rules: [
-              {required: true, message: '请输入设备名称'},
-              {max: 200, message: '设备名称不超过200个字符'}
+              { required: true, message: '请输入设备名称' },
+              { max: 200, message: '设备名称不超过200个字符' }
             ],
             initialValue: props.data.name,
-          })(<Input placeholder="请输入设备名称"/>)}
+          })(<Input placeholder="请输入设备名称" />)}
         </Form.Item>
         <Form.Item key="productId" label="产品">
           {getFieldDecorator('productId', {
-            rules: [{required: true}],
+            rules: [{ required: true }],
             initialValue: props.data.productId,
           })(
             <Select placeholder="请选择产品">
               {(productList || []).map(item => (
                 <Select.Option
-                  key={JSON.stringify({productId: item.id, productName: item.name})}
+                  key={JSON.stringify({ productId: item.id, productName: item.name })}
                   value={item.id}
                 >
                   {item.name}
@@ -158,14 +161,14 @@ const Save: React.FC<Props> = props => {
         <Form.Item key="describe" label="说明">
           {getFieldDecorator('describe', {
             initialValue: props.data.describe,
-          })(<Input.TextArea rows={4} placeholder="请输入至少五个字符"/>)}
+          })(<Input.TextArea rows={4} placeholder="请输入至少五个字符" />)}
         </Form.Item>
       </Form>
     </Modal>
   );
 };
 
-export default connect(({deviceProduct, loading}: ConnectState) => ({
+export default connect(({ deviceProduct, loading }: ConnectState) => ({
   deviceProduct,
   loading,
 }))(Form.create<Props>()(Save));
