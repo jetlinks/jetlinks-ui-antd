@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Table } from "antd";
 import Service from "../system/tenant/service";
 import encodeQueryParam from "@/utils/encodeParam";
-import { map, flatMap, toArray, groupBy, mergeMap, reduce, filter } from "rxjs/operators";
+import { map, flatMap, toArray, groupBy, mergeMap, reduce, filter, count } from "rxjs/operators";
 import { from } from "rxjs";
 import apis from "@/services";
 
@@ -38,17 +38,15 @@ const Demo = () => {
                             })).pipe(
                                 filter(item => item.length > 0),
                                 flatMap(from),
-                                groupBy(item => item.state),
-                                mergeMap(val$ => {
-                                    console.log(val$, 'vals');
-                                    return val$.pipe(reduce((acc, cur) => [...acc, cur], [`${val$.key?.value}`]))
-
-                                }),
-                                // map(p => ({ t: t, list: p }))
+                                groupBy(item => item.state.value),
+                                mergeMap(val$ => val$.pipe(
+                                    count(),
+                                    map(count => ({ state: val$.key, count, product: { id: t.id, name: t.name } }))
+                                )),
                             )
                     }),
                     toArray(),
-                    map(a => ({ i: i, data: a })),
+                    map(a => ({ member: i, data: a })),
                 )
                 ),
                 toArray(),

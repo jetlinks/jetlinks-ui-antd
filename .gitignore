@@ -38,3 +38,6 @@ screenshot
 .eslintcache
 
 build
+
+# 配置文件
+./config/proxy.ts

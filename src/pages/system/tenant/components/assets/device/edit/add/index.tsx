@@ -21,7 +21,7 @@ const Add = (props: Props) => {
     const [loading, setLoading] = useState<boolean>(true);
     const [userList, setUserList] = useState();
     const { data, form: { getFieldDecorator, validateFields } } = props;
-    const [checkedUserList, setCheckedUserList] = useState<string[]>(props.user ? [props.user] : []);
+    const [checkedUserList, setCheckedUserList] = useState<string[]>(props.user ? [props.user] : ['*']);
     const [selectedAssetsId, setSelectedAssetsId] = useState<string[]>([]);
     const initSearch = {
         terms: {
@@ -136,8 +136,12 @@ const Add = (props: Props) => {
         }, {
             title: '名称',
             dataIndex: 'name'
+        }, {
+            title: '状态',
+            dataIndx: 'state',
+            render: (record: any) => record.state.text,
         }]
-    const [selectMode, setSelectMode] = useState<'tags' | 'default'>('tags');
+    const [selectMode, setSelectMode] = useState<'tags' | 'default'>('default');
     const [checked, setChecked] = useState(checkedUserList);
     return (
         <Drawer
@@ -187,13 +191,24 @@ const Add = (props: Props) => {
                 formItems={[
                     {
                         label: "ID",
-                        key: "id$LIKE",
+                        key: "id",
                         type: 'string'
                     },
                     {
                         label: "名称",
                         key: "name$LIKE",
                         type: 'string'
+                    },
+                    {
+                        label: '状态',
+                        key: 'state',
+                        type: 'list',
+                        props: {
+                            data: [
+                                { id: 'offline', name: '离线' },
+                                { id: 'online', name: '在线' }
+                            ]
+                        }
                     }
                 ]}
             />
