@@ -43,7 +43,8 @@ class Service extends BaseService<TenantItem>{
                 map(resp => resp.result)
             )),
         queryNoPaging: (id: string, params: any) => defer(() => from(
-            request(`/jetlinks/tenant/${id}/members/_query/no-paging?paging=false`, {
+            // request(`/jetlinks/tenant/${id}/members/_query/no-paging?paging=false`, {
+            request(`/jetlinks/tenant/members/_query/no-paging?paging=false`, {
                 method: 'GET',
                 params
             })).pipe(
