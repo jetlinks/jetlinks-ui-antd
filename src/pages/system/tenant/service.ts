@@ -185,5 +185,15 @@ class Service extends BaseService<TenantItem>{
             )),
     }
 
+    public alarm = {
+        count: (params: any) => defer(() => from(
+            request(`/jetlinks/device/alarm/history/_count`, {
+                method: 'GET',
+                params,
+            })).pipe(
+                filter(resp => resp.status === 200),
+                map(resp => resp.result)
+            )),
+    }
 }
 export default Service;

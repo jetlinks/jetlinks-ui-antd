@@ -26,7 +26,7 @@ const TenantAnalysis: React.FC<Props> = (props) => {
           </Col>
           {/* <Col xl={12} lg={12} md={24} sm={24} xs={24}>
             <Suspense fallback={null}>
-              <TenantAlarm/>
+              <TenantAlarm />
             </Suspense>
           </Col> */}
         </Row>

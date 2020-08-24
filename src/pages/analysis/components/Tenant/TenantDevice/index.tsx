@@ -187,19 +187,31 @@ const TenantDevice: React.FC<Props> = (props) => {
         toArray(),
         map(list => list.sort((a, b) => a.userId - b.userId))
       ).subscribe((result) => {
-        setData(result);
-        if (tenantAdmin) {
-          setData(result);
-        } else {
-          const temp = result.filter(i => i.userId === userId);
-          setData(temp);
-        }
-        // console.log(tenantAdmin, 'rrr');
-        // console.log(JSON.stringify(result), 'result');
+        const tempData: any[] = [];
+        result.forEach((item: any) => {
+          service.alarm.count(encodeQueryParam({
+            terms: {
+              deviceId$assets: JSON.stringify({
+                tenantId: tenantId,
+                assetType: 'device',
+                memberId: item.userId,
+
+              }),
+              productId: item.productId,
+            }
+          })).subscribe((resp) => {
+            tempData.push({ ...item, alarmCount: resp });
+          }, () => { },
+            () => {
+              if (tenantAdmin) {
+                setData(tempData);
+              } else {
+                const temp = tempData.filter(i => i.userId === userId);
+                setData(temp);
+              }
+            })
+        });
       });
-
-    apis.deviceInstance.count({})
-
   }, []);
 
   const test: string[] = [];
@@ -255,7 +267,7 @@ const TenantDevice: React.FC<Props> = (props) => {
       render: (text: any) => text || 0,
     },
     {
-      dataIndex: 'log',
+      dataIndex: 'alarmCount',
       title: '告警记录',
       render: (text: any) => text || 0,
     },

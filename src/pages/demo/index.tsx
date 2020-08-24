@@ -67,7 +67,6 @@ const Demo = () => {
                 map(list => list.sort((a, b) => a.userId - b.userId))
             ).subscribe((result) => {
                 setData(result);
-                console.log(result, 'rrr');
                 // console.log(JSON.stringify(result), 'result');
             });
 
