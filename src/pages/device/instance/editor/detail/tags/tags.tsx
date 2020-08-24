@@ -80,7 +80,7 @@ const Tags: React.FC<Props> = props => {
         <Form key='tags_form'>
           <Form.Item key="tags_item">
             {tagsData.map((item: any, index) => (
-              <Row key={item._id}>
+              <Row key={`tags_${item._id || item.id}`}>
                 <Col span={5}>
                   <Input placeholder="请输入标签key"
                          value={item.key}
