@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { Card, Form, Input, Modal } from 'antd';
-import { FormComponentProps } from 'antd/lib/form';
-import { Map } from 'react-amap';
+import React, {useEffect, useState} from 'react';
+import {Card, Form, Input, Modal} from 'antd';
+import {FormComponentProps} from 'antd/lib/form';
+import {Map} from 'react-amap';
 
 interface Props extends FormComponentProps {
   close: Function;
@@ -22,7 +22,7 @@ const Location: React.FC<Props> = props => {
     };
 
     const {
-      form: { getFieldDecorator },
+      form: {getFieldDecorator},
       form,
     } = props;
 
@@ -31,7 +31,7 @@ const Location: React.FC<Props> = props => {
 
     useEffect(() => {
       if (props.tagInfo.value) {
-        form.setFieldsValue({ value: props.tagInfo.value.split(',') });
+        form.setFieldsValue({value: props.tagInfo.value.split(',')});
       }
     }, []);
 
@@ -43,7 +43,7 @@ const Location: React.FC<Props> = props => {
     };
 
     const newMassMarks = (map: any, keywords: string) => {
-      window.AMap.plugin('AMap.PlaceSearch', function() {
+      window.AMap.plugin('AMap.PlaceSearch', function () {
         let autoOptions = {
           pageSize: 5, // 单页显示结果条数
           pageIndex: 1, // 页码
@@ -52,7 +52,7 @@ const Location: React.FC<Props> = props => {
           autoFitView: true, // 是否自动调整地图视野使绘制的 Marker点都处于视口的可见范围
         };
         let placeSearch = new AMap.PlaceSearch(autoOptions);
-        placeSearch.search(keywords, function(status, result) {
+        placeSearch.search(keywords, function (status, result) {
         });
       });
     };
@@ -66,11 +66,15 @@ const Location: React.FC<Props> = props => {
         }
       },
       click: (ins: any) => {
-        form.setFieldsValue({ value: ins.lnglat.getLng() + ',' + ins.lnglat.getLat() });
+        form.setFieldsValue({value: ins.lnglat.getLng() + ',' + ins.lnglat.getLat()});
         if (mapCreated.getAllOverlays('marker').length <= 0) {
           newMarker(mapCreated, [ins.lnglat.getLng(), ins.lnglat.getLat()]);
         } else {
-          mapMarker.setPosition([ins.lnglat.getLng(), ins.lnglat.getLat()]);
+          if (Object.keys(mapMarker).length === 0) {
+            newMarker(mapCreated, [ins.lnglat.getLng(), ins.lnglat.getLat()])
+          } else {
+            mapMarker.setPosition([ins.lnglat.getLng(), ins.lnglat.getLat()]);
+          }
         }
       },
     };
@@ -81,10 +85,10 @@ const Location: React.FC<Props> = props => {
       });
       marker.setMap(map);
       setMapMarker(marker);
-      upMarker(marker,coordinate);
+      upMarker(marker, coordinate);
     };
 
-    const upMarker = (map: any,coordinate: any[]) => {
+    const upMarker = (map: any, coordinate: any[]) => {
       map.setPosition(coordinate);
     };
 
@@ -100,7 +104,7 @@ const Location: React.FC<Props> = props => {
         width="60%"
         onCancel={() => props.close()}
       >
-        <div style={{ width: '100%', height: '50vh' }}>
+        <div style={{width: '100%', height: '50vh'}}>
           <Map resizeEnable events={mapEvents} rotateEnable={true}/>
         </div>
         <div style={{
@@ -110,13 +114,13 @@ const Location: React.FC<Props> = props => {
           <Card bordered={false} style={{
             height: '150px', marginTop: 5,
           }}>
-            <Form labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} key="form">
-              <Form.Item key="search" label="位置搜索" style={{ marginBottom: 14 }}>
+            <Form labelCol={{span: 6}} wrapperCol={{span: 18}} key="form">
+              <Form.Item key="search" label="位置搜索" style={{marginBottom: 14}}>
                 <Input.Search placeholder="输入搜索区域" onSearch={value => {
                   newMassMarks(mapCreated, value);
                 }} enterButton/>
               </Form.Item>
-              <Form.Item key="value" label="经纬度" style={{ marginBottom: 14 }}>
+              <Form.Item key="value" label="经纬度" style={{marginBottom: 14}}>
                 {getFieldDecorator('value', {})(
                   <Input id="value" placeholder="鼠标点击地图获取"/>,
                 )}
