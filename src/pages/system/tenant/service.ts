@@ -1,7 +1,7 @@
 import BaseService from "@/services/crud";
 import { defer, from } from "rxjs";
 import request from "@/utils/request";
-import { map, filter } from "rxjs/operators";
+import { map, filter, flatMap } from "rxjs/operators";
 import { TenantItem } from "./data";
 
 class Service extends BaseService<TenantItem>{
@@ -42,14 +42,15 @@ class Service extends BaseService<TenantItem>{
                 filter(resp => resp.status === 200),
                 map(resp => resp.result)
             )),
-        queryNoPaging: (id: string, params: any) => defer(() => from(
+        queryNoPaging: (params: any) => defer(() => from(
             // request(`/jetlinks/tenant/${id}/members/_query/no-paging?paging=false`, {
             request(`/jetlinks/tenant/members/_query/no-paging?paging=false`, {
                 method: 'GET',
                 params
             })).pipe(
                 filter(resp => resp.status === 200),
-                map(resp => resp.result)
+                flatMap(resp => from(resp.result)),
+
             )),
         bind: (id: string, data: { name: string, userId: string, admin: boolean }[]) => defer(
             () => from(
@@ -142,7 +143,7 @@ class Service extends BaseService<TenantItem>{
                 params
             })).pipe(
                 filter(resp => resp.status === 200),
-                map(resp => resp.result)
+                flatMap(resp => from(resp.result)),
             )),
         productCount: (params: any) => defer(() => from(
             request(`/jetlinks/device-product/_count`, {
@@ -158,7 +159,7 @@ class Service extends BaseService<TenantItem>{
                 params
             })).pipe(
                 filter(resp => resp.status === 200),
-                map(resp => resp.result)
+                flatMap(resp => from(resp.result)),
             )),
         protocol: (params: any) => defer(() => from(
             request(`/jetlinks/protocol/_query`, {

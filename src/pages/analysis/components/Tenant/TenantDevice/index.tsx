@@ -10,8 +10,9 @@ import { DeviceProduct } from '@/pages/device/product/data';
 
 import Service from "@/pages/system/tenant/service";
 import { map, flatMap, toArray, groupBy, mergeMap, reduce, count, defaultIfEmpty } from "rxjs/operators";
-import { from } from "rxjs";
+import { from, zip } from "rxjs";
 import { randomString } from '@/utils/utils';
+import product from '@/pages/device/product';
 
 
 interface Props {
@@ -132,85 +133,67 @@ const TenantDevice: React.FC<Props> = (props) => {
   const userId = user?.userId;
   const tenantAdmin = user?.user.tenants.filter((i: any) => i.mainTenant)[0]?.adminMember;
 
+  const getProduct = (userId: string) =>
+    service.assets.productNopaging(encodeQueryParam({
+      terms: {
+        id$assets: JSON.stringify({
+          tenantId: tenantId,
+          assetType: 'product',
+          memberId: userId,
+        }),
+      }
+    }));
+
+  const getDeviceState = (product: any, userId: string) =>
+    service.assets.instanceNopaging(encodeQueryParam({
+      terms: {
+        productId: product.id,
+        id$assets: JSON.stringify({
+          tenantId: tenantId,
+          assetType: 'device',
+          memberId: userId,
+        }),
+      }
+    })).pipe(
+      groupBy((instance: any) => instance.state.value),
+      mergeMap(group$ => group$.pipe(
+        count(),
+        map(count => {
+          let v: any = {};
+          v[group$.key] = count;
+          return v;
+        }),
+      )),
+      map(state => ({ productName: product.name, online: state.online || 0, offline: state.offline || 0 })),
+      defaultIfEmpty({ productName: product.name, 'online': 0, 'offline': 0 }),
+    );
+
+  const getAlarmCount = (productId: string, userId: string) => service.alarm.count(encodeQueryParam({
+    terms: {
+      deviceId$assets: JSON.stringify({
+        tenantId: tenantId,
+        assetType: 'device',
+        memberId: userId,
+      }),
+      productId: productId,
+    }
+  }));
+
   useEffect(() => {
     // todo 查询租户
-    service.member.queryNoPaging(tenantId, {})
-      .pipe(// 
-        flatMap(from),
-        flatMap((i: any) => service.assets.productNopaging(encodeQueryParam({
-          terms: {
-            id$assets: JSON.stringify({
-              tenantId: tenantId,
-              assetType: 'product',
-              memberId: i.userId,
-            }),
-          }
-        })).pipe(
-          flatMap(from),
-          flatMap((t: any) => {
-            return service.assets.instanceNopaging(
-              encodeQueryParam({
-                terms: {
-                  productId: t.id,
-                  id$assets: JSON.stringify({
-                    tenantId: tenantId,
-                    assetType: 'device',
-                    memberId: i.userId,
-                  }),
-                }
-              })).pipe(
-                // filter(item => item.length > 0),
-                flatMap(from),
-                groupBy(item => item.state.value),
-                mergeMap(val$ => val$.pipe(
-                  count(),
-                  map(count => {
-                    let v = { productId: t.id, productName: t.name };
-                    v[val$.key] = count;
-                    return v;
-                  })
-                )),
-                defaultIfEmpty({ productId: t.id, productName: t.name }),
-                groupBy(j => j.productId),
-                flatMap(group => group.pipe(
-                  reduce((a, b) => ({ ...a, ...b }))
-                ))
-              )
-          }),
-          //product 为list
-          // toArray(),
-          // map(a => ({ userId: i.userId, name: i.name, product: a })),
-          // 平铺product
-          map(a => ({ userId: i.userId, name: i.name, ...a, key: `${i.userId}-${randomString(7)}` })),
-          defaultIfEmpty({ userId: i.userId, name: i.name, key: `${i.userId}` })
-        )),
+    service.member.queryNoPaging({})
+      .pipe(
+        flatMap((i: any) => getProduct(i.userId)
+          .pipe(
+            flatMap((product: any) =>
+              zip(getDeviceState(product, i.userId), getAlarmCount(product.id, i.userId))),
+            map(tp2 => ({ userId: i.userId, name: i.name, key: `${i.userId}-${randomString(7)}`, ...tp2[0], alarmCount: tp2[1] })),
+            defaultIfEmpty({ userId: i.userId, name: i.name, key: `${i.userId}` })
+          )),
         toArray(),
         map(list => list.sort((a, b) => a.userId - b.userId)),
       ).subscribe((result) => {
-        const tempData: any[] = [];
-        result.forEach((item: any) => {
-          service.alarm.count(encodeQueryParam({
-            terms: {
-              deviceId$assets: JSON.stringify({
-                tenantId: tenantId,
-                assetType: 'device',
-                memberId: item.userId,
-
-              }),
-              productId: item.productId,
-            }
-          })).subscribe((resp) => {
-            tempData.push({ ...item, alarmCount: resp });
-          }, () => { },
-            () => {
-              if (tenantAdmin) {
-                setData(tempData);
-              } else {
-                const temp = tempData.filter(i => i.userId === userId);
-                setData(temp);
-              }
-            })
-        });
+        setData(result);
       });
   }, []);
 
