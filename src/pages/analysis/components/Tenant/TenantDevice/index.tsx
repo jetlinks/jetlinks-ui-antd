@@ -128,9 +128,9 @@ const TenantDevice: React.FC<Props> = (props) => {
 
   const user = JSON.parse(localStorage.getItem('hsweb-autz') || '{}');
 
-  const tenantId = user?.user.tenants.filter((i: any) => i.mainTenant)[0].tenantId;
+  const tenantId = user?.user.tenants.filter((i: any) => i.mainTenant)[0]?.tenantId;
   const userId = user?.userId;
-  const tenantAdmin = user?.user.tenants.filter((i: any) => i.mainTenant)[0].adminMember;
+  const tenantAdmin = user?.user.tenants.filter((i: any) => i.mainTenant)[0]?.adminMember;
 
   useEffect(() => {
     // todo 查询租户
@@ -185,7 +185,7 @@ const TenantDevice: React.FC<Props> = (props) => {
           defaultIfEmpty({ userId: i.userId, name: i.name, key: `${i.userId}` })
         )),
         toArray(),
-        map(list => list.sort((a, b) => a.userId - b.userId))
+        map(list => list.sort((a, b) => a.userId - b.userId)),
       ).subscribe((result) => {
         const tempData: any[] = [];
         result.forEach((item: any) => {
