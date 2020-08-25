@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import Form from 'antd/es/form';
 import {FormComponentProps} from 'antd/lib/form';
-import {Modal} from 'antd';
+import {message, Modal} from 'antd';
 import 'ace-builds';
 import 'ace-builds/webpack-resolver';
 import AceEditor from "react-ace";
@@ -11,22 +11,33 @@ import 'ace-builds/src-noconflict/ext-language_tools';
 import 'ace-builds/src-noconflict/ext-searchbox';
 import 'ace-builds/src-noconflict/theme-eclipse';
 import {downloadObject} from "@/utils/utils";
+import apis from "@/services";
 
 interface Props extends FormComponentProps {
   close: Function;
-  data: string;
+  data?: string;
+  productId: string;
 }
 
 const MetaData: React.FC<Props> = props => {
 
   const [metaData, setMetaData] = useState<string>();
+  const [data, setData] = useState<string>();
 
   useEffect(() => {
-    try {
-      setMetaData(JSON.stringify(JSON.parse(props.data), null, 2));
-    } catch (error) {
-      setMetaData(props.data);
-    }
+    apis.deviceProdcut.info(props.productId)
+      .then((response: any) => {
+        if (response.status === 200) {
+          try {
+            setData(response.result.metadata);
+            setMetaData(JSON.stringify(JSON.parse(response.result.metadata), null, 2));
+          } catch (error) {
+            setMetaData(response.result.metadata);
+          }
+        }
+      })
+      .catch(() => {
+      });
   }, []);
 
   return (
@@ -36,7 +47,11 @@ const MetaData: React.FC<Props> = props => {
       okText='导出模型文件'
       cancelText="取消"
       onOk={() => {
-        downloadObject(JSON.parse(props.data), `产品-物模型`);
+        if (data != null) {
+          downloadObject(JSON.parse(data), `产品-物模型`);
+        } else {
+          message.error('请检查物模型');
+        }
       }}
       onCancel={() => props.close()}
     >
