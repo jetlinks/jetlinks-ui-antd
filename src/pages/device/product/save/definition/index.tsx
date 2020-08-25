@@ -40,7 +40,6 @@ const Definition: React.FC<Props> = props => {
   const [spinning, setSpinning] = useState(false);
   const [metaDataVisible, setMetaDataVisible] = useState(false);
   const [quickImportVisible, setQuickImportVisible] = useState(false);
-  const [metaData, setMetaData] = useState<string>();
   const [importData, setImportData] = useState<any>({
     properties: props.propertyData,
     functions: props.functionsData,
@@ -80,7 +79,6 @@ const Definition: React.FC<Props> = props => {
       {props.basicInfo.metadata && (
         <Button style={{marginLeft: 10}} onClick={() => {
           setMetaDataVisible(true);
-          setMetaData(basicInfo.metadata);
         }}>
           物模型 TSL
         </Button>
@@ -134,7 +132,7 @@ const Definition: React.FC<Props> = props => {
         {metaDataVisible && (
           <MetaData close={() => {
             setMetaDataVisible(false);
-          }} data={metaData}/>
+          }} productId={basicInfo.id}/>
         )}
         {quickImportVisible && (
           <QuickImport
