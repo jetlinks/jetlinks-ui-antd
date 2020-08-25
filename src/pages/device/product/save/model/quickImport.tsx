@@ -154,33 +154,31 @@ const QuickImport: React.FC<Props> = props => {
               <Icon type="upload"/>快速导入
             </Button>
           </Upload>
-          {metaData && (
-            <div style={{border: '1px solid #E9E9E9', marginTop: 10}}>
-              <AceEditor
-                mode='json'
-                theme="eclipse"
-                name="app_code_editor"
-                fontSize={14}
-                value={metaData}
-                onChange={value => {
-                  setMetaData(value);
-                }}
-                showPrintMargin
-                showGutter
-                wrapEnabled
-                highlightActiveLine  //突出活动线
-                enableSnippets  //启用代码段
-                style={{width: '100%', height: 400}}
-                setOptions={{
-                  enableBasicAutocompletion: true,   //启用基本自动完成功能
-                  enableLiveAutocompletion: true,   //启用实时自动完成功能 （比如：智能代码提示）
-                  enableSnippets: true,  //启用代码段
-                  showLineNumbers: true,
-                  tabSize: 2,
-                }}
-              />
-            </div>
-          )}
+          <div style={{border: '1px solid #E9E9E9', marginTop: 10}}>
+            <AceEditor
+              mode='json'
+              theme="eclipse"
+              name="app_code_editor"
+              fontSize={14}
+              value={metaData}
+              onChange={value => {
+                setMetaData(value);
+              }}
+              showPrintMargin
+              showGutter
+              wrapEnabled
+              highlightActiveLine  //突出活动线
+              enableSnippets  //启用代码段
+              style={{width: '100%', height: 400}}
+              setOptions={{
+                enableBasicAutocompletion: true,   //启用基本自动完成功能
+                enableLiveAutocompletion: true,   //启用实时自动完成功能 （比如：智能代码提示）
+                enableSnippets: true,  //启用代码段
+                showLineNumbers: true,
+                tabSize: 2,
+              }}
+            />
+          </div>
         </Tabs.TabPane>
       </Tabs>
     </Modal>
