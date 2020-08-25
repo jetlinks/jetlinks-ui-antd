@@ -141,7 +141,7 @@ const PermissionList: React.FC<Props> = props => {
             <SearchForm
               search={(params: any) => {
                 setSearchParam({ pageSize: 10, terms: { ...params, ...searchParam.terms } });
-                handleSearch({ terms: { ...params, ...searchParam.terms }, pageSize: 10 });
+                handleSearch({ terms: { ...params }, pageSize: 10 });
               }}
               formItems={[
                 {
