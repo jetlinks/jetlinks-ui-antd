@@ -1,18 +1,17 @@
-import React, {useEffect, useState} from "react";
-import {Modal, Tabs, Table, Tag, Tooltip} from "antd";
-import {RuleInstanceItem} from "@/pages/rule-engine/instance/data";
-import {ColumnProps} from 'antd/es/table';
+import React, { useEffect, useState } from "react";
+import { Modal, Tabs, Table, Tag, Tooltip, Form, Row, Col, DatePicker, Button } from "antd";
+import { RuleInstanceItem } from "@/pages/rule-engine/instance/data";
+import { ColumnProps, PaginationConfig, SorterResult } from 'antd/es/table';
 import encodeQueryParam from '@/utils/encodeParam';
 import apis from "@/services";
 import styles from './detail.less';
-import moment from 'moment';
-import SearchForm from "./SearchForm";
-import {getWebsocket} from '@/layouts/GlobalWebSocket';
+import moment, { Moment } from 'moment';
+import { getWebsocket } from '@/layouts/GlobalWebSocket';
+import { FormComponentProps } from "antd/lib/form";
+const { TabPane } = Tabs;
 
-const {TabPane} = Tabs;
 
-
-interface Props {
+interface Props extends FormComponentProps {
   data: Partial<RuleInstanceItem>
   close: Function
 }
@@ -23,7 +22,8 @@ interface State {
   realTimeDataEvents: any[]
   dataLogs: any
   dataEvents: any,
-  nodeData: any[]
+  nodeData: any[],
+  createTime: any
 }
 
 const columnsRealTime: ColumnProps<RuleInstanceItem>[] = [
@@ -128,17 +128,20 @@ const columnsEvents: ColumnProps<RuleInstanceItem>[] = [
 ];
 
 const Detail: React.FC<Props> = props => {
+  const { getFieldDecorator } = props.form
 
   let nodeMap = new Map();
 
   const initState: State = {
     searchParam: {
       pageSize: 10,
+      pageIndex: 0,
       sorts: {
-        order: "descend",
+        order: "desc",
         field: "createTime"
       }
     },
+    createTime: "",
     realTimeDataLogs: [],
     realTimeDataEvents: [],
     dataLogs: {},
@@ -150,7 +153,7 @@ const Detail: React.FC<Props> = props => {
   const [realTimeDataEvents, setRealTimeDataEvents] = useState(initState.realTimeDataEvents);
   const [dataLogs, setDataLogs] = useState(initState.dataLogs);
   const [dataEvents, setDataEvents] = useState(initState.dataEvents);
-  const [nodeData, setNodeData] = useState(initState.nodeData);
+  const [nodeData, setNodeData] = useState(initState.nodeData)
   const getNode = () => {
     return new Promise((resolve, reject) => {
       if (props.data.id as string !== '') {
@@ -158,10 +161,10 @@ const Detail: React.FC<Props> = props => {
           if (resp.status === 200) {
             let data: any[] = [];
             resp.result.map((i: any) => {
-              nodeMap.set(i.id, i.name);
-              data.push({id: i.realTimeDataEvents, name: i.name})
-            });
-            setNodeData(data);
+              nodeMap.set(i.id, i.name)
+              data.push({ id: i.id, name: i.name })
+            })
+            setNodeData(data)
             resolve();
           }
         }).catch((err) => {
@@ -181,7 +184,7 @@ const Detail: React.FC<Props> = props => {
           if (nodeData.length > 0) {
             datalist.push({
               time: item.createTime,
-              nodeId: nodeData.filter((x: any) => x.id === item.nodeData).map((i: any) => i.name),
+              nodeId: nodeData.filter((x: any) => x.id === item.nodeId).map((i: any) => i.name),
               message: item.message,
               level: item.level
             })
@@ -213,7 +216,7 @@ const Detail: React.FC<Props> = props => {
           if (nodeData.length > 0) {
             datalist.push({
               time: item.createTime,
-              nodeId: nodeData.filter((x: any) => x.id === item.nodeData).map((i: any) => i.name),
+              nodeId: nodeData.filter((x: any) => x.id === item.nodeId).map((i: any) => i.name),
               message: JSON.stringify(JSON.parse(item.ruleData).data)
             })
           } else {
@@ -234,29 +237,98 @@ const Detail: React.FC<Props> = props => {
     })
   };
   const eventsChange = (
-    pagination: any,
+    pagination: PaginationConfig,
     filters: any,
-    sorter: any,
+    sorter: SorterResult<RuleInstanceItem>,
   ) => {
+    const data = props.form.getFieldsValue();
+    let terms = {}
+    if (data.createTimeEvents) {
+      const formatDate = data.createTimeEvents.map((e: Moment) =>
+        moment(e).format('YYYY-MM-DD HH:mm:ss'),
+      );
+      terms = {
+        createTime$btw: formatDate.join(',')
+      }
+    }
     getDataEvents({
       pageIndex: Number(pagination.current) - 1,
       pageSize: pagination.pageSize,
-      terms: searchParam.terms,
-      sorts: sorter.field ? sorter : searchParam.sorter,
+      sorts: {
+        order: "desc",
+        field: "createTime"
+      },
+      terms: terms
     });
   };
   const logsChange = (
-    pagination: any,
+    pagination: PaginationConfig,
     filters: any,
-    sorter: any,
+    sorter: SorterResult<RuleInstanceItem>,
   ) => {
+    const data = props.form.getFieldsValue();
+    let terms = {}
+    if (data.createTimeLogs) {
+      const formatDate = data.createTimeLogs.map((e: Moment) =>
+        moment(e).format('YYYY-MM-DD HH:mm:ss'),
+      );
+      terms = {
+        createTime$btw: formatDate.join(',')
+      }
+    }
     getDataLogs({
       pageIndex: Number(pagination.current) - 1,
       pageSize: pagination.pageSize,
-      terms: searchParam.terms,
-      sorts: sorter.field ? sorter : searchParam.sorter,
+      sorts: {
+        order: "desc",
+        field: "createTime"
+      },
+      terms: terms
     });
   };
+  const searchLogs = () => {
+    const data = props.form.getFieldsValue();
+    let terms = {}
+    if (data.createTimeLogs) {
+      const formatDate = data.createTimeLogs.map((e: Moment) =>
+        moment(e).format('YYYY-MM-DD HH:mm:ss'),
+      );
+      terms = {
+        createTime$btw: formatDate.join(',')
+      }
+    }
+    getDataLogs({
+      pageSize: 10,
+      pageIndex: 0,
+      sorts: {
+        order: "desc",
+        field: "createTime"
+      },
+      terms: terms
+    });
+  }
+  const searchEvents = () => {
+    const data = props.form.getFieldsValue();
+    let terms = {}
+    if (data.createTimeEvents) {
+      const formatDate = data.createTimeEvents.map((e: Moment) =>
+        moment(e).format('YYYY-MM-DD HH:mm:ss'),
+      );
+      terms = {
+        createTime$btw: formatDate.join(',')
+      }
+    }
+    getDataEvents({
+      pageSize: 10,
+      pageIndex: 0,
+      sorts: {
+        order: "desc",
+        field: "createTime"
+      },
+      terms: terms
+    });
+  }
+
   useEffect(() => {
     getNode().then(() => {
       getDataLogs(searchParam);
@@ -322,18 +394,29 @@ const Detail: React.FC<Props> = props => {
           <div className={styles.box}>
             <div className={styles.boxLeft}>
               <div className={styles.search}>
-                <SearchForm
-                  formItems={[
-                    {
-                      label: '',
-                      key: 'createTime$btw'
-                    }
-                  ]}
-                  search={(params: any) => {
-                    setSearchParam(params);
-                    getDataLogs({terms: params, pageSize: 10});
-                  }}
-                />
+                <Form>
+                  <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
+                    <Col style={{ height: 56 }} md={8} sm={24} key='createTimeLogs'>
+                      <Form.Item>
+                        {getFieldDecorator('createTimeLogs', {
+                          initialValue: '',
+                          rules: []
+                        })(
+                          <DatePicker.RangePicker
+                            style={{ width: '200%' }}
+                            showTime={{ format: 'HH:mm' }}
+                            format="YYYY-MM-DD HH:mm"
+                            placeholder={['开始时间', '结束时间']}
+                          />
+                        )}
+                      </Form.Item>
+                    </Col>
+                    <div style={{ float: 'right', marginBottom: 24, marginRight: 30, marginTop: 4 }}>
+                      <Button type="primary" onClick={searchLogs}> 查询</Button>
+                      <Button style={{ marginLeft: 8 }} onClick={() => { props.form.resetFields(); searchLogs(); }}>重置</Button>
+                    </div>
+                  </Row>
+                </Form>
               </div>
               <Table
                 dataSource={dataLogs.datalist || []}
@@ -358,18 +441,29 @@ const Detail: React.FC<Props> = props => {
           <div className={styles.box}>
             <div className={styles.boxLeft}>
               <div className={styles.search}>
-                <SearchForm
-                  formItems={[
-                    {
-                      label: '',
-                      key: 'createTime$btw'
-                    }
-                  ]}
-                  search={(params: any) => {
-                    setSearchParam(params);
-                    getDataEvents({terms: params, pageSize: 10});
-                  }}
-                />
+                <Form>
+                  <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
+                    <Col style={{ height: 56 }} md={8} sm={24} key='createTimeEvents'>
+                      <Form.Item>
+                        {getFieldDecorator('createTimeEvents', {
+                          initialValue: '',
+                          rules: []
+                        })(
+                          <DatePicker.RangePicker
+                            style={{ width: '200%' }}
+                            showTime={{ format: 'HH:mm' }}
+                            format="YYYY-MM-DD HH:mm"
+                            placeholder={['开始时间', '结束时间']}
+                          />
+                        )}
+                      </Form.Item>
+                    </Col>
+                    <div style={{ float: 'right', marginBottom: 24, marginRight: 30, marginTop: 4 }}>
+                      <Button type="primary" onClick={searchEvents}> 查询</Button>
+                      <Button style={{ marginLeft: 8 }} onClick={() => { props.form.resetFields(); searchEvents(); }}>重置</Button>
+                    </div>
+                  </Row>
+                </Form>
               </div>
               <Table
                 onChange={eventsChange}
@@ -391,8 +485,9 @@ const Detail: React.FC<Props> = props => {
           </div>
         </TabPane>
       </Tabs>
-    </Modal>
+    </Modal >
   )
 };
 
-export default Detail
+// export default Detail
+export default Form.create<Props>()(Detail);

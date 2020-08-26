@@ -48,13 +48,17 @@ const Edit = (props: Props) => {
     let product = (tempSearch: any, datalist: any[]) => {
         return new Promise((resolve, reject) => {
             service.assets.product(encodeQueryParam(tempSearch)).subscribe(res => {
-                res.data.forEach(value => {
+                res.data.forEach((value: { id: string; name: any; photoUrl: any; }) => {
                     service.assets.members(data.id, 'product', value.id).subscribe(resp => {
+                        let str = ''
+                        resp.filter((item: any) => item.binding === true).map((i: any) => i.userName).forEach((i: string, index: number) => {
+                            str +=  i + '、'
+                        })
                         datalist.push({
                             id: value.id,
                             name: value.name,
                             photoUrl: value.photoUrl || productImg,
-                            tenant: resp.filter((item: any) => item.binding === true).map((i: any) => i.userName)
+                            tenant: str.substring(0,str.length-1)
                         })
                         if (datalist.length == res.data.length) {
                             resolve({
@@ -105,31 +109,19 @@ const Edit = (props: Props) => {
         {
             title: 'ID',
             dataIndex: 'id',
-            align: 'center',
+            align: 'center'
         }, 
         {
             title: '名称',
-            render: (text: any, record: any) => <div><Avatar shape="square" src={record.photoUrl || productImg} /><span>{record.name}</span> </div>
+            render: (record: any) => <div><Avatar shape="square" src={record.photoUrl || productImg} /> <span> {record.name}</span></div>
         },
         {
             title: '租户名称',
             ellipsis: true,
             align: 'center',
             width: 400,
-            render: (record: any) => (
-                <div onClick={() => {setAsset(record); setCat(true);}}>
-                    {
-                        record.tenant.length > 0 ? 
-                        record.tenant.map(i => {
-                            return (
-                                <Tag color="purple" key={i}>{i}</Tag>
-                            )
-                        })
-                        :<span>--</span>
-                    }
-                </div>
-            )
-        }, 
+            render: ( record: any) => <div style={{overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis'}} onClick={() => {setAsset(record); setCat(true);}}><span style={{color: 'purple'}}>{record.tenant}</span></div>
+        },  
         {
             title: '操作',
             align: 'center',
@@ -228,7 +220,7 @@ const Edit = (props: Props) => {
                         handleSearch(searchParam);
                     }} />
             )}
-            {cat && <User asset={asset} close={() => setCat(false)} />}
+            {cat && <User asset={asset} close={() => {setCat(false); handleSearch(searchParam);}} />}
         </Drawer>
     )
 }
