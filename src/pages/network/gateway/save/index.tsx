@@ -1,10 +1,10 @@
-import React, {useEffect, useState, Fragment} from 'react';
-import {Modal, Form, Input, Select, Card, Row, Col, Icon, message, Divider, Tooltip} from 'antd';
-import {FormComponentProps} from 'antd/es/form';
+import React, { useEffect, useState, Fragment } from 'react';
+import { Modal, Form, Input, Select, Card, Row, Col, Icon, Divider, Tooltip } from 'antd';
+import { FormComponentProps } from 'antd/es/form';
 import apis from '@/services';
 import encodeQueryParam from '@/utils/encodeParam';
-import {randomString} from '@/utils/utils';
-import {GatewayItem} from '../data.d';
+import { randomString } from '@/utils/utils';
+import { GatewayItem } from '../data.d';
 
 interface Props extends FormComponentProps {
   data: Partial<GatewayItem>;
@@ -30,7 +30,7 @@ const Save: React.FC<Props> = props => {
   };
 
   const {
-    form: {getFieldDecorator},
+    form: { getFieldDecorator },
     form,
     data,
   } = props;
@@ -53,19 +53,23 @@ const Save: React.FC<Props> = props => {
         if (tempProvider) {
           const temp = response.result.find((item: any) => tempProvider === item.id);
           // 获取对应的网络组件
-          apis.network
-            .list(
-              encodeQueryParam({
-                terms: {
-                  type: temp.networkType.value,
-                },
-              }),
-            )
-            .then(res => {
-              setNetworkList(res.result);
-            })
-            .catch(() => {
-            });
+          // apis.network
+          //   .list(
+          //     encodeQueryParam({
+          //       terms: {
+          //         type: temp.networkType.value,
+          //       },
+          //     }),
+          //   )
+          //   .then(res => {
+          //     setNetworkList(res.result);
+          //   })
+          //   .catch(() => {
+          //   });
+
+          apis.network.config(temp.networkType.value).then(res => {
+            setNetworkList(res.result);
+          })
         }
       })
       .catch(() => {
@@ -83,19 +87,24 @@ const Save: React.FC<Props> = props => {
     if (provider) {
       const temp = providerList.find(item => provider === item.id);
       if (!temp) return;
-      apis.network
-        .list(
-          encodeQueryParam({
-            terms: {
-              type: temp.networkType.value,
-            },
-          }),
-        )
-        .then(response => {
-          setNetworkList(response.result);
-        })
-        .catch(() => {
-        });
+      // apis.network
+      //   .list(
+      //     encodeQueryParam({
+      //       terms: {
+      //         type: temp.networkType.value,
+      //       },
+      //     }),
+      //   )
+      //   .then(response => {
+      //     setNetworkList(response.result);
+      //     console.log(response, 'ressss');
+      //   })
+      //   .catch(() => {
+      //   });
+
+      apis.network.config(temp.networkType.value).then(res => {
+        setNetworkList(res.result);
+      })
     }
   }, [provider]);
 
@@ -114,9 +123,9 @@ const Save: React.FC<Props> = props => {
                 initialValue: props.data.configuration?.protocol,
               })(
                 <Select
-                  // onChange={(value: string) => {
-                  // setSupport(value);
-                  // }}
+                // onChange={(value: string) => {
+                // setSupport(value);
+                // }}
                 >
                   {supportList.map((item: any) => (
                     <Select.Option key={item.id} value={item.id}>
@@ -130,7 +139,7 @@ const Save: React.FC<Props> = props => {
             <Form.Item label="Topics">
               {getFieldDecorator('configuration.topics', {
                 initialValue: props.data.configuration?.topics,
-              })(<Input.TextArea rows={3} placeholder="从MQTT服务订阅Topic.多个使用,分割"/>)}
+              })(<Input.TextArea rows={3} placeholder="从MQTT服务订阅Topic.多个使用,分割" />)}
             </Form.Item>
           </div>
         );
@@ -160,9 +169,9 @@ const Save: React.FC<Props> = props => {
           <Fragment>
             <Form.Item label="协议路由">
               <Card>
-                {(routesData.length > 0 ? routesData : [{id: '1001', url: '', protocol: ''}]).map((i, index) => {
+                {(routesData.length > 0 ? routesData : [{ id: '1001', url: '', protocol: '' }]).map((i, index) => {
                   return (
-                    <Row key={i.id} style={{marginBottom: 5}}>
+                    <Row key={i.id} style={{ marginBottom: 5 }}>
                       <Col span={9}>
                         <Input
                           value={i.url}
@@ -173,8 +182,8 @@ const Save: React.FC<Props> = props => {
                           placeholder="/**"
                         />
                       </Col>
-                      <Col span={2} style={{textAlign: 'center'}}>
-                        <Icon type="right"/>
+                      <Col span={2} style={{ textAlign: 'center' }}>
+                        <Icon type="right" />
                       </Col>
                       <Col span={9}>
                         <Select
@@ -192,7 +201,7 @@ const Save: React.FC<Props> = props => {
                         </Select>
                       </Col>
 
-                      <Col span={4} style={{textAlign: 'center'}}>
+                      <Col span={4} style={{ textAlign: 'center' }}>
                         {index === 0 ? (
                           <>
                             <Icon
@@ -202,7 +211,7 @@ const Save: React.FC<Props> = props => {
                                 setRoutesData([...tempData]);
                               }}
                             />
-                            <Divider type="vertical"/>
+                            <Divider type="vertical" />
                             <Icon
                               type="plus"
                               onClick={() => {
@@ -216,14 +225,14 @@ const Save: React.FC<Props> = props => {
                             />
                           </>
                         ) : (
-                          <Icon
-                            type="minus"
-                            onClick={() => {
-                              const tempData = routesData.filter(temp => temp.id !== i.id);
-                              setRoutesData([...tempData]);
-                            }}
-                          />
-                        )}
+                            <Icon
+                              type="minus"
+                              onClick={() => {
+                                const tempData = routesData.filter(temp => temp.id !== i.id);
+                                setRoutesData([...tempData]);
+                              }}
+                            />
+                          )}
                       </Col>
                     </Row>
                   )
@@ -239,7 +248,7 @@ const Save: React.FC<Props> = props => {
               <span>
                 认证协议
                 <Tooltip title='使用指定协议进行MQTT认证'>
-                  <Icon type="question-circle-o" style={{paddingLeft: 5}}/>
+                  <Icon type="question-circle-o" style={{ paddingLeft: 5 }} />
                 </Tooltip>
               </span>
             }>
@@ -264,11 +273,11 @@ const Save: React.FC<Props> = props => {
 
   const saveData = () => {
     const tempData = form.getFieldsValue();
-    const {id} = props.data;
+    const { id } = props.data;
     if (tempData.provider === 'websocket-server' || tempData.provider === 'http-server-gateway') {
-      props.save({id, ...tempData, configuration: {routes: routesData}});
+      props.save({ id, ...tempData, configuration: { routes: routesData } });
     } else {
-      props.save({id, ...tempData});
+      props.save({ id, ...tempData });
     }
   };
 
@@ -282,16 +291,16 @@ const Save: React.FC<Props> = props => {
         saveData();
       }}
     >
-      <Form labelCol={{span: 5}} wrapperCol={{span: 19}}>
+      <Form labelCol={{ span: 5 }} wrapperCol={{ span: 19 }}>
         <Form.Item label="名称">
           {getFieldDecorator('name', {
-            rules: [{required: true, message: '请输入组件名称'}],
+            rules: [{ required: true, message: '请输入组件名称' }],
             initialValue: props.data?.name,
-          })(<Input/>)}
+          })(<Input />)}
         </Form.Item>
         <Form.Item label="类型">
           {getFieldDecorator('provider', {
-            rules: [{required: true, message: '请选择组件类型'}],
+            rules: [{ required: true, message: '请选择组件类型' }],
             initialValue: props.data?.provider,
           })(
             <Select
@@ -310,7 +319,7 @@ const Save: React.FC<Props> = props => {
 
         <Form.Item label="网络组件">
           {getFieldDecorator('networkId', {
-            rules: [{required: true, message: '请选择组件类型'}],
+            rules: [{ required: true, message: '请选择组件类型' }],
             initialValue: props.data?.networkId,
           })(
             <Select
@@ -318,7 +327,7 @@ const Save: React.FC<Props> = props => {
             >
               {networkList.map((item: any) => (
                 <Select.Option key={item.id} value={item.id}>
-                  {item.name}
+                  {item.detail}
                 </Select.Option>
               ))}
             </Select>,
@@ -328,7 +337,7 @@ const Save: React.FC<Props> = props => {
         <Form.Item label="描述">
           {getFieldDecorator('describe', {
             initialValue: props.data?.describe,
-          })(<Input.TextArea rows={3}/>)}
+          })(<Input.TextArea rows={3} />)}
         </Form.Item>
       </Form>
     </Modal>

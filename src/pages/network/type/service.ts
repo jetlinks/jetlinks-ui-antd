@@ -7,6 +7,12 @@ export async function list(params?: any) {
   });
 }
 
+export async function config(networkType: string) {
+  return request(`/jetlinks/network/config/${networkType}/_detail`, {
+    method: 'GET',
+  });
+}
+
 export async function save(params?: any) {
   return request(`/jetlinks/network/config/`, {
     method: 'PATCH',
