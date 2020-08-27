@@ -78,7 +78,7 @@ const Edit = (props: Props) => {
     const defaultItem = searchParam.terms;
     const tempTerms = params?.terms;
     const terms = tempTerms ? {...defaultItem, ...tempTerms} : initSearch;
-    let tempSearch = {};
+    let tempSearch: {};
 
     if (tempTerms) {
       tempParam.terms = terms;
@@ -117,14 +117,14 @@ const Edit = (props: Props) => {
     {
       title: '租户名称',
       ellipsis: true,
-      align: 'center',
+      align: 'left',
       width: 400,
       render: (record: any) => <div
-        style={{textAlign: 'center', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}
+        style={{overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}
         onClick={() => {
           setAsset(record);
           setCat(true);
-        }}><span style={{color: 'purple'}}>{record.tenant}</span></div>
+        }}><span style={{color: '#1890ff'}}>{record.tenant}</span></div>
     },
     {
       title: '操作',
