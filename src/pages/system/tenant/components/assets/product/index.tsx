@@ -18,7 +18,7 @@ const Product = (props: Props) => {
     const service = new Service('tenant');
 
     const [pub, setPub] = useState(0);
-    const [unPub, setUnPub] = useState(0)
+    const [unPub, setUnPub] = useState(0);
 
     const getData = () => {
 
@@ -46,10 +46,10 @@ const Product = (props: Props) => {
         })).subscribe(resp => {
             setUnPub(resp)
         })
-    }
+    };
     useEffect(() => {
         getData();
-    }, [props.user])
+    }, [props.user]);
     return (
         <List.Item style={{ paddingRight: '10px' }}>
             <Card
@@ -102,5 +102,5 @@ const Product = (props: Props) => {
             )}
         </List.Item>
     )
-}
+};
 export default Product;
