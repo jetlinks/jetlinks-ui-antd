@@ -9,7 +9,7 @@ class Service extends BaseService<TenantItem>{
         method: 'POST',
         data: params
     })).pipe(
-        map(resp => resp.result)
+        map(resp => resp.result),
     ));
 
     public list = (params: any) => defer(() => from(request(`/jetlinks/tenant/detail/_query`, {
