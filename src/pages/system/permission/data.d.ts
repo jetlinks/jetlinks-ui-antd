@@ -29,10 +29,10 @@ export class PermissionItem {
 export interface PermissionAction {
     action: string;
     describe: string;
-    name: string;
+    name?: string;
     properties?: any;
     key?: string;
-    defaultCheck: boolean;
+    defaultCheck?: boolean | string;
     checked?: boolean;
 }
 

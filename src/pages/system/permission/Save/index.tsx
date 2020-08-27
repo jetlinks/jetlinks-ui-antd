@@ -41,7 +41,7 @@ const Save: React.FC<Props> = (props) => {
                 const permissionData = {
                     ...data,
                     actions,
-                    parents: association,
+                    parents: association.filter(i => i.actions.length > 0),
                     optionalFields: dataView
                 }
                 props.save(permissionData);

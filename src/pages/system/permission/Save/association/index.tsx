@@ -128,8 +128,8 @@ const Association: React.FC<EditableTableProps> = (props) => {
     const [editingKey, setEditingKey] = useState(initState.editingKey);
     const [data, setData] = useState(initState.data);
     useEffect(() => {
-        apis.permission.list().then(e => {
-            setPermissions(e.result.data);
+        apis.permission.listNoPaging().then(e => {
+            setPermissions(e.result);
         }).catch(() => {
 
         });
