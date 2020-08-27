@@ -32,8 +32,8 @@ const Save: React.FC<Props> = props => {
             }
             fileValue.id = props.data.id;
 
-            if (!props.data.id){
-              fileValue.status = 0;
+            if (!props.data.id) {
+                fileValue.status = 0;
             }
             props.save(fileValue);
         });
@@ -79,24 +79,24 @@ const Save: React.FC<Props> = props => {
                         initialValue: props.data.name
                     })(<Input placeholder="请输入" />)}
                 </Form.Item>
-              {
-                props.data.id ? (<Form.Item
-                  key="username"
-                  label="用户名"
-                >
-                  {getFieldDecorator('username', {
-                    initialValue: props.data.username,
-                  })(<Input placeholder="请输入" disabled="true"/>)}
-                </Form.Item>):(<Form.Item
-                  key="username"
-                  label="用户名"
-                >
-                  {getFieldDecorator('username', {
-                    rules: [{ required: true, message: '请输入用户名' }],
-                    initialValue: props.data.username,
-                  })(<Input placeholder="请输入"/>)}
-                </Form.Item>)
-              }
+                {
+                    props.data.id ? (<Form.Item
+                        key="username"
+                        label="用户名"
+                    >
+                        {getFieldDecorator('username', {
+                            initialValue: props.data.username,
+                        })(<Input placeholder="请输入" disabled={true} />)}
+                    </Form.Item>) : (<Form.Item
+                        key="username"
+                        label="用户名"
+                    >
+                        {getFieldDecorator('username', {
+                            rules: [{ required: true, message: '请输入用户名' }],
+                            initialValue: props.data.username,
+                        })(<Input placeholder="请输入" />)}
+                    </Form.Item>)
+                }
                 <Form.Item
                     key="password"
                     label="密码"

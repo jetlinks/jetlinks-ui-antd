@@ -152,7 +152,7 @@ const UserList: React.FC<Props> = props => {
                     handleSearch(searchParam);
                     setCurrentItem({})
                 } else {
-                    message.error(`添加失败，${response.message}`);
+                    // message.error(`添加失败，${response.message}`);
                 }
             }
         })
