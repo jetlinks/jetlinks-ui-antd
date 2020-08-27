@@ -1,16 +1,16 @@
-import {PageHeaderWrapper} from "@ant-design/pro-layout"
-import React, {useEffect, useState} from "react"
-import {Avatar, Button, Card, List, message, Popconfirm, Radio, Spin, Tag} from "antd";
-import {PlusOutlined} from "@ant-design/icons";
+import { PageHeaderWrapper } from "@ant-design/pro-layout"
+import React, { useEffect, useState } from "react"
+import { Avatar, Button, Card, List, message, Popconfirm, Radio, Spin, Tag } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
 import moment from "moment";
-import {ListData} from "@/services/response";
-import {router} from "umi";
+import { ListData } from "@/services/response";
+import { router } from "umi";
 import defaultImg from '@/assets/default.png';
-import {TenantItem} from "./data";
+import { TenantItem } from "./data";
 import styles from './index.less';
 import Service from "./service";
 import Save from "./save";
-import {PaginationConfig} from "antd/lib/pagination";
+import { PaginationConfig } from "antd/lib/pagination";
 import encodeQueryParam from "@/utils/encodeParam";
 
 const RadioButton = Radio.Button;
@@ -18,25 +18,25 @@ const RadioGroup = Radio.Group;
 
 
 const ListContent = ({
-                       data: {members, state, createTime},
-                     }: {
+  data: { members, state, createTime },
+}: {
   data: TenantItem;
 }) => (
-  <div className={styles.listContent}>
-    <div className={styles.listContentItem}>
-      <span>状态</span>
-      <p><Tag color={state.value === 'enabled' ? '#87d068' : '#F50'}>{state.text}</Tag></p>
+    <div className={styles.listContent}>
+      <div className={styles.listContentItem}>
+        <span>状态</span>
+        <p><Tag color={state.value === 'enabled' ? '#87d068' : '#F50'}>{state.text}</Tag></p>
+      </div>
+      <div className={styles.listContentItem}>
+        <span>成员数</span>
+        <p><Tag color="#87d068">{members}</Tag></p>
+      </div>
+      <div className={styles.listContentItem}>
+        <span>创建时间</span>
+        <p>{moment(createTime).format('YYYY-MM-DD HH:mm')}</p>
+      </div>
     </div>
-    <div className={styles.listContentItem}>
-      <span>成员数</span>
-      <p><Tag color="#87d068">{members}</Tag></p>
-    </div>
-    <div className={styles.listContentItem}>
-      <span>创建时间</span>
-      <p>{moment(createTime).format('YYYY-MM-DD HH:mm')}</p>
-    </div>
-  </div>
-);
+  );
 
 
 const UserTenant = () => {
@@ -68,12 +68,12 @@ const UserTenant = () => {
     showQuickJumper: true,
     pageSize: 5,
     total: list?.total || 0,
-    onChange: page => handleSearch({pageIndex: page - 1, pageSize: 5}),
+    onChange: page => handleSearch({ pageIndex: page - 1, pageSize: 5 }),
   };
 
   const extraContent = (
     <div className={styles.extraContent}>
-      <RadioGroup defaultValue="all" onChange={(e) => handleSearch(encodeQueryParam({terms: {state: e.target.value}}))}>
+      <RadioGroup defaultValue="all" onChange={(e) => handleSearch(encodeQueryParam({ terms: { state: e.target.value } }))}>
         <RadioButton value="">全部</RadioButton>
         <RadioButton value="enabled">正常</RadioButton>
         <RadioButton value="disabled">禁用</RadioButton>
@@ -84,13 +84,18 @@ const UserTenant = () => {
 
   const saveItem = (data: any) => {
     setLoading(true);
-    service.create(data).subscribe(() => {
-      message.success('保存成功');
-      setLoading(false);
-      setVisible(false);
-      setCurrent({});
-      handleSearch(searchParam);
-    });
+    service.create(data).subscribe(
+      (res) => {
+        if (res) {
+          message.success('保存成功');
+          setLoading(false);
+          setVisible(false);
+          setCurrent({});
+          handleSearch(searchParam);
+        }
+      }, () => {
+        message.error('保存失败');
+      });
   };
 
   const changeState = (item: any, state: string) => {
@@ -112,19 +117,19 @@ const UserTenant = () => {
             className={styles.listCard}
             bordered={false}
             title="租户列表"
-            style={{marginTop: 24}}
-            bodyStyle={{padding: '0 32px 40px 32px'}}
+            style={{ marginTop: 24 }}
+            bodyStyle={{ padding: '0 32px 40px 32px' }}
             extra={extraContent}
           >
             <Button
               type="dashed"
-              style={{width: '100%', marginBottom: 8}}
+              style={{ width: '100%', marginBottom: 8 }}
               onClick={() => {
                 setVisible(true);
                 setCurrent({});
               }}
             >
-              <PlusOutlined/>
+              <PlusOutlined />
               添加
             </Button>
 
@@ -145,18 +150,18 @@ const UserTenant = () => {
                         item.state.value === 'enabled' ?
                           (
                             <Popconfirm title="确认禁用此租户？"
-                                        onConfirm={() => {
-                                          changeState(item, 'disabled');
-                                        }}>
+                              onConfirm={() => {
+                                changeState(item, 'disabled');
+                              }}>
                               <a key="edit">
                                 禁用
                               </a>
                             </Popconfirm>) :
                           (
                             <Popconfirm title="确认禁用此租户？"
-                                        onConfirm={() => {
-                                          changeState(item, 'enabled');
-                                        }}>
+                              onConfirm={() => {
+                                changeState(item, 'enabled');
+                              }}>
                               <a key="edit">
                                 启用
                               </a>
@@ -167,11 +172,11 @@ const UserTenant = () => {
                   ]}
                 >
                   <List.Item.Meta
-                    avatar={<Avatar src={item.photo || defaultImg} shape="square" size="large"/>}
+                    avatar={<Avatar src={item.photo || defaultImg} shape="square" size="large" />}
                     title={<a>{item.name}</a>}
                     description={item.description}
                   />
-                  <ListContent data={item}/>
+                  <ListContent data={item} />
                 </List.Item>
               )}
             />
