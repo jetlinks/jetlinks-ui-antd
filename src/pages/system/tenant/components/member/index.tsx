@@ -61,7 +61,7 @@ const Member = (props: Props) => {
         handleSearch(searchParam);
       })
     }
-  }
+  };
   const columns: ColumnProps<any>[] = [
     {
       title: '姓名',
@@ -93,7 +93,6 @@ const Member = (props: Props) => {
         </Fragment>)
     }];
 
-  console.log(tenantAdmin, 'ddd');
   const renderBtn = () => {
     switch (tenantAdmin) {
       case 'true':
@@ -103,9 +102,9 @@ const Member = (props: Props) => {
             style={{ marginBottom: 10 }}
             onClick={() => setCreate(true)}
           > 创建成员</Button>
-        )
+        );
       case 'false':
-        return null
+        return null;
       case null:
         return (
           <Button

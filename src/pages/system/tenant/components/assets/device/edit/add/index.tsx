@@ -41,7 +41,7 @@ const Add = (props: Props) => {
         const defaultItem = searchParam.terms;
         const tempTerms = params?.terms;
         const terms = tempTerms ? { ...defaultItem, ...tempTerms } : initSearch;
-        let tempSearch = {};
+        let tempSearch: {};
         if (tempTerms) {
             tempParam.terms = terms;
             tempSearch = tempParam
@@ -53,7 +53,7 @@ const Add = (props: Props) => {
             setList(resp);
             setLoading(false);
         });
-    }
+    };
     useEffect(() => {
         handleSearch(searchParam);
         service.member.query(data.id, {}).subscribe(resp => {
@@ -63,7 +63,7 @@ const Add = (props: Props) => {
 
     const bind = () => {
         setLoading(true);
-        const bindData: any[] = []
+        const bindData: any[] = [];
 
         if (checkedUserList.includes('*')) {
             (userList || []).forEach((user: any) => bindData.push({
@@ -119,7 +119,7 @@ const Add = (props: Props) => {
         //     setLoading(false);
 
         // });
-    }
+    };
     const rowSelection = {
         onChange: (selectedRowKeys: any[], selectedRows: any[]) => {
             // selectedAssetsId = selectedRowKeys;
@@ -140,7 +140,7 @@ const Add = (props: Props) => {
             title: '状态',
             dataIndx: 'state',
             render: (record: any) => record.state.text,
-        }]
+        }];
     const [selectMode, setSelectMode] = useState<'tags' | 'default'>('default');
     const [checked, setChecked] = useState(checkedUserList);
     return (
@@ -185,7 +185,7 @@ const Add = (props: Props) => {
             <Divider />
             <SearchForm
                 search={(searchData: any) => {
-                    setLoading(true)
+                    setLoading(true);
                     handleSearch({ terms: searchData });
                 }}
                 formItems={[
@@ -257,5 +257,5 @@ const Add = (props: Props) => {
             </div>
         </Drawer>
     )
-}
+};
 export default Form.create<Props>()(Add);

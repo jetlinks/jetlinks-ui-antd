@@ -1,8 +1,7 @@
-import { Drawer, Table, message } from "antd";
-import React, { useEffect, useContext, useState } from "react";
+import {Drawer, message, Table} from "antd";
+import React, {useContext, useEffect, useState} from "react";
 import Service from "@/pages/system/tenant/service";
-import { TenantContext } from "@/pages/system/tenant/detail";
-import { ListData } from "@/services/response";
+import {TenantContext} from "@/pages/system/tenant/detail";
 
 interface Props {
     close: Function
@@ -32,7 +31,7 @@ const User = (props: Props) => {
         }]).subscribe(resp => {
             message.success('绑定成功');
         })
-    }
+    };
     const unbind = (userId: string) => {
         service.assets.unbind(data.id, [{
             userId,
@@ -41,7 +40,7 @@ const User = (props: Props) => {
         }]).subscribe(resp => {
             message.success('解绑成功');
         })
-    }
+    };
 
     const rowSelection = {
         selectedRowKeys: selected,
@@ -83,6 +82,6 @@ const User = (props: Props) => {
             />
         </Drawer>
     );
-}
+};
 
 export default User;
