@@ -4,6 +4,7 @@ import { Dispatch, ConnectState } from '@/models/connect';
 import { Settings } from '@ant-design/pro-layout';
 import { Spin } from 'antd';
 import style from './index.less';
+import Service from './service';
 
 interface Props {
   dispatch: Dispatch;
@@ -13,17 +14,22 @@ interface Props {
 const Login: React.FC<Props> = props => {
   const { dispatch, settings } = props;
 
+  const service = new Service('');
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [expires, setExpires] = useState<number>(3600000);
   const [isReady, setIsReady] = useState(false);
 
+  const [captcha, setCaptcha] = useState<string>('');
+  const [captchaImg, setCaptchaImg] = useState<string>('');
+
   const handleSubmit = () => {
     dispatch({
       type: 'login/login',
-      payload: { username, password, expires, tokenType: 'default' },
+      payload: { username, password, expires, tokenType: 'default', verifyKey: captcha, verifyCode: '000' },
     });
   };
+
 
   useEffect(() => {
     if (dispatch) {
@@ -42,6 +48,23 @@ const Login: React.FC<Props> = props => {
         }
       });
     }
+
+    //判断是否开启验证码
+    service.captchaConfig().subscribe((resp) => {
+
+      if (resp.enabled) {
+        //获取验证码
+        service.getCaptcha().subscribe((resp) => {
+          setCaptcha(resp.key);
+          setCaptchaImg(resp.base64);
+        });
+      } else {
+        //未开启验证码
+      }
+    });
+
+
+
   }, [settings.title]);
 
   const renderLogin = () => (
@@ -92,6 +115,7 @@ const Login: React.FC<Props> = props => {
           />
           <div className={style.reb}>记住我</div>
         </div>
+        <img src={captchaImg} />
         <div className={style.fg}>
           <div style={{ fontSize: '11px', marginTop: '11px' }}>
             {/* <a style={{ fontSize: '11px' }} href="#">
