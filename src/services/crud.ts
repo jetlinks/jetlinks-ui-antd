@@ -2,10 +2,11 @@
 import { map, catchError } from 'rxjs/operators';
 import { of, Observable, from, defer } from "rxjs";
 import { getAccessToken } from '@/utils/authority';
-import request from 'umi-request';
+// import request from 'umi-request';
 import { ApiResponse } from './response';
 import { ajax } from 'rxjs/ajax';
 import { message } from 'antd';
+import request from '@/utils/request';
 
 interface BaseServieImpl<T> {
     query(params: any): Observable<any>;
@@ -95,13 +96,12 @@ class BaseService<T> implements BaseServieImpl<T>{
     //     catchError(error => of(error)));
 
 
-    public update = (params: Partial<T>) => defer(() => request(`${this.uri}${params.id ? '/' + params.id : '/'}`, {
+    public update = (params: any) => defer(() => request(`${this.uri}${params.id ? '/' + params.id : '/'}`, {
         method: 'PUT',
         data: params
-    }));
-    // .pipe(
-    //     map(resp => resp.result),
-    //     catchError(error => of(error)));
+    })).pipe(
+        map(resp => resp.result),
+        catchError(error => of(error)));
 
     // public update = (params: Partial<T>) => ajax({
     //     url: `${this.uri}/${params.id}`,

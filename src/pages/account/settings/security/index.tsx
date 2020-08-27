@@ -13,9 +13,11 @@ const SecurityView: React.FC<Props> = (props) => {
     const update = () => {
         const data = getFieldsValue();
         service.update(data).subscribe((resp) => {
-            message.success('修改成功');
+            if (resp) {
+                message.success('修改成功');
+            }
         }, (error) => {
-            message.error('修改失败!');
+            // message.error('修改失败!');
         })
     };
 
