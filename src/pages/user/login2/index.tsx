@@ -22,14 +22,22 @@ const Login: React.FC<Props> = props => {
 
   const [captcha, setCaptcha] = useState<string>('');
   const [captchaImg, setCaptchaImg] = useState<string>('');
+  const [code, setCode] = useState<string>("");
+  const [enable, setEnable] = useState<boolean>(false);
 
   const handleSubmit = () => {
     dispatch({
       type: 'login/login',
-      payload: { username, password, expires, tokenType: 'default', verifyKey: captcha, verifyCode: '000' },
+      payload: { username, password, expires, tokenType: 'default', verifyKey: captcha, verifyCode: code },
     });
   };
 
+  const getCodeImg = () => {
+    service.getCaptcha().subscribe((resp) => {
+      setCaptcha(resp.key);
+      setCaptchaImg(resp.base64);
+    });
+  }
 
   useEffect(() => {
     if (dispatch) {
@@ -51,13 +59,14 @@ const Login: React.FC<Props> = props => {
 
     //判断是否开启验证码
     service.captchaConfig().subscribe((resp) => {
-
+      setEnable(resp.enabled)
       if (resp.enabled) {
         //获取验证码
-        service.getCaptcha().subscribe((resp) => {
-          setCaptcha(resp.key);
-          setCaptchaImg(resp.base64);
-        });
+        // service.getCaptcha().subscribe((resp) => {
+        //   setCaptcha(resp.key);
+        //   setCaptchaImg(resp.base64);
+        // });
+        getCodeImg();
       } else {
         //未开启验证码
       }
@@ -66,6 +75,7 @@ const Login: React.FC<Props> = props => {
 
 
   }, [settings.title]);
+  
 
   const renderLogin = () => (
     <div className={style.login}>
@@ -75,10 +85,10 @@ const Login: React.FC<Props> = props => {
         物联网平台
         <div className={style.gy2}>MQTT TCP CoAP HTTP , 多消息协议适配 , 可视化规则引擎</div>
       </div>
-      <div className={style.bg}>
-        <div className={style.wel}>用户登录</div>
+      <div className={style.box}>
+        <div className={style.header}>用户登录</div>
 
-        <div className={style.user}>
+        <div className={style.item}>
           <div className={style.userLabel}>用户名</div>
           <input
             style={{ borderStyle: 'none none solid none' }}
@@ -87,14 +97,7 @@ const Login: React.FC<Props> = props => {
             type="text"
           />
         </div>
-        <div
-          className={style.password}
-          onKeyUp={e => {
-            if (e.keyCode === 13) {
-              handleSubmit();
-            }
-          }}
-        >
+        <div className={style.item} onKeyUp={e => { if (e.keyCode === 13) { handleSubmit(); } }}>
           <div className={style.userLabel}>
             密<span style={{ marginLeft: '1em' }} />码
           </div>
@@ -105,22 +108,30 @@ const Login: React.FC<Props> = props => {
             type="password"
           />
         </div>
-        <div className={style.rem}>
+        {
+          enable ?  <div className={style.item}>
+          <div className={style.userLabel}>验证码</div>
           <input
-            type="checkbox"
-            checked={expires === -1}
-            onChange={() => {
-              setExpires(expires === -1 ? 3600000 : -1);
-            }}
+            style={{ borderStyle: 'none none solid none' }}
+            onChange={e => setCode(e.target.value)}
+            value={code}
+            type="text"
           />
-          <div className={style.reb}>记住我</div>
-        </div>
-        <img src={captchaImg} />
-        <div className={style.fg}>
-          <div style={{ fontSize: '11px', marginTop: '11px' }}>
-            {/* <a style={{ fontSize: '11px' }} href="#">
-              忘记密码？
-            </a> */}
+          <div className={style.code} onClick={() => {getCodeImg();}}><img src={captchaImg} className={style.code_img}/></div>
+        </div> : <div></div>
+        }
+       
+
+        <div className={style.remember}>
+          <div className={style.remember_box}>
+            <input
+              type="checkbox"
+              checked={expires === -1}
+              onChange={() => {
+                setExpires(expires === -1 ? 3600000 : -1);
+              }}
+            />
+            <div className={style.text}>记住我</div>
           </div>
         </div>
 

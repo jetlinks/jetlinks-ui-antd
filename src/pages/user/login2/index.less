@@ -54,11 +54,10 @@ body {
   margin-top: 10px;
 }
 
-.login .bg {
+.login .box{
   width: 375px;
-  height: 337px;
+  height: 387px;
   background: #fff;
-  position: relative;
   position: absolute;
   left: 56%;
   top: 0px;
@@ -70,45 +69,24 @@ body {
   border-radius: 5px;
 }
 
-.login .password {
-  position: absolute;
-  top: 9.5rem;
-  right: 2.5rem;
-  display: flex;
-}
-
-.login .btn {
-  position: absolute;
-  top: 16rem;
-  right: 2.5rem;
-  border: none;
-  color: #fff;
-  width: 18.825rem;
-  text-align: center;
-  background-color: #347ebc;
-  text-indent: 0rem;
-}
-
-.login .img {
+.login .header{
   width: 100%;
-  position: absolute;
-  left: 0;
-  right: 0;
-  margin: 0 auto;
-  z-index: -1;
-}
-
-.login .wel {
-  width: 375px;
   height: 35px;
   color: #347ebc;
   font-size: 1.5rem;
-  position: absolute;
-  top: 2rem;
+  margin-top: 2rem;
   text-align: center;
 }
 
-.login input {
+.login .item{
+  padding-left: 2.5rem;
+  display: flex;
+  margin: 10px 0px;
+  height: 40px;
+  position: relative;
+}
+
+.item input {
   border-bottom: 0.0625rem solid #347ebc;
   height: 2.5625rem;
   width: 15.8125rem;
@@ -116,6 +94,52 @@ body {
   outline: none;
 }
 
+.remember{
+  padding-left: 40px;
+  display: flex;
+  margin: 10px 0px;
+  height: 40px;
+  align-items: center;
+}
+.remember_box{
+  width: 200px;
+  display: flex;
+  height: 40px;
+  align-items: center;
+  justify-content: flex-start;
+}
+.remember .text{
+  margin-left: 10px;
+  width: 100px;
+}
+.login .btn {
+  border: none;
+  color: #fff;
+  width: 18.825rem;
+  text-align: center;
+  background-color: #347ebc;
+  text-indent: 0rem;
+  height: 40px;
+  margin-left: 40px;
+}
+
+.code{
+  width: 85px;
+  height: 35px;
+  position: absolute;
+  display: flex;
+  justify-content: space-around;
+  right: 2.5rem;
+}
+.code_img{
+  width: 80px;
+  height: 35px;
+}
+.code a{
+  font-size:12px;
+  height: 45px;
+  line-height: 45px;
+}
 .user {
   position: absolute;
   top: 6rem;
@@ -165,7 +189,7 @@ body {
 }
 
 @media (min-width:800px) and (max-width:1200px) {
-  .bg {
+  .box {
     width: 355px;
     height: 300px;
   }
@@ -174,33 +198,9 @@ body {
     font-size: 50px;
   }
 
-  .wel {
-    width: 355px;
-  }
-
-  .user {
-    top: 5rem;
-    right: 3.5rem;
-  }
-
-  .password {
-    top: 8rem;
-    right: 3.5rem;
-  }
-
-  input {
-
-    width: 12rem;
-  }
-
-  .rem {
-    top: 11rem;
-    right: 14.3rem;
-  }
-
-  .fg {
-    top: 11rem;
-    right: 3.5rem;
+  .item input {
+    // width: 12rem;
+    width: 15.8125rem;
   }
 
   .btn {
