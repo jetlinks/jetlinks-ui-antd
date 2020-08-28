@@ -59,23 +59,25 @@ const Login: React.FC<Props> = props => {
 
     //判断是否开启验证码
     service.captchaConfig().subscribe((resp) => {
-      setEnable(resp.enabled)
-      if (resp.enabled) {
-        //获取验证码
-        // service.getCaptcha().subscribe((resp) => {
-        //   setCaptcha(resp.key);
-        //   setCaptchaImg(resp.base64);
-        // });
-        getCodeImg();
-      } else {
-        //未开启验证码
+      if (resp) {
+        setEnable(resp.enabled)
+        if (resp.enabled) {
+          //获取验证码
+          // service.getCaptcha().subscribe((resp) => {
+          //   setCaptcha(resp.key);
+          //   setCaptchaImg(resp.base64);
+          // });
+          getCodeImg();
+        } else {
+          //未开启验证码
+        }
       }
     });
 
 
 
   }, [settings.title]);
-  
+
 
   const renderLogin = () => (
     <div className={style.login}>
@@ -85,7 +87,7 @@ const Login: React.FC<Props> = props => {
         物联网平台
         <div className={style.gy2}>MQTT TCP CoAP HTTP , 多消息协议适配 , 可视化规则引擎</div>
       </div>
-      <div className={style.box}>
+      <div className={style.box} style={{ height: enable ? '387px' : '330px' }}>
         <div className={style.header}>用户登录</div>
 
         <div className={style.item}>
@@ -109,18 +111,18 @@ const Login: React.FC<Props> = props => {
           />
         </div>
         {
-          enable ?  <div className={style.item}>
-          <div className={style.userLabel}>验证码</div>
-          <input
-            style={{ borderStyle: 'none none solid none' }}
-            onChange={e => setCode(e.target.value)}
-            value={code}
-            type="text"
-          />
-          <div className={style.code} onClick={() => {getCodeImg();}}><img src={captchaImg} className={style.code_img}/></div>
-        </div> : <div></div>
+          enable ? <div className={style.item}>
+            <div className={style.userLabel}>验证码</div>
+            <input
+              style={{ borderStyle: 'none none solid none' }}
+              onChange={e => setCode(e.target.value)}
+              value={code}
+              type="text"
+            />
+            <div className={style.code} onClick={() => { getCodeImg(); }}><img src={captchaImg} className={style.code_img} /></div>
+          </div> : <div></div>
         }
-       
+
 
         <div className={style.remember}>
           <div className={style.remember_box}>

@@ -7,8 +7,11 @@ class Service extends BaseService<any>{
     public captchaConfig = () => defer(
         () => from(request(`/jetlinks/authorize/captcha/config`, {
             method: 'GET',
+            errorHandler: () => {
+                // 未开启验证码 不显示验证码
+            }
         })).pipe(
-            map(resp => resp.result),
+            map(resp => resp?.result),
         ));
 
     public getCaptcha = () => defer(
