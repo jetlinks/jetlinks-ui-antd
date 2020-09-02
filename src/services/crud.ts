@@ -20,13 +20,13 @@ interface BaseServieImpl<T> {
  */
 class BaseService<T> implements BaseServieImpl<T>{
 
-    protected uri: string;
+    protected uri?: string;
 
     protected headers = {
         'X-Access-Token': getAccessToken()
     };
 
-    constructor(uri: string) {
+    constructor(uri?: string) {
         this.uri = `/jetlinks/${uri}`
     }
 
