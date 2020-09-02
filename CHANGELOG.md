@@ -1,3 +1,7 @@
+# [1.5.0](https://github.com/jetlinks/jetlinks-ui-antd/compare/1.4.0...1.5.0) (2020-09-02)
+
+
+
 # [1.3.0](https://github.com/jetlinks/jetlinks-ui-antd/compare/1.2.0...1.3.0) (2020-07-13)
 
 
