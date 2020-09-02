@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from 'react';
-import {Button, Col, Collapse, Drawer, Form, Icon, Input, message, Radio, Row, Select, Tabs, Upload} from 'antd';
-import {FormComponentProps} from 'antd/lib/form';
-import {ProtocolItem} from '@/pages/device/protocol/data';
-import {getAccessToken} from '@/utils/authority';
+import React, { useEffect, useState } from 'react';
+import { Button, Col, Collapse, Drawer, Form, Icon, Input, message, Radio, Row, Select, Tabs, Upload } from 'antd';
+import { FormComponentProps } from 'antd/lib/form';
+import { ProtocolItem } from '@/pages/device/protocol/data';
+import { getAccessToken } from '@/utils/authority';
 import apis from '@/services';
 import 'ace-builds';
 import 'ace-builds/webpack-resolver';
@@ -41,7 +41,7 @@ interface State {
 
 const Save: React.FC<Props> = props => {
   const {
-    form: {getFieldDecorator},
+    form: { getFieldDecorator, setFieldsValue },
     form,
   } = props;
 
@@ -90,6 +90,7 @@ const Save: React.FC<Props> = props => {
     '  ]\n' +
     '}');
 
+  const [uploading, setUploading] = useState<boolean>(false);
   const submitData = () => {
     form.validateFields((err, fileValue) => {
       if (err) return;
@@ -114,11 +115,17 @@ const Save: React.FC<Props> = props => {
       'X-Access-Token': getAccessToken(),
     },
     onChange(info: any) {
+      if (info.file.status === 'uploading') {
+        setUploading(true);
+      }
       if (info.file.status === 'done') {
         setJarLocation(info.file.response.result);
+        setFieldsValue({ 'configuration.location': info.file.response.result })
         message.success(`${info.file.name} 上传成功`);
+        setUploading(false);
       } else if (info.file.status === 'error') {
         message.error(`${info.file.name} 上传失败`);
+        setUploading(false);
       }
     },
   };
@@ -140,8 +147,8 @@ const Save: React.FC<Props> = props => {
               <Form.Item key="provider" label="类名">
                 {getFieldDecorator('configuration.provider', {
                   initialValue: props.data?.configuration?.provider,
-                  rules: [{required: true, message: '请输入类名'}],
-                })(<Input/>)}
+                  rules: [{ required: true, message: '请输入类名' }],
+                })(<Input />)}
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -150,13 +157,13 @@ const Save: React.FC<Props> = props => {
                   <Col span={14}>
                     {getFieldDecorator('configuration.location', {
                       initialValue: jarLocation,
-                      rules: [{required: true, message: '请输入文件地址'}],
-                    })(<Input/>)}
+                      rules: [{ required: true, message: '请输入文件地址' }],
+                    })(<Input />)}
                   </Col>
                   <Col span={2}>
                     <Upload {...uploadProps}>
-                      <Button type="primary">
-                        <Icon type="upload"/> 上传Jar包
+                      <Button type="primary" disabled={uploading}>
+                        <Icon type="upload" /> {uploading ? '正在上传...' : '上传Jar包'}
                       </Button>
                     </Upload>
                   </Col>
@@ -175,15 +182,15 @@ const Save: React.FC<Props> = props => {
               <Form.Item key="protocol" label="协议标识">
                 {getFieldDecorator('configuration.protocol', {
                   initialValue: props.data?.configuration?.protocol,
-                  rules: [{required: true, message: '请输入协议标识'}],
-                })(<Input/>)}
+                  rules: [{ required: true, message: '请输入协议标识' }],
+                })(<Input />)}
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item key="transport" label="连接协议">
                 {getFieldDecorator('configuration.transport', {
                   initialValue: props.data?.configuration?.transport?.split(','),
-                  rules: [{required: true, message: '请输入连接协议'}],
+                  rules: [{ required: true, message: '请输入连接协议' }],
                 })(
                   <Select mode="multiple">
                     <Select.Option value="MQTT">MQTT</Select.Option>
@@ -197,7 +204,7 @@ const Save: React.FC<Props> = props => {
               </Form.Item>
             </Col>
             <Col span={24}>
-              <Form.Item label="脚本" labelCol={{span: 3}} wrapperCol={{span: 21}}>
+              <Form.Item label="脚本" labelCol={{ span: 3 }} wrapperCol={{ span: 21 }}>
                 <AceEditor
                   mode='javascript'
                   theme="eclipse"
@@ -212,7 +219,7 @@ const Save: React.FC<Props> = props => {
                   wrapEnabled
                   highlightActiveLine  //突出活动线
                   enableSnippets  //启用代码段
-                  style={{width: '100%', height: 500}}
+                  style={{ width: '100%', height: 500 }}
                   setOptions={{
                     enableBasicAutocompletion: true,   //启用基本自动完成功能
                     enableLiveAutocompletion: true,   //启用实时自动完成功能 （比如：智能代码提示）
@@ -275,28 +282,28 @@ const Save: React.FC<Props> = props => {
       onClose={() => props.close()}
       title={`${props.data?.id ? '编辑' : '新增'}协议`}
     >
-      <Form labelCol={{span: 6}} wrapperCol={{span: 18}}>
+      <Form labelCol={{ span: 6 }} wrapperCol={{ span: 18 }}>
         <Row>
           <Col span={12}>
             <Form.Item key="id" label="协议ID">
               {getFieldDecorator('id', {
-                rules: [{required: true, message: '协议标识'}],
+                rules: [{ required: true, message: '协议标识' }],
                 initialValue: props.data?.id,
-              })(<Input placeholder="请输入协议ID" disabled={!!props.data.id}/>)}
+              })(<Input placeholder="请输入协议ID" disabled={!!props.data.id} />)}
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item key="name" label="协议名称">
               {getFieldDecorator('name', {
-                rules: [{required: true, message: '协议名称'}],
+                rules: [{ required: true, message: '协议名称' }],
                 initialValue: props.data?.name,
-              })(<Input placeholder="请输入协议名称"/>)}
+              })(<Input placeholder="请输入协议名称" />)}
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item key="type" label="类型">
               {getFieldDecorator('type', {
-                rules: [{required: true, message: '协议类型'}],
+                rules: [{ required: true, message: '协议类型' }],
                 initialValue: props.data?.type,
               })(
                 <Select
@@ -319,10 +326,10 @@ const Save: React.FC<Props> = props => {
 
         {renderTypeForm()}
 
-        <Form.Item key="description" label="描述" labelCol={{span: 3}} wrapperCol={{span: 21}}>
+        <Form.Item key="description" label="描述" labelCol={{ span: 3 }} wrapperCol={{ span: 21 }}>
           {getFieldDecorator('description', {
             initialValue: props.data?.description,
-          })(<Input/>)}
+          })(<Input />)}
         </Form.Item>
         <Collapse
           onChange={() => {
@@ -336,7 +343,7 @@ const Save: React.FC<Props> = props => {
           }}
           activeKey={activeDebugger}
           bordered={false}
-          expandIcon={({isActive}) => <Icon type="caret-right" rotate={isActive ? 90 : 0}/>}
+          expandIcon={({ isActive }) => <Icon type="caret-right" rotate={isActive ? 90 : 0} />}
         >
           <Collapse.Panel
             header="调试"
@@ -357,7 +364,7 @@ const Save: React.FC<Props> = props => {
                       <Radio.Group
                         onChange={e => {
                           debuggerData.type = e.target.value;
-                          setDebuggerData({...debuggerData});
+                          setDebuggerData({ ...debuggerData });
                           if (e.target.value === 'encode') {
                             setPayload(localStorage.getItem(`protocol-payload-encode-debug-data-${props.data.id}`) || '{\n' +
                               '  "messageType":"READ_PROPERTY",\n' +
@@ -406,7 +413,7 @@ const Save: React.FC<Props> = props => {
                       <Select
                         onChange={(e: string) => {
                           debuggerData.transport = e;
-                          setDebuggerData({...debuggerData});
+                          setDebuggerData({ ...debuggerData });
                           if (debuggerData.type === 'decode') {
                             switch (e) {
                               case 'HTTP':
@@ -448,7 +455,7 @@ const Save: React.FC<Props> = props => {
                       <Select
                         onChange={(e: string) => {
                           debuggerData.payloadType = e;
-                          setDebuggerData({...debuggerData});
+                          setDebuggerData({ ...debuggerData });
                         }}
                         defaultValue="JSON"
                       >
@@ -469,7 +476,7 @@ const Save: React.FC<Props> = props => {
                   showGutter
                   onChange={value => {
                     debuggerData.payload = value;
-                    setDebuggerData({...debuggerData});
+                    setDebuggerData({ ...debuggerData });
                     setPayload(value);
                     if (debuggerData.type === 'decode') {
                       localStorage.setItem(`protocol-payload-decode-debug-data-${props.data.id}`, value);
@@ -481,7 +488,7 @@ const Save: React.FC<Props> = props => {
                   wrapEnabled
                   highlightActiveLine  //突出活动线
                   enableSnippets  //启用代码段
-                  style={{width: '100%', height: 300}}
+                  style={{ width: '100%', height: 300 }}
                   setOptions={{
                     enableBasicAutocompletion: true,   //启用基本自动完成功能
                     enableLiveAutocompletion: true,   //启用实时自动完成功能 （比如：智能代码提示）
@@ -495,7 +502,7 @@ const Save: React.FC<Props> = props => {
                 </Button>
               </Tabs.TabPane>
               <Tabs.TabPane tab="运行结果" key="result">
-                <Input.TextArea rows={5} value={debugLog}/>
+                <Input.TextArea rows={5} value={debugLog} />
               </Tabs.TabPane>
             </Tabs>
           </Collapse.Panel>
@@ -517,7 +524,7 @@ const Save: React.FC<Props> = props => {
           onClick={() => {
             props.close();
           }}
-          style={{marginRight: 8}}
+          style={{ marginRight: 8 }}
         >
           关闭
         </Button>
