@@ -99,7 +99,7 @@ const Login: React.FC<Props> = props => {
             type="text"
           />
         </div>
-        <div className={style.item} onKeyUp={e => { if (e.keyCode === 13) { handleSubmit(); } }}>
+        <div className={style.item} onKeyUp={e => { if (e.keyCode === 13 && !enable) { handleSubmit(); } }}>
           <div className={style.userLabel}>
             密<span style={{ marginLeft: '1em' }} />码
           </div>
@@ -113,7 +113,7 @@ const Login: React.FC<Props> = props => {
         {
           enable ? <div className={style.item}>
             <div className={style.userLabel}>验证码</div>
-            <input
+            <input onKeyUp={e => { if (e.keyCode === 13) { handleSubmit(); } }}
               style={{ borderStyle: 'none none solid none' }}
               onChange={e => setCode(e.target.value)}
               value={code}
