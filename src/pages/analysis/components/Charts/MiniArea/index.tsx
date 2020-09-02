@@ -49,7 +49,7 @@ class MiniArea extends React.Component<IMiniAreaProps> {
 
     const scaleProps = {
       x: {
-        type: 'cat',
+        type: 'timeCat',
         range: [0, 1],
         ...scale!.x,
       },
@@ -98,7 +98,7 @@ class MiniArea extends React.Component<IMiniAreaProps> {
                 grid={false}
                 {...yAxis}
               />
-              <Tooltip showTitle={false} crosshairs={false}/>
+              <Tooltip showTitle={false} crosshairs={false} />
               <Geom
                 type="area"
                 position="x*y"
@@ -119,8 +119,8 @@ class MiniArea extends React.Component<IMiniAreaProps> {
                   tooltip={false}
                 />
               ) : (
-                <span style={{ display: 'none' }} />
-              )}
+                  <span style={{ display: 'none' }} />
+                )}
             </Chart>
           )}
         </div>
