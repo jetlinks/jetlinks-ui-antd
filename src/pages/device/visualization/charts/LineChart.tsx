@@ -5,6 +5,7 @@ import { ComponentProps } from "..";
 import apis from "@/services";
 import styles from '../index.less';
 import { getWebsocket } from "@/layouts/GlobalWebSocket";
+import moment from "moment";
 
 interface Props extends ComponentProps {
     config: any;
@@ -80,7 +81,7 @@ const LineChart = (props: Props) => {
             ).subscribe(
                 (resp: any) => {
                     const { payload } = resp;
-                    data.push({ year: payload.timestamp, value: payload.value.value });
+                    data.push({ year: moment(payload.timestamp).format('YYYY-MM-DD HH:mm:ss'), value: payload.value.value });
                     if (data.length > props.config.history) data.shift();
                     setData([...data]);
                 }
@@ -91,7 +92,7 @@ const LineChart = (props: Props) => {
             apis.visualization.getDashboardData(params).then(response => {
                 if (response.status === 200) {
                     const { result } = response;
-                    const tempData = result.map((item: any) => ({ year: item.data.timestamp, value: item.data.value.value }));
+                    const tempData = result.map((item: any) => ({ year: moment(item.data.timestamp).format('YYYY-MM-DD HH:mm:ss'), value: item.data.value.value }));
                     setData(tempData);
                 }
             })
