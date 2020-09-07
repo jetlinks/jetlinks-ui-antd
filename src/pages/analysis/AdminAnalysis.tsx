@@ -83,7 +83,7 @@ class AdminAnalysis extends Component<analysisProps, analysisState> {
           <Suspense fallback={null}>
             <SalesCard loading={loading} />
           </Suspense>
-          <Row gutter={24}>
+          {/* <Row gutter={24}>
             <Col xl={10} lg={24} md={24} sm={24} xs={24}>
               <Suspense fallback={null}>
                 <ProportionSales loading={loading} />
@@ -94,7 +94,7 @@ class AdminAnalysis extends Component<analysisProps, analysisState> {
                 <TopSearch loading={loading} />
               </Suspense>
             </Col>
-          </Row>
+          </Row> */}
         </React.Fragment>
       </GridContent>
     );
