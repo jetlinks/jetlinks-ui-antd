@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from 'react';
-import {Card, Col, DatePicker, Radio, Row, Tabs} from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Card, Col, DatePicker, Radio, Row, Tabs } from 'antd';
 import styles from '../style.less';
 import apis from '@/services';
 import moment from 'moment';
-import {Axis, Chart, Geom, Legend, Tooltip} from "bizcharts";
+import { Axis, Chart, Geom, Legend, Tooltip } from "bizcharts";
 
-const {TabPane} = Tabs;
+const { TabPane } = Tabs;
 
 export interface State {
   gatewayDataList: any[];
@@ -15,7 +15,7 @@ export interface State {
   selectionTime: string
 }
 
-const SalesCard = ({loading}: { loading: boolean; }) => {
+const SalesCard = ({ loading }: { loading: boolean; }) => {
   let gatewayMonitor: (from: string, to: string, time: string) => void;
   const initState: State = {
     gatewayDataList: [],
@@ -105,18 +105,24 @@ const SalesCard = ({loading}: { loading: boolean; }) => {
     const value = e.target.value;
     setTime(timeMap[value]);
     const dd = new Date(selectionTime);
-
+    let to = moment(selectionTime).format('YYYY-MM-DD HH:mm:ss');
+    let from = to;
     if (value === '1h') {
       dd.setHours(dd.getHours() - 1);
+      from = moment(selectionTime).subtract(1, 'hours').format('YYYY-MM-DD HH:mm:ss');
     } else if (value === '1d') {
       dd.setDate(dd.getDate() - 1);
+      from = moment(selectionTime).subtract(1, 'days').format('YYYY-MM-DD HH:mm:ss');
     } else if (value === '7d') {
       dd.setDate(dd.getDate() - 7);
+      from = moment(selectionTime).subtract(7, 'days').format('YYYY-MM-DD HH:mm:ss');
+
     } else if (value === '30d') {
       dd.setDate(dd.getDate() - 30);
+      from = moment(selectionTime).subtract(30, 'days').format('YYYY-MM-DD HH:mm:ss');
     }
-
-    gatewayMonitor(formatData(dd), formatData(new Date()), timeMap[value]);
+    gatewayMonitor(from, to, timeMap[value]);
+    // gatewayMonitor(formatData(dd), formatData(new Date()), timeMap[value]);
   }
 
   const formatData = (value: string) => {
@@ -140,7 +146,7 @@ const SalesCard = ({loading}: { loading: boolean; }) => {
   }
 
   return (
-    <Card loading={loading} bordered={false} bodyStyle={{padding: 0}}>
+    <Card loading={loading} bordered={false} bodyStyle={{ padding: 0 }}>
       <div className={styles.salesCard}>
         <Tabs
           tabBarExtraContent={
@@ -162,11 +168,11 @@ const SalesCard = ({loading}: { loading: boolean; }) => {
                 </Radio.Group>
               </div>
               <DatePicker showTime defaultValue={moment(new Date(), 'YYYY-MM-DD HH:mm:ss')}
-                          placeholder="结束时间" onOk={onOk} format="YYYY-MM-DD HH:mm:ss"/>
+                placeholder="结束时间" onOk={onOk} format="YYYY-MM-DD HH:mm:ss" />
             </div>
           }
           size="large"
-          tabBarStyle={{marginBottom: 24}}
+          tabBarStyle={{ marginBottom: 24 }}
         >
           <TabPane tab='设备消息' key="sales">
             <Row>
@@ -176,7 +182,7 @@ const SalesCard = ({loading}: { loading: boolean; }) => {
                     height={400}
                     data={gatewayData}
                     scale={{
-                      value: {min: 0},
+                      value: { min: 0 },
                       year: {
                         range: [0, 1],
                         ticks: ticksDataList,
@@ -184,21 +190,21 @@ const SalesCard = ({loading}: { loading: boolean; }) => {
                     }}
                     forceFit
                   >
-                    <Axis name="year"/>
+                    <Axis name="year" />
                     <Axis name="value" label={{
                       formatter: val => parseFloat(val).toLocaleString()
-                    }}/>
-                    <Legend/>
-                    <Tooltip crosshairs={{type: 'y'}}/>
+                    }} />
+                    <Legend />
+                    <Tooltip crosshairs={{ type: 'y' }} />
                     <Geom type="line" position="year*value*type" size={2}
-                          tooltip={[
-                            "year*value*type",
-                            (year, value, type) => ({
-                              title: year,
-                              name: type,
-                              value: parseFloat(value).toLocaleString()
-                            })
-                          ]}
+                      tooltip={[
+                        "year*value*type",
+                        (year, value, type) => ({
+                          title: year,
+                          name: type,
+                          value: parseFloat(value).toLocaleString()
+                        })
+                      ]}
                     />
                     <Geom
                       type="area"
