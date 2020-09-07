@@ -35,6 +35,8 @@ import * as deviceAlarm from '@/pages/device/alarm/service';
 import * as visualization from '@/pages/device/visualization/service';
 import * as systemConfig from '@/pages/system/config/service';
 import * as notification from '@/pages/account/notification/service';
+import * as screen from '@/pages/data-screen/screen/service';
+import * as categoty from '@/pages/data-screen/category/service'
 
 const apis = {
   login,
@@ -74,5 +76,7 @@ const apis = {
   firmware,
   deviceGroup,
   notification,
+  screen,
+  categoty
 };
 export default apis;

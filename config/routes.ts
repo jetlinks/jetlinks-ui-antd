@@ -425,6 +425,36 @@ export const routes = [
                             },
                         ],
                     },
+                    {
+                        path: 'data-screen',
+                        name: '大屏数据',
+                        icon: 'desktop',
+                        tenant: ['admin'],
+                        iconfont: 'icon-icon-',
+                        // authority: ['admin'],
+                        routes: [
+                            {
+                                path: '/data-screen/screen',
+                                name: '大屏管理',
+                                icon: 'fund',
+                                tenant: ['admin'],
+                                iconfont: 'icon-screen',
+                                // authority: ['admin'],
+                                version: 'pro',
+                                component: './data-screen/screen',
+                            },
+                            {
+                                path: '/data-screen/category',
+                                name: '分类管理',
+                                icon: 'appstore',
+                                tenant: ['admin'],
+                                iconfont: 'icon-category-search-fill',
+                                // authority: ['admin'],
+                                version: 'pro',
+                                component: './data-screen/category',
+                            }
+                        ]
+                    },
                 ],
             },
             {
