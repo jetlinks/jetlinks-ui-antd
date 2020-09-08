@@ -69,7 +69,7 @@ const Location: React.FC<Props> = props => {
       infoWindow: {},
       massMarksCreated: {},
       centerScale: {
-        center: [106.57, 29.52], //地图显示中心点，默认重庆
+        center: [], //地图显示中心点，默认重庆
       },
       regionInfo: {},
       satelliteLayer: {},
@@ -538,7 +538,8 @@ const Location: React.FC<Props> = props => {
       <PageHeaderWrapper title="地理位置">
         <Spin tip="加载中..." spinning={spinning}>
           <div style={{width: '100%', height: '79vh'}}>
-            <Map version="1.4.15" resizeEnable events={mapEvents} center={centerScale.center} features={contentInfo}>
+            <Map version="1.4.15" resizeEnable events={mapEvents}
+                 center={centerScale.center.length === 0 ? false : centerScale.center} features={contentInfo}>
               {pathPolygon.length > 0 && (
                 <Polygon visible={true} path={pathPolygon} bubble key='polygon_list'
                          style={{fillOpacity: 0, strokeOpacity: 1, strokeColor: '#C86A79', strokeWeight: 3}}/>

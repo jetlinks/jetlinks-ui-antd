@@ -171,6 +171,6 @@ const Status: React.FC<Props> = props => {
 
         </Spin>
     )
-}
+};
 
 export default Status;
