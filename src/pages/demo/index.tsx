@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import VideoPlayer from './VideoPlayer';
+import Service from "./service";
 const Demo = () => {
 
     const videoJsOptions = {
@@ -18,6 +19,11 @@ const Demo = () => {
             type: 'rtmp/flv'
         }]
     }
+
+    const service = new Service();
+    useEffect(() => {
+        // service.propertyType('', '').subscribe(data => console.log(data))
+    }, []);
 
     return (
         <div>
