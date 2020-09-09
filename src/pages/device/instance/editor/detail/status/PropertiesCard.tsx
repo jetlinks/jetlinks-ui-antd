@@ -71,13 +71,17 @@ const PropertiesCard: React.FC<Props> = props => {
     const [edit, setEdit] = useState<boolean>(false);
     useEffect(() => {
         item.subscribe((resp: any) => {
-            if ((data.visitData || []).length > 14) {
-                data.visitData.shift();
+            const value = resp.value.value;
+            const type = typeof (value);
+            if (type === 'number') {
+                if ((data.visitData || []).length > 14) {
+                    data.visitData.shift();
+                }
+                if (!data.visitData) {
+                    data.visitData = [];
+                }
+                data.visitData.push({ x: resp.timeString, y: resp.value.value });
             }
-            if (!data.visitData) {
-                data.visitData = [];
-            }
-            data.visitData.push({ x: resp.timeString, y: resp.value.value });
             setData({
                 ...data,
                 ...resp.value,
@@ -129,7 +133,7 @@ const PropertiesCard: React.FC<Props> = props => {
                         </div>
                     }
                     total={
-                        <AutoHide title={data.formatValue || '/'} style={{ width: '100%' }} />
+                        <AutoHide title={typeof (data.formatValue) === 'object' ? JSON.stringify(data.formatValue) : data.formatValue || '/'} style={{ width: '100%' }} />
                     }
                 >
                     <MiniArea height={40} color="#975FE4" data={data.visitData} />
