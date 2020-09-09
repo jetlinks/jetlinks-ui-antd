@@ -135,7 +135,7 @@ const Action: React.FC<Props> = props => {
               });
             } else {
               JSON.parse(response.result.metadata).functions?.map((item: any) => {
-                if (item.id === actionData.configuration.message.function) {
+                if (item.id === actionData.configuration.message.functionId) {
                   setFunctionData(item);
                 }
               });
