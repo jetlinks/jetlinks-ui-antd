@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { ComponentProps } from "..";
 import { message, Button } from "antd";
+import Service from "../service";
 
 interface Props extends ComponentProps {
     config: any;
+    productId: any;
+    deviceId: any;
 }
 
 const Action: React.FC<Props> = (props) => {
@@ -31,9 +34,20 @@ const Action: React.FC<Props> = (props) => {
 
     }, []);
 
+    const { deviceId, config } = props;
+    const service = new Service();
+    console.log(config, 'ffff');
+    const handleClick = () => {
+        if (config.sourceType === 'function') {
+            service.exec(deviceId, config.function, config.runParam).subscribe(() => {
+                message.success('操作成功');
+            });
+        }
+    }
+
     return (
         <Button
-            onClick={() => { message.success('操作') }}
+            onClick={() => { handleClick() }}
             // style={{ width: width, height: height }}
             type={props.config.type || 'danger'}>
             {props.config.name}
