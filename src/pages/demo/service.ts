@@ -1,37 +1,26 @@
-import { Subject, from, of } from "rxjs";
-import { flatMap, map, catchError, filter } from "rxjs/operators";
+import BaseService from "@/services/crud";
+import { defer, from } from "rxjs";
 import request from "@/utils/request";
-import { ApiResponse } from "@/services/response";
-import { root$ } from "@/data";
-import { ajax } from 'rxjs/ajax';
-import { ajaxGet } from "rxjs/internal/observable/dom/AjaxObservable";
-import { getAccessToken } from "@/utils/authority";
+import { map } from "rxjs/operators";
 
-const test = {
-    // query: (params: any) =>
-    //     from(request(`/jetlinks/authorize/me`, params))
-    //         .pipe(
-    //             filter(i => i.status === 200),
-    //             flatMap(user =>
-    //                 root$.pipe(
-    //                     map(root => ({ ...root, user })),
-    //                     catchError(err => of(err)))
-    //             )),
-    query: (params: any) =>
-        ajax({
-            url: '/jetlinks/authorize/me',
-            method: 'GET',
-            headers: {
-                'X-Access-Token': getAccessToken()
-            }
-        }).pipe(
-            filter(i => i.status === 200),
-            flatMap(user =>
-                root$.pipe(
-                    map(root => ({ ...root, user })),
-                    catchError(err => of(err))
-                ))
-        ),
-};
+class Service extends BaseService<any>{
+    public propertyType = (deviceId: string, propertyId: string) =>
+        defer(() =>
+            from(request(
+                `/jetlinks/device/instance/${deviceId}/property/${propertyId}`,
+                { method: 'GET' }
+            )).pipe(
+                map(resp => resp.result),
+            ));
 
-export default test;
+    public exec = (deviceId: string, functionId: string, data: any) =>
+        defer(() =>
+            from(request(
+                `/jetlinks/device/instance/${deviceId}/function/${functionId}`,
+                { method: 'POST', data }
+            )).pipe(
+                map(resp => resp.result)
+            ));
+
+}
+export default Service;

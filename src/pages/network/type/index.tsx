@@ -106,7 +106,7 @@ const Type: React.FC<Props> = props => {
           setSupportsType(response.result);
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   const remove = (id: string) => {
@@ -146,7 +146,7 @@ const Type: React.FC<Props> = props => {
         message.success('操作成功');
         handleSearch();
       })
-      .catch(() => {});
+      .catch(() => { });
   };
 
   const onSearch = (type?: string[], name?: string) => {
@@ -258,14 +258,14 @@ const Type: React.FC<Props> = props => {
                     hoverable
                     bodyStyle={{ paddingBottom: 20 }}
                     actions={[
-                      <Tooltip key="download" title="下载">
-                        <Icon
-                          type="download"
-                          onClick={() => {
-                            downloadObject(item, '产品');
-                          }}
-                        />
-                      </Tooltip>,
+                      // <Tooltip key="download" title="下载">
+                      //   <Icon
+                      //     type="download"
+                      //     onClick={() => {
+                      //       downloadObject(item, '产品');
+                      //     }}
+                      //   />
+                      // </Tooltip>,
                       <Tooltip key="edit" title="编辑">
                         <Icon
                           type="edit"
@@ -370,7 +370,7 @@ const Type: React.FC<Props> = props => {
         />
       )}
       {debuggerVisible && renderDebug()
-      // <Debugger close={() => setDebuggerVisible(false)} item={currentItem} />
+        // <Debugger close={() => setDebuggerVisible(false)} item={currentItem} />
       }
     </PageHeaderWrapper>
   );

@@ -114,4 +114,22 @@ export const ChartsConfig: Config[] = [
                 }
             }
         }
-    }];
+    },
+    {
+        id: 'Video',
+        type: '视频',
+        preview: 'https://misc.aotu.io/booxood/mobile-video/cover_900x500.jpg',
+        properties: {
+            "type": "object",
+            "properties": {
+
+            }
+        }
+    },
+    {
+        id: 'Action',
+        type: '操作',
+        preview: 'http://pic59.nipic.com/file/20150126/10989170_123658553000_2.jpg',
+        properties: {}
+    }
+];
