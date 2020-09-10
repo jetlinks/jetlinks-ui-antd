@@ -34,7 +34,7 @@ class Service extends BaseService<any>{
                 map(resp => resp.result),
             ));
 
-    public functionSource = (deviceId: string, functionId: string, data: any) =>
+    public exec = (deviceId: string, functionId: string, data: any) =>
         defer(() =>
             from(request(
                 `/jetlinks/device/instance/${deviceId}/function/${functionId}`,

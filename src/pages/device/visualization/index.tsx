@@ -28,7 +28,7 @@ interface Props {
 }
 
 export interface ComponentProps {
-    // config: any;
+    config: any;
     onLoad: Function;
     edit: Function;
     ySize: number;
@@ -105,6 +105,7 @@ const Visualization: React.FC<Props> = props => {
 
 
     const saveLayout = () => {
+
         apis.visualization.saveOrUpdate({
             metadata: JSON.stringify(layout),
             type: props.type,
@@ -284,6 +285,7 @@ const Visualization: React.FC<Props> = props => {
                     metaData={props.metaData}
                     current={current}
                     save={(item: any) => {
+                        console.log(item, 'items');
                         saveLayoutItem(item);
                     }}
                 />

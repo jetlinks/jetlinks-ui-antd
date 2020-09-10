@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'react';
-import {Form, Modal, Table} from 'antd';
-import {ColumnProps, PaginationConfig, SorterResult} from 'antd/lib/table';
+import React, { useEffect, useState } from 'react';
+import { Form, Modal, Table } from 'antd';
+import { ColumnProps, PaginationConfig, SorterResult } from 'antd/lib/table';
 import apis from '@/services';
 import encodeQueryParam from '@/utils/encodeParam';
 import moment from 'moment';
@@ -58,7 +58,7 @@ const EventLog: React.FC<Props> = props => {
             title: '详情',
             width: 850,
             content: (
-              <Form.Item wrapperCol={{span: 20}} labelCol={{span: 4}} label={props.item.name}>
+              <Form.Item wrapperCol={{ span: 20 }} labelCol={{ span: 4 }} label={props.item.name}>
                 <AceEditor
                   readOnly
                   value={JSON.stringify(record, null, 2)}
@@ -72,7 +72,7 @@ const EventLog: React.FC<Props> = props => {
                   wrapEnabled
                   highlightActiveLine  //突出活动线
                   enableSnippets  //启用代码段
-                  style={{width: '100%', height: '50vh'}}
+                  style={{ width: '100%', height: '50vh' }}
                   setOptions={{
                     enableBasicAutocompletion: true,   //启用基本自动完成功能
                     enableLiveAutocompletion: true,   //启用实时自动完成功能 （比如：智能代码提示）
@@ -134,7 +134,7 @@ const EventLog: React.FC<Props> = props => {
       width="70%"
     >
       <Table
-        rowKey='createTime'
+        rowKey='id'
         dataSource={logData.data}
         size="small"
         onChange={onTableChange}
