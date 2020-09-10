@@ -1,15 +1,15 @@
-import React, {Fragment, useEffect, useState} from 'react';
-import {ColumnProps, PaginationConfig, SorterResult} from 'antd/es/table';
-import {Badge, Button, Card, Divider, Form, message, Popconfirm, Table} from 'antd';
-import {PageHeaderWrapper} from '@ant-design/pro-layout';
+import React, { Fragment, useEffect, useState } from 'react';
+import { ColumnProps, PaginationConfig, SorterResult } from 'antd/es/table';
+import { Badge, Button, Card, Divider, Form, message, Popconfirm, Table, Upload, Icon } from 'antd';
+import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import styles from '@/utils/table.less';
-import {RuleInstanceItem} from './data.d';
-import {Dispatch} from '@/models/connect';
+import { RuleInstanceItem } from './data.d';
+import { Dispatch } from '@/models/connect';
 import encodeQueryParam from '@/utils/encodeParam';
 import Save from './save/index';
 import apis from '@/services';
-import {downloadObject} from '@/utils/utils';
-import {FormComponentProps} from 'antd/lib/form';
+import { downloadObject } from '@/utils/utils';
+import { FormComponentProps } from 'antd/lib/form';
 import moment from 'moment';
 import SearchForm from '@/components/SearchForm';
 
@@ -31,7 +31,7 @@ const SqlRuleList: React.FC<Props> = props => {
   const initState: State = {
     data: [],
     searchParam: {
-      pageSize: 10, terms: {modelType: 'sql_rule'}, sorts: {
+      pageSize: 10, terms: { modelType: 'sql_rule' }, sorts: {
         order: "descend",
         field: "createTime"
       }
@@ -44,6 +44,7 @@ const SqlRuleList: React.FC<Props> = props => {
   const [saveVisible, setSaveVisible] = useState(initState.saveVisible);
   const [current, setCurrent] = useState(initState.current);
   const [data, setData] = useState(initState.data);
+  const [loading, setLoading] = useState(false);
 
   const handleSearch = (params?: any) => {
     setSearchParam(params);
@@ -106,6 +107,7 @@ const SqlRuleList: React.FC<Props> = props => {
   };
 
   const saveOrUpdate = (item: RuleInstanceItem) => {
+    setLoading(true)
     apis.sqlRule.saveOrUpdate(item)
       .then((response: any) => {
         if (response.status === 200) {
@@ -115,6 +117,8 @@ const SqlRuleList: React.FC<Props> = props => {
         }
       })
       .catch(() => {
+      }).finally(() => {
+        setLoading(false)
       });
   };
 
@@ -144,7 +148,7 @@ const SqlRuleList: React.FC<Props> = props => {
     {
       title: '状态',
       dataIndex: 'state',
-      render: record => record ? <Badge status={statusMap.get(record.text)} text={record.text}/> : '',
+      render: record => record ? <Badge status={statusMap.get(record.text)} text={record.text} /> : '',
     },
     {
       title: '操作',
@@ -152,7 +156,7 @@ const SqlRuleList: React.FC<Props> = props => {
       render: (text, record) => (
         <Fragment>
           <a onClick={() => edit(record)}>编辑</a>
-          <Divider type="vertical"/>
+          <Divider type="vertical" />
           {record.state?.value === 'started' ? (
             <span>
               <Popconfirm title="确认停止？" onConfirm={() => _stop(record)}>
@@ -160,17 +164,17 @@ const SqlRuleList: React.FC<Props> = props => {
               </Popconfirm>
             </span>
           ) : (
-            <span>
+              <span>
                 <Popconfirm title="确认启用?" onConfirm={() => _start(record)}>
                   <a>启动</a>
                 </Popconfirm>
-                <Divider type="vertical"/>
+                <Divider type="vertical" />
                 <Popconfirm title="确认删除?" onConfirm={() => handleDelete(record)}>
                   <a>删除</a>
                 </Popconfirm>
               </span>
-          )}
-          <Divider type="vertical"/>
+            )}
+          <Divider type="vertical" />
           <a onClick={() => downloadObject(record, '数据转发')}>下载配置</a>
         </Fragment>
       ),
@@ -225,6 +229,27 @@ const SqlRuleList: React.FC<Props> = props => {
             >
               新建
             </Button>
+            <Upload
+              showUploadList={false} accept='.json'
+              beforeUpload={(file) => {
+                setLoading(true);
+                const reader = new FileReader();
+                reader.readAsText(file);
+                reader.onload = (result: any) => {
+                  try {
+                    let data = JSON.parse(result.target.result);
+                    saveOrUpdate(data);
+                  } catch (error) {
+                    message.error('导入失败，请重试！');
+                    setLoading(false);
+                  }
+                }
+              }}
+            >
+              <Button>
+                <Icon type="upload" />导入
+            </Button>
+            </Upload>
           </div>
           <div className={styles.StandardTable}>
             <Table
