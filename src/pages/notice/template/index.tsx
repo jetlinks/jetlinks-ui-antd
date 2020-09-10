@@ -238,7 +238,7 @@ const Template: React.FC<Props> = props => {
           <Divider type="vertical"/>
           <Button
             onClick={() => {
-              downloadObject(noticeTemplate.result?.data, '通知配置');
+              downloadObject(noticeTemplate.result?.data, '通知模板');
             }}
             style={{marginBottom: 16}}
           >
