@@ -26,7 +26,7 @@ const Save: React.FC<Props> = props => {
     item: props.data,
     typeList: [],
     metadata: {},
-    otherConfig: [
+    otherConfig: props.data?.configuration?.properties || [
       {
         id: randomString(8),
         name: '',
@@ -103,7 +103,7 @@ const Save: React.FC<Props> = props => {
         return <Input />;
       case 'array':
         if (property && property === 'properties') {
-          const properties = item?.configuration?.properties || otherConfig;
+          const properties = otherConfig;
           return (
             <Card>
               {properties.map((i, index) => {
@@ -150,6 +150,7 @@ const Save: React.FC<Props> = props => {
                         <Icon
                           type="plus"
                           onClick={() => {
+                            console.log(otherConfig, 'configs');
                             otherConfig.push({
                               id: randomString(8),
                               name: '',
@@ -225,14 +226,14 @@ const Save: React.FC<Props> = props => {
         <Form.Item label="配置名称">
           {getFieldDecorator('name', {
             rules: [{ required: true, message: '请输入配置名称' }],
-            initialValue: item.name,
+            initialValue: item?.name,
           })(<Input />)}
         </Form.Item>
 
         <Form.Item label="通知类型">
           {getFieldDecorator('type', {
             rules: [{ required: true, message: '请输入通知类型' }],
-            initialValue: item.type,
+            initialValue: item?.type,
           })(
             <Select onChange={e => setItem({ type: e })}>
               {typeList.map(i => (
@@ -247,7 +248,7 @@ const Save: React.FC<Props> = props => {
         <Form.Item label="服务商">
           {getFieldDecorator('provider', {
             rules: [{ required: true, message: '请选择服务商' }],
-            initialValue: item.provider,
+            initialValue: item?.provider,
           })(
             <Select
               onChange={(e: string) => {
