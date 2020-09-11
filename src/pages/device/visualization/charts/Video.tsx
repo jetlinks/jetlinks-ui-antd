@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { ComponentProps } from "..";
 import { message } from "antd";
-import VideoPlayer from "@/pages/demo/VideoPlayer";
 import Service from "../service";
-import FlashVideo from "@/pages/demo/FlashVideo";
+import FlashVideo from "@/components/VideoPlayer/FlashVideo";
 
 interface Props extends ComponentProps {
     config: any;
