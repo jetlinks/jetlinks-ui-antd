@@ -52,7 +52,7 @@ const Save = (props: Props) => {
         </TreeNode>
       )
     }
-  }
+  };
   useEffect(() => {
     api.categoty.query_tree({}).then(res => {
       if (res.status === 200) {
@@ -70,6 +70,16 @@ const Save = (props: Props) => {
       }}
     >
       <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
+        <Form.Item key="id" label="大屏ID">
+          {getFieldDecorator('id', {
+            rules: [{ required: true, message: '请输入大屏ID' }]
+          })(<Input placeholder="请输入大屏ID" />)}
+        </Form.Item>
+        <Form.Item key="name" label="大屏名称">
+          {getFieldDecorator('name', {
+            rules: [{ required: true, message: '请输入大屏名称' }]
+          })(<Input placeholder="请输入大屏名称" />)}
+        </Form.Item>
         <Form.Item key="categoryId" label="分类">
           {getFieldDecorator('categoryId', {
             rules: [{ required: true, message: '请选择分类' }]
@@ -84,16 +94,6 @@ const Save = (props: Props) => {
               })
             }
           </TreeSelect>)}
-        </Form.Item>
-        <Form.Item key="id" label="大屏ID">
-          {getFieldDecorator('id', {
-            rules: [{ required: true, message: '请输入大屏ID' }]
-          })(<Input placeholder="请输入大屏ID" />)}
-        </Form.Item>
-        <Form.Item key="name" label="大屏名称">
-          {getFieldDecorator('name', {
-            rules: [{ required: true, message: '请输入大屏名称' }]
-          })(<Input placeholder="请输入大屏名称" />)}
         </Form.Item>
         <Form.Item key="description" label="说明">
           {getFieldDecorator('description', {

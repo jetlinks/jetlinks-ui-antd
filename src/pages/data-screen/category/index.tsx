@@ -1,13 +1,11 @@
-import React, { Fragment, useState, useEffect } from "react";
-import { Table, Button, Card, Divider, Modal } from "antd";
-import { PageHeaderWrapper } from "@ant-design/pro-layout";
+import React, {Fragment, useEffect, useState} from "react";
+import {Button, Card, Divider, Modal, Popconfirm, Table} from "antd";
+import {PageHeaderWrapper} from "@ant-design/pro-layout";
 import Save from './save'
 import Edit from './edit'
 import api from '@/services'
-// import CategoryItem from './data'
-import { ExclamationCircleOutlined } from "@ant-design/icons";
+
 export const TenantContext = React.createContext({});
-const { confirm } = Modal;
 
 interface Props {
   data: any;
@@ -57,36 +55,36 @@ const Category = (props: Props) => {
           <Divider type="vertical" />
           <a onClick={() => {setSaveVisible(true); setParams({ type: '新增子',parentId: record.id, id: '', name: '', description: ''})}}>添加子分类</a>
           <Divider type="vertical" />
-          <a onClick={() => delConfirm(record.id)}>删除</a>
+          <Popconfirm
+            title="确认删除？"
+            onConfirm={() => {
+              delConfirm(record.id);
+            }}
+          >
+            <a>删除</a>
+          </Popconfirm>
         </Fragment>
       ),
     },
-  ]
+  ];
 
   const delConfirm = (id: string) => {
-    confirm({
-      title: '删除分类',
-      icon: <ExclamationCircleOutlined />,
-      onOk() {
-        api.categoty.remove(id).then(res => {
-          console.log(res)
-          if (res.status === 200) {
-            handleSearch();
-          }
-        })
+    api.categoty.remove(id).then(res => {
+      if (res.status === 200) {
+        handleSearch();
       }
     })
-  }
+  };
   const handleSearch = () => {
     api.categoty.query_tree({}).then(res => {
       if (res.status === 200) {
         setCategoryList(res.result)
       }
     })
-  }
+  };
   useEffect(() => {
     handleSearch();
-  }, [])
+  }, []);
   return (
     <div>
       <PageHeaderWrapper title="分类管理">
@@ -106,6 +104,6 @@ const Category = (props: Props) => {
       }} edit={() => {setEditVisible(false); handleSearch()}} />}
     </div>
   )
-}
+};
 
 export default Category

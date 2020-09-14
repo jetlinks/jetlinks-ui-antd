@@ -43,7 +43,7 @@ const Edit = (props: Props) => {
           {getFieldDecorator('id', {
             rules: [{ required: true, message: '请输入分类ID' }],
             initialValue: props.data.id ? props.data.id : ''
-          })(<Input placeholder="请输入分类ID" />)}
+          })(<Input placeholder="请输入分类ID" readOnly={!!props.data.id}/>)}
         </Form.Item>
         <Form.Item key="name" label="分类名称">
           {getFieldDecorator('name', {
