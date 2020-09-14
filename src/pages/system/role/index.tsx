@@ -1,18 +1,18 @@
-import React, {Fragment, useEffect, useState} from 'react';
-import {PageHeaderWrapper} from '@ant-design/pro-layout';
+import React, { Fragment, useEffect, useState } from 'react';
+import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import styles from '@/utils/table.less';
-import {Button, Card, Divider, message, Popconfirm, Spin} from 'antd';
-import {connect, Dispatch} from 'dva';
-import {ColumnProps} from 'antd/lib/table';
-import {RoleItem} from './data.d';
-import {ConnectState} from '@/models/connect';
+import { Button, Card, Divider, message, Popconfirm, Spin } from 'antd';
+import { connect, Dispatch } from 'dva';
+import { ColumnProps } from 'antd/lib/table';
+import { RoleItem } from './data.d';
+import { ConnectState } from '@/models/connect';
 import encodeQueryParam from '@/utils/encodeParam';
 import Save from './save';
 import Authorization from '@/components/Authorization';
 import BindUser from './user';
 import RoleService from './service';
 import ProTable from '../permission/component/ProTable';
-import {ListData} from '@/services/response';
+import { ListData } from '@/services/response';
 import apis from "@/services";
 
 interface Props {
@@ -33,7 +33,14 @@ interface State {
 const RoleList: React.FC<Props> = props => {
 
   const initState: State = {
-    searchParam: {pageSize: 10},
+    searchParam: {
+      paging: false,
+      pageIndex: 0,
+      pageSize: 10,
+      terms: {
+        typeId: 'role',
+      },
+    },
     saveVisible: false,
     currentItem: {},
     autzVisible: false,
@@ -58,11 +65,7 @@ const RoleList: React.FC<Props> = props => {
   };
 
   useEffect(() => {
-    handleSearch({
-      paging: false,
-      pageIndex: 0,
-      pageSize: 10,
-    });
+    handleSearch(searchParam);
   }, []);
 
   const saveOrUpdate = (item: RoleItem) => {
@@ -116,7 +119,7 @@ const RoleList: React.FC<Props> = props => {
           >
             编辑
           </a>
-          <Divider type="vertical"/>
+          <Divider type="vertical" />
           <a
             onClick={() => {
               setCurrentItem(record);
@@ -125,7 +128,7 @@ const RoleList: React.FC<Props> = props => {
           >
             权限分配
           </a>
-          <Divider type="vertical"/>
+          <Divider type="vertical" />
           <a
             onClick={() => {
               setCurrentItem(record);
@@ -134,7 +137,7 @@ const RoleList: React.FC<Props> = props => {
           >
             绑定用户
           </a>
-          <Divider type="vertical"/>
+          <Divider type="vertical" />
           <Popconfirm
             title="确认删除此角色吗？"
             onConfirm={() => {
@@ -220,7 +223,7 @@ const RoleList: React.FC<Props> = props => {
     </PageHeaderWrapper>
   );
 };
-export default connect(({role, loading}: ConnectState) => ({
+export default connect(({ role, loading }: ConnectState) => ({
   role,
   loading: loading.models.role,
 }))(RoleList);
