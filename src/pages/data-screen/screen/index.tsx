@@ -1,24 +1,16 @@
-import React, {useState, useEffect} from "react";
-import {Card, TreeSelect, Button, Modal, message, Popconfirm, Dropdown, Menu, Icon} from "antd";
+import React, {useEffect, useState} from "react";
+import {Avatar, Button, Card, Dropdown, Icon, List, Menu, Modal, Popconfirm, Tooltip} from "antd";
 import {PageHeaderWrapper} from "@ant-design/pro-layout";
 import api from '@/services'
 import styles from './index.less';
-import {List, Tooltip, Avatar} from "antd";
 import {getAccessToken} from '@/utils/authority';
-import {
-  EditOutlined,
-  SwitcherOutlined,
-  DeleteOutlined,
-  EyeOutlined,
-  ExclamationCircleOutlined
-} from "@ant-design/icons";
+import {EditOutlined, ExclamationCircleOutlined, EyeOutlined, SwitcherOutlined} from "@ant-design/icons";
 import Save from './save'
 import Edit from './edit'
 import AutoHide from "@/pages/analysis/components/Hide/autoHide";
 import encodeQueryParam from "@/utils/encodeParam";
 import SearchForm from "@/components/SearchForm";
 
-const {TreeNode} = TreeSelect;
 const {confirm} = Modal;
 
 interface Props {
@@ -31,7 +23,6 @@ const Screen = (props: Props) => {
 
   const defaultImg = 'https://oss.bladex.vip/caster/upload/20200512/f26107bbb77a84949285617848745d81.jpg'
   const [categoryList, setCategoryList] = useState([]);
-  const [categoryId, setCategoryId] = useState('');
   const [dataList, setDataList] = useState({
     data: [],
     pageIndex: 0,
@@ -266,7 +257,7 @@ const Screen = (props: Props) => {
             }}
           />
         </div>
-        {saveVisible && <Save data={categoryId} close={() => {
+        {saveVisible && <Save close={() => {
           setSaveVisible(false)
         }} save={() => {
           setSaveVisible(false);
