@@ -1,6 +1,6 @@
 import request from "@/utils/request";
-import {DeviceProduct} from "./data";
-import {DeviceInstance} from "@/pages/device/instance/data";
+import { DeviceProduct } from "./data";
+import { DeviceInstance } from "@/pages/device/instance/data";
 
 export async function list(params: any) {
   return request(`/jetlinks/device-product/_query`, {
@@ -23,7 +23,7 @@ export async function saveDeviceProduct(params: Partial<DeviceProduct>) {
   });
 }
 
-export async function update(params: DeviceProduct,productId?: string ) {
+export async function update(params: DeviceProduct, productId?: string) {
   return request(`/jetlinks/device-product/${productId}`, {
     method: 'PUT',
     data: params,
@@ -129,5 +129,11 @@ export async function deviceCategory() {
 export async function deviceCategoryTree() {
   return request(`/jetlinks/device/category/_tree`, {
     method: 'get'
+  });
+}
+
+export async function storagePolicy() {
+  return request(`/jetlinks/device/product/storage/policies`, {
+    method: 'get',
   });
 }
