@@ -37,7 +37,7 @@ const EventLog: React.FC<Props> = props => {
   };
   initState.eventColumns.push({
     title: '事件时间',
-    dataIndex: 'createTime',
+    dataIndex: 'timestamp',
     width: '200px',
     render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
     sorter: true,

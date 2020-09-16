@@ -7,6 +7,13 @@ export async function query(params: any){
     })
 }
 
+export async function queryNoPaging(params: any){
+    return request(`/jetlinks/visualization/catalog/_query/no-paging`,{
+        method: 'GET',
+        params,
+    })
+}
+
 export async function query_tree(params: any){
     return request(`/jetlinks/visualization/catalog/_query/tree`,{
         method: 'GET',
