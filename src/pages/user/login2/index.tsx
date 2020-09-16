@@ -29,6 +29,7 @@ const Login: React.FC<Props> = props => {
     dispatch({
       type: 'login/login',
       payload: { username, password, expires, tokenType: 'default', verifyKey: captcha, verifyCode: code },
+      callback: () => { getCodeImg() }
     });
   };
 

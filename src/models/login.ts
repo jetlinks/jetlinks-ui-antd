@@ -35,7 +35,7 @@ const Model: LoginModelType = {
   },
 
   effects: {
-    *login({ payload }, { call, put }) {
+    *login({ payload, callback }, { call, put }) {
       const response = yield call(apis.login.login, payload);
       yield put({
         type: 'changeLoginStatus',
@@ -75,7 +75,9 @@ const Model: LoginModelType = {
         // yield put(routerRedux.replace(redirect || '/'));
         router.replace(redirect || '/');
         // router.replace('/');
-      }
+      } else (
+        callback()
+      )
     },
 
     *logout(_, { call, put }) {
