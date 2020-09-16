@@ -426,6 +426,19 @@ export const routes = [
                             }
                         ]
                     },
+                    {
+                        path: 'mock',
+                        name: '模拟测试',
+                        icon: 'bug',
+                        routes: [
+                            {
+                                path: '/mock/device',
+                                name: '设备模拟器',
+                                icon: 'paper-clip',
+                                component: './mock/device',
+                            }
+                        ]
+                    },
                     // {
                     //   name: 'paramter',
                     //   path: '/properties',
