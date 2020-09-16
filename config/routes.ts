@@ -24,12 +24,12 @@ export const routes = [
                         redirect: '/analysis',
 
                     },
-                    {
-                        name: '数据表格',
-                        path: '/demo',
-                        icon: 'table',
-                        component: './demo'
-                    },
+                    // {
+                    //     name: '数据表格',
+                    //     path: '/demo',
+                    //     icon: 'table',
+                    //     component: './demo'
+                    // },
                     {
                         name: '统计分析',
                         path: '/analysis',
