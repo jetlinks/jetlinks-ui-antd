@@ -1,19 +1,19 @@
-import React, {useEffect, useState} from 'react';
-import {FormComponentProps} from 'antd/lib/form';
+import React, { useEffect, useState } from 'react';
+import { FormComponentProps } from 'antd/lib/form';
 import Form from 'antd/es/form';
-import {Avatar, Button, Card, Cascader, Col, Input, message, Radio, Row, Select, Spin, TreeSelect, Upload} from 'antd';
-import {DeviceProduct} from '../../data';
-import {FormItemConfig} from '@/utils/common';
+import { Avatar, Button, Card, Cascader, Col, Icon, Input, message, Radio, Row, Select, Spin, Tooltip, TreeSelect, Upload } from 'antd';
+import { DeviceProduct } from '../../data';
+import { FormItemConfig } from '@/utils/common';
 import apis from '@/services';
 import styles from "@/pages/device/product/save/add/index.less";
 import productImg from "@/pages/device/product/img/product.png";
-import {UploadProps} from "antd/lib/upload";
-import {getAccessToken} from "@/utils/authority";
-import {UploadOutlined} from "@ant-design/icons/lib";
-import {PageHeaderWrapper} from "@ant-design/pro-layout";
+import { UploadProps } from "antd/lib/upload";
+import { getAccessToken } from "@/utils/authority";
+import { UploadOutlined } from "@ant-design/icons/lib";
+import { PageHeaderWrapper } from "@ant-design/pro-layout";
 import Classified from '@/pages/device/product/save/add/classified';
-import {ProtocolItem} from "@/pages/device/protocol/data";
-import {router} from "umi";
+import { ProtocolItem } from "@/pages/device/protocol/data";
+import { router } from "umi";
 
 interface Props extends FormComponentProps {
   data?: Partial<DeviceProduct>;
@@ -42,7 +42,7 @@ const Save: React.FC<Props> = props => {
     classifiedData: {},
   };
 
-  const {getFieldDecorator, setFieldsValue} = props.form;
+  const { getFieldDecorator, setFieldsValue } = props.form;
   // 消息协议
   const [protocolSupports, setProtocolSupports] = useState(initState.protocolSupports);
   // 消息协议
@@ -55,6 +55,8 @@ const Save: React.FC<Props> = props => {
   const [photoUrl, setPhotoUrl] = useState(props.data?.photoUrl);
   const [classifiedVisible, setClassifiedVisible] = useState(false);
 
+  const [storagePolicy, setStoragePolicy] = useState<any[]>([]);
+  const [checkStorage, setCheckStorage] = useState<any>({});
   const onMessageProtocolChange = (value: string) => {
     // 获取链接协议
     apis.deviceProdcut
@@ -93,13 +95,18 @@ const Save: React.FC<Props> = props => {
         if (res.status === 200) {
           let orgList: any = [];
           res.result.map((item: any) => {
-            orgList.push({id: item.id, pId: item.parentId, value: item.id, title: item.name})
+            orgList.push({ id: item.id, pId: item.parentId, value: item.id, title: item.name })
           });
           setOrganizationList(orgList);
         }
       }).catch(() => {
-    });
+      });
 
+    apis.deviceProdcut.storagePolicy().then(res => {
+      if (res.status === 200) {
+        setStoragePolicy(res.result);
+      }
+    });
     if (props.data && props.data.messageProtocol) {
       onMessageProtocolChange(props.data.messageProtocol);
     }
@@ -110,16 +117,16 @@ const Save: React.FC<Props> = props => {
       label: '产品ID',
       key: 'id',
       styles: {
-        lg: {span: 8},
-        md: {span: 12},
-        sm: {span: 24},
+        lg: { span: 8 },
+        md: { span: 12 },
+        sm: { span: 24 },
       },
       options: {
         initialValue: props.data?.id,
         rules: [
-          {required: true, message: '请输入产品ID'},
-          {max: 64, message: '产品ID不超过64个字符'},
-          {pattern: new RegExp(/^[0-9a-zA-Z_\-]+$/, "g"), message: '产品ID只能由数字、字母、下划线、中划线组成'}
+          { required: true, message: '请输入产品ID' },
+          { max: 64, message: '产品ID不超过64个字符' },
+          { pattern: new RegExp(/^[0-9a-zA-Z_\-]+$/, "g"), message: '产品ID只能由数字、字母、下划线、中划线组成' }
         ],
       },
       component: (
@@ -134,34 +141,34 @@ const Save: React.FC<Props> = props => {
       key: 'name',
       options: {
         rules: [
-          {required: true, message: '请选择产品名称'},
-          {max: 200, message: '产品名称不超过200个字符'}
+          { required: true, message: '请选择产品名称' },
+          { max: 200, message: '产品名称不超过200个字符' }
         ],
         initialValue: props.data?.name,
       },
       styles: {
-        xl: {span: 8},
-        lg: {span: 8},
-        md: {span: 12},
-        sm: {span: 24},
+        xl: { span: 8 },
+        lg: { span: 8 },
+        md: { span: 12 },
+        sm: { span: 24 },
       },
-      component: <Input style={{width: '100%'}} maxLength={200} placeholder="请输入"/>,
+      component: <Input style={{ width: '100%' }} maxLength={200} placeholder="请输入" />,
     },
     {
       label: '所属品类',
       key: 'classifiedId',
       options: {
-        rules: [{required: true, message: '请选择所属品类'}],
+        rules: [{ required: true, message: '请选择所属品类' }],
       },
       styles: {
-        xl: {span: 8},
-        lg: {span: 8},
-        md: {span: 12},
-        sm: {span: 24},
+        xl: { span: 8 },
+        lg: { span: 8 },
+        md: { span: 12 },
+        sm: { span: 24 },
       },
       component:
         <Cascader
-          fieldNames={{label: 'name', value: 'id', children: 'children'}}
+          fieldNames={{ label: 'name', value: 'id', children: 'children' }}
           options={classified} popupVisible={false}
           onChange={(value) => {
             if (value.length === 0) {
@@ -171,7 +178,7 @@ const Save: React.FC<Props> = props => {
           onClick={() => {
             setClassifiedVisible(true);
           }}
-          placeholder="点击选择品类"/>,
+          placeholder="点击选择品类" />,
     },
     {
       label: '所属机构',
@@ -180,10 +187,10 @@ const Save: React.FC<Props> = props => {
         initialValue: props.data?.orgId,
       },
       styles: {
-        xl: {span: 8},
-        lg: {span: 10},
-        md: {span: 24},
-        sm: {span: 24},
+        xl: { span: 8 },
+        lg: { span: 10 },
+        md: { span: 24 },
+        sm: { span: 24 },
       },
       component: <TreeSelect
         allowClear treeDataSimpleMode showSearch
@@ -195,14 +202,14 @@ const Save: React.FC<Props> = props => {
       label: '消息协议',
       key: 'messageProtocol',
       options: {
-        rules: [{required: true, message: '请选择消息协议'}],
+        rules: [{ required: true, message: '请选择消息协议' }],
         initialValue: props.data?.messageProtocol,
       },
       styles: {
-        xl: {span: 8},
-        lg: {span: 8},
-        md: {span: 12},
-        sm: {span: 24},
+        xl: { span: 8 },
+        lg: { span: 8 },
+        md: { span: 12 },
+        sm: { span: 24 },
       },
       component: (
         <Select
@@ -223,18 +230,47 @@ const Save: React.FC<Props> = props => {
       label: '传输协议',
       key: 'transportProtocol',
       options: {
-        rules: [{required: true, message: '请选择传输协议'}],
+        rules: [{ required: true, message: '请选择传输协议' }],
         initialValue: props.data?.transportProtocol,
       },
       styles: {
-        xl: {span: 8},
-        lg: {span: 10},
-        md: {span: 24},
-        sm: {span: 24},
+        xl: { span: 8 },
+        lg: { span: 10 },
+        md: { span: 24 },
+        sm: { span: 24 },
       },
       component: (
         <Select placeholder="请选择">
           {protocolTransports.map(e => (
+            <Select.Option value={e.id} key={e.id}>
+              {e.name}
+            </Select.Option>
+          ))}
+        </Select>
+      ),
+    },
+    {
+      label: (
+        <span>存储策略&nbsp;
+          <Tooltip title={checkStorage.description ? checkStorage.description : '使用指定的存储策略来存储设备数据'}>
+            <Icon type="question-circle-o" />
+          </Tooltip>
+        </span>
+      ),
+      key: 'storePolicy',
+      options: {
+      },
+      styles: {
+        xl: { span: 8 },
+        lg: { span: 10 },
+        md: { span: 24 },
+        sm: { span: 24 },
+      },
+      component: (
+        <Select
+          onChange={e => setCheckStorage(storagePolicy.find(i => i.id === e))}
+          placeholder="请选择">
+          {storagePolicy.map(e => (
             <Select.Option value={e.id} key={e.id}>
               {e.name}
             </Select.Option>
@@ -247,16 +283,16 @@ const Save: React.FC<Props> = props => {
       label: '设备类型',
       key: 'deviceType',
       options: {
-        rules: [{required: true, message: '请选择设备类型'}],
+        rules: [{ required: true, message: '请选择设备类型' }],
         initialValue:
           typeof props.data?.deviceType === 'string'
             ? props.data?.deviceType
             : (props.data?.deviceType || {}).value,
       },
       styles: {
-        lg: {span: 8},
-        md: {span: 12},
-        sm: {span: 24},
+        lg: { span: 8 },
+        md: { span: 12 },
+        sm: { span: 24 },
       },
       component: (
         <Radio.Group>
@@ -270,20 +306,20 @@ const Save: React.FC<Props> = props => {
       label: '描述',
       key: 'describe',
       styles: {
-        xl: {span: 24},
-        lg: {span: 24},
-        md: {span: 24},
-        sm: {span: 24},
+        xl: { span: 24 },
+        lg: { span: 24 },
+        md: { span: 24 },
+        sm: { span: 24 },
       },
       options: {
         initialValue: props.data?.describe,
       },
-      component: <Input.TextArea rows={4} placeholder="请输入描述"/>,
+      component: <Input.TextArea rows={4} placeholder="请输入描述" />,
     },
   ];
 
   const saveData = () => {
-    const {form} = props;
+    const { form } = props;
     form.validateFields((err, fileValue) => {
       if (err) return;
       if (!fileValue.orgId) {
@@ -334,7 +370,7 @@ const Save: React.FC<Props> = props => {
           <Spin spinning={false}>
             <div className={styles.baseView}>
               <div className={styles.left}>
-                <Form labelCol={{span: 5}} wrapperCol={{span: 16}}>
+                <Form labelCol={{ span: 5 }} wrapperCol={{ span: 16 }}>
                   <Row gutter={16}>
                     {basicForm.map(item => (
                       <Col key={item.key}>
@@ -352,12 +388,12 @@ const Save: React.FC<Props> = props => {
                     图标
                   </div>
                   <div className={styles.avatar}>
-                    <Avatar size={144} src={photoUrl || props.data?.photoUrl || productImg}/>
+                    <Avatar size={144} src={photoUrl || props.data?.photoUrl || productImg} />
                   </div>
                   <Upload {...uploadProps} showUploadList={false}>
                     <div className={styles.button_view}>
                       <Button>
-                        <UploadOutlined/>
+                        <UploadOutlined />
                         更换图片
                       </Button>
                     </div>
@@ -383,7 +419,7 @@ const Save: React.FC<Props> = props => {
                 onClick={() => {
                   router.push(`/device/product`);
                 }}
-                style={{marginRight: 8}}
+                style={{ marginRight: 8 }}
               >
                 返回
               </Button>
@@ -401,12 +437,12 @@ const Save: React.FC<Props> = props => {
       </Card>
       {classifiedVisible && <Classified choice={(item: any) => {
         const categoryId = item.categoryId;
-        setFieldsValue({'classifiedId': categoryId});
+        setFieldsValue({ 'classifiedId': categoryId });
         setClassifiedData(item);
         setClassifiedVisible(false);
       }} close={() => {
         setClassifiedVisible(false);
-      }} data={classifiedData}/>}
+      }} data={classifiedData} />}
     </PageHeaderWrapper>
   );
 };

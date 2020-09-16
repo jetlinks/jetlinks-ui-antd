@@ -24,12 +24,12 @@ export const routes = [
                         redirect: '/analysis',
 
                     },
-                    {
-                        name: '数据表格',
-                        path: '/demo',
-                        icon: 'table',
-                        component: './demo'
-                    },
+                    // {
+                    //     name: '数据表格',
+                    //     path: '/demo',
+                    //     icon: 'table',
+                    //     component: './demo'
+                    // },
                     {
                         name: '统计分析',
                         path: '/analysis',
@@ -423,6 +423,19 @@ export const routes = [
                                 name: '通知订阅',
                                 icon: 'bell',
                                 component: './account/notification'
+                            }
+                        ]
+                    },
+                    {
+                        path: 'mock',
+                        name: '模拟测试',
+                        icon: 'bug',
+                        routes: [
+                            {
+                                path: '/mock/device',
+                                name: '设备模拟器',
+                                icon: 'paper-clip',
+                                component: './mock/device',
                             }
                         ]
                     },

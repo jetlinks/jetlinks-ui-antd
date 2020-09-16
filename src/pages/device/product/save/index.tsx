@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {FormComponentProps} from 'antd/lib/form';
+import React, { useEffect, useState } from 'react';
+import { FormComponentProps } from 'antd/lib/form';
 import Form from 'antd/es/form';
 import {
   Avatar,
@@ -8,23 +8,25 @@ import {
   Cascader,
   Col,
   Drawer,
+  Icon,
   Input,
   message,
   Radio,
   Row,
   Select,
+  Tooltip,
   TreeSelect,
   Upload
 } from 'antd';
-import {DeviceProduct} from '../data';
-import {FormItemConfig} from '@/utils/common';
+import { DeviceProduct } from '../data';
+import { FormItemConfig } from '@/utils/common';
 import apis from '@/services';
 import styles from "@/pages/device/product/save/style.less";
 import productImg from "@/pages/device/product/img/product.png";
-import {UploadProps} from "antd/lib/upload";
-import {getAccessToken} from "@/utils/authority";
-import {UploadOutlined} from "@ant-design/icons/lib";
-import {ProtocolItem} from "@/pages/device/protocol/data";
+import { UploadProps } from "antd/lib/upload";
+import { getAccessToken } from "@/utils/authority";
+import { UploadOutlined } from "@ant-design/icons/lib";
+import { ProtocolItem } from "@/pages/device/protocol/data";
 import Classified from "@/pages/device/product/save/add/classified";
 
 interface Props extends FormComponentProps {
@@ -39,6 +41,7 @@ interface State {
   organizationList: any[];
   categoryLIst: any[];
   classifiedData: any;
+  storagePolicy: string
 }
 
 const Save: React.FC<Props> = props => {
@@ -48,9 +51,10 @@ const Save: React.FC<Props> = props => {
     organizationList: [],
     categoryLIst: [],
     classifiedData: {},
+    storagePolicy: '',
   };
 
-  const {getFieldDecorator,setFieldsValue} = props.form;
+  const { getFieldDecorator, setFieldsValue } = props.form;
   // 消息协议
   const [protocolSupports, setProtocolSupports] = useState(initState.protocolSupports);
   // 消息协议
@@ -62,6 +66,8 @@ const Save: React.FC<Props> = props => {
   const [classifiedVisible, setClassifiedVisible] = useState(false);
   const [classifiedData, setClassifiedData] = useState(initState.classifiedData);
 
+  const [storagePolicy, setStoragePolicy] = useState<any[]>([]);
+  const [checkStorage, setCheckStorage] = useState<any>(initState.storagePolicy);
   const onMessageProtocolChange = (value: string) => {
     // 获取链接协议
     apis.deviceProdcut
@@ -77,7 +83,7 @@ const Save: React.FC<Props> = props => {
 
   useEffect(() => {
     if (props.data.classifiedId) {
-      setClassifiedData({id: props.data.classifiedId, name: props.data.classifiedName});
+      setClassifiedData({ id: props.data.classifiedId, name: props.data.classifiedName });
       let classified = props.data?.classifiedId.split('|').filter(function (s: string) {
         return s && s.trim();
       });
@@ -90,7 +96,7 @@ const Save: React.FC<Props> = props => {
         }
       });
       list.push(props.data.classifiedId);
-      setFieldsValue({'classifiedId': list});
+      setFieldsValue({ 'classifiedId': list });
     }
 
     apis.deviceProdcut
@@ -108,12 +114,12 @@ const Save: React.FC<Props> = props => {
         if (res.status === 200) {
           let orgList: any = [];
           res.result.map((item: any) => {
-            orgList.push({id: item.id, pId: item.parentId, value: item.id, title: item.name})
+            orgList.push({ id: item.id, pId: item.parentId, value: item.id, title: item.name })
           });
           setOrganizationList(orgList);
         }
       }).catch(() => {
-    });
+      });
 
     apis.deviceProdcut.deviceCategoryTree()
       .then((response: any) => {
@@ -124,6 +130,11 @@ const Save: React.FC<Props> = props => {
       .catch(() => {
       });
 
+    apis.deviceProdcut.storagePolicy().then(res => {
+      if (res.status === 200) {
+        setStoragePolicy(res.result);
+      }
+    });
     if (props.data && props.data.messageProtocol) {
       onMessageProtocolChange(props.data.messageProtocol);
     }
@@ -135,13 +146,13 @@ const Save: React.FC<Props> = props => {
       label: '产品ID',
       key: 'id',
       styles: {
-        lg: {span: 8},
-        md: {span: 12},
-        sm: {span: 24},
+        lg: { span: 8 },
+        md: { span: 12 },
+        sm: { span: 24 },
       },
       options: {
         initialValue: props.data?.id,
-        rules: [{required: true, message: '请输入产品ID'}],
+        rules: [{ required: true, message: '请输入产品ID' }],
       },
 
       component: (
@@ -155,32 +166,32 @@ const Save: React.FC<Props> = props => {
       label: '产品名称',
       key: 'name',
       options: {
-        rules: [{required: true, message: '请选择产品名称'}],
+        rules: [{ required: true, message: '请选择产品名称' }],
         initialValue: props.data?.name,
       },
       styles: {
-        xl: {span: 8},
-        lg: {span: 8},
-        md: {span: 12},
-        sm: {span: 24},
+        xl: { span: 8 },
+        lg: { span: 8 },
+        md: { span: 12 },
+        sm: { span: 24 },
       },
-      component: <Input style={{width: '100%'}} placeholder="请输入"/>,
+      component: <Input style={{ width: '100%' }} placeholder="请输入" />,
     },
     {
       label: '所属品类',
       key: 'classifiedId',
       options: {
-        rules: [{required: true, message: '请选择所属品类'}],
+        rules: [{ required: true, message: '请选择所属品类' }],
       },
       styles: {
-        xl: {span: 8},
-        lg: {span: 8},
-        md: {span: 12},
-        sm: {span: 24},
+        xl: { span: 8 },
+        lg: { span: 8 },
+        md: { span: 12 },
+        sm: { span: 24 },
       },
       component: (
         <Cascader
-          fieldNames={{label: 'name', value: 'id', children: 'children'}}
+          fieldNames={{ label: 'name', value: 'id', children: 'children' }}
           options={categoryLIst} popupVisible={false}
           onChange={(value) => {
             if (value.length === 0) {
@@ -190,7 +201,7 @@ const Save: React.FC<Props> = props => {
           onClick={() => {
             setClassifiedVisible(true);
           }}
-          placeholder="点击选择品类"/>
+          placeholder="点击选择品类" />
       ),
     },
     {
@@ -200,10 +211,10 @@ const Save: React.FC<Props> = props => {
         initialValue: props.data?.orgId,
       },
       styles: {
-        xl: {span: 8},
-        lg: {span: 10},
-        md: {span: 24},
-        sm: {span: 24},
+        xl: { span: 8 },
+        lg: { span: 10 },
+        md: { span: 24 },
+        sm: { span: 24 },
       },
       component: <TreeSelect
         allowClear treeDataSimpleMode showSearch
@@ -215,14 +226,14 @@ const Save: React.FC<Props> = props => {
       label: '消息协议',
       key: 'messageProtocol',
       options: {
-        rules: [{required: true, message: '请选择消息协议'}],
+        rules: [{ required: true, message: '请选择消息协议' }],
         initialValue: props.data?.messageProtocol,
       },
       styles: {
-        xl: {span: 8},
-        lg: {span: 8},
-        md: {span: 12},
-        sm: {span: 24},
+        xl: { span: 8 },
+        lg: { span: 8 },
+        md: { span: 12 },
+        sm: { span: 24 },
       },
       component: (
         <Select
@@ -239,18 +250,19 @@ const Save: React.FC<Props> = props => {
         </Select>
       ),
     },
+
     {
       label: '传输协议',
       key: 'transportProtocol',
       options: {
-        rules: [{required: true, message: '请选择传输协议'}],
+        rules: [{ required: true, message: '请选择传输协议' }],
         initialValue: props.data?.transportProtocol,
       },
       styles: {
-        xl: {span: 8},
-        lg: {span: 10},
-        md: {span: 24},
-        sm: {span: 24},
+        xl: { span: 8 },
+        lg: { span: 10 },
+        md: { span: 24 },
+        sm: { span: 24 },
       },
       component: (
         <Select
@@ -263,21 +275,50 @@ const Save: React.FC<Props> = props => {
         </Select>
       ),
     },
-
+    {
+      label: (
+        <span>存储策略&nbsp;
+          <Tooltip title={checkStorage.description ? checkStorage.description : '使用指定的存储策略来存储设备数据'}>
+            <Icon type="question-circle-o" />
+          </Tooltip>
+        </span>
+      ),
+      key: 'storePolicy',
+      options: {
+        initialValue: props.data?.storePolicy,
+      },
+      styles: {
+        xl: { span: 8 },
+        lg: { span: 10 },
+        md: { span: 24 },
+        sm: { span: 24 },
+      },
+      component: (
+        <Select
+          onChange={e => setCheckStorage(storagePolicy.find(i => i.id === e))}
+          placeholder="请选择">
+          {storagePolicy.map(e => (
+            <Select.Option value={e.id} key={e.id}>
+              {e.name}
+            </Select.Option>
+          ))}
+        </Select>
+      ),
+    },
     {
       label: '设备类型',
       key: 'deviceType',
       options: {
-        rules: [{required: true, message: '请选择设备类型'}],
+        rules: [{ required: true, message: '请选择设备类型' }],
         initialValue:
           typeof props.data?.deviceType === 'string'
             ? props.data?.deviceType
             : (props.data?.deviceType || {}).value,
       },
       styles: {
-        lg: {span: 8},
-        md: {span: 12},
-        sm: {span: 24},
+        lg: { span: 8 },
+        md: { span: 12 },
+        sm: { span: 24 },
       },
       component: (
         <Radio.Group>
@@ -291,20 +332,20 @@ const Save: React.FC<Props> = props => {
       label: '描述',
       key: 'describe',
       styles: {
-        xl: {span: 24},
-        lg: {span: 24},
-        md: {span: 24},
-        sm: {span: 24},
+        xl: { span: 24 },
+        lg: { span: 24 },
+        md: { span: 24 },
+        sm: { span: 24 },
       },
       options: {
         initialValue: props.data?.describe,
       },
-      component: <Input.TextArea rows={3} placeholder="请输入描述"/>,
+      component: <Input.TextArea rows={3} placeholder="请输入描述" />,
     },
   ];
 
   const saveData = () => {
-    const {form} = props;
+    const { form } = props;
     form.validateFields((err, fileValue) => {
       if (err) return;
       if (!fileValue.orgId) {
@@ -344,16 +385,16 @@ const Save: React.FC<Props> = props => {
       onClose={() => props.close()}
       closable
     >
-      <Form labelCol={{span: 6}} wrapperCol={{span: 18}}>
-        <Card title="基本信息" style={{marginBottom: 20}} bordered={false}>
+      <Form labelCol={{ span: 6 }} wrapperCol={{ span: 18 }}>
+        <Card title="基本信息" style={{ marginBottom: 20 }} bordered={false}>
           <Form.Item label='图标'>
             <>
               <div className={styles.avatar}>
-                <Avatar size={80} src={photoUrl || props.data?.photoUrl || productImg}/>
+                <Avatar size={80} src={photoUrl || props.data?.photoUrl || productImg} />
               </div>
               <Upload {...uploadProps} showUploadList={false}>
                 <Button>
-                  <UploadOutlined/>
+                  <UploadOutlined />
                   更换图片
                 </Button>
               </Upload>
@@ -389,7 +430,7 @@ const Save: React.FC<Props> = props => {
           onClick={() => {
             props.close();
           }}
-          style={{marginRight: 8}}
+          style={{ marginRight: 8 }}
         >
           关闭
         </Button>
@@ -408,12 +449,12 @@ const Save: React.FC<Props> = props => {
           return s && s.trim();
         }));*/
         const categoryId = item.categoryId;
-        setFieldsValue({'classifiedId': categoryId});
+        setFieldsValue({ 'classifiedId': categoryId });
         setClassifiedData(item);
         setClassifiedVisible(false);
       }} close={() => {
         setClassifiedVisible(false);
-      }} data={classifiedData}/>}
+      }} data={classifiedData} />}
     </Drawer>
   );
 };
