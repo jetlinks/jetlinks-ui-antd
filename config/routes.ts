@@ -272,7 +272,7 @@ export const routes = [
                         iconfont: 'icon-tongzhiguanli',
                         icon: 'message',
                         tenant: ['admin', 'member'],
-                        authority: ['certificate', 'network-config', 'device-gateway', 'admin'],
+                        authority: ['certificate', 'network-config', 'device-gateway', , 'template', 'notifier', 'admin'],
                         routes: [
                             {
                                 path: '/notice/config',
