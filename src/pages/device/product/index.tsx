@@ -408,9 +408,9 @@ const DeviceModel: React.FC<Props> = props => {
                                         </Menu.Item>
                                       ) : (
                                         <Menu.Item key="2">
-                                          <Tooltip placement="bottom" title='存在设备，无法删除'>
+                                          <Tooltip placement="bottom" title='该产品已绑定设备，无法删除'>
                                             <Button icon="stop" type="link">
-                                              禁用
+                                              删除
                                             </Button>
                                           </Tooltip>
                                         </Menu.Item>
@@ -419,7 +419,7 @@ const DeviceModel: React.FC<Props> = props => {
                                       <Menu.Item key="2">
                                         <Tooltip placement="bottom" title='该产品已发布，无法删除'>
                                           <Button icon="stop" type="link">
-                                            禁用
+                                            删除
                                           </Button>
                                         </Tooltip>
                                       </Menu.Item>
