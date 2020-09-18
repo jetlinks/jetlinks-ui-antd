@@ -427,15 +427,15 @@ export const routes = [
                         ]
                     },
                     {
-                        path: 'mock',
+                        path: 'simulator',
                         name: '模拟测试',
                         icon: 'bug',
                         routes: [
                             {
-                                path: '/mock/device',
+                                path: '/simulator/device',
                                 name: '设备模拟器',
                                 icon: 'paper-clip',
-                                component: './mock/device',
+                                component: './simulator/device',
                             }
                         ]
                     },
