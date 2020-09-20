@@ -84,7 +84,7 @@ const UpdateProperty: React.FC<Props> = props => {
         return (
           <Select placeholder="请选择">
             {valueType.elements.length > 0 && valueType.elements.map((item: any) => (
-              <Select.Option key={item.value}>{`${valueType.text}（${valueType.value}）`}</Select.Option>
+              <Select.Option key={item.value}>{`${item.text}（${item.value}）`}</Select.Option>
             ))}
           </Select>
         );
