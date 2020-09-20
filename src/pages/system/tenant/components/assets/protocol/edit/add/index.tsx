@@ -149,7 +149,7 @@ const Add = (props: Props) => {
                             e.preventDefault()
                         }}
                         onChange={(value: string[]) => {
-                            setCheckedUserList(value);
+                            setCheckedUserList(typeof (value) === "string" ? [value] : value);
                             if (value.includes('*')) {
                                 setSelectMode('default');
                                 setChecked(['*']);
