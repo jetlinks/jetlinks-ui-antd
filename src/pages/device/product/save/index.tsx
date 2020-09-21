@@ -80,6 +80,7 @@ const Save: React.FC<Props> = props => {
       .catch(() => {
       });
   };
+  const systemVersion = localStorage.getItem('system-version');
 
   useEffect(() => {
     if (props.data.classifiedId) {
@@ -130,11 +131,14 @@ const Save: React.FC<Props> = props => {
       .catch(() => {
       });
 
-    apis.deviceProdcut.storagePolicy().then(res => {
-      if (res.status === 200) {
-        setStoragePolicy(res.result);
-      }
-    });
+    if (systemVersion === 'pro') {
+      apis.deviceProdcut.storagePolicy().then(res => {
+        if (res.status === 200) {
+          setStoragePolicy(res.result);
+        }
+      });
+    }
+
     if (props.data && props.data.messageProtocol) {
       onMessageProtocolChange(props.data.messageProtocol);
     }
@@ -401,7 +405,7 @@ const Save: React.FC<Props> = props => {
             </>
           </Form.Item>
           <Row gutter={16}>
-            {basicForm.map(item => (
+            {(systemVersion === 'pro' ? basicForm : basicForm.filter(i => i.key !== 'storePolicy')).map(item => (
               <Col
                 key={item.key}
               >

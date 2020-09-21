@@ -41,6 +41,7 @@ const Save: React.FC<Props> = props => {
     classified: [],
     classifiedData: {},
   };
+  const systemVersion = localStorage.getItem('system-version');
 
   const { getFieldDecorator, setFieldsValue } = props.form;
   // 消息协议
@@ -102,11 +103,13 @@ const Save: React.FC<Props> = props => {
       }).catch(() => {
       });
 
-    apis.deviceProdcut.storagePolicy().then(res => {
-      if (res.status === 200) {
-        setStoragePolicy(res.result);
-      }
-    });
+    if (systemVersion === 'pro') {
+      apis.deviceProdcut.storagePolicy().then(res => {
+        if (res.status === 200) {
+          setStoragePolicy(res.result);
+        }
+      });
+    }
     if (props.data && props.data.messageProtocol) {
       onMessageProtocolChange(props.data.messageProtocol);
     }
@@ -372,7 +375,7 @@ const Save: React.FC<Props> = props => {
               <div className={styles.left}>
                 <Form labelCol={{ span: 5 }} wrapperCol={{ span: 16 }}>
                   <Row gutter={16}>
-                    {basicForm.map(item => (
+                    {(systemVersion === 'pro' ? basicForm : basicForm.filter(i => i.key !== 'storePolicy')).map(item => (
                       <Col key={item.key}>
                         <Form.Item label={item.label}>
                           {getFieldDecorator(item.key, item.options)(item.component)}
