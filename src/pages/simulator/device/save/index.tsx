@@ -257,12 +257,6 @@ const Save: React.FC<Props> = props => {
             "runner.binds": {
                 "title": "绑定网卡",
                 "x-component": "select",
-                "x-rules": [
-                    {
-                        "required": true,
-                        "message": "此字段必填"
-                    }
-                ],
                 "x-component-props": {
                     "mode": "tags",
                 },
@@ -316,24 +310,48 @@ const Save: React.FC<Props> = props => {
                                 { "label": "自动重连", "value": "auto-reconnect" },
                                 { "label": "脚本", "value": "jsr223" }
                             ],
+                            "x-rules": [
+                                {
+                                    "required": true,
+                                    "message": "此字段必填"
+                                }
+                            ],
                             "x-mega-props": { "labelCol": 6 },
                         },
                         "configuration.maxTimes": {
                             "title": "最大重连次数",
                             "x-component": "input",
                             "visible": false,
+                            "x-rules": [
+                                {
+                                    "required": true,
+                                    "message": "此字段必填"
+                                }
+                            ],
                             "x-mega-props": { "labelCol": 6 },
                         },
                         "configuration.delays": {
                             "title": "重连间隔",
                             "x-component": "input",
                             "visible": false,
+                            "x-rules": [
+                                {
+                                    "required": true,
+                                    "message": "此字段必填"
+                                }
+                            ],
                             "x-mega-props": { "labelCol": 6 },
                         },
                         "configuration.lang": {
                             "title": "脚本语言",
                             "x-component": "select",
                             "visible": false,
+                            "x-rules": [
+                                {
+                                    "required": true,
+                                    "message": "此字段必填"
+                                }
+                            ],
                             "enum": [
                                 { "label": "js", "value": "js" },
                             ]
@@ -342,6 +360,30 @@ const Save: React.FC<Props> = props => {
                             "title": "脚本内容",
                             "x-component": "AceComponent",
                             "visible": false,
+                            "default": `
+//内置变量
+//simulator , listener
+
+//启动完成
+simulator.doOnComplete(function () {
+   
+})
+
+//连接前
+listener.onBefore(function (session) {
+
+});
+
+//连接后
+listener.onAfter(function (session) {
+ 
+});`,
+                            "x-rules": [
+                                {
+                                    "required": true,
+                                    "message": "此字段必填"
+                                }
+                            ],
                             "x-mega-props": { "labelCol": 2, "span": 2 }
                         }
                     }
@@ -357,6 +399,7 @@ const Save: React.FC<Props> = props => {
             props.close();
         })
     }
+
     return (
         <Modal
             title={`${props.data.id ? '编辑' : '新建'}模拟器`}
