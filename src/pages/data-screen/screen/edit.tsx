@@ -27,7 +27,6 @@ const Save = (props: Props) => {
           text: "启用",
           value: "enabled"
         },
-        metadta: ''
       };
       api.screen.update(fileValue.id, param).then(res => {
         if (res.status === 200) {
