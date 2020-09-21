@@ -5,6 +5,7 @@ import { map, filter, flatMap } from "rxjs/operators";
 import { TenantItem } from "./data";
 
 class Service extends BaseService<TenantItem>{
+    private tenant = localStorage.getItem('tenants-admin');
     public create = (params: any) => defer(() => from(request(`/jetlinks/tenant/_create`, {
         method: 'POST',
         data: params
@@ -54,7 +55,7 @@ class Service extends BaseService<TenantItem>{
             )),
         bind: (id: string, data: { name: string, userId: string, admin: boolean }[]) => defer(
             () => from(
-                request(`/jetlinks/tenant/${id}/members/_bind`, {
+                request(this.tenant === 'true' ? `/jetlinks/tenant/members/_bind` : `/jetlinks/tenant/${id}/members/_bind`, {
                     method: 'POST',
                     data,
                 })).pipe(
@@ -62,7 +63,7 @@ class Service extends BaseService<TenantItem>{
                     map(resp => resp.result)
                 )),
         unBind: (id: string, data: string[]) => defer(() => from(
-            request(`/jetlinks/tenant/${id}/members/_unbind`, {
+            request(this.tenant === 'true' ? `/jetlinks/tenant/members/_unbind` : `/jetlinks/tenant/${id}/members/_unbind`, {
                 method: 'POST',
                 data
             })).pipe(
@@ -94,7 +95,7 @@ class Service extends BaseService<TenantItem>{
             assetIdList: string[],
             allPermission: boolean
         }[]) => defer(() => from(
-            request(`/jetlinks/tenant/${id}/assets/_bind`, {
+            request(this.tenant === 'true' ? `/jetlinks/tenant/assets/_bind` : `/jetlinks/tenant/${id}/assets/_bind`, {
                 method: 'POST',
                 data
             })).pipe(
@@ -106,7 +107,7 @@ class Service extends BaseService<TenantItem>{
             assetType: string,
             assetIdList: string[]
         }[]) => defer(() => from(
-            request(`/jetlinks/tenant/${id}/assets/_unbind`, {
+            request(this.tenant === 'true' ? `/jetlinks/tenant/assets/_unbind` : `/jetlinks/tenant/${id}/assets/_unbind`, {
                 method: 'POST',
                 data
             })).pipe(
