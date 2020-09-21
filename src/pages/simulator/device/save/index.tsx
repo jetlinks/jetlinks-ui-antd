@@ -1,13 +1,48 @@
 import { Button, message, Modal } from "antd";
 import React from "react";
 import Service from "../service";
-import { createFormActions, FormButtonGroup, FormEffectHooks, FormSpy, Reset, SchemaForm, Submit } from "@formily/antd";
+import { createFormActions, FormButtonGroup, FormEffectHooks, FormPath, FormSpy, Reset, SchemaForm, Submit } from "@formily/antd";
 import { ArrayCards, ArrayTable, Input, DatePicker, Select, FormStep } from '@formily/antd-components'
+import 'ace-builds';
+import 'ace-builds/webpack-resolver';
+import AceEditor from 'react-ace';
+import 'ace-builds/src-noconflict/mode-sql';
+import 'ace-builds/src-noconflict/mode-mysql';
+import 'ace-builds/src-noconflict/ext-language_tools';
+import 'ace-builds/src-noconflict/ext-searchbox';
+import 'ace-builds/src-noconflict/theme-eclipse';
 
 interface Props {
     close: Function;
     data: any
 }
+
+const AceComponent = (props: any) => (
+    <AceEditor
+        mode='javascript'
+        theme="eclipse"
+        name="app_code_editor"
+        fontSize={14}
+        showPrintMargin
+        showGutter
+        value={props.value || ''}
+        onChange={value => {
+            props.onChange(value)
+            // props.mutators.change(value)
+        }}
+        wrapEnabled
+        highlightActiveLine  //突出活动线
+        enableSnippets  //启用代码段
+        style={{ width: '100%', height: 300 }}
+        setOptions={{
+            enableBasicAutocompletion: true,   //启用基本自动完成功能
+            enableLiveAutocompletion: true,   //启用实时自动完成功能 （比如：智能代码提示）
+            enableSnippets: true,  //启用代码段
+            showLineNumbers: true,
+            tabSize: 2,
+        }}
+    />
+)
 
 const actions = createFormActions();
 
@@ -31,6 +66,21 @@ const Save: React.FC<Props> = props => {
                     state.visible = value === 'mqtt' ? true : false;
                 });
         });
+
+        onFieldValueChange$("listeners.*.type").subscribe(fieldState => {
+
+            console.log(fieldState, 'state');
+            setFieldState(
+                FormPath.transform(fieldState.name, /\d/, $1 => `*(listeners.${$1}.configuration.maxTimes,listeners.${$1}.configuration.delays,listeners.${$1}.configuration.lang,listeners.${$1}.configuration.script)`),
+                state => {
+                    state.visible = false;
+                })
+            setFieldState(
+                FormPath.transform(fieldState.name, /\d/, $1 => fieldState.value === 'auto-reconnect' ? `*(listeners.${$1}.configuration.maxTimes,listeners.${$1}.configuration.delays)` : `*(listeners.${$1}.configuration.lang,listeners.${$1}.configuration.script)`),
+                state => {
+                    state.visible = true;
+                });
+        })
     }
     const basicInfo = {
         "type": "object",
@@ -204,15 +254,18 @@ const Save: React.FC<Props> = props => {
         },
 
         "properties": {
-            "runner.bings": {
+            "runner.binds": {
                 "title": "绑定网卡",
-                "x-component": "input",
+                "x-component": "select",
                 "x-rules": [
                     {
                         "required": true,
                         "message": "此字段必填"
                     }
                 ],
+                "x-component-props": {
+                    "mode": "tags",
+                },
                 "x-mega-props": { "span": 1, }
             },
             "runner.total": {
@@ -248,21 +301,54 @@ const Save: React.FC<Props> = props => {
                 ],
                 "x-mega-props": { "span": 1 }
             },
-            "listeners.type": {
+            "listeners": {
                 "title": "其他功能",
-                "x-component": "select",
-                "enum": [
-                    { "label": "自动重链接", "value": "auto-reconnect" },
-                    { "label": "脚本", "value": "jsr223" }
-                ],
-                "x-rules": [
-                    {
-                        "required": true,
-                        "message": "此字段必填"
+                "x-component": "arraycards",
+                "type": "array",
+                "x-mega-props": { "span": 2, "labelCol": 2 },
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "title": "监听器类型",
+                            "x-component": "select",
+                            "enum": [
+                                { "label": "自动重连", "value": "auto-reconnect" },
+                                { "label": "脚本", "value": "jsr223" }
+                            ],
+                            "x-mega-props": { "labelCol": 6 },
+                        },
+                        "configuration.maxTimes": {
+                            "title": "最大重连次数",
+                            "x-component": "input",
+                            "visible": false,
+                            "x-mega-props": { "labelCol": 6 },
+                        },
+                        "configuration.delays": {
+                            "title": "重连间隔",
+                            "x-component": "input",
+                            "visible": false,
+                            "x-mega-props": { "labelCol": 6 },
+                        },
+                        "configuration.lang": {
+                            "title": "脚本语言",
+                            "x-component": "select",
+                            "visible": false,
+                            "enum": [
+                                { "label": "js", "value": "js" },
+                            ]
+                        },
+                        "configuration.script": {
+                            "title": "脚本内容",
+                            "x-component": "AceComponent",
+                            "visible": false,
+                            "x-mega-props": { "labelCol": 2, "span": 2 }
+                        }
                     }
-                ],
-                "x-mega-props": { "span": 1 }
-            }
+
+                },
+            },
+
         }
     };
     const save = (data: any) => {
@@ -287,7 +373,7 @@ const Save: React.FC<Props> = props => {
                 initialValues={props.data}
                 actions={actions}
                 onSubmit={v => save(v)}
-                components={{ DatePicker, Input, ArrayTable, ArrayCards, Select }}
+                components={{ DatePicker, Input, ArrayTable, ArrayCards, Select, AceComponent }}
                 schema={{
                     "type": "object",
                     "properties": {
