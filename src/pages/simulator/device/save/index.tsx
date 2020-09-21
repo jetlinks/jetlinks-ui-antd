@@ -63,7 +63,7 @@ const Save: React.FC<Props> = props => {
                     networkConfiguration.password,
                     networkConfiguration.keepAliveTimeSeconds)`,
                 state => {
-                    state.visible = value === 'mqtt' ? true : false;
+                    state.visible = value === 'mqtt_client' ? true : false;
                 });
         });
 
@@ -113,11 +113,11 @@ const Save: React.FC<Props> = props => {
                 "type": "string",
                 "enum": [
                     {
-                        "value": "mqtt",
+                        "value": "mqtt_client",
                         "label": "MQTT"
                     },
                     {
-                        "value": "tcp",
+                        "value": "tcp_client",
                         "label": "TCP"
                     }
                 ],

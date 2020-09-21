@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Save from "./save";
 import Service from "./service";
 import productImg from "@/pages/device/product/img/product.png";
+import Detail from "./detail";
 
 interface Props {
 
@@ -14,6 +15,7 @@ const Simulator: React.FC<Props> = props => {
     const service = new Service('network/simulator');
 
     const [saveVisible, setSaveVisible] = useState<boolean>(false);
+    const [detailVisible, setDetailVisible] = useState<boolean>(false);
     const [current, setCurrent] = useState<any>();
     const [data, setData] = useState();
     const search = () => {
@@ -69,7 +71,8 @@ const Simulator: React.FC<Props> = props => {
                                                 <Icon
                                                     type="eye"
                                                     onClick={() => {
-                                                        message.success('详情')
+                                                        setDetailVisible(true);
+                                                        setCurrent(item)
                                                     }}
                                                 />
                                             </Tooltip>,
@@ -143,6 +146,12 @@ const Simulator: React.FC<Props> = props => {
                     }}
                 />
             )}
+
+            {
+                detailVisible && (
+                    <Detail close={() => setDetailVisible(false)} data={current} />
+                )
+            }
 
         </PageHeaderWrapper>
     )
