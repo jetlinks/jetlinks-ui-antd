@@ -118,7 +118,7 @@ const Save: React.FC<Props> = props => {
               { pattern: new RegExp(/^[0-9a-zA-Z_\-]+$/, "g"), message: '产品ID只能由数字、字母、下划线、中划线组成' }
             ],
             initialValue: props.data.id,
-          })(<Input placeholder="请输入设备id" disabled={!!props.data.id} />)}
+          })(<Input placeholder="请输入设备id" readOnly={!!props.data.id} />)}
         </Form.Item>
         <Form.Item key="name" label="设备名称">
           {getFieldDecorator('name', {
