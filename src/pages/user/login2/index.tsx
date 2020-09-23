@@ -89,8 +89,6 @@ const Login: React.FC<Props> = props => {
       <div className={style.gyl}>
         物联网平台
         <div className={style.gy2}>MQTT TCP CoAP HTTP , 多消息协议适配 , 可视化规则引擎
-      {captcha},{code}
-
         </div>
       </div>
 
