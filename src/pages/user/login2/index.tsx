@@ -34,10 +34,12 @@ const Login: React.FC<Props> = props => {
   };
 
   const getCodeImg = () => {
-    service.getCaptcha().subscribe((resp) => {
-      setCaptcha(resp.key);
-      setCaptchaImg(resp.base64);
-    });
+    if (enable) {
+      service.getCaptcha().subscribe((resp) => {
+        setCaptcha(resp.key);
+        setCaptchaImg(resp.base64);
+      });
+    }
   }
 
   useEffect(() => {
@@ -64,11 +66,11 @@ const Login: React.FC<Props> = props => {
         setEnable(resp.enabled)
         if (resp.enabled) {
           //获取验证码
-          // service.getCaptcha().subscribe((resp) => {
-          //   setCaptcha(resp.key);
-          //   setCaptchaImg(resp.base64);
-          // });
-          getCodeImg();
+          service.getCaptcha().subscribe((resp) => {
+            setCaptcha(resp.key);
+            setCaptchaImg(resp.base64);
+          });
+          // getCodeImg();
         } else {
           //未开启验证码
         }
@@ -86,8 +88,10 @@ const Login: React.FC<Props> = props => {
       <div className={style.bg1} />
       <div className={style.gyl}>
         物联网平台
-        <div className={style.gy2}>MQTT TCP CoAP HTTP , 多消息协议适配 , 可视化规则引擎</div>
+        <div className={style.gy2}>MQTT TCP CoAP HTTP , 多消息协议适配 , 可视化规则引擎
+        </div>
       </div>
+
       <div className={style.box} style={{ height: enable ? '387px' : '330px' }}>
         <div className={style.header}>用户登录</div>
 

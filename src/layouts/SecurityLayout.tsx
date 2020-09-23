@@ -60,8 +60,8 @@ const SecurityLayout = (props: SecurityLayoutProps) => {
     }
     if (!isLogin) {
       // TODO 此处应使用注释的代码。但跳转存在问题，
-      return <Redirect to={`/user/login?${queryString}`} />;
-      // return <Redirect to="/user/login"></Redirect>;
+      // return <Redirect to={`/user/login?${queryString}`} />;
+      return <Redirect to="/user/login"></Redirect>;
     }
     return children;
   }
