@@ -34,10 +34,12 @@ const Login: React.FC<Props> = props => {
   };
 
   const getCodeImg = () => {
-    service.getCaptcha().subscribe((resp) => {
-      setCaptcha(resp.key);
-      setCaptchaImg(resp.base64);
-    });
+    if (enable) {
+      service.getCaptcha().subscribe((resp) => {
+        setCaptcha(resp.key);
+        setCaptchaImg(resp.base64);
+      });
+    }
   }
 
   useEffect(() => {
