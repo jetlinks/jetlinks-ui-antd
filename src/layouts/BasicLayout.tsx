@@ -13,7 +13,7 @@ import { Link } from 'umi';
 import { Dispatch } from 'redux';
 import { connect } from 'dva';
 import { Result, Button } from 'antd';
-import Authorized from '@/utils/Authorized';
+import Authorized, { reloadAuthorized } from '@/utils/Authorized';
 import RightContent from '@/components/GlobalHeader/RightContent';
 import { ConnectState } from '@/models/connect';
 import { isAntDesignPro, getAuthorityFromRouter } from '@/utils/utils';
@@ -58,6 +58,7 @@ export type BasicLayoutContext = { [K in 'location']: BasicLayoutProps[K] } & {
 const menuDataRender = (menuList: MenuDataItem[]): MenuDataItem[] => {
   const version = localStorage.getItem('system-version');
   const tenant = localStorage.getItem('tenants-admin');
+  reloadAuthorized();
   if (tenant === 'true') {
     return menuList.filter(j => j.tenant).filter(i => i.tenant.indexOf('admin') > -1).map(item => {
       const localItem: any = {
@@ -136,6 +137,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
   } = props;
 
 
+
   useEffect(() => {
     if (dispatch) {
       dispatch({
@@ -153,7 +155,6 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
       });
     }
   }; // get children authority
-
 
   const authorized = getAuthorityFromRouter(props.route.routes, location.pathname || '/') || {
     authority: undefined,
