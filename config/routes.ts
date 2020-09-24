@@ -430,11 +430,13 @@ export const routes = [
                         path: 'simulator',
                         name: '模拟测试',
                         icon: 'bug',
+                        authority: ['network-simulator', 'admin'],
                         routes: [
                             {
                                 path: '/simulator/device',
                                 name: '设备模拟器',
                                 icon: 'paper-clip',
+                                authority: ['network-simulator', 'admin'],
                                 component: './simulator/device',
                             }
                         ]
