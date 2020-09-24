@@ -45,9 +45,10 @@ class Service extends BaseService<any>{
             map(resp => resp.result),
         ));
 
-    public sendMessage = (id: string, sessionId: string) => defer(
+    public sendMessage = (id: string, sessionId: string, data: any) => defer(
         () => from(request(`${this.uri}/${id}/${sessionId}`, {
-            method: 'POST'
+            method: 'POST',
+            data
         })).pipe(
             filter(resp => resp.status === 200),
             map(resp => resp.result),

@@ -1,41 +1,34 @@
 import { Axis, Chart, Geom, Tooltip } from "bizcharts";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { Observable } from "rxjs";
+import { filter, map, mergeMap, toArray, windowCount } from "rxjs/operators";
 
-const Time: React.FC = props => {
-    const data = [
-        {
-            year: "1951 年",
-            sales: 38
-        },
-        {
-            year: "1952 年",
-            sales: 52
-        },
-        {
-            year: "1956 年",
-            sales: 61
-        },
-        {
-            year: "1957 年",
-            sales: 145
-        },
-        {
-            year: "1958 年",
-            sales: 48
-        },
-        {
-            year: "1959 年",
-            sales: 38
-        },
-        {
-            year: "1960 年",
-            sales: 38
-        },
-        {
-            year: "1962 年",
-            sales: 38
-        }
-    ];
+interface Props {
+    time: any
+}
+const Time: React.FC<Props> = props => {
+
+    const { time } = props;
+    const [data, setData] = useState<any>([]);
+    useEffect(() => {
+        // 后端提供了distTimeList字段，可直接取。
+        new Observable(sink => {
+            Object.keys(time || {}).forEach(e => sink.next({ time: e, value: time[e] }));
+            sink.complete();
+        }).pipe(
+            windowCount(2, 1),
+            mergeMap(i => i.pipe(toArray())),
+            filter(arr => arr.length > 0),
+            map((arr: any[]) => ({
+                label: arr.length === 1 ?
+                    `>=${arr[0].time}` :
+                    arr.map(i => i.time).join('~'), value: arr[0].value
+            })),
+            toArray(),
+        ).subscribe((result) => { setData(result) })
+
+    }, [time]);
+
     const cols = {
         sales: {
             tickInterval: 20
@@ -46,15 +39,14 @@ const Time: React.FC = props => {
             <span className='sub-title' style={{ marginLeft: 40, fontWeight: 700 }}>
                 时间分布
              </span>
-            <Axis name="year" />
-            <Axis name="sales" />
+            <Axis name="label" />
+            <Axis name="value" />
             <Tooltip
-            // crosshairs用于设置 tooltip 的辅助线或者辅助框
-            // crosshairs={{
-            //  type: "y"
-            // }}
+                crosshairs={{
+                    type: "y"
+                }}
             />
-            <Geom type="interval" position="year*sales" />
+            <Geom type="interval" position="label*value" />
         </Chart>
     )
 }

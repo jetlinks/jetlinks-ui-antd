@@ -7,122 +7,41 @@ import {
 } from 'bizcharts';
 import DataSet from '@antv/data-set';
 
-
-const Message: React.FC = props => {
+interface Props {
+    runtimeHistory: {
+        time: string,
+        totalDownstream: number,
+        totalDownstreamBytes: number,
+        totalUpstream: number,
+        totalUpstreamBytes: number
+    }[]
+}
+const Message: React.FC<Props> = props => {
+    const { runtimeHistory } = props;
     const { DataView } = DataSet;
-    const data = [
-        {
-            year: "1996",
-            north: 322,
-            south: 162
-        },
-        {
-            year: "1997",
-            north: 324,
-            south: 90
-        },
-        {
-            year: "1998",
-            north: 329,
-            south: 50
-        },
-        {
-            year: "1999",
-            north: 342,
-            south: 77
-        },
-        {
-            year: "2000",
-            north: 348,
-            south: 35
-        },
-        {
-            year: "2001",
-            north: 334,
-            south: -45
-        },
-        {
-            year: "2002",
-            north: 325,
-            south: -88
-        },
-        {
-            year: "2003",
-            north: 316,
-            south: -120
-        },
-        {
-            year: "2004",
-            north: 318,
-            south: -156
-        },
-        {
-            year: "2005",
-            north: 330,
-            south: -123
-        },
-        {
-            year: "2006",
-            north: 355,
-            south: -88
-        },
-        {
-            year: "2007",
-            north: 366,
-            south: -66
-        },
-        {
-            year: "2008",
-            north: 337,
-            south: -45
-        },
-        {
-            year: "2009",
-            north: 352,
-            south: -29
-        },
-        {
-            year: "2010",
-            north: 377,
-            south: -45
-        },
-        {
-            year: "2011",
-            north: 383,
-            south: -88
-        },
-        {
-            year: "2012",
-            north: 344,
-            south: -132
-        },
-        {
-            year: "2013",
-            north: 366,
-            south: -146
-        },
-        {
-            year: "2014",
-            north: 389,
-            south: -169
-        },
-        {
-            year: "2015",
-            north: 334,
-            south: -184
-        }
-    ];
-    const dv = new DataView().source(data);
+    console.log((runtimeHistory || []).map(e => ({
+        totalDownstream: -e.totalDownstream,
+        totalDownstreamBytes: -(e.totalDownstreamBytes / 1024).toFixed(2),
+        totalUpstream: e.totalUpstream,
+        totalUpstreamBytes: (e.totalUpstreamBytes / 1024)
+    })))
+    const dv = new DataView().source((runtimeHistory || []).map(e => ({
+        time: e.time,
+        totalDownstream: -e.totalDownstream,
+        totalDownstreamBytes: -(e.totalDownstreamBytes / 1024).toFixed(2),
+        totalUpstream: e.totalUpstream,
+        totalUpstreamBytes: Number((e.totalUpstreamBytes / 1024).toFixed(2))
+    })));
     dv.transform({
         type: "fold",
-        fields: ["north", "south"],
+        fields: ["totalDownstream", "totalDownstreamBytes", "totalUpstream", "totalUpstreamBytes"],
         // 展开字段集
         key: "type",
         // key字段
         value: "value" // value字段
     });
     const cols = {
-        year: {
+        time: {
             range: [0, 1]
         }
     };
@@ -131,14 +50,14 @@ const Message: React.FC = props => {
             <span className='sub-title' style={{ marginLeft: 40, fontWeight: 700 }}>
                 消息统计
              </span>
-            <Axis name="year" />
+            <Axis name="time" />
             <Axis
                 name="value"
-                label={{
-                    formatter: val => {
-                        return (val / 10000).toFixed(1) + "k";
-                    }
-                }}
+            // label={{
+            //     formatter: val => {
+            //         return (val / 10000).toFixed(1);
+            //     }
+            // }}
             />
             <Legend />
             <Tooltip
@@ -146,8 +65,8 @@ const Message: React.FC = props => {
                     type: "line"
                 }}
             />
-            <Geom type="area" position="year*value" color="type" />
-            <Geom type="line" position="year*value" size={2} color="type" />
+            <Geom type="area" position="time*value" color="type" />
+            <Geom type="line" position="time*value" size={2} color="type" />
         </Chart>
     )
 
