@@ -14,10 +14,15 @@ const Detail: React.FC<Props> = props => {
 
     const [data, setData] = useState<any>({});
     useEffect(() => {
-        service.state(props.data.id).pipe(
-        ).subscribe(data => {
-            setData(data);
-        });
+        const requestData = setInterval(() => {
+            service.state(props.data.id).pipe(
+            ).subscribe(data => {
+                setData(data);
+            });
+        }, 5000);
+        return () => {
+            clearInterval(requestData);
+        }
     }, []);
     return (
         <Modal
