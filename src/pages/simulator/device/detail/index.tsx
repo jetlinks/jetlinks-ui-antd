@@ -16,7 +16,6 @@ const Detail: React.FC<Props> = props => {
     useEffect(() => {
         service.state(props.data.id).pipe(
         ).subscribe(data => {
-            console.log(data, 'dddd');
             setData(data);
         });
     }, []);

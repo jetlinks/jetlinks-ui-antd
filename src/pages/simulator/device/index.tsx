@@ -37,6 +37,8 @@ const Simulator: React.FC<Props> = props => {
     const start = (id: string) => {
         service.start(id).subscribe(() => {
             message.success('启动成功');
+            setDetailVisible(true);
+            // setCurrent(item)
             search();
         })
     }
@@ -71,8 +73,12 @@ const Simulator: React.FC<Props> = props => {
                                                 <Icon
                                                     type="eye"
                                                     onClick={() => {
-                                                        setDetailVisible(true);
-                                                        setCurrent(item)
+                                                        if (item.status.value === 'stop') {
+                                                            message.success('模拟器未启动！')
+                                                        } else {
+                                                            setDetailVisible(true);
+                                                            setCurrent(item)
+                                                        }
                                                     }}
                                                 />
                                             </Tooltip>,
@@ -90,6 +96,7 @@ const Simulator: React.FC<Props> = props => {
                                                 <Icon
                                                     type="play-circle"
                                                     onClick={() => {
+                                                        setCurrent(item);
                                                         item.status.value === 'stop' ? start(item.id) : stop(item.id)
                                                     }}
                                                 />
