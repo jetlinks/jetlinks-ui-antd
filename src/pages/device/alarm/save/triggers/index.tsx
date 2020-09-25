@@ -58,6 +58,8 @@ const Trigger: React.FC<Props> = props => {
         data.map((item: any) => {
           if (item.id === trigger.modelId) {
             setDataSourceValue(trigger.type, item, trigger.modelId);
+          } else {
+            setDataSource([]);
           }
         });
       }
