@@ -53,7 +53,7 @@ const UserModel: UserModelType = {
     *fetchCurrent(_, { call, put }) {
       const response = yield call(queryCurrent);
       if (response) {
-        localStorage.setItem('hsweb-autz', JSON.stringify(response.result));
+        // localStorage.setItem('hsweb-autz', JSON.stringify(response.result));
         yield put({
           type: 'saveCurrentUser',
           payload: response.result.user,
