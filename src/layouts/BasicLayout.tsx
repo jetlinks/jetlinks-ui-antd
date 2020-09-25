@@ -18,6 +18,8 @@ import RightContent from '@/components/GlobalHeader/RightContent';
 import { ConnectState } from '@/models/connect';
 import { isAntDesignPro, getAuthorityFromRouter } from '@/utils/utils';
 import logo from '../assets/logo.svg';
+import apis from '@/services';
+import { getAuthority } from '@/utils/authority';
 
 // import PubSub from 'pubsub-js';
 
@@ -58,7 +60,7 @@ export type BasicLayoutContext = { [K in 'location']: BasicLayoutProps[K] } & {
 const menuDataRender = (menuList: MenuDataItem[]): MenuDataItem[] => {
   const version = localStorage.getItem('system-version');
   const tenant = localStorage.getItem('tenants-admin');
-  // reloadAuthorized();
+  reloadAuthorized();
   if (tenant === 'true') {
     return menuList.filter(j => j.tenant).filter(i => i.tenant.indexOf('admin') > -1).map(item => {
       const localItem: any = {
@@ -88,6 +90,7 @@ const menuDataRender = (menuList: MenuDataItem[]): MenuDataItem[] => {
   //     return localItem?.version && version === 'community' ? [] : Authorized.check(item.authority, localItem, null) as MenuDataItem;
   //   });
   // }
+  console.log(getAuthority(),'fff');
   return menuList.map(item => {
     const localItem: any = {
       ...item,
@@ -137,6 +140,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
   } = props;
 
 
+const auth = localStorage.getItem('hsweb-autz');
 
   useEffect(() => {
     if (dispatch) {
