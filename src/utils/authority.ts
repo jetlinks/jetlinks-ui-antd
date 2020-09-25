@@ -191,6 +191,8 @@ export function clearAutz() {
 export function setAutz(info: Authentication): Authentication {
   window.top.hsweb_autz = new Authentication(info);
   const autz = new Authentication(info);
-  localStorage.setItem('hsweb-autz', JSON.stringify(info));
+  if(JSON.stringify(info)!=='undefined'){
+    localStorage.setItem('hsweb-autz', JSON.stringify(info));
+  }
   return autz;
 }

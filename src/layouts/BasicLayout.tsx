@@ -89,8 +89,7 @@ const menuDataRender = (menuList: MenuDataItem[]): MenuDataItem[] => {
   //     };
   //     return localItem?.version && version === 'community' ? [] : Authorized.check(item.authority, localItem, null) as MenuDataItem;
   //   });
-  // }
-  console.log(getAuthority(),'fff');
+  // } 
   return menuList.map(item => {
     const localItem: any = {
       ...item,
@@ -138,9 +137,6 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
       pathname: '/',
     },
   } = props;
-
-
-const auth = localStorage.getItem('hsweb-autz');
 
   useEffect(() => {
     if (dispatch) {
