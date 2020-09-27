@@ -10,6 +10,8 @@ export default {
     '/jetlinks': {
       target: 'http://127.0.0.1:8848/',
       ws: 'ws://127.0.0.1:8848/',
+      // ws: 'ws://demo.jetlinks.cn/jetlinks',
+      // target: 'http://demo.jetlinks.cn/jetlinks',
       changeOrigin: true,
       pathRewrite: { '^/jetlinks': '' },
     },

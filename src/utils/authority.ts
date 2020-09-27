@@ -24,9 +24,13 @@ export function getAuthority(): string | string[] {
   // return authority;
   const storage = localStorage.getItem('hsweb-autz');
   const autz = storage ? JSON.parse(storage) : null;
-
   if (autz !== null) {
-    const authority = autz.currentAuthority || [];
+    let authority =[];
+    if(autz.currentAuthority){
+      authority=autz.currentAuthority;
+    }else{
+      authority=autz.permissions.map((item:any)=>item.id);
+    }
     if (autz.user?.username === 'admin') {
       return ['admin'];
     }
@@ -187,6 +191,8 @@ export function clearAutz() {
 export function setAutz(info: Authentication): Authentication {
   window.top.hsweb_autz = new Authentication(info);
   const autz = new Authentication(info);
-  localStorage.setItem('hsweb-autz', JSON.stringify(info));
+  if(JSON.stringify(info)!=='undefined'){
+    localStorage.setItem('hsweb-autz', JSON.stringify(info));
+  }
   return autz;
 }

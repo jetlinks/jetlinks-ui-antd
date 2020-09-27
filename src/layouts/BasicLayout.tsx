@@ -18,6 +18,8 @@ import RightContent from '@/components/GlobalHeader/RightContent';
 import { ConnectState } from '@/models/connect';
 import { isAntDesignPro, getAuthorityFromRouter } from '@/utils/utils';
 import logo from '../assets/logo.svg';
+import apis from '@/services';
+import { getAuthority } from '@/utils/authority';
 
 // import PubSub from 'pubsub-js';
 
@@ -87,7 +89,7 @@ const menuDataRender = (menuList: MenuDataItem[]): MenuDataItem[] => {
   //     };
   //     return localItem?.version && version === 'community' ? [] : Authorized.check(item.authority, localItem, null) as MenuDataItem;
   //   });
-  // }
+  // } 
   return menuList.map(item => {
     const localItem: any = {
       ...item,
@@ -135,8 +137,6 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
       pathname: '/',
     },
   } = props;
-
-
 
   useEffect(() => {
     if (dispatch) {
