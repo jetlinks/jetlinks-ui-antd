@@ -13,13 +13,15 @@ const Detail: React.FC<Props> = props => {
     const service = new Service('network/simulator');
 
     const [data, setData] = useState<any>({});
+    const getData = () => {
+        service.state(props.data.id).pipe(
+        ).subscribe(data => {
+            setData(data);
+        });
+    }
     useEffect(() => {
-        const requestData = setInterval(() => {
-            service.state(props.data.id).pipe(
-            ).subscribe(data => {
-                setData(data);
-            });
-        }, 5000);
+        getData();
+        const requestData = setInterval(() => getData(), 5000);
         return () => {
             clearInterval(requestData);
         }

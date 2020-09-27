@@ -29,7 +29,7 @@ const Simulator: React.FC<Props> = props => {
 
     const remove = (id: string) => {
         service.remove(id).subscribe(() => {
-            message.success('删除成功');
+            message.error('删除成功');
             search();
         })
     }
@@ -105,7 +105,12 @@ const Simulator: React.FC<Props> = props => {
                                                 <Popconfirm
                                                     title="删除此模拟器？"
                                                     onConfirm={() => {
-                                                        remove(item.id)
+                                                        console.log(item, 'itt');
+                                                        if (item.status.value === 'running') {
+                                                            message.success('运行中，删除失败！')
+                                                        } else {
+                                                            remove(item.id)
+                                                        }
                                                     }}>
                                                     <Icon type="close" />
                                                 </Popconfirm>
