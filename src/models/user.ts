@@ -53,7 +53,15 @@ const UserModel: UserModelType = {
     *fetchCurrent(_, { call, put }) {
       const response = yield call(queryCurrent);
       if (response) {
-        localStorage.setItem('hsweb-autz', JSON.stringify(response.result));
+        // 取出login 后缓存的数据
+        const loginStorage = localStorage.getItem('hsweb-autz');
+        if (loginStorage) {
+          const tempLogin = JSON.parse(loginStorage);
+          tempLogin.permissions = response.result.permissions;
+          localStorage.setItem('hsweb-autz', JSON.stringify(tempLogin));
+        } else {
+          // localStorage.setItem('hsweb-autz', JSON.stringify(response.result));
+        }
         yield put({
           type: 'saveCurrentUser',
           payload: response.result.user,

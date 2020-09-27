@@ -24,13 +24,13 @@ class Tenant extends React.Component<Props> {
                   query: {},
                   state: undefined,
                 }
-              }/>
+              } />
             } else {
-              return <Analysis/>
+              return <Analysis />
             }
           })
         } else {
-          return <UserTenant/>
+          return <UserTenant />
         }
       } catch (error) {
         return false;
