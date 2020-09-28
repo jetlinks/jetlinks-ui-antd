@@ -101,7 +101,7 @@ const Session: React.FC<Props> = props => {
             <Row gutter={10} style={{ height: 80, marginTop: 10 }}>
                 <Col push={19}>
                     <Button
-                        onClick={() => { sendMsg(msg) }}
+                        onClick={() => { setSubMsg({ payload: '' }) }}
                         type="danger">清空</Button>
                     <Divider type="vertical" />
                     <Button
@@ -109,7 +109,7 @@ const Session: React.FC<Props> = props => {
                         type="primary">发送</Button>
                 </Col>
             </Row>
-        </div>
+        </div >
     )
 }
 export default Session;

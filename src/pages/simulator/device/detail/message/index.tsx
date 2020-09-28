@@ -19,12 +19,6 @@ interface Props {
 const Message: React.FC<Props> = props => {
     const { runtimeHistory } = props;
     const { DataView } = DataSet;
-    console.log((runtimeHistory || []).map(e => ({
-        totalDownstream: -e.totalDownstream,
-        totalDownstreamBytes: -(e.totalDownstreamBytes / 1024).toFixed(2),
-        totalUpstream: e.totalUpstream,
-        totalUpstreamBytes: (e.totalUpstreamBytes / 1024)
-    })))
     const dv = new DataView().source((runtimeHistory || []).map(e => ({
         time: e.time,
         totalDownstream: -e.totalDownstream,
@@ -59,7 +53,14 @@ const Message: React.FC<Props> = props => {
             //     }
             // }}
             />
-            <Legend />
+            <Legend itemFormatter={val => {
+                const m = new Map();
+                m.set('totalDownstream', '下行消息数');
+                m.set('totalDownstreamBytes', '下行流量');
+                m.set('totalUpstream', '上行消息数');
+                m.set('totalUpstreamBytes', '下行流量');
+                return m.get(val);
+            }} />
             <Tooltip
                 crosshairs={{
                     type: "line"

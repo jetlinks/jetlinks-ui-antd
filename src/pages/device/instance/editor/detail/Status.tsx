@@ -144,7 +144,9 @@ const Status: React.FC<Props> = props => {
             }))
         ).subscribe((data) => {
             const index = properties.findIndex(item => item.id === data.property);
-            properties[index].list = data.list;
+            if (properties[index] && properties[index].list) {
+                properties[index].list = data.list;
+            }
         }, () => {
             message.error('错误处理');
         }, () => {
