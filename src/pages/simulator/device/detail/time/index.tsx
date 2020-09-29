@@ -36,8 +36,10 @@ const Time: React.FC<Props> = props => {
     };
     return (
         <Chart height={200} data={data} scale={cols} forceFit>
+            // x :ms 
+            // y :个
             <span className='sub-title' style={{ marginLeft: 40, fontWeight: 700 }}>
-                时间分布
+                连接时间分布
              </span>
             <Axis name="label" />
             <Axis name="value" />

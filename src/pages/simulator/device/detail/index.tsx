@@ -40,7 +40,7 @@ const Detail: React.FC<Props> = props => {
                     <Row gutter={16}>
                         <Col span={6}>
                             <Card>
-                                <div>成功连接数</div>
+                                <div>总连接数</div>
                                 <div>{data?.total}</div>
                             </Card>
                         </Col>
@@ -52,14 +52,14 @@ const Detail: React.FC<Props> = props => {
                         </Col>
                         <Col span={6}>
                             <Card>
-                                <div>并发数量</div>
+                                <div>当前并发数量</div>
                                 <div>{data?.current}</div>
                             </Card>
                         </Col>
                         <Col span={6}>
                             <Card>
-                                <div>时间统计</div>
-                                <div>平均{data?.aggTime?.avg}s</div>
+                                <div>连接时间统计</div>
+                                <div>平均{data?.aggTime?.avg}ms</div>
                             </Card>
                         </Col>
                     </Row>

@@ -26,7 +26,7 @@ const Session: React.FC<Props> = props => {
     const [msg, setMsg] = useState<string>('');
     useEffect(() => {
         if (item.type === 'mqtt_client') {
-            setMsg('QoS0 /topic \n{}');
+            setMsg('QoS0 /topic \n\n{}');
         }
         let simulator = getWebsocket(
             `network-simulator-session`,

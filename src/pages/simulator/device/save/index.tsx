@@ -11,6 +11,8 @@ import 'ace-builds/src-noconflict/mode-mysql';
 import 'ace-builds/src-noconflict/ext-language_tools';
 import 'ace-builds/src-noconflict/ext-searchbox';
 import 'ace-builds/src-noconflict/theme-eclipse';
+import ArrayPanels from '@/components/ArrayPanel';
+import createRichTextUtils from "@/utils/textUtils";
 
 interface Props {
     close: Function;
@@ -89,11 +91,11 @@ const Save: React.FC<Props> = props => {
             "grid": true,
             "autoRow": true,
             "columns": 2,
-            "labelCol": 2,
+            "labelCol": 3,
         },
         "properties": {
             "name": {
-                "title": "名称",
+                "title": "{{ text('名称',help('这是名称的提示'))}}",
                 "x-component": "input",
                 "required": true,
                 "x-rules": [
@@ -107,7 +109,7 @@ const Save: React.FC<Props> = props => {
                 }
             },
             "networkType": {
-                "title": "接入方式",
+                "title": "{{ text('接入方式',help('这是接入方式的提示'))}}",
                 "x-component": "select",
                 "required": true,
                 "type": "string",
@@ -129,11 +131,11 @@ const Save: React.FC<Props> = props => {
                 ],
                 "x-mega-props": {
                     "span": 1,
-                    "labelCol": 4
+                    "labelCol": 6
                 },
             },
             "networkConfiguration.certId": {
-                "title": "证书",
+                "title": "{{ text('证书',help('这是证书的提示'))}}",
                 "visible": false,
                 "x-component": "select",
                 "enum": [],
@@ -144,7 +146,7 @@ const Save: React.FC<Props> = props => {
                 },
             },
             "networkConfiguration.host": {
-                "title": "服务地址",
+                "title": "{{ text('服务地址',help('这是服务地址的提示'))}}",
                 "visible": false,
                 "x-component": "input",
                 "required": true,
@@ -156,11 +158,11 @@ const Save: React.FC<Props> = props => {
                 ],
                 "x-mega-props": {
                     "span": 1,
-                    "labelCol": 4
+                    "labelCol": 6
                 },
             },
             "networkConfiguration.port": {
-                "title": "端口",
+                "title": "{{ text('端口',help('这是端口的提示'))}}",
                 "x-component": "input",
                 "required": true,
                 "visible": false,
@@ -176,7 +178,7 @@ const Save: React.FC<Props> = props => {
                 },
             },
             "networkConfiguration.clientId": {
-                "title": "ClientId",
+                "title": "{{ text('ClientId',help('这是ClientId的提示'))}}",
                 "visible": false,
                 "required": true,
                 "x-component": "input",
@@ -191,7 +193,7 @@ const Save: React.FC<Props> = props => {
                 },
             },
             "networkConfiguration.username": {
-                "title": "用户名",
+                "title": "{{ text('用户名',help('这是用户名的提示'))}}",
                 "visible": false,
                 "required": true,
                 "x-component": "input",
@@ -206,7 +208,7 @@ const Save: React.FC<Props> = props => {
                 },
             },
             "networkConfiguration.password": {
-                "title": "密码",
+                "title": "{{ text('密码',help('这是密码的提示'))}}",
                 "visible": false,
                 "required": true,
                 "x-component": "input",
@@ -221,7 +223,7 @@ const Save: React.FC<Props> = props => {
                 },
             },
             "networkConfiguration.keepAliveTimeSeconds": {
-                "title": "心跳间隔",
+                "title": "{{ text('心跳间隔',help('这是心跳间隔的提示'))}}",
                 "visible": false,
                 "required": true,
                 "default": 30,
@@ -234,7 +236,7 @@ const Save: React.FC<Props> = props => {
                 ],
                 "x-mega-props": {
                     "span": 1,
-                    "labelCol": 4
+                    "labelCol": 6
                 },
                 "x-component-props": {
                     "addonAfter": "S"
@@ -250,20 +252,20 @@ const Save: React.FC<Props> = props => {
             "grid": true,
             "autoRow": true,
             "columns": 2,
-            "labelCol": 4,
+            "labelCol": 3,
         },
 
         "properties": {
             "runner.binds": {
-                "title": "绑定网卡",
+                "title": "{{ text('绑定网卡',help('这是绑定网卡的提示'))}}",
                 "x-component": "select",
                 "x-component-props": {
                     "mode": "tags",
                 },
-                "x-mega-props": { "span": 1, }
+                "x-mega-props": { "span": 1, "labelCol": 6 }
             },
             "runner.total": {
-                "title": "模拟总数",
+                "title": "{{ text('模拟总数',help('这是模拟总数的提示'))}}",
                 "x-component": "input",
                 "x-rules": [
                     {
@@ -271,10 +273,10 @@ const Save: React.FC<Props> = props => {
                         "message": "此字段必填"
                     }
                 ],
-                "x-mega-props": { "span": 1 }
+                "x-mega-props": { "span": 1, "labelCol": 6 }
             },
             "runner.startWith": {
-                "title": "起始索引",
+                "title": "{{ text('起始索引',help('这是起始索引的提示'))}}",
                 "x-component": "input",
                 "x-rules": [
                     {
@@ -282,10 +284,10 @@ const Save: React.FC<Props> = props => {
                         "message": "此字段必填"
                     }
                 ],
-                "x-mega-props": { "span": 1 }
+                "x-mega-props": { "span": 1, "labelCol": 6 }
             },
             "runner.batch": {
-                "title": "并发数",
+                "title": "{{ text('并发数',help('这是并发数的提示'))}}",
                 "x-component": "input",
                 "x-rules": [
                     {
@@ -293,18 +295,29 @@ const Save: React.FC<Props> = props => {
                         "message": "此字段必填"
                     }
                 ],
-                "x-mega-props": { "span": 1 }
+                "x-mega-props": { "span": 1, "labelCol": 6 }
             },
             "listeners": {
-                "title": "其他功能",
-                "x-component": "arraycards",
+                "title": "{{ text('其他功能',help('这是其他功能的提示'))}}",
+                "x-component": "arraypanels",
                 "type": "array",
-                "x-mega-props": { "span": 2, "labelCol": 2 },
+                "x-mega-props": { "span": 2, "labelCol": 3 },
                 "items": {
                     "type": "object",
                     "properties": {
+                        "name": {
+                            "title": "{{ text('名称',help('这是名称的提示'))}}",
+                            "x-component": "input",
+                            "x-rules": [
+                                {
+                                    "required": true,
+                                    "message": "此字段必填"
+                                }
+                            ],
+                            "x-mega-props": { "labelCol": 8 },
+                        },
                         "type": {
-                            "title": "监听器类型",
+                            "title": "{{ text('功能',help('这是功能的提示'))}}",
                             "x-component": "select",
                             "enum": [
                                 { "label": "自动重连", "value": "auto-reconnect" },
@@ -319,7 +332,7 @@ const Save: React.FC<Props> = props => {
                             "x-mega-props": { "labelCol": 6 },
                         },
                         "configuration.maxTimes": {
-                            "title": "最大重连次数",
+                            "title": "{{ text('最大重连次数',help('这是最大重连次数的提示'))}}",
                             "x-component": "input",
                             "visible": false,
                             "x-rules": [
@@ -328,10 +341,10 @@ const Save: React.FC<Props> = props => {
                                     "message": "此字段必填"
                                 }
                             ],
-                            "x-mega-props": { "labelCol": 6 },
+                            "x-mega-props": { "labelCol": 8 },
                         },
                         "configuration.delays": {
-                            "title": "重连间隔",
+                            "title": "{{ text('重连间隔',help('这是重连间隔的提示'))}}",
                             "x-component": "input",
                             "visible": false,
                             "x-rules": [
@@ -343,7 +356,7 @@ const Save: React.FC<Props> = props => {
                             "x-mega-props": { "labelCol": 6 },
                         },
                         "configuration.lang": {
-                            "title": "脚本语言",
+                            "title": "{{ text('脚本语言',help('这是脚本语言的提示'))}}",
                             "x-component": "select",
                             "visible": false,
                             "x-rules": [
@@ -354,10 +367,11 @@ const Save: React.FC<Props> = props => {
                             ],
                             "enum": [
                                 { "label": "js", "value": "js" },
-                            ]
+                            ],
+                            "x-mega-props": { "labelCol": 4, "span": 2 }
                         },
                         "configuration.script": {
-                            "title": "脚本内容",
+                            "title": "{{ text('脚本内容',help('这是脚本内容的提示'))}}",
                             "x-component": "AceComponent",
                             "visible": false,
                             "default": `
@@ -384,7 +398,7 @@ listener.onAfter(function (session) {
                                     "message": "此字段必填"
                                 }
                             ],
-                            "x-mega-props": { "labelCol": 2, "span": 2 }
+                            "x-mega-props": { "labelCol": 4, "span": 2 }
                         }
                     }
 
@@ -413,10 +427,11 @@ listener.onAfter(function (session) {
                 effects={() => {
                     changeNetworkTypeEffects()
                 }}
+                expressionScope={createRichTextUtils()}
                 initialValues={props.data}
                 actions={actions}
                 onSubmit={v => save(v)}
-                components={{ DatePicker, Input, ArrayTable, ArrayCards, Select, AceComponent }}
+                components={{ DatePicker, Input, Select, AceComponent, ArrayPanels }}
                 schema={{
                     "type": "object",
                     "properties": {
