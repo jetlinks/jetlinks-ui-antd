@@ -31,10 +31,14 @@ const Time: React.FC<Props> = props => {
 
     const cols = {
         label: {
+            min: 0,
+            max: 100,
             alias: 'ms'
         },
         value: {
-            alias: '次'
+            alias: '次',
+            min: 0,
+            ticks: [0, 40, 80, 120, 160]
         }
     };
     // x :ms 
@@ -45,29 +49,34 @@ const Time: React.FC<Props> = props => {
             <span className='sub-title' style={{ marginLeft: 40, fontWeight: 700 }}>
                 连接时间分布
              </span>
-            <Axis name="label" title={{
-                position: 'end',
-                offset: 15,
-                textStyle: {
-                    fontSize: '12',
-                    textAlign: 'center',
-                    fill: '#999',
-                    fontWeight: 'bold',
-                    rotate: 0,
-                    autoRotate: true
-                }
-            }} />
-            <Axis name="value" title={{
-                position: 'end',
-                offset: 5.5,
-                textStyle: {
-                    fontSize: '12',
-                    textAlign: 'right',
-                    fill: '#999',
-                    fontWeight: 'bold',
-                    rotate: 0
-                }
-            }} />
+            <Axis name="label"
+                label={{ autoRotate: false }}
+                title={{
+                    autoRotate: false,
+                    position: 'end',
+                    offset: 15,
+                    textStyle: {
+                        fontSize: '12',
+                        textAlign: 'center',
+                        fill: '#999',
+                        fontWeight: 'bold',
+                        // rotate: 0,
+                    }
+                }} />
+            <Axis name="value"
+                label={{ autoRotate: false }}
+                title={{
+                    autoRotate: false,
+                    position: 'center',
+                    offset: 40,
+                    textStyle: {
+                        fontSize: '12',
+                        textAlign: 'right',
+                        fill: '#999',
+                        fontWeight: 'bold',
+                        rotate: 0,
+                    }
+                }} />
             <Tooltip
                 crosshairs={{
                     type: "y"
