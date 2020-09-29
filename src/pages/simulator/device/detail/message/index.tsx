@@ -40,7 +40,7 @@ const Message: React.FC<Props> = props => {
         }
     };
     return (
-        <Chart height={250} data={dv} scale={cols} forceFit>
+        <Chart height={220} data={dv} scale={cols} forceFit>
             <span className='sub-title' style={{ marginLeft: 40, fontWeight: 700 }}>
                 消息统计
              </span>

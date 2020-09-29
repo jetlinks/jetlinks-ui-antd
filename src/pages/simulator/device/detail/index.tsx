@@ -30,7 +30,7 @@ const Detail: React.FC<Props> = props => {
         <Modal
             title="详情"
             visible
-            width={1000}
+            width='80VW'
             onCancel={() => props.close()}
             onOk={() => props.close()}
             footer={null}
@@ -40,26 +40,22 @@ const Detail: React.FC<Props> = props => {
                     <Row gutter={16}>
                         <Col span={6}>
                             <Card>
-                                <div>总连接数</div>
-                                <div>{data?.total}</div>
+                                <div>总连接数{data?.total}</div>
                             </Card>
                         </Col>
                         <Col span={6}>
                             <Card>
-                                <div>失败连接数</div>
-                                <div>{data?.failed}</div>
+                                <div>失败连接数{data?.failed}</div>
                             </Card>
                         </Col>
                         <Col span={6}>
                             <Card>
-                                <div>当前并发数量</div>
-                                <div>{data?.current}</div>
+                                <div>当前并发数量{data?.current}</div>
                             </Card>
                         </Col>
                         <Col span={6}>
                             <Card>
-                                <div>连接时间统计</div>
-                                <div>平均{data?.aggTime?.avg}ms</div>
+                                <div>平均连接时间{data?.aggTime?.avg}ms</div>
                             </Card>
                         </Col>
                     </Row>
@@ -71,7 +67,7 @@ const Detail: React.FC<Props> = props => {
                             <Error failed={data?.failed} failedTypeCounts={data?.failedTypeCounts} />
                         </Col>
                     </Row>
-                    <Row style={{ marginTop: 20 }}>
+                    <Row style={{ marginTop: 10 }}>
                         <Message runtimeHistory={data?.runtimeHistory} />
                     </Row>
                 </Tabs.TabPane>

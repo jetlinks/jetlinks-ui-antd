@@ -1,5 +1,5 @@
-import { Input, Tabs } from "antd";
-import React, { useEffect, useState } from "react";
+import { Button, Input, Tabs, Tree } from "antd";
+import React, { useEffect, useRef, useState } from "react";
 import Service from "../../service";
 import Session from "./session";
 
@@ -12,9 +12,11 @@ const Debugger: React.FC<Props> = props => {
     const [sessions, setSessions] = useState<any[]>([]);
     const [key, setkey] = useState<string>('');
 
+    const cache = useRef<any[]>([]);
     useEffect(() => {
-        service.sessions(data.id, 1000, 0)
+        service.sessions(data.id, 10000, 0)
             .subscribe(data => {
+                cache.current = data;
                 setSessions(data);
             })
         setkey(sessions.length > 0 ? sessions[0].id : '');
@@ -29,13 +31,15 @@ const Debugger: React.FC<Props> = props => {
 
     return (
         <>
+            <Input.Search
+                onSearch={(value) => {
+                    const temp = cache.current.filter(i => i.id.indexOf(value) != -1);
+                    setSessions(temp);
+                }}
+                style={{ width: 100, marginBottom: 10 }} />
+
             <Tabs
-                tabBarExtraContent={(
-                    <div >
-                        <Input.Search />
-                    </div>
-                )}
-                style={{ height: 500 }}
+                style={{ height: 600 }}
                 tabPosition={"left"}
                 defaultActiveKey={sessions.length > 0 ? sessions[0].id : ''}
                 onChange={(key => setkey(key))}>

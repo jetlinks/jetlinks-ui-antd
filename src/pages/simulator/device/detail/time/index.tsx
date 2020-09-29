@@ -30,19 +30,44 @@ const Time: React.FC<Props> = props => {
     }, [time]);
 
     const cols = {
-        sales: {
-            tickInterval: 20
+        label: {
+            alias: 'ms'
+        },
+        value: {
+            alias: '次'
         }
     };
+    // x :ms 
+    // y :个
     return (
-        <Chart height={200} data={data} scale={cols} forceFit>
-            // x :ms 
-            // y :个
+        <Chart height={350} data={data} scale={cols} forceFit>
+
             <span className='sub-title' style={{ marginLeft: 40, fontWeight: 700 }}>
                 连接时间分布
              </span>
-            <Axis name="label" />
-            <Axis name="value" />
+            <Axis name="label" title={{
+                position: 'end',
+                offset: 15,
+                textStyle: {
+                    fontSize: '12',
+                    textAlign: 'center',
+                    fill: '#999',
+                    fontWeight: 'bold',
+                    rotate: 0,
+                    autoRotate: true
+                }
+            }} />
+            <Axis name="value" title={{
+                position: 'end',
+                offset: 5.5,
+                textStyle: {
+                    fontSize: '12',
+                    textAlign: 'right',
+                    fill: '#999',
+                    fontWeight: 'bold',
+                    rotate: 0
+                }
+            }} />
             <Tooltip
                 crosshairs={{
                     type: "y"

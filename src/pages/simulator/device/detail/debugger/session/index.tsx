@@ -64,7 +64,7 @@ const Session: React.FC<Props> = props => {
                 wrapEnabled
                 highlightActiveLine  //突出活动线
                 enableSnippets  //启用代码段
-                style={{ width: '100%', height: 220 }}
+                style={{ width: '100%', height: 230 }}
                 setOptions={{
                     enableBasicAutocompletion: true,   //启用基本自动完成功能
                     enableLiveAutocompletion: true,   //启用实时自动完成功能 （比如：智能代码提示）
@@ -89,7 +89,7 @@ const Session: React.FC<Props> = props => {
                 wrapEnabled
                 highlightActiveLine  //突出活动线
                 enableSnippets  //启用代码段
-                style={{ width: '100%', height: 180 }}
+                style={{ width: '100%', height: 220 }}
                 setOptions={{
                     enableBasicAutocompletion: true,   //启用基本自动完成功能
                     enableLiveAutocompletion: true,   //启用实时自动完成功能 （比如：智能代码提示）
@@ -98,7 +98,7 @@ const Session: React.FC<Props> = props => {
                     tabSize: 2,
                 }}
             />
-            <Row gutter={10} style={{ height: 80, marginTop: 10 }}>
+            <Row gutter={10} style={{ height: 80, marginTop: 40 }}>
                 <Col push={19}>
                     <Button
                         onClick={() => { setSubMsg({ payload: '' }) }}
