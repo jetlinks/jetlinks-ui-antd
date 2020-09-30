@@ -144,7 +144,7 @@ const Status: React.FC<Props> = props => {
             }))
         ).subscribe((data) => {
             const index = properties.findIndex(item => item.id === data.property);
-            if (properties[index] && properties[index].list) {
+            if (index > -1) {
                 properties[index].list = data.list;
             }
         }, () => {
