@@ -345,7 +345,7 @@ export const routes = [
                             // },
                         ],
                     },
-                    /*{
+                    {
                         path: 'data-screen',
                         name: '大屏数据',
                         icon: 'desktop',
@@ -374,7 +374,7 @@ export const routes = [
                                 component: './data-screen/screen',
                             }
                         ]
-                    },*/
+                    },
                     {
                         path: 'logger',
                         name: '日志管理',
