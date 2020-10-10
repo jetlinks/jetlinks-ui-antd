@@ -60,7 +60,7 @@ const UserModel: UserModelType = {
           tempLogin.permissions = response.result.permissions;
           localStorage.setItem('hsweb-autz', JSON.stringify(tempLogin));
         } else {
-          // localStorage.setItem('hsweb-autz', JSON.stringify(response.result));
+          localStorage.setItem('hsweb-autz', JSON.stringify(response.result));
         }
         yield put({
           type: 'saveCurrentUser',

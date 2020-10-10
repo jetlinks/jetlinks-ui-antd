@@ -44,6 +44,7 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = (props) => {
   useEffect(() => {
     service.get().subscribe((resp) => {
       setUser(resp);
+      localStorage.setItem('user-detail', JSON.stringify(resp));
       // localStorage.setItem('tenants-admin', resp.tenants[0]?.adminMember);
     })
   }, [currentUser]);
