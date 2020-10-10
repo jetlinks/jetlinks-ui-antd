@@ -178,12 +178,12 @@ export const routes = [
                                 iconfont: 'icon-shebeifenzuguanli',
                                 component: './device/group',
                             },
-                            {
-                                path: '/device/tree',
-                                name: '设备树',
-                                icon: 'gold',
-                                component: './device/tree'
-                            },
+                            // {
+                            //     path: '/device/tree',
+                            //     name: '设备树',
+                            //     icon: 'gold',
+                            //     component: './device/tree'
+                            // },
                             {
                                 hideInMenu: true,
                                 path: '/device/instance/add',
