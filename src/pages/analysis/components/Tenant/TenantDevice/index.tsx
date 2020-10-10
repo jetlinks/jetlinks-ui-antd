@@ -126,13 +126,11 @@ const TenantDevice: React.FC<Props> = (props) => {
 
   const service = new Service('');
   const [data, setData] = useState<any[]>([]);
-
-  const user = JSON.parse(localStorage.getItem('hsweb-autz') || '{}');
-
-  const tenantId = user?.user.tenants.filter((i: any) => i.mainTenant)[0]?.tenantId;
-  const userId = user?.userId;
-  const tenantAdmin = user?.user.tenants.filter((i: any) => i.mainTenant)[0]?.adminMember;
-
+  
+  const user = JSON.parse(localStorage.getItem('user-detail') || '{}');
+  const tenantId = (user.tenants || []).filter((i: any) => i.mainTenant)[0]?.tenantId;
+  const tenantAdmin = (user.tenants || []).filter((i: any) => i.mainTenant)[0]?.adminMember;
+  
   const getProduct = (userId: string) =>
     service.assets.productNopaging(encodeQueryParam({
       terms: {
