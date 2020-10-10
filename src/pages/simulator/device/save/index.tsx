@@ -70,8 +70,6 @@ const Save: React.FC<Props> = props => {
         });
 
         onFieldValueChange$("listeners.*.type").subscribe(fieldState => {
-
-            console.log(fieldState, 'state');
             setFieldState(
                 FormPath.transform(fieldState.name, /\d/, $1 => `*(listeners.${$1}.configuration.maxTimes,listeners.${$1}.configuration.delays,listeners.${$1}.configuration.lang,listeners.${$1}.configuration.script)`),
                 state => {
