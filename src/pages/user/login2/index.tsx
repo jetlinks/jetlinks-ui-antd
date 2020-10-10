@@ -15,7 +15,6 @@ interface Props {
 const Login: React.FC<Props> = props => {
   const { dispatch, settings, location: { query } } = props;
 
-  console.log(location, query.code, 'local');
   const service = new Service('');
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
