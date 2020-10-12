@@ -180,7 +180,7 @@ const Screen = (props: Props) => {
                             </Tooltip>,
                             <Tooltip placement="bottom" title="预览">
                               <EyeOutlined onClick={i => {
-                                window.open(`http://localhost:8080/view/${item.id}?token=${token}`, '_blank')
+                                window.open(`http://localhost:8080/#/view/${item.id}?token=${token}`, '_blank')
                               }}/>
                             </Tooltip>,
                             <Tooltip placement="bottom" title="复制">
@@ -246,7 +246,7 @@ const Screen = (props: Props) => {
                       </div>
                       <div className={styles.edit} style={{display: item.id == id ? 'block' : 'none'}}>
                         <div className={styles.editBtn}><a onClick={i => {
-                          window.open(`http://localhost:8080/build/${id}?token=${token}`, '_blank')
+                          window.open(`http://localhost:8080/#/build/${id}?token=${token}`, '_blank')
                         }}>编辑</a></div>
                       </div>
                     </Card>
@@ -261,13 +261,13 @@ const Screen = (props: Props) => {
           setSaveVisible(false)
         }} save={() => {
           setSaveVisible(false);
-          handleSearch({pageSize: 12, pageIndex: 0});
+          handleSearch(searchParam);
         }}/>}
         {editVisible && <Edit data={param} close={() => {
           setEditVisible(false)
         }} save={() => {
           setEditVisible(false);
-          handleSearch({pageSize: 12, pageIndex: 0});
+          handleSearch(searchParam);
         }}/>}
       </div>
     </PageHeaderWrapper>
