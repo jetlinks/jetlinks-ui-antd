@@ -21,7 +21,7 @@ export const TenantContext = React.createContext({});
 
 const Screen = (props: Props) => {
 
-  const defaultImg = 'https://oss.bladex.vip/caster/upload/20200512/f26107bbb77a84949285617848745d81.jpg'
+  const defaultImg = 'http://demo.jetlinks.cn/jetlinks/upload/20201012/1315479621832351744.jpg'
   const [categoryList, setCategoryList] = useState([]);
   const [dataList, setDataList] = useState({
     data: [],
@@ -123,7 +123,7 @@ const Screen = (props: Props) => {
               },
                 {
                   label: '大屏分类',
-                  key: 'catalogId',
+                  key: 'classifiedId$LIKE',
                   type: 'treeSelect',
                   props: {
                     data: categoryList,
@@ -134,7 +134,7 @@ const Screen = (props: Props) => {
           </div>
 
           <div className={styles.tableListOperator}>
-            <Button icon="plus" type="primary" onClick={i => setSaveVisible(true)}>新建大屏</Button>
+            <Button icon="plus" type="primary" onClick={() => setSaveVisible(true)}>新建大屏</Button>
           </div>
         </div>
       </Card>
@@ -180,7 +180,7 @@ const Screen = (props: Props) => {
                             </Tooltip>,
                             <Tooltip placement="bottom" title="预览">
                               <EyeOutlined onClick={i => {
-                                window.open(`http://localhost:8080/#/view/${item.id}?token=${token}`, '_blank')
+                                window.open('http://demo.jetlinks.cn:9002/big-screen/#/view/'+item.id+'?token=' + token,'_blank')
                               }}/>
                             </Tooltip>,
                             <Tooltip placement="bottom" title="复制">
@@ -246,7 +246,7 @@ const Screen = (props: Props) => {
                       </div>
                       <div className={styles.edit} style={{display: item.id == id ? 'block' : 'none'}}>
                         <div className={styles.editBtn}><a onClick={i => {
-                          window.open(`http://localhost:8080/#/build/${id}?token=${token}`, '_blank')
+                          window.open(`http://demo.jetlinks.cn:9002/big-screen/#/build/${id}?token=${token}`, '_blank')
                         }}>编辑</a></div>
                       </div>
                     </Card>
@@ -261,13 +261,13 @@ const Screen = (props: Props) => {
           setSaveVisible(false)
         }} save={() => {
           setSaveVisible(false);
-          handleSearch(searchParam);
+          handleSearch({pageSize: 12, pageIndex: 0, terms: {type: 'big_screen'}});
         }}/>}
         {editVisible && <Edit data={param} close={() => {
           setEditVisible(false)
         }} save={() => {
           setEditVisible(false);
-          handleSearch(searchParam);
+          handleSearch({pageSize: 12, pageIndex: 0, terms: {type: 'big_screen'}});
         }}/>}
       </div>
     </PageHeaderWrapper>
