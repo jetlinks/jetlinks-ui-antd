@@ -41,7 +41,7 @@ const Save = (props: Props) => {
   };
   let getView = (view: any) => {
     return (
-      <TreeNode title={view.name} value={view.id}>
+      <TreeNode title={view.name} value={view.id} key={view.id}>
         {
           view.children && view.children.length > 0 ? view.children.map((v: any) => {
             return getView(v)
@@ -86,7 +86,7 @@ const Save = (props: Props) => {
             allowClear
           >
             {
-              categoryList.map((v) => {
+              categoryList.map((v: any) => {
                 return getView(v)
               })
             }

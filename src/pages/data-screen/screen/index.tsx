@@ -87,16 +87,38 @@ const Screen = (props: Props) => {
       terms: searchParam.terms
     });
   };
+  let getView = (view: any) => {
+    let children = []
+    if(view.children && view.children.length > 0){
+      children = view.children.map((i: any) => {
+        return getView(i)
+      })
+      return  {
+        id: view.id,
+        children: children,
+        pId: view.parentId,
+        value: view.id,
+        title: view.name
+      }
+    }else{
+      return  {
+        id: view.id,
+        pId: view.parentId,
+        value: view.id,
+        title: view.name
+      }
+    }
+  };
   useEffect(() => {
 
-    api.categoty.queryNoPaging({})
+    api.categoty.query_tree({})
       .then((response: any) => {
-        setCategoryList(response.result.map((item: any) => ({
-          id: item.id,
-          pId: item.parentId,
-          value: item.id,
-          title: item.name
-        })))
+        if (response.status === 200) {
+          let datalist = response.result.map((item: any) => {
+            return getView(item)
+          })
+          setCategoryList(datalist)
+        }
       })
       .catch(() => {
       });
