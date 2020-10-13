@@ -202,7 +202,7 @@ const Screen = (props: Props) => {
                             </Tooltip>,
                             <Tooltip placement="bottom" title="预览">
                               <EyeOutlined onClick={i => {
-                                window.open('http://demo.jetlinks.cn:9002/big-screen/#/view/'+item.id+'?token=' + token,'_blank')
+                                window.open('http://demo.jetlinks.cn:9002/#/view/'+item.id+'?token=' + token,'_blank')
                               }}/>
                             </Tooltip>,
                             <Tooltip placement="bottom" title="复制">
@@ -268,7 +268,7 @@ const Screen = (props: Props) => {
                       </div>
                       <div className={styles.edit} style={{display: item.id == id ? 'block' : 'none'}}>
                         <div className={styles.editBtn}><a onClick={i => {
-                          window.open(`http://demo.jetlinks.cn:9002/big-screen/#/build/${id}?token=${token}`, '_blank')
+                          window.open(`http://demo.jetlinks.cn:9002/#/build/${id}?token=${token}`, '_blank')
                         }}>编辑</a></div>
                       </div>
                     </Card>

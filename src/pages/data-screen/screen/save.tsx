@@ -34,7 +34,7 @@ const Save = (props: Props) => {
       api.screen.save(param).then(res => {
         if (res.status === 200) {
           props.save()
-          window.open('http://demo.jetlinks.cn:9002/big-screen/#/build/'+res.result.id+'?token=' + token,'_blank')
+          window.open('http://demo.jetlinks.cn:9002/#/build/'+res.result.id+'?token=' + token,'_blank')
         }
       })
     })
