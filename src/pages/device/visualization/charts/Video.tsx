@@ -13,7 +13,7 @@ interface Props extends ComponentProps {
 const Video: React.FC<Props> = (props) => {
     const { config, deviceId } = props;
     const [width, setWidth] = useState<number>(1000);
-    const [srcUrl, setSrcUrl] = useState(undefined);
+    const [srcUrl, setSrcUrl] = useState<string | null>(null);
     const service = new Service();
     const videoJsOptions = {
         autoplay: true,
@@ -54,7 +54,12 @@ const Video: React.FC<Props> = (props) => {
         } else if (config.urlType === 'switch') {
             service.propertySource(deviceId, config.property).subscribe((data) => {
                 if (data?.value) {
-                    const url = data.value[config.target];
+                    let url = '';
+                    if (typeof (data.value) === 'object') {
+                        url = data.value[config.target];
+                    } else if (typeof (data.value) === 'string') {
+                        url = JSON.parse(data.value)[config.target];
+                    }
                     setSrcUrl(url);
                 } else {
                     message.error('不存在视频源数据!');
