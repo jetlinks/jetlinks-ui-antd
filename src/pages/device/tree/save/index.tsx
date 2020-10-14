@@ -7,7 +7,7 @@ import { GroupItem } from "../data";
 interface Props {
     close: Function;
     save: Function;
-    data: GroupItem
+    data: Partial<GroupItem>
 }
 
 const actions = createFormActions();

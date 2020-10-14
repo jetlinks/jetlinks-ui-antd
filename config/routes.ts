@@ -186,6 +186,12 @@ export const routes = [
                             },
                             {
                                 hideInMenu: true,
+                                path: '/device/tree/detail',
+                                name: '分组详情',
+                                component: './device/tree/DeviceTree',
+                            },
+                            {
+                                hideInMenu: true,
                                 path: '/device/instance/add',
                                 name: '添加设备',
                                 tenant: ['admin', 'member'],
