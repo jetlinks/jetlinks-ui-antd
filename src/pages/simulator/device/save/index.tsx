@@ -116,10 +116,10 @@ const Save: React.FC<Props> = props => {
                         "value": "mqtt_client",
                         "label": "MQTT"
                     },
-                    {
-                        "value": "tcp_client",
-                        "label": "TCP"
-                    }
+                    // {
+                    //     "value": "tcp_client",
+                    //     "label": "TCP"
+                    // }
                 ],
                 "x-rules": [
                     {
