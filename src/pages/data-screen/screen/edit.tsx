@@ -2,6 +2,7 @@ import React from "react";
 import {Form, Input, Modal, TreeSelect} from "antd";
 import {FormComponentProps} from "antd/es/form";
 import api from '@/services'
+import {getAccessToken} from '@/utils/authority';
 
 const {TreeNode} = TreeSelect;
 
@@ -13,11 +14,13 @@ interface Props extends FormComponentProps {
 
 const Save = (props: Props) => {
   const {form, form: {getFieldDecorator}} = props;
+  const token = getAccessToken();
 
   const save = () => {
     form.validateFields((err, fileValue) => {
       if (err) return;
       let param = {
+        id: fileValue.id,
         description: fileValue.description,
         name: fileValue.name,
         type: "big_screen",
@@ -31,7 +34,7 @@ const Save = (props: Props) => {
       api.screen.update(fileValue.id, param).then(res => {
         if (res.status === 200) {
           props.save()
-          // window.open('http://localhost:8080/build/1296699307128270849','_blank')
+          window.open('http://demo.jetlinks.cn:9002/#/build/'+fileValue.id+'?token=' + token,'_blank')
         }
       })
     })

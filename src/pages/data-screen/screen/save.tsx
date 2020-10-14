@@ -25,7 +25,7 @@ const Save = (props: Props) => {
         name: fileValue.name,
         type: "big_screen",
         target: "",
-        catalogId:'000002',
+        catalogId: fileValue.categoryId,
         state:{
             text: "启用",
             value: "enabled"
@@ -33,25 +33,22 @@ const Save = (props: Props) => {
       }
       api.screen.save(param).then(res => {
         if (res.status === 200) {
-          // console.log(res)
           props.save()
-          // window.open('http://localhost:8080/build/'+res.result.id+'?token=' + token,'_blank')
+          window.open('http://demo.jetlinks.cn:9002/#/build/'+res.result.id+'?token=' + token,'_blank')
         }
       })
     })
   };
   let getView = (view: any) => {
-    if (view.children && view.children.length > 0) {
-      return (
-        <TreeNode title={view.name} value={view.id}>
-          {
-            view.children.map((v: any) => {
-              return getView(v)
-            })
-          }
-        </TreeNode>
-      )
-    }
+    return (
+      <TreeNode title={view.name} value={view.id} key={view.id}>
+        {
+          view.children && view.children.length > 0 ? view.children.map((v: any) => {
+            return getView(v)
+          }) : ''
+        }
+      </TreeNode>
+    )
   };
   useEffect(() => {
     api.categoty.query_tree({}).then(res => {
@@ -89,7 +86,7 @@ const Save = (props: Props) => {
             allowClear
           >
             {
-              categoryList.map((v) => {
+              categoryList.map((v: any) => {
                 return getView(v)
               })
             }
