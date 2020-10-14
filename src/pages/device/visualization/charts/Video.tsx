@@ -49,26 +49,24 @@ const Video: React.FC<Props> = (props) => {
         if (props.edit) {
             props.edit(() => props.config);
         }
-
-        console.log(config, 'configs');
         if (config.urlType === 'input') {
             setSrcUrl(config.url)
         } else if (config.urlType === 'switch') {
             service.propertySource(deviceId, config.property).subscribe((data) => {
-                const url = JSON.parse(data.value)[config.target];
-                setSrcUrl(url);
+                if (data?.value) {
+                    const url = data.value[config.target];
+                    setSrcUrl(url);
+                } else {
+                    message.error('不存在视频源数据!');
+                }
             })
         }
 
     }, []);
 
-    const renderVideo = () => {
-        // return <VideoPlayer {...videoJsOptions} width={width} height={height} />
-        return <FlashVideo url={srcUrl || ''} width={width} height={height} />
-    }
     return (
         <div >
-            {srcUrl && renderVideo()}
+            {srcUrl && <FlashVideo url={srcUrl || ''} width={width} height={height} />}
         </div>
     )
 }
