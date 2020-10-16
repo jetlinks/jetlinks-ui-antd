@@ -2,7 +2,7 @@ import BaseService from "@/services/crud";
 import request from "@/utils/request";
 import { message } from "antd";
 import { defer, from } from "rxjs";
-import { map } from "rxjs/operators";
+import { filter, map } from "rxjs/operators";
 
 class Service extends BaseService<any>{
 
@@ -11,14 +11,17 @@ class Service extends BaseService<any>{
             method: 'GET',
             params
         })).pipe(
+            filter(resp => resp.status === 200),
             map(resp => resp.result)
         ));
 
     public groupTree = (params: any) => defer(
         () => from(request(`/jetlinks/device/group/_query/_children/tree`, {
             method: 'GET',
-            params
+            params,
+            errorHandler: () => message.error('服务器错误！')
         })).pipe(
+            filter(resp => resp.status === 200),
             map(resp => resp.result)
         ));
 
@@ -28,6 +31,7 @@ class Service extends BaseService<any>{
             data,
             errorHandler: (res) => { message.error(res.data.message) }
         })).pipe(
+            filter(resp => resp.status === 200),
             map(resp => resp.result)
         ));
     public removeGroup = (id: string) => defer(
@@ -35,6 +39,7 @@ class Service extends BaseService<any>{
             method: 'DELETE',
             errorHandler: (res) => { message.error(res.data.message) }
         })).pipe(
+            filter(resp => resp.status === 200),
             map(resp => resp.result)
         ));
 
@@ -43,6 +48,7 @@ class Service extends BaseService<any>{
             method: 'GET',
             params: param
         })).pipe(
+            filter(resp => resp.status === 200),
             map(resp => resp.result)
         ));
 
@@ -52,6 +58,7 @@ class Service extends BaseService<any>{
             data: deviceId,
             errorHandler: (res) => { message.error(res.data.message) }
         })).pipe(
+            filter(resp => resp.status === 200),
             map(resp => resp.result)
         ));
 
@@ -61,6 +68,7 @@ class Service extends BaseService<any>{
             data: deviceId,
             errorHandler: (res) => { message.error(res.data.message) }
         })).pipe(
+            filter(resp => resp.status === 200),
             map(resp => resp.result)
         ));
 
@@ -68,6 +76,7 @@ class Service extends BaseService<any>{
         () => from(request(`/jetlinks/device/group/${id}/_unbind/all`, {
             method: 'POST',
         })).pipe(
+            filter(resp => resp.status === 200),
             map(resp => resp.result)
         ));
 }

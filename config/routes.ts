@@ -179,8 +179,12 @@ export const routes = [
                                 component: './device/group',
                             },
                             {
+                                hideInMenu: true,
                                 path: '/device/tree',
-                                name: '设备树',
+                                name: '分组',
+                                tenant: ['admin', 'member'],
+                                authority: ['device-group', 'admin'],
+                                version: 'pro',
                                 icon: 'gold',
                                 component: './device/tree'
                             },
