@@ -450,7 +450,7 @@ const Location: React.FC<Props> = props => {
         }, 'new');
       }
       apis.location._search_geo_json(params)
-        .then(response => {
+        .then((response: any) => {
             if (response.status === 200) {
               let region: any = [];
 
@@ -607,7 +607,10 @@ const Location: React.FC<Props> = props => {
                           resetPathPolygon();
                           if (value) {
                             let list: any[] = [];
-                            setCenterScale({center: data.triggerNode.props.data.properties.center});
+                            !data.triggerNode.props.data.properties.center ?
+                              setCenterScale({center: []}) :
+                              setCenterScale({center: data.triggerNode.props.data.properties.center});
+
                             data.triggerNode.props.data.geometry.coordinates.map((path: any) => {
                               list.push(path[0]);
                             });
