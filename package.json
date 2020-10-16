@@ -5,7 +5,7 @@
   "description": "Jetlinks 前端",
   "scripts": {
     "analyze": "cross-env ANALYZE=1 umi build",
-    "build": "umi build",
+    "build": "UMI_ENV=prod umi build",
     "deploy": "npm run site && npm run gh-pages",
     "docker-hub:build": "docker build  -f Dockerfile.hub -t  ant-design-pro ./",
     "docker-prod:build": "docker-compose -f ./docker/docker-compose.yml build",
@@ -137,6 +137,7 @@
     "@types/styled-components": "^5.1.3",
     "@types/video.js": "^7.3.11",
     "@umijs/fabric": "^2.2.2",
+    "babel-plugin-transform-remove-console": "^6.9.4",
     "chalk": "^3.0.0",
     "check-prettier": "^1.0.3",
     "conventional-changelog-cli": "^2.1.0",
