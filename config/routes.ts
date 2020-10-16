@@ -367,7 +367,7 @@ export const routes = [
                         icon: 'desktop',
                         tenant: ['admin'],
                         iconfont: 'icon-icon-',
-                        // authority: ['admin'],
+                        authority: ['big-screen','admin'],
                         routes: [
                             {
                                 path: '/data-screen/category',
@@ -375,7 +375,7 @@ export const routes = [
                                 icon: 'appstore',
                                 tenant: ['admin'],
                                 iconfont: 'icon-category-search-fill',
-                                // authority: ['admin'],
+                                authority: ['big-screen','admin'],
                                 version: 'pro',
                                 component: './data-screen/category',
                             },
@@ -385,9 +385,24 @@ export const routes = [
                                 icon: 'fund',
                                 tenant: ['admin'],
                                 iconfont: 'icon-screen',
-                                // authority: ['admin'],
+                                authority: ['big-screen','admin'],
                                 version: 'pro',
                                 component: './data-screen/screen',
+                            }
+                        ]
+                    },
+                    {
+                        path: 'simulator',
+                        name: '模拟测试',
+                        icon: 'bug',
+                        authority: ['network-simulator', 'admin'],
+                        routes: [
+                            {
+                                path: '/simulator/device',
+                                name: '设备模拟器',
+                                icon: 'paper-clip',
+                                authority: ['network-simulator', 'admin'],
+                                component: './simulator/device',
                             }
                         ]
                     },
@@ -439,21 +454,6 @@ export const routes = [
                                 name: '通知订阅',
                                 icon: 'bell',
                                 component: './account/notification'
-                            }
-                        ]
-                    },
-                    {
-                        path: 'simulator',
-                        name: '模拟测试',
-                        icon: 'bug',
-                        authority: ['network-simulator', 'admin'],
-                        routes: [
-                            {
-                                path: '/simulator/device',
-                                name: '设备模拟器',
-                                icon: 'paper-clip',
-                                authority: ['network-simulator', 'admin'],
-                                component: './simulator/device',
                             }
                         ]
                     },
