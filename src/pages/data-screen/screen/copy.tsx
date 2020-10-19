@@ -25,6 +25,7 @@ const Save = (props: Props) => {
         name: fileValue.name,
         type: "big_screen",
         target: "",
+        metadata: props.data.metadata || "",
         catalogId: fileValue.categoryId,
         state:{
             text: "启用",
@@ -34,7 +35,7 @@ const Save = (props: Props) => {
       api.screen.save(param).then(res => {
         if (res.status === 200) {
           props.save()
-          window.open(props.data+'/#/build/'+res.result.id+'?token=' + token,'_blank')
+          window.open(props.data.url+'/#/build/'+res.result.id+'?token=' + token,'_blank')
         }
       })
     })
@@ -60,7 +61,7 @@ const Save = (props: Props) => {
   return (
     <Modal
       visible
-      title="新增大屏"
+      title="复制大屏"
       onCancel={() => props.close()}
       onOk={() => {
         save()

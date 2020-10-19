@@ -34,7 +34,7 @@ const Save = (props: Props) => {
       api.screen.update(fileValue.id, param).then(res => {
         if (res.status === 200) {
           props.save()
-          window.open('http://demo.jetlinks.cn:9002/#/build/'+fileValue.id+'?token=' + token,'_blank')
+          window.open( props.data.url + '/#/build/'+fileValue.id+'?token=' + token,'_blank')
         }
       })
     })
