@@ -1,8 +1,8 @@
-import { Button, message, Modal } from "antd";
+import {Button, message, Modal} from "antd";
 import React from "react";
 import Service from "../service";
-import { createFormActions, FormButtonGroup, FormEffectHooks, FormPath, FormSpy, Reset, SchemaForm, Submit } from "@formily/antd";
-import { ArrayCards, ArrayTable, Input, DatePicker, Select, FormStep } from '@formily/antd-components'
+import {createFormActions, FormButtonGroup, FormEffectHooks, FormPath, FormSpy, Reset, SchemaForm, Submit} from "@formily/antd";
+import {DatePicker, FormStep, Input, Select} from '@formily/antd-components'
 import 'ace-builds';
 import 'ace-builds/webpack-resolver';
 import AceEditor from 'react-ace';
@@ -44,7 +44,7 @@ const AceComponent = (props: any) => (
             tabSize: 2,
         }}
     />
-)
+);
 
 const actions = createFormActions();
 
@@ -65,7 +65,7 @@ const Save: React.FC<Props> = props => {
                     networkConfiguration.password,
                     networkConfiguration.keepAliveTimeSeconds)`,
                 state => {
-                    state.visible = value === 'mqtt_client' ? true : false;
+                    state.visible = value === 'mqtt_client';
                 });
         });
 
@@ -74,14 +74,14 @@ const Save: React.FC<Props> = props => {
                 FormPath.transform(fieldState.name, /\d/, $1 => `*(listeners.${$1}.configuration.maxTimes,listeners.${$1}.configuration.delays,listeners.${$1}.configuration.lang,listeners.${$1}.configuration.script)`),
                 state => {
                     state.visible = false;
-                })
+                });
             setFieldState(
                 FormPath.transform(fieldState.name, /\d/, $1 => fieldState.value === 'auto-reconnect' ? `*(listeners.${$1}.configuration.maxTimes,listeners.${$1}.configuration.delays)` : `*(listeners.${$1}.configuration.lang,listeners.${$1}.configuration.script)`),
                 state => {
                     state.visible = true;
                 });
         })
-    }
+    };
     const basicInfo = {
         "type": "object",
         "x-component": "mega-layout",
@@ -241,7 +241,7 @@ const Save: React.FC<Props> = props => {
                 }
             },
         }
-    }
+    };
 
     const runner = {
         "type": "object",
@@ -378,7 +378,7 @@ const Save: React.FC<Props> = props => {
 
 //启动完成
 simulator.doOnComplete(function () {
-   
+
 })
 
 //连接前
@@ -388,7 +388,7 @@ listener.onBefore(function (session) {
 
 //连接后
 listener.onAfter(function (session) {
- 
+
 });`,
                             "x-rules": [
                                 {
@@ -410,7 +410,7 @@ listener.onAfter(function (session) {
             message.success('保存成功');
             props.close();
         })
-    }
+    };
 
     return (
         <Modal
@@ -464,14 +464,14 @@ listener.onAfter(function (session) {
                     reducer={(state, action) => {
                         switch (action.type) {
                             case FormStep.ON_FORM_STEP_CURRENT_CHANGE:
-                                return { ...state, step: action.payload }
+                                return { ...state, step: action.payload };
                             default:
                                 return { step: { value: 0 } }
                         }
                     }}
                 >
                     {({ state }) => {
-                        const formStepState = state.step ? state : { step: { value: 0 } }
+                        const formStepState = state.step ? state : { step: { value: 0 } };
                         return (
                             <FormButtonGroup align="center">
                                 <Button
