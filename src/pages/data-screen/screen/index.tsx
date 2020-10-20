@@ -23,8 +23,6 @@ export const TenantContext = React.createContext({});
 
 const Screen = (props: Props) => {
 
-  const url = origin + ":9002"; //线上
-  // const url = "http://localhost:8080" //本地
   const [categoryList, setCategoryList] = useState([]);
   const [dataList, setDataList] = useState({
     data: [],
@@ -33,6 +31,7 @@ const Screen = (props: Props) => {
     pageSize: 0
   });
   const [id, setId] = useState('');
+  const [url, setUrl] = useState('');
   const [saveVisible, setSaveVisible] = useState(false);
   const [editVisible, setEditVisible] = useState(false);
   const [copyVisible, setCopyVisible] = useState(false);
@@ -126,6 +125,16 @@ const Screen = (props: Props) => {
     }
   };
   useEffect(() => {
+    //获取跳转url
+    api.screen.getUrl().then((res) => {
+      if(res.status === 200){
+        if(res.result.urls['big-screen-path'] != ''){
+          setUrl(res.result.urls['big-screen-path'])
+        }else{
+          message.error('配置错误,请联系管理员');
+        }
+      }
+    })
     api.categoty.query_tree({})
       .then((response: any) => {
         if (response.status === 200) {
@@ -216,7 +225,7 @@ const Screen = (props: Props) => {
                 return (
                   <List.Item key={item.id}>
                     <Card hoverable bodyStyle={{paddingBottom: 20}}
-                          onMouseEnter={i => setId(item.id)} onMouseLeave={i => setId('')}
+                          onMouseEnter={() => setId(item.id)} onMouseLeave={() => setId('')}
                           actions={[
                             <Tooltip placement="bottom" title="编辑">
                               <EditOutlined onClick={() => {
@@ -232,7 +241,7 @@ const Screen = (props: Props) => {
                             </Tooltip>,
                             <Tooltip placement="bottom" title="预览">
                               <EyeOutlined onClick={() => {
-                                window.open(url + '/#/view/' + item.id + '?token=' + token, '_blank')
+                                url != '' ? window.open(url + '#/view/' + item.id + '?token=' + token, '_blank') : message.error('配置错误,请联系管理员')
                               }}/>
                             </Tooltip>,
                             <Tooltip placement="bottom" title="复制">
@@ -271,7 +280,7 @@ const Screen = (props: Props) => {
                           ]}
                     >
                       <Card.Meta
-                        avatar={<Avatar size={60} src={metadata.visual.backgroundUrl || false}/>}
+                        avatar={<Avatar size={60} src={ metadata.visual != undefined && metadata.visual.backgroundUrl != undefined ? metadata.visual.backgroundUrl : false }/>}
                         title={<AutoHide title={item.name} style={{width: '95%'}}/>}
                         description={<AutoHide title={item.id} style={{width: '95%'}}/>}
                       />
@@ -284,8 +293,8 @@ const Screen = (props: Props) => {
                         </div>
                       </div>
                       <div className={styles.edit} style={{display: item.id == id ? 'block' : 'none'}}>
-                        <div className={styles.editBtn}><a onClick={i => {
-                          window.open(url + `/#/build/${id}?token=${token}`, '_blank')
+                        <div className={styles.editBtn}><a onClick={() => {
+                          url != '' ? window.open(url + `#/build/${id}?token=${token}`, '_blank') : message.error('配置错误,请联系管理员')
                         }}>编辑</a></div>
                       </div>
                     </Card>

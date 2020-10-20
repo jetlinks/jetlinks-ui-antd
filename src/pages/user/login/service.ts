@@ -12,3 +12,10 @@ export async function logout(): Promise<any> {
     method: 'GET',
   });
 }
+
+export async function oauth(params: any): Promise<any> {
+  return request(`/jetlinks/oauth2/authorize`, {
+    method: 'GET',
+    params,
+  });
+}
