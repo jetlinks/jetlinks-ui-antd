@@ -28,3 +28,10 @@ export async function remove(id: any) {
   })
 }
 
+//获取跳转地址
+export async function getUrl() {
+  return request('/jetlinks/system/apis', {
+    method: 'GET'
+  })
+}
+

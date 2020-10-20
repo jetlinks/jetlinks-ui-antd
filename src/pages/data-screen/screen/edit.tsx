@@ -1,5 +1,5 @@
 import React from "react";
-import {Form, Input, Modal, TreeSelect} from "antd";
+import {Form, Input, message, Modal, TreeSelect} from "antd";
 import {FormComponentProps} from "antd/es/form";
 import api from '@/services'
 import {getAccessToken} from '@/utils/authority';
@@ -34,7 +34,7 @@ const Save = (props: Props) => {
       api.screen.update(fileValue.id, param).then(res => {
         if (res.status === 200) {
           props.save()
-          window.open( props.data.url + '/#/build/'+fileValue.id+'?token=' + token,'_blank')
+          props.data.url != '' ? window.open( props.data.url + '#/build/'+fileValue.id+'?token=' + token,'_blank') : message.error('配置错误,请联系管理员')
         }
       })
     })

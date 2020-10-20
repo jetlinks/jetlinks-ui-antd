@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Modal, TreeSelect } from "antd";
+import { Form, Input, message, Modal, TreeSelect } from "antd";
 import { FormComponentProps } from "antd/es/form";
 import api from '@/services'
 const { TreeNode } = TreeSelect;
@@ -35,7 +35,7 @@ const Save = (props: Props) => {
       api.screen.save(param).then(res => {
         if (res.status === 200) {
           props.save()
-          window.open(props.data.url+'/#/build/'+res.result.id+'?token=' + token,'_blank')
+          props.data.url != '' ? window.open(props.data.url+'#/build/'+res.result.id+'?token=' + token,'_blank') : message.error('配置错误,请联系管理员')
         }
       })
     })
