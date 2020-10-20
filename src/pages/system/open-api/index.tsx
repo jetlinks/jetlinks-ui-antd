@@ -111,15 +111,15 @@ const OpenApiList: React.FC<Props> = props => {
               </Popconfirm>
             </span>
           ) : (
-              <Popconfirm
-                title="确认禁用？"
-                onConfirm={() => {
-                  enableOrDisable(record);
-                }}
-              >
-                <a>禁用</a>
-              </Popconfirm>
-            )}
+            <Popconfirm
+              title="确认禁用？"
+              onConfirm={() => {
+                enableOrDisable(record);
+              }}
+            >
+              <a>禁用</a>
+            </Popconfirm>
+          )}
         </Fragment>
       ),
     },
@@ -143,29 +143,29 @@ const OpenApiList: React.FC<Props> = props => {
         status: record.status.value === 1 ? 0 : 1
       }
     ).then((res: any) => {
-      if (res.status === 200) {
-        if (record.status.value === 1) {
-          message.success("禁用成功");
+        if (res.status === 200) {
+          if (record.status.value === 1) {
+            message.success("禁用成功");
+          } else {
+            message.success("启用成功");
+          }
+          handleSearch(searchParam);
         } else {
-          message.success("启用成功");
+          message.error(`操作失败，${res.message}`)
         }
-        handleSearch(searchParam);
-      } else {
-        message.error(`操作失败，${res.message}`)
       }
-    }
     ).catch(() => { });
   };
 
   const removeOpenApi = (id: string) => {
     apis.openApi.remove(id).then(res => {
-      if (res.status === 200) {
-        message.success("删除成功");
-        handleSearch(searchParam);
-      } else {
-        message.error(`操作失败，${res.message}`)
+        if (res.status === 200) {
+          message.success("删除成功");
+          handleSearch(searchParam);
+        } else {
+          message.error(`操作失败，${res.message}`)
+        }
       }
-    }
     ).catch(() => { });
   };
 
@@ -199,7 +199,7 @@ const OpenApiList: React.FC<Props> = props => {
     });
   };
   return (
-    <PageHeaderWrapper title="OpenApi客户端">
+    <PageHeaderWrapper title="第三方平台">
       <Card bordered={false}>
         <div className={styles.tableList}>
           <div className={styles.tableListForm}>
@@ -213,11 +213,11 @@ const OpenApiList: React.FC<Props> = props => {
                 key: "name$LIKE",
                 type: 'string',
               },
-              {
-                label: "标识",
-                key: "id$LIKE",
-                type: 'string'
-              }]}
+                {
+                  label: "标识",
+                  key: "id$LIKE",
+                  type: 'string'
+                }]}
             />
           </div>
           <div className={styles.tableListOperator}>
