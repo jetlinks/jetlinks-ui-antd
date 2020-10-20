@@ -18,7 +18,7 @@ const Save: React.FC<Props> = props => {
 
   const [id] = useState(randomString(16));
   const [secureKey] = useState(randomString(24));
-  const [enableOAuth2, setEnableOAuth2] = useState<string>('false');
+  const [enableOAuth2, setEnableOAuth2] = useState(props.data.enableOAuth2);
   const submitData = () => {
     form.validateFields((err, fileValue) => {
       if (err) return;
@@ -33,21 +33,18 @@ const Save: React.FC<Props> = props => {
 
   const renderConfig = () => {
 
-    switch (enableOAuth2) {
-      case 'true':
-        return (
-          <div>
-            <Form.Item label="redirectUrl" key='redirectUrl'>
-              {getFieldDecorator('redirectUrl', {
-                initialValue: props.data.redirectUrl,
-              })(<Input/>)}
-            </Form.Item>
-          </div>
-        );
-      case 'false':
-        return null;
-      default:
-        return null;
+    if (enableOAuth2) {
+      return (
+        <div>
+          <Form.Item label="redirectUrl" key='redirectUrl'>
+            {getFieldDecorator('redirectUrl', {
+              initialValue: props.data.redirectUrl,
+            })(<Input/>)}
+          </Form.Item>
+        </div>
+      );
+    } else {
+      return null;
     }
   };
 
@@ -100,7 +97,8 @@ const Save: React.FC<Props> = props => {
           <Col span={12}>
             <Form.Item key="password" label="密码" labelCol={{span: 8}} wrapperCol={{span: 16}}>
               {getFieldDecorator('password', {
-                rules: [{required: true}],
+                rules: [{required: !props.data.id}],
+                initialValue: props.data.password,
               })(<Input.Password placeholder="请输入" disabled={!!props.data.id}/>)}
             </Form.Item>
           </Col>
@@ -118,13 +116,13 @@ const Save: React.FC<Props> = props => {
         </Form.Item>*/}
         <Form.Item key="enableOAuth2" label="开启OAuth2">
           {getFieldDecorator('enableOAuth2', {
-            initialValue: !props.data.enableOAuth2 ? "false" : props.data.enableOAuth2,
+            initialValue: !props.data.enableOAuth2 ? false : props.data.enableOAuth2,
           })(
             <Radio.Group buttonStyle="solid" onChange={(e) => {
               setEnableOAuth2(e.target.value);
             }}>
-              <Radio.Button value="true">开启</Radio.Button>
-              <Radio.Button value="false">关闭</Radio.Button>
+              <Radio.Button value={true}>开启</Radio.Button>
+              <Radio.Button value={false}>关闭</Radio.Button>
             </Radio.Group>,
           )}
         </Form.Item>
