@@ -463,7 +463,7 @@ const Action: React.FC<Props> = props => {
                 <Col span={24} style={{marginLeft: -8}}>
                   <div key={`function_${item.id}_${index}`}>
                     <Col span={4}>
-                      <Input value={`${item.name}(${item.id})`} disabled={true}/>
+                      <Input value={`${item.name}(${item.id})`} readOnly={true}/>
                     </Col>
                     {renderFunctionOnType(item, index)}
                   </div>
