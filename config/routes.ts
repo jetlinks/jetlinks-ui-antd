@@ -357,7 +357,7 @@ export const routes = [
                         icon: 'desktop',
                         tenant: ['admin'],
                         iconfont: 'icon-icon-',
-                        // authority: ['admin'],
+                        authority: ['big-screen','admin'],
                         routes: [
                             {
                                 path: '/data-screen/category',
@@ -365,7 +365,7 @@ export const routes = [
                                 icon: 'appstore',
                                 tenant: ['admin'],
                                 iconfont: 'icon-category-search-fill',
-                                // authority: ['admin'],
+                                authority: ['big-screen','admin'],
                                 version: 'pro',
                                 component: './data-screen/category',
                             },
@@ -375,7 +375,7 @@ export const routes = [
                                 icon: 'fund',
                                 tenant: ['admin'],
                                 iconfont: 'icon-screen',
-                                // authority: ['admin'],
+                                authority: ['big-screen','admin'],
                                 version: 'pro',
                                 component: './data-screen/screen',
                             }
