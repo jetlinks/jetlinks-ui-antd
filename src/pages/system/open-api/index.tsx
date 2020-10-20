@@ -199,7 +199,7 @@ const OpenApiList: React.FC<Props> = props => {
     });
   };
   return (
-    <PageHeaderWrapper title="OpenApi客户端">
+    <PageHeaderWrapper title="第三方平台">
       <Card bordered={false}>
         <div className={styles.tableList}>
           <div className={styles.tableListForm}>

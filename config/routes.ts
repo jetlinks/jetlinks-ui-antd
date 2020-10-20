@@ -64,7 +64,7 @@ export const routes = [
                             },
                             {
                                 path: '/system/open-api',
-                                name: 'OpenApi客户端',
+                                name: '第三方平台',
                                 icon: 'share-alt',
                                 iconfont: 'icon-APIguanli',
                                 authority: ['open-api', 'admin'],

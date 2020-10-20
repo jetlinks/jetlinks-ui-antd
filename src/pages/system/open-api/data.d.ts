@@ -10,6 +10,8 @@ export class OpenApiItem {
     ipWhiteList: string;
     secureKey: string;
     signature: string;
+    enableOAuth2 :boolean;
+    redirectUrl :string;
     status: {
         text: string;
         value: number;
