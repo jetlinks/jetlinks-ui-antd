@@ -18,7 +18,6 @@ const ActionEdit: React.FC<Props> = (props) => {
     const [source, setSource] = useState<any>(undefined);
     const [func, setFunc] = useState<any>(undefined);
     let actionParam = useRef<any>({});
-    console.log(metadata, 'medtaas');
     const getData = () => {
         let data: any;
         form.validateFields((err, fileValue) => {

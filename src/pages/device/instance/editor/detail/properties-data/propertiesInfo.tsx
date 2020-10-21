@@ -511,7 +511,6 @@ const PropertiesInfo: React.FC<Props> = props => {
           }}
         >
           <Tabs.TabPane tab="列表" key="1">
-            {console.log(propertiesInfo.data, 'ffffff')}
             <Table
               rowKey="timestamp"
               dataSource={propertiesInfo.data}

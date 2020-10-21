@@ -150,7 +150,6 @@ const Save: React.FC<Props> = props => {
                         <Icon
                           type="plus"
                           onClick={() => {
-                            console.log(otherConfig, 'configs');
                             otherConfig.push({
                               id: randomString(8),
                               name: '',

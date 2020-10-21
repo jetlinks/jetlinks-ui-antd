@@ -17,6 +17,7 @@ import React, {useState} from 'react';
 import styles from '../index.less';
 import {groupBy} from 'lodash';
 import {Unit} from '@/utils/unit';
+import {renderUnit} from "@/pages/device/public";
 
 interface Props {
   save: (data: any) => void;
@@ -165,7 +166,7 @@ const Paramter: React.FC<Props> = props => {
                 }}
                 value={data.valueType.unit}
               >
-                {Array.from(new Set<string>(props.unitsData.map((unit: any) => {
+                {/*{Array.from(new Set<string>(props.unitsData.map((unit: any) => {
                   return unit.type;
                 }))).map(type => {
                   const typeData = groupBy(props.unitsData, unit => unit.type)[type];
@@ -178,7 +179,8 @@ const Paramter: React.FC<Props> = props => {
                       ))}
                     </Select.OptGroup>
                   );
-                })}
+                })}*/}
+                {renderUnit(props.unitsData)}
               </Select>
             </Form.Item>
           </div>

@@ -105,7 +105,6 @@ const Simulator: React.FC<Props> = props => {
                                                 <Popconfirm
                                                     title="删除此模拟器？"
                                                     onConfirm={() => {
-                                                        console.log(item, 'itt');
                                                         if (item.status.value === 'running') {
                                                             message.success('运行中，删除失败！')
                                                         } else {

@@ -285,7 +285,6 @@ const Visualization: React.FC<Props> = props => {
                     metaData={props.metaData}
                     current={current}
                     save={(item: any) => {
-                        console.log(item, 'items');
                         saveLayoutItem(item);
                     }}
                 />

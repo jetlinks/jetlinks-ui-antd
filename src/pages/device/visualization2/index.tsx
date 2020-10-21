@@ -20,7 +20,6 @@ const Visualization: React.FC<Props> = props => {
                 map((result: any) => JSON.parse(result.metadata || '[]')),
             )
             .subscribe((data) => {
-                console.log(data, 'layout');
             })
     }, []);
     return (

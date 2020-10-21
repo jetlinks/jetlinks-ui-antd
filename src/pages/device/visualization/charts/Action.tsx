@@ -36,7 +36,6 @@ const Action: React.FC<Props> = (props) => {
 
     const { deviceId, config } = props;
     const service = new Service();
-    console.log(config, 'ffff');
     const handleClick = () => {
         if (config.sourceType === 'function') {
             service.exec(deviceId, config.function, config.runParam).subscribe(() => {

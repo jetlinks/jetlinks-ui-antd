@@ -11,7 +11,6 @@ const AccountCenter: React.FC<Props> = (props) => {
             <Button onClick={() => {
                 const a = count + 1;
                 setCount(a,);
-                console.log(a, 'count');
             }}>点击</Button>
 
         </div>

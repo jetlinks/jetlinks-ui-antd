@@ -68,7 +68,6 @@ export const ArrayPanels: any = styled(
             bordered={false}
           >
             {toArr(value).map((item, index) => {
-              console.log(item, 'ttt');
               return (
                 <Collapse.Panel
                   className='panel-list-item'
@@ -148,7 +147,7 @@ export const ArrayPanels: any = styled(
      .item-title{
         line-height:30px
       }
-      
+
       .ant-collapse-extra button{
         margin:0 3px 8px 2px
       }

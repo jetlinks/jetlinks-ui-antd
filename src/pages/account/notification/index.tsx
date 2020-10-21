@@ -112,7 +112,6 @@ const Notification: React.FC<Props> = (props) => {
             <Card bordered={false}>
                 <div className={styles.tableList}>
                     <SearchForm
-                        search={(params: any) => { console.log(params, 'parms') }}
                         formItems={[
                             {
                                 label: '消息',

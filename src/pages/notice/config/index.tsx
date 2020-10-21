@@ -178,7 +178,6 @@ const Config: React.FC<Props> = props => {
     },
   };*/
 
-  console.log(searchParam, 'papaa');
   return (
     <PageHeaderWrapper title="通知配置">
       <div className={styles.filterCardList}>
