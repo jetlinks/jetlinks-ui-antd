@@ -19,21 +19,16 @@ const Save = (props: Props) => {
   const save = () => {
     form.validateFields((err, fileValue) => {
       if (err) return;
-      let param = {
-        description: fileValue.description,
-        id: fileValue.id,
-        name: fileValue.name,
-        type: "big_screen",
-        target: "",
-        catalogId: fileValue.categoryId,
-        state:{
-            text: "启用",
-            value: "enabled"
-        }
-      }
-      api.screen.save(param).then(res => {
+
+      fileValue.type = 'big_screen';
+      fileValue.state = {
+        text: "启用",
+        value: "enabled"
+      };
+
+      api.screen.save(fileValue).then(res => {
         if (res.status === 200) {
-          props.save()
+          props.save();
           props.data != '' ? window.open(props.data+'#/build/'+res.result.id+'?token=' + token,'_blank') : message.error('配置错误,请联系管理员')
         }
       })
@@ -77,8 +72,8 @@ const Save = (props: Props) => {
             rules: [{ required: true, message: '请输入大屏名称' }]
           })(<Input placeholder="请输入大屏名称" />)}
         </Form.Item>
-        <Form.Item key="categoryId" label="分类">
-          {getFieldDecorator('categoryId', {
+        <Form.Item key="catalogId" label="分类">
+          {getFieldDecorator('catalogId', {
             rules: [{ required: true, message: '请选择分类' }]
           })(<TreeSelect
             dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
