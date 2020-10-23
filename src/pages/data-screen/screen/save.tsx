@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { Form, Input, message, Modal, TreeSelect } from "antd";
-import { FormComponentProps } from "antd/es/form";
+import React, {useEffect, useState} from "react";
+import {Form, Input, message, Modal, TreeSelect} from "antd";
+import {FormComponentProps} from "antd/es/form";
 import api from '@/services'
-const { TreeNode } = TreeSelect;
 import {getAccessToken} from '@/utils/authority';
 
 interface Props extends FormComponentProps {
@@ -34,21 +33,15 @@ const Save = (props: Props) => {
       })
     })
   };
-  let getView = (view: any) => {
-    return (
-      <TreeNode title={view.name} value={view.id} key={view.id}>
-        {
-          view.children && view.children.length > 0 ? view.children.map((v: any) => {
-            return getView(v)
-          }) : ''
-        }
-      </TreeNode>
-    )
-  };
+
   useEffect(() => {
-    api.categoty.query_tree({}).then(res => {
+    api.categoty.queryNoPaging({}).then(res => {
       if (res.status === 200) {
-        setCategoryList(res.result)
+        let list: any = [];
+        res.result.map((item: any) => {
+          list.push({ id: item.id, pId: item.parentId, value: item.id, title: item.name })
+        });
+        setCategoryList(list);
       }
     })
   }, []);
@@ -74,18 +67,12 @@ const Save = (props: Props) => {
         </Form.Item>
         <Form.Item key="catalogId" label="分类">
           {getFieldDecorator('catalogId', {
-            rules: [{ required: true, message: '请选择分类' }]
+            rules: [{required: true, message: '请选择分类'}],
           })(<TreeSelect
-            dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-            placeholder="请选择分类"
-            allowClear
-          >
-            {
-              categoryList.map((v: any) => {
-                return getView(v)
-              })
-            }
-          </TreeSelect>)}
+            allowClear treeDataSimpleMode showSearch
+            placeholder="选择分类" treeData={categoryList}
+            treeNodeFilterProp='title' searchPlaceholder='根据分类名称模糊查询'
+          />)}
         </Form.Item>
         <Form.Item key="description" label="说明">
           {getFieldDecorator('description', {
