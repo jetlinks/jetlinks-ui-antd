@@ -7,7 +7,7 @@ import {getAccessToken} from '@/utils/authority';
 const {TreeNode} = TreeSelect;
 
 interface Props extends FormComponentProps {
-  data?: any,
+  data: any,
   close: Function,
   save: Function
 }
@@ -18,9 +18,13 @@ const Save = (props: Props) => {
   const token = getAccessToken();
 
   useEffect(() => {
-    api.categoty.query_tree({}).then(res => {
+    api.categoty.queryNoPaging({}).then(res => {
       if (res.status === 200) {
-        setCategoryList(res.result)
+        let list: any = [];
+        res.result.map((item: any) => {
+          list.push({ id: item.id, pId: item.parentId, value: item.id, title: item.name })
+        });
+        setCategoryList(list);
       }
     })
   }, []);
@@ -79,18 +83,12 @@ const Save = (props: Props) => {
         <Form.Item key="catalogId" label="分类">
           {getFieldDecorator('catalogId', {
             rules: [{required: true, message: '请选择分类'}],
-            initialValue: props.data.catalogId ? props.data.catalogId : ''
+            initialValue: props.data.catalogId
           })(<TreeSelect
-            dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-            placeholder="请选择分类"
-            allowClear
-          >
-            {
-              categoryList.map((v: any) => {
-                return getView(v)
-              })
-            }
-          </TreeSelect>)}
+              allowClear treeDataSimpleMode showSearch
+              placeholder="选择分类" treeData={categoryList}
+              treeNodeFilterProp='title' searchPlaceholder='根据分类名称模糊查询'
+            />)}
         </Form.Item>
         <Form.Item key="description" label="说明">
           {getFieldDecorator('description', {
