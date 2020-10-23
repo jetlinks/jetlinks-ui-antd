@@ -1,53 +1,62 @@
-import React from "react";
-import {Form, Input, Modal, TreeSelect} from "antd";
+import React, {useEffect, useState} from "react";
+import {Form, Input, message, Modal, TreeSelect} from "antd";
 import {FormComponentProps} from "antd/es/form";
 import api from '@/services'
+import {getAccessToken} from '@/utils/authority';
 
 const {TreeNode} = TreeSelect;
 
 interface Props extends FormComponentProps {
-  data?: any,
+  data: any,
   close: Function,
   save: Function
 }
 
 const Save = (props: Props) => {
   const {form, form: {getFieldDecorator}} = props;
+  const [categoryList, setCategoryList] = useState([]);
+  const token = getAccessToken();
+
+  useEffect(() => {
+    api.categoty.queryNoPaging({}).then(res => {
+      if (res.status === 200) {
+        let list: any = [];
+        res.result.map((item: any) => {
+          list.push({ id: item.id, pId: item.parentId, value: item.id, title: item.name })
+        });
+        setCategoryList(list);
+      }
+    })
+  }, []);
 
   const save = () => {
     form.validateFields((err, fileValue) => {
       if (err) return;
-      let param = {
-        description: fileValue.description,
-        name: fileValue.name,
-        type: "big_screen",
-        target: "",
-        catalogId: fileValue.catalogId,
-        state: {
-          text: "启用",
-          value: "enabled"
-        },
+
+      fileValue.type = 'big_screen';
+      fileValue.state = {
+        text: "启用",
+        value: "enabled"
       };
-      api.screen.update(fileValue.id, param).then(res => {
+      api.screen.update(fileValue.id, fileValue).then(res => {
         if (res.status === 200) {
-          props.save()
-          // window.open('http://localhost:8080/build/1296699307128270849','_blank')
+          props.save();
+          props.data.url != '' ? window.open( props.data.url + '#/build/'+fileValue.id+'?token=' + token,'_blank') : message.error('配置错误,请联系管理员')
         }
       })
     })
   };
+
   let getView = (view: any) => {
-    if (view.children && view.children.length > 0) {
-      return (
-        <TreeNode title={view.name} value={view.id}>
-          {
-            view.children.map((v: any) => {
-              return getView(v)
-            })
-          }
-        </TreeNode>
-      )
-    }
+    return (
+      <TreeNode title={view.name} value={view.id} key={view.id}>
+        {
+          view.children && view.children.length > 0 ? view.children.map((v: any) => {
+            return getView(v)
+          }) : ''
+        }
+      </TreeNode>
+    )
   };
   return (
     <Modal
@@ -70,6 +79,16 @@ const Save = (props: Props) => {
             rules: [{required: true, message: '请输入大屏名称'}],
             initialValue: props.data.name ? props.data.name : ''
           })(<Input placeholder="请输入大屏名称"/>)}
+        </Form.Item>
+        <Form.Item key="catalogId" label="分类">
+          {getFieldDecorator('catalogId', {
+            rules: [{required: true, message: '请选择分类'}],
+            initialValue: props.data.catalogId
+          })(<TreeSelect
+              allowClear treeDataSimpleMode showSearch
+              placeholder="选择分类" treeData={categoryList}
+              treeNodeFilterProp='title' searchPlaceholder='根据分类名称模糊查询'
+            />)}
         </Form.Item>
         <Form.Item key="description" label="说明">
           {getFieldDecorator('description', {

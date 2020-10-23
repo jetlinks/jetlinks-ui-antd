@@ -39,7 +39,6 @@ const ScreenValue = (props: Props) => {
             onOk() {
                 api.screen.remove(id).then(res => {
                     if (res.status === 200) {
-                        console.log(id)
                         handleSearch()
                     }
                 })
@@ -116,7 +115,7 @@ const ScreenValue = (props: Props) => {
                                     </Card>
                                 </List.Item>
                             );
-                        } 
+                        }
                         return;
                     }}
                 />

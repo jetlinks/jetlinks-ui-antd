@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Avatar, Button, Card, Dropdown, Icon, List, Menu, Modal, Popconfirm, Tooltip} from "antd";
+import {Avatar, Button, Card, Divider, Dropdown, Icon, List, Menu, message, Modal, Tooltip, Upload} from "antd";
 import {PageHeaderWrapper} from "@ant-design/pro-layout";
 import api from '@/services'
 import styles from './index.less';
@@ -7,9 +7,12 @@ import {getAccessToken} from '@/utils/authority';
 import {EditOutlined, ExclamationCircleOutlined, EyeOutlined, SwitcherOutlined} from "@ant-design/icons";
 import Save from './save'
 import Edit from './edit'
+import Copy from './copy'
 import AutoHide from "@/pages/analysis/components/Hide/autoHide";
 import encodeQueryParam from "@/utils/encodeParam";
 import SearchForm from "@/components/SearchForm";
+import {downloadObject} from '@/utils/utils';
+import {CategoryItem} from "@/pages/data-screen/category/data";
 
 const {confirm} = Modal;
 
@@ -21,7 +24,6 @@ export const TenantContext = React.createContext({});
 
 const Screen = (props: Props) => {
 
-  const defaultImg = 'https://oss.bladex.vip/caster/upload/20200512/f26107bbb77a84949285617848745d81.jpg'
   const [categoryList, setCategoryList] = useState([]);
   const [dataList, setDataList] = useState({
     data: [],
@@ -30,8 +32,10 @@ const Screen = (props: Props) => {
     pageSize: 0
   });
   const [id, setId] = useState('');
+  const [url, setUrl] = useState('');
   const [saveVisible, setSaveVisible] = useState(false);
   const [editVisible, setEditVisible] = useState(false);
+  const [copyVisible, setCopyVisible] = useState(false);
   const [param, setParam] = useState({});
   const [searchParam, setSearchParam] = useState({pageSize: 12, pageIndex: 0, terms: {type: 'big_screen'}});
   const token = getAccessToken();
@@ -46,39 +50,51 @@ const Screen = (props: Props) => {
   };
 
   let delConfirm = (id: string) => {
-    api.screen.remove(id).then(res => {
-      if (res.status === 200) {
-        handleSearch(searchParam);
-      }
-    })
-  };
-
-  let updateState = (state: string, id: string) => {
-
-    api.screen.update(id, {
-      state: {
-        value: state
-      }
-    }).then(res => {
-      if (res.status === 200) {
-        handleSearch(searchParam);
-      }
-    })
-  };
-
-  function copyConfirm() {
     confirm({
-      title: '复制大屏',
+      title: '删除大屏',
       icon: <ExclamationCircleOutlined/>,
-      content: '确认复制',
+      content: '确认删除该大屏？',
       onOk() {
-        console.log('OK');
+        api.screen.remove(id).then(res => {
+          if (res.status === 200) {
+            handleSearch(searchParam);
+          }
+        })
       },
       onCancel() {
-        console.log('Cancel');
+        message.info('已取消')
+      }
+    })
+  };
+  let updateState = (state: string, id: string) => {
+    confirm({
+      title: `${state === 'enabled' ? '禁用' : '启用'}大屏`,
+      icon: <ExclamationCircleOutlined/>,
+      content: `确认${state === 'enabled' ? '禁用' : '启用'}该大屏`,
+      onOk() {
+        api.screen.update(id, {
+          state: {
+            value: state === 'enabled' ? 'disabled' : 'enabled'
+          }
+        }).then(res => {
+          if (res.status === 200) {
+            handleSearch(searchParam);
+          }
+        })
       },
-    });
-  }
+      onCancel() {
+        message.info('已取消')
+      }
+    })
+  };
+  const uploadProps = (item: any) => {
+    api.screen.save(item).then(res => {
+      if (res.status === 200) {
+        message.success('导入成功');
+        handleSearch(searchParam);
+      }
+    })
+  };
 
   const onChange = (page: number, pageSize: number) => {
     handleSearch({
@@ -87,22 +103,56 @@ const Screen = (props: Props) => {
       terms: searchParam.terms
     });
   };
-  useEffect(() => {
-
-    api.categoty.queryNoPaging({})
-      .then((response: any) => {
-        setCategoryList(response.result.map((item: any) => ({
-          id: item.id,
-          pId: item.parentId,
-          value: item.id,
-          title: item.name
-        })))
-      })
-      .catch(() => {
+  let getView = (view: any) => {
+    let children = [];
+    if (view.children && view.children.length > 0) {
+      children = view.children.map((i: any) => {
+        return getView(i)
       });
+      return {
+        id: view.id,
+        children: children,
+        pId: view.parentId,
+        value: view.id,
+        title: view.name
+      }
+    } else {
+      return {
+        id: view.id,
+        pId: view.parentId,
+        value: view.id,
+        title: view.name
+      }
+    }
+  };
+  useEffect(() => {
+    //获取跳转url
+    api.screen.getUrl().then((res) => {
+      if(res.status === 200){
+        if(res.result.urls['big-screen-path'] != ''){
+          setUrl(res.result.urls['big-screen-path'])
+        }else{
+          message.error('配置错误,请联系管理员');
+        }
+      }
+    });
+
+    api.categoty.queryNoPaging({}).then(res => {
+      if (res.status === 200) {
+        setCategoryList(res.result);
+      }
+    });
 
     handleSearch(searchParam);
   }, []);
+
+  const findCategory = (id:string)=>{
+
+    const category: Partial<CategoryItem> =
+      categoryList.find((i:any) => i.id === id) || {};
+
+    return category.name;
+  };
 
   return (
     <PageHeaderWrapper title="大屏管理">
@@ -123,7 +173,7 @@ const Screen = (props: Props) => {
               },
                 {
                   label: '大屏分类',
-                  key: 'catalogId',
+                  key: 'classifiedId$LIKE',
                   type: 'treeSelect',
                   props: {
                     data: categoryList,
@@ -134,7 +184,21 @@ const Screen = (props: Props) => {
           </div>
 
           <div className={styles.tableListOperator}>
-            <Button icon="plus" type="primary" onClick={i => setSaveVisible(true)}>新建大屏</Button>
+            <Button icon="plus" type="primary" onClick={() => setSaveVisible(true)}>新建大屏</Button>
+            <Divider type="vertical"/>
+            <Upload showUploadList={false} accept='.json' beforeUpload={(file) => {
+              const reader = new FileReader();
+              reader.readAsText(file);
+              reader.onload = (result) => {
+                try {
+                  uploadProps(JSON.parse(result.target.result));
+                } catch (error) {
+                  message.error('文件格式错误');
+                }
+              }
+            }}>
+              <Button><Icon type="upload"/>快速导入</Button>
+            </Upload>
           </div>
         </div>
       </Card>
@@ -161,11 +225,11 @@ const Screen = (props: Props) => {
             }}
             renderItem={item => {
               if (item && item.id) {
-                let metadata = item.metadata != undefined ? JSON.parse(item.metadata) : {};
+                let metadata = item.metadata != undefined && item.metadata != "" ? JSON.parse(item.metadata) : {};
                 return (
                   <List.Item key={item.id}>
                     <Card hoverable bodyStyle={{paddingBottom: 20}}
-                          onMouseEnter={i => setId(item.id)} onMouseLeave={i => setId('')}
+                          onMouseEnter={() => setId(item.id)} onMouseLeave={() => setId('')}
                           actions={[
                             <Tooltip placement="bottom" title="编辑">
                               <EditOutlined onClick={() => {
@@ -174,53 +238,42 @@ const Screen = (props: Props) => {
                                   id: item.id,
                                   name: item.name,
                                   description: item.description,
-                                  catalogId: props.data
+                                  catalogId: item.catalogId,
+                                  url: url
                                 })
                               }}/>
                             </Tooltip>,
                             <Tooltip placement="bottom" title="预览">
-                              <EyeOutlined onClick={i => {
-                                window.open(`http://localhost:8080/view/${item.id}?token=${token}`, '_blank')
+                              <EyeOutlined onClick={() => {
+                                url != '' ? window.open(url + '#/view/' + item.id + '?token=' + token, '_blank') : message.error('配置错误,请联系管理员')
                               }}/>
                             </Tooltip>,
                             <Tooltip placement="bottom" title="复制">
-                              <SwitcherOutlined onClick={copyConfirm}/>
+                              <SwitcherOutlined onClick={() => {
+                                setCopyVisible(true);
+                                setParam({url: url, metadata: item.metadata})
+                              }}/>
+                            </Tooltip>,
+                            <Tooltip placement="bottom" title="下载">
+                              <Icon type="download" onClick={() => {
+                                downloadObject(item, '大屏')
+                              }}/>
                             </Tooltip>,
                             <Tooltip key="more_actions" title="">
                               <Dropdown overlay={
                                 <Menu>
                                   <Menu.Item key="1">
-                                    <Popconfirm
-                                      placement="topRight"
-                                      title={item.state.value === 'enabled' ? '确定禁用此大屏吗？' : '确定启用此大屏吗？'}
-                                      onConfirm={() => {
-                                        let state;
-                                        if (item.state.value === 'enabled') {
-                                          state = 'disabled';
-                                        } else {
-                                          state = 'enabled';
-                                        }
-                                        updateState(state, item.id)
-                                      }}
-                                    >
-                                      <Button icon={item.state.value === 'enabled' ? 'close' : 'check'} type="link">
-                                        {item.state.value === 'enabled' ? '禁用' : '启用'}
-                                      </Button>
-                                    </Popconfirm>
+                                    <Button onClick={() => {
+                                      updateState(item.state.value, item.id)
+                                    }} icon={item.state.value === 'enabled' ? 'close' : 'check'} type="link">
+                                      {item.state.value === 'enabled' ? '禁用' : '启用'}
+                                    </Button>
                                   </Menu.Item>
                                   {item.state.value === 'disabled' && (
                                     <Menu.Item key="2">
-                                      <Popconfirm
-                                        placement="topRight"
-                                        title='确认删除此大屏吗？'
-                                        onConfirm={() => {
-                                          delConfirm(item.id);
-                                        }}
-                                      >
-                                        <Button icon="delete" type="link">
-                                          删除
-                                        </Button>
-                                      </Popconfirm>
+                                      <Button icon="delete" type="link" onClick={() => {
+                                        delConfirm(item.id)
+                                      }}>删除</Button>
                                     </Menu.Item>
                                   )}
                                 </Menu>
@@ -231,8 +284,7 @@ const Screen = (props: Props) => {
                           ]}
                     >
                       <Card.Meta
-                        avatar={<Avatar size={60}
-                                        src={metadata.visual != undefined ? metadata.visual.backgroundUrl : defaultImg}/>}
+                        avatar={<Avatar size={60} src={ metadata.visual != undefined && metadata.visual.backgroundUrl != undefined ? metadata.visual.backgroundUrl : false }/>}
                         title={<AutoHide title={item.name} style={{width: '95%'}}/>}
                         description={<AutoHide title={item.id} style={{width: '95%'}}/>}
                       />
@@ -241,12 +293,12 @@ const Screen = (props: Props) => {
                           <p>状态: 已{item.state.text}</p>
                         </div>
                         <div>
-                          <p>分类: {item.catalogId}</p>
+                          <p>分类: {findCategory(item.catalogId)}</p>
                         </div>
                       </div>
                       <div className={styles.edit} style={{display: item.id == id ? 'block' : 'none'}}>
-                        <div className={styles.editBtn}><a onClick={i => {
-                          window.open(`http://localhost:8080/build/${id}?token=${token}`, '_blank')
+                        <div className={styles.editBtn}><a onClick={() => {
+                          url != '' ? window.open(url + `#/build/${id}?token=${token}`, '_blank') : message.error('配置错误,请联系管理员')
                         }}>编辑</a></div>
                       </div>
                     </Card>
@@ -257,17 +309,23 @@ const Screen = (props: Props) => {
             }}
           />
         </div>
-        {saveVisible && <Save close={() => {
+        {saveVisible && <Save data={url} close={() => {
           setSaveVisible(false)
         }} save={() => {
           setSaveVisible(false);
-          handleSearch({pageSize: 12, pageIndex: 0});
+          handleSearch(searchParam);
+        }}/>}
+        {copyVisible && <Copy data={param} close={() => {
+          setCopyVisible(false)
+        }} save={() => {
+          setCopyVisible(false);
+          handleSearch(searchParam);
         }}/>}
         {editVisible && <Edit data={param} close={() => {
           setEditVisible(false)
         }} save={() => {
           setEditVisible(false);
-          handleSearch({pageSize: 12, pageIndex: 0});
+          handleSearch(searchParam);
         }}/>}
       </div>
     </PageHeaderWrapper>
