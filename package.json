@@ -5,7 +5,7 @@
   "description": "Jetlinks 前端",
   "scripts": {
     "analyze": "cross-env ANALYZE=1 umi build",
-    "build": "UMI_ENV=prod umi build",
+    "build": "umi build",
     "deploy": "npm run site && npm run gh-pages",
     "docker-hub:build": "docker build  -f Dockerfile.hub -t  ant-design-pro ./",
     "docker-prod:build": "docker-compose -f ./docker/docker-compose.yml build",
