@@ -166,7 +166,7 @@ const Paramter: React.FC<Props> = props => {
                 }}
                 value={data.valueType.unit}
               >
-                {/*{Array.from(new Set<string>(props.unitsData.map((unit: any) => {
+                {Array.from(new Set<string>(props.unitsData.map((unit: any) => {
                   return unit.type;
                 }))).map(type => {
                   const typeData = groupBy(props.unitsData, unit => unit.type)[type];
@@ -179,8 +179,8 @@ const Paramter: React.FC<Props> = props => {
                       ))}
                     </Select.OptGroup>
                   );
-                })}*/}
-                {renderUnit(props.unitsData)}
+                })}
+                {/*{renderUnit(props.unitsData)}*/}
               </Select>
             </Form.Item>
           </div>
