@@ -20,6 +20,7 @@ const Save = (props: Props) => {
       if (err) return;
 
       fileValue.type = 'big_screen';
+      fileValue.target="";
       fileValue.state = {
         text: "启用",
         value: "enabled"
