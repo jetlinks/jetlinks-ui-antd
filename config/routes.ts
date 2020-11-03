@@ -239,6 +239,12 @@ export const routes = [
                                 iconfont: 'icon-gujianshengji',
                                 component: './device/firmware/editor',
                             },
+                            {
+                                path: '/device/alarm',
+                                name: '设备告警',
+                                icon: 'alert',
+                                component: './device/alarmlog',
+                            }
                         ],
                     },
                     {
@@ -367,7 +373,7 @@ export const routes = [
                         icon: 'desktop',
                         tenant: ['admin'],
                         iconfont: 'icon-icon-',
-                        authority: ['big-screen','admin'],
+                        authority: ['big-screen', 'admin'],
                         routes: [
                             {
                                 path: '/data-screen/category',
@@ -375,7 +381,7 @@ export const routes = [
                                 icon: 'appstore',
                                 tenant: ['admin'],
                                 iconfont: 'icon-category-search-fill',
-                                authority: ['big-screen','admin'],
+                                authority: ['big-screen', 'admin'],
                                 version: 'pro',
                                 component: './data-screen/category',
                             },
@@ -385,7 +391,7 @@ export const routes = [
                                 icon: 'fund',
                                 tenant: ['admin'],
                                 iconfont: 'icon-screen',
-                                authority: ['big-screen','admin'],
+                                authority: ['big-screen', 'admin'],
                                 version: 'pro',
                                 component: './data-screen/screen',
                             }

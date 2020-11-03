@@ -132,9 +132,9 @@ export default {
   },
   proxy: proxy[REACT_APP_ENV || 'dev'],
   chainWebpack: webpackPlugin,
-  extraBabelPlugins: [
-    ['transform-remove-console', { exclude: ['error', 'info'] }]
-  ]
+  // extraBabelPlugins: [
+  //   ['transform-remove-console', { exclude: ['error', 'info'] }]
+  // ]
   // proxy: {
   //   '/jetlinks': {
   //     // target: 'http://192.168.3.89:8848/',
