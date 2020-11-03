@@ -179,21 +179,23 @@ const TenantDevice: React.FC<Props> = (props) => {
 
   useEffect(() => {
     // todo 查询租户
-    service.member.queryNoPaging({})
-      .pipe(
-        flatMap((i: any) => getProduct(i.userId)
-          .pipe(
-            flatMap((product: any) =>
-              zip(getDeviceState(product, i.userId), getAlarmCount(product.id, i.userId))),
-            map(tp2 => ({ userId: i.userId, name: i.name, key: `${i.userId}-${randomString(7)}`, ...tp2[0], alarmCount: tp2[1] })),
-            defaultIfEmpty({ userId: i.userId, name: i.name, key: `${i.userId}` })
-          )),
-        toArray(),
-        map(list => list.sort((a, b) => a.userId - b.userId)),
-      ).subscribe((result) => {
-        setData(result);
-      });
-  }, []);
+    if (tenantId) {
+      service.member.queryNoPaging({})
+        .pipe(
+          flatMap((i: any) => getProduct(i.userId)
+            .pipe(
+              flatMap((product: any) =>
+                zip(getDeviceState(product, i.userId), getAlarmCount(product.id, i.userId))),
+              map(tp2 => ({ userId: i.userId, name: i.name, key: `${i.userId}-${randomString(7)}`, ...tp2[0], alarmCount: tp2[1] })),
+              defaultIfEmpty({ userId: i.userId, name: i.name, key: `${i.userId}` })
+            )),
+          toArray(),
+          map(list => list.sort((a, b) => a.userId - b.userId)),
+        ).subscribe((result) => {
+          setData(result);
+        });
+    }
+  }, [tenantId]);
 
   const test: string[] = [];
 
