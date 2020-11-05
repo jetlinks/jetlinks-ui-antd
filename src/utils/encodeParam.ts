@@ -12,6 +12,8 @@ export default function encodeQueryParam(params: any) {
         if (!(terms[k] === '' || terms[k] === undefined || terms[k].length === 0 || terms[k] === {})) {
           if (k.indexOf('$LIKE') > -1 && terms[k].toString().indexOf('%') === -1) {
             terms[k] = `%${terms[k]}%`;
+          } if (k.indexOf('$IN') > -1) {
+            terms[k] = terms[k].toString();
           } else if (k.indexOf('$START') > -1) {
             terms[k] = `%${terms[k]}`;
           } else if (k.indexOf('$END') > -1) {
