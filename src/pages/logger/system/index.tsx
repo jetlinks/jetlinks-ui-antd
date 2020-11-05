@@ -169,10 +169,11 @@ const SystemLoggerList: React.FC<Props> = props => {
                 },
                 {
                   label: '日志级别',
-                  key: 'level',
+                  key: 'level$IN',
                   type: 'list',
                   props: {
-                    data: ['ERROR', 'INFO', 'WARN', 'DEBUG']
+                    data: ['ERROR', 'INFO', 'WARN', 'DEBUG'],
+                    mode: 'multiple'
                   }
                 },
                 {
