@@ -113,6 +113,7 @@ export const ArrayPanels: any = styled(
                   size="small"
                   className={`panel-list-item panel-list-empty ${allowAddition ? 'add-pointer' : ''}`}
                   onClick={allowAddition ? onAdd : undefined}
+                  style={{ textAlign: 'center' }}
                 >
                   <div className="empty-wrapper">{children}</div>
                 </Card>

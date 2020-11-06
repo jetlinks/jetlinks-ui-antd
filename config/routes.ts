@@ -438,6 +438,19 @@ export const routes = [
                         ],
                     },
                     {
+                        path: 'cloud',
+                        name: '云云对接',
+                        icon: 'cloud',
+                        routes: [
+                            {
+                                path: '/cloud/duer',
+                                name: 'DuerOS',
+                                icon: '',
+                                component: './cloud/dueros',
+                            }
+                        ]
+                    },
+                    {
                         path: 'account',
                         name: '个人中心',
                         icon: 'user',
