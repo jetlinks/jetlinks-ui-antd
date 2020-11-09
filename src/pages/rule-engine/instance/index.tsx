@@ -371,25 +371,25 @@ const RuleInstanceList: React.FC<Props> = props => {
                           <Avatar size={40} src={DeviceAlarm}/> : (item.modelType === 'sql_rule' ?
                             <Avatar size={40} src={SqlServer}/> :
                             <Avatar size={40} src={NodeRed}/>)}
-                        title={<AutoHide title={item.name} style={{width: '95%'}}/>}
+                        title={<AutoHide title={item.name} style={{width: '95%',fontWeight:600}}/>}
                         description={<AutoHide title={item.id} style={{width: '95%'}}/>}
                       />
                       <div className={cardStyles.cardItemContent}>
                         <div className={cardStyles.cardInfo}>
-                          <div>
+                          <div style={{textAlign: 'center', width: '33%'}}>
                             <p style={cardInfoTitle}>模型版本</p>
-                            <p style={{fontSize: 14}}>{item.modelVersion}</p>
+                            <p style={{fontSize: 14, fontWeight:600}}>{item.modelVersion}</p>
                           </div>
-                          <div>
+                          <div style={{textAlign: 'center', width: '33%'}}>
                             <p style={cardInfoTitle}>启动状态</p>
-                            <p>
+                            <p style={{fontSize: 14, fontWeight:600}}>
                               <Badge color={item.state?.value === 'stopped' ? 'red' : 'green'}
                                      text={item.state?.value === 'stopped' ? '已停止' : '已启动'}/>
                             </p>
                           </div>
-                          <div>
+                          <div style={{textAlign: 'center', width: '33%'}}>
                             <p style={cardInfoTitle}>模型类型</p>
-                            <p style={{fontSize: 14}}>
+                            <p style={{fontSize: 14, fontWeight:600}}>
                               {item.modelType === 'device_alarm' ? '设备告警' : (item.modelType === 'sql_rule' ? '数据转发' : '规则引擎')}
                             </p>
                           </div>

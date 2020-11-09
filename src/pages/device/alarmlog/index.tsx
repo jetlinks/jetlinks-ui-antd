@@ -3,15 +3,22 @@ import ProTable from "@/pages/system/permission/component/ProTable";
 import apis from "@/services";
 import encodeQueryParam from "@/utils/encodeParam";
 import { PageHeaderWrapper } from "@ant-design/pro-layout";
-import { Card, Divider, message, Modal, Tag } from "antd";
+import { Card, Divider, message, Modal, Tag, Input, Form } from "antd";
 import { ColumnProps } from "antd/lib/table";
 import moment from "moment";
+import { FormComponentProps } from "antd/lib/form";
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import { AlarmLog } from "../alarm/data";
 
-interface Props { }
-const Alarmlog: React.FC<Props> = () => {
+interface Props extends FormComponentProps{ }
+const Alarmlog: React.FC<Props> = props => {
+    const {
+        form: {getFieldDecorator},
+        form,
+      } = props;
     const [loading, setLoading] = useState(false);
+    const [solveVisible, setSolveVisible] = useState(false);
+    const [solveAlarmLogId, setSolveAlarmLogId] = useState();
     const [result, setResult] = useState<any>({});
     const productList = useRef<any[]>([]);
     const [searchParam, setSearchParam] = useState({
@@ -41,6 +48,23 @@ const Alarmlog: React.FC<Props> = () => {
                 }
             }).finally(() => { setLoading(false) });
 
+    };
+    const alarmSolve = () => {
+        form.validateFields((err, fileValue) => {
+            if (err) return;
+
+            apis.deviceAlarm.alarmLogSolve(solveAlarmLogId, fileValue.description)
+                .then((response: any) => {
+                    if (response.status === 200) {
+                        message.success('保存成功');
+                        setSolveAlarmLogId(undefined);
+                        setSolveVisible(false);
+                        handleSearch(searchParam);
+                    }
+                })
+                .catch(() => {
+                })
+        });
     };
     const alarmLogColumns: ColumnProps<AlarmLog>[] = [
         {
@@ -100,12 +124,14 @@ const Alarmlog: React.FC<Props> = () => {
                             cancelText: '关闭',
                         })
                     }}>详情</a>
-                    <Divider type="vertical" />
+                    {
+                        record.state !== 'solve' ? <Divider type="vertical" /> : ''
+                    }
                     {
                         record.state !== 'solve' && (
                             <a onClick={() => {
-                                // setSolveAlarmLogId(record.id);
-                                // setSolveVisible(true);
+                                setSolveAlarmLogId(record.id);
+                                setSolveVisible(true);
                             }}>处理</a>
                         )
                     }
@@ -163,7 +189,37 @@ const Alarmlog: React.FC<Props> = () => {
                     paginationConfig={result}
                 />
             </Card>
+            {solveVisible && (
+                <Modal
+                    title='告警处理结果'
+                    visible
+                    okText="确定"
+                    cancelText="取消"
+                    width='700px'
+                    onOk={() => {
+                        alarmSolve();
+                    }}
+                    onCancel={() => {
+                        setSolveVisible(false);
+                        setSolveAlarmLogId(undefined);
+                    }}
+                >
+                    <Form labelCol={{ span: 3 }} wrapperCol={{ span: 21 }} key="solve_form">
+                        <Form.Item key="description" label="处理结果">
+                            {getFieldDecorator('description', {
+                                rules: [
+                                    { required: true, message: '请输入处理结果' },
+                                    { max: 2000, message: '处理结果不超过2000个字符' }
+                                ],
+                            })(
+                                <Input.TextArea rows={8} placeholder="请输入处理结果" />,
+                            )}
+                        </Form.Item>
+                    </Form>
+                </Modal>
+            )}
         </PageHeaderWrapper>
     )
 }
-export default Alarmlog;
+
+export default Form.create<Props>()(Alarmlog);

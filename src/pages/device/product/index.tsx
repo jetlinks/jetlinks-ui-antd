@@ -433,15 +433,15 @@ const DeviceModel: React.FC<Props> = props => {
                       >
                         <Card.Meta
                           avatar={<Avatar size={40} src={item.photoUrl || productImg}/>}
-                          title={<AutoHide title={item.name} style={{width: '95%'}}/>}
+                          title={<AutoHide title={item.name} style={{width: '95%',fontWeight:600}}/>}
                           description={<AutoHide title={item.id} style={{width: '95%'}}/>}
                         />
                         <div className={cardStyles.cardItemContent}>
                           <div className={cardStyles.cardInfo}>
-                            <div>
+                            <div style={{ width: '33%', textAlign: 'center'}}>
                               <Spin spinning={!deviceCount[item.id]}>
                                 <p style={cardInfoTitle}>设备数量</p>
-                                <p style={{fontSize: 14}}>
+                                <p style={{fontSize: 14, fontWeight:600}}>
                                   <Tooltip key="findDevice" title="点击查看设备">
                                     <a onClick={() => {
                                       router.push(`/device/instance?productId=${item.id}`);
@@ -451,16 +451,16 @@ const DeviceModel: React.FC<Props> = props => {
                                 </p>
                               </Spin>
                             </div>
-                            <div>
+                            <div style={{ width: '33%', textAlign: 'center'}}>
                               <p style={cardInfoTitle}>发布状态</p>
-                              <p>
+                              <p style={{fontSize: 14, fontWeight:600}}>
                                 <Badge color={item.state === 0 ? 'red' : 'green'}
                                        text={item.state === 0 ? '未发布' : '已发布'}/>
                               </p>
                             </div>
-                            <div>
+                            <div style={{ width: '33%', textAlign: 'center'}}>
                               <p style={cardInfoTitle}>产品类型</p>
-                              <p style={{fontSize: 14}}>{item.deviceType.text}</p>
+                              <p style={{fontSize: 14, fontWeight:600}}>{item.deviceType.text}</p>
                             </div>
                           </div>
                         </div>
