@@ -14,10 +14,15 @@
     .ant-list .ant-list-item-content-single {
       max-width: 100%;
     }
+
+    .ant-list .ant-list-item{
+      min-width: 230px;
+    }
   }
   .cardInfo {
     margin-top: 16px;
-    margin-left: 10%;
+    display: flex;
+    justify-content: space-around;
     zoom: 1;
     &::before,
     &::after {
@@ -40,6 +45,7 @@
         font-size: 12px;
         line-height: 20px;
         font-weight: 300;
+        min-width: 60px;
       }
       p:first-child {
         margin-bottom: 4px;

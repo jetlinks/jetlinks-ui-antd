@@ -36,6 +36,7 @@ import WebSocketClient from './debugger/websocket-client';
 import UdpSupport from './debugger/udp-support';
 import HttpClient from './debugger/http-client';
 import HttpServer from './debugger/http-server';
+import AutoHide from '@/pages/analysis/components/Hide/autoHide';
 
 interface Props extends FormComponentProps {
   dispatch: Dispatch;
@@ -303,15 +304,16 @@ const Type: React.FC<Props> = props => {
                   >
                     <Card.Meta
                       avatar={<Avatar size="small" src={item.avatar} />}
-                      title={item.name}
+                      title={<AutoHide title={item.name} style={{width: '95%',fontWeight:600}}/>}
+                      style={{fontWeight:600}}
                     />
                     <div className={styles.cardItemContent}>
                       <div className={styles.cardInfo}>
-                        <div>
+                        <div style={{ width: '50%', textAlign: 'center'}}>
                           <p>组件类型</p>
-                          <p>{item.type.name}</p>
+                          <p style={{fontWeight:600}}>{item.type.name}</p>
                         </div>
-                        <div>
+                        <div style={{ width: '50%', textAlign: 'center'}}>
                           <p>启动状态</p>
                           <p style={{ color: 'red' }}>
                             <Popconfirm

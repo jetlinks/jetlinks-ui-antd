@@ -61,7 +61,7 @@ const Simulator: React.FC<Props> = props => {
 
                 <List<any>
                     rowKey="id"
-                    grid={{ gutter: 24, xl: 4, lg: 3, md: 3, sm: 2, xs: 1 }}
+                    grid={{ gutter: 24, xl: 4, lg: 3, md: 2, sm: 2, xs: 1 }}
                     dataSource={data}
                     renderItem={item => {
                         if (item && item.id) {
@@ -120,19 +120,19 @@ const Simulator: React.FC<Props> = props => {
                                             avatar={<Avatar size={40} src={productImg} />}
                                             title={item.name}
                                         />
-                                        <div >
-                                            <div style={{ float: 'left', marginRight: '50px' }}>
+                                        <div style={{display: 'flex',width: '100%'}}>
+                                            <div style={{ width: '50%', textAlign: 'center' }}>
 
                                                 <p  >状态</p>
-                                                <p>
+                                                <p style={{fontSize: 14, fontWeight:600}}>
                                                     <Badge color={item.status.value === 'stop' ? 'red' : 'green'}
                                                         text={item.status.text} />
                                                 </p>
                                             </div>
-                                            <div >
+                                            <div style={{ width: '50%', textAlign: 'center'}}>
 
                                                 <p >类型</p>
-                                                <p style={{ fontSize: 14 }}>
+                                                <p style={{fontSize: 14, fontWeight:600}}>
                                                     <Tooltip key="findDevice" title="点击查看设备">
                                                         <a>{item.networkType}</a>
                                                     </Tooltip>
