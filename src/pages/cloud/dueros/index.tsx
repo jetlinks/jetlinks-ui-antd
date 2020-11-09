@@ -1,5 +1,5 @@
 import { PageHeaderWrapper } from "@ant-design/pro-layout"
-import { Button, Card, Divider } from "antd";
+import { Button, Card, Divider, message, Popconfirm } from "antd";
 import React, { Fragment, useEffect, useState } from "react";
 import styles from '@/utils/table.less';
 import SearchForm from "@/components/SearchForm";
@@ -27,7 +27,7 @@ const DuerOS: React.FC<Props> = props => {
     const handleSearch = (params?: any) => {
         setSearchParam(params);
         setLoading(true);
-        service.query(params).subscribe(
+        service.query(encodeQueryParam(params)).subscribe(
             (data) => setResult(data),
             () => { },
             () => setLoading(false))
@@ -61,13 +61,20 @@ const DuerOS: React.FC<Props> = props => {
             render: (record: any) => (
                 <Fragment>
                     <a onClick={() => {
-
+                        setCurrent(record);
+                        setSaveVisible(true);
                     }}>编辑</a>
                     <Divider type="vertical" />
-                    <a onClick={() => {
-                        // setSolveAlarmLogId(record.id);
-                        // setSolveVisible(true);
-                    }}>删除</a>
+                    <Popconfirm
+                        title="确认删除吗？"
+                        onConfirm={() => {
+                            service.remove(record.id).subscribe(() => {
+                                message.success('删除成功');
+                            })
+                        }}>
+                        <a >删除</a>
+                    </Popconfirm>
+
                 </Fragment>
             )
         },
@@ -129,9 +136,19 @@ const DuerOS: React.FC<Props> = props => {
             {
                 saveVisible && (
                     <Save
-                        data={{}}
+                        data={current}
                         close={() => setSaveVisible(false)}
-                        save={(item: any) => { console.log(item) }} />
+                        save={(item: any) => {
+                            service.saveOrUpdate(item).subscribe(data => {
+                                message.success('添加成功');
+                            },
+                                () => { },
+                                () => {
+                                    handleSearch();
+                                    setSaveVisible(false);
+                                });
+                        }}
+                    />
                 )
             }
         </PageHeaderWrapper>
