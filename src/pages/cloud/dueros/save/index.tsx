@@ -53,11 +53,7 @@ const Save: React.FC<Props> = props => {
             }, () => { }, () => setLoading(false));
     }
 
-    useEffect(() => {
-        initValue();
-        console.log(props.data, 'dddd');
-    }, [loading]);
-
+    useEffect(() => initValue(), [loading]);
 
     const linkageEffect = async () => {
         // initValue();
