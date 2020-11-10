@@ -59,7 +59,7 @@ const ProtocolList: React.FC<Props> = props => {
       callback: response => {
         if (response.status === 200) {
           message.success('删除成功');
-          handleSearch();
+          handleSearch(searchParam);
         }
       },
     });
@@ -75,7 +75,7 @@ const ProtocolList: React.FC<Props> = props => {
       callback: (response: any) => {
         if (response.status === 200) {
           message.success('操作成功');
-          handleSearch();
+          handleSearch(searchParam);
         }
       },
     });
@@ -108,9 +108,15 @@ const ProtocolList: React.FC<Props> = props => {
         <Fragment>
           <a onClick={() => edit(record)}>编辑</a>
           <Divider type="vertical" />
-          <Popconfirm title="确认删除？" onConfirm={() => handleDelete(record)}>
-            <a>删除</a>
-          </Popconfirm>
+          {record.state === 1 ? (
+              <Popconfirm title="确认重新发布？" onConfirm={() => changeDeploy('_deploy', record)}>
+                <a>重新发布</a>
+              </Popconfirm>
+            ):(
+            <Popconfirm title="确认删除？" onConfirm={() => handleDelete(record)}>
+              <a>删除</a>
+            </Popconfirm>
+          ) }
           <Divider type="vertical" />
           {record.state === 1 ? (
             <Popconfirm title="确认取消发布？" onConfirm={() => changeDeploy('_un-deploy', record)}>
@@ -203,10 +209,8 @@ const ProtocolList: React.FC<Props> = props => {
                 showSizeChanger: true,
                 pageSizeOptions: ['10', '20', '50', '100'],
                 showTotal: (total: number) => (
-                  `共 ${total} 条记录 第  ${
-                  result.pageIndex + 1
-                  }/${
-                  Math.ceil(result.total / result.pageSize)
+                  `共 ${total} 条记录 第  ${result.pageIndex + 1
+                  }/${Math.ceil(result.total / result.pageSize)
                   }页`
                 ),
               }}
