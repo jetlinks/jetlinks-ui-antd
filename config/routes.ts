@@ -169,6 +169,7 @@ export const routes = [
                                 component: './device/instance/editor',
                             },
                             {
+                                hideInMenu: true,
                                 path: '/device/group',
                                 name: '分组',
                                 icon: 'gold',
@@ -179,7 +180,7 @@ export const routes = [
                                 component: './device/group',
                             },
                             {
-                                hideInMenu: true,
+                                // hideInMenu: true,
                                 path: '/device/tree',
                                 name: '分组',
                                 tenant: ['admin', 'member'],
@@ -441,11 +442,13 @@ export const routes = [
                         path: 'cloud',
                         name: '云云对接',
                         icon: 'cloud',
+                        authority: ['dueros-product', 'admin'],
                         routes: [
                             {
                                 path: '/cloud/duer',
                                 name: 'DuerOS',
-                                icon: '',
+                                authority: ['dueros-product', 'admin'],
+                                icon: 'cloud',
                                 component: './cloud/dueros',
                             }
                         ]
