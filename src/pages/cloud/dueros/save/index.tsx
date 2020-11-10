@@ -17,7 +17,7 @@ const actions = createFormActions();
 
 const Save: React.FC<Props> = props => {
     const service = new Service('dueros/product');
-    const { onFieldValueChange$, } = FormEffectHooks
+    const { onFieldValueChange$ } = FormEffectHooks
 
     const [productInfo, setProductInfo] = useState<{ list: any[], type: any[] }>({ list: [], type: [] });
 
@@ -65,13 +65,17 @@ const Save: React.FC<Props> = props => {
             linkage.show('actionMappings', true);
             linkage.show('propertyMappings', true);
             linkage.enum('actionMappings.*.action', actions);
+            linkage.enum('propertyMappings.*.source',
+                product.properties.map((item: any) => ({ label: item.name, value: item.id })));
+            linkage.enum('propertyMappings.*.target',
+                productRef.current.metadata.properties.map((item: any) => ({ label: item.name, value: item.id, ...item })));
         });
 
         onFieldValueChange$('actionMappings.*.command.messageType').subscribe(fieldState => {
             const propertiesPath = FormPath.transform(fieldState.name, /\d/, $1 => `*(actionMappings.${$1}.command.message.properties)`);
             const valuePath = FormPath.transform(fieldState.name, /\d/, $1 => `*(actionMappings.${$1}.command.message.value)`);
             const functionPath = FormPath.transform(fieldState.name, /\d/, $1 => `*(actionMappings.${$1}.command.message.functionId)`);
-            const functionParamPath = FormPath.transform(fieldState.name, /\d/, $1 => `*(actionMappings.${$1}.messagecommand.function)`);
+            const functionParamPath = FormPath.transform(fieldState.name, /\d/, $1 => `*(actionMappings.${$1}.command.message.function)`);
 
             switch (fieldState.value) {
                 case 'READ_PROPERTY':
@@ -80,6 +84,7 @@ const Save: React.FC<Props> = props => {
                         productRef.current.metadata.properties.map((item: any) => ({ label: item.name, value: item.id, ...item })));
                     linkage.show(valuePath, false);
                     linkage.show(propertiesPath, true);
+                    linkage.show(functionPath, false);
                     linkage.show(functionParamPath, false);
                     return;
                 case 'WRITE_PROPERTY':
@@ -87,6 +92,7 @@ const Save: React.FC<Props> = props => {
                         propertiesPath,
                         productRef.current.metadata.properties.map((item: any) => ({ label: item.name, value: item.id, ...item })));
                     linkage.show(valuePath, true);
+                    linkage.show(functionPath, false);
                     linkage.show(functionParamPath, false);
                     return;
                 case 'INVOKE_FUNCTION':
@@ -154,6 +160,8 @@ const Save: React.FC<Props> = props => {
             // 参数列表
             setFuncList(list);
         })
+
+
     }
 
     return (
@@ -344,7 +352,10 @@ const Save: React.FC<Props> = props => {
                                                 },
                                                 "target": {
                                                     "title": "平台属性",
-                                                    "x-component": "select"
+                                                    "x-component": "select",
+                                                    "x-props": {
+                                                        "mode": 'tags'
+                                                    }
                                                 }
                                             }
                                         }
