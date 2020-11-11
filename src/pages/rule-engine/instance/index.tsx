@@ -68,6 +68,12 @@ const RuleInstanceList: React.FC<Props> = props => {
   const [deviceAlarm, setDeviceAlarm] = useState(initState.deviceAlarm);
   const [deviceMateData, setDeviceMateData] = useState(initState.deviceMateData);
 
+  const modelType = new Map();
+  modelType.set('device_alarm', '设备告警');
+  modelType.set('sql_rule', '数据转发');
+  modelType.set('node-red', '规则引擎');
+  modelType.set('rule-scene', '场景联动');
+
   const handleSearch = (params?: any) => {
     setSearchParam(params);
     dispatch({
@@ -389,8 +395,8 @@ const RuleInstanceList: React.FC<Props> = props => {
                           </div>
                           <div style={{textAlign: 'center', width: '33%'}}>
                             <p style={cardInfoTitle}>模型类型</p>
-                            <p style={{fontSize: 14, fontWeight:600}}>
-                              {item.modelType === 'device_alarm' ? '设备告警' : (item.modelType === 'sql_rule' ? '数据转发' : '规则引擎')}
+                            <p style={{fontSize: 14}}>
+                              {modelType.get(item.modelType)}
                             </p>
                           </div>
                         </div>
