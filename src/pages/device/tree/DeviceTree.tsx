@@ -8,6 +8,7 @@ import Save from "./save";
 import Service from "./service";
 import DeviceInfo from '@/pages/device/instance/editor/index';
 import { router } from "umi";
+import ProTable from "@/pages/system/permission/component/ProTable";
 
 interface Props {
     location: any;
@@ -52,7 +53,13 @@ const DeviceTree: React.FC<Props> = (props) => {
     const [deviceLoading, setDeviceLoading] = useState<boolean>(true);
     const { data, deviceData, saveVisible, bindVisible, detailVisible, current, parentId, deviceIds, device } = state;
     const service = new Service('device');
-
+    const [searchParam, setSearchParam] = useState({
+        pageSize: 10,
+        sorts: {
+            order: "descend",
+            field: "alarmTime"
+        }
+    });
     const search = (param?: any) => {
         setDeviceLoading(true);
         const defaultTerms = {
@@ -74,7 +81,7 @@ const DeviceTree: React.FC<Props> = (props) => {
                         data: resp
                     },
                 });
-                searchDevice(resp);
+                searchDevice(resp, searchParam);
 
                 dispatch({
                     type: 'operation', payload: {
@@ -99,8 +106,10 @@ const DeviceTree: React.FC<Props> = (props) => {
             })
     }
 
-    const searchDevice = (item: GroupItem | any) => {
+    const searchDevice = (item: GroupItem | any, params: any) => {
         service.groupDevice(encodeQueryParam({
+            pageSize: 10,
+            ...params,
             terms: {
                 'id$dev-group': item.id,
                 name$LIKE: item.searchValue
@@ -143,18 +152,40 @@ const DeviceTree: React.FC<Props> = (props) => {
     }
 
     const unbindAll = () => {
-        service.unbindAll(parentId!).subscribe(
-            () => message.success('解绑成功'),
-            () => message.error('解绑失败'),
-            () => {
-                dispatch({
-                    type: 'operation', payload: {
-                        bindVisible: false
-                    }
+        if (selectedRowKeys.length > 0) {
+            service.unbind(parentId!, selectedRowKeys).subscribe(
+                () => message.success('解绑成功'),
+                () => message.error('解绑失败'),
+                () => {
+                    dispatch({
+                        type: 'operation', payload: {
+                            bindVisible: false
+                        }
+                    })
+                    searchDevice({ id: parentId });
+                    setSelectedRowKeys([]);
                 })
-                searchDevice({ id: parentId });
-            })
+        } else {
+            service.unbindAll(parentId!).subscribe(
+                () => message.success('解绑成功'),
+                () => message.error('解绑失败'),
+                () => {
+                    dispatch({
+                        type: 'operation', payload: {
+                            bindVisible: false
+                        }
+                    })
+                    searchDevice({ id: parentId });
+
+                })
+        }
+
     }
+    const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
+    const rowSelection = {
+        selectedRowKeys,
+        onChange: (selectedRowKeys: string[] | any[]) => { setSelectedRowKeys(selectedRowKeys) },
+    };
 
     return (
         <PageHeaderWrapper title={
@@ -208,7 +239,7 @@ const DeviceTree: React.FC<Props> = (props) => {
                                 onRow={(item) => {
                                     return {
                                         onClick: () => {
-                                            searchDevice(item);
+                                            searchDevice(item, searchParam);
                                             setDeviceLoading(true);
                                             dispatch({
                                                 type: 'operation',
@@ -286,7 +317,7 @@ const DeviceTree: React.FC<Props> = (props) => {
                                 ]} />
                         </Col>
                         <Col span={16}>
-                            <Table
+                            <ProTable
                                 loading={deviceLoading}
                                 title={() => (
                                     <Fragment>
@@ -303,13 +334,13 @@ const DeviceTree: React.FC<Props> = (props) => {
                                         </span>
 
                                         <Popconfirm
-                                            title="解绑全部设备？"
+                                            title="确认解绑？"
                                             onConfirm={() => unbindAll()}
                                         >
                                             <Button
                                                 style={{ marginLeft: 10 }}
                                                 type="danger"
-                                            >解绑全部</Button>
+                                            >解绑{selectedRowKeys.length > 0 ? `${selectedRowKeys.length}项` : '全部'}</Button>
                                         </Popconfirm>
                                         <Button style={{ marginLeft: 10 }} onClick={() => {
                                             dispatch({
@@ -326,15 +357,20 @@ const DeviceTree: React.FC<Props> = (props) => {
 
                                 )}
                                 dataSource={deviceData?.data}
+                                paginationConfig={deviceData}
                                 size="small"
-                                rowKey={(item: any) => item.id}
+                                rowKey="id"
+                                rowSelection={rowSelection}
+                                onSearch={(params: any) => {
+                                    searchDevice(params, searchParam);
+                                }}
                                 columns={[
                                     { title: 'ID', dataIndex: 'id' },
                                     { title: '名称', dataIndex: 'name' },
                                     { title: '产品名称', dataIndex: 'productName' },
-                                    { title: '状态', dataIndex: 'state', render: (text) => text.text },
+                                    { title: '状态', dataIndex: 'state', render: (text: any) => text.text },
                                     {
-                                        title: '操作', render: (_, record) => (
+                                        title: '操作', render: (_: any, record: any) => (
                                             <Fragment>
                                                 <a onClick={
                                                     () => {
