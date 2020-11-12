@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Modal, Tabs, Table, Tag, Tooltip, Form, Row, Col, DatePicker, Button } from "antd";
 import { RuleInstanceItem } from "@/pages/rule-engine/instance/data";
 import { ColumnProps, PaginationConfig, SorterResult } from 'antd/es/table';
@@ -6,7 +6,7 @@ import encodeQueryParam from '@/utils/encodeParam';
 import apis from "@/services";
 import styles from './detail.less';
 import moment, { Moment } from 'moment';
-import { getWebsocket } from '@/layouts/GlobalWebSocket';
+// import { getWebsocket } from '@/layouts/GlobalWebSocket';
 import { FormComponentProps } from "antd/lib/form";
 const { TabPane } = Tabs;
 
@@ -26,27 +26,27 @@ interface State {
   createTime: any
 }
 
-const columnsRealTime: ColumnProps<RuleInstanceItem>[] = [
-  {
-    title: '时间',
-    dataIndex: 'time',
-    align: 'center',
-    width: 200,
-    render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss')
-  },
-  {
-    title: '内容',
-    align: 'center',
-    width: 150,
-    ellipsis: true,
-    dataIndex: 'message',
-    render: (message: string) => {
-      return (
-        <Tooltip placement="left" arrowPointAtCenter title={message}>{message}</Tooltip>
-      )
-    }
-  }
-];
+// const columnsRealTime: ColumnProps<RuleInstanceItem>[] = [
+//   {
+//     title: '时间',
+//     dataIndex: 'time',
+//     align: 'center',
+//     width: 200,
+//     render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss')
+//   },
+//   {
+//     title: '内容',
+//     align: 'center',
+//     width: 150,
+//     ellipsis: true,
+//     dataIndex: 'message',
+//     render: (message: string) => {
+//       return (
+//         <Tooltip placement="left" arrowPointAtCenter title={message}>{message}</Tooltip>
+//       )
+//     }
+//   }
+// ];
 
 const columns: ColumnProps<RuleInstanceItem>[] = [
   {
@@ -97,7 +97,37 @@ const columns: ColumnProps<RuleInstanceItem>[] = [
         <Tooltip placement="left" arrowPointAtCenter title={message}>{message}</Tooltip>
       )
     }
-  }
+  },
+  {
+    title: '操作',
+    width: '250px',
+    align: 'center',
+    render: (record) => {
+      let content = '';
+      try {
+        content = JSON.stringify(JSON.parse(record.message), null, 2);
+      } catch (error) {
+        content = record.message;
+      }
+      return (
+        <Fragment>
+          <a
+            onClick={() =>
+              Modal.confirm({
+                width: '50VW',
+                title: '详细信息',
+                content: <pre>{content}</pre>,
+                okText: '确定',
+                cancelText: '关闭',
+              })
+            }
+          >
+            查看
+          </a>
+        </Fragment>
+      );
+    },
+  },
 ];
 
 const columnsEvents: ColumnProps<RuleInstanceItem>[] = [
@@ -124,6 +154,36 @@ const columnsEvents: ColumnProps<RuleInstanceItem>[] = [
         <Tooltip placement="left" arrowPointAtCenter title={message}>{message}</Tooltip>
       )
     }
+  },
+  {
+    title: '操作',
+    width: '250px',
+    align: 'center',
+    render: (record) => {
+      let content = '';
+      try {
+        content = JSON.stringify(JSON.parse(record.message), null, 2);
+      } catch (error) {
+        content = record.message;
+      }
+      return (
+        <Fragment>
+          <a
+            onClick={() =>
+              Modal.confirm({
+                width: '50VW',
+                title: '详细信息',
+                content: <pre>{content}</pre>,
+                okText: '确定',
+                cancelText: '关闭',
+              })
+            }
+          >
+            查看
+          </a>
+        </Fragment>
+      );
+    },
   }
 ];
 
@@ -149,8 +209,8 @@ const Detail: React.FC<Props> = props => {
     nodeData: []
   };
   const [searchParam, setSearchParam] = useState(initState.searchParam);
-  const [realTimeDataLogs, setRealTimeDataLogs] = useState(initState.realTimeDataLogs);
-  const [realTimeDataEvents, setRealTimeDataEvents] = useState(initState.realTimeDataEvents);
+  // const [realTimeDataLogs, setRealTimeDataLogs] = useState(initState.realTimeDataLogs);
+  // const [realTimeDataEvents, setRealTimeDataEvents] = useState(initState.realTimeDataEvents);
   const [dataLogs, setDataLogs] = useState(initState.dataLogs);
   const [dataEvents, setDataEvents] = useState(initState.dataEvents);
   const [nodeData, setNodeData] = useState(initState.nodeData)
@@ -336,51 +396,51 @@ const Detail: React.FC<Props> = props => {
     })
   }, []);
 
-  useEffect(() => {
-    let tempLogs = getWebsocket(
-      `rule-engine-realTime-logs${props.data.id}`,
-      `/rule-engine/${props.data.id}/*/logger/*`,
-      {},
-    ).subscribe(
-      (resp: any) => {
-        const {payload} = resp;
-        if (payload.message !== undefined || payload.timestamp !== undefined) {
-          let arr: any = {
-            message: payload.message,
-            time: payload.timestamp
-          };
-          setRealTimeDataLogs(prev => ([arr, ...prev]));
-        }
-        if (realTimeDataLogs.length >= 10) {
-          setRealTimeDataLogs(prev => ([...prev.slice(0, 10)]))
-        }
-      }
-    );
-    let tempEvents = getWebsocket(
-      `rule-engine-realTime-events${props.data.id}`,
-      `/rule-engine/${props.data.id}/*/event/*`,
-      {},
-    ).subscribe(
-      (resp: any) => {
-        const {payload} = resp;
-        if (payload.data !== undefined) {
-          let arr: any = {
-            time: new Date(),
-            message: JSON.stringify(payload.data)
-          };
-          setRealTimeDataEvents(prev => ([arr, ...prev]));
-        }
-        if (realTimeDataEvents.length >= 10) {
-          setRealTimeDataEvents(prev => ([...prev.slice(0, 10)]))
-        }
-      }
-    );
+  // useEffect(() => {
+  //   let tempLogs = getWebsocket(
+  //     `rule-engine-realTime-logs${props.data.id}`,
+  //     `/rule-engine/${props.data.id}/*/logger/*`,
+  //     {},
+  //   ).subscribe(
+  //     (resp: any) => {
+  //       const {payload} = resp;
+  //       if (payload.message !== undefined || payload.timestamp !== undefined) {
+  //         let arr: any = {
+  //           message: payload.message,
+  //           time: payload.timestamp
+  //         };
+  //         setRealTimeDataLogs(prev => ([arr, ...prev]));
+  //       }
+  //       if (realTimeDataLogs.length >= 10) {
+  //         setRealTimeDataLogs(prev => ([...prev.slice(0, 10)]))
+  //       }
+  //     }
+  //   );
+  //   let tempEvents = getWebsocket(
+  //     `rule-engine-realTime-events${props.data.id}`,
+  //     `/rule-engine/${props.data.id}/*/event/*`,
+  //     {},
+  //   ).subscribe(
+  //     (resp: any) => {
+  //       const {payload} = resp;
+  //       if (payload.data !== undefined) {
+  //         let arr: any = {
+  //           time: new Date(),
+  //           message: JSON.stringify(payload.data)
+  //         };
+  //         setRealTimeDataEvents(prev => ([arr, ...prev]));
+  //       }
+  //       if (realTimeDataEvents.length >= 10) {
+  //         setRealTimeDataEvents(prev => ([...prev.slice(0, 10)]))
+  //       }
+  //     }
+  //   );
 
-    return () => {
-      tempLogs && tempLogs.unsubscribe();
-      tempEvents && tempEvents.unsubscribe();
-    };
-  }, [realTimeDataLogs, realTimeDataEvents]);
+  //   return () => {
+  //     tempLogs && tempLogs.unsubscribe();
+  //     tempEvents && tempEvents.unsubscribe();
+  //   };
+  // }, [realTimeDataLogs, realTimeDataEvents]);
 
   return (
     <Modal width="1000px"
@@ -390,54 +450,7 @@ const Detail: React.FC<Props> = props => {
            onOk={() => props.close()}
     >
       <Tabs defaultActiveKey="1">
-        <TabPane tab="运行日志" key="1">
-          <div className={styles.box}>
-            <div className={styles.boxLeft}>
-              <div className={styles.search}>
-                <Form>
-                  <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-                    <Col style={{ height: 56 }} md={8} sm={24} key='createTimeLogs'>
-                      <Form.Item>
-                        {getFieldDecorator('createTimeLogs', {
-                          initialValue: '',
-                          rules: []
-                        })(
-                          <DatePicker.RangePicker
-                            style={{ width: '200%' }}
-                            showTime={{ format: 'HH:mm' }}
-                            format="YYYY-MM-DD HH:mm"
-                            placeholder={['开始时间', '结束时间']}
-                          />
-                        )}
-                      </Form.Item>
-                    </Col>
-                    <div style={{ float: 'right', marginBottom: 24, marginRight: 30, marginTop: 4 }}>
-                      <Button type="primary" onClick={searchLogs}> 查询</Button>
-                      <Button style={{ marginLeft: 8 }} onClick={() => { props.form.resetFields(); searchLogs(); }}>重置</Button>
-                    </div>
-                  </Row>
-                </Form>
-              </div>
-              <Table
-                dataSource={dataLogs.datalist || []}
-                rowKey="id"
-                columns={columns}
-                showHeader={false}
-                onChange={logsChange}
-                pagination={{
-                  current: dataLogs.pageIndex + 1,
-                  total: dataLogs.total,
-                  pageSize: dataLogs.pageSize
-                }}
-              />
-            </div>
-            <div className={styles.boxRight}>
-              <h4>运行日志：</h4>
-              <Table dataSource={(realTimeDataLogs || {})} rowKey="id" columns={columnsRealTime} pagination={false}/>
-            </div>
-          </div>
-        </TabPane>
-        <TabPane tab="运行数据" key="2">
+        <TabPane tab="运行数据" key="1">
           <div className={styles.box}>
             <div className={styles.boxLeft}>
               <div className={styles.search}>
@@ -470,7 +483,7 @@ const Detail: React.FC<Props> = props => {
                 dataSource={dataEvents.datalist || []}
                 rowKey="id"
                 columns={columnsEvents}
-                showHeader={false}
+                // showHeader={false}
                 pagination={{
                   current: dataEvents.pageIndex + 1,
                   total: dataEvents.total,
@@ -478,10 +491,57 @@ const Detail: React.FC<Props> = props => {
                 }}
               />
             </div>
-            <div className={styles.boxRight}>
+            {/* <div className={styles.boxRight}>
               <h4>运行日志：</h4>
               <Table dataSource={(realTimeDataEvents || {})} rowKey="id" columns={columnsRealTime} pagination={false}/>
+            </div> */}
+          </div>
+        </TabPane>
+        <TabPane tab="运行日志" key="2">
+          <div className={styles.box}>
+            <div className={styles.boxLeft}>
+              <div className={styles.search}>
+                <Form>
+                  <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
+                    <Col style={{ height: 56 }} md={8} sm={24} key='createTimeLogs'>
+                      <Form.Item>
+                        {getFieldDecorator('createTimeLogs', {
+                          initialValue: '',
+                          rules: []
+                        })(
+                          <DatePicker.RangePicker
+                            style={{ width: '200%' }}
+                            showTime={{ format: 'HH:mm' }}
+                            format="YYYY-MM-DD HH:mm"
+                            placeholder={['开始时间', '结束时间']}
+                          />
+                        )}
+                      </Form.Item>
+                    </Col>
+                    <div style={{ float: 'right', marginBottom: 24, marginRight: 30, marginTop: 4 }}>
+                      <Button type="primary" onClick={searchLogs}> 查询</Button>
+                      <Button style={{ marginLeft: 8 }} onClick={() => { props.form.resetFields(); searchLogs(); }}>重置</Button>
+                    </div>
+                  </Row>
+                </Form>
+              </div>
+              <Table
+                dataSource={dataLogs.datalist || []}
+                rowKey="id"
+                columns={columns}
+                // showHeader={false}
+                onChange={logsChange}
+                pagination={{
+                  current: dataLogs.pageIndex + 1,
+                  total: dataLogs.total,
+                  pageSize: dataLogs.pageSize
+                }}
+              />
             </div>
+            {/* <div className={styles.boxRight}>
+              <h4>运行日志：</h4>
+              <Table dataSource={(realTimeDataLogs || {})} rowKey="id" columns={columnsRealTime} pagination={false}/>
+            </div> */}
           </div>
         </TabPane>
       </Tabs>
