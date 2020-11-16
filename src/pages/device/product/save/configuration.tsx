@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from 'react';
-import {FormComponentProps} from 'antd/lib/form';
+import React, { useEffect, useState } from 'react';
+import { FormComponentProps } from 'antd/lib/form';
 import Form from 'antd/es/form';
-import {Button, Card, Col, Drawer, Input, Modal, Row, Select} from 'antd';
-import {DeviceProduct} from "@/pages/device/product/data";
+import { Button, Card, Col, Drawer, Input, Row, Select } from 'antd';
+import { DeviceProduct } from "@/pages/device/product/data";
 
 interface Props extends FormComponentProps {
   data?: Partial<DeviceProduct>;
@@ -28,60 +28,67 @@ const Configuration: React.FC<Props> = props => {
     configForm: [],
   };
 
-  const {getFieldDecorator} = props.form;
+  const { getFieldDecorator } = props.form;
   // 配置名称
-  const [configName, setConfigName] = useState(initState.configName);
+  // const [configName, setConfigName] = useState(initState.configName);
   // 配置表单
   const [configForm, setConfigForm] = useState(initState.configForm);
 
   const parseConfig = (configData: any[]) => {
     const config = configData.map(item => {
-      const label = item.name;
-      const key = `configuration.${item.property}`;
-      const componentType = item.type.id;
-      let component = null;
-      const options = {
-        initialValue: props.data?.configuration ? props.data?.configuration[item.property] : undefined,
-      };
+      const configName = item.name;
+      let properties = item.properties.map((i: any) => {
+        const label = i.name;
+        const key = `configuration.${i.property}`;
+        const componentType = i.type.id;
+        let component = null;
+        const options = {
+          initialValue: props.data?.configuration ? props.data?.configuration[i.property] : undefined,
+        };
 
-      if (componentType !== 'enum') {
-        component = componentType === 'password' ? <Input.Password/> : <Input type={'text'}/>;
-      } else {
-        const o = item.type.elements;
-        component = (
-          <Select>
-            {(o || []).map((e: any) => (
-              <Select.Option key={e.value} value={e.value}>
-                {e.text}
-              </Select.Option>
-            ))}
-          </Select>
-        );
-      }
+        if (componentType !== 'enum') {
+          component = componentType === 'password' ? <Input.Password /> : <Input type={'text'} />;
+        } else {
+          const o = i.type.elements;
+          component = (
+            <Select>
+              {(o || []).map((e: any) => (
+                <Select.Option key={e.value} value={e.value}>
+                  {e.text}
+                </Select.Option>
+              ))}
+            </Select>
+          );
+        }
+        return {
+          label,
+          key,
+          styles: {
+            xl: { span: 8 },
+            lg: { span: 8 },
+            md: { span: 12 },
+            sm: { span: 24 },
+          },
+          options,
+          component
+        };
+      })
       return {
-        label,
-        key,
-        styles: {
-          xl: {span: 8},
-          lg: {span: 8},
-          md: {span: 12},
-          sm: {span: 24},
-        },
-        options,
-        component,
-      };
+        configName,
+        properties
+      }
     });
     setConfigForm(config);
   };
 
   useEffect(() => {
-    setConfigName(props.configuration.name);
-    parseConfig(props.configuration.properties)
+    // setConfigName(props.configuration[0].name);
+    parseConfig(props.configuration)
   }, []);
 
 
   const saveData = () => {
-    const {form} = props;
+    const { form } = props;
     form.validateFields((err, fileValue) => {
       if (err) return;
       props.save(fileValue);
@@ -96,19 +103,24 @@ const Configuration: React.FC<Props> = props => {
       onClose={() => props.close()}
       closable
     >
-      <Form labelCol={{span: 6}} wrapperCol={{span: 18}}>
-        {configName && (
-          <Card title={configName} style={{marginBottom: 20}} bordered={false}>
+      <Form labelCol={{ span: 6 }} wrapperCol={{ span: 18 }}>
+        {configForm && (
+          // <Card title="配置" style={{ marginBottom: 20 }} bordered={false}>
             <Row gutter={16}>
-              {configForm.map(item => (
-                <Col key={item.key}>
-                  <Form.Item label={item.label}>
-                    {getFieldDecorator(item.key, item.options)(item.component)}
-                  </Form.Item>
+              {configForm.map((item, index) => (
+                <Col key={index}>
+                  <h4>{item.configName}</h4>
+                  {item.properties.map((i: any) => (
+                    <Col key={i.key}>
+                      <Form.Item label={i.label}>
+                        {getFieldDecorator(i.key, i.options)(i.component)}
+                      </Form.Item>
+                    </Col>
+                  ))}
                 </Col>
               ))}
             </Row>
-          </Card>
+          // </Card>
         )}
       </Form>
       <div
@@ -127,10 +139,10 @@ const Configuration: React.FC<Props> = props => {
           onClick={() => {
             props.close();
           }}
-          style={{marginRight: 8}}
+          style={{ marginRight: 8 }}
         >
           关闭
-        </Button>
+                </Button>
         <Button
           onClick={() => {
             saveData();
@@ -138,7 +150,7 @@ const Configuration: React.FC<Props> = props => {
           type="primary"
         >
           保存
-        </Button>
+                </Button>
       </div>
     </Drawer>
   );

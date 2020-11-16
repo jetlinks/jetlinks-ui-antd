@@ -133,9 +133,14 @@ const Editor: React.FC<Props> = props => {
               tab: '子设备管理',
             });
           }
+          // apis.deviceProdcut.protocolConfiguration(deviceData.protocol, deviceData.transport)
+          //   .then(resp => {
+          //     setConfig(resp.result);
+          //   }).catch();
 
-          apis.deviceProdcut.protocolConfiguration(deviceData.protocol, deviceData.transport)
+            apis.deviceProdcut.deviceConfiguration(deviceData.id)
             .then(resp => {
+              // console.log(resp)
               setConfig(resp.result);
             }).catch();
           setTableList(tabList);
