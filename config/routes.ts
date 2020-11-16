@@ -354,6 +354,13 @@ export const routes = [
                                 authority: ['rule-instance', 'admin'],
                                 component: './rule-engine/sqlRule',
                             },
+                            {
+                                path: '/rule-engine/scene',
+                                name: '场景联动',
+                                icon: 'gateway',
+                                authority: ['rule-scene', 'admin'],
+                                component: './rule-engine/scene'
+                            }
                             // {
                             //   path: '/rule-engine/email',
                             //   name: 'email',
