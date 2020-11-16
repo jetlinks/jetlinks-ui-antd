@@ -122,7 +122,7 @@ export const routes = [
                         icon: 'box-plot',
                         tenant: ['admin', 'member'],
                         iconfont: 'icon-device-manage',
-                        authority: ['device-product', 'device-instance', 'admin'],
+                        authority: ['device-product', 'device-instance', 'device-category', 'admin'],
                         routes: [
                             {
                                 path: '/device/product',
@@ -132,6 +132,15 @@ export const routes = [
                                 tenant: ['admin', 'member'],
                                 authority: ['device-product', 'admin'],
                                 component: './device/product',
+                            },
+                            {
+                                path: '/device/product-category',
+                                name: '产品分类',
+                                icon: 'appstore',
+                                iconfont: 'icon-shebei',
+                                tenant: ['admin', 'member'],
+                                authority: ['device-category', 'admin'],
+                                component: './device/product-category',
                             },
                             {
                                 hideInMenu: true,
