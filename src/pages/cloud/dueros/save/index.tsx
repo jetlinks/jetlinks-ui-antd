@@ -56,7 +56,6 @@ const Save: React.FC<Props> = props => {
     useEffect(() => initValue(), [loading]);
 
     const linkageEffect = async () => {
-        // initValue();
         const linkage = createLinkageUtils();
         onFieldValueChange$('applianceType').subscribe(fieldState => {
             if (!fieldState.value) return;
@@ -143,8 +142,7 @@ const Save: React.FC<Props> = props => {
             const list = {};
             (func.inputs || []).forEach((item: any) => {
                 const valueType = item.valueType;
-
-                list[item.id] = {
+                list['funcparam.' + item.id] = {
                     "title": item.description ? `{{text("${item.name}",help("${item.description.replaceAll('\n', '')}"))}}` : item.name,
                     "x-component": componentMap[valueType.type],
                     "type": componentType[valueType.type],
@@ -180,7 +178,25 @@ const Save: React.FC<Props> = props => {
                     expressionScope={createRichTextUtils()}
                     initialValues={props.data}
                     actions={actions}
-                    onSubmit={v => props.save(v)}
+                    onSubmit={data => {
+                        if (data.actionMappings.length > 1) {
+                            data.actionMappings.map((item: any) => {
+                                const funcParam = item?.command?.message?.funcparam;
+                                const inputs: any = []
+                                if (funcParam) {
+                                    Object.keys(funcParam).forEach(key => {
+                                        inputs.push({
+                                            name: key,
+                                            value: funcParam[key]
+                                        })
+                                    })
+                                }
+                                item.command.message.inputs = inputs;
+                                return item
+                            })
+                        }
+                        props.save(data);
+                    }}
                     components={{ DatePicker, Input, Select, ArrayPanels, ArrayTable, FormCard, NumberPicker }}
                     schema={{
                         "type": "object",
