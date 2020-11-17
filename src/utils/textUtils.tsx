@@ -1,5 +1,6 @@
 
 import { QuestionCircleOutlined } from "@ant-design/icons"
+import { createFormActions, FormPath } from "@formily/antd"
 import { Tooltip } from "antd"
 import React from "react"
 
@@ -41,6 +42,22 @@ const createRichTextUtils = () => {
                 <span style={{ margin: '0 3px', cursor: 'default' }}>{text}</span>
             )
         }
+    }
+}
+
+export const createLinkageUtils = () => {
+    const { setFieldState } = createFormActions()
+    const linkage = (key: string, defaultValue: any) => (path: string, value: any) =>
+        setFieldState(path, state => {
+            FormPath.setIn(state, key, value !== undefined ? value : defaultValue)
+        })
+    return {
+        hide: linkage('visible', false),
+        show: linkage('visible', true),
+        enum: linkage('props.enum', []),
+        loading: linkage('loading', true),
+        loaded: linkage('loading', false),
+        value: linkage('value', '')
     }
 }
 export default createRichTextUtils;

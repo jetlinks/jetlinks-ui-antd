@@ -18,11 +18,16 @@ const DuerOS: React.FC<Props> = props => {
     const [result, setResult] = useState<any>({});
     const [saveVisible, setSaveVisible] = useState<boolean>(false);
     const [current, setCurrent] = useState<any>({});
+    const [productType, setProductType] = useState<any[]>([]);
     const [searchParam, setSearchParam] = useState({
         pageSize: 10,
     });
     useEffect(() => {
         handleSearch(encodeQueryParam(searchParam));
+        service.productTypes().subscribe((data) => {
+            const temp = data.map((item: any) => ({ value: item.id, label: item.name, ...item }))
+            setProductType(temp);
+        })
     }, [])
     const handleSearch = (params?: any) => {
         setSearchParam(params);
@@ -97,10 +102,10 @@ const DuerOS: React.FC<Props> = props => {
                                 },
                                 {
                                     label: '设备类型',
-                                    key: 'level$IN',
+                                    key: 'applianceType$IN',
                                     type: 'list',
                                     props: {
-                                        data: ['ERROR', 'INFO', 'WARN', 'DEBUG'],
+                                        data: productType,
                                         mode: 'multiple'
                                     }
                                 }

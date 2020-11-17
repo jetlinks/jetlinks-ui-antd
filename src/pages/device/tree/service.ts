@@ -79,6 +79,16 @@ class Service extends BaseService<any>{
             filter(resp => resp.status === 200),
             map(resp => resp.result)
         ));
+
+    public unbind = (groupId: string, id: string[]) => defer(
+        () => from(request(`/jetlinks/device/group/${groupId}/_unbind`, {
+            method: 'POST',
+            data: id
+        })).pipe(
+            filter(resp => resp.status === 200),
+            map(resp => resp.result)
+        ));
+
 }
 
 export default Service;

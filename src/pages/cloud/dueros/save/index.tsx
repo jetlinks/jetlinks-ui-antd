@@ -56,7 +56,6 @@ const Save: React.FC<Props> = props => {
     useEffect(() => initValue(), [loading]);
 
     const linkageEffect = async () => {
-        // initValue();
         const linkage = createLinkageUtils();
         onFieldValueChange$('applianceType').subscribe(fieldState => {
             if (!fieldState.value) return;
@@ -72,31 +71,38 @@ const Save: React.FC<Props> = props => {
         });
 
         onFieldValueChange$('actionMappings.*.command.messageType').subscribe(fieldState => {
-            const propertiesPath = FormPath.transform(fieldState.name, /\d/, $1 => `*(actionMappings.${$1}.command.message.properties)`);
-            const valuePath = FormPath.transform(fieldState.name, /\d/, $1 => `*(actionMappings.${$1}.command.message.value)`);
+            const wpropertiesPath = FormPath.transform(fieldState.name, /\d/, $1 => `*(actionMappings.${$1}.command.message._properties)`);
+            const rpropertiesPath = FormPath.transform(fieldState.name, /\d/, $1 => `*(actionMappings.${$1}.command.message.properties)`);
+
+            const valuePath = FormPath.transform(fieldState.name, /\d/, $1 => `*(actionMappings.${$1}.command.message._value)`);
             const functionPath = FormPath.transform(fieldState.name, /\d/, $1 => `*(actionMappings.${$1}.command.message.functionId)`);
             const functionParamPath = FormPath.transform(fieldState.name, /\d/, $1 => `*(actionMappings.${$1}.command.message.function)`);
 
             switch (fieldState.value) {
                 case 'READ_PROPERTY':
                     linkage.enum(
-                        propertiesPath,
+                        rpropertiesPath,
                         productRef.current.metadata.properties.map((item: any) => ({ label: item.name, value: item.id, ...item })));
                     linkage.show(valuePath, false);
-                    linkage.show(propertiesPath, true);
+                    linkage.show(rpropertiesPath, true);
+                    linkage.show(wpropertiesPath, false);
                     linkage.show(functionPath, false);
                     linkage.show(functionParamPath, false);
+
                     return;
                 case 'WRITE_PROPERTY':
                     linkage.enum(
-                        propertiesPath,
+                        wpropertiesPath,
                         productRef.current.metadata.properties.map((item: any) => ({ label: item.name, value: item.id, ...item })));
+                    linkage.show(wpropertiesPath, true);
+                    linkage.show(rpropertiesPath, false);
                     linkage.show(valuePath, true);
                     linkage.show(functionPath, false);
                     linkage.show(functionParamPath, false);
                     return;
                 case 'INVOKE_FUNCTION':
-                    linkage.hide(propertiesPath, false);
+                    linkage.hide(wpropertiesPath, false);
+                    linkage.hide(rpropertiesPath, false);
                     linkage.show(valuePath, false);
                     linkage.show(functionPath, true);
                     linkage.enum(functionPath,
@@ -110,7 +116,7 @@ const Save: React.FC<Props> = props => {
         onFieldValueChange$('actionMappings.*.actionType').subscribe(fieldState => {
             if (fieldState.value === 'latestData') {
                 linkage.hide(FormPath.transform(fieldState.name, /\d/, $1 => `*(actionMappings.${$1}.command.messageType)`), false);
-                linkage.show(FormPath.transform(fieldState.name, /\d/, $1 => `*(actionMappings.${$1}.command.message.properties)`), true);
+                linkage.show(FormPath.transform(fieldState.name, /\d/, $1 => `*(actionMappings.${$1}.command.message._properties)`), true);
             } else if (fieldState.value === 'command') {
                 linkage.hide(FormPath.transform(fieldState.name, /\d/, $1 => `*(actionMappings.${$1}.command.messageType)`), true);
             }
@@ -143,8 +149,7 @@ const Save: React.FC<Props> = props => {
             const list = {};
             (func.inputs || []).forEach((item: any) => {
                 const valueType = item.valueType;
-
-                list[item.id] = {
+                list['funcparam.' + item.id] = {
                     "title": item.description ? `{{text("${item.name}",help("${item.description.replaceAll('\n', '')}"))}}` : item.name,
                     "x-component": componentMap[valueType.type],
                     "type": componentType[valueType.type],
@@ -180,7 +185,43 @@ const Save: React.FC<Props> = props => {
                     expressionScope={createRichTextUtils()}
                     initialValues={props.data}
                     actions={actions}
-                    onSubmit={v => props.save(v)}
+                    onSubmit={data => {
+                        if (data.actionMappings.length > 1) {
+                            data.actionMappings.map((item: any) => {
+                                const funcParam = item?.command?.message?.funcparam;
+                                const inputs: any = []
+                                if (funcParam) {
+                                    Object.keys(funcParam).forEach(key => {
+                                        inputs.push({
+                                            name: key,
+                                            value: funcParam[key]
+                                        })
+                                    })
+                                }
+                                if (!item.command) {
+                                    item.command = {};
+                                    if (!item.command.message) {
+                                        item.command.message = {};
+                                        if (!item.command.message.inputs) {
+                                            item.command.message.inputs = inputs;
+                                        }
+                                    } else {
+                                        item.command.message.inputs = inputs;
+                                    }
+                                }
+
+                                if (item?.command?.messageType === 'WRITE_PROPERTY') {
+                                    const temp = {};
+                                    const key = item.command.message._properties;
+                                    const value = item.command.message._value;
+                                    temp[key] = value;
+                                    item.command.message.properties = temp;
+                                }
+                                return item
+                            })
+                            props.save(data);
+                        }
+                    }}
                     components={{ DatePicker, Input, Select, ArrayPanels, ArrayTable, FormCard, NumberPicker }}
                     schema={{
                         "type": "object",
@@ -303,12 +344,20 @@ const Save: React.FC<Props> = props => {
                                                         { "label": "调用功能", "value": "INVOKE_FUNCTION" }
                                                     ],
                                                 },
+                                                "command.message._properties": {
+                                                    "title": "属性",
+                                                    "x-component": "select",
+                                                    "visible": false,
+                                                },
                                                 "command.message.properties": {
                                                     "title": "属性",
                                                     "x-component": "select",
-                                                    "visible": false
+                                                    "visible": false,
+                                                    "x-component-props": {
+                                                        "mode": "tags"
+                                                    }
                                                 },
-                                                "command.message.value": {
+                                                "command.message._value": {
                                                     "title": "值",
                                                     "x-component": "input",
                                                     "visible": false,

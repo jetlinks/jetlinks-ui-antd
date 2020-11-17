@@ -363,6 +363,13 @@ export const routes = [
                                 authority: ['rule-instance', 'admin'],
                                 component: './rule-engine/sqlRule',
                             },
+                            {
+                                path: '/rule-engine/scene',
+                                name: '场景联动',
+                                icon: 'gateway',
+                                authority: ['rule-scene', 'admin'],
+                                component: './rule-engine/scene'
+                            }
                             // {
                             //   path: '/rule-engine/email',
                             //   name: 'email',
@@ -399,7 +406,7 @@ export const routes = [
                                 path: '/data-screen/screen',
                                 name: '大屏管理',
                                 icon: 'fund',
-                                tenant: ['admin'],
+                                tenant: ['admin', 'big-screen'],
                                 iconfont: 'icon-screen',
                                 authority: ['big-screen', 'admin'],
                                 version: 'pro',
@@ -411,11 +418,13 @@ export const routes = [
                         path: 'simulator',
                         name: '模拟测试',
                         icon: 'bug',
+                        version: 'pro',
                         authority: ['network-simulator', 'admin'],
                         routes: [
                             {
                                 path: '/simulator/device',
                                 name: '设备模拟器',
+                                version: 'pro',
                                 icon: 'paper-clip',
                                 authority: ['network-simulator', 'admin'],
                                 component: './simulator/device',
@@ -451,11 +460,13 @@ export const routes = [
                         path: 'cloud',
                         name: '云云对接',
                         icon: 'cloud',
+                        version: 'pro',
                         authority: ['dueros-product', 'admin'],
                         routes: [
                             {
                                 path: '/cloud/duer',
                                 name: 'DuerOS',
+                                version: 'pro',
                                 authority: ['dueros-product', 'admin'],
                                 icon: 'cloud',
                                 component: './cloud/dueros',
