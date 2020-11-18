@@ -121,13 +121,13 @@ const Info: React.FC<Props> = (props) => {
           </Descriptions.Item>
           {props.data.binds && props.data.binds.length > 0 && (
             <Descriptions.Item label="云对云接入" span={3}>
-              {props.data.binds.map((i: any) => {
+              {props.data.binds.map((i: any, index: number) => {
                 return (
-                  <Tag color="blue">
+                  <Tag color="blue" key={index}>
                     <Tooltip title={i.description}>
                       <span>{i.bindName}</span>
                     </Tooltip>
-                    <Popconfirm title={`是否解绑${i.name}接入`} onConfirm={() => {
+                    <Popconfirm title={`是否解绑${i.bindName}接入`} onConfirm={() => {
                       deleteBinds(props.data.id, i.bindType, i.bindKey)
                     }}>
                       <span style={{ display: "inline-block", marginLeft: "10px" }}>×</span>
@@ -180,7 +180,7 @@ const Info: React.FC<Props> = (props) => {
                 <Descriptions bordered column={2} title="">
                   {i.properties &&
                     i.properties.map((item: any) => (
-                      <Descriptions.Item label={item.property} span={1} key={item.property}>
+                      <Descriptions.Item label={item.name} span={1} key={item.property}>
                         {props.data.configuration ? (
                           item.type.type === 'password' ? (
                             props.data.configuration[item.property]?.length > 0 ? '••••••' : null
@@ -240,49 +240,3 @@ const Info: React.FC<Props> = (props) => {
 };
 
 export default Info;
-{/* {props.configuration && props.configuration.name && (
-          <Descriptions style={{ marginBottom: 20 }} bordered size="small" column={3}
-            title={
-              <span>
-                {props.configuration.name}
-                <Button icon="edit" style={{ marginLeft: 20 }} type="link"
-                  onClick={() => setUpdateVisible(true)}
-                >编辑</Button>
-                {props.data.state?.value != 'notActive' && (
-                  <Popconfirm title="确认重新应用该配置？"
-                    onConfirm={() => {
-                      changeDeploy(props.data.id);
-                    }}>
-                    <Button icon="check" type="link">应用配置</Button>
-                    <Tooltip title="修改配置后需重新应用后才能生效。">
-                      <Icon type="question-circle-o" />
-                    </Tooltip>
-                  </Popconfirm>
-                )}
-
-                {props.data.aloneConfiguration && (
-                  <Popconfirm title="确认恢复默认配置？"
-                    onConfirm={() => {
-                      configurationReset(props.data.id);
-                    }}>
-                    <Button icon="undo" type="link">恢复默认</Button>
-                    <Tooltip title={`该设备单独编辑过${props.configuration.name}，点击此将恢复成默认的配置信息，请谨慎操作。`}>
-                      <Icon type="question-circle-o" />
-                    </Tooltip>
-                  </Popconfirm>
-                )}
-              </span>
-            }>
-            {props.configuration.properties &&
-              props.configuration.properties.map((item: any) => (
-                <Descriptions.Item label={item.property} span={1} key={item.property}>
-                  {props.data.configuration ? (
-                    item.type.type === 'password' ? (
-                      props.data.configuration[item.property]?.length > 0 ? '••••••' : null
-                    ) :
-                      props.data.configuration[item.property]
-                  ) : null}
-                </Descriptions.Item>
-              ))}
-          </Descriptions>
-        )} */}

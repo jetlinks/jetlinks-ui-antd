@@ -481,7 +481,7 @@ const Detail: React.FC<Props> = props => {
               <Table
                 onChange={eventsChange}
                 dataSource={dataEvents.datalist || []}
-                rowKey="id"
+                rowKey={(item: any) => item.id}
                 columns={columnsEvents}
                 // showHeader={false}
                 pagination={{
@@ -527,7 +527,7 @@ const Detail: React.FC<Props> = props => {
               </div>
               <Table
                 dataSource={dataLogs.datalist || []}
-                rowKey="id"
+                rowKey={(item: any) => item.id}
                 columns={columns}
                 // showHeader={false}
                 onChange={logsChange}

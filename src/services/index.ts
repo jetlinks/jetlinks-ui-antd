@@ -9,6 +9,7 @@ import * as ruleEngine from '@/pages/rule-engine/service';
 import * as email from '@/pages/rule-engine/email/service';
 import * as sms from '@/pages/rule-engine/sms/service';
 import * as ruleInstance from '@/pages/rule-engine/instance/service';
+import * as scene from '@/pages/rule-engine/scene/service'
 import * as ruleModel from '@/pages/rule-engine/model/service';
 import * as protocol from '@/pages/device/protocol/service';
 import * as openApi from '@/pages/system/open-api/service';
@@ -51,6 +52,7 @@ const apis = {
   email,
   sms,
   ruleInstance,
+  scene, //场景联动
   ruleModel,
   protocol,
   openApi,

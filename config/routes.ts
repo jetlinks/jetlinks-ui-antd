@@ -366,7 +366,7 @@ export const routes = [
                             {
                                 path: '/rule-engine/scene',
                                 name: '场景联动',
-                                icon: 'gateway',
+                                icon: 'codeSandbox',
                                 authority: ['rule-scene', 'admin'],
                                 component: './rule-engine/scene'
                             }
