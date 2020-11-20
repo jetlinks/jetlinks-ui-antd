@@ -15,6 +15,7 @@ import cardStyles from "@/pages/device/product/index.less";
 import DeviceAlarm from "@/pages/rule-engine/instance/img/DeviceAlarm.png";
 import NodeRed from "@/pages/rule-engine/instance/img/NodeRed.png";
 import SqlServer from "@/pages/rule-engine/instance/img/SqlServer.png";
+import SceneImg from '@/pages/rule-engine/scene/img/scene.svg';
 import AutoHide from "@/pages/device/location/info/autoHide";
 import AlarmSave from "@/pages/device/alarm/save/index";
 import SceneSave from '../scene/save';
@@ -212,6 +213,12 @@ const RuleInstanceList: React.FC<Props> = props => {
   };
 
   const [sceneVisible, setSceneVisible] = useState<boolean>(false);
+  const logoMap = {
+    'device_alarm': <Avatar size={40} src={DeviceAlarm} />,
+    'sql_rule': <Avatar size={40} src={SqlServer} />,
+    'node_red': <Avatar size={40} src={NodeRed} />,
+    'rule-scene': <Avatar size={40} src={SceneImg} />
+  }
   return (
     <PageHeaderWrapper title="规则实例">
       <Card bordered={false}>
@@ -399,10 +406,7 @@ const RuleInstanceList: React.FC<Props> = props => {
                       ]}
                     >
                       <Card.Meta
-                        avatar={item.modelType === 'device_alarm' ?
-                          <Avatar size={40} src={DeviceAlarm} /> : (item.modelType === 'sql_rule' ?
-                            <Avatar size={40} src={SqlServer} /> :
-                            <Avatar size={40} src={NodeRed} />)}
+                        avatar={logoMap[item.modelType]}
                         title={<AutoHide title={item.name} style={{ width: '95%', fontWeight: 600 }} />}
                         description={<AutoHide title={item.id} style={{ width: '95%' }} />}
                       />
