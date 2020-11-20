@@ -72,7 +72,7 @@ const RuleInstanceList: React.FC<Props> = props => {
   const modelType = new Map();
   modelType.set('device_alarm', '设备告警');
   modelType.set('sql_rule', '数据转发');
-  modelType.set('node-red', '规则引擎');
+  modelType.set('node-red', '规则编排');
   modelType.set('rule-scene', '场景联动');
 
   const handleSearch = (params?: any) => {
@@ -236,6 +236,19 @@ const RuleInstanceList: React.FC<Props> = props => {
                     ]
                   }
                 },
+                {
+                  label: '规则类型',
+                  key: 'modelType$IN',
+                  type: 'list',
+                  props: {
+                    data: [
+                      { id: 'node-red', name: '规则编排' },
+                      { id: 'sql_rule', name: '数据转发' },
+                      { id: 'device_alarm', name: '设备告警' },
+                      { id: 'rule-scene', name: '场景联动' }
+                    ]
+                  }
+                }
               ]}
               search={(params: any) => {
                 setSearchParam(params);
@@ -344,6 +357,14 @@ const RuleInstanceList: React.FC<Props> = props => {
                                   </Button>
                                 </Popconfirm>
                               </Menu.Item>
+                              <Menu.Item key="4">
+                                <Button icon="copy" type="link"
+                                  onClick={() => {
+                                    startInstance(item);
+                                  }}>
+                                  重启
+                                      </Button>
+                              </Menu.Item>
                               {item.modelType === 'node-red' && (
                                 <Menu.Item key="3">
                                   <Button icon="copy" type="link"
@@ -387,21 +408,21 @@ const RuleInstanceList: React.FC<Props> = props => {
                       />
                       <div className={cardStyles.cardItemContent}>
                         <div className={cardStyles.cardInfo}>
-                          <div style={{ textAlign: 'center', width: '33%' }}>
+                          {/* <div style={{ textAlign: 'center', width: '33%' }}>
                             <p style={cardInfoTitle}>模型版本</p>
                             <p style={{ fontSize: 14, fontWeight: 600 }}>{item.modelVersion}</p>
+                          </div> */}
+                          <div style={{ textAlign: 'center', width: '50%' }}>
+                            <p style={cardInfoTitle}>规则类型</p>
+                            <p style={{ fontSize: 14 }}>
+                              {modelType.get(item.modelType)}
+                            </p>
                           </div>
-                          <div style={{ textAlign: 'center', width: '33%' }}>
-                            <p style={cardInfoTitle}>启动状态</p>
+                          <div style={{ textAlign: 'center', width: '50%' }}>
+                            <p style={cardInfoTitle}>状态</p>
                             <p style={{ fontSize: 14, fontWeight: 600 }}>
                               <Badge color={item.state?.value === 'stopped' ? 'red' : 'green'}
                                 text={item.state?.value === 'stopped' ? '已停止' : '已启动'} />
-                            </p>
-                          </div>
-                          <div style={{ textAlign: 'center', width: '33%' }}>
-                            <p style={cardInfoTitle}>模型类型</p>
-                            <p style={{ fontSize: 14 }}>
-                              {modelType.get(item.modelType)}
                             </p>
                           </div>
                         </div>
