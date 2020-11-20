@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Form from 'antd/es/form';
 import { FormComponentProps } from 'antd/lib/form';
-import { Card, Col, Icon, Input, Modal, Row, Tooltip } from 'antd';
+import { Card, Col, Icon, Input, Modal, Row, Switch, Tooltip } from 'antd';
 import { SceneItem } from '../data';
 import Triggers from './Triggers';
 import Action from './action';
@@ -83,7 +83,15 @@ const Detail: React.FC<Props> = props => {
           </Card>
 
           <Card bordered={false} size="small">
-            <p style={{ fontSize: 16 }}>执行动作</p>
+          <p style={{ fontSize: 16 }}>
+              <span>执行动作</span>
+              <span style={{ fontSize: 13, display: 'inline-block', marginLeft: '20px' }}>是否并行执行动作:</span>
+              <Switch key='parallel'
+                defaultChecked={data.parallel || false}
+                style={{ marginLeft: 20 }}
+                disabled
+              />
+            </p>
             {data.actions.length > 0 && data.actions.map((item: any, index: number) => (
               <div key={index}>
                 <Action
