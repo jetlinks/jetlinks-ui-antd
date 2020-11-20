@@ -15,7 +15,7 @@ interface Props extends FormComponentProps {
 const Trigger: React.FC<Props> = props => {
     const [deviceName, setDeviceName] = useState('');
     const [sceneListNoPage, setSceneListNoPage] = useState([]);
-    const [shakeLimit, setShakeLimit] = useState( props.trigger.device && props.trigger.device.shakeLimit ? props.trigger.device.shakeLimit : {enabled:false});
+    const [shakeLimit, setShakeLimit] = useState(props.trigger.device && props.trigger.device.shakeLimit ? props.trigger.device.shakeLimit : { enabled: false });
     const [bindVisible, setBindVisible] = useState(false);
     const [deviceData, setDeviceData] = useState({});
     const [metaData, setMetaData] = useState({
@@ -156,35 +156,6 @@ const Trigger: React.FC<Props> = props => {
             case 'device':
                 return (
                     <div>
-                        {shakeLimit.enabled && (
-                            <Col span={24}>
-                                <Col span={24} style={{ paddingBottom: 10, paddingLeft: -1, paddingRight: 12 }}>
-                                    <Input style={{ width: 80, marginLeft: 3 }} size='small' key='shakeLimit.time'
-                                        defaultValue={shakeLimit.time}
-                                        onBlur={event => {
-                                            trigger.device.shakeLimit.time = event.target.value;
-                                            setTrigger(trigger)
-                                        }}
-                                    />秒内发生
-                                <Input style={{ width: 80 }} size='small' key='shakeLimit.threshold' defaultValue={shakeLimit.threshold}
-                                        onBlur={event => {
-                                            trigger.device.shakeLimit.threshold = event.target.value;
-                                            setTrigger(trigger)
-                                        }}
-                                    />次及以上时，处理
-                                <Radio.Group defaultValue={shakeLimit.alarmFirst} key='shakeLimit.alarmFirst' size='small'
-                                        buttonStyle="solid"
-                                        onChange={event => {
-                                            trigger.device.shakeLimit.alarmFirst = Boolean(event.target.value);
-                                            setTrigger(trigger)
-                                        }}
-                                    >
-                                        <Radio.Button value={true}>第一次</Radio.Button>
-                                        <Radio.Button value={false}>最后一次</Radio.Button>
-                                    </Radio.Group>
-                                </Col>
-                            </Col>
-                        )}
                         <Col span={24}>
                             <Col span={6} style={{ paddingBottom: 10, paddingLeft: -1, paddingRight: 12 }}>
                                 <Input addonAfter={<Icon onClick={() => {
@@ -328,29 +299,31 @@ const Trigger: React.FC<Props> = props => {
                 </Row>
 
                 <Row gutter={16} style={{ paddingLeft: 10 }}>
-                    <Col span={6} style={{ paddingBottom: 10 }}>
+                    <Col span={24} style={{ paddingBottom: 10 }}>
                         <div style={{ display: 'flex' }}>
-                            <Select placeholder="选择触发器类型" value={trigger.trigger}
-                                onChange={(value: string) => {
-                                    setTriggerType(() => value);
-                                    trigger.trigger = value;
-                                    if(value==='scene' && trigger.scene === undefined){
-                                        trigger.scene = {}
-                                        trigger.scene.sceneIds = []
-                                    }
-                                    setTrigger(trigger);
-                                }}
-                            >
-                                <Select.Option value="manual">手动触发</Select.Option>
-                                <Select.Option value="timer">定时触发</Select.Option>
-                                <Select.Option value="device">设备触发</Select.Option>
-                                <Select.Option value="scene">场景触发</Select.Option>
-                            </Select>
+                            <Col span={6}>
+                                <Select placeholder="选择触发器类型" value={trigger.trigger}
+                                    onChange={(value: string) => {
+                                        setTriggerType(() => value);
+                                        trigger.trigger = value;
+                                        if (value === 'scene' && trigger.scene === undefined) {
+                                            trigger.scene = {}
+                                            trigger.scene.sceneIds = []
+                                        }
+                                        setTrigger(trigger);
+                                    }}
+                                >
+                                    <Select.Option value="manual">手动触发</Select.Option>
+                                    <Select.Option value="timer">定时触发</Select.Option>
+                                    <Select.Option value="device">设备触发</Select.Option>
+                                    <Select.Option value="scene">场景触发</Select.Option>
+                                </Select>
+                            </Col>
                             {
                                 triggerType === 'device' && (
                                     <Switch key='shakeLimit.enabled' checkedChildren="开启防抖" unCheckedChildren="关闭防抖"
                                         defaultChecked={shakeLimit.enabled ? shakeLimit.enabled : false}
-                                        style={{ marginLeft: 20, width: '140px' }}
+                                        style={{ marginLeft: 20, width: '100px'}}
                                         onChange={(value: boolean) => {
                                             shakeLimit.enabled = value;
                                             setShakeLimit({ ...shakeLimit })
@@ -360,9 +333,40 @@ const Trigger: React.FC<Props> = props => {
                                     />
                                 )
                             }
+                            {shakeLimit.enabled && triggerType == 'device' && (
+                                <Col span={12}>
+                                    <Col span={24} style={{ paddingBottom: 10, paddingLeft: -1, paddingRight: 12 }}>
+                                        <Input style={{ width: 80, marginLeft: 3 }} size='small' key='shakeLimit.time'
+                                            defaultValue={shakeLimit.time}
+                                            onBlur={event => {
+                                                trigger.device.shakeLimit.time = event.target.value;
+                                                setTrigger(trigger)
+                                            }}
+                                        />秒内发生
+                                <Input style={{ width: 80 }} size='small' key='shakeLimit.threshold' defaultValue={shakeLimit.threshold}
+                                            onBlur={event => {
+                                                trigger.device.shakeLimit.threshold = event.target.value;
+                                                setTrigger(trigger)
+                                            }}
+                                        />次及以上时，处理
+                                <Radio.Group defaultValue={shakeLimit.alarmFirst} key='shakeLimit.alarmFirst' size='small'
+                                            buttonStyle="solid"
+                                            onChange={event => {
+                                                trigger.device.shakeLimit.alarmFirst = Boolean(event.target.value);
+                                                setTrigger(trigger)
+                                            }}
+                                        >
+                                            <Radio.Button value={true}>第一次</Radio.Button>
+                                            <Radio.Button value={false}>最后一次</Radio.Button>
+                                        </Radio.Group>
+                                    </Col>
+                                </Col>
+                            )}
                         </div>
                     </Col>
-                    {renderDataType()}
+                    <Col span={24}>
+                        {renderDataType()}
+                    </Col>
                 </Row>
             </Card>
             {bindVisible && (

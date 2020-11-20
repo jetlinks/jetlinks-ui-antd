@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Form, { FormComponentProps } from 'antd/lib/form';
-import { AutoComplete, Card, Col, Icon, Input,  Radio, Row, Select, Switch } from 'antd';
+import { AutoComplete, Card, Col, Icon, Input, Radio, Row, Select, Switch } from 'antd';
 import { Triggers } from '@/pages/rule-engine/scene/data';
 import apis from '@/services';
 
@@ -13,7 +13,7 @@ interface Props extends FormComponentProps {
 const Trigger: React.FC<Props> = props => {
     const [deviceName, setDeviceName] = useState('');
     const [sceneListNoPage, setSceneListNoPage] = useState([]);
-    const [shakeLimit] = useState( props.trigger.device && props.trigger.device.shakeLimit ? props.trigger.device.shakeLimit : {enabled:false});
+    const [shakeLimit] = useState(props.trigger.device && props.trigger.device.shakeLimit ? props.trigger.device.shakeLimit : { enabled: false });
     const [deviceData, setDeviceData] = useState({});
     const [metaData, setMetaData] = useState({
         properties: [],
@@ -93,28 +93,6 @@ const Trigger: React.FC<Props> = props => {
             case 'device':
                 return (
                     <div>
-                        {shakeLimit.enabled && (
-                            <Col span={24}>
-                                <Col span={24} style={{ paddingBottom: 10, paddingLeft: -1, paddingRight: 12 }}>
-                                    <Input style={{ width: 80, marginLeft: 3 }} size='small' key='shakeLimit.time'
-                                        defaultValue={shakeLimit.time}
-                                        readOnly
-                                    />秒内发生
-                                <Input style={{ width: 80 }} size='small' key='shakeLimit.threshold' defaultValue={shakeLimit.threshold}
-                                        readOnly
-                                    />次及以上时，处理
-                                <Radio.Group defaultValue={shakeLimit.alarmFirst} key='shakeLimit.alarmFirst' size='small'
-                                        buttonStyle="solid"
-                                        onChange={event => {
-                                            props.trigger.device.shakeLimit.alarmFirst = Boolean(event.target.value);
-                                        }}
-                                    >
-                                        <Radio.Button value={true}>第一次</Radio.Button>
-                                        <Radio.Button value={false}>最后一次</Radio.Button>
-                                    </Radio.Group>
-                                </Col>
-                            </Col>
-                        )}
                         <Col span={24}>
                             <Col span={6} style={{ paddingBottom: 10, paddingLeft: -1, paddingRight: 12 }}>
                                 <Input addonAfter={<Icon onClick={() => {
@@ -180,7 +158,7 @@ const Trigger: React.FC<Props> = props => {
                     <div>
                         <Col span={6} style={{ paddingBottom: 10 }}>
                             <Input placeholder="cron表达式" defaultValue={trigger.cron} key="cron"
-                               readOnly
+                                readOnly
                             />
                         </Col>
                     </div>
@@ -212,25 +190,51 @@ const Trigger: React.FC<Props> = props => {
                 </Row>
 
                 <Row gutter={16} style={{ paddingLeft: 10 }}>
-                    <Col span={6} style={{ paddingBottom: 10 }}>
+                    <Col span={24} style={{ paddingBottom: 10 }}>
                         <div style={{ display: 'flex' }}>
-                            <Select placeholder="选择触发器类型" value={trigger.trigger}>
-                                <Select.Option value="manual">手动触发</Select.Option>
-                                <Select.Option value="timer">定时触发</Select.Option>
-                                <Select.Option value="device">设备触发</Select.Option>
-                                <Select.Option value="scene">场景触发</Select.Option>
-                            </Select>
+                            <Col span={6}>
+                                <Select placeholder="选择触发器类型" value={trigger.trigger}>
+                                    <Select.Option value="manual">手动触发</Select.Option>
+                                    <Select.Option value="timer">定时触发</Select.Option>
+                                    <Select.Option value="device">设备触发</Select.Option>
+                                    <Select.Option value="scene">场景触发</Select.Option>
+                                </Select>
+                            </Col>
                             {
-                                triggerType === 'device' && (
+                                triggerType === 'device' && triggerType === 'device' && (
                                     <Switch disabled key='shakeLimit.enabled' checkedChildren="开启防抖" unCheckedChildren="关闭防抖"
                                         defaultChecked={shakeLimit.enabled ? shakeLimit.enabled : false}
-                                        style={{ marginLeft: 20, width: '140px' }}
+                                        style={{ marginLeft: 20, width: '100px' }}
                                     />
                                 )
                             }
+                            {shakeLimit.enabled && (
+                                <Col span={24}>
+                                    <Col span={24} style={{ paddingBottom: 10, paddingLeft: -1, paddingRight: 12 }}>
+                                        <Input style={{ width: 80, marginLeft: 3 }} size='small' key='shakeLimit.time'
+                                            defaultValue={shakeLimit.time}
+                                            readOnly
+                                        />秒内发生
+                                <Input style={{ width: 80 }} size='small' key='shakeLimit.threshold' defaultValue={shakeLimit.threshold}
+                                            readOnly
+                                        />次及以上时，处理
+                                <Radio.Group defaultValue={shakeLimit.alarmFirst} key='shakeLimit.alarmFirst' size='small'
+                                            buttonStyle="solid"
+                                            onChange={event => {
+                                                props.trigger.device.shakeLimit.alarmFirst = Boolean(event.target.value);
+                                            }}
+                                        >
+                                            <Radio.Button value={true}>第一次</Radio.Button>
+                                            <Radio.Button value={false}>最后一次</Radio.Button>
+                                        </Radio.Group>
+                                    </Col>
+                                </Col>
+                            )}
                         </div>
                     </Col>
-                    {renderDataType()}
+                    <Col>
+                        {renderDataType()}
+                    </Col>
                 </Row>
             </Card>
         </div>

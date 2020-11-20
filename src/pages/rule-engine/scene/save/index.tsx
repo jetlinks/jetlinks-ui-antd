@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Form from 'antd/es/form';
 import { FormComponentProps } from 'antd/lib/form';
-import { Button, Card, Col, Icon, Input, Modal, Row, Tooltip } from 'antd';
+import { Button, Card, Col, Icon, Input, Modal, Row, Switch, Tooltip } from 'antd';
 import { SceneItem } from '../data';
 import Triggers from './Triggers';
 import ActionAssembly from './action';
@@ -14,34 +14,25 @@ interface Props extends FormComponentProps {
 }
 
 interface State {
-  properties: any[];
   data: Partial<SceneItem>;
   triggers: any[];
   action: any[];
+  parallel: Boolean;
 }
 
 const Save: React.FC<Props> = props => {
 
   const initState: State = {
-    properties: [],
-    data: props.data,
-    triggers: props.data.triggers && props.data.triggers.length > 0 ? props.data.triggers :
-      [
-        {
-          _id: Math.round(Math.random() * 100000),
-          trigger: '', cron: '',
-          device: { shakeLimit: { enabled: false }, filters: [{ _id: Math.round(Math.random() * 100000), key: '', value: '', operator: '' }], productId: '', deviceId: '', type: '', modelId: '' },
-          scene: { sceneIds: [] }
-        }
-      ],
-    action: props.data.actions && props.data.actions.length > 0 ? props.data.actions : [
-      { executor: '' }
-    ]
+    data: {},
+    parallel: false,
+    triggers: [],
+    action: []
   };
 
   const [data, setData] = useState(initState.data);
   const [triggers, setTriggers] = useState(initState.triggers);
   const [action, setAction] = useState(initState.action);
+  const [parallel, setParallel] = useState(initState.parallel);
 
   const submitData = () => {
     let tri = triggers.map(item => {
@@ -58,19 +49,67 @@ const Save: React.FC<Props> = props => {
       }
     })
     let items = {
-      name: data.name,
+      name: name,
       id: data.id,
       triggers: tri,
-      actions: action
+      actions: action,
+      parallel: parallel
     }
-    props.save({ ...items });
+    apis.scene.save({ ...items }).then(res => {
+      if (res.status === 200) {
+        props.save();
+      }
+    })
   };
 
   useEffect(() => {
     if (props.data.id) {
       apis.scene.info(props.data.id).then(res => {
-        setData(res.result)
+        let result = res.result
+        setData(result)
+        setParallel(result.parallel || false)
+        if (result.triggers && result.triggers.length > 0) {
+          setTriggers(result.triggers)
+        } else {
+          setTriggers(
+            [
+              {
+                _id: Math.round(Math.random() * 100000),
+                trigger: '', cron: '',
+                device: { shakeLimit: { enabled: false }, filters: [{ _id: Math.round(Math.random() * 100000), key: '', value: '', operator: '' }], productId: '', deviceId: '', type: '', modelId: '' },
+                scene: { sceneIds: [] }
+              }
+            ],
+          )
+        }
+        if (result.actions && result.actions.length > 0) {
+          setAction(result.actions)
+        } else {
+          setAction(
+            [
+              { executor: '' }
+            ]
+          )
+        }
       })
+    }else{
+      setData({id: '', name: ''})
+      setParallel(false)
+      setTriggers(
+        [
+          {
+            _id: Math.round(Math.random() * 100000),
+            trigger: '', cron: '',
+            device: { shakeLimit: { enabled: false }, filters: [{ _id: Math.round(Math.random() * 100000), key: '', value: '', operator: '' }], productId: '', deviceId: '', type: '', modelId: '' },
+            scene: { sceneIds: [] }
+          }
+        ],
+      )
+      setAction(
+        [
+          { executor: '' }
+        ]
+      )
     }
   }, []);
 
@@ -94,18 +133,24 @@ const Save: React.FC<Props> = props => {
             <Col span={12}>
               <Form.Item key="name" label="场景联动ID">
                 <Input placeholder="输入场景联动ID"
-                  defaultValue={data.id}
+                  defaultValue={props.data.id}
                   onBlur={event => {
-                    data.id = event.target.value;
+                    setData({
+                      id: event.target.value,
+                      name: data.name
+                    })
                   }} />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item key="name" label="场景联动名称">
                 <Input placeholder="输入场景联动名称"
-                  defaultValue={data.name}
+                  defaultValue={props.data.name}
                   onBlur={event => {
-                    data.name = event.target.value;
+                    setData({
+                      id: data.id,
+                      name: event.target.value
+                    })
                   }} />
               </Form.Item>
             </Col>
@@ -145,7 +190,17 @@ const Save: React.FC<Props> = props => {
           </Card>
 
           <Card bordered={false} size="small">
-            <p style={{ fontSize: 16 }}>执行动作</p>
+            <p style={{ fontSize: 16 }}>
+              <span>执行动作</span>
+              <span style={{ fontSize: 13, display: 'inline-block', marginLeft: '20px' }}>是否并行执行动作:</span>
+              <Switch key='parallel'
+                defaultChecked={parallel || false}
+                style={{ marginLeft: 20 }}
+                onChange={(value: boolean) => {
+                  setParallel(value)
+                }}
+              />
+            </p>
             {action.length > 0 && action.map((item: any, index) => (
               <div key={index}>
                 <ActionAssembly save={(actionData: any) => {

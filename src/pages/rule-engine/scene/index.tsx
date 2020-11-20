@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Avatar, Badge, Button, Card, Dropdown, Icon, List, Menu, Popconfirm, Tooltip } from 'antd';
+import { Avatar, Badge, Button, Card, Dropdown, Icon, List, Menu, message, Popconfirm, Tooltip } from 'antd';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import styles from '@/utils/table.less';
 import { connect } from 'dva';
@@ -60,6 +60,12 @@ const RuleInstanceList: React.FC<Props> = props => {
   statusColor.set('disable', 'red');
   statusColor.set('started', 'green');
   statusColor.set('stopped', 'blue');
+
+  const triggerType = new Map();
+  triggerType.set("manual", '手动触发')
+  triggerType.set("timer", '定时触发')
+  triggerType.set("device", '设备触发')
+  triggerType.set("scene", '场景触发')
 
   const handleSearch = (params?: any) => {
     setSearchParam(params);
@@ -207,7 +213,7 @@ const RuleInstanceList: React.FC<Props> = props => {
                                         })
                                       }}
                                     >
-                                      <Button icon="delete" type="link">删除</Button>
+                                      <Button icon="tool" type="link">执行</Button>
                                     </Popconfirm>
                                   </Menu.Item>
                                 </>
@@ -259,10 +265,16 @@ const RuleInstanceList: React.FC<Props> = props => {
                         description={<AutoHide title={item.id} style={{ width: '95%' }} />}
                       />
                       <div>
-                        <div style={{ display: 'flex', marginTop: '10px' }}>
+                        <div style={{ display: 'flex', marginTop: '10px', height: '70px' }}>
                           <div style={{ textAlign: 'center', width: '50%' }}>
-                            <p>是否并行执行动作</p>
-                            <p style={{ fontSize: 14, fontWeight: 600, color: '#1890FF' }}>{item.parallel ? '是' : '否'}</p>
+                            <p>触发方式</p>
+                            <p style={{ fontSize: 14, fontWeight: 600, textAlign: 'center' }}>
+                              {
+                                item.triggers.map((i: any) => {
+                                  return triggerType.get(i.trigger) + ' '
+                                })
+                              }
+                            </p>
                           </div>
                           <div style={{ textAlign: 'center', width: '50%' }}>
                             <p>场景状态</p>
@@ -291,10 +303,8 @@ const RuleInstanceList: React.FC<Props> = props => {
             handleSearch(searchParam);
           }}
           save={(data: any) => {
-            apis.scene.save(data).then(res => {
-              setSaveVisible(false);
-              handleSearch(searchParam);
-            })
+            setSaveVisible(false);
+            handleSearch(searchParam);
           }}
         />
       )}
