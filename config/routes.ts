@@ -470,6 +470,14 @@ export const routes = [
                                 authority: ['dueros-product', 'admin'],
                                 icon: 'cloud',
                                 component: './cloud/dueros',
+                            },
+                            {
+                                path: '/cloud/aliyun',
+                                name: '阿里云',
+                                version: 'pro',
+                                // authority: ['dueros-product', 'admin'],
+                                icon: 'aliyun',
+                                component: './cloud/aliyun',
                             }
                         ]
                     },

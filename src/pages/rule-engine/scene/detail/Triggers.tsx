@@ -204,12 +204,12 @@ const Trigger: React.FC<Props> = props => {
                                 triggerType === 'device' && triggerType === 'device' && (
                                     <Switch disabled key='shakeLimit.enabled' checkedChildren="开启防抖" unCheckedChildren="关闭防抖"
                                         defaultChecked={shakeLimit.enabled ? shakeLimit.enabled : false}
-                                        style={{ marginLeft: 20, width: '100px' }}
+                                        style={{ marginLeft: 20, width: '100px'}}
                                     />
                                 )
                             }
                             {shakeLimit.enabled && (
-                                <Col span={24}>
+                                <Col span={12}>
                                     <Col span={24} style={{ paddingBottom: 10, paddingLeft: -1, paddingRight: 12 }}>
                                         <Input style={{ width: 80, marginLeft: 3 }} size='small' key='shakeLimit.time'
                                             defaultValue={shakeLimit.time}

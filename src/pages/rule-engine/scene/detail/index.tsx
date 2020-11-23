@@ -83,12 +83,12 @@ const Detail: React.FC<Props> = props => {
           </Card>
 
           <Card bordered={false} size="small">
-          <p style={{ fontSize: 16 }}>
+            <p style={{ fontSize: 16 }}>
               <span>执行动作</span>
-              <span style={{ fontSize: 13, display: 'inline-block', marginLeft: '20px' }}>是否并行执行动作:</span>
               <Switch key='parallel'
+                checkedChildren="并行执行" unCheckedChildren="串行执行"
                 defaultChecked={data.parallel || false}
-                style={{ marginLeft: 20 }}
+                style={{ marginLeft: 20, width: '100px'}}
                 disabled
               />
             </p>
