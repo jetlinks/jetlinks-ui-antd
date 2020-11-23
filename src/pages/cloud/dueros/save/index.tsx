@@ -198,17 +198,17 @@ const Save: React.FC<Props> = props => {
                                         })
                                     })
                                 }
-                                if (!item.command) {
-                                    item.command = {};
-                                    if (!item.command.message) {
-                                        item.command.message = {};
-                                        if (!item.command.message.inputs) {
-                                            item.command.message.inputs = inputs;
-                                        }
-                                    } else {
+
+                                item.command = item.command ? item.command : {};
+                                if (!item.command.message) {
+                                    item.command.message = {};
+                                    if (!item.command.message.inputs) {
                                         item.command.message.inputs = inputs;
                                     }
+                                } else {
+                                    item.command.message.inputs = inputs;
                                 }
+
 
                                 if (item?.command?.messageType === 'WRITE_PROPERTY') {
                                     const temp = {};
@@ -218,7 +218,8 @@ const Save: React.FC<Props> = props => {
                                     item.command.message.properties = temp;
                                 }
                                 return item
-                            })
+                            });
+                            console.log(data, 'dddd');
                             props.save(data);
                         }
                     }}
