@@ -22,22 +22,26 @@ export function getAuthority(): string | string[] {
   //   return ['admin'];
   // }
   // return authority;
-  const storage = localStorage.getItem('hsweb-autz');
-  const autz = storage ? JSON.parse(storage) : null;
-  if (autz !== null) {
-    let authority =[];
-    if(autz.currentAuthority){
-      authority=autz.currentAuthority;
-    }else{
-      authority=autz.permissions.map((item:any)=>item.id);
+ const storage = localStorage.getItem('hsweb-autz');
+  if (storage) {
+    try {
+      const autz = storage && JSON.parse(storage)
+      let authority = [];
+      if (autz.currentAuthority) {
+        authority = autz.currentAuthority;
+      } else {
+        authority = autz.permissions.map((item: any) => item.id);
+      }
+      if (autz.user?.username === 'admin') {
+        return ['admin'];
+      }
+      return authority;
+    } catch (error) {
+      localStorage.removeItem('hsweb-autz');
+      location.reload();
+      return ['guest'];
     }
-    if (autz.user?.username === 'admin') {
-      return ['admin'];
-    }
-    return authority;
-
   }
-  return ['guest'];
 }
 
 export function setAuthority(authority: string | string[]): void {
