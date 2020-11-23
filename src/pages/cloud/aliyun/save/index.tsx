@@ -1,5 +1,5 @@
 import { MinusCircleOutlined } from "@ant-design/icons";
-import { Button, Col, Divider, Form, Input, Modal, Row, Select, Tooltip } from "antd";
+import { AutoComplete, Button, Col, Divider, Form, Input, Modal, Row, Select, Tooltip } from "antd";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { FormComponentProps } from "antd/lib/form";
@@ -296,11 +296,11 @@ const Save: React.FC<Props> = props => {
                                                         {getFieldDecorator(`bridgeConfigs[${index}].serverId`, {
                                                             initialValue: item.serverId || undefined,
                                                             rules: [{ required: true, message: '本地服务ID' }],
-                                                        })(<Select placeholder="本地服务ID" allowClear>
+                                                        })(<AutoComplete placeholder="本地服务ID">
                                                             {serveIdList && serveIdList.map((i: any, index: number) => {
-                                                                return <Select.Option key={index} value={i.id}>{i.id}</Select.Option>
+                                                                return <AutoComplete.Option key={index} value={i.id}>{i.id}</AutoComplete.Option>
                                                             })}
-                                                        </Select>)}
+                                                        </AutoComplete>)}
                                                     </Form.Item>
                                                 </Col>
                                                 <Col span={8}>
