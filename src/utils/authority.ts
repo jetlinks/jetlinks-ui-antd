@@ -1,3 +1,4 @@
+import { router } from 'umi';
 import { reloadAuthorized } from './Authorized';
 
 // use localStorage to store the authority info, which might be sent from server in actual project.
@@ -23,21 +24,25 @@ export function getAuthority(): string | string[] {
   // }
   // return authority;
   const storage = localStorage.getItem('hsweb-autz');
-  const autz = storage ? JSON.parse(storage) : null;
-  if (autz !== null) {
-    let authority =[];
-    if(autz.currentAuthority){
-      authority=autz.currentAuthority;
-    }else{
-      authority=autz.permissions.map((item:any)=>item.id);
+  if (storage) {
+    try {
+      const autz = storage && JSON.parse(storage)
+      let authority = [];
+      if (autz.currentAuthority) {
+        authority = autz.currentAuthority;
+      } else {
+        authority = autz.permissions.map((item: any) => item.id);
+      }
+      if (autz.user?.username === 'admin') {
+        return ['admin'];
+      }
+      return authority;
+    } catch (error) {
+      localStorage.removeItem('hsweb-autz');
+      location.reload();
+      return ['guest'];
     }
-    if (autz.user?.username === 'admin') {
-      return ['admin'];
-    }
-    return authority;
-
   }
-  return ['guest'];
 }
 
 export function setAuthority(authority: string | string[]): void {
@@ -191,7 +196,7 @@ export function clearAutz() {
 export function setAutz(info: Authentication): Authentication {
   window.top.hsweb_autz = new Authentication(info);
   const autz = new Authentication(info);
-  if(JSON.stringify(info)!=='undefined'){
+  if (JSON.stringify(info) !== 'undefined') {
     localStorage.setItem('hsweb-autz', JSON.stringify(info));
   }
   return autz;
