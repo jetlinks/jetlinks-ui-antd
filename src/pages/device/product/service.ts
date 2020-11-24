@@ -91,14 +91,14 @@ export async function protocolConfiguration(support: string, transport: string) 
 }
 
 //产品协议配置
-export async function productConfiguration(productId:string) {
-  return request(`/jetlinks/device/product/${productId}/config-metadata`,{
+export async function productConfiguration(productId: string) {
+  return request(`/jetlinks/device/product/${productId}/config-metadata`, {
     method: 'GET'
   })
 }
 //设备协议配置
-export async function deviceConfiguration(deviceId:string) {
-  return request(`/jetlinks/device/instance/${deviceId}/config-metadata`,{
+export async function deviceConfiguration(deviceId: string) {
+  return request(`/jetlinks/device/instance/${deviceId}/config-metadata`, {
     method: 'GET'
   })
 }
@@ -156,4 +156,14 @@ export async function deviceBind() {
   return request(`/jetlinks/device/instance/bind-providers`, {
     method: 'get'
   });
+}
+
+export async function configMetadata(params: {
+  productId: string,
+  modelType: string,
+  modelId: string,
+  typeId: string
+}) {
+  return request(`/jetlinks/device/product/${params.productId}/config-metadata/${params.modelType}/${params.modelId}/${params.typeId}`,
+    { method: 'GET' })
 }
