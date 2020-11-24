@@ -11,14 +11,17 @@ interface Props extends FormComponentProps {
 
 interface State {
     confirmDirty: boolean,
+    defaultPassword: string,
+
 }
 const Save: React.FC<Props> = props => {
 
     //随机一个默认密码
-    const RandomPassword = (Math.random() * 20).toString();
+    // const RandomPassword = (Math.random() * 20).toString();
 
     const initState: State = {
         confirmDirty: false,
+        defaultPassword: '123456' //默认密码，不会被保存
     };
     const [confirmDirty, setConfirmDirty] = useState(initState.confirmDirty);
 
@@ -26,7 +29,7 @@ const Save: React.FC<Props> = props => {
     const submitData = () => {
         form.validateFields((err, fileValue) => {
             if (err) return;
-            if (fileValue.password === RandomPassword) {
+            if (fileValue.password === initState.defaultPassword) {
                 fileValue.password = undefined;
                 fileValue.confirm = undefined;
             }
@@ -59,6 +62,7 @@ const Save: React.FC<Props> = props => {
         callback();
     };
 
+    console.log(initState.defaultPassword, '12332');
     return (
         <Modal
             title={`${props.data.id ? '编辑' : '新建'}用户`}
@@ -108,7 +112,7 @@ const Save: React.FC<Props> = props => {
                                 validator: validateToNextPassword,
                             }
                         ],
-                        initialValue: props.data.id ? RandomPassword : null
+                        initialValue: props.data.id ? initState.defaultPassword : null
                     })(<Input.Password visibilityToggle={false} />)}
                 </Form.Item>
                 <Form.Item
@@ -122,7 +126,7 @@ const Save: React.FC<Props> = props => {
                                 validator: compareToFirstPassword,
                             }
                         ],
-                        initialValue: props.data.id ? RandomPassword : null
+                        initialValue: props.data.id ? initState.defaultPassword : null
                     })(
                         <Input.Password
                             visibilityToggle={false}
