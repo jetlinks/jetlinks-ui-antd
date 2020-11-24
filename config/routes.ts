@@ -461,7 +461,7 @@ export const routes = [
                         name: '云云对接',
                         icon: 'cloud',
                         version: 'pro',
-                        authority: ['dueros-product', 'admin'],
+                        authority: ['dueros-product', 'aliyun-bridge', 'admin'],
                         routes: [
                             {
                                 path: '/cloud/duer',
@@ -475,7 +475,7 @@ export const routes = [
                                 path: '/cloud/aliyun',
                                 name: '阿里云',
                                 version: 'pro',
-                                // authority: ['dueros-product', 'admin'],
+                                authority: ['aliyun-bridge', 'admin'],
                                 icon: 'aliyun',
                                 component: './cloud/aliyun',
                             }
