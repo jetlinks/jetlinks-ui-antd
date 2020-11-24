@@ -247,7 +247,7 @@ const Save: React.FC<Props> = props => {
             <Form.Item label={
               <span>
                 认证协议
-                <Tooltip title='使用指定协议进行MQTT认证'>
+                <Tooltip title='使用特定的协议进行MQTT认证'>
                   <Icon type="question-circle-o" style={{ paddingLeft: 5 }} />
                 </Tooltip>
               </span>
@@ -255,9 +255,10 @@ const Save: React.FC<Props> = props => {
               {getFieldDecorator('configuration.protocol', {
                 initialValue: props.data.configuration?.protocol,
               })(
-                <Select allowClear>
+                <Select placeholder="使用clientId对应设备使用的协议进行认证" allowClear>
                   {supportList.map((item: any) => (
-                    <Select.Option key={item.id} value={item.id}>
+                    <Select.Option
+                      key={item.id} value={item.id}>
                       {item.name}
                     </Select.Option>
                   ))}

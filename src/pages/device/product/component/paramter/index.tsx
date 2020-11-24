@@ -13,11 +13,11 @@ import {
   Row,
   Select
 } from 'antd';
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import styles from '../index.less';
-import {groupBy} from 'lodash';
-import {Unit} from '@/utils/unit';
-import {renderUnit} from "@/pages/device/public";
+import { groupBy } from 'lodash';
+import { Unit } from '@/utils/unit';
+import { renderUnit } from "@/pages/device/public";
 
 interface Props {
   save: (data: any) => void;
@@ -38,8 +38,8 @@ const Paramter: React.FC<Props> = props => {
   const initState: State = {
     dataType: props.data.valueType?.type || '',
     parameterVisible: false,
-    data: {...props.data},
-    enumData: props.data.valueType?.elements || [{text: '', value: '', id: 0}],
+    data: { ...props.data },
+    enumData: props.data.valueType?.elements || [{ text: '', value: '', id: 0 }],
     currentParameter: {},
   };
   const [dataType, setDataType] = useState(initState.dataType);
@@ -63,14 +63,14 @@ const Paramter: React.FC<Props> = props => {
       case 'long':
         return (
           <div>
-            <Form.Item label="取值范围" style={{height: 69}}>
+            <Form.Item label="取值范围" style={{ height: 69 }}>
               <Col span={11}>
-                <InputNumber style={{width:'100%'}}
+                <InputNumber style={{ width: '100%' }}
                   value={data.valueType.min}
                   placeholder="最小值"
                   onChange={value => {
                     data.valueType.min = value;
-                    setData({...data});
+                    setData({ ...data });
                   }}
                 />
               </Col>
@@ -79,12 +79,12 @@ const Paramter: React.FC<Props> = props => {
               </Col>
               <Col span={11}>
                 <Form.Item>
-                  <InputNumber style={{width:'100%'}}
+                  <InputNumber style={{ width: '100%' }}
                     value={data.valueType.max}
                     placeholder="最大值"
                     onChange={value => {
                       data.valueType.max = value;
-                      setData({...data});
+                      setData({ ...data });
                     }}
                   />
                 </Form.Item>
@@ -94,7 +94,7 @@ const Paramter: React.FC<Props> = props => {
               <Select
                 onChange={(value: string) => {
                   data.valueType.unit = value;
-                  setData({...data});
+                  setData({ ...data });
                 }}
                 value={data.valueType.unit}
               >
@@ -120,14 +120,14 @@ const Paramter: React.FC<Props> = props => {
       case 'float':
         return (
           <div>
-            <Form.Item label="取值范围" style={{height: 69}}>
+            <Form.Item label="取值范围" style={{ height: 69 }}>
               <Col span={11}>
-                <InputNumber style={{width:'100%'}}
+                <InputNumber style={{ width: '100%' }}
                   value={data.valueType.min}
                   placeholder="最小值"
                   onChange={value => {
                     data.valueType.min = value;
-                    setData({...data});
+                    setData({ ...data });
                   }}
                 />
               </Col>
@@ -136,25 +136,25 @@ const Paramter: React.FC<Props> = props => {
               </Col>
               <Col span={11}>
                 <Form.Item>
-                  <InputNumber style={{width:'100%'}}
+                  <InputNumber style={{ width: '100%' }}
                     value={data.valueType.max}
                     placeholder="最大值"
                     onChange={value => {
                       data.valueType.max = value;
-                      setData({...data});
+                      setData({ ...data });
                     }}
                   />
                 </Form.Item>
               </Col>
             </Form.Item>
-            <Form.Item label="精度" style={{height: 69}}>
+            <Form.Item label="精度" style={{ height: 69 }}>
               <InputNumber
                 min={0} step={1} placeholder="请输入精度"
                 value={data.valueType.scale}
-                style={{width:'100%'}}
+                style={{ width: '100%' }}
                 onChange={value => {
                   data.valueType.scale = value;
-                  setData({...data});
+                  setData({ ...data });
                 }}
               />
             </Form.Item>
@@ -162,7 +162,7 @@ const Paramter: React.FC<Props> = props => {
               <Select
                 onChange={(value: string) => {
                   data.valueType.unit = value;
-                  setData({...data});
+                  setData({ ...data });
                 }}
                 value={data.valueType.unit}
               >
@@ -188,16 +188,15 @@ const Paramter: React.FC<Props> = props => {
       case 'string':
         return (
           <div>
-            <Form.Item label="数据长度">
+            <Form.Item label="最大长度">
               <Input
-                addonAfter="字节"
                 value={data.valueType?.expands?.maxLength}
                 onChange={event => {
                   if (!data.valueType.expands) {
                     data.valueType.expands = {};
                   }
                   data.valueType.expands.maxLength = event.target.value;
-                  setData({...data});
+                  setData({ ...data });
                 }}
               />
             </Form.Item>
@@ -206,14 +205,14 @@ const Paramter: React.FC<Props> = props => {
       case 'boolean':
         return (
           <div>
-            <Form.Item label="布尔值" style={{height: 69}}>
+            <Form.Item label="布尔值" style={{ height: 69 }}>
               <Col span={11}>
                 <Input
                   value={data.valueType.trueText}
                   placeholder="trueText"
                   onChange={event => {
-                    data.valueType.trueText = event.target.value;
-                    setData({...data});
+                    data.valueType.trueText = event.target.value || '是';
+                    setData({ ...data });
                   }}
                 />
               </Col>
@@ -226,21 +225,21 @@ const Paramter: React.FC<Props> = props => {
                     value={data.valueType.trueValue}
                     placeholder="trueValue"
                     onChange={event => {
-                      data.valueType.trueValue = event.target.value;
-                      setData({...data});
+                      data.valueType.trueValue = event.target.value || true;
+                      setData({ ...data });
                     }}
                   />
                 </Form.Item>
               </Col>
             </Form.Item>
-            <Form.Item style={{height: 69}}>
+            <Form.Item style={{ height: 69 }}>
               <Col span={11}>
                 <Input
                   value={data.valueType.falseText}
                   placeholder="falseText"
                   onChange={event => {
-                    data.valueType.falseText = event.target.value;
-                    setData({...data});
+                    data.valueType.falseText = event.target.value || '否';
+                    setData({ ...data });
                   }}
                 />
               </Col>
@@ -253,8 +252,8 @@ const Paramter: React.FC<Props> = props => {
                     value={data.valueType.falseValue}
                     placeholder="falseValue"
                     onChange={event => {
-                      data.valueType.falseValue = event.target.value;
-                      setData({...data});
+                      data.valueType.falseValue = event.target.value || false;
+                      setData({ ...data });
                     }}
                   />
                 </Form.Item>
@@ -267,14 +266,14 @@ const Paramter: React.FC<Props> = props => {
           <div>
             <Form.Item label="时间格式">
               <AutoComplete dataSource={dataSource} placeholder="默认格式：String类型的UTC时间戳 (毫秒)"
-                            value={data.valueType.format}
-                            onChange={value => {
-                              data.valueType.format = value;
-                              setData({...data});
-                            }}
-                            filterOption={(inputValue, option) =>
-                              option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
-                            }
+                value={data.valueType.format}
+                onChange={value => {
+                  data.valueType.format = value;
+                  setData({ ...data });
+                }}
+                filterOption={(inputValue, option) =>
+                  option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
+                }
               />
             </Form.Item>
           </div>
@@ -287,7 +286,7 @@ const Paramter: React.FC<Props> = props => {
                 value={data.valueType.elementType}
                 onChange={e => {
                   data.valueType.elementType = e.target.value;
-                  setData({...data});
+                  setData({ ...data });
                 }}
               >
                 <Radio value="int">int32(整数型)</Radio>
@@ -302,7 +301,7 @@ const Paramter: React.FC<Props> = props => {
                 value={data.valueType.elementNumber}
                 onChange={e => {
                   data.valueType.elementNumber = e.target.value;
-                  setData({...data});
+                  setData({ ...data });
                 }}
               />
             </Form.Item>
@@ -324,8 +323,8 @@ const Paramter: React.FC<Props> = props => {
                       }}
                     />
                   </Col>
-                  <Col span={1} style={{textAlign: 'center'}}>
-                    <Icon type="arrow-right"/>
+                  <Col span={1} style={{ textAlign: 'center' }}>
+                    <Icon type="arrow-right" />
                   </Col>
                   <Col span={10}>
                     <Input
@@ -337,47 +336,47 @@ const Paramter: React.FC<Props> = props => {
                       }}
                     />
                   </Col>
-                  <Col span={3} style={{textAlign: 'center'}}>
+                  <Col span={3} style={{ textAlign: 'center' }}>
                     {index === 0 ? (
                       (enumData.length - 1) === 0 ? (
                         <Icon type="plus-circle"
-                              onClick={() => {
-                                setEnumData([...enumData, {id: enumData.length + 1}]);
-                              }}
+                          onClick={() => {
+                            setEnumData([...enumData, { id: enumData.length + 1 }]);
+                          }}
                         />
                       ) : (
-                        <Icon type="minus-circle"
-                              onClick={() => {
-                                enumData.splice(index, 1);
-                                setEnumData([...enumData]);
-                              }}
-                        />
-                      )
+                          <Icon type="minus-circle"
+                            onClick={() => {
+                              enumData.splice(index, 1);
+                              setEnumData([...enumData]);
+                            }}
+                          />
+                        )
                     ) : (
-                      index === (enumData.length - 1) ? (
-                        <Row>
-                          <Icon type="plus-circle"
-                                onClick={() => {
-                                  setEnumData([...enumData, {id: enumData.length + 1}]);
-                                }}
-                          />
-                          <Icon style={{paddingLeft: 10}}
-                                type="minus-circle"
-                                onClick={() => {
-                                  enumData.splice(index, 1);
-                                  setEnumData([...enumData]);
-                                }}
-                          />
-                        </Row>
-                      ) : (
-                        <Icon type="minus-circle"
+                        index === (enumData.length - 1) ? (
+                          <Row>
+                            <Icon type="plus-circle"
+                              onClick={() => {
+                                setEnumData([...enumData, { id: enumData.length + 1 }]);
+                              }}
+                            />
+                            <Icon style={{ paddingLeft: 10 }}
+                              type="minus-circle"
                               onClick={() => {
                                 enumData.splice(index, 1);
                                 setEnumData([...enumData]);
                               }}
-                        />
-                      )
-                    )}
+                            />
+                          </Row>
+                        ) : (
+                            <Icon type="minus-circle"
+                              onClick={() => {
+                                enumData.splice(index, 1);
+                                setEnumData([...enumData]);
+                              }}
+                            />
+                          )
+                      )}
                   </Col>
                 </Row>
               ))}
@@ -410,7 +409,7 @@ const Paramter: React.FC<Props> = props => {
                             (i: any) => i.id === item.id,
                           );
                           data.valueType.parameters.splice(index, 1);
-                          setData({...data});
+                          setData({ ...data });
                         }}
                       >
                         删除
@@ -429,7 +428,7 @@ const Paramter: React.FC<Props> = props => {
                 setParameterVisible(true);
               }}
             >
-              <Icon type="plus"/>
+              <Icon type="plus" />
               添加参数
             </Button>
           </Form.Item>
@@ -466,7 +465,7 @@ const Paramter: React.FC<Props> = props => {
                 value={data.valueType.expands.maxLength}
                 onChange={event => {
                   data.valueType.expands.maxLength = event.target.value;
-                  setData({...data});
+                  setData({ ...data });
                 }}
               />
             </Form.Item>
@@ -503,7 +502,7 @@ const Paramter: React.FC<Props> = props => {
             value={data.id}
             onChange={e => {
               data.id = e.target.value;
-              setData({...data});
+              setData({ ...data });
             }}
           />
         </Form.Item>
@@ -512,7 +511,7 @@ const Paramter: React.FC<Props> = props => {
             value={data.name}
             onChange={e => {
               data.name = e.target.value;
-              setData({...data});
+              setData({ ...data });
             }}
           />
         </Form.Item>
@@ -526,7 +525,7 @@ const Paramter: React.FC<Props> = props => {
               }
               data.valueType.type = value;
               dataTypeChange(value);
-              setData({...data});
+              setData({ ...data });
             }}
           >
             <Select.OptGroup label="基本类型">
@@ -552,7 +551,7 @@ const Paramter: React.FC<Props> = props => {
             value={data.description}
             onChange={e => {
               data.description = e.target.value;
-              setData({...data});
+              setData({ ...data });
             }}
             rows={3}
           />
@@ -574,7 +573,7 @@ const Paramter: React.FC<Props> = props => {
           onClick={() => {
             props.close();
           }}
-          style={{marginRight: 8}}
+          style={{ marginRight: 8 }}
         >
           关闭
         </Button>
@@ -601,7 +600,7 @@ const Paramter: React.FC<Props> = props => {
             } else {
               data.valueType.parameters[index] = item;
             }
-            setData({...data});
+            setData({ ...data });
             // props.close();
           }}
           close={() => {

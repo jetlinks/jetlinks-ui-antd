@@ -1,9 +1,9 @@
-import Form, {FormComponentProps} from 'antd/es/form';
-import {Input, Button, Radio, Drawer, Select, Col, Row, Icon, List, AutoComplete, InputNumber} from 'antd';
-import React, {useState} from 'react';
-import {EventsMeta, Parameter} from '../data.d';
+import Form, { FormComponentProps } from 'antd/es/form';
+import { Input, Button, Radio, Drawer, Select, Col, Row, Icon, List, AutoComplete, InputNumber } from 'antd';
+import React, { useState } from 'react';
+import { EventsMeta, Parameter } from '../data.d';
 import styles from '../index.less';
-import {renderUnit} from '@/pages/device/public';
+import { renderUnit } from '@/pages/device/public';
 import Paramter from '../paramter';
 
 interface Props extends FormComponentProps {
@@ -31,7 +31,7 @@ const EventDefin: React.FC<Props> = props => {
     current: {},
     data: props.data || {},
     dataType: props.data.valueType?.type || '',
-    enumData: props.data.valueType?.elements || [{text: '', value: '', id: 0}],
+    enumData: props.data.valueType?.elements || [{ text: '', value: '', id: 0 }],
     properties: props.data.valueType?.properties || [],
     parameterVisible: false,
     currentParameter: {},
@@ -47,7 +47,7 @@ const EventDefin: React.FC<Props> = props => {
   const [currentParameter, setCurrentParameter] = useState(initState.currentParameter);
 
   const {
-    form: {getFieldDecorator},
+    form: { getFieldDecorator },
   } = props;
 
   const saveData = () => {
@@ -61,7 +61,7 @@ const EventDefin: React.FC<Props> = props => {
       const data = fieldValue;
 
       const {
-        valueType: {type},
+        valueType: { type },
       } = fieldValue;
 
       if (type === 'object') {
@@ -69,7 +69,7 @@ const EventDefin: React.FC<Props> = props => {
       } else if (type === 'enum') {
         data.valueType.elements = enumData;
       }
-      props.save({...data});
+      props.save({ ...data });
     });
   };
 
@@ -84,11 +84,11 @@ const EventDefin: React.FC<Props> = props => {
       case 'double':
         return (
           <div>
-            <Form.Item label="取值范围" style={{height: 69}}>
+            <Form.Item label="取值范围" style={{ height: 69 }}>
               <Col span={11}>
                 {getFieldDecorator('valueType.min', {
                   initialValue: initState.data.valueType?.min,
-                })(<InputNumber placeholder="最小值" style={{width: '100%'}}/>)}
+                })(<InputNumber placeholder="最小值" style={{ width: '100%' }} />)}
               </Col>
               <Col span={2} push={1}>
                 ~
@@ -97,7 +97,7 @@ const EventDefin: React.FC<Props> = props => {
                 <Form.Item>
                   {getFieldDecorator('valueType.max', {
                     initialValue: initState.data.valueType?.max,
-                  })(<InputNumber placeholder="最大值" style={{width: '100%'}}/>)}
+                  })(<InputNumber placeholder="最大值" style={{ width: '100%' }} />)}
                 </Form.Item>
               </Col>
             </Form.Item>
@@ -105,13 +105,13 @@ const EventDefin: React.FC<Props> = props => {
             <Form.Item label="步长">
               {getFieldDecorator('valueType.step', {
                 initialValue: initState.data.valueType?.step,
-              })(<InputNumber placeholder="请输入步长" style={{width: '100%'}}/>)}
+              })(<InputNumber placeholder="请输入步长" style={{ width: '100%' }} />)}
             </Form.Item>
 
             <Form.Item label="精度">
               {getFieldDecorator('valueType.scale', {
                 initialValue: initState.data.valueType?.scale,
-              })(<InputNumber min={0} step={1} placeholder="请输入精度" style={{width: '100%'}}/>)}
+              })(<InputNumber min={0} step={1} placeholder="小数点位数" style={{ width: '100%' }} />)}
             </Form.Item>
 
             <Form.Item label="单位">
@@ -125,11 +125,11 @@ const EventDefin: React.FC<Props> = props => {
       case 'long':
         return (
           <div>
-            <Form.Item label="取值范围" style={{height: 69}}>
+            <Form.Item label="取值范围" style={{ height: 69 }}>
               <Col span={11}>
                 {getFieldDecorator('valueType.min', {
                   initialValue: initState.data.valueType?.min,
-                })(<InputNumber placeholder="最小值" style={{width: '100%'}}/>)}
+                })(<InputNumber placeholder="最小值" style={{ width: '100%' }} />)}
               </Col>
               <Col span={2} push={1}>
                 ~
@@ -138,7 +138,7 @@ const EventDefin: React.FC<Props> = props => {
                 <Form.Item>
                   {getFieldDecorator('valueType.max', {
                     initialValue: initState.data.valueType?.max,
-                  })(<InputNumber placeholder="最大值" style={{width: '100%'}}/>)}
+                  })(<InputNumber placeholder="最大值" style={{ width: '100%' }} />)}
                 </Form.Item>
               </Col>
             </Form.Item>
@@ -146,7 +146,7 @@ const EventDefin: React.FC<Props> = props => {
             <Form.Item label="步长">
               {getFieldDecorator('valueType.step', {
                 initialValue: initState.data.valueType?.step,
-              })(<InputNumber placeholder="请输入步长" style={{width: '100%'}}/>)}
+              })(<InputNumber placeholder="请输入步长" style={{ width: '100%' }} />)}
             </Form.Item>
 
             <Form.Item label="单位">
@@ -159,21 +159,21 @@ const EventDefin: React.FC<Props> = props => {
       case 'string':
         return (
           <div>
-            <Form.Item label="数据长度">
+            <Form.Item label="最大长度">
               {getFieldDecorator('valueType.expands.maxLength', {
                 initialValue: initState.data.valueType?.expands?.maxLength,
-              })(<Input addonAfter="字节"/>)}
+              })(<Input />)}
             </Form.Item>
           </div>
         );
       case 'boolean':
         return (
           <div>
-            <Form.Item label="布尔值" style={{height: 69}}>
+            <Form.Item label="布尔值" style={{ height: 69 }}>
               <Col span={11}>
                 {getFieldDecorator('valueType.trueText', {
                   initialValue: initState.data.valueType?.trueText,
-                })(<Input placeholder="trueText"/>)}
+                })(<Input placeholder="trueText" />)}
               </Col>
               <Col span={2} push={1}>
                 ~
@@ -182,15 +182,15 @@ const EventDefin: React.FC<Props> = props => {
                 <Form.Item>
                   {getFieldDecorator('valueType.trueValue', {
                     initialValue: initState.data.valueType?.trueValue,
-                  })(<Input placeholder="trueValue"/>)}
+                  })(<Input placeholder="trueValue" />)}
                 </Form.Item>
               </Col>
             </Form.Item>
-            <Form.Item style={{height: 69}}>
+            <Form.Item style={{ height: 69 }}>
               <Col span={11}>
                 {getFieldDecorator('valueType.falseText', {
                   initialValue: initState.data.valueType?.falseText,
-                })(<Input placeholder="falseText"/>)}
+                })(<Input placeholder="falseText" />)}
               </Col>
               <Col span={2} push={1}>
                 ~
@@ -199,7 +199,7 @@ const EventDefin: React.FC<Props> = props => {
                 <Form.Item>
                   {getFieldDecorator('valueType.falseValue', {
                     initialValue: initState.data.valueType?.falseValue,
-                  })(<Input placeholder="falseValue"/>)}
+                  })(<Input placeholder="falseValue" />)}
                 </Form.Item>
               </Col>
             </Form.Item>
@@ -213,9 +213,9 @@ const EventDefin: React.FC<Props> = props => {
                 initialValue: initState.data.valueType?.format,
               })(
                 <AutoComplete dataSource={dataSource} placeholder="默认格式：String类型的UTC时间戳 (毫秒)"
-                              filterOption={(inputValue, option) =>
-                                option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
-                              }
+                  filterOption={(inputValue, option) =>
+                    option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
+                  }
                 />,
               )}
             </Form.Item>
@@ -240,7 +240,7 @@ const EventDefin: React.FC<Props> = props => {
             <Form.Item label="元素个数">
               {getFieldDecorator('valueType.elementNumber', {
                 initialValue: initState.data.valueType?.elementNumber,
-              })(<Input/>)}
+              })(<Input />)}
             </Form.Item>
           </div>
         );
@@ -260,8 +260,8 @@ const EventDefin: React.FC<Props> = props => {
                       }}
                     />
                   </Col>
-                  <Col span={1} style={{textAlign: 'center'}}>
-                    <Icon type="arrow-right"/>
+                  <Col span={1} style={{ textAlign: 'center' }}>
+                    <Icon type="arrow-right" />
                   </Col>
                   <Col span={10}>
                     <Input
@@ -273,47 +273,47 @@ const EventDefin: React.FC<Props> = props => {
                       }}
                     />
                   </Col>
-                  <Col span={3} style={{textAlign: 'center'}}>
+                  <Col span={3} style={{ textAlign: 'center' }}>
                     {index === 0 ? (
                       (enumData.length - 1) === 0 ? (
                         <Icon type="plus-circle"
-                              onClick={() => {
-                                setEnumData([...enumData, {id: enumData.length + 1}]);
-                              }}
+                          onClick={() => {
+                            setEnumData([...enumData, { id: enumData.length + 1 }]);
+                          }}
                         />
                       ) : (
-                        <Icon type="minus-circle"
-                              onClick={() => {
-                                enumData.splice(index, 1);
-                                setEnumData([...enumData]);
-                              }}
-                        />
-                      )
+                          <Icon type="minus-circle"
+                            onClick={() => {
+                              enumData.splice(index, 1);
+                              setEnumData([...enumData]);
+                            }}
+                          />
+                        )
                     ) : (
-                      index === (enumData.length - 1) ? (
-                        <Row>
-                          <Icon type="plus-circle"
-                                onClick={() => {
-                                  setEnumData([...enumData, {id: enumData.length + 1}]);
-                                }}
-                          />
-                          <Icon style={{paddingLeft: 10}}
-                                type="minus-circle"
-                                onClick={() => {
-                                  enumData.splice(index, 1);
-                                  setEnumData([...enumData]);
-                                }}
-                          />
-                        </Row>
-                      ) : (
-                        <Icon type="minus-circle"
+                        index === (enumData.length - 1) ? (
+                          <Row>
+                            <Icon type="plus-circle"
+                              onClick={() => {
+                                setEnumData([...enumData, { id: enumData.length + 1 }]);
+                              }}
+                            />
+                            <Icon style={{ paddingLeft: 10 }}
+                              type="minus-circle"
                               onClick={() => {
                                 enumData.splice(index, 1);
                                 setEnumData([...enumData]);
                               }}
-                        />
-                      )
-                    )}
+                            />
+                          </Row>
+                        ) : (
+                            <Icon type="minus-circle"
+                              onClick={() => {
+                                enumData.splice(index, 1);
+                                setEnumData([...enumData]);
+                              }}
+                            />
+                          )
+                      )}
                   </Col>
                 </Row>
               ))}
@@ -363,7 +363,7 @@ const EventDefin: React.FC<Props> = props => {
                 setCurrentParameter({});
               }}
             >
-              <Icon type="plus"/>
+              <Icon type="plus" />
               添加参数
             </Button>
           </Form.Item>
@@ -403,7 +403,7 @@ const EventDefin: React.FC<Props> = props => {
             <Form.Item label="密码长度">
               {getFieldDecorator('valueType.expands.maxLength', {
                 initialValue: initState.data.valueType?.expands.maxLength,
-              })(<Input addonAfter="字节"/>)}
+              })(<Input addonAfter="字节" />)}
             </Form.Item>
           </div>
         );
@@ -425,15 +425,15 @@ const EventDefin: React.FC<Props> = props => {
         <Form.Item label="事件标识">
           {getFieldDecorator('id', {
             rules: [
-              {required: true, message: '请输入事件标识'},
-              {max: 64, message: '事件标识不超过64个字符'},
-              {pattern: new RegExp(/^[0-9a-zA-Z_\-]+$/, "g"), message: '事件标识只能由数字、字母、下划线、中划线组成'}
+              { required: true, message: '请输入事件标识' },
+              { max: 64, message: '事件标识不超过64个字符' },
+              { pattern: new RegExp(/^[0-9a-zA-Z_\-]+$/, "g"), message: '事件标识只能由数字、字母、下划线、中划线组成' }
             ],
             initialValue: initState.data.id,
           })(
             <Input
               disabled={!!initState.data.id}
-              style={{width: '100%'}}
+              style={{ width: '100%' }}
               placeholder="请输入事件标识"
             />,
           )}
@@ -441,15 +441,15 @@ const EventDefin: React.FC<Props> = props => {
         <Form.Item label="事件名称">
           {getFieldDecorator('name', {
             rules: [
-              {required: true, message: '请输入事件名称'},
-              {max: 200, message: '事件名称不超过200个字符'}
+              { required: true, message: '请输入事件名称' },
+              { max: 200, message: '事件名称不超过200个字符' }
             ],
             initialValue: initState.data.name,
-          })(<Input placeholder="请输入事件名称"/>)}
+          })(<Input placeholder="请输入事件名称" />)}
         </Form.Item>
         <Form.Item label="事件类型">
           {getFieldDecorator('expands.eventType', {
-            rules: [{required: true}],
+            rules: [{ required: true }],
             initialValue: initState.data.expands?.eventType,
           })(
             <Radio.Group>
@@ -460,7 +460,7 @@ const EventDefin: React.FC<Props> = props => {
         </Form.Item>
         <Form.Item label="事件级别">
           {getFieldDecorator('expands.level', {
-            rules: [{required: true}],
+            rules: [{ required: true }],
             initialValue: initState.data.expands?.level,
           })(
             <Radio.Group>
@@ -472,7 +472,7 @@ const EventDefin: React.FC<Props> = props => {
         </Form.Item>
         <Form.Item label="输出参数">
           {getFieldDecorator('valueType.type', {
-            rules: [{required: true, message: '请选择'}],
+            rules: [{ required: true, message: '请选择' }],
             initialValue: initState.data.valueType?.type,
           })(
             <Select
@@ -505,7 +505,7 @@ const EventDefin: React.FC<Props> = props => {
         <Form.Item label="描述">
           {getFieldDecorator('description', {
             initialValue: initState.data.description,
-          })(<Input.TextArea rows={3}/>)}
+          })(<Input.TextArea rows={3} />)}
         </Form.Item>
       </Form>
       {parameterVisible && (
@@ -538,7 +538,7 @@ const EventDefin: React.FC<Props> = props => {
           onClick={() => {
             props.close();
           }}
-          style={{marginRight: 8}}
+          style={{ marginRight: 8 }}
         >
           关闭
         </Button>
