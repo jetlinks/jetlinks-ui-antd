@@ -105,7 +105,7 @@ const Save: React.FC<Props> = props => {
             onCancel={() => props.close()}
         >
             <div>
-                <Form layout="horizontal" labelCol={{ span: 6 }} wrapperCol={{ span: 18 }}>
+                <Form layout="horizontal" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
                     <Row justify="space-around" gutter={24}>
                         <Col span={12}>
                             <Form.Item label="产品ID" >
@@ -195,7 +195,7 @@ const Save: React.FC<Props> = props => {
                             </Form.Item>
                         </Col>
                         <Col span={12}>
-                            <Form.Item label="阿里云accessKey">
+                            <Form.Item label="accessKey">
                                 {getFieldDecorator('accessConfig.accessKeyId', {
                                     initialValue: accessConfig?.accessKeyId,
                                     rules: [{ required: true, message: '请输入' }],
@@ -212,7 +212,7 @@ const Save: React.FC<Props> = props => {
                             </Form.Item>
                         </Col>
                         <Col span={12}>
-                            <Form.Item label="阿里云accessSecret">
+                            <Form.Item label="accessSecret">
                                 {getFieldDecorator('accessConfig.accessSecret', {
                                     initialValue: accessConfig?.accessSecret,
                                     rules: [{ required: true, message: '请输入' }],
@@ -229,7 +229,7 @@ const Save: React.FC<Props> = props => {
                             </Form.Item>
                         </Col>
                         <Col span={12}>
-                            <Form.Item label="阿里云ProdctKey">
+                            <Form.Item label="ProductKey">
                                 {getFieldDecorator('accessConfig.productKey', {
                                     initialValue: accessConfig?.productKey,
                                     rules: [{ required: true, message: '请输入' }],
@@ -267,7 +267,7 @@ const Save: React.FC<Props> = props => {
                                         }
                                     }}>
                                         {productKeyList && productKeyList.map((i: any, index: number) => {
-                                            return <Select.Option key={index} value={i.productKey}>{i.productKey}</Select.Option>
+                                            return <Select.Option key={index} value={i.productKey}>{`${i.productKey}(${i.productName})`}</Select.Option>
                                         })}
                                     </Select>
                                 )}
@@ -289,10 +289,10 @@ const Save: React.FC<Props> = props => {
                                 <div key={index} style={{ backgroundColor: 'rgba(192,192,192,0.1)', marginBottom: '10px', paddingTop: '20px' }}>
                                     <div style={{ width: "90%", marginLeft: '5%' }}>网桥： {index + 1}</div>
                                     <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                        <div style={{ width: "80%" }}>
+                                        <div style={{ width: "85%" }}>
                                             <Row gutter={24}>
-                                                <Col span={8}>
-                                                    <Form.Item>
+                                                <Col span={12}>
+                                                    <Form.Item label="本地服务ID">
                                                         {getFieldDecorator(`bridgeConfigs[${index}].serverId`, {
                                                             initialValue: item.serverId || undefined,
                                                             rules: [{ required: true, message: '本地服务ID' }],
@@ -303,8 +303,8 @@ const Save: React.FC<Props> = props => {
                                                         </AutoComplete>)}
                                                     </Form.Item>
                                                 </Col>
-                                                <Col span={8}>
-                                                    <Form.Item>
+                                                <Col span={12}>
+                                                    <Form.Item label="网桥ProductKey">
                                                         {getFieldDecorator(`bridgeConfigs[${index}].bridgeProductKey`, {
                                                             initialValue: item.bridgeProductKey || undefined,
                                                             rules: [{ required: true, message: '网桥ProductKey' }],
@@ -315,8 +315,8 @@ const Save: React.FC<Props> = props => {
                                                         </Select>)}
                                                     </Form.Item>
                                                 </Col>
-                                                <Col span={8}>
-                                                    <Form.Item>
+                                                <Col span={12}>
+                                                    <Form.Item label="网桥DeviceName">
                                                         {getFieldDecorator(`bridgeConfigs[${index}].bridgeDeviceName`, {
                                                             initialValue: item.bridgeDeviceName || undefined,
                                                             rules: [{ required: true, message: '网桥DeviceName' }],
@@ -327,8 +327,8 @@ const Save: React.FC<Props> = props => {
                                                         </Select>)}
                                                     </Form.Item>
                                                 </Col>
-                                                <Col span={8}>
-                                                    <Form.Item>
+                                                <Col span={12}>
+                                                    <Form.Item label="网桥DeviceSecret">
                                                         {getFieldDecorator(`bridgeConfigs[${index}].bridgeDeviceSecret`, {
                                                             initialValue: item.bridgeDeviceSecret || undefined,
                                                             rules: [{ required: true, message: '网桥DeviceSecret' }],
@@ -341,7 +341,7 @@ const Save: React.FC<Props> = props => {
                                                 </Col>
                                             </Row>
                                         </div>
-                                        <div style={{ width: "10%", display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+                                        <div style={{ width: "10%", display: 'flex', justifyContent: 'center', marginTop: '30px' }}>
                                             <Tooltip title="删除">
                                                 <MinusCircleOutlined
                                                     onClick={() => {
