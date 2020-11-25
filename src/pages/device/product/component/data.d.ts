@@ -51,7 +51,7 @@ export class ValueType {
 
   length?: number;
 
-  latProperty:string;
+  latProperty: string;
 
   dateTemplate?: string;
 
@@ -74,7 +74,7 @@ export class ValueType {
   expands: {
     report: boolean;
     readOnly: boolean;
-    maxLength:number;
+    maxLength: number;
   };
 
   properties?: Parameter[];
@@ -94,6 +94,7 @@ export class PropertiesMeta {
   expands: {
     report: boolean;
     readOnly: boolean;
+    [name: string]: any
   };
 }
 
