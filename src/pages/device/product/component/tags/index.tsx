@@ -12,7 +12,6 @@ import {
   AutoComplete,
   InputNumber,
   Collapse,
-  Spin
 } from 'antd';
 import Form, { FormComponentProps } from 'antd/es/form';
 import { renderUnit } from '@/pages/device/public';
@@ -513,6 +512,7 @@ const TagsDefin: React.FC<Props> = props => {
               initialValue: initState.data.id,
             })(
               <Input
+                onChange={(value) => getMetadata(value.target.value, undefined)}
                 disabled={!!initState.data.id}
                 style={{ width: '100%' }}
                 placeholder="请输入标签标识"
@@ -537,6 +537,7 @@ const TagsDefin: React.FC<Props> = props => {
                 placeholder="请选择"
                 onChange={(value: string) => {
                   dataTypeChange(value);
+                  getMetadata(undefined, value)
                 }}
               >
                 <Select.OptGroup label="基本类型">
