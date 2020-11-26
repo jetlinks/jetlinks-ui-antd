@@ -445,7 +445,7 @@ const EventDefin: React.FC<Props> = props => {
       setLoadConfig(true);
       apis.deviceProdcut.configMetadata({
         productId: product.id,
-        modelType: 'property',
+        modelType: 'event',
         modelId: data.id,
         typeId: data.valueType.type
       }).then(rsp => {

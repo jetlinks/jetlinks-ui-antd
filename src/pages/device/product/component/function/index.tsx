@@ -443,7 +443,7 @@ const FunctionDefin: React.FC<Props> = props => {
       setLoadConfig(true);
       apis.deviceProdcut.configMetadata({
         productId: product.id,
-        modelType: 'property',
+        modelType: 'function',
         modelId: data.id,
         typeId: data.output.type
       }).then(rsp => {
