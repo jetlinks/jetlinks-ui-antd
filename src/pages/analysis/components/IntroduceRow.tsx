@@ -203,6 +203,7 @@ const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVi
                 break;
             }
           });
+          visitData = visitData.reverse()
         }
         setDeviceCountSpinning(false);
       });

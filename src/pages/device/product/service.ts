@@ -167,3 +167,25 @@ export async function configMetadata(params: {
   return request(`/jetlinks/device/product/${params.productId}/config-metadata/${params.modelType}/${params.modelId}/${params.typeId}`,
     { method: 'GET' })
 }
+
+//获取物模型格式
+export async function getModelFormat() {
+  return request(`/jetlinks/device/product/metadata/codecs`, {
+    method: 'get'
+  })  
+}
+
+//物模型
+export async function getModel(id: string, data: any) {
+  return request(`/jetlinks/device/product/metadata/convert-from/${id}`,{
+    method: 'post',
+    data
+  })
+}
+//物模型
+export async function getOtherModel(id: string, data: any) {
+  return request(`/jetlinks/device/product/metadata/convert-to/${id}`,{
+    method: 'post',
+    data
+  })
+}
