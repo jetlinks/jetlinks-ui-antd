@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Form, Input, Select, Radio, Col, Drawer, Button, Row, Icon, List, AutoComplete, InputNumber, Collapse } from 'antd';
+import { Form, Input, Select, Radio, Col, Drawer, Button, Row, Icon, List, AutoComplete, InputNumber, Collapse, Spin, message } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import { renderUnit } from '@/pages/device/public';
 import { PropertiesMeta } from '../data.d';
@@ -415,34 +415,61 @@ const PropertiesDefin: React.FC<Props> = props => {
   };
 
   const product = useContext<any>(ProductContext);
-  const data = getFieldsValue(['id', 'valueType.type']);
 
-  useEffect(() => {
+
+  const getMetadata = (id?: any, type?: any) => {
+    const data = getFieldsValue(['id', 'valueType.type']);
+    if (id) {
+      data.id = id;
+    }
+    if (type) {
+      data.valueType.type = type;
+    }
 
     if (data.id && data.valueType.type) {
+      setLoadConfig(true);
       apis.deviceProdcut.configMetadata({
         productId: product.id,
         modelType: 'property',
         modelId: data.id,
         typeId: data.valueType.type
       }).then(rsp => {
-        setLoadConfig(true);
+        setLoadConfig(false);
         setConfigMetadata(rsp.result);
-      })
+      }).finally(() => setLoadConfig(false));
     }
-
-  }, [data]);
-  const getMetadata = () => {
-    console.log(data, 'ddd');
-
   }
+  const renderItem = (config: any) => {
+    switch (config.type.type) {
+      case 'int':
+      case 'string':
+        return <Input />
+      case 'enum':
+        return (
+          <Select>
+            {config.type.elements.map(i => (
+              <Select.Option value={i.value}>{i.text}</Select.Option>
+            ))}
+          </Select>
+        );
+      default:
+        return <Input />
+    }
+  }
+
   const renderConfigMetadata = () => {
     return (
       <Collapse>{
         (configMetadata || []).map((item, index) => {
           return (
             <Collapse.Panel header={item.name} key={index}>
-              {JSON.stringify(item)}
+              {item.properties.map((config: any) => (
+                <Form.Item label={config.name} key={config.property}>
+                  {getFieldDecorator('expands.' + config.property, {
+                    initialValue: initState.data?.expands[config.property] || null
+                  })(renderItem(config))}
+                </Form.Item>
+              ))}
             </Collapse.Panel>
           )
         })}</Collapse>
@@ -459,78 +486,83 @@ const PropertiesDefin: React.FC<Props> = props => {
         visible
         width="30%"
       >
-        <Form>
-          <Form.Item label="属性标识">
-            {getFieldDecorator('id', {
-              rules: [
-                { required: true, message: '请输入属性标识' },
-                { max: 64, message: '属性标识不超过64个字符' },
-                { pattern: new RegExp(/^[0-9a-zA-Z_\-]+$/, "g"), message: '属性标识只能由数字、字母、下划线、中划线组成' }
-              ],
-              initialValue: initState.data.id,
-            })(
-              <Input
-                disabled={!!initState.data.id}
-                style={{ width: '100%' }}
-                placeholder="请输入属性标识"
-              />,
-            )}
-          </Form.Item>
-          <Form.Item label="属性名称">
-            {getFieldDecorator('name', {
-              rules: [
-                { required: true, message: '请输入属性名称' },
-                { max: 200, message: '属性名称不超过200个字符' }
-              ],
-              initialValue: initState.data.name,
-            })(<Input style={{ width: '100%' }} placeholder="请输入属性名称" />)}
-          </Form.Item>
-          <Form.Item label="数据类型">
-            {getFieldDecorator('valueType.type', {
-              rules: [{ required: true, message: '请选择' }],
-              initialValue: initState.data.valueType?.type,
-            })(
-              <Select
-                placeholder="请选择"
-                onChange={(value: string) => {
-                  dataTypeChange(value);
-                }}
-              >
-                <Select.OptGroup label="基本类型">
-                  <Select.Option value="int">int(整数型)</Select.Option>
-                  <Select.Option value="long">long(长整数型)</Select.Option>
-                  <Select.Option value="float">float(单精度浮点型)</Select.Option>
-                  <Select.Option value="double">double(双精度浮点数)</Select.Option>
-                  <Select.Option value="string">text(字符串)</Select.Option>
-                  <Select.Option value="boolean">bool(布尔型)</Select.Option>
-                </Select.OptGroup>
-                <Select.OptGroup label="其他类型">
-                  <Select.Option value="date">date(时间型)</Select.Option>
-                  <Select.Option value="enum">enum(枚举)</Select.Option>
-                  <Select.Option value="array">array(数组)</Select.Option>
-                  <Select.Option value="object">object(结构体)</Select.Option>
-                  <Select.Option value="file">file(文件)</Select.Option>
-                  <Select.Option value="password">password(密码)</Select.Option>
-                  <Select.Option value="geoPoint">geoPoint(地理位置)</Select.Option>
-                </Select.OptGroup>
-              </Select>,
-            )}
-          </Form.Item>
-          {renderDataType()}
+        <Spin spinning={loadConfig}>
 
-          {loadConfig && renderConfigMetadata()}
-          <Form.Item label="是否只读">
-            {getFieldDecorator('expands.readOnly', {
-              rules: [{ required: true }],
-              initialValue: initState.data.expands?.readOnly,
-            })(
-              <Radio.Group>
-                <Radio value="true">是</Radio>
-                <Radio value="false">否</Radio>
-              </Radio.Group>,
-            )}
-          </Form.Item>
-          {/*<Form.Item label="设备上报">
+          <Form>
+            <Form.Item label="属性标识">
+              {getFieldDecorator('id', {
+                rules: [
+                  { required: true, message: '请输入属性标识' },
+                  { max: 64, message: '属性标识不超过64个字符' },
+                  { pattern: new RegExp(/^[0-9a-zA-Z_\-]+$/, "g"), message: '属性标识只能由数字、字母、下划线、中划线组成' }
+                ],
+                initialValue: initState.data.id,
+              })(
+                <Input
+                  onChange={(value) => getMetadata(value.target.value, undefined)}
+                  disabled={!!initState.data.id}
+                  style={{ width: '100%' }}
+                  placeholder="请输入属性标识"
+                />,
+              )}
+            </Form.Item>
+            <Form.Item label="属性名称">
+              {getFieldDecorator('name', {
+                rules: [
+                  { required: true, message: '请输入属性名称' },
+                  { max: 200, message: '属性名称不超过200个字符' }
+                ],
+                initialValue: initState.data.name,
+              })(<Input style={{ width: '100%' }} placeholder="请输入属性名称" />)}
+            </Form.Item>
+            <Form.Item label="数据类型">
+              {getFieldDecorator('valueType.type', {
+                rules: [{ required: true, message: '请选择' }],
+                initialValue: initState.data.valueType?.type,
+              })(
+                <Select
+
+                  placeholder="请选择"
+                  onChange={(value: string) => {
+                    dataTypeChange(value);
+                    getMetadata(undefined, value)
+                  }}
+                >
+                  <Select.OptGroup label="基本类型">
+                    <Select.Option value="int">int(整数型)</Select.Option>
+                    <Select.Option value="long">long(长整数型)</Select.Option>
+                    <Select.Option value="float">float(单精度浮点型)</Select.Option>
+                    <Select.Option value="double">double(双精度浮点数)</Select.Option>
+                    <Select.Option value="string">text(字符串)</Select.Option>
+                    <Select.Option value="boolean">bool(布尔型)</Select.Option>
+                  </Select.OptGroup>
+                  <Select.OptGroup label="其他类型">
+                    <Select.Option value="date">date(时间型)</Select.Option>
+                    <Select.Option value="enum">enum(枚举)</Select.Option>
+                    <Select.Option value="array">array(数组)</Select.Option>
+                    <Select.Option value="object">object(结构体)</Select.Option>
+                    <Select.Option value="file">file(文件)</Select.Option>
+                    <Select.Option value="password">password(密码)</Select.Option>
+                    <Select.Option value="geoPoint">geoPoint(地理位置)</Select.Option>
+                  </Select.OptGroup>
+                </Select>,
+              )}
+            </Form.Item>
+            {renderDataType()}
+
+
+            <Form.Item label="是否只读">
+              {getFieldDecorator('expands.readOnly', {
+                rules: [{ required: true }],
+                initialValue: initState.data.expands?.readOnly,
+              })(
+                <Radio.Group>
+                  <Radio value="true">是</Radio>
+                  <Radio value="false">否</Radio>
+                </Radio.Group>,
+              )}
+            </Form.Item>
+            {/*<Form.Item label="设备上报">
             {getFieldDecorator('expands.report', {
               rules: [{ required: true }],
               initialValue: initState.data.expands?.report,
@@ -541,12 +573,14 @@ const PropertiesDefin: React.FC<Props> = props => {
               </Radio.Group>,
             )}
           </Form.Item>*/}
-          <Form.Item label="描述">
-            {getFieldDecorator('description', {
-              initialValue: initState.data.description,
-            })(<Input.TextArea rows={3} />)}
-          </Form.Item>
-        </Form>
+            {!loadConfig && renderConfigMetadata()}
+            <Form.Item label="描述">
+              {getFieldDecorator('description', {
+                initialValue: initState.data.description,
+              })(<Input.TextArea rows={3} />)}
+            </Form.Item>
+          </Form>
+        </Spin>
 
         <div
           style={{

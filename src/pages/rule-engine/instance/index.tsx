@@ -216,7 +216,7 @@ const RuleInstanceList: React.FC<Props> = props => {
   const logoMap = {
     'device_alarm': <Avatar size={40} src={DeviceAlarm} />,
     'sql_rule': <Avatar size={40} src={SqlServer} />,
-    'node_red': <Avatar size={40} src={NodeRed} />,
+    'node-red': <Avatar size={40} src={NodeRed} />,
     'rule-scene': <Avatar size={40} src={SceneImg} />
   }
   return (

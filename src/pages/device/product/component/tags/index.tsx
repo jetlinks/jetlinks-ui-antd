@@ -1,9 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { AutoComplete, Button, Col, Drawer, Form, Icon, Input, InputNumber, List, Radio, Row, Select } from 'antd';
-import { FormComponentProps } from 'antd/lib/form';
+import React, { useContext, useEffect, useState } from 'react';
+import {
+  Input,
+  Radio,
+  Button,
+  List,
+  Select,
+  Drawer,
+  Col,
+  Row,
+  Icon,
+  AutoComplete,
+  InputNumber,
+  Collapse,
+  Spin
+} from 'antd';
+import Form, { FormComponentProps } from 'antd/es/form';
 import { renderUnit } from '@/pages/device/public';
 import { TagsMeta } from '../data.d';
 import Paramter from '../paramter';
+import { ProductContext } from "@/pages/device/product/context";
+import apis from "@/services";
 
 interface Props extends FormComponentProps {
   data: Partial<TagsMeta>;
@@ -34,7 +50,7 @@ const TagsDefin: React.FC<Props> = props => {
   };
 
   const {
-    form: { getFieldDecorator },
+    form: { getFieldDecorator, getFieldsValue },
   } = props;
 
   const [dataType, setDataType] = useState(initState.dataType);
@@ -42,6 +58,9 @@ const TagsDefin: React.FC<Props> = props => {
   const [parameterVisible, setParameterVisible] = useState(initState.parameterVisible);
   const [properties, setProperties] = useState(initState.properties);
   const [currentParameter, setCurrentParameter] = useState(initState.currentParameter);
+  const [configMetadata, setConfigMetadata] = useState<any[]>([]);
+  const [loadConfig, setLoadConfig] = useState<boolean>(false);
+
 
   useEffect(() => {
     if (dataType === 'enum') {
@@ -83,7 +102,7 @@ const TagsDefin: React.FC<Props> = props => {
       case 'double':
         return (
           <div>
-            <Form.Item label="取值范围" style={{ height: 69 }}>
+            {/* <Form.Item label="取值范围" style={{ height: 69 }}>
               <Col span={11}>
                 {getFieldDecorator('valueType.min', {
                   initialValue: initState.data.valueType?.min,
@@ -105,7 +124,7 @@ const TagsDefin: React.FC<Props> = props => {
               {getFieldDecorator('valueType.step', {
                 initialValue: initState.data.valueType?.step,
               })(<Input placeholder="请输入步长" />)}
-            </Form.Item>
+            </Form.Item> */}
 
             <Form.Item label="精度">
               {getFieldDecorator('valueType.scale', {
@@ -124,7 +143,7 @@ const TagsDefin: React.FC<Props> = props => {
       case 'long':
         return (
           <div>
-            <Form.Item label="取值范围" style={{ height: 69 }}>
+            {/* <Form.Item label="取值范围" style={{ height: 69 }}>
               <Col span={11}>
                 {getFieldDecorator('valueType.min', {
                   initialValue: initState.data.valueType?.min,
@@ -146,7 +165,7 @@ const TagsDefin: React.FC<Props> = props => {
               {getFieldDecorator('valueType.step', {
                 initialValue: initState.data.valueType?.step,
               })(<InputNumber style={{ width: '100%' }} placeholder="请输入步长" />)}
-            </Form.Item>
+            </Form.Item> */}
             <Form.Item label="单位">
               {getFieldDecorator('valueType.unit', {
                 initialValue: initState.data.valueType?.unit,
@@ -250,7 +269,7 @@ const TagsDefin: React.FC<Props> = props => {
                 <Row key={item.id}>
                   <Col span={10}>
                     <Input
-                      placeholder="编号为：0"
+                      placeholder="标识"
                       value={item.value}
                       onChange={event => {
                         enumData[index].value = event.target.value;
@@ -410,6 +429,69 @@ const TagsDefin: React.FC<Props> = props => {
     }
   };
 
+
+  const product = useContext<any>(ProductContext);
+
+  useEffect(() => getMetadata(), []);
+  const getMetadata = (id?: any, type?: any) => {
+    const data = getFieldsValue(['id', 'valueType.type']);
+    if (id) {
+      data.id = id;
+    }
+    if (type) {
+      data.valueType.type = type;
+    }
+
+    if (data.id && data.valueType.type) {
+      setLoadConfig(true);
+      apis.deviceProdcut.configMetadata({
+        productId: product.id,
+        modelType: 'property',
+        modelId: data.id,
+        typeId: data.valueType.type
+      }).then(rsp => {
+        setLoadConfig(false);
+        setConfigMetadata(rsp.result);
+      }).finally(() => setLoadConfig(false));
+    }
+  }
+  const renderItem = (config: any) => {
+    switch (config.type.type) {
+      case 'int':
+      case 'string':
+        return <Input />
+      case 'enum':
+        return (
+          <Select>
+            {config.type.elements.map(i => (
+              <Select.Option value={i.value}>{i.text}</Select.Option>
+            ))}
+          </Select>
+        );
+      default:
+        return <Input />
+    }
+  }
+
+  const renderConfigMetadata = () => {
+    return (
+      <Collapse>{
+        (configMetadata || []).map((item, index) => {
+          return (
+            <Collapse.Panel header={item.name} key={index}>
+              {item.properties.map((config: any) => (
+                <Form.Item label={config.name} key={config.property}>
+                  {getFieldDecorator(`expands.${config.property}`, {
+                    initialValue: (initState.data?.expands || {})[config.property]
+                  })(renderItem(config))}
+                </Form.Item>
+              ))}
+            </Collapse.Panel>
+          )
+        })}</Collapse>
+    )
+  }
+
   return (
     <div>
       <Drawer
@@ -501,6 +583,8 @@ const TagsDefin: React.FC<Props> = props => {
               </Radio.Group>,
             )}
           </Form.Item>*/}
+          {!loadConfig && renderConfigMetadata()}
+
           <Form.Item label="描述">
             {getFieldDecorator('description', {
               initialValue: initState.data.description,
