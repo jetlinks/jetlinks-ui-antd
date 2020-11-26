@@ -466,7 +466,7 @@ const PropertiesDefin: React.FC<Props> = props => {
               {item.properties.map((config: any) => (
                 <Form.Item label={config.name} key={config.property}>
                   {getFieldDecorator('expands.' + config.property, {
-                    initialValue: initState.data?.expands[config.property] || null
+                    initialValue: (initState.data?.expands || {})[config.property]
                   })(renderItem(config))}
                 </Form.Item>
               ))}
