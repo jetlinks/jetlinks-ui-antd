@@ -22,7 +22,7 @@ export function getAuthority(): string | string[] {
   //   return ['admin'];
   // }
   // return authority;
- const storage = localStorage.getItem('hsweb-autz');
+  const storage = localStorage.getItem('hsweb-autz');
   if (storage) {
     try {
       const autz = storage && JSON.parse(storage)
@@ -41,6 +41,8 @@ export function getAuthority(): string | string[] {
       location.reload();
       return ['guest'];
     }
+  } else {
+    return ['guest'];
   }
 }
 
@@ -195,7 +197,7 @@ export function clearAutz() {
 export function setAutz(info: Authentication): Authentication {
   window.top.hsweb_autz = new Authentication(info);
   const autz = new Authentication(info);
-  if(JSON.stringify(info)!=='undefined'){
+  if (JSON.stringify(info) !== 'undefined') {
     localStorage.setItem('hsweb-autz', JSON.stringify(info));
   }
   return autz;
