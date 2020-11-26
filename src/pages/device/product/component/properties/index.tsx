@@ -499,7 +499,7 @@ const PropertiesDefin: React.FC<Props> = props => {
                 initialValue: initState.data.id,
               })(
                 <Input
-                  onChange={(value) => getMetadata(value.target.value, undefined)}
+                  onBlur={(value) => getMetadata(value.target.value, undefined)}
                   disabled={!!initState.data.id}
                   style={{ width: '100%' }}
                   placeholder="请输入属性标识"
