@@ -181,7 +181,7 @@ const QuickImport: React.FC<Props> = props => {
               </Upload>
             </Col>
             <Col span={18}>
-              <Select placeholder="JetLinks物模型" style={{width: '200px'}} onChange={(value: string) => {
+              <Select placeholder="JetLinks物模型" allowClear style={{width: '200px'}} onChange={(value: string) => {
                 if(value !== '{}' && value !== undefined){
                   setModelId(value)
                 }
