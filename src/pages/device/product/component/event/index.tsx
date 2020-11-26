@@ -527,7 +527,7 @@ const EventDefin: React.FC<Props> = props => {
               initialValue: initState.data.name,
             })(<Input placeholder="请输入事件名称" />)}
           </Form.Item>
-          <Form.Item label="事件类型">
+          {/* <Form.Item label="事件类型">
             {getFieldDecorator('expands.eventType', {
               rules: [{ required: true }],
               initialValue: initState.data.expands?.eventType,
@@ -549,7 +549,7 @@ const EventDefin: React.FC<Props> = props => {
                 <Radio value="urgent">紧急</Radio>
               </Radio.Group>,
             )}
-          </Form.Item>
+          </Form.Item> */}
           <Form.Item label="输出参数">
             {getFieldDecorator('valueType.type', {
               rules: [{ required: true, message: '请选择' }],
