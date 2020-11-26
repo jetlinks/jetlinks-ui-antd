@@ -1,7 +1,7 @@
-import React, {useState} from 'react';
-import {Button, Card, Descriptions, Icon, message, Popconfirm, Tooltip} from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Button, Card, Descriptions, Icon, message, Popconfirm, Tag, Tooltip } from 'antd';
 import moment from 'moment';
-import {DeviceInstance} from '@/pages/device/instance/data';
+import { DeviceInstance } from '@/pages/device/instance/data';
 import Configuration from './configuration';
 import Tags from './tags/tags';
 import apis from '@/services';
@@ -38,7 +38,6 @@ const Info: React.FC<Props> = (props) => {
       .catch(() => {
       });
   };
-
   const saveTags = (item?: any) => {
     setTagsVisible(false);
     apis.deviceInstance.saveDeviceTags(props.data.id, item)
@@ -48,7 +47,7 @@ const Info: React.FC<Props> = (props) => {
           props.refresh();
         }
       }).catch(() => {
-    });
+      });
   };
 
   const changeDeploy = (deviceId: string | undefined) => {
@@ -76,11 +75,20 @@ const Info: React.FC<Props> = (props) => {
       });
   };
 
+  const deleteBinds = (deviceId: string | undefined, bindType: string, bindKey: string) => {
+    apis.deviceInstance.deleteBinds(deviceId, bindType, bindKey).then(res => {
+      if (res.status === 200) {
+        message.success('解绑成功！');
+        props.refresh();
+      }
+    })
+  }
+
   return (
     <div>
-      <Card style={{marginBottom: 20}}>
-        <Descriptions style={{marginBottom: 20}} bordered column={3} size="small"
-                      title={<span>设备信息</span>}>
+      <Card style={{ marginBottom: 20 }}>
+        <Descriptions style={{ marginBottom: 20 }} bordered column={3} size="small"
+          title={<span>设备信息</span>}>
           <Descriptions.Item label="产品名称" span={1}>
             {props.data.productName}
           </Descriptions.Item>
@@ -111,91 +119,120 @@ const Info: React.FC<Props> = (props) => {
           <Descriptions.Item label="说明" span={3}>
             {props.data.describe}
           </Descriptions.Item>
+          {props.data.binds && props.data.binds.length > 0 && (
+            <Descriptions.Item label="云对云接入" span={3}>
+              {props.data.binds.map((i: any, index: number) => {
+                return (
+                  <Tag color="blue" key={index}>
+                    <Tooltip title={i.description}>
+                      <span>{i.bindName}</span>
+                    </Tooltip>
+                    <Popconfirm title={`是否解绑${i.bindName}接入`} onConfirm={() => {
+                      deleteBinds(props.data.id, i.bindType, i.bindKey)
+                    }}>
+                      <span style={{ display: "inline-block", marginLeft: "10px" }}>×</span>
+                    </Popconfirm>
+                  </Tag>
+                )
+              })}
+            </Descriptions.Item>
+          )}
         </Descriptions>
 
-        {props.configuration && props.configuration.name && (
-          <Descriptions style={{marginBottom: 20}} bordered size="small" column={3}
-                        title={
-                          <span>
-                {props.configuration.name}
-                            <Button icon="edit" style={{marginLeft: 20}} type="link"
-                                    onClick={() => setUpdateVisible(true)}
-                            >编辑</Button>
-                            {props.data.state?.value != 'notActive' && (
-                              <Popconfirm title="确认重新应用该配置？"
-                                          onConfirm={() => {
-                                            changeDeploy(props.data.id);
-                                          }}>
-                                <Button icon="check" type="link">应用配置</Button>
-                                <Tooltip title="修改配置后需重新应用后才能生效。">
-                                  <Icon type="question-circle-o"/>
-                                </Tooltip>
-                              </Popconfirm>
-                            )}
+        {props.configuration && props.configuration.length > 0 && (
+          <div style={{ width: '100%' }}>
+            <Descriptions
+              title={
+                <span>
+                  配置
+                      <Button icon="edit" style={{ marginLeft: 20 }} type="link"
+                    onClick={() => setUpdateVisible(true)}
+                  >编辑</Button>
+                  {props.data.state?.value != 'notActive' && (
+                    <Popconfirm title="确认重新应用该配置？"
+                      onConfirm={() => {
+                        changeDeploy(props.data.id);
+                      }}>
+                      <Button icon="check" type="link">应用配置</Button>
+                      <Tooltip title="修改配置后需重新应用后才能生效。">
+                        <Icon type="question-circle-o" />
+                      </Tooltip>
+                    </Popconfirm>
+                  )}
 
-                            {props.data.aloneConfiguration && (
-                              <Popconfirm title="确认恢复默认配置？"
-                                          onConfirm={() => {
-                                            configurationReset(props.data.id);
-                                          }}>
-                                <Button icon="undo" type="link">恢复默认</Button>
-                                <Tooltip title={`该设备单独编辑过${props.configuration.name}，点击此将恢复成默认的配置信息，请谨慎操作。`}>
-                                  <Icon type="question-circle-o"/>
-                                </Tooltip>
-                              </Popconfirm>
-                            )}
+                  {props.data.aloneConfiguration && (
+                    <Popconfirm title="确认恢复默认配置？"
+                      onConfirm={() => {
+                        configurationReset(props.data.id);
+                      }}>
+                      <Button icon="undo" type="link">恢复默认</Button>
+                      <Tooltip title={`该设备单独编辑过${props.configuration.name}，点击此将恢复成默认的配置信息，请谨慎操作。`}>
+                        <Icon type="question-circle-o" />
+                      </Tooltip>
+                    </Popconfirm>
+                  )}
+                </span>
+              }
+            ></Descriptions>
+            {props.configuration.map((i: any) => (
+              <div style={{ marginBottom: "20px" }} key={i.name}>
+                <h3>{i.name}</h3>
+                <Descriptions bordered column={2} title="">
+                  {i.properties &&
+                    i.properties.map((item: any) => (
+                      <Descriptions.Item label={item.name} span={1} key={item.property}>
+                        {props.data.configuration ? (
+                          item.type.type === 'password' ? (
+                            props.data.configuration[item.property]?.length > 0 ? '••••••' : null
+                          ) :
+                            props.data.configuration[item.property]
+                        ) : null}
+                      </Descriptions.Item>
+                    ))}
+                </Descriptions>
+              </div>
+            ))}
+          </div>
+        )}
+        {props.data.tags && props.data.tags.length > 0 && (
+          <Descriptions style={{ marginBottom: 20 }} bordered column={3} size="small"
+            title={
+              <span>
+                {'标签'}
+                <Button icon="edit" style={{ marginLeft: 20 }} type="link"
+                  onClick={() => setTagsVisible(true)}
+                >编辑</Button>
               </span>
-                        }>
-            {props.configuration.properties &&
-            props.configuration.properties.map((item: any) => (
-              <Descriptions.Item label={item.property} span={1} key={item.property}>
-                {props.data.configuration ? (
-                  item.type.type === 'password' ? (
-                      props.data.configuration[item.property]?.length > 0 ? '••••••' : null
-                    ) :
-                    props.data.configuration[item.property]
-                ) : null}
+            }>
+            {props.data.tags && props.data.tags?.map((item: any) => (
+              <Descriptions.Item label={`${item.name}（${item.key})`} span={1} key={item.key}>
+                {item.value || "——————————"}
               </Descriptions.Item>
             ))}
           </Descriptions>
         )}
-        <Descriptions style={{marginBottom: 20}} bordered column={3} size="small"
-                      title={
-                        <span>
-            {'标签'}
-                          <Button icon="edit" style={{marginLeft: 20}} type="link"
-                                  onClick={() => setTagsVisible(true)}
-                          >编辑</Button>
-            </span>
-                      }>
-          {props.data.tags && props.data.tags?.map((item: any) => (
-            <Descriptions.Item label={`${item.name}（${item.key})`} span={1} key={item.key}>
-              {item.value}
-            </Descriptions.Item>
-          ))}
-        </Descriptions>
       </Card>
       {updateVisible && (
         <Configuration data={props.data} configuration={props.configuration}
-                       close={() => {
-                         setUpdateVisible(false);
-                         props.refresh();
-                       }}
-                       save={(item: any) => {
-                         updateData(item);
-                       }}
+          close={() => {
+            setUpdateVisible(false);
+            props.refresh();
+          }}
+          save={(item: any) => {
+            updateData(item);
+          }}
         />
       )}
 
       {tagsVisible && (
         <Tags data={props.data.tags} deviceId={props.data.id}
-              close={() => {
-                setTagsVisible(false);
-                props.refresh();
-              }}
-              save={(item: any) => {
-                saveTags(item);
-              }}
+          close={() => {
+            setTagsVisible(false);
+            props.refresh();
+          }}
+          save={(item: any) => {
+            saveTags(item);
+          }}
         />
       )}
     </div>

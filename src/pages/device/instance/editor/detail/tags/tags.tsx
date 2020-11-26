@@ -38,8 +38,11 @@ const Tags: React.FC<Props> = props => {
   }, []);
 
   const saveData = () => {
-    if (tagsData.length > 0) {
-      props.save(tagsData);
+    let data = tagsData.filter(item => {
+      return (item.key != '') && (item.name != '') && (item.value != '') && (item.key != undefined) && (item.name != undefined) && (item.value != undefined)
+    })
+    if (data.length > 0) {
+      props.save(data);
     } else {
       props.close();
     }

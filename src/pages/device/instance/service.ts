@@ -172,3 +172,8 @@ export async function updateProperty(deviceId: string, data: any) {
     data
   });
 }
+export async function deleteBinds(deviceId: string | undefined, bindType: string, bindKey: string) {
+  return request(`/jetlinks/device/instance/${deviceId}/binds/${bindType}/${bindKey}`, {
+    method: 'DELETE',
+  });
+}

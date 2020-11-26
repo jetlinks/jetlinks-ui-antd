@@ -38,6 +38,8 @@ import * as systemConfig from '@/pages/system/config/service';
 import * as notification from '@/pages/account/notification/service';
 import * as screen from '@/pages/data-screen/screen/service';
 import * as categoty from '@/pages/data-screen/category/service'
+import * as productCategoty from '@/pages/device/product-category/service'
+import * as aliyun from '@/pages/cloud/aliyun/service'
 
 const apis = {
   login,
@@ -80,5 +82,7 @@ const apis = {
   notification,
   screen,
   categoty, //大屏分类
+  productCategoty,
+  aliyun, //阿里云
 };
 export default apis;

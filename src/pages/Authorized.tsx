@@ -24,6 +24,7 @@ const AuthComponent: React.FC<AuthComponentProps> = ({
   const { currentUser } = user;
   const { routes = [] } = route;
   const isLogin = currentUser && currentUser.name;
+
   const autz = localStorage.getItem('hsweb-autz');
   if (!autz) {
     dispatch!({

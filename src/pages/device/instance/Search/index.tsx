@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'react';
-import Form, {FormComponentProps} from 'antd/lib/form';
-import {Button, Col, Input, Row, Select, TreeSelect} from 'antd';
+import React, { useEffect, useState } from 'react';
+import Form, { FormComponentProps } from 'antd/lib/form';
+import { Button, Col, Input, Row, Select, TreeSelect } from 'antd';
 import apis from '@/services';
 import SearchTags from "@/pages/device/instance/Search/tags/tags";
 
@@ -18,7 +18,7 @@ const Search: React.FC<Props> = props => {
 
   const {
     form,
-    form: {getFieldDecorator, setFieldsValue},
+    form: { getFieldDecorator, setFieldsValue },
   } = props;
 
   const initState: State = {
@@ -32,22 +32,23 @@ const Search: React.FC<Props> = props => {
   const [tagsVisible, setTagsVisible] = useState(false);
   const [tagsData, setTagsData] = useState(initState.tagsData);
   const [categoryList, setCategoryList] = useState([]);
+  const [bindList, setBindList] = useState([]);
 
   useEffect(() => {
     setParameterType('id$like');
-    form.setFieldsValue({parameter: 'id$like'});
+    form.setFieldsValue({ parameter: 'id$like' });
 
     apis.deviceProdcut.queryOrganization()
       .then(res => {
         if (res.status === 200) {
           let orgList: any = [];
           res.result.map((item: any) => {
-            orgList.push({id: item.id, pId: item.parentId, value: item.id, title: item.name})
+            orgList.push({ id: item.id, pId: item.parentId, value: item.id, title: item.name })
           });
           setOrganizationList(orgList);
         }
       }).catch(() => {
-    });
+      });
 
     apis.deviceProdcut.deviceCategory()
       .then((response: any) => {
@@ -63,6 +64,13 @@ const Search: React.FC<Props> = props => {
       .catch(() => {
       });
 
+    //云对云接入
+    apis.deviceProdcut.deviceBind().then((res: any) => {
+      if (res.status === 200) {
+        setBindList(res.result)
+      }
+    })
+
   }, []);
 
   const search = () => {
@@ -73,9 +81,10 @@ const Search: React.FC<Props> = props => {
       data.value = JSON.stringify(data.value).replace(/[\[\]"]/g, '');
     } else if (data.parameter === 'id$dev-tag') {
       data.value = tagsData.length > 0 ? JSON.stringify(tagsData) : undefined;
+    } else if (data.parameter === 'id$dev-bind$any') {
+      data.value = JSON.stringify(data.value).replace(/[\[\]"]/g, '') 
     }
     map[data.parameter] = data.value;
-
     props.search(map);
   };
 
@@ -86,7 +95,7 @@ const Search: React.FC<Props> = props => {
         return (
           <>
             {getFieldDecorator('value', {})(
-              <Input placeholder="请输入" style={{width: 'calc(100% - 100px)'}}/>,
+              <Input placeholder="请输入" style={{ width: 'calc(100% - 100px)' }} />,
             )}
           </>
         );
@@ -95,7 +104,7 @@ const Search: React.FC<Props> = props => {
           <>
             {getFieldDecorator('value', {})(
               <TreeSelect
-                style={{width: 'calc(100% - 100px)'}}
+                style={{ width: 'calc(100% - 100px)' }}
                 allowClear treeDataSimpleMode showSearch multiple
                 placeholder="所属机构，可根据机构名称模糊查询" treeData={organizationList}
                 treeNodeFilterProp='title'
@@ -109,7 +118,7 @@ const Search: React.FC<Props> = props => {
             {getFieldDecorator('value', {})(
               <Input placeholder="点击选择设备标签" onClick={() => {
                 setTagsVisible(true);
-              }} style={{width: 'calc(100% - 100px)'}}/>
+              }} style={{ width: 'calc(100% - 100px)' }} />
             )}
           </>
         );
@@ -118,12 +127,31 @@ const Search: React.FC<Props> = props => {
           <>
             {getFieldDecorator('value', {})(
               <TreeSelect
-                style={{width: 'calc(100% - 100px)'}}
-                dropdownStyle={{maxHeight: 500}}
+                style={{ width: 'calc(100% - 100px)' }}
+                dropdownStyle={{ maxHeight: 500 }}
                 allowClear treeDataSimpleMode showSearch multiple
                 placeholder="所属品类，可根据品类名称模糊查询" treeData={categoryList}
                 treeNodeFilterProp='title'
               />
+            )}
+          </>
+        );
+      case 'id$dev-bind$any':
+        return (
+          <>
+            {getFieldDecorator('value', {})(
+              <Select
+                style={{ width: 'calc(100% - 100px)' }}
+                dropdownStyle={{ maxHeight: 500 }}
+                mode="tags"
+                placeholder="云对云接入，可根据品类名称模糊查询"
+              >
+                {
+                  bindList.map((i: any) => {
+                    return (<Select.Option key={i.id} >{i.name}</Select.Option>)
+                  })
+                }
+              </Select>
             )}
           </>
         );
@@ -134,33 +162,34 @@ const Search: React.FC<Props> = props => {
 
   const formItemLayout = {
     labelCol: {
-      xs: {span: 24},
-      sm: {span: 4},
+      xs: { span: 24 },
+      sm: { span: 4 },
     },
     wrapperCol: {
-      xs: {span: 24},
-      sm: {span: 20},
+      xs: { span: 24 },
+      sm: { span: 20 },
     },
   };
 
   return (
     <Form {...formItemLayout}>
-      <Row gutter={{md: 8, lg: 24, xl: 48}}>
+      <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
         <Col md={8} sm={24} key='parameter'>
           <Input.Group compact>
             {getFieldDecorator('parameter', {
               initialValue: parameterType,
             })(
-              <Select style={{width: 100}} placeholder="请选择"
-                      onChange={(value: string) => {
-                        setFieldsValue({'value': undefined});
-                        setParameterType(value);
-                      }}>
+              <Select style={{ width: 100 }} placeholder="请选择"
+                onChange={(value: string) => {
+                  setFieldsValue({ 'value': undefined });
+                  setParameterType(value);
+                }}>
                 <Select.Option value="id$like" key="id$like">设备ID</Select.Option>
                 <Select.Option value="name$like" key="name$like">设备名称</Select.Option>
                 <Select.Option value="orgId$in" key="orgId$in">所属机构</Select.Option>
                 <Select.Option value="id$dev-tag" key="id$dev-tag">设备标签</Select.Option>
                 <Select.Option value="productId$dev-prod-cat" key="productId$dev-prod-cat">所属品类</Select.Option>
+                <Select.Option value="id$dev-bind$any" key="id$dev-bind$any">云对云接入</Select.Option>
               </Select>,
             )}
             {renderType()}
@@ -173,16 +202,16 @@ const Search: React.FC<Props> = props => {
           marginRight: 30,
           marginTop: 4
         }}>
-          <Button type="primary" style={{marginLeft: 8}} onClick={() => {
+          <Button type="primary" style={{ marginLeft: 8 }} onClick={() => {
             search();
           }}>
             查询
           </Button>
-          <Button style={{marginLeft: 8}} onClick={() => {
+          <Button style={{ marginLeft: 8 }} onClick={() => {
             form.resetFields();
-            form.setFieldsValue({parameter: 'id$like', value: undefined});
+            form.setFieldsValue({ parameter: 'id$like', value: undefined });
             setParameterType('id$like');
-            setFieldsValue({'value': undefined});
+            setFieldsValue({ 'value': undefined });
             setTagsData([]);
             props.search({});
           }}>
@@ -192,18 +221,18 @@ const Search: React.FC<Props> = props => {
       </Row>
       {tagsVisible && (
         <SearchTags data={tagsData}
-                    close={() => {
-                      setTagsVisible(false);
-                    }}
-                    save={(item: any) => {
-                      let displayData: any[] = [];
-                      item.map((item: any) => {
-                        displayData.push(`${item.key}=${item.value}`);
-                      });
-                      setFieldsValue({'value': displayData.join('；')});
-                      setTagsData(item);
-                      setTagsVisible(false);
-                    }}
+          close={() => {
+            setTagsVisible(false);
+          }}
+          save={(item: any) => {
+            let displayData: any[] = [];
+            item.map((item: any) => {
+              displayData.push(`${item.key}=${item.value}`);
+            });
+            setFieldsValue({ 'value': displayData.join('；') });
+            setTagsData(item);
+            setTagsVisible(false);
+          }}
         />
       )}
     </Form>

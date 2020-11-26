@@ -1,15 +1,16 @@
-import React, {useState} from 'react';
-import {Button, Card, message, Spin, Tabs} from 'antd';
+import React, { useState } from 'react';
+import { Button, Card, message, Spin, Tabs } from 'antd';
 import Property from './Properties';
 import Functions from './Functions';
 import Events from './Events';
 import Tags from '@/pages/device/product/save/definition/Tags';
 import Form from "antd/es/form";
-import {FormComponentProps} from "antd/lib/form";
+import { FormComponentProps } from "antd/lib/form";
 import MetaData from "@/pages/device/product/save/model/metaData";
 import QuickImport from "@/pages/device/product/save/model/quickImport";
 import apis from "@/services";
-import {DeviceProduct} from "@/pages/device/product/data";
+import { DeviceProduct } from "@/pages/device/product/data";
+import { ProductContext } from '../../context';
 
 interface Props extends FormComponentProps {
   basicInfo: Partial<DeviceProduct>
@@ -77,7 +78,7 @@ const Definition: React.FC<Props> = props => {
         快速导入
       </Button>
       {props.basicInfo.metadata && (
-        <Button style={{marginLeft: 10}} onClick={() => {
+        <Button style={{ marginLeft: 10 }} onClick={() => {
           setMetaDataVisible(true);
         }}>
           物模型 TSL
@@ -90,49 +91,53 @@ const Definition: React.FC<Props> = props => {
     <Card>
       <Spin spinning={spinning}>
         <TenantContext.Provider value={importData}>
-          <Tabs defaultActiveKey="1" tabPosition="top" type="card" tabBarExtraContent={operations}>
-            <Tabs.TabPane tab="属性定义" key="1">
-              <Property
-                data={props.propertyData}
-                unitsData={props.unitsData}
-                save={(data: any) => {
-                  props.saveProperty(data);
-                }}
-              />
-            </Tabs.TabPane>
-            <Tabs.TabPane tab="功能定义" key="2">
-              <Functions
-                data={props.functionsData}
-                unitsData={props.unitsData}
-                save={(data: any) => {
-                  props.saveFunctions(data);
-                }}
-              />
-            </Tabs.TabPane>
-            <Tabs.TabPane tab="事件定义" key="3">
-              <Events
-                data={props.eventsData}
-                unitsData={props.unitsData}
-                save={(data: any) => {
-                  props.saveEvents(data);
-                }}
-              />
-            </Tabs.TabPane>
-            <Tabs.TabPane tab="标签定义" key="4">
-              <Tags
-                data={props.tagsData}
-                unitsData={props.unitsData}
-                save={(data: any) => {
-                  props.saveTags(data);
-                }}
-              />
-            </Tabs.TabPane>
-          </Tabs>
+          <ProductContext.Provider value={props.basicInfo}>
+
+            <Tabs defaultActiveKey="1" tabPosition="top" type="card" tabBarExtraContent={operations}>
+              <Tabs.TabPane tab="属性定义" key="1">
+                <Property
+                  data={props.propertyData}
+                  unitsData={props.unitsData}
+                  save={(data: any) => {
+                    props.saveProperty(data);
+                  }}
+                />
+              </Tabs.TabPane>
+              <Tabs.TabPane tab="功能定义" key="2">
+                <Functions
+                  data={props.functionsData}
+                  unitsData={props.unitsData}
+                  save={(data: any) => {
+                    props.saveFunctions(data);
+                  }}
+                />
+              </Tabs.TabPane>
+              <Tabs.TabPane tab="事件定义" key="3">
+                <Events
+                  data={props.eventsData}
+                  unitsData={props.unitsData}
+                  save={(data: any) => {
+                    props.saveEvents(data);
+                  }}
+                />
+              </Tabs.TabPane>
+              <Tabs.TabPane tab="标签定义" key="4">
+                <Tags
+                  data={props.tagsData}
+                  unitsData={props.unitsData}
+                  save={(data: any) => {
+                    props.saveTags(data);
+                  }}
+                />
+              </Tabs.TabPane>
+            </Tabs>
+
+          </ProductContext.Provider>
         </TenantContext.Provider>
         {metaDataVisible && (
           <MetaData close={() => {
             setMetaDataVisible(false);
-          }} productId={basicInfo.id}/>
+          }} productId={basicInfo.id} />
         )}
         {quickImportVisible && (
           <QuickImport
@@ -142,7 +147,7 @@ const Definition: React.FC<Props> = props => {
             update={(item: any) => {
               setQuickImportVisible(false);
               setSpinning(true);
-              updateModel({metadata: item});
+              updateModel({ metadata: item });
             }}
           />
         )}

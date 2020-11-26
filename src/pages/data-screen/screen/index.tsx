@@ -174,10 +174,10 @@ const Screen = (props: Props) => {
                 {
                   label: '大屏分类',
                   key: 'classifiedId$LIKE',
-                  type: 'treeSelect',
+                  type: 'list',
                   props: {
                     data: categoryList,
-                    dropdownStyle: {maxHeight: 500}
+                    mode: 'default'
                   }
                 }]}
             />

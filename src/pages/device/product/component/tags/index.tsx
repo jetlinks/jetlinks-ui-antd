@@ -1,9 +1,25 @@
-import React, {useEffect, useState} from 'react';
-import {AutoComplete, Button, Col, Drawer, Form, Icon, Input, InputNumber, List, Radio, Row, Select} from 'antd';
-import {FormComponentProps} from 'antd/lib/form';
-import {renderUnit} from '@/pages/device/public';
-import {TagsMeta} from '../data.d';
+import React, { useContext, useEffect, useState } from 'react';
+import {
+  Input,
+  Radio,
+  Button,
+  List,
+  Select,
+  Drawer,
+  Col,
+  Row,
+  Icon,
+  AutoComplete,
+  InputNumber,
+  Collapse,
+  Spin
+} from 'antd';
+import Form, { FormComponentProps } from 'antd/es/form';
+import { renderUnit } from '@/pages/device/public';
+import { TagsMeta } from '../data.d';
 import Paramter from '../paramter';
+import { ProductContext } from "@/pages/device/product/context";
+import apis from "@/services";
 
 interface Props extends FormComponentProps {
   data: Partial<TagsMeta>;
@@ -26,7 +42,7 @@ const TagsDefin: React.FC<Props> = props => {
   const initState: State = {
     dataType: props.data.valueType?.type || '',
     data: props.data,
-    enumData: props.data.valueType?.elements || [{text: '', value: '', id: 0}],
+    enumData: props.data.valueType?.elements || [{ text: '', value: '', id: 0 }],
     parameterVisible: false,
     properties: props.data.valueType?.properties || [],
     currentParameter: {},
@@ -34,7 +50,7 @@ const TagsDefin: React.FC<Props> = props => {
   };
 
   const {
-    form: {getFieldDecorator},
+    form: { getFieldDecorator, getFieldsValue },
   } = props;
 
   const [dataType, setDataType] = useState(initState.dataType);
@@ -42,6 +58,9 @@ const TagsDefin: React.FC<Props> = props => {
   const [parameterVisible, setParameterVisible] = useState(initState.parameterVisible);
   const [properties, setProperties] = useState(initState.properties);
   const [currentParameter, setCurrentParameter] = useState(initState.currentParameter);
+  const [configMetadata, setConfigMetadata] = useState<any[]>([]);
+  const [loadConfig, setLoadConfig] = useState<boolean>(false);
+
 
   useEffect(() => {
     if (dataType === 'enum') {
@@ -68,7 +87,7 @@ const TagsDefin: React.FC<Props> = props => {
       if (dataType === 'object') {
         data.valueType.properties = properties;
       }
-      props.save({...data});
+      props.save({ ...data });
     });
   };
 
@@ -83,11 +102,11 @@ const TagsDefin: React.FC<Props> = props => {
       case 'double':
         return (
           <div>
-            <Form.Item label="取值范围" style={{height: 69}}>
+            {/* <Form.Item label="取值范围" style={{ height: 69 }}>
               <Col span={11}>
                 {getFieldDecorator('valueType.min', {
                   initialValue: initState.data.valueType?.min,
-                })(<InputNumber style={{width:'100%'}} placeholder="最小值"/>)}
+                })(<InputNumber style={{ width: '100%' }} placeholder="最小值" />)}
               </Col>
               <Col span={2} push={1}>
                 ~
@@ -96,7 +115,7 @@ const TagsDefin: React.FC<Props> = props => {
                 <Form.Item>
                   {getFieldDecorator('valueType.max', {
                     initialValue: initState.data.valueType?.max,
-                  })(<InputNumber style={{width:'100%'}} placeholder="最大值"/>)}
+                  })(<InputNumber style={{ width: '100%' }} placeholder="最大值" />)}
                 </Form.Item>
               </Col>
             </Form.Item>
@@ -104,13 +123,13 @@ const TagsDefin: React.FC<Props> = props => {
             <Form.Item label="步长">
               {getFieldDecorator('valueType.step', {
                 initialValue: initState.data.valueType?.step,
-              })(<Input placeholder="请输入步长"/>)}
-            </Form.Item>
+              })(<Input placeholder="请输入步长" />)}
+            </Form.Item> */}
 
             <Form.Item label="精度">
               {getFieldDecorator('valueType.scale', {
                 initialValue: initState.data.valueType?.scale,
-              })(<InputNumber min={0} step={1} placeholder="请输入精度" style={{width:'100%'}}/>)}
+              })(<InputNumber min={0} step={1} placeholder="小数点位数" style={{ width: '100%' }} />)}
             </Form.Item>
 
             <Form.Item label="单位">
@@ -124,11 +143,11 @@ const TagsDefin: React.FC<Props> = props => {
       case 'long':
         return (
           <div>
-            <Form.Item label="取值范围" style={{height: 69}}>
+            {/* <Form.Item label="取值范围" style={{ height: 69 }}>
               <Col span={11}>
                 {getFieldDecorator('valueType.min', {
                   initialValue: initState.data.valueType?.min,
-                })(<InputNumber style={{width:'100%'}} placeholder="最小值"/>)}
+                })(<InputNumber style={{ width: '100%' }} placeholder="最小值" />)}
               </Col>
               <Col span={2} push={1}>
                 ~
@@ -137,7 +156,7 @@ const TagsDefin: React.FC<Props> = props => {
                 <Form.Item>
                   {getFieldDecorator('valueType.max', {
                     initialValue: initState.data.valueType?.max,
-                  })(<InputNumber style={{width:'100%'}} placeholder="最大值"/>)}
+                  })(<InputNumber style={{ width: '100%' }} placeholder="最大值" />)}
                 </Form.Item>
               </Col>
             </Form.Item>
@@ -145,8 +164,8 @@ const TagsDefin: React.FC<Props> = props => {
             <Form.Item label="步长">
               {getFieldDecorator('valueType.step', {
                 initialValue: initState.data.valueType?.step,
-              })(<InputNumber style={{width:'100%'}} placeholder="请输入步长"/>)}
-            </Form.Item>
+              })(<InputNumber style={{ width: '100%' }} placeholder="请输入步长" />)}
+            </Form.Item> */}
             <Form.Item label="单位">
               {getFieldDecorator('valueType.unit', {
                 initialValue: initState.data.valueType?.unit,
@@ -157,21 +176,21 @@ const TagsDefin: React.FC<Props> = props => {
       case 'string':
         return (
           <div>
-            <Form.Item label="数据长度">
+            <Form.Item label="最大长度">
               {getFieldDecorator('valueType.expands.maxLength', {
                 initialValue: initState.data.valueType?.expands?.maxLength,
-              })(<Input addonAfter="字节"/>)}
+              })(<Input />)}
             </Form.Item>
           </div>
         );
       case 'boolean':
         return (
           <div>
-            <Form.Item label="布尔值" style={{height: 69}}>
+            <Form.Item label="布尔值" style={{ height: 69 }}>
               <Col span={11}>
                 {getFieldDecorator('valueType.trueText', {
-                  initialValue: initState.data.valueType?.trueText,
-                })(<Input placeholder="trueText"/>)}
+                  initialValue: initState.data.valueType?.trueText || '是',
+                })(<Input placeholder="trueText" />)}
               </Col>
               <Col span={2} push={1}>
                 ~
@@ -179,16 +198,16 @@ const TagsDefin: React.FC<Props> = props => {
               <Col span={11}>
                 <Form.Item>
                   {getFieldDecorator('valueType.trueValue', {
-                    initialValue: initState.data.valueType?.trueValue,
-                  })(<Input placeholder="trueValue"/>)}
+                    initialValue: initState.data.valueType?.trueValue || true,
+                  })(<Input placeholder="trueValue" />)}
                 </Form.Item>
               </Col>
             </Form.Item>
-            <Form.Item style={{height: 69}}>
+            <Form.Item style={{ height: 69 }}>
               <Col span={11}>
                 {getFieldDecorator('valueType.falseText', {
-                  initialValue: initState.data.valueType?.falseText,
-                })(<Input placeholder="falseText"/>)}
+                  initialValue: initState.data.valueType?.falseText || '否',
+                })(<Input placeholder="falseText" />)}
               </Col>
               <Col span={2} push={1}>
                 ~
@@ -196,8 +215,8 @@ const TagsDefin: React.FC<Props> = props => {
               <Col span={11}>
                 <Form.Item>
                   {getFieldDecorator('valueType.falseValue', {
-                    initialValue: initState.data.valueType?.falseValue,
-                  })(<Input placeholder="falseValue"/>)}
+                    initialValue: initState.data.valueType?.falseValue || false,
+                  })(<Input placeholder="falseValue" />)}
                 </Form.Item>
               </Col>
             </Form.Item>
@@ -211,9 +230,9 @@ const TagsDefin: React.FC<Props> = props => {
                 initialValue: initState.data.valueType?.format,
               })(
                 <AutoComplete dataSource={dataSource} placeholder="默认格式：String类型的UTC时间戳 (毫秒)"
-                              filterOption={(inputValue, option) =>
-                                option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
-                              }
+                  filterOption={(inputValue, option) =>
+                    option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
+                  }
                 />,
               )}
             </Form.Item>
@@ -238,7 +257,7 @@ const TagsDefin: React.FC<Props> = props => {
             <Form.Item label="元素个数">
               {getFieldDecorator('valueType.elementNumber', {
                 initialValue: initState.data.valueType?.elementNumber,
-              })(<Input/>)}
+              })(<Input />)}
             </Form.Item>
           </div>
         );
@@ -250,7 +269,7 @@ const TagsDefin: React.FC<Props> = props => {
                 <Row key={item.id}>
                   <Col span={10}>
                     <Input
-                      placeholder="编号为：0"
+                      placeholder="标识"
                       value={item.value}
                       onChange={event => {
                         enumData[index].value = event.target.value;
@@ -258,8 +277,8 @@ const TagsDefin: React.FC<Props> = props => {
                       }}
                     />
                   </Col>
-                  <Col span={1} style={{textAlign: 'center'}}>
-                    <Icon type="arrow-right"/>
+                  <Col span={1} style={{ textAlign: 'center' }}>
+                    <Icon type="arrow-right" />
                   </Col>
                   <Col span={10}>
                     <Input
@@ -271,47 +290,47 @@ const TagsDefin: React.FC<Props> = props => {
                       }}
                     />
                   </Col>
-                  <Col span={3} style={{textAlign: 'center'}}>
+                  <Col span={3} style={{ textAlign: 'center' }}>
                     {index === 0 ? (
                       (enumData.length - 1) === 0 ? (
                         <Icon type="plus-circle"
-                              onClick={() => {
-                                setEnumData([...enumData, {id: enumData.length + 1}]);
-                              }}
+                          onClick={() => {
+                            setEnumData([...enumData, { id: enumData.length + 1 }]);
+                          }}
                         />
                       ) : (
-                        <Icon type="minus-circle"
-                              onClick={() => {
-                                enumData.splice(index, 1);
-                                setEnumData([...enumData]);
-                              }}
-                        />
-                      )
+                          <Icon type="minus-circle"
+                            onClick={() => {
+                              enumData.splice(index, 1);
+                              setEnumData([...enumData]);
+                            }}
+                          />
+                        )
                     ) : (
-                      index === (enumData.length - 1) ? (
-                        <Row>
-                          <Icon type="plus-circle"
-                                onClick={() => {
-                                  setEnumData([...enumData, {id: enumData.length + 1}]);
-                                }}
-                          />
-                          <Icon style={{paddingLeft: 10}}
-                                type="minus-circle"
-                                onClick={() => {
-                                  enumData.splice(index, 1);
-                                  setEnumData([...enumData]);
-                                }}
-                          />
-                        </Row>
-                      ) : (
-                        <Icon type="minus-circle"
+                        index === (enumData.length - 1) ? (
+                          <Row>
+                            <Icon type="plus-circle"
+                              onClick={() => {
+                                setEnumData([...enumData, { id: enumData.length + 1 }]);
+                              }}
+                            />
+                            <Icon style={{ paddingLeft: 10 }}
+                              type="minus-circle"
                               onClick={() => {
                                 enumData.splice(index, 1);
                                 setEnumData([...enumData]);
                               }}
-                        />
-                      )
-                    )}
+                            />
+                          </Row>
+                        ) : (
+                            <Icon type="minus-circle"
+                              onClick={() => {
+                                enumData.splice(index, 1);
+                                setEnumData([...enumData]);
+                              }}
+                            />
+                          )
+                      )}
                   </Col>
                 </Row>
               ))}
@@ -361,7 +380,7 @@ const TagsDefin: React.FC<Props> = props => {
                 setParameterVisible(true);
               }}
             >
-              <Icon type="plus"/>
+              <Icon type="plus" />
               添加参数
             </Button>
           </Form.Item>
@@ -401,7 +420,7 @@ const TagsDefin: React.FC<Props> = props => {
             <Form.Item label="密码长度">
               {getFieldDecorator('valueType.expands.maxLength', {
                 initialValue: initState.data.valueType?.expands.maxLength,
-              })(<Input addonAfter="字节"/>)}
+              })(<Input addonAfter="字节" />)}
             </Form.Item>
           </div>
         );
@@ -409,6 +428,69 @@ const TagsDefin: React.FC<Props> = props => {
         return null;
     }
   };
+
+
+  const product = useContext<any>(ProductContext);
+
+  useEffect(() => getMetadata(), []);
+  const getMetadata = (id?: any, type?: any) => {
+    const data = getFieldsValue(['id', 'valueType.type']);
+    if (id) {
+      data.id = id;
+    }
+    if (type) {
+      data.valueType.type = type;
+    }
+
+    if (data.id && data.valueType.type) {
+      setLoadConfig(true);
+      apis.deviceProdcut.configMetadata({
+        productId: product.id,
+        modelType: 'property',
+        modelId: data.id,
+        typeId: data.valueType.type
+      }).then(rsp => {
+        setLoadConfig(false);
+        setConfigMetadata(rsp.result);
+      }).finally(() => setLoadConfig(false));
+    }
+  }
+  const renderItem = (config: any) => {
+    switch (config.type.type) {
+      case 'int':
+      case 'string':
+        return <Input />
+      case 'enum':
+        return (
+          <Select>
+            {config.type.elements.map(i => (
+              <Select.Option value={i.value}>{i.text}</Select.Option>
+            ))}
+          </Select>
+        );
+      default:
+        return <Input />
+    }
+  }
+
+  const renderConfigMetadata = () => {
+    return (
+      <Collapse>{
+        (configMetadata || []).map((item, index) => {
+          return (
+            <Collapse.Panel header={item.name} key={index}>
+              {item.properties.map((config: any) => (
+                <Form.Item label={config.name} key={config.property}>
+                  {getFieldDecorator(`expands.${config.property}`, {
+                    initialValue: (initState.data?.expands || {})[config.property]
+                  })(renderItem(config))}
+                </Form.Item>
+              ))}
+            </Collapse.Panel>
+          )
+        })}</Collapse>
+    )
+  }
 
   return (
     <div>
@@ -424,15 +506,15 @@ const TagsDefin: React.FC<Props> = props => {
           <Form.Item label="标签标识">
             {getFieldDecorator('id', {
               rules: [
-                {required: true, message: '请输入标签标识'},
-                {max: 64, message: '标签标识不超过64个字符'},
-                {pattern: new RegExp(/^[0-9a-zA-Z_\-]+$/, "g"), message: '标签标识只能由数字、字母、下划线、中划线组成'}
+                { required: true, message: '请输入标签标识' },
+                { max: 64, message: '标签标识不超过64个字符' },
+                { pattern: new RegExp(/^[0-9a-zA-Z_\-]+$/, "g"), message: '标签标识只能由数字、字母、下划线、中划线组成' }
               ],
               initialValue: initState.data.id,
             })(
               <Input
                 disabled={!!initState.data.id}
-                style={{width: '100%'}}
+                style={{ width: '100%' }}
                 placeholder="请输入标签标识"
               />,
             )}
@@ -440,15 +522,15 @@ const TagsDefin: React.FC<Props> = props => {
           <Form.Item label="标签名称">
             {getFieldDecorator('name', {
               rules: [
-                {required: true, message: '请输入标签名称'},
-                {max: 200, message: '标签名称不超过200个字符'}
+                { required: true, message: '请输入标签名称' },
+                { max: 200, message: '标签名称不超过200个字符' }
               ],
               initialValue: initState.data.name,
-            })(<Input style={{width: '100%'}} placeholder="请输入标签名称"/>)}
+            })(<Input style={{ width: '100%' }} placeholder="请输入标签名称" />)}
           </Form.Item>
           <Form.Item label="数据类型">
             {getFieldDecorator('valueType.type', {
-              rules: [{required: true, message: '请选择'}],
+              rules: [{ required: true, message: '请选择' }],
               initialValue: initState.data.valueType?.type,
             })(
               <Select
@@ -481,7 +563,7 @@ const TagsDefin: React.FC<Props> = props => {
 
           <Form.Item label="是否只读">
             {getFieldDecorator('expands.readOnly', {
-              rules: [{required: true}],
+              rules: [{ required: true }],
               initialValue: initState.data.expands?.readOnly,
             })(
               <Radio.Group>
@@ -501,10 +583,12 @@ const TagsDefin: React.FC<Props> = props => {
               </Radio.Group>,
             )}
           </Form.Item>*/}
+          {!loadConfig && renderConfigMetadata()}
+
           <Form.Item label="描述">
             {getFieldDecorator('description', {
               initialValue: initState.data.description,
-            })(<Input.TextArea rows={3}/>)}
+            })(<Input.TextArea rows={3} />)}
           </Form.Item>
         </Form>
 
@@ -524,7 +608,7 @@ const TagsDefin: React.FC<Props> = props => {
             onClick={() => {
               props.close();
             }}
-            style={{marginRight: 8}}
+            style={{ marginRight: 8 }}
           >
             关闭
           </Button>
