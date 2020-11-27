@@ -2,6 +2,7 @@ import {
   AutoComplete,
   Button,
   Col,
+  Collapse,
   Drawer,
   Form,
   Icon,
@@ -13,11 +14,13 @@ import {
   Row,
   Select
 } from 'antd';
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import styles from '../index.less';
 import { groupBy } from 'lodash';
 import { Unit } from '@/utils/unit';
 import { renderUnit } from "@/pages/device/public";
+import { ProductContext } from '../../context';
+import apis from '@/services';
 
 interface Props {
   save: (data: any) => void;
@@ -47,6 +50,8 @@ const Paramter: React.FC<Props> = props => {
   const [data, setData] = useState(initState.data);
   const [currentParameter, setCurrentParameter] = useState(initState.currentParameter);
   const [enumData, setEnumData] = useState(initState.enumData);
+  const [configMetadata, setConfigMetadata] = useState<any[]>([]);
+  const [loadConfig, setLoadConfig] = useState<boolean>(false);
 
   const dataTypeChange = (value: string) => {
     setDataType(value);
@@ -63,7 +68,7 @@ const Paramter: React.FC<Props> = props => {
       case 'long':
         return (
           <div>
-            <Form.Item label="取值范围" style={{ height: 69 }}>
+            {/* <Form.Item label="取值范围" style={{ height: 69 }}>
               <Col span={11}>
                 <InputNumber style={{ width: '100%' }}
                   value={data.valueType.min}
@@ -89,7 +94,7 @@ const Paramter: React.FC<Props> = props => {
                   />
                 </Form.Item>
               </Col>
-            </Form.Item>
+            </Form.Item> */}
             <Form.Item label="单位">
               <Select
                 onChange={(value: string) => {
@@ -120,7 +125,7 @@ const Paramter: React.FC<Props> = props => {
       case 'float':
         return (
           <div>
-            <Form.Item label="取值范围" style={{ height: 69 }}>
+            {/* <Form.Item label="取值范围" style={{ height: 69 }}>
               <Col span={11}>
                 <InputNumber style={{ width: '100%' }}
                   value={data.valueType.min}
@@ -146,7 +151,7 @@ const Paramter: React.FC<Props> = props => {
                   />
                 </Form.Item>
               </Col>
-            </Form.Item>
+            </Form.Item> */}
             <Form.Item label="精度" style={{ height: 69 }}>
               <InputNumber
                 min={0} step={1} placeholder="请输入精度"
@@ -315,7 +320,7 @@ const Paramter: React.FC<Props> = props => {
                 <Row key={item.id}>
                   <Col span={10}>
                     <Input
-                      placeholder="编号为：0"
+                      placeholder="标识"
                       value={item.value}
                       onChange={event => {
                         enumData[index].value = event.target.value;
@@ -486,6 +491,81 @@ const Paramter: React.FC<Props> = props => {
     props.close();
   }
 
+
+  const product = useContext<any>(ProductContext);
+
+  useEffect(() => getMetadata(), []);
+  const getMetadata = (id?: any, type?: any) => {
+
+    if (id) {
+      data.id = id;
+    }
+    if (type) {
+      data.valueType.type = type;
+    }
+
+    if (data.id && data.valueType?.type) {
+      setLoadConfig(true);
+      apis.deviceProdcut.configMetadata({
+        productId: product.id,
+        modelType: 'functionParameter',
+        modelId: data.id,
+        typeId: data.valueType.type
+      }).then(rsp => {
+        setLoadConfig(false);
+        setConfigMetadata(rsp.result);
+      }).finally(() => setLoadConfig(false));
+    }
+  }
+  const renderItem = (config: any) => {
+    switch (config.type.type) {
+      case 'int':
+      case 'string':
+        return (
+          <Input
+            value={(data?.expands || {})[config.property]}
+            onChange={e => {
+              if (!data.expands) data.expands = {};
+              data.expands[config.property] = e.target.value;
+              setData({ ...data });
+            }} />
+        )
+      case 'enum':
+        return (
+          <Select
+            value={(data?.expands || {})[config.property]}
+            onChange={e => {
+              if (!data.expands) data.expands = {};
+              data.expands[config.property] = e;
+              setData({ ...data });
+            }}
+          >
+            {config.type.elements.map(i => (
+              <Select.Option value={i.value}>{i.text}</Select.Option>
+            ))}
+          </Select>
+        );
+      default:
+        return <Input />
+    }
+  }
+
+  const renderConfigMetadata = () => {
+    return (
+      <Collapse>{
+        (configMetadata || []).map((item, index) => {
+          return (
+            <Collapse.Panel header={item.name} key={index}>
+              {item.properties.map((config: any) => (
+                <Form.Item label={config.name} key={config.property}>
+                  {renderItem(config)}
+                </Form.Item>
+              ))}
+            </Collapse.Panel>
+          )
+        })}</Collapse>
+    )
+  }
   return (
     <Drawer
       title="新增参数"
@@ -504,6 +584,7 @@ const Paramter: React.FC<Props> = props => {
               data.id = e.target.value;
               setData({ ...data });
             }}
+            onBlur={(value) => getMetadata(value.target.value, undefined)}
           />
         </Form.Item>
         <Form.Item label="参数名称">
@@ -526,6 +607,7 @@ const Paramter: React.FC<Props> = props => {
               data.valueType.type = value;
               dataTypeChange(value);
               setData({ ...data });
+              getMetadata(undefined, value)
             }}
           >
             <Select.OptGroup label="基本类型">
@@ -546,6 +628,7 @@ const Paramter: React.FC<Props> = props => {
           </Select>
         </Form.Item>
         {renderDetailForm()}
+        {!loadConfig && renderConfigMetadata()}
         <Form.Item label="描述">
           <Input.TextArea
             value={data.description}
