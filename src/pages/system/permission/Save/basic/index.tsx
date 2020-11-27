@@ -23,13 +23,13 @@ const Basic: React.FC<Props> = (props) => {
     ];
 
     var defaultActionData: PermissionAction[] = [
-        { "action": "query", "describe": "查询列表", defaultCheck: true, name: '' },
-        { "action": "get", "describe": "查询明细", defaultCheck: true, name: '' },
-        { "action": "add", "describe": "新增", defaultCheck: true, name: '' },
-        { "action": "update", "describe": "修改", defaultCheck: true, name: '' },
-        { "action": "delete", "describe": "删除", defaultCheck: false, name: '' },
-        { "action": "import", "describe": "导入", defaultCheck: true, name: '' },
-        { "action": "export", "describe": "导出", defaultCheck: true, name: '' }
+        { "action": "query", "describe": "查询列表", defaultCheck: true, name: '查询列表' },
+        { "action": "get", "describe": "查询明细", defaultCheck: true, name: '查询明细' },
+        { "action": "add", "describe": "新增", defaultCheck: true, name: '新增' },
+        { "action": "update", "describe": "修改", defaultCheck: true, name: '修改' },
+        { "action": "delete", "describe": "删除", defaultCheck: false, name: '删除' },
+        { "action": "import", "describe": "导入", defaultCheck: true, name: '导入' },
+        { "action": "export", "describe": "导出", defaultCheck: true, name: '导出' }
     ];
 
     PubSub.unsubscribe("permission-basic-save");
@@ -59,7 +59,8 @@ const Basic: React.FC<Props> = (props) => {
                             wrapperCol={{ span: 12 }}
                         >
                             {getFieldDecorator('id', {
-                                initialValue: data.id
+                                initialValue: data.id,
+                                rules: [{ required: true, message: "请输入权限标识" }]
                             })(
                                 <Input placeholder='只能由字母数字下划线组成' readOnly={data.id ? true : false} />,
                             )}
@@ -74,7 +75,8 @@ const Basic: React.FC<Props> = (props) => {
                             wrapperCol={{ span: 12 }}
                         >
                             {getFieldDecorator('name', {
-                                initialValue: data.name
+                                initialValue: data.name,
+                                rules: [{ required: true, message: "请输入权限名称" }]
                             })(
                                 <Input />,
                             )}
@@ -92,7 +94,8 @@ const Basic: React.FC<Props> = (props) => {
                             wrapperCol={{ span: 12 }}
                         >
                             {getFieldDecorator('status', {
-                                initialValue: data.status || 1
+                                initialValue: data.status || 1,
+                                rules: [{ required: true, message: "请选择状态" }]
                             })(
 
                                 <Radio.Group buttonStyle="solid">
