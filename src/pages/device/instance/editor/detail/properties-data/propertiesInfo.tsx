@@ -36,6 +36,7 @@ import 'ace-builds/src-noconflict/ext-language_tools';
 import 'ace-builds/src-noconflict/ext-searchbox';
 import 'ace-builds/src-noconflict/theme-eclipse';
 import { propertieInfo } from '../../../service';
+import ProTable from '@/pages/system/permission/component/ProTable';
 
 interface Props extends FormComponentProps {
   close: Function;
@@ -154,7 +155,18 @@ const PropertiesInfo: React.FC<Props> = props => {
   const [passedPolyline, setPassedPolyline] = useState<any>();
 
   const handleSearch = (params?: any) => {
-    apis.deviceInstance.propertieInfo(props.deviceId, encodeQueryParam(params))
+    apis.deviceInstance.propertieInfo(props.deviceId, encodeQueryParam({
+      terms: {
+        ...params.terms,
+        property: props.item.id
+      },
+      sorts: {
+        field: 'timestamp',
+        order: 'desc',
+      },
+      pageIndex: params.pageIndex || 0,
+      pageSize: params.pageSize || 10
+    }))
       .then((response: any) => {
         if (response.status === 200) {
           setPropertiesInfo(response.result);
@@ -511,7 +523,7 @@ const PropertiesInfo: React.FC<Props> = props => {
           }}
         >
           <Tabs.TabPane tab="列表" key="1">
-            <Table
+            {/* <Table
               rowKey="timestamp"
               dataSource={propertiesInfo.data}
               size="small"
@@ -523,6 +535,19 @@ const PropertiesInfo: React.FC<Props> = props => {
                 simple: true
               }}
               columns={initState.eventColumns}
+            /> */}
+
+
+            <ProTable
+              size="small"
+              // loading={loading}
+              dataSource={propertiesInfo?.data}
+              columns={initState.eventColumns}
+              rowKey="id"
+              onSearch={(params: any) => {
+                handleSearch(params);
+              }}
+              paginationConfig={propertiesInfo}
             />
           </Tabs.TabPane>
 
