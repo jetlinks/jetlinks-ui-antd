@@ -107,7 +107,7 @@ const Save: React.FC<Props> = props => {
   };
 
   const uploadProps = {
-    accept: '.jar',
+    accept: '.jar,.zip',
     name: 'file',
     action: `/jetlinks/file/static`,
     showUploadList: false,
