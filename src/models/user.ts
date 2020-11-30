@@ -3,6 +3,7 @@ import { Reducer } from 'redux';
 
 import { queryCurrent, query as queryUsers } from '@/services/user';
 import { router } from 'umi';
+import { reloadAuthorized } from '@/utils/Authorized';
 
 export interface CurrentUser {
   avatar?: string;
@@ -71,6 +72,7 @@ const UserModel: UserModelType = {
       } else {
         router.push('/user/login');
       }
+      reloadAuthorized();
     },
   },
 

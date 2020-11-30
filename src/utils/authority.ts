@@ -42,6 +42,8 @@ export function getAuthority(): string | string[] {
       location.reload();
       return ['guest'];
     }
+  } else {
+    return ['guest'];
   }
 }
 
