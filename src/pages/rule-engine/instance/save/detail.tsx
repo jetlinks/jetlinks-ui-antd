@@ -69,7 +69,7 @@ const columns: ColumnProps<RuleInstanceItem>[] = [
     }
   },
   {
-    title: '水平',
+    title: '日志级别',
     align: 'center',
     dataIndex: 'level',
     render: (text: {} | null | undefined) => {
