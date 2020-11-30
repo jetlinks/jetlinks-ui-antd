@@ -67,6 +67,8 @@ const Events: React.FC<Props> = props => {
     {
       title: '描述',
       dataIndex: 'description',
+      width:'30%',
+      ellipsis:true
     },
     {
       title: '操作',
