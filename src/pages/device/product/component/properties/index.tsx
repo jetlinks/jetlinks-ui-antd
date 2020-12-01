@@ -513,13 +513,12 @@ const PropertiesDefin: React.FC<Props> = props => {
                   <Select.OptGroup label="其他类型">
                     <Select.Option value="date">date(时间型)</Select.Option>
                     <Select.Option value="enum">enum(枚举)</Select.Option>
-                    <Select.Option value="array">array(数组)</Select.Option>
                     <Select.Option value="object">object(结构体)</Select.Option>
                     <Select.Option value="file">file(文件)</Select.Option>
                     <Select.Option value="password">password(密码)</Select.Option>
                     <Select.Option value="geoPoint">geoPoint(地理位置)</Select.Option>
                   </Select.OptGroup>
-                </Select>,
+                </Select>
               )}
             </Form.Item>
             {renderAType()}
