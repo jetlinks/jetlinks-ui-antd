@@ -1,5 +1,5 @@
 import { PageHeaderWrapper } from "@ant-design/pro-layout";
-import { Button, Card, Divider, message } from "antd";
+import { Button, Card, Divider, message, Popconfirm, Spin } from "antd";
 import React, { useState, Fragment, useEffect } from "react";
 import styles from '@/utils/table.less';
 import SearchForm from "@/components/SearchForm";
@@ -15,6 +15,7 @@ interface State {
     saveVisible: boolean;
     resultList: any;
     productData: any;
+    spinning: Boolean
 }
 const Aliyun: React.FC<{}> = () => {
 
@@ -28,13 +29,15 @@ const Aliyun: React.FC<{}> = () => {
         },
         saveVisible: false,
         resultList: {},
-        productData: {}
+        productData: {},
+        spinning: true
     };
 
     const [resultList, setResultList] = useState(initState.resultList);
     const [saveVisible, setSaveVisible] = useState(initState.saveVisible);
     const [searchParam, setSearchParam] = useState(initState.searchParam);
     const [productData, setProductData] = useState(initState.productData);
+    const [spinning, setSpinning] = useState(initState.spinning);
 
     const handleSearch = (params?: any) => {
         setSearchParam(params);
@@ -42,6 +45,7 @@ const Aliyun: React.FC<{}> = () => {
             .then((response: any) => {
                 if (response.status === 200) {
                     setResultList(response.result)
+                    setSpinning(false)
                 }
             }).catch(() => {
             });
@@ -113,7 +117,11 @@ const Aliyun: React.FC<{}> = () => {
                                 <Divider type="vertical" />
                                 <a onClick={() => { setEnabled(record.id); }}>启用</a>
                                 <Divider type="vertical" />
-                                <a onClick={() => { deleteBridge(record.id); }}>删除</a>
+                                <Popconfirm title="确认删除此执行动作？"
+                                    onConfirm={() => { deleteBridge(record.id); }}
+                                >
+                                    <a>删除</a>
+                                </Popconfirm>
                             </>
                         )
                     }
@@ -158,19 +166,21 @@ const Aliyun: React.FC<{}> = () => {
                     </div>
                 </div>
             </Card>
-            <Card>
-                <div className={styles.StandardTable}>
-                    <ProTable
-                        dataSource={resultList?.data}
-                        columns={columns}
-                        rowKey="id"
-                        onSearch={(params: any) => {
-                            handleSearch(params);
-                        }}
-                        paginationConfig={resultList}
-                    />
-                </div>
-            </Card>
+            <Spin tip="加载中..." spinning={spinning}>
+                <Card>
+                    <div className={styles.StandardTable}>
+                        <ProTable
+                            dataSource={resultList?.data}
+                            columns={columns}
+                            rowKey="id"
+                            onSearch={(params: any) => {
+                                handleSearch(params);
+                            }}
+                            paginationConfig={resultList}
+                        />
+                    </div>
+                </Card>
+            </Spin>
             {saveVisible && (
                 <Save
                     data={productData}

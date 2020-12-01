@@ -4,6 +4,7 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import { FormComponentProps } from "antd/lib/form";
 import apis from "@/services";
+import { SelectValue } from "antd/lib/select";
 
 interface Props extends FormComponentProps {
     data: any;
@@ -263,11 +264,16 @@ const Save: React.FC<Props> = props => {
                                     initialValue: accessConfig?.productKey,
                                     rules: [{ required: true, message: '请输入' }],
                                 })(
-                                    <Select placeholder="请选择" allowClear>
+                                    <AutoComplete placeholder="请选择" allowClear>
                                         {productKeyList && productKeyList.map((i: any, index: number) => {
-                                            return <Select.Option key={index} value={i.productKey}>{`${i.productKey}(${i.productName})`}</Select.Option>
+                                            return <AutoComplete.Option key={index} value={i.productKey}>{`${i.productKey}(${i.productName})`}</AutoComplete.Option>
                                         })}
-                                    </Select>
+                                    </AutoComplete>
+                                    // <Select placeholder="请选择" allowClear>
+                                    //     {productKeyList && productKeyList.map((i: any, index: number) => {
+                                    //         return <Select.Option key={index} value={i.productKey}>{`${i.productKey}(${i.productName})`}</Select.Option>
+                                    //     })}
+                                    // </Select>
                                 )}
                             </Form.Item>
                         </Col>
@@ -298,35 +304,38 @@ const Save: React.FC<Props> = props => {
                                                         {getFieldDecorator(`bridgeConfigs[${index}].bridgeProductKey`, {
                                                             initialValue: item.bridgeProductKey || undefined,
                                                             rules: [{ required: true, message: '网桥ProductKey' }],
-                                                        })(<Select placeholder="网桥ProductKey" allowClear onChange={(value: string) => {
-                                                            let temp = form.getFieldValue('accessConfig.regionId')
-                                                            let bridge = form.getFieldValue('bridgeConfigs')
-                                                            bridge[index].http2Endpoint = `https://${value}.iot-as-http2.${temp}.aliyuncs.com`
-                                                            form.setFieldsValue({
-                                                                bridgeConfigs: bridge
-                                                            })
-                                                            let config = form.getFieldValue('accessConfig')
-                                                            if (config.regionId !== '' && config.apiEndpoint !== '' && 
-                                                            config.authEndpoint !== '' && config.accessKeyId !== '' && config.accessSecret !== '' && value !== '') {
-                                                                apis.aliyun.getDevices({
-                                                                    regionId: config.regionId,
-                                                                    accessSecret: config.accessSecret,
-                                                                    apiEndpoint: config.apiEndpoint,
-                                                                    productKey: value,
-                                                                    authEndpoint: config.authEndpoint,
-                                                                    accessKeyId: config.accessKeyId,
-                                                                }).then(res => {
-                                                                    if (res.status === 200) {
-                                                                        deviceList[index] = res.result?.data || []
-                                                                        setDeviceList([...deviceList])
+                                                        })(
+                                                            <AutoComplete placeholder="请选择" allowClear
+                                                                onBlur={(value: SelectValue) => {
+                                                                    let temp = form.getFieldValue('accessConfig.regionId')
+                                                                    let bridge = form.getFieldValue('bridgeConfigs')
+                                                                    bridge[index].http2Endpoint = `https://${value}.iot-as-http2.${temp}.aliyuncs.com`
+                                                                    form.setFieldsValue({
+                                                                        bridgeConfigs: bridge
+                                                                    })
+                                                                    let config = form.getFieldValue('accessConfig')
+                                                                    if (config.regionId !== '' && config.apiEndpoint !== '' &&
+                                                                        config.authEndpoint !== '' && config.accessKeyId !== '' && config.accessSecret !== '' && value !== '') {
+                                                                        apis.aliyun.getDevices({
+                                                                            regionId: config.regionId,
+                                                                            accessSecret: config.accessSecret,
+                                                                            apiEndpoint: config.apiEndpoint,
+                                                                            productKey: value,
+                                                                            authEndpoint: config.authEndpoint,
+                                                                            accessKeyId: config.accessKeyId,
+                                                                        }).then(res => {
+                                                                            if (res.status === 200) {
+                                                                                deviceList[index] = res.result?.data || []
+                                                                                setDeviceList([...deviceList])
+                                                                            }
+                                                                        })
                                                                     }
-                                                                })
-                                                            }
-                                                        }}>
-                                                            {productKeyList && productKeyList.map((i: any, index: number) => {
-                                                                return <Select.Option key={index} value={i.productKey}>{`${i.productKey}(${i.productName})`}</Select.Option>
-                                                            })}
-                                                        </Select>)}
+                                                                }}>
+                                                                {productKeyList && productKeyList.map((i: any, index: number) => {
+                                                                    return <AutoComplete.Option key={index} value={i.productKey}>{`${i.productKey}(${i.productName})`}</AutoComplete.Option>
+                                                                })}
+                                                            </AutoComplete>
+                                                        )}
                                                     </Form.Item>
                                                 </Col>
                                                 <Col span={12}>
@@ -334,24 +343,26 @@ const Save: React.FC<Props> = props => {
                                                         {getFieldDecorator(`bridgeConfigs[${index}].bridgeDeviceName`, {
                                                             initialValue: item.bridgeDeviceName || undefined,
                                                             rules: [{ required: true, message: '网桥DeviceName' }],
-                                                        })(<Select placeholder="网桥DeviceName" allowClear onChange={(value: string) => {
-                                                            let secret = ''
-                                                            if (value !== '' && value !== undefined) {
-                                                                let data: any[] = deviceList[index].filter((i: any) => {
-                                                                    return i.deviceName === value
+                                                        })(
+                                                            <AutoComplete placeholder="网桥DeviceName" allowClear onChange={(value: SelectValue) => {
+                                                                let secret = ''
+                                                                if (value !== '' && value !== undefined) {
+                                                                    let data: any[] = deviceList[index].filter((i: any) => {
+                                                                        return i.deviceName === value
+                                                                    })
+                                                                    secret = data[0].deviceSecret
+                                                                }
+                                                                let bridge = form.getFieldValue('bridgeConfigs')
+                                                                bridge[index].bridgeDeviceSecret = secret
+                                                                form.setFieldsValue({
+                                                                    bridgeConfigs: bridge
                                                                 })
-                                                                secret = data[0].deviceSecret
-                                                            }
-                                                            let bridge = form.getFieldValue('bridgeConfigs')
-                                                            bridge[index].bridgeDeviceSecret = secret
-                                                            form.setFieldsValue({
-                                                                bridgeConfigs: bridge
-                                                            })
-                                                        }}>
-                                                            {deviceList && deviceList.length > 0 && deviceList[index] && deviceList[index].length > 0 && deviceList[index].map((i: any, index: number) => {
-                                                                return <Select.Option key={index} value={i.deviceName}>{i.deviceName}</Select.Option>
-                                                            })}
-                                                        </Select>)}
+                                                            }}>
+                                                                {deviceList && deviceList.length > 0 && deviceList[index] && deviceList[index].length > 0 && deviceList[index].map((i: any, index: number) => {
+                                                                    return <AutoComplete.Option key={index} value={i.deviceName}>{i.deviceName}</AutoComplete.Option>
+                                                                })}
+                                                            </AutoComplete>
+                                                        )}
                                                     </Form.Item>
                                                 </Col>
                                                 <Col span={12}>
@@ -398,7 +409,7 @@ const Save: React.FC<Props> = props => {
                                 bridgeDeviceSecret: "",
                                 http2Endpoint: ""
                             }])
-                            setDeviceList([...deviceList,{}])
+                            setDeviceList([...deviceList, {}])
                         }}
                     >添加</Button>
                 </Form>
