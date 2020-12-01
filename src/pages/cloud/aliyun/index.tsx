@@ -19,7 +19,13 @@ interface State {
 const Aliyun: React.FC<{}> = () => {
 
     const initState: State = {
-        searchParam: { pageSize: 10 },
+        searchParam: {
+            pageSize: 10,
+            sorts: {
+                field: 'id',
+                order: 'desc'
+            }
+        },
         saveVisible: false,
         resultList: {},
         productData: {}
@@ -50,7 +56,7 @@ const Aliyun: React.FC<{}> = () => {
         })
     };
 
-    const setEnabled = (id : string) => {
+    const setEnabled = (id: string) => {
         apis.aliyun.setEnabled(id).then(res => {
             if (res.status === 200) {
                 message.success('启用成功');
@@ -59,7 +65,7 @@ const Aliyun: React.FC<{}> = () => {
         })
     }
 
-    const setDisabled = (id : string) => {
+    const setDisabled = (id: string) => {
         apis.aliyun.setDisabled(id).then(res => {
             if (res.status === 200) {
                 message.success('禁用成功');
@@ -168,13 +174,13 @@ const Aliyun: React.FC<{}> = () => {
             {saveVisible && (
                 <Save
                     data={productData}
-                    close={() => { 
-                        setSaveVisible(false); 
-                        handleSearch(searchParam); 
+                    close={() => {
+                        setSaveVisible(false);
+                        handleSearch(searchParam);
                     }}
                     save={() => {
-                         setSaveVisible(false);
-                         handleSearch(searchParam);
+                        setSaveVisible(false);
+                        handleSearch(searchParam);
                     }}
                 />
             )}

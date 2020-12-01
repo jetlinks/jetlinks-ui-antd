@@ -20,9 +20,9 @@ const Save: React.FC<Props> = props => {
     const [productList, setProductList] = useState([]);
     const [protocolSupport, setProtocolSupport] = useState([]);
     const [productKeyList, setProductKeyList] = useState([]);
-    const [deviceList, setDeviceList] = useState([]);
+    const [deviceList, setDeviceList] = useState<any>([]);
     const [serveIdList, setServeIdList] = useState([]);
-    const [regionIdList] = useState(['cn-qingdao','cn-beijing','cn-zhangjiakou','cn-huhehaote','cn-wulanchabu','cn-hangzhou','cn-shanghai','cn-shenzhen','cn-heyuan','cn-guangzhou','cn-chengdu'])
+    const [regionIdList] = useState(['cn-qingdao', 'cn-beijing', 'cn-zhangjiakou', 'cn-huhehaote', 'cn-wulanchabu', 'cn-hangzhou', 'cn-shanghai', 'cn-shenzhen', 'cn-heyuan', 'cn-guangzhou', 'cn-chengdu'])
 
     useEffect(() => {
         setBridgeConfigs(props.data.bridgeConfigs || [
@@ -30,14 +30,14 @@ const Save: React.FC<Props> = props => {
                 serverId: "",
                 bridgeProductKey: "",
                 bridgeDeviceName: "",
-                bridgeDeviceSecret: ""
+                bridgeDeviceSecret: "",
+                http2Endpoint: ""
             }
         ])
         setAccessConfig(props.data?.accessConfig || {
             regionId: "",
             apiEndpoint: "",
             authEndpoint: "",
-            http2Endpoint: "",
             accessKeyId: "",
             accessSecret: "",
             productKey: ""
@@ -60,10 +60,22 @@ const Save: React.FC<Props> = props => {
         })
         if (props.data.accessConfig) {
             getBridge(props.data?.accessConfig)
-            apis.aliyun.getDevices(props.data?.accessConfig).then(res => {
-                if (res.status === 200) {
-                    setDeviceList(res.result?.data || [])
+            let item = props.data?.accessConfig
+            props.data.bridgeConfigs.map((i: any, index: number) => {
+                let param = {
+                    regionId: item.regionId,
+                    accessSecret: item.accessSecret,
+                    apiEndpoint: item.apiEndpoint,
+                    authEndpoint: item.authEndpoint,
+                    accessKeyId: item.accessKeyId,
+                    productKey: i.bridgeProductKey
                 }
+                apis.aliyun.getDevices(param).then(res => {
+                    if (res.status === 200) {
+                        deviceList[index] = res.result?.data || []
+                        setDeviceList([...deviceList])
+                    }
+                })
             })
         }
     }, []);
@@ -168,10 +180,10 @@ const Save: React.FC<Props> = props => {
                                     rules: [{ required: true, message: '请选择' }],
                                 })(
                                     <AutoComplete placeholder="本地服务ID"
-                                    dataSource={regionIdList}
-                                    filterOption={(inputValue, option) =>
-                                        option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
-                                      }
+                                        dataSource={regionIdList}
+                                        filterOption={(inputValue, option) =>
+                                            option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
+                                        }
                                         onBlur={(value) => {
                                             let temp = form.getFieldValue('accessConfig.productKey')
                                             form.setFieldsValue({
@@ -190,7 +202,7 @@ const Save: React.FC<Props> = props => {
                                                 accessKeyId: params.accessKeyId,
                                             })
                                         }}
-                                        >
+                                    >
                                     </AutoComplete>
                                 )}
                             </Form.Item>
@@ -251,32 +263,7 @@ const Save: React.FC<Props> = props => {
                                     initialValue: accessConfig?.productKey,
                                     rules: [{ required: true, message: '请输入' }],
                                 })(
-                                    <Select placeholder="请选择" allowClear onChange={(value: string) => {
-                                        let config = form.getFieldValue('accessConfig')
-                                        if (config.regionId !== '' && config.apiEndpoint !== '' && config.authEndpoint !== '' && config.accessKeyId !== '' && config.accessSecret !== '' && value !== '') {
-                                            apis.aliyun.getDevices({
-                                                regionId: config.regionId,
-                                                accessSecret: config.accessSecret,
-                                                apiEndpoint: config.apiEndpoint,
-                                                http2Endpoint: config.http2Endpoint,
-                                                productKey: value,
-                                                authEndpoint: config.authEndpoint,
-                                                accessKeyId: config.accessKeyId,
-                                            }).then(res => {
-                                                if (res.status === 200) {
-                                                    setDeviceList(res.result?.data || [])
-                                                    setBridgeConfigs([
-                                                        {
-                                                            serverId: "",
-                                                            bridgeProductKey: "",
-                                                            bridgeDeviceName: "",
-                                                            bridgeDeviceSecret: "",
-                                                        }
-                                                    ])
-                                                }
-                                            })
-                                        }
-                                    }}>
+                                    <Select placeholder="请选择" allowClear>
                                         {productKeyList && productKeyList.map((i: any, index: number) => {
                                             return <Select.Option key={index} value={i.productKey}>{`${i.productKey}(${i.productName})`}</Select.Option>
                                         })}
@@ -318,6 +305,23 @@ const Save: React.FC<Props> = props => {
                                                             form.setFieldsValue({
                                                                 bridgeConfigs: bridge
                                                             })
+                                                            let config = form.getFieldValue('accessConfig')
+                                                            if (config.regionId !== '' && config.apiEndpoint !== '' && 
+                                                            config.authEndpoint !== '' && config.accessKeyId !== '' && config.accessSecret !== '' && value !== '') {
+                                                                apis.aliyun.getDevices({
+                                                                    regionId: config.regionId,
+                                                                    accessSecret: config.accessSecret,
+                                                                    apiEndpoint: config.apiEndpoint,
+                                                                    productKey: value,
+                                                                    authEndpoint: config.authEndpoint,
+                                                                    accessKeyId: config.accessKeyId,
+                                                                }).then(res => {
+                                                                    if (res.status === 200) {
+                                                                        deviceList[index] = res.result?.data || []
+                                                                        setDeviceList([...deviceList])
+                                                                    }
+                                                                })
+                                                            }
                                                         }}>
                                                             {productKeyList && productKeyList.map((i: any, index: number) => {
                                                                 return <Select.Option key={index} value={i.productKey}>{`${i.productKey}(${i.productName})`}</Select.Option>
@@ -333,7 +337,7 @@ const Save: React.FC<Props> = props => {
                                                         })(<Select placeholder="网桥DeviceName" allowClear onChange={(value: string) => {
                                                             let secret = ''
                                                             if (value !== '' && value !== undefined) {
-                                                                let data: any[] = deviceList.filter((i: any) => {
+                                                                let data: any[] = deviceList[index].filter((i: any) => {
                                                                     return i.deviceName === value
                                                                 })
                                                                 secret = data[0].deviceSecret
@@ -344,7 +348,7 @@ const Save: React.FC<Props> = props => {
                                                                 bridgeConfigs: bridge
                                                             })
                                                         }}>
-                                                            {deviceList && deviceList.map((i: any, index: number) => {
+                                                            {deviceList && deviceList.length > 0 && deviceList[index] && deviceList[index].length > 0 && deviceList[index].map((i: any, index: number) => {
                                                                 return <Select.Option key={index} value={i.deviceName}>{i.deviceName}</Select.Option>
                                                             })}
                                                         </Select>)}
@@ -357,11 +361,6 @@ const Save: React.FC<Props> = props => {
                                                             rules: [{ required: true, message: '网桥DeviceSecret' }],
                                                         })(
                                                             <Input placeholder="请输入" readOnly />
-                                                            // <Select placeholder="网桥DeviceSecret" allowClear>
-                                                            //     {deviceList && deviceList.map((i: any, index: number) => {
-                                                            //         return <Select.Option key={index} value={i.deviceSecret}>{i.deviceSecret}</Select.Option>
-                                                            //     })}
-                                                            // </Select>
                                                         )}
                                                     </Form.Item>
                                                 </Col>
@@ -396,8 +395,10 @@ const Save: React.FC<Props> = props => {
                                 serverId: "",
                                 bridgeProductKey: "",
                                 bridgeDeviceName: "",
-                                bridgeDeviceSecret: ""
+                                bridgeDeviceSecret: "",
+                                http2Endpoint: ""
                             }])
+                            setDeviceList([...deviceList,{}])
                         }}
                     >添加</Button>
                 </Form>
