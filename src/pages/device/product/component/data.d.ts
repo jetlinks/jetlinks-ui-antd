@@ -57,7 +57,7 @@ export class ValueType {
 
   format?: string;
 
-  elementType?: string;
+  elementType?: string | any;
 
   fileType?: string;
 
