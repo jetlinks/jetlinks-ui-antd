@@ -1,4 +1,4 @@
-import { MinusCircleOutlined } from "@ant-design/icons";
+import { MinusCircleOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import { AutoComplete, Button, Col, Divider, Form, Input, Modal, Row, Select, Tooltip } from "antd";
 import React, { useEffect } from "react";
 import { useState } from "react";
@@ -22,6 +22,7 @@ const Save: React.FC<Props> = props => {
     const [productKeyList, setProductKeyList] = useState([]);
     const [deviceList, setDeviceList] = useState([]);
     const [serveIdList, setServeIdList] = useState([]);
+    const [regionIdList] = useState(['cn-qingdao','cn-beijing','cn-zhangjiakou','cn-huhehaote','cn-wulanchabu','cn-hangzhou','cn-shanghai','cn-shenzhen','cn-heyuan','cn-guangzhou','cn-chengdu'])
 
     useEffect(() => {
         setBridgeConfigs(props.data.bridgeConfigs || [
@@ -78,7 +79,7 @@ const Save: React.FC<Props> = props => {
         })
     }
     const getBridge = (params: any) => {
-        if(params.regionId !== '' && params.accessSecret !== '' && params.apiEndpoint !== '' && params.authEndpoint !== '' && params.accessKeyId !== ''){
+        if (params.regionId !== '' && params.accessSecret !== '' && params.apiEndpoint !== '' && params.authEndpoint !== '' && params.accessKeyId !== '') {
             let param = {
                 regionId: params.regionId,
                 accessSecret: params.accessSecret,
@@ -105,7 +106,7 @@ const Save: React.FC<Props> = props => {
             onCancel={() => props.close()}
         >
             <div>
-                <Form layout="horizontal" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
+                <Form layout="horizontal" labelCol={{ span: 6 }} wrapperCol={{ span: 18 }}>
                     <Row justify="space-around" gutter={24}>
                         <Col span={12}>
                             <Form.Item label="产品ID" >
@@ -151,31 +152,47 @@ const Save: React.FC<Props> = props => {
                         </Col>
                     </Row>
                     <Divider orientation="left" dashed><div style={{ fontWeight: 'bold' }}>认证信息配置</div></Divider>
-                    <Row justify="space-around" gutter={24}>
+                    <Row justify="start" gutter={24}>
                         <Col span={12}>
-                            <Form.Item label="区域ID" >
+                            <Form.Item label={
+                                <span>
+                                    区域ID&nbsp; <Tooltip title="地域和可用区">
+                                        <QuestionCircleOutlined onClick={() => {
+                                            window.open('https://help.aliyun.com/document_detail/40654.html')
+                                        }} />
+                                    </Tooltip>
+                                </span>
+                            } >
                                 {getFieldDecorator('accessConfig.regionId', {
                                     initialValue: accessConfig?.regionId,
-                                    rules: [{ required: true, message: '请输入' }],
-                                })(<Input placeholder="请输入" onChange={(e) => {
-                                    let temp = form.getFieldValue('accessConfig.productKey')
-                                    form.setFieldsValue({
-                                        accessConfig: {
-                                            apiEndpoint: `https://iot.${e.target.value}.aliyuncs.com`,
-                                            authEndpoint: `https://iot-auth.${e.target.value}.aliyuncs.com/auth/bridge`,
-                                            http2Endpoint: `https://${temp}.iot-as-http2.${e.target.value}.aliyuncs.com`,
-                                        }
-                                    })
-                                }} onBlur={(e) => {
-                                    let params = form.getFieldValue('accessConfig')
-                                    getBridge({
-                                        regionId: e.target.value,
-                                        accessSecret: params.accessSecret,
-                                        apiEndpoint: params.apiEndpoint,
-                                        authEndpoint: params.authEndpoint,
-                                        accessKeyId: params.accessKeyId,
-                                    })
-                                }}/>)}
+                                    rules: [{ required: true, message: '请选择' }],
+                                })(
+                                    <AutoComplete placeholder="本地服务ID"
+                                    dataSource={regionIdList}
+                                    filterOption={(inputValue, option) =>
+                                        option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
+                                      }
+                                        onBlur={(value) => {
+                                            let temp = form.getFieldValue('accessConfig.productKey')
+                                            form.setFieldsValue({
+                                                accessConfig: {
+                                                    apiEndpoint: `https://iot.${value}.aliyuncs.com`,
+                                                    authEndpoint: `https://iot-auth.${value}.aliyuncs.com/auth/bridge`,
+                                                    http2Endpoint: `https://${temp}.iot-as-http2.${value}.aliyuncs.com`,
+                                                }
+                                            })
+                                            let params = form.getFieldValue('accessConfig')
+                                            getBridge({
+                                                regionId: value,
+                                                accessSecret: params.accessSecret,
+                                                apiEndpoint: params.apiEndpoint,
+                                                authEndpoint: params.authEndpoint,
+                                                accessKeyId: params.accessKeyId,
+                                            })
+                                        }}
+                                        >
+                                    </AutoComplete>
+                                )}
                             </Form.Item>
                         </Col>
                         <Col span={12}>
@@ -208,7 +225,7 @@ const Save: React.FC<Props> = props => {
                                         authEndpoint: params.authEndpoint,
                                         accessKeyId: e.target.value,
                                     })
-                                }}/>)}
+                                }} />)}
                             </Form.Item>
                         </Col>
                         <Col span={12}>
@@ -216,7 +233,7 @@ const Save: React.FC<Props> = props => {
                                 {getFieldDecorator('accessConfig.accessSecret', {
                                     initialValue: accessConfig?.accessSecret,
                                     rules: [{ required: true, message: '请输入' }],
-                                })(<Input placeholder="请输入"  onBlur={(e) => {
+                                })(<Input placeholder="请输入" onBlur={(e) => {
                                     let params = form.getFieldValue('accessConfig')
                                     getBridge({
                                         regionId: params.regionId,
@@ -225,7 +242,7 @@ const Save: React.FC<Props> = props => {
                                         authEndpoint: params.authEndpoint,
                                         accessKeyId: params.accessKeyId,
                                     })
-                                }}/>)}
+                                }} />)}
                             </Form.Item>
                         </Col>
                         <Col span={12}>
@@ -235,12 +252,6 @@ const Save: React.FC<Props> = props => {
                                     rules: [{ required: true, message: '请输入' }],
                                 })(
                                     <Select placeholder="请选择" allowClear onChange={(value: string) => {
-                                        let temp = form.getFieldValue('accessConfig.regionId')
-                                        form.setFieldsValue({
-                                            accessConfig: {
-                                                http2Endpoint: `https://${value}.iot-as-http2.${temp}.aliyuncs.com`,
-                                            }
-                                        })
                                         let config = form.getFieldValue('accessConfig')
                                         if (config.regionId !== '' && config.apiEndpoint !== '' && config.authEndpoint !== '' && config.accessKeyId !== '' && config.accessSecret !== '' && value !== '') {
                                             apis.aliyun.getDevices({
@@ -273,14 +284,6 @@ const Save: React.FC<Props> = props => {
                                 )}
                             </Form.Item>
                         </Col>
-                        <Col span={12}>
-                            <Form.Item label="HTTP2接口地址">
-                                {getFieldDecorator('accessConfig.http2Endpoint', { //https://a1WEHOY5PU7.iot-as-http2.cn-shanghai.aliyuncs.com
-                                    initialValue: accessConfig?.http2Endpoint,
-                                    rules: [{ required: true, message: '请输入' }],
-                                })(<Input placeholder="请输入" />)}
-                            </Form.Item>
-                        </Col>
                     </Row>
                     <Divider orientation="left" dashed><div style={{ fontWeight: 'bold' }}>网桥配置</div></Divider>
                     {
@@ -289,8 +292,8 @@ const Save: React.FC<Props> = props => {
                                 <div key={index} style={{ backgroundColor: 'rgba(192,192,192,0.1)', marginBottom: '10px', paddingTop: '20px' }}>
                                     <div style={{ width: "90%", marginLeft: '5%' }}>网桥： {index + 1}</div>
                                     <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                        <div style={{ width: "85%" }}>
-                                            <Row gutter={24}>
+                                        <div style={{ width: "90%" }}>
+                                            <Row gutter={0} justify="start">
                                                 <Col span={12}>
                                                     <Form.Item label="本地服务ID">
                                                         {getFieldDecorator(`bridgeConfigs[${index}].serverId`, {
@@ -304,23 +307,43 @@ const Save: React.FC<Props> = props => {
                                                     </Form.Item>
                                                 </Col>
                                                 <Col span={12}>
-                                                    <Form.Item label="网桥ProductKey">
+                                                    <Form.Item label="ProductKey">
                                                         {getFieldDecorator(`bridgeConfigs[${index}].bridgeProductKey`, {
                                                             initialValue: item.bridgeProductKey || undefined,
                                                             rules: [{ required: true, message: '网桥ProductKey' }],
-                                                        })(<Select placeholder="网桥ProductKey" allowClear>
-                                                            {deviceList && deviceList.map((i: any, index: number) => {
-                                                                return <Select.Option key={index} value={i.productKey}>{i.productKey}</Select.Option>
+                                                        })(<Select placeholder="网桥ProductKey" allowClear onChange={(value: string) => {
+                                                            let temp = form.getFieldValue('accessConfig.regionId')
+                                                            let bridge = form.getFieldValue('bridgeConfigs')
+                                                            bridge[index].http2Endpoint = `https://${value}.iot-as-http2.${temp}.aliyuncs.com`
+                                                            form.setFieldsValue({
+                                                                bridgeConfigs: bridge
+                                                            })
+                                                        }}>
+                                                            {productKeyList && productKeyList.map((i: any, index: number) => {
+                                                                return <Select.Option key={index} value={i.productKey}>{`${i.productKey}(${i.productName})`}</Select.Option>
                                                             })}
                                                         </Select>)}
                                                     </Form.Item>
                                                 </Col>
                                                 <Col span={12}>
-                                                    <Form.Item label="网桥DeviceName">
+                                                    <Form.Item label="DeviceName">
                                                         {getFieldDecorator(`bridgeConfigs[${index}].bridgeDeviceName`, {
                                                             initialValue: item.bridgeDeviceName || undefined,
                                                             rules: [{ required: true, message: '网桥DeviceName' }],
-                                                        })(<Select placeholder="网桥DeviceName" allowClear>
+                                                        })(<Select placeholder="网桥DeviceName" allowClear onChange={(value: string) => {
+                                                            let secret = ''
+                                                            if (value !== '' && value !== undefined) {
+                                                                let data: any[] = deviceList.filter((i: any) => {
+                                                                    return i.deviceName === value
+                                                                })
+                                                                secret = data[0].deviceSecret
+                                                            }
+                                                            let bridge = form.getFieldValue('bridgeConfigs')
+                                                            bridge[index].bridgeDeviceSecret = secret
+                                                            form.setFieldsValue({
+                                                                bridgeConfigs: bridge
+                                                            })
+                                                        }}>
                                                             {deviceList && deviceList.map((i: any, index: number) => {
                                                                 return <Select.Option key={index} value={i.deviceName}>{i.deviceName}</Select.Option>
                                                             })}
@@ -328,20 +351,31 @@ const Save: React.FC<Props> = props => {
                                                     </Form.Item>
                                                 </Col>
                                                 <Col span={12}>
-                                                    <Form.Item label="网桥DeviceSecret">
+                                                    <Form.Item label="DeviceSecret">
                                                         {getFieldDecorator(`bridgeConfigs[${index}].bridgeDeviceSecret`, {
                                                             initialValue: item.bridgeDeviceSecret || undefined,
                                                             rules: [{ required: true, message: '网桥DeviceSecret' }],
-                                                        })(<Select placeholder="网桥DeviceSecret" allowClear>
-                                                            {deviceList && deviceList.map((i: any, index: number) => {
-                                                                return <Select.Option key={index} value={i.deviceSecret}>{i.deviceSecret}</Select.Option>
-                                                            })}
-                                                        </Select>)}
+                                                        })(
+                                                            <Input placeholder="请输入" readOnly />
+                                                            // <Select placeholder="网桥DeviceSecret" allowClear>
+                                                            //     {deviceList && deviceList.map((i: any, index: number) => {
+                                                            //         return <Select.Option key={index} value={i.deviceSecret}>{i.deviceSecret}</Select.Option>
+                                                            //     })}
+                                                            // </Select>
+                                                        )}
+                                                    </Form.Item>
+                                                </Col>
+                                                <Col span={12}>
+                                                    <Form.Item label="HTTP2接口地址">
+                                                        {getFieldDecorator(`bridgeConfigs[${index}].http2Endpoint`, { //https://a1WEHOY5PU7.iot-as-http2.cn-shanghai.aliyuncs.com
+                                                            initialValue: item.http2Endpoint || undefined,
+                                                            rules: [{ required: true, message: '请输入' }],
+                                                        })(<Input placeholder="请输入" />)}
                                                     </Form.Item>
                                                 </Col>
                                             </Row>
                                         </div>
-                                        <div style={{ width: "10%", display: 'flex', justifyContent: 'center', marginTop: '30px' }}>
+                                        <div style={{ width: "10%", display: 'flex', justifyContent: 'center', marginTop: '45px' }}>
                                             <Tooltip title="删除">
                                                 <MinusCircleOutlined
                                                     onClick={() => {
