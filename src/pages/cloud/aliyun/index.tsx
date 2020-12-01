@@ -50,6 +50,24 @@ const Aliyun: React.FC<{}> = () => {
         })
     };
 
+    const setEnabled = (id : string) => {
+        apis.aliyun.setEnabled(id).then(res => {
+            if (res.status === 200) {
+                message.success('启用成功');
+                handleSearch(searchParam);
+            }
+        })
+    }
+
+    const setDisabled = (id : string) => {
+        apis.aliyun.setDisabled(id).then(res => {
+            if (res.status === 200) {
+                message.success('禁用成功');
+                handleSearch(searchParam);
+            }
+        })
+    }
+
     useEffect(() => {
         handleSearch(searchParam);
     }, [])
@@ -71,6 +89,11 @@ const Aliyun: React.FC<{}> = () => {
             dataIndex: 'description',
         },
         {
+            title: '状态',
+            align: 'center',
+            dataIndex: 'state.text',
+        },
+        {
             title: '操作',
             align: 'center',
             render: (record: any) => (
@@ -78,8 +101,24 @@ const Aliyun: React.FC<{}> = () => {
                     <a onClick={() => { router.push(`/device/product/save/${record.id}`) }}>查看</a>
                     <Divider type="vertical" />
                     <a onClick={() => { setSaveVisible(true); setProductData(record) }}>编辑</a>
-                    <Divider type="vertical" />
-                    <a onClick={() => { deleteBridge(record.id); }}>删除</a>
+                    {
+                        record.state.value === 'disabled' && (
+                            <>
+                                <Divider type="vertical" />
+                                <a onClick={() => { setEnabled(record.id); }}>启用</a>
+                                <Divider type="vertical" />
+                                <a onClick={() => { deleteBridge(record.id); }}>删除</a>
+                            </>
+                        )
+                    }
+                    {
+                        record.state.value === 'enabled' && (
+                            <>
+                                <Divider type="vertical" />
+                                <a onClick={() => { setDisabled(record.id); }}>禁用</a>
+                            </>
+                        )
+                    }
                 </Fragment>
             )
         }

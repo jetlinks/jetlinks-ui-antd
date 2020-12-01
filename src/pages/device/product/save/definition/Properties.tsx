@@ -68,6 +68,8 @@ const Properties: React.FC<Props> = (props: Props) => {
     {
       title: '说明',
       dataIndex: 'description',
+      width:'30%',
+      ellipsis:true
     },
     {
       title: '操作',

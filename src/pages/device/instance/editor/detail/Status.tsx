@@ -120,7 +120,7 @@ const Status: React.FC<Props> = props => {
                     <EventCard item={item} device={device} key={item.id} />
                 </Col>
             ));
-            return [...propertyCard, ...eventCard].splice(1, index)
+            return [...propertyCard, ...eventCard].splice(0, index)
         }, [device, index]);
 
     const service = new Service();
