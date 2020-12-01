@@ -78,14 +78,12 @@ const PropertiesDefin: React.FC<Props> = props => {
     form.validateFields((err: any, fieldValue: any) => {
       if (err) return;
       const data = fieldValue;
-      console.log(data, properties, 'dddd');
       if (dataType === 'enum') {
         data.valueType.elements = enumData;
       }
       if (dataType === 'object') {
         data.valueType.properties = properties;
       }
-      console.log(dataType, data.valueType.elementType.type, 'from');
       if (dataType === 'array' && data.valueType.elementType.type === 'object') {
         data.valueType.elementType.properties = arrayProperties;
       }
