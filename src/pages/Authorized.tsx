@@ -32,8 +32,6 @@ const AuthComponent: React.FC<AuthComponentProps> = ({
     });
     return <PageLoading tip="获取用户数据中" />
   } else {
-    console.log(getRouteAuthority(location.pathname, routes), location.pathname, 'auth');
-    // reloadAuthorized();
     return (
       <Authorized
         authority={getRouteAuthority(location.pathname, routes) || ''}

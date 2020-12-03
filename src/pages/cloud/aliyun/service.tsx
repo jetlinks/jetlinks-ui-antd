@@ -53,3 +53,16 @@ export async function getNodesList() {
         method: 'GET',
     });
 }
+//启用
+export async function setEnabled(id: string) {
+    return request(`/jetlinks/device/aliyun/bridge/${id}/enable`,{
+        method: 'POST'
+    })
+}
+
+//禁用
+export async function setDisabled(id: string) {
+    return request(`/jetlinks/device/aliyun/bridge/${id}/disable`,{
+        method: 'POST'
+    })
+}

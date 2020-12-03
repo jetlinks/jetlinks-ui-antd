@@ -2,6 +2,7 @@ import {
   AutoComplete,
   Button,
   Col,
+  Collapse,
   Drawer,
   Form,
   Icon,
@@ -9,15 +10,15 @@ import {
   InputNumber,
   List,
   message,
-  Radio,
   Row,
   Select
 } from 'antd';
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import styles from '../index.less';
 import { groupBy } from 'lodash';
 import { Unit } from '@/utils/unit';
-import { renderUnit } from "@/pages/device/public";
+import { ProductContext } from '../../context';
+import apis from '@/services';
 
 interface Props {
   save: (data: any) => void;
@@ -32,6 +33,10 @@ interface State {
   data: any;
   enumData: any[];
   currentParameter: any;
+  arrayEnumData: any[];
+  arrParameterVisible: boolean;
+  arrayProperties: any[];
+  aType: string;
 }
 
 const Paramter: React.FC<Props> = props => {
@@ -41,12 +46,22 @@ const Paramter: React.FC<Props> = props => {
     data: { ...props.data },
     enumData: props.data.valueType?.elements || [{ text: '', value: '', id: 0 }],
     currentParameter: {},
+    aType: props.data.valueType?.elementType?.type || '',
+    arrayEnumData: props.data.valueType?.elementType?.elements || [{ text: '', value: '', id: 0 }],
+    arrParameterVisible: false,
+    arrayProperties: props.data.valueType?.elementType?.properties || [],
   };
   const [dataType, setDataType] = useState(initState.dataType);
   const [parameterVisible, setParameterVisible] = useState(initState.parameterVisible);
   const [data, setData] = useState(initState.data);
   const [currentParameter, setCurrentParameter] = useState(initState.currentParameter);
   const [enumData, setEnumData] = useState(initState.enumData);
+  const [configMetadata, setConfigMetadata] = useState<any[]>([]);
+  const [loadConfig, setLoadConfig] = useState<boolean>(false);
+  const [arrayEnumData, setArrayEnumData] = useState(initState.arrayEnumData);
+  const [arrParameterVisible, setArrParameterVisible] = useState(initState.arrParameterVisible);
+  const [arrayProperties, setArrayProperties] = useState(initState.arrayProperties);
+  const [aType, setAType] = useState<string>(initState.aType);
 
   const dataTypeChange = (value: string) => {
     setDataType(value);
@@ -57,39 +72,338 @@ const Paramter: React.FC<Props> = props => {
     value: 'string',
   }, 'yyyy-MM-dd', 'yyyy-MM-dd HH:mm:ss', 'yyyy-MM-dd HH:mm:ss EE', 'yyyy-MM-dd HH:mm:ss zzz'];
 
-  const renderDetailForm = () => {
-    switch (dataType) {
+
+  const renderAType = () => {
+    switch (aType) {
+      case 'float':
+      case 'double':
+        return (
+          <div>
+            <Form.Item label="精度">
+              <InputNumber
+                onChange={(value) => {
+                  data.valueType.elementType.scale = value;
+                  setData({ ...data });
+                }}
+                value={data.valueType.elementType?.scale}
+                precision={0}
+                min={0}
+                step={1}
+                placeholder="小数点位数"
+                style={{ width: '100%' }} />
+            </Form.Item>
+
+            <Form.Item label="单位">
+              <Select
+                onChange={(value: string) => {
+                  data.valueType.lementType.unit = value;
+                  setData({ ...data });
+                }}
+                value={data.valueType.elementType.unit}
+              >
+                {Array.from(new Set<string>(props.unitsData.map((unit: any) => {
+                  return unit.type;
+                }))).map(type => {
+                  const typeData = groupBy(props.unitsData, unit => unit.type)[type];
+                  return (
+                    <Select.OptGroup label={type} key={type}>
+                      {typeData.map((e: Unit) => (
+                        <Select.Option value={e.id} key={e.id}>
+                          {e.name} / {e.symbol}
+                        </Select.Option>
+                      ))}
+                    </Select.OptGroup>
+                  );
+                })}
+              </Select>
+            </Form.Item>
+          </div>
+        );
       case 'int':
       case 'long':
         return (
           <div>
-            <Form.Item label="取值范围" style={{ height: 69 }}>
+
+            <Form.Item label="单位">
+              <Select
+                onChange={(value: string) => {
+                  data.valueType.lementType.unit = value;
+                  setData({ ...data });
+                }}
+                value={data.valueType?.elementType?.unit}
+              >
+                {Array.from(new Set<string>(props.unitsData.map((unit: any) => {
+                  return unit.type;
+                }))).map(type => {
+                  const typeData = groupBy(props.unitsData, unit => unit.type)[type];
+                  return (
+                    <Select.OptGroup label={type} key={type}>
+                      {typeData.map((e: Unit) => (
+                        <Select.Option value={e.id} key={e.id}>
+                          {e.name} / {e.symbol}
+                        </Select.Option>
+                      ))}
+                    </Select.OptGroup>
+                  );
+                })}
+              </Select>
+            </Form.Item>
+          </div>
+        );
+      case 'string':
+        return (
+          <div>
+            <Form.Item label="最大长度">
+              <Input
+                onChange={(value) => {
+                  data.valueType.elementType.expands.maxLength = value.target.value;
+                  setData({ ...data });
+                }}
+                value={data.valueType.elementType.expands.maxLength}
+              />
+            </Form.Item>
+          </div>
+        );
+      case 'boolean':
+        return (
+          <div>
+            <Form.Item label="布尔值" style={{ height: 69 }}>
               <Col span={11}>
-                <InputNumber style={{ width: '100%' }}
-                  value={data.valueType.min}
-                  placeholder="最小值"
-                  onChange={value => {
-                    data.valueType.min = value;
+                <Input
+                  onChange={(value) => {
+                    data.valueType.elementType.trueText = value.target.value;
                     setData({ ...data });
                   }}
-                />
+                  value={data.valueType.elementType.trueText || '是'}
+
+                  placeholder="trueText" />
               </Col>
               <Col span={2} push={1}>
                 ~
               </Col>
               <Col span={11}>
                 <Form.Item>
-                  <InputNumber style={{ width: '100%' }}
-                    value={data.valueType.max}
-                    placeholder="最大值"
-                    onChange={value => {
-                      data.valueType.max = value;
+                  <Input
+                    onChange={(value) => {
+                      data.valueType.elementType.trueValue = value.target.value;
                       setData({ ...data });
                     }}
-                  />
+                    value={data.valueType.elementType.trueValue || true}
+                    placeholder="trueValue" />
                 </Form.Item>
               </Col>
             </Form.Item>
+            <Form.Item style={{ height: 69 }}>
+              <Col span={11}>
+                <Input
+                  onChange={(value) => {
+                    data.valueType.elementType.falseText = value.target.value || '否';
+                    setData({ ...data });
+                  }}
+                  value={data.valueType.elementType.falseText || true}
+                  placeholder="falseText" />
+              </Col>
+              <Col span={2} push={1}>
+                ~
+              </Col>
+              <Col span={11}>
+                <Form.Item>
+                  <Input
+                    onChange={(value) => {
+                      data.valueType.elementType.falseValue = value.target.value || '否';
+                      setData({ ...data });
+                    }}
+                    value={data.valueType.elementType.falseValue || false}
+                    placeholder="falseValue" />
+                </Form.Item>
+              </Col>
+            </Form.Item>
+          </div>
+        );
+      case 'date':
+        return (
+          <div>
+            <Form.Item label="时间格式">
+              <AutoComplete
+                onChange={(value) => {
+                  data.valueType.elementType.format = value;
+                  setData({ ...data });
+                }}
+                value={data.valueType.elementType.format}
+                dataSource={dataSource}
+                placeholder="默认格式：String类型的UTC时间戳 (毫秒)"
+                filterOption={(inputValue, option) =>
+                  option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
+                }
+              />
+            </Form.Item>
+          </div>
+        );
+      case 'enum':
+        return (
+          <div>
+            <Form.Item label="枚举项">
+              {arrayEnumData.map((item, index) => (
+                <Row key={item.id}>
+                  <Col span={10}>
+                    <Input
+                      placeholder="标识"
+                      value={item.value}
+                      onChange={event => {
+                        arrayEnumData[index].value = event.target.value;
+                        setArrayEnumData([...arrayEnumData]);
+                      }}
+                    />
+                  </Col>
+                  <Col span={1} style={{ textAlign: 'center' }}>
+                    <Icon type="arrow-right" />
+                  </Col>
+                  <Col span={10}>
+                    <Input
+                      placeholder="对该枚举项的描述"
+                      value={item.text}
+                      onChange={event => {
+                        arrayEnumData[index].text = event.target.value;
+                        setArrayEnumData([...arrayEnumData]);
+                      }}
+                    />
+                  </Col>
+                  <Col span={3} style={{ textAlign: 'center' }}>
+                    {index === 0 ? (
+                      (arrayEnumData.length - 1) === 0 ? (
+                        <Icon type="plus-circle"
+                          onClick={() => {
+                            setArrayEnumData([...arrayEnumData, { id: arrayEnumData.length + 1 }]);
+                          }}
+                        />
+                      ) : (
+                          <Icon type="minus-circle"
+                            onClick={() => {
+                              arrayEnumData.splice(index, 1);
+                              setArrayEnumData([...arrayEnumData]);
+                            }}
+                          />
+                        )
+                    ) : (
+                        index === (arrayEnumData.length - 1) ? (
+                          <Row>
+                            <Icon type="plus-circle"
+                              onClick={() => {
+                                setArrayEnumData([...arrayEnumData, { id: arrayEnumData.length + 1 }]);
+                              }}
+                            />
+                            <Icon style={{ paddingLeft: 10 }}
+                              type="minus-circle"
+                              onClick={() => {
+                                arrayEnumData.splice(index, 1);
+                                setArrayEnumData([...arrayEnumData]);
+                              }}
+                            />
+                          </Row>
+                        ) : (
+                            <Icon type="minus-circle"
+                              onClick={() => {
+                                arrayEnumData.splice(index, 1);
+                                setArrayEnumData([...arrayEnumData]);
+                              }}
+                            />
+                          )
+                      )}
+                  </Col>
+                </Row>
+              ))}
+            </Form.Item>
+          </div>
+        );
+      case 'object':
+        return (
+          <Form.Item label="JSON对象">
+            {arrayProperties.length > 0 && (
+              <List
+                bordered
+                dataSource={arrayProperties}
+                renderItem={(item: any) => (
+                  <List.Item
+                    actions={[
+                      <Button
+                        type="link"
+                        onClick={() => {
+                          setArrParameterVisible(true);
+                          setCurrentParameter(item);
+                        }}
+                      >
+                        编辑
+                      </Button>,
+                      <Button
+                        type="link"
+                        onClick={() => {
+                          const index = arrayProperties.findIndex((i: any) => i.id === item.id);
+                          arrayProperties.splice(index, 1);
+                          setArrayProperties([...arrayProperties]);
+                        }}
+                      >
+                        删除
+                      </Button>,
+                    ]}
+                  >
+                    参数名称：{item.name}
+                  </List.Item>
+                )}
+              />
+            )}
+            <Button
+              type="link"
+              onClick={() => {
+                setCurrentParameter({});
+                setArrParameterVisible(true);
+              }}
+            >
+              <Icon type="plus" />
+              添加参数
+            </Button>
+          </Form.Item>
+        );
+      case 'file':
+        return (
+          <Form.Item label="文件类型">
+            <Select
+              onChange={(value: any) => {
+                data.valueType.elementType.fileType = value;
+                setData({ ...data });
+              }}
+              value={data.valueType.elementType.fileType}
+            >
+              <Select.Option value="url">URL(链接)</Select.Option>
+              <Select.Option value="base64">Base64(Base64编码)</Select.Option>
+              <Select.Option value="binary">Binary(二进制)</Select.Option>
+            </Select>,
+
+          </Form.Item>
+        );
+      case 'password':
+        return (
+          <div>
+            <Form.Item label="密码长度">
+              <Input
+                onChange={(value: any) => {
+                  data.valueType.elementType.expands.maxLength = value;
+                  setData({ ...data });
+                }}
+                value={data.valueType.elementType.expands.maxLength}
+                addonAfter="字节" />
+            </Form.Item>
+          </div>
+        );
+      default:
+        return null;
+    }
+  }
+  const renderDetailForm = () => {
+    switch (dataType) {
+      case 'int':
+      case 'long':
+        return (
+          <div>
             <Form.Item label="单位">
               <Select
                 onChange={(value: string) => {
@@ -120,33 +434,6 @@ const Paramter: React.FC<Props> = props => {
       case 'float':
         return (
           <div>
-            <Form.Item label="取值范围" style={{ height: 69 }}>
-              <Col span={11}>
-                <InputNumber style={{ width: '100%' }}
-                  value={data.valueType.min}
-                  placeholder="最小值"
-                  onChange={value => {
-                    data.valueType.min = value;
-                    setData({ ...data });
-                  }}
-                />
-              </Col>
-              <Col span={2} push={1}>
-                ~
-              </Col>
-              <Col span={11}>
-                <Form.Item>
-                  <InputNumber style={{ width: '100%' }}
-                    value={data.valueType.max}
-                    placeholder="最大值"
-                    onChange={value => {
-                      data.valueType.max = value;
-                      setData({ ...data });
-                    }}
-                  />
-                </Form.Item>
-              </Col>
-            </Form.Item>
             <Form.Item label="精度" style={{ height: 69 }}>
               <InputNumber
                 min={0} step={1} placeholder="请输入精度"
@@ -282,29 +569,32 @@ const Paramter: React.FC<Props> = props => {
         return (
           <div>
             <Form.Item label="元素类型">
-              <Radio.Group
-                value={data.valueType.elementType}
-                onChange={e => {
-                  data.valueType.elementType = e.target.value;
-                  setData({ ...data });
+              <Select
+                placeholder="请选择"
+                onChange={(value: string) => {
+                  setAType(value);
+                  getMetadata(undefined, value)
                 }}
               >
-                <Radio value="int">int32(整数型)</Radio>
-                <Radio value="float">float(单精度）</Radio>
-                <Radio value="double">double(双精度)</Radio>
-                <Radio value="string">text(字符串)</Radio>
-                <Radio value="object">object(结构体)</Radio>
-              </Radio.Group>
+                <Select.OptGroup label="基本类型">
+                  <Select.Option value="int">int(整数型)</Select.Option>
+                  <Select.Option value="long">long(长整数型)</Select.Option>
+                  <Select.Option value="float">float(单精度浮点型)</Select.Option>
+                  <Select.Option value="double">double(双精度浮点数)</Select.Option>
+                  <Select.Option value="string">text(字符串)</Select.Option>
+                  <Select.Option value="boolean">bool(布尔型)</Select.Option>
+                </Select.OptGroup>
+                <Select.OptGroup label="其他类型">
+                  <Select.Option value="date">date(时间型)</Select.Option>
+                  <Select.Option value="enum">enum(枚举)</Select.Option>
+                  <Select.Option value="object">object(结构体)</Select.Option>
+                  <Select.Option value="file">file(文件)</Select.Option>
+                  <Select.Option value="password">password(密码)</Select.Option>
+                  <Select.Option value="geoPoint">geoPoint(地理位置)</Select.Option>
+                </Select.OptGroup>
+              </Select>
             </Form.Item>
-            <Form.Item label="元素个数">
-              <Input
-                value={data.valueType.elementNumber}
-                onChange={e => {
-                  data.valueType.elementNumber = e.target.value;
-                  setData({ ...data });
-                }}
-              />
-            </Form.Item>
+            {renderAType()}
           </div>
         );
       case 'enum':
@@ -315,7 +605,7 @@ const Paramter: React.FC<Props> = props => {
                 <Row key={item.id}>
                   <Col span={10}>
                     <Input
-                      placeholder="编号为：0"
+                      placeholder="标识"
                       value={item.value}
                       onChange={event => {
                         enumData[index].value = event.target.value;
@@ -486,6 +776,81 @@ const Paramter: React.FC<Props> = props => {
     props.close();
   }
 
+
+  const product = useContext<any>(ProductContext);
+
+  useEffect(() => getMetadata(), []);
+  const getMetadata = (id?: any, type?: any) => {
+
+    if (id) {
+      data.id = id;
+    }
+    if (type) {
+      data.valueType.type = type;
+    }
+
+    if (data.id && data.valueType?.type) {
+      setLoadConfig(true);
+      apis.deviceProdcut.configMetadata({
+        productId: product.id,
+        modelType: 'functionParameter',
+        modelId: data.id,
+        typeId: data.valueType.type
+      }).then(rsp => {
+        setLoadConfig(false);
+        setConfigMetadata(rsp.result);
+      }).finally(() => setLoadConfig(false));
+    }
+  }
+  const renderItem = (config: any) => {
+    switch (config.type.type) {
+      case 'int':
+      case 'string':
+        return (
+          <Input
+            value={(data?.expands || {})[config.property]}
+            onChange={e => {
+              if (!data.expands) data.expands = {};
+              data.expands[config.property] = e.target.value;
+              setData({ ...data });
+            }} />
+        )
+      case 'enum':
+        return (
+          <Select
+            value={(data?.expands || {})[config.property]}
+            onChange={e => {
+              if (!data.expands) data.expands = {};
+              data.expands[config.property] = e;
+              setData({ ...data });
+            }}
+          >
+            {config.type.elements.map(i => (
+              <Select.Option value={i.value}>{i.text}</Select.Option>
+            ))}
+          </Select>
+        );
+      default:
+        return <Input />
+    }
+  }
+
+  const renderConfigMetadata = () => {
+    return (
+      <Collapse>{
+        (configMetadata || []).map((item, index) => {
+          return (
+            <Collapse.Panel header={item.name} key={index}>
+              {item.properties.map((config: any) => (
+                <Form.Item label={config.name} key={config.property}>
+                  {renderItem(config)}
+                </Form.Item>
+              ))}
+            </Collapse.Panel>
+          )
+        })}</Collapse>
+    )
+  }
   return (
     <Drawer
       title="新增参数"
@@ -504,6 +869,7 @@ const Paramter: React.FC<Props> = props => {
               data.id = e.target.value;
               setData({ ...data });
             }}
+            onBlur={(value) => getMetadata(value.target.value, undefined)}
           />
         </Form.Item>
         <Form.Item label="参数名称">
@@ -526,6 +892,7 @@ const Paramter: React.FC<Props> = props => {
               data.valueType.type = value;
               dataTypeChange(value);
               setData({ ...data });
+              getMetadata(undefined, value)
             }}
           >
             <Select.OptGroup label="基本类型">
@@ -546,6 +913,7 @@ const Paramter: React.FC<Props> = props => {
           </Select>
         </Form.Item>
         {renderDetailForm()}
+        {!loadConfig && renderConfigMetadata()}
         <Form.Item label="描述">
           <Input.TextArea
             value={data.description}
@@ -607,6 +975,25 @@ const Paramter: React.FC<Props> = props => {
             setCurrentParameter({});
             setParameterVisible(false);
           }}
+        />
+      )}
+      {arrParameterVisible && (
+        <Paramter
+          save={item => {
+            const index = arrayProperties.findIndex((e: any) => e.id === item.id);
+            if (index === -1) {
+              arrayProperties.push(item);
+            } else {
+              arrayProperties[index] = item;
+            }
+            setArrayProperties(arrayProperties);
+          }}
+          unitsData={props.unitsData}
+          close={() => {
+            setCurrentParameter({});
+            setArrParameterVisible(false);
+          }}
+          data={currentParameter}
         />
       )}
     </Drawer>

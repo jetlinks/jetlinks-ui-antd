@@ -1,4 +1,4 @@
-import { Modal, Tabs, Icon, Spin } from "antd";
+import { Modal, Tabs, Spin } from "antd";
 import React, { useState } from "react";
 import Basic from "./basic";
 import Association from "./association";
@@ -20,11 +20,19 @@ interface State {
     dataView: DataViewItem[];
 }
 const Save: React.FC<Props> = (props) => {
-
+    var defaultActionData: PermissionAction[] = [
+        { "action": "query", "describe": "查询列表", defaultCheck: true, name: '查询列表' },
+        { "action": "get", "describe": "查询明细", defaultCheck: true, name: '查询明细' },
+        { "action": "add", "describe": "新增", defaultCheck: true, name: '新增' },
+        { "action": "update", "describe": "修改", defaultCheck: true, name: '修改' },
+        { "action": "delete", "describe": "删除", defaultCheck: false, name: '删除' },
+        { "action": "import", "describe": "导入", defaultCheck: true, name: '导入' },
+        { "action": "export", "describe": "导出", defaultCheck: true, name: '导出' }
+    ];
     const currentItem = props.data;
     const initState: State = {
         basicInfo: currentItem,
-        actions: currentItem.actions || [],
+        actions: currentItem.actions || defaultActionData,
         association: currentItem.parents || [],
         dataView: currentItem.optionalFields || [],
     }

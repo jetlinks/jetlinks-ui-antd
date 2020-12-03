@@ -89,7 +89,7 @@ const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVi
           'time': '1d',
           'format': 'yyyy-MM-dd',
           'from': calculationDate(),
-          'to': moment(new Date()).add(1, 'days').format('YYYY-MM-DD') + ' 00:00:00'
+          'to': moment(new Date()).format('YYYY-MM-DD') + ' 23:59:59'
         },
       },
       {
@@ -102,7 +102,7 @@ const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVi
           'time': '1M',
           'format': 'yyyy-MM-dd',
           'from': calculationDate(),
-          'to': moment(new Date()).add(1, 'days').format('YYYY-MM-DD') + ' 00:00:00'
+          'to': moment(new Date()).format('YYYY-MM-DD') + ' 23:59:59'
         },
       },
     ];

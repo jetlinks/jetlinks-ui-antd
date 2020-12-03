@@ -77,7 +77,7 @@ const Status: React.FC<Props> = props => {
     let eventsMap = {};
     events.forEach((item: any) => eventsMap[item.id] = item);
 
-
+    const [index, setIndex] = useState<number>(20);
     useEffect(() => {
 
         const properties$ = propertiesWs.subscribe((resp) => {
@@ -95,6 +95,7 @@ const Status: React.FC<Props> = props => {
                 item.next(resp);
             }
         });
+
         return () => {
             properties$.unsubscribe();
             events$.unsubscribe()
@@ -104,22 +105,23 @@ const Status: React.FC<Props> = props => {
 
 
     const renderProperties = useCallback(
-        () => properties.map((item: any) => (
-            <Col {...topColResponsiveProps} key={item.id}>
-                <PropertiesCard
-                    item={item}
-                    key={item.id}
-                    device={device}
-                />
-            </Col>
-        )), [device]);
-
-    const renderEvents = useCallback(
-        () => events.map((item: any) => (
-            <Col {...topColResponsiveProps} key={item.id}>
-                <EventCard item={item} device={device} key={item.id} />
-            </Col>
-        )), [device]);
+        () => {
+            const propertyCard = properties.map((item: any) => (
+                <Col {...topColResponsiveProps} key={item.id}>
+                    <PropertiesCard
+                        item={item}
+                        key={item.id}
+                        device={device}
+                    />
+                </Col>
+            ))
+            const eventCard = events.map((item: any) => (
+                <Col {...topColResponsiveProps} key={item.id}>
+                    <EventCard item={item} device={device} key={item.id} />
+                </Col>
+            ));
+            return [...propertyCard, ...eventCard].splice(0, index)
+        }, [device, index]);
 
     const service = new Service();
 
@@ -155,10 +157,19 @@ const Status: React.FC<Props> = props => {
         })
     }, []);
 
+    window.onscroll = () => {
+        var a = document.documentElement.scrollTop;
+        var c = document.documentElement.scrollHeight;
+
+        var b = document.body.clientHeight;
+        if (a + b >= c) {
+            setIndex(index + 10);
+        }
+    }
 
     return (
         <Spin spinning={!loading}>
-            <Row gutter={24}>
+            <Row gutter={24} id="device-instance-status" >
                 <Col {...topColResponsiveProps}>
                     <DeviceState
                         refresh={() => { props.refresh() }}
@@ -166,11 +177,9 @@ const Status: React.FC<Props> = props => {
                         runInfo={device}
                     />
                 </Col>
-                {loading && renderEvents()}
 
                 {loading && renderProperties()}
             </Row>
-
         </Spin>
     )
 };
