@@ -58,17 +58,18 @@ const PropertiesCard: React.FC<Props> = props => {
                         'x': data.timeString,
                         'y': Math.floor(Number(data.value) * 100) / 100,
                     });
-                })
+                });
                 item.visitData = visitData;
             }
         }
         return item;
-    }
+    };
 
     const [data, setData] = useState(getValue);
 
     const [visible, setVisible] = useState<boolean>(false);
     const [edit, setEdit] = useState<boolean>(false);
+
     useEffect(() => {
         item.subscribe((resp: any) => {
             const value = resp.value.value;
@@ -89,18 +90,20 @@ const PropertiesCard: React.FC<Props> = props => {
             setLoading(false);
         })
     }, []);
+
     const refreshProperty = (item: any) => {
         setLoading(true);
         // 刷新数据
         service.getProperty(device.id, item.id).subscribe(() => { }, () => { }, () => { setLoading(false) });
-    }
+    };
 
     const updateProperty = (item: any) => {
         service.updateProperty(device.id, item).subscribe(() => {
             message.success('操作成功');
             setEdit(false);
         });
-    }
+    };
+
     return (
         <>
             <Spin spinning={loading}>
@@ -142,9 +145,12 @@ const PropertiesCard: React.FC<Props> = props => {
             {visible && <PropertiesInfo item={item} close={() => { setVisible(false) }} deviceId={props.device.id} />}
             {edit && <UpdateProperty
                 data={item}
-                save={(item: any) => { updateProperty(item) }}
+                save={(data: any) => {
+                  item.value = data[item.id];
+                  updateProperty(data);
+                }}
                 close={() => setEdit(false)} />}
         </>
     );
-}
+};
 export default memo(PropertiesCard);

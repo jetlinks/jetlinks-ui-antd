@@ -39,6 +39,10 @@ const UpdateProperty: React.FC<Props> = props => {
       } else {
         setFieldsValue({'value': JSON.stringify(JSON.parse(props.data.formatValue), null, 2)});
       }
+    } else if (valueType.type === 'boolean') {
+      props.data.formatValue ?
+        setFieldsValue({'value': props.data.value})
+        : setFieldsValue({'value': props.data.formatValue});
     } else if (valueType.type === 'enum') {
       props.data.formatValue ?
         setFieldsValue({'value': props.data.value})
