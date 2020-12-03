@@ -49,7 +49,7 @@ const Save: React.FC<Props> = props => {
       }
     })
     let items = {
-      name: name,
+      name: data.name,
       id: data.id,
       triggers: tri,
       actions: action,
@@ -131,7 +131,7 @@ const Save: React.FC<Props> = props => {
           <Row gutter={16}
             style={{ marginLeft: '0.1%' }}>
             <Col span={12}>
-              <Form.Item key="name" label="场景联动ID">
+              <Form.Item key="id" label="场景联动ID">
                 <Input placeholder="输入场景联动ID"
                   defaultValue={props.data.id}
                   onBlur={event => {
@@ -167,11 +167,13 @@ const Save: React.FC<Props> = props => {
                   save={(data: any) => {
                     triggers.splice(index, 1, data);
                   }}
+                  key={index+Math.random()}
                   trigger={item}
                   position={index}
                   remove={(position: number) => {
                     triggers.splice(position, 1);
-                    setTriggers([...triggers]);
+                    let data = [...triggers]
+                    setTriggers([...data]);
                   }}
                 />
               </div>
@@ -203,7 +205,7 @@ const Save: React.FC<Props> = props => {
             </p>
             {action.length > 0 && action.map((item: any, index) => (
               <div key={index}>
-                <ActionAssembly save={(actionData: any) => {
+                <ActionAssembly key={index+Math.random()} save={(actionData: any) => {
                   action.splice(index, 1, actionData);
                 }} action={item} position={index} remove={(position: number) => {
                   action.splice(position, 1);
