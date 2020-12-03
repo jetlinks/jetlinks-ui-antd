@@ -65,6 +65,13 @@ const UpdateProperty: React.FC<Props> = props => {
       if (err) return;
 
       let map = {};
+      
+      let valueType: any = props.data.valueType;
+
+      if (valueType.type === "array" || valueType.type === "object") {
+        fileValue.value = JSON.parse(fileValue.value);
+      }
+      
       map[props.data.id] = fileValue.value;
       props.save(map);
     });
