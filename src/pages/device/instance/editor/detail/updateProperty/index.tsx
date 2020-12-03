@@ -41,7 +41,7 @@ const UpdateProperty: React.FC<Props> = props => {
       }
     } else if (valueType.type === 'boolean') {
       props.data.formatValue ?
-        setFieldsValue({'value': props.data.value})
+        setFieldsValue({'value': String(props.data.value)})
         : setFieldsValue({'value': props.data.formatValue});
     } else if (valueType.type === 'enum') {
       props.data.formatValue ?
@@ -92,17 +92,17 @@ const UpdateProperty: React.FC<Props> = props => {
         return (
           <Select placeholder="请选择">
             {valueType.elements.length > 0 && valueType.elements.map((item: any) => (
-              <Select.Option key={item.value}>{`${item.text}（${item.value}）`}</Select.Option>
+              <Select.Option key={item.value} value={item.value}>{`${item.text}（${item.value}）`}</Select.Option>
             ))}
           </Select>
         );
       case 'boolean':
         return (
           <Select placeholder="请选择">
-            <Select.Option key={valueType.trueValue}>
+            <Select.Option key={valueType.trueValue} value={valueType.trueValue}>
               {`${valueType.trueText}（${valueType.trueValue}）`}
             </Select.Option>
-            <Select.Option key={valueType.falseValue}>
+            <Select.Option key={valueType.falseValue} value={valueType.falseValue}>
               {`${valueType.falseText}（${valueType.falseValue}）`}
             </Select.Option>
           </Select>
