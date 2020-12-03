@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {FormComponentProps} from 'antd/lib/form';
 import Form from 'antd/es/form';
-import {Input, InputNumber, Modal, Select} from 'antd';
+import {Input, InputNumber, message, Modal, Select} from 'antd';
 import 'ace-builds';
 import 'ace-builds/webpack-resolver';
 import AceEditor from "react-ace";
@@ -68,7 +68,12 @@ const UpdateProperty: React.FC<Props> = props => {
       let valueType: any = props.data.valueType;
 
       if (valueType.type === "array" || valueType.type === "object") {
-        fileValue.value = JSON.parse(fileValue.value);
+        try {
+          fileValue.value = JSON.parse(fileValue.value);
+        } catch (e) {
+          message.error("JSON格式错误");
+          return;
+        }
       }
 
       map[props.data.id] = fileValue.value;
