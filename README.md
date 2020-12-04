@@ -6,6 +6,7 @@ $ cd jetlinks-ui-antd
 $ npm install
 $ npm start         # visit http://localhost:8000
 ```
+>>npm install 失败的话检查一下是否配置了淘宝镜像
 
 ### 本地开发环境要求
 
