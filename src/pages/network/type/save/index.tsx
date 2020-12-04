@@ -719,7 +719,7 @@ const Save: React.FC<Props> = props => {
             rules: [{required: true, message: '请选择组件类型'}],
             initialValue: props.data?.type?.value,
           })(
-            <Select
+            <Select disabled={!!props.data.id}
               onChange={(value: string) => {
                 setDataType(value);
               }}
