@@ -23,6 +23,7 @@ interface Props extends FormComponentProps {
   functionsData: any;
   eventsData: any;
   tagsData: any;
+  update: Function;
 }
 
 export const TenantContext = React.createContext({});
@@ -67,7 +68,7 @@ const Definition: React.FC<Props> = props => {
         setSpinning(false);
       })
       .catch(() => {
-      });
+      }).finally(() => props.update());
   };
 
   const operations = (
