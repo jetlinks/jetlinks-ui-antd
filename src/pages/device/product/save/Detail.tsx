@@ -57,10 +57,12 @@ const Detail: React.FC<Props> = props => {
   const [units, setUnits] = useState(initState.units);
   const [updateVisible, setUpdateVisible] = useState(false);
 
-  const handleSearch = (id: string) => {
+  const handleSearch = (id?: string) => {
+    const list = pathname.split('/');
+    const temp = id || list[list.length - 1];
     dispatch({
       type: 'deviceProduct/queryById',
-      payload: id,
+      payload: temp,
       callback: (r: any) => {
         if (r.status === 200) {
           const data = r.result;
@@ -391,6 +393,7 @@ const Detail: React.FC<Props> = props => {
                   setTags(data);
                   updateData('tags', data);
                 }}
+                update={() => handleSearch()}
               />
             </Tabs.TabPane>
             <Tabs.TabPane tab="告警设置" key="metadata1">
