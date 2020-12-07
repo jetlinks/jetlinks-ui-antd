@@ -344,13 +344,15 @@ const Save: React.FC<Props> = props => {
                                                             initialValue: item.bridgeDeviceName || undefined,
                                                             rules: [{ required: true, message: '网桥DeviceName' }],
                                                         })(
-                                                            <AutoComplete placeholder="网桥DeviceName" allowClear onChange={(value: SelectValue) => {
+                                                            <AutoComplete placeholder="网桥DeviceName" allowClear onBlur={(value: SelectValue) => {
                                                                 let secret = ''
                                                                 if (value !== '' && value !== undefined) {
                                                                     let data: any[] = deviceList[index].filter((i: any) => {
                                                                         return i.deviceName === value
                                                                     })
-                                                                    secret = data[0].deviceSecret
+                                                                    if(data.length > 0){
+                                                                        secret = data[0].deviceSecret
+                                                                    }
                                                                 }
                                                                 let bridge = form.getFieldValue('bridgeConfigs')
                                                                 bridge[index].bridgeDeviceSecret = secret
