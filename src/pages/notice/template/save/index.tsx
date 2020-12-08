@@ -62,8 +62,10 @@ const Save: React.FC<Props> = props => {
     // showUploadList: false,
     onChange(info) {
       if (info.file.status === 'done') {
+        let url = info.file.response.result;
+        delete info.file.response;
         const tempFile: any = info.file;
-        tempFile.localtion = info.file.response.result;
+        tempFile.location = url;
         fileList.push(tempFile);
         setFileList([...fileList]);
       }
