@@ -96,7 +96,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
   const statusMap = new Map();
   statusMap.set('在线', 'success');
   statusMap.set('离线', 'error');
-  statusMap.set('未激活', 'processing');
+  statusMap.set('未启用', 'processing');
 
   const handleSearch = (params?: any) => {
     setSearchParam(params);
@@ -583,7 +583,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
                   value={numeral(deviceCount.offlineCount).format('0,0')} />
               </Col>
               <Col sm={4} xs={24}>
-                <Info title={<Badge status={statusMap.get('未激活')} text="未激活" />}
+                <Info title={<Badge status={statusMap.get('未启用')} text="未启用" />}
                   value={numeral(deviceCount.notActiveCount).format('0,0')} />
               </Col>
               <Col sm={1} xs={24}>
