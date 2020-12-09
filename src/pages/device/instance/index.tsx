@@ -97,6 +97,9 @@ const DeviceInstancePage: React.FC<Props> = props => {
   statusMap.set('在线', 'success');
   statusMap.set('离线', 'error');
   statusMap.set('未激活', 'processing');
+  statusMap.set('online', 'success');
+  statusMap.set('offline', 'error');
+  statusMap.set('notActive', 'processing');
 
   const handleSearch = (params?: any) => {
     setSearchParam(params);
@@ -171,7 +174,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
       title: '状态',
       dataIndex: 'state',
       width: '90px',
-      render: record => record ? <Badge status={statusMap.get(record.text)} text={record.text} /> : '',
+      render: record => record ? <Badge status={statusMap.get(record.value)} text={record.text} /> : '',
       filters: [
         {
           text: '未激活',
