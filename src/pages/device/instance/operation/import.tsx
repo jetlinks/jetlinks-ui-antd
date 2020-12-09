@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {FormComponentProps} from 'antd/lib/form';
 import Form from 'antd/es/form';
-import {Badge, Button, message, Modal, Radio, Select, Spin, Upload} from 'antd';
+import {Badge, Button, Checkbox, message, Modal, Radio, Select, Spin, Upload} from 'antd';
 import apis from '@/services';
 import {DeviceProduct} from '@/pages/device/product/data';
 import {UploadProps} from 'antd/lib/upload';
@@ -36,6 +36,7 @@ const Import: React.FC<Props> = props => {
   const [product, setProduct] = useState(initState.product);
   const [fileType, setFileType] = useState(initState.fileType);
   const [flag, setFlag] = useState<boolean>(true);
+  const [autoDeploy, setAutoDeploy] = useState<boolean>(false);
   const [eventSource, setSource] = useState<any>(initState.source);
   const [count, setCount] = useState<number>(0);
   const [errMessage, setErrMessage] = useState<string>('');
@@ -66,7 +67,7 @@ const Import: React.FC<Props> = props => {
       let dt = 0;
       // todo:后期需优化，更换为：websocket
       const source = new EventSourcePolyfill(
-        wrapAPI(`/jetlinks/device/instance/${product}/import?fileUrl=${fileUrl}&:X_Access_Token=${getAccessToken()}`)
+        wrapAPI(`/jetlinks/device/instance/${product}/import?fileUrl=${fileUrl}&autoDeploy=${autoDeploy}&:X_Access_Token=${getAccessToken()}`)
       );
       setSource(source);
       source.onmessage = (e: any) => {
@@ -104,7 +105,6 @@ const Import: React.FC<Props> = props => {
       setImportLoading(false);
       setUploading(true);
       if (info.file.status === 'done') {
-        // setFileUrl(info.file.response.result);
         setUploading(false);
         message.success('文件上传成功');
         submitData(info.file.response.result);
@@ -178,6 +178,10 @@ const Import: React.FC<Props> = props => {
                   <Radio.Button value=".xlsx">xlsx</Radio.Button>
                   <Radio.Button value=".csv">csv</Radio.Button>
                 </Radio.Group>
+
+                <Checkbox onChange={(e) => {
+                  setAutoDeploy(e.target.checked);
+                }} style={{marginLeft: 15}}>自动启用</Checkbox>
               </Form.Item>
               <Form.Item label="文件上传">
                 <Upload {...uploadProps}>

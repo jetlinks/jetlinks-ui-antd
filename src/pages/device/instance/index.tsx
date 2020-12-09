@@ -177,7 +177,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
       render: record => record ? <Badge status={statusMap.get(record.value)} text={record.text} /> : '',
       filters: [
         {
-          text: '未激活',
+          text: '未启用',
           value: 'notActive',
         },
         {
@@ -221,12 +221,12 @@ const DeviceInstancePage: React.FC<Props> = props => {
           {record.state?.value === 'notActive' ? (
             <span>
               <Popconfirm
-                title="确认激活？"
+                title="确认启用？"
                 onConfirm={() => {
                   changeDeploy(record);
                 }}
               >
-                <a>激活</a>
+                <a>启用</a>
               </Popconfirm>
               <Divider type="vertical" />
               <Popconfirm
@@ -240,12 +240,12 @@ const DeviceInstancePage: React.FC<Props> = props => {
             </span>
           ) : (
               <Popconfirm
-                title="确认注销设备？"
+                title="确认禁用设备？"
                 onConfirm={() => {
                   unDeploy(record);
                 }}
               >
-                <a>注销</a>
+                <a>禁用</a>
               </Popconfirm>
             )}
         </Fragment>
@@ -586,7 +586,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
                   value={numeral(deviceCount.offlineCount).format('0,0')} />
               </Col>
               <Col sm={4} xs={24}>
-                <Info title={<Badge status={statusMap.get('未激活')} text="未激活" />}
+                <Info title={<Badge status={statusMap.get('未启用')} text="未启用" />}
                   value={numeral(deviceCount.notActiveCount).format('0,0')} />
               </Col>
               <Col sm={1} xs={24}>
