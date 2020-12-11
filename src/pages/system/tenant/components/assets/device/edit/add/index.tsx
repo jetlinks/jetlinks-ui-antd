@@ -1,4 +1,4 @@
-import { Form, Drawer, Select, Divider, Button, Table, message } from "antd";
+import { Form, Drawer, Select, Divider, Button, message } from "antd";
 import React, { useState, useEffect } from "react";
 import { ListData } from "@/services/response";
 import Service from "@/pages/system/tenant/service";
@@ -19,8 +19,8 @@ const Add = (props: Props) => {
 
     const [list, setList] = useState<ListData<any>>();
     const [loading, setLoading] = useState<boolean>(true);
-    const [userList, setUserList] = useState();
-    const { data, form: { getFieldDecorator, validateFields } } = props;
+    const [userList, setUserList] = useState<any[]>([]);
+    const { data, } = props;
     const [checkedUserList, setCheckedUserList] = useState<string[]>(props.user ? [props.user] : ['*']);
     const [selectedAssetsId, setSelectedAssetsId] = useState<string[]>([]);
     const initSearch = {
@@ -58,6 +58,9 @@ const Add = (props: Props) => {
         handleSearch(searchParam);
         service.member.query(data.id, {}).subscribe(resp => {
             setUserList(resp.data);
+            if (resp.data.length < 1) {
+                message.error('租户下没有成员，无法绑定资产');
+            }
         });
     }, []);
 
@@ -94,31 +97,6 @@ const Add = (props: Props) => {
             });
         setLoading(false);
 
-        // validateFields((error) => {
-        //     if (!error) {
-        //         checkedUserList.forEach(id => bindData.push({
-        //             userId: id,
-        //             assetType: 'device',
-        //             assetIdList: selectedAssetsId,
-        //             allPermission: true,
-        //         }));
-
-        //         service.assets.bind(data.id, bindData).subscribe(
-        //             () => {
-        //                 setLoading(false);
-        //                 message.success('绑定成功');
-        //                 props.close();
-        //             },
-        //             () => {
-        //                 message.error('绑定失败');
-        //             },
-        //             () => {
-        //                 setLoading(false);
-        //             });
-        //     }
-        //     setLoading(false);
-
-        // });
     };
     const rowSelection = {
         onChange: (selectedRowKeys: any[], selectedRows: any[]) => {
@@ -249,7 +227,7 @@ const Add = (props: Props) => {
                     onClick={() => {
                         bind()
                     }}
-                    disabled={selectedAssetsId.length === 0}
+                    disabled={userList.length < 1 || selectedAssetsId.length === 0}
                     type="primary"
                 >
                     {selectedAssetsId.length === 0 ? '添加' : `添加${selectedAssetsId.length}项`}

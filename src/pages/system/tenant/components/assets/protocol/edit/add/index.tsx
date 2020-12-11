@@ -17,9 +17,9 @@ const Add = (props: Props) => {
 
     const [list, setList] = useState<ListData<any>>();
     const [loading, setLoading] = useState<boolean>(true);
-    const [userList, setUserList] = useState();
+    const [userList, setUserList] = useState([]);
     const { data } = props;
-    const [checkedUserList, setCheckedUserList] = useState<string[]>(props.user ? [props.user] : []);
+    const [checkedUserList, setCheckedUserList] = useState<string[]>(props.user ? [props.user] : ['*']);
     const [selectedAssetsId, setSelectedAssetsId] = useState<string[]>([]);
 
     const initSearch = {
@@ -57,6 +57,9 @@ const Add = (props: Props) => {
         handleSearch(searchParam);
         service.member.query(data.id, {}).subscribe(resp => {
             setUserList(resp.data);
+            if (resp.data.length < 1) {
+                message.error('租户下没有成员，无法绑定资产');
+            }
         });
     }, []);
 
@@ -125,7 +128,7 @@ const Add = (props: Props) => {
             title: '名称',
             dataIndex: 'name'
         }];
-    const [selectMode, setSelectMode] = useState<'tags' | 'default'>('tags');
+    const [selectMode, setSelectMode] = useState<'tags' | 'default'>('default');
     const [checked, setChecked] = useState(checkedUserList);
     return (
         <Drawer
@@ -222,7 +225,7 @@ const Add = (props: Props) => {
                     onClick={() => {
                         bind()
                     }}
-                    disabled={selectedAssetsId.length === 0}
+                    disabled={userList.length < 1 || selectedAssetsId.length === 0}
                     type="primary"
                 >
                     {selectedAssetsId.length === 0 ? '添加' : `添加${selectedAssetsId.length}项`}
