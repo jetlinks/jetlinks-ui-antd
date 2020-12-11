@@ -1,10 +1,10 @@
-import React, {Fragment, useContext, useEffect, useState} from 'react';
-import {FormComponentProps} from 'antd/es/form';
-import {Button, Card, Divider, Form, Table} from 'antd';
-import {ColumnProps} from 'antd/lib/table';
-import {PropertiesMeta} from '../../component/data.d';
+import React, { Fragment, useContext, useEffect, useState } from 'react';
+import { FormComponentProps } from 'antd/es/form';
+import { Button, Card, Divider, Form, Table } from 'antd';
+import { ColumnProps } from 'antd/lib/table';
+import { PropertiesMeta } from '../../component/data.d';
 import PropertiesDefin from '../../component/properties';
-import {TenantContext} from "@/pages/device/product/save/definition/index";
+import { TenantContext } from "@/pages/device/product/save/definition/index";
 
 interface Props extends FormComponentProps {
   save: Function;
@@ -46,6 +46,7 @@ const Properties: React.FC<Props> = (props: Props) => {
     props.save(temp);
   };
 
+  console.log(initState.data, 'dd');
   const columns: ColumnProps<PropertiesMeta>[] = [
     {
       title: '属性标识',
@@ -63,20 +64,20 @@ const Properties: React.FC<Props> = (props: Props) => {
     {
       title: '是否只读',
       dataIndex: 'expands.readOnly',
-      render: text => (text === 'true' ? '是' : '否'),
+      render: text => ((text === 'true' || text === true) ? '是' : '否'),
     },
     {
       title: '说明',
       dataIndex: 'description',
-      width:'30%',
-      ellipsis:true
+      width: '30%',
+      ellipsis: true
     },
     {
       title: '操作',
       render: (text, record) => (
         <Fragment>
           <a onClick={() => editItem(record)}>编辑</a>
-          <Divider type="vertical"/>
+          <Divider type="vertical" />
           <a onClick={() => deleteItem(record)}>删除</a>
         </Fragment>
       ),
@@ -99,7 +100,7 @@ const Properties: React.FC<Props> = (props: Props) => {
     <div>
       <Card
         title="属性定义"
-        style={{marginBottom: 20}}
+        style={{ marginBottom: 20 }}
         extra={
           <Button type="primary" onClick={() => {
             setCurrent({});
@@ -109,7 +110,7 @@ const Properties: React.FC<Props> = (props: Props) => {
           </Button>
         }
       >
-        <Table rowKey="id" columns={columns} dataSource={data}/>
+        <Table rowKey="id" columns={columns} dataSource={data} />
       </Card>
       {visible && (
         <PropertiesDefin

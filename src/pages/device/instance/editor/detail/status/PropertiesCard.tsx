@@ -113,7 +113,7 @@ const PropertiesCard: React.FC<Props> = props => {
                     contentHeight={46}
                     action={
                         <div>
-                            {item.expands?.readOnly === 'false' && (
+                            {(item.expands?.readOnly === 'false' || item.expands?.readOnly === false) && (
                                 <Tooltip placement="top" title="设置属性至设备">
                                     <Icon title="编辑" type="edit" onClick={() => { setEdit(true) }} />
                                 </Tooltip>
@@ -146,8 +146,8 @@ const PropertiesCard: React.FC<Props> = props => {
             {edit && <UpdateProperty
                 data={item}
                 save={(data: any) => {
-                  item.value = data[item.id];
-                  updateProperty(data);
+                    item.value = data[item.id];
+                    updateProperty(data);
                 }}
                 close={() => setEdit(false)} />}
         </>

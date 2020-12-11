@@ -97,6 +97,7 @@ const UserList: React.FC<Props> = props => {
         });
       if (index === selectRow.length - 1) {
         message.success('操作成功！');
+        props.close();
         setLoading(false);
       }
     });
