@@ -206,7 +206,7 @@ const Info: React.FC<Props> = (props) => {
             }>
             {props.data.tags && props.data.tags?.map((item: any) => (
               <Descriptions.Item label={`${item.name}（${item.key})`} span={1} key={item.key}>
-                {item.value || "——————————"}
+                {item.value}
               </Descriptions.Item>
             ))}
           </Descriptions>

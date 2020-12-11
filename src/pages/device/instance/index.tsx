@@ -578,15 +578,15 @@ const DeviceInstancePage: React.FC<Props> = props => {
                 <Info title="全部设备" value={numeral(deviceCount.deviceTotal).format('0,0')} />
               </Col>
               <Col sm={4} xs={24}>
-                <Info title={<Badge status={statusMap.get('在线')} text="在线" />}
+                <Info title={<Badge status={statusMap.get('online')} text="在线" />}
                   value={numeral(deviceCount.onlineCount).format('0,0')} />
               </Col>
               <Col sm={4} xs={24}>
-                <Info title={<Badge status={statusMap.get('离线')} text="离线" />}
+                <Info title={<Badge status={statusMap.get('offline')} text="离线" />}
                   value={numeral(deviceCount.offlineCount).format('0,0')} />
               </Col>
               <Col sm={4} xs={24}>
-                <Info title={<Badge status={statusMap.get('未启用')} text="未启用" />}
+                <Info title={<Badge status={statusMap.get('notActive')} text="未启用" />}
                   value={numeral(deviceCount.notActiveCount).format('0,0')} />
               </Col>
               <Col sm={1} xs={24}>
