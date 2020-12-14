@@ -26,7 +26,8 @@ class Tenant extends React.Component<Props> {
                 }
               } />
             } else {
-              return <Analysis />
+              // return <Analysis />
+              return null;
             }
           })
         } else {
