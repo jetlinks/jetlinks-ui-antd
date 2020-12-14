@@ -62,7 +62,7 @@ const Assets = (props: Props) => {
 
                     <Product user={current} />
                     <Device user={current} />
-                    <Protocol user={current} />
+                    {/* <Protocol user={current} /> */}
                 </List>
             </div>
         </div >

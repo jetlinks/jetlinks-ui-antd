@@ -65,6 +65,7 @@ const UpdateProperty: React.FC<Props> = props => {
       if (err) return;
 
       let map = {};
+
       let valueType: any = props.data.valueType;
 
       if (valueType.type === "array" || valueType.type === "object") {
