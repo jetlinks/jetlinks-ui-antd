@@ -110,7 +110,7 @@ const Save: React.FC<Props> = props => {
       onCancel={() => props.close()}
     >
       <div style={{maxHeight: 750, overflowY: 'auto', overflowX: 'hidden'}}>
-        <Form wrapperCol={{span: 20}} labelCol={{span:4}} key='addAlarmForm'>
+        <Form wrapperCol={{span: 20}} labelCol={{span: 4}} key='addAlarmForm'>
           <Row gutter={16}
                style={{marginLeft: '0.1%'}}>
             <Col span={12}>
@@ -161,12 +161,22 @@ const Save: React.FC<Props> = props => {
               )}
             </p>
             {trigger.map((item: any, index) => (
-              <Triggers save={(data: any) => {
-                trigger.splice(index, 1, data);
-              }} trigger={item} metaData={props.metaData} position={index} remove={(position: number) => {
-                trigger.splice(position, 1);
-                setTrigger([...trigger]);
-              }}/>
+              <div key={index}>
+                <Triggers
+                  save={(data: any) => {
+                    trigger.splice(index, 1, data);
+                  }}
+                  trigger={item}
+                  key={`trigger_${Math.round(Math.random() * 100000)}`}
+                  metaData={props.metaData}
+                  position={index}
+                  remove={(position: number) => {
+                    trigger.splice(position, 1);
+                    let data = [...trigger];
+                    setTrigger([...data]);
+                  }}
+                />
+              </div>
             ))}
             <Button icon="plus" type="link"
                     onClick={() => {
@@ -228,12 +238,19 @@ const Save: React.FC<Props> = props => {
           <Card bordered={false} size="small">
             <p style={{fontSize: 16}}>执行动作</p>
             {action.map((item: any, index) => (
-              <ActionAssembly save={(actionData: any) => {
-                action.splice(index, 1, actionData);
-              }} action={item} position={index} remove={(position: number) => {
-                action.splice(position, 1);
-                setAction([...action]);
-              }}/>
+              <ActionAssembly
+                save={(actionData: any) => {
+                  action.splice(index, 1, actionData);
+                }}
+                key={`action_${Math.round(Math.random() * 100000)}`}
+                action={item}
+                position={index}
+                remove={(position: number) => {
+                  action.splice(position, 1);
+                  let data = [...action];
+                  setAction([...data]);
+
+                }}/>
             ))}
             <Button icon="plus" type="link"
                     onClick={() => {
