@@ -144,7 +144,7 @@ const Search: React.FC<Props> = props => {
                 style={{ width: 'calc(100% - 100px)' }}
                 dropdownStyle={{ maxHeight: 500 }}
                 mode="tags"
-                placeholder="云对云接入，可根据品类名称模糊查询"
+                placeholder="请选择"
               >
                 {
                   bindList.map((i: any) => {

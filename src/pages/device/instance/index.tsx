@@ -97,6 +97,9 @@ const DeviceInstancePage: React.FC<Props> = props => {
   statusMap.set('在线', 'success');
   statusMap.set('离线', 'error');
   statusMap.set('未激活', 'processing');
+  statusMap.set('online', 'success');
+  statusMap.set('offline', 'error');
+  statusMap.set('notActive', 'processing');
 
   const handleSearch = (params?: any) => {
     setSearchParam(params);
@@ -171,10 +174,10 @@ const DeviceInstancePage: React.FC<Props> = props => {
       title: '状态',
       dataIndex: 'state',
       width: '90px',
-      render: record => record ? <Badge status={statusMap.get(record.text)} text={record.text} /> : '',
+      render: record => record ? <Badge status={statusMap.get(record.value)} text={record.text} /> : '',
       filters: [
         {
-          text: '未激活',
+          text: '未启用',
           value: 'notActive',
         },
         {
@@ -218,12 +221,12 @@ const DeviceInstancePage: React.FC<Props> = props => {
           {record.state?.value === 'notActive' ? (
             <span>
               <Popconfirm
-                title="确认激活？"
+                title="确认启用？"
                 onConfirm={() => {
                   changeDeploy(record);
                 }}
               >
-                <a>激活</a>
+                <a>启用</a>
               </Popconfirm>
               <Divider type="vertical" />
               <Popconfirm
@@ -237,12 +240,12 @@ const DeviceInstancePage: React.FC<Props> = props => {
             </span>
           ) : (
               <Popconfirm
-                title="确认注销设备？"
+                title="确认禁用设备？"
                 onConfirm={() => {
                   unDeploy(record);
                 }}
               >
-                <a>注销</a>
+                <a>禁用</a>
               </Popconfirm>
             )}
         </Fragment>
@@ -575,15 +578,15 @@ const DeviceInstancePage: React.FC<Props> = props => {
                 <Info title="全部设备" value={numeral(deviceCount.deviceTotal).format('0,0')} />
               </Col>
               <Col sm={4} xs={24}>
-                <Info title={<Badge status={statusMap.get('在线')} text="在线" />}
+                <Info title={<Badge status={statusMap.get('online')} text="在线" />}
                   value={numeral(deviceCount.onlineCount).format('0,0')} />
               </Col>
               <Col sm={4} xs={24}>
-                <Info title={<Badge status={statusMap.get('离线')} text="离线" />}
+                <Info title={<Badge status={statusMap.get('offline')} text="离线" />}
                   value={numeral(deviceCount.offlineCount).format('0,0')} />
               </Col>
               <Col sm={4} xs={24}>
-                <Info title={<Badge status={statusMap.get('未激活')} text="未激活" />}
+                <Info title={<Badge status={statusMap.get('notActive')} text="未启用" />}
                   value={numeral(deviceCount.notActiveCount).format('0,0')} />
               </Col>
               <Col sm={1} xs={24}>

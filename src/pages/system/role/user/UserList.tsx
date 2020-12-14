@@ -64,9 +64,12 @@ const UserList: React.FC<Props> = props => {
   }, []);
 
   // { "dimensionTypeId": "org", "dimensionId": "org1", "dimensionName": "机构1", "userId": "1209763126217355264", "userName": "antd" }
-  const bindUser = () => {
+
+  const bindUser = async () => {
+
     setLoading(true);
-    selectRow.forEach((item, index) => {
+
+    await selectRow.forEach((item, index) => {
       apis.org
         .bind({
           userId: item.id,
@@ -83,11 +86,11 @@ const UserList: React.FC<Props> = props => {
         })
         .catch(() => {
           message.success('绑定失败！');
-          setLoading(false);
         });
       if (index === selectRow.length - 1) {
         message.success('操作成功！');
         setLoading(false);
+        props.close()
       }
     });
   };

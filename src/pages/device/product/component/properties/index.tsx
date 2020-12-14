@@ -816,7 +816,7 @@ const PropertiesDefin: React.FC<Props> = props => {
             <Form.Item label="是否只读">
               {getFieldDecorator('expands.readOnly', {
                 rules: [{ required: true }],
-                initialValue: initState.data.expands?.readOnly,
+                initialValue: initState.data.expands?.readOnly.toString(),
               })(
                 <Radio.Group>
                   <Radio value="true">是</Radio>
