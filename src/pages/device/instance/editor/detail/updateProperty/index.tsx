@@ -39,6 +39,14 @@ const UpdateProperty: React.FC<Props> = props => {
       } else {
         setFieldsValue({'value': JSON.stringify(JSON.parse(props.data.formatValue), null, 2)});
       }
+    } else if (valueType.type === 'boolean') {
+      props.data.formatValue ?
+        setFieldsValue({'value': String(props.data.value)})
+        : setFieldsValue({'value': props.data.formatValue});
+    } else if (valueType.type === 'enum') {
+      props.data.formatValue ?
+        setFieldsValue({'value': props.data.value})
+        : setFieldsValue({'value': props.data.formatValue});
     } else if (valueType.type === 'array') {
       props.data.formatValue ?
         setFieldsValue({'value': JSON.stringify([`类型：${valueType.elementType}`], null, 2)})
@@ -57,6 +65,18 @@ const UpdateProperty: React.FC<Props> = props => {
       if (err) return;
 
       let map = {};
+      
+      let valueType: any = props.data.valueType;
+
+      if (valueType.type === "array" || valueType.type === "object") {
+        try {
+          fileValue.value = JSON.parse(fileValue.value);
+        } catch (e) {
+          message.error("JSON格式错误");
+          return;
+        }
+      }
+      
       map[props.data.id] = fileValue.value;
       props.save(map);
     });
@@ -84,17 +104,17 @@ const UpdateProperty: React.FC<Props> = props => {
         return (
           <Select placeholder="请选择">
             {valueType.elements.length > 0 && valueType.elements.map((item: any) => (
-              <Select.Option key={item.value}>{`${item.text}（${item.value}）`}</Select.Option>
+              <Select.Option key={item.value} value={item.value}>{`${item.text}（${item.value}）`}</Select.Option>
             ))}
           </Select>
         );
       case 'boolean':
         return (
           <Select placeholder="请选择">
-            <Select.Option key={valueType.trueValue}>
+            <Select.Option key={valueType.trueValue} value={valueType.trueValue}>
               {`${valueType.trueText}（${valueType.trueValue}）`}
             </Select.Option>
-            <Select.Option key={valueType.falseValue}>
+            <Select.Option key={valueType.falseValue} value={valueType.falseValue}>
               {`${valueType.falseText}（${valueType.falseValue}）`}
             </Select.Option>
           </Select>
