@@ -35,7 +35,6 @@ interface State {
 
 const Save: React.FC<Props> = props => {
   const version = localStorage.getItem('system-version');
-  console.log(version)
   const initState: State = {
     dataType: props.data.type?.value,
     supportsType: [],

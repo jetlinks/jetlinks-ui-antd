@@ -2,9 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'dva';
 import { Dispatch, ConnectState } from '@/models/connect';
 import { Settings } from '@ant-design/pro-layout';
-import { Spin } from 'antd';
+import { Spin, Avatar } from 'antd';
 import style from './index.less';
 import Service from './service';
+import { stringify } from 'qs';
+import { router } from 'umi';
+import { getPageQuery } from '../../../utils/utils';
 
 interface Props {
   dispatch: Dispatch;
@@ -90,7 +93,64 @@ const Login: React.FC<Props> = props => {
 
   }, [settings.title]);
 
-
+  const Login = () => {
+    const information = JSON.parse(localStorage.getItem('user-detail') || '');
+    const token = localStorage.getItem('x-access-token');
+    if (information !== {} && token) {
+      return (
+        <div className={style.login}>
+          <div className={style.bg1} />
+          <div className={style.gyl}>
+            物联网平台
+        <div className={style.gy2}>MQTT TCP CoAP HTTP , 多消息协议适配 , 可视化规则引擎
+        </div>
+          </div>
+          <div className={style.box}>
+            <div className={style.box1} >
+              <div style={{ width: '100%', height: '30px' }}></div>
+              <div className={style.avatar}>
+                <Avatar size="small" className={style.avatarx} src={information.avatar || 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3273016457,3482023254&fm=26&gp=0.jpg'} alt="avatar" />
+              </div>
+              <input
+                onClick={() => {
+                  // console.log(window.history.back())
+                  // router.replace('/');
+                  window.history.back()
+                }}
+                className={style.btn}
+                type="button"
+                name="登录"
+                value="登录"
+              />
+              <div style={{ width: '100%', height: '30px' }}></div>
+              <input
+                onClick={() => {
+                  localStorage.setItem('x-access-token', '');
+                  if (window.location.pathname !== '/user/login') {
+                    router.replace({
+                      pathname: '/user/login',
+                      // search: stringify({
+                      //   redirect: window.location.href,
+                      // }),
+                    });
+                  } else {
+                    router.push('/user/login');
+                  }
+                }}
+                className={style.btn}
+                type="button"
+                name="切换账号"
+                value="切换账号"
+              />
+              <div style={{ width: '100%', height: '30px' }}></div>
+            </div>
+          </div>
+        </div>
+      )
+    }else{
+      return renderLogin()
+    }
+  }
   const renderLogin = () => (
     <div className={style.login}>
 
@@ -165,7 +225,8 @@ const Login: React.FC<Props> = props => {
       </div>
     </div>
   )
-  return isReady ? renderLogin() : <Spin spinning={isReady} />;
+  // return isReady ? renderLogin() : <Spin spinning={isReady} />;
+  return isReady ? Login() : <Spin spinning={isReady} />;
 };
 export default connect(({ login, loading, settings }: ConnectState) => ({
   userLogin: login,
