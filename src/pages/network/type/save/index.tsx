@@ -1,6 +1,6 @@
-import React, {useState, useEffect} from 'react';
-import {Form, Input, Drawer, Button, Select, Radio, InputNumber, Tooltip, Icon, Collapse, Modal} from 'antd';
-import {FormComponentProps} from 'antd/lib/form';
+import React, { useState, useEffect } from 'react';
+import { Form, Input, Drawer, Button, Select, Radio, InputNumber, Tooltip, Icon, Collapse, Modal } from 'antd';
+import { FormComponentProps } from 'antd/lib/form';
 import styles from './index.less';
 import apis from '@/services';
 import 'ace-builds';
@@ -34,6 +34,8 @@ interface State {
 }
 
 const Save: React.FC<Props> = props => {
+  const version = localStorage.getItem('system-version');
+  console.log(version)
   const initState: State = {
     dataType: props.data.type?.value,
     supportsType: [],
@@ -45,7 +47,7 @@ const Save: React.FC<Props> = props => {
     isModalVisible: false
   };
   const {
-    form: {getFieldDecorator},
+    form: { getFieldDecorator },
     form,
   } = props;
   const [dataType, setDataType] = useState(initState.dataType);
@@ -69,7 +71,7 @@ const Save: React.FC<Props> = props => {
       .catch(() => {
       });
     apis.certificate
-      .listNoPaging({paging: false})
+      .listNoPaging({ paging: false })
       .then(response => {
         if (response.status === 200) {
           setCertificateList(response.result || []);
@@ -77,25 +79,25 @@ const Save: React.FC<Props> = props => {
       })
       .catch(() => {
       });
-      if(props.data.id && props.data.cluster){
-        if(props.data.cluster){
+    if (props.data.id && props.data.cluster) {
+      if (props.data.cluster) {
+        let data: any[] = []
+        props.data.cluster.map(item => {
+          data.push(item.serverId)
+        })
+        setClusterList([...data])
+      }
+    } else {
+      apis.network.getNodesList().then(res => {
+        if (res.status === 200) {
           let data: any[] = []
-          props.data.cluster.map(item => {
-            data.push(item.serverId)
+          res.result.forEach(item => {
+            data.push(item.id)
           })
           setClusterList([...data])
         }
-      }else{
-        apis.network.getNodesList().then(res => {
-          if(res.status === 200){
-            let data: any[] = []
-            res.result.forEach(item => {
-              data.push(item.id)
-            })
-            setClusterList([...data])
-          }
-        })
-      }
+      })
+    }
   }, []);
 
   const handleOk = (node: string) => {
@@ -105,14 +107,14 @@ const Save: React.FC<Props> = props => {
     setIsModalVisible(false)
   }
   const renderTcpServerParse = (index: number) => {
-    if(clusterType){
+    if (clusterType) {
       switch (tcpServerParseType) {
         case 'delimited':
           return (
             <Form.Item label="分隔符">
               {getFieldDecorator('configuration.parserConfiguration.delimited', {
                 initialValue: props.data?.configuration?.parserConfiguration?.delimited,
-              })(<Input/>)}
+              })(<Input />)}
             </Form.Item>
           );
         case 'script':
@@ -145,7 +147,7 @@ const Save: React.FC<Props> = props => {
                     wrapEnabled
                     highlightActiveLine  //突出活动线
                     enableSnippets  //启用代码段
-                    style={{width: '100%', height: '35vh'}}
+                    style={{ width: '100%', height: '35vh' }}
                     setOptions={{
                       enableBasicAutocompletion: true,   //启用基本自动完成功能
                       enableLiveAutocompletion: true,   //启用实时自动完成功能 （比如：智能代码提示）
@@ -163,20 +165,20 @@ const Save: React.FC<Props> = props => {
             <Form.Item label="长度值">
               {getFieldDecorator('configuration.parserConfiguration.size', {
                 initialValue: props.data?.configuration?.parserConfiguration?.size,
-              })(<Input/>)}
+              })(<Input />)}
             </Form.Item>
           );
         default:
           return null;
       }
-    }else{
+    } else {
       switch (tcpServerParseType) {
         case 'delimited':
           return (
             <Form.Item label="分隔符">
               {getFieldDecorator(`cluster[${index}].configuration.parserConfiguration.delimited`, {
                 initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.parserConfiguration?.delimited : '',
-              })(<Input/>)}
+              })(<Input />)}
             </Form.Item>
           );
         case 'script':
@@ -209,7 +211,7 @@ const Save: React.FC<Props> = props => {
                     wrapEnabled
                     highlightActiveLine  //突出活动线
                     enableSnippets  //启用代码段
-                    style={{width: '100%', height: '35vh'}}
+                    style={{ width: '100%', height: '35vh' }}
                     setOptions={{
                       enableBasicAutocompletion: true,   //启用基本自动完成功能
                       enableLiveAutocompletion: true,   //启用实时自动完成功能 （比如：智能代码提示）
@@ -227,16 +229,16 @@ const Save: React.FC<Props> = props => {
             <Form.Item label="长度值">
               {getFieldDecorator(`cluster[${index}].configuration.parserConfiguration.size`, {
                 initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.parserConfiguration?.size : '',
-              })(<Input/>)}
+              })(<Input />)}
             </Form.Item>
           );
         default:
           return null;
       }
-    }    
+    }
   };
   const renderForm = (index: number) => {
-    if(clusterType){
+    if (clusterType) {
       switch (dataType) {
         case 'MQTT_SERVER':
           return (
@@ -244,17 +246,17 @@ const Save: React.FC<Props> = props => {
               <Form.Item label="线程数">
                 {getFieldDecorator('configuration.instance', {
                   initialValue: props.data?.configuration?.instance,
-                })(<InputNumber min={1} style={{width: '100%'}}/>)}
+                })(<InputNumber min={1} style={{ width: '100%' }} />)}
               </Form.Item>
               <Form.Item label="HOST">
                 {getFieldDecorator('configuration.host', {
                   initialValue: props.data?.configuration?.host || '0.0.0.0',
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
               <Form.Item label="PORT">
                 {getFieldDecorator('configuration.port', {
                   initialValue: props.data?.configuration?.port,
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
               <Form.Item label="TLS">
                 {getFieldDecorator('configuration.ssl', {
@@ -282,7 +284,7 @@ const Save: React.FC<Props> = props => {
               <Form.Item label="最大消息长度">
                 {getFieldDecorator('configuration.maxMessageSize', {
                   initialValue: props.data?.configuration?.maxMessageSize || 8096,
-                })(<InputNumber style={{width: '100%'}}/>)}
+                })(<InputNumber style={{ width: '100%' }} />)}
               </Form.Item>
             </div>
           );
@@ -292,17 +294,17 @@ const Save: React.FC<Props> = props => {
               <Form.Item label="clientId">
                 {getFieldDecorator('configuration.clientId', {
                   initialValue: props.data?.configuration?.clientId,
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
               <Form.Item label="HOST">
                 {getFieldDecorator('configuration.host', {
                   initialValue: props.data?.configuration?.host || '0.0.0.0',
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
               <Form.Item label="PORT">
                 {getFieldDecorator('configuration.port', {
                   initialValue: props.data?.configuration?.port,
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
               <Form.Item label="TLS">
                 {getFieldDecorator('configuration.ssl', {
@@ -330,17 +332,17 @@ const Save: React.FC<Props> = props => {
               <Form.Item label="用户名">
                 {getFieldDecorator('configuration.username', {
                   initialValue: props.data?.configuration?.username,
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
               <Form.Item label="密码">
                 {getFieldDecorator('configuration.password', {
                   initialValue: props.data?.configuration?.password,
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
               <Form.Item label="最大消息长度">
                 {getFieldDecorator('configuration.maxMessageSize', {
                   initialValue: props.data?.configuration?.maxMessageSize || 8096,
-                })(<InputNumber style={{width: '100%'}}/>)}
+                })(<InputNumber style={{ width: '100%' }} />)}
               </Form.Item>
             </div>
           );
@@ -373,19 +375,19 @@ const Save: React.FC<Props> = props => {
               <Form.Item label="HOST">
                 {getFieldDecorator('configuration.host', {
                   initialValue: props.data?.configuration?.host || '0.0.0.0',
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
               <Form.Item label="PORT">
                 {getFieldDecorator('configuration.port', {
                   initialValue: props.data?.configuration?.port,
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
-  
+
               <Form.Item label={
                 <span>
                   解析方式
                   <Tooltip title="处理TCP粘拆包的方式">
-                    <Icon type="question-circle-o" style={{paddingLeft: 10}}/>
+                    <Icon type="question-circle-o" style={{ paddingLeft: 10 }} />
                   </Tooltip>
                 </span>
               }>
@@ -436,19 +438,19 @@ const Save: React.FC<Props> = props => {
               <Form.Item label="HOST">
                 {getFieldDecorator('configuration.host', {
                   initialValue: props.data?.configuration?.host || '0.0.0.0',
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
               <Form.Item label="PORT">
                 {getFieldDecorator('configuration.port', {
                   initialValue: props.data?.configuration?.port,
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
-  
+
               <Form.Item label={
                 <span>
                   解析方式
                   <Tooltip title="处理TCP粘拆包的方式">
-                    <Icon type="question-circle-o" style={{paddingLeft: 10}}/>
+                    <Icon type="question-circle-o" style={{ paddingLeft: 10 }} />
                   </Tooltip>
                 </span>
               }>
@@ -476,14 +478,14 @@ const Save: React.FC<Props> = props => {
               <Form.Item label="本地IP">
                 {getFieldDecorator('configuration.address', {
                   initialValue: props.data?.configuration?.address || '0.0.0.0',
-                })(<Input placeholder="0.0.0.0"/>)}
+                })(<Input placeholder="0.0.0.0" />)}
               </Form.Item>
               <Form.Item label="端口">
                 {getFieldDecorator('configuration.port', {
                   initialValue: props.data?.configuration?.port,
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
-  
+
               <Form.Item label="开启DTLS">
                 {getFieldDecorator('configuration.enableDtls', {
                   initialValue: props.data?.configuration?.enableDtls || false,
@@ -497,7 +499,7 @@ const Save: React.FC<Props> = props => {
               <Form.Item label="私钥别名">
                 {getFieldDecorator('configuration.privateKeyAlias', {
                   initialValue: props.data?.configuration?.privateKeyAlias,
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
               <Form.Item label="证书">
                 {getFieldDecorator('configuration.certId', {
@@ -520,14 +522,14 @@ const Save: React.FC<Props> = props => {
               <Form.Item label="URL">
                 {getFieldDecorator('configuration.url', {
                   initialValue: props.data?.configuration?.url,
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
               <Form.Item label="超时时间">
                 {getFieldDecorator('configuration.timeout', {
                   initialValue: props.data?.configuration?.timeout,
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
-  
+
               <Form.Item label="开启DTLS">
                 {getFieldDecorator('configuration.enableDtls', {
                   initialValue: props.data?.configuration?.enableDtls,
@@ -559,7 +561,7 @@ const Save: React.FC<Props> = props => {
               <Form.Item label="PORT">
                 {getFieldDecorator('configuration.port', {
                   initialValue: props.data?.configuration?.port,
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
               <Form.Item label="证书">
                 {getFieldDecorator('configuration.certId', {
@@ -592,7 +594,7 @@ const Save: React.FC<Props> = props => {
               <Form.Item label="baseUrl">
                 {getFieldDecorator('configuration.baseUrl', {
                   initialValue: props.data?.configuration?.baseUrl,
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
               <Form.Item label="证书">
                 {getFieldDecorator('configuration.certId', {
@@ -645,7 +647,7 @@ const Save: React.FC<Props> = props => {
               <Form.Item label="线程数">
                 {getFieldDecorator('configuration.instance', {
                   initialValue: props.data?.configuration?.instance,
-                })(<InputNumber min={1} style={{width: '100%'}}/>)}
+                })(<InputNumber min={1} style={{ width: '100%' }} />)}
               </Form.Item>
               <Form.Item label="开启SSL">
                 {getFieldDecorator('configuration.ssl', {
@@ -670,16 +672,16 @@ const Save: React.FC<Props> = props => {
                   </Select>,
                 )}
               </Form.Item>
-  
+
               <Form.Item label="HOST">
                 {getFieldDecorator('configuration.host', {
                   initialValue: props.data?.configuration?.host || '0.0.0.0',
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
               <Form.Item label="PORT">
                 {getFieldDecorator('configuration.port', {
                   initialValue: props.data?.configuration?.port,
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
             </div>
           );
@@ -689,7 +691,7 @@ const Save: React.FC<Props> = props => {
               <Form.Item label="uri">
                 {getFieldDecorator('configuration.uri', {
                   initialValue: props.data?.configuration?.uri,
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
               <Form.Item label="开启SSL">
                 {getFieldDecorator('configuration.ssl', {
@@ -724,16 +726,16 @@ const Save: React.FC<Props> = props => {
                   </Select>,
                 )}
               </Form.Item>
-  
+
               <Form.Item label="HOST">
                 {getFieldDecorator('configuration.host', {
                   initialValue: props.data?.configuration?.host || '0.0.0.0',
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
               <Form.Item label="PORT">
                 {getFieldDecorator('configuration.port', {
                   initialValue: props.data?.configuration?.port,
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
             </div>
           );
@@ -763,40 +765,40 @@ const Save: React.FC<Props> = props => {
                   </Select>,
                 )}
               </Form.Item>
-  
+
               <Form.Item label="私钥别名">
                 {getFieldDecorator('configuration.privateKeyAlias', {
                   initialValue: props.data?.configuration?.privateKeyAlias,
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
               <Form.Item label="远程地址">
                 {getFieldDecorator('configuration.remoteAddress', {
                   initialValue: props.data?.configuration?.remoteAddress,
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
-  
+
               <Form.Item label="远程端口">
                 {getFieldDecorator('configuration.remotePort', {
                   initialValue: props.data?.configuration?.remotePort,
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
               <Form.Item label="本地地址">
                 {getFieldDecorator('configuration.localAddress', {
                   initialValue: props.data?.configuration?.localAddress,
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
-  
+
               <Form.Item label="本地端口">
                 {getFieldDecorator('configuration.localPort', {
                   initialValue: props.data?.configuration?.localPort,
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
             </div>
           );
         default:
           return null;
       }
-    }else{
+    } else {
       switch (dataType) {
         case 'MQTT_SERVER':
           return (
@@ -804,17 +806,17 @@ const Save: React.FC<Props> = props => {
               <Form.Item label="线程数">
                 {getFieldDecorator(`cluster[${index}].configuration.instance`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.instance : '',
-                })(<InputNumber min={1} style={{width: '100%'}}/>)}
+                })(<InputNumber min={1} style={{ width: '100%' }} />)}
               </Form.Item>
               <Form.Item label="HOST">
                 {getFieldDecorator(`cluster[${index}].configuration.host`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.host : '0.0.0.0',
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
               <Form.Item label="PORT">
                 {getFieldDecorator(`cluster[${index}].configuration.port`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.port : '',
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
               <Form.Item label="TLS">
                 {getFieldDecorator(`cluster[${index}].configuration.ssl`, {
@@ -842,7 +844,7 @@ const Save: React.FC<Props> = props => {
               <Form.Item label="最大消息长度">
                 {getFieldDecorator(`cluster[${index}].configuration.maxMessageSize`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.maxMessageSize : 8096,
-                })(<InputNumber style={{width: '100%'}}/>)}
+                })(<InputNumber style={{ width: '100%' }} />)}
               </Form.Item>
             </div>
           );
@@ -852,17 +854,17 @@ const Save: React.FC<Props> = props => {
               <Form.Item label="clientId">
                 {getFieldDecorator(`cluster[${index}].configuration.clientId`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.clientId : '',
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
               <Form.Item label="HOST">
                 {getFieldDecorator(`cluster[${index}].configuration.host`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.host : '0.0.0.0',
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
               <Form.Item label="PORT">
                 {getFieldDecorator(`cluster[${index}].configuration.port`, {
-                  initialValue: props.data?.cluster? props.data?.cluster[index]?.configuration?.port : '',
-                })(<Input/>)}
+                  initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.port : '',
+                })(<Input />)}
               </Form.Item>
               <Form.Item label="TLS">
                 {getFieldDecorator(`cluster[${index}].configuration.ssl`, {
@@ -890,17 +892,17 @@ const Save: React.FC<Props> = props => {
               <Form.Item label="用户名">
                 {getFieldDecorator(`cluster[${index}].configuration.username`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.username : '',
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
               <Form.Item label="密码">
                 {getFieldDecorator(`cluster[${index}].configuration.password`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.password : '',
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
               <Form.Item label="最大消息长度">
                 {getFieldDecorator(`cluster[${index}].configuration.maxMessageSize`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.maxMessageSize : 8096,
-                })(<InputNumber style={{width: '100%'}}/>)}
+                })(<InputNumber style={{ width: '100%' }} />)}
               </Form.Item>
             </div>
           );
@@ -933,19 +935,19 @@ const Save: React.FC<Props> = props => {
               <Form.Item label="HOST">
                 {getFieldDecorator(`cluster[${index}].configuration.host`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.host : '0.0.0.0',
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
               <Form.Item label="PORT">
                 {getFieldDecorator(`cluster[${index}].configuration.port`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.port : '',
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
-  
+
               <Form.Item label={
                 <span>
                   解析方式
                   <Tooltip title="处理TCP粘拆包的方式">
-                    <Icon type="question-circle-o" style={{paddingLeft: 10}}/>
+                    <Icon type="question-circle-o" style={{ paddingLeft: 10 }} />
                   </Tooltip>
                 </span>
               }>
@@ -996,19 +998,19 @@ const Save: React.FC<Props> = props => {
               <Form.Item label="HOST">
                 {getFieldDecorator(`cluster[${index}].configuration.host`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.host : '0.0.0.0',
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
               <Form.Item label="PORT">
                 {getFieldDecorator(`cluster[${index}].configuration.port`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.port : '',
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
-  
+
               <Form.Item label={
                 <span>
                   解析方式
                   <Tooltip title="处理TCP粘拆包的方式">
-                    <Icon type="question-circle-o" style={{paddingLeft: 10}}/>
+                    <Icon type="question-circle-o" style={{ paddingLeft: 10 }} />
                   </Tooltip>
                 </span>
               }>
@@ -1036,14 +1038,14 @@ const Save: React.FC<Props> = props => {
               <Form.Item label="本地IP">
                 {getFieldDecorator(`cluster[${index}].configuration.address`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.address : '0.0.0.0',
-                })(<Input placeholder="0.0.0.0"/>)}
+                })(<Input placeholder="0.0.0.0" />)}
               </Form.Item>
               <Form.Item label="端口">
                 {getFieldDecorator(`cluster[${index}].configuration.port`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.port : '',
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
-  
+
               <Form.Item label="开启DTLS">
                 {getFieldDecorator(`cluster[${index}].configuration.enableDtls`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.enableDtls : false,
@@ -1057,7 +1059,7 @@ const Save: React.FC<Props> = props => {
               <Form.Item label="私钥别名">
                 {getFieldDecorator(`cluster[${index}].configuration.privateKeyAlias`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.privateKeyAlias : '',
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
               <Form.Item label="证书">
                 {getFieldDecorator(`cluster[${index}].configuration.certId`, {
@@ -1080,14 +1082,14 @@ const Save: React.FC<Props> = props => {
               <Form.Item label="URL">
                 {getFieldDecorator(`cluster[${index}].configuration.url`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.url : '',
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
               <Form.Item label="超时时间">
                 {getFieldDecorator(`cluster[${index}].configuration.timeout`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.timeout : '',
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
-  
+
               <Form.Item label="开启DTLS">
                 {getFieldDecorator(`cluster[${index}].configuration.enableDtls`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.enableDtls : false,
@@ -1119,7 +1121,7 @@ const Save: React.FC<Props> = props => {
               <Form.Item label="PORT">
                 {getFieldDecorator(`cluster[${index}].configuration.port`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.port : '',
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
               <Form.Item label="证书">
                 {getFieldDecorator(`cluster[${index}].configuration.certId`, {
@@ -1152,7 +1154,7 @@ const Save: React.FC<Props> = props => {
               <Form.Item label="baseUrl">
                 {getFieldDecorator(`cluster[${index}].configuration.baseUrl`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.baseUrl : '',
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
               <Form.Item label="证书">
                 {getFieldDecorator(`cluster[${index}].configuration.certId`, {
@@ -1205,7 +1207,7 @@ const Save: React.FC<Props> = props => {
               <Form.Item label="线程数">
                 {getFieldDecorator(`cluster[${index}].configuration.instance`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.instance : '',
-                })(<InputNumber min={1} style={{width: '100%'}}/>)}
+                })(<InputNumber min={1} style={{ width: '100%' }} />)}
               </Form.Item>
               <Form.Item label="开启SSL">
                 {getFieldDecorator(`cluster[${index}].configuration.ssl`, {
@@ -1230,16 +1232,16 @@ const Save: React.FC<Props> = props => {
                   </Select>,
                 )}
               </Form.Item>
-  
+
               <Form.Item label="HOST">
                 {getFieldDecorator(`cluster[${index}].configuration.host`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.host : '0.0.0.0',
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
               <Form.Item label="PORT">
                 {getFieldDecorator(`cluster[${index}].configuration.port`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.port : '',
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
             </div>
           );
@@ -1248,8 +1250,8 @@ const Save: React.FC<Props> = props => {
             <div>
               <Form.Item label="uri">
                 {getFieldDecorator(`cluster[${index}].configuration.uri`, {
-                  initialValue:props.data?.cluster ? props.data?.cluster[index]?.configuration?.uri : '',
-                })(<Input/>)}
+                  initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.uri : '',
+                })(<Input />)}
               </Form.Item>
               <Form.Item label="开启SSL">
                 {getFieldDecorator(`cluster[${index}].configuration.ssl`, {
@@ -1284,16 +1286,16 @@ const Save: React.FC<Props> = props => {
                   </Select>,
                 )}
               </Form.Item>
-  
+
               <Form.Item label="HOST">
                 {getFieldDecorator(`cluster[${index}].configuration.host`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.host : '0.0.0.0',
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
               <Form.Item label="PORT">
                 {getFieldDecorator(`cluster[${index}].configuration.port`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.port : '',
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
             </div>
           );
@@ -1323,33 +1325,33 @@ const Save: React.FC<Props> = props => {
                   </Select>,
                 )}
               </Form.Item>
-  
+
               <Form.Item label="私钥别名">
                 {getFieldDecorator(`cluster[${index}].configuration.privateKeyAlias`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.privateKeyAlias : '',
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
               <Form.Item label="远程地址">
                 {getFieldDecorator(`cluster[${index}].configuration.remoteAddress`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.remoteAddress : '',
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
-  
+
               <Form.Item label="远程端口">
                 {getFieldDecorator(`cluster[${index}].configuration.remotePort`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.remotePort : '',
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
               <Form.Item label="本地地址">
                 {getFieldDecorator(`cluster[${index}].configuration.localAddress`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.localAddress : '',
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
-  
+
               <Form.Item label="本地端口">
                 {getFieldDecorator(`cluster[${index}].configuration.localPort`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.localPort : '',
-                })(<Input/>)}
+                })(<Input />)}
               </Form.Item>
             </div>
           );
@@ -1359,20 +1361,20 @@ const Save: React.FC<Props> = props => {
     }
   };
   const genExtra = (item: string) => (
-    <DeleteOutlined 
+    <DeleteOutlined
       onClick={() => {
         let a = -1
-        let data: any[]= []
+        let data: any[] = []
         clusterList.map((i, index) => {
-          if(i !== item){
+          if (i !== item) {
             data.push(i)
-          }else{
+          } else {
             a = index
           }
         })
         setClusterList([...data])
         let formdata = form.getFieldsValue()
-        if(formdata.cluster && a !== -1){
+        if (formdata.cluster && a !== -1) {
           formdata.cluster.splice(a, 1)
         }
         form.setFieldsValue({
@@ -1384,20 +1386,20 @@ const Save: React.FC<Props> = props => {
   const saveData = () => {
     form.validateFields((err, fileValue) => {
       if (err) return;
-      if(clusterType){
-        const {id} = props.data;
+      if (clusterType) {
+        const { id } = props.data;
         let data = fileValue
-        if(fileValue.cluster && fileValue.cluster.length > 0){
+        if (fileValue.cluster && fileValue.cluster.length > 0) {
           data.cluster = []
         }
-        props.save({id, ...data});
-      }else{
+        props.save({ id, ...data });
+      } else {
         let data = fileValue
         data.cluster.map((item: any, index: number) => {
           item.serverId = clusterList[index]
         })
-        const {id} = props.data;
-        props.save({id, ...data});
+        const { id } = props.data;
+        props.save({ id, ...data });
       }
     });
   };
@@ -1408,16 +1410,16 @@ const Save: React.FC<Props> = props => {
       onClose={() => props.close()}
       width="30VW"
     >
-      <Form labelCol={{span: 4}} wrapperCol={{span: 20}} layout={'vertical'}>
+      <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} layout={'vertical'}>
         <Form.Item label="组件名称">
           {getFieldDecorator('name', {
-            rules: [{required: true, message: '请输入组件名称'}],
+            rules: [{ required: true, message: '请输入组件名称' }],
             initialValue: props.data?.name,
-          })(<Input/>)}
+          })(<Input />)}
         </Form.Item>
         <Form.Item label="组件类型">
           {getFieldDecorator('type', {
-            rules: [{required: true, message: '请选择组件类型'}],
+            rules: [{ required: true, message: '请选择组件类型' }],
             initialValue: props.data?.type?.value,
           })(
             <Select disabled={!!props.data.id}
@@ -1433,36 +1435,35 @@ const Save: React.FC<Props> = props => {
             </Select>,
           )}
         </Form.Item>
-        <Form.Item label="集群">
-          {getFieldDecorator('shareCluster', {
-            rules: [{required: true, message: '请选择'}],
-            initialValue: props.data?.shareCluster,
-          })(
-            <Radio.Group onChange={(e) => {
-              setClusterType(e.target.value)
-            }}>
-              <Radio value ={true}>共享配置</Radio>
-              <Radio value={false}>独立配置</Radio>
-            </Radio.Group>,
-          )}
-        </Form.Item>
-        {clusterType ? 
+        {version === 'pro' && 
+          <Form.Item label="集群">
+            {getFieldDecorator('shareCluster', {
+              rules: [{ required: true, message: '请选择' }],
+              initialValue: props.data?.shareCluster,
+            })(
+              <Radio.Group onChange={(e) => {
+                setClusterType(e.target.value)
+              }}>
+                <Radio value={true}>共享配置</Radio>
+                <Radio value={false}>独立配置</Radio>
+              </Radio.Group>,
+            )}
+          </Form.Item>
+        }
+        {clusterType === false && version === 'pro' ?
           <div>
-            {renderForm(0)}
-          </div> : 
-          <div>
-              <Collapse accordion expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />} defaultActiveKey={['0']} bordered={false}>
-                {
-                  clusterList.map((item, index) => {
-                    return <Collapse.Panel header={item} key={index} extra={genExtra(item)}>
+            <Collapse accordion expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />} defaultActiveKey={['0']} bordered={false}>
+              {
+                clusterList.map((item, index) => {
+                  return <Collapse.Panel header={item} key={index} extra={genExtra(item)}>
                     <div>
                       {renderForm(index)}
                     </div>
                   </Collapse.Panel>
-                  })
-                }
-              </Collapse>
-            
+                })
+              }
+            </Collapse>
+
             <Button
               type="dashed"
               onClick={() => {
@@ -1471,13 +1472,17 @@ const Save: React.FC<Props> = props => {
               className={styles.newButton}
             >
               <Icon type="plus" />
-              新增
-            </Button>
+          新增
+        </Button>
+          </div>
+          :
+          <div>
+            {renderForm(0)}
           </div>
         }
         <Form.Item label="描述">
-            {getFieldDecorator('describe', {})(<Input.TextArea rows={3}/>)}
-          </Form.Item>
+          {getFieldDecorator('describe', {})(<Input.TextArea rows={3} />)}
+        </Form.Item>
       </Form>
 
       <div
@@ -1496,7 +1501,7 @@ const Save: React.FC<Props> = props => {
           onClick={() => {
             props.close();
           }}
-          style={{marginRight: 8}}
+          style={{ marginRight: 8 }}
         >
           关闭
         </Button>
@@ -1512,7 +1517,7 @@ const Save: React.FC<Props> = props => {
       {
         isModalVisible && <Add close={() => {
           setIsModalVisible(false)
-        }} save={(data: string) => {handleOk(data);}} />
+        }} save={(data: string) => { handleOk(data); }} />
       }
     </Drawer>
   );
