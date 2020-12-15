@@ -78,20 +78,21 @@ const UserList: React.FC<Props> = props => {
           dimensionId: props.data.id,
           dimensionName: props.data.name,
         })
-        .then(() => {
-          // if (response) {
-          //     message.success('操作成功');
-          //     props.close();
-          // }
+        .then((response) => {
+          if (response) {
+              message.success('操作成功');
+              setLoading(false);
+              props.close();
+          }
         })
         .catch(() => {
           message.success('绑定失败！');
         });
-      if (index === selectRow.length - 1) {
-        message.success('操作成功！');
-        setLoading(false);
-        props.close()
-      }
+      // if (index === selectRow.length - 1) {
+      //   message.success('操作成功！');
+      //   props.close();
+      //   setLoading(false);
+      // }
     });
   };
   return (

@@ -14,7 +14,7 @@ export async function config(networkType: string) {
 }
 
 export async function save(params?: any) {
-  return request(`/jetlinks/network/config/`, {
+  return request(`/jetlinks/network/config`, {
     method: 'PATCH',
     data: params,
   });
@@ -78,5 +78,11 @@ export async function debugHttpClient(id: string, data: any) {
   return request(`/jetlinks/network/http/client/${id}/_send`, {
     method: 'POST',
     data,
+  });
+}
+
+export async function getNodesList() {
+  return request(`/jetlinks/cluster/nodes`, {
+      method: 'GET',
   });
 }
