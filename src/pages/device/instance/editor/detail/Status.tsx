@@ -162,7 +162,7 @@ const Status: React.FC<Props> = props => {
         var c = document.documentElement.scrollHeight;
 
         var b = document.body.clientHeight;
-        if (a + b >= c) {
+        if (a + b >= c - 50) {
             setIndex(index + 10);
         }
     }
