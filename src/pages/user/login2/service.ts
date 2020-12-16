@@ -20,6 +20,13 @@ class Service extends BaseService<any>{
         })).pipe(
             map(resp => resp.result)
         ));
+
+    public queryCurrent = () => defer(
+        () => from(request('/jetlinks/authorize/me',{
+            method: 'GET'
+        })).pipe(
+            map(resp => resp)
+        ));
 }
 
 export default Service;

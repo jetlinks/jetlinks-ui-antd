@@ -5,9 +5,7 @@ import { Settings } from '@ant-design/pro-layout';
 import { Spin, Avatar } from 'antd';
 import style from './index.less';
 import Service from './service';
-import { stringify } from 'qs';
 import { router } from 'umi';
-import { getPageQuery } from '../../../utils/utils';
 
 interface Props {
   dispatch: Dispatch;
@@ -17,7 +15,7 @@ interface Props {
 
 const Login: React.FC<Props> = props => {
   const { dispatch, settings, location: { query } } = props;
-
+  const token = localStorage.getItem('x-access-token');
   const service = new Service('');
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -28,6 +26,7 @@ const Login: React.FC<Props> = props => {
   const [captchaImg, setCaptchaImg] = useState<string>('');
   const [code, setCode] = useState<string>("");
   const [enable, setEnable] = useState<boolean>(false);
+  const [current, setCurrent] = useState<boolean>(false);
 
   const handleSubmit = () => {
     dispatch({
@@ -67,7 +66,18 @@ const Login: React.FC<Props> = props => {
           if (icon && settings.titleIcon) {
             icon.href = settings.titleIcon;
           }
-          setIsReady(true);
+          if(token){
+            service.queryCurrent().subscribe((resp) => {
+              if (resp.status === 200) {
+                setCurrent(true)
+              } else {
+                setCurrent(false)
+              }
+              setIsReady(true);
+            })
+          }else{
+            setIsReady(true);
+          }
         }
       });
     }
@@ -95,8 +105,8 @@ const Login: React.FC<Props> = props => {
 
   const Login = () => {
     const information = JSON.parse(localStorage.getItem('user-detail') || '');
-    const token = localStorage.getItem('x-access-token');
-    if (information !== {} && token) {
+    if (current) {
+      console.log(current)
       return (
         <div className={style.login}>
           <div className={style.bg1} />
@@ -126,12 +136,10 @@ const Login: React.FC<Props> = props => {
               <input
                 onClick={() => {
                   localStorage.setItem('x-access-token', '');
+                  setCurrent(false)
                   if (window.location.pathname !== '/user/login') {
                     router.replace({
-                      pathname: '/user/login',
-                      // search: stringify({
-                      //   redirect: window.location.href,
-                      // }),
+                      pathname: '/user/login'
                     });
                   } else {
                     router.push('/user/login');
@@ -147,7 +155,7 @@ const Login: React.FC<Props> = props => {
           </div>
         </div>
       )
-    }else{
+    } else {
       return renderLogin()
     }
   }
