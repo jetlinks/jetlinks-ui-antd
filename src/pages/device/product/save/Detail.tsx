@@ -352,7 +352,7 @@ const Detail: React.FC<Props> = props => {
                         <Descriptions bordered column={2} title="">
                           {
                             i.properties && i.properties.map((item: any) => (
-                              <Descriptions.Item label={item.property} span={1} key={item.property}>
+                              <Descriptions.Item label={item.name} span={1} key={item.property}>
                                 {basicInfo.configuration ? (
                                   item.type.type === 'password' ? (
                                     basicInfo.configuration[item.property]?.length > 0 ? '••••••' : null

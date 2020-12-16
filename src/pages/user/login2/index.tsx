@@ -106,7 +106,6 @@ const Login: React.FC<Props> = props => {
   const Login = () => {
     const information = JSON.parse(localStorage.getItem('user-detail') || '');
     if (current) {
-      console.log(current)
       return (
         <div className={style.login}>
           <div className={style.bg1} />
@@ -123,7 +122,6 @@ const Login: React.FC<Props> = props => {
               </div>
               <input
                 onClick={() => {
-                  // console.log(window.history.back())
                   // router.replace('/');
                   window.history.back()
                 }}
