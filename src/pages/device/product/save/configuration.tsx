@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FormComponentProps } from 'antd/lib/form';
 import Form from 'antd/es/form';
-import { Button, Card, Col, Drawer, Input, Row, Select } from 'antd';
+import { Button, Card, Col, Drawer, Icon, Input, Row, Select, Tooltip } from 'antd';
 import { DeviceProduct } from "@/pages/device/product/data";
 
 interface Props extends FormComponentProps {
@@ -38,7 +38,13 @@ const Configuration: React.FC<Props> = props => {
     const config = configData.map(item => {
       const configName = item.name;
       let properties = item.properties.map((i: any) => {
-        const label = i.name;
+        const label = i.description ? (
+          <span>
+            <span style={{marginRight: '10px'}}>{i.name}</span>
+            <Tooltip title={i.description}>
+              <Icon type="question-circle-o" />
+            </Tooltip>
+          </span>) : i.name
         const key = `configuration.${i.property}`;
         const componentType = i.type.id;
         let component = null;

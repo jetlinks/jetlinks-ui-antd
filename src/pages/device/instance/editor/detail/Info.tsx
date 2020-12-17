@@ -180,8 +180,13 @@ const Info: React.FC<Props> = (props) => {
                 <Descriptions bordered column={2} title="">
                   {i.properties &&
                     i.properties.map((item: any) => (
-                      <Descriptions.Item label={item.name} span={1} key={item.property}>
+                      <Descriptions.Item label={
+                        item.description ? (<div><span style={{marginRight: '10px'}}>{item.name}</span>
+                          <Tooltip title={item.description}>
+                            <Icon type="question-circle-o" />
+                          </Tooltip></div>) : item.name} span={1} key={item.property}>
                         {props.data.configuration ? (
+
                           item.type.type === 'password' ? (
                             props.data.configuration[item.property]?.length > 0 ? '••••••' : null
                           ) :

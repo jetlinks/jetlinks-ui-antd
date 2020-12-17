@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Badge, Button, Card, Descriptions, message, Popconfirm, Row, Spin, Tabs, Tooltip } from 'antd';
+import { Badge, Button, Card, Descriptions, Icon, message, Popconfirm, Row, Spin, Tabs, Tooltip } from 'antd';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { connect } from 'dva';
 import { router } from 'umi';
@@ -352,7 +352,10 @@ const Detail: React.FC<Props> = props => {
                         <Descriptions bordered column={2} title="">
                           {
                             i.properties && i.properties.map((item: any) => (
-                              <Descriptions.Item label={item.property} span={1} key={item.property}>
+                              <Descriptions.Item label={item.description ? (<div><span style={{marginRight: '10px'}}>{item.name}</span>
+                              <Tooltip title={item.description}>
+                                <Icon type="question-circle-o" />
+                              </Tooltip></div>) : item.name} span={1} key={item.property}>
                                 {basicInfo.configuration ? (
                                   item.type.type === 'password' ? (
                                     basicInfo.configuration[item.property]?.length > 0 ? '••••••' : null
