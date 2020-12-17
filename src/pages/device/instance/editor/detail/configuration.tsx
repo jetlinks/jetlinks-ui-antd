@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { FormComponentProps } from 'antd/lib/form';
 import Form from 'antd/es/form';
-import { Button, Card, Col, Drawer, Input, Modal, Row, Select } from 'antd';
+import { Button, Card, Col, Drawer, Icon, Input, Modal, Row, Select, Tooltip } from 'antd';
 import { DeviceInstance } from '@/pages/device/instance/data';
+import config from 'config/config';
 
 interface Props extends FormComponentProps {
   data?: Partial<DeviceInstance>;
@@ -38,7 +39,13 @@ const Configuration: React.FC<Props> = props => {
     const config = configData.map(i => {
       const configName = i.name
       let properties = i.properties.map((item: any) => {
-        const label = item.name;
+        const label = item.description ? (
+          <span>
+            <span style={{marginRight: '10px'}}>{item.name}</span>
+            <Tooltip title={item.description}>
+              <Icon type="question-circle-o" />
+            </Tooltip>
+          </span>) : item.name
         const key = `configuration.${item.property}`;
         const componentType = item.type.id;
         let component = null;
@@ -105,13 +112,13 @@ const Configuration: React.FC<Props> = props => {
       //   saveData();
       // }}
       // onCancel={() => props.close()}
-      title='编辑配置'
+      title='编辑配置1'
       visible
       width={500}
       onClose={() => props.close()}
       closable
     >
-      <Form labelCol={{ span: 6 }} wrapperCol={{ span: 18 }}>
+      <Form labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
         {/* {configName && (
           <Card title={configName} style={{ marginBottom: 20 }} bordered={false}>
             <Row gutter={16}>
