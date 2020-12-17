@@ -66,7 +66,7 @@ const Login: React.FC<Props> = props => {
           if (icon && settings.titleIcon) {
             icon.href = settings.titleIcon;
           }
-          if(token){
+          if (token) {
             service.queryCurrent().subscribe((resp) => {
               if (resp.status === 200) {
                 setCurrent(true)
@@ -75,7 +75,7 @@ const Login: React.FC<Props> = props => {
               }
               setIsReady(true);
             })
-          }else{
+          } else {
             setIsReady(true);
           }
         }
@@ -104,7 +104,7 @@ const Login: React.FC<Props> = props => {
   }, [settings.title]);
 
   const Login = () => {
-    const information = JSON.parse(localStorage.getItem('user-detail') || '');
+    const information = JSON.parse(localStorage.getItem('user-detail') || '{}');
     if (current) {
       console.log(current)
       return (
