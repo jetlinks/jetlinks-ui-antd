@@ -461,7 +461,7 @@ export const routes = [
                         name: '云云对接',
                         icon: 'cloud',
                         version: 'pro',
-                        authority: ['dueros-product', 'aliyun-bridge', 'admin'],
+                        authority: ['dueros-product', 'aliyun-bridge', 'onenet-product', 'ctwing-product', 'admin'],
                         routes: [
                             {
                                 path: '/cloud/duer',
@@ -478,6 +478,22 @@ export const routes = [
                                 authority: ['aliyun-bridge', 'admin'],
                                 icon: 'aliyun',
                                 component: './cloud/aliyun',
+                            },
+                            {
+                                path: '/cloud/onenet',
+                                name: '移动OneNet',
+                                version: 'pro',
+                                authority: ['onenet-product', 'admin'],
+                                icon: 'mobile',
+                                component: './cloud/onenet',
+                            },
+                            {
+                                path: '/cloud/ctwing',
+                                name: '电信CTWing',
+                                version: 'pro',
+                                authority: ['ctwing-product', 'admin'],
+                                icon: 'phone',
+                                component: './cloud/ctwing',
                             }
                         ]
                     },
