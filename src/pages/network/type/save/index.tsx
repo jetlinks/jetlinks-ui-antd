@@ -78,24 +78,26 @@ const Save: React.FC<Props> = props => {
       })
       .catch(() => {
       });
-    if (props.data.id && props.data.cluster) {
-      if (props.data.cluster) {
-        let data: any[] = []
-        props.data.cluster.map(item => {
-          data.push(item.serverId)
-        })
-        setClusterList([...data])
-      }
-    } else {
-      apis.network.getNodesList().then(res => {
-        if (res.status === 200) {
+    if(version === 'pro'){
+      if (props.data.id && props.data.cluster) {
+        if (props.data.cluster) {
           let data: any[] = []
-          res.result.forEach(item => {
-            data.push(item.id)
+          props.data.cluster.map(item => {
+            data.push(item.serverId)
           })
           setClusterList([...data])
         }
-      })
+      } else {
+        apis.network.getNodesList().then(res => {
+          if (res.status === 200) {
+            let data: any[] = []
+            res.result.forEach(item => {
+              data.push(item.id)
+            })
+            setClusterList([...data])
+          }
+        })
+      }
     }
   }, []);
 
