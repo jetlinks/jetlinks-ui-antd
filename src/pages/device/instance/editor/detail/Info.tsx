@@ -51,11 +51,13 @@ const Info: React.FC<Props> = (props) => {
   };
 
   const changeDeploy = (deviceId: string | undefined) => {
+    console.log(11111111111)
     apis.deviceInstance
       .changeDeploy(deviceId)
       .then(response => {
         if (response.status === 200) {
           message.success('应用成功');
+          props.refresh(props.data.id)
         }
       })
       .catch(() => {
@@ -82,6 +84,36 @@ const Info: React.FC<Props> = (props) => {
         props.refresh();
       }
     })
+  }
+
+  const renderComponent = (item: any) => {
+    if(props.data.configuration){
+      if(item.type.type === 'password' && props.data.configuration[item.property]?.length > 0){
+        return '••••••'
+      }
+      if(isExit(item.property)){
+        return (
+          <div>
+            <span style={{marginRight: '10px'}}>{props.data.configuration[item.property]}</span>
+            <Tooltip title= {`有效值${props.data.cachedConfiguration[item.property]}`}>
+              <Icon type="info-circle-o" />
+            </Tooltip>
+          </div>
+        )
+      }else{
+        console.log(11)
+        return (<span>{props.data.configuration[item.property]}</span>)
+      }
+    }else{
+      return null;
+    }
+  }
+  const isExit = (property: string) => {
+    if(props.data.cachedConfiguration && props.data.configuration[property] !== undefined && props.data.cachedConfiguration[property] !== undefined && props.data.configuration[property] !== props.data.cachedConfiguration[property]){
+      return true
+    }else{
+      return false
+    }
   }
 
   return (
@@ -185,13 +217,13 @@ const Info: React.FC<Props> = (props) => {
                           <Tooltip title={item.description}>
                             <Icon type="question-circle-o" />
                           </Tooltip></div>) : item.name} span={1} key={item.property}>
-                        {props.data.configuration ? (
-
+                            {renderComponent(item)}
+                        {/* {props.data.configuration ? 
+                        (
                           item.type.type === 'password' ? (
                             props.data.configuration[item.property]?.length > 0 ? '••••••' : null
-                          ) :
-                            props.data.configuration[item.property]
-                        ) : null}
+                          ) : props.data.configuration[item.property]
+                        ) : null} */}
                       </Descriptions.Item>
                     ))}
                 </Descriptions>

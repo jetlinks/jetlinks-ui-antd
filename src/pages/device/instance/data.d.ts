@@ -53,6 +53,8 @@ export class DeviceInstance extends SimpleType {
 
   configuration:any;
 
+  cachedConfiguration: any;
+
   transport:string;
 
   protocol:string;
