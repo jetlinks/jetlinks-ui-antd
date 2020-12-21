@@ -95,13 +95,12 @@ const Info: React.FC<Props> = (props) => {
         return (
           <div>
             <span style={{marginRight: '10px'}}>{props.data.configuration[item.property]}</span>
-            <Tooltip title= {`有效值${props.data.cachedConfiguration[item.property]}`}>
+            <Tooltip title= {`有效值:${props.data.cachedConfiguration[item.property]}`}>
               <Icon type="info-circle-o" />
             </Tooltip>
           </div>
         )
       }else{
-        console.log(11)
         return (<span>{props.data.configuration[item.property]}</span>)
       }
     }else{
@@ -109,7 +108,7 @@ const Info: React.FC<Props> = (props) => {
     }
   }
   const isExit = (property: string) => {
-    if(props.data.cachedConfiguration && props.data.configuration[property] !== undefined && props.data.cachedConfiguration[property] !== undefined && props.data.configuration[property] !== props.data.cachedConfiguration[property]){
+    if(props.data.cachedConfiguration &&  props.data.cachedConfiguration[property] !== undefined && props.data.configuration[property] !== props.data.cachedConfiguration[property]){
       return true
     }else{
       return false
