@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { Button, Card, Descriptions, Icon, message, Popconfirm, Tag, Tooltip } from 'antd';
+import React, {useState} from 'react';
+import {Button, Card, Descriptions, Icon, message, Popconfirm, Tag, Tooltip} from 'antd';
 import moment from 'moment';
-import { DeviceInstance } from '@/pages/device/instance/data';
+import {DeviceInstance} from '@/pages/device/instance/data';
 import Configuration from './configuration';
 import Tags from './tags/tags';
 import apis from '@/services';
@@ -47,11 +47,10 @@ const Info: React.FC<Props> = (props) => {
           props.refresh();
         }
       }).catch(() => {
-      });
+    });
   };
 
   const changeDeploy = (deviceId: string | undefined) => {
-    console.log(11111111111)
     apis.deviceInstance
       .changeDeploy(deviceId)
       .then(response => {
@@ -84,42 +83,39 @@ const Info: React.FC<Props> = (props) => {
         props.refresh();
       }
     })
-  }
+  };
 
   const renderComponent = (item: any) => {
-    if(props.data.configuration){
-      if(item.type.type === 'password' && props.data.configuration[item.property]?.length > 0){
+    if (props.data.configuration) {
+      if (item.type.type === 'password' && props.data.configuration[item.property]?.length > 0) {
         return '••••••'
       }
-      if(isExit(item.property)){
+      if (isExit(item.property)) {
         return (
           <div>
             <span style={{marginRight: '10px'}}>{props.data.configuration[item.property]}</span>
-            <Tooltip title= {`有效值:${props.data.cachedConfiguration[item.property]}`}>
-              <Icon type="info-circle-o" />
+            <Tooltip title={`有效值:${props.data.cachedConfiguration[item.property]}`}>
+              <Icon type="info-circle-o"/>
             </Tooltip>
           </div>
         )
-      }else{
+      } else {
         return (<span>{props.data.configuration[item.property]}</span>)
       }
-    }else{
+    } else {
       return null;
     }
-  }
+  };
+
   const isExit = (property: string) => {
-    if(props.data.cachedConfiguration &&  props.data.cachedConfiguration[property] !== undefined && props.data.configuration[property] !== props.data.cachedConfiguration[property]){
-      return true
-    }else{
-      return false
-    }
-  }
+    return props.data.cachedConfiguration && props.data.cachedConfiguration[property] !== undefined && props.data.configuration[property] !== props.data.cachedConfiguration[property];
+  };
 
   return (
     <div>
-      <Card style={{ marginBottom: 20 }}>
-        <Descriptions style={{ marginBottom: 20 }} bordered column={3} size="small"
-          title={<span>设备信息</span>}>
+      <Card style={{marginBottom: 20}}>
+        <Descriptions style={{marginBottom: 20}} bordered column={3} size="small"
+                      title={<span>设备信息</span>}>
           <Descriptions.Item label="产品名称" span={1}>
             {props.data.productName}
           </Descriptions.Item>
@@ -161,7 +157,7 @@ const Info: React.FC<Props> = (props) => {
                     <Popconfirm title={`是否解绑${i.bindName}接入`} onConfirm={() => {
                       deleteBinds(props.data.id, i.bindType, i.bindKey)
                     }}>
-                      <span style={{ display: "inline-block", marginLeft: "10px" }}>×</span>
+                      <span style={{display: "inline-block", marginLeft: "10px"}}>×</span>
                     </Popconfirm>
                   </Tag>
                 )
@@ -171,75 +167,75 @@ const Info: React.FC<Props> = (props) => {
         </Descriptions>
 
         {props.configuration && props.configuration.length > 0 && (
-          <div style={{ width: '100%' }}>
+          <div style={{width: '100%'}}>
             <Descriptions
               title={
                 <span>
                   配置
-                      <Button icon="edit" style={{ marginLeft: 20 }} type="link"
-                    onClick={() => setUpdateVisible(true)}
-                  >编辑</Button>
+                      <Button icon="edit" style={{marginLeft: 20}} type="link"
+                              onClick={() => setUpdateVisible(true)}
+                      >编辑</Button>
                   {props.data.state?.value != 'notActive' && (
                     <Popconfirm title="确认重新应用该配置？"
-                      onConfirm={() => {
-                        changeDeploy(props.data.id);
-                      }}>
+                                onConfirm={() => {
+                                  changeDeploy(props.data.id);
+                                }}>
                       <Button icon="check" type="link">应用配置</Button>
                       <Tooltip title="修改配置后需重新应用后才能生效。">
-                        <Icon type="question-circle-o" />
+                        <Icon type="question-circle-o"/>
                       </Tooltip>
                     </Popconfirm>
                   )}
 
                   {props.data.aloneConfiguration && (
                     <Popconfirm title="确认恢复默认配置？"
-                      onConfirm={() => {
-                        configurationReset(props.data.id);
-                      }}>
+                                onConfirm={() => {
+                                  configurationReset(props.data.id);
+                                }}>
                       <Button icon="undo" type="link">恢复默认</Button>
                       <Tooltip title={`该设备单独编辑过${props.configuration.name}，点击此将恢复成默认的配置信息，请谨慎操作。`}>
-                        <Icon type="question-circle-o" />
+                        <Icon type="question-circle-o"/>
                       </Tooltip>
                     </Popconfirm>
                   )}
                 </span>
               }
-            ></Descriptions>
+            />
             {props.configuration.map((i: any) => (
-              <div style={{ marginBottom: "20px" }} key={i.name}>
+              <div style={{marginBottom: "20px"}} key={i.name}>
                 <h3>{i.name}</h3>
                 <Descriptions bordered column={2} title="">
                   {i.properties &&
-                    i.properties.map((item: any) => (
-                      <Descriptions.Item label={
-                        item.description ? (<div><span style={{marginRight: '10px'}}>{item.name}</span>
-                          <Tooltip title={item.description}>
-                            <Icon type="question-circle-o" />
-                          </Tooltip></div>) : item.name} span={1} key={item.property}>
-                            {renderComponent(item)}
-                        {/* {props.data.configuration ? 
+                  i.properties.map((item: any) => (
+                    <Descriptions.Item label={
+                      item.description ? (<div><span style={{marginRight: '10px'}}>{item.name}</span>
+                        <Tooltip title={item.description}>
+                          <Icon type="question-circle-o"/>
+                        </Tooltip></div>) : item.name} span={1} key={item.property}>
+                      {renderComponent(item)}
+                      {/* {props.data.configuration ?
                         (
                           item.type.type === 'password' ? (
                             props.data.configuration[item.property]?.length > 0 ? '••••••' : null
                           ) : props.data.configuration[item.property]
                         ) : null} */}
-                      </Descriptions.Item>
-                    ))}
+                    </Descriptions.Item>
+                  ))}
                 </Descriptions>
               </div>
             ))}
           </div>
         )}
         {props.data.tags && props.data.tags.length > 0 && (
-          <Descriptions style={{ marginBottom: 20 }} bordered column={3} size="small"
-            title={
-              <span>
+          <Descriptions style={{marginBottom: 20}} bordered column={3} size="small"
+                        title={
+                          <span>
                 {'标签'}
-                <Button icon="edit" style={{ marginLeft: 20 }} type="link"
-                  onClick={() => setTagsVisible(true)}
-                >编辑</Button>
+                            <Button icon="edit" style={{marginLeft: 20}} type="link"
+                                    onClick={() => setTagsVisible(true)}
+                            >编辑</Button>
               </span>
-            }>
+                        }>
             {props.data.tags && props.data.tags?.map((item: any) => (
               <Descriptions.Item label={`${item.name}（${item.key})`} span={1} key={item.key}>
                 {item.value}
@@ -250,25 +246,25 @@ const Info: React.FC<Props> = (props) => {
       </Card>
       {updateVisible && (
         <Configuration data={props.data} configuration={props.configuration}
-          close={() => {
-            setUpdateVisible(false);
-            props.refresh();
-          }}
-          save={(item: any) => {
-            updateData(item);
-          }}
+                       close={() => {
+                         setUpdateVisible(false);
+                         props.refresh();
+                       }}
+                       save={(item: any) => {
+                         updateData(item);
+                       }}
         />
       )}
 
       {tagsVisible && (
         <Tags data={props.data.tags} deviceId={props.data.id}
-          close={() => {
-            setTagsVisible(false);
-            props.refresh();
-          }}
-          save={(item: any) => {
-            saveTags(item);
-          }}
+              close={() => {
+                setTagsVisible(false);
+                props.refresh();
+              }}
+              save={(item: any) => {
+                saveTags(item);
+              }}
         />
       )}
     </div>
