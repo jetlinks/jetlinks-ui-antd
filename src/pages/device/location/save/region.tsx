@@ -258,7 +258,7 @@ const SaveRegion: React.FC<Props> = props => {
               {getFieldDecorator('parentId', {
                 initialValue: props.data.properties?.parentId,
               })(
-                <TreeSelect
+                <TreeSelect dropdownStyle={{maxHeight: 400}}
                   allowClear treeDataSimpleMode showSearch
                   placeholder="上级区域" treeData={regionList}
                   treeNodeFilterProp='title' searchPlaceholder='选择查看区域，可输入查询'

@@ -69,7 +69,7 @@ const Location: React.FC<Props> = props => {
       infoWindow: {},
       massMarksCreated: {},
       centerScale: {
-        center: [], //地图显示中心点，默认重庆
+        center: []
       },
       regionInfo: {},
       satelliteLayer: {},
@@ -459,7 +459,9 @@ const Location: React.FC<Props> = props => {
                     // 区域不存在中心点时将取区域线条的第一个坐标点为中心点
                     setCenterScale({center: item.geometry.coordinates[0][0][0]});
                   }
-                } else if (item.properties.parentId === parentId) {
+                }
+
+                if (String(item.properties.parentId) === String(parentId)) {
                   //获取第一个区域下的所有子区域
                   item.geometry.coordinates.map((path: any) => {
                     pathPolygon.push(path[0]);
