@@ -620,7 +620,7 @@ const Location: React.FC<Props> = props => {
                             });
 
                             regionList.map((region: any) => {
-                              if (value === region.pId) {
+                              if (String(value) === String(region.pId)) {
                                 region.data.geometry.coordinates.map((path: any) => {
                                   pathPolygon.push(path[0]);
                                 });
@@ -634,7 +634,7 @@ const Location: React.FC<Props> = props => {
                             });
 
                             regionList.map((region: any) => {
-                              if (regionList[0].id === region.pId) {
+                              if (String(regionList[0].id) === String(region.pId)) {
                                 region.data.geometry.coordinates.map((path: any) => {
                                   pathPolygon.push(path[0]);
                                 });
@@ -711,7 +711,7 @@ const Location: React.FC<Props> = props => {
                       });
 
                       regionList.map((region: any) => {
-                        if (regionList[0].id === region.pId) {
+                        if (String(regionList[0].id) === String(region.pId)) {
                           region.data.geometry.coordinates.map((path: any) => {
                             pathPolygon.push(path[0]);
                           });
