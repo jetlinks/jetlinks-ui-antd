@@ -8,6 +8,6 @@ fi
 
 apiUrl="proxy_pass  $API_BASE_PATH;"
 
-sed -i '18c '"$apiUrl"'' /etc/nginx/conf.d/default.conf
+sed -i '20c '"$apiUrl"'' /etc/nginx/conf.d/default.conf
 
 nginx -g "daemon off;"
