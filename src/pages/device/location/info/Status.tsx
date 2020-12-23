@@ -156,7 +156,7 @@ const Status: React.FC<Props> = (props) => {
   const statusMap = new Map();
   statusMap.set('online', <Badge status='success' text={'在线'}/>);
   statusMap.set('offline', <Badge status='error' text={'离线'}/>);
-  statusMap.set('notActive', <Badge status='processing' text={'未激活'}/>);
+  statusMap.set('notActive', <Badge status='processing' text={'未启用'}/>);
 
   const eventLevel = new Map();
   eventLevel.set('ordinary', <Badge status="processing"/>);
@@ -173,7 +173,7 @@ const Status: React.FC<Props> = (props) => {
                    avatar={
                      <Avatar src={gateway} style={{width: 48, height: 48}}/>
                    }
-                   title={<b style={{fontSize: 16}}><AutoHide title={props.device.name} style={{width: 250}}/></b>}
+                   title={<b style={{fontSize: 16}}><AutoHide title={props.device.name} style={{width: 245}}/></b>}
                    action={
                      <div>
                        {statusMap.get(statusType)}
@@ -182,8 +182,8 @@ const Status: React.FC<Props> = (props) => {
                    total={
                      <Row>
                       <span style={{fontSize: 14}}>
-                        <AutoHide title={`ID：${props.device.id}`} style={{width: 140}}/>
-                        <AutoHide title={`产品：${props.device.productName}`} style={{width: 140}}/>
+                        <AutoHide title={`ID：${props.device.id}`} style={{width: 120}}/>
+                        <AutoHide title={`产品：${props.device.productName}`} style={{width: 120}}/>
                       </span>
                      </Row>
                    }>
@@ -195,7 +195,8 @@ const Status: React.FC<Props> = (props) => {
                       <Col {...topColResponsiveProps} key={item.id}>
                         <Card style={{backgroundColor: '#FBFBFB', height: 50}}
                               bodyStyle={{padding: 2, paddingLeft: 8, height: 50}}>
-                          <span style={{fontSize: 12}}>{item.name}</span>
+                          <AutoHide title={item.name}
+                                    style={{width: 100, height: 20,fontSize: 12}}/>
                           <div>
                             <b>
                               <AutoHide title={...propertyData[item.id]?.formatValue || '/'}
@@ -214,7 +215,12 @@ const Status: React.FC<Props> = (props) => {
                       <Col {...topColResponsiveProps} key={item.id}>
                         <Card style={{backgroundColor: '#FBFBFB', height: 50}}
                               bodyStyle={{padding: 2, paddingLeft: 8, height: 50}}>
-                          <span style={{fontSize: 12}}>{eventLevel.get(item.expands?.level)}{item.name}</span>
+                          <AutoHide title={
+                            <span>
+                              {eventLevel.get(item.expands?.level)}{item.name}
+                            </span>
+                          }
+                                    style={{width: 100, height: 20,fontSize: 12}}/>
                           <div>
                             <b>
                               <AutoHide title={`${eventDataCount[item.id] || 0}次`}

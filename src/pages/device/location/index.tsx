@@ -5,7 +5,7 @@ import {
   Card,
   Divider,
   Dropdown,
-  Form,
+  Form, Icon,
   Input,
   List,
   Menu,
@@ -16,7 +16,7 @@ import {
   Spin,
   Switch,
   Table,
-  Tabs,
+  Tabs, Tooltip,
   TreeSelect,
 } from 'antd';
 import {FormComponentProps} from 'antd/lib/form';
@@ -69,7 +69,7 @@ const Location: React.FC<Props> = props => {
       infoWindow: {},
       massMarksCreated: {},
       centerScale: {
-        center: [], //地图显示中心点，默认重庆
+        center: []
       },
       regionInfo: {},
       satelliteLayer: {},
@@ -420,7 +420,7 @@ const Location: React.FC<Props> = props => {
             setInfoWindow(infoWindow);
 
             let deviceStatusInfo = document.getElementById('deviceStatus');
-            infoWindow.on('open', function (e: any) {
+            infoWindow.on('open', function () {
               let div = document.createElement('div');
               div.style.width = '400px';
               div.append(deviceStatusInfo);
@@ -429,7 +429,7 @@ const Location: React.FC<Props> = props => {
 
             infoWindow.open(ins, data.lnglat);
 
-            infoWindow.on('close', function (e: any) {
+            infoWindow.on('close', function () {
 
             });
           }
@@ -438,30 +438,34 @@ const Location: React.FC<Props> = props => {
         });
     };
 
-    const queryArea = (params: any, type: string) => {
+    const queryAreaNew = (params: any) => {
       regionList.splice(0, regionList.length);
-      if (type === 'old') {
-        newMassMarks(mapCreated, {
-          shape: params.shape,
-          filter: {
-            where: 'objectType = device',
-            pageSize: pageSize
-          },
-        }, 'new');
-      }
       apis.location._search_geo_json(params)
         .then((response: any) => {
             if (response.status === 200) {
               let region: any = [];
-
+              let parentId: string = "";
               response.result.features.map((item: any, index: number) => {
                 if (index === 0) {
+                  //地图默认显示区域下拉列表中的第一个区域以及子区域
+                  parentId = item.properties.id;//第一个区域ID
+                  item.geometry.coordinates.map((path: any) => {
+                    pathPolygon.push(path[0]);
+                  });
+
                   if (item.properties.center) {
                     setCenterScale({center: item.properties.center});
                   } else {
                     // 区域不存在中心点时将取区域线条的第一个坐标点为中心点
                     setCenterScale({center: item.geometry.coordinates[0][0][0]});
                   }
+                }
+
+                if (String(item.properties.parentId) === String(parentId)) {
+                  //获取第一个区域下的所有子区域
+                  item.geometry.coordinates.map((path: any) => {
+                    pathPolygon.push(path[0]);
+                  });
                 }
                 region.push({
                   id: item.properties.id,
@@ -470,21 +474,9 @@ const Location: React.FC<Props> = props => {
                   title: item.properties.name,
                   data: item
                 });
-                /*if (item.geometry.type === 'MultiPolygon') {
-                  item.geometry.coordinates.map((path: any) => {
-                    pathPolygon.push(path[0]);
-                  });
-                } else {
-                  pathPolygon.push(item.geometry.coordinates);
-                }*/
-                item.geometry.coordinates.map((path: any) => {
-                  pathPolygon.push(path[0]);
-                });
-                setPathPolygon([...pathPolygon]);
               });
-              if (type === 'new') {
-                setRegionList(region);
-              }
+              setPathPolygon([...pathPolygon]);
+              setRegionList(region);
             }
             setSpinning(false);
           },
@@ -508,12 +500,12 @@ const Location: React.FC<Props> = props => {
           }
         }, 'new');
         resetPathPolygon();
-        queryArea({
+        queryAreaNew({
           'filter': {
             'where': 'objectType not device',
             pageSize: pageSize
           },
-        }, 'new');
+        });
       },
     };
 
@@ -541,8 +533,9 @@ const Location: React.FC<Props> = props => {
             <Map version="1.4.15" resizeEnable events={mapEvents}
                  center={centerScale.center.length === 0 ? false : centerScale.center} features={contentInfo}>
               {pathPolygon.length > 0 && (
-                <Polygon visible={true} path={pathPolygon} bubble key='polygon_list'
-                         style={{fillOpacity: 0, strokeOpacity: 1, strokeColor: '#C86A79', strokeWeight: 3}}/>
+                <Polygon
+                  visible={true} path={pathPolygon} bubble key='polygon_list'
+                  style={{fillOpacity: 0, strokeOpacity: 1, strokeColor: '#C86A79', strokeWeight: 3}}/>
               )}
             </Map>
           </div>
@@ -597,37 +590,68 @@ const Location: React.FC<Props> = props => {
                 overflowX: 'hidden', marginTop: 5,
               }}>
                 <Form labelCol={{span: 5}} wrapperCol={{span: 19}} key="queryForm">
-                  <Form.Item key="region" label="查看区域" style={{marginBottom: 14}}>
+                  <Form.Item
+                    key="region" style={{marginBottom: 14}}
+                    label={
+                      <span>
+                        查看区域
+                        <Tooltip title="地图默认显示区域下拉列表中的第一个区域以及子区域">
+                          <Icon type="question-circle-o" style={{paddingLeft: 5}}/>
+                        </Tooltip>
+                      </span>
+                    }>
                     {getFieldDecorator('region', {})(
                       <TreeSelect
+                        dropdownStyle={{maxHeight: 400}}
                         allowClear treeDataSimpleMode showSearch
                         placeholder="所属区域" treeData={regionList}
                         treeNodeFilterProp='title' searchPlaceholder='选择查看区域，可输入查询'
                         onChange={(value: string, title: string, data: any) => {
                           resetPathPolygon();
+                          mapCreated.remove(labelsLayer);
+
                           if (value) {
-                            let list: any[] = [];
                             !data.triggerNode.props.data.properties.center ?
                               setCenterScale({center: []}) :
                               setCenterScale({center: data.triggerNode.props.data.properties.center});
 
                             data.triggerNode.props.data.geometry.coordinates.map((path: any) => {
-                              list.push(path[0]);
+                              pathPolygon.push(path[0]);
                             });
-                            setPathPolygon(list);
-                          }
-                          mapCreated.remove(labelsLayer);
 
-                          setSpinning(true);
-                          queryArea({
+                            regionList.map((region: any) => {
+                              if (String(value) === String(region.pId)) {
+                                region.data.geometry.coordinates.map((path: any) => {
+                                  pathPolygon.push(path[0]);
+                                });
+                              }
+                            });
+                            setPathPolygon([...pathPolygon]);
+                          } else {
+                            //默认取出区域下拉列表中的第一个区域以及下属区域
+                            regionList[0].data.geometry.coordinates.map((path: any) => {
+                              pathPolygon.push(path[0]);
+                            });
+
+                            regionList.map((region: any) => {
+                              if (String(regionList[0].id) === String(region.pId)) {
+                                region.data.geometry.coordinates.map((path: any) => {
+                                  pathPolygon.push(path[0]);
+                                });
+                              }
+                            });
+                            setPathPolygon([...pathPolygon]);
+                          }
+                          newMassMarks(mapCreated, {
                             shape: {
-                              objectId: value,
+                              'objectId': value,
                             },
                             filter: {
-                              where: 'objectType not device',
+                              where: 'objectType = device',
                               pageSize: pageSize
                             },
-                          }, 'old');
+                          }, 'new');
+
                           mapCreated.remove(infoWindow);
                         }}
                       />
@@ -637,10 +661,11 @@ const Location: React.FC<Props> = props => {
                     {getFieldDecorator('productId', {
                       initialValue: undefined,
                     })(
-                      <Select placeholder="选择产品，可输入查询" showSearch={true} allowClear={true}
-                              filterOption={(inputValue, option) =>
-                                option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
-                              }
+                      <Select
+                        placeholder="选择产品，可输入查询" showSearch={true} allowClear={true}
+                        filterOption={(inputValue, option) =>
+                          option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
+                        }
                       >
                         {(productList || []).map(item => (
                           <Select.Option value={item.id}>{item.name}</Select.Option>
@@ -669,7 +694,8 @@ const Location: React.FC<Props> = props => {
                     <Button type="primary" ghost={false} onClick={() => {
                       setSpinning(true);
                       mapCreated.remove(labelsLayer);
-                      onValidateForm();
+                      onValidateForm().then(() => {
+                      });
                     }}>
                       查询
                     </Button>
@@ -678,12 +704,21 @@ const Location: React.FC<Props> = props => {
                       setSpinning(true);
                       form.resetFields();
                       resetPathPolygon();
-                      queryArea({
-                        filter: {
-                          where: 'objectType not device',
-                          pageSize: pageSize
-                        },
-                      }, 'old');
+
+                      //默认取出区域下拉列表中的第一个区域以及下属区域
+                      regionList[0].data.geometry.coordinates.map((path: any) => {
+                        pathPolygon.push(path[0]);
+                      });
+
+                      regionList.map((region: any) => {
+                        if (String(regionList[0].id) === String(region.pId)) {
+                          region.data.geometry.coordinates.map((path: any) => {
+                            pathPolygon.push(path[0]);
+                          });
+                        }
+                      });
+                      setPathPolygon([...pathPolygon]);
+                      // 结束
                       handleSearch({pageSize: 10, sorts: {field: 'alarmTime', order: 'desc'}});
                       mapCreated.remove(infoWindow);
                     }}>
@@ -740,42 +775,43 @@ const Location: React.FC<Props> = props => {
                     </div>
                     <div>
                       {alarmLogData.data && (
-                        <List size='small'
-                              itemLayout="horizontal" dataSource={alarmLogData.data}
-                              header={<span>设备ID/设备名称/告警名称/告警时间</span>}
-                              pagination={{
-                                current: alarmLogData.pageIndex + 1,
-                                total: alarmLogData.total,
-                                pageSize: alarmLogData.pageSize,
-                                size: 'small',
-                                hideOnSinglePage: true,
-                                onChange: onListChange,
-                              }}
-                              renderItem={(dev: any) => (
-                                <List.Item>
-                                  <List.Item.Meta
-                                    title={<a
-                                      onClick={() => {
-                                        let content: string;
-                                        try {
-                                          content = JSON.stringify(dev.alarmData, null, 2);
-                                        } catch (error) {
-                                          content = dev.alarmData;
-                                        }
-                                        Modal.confirm({
-                                          width: '30VW',
-                                          title: '告警数据',
-                                          content: <pre>{content}</pre>,
-                                          okText: '确定',
-                                          cancelText: '关闭',
-                                        });
-                                      }}
-                                    ><AutoHide
-                                      title={`${dev.deviceId}/${dev.deviceName}/${dev.alarmName}/${moment(dev.alarmTime).format('YYYY-MM-DD HH:mm:ss')}`}
-                                      style={{width: 415}}/></a>}
-                                  />
-                                </List.Item>
-                              )}
+                        <List
+                          size='small'
+                          itemLayout="horizontal" dataSource={alarmLogData.data}
+                          header={<span>设备ID/设备名称/告警名称/告警时间</span>}
+                          pagination={{
+                            current: alarmLogData.pageIndex + 1,
+                            total: alarmLogData.total,
+                            pageSize: alarmLogData.pageSize,
+                            size: 'small',
+                            hideOnSinglePage: true,
+                            onChange: onListChange,
+                          }}
+                          renderItem={(dev: any) => (
+                            <List.Item>
+                              <List.Item.Meta
+                                title={<a
+                                  onClick={() => {
+                                    let content: string;
+                                    try {
+                                      content = JSON.stringify(dev.alarmData, null, 2);
+                                    } catch (error) {
+                                      content = dev.alarmData;
+                                    }
+                                    Modal.confirm({
+                                      width: '30VW',
+                                      title: '告警数据',
+                                      content: <pre>{content}</pre>,
+                                      okText: '确定',
+                                      cancelText: '关闭',
+                                    });
+                                  }}
+                                ><AutoHide
+                                  title={`${dev.deviceId}/${dev.deviceName}/${dev.alarmName}/${moment(dev.alarmTime).format('YYYY-MM-DD HH:mm:ss')}`}
+                                  style={{width: 415}}/></a>}
+                              />
+                            </List.Item>
+                          )}
                         />
                       )}
                     </div>
@@ -790,7 +826,8 @@ const Location: React.FC<Props> = props => {
               setDeviceId('');
               setSpinning(true);
               mapCreated.remove(labelsLayer);
-              onValidateForm();
+              onValidateForm().then(() => {
+              });
             }}/>
           )}
 
@@ -809,13 +846,14 @@ const Location: React.FC<Props> = props => {
               setSpinning(true);
               mapCreated.remove(labelsLayer);
               resetPathPolygon();
-              queryArea({
+              queryAreaNew({
                 filter: {
                   where: 'objectType not device',
                   pageSize: pageSize
                 },
-              }, 'new');
-              onValidateForm();
+              });
+              onValidateForm().then(() => {
+              });
               handleSearch({pageSize: 10, sorts: {field: 'alarmTime', order: 'desc'}});
             }}/>
           )}
