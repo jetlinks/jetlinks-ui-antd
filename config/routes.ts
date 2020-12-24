@@ -386,11 +386,11 @@ export const routes = [
                     },
                     {
                         path: 'data-screen',
-                        name: '大屏数据',
+                        name: '可视化',
                         icon: 'desktop',
                         tenant: ['admin'],
                         iconfont: 'icon-icon-',
-                        authority: ['big-screen', 'admin'],
+                        authority: ['big-screen', 'admin', 'vis_configuration'],
                         routes: [
                             {
                                 path: '/data-screen/category',
@@ -411,6 +411,15 @@ export const routes = [
                                 authority: ['big-screen', 'admin'],
                                 version: 'pro',
                                 component: './data-screen/screen',
+                            },
+                            {
+                                path: '/data-screen/configuration',
+                                name: '组态管理',
+                                icon: 'fund',
+                                iconfont: 'icon-screen',
+                                authority: ['vis_configuration', 'admin'],
+                                version: 'pro',
+                                component: './data-screen/visConfiguration',
                             }
                         ]
                     },

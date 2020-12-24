@@ -122,8 +122,8 @@ const Login: React.FC<Props> = props => {
               </div>
               <input
                 onClick={() => {
-                  // router.replace('/');
-                  window.history.back()
+                  router.replace('/');
+                  // window.history.back()
                 }}
                 className={style.btn}
                 type="button"
