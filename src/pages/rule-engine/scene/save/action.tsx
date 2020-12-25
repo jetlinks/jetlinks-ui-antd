@@ -122,7 +122,7 @@ const Action: React.FC<Props> = props => {
       .then((response: any) => {
         if (response.status === 200) {
           setDeviceData(response.result || {});
-          setDeviceName(response.result.name || '')
+          setDeviceName(response.result.name || '');
           if (!actionData.configuration) {
             actionData.configuration = {};
           }
@@ -542,8 +542,8 @@ const Action: React.FC<Props> = props => {
                 setBindVisible(true);
               }} type='gold' title="点击选择设备"/>}
                 defaultValue={deviceName || props.action.configuration.deviceId}
-                placeholder="点击选择设备" 
-                value={deviceData?.name} 
+                placeholder="点击选择设备"
+                value={deviceData?.name}
                 readOnly/>
             </Col>
             {deviceData.name && (
