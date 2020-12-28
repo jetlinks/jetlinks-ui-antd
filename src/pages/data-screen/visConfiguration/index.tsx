@@ -129,8 +129,8 @@ const Screen = (props: Props) => {
     //获取跳转url
     api.screen.getUrl().then((res) => {
       if(res.status === 200){
-        if(res.result.urls['vis_configuration'] !=='' && res.result.urls['vis_configuration'] !== undefined){
-          setUrl(res.result.urls['vis_configuration'])
+        if(res.result.urls['vis-configuration'] !=='' && res.result.urls['vis-configuration'] !== undefined){
+          setUrl(res.result.urls['vis-configuration'])
         }else{
           message.error('配置错误,请联系管理员');
           // setUrl('http://localhost:8000/')

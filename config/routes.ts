@@ -390,7 +390,7 @@ export const routes = [
                         icon: 'desktop',
                         tenant: ['admin'],
                         iconfont: 'icon-icon-',
-                        authority: ['big-screen', 'admin', 'vis_configuration'],
+                        authority: ['big-screen', 'admin', 'vis-configuration'],
                         routes: [
                             {
                                 path: '/data-screen/category',
@@ -417,7 +417,7 @@ export const routes = [
                                 name: '组态管理',
                                 icon: 'fund',
                                 iconfont: 'icon-screen',
-                                authority: ['vis_configuration', 'admin'],
+                                authority: ['vis-configuration', 'admin'],
                                 version: 'pro',
                                 component: './data-screen/visConfiguration',
                             }
