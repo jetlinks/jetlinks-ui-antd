@@ -247,7 +247,7 @@ const Screen = (props: Props) => {
                             </Tooltip>,
                             <Tooltip placement="bottom" title="预览">
                               <EyeOutlined onClick={() => {
-                                url != '' ? window.open(url + '#/' + item.id + '?token=' + token, '_blank') : message.error('配置错误,请联系管理员')
+                                url != '' ? window.open(url + `#/?id=${id}&token=${token}`, '_blank') : message.error('配置错误,请联系管理员')
                               }}/>
                             </Tooltip>,
                             <Tooltip placement="bottom" title="复制">
@@ -300,7 +300,7 @@ const Screen = (props: Props) => {
                       </div>
                       <div className={styles.edit} style={{display: item.id == id ? 'block' : 'none'}}>
                         <div className={styles.editBtn}><a onClick={() => {
-                          url != '' ? window.open(url + `#/${id}?token=${token}`, '_blank') : message.error('配置错误,请联系管理员')
+                          url != '' ? window.open(url + `#/?id=${id}&token=${token}`, '_blank') : message.error('配置错误,请联系管理员')
                         }}>编辑</a></div>
                       </div>
                     </Card>
