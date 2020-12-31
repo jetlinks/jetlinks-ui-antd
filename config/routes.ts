@@ -334,16 +334,16 @@ export const routes = [
                         tenant: ['admin'],
                         authority: ['rule-model', 'rule-instance', 'sql-rule', 'admin'],
                         routes: [
-                            {
-                                path: '/rule-engine/model',
-                                name: '规则模型',
-                                icon: 'gateway',
-                                tenant: ['admin'],
-                                iconfont: 'icon-xian-buguize-moxing',
-                                authority: ['rule-model', 'admin'],
-                                version: 'pro',
-                                component: './rule-engine/model',
-                            },
+                            // {
+                            //     path: '/rule-engine/model',
+                            //     name: '规则模型',
+                            //     icon: 'gateway',
+                            //     tenant: ['admin'],
+                            //     iconfont: 'icon-xian-buguize-moxing',
+                            //     authority: ['rule-model', 'admin'],
+                            //     version: 'pro',
+                            //     component: './rule-engine/model',
+                            // },
                             {
                                 path: '/rule-engine/instance',
                                 name: '规则实例',
@@ -368,6 +368,7 @@ export const routes = [
                                 name: '场景联动',
                                 icon: 'codeSandbox',
                                 authority: ['rule-scene', 'admin'],
+                                version: 'pro',
                                 component: './rule-engine/scene'
                             }
                             // {
