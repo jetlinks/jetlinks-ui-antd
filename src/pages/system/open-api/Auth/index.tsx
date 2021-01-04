@@ -94,6 +94,10 @@ const Auth = (props: Props) => {
             width="50VW"
             visible
             onClose={() => props.close()}
+            bodyStyle={{
+                overflow: 'auto',
+                height: '800px'
+            }}
         >
             <Tree
                 defaultExpandAll
@@ -136,7 +140,7 @@ const Auth = (props: Props) => {
                     保存
                 </Button>
             </div>
-        </Drawer>
+        </Drawer >
     )
 }
 export default Auth;
