@@ -29,6 +29,7 @@ interface State {
   configName: string;
   classified: any[];
   classifiedData: any;
+  defaultMetadata: string;
 }
 
 const Save: React.FC<Props> = props => {
@@ -40,6 +41,7 @@ const Save: React.FC<Props> = props => {
     configForm: [],
     classified: [],
     classifiedData: {},
+    defaultMetadata: '{"events":[],"properties":[],"functions":[],"tags":[]}'
   };
   const systemVersion = localStorage.getItem('system-version');
 
@@ -52,6 +54,9 @@ const Save: React.FC<Props> = props => {
   const [protocolTransports, setProtocolTransports] = useState(initState.protocolTransports);
   const [classified, setClassified] = useState(initState.classified);
   const [classifiedData, setClassifiedData] = useState(initState.classifiedData);
+  
+  //默认物模型
+  const [defaultMetadata, setDefaultMetadata] = useState(initState.defaultMetadata);
 
   const [photoUrl, setPhotoUrl] = useState(props.data?.photoUrl);
   const [classifiedVisible, setClassifiedVisible] = useState(false);
@@ -71,6 +76,20 @@ const Save: React.FC<Props> = props => {
       });
   };
 
+  const getDefaultModel = (id:string, transport: string) => {
+    apis.deviceProdcut
+    .getDefaultModel(id, transport)
+    .then(res => {
+      if(res.status === 200){
+        setDefaultMetadata(res.result);
+      }else{
+        setDefaultMetadata('{"events":[],"properties":[],"functions":[],"tags":[]}');
+      }
+    })
+    .catch(() => {
+      setDefaultMetadata('{"events":[],"properties":[],"functions":[],"tags":[]}');
+    });
+  }
   useEffect(() => {
     apis.deviceProdcut
       .protocolSupport()
@@ -243,7 +262,11 @@ const Save: React.FC<Props> = props => {
         sm: { span: 24 },
       },
       component: (
-        <Select placeholder="请选择">
+        <Select placeholder="请选择" onChange={(value: string) => {
+          if(value !== "" && value !== undefined && props.form.getFieldsValue().id !== "" && props.form.getFieldsValue().id !== undefined){
+            getDefaultModel(props.form.getFieldsValue().id, value);
+          }
+        }}>
           {protocolTransports.map(e => (
             <Select.Option value={e.id} key={e.id}>
               {e.name}
@@ -336,7 +359,7 @@ const Save: React.FC<Props> = props => {
         state: 0,
         ...fileValue,
         photoUrl,
-        metadata: '{"events":[],"properties":[],"functions":[],"tags":[]}',
+        metadata: defaultMetadata,//'{"events":[],"properties":[],"functions":[],"tags":[]}',
         protocolName: protocol.name,
         classifiedId: classifiedData.id,
         classifiedName: classifiedData.name
