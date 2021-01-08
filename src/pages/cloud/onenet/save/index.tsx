@@ -31,7 +31,7 @@ const Save: React.FC<Props> = props => {
                 }
             })
         })
-    }
+    };
     return (
         <Modal
             width='40VW'
@@ -51,8 +51,8 @@ const Save: React.FC<Props> = props => {
                                     initialValue: props.data?.id,
                                     rules: [{ required: true, message: '请选择' }],
                                 })(
-                                    <Select disabled={props.data.id ? true : false} placeholder="请选择" allowClear onChange={(value: string) => {
-                                        let data = ''
+                                    <Select disabled={!!props.data.id} placeholder="请选择" allowClear onChange={(value: string) => {
+                                        let data = '';
                                         if(value !== '' && productList){
                                             data = productList.filter((item: any) => {
                                                 return item.id === value
@@ -121,5 +121,5 @@ const Save: React.FC<Props> = props => {
             </div>
         </Modal>
     )
-}
+};
 export default Form.create<Props>()(Save);
