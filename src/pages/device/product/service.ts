@@ -1,6 +1,6 @@
 import request from "@/utils/request";
 import { DeviceProduct } from "./data";
-import { DeviceInstance } from "@/pages/device/instance/data";
+import { notification } from "antd";
 
 export async function list(params: any) {
   return request(`/jetlinks/device-product/_query`, {
@@ -187,5 +187,22 @@ export async function getOtherModel(id: string, data: any) {
   return request(`/jetlinks/device/product/metadata/convert-to/${id}`,{
     method: 'post',
     data
+  })
+}
+//获取默认物模型
+export async function getDefaultModel(id: string, transport: string) {
+  return request(`/jetlinks/protocol/${id}/${transport}/metadata`,{
+    method: 'get',
+    errorHandler: (error) => {
+      const { response } = error;
+      if(response.status === 404 || response.status === 500){
+        console.error(response)
+      }else{
+        notification.error({
+          key: 'error',
+          message: response.statusText,
+        });
+      }
+    }
   })
 }

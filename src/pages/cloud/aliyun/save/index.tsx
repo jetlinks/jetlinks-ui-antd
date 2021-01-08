@@ -23,7 +23,7 @@ const Save: React.FC<Props> = props => {
     const [productKeyList, setProductKeyList] = useState([]);
     const [deviceList, setDeviceList] = useState<any>([]);
     const [serveIdList, setServeIdList] = useState([]);
-    const [regionIdList] = useState(['cn-qingdao', 'cn-beijing', 'cn-zhangjiakou', 'cn-huhehaote', 'cn-wulanchabu', 'cn-hangzhou', 'cn-shanghai', 'cn-shenzhen', 'cn-heyuan', 'cn-guangzhou', 'cn-chengdu'])
+    const [regionIdList] = useState(['cn-qingdao', 'cn-beijing', 'cn-zhangjiakou', 'cn-huhehaote', 'cn-wulanchabu', 'cn-hangzhou', 'cn-shanghai', 'cn-shenzhen', 'cn-heyuan', 'cn-guangzhou', 'cn-chengdu']);
 
     useEffect(() => {
         setBridgeConfigs(props.data.bridgeConfigs || [
@@ -34,7 +34,7 @@ const Save: React.FC<Props> = props => {
                 bridgeDeviceSecret: "",
                 http2Endpoint: ""
             }
-        ])
+        ]);
         setAccessConfig(props.data?.accessConfig || {
             regionId: "",
             apiEndpoint: "",
@@ -42,26 +42,26 @@ const Save: React.FC<Props> = props => {
             accessKeyId: "",
             accessSecret: "",
             productKey: ""
-        })
+        });
         apis.aliyun.getNodesList().then(res => {
             if (res.status === 200) {
                 setServeIdList(res.result)
             }
-        })
+        });
         apis.aliyun.productList({}).then(res => {
             if (res.status === 200) {
                 setProductList(res.result)
             }
-        })
+        });
 
         apis.aliyun.protocolSupport().then(res => {
             if (res.status === 200) {
                 setProtocolSupport(res.result)
             }
-        })
+        });
         if (props.data.accessConfig) {
-            getBridge(props.data?.accessConfig)
-            let item = props.data?.accessConfig
+            getBridge(props.data?.accessConfig);
+            let item = props.data?.accessConfig;
             props.data.bridgeConfigs.map((i: any, index: number) => {
                 let param = {
                     regionId: item.regionId,
@@ -70,10 +70,10 @@ const Save: React.FC<Props> = props => {
                     authEndpoint: item.authEndpoint,
                     accessKeyId: item.accessKeyId,
                     productKey: i.bridgeProductKey
-                }
+                };
                 apis.aliyun.getDevices(param).then(res => {
                     if (res.status === 200) {
-                        deviceList[index] = res.result?.data || []
+                        deviceList[index] = res.result?.data || [];
                         setDeviceList([...deviceList])
                     }
                 })
@@ -90,7 +90,7 @@ const Save: React.FC<Props> = props => {
                 }
             })
         })
-    }
+    };
     const getBridge = (params: any) => {
         if (params.regionId !== '' && params.accessSecret !== '' && params.apiEndpoint !== '' && params.authEndpoint !== '' && params.accessKeyId !== '') {
             let param = {
@@ -99,14 +99,14 @@ const Save: React.FC<Props> = props => {
                 apiEndpoint: params.apiEndpoint,
                 authEndpoint: params.authEndpoint,
                 accessKeyId: params.accessKeyId,
-            }
+            };
             apis.aliyun.getProducts(param).then(res => {
                 if (res.status === 200) {
                     setProductKeyList(res.result?.data || [])
                 }
             })
         }
-    }
+    };
 
     return (
         <Modal
@@ -186,15 +186,15 @@ const Save: React.FC<Props> = props => {
                                             option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
                                         }
                                         onBlur={(value) => {
-                                            let temp = form.getFieldValue('accessConfig.productKey')
+                                            let temp = form.getFieldValue('accessConfig.productKey');
                                             form.setFieldsValue({
                                                 accessConfig: {
                                                     apiEndpoint: `https://iot.${value}.aliyuncs.com`,
                                                     authEndpoint: `https://iot-auth.${value}.aliyuncs.com/auth/bridge`,
                                                     http2Endpoint: `https://${temp}.iot-as-http2.${value}.aliyuncs.com`,
                                                 }
-                                            })
-                                            let params = form.getFieldValue('accessConfig')
+                                            });
+                                            let params = form.getFieldValue('accessConfig');
                                             getBridge({
                                                 regionId: value,
                                                 accessSecret: params.accessSecret,
@@ -230,7 +230,7 @@ const Save: React.FC<Props> = props => {
                                     initialValue: accessConfig?.accessKeyId,
                                     rules: [{ required: true, message: '请输入' }],
                                 })(<Input placeholder="请输入" onBlur={(e) => {
-                                    let params = form.getFieldValue('accessConfig')
+                                    let params = form.getFieldValue('accessConfig');
                                     getBridge({
                                         regionId: params.regionId,
                                         accessSecret: params.accessSecret,
@@ -247,7 +247,7 @@ const Save: React.FC<Props> = props => {
                                     initialValue: accessConfig?.accessSecret,
                                     rules: [{ required: true, message: '请输入' }],
                                 })(<Input placeholder="请输入" onBlur={(e) => {
-                                    let params = form.getFieldValue('accessConfig')
+                                    let params = form.getFieldValue('accessConfig');
                                     getBridge({
                                         regionId: params.regionId,
                                         accessSecret: e.target.value,
@@ -307,13 +307,13 @@ const Save: React.FC<Props> = props => {
                                                         })(
                                                             <AutoComplete placeholder="请选择" allowClear
                                                                 onBlur={(value: SelectValue) => {
-                                                                    let temp = form.getFieldValue('accessConfig.regionId')
-                                                                    let bridge = form.getFieldValue('bridgeConfigs')
-                                                                    bridge[index].http2Endpoint = `https://${value}.iot-as-http2.${temp}.aliyuncs.com`
+                                                                    let temp = form.getFieldValue('accessConfig.regionId');
+                                                                    let bridge = form.getFieldValue('bridgeConfigs');
+                                                                    bridge[index].http2Endpoint = `https://${value}.iot-as-http2.${temp}.aliyuncs.com`;
                                                                     form.setFieldsValue({
                                                                         bridgeConfigs: bridge
-                                                                    })
-                                                                    let config = form.getFieldValue('accessConfig')
+                                                                    });
+                                                                    let config = form.getFieldValue('accessConfig');
                                                                     if (config.regionId !== '' && config.apiEndpoint !== '' &&
                                                                         config.authEndpoint !== '' && config.accessKeyId !== '' && config.accessSecret !== '' && value !== '') {
                                                                         apis.aliyun.getDevices({
@@ -325,7 +325,7 @@ const Save: React.FC<Props> = props => {
                                                                             accessKeyId: config.accessKeyId,
                                                                         }).then(res => {
                                                                             if (res.status === 200) {
-                                                                                deviceList[index] = res.result?.data || []
+                                                                                deviceList[index] = res.result?.data || [];
                                                                                 setDeviceList([...deviceList])
                                                                             }
                                                                         })
@@ -345,17 +345,17 @@ const Save: React.FC<Props> = props => {
                                                             rules: [{ required: true, message: '网桥DeviceName' }],
                                                         })(
                                                             <AutoComplete placeholder="网桥DeviceName" allowClear onBlur={(value: SelectValue) => {
-                                                                let secret = ''
+                                                                let secret = '';
                                                                 if (value !== '' && value !== undefined) {
                                                                     let data: any[] = deviceList[index].filter((i: any) => {
                                                                         return i.deviceName === value
-                                                                    })
+                                                                    });
                                                                     if(data.length > 0){
                                                                         secret = data[0].deviceSecret
                                                                     }
                                                                 }
-                                                                let bridge = form.getFieldValue('bridgeConfigs')
-                                                                bridge[index].bridgeDeviceSecret = secret
+                                                                let bridge = form.getFieldValue('bridgeConfigs');
+                                                                bridge[index].bridgeDeviceSecret = secret;
                                                                 form.setFieldsValue({
                                                                     bridgeConfigs: bridge
                                                                 })
@@ -391,7 +391,7 @@ const Save: React.FC<Props> = props => {
                                             <Tooltip title="删除">
                                                 <MinusCircleOutlined
                                                     onClick={() => {
-                                                        bridgeConfigs.splice(index, 1)
+                                                        bridgeConfigs.splice(index, 1);
                                                         setBridgeConfigs([...bridgeConfigs]);
                                                     }}
                                                 />
@@ -410,7 +410,7 @@ const Save: React.FC<Props> = props => {
                                 bridgeDeviceName: "",
                                 bridgeDeviceSecret: "",
                                 http2Endpoint: ""
-                            }])
+                            }]);
                             setDeviceList([...deviceList, {}])
                         }}
                     >添加</Button>
@@ -418,6 +418,6 @@ const Save: React.FC<Props> = props => {
             </div>
         </Modal>
     )
-}
+};
 
 export default Form.create<Props>()(Save);
