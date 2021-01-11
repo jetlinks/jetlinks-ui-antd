@@ -1,19 +1,35 @@
-import React, { useEffect, useState } from 'react';
-import { FormComponentProps } from 'antd/lib/form';
+import React, {useEffect, useState} from 'react';
+import {FormComponentProps} from 'antd/lib/form';
 import Form from 'antd/es/form';
-import { Avatar, Button, Card, Cascader, Col, Icon, Input, message, Radio, Row, Select, Spin, Tooltip, TreeSelect, Upload } from 'antd';
-import { DeviceProduct } from '../../data';
-import { FormItemConfig } from '@/utils/common';
+import {
+  Avatar,
+  Button,
+  Card,
+  Cascader,
+  Col,
+  Icon,
+  Input,
+  message,
+  Radio,
+  Row,
+  Select,
+  Spin,
+  Tooltip,
+  TreeSelect,
+  Upload
+} from 'antd';
+import {DeviceProduct} from '../../data';
+import {FormItemConfig} from '@/utils/common';
 import apis from '@/services';
 import styles from "@/pages/device/product/save/add/index.less";
 import productImg from "@/pages/device/product/img/product.png";
-import { UploadProps } from "antd/lib/upload";
-import { getAccessToken } from "@/utils/authority";
-import { UploadOutlined } from "@ant-design/icons/lib";
-import { PageHeaderWrapper } from "@ant-design/pro-layout";
+import {UploadProps} from "antd/lib/upload";
+import {getAccessToken} from "@/utils/authority";
+import {UploadOutlined} from "@ant-design/icons/lib";
+import {PageHeaderWrapper} from "@ant-design/pro-layout";
 import Classified from '@/pages/device/product/save/add/classified';
-import { ProtocolItem } from "@/pages/device/protocol/data";
-import { router } from "umi";
+import {ProtocolItem} from "@/pages/device/protocol/data";
+import {router} from "umi";
 
 interface Props extends FormComponentProps {
   data?: Partial<DeviceProduct>;
@@ -54,7 +70,7 @@ const Save: React.FC<Props> = props => {
   const [protocolTransports, setProtocolTransports] = useState(initState.protocolTransports);
   const [classified, setClassified] = useState(initState.classified);
   const [classifiedData, setClassifiedData] = useState(initState.classifiedData);
-  
+
   //默认物模型
   const [defaultMetadata, setDefaultMetadata] = useState(initState.defaultMetadata);
 
@@ -89,7 +105,7 @@ const Save: React.FC<Props> = props => {
     .catch(() => {
       setDefaultMetadata('{"events":[],"properties":[],"functions":[],"tags":[]}');
     });
-  }
+  };
   useEffect(() => {
     apis.deviceProdcut
       .protocolSupport()
@@ -163,7 +179,7 @@ const Save: React.FC<Props> = props => {
       key: 'name',
       options: {
         rules: [
-          { required: true, message: '请选择产品名称' },
+          { required: true, message: '请输入产品名称' },
           { max: 200, message: '产品名称不超过200个字符' }
         ],
         initialValue: props.data?.name,
