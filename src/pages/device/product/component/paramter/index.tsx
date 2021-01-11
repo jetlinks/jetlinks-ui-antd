@@ -19,6 +19,7 @@ import { groupBy } from 'lodash';
 import { Unit } from '@/utils/unit';
 import { ProductContext } from '../../context';
 import apis from '@/services';
+import _ from 'lodash';
 
 interface Props {
   save: (data: any) => void;
@@ -99,7 +100,7 @@ const Paramter: React.FC<Props> = props => {
                   data.valueType.lementType.unit = value;
                   setData({ ...data });
                 }}
-                value={data.valueType.elementType.unit}
+                value={data.valueType?.elementType?.unit}
               >
                 {Array.from(new Set<string>(props.unitsData.map((unit: any) => {
                   return unit.type;
@@ -159,7 +160,7 @@ const Paramter: React.FC<Props> = props => {
                   data.valueType.elementType.expands.maxLength = value.target.value;
                   setData({ ...data });
                 }}
-                value={data.valueType.elementType.expands.maxLength}
+                value={data.valueType?.elementType?.expands?.maxLength}
               />
             </Form.Item>
           </div>
@@ -174,7 +175,7 @@ const Paramter: React.FC<Props> = props => {
                     data.valueType.elementType.trueText = value.target.value;
                     setData({ ...data });
                   }}
-                  value={data.valueType.elementType.trueText || '是'}
+                  value={data.valueType?.elementType?.trueText || '是'}
 
                   placeholder="trueText" />
               </Col>
@@ -188,7 +189,7 @@ const Paramter: React.FC<Props> = props => {
                       data.valueType.elementType.trueValue = value.target.value;
                       setData({ ...data });
                     }}
-                    value={data.valueType.elementType.trueValue || true}
+                    value={data.valueType?.elementType?.trueValue || true}
                     placeholder="trueValue" />
                 </Form.Item>
               </Col>
@@ -200,7 +201,7 @@ const Paramter: React.FC<Props> = props => {
                     data.valueType.elementType.falseText = value.target.value || '否';
                     setData({ ...data });
                   }}
-                  value={data.valueType.elementType.falseText || true}
+                  value={data.valueType?.elementType?.falseText || true}
                   placeholder="falseText" />
               </Col>
               <Col span={2} push={1}>
@@ -213,7 +214,7 @@ const Paramter: React.FC<Props> = props => {
                       data.valueType.elementType.falseValue = value.target.value || '否';
                       setData({ ...data });
                     }}
-                    value={data.valueType.elementType.falseValue || false}
+                    value={data.valueType?.elementType?.falseValue || false}
                     placeholder="falseValue" />
                 </Form.Item>
               </Col>
@@ -229,7 +230,7 @@ const Paramter: React.FC<Props> = props => {
                   data.valueType.elementType.format = value;
                   setData({ ...data });
                 }}
-                value={data.valueType.elementType.format}
+                value={data.valueType?.elementType?.format}
                 dataSource={dataSource}
                 placeholder="默认格式：String类型的UTC时间戳 (毫秒)"
                 filterOption={(inputValue, option) =>
@@ -368,15 +369,17 @@ const Paramter: React.FC<Props> = props => {
           <Form.Item label="文件类型">
             <Select
               onChange={(value: any) => {
-                data.valueType.elementType.fileType = value;
+                // data.valueType.elementType.fileType = value;
+                _.set(data, 'valueType.elementType.fileType', value);
                 setData({ ...data });
+
               }}
-              value={data.valueType.elementType.fileType}
+              value={data.valueType?.elementType?.fileType}
             >
               <Select.Option value="url">URL(链接)</Select.Option>
               <Select.Option value="base64">Base64(Base64编码)</Select.Option>
               <Select.Option value="binary">Binary(二进制)</Select.Option>
-            </Select>,
+            </Select>
 
           </Form.Item>
         );
@@ -389,7 +392,7 @@ const Paramter: React.FC<Props> = props => {
                   data.valueType.elementType.expands.maxLength = value;
                   setData({ ...data });
                 }}
-                value={data.valueType.elementType.expands.maxLength}
+                value={data.valueType?.elementType?.expands?.maxLength}
                 addonAfter="字节" />
             </Form.Item>
           </div>
@@ -495,7 +498,7 @@ const Paramter: React.FC<Props> = props => {
             <Form.Item label="布尔值" style={{ height: 69 }}>
               <Col span={11}>
                 <Input
-                  value={data.valueType.trueText}
+                  value={data.valueType?.trueText}
                   placeholder="trueText"
                   onChange={event => {
                     data.valueType.trueText = event.target.value || '是';
@@ -509,7 +512,7 @@ const Paramter: React.FC<Props> = props => {
               <Col span={11}>
                 <Form.Item>
                   <Input
-                    value={data.valueType.trueValue}
+                    value={data.valueType?.trueValue}
                     placeholder="trueValue"
                     onChange={event => {
                       data.valueType.trueValue = event.target.value || true;
@@ -522,7 +525,7 @@ const Paramter: React.FC<Props> = props => {
             <Form.Item style={{ height: 69 }}>
               <Col span={11}>
                 <Input
-                  value={data.valueType.falseText}
+                  value={data.valueType?.falseText}
                   placeholder="falseText"
                   onChange={event => {
                     data.valueType.falseText = event.target.value || '否';
@@ -536,7 +539,7 @@ const Paramter: React.FC<Props> = props => {
               <Col span={11}>
                 <Form.Item>
                   <Input
-                    value={data.valueType.falseValue}
+                    value={data.valueType?.falseValue}
                     placeholder="falseValue"
                     onChange={event => {
                       data.valueType.falseValue = event.target.value || false;
@@ -553,7 +556,7 @@ const Paramter: React.FC<Props> = props => {
           <div>
             <Form.Item label="时间格式">
               <AutoComplete dataSource={dataSource} placeholder="默认格式：String类型的UTC时间戳 (毫秒)"
-                value={data.valueType.format}
+                value={data.valueType?.format}
                 onChange={value => {
                   data.valueType.format = value;
                   setData({ ...data });
@@ -571,9 +574,11 @@ const Paramter: React.FC<Props> = props => {
             <Form.Item label="元素类型">
               <Select
                 placeholder="请选择"
+                value={data.valueType?.expands?.elementType?.type}
                 onChange={(value: string) => {
                   setAType(value);
-                  getMetadata(undefined, value)
+                  _.set(data, 'valueType.expands.elementType.type', value);
+                  setData({ ...data });
                 }}
               >
                 <Select.OptGroup label="基本类型">
@@ -752,7 +757,7 @@ const Paramter: React.FC<Props> = props => {
             <Form.Item label="密码长度">
               <Input
                 addonAfter="字节"
-                value={data.valueType.expands.maxLength}
+                value={data.valueType?.expands?.maxLength}
                 onChange={event => {
                   data.valueType.expands.maxLength = event.target.value;
                   setData({ ...data });
