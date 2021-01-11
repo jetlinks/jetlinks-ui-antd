@@ -304,7 +304,7 @@ export const routes = [
                         iconfont: 'icon-tongzhiguanli',
                         icon: 'message',
                         tenant: ['admin', 'member'],
-                        authority: ['certificate', 'network-config', 'device-gateway', , 'template', 'notifier', 'admin'],
+                        authority: ['certificate', 'network-config', 'device-gateway', 'template', 'notifier', 'admin'],
                         routes: [
                             {
                                 path: '/notice/config',
@@ -391,6 +391,7 @@ export const routes = [
                         icon: 'desktop',
                         tenant: ['admin'],
                         iconfont: 'icon-icon-',
+                        version: 'pro',
                         authority: ['big-screen', 'admin', 'vis-configuration'],
                         routes: [
                             {
