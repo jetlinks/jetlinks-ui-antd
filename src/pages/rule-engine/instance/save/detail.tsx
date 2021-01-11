@@ -243,14 +243,14 @@ const Detail: React.FC<Props> = props => {
         resp.result.data.map((item: any) => {
           if (nodeData.length > 0) {
             datalist.push({
-              time: item.createTime,
+              time: item.timestamp,
               nodeId: nodeData.filter((x: any) => x.id === item.nodeId).map((i: any) => i.name),
               message: item.message,
               level: item.level
             })
           } else {
             datalist.push({
-              time: item.createTime,
+              time: item.timestamp,
               nodeId: nodeMap.get(item.nodeId) || '--',
               message: item.message,
               level: item.level
@@ -481,7 +481,7 @@ const Detail: React.FC<Props> = props => {
               <Table
                 onChange={eventsChange}
                 dataSource={dataEvents.datalist || []}
-                rowKey={(item: any) => item.id}
+                rowKey={(item: any) => item.time}
                 columns={columnsEvents}
                 // showHeader={false}
                 pagination={{
@@ -527,7 +527,7 @@ const Detail: React.FC<Props> = props => {
               </div>
               <Table
                 dataSource={dataLogs.datalist || []}
-                rowKey={(item: any) => item.id}
+                rowKey={(item: any) => item.time}
                 columns={columns}
                 // showHeader={false}
                 onChange={logsChange}
