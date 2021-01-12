@@ -13,11 +13,12 @@ interface Props extends FormComponentProps {
 
 const Save: React.FC<Props> = props => {
 
-  const { form: {getFieldDecorator} } = props;
+  const {form: {getFieldDecorator}} = props;
 
   const service = new Service('dueros/product');
 
   const [productList, setProductList] = useState<any[]>([]);
+  const [mediaServerList, setMediaServerList] = useState<any[]>([]);
 
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -26,16 +27,23 @@ const Save: React.FC<Props> = props => {
       setProductList(data);
     }, () => {
     }, () => setLoading(false));
+
+    service.mediaServer({}).subscribe((data) => {
+      setMediaServerList(data);
+    }, () => {
+    }, () => setLoading(false))
   };
 
   useEffect(() => initValue(), [loading]);
 
   const saveData = () => {
     const {form} = props;
+    const id = props.data?.id;
+
     form.validateFields((err, fileValue) => {
       if (err) return;
 
-      props.save(fileValue);
+      props.save({...fileValue}, id);
     });
   };
 
@@ -53,14 +61,14 @@ const Save: React.FC<Props> = props => {
     >
       <Spin spinning={loading}>
         <Form labelCol={{span: 3}} wrapperCol={{span: 21}}>
-          <Form.Item key="name" label="网关名称">
+          <Form.Item key="name" label="信令名称">
             {getFieldDecorator('name', {
               rules: [
-                {required: true, message: '请输入国标网关名称'},
-                {max: 200, message: '国标网关名称不超过200个字符'}
+                {required: true, message: '请输入信令名称'},
+                {max: 200, message: '信令名称不超过200个字符'}
               ],
               initialValue: props.data?.id,
-            })(<Input placeholder="请输入国标网关名称"/>)}
+            })(<Input placeholder="请输入信令名称"/>)}
           </Form.Item>
           <Form.Item key="productId" label="关联产品">
             {getFieldDecorator('productId', {
@@ -73,7 +81,7 @@ const Save: React.FC<Props> = props => {
                     key={JSON.stringify({productId: item.id, productName: item.name})}
                     value={item.id}
                   >
-                    {item.name}
+                    {`${item.name}(${item.id})`}
                   </Select.Option>
                 ))}
               </Select>,
@@ -85,12 +93,12 @@ const Save: React.FC<Props> = props => {
               initialValue: props.data?.mediaServerId,
             })(
               <Select placeholder="请选择流媒体服务">
-                {(productList || []).map(item => (
+                {(mediaServerList || []).map(item => (
                   <Select.Option
-                    key={JSON.stringify({productId: item.id, productName: item.name})}
+                    key={JSON.stringify({mediaServerId: item.id, mediaServerName: item.name})}
                     value={item.id}
                   >
-                    {item.name}
+                    {`${item.name}(${item.id})`}
                   </Select.Option>
                 ))}
               </Select>,
@@ -101,47 +109,47 @@ const Save: React.FC<Props> = props => {
               <Form.Item key="name" label="SIP ID" labelCol={{span: 6}} wrapperCol={{span: 18}}>
                 {getFieldDecorator('sipConfig.sipId', {
                   rules: [
-                    {required: true, message: '请输入国标网关SIP ID'}
+                    {required: true, message: '请输入信令SIP ID'}
                   ],
                   initialValue: props.data?.sipConfig?.sipId,
-                })(<Input placeholder="请输入国标网关SIP ID"/>)}
+                })(<Input placeholder="请输入信令SIP ID"/>)}
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item key="name" label="SIP 域" labelCol={{span: 6}} wrapperCol={{span: 18}}>
                 {getFieldDecorator('sipConfig.domain', {
                   rules: [
-                    {required: true, message: '请输入国标网关SIP 域'}
+                    {required: true, message: '请输入信令SIP 域'}
                   ],
                   initialValue: props.data?.sipConfig?.domain,
-                })(<Input placeholder="请输入国标网关SIP 域"/>)}
+                })(<Input placeholder="请输入信令SIP 域"/>)}
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item key="name" label="SIP Host" labelCol={{span: 6}} wrapperCol={{span: 18}}>
                 {getFieldDecorator('sipConfig.localAddress', {
                   rules: [
-                    {required: true, message: '请输入国标网关SIP Host'}
+                    {required: true, message: '请输入信令SIP Host'}
                   ],
                   initialValue: props.data?.sipConfig?.localAddress,
-                })(<Input placeholder="请输入国标网关SIP Host"/>)}
+                })(<Input placeholder="请输入信令SIP Host"/>)}
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item key="name" label="接入密码" labelCol={{span: 6}} wrapperCol={{span: 18}}>
                 {getFieldDecorator('sipConfig.password', {
                   rules: [
-                    {required: true, message: '请输入国标网关接入密码'}
+                    {required: true, message: '请输入信令接入密码'}
                   ],
                   initialValue: props.data?.sipConfig?.password,
-                })(<Input.Password placeholder="请输入国标网关接入密码"/>)}
+                })(<Input.Password placeholder="请输入信令接入密码"/>)}
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item key="name" label="端口" labelCol={{span: 6}} wrapperCol={{span: 18}}>
                 {getFieldDecorator('sipConfig.port', {
                   rules: [
-                    {required: true, message: '请输入国标网关端口'}
+                    {required: true, message: '请输入信令端口'}
                   ],
                   initialValue: props.data?.sipConfig?.port,
                 })(<InputNumber placeholder="端口" style={{width: '100%'}}/>)}
@@ -151,10 +159,10 @@ const Save: React.FC<Props> = props => {
               <Form.Item key="name" label="公网端口" labelCol={{span: 6}} wrapperCol={{span: 18}}>
                 {getFieldDecorator('sipConfig.publicPort', {
                   rules: [
-                    {required: true, message: '请输入国标公网端口'}
+                    {required: true, message: '请输入信令端口'}
                   ],
                   initialValue: props.data?.sipConfig?.publicPort,
-                })(<InputNumber placeholder="请输入国标公网端口" style={{width: '100%'}}/>)}
+                })(<InputNumber placeholder="请输入信令端口" style={{width: '100%'}}/>)}
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -185,4 +193,3 @@ const Save: React.FC<Props> = props => {
 };
 
 export default Form.create<Props>()(Save);
-

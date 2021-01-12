@@ -27,6 +27,7 @@ const MediaGateway: React.FC<Props> = () => {
   const [saveVisible, setSaveVisible] = useState<boolean>(false);
   const [mediaGateway, setMediaGateway] = useState<any>({});
   const [productList, setProductList] = useState<any[]>([]);
+  const [mediaServerList, setMediaServerList] = useState<any[]>([]);
   const [searchParam, setSearchParam] = useState(initState.searchParam);
 
   useEffect(() => {
@@ -34,6 +35,11 @@ const MediaGateway: React.FC<Props> = () => {
     service.queryProduct({}).subscribe((data) => {
       const temp = data.map((item: any) => ({value: item.id, label: item.name, ...item}));
       setProductList(temp);
+    });
+
+    service.mediaServer({}).subscribe((data) => {
+      const temp = data.map((item: any) => ({value: item.id, label: item.name, ...item}));
+      setMediaServerList(temp);
     })
   }, []);
 
@@ -69,6 +75,10 @@ const MediaGateway: React.FC<Props> = () => {
 
   const getProductName = (productId: string) => {
     const protocol: Partial<any> = productList.find(i => i.id === productId) || {};
+    return protocol.name;
+  };
+  const getMediaServerName = (mediaServerId: string) => {
+    const protocol: Partial<any> = mediaServerList.find(i => i.id === mediaServerId) || {};
     return protocol.name;
   };
 
@@ -117,6 +127,15 @@ const MediaGateway: React.FC<Props> = () => {
                     type: 'list',
                     props: {
                       data: productList,
+                      mode: 'multiple'
+                    }
+                  },
+                  {
+                    label: '流媒体服务',
+                    key: 'mediaServerId$IN',
+                    type: 'list',
+                    props: {
+                      data: mediaServerList,
                       mode: 'multiple'
                     }
                   }
@@ -213,7 +232,8 @@ const MediaGateway: React.FC<Props> = () => {
                           </div>
                           <div style={{width: '33.33%', textAlign: 'center'}}>
                             <p>流媒体服务</p>
-                            <AutoHide title={item.mediaServerId} style={{width: '95%', fontWeight: 600}}/>
+                            <AutoHide title={getMediaServerName(item.mediaServerId)}
+                                      style={{width: '95%', fontWeight: 600}}/>
                           </div>
                           <div style={{width: '33.33%', textAlign: 'center'}}>
                             <p>启动状态</p>
@@ -254,16 +274,16 @@ const MediaGateway: React.FC<Props> = () => {
             data={mediaGateway}
             close={() => setSaveVisible(false)}
             save={(item: any) => {
-              console.log(item);
-              // service.saveOrUpdate(item).subscribe(data => {
-              //   message.success('添加成功');
-              //   },
-              //   () => {
-              //   },
-              //   () => {
-              //     handleSearch();
-              //     setSaveVisible(false);
-              //   });
+              service.saveOrUpdate(item).subscribe(() => {
+                  message.success('保存成功');
+                },
+                () => {
+                  message.error('保存失败');
+                },
+                () => {
+                  handleSearch();
+                  setSaveVisible(false);
+                });
             }}
           />
         )
