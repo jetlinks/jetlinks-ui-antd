@@ -509,6 +509,39 @@ export const routes = [
                         ]
                     },
                     {
+                        path: 'media',
+                        name: '视频管理',
+                        icon: 'youtube',
+                        version: 'pro',
+                        authority: ['gb28181-gateway','media-channel','media-server','media-stream','admin','gyf'],
+                        routes: [
+                            {
+                                path: '/media/media-server',
+                                name: '流媒体服务',
+                                version: 'pro',
+                                authority: ['media-server','admin','gyf'],
+                                icon: 'video-camera',
+                                component: './media/media-server',
+                            },
+                            {
+                                path: '/media/gateway',
+                                name: '信令服务',
+                                version: 'pro',
+                                authority: ['gb28181-gateway','admin','gyf'],
+                                icon: 'gateway',
+                                component: './media/gateway',
+                            },
+                            {
+                                path: '/media/reveal',
+                                name: '分屏展示',
+                                version: 'pro',
+                                authority: ['media-stream','admin','gyf'],
+                                icon: 'appstore',
+                                component: './media/reveal',
+                            },
+                        ]
+                    },
+                    {
                         path: 'account',
                         name: '个人中心',
                         icon: 'user',
