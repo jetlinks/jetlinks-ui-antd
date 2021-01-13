@@ -1,5 +1,5 @@
 import {PageHeaderWrapper} from "@ant-design/pro-layout"
-import {Badge, Card, Divider, message, Popconfirm} from "antd";
+import {Badge, Card, Divider, Popconfirm} from "antd";
 import React, {Fragment, useEffect, useState} from "react";
 import styles from '@/utils/table.less';
 import SearchForm from "@/components/SearchForm";
@@ -8,7 +8,6 @@ import {ColumnProps} from "antd/lib/table";
 import Service from "./service";
 import encodeQueryParam from "@/utils/encodeParam";
 import moment from "moment";
-import {router} from "umi";
 
 interface Props {
 
@@ -19,9 +18,9 @@ interface State {
 }
 
 const initState: State = {
-  searchParam: {pageSize: 8, terms: location?.query?.terms, sorts: {field: 'id', order: 'desc'}},
+  searchParam: {pageSize: 10, terms: location?.query?.terms, sorts: {field: 'id', order: 'desc'}},
 };
-const MediaDevice: React.FC<Props> = props => {
+const MediaDevice: React.FC<Props> = () => {
   const service = new Service('device/instance');
   const [loading, setLoading] = useState<boolean>(false);
   const [result, setResult] = useState<any>({});
@@ -115,7 +114,7 @@ const MediaDevice: React.FC<Props> = props => {
           >
             编辑
           </a>
-          <Divider type="vertical" />
+          <Divider type="vertical"/>
           <a
             onClick={() => {
               // router.push(`/device/instance/save/${record.id}`);
@@ -123,7 +122,7 @@ const MediaDevice: React.FC<Props> = props => {
           >
             查看通道
           </a>
-          <Divider type="vertical" />
+          <Divider type="vertical"/>
           <Popconfirm
             title="确认更新吗？"
             onConfirm={() => {
@@ -144,7 +143,7 @@ const MediaDevice: React.FC<Props> = props => {
               search={(params: any) => {
                 setSearchParam(params);
                 params.productId$IN = productList;
-                handleSearch({terms: {...params}, pageSize: 10});
+                handleSearch({terms: {...params}, pageSize: 10, sorts: {field: 'id', order: 'desc'}});
               }}
               formItems={[
                 {
@@ -166,6 +165,8 @@ const MediaDevice: React.FC<Props> = props => {
             columns={columns}
             rowKey="id"
             onSearch={(params: any) => {
+              params.terms = {productId$IN: productList};
+              params.sorts = {field: 'id', order: 'desc'};
               handleSearch(params);
             }}
             paginationConfig={result}

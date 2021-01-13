@@ -1,5 +1,5 @@
 import {PageHeaderWrapper} from "@ant-design/pro-layout"
-import {Card, Col, Row} from "antd";
+import {Card, Tabs} from 'antd';
 import React from "react";
 import GatewayInfo from "@/pages/media/gateway/save/index";
 import MediaServer from "@/pages/media/media-server/save/index"
@@ -12,18 +12,16 @@ const MediaDevice: React.FC<Props> = () => {
 
   return (
     <PageHeaderWrapper title="基本配置">
-      <Row gutter={24}>
-        <Col span={12}>
-          <Card title="流媒体服务配置">
+      <Card style={{width: '50%',marginLeft:'25%'}}>
+        <Tabs>
+          <Tabs.TabPane tab="流媒体服务配置" key="MediaServer">
             <MediaServer/>
-          </Card>
-        </Col>
-        <Col span={12}>
-          <Card title="信令服务配置">
+          </Tabs.TabPane>
+          <Tabs.TabPane tab="信令服务配置" key="GatewayInfo">
             <GatewayInfo/>
-          </Card>
-        </Col>
-      </Row>
+          </Tabs.TabPane>
+        </Tabs>
+      </Card>
     </PageHeaderWrapper>
   )
 };
