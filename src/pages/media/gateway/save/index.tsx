@@ -21,7 +21,7 @@ const Save: React.FC<Props> = props => {
   const [loading, setLoading] = useState<boolean>(true);
 
   const initValue = () => {
-    service.gatewayInfo("test").subscribe(data => {
+    service.gatewayInfo("gb28181_gateway").subscribe(data => {
       setData(data);
     }, () => {
     }, () => setLoading(false));
@@ -34,7 +34,7 @@ const Save: React.FC<Props> = props => {
     service.mediaServer({}).subscribe((data) => {
       setMediaServerList(data);
     }, () => {
-    }, () => setLoading(false))
+    }, () => setLoading(false));
   };
 
   useEffect(() => initValue(), [loading]);
@@ -46,9 +46,9 @@ const Save: React.FC<Props> = props => {
 
       //todo 统一界面，后期有需求就开放多网关和流媒体服务
 
-      fileValue.id = 'test';
-      fileValue.mediaServerId = 'test';
-      service.saveOrUpdate(fileValue).subscribe(() => {
+      fileValue.id = "gb28181_gateway";
+
+      service.saveGateway(fileValue).subscribe(() => {
           message.success('保存成功');
         },
         () => {
@@ -89,7 +89,7 @@ const Save: React.FC<Props> = props => {
             </Select>,
           )}
         </Form.Item>
-        {/*<Form.Item key="mediaServerId" label="流媒体服务">
+        <Form.Item key="mediaServerId" label="流媒体服务">
           {getFieldDecorator('mediaServerId', {
             rules: [{required: true, message: '请选择流媒体服务'}],
             initialValue: data?.mediaServerId,
@@ -105,7 +105,7 @@ const Save: React.FC<Props> = props => {
               ))}
             </Select>,
           )}
-        </Form.Item>*/}
+        </Form.Item>
         <Row>
           <Col span={12}>
             <Form.Item key="name" label="SIP ID" labelCol={{span: 6}} wrapperCol={{span: 18}}>

@@ -44,7 +44,19 @@ class Service extends BaseService<any> {
 
   public gatewayInfo = (id: string) => defer(
     () => from(request(`/jetlinks/media/gb28181/${id}`, {
-      method: 'GET'
+      method: 'GET',
+      errorHandler: () => {
+      }
+    }))
+      .pipe(
+        filter(resp => resp.status === 200),
+        map(resp => resp.result)
+      ));
+
+  public saveGateway = (data: any) => defer(
+    () => from(request(`/jetlinks/media/gb28181/`, {
+      method: 'PATCH',
+      data: data
     }))
       .pipe(
         filter(resp => resp.status === 200),
