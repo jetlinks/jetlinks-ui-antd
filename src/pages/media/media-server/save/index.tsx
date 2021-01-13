@@ -1,4 +1,4 @@
-import {Button, Input, InputNumber, message, Spin} from "antd";
+import {Button, Input, InputNumber, message, Select, Spin} from "antd";
 import React, {useEffect, useState} from "react";
 import Service from "../service";
 import Form from "antd/es/form";
@@ -21,20 +21,20 @@ const Save: React.FC<Props> = props => {
   const service = new Service('media/server');
 
   const [item, setItem] = useState(initState.item);
-  // const [providersList, setProvidersList] = useState<any[]>([]);
+  const [providersList, setProvidersList] = useState<any[]>([]);
 
   const [loading, setLoading] = useState<boolean>(true);
 
   const initValue = () => {
-    service.mediaServerInfo("test").subscribe(data => {
+    service.mediaServerInfo("gb28181_MediaServer").subscribe(data => {
       setItem(data);
     }, () => {
     }, () => setLoading(false));
 
-    // service.providersList().subscribe(data => {
-    //   setProvidersList(data);
-    // }, () => {
-    // }, () => setLoading(false));
+    service.providersList().subscribe(data => {
+      setProvidersList(data);
+    }, () => {
+    }, () => setLoading(false));
   };
 
   useEffect(() => initValue(), [loading]);
@@ -46,8 +46,8 @@ const Save: React.FC<Props> = props => {
 
       //todo 统一界面，后期有需求就开放多网关和流媒体服务
 
-      fileValue.id = "test";
-      service.saveOrUpdate(fileValue).subscribe((data) => {
+      fileValue.id = 'gb28181_MediaServer';
+      service.saveMediaServer(fileValue).subscribe((data) => {
           message.success('保存成功');
         },
         () => {
@@ -139,6 +139,25 @@ const Save: React.FC<Props> = props => {
             ],
             initialValue: item?.name,
           })(<Input placeholder="请输入流媒体名称"/>)}
+        </Form.Item>
+        <Form.Item key="provider" label="服务商">
+          {getFieldDecorator('provider', {
+            rules: [{required: true, message: '请选择服务商'}],
+            initialValue: item?.provider,
+          })(
+            <Select placeholder="服务商" onChange={(e) => {
+              setItem({provider: e})
+            }}>
+              {(providersList || []).map(item => (
+                <Select.Option
+                  key={JSON.stringify({providerId: item.id, providerName: item.name})}
+                  value={item.id}
+                >
+                  {`${item.name}(${item.id})`}
+                </Select.Option>
+              ))}
+            </Select>,
+          )}
         </Form.Item>
         {renderConfig()}
       </Form>

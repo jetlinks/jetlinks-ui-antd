@@ -14,7 +14,19 @@ class Service extends BaseService<any> {
 
   public mediaServerInfo = (id: string) => defer(
     () => from(request(`/jetlinks/media/server/${id}`, {
-      method: 'GET'
+      method: 'GET',
+      errorHandler: () => {
+      }
+    }))
+      .pipe(
+        filter(resp => resp.status === 200 || resp.status === 404),
+        map(resp => resp.result)
+      ));
+
+  public saveMediaServer = (data: any) => defer(
+    () => from(request(`/jetlinks/media/server/`, {
+      method: 'PATCH',
+      data: data
     }))
       .pipe(
         filter(resp => resp.status === 200),
