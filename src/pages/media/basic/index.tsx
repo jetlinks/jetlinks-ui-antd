@@ -15,10 +15,10 @@ const MediaDevice: React.FC<Props> = () => {
       <Card style={{width: '50%',marginLeft:'25%'}}>
         <Tabs>
           <Tabs.TabPane tab="流媒体服务配置" key="MediaServer">
-            <MediaServer/>
+            <MediaServer loading={true}/>
           </Tabs.TabPane>
           <Tabs.TabPane tab="信令服务配置" key="GatewayInfo">
-            <GatewayInfo/>
+            <GatewayInfo loading={true}/>
           </Tabs.TabPane>
         </Tabs>
       </Card>

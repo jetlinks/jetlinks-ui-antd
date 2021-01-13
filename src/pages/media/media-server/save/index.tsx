@@ -5,16 +5,19 @@ import Form from "antd/es/form";
 import {FormComponentProps} from "antd/lib/form";
 
 interface Props extends FormComponentProps {
+  loading: boolean
 }
 
 interface State {
   item: any;
+  loading: boolean;
 }
 
 const Save: React.FC<Props> = props => {
 
   const initState: State = {
     item: {},
+    loading: props.loading
   };
 
   const {form: {getFieldDecorator}, form} = props;
@@ -23,7 +26,7 @@ const Save: React.FC<Props> = props => {
   const [item, setItem] = useState(initState.item);
   const [providersList, setProvidersList] = useState<any[]>([]);
 
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(initState.loading);
 
   const initValue = () => {
     service.mediaServerInfo("gb28181_MediaServer").subscribe(data => {
@@ -37,7 +40,9 @@ const Save: React.FC<Props> = props => {
     }, () => setLoading(false));
   };
 
-  useEffect(() => initValue(), [loading]);
+  useEffect(() => {
+    initValue();
+  }, [props.loading]);
 
   const saveData = () => {
 
