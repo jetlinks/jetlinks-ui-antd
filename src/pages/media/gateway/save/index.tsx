@@ -5,10 +5,18 @@ import Form from "antd/es/form";
 import {FormComponentProps} from "antd/lib/form";
 
 interface Props extends FormComponentProps {
+  loading: boolean
+}
 
+interface State {
+  loading: boolean;
 }
 
 const Save: React.FC<Props> = props => {
+
+  const initState: State = {
+    loading: props.loading,
+  };
 
   const {form: {getFieldDecorator}, form} = props;
 
@@ -18,7 +26,7 @@ const Save: React.FC<Props> = props => {
   const [productList, setProductList] = useState<any[]>([]);
   const [mediaServerList, setMediaServerList] = useState<any[]>([]);
 
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(initState.loading);
 
   const initValue = () => {
     service.gatewayInfo("gb28181_gateway").subscribe(data => {
@@ -37,7 +45,9 @@ const Save: React.FC<Props> = props => {
     }, () => setLoading(false));
   };
 
-  useEffect(() => initValue(), [loading]);
+  useEffect(() => {
+    initValue();
+  }, [props.loading]);
 
   const saveData = () => {
 
@@ -63,6 +73,19 @@ const Save: React.FC<Props> = props => {
   return (
     <Spin spinning={loading}>
       <Form labelCol={{span: 3}} wrapperCol={{span: 21}}>
+        <Form.Item key="charset" label="状态">
+          {getFieldDecorator('status', {
+            rules: [
+              {required: true, message: '请选择字符集'}
+            ],
+            initialValue: data?.status?.value ? data.status.value : 'disabled',
+          })(
+            <Radio.Group buttonStyle="solid">
+              <Radio.Button value="disabled">禁用</Radio.Button>
+              <Radio.Button value="enabled">启用</Radio.Button>
+            </Radio.Group>
+          )}
+        </Form.Item>
         <Form.Item key="name" label="信令名称">
           {getFieldDecorator('name', {
             rules: [
