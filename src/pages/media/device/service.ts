@@ -14,26 +14,8 @@ class Service extends BaseService<any> {
       map(resp => resp.result)
     ));
 
-  public _enabled = (id: string) => defer(
-    () => from(request(`/jetlinks/media/gb28181/${id}/_enabled`, {
-      method: 'POST'
-    }))
-      .pipe(
-        filter(resp => resp.status === 200),
-        map(resp => resp)
-      ));
-
-  public _disabled = (id: string) => defer(
-    () => from(request(`/jetlinks/media/gb28181/${id}/_disabled`, {
-      method: 'POST'
-    }))
-      .pipe(
-        filter(resp => resp.status === 200),
-        map(resp => resp)
-      ));
-
-  public mediaServer = (params: any) => defer(
-    () => from(request(`/jetlinks/media/server/_query/no-paging?paging=false`, {
+  public mediaGateway = (params: any) => defer(
+    () => from(request(`/jetlinks/media/gb28181/_query/no-paging?paging=false`, {
       method: 'GET',
       params
     }))
@@ -42,10 +24,8 @@ class Service extends BaseService<any> {
         map(resp => resp.result)
       ));
 
-  public gatewayInfo = (id: string) => defer(
-    () => from(request(`/jetlinks/media/gb28181/${id}`, {
-      method: 'GET'
-    }))
+  public productTypes = () => defer(
+    () => from(request(`/jetlinks/dueros/product/types`, {method: 'GET'}))
       .pipe(
         filter(resp => resp.status === 200),
         map(resp => resp.result)
