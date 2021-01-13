@@ -14,13 +14,13 @@ const MediaDevice: React.FC<Props> = () => {
     <PageHeaderWrapper title="基本配置">
       <Row gutter={24}>
         <Col span={12}>
-          <Card title="信令服务配置">
-            <GatewayInfo/>
+          <Card title="流媒体服务配置">
+            <MediaServer/>
           </Card>
         </Col>
         <Col span={12}>
-          <Card title="流媒体服务配置">
-            <MediaServer/>
+          <Card title="信令服务配置">
+            <GatewayInfo/>
           </Card>
         </Col>
       </Row>
