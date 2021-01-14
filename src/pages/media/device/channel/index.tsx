@@ -39,7 +39,6 @@ const MediaDevice: React.FC<Props> = props => {
   useEffect(() => {
     if (pathname.indexOf('channel') > 0) {
       const list = pathname.split('/');
-      console.log(list[list.length - 1]);
       deviceDetail(list[list.length - 1]);
       setDeviceId(list[list.length - 1]);
       searchParam.terms = {deviceId: list[list.length - 1]};
@@ -49,7 +48,6 @@ const MediaDevice: React.FC<Props> = props => {
 
   const deviceDetail = (deviceId: string) => {
     service.deviceDetail(deviceId).subscribe((data) => {
-        console.log(data);
         setDeviceInfo(data);
       },
       () => {
