@@ -248,11 +248,11 @@ const Save: React.FC<Props> = props => {
           textAlign: 'right',
         }}
       >
-        {data?.status?.value === 'disabled' ? (
+        {data.status ? (data.status?.value === 'disabled' ? (
           <Button
             onClick={() => {
               setLoading(true);
-              _enabledOr_disabled(data?.status?.value);
+              _enabledOr_disabled(data.status?.value);
             }}
             style={{marginRight: 8}}
           >
@@ -262,14 +262,14 @@ const Save: React.FC<Props> = props => {
           <Button
             onClick={() => {
               setLoading(true);
-              _enabledOr_disabled(data?.status?.value);
+              _enabledOr_disabled(data.status?.value);
             }}
             style={{marginRight: 8}}
             type="danger"
           >
             禁用
           </Button>
-        )}
+        )) : ""}
         <Button
           onClick={() => {
             setLoading(true);
