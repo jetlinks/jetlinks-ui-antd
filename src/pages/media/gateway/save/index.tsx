@@ -21,6 +21,7 @@ const Save: React.FC<Props> = props => {
   const {form: {getFieldDecorator}, form} = props;
 
   const service = new Service('media/gb28181');
+  const id = 'gb28181_gateway';
 
   const [data, setData] = useState<any>({});
   const [productList, setProductList] = useState<any[]>([]);
@@ -29,7 +30,7 @@ const Save: React.FC<Props> = props => {
   const [loading, setLoading] = useState<boolean>(initState.loading);
 
   const initValue = () => {
-    service.gatewayInfo("gb28181_gateway").subscribe(data => {
+    service.gatewayInfo(id).subscribe(data => {
       setData(data);
     }, () => {
     }, () => setLoading(false));
@@ -56,7 +57,7 @@ const Save: React.FC<Props> = props => {
 
       //todo 统一界面，后期有需求就开放多网关和流媒体服务
 
-      fileValue.id = "gb28181_gateway";
+      fileValue.id = id;
 
       service.saveGateway(fileValue).subscribe(() => {
           message.success('保存成功');
@@ -68,6 +69,28 @@ const Save: React.FC<Props> = props => {
           initValue();
         });
     });
+  };
+
+  const _enabledOr_disabled = (status: string) => {
+    status === "disabled" ? (
+      service._enabled(id).subscribe(() => {
+          message.success("启动成功");
+          initValue();
+        },
+        () => {
+          message.error("启动失败");
+        },
+        () => setLoading(false))
+    ) : (
+      service._disabled(id).subscribe(() => {
+          message.success("停止成功");
+          initValue();
+        },
+        () => {
+          message.error("停止失败");
+        },
+        () => setLoading(false))
+    );
   };
 
   return (
@@ -192,7 +215,7 @@ const Save: React.FC<Props> = props => {
               )}
             </Form.Item>
           </Col>
-          <Col span={12}>
+          {/*<Col span={12}>
             <Form.Item key="status" label="状态" labelCol={{span: 6}} wrapperCol={{span: 18}}>
               {getFieldDecorator('status', {
                 rules: [
@@ -206,7 +229,7 @@ const Save: React.FC<Props> = props => {
                 </Radio.Group>
               )}
             </Form.Item>
-          </Col>
+          </Col>*/}
         </Row>
         <Form.Item key="description" label="说明">
           {getFieldDecorator('description', {
@@ -225,6 +248,28 @@ const Save: React.FC<Props> = props => {
           textAlign: 'right',
         }}
       >
+        {data?.status?.value === 'disabled' ? (
+          <Button
+            onClick={() => {
+              setLoading(true);
+              _enabledOr_disabled(data?.status?.value);
+            }}
+            style={{marginRight: 8}}
+          >
+            启用
+          </Button>
+        ) : (
+          <Button
+            onClick={() => {
+              setLoading(true);
+              _enabledOr_disabled(data?.status?.value);
+            }}
+            style={{marginRight: 8}}
+            type="danger"
+          >
+            禁用
+          </Button>
+        )}
         <Button
           onClick={() => {
             setLoading(true);
