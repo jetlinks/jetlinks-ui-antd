@@ -160,50 +160,56 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
     authority: undefined,
   };
 
-  return (
-    <ProLayout
-      // logo={logo}
-      logo={settings.titleIcon || logo}
-      menuHeaderRender={(logoDom, titleDom) => (
-        <Link to="/">
-          {logoDom}
-          {titleDom}
-        </Link>
-      )}
-      onCollapse={handleMenuCollapse}
-      menuItemRender={(menuItemProps, defaultDom) => {
-        if (menuItemProps.isUrl || menuItemProps.children || !menuItemProps.path) {
-          return defaultDom;
-        }
+  console.log(props.location?.query?.hide_menu, 'jprops');
+  const hide_menu = props.location?.query?.hide_menu;
 
-        return <Link to={menuItemProps.path}>{defaultDom}</Link>;
-      }}
-      breadcrumbRender={(routers = []) => [
-        {
-          path: '/',
-          breadcrumbName: '首页',
-        },
-        ...routers,
-      ]}
-      itemRender={(route, params, routes, paths) => {
-        const first = routes.indexOf(route) === 0;
-        return first ? (
-          <Link to={paths.join('/')}>{route.breadcrumbName}</Link>
-        ) : (
-            <span>{route.breadcrumbName}</span>
-          );
-      }}
-      footerRender={footerRender}
-      menuDataRender={menuDataRender}
-      // menuDataRender={()=>menuData}
-      rightContentRender={() => <RightContent />}
-      {...props}
-      {...settings}
-    >
-      <Authorized authority={authorized!.authority} noMatch={noMatch}>
+  return (
+    hide_menu === 'true' ?
+      <Authorized authority={authorized!.authority} noMatch={noMatch} >
         {children}
-      </Authorized>
-    </ProLayout>
+      </Authorized > : <ProLayout
+        // logo={logo}
+        logo={settings.titleIcon || logo}
+        menuHeaderRender={(logoDom, titleDom) => (
+          <Link to="/">
+            {logoDom}
+            {titleDom}
+          </Link>
+        )}
+        onCollapse={handleMenuCollapse}
+        menuItemRender={(menuItemProps, defaultDom) => {
+          if (menuItemProps.isUrl || menuItemProps.children || !menuItemProps.path) {
+            return defaultDom;
+          }
+
+          return <Link to={menuItemProps.path}>{defaultDom}</Link>;
+        }}
+        breadcrumbRender={(routers = []) => [
+          {
+            path: '/',
+            breadcrumbName: '首页',
+          },
+          ...routers,
+        ]}
+        itemRender={(route, params, routes, paths) => {
+          const first = routes.indexOf(route) === 0;
+          return first ? (
+            <Link to={paths.join('/')}>{route.breadcrumbName}</Link>
+          ) : (
+              <span>{route.breadcrumbName}</span>
+            );
+        }}
+        footerRender={footerRender}
+        menuDataRender={menuDataRender}
+        // menuDataRender={()=>menuData}
+        rightContentRender={() => <RightContent />}
+        {...props}
+        {...settings}
+      >
+        <Authorized authority={authorized!.authority} noMatch={noMatch}>
+          {children}
+        </Authorized>
+      </ProLayout>
   );
 };
 
