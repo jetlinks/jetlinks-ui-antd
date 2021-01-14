@@ -279,8 +279,8 @@ const Save: React.FC<Props> = props => {
       },
       component: (
         <Select placeholder="请选择" onChange={(value: string) => {
-          if(value !== "" && value !== undefined && props.form.getFieldsValue().id !== "" && props.form.getFieldsValue().id !== undefined){
-            getDefaultModel(props.form.getFieldsValue().id, value);
+          if(value !== "" && value !== undefined && props.form.getFieldsValue().messageProtocol !== "" && props.form.getFieldsValue().messageProtocol !== undefined){
+            getDefaultModel(props.form.getFieldsValue().messageProtocol, value);
           }
         }}>
           {protocolTransports.map(e => (
