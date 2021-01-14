@@ -129,7 +129,7 @@ export const ChartsConfig: Config[] = [
     {
         id: 'Action',
         type: '操作',
-        preview: 'http://pic59.nipic.com/file/20150126/10989170_123658553000_2.jpg',
+        preview: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fku.90sjimg.com%2Felement_origin_min_pic%2F16%2F10%2F27%2Fc120bcc802865f7619c01aba37b27139.jpg&refer=http%3A%2F%2Fku.90sjimg.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1613187169&t=4d4e5cb3e59f6f1f1d66f403e18cbb73',
         properties: {}
     }
 ];

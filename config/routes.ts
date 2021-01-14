@@ -44,7 +44,7 @@ export const routes = [
                         iconfont: 'icon-shezhi',
                         icon: 'setting',
                         tenant: ['admin'],
-                        authority: ['user', 'role', 'permission', 'dictionary', 'admin'],
+                        authority: ['user', 'permission', 'organization', 'dictionary', 'open-api', 'admin', 'system-config', 'dimension', 'tenant-side-manager', 'tenant-manager'],
                         routes: [
                             {
                                 path: '/system/user',
@@ -76,7 +76,7 @@ export const routes = [
                                 name: '机构管理',
                                 icon: 'apartment',
                                 iconfont: 'icon-jigoubianzhi',
-                                authority: ['dimension', 'admin'],
+                                authority: ['organization', 'admin'],
                                 component: './system/org',
                             },
                             {
@@ -122,7 +122,7 @@ export const routes = [
                         icon: 'box-plot',
                         tenant: ['admin', 'member'],
                         iconfont: 'icon-device-manage',
-                        authority: ['device-product', 'device-instance', 'device-category', 'admin'],
+                        authority: ['device-product', 'device-instance', 'device-category', 'device-group', 'device-gateway', 'geo-manager', 'firmware-manager', 'device-alarm', 'admin'],
                         routes: [
                             {
                                 path: '/device/product',
@@ -148,7 +148,7 @@ export const routes = [
                                 name: '产品详情',
                                 tenant: ['admin', 'member'],
                                 iconfont: 'icon-shebei',
-                                // authority: ['device-product'],
+                                authority: ['device-product', 'admin'],
                                 component: './device/product/save/Detail',
                             },
                             {
@@ -157,7 +157,7 @@ export const routes = [
                                 name: '新建产品',
                                 tenant: ['admin', 'member'],
                                 iconfont: 'icon-shebei',
-                                // authority: ['device-product'],
+                                authority: ['device-product', 'admin'],
                                 component: './device/product/save/add/index.tsx',
                             },
                             {
@@ -175,6 +175,7 @@ export const routes = [
                                 name: '设备详情',
                                 tenant: ['admin', 'member'],
                                 iconfont: 'icon-shebei1',
+                                authority: ['device-instance', 'admin'],
                                 component: './device/instance/editor',
                             },
                             {
@@ -202,6 +203,7 @@ export const routes = [
                                 hideInMenu: true,
                                 path: '/device/tree/detail',
                                 name: '分组详情',
+                                authority: ['device-group', 'admin'],
                                 component: './device/tree/DeviceTree',
                             },
                             {
@@ -209,6 +211,7 @@ export const routes = [
                                 path: '/device/instance/add',
                                 name: '添加设备',
                                 tenant: ['admin', 'member'],
+                                authority: ['device-instance', 'admin'],
                                 iconfont: 'icon-shebeifenzuguanli',
                                 component: './device/instance/editor',
                             },
@@ -246,6 +249,7 @@ export const routes = [
                                 tenant: ['admin'],
                                 path: '/device/firmware/save/:id',
                                 name: '固件详情',
+                                authority: ['firmware-manager', 'admin'],
                                 iconfont: 'icon-gujianshengji',
                                 component: './device/firmware/editor',
                             },
@@ -253,6 +257,7 @@ export const routes = [
                                 path: '/device/alarm',
                                 name: '设备告警',
                                 icon: 'alert',
+                                authority: ['device-alarm', 'admin'],
                                 component: './device/alarmlog',
                             }
                         ],
@@ -304,7 +309,7 @@ export const routes = [
                         iconfont: 'icon-tongzhiguanli',
                         icon: 'message',
                         tenant: ['admin', 'member'],
-                        authority: ['certificate', 'network-config', 'device-gateway', 'template', 'notifier', 'admin'],
+                        authority: ['template', 'notifier', 'admin'],
                         routes: [
                             {
                                 path: '/notice/config',
@@ -332,7 +337,7 @@ export const routes = [
                         icon: 'retweet',
                         iconfont: 'icon-guizeyinqing',
                         tenant: ['admin'],
-                        authority: ['rule-model', 'rule-instance', 'sql-rule', 'admin'],
+                        authority: ['rule-instance', 'rule-scene', 'admin'],
                         routes: [
                             // {
                             //     path: '/rule-engine/model',
