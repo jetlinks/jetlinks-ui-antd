@@ -26,10 +26,11 @@ const Save: React.FC<Props> = props => {
   const [item, setItem] = useState(initState.item);
   const [providersList, setProvidersList] = useState<any[]>([]);
 
+  const id = 'gb28181_MediaServer';
   const [loading, setLoading] = useState<boolean>(initState.loading);
 
   const initValue = () => {
-    service.mediaServerInfo("gb28181_MediaServer").subscribe(data => {
+    service.mediaServerInfo(id).subscribe(data => {
       setItem(data);
     }, () => {
     }, () => setLoading(false));
@@ -51,7 +52,7 @@ const Save: React.FC<Props> = props => {
 
       //todo 统一界面，后期有需求就开放多网关和流媒体服务
 
-      fileValue.id = 'gb28181_MediaServer';
+      fileValue.id = id;
       service.saveMediaServer(fileValue).subscribe((data) => {
           message.success('保存成功');
         },

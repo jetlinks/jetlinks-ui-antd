@@ -30,6 +30,13 @@ class Service extends BaseService<any> {
         filter(resp => resp.status === 200),
         map(resp => resp.result)
       ));
+
+  public deviceDetail = (deviceId: string) => defer(
+    () => from(request(`/jetlinks/device/instance/${deviceId}/detail`, {method: 'GET'}))
+      .pipe(
+        filter(resp => resp.status === 200),
+        map(resp => resp.result)
+      ));
 }
 
 export default Service;

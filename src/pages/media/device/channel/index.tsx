@@ -1,18 +1,18 @@
 import {PageHeaderWrapper} from "@ant-design/pro-layout"
-import {Badge, Card, Divider, Popconfirm} from "antd";
+import {Badge, Card, Descriptions, Row} from "antd";
 import React, {Fragment, useEffect, useState} from "react";
 import styles from '@/utils/table.less';
 import SearchForm from "@/components/SearchForm";
 import ProTable from "@/pages/system/permission/component/ProTable";
 import {ColumnProps} from "antd/lib/table";
-import Service from "./service";
+import Service from "../service";
 import encodeQueryParam from "@/utils/encodeParam";
-import moment from "moment";
 import {router} from "umi";
-import DeviceUpdate from "./update/index";
+import {Dispatch} from "@/models/connect";
 
 interface Props {
-
+  dispatch: Dispatch;
+  location: Location;
 }
 
 interface State {
@@ -22,14 +22,14 @@ interface State {
 const initState: State = {
   searchParam: {pageSize: 10, terms: location?.query?.terms, sorts: {field: 'id', order: 'desc'}},
 };
-const MediaDevice: React.FC<Props> = () => {
-  const service = new Service('device/instance');
+const MediaDevice: React.FC<Props> = props => {
+  const {location: {pathname},} = props;
+  const service = new Service('media/channel');
   const [loading, setLoading] = useState<boolean>(false);
-  const [deviceUpdate, setDeviceUpdate] = useState<boolean>(false);
-  const [deviceData, setDeviceData] = useState<any>({});
+  const [deviceId, setDeviceId] = useState<string>("");
   const [result, setResult] = useState<any>({});
+  const [deviceInfo, setDeviceInfo] = useState<any>({});
 
-  const [productList, setProductList] = useState<any[]>([]);
   const [searchParam, setSearchParam] = useState(initState.searchParam);
   const statusMap = new Map();
   statusMap.set('online', 'success');
@@ -37,16 +37,24 @@ const MediaDevice: React.FC<Props> = () => {
   statusMap.set('notActive', 'processing');
 
   useEffect(() => {
-    service.mediaGateway({}).subscribe((data) => {
-      let productIdList: any[] = [];
-      data.map((item: any) => {
-        productIdList.push(item.productId)
-      });
-      setProductList(productIdList);
-      searchParam.terms = {productId$IN: productIdList};
+    if (pathname.indexOf('channel') > 0) {
+      const list = pathname.split('/');
+      deviceDetail(list[list.length - 1]);
+      setDeviceId(list[list.length - 1]);
+      searchParam.terms = {deviceId: list[list.length - 1]};
       handleSearch(encodeQueryParam(searchParam));
-    })
-  }, []);
+    }
+  }, [window.location.hash]);
+
+  const deviceDetail = (deviceId: string) => {
+    service.deviceDetail(deviceId).subscribe((data) => {
+        setDeviceInfo(data);
+      },
+      () => {
+      },
+      () => {
+      })
+  };
 
   const handleSearch = (params?: any) => {
     setSearchParam(params);
@@ -61,34 +69,27 @@ const MediaDevice: React.FC<Props> = () => {
 
   const columns: ColumnProps<any>[] = [
     {
-      title: 'ID',
-      dataIndex: 'id',
+      title: '通道ID',
+      dataIndex: 'channelId',
     },
     {
-      title: '设备名称',
+      title: '通道名称',
       dataIndex: 'name',
     },
     {
-      title: '产品名称',
-      dataIndex: 'productName',
+      title: '厂商',
+      dataIndex: 'manufacturer',
     },
     {
-      title: '注册时间',
-      dataIndex: 'registryTime',
-      width: '200px',
-      render: (text: any) => text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/',
-      sorter: true,
+      title: '安装地址',
+      dataIndex: 'address',
     },
     {
       title: '状态',
-      dataIndex: 'state',
+      dataIndex: 'status',
       width: '90px',
       render: record => record ? <Badge status={statusMap.get(record.value)} text={record.text}/> : '',
       filters: [
-        {
-          text: '未启用',
-          value: 'notActive',
-        },
         {
           text: '离线',
           value: 'offline',
@@ -111,51 +112,70 @@ const MediaDevice: React.FC<Props> = () => {
       align: 'center',
       render: (record: any) => (
         <Fragment>
-          <a
-            onClick={() => {
-              router.push(`/device/instance/save/${record.id}`);
-            }}
-          >
-            查看
-          </a>
-          <Divider type="vertical"/>
-          <a
-            onClick={() => {
-              setDeviceData(record);
-              setDeviceUpdate(true);
-            }}
-          >
-            编辑
-          </a>
-          <Divider type="vertical"/>
-          <a
-            onClick={() => {
-              router.push(`/media/device/channel/${record.id}`);
-            }}
-          >
-            查看通道
-          </a>
-          {/*<Divider type="vertical"/>
-          <Popconfirm
-            title="确认更新吗？"
-            onConfirm={() => {
+          {record.status.value === 'online' && (
+            <a
+              onClick={() => {
 
-            }}>
-            <a>更新通道</a>
-          </Popconfirm>*/}
+              }}
+            >
+              播放
+            </a>
+          )}
         </Fragment>
       )
     },
   ];
+
+  const content = (
+    <div style={{marginTop: 30}}>
+      <Descriptions column={4}>
+        <Descriptions.Item label="设备名称">
+          <div>
+            {deviceInfo.name}
+            <a style={{marginLeft: 10}}
+               onClick={() => {
+                 router.push(`/device/instance/save/${deviceInfo.id}`);
+               }}
+            >查看</a>
+          </div>
+        </Descriptions.Item>
+        <Descriptions.Item label="产品名称">
+          <div>
+            {deviceInfo.productName}
+            <a style={{marginLeft: 10}}
+               onClick={() => {
+                 router.push(`/device/product/save/${deviceInfo.productId}`);
+               }}
+            >查看</a>
+          </div>
+        </Descriptions.Item>
+      </Descriptions>
+    </div>
+  );
+
+  const titleInfo = (
+    <Row>
+      <div>
+        <span style={{paddingRight: 20}}>
+          通道列表：{deviceId}
+        </span>
+        <Badge status={statusMap.get(deviceInfo.state?.value)} text={deviceInfo.state?.text}/>
+      </div>
+    </Row>
+  );
+
   return (
-    <PageHeaderWrapper title="国标设备">
+    <PageHeaderWrapper
+      title={titleInfo}
+      content={content}
+    >
       <Card bordered={false} style={{marginBottom: 16}}>
         <div className={styles.tableList}>
           <div>
             <SearchForm
               search={(params: any) => {
                 setSearchParam(params);
-                params.productId$IN = productList;
+                params.deviceId = deviceId;
                 handleSearch({terms: {...params}, pageSize: 10, sorts: {field: 'id', order: 'desc'}});
               }}
               formItems={[
@@ -177,7 +197,7 @@ const MediaDevice: React.FC<Props> = () => {
             columns={columns}
             rowKey="id"
             onSearch={(params: any) => {
-              params.terms['productId$IN'] = productList;
+              params.terms['deviceId'] = deviceId;
               params.sorts = params.sorts.field ? params.sorts : {field: 'id', order: 'desc'};
               handleSearch(params);
             }}
@@ -185,13 +205,6 @@ const MediaDevice: React.FC<Props> = () => {
           />
         </div>
       </Card>
-      {deviceUpdate && (
-        <DeviceUpdate close={() => {
-          setDeviceUpdate(false);
-          searchParam.terms = {productId$IN: productList};
-          handleSearch(encodeQueryParam(searchParam));
-        }} data={deviceData}/>
-      )}
     </PageHeaderWrapper>
   )
 };
