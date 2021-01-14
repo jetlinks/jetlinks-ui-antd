@@ -160,7 +160,6 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
     authority: undefined,
   };
 
-  console.log(props.location?.query?.hide_menu, 'jprops');
   const hide_menu = props.location?.query?.hide_menu;
 
   return (
