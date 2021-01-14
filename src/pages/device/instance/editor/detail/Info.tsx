@@ -3,6 +3,7 @@ import {Button, Card, Descriptions, Icon, message, Popconfirm, Tag, Tooltip} fro
 import moment from 'moment';
 import {DeviceInstance} from '@/pages/device/instance/data';
 import Configuration from './configuration';
+import Save from '../../Save';
 import Tags from './tags/tags';
 import apis from '@/services';
 
@@ -15,15 +16,18 @@ interface Props {
 interface State {
   updateVisible: boolean;
   tagsVisible: boolean;
+  addVisible: boolean;
 }
 
 const Info: React.FC<Props> = (props) => {
   const initState: State = {
     updateVisible: false,
     tagsVisible: false,
+    addVisible: false,
   };
   const [updateVisible, setUpdateVisible] = useState(initState.updateVisible);
   const [tagsVisible, setTagsVisible] = useState(initState.tagsVisible);
+  const [addVisible, setAddVisible] = useState(initState.addVisible);
 
   const updateData = (item?: any) => {
     setUpdateVisible(false);
@@ -115,7 +119,11 @@ const Info: React.FC<Props> = (props) => {
     <div>
       <Card style={{marginBottom: 20}}>
         <Descriptions style={{marginBottom: 20}} bordered column={3} size="small"
-                      title={<span>设备信息</span>}>
+                      title={<span>设备信息
+                         <Button icon="edit" style={{marginLeft: 20}} type="link"
+                              onClick={() => setAddVisible(true)}
+                      >编辑</Button>
+                      </span>}>
           <Descriptions.Item label="产品名称" span={1}>
             {props.data.productName}
           </Descriptions.Item>
@@ -244,6 +252,15 @@ const Info: React.FC<Props> = (props) => {
           </Descriptions>
         )}
       </Card>
+      {addVisible && (
+          <Save
+            data={props.data}
+            close={() => {
+              setAddVisible(false);
+              // setCurrentItem({});
+            }}
+          />
+        )}
       {updateVisible && (
         <Configuration data={props.data} configuration={props.configuration}
                        close={() => {

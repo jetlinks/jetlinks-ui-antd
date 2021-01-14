@@ -194,6 +194,8 @@ const DeviceInstancePage: React.FC<Props> = props => {
     {
       title: '描述',
       dataIndex: 'describe',
+      width: '15%',
+      ellipsis: true
     },
     {
       title: '操作',
