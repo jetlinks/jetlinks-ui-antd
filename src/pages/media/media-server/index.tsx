@@ -26,15 +26,15 @@ const MediaServer: React.FC<Props> = props => {
   const [loading, setLoading] = useState<boolean>(false);
   const [result, setResult] = useState<any>({});
   const [saveVisible, setSaveVisible] = useState<boolean>(false);
-  const [current, setCurrent] = useState<any>({});
-  const [productType, setProductType] = useState<any[]>([]);
+  const [mediaServerData, setMediaServerData] = useState<any>({});
+  const [providersList, setProvidersList] = useState<any[]>([]);
   const [searchParam, setSearchParam] = useState(initState.searchParam);
 
   useEffect(() => {
     handleSearch(encodeQueryParam(searchParam));
-    service.productTypes().subscribe((data) => {
+    service.providersList().subscribe((data) => {
       const temp = data.map((item: any) => ({value: item.id, label: item.name, ...item}));
-      setProductType(temp);
+      setProvidersList(temp);
     })
   }, []);
 
@@ -84,11 +84,11 @@ const MediaServer: React.FC<Props> = props => {
                     type: 'string',
                   },
                   {
-                    label: '设备类型',
-                    key: 'applianceType$IN',
+                    label: '服务商',
+                    key: 'provider$IN',
                     type: 'list',
                     props: {
-                      data: productType,
+                      data: providersList,
                       mode: 'multiple'
                     }
                   }
@@ -98,7 +98,7 @@ const MediaServer: React.FC<Props> = props => {
             <div>
               <Button icon="plus" type="primary" onClick={() => {
                 setSaveVisible(true);
-                setCurrent({});
+                setMediaServerData({});
               }}>
                 新建
               </Button>
@@ -140,6 +140,7 @@ const MediaServer: React.FC<Props> = props => {
                           <Icon
                             type="edit"
                             onClick={() => {
+                              setMediaServerData(item);
                               setSaveVisible(true);
                             }}
                           />
@@ -219,13 +220,14 @@ const MediaServer: React.FC<Props> = props => {
       {
         saveVisible && (
           <Save
-            data={current}
+            data={mediaServerData}
             close={() => setSaveVisible(false)}
             save={(item: any) => {
-              service.saveOrUpdate(item).subscribe(data => {
-                  message.success('添加成功');
+              service.saveOrUpdate(item).subscribe((data) => {
+                  message.success('保存成功');
                 },
                 () => {
+                  message.error('保存失败');
                 },
                 () => {
                   handleSearch();

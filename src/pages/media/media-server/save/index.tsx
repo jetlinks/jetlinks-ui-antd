@@ -1,314 +1,194 @@
-import createRichTextUtils from "@/utils/textUtils";
-import {createFormActions, FormEffectHooks, FormPath, SchemaForm,} from "@formily/antd";
-import {Modal, Spin} from "antd";
-import React, {useEffect, useRef, useState} from "react";
-import {DatePicker, Input, Select, ArrayTable, FormCard, NumberPicker} from '@formily/antd-components'
-import ArrayPanels from '@/components/ArrayPanel';
+import {Button, Input, InputNumber, message, Select, Spin} from "antd";
+import React, {useEffect, useState} from "react";
 import Service from "../service";
-import {zip} from "rxjs";
+import Form from "antd/es/form";
+import {FormComponentProps} from "antd/lib/form";
 
-interface Props {
-  data: any;
-  close: Function;
-  save: Function;
+interface Props extends FormComponentProps {
+  loading: boolean
 }
 
-const actions = createFormActions();
+interface State {
+  item: any;
+  loading: boolean;
+}
 
 const Save: React.FC<Props> = props => {
-  const service = new Service('dueros/product');
-  const {onFieldValueChange$} = FormEffectHooks;
 
-  const [productInfo, setProductInfo] = useState<{ list: any[], type: any[] }>({list: [], type: []});
-
-  const testRef = useRef<any>({});
-  const productRef = useRef<any>({});
-  const [funcList, setFuncList] = useState<any>({});
-  const [loading, setLoading] = useState<boolean>(true);
-
-  const createLinkageUtils = () => {
-    const {setFieldState} = createFormActions();
-    const linkage = (key: string, defaultValue: any) => (path: string, value: any) =>
-      setFieldState(path, state => {
-        FormPath.setIn(state, key, value !== undefined ? value : defaultValue)
-      });
-    return {
-      hide: linkage('visible', false),
-      show: linkage('visible', true),
-      enum: linkage('props.enum', []),
-      loading: linkage('loading', true),
-      loaded: linkage('loading', false),
-      value: linkage('value', '')
-    }
+  const initState: State = {
+    item: {},
+    loading: props.loading
   };
+
+  const {form: {getFieldDecorator}, form} = props;
+  const service = new Service('media/server');
+
+  const [item, setItem] = useState(initState.item);
+  const [providersList, setProvidersList] = useState<any[]>([]);
+
+  const [loading, setLoading] = useState<boolean>(initState.loading);
+
   const initValue = () => {
-    zip(service.queryProduct({}),
-      service.productTypes()).subscribe(data => {
-      const temp = {
-        list: data[0].map((item: any) => ({value: item.id, label: item.name, ...item})),
-        type: data[1].map((item: any) => ({value: item.id, label: item.name, ...item}))
-      };
-      setProductInfo(temp);
-      testRef.current = temp;
+    service.mediaServerInfo("gb28181_MediaServer").subscribe(data => {
+      setItem(data);
+    }, () => {
+    }, () => setLoading(false));
+
+    service.providersList().subscribe(data => {
+      setProvidersList(data);
     }, () => {
     }, () => setLoading(false));
   };
 
-  useEffect(() => initValue(), [loading]);
+  useEffect(() => {
+    initValue();
+  }, [props.loading]);
 
-  const linkageEffect = async () => {
-    const linkage = createLinkageUtils();
-    onFieldValueChange$('applianceType').subscribe(fieldState => {
-      if (!fieldState.value) return;
-      const product = testRef.current.type.find((item: any) => item.id === fieldState.value);
-      const actions = (product.actions || []).map((item: any) => ({label: item.name, value: item.id}));
-      linkage.show('actionMappings', true);
-      linkage.show('propertyMappings', true);
-      linkage.enum('actionMappings.*.action', actions);
-      linkage.enum('propertyMappings.*.source',
-        product.properties.map((item: any) => ({label: item.name, value: item.id})));
-      linkage.enum('propertyMappings.*.target',
-        productRef.current.metadata.properties.map((item: any) => ({label: item.name, value: item.id, ...item})));
+  const saveData = () => {
+
+    form.validateFields((err, fileValue) => {
+      if (err) return;
+
+      //todo 统一界面，后期有需求就开放多网关和流媒体服务
+
+      fileValue.id = 'gb28181_MediaServer';
+      service.saveMediaServer(fileValue).subscribe((data) => {
+          message.success('保存成功');
+        },
+        () => {
+          message.error('保存失败');
+        },
+        () => {
+          initValue();
+        });
     });
+  };
 
-    onFieldValueChange$('actionMappings.*.command.messageType').subscribe(fieldState => {
-      const wpropertiesPath = FormPath.transform(fieldState.name, /\d/, $1 => `*(actionMappings.${$1}.command.message._properties)`);
-      const rpropertiesPath = FormPath.transform(fieldState.name, /\d/, $1 => `*(actionMappings.${$1}.command.message.properties)`);
-
-      const valuePath = FormPath.transform(fieldState.name, /\d/, $1 => `*(actionMappings.${$1}.command.message._value)`);
-      const functionPath = FormPath.transform(fieldState.name, /\d/, $1 => `*(actionMappings.${$1}.command.message.functionId)`);
-      const functionParamPath = FormPath.transform(fieldState.name, /\d/, $1 => `*(actionMappings.${$1}.command.message.function)`);
-
-      switch (fieldState.value) {
-        case 'READ_PROPERTY':
-          linkage.enum(
-            rpropertiesPath,
-            productRef.current.metadata.properties.map((item: any) => ({label: item.name, value: item.id, ...item})));
-          linkage.show(valuePath, false);
-          linkage.show(rpropertiesPath, true);
-          linkage.show(wpropertiesPath, false);
-          linkage.show(functionPath, false);
-          linkage.show(functionParamPath, false);
-
-          return;
-        case 'WRITE_PROPERTY':
-          linkage.enum(
-            wpropertiesPath,
-            productRef.current.metadata.properties.map((item: any) => ({label: item.name, value: item.id, ...item})));
-          linkage.show(wpropertiesPath, true);
-          linkage.show(rpropertiesPath, false);
-          linkage.show(valuePath, true);
-          linkage.show(functionPath, false);
-          linkage.show(functionParamPath, false);
-          return;
-        case 'INVOKE_FUNCTION':
-          linkage.hide(wpropertiesPath, false);
-          linkage.hide(rpropertiesPath, false);
-          linkage.show(valuePath, false);
-          linkage.show(functionPath, true);
-          linkage.enum(functionPath,
-            productRef.current.metadata.functions.map((item: any) => ({label: item.name, value: item.id, ...item})));
-
-          return;
-        default:
-          return;
-      }
-    });
-    onFieldValueChange$('actionMappings.*.actionType').subscribe(fieldState => {
-      if (fieldState.value === 'latestData') {
-        linkage.hide(FormPath.transform(fieldState.name, /\d/, $1 => `*(actionMappings.${$1}.command.messageType)`), false);
-        linkage.show(FormPath.transform(fieldState.name, /\d/, $1 => `*(actionMappings.${$1}.command.message._properties)`), true);
-      } else if (fieldState.value === 'command') {
-        linkage.hide(FormPath.transform(fieldState.name, /\d/, $1 => `*(actionMappings.${$1}.command.messageType)`), true);
-      }
-
-    });
-    onFieldValueChange$('id').subscribe(fieldState => {
-      if (!fieldState.value) return;
-
-      const product = testRef.current.list.find((item: any) => item.id === fieldState.value);
-      product.metadata = JSON.parse(product.metadata);
-      productRef.current = product;
-      linkage.show('applianceType', true);
-      linkage.value('name', product.name);
-    });
-    onFieldValueChange$('actionMappings.*.command.message.functionId').subscribe(fieldState => {
-      if (!fieldState.value) return;
-      const funcPath = FormPath.transform(fieldState.name, /\d/, $1 => `*(actionMappings.${$1}.command.message.function)`);
-      const func = productRef.current.metadata.functions.find((item: any) => item.id === fieldState.value);
-      linkage.value(funcPath, func.inputs || {});
-      linkage.show(funcPath, true);
-
-      const componentMap = {
-        "string": "input",
-        "int": "numberpicker"
-      };
-      const componentType = {
-        'string': 'string',
-        'int': 'number',
-      };
-      const list = {};
-      (func.inputs || []).forEach((item: any) => {
-        const valueType = item.valueType;
-        list['funcparam.' + item.id] = {
-          "title": item.description ? `{{text("${item.name}",help("${item.description.replaceAll('\n', '')}"))}}` : item.name,
-          "x-component": componentMap[valueType.type],
-          "type": componentType[valueType.type],
-          "x-component-props": {
-            "width": "100%"
-          },
-          "x-mega-props": {
-            "span": 1,
-            "labelCol": 10
-          },
-        }
-      });
-      // 参数列表
-      setFuncList(list);
-    })
-
-
+  const renderConfig = () => {
+    const {provider} = item;
+    const configuration = item.configuration ?
+      (typeof item.configuration === "string" ? JSON.parse(item.configuration) : item.configuration)
+      : {};
+    switch (provider) {
+      case 'srs-media':
+        return (
+          <div>
+            <Form.Item label="公网 Host">
+              {getFieldDecorator('configuration.publicHost', {
+                rules: [
+                  {required: true, message: '请输入公网 Host'}
+                ],
+                initialValue: configuration.publicHost,
+              })(<Input/>)}
+            </Form.Item>
+            <Form.Item label="API Host">
+              {getFieldDecorator('configuration.apiHost', {
+                rules: [
+                  {required: true, message: '请输入API Host'}
+                ],
+                initialValue: configuration.apiHost,
+              })(<Input/>)}
+            </Form.Item>
+            <Form.Item label="API端口">
+              {getFieldDecorator('configuration.apiPort', {
+                rules: [
+                  {required: true, message: '请输入API端口'}
+                ],
+                initialValue: configuration.apiPort,
+              })(<InputNumber style={{width: '100%'}}/>)}
+            </Form.Item>
+            <Form.Item label="RTP端口">
+              {getFieldDecorator('configuration.rtpPort', {
+                rules: [
+                  {required: true, message: '请输入RTP端口'}
+                ],
+                initialValue: configuration.rtpPort,
+              })(<InputNumber style={{width: '100%'}}/>)}
+            </Form.Item>
+            <Form.Item label="HTTP端口">
+              {getFieldDecorator('configuration.httpPort', {
+                rules: [
+                  {required: true, message: '请输入HTTP端口'}
+                ],
+                initialValue: configuration.httpPort,
+              })(<InputNumber style={{width: '100%'}}/>)}
+            </Form.Item>
+            <Form.Item label="RTMP端口">
+              {getFieldDecorator('configuration.rtmpPort', {
+                rules: [
+                  {required: true, message: '请输入RTMP端口'}
+                ],
+                initialValue: configuration.rtmpPort,
+              })(<InputNumber style={{width: '100%'}}/>)}
+            </Form.Item>
+            <Form.Item label="流ID前缀">
+              {getFieldDecorator('configuration.streamIdPrefix', {
+                initialValue: configuration.streamIdPrefix,
+              })(<Input/>)}
+            </Form.Item>
+          </div>
+        );
+      default:
+        return null;
+    }
   };
 
   return (
-    <Modal
-      width='50VW'
-      title={`${props.data.id ? '编辑' : '新建'}`}
-      visible
-      okText="确定"
-      cancelText="取消"
-      onOk={() => {
-        actions.submit()
-      }}
-      onCancel={() => props.close()}
-    >
-      <Spin spinning={loading}>
-        {!loading && <SchemaForm
-          effects={linkageEffect}
-          expressionScope={createRichTextUtils()}
-          initialValues={props.data}
-          actions={actions}
-          onSubmit={data => {
-            if (data.actionMappings.length > 1) {
-              data.actionMappings.map((item: any) => {
-                const funcParam = item?.command?.message?.funcparam;
-                const inputs: any = [];
-                if (funcParam) {
-                  Object.keys(funcParam).forEach(key => {
-                    inputs.push({
-                      name: key,
-                      value: funcParam[key]
-                    })
-                  })
-                }
-
-                item.command = item.command ? item.command : {};
-                if (!item.command.message) {
-                  item.command.message = {};
-                  if (!item.command.message.inputs) {
-                    item.command.message.inputs = inputs;
-                  }
-                } else {
-                  item.command.message.inputs = inputs;
-                }
-
-
-                if (item?.command?.messageType === 'WRITE_PROPERTY') {
-                  const temp = {};
-                  const key = item.command.message._properties;
-                  const value = item.command.message._value;
-                  temp[key] = value;
-                  item.command.message.properties = temp;
-                }
-                return item
-              });
-              props.save(data);
-            }
+    <Spin spinning={loading}>
+      <Form labelCol={{span: 3}} wrapperCol={{span: 21}}>
+        <Form.Item key="name" label="流媒体名称">
+          {getFieldDecorator('name', {
+            rules: [
+              {required: true, message: '请输入流媒体名称'},
+              {max: 200, message: '流媒体名称不超过200个字符'}
+            ],
+            initialValue: item?.name,
+          })(<Input placeholder="请输入流媒体名称"/>)}
+        </Form.Item>
+        <Form.Item key="provider" label="服务商">
+          {getFieldDecorator('provider', {
+            rules: [{required: true, message: '请选择服务商'}],
+            initialValue: item?.provider,
+          })(
+            <Select placeholder="服务商" onChange={(e) => {
+              setItem({provider: e})
+            }}>
+              {(providersList || []).map(item => (
+                <Select.Option
+                  key={JSON.stringify({providerId: item.id, providerName: item.name})}
+                  value={item.id}
+                >
+                  {`${item.name}(${item.id})`}
+                </Select.Option>
+              ))}
+            </Select>,
+          )}
+        </Form.Item>
+        {renderConfig()}
+      </Form>
+      <div
+        style={{
+          right: 0,
+          bottom: 0,
+          width: '100%',
+          borderTop: '1px solid #e9e9e9',
+          padding: '16px',
+          background: '#fff',
+          textAlign: 'right',
+        }}
+      >
+        <Button
+          onClick={() => {
+            setLoading(true);
+            saveData();
           }}
-          components={{DatePicker, Input, Select, ArrayPanels, ArrayTable, FormCard, NumberPicker}}
-          schema={{
-            "type": "object",
-            "properties": {
-              "NO_NAME_FIELD_$0": {
-                "type": "object",
-                "x-component": "mega-layout",
-                "x-component-props": {
-                  "grid": true,
-                  "autoRow": true,
-                  "columns": 2,
-                  "labelCol": 4
-                },
-                "properties": {
-                  "id": {
-                    "title": '产品',
-                    "x-mega-props": {
-                      "span": 1,
-                    },
-                    "x-rules": [
-                      {
-                        "required": true,
-                        "message": "此字段必填"
-                      }
-                    ],
-                    "enum": productInfo.list,
-                    "x-component": "select"
-                  },
-                  "name": {
-                    "x-mega-props": {
-                      "span": 1,
-                    },
-                    "title": "名称",
-                    "x-component": "input",
-                    "x-rules": [
-                      {
-                        "required": true,
-                        "message": "此字段必填"
-                      }
-                    ],
-                  },
-                  "manufacturerName": {
-                    "x-mega-props": {
-                      "span": 1,
-                    },
-                    "title": "厂商名称",
-                    "x-component": "input",
-                    "x-rules": [
-                      {
-                        "required": true,
-                        "message": "此字段必填"
-                      }
-                    ],
-                  },
-                  "version": {
-                    "x-mega-props": {
-                      "span": 1,
-                    },
-                    "title": "设备版本",
-                    "x-component": "input",
-                    "x-rules": [
-                      {
-                        "required": true,
-                        "message": "此字段必填"
-                      }
-                    ],
-                  },
-                  "applianceType": {
-                    "x-mega-props": {
-                      "span": 1,
-                    },
-                    "title": "设备类型",
-                    "x-component": "select",
-                    "visible": false,
-                    "enum": productInfo.type
-                  },
-                }
-              }
-            }
-          }
-          }>
-        </SchemaForm>}
-      </Spin>
-    </Modal>
+          type="primary"
+        >
+          保存
+        </Button>
+      </div>
+    </Spin>
   )
 };
-export default Save;
+
+export default Form.create<Props>()(Save);
