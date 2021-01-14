@@ -73,19 +73,6 @@ const Save: React.FC<Props> = props => {
   return (
     <Spin spinning={loading}>
       <Form labelCol={{span: 3}} wrapperCol={{span: 21}}>
-        <Form.Item key="charset" label="状态">
-          {getFieldDecorator('status', {
-            rules: [
-              {required: true, message: '请选择字符集'}
-            ],
-            initialValue: data?.status?.value ? data.status.value : 'disabled',
-          })(
-            <Radio.Group buttonStyle="solid">
-              <Radio.Button value="disabled">禁用</Radio.Button>
-              <Radio.Button value="enabled">启用</Radio.Button>
-            </Radio.Group>
-          )}
-        </Form.Item>
         <Form.Item key="name" label="信令名称">
           {getFieldDecorator('name', {
             rules: [
@@ -131,7 +118,7 @@ const Save: React.FC<Props> = props => {
         </Form.Item>
         <Row>
           <Col span={12}>
-            <Form.Item key="name" label="SIP ID" labelCol={{span: 6}} wrapperCol={{span: 18}}>
+            <Form.Item key="sipId" label="SIP ID" labelCol={{span: 6}} wrapperCol={{span: 18}}>
               {getFieldDecorator('sipConfig.sipId', {
                 rules: [
                   {required: true, message: '请输入信令SIP ID'}
@@ -141,7 +128,7 @@ const Save: React.FC<Props> = props => {
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item key="name" label="SIP 域" labelCol={{span: 6}} wrapperCol={{span: 18}}>
+            <Form.Item key="domain" label="SIP 域" labelCol={{span: 6}} wrapperCol={{span: 18}}>
               {getFieldDecorator('sipConfig.domain', {
                 rules: [
                   {required: true, message: '请输入信令SIP 域'}
@@ -151,7 +138,7 @@ const Save: React.FC<Props> = props => {
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item key="name" label="SIP Host" labelCol={{span: 6}} wrapperCol={{span: 18}}>
+            <Form.Item key="localAddress" label="SIP Host" labelCol={{span: 6}} wrapperCol={{span: 18}}>
               {getFieldDecorator('sipConfig.localAddress', {
                 rules: [
                   {required: true, message: '请输入信令SIP Host'}
@@ -161,7 +148,7 @@ const Save: React.FC<Props> = props => {
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item key="name" label="接入密码" labelCol={{span: 6}} wrapperCol={{span: 18}}>
+            <Form.Item key="password" label="接入密码" labelCol={{span: 6}} wrapperCol={{span: 18}}>
               {getFieldDecorator('sipConfig.password', {
                 rules: [
                   {required: true, message: '请输入信令接入密码'}
@@ -171,7 +158,7 @@ const Save: React.FC<Props> = props => {
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item key="name" label="端口" labelCol={{span: 6}} wrapperCol={{span: 18}}>
+            <Form.Item key="port" label="端口" labelCol={{span: 6}} wrapperCol={{span: 18}}>
               {getFieldDecorator('sipConfig.port', {
                 rules: [
                   {required: true, message: '请输入信令端口'}
@@ -181,7 +168,7 @@ const Save: React.FC<Props> = props => {
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item key="name" label="公网端口" labelCol={{span: 6}} wrapperCol={{span: 18}}>
+            <Form.Item key="publicPort" label="公网端口" labelCol={{span: 6}} wrapperCol={{span: 18}}>
               {getFieldDecorator('sipConfig.publicPort', {
                 rules: [
                   {required: true, message: '请输入信令端口'}
@@ -201,6 +188,21 @@ const Save: React.FC<Props> = props => {
                 <Radio.Group buttonStyle="solid">
                   <Radio.Button value="GBK">GB2312</Radio.Button>
                   <Radio.Button value="UTF-8">UTF-8</Radio.Button>
+                </Radio.Group>
+              )}
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item key="status" label="状态" labelCol={{span: 6}} wrapperCol={{span: 18}}>
+              {getFieldDecorator('status', {
+                rules: [
+                  {required: true, message: '请选择字符集'}
+                ],
+                initialValue: data?.status?.value ? data.status.value : 'enabled',
+              })(
+                <Radio.Group buttonStyle="solid">
+                  <Radio.Button value="enabled">启用</Radio.Button>
+                  <Radio.Button value="disabled">禁用</Radio.Button>
                 </Radio.Group>
               )}
             </Form.Item>
