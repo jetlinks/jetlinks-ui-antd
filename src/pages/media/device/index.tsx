@@ -8,6 +8,8 @@ import {ColumnProps} from "antd/lib/table";
 import Service from "./service";
 import encodeQueryParam from "@/utils/encodeParam";
 import moment from "moment";
+import {router} from "umi";
+import DeviceUpdate from "./update/index";
 
 interface Props {
 
@@ -23,6 +25,8 @@ const initState: State = {
 const MediaDevice: React.FC<Props> = () => {
   const service = new Service('device/instance');
   const [loading, setLoading] = useState<boolean>(false);
+  const [deviceUpdate, setDeviceUpdate] = useState<boolean>(false);
+  const [deviceData, setDeviceData] = useState<any>({});
   const [result, setResult] = useState<any>({});
 
   const [productList, setProductList] = useState<any[]>([]);
@@ -104,12 +108,21 @@ const MediaDevice: React.FC<Props> = () => {
     },
     {
       title: '操作',
-      width: '250px',
       align: 'center',
       render: (record: any) => (
         <Fragment>
           <a
             onClick={() => {
+              router.push(`/device/instance/save/${record.id}`);
+            }}
+          >
+            查看
+          </a>
+          <Divider type="vertical"/>
+          <a
+            onClick={() => {
+              setDeviceData(record);
+              setDeviceUpdate(true);
             }}
           >
             编辑
@@ -117,19 +130,19 @@ const MediaDevice: React.FC<Props> = () => {
           <Divider type="vertical"/>
           <a
             onClick={() => {
-              // router.push(`/device/instance/save/${record.id}`);
+              router.push(`/media/device/channel/${record.id}`);
             }}
           >
             查看通道
           </a>
-          <Divider type="vertical"/>
+          {/*<Divider type="vertical"/>
           <Popconfirm
             title="确认更新吗？"
             onConfirm={() => {
 
             }}>
             <a>更新通道</a>
-          </Popconfirm>
+          </Popconfirm>*/}
         </Fragment>
       )
     },
@@ -154,7 +167,6 @@ const MediaDevice: React.FC<Props> = () => {
               ]}
             />
           </div>
-
         </div>
       </Card>
       <Card>
@@ -165,14 +177,21 @@ const MediaDevice: React.FC<Props> = () => {
             columns={columns}
             rowKey="id"
             onSearch={(params: any) => {
-              params.terms = {productId$IN: productList};
-              params.sorts = {field: 'id', order: 'desc'};
+              params.terms['productId$IN'] = productList;
+              params.sorts = params.sorts.field ? params.sorts : {field: 'id', order: 'desc'};
               handleSearch(params);
             }}
             paginationConfig={result}
           />
         </div>
       </Card>
+      {deviceUpdate && (
+        <DeviceUpdate close={() => {
+          setDeviceUpdate(false);
+          searchParam.terms = {productId$IN: productList};
+          handleSearch(encodeQueryParam(searchParam));
+        }} data={deviceData}/>
+      )}
     </PageHeaderWrapper>
   )
 };
