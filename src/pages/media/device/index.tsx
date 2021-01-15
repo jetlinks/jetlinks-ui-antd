@@ -1,5 +1,5 @@
 import {PageHeaderWrapper} from "@ant-design/pro-layout"
-import {Badge, Card, Divider, Popconfirm} from "antd";
+import {Badge, Card, Divider} from "antd";
 import React, {Fragment, useEffect, useState} from "react";
 import styles from '@/utils/table.less';
 import SearchForm from "@/components/SearchForm";
@@ -7,9 +7,9 @@ import ProTable from "@/pages/system/permission/component/ProTable";
 import {ColumnProps} from "antd/lib/table";
 import Service from "./service";
 import encodeQueryParam from "@/utils/encodeParam";
-import moment from "moment";
 import {router} from "umi";
 import DeviceUpdate from "./update/index";
+import moment from "moment";
 
 interface Props {
 
@@ -23,7 +23,7 @@ const initState: State = {
   searchParam: {pageSize: 10, terms: location?.query?.terms, sorts: {field: 'id', order: 'desc'}},
 };
 const MediaDevice: React.FC<Props> = () => {
-  const service = new Service('device/instance');
+  const service = new Service('media/device');
   const [loading, setLoading] = useState<boolean>(false);
   const [deviceUpdate, setDeviceUpdate] = useState<boolean>(false);
   const [deviceData, setDeviceData] = useState<any>({});
@@ -35,6 +35,11 @@ const MediaDevice: React.FC<Props> = () => {
   statusMap.set('online', 'success');
   statusMap.set('offline', 'error');
   statusMap.set('notActive', 'processing');
+
+  const streamMode = new Map();
+  streamMode.set('UDP', 'UDP');
+  streamMode.set('TCP_ACTIVE', 'TCP主动');
+  streamMode.set('TCP_PASSIVE', 'TCP被动');
 
   useEffect(() => {
     service.mediaGateway({}).subscribe((data) => {
@@ -63,27 +68,37 @@ const MediaDevice: React.FC<Props> = () => {
     {
       title: 'ID',
       dataIndex: 'id',
+      width: 200,
+      ellipsis: true,
+      fixed: 'left',
     },
     {
       title: '设备名称',
       dataIndex: 'name',
+      render: (record: any) => record ? record : result.id,
+      ellipsis: true
     },
     {
-      title: '产品名称',
-      dataIndex: 'productName',
+      title: '信令传输',
+      dataIndex: 'transport',
+      width: '90px',
     },
     {
-      title: '注册时间',
-      dataIndex: 'registryTime',
-      width: '200px',
-      render: (text: any) => text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/',
-      sorter: true,
+      title: '流传输模式',
+      dataIndex: 'streamMode',
+      width: '110px',
+      render: record => record ? streamMode.get(record) : '/',
+    },
+    {
+      title: '通道数',
+      dataIndex: 'channelNumber',
+      width: '90px',
     },
     {
       title: '状态',
       dataIndex: 'state',
       width: '90px',
-      render: record => record ? <Badge status={statusMap.get(record.value)} text={record.text}/> : '',
+      render: record => record ? <Badge status={statusMap.get(record.value)} text={record.text}/> : '/',
       filters: [
         {
           text: '未启用',
@@ -101,14 +116,38 @@ const MediaDevice: React.FC<Props> = () => {
       filterMultiple: false,
     },
     {
-      title: '说明',
-      dataIndex: 'describe',
-      width: '15%',
+      title: '设备IP',
+      dataIndex: 'host',
+    },
+    {
+      title: '设备端口',
+      dataIndex: 'port',
+    },
+    {
+      title: '厂家',
+      dataIndex: 'manufacturer',
       ellipsis: true
     },
     {
+      title: '型号',
+      dataIndex: 'model',
+      ellipsis: true
+    },
+    {
+      title: '固件版本',
+      dataIndex: 'firmware',
+    },
+    {
+      title: '创建时间',
+      dataIndex: 'createTime',
+      render: (text: any) => text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/',
+      sorter: true,
+    },
+    {
       title: '操作',
-      align: 'center',
+      key: 'center',
+      fixed: 'right',
+      width: 180,
       render: (record: any) => (
         <Fragment>
           <a
@@ -176,6 +215,7 @@ const MediaDevice: React.FC<Props> = () => {
             dataSource={result?.data}
             columns={columns}
             rowKey="id"
+            scroll={{x: '150%'}}
             onSearch={(params: any) => {
               params.terms['productId$IN'] = productList;
               params.sorts = params.sorts.field ? params.sorts : {field: 'id', order: 'desc'};
