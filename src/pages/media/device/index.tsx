@@ -101,7 +101,7 @@ const MediaDevice: React.FC<Props> = () => {
       filterMultiple: false,
     },
     {
-      title: '描述',
+      title: '说明',
       dataIndex: 'describe',
       width: '15%',
       ellipsis: true
