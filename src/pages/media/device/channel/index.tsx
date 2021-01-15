@@ -9,6 +9,7 @@ import Service from "../service";
 import encodeQueryParam from "@/utils/encodeParam";
 import {router} from "umi";
 import {Dispatch} from "@/models/connect";
+import Play from './play';
 
 interface Props {
   dispatch: Dispatch;
@@ -29,6 +30,8 @@ const MediaDevice: React.FC<Props> = props => {
   const [deviceId, setDeviceId] = useState<string>("");
   const [result, setResult] = useState<any>({});
   const [deviceInfo, setDeviceInfo] = useState<any>({});
+  const [playing, setPlaying] = useState<boolean>(false);
+  const [data, setData] = useState<any>({});
 
   const [searchParam, setSearchParam] = useState(initState.searchParam);
   const statusMap = new Map();
@@ -115,7 +118,8 @@ const MediaDevice: React.FC<Props> = props => {
           {record.status.value === 'online' && (
             <a
               onClick={() => {
-
+                setPlaying(true);
+                setData(record)
               }}
             >
               播放
@@ -205,6 +209,7 @@ const MediaDevice: React.FC<Props> = props => {
           />
         </div>
       </Card>
+      {playing && <Play data={data} close={() => {setPlaying(false)}} ok={() => {setPlaying(false)}} />}
     </PageHeaderWrapper>
   )
 };

@@ -1,0 +1,103 @@
+.box{
+    display: flex;
+}
+.device_tree{
+    width: 20%;
+    padding-right: 10px;
+}
+.player{
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    .top{
+        display: flex;
+        margin: 10px auto 30px;
+        .btn{
+            width: 100px;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            border: 1px solid lightgray;
+            cursor: pointer;
+        }
+    }
+    .player_box{
+        width: 100%;
+        display: flex;
+        .player_left{
+            width: 80%;
+            .video{
+                border: 1px solid #fff;
+                box-sizing: border-box;
+                float: left;
+                padding: 0;
+                margin: 5px;
+                position: relative;
+
+            }
+            video{
+                width: 100%;
+            }
+        }
+        .player_right{
+            width: 20%;
+            .ptz_block{
+                width: 150px;
+                height: 180px;
+                margin: 0 auto;
+                text-align: center;
+                position: relative;
+                font-size: 24px;
+                .ptz_center {
+                    top: 50px;
+                    left: 50px;
+                  }
+                .ptz_up {
+                    top: 0;
+                    left: 50px;
+                }
+                
+                .ptz_left {
+                    top: 50px;
+                    left: 0;
+                }
+                
+                .ptz_right {
+                    top: 50px;
+                    left: 100px;
+                }
+                
+                .ptz_down {
+                    top: 100px;
+                    left: 50px;
+                }
+                
+                .ptz_zoomin {
+                    top: 150px;
+                    left: 20px;
+                }
+                
+                .ptz_zoomout {
+                    top: 150px;
+                    left: 80px;
+                }
+
+                .ptz_up,
+                .ptz_left,
+                .ptz_right,
+                .ptz_down,
+                .ptz_center,
+                .ptz_zoomin,
+                .ptz_zoomout{
+                    width: 50px;
+                    height: 50px;
+                    line-height: 50px;
+                    position: absolute;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+            }
+        }
+    }
+}

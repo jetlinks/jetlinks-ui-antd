@@ -1,7 +1,7 @@
 import BaseService from "@/services/crud";
 import request from "@/utils/request";
-import {defer, from} from "rxjs";
-import {filter, map} from "rxjs/operators";
+import { defer, from } from "rxjs";
+import { filter, map } from "rxjs/operators";
 
 class Service extends BaseService<any> {
 
@@ -25,14 +25,38 @@ class Service extends BaseService<any> {
       ));
 
   public productTypes = () => defer(
-    () => from(request(`/jetlinks/dueros/product/types`, {method: 'GET'}))
+    () => from(request(`/jetlinks/dueros/product/types`, { method: 'GET' }))
       .pipe(
         filter(resp => resp.status === 200),
         map(resp => resp.result)
       ));
 
   public deviceDetail = (deviceId: string) => defer(
-    () => from(request(`/jetlinks/device/instance/${deviceId}/detail`, {method: 'GET'}))
+    () => from(request(`/jetlinks/device/instance/${deviceId}/detail`, { method: 'GET' }))
+      .pipe(
+        filter(resp => resp.status === 200),
+        map(resp => resp.result)
+      ));
+  public getPlay = (deviceId: string, channelId: string) => defer(
+    () => from(request(`/jetlinks/media/device/${deviceId}/${channelId}/_start`, { method: 'POST' }))
+      .pipe(
+        filter(resp => resp.status === 200),
+        map(resp => resp.result)
+      ));
+  public getStop = (deviceId: string, channelId: string) => defer(
+    () => from(request(`/jetlinks/media/device/${deviceId}/${channelId}/_stop`, { method: 'POST' }))
+      .pipe(
+        filter(resp => resp.status === 200),
+        map(resp => resp.result)
+      ));
+  public getControlStart = (deviceId: string, channelId: string, direct: string, speed: number) => defer(
+    () => from(request(`/jetlinks/media/device/${deviceId}/${channelId}/_ptz/${direct}/${speed}`, { method: 'GET' }))
+      .pipe(
+        filter(resp => resp.status === 200),
+        map(resp => resp.result)
+      ));
+  public getControlStop = (deviceId: string, channelId: string) => defer(
+    () => from(request(`/jetlinks/media/device/${deviceId}/${channelId}/_STOP`, { method: 'GET' }))
       .pipe(
         filter(resp => resp.status === 200),
         map(resp => resp.result)
