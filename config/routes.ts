@@ -553,6 +553,14 @@ export const routes = [
                                 component: './media/device',
                             },
                             {
+                                hideInMenu: true,
+                                path: '/media/device/channel/:id',
+                                name: '通道列表',
+                                tenant: ['admin', 'member'],
+                                iconfont: 'icon-shebei1',
+                                component: './media/device/channel',
+                            },
+                            {
                                 path: '/media/reveal',
                                 name: '分屏展示',
                                 version: 'pro',
