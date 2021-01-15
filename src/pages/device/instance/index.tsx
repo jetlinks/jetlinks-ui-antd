@@ -192,7 +192,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
       filterMultiple: false,
     },
     {
-      title: '描述',
+      title: '说明',
       dataIndex: 'describe',
       width: '15%',
       ellipsis: true
