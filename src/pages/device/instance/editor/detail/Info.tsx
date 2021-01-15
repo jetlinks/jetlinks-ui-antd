@@ -121,8 +121,8 @@ const Info: React.FC<Props> = (props) => {
         <Descriptions style={{marginBottom: 20}} bordered column={3} size="small"
                       title={<span>设备信息
                          <Button icon="edit" style={{marginLeft: 20}} type="link"
-                              onClick={() => setAddVisible(true)}
-                      >编辑</Button>
+                                 onClick={() => setAddVisible(true)}
+                         >编辑</Button>
                       </span>}>
           <Descriptions.Item label="产品名称" span={1}>
             {props.data.productName}
@@ -152,7 +152,7 @@ const Info: React.FC<Props> = (props) => {
             {props.data.state?.value !== 'notActive' ? moment(props.data.onlineTime).format('YYYY-MM-DD HH:mm:ss') : '/'}
           </Descriptions.Item>
           <Descriptions.Item label="说明" span={3}>
-            {props.data.describe}
+            {props.data.describe || props.data.description}
           </Descriptions.Item>
           {props.data.binds && props.data.binds.length > 0 && (
             <Descriptions.Item label="云对云接入" span={3}>
@@ -253,14 +253,14 @@ const Info: React.FC<Props> = (props) => {
         )}
       </Card>
       {addVisible && (
-          <Save
-            data={props.data}
-            close={() => {
-              setAddVisible(false);
-              // setCurrentItem({});
-            }}
-          />
-        )}
+        <Save
+          data={props.data}
+          close={() => {
+            setAddVisible(false);
+            // setCurrentItem({});
+          }}
+        />
+      )}
       {updateVisible && (
         <Configuration data={props.data} configuration={props.configuration}
                        close={() => {

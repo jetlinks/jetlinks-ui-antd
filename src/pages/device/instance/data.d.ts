@@ -7,6 +7,8 @@ export class DeviceInstance extends SimpleType {
 
   describe: string;
 
+  description: string;
+
   productId: string;
 
   productName: string;
