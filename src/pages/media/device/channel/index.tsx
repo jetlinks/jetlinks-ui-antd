@@ -1,13 +1,11 @@
 import {PageHeaderWrapper} from "@ant-design/pro-layout"
-import {Badge, Card, Descriptions, Row} from "antd";
+import {Badge, Card, Descriptions, Row, Table} from "antd";
 import React, {Fragment, useEffect, useState} from "react";
 import styles from '@/utils/table.less';
 import SearchForm from "@/components/SearchForm";
-import ProTable from "@/pages/system/permission/component/ProTable";
-import {ColumnProps} from "antd/lib/table";
+import {ColumnProps, PaginationConfig, SorterResult} from "antd/lib/table";
 import Service from "../service";
 import encodeQueryParam from "@/utils/encodeParam";
-import {router} from "umi";
 import {Dispatch} from "@/models/connect";
 import Play from './play';
 
@@ -21,14 +19,14 @@ interface State {
 }
 
 const initState: State = {
-  searchParam: {pageSize: 10, terms: location?.query?.terms, sorts: {field: 'id', order: 'desc'}},
+  searchParam: {terms: location?.query?.terms, sorts: {field: 'id', order: 'desc'}},
 };
 const MediaDevice: React.FC<Props> = props => {
   const {location: {pathname},} = props;
   const service = new Service('media/channel');
   const [loading, setLoading] = useState<boolean>(false);
   const [deviceId, setDeviceId] = useState<string>("");
-  const [result, setResult] = useState<any>({});
+  const [result, setResult] = useState<any[]>([]);
   const [deviceInfo, setDeviceInfo] = useState<any>({});
   const [playing, setPlaying] = useState<boolean>(false);
   const [data, setData] = useState<any>({});
@@ -45,12 +43,12 @@ const MediaDevice: React.FC<Props> = props => {
       deviceDetail(list[list.length - 1]);
       setDeviceId(list[list.length - 1]);
       searchParam.terms = {deviceId: list[list.length - 1]};
-      handleSearch(encodeQueryParam(searchParam));
+      handleSearch(searchParam);
     }
   }, [window.location.hash]);
 
   const deviceDetail = (deviceId: string) => {
-    service.deviceDetail(deviceId).subscribe((data) => {
+    service.mediaDevice(deviceId).subscribe((data) => {
         setDeviceInfo(data);
       },
       () => {
@@ -62,11 +60,14 @@ const MediaDevice: React.FC<Props> = props => {
   const handleSearch = (params?: any) => {
     setSearchParam(params);
     setLoading(true);
-    service.query(encodeQueryParam(params)).subscribe(
-      (data) => setResult(data),
+    service.mediaDeviceNoPaging(encodeQueryParam(params)).subscribe(
+      (data) => {
+        const temp = data.map((item: any) => ({parentId: item.parentChannelId, ...item}));
+        setResult(temp);
+      },
       () => {
       },
-      () => setLoading(false))
+      () => setLoading(false));
   };
 
 
@@ -78,6 +79,13 @@ const MediaDevice: React.FC<Props> = props => {
     {
       title: '通道名称',
       dataIndex: 'name',
+      // onCell: record => {
+      //   return {
+      //     onDoubleClick: () => {
+      //       console.log(record);
+      //     },
+      //   };
+      // }
     },
     {
       title: '厂商',
@@ -105,8 +113,12 @@ const MediaDevice: React.FC<Props> = props => {
       filterMultiple: false,
     },
     {
+      title: '子通道数',
+      dataIndex: 'subCount',
+    },
+    {
       title: '描述',
-      dataIndex: 'describe',
+      dataIndex: 'description',
       width: '15%',
       ellipsis: true
     },
@@ -130,27 +142,29 @@ const MediaDevice: React.FC<Props> = props => {
     },
   ];
 
+  const onTableChange = (
+    pagination: PaginationConfig,
+    filters: any,
+    sorter: SorterResult<any>,
+  ) => {
+    searchParam.terms = filters;
+    searchParam.terms['deviceId'] = deviceId;
+    searchParam.sorts = sorter.field ? sorter : {field: 'id', order: 'desc'};
+
+    handleSearch(searchParam);
+  };
+
   const content = (
     <div style={{marginTop: 30}}>
       <Descriptions column={4}>
         <Descriptions.Item label="设备名称">
           <div>
             {deviceInfo.name}
-            <a style={{marginLeft: 10}}
+            {/*<a style={{marginLeft: 10}}
                onClick={() => {
                  router.push(`/device/instance/save/${deviceInfo.id}`);
                }}
-            >查看</a>
-          </div>
-        </Descriptions.Item>
-        <Descriptions.Item label="产品名称">
-          <div>
-            {deviceInfo.productName}
-            <a style={{marginLeft: 10}}
-               onClick={() => {
-                 router.push(`/device/product/save/${deviceInfo.productId}`);
-               }}
-            >查看</a>
+            >查看</a>*/}
           </div>
         </Descriptions.Item>
       </Descriptions>
@@ -180,7 +194,7 @@ const MediaDevice: React.FC<Props> = props => {
               search={(params: any) => {
                 setSearchParam(params);
                 params.deviceId = deviceId;
-                handleSearch({terms: {...params}, pageSize: 10, sorts: {field: 'id', order: 'desc'}});
+                handleSearch({terms: {...params}, sorts: {field: 'id', order: 'desc'}});
               }}
               formItems={[
                 {
@@ -195,21 +209,22 @@ const MediaDevice: React.FC<Props> = props => {
       </Card>
       <Card>
         <div className={styles.StandardTable}>
-          <ProTable
+          <Table
             loading={loading}
-            dataSource={result?.data}
+            dataSource={result}
             columns={columns}
             rowKey="id"
-            onSearch={(params: any) => {
-              params.terms['deviceId'] = deviceId;
-              params.sorts = params.sorts.field ? params.sorts : {field: 'id', order: 'desc'};
-              handleSearch(params);
-            }}
-            paginationConfig={result}
-          />
+            onChange={onTableChange}
+            pagination={{
+              pageSize: 10
+            }}/>
         </div>
       </Card>
-      {playing && <Play data={data} close={() => {setPlaying(false)}} ok={() => {setPlaying(false)}} />}
+      {playing && <Play data={data} close={() => {
+        setPlaying(false)
+      }} ok={() => {
+        setPlaying(false)
+      }}/>}
     </PageHeaderWrapper>
   )
 };
