@@ -1,5 +1,5 @@
 import {PageHeaderWrapper} from "@ant-design/pro-layout"
-import {Badge, Card, Descriptions, Row, Table} from "antd";
+import {Badge, Card, Descriptions, Divider, Row, Table} from "antd";
 import React, {Fragment, useEffect, useState} from "react";
 import styles from '@/utils/table.less';
 import SearchForm from "@/components/SearchForm";
@@ -8,6 +8,7 @@ import Service from "../service";
 import encodeQueryParam from "@/utils/encodeParam";
 import {Dispatch} from "@/models/connect";
 import Play from './play';
+import ChannelEdit from './edit/index';
 
 interface Props {
   dispatch: Dispatch;
@@ -28,6 +29,8 @@ const MediaDevice: React.FC<Props> = props => {
   const [deviceId, setDeviceId] = useState<string>("");
   const [result, setResult] = useState<any[]>([]);
   const [deviceInfo, setDeviceInfo] = useState<any>({});
+  const [channel, setChannel] = useState<boolean>(false);
+  const [channelInfo, setChannelInfo] = useState<any>({});
   const [playing, setPlaying] = useState<boolean>(false);
   const [data, setData] = useState<any>({});
 
@@ -36,6 +39,13 @@ const MediaDevice: React.FC<Props> = props => {
   statusMap.set('online', 'success');
   statusMap.set('offline', 'error');
   statusMap.set('notActive', 'processing');
+
+  const ptzType = new Map();
+  ptzType.set('unknown', '未知');
+  ptzType.set('sphere', '球体');
+  ptzType.set('dome', '半球体');
+  ptzType.set('box', '固定枪机');
+  ptzType.set('control', '遥控枪机');
 
   useEffect(() => {
     if (pathname.indexOf('channel') > 0) {
@@ -94,6 +104,13 @@ const MediaDevice: React.FC<Props> = props => {
     {
       title: '安装地址',
       dataIndex: 'address',
+      width: '15%',
+      ellipsis: true,
+    },
+    {
+      title: '云台类型',
+      dataIndex: 'others.ptzType',
+      render: record => ptzType.get(record),
     },
     {
       title: '状态',
@@ -125,8 +142,18 @@ const MediaDevice: React.FC<Props> = props => {
     {
       title: '操作',
       align: 'center',
+      fixed: 'right',
       render: (record: any) => (
         <Fragment>
+          <a
+            onClick={() => {
+              setChannel(true);
+              setChannelInfo(record);
+            }}
+          >
+            编辑
+          </a>
+          <Divider type="vertical"/>
           {record.status.value === 'online' && (
             <a
               onClick={() => {
@@ -214,6 +241,7 @@ const MediaDevice: React.FC<Props> = props => {
             dataSource={result}
             columns={columns}
             rowKey="id"
+            scroll={{x: '120%'}}
             onChange={onTableChange}
             pagination={{
               pageSize: 10
@@ -225,6 +253,13 @@ const MediaDevice: React.FC<Props> = props => {
       }} ok={() => {
         setPlaying(false)
       }}/>}
+
+      {channel && <ChannelEdit data={channelInfo} close={() => {
+        setChannel(false);
+        handleSearch(searchParam);
+      }}/>
+
+      }
     </PageHeaderWrapper>
   )
 };
