@@ -6,7 +6,7 @@ import { filter, map } from "rxjs/operators";
 class Service extends BaseService<any> {
 
   public groupDevice = (param: any) => defer(
-    () => from(request(`/jetlinks/device-instance/_query/no-paging?paging=false`, {
+    () => from(request(`/jetlinks/media/device/_query/no-paging?paging=false`, {
       method: 'GET',
       params: param
     })).pipe(
@@ -44,6 +44,18 @@ class Service extends BaseService<any> {
       filter(resp => resp.status === 200),
       map(resp => resp.result)
     ));
+  public getControlStart = (deviceId: string, channelId: string, direct: string, speed: number) => defer(
+    () => from(request(`/jetlinks/media/device/${deviceId}/${channelId}/_ptz/${direct}/${speed}`, { method: 'POST' }))
+      .pipe(
+        filter(resp => resp.status === 200),
+        map(resp => resp.result)
+      ));
+  public getControlStop = (deviceId: string, channelId: string) => defer(
+    () => from(request(`/jetlinks/media/device/${deviceId}/${channelId}/_ptz/STOP`, { method: 'POST' }))
+      .pipe(
+        filter(resp => resp.status === 200),
+        map(resp => resp.result)
+      ));
 }
 
 export default Service;

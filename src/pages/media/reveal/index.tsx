@@ -25,9 +25,13 @@ const Reveal: React.FC<Props> = props => {
     code: "",
     protocol: "",
     poster: "",
+    deviceId: '',
+    channelId: ''
   }]);
   const [playing, setPlaying] = useState(false);
   const [setting, setSetting] = useState(0);
+  const [deviceId, setDeviceId] = useState('');
+  const [channelId, setChannelId] = useState('');
   const [playerActive, setPlayerActive] = useState(0);
   const playerBtnGroup = [{ num: 1, name: '单屏' }, { num: 4, name: '四分屏' }, { num: 9, name: '九分屏' }];
 
@@ -81,6 +85,10 @@ const Reveal: React.FC<Props> = props => {
     });
   };
   const setPlayerLength = (playerLength: number) => {
+    //关闭流
+    // players.map(item => {
+    //   stopVideo(item.deviceId, item.channelId);
+    // });
     let data: any = [];
     for (let i = 0; i < playerLength; i++) {
       data.push({
@@ -91,8 +99,10 @@ const Reveal: React.FC<Props> = props => {
         closeTimer: 0,
         serial: "",
         code: "",
-        protocol: "FLV",
+        protocol: "",
         poster: "",
+        deviceId: '',
+        channelId: ''
       })
     }
     setSetting(0);
@@ -131,13 +141,18 @@ const Reveal: React.FC<Props> = props => {
   };
   const playVideo = (e) => {
     const { deviceId, channelId, isLeaf } = e.node.props;
+    setDeviceId(deviceId);
+    setChannelId(channelId);
     if (isLeaf) {
       service.getPlay(deviceId, channelId).subscribe(res => {
         let data = players || [];
         data.forEach((item, index) => {
           if (index === setting) {
-            item.url = res.hls
-            item.protocol = 'hls'
+            // stopVideo(item.deviceId, item.channelId);
+            item.url = getPlayer(res).url
+            item.protocol = getPlayer(res).protocol
+            item.deviceId = deviceId
+            item.channelId = channelId
           }
         })
         let i = 0;
@@ -147,10 +162,55 @@ const Reveal: React.FC<Props> = props => {
           i = 0
         }
         setSetting(i);
-        setPlayers(data)
+        setPlayers([...data])
+      })
+    }
+  };
+
+  const getPlayer = (res: any) => {
+    if(res.mp4){
+      return {url: res.mp4, protocol:'mp4'}
+    }else if(res.hls){
+      return {url: res.hls, protocol:'hls'}
+    }else if(res.flv){
+      return {url: res.flv, protocol:'flv'}
+    }else if(res.rtmp){
+      return {url: res.rtmp, protocol:'rtmp'}
+    }else if(res.rtsp){
+      return {url: res.rtsp, protocol:'rtsp'}
+    }else if(res.rtc){
+      return {url: res.rtc, protocol:'rtc'}
+    }else{
+      return {url: '', protocol:''}
+    }
+  }
+
+  const stopVideo = (deviceId: string, channelId: string) => {
+    if(deviceId !== '' && channelId !== ''){
+      service.getStop(deviceId, channelId).subscribe(() => {})
+    }
+  }
+
+  const controlStart = (deviceId: string, channelId: string, direct: string) => {
+    if (playing) {
+      service.getControlStart(deviceId, channelId, direct, 10).subscribe(() => {
       })
     }
   }
+  const controlStop = (deviceId: string, channelId: string) => {
+    if (playing) {
+      service.getControlStop(deviceId, channelId).subscribe(() => {
+      })
+    }
+  }
+
+  const fullScreen = () => {
+    let dom = document.getElementById('video_show');
+    if (dom?.requestFullscreen) {
+      dom.requestFullscreen();
+    }
+  };
+
   return (
     <PageHeaderWrapper title="分屏展示">
       <Card bordered={false} style={{ marginBottom: 16 }}>
@@ -172,42 +232,41 @@ const Reveal: React.FC<Props> = props => {
           <div className={styles.player}>
             <div className={styles.top}>
               {playerBtnGroup.length > 0 && playerBtnGroup.map((item, index) => (
-                <div key={index} className={styles.btn} onClick={() => { setPlayerActive(index); setPlayerLength(item.num) }} style={index === playerActive ? { backgroundColor: '#404d59', color: '#fff' } : {}}>{item.name}</div>
+                <div key={index} className={styles.btn} onClick={() => { setPlayerActive(index); setPlayerLength(item.num); }} style={index === playerActive ? { backgroundColor: '#404d59', color: '#fff' } : {}}>{item.name}</div>
               ))}
-              <div className={styles.btn}>全屏</div>
+              <div className={styles.btn} onClick={() => { fullScreen() }}>全屏</div>
             </div>
             <div className={styles.player_box}>
-              <div className={styles.player_left}>
+              <div className={styles.player_left} id="video_show">
                 {
                   players.length > 0 && players.map((item: any, index: number) => (
-                    <div onClick={() => { setSetting(index); }} className={styles.video} key={index} style={players.length === 1 ? { border: setting === index ? "1px solid red" : null, width: '100%' } : players.length === 9 ? { border: setting === index ? "1px solid red" : null, width: "32%" } : { width: "48%", border: setting === index ? "1px solid red" : null }}>
-                      <live-player loading={item.bLoading} live muted stretch protocol={item.protocol} element-loading-text="加载中..." element-loading-background="#000" autoplay live video-url={item.url}></live-player>
+                    <div onClick={() => { setSetting(index); }} className={styles.video} key={index} style={players.length === 1 ? { border: setting === index ? "1px solid red" : null, width: 'calc(100% - 10px)' } : players.length === 9 ? { border: setting === index ? "1px solid red" : null, width: "calc((100% -  30px) / 3)" } : { width: "calc((100% -  20px) / 2)", border: setting === index ? "1px solid red" : null }}>
+                      <live-player loading={item.bLoading} muted stretch protocol={item.protocol} element-loading-text="加载中..." element-loading-background="#000" autoplay live video-url={item.url}></live-player>
                     </div>
                   ))
                 }
               </div>
               <div className={styles.player_right}>
                 <div className={styles.ptz_block}>
-                  <div className={styles.ptz_up} title="上">
+                  <div className={styles.ptz_up} title="上" onMouseDown={() => { controlStart(deviceId,channelId,'UP'); }} onMouseUp={() => { controlStop(deviceId,channelId); }}>
                     <UpOutlined style={{ fontSize: '30px', color: playing ? '#00000f5' : 'lightgray' }} />
                   </div>
-                  <div className={styles.ptz_left} title="左">
+                  <div className={styles.ptz_left} title="左" onMouseDown={() => { controlStart(deviceId,channelId,'LEFT'); }} onMouseUp={() => { controlStop(deviceId,channelId); }}>
                     <LeftOutlined style={{ fontSize: '30px', color: playing ? '#00000f5' : 'lightgray' }} />
                   </div>
                   <div className={styles.ptz_center} title="云控制台">
-                    {/* <PlayCircleOutlined style={{ fontSize: '30px', color: playing ? '#00000f5' : 'lightgray' }} /> */}
                     <AudioOutlined style={{ fontSize: '30px', color: playing ? '#00000f5' : 'lightgray' }} />
                   </div>
-                  <div className={styles.ptz_right} title="右">
+                  <div className={styles.ptz_right} title="右" onMouseDown={() => { controlStart(deviceId,channelId,'RIGHT'); }} onMouseUp={() => { controlStop(deviceId,channelId); }}>
                     <RightOutlined style={{ fontSize: '30px', color: playing ? '#00000f5' : 'lightgray' }} />
                   </div>
-                  <div className={styles.ptz_down} title="下">
+                  <div className={styles.ptz_down} title="下" onMouseDown={() => { controlStart(deviceId,channelId,'DOWN'); }} onMouseUp={() => { controlStop(deviceId,channelId); }}>
                     <DownOutlined style={{ fontSize: '30px', color: playing ? '#00000f5' : 'lightgray' }} />
                   </div>
-                  <div className={styles.ptz_zoomin} title="放大">
+                  <div className={styles.ptz_zoomin} title="放大" onMouseDown={() => { controlStart(deviceId,channelId,'ZOOM_IN'); }} onMouseUp={() => { controlStop(deviceId,channelId); }}>
                     <PlusOutlined style={{ fontSize: '30px', color: playing ? '#00000f5' : 'lightgray' }} />
                   </div>
-                  <div className={styles.ptz_zoomout} title="缩小">
+                  <div className={styles.ptz_zoomout} title="缩小" onMouseDown={() => { controlStart(deviceId,channelId,'ZOOM_OUT'); }} onMouseUp={() => { controlStop(deviceId,channelId); }}>
                     <MinusOutlined style={{ fontSize: '30px', color: playing ? '#00000f5' : 'lightgray' }} />
                   </div>
                 </div>
