@@ -8,7 +8,7 @@ import {ColumnProps} from "antd/lib/table";
 import Service from "./service";
 import encodeQueryParam from "@/utils/encodeParam";
 import {router} from "umi";
-import DeviceUpdate from "./update/index";
+import DeviceUpdate from "./edit/index";
 import moment from "moment";
 
 interface Props {
