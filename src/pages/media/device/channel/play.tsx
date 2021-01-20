@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Modal, Radio } from "antd";
 import Service from '../service'
 import { UpOutlined, LeftOutlined, AudioOutlined, RightOutlined, DownOutlined, PlusOutlined, MinusOutlined } from "@ant-design/icons";
-import styles from './play.less'
+import styles from './play.less';
 
 
 interface Props {
@@ -19,47 +19,30 @@ const Play = (props: Props) => {
     const [url, setUrl] = useState('');
     const [bloading, setBloading] = useState(true);
     const [protocol, setProtocol] = useState('');
-    const [node, setNode] = useState(null);
     useEffect(() => {
-        // setPlaying(true);
+        setPlaying(true);
         service.getPlay(props.data.deviceId, props.data.channelId).subscribe(res => {
             setUrl(res['flv'])
             setProtocol('flv')
             setBloading(false);
             setUrlItem(res);
         });
-        // setUrl('http://192.168.3.113:8180/live/200009368.flv?deviceId=34020000001320000123&key=')
-        // setProtocol('flv')
     }, []);
-
-    const nodeHandle = (node) => {
-        console.log(node)
-    }
 
     const play = (value: string) => {
         setUrl(urlItem[value])
         setProtocol(value)
     }
 
-    const _stop = () => {
-        service.getStop(props.data.deviceId, props.data.channelId).subscribe(() => {
-            // console.log(res)
-        })
-    }
-
     const controlStart = (direct: string) => {
         if (playing) {
-            service.getControlStart(props.data.deviceId, props.data.channelId, direct, 10).subscribe(() => {
-                // console.log('start')
-                // console.log(res)
+            service.getControlStart(props.data.deviceId, props.data.channelId, direct, 20).subscribe(() => {
             })
         }
     }
     const controlStop = () => {
         if (playing) {
             service.getControlStop(props.data.deviceId, props.data.channelId).subscribe(() => {
-                // console.log('stop')
-                // console.log(res)
             })
         }  
     }
@@ -69,10 +52,9 @@ const Play = (props: Props) => {
             visible
             width='50VW'
             title="视频播放"
-            onCancel={() => {props.close(); _stop()}}
+            onCancel={() => {props.close();}}
             onOk={() => {
                 props.ok();
-                _stop();
             }}
         >
             <div className={styles.player_box}>
@@ -82,7 +64,6 @@ const Play = (props: Props) => {
                     </div>
                     <div className={styles.bottom}>
                         <Radio.Group defaultValue="flv" buttonStyle="solid" onChange={(e) => {
-                            _stop();
                             play(e.target.value)
                         }}>
                             {playerBtnGroup.length > 0 && playerBtnGroup.map((item, index) => (
@@ -100,7 +81,7 @@ const Play = (props: Props) => {
                             <LeftOutlined style={{ fontSize: '30px', color: playing ? '#00000f5' : 'lightgray' }} />
                         </div>
                         <div className={styles.ptz_center} title="云控制台">
-                            <AudioOutlined style={{ fontSize: '30px', color: playing ? '#00000f5' : 'lightgray' }} />
+                            <AudioOutlined style={{ fontSize: '30px', color: 'lightgray' }} />
                         </div>
                         <div className={styles.ptz_right} title="右" onMouseDown={() => { controlStart('RIGHT'); }} onMouseUp={() => { controlStop(); }}>
                             <RightOutlined style={{ fontSize: '30px', color: playing ? '#00000f5' : 'lightgray' }} />

@@ -8,6 +8,22 @@
         .video_box{
             width: 100%;
             border: 1px solid #000;
+            position: relative;
+            .video_lose{
+                position: absolute;
+                top: 5px;
+                right: 5px;
+                color: white;
+                font-size: 12px;
+                background-color: fade(gray, 50%);
+                padding: 2px 5px;
+                cursor: pointer;
+                border-radius: 2px;
+                max-width: 120px;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
         }
         .bottom{
             display: flex;
@@ -73,6 +89,7 @@
             .ptz_center,
             .ptz_zoomin,
             .ptz_zoomout{
+                cursor: pointer;
                 width: 50px;
                 height: 50px;
                 line-height: 50px;
