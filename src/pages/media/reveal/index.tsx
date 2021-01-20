@@ -86,9 +86,9 @@ const Reveal: React.FC<Props> = props => {
   };
   const setPlayerLength = (playerLength: number) => {
     //关闭流
-    // players.map(item => {
-    //   stopVideo(item.deviceId, item.channelId);
-    // });
+    players.map(item => {
+      stopVideo(item.deviceId, item.channelId);
+    });
     let data: any = [];
     for (let i = 0; i < playerLength; i++) {
       data.push({
@@ -148,7 +148,7 @@ const Reveal: React.FC<Props> = props => {
         let data = players || [];
         data.forEach((item, index) => {
           if (index === setting) {
-            // stopVideo(item.deviceId, item.channelId);
+            stopVideo(item.deviceId, item.channelId);
             item.url = getPlayer(res).url
             item.protocol = getPlayer(res).protocol
             item.deviceId = deviceId
