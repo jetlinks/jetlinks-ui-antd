@@ -158,10 +158,12 @@ const DeviceInstancePage: React.FC<Props> = props => {
     {
       title: '设备名称',
       dataIndex: 'name',
+      ellipsis: true,
     },
     {
       title: '产品名称',
       dataIndex: 'productName',
+      ellipsis: true,
     },
     {
       title: '注册时间',
