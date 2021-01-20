@@ -76,14 +76,14 @@ const Update: React.FC<Props> = props => {
             rules: [
               {required: true, message: '请选择云台类型'}
             ],
-            initialValue: props.data.others?.ptzType || 'unknown',
+            initialValue: props.data.others?.ptzType || 0,
           })(
             <Select>
-              <Select.Option value='0'>未知</Select.Option>
-              <Select.Option value='1'>球体</Select.Option>
-              <Select.Option value='2'>半球体</Select.Option>
-              <Select.Option value='3'>固定枪机</Select.Option>
-              <Select.Option value='4'>遥控枪机</Select.Option>
+              <Select.Option value={0}>未知</Select.Option>
+              <Select.Option value={1}>球体</Select.Option>
+              <Select.Option value={2}>半球体</Select.Option>
+              <Select.Option value={3}>固定枪机</Select.Option>
+              <Select.Option value={4}>遥控枪机</Select.Option>
             </Select>
           )}
         </Form.Item>

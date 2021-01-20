@@ -41,11 +41,11 @@ const MediaDevice: React.FC<Props> = props => {
   statusMap.set('notActive', 'processing');
 
   const ptzType = new Map();
-  ptzType.set('0', '未知');
-  ptzType.set('1', '球体');
-  ptzType.set('2', '半球体');
-  ptzType.set('3', '固定枪机');
-  ptzType.set('4', '遥控枪机');
+  ptzType.set(0, '未知');
+  ptzType.set(1, '球体');
+  ptzType.set(2, '半球体');
+  ptzType.set(3, '固定枪机');
+  ptzType.set(4, '遥控枪机');
 
   useEffect(() => {
     if (pathname.indexOf('channel') > 0) {
