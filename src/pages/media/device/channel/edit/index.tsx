@@ -79,11 +79,11 @@ const Update: React.FC<Props> = props => {
             initialValue: props.data.others?.ptzType || 'unknown',
           })(
             <Select>
-              <Select.Option value='unknown'>未知</Select.Option>
-              <Select.Option value='sphere'>球体</Select.Option>
-              <Select.Option value='dome'>半球体</Select.Option>
-              <Select.Option value='box'>固定枪机</Select.Option>
-              <Select.Option value='control'>遥控枪机</Select.Option>
+              <Select.Option value='0'>未知</Select.Option>
+              <Select.Option value='1'>球体</Select.Option>
+              <Select.Option value='2'>半球体</Select.Option>
+              <Select.Option value='3'>固定枪机</Select.Option>
+              <Select.Option value='4'>遥控枪机</Select.Option>
             </Select>
           )}
         </Form.Item>

@@ -41,11 +41,11 @@ const MediaDevice: React.FC<Props> = props => {
   statusMap.set('notActive', 'processing');
 
   const ptzType = new Map();
-  ptzType.set('unknown', '未知');
-  ptzType.set('sphere', '球体');
-  ptzType.set('dome', '半球体');
-  ptzType.set('box', '固定枪机');
-  ptzType.set('control', '遥控枪机');
+  ptzType.set('0', '未知');
+  ptzType.set('1', '球体');
+  ptzType.set('2', '半球体');
+  ptzType.set('3', '固定枪机');
+  ptzType.set('4', '遥控枪机');
 
   useEffect(() => {
     if (pathname.indexOf('channel') > 0) {
@@ -83,12 +83,14 @@ const MediaDevice: React.FC<Props> = props => {
 
   const columns: ColumnProps<any>[] = [
     {
-      title: '通道ID',
+      title: '通道国标编号',
       dataIndex: 'channelId',
+      // fixed: 'left',
     },
     {
       title: '通道名称',
       dataIndex: 'name',
+      ellipsis: true,
       // onCell: record => {
       //   return {
       //     onDoubleClick: () => {
@@ -100,6 +102,7 @@ const MediaDevice: React.FC<Props> = props => {
     {
       title: '厂商',
       dataIndex: 'manufacturer',
+      ellipsis: true,
     },
     {
       title: '安装地址',
@@ -110,12 +113,13 @@ const MediaDevice: React.FC<Props> = props => {
     {
       title: '云台类型',
       dataIndex: 'others.ptzType',
+      width: 100,
       render: record => ptzType.get(record),
     },
     {
-      title: '状态',
+      title: '在线状态',
       dataIndex: 'status',
-      width: '90px',
+      width: 110,
       render: record => record ? <Badge status={statusMap.get(record.value)} text={record.text}/> : '',
       filters: [
         {
@@ -132,17 +136,18 @@ const MediaDevice: React.FC<Props> = props => {
     {
       title: '子通道数',
       dataIndex: 'subCount',
+      width: 100,
     },
     {
       title: '描述',
       dataIndex: 'description',
-      width: '15%',
+      width: '10%',
       ellipsis: true
     },
     {
       title: '操作',
       align: 'center',
-      fixed: 'right',
+      // fixed: 'right',
       render: (record: any) => (
         <Fragment>
           <a
@@ -241,7 +246,7 @@ const MediaDevice: React.FC<Props> = props => {
             dataSource={result}
             columns={columns}
             rowKey="id"
-            scroll={{x: '120%'}}
+            // scroll={{x: '120%'}}
             onChange={onTableChange}
             pagination={{
               pageSize: 10

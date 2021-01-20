@@ -1,5 +1,5 @@
 import {PageHeaderWrapper} from "@ant-design/pro-layout"
-import {Badge, Card, Divider} from "antd";
+import {Badge, Card, Divider, Popconfirm} from "antd";
 import React, {Fragment, useEffect, useState} from "react";
 import styles from '@/utils/table.less';
 import SearchForm from "@/components/SearchForm";
@@ -66,7 +66,7 @@ const MediaDevice: React.FC<Props> = () => {
 
   const columns: ColumnProps<any>[] = [
     {
-      title: 'ID',
+      title: '国标设备编号',
       dataIndex: 'id',
       width: 200,
       ellipsis: true,
@@ -81,23 +81,23 @@ const MediaDevice: React.FC<Props> = () => {
     {
       title: '信令传输',
       dataIndex: 'transport',
-      width: '90px',
+      width: 90,
     },
     {
       title: '流传输模式',
       dataIndex: 'streamMode',
-      width: '110px',
+      width: 110,
       render: record => record ? streamMode.get(record) : '/',
     },
     {
       title: '通道数',
       dataIndex: 'channelNumber',
-      width: '90px',
+      width: 100,
     },
     {
-      title: '状态',
+      title: '设备状态',
       dataIndex: 'state',
-      width: '90px',
+      width: 110,
       render: record => record ? <Badge status={statusMap.get(record.value)} text={record.text}/> : '/',
       filters: [
         {
@@ -118,36 +118,41 @@ const MediaDevice: React.FC<Props> = () => {
     {
       title: '设备IP',
       dataIndex: 'host',
+      ellipsis: true,
+      width: 150,
     },
     {
       title: '设备端口',
       dataIndex: 'port',
+      width: 90,
+      ellipsis: true,
     },
     {
-      title: '厂家',
+      title: '设备厂家',
       dataIndex: 'manufacturer',
-      ellipsis: true
+      ellipsis: true,
     },
     {
-      title: '型号',
+      title: '设备型号',
       dataIndex: 'model',
-      ellipsis: true
+      ellipsis: true,
     },
     {
       title: '固件版本',
       dataIndex: 'firmware',
+      ellipsis: true,
     },
     {
       title: '创建时间',
       dataIndex: 'createTime',
       render: (text: any) => text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/',
       sorter: true,
+      width: 200,
     },
     {
       title: '操作',
       key: 'center',
       fixed: 'right',
-      width: 180,
       render: (record: any) => (
         <Fragment>
           <a
@@ -174,14 +179,18 @@ const MediaDevice: React.FC<Props> = () => {
           >
             查看通道
           </a>
-          {/*<Divider type="vertical"/>
-          <Popconfirm
-            title="确认更新吗？"
-            onConfirm={() => {
+          {record.state.value !== 'online' && (
+            <>
+              <Divider type="vertical"/>
+              <Popconfirm
+                title="确认删除该国标设备吗？"
+                onConfirm={() => {
 
-            }}>
-            <a>更新通道</a>
-          </Popconfirm>*/}
+                }}>
+                <a>删除</a>
+              </Popconfirm>
+            </>
+          )}
         </Fragment>
       )
     },
