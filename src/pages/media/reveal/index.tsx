@@ -173,10 +173,10 @@ const Reveal: React.FC<Props> = props => {
   const getPlayer = (res: any) => {
     if (res.mp4) {
       return { url: res.mp4, protocol: 'mp4' }
-    } else if (res.hls) {
-      return { url: res.hls, protocol: 'hls' }
     } else if (res.flv) {
       return { url: res.flv, protocol: 'flv' }
+    } else if (res.hls) {
+      return { url: res.hls, protocol: 'hls' }
     } else if (res.rtmp) {
       return { url: res.rtmp, protocol: 'rtmp' }
     } else if (res.rtsp) {
@@ -190,7 +190,7 @@ const Reveal: React.FC<Props> = props => {
 
   const controlStart = (deviceId: string, channelId: string, direct: string) => {
     if (playing && deviceId !== '' && channelId !== '' && deviceId !== undefined && channelId !== undefined) {
-      service.getControlStart(deviceId, channelId, direct, 20).subscribe(() => {
+      service.getControlStart(deviceId, channelId, direct, 90).subscribe(() => {
       })
     }
   }
@@ -207,6 +207,26 @@ const Reveal: React.FC<Props> = props => {
       dom.requestFullscreen();
     }
   };
+
+  //刷新
+  const refresh = (deviceId:string, channelId: string) => {
+    //关闭流
+    service.getStop(deviceId, channelId).subscribe(() => {
+      //开启流
+      service.getPlay(deviceId, channelId).subscribe(res => {
+        let data = players || [];
+        data.forEach((item, index) => {
+          if (index === setting) {` `
+            item.url = getPlayer(res).url
+            item.protocol = getPlayer(res).protocol
+            item.deviceId = deviceId
+            item.channelId = channelId
+          }
+        })
+        setPlayers([...data])
+      })
+    });
+  }
 
   return (
     <PageHeaderWrapper title="分屏展示">
@@ -241,6 +261,7 @@ const Reveal: React.FC<Props> = props => {
                   players.length > 0 && players.map((item: any, index: number) => (
                     <div onClick={() => { if (!document.fullscreenElement) { setSetting(index); setDeviceId(item.deviceId); setChannelId(item.channelId); } }} className={styles.video} key={index} style={players.length === 1 ? { border: setting === index ? "1px solid red" : null, width: 'calc(100% - 10px)' } : players.length === 9 ? { border: setting === index ? "1px solid red" : null, width: "calc((100% -  30px) / 3)" } : { width: "calc((100% -  20px) / 2)", border: setting === index ? "1px solid red" : null }}>
                       <live-player loading={item.bLoading} muted stretch protocol={item.protocol} element-loading-text="加载中..." element-loading-background="#000" autoplay live video-url={item.url}></live-player>
+                      {item.deviceId !== '' && item.channelId !== '' && <div className={styles.video_lose} onClick={() => { refresh(item.deviceId, item.channelId) }}>刷新</div>}
                     </div>
                   ))
                 }

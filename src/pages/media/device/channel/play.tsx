@@ -36,7 +36,7 @@ const Play = (props: Props) => {
 
     const controlStart = (direct: string) => {
         if (playing) {
-            service.getControlStart(props.data.deviceId, props.data.channelId, direct, 20).subscribe(() => {
+            service.getControlStart(props.data.deviceId, props.data.channelId, direct, 90).subscribe(() => {
             })
         }
     }
@@ -45,6 +45,21 @@ const Play = (props: Props) => {
             service.getControlStop(props.data.deviceId, props.data.channelId).subscribe(() => {
             })
         }  
+    }
+
+    //刷新
+    const refresh = () => {
+        setBloading(true);
+        //关闭流
+        service.getStop(props.data.deviceId, props.data.channelId).subscribe(() => {
+            //开启流
+            service.getPlay(props.data.deviceId, props.data.channelId).subscribe(res => {
+                setUrl(res[protocol]);
+                setProtocol(protocol);
+                setBloading(false);
+                setUrlItem(res);
+            });
+        })
     }
 
     return (
@@ -61,6 +76,7 @@ const Play = (props: Props) => {
                 <div className={styles.player_left}>
                     <div className={styles.video_box}>
                         <live-player muted fluent loading={bloading} autoplay live protocol={protocol} video-url={url}></live-player>
+                        <div className={styles.video_lose} onClick={() => {refresh()}}>刷新</div>
                     </div>
                     <div className={styles.bottom}>
                         <Radio.Group defaultValue="flv" buttonStyle="solid" onChange={(e) => {
@@ -74,25 +90,25 @@ const Play = (props: Props) => {
                 </div>
                 <div className={styles.player_right}>
                     <div className={styles.ptz_block}>
-                        <div className={styles.ptz_up} title="上" onMouseDown={() => { controlStart('UP'); }} onMouseUp={() => { controlStop(); }}>
+                        <div className={styles.ptz_up} title="上" onMouseDown={() => {controlStart('UP');}} onMouseUp={() => {controlStop();}}>
                             <UpOutlined style={{ fontSize: '30px', color: playing ? '#00000f5' : 'lightgray' }} />
                         </div>
-                        <div className={styles.ptz_left} title="左" onMouseDown={() => { controlStart('LEFT'); }} onMouseUp={() => { controlStop(); }}>
+                        <div className={styles.ptz_left} title="左" onMouseDown={() => { controlStart('LEFT');}} onMouseUp={() => { controlStop();}}>
                             <LeftOutlined style={{ fontSize: '30px', color: playing ? '#00000f5' : 'lightgray' }} />
                         </div>
                         <div className={styles.ptz_center} title="云控制台">
                             <AudioOutlined style={{ fontSize: '30px', color: 'lightgray' }} />
                         </div>
-                        <div className={styles.ptz_right} title="右" onMouseDown={() => { controlStart('RIGHT'); }} onMouseUp={() => { controlStop(); }}>
+                        <div className={styles.ptz_right} title="右" onMouseDown={() => { controlStart('RIGHT');}} onMouseUp={() => { controlStop();}}>
                             <RightOutlined style={{ fontSize: '30px', color: playing ? '#00000f5' : 'lightgray' }} />
                         </div>
-                        <div className={styles.ptz_down} title="下" onMouseDown={() => { controlStart('DOWN'); }} onMouseUp={() => { controlStop(); }}>
+                        <div className={styles.ptz_down} title="下" onMouseDown={() => { controlStart('DOWN');}} onMouseUp={() => { controlStop();}}>
                             <DownOutlined style={{ fontSize: '30px', color: playing ? '#00000f5' : 'lightgray' }} />
                         </div>
-                        <div className={styles.ptz_zoomin} title="放大" onMouseDown={() => { controlStart('ZOOM_IN'); }} onMouseUp={() => { controlStop(); }}>
+                        <div className={styles.ptz_zoomin} title="放大" onMouseDown={() => { controlStart('ZOOM_IN');}} onMouseUp={() => { controlStop();}}>
                             <PlusOutlined style={{ fontSize: '30px', color: playing ? '#00000f5' : 'lightgray' }} />
                         </div>
-                        <div className={styles.ptz_zoomout} title="缩小" onMouseDown={() => { controlStart('ZOOM_OUT'); }} onMouseUp={() => { controlStop(); }}>
+                        <div className={styles.ptz_zoomout} title="缩小" onMouseDown={() => { controlStart('ZOOM_OUT');}} onMouseUp={() => { controlStop();}}>
                             <MinusOutlined style={{ fontSize: '30px', color: playing ? '#00000f5' : 'lightgray' }} />
                         </div>
                     </div>
