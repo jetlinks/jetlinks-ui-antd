@@ -7,9 +7,9 @@ import ProTable from "@/pages/system/permission/component/ProTable";
 import {ColumnProps} from "antd/lib/table";
 import Service from "./service";
 import encodeQueryParam from "@/utils/encodeParam";
-import moment from "moment";
 import {router} from "umi";
-import DeviceUpdate from "./update/index";
+import DeviceUpdate from "./edit/index";
+import moment from "moment";
 
 interface Props {
 
@@ -23,7 +23,7 @@ const initState: State = {
   searchParam: {pageSize: 10, terms: location?.query?.terms, sorts: {field: 'id', order: 'desc'}},
 };
 const MediaDevice: React.FC<Props> = () => {
-  const service = new Service('device/instance');
+  const service = new Service('media/device');
   const [loading, setLoading] = useState<boolean>(false);
   const [deviceUpdate, setDeviceUpdate] = useState<boolean>(false);
   const [deviceData, setDeviceData] = useState<any>({});
@@ -35,6 +35,11 @@ const MediaDevice: React.FC<Props> = () => {
   statusMap.set('online', 'success');
   statusMap.set('offline', 'error');
   statusMap.set('notActive', 'processing');
+
+  const streamMode = new Map();
+  streamMode.set('UDP', 'UDP');
+  streamMode.set('TCP_ACTIVE', 'TCP主动');
+  streamMode.set('TCP_PASSIVE', 'TCP被动');
 
   useEffect(() => {
     service.mediaGateway({}).subscribe((data) => {
@@ -61,29 +66,39 @@ const MediaDevice: React.FC<Props> = () => {
 
   const columns: ColumnProps<any>[] = [
     {
-      title: 'ID',
+      title: '国标设备编号',
       dataIndex: 'id',
+      width: 200,
+      ellipsis: true,
+      fixed: 'left',
     },
     {
       title: '设备名称',
       dataIndex: 'name',
+      render: (record: any) => record ? record : result.id,
+      ellipsis: true
     },
     {
-      title: '产品名称',
-      dataIndex: 'productName',
+      title: '信令传输',
+      dataIndex: 'transport',
+      width: 90,
     },
     {
-      title: '注册时间',
-      dataIndex: 'registryTime',
-      width: '200px',
-      render: (text: any) => text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/',
-      sorter: true,
+      title: '流传输模式',
+      dataIndex: 'streamMode',
+      width: 110,
+      render: record => record ? streamMode.get(record) : '/',
     },
     {
-      title: '状态',
+      title: '通道数',
+      dataIndex: 'channelNumber',
+      width: 100,
+    },
+    {
+      title: '设备状态',
       dataIndex: 'state',
-      width: '90px',
-      render: record => record ? <Badge status={statusMap.get(record.value)} text={record.text}/> : '',
+      width: 110,
+      render: record => record ? <Badge status={statusMap.get(record.value)} text={record.text}/> : '/',
       filters: [
         {
           text: '未启用',
@@ -101,14 +116,43 @@ const MediaDevice: React.FC<Props> = () => {
       filterMultiple: false,
     },
     {
-      title: '描述',
-      dataIndex: 'describe',
-      width: '15%',
-      ellipsis: true
+      title: '设备IP',
+      dataIndex: 'host',
+      ellipsis: true,
+      width: 150,
+    },
+    {
+      title: '设备端口',
+      dataIndex: 'port',
+      width: 90,
+      ellipsis: true,
+    },
+    {
+      title: '设备厂家',
+      dataIndex: 'manufacturer',
+      ellipsis: true,
+    },
+    {
+      title: '设备型号',
+      dataIndex: 'model',
+      ellipsis: true,
+    },
+    {
+      title: '固件版本',
+      dataIndex: 'firmware',
+      ellipsis: true,
+    },
+    {
+      title: '创建时间',
+      dataIndex: 'createTime',
+      render: (text: any) => text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/',
+      sorter: true,
+      width: 200,
     },
     {
       title: '操作',
-      align: 'center',
+      key: 'center',
+      fixed: 'right',
       render: (record: any) => (
         <Fragment>
           <a
@@ -135,14 +179,18 @@ const MediaDevice: React.FC<Props> = () => {
           >
             查看通道
           </a>
-          {/*<Divider type="vertical"/>
-          <Popconfirm
-            title="确认更新吗？"
-            onConfirm={() => {
+          {record.state.value !== 'online' && (
+            <>
+              <Divider type="vertical"/>
+              <Popconfirm
+                title="确认删除该国标设备吗？"
+                onConfirm={() => {
 
-            }}>
-            <a>更新通道</a>
-          </Popconfirm>*/}
+                }}>
+                <a>删除</a>
+              </Popconfirm>
+            </>
+          )}
         </Fragment>
       )
     },
@@ -176,6 +224,7 @@ const MediaDevice: React.FC<Props> = () => {
             dataSource={result?.data}
             columns={columns}
             rowKey="id"
+            scroll={{x: '150%'}}
             onSearch={(params: any) => {
               params.terms['productId$IN'] = productList;
               params.sorts = params.sorts.field ? params.sorts : {field: 'id', order: 'desc'};

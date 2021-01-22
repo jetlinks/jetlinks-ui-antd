@@ -1,0 +1,113 @@
+.player_box{
+    width: 100%;
+    display: flex;
+    padding: 20px;
+    .player_left{
+        width: 70%;
+        margin-right: 50px;
+        .video_box{
+            width: 100%;
+            border: 1px solid #000;
+            position: relative;
+            background-color: #000;
+            .video_lose{
+                position: absolute;
+                top: 5px;
+                right: 5px;
+                color: white;
+                font-size: 12px;
+                background-color: fade(gray, 80%);
+                padding: 2px 5px;
+                cursor: pointer;
+                border-radius: 2px;
+                max-width: 120px;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+        }
+        .bottom{
+            display: flex;
+            margin: 30px auto 10px;
+            justify-content: center;
+            .btn{
+                width: 100px;
+                height: 40px;
+                line-height: 40px;
+                text-align: center;
+                border: 1px solid lightgray;
+                cursor: pointer;
+            }
+        }
+    }
+    .player_right{
+        width: 20%;
+        .ptz_block{
+            width: 150px;
+            height: 180px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            font-size: 24px;
+            .ptz_center {
+                top: 50px;
+                left: 50px;
+              }
+            .ptz_up {
+                top: 0;
+                left: 50px;
+            }
+            
+            .ptz_left {
+                top: 50px;
+                left: 0;
+            }
+            
+            .ptz_right {
+                top: 50px;
+                left: 100px;
+            }
+            
+            .ptz_down {
+                top: 100px;
+                left: 50px;
+            }
+            
+            .ptz_zoomin {
+                top: 150px;
+                left: 20px;
+            }
+            
+            .ptz_zoomout {
+                top: 150px;
+                left: 80px;
+            }
+
+            .ptz_up,
+            .ptz_left,
+            .ptz_right,
+            .ptz_down,
+            .ptz_center,
+            .ptz_zoomin,
+            .ptz_zoomout{
+                cursor: pointer;
+                width: 50px;
+                height: 50px;
+                line-height: 50px;
+                position: absolute;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            .ptz_up:active,
+            .ptz_left:active,
+            .ptz_right:active,
+            .ptz_down:active,
+            .ptz_center:active,
+            .ptz_zoomin:active,
+            .ptz_zoomout:active{
+                color: lightgray;
+            }
+        }
+    }
+}

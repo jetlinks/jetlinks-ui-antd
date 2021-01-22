@@ -238,7 +238,7 @@ export const routes = [
                                 path: '/device/firmware',
                                 name: '固件升级',
                                 icon: 'cloud-sync',
-                                tenant: ['admin'],
+                                tenant: ['admin', 'member'],
                                 authority: ['firmware-manager', 'admin'],
                                 version: 'pro',
                                 iconfont: 'icon-gujianshengji',
@@ -246,7 +246,7 @@ export const routes = [
                             },
                             {
                                 hideInMenu: true,
-                                tenant: ['admin'],
+                                tenant: ['admin', 'member'],
                                 path: '/device/firmware/save/:id',
                                 name: '固件详情',
                                 authority: ['firmware-manager', 'admin'],
@@ -257,6 +257,7 @@ export const routes = [
                                 path: '/device/alarm',
                                 name: '设备告警',
                                 icon: 'alert',
+                                tenant: ['admin', 'member'],
                                 authority: ['device-alarm', 'admin'],
                                 component: './device/alarmlog',
                             }
@@ -551,6 +552,14 @@ export const routes = [
                                 authority: ['media-device','media-stream','admin'],
                                 icon: 'gateway',
                                 component: './media/device',
+                            },
+                            {
+                                hideInMenu: true,
+                                path: '/media/device/channel/:id',
+                                name: '通道列表',
+                                tenant: ['admin', 'member'],
+                                iconfont: 'icon-shebei1',
+                                component: './media/device/channel',
                             },
                             {
                                 path: '/media/reveal',

@@ -27,6 +27,7 @@ const VideoPlayer: React.FC<Props> = (props) => {
             <div>
                 <video
                     ref={node => setNode(node)}
+                    
                     className="video-js">
                 </video>
             </div>

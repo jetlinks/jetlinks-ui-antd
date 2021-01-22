@@ -1,7 +1,7 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import Form from 'antd/es/form';
 import {FormComponentProps} from 'antd/lib/form';
-import {Input, message, Modal} from 'antd';
+import {Input, message, Modal, Radio} from 'antd';
 import Service from "@/pages/media/device/service";
 
 interface Props extends FormComponentProps {
@@ -11,7 +11,7 @@ interface Props extends FormComponentProps {
 
 const Update: React.FC<Props> = props => {
 
-  const service = new Service('device/instance');
+  const service = new Service('media/device');
 
   const {
     form: {getFieldDecorator},
@@ -23,7 +23,7 @@ const Update: React.FC<Props> = props => {
       if (err) return;
 
       service.update(fileValue).subscribe(
-        (data) => {
+        () => {
           props.close();
         },
         () => {
@@ -33,11 +33,6 @@ const Update: React.FC<Props> = props => {
         });
     });
   };
-
-  useEffect(() => {
-    // 获取下拉框数据
-
-  }, []);
 
   return (
     <Modal
@@ -50,14 +45,9 @@ const Update: React.FC<Props> = props => {
       }}
       onCancel={() => props.close()}
     >
-      <Form labelCol={{span: 4}} wrapperCol={{span: 20}}>
+      <Form labelCol={{span: 5}} wrapperCol={{span: 19}}>
         <Form.Item key="id" label="设备id">
           {getFieldDecorator('id', {
-            rules: [
-              {required: true, message: '请输入设备id'},
-              {max: 64, message: '设备ID不超过64个字符'},
-              {pattern: new RegExp(/^[0-9a-zA-Z_\-]+$/, "g"), message: '产品ID只能由数字、字母、下划线、中划线组成'}
-            ],
             initialValue: props.data.id,
           })(<Input placeholder="请输入设备id" readOnly={!!props.data.id}/>)}
         </Form.Item>
@@ -69,6 +59,21 @@ const Update: React.FC<Props> = props => {
             ],
             initialValue: props.data.name,
           })(<Input placeholder="请输入设备名称"/>)}
+        </Form.Item>
+        <Form.Item key="streamMode" label="流传输模式">
+          {getFieldDecorator('streamMode', {
+            rules: [
+              {required: true, message: '请输入设备名称'},
+              {max: 200, message: '设备名称不超过200个字符'}
+            ],
+            initialValue: props.data.streamMode,
+          })(
+            <Radio.Group buttonStyle="solid">
+              <Radio.Button value="UDP">UDP</Radio.Button>
+              <Radio.Button value="TCP_ACTIVE">TCP主动</Radio.Button>
+              <Radio.Button value="TCP_PASSIVE">TCP被动</Radio.Button>
+            </Radio.Group>
+          )}
         </Form.Item>
 
         <Form.Item key="describe" label="说明">
