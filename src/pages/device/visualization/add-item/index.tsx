@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import 'antd/dist/antd.css';
+// import 'antd/dist/antd.css';
 
 import { List, Modal, Row, Col } from 'antd';
 
