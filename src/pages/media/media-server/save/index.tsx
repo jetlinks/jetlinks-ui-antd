@@ -136,7 +136,7 @@ const Save: React.FC<Props> = props => {
 
   return (
     <Spin spinning={loading}>
-      <Form labelCol={{span: 3}} wrapperCol={{span: 21}}>
+      <Form labelCol={{span: 5}} wrapperCol={{span: 19}}>
         <Form.Item key="name" label="流媒体名称">
           {getFieldDecorator('name', {
             rules: [

@@ -95,7 +95,7 @@ const Save: React.FC<Props> = props => {
 
   return (
     <Spin spinning={loading}>
-      <Form labelCol={{span: 3}} wrapperCol={{span: 21}}>
+      <Form labelCol={{span: 5}} wrapperCol={{span: 19}}>
         <Form.Item key="name" label="信令名称">
           {getFieldDecorator('name', {
             rules: [
@@ -141,7 +141,7 @@ const Save: React.FC<Props> = props => {
         </Form.Item>
         <Row>
           <Col span={12}>
-            <Form.Item key="sipId" label="SIP ID" labelCol={{span: 6}} wrapperCol={{span: 18}}>
+            <Form.Item key="sipId" label="SIP ID" labelCol={{span: 10}} wrapperCol={{span: 14}}>
               {getFieldDecorator('sipConfig.sipId', {
                 rules: [
                   {required: true, message: '请输入信令SIP ID'}
@@ -151,7 +151,7 @@ const Save: React.FC<Props> = props => {
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item key="domain" label="SIP 域" labelCol={{span: 6}} wrapperCol={{span: 18}}>
+            <Form.Item key="domain" label="SIP 域" labelCol={{span: 10}} wrapperCol={{span: 14}}>
               {getFieldDecorator('sipConfig.domain', {
                 rules: [
                   {required: true, message: '请输入信令SIP 域'}
@@ -161,7 +161,7 @@ const Save: React.FC<Props> = props => {
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item key="localAddress" label="SIP Host" labelCol={{span: 6}} wrapperCol={{span: 18}}>
+            <Form.Item key="localAddress" label="SIP Host" labelCol={{span: 10}} wrapperCol={{span: 14}}>
               {getFieldDecorator('sipConfig.localAddress', {
                 rules: [
                   {required: true, message: '请输入信令SIP Host'}
@@ -171,7 +171,7 @@ const Save: React.FC<Props> = props => {
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item key="password" label="接入密码" labelCol={{span: 6}} wrapperCol={{span: 18}}>
+            <Form.Item key="password" label="接入密码" labelCol={{span: 10}} wrapperCol={{span: 14}}>
               {getFieldDecorator('sipConfig.password', {
                 rules: [
                   {required: true, message: '请输入信令接入密码'}
@@ -181,7 +181,7 @@ const Save: React.FC<Props> = props => {
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item key="port" label="端口" labelCol={{span: 6}} wrapperCol={{span: 18}}>
+            <Form.Item key="port" label="端口" labelCol={{span: 10}} wrapperCol={{span: 14}}>
               {getFieldDecorator('sipConfig.port', {
                 rules: [
                   {required: true, message: '请输入信令端口'}
@@ -191,7 +191,7 @@ const Save: React.FC<Props> = props => {
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item key="publicPort" label="公网端口" labelCol={{span: 6}} wrapperCol={{span: 18}}>
+            <Form.Item key="publicPort" label="公网端口" labelCol={{span: 10}} wrapperCol={{span: 14}}>
               {getFieldDecorator('sipConfig.publicPort', {
                 rules: [
                   {required: true, message: '请输入信令端口'}
@@ -201,7 +201,7 @@ const Save: React.FC<Props> = props => {
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item key="charset" label="字符集" labelCol={{span: 6}} wrapperCol={{span: 18}}>
+            <Form.Item key="charset" label="字符集" labelCol={{span: 10}} wrapperCol={{span: 14}}>
               {getFieldDecorator('sipConfig.charset', {
                 rules: [
                   {required: true, message: '请选择字符集'}
@@ -216,10 +216,10 @@ const Save: React.FC<Props> = props => {
             </Form.Item>
           </Col>
           {/*<Col span={12}>
-            <Form.Item key="status" label="状态" labelCol={{span: 6}} wrapperCol={{span: 18}}>
+            <Form.Item key="status" label="状态" labelCol={{span: 10}} wrapperCol={{span: 14}}>
               {getFieldDecorator('status', {
                 rules: [
-                  {required: true, message: '请选择字符集'}
+                  {required: true, message: '请信令服务状态'}
                 ],
                 initialValue: data?.status?.value ? data.status.value : 'enabled',
               })(
