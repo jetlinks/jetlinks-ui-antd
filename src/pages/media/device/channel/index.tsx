@@ -85,7 +85,7 @@ const MediaDevice: React.FC<Props> = props => {
     {
       title: '通道国标编号',
       dataIndex: 'channelId',
-      // fixed: 'left',
+      ellipsis: true,
     },
     {
       title: '通道名称',
@@ -115,6 +115,7 @@ const MediaDevice: React.FC<Props> = props => {
       dataIndex: 'others.ptzType',
       width: 100,
       render: record => ptzType.get(record),
+      ellipsis: true,
     },
     {
       title: '在线状态',
@@ -150,7 +151,7 @@ const MediaDevice: React.FC<Props> = props => {
       // fixed: 'right',
       render: (record: any) => (
         <Fragment>
-          <a
+          {/*<a
             onClick={() => {
               setChannel(true);
               setChannelInfo(record);
@@ -158,7 +159,7 @@ const MediaDevice: React.FC<Props> = props => {
           >
             编辑
           </a>
-          <Divider type="vertical"/>
+          <Divider type="vertical"/>*/}
           {record.status.value === 'online' && (
             <a
               onClick={() => {
