@@ -68,7 +68,7 @@ const MediaDevice: React.FC<Props> = () => {
     {
       title: '国标设备编号',
       dataIndex: 'id',
-      width: 200,
+      width: 180,
       ellipsis: true,
       fixed: 'left',
     },
@@ -76,23 +76,26 @@ const MediaDevice: React.FC<Props> = () => {
       title: '设备名称',
       dataIndex: 'name',
       render: (record: any) => record ? record : result.id,
-      ellipsis: true
+      ellipsis: true,
     },
     {
       title: '信令传输',
       dataIndex: 'transport',
       width: 90,
+      ellipsis: true,
     },
     {
       title: '流传输模式',
       dataIndex: 'streamMode',
       width: 110,
       render: record => record ? streamMode.get(record) : '/',
+      ellipsis: true,
     },
     {
       title: '通道数',
       dataIndex: 'channelNumber',
       width: 100,
+      ellipsis: true,
     },
     {
       title: '设备状态',
@@ -147,12 +150,14 @@ const MediaDevice: React.FC<Props> = () => {
       dataIndex: 'createTime',
       render: (text: any) => text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/',
       sorter: true,
-      width: 200,
+      width: 180,
+      ellipsis: true,
     },
     {
       title: '操作',
       key: 'center',
       fixed: 'right',
+      width: 230,
       render: (record: any) => (
         <Fragment>
           <a
@@ -197,7 +202,7 @@ const MediaDevice: React.FC<Props> = () => {
   ];
   return (
     <PageHeaderWrapper title="国标设备">
-      <Card bordered={false} style={{marginBottom: 16}}>
+      <Card style={{height: 92, marginBottom: 16}}>
         <div className={styles.tableList}>
           <div>
             <SearchForm
@@ -208,7 +213,7 @@ const MediaDevice: React.FC<Props> = () => {
               }}
               formItems={[
                 {
-                  label: '名称',
+                  label: '设备名称',
                   key: 'name$LIKE',
                   type: 'string',
                 },
