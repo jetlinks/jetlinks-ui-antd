@@ -51,9 +51,7 @@ const SearchForm = (props: Props) => {
     const renderItem = (type: string, label?: string, itemProps?: any) => {
         if (type === 'string') {
             return (
-                <Input
-                    placeholder={`${label}`}
-                />
+                <Input placeholder={`请输入${label}`}/>
             )
         }
         if (type === 'list') {
