@@ -32,6 +32,13 @@ const Reveal: React.FC<Props> = props => {
   const [setting, setSetting] = useState(0);
   const [deviceId, setDeviceId] = useState('');
   const [channelId, setChannelId] = useState('');
+  const [playUp, setPlayUp] = useState<boolean>(true);
+  const [playDown, setPlayDown] = useState<boolean>(true);
+  const [playLeft, setPlayLeft] = useState<boolean>(true);
+  const [playCenter, setPlayCenter] = useState<boolean>(false);
+  const [playRight, setPlayRight] = useState<boolean>(true);
+  const [playIn, setPlayIn] = useState<boolean>(true);
+  const [playOut, setPlayOut] = useState<boolean>(true);
   const [playerActive, setPlayerActive] = useState(0);
   const playerBtnGroup = [{ num: 1, name: '单屏' }, { num: 4, name: '四分屏' }, { num: 9, name: '九分屏' }];
 
@@ -131,7 +138,7 @@ const Reveal: React.FC<Props> = props => {
               title: it.name,
               key: it.id,
               isLeaf: true,
-              icon: it.status.value === 'online' ? <VideoCameraTwoTone /> : <VideoCameraOutlined />,
+              icon: it.status.value === 'online' ? <VideoCameraTwoTone twoToneColor="#52c41a" /> : <VideoCameraOutlined />,
               channelId: it.channelId,
               deviceId: it.deviceId,
               children: []
@@ -209,14 +216,15 @@ const Reveal: React.FC<Props> = props => {
   };
 
   //刷新
-  const refresh = (deviceId:string, channelId: string) => {
+  const refresh = (deviceId: string, channelId: string) => {
     //关闭流
     service.getStop(deviceId, channelId).subscribe(() => {
       //开启流
       service.getPlay(deviceId, channelId).subscribe(res => {
         let data = players || [];
         data.forEach((item, index) => {
-          if (index === setting) {` `
+          if (index === setting) {
+            ` `
             item.url = getPlayer(res).url
             item.protocol = getPlayer(res).protocol
             item.deviceId = deviceId
@@ -268,26 +276,26 @@ const Reveal: React.FC<Props> = props => {
               </div>
               <div className={styles.player_right}>
                 <div className={styles.ptz_block}>
-                  <div className={styles.ptz_up} title="上" onMouseDown={() => { controlStart(deviceId, channelId, 'UP'); }} onMouseUp={() => { controlStop(deviceId, channelId); }}>
-                    <UpOutlined style={{ fontSize: '30px', color: playing ? '#00000f5' : 'lightgray' }} />
+                  <div className={styles.ptz_up} title="上" onMouseDown={() => { controlStart(deviceId, channelId,'UP'); setPlayUp(false); }} onMouseUp={() => { controlStop(deviceId, channelId); setPlayUp(true); }}>
+                    {playing && playUp ? <img src="/img/up.svg" width="30px" /> : <img src="/img/up_1.svg" width="30px" />}
                   </div>
-                  <div className={styles.ptz_left} title="左" onMouseDown={() => { controlStart(deviceId, channelId, 'LEFT'); }} onMouseUp={() => { controlStop(deviceId, channelId); }}>
-                    <LeftOutlined style={{ fontSize: '30px', color: playing ? '#00000f5' : 'lightgray' }} />
+                  <div className={styles.ptz_left} title="左" onMouseDown={() => { controlStart(deviceId, channelId,'LEFT'); setPlayLeft(false); }} onMouseUp={() => { controlStop(deviceId, channelId); setPlayLeft(true); }}>
+                    {playing && playLeft ? <img src="/img/left.svg" width="30px" /> : <img src="/img/left_1.svg" width="30px" />}
                   </div>
                   <div className={styles.ptz_center} title="云控制台">
-                    <AudioOutlined style={{ fontSize: '30px', color: 'lightgray' }} />
+                    {playing && playCenter ? <img src="/img/audio.svg" width="30px" /> : <img src="/img/audio_1.svg" width="30px" />}
                   </div>
-                  <div className={styles.ptz_right} title="右" onMouseDown={() => { controlStart(deviceId, channelId, 'RIGHT'); }} onMouseUp={() => { controlStop(deviceId, channelId); }}>
-                    <RightOutlined style={{ fontSize: '30px', color: playing ? '#00000f5' : 'lightgray' }} />
+                  <div className={styles.ptz_right} title="右" onMouseDown={() => { controlStart(deviceId, channelId,'RIGHT'); setPlayRight(false); }} onMouseUp={() => { controlStop(deviceId, channelId); setPlayRight(true); }}>
+                    {playing && playRight ? <img src="/img/right.svg" width="30px" /> : <img src="/img/right_1.svg" width="30px" />}
                   </div>
-                  <div className={styles.ptz_down} title="下" onMouseDown={() => { controlStart(deviceId, channelId, 'DOWN'); }} onMouseUp={() => { controlStop(deviceId, channelId); }}>
-                    <DownOutlined style={{ fontSize: '30px', color: playing ? '#00000f5' : 'lightgray' }} />
+                  <div className={styles.ptz_down} title="下" onMouseDown={() => { controlStart(deviceId, channelId,'DOWN'); setPlayDown(false); }} onMouseUp={() => { controlStop(deviceId, channelId); setPlayDown(true); }}>
+                    {playing && playDown ? <img src="/img/down.svg" width="30px" /> : <img src="/img/down_1.svg" width="30px" />}
                   </div>
-                  <div className={styles.ptz_zoomin} title="放大" onMouseDown={() => { controlStart(deviceId, channelId, 'ZOOM_IN'); }} onMouseUp={() => { controlStop(deviceId, channelId); }}>
-                    <PlusOutlined style={{ fontSize: '30px', color: playing ? '#00000f5' : 'lightgray' }} />
+                  <div className={styles.ptz_zoomin} title="放大" onMouseDown={() => { controlStart(deviceId, channelId,'ZOOM_IN'); setPlayIn(false); }} onMouseUp={() => { controlStop(deviceId, channelId); setPlayIn(true); }}>
+                    {playing && playIn ? <img src="/img/add.svg" width="30px" /> : <img src="/img/add_1.svg" width="30px" />}
                   </div>
-                  <div className={styles.ptz_zoomout} title="缩小" onMouseDown={() => { controlStart(deviceId, channelId, 'ZOOM_OUT'); }} onMouseUp={() => { controlStop(deviceId, channelId); }}>
-                    <MinusOutlined style={{ fontSize: '30px', color: playing ? '#00000f5' : 'lightgray' }} />
+                  <div className={styles.ptz_zoomout} title="缩小" onMouseDown={() => { controlStart(deviceId, channelId,'ZOOM_OUT'); setPlayOut(false); }} onMouseUp={() => { controlStop(deviceId, channelId); setPlayOut(true); }}>
+                    {playing && playOut ? <img src="/img/sub.svg" width="30px" /> : <img src="/img/sub_1.svg" width="30px" />}
                   </div>
                 </div>
               </div>

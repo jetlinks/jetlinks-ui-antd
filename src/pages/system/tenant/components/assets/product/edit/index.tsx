@@ -50,28 +50,38 @@ const Edit = (props: Props) => {
   let product = (tempSearch: any, datalist: any[]) => {
     return new Promise((resolve) => {
       service.assets.product(encodeQueryParam(tempSearch)).subscribe(res => {
-        res.data.forEach((value: { id: string; name: any; photoUrl: any; }) => {
-          service.assets.members(data.id, 'product', value.id).subscribe(resp => {
-            let str = '';
-            resp.filter((item: any) => item.binding === true).map((i: any) => i.userName).forEach((i: string) => {
-              str += i + '、'
+        console.log(res)
+        if(res.data.length > 0){
+          res.data.forEach((value: { id: string; name: any; photoUrl: any; }) => {
+            service.assets.members(data.id, 'product', value.id).subscribe(resp => {
+              let str = '';
+              resp.filter((item: any) => item.binding === true).map((i: any) => i.userName).forEach((i: string) => {
+                str += i + '、'
+              });
+              datalist.push({
+                id: value.id,
+                name: value.name,
+                photoUrl: value.photoUrl || productImg,
+                tenant: str.substring(0, str.length - 1)
+              });
+              if (datalist.length == res.data.length) {
+                resolve({
+                  pageIndex: res.pageIndex,
+                  pageSize: res.pageSize,
+                  total: res.total,
+                  data: datalist
+                })
+              }
             });
-            datalist.push({
-              id: value.id,
-              name: value.name,
-              photoUrl: value.photoUrl || productImg,
-              tenant: str.substring(0, str.length - 1)
-            });
-            if (datalist.length == res.data.length) {
-              resolve({
-                pageIndex: res.pageIndex,
-                pageSize: res.pageSize,
-                total: res.total,
-                data: datalist
-              })
-            }
-          });
-        })
+          })
+        }else {
+          resolve({
+            pageIndex: res.pageIndex,
+            pageSize: res.pageSize,
+            total: res.total,
+            data: []
+          })
+        }
       })
     })
   };
