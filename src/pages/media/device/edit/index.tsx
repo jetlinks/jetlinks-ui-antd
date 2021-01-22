@@ -45,8 +45,8 @@ const Update: React.FC<Props> = props => {
       }}
       onCancel={() => props.close()}
     >
-      <Form labelCol={{span: 5}} wrapperCol={{span: 19}}>
-        <Form.Item key="id" label="设备id">
+      <Form labelCol={{span: 6}} wrapperCol={{span: 18}}>
+        <Form.Item key="id" label="设备编码">
           {getFieldDecorator('id', {
             initialValue: props.data.id,
           })(<Input placeholder="请输入设备id" readOnly={!!props.data.id}/>)}
