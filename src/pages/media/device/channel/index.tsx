@@ -220,7 +220,7 @@ const MediaDevice: React.FC<Props> = props => {
       title={titleInfo}
       content={content}
     >
-      <Card bordered={false} style={{marginBottom: 16}}>
+      <Card style={{height: 92, marginBottom: 16}}>
         <div className={styles.tableList}>
           <div>
             <SearchForm
