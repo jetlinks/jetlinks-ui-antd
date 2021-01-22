@@ -144,6 +144,10 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
         type: 'user/fetchCurrent',
       });
     }
+    const hide_menu = props.location?.query?.hide_menu;
+    if (hide_menu) {
+      localStorage.setItem('hide_menu', hide_menu);
+    }
   }, []);
 
 
@@ -160,10 +164,9 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
     authority: undefined,
   };
 
-  const hide_menu = props.location?.query?.hide_menu;
 
   return (
-    hide_menu === 'true' ?
+    localStorage.getItem('hide_menu') === 'true' ?
       <Authorized authority={authorized!.authority} noMatch={noMatch} >
         {children}
       </Authorized > : <ProLayout
