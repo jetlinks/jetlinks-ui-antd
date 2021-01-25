@@ -1,5 +1,5 @@
 import {PageHeaderWrapper} from "@ant-design/pro-layout"
-import {Badge, Card, Descriptions, Divider, Row, Table} from "antd";
+import {Badge, Card, Descriptions, Row, Table} from "antd";
 import React, {Fragment, useEffect, useState} from "react";
 import styles from '@/utils/table.less';
 import SearchForm from "@/components/SearchForm";
@@ -216,17 +216,14 @@ const MediaDevice: React.FC<Props> = props => {
   );
 
   return (
-    <PageHeaderWrapper
-      title={titleInfo}
-      content={content}
-    >
+    <PageHeaderWrapper title={titleInfo} content={content}>
       <Card style={{height: 92, marginBottom: 16}}>
-        <div className={styles.tableList}>
+        <div className={styles.tableList} style={{marginTop: -22}}>
           <div>
             <SearchForm
               search={(params: any) => {
                 setSearchParam(params);
-                params.deviceId = deviceId;
+                params ? params.deviceId = deviceId : params = {deviceId: deviceId};
                 handleSearch({terms: {...params}, sorts: {field: 'id', order: 'desc'}});
               }}
               formItems={[
