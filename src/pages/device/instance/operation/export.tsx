@@ -51,7 +51,7 @@ const Export: React.FC<Props> = props => {
     if (product) {
       formElement.action = `/jetlinks/device/instance/${product}/export.${fileType}`;
     } else {
-      formElement.action = `/jetlinks//device/instance/export.${fileType}`;
+      formElement.action = `/jetlinks/device/instance/export.${fileType}`;
     }
     delete props.searchParam.pageSize;
     delete props.searchParam.pageIndex;
