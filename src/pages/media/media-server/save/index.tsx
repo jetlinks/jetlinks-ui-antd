@@ -122,6 +122,20 @@ const Save: React.FC<Props> = props => {
                 initialValue: configuration.rtmpPort,
               })(<InputNumber style={{width: '100%'}}/>)}
             </Form.Item>
+            <Form.Item label="流媒体格式">
+              {getFieldDecorator('configuration.formats', {
+                rules: [
+                  {required: true, message: '请选择流媒体格式'}
+                ],
+                initialValue: configuration.formats,
+              })(<Select placeholder="流媒体格式" mode='multiple'>
+                <Select.Option value='flv'>FLV</Select.Option>
+                <Select.Option value='mp4'>MP4</Select.Option>
+                <Select.Option value='hls'>HLS</Select.Option>
+                <Select.Option value='ts'>TS</Select.Option>
+                <Select.Option value='rtc'>RTC</Select.Option>
+              </Select>)}
+            </Form.Item>
             <Form.Item label="流ID前缀">
               {getFieldDecorator('configuration.streamIdPrefix', {
                 initialValue: configuration.streamIdPrefix,
