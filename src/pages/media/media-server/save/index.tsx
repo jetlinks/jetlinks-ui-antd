@@ -53,7 +53,7 @@ const Save: React.FC<Props> = props => {
       //todo 统一界面，后期有需求就开放多网关和流媒体服务
 
       fileValue.id = id;
-      service.saveMediaServer(fileValue).subscribe((data) => {
+      service.saveMediaServer(fileValue).subscribe(() => {
           message.success('保存成功');
         },
         () => {
@@ -80,7 +80,7 @@ const Save: React.FC<Props> = props => {
                   {required: true, message: '请输入公网 Host'}
                 ],
                 initialValue: configuration.publicHost,
-              })(<Input/>)}
+              })(<Input placeholder='请输入公网 Host'/>)}
             </Form.Item>
             <Form.Item label="API Host">
               {getFieldDecorator('configuration.apiHost', {
@@ -88,7 +88,7 @@ const Save: React.FC<Props> = props => {
                   {required: true, message: '请输入API Host'}
                 ],
                 initialValue: configuration.apiHost,
-              })(<Input/>)}
+              })(<Input placeholder='请输入API Host'/>)}
             </Form.Item>
             <Form.Item label="API端口">
               {getFieldDecorator('configuration.apiPort', {
@@ -96,7 +96,7 @@ const Save: React.FC<Props> = props => {
                   {required: true, message: '请输入API端口'}
                 ],
                 initialValue: configuration.apiPort,
-              })(<InputNumber style={{width: '100%'}}/>)}
+              })(<InputNumber style={{width: '100%'}} placeholder='请输入API端口'/>)}
             </Form.Item>
             <Form.Item label="RTP端口">
               {getFieldDecorator('configuration.rtpPort', {
@@ -104,7 +104,7 @@ const Save: React.FC<Props> = props => {
                   {required: true, message: '请输入RTP端口'}
                 ],
                 initialValue: configuration.rtpPort,
-              })(<InputNumber style={{width: '100%'}}/>)}
+              })(<InputNumber style={{width: '100%'}} placeholder='请输入RTP端口'/>)}
             </Form.Item>
             <Form.Item label="HTTP端口">
               {getFieldDecorator('configuration.httpPort', {
@@ -112,7 +112,7 @@ const Save: React.FC<Props> = props => {
                   {required: true, message: '请输入HTTP端口'}
                 ],
                 initialValue: configuration.httpPort,
-              })(<InputNumber style={{width: '100%'}}/>)}
+              })(<InputNumber style={{width: '100%'}} placeholder='请输入HTTP端口'/>)}
             </Form.Item>
             <Form.Item label="RTMP端口">
               {getFieldDecorator('configuration.rtmpPort', {
@@ -120,7 +120,7 @@ const Save: React.FC<Props> = props => {
                   {required: true, message: '请输入RTMP端口'}
                 ],
                 initialValue: configuration.rtmpPort,
-              })(<InputNumber style={{width: '100%'}}/>)}
+              })(<InputNumber style={{width: '100%'}} placeholder='请输入RTMP端口'/>)}
             </Form.Item>
             <Form.Item label="流媒体格式">
               {getFieldDecorator('configuration.formats', {
@@ -128,7 +128,7 @@ const Save: React.FC<Props> = props => {
                   {required: true, message: '请选择流媒体格式'}
                 ],
                 initialValue: configuration.formats,
-              })(<Select placeholder="流媒体格式" mode='multiple'>
+              })(<Select placeholder="请选择流媒体格式，多选" mode='multiple'>
                 <Select.Option value='flv'>FLV</Select.Option>
                 <Select.Option value='mp4'>MP4</Select.Option>
                 <Select.Option value='hls'>HLS</Select.Option>
