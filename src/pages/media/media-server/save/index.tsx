@@ -1,4 +1,4 @@
-import {Button, Input, InputNumber, message, Select, Spin} from "antd";
+import {Button, Col, Input, InputNumber, message, Row, Select, Spin} from "antd";
 import React, {useEffect, useState} from "react";
 import Service from "../service";
 import Form from "antd/es/form";
@@ -90,38 +90,48 @@ const Save: React.FC<Props> = props => {
                 initialValue: configuration.apiHost,
               })(<Input placeholder='请输入API Host'/>)}
             </Form.Item>
-            <Form.Item label="API端口">
-              {getFieldDecorator('configuration.apiPort', {
-                rules: [
-                  {required: true, message: '请输入API端口'}
-                ],
-                initialValue: configuration.apiPort,
-              })(<InputNumber style={{width: '100%'}} placeholder='请输入API端口'/>)}
-            </Form.Item>
-            <Form.Item label="RTP端口">
-              {getFieldDecorator('configuration.rtpPort', {
-                rules: [
-                  {required: true, message: '请输入RTP端口'}
-                ],
-                initialValue: configuration.rtpPort,
-              })(<InputNumber style={{width: '100%'}} placeholder='请输入RTP端口'/>)}
-            </Form.Item>
-            <Form.Item label="HTTP端口">
-              {getFieldDecorator('configuration.httpPort', {
-                rules: [
-                  {required: true, message: '请输入HTTP端口'}
-                ],
-                initialValue: configuration.httpPort,
-              })(<InputNumber style={{width: '100%'}} placeholder='请输入HTTP端口'/>)}
-            </Form.Item>
-            <Form.Item label="RTMP端口">
-              {getFieldDecorator('configuration.rtmpPort', {
-                rules: [
-                  {required: true, message: '请输入RTMP端口'}
-                ],
-                initialValue: configuration.rtmpPort,
-              })(<InputNumber style={{width: '100%'}} placeholder='请输入RTMP端口'/>)}
-            </Form.Item>
+            <Row>
+              <Col span={12}>
+                <Form.Item label="API端口" labelCol={{span: 10}} wrapperCol={{span: 14}}>
+                  {getFieldDecorator('configuration.apiPort', {
+                    rules: [
+                      {required: true, message: '请输入API端口'}
+                    ],
+                    initialValue: configuration.apiPort,
+                  })(<InputNumber style={{width: '100%'}} placeholder='请输入API端口'/>)}
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item label="RTP端口" labelCol={{span: 10}} wrapperCol={{span: 14}}>
+                  {getFieldDecorator('configuration.rtpPort', {
+                    rules: [
+                      {required: true, message: '请输入RTP端口'}
+                    ],
+                    initialValue: configuration.rtpPort,
+                  })(<InputNumber style={{width: '100%'}} placeholder='请输入RTP端口'/>)}
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item label="HTTP端口" labelCol={{span: 10}} wrapperCol={{span: 14}}>
+                  {getFieldDecorator('configuration.httpPort', {
+                    rules: [
+                      {required: true, message: '请输入HTTP端口'}
+                    ],
+                    initialValue: configuration.httpPort,
+                  })(<InputNumber style={{width: '100%'}} placeholder='请输入HTTP端口'/>)}
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item label="RTMP端口" labelCol={{span: 10}} wrapperCol={{span: 14}}>
+                  {getFieldDecorator('configuration.rtmpPort', {
+                    rules: [
+                      {required: true, message: '请输入RTMP端口'}
+                    ],
+                    initialValue: configuration.rtmpPort,
+                  })(<InputNumber style={{width: '100%'}} placeholder='请输入RTMP端口'/>)}
+                </Form.Item>
+              </Col>
+            </Row>
             <Form.Item label="流媒体格式">
               {getFieldDecorator('configuration.formats', {
                 rules: [
