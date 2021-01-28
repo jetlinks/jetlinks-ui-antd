@@ -1,12 +1,12 @@
-import {Button, Drawer, message,} from "antd";
-import React, {Fragment, useEffect, useState} from "react";
+import { Button, Drawer, message, } from "antd";
+import React, { Fragment, useEffect, useState } from "react";
 import Service from "@/pages/system/tenant/service";
 import encodeQueryParam from "@/utils/encodeParam";
 import SearchForm from "@/components/SearchForm";
 import ProTable from "@/pages/system/permission/component/ProTable";
 import Add from "./add";
 import User from "./user";
-import {router} from 'umi';
+import { router } from 'umi';
 
 interface Props {
   close: Function;
@@ -27,7 +27,7 @@ const Edit = (props: Props) => {
 
   const [list, setList] = useState(initState.list);
   const [add, setAdd] = useState<boolean>(false);
-  const {data} = props;
+  const { data } = props;
   const [cat, setCat] = useState<boolean>(false);
   const [asset, setAsset] = useState();
   const [selected, setSelected] = useState<any[]>([]);
@@ -48,36 +48,45 @@ const Edit = (props: Props) => {
   let device = (tempSearch: any, datalist: any[]) => {
     return new Promise((resolve) => {
       service.assets.device(encodeQueryParam(tempSearch)).subscribe(res => {
-        res.data.forEach((value:any) => {
-          service.assets.members(data.id, 'device', value.id).subscribe(resp => {
-            let str = '';
-            resp.filter((item: any) => item.binding === true).map((i: any) => i.userName).forEach((i: string) => {
-              str += i + '、'
+        if (res.data.length > 0) {
+          res.data.forEach((value: any) => {
+            service.assets.members(data.id, 'device', value.id).subscribe(resp => {
+              let str = '';
+              resp.filter((item: any) => item.binding === true).map((i: any) => i.userName).forEach((i: string) => {
+                str += i + '、'
+              });
+              datalist.push({
+                id: value.id,
+                name: value.name,
+                tenant: str.substring(0, str.length - 1)
+              });
+              if (datalist.length == res.data.length) {
+                resolve({
+                  pageIndex: res.pageIndex,
+                  pageSize: res.pageSize,
+                  total: res.total,
+                  data: datalist
+                })
+              }
             });
-            datalist.push({
-              id: value.id,
-              name: value.name,
-              tenant: str.substring(0, str.length - 1)
-            });
-            if (datalist.length == res.data.length) {
-              resolve({
-                pageIndex: res.pageIndex,
-                pageSize: res.pageSize,
-                total: res.total,
-                data: datalist
-              })
-            }
-          });
-        })
+          })
+        }else {
+          resolve({
+            pageIndex: res.pageIndex,
+            pageSize: res.pageSize,
+            total: res.total,
+            data: []
+          })
+        }
       })
     })
   };
 
   const handleSearch = (params: any) => {
-    const tempParam = {...searchParam, ...params,};
+    const tempParam = { ...searchParam, ...params, };
     const defaultItem = searchParam.terms;
     const tempTerms = params?.terms;
-    const terms = tempTerms ? {...defaultItem, ...tempTerms} : initSearch;
+    const terms = tempTerms ? { ...defaultItem, ...tempTerms } : initSearch;
     let tempSearch: {};
 
     if (tempTerms) {
@@ -120,11 +129,11 @@ const Edit = (props: Props) => {
       align: 'left',
       width: 400,
       render: (record: any) => <div
-        style={{overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}
+        style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}
         onClick={() => {
           setAsset(record);
           setCat(true);
-        }}><span style={{color: '#1890ff'}}>{record.tenant}</span></div>
+        }}><span style={{ color: '#1890ff' }}>{record.tenant}</span></div>
     },
     {
       title: '操作',
@@ -158,7 +167,7 @@ const Edit = (props: Props) => {
 
       <SearchForm
         search={(params: any) => {
-          handleSearch({terms: params})
+          handleSearch({ terms: params })
         }}
         formItems={[
           {
@@ -175,13 +184,13 @@ const Edit = (props: Props) => {
       />
       <Button
         type="primary"
-        style={{marginBottom: 10}}
+        style={{ marginBottom: 10 }}
         onClick={() => setAdd(true)}>添加</Button>
       {
         selected.length > 0 && (
           <Button
             type="danger"
-            style={{marginBottom: 10, marginLeft: 10}}
+            style={{ marginBottom: 10, marginLeft: 10 }}
             onClick={() => {
               unbind()
             }}>
@@ -214,7 +223,7 @@ const Edit = (props: Props) => {
           onClick={() => {
             props.close();
           }}
-          style={{marginRight: 8}}
+          style={{ marginRight: 8 }}
         >
           关闭
         </Button>
@@ -226,12 +235,12 @@ const Edit = (props: Props) => {
           close={() => {
             setAdd(false);
             handleSearch(searchParam);
-          }}/>
+          }} />
       )}
       {cat && <User asset={asset} close={() => {
         setCat(false);
         handleSearch(searchParam);
-      }}/>}
+      }} />}
     </Drawer>
   )
 };

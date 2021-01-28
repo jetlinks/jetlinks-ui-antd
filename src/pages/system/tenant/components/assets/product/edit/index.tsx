@@ -50,7 +50,6 @@ const Edit = (props: Props) => {
   let product = (tempSearch: any, datalist: any[]) => {
     return new Promise((resolve) => {
       service.assets.product(encodeQueryParam(tempSearch)).subscribe(res => {
-        console.log(res)
         if(res.data.length > 0){
           res.data.forEach((value: { id: string; name: any; photoUrl: any; }) => {
             service.assets.members(data.id, 'product', value.id).subscribe(resp => {
