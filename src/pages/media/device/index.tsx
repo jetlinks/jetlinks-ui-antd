@@ -1,5 +1,5 @@
 import {PageHeaderWrapper} from "@ant-design/pro-layout"
-import {Badge, Card, Divider, Popconfirm} from "antd";
+import {Badge, Card, Divider, message, Popconfirm} from "antd";
 import React, {Fragment, useEffect, useState} from "react";
 import styles from '@/utils/table.less';
 import SearchForm from "@/components/SearchForm";
@@ -181,7 +181,15 @@ const MediaDevice: React.FC<Props> = () => {
               <Popconfirm
                 title="确认删除该国标设备吗？"
                 onConfirm={() => {
-
+                  setLoading(true);
+                  service.remove(record.id).subscribe(() => {
+                      message.success("删除成功");
+                      handleSearch(encodeQueryParam(searchParam));
+                    },
+                    () => {
+                      message.error("删除失败");
+                    },
+                    () => setLoading(false))
                 }}>
                 <a>删除</a>
               </Popconfirm>
