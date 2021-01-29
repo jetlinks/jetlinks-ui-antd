@@ -1,5 +1,5 @@
 import {PageHeaderWrapper} from "@ant-design/pro-layout"
-import {Badge, Card, Descriptions, Row, Table} from "antd";
+import {Badge, Card, Descriptions, Divider, Row, Table} from "antd";
 import React, {Fragment, useEffect, useState} from "react";
 import styles from '@/utils/table.less';
 import SearchForm from "@/components/SearchForm";
@@ -151,7 +151,7 @@ const MediaDevice: React.FC<Props> = props => {
       // fixed: 'right',
       render: (record: any) => (
         <Fragment>
-          {/*<a
+          <a
             onClick={() => {
               setChannel(true);
               setChannelInfo(record);
@@ -159,7 +159,7 @@ const MediaDevice: React.FC<Props> = props => {
           >
             编辑
           </a>
-          <Divider type="vertical"/>*/}
+          <Divider type="vertical"/>
           {record.status.value === 'online' && (
             <a
               onClick={() => {
