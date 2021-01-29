@@ -2,6 +2,15 @@ import React, {useEffect, useState} from 'react';
 import {Button, Card, Divider, Form, Input, Select, Spin} from 'antd';
 import apis from '@/services';
 import {FormComponentProps} from "antd/lib/form";
+import AceEditor from "react-ace";
+import 'ace-builds/src-noconflict/mode-json';
+import 'ace-builds/src-noconflict/mode-json5';
+import 'ace-builds/src-noconflict/mode-hjson';
+import 'ace-builds/src-noconflict/mode-jsoniq';
+import 'ace-builds/src-noconflict/snippets/json';
+import 'ace-builds/src-noconflict/ext-language_tools';
+import 'ace-builds/src-noconflict/ext-searchbox';
+import 'ace-builds/src-noconflict/theme-eclipse';
 
 interface Props extends FormComponentProps {
   device: any
@@ -11,7 +20,6 @@ interface State {
   propertiesData: any[];
   functionsSelectList: any[];
   functionsInfo: any;
-  logs: string;
   spinning: boolean;
 }
 
@@ -26,13 +34,11 @@ const Functions: React.FC<Props> = (props) => {
       propertiesData: [],
       functionsSelectList: [],
       functionsInfo: {},
-      logs: '',
       spinning: false,
     };
 
     const [functionsSelectList] = useState(initState.functionsSelectList);
     const [functionsInfo, setFunctionsInfo] = useState(initState.functionsInfo);
-    const [logs, setLogs] = useState(initState.logs);
     const [spinning, setSpinning] = useState(initState.spinning);
 
     useEffect(() => {
@@ -58,11 +64,13 @@ const Functions: React.FC<Props> = (props) => {
           .then(response => {
             const tempResult = response?.result;
             if (response.status === 200) {
-              typeof tempResult === 'object' ? setLogs(JSON.stringify(tempResult)) : setLogs(tempResult);
+              typeof tempResult === 'object' ?
+                setFieldsValue({logs: JSON.stringify(tempResult)}) :
+                setFieldsValue({logs: tempResult})
             }
             setSpinning(false);
           }).catch(() => {
-          setLogs(`调试错误`);
+          setFieldsValue({logs: '调试错误'});
         });
       });
     };
@@ -84,7 +92,8 @@ const Functions: React.FC<Props> = (props) => {
                   });
                   setFieldsValue({
                     'functionData':
-                      localStorage.getItem(`function-debug-data-${props.device.id}-${e}`) || JSON.stringify(map, null, 2)
+                      localStorage.getItem(`function-debug-data-${props.device.id}-${e}`) ||
+                      JSON.stringify(map, null, 2)
                   });
                 }}>
                   {functionsSelectList}
@@ -95,10 +104,28 @@ const Functions: React.FC<Props> = (props) => {
                   rules: [
                     {required: true, message: '请输入功能参数'},
                   ],
-                })(<Input.TextArea
-                  rows={4} style={{height: '210px'}}
-                  placeholder="参数必须JSON格式"
-                />)}
+                })(
+                  <AceEditor
+                    mode='json'
+                    theme="eclipse"
+                    name="app_code_editor"
+                    key='simulator'
+                    fontSize={14}
+                    showPrintMargin
+                    showGutter
+                    wrapEnabled
+                    highlightActiveLine  //突出活动线
+                    enableSnippets  //启用代码段
+                    style={{width: '100%', height: 300}}
+                    setOptions={{
+                      enableBasicAutocompletion: true,   //启用基本自动完成功能
+                      enableLiveAutocompletion: true,   //启用实时自动完成功能 （比如：智能代码提示）
+                      enableSnippets: true,  //启用代码段
+                      showLineNumbers: true,
+                      tabSize: 2,
+                    }}
+                  />
+                )}
               </Form.Item>
               <div style={{textAlign: 'right'}}>
                 <Button
@@ -110,13 +137,15 @@ const Functions: React.FC<Props> = (props) => {
                   执行
                 </Button>
                 <Divider type="vertical"/>
-                <Button type="ghost" onClick={() => setLogs('')}>
+                <Button type="ghost" onClick={() => setFieldsValue({logs: undefined})}>
                   清空
                 </Button>
               </div>
 
               <Form.Item label="调试结果：" style={{paddingTop: 20}}>
-                <Input.TextArea rows={4} value={logs} readOnly/>
+                {getFieldDecorator('logs', {})(
+                  <Input.TextArea rows={4} readOnly/>
+                )}
               </Form.Item>
             </Form>
           </Card>
