@@ -207,11 +207,11 @@ const Save: React.FC<Props> = props => {
                 rules: [
                   {required: true, message: '请选择字符集'}
                 ],
-                initialValue: data?.sipConfig?.charset || "GBK",
+                initialValue: data?.sipConfig?.charset || "gb2312",
               })(
                 <Radio.Group buttonStyle="solid">
-                  <Radio.Button value="GBK">GB2312</Radio.Button>
-                  <Radio.Button value="UTF-8">UTF-8</Radio.Button>
+                  <Radio.Button value="gb2312">GB2312</Radio.Button>
+                  <Radio.Button value="utf-8">UTF-8</Radio.Button>
                 </Radio.Group>
               )}
             </Form.Item>
