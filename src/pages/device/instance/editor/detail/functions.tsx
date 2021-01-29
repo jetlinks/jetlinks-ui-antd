@@ -93,7 +93,7 @@ const Functions: React.FC<Props> = (props) => {
               <Form.Item label="参数：">
                 {getFieldDecorator('functionData', {
                   rules: [
-                    {required: true, message: '请选择设备功能'},
+                    {required: true, message: '请输入功能参数'},
                   ],
                 })(<Input.TextArea
                   rows={4} style={{height: '210px'}}
