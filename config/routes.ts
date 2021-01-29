@@ -520,7 +520,7 @@ export const routes = [
                         name: '国标网关',
                         icon: 'youtube',
                         version: 'pro',
-                        authority: ['gb28181-gateway','media-channel','media-server','media-stream','admin'],
+                        authority: ['gb28181-gateway','media-channel','media-server','media-stream','gb28181-cascade','admin'],
                         routes: [
                             {
                                 path: '/media/basic',
@@ -570,6 +570,14 @@ export const routes = [
                                 authority: ['media-stream','admin'],
                                 icon: 'appstore',
                                 component: './media/reveal',
+                            },
+                            {
+                                path: '/media/cascade',
+                                name: '国标级联',
+                                version: 'pro',
+                                authority: ['gb28181-cascade','admin'],
+                                icon: 'cloud-upload',
+                                component: './media/cascade',
                             },
                         ]
                     },
