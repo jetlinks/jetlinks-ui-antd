@@ -193,8 +193,8 @@ const Save: React.FC<Props> = props => {
                         </Col>
                         <Col span={12}>
                           <Form.Item label="SIP本地地址">
-                            {getFieldDecorator(`sipConfigs[${index}].remoteAddress`, {
-                              initialValue: item.remoteAddress || undefined,
+                            {getFieldDecorator(`sipConfigs[${index}].localAddress`, {
+                              initialValue: item.localAddress || undefined,
                               rules: [{required: true, message: '请输入SIP本地地址'}],
                             })(
                               <Input placeholder="请输入SIP本地地址"/>
