@@ -71,12 +71,12 @@ const Update: React.FC<Props> = props => {
             initialValue: props.data.address,
           })(<Input placeholder="请输入设备名称"/>)}
         </Form.Item>
-        <Form.Item key="others.ptzType" label="云台类型">
-          {getFieldDecorator('others.ptzType', {
+        <Form.Item key="ptzType" label="云台类型">
+          {getFieldDecorator('ptzType', {
             rules: [
               {required: true, message: '请选择云台类型'}
             ],
-            initialValue: props.data.others?.ptzType || 0,
+            initialValue: props.data?.ptzType || 0,
           })(
             <Select>
               <Select.Option value={0}>未知</Select.Option>
