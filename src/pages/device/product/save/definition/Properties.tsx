@@ -22,7 +22,7 @@ const Properties: React.FC<Props> = (props: Props) => {
   const tenantContextData = useContext(TenantContext);
 
   const initState: State = {
-    data: props.data,
+    data: props.data || [],
     current: {},
     visible: false,
   };
@@ -32,7 +32,7 @@ const Properties: React.FC<Props> = (props: Props) => {
   const [current, setCurrent] = useState(initState.current);
 
   useEffect(() => {
-    setData(tenantContextData.properties)
+    setData(tenantContextData.properties || [])
   }, [tenantContextData]);
 
   const editItem = (item: any) => {

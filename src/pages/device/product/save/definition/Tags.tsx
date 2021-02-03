@@ -21,7 +21,7 @@ interface State {
 const Tags: React.FC<Props> = (props: Props) => {
   const tenantContextData = useContext(TenantContext);
   const initState: State = {
-    data: props.data,
+    data: props.data || [],
     current: {},
     visible: false,
   };
@@ -31,7 +31,7 @@ const Tags: React.FC<Props> = (props: Props) => {
   const [current, setCurrent] = useState(initState.current);
 
   useEffect(() => {
-    setData(tenantContextData.tags)
+    setData(tenantContextData.tags || [])
   }, [tenantContextData]);
   const editItem = (item: any) => {
     setVisible(true);
