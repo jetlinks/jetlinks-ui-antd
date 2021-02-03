@@ -550,7 +550,7 @@ export const routes = [
                                 path: '/media/device',
                                 name: '国标设备',
                                 version: 'pro',
-                                authority: ['media-device','media-stream','admin'],
+                                authority: ['media-device','admin'],
                                 icon: 'gateway',
                                 component: './media/device',
                             },
