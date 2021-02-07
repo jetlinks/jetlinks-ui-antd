@@ -8,6 +8,7 @@ import {ColumnProps} from "antd/lib/table";
 import Service from "./service";
 import encodeQueryParam from "@/utils/encodeParam";
 import SaveCascade from "./save/index";
+import ChoiceChannel from './channel/index';
 
 interface Props {
 
@@ -25,7 +26,9 @@ const MediaCascade: React.FC<Props> = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [result, setResult] = useState<any>({});
   const [saveVisible, setSaveVisible] = useState<boolean>(false);
+  const [choiceVisible, setChoiceVisible] = useState<boolean>(false);
   const [mediaCascade, setMediaCascade] = useState<any>({});
+  const [cascadeId, setCascadeId] = useState<string>('');
 
   const [searchParam, setSearchParam] = useState(initState.searchParam);
   const statusMap = new Map();
@@ -145,7 +148,6 @@ const MediaCascade: React.FC<Props> = () => {
     {
       title: '操作',
       key: 'center',
-      width: 150,
       render: (record: any) => (
         <Fragment>
           <a
@@ -155,6 +157,15 @@ const MediaCascade: React.FC<Props> = () => {
             }}
           >
             编辑
+          </a>
+          <Divider type="vertical"/>
+          <a
+            onClick={() => {
+              setChoiceVisible(true);
+              setCascadeId(record.id);
+            }}
+          >
+            选择通道
           </a>
           {record.status.value === 'disabled' ? (
             <>
@@ -208,6 +219,15 @@ const MediaCascade: React.FC<Props> = () => {
                 }}>
                 <a>禁用</a>
               </Popconfirm>
+              {/*<Divider type="vertical"/>
+              <a
+                onClick={() => {
+                  setChoiceVisible(true);
+                  setCascadeId(record.id);
+                }}
+              >
+                选择通道
+              </a>*/}
             </>
           )}
         </Fragment>
@@ -260,16 +280,24 @@ const MediaCascade: React.FC<Props> = () => {
         </div>
       </Card>
 
-      {
-        saveVisible &&
-        <SaveCascade
-          data={mediaCascade}
-          close={() => {
-            setSaveVisible(false);
-            setMediaCascade({});
-            handleSearch(searchParam);
-          }}/>
+      {saveVisible &&
+      <SaveCascade
+        data={mediaCascade}
+        close={() => {
+          setSaveVisible(false);
+          setMediaCascade({});
+          handleSearch(searchParam);
+        }}/>
       }
+
+      {choiceVisible &&
+      <ChoiceChannel
+        cascadeId={cascadeId}
+        close={() => {
+          setChoiceVisible(false);
+          setCascadeId('');
+          handleSearch(searchParam);
+        }}/>}
     </PageHeaderWrapper>
   )
 };
