@@ -1,5 +1,4 @@
-import {MinusCircleOutlined} from "@ant-design/icons";
-import {Button, Col, Divider, Form, Input, InputNumber, message, Modal, Radio, Row, Tooltip} from "antd";
+import {Col, Divider, Form, Input, InputNumber, message, Modal, Radio, Row, Select} from "antd";
 import React, {useEffect, useState} from "react";
 import {FormComponentProps} from "antd/lib/form";
 import Password from "antd/es/input/Password";
@@ -14,7 +13,7 @@ const Save: React.FC<Props> = props => {
 
   const service = new Service('media/device');
   const {form: {getFieldDecorator}, form} = props;
-
+  const [serveIdList, setServeIdList] = useState([]);
   const [sipConfigs, setSipConfigs] = useState<any>([]);
 
   useEffect(() => {
@@ -42,6 +41,15 @@ const Save: React.FC<Props> = props => {
         keepaliveInterval: 0
       }
     ]);
+
+    service.clusterNodes().subscribe((data) => {
+        setServeIdList(data);
+      }, () => {
+        message.error("集群节点查询失败");
+      },
+      () => {
+
+      });
   }, []);
 
   const saveData = () => {
@@ -125,7 +133,13 @@ const Save: React.FC<Props> = props => {
                             {getFieldDecorator(`sipConfigs[${index}].clusterNodeId`, {
                               initialValue: item.clusterNodeId || undefined,
                               rules: [{required: true, message: '请输入本地服务ID'}],
-                            })(<Input placeholder="请输入集群节点ID"/>)}
+                            })(
+                              <Select placeholder="请选择集群节点ID">
+                                {(serveIdList || []).map((item: any) => (
+                                  <Select.Option key={item.id} value={item.id}> item.id </Select.Option>
+                                ))}
+                              </Select>,
+                            )}
                           </Form.Item>
                         </Col>
                         <Col span={12}>

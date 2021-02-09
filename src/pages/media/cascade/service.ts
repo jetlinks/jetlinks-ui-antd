@@ -61,6 +61,15 @@ class Service extends BaseService<any> {
         map(resp => resp.result)
       ));
 
+  public clusterNodes = () => defer(
+    () => from(request(`/jetlinks/cluster/nodes`, {
+      method: 'GET',
+    }))
+      .pipe(
+        filter(resp => resp.status === 200),
+        map(resp => resp.result)
+      ));
+
 }
 
 export default Service;
