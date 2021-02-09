@@ -35,6 +35,10 @@ const MediaCascade: React.FC<Props> = () => {
   statusMap.set('enabled', 'success');
   statusMap.set('disabled', 'error');
 
+  const onlineStatusMap = new Map();
+  onlineStatusMap.set('online', 'success');
+  onlineStatusMap.set('offline', 'error');
+
   useEffect(() => {
     handleSearch(searchParam);
   }, []);
@@ -140,14 +144,82 @@ const MediaCascade: React.FC<Props> = () => {
       filterMultiple: false,
     },
     {
+      title: '连接状态',
+      dataIndex: 'onlineStatus',
+      width: 250,
+      render: record => record ? <Badge status={statusMap.get(record.value)} text={record.text}/> : '/',
+      filters: [
+        {
+          text: '在线',
+          value: 'online',
+        },
+        {
+          text: '离线',
+          value: 'offline',
+        },
+      ],
+      filterMultiple: false,
+    },
+    {
+      title: '集群节点ID',
+      dataIndex: 'sipConfigs[0].clusterNodeId',
+      ellipsis: true,
+    },
+    {
+      title: 'SIP服务国标编号',
+      dataIndex: 'sipConfigs[0].sipId',
+      ellipsis: true,
+    },
+    {
+      title: 'SIP服务IP',
+      dataIndex: 'sipConfigs[0].remoteAddress',
+      ellipsis: true,
+    },
+    {
+      title: 'SIP服务域',
+      dataIndex: 'sipConfigs[0].domain',
+      ellipsis: true,
+    },
+    {
+      title: 'SIP服务端口',
+      dataIndex: 'sipConfigs[0].remotePort',
+      ellipsis: true,
+    },
+    {
+      title: '设备国标编号',
+      dataIndex: 'sipConfigs[0].user',
+      ellipsis: true,
+    },
+    {
+      title: '注册周期(秒)',
+      dataIndex: 'sipConfigs[0].registerInterval',
+      ellipsis: true,
+    },
+    {
+      title: '心跳周期(秒)',
+      dataIndex: 'sipConfigs[0].keepaliveInterval',
+      ellipsis: true,
+    },
+    {
+      title: '传输信令',
+      dataIndex: 'sipConfigs[0].transport',
+      ellipsis: true,
+    },
+    {
+      title: '字符集',
+      dataIndex: 'sipConfigs[0].charset',
+      ellipsis: true,
+    },
+    {
       title: '说明',
       dataIndex: 'description',
-      width: '30%',
+      width: '5%',
       ellipsis: true,
     },
     {
       title: '操作',
       key: 'center',
+      width: 250,
       render: (record: any) => (
         <Fragment>
           <a
@@ -270,7 +342,8 @@ const MediaCascade: React.FC<Props> = () => {
             dataSource={result?.data}
             columns={columns}
             rowKey="id"
-            expandedRowRender={expandedRowRender}
+            /*expandedRowRender={expandedRowRender}*/
+            scroll={{x: '150%'}}
             onSearch={(params: any) => {
               params.sorts = params.sorts.field ? params.sorts : {field: 'id', order: 'desc'};
               handleSearch(params);

@@ -303,7 +303,7 @@ const Save: React.FC<Props> = props => {
                         </Col>
                       </Row>
                     </div>
-                    <div style={{width: "10%", display: 'flex', justifyContent: 'center', marginTop: 100}}>
+                    {/*<div style={{width: "10%", display: 'flex', justifyContent: 'center', marginTop: 100}}>
                       <Tooltip title="删除">
                         <MinusCircleOutlined
                           onClick={() => {
@@ -312,13 +312,13 @@ const Save: React.FC<Props> = props => {
                           }}
                         />
                       </Tooltip>
-                    </div>
+                    </div>*/}
                   </div>
                 </div>
               )
             })
           }
-          <Button icon="plus" type="link"
+          {/*<Button icon="plus" type="link"
                   onClick={() => {
                     setSipConfigs([...sipConfigs, {
                       sipId: '',
@@ -343,7 +343,7 @@ const Save: React.FC<Props> = props => {
                       keepaliveInterval: 0
                     }]);
                   }}
-          >添加</Button>
+          >添加</Button>*/}
         </Form>
       </div>
     </Modal>
