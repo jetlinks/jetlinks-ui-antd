@@ -136,7 +136,7 @@ const Save: React.FC<Props> = props => {
                             })(
                               <Select placeholder="请选择集群节点ID">
                                 {(serveIdList || []).map((item: any) => (
-                                  <Select.Option key={item.id} value={item.id}> item.id </Select.Option>
+                                  <Select.Option key={item.id} value={item.id}>{item.id}</Select.Option>
                                 ))}
                               </Select>,
                             )}
