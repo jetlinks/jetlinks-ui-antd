@@ -62,6 +62,14 @@ const DeviceInstancePage: React.FC<Props> = props => {
   const { result } = props.deviceInstance;
   const { dispatch, location } = props;
 
+  const map = new Map();
+  map.set('id','id$like');
+  map.set('name','name$like');
+  map.set('orgId','orgId$in');
+  map.set('devTag','id$dev-tag');
+  map.set('devBind','id$dev-bind$any');
+  map.set('productId','productId$dev-prod-cat');
+
   const initState: State = {
     data: result,
     searchParam: { pageSize: 10, terms: location?.query?.terms, },
@@ -320,7 +328,13 @@ const DeviceInstancePage: React.FC<Props> = props => {
         pageSize: 10,
       });
       stateCount(productId);
-    } else {
+    }else if (location?.query) {
+      let key = Object.keys(location?.query)[0];
+      let params = {};
+      params[map.get(key)] = location?.query[key]
+      handleSearch({ terms: params, pageSize: 10, sorts: searchParam.sorts });
+      stateCount('');
+    }else {
       handleSearch(searchParam);
       stateCount('');
     }
