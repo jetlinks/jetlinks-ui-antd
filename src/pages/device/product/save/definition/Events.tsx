@@ -25,7 +25,7 @@ interface State {
 
 const Events: React.FC<Props> = props => {
   const initState: State = {
-    data: props.data,
+    data: props.data || [],
     current: {},
     visible: false,
   };
@@ -36,7 +36,7 @@ const Events: React.FC<Props> = props => {
   const tenantContextData = useContext(TenantContext);
 
   useEffect(() => {
-    setData(tenantContextData.events)
+    setData(tenantContextData.events || [])
   }, [tenantContextData]);
 
   const editItem = (item: any) => {

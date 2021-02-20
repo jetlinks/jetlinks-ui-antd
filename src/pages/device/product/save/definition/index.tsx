@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import { Button, Card, message, Spin, Tabs } from 'antd';
+import React, {useState} from 'react';
+import {Button, Card, message, Spin, Tabs} from 'antd';
 import Property from './Properties';
 import Functions from './Functions';
 import Events from './Events';
 import Tags from '@/pages/device/product/save/definition/Tags';
 import Form from "antd/es/form";
-import { FormComponentProps } from "antd/lib/form";
+import {FormComponentProps} from "antd/lib/form";
 import MetaData from "@/pages/device/product/save/model/metaData";
 import QuickImport from "@/pages/device/product/save/model/quickImport";
 import apis from "@/services";
-import { DeviceProduct } from "@/pages/device/product/data";
-import { ProductContext } from '../../context';
+import {DeviceProduct} from "@/pages/device/product/data";
+import {ProductContext} from '../../context';
 
 interface Props extends FormComponentProps {
   basicInfo: Partial<DeviceProduct>
@@ -79,7 +79,7 @@ const Definition: React.FC<Props> = props => {
         快速导入
       </Button>
       {props.basicInfo.metadata && (
-        <Button style={{ marginLeft: 10 }} onClick={() => {
+        <Button style={{marginLeft: 10}} onClick={() => {
           setMetaDataVisible(true);
         }}>
           物模型 TSL
@@ -138,7 +138,7 @@ const Definition: React.FC<Props> = props => {
         {metaDataVisible && (
           <MetaData close={() => {
             setMetaDataVisible(false);
-          }} productId={basicInfo.id} />
+          }} productId={basicInfo.id}/>
         )}
         {quickImportVisible && (
           <QuickImport
@@ -148,7 +148,7 @@ const Definition: React.FC<Props> = props => {
             update={(item: any) => {
               setQuickImportVisible(false);
               setSpinning(true);
-              updateModel({ metadata: item });
+              updateModel({metadata: item});
             }}
           />
         )}

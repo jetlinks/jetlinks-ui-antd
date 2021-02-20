@@ -8,6 +8,7 @@ import {ColumnProps} from "antd/lib/table";
 import Service from "./service";
 import encodeQueryParam from "@/utils/encodeParam";
 import SaveCascade from "./save/index";
+import ChoiceChannel from './channel/index';
 
 interface Props {
 
@@ -25,12 +26,18 @@ const MediaCascade: React.FC<Props> = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [result, setResult] = useState<any>({});
   const [saveVisible, setSaveVisible] = useState<boolean>(false);
+  const [choiceVisible, setChoiceVisible] = useState<boolean>(false);
   const [mediaCascade, setMediaCascade] = useState<any>({});
+  const [cascadeId, setCascadeId] = useState<string>('');
 
   const [searchParam, setSearchParam] = useState(initState.searchParam);
   const statusMap = new Map();
   statusMap.set('enabled', 'success');
   statusMap.set('disabled', 'error');
+
+  const onlineStatusMap = new Map();
+  onlineStatusMap.set('online', 'success');
+  onlineStatusMap.set('offline', 'error');
 
   useEffect(() => {
     handleSearch(searchParam);
@@ -137,15 +144,82 @@ const MediaCascade: React.FC<Props> = () => {
       filterMultiple: false,
     },
     {
+      title: '连接状态',
+      dataIndex: 'onlineStatus',
+      width: 250,
+      render: record => record ? <Badge status={statusMap.get(record.value)} text={record.text}/> : '/',
+      filters: [
+        {
+          text: '在线',
+          value: 'online',
+        },
+        {
+          text: '离线',
+          value: 'offline',
+        },
+      ],
+      filterMultiple: false,
+    },
+    {
+      title: '集群节点ID',
+      dataIndex: 'sipConfigs[0].clusterNodeId',
+      ellipsis: true,
+    },
+    {
+      title: 'SIP服务国标编号',
+      dataIndex: 'sipConfigs[0].sipId',
+      ellipsis: true,
+    },
+    {
+      title: 'SIP服务IP',
+      dataIndex: 'sipConfigs[0].remoteAddress',
+      ellipsis: true,
+    },
+    {
+      title: 'SIP服务域',
+      dataIndex: 'sipConfigs[0].domain',
+      ellipsis: true,
+    },
+    {
+      title: 'SIP服务端口',
+      dataIndex: 'sipConfigs[0].remotePort',
+      ellipsis: true,
+    },
+    {
+      title: '设备国标编号',
+      dataIndex: 'sipConfigs[0].user',
+      ellipsis: true,
+    },
+    {
+      title: '注册周期(秒)',
+      dataIndex: 'sipConfigs[0].registerInterval',
+      ellipsis: true,
+    },
+    {
+      title: '心跳周期(秒)',
+      dataIndex: 'sipConfigs[0].keepaliveInterval',
+      ellipsis: true,
+    },
+    {
+      title: '传输信令',
+      dataIndex: 'sipConfigs[0].transport',
+      ellipsis: true,
+    },
+    {
+      title: '字符集',
+      dataIndex: 'sipConfigs[0].charset',
+      ellipsis: true,
+    },
+    {
       title: '说明',
       dataIndex: 'description',
-      width: '30%',
+      width: '5%',
       ellipsis: true,
     },
     {
       title: '操作',
       key: 'center',
-      width: 150,
+      width: 250,
       render: (record: any) => (
         <Fragment>
           <a
@@ -155,6 +229,15 @@ const MediaCascade: React.FC<Props> = () => {
             }}
           >
             编辑
+          </a>
+          <Divider type="vertical"/>
+          <a
+            onClick={() => {
+              setChoiceVisible(true);
+              setCascadeId(record.id);
+            }}
+          >
+            选择通道
           </a>
           {record.status.value === 'disabled' ? (
             <>
@@ -208,6 +291,15 @@ const MediaCascade: React.FC<Props> = () => {
                 }}>
                 <a>禁用</a>
               </Popconfirm>
+              {/*<Divider type="vertical"/>
+              <a
+                onClick={() => {
+                  setChoiceVisible(true);
+                  setCascadeId(record.id);
+                }}
+              >
+                选择通道
+              </a>*/}
             </>
           )}
         </Fragment>
@@ -250,7 +342,8 @@ const MediaCascade: React.FC<Props> = () => {
             dataSource={result?.data}
             columns={columns}
             rowKey="id"
-            expandedRowRender={expandedRowRender}
+            /*expandedRowRender={expandedRowRender}*/
+            scroll={{x: '150%'}}
             onSearch={(params: any) => {
               params.sorts = params.sorts.field ? params.sorts : {field: 'id', order: 'desc'};
               handleSearch(params);
@@ -260,16 +353,24 @@ const MediaCascade: React.FC<Props> = () => {
         </div>
       </Card>
 
-      {
-        saveVisible &&
-        <SaveCascade
-          data={mediaCascade}
-          close={() => {
-            setSaveVisible(false);
-            setMediaCascade({});
-            handleSearch(searchParam);
-          }}/>
+      {saveVisible &&
+      <SaveCascade
+        data={mediaCascade}
+        close={() => {
+          setSaveVisible(false);
+          setMediaCascade({});
+          handleSearch(searchParam);
+        }}/>
       }
+
+      {choiceVisible &&
+      <ChoiceChannel
+        cascadeId={cascadeId}
+        close={() => {
+          setChoiceVisible(false);
+          setCascadeId('');
+          handleSearch(searchParam);
+        }}/>}
     </PageHeaderWrapper>
   )
 };

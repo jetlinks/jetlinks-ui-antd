@@ -30,6 +30,46 @@ class Service extends BaseService<any> {
         filter(resp => resp.status === 200),
         map(resp => resp.result)
       ));
+
+  public mediaDeviceNoPaging = (params: any) => defer(
+    () => from(request(`/jetlinks/media/channel/_query/no-paging?paging=false`, {
+      method: 'GET',
+      params
+    }))
+      .pipe(
+        filter(resp => resp.status === 200),
+        map(resp => resp.result)
+      ));
+
+  public _bind = (cascadeId: string, channelList: any[]) => defer(
+    () => from(request(`/jetlinks/media/gb28181-cascade/${cascadeId}/channels/_bind`, {
+      method: 'POST',
+      data: channelList
+    }))
+      .pipe(
+        filter(resp => resp.status === 200),
+        map(resp => resp.result)
+      ));
+
+  public _unbind = (cascadeId: string, channelList: any[]) => defer(
+    () => from(request(`/jetlinks/media/gb28181-cascade/${cascadeId}/channels/_unbind`, {
+      method: 'POST',
+      data: channelList
+    }))
+      .pipe(
+        filter(resp => resp.status === 200),
+        map(resp => resp.result)
+      ));
+
+  public clusterNodes = () => defer(
+    () => from(request(`/jetlinks/cluster/nodes`, {
+      method: 'GET',
+    }))
+      .pipe(
+        filter(resp => resp.status === 200),
+        map(resp => resp.result)
+      ));
+
 }
 
 export default Service;
