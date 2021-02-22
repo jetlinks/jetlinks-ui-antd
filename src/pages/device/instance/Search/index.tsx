@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Form, { FormComponentProps } from 'antd/lib/form';
 import { Button, Col, Input, Row, Select, TreeSelect } from 'antd';
 import apis from '@/services';
+import { router } from 'umi';
 import SearchTags from "@/pages/device/instance/Search/tags/tags";
 
 interface Props extends FormComponentProps {
@@ -33,6 +34,14 @@ const Search: React.FC<Props> = props => {
   const [tagsData, setTagsData] = useState(initState.tagsData);
   const [categoryList, setCategoryList] = useState([]);
   const [bindList, setBindList] = useState([]);
+
+  const mapType = new Map();
+  mapType.set('id$like','id');
+  mapType.set('name$like','name');
+  mapType.set('orgId$in','orgId');
+  mapType.set('id$dev-tag','devTag');
+  mapType.set('id$dev-bind$any','devBind');
+  mapType.set('productId$dev-prod-cat','productId');
 
   useEffect(() => {
     setParameterType('id$like');
@@ -82,10 +91,13 @@ const Search: React.FC<Props> = props => {
     } else if (data.parameter === 'id$dev-tag') {
       data.value = tagsData.length > 0 ? JSON.stringify(tagsData) : undefined;
     } else if (data.parameter === 'id$dev-bind$any') {
-      data.value = JSON.stringify(data.value).replace(/[\[\]"]/g, '') 
+      data.value = JSON.stringify(data.value).replace(/[\[\]"]/g, '')
     }
+    let params = {}
+    params[mapType.get(data.parameter)] = data.value
+    router.push({pathname: `/device/instance`, query: params})
     map[data.parameter] = data.value;
-    props.search(map);
+    props.search(map); 
   };
 
   const renderType = () => {
