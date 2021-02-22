@@ -114,7 +114,7 @@ const MediaDevice: React.FC<Props> = props => {
       title: '云台类型',
       dataIndex: 'ptzType',
       width: 100,
-      render: record => ptzType.get(record.value),
+      render: record => ptzType.get(record?.value || 0),
       ellipsis: true,
     },
     {
