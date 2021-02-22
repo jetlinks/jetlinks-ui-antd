@@ -68,7 +68,8 @@ const DeviceInstancePage: React.FC<Props> = props => {
   map.set('orgId','orgId$in');
   map.set('devTag','id$dev-tag');
   map.set('devBind','id$dev-bind$any');
-  map.set('productId','productId$dev-prod-cat');
+  map.set('devProd','productId$dev-prod-cat');
+  map.set('productId','productId');
 
   const initState: State = {
     data: result,
@@ -585,6 +586,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
                     setProduct(() => value);
                     setDeviceCount({ loading: true });
                     onDeviceProduct(value);
+                    router.push({pathname: `/device/instance`, query: {productId: value}})
                   }}
                 >
                   {productList?.map(item => (
