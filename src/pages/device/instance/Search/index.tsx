@@ -4,9 +4,11 @@ import { Button, Col, Input, Row, Select, TreeSelect } from 'antd';
 import apis from '@/services';
 import { router } from 'umi';
 import SearchTags from "@/pages/device/instance/Search/tags/tags";
+import { getPageQuery } from '@/utils/utils';
 
 interface Props extends FormComponentProps {
   search: Function;
+  location: Location
 }
 
 interface State {
@@ -36,16 +38,40 @@ const Search: React.FC<Props> = props => {
   const [bindList, setBindList] = useState([]);
 
   const mapType = new Map();
-  mapType.set('id$like','id');
-  mapType.set('name$like','name');
-  mapType.set('orgId$in','orgId');
-  mapType.set('id$dev-tag','devTag');
-  mapType.set('id$dev-bind$any','devBind');
-  mapType.set('productId$dev-prod-cat','productId');
+  mapType.set('id$like', 'id');
+  mapType.set('name$like', 'name');
+  mapType.set('orgId$in', 'orgId');
+  mapType.set('id$dev-tag', 'devTag');
+  mapType.set('id$dev-bind$any', 'devBind');
+  mapType.set('productId$dev-prod-cat', 'devProd');
 
   useEffect(() => {
     setParameterType('id$like');
-    form.setFieldsValue({ parameter: 'id$like' });
+    const query: any = getPageQuery();
+    if (query && query !== {}) {
+      mapType.forEach((value, key) => {
+        let k = Object.keys(query)[0]
+        if(value === k){
+          form.setFieldsValue({ parameter: key });
+          if (key === 'orgId$in') {
+            form.setFieldsValue({value: query[k].split(",")})
+          } else if (key === 'id$dev-tag') {
+            let v = JSON.parse(query[k])
+            let displayData: any[] = [];
+            v.map((item: any) => {
+              displayData.push(`${item.key}=${item.value}`);
+            });
+            setFieldsValue({ 'value': displayData.join('；') });
+          }else if (key === 'id$dev-bind$any') {
+            form.setFieldsValue({value: query[k].split(",")})
+          }else{
+            form.setFieldsValue({ value: query[k] });
+          }
+        }
+      });
+    }else{
+      form.setFieldsValue({ parameter: 'id$like' });
+    }
 
     apis.deviceProdcut.queryOrganization()
       .then(res => {
@@ -95,9 +121,9 @@ const Search: React.FC<Props> = props => {
     }
     let params = {}
     params[mapType.get(data.parameter)] = data.value
-    router.push({pathname: `/device/instance`, query: params})
+    router.push({ pathname: `/device/instance`, query: params })
     map[data.parameter] = data.value;
-    props.search(map); 
+    props.search(map);
   };
 
   const renderType = () => {
