@@ -59,7 +59,7 @@ const MediaDevice: React.FC<Props> = () => {
     {
       title: '国标设备编号',
       dataIndex: 'id',
-      width: 180,
+      width: 200,
       ellipsis: true,
       fixed: 'left',
     },
