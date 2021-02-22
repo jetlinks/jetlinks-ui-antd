@@ -133,7 +133,6 @@ const ChoiceChannel: React.FC<Props> = props => {
     filters['id$cascade_channel'] = props.cascadeId;
     searchParam.terms = filters;
     searchParam.sorts = sorter.field ? sorter : {field: 'id', order: 'desc'};
-
     _bind_cascade_channel(searchParam);
   };
 
@@ -145,7 +144,6 @@ const ChoiceChannel: React.FC<Props> = props => {
     filters['id$cascade_channel'] = props.cascadeId;
     searchParam.terms = filters;
     searchParam.sorts = sorter.field ? sorter : {field: 'id', order: 'desc'};
-
     _bind_cascade_channel(searchParam);
   };
 
@@ -164,35 +162,44 @@ const ChoiceChannel: React.FC<Props> = props => {
   const _bind = () => {
     if (bindChannelId.length === 0) {
       message.error('请选择需绑定的通道');
+      setLoading(false);
       return;
     }
     service._bind(cascadeId, bindChannelId).subscribe(
-      (data) => {
-        console.log(data);
+      () => {
+        message.success('绑定成功')
       },
       () => {
+        message.error('绑定失败')
       },
       () => {
-        setBindChannelId([]);
+        emptyChannelId();
         setLoading(false);
       });
   };
 
   const _unbind = () => {
-    if (bindChannelId.length === 0) {
+    if (unbindChannelId.length === 0) {
       message.error('请选择需解绑的通道');
+      setLoading(false);
       return;
     }
     service._unbind(cascadeId, unbindChannelId).subscribe(
-      (data) => {
-        console.log(data);
+      () => {
+        message.success('解绑成功')
       },
       () => {
+        message.error('解绑失败')
       },
       () => {
-        setUnbindChannelId([]);
+        emptyChannelId();
         setLoading(false);
       });
+  };
+
+  const emptyChannelId = () => {
+    setBindChannelId([]);
+    setUnbindChannelId([]);
   };
   return (
     <Modal
@@ -210,6 +217,7 @@ const ChoiceChannel: React.FC<Props> = props => {
         <div>
           <SearchForm
             search={(params: any) => {
+              emptyChannelId();
               if (bindOrUnbind === 'channels_bind') {
                 params['id$cascade_channel'] = props.cascadeId;
                 _bind_cascade_channel(searchParam);
@@ -231,11 +239,14 @@ const ChoiceChannel: React.FC<Props> = props => {
       <Tabs defaultActiveKey="channels_bind" tabPosition="top" type="card"
             onTabClick={(value: string) => {
               setBindOrUnbind(value);
+              emptyChannelId();
               if (value === 'channels_bind') {
                 searchParam.terms = {id$cascade_channel: props.cascadeId};
+                setBindChannelId([]);
                 _bind_cascade_channel(searchParam);
               } else {
                 searchParam.terms = {id$cascade_channel$not: props.cascadeId};
+                setUnbindChannelId([]);
                 _unbind_cascade_channel(searchParam);
               }
             }}>
@@ -256,7 +267,7 @@ const ChoiceChannel: React.FC<Props> = props => {
               rowKey="id"
               rowSelection={{
                 type: 'checkbox',
-                ...bindSelection,
+                ...unbindSelection,
               }}
               onChange={bindTableChange}
               pagination={{
@@ -281,7 +292,7 @@ const ChoiceChannel: React.FC<Props> = props => {
               rowKey="id"
               rowSelection={{
                 type: 'checkbox',
-                ...unbindSelection,
+                ...bindSelection
               }}
               onChange={unbindTableChange}
               pagination={{
