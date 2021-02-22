@@ -174,6 +174,8 @@ const ChoiceChannel: React.FC<Props> = props => {
       },
       () => {
         emptyChannelId();
+        searchParam.terms = {id$cascade_channel$not: props.cascadeId};
+        _bind_cascade_channel(searchParam);
         setLoading(false);
       });
   };
@@ -193,6 +195,8 @@ const ChoiceChannel: React.FC<Props> = props => {
       },
       () => {
         emptyChannelId();
+        searchParam.terms = {id$cascade_channel: props.cascadeId};
+        _unbind_cascade_channel(searchParam);
         setLoading(false);
       });
   };
@@ -220,10 +224,10 @@ const ChoiceChannel: React.FC<Props> = props => {
               emptyChannelId();
               if (bindOrUnbind === 'channels_bind') {
                 params['id$cascade_channel'] = props.cascadeId;
-                _bind_cascade_channel(searchParam);
+                _bind_cascade_channel(params);
               } else {
                 params['id$cascade_channel$not'] = props.cascadeId;
-                _unbind_cascade_channel(searchParam);
+                _unbind_cascade_channel(params);
               }
             }}
             formItems={[
@@ -242,11 +246,9 @@ const ChoiceChannel: React.FC<Props> = props => {
               emptyChannelId();
               if (value === 'channels_bind') {
                 searchParam.terms = {id$cascade_channel: props.cascadeId};
-                setBindChannelId([]);
                 _bind_cascade_channel(searchParam);
               } else {
                 searchParam.terms = {id$cascade_channel$not: props.cascadeId};
-                setUnbindChannelId([]);
                 _unbind_cascade_channel(searchParam);
               }
             }}>
