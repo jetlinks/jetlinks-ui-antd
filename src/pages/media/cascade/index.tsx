@@ -147,7 +147,7 @@ const MediaCascade: React.FC<Props> = () => {
       title: '连接状态',
       dataIndex: 'onlineStatus',
       width: 120,
-      render: record => record ? <Badge status={statusMap.get(record.value)} text={record.text}/> : '/',
+      render: record => record ? <Badge status={onlineStatusMap.get(record.value)} text={record.text}/> : '/',
       filters: [
         {
           text: '在线',
