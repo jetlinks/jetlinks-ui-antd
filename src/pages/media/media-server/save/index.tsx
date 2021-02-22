@@ -48,7 +48,10 @@ const Save: React.FC<Props> = props => {
   const saveData = () => {
 
     form.validateFields((err, fileValue) => {
-      if (err) return;
+      if (err) {
+        setLoading(false);
+        return;
+      }
 
       //todo 统一界面，后期有需求就开放多网关和流媒体服务
 
