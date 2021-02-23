@@ -63,13 +63,13 @@ const DeviceInstancePage: React.FC<Props> = props => {
   const { dispatch, location } = props;
 
   const map = new Map();
-  map.set('id','id$like');
-  map.set('name','name$like');
-  map.set('orgId','orgId$in');
-  map.set('devTag','id$dev-tag');
-  map.set('devBind','id$dev-bind$any');
-  map.set('devProd','productId$dev-prod-cat');
-  map.set('productId','productId');
+  map.set('id', 'id$like');
+  map.set('name', 'name$like');
+  map.set('orgId', 'orgId$in');
+  map.set('devTag', 'id$dev-tag');
+  map.set('devBind', 'id$dev-bind$any');
+  map.set('devProd', 'productId$dev-prod-cat');
+  map.set('productId', 'productId');
 
   const initState: State = {
     data: result,
@@ -329,13 +329,13 @@ const DeviceInstancePage: React.FC<Props> = props => {
         pageSize: 10,
       });
       stateCount(productId);
-    }else if (location?.query) {
+    } else if (location?.query) {
       let key = Object.keys(location?.query)[0];
       let params = {};
       params[map.get(key)] = location?.query[key]
       handleSearch({ terms: params, pageSize: 10, sorts: searchParam.sorts });
       stateCount('');
-    }else {
+    } else {
       handleSearch(searchParam);
       stateCount('');
     }
@@ -583,10 +583,16 @@ const DeviceInstancePage: React.FC<Props> = props => {
               <Col sm={7} xs={24}>
                 <Select placeholder="选择产品" allowClear style={{ width: '70%', marginTop: 7 }} value={product}
                   onChange={(value: string) => {
+                    let key = Object.keys(location?.query)[0];
+                    let params = {};
+                    if(location?.query){
+                      params[key] = location?.query[key]
+                    }
+                    params['productId'] = value
+                    router.push({ pathname: `/device/instance`, query: params })
                     setProduct(() => value);
                     setDeviceCount({ loading: true });
                     onDeviceProduct(value);
-                    router.push({pathname: `/device/instance`, query: {productId: value}})
                   }}
                 >
                   {productList?.map(item => (
