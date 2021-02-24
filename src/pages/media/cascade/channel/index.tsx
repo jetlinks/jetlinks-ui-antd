@@ -42,6 +42,7 @@ const ChoiceChannel: React.FC<Props> = props => {
   ptzType.set(4, '遥控枪机');
 
   useEffect(() => {
+    setLoading(true);
     _bind_cascade_channel(fixedParam);
     _channel(searchParam);
   }, []);
@@ -58,11 +59,10 @@ const ChoiceChannel: React.FC<Props> = props => {
       },
       () => {
       },
-      () => setLoading(false));
+      () => {});
   };
 
   const _channel = (params?: any) => {
-    setLoading(true);
     setSearchParam(params);
     service.deviceChannelNoPaging(encodeQueryParam(params)).subscribe(
       (data) => {
@@ -122,6 +122,7 @@ const ChoiceChannel: React.FC<Props> = props => {
       setBindList(selectedRowKeys);
     },
     onSelect: (record: any, selected: any) => {
+      setLoading(true);
       let list: string[] = [record.id];
       if (selected) {
         _bind(list);
@@ -130,6 +131,7 @@ const ChoiceChannel: React.FC<Props> = props => {
       }
     },
     onSelectAll: (selected: any, selectedRows: any, changeRows: any) => {
+      setLoading(true);
       let list: string[] = [];
       changeRows.map((item: any) => {
         list.push(item.id);
