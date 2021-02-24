@@ -121,6 +121,11 @@ const Search: React.FC<Props> = props => {
     }
     let params = {}
     params[mapType.get(data.parameter)] = data.value
+    params['productId'] = getPageQuery().productId
+    if(getPageQuery().productId){
+      params['productId'] = getPageQuery().productId
+      map['productId'] = getPageQuery().productId
+    }
     router.push({ pathname: `/device/instance`, query: params })
     map[data.parameter] = data.value;
     props.search(map);

@@ -1,5 +1,5 @@
 import React, {Fragment, useEffect, useState} from "react";
-import {Button, Card, Divider, Popconfirm, Table} from "antd";
+import {Button, Card, Divider, message, Popconfirm, Table} from "antd";
 import {PageHeaderWrapper} from "@ant-design/pro-layout";
 import Save from './save'
 import Edit from './edit'
@@ -76,6 +76,10 @@ const Category = (props: Props) => {
   ];
 
   const delConfirm = (id: string) => {
+    if(id===''){
+      message.error('分类id不能为空')
+      return
+    }
     api.productCategoty.remove(id).then(res => {
       if (res.status === 200) {
         handleSearch();

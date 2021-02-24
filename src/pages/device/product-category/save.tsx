@@ -24,6 +24,7 @@ const Save = (props: Props) => {
     form.validateFields((err, fileValue) => {
       if (err) return;
       let parentId = props.data.parentId
+      if(fileValue.id === '') fileValue.id = undefined;
       api.productCategoty.save({...fileValue, parentId}).then(res => {
         if(res.status === 200){
           props.save()
