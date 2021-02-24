@@ -308,6 +308,7 @@ const Editor: React.FC<Props> = props => {
       <PageHeaderWrapper
         className={styles.instancePageHeader}
         style={{marginTop: 0, backgroundColor: '#F0F2F5', paddingBottom: 10}}
+        onBack={() => window.history.back()}
         title={titleInfo}
         extra={action}
         content={content}
