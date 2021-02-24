@@ -1,8 +1,8 @@
-import {Badge, Button, message, Modal, Table, Tabs} from "antd";
+import {Badge, message, Modal, Table} from "antd";
 import React, {useEffect, useState} from "react";
 import styles from '@/utils/table.less';
 import SearchForm from "@/components/SearchForm";
-import {ColumnProps, PaginationConfig, SorterResult} from "antd/lib/table";
+import {ColumnProps} from "antd/lib/table";
 import Service from "../service";
 import encodeQueryParam from "@/utils/encodeParam";
 
@@ -24,12 +24,11 @@ const ChoiceChannel: React.FC<Props> = props => {
 
   const service = new Service('media/channel');
   const [loading, setLoading] = useState<boolean>(false);
-  const [bindOrUnbind, setBindOrUnbind] = useState<string>('');
-  const [bindChannelId, setBindChannelId] = useState<any[]>([]);
-  const [unbindChannelId, setUnbindChannelId] = useState<any[]>([]);
   const [result, setResult] = useState<any[]>([]);
+  const [bindList, setBindList] = useState<string[]>([]);
 
-  const [searchParam] = useState(initState.searchParam);
+  const [searchParam, setSearchParam] = useState(initState.searchParam);
+  const [fixedParam] = useState({terms: {id$cascade_channel: props.cascadeId}, sorts: {field: 'id', order: 'desc'}});
   const statusMap = new Map();
   statusMap.set('online', 'success');
   statusMap.set('offline', 'error');
@@ -43,25 +42,29 @@ const ChoiceChannel: React.FC<Props> = props => {
   ptzType.set(4, '遥控枪机');
 
   useEffect(() => {
-    searchParam.terms = {id$cascade_channel: props.cascadeId};
-    _bind_cascade_channel(searchParam);
+    _bind_cascade_channel(fixedParam);
+    _channel(searchParam);
   }, []);
 
   const _bind_cascade_channel = (params?: any) => {
     setLoading(true);
-    service.mediaDeviceNoPaging(encodeQueryParam(params)).subscribe(
-      (data) => {
-        const temp = data.map((item: any) => ({parentId: item.parentChannelId, ...item}));
-        setResult(temp);
+    service.deviceChannelNoPaging(encodeQueryParam(params)).subscribe(
+      (data: any) => {
+        let list: string[] = [];
+        data.map((item: any) => {
+          list.push(item.id);
+        });
+        setBindList(list);
       },
       () => {
       },
       () => setLoading(false));
   };
 
-  const _unbind_cascade_channel = (params?: any) => {
+  const _channel = (params?: any) => {
     setLoading(true);
-    service.mediaDeviceNoPaging(encodeQueryParam(params)).subscribe(
+    setSearchParam(params);
+    service.deviceChannelNoPaging(encodeQueryParam(params)).subscribe(
       (data) => {
         const temp = data.map((item: any) => ({parentId: item.parentChannelId, ...item}));
         setResult(temp);
@@ -106,17 +109,6 @@ const ChoiceChannel: React.FC<Props> = props => {
       dataIndex: 'status',
       width: 110,
       render: record => record ? <Badge status={statusMap.get(record.value)} text={record.text}/> : '',
-      filters: [
-        {
-          text: '离线',
-          value: 'offline',
-        },
-        {
-          text: '在线',
-          value: 'online',
-        },
-      ],
-      filterMultiple: false,
     },
     {
       title: '子通道数',
@@ -125,90 +117,61 @@ const ChoiceChannel: React.FC<Props> = props => {
     },
   ];
 
-  const bindTableChange = (
-    pagination: PaginationConfig,
-    filters: any,
-    sorter: SorterResult<any>,
-  ) => {
-    filters['id$cascade_channel'] = props.cascadeId;
-    searchParam.terms = filters;
-    searchParam.sorts = sorter.field ? sorter : {field: 'id', order: 'desc'};
-    _bind_cascade_channel(searchParam);
-  };
-
-  const unbindTableChange = (
-    pagination: PaginationConfig,
-    filters: any,
-    sorter: SorterResult<any>,
-  ) => {
-    filters['id$cascade_channel'] = props.cascadeId;
-    searchParam.terms = filters;
-    searchParam.sorts = sorter.field ? sorter : {field: 'id', order: 'desc'};
-    _bind_cascade_channel(searchParam);
-  };
-
-  const bindSelection = {
-    onChange: (selectedRowKeys: any) => {
-      setBindChannelId(selectedRowKeys);
-    },
-  };
-
   const unbindSelection = {
     onChange: (selectedRowKeys: any) => {
-      setUnbindChannelId(selectedRowKeys);
+      setBindList(selectedRowKeys);
+    },
+    onSelect: (record: any, selected: any) => {
+      let list: string[] = [record.id];
+      if (selected) {
+        _bind(list);
+      } else {
+        _unbind(list);
+      }
+    },
+    onSelectAll: (selected: any, selectedRows: any, changeRows: any) => {
+      let list: string[] = [];
+      changeRows.map((item: any) => {
+        list.push(item.id);
+      });
+      if (selected) {
+        _bind(list);
+      } else {
+        _unbind(list);
+      }
     },
   };
 
-  const _bind = () => {
-    if (bindChannelId.length === 0) {
-      message.error('请选择需绑定的通道');
-      setLoading(false);
-      return;
-    }
-    service._bind(cascadeId, bindChannelId).subscribe(
+  const _bind = (channelId: string[]) => {
+    service._bind(cascadeId, channelId).subscribe(
       () => {
-        message.success('绑定成功')
+        message.success('绑定成功');
+        _bind_cascade_channel(fixedParam);
       },
       () => {
         message.error('绑定失败')
       },
       () => {
-        emptyChannelId();
-        searchParam.terms = {id$cascade_channel$not: props.cascadeId};
-        _bind_cascade_channel(searchParam);
-        setLoading(false);
       });
   };
 
-  const _unbind = () => {
-    if (unbindChannelId.length === 0) {
-      message.error('请选择需解绑的通道');
-      setLoading(false);
-      return;
-    }
-    service._unbind(cascadeId, unbindChannelId).subscribe(
+  const _unbind = (channelId: string[]) => {
+    service._unbind(cascadeId, channelId).subscribe(
       () => {
-        message.success('解绑成功')
+        message.success('解绑成功');
+        _bind_cascade_channel(fixedParam);
       },
       () => {
         message.error('解绑失败')
       },
       () => {
-        emptyChannelId();
-        searchParam.terms = {id$cascade_channel: props.cascadeId};
-        _unbind_cascade_channel(searchParam);
-        setLoading(false);
       });
   };
 
-  const emptyChannelId = () => {
-    setBindChannelId([]);
-    setUnbindChannelId([]);
-  };
   return (
     <Modal
       width='50VW'
-      title={`选择通道`}
+      title='选择通道'
       visible
       okText="确定"
       cancelText="取消"
@@ -221,18 +184,17 @@ const ChoiceChannel: React.FC<Props> = props => {
         <div>
           <SearchForm
             search={(params: any) => {
-              emptyChannelId();
-              if (bindOrUnbind === 'channels_bind') {
-                params['id$cascade_channel'] = props.cascadeId;
-                _bind_cascade_channel(params);
-              } else {
-                params['id$cascade_channel$not'] = props.cascadeId;
-                _unbind_cascade_channel(params);
-              }
+              searchParam.terms = params;
+              _channel(searchParam);
             }}
             formItems={[
               {
-                label: '名称',
+                label: '通道编码',
+                key: 'channelId$LIKE',
+                type: 'string',
+              },
+              {
+                label: '通道名称',
                 key: 'name$LIKE',
                 type: 'string',
               },
@@ -240,69 +202,20 @@ const ChoiceChannel: React.FC<Props> = props => {
           />
         </div>
       </div>
-      <Tabs defaultActiveKey="channels_bind" tabPosition="top" type="card"
-            onTabClick={(value: string) => {
-              setBindOrUnbind(value);
-              emptyChannelId();
-              if (value === 'channels_bind') {
-                searchParam.terms = {id$cascade_channel: props.cascadeId};
-                _bind_cascade_channel(searchParam);
-              } else {
-                searchParam.terms = {id$cascade_channel$not: props.cascadeId};
-                _unbind_cascade_channel(searchParam);
-              }
-            }}>
-        <Tabs.TabPane tab="已绑定通道" key="channels_bind">
-          <div style={{paddingBottom: 10}}>
-            <Button icon="close" type="primary" onClick={() => {
-              setLoading(true);
-              _unbind();
-            }}>
-              解绑
-            </Button>
-          </div>
-          <div className={styles.StandardTable}>
-            <Table
-              loading={loading}
-              dataSource={result}
-              columns={columns}
-              rowKey="id"
-              rowSelection={{
-                type: 'checkbox',
-                ...unbindSelection,
-              }}
-              onChange={bindTableChange}
-              pagination={{
-                pageSize: 10
-              }}/>
-          </div>
-        </Tabs.TabPane>
-        <Tabs.TabPane tab="未绑定通道" key="channels_unbind">
-          <div style={{paddingBottom: 10}}>
-            <Button icon="check" type="primary" onClick={() => {
-              setLoading(true);
-              _bind();
-            }}>
-              绑定
-            </Button>
-          </div>
-          <div className={styles.StandardTable}>
-            <Table
-              loading={loading}
-              dataSource={result}
-              columns={columns}
-              rowKey="id"
-              rowSelection={{
-                type: 'checkbox',
-                ...bindSelection
-              }}
-              onChange={unbindTableChange}
-              pagination={{
-                pageSize: 10
-              }}/>
-          </div>
-        </Tabs.TabPane>
-      </Tabs>
+      <div className={styles.StandardTable}>
+        <Table
+          loading={loading}
+          dataSource={result}
+          columns={columns}
+          rowKey="id"
+          rowSelection={{
+            selectedRowKeys: bindList,
+            ...unbindSelection,
+          }}
+          pagination={{
+            pageSize: 10
+          }}/>
+      </div>
 
     </Modal>
   )
