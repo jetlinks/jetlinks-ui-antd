@@ -46,5 +46,12 @@ class Service extends BaseService<any>{
         })).pipe(
             filter(resp => resp.status === 200)
         ));
+
+    public getLogType = () => defer(() => from(
+        request(`/jetlinks/dictionary/device-log-type/items`, {
+            method: 'GET'
+        })).pipe(
+            filter(resp => resp.status === 200)
+        ))
 }
 export default Service;

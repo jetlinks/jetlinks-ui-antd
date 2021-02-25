@@ -5,6 +5,7 @@ import { FormComponentProps } from 'antd/es/form';
 import moment, { Moment } from 'moment';
 import apis from '@/services';
 import encodeQueryParam from '@/utils/encodeParam';
+import Service from '../service';
 
 interface Props extends FormComponentProps {
   deviceId: string;
@@ -25,6 +26,7 @@ const Log: React.FC<Props> = props => {
   const [params, setParams] = useState({ deviceId: props.deviceId });
   const [log, setLog] = useState(initState.log);
 
+  const [logType, setLogType] = useState<any[]>([]);
   const loadLogData = (param: any) => {
     apis.deviceInstance
       .logs(props.deviceId, encodeQueryParam(param))
@@ -33,8 +35,10 @@ const Log: React.FC<Props> = props => {
           setLog(response.result);
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   };
+
+  const service = new Service();
 
   useEffect(() => {
     loadLogData({
@@ -44,6 +48,9 @@ const Log: React.FC<Props> = props => {
         field: 'createTime',
         order: 'desc',
       },
+    });
+    service.getLogType().subscribe((data) => {
+      setLogType(data.result.map((item: { value: string, text: string }) => ({ id: item.value, name: item.text })));
     });
   }, []);
 
@@ -136,7 +143,6 @@ const Log: React.FC<Props> = props => {
       },
     });
   };
-
   const onTableChange = (pagination: PaginationConfig) => {
     loadLogData({
       pageIndex: Number(pagination.current) - 1,
@@ -159,17 +165,7 @@ const Log: React.FC<Props> = props => {
                 <Form.Item label="日志类型">
                   {getFieldDecorator('type$IN')(
                     <Select mode="multiple">
-                      {[
-                        { id: 'event', name: '事件上报' },
-                        { id: 'readProperty', name: '属性读取' },
-                        { id: 'writeProperty', name: '属性修改' },
-                        { id: 'reportProperty', name: '属性上报' },
-                        { id: 'call', name: '调用' },
-                        { id: 'reply', name: '回复' },
-                        { id: 'offline', name: '下线' },
-                        { id: 'online', name: '上线' },
-                        { id: 'other', name: '其它' },
-                      ].map(item => (
+                      {logType.map(item => (
                         <Select.Option key={item.id} value={item.id}>
                           {item.name}
                         </Select.Option>
