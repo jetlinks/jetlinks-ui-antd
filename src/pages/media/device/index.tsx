@@ -1,5 +1,5 @@
 import {PageHeaderWrapper} from "@ant-design/pro-layout"
-import {Badge, Card, Divider, Popconfirm} from "antd";
+import {Badge, Card, Divider, message, Popconfirm} from "antd";
 import React, {Fragment, useEffect, useState} from "react";
 import styles from '@/utils/table.less';
 import SearchForm from "@/components/SearchForm";
@@ -59,7 +59,7 @@ const MediaDevice: React.FC<Props> = () => {
     {
       title: '国标设备编号',
       dataIndex: 'id',
-      width: 180,
+      width: '8%',
       ellipsis: true,
       fixed: 'left',
     },
@@ -148,7 +148,7 @@ const MediaDevice: React.FC<Props> = () => {
       title: '操作',
       key: 'center',
       fixed: 'right',
-      width: 230,
+      width: '10%',
       render: (record: any) => (
         <Fragment>
           <a
@@ -175,16 +175,35 @@ const MediaDevice: React.FC<Props> = () => {
           >
             查看通道
           </a>
-          {record.state.value !== 'online' && (
+          {record.state.value !== 'online' ? (
             <>
               <Divider type="vertical"/>
               <Popconfirm
                 title="确认删除该国标设备吗？"
                 onConfirm={() => {
-
+                  setLoading(true);
+                  service.remove(record.id).subscribe(() => {
+                      message.success("删除成功");
+                      handleSearch(encodeQueryParam(searchParam));
+                    },
+                    () => {
+                      message.error("删除失败");
+                    },
+                    () => setLoading(false))
                 }}>
                 <a>删除</a>
               </Popconfirm>
+            </>
+          ):(
+            <>
+              {/*<Divider type="vertical"/>
+              <Popconfirm
+                title="更新最新通道将会删除多余通道，确认继续？"
+                onConfirm={() => {
+
+                }}>
+                <a>更新通道</a>
+              </Popconfirm>*/}
             </>
           )}
         </Fragment>

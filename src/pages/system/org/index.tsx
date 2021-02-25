@@ -73,11 +73,11 @@ const OrgList: React.FC<Props> = props => {
       type: 'org/insert',
       payload: encodeQueryParam(item),
       callback: (response: any) => {
-        if (response) {
+        if (response.status === 200) {
           message.success('保存成功');
-          setSaveVisible(false);
-          handleSearch(searchParam);
         }
+        setSaveVisible(false);
+        handleSearch(searchParam);
       },
     });
   };

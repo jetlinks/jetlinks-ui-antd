@@ -12,7 +12,7 @@ const MediaDevice: React.FC<Props> = () => {
 
   return (
     <PageHeaderWrapper title="基本配置">
-      <Card style={{width: '50%',marginLeft:'25%'}}>
+      <Card style={{width: '60%',marginLeft:'20%'}}>
         <Tabs>
           <Tabs.TabPane tab="流媒体服务配置" key="MediaServer">
             <MediaServer loading={true}/>

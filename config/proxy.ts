@@ -23,7 +23,7 @@ export default {
   test: {
     '/jetlinks': {
       // target: 'http://192.168.3.89:8848/',
-      target: 'http://2.jetlinks.org:9010/',
+      target: 'http://192.168.3.89:9010/',
       changeOrigin: true,
       pathRewrite: { '^/jetlinks': '' },
     },
@@ -31,7 +31,7 @@ export default {
   pre: {
     '/jetlinks': {
       // target: 'http://192.168.3.89:8848/',
-      target: 'http://2.jetlinks.org:9010/',
+      target: 'http://192.168.3.89:9010/',
       changeOrigin: true,
       pathRewrite: { '^/jetlinks': '' },
     },

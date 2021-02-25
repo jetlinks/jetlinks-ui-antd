@@ -14,6 +14,7 @@ interface Props {
     rowSelection?: any;
     onRow?: any;
     scroll?: any;
+    expandedRowRender?: any;
 }
 const ProTable = (props: Props) => {
     const { loading, dataSource, columns, rowKey, onSearch, paginationConfig } = props;
@@ -41,15 +42,15 @@ const ProTable = (props: Props) => {
             // rowKey={rowKey}
             onChange={onTableChange}
             pagination={typeof paginationConfig === "boolean" ? paginationConfig : {
-                current: paginationConfig.pageIndex + 1,
-                total: paginationConfig.total,
-                pageSize: paginationConfig.pageSize,
+                current: paginationConfig?.pageIndex + 1 || 0,
+                total: paginationConfig?.total || 0,
+                pageSize: paginationConfig?.pageSize || 0,
                 showQuickJumper: true,
                 showSizeChanger: true,
                 pageSizeOptions: ['10', '20', '50', '100'],
                 showTotal: (total: number) =>
-                    `共 ${total} 条记录 第  ${paginationConfig.pageIndex + 1}/${Math.ceil(
-                        paginationConfig.total / paginationConfig.pageSize,
+                    `共 ${total} 条记录 第  ${paginationConfig?.pageIndex + 1}/${Math.ceil(
+                        paginationConfig?.total / paginationConfig?.pageSize,
                     )}页`,
             }}
         />

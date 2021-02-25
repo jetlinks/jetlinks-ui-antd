@@ -25,7 +25,7 @@ const Save: React.FC<Props> = props => {
 
   const [data, setData] = useState<any>({});
   const [productList, setProductList] = useState<any[]>([]);
-  const [mediaServerList, setMediaServerList] = useState<any[]>([]);
+  // const [mediaServerList, setMediaServerList] = useState<any[]>([]);
 
   const [loading, setLoading] = useState<boolean>(initState.loading);
 
@@ -40,10 +40,10 @@ const Save: React.FC<Props> = props => {
     }, () => {
     }, () => setLoading(false));
 
-    service.mediaServer({}).subscribe((data) => {
-      setMediaServerList(data);
-    }, () => {
-    }, () => setLoading(false));
+    // service.mediaServer({}).subscribe((data) => {
+    //   setMediaServerList(data);
+    // }, () => {
+    // }, () => setLoading(false));
   };
 
   useEffect(() => {
@@ -58,6 +58,7 @@ const Save: React.FC<Props> = props => {
       //todo 统一界面，后期有需求就开放多网关和流媒体服务
 
       fileValue.id = id;
+      fileValue.mediaServerId = 'gb28181_MediaServer';
 
       service.saveGateway(fileValue).subscribe(() => {
           message.success('保存成功');
@@ -122,7 +123,7 @@ const Save: React.FC<Props> = props => {
             </Select>,
           )}
         </Form.Item>
-        <Form.Item key="mediaServerId" label="流媒体服务">
+        {/*<Form.Item key="mediaServerId" label="流媒体服务">
           {getFieldDecorator('mediaServerId', {
             rules: [{required: true, message: '请选择流媒体服务'}],
             initialValue: data?.mediaServerId,
@@ -138,7 +139,7 @@ const Save: React.FC<Props> = props => {
               ))}
             </Select>,
           )}
-        </Form.Item>
+        </Form.Item>*/}
         <Row>
           <Col span={12}>
             <Form.Item key="sipId" label="SIP ID" labelCol={{span: 10}} wrapperCol={{span: 14}}>
@@ -206,11 +207,11 @@ const Save: React.FC<Props> = props => {
                 rules: [
                   {required: true, message: '请选择字符集'}
                 ],
-                initialValue: data?.sipConfig?.charset || "GBK",
+                initialValue: data?.sipConfig?.charset || "gb2312",
               })(
                 <Radio.Group buttonStyle="solid">
-                  <Radio.Button value="GBK">GB2312</Radio.Button>
-                  <Radio.Button value="UTF-8">UTF-8</Radio.Button>
+                  <Radio.Button value="gb2312">GB2312</Radio.Button>
+                  <Radio.Button value="utf-8">UTF-8</Radio.Button>
                 </Radio.Group>
               )}
             </Form.Item>

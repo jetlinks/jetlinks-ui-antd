@@ -1,4 +1,4 @@
-import {Button, Input, InputNumber, message, Select, Spin} from "antd";
+import {Button, Col, Input, InputNumber, message, Row, Select, Spin} from "antd";
 import React, {useEffect, useState} from "react";
 import Service from "../service";
 import Form from "antd/es/form";
@@ -48,12 +48,15 @@ const Save: React.FC<Props> = props => {
   const saveData = () => {
 
     form.validateFields((err, fileValue) => {
-      if (err) return;
+      if (err) {
+        setLoading(false);
+        return;
+      }
 
       //todo 统一界面，后期有需求就开放多网关和流媒体服务
 
       fileValue.id = id;
-      service.saveMediaServer(fileValue).subscribe((data) => {
+      service.saveMediaServer(fileValue).subscribe(() => {
           message.success('保存成功');
         },
         () => {
@@ -80,7 +83,7 @@ const Save: React.FC<Props> = props => {
                   {required: true, message: '请输入公网 Host'}
                 ],
                 initialValue: configuration.publicHost,
-              })(<Input/>)}
+              })(<Input placeholder='请输入公网 Host'/>)}
             </Form.Item>
             <Form.Item label="API Host">
               {getFieldDecorator('configuration.apiHost', {
@@ -88,47 +91,57 @@ const Save: React.FC<Props> = props => {
                   {required: true, message: '请输入API Host'}
                 ],
                 initialValue: configuration.apiHost,
-              })(<Input/>)}
+              })(<Input placeholder='请输入API Host'/>)}
             </Form.Item>
-            <Form.Item label="API端口">
-              {getFieldDecorator('configuration.apiPort', {
-                rules: [
-                  {required: true, message: '请输入API端口'}
-                ],
-                initialValue: configuration.apiPort,
-              })(<InputNumber style={{width: '100%'}}/>)}
-            </Form.Item>
-            <Form.Item label="RTP端口">
-              {getFieldDecorator('configuration.rtpPort', {
-                rules: [
-                  {required: true, message: '请输入RTP端口'}
-                ],
-                initialValue: configuration.rtpPort,
-              })(<InputNumber style={{width: '100%'}}/>)}
-            </Form.Item>
-            <Form.Item label="HTTP端口">
-              {getFieldDecorator('configuration.httpPort', {
-                rules: [
-                  {required: true, message: '请输入HTTP端口'}
-                ],
-                initialValue: configuration.httpPort,
-              })(<InputNumber style={{width: '100%'}}/>)}
-            </Form.Item>
-            <Form.Item label="RTMP端口">
-              {getFieldDecorator('configuration.rtmpPort', {
-                rules: [
-                  {required: true, message: '请输入RTMP端口'}
-                ],
-                initialValue: configuration.rtmpPort,
-              })(<InputNumber style={{width: '100%'}}/>)}
-            </Form.Item>
+            <Row>
+              <Col span={12}>
+                <Form.Item label="API端口" labelCol={{span: 10}} wrapperCol={{span: 14}}>
+                  {getFieldDecorator('configuration.apiPort', {
+                    rules: [
+                      {required: true, message: '请输入API端口'}
+                    ],
+                    initialValue: configuration.apiPort,
+                  })(<InputNumber style={{width: '100%'}} placeholder='请输入API端口'/>)}
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item label="RTP端口" labelCol={{span: 10}} wrapperCol={{span: 14}}>
+                  {getFieldDecorator('configuration.rtpPort', {
+                    rules: [
+                      {required: true, message: '请输入RTP端口'}
+                    ],
+                    initialValue: configuration.rtpPort,
+                  })(<InputNumber style={{width: '100%'}} placeholder='请输入RTP端口'/>)}
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item label="HTTP端口" labelCol={{span: 10}} wrapperCol={{span: 14}}>
+                  {getFieldDecorator('configuration.httpPort', {
+                    rules: [
+                      {required: true, message: '请输入HTTP端口'}
+                    ],
+                    initialValue: configuration.httpPort,
+                  })(<InputNumber style={{width: '100%'}} placeholder='请输入HTTP端口'/>)}
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item label="RTMP端口" labelCol={{span: 10}} wrapperCol={{span: 14}}>
+                  {getFieldDecorator('configuration.rtmpPort', {
+                    rules: [
+                      {required: true, message: '请输入RTMP端口'}
+                    ],
+                    initialValue: configuration.rtmpPort,
+                  })(<InputNumber style={{width: '100%'}} placeholder='请输入RTMP端口'/>)}
+                </Form.Item>
+              </Col>
+            </Row>
             <Form.Item label="流媒体格式">
               {getFieldDecorator('configuration.formats', {
                 rules: [
                   {required: true, message: '请选择流媒体格式'}
                 ],
                 initialValue: configuration.formats,
-              })(<Select placeholder="流媒体格式" mode='multiple'>
+              })(<Select placeholder="请选择流媒体格式，多选" mode='multiple'>
                 <Select.Option value='flv'>FLV</Select.Option>
                 <Select.Option value='mp4'>MP4</Select.Option>
                 <Select.Option value='hls'>HLS</Select.Option>

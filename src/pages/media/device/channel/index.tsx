@@ -1,5 +1,5 @@
 import {PageHeaderWrapper} from "@ant-design/pro-layout"
-import {Badge, Card, Descriptions, Row, Table} from "antd";
+import {Badge, Card, Descriptions, Divider, message, Popconfirm, Row, Table} from "antd";
 import React, {Fragment, useEffect, useState} from "react";
 import styles from '@/utils/table.less';
 import SearchForm from "@/components/SearchForm";
@@ -70,7 +70,7 @@ const MediaDevice: React.FC<Props> = props => {
   const handleSearch = (params?: any) => {
     setSearchParam(params);
     setLoading(true);
-    service.mediaDeviceNoPaging(encodeQueryParam(params)).subscribe(
+    service.deviceChannelNoPaging(encodeQueryParam(params)).subscribe(
       (data) => {
         const temp = data.map((item: any) => ({parentId: item.parentChannelId, ...item}));
         setResult(temp);
@@ -112,9 +112,9 @@ const MediaDevice: React.FC<Props> = props => {
     },
     {
       title: '云台类型',
-      dataIndex: 'others.ptzType',
+      dataIndex: 'ptzType',
       width: 100,
-      render: record => ptzType.get(record),
+      render: record => ptzType.get(record?.value || 0),
       ellipsis: true,
     },
     {
@@ -151,7 +151,7 @@ const MediaDevice: React.FC<Props> = props => {
       // fixed: 'right',
       render: (record: any) => (
         <Fragment>
-          {/*<a
+          <a
             onClick={() => {
               setChannel(true);
               setChannelInfo(record);
@@ -159,16 +159,33 @@ const MediaDevice: React.FC<Props> = props => {
           >
             编辑
           </a>
-          <Divider type="vertical"/>*/}
-          {record.status.value === 'online' && (
-            <a
-              onClick={() => {
-                setPlaying(true);
-                setData(record)
-              }}
+          <Divider type="vertical"/>
+          {record.status.value === 'online' ? (
+            <a onClick={() => {
+              setPlaying(true);
+              setData(record)
+            }}
             >
               播放
             </a>
+          ) : (
+            <Popconfirm
+              title="确认删除该设备通道吗？"
+              onConfirm={() => {
+                setLoading(true);
+
+                service.remove(record.id).subscribe(() => {
+                    message.success("删除成功");
+                    searchParam.terms = {deviceId: deviceId};
+                    handleSearch(searchParam);
+                  },
+                  () => {
+                    message.error("删除失败");
+                  },
+                  () => setLoading(false))
+              }}>
+              <a>删除</a>
+            </Popconfirm>
           )}
         </Fragment>
       )
