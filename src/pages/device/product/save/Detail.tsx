@@ -147,7 +147,7 @@ const Detail: React.FC<Props> = props => {
       });
   };
 
-  const updateData = (type: string, item: any) => {
+  const updateData = (type: string, item: any, onlySave:boolean) => {
     let metadata = JSON.stringify({ events, properties, functions, tags });
     if (type === 'event') {
       metadata = JSON.stringify({ events: item, properties, functions, tags });
@@ -165,6 +165,9 @@ const Detail: React.FC<Props> = props => {
       .then((re: any) => {
         if (re.status === 200) {
           message.success('保存成功');
+          if(!onlySave){
+            deploy(data)
+          }
         }
       })
       .catch(() => {
@@ -202,7 +205,7 @@ const Detail: React.FC<Props> = props => {
     });
   };
 
-  const updateInfo = (item?: any) => {
+  const updateInfo = (onlySave: boolean, item?: any) => {
     apis.deviceProdcut
       .update(item, basicInfo.id)
       .then((response: any) => {
@@ -211,6 +214,9 @@ const Detail: React.FC<Props> = props => {
           setUpdateVisible(false);
           const list = pathname.split('/');
           handleSearch(list[list.length - 1]);
+          if(!onlySave){
+            deploy(basicInfo)
+          }
         }
       })
       .catch(() => {
@@ -380,21 +386,21 @@ const Detail: React.FC<Props> = props => {
                 propertyData={properties}
                 tagsData={tags}
                 unitsData={units}
-                saveEvents={(data: any) => {
+                saveEvents={(data: any, onlySave: boolean) => {
                   setEvents(data);
-                  updateData('event', data);
+                  updateData('event', data, onlySave);
                 }}
-                saveFunctions={(data: any) => {
+                saveFunctions={(data: any, onlySave: boolean) => {
                   setFunctions(data);
-                  updateData('function', data);
+                  updateData('function', data, onlySave);
                 }}
-                saveProperty={(data: any[]) => {
+                saveProperty={(data: any[], onlySave: boolean) => {
                   setProperties(data);
-                  updateData('properties', data);
+                  updateData('properties', data, onlySave);
                 }}
-                saveTags={(data: any[]) => {
+                saveTags={(data: any[], onlySave: boolean) => {
                   setTags(data);
-                  updateData('tags', data);
+                  updateData('tags', data, onlySave);
                 }}
                 update={() => handleSearch()}
               />
@@ -425,8 +431,8 @@ const Detail: React.FC<Props> = props => {
             close={() => {
               setUpdateVisible(false);
             }}
-            save={(item: any) => {
-              updateInfo(item);
+            save={(onlySave: boolean, item: any) => {
+              updateInfo(onlySave, item);
             }}
           />
         )}

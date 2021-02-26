@@ -13,7 +13,9 @@ import {
   AutoComplete,
   InputNumber,
   Collapse,
-  Spin
+  Spin,
+  Dropdown,
+  Menu
 } from 'antd';
 import styles from '../index.less';
 import { Parameter, FunctionMeta } from '../data.d';
@@ -82,7 +84,7 @@ const FunctionDefin: React.FC<Props> = props => {
   const [arrayProperties, setArrayProperties] = useState(initState.arrayProperties);
   const [arrParameterVisible, setArrParameterVisible] = useState(initState.arrParameterVisible);
   const [arrayEnumData, setArrayEnumData] = useState(initState.arrayEnumData);
-  const saveData = () => {
+  const saveData = (onlySave: boolean) => {
     const { form } = props;
     // const { id } = props.data;
     form.validateFields((err: any, fieldValue: any) => {
@@ -99,9 +101,26 @@ const FunctionDefin: React.FC<Props> = props => {
       if (dataType === 'array' && data.output.elementType.type === 'object') {
         data.output.elementType.properties = arrayProperties;
       }
-      props.save({ ...data, inputs });
+      props.save({ ...data, inputs }, onlySave);
     });
   };
+
+  const menu = (
+    <Menu>
+      <Menu.Item key="1">
+        <Button type="default" onClick={() => {
+          saveData(true);
+        }}>
+          仅保存
+        </Button>
+      </Menu.Item>
+      <Menu.Item key="2">
+        <Button onClick={() => {
+          saveData(false);
+        }}>保存并生效</Button>
+      </Menu.Item>
+    </Menu>
+  );
 
   let dataSource = [{
     text: 'String类型的UTC时间戳 (毫秒)',
@@ -854,14 +873,19 @@ const FunctionDefin: React.FC<Props> = props => {
         >
           关闭
         </Button>
-        <Button
+        <Dropdown overlay={menu}>
+          <Button icon="menu" type="primary">
+            保存<Icon type="down" />
+          </Button>
+        </Dropdown>
+        {/* <Button
           onClick={() => {
             saveData();
           }}
           type="primary"
         >
           保存
-        </Button>
+        </Button> */}
       </div>
       {outputVisible && (
         <Paramter

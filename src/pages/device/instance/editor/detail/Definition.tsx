@@ -1,24 +1,24 @@
 import React, {useState} from 'react';
 import {Button, Card, message, Spin, Tabs} from 'antd';
-import Property from './Properties';
-import Functions from './Functions';
-import Events from './Events';
-import Tags from '@/pages/device/product/save/definition/Tags';
+import Property from './definition/Properties';
+import Functions from './definition/Functions';
+import Events from './definition/Events';
+import Tags from './definition/Tags';
 import Form from "antd/es/form";
 import {FormComponentProps} from "antd/lib/form";
 import MetaData from "@/pages/device/product/save/model/metaData";
 import QuickImport from "@/pages/device/product/save/model/quickImport";
 import apis from "@/services";
-import {DeviceProduct} from "@/pages/device/product/data";
-import {ProductContext} from '../../context';
+// import {DeviceProduct} from "@/pages/device/product/data";
+import {ProductContext} from '@/pages/device/product/context';
 
 interface Props extends FormComponentProps {
-  basicInfo: Partial<DeviceProduct>
+  basicInfo: any;
   saveProperty: Function;
   saveFunctions: Function;
   saveEvents: Function;
   saveTags: Function;
-  unitsData: Function;
+  unitsData: any;
   propertyData: any;
   functionsData: any;
   eventsData: any;
@@ -29,7 +29,7 @@ interface Props extends FormComponentProps {
 export const TenantContext = React.createContext({});
 
 interface State {
-  basicInfo: Partial<DeviceProduct>;
+  basicInfo: any;
 }
 
 const Definition: React.FC<Props> = props => {
@@ -93,14 +93,13 @@ const Definition: React.FC<Props> = props => {
       <Spin spinning={spinning}>
         <TenantContext.Provider value={importData}>
           <ProductContext.Provider value={props.basicInfo}>
-
             <Tabs defaultActiveKey="1" tabPosition="top" type="card" tabBarExtraContent={operations}>
               <Tabs.TabPane tab="属性定义" key="1">
                 <Property
                   data={props.propertyData}
                   unitsData={props.unitsData}
-                  save={(data: any, onlySave: boolean) => {
-                    props.saveProperty(data, onlySave);
+                  save={(data: any) => {
+                    props.saveProperty(data);
                   }}
                 />
               </Tabs.TabPane>
@@ -108,8 +107,8 @@ const Definition: React.FC<Props> = props => {
                 <Functions
                   data={props.functionsData}
                   unitsData={props.unitsData}
-                  save={(data: any, onlySave: boolean) => {
-                    props.saveFunctions(data, onlySave);
+                  save={(data: any) => {
+                    props.saveFunctions(data);
                   }}
                 />
               </Tabs.TabPane>
@@ -117,8 +116,8 @@ const Definition: React.FC<Props> = props => {
                 <Events
                   data={props.eventsData}
                   unitsData={props.unitsData}
-                  save={(data: any, onlySave: boolean) => {
-                    props.saveEvents(data, onlySave);
+                  save={(data: any) => {
+                    props.saveEvents(data);
                   }}
                 />
               </Tabs.TabPane>
@@ -126,8 +125,8 @@ const Definition: React.FC<Props> = props => {
                 <Tags
                   data={props.tagsData}
                   unitsData={props.unitsData}
-                  save={(data: any, onlySave: boolean) => {
-                    props.saveTags(data, onlySave);
+                  save={(data: any) => {
+                    props.saveTags(data);
                   }}
                 />
               </Tabs.TabPane>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FormComponentProps } from 'antd/lib/form';
 import Form from 'antd/es/form';
-import { Button, Card, Col, Drawer, Icon, Input, Row, Select, Tooltip } from 'antd';
+import { Button, Card, Col, Drawer, Dropdown, Icon, Input, Menu, Row, Select, Tooltip } from 'antd';
 import { DeviceProduct } from "@/pages/device/product/data";
 
 interface Props extends FormComponentProps {
@@ -40,7 +40,7 @@ const Configuration: React.FC<Props> = props => {
       let properties = item.properties.map((i: any) => {
         const label = i.description ? (
           <span>
-            <span style={{marginRight: '10px'}}>{i.name}</span>
+            <span style={{ marginRight: '10px' }}>{i.name}</span>
             <Tooltip title={i.description}>
               <Icon type="question-circle-o" />
             </Tooltip>
@@ -93,13 +93,29 @@ const Configuration: React.FC<Props> = props => {
   }, []);
 
 
-  const saveData = () => {
+  const saveData = (onlySave: boolean) => {
     const { form } = props;
     form.validateFields((err, fileValue) => {
       if (err) return;
-      props.save(fileValue);
+      props.save(onlySave, fileValue);
     });
   };
+  const menu = (
+    <Menu>
+      <Menu.Item key="1">
+        <Button type="default" onClick={() => {
+          saveData(true);
+        }}>
+          仅保存
+        </Button>
+      </Menu.Item>
+      <Menu.Item key="2">
+        <Button onClick={() => {
+          saveData(false);
+        }}>保存并生效</Button>
+      </Menu.Item>
+    </Menu>
+  );
 
   return (
     <Drawer
@@ -112,20 +128,20 @@ const Configuration: React.FC<Props> = props => {
       <Form labelCol={{ span: 6 }} wrapperCol={{ span: 18 }}>
         {configForm && (
           // <Card title="配置" style={{ marginBottom: 20 }} bordered={false}>
-            <Row gutter={16}>
-              {configForm.map((item, index) => (
-                <Col key={index}>
-                  <h4>{item.configName}</h4>
-                  {item.properties.map((i: any) => (
-                    <Col key={i.key}>
-                      <Form.Item label={i.label}>
-                        {getFieldDecorator(i.key, i.options)(i.component)}
-                      </Form.Item>
-                    </Col>
-                  ))}
-                </Col>
-              ))}
-            </Row>
+          <Row gutter={16}>
+            {configForm.map((item, index) => (
+              <Col key={index}>
+                <h4>{item.configName}</h4>
+                {item.properties.map((i: any) => (
+                  <Col key={i.key}>
+                    <Form.Item label={i.label}>
+                      {getFieldDecorator(i.key, i.options)(i.component)}
+                    </Form.Item>
+                  </Col>
+                ))}
+              </Col>
+            ))}
+          </Row>
           // </Card>
         )}
       </Form>
@@ -149,14 +165,19 @@ const Configuration: React.FC<Props> = props => {
         >
           关闭
                 </Button>
-        <Button
+        <Dropdown overlay={menu}>
+          <Button icon="menu" type="primary">
+            保存<Icon type="down" />
+          </Button>
+        </Dropdown>
+        {/* <Button
           onClick={() => {
             saveData();
           }}
           type="primary"
         >
           保存
-                </Button>
+                </Button> */}
       </div>
     </Drawer>
   );

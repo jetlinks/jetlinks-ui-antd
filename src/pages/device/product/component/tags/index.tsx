@@ -12,6 +12,8 @@ import {
   AutoComplete,
   InputNumber,
   Collapse,
+  Dropdown,
+  Menu,
 } from 'antd';
 import Form, { FormComponentProps } from 'antd/es/form';
 import { renderUnit } from '@/pages/device/public';
@@ -82,7 +84,7 @@ const TagsDefin: React.FC<Props> = props => {
     setDataType(value);
   };
 
-  const getFormData = () => {
+  const getFormData = (onlySave: boolean) => {
     const {
       form,
       // data,
@@ -99,9 +101,26 @@ const TagsDefin: React.FC<Props> = props => {
       if (dataType === 'array' && data.valueType.elementType.type === 'object') {
         data.valueType.elementType.properties = arrayProperties;
       }
-      props.save({ ...data });
+      props.save({ ...data }, onlySave);
     });
   };
+
+  const menu = (
+    <Menu>
+      <Menu.Item key="1">
+        <Button type="default" onClick={() => {
+          getFormData(true);
+        }}>
+          仅保存
+        </Button>
+      </Menu.Item>
+      <Menu.Item key="2">
+        <Button onClick={() => {
+          getFormData(false);
+        }}>保存并生效</Button>
+      </Menu.Item>
+    </Menu>
+  );
 
   let dataSource = [{
     text: 'String类型的UTC时间戳 (毫秒)',
@@ -889,14 +908,19 @@ const TagsDefin: React.FC<Props> = props => {
           >
             关闭
           </Button>
-          <Button
+          <Dropdown overlay={menu}>
+            <Button icon="menu" type="primary">
+              保存<Icon type="down" />
+            </Button>
+          </Dropdown>
+          {/* <Button
             onClick={() => {
               getFormData();
             }}
             type="primary"
           >
             保存
-          </Button>
+          </Button> */}
         </div>
         {parameterVisible && (
           <Paramter
