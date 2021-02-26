@@ -1,5 +1,5 @@
 import request from '@/utils/request';
-import {DeviceInstance} from './data.d';
+import { DeviceInstance } from './data.d';
 
 export async function list(params: any) {
   return request(`/jetlinks/device-instance/_query`, {
@@ -175,5 +175,12 @@ export async function updateProperty(deviceId: string, data: any) {
 export async function deleteBinds(deviceId: string | undefined, bindType: string, bindKey: string) {
   return request(`/jetlinks/device/instance/${deviceId}/binds/${bindType}/${bindKey}`, {
     method: 'DELETE',
+  });
+}
+
+export async function saveOrUpdateMetadata(deviceId: string, data: any) {
+  return request(`/jetlinks/device/instance/${deviceId}/metadata`, {
+    method: 'PUT',
+    data,
   });
 }

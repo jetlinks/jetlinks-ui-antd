@@ -1,76 +1,90 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Form, Input, Select, Radio, Col, Drawer, Button, Row, Icon, List, AutoComplete, InputNumber, Collapse, Spin, Dropdown, Menu, } from 'antd';
-import { FormComponentProps } from 'antd/lib/form';
+import React, { useContext, useEffect, useState } from 'react';
+import {
+  Input,
+  Radio,
+  Button,
+  List,
+  Select,
+  Drawer,
+  Col,
+  Row,
+  Icon,
+  AutoComplete,
+  InputNumber,
+  Collapse,
+  Dropdown,
+  Menu,
+} from 'antd';
+import Form, { FormComponentProps } from 'antd/es/form';
 import { renderUnit } from '@/pages/device/public';
-import { PropertiesMeta } from '../data.d';
+import { TagsMeta } from '../data.d';
 import Paramter from '../paramter';
-import apis from '@/services';
-import { ProductContext } from '../../context';
+import { ProductContext } from "@/pages/device/product/context";
+import apis from "@/services";
 
 interface Props extends FormComponentProps {
-  data: Partial<PropertiesMeta>;
-  unitsData: any;
+  data: Partial<TagsMeta>;
   save: Function;
   close: Function;
+  unitsData: any;
 }
 
 interface State {
   dataType: string;
-  data: Partial<PropertiesMeta>;
+  data: Partial<TagsMeta>;
   enumData: any[];
-  arrayEnumData: any[];
   parameterVisible: boolean;
-  arrParameterVisible: boolean;
   parameters: any[];
   currentParameter: any;
   properties: any[];
   arrayProperties: any[];
   aType: string;
+  arrParameterVisible: boolean;
+  arrayEnumData: any[];
 }
 
-const PropertiesDefin: React.FC<Props> = props => {
+const TagsDefin: React.FC<Props> = props => {
   const initState: State = {
     dataType: props.data.valueType?.type || '',
-    aType: props.data.valueType?.elementType?.type || '',
     data: props.data,
     enumData: props.data.valueType?.elements || [{ text: '', value: '', id: 0 }],
-    arrayEnumData: props.data.valueType?.elementType?.elements || [{ text: '', value: '', id: 0 }],
     parameterVisible: false,
-    arrParameterVisible: false,
     properties: props.data.valueType?.properties || [],
-    arrayProperties: props.data.valueType?.elementType?.properties || [],
     currentParameter: {},
     parameters: [],
+    arrayEnumData: props.data.valueType?.elementType?.elements || [{ text: '', value: '', id: 0 }],
+    arrParameterVisible: false,
+    arrayProperties: props.data.valueType?.elementType?.properties || [],
+    aType: props.data.valueType?.elementType?.type || '',
   };
 
   const {
-    form: { getFieldDecorator, getFieldsValue }
+    form: { getFieldDecorator, getFieldsValue },
   } = props;
 
   const [dataType, setDataType] = useState(initState.dataType);
   const [enumData, setEnumData] = useState(initState.enumData);
-  const [arrayEnumData, setArrayEnumData] = useState(initState.arrayEnumData);
   const [parameterVisible, setParameterVisible] = useState(initState.parameterVisible);
-  const [arrParameterVisible, setArrParameterVisible] = useState(initState.arrParameterVisible);
   const [properties, setProperties] = useState(initState.properties);
-  const [arrayProperties, setArrayProperties] = useState(initState.arrayProperties);
   const [currentParameter, setCurrentParameter] = useState(initState.currentParameter);
   const [configMetadata, setConfigMetadata] = useState<any[]>([]);
   const [loadConfig, setLoadConfig] = useState<boolean>(false);
   const [aType, setAType] = useState<string>(initState.aType);
+  const [arrayProperties, setArrayProperties] = useState(initState.arrayProperties);
+  const [arrParameterVisible, setArrParameterVisible] = useState(initState.arrParameterVisible);
+  const [arrayEnumData, setArrayEnumData] = useState(initState.arrayEnumData);
   useEffect(() => {
     if (dataType === 'enum') {
-      const elements = props.data.valueType?.elements || [];
+      const elements = props.data.valueType?.enums || [];
       setEnumData(elements);
     }
-    getMetadata();
   }, []);
 
   const dataTypeChange = (value: string) => {
     setDataType(value);
   };
 
-  const getFormData = (onlySave:boolean) => {
+  const getFormData = () => {
     const {
       form,
       // data,
@@ -87,7 +101,7 @@ const PropertiesDefin: React.FC<Props> = props => {
       if (dataType === 'array' && data.valueType.elementType.type === 'object') {
         data.valueType.elementType.properties = arrayProperties;
       }
-      props.save({ ...data }, onlySave);
+      props.save({ ...data });
     });
   };
 
@@ -95,6 +109,7 @@ const PropertiesDefin: React.FC<Props> = props => {
     text: 'String类型的UTC时间戳 (毫秒)',
     value: 'string',
   }, 'yyyy-MM-dd', 'yyyy-MM-dd HH:mm:ss', 'yyyy-MM-dd HH:mm:ss EE', 'yyyy-MM-dd HH:mm:ss zzz'];
+
 
 
   const renderAType = () => {
@@ -345,17 +360,17 @@ const PropertiesDefin: React.FC<Props> = props => {
     }
   }
 
-  const renderDataType = (type?: string) => {
-    switch (type || dataType) {
+  const renderDataType = () => {
+    switch (dataType) {
       case 'float':
       case 'double':
         return (
           <div>
-            {/* <Form.Item label="取值范围" style={{height: 69}}>
+            {/* <Form.Item label="取值范围" style={{ height: 69 }}>
               <Col span={11}>
                 {getFieldDecorator('valueType.min', {
                   initialValue: initState.data.valueType?.min,
-                })(<InputNumber style={{width:'100%'}} placeholder="最小值"/>)}
+                })(<InputNumber style={{ width: '100%' }} placeholder="最小值" />)}
               </Col>
               <Col span={2} push={1}>
                 ~
@@ -364,7 +379,7 @@ const PropertiesDefin: React.FC<Props> = props => {
                 <Form.Item>
                   {getFieldDecorator('valueType.max', {
                     initialValue: initState.data.valueType?.max,
-                  })(<InputNumber style={{width:'100%'}} placeholder="最大值"/>)}
+                  })(<InputNumber style={{ width: '100%' }} placeholder="最大值" />)}
                 </Form.Item>
               </Col>
             </Form.Item>
@@ -372,13 +387,13 @@ const PropertiesDefin: React.FC<Props> = props => {
             <Form.Item label="步长">
               {getFieldDecorator('valueType.step', {
                 initialValue: initState.data.valueType?.step,
-              })(<InputNumber style={{width:'100%'}} placeholder="请输入步长"/>)}
+              })(<Input placeholder="请输入步长" />)}
             </Form.Item> */}
 
             <Form.Item label="精度">
               {getFieldDecorator('valueType.scale', {
                 initialValue: initState.data.valueType?.scale,
-              })(<InputNumber precision={0} min={0} step={1} placeholder="小数点位数" style={{ width: '100%' }} />)}
+              })(<InputNumber min={0} step={1} placeholder="小数点位数" style={{ width: '100%' }} />)}
             </Form.Item>
 
             <Form.Item label="单位">
@@ -492,8 +507,7 @@ const PropertiesDefin: React.FC<Props> = props => {
           <div>
             <Form.Item label="元素类型">
               {getFieldDecorator('valueType.elementType.type', {
-                rules: [{ required: true, message: '请选择' }],
-                initialValue: initState.data.valueType?.elementType?.type,
+                initialValue: initState.data.valueType?.elementType.type,
               })(
                 <Select
                   placeholder="请选择"
@@ -520,8 +534,8 @@ const PropertiesDefin: React.FC<Props> = props => {
                   </Select.OptGroup>
                 </Select>
               )}
+              {renderAType()}
             </Form.Item>
-            {renderAType()}
           </div>
         );
       case 'enum':
@@ -662,6 +676,21 @@ const PropertiesDefin: React.FC<Props> = props => {
             )}
           </Form.Item>
         );
+      /*case 'geoPoint':
+        return (
+          <div>
+            <Form.Item label="经度字段">
+              {getFieldDecorator('valueType.latProperty', {
+                initialValue: initState.data.valueType?.latProperty,
+              })(<Input placeholder="请输入经度字段" />)}
+            </Form.Item>
+            <Form.Item label="纬度字段">
+              {getFieldDecorator('valueType.lonProperty', {
+                initialValue: initState.data.valueType?.lonProperty,
+              })(<Input placeholder="请输入纬度字段" />)}
+            </Form.Item>
+          </div>
+        );*/
       case 'password':
         return (
           <div>
@@ -677,9 +706,10 @@ const PropertiesDefin: React.FC<Props> = props => {
     }
   };
 
+
   const product = useContext<any>(ProductContext);
 
-
+  useEffect(() => getMetadata(), []);
   const getMetadata = (id?: any, type?: any) => {
     const data = getFieldsValue(['id', 'valueType.type']);
     if (id) {
@@ -728,7 +758,7 @@ const PropertiesDefin: React.FC<Props> = props => {
             <Collapse.Panel header={item.name} key={index}>
               {item.properties.map((config: any) => (
                 <Form.Item label={config.name} key={config.property}>
-                  {getFieldDecorator('expands.' + config.property, {
+                  {getFieldDecorator(`expands.${config.property}`, {
                     initialValue: (initState.data?.expands || {})[config.property]
                   })(renderItem(config))}
                 </Form.Item>
@@ -739,116 +769,107 @@ const PropertiesDefin: React.FC<Props> = props => {
     )
   }
 
-  const menu = (
-    <Menu>
-      <Menu.Item key="1">
-        <Button type="default" onClick={() => {
-          getFormData(true);
-        }}>
-          仅保存
-        </Button>
-      </Menu.Item>
-      <Menu.Item key="2">
-        <Button onClick={() => {
-          getFormData(false);
-        }}>保存并生效</Button>
-      </Menu.Item>
-    </Menu>
-  );
-
   return (
     <div>
       <Drawer
-        title="编辑属性"
+        title="编辑标签"
         placement="right"
         closable={false}
         onClose={() => props.close()}
         visible
         width="30%"
       >
-        <Spin spinning={loadConfig}>
+        <Form>
+          <Form.Item label="标签标识">
+            {getFieldDecorator('id', {
+              rules: [
+                { required: true, message: '请输入标签标识' },
+                { max: 64, message: '标签标识不超过64个字符' },
+                { pattern: new RegExp(/^[0-9a-zA-Z_\-]+$/, "g"), message: '标签标识只能由数字、字母、下划线、中划线组成' }
+              ],
+              initialValue: initState.data.id,
+            })(
+              <Input
+                onChange={(value) => getMetadata(value.target.value, undefined)}
+                disabled={!!initState.data.id}
+                style={{ width: '100%' }}
+                placeholder="请输入标签标识"
+              />,
+            )}
+          </Form.Item>
+          <Form.Item label="标签名称">
+            {getFieldDecorator('name', {
+              rules: [
+                { required: true, message: '请输入标签名称' },
+                { max: 200, message: '标签名称不超过200个字符' }
+              ],
+              initialValue: initState.data.name,
+            })(<Input style={{ width: '100%' }} placeholder="请输入标签名称" />)}
+          </Form.Item>
+          <Form.Item label="数据类型">
+            {getFieldDecorator('valueType.type', {
+              rules: [{ required: true, message: '请选择' }],
+              initialValue: initState.data.valueType?.type,
+            })(
+              <Select
+                placeholder="请选择"
+                onChange={(value: string) => {
+                  dataTypeChange(value);
+                  getMetadata(undefined, value)
+                }}
+              >
+                <Select.OptGroup label="基本类型">
+                  <Select.Option value="int">int(整数型)</Select.Option>
+                  <Select.Option value="long">long(长整数型)</Select.Option>
+                  <Select.Option value="float">float(单精度浮点型)</Select.Option>
+                  <Select.Option value="double">double(双精度浮点数)</Select.Option>
+                  <Select.Option value="string">text(字符串)</Select.Option>
+                  <Select.Option value="boolean">bool(布尔型)</Select.Option>
+                </Select.OptGroup>
+                <Select.OptGroup label="其他类型">
+                  <Select.Option value="date">date(时间型)</Select.Option>
+                  <Select.Option value="enum">enum(枚举)</Select.Option>
+                  <Select.Option value="array">array(数组)</Select.Option>
+                  <Select.Option value="object">object(结构体)</Select.Option>
+                  <Select.Option value="file">file(文件)</Select.Option>
+                  <Select.Option value="password">password(密码)</Select.Option>
+                  <Select.Option value="geoPoint">geoPoint(地理位置)</Select.Option>
+                </Select.OptGroup>
+              </Select>,
+            )}
+          </Form.Item>
+          {renderDataType()}
 
-          <Form>
-            <Form.Item label="属性标识">
-              {getFieldDecorator('id', {
-                rules: [
-                  { required: true, message: '请输入属性标识' },
-                  { max: 64, message: '属性标识不超过64个字符' },
-                  { pattern: new RegExp(/^[0-9a-zA-Z_\-]+$/, "g"), message: '属性标识只能由数字、字母、下划线、中划线组成' }
-                ],
-                initialValue: initState.data.id,
-              })(
-                <Input
-                  onBlur={(value) => getMetadata(value.target.value, undefined)}
-                  disabled={!!initState.data.id}
-                  style={{ width: '100%' }}
-                  placeholder="请输入属性标识"
-                />,
-              )}
-            </Form.Item>
-            <Form.Item label="属性名称">
-              {getFieldDecorator('name', {
-                rules: [
-                  { required: true, message: '请输入属性名称' },
-                  { max: 200, message: '属性名称不超过200个字符' }
-                ],
-                initialValue: initState.data.name,
-              })(<Input style={{ width: '100%' }} placeholder="请输入属性名称" />)}
-            </Form.Item>
-            <Form.Item label="数据类型">
-              {getFieldDecorator('valueType.type', {
-                rules: [{ required: true, message: '请选择' }],
-                initialValue: initState.data.valueType?.type,
-              })(
-                <Select
-                  placeholder="请选择"
-                  onChange={(value: string) => {
-                    dataTypeChange(value);
-                    getMetadata(undefined, value)
-                  }}
-                >
-                  <Select.OptGroup label="基本类型">
-                    <Select.Option value="int">int(整数型)</Select.Option>
-                    <Select.Option value="long">long(长整数型)</Select.Option>
-                    <Select.Option value="float">float(单精度浮点型)</Select.Option>
-                    <Select.Option value="double">double(双精度浮点数)</Select.Option>
-                    <Select.Option value="string">text(字符串)</Select.Option>
-                    <Select.Option value="boolean">bool(布尔型)</Select.Option>
-                  </Select.OptGroup>
-                  <Select.OptGroup label="其他类型">
-                    <Select.Option value="date">date(时间型)</Select.Option>
-                    <Select.Option value="enum">enum(枚举)</Select.Option>
-                    <Select.Option value="array">array(数组)</Select.Option>
-                    <Select.Option value="object">object(结构体)</Select.Option>
-                    <Select.Option value="file">file(文件)</Select.Option>
-                    <Select.Option value="password">password(密码)</Select.Option>
-                    <Select.Option value="geoPoint">geoPoint(地理位置)</Select.Option>
-                  </Select.OptGroup>
-                </Select>,
-              )}
-            </Form.Item>
-            {renderDataType()}
+          <Form.Item label="是否只读">
+            {getFieldDecorator('expands.readOnly', {
+              rules: [{ required: true }],
+              initialValue: initState.data.expands?.readOnly.toString(),
+            })(
+              <Radio.Group>
+                <Radio value="true">是</Radio>
+                <Radio value="false">否</Radio>
+              </Radio.Group>,
+            )}
+          </Form.Item>
+          {/*<Form.Item label="设备上报">
+            {getFieldDecorator('expands.report', {
+              rules: [{ required: true }],
+              initialValue: initState.data.expands?.report,
+            })(
+              <Radio.Group>
+                <Radio value="true">是</Radio>
+                <Radio value="false">否</Radio>
+              </Radio.Group>,
+            )}
+          </Form.Item>*/}
+          {!loadConfig && renderConfigMetadata()}
 
-
-            <Form.Item label="是否只读">
-              {getFieldDecorator('expands.readOnly', {
-                rules: [{ required: true }],
-                initialValue: initState.data.expands?.readOnly.toString(),
-              })(
-                <Radio.Group>
-                  <Radio value="true">是</Radio>
-                  <Radio value="false">否</Radio>
-                </Radio.Group>,
-              )}
-            </Form.Item>
-            {!loadConfig && renderConfigMetadata()}
-            <Form.Item label="描述">
-              {getFieldDecorator('description', {
-                initialValue: initState.data.description,
-              })(<Input.TextArea rows={3} />)}
-            </Form.Item>
-          </Form>
-        </Spin>
+          <Form.Item label="描述">
+            {getFieldDecorator('description', {
+              initialValue: initState.data.description,
+            })(<Input.TextArea rows={3} />)}
+          </Form.Item>
+        </Form>
 
         <div
           style={{
@@ -870,20 +891,14 @@ const PropertiesDefin: React.FC<Props> = props => {
           >
             关闭
           </Button>
-          <Dropdown overlay={menu}>
-            <Button icon="menu" type="primary">
-              保存<Icon type="down" />
-            </Button>
-          </Dropdown>
-          {/* <Button
+          <Button
             onClick={() => {
               getFormData();
             }}
             type="primary"
           >
             保存
-          </Button> */}
-
+          </Button>
         </div>
         {parameterVisible && (
           <Paramter
@@ -928,4 +943,4 @@ const PropertiesDefin: React.FC<Props> = props => {
   );
 };
 
-export default Form.create<Props>()(PropertiesDefin);
+export default Form.create<Props>()(TagsDefin);

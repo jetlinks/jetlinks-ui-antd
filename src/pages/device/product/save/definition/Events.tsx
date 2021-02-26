@@ -84,7 +84,7 @@ const Events: React.FC<Props> = props => {
     },
   ];
 
-  const saveEventData = (item: EventsMeta) => {
+  const saveEventData = (item: EventsMeta, onlySave: boolean) => {
     const i = data.findIndex((j: any) => j.id === item.id);
     if (i > -1) {
       data[i] = item;
@@ -93,7 +93,7 @@ const Events: React.FC<Props> = props => {
     }
     setVisible(false);
     setData(data);
-    props.save(data);
+    props.save(data, onlySave);
   };
 
   return (
@@ -116,8 +116,8 @@ const Events: React.FC<Props> = props => {
         <EventDefin
           data={current}
           unitsData={props.unitsData}
-          save={(item: EventsMeta) => {
-            saveEventData(item);
+          save={(item: EventsMeta, onlySave: boolean) => {
+            saveEventData(item, onlySave);
           }}
           close={() => {
             setVisible(false);

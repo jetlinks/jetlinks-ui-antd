@@ -33,9 +33,9 @@ export function getAuthority(): string | string[] {
       } else {
         authority = autz.permissions.map((item: any) => item.id);
       }
-      // if (autz.user?.username === 'admin') {
-      //   return ['admin'];
-      // }
+      if (autz.user?.username === 'admin') {
+        return ['admin'];
+      }
       return authority;
     } catch (error) {
       localStorage.removeItem('hsweb-autz');

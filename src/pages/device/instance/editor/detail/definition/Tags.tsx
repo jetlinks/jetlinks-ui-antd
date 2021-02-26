@@ -2,9 +2,9 @@ import React, {Fragment, useContext, useEffect, useState} from 'react';
 import {FormComponentProps} from 'antd/es/form';
 import {Button, Card, Divider, Form, Table} from 'antd';
 import {ColumnProps} from 'antd/lib/table';
-import {TagsMeta} from '../../component/data.d';
-import TagsDefin from '../../component/tags';
-import {TenantContext} from "@/pages/device/product/save/definition/index";
+import {TagsMeta} from './component/data.d';
+import TagsDefin from './component/tags';
+import {TenantContext} from "@/pages/device/instance/editor/detail/Definition";
 
 interface Props extends FormComponentProps {
   save: Function;
@@ -81,7 +81,7 @@ const Tags: React.FC<Props> = (props: Props) => {
     },
   ];
 
-  const saveTagsData = (item: TagsMeta, onlySave: boolean) => {
+  const saveTagsData = (item: TagsMeta) => {
     if (!data) {
       setData([]);
     }
@@ -93,7 +93,7 @@ const Tags: React.FC<Props> = (props: Props) => {
     }
     setVisible(false);
     setData(data);
-    props.save(data, onlySave);
+    props.save(data);
   };
   return (
     <div>
@@ -115,8 +115,8 @@ const Tags: React.FC<Props> = (props: Props) => {
         <TagsDefin
           data={current}
           unitsData={props.unitsData}
-          save={(item: TagsMeta, onlySave: boolean) => {
-            saveTagsData(item, onlySave);
+          save={(item: TagsMeta) => {
+            saveTagsData(item);
           }}
           close={() => {
             setVisible(false);

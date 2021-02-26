@@ -2,9 +2,9 @@ import React, {Fragment, useContext, useEffect, useState} from 'react';
 import {FormComponentProps} from 'antd/es/form';
 import {Button, Card, Divider, Form, Table} from 'antd';
 import {ColumnProps} from 'antd/lib/table';
-import {TagsMeta} from '../../component/data.d';
-import TagsDefin from '../../component/tags';
-import {TenantContext} from "@/pages/device/product/save/definition/index";
+import {PropertiesMeta} from './component/data.d';
+import PropertiesDefin from './component/properties';
+import {TenantContext} from "@/pages/device/instance/editor/detail/Definition";
 
 interface Props extends FormComponentProps {
   save: Function;
@@ -13,13 +13,14 @@ interface Props extends FormComponentProps {
 }
 
 interface State {
-  data: TagsMeta[];
-  current: Partial<TagsMeta>;
+  data: PropertiesMeta[];
+  current: Partial<PropertiesMeta>;
   visible: boolean;
 }
 
-const Tags: React.FC<Props> = (props: Props) => {
+const Properties: React.FC<Props> = (props: Props) => {
   const tenantContextData = useContext(TenantContext);
+
   const initState: State = {
     data: props.data || [],
     current: {},
@@ -31,8 +32,9 @@ const Tags: React.FC<Props> = (props: Props) => {
   const [current, setCurrent] = useState(initState.current);
 
   useEffect(() => {
-    setData(tenantContextData.tags || [])
+    setData(tenantContextData.properties || [])
   }, [tenantContextData]);
+
   const editItem = (item: any) => {
     setVisible(true);
     setCurrent(item);
@@ -44,7 +46,7 @@ const Tags: React.FC<Props> = (props: Props) => {
     props.save(temp);
   };
 
-  const columns: ColumnProps<TagsMeta>[] = [
+  const columns: ColumnProps<PropertiesMeta>[] = [
     {
       title: '属性标识',
       dataIndex: 'id',
@@ -61,13 +63,13 @@ const Tags: React.FC<Props> = (props: Props) => {
     {
       title: '是否只读',
       dataIndex: 'expands.readOnly',
-      render: text => (text === 'true' ? '是' : '否'),
+      render: text => ((text === 'true' || text === true) ? '是' : '否'),
     },
     {
       title: '说明',
       dataIndex: 'description',
-      width:'30%',
-      ellipsis:true
+      width: '30%',
+      ellipsis: true
     },
     {
       title: '操作',
@@ -81,24 +83,22 @@ const Tags: React.FC<Props> = (props: Props) => {
     },
   ];
 
-  const saveTagsData = (item: TagsMeta, onlySave: boolean) => {
-    if (!data) {
-      setData([]);
-    }
+  const savePropertiesData = (item: PropertiesMeta) => {
     const i = data.findIndex((j: any) => j.id === item.id);
     if (i > -1) {
       data[i] = item;
     } else {
       data.push(item);
     }
+    // }
     setVisible(false);
     setData(data);
-    props.save(data, onlySave);
+    props.save(data);
   };
   return (
     <div>
       <Card
-        title="标签定义"
+        title="属性定义"
         style={{marginBottom: 20}}
         extra={
           <Button type="primary" onClick={() => {
@@ -112,11 +112,11 @@ const Tags: React.FC<Props> = (props: Props) => {
         <Table rowKey="id" columns={columns} dataSource={data}/>
       </Card>
       {visible && (
-        <TagsDefin
+        <PropertiesDefin
           data={current}
           unitsData={props.unitsData}
-          save={(item: TagsMeta, onlySave: boolean) => {
-            saveTagsData(item, onlySave);
+          save={(item: PropertiesMeta) => {
+            savePropertiesData(item);
           }}
           close={() => {
             setVisible(false);
@@ -127,4 +127,4 @@ const Tags: React.FC<Props> = (props: Props) => {
     </div>
   );
 };
-export default Form.create<Props>()(Tags);
+export default Form.create<Props>()(Properties);

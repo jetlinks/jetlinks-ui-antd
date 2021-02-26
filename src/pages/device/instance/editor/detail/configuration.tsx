@@ -3,7 +3,6 @@ import { FormComponentProps } from 'antd/lib/form';
 import Form from 'antd/es/form';
 import { Button, Card, Col, Drawer, Icon, Input, Modal, Row, Select, Tooltip } from 'antd';
 import { DeviceInstance } from '@/pages/device/instance/data';
-import config from 'config/config';
 
 interface Props extends FormComponentProps {
   data?: Partial<DeviceInstance>;
@@ -112,7 +111,7 @@ const Configuration: React.FC<Props> = props => {
       //   saveData();
       // }}
       // onCancel={() => props.close()}
-      title='编辑配置1'
+      title='编辑配置'
       visible
       width={500}
       onClose={() => props.close()}

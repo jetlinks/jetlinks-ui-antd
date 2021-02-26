@@ -5,7 +5,7 @@ import { renderUnit } from '@/pages/device/public';
 import { PropertiesMeta } from '../data.d';
 import Paramter from '../paramter';
 import apis from '@/services';
-import { ProductContext } from '../../context';
+import {ProductContext} from '@/pages/device/product/context';
 
 interface Props extends FormComponentProps {
   data: Partial<PropertiesMeta>;
@@ -70,7 +70,7 @@ const PropertiesDefin: React.FC<Props> = props => {
     setDataType(value);
   };
 
-  const getFormData = (onlySave:boolean) => {
+  const getFormData = () => {
     const {
       form,
       // data,
@@ -87,7 +87,7 @@ const PropertiesDefin: React.FC<Props> = props => {
       if (dataType === 'array' && data.valueType.elementType.type === 'object') {
         data.valueType.elementType.properties = arrayProperties;
       }
-      props.save({ ...data }, onlySave);
+      props.save({ ...data });
     });
   };
 
@@ -739,23 +739,6 @@ const PropertiesDefin: React.FC<Props> = props => {
     )
   }
 
-  const menu = (
-    <Menu>
-      <Menu.Item key="1">
-        <Button type="default" onClick={() => {
-          getFormData(true);
-        }}>
-          仅保存
-        </Button>
-      </Menu.Item>
-      <Menu.Item key="2">
-        <Button onClick={() => {
-          getFormData(false);
-        }}>保存并生效</Button>
-      </Menu.Item>
-    </Menu>
-  );
-
   return (
     <div>
       <Drawer
@@ -870,19 +853,14 @@ const PropertiesDefin: React.FC<Props> = props => {
           >
             关闭
           </Button>
-          <Dropdown overlay={menu}>
-            <Button icon="menu" type="primary">
-              保存<Icon type="down" />
-            </Button>
-          </Dropdown>
-          {/* <Button
+          <Button
             onClick={() => {
               getFormData();
             }}
             type="primary"
           >
             保存
-          </Button> */}
+          </Button>
 
         </div>
         {parameterVisible && (

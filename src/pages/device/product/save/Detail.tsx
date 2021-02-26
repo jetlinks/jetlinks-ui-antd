@@ -147,8 +147,8 @@ const Detail: React.FC<Props> = props => {
       });
   };
 
-  const updateData = (type: string, item: any) => {
-    let metadata = JSON.stringify({events, properties, functions, tags});
+  const updateData = (type: string, item: any, onlySave:boolean) => {
+    let metadata = JSON.stringify({ events, properties, functions, tags });
     if (type === 'event') {
       metadata = JSON.stringify({events: item, properties, functions, tags});
     } else if (type === 'properties') {
@@ -165,6 +165,9 @@ const Detail: React.FC<Props> = props => {
       .then((re: any) => {
         if (re.status === 200) {
           message.success('保存成功');
+          if(!onlySave){
+            deploy(data)
+          }
         }
       })
       .catch(() => {
@@ -202,7 +205,7 @@ const Detail: React.FC<Props> = props => {
     });
   };
 
-  const updateInfo = (item?: any) => {
+  const updateInfo = (onlySave: boolean, item?: any) => {
     apis.deviceProdcut
       .update(item, basicInfo.id)
       .then((response: any) => {
@@ -211,6 +214,9 @@ const Detail: React.FC<Props> = props => {
           setUpdateVisible(false);
           const list = pathname.split('/');
           handleSearch(list[list.length - 1]);
+          if(!onlySave){
+            deploy(basicInfo)
+          }
         }
       })
       .catch(() => {
@@ -287,7 +293,7 @@ const Detail: React.FC<Props> = props => {
                     产品信息
                     <Button
                       icon="edit"
-                      style={{marginLeft: 20}}
+                      style={{ marginLeft: 20 }}
                       type="link"
                       onClick={() => setSaveVisible(true)}
                     >
@@ -322,17 +328,17 @@ const Detail: React.FC<Props> = props => {
                 </Descriptions.Item>
               </Descriptions>
               {config && config.length > 0 && (
-                <div style={{width: '100%'}}>
+                <div style={{ width: '100%' }}>
                   <Descriptions
                     title={
                       <span>
                         配置
                       <Button
-                        icon="edit"
-                        style={{marginLeft: 20}}
-                        type="link"
-                        onClick={() => setUpdateVisible(true)}
-                      >
+                          icon="edit"
+                          style={{ marginLeft: 20 }}
+                          type="link"
+                          onClick={() => setUpdateVisible(true)}
+                        >
                           编辑
                     </Button>
                         {/* <Button
@@ -347,20 +353,19 @@ const Detail: React.FC<Props> = props => {
                   ></Descriptions>
                   {
                     config.map((i: any) => (
-                      <div style={{marginBottom: "20px"}} key={i.name}>
+                      <div style={{ marginBottom: "20px" }} key={i.name}>
                         <h3>{i.name}</h3>
                         <Descriptions bordered column={2} title="">
                           {
                             i.properties && i.properties.map((item: any) => (
-                              <Descriptions.Item
-                                label={item.description ? (<div><span style={{marginRight: '10px'}}>{item.name}</span>
-                                  <Tooltip title={item.description}>
-                                    <Icon type="question-circle-o"/>
-                                  </Tooltip></div>) : item.name} span={1} key={item.property}>
+                              <Descriptions.Item label={item.description ? (<div><span style={{marginRight: '10px'}}>{item.name}</span>
+                              <Tooltip title={item.description}>
+                                <Icon type="question-circle-o" />
+                              </Tooltip></div>) : item.name} span={1} key={item.property}>
                                 {basicInfo.configuration ? (
                                   item.type.type === 'password' ? (
-                                      basicInfo.configuration[item.property]?.length > 0 ? '••••••' : null
-                                    ) :
+                                    basicInfo.configuration[item.property]?.length > 0 ? '••••••' : null
+                                  ) :
                                     basicInfo.configuration[item.property]
                                 ) : null}
                               </Descriptions.Item>
@@ -381,29 +386,29 @@ const Detail: React.FC<Props> = props => {
                 propertyData={properties}
                 tagsData={tags}
                 unitsData={units}
-                saveEvents={(data: any) => {
+                saveEvents={(data: any, onlySave: boolean) => {
                   setEvents(data);
-                  updateData('event', data);
+                  updateData('event', data, onlySave);
                 }}
-                saveFunctions={(data: any) => {
+                saveFunctions={(data: any, onlySave: boolean) => {
                   setFunctions(data);
-                  updateData('function', data);
+                  updateData('function', data, onlySave);
                 }}
-                saveProperty={(data: any[]) => {
+                saveProperty={(data: any[], onlySave: boolean) => {
                   setProperties(data);
-                  updateData('properties', data);
+                  updateData('properties', data, onlySave);
                 }}
-                saveTags={(data: any[]) => {
+                saveTags={(data: any[], onlySave: boolean) => {
                   setTags(data);
-                  updateData('tags', data);
+                  updateData('tags', data, onlySave);
                 }}
                 update={() => handleSearch()}
               />
             </Tabs.TabPane>
             <Tabs.TabPane tab="告警设置" key="metadata1">
               <Alarm target="product" productId={basicInfo.id} productName={basicInfo.name} targetId={basicInfo.id}
-                     metaData={basicInfo.metadata}
-                     name={basicInfo.name}/>
+                metaData={basicInfo.metadata}
+                name={basicInfo.name} />
             </Tabs.TabPane>
           </Tabs>
         </Card>
@@ -426,8 +431,8 @@ const Detail: React.FC<Props> = props => {
             close={() => {
               setUpdateVisible(false);
             }}
-            save={(item: any) => {
-              updateInfo(item);
+            save={(onlySave: boolean, item: any) => {
+              updateInfo(onlySave, item);
             }}
           />
         )}
@@ -435,7 +440,7 @@ const Detail: React.FC<Props> = props => {
     </Spin>
   );
 };
-export default connect(({deviceProduct, loading}: ConnectState) => ({
+export default connect(({ deviceProduct, loading }: ConnectState) => ({
   deviceProduct,
   loading,
 }))(Detail);

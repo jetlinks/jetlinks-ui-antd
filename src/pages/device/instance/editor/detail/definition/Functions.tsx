@@ -1,38 +1,38 @@
-import React, {Fragment, useContext, useEffect, useState} from 'react';
-import {FormComponentProps} from 'antd/es/form';
-import {Button, Card, Divider, Form, Table} from 'antd';
-import {ColumnProps} from 'antd/lib/table';
-import {TagsMeta} from '../../component/data.d';
-import TagsDefin from '../../component/tags';
-import {TenantContext} from "@/pages/device/product/save/definition/index";
+import React, {useState, Fragment, useContext, useEffect} from 'react';
+import { Card, Button, Table, Divider } from 'antd';
+import { ColumnProps } from 'antd/es/table';
+import FunctionDefin from './component/function';
+import { FunctionMeta } from './component/data.d';
+import {TenantContext} from "@/pages/device/instance/editor/detail/Definition";
 
-interface Props extends FormComponentProps {
+interface Props {
   save: Function;
   data: any[];
   unitsData: any;
 }
 
 interface State {
-  data: TagsMeta[];
-  current: Partial<TagsMeta>;
+  data: FunctionMeta[];
+  current: Partial<FunctionMeta>;
   visible: boolean;
 }
 
-const Tags: React.FC<Props> = (props: Props) => {
+const Functions: React.FC<Props> = props => {
   const tenantContextData = useContext(TenantContext);
+
   const initState: State = {
     data: props.data || [],
     current: {},
     visible: false,
   };
-
   const [visible, setVisible] = useState(initState.visible);
-  const [data, setData] = useState(initState.data);
   const [current, setCurrent] = useState(initState.current);
+  const [data, setData] = useState(initState.data);
 
   useEffect(() => {
-    setData(tenantContextData.tags || [])
+    setData(tenantContextData.functions || [])
   }, [tenantContextData]);
+
   const editItem = (item: any) => {
     setVisible(true);
     setCurrent(item);
@@ -44,47 +44,41 @@ const Tags: React.FC<Props> = (props: Props) => {
     props.save(temp);
   };
 
-  const columns: ColumnProps<TagsMeta>[] = [
+  const columns: ColumnProps<FunctionMeta>[] = [
     {
-      title: '属性标识',
+      title: '功能标识',
       dataIndex: 'id',
     },
     {
-      title: '属性名称',
+      title: '名称',
       dataIndex: 'name',
     },
     {
-      title: '数据类型',
-      dataIndex: 'valueType',
-      render: text => text.type,
+      title: '是否异步',
+      dataIndex: 'async',
+      render: text => (text ? '是' : '否'),
     },
     {
-      title: '是否只读',
-      dataIndex: 'expands.readOnly',
-      render: text => (text === 'true' ? '是' : '否'),
-    },
-    {
-      title: '说明',
+      title: '描述',
       dataIndex: 'description',
       width:'30%',
       ellipsis:true
     },
     {
       title: '操作',
+      width: '250px',
+      align: 'center',
       render: (text, record) => (
         <Fragment>
           <a onClick={() => editItem(record)}>编辑</a>
-          <Divider type="vertical"/>
+          <Divider type="vertical" />
           <a onClick={() => deleteItem(record)}>删除</a>
         </Fragment>
       ),
     },
   ];
 
-  const saveTagsData = (item: TagsMeta, onlySave: boolean) => {
-    if (!data) {
-      setData([]);
-    }
+  const saveFunctionData = (item: FunctionMeta) => {
     const i = data.findIndex((j: any) => j.id === item.id);
     if (i > -1) {
       data[i] = item;
@@ -93,13 +87,14 @@ const Tags: React.FC<Props> = (props: Props) => {
     }
     setVisible(false);
     setData(data);
-    props.save(data, onlySave);
+    props.save(data);
   };
+
   return (
     <div>
       <Card
-        title="标签定义"
-        style={{marginBottom: 20}}
+        title="功能定义"
+        style={{ marginBottom: 20 }}
         extra={
           <Button type="primary" onClick={() => {
             setCurrent({});
@@ -109,14 +104,14 @@ const Tags: React.FC<Props> = (props: Props) => {
           </Button>
         }
       >
-        <Table rowKey="id" columns={columns} dataSource={data}/>
+        <Table rowKey="id" columns={columns} dataSource={data} />
       </Card>
       {visible && (
-        <TagsDefin
+        <FunctionDefin
           data={current}
           unitsData={props.unitsData}
-          save={(item: TagsMeta, onlySave: boolean) => {
-            saveTagsData(item, onlySave);
+          save={(item: FunctionMeta) => {
+            saveFunctionData(item);
           }}
           close={() => {
             setVisible(false);
@@ -127,4 +122,4 @@ const Tags: React.FC<Props> = (props: Props) => {
     </div>
   );
 };
-export default Form.create<Props>()(Tags);
+export default Functions;

@@ -1,21 +1,22 @@
-import React, {useEffect, useState} from 'react';
-import {Badge, Descriptions, Icon, message, Popconfirm, Row, Spin, Tooltip} from 'antd';
-import {PageHeaderWrapper} from '@ant-design/pro-layout';
-import {connect} from 'dva';
-import {router} from 'umi';
+import React, { useEffect, useState } from 'react';
+import { Badge, Descriptions, Icon, message, Popconfirm, Row, Spin, Tooltip } from 'antd';
+import { PageHeaderWrapper } from '@ant-design/pro-layout';
+import { connect } from 'dva';
+import { router } from 'umi';
 import Info from './detail/Info';
+import Definition from './detail/Definition';
 import Status from './detail/Status';
 import Log from './detail/Log';
 import Debugger from './detail/Debugger';
 import Functions from './detail/functions';
 import styles from './index.less';
-import {ConnectState, Dispatch} from '@/models/connect';
-import {DeviceInstance} from '@/pages/device/instance/data';
+import { ConnectState, Dispatch } from '@/models/connect';
+import { DeviceInstance } from '@/pages/device/instance/data';
 import apis from '@/services';
 import Gateway from './detail/gateway';
 import Alarm from '@/pages/device/alarm';
 import Visualization from '../../visualization';
-import {getWebsocket} from "@/layouts/GlobalWebSocket";
+import { getWebsocket } from "@/layouts/GlobalWebSocket";
 import Shadow from "@/pages/device/instance/editor/detail/Shadow";
 
 interface Props {
@@ -33,7 +34,7 @@ interface State {
 }
 
 const Editor: React.FC<Props> = props => {
-  const {location: {pathname},} = props;
+  const { location: { pathname }, } = props;
 
   const initState: State = {
     activeKey: 'info',
@@ -50,12 +51,21 @@ const Editor: React.FC<Props> = props => {
   const [orgInfo] = useState(initState.orgInfo);
   const [spinning, setSpinning] = useState(initState.spinning);
   const [tableList, setTableList] = useState();
+  const [events, setEvents] = useState<any[]>([]);
+  const [functions, setFunctions] = useState<any[]>([]);
+  const [properties, setProperties] = useState<any[]>([]);
+  const [tags, setTags] = useState<any[]>([]);
+  const [units, setUnits] = useState({});
   let deviceStatus: any;
 
   const tabList = [
     {
       key: 'info',
       tab: '实例信息',
+    },
+    {
+      key: 'metadata',
+      tab: '物模型',
     },
     {
       key: 'status',
@@ -91,8 +101,8 @@ const Editor: React.FC<Props> = props => {
       },
     ).subscribe(
       (resp: any) => {
-        const {payload} = resp;
-        deviceData.state = payload.value.type === 'online' ? {value: 'online', text: '在线'} : {
+        const { payload } = resp;
+        deviceData.state = payload.value.type === 'online' ? { value: 'online', text: '在线' } : {
           value: 'offline',
           text: '离线'
         };
@@ -101,7 +111,7 @@ const Editor: React.FC<Props> = props => {
         } else {
           deviceData.offlineTime = payload.timestamp;
         }
-        setData({...deviceData});
+        setData({ ...deviceData });
       },
     );
   };
@@ -115,7 +125,14 @@ const Editor: React.FC<Props> = props => {
           if (deviceData.orgId) {
             deviceData.orgName = orgInfo[deviceData.orgId];
           }
-          setData({...deviceData});
+          setData({ ...deviceData });
+          if (deviceData.metadata) {
+            const metadata = JSON.parse(deviceData.metadata);
+            setEvents(metadata.events);
+            setFunctions(metadata.functions);
+            setProperties(metadata.properties);
+            setTags(metadata.tags);
+          }
           subscribeDeviceState(deviceData, deviceId);
           if (deviceData.metadata) {
             const deriveMetadata = JSON.parse(deviceData.metadata);
@@ -138,9 +155,8 @@ const Editor: React.FC<Props> = props => {
           //     setConfig(resp.result);
           //   }).catch();
 
-            apis.deviceProdcut.deviceConfiguration(deviceData.id)
+          apis.deviceProdcut.deviceConfiguration(deviceData.id)
             .then(resp => {
-              // console.log(resp)
               setConfig(resp.result);
             }).catch();
           setTableList(tabList);
@@ -154,9 +170,9 @@ const Editor: React.FC<Props> = props => {
   };
 
   const statusMap = new Map();
-  statusMap.set('online', <Badge status='success' text={'在线'}/>);
-  statusMap.set('offline', <Badge status='error' text={'离线'}/>);
-  statusMap.set('notActive', <Badge status='processing' text={'未激活'}/>);
+  statusMap.set('online', <Badge status='success' text={'在线'} />);
+  statusMap.set('offline', <Badge status='error' text={'离线'} />);
+  statusMap.set('notActive', <Badge status='processing' text={'未激活'} />);
 
   useEffect(() => {
     apis.deviceProdcut.queryOrganization()
@@ -167,7 +183,14 @@ const Editor: React.FC<Props> = props => {
           ));
         }
       }).catch(() => {
+      });
+    apis.deviceProdcut.units().then((response: any) => {
+      if (response.status === 200) {
+        setUnits(response.result);
+      }
+    }).catch(() => {
     });
+
 
     return () => {
       deviceStatus && deviceStatus.unsubscribe();
@@ -191,7 +214,7 @@ const Editor: React.FC<Props> = props => {
       .then(response => {
         if (response.status === 200) {
           message.success('断开连接成功');
-          data.state = {value: 'offline', text: '离线'};
+          data.state = { value: 'offline', text: '离线' };
           setData(data);
           setSpinning(false);
         } else {
@@ -208,7 +231,7 @@ const Editor: React.FC<Props> = props => {
       .then(response => {
         if (response.status === 200) {
           message.success('激活成功');
-          data.state = {value: 'offline', text: '离线'};
+          data.state = { value: 'offline', text: '离线' };
           setData(data);
           setSpinning(false);
         } else {
@@ -220,48 +243,97 @@ const Editor: React.FC<Props> = props => {
       });
   };
 
+  const updateData = (type: string, item: any) => {
+    let metadata = JSON.stringify({ events, properties, functions, tags });
+    if (type === 'event') {
+      metadata = JSON.stringify({ events: item, properties, functions, tags });
+    } else if (type === 'properties') {
+      metadata = JSON.stringify({ events, properties: item, functions, tags });
+    } else if (type === 'function') {
+      metadata = JSON.stringify({ events, properties, functions: item, tags });
+    } else if (type === 'tags') {
+      metadata = JSON.stringify({ events, properties, functions, tags: item });
+    }
+
+    const params = { ...data, metadata };
+    apis.deviceInstance
+      .saveOrUpdateMetadata(params.id, params)
+      .then((re: any) => {
+        if (re.status === 200) {
+          message.success('保存成功')
+        }
+      })
+      .catch(() => {
+      });
+  };
+
   const action = (
     <Tooltip title='刷新'>
-      <Icon type="sync" style={{fontSize: 20}} onClick={() => {
+      <Icon type="sync" style={{ fontSize: 20 }} onClick={() => {
         getInfo(data.id);
-      }}/>
+      }} />
     </Tooltip>
   );
 
   const info = {
     info: <Info data={data} configuration={config} refresh={() => {
       getInfo(data.id);
-    }}/>,
+    }} />,
+    metadata: <Definition
+      basicInfo={data}
+      eventsData={events}
+      functionsData={functions}
+      propertyData={properties}
+      tagsData={tags}
+      unitsData={units}
+      saveEvents={(data: any) => {
+        setEvents(data);
+        updateData('event', data);
+      }}
+      saveFunctions={(data: any) => {
+        setFunctions(data);
+        updateData('function', data);
+      }}
+      saveProperty={(data: any[]) => {
+        setProperties(data);
+        updateData('properties', data);
+      }}
+      saveTags={(data: any[]) => {
+        setTags(data);
+        updateData('tags', data);  //handleSearch()
+      }}
+      update={() => { }}
+    />,
     status: <Status device={data} refresh={() => {
       getInfo(data.id);
-    }}/>,
-    functions: <Functions device={data}/>,
-    log: <Log deviceId={id}/>,
-    debugger: <Debugger/>,
-    gateway: <Gateway deviceId={id} loading={false}/>,
+    }} />,
+    functions: <Functions device={data} />,
+    log: <Log deviceId={id} />,
+    debugger: <Debugger />,
+    gateway: <Gateway deviceId={id} loading={false} />,
     alarm: <Alarm target="device" productId={data.productId} productName={data.productName} targetId={data.id}
-                  metaData={data.metadata}
-                  name={data.name}/>,
-    shadow: <Shadow deviceId={data.id}/>,
+      metaData={data.metadata}
+      name={data.name} />,
+    shadow: <Shadow deviceId={data.id} />,
     visualization: <Visualization
       type="device"
       target={data.id}
       name={data.name}
       productId={data.productId}
-      metaData={data.metadata}/>,
+      metaData={data.metadata} />,
   };
 
   const content = (
-    <div style={{marginTop: 30}}>
+    <div style={{ marginTop: 30 }}>
       <Descriptions column={4}>
         <Descriptions.Item label="ID">{id}</Descriptions.Item>
         <Descriptions.Item label="产品">
           <div>
             {data.productName}
-            <a style={{marginLeft: 10}}
-               onClick={() => {
-                 router.push(`/device/product/save/${data.productId}`);
-               }}
+            <a style={{ marginLeft: 10 }}
+              onClick={() => {
+                router.push(`/device/product/save/${data.productId}`);
+              }}
             >查看</a>
           </div>
         </Descriptions.Item>
@@ -277,7 +349,7 @@ const Editor: React.FC<Props> = props => {
   const titleInfo = (
     <Row>
       <div>
-        <span style={{paddingRight: 20}}>
+        <span style={{ paddingRight: 20 }}>
           设备：{data.name}
         </span>
         {statusMap.get(data.state?.value)}
@@ -289,18 +361,18 @@ const Editor: React.FC<Props> = props => {
           </Popconfirm>
         ) : (data.state?.value === 'notActive' ? (
           <Popconfirm title="确认激活此设备？"
-                      onConfirm={() => {
-                        changeDeploy(data.id);
-                      }}>
+            onConfirm={() => {
+              changeDeploy(data.id);
+            }}>
             <a {...deviceStateStyle}>激活设备</a>
           </Popconfirm>
-        ) : (<span/>))}
+        ) : (<span />))}
       </div>
     </Row>
   );
 
   const extra = (
-    <div className={styles.moreInfo}/>
+    <div className={styles.moreInfo} />
   );
 
   return (
@@ -329,7 +401,7 @@ const Editor: React.FC<Props> = props => {
   );
 };
 
-export default connect(({deviceInstance, loading}: ConnectState) => ({
+export default connect(({ deviceInstance, loading }: ConnectState) => ({
   deviceInstance,
   loading,
 }))(Editor);

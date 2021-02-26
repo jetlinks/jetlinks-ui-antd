@@ -55,16 +55,16 @@ const UserModel: UserModelType = {
       const response = yield call(queryCurrent);
       if (response) {
         // 取出login 后缓存的数据
-        // const loginStorage = localStorage.getItem('hsweb-autz');
-        // if (loginStorage) {
-        //   const tempLogin = JSON.parse(loginStorage);
-        //   tempLogin.permissions = response.result.permissions;
-        //   const autz = JSON.stringify(tempLogin);
-        //   autz && localStorage.setItem('hsweb-autz', autz);
-        // } else {
-        const autz = JSON.stringify(response.result);
-        autz && localStorage.setItem('hsweb-autz', autz);
-        // }
+        const loginStorage = localStorage.getItem('hsweb-autz');
+        if (loginStorage) {
+          const tempLogin = JSON.parse(loginStorage);
+          tempLogin.permissions = response.result.permissions;
+          const autz = JSON.stringify(tempLogin);
+          autz && localStorage.setItem('hsweb-autz', autz);
+        } else {
+          const autz = JSON.stringify(response.result);
+          autz && localStorage.setItem('hsweb-autz', autz);
+        }
         yield put({
           type: 'saveCurrentUser',
           payload: response.result.user,

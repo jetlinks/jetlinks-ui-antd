@@ -83,7 +83,7 @@ const Properties: React.FC<Props> = (props: Props) => {
     },
   ];
 
-  const savePropertiesData = (item: PropertiesMeta) => {
+  const savePropertiesData = (item: PropertiesMeta, onlySave:boolean) => {
     const i = data.findIndex((j: any) => j.id === item.id);
     if (i > -1) {
       data[i] = item;
@@ -93,7 +93,7 @@ const Properties: React.FC<Props> = (props: Props) => {
     // }
     setVisible(false);
     setData(data);
-    props.save(data);
+    props.save(data, onlySave);
   };
   return (
     <div>
@@ -115,8 +115,8 @@ const Properties: React.FC<Props> = (props: Props) => {
         <PropertiesDefin
           data={current}
           unitsData={props.unitsData}
-          save={(item: PropertiesMeta) => {
-            savePropertiesData(item);
+          save={(item: PropertiesMeta, onlySave: boolean) => {
+            savePropertiesData(item, onlySave);
           }}
           close={() => {
             setVisible(false);

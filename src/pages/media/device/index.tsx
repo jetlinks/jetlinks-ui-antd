@@ -59,7 +59,7 @@ const MediaDevice: React.FC<Props> = () => {
     {
       title: '国标设备编号',
       dataIndex: 'id',
-      width: '8%',
+      width: 200,
       ellipsis: true,
       fixed: 'left',
     },
@@ -148,7 +148,7 @@ const MediaDevice: React.FC<Props> = () => {
       title: '操作',
       key: 'center',
       fixed: 'right',
-      width: '10%',
+      width: 230,
       render: (record: any) => (
         <Fragment>
           <a
@@ -175,7 +175,7 @@ const MediaDevice: React.FC<Props> = () => {
           >
             查看通道
           </a>
-          {record.state.value !== 'online' ? (
+          {record.state.value !== 'online' && (
             <>
               <Divider type="vertical"/>
               <Popconfirm
@@ -193,17 +193,6 @@ const MediaDevice: React.FC<Props> = () => {
                 }}>
                 <a>删除</a>
               </Popconfirm>
-            </>
-          ):(
-            <>
-              {/*<Divider type="vertical"/>
-              <Popconfirm
-                title="更新最新通道将会删除多余通道，确认继续？"
-                onConfirm={() => {
-
-                }}>
-                <a>更新通道</a>
-              </Popconfirm>*/}
             </>
           )}
         </Fragment>
