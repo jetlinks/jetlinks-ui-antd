@@ -31,7 +31,7 @@ class Service extends BaseService<any> {
         map(resp => resp.result)
       ));
 
-  public mediaDeviceNoPaging = (params: any) => defer(
+  public deviceChannelNoPaging = (params: any) => defer(
     () => from(request(`/jetlinks/media/channel/_query/no-paging?paging=false`, {
       method: 'GET',
       params

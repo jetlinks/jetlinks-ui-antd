@@ -220,7 +220,7 @@ const MediaCascade: React.FC<Props> = () => {
       title: '操作',
       key: 'center',
       fixed: 'right',
-      width: 230,
+      width: '10%',
       render: (record: any) => (
         <Fragment>
           <a
