@@ -219,7 +219,8 @@ const MediaCascade: React.FC<Props> = () => {
     {
       title: '操作',
       key: 'center',
-      width: 250,
+      fixed: 'right',
+      width: 230,
       render: (record: any) => (
         <Fragment>
           <a
