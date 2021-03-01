@@ -114,17 +114,17 @@ const Save: React.FC<Props> = props => {
               </Form.Item>
             </Col>
           </Row>
-          <Divider orientation="left" dashed>
+          <Divider orientation="left" dashed style={{marginTop: -15}}>
             <div style={{fontWeight: 'bold'}}>信令服务配置</div>
           </Divider>
           {
             sipConfigs.map((item: any, index: number) => {
               return (
                 <div key={index}
-                     style={{backgroundColor: 'rgba(192,192,192,0.1)', marginBottom: '10px', paddingTop: '20px'}}>
-                  <div style={{width: "90%", marginLeft: '5%', paddingBottom: 10, fontSize: 16}}>
+                     style={{backgroundColor: 'rgba(192,192,192,0.1)', marginBottom: 10, paddingTop: 10}}>
+                  {/*<div style={{width: "90%", marginLeft: '5%', paddingBottom: 10, fontSize: 16}}>
                     <b>服务： {index + 1}</b>
-                  </div>
+                  </div>*/}
                   <div style={{display: 'flex', justifyContent: 'center'}}>
                     <div style={{width: "90%"}}>
                       <Row gutter={0} justify="start">
