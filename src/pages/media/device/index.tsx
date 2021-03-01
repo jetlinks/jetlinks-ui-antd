@@ -148,7 +148,7 @@ const MediaDevice: React.FC<Props> = () => {
       title: '操作',
       key: 'center',
       fixed: 'right',
-      width: 230,
+      width: 180,
       render: (record: any) => (
         <Fragment>
           <a
@@ -175,7 +175,7 @@ const MediaDevice: React.FC<Props> = () => {
           >
             查看通道
           </a>
-          {record.state.value !== 'online' && (
+          {/*{record.state.value !== 'online' && (
             <>
               <Divider type="vertical"/>
               <Popconfirm
@@ -194,7 +194,7 @@ const MediaDevice: React.FC<Props> = () => {
                 <a>删除</a>
               </Popconfirm>
             </>
-          )}
+          )}*/}
         </Fragment>
       )
     },
