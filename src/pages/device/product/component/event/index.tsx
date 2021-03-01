@@ -13,7 +13,9 @@ import {
   AutoComplete,
   InputNumber,
   Collapse,
-  Spin
+  Spin,
+  Menu,
+  Dropdown
 } from 'antd';
 import { EventsMeta, Parameter } from '../data.d';
 import styles from '../index.less';
@@ -76,7 +78,7 @@ const EventDefin: React.FC<Props> = props => {
     form: { getFieldDecorator, getFieldsValue },
   } = props;
 
-  const saveData = () => {
+  const saveData = (onlySave: boolean) => {
     const {
       form,
       // data: { id },
@@ -98,9 +100,26 @@ const EventDefin: React.FC<Props> = props => {
       if (dataType === 'array' && data.valueType.elementType.type === 'object') {
         data.valueType.elementType.properties = arrayProperties;
       }
-      props.save({ ...data });
+      props.save({ ...data }, onlySave);
     });
   };
+
+  const menu = (
+    <Menu>
+      <Menu.Item key="1">
+        <Button type="default" onClick={() => {
+          saveData(true);
+        }}>
+          仅保存
+        </Button>
+      </Menu.Item>
+      <Menu.Item key="2">
+        <Button onClick={() => {
+          saveData(false);
+        }}>保存并生效</Button>
+      </Menu.Item>
+    </Menu>
+  );
 
   let dataSource = [{
     text: 'String类型的UTC时间戳 (毫秒)',
@@ -896,14 +915,19 @@ const EventDefin: React.FC<Props> = props => {
         >
           关闭
         </Button>
-        <Button
+        <Dropdown overlay={menu}>
+          <Button icon="menu" type="primary">
+            保存<Icon type="down" />
+          </Button>
+        </Dropdown>
+        {/* <Button
           onClick={() => {
             saveData();
           }}
           type="primary"
         >
           保存
-        </Button>
+        </Button> */}
       </div>
     </Drawer>
   );

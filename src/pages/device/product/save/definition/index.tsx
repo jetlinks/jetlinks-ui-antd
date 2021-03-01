@@ -99,8 +99,8 @@ const Definition: React.FC<Props> = props => {
                 <Property
                   data={props.propertyData}
                   unitsData={props.unitsData}
-                  save={(data: any) => {
-                    props.saveProperty(data);
+                  save={(data: any, onlySave: boolean) => {
+                    props.saveProperty(data, onlySave);
                   }}
                 />
               </Tabs.TabPane>
@@ -108,8 +108,8 @@ const Definition: React.FC<Props> = props => {
                 <Functions
                   data={props.functionsData}
                   unitsData={props.unitsData}
-                  save={(data: any) => {
-                    props.saveFunctions(data);
+                  save={(data: any, onlySave: boolean) => {
+                    props.saveFunctions(data, onlySave);
                   }}
                 />
               </Tabs.TabPane>
@@ -117,8 +117,8 @@ const Definition: React.FC<Props> = props => {
                 <Events
                   data={props.eventsData}
                   unitsData={props.unitsData}
-                  save={(data: any) => {
-                    props.saveEvents(data);
+                  save={(data: any, onlySave: boolean) => {
+                    props.saveEvents(data, onlySave);
                   }}
                 />
               </Tabs.TabPane>
@@ -126,8 +126,8 @@ const Definition: React.FC<Props> = props => {
                 <Tags
                   data={props.tagsData}
                   unitsData={props.unitsData}
-                  save={(data: any) => {
-                    props.saveTags(data);
+                  save={(data: any, onlySave: boolean) => {
+                    props.saveTags(data, onlySave);
                   }}
                 />
               </Tabs.TabPane>

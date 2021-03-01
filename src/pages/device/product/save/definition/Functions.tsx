@@ -78,7 +78,7 @@ const Functions: React.FC<Props> = props => {
     },
   ];
 
-  const saveFunctionData = (item: FunctionMeta) => {
+  const saveFunctionData = (item: FunctionMeta, onlySave: boolean) => {
     const i = data.findIndex((j: any) => j.id === item.id);
     if (i > -1) {
       data[i] = item;
@@ -87,7 +87,7 @@ const Functions: React.FC<Props> = props => {
     }
     setVisible(false);
     setData(data);
-    props.save(data);
+    props.save(data, onlySave);
   };
 
   return (
@@ -110,8 +110,8 @@ const Functions: React.FC<Props> = props => {
         <FunctionDefin
           data={current}
           unitsData={props.unitsData}
-          save={(item: FunctionMeta) => {
-            saveFunctionData(item);
+          save={(item: FunctionMeta, onlySave: boolean) => {
+            saveFunctionData(item, onlySave);
           }}
           close={() => {
             setVisible(false);
