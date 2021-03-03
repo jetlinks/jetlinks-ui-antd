@@ -15,7 +15,7 @@ class Service extends BaseService<any> {
     ));
 
   public getProduct = (param: any) => defer(
-    () => from(request(`/jetlinks/media/gb28181/_query/no-paging?paging=false`, {
+    () => from(request(`/jetlinks/media/gateway/_query/no-paging?paging=false`, {
       method: 'GET',
       params: param
     })).pipe(
