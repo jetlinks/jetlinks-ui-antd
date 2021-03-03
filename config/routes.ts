@@ -517,16 +517,16 @@ export const routes = [
                     },
                     {
                         path: 'media',
-                        name: '国标网关',
+                        name: '视频网关',
                         icon: 'youtube',
                         version: 'pro',
-                        authority: ['gb28181-gateway','media-channel','media-server','media-stream','gb28181-cascade'],
+                        authority: ['gb28181-gateway','media-gateway','media-channel','media-server','media-stream','gb28181-cascade'],
                         routes: [
                             {
                                 path: '/media/basic',
                                 name: '基本配置',
                                 version: 'pro',
-                                authority: ['gb28181-gateway','media-server'],
+                                authority: ['gb28181-gateway','media-gateway','media-server'],
                                 icon: 'video-camera',
                                 component: './media/basic',
                             },
@@ -548,7 +548,7 @@ export const routes = [
                             // },
                             {
                                 path: '/media/device',
-                                name: '国标设备',
+                                name: '视频设备',
                                 version: 'pro',
                                 authority: ['media-device'],
                                 icon: 'gateway',
