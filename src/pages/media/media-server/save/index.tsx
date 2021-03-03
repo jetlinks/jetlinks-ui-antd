@@ -229,7 +229,6 @@ const Save: React.FC<Props> = props => {
             <Form.Item label="密钥">
               {getFieldDecorator('configuration.secret', {
                 rules: [
-                  {required: true, message: '请输入密钥'}
                 ],
                 initialValue: configuration.secret,
               })(<Input placeholder='请输入密钥'/>)}
