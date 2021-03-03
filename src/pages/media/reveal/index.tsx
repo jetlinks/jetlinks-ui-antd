@@ -12,7 +12,7 @@ interface Props {
 }
 
 const Reveal: React.FC<Props> = props => {
-  const service = new Service('media/gb28181');
+  const service = new Service('media/gateway');
 
   const [treeData, setTreeData] = useState<DataNode>();
   const [players, setPlayers] = useState([{

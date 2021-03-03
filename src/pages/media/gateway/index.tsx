@@ -21,7 +21,7 @@ const initState: State = {
   searchParam: {pageSize: 8, terms: location?.query?.terms, sorts: {field: 'id', order: 'desc'}},
 };
 const MediaGateway: React.FC<Props> = () => {
-  const service = new Service('media/gb28181');
+  const service = new Service('media/gateway');
   const [loading, setLoading] = useState<boolean>(false);
   const [result, setResult] = useState<any>({});
   const [saveVisible, setSaveVisible] = useState<boolean>(false);
