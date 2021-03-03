@@ -17,7 +17,7 @@ const MediaDevice: React.FC<Props> = () => {
           <Tabs.TabPane tab="流媒体服务配置" key="MediaServer">
             <MediaServer loading={true}/>
           </Tabs.TabPane>
-          <Tabs.TabPane tab="信令服务配置" key="GatewayInfo">
+          <Tabs.TabPane tab="GB28181/2016" key="GatewayInfo">
             <GatewayInfo loading={true}/>
           </Tabs.TabPane>
         </Tabs>

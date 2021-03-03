@@ -20,7 +20,7 @@ const Save: React.FC<Props> = props => {
 
   const {form: {getFieldDecorator}, form} = props;
 
-  const service = new Service('media/gb28181');
+  const service = new Service('media/gateway');
   const id = 'gb28181_gateway';
 
   const [data, setData] = useState<any>({});
@@ -59,6 +59,7 @@ const Save: React.FC<Props> = props => {
 
       fileValue.id = id;
       fileValue.mediaServerId = 'gb28181_MediaServer';
+      fileValue.provider = 'gb28181-2016';
 
       service.saveGateway(fileValue).subscribe(() => {
           message.success('保存成功');
@@ -143,71 +144,71 @@ const Save: React.FC<Props> = props => {
         <Row>
           <Col span={12}>
             <Form.Item key="sipId" label="SIP ID" labelCol={{span: 10}} wrapperCol={{span: 14}}>
-              {getFieldDecorator('sipConfig.sipId', {
+              {getFieldDecorator('configuration.sipId', {
                 rules: [
                   {required: true, message: '请输入信令SIP ID'}
                 ],
-                initialValue: data?.sipConfig?.sipId,
+                initialValue: data?.configuration?.sipId,
               })(<Input placeholder="请输入信令SIP ID"/>)}
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item key="domain" label="SIP 域" labelCol={{span: 10}} wrapperCol={{span: 14}}>
-              {getFieldDecorator('sipConfig.domain', {
+              {getFieldDecorator('configuration.domain', {
                 rules: [
                   {required: true, message: '请输入信令SIP 域'}
                 ],
-                initialValue: data?.sipConfig?.domain,
+                initialValue: data?.configuration?.domain,
               })(<Input placeholder="请输入信令SIP 域"/>)}
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item key="localAddress" label="SIP Host" labelCol={{span: 10}} wrapperCol={{span: 14}}>
-              {getFieldDecorator('sipConfig.localAddress', {
+              {getFieldDecorator('configuration.localAddress', {
                 rules: [
                   {required: true, message: '请输入信令SIP Host'}
                 ],
-                initialValue: data?.sipConfig?.localAddress,
+                initialValue: data?.configuration?.localAddress,
               })(<Input placeholder="请输入信令SIP Host"/>)}
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item key="password" label="接入密码" labelCol={{span: 10}} wrapperCol={{span: 14}}>
-              {getFieldDecorator('sipConfig.password', {
+              {getFieldDecorator('configuration.password', {
                 rules: [
                   {required: true, message: '请输入信令接入密码'}
                 ],
-                initialValue: data?.sipConfig?.password,
+                initialValue: data?.configuration?.password,
               })(<Input.Password placeholder="请输入信令接入密码"/>)}
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item key="port" label="端口" labelCol={{span: 10}} wrapperCol={{span: 14}}>
-              {getFieldDecorator('sipConfig.port', {
+              {getFieldDecorator('configuration.port', {
                 rules: [
                   {required: true, message: '请输入信令端口'}
                 ],
-                initialValue: data?.sipConfig?.port,
+                initialValue: data?.configuration?.port,
               })(<InputNumber placeholder="端口" style={{width: '100%'}}/>)}
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item key="publicPort" label="公网端口" labelCol={{span: 10}} wrapperCol={{span: 14}}>
-              {getFieldDecorator('sipConfig.publicPort', {
+              {getFieldDecorator('configuration.publicPort', {
                 rules: [
                   {required: true, message: '请输入信令端口'}
                 ],
-                initialValue: data?.sipConfig?.publicPort,
+                initialValue: data?.configuration?.publicPort,
               })(<InputNumber placeholder="请输入信令端口" style={{width: '100%'}}/>)}
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item key="charset" label="字符集" labelCol={{span: 10}} wrapperCol={{span: 14}}>
-              {getFieldDecorator('sipConfig.charset', {
+              {getFieldDecorator('configuration.charset', {
                 rules: [
                   {required: true, message: '请选择字符集'}
                 ],
-                initialValue: data?.sipConfig?.charset || "gb2312",
+                initialValue: data?.configuration?.charset || "gb2312",
               })(
                 <Radio.Group buttonStyle="solid">
                   <Radio.Button value="gb2312">GB2312</Radio.Button>

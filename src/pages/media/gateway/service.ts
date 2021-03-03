@@ -15,7 +15,7 @@ class Service extends BaseService<any> {
     ));
 
   public _enabled = (id: string) => defer(
-    () => from(request(`/jetlinks/media/gb28181/${id}/_enabled`, {
+    () => from(request(`/jetlinks/media/gateway/${id}/_enabled`, {
       method: 'POST'
     }))
       .pipe(
@@ -24,7 +24,7 @@ class Service extends BaseService<any> {
       ));
 
   public _disabled = (id: string) => defer(
-    () => from(request(`/jetlinks/media/gb28181/${id}/_disabled`, {
+    () => from(request(`/jetlinks/media/gateway/${id}/_disabled`, {
       method: 'POST'
     }))
       .pipe(
@@ -43,7 +43,7 @@ class Service extends BaseService<any> {
       ));
 
   public gatewayInfo = (id: string) => defer(
-    () => from(request(`/jetlinks/media/gb28181/${id}`, {
+    () => from(request(`/jetlinks/media/gateway/${id}`, {
       method: 'GET',
       errorHandler: () => {
       }
@@ -54,7 +54,7 @@ class Service extends BaseService<any> {
       ));
 
   public saveGateway = (data: any) => defer(
-    () => from(request(`/jetlinks/media/gb28181/`, {
+    () => from(request(`/jetlinks/media/gateway/`, {
       method: 'PATCH',
       data: data
     }))
