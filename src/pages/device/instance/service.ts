@@ -8,6 +8,13 @@ export async function list(params: any) {
   });
 }
 
+export async function queryNoPagin(params: any) {
+  return request(`/jetlinks/device-instance/_query/no-paging?paging=false`, {
+    method: 'GET',
+    params,
+  });
+}
+
 export async function count(params: any) {
   return request(`/jetlinks/device-instance/_count`, {
     method: 'GET',

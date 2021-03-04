@@ -6,8 +6,8 @@ import Events from './definition/Events';
 import Tags from './definition/Tags';
 import Form from "antd/es/form";
 import {FormComponentProps} from "antd/lib/form";
-import MetaData from "@/pages/device/product/save/model/metaData";
-import QuickImport from "@/pages/device/product/save/model/quickImport";
+import MetaData from "@/pages/device/instance/editor/detail/model/metaData";
+import QuickImport from "@/pages/device/instance/editor/detail/model/quickImport";
 import apis from "@/services";
 // import {DeviceProduct} from "@/pages/device/product/data";
 import {ProductContext} from '@/pages/device/product/context';
@@ -50,8 +50,10 @@ const Definition: React.FC<Props> = props => {
   });
 
   const updateModel = (item?: any) => {
-    apis.deviceProdcut
-      .update(item, basicInfo.id)
+    const params = { ...basicInfo};
+    params.metadata = item.metadata;
+    apis.deviceInstance
+      .saveOrUpdateMetadata(params.id, params)
       .then((response: any) => {
         if (response.status === 200) {
           basicInfo.metadata = item.metadata;
@@ -131,13 +133,12 @@ const Definition: React.FC<Props> = props => {
                 />
               </Tabs.TabPane>
             </Tabs>
-
           </ProductContext.Provider>
         </TenantContext.Provider>
         {metaDataVisible && (
           <MetaData close={() => {
             setMetaDataVisible(false);
-          }} productId={basicInfo.id}/>
+          }} deviceId={basicInfo.id}/>
         )}
         {quickImportVisible && (
           <QuickImport
