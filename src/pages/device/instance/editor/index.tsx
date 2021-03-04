@@ -255,9 +255,8 @@ const Editor: React.FC<Props> = props => {
       metadata = JSON.stringify({ events, properties, functions, tags: item });
     }
 
-    const params = { ...data, metadata };
     apis.deviceInstance
-      .saveOrUpdateMetadata(params.id, params)
+      .saveOrUpdateMetadata(data.id, metadata)
       .then((re: any) => {
         if (re.status === 200) {
           message.success('保存成功')
