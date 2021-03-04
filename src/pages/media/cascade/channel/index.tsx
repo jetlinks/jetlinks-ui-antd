@@ -59,7 +59,7 @@ const ChoiceChannel: React.FC<Props> = props => {
       },
       () => {
       },
-      () => {});
+      () => setLoading(false));
   };
 
   const _channel = (params?: any) => {
