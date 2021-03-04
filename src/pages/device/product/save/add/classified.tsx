@@ -1,10 +1,11 @@
 import React, {Fragment, useEffect, useState} from 'react';
 import {FormComponentProps} from 'antd/lib/form';
 import Form from 'antd/es/form';
-import {Button, Drawer, Select, Spin, Table} from 'antd';
+import {Button, Drawer, Spin, Table} from 'antd';
 import apis from "@/services";
 import styles from "@/utils/table.less";
 import {ColumnProps} from "antd/lib/table";
+import treeTool from 'tree-tool';
 import Search from "antd/es/input/Search";
 
 interface Props extends FormComponentProps {
@@ -13,41 +14,18 @@ interface Props extends FormComponentProps {
   choice: Function;
 }
 
-interface State {
-  categoryLIst: any[];
-  categoryAllLIst: any[];
-}
-
 const Classified: React.FC<Props> = props => {
-  const initState: State = {
-    categoryLIst: [],
-    categoryAllLIst: [],
-  };
 
   const [spinning, setSpinning] = useState(true);
-  const [categoryLIst, setCategoryLIst] = useState(initState.categoryLIst);
-  const [categoryAllLIst, setCategoryAllLIst] = useState(initState.categoryAllLIst);
+  const [categoryLIst, setCategoryLIst] = useState<any[]>([]);
+  const [categoryAllLIst, setCategoryAllLIst] = useState<any[]>([]);
 
   useEffect(() => {
     apis.deviceProdcut.deviceCategoryTree()
       .then((response: any) => {
         if (response.status === 200) {
           setCategoryLIst(response.result);
-          response.result.map((item: any) => {
-            item.children?.map((i: any) => {
-              if (i.children) {
-                i.children.map((data: any) => {
-                  data['parentName'] = i.name;
-                  data['categoryId'] = [item.id, i.id, data.id];
-                  categoryAllLIst.push(data);
-                })
-              } else {
-                i['parentName'] = item.name;
-                i['categoryId'] = [item.id, i.id];
-                categoryAllLIst.push(i);
-              }
-            });
-          });
+          setCategoryAllLIst(response.result);
           setSpinning(false);
         }
       })
@@ -55,75 +33,16 @@ const Classified: React.FC<Props> = props => {
       });
   }, []);
 
-  const assemblyData = () => {
-    let list: any[] = [];
-    categoryLIst.map((item: any) => {
-      item.children?.map((i: any) => {
-        if (i.children) {
-          i.children.map((data: any) => {
-            data['parentName'] = i.name;
-            data['categoryId'] = [item.id, i.id, data.id];
-            list.push(data);
-          })
-        } else {
-          i['parentName'] = item.name;
-          i['categoryId'] = [item, i.id];
-          list.push(i);
-        }
-      });
-      setCategoryAllLIst(list);
-    });
-  };
-
-  const findCategoryByPid = (value: string) => {
-    categoryAllLIst.splice(0, categoryAllLIst.length);
-    if (value === 'all') {
-      assemblyData();
-    } else {
-      const category: Partial<any> =
-        categoryLIst.find(i => i.id === value) || {};
-      let list: any[] = [];
-      category.children?.map((i: any) => {
-        if (i.children) {
-          i.children.map((data: any) => {
-            data['parentName'] = i.name;
-            data['categoryId'] = [value, i.id, data.id];
-            list.push(data);
-          })
-        } else {
-          i['parentName'] = category.name;
-          i['categoryId'] = [value, i.id];
-          list.push(i);
-        }
-        setCategoryAllLIst(list);
-      });
-    }
-  };
-
-  const findCategoryByVague = (value: string) => {
-    if (value === '') {
-      categoryAllLIst.splice(0, categoryAllLIst.length);
-      assemblyData();
-    } else {
-      let list: any[] = [];
-      categoryAllLIst.map((item: any) => {
-        if (item.name.indexOf(value) !== -1 || item.parentName.indexOf(value) !== -1) {
-          list.push(item);
-        }
-      });
-      categoryAllLIst.splice(0, categoryAllLIst.length);
-      setCategoryAllLIst(list);
-    }
-  };
-
   const columns: ColumnProps<any>[] = [
     {
-      title: '品类名称',
-      dataIndex: 'name',
+      title: '标识',
+      align: 'left',
+      dataIndex: 'key',
     },
     {
-      title: '所属场景',
-      dataIndex: 'parentName',
+      title: '分类名称',
+      dataIndex: 'name',
+      align: 'center',
     },
     {
       title: '操作',
@@ -137,6 +56,12 @@ const Classified: React.FC<Props> = props => {
             </span>
           ) : (
             <a onClick={() => {
+              const pathList = treeTool.findPath(categoryAllLIst, function (n: any) {
+                return n.id == record.parentId
+              }); // pathList所有父级data组成的
+              let idList: string[] = pathList.map(n => n.id);// idList即为所求的上级所有ID
+              idList.push(record.id);
+              record['categoryId'] = idList;
               props.choice(record);
             }}>
               选择
@@ -147,51 +72,45 @@ const Classified: React.FC<Props> = props => {
     },
   ];
 
+  const instance = treeTool.createInstance(categoryAllLIst, {pid: 'parentId'});
+
+  const findCategoryByVague = (value: string) => {
+    if (value === '') {
+      categoryLIst.splice(0, categoryLIst.length);
+      setCategoryLIst(categoryAllLIst);
+    } else {
+      let result = instance.findNodeAll(categoryAllLIst, function (node: any) {
+        return node.name.indexOf(value) != -1;
+      });
+      setCategoryLIst(result);
+    }
+  };
+
   return (
     <Drawer
       visible
       title='选择品类'
-      width='40%'
+      width='50%'
       onClose={() => props.close()}
       closable
     >
       <Spin spinning={spinning}>
-        <div style={{paddingBottom: 20}}>
-          <Select
-            style={{width: '43%'}} defaultValue='all'
-            onChange={(value: string) => {
-              findCategoryByPid(value);
-            }}
-          >
-            <Select.Option value="all">全部领域</Select.Option>
-            {(categoryLIst || []).map(item => (
-              <Select.Option key={item.id} value={item.id}>
-                {item.name}
-              </Select.Option>
-            ))}
-          </Select>
-          <Search
-            allowClear
-            placeholder="请输入品类名称或者所属场景"
-            enterButton
-            onChange={(event: any) => {
-              if (event.target.value === '') {
-                assemblyData();
-              }
-            }}
-            onSearch={value => {
-              findCategoryByVague(value);
-            }}
-            style={{width: '43%', paddingLeft: 20}}
-          />
-        </div>
+        <Search
+          allowClear
+          placeholder="请输入品类名称或者所属场景"
+          enterButton
+          onSearch={value => {
+            findCategoryByVague(value);
+          }}
+          style={{width: '43%', paddingBottom: 20}}
+        />
         <div className={styles.StandardTable}>
           <Table
-            dataSource={categoryAllLIst || []}
+            dataSource={categoryLIst || []}
             columns={columns}
             rowKey='id'
             pagination={{
-              pageSize: 8,
+              pageSize: 10,
             }}
           />
         </div>
