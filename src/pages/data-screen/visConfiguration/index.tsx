@@ -163,7 +163,7 @@ const Screen = (props: Props) => {
             <SearchForm
               search={(params: any) => {
                 handleSearch({
-                  terms: {...params, type: 'big_screen'},
+                  terms: {...params, type: 'vis_configuration'},
                   pageSize: 8,
                 });
               }}

@@ -117,6 +117,7 @@ const Editor: React.FC<Props> = props => {
   };
 
   const getInfo = (deviceId: string) => {
+    console.log(deviceId)
     setSpinning(true);
     apis.deviceInstance.info(deviceId)
       .then((response: any) => {
@@ -136,6 +137,7 @@ const Editor: React.FC<Props> = props => {
           subscribeDeviceState(deviceData, deviceId);
           if (deviceData.metadata) {
             const deriveMetadata = JSON.parse(deviceData.metadata);
+            console.log(deriveMetadata)
             if ((deriveMetadata.functions || []).length > 0) {
               tabList.splice(2, 0, {
                 key: 'functions',
@@ -254,7 +256,6 @@ const Editor: React.FC<Props> = props => {
     } else if (type === 'tags') {
       metadata = JSON.stringify({ events, properties, functions, tags: item });
     }
-
     apis.deviceInstance
       .saveOrUpdateMetadata(data.id, metadata)
       .then((re: any) => {
@@ -294,6 +295,7 @@ const Editor: React.FC<Props> = props => {
         updateData('function', data);
       }}
       saveProperty={(data: any[]) => {
+        console.log(data)
         setProperties(data);
         updateData('properties', data);
       }}
@@ -301,7 +303,7 @@ const Editor: React.FC<Props> = props => {
         setTags(data);
         updateData('tags', data);  //handleSearch()
       }}
-      update={() => { }}
+      update={() => {getInfo(data.id)  }}
     />,
     status: <Status device={data} refresh={() => {
       getInfo(data.id);

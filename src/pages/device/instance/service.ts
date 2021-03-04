@@ -48,6 +48,12 @@ export async function remove(id: string) {
   });
 }
 
+export async function reset(id: string) {
+  return request(`/jetlinks/device/instance/${id}/metadata`, {
+    method: 'DELETE',
+  });
+}
+
 export async function logs(deviceId: string, params: any) {
   return request(`/jetlinks/device-instance/${deviceId}/logs`, {
     method: 'GET',

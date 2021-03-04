@@ -51,9 +51,9 @@ const Definition: React.FC<Props> = props => {
 
   const updateModel = (item?: any) => {
     const params = { ...basicInfo};
-    params.metadata = item.metadata;
+    // params.metadata = item.metadata;
     apis.deviceInstance
-      .saveOrUpdateMetadata(params.id, params)
+      .saveOrUpdateMetadata(params.id, item.metadata)
       .then((response: any) => {
         if (response.status === 200) {
           basicInfo.metadata = item.metadata;
@@ -76,6 +76,15 @@ const Definition: React.FC<Props> = props => {
   const operations = (
     <>
       <Button onClick={() => {
+        apis.deviceInstance.reset(basicInfo.id).then((res) => {
+          if(res.status === 200){
+            message.success('重置成功！')
+          }
+        }).finally(() => props.update());
+      }}>
+        重置
+      </Button>
+      <Button style={{marginLeft: 10}} onClick={() => {
         setQuickImportVisible(true);
       }}>
         快速导入

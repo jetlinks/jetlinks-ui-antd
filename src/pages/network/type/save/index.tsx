@@ -393,6 +393,7 @@ const Save: React.FC<Props> = props => {
                 </span>
               }>
                 {getFieldDecorator('configuration.parserType', {
+                  rules: [{ required: true, message: '请选择' }],
                   initialValue: props.data?.configuration?.parserType,
                 })(
                   <Select
@@ -456,6 +457,7 @@ const Save: React.FC<Props> = props => {
                 </span>
               }>
                 {getFieldDecorator('configuration.parserType', {
+                  rules: [{ required: true, message: '请选择' }],
                   initialValue: props.data?.configuration?.parserType,
                 })(
                   <Select
@@ -953,6 +955,7 @@ const Save: React.FC<Props> = props => {
                 </span>
               }>
                 {getFieldDecorator(`cluster[${index}].configuration.parserType`, {
+                  rules: [{ required: true, message: '请选择' }],
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.parserType : '',
                 })(
                   <Select
@@ -1016,6 +1019,7 @@ const Save: React.FC<Props> = props => {
                 </span>
               }>
                 {getFieldDecorator(`cluster[${index}].configuration.parserType`, {
+                  rules: [{ required: true, message: '请选择' }],
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.parserType : '',
                 })(
                   <Select
@@ -1406,7 +1410,7 @@ const Save: React.FC<Props> = props => {
   };
   return (
     <Drawer
-      title={`${props.data.id ? '编辑' : '新建'}网络组件`}
+      title={`${props.data.id ? '编辑' : '新建'}网络组件1`}
       visible
       onClose={() => props.close()}
       width="30VW"
