@@ -43,7 +43,7 @@ const Properties: React.FC<Props> = (props: Props) => {
   const deleteItem = (item: any) => {
     const temp = data.filter(e => e.id !== item.id);
     setData(temp);
-    props.save(temp);
+    props.save(temp, true);
   };
 
   const columns: ColumnProps<PropertiesMeta>[] = [

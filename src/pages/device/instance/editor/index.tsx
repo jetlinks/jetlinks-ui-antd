@@ -64,12 +64,12 @@ const Editor: React.FC<Props> = props => {
       tab: '实例信息',
     },
     {
-      key: 'metadata',
-      tab: '物模型',
-    },
-    {
       key: 'status',
       tab: '运行状态',
+    },
+    {
+      key: 'metadata',
+      tab: '物模型',
     },
     {
       key: 'log',
@@ -117,7 +117,6 @@ const Editor: React.FC<Props> = props => {
   };
 
   const getInfo = (deviceId: string) => {
-    console.log(deviceId)
     setSpinning(true);
     apis.deviceInstance.info(deviceId)
       .then((response: any) => {
@@ -137,7 +136,6 @@ const Editor: React.FC<Props> = props => {
           subscribeDeviceState(deviceData, deviceId);
           if (deviceData.metadata) {
             const deriveMetadata = JSON.parse(deviceData.metadata);
-            console.log(deriveMetadata)
             if ((deriveMetadata.functions || []).length > 0) {
               tabList.splice(2, 0, {
                 key: 'functions',
@@ -295,7 +293,6 @@ const Editor: React.FC<Props> = props => {
         updateData('function', data);
       }}
       saveProperty={(data: any[]) => {
-        console.log(data)
         setProperties(data);
         updateData('properties', data);
       }}
@@ -303,7 +300,7 @@ const Editor: React.FC<Props> = props => {
         setTags(data);
         updateData('tags', data);  //handleSearch()
       }}
-      update={() => {getInfo(data.id)  }}
+      update={() => {getInfo(data.id);  }}
     />,
     status: <Status device={data} refresh={() => {
       getInfo(data.id);
