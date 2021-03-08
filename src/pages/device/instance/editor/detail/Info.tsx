@@ -254,7 +254,13 @@ const Info: React.FC<Props> = (props) => {
       </Card>
       {addVisible && (
         <Save
-          data={props.data}
+          data={{
+            describe: props.data.description,
+            id: props.data.id,
+            name: props.data.name,
+            productId: props.data.productId,
+            orgId: props.data.orgId,
+          }}
           close={() => {
             setAddVisible(false);
             // setCurrentItem({});
