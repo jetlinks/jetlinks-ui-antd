@@ -173,6 +173,16 @@ const Save: React.FC<Props> = props => {
             </Form.Item>
           </Col>
           <Col span={12}>
+            <Form.Item key="publicAddress" label="公网 Host" labelCol={{span: 10}} wrapperCol={{span: 14}}>
+              {getFieldDecorator('configuration.publicAddress', {
+                rules: [
+                  {required: true, message: '请输入信令公网 Host'}
+                ],
+                initialValue: data?.configuration?.publicAddress,
+              })(<Input placeholder="请输入信令公网 Host"/>)}
+            </Form.Item>
+          </Col>
+          <Col span={12}>
             <Form.Item key="password" label="接入密码" labelCol={{span: 10}} wrapperCol={{span: 14}}>
               {getFieldDecorator('configuration.password', {
                 rules: [
