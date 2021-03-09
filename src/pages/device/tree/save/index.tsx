@@ -7,21 +7,23 @@ import { GroupItem } from "../data";
 interface Props {
     close: Function;
     save: Function;
-    data: Partial<GroupItem>
+    data: Partial<GroupItem>;
+    flag:boolean;
 }
 
 const actions = createFormActions();
 
 const Save: React.FC<Props> = props => {
+    
     return (
         <Modal
             visible
-            title={`${props.data?.name ? '编辑' : '新建'}设备分组`}
+            title={`${props.flag? '编辑' : '新建'}设备分组`}
             onCancel={() => props.close()}
             onOk={() => { actions.submit() }}
         >
             <SchemaForm
-                initialValues={props.data}
+                initialValues={props.flag?{}:props.data}
                 actions={actions}
                 onSubmit={v => props.save(v)}
                 components={{ Input, textarea: Input.TextArea }}

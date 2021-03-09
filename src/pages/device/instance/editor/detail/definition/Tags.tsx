@@ -56,7 +56,7 @@ const Tags: React.FC<Props> = (props: Props) => {
     {
       title: '数据类型',
       dataIndex: 'valueType',
-      render: text => text.type,
+      render: text => text?.type,
     },
     {
       title: '是否只读',
