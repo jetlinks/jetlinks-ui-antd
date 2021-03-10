@@ -129,7 +129,8 @@ const DeviceTree: React.FC<Props> = props => {
     search();
   }, []);
   const saveGroup = (item: GroupItem) => {
-    service.saveGroup({ id: item.id, name: item.name, parentId }).subscribe(
+    console.log(add?{...item,parentId}:item,item.id,'rrr');
+    service.saveGroup(add?{...item,parentId}:item).subscribe(
       () => message.success('添加成功'),
       () => {},
       () => {
@@ -289,10 +290,10 @@ const DeviceTree: React.FC<Props> = props => {
                     onClick: () => {
                       searchDevice(item, searchParam);
                       setDeviceLoading(true);
-                      dispatch({
-                        type: 'operation',
-                        payload: { parentId: item.id, current: item },
-                      });
+                      // dispatch({
+                      //   type: 'operation',
+                      //   payload: { parentId: item.id, current: item },
+                      // });
                     },
                   };
                 }}

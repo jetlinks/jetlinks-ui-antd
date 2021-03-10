@@ -18,7 +18,7 @@ const Save: React.FC<Props> = props => {
     return (
         <Modal
             visible
-            title={`${props.flag? '编辑' : '新建'}设备分组`}
+            title={`${props.flag? '新建':'编辑' }设备分组`}
             onCancel={() => props.close()}
             onOk={() => { actions.submit() }}
         >
