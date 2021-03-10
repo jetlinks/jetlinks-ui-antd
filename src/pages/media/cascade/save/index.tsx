@@ -136,7 +136,7 @@ const Save: React.FC<Props> = props => {
             <Col span={12}>
               <Form.Item label="代理视频流">
                 {getFieldDecorator('proxyStream', {
-                  initialValue: props.data?.proxyStream || true,
+                  initialValue: props.data?.proxyStream || false,
                 })(<Radio.Group buttonStyle="solid">
                   <Radio.Button value={true}>启用</Radio.Button>
                   <Radio.Button value={false}>禁用</Radio.Button>
