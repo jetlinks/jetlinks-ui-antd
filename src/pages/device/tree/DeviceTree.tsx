@@ -129,7 +129,6 @@ const DeviceTree: React.FC<Props> = props => {
     search();
   }, []);
   const saveGroup = (item: GroupItem) => {
-    console.log(add?{...item,parentId}:item,item.id,'rrr');
     service.saveGroup(add?{...item,parentId}:item).subscribe(
       () => message.success('添加成功'),
       () => {},
