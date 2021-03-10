@@ -313,6 +313,7 @@ const DeviceTree: React.FC<Props> = props => {
                         <Icon
                           type="edit"
                           onClick={() => {
+                            setAdd(false);
                             dispatch({
                               type: 'operation',
                               payload: {
