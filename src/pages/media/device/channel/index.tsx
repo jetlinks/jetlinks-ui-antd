@@ -1,14 +1,15 @@
 import {PageHeaderWrapper} from "@ant-design/pro-layout"
-import {Badge, Card, Descriptions, Divider, Row, Table} from "antd";
+import {Badge, Card, Descriptions, Divider, Row} from "antd";
 import React, {Fragment, useEffect, useState} from "react";
 import styles from '@/utils/table.less';
 import SearchForm from "@/components/SearchForm";
-import {ColumnProps, PaginationConfig, SorterResult} from "antd/lib/table";
+import {ColumnProps} from "antd/lib/table";
 import Service from "../service";
 import encodeQueryParam from "@/utils/encodeParam";
 import {Dispatch} from "@/models/connect";
 import Play from './play';
 import ChannelEdit from './edit/index';
+import ProTable from "@/pages/system/permission/component/ProTable";
 
 interface Props {
   dispatch: Dispatch;
@@ -27,7 +28,7 @@ const MediaDevice: React.FC<Props> = props => {
   const service = new Service('media/channel');
   const [loading, setLoading] = useState<boolean>(false);
   const [deviceId, setDeviceId] = useState<string>("");
-  const [result, setResult] = useState<any[]>([]);
+  const [result, setResult] = useState<any>({});
   const [deviceInfo, setDeviceInfo] = useState<any>({});
   const [channel, setChannel] = useState<boolean>(false);
   const [channelInfo, setChannelInfo] = useState<any>({});
@@ -70,11 +71,8 @@ const MediaDevice: React.FC<Props> = props => {
   const handleSearch = (params?: any) => {
     setSearchParam(params);
     setLoading(true);
-    service.mediaDeviceNoPaging(encodeQueryParam(params)).subscribe(
-      (data) => {
-        const temp = data.map((item: any) => ({parentId: item.parentChannelId, ...item}));
-        setResult(temp);
-      },
+    service.query(encodeQueryParam(params)).subscribe(
+      data => setResult(data),
       () => {
       },
       () => setLoading(false));
@@ -175,18 +173,6 @@ const MediaDevice: React.FC<Props> = props => {
     },
   ];
 
-  const onTableChange = (
-    pagination: PaginationConfig,
-    filters: any,
-    sorter: SorterResult<any>,
-  ) => {
-    searchParam.terms = filters;
-    searchParam.terms['deviceId'] = deviceId;
-    searchParam.sorts = sorter.field ? sorter : {field: 'id', order: 'desc'};
-
-    handleSearch(searchParam);
-  };
-
   const content = (
     <div style={{marginTop: 30}}>
       <Descriptions column={4}>
@@ -239,16 +225,17 @@ const MediaDevice: React.FC<Props> = props => {
       </Card>
       <Card>
         <div className={styles.StandardTable}>
-          <Table
+          <ProTable
             loading={loading}
-            dataSource={result}
+            dataSource={result?.data}
             columns={columns}
             rowKey="id"
-            // scroll={{x: '120%'}}
-            onChange={onTableChange}
-            pagination={{
-              pageSize: 10
-            }}/>
+            onSearch={(params: any) => {
+              params.sorts = params.sorts.field ? params.sorts : {field: 'id', order: 'desc'};
+              handleSearch(params);
+            }}
+            paginationConfig={result}
+          />
         </div>
       </Card>
       {playing && <Play data={data} close={() => {
