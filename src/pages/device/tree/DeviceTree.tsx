@@ -271,11 +271,13 @@ const DeviceTree: React.FC<Props> = props => {
                     <Button
                       type="primary"
                       onClick={() => {
+                        setAdd(true);
                         dispatch({
                           type: 'operation',
                           payload: {
                             saveVisible: true,
                             parentId: query.id,
+                            // current:null,
                           },
                         });
                       }}
@@ -289,10 +291,10 @@ const DeviceTree: React.FC<Props> = props => {
                     onClick: () => {
                       searchDevice(item, searchParam);
                       setDeviceLoading(true);
-                      // dispatch({
-                      //   type: 'operation',
-                      //   payload: { parentId: item.id, current: item },
-                      // });
+                      dispatch({
+                        type: 'operation',
+                        payload: {  current: item },
+                      });
                     },
                   };
                 }}
