@@ -1,17 +1,18 @@
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import { Badge, Card, Divider, message, Popconfirm } from 'antd';
-import React, { Fragment, useEffect, useState } from 'react';
+import {PageHeaderWrapper} from '@ant-design/pro-layout';
+import {Badge, Card, Divider, message} from 'antd';
+import React, {Fragment, useEffect, useState} from 'react';
 import styles from '@/utils/table.less';
 import SearchForm from '@/components/SearchForm';
 import ProTable from '@/pages/system/permission/component/ProTable';
-import { ColumnProps } from 'antd/lib/table';
+import {ColumnProps} from 'antd/lib/table';
 import Service from './service';
 import encodeQueryParam from '@/utils/encodeParam';
-import { router } from 'umi';
+import {router} from 'umi';
 import DeviceUpdate from './edit/index';
 import moment from 'moment';
 
-interface Props {}
+interface Props {
+}
 
 interface State {
   searchParam: any;
@@ -21,7 +22,7 @@ const initState: State = {
   searchParam: {
     pageSize: 10,
     terms: location?.query?.terms,
-    sorts: { field: 'id', order: 'desc' },
+    sorts: {field: 'id', order: 'desc'},
   },
 };
 const MediaDevice: React.FC<Props> = () => {
@@ -51,7 +52,8 @@ const MediaDevice: React.FC<Props> = () => {
     setLoading(true);
     service.query(encodeQueryParam(params)).subscribe(
       data => setResult(data),
-      () => {},
+      () => {
+      },
       () => setLoading(false),
     );
   };
@@ -94,7 +96,7 @@ const MediaDevice: React.FC<Props> = () => {
       dataIndex: 'state',
       width: 110,
       render: record =>
-        record ? <Badge status={statusMap.get(record.value)} text={record.text} /> : '/',
+        record ? <Badge status={statusMap.get(record.value)} text={record.text}/> : '/',
       filters: [
         {
           text: '未启用',
@@ -160,7 +162,7 @@ const MediaDevice: React.FC<Props> = () => {
           >
             查看
           </a>
-          <Divider type="vertical" />
+          <Divider type="vertical"/>
           <a
             onClick={() => {
               setDeviceData(record);
@@ -169,7 +171,7 @@ const MediaDevice: React.FC<Props> = () => {
           >
             编辑
           </a>
-          <Divider type="vertical" />
+          <Divider type="vertical"/>
           <a
             onClick={() => {
               router.push(`/media/device/channel/${record.id}`);
@@ -179,7 +181,7 @@ const MediaDevice: React.FC<Props> = () => {
           </a>
           {record.state.value === 'online' && (
             <>
-              <Divider type="vertical" />
+              <Divider type="vertical"/>
               <a
                 onClick={() => {
                   setLoading(true);
@@ -204,16 +206,16 @@ const MediaDevice: React.FC<Props> = () => {
   ];
   return (
     <PageHeaderWrapper title="国标设备">
-      <Card style={{ marginBottom: 16, height: 92 }}>
-        <div className={styles.tableList} style={{ marginTop: -22 }}>
+      <Card style={{marginBottom: 16, height: 92}}>
+        <div className={styles.tableList} style={{marginTop: -22}}>
           <div>
             <SearchForm
               search={(params: any) => {
                 setSearchParam(params);
                 handleSearch({
-                  terms: { ...params },
+                  terms: {...params},
                   pageSize: 10,
-                  sorts: { field: 'id', order: 'desc' },
+                  sorts: {field: 'id', order: 'desc'},
                 });
               }}
               formItems={[
@@ -234,9 +236,9 @@ const MediaDevice: React.FC<Props> = () => {
             dataSource={result?.data}
             columns={columns}
             rowKey="id"
-            scroll={{ x: '150%' }}
+            scroll={{x: '150%'}}
             onSearch={(params: any) => {
-              params.sorts = params.sorts.field ? params.sorts : { field: 'id', order: 'desc' };
+              params.sorts = params.sorts.field ? params.sorts : {field: 'id', order: 'desc'};
               handleSearch(params);
             }}
             paginationConfig={result}
