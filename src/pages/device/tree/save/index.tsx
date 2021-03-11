@@ -56,7 +56,10 @@ const Save: React.FC<Props> = props => {
                                             "message": "此字段必填"
                                         }
                                     ],
-                                    "x-component": "input"
+                                    "x-component": "input",
+                                    "x-component-props":{
+                                        "disabled":!props.flag,
+                                    }
                                 },
                                 "name": {
                                     "x-mega-props": {

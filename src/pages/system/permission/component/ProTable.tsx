@@ -15,9 +15,10 @@ interface Props {
     onRow?: any;
     scroll?: any;
     expandedRowRender?: any;
+    title?:any
 }
 const ProTable = (props: Props) => {
-    const { loading, dataSource, columns, rowKey, onSearch, paginationConfig } = props;
+    const { loading, dataSource, columns, rowKey, onSearch, paginationConfig,title } = props;
 
     const onTableChange = (
         pagination: PaginationConfig,
