@@ -56,10 +56,13 @@ const Classified: React.FC<Props> = props => {
             </span>
           ) : (
             <a onClick={() => {
+              let idList: string[] = [];
               const pathList = treeTool.findPath(categoryAllLIst, function (n: any) {
                 return n.id == record.parentId
               }); // pathList所有父级data组成的
-              let idList: string[] = pathList.map(n => n.id);// idList即为所求的上级所有ID
+              if (pathList != null && pathList.length > 0) {
+                idList = pathList.map(n => n.id);// idList即为所求的上级所有ID
+              }
               idList.push(record.id);
               record['categoryId'] = idList;
               props.choice(record);
