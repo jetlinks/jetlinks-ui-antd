@@ -1,45 +1,50 @@
-import SearchForm from "@/components/SearchForm";
 import { PageHeaderWrapper } from "@ant-design/pro-layout";
-import { Avatar, Button, Card, Icon, List, message, Popconfirm, Tooltip } from "antd";
 import React, { useEffect, useState } from "react";
 import styles from '@/utils/table.less';
-import cardStyles from "@/pages/device/product/index.less";
+import { Avatar, Badge, Card, Icon, List, Tooltip } from "antd";
 import apis from '@/services';
+import SearchForm from "@/components/SearchForm";
 import encodeQueryParam from "@/utils/encodeParam";
-import Save from './save';
 import AutoHide from "@/pages/analysis/components/Hide/autoHide";
 import img from "@/pages/edge-gateway/device/img/edge-device.png";
+import moment from "moment";
+import Save from './save';
 import { router } from "umi";
+import { getPageQuery } from "@/utils/utils";
 
 interface Props {
-    loading: boolean;
-}
 
-const edgeProduct: React.FC<Props> = props => {
+}
+const edgeDevice: React.FC<Props> = () => {
     const [result, setResult] = useState({
         data: [],
         pageIndex: 0,
         total: 0,
         pageSize: 0
     });
-    const [searchParam, setSearchParam] = useState({ pageSize: 8, terms: {} });
+    const [loading, setLoading] = useState(false);
+    const [searchParam, setSearchParam] = useState({
+        pageSize: 8, terms: {
+            'productId$edge-product': 1
+        }
+    });
     const [saveVisible, setSaveVisible] = useState(false);
-    const [deviceCount, setDeviceCount] = useState({});
     const [info, setInfo] = useState({});
+    const statusColor = new Map();
+    statusColor.set('online', 'green');
+    statusColor.set('offline', 'red');
+    statusColor.set('notActive', 'blue');
 
-    const cardInfoTitle = {
-        fontSize: 14,
-        color: 'rgba(0, 0, 0, 0.85)'
-    };
-
-    const handleSearch = (params?: any) => {
-        setSearchParam(params);
-        apis.edgeProduct.list(encodeQueryParam(params)).then(res => {
+    const handleSearch = (param?: any) => {
+        setLoading(true);
+        setSearchParam(param);
+        apis.edgeDevice.list(encodeQueryParam(param)).then(res => {
             if (res.status === 200) {
-                setResult(res.result)
+                setResult(res.result);
+                setLoading(false);
             }
         })
-    };
+    }
 
     const onChange = (page: number, pageSize: number) => {
         handleSearch({
@@ -48,28 +53,22 @@ const edgeProduct: React.FC<Props> = props => {
             terms: searchParam.terms
         });
     };
-
     useEffect(() => {
-        handleSearch(searchParam);
+        const query: any = getPageQuery();
+        if (query.hasOwnProperty('productId')) {
+            handleSearch({
+                terms: {
+                    productId: query.productId,
+                },
+                pageSize: 10,
+            });
+        } else {
+            handleSearch(searchParam);
+        }
     }, []);
 
-    useEffect(() => {
-        result.data?.map((item: any) => {
-            apis.deviceInstance.count(encodeQueryParam({ terms: { 'productId': item.id } }))
-                .then(res => {
-                    if (res.status === 200) {
-                        deviceCount[item.id] = String(res.result);
-                        setDeviceCount({ ...deviceCount });
-                    } else {
-                        deviceCount[item.id] = '/';
-                        setDeviceCount({ ...deviceCount });
-                    }
-                }).catch();
-        });
-    }, [result]);
-
     return (
-        <PageHeaderWrapper title="产品管理">
+        <PageHeaderWrapper title="设备管理">
             <Card bordered={false}>
                 <div className={styles.tableList}>
                     <div>
@@ -77,8 +76,8 @@ const edgeProduct: React.FC<Props> = props => {
                             formItems={[
                                 {
                                     label: 'ID',
-                                    key: 'id$LIKE',
-                                    type: 'string',
+                                    key: 'id',
+                                    type: 'string'
                                 },
                                 {
                                     label: '名称',
@@ -89,31 +88,30 @@ const edgeProduct: React.FC<Props> = props => {
                             search={(params: any) => {
                                 setSearchParam(params);
                                 handleSearch({
-                                    terms: params,
+                                    terms: { ...params, 'productId$edge-product': 1 },
                                     pageSize: 8
                                 });
                             }}
                         />
                     </div>
-                    <div className={styles.tableListOperator}>
+                    {/* <div className={styles.tableListOperator}>
                         <Button
                             icon="plus"
                             type="primary"
                             onClick={() => {
-                                setSaveVisible(true);
-                                setInfo({});
+
                             }}>
                             新增
             </Button>
-                    </div>
+                    </div> */}
                 </div>
             </Card>
             <br />
-            <div className={cardStyles.filterCardList}>
+            <div>
                 {result.data && (
                     <List<any>
                         rowKey="id"
-                        loading={props.loading}
+                        loading={loading}
                         grid={{ gutter: 24, xl: 4, lg: 3, md: 3, sm: 2, xs: 1 }}
                         dataSource={(result || {}).data}
                         pagination={{
@@ -131,7 +129,6 @@ const edgeProduct: React.FC<Props> = props => {
                                 )}页`,
                             onChange
                         }}
-
                         renderItem={item => {
                             if (item && item.id) {
                                 return (
@@ -142,7 +139,7 @@ const edgeProduct: React.FC<Props> = props => {
                                                     <Icon
                                                         type="eye"
                                                         onClick={() => {
-                                                            router.push(`/device/product/save/${item.id}`);
+                                                            router.push(`/edge-gateway/device/detail/${item.id}`);
                                                         }}
                                                     />
                                                 </Tooltip>,
@@ -155,50 +152,28 @@ const edgeProduct: React.FC<Props> = props => {
                                                         }}
                                                     />
                                                 </Tooltip>,
-                                                <Tooltip key="del" title='删除'>
-                                                    <Popconfirm
-                                                        title="删除此产品？"
-                                                        onConfirm={() => {
-                                                            apis.edgeProduct.remove(item.id).then(res => {
-                                                                if (res.status === 200) {
-                                                                    handleSearch(searchParam);
-                                                                    message.success('删除成功！');
-                                                                }
-                                                            })
-                                                        }}>
-                                                        <Icon type="close" />
-                                                    </Popconfirm>
-                                                </Tooltip>
                                             ]}
                                         >
                                             <Card.Meta
-                                                avatar={<Avatar size={40} src={item.photoUrl || img} />}
+                                                avatar={<Avatar size={40} src={img} />}
                                                 title={<AutoHide title={item.name} style={{ width: '95%', fontWeight: 600 }} />}
-                                                description={<AutoHide title={item.id} style={{ width: '95%' }} />}
+                                                description={<AutoHide title={moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')} style={{ width: '95%' }} />}
                                             />
-                                            <div className={cardStyles.cardItemContent}>
-                                                <div className={cardStyles.cardInfo}>
+                                            <div>
+                                                <div style={{ width: '100%', display: 'flex', marginTop: '10px' }}>
                                                     <div style={{ textAlign: 'center', width: '30%' }}>
-                                                        <p style={cardInfoTitle}>厂家</p>
-                                                        <p style={{ fontSize: 14, fontWeight: 600 }}>
-                                                            <AutoHide title={item.manufacturer} style={{ width: '95%' }} />
-                                                        </p>
+                                                        <p>ID</p>
+                                                        <p style={{ fontSize: 14 }}>{item.id}</p>
                                                     </div>
                                                     <div style={{ textAlign: 'center', width: '30%' }}>
-                                                        <p style={cardInfoTitle}>型号</p>
-                                                        <p style={{ fontSize: 14, fontWeight: 600 }}>
-                                                            <AutoHide title={item.model} style={{ width: '95%' }} />
-                                                        </p>
+                                                        <p>产品名称</p>
+                                                        <p style={{ fontSize: 14 }}>{item.productName}</p>
                                                     </div>
                                                     <div style={{ textAlign: 'center', width: '30%' }}>
-                                                        <p style={cardInfoTitle}>设备数量</p>
+                                                        <p>状态</p>
                                                         <p style={{ fontSize: 14, fontWeight: 600 }}>
-                                                            <Tooltip key="findDevice" title="点击查看设备">
-                                                                <a onClick={() => {
-                                                                    router.push(`/edge-gateway/device?productId=${item.id}`);
-                                                                }}
-                                                                >{deviceCount[item.id]}</a>
-                                                            </Tooltip>
+                                                            <Badge color={statusColor.get(item.state?.value)}
+                                                                text={item.state?.text} />
                                                         </p>
                                                     </div>
                                                 </div>
@@ -215,11 +190,11 @@ const edgeProduct: React.FC<Props> = props => {
             {
                 saveVisible && <Save
                     close={() => {
-                        setSaveVisible(false);
+                        setSaveVisible(false); 
                     }}
                     save={() => {
                         handleSearch(searchParam);
-                        setSaveVisible(false);
+                        setSaveVisible(false); 
                     }}
                     data={info}
                 />
@@ -227,5 +202,4 @@ const edgeProduct: React.FC<Props> = props => {
         </PageHeaderWrapper>
     )
 }
-
-export default edgeProduct;
+export default edgeDevice;

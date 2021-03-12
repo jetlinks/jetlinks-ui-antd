@@ -1,7 +1,10 @@
-import { Form, Input, message, Modal } from "antd";
+import { Avatar, Button, Form, Input, message, Modal, Upload } from "antd";
 import { FormComponentProps } from "antd/es/form";
 import apis from '@/services';
-import React from "react";
+import React, { useState } from "react";
+import { UploadOutlined } from "@ant-design/icons";
+import { UploadProps } from "antd/lib/upload";
+import { getAccessToken } from "@/utils/authority";
 
 interface Props extends FormComponentProps {
     data: any;
@@ -10,23 +13,38 @@ interface Props extends FormComponentProps {
 }
 const Save: React.FC<Props> = props => {
     const { form: { getFieldsValue, getFieldDecorator }, data } = props;
+    const [photoUrl, setPhotoUrl] = useState(data?.photoUrl);
+
+    const uploadProps: UploadProps = {
+        action: '/jetlinks/file/static',
+        headers: {
+            'X-Access-Token': getAccessToken(),
+        },
+        showUploadList: false,
+        onChange(info) {
+            if (info.file.status === 'done') {
+                setPhotoUrl(info.file.response.result);
+                message.success('上传成功');
+            }
+        },
+    };
     return (
-        <Modal 
-            title={data.id ? `编辑` : '新增' }
+        <Modal
+            title={data.id ? `编辑` : '新增'}
             visible
-            onCancel={() => {props.close()}}
-            onOk={() => { 
+            onCancel={() => { props.close() }}
+            onOk={() => {
                 const formData = getFieldsValue();
-                if(props.data.id){
-                    apis.edgeProduct.update(formData, props.data.id).then(res => {
-                        if(res.status === 200){
+                if (props.data.id) {
+                    apis.edgeProduct.update({...formData, photoUrl}).then(res => {
+                        if (res.status === 200) {
                             props.save();
                             message.success('更新成功');
                         }
                     })
-                }else{
-                    apis.edgeProduct.save(formData).then(res => {
-                        if(res.status === 200){
+                } else {
+                    apis.edgeProduct.save({...formData, photoUrl}).then(res => {
+                        if (res.status === 200) {
                             props.save();
                             message.success('新增成功');
                         }
@@ -70,12 +88,24 @@ const Save: React.FC<Props> = props => {
                         <Input />
                     )}
                 </Form.Item>
-                <Form.Item label="版本">
-                    {getFieldDecorator('version', {
-                        rules: [{ required: true }],
-                        initialValue: data?.version,
+                <Form.Item label='图标'>
+                    <>
+                        <div>
+                            <Avatar size={80} src={photoUrl || data?.photoUrl} />
+                        </div>
+                        <Upload {...uploadProps} showUploadList={false}>
+                            <Button>
+                                <UploadOutlined />
+                                更换图片
+                            </Button>
+                        </Upload>
+                    </>
+                </Form.Item>
+                <Form.Item label="说明">
+                    {getFieldDecorator('description', {
+                        initialValue: data?.description,
                     })(
-                        <Input />
+                        <Input.TextArea rows={3} placeholder="请输入" />
                     )}
                 </Form.Item>
             </Form>

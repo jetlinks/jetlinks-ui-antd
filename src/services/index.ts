@@ -44,7 +44,7 @@ import * as aliyun from '@/pages/cloud/aliyun/service';
 import * as onenet from '@/pages/cloud/onenet/service';
 import * as ctwing from '@/pages/cloud/ctwing/service';
 import * as edgeProduct from '@/pages/edge-gateway/product/service';
-// import * as edgeDevice from '@/pages/edge-gateway/device/service';
+import * as edgeDevice from '@/pages/edge-gateway/device/service';
 
 const apis = {
   login,
@@ -93,6 +93,6 @@ const apis = {
   onenet,
   ctwing,
   edgeProduct,
-  // edgeDevice
+  edgeDevice
 };
 export default apis;
