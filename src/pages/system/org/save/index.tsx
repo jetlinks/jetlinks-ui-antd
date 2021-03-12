@@ -23,7 +23,7 @@ const Save: React.FC<Props> = props => {
       parentId,
       typeId: 'org', ...value
     } : {
-        typeId: 'org', ...value
+        typeId: 'org', ...value, parentId: data.parentId
       };
     props.save(tempData);
   };
@@ -48,7 +48,7 @@ const Save: React.FC<Props> = props => {
           {getFieldDecorator('id', {
             rules: [{ required: true, message: '请输入机构标识' }],
             initialValue: data.id,
-          })(<Input placeholder="机构标识" disabled={data.id} />)}
+          })(<Input placeholder="机构标识" disabled={!!data.id} />)}
         </Form.Item>
         <Form.Item label="机构名称">
           {getFieldDecorator('name', {

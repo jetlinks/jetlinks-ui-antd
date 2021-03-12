@@ -126,6 +126,7 @@ const OrgList: React.FC<Props> = props => {
           <a
             onClick={() => {
               setCurrentItem(record);
+              setParentId(null);
               setSaveVisible(true);
             }}
           >
