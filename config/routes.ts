@@ -582,6 +582,38 @@ export const routes = [
                         ]
                     },
                     {
+                        path: 'edge-gateway',
+                        name: '边缘网关',
+                        icon: 'gateway',
+                        authority: ['edge-product', 'edge-device', 'admin'],
+                        routes: [
+                            {
+                                path: '/edge-gateway/product',
+                                name: '产品',
+                                icon: 'laptop',
+                                // iconfont: 'icon-zhengshuguanli-',
+                                authority: ['edge-product', 'admin'],
+                                component: './edge-gateway/product',
+                            },
+                            // {
+                            //     path: '/edge-gateway/device',
+                            //     name: '设备',
+                            //     icon: 'desktop',
+                            //     // iconfont: 'icon-xieyiguanli',
+                            //     authority: ['edge-device', 'admin'],
+                            //     component: './edge-gateway/device',
+                            // },
+                            // {
+                            //     hideInMenu: true,
+                            //     path: '/edge-gateway/device/detail/:id',
+                            //     name: '设备详情',
+                            //     authority: ['edge-device', 'admin'],
+                            //     // iconfont: 'icon-gujianshengji',
+                            //     component: './edge-gateway/device/detail',
+                            // },
+                        ]
+                    },
+                    {
                         path: 'account',
                         name: '个人中心',
                         icon: 'user',
