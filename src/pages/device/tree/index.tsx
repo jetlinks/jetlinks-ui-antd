@@ -37,7 +37,7 @@ const GroupList: React.FC<Props> = props => {
   }, []);
 
   const saveGroup = (item: GroupItem) => {
-    service.saveGroup({ id: item.id, name: item.name }).subscribe(
+    service.saveGroup(item).subscribe(
       () => message.success('添加成功'),
       () => {},
       () => {
