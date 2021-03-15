@@ -15,6 +15,7 @@ const GroupList: React.FC<Props> = props => {
   const [saveVisible, setSaveVisible] = useState<boolean>(false);
   const [current, setCurrnet] = useState<any>({});
   const [list, setList] = useState<any>({});
+  const [add,setAdd] = useState<boolean>(false);
   const search = (params?: any) => {
     setLoading(true);
     const defaultTerms = { parentId$isnull: true };
@@ -54,6 +55,7 @@ const GroupList: React.FC<Props> = props => {
             style={{ marginLeft: 8 }}
             onClick={() => {
               setSaveVisible(true);
+              setAdd(true);
             }}
           >
             <Icon type="plus" />
@@ -101,6 +103,7 @@ const GroupList: React.FC<Props> = props => {
                   <a
                     onClick={() => {
                       setCurrnet(record);
+                      setAdd(false);
                       setSaveVisible(true);
                     }}
                   >
@@ -132,7 +135,7 @@ const GroupList: React.FC<Props> = props => {
       </Card>
       {saveVisible && (
         <Save
-          flag
+          flag={add}
           data={current}
           close={() => {
             setSaveVisible(false);
