@@ -29,7 +29,7 @@
     "lint:style": "stylelint --fix \"src/**/*.less\" --syntax less",
     "prettier": "prettier -c --write \"**/*\"",
     "site": "npm run fetch:blocks && npm run build && npm run functions:build",
-    "start": "umi dev",
+    "start": "umi dev UMI_UI=none",
     "dev": "npm run start:dev",
     "start:dev": "cross-env REACT_APP_ENV=dev MOCK=none umi dev",
     "start:no-mock": "cross-env MOCK=none umi dev",
