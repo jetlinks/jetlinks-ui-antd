@@ -1,15 +1,15 @@
 import {PageHeaderWrapper} from "@ant-design/pro-layout"
-import {Badge, Card, Descriptions, Divider, Row} from "antd";
+import {Badge, Card, Descriptions, Divider, Row, Table} from "antd";
 import React, {Fragment, useEffect, useState} from "react";
 import styles from '@/utils/table.less';
 import SearchForm from "@/components/SearchForm";
-import {ColumnProps} from "antd/lib/table";
+import {ColumnProps, PaginationConfig, SorterResult} from "antd/lib/table";
 import Service from "../service";
 import encodeQueryParam from "@/utils/encodeParam";
 import {Dispatch} from "@/models/connect";
 import Play from './play';
 import ChannelEdit from './edit/index';
-import ProTable from "@/pages/system/permission/component/ProTable";
+import {DeviceInstance} from "@/pages/device/instance/data";
 
 interface Props {
   dispatch: Dispatch;
@@ -173,6 +173,19 @@ const MediaDevice: React.FC<Props> = props => {
     },
   ];
 
+  const onTableChange = (
+    pagination: PaginationConfig,
+    filters: any,
+    sorter: SorterResult<DeviceInstance>,
+  ) => {
+    handleSearch({
+      pageIndex: Number(pagination.current) - 1,
+      pageSize: pagination.pageSize,
+      terms: {deviceId: deviceId},
+      sorts: sorter,
+    });
+  };
+
   const content = (
     <div style={{marginTop: 30}}>
       <Descriptions column={4}>
@@ -225,7 +238,26 @@ const MediaDevice: React.FC<Props> = props => {
       </Card>
       <Card>
         <div className={styles.StandardTable}>
-          <ProTable
+          <Table
+            columns={columns}
+            dataSource={(result || {}).data}
+            rowKey="id"
+            onChange={onTableChange}
+            pagination={{
+              current: result.pageIndex + 1,
+              total: result.total,
+              pageSize: result.pageSize,
+              showQuickJumper: true,
+              showSizeChanger: true,
+              pageSizeOptions: ['10', '20', '50', '100'],
+              showTotal: (total: number) =>
+                `共 ${total} 条记录 第  ${result.pageIndex + 1}/${Math.ceil(
+                  result.total / result.pageSize,
+                )}页`,
+            }}
+          />
+
+          {/*<ProTable
             loading={loading}
             dataSource={result?.data}
             columns={columns}
@@ -234,7 +266,7 @@ const MediaDevice: React.FC<Props> = props => {
               handleSearch({terms: {deviceId: deviceId}, sorts: {field: 'id', order: 'desc'}});
             }}
             paginationConfig={result}
-          />
+          />*/}
         </div>
       </Card>
       {playing && <Play data={data} close={() => {
