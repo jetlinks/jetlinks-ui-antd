@@ -22,7 +22,7 @@ const Basic: React.FC<Props> = (props) => {
         { id: 'tenant', text: '多租户' }
     ];
 
-    var defaultActionData: PermissionAction[] = [
+    const defaultActionData: PermissionAction[] = [
         { "action": "query", "describe": "查询列表", defaultCheck: true, name: '查询列表' },
         { "action": "get", "describe": "查询明细", defaultCheck: true, name: '查询明细' },
         { "action": "add", "describe": "新增", defaultCheck: true, name: '新增' },
@@ -94,7 +94,7 @@ const Basic: React.FC<Props> = (props) => {
                             wrapperCol={{ span: 12 }}
                         >
                             {getFieldDecorator('status', {
-                                initialValue: data.status || 1,
+                                initialValue: data?.status,
                                 rules: [{ required: true, message: "请选择状态" }]
                             })(
 
