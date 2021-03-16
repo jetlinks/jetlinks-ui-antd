@@ -230,9 +230,9 @@ const MediaDevice: React.FC<Props> = props => {
             dataSource={result?.data}
             columns={columns}
             rowKey="id"
-            onSearch={(params: any) => {
-              params.sorts = params.sorts.field ? params.sorts : {field: 'id', order: 'desc'};
-              handleSearch(params);
+            onSearch={() => {
+              searchParam.terms = {deviceId: deviceId};
+              handleSearch(setSearchParam);
             }}
             paginationConfig={result}
           />
