@@ -231,8 +231,7 @@ const MediaDevice: React.FC<Props> = props => {
             columns={columns}
             rowKey="id"
             onSearch={() => {
-              searchParam.terms = {deviceId: deviceId};
-              handleSearch(setSearchParam);
+              handleSearch({terms: {deviceId: deviceId}, sorts: {field: 'id', order: 'desc'}});
             }}
             paginationConfig={result}
           />
