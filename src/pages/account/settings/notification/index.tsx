@@ -9,7 +9,7 @@ import { Notification } from '../data.d';
 
 
 const NotificationView = () => {
-    const service = new Service('notifications/subscriptions/');
+    const service = new Service('notifications/subscriptions');
     const [result, setResult] = useState<any>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [searchParam, setSearchParam] = useState<any>({
