@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { Badge, Button, Card, Descriptions, Icon, message, Popconfirm, Row, Spin, Tabs, Tooltip } from 'antd';
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import { connect } from 'dva';
-import { router } from 'umi';
-import { DeviceProduct } from '../data.d';
+import React, {useEffect, useState} from 'react';
+import {Badge, Button, Card, Descriptions, Icon, message, Popconfirm, Row, Spin, Tabs, Tooltip} from 'antd';
+import {PageHeaderWrapper} from '@ant-design/pro-layout';
+import {connect} from 'dva';
+import {router} from 'umi';
+import {DeviceProduct} from '../data.d';
 import Definition from './definition';
-import { ConnectState, Dispatch } from '@/models/connect';
+import {ConnectState, Dispatch} from '@/models/connect';
 import apis from '@/services';
 import Save from '.';
 import numeral from 'numeral';
@@ -42,7 +42,7 @@ const Detail: React.FC<Props> = props => {
   };
   const {
     dispatch,
-    location: { pathname },
+    location: {pathname},
   } = props;
   const [events, setEvents] = useState<any[]>([]);
   const [functions, setFunctions] = useState<any[]>([]);
@@ -90,7 +90,7 @@ const Detail: React.FC<Props> = props => {
       },
     });
 
-    apis.deviceInstance.count(encodeQueryParam({ terms: { 'productId': id } }))
+    apis.deviceInstance.count(encodeQueryParam({terms: {'productId': id}}))
       .then(res => {
         if (res.status === 200) {
           setDeviceCount(res.result);
@@ -108,7 +108,7 @@ const Detail: React.FC<Props> = props => {
           ));
         }
       }).catch(() => {
-      });
+    });
 
     apis.deviceProdcut.units().then((response: any) => {
       if (response.status === 200) {
@@ -125,13 +125,13 @@ const Detail: React.FC<Props> = props => {
 
   const saveData = (item?: any) => {
     let data: Partial<DeviceProduct>;
-    const metadata = JSON.stringify({ events, properties, functions, tags });
+    const metadata = JSON.stringify({events, properties, functions, tags});
 
     // TODO 这个地方有疑惑，set数据之后此处数据还是未更新。原因待查
     if (item) {
-      data = { ...item, metadata };
+      data = {...item, metadata};
     } else {
-      data = { ...basicInfo, metadata };
+      data = {...basicInfo, metadata};
     }
     apis.deviceProdcut
       .saveOrUpdate(data)
@@ -147,24 +147,27 @@ const Detail: React.FC<Props> = props => {
       });
   };
 
-  const updateData = (type: string, item: any) => {
+  const updateData = (type: string, item: any, onlySave:boolean) => {
     let metadata = JSON.stringify({ events, properties, functions, tags });
     if (type === 'event') {
-      metadata = JSON.stringify({ events: item, properties, functions, tags });
+      metadata = JSON.stringify({events: item, properties, functions, tags});
     } else if (type === 'properties') {
-      metadata = JSON.stringify({ events, properties: item, functions, tags });
+      metadata = JSON.stringify({events, properties: item, functions, tags});
     } else if (type === 'function') {
-      metadata = JSON.stringify({ events, properties, functions: item, tags });
+      metadata = JSON.stringify({events, properties, functions: item, tags});
     } else if (type === 'tags') {
-      metadata = JSON.stringify({ events, properties, functions, tags: item });
+      metadata = JSON.stringify({events, properties, functions, tags: item});
     }
 
-    const data = { ...basicInfo, metadata };
+    const data = {...basicInfo, metadata};
     apis.deviceProdcut
       .saveOrUpdate(data)
       .then((re: any) => {
         if (re.status === 200) {
           message.success('保存成功');
+          if(!onlySave){
+            deploy(data)
+          }
         }
       })
       .catch(() => {
@@ -202,7 +205,7 @@ const Detail: React.FC<Props> = props => {
     });
   };
 
-  const updateInfo = (item?: any) => {
+  const updateInfo = (onlySave: boolean, item?: any) => {
     apis.deviceProdcut
       .update(item, basicInfo.id)
       .then((response: any) => {
@@ -211,6 +214,9 @@ const Detail: React.FC<Props> = props => {
           setUpdateVisible(false);
           const list = pathname.split('/');
           handleSearch(list[list.length - 1]);
+          if(!onlySave){
+            deploy(basicInfo)
+          }
         }
       })
       .catch(() => {
@@ -218,15 +224,15 @@ const Detail: React.FC<Props> = props => {
   };
 
   const content = (
-    <div style={{ marginTop: 30 }}>
+    <div style={{marginTop: 30}}>
       <Descriptions column={4}>
         <Descriptions.Item label="设备数量">
           <div>
             {numeral(deviceCount).format('0,0')}
-            <a style={{ marginLeft: 10 }}
-              onClick={() => {
-                router.push(`/device/instance?productId=${basicInfo.id}`);
-              }}
+            <a style={{marginLeft: 10}}
+               onClick={() => {
+                 router.push(`/device/instance?productId=${basicInfo.id}`);
+               }}
             >查看</a>
           </div>
         </Descriptions.Item>
@@ -240,18 +246,18 @@ const Detail: React.FC<Props> = props => {
         <span>
           产品：{basicInfo.name}
         </span>
-        <Badge style={{ marginLeft: 20 }} color={basicInfo.state === 1 ? 'green' : 'red'}
-          text={basicInfo.state === 1 ? '已发布' : '未发布'} />
+        <Badge style={{marginLeft: 20}} color={basicInfo.state === 1 ? 'green' : 'red'}
+               text={basicInfo.state === 1 ? '已发布' : '未发布'}/>
         {basicInfo.state === 1 ? (
           <Popconfirm title="确认停用？" onConfirm={() => {
             unDeploy(basicInfo);
           }}>
-            <a style={{ fontSize: 12, marginLeft: 20 }}>停用</a>
+            <a style={{fontSize: 12, marginLeft: 20}}>停用</a>
           </Popconfirm>
         ) : (<Popconfirm title="确认发布？" onConfirm={() => {
           deploy(basicInfo);
         }}>
-          <a style={{ fontSize: 12, marginLeft: 20 }}>发布</a>
+          <a style={{fontSize: 12, marginLeft: 20}}>发布</a>
         </Popconfirm>)}
       </div>
     </Row>
@@ -272,14 +278,14 @@ const Detail: React.FC<Props> = props => {
   return (
     <Spin tip="加载中..." spinning={spinning}>
       <PageHeaderWrapper title={titleInfo}
-        content={content}
-        extra={action}
+                         content={content}
+                         extra={action}
       >
         <Card>
           <Tabs>
             <Tabs.TabPane tab="产品信息" key="info">
               <Descriptions
-                style={{ marginBottom: 20 }}
+                style={{marginBottom: 20}}
                 bordered
                 column={3}
                 title={
@@ -380,21 +386,21 @@ const Detail: React.FC<Props> = props => {
                 propertyData={properties}
                 tagsData={tags}
                 unitsData={units}
-                saveEvents={(data: any) => {
+                saveEvents={(data: any, onlySave: boolean) => {
                   setEvents(data);
-                  updateData('event', data);
+                  updateData('event', data, onlySave);
                 }}
-                saveFunctions={(data: any) => {
+                saveFunctions={(data: any, onlySave: boolean) => {
                   setFunctions(data);
-                  updateData('function', data);
+                  updateData('function', data, onlySave);
                 }}
-                saveProperty={(data: any[]) => {
+                saveProperty={(data: any[], onlySave: boolean) => {
                   setProperties(data);
-                  updateData('properties', data);
+                  updateData('properties', data, onlySave);
                 }}
-                saveTags={(data: any[]) => {
+                saveTags={(data: any[], onlySave: boolean) => {
                   setTags(data);
-                  updateData('tags', data);
+                  updateData('tags', data, onlySave);
                 }}
                 update={() => handleSearch()}
               />
@@ -425,8 +431,8 @@ const Detail: React.FC<Props> = props => {
             close={() => {
               setUpdateVisible(false);
             }}
-            save={(item: any) => {
-              updateInfo(item);
+            save={(onlySave: boolean, item: any) => {
+              updateInfo(onlySave, item);
             }}
           />
         )}

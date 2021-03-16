@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Form, Input, Select, Radio, Col, Drawer, Button, Row, Icon, List, AutoComplete, InputNumber, Collapse, Spin, } from 'antd';
+import { Form, Input, Select, Radio, Col, Drawer, Button, Row, Icon, List, AutoComplete, InputNumber, Collapse, Spin, Dropdown, Menu, } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import { renderUnit } from '@/pages/device/public';
 import { PropertiesMeta } from '../data.d';
@@ -44,7 +44,7 @@ const PropertiesDefin: React.FC<Props> = props => {
   };
 
   const {
-    form: { getFieldDecorator, getFieldsValue },
+    form: { getFieldDecorator, getFieldsValue }
   } = props;
 
   const [dataType, setDataType] = useState(initState.dataType);
@@ -70,7 +70,7 @@ const PropertiesDefin: React.FC<Props> = props => {
     setDataType(value);
   };
 
-  const getFormData = () => {
+  const getFormData = (onlySave:boolean) => {
     const {
       form,
       // data,
@@ -87,7 +87,7 @@ const PropertiesDefin: React.FC<Props> = props => {
       if (dataType === 'array' && data.valueType.elementType.type === 'object') {
         data.valueType.elementType.properties = arrayProperties;
       }
-      props.save({ ...data });
+      props.save({ ...data }, onlySave);
     });
   };
 
@@ -710,8 +710,8 @@ const PropertiesDefin: React.FC<Props> = props => {
       case 'enum':
         return (
           <Select>
-            {config.type.elements.map(i => (
-              <Select.Option value={i.value}>{i.text}</Select.Option>
+            {config.type.elements.map((i: any, index: number) => (
+              <Select.Option key={index} value={i.value}>{i.text}</Select.Option>
             ))}
           </Select>
         );
@@ -738,6 +738,23 @@ const PropertiesDefin: React.FC<Props> = props => {
         })}</Collapse>
     )
   }
+
+  const menu = (
+    <Menu>
+      <Menu.Item key="1">
+        <Button type="default" onClick={() => {
+          getFormData(true);
+        }}>
+          仅保存
+        </Button>
+      </Menu.Item>
+      <Menu.Item key="2">
+        <Button onClick={() => {
+          getFormData(false);
+        }}>保存并生效</Button>
+      </Menu.Item>
+    </Menu>
+  );
 
   return (
     <div>
@@ -853,14 +870,20 @@ const PropertiesDefin: React.FC<Props> = props => {
           >
             关闭
           </Button>
-          <Button
+          <Dropdown overlay={menu}>
+            <Button icon="menu" type="primary">
+              保存<Icon type="down" />
+            </Button>
+          </Dropdown>
+          {/* <Button
             onClick={() => {
               getFormData();
             }}
             type="primary"
           >
             保存
-          </Button>
+          </Button> */}
+
         </div>
         {parameterVisible && (
           <Paramter
