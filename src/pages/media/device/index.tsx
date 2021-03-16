@@ -238,6 +238,7 @@ const MediaDevice: React.FC<Props> = () => {
             rowKey="id"
             scroll={{x: '150%'}}
             onSearch={(params: any) => {
+              params.pageSize = 10;
               params.sorts = params.sorts.field ? params.sorts : {field: 'id', order: 'desc'};
               handleSearch(params);
             }}

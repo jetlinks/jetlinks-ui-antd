@@ -21,7 +21,7 @@ interface State {
 }
 
 const initState: State = {
-  searchParam: {terms: location?.query?.terms, sorts: {field: 'id', order: 'desc'}},
+  searchParam: {pageSize: 10, terms: location?.query?.terms, sorts: {field: 'id', order: 'desc'}},
 };
 const MediaDevice: React.FC<Props> = props => {
   const {location: {pathname},} = props;
@@ -223,7 +223,7 @@ const MediaDevice: React.FC<Props> = props => {
               search={(params: any) => {
                 setSearchParam(params);
                 params ? params.deviceId = deviceId : params = {deviceId: deviceId};
-                handleSearch({terms: {...params}, sorts: {field: 'id', order: 'desc'}});
+                handleSearch({pageSize: 10, terms: {...params}, sorts: {field: 'id', order: 'desc'}});
               }}
               formItems={[
                 {
@@ -239,6 +239,7 @@ const MediaDevice: React.FC<Props> = props => {
       <Card>
         <div className={styles.StandardTable}>
           <Table
+            loading={loading}
             columns={columns}
             dataSource={(result || {}).data}
             rowKey="id"
