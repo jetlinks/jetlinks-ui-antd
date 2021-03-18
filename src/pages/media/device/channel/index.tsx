@@ -1,15 +1,15 @@
 import {PageHeaderWrapper} from "@ant-design/pro-layout"
-import {Badge, Card, Descriptions, Divider, Row} from "antd";
+import {Badge, Card, Descriptions, Divider, Row, Table} from "antd";
 import React, {Fragment, useEffect, useState} from "react";
 import styles from '@/utils/table.less';
 import SearchForm from "@/components/SearchForm";
-import {ColumnProps} from "antd/lib/table";
+import {ColumnProps, PaginationConfig, SorterResult} from "antd/lib/table";
 import Service from "../service";
 import encodeQueryParam from "@/utils/encodeParam";
 import {Dispatch} from "@/models/connect";
 import Play from './play';
 import ChannelEdit from './edit/index';
-import ProTable from "@/pages/system/permission/component/ProTable";
+import {DeviceInstance} from "@/pages/device/instance/data";
 
 interface Props {
   dispatch: Dispatch;
@@ -21,7 +21,7 @@ interface State {
 }
 
 const initState: State = {
-  searchParam: {terms: location?.query?.terms, sorts: {field: 'id', order: 'desc'}},
+  searchParam: {pageSize: 10, terms: location?.query?.terms, sorts: {field: 'id', order: 'desc'}},
 };
 const MediaDevice: React.FC<Props> = props => {
   const {location: {pathname},} = props;
@@ -173,6 +173,19 @@ const MediaDevice: React.FC<Props> = props => {
     },
   ];
 
+  const onTableChange = (
+    pagination: PaginationConfig,
+    filters: any,
+    sorter: SorterResult<DeviceInstance>,
+  ) => {
+    handleSearch({
+      pageIndex: Number(pagination.current) - 1,
+      pageSize: pagination.pageSize,
+      terms: {deviceId: deviceId},
+      sorts: sorter,
+    });
+  };
+
   const content = (
     <div style={{marginTop: 30}}>
       <Descriptions column={4}>
@@ -210,7 +223,7 @@ const MediaDevice: React.FC<Props> = props => {
               search={(params: any) => {
                 setSearchParam(params);
                 params ? params.deviceId = deviceId : params = {deviceId: deviceId};
-                handleSearch({terms: {...params}, sorts: {field: 'id', order: 'desc'}});
+                handleSearch({pageSize: 10, terms: {...params}, sorts: {field: 'id', order: 'desc'}});
               }}
               formItems={[
                 {
@@ -225,17 +238,36 @@ const MediaDevice: React.FC<Props> = props => {
       </Card>
       <Card>
         <div className={styles.StandardTable}>
-          <ProTable
+          <Table
+            loading={loading}
+            columns={columns}
+            dataSource={(result || {}).data}
+            rowKey="id"
+            onChange={onTableChange}
+            pagination={{
+              current: result.pageIndex + 1,
+              total: result.total,
+              pageSize: result.pageSize,
+              showQuickJumper: true,
+              showSizeChanger: true,
+              pageSizeOptions: ['10', '20', '50', '100'],
+              showTotal: (total: number) =>
+                `共 ${total} 条记录 第  ${result.pageIndex + 1}/${Math.ceil(
+                  result.total / result.pageSize,
+                )}页`,
+            }}
+          />
+
+          {/*<ProTable
             loading={loading}
             dataSource={result?.data}
             columns={columns}
             rowKey="id"
-            onSearch={(params: any) => {
-              params.sorts = params.sorts.field ? params.sorts : {field: 'id', order: 'desc'};
-              handleSearch(params);
+            onSearch={() => {
+              handleSearch({terms: {deviceId: deviceId}, sorts: {field: 'id', order: 'desc'}});
             }}
             paginationConfig={result}
-          />
+          />*/}
         </div>
       </Card>
       {playing && <Play data={data} close={() => {

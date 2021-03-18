@@ -131,13 +131,13 @@ const Save: React.FC<Props> = props => {
       .catch(() => {
       });
 
-    if (systemVersion === 'pro') {
+    // if (systemVersion === 'pro') {
       apis.deviceProdcut.storagePolicy().then(res => {
         if (res.status === 200) {
           setStoragePolicy(res.result);
         }
       });
-    }
+    // }
 
     if (props.data && props.data.messageProtocol) {
       onMessageProtocolChange(props.data.messageProtocol);
