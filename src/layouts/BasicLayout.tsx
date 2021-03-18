@@ -151,18 +151,18 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
   } = props;
 
   const [mark, setMark] = useState<string | boolean>(localStorage.getItem('hide_menu') || "false");
+  const hide_menu = props.location?.query?.hide_menu;
   useEffect(() => {
     if (dispatch) {
       dispatch({
         type: 'user/fetchCurrent',
       });
     }
-    const hide_menu = props.location?.query?.hide_menu;
     if (hide_menu) {
       setMark(hide_menu);
       localStorage.setItem('hide_menu', hide_menu);
     }
-  }, []);
+  }, [hide_menu]);
 
   const handleMenuCollapse = (payload: boolean): void => {
     if (dispatch) {

@@ -13,7 +13,7 @@ export interface GlobalHeaderRightProps extends ConnectProps {
   currentUser?: CurrentUser;
   menu?: boolean;
 }
-const AvatarDropdown: React.FC<GlobalHeaderRightProps> = (props) => {
+const AvatarDropdown: React.FC<GlobalHeaderRightProps> = props => {
   const onMenuClick = (event: ClickParam) => {
     const { key } = event;
 
@@ -42,13 +42,15 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = (props) => {
   } = props;
 
   useEffect(() => {
-    service.get().subscribe((resp) => {
+    const u = service.get().subscribe(resp => {
       setUser(resp);
       localStorage.setItem('user-detail', JSON.stringify(resp));
       // localStorage.setItem('tenants-admin', resp.tenants[0]?.adminMember);
-    })
+    });
+    return () => {
+      u.unsubscribe();
+    };
   }, [currentUser]);
-
 
   const menuHeaderDropdown = (
     <Menu className={styles.menu} selectedKeys={[]} onClick={onMenuClick}>
@@ -58,14 +60,14 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = (props) => {
         </Menu.Item> */}
       <Menu.Item key="settings">
         <Icon type="setting" />
-            个人设置
-        </Menu.Item>
+        个人设置
+      </Menu.Item>
       <Menu.Divider />
 
       <Menu.Item key="logout">
         <Icon type="logout" />
-          退出登录
-        </Menu.Item>
+        退出登录
+      </Menu.Item>
     </Menu>
   );
   return currentUser && currentUser.name ? (
@@ -76,15 +78,15 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = (props) => {
       </span>
     </HeaderDropdown>
   ) : (
-      <Spin
-        size="small"
-        style={{
-          marginLeft: 8,
-          marginRight: 8,
-        }}
-      />
-    );
-}
+    <Spin
+      size="small"
+      style={{
+        marginLeft: 8,
+        marginRight: 8,
+      }}
+    />
+  );
+};
 // class AvatarDropdown extends React.Component<GlobalHeaderRightProps> {
 // }
 
