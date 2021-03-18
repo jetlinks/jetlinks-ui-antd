@@ -150,7 +150,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
     },
   } = props;
 
-  const [mark, setMark] = useState<string | boolean>(false);
+  const [mark, setMark] = useState<string | boolean>(localStorage.getItem('hide_menu') || "false");
   useEffect(() => {
     if (dispatch) {
       dispatch({

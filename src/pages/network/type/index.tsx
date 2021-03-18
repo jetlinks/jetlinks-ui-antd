@@ -311,7 +311,7 @@ const Type: React.FC<Props> = props => {
                       <div className={styles.cardInfo}>
                         <div style={{ width: '50%', textAlign: 'center'}}>
                           <p>组件类型</p>
-                          <p style={{fontWeight:600}}>{item.type.name}</p>
+                          <p style={{fontWeight:600}}>{item.type}</p>
                         </div>
                         <div style={{ width: '50%', textAlign: 'center'}}>
                           <p>启动状态</p>

@@ -36,7 +36,7 @@ interface State {
 const Save: React.FC<Props> = props => {
   const version = localStorage.getItem('system-version');
   const initState: State = {
-    dataType: props.data.type?.value,
+    dataType: props.data.type,
     supportsType: [],
     certificateList: [],
     tcpServerParseType: props.data?.configuration?.parserType || 'DIRECT',
@@ -1425,7 +1425,7 @@ const Save: React.FC<Props> = props => {
         <Form.Item label="组件类型">
           {getFieldDecorator('type', {
             rules: [{ required: true, message: '请选择组件类型' }],
-            initialValue: props.data?.type?.value,
+            initialValue: props.data?.type,
           })(
             <Select disabled={!!props.data.id}
               onChange={(value: string) => {
