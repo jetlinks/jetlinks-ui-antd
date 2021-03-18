@@ -8,7 +8,7 @@ import ProLayout, {
   BasicLayoutProps as ProLayoutProps,
   Settings,
 } from '@ant-design/pro-layout';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'umi';
 import { Dispatch } from 'redux';
 import { connect } from 'dva';
@@ -62,23 +62,33 @@ const menuDataRender = (menuList: MenuDataItem[]): MenuDataItem[] => {
   const tenant = localStorage.getItem('tenants-admin');
   reloadAuthorized();
   if (tenant === 'true') {
-    return menuList.filter(j => j.tenant).filter(i => i.tenant.indexOf('admin') > -1).map(item => {
-      const localItem: any = {
-        ...item,
-        // icon: <MenuFont type={item.iconfont} />,
-        children: item.children ? menuDataRender(item.children) : []
-      };
-      return localItem?.version && version === 'community' ? [] : Authorized.check(item.authority, localItem, null) as MenuDataItem;
-    });
+    return menuList
+      .filter(j => j.tenant)
+      .filter(i => i.tenant.indexOf('admin') > -1)
+      .map(item => {
+        const localItem: any = {
+          ...item,
+          // icon: <MenuFont type={item.iconfont} />,
+          children: item.children ? menuDataRender(item.children) : [],
+        };
+        return localItem?.version && version === 'community'
+          ? []
+          : (Authorized.check(item.authority, localItem, null) as MenuDataItem);
+      });
   } else if (tenant === 'false') {
-    return menuList.filter(j => j.tenant).filter(i => i.tenant.indexOf('member') > -1).map(item => {
-      const localItem: any = {
-        ...item,
-        // icon: <MenuFont type={item.iconfont} />,
-        children: item.children ? menuDataRender(item.children) : []
-      };
-      return localItem?.version && version === 'community' ? [] : Authorized.check(item.authority, localItem, null) as MenuDataItem;
-    });
+    return menuList
+      .filter(j => j.tenant)
+      .filter(i => i.tenant.indexOf('member') > -1)
+      .map(item => {
+        const localItem: any = {
+          ...item,
+          // icon: <MenuFont type={item.iconfont} />,
+          children: item.children ? menuDataRender(item.children) : [],
+        };
+        return localItem?.version && version === 'community'
+          ? []
+          : (Authorized.check(item.authority, localItem, null) as MenuDataItem);
+      });
   }
   //  else {
   //   return menuList.filter(j => j.tenant).map(item => {
@@ -89,14 +99,16 @@ const menuDataRender = (menuList: MenuDataItem[]): MenuDataItem[] => {
   //     };
   //     return localItem?.version && version === 'community' ? [] : Authorized.check(item.authority, localItem, null) as MenuDataItem;
   //   });
-  // } 
+  // }
   return menuList.map(item => {
     const localItem: any = {
       ...item,
       // icon: <MenuFont type={item.iconfont} />,
-      children: item.children ? menuDataRender(item.children) : []
+      children: item.children ? menuDataRender(item.children) : [],
     };
-    return localItem?.version && version === 'community' ? [] : Authorized.check(item.authority, localItem, null) as MenuDataItem;
+    return localItem?.version && version === 'community'
+      ? []
+      : (Authorized.check(item.authority, localItem, null) as MenuDataItem);
   });
 };
 
@@ -138,6 +150,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
     },
   } = props;
 
+  const [mark, setMark] = useState<string | boolean>(false);
   useEffect(() => {
     if (dispatch) {
       dispatch({
@@ -146,10 +159,10 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
     }
     const hide_menu = props.location?.query?.hide_menu;
     if (hide_menu) {
+      setMark(hide_menu);
       localStorage.setItem('hide_menu', hide_menu);
     }
   }, []);
-
 
   const handleMenuCollapse = (payload: boolean): void => {
     if (dispatch) {
@@ -164,54 +177,54 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
     authority: undefined,
   };
 
+  return mark === 'true' ? (
+    <Authorized authority={authorized!.authority} noMatch={noMatch}>
+      {children}
+    </Authorized>
+  ) : (
+    <ProLayout
+      // logo={logo}
+      logo={settings.titleIcon || logo}
+      menuHeaderRender={(logoDom, titleDom) => (
+        <Link to="/">
+          {logoDom}
+          {titleDom}
+        </Link>
+      )}
+      onCollapse={handleMenuCollapse}
+      menuItemRender={(menuItemProps, defaultDom) => {
+        if (menuItemProps.isUrl || menuItemProps.children || !menuItemProps.path) {
+          return defaultDom;
+        }
 
-  return (
-    localStorage.getItem('hide_menu') === 'true' ?
-      <Authorized authority={authorized!.authority} noMatch={noMatch} >
+        return <Link to={menuItemProps.path}>{defaultDom}</Link>;
+      }}
+      breadcrumbRender={(routers = []) => [
+        {
+          path: '/',
+          breadcrumbName: '首页',
+        },
+        ...routers,
+      ]}
+      itemRender={(route, params, routes, paths) => {
+        const first = routes.indexOf(route) === 0;
+        return first ? (
+          <Link to={paths.join('/')}>{route.breadcrumbName}</Link>
+        ) : (
+          <span>{route.breadcrumbName}</span>
+        );
+      }}
+      footerRender={footerRender}
+      menuDataRender={menuDataRender}
+      // menuDataRender={()=>menuData}
+      rightContentRender={() => <RightContent />}
+      {...props}
+      {...settings}
+    >
+      <Authorized authority={authorized!.authority} noMatch={noMatch}>
         {children}
-      </Authorized > : <ProLayout
-        // logo={logo}
-        logo={settings.titleIcon || logo}
-        menuHeaderRender={(logoDom, titleDom) => (
-          <Link to="/">
-            {logoDom}
-            {titleDom}
-          </Link>
-        )}
-        onCollapse={handleMenuCollapse}
-        menuItemRender={(menuItemProps, defaultDom) => {
-          if (menuItemProps.isUrl || menuItemProps.children || !menuItemProps.path) {
-            return defaultDom;
-          }
-
-          return <Link to={menuItemProps.path}>{defaultDom}</Link>;
-        }}
-        breadcrumbRender={(routers = []) => [
-          {
-            path: '/',
-            breadcrumbName: '首页',
-          },
-          ...routers,
-        ]}
-        itemRender={(route, params, routes, paths) => {
-          const first = routes.indexOf(route) === 0;
-          return first ? (
-            <Link to={paths.join('/')}>{route.breadcrumbName}</Link>
-          ) : (
-              <span>{route.breadcrumbName}</span>
-            );
-        }}
-        footerRender={footerRender}
-        menuDataRender={menuDataRender}
-        // menuDataRender={()=>menuData}
-        rightContentRender={() => <RightContent />}
-        {...props}
-        {...settings}
-      >
-        <Authorized authority={authorized!.authority} noMatch={noMatch}>
-          {children}
-        </Authorized>
-      </ProLayout>
+      </Authorized>
+    </ProLayout>
   );
 };
 
