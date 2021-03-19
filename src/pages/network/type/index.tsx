@@ -169,8 +169,9 @@ const Type: React.FC<Props> = props => {
 
   const renderDebug = () => {
     const {
-      type: { value },
+      type,
     } = currentItem;
+    let value = type
     if (value === 'MQTT_CLIENT') {
       return <MqttClient close={() => setDebuggerVisible(false)} item={currentItem} />;
     }
