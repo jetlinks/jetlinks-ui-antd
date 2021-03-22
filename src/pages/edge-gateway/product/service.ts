@@ -6,6 +6,14 @@ export async function list(params: any) {
         params,
     });
 }
+
+export async function queryNoPagin(params?: any) {
+  return request(`/jetlinks/edge/product/_query/no-paging`, {
+    method: 'GET',
+    params: params,
+  })
+}
+
 export async function save(params: any) {
     return request(`/jetlinks/edge/product`, {
       method: 'POST',

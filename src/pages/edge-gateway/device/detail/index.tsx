@@ -2,7 +2,8 @@ import { PageHeaderWrapper } from "@ant-design/pro-layout";
 import { Avatar, Badge, Card, Descriptions, Spin, Tabs } from "antd";
 import React, { useEffect, useState } from "react";
 import img from "@/pages/edge-gateway/device/img/edge-device.png";
-import Status from './status';
+import Status from './status/status';
+import Video from './video';
 import apis from '@/services';
 import moment from "moment";
 
@@ -40,6 +41,10 @@ const Detail: React.FC<Props> = props => {
         {
             key: 'status',
             tab: '运行状态'
+        },
+        {
+            key: 'video',
+            tab: '视频模块'
         }
     ]
     const content = {
@@ -57,7 +62,8 @@ const Detail: React.FC<Props> = props => {
                 <Descriptions.Item label="说明">{info.description}</Descriptions.Item>
             </Descriptions>
         </div>,
-        status: <Status refresh={() => {getInfo(deviceId)}} device={info} />
+        status: <Status refresh={() => {getInfo(deviceId)}} device={info} />,
+        video: <Video device={info}/>
     }
 
     const getInfo = (id: string) => {

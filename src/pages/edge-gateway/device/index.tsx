@@ -1,7 +1,7 @@
 import { PageHeaderWrapper } from "@ant-design/pro-layout";
 import React, { useEffect, useState } from "react";
 import styles from '@/utils/table.less';
-import { Avatar, Badge, Card, Icon, List, Tooltip } from "antd";
+import { Avatar, Badge, Button, Card, Dropdown, Icon, List, Menu, message, Popconfirm, Tooltip } from "antd";
 import apis from '@/services';
 import SearchForm from "@/components/SearchForm";
 import encodeQueryParam from "@/utils/encodeParam";
@@ -45,6 +45,34 @@ const edgeDevice: React.FC<Props> = () => {
             }
         })
     }
+
+    // const changeDeploy = (record: any) => {
+    //     apis.deviceInstance
+    //         .changeDeploy(record.id)
+    //         .then(response => {
+    //             if (response.status === 200) {
+    //                 message.success('操作成功');
+    //                 deviceIdList.splice(0, deviceIdList.length);
+    //                 handleSearch(searchParam);
+    //             }
+    //         })
+    //         .catch(() => {
+    //         });
+    // };
+
+    // const unDeploy = (record: any) => {
+    //     apis.deviceInstance
+    //         .unDeploy(record.id)
+    //         .then(response => {
+    //             if (response.status === 200) {
+    //                 message.success('操作成功');
+    //                 deviceIdList.splice(0, deviceIdList.length);
+    //                 handleSearch(searchParam);
+    //             }
+    //         })
+    //         .catch(() => {
+    //         });
+    // };
 
     const onChange = (page: number, pageSize: number) => {
         handleSearch({
@@ -94,16 +122,17 @@ const edgeDevice: React.FC<Props> = () => {
                             }}
                         />
                     </div>
-                    {/* <div className={styles.tableListOperator}>
+                    <div className={styles.tableListOperator}>
                         <Button
                             icon="plus"
                             type="primary"
                             onClick={() => {
-
+                                setSaveVisible(true);
+                                setInfo({});
                             }}>
                             新增
-            </Button>
-                    </div> */}
+                        </Button>
+                    </div>
                 </div>
             </Card>
             <br />
@@ -152,6 +181,47 @@ const edgeDevice: React.FC<Props> = () => {
                                                         }}
                                                     />
                                                 </Tooltip>,
+                                                // <Tooltip key="more_actions" title="">
+                                                //     <Dropdown overlay={
+                                                //         <Menu>
+                                                //             <Menu.Item key="1">
+                                                //                 <Popconfirm
+                                                //                     placement="topRight"
+                                                //                     title={item.state !== 0 ? '确定停用此组件吗？' : '确定发布此组件吗？'}
+                                                //                     onConfirm={() => {
+                                                //                         if (item.state === 0) {
+                                                //                             deploy(item);
+                                                //                         } else {
+                                                //                             unDeploy(item);
+                                                //                         }
+                                                //                     }}
+                                                //                 >
+                                                //                     <Button icon={item.state !== 0 ? 'close' : 'check'} type="link">
+                                                //                         {item.state !== 0 ? '停用' : '发布'}
+                                                //                     </Button>
+                                                //                 </Popconfirm>
+                                                //                 <Popconfirm
+                                                //                         title="确认删除？"
+                                                //                         onConfirm={() => {
+                                                //                             delelteInstance(record);
+                                                //                         }}
+                                                //                     >
+                                                //                         <a>删除</a>
+                                                //                     </Popconfirm>
+                                                //                     <Popconfirm
+                                                //                     title="确认禁用设备？"
+                                                //                     onConfirm={() => {
+                                                //                         unDeploy(record);
+                                                //                     }}
+                                                //                 >
+                                                //                     <a>禁用</a>
+                                                //                 </Popconfirm>
+                                                //             </Menu.Item>
+                                                //         </Menu>
+                                                //     }>
+                                                //         <Icon type="ellipsis" />
+                                                //     </Dropdown>
+                                                // </Tooltip>,
                                             ]}
                                         >
                                             <Card.Meta
@@ -190,11 +260,11 @@ const edgeDevice: React.FC<Props> = () => {
             {
                 saveVisible && <Save
                     close={() => {
-                        setSaveVisible(false); 
+                        setSaveVisible(false);
                     }}
                     save={() => {
                         handleSearch(searchParam);
-                        setSaveVisible(false); 
+                        setSaveVisible(false);
                     }}
                     data={info}
                 />
