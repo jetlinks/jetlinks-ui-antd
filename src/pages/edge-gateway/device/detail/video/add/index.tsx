@@ -51,7 +51,7 @@ const Add: React.FC<Props> = props => {
             align: 'center',
             render: (text: string, record: any) => (
                 <div style={{ width: '100%', textAlign: 'center' }}>
-                    <div style={{ width: '100%', fontWeight: 600, textAlign: 'center' }}>{record.id}</div>
+                    <div style={{ width: '100%', fontWeight: 600, textAlign: 'center' }}>{record.name}</div>
                     <div style={{ width: '100%', display: 'flex', justifyContent: 'center', color: 'rgba(0, 0, 0, 0.4)' }}>
                         <div style={{ fontSize: '10px', marginRight: '5px' }}>IP： {record.host}</div>
                         <div style={{ fontSize: '10px' }}>通道：{record.channelNumber || 0}个</div>
@@ -76,24 +76,19 @@ const Add: React.FC<Props> = props => {
                         setAddVisible(true);
                         setDevice(record);
                     }}>编辑</a>
-                    {
-                        record.status?.value === 'offline' ?
-                            <>
-                                <Divider type="vertical" />
-                                <Popconfirm
-                                    title="确认删除吗？"
-                                    onConfirm={() => {
-                                        apis.edgeDevice.delDevice(props.device.id, { id: record.id }).then(res => {
-                                            if (res.status === 200) {
-                                                message.success('删除成功！');
-                                                getDevice(props.device.id, deviceParams);
-                                            }
-                                        })
-                                    }}>
-                                    <a>删除</a>
-                                </Popconfirm>
-                            </> : null
-                    }
+                    <Divider type="vertical" />
+                    <Popconfirm
+                        title="确认删除吗？"
+                        onConfirm={() => {
+                            apis.edgeDevice.delDevice(props.device.id, { id: record.id }).then(res => {
+                                if (res.status === 200) {
+                                    message.success('删除成功！');
+                                    getDevice(props.device.id, deviceParams);
+                                }
+                            })
+                        }}>
+                        <a>删除</a>
+                    </Popconfirm>
                 </>
             ),
         },
@@ -152,29 +147,24 @@ const Add: React.FC<Props> = props => {
                         setChannel(record);
                         setChannelVisible(true);
                     }}>编辑</a>
-                    {
-                        record.status?.value === 'offline' ? <>
-                            <Divider type="vertical" />
-                            <Popconfirm
-                                title="确认删除吗？"
-                                onConfirm={() => {
-                                    apis.edgeDevice.delChannel(props.device.id, { channelDataId: record.id }).then(res => {
-                                        if (res.status === 200) {
-                                            message.success('删除成功！');
-                                            getChannel(props.device.id, channelParams);
-                                        }
-                                    })
-                                }}>
-                                <a>删除</a>
-                            </Popconfirm>
-                        </> : <>
-                            <Divider type="vertical" />
-                            <a onClick={() => {
-                                setChannel(record);
-                                setPlaylVisible(true);
-                            }}>查看</a>
-                        </>
-                    }
+                    <Divider type="vertical" />
+                    <Popconfirm
+                        title="确认删除吗？"
+                        onConfirm={() => {
+                            apis.edgeDevice.delChannel(props.device.id, { channelDataId: record.id }).then(res => {
+                                if (res.status === 200) {
+                                    message.success('删除成功！');
+                                    getChannel(props.device.id, channelParams);
+                                }
+                            })
+                        }}>
+                        <a>删除</a>
+                    </Popconfirm>
+                    <Divider type="vertical" />
+                    <a onClick={() => {
+                        setChannel(record);
+                        setPlaylVisible(true);
+                    }}>播放</a>
                 </>
             ),
         },

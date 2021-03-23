@@ -36,7 +36,7 @@ const ChannelEdit: React.FC<Props> = props => {
             onOk={() => {
                 form.validateFields((err, fileValue) => {
                     if (err) return;
-                    apis.edgeDevice.saveChannel(id, {...fileValue}).then(res => {
+                    apis.edgeDevice.saveChannel(id, {...fileValue, id: props.data.id}).then(res => {
                         if(res.status === 200){
                             message.success('保存成功！');
                             props.save();
