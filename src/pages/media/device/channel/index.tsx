@@ -89,13 +89,6 @@ const MediaDevice: React.FC<Props> = props => {
       title: '通道名称',
       dataIndex: 'name',
       ellipsis: true,
-      // onCell: record => {
-      //   return {
-      //     onDoubleClick: () => {
-      //       console.log(record);
-      //     },
-      //   };
-      // }
     },
     {
       title: '厂商',
@@ -180,11 +173,7 @@ const MediaDevice: React.FC<Props> = props => {
                   },
                   () => {
                     setLoading(false);
-                    handleSearch({
-                      pageSize: 10,
-                      terms: {...searchParam.terms, deviceId: deviceId},
-                      sorts: {field: 'id', order: 'desc'}
-                    });
+                    handleSearch(searchParam);
                   }
                 );
               }}
@@ -202,10 +191,12 @@ const MediaDevice: React.FC<Props> = props => {
     filters: any,
     sorter: SorterResult<DeviceInstance>,
   ) => {
+    let {terms} = searchParam;
+
     handleSearch({
       pageIndex: Number(pagination.current) - 1,
       pageSize: pagination.pageSize,
-      terms: {...filters, deviceId: deviceId},
+      terms: terms,
       sorts: sorter,
     })
   };
@@ -269,15 +260,15 @@ const MediaDevice: React.FC<Props> = props => {
             rowKey="id"
             onChange={onTableChange}
             pagination={{
-              current: result.pageIndex + 1,
-              total: result.total,
-              pageSize: result.pageSize,
+              current: result?.pageIndex + 1,
+              total: result?.total,
+              pageSize: result?.pageSize,
               showQuickJumper: true,
               showSizeChanger: true,
               pageSizeOptions: ['10', '20', '50', '100'],
               showTotal: (total: number) =>
-                `共 ${total} 条记录 第  ${result.pageIndex + 1}/${Math.ceil(
-                  result.total / result.pageSize,
+                `共 ${total} 条记录 第  ${result?.pageIndex + 1}/${Math.ceil(
+                  result?.total / result?.pageSize,
                 )}页`,
             }}
           />
