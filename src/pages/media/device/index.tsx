@@ -179,26 +179,44 @@ const MediaDevice: React.FC<Props> = () => {
           >
             查看通道
           </a>
-          {record.state.value === 'online' && (
-            <>
-              <Divider type="vertical"/>
-              <a
-                onClick={() => {
-                  setLoading(true);
-                  service._sync(record.id).subscribe(
-                    () => {
-                      message.success('通道更新成功');
-                    },
-                    () => {
-                      message.error('通道更新失败');
-                    },
-                    () => setLoading(false),
-                  );
-                }}
-              >
-                更新通道
-              </a>
-            </>
+          <Divider type="vertical"/>
+          {record.state.value === 'online' ? (
+            <a
+              onClick={() => {
+                setLoading(true);
+                service._sync(record.id).subscribe(
+                  () => {
+                    message.success('通道更新成功');
+                  },
+                  () => {
+                    message.error('通道更新失败');
+                  },
+                  () => setLoading(false),
+                );
+              }}
+            >
+              更新通道
+            </a>
+          ):(
+            <a
+              onClick={() => {
+                setLoading(true);
+                service.remove(record.id).subscribe(
+                  () => {
+                    message.success('设备删除成功');
+                  },
+                  () => {
+                    message.error('设备删除失败');
+                  },
+                  () => {
+                    handleSearch(searchParam);
+                    setLoading(false);
+                  },
+                );
+              }}
+            >
+              删除
+            </a>
           )}
         </Fragment>
       ),
@@ -250,7 +268,7 @@ const MediaDevice: React.FC<Props> = () => {
         <DeviceUpdate
           close={() => {
             setDeviceUpdate(false);
-            handleSearch(encodeQueryParam(searchParam));
+            handleSearch(searchParam);
           }}
           data={deviceData}
         />

@@ -1,5 +1,5 @@
 import {PageHeaderWrapper} from "@ant-design/pro-layout"
-import {Badge, Card, Descriptions, Divider, Row, Table} from "antd";
+import {Badge, Card, Descriptions, Divider, message, Row, Table} from "antd";
 import React, {Fragment, useEffect, useState} from "react";
 import styles from '@/utils/table.less';
 import SearchForm from "@/components/SearchForm";
@@ -158,7 +158,7 @@ const MediaDevice: React.FC<Props> = props => {
             编辑
           </a>
           <Divider type="vertical"/>
-          {record.status.value === 'online' && (
+          {record.status.value === 'online' ? (
             <a
               onClick={() => {
                 setPlaying(true);
@@ -166,6 +166,30 @@ const MediaDevice: React.FC<Props> = props => {
               }}
             >
               播放
+            </a>
+          ) : (
+            <a
+              onClick={() => {
+                setLoading(true);
+                service.remove(record.id).subscribe(
+                  () => {
+                    message.success('通道删除成功');
+                  },
+                  () => {
+                    message.error('通道删除失败');
+                  },
+                  () => {
+                    setLoading(false);
+                    handleSearch({
+                      pageSize: 10,
+                      terms: {...searchParam.terms, deviceId: deviceId},
+                      sorts: {field: 'id', order: 'desc'}
+                    });
+                  }
+                );
+              }}
+            >
+              删除
             </a>
           )}
         </Fragment>
@@ -181,9 +205,9 @@ const MediaDevice: React.FC<Props> = props => {
     handleSearch({
       pageIndex: Number(pagination.current) - 1,
       pageSize: pagination.pageSize,
-      terms: {deviceId: deviceId},
+      terms: {...filters, deviceId: deviceId},
       sorts: sorter,
-    });
+    })
   };
 
   const content = (
