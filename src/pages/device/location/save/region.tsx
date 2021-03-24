@@ -63,7 +63,7 @@ const SaveRegion: React.FC<Props> = props => {
                 id: item.properties.id,
                 pId: item.properties.parentId,
                 value: item.properties.id,
-                title: item.properties.name
+                title: `${item.properties.name}（${item.properties.id}）`
               })
             });
             setRegionList(region);
@@ -77,6 +77,11 @@ const SaveRegion: React.FC<Props> = props => {
   const onValidateForm = async () => {
     form.validateFields((err, fileValue) => {
       if (err) return;
+
+      if (fileValue.id === fileValue.parentId) {
+        message.error('上级区域选择错误，请重新选择');
+        return;
+      }
 
       if (regionType === 'geoJsonInfo') {
         let geoJson = JSON.parse(fileValue.geoJson);
@@ -259,9 +264,9 @@ const SaveRegion: React.FC<Props> = props => {
                 initialValue: props.data.properties?.parentId,
               })(
                 <TreeSelect dropdownStyle={{maxHeight: 400}}
-                  allowClear treeDataSimpleMode showSearch
-                  placeholder="上级区域" treeData={regionList}
-                  treeNodeFilterProp='title' searchPlaceholder='选择查看区域，可输入查询'
+                            allowClear treeDataSimpleMode showSearch
+                            placeholder="上级区域" treeData={regionList}
+                            treeNodeFilterProp='title' searchPlaceholder='选择查看区域，可输入查询'
                 />
               )}
             </Form.Item>
