@@ -162,6 +162,7 @@ const Location: React.FC<Props> = props => {
         .then((response: any) => {
           if (response.status === 200) {
             setAlarmLogData(response.result);
+            setSpinning(false);
           }
         })
         .catch(() => {
@@ -706,18 +707,20 @@ const Location: React.FC<Props> = props => {
                       resetPathPolygon();
 
                       //默认取出区域下拉列表中的第一个区域以及下属区域
-                      regionList[0].data.geometry.coordinates.map((path: any) => {
-                        pathPolygon.push(path[0]);
-                      });
+                      if (regionList.length > 0) {
+                        regionList[0].data.geometry.coordinates.map((path: any) => {
+                          pathPolygon.push(path[0]);
+                        });
 
-                      regionList.map((region: any) => {
-                        if (String(regionList[0].id) === String(region.pId)) {
-                          region.data.geometry.coordinates.map((path: any) => {
-                            pathPolygon.push(path[0]);
-                          });
-                        }
-                      });
-                      setPathPolygon([...pathPolygon]);
+                        regionList.map((region: any) => {
+                          if (String(regionList[0].id) === String(region.pId)) {
+                            region.data.geometry.coordinates.map((path: any) => {
+                              pathPolygon.push(path[0]);
+                            });
+                          }
+                        });
+                        setPathPolygon([...pathPolygon]);
+                      }
                       // 结束
                       handleSearch({pageSize: 10, sorts: {field: 'alarmTime', order: 'desc'}});
                       mapCreated.remove(infoWindow);
