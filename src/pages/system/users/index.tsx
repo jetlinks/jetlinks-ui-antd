@@ -147,7 +147,7 @@ const UserList: React.FC<Props> = props => {
             payload: encodeQueryParam(user),
             callback: (response: any) => {
                 if (response.status === 200) {
-                    message.success("添加成功");
+                    message.success("保存成功");
                     setSaveVisible(false);
                     handleSearch(searchParam);
                     setCurrentItem({})

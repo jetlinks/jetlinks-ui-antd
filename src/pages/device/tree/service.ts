@@ -27,6 +27,15 @@ class Service extends BaseService<any>{
 
     public saveGroup = (data: any) => defer(
         () => from(request(`/jetlinks/device/group`, {
+            method: 'POST',
+            data,
+            errorHandler: (res) => { message.error(res.data.message) }
+        })).pipe(
+            filter(resp => resp.status === 200),
+            map(resp => resp.result)
+        ));
+    public saveOrUpdataGroup = (data: any) => defer(
+        () => from(request(`/jetlinks/device/group`, {
             method: 'PATCH',
             data,
             errorHandler: (res) => { message.error(res.data.message) }

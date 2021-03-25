@@ -1,12 +1,12 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import Form from 'antd/es/form';
-import {FormComponentProps} from 'antd/lib/form';
-import {Button, Input, message, Modal, Select, Upload} from 'antd';
-import {FirmwareData} from '../data';
-import {UploadProps} from 'antd/lib/upload';
-import {getAccessToken} from '@/utils/authority';
+import { FormComponentProps } from 'antd/lib/form';
+import { Button, Input, message, Modal, Select, Upload } from 'antd';
+import { FirmwareData } from '../data';
+import { UploadProps } from 'antd/lib/upload';
+import { getAccessToken } from '@/utils/authority';
 import apis from '@/services';
-import {DeviceProduct} from '@/pages/device/product/data';
+import { DeviceProduct } from '@/pages/device/product/data';
 
 interface Props extends FormComponentProps {
   close: Function;
@@ -27,7 +27,7 @@ const Save: React.FC<Props> = props => {
   };
 
   const {
-    form: {getFieldDecorator},
+    form: { getFieldDecorator },
     form,
   } = props;
 
@@ -87,6 +87,7 @@ const Save: React.FC<Props> = props => {
           size: info.file.size,
           url: info.file.response.result,
         });
+        form.setFieldsValue({ 'url': info.file.response.result })
         message.success('文件上传成功');
       }
     },
@@ -103,15 +104,15 @@ const Save: React.FC<Props> = props => {
       }}
       onCancel={() => props.close()}
     >
-      <Form labelCol={{span: 6}} wrapperCol={{span: 18}} key="firmware-form">
+      <Form labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} key="firmware-form">
         <Form.Item key="productId" label="所属产品">
           {getFieldDecorator('productId', {
-            rules: [{required: true, message: '所属产品必填'}],
+            rules: [{ required: true, message: '所属产品必填' }],
             initialValue: props.data.productId,
           })(<Select placeholder="选择所属产品" showSearch={true} allowClear={true}
-                     filterOption={(inputValue, option) =>
-                       option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
-                     }
+            filterOption={(inputValue, option) =>
+              option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
+            }
           >
             {productList.map(item => (
               <Select.Option value={item.id}>{item.name}</Select.Option>
@@ -121,30 +122,30 @@ const Save: React.FC<Props> = props => {
         <Form.Item key="name" label="固件名称">
           {getFieldDecorator('name', {
             rules: [
-              {required: true, message: '请输入固件名称'},
-              {max: 200, message: '固件名称不超过200个字符'}
+              { required: true, message: '请输入固件名称' },
+              { max: 200, message: '固件名称不超过200个字符' }
             ],
             initialValue: props.data.name,
-          })(<Input placeholder="输入固件名称"/>)}
+          })(<Input placeholder="输入固件名称" />)}
         </Form.Item>
         <Form.Item key="version" label="版本号">
           {getFieldDecorator('version', {
             rules: [
-              {required: true, message: '版本号必填'},
-              {pattern: new RegExp(/^[0-9]+\.[0-9]+\.[0-9]+$/, "g"), message: '版本号格式：0.0.0'}
+              { required: true, message: '版本号必填' },
+              { pattern: new RegExp(/^[0-9]+\.[0-9]+\.[0-9]+$/, "g"), message: '版本号格式：0.0.0' }
             ],
             initialValue: props.data.version,
-          })(<Input placeholder="输入版本号"/>)}
+          })(<Input placeholder="输入版本号" />)}
         </Form.Item>
         <Form.Item key="versionOrder" label="版本序号">
           {getFieldDecorator('versionOrder', {
-            rules: [{required: true, message: '版本序号必填'}],
+            rules: [{ required: true, message: '版本序号必填' }],
             initialValue: props.data.versionOrder,
-          })(<Input placeholder="输入版本序号"/>)}
+          })(<Input placeholder="输入版本序号" />)}
         </Form.Item>
         <Form.Item key="signMethod" label="签名方式">
           {getFieldDecorator('signMethod', {
-            rules: [{required: true, message: '签名方式必填'}],
+            rules: [{ required: true, message: '签名方式必填' }],
             initialValue: props.data.signMethod,
           })(<Select placeholder="选择签名方式">
             <Select.Option value='MD5'>MD5</Select.Option>
@@ -153,11 +154,14 @@ const Save: React.FC<Props> = props => {
         </Form.Item>
         <Form.Item key="sign" label="签名">
           {getFieldDecorator('sign', {
-            rules: [{required: true, message: '签名必填'}],
+            rules: [{ required: true, message: '签名必填' }],
             initialValue: props.data.sign,
-          })(<Input placeholder="输入签名"/>)}
+          })(<Input placeholder="输入签名" />)}
         </Form.Item>
         <Form.Item label="文件上传" key='uploadFile'>
+          {getFieldDecorator('url', {
+            initialValue: props.data.url,
+          })(<Input />)}
           <Upload {...uploadProps}>
             <Button icon="upload">上传文件</Button>
           </Upload>
@@ -165,7 +169,7 @@ const Save: React.FC<Props> = props => {
         <Form.Item label="描述" key='description'>
           {getFieldDecorator('description', {
             initialValue: props.data.description,
-          })(<Input.TextArea rows={4}/>)}
+          })(<Input.TextArea rows={4} />)}
         </Form.Item>
       </Form>
     </Modal>
@@ -173,3 +177,4 @@ const Save: React.FC<Props> = props => {
 };
 
 export default Form.create<Props>()(Save);
+

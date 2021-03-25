@@ -460,7 +460,8 @@ const DeviceModel: React.FC<Props> = props => {
                             </div>
                             <div style={{ width: '33%', textAlign: 'center' }}>
                               <p style={cardInfoTitle}>产品类型</p>
-                              <p style={{ fontSize: 14, fontWeight: 600 }}>{item.deviceType?.text}</p>
+                              <AutoHide title={item.deviceType?.text} style={{ fontSize: 14, fontWeight: 600, width: '95%' }} />
+                              {/* <p style={{ fontSize: 14, fontWeight: 600 }}>{item.deviceType?.text}</p> */}
                             </div>
                           </div>
                         </div>

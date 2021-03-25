@@ -164,7 +164,7 @@ const Gateway: React.FC<Props> = props => {
       dataIndex: 'networkId',
       render: text => {
         const temp = networkList.find((item: any) => item.id === text);
-        return temp ? temp.type?.name : text;
+        return temp ? temp.name : text;
       },
     },
     {

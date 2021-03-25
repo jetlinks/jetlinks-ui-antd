@@ -37,14 +37,25 @@ const GroupList: React.FC<Props> = props => {
   }, []);
 
   const saveGroup = (item: GroupItem) => {
-    service.saveGroup(item).subscribe(
-      () => message.success('保存成功'),
-      () => {},
-      () => {
-        setSaveVisible(false);
-        search();
-      },
-    );
+    if(current.id){//编辑
+      service.saveOrUpdataGroup(item).subscribe(
+        () => message.success('保存成功'),
+        () => {},
+        () => {
+          setSaveVisible(false);
+          search();
+        },
+      );
+    }else{  //新增
+      service.saveGroup(item).subscribe(
+        () => message.success('保存成功'),
+        () => {},
+        () => {
+          setSaveVisible(false);
+          search();
+        },
+      );
+    }
   };
   return (
     <PageHeaderWrapper title="设备分组">
@@ -56,6 +67,7 @@ const GroupList: React.FC<Props> = props => {
             onClick={() => {
               setSaveVisible(true);
               setAdd(true);
+              setCurrnet({});
             }}
           >
             <Icon type="plus" />

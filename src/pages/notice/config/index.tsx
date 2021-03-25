@@ -186,7 +186,7 @@ const Config: React.FC<Props> = props => {
             <StandardFormRow title="组件类型" block style={{ paddingBottom: 11 }}>
               <Form.Item>
                 <TagSelect
-                  expandable
+                  // expandable
                   onChange={(value: any[]) => {
                     setFilterType(value);
                     onSearch(value, undefined);
