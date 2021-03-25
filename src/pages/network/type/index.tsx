@@ -214,21 +214,26 @@ const Type: React.FC<Props> = props => {
         <Card bordered={false}>
           <Form layout="inline">
             <StandardFormRow title="组件类型" block style={{ paddingBottom: 11 }}>
-              <Form.Item>
-                <TagSelect
-                  expandable
-                  onChange={(value: any[]) => {
-                    setFilterType(value);
-                    onSearch(value, undefined);
-                  }}
-                >
-                  {supportsType.map(item => (
-                    <TagSelect.Option key={item.id} value={item.id}>
-                      {item.name}
-                    </TagSelect.Option>
-                  ))}
-                </TagSelect>
-              </Form.Item>
+              <Row gutter={24}>
+                <Col lg={20}>
+                  <Form.Item>
+                    <TagSelect
+                      expandable
+                      onChange={(value: any[]) => {
+                        setFilterType(value);
+                        onSearch(value, undefined);
+                      }}
+                    >
+                      {supportsType.map(item => (
+                        <TagSelect.Option key={item.id} value={item.id}>
+                          {item.name}
+                        </TagSelect.Option>
+                      ))}
+                    </TagSelect>
+                  </Form.Item>
+                </Col>
+              </Row>
+
             </StandardFormRow>
             <StandardFormRow title="其它选项" grid last>
               <Row gutter={16}>
@@ -305,16 +310,16 @@ const Type: React.FC<Props> = props => {
                   >
                     <Card.Meta
                       avatar={<Avatar size="small" src={item.avatar} />}
-                      title={<AutoHide title={item.name} style={{width: '95%',fontWeight:600}}/>}
-                      style={{fontWeight:600}}
+                      title={<AutoHide title={item.name} style={{ width: '95%', fontWeight: 600 }} />}
+                      style={{ fontWeight: 600 }}
                     />
                     <div className={styles.cardItemContent}>
                       <div className={styles.cardInfo}>
-                        <div style={{ width: '50%', textAlign: 'center'}}>
+                        <div style={{ width: '50%', textAlign: 'center' }}>
                           <p>组件类型</p>
-                          <p style={{fontWeight:600}}>{item.type}</p>
+                          <p style={{ fontWeight: 600 }}>{item.type}</p>
                         </div>
-                        <div style={{ width: '50%', textAlign: 'center'}}>
+                        <div style={{ width: '50%', textAlign: 'center' }}>
                           <p>启动状态</p>
                           <p style={{ color: 'red' }}>
                             <Popconfirm

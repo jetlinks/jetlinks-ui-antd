@@ -72,11 +72,11 @@ const PermissionList: React.FC<Props> = props => {
       callback: (response: any) => {
         if (response.status === 200) {
           setCurrentItem({});
-          setSaveLoading(false);
           message.success('添加成功');
-          setSaveVisible(false);
           handleSearch(setSearchParam);
+          setSaveVisible(false);
         }
+        setSaveLoading(false);
       },
     });
   };
@@ -84,9 +84,11 @@ const PermissionList: React.FC<Props> = props => {
     dispatch({
       type: 'permission/remove',
       payload: params.id,
-      callback: () => {
-        message.success('删除成功');
-        handleSearch(searchParam);
+      callback: (res) => {
+        if(res.status === 200){
+          message.success('删除成功');
+          handleSearch(searchParam);
+        }
       },
     });
   };
@@ -125,6 +127,7 @@ const PermissionList: React.FC<Props> = props => {
             title="确定删除此权限吗？"
             onConfirm={() => {
               handleDelete(record);
+              setSaveLoading(false);
             }}
           >
             <a>删除</a>
@@ -162,6 +165,7 @@ const PermissionList: React.FC<Props> = props => {
               type="primary"
               onClick={() => {
                 setSaveVisible(true);
+                setSaveLoading(false);
               }}
             >
               新建

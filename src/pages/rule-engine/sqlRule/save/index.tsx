@@ -129,7 +129,11 @@ const Save: React.FC<Props> = props => {
 
           <Col span={24}>
             <Form.Item label="SQL" labelCol={{ span: 3 }} wrapperCol={{ span: 21 }}>
-              <AceEditor
+            {getFieldDecorator('sql', {
+                rules: [{ required: sqlRuleType === 'realTime'}],
+                initialValue: props.data?.sql,
+              })(
+                <AceEditor
                 mode='mysql'
                 theme="eclipse"
                 name="app_code_editor"
@@ -139,7 +143,7 @@ const Save: React.FC<Props> = props => {
                 onChange={value => {
                   props.data.sql = value;
                 }}
-                value={props.data.sql}
+                // value={props.data.sql}
                 wrapEnabled
                 highlightActiveLine  //突出活动线
                 enableSnippets  //启用代码段
@@ -152,17 +156,20 @@ const Save: React.FC<Props> = props => {
                   tabSize: 2,
                 }}
               />
+              )}
             </Form.Item>
           </Col>
           <Col span={24}>
             <Form.Item label="执行动作" labelCol={{ span: 3 }} wrapperCol={{ span: 21 }}>
               {actions.map((item: any, index: number) => (
-                  <Action save={(data: any) => {
+                  <div key={index}>
+                    <Action save={(data: any) => {
                     actions.splice(index, 1, data);
                   }} remove={(value: any) => {
                     actions.splice(value, 1);
                     setActions([...actions]);
                   }} position={index} action={item}/>
+                  </div>
                 ),
               )}
               <Button icon="plus" type="link"
@@ -177,12 +184,14 @@ const Save: React.FC<Props> = props => {
           <Col span={24}>
             <Form.Item label="失败执行动作" labelCol={{ span: 3 }} wrapperCol={{ span: 21 }}>
               {whenErrorThen.map((item: any, index: number) => (
-                  <Action save={(data: any) => {
-                    whenErrorThen.splice(index, 1, data);
-                  }} remove={(value: any) => {
-                    whenErrorThen.splice(value, 1);
-                    setWhenErrorThen([...whenErrorThen]);
-                  }} position={index} action={item}/>
+                  <div key={index}>
+                    <Action save={(data: any) => {
+                      whenErrorThen.splice(index, 1, data);
+                    }} remove={(value: any) => {
+                      whenErrorThen.splice(value, 1);
+                      setWhenErrorThen([...whenErrorThen]);
+                    }} position={index} action={item}/>
+                  </div>
                 ),
               )}
               <Button icon="plus" type="link"

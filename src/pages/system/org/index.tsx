@@ -10,6 +10,7 @@ import encodeQueryParam from '@/utils/encodeParam';
 import Save from './save';
 import Authorization from '@/components/Authorization';
 import BindUser from './user';
+import apis from '@/services';
 
 interface Props {
   org: any;
@@ -69,17 +70,27 @@ const OrgList: React.FC<Props> = props => {
   }, []);
 
   const saveOrUpdate = (item: OrgItem) => {
-    dispatch({
-      type: 'org/insert',
-      payload: encodeQueryParam(item),
-      callback: (response: any) => {
-        if (response.status === 200) {
+    if (currentItem.id) {
+      dispatch({ //编辑
+        type: 'org/insert',
+        payload: encodeQueryParam(item),
+        callback: (response: any) => {
+          if (response.status === 200) {
+            message.success('保存成功');
+          }
+          setSaveVisible(false);
+          handleSearch(searchParam);
+        },
+      });
+    } else {
+      apis.org.add(item).then(res => {
+        if (res.status === 200) {
           message.success('保存成功');
         }
         setSaveVisible(false);
         handleSearch(searchParam);
-      },
-    });
+      })
+    }
   };
   const handleDelete = (item: any) => {
     dispatch({
@@ -174,7 +185,7 @@ const OrgList: React.FC<Props> = props => {
     },
   ];
   return (
-    <PageHeaderWrapper title="机构管理">
+    <PageHeaderWrapper title="机构管理1">
       <Card bordered={false}>
         <div className={styles.tableList}>
           <div className={styles.tableListForm}>

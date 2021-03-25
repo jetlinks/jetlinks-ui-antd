@@ -150,9 +150,10 @@ const OpenApiList: React.FC<Props> = props => {
           message.success("启用成功");
         }
         handleSearch(searchParam);
-      } else {
-        message.error(`操作失败，${res.message}`)
-      }
+      } 
+      // else {
+      //   message.error(`操作失败，${res.message}`)
+      // }
     }
     ).catch(() => { });
   };
@@ -162,9 +163,10 @@ const OpenApiList: React.FC<Props> = props => {
       if (res.status === 200) {
         message.success("删除成功");
         handleSearch(searchParam);
-      } else {
-        message.error(`操作失败，${res.message}`)
-      }
+      } 
+      // else {
+      //   message.error(`操作失败，${res.message}`)
+      // }
     }
     ).catch(() => { });
   };

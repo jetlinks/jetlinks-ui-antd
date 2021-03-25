@@ -124,9 +124,10 @@ const UserList: React.FC<Props> = props => {
                     message.success("启用成功");
                 }
                 handleSearch(searchParam);
-            } else {
-                message.error(`操作失败，${res.message}`)
-            }
+            } 
+            // else {
+            //     message.error(`操作失败，${res.message}`)
+            // }
         }
         ).catch(() => { });
     };
