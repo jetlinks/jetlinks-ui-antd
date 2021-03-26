@@ -1,5 +1,5 @@
 import {PageHeaderWrapper} from "@ant-design/pro-layout"
-import {Badge, Card, Descriptions, Divider, message, Row, Table} from "antd";
+import {Badge, Button, Card, Descriptions, Divider, message, Popconfirm, Row, Table} from "antd";
 import React, {Fragment, useEffect, useState} from "react";
 import styles from '@/utils/table.less';
 import SearchForm from "@/components/SearchForm";
@@ -161,8 +161,10 @@ const MediaDevice: React.FC<Props> = props => {
               播放
             </a>
           ) : (
-            <a
-              onClick={() => {
+            <Popconfirm
+              placement="topRight"
+              title="确定删除此通道吗？"
+              onConfirm={() => {
                 setLoading(true);
                 service.remove(record.id).subscribe(
                   () => {
@@ -172,14 +174,14 @@ const MediaDevice: React.FC<Props> = props => {
                     message.error('通道删除失败');
                   },
                   () => {
-                    setLoading(false);
                     handleSearch(searchParam);
-                  }
+                    setLoading(false);
+                  },
                 );
               }}
             >
-              删除
-            </a>
+              <a>删除</a>
+            </Popconfirm>
           )}
         </Fragment>
       )

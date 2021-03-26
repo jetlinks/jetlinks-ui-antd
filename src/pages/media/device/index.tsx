@@ -1,5 +1,5 @@
 import {PageHeaderWrapper} from '@ant-design/pro-layout';
-import {Badge, Card, Divider, message} from 'antd';
+import {Badge, Button, Card, Divider, message, Popconfirm} from 'antd';
 import React, {Fragment, useEffect, useState} from 'react';
 import styles from '@/utils/table.less';
 import SearchForm from '@/components/SearchForm';
@@ -198,15 +198,17 @@ const MediaDevice: React.FC<Props> = () => {
               更新通道
             </a>
           ):(
-            <a
-              onClick={() => {
+            <Popconfirm
+              placement="topRight"
+              title="确定删除此国标设备吗？"
+              onConfirm={() => {
                 setLoading(true);
                 service.remove(record.id).subscribe(
                   () => {
-                    message.success('设备删除成功');
+                    message.success('国标设备删除成功');
                   },
                   () => {
-                    message.error('设备删除失败');
+                    message.error('国标设备删除失败');
                   },
                   () => {
                     handleSearch(searchParam);
@@ -215,8 +217,8 @@ const MediaDevice: React.FC<Props> = () => {
                 );
               }}
             >
-              删除
-            </a>
+              <a>删除</a>
+            </Popconfirm>
           )}
         </Fragment>
       ),
