@@ -1,6 +1,6 @@
 import request from "@/utils/request";
-import { DeviceProduct } from "./data";
-import { notification } from "antd";
+import {DeviceProduct} from "./data";
+import {notification} from "antd";
 
 export async function list(params: any) {
   return request(`/jetlinks/device-product/_query`, {
@@ -96,6 +96,7 @@ export async function productConfiguration(productId: string) {
     method: 'GET'
   })
 }
+
 //设备协议配置
 export async function deviceConfiguration(deviceId: string) {
   return request(`/jetlinks/device/instance/${deviceId}/config-metadata`, {
@@ -123,6 +124,14 @@ export async function unDeploy(id: string) {
 export async function queryOrganization() {
   return request(`/jetlinks/organization/_all`, {
     method: 'get'
+  });
+}
+
+//获取机构  /_query/_children/tree
+export async function queryOrganization_children(params: any) {
+  return request(`/jetlinks/organization/_query/_children`, {
+    method: 'get',
+    params: params
   });
 }
 
@@ -165,39 +174,41 @@ export async function configMetadata(params: {
   typeId: string
 }) {
   return request(`/jetlinks/device/product/${params.productId}/config-metadata/${params.modelType}/${params.modelId}/${params.typeId}`,
-    { method: 'GET' })
+    {method: 'GET'})
 }
 
 //获取物模型格式
 export async function getModelFormat() {
   return request(`/jetlinks/device/product/metadata/codecs`, {
     method: 'get'
-  })  
+  })
 }
 
 //物模型
 export async function getModel(id: string, data: any) {
-  return request(`/jetlinks/device/product/metadata/convert-from/${id}`,{
+  return request(`/jetlinks/device/product/metadata/convert-from/${id}`, {
     method: 'post',
     data
   })
 }
+
 //物模型
 export async function getOtherModel(id: string, data: any) {
-  return request(`/jetlinks/device/product/metadata/convert-to/${id}`,{
+  return request(`/jetlinks/device/product/metadata/convert-to/${id}`, {
     method: 'post',
     data
   })
 }
+
 //获取默认物模型
 export async function getDefaultModel(id: string, transport: string) {
-  return request(`/jetlinks/protocol/${id}/${transport}/metadata`,{
+  return request(`/jetlinks/protocol/${id}/${transport}/metadata`, {
     method: 'get',
     errorHandler: (error) => {
-      const { response } = error;
-      if(response.status === 404 || response.status === 500){
+      const {response} = error;
+      if (response.status === 404 || response.status === 500) {
         console.error(response)
-      }else{
+      } else {
         notification.error({
           key: 'error',
           message: response.statusText,
