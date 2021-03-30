@@ -2,26 +2,26 @@ import request from '@/utils/request';
 import { OrgItem } from './data.d';
 
 export async function list(params: any) {
-  return request(`/jetlinks/dimension/_query/tree`, {
+  return request(`/jetlinks/organization/_all/tree`, {
     method: 'GET',
     params,
   });
 }
 
 export async function remove(id: string) {
-  return request(`/jetlinks/dimension/${id}`, {
+  return request(`/jetlinks/organization/${id}`, {
     method: 'DELETE',
   });
 }
 
 export async function add(params: OrgItem) {
-  return request(`/jetlinks/dimension`, {
+  return request(`/jetlinks/organization`, {
     method: 'POST',
     data: params,
   });
 }
 export async function saveOrUpdate(params: OrgItem) {
-  return request(`/jetlinks/dimension/${params.id}`, {
+  return request(`/jetlinks/organization/${params.id}`, {
     method: 'PUT',
     data: params,
   });
