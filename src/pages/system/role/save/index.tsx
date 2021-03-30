@@ -42,7 +42,7 @@ const Save: React.FC<Props> = props => {
           {getFieldDecorator('id', {
             rules: [{ required: true, message: '请输入角色标识' }],
             initialValue: data.id,
-          })(<Input placeholder="角色标识" />)}
+          })(<Input placeholder="角色标识" readOnly={!!data.id} />)}
         </Form.Item>
         <Form.Item label="角色名称">
           {getFieldDecorator('name', {
