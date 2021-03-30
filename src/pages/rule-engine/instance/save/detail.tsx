@@ -327,6 +327,7 @@ const Detail: React.FC<Props> = props => {
     sorter: SorterResult<RuleInstanceItem>,
   ) => {
     const data = props.form.getFieldsValue();
+
     let terms = {}
     if (data.createTimeLogs) {
       const formatDate = data.createTimeLogs.map((e: Moment) =>
@@ -354,7 +355,7 @@ const Detail: React.FC<Props> = props => {
         moment(e).format('YYYY-MM-DD HH:mm:ss'),
       );
       terms = {
-        createTime$btw: formatDate.join(',')
+        timestamp$btw: formatDate.join(',')
       }
     }
     getDataLogs({
