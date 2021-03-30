@@ -46,7 +46,7 @@ const AddDevice: React.FC<Props> = props => {
                         manufacturer: data.manufacturer,
                         mediaProfiles: mediaProfiles,
                         model: data.model,
-                        name: data.name,
+                        name: fileValue.name || data.name,
                         password: data.password,
                         serialNumber: data.serialNumber,
                         url: data.url,
@@ -77,6 +77,7 @@ const AddDevice: React.FC<Props> = props => {
                         let params = {
                             id: data.id,
                             url: data.others.url,
+                            name: fileValue.name || data.name,
                             username: fileValue.username,
                             password: fileValue.password,
                             manufacturer: data.manufacturer,
@@ -104,6 +105,13 @@ const AddDevice: React.FC<Props> = props => {
                         initialValue: data?.id
                     })(
                         <Input readOnly={!!data.id} />
+                    )}
+                </Form.Item>
+                <Form.Item label="名称">
+                    {getFieldDecorator('name', {
+                        initialValue: data?.name
+                    })(
+                        <Input />
                     )}
                 </Form.Item>
                 <Form.Item label="IP地址">

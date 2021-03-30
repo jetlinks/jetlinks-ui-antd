@@ -1,12 +1,10 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Modal, Tabs, Table, Tag, Tooltip, Form, Row, Col, DatePicker, Button } from "antd";
 import { RuleInstanceItem } from "@/pages/rule-engine/instance/data";
-import { PaginationConfig, SorterResult } from 'antd/es/table';
-import encodeQueryParam from '@/utils/encodeParam';
-import apis from "@/services";
-import styles from './detail.less';
+import { ColumnProps, PaginationConfig } from 'antd/es/table';
+import Service from "../../service";
+import styles from './index.less';
 import moment, { Moment } from 'moment';
-// import { getWebsocket } from '@/layouts/GlobalWebSocket';
 import { FormComponentProps } from "antd/lib/form";
 const { TabPane } = Tabs;
 
@@ -14,6 +12,7 @@ const { TabPane } = Tabs;
 interface Props extends FormComponentProps {
   data: Partial<RuleInstanceItem>
   close: Function
+  id: string
 }
 
 interface State {
@@ -26,37 +25,13 @@ interface State {
   createTime: any
 }
 
-// const columnsRealTime: ColumnProps<RuleInstanceItem>[] = [
-//   {
-//     title: '时间',
-//     dataIndex: 'time',
-//     align: 'center',
-//     width: 200,
-//     render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss')
-//   },
-//   {
-//     title: '内容',
-//     align: 'center',
-//     width: 150,
-//     ellipsis: true,
-//     dataIndex: 'message',
-//     render: (message: string) => {
-//       return (
-//         <Tooltip placement="left" arrowPointAtCenter title={message}>{message}</Tooltip>
-//       )
-//     }
-//   }
-// ];
-
-const columns = [
+const columns: ColumnProps<RuleInstanceItem>[] = [
   {
     title: '时间',
     dataIndex: 'timestamp',
     align: 'center',
-    defaultSortOrder: 'descend',
-    sorter: true,
     width: 180,
-    render: (text: any) => text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/',
+    render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
   },
   {
     title: '节点',
@@ -104,7 +79,7 @@ const columns = [
     title: '操作',
     width: '250px',
     align: 'center',
-    render: (record: any) => {
+    render: (record) => {
       let content = '';
       try {
         content = JSON.stringify(JSON.parse(record.message), null, 2);
@@ -132,15 +107,13 @@ const columns = [
   },
 ];
 
-const columnsEvents = [
+const columnsEvents: ColumnProps<RuleInstanceItem>[] = [
   {
     title: '时间',
     dataIndex: 'createTime',
     width: 200,
     align: 'center',
-    sorter: true,
-    defaultSortOrder: 'descend',
-    render: (text: any) => text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/',
+    render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
   },
   {
     title: '节点',
@@ -152,7 +125,7 @@ const columnsEvents = [
     width: 200,
     align: 'center',
     ellipsis: true,
-    dataIndex: 'message',
+    dataIndex: 'ruleData',
     render: (message: string) => {
       return (
         <Tooltip placement="left" arrowPointAtCenter title={message}>{message}</Tooltip>
@@ -163,7 +136,7 @@ const columnsEvents = [
     title: '操作',
     width: '250px',
     align: 'center',
-    render: (record: any) => {
+    render: (record) => {
       let content = '';
       try {
         content = JSON.stringify(JSON.parse(record.message), null, 2);
@@ -192,14 +165,13 @@ const columnsEvents = [
 ];
 
 const Detail: React.FC<Props> = props => {
-  const { getFieldDecorator } = props.form
-
-  let nodeMap = new Map();
+  const service = new Service('rule-engine');
+  const { getFieldDecorator } = props.form;
 
   const initState: State = {
     searchParam: {
       pageSize: 10,
-      pageIndex: 0,
+      ruleInstanceId: props.data.id,
       sorts: {
         order: "desc",
         field: "createTime"
@@ -213,97 +185,31 @@ const Detail: React.FC<Props> = props => {
     nodeData: []
   };
   const [searchParam, setSearchParam] = useState(initState.searchParam);
-  // const [realTimeDataLogs, setRealTimeDataLogs] = useState(initState.realTimeDataLogs);
-  // const [realTimeDataEvents, setRealTimeDataEvents] = useState(initState.realTimeDataEvents);
   const [dataLogs, setDataLogs] = useState(initState.dataLogs);
   const [dataEvents, setDataEvents] = useState(initState.dataEvents);
-  const [nodeData, setNodeData] = useState(initState.nodeData)
-  const getNode = () => {
-    return new Promise((resolve, reject) => {
-      if (props.data.id as string !== '') {
-        apis.ruleInstance.node(props.data.id as string, {}).then(resp => {
-          if (resp.status === 200) {
-            let data: any[] = [];
-            resp.result.map((i: any) => {
-              nodeMap.set(i.id, i.name)
-              data.push({ id: i.id, name: i.name })
-            })
-            setNodeData(data)
-            resolve();
-          }
-        }).catch((err) => {
-          reject(err);
-        })
-      }
-    })
-  };
+  // const [nodeData, setNodeData] = useState(initState.nodeData)
+  // const getNode = () => {
+  //   return new Promise((resolve, reject) => {
+  //     if (props.data.id as string !== '') {
+  //       apis.ruleInstance.node(props.data.id as string, {}).then(resp => {
+  //         if (resp.status === 200) {
+  //           let data: any[] = [];
+  //           resp.result.map((i: any) => {
+  //             nodeMap.set(i.id, i.name)
+  //             data.push({ id: i.id, name: i.name })
+  //           })
+  //           setNodeData(data)
+  //           resolve();
+  //         }
+  //       }).catch((err) => {
+  //         reject(err);
+  //       })
+  //     }
+  //   })
+  // };
 
-  const getDataLogs = (params?: any) => {
-    const temp = {...searchParam, ...params};
-    setSearchParam(temp);
-    apis.ruleInstance.log(props.data.id as string, encodeQueryParam(temp)).then(resp => {
-      if (resp.status === 200) {
-        let datalist: any[] = [];
-        resp.result.data.map((item: any) => {
-          if (nodeData.length > 0) {
-            datalist.push({
-              timestamp: item.timestamp,
-              nodeId: nodeData.filter((x: any) => x.id === item.nodeId).map((i: any) => i.name),
-              message: item.message,
-              level: item.level
-            })
-          } else {
-            datalist.push({
-              timestamp: item.timestamp,
-              nodeId: nodeMap.get(item.nodeId) || '--',
-              message: item.message,
-              level: item.level
-            })
-          }
-        });
-        setDataLogs({
-          datalist,
-          pageIndex: resp.result.pageIndex,
-          pageSize: resp.result.pageSize,
-          total: resp.result.total
-        })
-      }
-    })
-  };
-  const getDataEvents = (params?: any) => {
-    const temp = {...searchParam, ...params};
-    setSearchParam(temp);
-    apis.ruleInstance.event(props.data.id as string, encodeQueryParam(temp)).then(resp => {
-      if (resp.status === 200) {
-        let datalist: any[] = [];
-        resp.result.data.map((item: any) => {
-          if (nodeData.length > 0) {
-            datalist.push({
-              createTime: item.createTime,
-              nodeId: nodeData.filter((x: any) => x.id === item.nodeId).map((i: any) => i.name),
-              message: JSON.stringify(JSON.parse(item.ruleData).data)
-            })
-          } else {
-            datalist.push({
-              createTime: item.createTime,
-              nodeId: nodeMap.get(item.nodeId) || '--',
-              message: JSON.stringify(JSON.parse(item.ruleData).data)
-            })
-          }
-        });
-        setDataEvents({
-          datalist,
-          pageIndex: resp.result.pageIndex,
-          pageSize: resp.result.pageSize,
-          total: resp.result.total
-        })
-      }
-    })
-  };
   const eventsChange = (
     pagination: PaginationConfig,
-    filters: any,
-    sorter: SorterResult<RuleInstanceItem>,
   ) => {
     const data = props.form.getFieldsValue();
     let terms = {}
@@ -315,20 +221,21 @@ const Detail: React.FC<Props> = props => {
         createTime$btw: formatDate.join(',')
       }
     }
-    getDataEvents({
+    getEventsList({
       pageIndex: Number(pagination.current) - 1,
       pageSize: pagination.pageSize,
-      sorts: sorter,
+      ruleInstanceId: props.data.id,
+      sorts: {
+        order: "desc",
+        field: "createTime"
+      },
       terms: terms
     });
   };
   const logsChange = (
-    pagination: PaginationConfig,
-    filters: any,
-    sorter: SorterResult<RuleInstanceItem>,
+    pagination: PaginationConfig
   ) => {
     const data = props.form.getFieldsValue();
-
     let terms = {}
     if (data.createTimeLogs) {
       const formatDate = data.createTimeLogs.map((e: Moment) =>
@@ -338,10 +245,14 @@ const Detail: React.FC<Props> = props => {
         createTime$btw: formatDate.join(',')
       }
     }
-    getDataLogs({
+    getLogsList({
       pageIndex: Number(pagination.current) - 1,
       pageSize: pagination.pageSize,
-      sorts: sorter,
+      ruleInstanceId: props.data.id,
+      sorts: {
+        order: "desc",
+        field: "createTime"
+      },
       terms: terms
     });
   };
@@ -353,12 +264,13 @@ const Detail: React.FC<Props> = props => {
         moment(e).format('YYYY-MM-DD HH:mm:ss'),
       );
       terms = {
-        timestamp$btw: formatDate.join(',')
+        createTime$btw: formatDate.join(',')
       }
     }
-    getDataLogs({
+    getLogsList({
       pageSize: 10,
       pageIndex: 0,
+      ruleInstanceId: props.data.id,
       sorts: {
         order: "desc",
         field: "createTime"
@@ -377,9 +289,10 @@ const Detail: React.FC<Props> = props => {
         createTime$btw: formatDate.join(',')
       }
     }
-    getDataEvents({
+    getEventsList({
       pageSize: 10,
       pageIndex: 0,
+      ruleInstanceId: props.data.id,
       sorts: {
         order: "desc",
         field: "createTime"
@@ -388,58 +301,26 @@ const Detail: React.FC<Props> = props => {
     });
   }
 
+  const getEventsList = (params?: any) => {
+    setSearchParam(params);
+    service.getRuleInstanceEventsList(props.id, params).subscribe(
+      (res) => { setDataEvents(res) },
+      () => {
+      })
+  }
+
+  const getLogsList = (params?: any) => {
+    setSearchParam(params);
+    service.getRuleInstanceLogsList(props.id, params).subscribe(
+      (res) => { setDataLogs(res) },
+      () => {
+      })
+  }
+
   useEffect(() => {
-    getNode().then(() => {
-      getDataLogs(searchParam);
-      getDataEvents(searchParam);
-    })
+    getLogsList(searchParam);
+    getEventsList(searchParam);
   }, []);
-
-  // useEffect(() => {
-  //   let tempLogs = getWebsocket(
-  //     `rule-engine-realTime-logs${props.data.id}`,
-  //     `/rule-engine/${props.data.id}/*/logger/*`,
-  //     {},
-  //   ).subscribe(
-  //     (resp: any) => {
-  //       const {payload} = resp;
-  //       if (payload.message !== undefined || payload.timestamp !== undefined) {
-  //         let arr: any = {
-  //           message: payload.message,
-  //           time: payload.timestamp
-  //         };
-  //         setRealTimeDataLogs(prev => ([arr, ...prev]));
-  //       }
-  //       if (realTimeDataLogs.length >= 10) {
-  //         setRealTimeDataLogs(prev => ([...prev.slice(0, 10)]))
-  //       }
-  //     }
-  //   );
-  //   let tempEvents = getWebsocket(
-  //     `rule-engine-realTime-events${props.data.id}`,
-  //     `/rule-engine/${props.data.id}/*/event/*`,
-  //     {},
-  //   ).subscribe(
-  //     (resp: any) => {
-  //       const {payload} = resp;
-  //       if (payload.data !== undefined) {
-  //         let arr: any = {
-  //           time: new Date(),
-  //           message: JSON.stringify(payload.data)
-  //         };
-  //         setRealTimeDataEvents(prev => ([arr, ...prev]));
-  //       }
-  //       if (realTimeDataEvents.length >= 10) {
-  //         setRealTimeDataEvents(prev => ([...prev.slice(0, 10)]))
-  //       }
-  //     }
-  //   );
-
-  //   return () => {
-  //     tempLogs && tempLogs.unsubscribe();
-  //     tempEvents && tempEvents.unsubscribe();
-  //   };
-  // }, [realTimeDataLogs, realTimeDataEvents]);
 
   return (
     <Modal width="1000px"
@@ -479,21 +360,16 @@ const Detail: React.FC<Props> = props => {
               </div>
               <Table
                 onChange={eventsChange}
-                dataSource={dataEvents.datalist || []}
+                dataSource={dataEvents?.datalist || []}
                 rowKey={(item: any) => item.time}
                 columns={columnsEvents}
-                // showHeader={false}
                 pagination={{
-                  current: dataEvents.pageIndex + 1,
-                  total: dataEvents.total,
-                  pageSize: dataEvents.pageSize
+                  current: dataEvents?.pageIndex + 1,
+                  total: dataEvents?.total,
+                  pageSize: dataEvents?.pageSize
                 }}
               />
             </div>
-            {/* <div className={styles.boxRight}>
-              <h4>运行日志：</h4>
-              <Table dataSource={(realTimeDataEvents || {})} rowKey="id" columns={columnsRealTime} pagination={false}/>
-            </div> */}
           </div>
         </TabPane>
         <TabPane tab="运行日志" key="2">
@@ -525,22 +401,17 @@ const Detail: React.FC<Props> = props => {
                 </Form>
               </div>
               <Table
-                dataSource={dataLogs.datalist || []}
+                dataSource={dataLogs?.datalist || []}
                 rowKey={(item: any) => item.time}
                 columns={columns}
-                // showHeader={false}
                 onChange={logsChange}
                 pagination={{
-                  current: dataLogs.pageIndex + 1,
-                  total: dataLogs.total,
-                  pageSize: dataLogs.pageSize
+                  current: dataLogs?.pageIndex + 1,
+                  total: dataLogs?.total,
+                  pageSize: dataLogs?.pageSize
                 }}
               />
             </div>
-            {/* <div className={styles.boxRight}>
-              <h4>运行日志：</h4>
-              <Table dataSource={(realTimeDataLogs || {})} rowKey="id" columns={columnsRealTime} pagination={false}/>
-            </div> */}
           </div>
         </TabPane>
       </Tabs>
@@ -548,5 +419,4 @@ const Detail: React.FC<Props> = props => {
   )
 };
 
-// export default Detail
 export default Form.create<Props>()(Detail);

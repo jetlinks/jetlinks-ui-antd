@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import img from "@/pages/edge-gateway/device/img/edge-device.png";
 import Status from './status/status';
 import Video from './video';
+import RuleEngine from './rule-engine';
 import apis from '@/services';
 import moment from "moment";
 
@@ -45,6 +46,14 @@ const Detail: React.FC<Props> = props => {
         {
             key: 'video',
             tab: '视频模块'
+        },
+        {
+            key: 'ruleEngine',
+            tab: '规则引擎'
+        },
+        {
+            key: 'network',
+            tab: '设备接入'
         }
     ]
     const content = {
@@ -63,7 +72,8 @@ const Detail: React.FC<Props> = props => {
             </Descriptions>
         </div>,
         status: <Status refresh={() => {getInfo(deviceId)}} device={info} />,
-        video: <Video device={info}/>
+        video: <Video device={info}/>,
+        ruleEngine: <RuleEngine device={info}/>
     }
 
     const getInfo = (id: string) => {

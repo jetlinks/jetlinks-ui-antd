@@ -52,7 +52,7 @@ const MediaDevice: React.FC<Props> = props => {
                 <Form.Item key="provider" label="服务商">
                     {getFieldDecorator('provider', {
                         rules: [{ required: true, message: '请选择服务商' }],
-                        initialValue: result.provider,
+                        initialValue: result?.provider,
                     })(
                         <Select placeholder="服务商">
                             <Select.Option value="zlmedia">ZLMedia</Select.Option>
@@ -106,7 +106,7 @@ const MediaDevice: React.FC<Props> = props => {
                                 rules: [
                                     { required: true, message: '请输入HTTP端口' }
                                 ],
-                                initialValue: result.configuration?.httpPort,
+                                initialValue: result?.configuration?.httpPort,
                             })(<InputNumber style={{ width: '100%' }} placeholder='请输入HTTP端口' />)}
                         </Form.Item>
                     </Col>
@@ -116,7 +116,7 @@ const MediaDevice: React.FC<Props> = props => {
                                 rules: [
                                     { required: true, message: '请输入RTMP端口' }
                                 ],
-                                initialValue: result.configuration?.rtmpPort,
+                                initialValue: result?.configuration?.rtmpPort,
                             })(<InputNumber style={{ width: '100%' }} placeholder='请输入RTMP端口' />)}
                         </Form.Item>
                     </Col>
@@ -125,7 +125,7 @@ const MediaDevice: React.FC<Props> = props => {
                     {getFieldDecorator('configuration.secret', {
                         rules: [
                         ],
-                        initialValue: result.configuration?.secret,
+                        initialValue: result?.configuration?.secret,
                     })(<Input placeholder='请输入密钥' />)}
                 </Form.Item>
                 <Form.Item label="流媒体格式">
@@ -133,7 +133,7 @@ const MediaDevice: React.FC<Props> = props => {
                         rules: [
                             { required: true, message: '请选择流媒体格式' }
                         ],
-                        initialValue: result.configuration?.formats,
+                        initialValue: result?.configuration?.formats,
                     })(<Select placeholder="请选择流媒体格式，多选" mode='multiple'>
                         <Select.Option value='flv'>FLV</Select.Option>
                         <Select.Option value='mp4'>MP4</Select.Option>
@@ -144,7 +144,7 @@ const MediaDevice: React.FC<Props> = props => {
                 </Form.Item>
                 <Form.Item label="流ID前缀">
                     {getFieldDecorator('configuration.streamIdPrefix', {
-                        initialValue: result.configuration?.streamIdPrefix,
+                        initialValue: result?.configuration?.streamIdPrefix,
                     })(<Input />)}
                 </Form.Item>
             </Form>

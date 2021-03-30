@@ -180,48 +180,7 @@ const edgeDevice: React.FC<Props> = () => {
                                                             setInfo(item);
                                                         }}
                                                     />
-                                                </Tooltip>,
-                                                // <Tooltip key="more_actions" title="">
-                                                //     <Dropdown overlay={
-                                                //         <Menu>
-                                                //             <Menu.Item key="1">
-                                                //                 <Popconfirm
-                                                //                     placement="topRight"
-                                                //                     title={item.state !== 0 ? '确定停用此组件吗？' : '确定发布此组件吗？'}
-                                                //                     onConfirm={() => {
-                                                //                         if (item.state === 0) {
-                                                //                             deploy(item);
-                                                //                         } else {
-                                                //                             unDeploy(item);
-                                                //                         }
-                                                //                     }}
-                                                //                 >
-                                                //                     <Button icon={item.state !== 0 ? 'close' : 'check'} type="link">
-                                                //                         {item.state !== 0 ? '停用' : '发布'}
-                                                //                     </Button>
-                                                //                 </Popconfirm>
-                                                //                 <Popconfirm
-                                                //                         title="确认删除？"
-                                                //                         onConfirm={() => {
-                                                //                             delelteInstance(record);
-                                                //                         }}
-                                                //                     >
-                                                //                         <a>删除</a>
-                                                //                     </Popconfirm>
-                                                //                     <Popconfirm
-                                                //                     title="确认禁用设备？"
-                                                //                     onConfirm={() => {
-                                                //                         unDeploy(record);
-                                                //                     }}
-                                                //                 >
-                                                //                     <a>禁用</a>
-                                                //                 </Popconfirm>
-                                                //             </Menu.Item>
-                                                //         </Menu>
-                                                //     }>
-                                                //         <Icon type="ellipsis" />
-                                                //     </Dropdown>
-                                                // </Tooltip>,
+                                                </Tooltip>
                                             ]}
                                         >
                                             <Card.Meta
@@ -230,10 +189,10 @@ const edgeDevice: React.FC<Props> = () => {
                                                 description={<AutoHide title={moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')} style={{ width: '95%' }} />}
                                             />
                                             <div>
-                                                <div style={{ width: '100%', display: 'flex', marginTop: '10px' }}>
+                                                <div style={{ width: '100%', display: 'flex', marginTop: '10px', justifyContent: 'space-' }}>
                                                     <div style={{ textAlign: 'center', width: '30%' }}>
                                                         <p>ID</p>
-                                                        <p style={{ fontSize: 14 }}>{item.id}</p>
+                                                        <AutoHide title={item.id} style={{ fontSize: 14, width: '95%' }} />
                                                     </div>
                                                     <div style={{ textAlign: 'center', width: '30%' }}>
                                                         <p>产品名称</p>
