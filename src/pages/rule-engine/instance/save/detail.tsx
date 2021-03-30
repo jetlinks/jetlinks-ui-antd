@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Modal, Tabs, Table, Tag, Tooltip, Form, Row, Col, DatePicker, Button } from "antd";
 import { RuleInstanceItem } from "@/pages/rule-engine/instance/data";
-import { ColumnProps, PaginationConfig, SorterResult } from 'antd/es/table';
+import { PaginationConfig, SorterResult } from 'antd/es/table';
 import encodeQueryParam from '@/utils/encodeParam';
 import apis from "@/services";
 import styles from './detail.less';
@@ -48,13 +48,15 @@ interface State {
 //   }
 // ];
 
-const columns: ColumnProps<RuleInstanceItem>[] = [
+const columns = [
   {
     title: '时间',
-    dataIndex: 'time',
+    dataIndex: 'timestamp',
     align: 'center',
+    defaultSortOrder: 'descend',
+    sorter: true,
     width: 180,
-    render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
+    render: (text: any) => text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/',
   },
   {
     title: '节点',
@@ -102,7 +104,7 @@ const columns: ColumnProps<RuleInstanceItem>[] = [
     title: '操作',
     width: '250px',
     align: 'center',
-    render: (record) => {
+    render: (record: any) => {
       let content = '';
       try {
         content = JSON.stringify(JSON.parse(record.message), null, 2);
@@ -130,13 +132,15 @@ const columns: ColumnProps<RuleInstanceItem>[] = [
   },
 ];
 
-const columnsEvents: ColumnProps<RuleInstanceItem>[] = [
+const columnsEvents = [
   {
     title: '时间',
-    dataIndex: 'time',
+    dataIndex: 'createTime',
     width: 200,
     align: 'center',
-    render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
+    sorter: true,
+    defaultSortOrder: 'descend',
+    render: (text: any) => text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/',
   },
   {
     title: '节点',
@@ -159,7 +163,7 @@ const columnsEvents: ColumnProps<RuleInstanceItem>[] = [
     title: '操作',
     width: '250px',
     align: 'center',
-    render: (record) => {
+    render: (record: any) => {
       let content = '';
       try {
         content = JSON.stringify(JSON.parse(record.message), null, 2);
@@ -243,14 +247,14 @@ const Detail: React.FC<Props> = props => {
         resp.result.data.map((item: any) => {
           if (nodeData.length > 0) {
             datalist.push({
-              time: item.timestamp,
+              timestamp: item.timestamp,
               nodeId: nodeData.filter((x: any) => x.id === item.nodeId).map((i: any) => i.name),
               message: item.message,
               level: item.level
             })
           } else {
             datalist.push({
-              time: item.timestamp,
+              timestamp: item.timestamp,
               nodeId: nodeMap.get(item.nodeId) || '--',
               message: item.message,
               level: item.level
@@ -275,13 +279,13 @@ const Detail: React.FC<Props> = props => {
         resp.result.data.map((item: any) => {
           if (nodeData.length > 0) {
             datalist.push({
-              time: item.createTime,
+              createTime: item.createTime,
               nodeId: nodeData.filter((x: any) => x.id === item.nodeId).map((i: any) => i.name),
               message: JSON.stringify(JSON.parse(item.ruleData).data)
             })
           } else {
             datalist.push({
-              time: item.createTime,
+              createTime: item.createTime,
               nodeId: nodeMap.get(item.nodeId) || '--',
               message: JSON.stringify(JSON.parse(item.ruleData).data)
             })
@@ -314,10 +318,7 @@ const Detail: React.FC<Props> = props => {
     getDataEvents({
       pageIndex: Number(pagination.current) - 1,
       pageSize: pagination.pageSize,
-      sorts: {
-        order: "desc",
-        field: "createTime"
-      },
+      sorts: sorter,
       terms: terms
     });
   };
@@ -340,10 +341,7 @@ const Detail: React.FC<Props> = props => {
     getDataLogs({
       pageIndex: Number(pagination.current) - 1,
       pageSize: pagination.pageSize,
-      sorts: {
-        order: "desc",
-        field: "createTime"
-      },
+      sorts: sorter,
       terms: terms
     });
   };
