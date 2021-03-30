@@ -80,7 +80,7 @@ export async function saveChannel(deviceId: string, params: any) {
 }
 
 export async function delDevice(deviceId: string, params: any) {
-  return request(`/jetlinks/edge/operations/${deviceId}/media-device-remove/invoke`, {
+  return request(`/jetlinks/edge/operations/${deviceId}/media-device-delete/invoke`, {
     method: 'POST',
     data: params
   });

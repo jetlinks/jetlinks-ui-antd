@@ -80,7 +80,7 @@ const Add: React.FC<Props> = props => {
                     <Popconfirm
                         title="确认删除吗？"
                         onConfirm={() => {
-                            apis.edgeDevice.delDevice(props.device.id, { id: record.id }).then(res => {
+                            apis.edgeDevice.delDevice(props.device.id, { deviceId: record.id }).then(res => {
                                 if (res.status === 200) {
                                     message.success('删除成功！');
                                     getDevice(props.device.id, deviceParams);
