@@ -180,10 +180,11 @@ const OpenApiList: React.FC<Props> = props => {
           message.success('保存成功');
           setSaveVisible(false);
           handleSearch(searchParam);
-        } else {
-          message.error(`添加失败`);
-          setSaveVisible(false);
-        }
+        } 
+        // else {
+        //   message.error(`添加失败`);
+        //   setSaveVisible(false);
+        // }
       },
     });
   };

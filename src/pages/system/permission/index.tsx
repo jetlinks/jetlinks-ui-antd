@@ -196,8 +196,8 @@ const PermissionList: React.FC<Props> = props => {
                     apis.permission.add(data).then(resp => {
                       if (resp.status === 200) {
                         message.success('导入成功');
-                        setLoading(false);
                       }
+                      setLoading(false);
                     })
                   } catch (error) {
                     message.error('导入失败，请重试！');

@@ -679,7 +679,6 @@ const PropertiesDefin: React.FC<Props> = props => {
 
   const product = useContext<any>(ProductContext);
 
-
   const getMetadata = (id?: any, type?: any) => {
     const data = getFieldsValue(['id', 'valueType.type']);
     if (id) {
@@ -692,7 +691,7 @@ const PropertiesDefin: React.FC<Props> = props => {
     if (data.id && data.valueType.type) {
       setLoadConfig(true);
       apis.deviceProdcut.configMetadata({
-        productId: product.id,
+        productId: product.productId,
         modelType: 'property',
         modelId: data.id,
         typeId: data.valueType.type

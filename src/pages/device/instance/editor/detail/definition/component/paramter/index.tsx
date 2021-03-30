@@ -797,7 +797,7 @@ const Paramter: React.FC<Props> = props => {
     if (data.id && data.valueType?.type) {
       setLoadConfig(true);
       apis.deviceProdcut.configMetadata({
-        productId: product.id,
+        productId: product.productId,
         modelType: 'functionParameter',
         modelId: data.id,
         typeId: data.valueType.type

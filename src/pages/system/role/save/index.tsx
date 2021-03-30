@@ -15,8 +15,13 @@ const Save: React.FC<Props> = props => {
     data,
   } = props;
   const saveData = () => {
-    const value = form.getFieldsValue();
-    props.save({ typeId: 'role', ...value });
+    // const value = form.getFieldsValue();
+    
+    form.validateFields((err, fileValue) => {
+      if (err) return;
+
+      props.save({ typeId: 'role', ...fileValue });
+    });
   };
   const formateTitle = () => {
     let title = '';
