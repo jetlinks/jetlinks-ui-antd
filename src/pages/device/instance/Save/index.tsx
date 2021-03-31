@@ -118,7 +118,7 @@ const Save: React.FC<Props> = props => {
           if (props.data) {
             let product = response.result.find((n: any) => n.id === props.data.productId);
             if (product.orgId && product.orgId != '') {
-              queryOrganization_children({terms: {parentId: product.orgId}});
+              queryOrganization_children({terms: {id: product.orgId}});
             }
           }
         }
@@ -168,7 +168,7 @@ const Save: React.FC<Props> = props => {
                 placeholder="请选择产品" disabled={!!props.data.id}
                 onSelect={(value: any, option: any) => {
                   if (option.props.data.orgId && option.props.data.opgId != '') {
-                    queryOrganization_children({terms: {parentId: option.props.data.orgId}});
+                    queryOrganization_children({terms: {id: option.props.data.orgId}});
                   } else {
                     queryOrganization();
                   }

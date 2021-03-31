@@ -46,6 +46,30 @@ export async function stop(id: string) {
   });
 }
 
+export async function startDeviceAlarm(id: string) {
+  return request(`/jetlinks/device/alarm/${id}/_start`, {
+    method: 'POST',
+  });
+}
+
+export async function stopDeviceAlarm(id: string) {
+  return request(`/jetlinks/device/alarm/${id}/_stop`, {
+    method: 'POST',
+  });
+}
+
+export async function startScene(id: string) {
+  return request(`/jetlinks/rule-engine/scene/${id}/_start`, {
+    method: 'POST',
+  });
+}
+
+export async function stopScene(id: string) {
+  return request(`/jetlinks/rule-engine/scene/${id}/_stop`, {
+    method: 'POST',
+  });
+}
+
 export async function createModel(params: RuleInstanceItem) {
   return request(`/jetlinks/rule-engine/model`, {
     method: 'POST',
