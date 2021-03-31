@@ -6,7 +6,7 @@ class Service extends BaseService<any> {
   public queryTree = (params: any) =>
     defer(() =>
       from(
-        request(`${this.uri}/_query/tree`, {
+        request(`${this.uri}/_query/tree?paging=false`, {
           method: 'GET',
           params,
         }),

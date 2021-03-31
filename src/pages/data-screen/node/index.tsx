@@ -82,26 +82,26 @@ const NodeType = () => {
 
   const onTableChange = () => {};
 
-  const importData = () => {
-    const list: any[] = [];
-    Tools.forEach(item => {
-      list.push({ name: item.group, type: 'dir', id: item.id });
-      const child = item.children;
-      child.forEach(i => {
-        list.push({
-          name: i.name,
-          icon: i.img,
-          type: 'node',
-          parentId: item.id,
-          data: JSON.stringify(i.data),
-        });
-      });
-    });
-    service.add(list).subscribe(data => {
-      message.success('保存成功');
-      console.log(data, 'ddd');
-    });
-  };
+  // const importData = () => {
+    // const list: any[] = [];
+    // Tools.forEach(item => {
+    //   list.push({ name: item.group, type: 'dir', id: item.id });
+    //   const child = item.children;
+    //   child.forEach(i => {
+    //     list.push({
+    //       name: i.name,
+    //       icon: i.img,
+    //       type: 'node',
+    //       parentId: item.id,
+    //       data: JSON.stringify(i.data),
+    //     });
+    //   });
+    // });
+    // service.add(list).subscribe(data => {
+    //   message.success('保存成功');
+    //   console.log(data, 'ddd');
+    // });
+  // };
   return (
     <PageHeaderWrapper title="组件管理">
       <Card bordered={false}>
@@ -132,7 +132,7 @@ const NodeType = () => {
               新建
             </Button>
 
-            <Button onClick={importData}>导入数据</Button>
+            {/* <Button onClick={importData}>导入数据</Button> */}
           </div>
           <div className={styles.StandardTable}>
             {result && (
