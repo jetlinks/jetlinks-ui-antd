@@ -129,7 +129,7 @@ const Device: React.FC<Props> = props => {
         },
         {
             title: '说明',
-            dataIndex: 'description',
+            dataIndex: 'describe',
             width: '15%',
             ellipsis: true
         },

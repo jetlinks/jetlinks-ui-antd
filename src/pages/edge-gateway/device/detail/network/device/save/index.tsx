@@ -49,10 +49,10 @@ const Save: React.FC<Props> = props => {
                         productId: product.productId || props.data.productId,
                         productName: product.productName || props.data.productName,
                         configuration: {
-                            deviceGatewayId: product.id || props.data.deviceGatewayId,
-                            deviceGatewayName: product.name || props.data.deviceGatewayName
+                            deviceGatewayId: product.id || props.data.configuration?.deviceGatewayId,
+                            deviceGatewayName: product.name || props.data.configuration?.deviceGatewayName
                         },
-                        description: fileValue.description
+                        describe: fileValue.describe
                     }
                     props.save({...data});
                 });
@@ -98,8 +98,8 @@ const Save: React.FC<Props> = props => {
                     )}
                 </Form.Item>
                 <Form.Item key="description" label="说明">
-                    {getFieldDecorator('description', {
-                        initialValue: data?.description
+                    {getFieldDecorator('describe', {
+                        initialValue: data?.describe
                     })(<Input.TextArea rows={4} placeholder="请输入" />)}
                 </Form.Item>
             </Form>
