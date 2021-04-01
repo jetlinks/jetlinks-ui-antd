@@ -198,7 +198,7 @@ const MediaDevice: React.FC<Props> = props => {
     handleSearch({
       pageIndex: Number(pagination.current) - 1,
       pageSize: pagination.pageSize,
-      terms: terms,
+      terms: {...terms, ...filters},
       sorts: sorter,
     })
   };
