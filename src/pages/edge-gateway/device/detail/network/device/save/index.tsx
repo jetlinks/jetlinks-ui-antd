@@ -65,7 +65,7 @@ const Save: React.FC<Props> = props => {
                 <Form.Item label="ID">
                     {getFieldDecorator('id', {
                         rules: [{ required: true }],
-                        initialValue: data.id
+                        initialValue: data?.id
                     })(
                         <Input readOnly={!!data.id} />
                     )}
@@ -73,7 +73,7 @@ const Save: React.FC<Props> = props => {
                 <Form.Item label="名称">
                     {getFieldDecorator('name', {
                         rules: [{ required: true }],
-                        initialValue: data.name
+                        initialValue: data?.name
                     })(
                         <Input />
                     )}
@@ -81,7 +81,7 @@ const Save: React.FC<Props> = props => {
                 <Form.Item label="复合网关">
                     {getFieldDecorator('deviceGatewayId', {
                         rules: [{ required: true }],
-                        initialValue: data.configuration.deviceGatewayId
+                        initialValue: data?.configuration?.deviceGatewayId
                     })(
                         <Select
                             onChange={(value: string) => {
@@ -99,7 +99,7 @@ const Save: React.FC<Props> = props => {
                 </Form.Item>
                 <Form.Item key="description" label="说明">
                     {getFieldDecorator('description', {
-                        initialValue: data.description
+                        initialValue: data?.description
                     })(<Input.TextArea rows={4} placeholder="请输入" />)}
                 </Form.Item>
             </Form>
