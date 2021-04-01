@@ -5,6 +5,7 @@ import img from "@/pages/edge-gateway/device/img/edge-device.png";
 import Status from './status/status';
 import Video from './video';
 import RuleEngine from './rule-engine';
+import Network from './network';
 import apis from '@/services';
 import moment from "moment";
 
@@ -73,7 +74,8 @@ const Detail: React.FC<Props> = props => {
         </div>,
         status: <Status refresh={() => {getInfo(deviceId)}} device={info} />,
         video: <Video device={info}/>,
-        ruleEngine: <RuleEngine device={info}/>
+        ruleEngine: <RuleEngine device={info}/>,
+        network: <Network device={info}/>
     }
 
     const getInfo = (id: string) => {
