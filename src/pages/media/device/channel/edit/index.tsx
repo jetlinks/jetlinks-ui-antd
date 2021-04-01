@@ -26,6 +26,7 @@ const Update: React.FC<Props> = props => {
 
       service.update(fileValue).subscribe(
         () => {
+          message.success('保存成功');
           props.close();
         },
         () => {
