@@ -44,13 +44,13 @@ const Edit = (props: Props) => {
           {getFieldDecorator('id', {
             rules: [{ message: '请输入分类ID' }],
             initialValue: props.data.id ? props.data.id : ''
-          })(<Input placeholder="请输入分类ID" readOnly={!!props.data.id}/>)}
+          })(<Input placeholder="请输入分类ID" disabled={!!props.data.id}/>)}
         </Form.Item>
         <Form.Item key="key" label="分类标识">
           {getFieldDecorator('key', {
             rules: [{ required: true, message: '分类标识' }],
             initialValue: props.data.key ? props.data.key : ''
-          })(<Input placeholder="分类标识" readOnly={!!props.data.key}/>)}
+          })(<Input placeholder="分类标识"/>)}
         </Form.Item>
         <Form.Item key="name" label="分类名称">
           {getFieldDecorator('name', {
