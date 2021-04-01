@@ -3,6 +3,7 @@ import Form from "antd/es/form";
 import { FormComponentProps } from "antd/lib/form";
 import { Badge, Button, Card, Divider, Icon, message, Popconfirm, Table } from 'antd';
 import Save from './save';
+import SearchForm from "@/components/SearchForm";
 import Service from '../service';
 import moment from 'moment';
 
@@ -14,12 +15,16 @@ const Device: React.FC<Props> = props => {
     const service = new Service('device-network');
     const [result, setResult] = useState<any>({});
     const [loading, setLoading] = useState<boolean>(false);
+    const [searchParam, setSearchParam] = useState<any>({
+        pageSize: 10
+    });
     const [saveVisible, setSaveVisible] = useState<boolean>(false);
     const [currentItem, setCurrentItem] = useState<any>({});
 
-    const handleSearch = () => {
+    const handleSearch = (params: any) => {
+        setSearchParam(params);
         setLoading(true);
-        service.getDeviceList(props.device.id, { pageSize: 10 }).subscribe(
+        service.getDeviceList(props.device.id, params).subscribe(
             (res) => {
                 setResult(res)
             },
@@ -37,27 +42,27 @@ const Device: React.FC<Props> = props => {
     statusMap.set('notActive', 'processing');
 
     useEffect(() => {
-        handleSearch();
+        handleSearch(searchParam);
     }, []);
 
     const saveData = (params?: any) => {
-        if(currentItem.id){
+        if (currentItem.id) {
             service.saveDevice(props.device.id, params).subscribe(
                 (res) => {
                     if (res.status === 200) {
                         message.success('操作成功！');
-                        handleSearch();
+                        handleSearch(searchParam);
                     }
                 },
                 () => {
                 },
                 () => setLoading(false));
-        }else{
+        } else {
             service.insertDevice(props.device.id, params).subscribe(
                 (res) => {
                     if (res.status === 200) {
                         message.success('操作成功！');
-                        handleSearch();
+                        handleSearch(searchParam);
                     }
                 },
                 () => {
@@ -69,7 +74,7 @@ const Device: React.FC<Props> = props => {
     const deploy = (id: string) => {
         service.deployDevice(props.device.id, id).subscribe(
             () => {
-                handleSearch();
+                handleSearch(searchParam);
                 message.success('操作成功！');
             },
             () => {
@@ -80,7 +85,7 @@ const Device: React.FC<Props> = props => {
     const undeploy = (id: string) => {
         service.undeployDevice(props.device.id, id).subscribe(
             () => {
-                handleSearch();
+                handleSearch(searchParam);
                 message.success('操作成功！');
             },
             () => {
@@ -91,7 +96,7 @@ const Device: React.FC<Props> = props => {
     const removeItem = (params?: any) => {
         service.delIinstance(props.device.id, params.id).subscribe(
             () => {
-                handleSearch();
+                handleSearch(searchParam);
                 message.success('操作成功！');
             },
             () => {
@@ -199,6 +204,30 @@ const Device: React.FC<Props> = props => {
             }}><Icon type="plus" />新增设备</Button>
         }>
             <div>
+                <SearchForm
+                    formItems={[
+                        {
+                            label: '名称',
+                            key: 'name',
+                            type: 'string',
+                        }
+                    ]}
+                    search={(params: any) => {
+                        if(params?.name){
+                            setSearchParam({
+                                where: `name like '%${params?.name}%'`, 
+                                pageSize: 10
+                            })
+                            handleSearch({
+                                where: `name like '%${params?.name}%'`, 
+                                pageSize: 10
+                            });
+                        }else{
+                            setSearchParam({pageSize: 10})
+                            handleSearch({pageSize: 10});
+                        }
+                    }}
+                />
                 <Table
                     loading={loading}
                     columns={columns}
