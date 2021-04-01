@@ -1,6 +1,8 @@
 import path from 'path';
 
 import * as IWebpackChainConfig from 'webpack-chain';
+import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
+
 
 function getModulePackageName(module: { context: string }) {
   if (!module.context) return null;
@@ -60,6 +62,11 @@ const webpackPlugin = (config: IWebpackChainConfig) => {
         },
       },
     });
+    config.plugin('monaco-editor').use(
+      new MonacoWebpackPlugin({
+        languages: ['json','javascript', 'typescript'],
+      }),
+    );
 };
 
 export default webpackPlugin;
