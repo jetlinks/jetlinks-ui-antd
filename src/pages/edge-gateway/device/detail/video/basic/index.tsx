@@ -1,4 +1,4 @@
-import { Button, Col, Input, InputNumber, message, Row, Select } from "antd";
+import { Button, Card, Col, Input, InputNumber, message, Row, Select } from "antd";
 import React, { useEffect, useState } from "react";
 import Service from "./service";
 import Form from "antd/es/form";
@@ -38,7 +38,7 @@ const MediaDevice: React.FC<Props> = props => {
     }, []);
 
     return (
-        <div style={{ width: '50%', marginTop: '20px' }}>
+        <Card style={{ width: '50%', marginTop: '20px' }} title="流媒体服务">
             <Form labelCol={{ span: 5 }} wrapperCol={{ span: 19 }}>
                 <Form.Item key="name" label="流媒体名称">
                     {getFieldDecorator('name', {
@@ -167,7 +167,7 @@ const MediaDevice: React.FC<Props> = props => {
                     保存
         </Button>
             </div>
-        </div>
+        </Card>
     )
 };
 

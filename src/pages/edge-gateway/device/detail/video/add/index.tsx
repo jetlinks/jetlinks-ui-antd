@@ -27,6 +27,7 @@ const Add: React.FC<Props> = props => {
         pageSize: 8
     });
     const [device, setDevice] = useState({});
+    const [deviceId, setDeviceId] = useState('');
     const [channel, setChannel] = useState({});
 
     const statusMap = new Map();
@@ -36,13 +37,10 @@ const Add: React.FC<Props> = props => {
 
     const columnsLeft = [
         {
-            title: '状态',
-            dataIndex: 'state',
-            key: 'state',
+            title: '序号',
             align: 'center',
-            width: '80px',
-            render: (record: any) =>
-                record ? <Badge status={statusMap.get(record.text)} text={record.text} /> : '',
+            width: 60,
+            render: (text: string, record: any, index: number) => `${index + 1}`,
         },
         {
             title: '视频设备',
@@ -60,7 +58,16 @@ const Add: React.FC<Props> = props => {
             ),
         },
         {
-            title: '接入协议',
+            title: '状态',
+            dataIndex: 'state',
+            key: 'state',
+            align: 'center',
+            width: '80px',
+            render: (record: any) =>
+                record ? <Badge status={statusMap.get(record.text)} text={record.text} /> : '',
+        },
+        {
+            title: '协议',
             dataIndex: 'provider',
             key: 'provider',
             align: 'center',
@@ -95,15 +102,21 @@ const Add: React.FC<Props> = props => {
     ];
     const columnsRight = [
         {
-            title: '通道ID',
-            dataIndex: 'channelId',
-            key: 'channelId',
-            width: 120,
+            title: '序号',
             align: 'center',
+            width: 60,
+            render: (text: string, record: any, index: number) => `${index + 1}`,
+        },
+        {
+            title: '通道名称',
+            dataIndex: 'name',
+            key: 'name',
+            align: 'center',
+            width: 140,
             ellipsis: true,
-            render: (channelId: string) => {
+            render: (name: string) => {
                 return (
-                    <Tooltip arrowPointAtCenter title={channelId}>{channelId}</Tooltip>
+                    <Tooltip arrowPointAtCenter title={name}>{name}</Tooltip>
                 )
             }
         },
@@ -117,23 +130,23 @@ const Add: React.FC<Props> = props => {
                 record ? <Badge status={statusMap.get(record.text)} text={record.text} /> : '',
         },
         {
-            title: '通道名',
-            dataIndex: 'name',
-            key: 'name',
+            title: '通道ID',
+            dataIndex: 'channelId',
+            key: 'channelId',
+            width: 120,
             align: 'center',
-            width: 180,
             ellipsis: true,
-            render: (name: string) => {
+            render: (channelId: string) => {
                 return (
-                    <Tooltip arrowPointAtCenter title={name}>{name}</Tooltip>
+                    <Tooltip arrowPointAtCenter title={channelId}>{channelId}</Tooltip>
                 )
             }
         },
         {
-            title: '接入协议',
+            title: '协议',
             dataIndex: 'provider',
             key: 'provider',
-            width: 150,
+            width: 100,
             align: 'center',
         },
         {
@@ -148,6 +161,11 @@ const Add: React.FC<Props> = props => {
                         setChannelVisible(true);
                     }}>编辑</a>
                     <Divider type="vertical" />
+                    <a onClick={() => {
+                        setChannel(record);
+                        setPlaylVisible(true);
+                    }}>播放</a>
+                    <Divider type="vertical" />
                     <Popconfirm
                         title="确认删除吗？"
                         onConfirm={() => {
@@ -160,11 +178,6 @@ const Add: React.FC<Props> = props => {
                         }}>
                         <a>删除</a>
                     </Popconfirm>
-                    <Divider type="vertical" />
-                    <a onClick={() => {
-                        setChannel(record);
-                        setPlaylVisible(true);
-                    }}>播放</a>
                 </>
             ),
         },
@@ -187,6 +200,10 @@ const Add: React.FC<Props> = props => {
                 setRightData(res.result[0].data);
             }
         })
+    }
+
+    const backgroundStyle = (record: any) => {
+        return record.id === deviceId ? styles.clickRowStyl : ''
     }
 
     useEffect(() => {
@@ -212,17 +229,21 @@ const Add: React.FC<Props> = props => {
                     </div>
                 }>
                     <div className={styles.leftTable}>
-                        <Table rowKey="id" onRow={record => {
-                            return {
-                                onClick: () => {
-                                    let params = {
-                                        where: `deviceId = ${record.id}`,
-                                        pageSize: 8,
+                        <Table rowKey="id"
+                            rowClassName={backgroundStyle}
+                            onRow={record => {
+                                return {
+                                    onClick: () => {
+                                        setDeviceId(record.id);
+                                        let params = {
+                                            where: `deviceId = ${record.id}`,
+                                            pageSize: 8,
+                                        }
+                                        getChannel(props.device.id, params);
+
                                     }
-                                    getChannel(props.device.id, params)
                                 }
-                            }
-                        }} columns={columnsLeft} dataSource={leftData} />
+                            }} columns={columnsLeft} dataSource={leftData} />
                     </div>
                 </Card>
 

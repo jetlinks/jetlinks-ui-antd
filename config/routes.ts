@@ -647,6 +647,13 @@ export const routes = [
                 authority: ['edge-device', 'admin'],
                 component: './edge-gateway/device/detail',
               },
+              {
+                hideInMenu: true,
+                path: '/edge-gateway/device/detail/:id/save/:id',
+                name: '网关设备详情',
+                authority: ['edge-device', 'admin'],
+                component: './edge-gateway/device/detail/network/device/editor',
+              }
             ],
           },
           {

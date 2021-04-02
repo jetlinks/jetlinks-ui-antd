@@ -56,6 +56,7 @@ const Save: React.FC<Props> = props => {
       if (err) return;
 
       service.saveCascade(props.id, fileValue).subscribe(() => {
+          message.success("保存成功");
           props.close();
         }, () => {
           message.error("保存错误");

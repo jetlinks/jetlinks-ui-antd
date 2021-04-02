@@ -17,7 +17,13 @@ const AddDevice: React.FC<Props> = props => {
         data,
         deviceId
     } = props;
+
     const [onvif, setOnvif] = useState({});
+    const [dataType, setDataType] = useState("");
+
+    useEffect(() => {
+        setDataType(data.provider)
+    },[]);
 
     const geOnvif = (id: string, fileValue: any) => {
         let param = {
@@ -31,15 +37,15 @@ const AddDevice: React.FC<Props> = props => {
                 if (res.result.length > 0) {
                     let data = res.result[0];
                     let mediaProfiles = (res.result[0]?.mediaProfiles || []).map((item: any, index: number) => {
-                        let ra = Math.round(Math.random() * 100000);
+                        let ra = Math.round(Math.random() * 10000000000);
                         return {
                             name: item.name,
                             token: item.token,
                             id: `channel${index}${ra}`
                         }
                     })
-                    let params = { 
-                        id: fileValue.id,
+                    let params = {
+                        id: `device${Math.round(Math.random() * 10000000000)}`,
                         firmwareVersion: data.firmwareVersion,
                         hardwareId: data.hardwareId,
                         description: fileValue.description,
@@ -60,6 +66,42 @@ const AddDevice: React.FC<Props> = props => {
                 }
             }
         })
+    }
+
+    const renderType = (type: string) => {
+        switch (type) {
+            case 'onvif':
+                return (
+                    <>
+                        <Form.Item label="IP地址">
+                            {getFieldDecorator('url', {
+                                rules: [{ required: true }],
+                                initialValue: data?.others?.url
+                            })(
+                                <Input readOnly={!!data.id} />
+                            )}
+                        </Form.Item>
+                        <Form.Item key="username" label="用户名">
+                            {getFieldDecorator('username', {
+                                // rules: [{ required: true }],
+                                initialValue: data?.others?.username
+                            })(
+                                <Input />
+                            )}
+                        </Form.Item>
+                        <Form.Item key="password" label="密码">
+                            {getFieldDecorator('password', {
+                                // rules: [{ required: true }],
+                                initialValue: data?.others?.password
+                            })(
+                                <Input type="password" readOnly={!!data.id} />
+                            )}
+                        </Form.Item>
+                    </>
+                );
+            default:
+                return null;
+        }
     }
 
     return (
@@ -85,9 +127,9 @@ const AddDevice: React.FC<Props> = props => {
                             description: fileValue.description,
                         }
                         apis.edgeDevice.addOnvif(deviceId, params).then(response => {
-                            if(response.status === 200){
+                            if (response.status === 200) {
                                 props.save();
-                            }else{
+                            } else {
                                 props.close();
                             }
                         })
@@ -99,27 +141,20 @@ const AddDevice: React.FC<Props> = props => {
                 labelCol={{ span: 6 }}
                 wrapperCol={{ span: 18 }}
             >
-                <Form.Item label="id">
+                {/* <Form.Item label="id">
                     {getFieldDecorator('id', {
                         rules: [{ required: true }],
                         initialValue: data?.id
                     })(
                         <Input readOnly={!!data.id} />
                     )}
-                </Form.Item>
+                </Form.Item> */}
                 <Form.Item label="名称">
                     {getFieldDecorator('name', {
+                        rules: [{ required: true }],
                         initialValue: data?.name
                     })(
                         <Input />
-                    )}
-                </Form.Item>
-                <Form.Item label="IP地址">
-                    {getFieldDecorator('url', {
-                        rules: [{ required: true }],
-                        initialValue: data?.others?.url
-                    })(
-                        <Input readOnly={!!data.id} />
                     )}
                 </Form.Item>
                 <Form.Item label="协议类型">
@@ -127,27 +162,16 @@ const AddDevice: React.FC<Props> = props => {
                         rules: [{ required: true }],
                         initialValue: data?.provider
                     })(
-                        <Select placeholder="请选择" disabled={!!data.id}>
-                            <Select.Option value="ONVIF" key="ONVIF">ONVIF</Select.Option>
+                        <Select placeholder="请选择" disabled={!!data.id}
+                            onChange={(value: string) => {
+                                setDataType(value);
+                            }}
+                        >
+                            <Select.Option value="onvif" key="onvif">ONVIF</Select.Option>
                         </Select>
                     )}
                 </Form.Item>
-                <Form.Item key="username" label="用户名">
-                    {getFieldDecorator('username', {
-                        rules: [{ required: true }],
-                        initialValue: data?.others?.username
-                    })(
-                        <Input />
-                    )}
-                </Form.Item>
-                <Form.Item key="password" label="密码">
-                    {getFieldDecorator('password', {
-                        rules: [{ required: true }],
-                        initialValue: data?.others?.password
-                    })(
-                        <Input type="password" readOnly={!!data.id} />
-                    )}
-                </Form.Item>
+                {renderType(dataType)}
                 <Form.Item key="description" label="说明">
                     {getFieldDecorator('description', {
                         initialValue: data?.description
