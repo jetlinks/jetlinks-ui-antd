@@ -64,10 +64,6 @@ const Editor: React.FC<Props> = props => {
       tab: '实例信息',
     },
     {
-      key: 'status',
-      tab: '运行状态',
-    },
-    {
       key: 'metadata',
       tab: '物模型',
     },
@@ -136,7 +132,7 @@ const Editor: React.FC<Props> = props => {
           subscribeDeviceState(deviceData, deviceId);
           if (deviceData.metadata) {
             const deriveMetadata = JSON.parse(deviceData.metadata);
-            if ((deriveMetadata.functions || []).length > 0) {
+            if ((deriveMetadata.functions || []).length > 0 && deviceData.state?.value !== 'notActive') {
               tabList.splice(2, 0, {
                 key: 'functions',
                 tab: '设备功能',
@@ -148,6 +144,12 @@ const Editor: React.FC<Props> = props => {
             tabList.push({
               key: 'gateway',
               tab: '子设备管理',
+            });
+          }
+          if (deviceData.state?.value !== 'notActive') {
+            tabList.splice(2, 0, {
+              key: 'status',
+              tab: '运行状态',
             });
           }
           // apis.deviceProdcut.protocolConfiguration(deviceData.protocol, deviceData.transport)
@@ -300,7 +302,7 @@ const Editor: React.FC<Props> = props => {
         setTags(data);
         updateData('tags', data);  //handleSearch()
       }}
-      update={() => {getInfo(data.id);  }}
+      update={() => { getInfo(data.id); }}
     />,
     status: <Status device={data} refresh={() => {
       getInfo(data.id);
@@ -377,7 +379,7 @@ const Editor: React.FC<Props> = props => {
     <Spin tip="加载中..." spinning={spinning}>
       <PageHeaderWrapper
         className={styles.instancePageHeader}
-        style={{marginTop: 0, backgroundColor: '#F0F2F5', paddingBottom: 10}}
+        style={{ marginTop: 0, backgroundColor: '#F0F2F5', paddingBottom: 10 }}
         onBack={() => window.history.back()}
         title={titleInfo}
         extra={action}

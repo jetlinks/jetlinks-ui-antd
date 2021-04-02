@@ -62,9 +62,16 @@ export async function add(params: RoleItem) {
     data: params,
   });
 }
+export async function save(params: RoleItem) {
+  return request(`/jetlinks/dimension`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
 export async function saveOrUpdate(params: RoleItem) {
-  return request(`/jetlinks/dimension/${params.id}`, {
-    method: 'PUT',
+  return request(`/jetlinks/dimension`, {
+    method: 'PATCH',
     data: params,
   });
 }
