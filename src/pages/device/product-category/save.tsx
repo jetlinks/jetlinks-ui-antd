@@ -1,36 +1,38 @@
-import React from "react";
-import { Form, Input, Modal } from "antd";
-import { FormComponentProps } from "antd/es/form";
-import api from '@/services'
+import React from 'react';
+import { Form, Input, Modal } from 'antd';
+import { FormComponentProps } from 'antd/es/form';
+import api from '@/services';
 
 interface Props extends FormComponentProps {
   data: {
-    type: string,
-    description: string,
-    key: string,
-    id: string,
-    name: string,
-    parentId: string
-  },
-  close: Function,
-  save: Function
+    type: string;
+    description: string;
+    key: string;
+    id: string;
+    name: string;
+    parentId: string;
+  };
+  close: Function;
+  save: Function;
 }
 
 const Save = (props: Props) => {
-
-  const { form, form: { getFieldDecorator } } = props;
+  const {
+    form,
+    form: { getFieldDecorator },
+  } = props;
 
   const save = () => {
     form.validateFields((err, fileValue) => {
       if (err) return;
-      let parentId = props.data.parentId
-      if(fileValue.id === '') fileValue.id = undefined;
-      api.productCategoty.save({...fileValue, parentId}).then(res => {
-        if(res.status === 200){
-          props.save()
+      let parentId = props.data.parentId;
+      if (fileValue.id === '') fileValue.id = undefined;
+      api.productCategoty.save({ ...fileValue, parentId }).then(res => {
+        if (res.status === 200) {
+          props.save();
         }
-      }) 
-    })
+      });
+    });
   };
   return (
     <Modal
@@ -38,7 +40,7 @@ const Save = (props: Props) => {
       title={`${props.data.type}分类`}
       onCancel={() => props.close()}
       onOk={() => {
-        save()
+        save();
       }}
     >
       <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
@@ -64,6 +66,6 @@ const Save = (props: Props) => {
         </Form.Item>
       </Form>
     </Modal>
-  )
+  );
 };
 export default Form.create<Props>()(Save);
