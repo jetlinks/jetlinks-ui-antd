@@ -71,7 +71,8 @@ const OrgList: React.FC<Props> = props => {
 
   const saveOrUpdate = (item: OrgItem) => {
     if (currentItem.id) {
-      dispatch({ //编辑
+      dispatch({
+        //编辑
         type: 'org/insert',
         payload: encodeQueryParam(item),
         callback: (response: any) => {
@@ -89,7 +90,7 @@ const OrgList: React.FC<Props> = props => {
         }
         setSaveVisible(false);
         handleSearch(searchParam);
-      })
+      });
     }
   };
   const handleDelete = (item: any) => {
@@ -118,20 +119,21 @@ const OrgList: React.FC<Props> = props => {
     {
       title: '机构标识',
       dataIndex: 'id',
-      width: '20%',
+      width: '50%',
     },
     {
       title: '机构名称',
       dataIndex: 'name',
-      width: '20%',
+      width: '10%',
     },
     {
       title: '描述',
       dataIndex: 'describe',
-      width: '30%',
+      width: '10%',
     },
     {
       title: '操作',
+      width: '20%',
       render: (text, record) => (
         <Fragment>
           <a
@@ -215,15 +217,15 @@ const OrgList: React.FC<Props> = props => {
               rowKey="id"
               onChange={onTableChange}
               pagination={false}
-            // pagination={{
-            //     current: result.pageIndex + 1,
-            //     total: result.total,
-            //     pageSize: result.pageSize,
-            //     showQuickJumper: true,
-            //     showSizeChanger: true,
-            //     pageSizeOptions: ['10', '20', '50', '100'],
-            //     showTotal: (total: number) => `共 ${total} 条记录 第  ${result.pageIndex + 1}/${Math.ceil(result.total / result.pageSize)}页`
-            // }}
+              // pagination={{
+              //     current: result.pageIndex + 1,
+              //     total: result.total,
+              //     pageSize: result.pageSize,
+              //     showQuickJumper: true,
+              //     showSizeChanger: true,
+              //     pageSizeOptions: ['10', '20', '50', '100'],
+              //     showTotal: (total: number) => `共 ${total} 条记录 第  ${result.pageIndex + 1}/${Math.ceil(result.total / result.pageSize)}页`
+              // }}
             />
           </div>
         </div>

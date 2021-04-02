@@ -16,7 +16,7 @@ export async function remove(id: string) {
 
 export async function add(params: OrgItem) {
   return request(`/jetlinks/organization`, {
-    method: 'POST',
+    method: 'PATCH',
     data: params,
   });
 }
