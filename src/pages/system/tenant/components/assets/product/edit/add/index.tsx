@@ -152,7 +152,7 @@ const Add = (props: Props) => {
       <SearchForm
         search={(searchData: any) => {
           setLoading(true);
-          handleSearch({ terms: searchData });
+          handleSearch({ terms: searchData, pageIndex: 0, pageSize: 10 });
         }}
         formItems={[
           {
