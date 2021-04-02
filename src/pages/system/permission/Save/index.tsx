@@ -52,7 +52,11 @@ const Save: React.FC<Props> = (props) => {
                     parents: association.filter(i => i.actions.length > 0),
                     optionalFields: dataView
                 }
-                props.save(permissionData);
+                if(permissionData.id === undefined || permissionData.name === undefined || permissionData.status === undefined){
+                    
+                }else{
+                    props.save(permissionData);
+                }
             }
         });
     }
@@ -73,7 +77,6 @@ const Save: React.FC<Props> = (props) => {
                     <Tabs.TabPane tab="基本信息" key="basic">
                         <Basic data={basicInfo} save={(data: any) => setActions(data)} />
                     </Tabs.TabPane>
-
                     <Tabs.TabPane tab="关联权限" key="association">
                         <Association data={association} save={(data: any) => setAssociation(data)} />
                     </Tabs.TabPane>

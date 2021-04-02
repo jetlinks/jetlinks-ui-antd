@@ -185,7 +185,7 @@ const OrgList: React.FC<Props> = props => {
     },
   ];
   return (
-    <PageHeaderWrapper title="机构管理1">
+    <PageHeaderWrapper title="机构管理">
       <Card bordered={false}>
         <div className={styles.tableList}>
           <div className={styles.tableListForm}>

@@ -69,15 +69,29 @@ const RoleList: React.FC<Props> = props => {
   }, []);
 
   const saveOrUpdate = (item: RoleItem) => {
-    apis.role.saveOrUpdate(item)
-      .then((response: any) => {
-        if (response.status === 200) {
-          message.success('保存成功');
-          handleSearch(searchParam);
-        }
-      })
-      .catch(() => {
-      })
+    if (currentItem.id) {
+      apis.role.saveOrUpdate(item)
+        .then((response: any) => {
+          if (response.status === 200) {
+            message.success('保存成功');
+            handleSearch(searchParam);
+          }
+          setLoading(false);
+        })
+        .catch(() => {
+        })
+    } else {
+      apis.role.save(item)
+        .then((response: any) => {
+          if (response.status === 200) {
+            message.success('新增成功');
+            handleSearch(searchParam);
+          }
+          setLoading(false);
+        })
+        .catch(() => {
+        })
+    }
   };
   const handleDelete = (item: any) => {
     apis.role.remove(item.id)

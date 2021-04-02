@@ -66,19 +66,35 @@ const PermissionList: React.FC<Props> = props => {
 
   const saveOrUpdate = (permission: PermissionItem) => {
     setSaveLoading(true);
-    dispatch({
-      type: 'permission/insert',
-      payload: encodeQueryParam(permission),
-      callback: (response: any) => {
-        if (response.status === 200) {
-          setCurrentItem({});
-          message.success('添加成功');
-          handleSearch(setSearchParam);
-          setSaveVisible(false);
-        }
-        setSaveLoading(false);
-      },
-    });
+    if(!!currentItem.id){
+      dispatch({
+        type: 'permission/updata',
+        payload: encodeQueryParam(permission),
+        callback: (response: any) => {
+          if (response.status === 200) {
+            setCurrentItem({});
+            message.success('更新成功');
+            handleSearch(setSearchParam);
+            setSaveVisible(false);
+          }
+          setSaveLoading(false);
+        },
+      });
+    }else{
+      dispatch({
+        type: 'permission/insert',
+        payload: encodeQueryParam(permission),
+        callback: (response: any) => {
+          if (response.status === 200) {
+            setCurrentItem({});
+            message.success('添加成功');
+            handleSearch(setSearchParam);
+            setSaveVisible(false);
+          }
+          setSaveLoading(false);
+        },
+      });
+    }
   };
   const handleDelete = (params: any) => {
     dispatch({
