@@ -104,7 +104,7 @@ const RoleList: React.FC<Props> = props => {
     },
     {
       title: '描述',
-      dataIndex: 'description',
+      dataIndex: 'describe',
       width: '30%',
     },
     {
