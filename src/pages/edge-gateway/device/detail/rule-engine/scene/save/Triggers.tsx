@@ -78,10 +78,10 @@ const Trigger: React.FC<Props> = props => {
   const findDeviceById = (deviceId: string) => {
     service.getIinstanceDetail(props.deviceId, deviceId).subscribe((response: any) => {
       setDeviceData(response);
-      trigger.device.productId = response.productId;
-      trigger.device.deviceId = response.id;
-      setMetaData(JSON.parse(response.metadata));
-      setDeviceName(response.name)
+      trigger.device.productId = response?.productId || '';
+      trigger.device.deviceId = response?.id || '';
+      setMetaData(JSON.parse(response?.metadata || '[]'));
+      setDeviceName(response?.name || '')
     })
   };
 
