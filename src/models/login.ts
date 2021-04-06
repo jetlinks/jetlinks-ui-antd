@@ -100,6 +100,8 @@ const Model: LoginModelType = {
               if (redirect.match(/^\/.*#/)) {
                 redirect = redirect.substr(redirect.indexOf('#') + 1);
               }
+              router.replace(redirect);
+              return;
             } else {
               window.location.href = '/';
               return;
