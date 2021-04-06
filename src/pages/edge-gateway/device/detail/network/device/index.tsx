@@ -7,6 +7,8 @@ import SearchForm from "@/components/SearchForm";
 import Service from '../service';
 import router from 'umi/router';
 import moment from 'moment';
+import { PaginationConfig } from 'antd/lib/pagination';
+import { SorterResult } from 'antd/lib/table';
 
 interface Props extends FormComponentProps {
     device: any
@@ -103,6 +105,17 @@ const Device: React.FC<Props> = props => {
             () => {
             },
             () => setLoading(false))
+    };
+
+    const onTableChange = (pagination: PaginationConfig, filters: any, sorter: SorterResult<any>) => {
+        service.getDeviceList(props.device.id, {
+            ...searchParam,
+            pageIndex: Number(pagination.current) - 1,
+            pageSize: pagination.pageSize
+        }).subscribe(
+            (res) => {
+                setResult(res)
+            })
     };
 
     const columns = [
@@ -239,6 +252,7 @@ const Device: React.FC<Props> = props => {
                         total: result.total,
                         pageSize: result.pageSize
                     }}
+                    onChange={onTableChange}
                 />
             </div>
             {saveVisible && <Save

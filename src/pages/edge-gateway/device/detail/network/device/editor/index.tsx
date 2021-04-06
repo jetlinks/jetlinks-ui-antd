@@ -110,7 +110,7 @@ const Editor: React.FC<Props> = props => {
         }
         service.getIinstanceConfigMetadata(parantDeviceId, deviceData.id).subscribe(
           (resp) => {
-            setConfig(resp.result);
+            setConfig(resp);
           }
         )
         setTableList(tabList);
@@ -156,21 +156,21 @@ const Editor: React.FC<Props> = props => {
 
   const changeDeploy = (deviceId?: string) => {
     setSpinning(true);
-    apis.deviceInstance
-      .changeDeploy(deviceId)
-      .then(response => {
-        if (response.status === 200) {
-          message.success('激活成功');
-          data.state = { value: 'offline', text: '离线' };
-          setData(data);
-          setSpinning(false);
-        } else {
-          message.error('激活失败');
-          setSpinning(false);
-        }
-      })
-      .catch(() => {
-      });
+    // apis.deviceInstance
+    //   .changeDeploy(deviceId)
+    //   .then(response => {
+    //     if (response.status === 200) {
+    //       message.success('激活成功');
+    //       data.state = { value: 'offline', text: '离线' };
+    //       setData(data);
+    //       setSpinning(false);
+    //     } else {
+    //       message.error('激活失败');
+    //       setSpinning(false);
+    //     }
+    //   })
+    //   .catch(() => {
+    //   });
   };
 
   const action = (
@@ -195,25 +195,15 @@ const Editor: React.FC<Props> = props => {
     <div style={{ marginTop: 30 }}>
       <Descriptions column={4}>
         <Descriptions.Item label="ID">{id}</Descriptions.Item>
-        <Descriptions.Item label="产品">
-          <div>
-            {data.productName}
-            <a style={{ marginLeft: 10 }}
-              onClick={() => {
-                router.push(`/device/product/save/${data.productId}`);
-              }}
-            >查看</a>
-          </div>
-        </Descriptions.Item>
       </Descriptions>
     </div>
   );
 
-  const deviceStateStyle = {
-    style: {
-      fontSize: 12, marginLeft: 20
-    }
-  };
+  // const deviceStateStyle = {
+  //   style: {
+  //     fontSize: 12, marginLeft: 20
+  //   }
+  // };
   const titleInfo = (
     <Row>
       <div>
@@ -221,7 +211,7 @@ const Editor: React.FC<Props> = props => {
           设备：{data.name}
         </span>
         {statusMap.get(data.state?.value)}
-        {data.state?.value === 'online' ? (
+        {/* {data.state?.value === 'online' ? (
           <Popconfirm title="确认让此设备断开连接？" onConfirm={() => {
             disconnectDevice(data.id);
           }}>
@@ -234,7 +224,7 @@ const Editor: React.FC<Props> = props => {
             }}>
             <a {...deviceStateStyle}>激活设备</a>
           </Popconfirm>
-        ) : (<span />))}
+        ) : (<span />))} */}
       </div>
     </Row>
   );

@@ -4,7 +4,7 @@ import { FormComponentProps } from "antd/lib/form";
 import SceneImg from '@/pages/rule-engine/scene/img/scene.svg';
 import { Avatar, Badge, Button, Card, Dropdown, Icon, List, Menu, message, Popconfirm, Tooltip } from 'antd';
 import Service from "../service";
-import Save from './save';
+import SceneSave from './save';
 // import Detail from './detail';
 import AutoHide from '@/pages/analysis/components/Hide/autoHide';
 import encodeQueryParam from '@/utils/encodeParam';
@@ -18,8 +18,8 @@ const Scene: React.FC<Props> = props => {
     const [result, setResult] = useState<any>({});
     const [loading, setLoading] = useState<boolean>(false);
     const [saveVisible, setSaveVisible] = useState<boolean>(false);
-    const [detailVisible, setDetailVisible] = useState<boolean>(false);
-    const [sceneData, setSceneData] = useState<any>({}); 
+    // const [detailVisible, setDetailVisible] = useState<boolean>(false);
+    const [sceneData, setSceneData] = useState<any>({});
     const [searchParam, setSearchParam] = useState({ pageSize: 8, sorts: { field: 'id', order: 'desc' } });
 
     const handleSearch = (params?: any) => {
@@ -32,11 +32,11 @@ const Scene: React.FC<Props> = props => {
             () => setLoading(false))
     };
 
-    const modelType = new Map();
-    modelType.set('device_alarm', '设备告警');
-    modelType.set('sql_rule', '数据转发');
-    modelType.set('node-red', '规则编排');
-    modelType.set('rule-scene', '场景联动');
+    const triggerType = new Map();
+    triggerType.set("manual", '手动触发')
+    triggerType.set("timer", '定时触发')
+    triggerType.set("device", '设备触发')
+    triggerType.set("scene", '场景触发')
 
     useEffect(() => {
         setLoading(true);
@@ -45,8 +45,11 @@ const Scene: React.FC<Props> = props => {
 
     const saveData = (params?: any) => {
         service.saveScene(props.device.id, params).subscribe(
-            () => {
-                handleSearch(searchParam);
+            (resp) => {
+                if (resp.status === 200) {
+                    message.success('保存成功！')
+                    handleSearch(searchParam);
+                }
             },
             () => {
             },
@@ -54,7 +57,7 @@ const Scene: React.FC<Props> = props => {
     };
 
     const start = (params?: any) => {
-        service.startScene(props.device.id, {id: params.id}).subscribe(
+        service.startScene(props.device.id, { id: params.id }).subscribe(
             () => {
                 handleSearch(searchParam);
                 message.success('操作成功！');
@@ -65,7 +68,7 @@ const Scene: React.FC<Props> = props => {
     };
 
     const stop = (params?: any) => {
-        service.stopScene(props.device.id, {id: params.id}).subscribe(
+        service.stopScene(props.device.id, { id: params.id }).subscribe(
             () => {
                 handleSearch(searchParam);
                 message.success('操作成功！');
@@ -76,7 +79,7 @@ const Scene: React.FC<Props> = props => {
     };
 
     const handleDelete = (params?: any) => {
-        service.delScene(props.device.id, {id: params.id}).subscribe(
+        service.delScene(props.device.id, { id: params.id }).subscribe(
             () => {
                 handleSearch(searchParam);
                 message.success('操作成功！');
@@ -121,21 +124,20 @@ const Scene: React.FC<Props> = props => {
                                 <List.Item key={item.id}>
                                     <Card hoverable bodyStyle={{ paddingBottom: 20 }}
                                         actions={[
-                                            <Tooltip key="seeProduct" title="查看">
-                                                <Icon
-                                                    type="eye"
-                                                    onClick={() => {
-                                                        setDetailVisible(true);
-                                                        setSceneData(item);
-                                                    }}
-                                                />
-                                            </Tooltip>,
                                             <Tooltip key="update" title='编辑'>
                                                 <Icon
                                                     type="edit"
                                                     onClick={() => {
                                                         setSaveVisible(true);
                                                         setSceneData(item);
+                                                    }}
+                                                />
+                                            </Tooltip>,
+                                            <Tooltip key="seeProduct" title="重启">
+                                                <Icon
+                                                    type="reload"
+                                                    onClick={() => {
+                                                        start(item);
                                                     }}
                                                 />
                                             </Tooltip>,
@@ -159,25 +161,6 @@ const Scene: React.FC<Props> = props => {
                                                                 </Button>
                                                             </Popconfirm>
                                                         </Menu.Item>
-                                                        <Menu.Item key="4">
-                                                            <Button icon="copy" type="link"
-                                                                onClick={() => {
-                                                                    start(item);
-                                                                }}>
-                                                                重启
-                                                            </Button>
-                                                        </Menu.Item>
-                                                        {item.modelType === 'node-red' && (
-                                                            <Menu.Item key="3">
-                                                                <Button icon="copy" type="link"
-                                                                    onClick={() => {
-                                                                        setSceneData(item);
-                                                                        setSaveVisible(true);
-                                                                    }}>
-                                                                    复制
-                                                                </Button>
-                                                            </Menu.Item>
-                                                        )}
                                                         {item.state?.value === 'stopped' && (
                                                             <Menu.Item key="2">
                                                                 <Popconfirm
@@ -207,10 +190,14 @@ const Scene: React.FC<Props> = props => {
                                         />
                                         <div>
                                             <div style={{ display: 'flex', marginTop: '10px' }}>
-                                                <div style={{ textAlign: 'center', width: '50%' }}>
+                                                <div style={{ textAlign: 'center', width: '50%', height: '60px' }}>
                                                     <p>触发方式</p>
-                                                    <p style={{ fontSize: 14 }}>
-                                                        {modelType.get(item.modelType)}
+                                                    <p style={{ fontSize: 14, fontWeight: 600, textAlign: 'center' }}>
+                                                        {
+                                                            item.triggers?.map((i: any) => {
+                                                                return triggerType.get(i.trigger) + ' '
+                                                            })
+                                                        }
                                                     </p>
                                                 </div>
                                                 <div style={{ textAlign: 'center', width: '50%' }}>
@@ -230,7 +217,7 @@ const Scene: React.FC<Props> = props => {
                     }}
                 />
             )}
-           {saveVisible && <Save
+            {saveVisible && <SceneSave
                 deviceId={props.device.id}
                 data={sceneData}
                 close={() => {

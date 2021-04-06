@@ -89,14 +89,14 @@ class Service extends BaseService<any> {
                 filter(resp => resp.status === 200),
                 map(resp => resp.result[0])
             ));
-            
+
     public saveScene = (deviceId: string, params: any) => defer(
         () => from(request(`/jetlinks/edge/operations/${deviceId}/rule-engine-scene-save/invoke`, {
             method: 'POST',
             data: params
         })).pipe(
             filter(resp => resp.status === 200),
-            map(resp => resp.result)
+            map(resp => resp)
         ));
 
     public getScenePageList = (deviceId: any, data: any) => defer(
@@ -162,6 +162,54 @@ class Service extends BaseService<any> {
                 filter(resp => resp.status === 200),
                 map(resp => resp.result[0])
             ));
+    public getNotifierTypeList = (deviceId: any) => defer(
+        () => from(request(`/jetlinks/edge/operations/${deviceId}/notifier-type-list/invoke`, {
+            method: 'POST',
+            data: {}
+        }))
+            .pipe(
+                filter(resp => resp.status === 200),
+                map(resp => resp.result[0])
+            ));
+    public getNotifierProviderList = (deviceId: any, typeId: string) => defer(
+        () => from(request(`/jetlinks/edge/operations/${deviceId}/notifier-provider-list/invoke`, {
+            method: 'POST',
+            data: {
+                typeId: typeId
+            }
+        }))
+            .pipe(
+                filter(resp => resp.status === 200),
+                map(resp => resp.result[0])
+            ));
+    public getNotifierConfigList = (deviceId: any, data: any) => defer(
+        () => from(request(`/jetlinks/edge/operations/${deviceId}/notifier-config-list/invoke`, {
+            method: 'POST',
+            data: data
+        }))
+            .pipe(
+                filter(resp => resp.status === 200),
+                map(resp => resp.result[0])
+            ));
+    public getNotifierTemplateList = (deviceId: any, data: any) => defer(
+        () => from(request(`/jetlinks/edge/operations/${deviceId}/notifier-template-list/invoke`, {
+            method: 'POST',
+            data: data
+        }))
+            .pipe(
+                filter(resp => resp.status === 200),
+                map(resp => resp.result[0])
+            ));
+    public getIinstanceDetail = (deviceId: string, id: string) => defer(
+        () => from(request(`/jetlinks/edge/operations/${deviceId}/device-instance-detail/invoke`, {
+            method: 'POST',
+            data: {
+                deviceId: id
+            }
+        })).pipe(
+            filter(resp => resp.status === 200),
+            map(resp => resp.result[0])
+        ))
 }
 
 export default Service;

@@ -2,15 +2,15 @@ import React, {useEffect, useState} from 'react';
 import Form, {FormComponentProps} from 'antd/lib/form';
 import {Card, Col, Icon, Input, message, Popconfirm, Row, Select} from 'antd';
 import {ActionData} from '@/pages/rule-engine/scene/data';
-import apis from '@/services';
-import encodeQueryParam from '@/utils/encodeParam';
-import Bind from '@/pages/device/gateway/bind';
+import Service from '../../service';
+import Bind from './bind';
 
 interface Props extends FormComponentProps {
   action: Partial<ActionData>;
   save: Function;
   remove: Function;
   position: number;
+  deviceId: string;
 }
 
 interface State {
@@ -38,6 +38,7 @@ const Action: React.FC<Props> = props => {
     arrayData: [undefined],
   };
 
+  const service = new Service('rule-engine');
   const [bindVisible, setBindVisible] = useState(false);
   const [actionData, setActionData] = useState(initState.actionData);
   const [deviceData, setDeviceData] = useState(initState.deviceData);
@@ -70,73 +71,59 @@ const Action: React.FC<Props> = props => {
 
   useEffect(() => {
     if (actionType === 'notifier') {
-      apis.notifier.configType().then((res: any) => {
-        if (res) {
-          setNotifyTypeConfig(res.result);
+      service.getNotifierTypeList(props.deviceId).subscribe(
+        (res) => {
+          setNotifyTypeConfig(res);
         }
-      });
+      )
     }
   }, [actionType]);
 
   const findNotifier = (value: any) => {
-    apis.notifier.config(
-      encodeQueryParam({
-        paging: false,
-        terms: {
-          type: value.id,
-        },
-      }))
-      .then((response: any) => {
-        if (response.status === 200) {
-          setMessageConfig(response.result.data);
-          response.result.data.map((item: any) => {
+    service.getNotifierConfigList(props.deviceId, {
+      paging: false,
+      where: `type=${value.id}`
+    }).subscribe(
+      res => {
+        setMessageConfig(res);
+          res.map((item: any) => {
             if (item.id === actionData.configuration.notifierId) {
               findTemplate(item);
             }
           });
-        }
-      })
-      .catch(() => {
-      });
+      }
+    )
   };
 
   const findTemplate = (value: any) => {
-    apis.notifier.template(
-      encodeQueryParam({
-        paging: false,
-        terms: {
-          type: value.type,
-          provider: value.provider,
-        },
-      }),
-    ).then(res => {
-      if (res.status === 200) {
-        setTemplateConfig(res.result?.data);
+    service.getNotifierTemplateList(props.deviceId, {
+      paging: false,
+      where: `type=${value.type} and provider=${value.provider}`
+    }).subscribe(
+      res => {
+        setTemplateConfig(res);
       }
-    }).catch(() => {
-    });
+    )
   };
 
   const findDeviceById = (deviceId: string) => {
-    apis.deviceInstance.info(deviceId)
-      .then((response: any) => {
-        if (response.status === 200) {
-          setDeviceData(response.result || {});
-          setDeviceName(response.result.name || '');
+      service.getIinstanceDetail(props.deviceId, deviceId).subscribe((response: any) =>{
+          setDeviceData(response || {});
+          setDeviceName(response?.name || '');
           if (!actionData.configuration) {
             actionData.configuration = {};
           }
           if (actionData.configuration.deviceId) {
             setMessageType(actionData.configuration.message.messageType);
             if (actionData.configuration.message.messageType === 'WRITE_PROPERTY') {
-              JSON.parse(response.result.metadata).properties?.map((item: any) => {
+              JSON.parse(response?.metadata).properties?.map((item: any) => {
                 if (item.id === Object.keys(actionData.configuration.message.properties)[0]) {
                   setPropertiesData(item);
                   setArrayData(actionData.configuration.message.properties[item.id]);
                 }
               });
             } else {
-              JSON.parse(response.result.metadata).functions?.map((item: any) => {
+              JSON.parse(response?.metadata).functions?.map((item: any) => {
                 if (item.id === actionData.configuration.message.functionId) {
                   setFunctionData(item);
                 }
@@ -144,12 +131,10 @@ const Action: React.FC<Props> = props => {
             }
           }
           actionData.configuration.deviceId = deviceId;
-          actionData.configuration.productId = response.result?.productId;
+          actionData.configuration.productId = response?.productId;
           setActionData({...actionData});
           submitData();
-        }
-      }).catch(() => {
-    });
+      });
   };
 
   const renderPropertiesObject = (properties: any) => {
@@ -603,6 +588,7 @@ const Action: React.FC<Props> = props => {
               close={() => {
                 setBindVisible(false);
               }}
+              deviceId={props.deviceId}
               save={(item: any) => {
                 if (item[0]) {
                   setBindVisible(false);

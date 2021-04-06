@@ -5,7 +5,6 @@ import {Button, Card, Col, Icon, Input, Modal, Row, Switch, Tooltip} from 'antd'
 import {SceneItem} from '../data';
 import Triggers from './Triggers';
 import ActionAssembly from './action';
-import apis from '@/services';
 import Service from "../../service";
 
 interface Props extends FormComponentProps {
@@ -22,7 +21,7 @@ interface State {
   parallel: Boolean;
 }
 
-const Save: React.FC<Props> = props => {
+const SceneSave: React.FC<Props> = props => {
   const service = new Service('rule-engine');
   const initState: State = {
     data: {},
@@ -53,7 +52,7 @@ const Save: React.FC<Props> = props => {
     let items = {
       name: data.name,
       id: data.id,
-      // triggers: tri,
+      triggers: tri,
       actions: action,
       parallel: parallel
     };
@@ -89,6 +88,7 @@ const Save: React.FC<Props> = props => {
           }
           if (res.actions && res.actions.length > 0) {
             setAction(res.actions)
+            console.log(res)
           } else {
             setAction(
               [
@@ -146,16 +146,17 @@ const Save: React.FC<Props> = props => {
           <Row gutter={16}
                style={{marginLeft: '0.1%'}}>
             <Col span={12}>
-              <Form.Item key="id" label="场景联动ID" required={true}>
+              <Form.Item key="id" label="场景联动ID">
                 <Input placeholder="输入场景联动ID"
                        defaultValue={props.data.id}
+                       readOnly={!!props.data.id}
                        onBlur={event => {
                          setData({...data, id: event.target.value})
                        }}/>
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item key="name" label="场景联动名称" required={true}>
+              <Form.Item key="name" label="场景联动名称">
                 <Input placeholder="输入场景联动名称"
                        defaultValue={props.data.name}
                        onBlur={event => {
@@ -176,6 +177,7 @@ const Save: React.FC<Props> = props => {
                   save={(data: any) => {
                     triggers.splice(index, 1, data);
                   }}
+                  deviceId={props.deviceId}
                   key={index + Math.random()}
                   trigger={item}
                   position={index}
@@ -214,7 +216,7 @@ const Save: React.FC<Props> = props => {
             </p>
             {action.length > 0 && action.map((item: any, index) => (
               <div key={index}>
-                <ActionAssembly key={index + Math.random()} save={(actionData: any) => {
+                <ActionAssembly deviceId={props.deviceId} key={index + Math.random()} save={(actionData: any) => {
                   action.splice(index, 1, actionData);
                 }} action={item} position={index} remove={(position: number) => {
                   action.splice(position, 1);
@@ -236,4 +238,4 @@ const Save: React.FC<Props> = props => {
   );
 };
 
-export default Form.create<Props>()(Save);
+export default Form.create<Props>()(SceneSave);

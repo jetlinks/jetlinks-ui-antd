@@ -60,17 +60,22 @@ const Info: React.FC<Props> = (props) => {
       });
   };
 
-  const changeDeploy = (deviceId: string | undefined) => {
-    apis.deviceInstance
-      .changeDeploy(deviceId)
-      .then(response => {
-        if (response.status === 200) {
-          message.success('应用成功');
-          props.refresh(props.data.id)
-        }
+  const changeDeploy = (deviceId: string) => {
+    service.deployDevice(props.deviceId, deviceId).subscribe(
+      () => {
+        props.refresh(props.data.id)
+          message.success('操作成功！');
       })
-      .catch(() => {
-      });
+    // apis.deviceInstance
+    //   .changeDeploy(deviceId)
+    //   .then(response => {
+    //     if (response.status === 200) {
+    //       message.success('应用成功');
+    //       props.refresh(props.data.id)
+    //     }
+    //   })
+    //   .catch(() => {
+    //   });
   };
 
   const configurationReset = (deviceId: string | undefined) => {
