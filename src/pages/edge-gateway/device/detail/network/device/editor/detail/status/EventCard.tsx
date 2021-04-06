@@ -3,7 +3,7 @@ import { Tooltip, Icon, Badge, Spin } from "antd";
 import React, { memo, useEffect, useState, useRef } from "react";
 import AutoHide from "@/pages/device/location/info/autoHide";
 import Service from "../../service";
-import EventLog from "../event-log/EventLog";
+import EventLog from "@/pages/device/instance/editor/detail/event-log/EventLog";
 
 interface Props {
     item: any;

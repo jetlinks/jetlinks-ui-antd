@@ -4,7 +4,7 @@ import { Tooltip, Icon, message, Spin } from "antd";
 import AutoHide from "@/pages/device/location/info/autoHide";
 import { MiniArea } from "@/pages/analysis/components/Charts";
 import Service from "../../service";
-import PropertiesInfo from '../properties-data/propertiesInfo';
+import PropertiesInfo from '@/pages/device/instance/editor/detail/properties-data/propertiesInfo';
 import UpdateProperty from "@/pages/device/instance/editor/detail/updateProperty";
 
 interface Props {
