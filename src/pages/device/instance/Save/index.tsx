@@ -53,7 +53,7 @@ const Save: React.FC<Props> = props => {
       apis.deviceInstance.saveOrUpdate(item)
         .then((response: any) => {
           if (response.status === 200) {
-            message.success('创建成功');
+            message.success('保存成功');
             props.close();
             router.push(`/device/instance/save/${item.id}`);
           }
@@ -64,7 +64,7 @@ const Save: React.FC<Props> = props => {
       apis.deviceInstance.saveDevice(item)
         .then((response: any) => {
           if (response.status === 200) {
-            message.success('保存成功');
+            message.success('创建成功');
             props.close();
             router.push(`/device/instance/save/${item.id}`);
           }

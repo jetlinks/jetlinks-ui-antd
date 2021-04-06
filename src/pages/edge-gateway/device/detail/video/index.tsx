@@ -16,7 +16,7 @@ const Video: React.FC<Props> = props => {
         <Card>
             <Spin spinning={spinning}>
                 <Tabs defaultActiveKey="1" tabPosition="top" type="card">
-                    <Tabs.TabPane tab="设备视频添加" key="1">
+                    <Tabs.TabPane tab="视频设备" key="1">
                         <Add device={props.device}/>
                     </Tabs.TabPane>
                     <Tabs.TabPane tab="国标级联" key="2">

@@ -99,7 +99,7 @@ class Service extends BaseService<any> {
             }
         })).pipe(
             filter(resp => resp.status === 200),
-            map(resp => resp.result)
+            map(resp => resp.result[0])
         ));
 
     public getProtocolInfo = (id: string) => defer(
@@ -122,6 +122,17 @@ class Service extends BaseService<any> {
         () => from(request(`/jetlinks/edge/operations/${deviceId}/device-instance-page-list/invoke`, {
             method: 'POST',
             data: params
+        })).pipe(
+            filter(resp => resp.status === 200),
+            map(resp => resp.result[0])
+        ));
+
+    public getDeviceInfo = (deviceId: string, id: string) => defer(
+        () => from(request(`/jetlinks/edge/operations/${deviceId}/device-instance-info/invoke`, {
+            method: 'POST',
+            data: {
+                id: id
+            }
         })).pipe(
             filter(resp => resp.status === 200),
             map(resp => resp.result[0])
@@ -175,6 +186,26 @@ class Service extends BaseService<any> {
         })).pipe(
             filter(resp => resp.status === 200),
             map(resp => resp)
+        ));
+    public getIinstanceDetail = (deviceId: string, id: string) => defer(
+        () => from(request(`/jetlinks/edge/operations/${deviceId}/device-instance-detail/invoke`, {
+            method: 'POST',
+            data: {
+                deviceId: id
+            }
+        })).pipe(
+            filter(resp => resp.status === 200),
+            map(resp => resp.result[0])
+        ))
+    public getIinstanceConfigMetadata = (deviceId: string, id: string) => defer(
+        () => from(request(`/jetlinks/edge/operations/${deviceId}/device-config-metadata/invoke`, {
+            method: 'POST',
+            data: {
+                deviceId: id
+            }
+        })).pipe(
+            filter(resp => resp.status === 200),
+            map(resp => resp.result[0])
         ))
 }
 export default Service;

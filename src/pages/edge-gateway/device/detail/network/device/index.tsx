@@ -5,6 +5,7 @@ import { Badge, Button, Card, Divider, Icon, message, Popconfirm, Table } from '
 import Save from './save';
 import SearchForm from "@/components/SearchForm";
 import Service from '../service';
+import router from 'umi/router';
 import moment from 'moment';
 
 interface Props extends FormComponentProps {
@@ -144,14 +145,14 @@ const Device: React.FC<Props> = props => {
             align: 'center',
             render: (record: any) => (
                 <Fragment>
-                    {/* <a
+                    <a
                         onClick={() => {
-                            // router.push(`/device/instance/save/${record.id}`);
+                            router.push(`/edge-gateway/device/detail/${props.device.id}/save/${record.id}`);
                         }}
                     >
                         查看
-                </a> */}
-                    {/* <Divider type="vertical" /> */}
+                    </a>
+                    <Divider type="vertical" />
                     <a
                         onClick={() => {
                             setCurrentItem(record);
@@ -159,7 +160,7 @@ const Device: React.FC<Props> = props => {
                         }}
                     >
                         编辑
-                </a>
+                    </a>
                     <Divider type="vertical" />
                     {record.state?.value === 'notActive' ? (
                         <span>
@@ -213,18 +214,18 @@ const Device: React.FC<Props> = props => {
                         }
                     ]}
                     search={(params: any) => {
-                        if(params?.name){
+                        if (params?.name) {
                             setSearchParam({
-                                where: `name like '%${params?.name}%'`, 
+                                where: `name like '%${params?.name}%'`,
                                 pageSize: 10
                             })
                             handleSearch({
-                                where: `name like '%${params?.name}%'`, 
+                                where: `name like '%${params?.name}%'`,
                                 pageSize: 10
                             });
-                        }else{
-                            setSearchParam({pageSize: 10})
-                            handleSearch({pageSize: 10});
+                        } else {
+                            setSearchParam({ pageSize: 10 })
+                            handleSearch({ pageSize: 10 });
                         }
                     }}
                 />

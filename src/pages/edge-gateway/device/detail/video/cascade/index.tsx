@@ -1,4 +1,4 @@
-import { Badge, Divider, message, Popconfirm } from "antd";
+import { Badge, Button, Card, Divider, Icon, message, Popconfirm } from "antd";
 import React, { Fragment, useEffect, useState } from "react";
 import styles from '@/utils/table.less';
 import Table, { ColumnProps } from "antd/lib/table";
@@ -235,15 +235,22 @@ const MediaCascade: React.FC<Props> = props => {
     ];
     return (
         <div style={{ marginTop: '20px' }}>
-            <div className={styles.StandardTable}>
-                <Table
-                    loading={loading}
-                    dataSource={result}
-                    columns={columns}
-                    rowKey="id"
-                    scroll={{ x: '150%' }}
-                />
-            </div>
+            <Card title="国标级联" extra={
+                <Button type="primary" onClick={() => {
+                    setSaveVisible(true);
+                    setMediaCascade({});
+                }}><Icon type="plus" />新增国标级联</Button>
+            }>
+                <div className={styles.StandardTable}>
+                    <Table
+                        loading={loading}
+                        dataSource={result}
+                        columns={columns}
+                        rowKey="id"
+                        scroll={{ x: '150%' }}
+                    />
+                </div>
+            </Card>
             {saveVisible &&
                 <SaveCascade
                     data={mediaCascade}
