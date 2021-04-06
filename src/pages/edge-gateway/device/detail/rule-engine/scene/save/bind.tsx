@@ -1,20 +1,23 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import Form from 'antd/es/form';
-import {FormComponentProps} from 'antd/lib/form';
-import {Badge, Modal, Table} from 'antd';
-import {ConnectState} from '@/models/connect';
-import {connect} from 'dva';
-import apis from '@/services';
+import { FormComponentProps } from 'antd/lib/form';
+import { Badge, Modal, Table } from 'antd';
+import { ConnectState } from '@/models/connect';
+import { connect } from 'dva';
+// import apis from '@/services';
 import styles from '@/utils/table.less';
-import Search from '@/pages/device/gateway/Search';
-import { PaginationConfig, SorterResult} from 'antd/lib/table';
+// import Search from '@/pages/device/gateway/Search';
+import { PaginationConfig, SorterResult } from 'antd/lib/table';
 import moment from 'moment';
 import encodeQueryParam from '@/utils/encodeParam';
+import Service from '../../../network/service';
+import SearchForm from '@/components/SearchForm';
 
 interface Props extends FormComponentProps {
   selectionType: string;
   close: Function;
   save: Function;
+  deviceId: string;
 }
 
 interface State {
@@ -24,8 +27,10 @@ interface State {
 }
 
 const DeviceGatewayBind: React.FC<Props> = props => {
+
+  const service = new Service('device-network');
   const initState: State = {
-    searchParam: {pageSize: 10},
+    searchParam: { pageSize: 10 },
     deviceData: {},
     deviceId: [],
   };
@@ -40,40 +45,37 @@ const DeviceGatewayBind: React.FC<Props> = props => {
 
   const handleSearch = (params?: any) => {
     setSearchParam(params);
-    apis.deviceInstance
-      .list(encodeQueryParam(params))
-      .then(response => {
-        if (response.status === 200) {
-          setDeviceData(response.result);
-        }
+    service.getDeviceList(props.deviceId, params).subscribe(
+      (res) => {
+        setDeviceData(res)
       })
-      .catch(() => {
-      });
+    // apis.deviceInstance
+    //   .list(encodeQueryParam(params))
+    //   .then(response => {
+    //     if (response.status === 200) {
+    //       setDeviceData(response.result);
+    //     }
+    //   })
+    //   .catch(() => {
+    //   });
   };
 
   useEffect(() => {
     if (props.selectionType === 'checkbox') {
-      searchParam.terms = {parentId$isnull: 1};
+      searchParam.terms = { parentId$isnull: 1 };
     }
     handleSearch(searchParam);
   }, []);
 
   const onTableChange = (pagination: PaginationConfig, filters: any, sorter: SorterResult<any>) => {
-    apis.deviceInstance
-      .list(
-        encodeQueryParam({
-          pageIndex: Number(pagination.current) - 1,
-          pageSize: pagination.pageSize,
-          sorts: sorter,
-        }),
-      )
-      .then(response => {
-        if (response.status === 200) {
-          setDeviceData(response.result);
-        }
+    service.getDeviceList(props.deviceId, encodeQueryParam({
+      pageIndex: Number(pagination.current) - 1,
+      pageSize: pagination.pageSize,
+      sorts: sorter,
+    })).subscribe(
+      (res) => {
+        setDeviceData(res)
       })
-      .catch(() => {
-      });
   };
 
   const rowSelection = {
@@ -117,7 +119,7 @@ const DeviceGatewayBind: React.FC<Props> = props => {
       dataIndex: 'state',
       width: '120px',
       render: record =>
-        record ? <Badge status={statusMap.get(record.text)} text={record.text}/> : '',
+        record ? <Badge status={statusMap.get(record.text)} text={record.text} /> : '',
     }
   ];
 
@@ -131,18 +133,33 @@ const DeviceGatewayBind: React.FC<Props> = props => {
         submitData();
       }}
       width="60%"
-      style={{marginTop: -30}}
+      style={{ marginTop: -30 }}
       onCancel={() => props.close()}
     >
-      <div className={styles.tableList} style={{maxHeight: 600, overflowY: 'auto', overflowX: 'hidden'}}>
+      <div className={styles.tableList} style={{ maxHeight: 600, overflowY: 'auto', overflowX: 'hidden' }}>
         <div className={styles.tableListForm}>
-          <Search
-            search={(params: any) => {
-              setSearchParam(params);
-              if (props.selectionType === 'checkbox') {
-                params['parentId$isnull'] = 1;
+          <SearchForm
+            formItems={[
+              {
+                label: '名称',
+                key: 'name',
+                type: 'string',
               }
-              handleSearch({terms: params, sorter: searchParam.sorter, pageSize: 10});
+            ]}
+            search={(params: any) => {
+              if (params?.name) {
+                setSearchParam({
+                  where: `name like '%${params?.name}%'`,
+                  pageSize: 10
+                })
+                handleSearch({
+                  where: `name like '%${params?.name}%'`,
+                  pageSize: 10
+                });
+              } else {
+                setSearchParam({ pageSize: 10 })
+                handleSearch({ pageSize: 10 });
+              }
             }}
           />
         </div>
@@ -176,7 +193,7 @@ const DeviceGatewayBind: React.FC<Props> = props => {
   );
 };
 
-export default connect(({deviceGateway, loading}: ConnectState) => ({
+export default connect(({ deviceGateway, loading }: ConnectState) => ({
   deviceGateway,
   loading,
 }))(Form.create<Props>()(DeviceGatewayBind));

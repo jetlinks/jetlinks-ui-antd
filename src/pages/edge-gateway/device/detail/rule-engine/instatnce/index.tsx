@@ -8,7 +8,7 @@ import SceneImg from '@/pages/rule-engine/scene/img/scene.svg';
 import { Avatar, Badge, Button, Card, Dropdown, Icon, List, Menu, message, Popconfirm, Tooltip } from 'antd';
 import Service from "../service";
 import Save from './save';
-import Detail from './detail';
+import SceneSave from "../scene/save";
 import AutoHide from '@/pages/analysis/components/Hide/autoHide';
 import encodeQueryParam from '@/utils/encodeParam';
 
@@ -21,8 +21,10 @@ const RuleInstance: React.FC<Props> = props => {
     const [result, setResult] = useState<any>({});
     const [loading, setLoading] = useState<boolean>(false);
     const [saveVisible, setSaveVisible] = useState<boolean>(false);
-    const [detailVisible, setDetailVisible] = useState<boolean>(false);
-    const [ruleData, setRuleData] = useState<any>({}); 
+    const [sceneSaveVisible, setSceneSaveVisible] = useState<boolean>(false);
+    // const [detailVisible, setDetailVisible] = useState<boolean>(false);
+    const [sceneData, setSceneData] = useState<any>({});
+    const [ruleData, setRuleData] = useState<any>({});
     const [searchParam, setSearchParam] = useState({ pageSize: 8, sorts: { field: 'id', order: 'desc' } });
 
     const handleSearch = (params?: any) => {
@@ -131,38 +133,26 @@ const RuleInstance: React.FC<Props> = props => {
                                 <List.Item key={item.id}>
                                     <Card hoverable bodyStyle={{ paddingBottom: 20 }}
                                         actions={[
-                                            <Tooltip key="seeProduct" title="查看">
-                                                <Icon
-                                                    type="eye"
-                                                    onClick={() => {
-                                                        setDetailVisible(true);
-                                                        setRuleData(item);
-                                                    }}
-                                                />
-                                            </Tooltip>,
                                             <Tooltip key="update" title='编辑'>
                                                 <Icon
                                                     type="edit"
                                                     onClick={() => {
                                                         if (item.modelType === 'node-red') {
                                                             window.open(`/jetlinks/rule-editor/index.html?edgeDeviceId=${props.device.id}#flow/${item.id}`)
-                                                        } else if (item.modelType === 'sql_rule') {
-                                                            try {
-                                                                let data = JSON.parse(item.modelMeta);
-                                                                data['id'] = item.id;
-                                                                // setCurrent(data);
-                                                                // setSaveSqlRuleVisible(true);
-                                                            } catch (error) {
-                                                                message.error('数据异常，请至数据转发界面检查数据');
-                                                            }
-                                                        } else if (item.modelType === 'device_alarm') {
-                                                            // updateDeviceAlarm(item);
                                                         } else if (item.modelType === 'rule-scene') {
-                                                            // setDetailData(item);
-                                                            // setSceneVisible(true);
+                                                            setSceneData(item);
+                                                            setSceneSaveVisible(true);
                                                         }
                                                     }}
                                                 />
+                                            </Tooltip>,
+                                            <Tooltip key="seeProduct" title="复制">
+                                                <Icon
+                                                    type="copy"
+                                                    onClick={() => {
+                                                        setRuleData(item);
+                                                        setSaveVisible(true);
+                                                    }} />
                                             </Tooltip>,
                                             <Tooltip key="more_actions" title=''>
                                                 <Dropdown overlay={
@@ -192,17 +182,6 @@ const RuleInstance: React.FC<Props> = props => {
                                                                 重启
                                                             </Button>
                                                         </Menu.Item>
-                                                        {item.modelType === 'node-red' && (
-                                                            <Menu.Item key="3">
-                                                                <Button icon="copy" type="link"
-                                                                    onClick={() => {
-                                                                        setRuleData(item);
-                                                                        setSaveVisible(true);
-                                                                    }}>
-                                                                    复制
-                                                                </Button>
-                                                            </Menu.Item>
-                                                        )}
                                                         {item.state?.value === 'stopped' && (
                                                             <Menu.Item key="2">
                                                                 <Popconfirm
@@ -267,13 +246,26 @@ const RuleInstance: React.FC<Props> = props => {
                     setRuleData({});
                 }} />
             }
-            {detailVisible && <Detail 
-                id={props.device.id}
-                data={ruleData}
+            {sceneSaveVisible && <SceneSave
+                deviceId={props.device.id}
+                data={sceneData}
                 close={() => {
-                    setDetailVisible(false);
-                    setRuleData({});
-                }}/>
+                    setSceneSaveVisible(false);
+                }}
+                save={(item: any) => {
+                    service.saveScene(props.device.id, item).subscribe(
+                        (resp) => {
+                            if (resp.status === 200) {
+                                message.success('保存成功！');
+                                handleSearch(searchParam);
+                            }
+                        },
+                        () => {
+                        },
+                        () => setLoading(false))
+                    setSceneSaveVisible(false);
+                    setSceneData({});
+                }} />
             }
         </Card>
 

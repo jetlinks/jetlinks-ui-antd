@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from 'react';
-import Form, {FormComponentProps} from 'antd/lib/form';
-import {AutoComplete, Card, Col, Icon, Input, message, Popconfirm, Radio, Row, Select, Switch} from 'antd';
-import {Triggers} from '@/pages/rule-engine/scene/data';
-import apis from '@/services';
+import React, { useEffect, useState } from 'react';
+import Form, { FormComponentProps } from 'antd/lib/form';
+import { AutoComplete, Card, Col, Icon, Input, message, Popconfirm, Radio, Row, Select, Switch } from 'antd';
+import { Triggers } from '@/pages/rule-engine/scene/data';
+import Service from '../../service';
 import Bind from './bind';
 
 interface Props extends FormComponentProps {
@@ -10,12 +10,14 @@ interface Props extends FormComponentProps {
   save: Function;
   remove: Function;
   position: number;
+  deviceId: string;
 }
 
 const Trigger: React.FC<Props> = props => {
+  const service = new Service('rule-engine');
   const [deviceName, setDeviceName] = useState('');
   const [sceneListNoPage, setSceneListNoPage] = useState([]);
-  const [shakeLimit, setShakeLimit] = useState(props.trigger.device && props.trigger.device.shakeLimit ? props.trigger.device.shakeLimit : {enabled: false});
+  const [shakeLimit, setShakeLimit] = useState(props.trigger.device && props.trigger.device.shakeLimit ? props.trigger.device.shakeLimit : { enabled: false });
   const [bindVisible, setBindVisible] = useState(false);
   const [deviceData, setDeviceData] = useState({});
   const [metaData, setMetaData] = useState({
@@ -30,11 +32,11 @@ const Trigger: React.FC<Props> = props => {
 
   const [trigger, setTrigger] = useState(props.trigger);
   useEffect(() => {
-    apis.scene.listNoPaging({}).then(res => {
-      if (res.status === 200) {
-        setSceneListNoPage(res.result);
+    service.getSceneList(props.deviceId, {paging: false}).subscribe(
+      res => {
+        setSceneListNoPage(res);
       }
-    });
+    );
     if (props.trigger.device && props.trigger.device.deviceId) {
       findDeviceById(props.trigger.device.deviceId)
     }
@@ -74,17 +76,13 @@ const Trigger: React.FC<Props> = props => {
   };
 
   const findDeviceById = (deviceId: string) => {
-    apis.deviceInstance.info(deviceId)
-      .then((response: any) => {
-        if (response.status === 200) {
-          setDeviceData(response.result);
-          trigger.device.productId = response.result.productId;
-          trigger.device.deviceId = response.result.id;
-          setMetaData(JSON.parse(response.result.metadata));
-          setDeviceName(response.result.name)
-        }
-      }).catch(() => {
-    });
+    service.getIinstanceDetail(props.deviceId, deviceId).subscribe((response: any) => {
+      setDeviceData(response);
+      trigger.device.productId = response.productId;
+      trigger.device.deviceId = response.id;
+      setMetaData(JSON.parse(response.metadata));
+      setDeviceName(response.name)
+    })
   };
 
   const submitData = () => {
@@ -97,14 +95,14 @@ const Trigger: React.FC<Props> = props => {
     switch (messageType) {
       case 'properties':
         return (
-          <Col span={6} style={{paddingBottom: 10, paddingLeft: 3, paddingRight: 9}}>
+          <Col span={6} style={{ paddingBottom: 10, paddingLeft: 3, paddingRight: 9 }}>
             <Select placeholder="物模型属性" defaultValue={props.trigger.device?.modelId}
-                    onChange={(value: string) => {
-                      setDataSourceValue('properties', metaData.properties, value);
-                      trigger.device.modelId = value;
-                      setTrigger(trigger);
-                      submitData();
-                    }}
+              onChange={(value: string) => {
+                setDataSourceValue('properties', metaData.properties, value);
+                trigger.device.modelId = value;
+                setTrigger(trigger);
+                submitData();
+              }}
             >
               {metaData.properties?.map((item: any) => (
                 <Select.Option key={item.id} data={item}>{`${item.name}（${item.id}）`}</Select.Option>
@@ -114,14 +112,14 @@ const Trigger: React.FC<Props> = props => {
         );
       case 'event':
         return (
-          <Col span={6} style={{paddingBottom: 10, paddingLeft: 3, paddingRight: 9}}>
+          <Col span={6} style={{ paddingBottom: 10, paddingLeft: 3, paddingRight: 9 }}>
             <Select placeholder="物模型事件" defaultValue={props.trigger.device?.modelId}
-                    onChange={(value: string) => {
-                      setDataSourceValue('events', metaData.events, value);
-                      trigger.device.modelId = value;
-                      setTrigger(trigger);
-                      submitData();
-                    }}
+              onChange={(value: string) => {
+                setDataSourceValue('events', metaData.events, value);
+                trigger.device.modelId = value;
+                setTrigger(trigger);
+                submitData();
+              }}
             >
               {metaData.events?.map((item: any) => (
                 <Select.Option key={item.id} data={item}>{`${item.name}（${item.id}）`}</Select.Option>
@@ -131,14 +129,14 @@ const Trigger: React.FC<Props> = props => {
         );
       case 'function':
         return (
-          <Col span={6} style={{paddingBottom: 10, paddingLeft: 3, paddingRight: 9}}>
+          <Col span={6} style={{ paddingBottom: 10, paddingLeft: 3, paddingRight: 9 }}>
             <Select placeholder="物模型功能" defaultValue={props.trigger.device?.modelId}
-                    onChange={(value: string) => {
-                      setDataSourceValue('function', metaData.functions, value);
-                      trigger.device.modelId = value;
-                      setTrigger(trigger);
-                      submitData();
-                    }}
+              onChange={(value: string) => {
+                setDataSourceValue('function', metaData.functions, value);
+                trigger.device.modelId = value;
+                setTrigger(trigger);
+                submitData();
+              }}
             >
               {metaData.functions?.map((item: any) => (
                 <Select.Option key={item.id} data={item}>{`${item.name}（${item.id}）`}</Select.Option>
@@ -157,26 +155,26 @@ const Trigger: React.FC<Props> = props => {
         return (
           <div>
             <Col span={24}>
-              <Col span={6} style={{paddingBottom: 10, paddingLeft: -1, paddingRight: 12}}>
+              <Col span={6} style={{ paddingBottom: 10, paddingLeft: -1, paddingRight: 12 }}>
                 <Input addonAfter={<Icon onClick={() => {
                   setBindVisible(true);
-                }} type='gold' title="点击选择设备"/>}
-                       defaultValue={deviceName}
-                       placeholder="点击选择设备"
-                       readOnly={true}
-                       value={deviceData?.name}
+                }} type='gold' title="点击选择设备" />}
+                  defaultValue={deviceName}
+                  placeholder="点击选择设备"
+                  readOnly={true}
+                  value={deviceData?.name}
                 />
               </Col>
             </Col>
             <Col span={24}>
-              <Col span={6} style={{paddingBottom: 10, paddingLeft: -1, paddingRight: 12}}>
+              <Col span={6} style={{ paddingBottom: 10, paddingLeft: -1, paddingRight: 12 }}>
                 <Select placeholder="选择消息类型" defaultValue={props.trigger.device?.type}
-                        onChange={(value: string) => {
-                          setMessageType(() => value);
-                          trigger.device.type = value;
-                          setTrigger(trigger);
-                          submitData();
-                        }}>
+                  onChange={(value: string) => {
+                    setMessageType(() => value);
+                    trigger.device.type = value;
+                    setTrigger(trigger);
+                    submitData();
+                  }}>
                   <Select.Option value="online">上线</Select.Option>
                   <Select.Option value="offline">离线</Select.Option>
                   <Select.Option value="properties">属性</Select.Option>
@@ -189,26 +187,26 @@ const Trigger: React.FC<Props> = props => {
             <Col span={24}>
               {filters.map((item: any, index: number) => (
                 <div className="ant-row" key={index}>
-                  <Col span={6} style={{paddingLeft: -1, paddingRight: 12, paddingBottom: 10}}>
+                  <Col span={6} style={{ paddingLeft: -1, paddingRight: 12, paddingBottom: 10 }}>
                     <AutoComplete dataSource={dataSource} placeholder="过滤条件KEY" children={item.key}
-                                  defaultValue={item.key}
-                                  onBlur={value => {
-                                    filters[index].key = value;
-                                    trigger.device.filters = filters;
-                                    setTrigger(trigger);
-                                  }}
-                                  filterOption={(inputValue, option) =>
-                                    option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
-                                  }
+                      defaultValue={item.key}
+                      onBlur={value => {
+                        filters[index].key = value;
+                        trigger.device.filters = filters;
+                        setTrigger(trigger);
+                      }}
+                      filterOption={(inputValue, option) =>
+                        option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
+                      }
                     />
                   </Col>
-                  <Col span={6} style={{paddingLeft: 3, paddingRight: 9, paddingBottom: 10}}>
+                  <Col span={6} style={{ paddingLeft: 3, paddingRight: 9, paddingBottom: 10 }}>
                     <Select placeholder="操作符" defaultValue={item.operator}
-                            onChange={(value: string) => {
-                              filters[index].operator = value;
-                              trigger.device.filters = filters;
-                              setTrigger(trigger);
-                            }}>
+                      onChange={(value: string) => {
+                        filters[index].operator = value;
+                        trigger.device.filters = filters;
+                        setTrigger(trigger);
+                      }}>
                       <Select.Option value="eq">等于(=)</Select.Option>
                       <Select.Option value="not">不等于(!=)</Select.Option>
                       <Select.Option value="gt">大于(&gt;)</Select.Option>
@@ -218,23 +216,23 @@ const Trigger: React.FC<Props> = props => {
                       <Select.Option value="like">模糊(%)</Select.Option>
                     </Select>
                   </Col>
-                  <Col span={7} style={{paddingLeft: 7, paddingRight: 3, paddingBottom: 10}}>
+                  <Col span={7} style={{ paddingLeft: 7, paddingRight: 3, paddingBottom: 10 }}>
                     <Input placeholder="过滤条件值" defaultValue={item.value}
-                           onChange={event => {
-                             filters[index].value = event.target.value;
-                             trigger.device.filters = filters;
-                             setTrigger(trigger);
-                           }}
+                      onChange={event => {
+                        filters[index].value = event.target.value;
+                        trigger.device.filters = filters;
+                        setTrigger(trigger);
+                      }}
                     />
                   </Col>
-                  <Col span={5} style={{textAlign: 'right', marginTop: 6, paddingBottom: 10}}>
-                    <a style={{paddingLeft: 10, paddingTop: 7}}
-                       onClick={() => {
-                         filters.splice(index, 1);
-                         setFilters([...filters]);
-                         trigger.device.filters = filters;
-                         setTrigger({...trigger});
-                       }}
+                  <Col span={5} style={{ textAlign: 'right', marginTop: 6, paddingBottom: 10 }}>
+                    <a style={{ paddingLeft: 10, paddingTop: 7 }}
+                      onClick={() => {
+                        filters.splice(index, 1);
+                        setFilters([...filters]);
+                        trigger.device.filters = filters;
+                        setTrigger({ ...trigger });
+                      }}
                     >删除</a>
                   </Col>
                 </div>
@@ -243,7 +241,7 @@ const Trigger: React.FC<Props> = props => {
             <Col span={24}>
               <div>
                 <a onClick={() => {
-                  setFilters([...filters, {_id: Math.round(Math.random() * 100000)}]);
+                  setFilters([...filters, { _id: Math.round(Math.random() * 100000) }]);
                 }}>添加</a>
               </div>
             </Col>
@@ -252,12 +250,12 @@ const Trigger: React.FC<Props> = props => {
       case 'timer':
         return (
           <div>
-            <Col span={6} style={{paddingBottom: 10}}>
+            <Col span={6} style={{ paddingBottom: 10 }}>
               <Input placeholder="cron表达式" defaultValue={trigger.cron} key="cron"
-                     onBlur={event => {
-                       trigger.cron = event.target.value;
-                       setTrigger(trigger);
-                     }}
+                onBlur={event => {
+                  trigger.cron = event.target.value;
+                  setTrigger(trigger);
+                }}
               />
             </Col>
           </div>
@@ -265,12 +263,12 @@ const Trigger: React.FC<Props> = props => {
       case 'scene':
         return (
           <div>
-            <Col span={6} style={{paddingBottom: 10}}>
+            <Col span={6} style={{ paddingBottom: 10 }}>
               <Select placeholder="请选择场景" mode="multiple" defaultValue={trigger.scene?.sceneIds}
-                      onChange={(value: string) => {
-                        trigger.scene.sceneIds = value;
-                        setTrigger(trigger);
-                      }}
+                onChange={(value: string) => {
+                  trigger.scene.sceneIds = value;
+                  setTrigger(trigger);
+                }}
               >
                 {
                   sceneListNoPage.map((item, index) => {
@@ -287,31 +285,31 @@ const Trigger: React.FC<Props> = props => {
   };
 
   return (
-    <div style={{paddingBottom: 5}} key={props.position}>
-      <Card size="small" bordered={false} style={{backgroundColor: '#F5F5F6'}}>
-        <Row style={{marginLeft: -2}}>
+    <div style={{ paddingBottom: 5 }} key={props.position}>
+      <Card size="small" bordered={false} style={{ backgroundColor: '#F5F5F6' }}>
+        <Row style={{ marginLeft: -2 }}>
           <span>触发器: {props.position + 1}</span>
           <Popconfirm title="确认删除此触发器？"
-                      onConfirm={() => props.remove(props.position)}
+            onConfirm={() => props.remove(props.position)}
           >
-            <a style={{paddingLeft: 30}}>删除</a>
+            <a style={{ paddingLeft: 30 }}>删除</a>
           </Popconfirm>
         </Row>
 
-        <Row gutter={16} style={{paddingLeft: 10}}>
-          <Col span={24} style={{paddingBottom: 10}}>
-            <div style={{display: 'flex'}}>
+        <Row gutter={16} style={{ paddingLeft: 10 }}>
+          <Col span={24} style={{ paddingBottom: 10 }}>
+            <div style={{ display: 'flex' }}>
               <Col span={6}>
                 <Select placeholder="选择触发器类型" value={trigger.trigger}
-                        onChange={(value: string) => {
-                          setTriggerType(() => value);
-                          trigger.trigger = value;
-                          if (value === 'scene' && trigger.scene === undefined) {
-                            trigger.scene = {};
-                            trigger.scene.sceneIds = []
-                          }
-                          setTrigger(trigger);
-                        }}
+                  onChange={(value: string) => {
+                    setTriggerType(() => value);
+                    trigger.trigger = value;
+                    if (value === 'scene' && trigger.scene === undefined) {
+                      trigger.scene = {};
+                      trigger.scene.sceneIds = []
+                    }
+                    setTrigger(trigger);
+                  }}
                 >
                   <Select.Option value="manual">手动触发</Select.Option>
                   <Select.Option value="timer">定时触发</Select.Option>
@@ -322,40 +320,40 @@ const Trigger: React.FC<Props> = props => {
               {
                 triggerType === 'device' && (
                   <Switch key='shakeLimit.enabled' checkedChildren="开启防抖" unCheckedChildren="关闭防抖"
-                          defaultChecked={shakeLimit.enabled ? shakeLimit.enabled : false}
-                          style={{marginLeft: 20, width: '100px'}}
-                          onChange={(value: boolean) => {
-                            shakeLimit.enabled = value;
-                            setShakeLimit({...shakeLimit});
-                            trigger.device.shakeLimit.enabled = value;
-                            setTrigger(trigger);
-                          }}
+                    defaultChecked={shakeLimit.enabled ? shakeLimit.enabled : false}
+                    style={{ marginLeft: 20, width: '100px' }}
+                    onChange={(value: boolean) => {
+                      shakeLimit.enabled = value;
+                      setShakeLimit({ ...shakeLimit });
+                      trigger.device.shakeLimit.enabled = value;
+                      setTrigger(trigger);
+                    }}
                   />
                 )
               }
               {shakeLimit.enabled && triggerType == 'device' && (
                 <Col span={12}>
-                  <Col span={24} style={{paddingBottom: 10, paddingLeft: -1, paddingRight: 12}}>
-                    <Input style={{width: 80, marginLeft: 3}} size='small' key='shakeLimit.time'
-                           defaultValue={shakeLimit.time}
-                           onBlur={event => {
-                             trigger.device.shakeLimit.time = event.target.value;
-                             setTrigger(trigger)
-                           }}
+                  <Col span={24} style={{ paddingBottom: 10, paddingLeft: -1, paddingRight: 12 }}>
+                    <Input style={{ width: 80, marginLeft: 3 }} size='small' key='shakeLimit.time'
+                      defaultValue={shakeLimit.time}
+                      onBlur={event => {
+                        trigger.device.shakeLimit.time = event.target.value;
+                        setTrigger(trigger)
+                      }}
                     />秒内发生
-                    <Input style={{width: 80}} size='small' key='shakeLimit.threshold'
-                           defaultValue={shakeLimit.threshold}
-                           onBlur={event => {
-                             trigger.device.shakeLimit.threshold = event.target.value;
-                             setTrigger(trigger)
-                           }}
+                    <Input style={{ width: 80 }} size='small' key='shakeLimit.threshold'
+                      defaultValue={shakeLimit.threshold}
+                      onBlur={event => {
+                        trigger.device.shakeLimit.threshold = event.target.value;
+                        setTrigger(trigger)
+                      }}
                     />次及以上时，处理
                     <Radio.Group defaultValue={shakeLimit.alarmFirst} key='shakeLimit.alarmFirst' size='small'
-                                 buttonStyle="solid"
-                                 onChange={event => {
-                                   trigger.device.shakeLimit.alarmFirst = Boolean(event.target.value);
-                                   setTrigger(trigger)
-                                 }}
+                      buttonStyle="solid"
+                      onChange={event => {
+                        trigger.device.shakeLimit.alarmFirst = Boolean(event.target.value);
+                        setTrigger(trigger)
+                      }}
                     >
                       <Radio.Button value={true}>第一次</Radio.Button>
                       <Radio.Button value={false}>最后一次</Radio.Button>
@@ -372,18 +370,19 @@ const Trigger: React.FC<Props> = props => {
       </Card>
       {bindVisible && (
         <Bind selectionType='radio'
-              close={() => {
-                setBindVisible(false);
-              }}
-              save={(item: any) => {
-                if (item[0]) {
-                  setBindVisible(false);
-                  findDeviceById(item[0]);
-                } else {
-                  message.error('请勾选设备');
-                  return;
-                }
-              }}
+          close={() => {
+            setBindVisible(false);
+          }}
+          deviceId={props.deviceId}
+          save={(item: any) => {
+            if (item[0]) {
+              setBindVisible(false);
+              findDeviceById(item[0]);
+            } else {
+              message.error('请勾选设备');
+              return;
+            }
+          }}
         />
       )}
     </div>
