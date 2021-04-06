@@ -47,8 +47,9 @@ const PropertiesCard: React.FC<Props> = props => {
       } else {
         item.formatValue = value.formatValue || '/';
         if (value.value === 0) {
-          item.formatValue = '/';
+          item.formatValue = "0";
         }
+        
         item.value = value.value || 0;
       }
 
