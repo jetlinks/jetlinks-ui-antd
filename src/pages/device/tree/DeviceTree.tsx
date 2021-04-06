@@ -305,11 +305,11 @@ const DeviceTree: React.FC<Props> = props => {
                 defaultExpandedRowKeys={data[0] && [data[0].id]}
                 rowKey={(item: any) => item.id}
                 columns={[
-                  { title: '序号', dataIndex: 'id' },
-                  { title: '名称', dataIndex: 'name' },
+                  { title: '序号', dataIndex: 'id',width:200 },
+                  { title: '名称', dataIndex: 'name',ellipsis:true },
                   {
                     title: '操作',
-                    width: 140,
+                    width: 100,
                     render: (_, record) => (
                       <Fragment>
                         <Icon

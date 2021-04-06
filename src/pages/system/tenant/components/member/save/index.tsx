@@ -34,11 +34,18 @@ const Save = (props: Props) => {
       ).subscribe(data => {
         setLoading(false);
         const all: any[] = data[0].data;
-        setResult(data[0]);
         const checked: any[] = data[1].data.map((i: any) => i.userId);
 
         const unchecked = all.filter(item => !checked.includes(item.id));
         setLoading(false);
+        if(unchecked.length<1){
+          setResult({
+            pageIndex:0,
+            pageSize:100,
+            total:data[0].data.total,
+            data:data[0].data
+          });
+        }
         setUserList(unchecked);
       });
     }

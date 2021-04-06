@@ -6,7 +6,6 @@ import React, { Fragment, useEffect, useState } from 'react';
 import styles from '@/utils/table.less';
 import Save from './save';
 import Service from './service';
-import { Tools } from './tools';
 
 export type NodeItem = {
   id: string;
