@@ -151,7 +151,7 @@ const groupSave: React.FC<Props> = props => {
           </Form>
         )}
 
-        {currentStep === 1 && (
+        {/* {currentStep === 1 && (
           <div>
             <Card style={{maxHeight: 500, overflowY: 'auto', overflowX: 'hidden'}}>
               <ChoiceDevice deviceList={deviceId} save={(item: any[]) => {
@@ -159,7 +159,7 @@ const groupSave: React.FC<Props> = props => {
               }}/>
             </Card>
           </div>
-        )}
+        )} */}
 
         {currentStep === 2 && (
           <Result
