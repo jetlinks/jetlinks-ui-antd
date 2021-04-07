@@ -23,7 +23,6 @@ import Service from './service';
 import DeviceInfo from '@/pages/device/instance/editor/index';
 import { router } from 'umi';
 import ProTable from '@/pages/system/permission/component/ProTable';
-
 interface Props {
   location: any;
 }
@@ -86,6 +85,7 @@ const DeviceTree: React.FC<Props> = props => {
       field: 'alarmTime',
     },
   });
+  const [searchValue, setSearchValue] = useState('');
   const search = (param?: any) => {
     setDeviceLoading(true);
     const defaultTerms = {
@@ -119,7 +119,7 @@ const DeviceTree: React.FC<Props> = props => {
             },
           });
         },
-        () => {},
+        () => { },
         () => {
           setLoading(true);
         },
@@ -129,14 +129,25 @@ const DeviceTree: React.FC<Props> = props => {
     search();
   }, []);
   const saveGroup = (item: GroupItem) => {
-    service.saveGroup(add?{...item,parentId}:item).subscribe(
-      () => message.success('添加成功'),
-      () => {},
-      () => {
-        dispatch({ type: 'operation', payload: { saveVisible: false, parentId: null } });
-        search();
-      },
-    );
+    if (add) {
+      service.saveGroup({ ...item, parentId }).subscribe(
+        () => message.success('添加成功'),
+        () => { },
+        () => {
+          dispatch({ type: 'operation', payload: { saveVisible: false, parentId: null } });
+          search();
+        },
+      );
+    } else {
+      service.saveOrUpdataGroup(item).subscribe(
+        () => message.success('添加成功'),
+        () => { },
+        () => {
+          dispatch({ type: 'operation', payload: { saveVisible: false, parentId: null } });
+          search();
+        },
+      );
+    }
   };
 
   const searchDevice = (item: GroupItem | any, params?: any) => {
@@ -157,30 +168,35 @@ const DeviceTree: React.FC<Props> = props => {
             type: 'operation',
             payload: {
               deviceData: resp,
-              deviceIds: resp.data.map((item: any) => item.id),
+              // deviceIds: resp.data.map((item: any) => item.id),
             },
           });
         },
-        () => {},
+        () => { },
         () => {
           setDeviceLoading(false);
         },
       );
   };
   const bindDevice = () => {
-    service.bindDevice(parentId!, deviceIds).subscribe(
-      () => message.success('绑定成功'),
-      () => message.error('绑定失败'),
-      () => {
-        dispatch({
-          type: 'operation',
-          payload: {
-            bindVisible: false,
-          },
-        });
-        searchDevice({ id: parentId });
-      },
-    );
+    if (deviceIds.length > 0) {
+      service.bindDevice(parentId!, deviceIds).subscribe(
+        () => message.success('绑定成功'),
+        () => message.error('绑定失败'),
+        () => {
+          dispatch({
+            type: 'operation',
+            payload: {
+              bindVisible: false,
+              deviceIds: []
+            },
+          });
+          searchDevice({ id: parentId });
+        },
+      );
+    } else {
+      message.error('未选择需要绑定的设备')
+    }
   };
   const unbindDevice = (deviceId: string[]) => {
     service.unbindDevice(parentId!, deviceId).subscribe(
@@ -254,8 +270,8 @@ const DeviceTree: React.FC<Props> = props => {
                     <span style={{ marginLeft: 20, marginRight: 10 }}>
                       <Input.Search
                         style={{ width: '60%' }}
-                        placeholder="输入名称后自动查询"
-                        onChange={() => search()}
+                        placeholder="请输入输入名称"
+                        // onChange={() => search()}
                         onSearch={value => {
                           if (value) {
                             const tempData = data.filter(
@@ -293,7 +309,7 @@ const DeviceTree: React.FC<Props> = props => {
                       setDeviceLoading(true);
                       dispatch({
                         type: 'operation',
-                        payload: {  current: item },
+                        payload: { current: item, parentId: item.id },
                       });
                     },
                   };
@@ -305,11 +321,22 @@ const DeviceTree: React.FC<Props> = props => {
                 defaultExpandedRowKeys={data[0] && [data[0].id]}
                 rowKey={(item: any) => item.id}
                 columns={[
-                  { title: '序号', dataIndex: 'id',width:200 },
-                  { title: '名称', dataIndex: 'name',ellipsis:true },
+                  {
+                    title: '序号',
+                    dataIndex: 'id',
+                    // width:200,
+                    ellipsis: true,
+                    render: (record) => (
+                      <Tooltip title={record}>
+                        <span>{record}</span>
+                      </Tooltip>
+                    )
+                  },
+                  { title: '名称', dataIndex: 'name', ellipsis: true },
                   {
                     title: '操作',
                     width: 100,
+                    align: 'center',
                     render: (_, record) => (
                       <Fragment>
                         <Icon
@@ -325,22 +352,27 @@ const DeviceTree: React.FC<Props> = props => {
                             });
                           }}
                         />
-                        <Divider type="vertical" />
-                        <Tooltip title="新增子分组">
-                          <Icon
-                            type="plus"
-                            onClick={() => {
-                              setAdd(true);
-                              dispatch({
-                                type: 'operation',
-                                payload: {
-                                  parentId: record.id,
-                                  saveVisible: true,
-                                },
-                              });
-                            }}
-                          />
-                        </Tooltip>
+                        {
+                          record.level < 6 &&
+                          <>
+                            <Divider type="vertical" />
+                            <Tooltip title="新增子分组">
+                              <Icon
+                                type="plus"
+                                onClick={() => {
+                                  setAdd(true);
+                                  dispatch({
+                                    type: 'operation',
+                                    payload: {
+                                      parentId: record.id,
+                                      saveVisible: true,
+                                    },
+                                  });
+                                }}
+                              />
+                            </Tooltip>
+                          </>
+                        }
                         <Divider type="vertical" />
                         <Tooltip title="删除">
                           <Popconfirm
@@ -384,12 +416,13 @@ const DeviceTree: React.FC<Props> = props => {
                       <Input.Search
                         style={{ width: '30%' }}
                         placeholder="输入名称后自动查询"
-                        onSearch={value =>
+                        onSearch={value => {
+                          setSearchValue(value);
                           searchDevice({
                             id: parentId,
                             searchValue: value,
                           })
-                        }
+                        }}
                       />
                     </span>
 
@@ -420,7 +453,7 @@ const DeviceTree: React.FC<Props> = props => {
                 rowKey="id"
                 rowSelection={rowSelection}
                 onSearch={(params: any) => {
-                  searchDevice(params, searchParam);
+                  searchDevice({ id: parentId, searchValue: searchValue }, params);
                 }}
                 columns={[
                   { title: 'ID', dataIndex: 'id' },
@@ -483,8 +516,7 @@ const DeviceTree: React.FC<Props> = props => {
               type: 'operation',
               payload: {
                 deviceIds: [],
-                bindVisible: false,
-                parentId: null,
+                bindVisible: false
               },
             });
           }}
@@ -493,7 +525,7 @@ const DeviceTree: React.FC<Props> = props => {
           }}
         >
           <ChoiceDevice
-            deviceList={deviceIds}
+            parentId={parentId}
             save={(item: any[]) => {
               dispatch({
                 type: 'operation',

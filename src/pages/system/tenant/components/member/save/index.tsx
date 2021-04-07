@@ -18,13 +18,16 @@ const Save = (props: Props) => {
   const [userList, setUserList] = useState<any[]>();
   const [selectedRow, setSelectedRow] = useState<any[]>([]);
   const [result, setResult] = useState<any>({});
-  const [searchParam, setSearchParam] = useState<any>({
-    pageSize: 10,
-  });
-
   const {
     data: { id },
   } = props;
+  const [searchParam, setSearchParam] = useState<any>({
+    pageSize: 10,
+    terms: {
+      'id$tenant-user$not': id || undefined,
+    },
+  });
+
   const handleSearch = (params: any) => {
     setSearchParam(params);
     if (id) {
@@ -35,17 +38,10 @@ const Save = (props: Props) => {
         setLoading(false);
         const all: any[] = data[0].data;
         const checked: any[] = data[1].data.map((i: any) => i.userId);
-
+        setResult(data[0]);
         const unchecked = all.filter(item => !checked.includes(item.id));
         setLoading(false);
-        if(unchecked.length<1){
-          setResult({
-            pageIndex:0,
-            pageSize:100,
-            total:data[0].data.total,
-            data:data[0].data
-          });
-        }
+
         setUserList(unchecked);
       });
     }
@@ -140,7 +136,7 @@ const Save = (props: Props) => {
         rowKey="id"
         rowSelection={rowSelection}
         columns={columns}
-        dataSource={userList}
+        dataSource={result.data}
         onChange={onTableChange}
         pagination={{
           current: result.pageIndex + 1,

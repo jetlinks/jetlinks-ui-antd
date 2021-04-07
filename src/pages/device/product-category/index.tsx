@@ -110,6 +110,7 @@ const Category = (props: Props) => {
     }
     api.productCategoty.remove(id).then(res => {
       if (res.status === 200) {
+        message.success('删除成功');
         handleSearch();
       }
     });

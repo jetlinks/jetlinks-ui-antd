@@ -12,22 +12,27 @@ import encodeQueryParam from '@/utils/encodeParam';
 
 interface Props extends FormComponentProps {
   save: Function;
-  deviceList: any[];
+  parentId: string;
 }
 
 interface State {
   searchParam: any;
   deviceData: any;
+  deviceList: any[];
 }
 
 const ChoiceDevice: React.FC<Props> = props => {
   const initState: State = {
-    searchParam: {pageSize: 10},
+    searchParam: {pageSize: 10, terms: {
+      "id$dev-group$not": props.parentId
+    }},
     deviceData: {},
+    deviceList: []
   };
 
   const [searchParam, setSearchParam] = useState(initState.searchParam);
   const [deviceData, setDeviceData] = useState(initState.deviceData);
+  const [deviceList, setDeviceList] = useState(initState.deviceList);
   const [spinning, setSpinning] = useState(true);
 
   const handleSearch = (params?: any) => {
@@ -63,6 +68,7 @@ const ChoiceDevice: React.FC<Props> = props => {
 
   const rowSelection = {
     onChange: (selectedRowKeys: any) => {
+      setDeviceList(selectedRowKeys);
       props.save(selectedRowKeys);
     },
   };
@@ -112,8 +118,8 @@ const ChoiceDevice: React.FC<Props> = props => {
         <div className={styles.tableListForm}>
           <Search
             search={(params: any) => {
-              setSearchParam(params);
-              handleSearch({terms: params, sorter: searchParam.sorter, pageSize: 10});
+              setSearchParam({...searchParam, ...params});
+              handleSearch({terms: {...searchParam.terms, ...params}, sorter: searchParam.sorter, pageSize: 10});
             }}
           />
         </div>
@@ -126,7 +132,7 @@ const ChoiceDevice: React.FC<Props> = props => {
             rowSelection={{
               type: 'checkbox',
               ...rowSelection,
-              selectedRowKeys: props.deviceList
+              selectedRowKeys: deviceList
             }}
             size='middle'
             pagination={{

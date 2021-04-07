@@ -109,21 +109,21 @@ const Action: React.FC<Props> = props => {
   const findDeviceById = (deviceId: string) => {
       service.getIinstanceDetail(props.deviceId, deviceId).subscribe((response: any) =>{
           setDeviceData(response || {});
-          setDeviceName(response.name || '');
+          setDeviceName(response?.name || '');
           if (!actionData.configuration) {
             actionData.configuration = {};
           }
           if (actionData.configuration.deviceId) {
             setMessageType(actionData.configuration.message.messageType);
             if (actionData.configuration.message.messageType === 'WRITE_PROPERTY') {
-              JSON.parse(response.metadata).properties?.map((item: any) => {
+              JSON.parse(response?.metadata).properties?.map((item: any) => {
                 if (item.id === Object.keys(actionData.configuration.message.properties)[0]) {
                   setPropertiesData(item);
                   setArrayData(actionData.configuration.message.properties[item.id]);
                 }
               });
             } else {
-              JSON.parse(response.metadata).functions?.map((item: any) => {
+              JSON.parse(response?.metadata).functions?.map((item: any) => {
                 if (item.id === actionData.configuration.message.functionId) {
                   setFunctionData(item);
                 }
