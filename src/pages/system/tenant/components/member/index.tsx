@@ -130,6 +130,7 @@ const Member = (props: Props) => {
       <SearchForm
         search={(params: any) => {
           searchParam.terms = params;
+          searchParam.pageIndex=0;
           handleSearch(searchParam);
         }}
         formItems={[{
