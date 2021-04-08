@@ -119,12 +119,12 @@ const OrgList: React.FC<Props> = props => {
     {
       title: '机构标识',
       dataIndex: 'id',
-      width: '50%',
+      width: '45%',
     },
     {
       title: '机构名称',
       dataIndex: 'name',
-      width: '10%',
+      width: '15%',
     },
     {
       title: '描述',
