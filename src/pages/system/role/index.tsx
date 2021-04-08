@@ -34,7 +34,6 @@ const RoleList: React.FC<Props> = props => {
 
   const initState: State = {
     searchParam: {
-      paging: false,
       pageIndex: 0,
       pageSize: 10,
       terms: {
@@ -193,7 +192,7 @@ const RoleList: React.FC<Props> = props => {
                   columns={columns}
                   rowKey="id"
                   onSearch={(params: any) => {
-                    handleSearch(params);
+                    handleSearch({...params, terms: searchParam.terms});
                   }}
                   paginationConfig={result}
                 />

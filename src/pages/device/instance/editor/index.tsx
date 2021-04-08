@@ -147,7 +147,7 @@ const Editor: React.FC<Props> = props => {
             });
           }
           if (deviceData.state?.value !== 'notActive') {
-            tabList.splice(2, 0, {
+            tabList.splice(1, 0, {
               key: 'status',
               tab: '运行状态',
             });

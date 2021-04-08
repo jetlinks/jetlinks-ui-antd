@@ -130,27 +130,29 @@ const Save = (props: Props) => {
           });
         }}
       />
-      <Table
-        size="small"
-        loading={loading}
-        rowKey="id"
-        rowSelection={rowSelection}
-        columns={columns}
-        dataSource={result.data}
-        onChange={onTableChange}
-        pagination={{
-          current: result.pageIndex + 1,
-          total: result.total,
-          pageSize: result.pageSize,
-          showQuickJumper: true,
-          showSizeChanger: true,
-          pageSizeOptions: ['10', '20', '50', '100'],
-          showTotal: (total: number) =>
-            `共 ${total} 条记录 第  ${result.pageIndex + 1}/${Math.ceil(
-              result.total / result.pageSize,
-            )}页`,
-        }}
-      />
+      <div style={{marginBottom: '30px'}}>
+        <Table
+          size="small"
+          loading={loading}
+          rowKey="id"
+          rowSelection={rowSelection}
+          columns={columns}
+          dataSource={result.data}
+          onChange={onTableChange}
+          pagination={{
+            current: result.pageIndex + 1,
+            total: result.total,
+            pageSize: result.pageSize,
+            showQuickJumper: true,
+            showSizeChanger: true,
+            pageSizeOptions: ['10', '20', '50', '100'],
+            showTotal: (total: number) =>
+              `共 ${total} 条记录 第  ${result.pageIndex + 1}/${Math.ceil(
+                result.total / result.pageSize,
+              )}页`,
+          }}
+        />
+      </div>
       <div
         style={{
           position: 'absolute',

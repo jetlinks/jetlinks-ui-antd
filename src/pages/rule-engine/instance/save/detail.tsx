@@ -335,7 +335,7 @@ const Detail: React.FC<Props> = props => {
         moment(e).format('YYYY-MM-DD HH:mm:ss'),
       );
       terms = {
-        createTime$btw: formatDate.join(',')
+        timestamp$btw: formatDate.join(',')
       }
     }
     getDataLogs({
