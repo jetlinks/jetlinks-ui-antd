@@ -1,9 +1,9 @@
+import Bind from '../../../rule-engine/scene-save/bind';
 import React, {useEffect, useState} from 'react';
 import Form, {FormComponentProps} from 'antd/lib/form';
 import {Card, Col, Icon, Input, message, Popconfirm, Row, Select} from 'antd';
 import {ActionData} from '@/pages/rule-engine/scene/data';
 import Service from '../../service';
-import Bind from './bind';
 
 interface Props extends FormComponentProps {
   action: Partial<ActionData>;
@@ -38,7 +38,7 @@ const Action: React.FC<Props> = props => {
     arrayData: [undefined],
   };
 
-  const service = new Service('rule-engine');
+  const service = new Service('rule-engine-alarm');
   const [bindVisible, setBindVisible] = useState(false);
   const [actionData, setActionData] = useState(initState.actionData);
   const [deviceData, setDeviceData] = useState(initState.deviceData);
@@ -107,7 +107,7 @@ const Action: React.FC<Props> = props => {
   };
 
   const findDeviceById = (deviceId: string) => {
-      service.getIinstanceDetail(props.deviceId, deviceId).subscribe((response: any) =>{
+      service.getInstanceDetail(props.deviceId, deviceId).subscribe((response: any) =>{
           setDeviceData(response || {});
           setDeviceName(response?.name || '');
           if (!actionData.configuration) {

@@ -6,6 +6,7 @@ import Status from './status/status';
 import Video from './video';
 import RuleEngine from './rule-engine';
 import Network from './network';
+import Alarm from './alarm';
 import apis from '@/services';
 import moment from "moment";
 
@@ -55,6 +56,10 @@ const Detail: React.FC<Props> = props => {
         {
             key: 'network',
             tab: '设备接入'
+        },
+        {
+            key: 'alarm',
+            tab: '告警设置'
         }
     ]
     const content = {
@@ -62,7 +67,7 @@ const Detail: React.FC<Props> = props => {
             <Descriptions bordered>
                 <Descriptions.Item label="产品名称">{info.productName}</Descriptions.Item>
                 <Descriptions.Item label="设备类型">{info.deviceType?.text}</Descriptions.Item>
-                <Descriptions.Item label="所属机构">{info.orgId}</Descriptions.Item>
+                {/* <Descriptions.Item label="所属机构">{info.orgId}</Descriptions.Item> */}
                 <Descriptions.Item label="链接协议">{info.transport}</Descriptions.Item>
                 <Descriptions.Item label="消息协议">{info.protocolName}</Descriptions.Item>
                 <Descriptions.Item label="IP地址">{info.address}</Descriptions.Item>
@@ -75,7 +80,8 @@ const Detail: React.FC<Props> = props => {
         status: <Status refresh={() => {getInfo(deviceId)}} device={info} />,
         video: <Video device={info}/>,
         ruleEngine: <RuleEngine device={info}/>,
-        network: <Network device={info}/>
+        network: <Network device={info}/>,
+        alarm: <Alarm device={info} />
     }
 
     const getInfo = (id: string) => {
@@ -106,6 +112,14 @@ const Detail: React.FC<Props> = props => {
                         </div>
                         <div style={{ fontWeight: 600, fontSize: '20px', margin: '0px 30px' }}>{info?.name}</div>
                         <div><Badge color={statusColor.get(info.state?.value)} text={info.state?.text} /></div>
+                        <div style={{marginLeft: '30px'}} onClick={() => {
+                            setLoading(true);
+                            apis.edgeDevice.reload(deviceId).then(res => {
+                                if (res.status === 200) {
+                                    setLoading(false);
+                                }
+                            })
+                        }}><a>重启</a></div>
                     </div>
                     <div>
                         <Tabs defaultActiveKey="info">

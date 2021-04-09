@@ -193,21 +193,21 @@ const MediaCascade: React.FC<Props> = props => {
                                 }}>
                                 <a>启用</a>
                             </Popconfirm>
-                            {/* <Divider type="vertical" />
+                            <Divider type="vertical" />
                             <Popconfirm
                                 title="确认删除该级联吗？"
                                 onConfirm={() => {
-                                    //   service.remove(record.id).subscribe(() => {
-                                    //       message.success("删除成功");
-                                    //       handleSearch(encodeQueryParam(searchParam));
-                                    //     },
-                                    //     () => {
-                                    //       message.error("删除失败");
-                                    //     },
-                                    //     () => setLoading(false))
+                                      service.removeCascade(props.device.id,record.id).subscribe(() => {
+                                          message.success("删除成功");
+                                          handleSearch(searchParam);
+                                        },
+                                        () => {
+                                          message.error("删除失败");
+                                        },
+                                        () => setLoading(false))
                                 }}>
                                 <a>删除</a>
-                            </Popconfirm> */}
+                            </Popconfirm>
                         </>
                     ) : (
                         <>

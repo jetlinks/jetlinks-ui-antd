@@ -20,8 +20,13 @@ export async function update(params: any) {
   });
 }
 
-export async function info(id: string) {
-  return request(`/jetlinks/device/instance/${id}/detail`, {
+// export async function info(id: string) {
+//   return request(`/jetlinks/device/instance/${id}/detail`, {
+//     method: 'GET',
+//   });
+// }
+export async function info(deviceId: string) {
+  return request(`/jetlinks/edge/operations/${deviceId}/detail`, {
     method: 'GET',
   });
 }
@@ -104,5 +109,11 @@ export async function getChannelInfo(deviceId: string, params: any) {
   return request(`/jetlinks/edge/operations/${deviceId}/media-channel-info/invoke`, {
     method: 'POST',
     data: params
+  });
+}
+
+export async function reload(deviceId: string) {
+  return request(`/jetlinks/edge/operations/${deviceId}/restart/invoke`, {
+    method: 'POST'
   });
 }

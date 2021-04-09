@@ -28,7 +28,7 @@ const ChoiceChannel: React.FC<Props> = props => {
   const [bindList, setBindList] = useState<string[]>([]);
 
   const [searchParam, setSearchParam] = useState(initState.searchParam);
-  const [fixedParam] = useState({ terms: [{ column: 'id$cascade_channel', value: props.cascadeId }] });
+  const [fixedParam] = useState({ terms: [{ column: 'channelId$cascade_channel', value: props.cascadeId }] });
   const statusMap = new Map();
   statusMap.set('online', 'success');
   statusMap.set('offline', 'error');
@@ -64,7 +64,7 @@ const ChoiceChannel: React.FC<Props> = props => {
       (res) => {
         let list: string[] = [];
         res.data.map((item: any) => {
-          list.push(item.id);
+          list.push(item.channelId);
         });
         setBindList(list);
       },
@@ -111,7 +111,7 @@ const ChoiceChannel: React.FC<Props> = props => {
     },
     onSelect: (record: any, selected: any) => {
       setLoading(true);
-      let list: string[] = [record.id];
+      let list: string[] = [record.channelId];
       if (selected) {
         _bind(list);
       } else {
@@ -122,7 +122,7 @@ const ChoiceChannel: React.FC<Props> = props => {
       setLoading(true);
       let list: string[] = [];
       changeRows.map((item: any) => {
-        list.push(item.id);
+        list.push(item.channelId);
       });
       if (selected) {
         _bind(list);
@@ -206,7 +206,7 @@ const ChoiceChannel: React.FC<Props> = props => {
           loading={loading}
           dataSource={result}
           columns={columns}
-          rowKey="id"
+          rowKey="channelId"
           rowSelection={{
             selectedRowKeys: bindList,
             ...unbindSelection,

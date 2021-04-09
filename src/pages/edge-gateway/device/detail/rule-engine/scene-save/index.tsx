@@ -2,10 +2,10 @@ import React, {useEffect, useState} from 'react';
 import Form from 'antd/es/form';
 import {FormComponentProps} from 'antd/lib/form';
 import {Button, Card, Col, Icon, Input, Modal, Row, Switch, Tooltip} from 'antd';
-import {SceneItem} from '../data';
-import Triggers from './Triggers';
+import {SceneItem} from './data';
+import Trigger from './Triggers';
 import ActionAssembly from './action';
-import Service from "../../service";
+import Service from "../service";
 
 interface Props extends FormComponentProps {
   deviceId: string;
@@ -173,7 +173,7 @@ const SceneSave: React.FC<Props> = props => {
             </p>
             {triggers.length > 0 && triggers.map((item: any, index) => (
               <div key={index}>
-                <Triggers
+                <Trigger
                   save={(data: any) => {
                     triggers.splice(index, 1, data);
                   }}
