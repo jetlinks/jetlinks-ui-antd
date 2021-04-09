@@ -124,6 +124,12 @@ export const routes = [
                 version: 'pro',
                 component: './system/tenant/detail',
               },
+              {
+                path: '/system/org-chart',
+                name: '组织架构图',
+                icon: 'tool',
+                component: './system/org-chart',
+              },
             ],
           },
           {
@@ -653,7 +659,7 @@ export const routes = [
                 name: '网关设备详情',
                 authority: ['edge-device', 'admin'],
                 component: './edge-gateway/device/detail/network/device/editor',
-              }
+              },
             ],
           },
           {
