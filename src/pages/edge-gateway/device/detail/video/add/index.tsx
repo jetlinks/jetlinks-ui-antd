@@ -9,11 +9,10 @@ import Play from '../play/play';
 import apis from '@/services';
 
 interface Props extends FormComponentProps {
-    device: any
+    device: any;
 }
 
-const Add: React.FC<Props> = props => {
-
+const Add: React.FC<Props> = (props) => {
     const [addVisible, setAddVisible] = useState(false);
     const [channelVisible, setChannelVisible] = useState(false);
     const [playVisible, setPlaylVisible] = useState(false);
@@ -160,11 +159,11 @@ const Add: React.FC<Props> = props => {
                         setChannel(record);
                         setChannelVisible(true);
                     }}>编辑</a>
-                    <Divider type="vertical" />
+                    <><Divider type="vertical" />
                     <a onClick={() => {
                         setChannel(record);
                         setPlaylVisible(true);
-                    }}>播放</a>
+                    }}>播放</a></>
                     <Divider type="vertical" />
                     <Popconfirm
                         title="确认删除吗？"

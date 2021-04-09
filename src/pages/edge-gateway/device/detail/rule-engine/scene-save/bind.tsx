@@ -4,13 +4,11 @@ import { FormComponentProps } from 'antd/lib/form';
 import { Badge, Modal, Table } from 'antd';
 import { ConnectState } from '@/models/connect';
 import { connect } from 'dva';
-// import apis from '@/services';
 import styles from '@/utils/table.less';
-// import Search from '@/pages/device/gateway/Search';
 import { PaginationConfig, SorterResult } from 'antd/lib/table';
 import moment from 'moment';
 import encodeQueryParam from '@/utils/encodeParam';
-import Service from '../../../network/service';
+import Service from '../../network/service';
 import SearchForm from '@/components/SearchForm';
 
 interface Props extends FormComponentProps {

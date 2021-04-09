@@ -187,7 +187,7 @@ class Service extends BaseService<any> {
             filter(resp => resp.status === 200),
             map(resp => resp)
         ));
-    public getIinstanceDetail = (deviceId: string, id: string) => defer(
+    public getInstanceDetail = (deviceId: string, id: string) => defer(
         () => from(request(`/jetlinks/edge/operations/${deviceId}/device-instance-detail/invoke`, {
             method: 'POST',
             data: {

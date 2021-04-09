@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Form, { FormComponentProps } from 'antd/lib/form';
 import { AutoComplete, Card, Col, Icon, Input, message, Popconfirm, Radio, Row, Select, Switch } from 'antd';
 import { Triggers } from '@/pages/rule-engine/scene/data';
-import Service from '../../service';
+import Service from '../service';
 import Bind from './bind';
 
 interface Props extends FormComponentProps {
@@ -76,7 +76,7 @@ const Trigger: React.FC<Props> = props => {
   };
 
   const findDeviceById = (deviceId: string) => {
-    service.getIinstanceDetail(props.deviceId, deviceId).subscribe((response: any) => {
+    service.getInstanceDetail(props.deviceId, deviceId).subscribe((response: any) => {
       setDeviceData(response);
       trigger.device.productId = response?.productId || '';
       trigger.device.deviceId = response?.id || '';

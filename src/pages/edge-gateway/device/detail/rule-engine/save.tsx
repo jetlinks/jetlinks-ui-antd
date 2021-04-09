@@ -7,7 +7,7 @@ interface Props extends FormComponentProps {
     save: Function;
 }
 
-const Save: React.FC<Props> = props => {
+const Save1: React.FC<Props> = props => {
     const {
         form: { getFieldDecorator },
         form,
@@ -63,4 +63,4 @@ const Save: React.FC<Props> = props => {
         </Modal>
     )
 }
-export default Form.create<Props>()(Save);
+export default Form.create<Props>()(Save1);

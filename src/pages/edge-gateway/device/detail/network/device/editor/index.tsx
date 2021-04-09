@@ -85,7 +85,7 @@ const Editor: React.FC<Props> = props => {
 
   const getInfo = (parantDeviceId: string, deviceId: string) => {
     setSpinning(true);
-    service.getIinstanceDetail(parantDeviceId, deviceId).subscribe(
+    service.getInstanceDetail(parantDeviceId, deviceId).subscribe(
       (res) => {
         const deviceData = res;
         if (deviceData.orgId) {

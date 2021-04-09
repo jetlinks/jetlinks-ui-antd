@@ -200,7 +200,7 @@ class Service extends BaseService<any> {
                 filter(resp => resp.status === 200),
                 map(resp => resp.result[0])
             ));
-    public getIinstanceDetail = (deviceId: string, id: string) => defer(
+    public getInstanceDetail = (deviceId: string, id: string) => defer(
         () => from(request(`/jetlinks/edge/operations/${deviceId}/device-instance-detail/invoke`, {
             method: 'POST',
             data: {
@@ -210,6 +210,31 @@ class Service extends BaseService<any> {
             filter(resp => resp.status === 200),
             map(resp => resp.result[0])
         ))
+    public saveAlarms = (deviceId: string, params: any) => defer(
+        () => from(request(`/jetlinks/edge/operations/${deviceId}/rule-engine-alarm-save/invoke`, {
+            method: 'POST',
+            data: params
+        })).pipe(
+            filter(resp => resp.status === 200),
+            map(resp => resp.result)
+        ));
+
+    public getDeviceList = (deviceId: string, params?: any) => defer(
+        () => from(request(`/jetlinks/edge/operations/${deviceId}/device-instance-page-list/invoke`, {
+            method: 'POST',
+            data: params
+        })).pipe(
+            filter(resp => resp.status === 200),
+            map(resp => resp.result[0])
+        ));
+    public getProductList = (deviceId: string, params?: any) => defer(
+        () => from(request(`/jetlinks/edge/operations/${deviceId}/device-product-list/invoke`, {
+            method: 'POST',
+            data: params
+        })).pipe(
+            filter(resp => resp.status === 200),
+            map(resp => resp.result[0])
+        ));
 }
 
 export default Service;
