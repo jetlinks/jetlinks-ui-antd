@@ -245,13 +245,16 @@ const Alarm: React.FC<Props> = props => {
               cancelText: '关闭',
             })
           }}>详情</a>
-          <Divider type="vertical" />
           {
+
             record.state !== 'solve' && (
-              <a onClick={() => {
-                setSolveAlarmLog(record);
-                setSolveVisible(true);
-              }}>处理</a>
+              <>
+                <Divider type="vertical" />
+                <a onClick={() => {
+                  setSolveAlarmLog(record);
+                  setSolveVisible(true);
+                }}>处理</a>
+              </>
             )
           }
         </Fragment>

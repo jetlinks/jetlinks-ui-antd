@@ -108,6 +108,15 @@ const AlarmSave: React.FC<Props> = props => {
     )
   }
 
+  const getProductInfo = (id: string) => {
+    service.getProductInfo(props.deviceId, {id: id}).subscribe(
+      res => {
+        console.log(res);
+        setProduct(res);
+      }
+    )
+  }
+
   const getInstanceDetail = (id: string) => {
     service.getInstanceDetail(props.deviceId, id).subscribe(
       (res) => {
@@ -183,6 +192,7 @@ const AlarmSave: React.FC<Props> = props => {
                 <Form.Item key="productId" label="产品" >
                   <Select placeholder="请选择" defaultValue={props.data.targetId} onChange={(value: string) => {
                     setProductId(value);
+                    getProductInfo(value);
                   }}>
                     {productList.map((item: any) => {
                       return (

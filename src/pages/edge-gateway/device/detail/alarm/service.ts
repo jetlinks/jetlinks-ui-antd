@@ -119,8 +119,18 @@ class Service extends BaseService<any> {
       filter(resp => resp.status === 200),
       map(resp => resp.result[0])
     ))
+
   public updataAlarmLog = (deviceId: string, params: any) => defer(
     () => from(request(`/jetlinks/edge/operations/${deviceId}/rule-engine-alarm-history-update/invoke`, {
+      method: 'POST',
+      data: params
+    })).pipe(
+      filter(resp => resp.status === 200),
+      map(resp => resp.result[0])
+    ))
+  
+  public getProductInfo = (deviceId: string, params: any) => defer(
+    () => from(request(`/jetlinks/edge/operations/${deviceId}/device-product-info/invoke`,{
       method: 'POST',
       data: params
     })).pipe(

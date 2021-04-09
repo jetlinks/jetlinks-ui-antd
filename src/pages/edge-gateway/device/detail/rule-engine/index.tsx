@@ -107,8 +107,8 @@ const RuleEngine: React.FC<Props> = props => {
                             }}
                         >
                             <TagSelect.Option key="node-red" value="node-red">规则实例</TagSelect.Option>
-                            <TagSelect.Option key="device_alarm" value="device_alarm">场景联动</TagSelect.Option>
-                            <TagSelect.Option key="rule-scene" value="rule-scene">设备告警</TagSelect.Option>
+                            <TagSelect.Option key="device_alarm" value="device_alarm">设备告警</TagSelect.Option>
+                            <TagSelect.Option key="rule-scene" value="rule-scene">场景联动</TagSelect.Option>
                         </TagSelect>
                     </div>
                 }
