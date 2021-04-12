@@ -73,10 +73,7 @@ const OrgChart = () => {
               <div className={styles.node}>
                 <div className={styles.top}>
                   <span
-                    style={{
-                      whiteSpace: 'nowrap',
-                      marginRight: '12px',
-                    }}
+                    className={styles.title}
                   >
                     重庆市顺达行车监控技术服务有限公司
                   </span>
@@ -95,13 +92,7 @@ const OrgChart = () => {
                     </div>
                   </div>
                   <div
-                    style={{
-                      height: '100%',
-                      verticalAlign: 'bottom',
-                      alignSelf: 'flex-end',
-                      paddingBottom: '3px',
-                      cursor: 'pointer',
-                    }}
+                  className={styles.action}
                   >
                     <Dropdown overlay={menu}>
                       <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
