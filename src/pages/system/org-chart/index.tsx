@@ -1,5 +1,6 @@
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import OrganizationChart from '@dabeng/react-orgchart';
+import { Button, message } from 'antd';
 
 import React from 'react';
 const ds = {
@@ -38,7 +39,19 @@ const ds = {
 const OrgChart = () => {
   return (
     <PageHeaderWrapper title="组织架构图">
-      <OrganizationChart datasource={ds} draggable/>
+      <OrganizationChart
+        datasource={ds}
+        draggable
+        onClickNode={(node: any) => {
+          message.success(JSON.stringify(node));
+        }}
+        NodeTemplate={(nodeData: any) => {
+          console.log(nodeData, 'node');
+          return (
+            <Button onClick={()=>message.success(JSON.stringify(nodeData))}>{nodeData.nodeData.name}</Button>
+          );
+        }}
+      />
     </PageHeaderWrapper>
   );
 };
