@@ -1,6 +1,8 @@
+import { SmallDashOutlined, UserOutlined } from '@ant-design/icons';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import OrganizationChart from '@dabeng/react-orgchart';
-import { Button, message } from 'antd';
+import { Avatar, Dropdown, Menu, message } from 'antd';
+import styles from './index.less';
 
 import React from 'react';
 const ds = {
@@ -37,21 +39,82 @@ const ds = {
   ],
 };
 const OrgChart = () => {
+  const menu = (
+    <Menu>
+      <Menu.Item>
+        <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
+          1st menu item
+        </a>
+      </Menu.Item>
+      <Menu.Item disabled>
+        <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">
+          2nd menu item
+        </a>
+      </Menu.Item>
+      <Menu.Item disabled>
+        <a target="_blank" rel="noopener noreferrer" href="https://www.luohanacademy.com">
+          3rd menu item
+        </a>
+      </Menu.Item>
+      <Menu.Item>a danger item</Menu.Item>
+    </Menu>
+  );
   return (
     <PageHeaderWrapper title="组织架构图">
-      <OrganizationChart
-        datasource={ds}
-        draggable
-        onClickNode={(node: any) => {
-          message.success(JSON.stringify(node));
-        }}
-        NodeTemplate={(nodeData: any) => {
-          console.log(nodeData, 'node');
-          return (
-            <Button onClick={()=>message.success(JSON.stringify(nodeData))}>{nodeData.nodeData.name}</Button>
-          );
-        }}
-      />
+      <div className={styles.testContainer}>
+        <OrganizationChart
+          datasource={ds}
+          draggable
+          onClickNode={(node: any) => {
+            message.success(JSON.stringify(node));
+          }}
+          NodeTemplate={(nodeData: any) => {
+            return (
+              <div className={styles.node}>
+                <div className={styles.top}>
+                  <span
+                    style={{
+                      whiteSpace: 'nowrap',
+                      marginRight: '12px',
+                    }}
+                  >
+                    重庆市顺达行车监控技术服务有限公司
+                  </span>
+                  <Avatar size="small" icon={<UserOutlined />} />
+                </div>
+
+                <div className={styles.content}>
+                  <div className={styles.item}>
+                    <div>
+                      <span className={styles.mark}>标识</span>
+                      <span>xxxxxxxxxx</span>
+                    </div>
+                    <div>
+                      <span className={styles.mark}>子节点</span>
+                      <span>90099999999999999</span>
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      height: '100%',
+                      verticalAlign: 'bottom',
+                      alignSelf: 'flex-end',
+                      paddingBottom: '3px',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <Dropdown overlay={menu}>
+                      <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
+                        <SmallDashOutlined />
+                      </a>
+                    </Dropdown>
+                  </div>
+                </div>
+              </div>
+            );
+          }}
+        />
+      </div>
     </PageHeaderWrapper>
   );
 };
