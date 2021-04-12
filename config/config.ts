@@ -78,8 +78,8 @@ export default {
     ie: 11,
   },
   history: 'hash',
-  // base: './',
-  // publicPath: "./",
+  base: './',
+  publicPath: "./",
   // umi routes: https://umijs.org/zh/guide/router.html
   routes: routes,
   // Theme for antd: https://ant.design/docs/react/customize-theme-cn
@@ -132,15 +132,4 @@ export default {
   },
   proxy: proxy[REACT_APP_ENV || 'dev'],
   chainWebpack: webpackPlugin,
-  // extraBabelPlugins: [
-  //   ['transform-remove-console', { exclude: ['error', 'info'] }]
-  // ]
-  // proxy: {
-  //   '/jetlinks': {
-  //     // target: 'http://192.168.3.89:8848/',
-  //     target: 'http://2.jetlinks.org:9010/',
-  //     changeOrigin: true,
-  //     pathRewrite: { '^/jetlinks': '' },
-  //   },
-  // },
 } as IConfig;

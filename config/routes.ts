@@ -16,19 +16,13 @@ export const routes = [
     routes: [
       {
         path: '/',
-        component: '../layouts/BasicLayout',
+        // component: '../layouts/BasicLayout',
         Routes: ['src/pages/Authorized'],
         routes: [
           {
             path: '/',
-            redirect: '/analysis',
+            redirect: '/edge-gateway/device/detail/edge-gateway-device-001',
           },
-          // {
-          //     name: '数据表格',
-          //     path: '/demo',
-          //     icon: 'table',
-          //     component: './demo'
-          // },
           {
             name: '统计分析',
             path: '/analysis',
