@@ -24,7 +24,8 @@ const Config: React.FC<Props> = props => {
         const { dispatch } = props;
         dispatch({
             type: 'settings/settingData',
-            payload: { ...settings, ...getFieldsValue(), titleIcon }
+            payload: { ...settings, ...getFieldsValue(), titleIcon },
+            callback:()=>{message.success('保存成功')}
         })
     }
 
