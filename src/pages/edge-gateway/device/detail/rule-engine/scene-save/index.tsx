@@ -11,7 +11,7 @@ interface Props extends FormComponentProps {
   deviceId: string;
   close: Function;
   save: Function;
-  data: Partial<SceneItem>;
+  data: any;
 }
 
 interface State {
@@ -23,9 +23,10 @@ interface State {
 
 const SceneSave: React.FC<Props> = props => {
   const service = new Service('rule-engine');
+  const modelMeta = props.data.modelMeta ? JSON.parse(props.data.modelMeta) : {};
   const initState: State = {
     data: {},
-    parallel: false,
+    parallel: modelMeta?.parallel || false,
     triggers: [],
     action: []
   };

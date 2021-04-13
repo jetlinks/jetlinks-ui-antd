@@ -113,7 +113,7 @@ const Action: React.FC<Props> = props => {
           if (!actionData.configuration) {
             actionData.configuration = {};
           }
-          if (actionData.configuration.deviceId) {
+          if (actionData.configuration.deviceId && response) {
             setMessageType(actionData.configuration.message.messageType);
             if (actionData.configuration.message.messageType === 'WRITE_PROPERTY') {
               JSON.parse(response?.metadata).properties?.map((item: any) => {

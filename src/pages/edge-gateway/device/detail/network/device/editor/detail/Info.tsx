@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Card, Descriptions, Icon, message, Popconfirm, Tag, Tooltip } from 'antd';
 import moment from 'moment';
-import { DeviceInstance } from '@/pages/device/instance/data';
 import Configuration from './configuration';
 import Save from '../../save';
 import Tags from './tags/tags';
@@ -9,7 +8,7 @@ import Service from '../../../service';
 import apis from '@/services';
 
 interface Props {
-  data: Partial<DeviceInstance>;
+  data: any;
   configuration: any;
   refresh: Function;
   deviceId: string;
@@ -19,7 +18,6 @@ interface State {
   updateVisible: boolean;
   tagsVisible: boolean;
   addVisible: boolean;
-  currentItem: any;
 }
 
 const Info: React.FC<Props> = (props) => {
@@ -27,26 +25,29 @@ const Info: React.FC<Props> = (props) => {
   const initState: State = {
     updateVisible: false,
     tagsVisible: false,
-    addVisible: false,
-    currentItem: {}
+    addVisible: false
   };
   const [updateVisible, setUpdateVisible] = useState(initState.updateVisible);
   const [tagsVisible, setTagsVisible] = useState(initState.tagsVisible);
   const [addVisible, setAddVisible] = useState(initState.addVisible);
-  const [currentItem, setCurrentItem] = useState(initState.currentItem);
 
   const updateData = (item?: any) => {
     setUpdateVisible(false);
-    apis.deviceInstance
-      .update(props.data.id, item)
-      .then((response: any) => {
-        if (response.status === 200) {
-          message.success('配置信息修改成功');
-          props.refresh();
-        }
-      })
-      .catch(() => {
-      });
+    let params = {
+      ...item,
+      id: props.data.id,
+      name: props.data.name,
+      productId: props.data.productId,
+      productName: props.data.productName
+    }
+    service.saveDevice(props.deviceId, params).subscribe(
+      (res) => {
+          if (res.status === 200) {
+            message.success('配置信息修改成功');
+              props.refresh();
+          }
+      }
+    )
   };
   const saveTags = (item?: any) => {
     setTagsVisible(false);
@@ -66,30 +67,20 @@ const Info: React.FC<Props> = (props) => {
         props.refresh(props.data.id)
           message.success('操作成功！');
       })
-    // apis.deviceInstance
-    //   .changeDeploy(deviceId)
-    //   .then(response => {
-    //     if (response.status === 200) {
-    //       message.success('应用成功');
-    //       props.refresh(props.data.id)
-    //     }
-    //   })
-    //   .catch(() => {
-    //   });
   };
 
-  const configurationReset = (deviceId: string | undefined) => {
-    apis.deviceInstance
-      .configurationReset(deviceId)
-      .then(response => {
-        if (response.status === 200) {
-          message.success('恢复默认配置成功');
-          props.refresh();
-        }
-      })
-      .catch(() => {
-      });
-  };
+  // const configurationReset = (deviceId: string | undefined) => {
+  //   apis.deviceInstance
+  //     .configurationReset(deviceId)
+  //     .then(response => {
+  //       if (response.status === 200) {
+  //         message.success('恢复默认配置成功');
+  //         props.refresh();
+  //       }
+  //     })
+  //     .catch(() => {
+  //     });
+  // };
 
   const deleteBinds = (deviceId: string | undefined, bindType: string, bindKey: string) => {
     apis.deviceInstance.deleteBinds(deviceId, bindType, bindKey).then(res => {
@@ -134,7 +125,6 @@ const Info: React.FC<Props> = (props) => {
             <Button icon="edit" style={{ marginLeft: 20 }} type="link"
               onClick={() => {
                 setAddVisible(true);
-                setCurrentItem(props.data)
               }}
             >编辑</Button>
           </span>}>
@@ -206,7 +196,7 @@ const Info: React.FC<Props> = (props) => {
                     </Popconfirm>
                   )}
 
-                  {props.data.aloneConfiguration && (
+                  {/* {props.data.aloneConfiguration && (
                     <Popconfirm title="确认恢复默认配置？"
                       onConfirm={() => {
                         configurationReset(props.data.id);
@@ -216,7 +206,7 @@ const Info: React.FC<Props> = (props) => {
                         <Icon type="question-circle-o" />
                       </Tooltip>
                     </Popconfirm>
-                  )}
+                  )} */}
                 </span>
               }
             />
@@ -284,7 +274,6 @@ const Info: React.FC<Props> = (props) => {
           }}
           close={() => {
             setAddVisible(false);
-            setCurrentItem({});
           }}
         />
       )}
