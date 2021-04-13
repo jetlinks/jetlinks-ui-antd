@@ -124,12 +124,12 @@ export const routes = [
                 version: 'pro',
                 component: './system/tenant/detail',
               },
-              // {
-              //   path: '/system/org-chart',
-              //   name: '组织架构图',
-              //   icon: 'tool',
-              //   component: './system/org-chart',
-              // },
+              {
+                path: '/system/org-chart',
+                name: '组织架构图',
+                icon: 'tool',
+                component: './system/org-chart',
+              },
             ],
           },
           {

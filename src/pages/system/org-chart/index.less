@@ -1,5 +1,12 @@
- .testContainer>div>div:nth-of-type(1) {
-   background: #fff;
+ .orgContainer {
+   :global {
+    .orgchart{
+      background: #fff;
+    }
+    .orgchart-container{
+      border: none;
+    }
+   }
  }
 
  .node {
@@ -47,7 +54,7 @@
  .mark {
    width: 50px;
    display: flex;
-   justify-content: flex-end;
+   justify-content: flex-start;
    font-size: 14px;
    margin-right: 4px;
    white-space: nowrap;

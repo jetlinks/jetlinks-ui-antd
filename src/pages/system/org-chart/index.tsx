@@ -1,110 +1,166 @@
-import { SmallDashOutlined, UserOutlined } from '@ant-design/icons';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import OrganizationChart from '@dabeng/react-orgchart';
-import { Avatar, Dropdown, Menu, message } from 'antd';
+import { Menu, message } from 'antd';
 import styles from './index.less';
 
-import React from 'react';
-const ds = {
-  id: 'n1',
-  name: 'Lao Lao',
-  title: 'general manager',
-  children: [
-    { id: 'n2', name: 'Bo Miao', title: 'department manager' },
-    {
-      id: 'n3',
-      name: 'Su Miao',
-      title: 'department manager',
-      children: [
-        { id: 'n4', name: 'Tie Hua', title: 'senior engineer' },
-        {
-          id: 'n5',
-          name: 'Hei Hei',
-          title: 'senior engineer',
-          children: [
-            { id: 'n6', name: 'Dan Dan', title: 'engineer' },
-            { id: 'n7', name: 'Xiang Xiang', title: 'engineer' },
-          ],
-        },
-        { id: 'n8', name: 'Pang Pang', title: 'senior engineer' },
-      ],
-    },
-    { id: 'n9', name: 'Hong Miao', title: 'department manager' },
-    {
-      id: 'n10',
-      name: 'Chun Miao',
-      title: 'department manager',
-      children: [{ id: 'n11', name: 'Yue Yue', title: 'senior engineer' }],
-    },
-  ],
-};
+import React, { useEffect, useState } from 'react';
+import NodeTemplate from './NodeTemplate';
+import apis from '@/services';
+import encodeQueryParam from '@/utils/encodeParam';
+import Save from './save';
+import Authorization from '@/components/Authorization';
+import BindUser from '@/pages/system/org/user';
+
 const OrgChart = () => {
-  const menu = (
+  const [list, setList] = useState<any>({});
+  const [edit, setEdit] = useState<boolean>(false);
+  const [current, setCurrent] = useState<any>({});
+  const [autzVisible, setAutzVisible] = useState(false);
+  const [userVisible, setUserVisible] = useState(false);
+  const [parentId, setParentId] = useState(null);
+
+  const hitCenter = () => {
+    const orgChart = document.getElementsByClassName('orgchart-container')[0];
+    const { width } = orgChart.getBoundingClientRect();
+    orgChart.scrollLeft = width;
+  };
+  const handleSearch = () => {
+    apis.org.list(encodeQueryParam({ paging: false, terms: { typeId: 'org' } })).then(resp => {
+      const data = {
+        id: '',
+        name: '组织架构',
+        title: '根节点',
+        children: resp.result,
+      };
+      setList(data);
+      hitCenter();
+    });
+  };
+  useEffect(() => {
+    handleSearch();
+  }, []);
+
+  const saveData = (data: any) => {
+    if (data.id) {
+      apis.org
+        .saveOrUpdate(data)
+        .then(res => {
+          message.success('保存成功');
+        })
+        .then(() => {
+          handleSearch();
+        });
+    } else {
+      apis.org
+        .add(data)
+        .then(res => {
+          message.success('保存成功');
+        })
+        .then(() => {
+          handleSearch();
+        });
+    }
+  };
+  const menu = (nodeData: any) => (
     <Menu>
       <Menu.Item>
-        <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
-          1st menu item
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => {
+            setParentId(null);
+            setCurrent(nodeData);
+            setEdit(true);
+          }}
+        >
+          编辑
         </a>
       </Menu.Item>
-      <Menu.Item disabled>
-        <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">
-          2nd menu item
+      <Menu.Item>
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => {
+            setCurrent({});
+            setParentId(nodeData.id);
+            setEdit(true);
+          }}
+        >
+          添加下级
         </a>
       </Menu.Item>
-      <Menu.Item disabled>
-        <a target="_blank" rel="noopener noreferrer" href="https://www.luohanacademy.com">
-          3rd menu item
+      <Menu.Item>
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => {
+            setCurrent(nodeData);
+            setAutzVisible(true);
+          }}
+        >
+          权限分配
         </a>
       </Menu.Item>
-      <Menu.Item>a danger item</Menu.Item>
+      <Menu.Item>
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => {
+            setCurrent(nodeData);
+            setUserVisible(true);
+          }}
+        >
+          绑定用户
+        </a>
+      </Menu.Item>
     </Menu>
   );
   return (
     <PageHeaderWrapper title="组织架构图">
-      <div className={styles.testContainer}>
+      <div className={styles.orgContainer}>
         <OrganizationChart
-          datasource={ds}
-          draggable
-          onClickNode={(node: any) => {
-            message.success(JSON.stringify(node));
-          }}
-          NodeTemplate={(nodeData: any) => {
-            return (
-              <div className={styles.node}>
-                <div className={styles.top}>
-                  <span
-                    className={styles.title}
-                  >
-                    重庆市顺达行车监控技术服务有限公司
-                  </span>
-                  <Avatar size="small" icon={<UserOutlined />} />
-                </div>
-
-                <div className={styles.content}>
-                  <div className={styles.item}>
-                    <div>
-                      <span className={styles.mark}>标识</span>
-                      <span>xxxxxxxxxx</span>
-                    </div>
-                    <div>
-                      <span className={styles.mark}>子节点</span>
-                      <span>90099999999999999</span>
-                    </div>
-                  </div>
-                  <div
-                  className={styles.action}
-                  >
-                    <Dropdown overlay={menu}>
-                      <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
-                        <SmallDashOutlined />
-                      </a>
-                    </Dropdown>
-                  </div>
-                </div>
-              </div>
-            );
-          }}
+          datasource={list}
+          // draggable
+          // onClickNode={(node: any) => {
+          //   message.success(JSON.stringify(node));
+          // }}
+          pan={true}
+          // zoom={true}
+          NodeTemplate={(nodeData: any) => (
+            <NodeTemplate data={nodeData.nodeData} action={menu(nodeData.nodeData)} />
+          )}
         />
+        {edit && (
+          <Save
+            data={current}
+            close={() => {
+              setEdit(false);
+            }}
+            save={(item: any) => {
+              saveData(item);
+              setEdit(false);
+            }}
+            parentId={parentId}
+          />
+        )}
+        {autzVisible && (
+          <Authorization
+            close={() => {
+              setAutzVisible(false);
+              setCurrent({});
+            }}
+            target={current}
+            targetType="org"
+          />
+        )}
+        {userVisible && (
+          <BindUser
+            data={current}
+            close={() => {
+              setUserVisible(false);
+            }}
+          />
+        )}
       </div>
     </PageHeaderWrapper>
   );
