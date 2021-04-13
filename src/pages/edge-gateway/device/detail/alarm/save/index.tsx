@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import Form from 'antd/es/form';
 import { FormComponentProps } from 'antd/lib/form';
-import { Button, Card, Col, Icon, Input, Modal, Row, Radio, Switch, Tooltip, Select } from 'antd';
+import { Button, Card, Col, Icon, Input, Modal, Row, Radio, Switch, Tooltip, Select, message } from 'antd';
 import { alarm } from '../data';
 import Service from '../service';
 import Triggers from './triggers';
+import Bind from '../../rule-engine/scene-save/bind';
 import ActionAssembly from './actions';
 
 interface Props extends FormComponentProps {
@@ -53,8 +54,9 @@ const AlarmSave: React.FC<Props> = props => {
   const [properties, setProperties] = useState(initState.properties);
   const [trigger, setTrigger] = useState(initState.trigger);
   const [action, setAction] = useState(initState.action);
+  const [bindVisible, setBindVisible] = useState(false);
   const [shakeLimit, setShakeLimit] = useState(initState.shakeLimit);
-  const [deviceList, setDeviceList] = useState(initState.deviceList);
+  // const [deviceList, setDeviceList] = useState(initState.deviceList);
   const [productList, setProductList] = useState(initState.productList);
   const [name, setName] = useState(initState.name);
   const [deviceId, setDeviceId] = useState(initState.deviceId);
@@ -90,16 +92,17 @@ const AlarmSave: React.FC<Props> = props => {
         shakeLimit: shakeLimit,
       };
     }
+    data.state = undefined;
     props.save({ ...data });
   };
 
-  const getDeviceList = () => {
-    service.getDeviceList(props.deviceId, { paging: false }).subscribe(
-      (res) => {
-        setDeviceList(res.data)
-      }
-    )
-  }
+  // const getDeviceList = () => {
+  //   service.getDeviceList(props.deviceId, { paging: false }).subscribe(
+  //     (res) => {
+  //       setDeviceList(res.data)
+  //     }
+  //   )
+  // }
   const getProductList = () => {
     service.getProductList(props.deviceId, { paging: false }).subscribe(
       (res) => {
@@ -109,9 +112,8 @@ const AlarmSave: React.FC<Props> = props => {
   }
 
   const getProductInfo = (id: string) => {
-    service.getProductInfo(props.deviceId, {id: id}).subscribe(
+    service.getProductInfo(props.deviceId, { id: id }).subscribe(
       res => {
-        console.log(res);
         setProduct(res);
       }
     )
@@ -126,7 +128,10 @@ const AlarmSave: React.FC<Props> = props => {
   }
 
   useEffect(() => {
-    getDeviceList();
+    // getDeviceList();
+    if(deviceId !== ''){
+      getInstanceDetail(deviceId);
+    }
     getProductList();
     if (props.data.alarmRule) {
       setShakeLimit(props.data.alarmRule.shakeLimit ? props.data.alarmRule.shakeLimit : {
@@ -190,7 +195,7 @@ const AlarmSave: React.FC<Props> = props => {
             {
               alarmType === 'product' && <Col span={12}>
                 <Form.Item key="productId" label="产品" >
-                  <Select placeholder="请选择" defaultValue={props.data.targetId} onChange={(value: string) => {
+                  <Select placeholder="请选择" defaultValue={productId} onChange={(value: string) => {
                     setProductId(value);
                     getProductInfo(value);
                   }}>
@@ -206,8 +211,14 @@ const AlarmSave: React.FC<Props> = props => {
             {
               alarmType === 'device' && <Col span={12}>
                 <Form.Item key="deviceId" label="设备">
-                  <Select placeholder="请选择" defaultValue={props.data.targetId} onChange={(value: string) => {
-                    setDeviceId(value);
+                  <Input addonAfter={<Icon onClick={() => {
+                    setBindVisible(true);
+                  }} type='gold' title="点击选择设备" />}
+                    defaultValue={deviceId || ''}
+                    placeholder="点击选择设备"
+                    value={device?.name}
+                    readOnly />
+                  {/* <Select placeholder="请选择" defaultValue={props.data.targetId} onChange={(value: string) => {
                     getInstanceDetail(value);
                   }}>
                     {deviceList.map((item: any) => {
@@ -215,7 +226,7 @@ const AlarmSave: React.FC<Props> = props => {
                         <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
                       )
                     })}
-                  </Select>
+                  </Select> */}
                 </Form.Item>
               </Col>
             }
@@ -353,6 +364,24 @@ const AlarmSave: React.FC<Props> = props => {
           </Card>
         </Form>
       </div>
+      {bindVisible && (
+        <Bind selectionType='radio'
+              close={() => {
+                setBindVisible(false);
+              }}
+              deviceId={props.deviceId}
+              save={(item: any) => {
+                if (item[0]) {
+                  setBindVisible(false);
+                  getInstanceDetail(item[0]);
+                  setDeviceId(item[0]);
+                } else {
+                  message.error('请勾选设备');
+                  return;
+                }
+              }}
+        />
+      )}
     </Modal>
   );
 };

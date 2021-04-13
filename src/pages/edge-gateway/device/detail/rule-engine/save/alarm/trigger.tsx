@@ -468,7 +468,7 @@ const Trigger: React.FC<Props> = props => {
               placeholder="选择触发器类型"
               value={trigger.trigger}
               onChange={(value: string) => {
-                setTriggerType(() => value);
+                setTriggerType(value);
                 trigger.trigger = value;
                 submitData();
               }}

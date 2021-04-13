@@ -78,7 +78,8 @@ const Save: React.FC<Props> = props => {
                         <Input />
                     )}
                 </Form.Item>
-                <Form.Item label="复合网关">
+                { !data.id && (
+                        <Form.Item label="复合网关">
                     {getFieldDecorator('deviceGatewayId', {
                         rules: [{ required: true }],
                         initialValue: data?.configuration?.deviceGatewayId
@@ -97,6 +98,8 @@ const Save: React.FC<Props> = props => {
                         </Select>
                     )}
                 </Form.Item>
+                    )
+                }
                 <Form.Item key="description" label="说明">
                     {getFieldDecorator('describe', {
                         initialValue: data?.describe

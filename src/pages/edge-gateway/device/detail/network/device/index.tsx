@@ -8,7 +8,6 @@ import Service from '../service';
 import router from 'umi/router';
 import moment from 'moment';
 import { PaginationConfig } from 'antd/lib/pagination';
-import { SorterResult } from 'antd/lib/table';
 
 interface Props extends FormComponentProps {
     device: any
@@ -107,7 +106,7 @@ const Device: React.FC<Props> = props => {
             () => setLoading(false))
     };
 
-    const onTableChange = (pagination: PaginationConfig, filters: any, sorter: SorterResult<any>) => {
+    const onTableChange = (pagination: PaginationConfig) => {
         service.getDeviceList(props.device.id, {
             ...searchParam,
             pageIndex: Number(pagination.current) - 1,
@@ -211,12 +210,7 @@ const Device: React.FC<Props> = props => {
     ];
 
     return (
-        <Card title="设备管理" extra={
-            <Button type="primary" onClick={() => {
-                setSaveVisible(true);
-                setCurrentItem({});
-            }}><Icon type="plus" />新增设备</Button>
-        }>
+        <Card>
             <div>
                 <SearchForm
                     formItems={[
@@ -242,6 +236,12 @@ const Device: React.FC<Props> = props => {
                         }
                     }}
                 />
+                <div style={{marginBottom: '20px'}}>
+                    <Button type="primary" onClick={() => {
+                        setSaveVisible(true);
+                        setCurrentItem({});
+                    }}><Icon type="plus" />新增设备</Button>
+                </div>
                 <Table
                     loading={loading}
                     columns={columns}

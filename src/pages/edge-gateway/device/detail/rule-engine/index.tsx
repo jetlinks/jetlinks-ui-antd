@@ -246,8 +246,9 @@ const RuleEngine: React.FC<Props> = props => {
                     save={(item: any) => {
                         setSaveVisible(false);
                         if (item.instanceType === 'device_alarm') {
-                            item.instanceType = undefined;
-                            service.saveAlarms(props.device.id, item).subscribe(
+                            let param: any = {...item};
+                            param.instanceType = undefined;
+                            service.saveAlarms(props.device.id, param).subscribe(
                                 (resp) => {
                                     if (resp.status === 200) {
                                         message.success('保存成功！');
@@ -270,8 +271,9 @@ const RuleEngine: React.FC<Props> = props => {
                                 },
                                 () => setLoading(false));
                         } else if (item.instanceType === 'rule-scene') {
-                            item.instanceType = undefined;
-                            service.saveScene(props.device.id, item).subscribe(
+                            let param: any = {...item};
+                            param.instanceType = undefined;
+                            service.saveScene(props.device.id, param).subscribe(
                                 (resp) => {
                                     if (resp.status === 200) {
                                         message.success('保存成功！');

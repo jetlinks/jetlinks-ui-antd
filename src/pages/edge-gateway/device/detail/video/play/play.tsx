@@ -3,15 +3,15 @@ import { Modal, Radio } from "antd";
 import Service from './service';
 import styles from './play.less';
 
-
 interface Props {
     data: any;
     close: Function,
-    ok: Function
+    save: Function,
+    deviceId: string
 }
 
 const Play = (props: Props) => {
-    const service = new Service('media/channel');
+    const service = new Service('media/channel-play');
     const [playing, setPlaying] = useState<boolean>(false);
     const [playUp, setPlayUp] = useState<boolean>(true);
     const [playDown, setPlayDown] = useState<boolean>(true);
@@ -26,12 +26,12 @@ const Play = (props: Props) => {
     const [bloading, setBloading] = useState(true);
     const [protocol, setProtocol] = useState('');
     useEffect(() => {
-        // setPlaying(true);
-        service.getPlay(props.data.deviceId, props.data.channelId).subscribe(res => {
-            // setUrl(res['flv'])
-            // setProtocol('flv')
-            // setBloading(false);
-            // setUrlItem(res);
+        setPlaying(true);
+        service.getPlay(props.deviceId, {deviceId: props.data.deviceId, channelId: props.data.channelId}).subscribe(res => {
+            setUrl(res[0]['flv'])
+            setProtocol('flv')
+            setBloading(false);
+            setUrlItem(res[0]);
         });
     }, []);
 
@@ -42,13 +42,13 @@ const Play = (props: Props) => {
 
     const controlStart = (direct: string) => {
         if (playing) {
-            service.getControlStart(props.data.deviceId, props.data.channelId, direct, 90).subscribe(() => {
+            service.getControlStart(props.deviceId, {deviceId: props.data.deviceId, channelId: props.data.channelId, direct: direct, speed: 90, stopDelaySeconds: 0}).subscribe(() => {
             })
         }
     }
     const controlStop = () => {
         if (playing) {
-            service.getControlStop(props.data.deviceId, props.data.channelId).subscribe(() => {
+            service.getControlStop(props.deviceId, {deviceId: props.data.deviceId, channelId: props.data.channelId}).subscribe(() => {
             })
         }  
     }
@@ -57,9 +57,9 @@ const Play = (props: Props) => {
     const refresh = () => {
         setBloading(true);
         //关闭流
-        service.getStop(props.data.deviceId, props.data.channelId).subscribe(() => {
+        service.getStop(props.deviceId, {deviceId: props.data.deviceId, channelId: props.data.channelId}).subscribe(() => {
             //开启流
-            service.getPlay(props.data.deviceId, props.data.channelId).subscribe(res => {
+            service.getPlay(props.deviceId, {deviceId: props.data.deviceId, channelId: props.data.channelId}).subscribe(res => {
                 setUrl(res[protocol]);
                 setProtocol(protocol);
                 setBloading(false);
@@ -75,7 +75,7 @@ const Play = (props: Props) => {
             title="视频播放"
             onCancel={() => {props.close();}}
             onOk={() => {
-                props.ok();
+                props.save();
             }}
         >
             <div className={styles.player_box}>

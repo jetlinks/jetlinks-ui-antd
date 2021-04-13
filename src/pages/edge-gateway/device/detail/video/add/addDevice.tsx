@@ -1,7 +1,6 @@
 import { Form, Input, Modal, Select } from "antd";
 import { FormComponentProps } from "antd/es/form";
 import React, { useEffect, useState } from "react";
-import apis from '@/services';
 
 interface Props extends FormComponentProps {
     data: any;
@@ -14,59 +13,14 @@ const AddDevice: React.FC<Props> = props => {
     const {
         form: { getFieldDecorator },
         form,
-        data,
-        deviceId
+        data
     } = props;
 
-    const [onvif, setOnvif] = useState({});
     const [dataType, setDataType] = useState("");
 
     useEffect(() => {
         setDataType(data.provider)
-    },[]);
-
-    const geOnvif = (id: string, fileValue: any) => {
-        let param = {
-            url: fileValue.url,
-            username: fileValue.username,
-            password: fileValue.password,
-        }
-        apis.edgeDevice.getOnvif(deviceId, param).then(res => {
-            if (res.status === 200) {
-                setOnvif(res.result[0]);
-                if (res.result.length > 0) {
-                    let data = res.result[0];
-                    let mediaProfiles = (res.result[0]?.mediaProfiles || []).map((item: any, index: number) => {
-                        let ra = Math.round(Math.random() * 10000000000);
-                        return {
-                            name: item.name,
-                            token: item.token,
-                            id: `channel${index}${ra}`
-                        }
-                    })
-                    let params = {
-                        id: `device${Math.round(Math.random() * 10000000000)}`,
-                        firmwareVersion: data.firmwareVersion,
-                        hardwareId: data.hardwareId,
-                        description: fileValue.description,
-                        manufacturer: data.manufacturer,
-                        mediaProfiles: mediaProfiles,
-                        model: data.model,
-                        name: fileValue.name || data.name,
-                        password: data.password,
-                        serialNumber: data.serialNumber,
-                        url: data.url,
-                        username: data.username
-                    }
-                    apis.edgeDevice.addOnvif(deviceId, params).then(response => {
-                        if (response.status === 200) {
-                            props.save();
-                        }
-                    })
-                }
-            }
-        })
-    }
+    }, []);
 
     const renderType = (type: string) => {
         switch (type) {
@@ -114,7 +68,7 @@ const AddDevice: React.FC<Props> = props => {
                 form.validateFields((err, fileValue) => {
                     if (err) return;
                     if (!data.id) {
-                        geOnvif(data.id, { ...fileValue });
+                        props.save({ ...fileValue });
                     } else {
                         let params = {
                             id: data.id,
@@ -126,13 +80,7 @@ const AddDevice: React.FC<Props> = props => {
                             model: data.model,
                             description: fileValue.description,
                         }
-                        apis.edgeDevice.addOnvif(deviceId, params).then(response => {
-                            if (response.status === 200) {
-                                props.save();
-                            } else {
-                                props.close();
-                            }
-                        })
+                        props.save(params);
                     }
                 });
             }}

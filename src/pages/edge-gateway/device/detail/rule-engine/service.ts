@@ -216,7 +216,7 @@ class Service extends BaseService<any> {
             data: params
         })).pipe(
             filter(resp => resp.status === 200),
-            map(resp => resp.result)
+            map(resp => resp)
         ));
 
     public getDeviceList = (deviceId: string, params?: any) => defer(

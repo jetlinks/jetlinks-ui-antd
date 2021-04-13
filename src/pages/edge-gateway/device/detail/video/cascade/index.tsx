@@ -16,7 +16,7 @@ interface State {
 }
 
 const initState: State = {
-    searchParam: { pageSize: 10, terms: location?.query?.terms, sorts: { field: 'id', order: 'desc' } },
+    searchParam: { pageSize: 10, sorts: { field: 'id', order: 'desc' } },
 };
 const MediaCascade: React.FC<Props> = props => {
     const service = new Service('media/gb-cascade');
@@ -49,7 +49,7 @@ const MediaCascade: React.FC<Props> = props => {
             },
             () => setLoading(false))
     };
-
+    
     const columns: ColumnProps<any>[] = [
         {
             title: 'ID',
@@ -170,6 +170,7 @@ const MediaCascade: React.FC<Props> = props => {
                     <a
                         onClick={() => {
                             setChoiceVisible(true);
+                            console.log(record)
                             setCascadeId(record.id);
                         }}
                     >
@@ -197,12 +198,12 @@ const MediaCascade: React.FC<Props> = props => {
                             <Popconfirm
                                 title="确认删除该级联吗？"
                                 onConfirm={() => {
-                                      service.removeCascade(props.device.id,record.id).subscribe(() => {
-                                          message.success("删除成功");
-                                          handleSearch(searchParam);
-                                        },
+                                    service.removeCascade(props.device.id, record.id).subscribe(() => {
+                                        message.success("删除成功");
+                                        handleSearch(searchParam);
+                                    },
                                         () => {
-                                          message.error("删除失败");
+                                            message.error("删除失败");
                                         },
                                         () => setLoading(false))
                                 }}>
@@ -235,12 +236,13 @@ const MediaCascade: React.FC<Props> = props => {
     ];
     return (
         <div style={{ marginTop: '20px' }}>
-            <Card title="国标级联" extra={
-                <Button type="primary" onClick={() => {
-                    setSaveVisible(true);
-                    setMediaCascade({});
-                }}><Icon type="plus" />新增国标级联</Button>
-            }>
+            <Card>
+                <div style={{marginBottom: '20px'}}>
+                    <Button type="primary" onClick={() => {
+                        setSaveVisible(true);
+                        setMediaCascade({});
+                    }}><Icon type="plus" />新增国标级联</Button>
+                </div>
                 <div className={styles.StandardTable}>
                     <Table
                         loading={loading}

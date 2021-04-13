@@ -86,10 +86,10 @@ class Service extends BaseService<any> {
         map(resp => resp.result[0])
       ));
   public removeCascade = (deviceId: string, id: string) => defer(
-    () => from(request(`/jetlinks/edge/operations/${deviceId}/media-channel-delete/invoke`, {
+    () => from(request(`/jetlinks/edge/operations/${deviceId}/gb28181-cascade-delete/invoke`, {
       method: 'POST',
       data: {
-        channelDataId: id
+        cascadeId: id
       }
     }))
       .pipe(

@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import Form from 'antd/es/form';
 import { FormComponentProps } from 'antd/lib/form';
-import { Button, Card, Col, Icon, Input, Modal, Row, Radio, Switch, Tooltip, Select } from 'antd';
+import { Button, Card, Col, Icon, Input, Modal, Row, Radio, Switch, Tooltip, Select, message } from 'antd';
 import Service from '../service';
 import Triggers from './alarm/trigger';
 import Trigger from './alarm/trigger-scene';
 import ActionAssembly from './alarm/action';
+import Bind from '../../rule-engine/scene-save/bind';
 
 interface Props extends FormComponentProps {
   close: Function;
@@ -61,7 +62,8 @@ const Save: React.FC<Props> = props => {
   const [instanceType, setInstanceType] = useState(initState.instanceType);
   const [description, setDescription] = useState(initState.description);
 
-  const [deviceList, setDeviceList] = useState(initState.deviceList);
+  // const [deviceList, setDeviceList] = useState(initState.deviceList);
+  const [bindVisible, setBindVisible] = useState(false);
   const [productList, setProductList] = useState(initState.productList);
 
   const [data] = useState(initState.data);
@@ -81,7 +83,7 @@ const Save: React.FC<Props> = props => {
   const submitData = () => {
     if (instanceType === 'node-red') {
       let params = {
-        type: instanceType,
+        instanceType: 'node-red',
         name: name,
         description: description
       }
@@ -116,18 +118,18 @@ const Save: React.FC<Props> = props => {
       }
       data.instanceType = 'device_alarm'
       props.save({ ...data });
-    }else if (instanceType === 'rule-scene'){
+    } else if (instanceType === 'rule-scene') {
       let tri = trigger.map(item => {
         if (item.trigger === 'scene') {
-          return {scene: item.scene, trigger: 'scene'}
+          return { scene: item.scene, trigger: 'scene' }
         } else if (item.trigger === 'manual') {
           return {
             trigger: 'manual'
           }
         } else if (item.trigger === 'timer') {
-          return {cron: item.cron, trigger: 'timer'}
+          return { cron: item.cron, trigger: 'timer' }
         } else {
-          return {device: item.device, trigger: 'device'}
+          return { device: item.device, trigger: 'device' }
         }
       });
       let items = {
@@ -141,13 +143,13 @@ const Save: React.FC<Props> = props => {
     }
   };
 
-  const getDeviceList = () => {
-    service.getDeviceList(props.deviceId, { paging: false }).subscribe(
-      (res) => {
-        setDeviceList(res.data)
-      }
-    )
-  }
+  // const getDeviceList = () => {
+  //   service.getDeviceList(props.deviceId, { paging: false }).subscribe(
+  //     (res) => {
+  //       setDeviceList(res.data)
+  //     }
+  //   )
+  // }
   const getProductList = () => {
     service.getProductList(props.deviceId, { paging: false }).subscribe(
       (res) => {
@@ -165,7 +167,7 @@ const Save: React.FC<Props> = props => {
   }
 
   useEffect(() => {
-    getDeviceList();
+    // getDeviceList();
     getProductList();
   }, []);
 
@@ -211,7 +213,7 @@ const Save: React.FC<Props> = props => {
               {
                 alarmType === 'device' && <Col span={20}>
                   <Form.Item key="deviceId" label="设备">
-                    <Select placeholder="请选择" defaultValue={props.data.targetId} onChange={(value: string) => {
+                    {/* <Select placeholder="请选择" defaultValue={props.data.targetId} onChange={(value: string) => {
                       setDeviceId(value);
                       getInstanceDetail(value);
                     }}>
@@ -220,7 +222,14 @@ const Save: React.FC<Props> = props => {
                           <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
                         )
                       })}
-                    </Select>
+                    </Select> */}
+                    <Input addonAfter={<Icon onClick={() => {
+                      setBindVisible(true);
+                    }} type='gold' title="点击选择设备" />}
+                      defaultValue={deviceId || ''}
+                      placeholder="点击选择设备"
+                      value={device?.name}
+                      readOnly />
                   </Form.Item>
                 </Col>
               }
@@ -368,7 +377,7 @@ const Save: React.FC<Props> = props => {
               </Form.Item>
             </Col>
           </Row>
-        )
+        );
       case 'rule-scene':
         return (
           <>
@@ -439,7 +448,7 @@ const Save: React.FC<Props> = props => {
             </Button>
             </Card>
           </>
-        )
+        );
       default: null;
     }
   }
@@ -484,6 +493,24 @@ const Save: React.FC<Props> = props => {
           {renderComponent()}
         </Form>
       </div>
+      {bindVisible && (
+        <Bind selectionType='radio'
+              close={() => {
+                setBindVisible(false);
+              }}
+              deviceId={props.deviceId}
+              save={(item: any) => {
+                if (item[0]) {
+                  setBindVisible(false);
+                  getInstanceDetail(item[0]);
+                  setDeviceId(item[0]);
+                } else {
+                  message.error('请勾选设备');
+                  return;
+                }
+              }}
+        />
+      )}
     </Modal>
   );
 };

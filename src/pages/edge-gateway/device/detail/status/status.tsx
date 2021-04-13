@@ -4,12 +4,14 @@ import PropertiesCard from "./PropertiesCard";
 import Service from "@/pages/device/instance/editor/service";
 import { groupBy, flatMap, toArray, map } from "rxjs/operators";
 import { getWebsocket } from "@/layouts/GlobalWebSocket";
-import { Observable } from "rxjs";
+import { getWebSocket } from './websocket';
+import { Observable, Subscription } from "rxjs";
 import DeviceState from "./DeviceState";
 
 interface Props {
     refresh: Function;
     device: any;
+    edgeTag: boolean;
 }
 const topColResponsiveProps = {
     xs: 24,
@@ -20,7 +22,7 @@ const topColResponsiveProps = {
     style: { marginBottom: 24 },
 };
 const Status: React.FC<Props> = props => {
-    const { device } = props;
+    const { device, edgeTag } = props;
     const metadata = JSON.parse(device.metadata);
     const events = metadata.events
         .map((item: any) => {
@@ -48,8 +50,8 @@ const Status: React.FC<Props> = props => {
             }
             return item;
         }));
-
     const [loading, setLoading] = useState<boolean>(false);
+
     const propertiesWs: Observable<any> = getWebsocket(
         `instance-info-property-${device.id}-${device.productId}`,
         `/dashboard/device/${device.productId}/properties/realTime`,
@@ -71,35 +73,75 @@ const Status: React.FC<Props> = props => {
         map(result => result.payload)
     );
 
+    const propertiesEdge: Observable<any> = getWebSocket(
+        `instance-info-property-${device.id}-${device.productId}`,
+        `/dashboard/device/${device.productId}/properties/realTime`,
+        {
+            deviceId: device.id,
+            history: 0,
+        },
+    ).pipe(
+        map(result => result.payload)
+    );
+
+    const eventsEdge: Observable<any> = getWebSocket(
+        `instance-info-event-${device.id}-${device.productId}`,
+        `/dashboard/device/${device.productId}/events/realTime`,
+        {
+            deviceId: device.id,
+        },
+    ).pipe(
+        map(result => result.payload)
+    );
+
     let propertiesMap = {};
     properties.forEach(item => propertiesMap[item.id] = item);
     let eventsMap = {};
     events.forEach((item: any) => eventsMap[item.id] = item);
 
     const [index, setIndex] = useState<number>(20);
+
     useEffect(() => {
+        let properties$: Subscription | null = null;
+        let events$: Subscription | null = null;
 
-        const properties$ = propertiesWs.subscribe((resp) => {
-            const property = resp.value.property;
-            const item = propertiesMap[property];
-            if (item) {
-                item.next(resp);
-            }
-        });
+        if (edgeTag) {
+            properties$ = propertiesEdge.subscribe((resp) => {
+                const property = resp.value.property;
+                const item = propertiesMap[property];
+                if (item) {
+                    item.next(resp);
+                }
+            });
 
-        const events$ = eventsWs.subscribe((resp) => {
-            const event = resp.value.event;
-            const item = eventsMap[event];
-            if (item) {
-                item.next(resp);
-            }
-        });
+            events$ = eventsEdge.subscribe((resp) => {
+                const event = resp.value.event;
+                const item = eventsMap[event];
+                if (item) {
+                    item.next(resp);
+                }
+            });
+        } else {
+            properties$ = propertiesWs.subscribe((resp) => {
+                const property = resp.value.property;
+                const item = propertiesMap[property];
+                if (item) {
+                    item.next(resp);
+                }
+            });
 
+            events$ = eventsWs.subscribe((resp) => {
+                const event = resp.value.event;
+                const item = eventsMap[event];
+                if (item) {
+                    item.next(resp);
+                }
+            });
+        }
         return () => {
-            properties$.unsubscribe();
-            events$.unsubscribe()
+            properties$ && properties$.unsubscribe();
+            events$ && events$.unsubscribe()
         };
-
     }, []);
 
 
@@ -120,6 +162,7 @@ const Status: React.FC<Props> = props => {
     const service = new Service();
 
     useEffect(() => {
+        console.log(props.edgeTag)
         const list = [{
             'dashboard': 'device',
             'object': device.productId,
@@ -166,7 +209,7 @@ const Status: React.FC<Props> = props => {
             <Row gutter={24} id="device-edge-status" >
                 <Col {...topColResponsiveProps}>
                     <DeviceState
-                        refresh={() => {props.refresh()}}
+                        refresh={() => { props.refresh() }}
                         state={device.state}
                         runInfo={device}
                     />

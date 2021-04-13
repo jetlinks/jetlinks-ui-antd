@@ -166,12 +166,13 @@ const CompositeGateway: React.FC<Props> = props => {
     ];
 
     return (
-        <Card title="复合网关" extra={
-            <Button type="primary" onClick={() => {
-                setSaveVisible(true);
-                setCurrentItem({});
-            }}><Icon type="plus" />创建复合网关</Button>
-        }>
+        <Card>
+            <div style={{marginBottom: '20px'}}>
+                <Button type="primary" onClick={() => {
+                    setSaveVisible(true);
+                    setCurrentItem({});
+                }}><Icon type="plus" />创建复合网关</Button>
+            </div>
             <div>
                 <Table
                     loading={loading}

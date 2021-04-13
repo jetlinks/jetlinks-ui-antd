@@ -143,7 +143,7 @@ const MediaDevice: React.FC<Props> = props => {
     }
 
     return (
-        <Card style={{ width: '50%', marginTop: '20px' }} title="流媒体服务">
+        <Card style={{ width: '50%', marginTop: '20px' }}>
             <Form labelCol={{ span: 5 }} wrapperCol={{ span: 19 }}>
                 <Form.Item key="name" label="流媒体名称">
                     {getFieldDecorator('name', {

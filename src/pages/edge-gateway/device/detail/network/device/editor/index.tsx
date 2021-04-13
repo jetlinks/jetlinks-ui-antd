@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Badge, Descriptions, Icon, message, Popconfirm, Row, Spin, Tooltip } from 'antd';
+import { Badge, Descriptions, Icon, message, Row, Spin, Tooltip } from 'antd';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { connect } from 'dva';
-import { router } from 'umi';
 import Info from './detail/Info';
 import Status from './detail/Status';
 import Functions from './detail/functions';
