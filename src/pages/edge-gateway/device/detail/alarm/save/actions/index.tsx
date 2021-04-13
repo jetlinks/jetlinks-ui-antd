@@ -326,7 +326,7 @@ const Action: React.FC<Props> = props => {
     } else if (propertiesData.valueType.type === 'object') {
       return (
         propertiesData.valueType.properties?.map((item: any, index: number) => (
-          <Col span={24} style={{marginLeft: -8}}>
+          <Col span={24} style={{marginLeft: -8}} key={`object${item.id}_${index}`}>
             <div key={`object${item.id}_${index}`}>
               <Col span={4}>
                 <Input value={`${item.name}(${item.id})`} disabled={true}/>
@@ -419,7 +419,7 @@ const Action: React.FC<Props> = props => {
                         actionData.configuration.message.properties = {};
                       }}
               >
-                {JSON.parse(deviceData.metadata).properties?.map((item: any) => (
+                {deviceData.metadata && JSON.parse(deviceData.metadata).properties?.map((item: any) => (
                   <Select.Option key={item.id} data={item}>{`${item.name}（${item.id}）`}</Select.Option>
                 ))}
               </Select>
@@ -447,7 +447,7 @@ const Action: React.FC<Props> = props => {
             </Col>
             {functionData.id && functionData.inputs.map((item: any, index: number) => {
               return (
-                <Col span={24} style={{marginLeft: -8}}>
+                <Col span={24} style={{marginLeft: -8}} key={`function_${item.id}_${index}`}>
                   <div key={`function_${item.id}_${index}`}>
                     <Col span={4}>
                       <Input value={`${item.name}(${item.id})`} readOnly={true}/>

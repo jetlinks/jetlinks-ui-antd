@@ -1,23 +1,22 @@
-import React, { useState } from 'react';
-import { Card, Spin, Tabs } from 'antd';
+import React from 'react';
+import { Card, Tabs } from 'antd';
 import Add from './add';
 import MediaCascade from './cascade';
 import Basic from './basic';
 
 interface Props{
-    device: any
+    device: any,
+    edgeTag: boolean,
 }
 
 const Video: React.FC<Props> = props => {
 
-    const [spinning, setSpinning] = useState(false);
-
     return (
         <Card>
-            <Spin spinning={spinning}>
+            <div>
                 <Tabs defaultActiveKey="1" tabPosition="top" type="card">
                     <Tabs.TabPane tab="视频设备" key="1">
-                        <Add device={props.device}/>
+                        <Add device={props.device} edgeTag={props.edgeTag}/>
                     </Tabs.TabPane>
                     <Tabs.TabPane tab="国标级联" key="2">
                         <MediaCascade device={props.device}/>
@@ -26,7 +25,7 @@ const Video: React.FC<Props> = props => {
                         <Basic device={props.device}/>
                     </Tabs.TabPane>
                 </Tabs>
-            </Spin>
+            </div>
         </Card>
     )
 };

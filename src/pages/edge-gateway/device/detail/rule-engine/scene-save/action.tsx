@@ -447,7 +447,7 @@ const Action: React.FC<Props> = props => {
             </Col>
             {functionData.id && functionData.inputs.map((item: any, index: number) => {
               return (
-                <Col span={24} style={{marginLeft: -8}}>
+                <Col span={24} style={{marginLeft: -8}} key={index}>
                   <div key={`function_${item.id}_${index}`}>
                     <Col span={4}>
                       <Input value={`${item.name}(${item.id})`} readOnly={true}/>

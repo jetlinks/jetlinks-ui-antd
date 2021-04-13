@@ -10,6 +10,7 @@ import DeviceState from "./DeviceState";
 interface Props {
     refresh: Function;
     device: any;
+    edgeTag: boolean;
 }
 const topColResponsiveProps = {
     xs: 24,
@@ -48,8 +49,8 @@ const Status: React.FC<Props> = props => {
             }
             return item;
         }));
-
     const [loading, setLoading] = useState<boolean>(false);
+
     const propertiesWs: Observable<any> = getWebsocket(
         `instance-info-property-${device.id}-${device.productId}`,
         `/dashboard/device/${device.productId}/properties/realTime`,
@@ -78,7 +79,6 @@ const Status: React.FC<Props> = props => {
 
     const [index, setIndex] = useState<number>(20);
     useEffect(() => {
-
         const properties$ = propertiesWs.subscribe((resp) => {
             const property = resp.value.property;
             const item = propertiesMap[property];
@@ -120,6 +120,7 @@ const Status: React.FC<Props> = props => {
     const service = new Service();
 
     useEffect(() => {
+        console.log(props.edgeTag)
         const list = [{
             'dashboard': 'device',
             'object': device.productId,

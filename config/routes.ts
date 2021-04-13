@@ -300,6 +300,7 @@ export const routes = [
               'network-config',
               'device-gateway',
               'protocol-supports',
+              'opc-client',
               'admin',
             ],
             routes: [
@@ -335,6 +336,14 @@ export const routes = [
                 authority: ['device-gateway', 'admin'],
                 component: './network/gateway',
               },
+              {
+                path: '/network/opcua',
+                name: 'OPC UA',
+                icon: 'file-ppt',
+                iconfont: 'icon-fileppt',
+                authority: ['opc-client', 'admin'],
+                component: './network/opc-ua',
+              }
             ],
           },
           {

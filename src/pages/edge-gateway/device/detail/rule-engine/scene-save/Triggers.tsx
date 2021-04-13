@@ -302,11 +302,14 @@ const Trigger: React.FC<Props> = props => {
               <Col span={6}>
                 <Select placeholder="选择触发器类型" value={trigger.trigger}
                   onChange={(value: string) => {
-                    setTriggerType(() => value);
+                    setTriggerType(value);
                     trigger.trigger = value;
                     if (value === 'scene' && trigger.scene === undefined) {
                       trigger.scene = {};
-                      trigger.scene.sceneIds = []
+                      trigger.scene.sceneIds = [];
+                    }
+                    if(value === 'device' && trigger.device === undefined){
+                      trigger.device = {}
                     }
                     setTrigger(trigger);
                   }}
@@ -323,9 +326,9 @@ const Trigger: React.FC<Props> = props => {
                     defaultChecked={shakeLimit.enabled ? shakeLimit.enabled : false}
                     style={{ marginLeft: 20, width: '100px' }}
                     onChange={(value: boolean) => {
-                      shakeLimit.enabled = value;
-                      setShakeLimit({ ...shakeLimit });
-                      trigger.device.shakeLimit.enabled = value;
+                      let shake = {...shakeLimit, enabled: value};
+                      setShakeLimit({ ...shake });
+                      trigger.device.shakeLimit = {...shake};
                       setTrigger(trigger);
                     }}
                   />

@@ -17,51 +17,36 @@ interface State {
     loading: boolean;
     info: any;
     deviceId: string;
+    tabList: any[];
+    edgeTag: boolean;
 }
 
 const Detail: React.FC<Props> = props => {
     const { location: { pathname }, } = props;
     const initState: State = {
         loading: false,
+        edgeTag: false,
         info: {},
-        deviceId: ''
-    }
-    const [loading, setLoading] = useState(initState.loading);
-
-    const [info, setInfo] = useState(initState.info);
-    const [deviceId, setDeviceId] = useState(initState.deviceId);
-
-    const statusColor = new Map();
-    statusColor.set('online', 'green');
-    statusColor.set('offline', 'red');
-    statusColor.set('notActive', 'blue');
-
-    const tabList = [
-        {
+        deviceId: '',
+        tabList: [{
             key: 'info',
             tab: '基本信息'
         },
         {
             key: 'status',
             tab: '运行状态'
-        },
-        {
-            key: 'video',
-            tab: '视频模块'
-        },
-        {
-            key: 'ruleEngine',
-            tab: '规则引擎'
-        },
-        {
-            key: 'network',
-            tab: '设备接入'
-        },
-        {
-            key: 'alarm',
-            tab: '告警设置'
-        }
-    ]
+        }]
+    }
+    const [edgeTag, setEdgeTag] = useState(initState.edgeTag);
+    const [loading, setLoading] = useState(initState.loading);
+    const [info, setInfo] = useState(initState.info);
+    const [deviceId, setDeviceId] = useState(initState.deviceId);
+    const [tabList, setTabList] = useState(initState.tabList);
+
+    const statusColor = new Map();
+    statusColor.set('online', 'green');
+    statusColor.set('offline', 'red');
+    statusColor.set('notActive', 'blue');
     const content = {
         info: <div>
             <Descriptions bordered>
@@ -77,8 +62,8 @@ const Detail: React.FC<Props> = props => {
                 <Descriptions.Item label="说明">{info.description}</Descriptions.Item>
             </Descriptions>
         </div>,
-        status: <Status refresh={() => {getInfo(deviceId)}} device={info} />,
-        video: <Video device={info}/>,
+        status: <Status refresh={() => {getInfo(deviceId)}} edgeTag={edgeTag} device={info} />,
+        video: <Video device={info} edgeTag={edgeTag}/>,
         ruleEngine: <RuleEngine device={info}/>,
         network: <Network device={info}/>,
         alarm: <Alarm device={info} />
@@ -89,6 +74,25 @@ const Detail: React.FC<Props> = props => {
         apis.edgeDevice.info(id).then(res => {
             if (res.status === 200) {
                 setInfo(res.result);
+                if(res.result.state?.value === 'online'){
+                    tabList.push({
+                        key: 'video',
+                        tab: '视频模块'
+                    },
+                    {
+                        key: 'ruleEngine',
+                        tab: '规则引擎'
+                    },
+                    {
+                        key: 'network',
+                        tab: '设备接入'
+                    },
+                    {
+                        key: 'alarm',
+                        tab: '告警设置'
+                    })
+                    setTabList([...tabList]);
+                }
                 setLoading(false);
             }
         })
@@ -96,6 +100,8 @@ const Detail: React.FC<Props> = props => {
 
     useEffect(() => {
         if (pathname.indexOf('detail') > 0) {
+            let tag = location.hash.split('=')[1] === 'true' ? true : false;
+            setEdgeTag(tag);
             const list = pathname.split('/');
             setDeviceId(list[list.length - 1]);
             getInfo(list[list.length - 1]);

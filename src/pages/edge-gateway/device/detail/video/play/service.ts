@@ -5,31 +5,31 @@ import { filter, map } from 'rxjs/operators';
 
 class Service extends BaseService<any> {
 
-  public getPlay = (deviceId: string, channelId: string) =>
+  public getPlay = (deviceId: string, params: any) =>
     defer(() =>
       from(
-        request(`/jetlinks/media/device/${deviceId}/${channelId}/_start`, { method: 'POST' }),
-      ).pipe(
-        filter(resp => resp.status === 200),
-        map(resp => resp.result),
-      ),
-    );
-
-  public getStop = (deviceId: string, channelId: string) =>
-    defer(() =>
-      from(
-        request(`/jetlinks/media/device/${deviceId}/${channelId}/_stop`, { method: 'POST' }),
-      ).pipe(
-        filter(resp => resp.status === 200),
-        map(resp => resp.result),
-      ),
-    );
-
-  public getControlStart = (deviceId: string, channelId: string, direct: string, speed: number) =>
-    defer(() =>
-      from(
-        request(`/jetlinks/media/device/${deviceId}/${channelId}/_ptz/${direct}/${speed}`, {
+        request(`/jetlinks/edge/operations/${deviceId}/media-device-start-play/invoke`, { 
           method: 'POST',
+          data: {
+            deviceId: params.deviceId,
+            channelId: params.channelId
+          }
+       }),
+      ).pipe(
+        filter(resp => resp.status === 200),
+        map(resp => resp.result),
+      ),
+    );
+
+  public getStop = (deviceId: string, params: any) =>
+    defer(() =>
+      from(
+        request(`/jetlinks/edge/operations/${deviceId}/media-device-stop-play/invoke`, { 
+          method: 'POST',
+          data: {
+            deviceId: params.deviceId,
+            channelId: params.channelId
+          }
         }),
       ).pipe(
         filter(resp => resp.status === 200),
@@ -37,19 +37,36 @@ class Service extends BaseService<any> {
       ),
     );
 
-  public getControlStop = (deviceId: string, channelId: string) =>
-    defer(() =>
+  public getControlStart = (deviceId: string, params: any) =>
+    defer(() => 
       from(
-        request(`/jetlinks/media/device/${deviceId}/${channelId}/_ptz/STOP`, { method: 'POST' }),
+        request(`/jetlinks/edge/operations/${deviceId}/media-device-ptz/invoke`, {
+          method: 'POST',
+          data: {
+            deviceId: params.deviceId,
+            channelId: params.channelId,
+            direct: params.direct,
+            speed: params.speed,
+            stopDelaySeconds: params.stopDelaySeconds
+          }
+        }),
       ).pipe(
         filter(resp => resp.status === 200),
         map(resp => resp.result),
       ),
     );
 
-  public _sync = (deviceId: string) =>
+  public getControlStop = (deviceId: string, params: any) =>
     defer(() =>
-      from(request(`/jetlinks/media/device/${deviceId}/channels/_sync`, { method: 'POST' })).pipe(
+      from(
+        request(`/jetlinks/edge/operations/${deviceId}/media-device-stop-ptz/invoke`, { 
+          method: 'POST',
+          data: {
+            deviceId: params.deviceId,
+            channelId: params.channelId
+          }
+        }),
+      ).pipe(
         filter(resp => resp.status === 200),
         map(resp => resp.result),
       ),

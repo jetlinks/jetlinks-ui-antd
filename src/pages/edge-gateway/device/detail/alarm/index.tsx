@@ -1,6 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Badge, Button, Card, Divider, Input, message, Modal, Popconfirm, Select, Spin, Table, Tabs, Tag } from 'antd';
-// import apis from '@/services';
 import { ColumnProps, SorterResult } from 'antd/es/table';
 import { alarm, AlarmLog } from '@/pages/device/alarm/data';
 import moment from 'moment';
@@ -139,7 +138,6 @@ const Alarm: React.FC<Props> = props => {
       render: (record: any) => (
         <Fragment>
           <a onClick={() => {
-            console.log(record)
             setSaveAlarmData(record);
             setSaveVisible(true);
           }}>编辑</a>
@@ -296,24 +294,6 @@ const Alarm: React.FC<Props> = props => {
   };
 
   useEffect(() => {
-    // if (alarmActiveKey === 'logList') {
-    //   if (props.target === 'device') {
-    //     searchParam.terms = {
-    //       deviceId: props.targetId,
-    //     };
-    //     if (alarmLogId != '' && alarmLogId != null && alarmLogId) {
-    //       searchParam.terms.alarmId = alarmLogId;
-    //     }
-    //   } else {
-    //     searchParam.terms = {
-    //       productId: props.targetId,
-    //     };
-    //     if (alarmLogId != '' && alarmLogId != null && alarmLogId) {
-    //       searchParam.terms.alarmId = alarmLogId;
-    //     }
-    //   }
-    //   handleSearch(searchParam);
-    // }
     handleSearch(searchParam);
   }, [alarmActiveKey]);
 
@@ -333,7 +313,7 @@ const Alarm: React.FC<Props> = props => {
   return (
     <Spin tip="加载中..." spinning={spinning}>
       <Card>
-        <Tabs activeKey={alarmActiveKey} onTabClick={(key: any) => {
+        <Tabs tabPosition="top" type="card" activeKey={alarmActiveKey} onTabClick={(key: any) => {
           setAlarmId(undefined);
           setAlarmActiveKey(key);
         }}>
@@ -374,15 +354,7 @@ const Alarm: React.FC<Props> = props => {
                 pagination={{
                   current: alarmLogData.pageIndex + 1,
                   total: alarmLogData.total,
-                  pageSize: alarmLogData.pageSize,
-                  showQuickJumper: true,
-                  showSizeChanger: true,
-                  pageSizeOptions: ['10', '20', '50', '100'],
-                  showTotal: (total: number) => (
-                    `共 ${total} 条记录 第  ${alarmLogData.pageIndex + 1
-                    }/${Math.ceil(alarmLogData.total / alarmLogData.pageSize)
-                    }页`
-                  ),
+                  pageSize: alarmLogData.pageSize
                 }}
               />
             </div>

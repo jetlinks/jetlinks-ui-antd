@@ -18,7 +18,7 @@ interface State {
   data: Partial<SceneItem>;
   triggers: any[];
   action: any[];
-  parallel: Boolean;
+  parallel: boolean;
 }
 
 const SceneSave: React.FC<Props> = props => {
@@ -64,7 +64,7 @@ const SceneSave: React.FC<Props> = props => {
       service.getSceneInfo(props.deviceId, {id: props.data.id}).subscribe(
         (res) => {
           setData(res);
-          setParallel(res.parallel || false);
+          setParallel(res.parallel);
           if (res.triggers && res.triggers.length > 0) {
             setTriggers(res.triggers)
           } else {
@@ -88,7 +88,6 @@ const SceneSave: React.FC<Props> = props => {
           }
           if (res.actions && res.actions.length > 0) {
             setAction(res.actions)
-            console.log(res)
           } else {
             setAction(
               [
@@ -207,10 +206,10 @@ const SceneSave: React.FC<Props> = props => {
               <span>执行动作</span>
               <Switch key='parallel'
                       checkedChildren="并行执行" unCheckedChildren="串行执行"
-                      defaultChecked={parallel || false}
+                      defaultChecked={parallel}
                       style={{marginLeft: 20, width: '100px'}}
                       onChange={(value: boolean) => {
-                        setParallel(value)
+                        setParallel(value);
                       }}
               />
             </p>
