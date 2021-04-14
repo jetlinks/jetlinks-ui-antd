@@ -28,8 +28,8 @@ const OrgChart = () => {
     apis.org.list(encodeQueryParam({ paging: false, terms: { typeId: 'org' } })).then(resp => {
       const data = {
         id: '',
-        name: '组织架构',
-        title: '根节点',
+        name: '机构管理',
+        title: '组织架构',
         children: resp.result,
       };
       setList(data);
@@ -116,7 +116,7 @@ const OrgChart = () => {
     </Menu>
   );
   return (
-    <PageHeaderWrapper title="组织架构图">
+    <PageHeaderWrapper title="机构管理">
       <div className={styles.orgContainer}>
         <OrganizationChart
           datasource={list}

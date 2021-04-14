@@ -81,13 +81,20 @@ export const routes = [
                 version: 'pro',
                 component: './system/open-api',
               },
+              // {
+              //   path: '/system/org',
+              //   name: '机构管理',
+              //   icon: 'apartment',
+              //   iconfont: 'icon-jigoubianzhi',
+              //   authority: ['organization', 'admin'],
+              //   component: './system/org',
+              // },
               {
-                path: '/system/org',
+                path: '/system/org-chart',
                 name: '机构管理',
                 icon: 'apartment',
-                iconfont: 'icon-jigoubianzhi',
                 authority: ['organization', 'admin'],
-                component: './system/org',
+                component: './system/org-chart',
               },
               {
                 path: '/system/role',
@@ -124,12 +131,7 @@ export const routes = [
                 version: 'pro',
                 component: './system/tenant/detail',
               },
-              {
-                path: '/system/org-chart',
-                name: '组织架构图',
-                icon: 'tool',
-                component: './system/org-chart',
-              },
+             
             ],
           },
           {
