@@ -143,8 +143,10 @@ const Config: React.FC<Props> = props => {
     dispatch({
       type: 'noticeConfig/insert',
       payload: item,
-      callback: () => {
-        message.success('导入成功');
+      callback: (data) => {
+        if(data.status===200){
+          message.success('导入成功');
+        }
         handlerSearch(searchParam);
       },
     });

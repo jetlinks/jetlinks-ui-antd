@@ -37,7 +37,7 @@ const Save = (props: Props) => {
       ).subscribe(data => {
         setLoading(false);
         const all: any[] = data[0].data;
-        const checked: any[] = data[1].data.map((i: any) => i.userId);
+        const checked: any[] = data[1].map((i: any) => i.userId);
         setResult(data[0]);
         const unchecked = all.filter(item => !checked.includes(item.id));
         setLoading(false);
@@ -130,7 +130,7 @@ const Save = (props: Props) => {
           });
         }}
       />
-      <div style={{marginBottom: '30px'}}>
+      <div style={{ marginBottom: '30px' }}>
         <Table
           size="small"
           loading={loading}

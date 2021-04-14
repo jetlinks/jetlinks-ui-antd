@@ -50,7 +50,7 @@ class Service extends BaseService<TenantItem> {
     query: (id: string, params: any) =>
       defer(() =>
         from(
-          request(`/jetlinks/tenant/${id}/members/_query`, {
+          request(`/jetlinks/tenant/${id}/members/_query/no-paging?paging=false`, {
             method: 'GET',
             params,
           }),

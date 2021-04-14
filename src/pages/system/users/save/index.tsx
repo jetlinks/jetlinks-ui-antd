@@ -62,7 +62,6 @@ const Save: React.FC<Props> = props => {
         callback();
     };
 
-    console.log(initState.defaultPassword, '12332');
     return (
         <Modal
             title={`${props.data.id ? '编辑' : '新建'}用户`}
