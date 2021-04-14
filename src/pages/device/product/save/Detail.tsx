@@ -56,6 +56,7 @@ const Detail: React.FC<Props> = props => {
   const [spinning, setSpinning] = useState(initState.spinning);
   const [units, setUnits] = useState(initState.units);
   const [updateVisible, setUpdateVisible] = useState(false);
+  const [productId, setProductId] = useState("");
 
   const handleSearch = (id?: string) => {
     const list = pathname.split('/');
@@ -120,6 +121,7 @@ const Detail: React.FC<Props> = props => {
     if (pathname.indexOf('save') > 0) {
       const list = pathname.split('/');
       handleSearch(list[list.length - 1]);
+      setProductId(list[list.length - 1]);
     }
   }, []);
 
@@ -402,7 +404,7 @@ const Detail: React.FC<Props> = props => {
                   setTags(data);
                   updateData('tags', data, onlySave);
                 }}
-                update={() => handleSearch()}
+                update={() => handleSearch(productId)}
               />
             </Tabs.TabPane>
             <Tabs.TabPane tab="告警设置" key="metadata1">
