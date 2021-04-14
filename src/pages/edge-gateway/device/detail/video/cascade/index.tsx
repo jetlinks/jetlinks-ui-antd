@@ -170,7 +170,6 @@ const MediaCascade: React.FC<Props> = props => {
                     <a
                         onClick={() => {
                             setChoiceVisible(true);
-                            console.log(record)
                             setCascadeId(record.id);
                         }}
                     >

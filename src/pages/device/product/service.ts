@@ -217,3 +217,9 @@ export async function getDefaultModel(id: string, transport: string) {
     }
   })
 }
+//获取虚拟属性聚合函数
+export async function getAggTypeList(){
+  return request(`/jetlinks/dictionary/streaming-agg-type/items`, {
+    method: 'get'
+  })
+}

@@ -164,7 +164,7 @@ const Add: React.FC<Props> = (props) => {
                         setChannel(record);
                         setChannelVisible(true);
                     }}>编辑</a>
-                    {!props.edgeTag && (<>
+                    {props.edgeTag && (<>
                         <Divider type="vertical" />
                         <a onClick={() => {
                             setChannel(record);
@@ -263,6 +263,8 @@ const Add: React.FC<Props> = (props) => {
                             getDevice(props.device.id, deviceParams);
                         })
                     }
+                }else{
+                    setSpin(false);
                 }
             })
         }
