@@ -56,9 +56,9 @@ const Add = (props: Props) => {
   };
   useEffect(() => {
     handleSearch(searchParam);
-    service.member.query(data.id, {}).subscribe(resp => {
-      setUserList(resp.data);
-      if (resp.data.length < 1) {
+    service.member.query(data.id, {}).subscribe(data => {
+      setUserList(data);
+      if (data.length < 1) {
         message.error('租户下没有成员，无法绑定资产');
       }
     });

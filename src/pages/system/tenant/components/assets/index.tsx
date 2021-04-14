@@ -20,7 +20,7 @@ const Assets = (props: Props) => {
     const [current, setCurrent] = useState();
     useEffect(() => {
         service.member.query(id, encodeQueryParam({})).subscribe(resp => {
-            const temp = resp.data.map((item: any) => ({
+            const temp = resp.map((item: any) => ({
                 id: item.userId,
                 name: item.name
             }));
