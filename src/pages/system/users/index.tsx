@@ -171,7 +171,7 @@ const UserList: React.FC<Props> = props => {
             if (response.status === 200) {
               message.success('删除成功');
               if (result.data.length === 1) {
-                handleSearch({ ...searchParam, pageIndex: 0 });
+                handleSearch({ ...searchParam, pageIndex: searchParam.pageIndex - 1 });
               } else {
                 handleSearch(searchParam);
               }
