@@ -8,7 +8,7 @@ interface Props extends FormComponentProps {
   data?: Partial<DeviceProduct>;
   configuration?: any;
   close: Function;
-  save: (data: Partial<DeviceProduct>) => void;
+  save: Function;
 }
 
 interface State {
