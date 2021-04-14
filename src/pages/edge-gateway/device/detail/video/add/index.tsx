@@ -305,6 +305,10 @@ const Add: React.FC<Props> = (props) => {
                             <div>
                                 <Button type="primary" onClick={() => {
                                     getDevice(props.device.id, deviceParams);
+                                    setDeviceId('');
+                                    getChannel(props.device.id, {
+                                        pageSize: 8
+                                    })
                                 }}>刷新</Button>
                             </div>
                         </div>
@@ -341,12 +345,13 @@ const Add: React.FC<Props> = (props) => {
                     <Card title="视频通道" bordered={false} extra={
                         <Button type="primary" onClick={() => {
                             getChannel(props.device.id, {
+                                where: `deviceId = ${deviceId}`,
                                 pageSize: 8
                             })
                         }}>刷新</Button>
                     }>
                         <div className={styles.rightTable}>
-                            <Table rowKey="channelId" onChange={onRightTableChange} columns={columnsRight} dataSource={rightData?.data || []}
+                            <Table rowKey="id" onChange={onRightTableChange} columns={columnsRight} dataSource={rightData?.data || []}
                                 pagination={{
                                     current: rightData.pageIndex + 1,
                                     total: rightData.total,

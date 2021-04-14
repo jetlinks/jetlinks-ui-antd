@@ -28,14 +28,7 @@ const Detail: React.FC<Props> = props => {
         edgeTag: false,
         info: {},
         deviceId: '',
-        tabList: [{
-            key: 'info',
-            tab: '基本信息'
-        },
-        {
-            key: 'status',
-            tab: '运行状态'
-        }]
+        tabList: []
     }
     const [edgeTag, setEdgeTag] = useState(initState.edgeTag);
     const [loading, setLoading] = useState(initState.loading);
@@ -74,8 +67,17 @@ const Detail: React.FC<Props> = props => {
         apis.edgeDevice.info(id).then(res => {
             if (res.status === 200) {
                 setInfo(res.result);
+                let tabList = []
                 if(res.result.state?.value === 'online'){
-                    tabList.push({
+                    tabList = [{
+                        key: 'info',
+                        tab: '基本信息'
+                    },
+                    {
+                        key: 'status',
+                        tab: '运行状态'
+                    },
+                    {
                         key: 'video',
                         tab: '视频模块'
                     },
@@ -90,9 +92,21 @@ const Detail: React.FC<Props> = props => {
                     {
                         key: 'alarm',
                         tab: '告警设置'
-                    })
-                    setTabList([...tabList]);
+                    }]
+                }else{
+                    tabList = [
+                        {
+                            key: 'info',
+                            tab: '基本信息'
+                        },
+                        {
+                            key: 'status',
+                            tab: '运行状态'
+                        }
+                    ]
+                    
                 }
+                setTabList([...tabList]);
                 setLoading(false);
             }
         })
