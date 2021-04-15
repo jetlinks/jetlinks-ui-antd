@@ -48,15 +48,32 @@ const Edit = (props: Props) => {
   };
   const [searchParam, setSearchParam] = useState<any>(initSearch);
 
-  // const 
-  // let tenant = (value: any) => {
-  //   return new Promise((resolve) => {
-  //     service.assets.members(data.id, 'product', value.id).subscribe(resp => {
-  //       let tenant = resp.filter((item: any) => item.binding === true).map((i: any) => i.userName).join('、');
-  //       resolve(tenant)
+  // 获取设备资产和成员
+  // let product = (tempSearch: any) =>
+  //   service.assets
+  //     .product(encodeQueryParam(tempSearch))
+  //     .pipe(
+  //       mergeMap(result =>
+  //         from(result.data).pipe(
+  //           mergeMap((item: any) =>
+  //             service.assets.members(data.id, 'product', item.id).pipe(
+  //               map(j => ({
+  //                 ...item,
+  //                 tenant: j
+  //                   .filter((a: { binding: boolean }) => a.binding === true)
+  //                   .map((l: { userName: any }) => l.userName)
+  //                   .join('、'),
+  //               })),
+  //             ),
+  //           ),
+  //           toArray(),
+  //           map(i => ({ ...result, data: i })),
+  //         ),
+  //       ),
+  //     )
+  //     .subscribe((data: any) => {
+  //       setList(data);
   //     });
-  //   })
-  // };
 
   useEffect(() => {
     list.data?.map((item: any) => {
