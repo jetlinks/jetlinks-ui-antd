@@ -342,7 +342,7 @@ const Detail: React.FC<Props> = props => {
                 <Descriptions.Item label="设备类型" span={1}>
                   {(basicInfo.deviceType || {}).text}
                 </Descriptions.Item>
-                <Descriptions.Item label="说明" span={2}>
+                <Descriptions.Item label="说明" span={3}>
                   {basicInfo.describe}
                 </Descriptions.Item>
               </Descriptions>
