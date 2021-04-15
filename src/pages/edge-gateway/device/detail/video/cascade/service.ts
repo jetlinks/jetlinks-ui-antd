@@ -42,6 +42,16 @@ class Service extends BaseService<any> {
         map(resp => resp.result)
       ));
 
+  public insertCascade = (deviceId: any, data: any) => defer(
+    () => from(request(`/jetlinks/edge/operations/${deviceId}/gb28181-cascade-insert/invoke`, {
+      method: 'POST',
+      data: data
+    }))
+      .pipe(
+        filter(resp => resp.status === 200),
+        map(resp => resp.result)
+      ));
+
   public _bind = (deviceId: string, cascadeId: string, channelIds: any[]) => defer(
     () => from(request(`/jetlinks/edge/operations/${deviceId}/gb28181-cascade-bind/invoke`, {
       method: 'POST',

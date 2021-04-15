@@ -37,7 +37,7 @@ const AddDevice: React.FC<Props> = props => {
                         </Form.Item>
                         <Form.Item key="username" label="用户名">
                             {getFieldDecorator('username', {
-                                // rules: [{ required: true }],
+                                rules: [{ required: true }],
                                 initialValue: data?.others?.username
                             })(
                                 <Input />
@@ -45,10 +45,10 @@ const AddDevice: React.FC<Props> = props => {
                         </Form.Item>
                         <Form.Item key="password" label="密码">
                             {getFieldDecorator('password', {
-                                // rules: [{ required: true }],
+                                rules: [{ required: true }],
                                 initialValue: data?.others?.password
                             })(
-                                <Input type="password" readOnly={!!data.id} />
+                                <Input type="password" />
                             )}
                         </Form.Item>
                     </>
@@ -110,7 +110,7 @@ const AddDevice: React.FC<Props> = props => {
                         rules: [{ required: true }],
                         initialValue: data?.provider
                     })(
-                        <Select placeholder="请选择" disabled={!!data.id}
+                        <Select placeholder="请选择"
                             onChange={(value: string) => {
                                 setDataType(value);
                             }}

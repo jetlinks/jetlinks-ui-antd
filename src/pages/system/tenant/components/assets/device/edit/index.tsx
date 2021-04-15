@@ -15,14 +15,14 @@ interface Props {
 }
 
 interface State {
-  list: []
+  list: any
 }
 
 const Edit = (props: Props) => {
   const service = new Service('tenant');
 
   const initState: State = {
-    list: []
+    list: {}
   };
 
   const [list, setList] = useState(initState.list);
@@ -31,6 +31,8 @@ const Edit = (props: Props) => {
   const [cat, setCat] = useState<boolean>(false);
   const [asset, setAsset] = useState();
   const [selected, setSelected] = useState<any[]>([]);
+  const [tenant, setTenant] = useState<any[]>([]);
+
   const initSearch = {
     terms: {
       id$assets: JSON.stringify({
@@ -44,43 +46,51 @@ const Edit = (props: Props) => {
     pageSize: 10,
   };
   const [searchParam, setSearchParam] = useState<any>(initSearch);
+  useEffect(() => {
+    list.data?.map((item: any) => {
+      service.assets.members(data.id, 'device', item.id).subscribe(resp => {
+        tenant[item.id] = resp.filter((item: any) => item.binding === true).map((i: any) => i.userName).join('、')
+        setTenant({ ...tenant });
+      });
+    });
+  }, [list]);
 
-  let device = (tempSearch: any, datalist: any[]) => {
-    return new Promise((resolve) => {
-      service.assets.device(encodeQueryParam(tempSearch)).subscribe(res => {
-        if (res.data.length > 0) {
-          res.data.forEach((value: any) => {
-            service.assets.members(data.id, 'device', value.id).subscribe(resp => {
-              let str = '';
-              resp.filter((item: any) => item.binding === true).map((i: any) => i.userName).forEach((i: string) => {
-                str += i + '、'
-              });
-              datalist.push({
-                id: value.id,
-                name: value.name,
-                tenant: str.substring(0, str.length - 1)
-              });
-              if (datalist.length == res.data.length) {
-                resolve({
-                  pageIndex: res.pageIndex,
-                  pageSize: res.pageSize,
-                  total: res.total,
-                  data: datalist
-                })
-              }
-            });
-          })
-        }else {
-          resolve({
-            pageIndex: res.pageIndex,
-            pageSize: res.pageSize,
-            total: res.total,
-            data: []
-          })
-        }
-      })
-    })
-  };
+  // let device = (tempSearch: any, datalist: any[]) => {
+  //   return new Promise((resolve) => {
+  //     service.assets.device(encodeQueryParam(tempSearch)).subscribe(res => {
+  //       if (res.data.length > 0) {
+  //         res.data.forEach((value: any) => {
+  //           service.assets.members(data.id, 'device', value.id).subscribe(resp => {
+  //             let str = '';
+  //             resp.filter((item: any) => item.binding === true).map((i: any) => i.userName).forEach((i: string) => {
+  //               str += i + '、'
+  //             });
+  //             datalist.push({
+  //               id: value.id,
+  //               name: value.name,
+  //               tenant: str.substring(0, str.length - 1)
+  //             });
+  //             if (datalist.length == res.data.length) {
+  //               resolve({
+  //                 pageIndex: res.pageIndex,
+  //                 pageSize: res.pageSize,
+  //                 total: res.total,
+  //                 data: datalist
+  //               })
+  //             }
+  //           });
+  //         })
+  //       }else {
+  //         resolve({
+  //           pageIndex: res.pageIndex,
+  //           pageSize: res.pageSize,
+  //           total: res.total,
+  //           data: []
+  //         })
+  //       }
+  //     })
+  //   })
+  // };
 
   const handleSearch = (params: any) => {
     const tempParam = { ...searchParam, ...params, };
@@ -96,9 +106,29 @@ const Edit = (props: Props) => {
       tempSearch = initSearch
     }
     setSearchParam(tempSearch);
-    let datalist: any = [];
-    device(tempSearch, datalist).then((res: any) => {
-      setList(res)
+    service.assets.device(encodeQueryParam(tempSearch)).subscribe(res => {
+      if (res.data.length > 0) {
+        let datalist: any = [];
+        res.data.forEach((value: any) => {
+          datalist.push({
+            id: value.id,
+            name: value.name
+          })
+        })
+        setList({
+          pageIndex: res.pageIndex,
+          pageSize: res.pageSize,
+          total: res.total,
+          data: datalist
+        })
+      } else {
+        setList({
+          pageIndex: res.pageIndex,
+          pageSize: res.pageSize,
+          total: res.total,
+          data: []
+        })
+      }
     })
   };
 
@@ -133,7 +163,7 @@ const Edit = (props: Props) => {
         onClick={() => {
           setAsset(record);
           setCat(true);
-        }}><span style={{ color: '#1890ff' }}>{record.tenant}</span></div>
+        }}><span style={{ color: '#1890ff' }}>{tenant[record.id]}</span></div>
     },
     {
       title: '操作',
