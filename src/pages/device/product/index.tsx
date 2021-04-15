@@ -14,20 +14,20 @@ import {
   Popconfirm,
   Spin,
   Tooltip,
-  Upload
+  Upload,
 } from 'antd';
 import { connect } from 'dva';
 import { ConnectState, Dispatch } from '@/models/connect';
 import { router } from 'umi';
 import encodeQueryParam from '@/utils/encodeParam';
 import cardStyles from './index.less';
-import productImg from "@/pages/device/product/img/product.png";
+import productImg from '@/pages/device/product/img/product.png';
 import Save from './save';
 import { downloadObject } from '@/utils/utils';
 import SearchForm from '@/components/SearchForm';
 import apis from '@/services';
 import numeral from 'numeral';
-import AutoHide from "@/pages/device/location/info/autoHide";
+import AutoHide from '@/pages/device/location/info/autoHide';
 
 interface Props {
   dispatch: Dispatch;
@@ -48,7 +48,11 @@ const DeviceModel: React.FC<Props> = props => {
 
   const initState: State = {
     data: result,
-    searchParam: { pageSize: 8, terms: location?.query?.terms, sorts: { field: 'id', order: 'desc' } },
+    searchParam: {
+      pageSize: 8,
+      terms: JSON.parse(location?.query.iop).terms,
+      sorts: { field: 'id', order: 'desc' },
+    },
     saveVisible: false,
   };
 
@@ -108,19 +112,21 @@ const DeviceModel: React.FC<Props> = props => {
   };
 
   useEffect(() => {
-    apis.deviceProdcut.deviceCategory()
+    apis.deviceProdcut
+      .deviceCategory()
       .then((response: any) => {
         if (response.status === 200) {
-          setCategoryList(response.result.map((item: any) => ({
-            id: item.id,
-            pId: item.parentId,
-            value: item.id,
-            title: item.name
-          })))
+          setCategoryList(
+            response.result.map((item: any) => ({
+              id: item.id,
+              pId: item.parentId,
+              value: item.id,
+              title: item.name,
+            })),
+          );
         }
       })
-      .catch(() => {
-      });
+      .catch(() => {});
 
     apis.deviceProdcut
       .protocolSupport()
@@ -129,15 +135,15 @@ const DeviceModel: React.FC<Props> = props => {
           setProtocolSupports(response.result.map((i: any) => ({ id: i.id, name: i.name })));
         }
       })
-      .catch(() => {
-      });
+      .catch(() => {});
 
     handleSearch(searchParam);
   }, []);
 
   useEffect(() => {
     result.data?.map((item: any) => {
-      apis.deviceInstance.count(encodeQueryParam({ terms: { 'productId': item.id } }))
+      apis.deviceInstance
+        .count(encodeQueryParam({ terms: { productId: item.id } }))
         .then(res => {
           if (res.status === 200) {
             deviceCount[item.id] = String(res.result);
@@ -146,10 +152,11 @@ const DeviceModel: React.FC<Props> = props => {
             deviceCount[item.id] = '/';
             setDeviceCount({ ...deviceCount });
           }
-        }).catch();
+        })
+        .catch();
     });
 
-    setSpinning(false)
+    setSpinning(false);
   }, [result]);
 
   const handleSave = (record: any) => {
@@ -228,7 +235,7 @@ const DeviceModel: React.FC<Props> = props => {
 
   const cardInfoTitle = {
     fontSize: 14,
-    color: 'rgba(0, 0, 0, 0.85)'
+    color: 'rgba(0, 0, 0, 0.85)',
   };
 
   return (
@@ -242,71 +249,79 @@ const DeviceModel: React.FC<Props> = props => {
                   handleSearch({
                     terms: { ...params },
                     pageSize: 8,
-                    sorts: searchParam.sorts
+                    sorts: searchParam.sorts,
                   });
                 }}
-                formItems={[{
-                  label: '产品名称',
-                  key: 'name$LIKE',
-                  type: 'string',
-                },
-                {
-                  label: '所属品类',
-                  key: 'classifiedId$LIKE',
-                  type: 'treeSelect',
-                  props: {
-                    data: categoryList,
-                    dropdownStyle: { maxHeight: 500 }
-                  }
-                },
-                {
-                  label: '产品类型',
-                  key: 'deviceType',
-                  type: 'list',
-                  props: {
-                    data: [
-                      { id: 'device', name: '直连设备' },
-                      { id: 'childrenDevice', name: '网关子设备' },
-                      { id: 'gateway', name: '网关设备' },
-                    ],
-                    mode: 'tags',
-                  }
-                },
-                {
-                  label: '消息协议',
-                  key: 'messageProtocol$IN',
-                  type: 'list',
-                  props: {
-                    data: protocolSupports,
-                    mode: 'tags',
-                  }
-                },]}
+                formItems={[
+                  {
+                    label: '产品名称',
+                    key: 'name$LIKE',
+                    type: 'string',
+                  },
+                  {
+                    label: '所属品类',
+                    key: 'classifiedId$LIKE',
+                    type: 'treeSelect',
+                    props: {
+                      data: categoryList,
+                      dropdownStyle: { maxHeight: 500 },
+                    },
+                  },
+                  {
+                    label: '产品类型',
+                    key: 'deviceType',
+                    type: 'list',
+                    props: {
+                      data: [
+                        { id: 'device', name: '直连设备' },
+                        { id: 'childrenDevice', name: '网关子设备' },
+                        { id: 'gateway', name: '网关设备' },
+                      ],
+                      mode: 'tags',
+                    },
+                  },
+                  {
+                    label: '消息协议',
+                    key: 'messageProtocol$IN',
+                    type: 'list',
+                    props: {
+                      data: protocolSupports,
+                      mode: 'tags',
+                    },
+                  },
+                ]}
               />
             </div>
             <div>
-              <Button icon="plus" type="primary" onClick={() => {
-                router.push('/device/product/add');
-              }}>
+              <Button
+                icon="plus"
+                type="primary"
+                onClick={() => {
+                  router.push('/device/product/add');
+                }}
+              >
                 新建
               </Button>
               <Divider type="vertical" />
 
               <Upload
-                showUploadList={false} accept='.json'
-                beforeUpload={(file) => {
+                showUploadList={false}
+                accept=".json"
+                beforeUpload={file => {
                   const reader = new FileReader();
                   reader.readAsText(file);
-                  reader.onload = (result) => {
+                  reader.onload = result => {
                     try {
                       uploadProps(JSON.parse(result.target.result));
                     } catch (error) {
                       message.error('文件格式错误');
                     }
-                  }
+                  };
                 }}
               >
                 <Button>
-                  <Icon type="upload" />快速导入
+                  <Icon type="upload" />
+                  快速导入
                 </Button>
               </Upload>
             </div>
@@ -340,7 +355,9 @@ const DeviceModel: React.FC<Props> = props => {
                 if (item && item.id) {
                   return (
                     <List.Item key={item.id}>
-                      <Card hoverable bodyStyle={{ paddingBottom: 20 }}
+                      <Card
+                        hoverable
+                        bodyStyle={{ paddingBottom: 20 }}
                         actions={[
                           <Tooltip key="seeProduct" title="查看">
                             <Icon
@@ -350,7 +367,7 @@ const DeviceModel: React.FC<Props> = props => {
                               }}
                             />
                           </Tooltip>,
-                          <Tooltip key="update" title='编辑'>
+                          <Tooltip key="update" title="编辑">
                             <Icon
                               type="edit"
                               onClick={() => {
@@ -368,64 +385,76 @@ const DeviceModel: React.FC<Props> = props => {
                             />
                           </Tooltip>,
                           <Tooltip key="more_actions" title="">
-                            <Dropdown overlay={
-                              <Menu>
-                                <Menu.Item key="1">
-                                  <Popconfirm
-                                    placement="topRight"
-                                    title={item.state !== 0 ? '确定停用此组件吗？' : '确定发布此组件吗？'}
-                                    onConfirm={() => {
-                                      if (item.state === 0) {
-                                        deploy(item);
-                                      } else {
-                                        unDeploy(item);
+                            <Dropdown
+                              overlay={
+                                <Menu>
+                                  <Menu.Item key="1">
+                                    <Popconfirm
+                                      placement="topRight"
+                                      title={
+                                        item.state !== 0
+                                          ? '确定停用此组件吗？'
+                                          : '确定发布此组件吗？'
                                       }
-                                    }}
-                                  >
-                                    <Button icon={item.state !== 0 ? 'close' : 'check'} type="link">
-                                      {item.state !== 0 ? '停用' : '发布'}
-                                    </Button>
-                                  </Popconfirm>
-                                </Menu.Item>
-                                {item.state === 0 ? (
-                                  deviceCount[item.id] === '0' ? (
-                                    <Menu.Item key="2">
-                                      <Popconfirm
-                                        placement="topRight"
-                                        title="确定删除此组件吗？"
-                                        onConfirm={() => {
-                                          if (item.state === 0 && deviceCount[item.id] === '0') {
-                                            handleDelete(item);
-                                          } else {
-                                            message.error('产品以发布，无法删除');
-                                          }
-                                        }}
+                                      onConfirm={() => {
+                                        if (item.state === 0) {
+                                          deploy(item);
+                                        } else {
+                                          unDeploy(item);
+                                        }
+                                      }}
+                                    >
+                                      <Button
+                                        icon={item.state !== 0 ? 'close' : 'check'}
+                                        type="link"
                                       >
-                                        <Button icon="delete" type="link">
-                                          删除
-                                            </Button>
-                                      </Popconfirm>
-                                    </Menu.Item>
-                                  ) : (
+                                        {item.state !== 0 ? '停用' : '发布'}
+                                      </Button>
+                                    </Popconfirm>
+                                  </Menu.Item>
+                                  {item.state === 0 ? (
+                                    deviceCount[item.id] === '0' ? (
                                       <Menu.Item key="2">
-                                        <Tooltip placement="bottom" title='该产品已绑定设备，无法删除'>
+                                        <Popconfirm
+                                          placement="topRight"
+                                          title="确定删除此组件吗？"
+                                          onConfirm={() => {
+                                            if (item.state === 0 && deviceCount[item.id] === '0') {
+                                              handleDelete(item);
+                                            } else {
+                                              message.error('产品以发布，无法删除');
+                                            }
+                                          }}
+                                        >
+                                          <Button icon="delete" type="link">
+                                            删除
+                                          </Button>
+                                        </Popconfirm>
+                                      </Menu.Item>
+                                    ) : (
+                                      <Menu.Item key="2">
+                                        <Tooltip
+                                          placement="bottom"
+                                          title="该产品已绑定设备，无法删除"
+                                        >
                                           <Button icon="stop" type="link">
                                             删除
-                                            </Button>
+                                          </Button>
                                         </Tooltip>
                                       </Menu.Item>
                                     )
-                                ) : (
+                                  ) : (
                                     <Menu.Item key="2">
-                                      <Tooltip placement="bottom" title='该产品已发布，无法删除'>
+                                      <Tooltip placement="bottom" title="该产品已发布，无法删除">
                                         <Button icon="stop" type="link">
                                           删除
-                                          </Button>
+                                        </Button>
                                       </Tooltip>
                                     </Menu.Item>
                                   )}
-                              </Menu>
-                            }>
+                                </Menu>
+                              }
+                            >
                               <Icon type="ellipsis" />
                             </Dropdown>
                           </Tooltip>,
@@ -433,7 +462,9 @@ const DeviceModel: React.FC<Props> = props => {
                       >
                         <Card.Meta
                           avatar={<Avatar size={40} src={item.photoUrl || productImg} />}
-                          title={<AutoHide title={item.name} style={{ width: '95%', fontWeight: 600 }} />}
+                          title={
+                            <AutoHide title={item.name} style={{ width: '95%', fontWeight: 600 }} />
+                          }
                           description={<AutoHide title={item.id} style={{ width: '95%' }} />}
                         />
                         <div className={cardStyles.cardItemContent}>
@@ -443,10 +474,13 @@ const DeviceModel: React.FC<Props> = props => {
                                 <p style={cardInfoTitle}>设备数量</p>
                                 <p style={{ fontSize: 14, fontWeight: 600 }}>
                                   <Tooltip key="findDevice" title="点击查看设备">
-                                    <a onClick={() => {
-                                      router.push(`/device/instance?productId=${item.id}`);
-                                    }}
-                                    >{numeral(deviceCount[item.id]).format('0,0')}</a>
+                                    <a
+                                      onClick={() => {
+                                        router.push(`/device/instance?productId=${item.id}`);
+                                      }}
+                                    >
+                                      {numeral(deviceCount[item.id]).format('0,0')}
+                                    </a>
                                   </Tooltip>
                                 </p>
                               </Spin>
@@ -454,13 +488,18 @@ const DeviceModel: React.FC<Props> = props => {
                             <div style={{ width: '33%', textAlign: 'center' }}>
                               <p style={cardInfoTitle}>发布状态</p>
                               <p style={{ fontSize: 14, fontWeight: 600 }}>
-                                <Badge color={item.state === 0 ? 'red' : 'green'}
-                                  text={item.state === 0 ? '未发布' : '已发布'} />
+                                <Badge
+                                  color={item.state === 0 ? 'red' : 'green'}
+                                  text={item.state === 0 ? '未发布' : '已发布'}
+                                />
                               </p>
                             </div>
                             <div style={{ width: '33%', textAlign: 'center' }}>
                               <p style={cardInfoTitle}>产品类型</p>
-                              <AutoHide title={item.deviceType?.text} style={{ fontSize: 14, fontWeight: 600, width: '95%' }} />
+                              <AutoHide
+                                title={item.deviceType?.text}
+                                style={{ fontSize: 14, fontWeight: 600, width: '95%' }}
+                              />
                               {/* <p style={{ fontSize: 14, fontWeight: 600 }}>{item.deviceType?.text}</p> */}
                             </div>
                           </div>
@@ -475,10 +514,16 @@ const DeviceModel: React.FC<Props> = props => {
           )}
         </div>
       </Spin>
-      {saveVisible && <Save data={basicInfo} close={() => {
-        setBasicInfo({});
-        setSaveVisible(false)
-      }} save={item => handleSave(item)} />}
+      {saveVisible && (
+        <Save
+          data={basicInfo}
+          close={() => {
+            setBasicInfo({});
+            setSaveVisible(false);
+          }}
+          save={item => handleSave(item)}
+        />
+      )}
     </PageHeaderWrapper>
   );
 };
