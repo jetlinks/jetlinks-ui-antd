@@ -50,7 +50,7 @@ const DeviceModel: React.FC<Props> = props => {
     data: result,
     searchParam: {
       pageSize: 8,
-      terms: JSON.parse(location?.query.iop).terms,
+      terms: location?.query.iop && JSON.parse(location?.query.iop)?.terms,
       sorts: { field: 'id', order: 'desc' },
     },
     saveVisible: false,
