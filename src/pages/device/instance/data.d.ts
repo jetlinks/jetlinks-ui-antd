@@ -24,8 +24,8 @@ export class DeviceInstance extends SimpleType {
   binds: any;
 
   state: {
-    value: string,
-    text: string,
+    value: string;
+    text: string;
   };
 
   creatorId: string;
@@ -41,8 +41,8 @@ export class DeviceInstance extends SimpleType {
   aloneConfiguration?: boolean;
 
   deviceType: {
-    value: string,
-    text: string,
+    value: string;
+    text: string;
   };
 
   transportProtocol: string;
@@ -53,21 +53,21 @@ export class DeviceInstance extends SimpleType {
 
   orgName: string;
 
-  configuration:any;
+  configuration: any;
 
   cachedConfiguration: any;
 
-  transport:string;
+  transport: string;
 
-  protocol:string;
+  protocol: string;
 
-  address:string;
+  address: string;
 
-  registerTime:string;
+  registerTime: string;
 
-  onlineTime:string;
+  onlineTime: string | number;
 
-  tags:any;
+  tags: any;
 }
 
 export interface DeviceInstancePagination {

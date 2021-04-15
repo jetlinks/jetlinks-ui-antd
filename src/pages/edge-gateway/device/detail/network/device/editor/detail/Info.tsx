@@ -20,12 +20,12 @@ interface State {
   addVisible: boolean;
 }
 
-const Info: React.FC<Props> = (props) => {
+const Info: React.FC<Props> = props => {
   const service = new Service('device-network');
   const initState: State = {
     updateVisible: false,
     tagsVisible: false,
-    addVisible: false
+    addVisible: false,
   };
   const [updateVisible, setUpdateVisible] = useState(initState.updateVisible);
   const [tagsVisible, setTagsVisible] = useState(initState.tagsVisible);
@@ -38,35 +38,33 @@ const Info: React.FC<Props> = (props) => {
       id: props.data.id,
       name: props.data.name,
       productId: props.data.productId,
-      productName: props.data.productName
-    }
-    service.saveDevice(props.deviceId, params).subscribe(
-      (res) => {
-          if (res.status === 200) {
-            message.success('配置信息修改成功');
-              props.refresh();
-          }
+      productName: props.data.productName,
+    };
+    service.saveDevice(props.deviceId, params).subscribe(res => {
+      if (res.status === 200) {
+        message.success('配置信息修改成功');
+        props.refresh();
       }
-    )
+    });
   };
   const saveTags = (item?: any) => {
     setTagsVisible(false);
-    apis.deviceInstance.saveDeviceTags(props.data.id, item)
+    apis.deviceInstance
+      .saveDeviceTags(props.data.id, item)
       .then((res: any) => {
         if (res.status === 200) {
           message.success('标签信息保存成功');
           props.refresh();
         }
-      }).catch(() => {
-      });
+      })
+      .catch(() => {});
   };
 
   const changeDeploy = (deviceId: string) => {
-    service.deployDevice(props.deviceId, deviceId).subscribe(
-      () => {
-        props.refresh(props.data.id)
-          message.success('操作成功！');
-      })
+    service.deployDevice(props.deviceId, deviceId).subscribe(() => {
+      props.refresh(props.data.id);
+      message.success('操作成功！');
+    });
   };
 
   // const configurationReset = (deviceId: string | undefined) => {
@@ -88,13 +86,13 @@ const Info: React.FC<Props> = (props) => {
         message.success('解绑成功！');
         props.refresh();
       }
-    })
+    });
   };
 
   const renderComponent = (item: any) => {
     if (props.data.configuration) {
       if (item.type.type === 'password' && props.data.configuration[item.property]?.length > 0) {
-        return '••••••'
+        return '••••••';
       }
       if (isExit(item.property)) {
         return (
@@ -104,9 +102,9 @@ const Info: React.FC<Props> = (props) => {
               <Icon type="info-circle-o" />
             </Tooltip>
           </div>
-        )
+        );
       } else {
-        return (<span>{props.data.configuration[item.property]}</span>)
+        return <span>{props.data.configuration[item.property]}</span>;
       }
     } else {
       return null;
@@ -114,20 +112,37 @@ const Info: React.FC<Props> = (props) => {
   };
 
   const isExit = (property: string) => {
-    return props.data.cachedConfiguration && props.data.cachedConfiguration[property] !== undefined && props.data.configuration[property] !== props.data.cachedConfiguration[property];
+    return (
+      props.data.cachedConfiguration &&
+      props.data.cachedConfiguration[property] !== undefined &&
+      props.data.configuration[property] !== props.data.cachedConfiguration[property]
+    );
   };
 
   return (
     <div>
       <Card style={{ marginBottom: 20 }}>
-        <Descriptions style={{ marginBottom: 20 }} bordered column={3} size="small"
-          title={<span>设备信息
-            <Button icon="edit" style={{ marginLeft: 20 }} type="link"
-              onClick={() => {
-                setAddVisible(true);
-              }}
-            >编辑</Button>
-          </span>}>
+        <Descriptions
+          style={{ marginBottom: 20 }}
+          bordered
+          column={3}
+          size="small"
+          title={
+            <span>
+              设备信息
+              <Button
+                icon="edit"
+                style={{ marginLeft: 20 }}
+                type="link"
+                onClick={() => {
+                  setAddVisible(true);
+                }}
+              >
+                编辑
+              </Button>
+            </span>
+          }
+        >
           <Descriptions.Item label="产品名称" span={1}>
             {props.data.productName}
           </Descriptions.Item>
@@ -147,10 +162,14 @@ const Info: React.FC<Props> = (props) => {
             {moment(props.data.createTime).format('YYYY-MM-DD HH:mm:ss')}
           </Descriptions.Item>
           <Descriptions.Item label="注册时间" span={1}>
-            {props.data.state?.value !== 'notActive' ? moment(props.data.registerTime).format('YYYY-MM-DD HH:mm:ss') : '/'}
+            {props.data.state?.value !== 'notActive'
+              ? moment(props.data.registerTime).format('YYYY-MM-DD HH:mm:ss')
+              : '/'}
           </Descriptions.Item>
           <Descriptions.Item label="最后上线时间" span={1}>
-            {props.data.state?.value !== 'notActive' ? moment(props.data.onlineTime).format('YYYY-MM-DD HH:mm:ss') : '/'}
+            {props.data.state?.value !== 'notActive' && !!props.data.onlineTime
+              ? moment(props.data.onlineTime).format('YYYY-MM-DD HH:mm:ss')
+              : '/'}
           </Descriptions.Item>
           <Descriptions.Item label="说明" span={3}>
             {props.data.describe || props.data.description}
@@ -163,13 +182,16 @@ const Info: React.FC<Props> = (props) => {
                     <Tooltip title={i.description}>
                       <span>{i.bindName}</span>
                     </Tooltip>
-                    <Popconfirm title={`是否解绑${i.bindName}接入`} onConfirm={() => {
-                      deleteBinds(props.data.id, i.bindType, i.bindKey)
-                    }}>
-                      <span style={{ display: "inline-block", marginLeft: "10px" }}>×</span>
+                    <Popconfirm
+                      title={`是否解绑${i.bindName}接入`}
+                      onConfirm={() => {
+                        deleteBinds(props.data.id, i.bindType, i.bindKey);
+                      }}
+                    >
+                      <span style={{ display: 'inline-block', marginLeft: '10px' }}>×</span>
                     </Popconfirm>
                   </Tag>
-                )
+                );
               })}
             </Descriptions.Item>
           )}
@@ -181,21 +203,29 @@ const Info: React.FC<Props> = (props) => {
               title={
                 <span>
                   配置
-                      <Button icon="edit" style={{ marginLeft: 20 }} type="link"
+                  <Button
+                    icon="edit"
+                    style={{ marginLeft: 20 }}
+                    type="link"
                     onClick={() => setUpdateVisible(true)}
-                  >编辑</Button>
+                  >
+                    编辑
+                  </Button>
                   {props.data.state?.value != 'notActive' && (
-                    <Popconfirm title="确认重新应用该配置？"
+                    <Popconfirm
+                      title="确认重新应用该配置？"
                       onConfirm={() => {
                         changeDeploy(props.data.id);
-                      }}>
-                      <Button icon="check" type="link">应用配置</Button>
+                      }}
+                    >
+                      <Button icon="check" type="link">
+                        应用配置
+                      </Button>
                       <Tooltip title="修改配置后需重新应用后才能生效。">
                         <Icon type="question-circle-o" />
                       </Tooltip>
                     </Popconfirm>
                   )}
-
                   {/* {props.data.aloneConfiguration && (
                     <Popconfirm title="确认恢复默认配置？"
                       onConfirm={() => {
@@ -211,16 +241,27 @@ const Info: React.FC<Props> = (props) => {
               }
             />
             {props.configuration.map((i: any) => (
-              <div style={{ marginBottom: "20px" }} key={i.name}>
+              <div style={{ marginBottom: '20px' }} key={i.name}>
                 <h3>{i.name}</h3>
                 <Descriptions bordered column={2} title="">
                   {i.properties &&
                     i.properties.map((item: any) => (
-                      <Descriptions.Item label={
-                        item.description ? (<div><span style={{ marginRight: '10px' }}>{item.name}</span>
-                          <Tooltip title={item.description}>
-                            <Icon type="question-circle-o" />
-                          </Tooltip></div>) : item.name} span={1} key={item.property}>
+                      <Descriptions.Item
+                        label={
+                          item.description ? (
+                            <div>
+                              <span style={{ marginRight: '10px' }}>{item.name}</span>
+                              <Tooltip title={item.description}>
+                                <Icon type="question-circle-o" />
+                              </Tooltip>
+                            </div>
+                          ) : (
+                            item.name
+                          )
+                        }
+                        span={1}
+                        key={item.property}
+                      >
                         {renderComponent(item)}
                       </Descriptions.Item>
                     ))}
@@ -230,20 +271,31 @@ const Info: React.FC<Props> = (props) => {
           </div>
         )}
         {props.data.tags && props.data.tags.length > 0 && (
-          <Descriptions style={{ marginBottom: 20 }} bordered column={3} size="small"
+          <Descriptions
+            style={{ marginBottom: 20 }}
+            bordered
+            column={3}
+            size="small"
             title={
               <span>
                 {'标签'}
-                <Button icon="edit" style={{ marginLeft: 20 }} type="link"
+                <Button
+                  icon="edit"
+                  style={{ marginLeft: 20 }}
+                  type="link"
                   onClick={() => setTagsVisible(true)}
-                >编辑</Button>
+                >
+                  编辑
+                </Button>
               </span>
-            }>
-            {props.data.tags && props.data.tags?.map((item: any) => (
-              <Descriptions.Item label={`${item.name}（${item.key})`} span={1} key={item.key}>
-                {item.value}
-              </Descriptions.Item>
-            ))}
+            }
+          >
+            {props.data.tags &&
+              props.data.tags?.map((item: any) => (
+                <Descriptions.Item label={`${item.name}（${item.key})`} span={1} key={item.key}>
+                  {item.value}
+                </Descriptions.Item>
+              ))}
           </Descriptions>
         )}
       </Card>
@@ -256,20 +308,18 @@ const Info: React.FC<Props> = (props) => {
             productId: props.data.productId,
             productName: props.data.productName,
             configuration: {
-                deviceGatewayId: props.data.configuration?.deviceGatewayId,
-                deviceGatewayName: props.data.configuration?.deviceGatewayName
+              deviceGatewayId: props.data.configuration?.deviceGatewayId,
+              deviceGatewayName: props.data.configuration?.deviceGatewayName,
             },
-            describe: props.data.describe
+            describe: props.data.describe,
           }}
           save={(data: any) => {
-            service.saveDevice(props.deviceId, data).subscribe(
-              (res) => {
-                  if (res.status === 200) {
-                      message.success('操作成功！');
-                      props.refresh();
-                  }
+            service.saveDevice(props.deviceId, data).subscribe(res => {
+              if (res.status === 200) {
+                message.success('操作成功！');
+                props.refresh();
               }
-            )
+            });
             setAddVisible(false);
           }}
           close={() => {
@@ -278,7 +328,9 @@ const Info: React.FC<Props> = (props) => {
         />
       )}
       {updateVisible && (
-        <Configuration data={props.data} configuration={props.configuration}
+        <Configuration
+          data={props.data}
+          configuration={props.configuration}
           close={() => {
             setUpdateVisible(false);
             props.refresh();
@@ -290,7 +342,9 @@ const Info: React.FC<Props> = (props) => {
       )}
 
       {tagsVisible && (
-        <Tags data={props.data.tags} deviceId={props.data.id}
+        <Tags
+          data={props.data.tags}
+          deviceId={props.data.id}
           close={() => {
             setTagsVisible(false);
             props.refresh();
