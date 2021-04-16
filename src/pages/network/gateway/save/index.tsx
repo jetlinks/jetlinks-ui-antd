@@ -273,13 +273,19 @@ const Save: React.FC<Props> = props => {
   };
 
   const saveData = () => {
-    const tempData = form.getFieldsValue();
+    //const tempData = form.getFieldsValue();
     const { id } = props.data;
-    if (tempData.provider === 'websocket-server' || tempData.provider === 'http-server-gateway') {
-      props.save({ id, ...tempData, configuration: { routes: routesData } });
-    } else {
-      props.save({ id, ...tempData });
-    }
+    form.validateFields((err, tempData) => {
+      if(err) return;
+
+      if (tempData.provider === 'websocket-server' || tempData.provider === 'http-server-gateway') {
+        props.save({ id, ...tempData, configuration: { routes: routesData } });
+      } else {
+        props.save({ id, ...tempData });
+      }
+    })
+    
+    
   };
 
   return (
