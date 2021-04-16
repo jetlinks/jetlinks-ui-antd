@@ -17,7 +17,7 @@ import {
   Switch,
   Table,
   Tabs, Tooltip,
-  TreeSelect,
+  TreeSelect
 } from 'antd';
 import {FormComponentProps} from 'antd/lib/form';
 import {Map, Polygon} from 'react-amap';
@@ -669,28 +669,31 @@ const Location: React.FC<Props> = props => {
                         }
                       >
                         {(productList || []).map(item => (
-                          <Select.Option value={item.id}>{item.name}</Select.Option>
+                          <Select.Option value={item.id} key={item.id}>{item.name}</Select.Option>
                         ))}
                       </Select>,
                     )}
                   </Form.Item>
                   <Form.Item key="device" label="设备信息" style={{marginBottom: 14}}>
                     <Input.Group compact>
-                      {getFieldDecorator('device.key', {
-                        initialValue: 'deviceId',
-                      })(
-                        <Select style={{width: 100}} id="device_key">
-                          <Select.Option value="deviceId">设备ID</Select.Option>
-                          <Select.Option value="deviceName">设备名称</Select.Option>
-                        </Select>,
-                      )}
-                      {getFieldDecorator('device.value', {
-                        initialValue: undefined,
-                      })(
-                        <Input id="value" style={{width: 'calc(100% - 100px)'}} placeholder="输入设备信息"/>,
-                      )}
+                          <Form.Item>
+                              {getFieldDecorator('device.key', {
+                                initialValue: 'deviceId',
+                              })(
+                                <Select id="device_key" style={{width: 100}}>
+                                  <Select.Option value="deviceId">设备ID</Select.Option>
+                                  <Select.Option value="deviceName">设备名称</Select.Option>
+                                </Select>,
+                              )}   
+                              
+                          </Form.Item>
+                          {getFieldDecorator('device.value', {
+                              initialValue: undefined,
+                                 })(
+                               <Input id="value" style={{width: 'calc(100% - 100px)', marginTop: 4}} placeholder="输入设备信息"/>,
+                             )} 
                     </Input.Group>
-                  </Form.Item>
+                  </Form.Item>          
                   <div style={{textAlign: 'right'}}>
                     <Button type="primary" ghost={false} onClick={() => {
                       setSpinning(true);
