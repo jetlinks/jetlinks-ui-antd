@@ -690,7 +690,7 @@ const Location: React.FC<Props> = props => {
                           {getFieldDecorator('device.value', {
                               initialValue: undefined,
                                  })(
-                               <Input id="value" style={{width: 'calc(100% - 100px)', marginTop: 4}} placeholder="输入设备信息"/>,
+                               <Input id="value" style={{width: 'calc(100% - 100px)', margin: '4px 0 0 0'}} placeholder="输入设备信息"/>,
                              )} 
                     </Input.Group>
                   </Form.Item>          
