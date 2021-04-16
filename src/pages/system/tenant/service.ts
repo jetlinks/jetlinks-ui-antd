@@ -71,6 +71,18 @@ class Service extends BaseService<TenantItem> {
           map(resp => resp.result),
         ),
       ),
+    query3: (id: string, params: any) =>
+      defer(() =>
+        from(
+          request(`/jetlinks/tenant/${id}/members/_query`, {
+            method: 'GET',
+            params,
+          }),
+        ).pipe(
+          filter(resp => resp.status === 200),
+          map(resp => resp.result),
+        ),
+      ),
     queryNoPaging: (params: any) =>
       defer(() =>
         from(
