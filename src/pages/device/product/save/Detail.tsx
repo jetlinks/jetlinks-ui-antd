@@ -80,11 +80,9 @@ const Detail: React.FC<Props> = props => {
           // apis.deviceProdcut
           //   .protocolConfiguration(data.messageProtocol, data.transportProtocol)
           //   .then(resp => {
-          //     // console.log(resp)
           //     setConfig(resp.result);
           //   });
           apis.deviceProdcut.productConfiguration(data.id).then(resp => {
-            // console.log(resp.result)
             setConfig(resp.result);
           })
         }
@@ -184,7 +182,6 @@ const Detail: React.FC<Props> = props => {
       callback: response => {
         if (response.status === 200) {
           basicInfo.state = 1;
-          console.log(basicInfo)
           setBasicInfo(basicInfo);
           message.success('操作成功');
           setSpinning(false);

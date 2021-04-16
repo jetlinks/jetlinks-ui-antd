@@ -6,14 +6,7 @@ import { PropertiesMeta } from '../data.d';
 import Paramter from '../paramter';
 import apis from '@/services';
 import { ProductContext } from '../../context';
-import 'ace-builds';
-import 'ace-builds/webpack-resolver';
-import AceEditor from 'react-ace';
-import 'ace-builds/src-noconflict/mode-sql';
-import 'ace-builds/src-noconflict/mode-mysql';
-import 'ace-builds/src-noconflict/ext-language_tools';
-import 'ace-builds/src-noconflict/ext-searchbox';
-import 'ace-builds/src-noconflict/theme-eclipse';
+import VirtualEditorComponent from '../virtual-editor';
 
 interface Props extends FormComponentProps {
   data: Partial<PropertiesMeta>;
@@ -57,7 +50,7 @@ const PropertiesDefin: React.FC<Props> = props => {
     currentParameter: {},
     parameters: [],
 
-    isVirtual: false,
+    isVirtual: props.data.expands?.virtual === 'true' ? true : false,
     aggTypeList: [],
     isUseWindow: props.data.expands?.virtualRule?.type === 'window' ? true : false,
     isTimeWindow: props.data.expands?.virtualRule?.windowType === 'time' ? true : false,
@@ -93,6 +86,15 @@ const PropertiesDefin: React.FC<Props> = props => {
     }
     getMetadata();
     getAggTypeList();
+    if (isUseWindow && isTimeWindow) {
+      setWindows(['useWindow', 'timeWindow'])
+    } else if (isUseWindow && !isTimeWindow) {
+      setWindows(['useWindow'])
+    } else if (!isUseWindow && isTimeWindow) {
+      setWindows(['timeWindow'])
+    } else {
+      setWindows([]);
+    }
   }, []);
 
   const dataTypeChange = (value: string) => {
@@ -109,12 +111,11 @@ const PropertiesDefin: React.FC<Props> = props => {
 
   const getFormData = (onlySave: boolean) => {
     const {
-      form,
-      // data,
+      form
     } = props;
     form.validateFields((err: any, fieldValue: any) => {
       if (err) return;
-      const data = fieldValue;
+      let data = fieldValue;
       if (dataType === 'enum') {
         data.valueType.elements = enumData;
       }
@@ -124,11 +125,11 @@ const PropertiesDefin: React.FC<Props> = props => {
       if (dataType === 'array' && data.valueType.elementType.type === 'object') {
         data.valueType.elementType.properties = arrayProperties;
       }
-      if(version === 'pro'){
-        data.expands.virtualRule.type = isUseWindow ? 'window' : 'script';
-        data.expands.virtualRule.windowType = isTimeWindow ? 'time' : 'num';
-        data.windows = undefined;
-      }
+      // if (version === 'pro') {
+      //   data.expands.virtualRule.type = isUseWindow ? 'window' : 'script';
+      //   data.expands.virtualRule.windowType = isTimeWindow ? 'time' : 'num';
+      //   data.windows = undefined;
+      // }
       props.save({ ...data }, onlySave);
     });
   };
@@ -883,7 +884,7 @@ const PropertiesDefin: React.FC<Props> = props => {
               )}
             </Form.Item>
             {/* 虚拟属性 */}
-            {version === 'pro' && (
+            {/* {version === 'pro' && (
               <>
                 <Form.Item label="虚拟属性">
                   {getFieldDecorator('expands.virtual', {
@@ -899,35 +900,12 @@ const PropertiesDefin: React.FC<Props> = props => {
                     </Radio.Group>,
                   )}
                 </Form.Item>
-                {isVirtual && (<Form.Item label="" labelCol={{ span: 3 }} wrapperCol={{ span: 21 }}>
+                {isVirtual && (<Form.Item wrapperCol={{ span: 24 }}>
                   {getFieldDecorator('expands.virtualRule.script', {
                     rules: [{ required: true }],
                     initialValue: initState.data.expands?.virtualRule?.script
                   })(
-                    <AceEditor
-                      mode='mysql'
-                      theme="eclipse"
-                      name="app_code_editor"
-                      fontSize={14}
-                      showPrintMargin
-                      showGutter
-                      onChange={value => {
-                        // initState.data.expands.virtualRule.script = value
-                        // console.log(value)
-                      }}
-                      // value={props.data.sql}
-                      wrapEnabled
-                      highlightActiveLine  //突出活动线
-                      enableSnippets  //启用代码段
-                      style={{ width: '100%', height: 300 }}
-                      setOptions={{
-                        enableBasicAutocompletion: true,   //启用基本自动完成功能
-                        enableLiveAutocompletion: true,   //启用实时自动完成功能 （比如：智能代码提示）
-                        enableSnippets: true,  //启用代码段
-                        showLineNumbers: true,
-                        tabSize: 2,
-                      }}
-                    />
+                    <VirtualEditorComponent initialValue={initState.data.expands?.virtualRule?.script} />
                   )}
                 </Form.Item>)}
                 <Form.Item label="">
@@ -938,12 +916,12 @@ const PropertiesDefin: React.FC<Props> = props => {
                       setIsUseWindow(value.includes('useWindow'));
                       setIsTimeWindow(value.includes('timeWindow'));
                     }}>
-                      <Row>
+                      <Row gutter={24}>
                         <Col span={12}>
                           <Checkbox value="useWindow" style={{ lineHeight: '32px' }}>使用窗口</Checkbox>
                         </Col>
                         <Col span={12}>
-                          <Checkbox value="timeWindow" style={{ lineHeight: '32px' }}>时间窗口</Checkbox>
+                          {isUseWindow && <Checkbox value="timeWindow" style={{ lineHeight: '32px' }}>时间窗口</Checkbox>}
                         </Col>
                       </Row>
                     </Checkbox.Group>
@@ -976,7 +954,7 @@ const PropertiesDefin: React.FC<Props> = props => {
                       </Col>
                       <Col span={4}></Col>
                       <Col span={10}>
-                        <Form.Item label="步长（s）">
+                        <Form.Item label={`步长${isTimeWindow ? '秒' : '次'}）`}>
                           {getFieldDecorator('expands.virtualRule.window.every', {
                             rules: [
                               { required: true }
@@ -989,7 +967,7 @@ const PropertiesDefin: React.FC<Props> = props => {
                   </>
                 )}
               </>
-            )}
+            )} */}
             {!loadConfig && renderConfigMetadata()}
             <Form.Item label="描述">
               {getFieldDecorator('description', {
