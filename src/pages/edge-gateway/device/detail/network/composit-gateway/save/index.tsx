@@ -28,7 +28,8 @@ const Save: React.FC<Props> = props => {
     const [protocol, setProtocol] = useState<any>({});
     const [gateTypeList, setGatetypeList] = useState<any[]>([]);
     const [dataType, setDataType] = useState('');
-    const [supportList, setSupportList] = useState([]);
+    // const [supportList, setSupportList] = useState([]);
+    const [protocolList, setProtocolList] = useState([]);
     const [networkConfigList, setNetworkConfigList] = useState<any[]>([]);
     const [routesData, setRoutesData] = useState<{ id: string, url: string, protocol: string }[]>([{
         id: '1001',
@@ -36,8 +37,12 @@ const Save: React.FC<Props> = props => {
         protocol: ''
     }]);
 
-    const getProductList = () => {
-        service.getProductList(encodeQueryParam({ paging: false })).subscribe(
+    const getProductList = (value: string) => {
+        service.getProductList(encodeQueryParam({
+            terms: {
+                messageProtocol: value
+            }
+        })).subscribe(
             (res) => {
                 setProductList([...res]);
             },
@@ -56,7 +61,7 @@ const Save: React.FC<Props> = props => {
         service.getNetworkConfigList(props.deviceId, { where: `type=${id}` }).subscribe(
             (res) => {
                 setNetworkConfigList([...res]);
-                if(data.id){
+                if (data.id) {
                     let type: any = [...res].filter(item => item.id === data.networkId);
                     setNetwork(type[0])
                 }
@@ -77,18 +82,44 @@ const Save: React.FC<Props> = props => {
             }
         )
     }
-    const getSupportList = () => {
-        service.getSupportList().subscribe(
+    // const getSupportList = () => {
+    //     service.getSupportList().subscribe(
+    //         (res) => {
+    //             setSupportList(res);
+    //         }
+    //     )
+    // }
+
+    const getProtocolList = () => {
+        service.getProtocolList(props.deviceId, { paging: false }).subscribe(
             (res) => {
-                setSupportList(res);
+                setProtocolList(res);
+            }
+        )
+    }
+    //同步平台
+    const syncPlatform = () => {
+        service.getPlatformProtocolList().subscribe(
+            (res) => {
+                if (res.status === 200) {
+                    let data = res.result || [];
+                    if (data.length > 0) {
+                        service.addProtocol(props.deviceId, { entities: data }).subscribe(
+                            (resp) => {
+                                if (resp.status === 200) {
+                                    getProtocolList();
+                                }
+                            }
+                        )
+                    }
+                }
             }
         )
     }
 
     useEffect(() => {
-        getSupportList();
         if (data.id) {
-            service.getProductList(encodeQueryParam({ paging: false })).subscribe(
+            service.getProductList({}).subscribe(
                 (res) => {
                     setProductList([...res]);
                     let pro: any = [...res].filter(item => item.id === data.productId);
@@ -103,8 +134,8 @@ const Save: React.FC<Props> = props => {
                         }
                     )
                 })
-        } else {
-            getProductList();
+        }else{
+            getProtocolList();
         }
     }, []);
 
@@ -118,7 +149,7 @@ const Save: React.FC<Props> = props => {
                                 initialValue: data.configuration?.protocol,
                             })(
                                 <Select>
-                                    {supportList.map((item: any) => (
+                                    {protocolList.map((item: any) => (
                                         <Select.Option key={item.id} value={item.id}>
                                             {item.name}
                                         </Select.Option>
@@ -144,7 +175,7 @@ const Save: React.FC<Props> = props => {
                                 initialValue: data.configuration?.protocol,
                             })(
                                 <Select>
-                                    {supportList.map((item: any) => (
+                                    {protocolList.map((item: any) => (
                                         <Select.Option key={item.id} value={item.id}>
                                             {item.name}
                                         </Select.Option>
@@ -184,7 +215,7 @@ const Save: React.FC<Props> = props => {
                                                         setRoutesData([...routesData]);
                                                     }}
                                                 >
-                                                    {supportList.map((item: any) => (
+                                                    {protocolList.map((item: any) => (
                                                         <Select.Option key={item.id} value={item.id}>
                                                             {item.name}
                                                         </Select.Option>
@@ -247,7 +278,7 @@ const Save: React.FC<Props> = props => {
                                 initialValue: data.configuration?.protocol,
                             })(
                                 <Select placeholder="使用clientId对应设备使用的协议进行认证" allowClear>
-                                    {supportList.map((item: any) => (
+                                    {protocolList.map((item: any) => (
                                         <Select.Option
                                             key={item.id} value={item.id}>
                                             {item.name}
@@ -306,17 +337,45 @@ const Save: React.FC<Props> = props => {
                         <Input />
                     )}
                 </Form.Item>
+                {!!!data.id && <Form.Item label="协议">
+                    {getFieldDecorator('procotol', {
+                        rules: [{ required: true }],
+                        initialValue: data.name
+                    })(
+                        <Row gutter={24}>
+                            <Col span={18}>
+                                <Select onChange={(value: string) => {
+                                    getProductList(value);
+                                    form.setFieldsValue({'procotol': value});
+                                }} allowClear>
+                                    {
+                                        protocolList.map((item: any, index: number) => (
+                                            <Select.Option key={index} value={item.id}>{item.name}</Select.Option>
+                                        ))
+                                    }
+                                </Select>
+                            </Col>
+                            <Col span={6}>
+                                <Button icon="sync" onClick={() => {
+                                    syncPlatform()
+                                }}>同步平台</Button>
+                            </Col>
+                        </Row>
+                    )}
+                </Form.Item>}
                 <Form.Item label="产品">
                     {getFieldDecorator('productId', {
                         rules: [{ required: true }],
                         initialValue: data.productId
                     })(
-                        <Select onChange={(value: string) => {
-                            let pro: any = productList.filter(item => item.id === value);
-                            setProduct(pro[0]);
-                            getGatetypeList(pro[0].transportProtocol);
-                            getProcotolInfo(pro[0].messageProtocol);
-                        }}>
+                        <Select allowClear onChange={(value: string) => {
+                            if(value !== ''){
+                                let pro: any = productList.filter(item => item.id === value);
+                                setProduct(pro[0]);
+                                getGatetypeList(pro[0].transportProtocol);
+                                getProcotolInfo(pro[0].messageProtocol);
+                            }
+                        }} disabled={!!data.id}>
                             {
                                 productList.map((item, index) => (
                                     <Select.Option key={index} value={item.id}>{item.name}</Select.Option>

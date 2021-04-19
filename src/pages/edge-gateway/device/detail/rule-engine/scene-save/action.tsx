@@ -113,7 +113,7 @@ const Action: React.FC<Props> = props => {
           if (!actionData.configuration) {
             actionData.configuration = {};
           }
-          if (actionData.configuration.deviceId) {
+          if (actionData.configuration.deviceId && response) {
             setMessageType(actionData.configuration.message.messageType);
             if (actionData.configuration.message.messageType === 'WRITE_PROPERTY') {
               JSON.parse(response?.metadata).properties?.map((item: any) => {
@@ -447,7 +447,7 @@ const Action: React.FC<Props> = props => {
             </Col>
             {functionData.id && functionData.inputs.map((item: any, index: number) => {
               return (
-                <Col span={24} style={{marginLeft: -8}}>
+                <Col span={24} style={{marginLeft: -8}} key={index}>
                   <div key={`function_${item.id}_${index}`}>
                     <Col span={4}>
                       <Input value={`${item.name}(${item.id})`} readOnly={true}/>

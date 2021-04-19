@@ -6,9 +6,9 @@ import { filter, map } from "rxjs/operators";
 class Service extends BaseService<any> {
 
     public getProductList = (params: any) => defer(
-        () => from(request(`/jetlinks/device-product/_query/no-paging`, {
+        () => from(request(`/jetlinks/device-product/_query/no-paging?paging=false`, {
             method: 'GET',
-            data: params
+            params
         })).pipe(
             filter(resp => resp.status === 200),
             map(resp => resp.result)
@@ -206,6 +206,31 @@ class Service extends BaseService<any> {
         })).pipe(
             filter(resp => resp.status === 200),
             map(resp => resp.result[0])
+        ))
+
+    //协议
+    public getProtocolList = (deviceId: string, params: any) => defer(
+        () => from(request(`/jetlinks/edge/operations/${deviceId}/protocol-list/invoke`, {
+            method: 'POST',
+            data: params
+        })).pipe(
+            filter(resp => resp.status === 200),
+            map(resp => resp.result[0])
+        ))
+    public getPlatformProtocolList = () => defer(
+        () => from(request(`/jetlinks/protocol/_query/no-paging?paging=false`, {
+            method: 'GET'
+        })).pipe(
+            filter(resp => resp.status === 200),
+            map(resp => resp)
+        ))
+    public addProtocol = (deviceId: string, params: any) => defer(
+        () => from(request(`/jetlinks/edge/operations/${deviceId}/protocol-add/invoke`, {
+            method: 'POST',
+            data: params
+        })).pipe(
+            filter(resp => resp.status === 200),
+            map(resp => resp)
         ))
 }
 export default Service;

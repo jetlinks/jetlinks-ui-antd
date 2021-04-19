@@ -2,23 +2,26 @@ import React, { useEffect, useState } from 'react';
 import Form from "antd/es/form";
 import { FormComponentProps } from "antd/lib/form";
 import styles from './index.less';
-import { Badge, Button, Card, Divider, message, Popconfirm, Table, Tooltip } from 'antd';
+import { Badge, Button, Card, Divider, message, Popconfirm, Spin, Table, Tooltip } from 'antd';
 import AddDevice from './addDevice';
 import ChannelEdit from './channelEdit';
 import Play from '../play/play';
 import apis from '@/services';
+import { PaginationConfig } from 'antd/lib/table';
 
 interface Props extends FormComponentProps {
     device: any;
+    edgeTag: boolean;
 }
 
 const Add: React.FC<Props> = (props) => {
+    const [spin, setSpin] = useState(false);
     const [addVisible, setAddVisible] = useState(false);
     const [channelVisible, setChannelVisible] = useState(false);
     const [playVisible, setPlaylVisible] = useState(false);
-    const [leftData, setLeftData] = useState([]);
+    const [leftData, setLeftData] = useState<any>({});
     const [deviceLength, setDeviceLength] = useState(0);
-    const [rightData, setRightData] = useState([]);
+    const [rightData, setRightData] = useState<any>({});
     const [deviceParams, setDeviceParams] = useState({
         pageSize: 8
     });
@@ -86,9 +89,11 @@ const Add: React.FC<Props> = (props) => {
                     <Popconfirm
                         title="确认删除吗？"
                         onConfirm={() => {
+                            setSpin(true);
                             apis.edgeDevice.delDevice(props.device.id, { deviceId: record.id }).then(res => {
                                 if (res.status === 200) {
                                     message.success('删除成功！');
+                                    setSpin(false);
                                     getDevice(props.device.id, deviceParams);
                                 }
                             })
@@ -159,11 +164,13 @@ const Add: React.FC<Props> = (props) => {
                         setChannel(record);
                         setChannelVisible(true);
                     }}>编辑</a>
-                    <><Divider type="vertical" />
-                    <a onClick={() => {
-                        setChannel(record);
-                        setPlaylVisible(true);
-                    }}>播放</a></>
+                    {props.edgeTag && (<>
+                        <Divider type="vertical" />
+                        <a onClick={() => {
+                            setChannel(record);
+                            setPlaylVisible(true);
+                        }}>播放</a>
+                    </>)}
                     <Divider type="vertical" />
                     <Popconfirm
                         title="确认删除吗？"
@@ -183,10 +190,12 @@ const Add: React.FC<Props> = (props) => {
     ];
 
     const getDevice = (id: string, params: any) => {
+        setSpin(true);
         setDeviceParams(params);
         apis.edgeDevice.getDeviceList(id, params).then(res => {
             if (res.status === 200) {
-                setLeftData(res.result[0].data);
+                setLeftData(res.result[0]);
+                setSpin(false);
                 setDeviceLength(res.result[0].total)
             }
         })
@@ -196,14 +205,88 @@ const Add: React.FC<Props> = (props) => {
         setChannelParams(params);
         apis.edgeDevice.getChannelList(id, params).then(res => {
             if (res.status === 200) {
-                setRightData(res.result[0].data);
+                setRightData(res.result[0]);
             }
         })
     }
 
     const backgroundStyle = (record: any) => {
-        return record.id === deviceId ? styles.clickRowStyl : ''
+        return record.id === deviceId ? styles.clickRowStyl : '';
     }
+
+    const saveOnvif = (fileValue: any) => {
+        if (!!fileValue.id) {
+            apis.edgeDevice.addOnvif(props.device.id, fileValue).then(response => {
+                if (response.status === 200) {
+                    message.success('保存成功！');
+                }
+                setSpin(false);
+                getDevice(props.device.id, deviceParams);
+            })
+        } else {
+            let param = {
+                url: fileValue.url,
+                username: fileValue.username,
+                password: fileValue.password,
+            }
+            apis.edgeDevice.getOnvif(props.device.id, param).then(res => {
+                if (res.status === 200) {
+                    if (res.result.length > 0) {
+                        let data = res.result[0];
+                        let mediaProfiles = (res.result[0]?.mediaProfiles || []).map((item: any, index: number) => {
+                            let ra = Math.round(Math.random() * 10000000000);
+                            return {
+                                name: item.name,
+                                token: item.token,
+                                id: `channel${index}${ra}`
+                            }
+                        })
+                        let params = {
+                            id: `device${Math.round(Math.random() * 10000000000)}`,
+                            firmwareVersion: data.firmwareVersion,
+                            hardwareId: data.hardwareId,
+                            description: fileValue.description,
+                            manufacturer: data.manufacturer,
+                            mediaProfiles: mediaProfiles,
+                            model: data.model,
+                            name: fileValue.name || data.name,
+                            password: data.password,
+                            serialNumber: data.serialNumber,
+                            url: data.url,
+                            username: data.username
+                        }
+                        apis.edgeDevice.addOnvif(props.device.id, params).then(response => {
+                            if (response.status === 200) {
+                                message.success('保存成功！');
+                            }
+                            setSpin(false);
+                            getDevice(props.device.id, deviceParams);
+                        })
+                    }
+                }else{
+                    setSpin(false);
+                }
+            })
+        }
+    }
+
+    const onTableChange = (
+        pagination: PaginationConfig
+    ) => {
+        getDevice(props.device.id, {
+            pageIndex: Number(pagination.current) - 1,
+            pageSize: pagination.pageSize
+        });
+    };
+    
+    const onRightTableChange = (
+        pagination: PaginationConfig
+    ) => {
+        getChannel(props.device.id, {
+            pageIndex: Number(pagination.current) - 1,
+            pageSize: pagination.pageSize
+        });
+    };
 
     useEffect(() => {
         getDevice(props.device.id, deviceParams);
@@ -211,65 +294,99 @@ const Add: React.FC<Props> = (props) => {
     }, []);
 
     return (
-        <div className={styles.box}>
-            <div className={styles.left}>
-                <Card title="视频设备" bordered={false} extra={
-                    <div className={styles.leftTop}>
-                        <div><span>已接入设备： {deviceLength}</span></div>
-                        <div><Button type="primary" onClick={() => {
-                            setAddVisible(true);
-                            setDevice({});
-                        }}>添加设备</Button></div>
-                        <div>
-                            <Button type="primary" onClick={() => {
-                                getDevice(props.device.id, deviceParams);
-                            }}>刷新</Button>
+        <Spin spinning={spin}>
+            <div className={styles.box}>
+                <div className={styles.left}>
+                    <Card title="视频设备" bordered={false} extra={
+                        <div className={styles.leftTop}>
+                            <div><span>已接入设备： {deviceLength}</span></div>
+                            <div><Button type="primary" onClick={() => {
+                                setAddVisible(true);
+                                setDevice({});
+                            }}>添加设备</Button></div>
+                            <div>
+                                <Button type="primary" onClick={() => {
+                                    getDevice(props.device.id, deviceParams);
+                                    setDeviceId('');
+                                    getChannel(props.device.id, {
+                                        pageSize: 8
+                                    })
+                                }}>刷新</Button>
+                            </div>
                         </div>
-                    </div>
-                }>
-                    <div className={styles.leftTable}>
-                        <Table rowKey="id"
-                            rowClassName={backgroundStyle}
-                            onRow={record => {
-                                return {
-                                    onClick: () => {
-                                        setDeviceId(record.id);
-                                        let params = {
-                                            where: `deviceId = ${record.id}`,
-                                            pageSize: 8,
+                    }>
+                        <div className={styles.leftTable}>
+                            <Table rowKey="id"
+                                rowClassName={backgroundStyle}
+                                onRow={record => {
+                                    return {
+                                        onClick: () => {
+                                            setDeviceId(record.id);
+                                            let params = {
+                                                where: `deviceId = ${record.id}`,
+                                                pageSize: 8,
+                                            }
+                                            getChannel(props.device.id, params);
                                         }
-                                        getChannel(props.device.id, params);
-
                                     }
-                                }
-                            }} columns={columnsLeft} dataSource={leftData} />
-                    </div>
-                </Card>
+                                }}
+                                onChange={onTableChange}
+                                columns={columnsLeft}
+                                dataSource={leftData?.data || []}
+                                pagination={{
+                                    current: leftData.pageIndex + 1,
+                                    total: leftData.total,
+                                    pageSize: leftData.pageSize
+                                }}
+                            />
+                        </div>
+                    </Card>
 
+                </div>
+                <div className={styles.right}>
+                    <Card title="视频通道" bordered={false} extra={
+                        <Button type="primary" onClick={() => {
+                            getChannel(props.device.id, {
+                                where: `deviceId = ${deviceId}`,
+                                pageSize: 8
+                            })
+                        }}>刷新</Button>
+                    }>
+                        <div className={styles.rightTable}>
+                            <Table rowKey="id" onChange={onRightTableChange} columns={columnsRight} dataSource={rightData?.data || []}
+                                pagination={{
+                                    current: rightData.pageIndex + 1,
+                                    total: rightData.total,
+                                    pageSize: rightData.pageSize
+                                }}
+                            />
+                        </div>
+                    </Card>
+                </div>
+                {addVisible && <AddDevice
+                    deviceId={props.device.id}
+                    close={() => { setAddVisible(false) }}
+                    data={{ ...device }}
+                    save={(data: any) => {
+                        setSpin(true);
+                        saveOnvif(data);
+                        setAddVisible(false);
+                    }} />}
+                {channelVisible && <ChannelEdit id={props.device.id}
+                    close={() => { setChannelVisible(false) }}
+                    data={{ ...channel }}
+                    save={() => {
+                        setChannelVisible(false);
+                        getChannel(props.device.id, channelParams);
+                    }}
+                />}
+                {playVisible && <Play
+                    close={() => { setPlaylVisible(false) }}
+                    data={{ ...channel }}
+                    deviceId={props.device.id}
+                    save={() => { setPlaylVisible(false); }} />}
             </div>
-            <div className={styles.right}>
-                <Card title="视频通道" bordered={false} extra={
-                    <Button type="primary" onClick={() => {
-                        getChannel(props.device.id, {
-                            pageSize: 8
-                        })
-                    }}>刷新</Button>
-                }>
-                    <div className={styles.rightTable}>
-                        <Table rowKey="channelId" columns={columnsRight} dataSource={rightData} />
-                    </div>
-                </Card>
-            </div>
-            {addVisible && <AddDevice deviceId={props.device.id} close={() => { setAddVisible(false) }} data={{ ...device }} save={() => { getDevice(props.device.id, deviceParams); setAddVisible(false); }} />}
-            {channelVisible && <ChannelEdit id={props.device.id}
-                close={() => { setChannelVisible(false) }}
-                data={{ ...channel }}
-                save={() => { setChannelVisible(false); getChannel(props.device.id, channelParams); }} />}
-            {playVisible && <Play
-                close={() => { setPlaylVisible(false) }}
-                data={{ ...channel }}
-                save={() => { setPlaylVisible(false); }} />}
-        </div>
+        </Spin>
     )
 };
 

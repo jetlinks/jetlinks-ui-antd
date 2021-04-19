@@ -21,6 +21,20 @@ export default {
       changeOrigin: true,
       pathRewrite: { '^/jetlinks': '' },
     },
+    '/jetlinks-edge': {
+      // target: 'http://192.168.3.146:8844/',
+      // ws: 'ws://192.168.3.146:8844/',
+      // target: 'http://water.zlkjhb.com:9000/jetlinks',
+      // ws: 'http://water.zlkjhb.com:9000/jetlinks',
+      // ws: 'ws://demo.jetlinks.cn/jetlinks',
+      // target: 'http://demo.jetlinks.cn/jetlinks',
+      target: 'http://127.0.0.1:8848/',
+      ws: 'ws://127.0.0.1:8848/',
+      // ws: 'ws://demo.jetlinks.cn/jetlinks',
+      // target: 'http://demo.jetlinks.cn/jetlinks',
+      changeOrigin: true,
+      pathRewrite: { '^/jetlinks-edge': '' },
+    },
   },
   test: {
     '/jetlinks': {
