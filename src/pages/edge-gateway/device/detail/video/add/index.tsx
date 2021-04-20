@@ -346,10 +346,14 @@ const Add: React.FC<Props> = (props) => {
                 <div className={styles.right}>
                     <Card title="视频通道" bordered={false} extra={
                         <Button type="primary" onClick={() => {
-                            getChannel(props.device.id, {
-                                where: `deviceId = ${deviceId}`,
-                                pageSize: 8
-                            })
+                            if(deviceId === ''){
+                                getChannel(props.device.id, channelParams);
+                            }else{
+                                getChannel(props.device.id, {
+                                    where: `deviceId = ${deviceId}`,
+                                    pageSize: 8
+                                })
+                            }
                         }}>刷新</Button>
                     }>
                         <div className={styles.rightTable}>
