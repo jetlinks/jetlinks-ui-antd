@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import Form from 'antd/es/form';
 import {FormComponentProps} from 'antd/lib/form';
-import {Button, Card, Col, Icon, Input, Modal, Row, Switch, Tooltip} from 'antd';
+import {Button, Card, Col, Icon, Input, message, Modal, Row, Switch, Tooltip} from 'antd';
 import {SceneItem} from '../data';
 import Triggers from './Triggers';
 import ActionAssembly from './action';
@@ -35,7 +35,7 @@ const Save: React.FC<Props> = props => {
   const [parallel, setParallel] = useState(initState.parallel);
 
   const submitData = () => {
-    let tri = triggers.map(item => {
+    let tri = triggers.filter(item=>item.trigger!="").map(item => {
       if (item.trigger === 'scene') {
         return {scene: item.scene, trigger: 'scene'}
       } else if (item.trigger === 'manual') {
@@ -55,11 +55,16 @@ const Save: React.FC<Props> = props => {
       actions: action,
       parallel: parallel
     };
-    apis.scene.save({...items}).then(res => {
-      if (res.status === 200) {
-        props.save();
-      }
-    })
+
+    if(data.name!=''&&data.id!=''&&triggers?.length>0){
+      apis.scene.save({...items}).then(res => {
+        if (res.status === 200) {
+          props.save();
+        }
+      });
+    }else{
+      message.error('请完善所有参数');
+    }
   };
 
   useEffect(() => {
