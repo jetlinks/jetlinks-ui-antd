@@ -346,6 +346,7 @@ const Save: React.FC<Props> = props => {
                             <Col span={18}>
                                 <Select onChange={(value: string) => {
                                     getProductList(value);
+                                    form.setFieldsValue({'procotol': value});
                                 }} allowClear>
                                     {
                                         protocolList.map((item: any, index: number) => (

@@ -245,21 +245,9 @@ const RuleEngine: React.FC<Props> = props => {
                     deviceId={props.device.id}
                     save={(item: any) => {
                         setSaveVisible(false);
-                        if (item.instanceType === 'device_alarm') {
-                            let param: any = {...item};
-                            param.instanceType = undefined;
-                            service.saveAlarms(props.device.id, param).subscribe(
-                                (resp) => {
-                                    if (resp.status === 200) {
-                                        message.success('保存成功！');
-                                        handleSearch(searchParam);
-                                    }
-                                },
-                                () => {
-                                },
-                                () => setLoading(false));
-                        } else if (item.instanceType === 'node-red') {
+                        if (item.instanceType === 'node-red') {
                             service.saveRuleInstance(props.device.id, {
+                                id: item.id,
                                 name: item.name,
                                 description: item.description
                             }).subscribe(
