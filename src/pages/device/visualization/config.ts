@@ -4,6 +4,7 @@ interface Config {
     id: string,
     type: string,
     preview: string,
+    icon?:string,
     properties: ISchema | undefined
 }
 export const ChartsConfig: Config[] = [
@@ -11,6 +12,7 @@ export const ChartsConfig: Config[] = [
     {
         id: 'LineChart',
         type: '折线图',
+        icon:'line-chart',
         preview: 'https://z.alicdn.com/alickn/chu-ko-no/2020-4-18/bizcharts/7362edf6-3fef-42b2-aafa-82c01d8d0ddc/7362edf6-3fef-42b2-aafa-82c01d8d0ddc.png',
         properties: {
             "type": "object",
@@ -50,6 +52,7 @@ export const ChartsConfig: Config[] = [
     {
         id: 'ColumnChart',
         type: '柱形图',
+        icon:'bar-chart',
         preview: 'https://z.alicdn.com/alickn/chu-ko-no/2020-4-18/bizcharts/1ac2ed65-5911-4422-8f6f-8b4b719d8555/1ac2ed65-5911-4422-8f6f-8b4b719d8555.png',
         properties: {
             "type": "object",
@@ -84,6 +87,7 @@ export const ChartsConfig: Config[] = [
     {
         id: 'GaugeChart',
         type: '柱形图',
+        icon:'dashboard',
         preview: 'https://z.alicdn.com/alickn/chu-ko-no/2020-4-18/bizcharts/82f5bedc-7eee-43af-8ee4-18033826d03a/82f5bedc-7eee-43af-8ee4-18033826d03a.png',
         properties: {
             "type": "object",
@@ -118,6 +122,7 @@ export const ChartsConfig: Config[] = [
     {
         id: 'Video',
         type: '视频',
+        icon:'play-square',
         preview: 'https://misc.aotu.io/booxood/mobile-video/cover_900x500.jpg',
         properties: {
             "type": "object",
@@ -129,6 +134,7 @@ export const ChartsConfig: Config[] = [
     {
         id: 'Action',
         type: '操作',
+        icon:'bars',
         preview: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fku.90sjimg.com%2Felement_origin_min_pic%2F16%2F10%2F27%2Fc120bcc802865f7619c01aba37b27139.jpg&refer=http%3A%2F%2Fku.90sjimg.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1613187169&t=4d4e5cb3e59f6f1f1d66f403e18cbb73',
         properties: {}
     }

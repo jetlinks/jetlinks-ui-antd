@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 // import 'antd/dist/antd.css';
 
-import { List, Modal, Row, Col } from 'antd';
+import { List, Modal, Row, Col, Icon } from 'antd';
 
 import loadable from '@loadable/component';
 import styles from './index.less';
@@ -97,10 +97,14 @@ const AddItem = (props: Props) => {
                       height: 180,
                       width: 180,
                       paddingTop: 10,
+                      display:'flex',
+                      justifyContent:'center',
+                      alignItems:'center'
                     }}
                     className={item.id === type ? styles.checked : styles.item}
                   >
-                    <img height={150} width={150} src={item.preview} alt="" />
+                    {/* <img height={150} width={150} src={item.preview} alt="" /> */}
+                    <Icon type={item.icon} style={{fontSize:100}} />
                   </div>
                 </List.Item>
               )}
