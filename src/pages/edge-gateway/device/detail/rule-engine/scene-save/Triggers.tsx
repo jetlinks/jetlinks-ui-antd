@@ -26,8 +26,8 @@ const Trigger: React.FC<Props> = props => {
     functions: []
   });
   const [triggerType, setTriggerType] = useState(props.trigger.trigger);
-  const [messageType, setMessageType] = useState(props.trigger.device ? props.trigger.device.type : '');
-  const [filters, setFilters] = useState(props.trigger.device ? props.trigger.device.filters : []);
+  const [messageType, setMessageType] = useState(props.trigger.device && props.trigger.device?.type ? props.trigger.device.type : '');
+  const [filters, setFilters] = useState(props.trigger.device && props.trigger.device?.filters ? props.trigger.device.filters : []);
   const [dataSource, setDataSource] = useState([]);
 
   const [trigger, setTrigger] = useState(props.trigger);
@@ -78,8 +78,15 @@ const Trigger: React.FC<Props> = props => {
   const findDeviceById = (deviceId: string) => {
     service.getInstanceDetail(props.deviceId, deviceId).subscribe((response: any) => {
       setDeviceData(response);
-      trigger.device.productId = response?.productId || '';
-      trigger.device.deviceId = response?.id || '';
+      if(trigger.device){
+        trigger.device.productId = response?.productId || '';
+        trigger.device.deviceId = response?.id || '';
+      }else{
+        trigger.device = {
+          productId: response?.productId || '',
+          deviceId: response?.id || '',
+        }
+      }
       setMetaData(JSON.parse(response?.metadata || '[]'));
       setDeviceName(response?.name || '')
     })
