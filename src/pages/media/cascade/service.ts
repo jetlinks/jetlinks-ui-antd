@@ -1,7 +1,7 @@
 import BaseService from "@/services/crud";
 import request from "@/utils/request";
-import {defer, from} from "rxjs";
-import {filter, map} from "rxjs/operators";
+import { defer, from } from "rxjs";
+import { filter, map } from "rxjs/operators";
 
 class Service extends BaseService<any> {
 
@@ -21,9 +21,18 @@ class Service extends BaseService<any> {
       map(resp => resp.result)
     ));
 
-  public saveCascade = (data: any) => defer(
+  public updataCascade = (data: any) => defer(
     () => from(request(`/jetlinks/media/gb28181-cascade/`, {
       method: 'PATCH',
+      data: data
+    }))
+      .pipe(
+        filter(resp => resp.status === 200),
+        map(resp => resp.result)
+      ));
+  public saveCascade = (data: any) => defer(
+    () => from(request(`/jetlinks/media/gb28181-cascade/`, {
+      method: 'POST',
       data: data
     }))
       .pipe(
