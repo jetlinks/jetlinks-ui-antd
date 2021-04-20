@@ -186,7 +186,7 @@ const Save: React.FC<Props> = props => {
                     initialValues={props.data}
                     actions={actions}
                     onSubmit={data => {
-                        if (data.actionMappings.length > 1) {
+                        if (data.actionMappings?.length > 1) {
                             data.actionMappings.map((item: any) => {
                                 const funcParam = item?.command?.message?.funcparam;
                                 const inputs: any = []
