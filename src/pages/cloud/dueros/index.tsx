@@ -57,7 +57,7 @@ const DuerOS: React.FC<Props> = props => {
         {
             title: '动作数量',
             dataIndex: 'actionMappings',
-            render: (text: any[]) => text.length
+            render: (text: any[]) => text?.length
         },
         {
             title: '操作',
@@ -75,6 +75,7 @@ const DuerOS: React.FC<Props> = props => {
                         onConfirm={() => {
                             service.remove(record.id).subscribe(() => {
                                 message.success('删除成功');
+                                handleSearch(encodeQueryParam(searchParam));
                             })
                         }}>
                         <a >删除</a>

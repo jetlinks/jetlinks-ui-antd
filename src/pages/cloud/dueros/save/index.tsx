@@ -219,9 +219,9 @@ const Save: React.FC<Props> = props => {
                                 }
                                 return item
                             });
-                            console.log(data, 'dddd');
-                            props.save(data);
                         }
+                        //console.log(data, 'dddd');
+                        props.save(data);
                     }}
                     components={{ DatePicker, Input, Select, ArrayPanels, ArrayTable, FormCard, NumberPicker }}
                     schema={{
