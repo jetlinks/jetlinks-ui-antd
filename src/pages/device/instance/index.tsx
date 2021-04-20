@@ -42,7 +42,7 @@ interface Props extends FormComponentProps {
   loading: boolean;
   dispatch: Dispatch;
   deviceInstance: any;
-  location: Location
+  location: Location;
 }
 
 interface State {
@@ -73,7 +73,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
 
   const initState: State = {
     data: result,
-    searchParam: { pageSize: 10, terms: location?.query?.terms, },
+    searchParam: { pageSize: 10, terms: location?.query?.terms },
     addVisible: false,
     currentItem: {},
     processVisible: false,
@@ -128,8 +128,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
           handleSearch(searchParam);
         }
       })
-      .catch(() => {
-      });
+      .catch(() => {});
   };
 
   const changeDeploy = (record: any) => {
@@ -142,8 +141,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
           handleSearch(searchParam);
         }
       })
-      .catch(() => {
-      });
+      .catch(() => {});
   };
 
   const unDeploy = (record: any) => {
@@ -156,8 +154,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
           handleSearch(searchParam);
         }
       })
-      .catch(() => {
-      });
+      .catch(() => {});
   };
   const columns: ColumnProps<DeviceInstance>[] = [
     {
@@ -178,14 +175,15 @@ const DeviceInstancePage: React.FC<Props> = props => {
       title: '注册时间',
       dataIndex: 'registryTime',
       width: '200px',
-      render: (text: any) => text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/',
+      render: (text: any) => (text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/'),
       sorter: true,
     },
     {
       title: '状态',
       dataIndex: 'state',
       width: '90px',
-      render: record => record ? <Badge status={statusMap.get(record.value)} text={record.text} /> : '',
+      render: record =>
+        record ? <Badge status={statusMap.get(record.value)} text={record.text} /> : '',
       filters: [
         {
           text: '未启用',
@@ -206,7 +204,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
       title: '说明',
       dataIndex: 'describe',
       width: '15%',
-      ellipsis: true
+      ellipsis: true,
     },
     {
       title: '操作',
@@ -252,15 +250,15 @@ const DeviceInstancePage: React.FC<Props> = props => {
               </Popconfirm>
             </span>
           ) : (
-              <Popconfirm
-                title="确认禁用设备？"
-                onConfirm={() => {
-                  unDeploy(record);
-                }}
-              >
-                <a>禁用</a>
-              </Popconfirm>
-            )}
+            <Popconfirm
+              title="确认禁用设备？"
+              onConfirm={() => {
+                unDeploy(record);
+              }}
+            >
+              <a>禁用</a>
+            </Popconfirm>
+          )}
         </Fragment>
       ),
     },
@@ -275,48 +273,84 @@ const DeviceInstancePage: React.FC<Props> = props => {
       loading: true,
     };
 
-    apis.deviceInstance.count(encodeQueryParam({ terms: { state: 'notActive', productId, ...location?.query?.terms, } }))
+    apis.deviceInstance
+      .count(
+        encodeQueryParam({
+          terms: {
+            state: 'notActive',
+            productId,
+            ...location?.query?.terms,
+            ...(location?.query.iop && JSON.parse(location?.query.iop)?.terms),
+          },
+        }),
+      )
       .then(res => {
         if (res.status === 200) {
           map.notActiveCount = res.result;
           setDeviceCount({ ...map });
         }
-      }).catch();
-    apis.deviceInstance.count(encodeQueryParam({ terms: { state: 'offline', productId, ...location?.query?.terms, } }))
+      })
+      .catch();
+    apis.deviceInstance
+      .count(
+        encodeQueryParam({
+          terms: {
+            state: 'offline',
+            productId,
+            ...location?.query?.terms,
+            ...(location?.query.iop && JSON.parse(location?.query.iop)?.terms),
+          },
+        }),
+      )
       .then(res => {
         if (res.status === 200) {
           map.offlineCount = res.result;
           setDeviceCount({ ...map });
         }
-      }).catch();
-    apis.deviceInstance.count(encodeQueryParam({ terms: { state: 'online', productId, ...location?.query?.terms, } }))
+      })
+      .catch();
+    apis.deviceInstance
+      .count(
+        encodeQueryParam({
+          terms: {
+            state: 'online',
+            productId,
+            ...location?.query?.terms,
+            ...(location?.query.iop && JSON.parse(location?.query.iop)?.terms),
+          },
+        }),
+      )
       .then(res => {
         if (res.status === 200) {
           map.onlineCount = res.result;
           setDeviceCount({ ...map });
         }
-      }).catch();
-    apis.deviceInstance.count(encodeQueryParam({ terms: { productId, ...location?.query?.terms, } }))
+      })
+      .catch();
+    apis.deviceInstance
+      .count(encodeQueryParam({ terms: { productId, ...location?.query?.terms,...(location?.query.iop && JSON.parse(location?.query.iop)?.terms) } }))
       .then(res => {
         if (res.status === 200) {
           map.deviceTotal = res.result;
           map.loading = false;
           setDeviceCount({ ...map });
         }
-      }).catch();
+      })
+      .catch();
   };
 
   useEffect(() => {
     // 获取下拉框数据
     apis.deviceProdcut
-      .queryNoPagin(encodeQueryParam({
-        paging: false
-      }))
+      .queryNoPagin(
+        encodeQueryParam({
+          paging: false,
+        }),
+      )
       .then(e => {
         setProductList(e.result);
       })
-      .catch(() => {
-      });
+      .catch(() => {});
 
     const query: any = getPageQuery();
     if (query.hasOwnProperty('productId')) {
@@ -332,8 +366,12 @@ const DeviceInstancePage: React.FC<Props> = props => {
     } else if (location?.query) {
       let key = Object.keys(location?.query)[0];
       let params = {};
-      params[map.get(key)] = location?.query[key]
-      handleSearch({ terms: params, pageSize: 10, sorts: searchParam.sorts });
+      params[map.get(key)] = location?.query[key];
+      handleSearch({
+        terms: { ...params, ...(location?.query.iop && JSON.parse(location?.query.iop)?.terms) },
+        pageSize: 10,
+        sorts: searchParam.sorts,
+      });
       stateCount('');
     } else {
       handleSearch(searchParam);
@@ -459,8 +497,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
               handleSearch(searchParam);
             }
           })
-          .catch(() => {
-          });
+          .catch(() => {});
       },
     });
   };
@@ -481,8 +518,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
               handleSearch(searchParam);
             }
           })
-          .catch(() => {
-          });
+          .catch(() => {});
       },
     });
   };
@@ -503,8 +539,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
               handleSearch(searchParam);
             }
           })
-          .catch(() => {
-          });
+          .catch(() => {});
       },
     });
   };
@@ -522,31 +557,46 @@ const DeviceInstancePage: React.FC<Props> = props => {
   const menu = (
     <Menu>
       <Menu.Item key="1">
-        <Button icon="download" type="default" onClick={() => {
-          setDeviceExport(true);
-        }}>
+        <Button
+          icon="download"
+          type="default"
+          onClick={() => {
+            setDeviceExport(true);
+          }}
+        >
           批量导出设备
         </Button>
       </Menu.Item>
       <Menu.Item key="2">
-        <Button icon="upload" onClick={() => {
-          setDeviceImport(true);
-        }}>批量导入设备</Button>
+        <Button
+          icon="upload"
+          onClick={() => {
+            setDeviceImport(true);
+          }}
+        >
+          批量导入设备
+        </Button>
       </Menu.Item>
       {deviceIdList.length > 0 && (
         <Menu.Item key="3">
-          <Button icon="delete" onClick={() => {
-            _delete(deviceIdList);
-          }}>
+          <Button
+            icon="delete"
+            onClick={() => {
+              _delete(deviceIdList);
+            }}
+          >
             删除选中设备
           </Button>
         </Menu.Item>
       )}
       {deviceIdList.length > 0 && (
         <Menu.Item key="6">
-          <Button icon="stop" onClick={() => {
-            _unDeploy(deviceIdList);
-          }}>
+          <Button
+            icon="stop"
+            onClick={() => {
+              _unDeploy(deviceIdList);
+            }}
+          >
             注销选中设备
           </Button>
         </Menu.Item>
@@ -559,12 +609,12 @@ const DeviceInstancePage: React.FC<Props> = props => {
           </Button>
         </Menu.Item>
       ) : (
-          <Menu.Item key="4">
-            <Button icon="check-circle" type="danger" onClick={() => activeDevice()}>
-              激活全部设备
+        <Menu.Item key="4">
+          <Button icon="check-circle" type="danger" onClick={() => activeDevice()}>
+            激活全部设备
           </Button>
-          </Menu.Item>
-        )}
+        </Menu.Item>
+      )}
 
       <Menu.Item key="5">
         <Button icon="sync" type="danger" onClick={() => syncDevice()}>
@@ -581,15 +631,19 @@ const DeviceInstancePage: React.FC<Props> = props => {
           <Spin spinning={deviceCount.loading}>
             <Row>
               <Col sm={7} xs={24}>
-                <Select placeholder="选择产品" allowClear style={{ width: '70%', marginTop: 7 }} value={product}
+                <Select
+                  placeholder="选择产品"
+                  allowClear
+                  style={{ width: '70%', marginTop: 7 }}
+                  value={product}
                   onChange={(value: string) => {
                     let key = Object.keys(location?.query)[0];
                     let params = {};
-                    if(location?.query){
-                      params[key] = location?.query[key]
+                    if (location?.query) {
+                      params[key] = location?.query[key];
                     }
-                    params['productId'] = value
-                    router.push({ pathname: `/device/instance`, query: params })
+                    params['productId'] = value;
+                    router.push({ pathname: `/device/instance`, query: params });
                     setProduct(() => value);
                     setDeviceCount({ loading: true });
                     onDeviceProduct(value);
@@ -604,23 +658,33 @@ const DeviceInstancePage: React.FC<Props> = props => {
                 <Info title="全部设备" value={numeral(deviceCount.deviceTotal).format('0,0')} />
               </Col>
               <Col sm={4} xs={24}>
-                <Info title={<Badge status={statusMap.get('online')} text="在线" />}
-                  value={numeral(deviceCount.onlineCount).format('0,0')} />
+                <Info
+                  title={<Badge status={statusMap.get('online')} text="在线" />}
+                  value={numeral(deviceCount.onlineCount).format('0,0')}
+                />
               </Col>
               <Col sm={4} xs={24}>
-                <Info title={<Badge status={statusMap.get('offline')} text="离线" />}
-                  value={numeral(deviceCount.offlineCount).format('0,0')} />
+                <Info
+                  title={<Badge status={statusMap.get('offline')} text="离线" />}
+                  value={numeral(deviceCount.offlineCount).format('0,0')}
+                />
               </Col>
               <Col sm={4} xs={24}>
-                <Info title={<Badge status={statusMap.get('notActive')} text="未启用" />}
-                  value={numeral(deviceCount.notActiveCount).format('0,0')} />
+                <Info
+                  title={<Badge status={statusMap.get('notActive')} text="未启用" />}
+                  value={numeral(deviceCount.notActiveCount).format('0,0')}
+                />
               </Col>
               <Col sm={1} xs={24}>
-                <Tooltip title='刷新'>
-                  <Icon type="sync" style={{ fontSize: 20 }} onClick={() => {
-                    setDeviceCount({ loading: true });
-                    stateCount(product);
-                  }} />
+                <Tooltip title="刷新">
+                  <Icon
+                    type="sync"
+                    style={{ fontSize: 20 }}
+                    onClick={() => {
+                      setDeviceCount({ loading: true });
+                      stateCount(product);
+                    }}
+                  />
                 </Tooltip>
               </Col>
             </Row>
@@ -657,7 +721,8 @@ const DeviceInstancePage: React.FC<Props> = props => {
               <Divider type="vertical" />
               <Dropdown overlay={menu}>
                 <Button icon="menu">
-                  其他批量操作<Icon type="down" />
+                  其他批量操作
+                  <Icon type="down" />
                 </Button>
               </Dropdown>
             </div>

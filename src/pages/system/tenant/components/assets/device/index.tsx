@@ -58,15 +58,15 @@ const Device = (props: Props) => {
           <Tooltip title="查看">
             <Icon type="eye" onClick={() => router.push({
               pathname: `/device/instance`,
-              query: {
+              search:'iop='+JSON.stringify({
                 terms: {
-                  id$assets: JSON.stringify({
+                  id$assets: {
                     tenantId: data?.id,
                     assetType: 'device',
                     memberId: props.user,
-                  })
+                  }
                 }
-              }
+              }) 
             })}/>
           </Tooltip>,
           <Tooltip title="编辑">
