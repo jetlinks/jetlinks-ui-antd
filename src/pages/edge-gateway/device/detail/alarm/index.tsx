@@ -334,16 +334,28 @@ const Alarm: React.FC<Props> = props => {
             </Card>
           </Tabs.TabPane>
           <Tabs.TabPane tab="告警记录" key="logList">
-            <div>
+            <div style={{display: 'flex', justifyContent: 'space-between'}}>
               <Select placeholder="选择设告警设置" allowClear style={{ width: 300 }} defaultValue={alarmLogId}
                 onChange={(value: string) => {
-                  onAlarmProduct(value);
+                  if(value !== '' && value !== undefined){
+                    onAlarmProduct(value);
+                  }else{
+                    handleSearch({
+                        pageIndex: searchParam.pageIndex,
+                        pageSize: searchParam.pageSize
+                    });
+                  }
                 }}
               >
                 {alarmDataList.length > 0 && alarmDataList.map(item => (
                   <Select.Option key={item.id}>{item.name}</Select.Option>
                 ))}
               </Select>
+              <div>
+                <Button type="primary" onClick={() => {
+                  handleSearch(searchParam);
+                }}>刷新</Button>
+              </div>
             </div>
             <div className={styles.StandardTable} style={{ marginTop: 10 }}>
               <Table
