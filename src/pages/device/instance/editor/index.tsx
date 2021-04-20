@@ -16,8 +16,8 @@ import apis from '@/services';
 import Gateway from './detail/gateway';
 import Alarm from '@/pages/device/alarm';
 import Visualization from '../../visualization';
-import { getWebsocket } from "@/layouts/GlobalWebSocket";
-import Shadow from "@/pages/device/instance/editor/detail/Shadow";
+import { getWebsocket } from '@/layouts/GlobalWebSocket';
+import Shadow from '@/pages/device/instance/editor/detail/Shadow';
 
 interface Props {
   dispatch: Dispatch;
@@ -34,7 +34,9 @@ interface State {
 }
 
 const Editor: React.FC<Props> = props => {
-  const { location: { pathname }, } = props;
+  const {
+    location: { pathname },
+  } = props;
 
   const initState: State = {
     activeKey: 'info',
@@ -56,6 +58,7 @@ const Editor: React.FC<Props> = props => {
   const [properties, setProperties] = useState<any[]>([]);
   const [tags, setTags] = useState<any[]>([]);
   const [units, setUnits] = useState({});
+  const [deviceId, setDeviceId] = useState<string | null>();
   let deviceStatus: any;
 
   const tabList = [
@@ -86,7 +89,6 @@ const Editor: React.FC<Props> = props => {
   ];
 
   const subscribeDeviceState = (deviceData: any, deviceId: string) => {
-
     deviceStatus && deviceStatus.unsubscribe();
 
     deviceStatus = getWebsocket(
@@ -95,26 +97,29 @@ const Editor: React.FC<Props> = props => {
       {
         deviceId: deviceId,
       },
-    ).subscribe(
-      (resp: any) => {
-        const { payload } = resp;
-        deviceData.state = payload.value.type === 'online' ? { value: 'online', text: '在线' } : {
-          value: 'offline',
-          text: '离线'
-        };
-        if (payload.value.type === 'online') {
-          deviceData.onlineTime = payload.timestamp;
-        } else {
-          deviceData.offlineTime = payload.timestamp;
-        }
-        setData({ ...deviceData });
-      },
-    );
+    ).subscribe((resp: any) => {
+      const { payload } = resp;
+      deviceData.state =
+        payload.value.type === 'online'
+          ? { value: 'online', text: '在线' }
+          : {
+              value: 'offline',
+              text: '离线',
+            };
+      if (payload.value.type === 'online') {
+        deviceData.onlineTime = payload.timestamp;
+      } else {
+        deviceData.offlineTime = payload.timestamp;
+      }
+      setData({ ...deviceData });
+    });
   };
 
   const getInfo = (deviceId: string) => {
     setSpinning(true);
-    apis.deviceInstance.info(deviceId)
+    setDeviceId(deviceId);
+    apis.deviceInstance
+      .info(deviceId)
       .then((response: any) => {
         if (response.status === 200) {
           const deviceData = response.result;
@@ -132,7 +137,10 @@ const Editor: React.FC<Props> = props => {
           subscribeDeviceState(deviceData, deviceId);
           if (deviceData.metadata) {
             const deriveMetadata = JSON.parse(deviceData.metadata);
-            if ((deriveMetadata.functions || []).length > 0 && deviceData.state?.value !== 'notActive') {
+            if (
+              (deriveMetadata.functions || []).length > 0 &&
+              deviceData.state?.value !== 'notActive'
+            ) {
               tabList.splice(2, 0, {
                 key: 'functions',
                 tab: '设备功能',
@@ -157,42 +165,44 @@ const Editor: React.FC<Props> = props => {
           //     setConfig(resp.result);
           //   }).catch();
 
-          apis.deviceProdcut.deviceConfiguration(deviceData.id)
+          apis.deviceProdcut
+            .deviceConfiguration(deviceData.id)
             .then(resp => {
               setConfig(resp.result);
-            }).catch();
+            })
+            .catch();
           setTableList(tabList);
           setSpinning(false);
         }
       })
       .catch(() => {
         setSpinning(false);
-        message.error("产品物模型数据错误");
+        message.error('产品物模型数据错误');
       });
   };
 
   const statusMap = new Map();
-  statusMap.set('online', <Badge status='success' text={'在线'} />);
-  statusMap.set('offline', <Badge status='error' text={'离线'} />);
-  statusMap.set('notActive', <Badge status='processing' text={'未激活'} />);
+  statusMap.set('online', <Badge status="success" text={'在线'} />);
+  statusMap.set('offline', <Badge status="error" text={'离线'} />);
+  statusMap.set('notActive', <Badge status="processing" text={'未激活'} />);
 
   useEffect(() => {
-    apis.deviceProdcut.queryOrganization()
+    apis.deviceProdcut
+      .queryOrganization()
       .then(res => {
         if (res.status === 200) {
-          res.result.map((e: any) => (
-            orgInfo[e.id] = e.name
-          ));
+          res.result.map((e: any) => (orgInfo[e.id] = e.name));
         }
-      }).catch(() => {
-      });
-    apis.deviceProdcut.units().then((response: any) => {
-      if (response.status === 200) {
-        setUnits(response.result);
-      }
-    }).catch(() => {
-    });
-
+      })
+      .catch(() => {});
+    apis.deviceProdcut
+      .units()
+      .then((response: any) => {
+        if (response.status === 200) {
+          setUnits(response.result);
+        }
+      })
+      .catch(() => {});
 
     return () => {
       deviceStatus && deviceStatus.unsubscribe();
@@ -212,7 +222,8 @@ const Editor: React.FC<Props> = props => {
 
   const disconnectDevice = (deviceId?: string) => {
     setSpinning(true);
-    apis.deviceInstance.disconnectDevice(deviceId)
+    apis.deviceInstance
+      .disconnectDevice(deviceId)
       .then(response => {
         if (response.status === 200) {
           message.success('断开连接成功');
@@ -223,7 +234,8 @@ const Editor: React.FC<Props> = props => {
           message.error('断开连接失败');
           setSpinning(false);
         }
-      }).catch();
+      })
+      .catch();
   };
 
   const changeDeploy = (deviceId?: string) => {
@@ -241,8 +253,7 @@ const Editor: React.FC<Props> = props => {
           setSpinning(false);
         }
       })
-      .catch(() => {
-      });
+      .catch(() => {});
   };
 
   const updateData = (type: string, item: any) => {
@@ -260,67 +271,98 @@ const Editor: React.FC<Props> = props => {
       .saveOrUpdateMetadata(data.id, metadata)
       .then((re: any) => {
         if (re.status === 200) {
-          message.success('保存成功')
+          message.success('保存成功');
         }
       })
-      .catch(() => {
+      .catch(() => {})
+      .finally(() => {
+        getInfo(deviceId!);
       });
   };
 
   const action = (
-    <Tooltip title='刷新'>
-      <Icon type="sync" style={{ fontSize: 20 }} onClick={() => {
-        getInfo(data.id);
-      }} />
+    <Tooltip title="刷新">
+      <Icon
+        type="sync"
+        style={{ fontSize: 20 }}
+        onClick={() => {
+          getInfo(deviceId!);
+        }}
+      />
     </Tooltip>
   );
 
   const info = {
-    info: <Info data={data} configuration={config} refresh={() => {
-      getInfo(data.id);
-    }} />,
-    metadata: <Definition
-      basicInfo={data}
-      eventsData={events}
-      functionsData={functions}
-      propertyData={properties}
-      tagsData={tags}
-      unitsData={units}
-      saveEvents={(data: any) => {
-        setEvents(data);
-        updateData('event', data);
-      }}
-      saveFunctions={(data: any) => {
-        setFunctions(data);
-        updateData('function', data);
-      }}
-      saveProperty={(data: any[]) => {
-        setProperties(data);
-        updateData('properties', data);
-      }}
-      saveTags={(data: any[]) => {
-        setTags(data);
-        updateData('tags', data);  //handleSearch()
-      }}
-      update={() => { getInfo(data.id); }}
-    />,
-    status: <Status device={data} refresh={() => {
-      getInfo(data.id);
-    }} />,
+    info: (
+      <Info
+        data={data}
+        configuration={config}
+        refresh={() => {
+          getInfo(data.id);
+        }}
+      />
+    ),
+    metadata: (
+      <Definition
+        basicInfo={data}
+        eventsData={events}
+        functionsData={functions}
+        propertyData={properties}
+        tagsData={tags}
+        unitsData={units}
+        saveEvents={(data: any) => {
+          setEvents(data);
+          updateData('event', data);
+        }}
+        saveFunctions={(data: any) => {
+          setFunctions(data);
+          updateData('function', data);
+        }}
+        saveProperty={(data: any[]) => {
+          setProperties(data);
+          updateData('properties', data);
+        }}
+        saveTags={(data: any[]) => {
+          setTags(data);
+          updateData('tags', data); //handleSearch()
+        }}
+        update={() => {
+          getInfo(data.id);
+        }}
+      />
+    ),
+    status: (
+      <Status
+        device={data}
+        refresh={() => {
+          getInfo(data.id);
+        }}
+      />
+    ),
     functions: <Functions device={data} />,
     log: <Log deviceId={id} />,
     debugger: <Debugger />,
     gateway: <Gateway deviceId={id} loading={false} />,
-    alarm: <Alarm target="device" productId={data.productId} productName={data.productName} targetId={data.id}
-      metaData={data.metadata}
-      name={data.name} />,
+    alarm: (
+      <Alarm
+        target="device"
+        productId={data.productId}
+        productName={data.productName}
+        targetId={data.id}
+        metaData={data.metadata}
+        name={data.name}
+      />
+    ),
     shadow: <Shadow deviceId={data.id} />,
-    visualization: <Visualization
-      type="device"
-      target={data.id}
-      name={data.name}
-      productId={data.productId}
-      metaData={data.metadata} />,
+    visualization: (
+      <Visualization
+        type="device"
+        target={data.id}
+        name={data.name}
+        productId={data.productId}
+        metaData={data.metadata}
+      />
+    ),
   };
 
   const content = (
@@ -330,11 +372,14 @@ const Editor: React.FC<Props> = props => {
         <Descriptions.Item label="产品">
           <div>
             {data.productName}
-            <a style={{ marginLeft: 10 }}
+            <a
+              style={{ marginLeft: 10 }}
               onClick={() => {
                 router.push(`/device/product/save/${data.productId}`);
               }}
-            >查看</a>
+            >
+              查看
+            </a>
           </div>
         </Descriptions.Item>
       </Descriptions>
@@ -343,37 +388,41 @@ const Editor: React.FC<Props> = props => {
 
   const deviceStateStyle = {
     style: {
-      fontSize: 12, marginLeft: 20
-    }
+      fontSize: 12,
+      marginLeft: 20,
+    },
   };
   const titleInfo = (
     <Row>
       <div>
-        <span style={{ paddingRight: 20 }}>
-          设备：{data.name}
-        </span>
+        <span style={{ paddingRight: 20 }}>设备：{data.name}</span>
         {statusMap.get(data.state?.value)}
         {data.state?.value === 'online' ? (
-          <Popconfirm title="确认让此设备断开连接？" onConfirm={() => {
-            disconnectDevice(data.id);
-          }}>
+          <Popconfirm
+            title="确认让此设备断开连接？"
+            onConfirm={() => {
+              disconnectDevice(data.id);
+            }}
+          >
             <a {...deviceStateStyle}>断开连接</a>
           </Popconfirm>
-        ) : (data.state?.value === 'notActive' ? (
-          <Popconfirm title="确认激活此设备？"
+        ) : data.state?.value === 'notActive' ? (
+          <Popconfirm
+            title="确认激活此设备？"
             onConfirm={() => {
               changeDeploy(data.id);
-            }}>
+            }}
+          >
             <a {...deviceStateStyle}>激活设备</a>
           </Popconfirm>
-        ) : (<span />))}
+        ) : (
+          <span />
+        )}
       </div>
     </Row>
   );
 
-  const extra = (
-    <div className={styles.moreInfo} />
-  );
+  const extra = <div className={styles.moreInfo} />;
 
   return (
     <Spin tip="加载中..." spinning={spinning}>
