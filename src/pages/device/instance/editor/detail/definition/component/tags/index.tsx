@@ -721,7 +721,7 @@ const TagsDefin: React.FC<Props> = props => {
 
     if (data.id && data.valueType.type) {
       setLoadConfig(true);
-      apis.deviceProdcut.configMetadata({
+      apis.deviceProdcut.deviceConfigMetadata({
         productId: product.productId,
         modelType: 'property',
         modelId: data.id,
