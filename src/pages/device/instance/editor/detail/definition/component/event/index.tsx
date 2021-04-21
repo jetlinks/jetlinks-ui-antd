@@ -696,7 +696,7 @@ const EventDefin: React.FC<Props> = props => {
     if (data.id && data.valueType.type) {
       setLoadConfig(true);
       apis.deviceProdcut.deviceConfigMetadata({
-        productId: product.productId,
+        productId: product.id,
         modelType: 'event',
         modelId: data.id,
         typeId: data.valueType.type
