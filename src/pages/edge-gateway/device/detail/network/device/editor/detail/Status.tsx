@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Row, Col, message, Spin } from "antd";
 import DeviceState from "./status/DeviceState";
 import PropertiesCard from "./status/PropertiesCard";
-import EventCard from "./status/EventCard";
+// import EventCard from "./status/EventCard";
 import Service from "../service";
 import { groupBy, flatMap, toArray, map } from "rxjs/operators";
 import { getWebsocket } from "@/layouts/GlobalWebSocket";
@@ -11,6 +11,7 @@ import { Observable } from "rxjs";
 interface Props {
     refresh: Function;
     device: any;
+    deviceId: string;
 }
 const topColResponsiveProps = {
     xs: 24,
@@ -112,6 +113,7 @@ const Status: React.FC<Props> = props => {
                         item={item}
                         key={item.id}
                         device={device}
+                        deviceId={props.deviceId}
                     />
                 </Col>
             ))

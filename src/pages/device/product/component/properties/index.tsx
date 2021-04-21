@@ -901,33 +901,37 @@ const PropertiesDefin: React.FC<Props> = props => {
                     </Radio.Group>,
                   )}
                 </Form.Item>
-                {isVirtual && (<Form.Item wrapperCol={{ span: 24 }}>
-                  {getFieldDecorator('expands.virtualRule.script', {
-                    rules: [{ required: true }],
-                    initialValue: initState.data.expands?.virtualRule?.script
-                  })(
-                    <VirtualEditorComponent metaDataList={props.dataList} data={props.data} />
-                  )}
-                </Form.Item>)}
-                <Form.Item label="">
-                  {getFieldDecorator('windows', {
-                    initialValue: windows,
-                  })(
-                    <Checkbox.Group onChange={(value) => {
-                      setIsUseWindow(value.includes('useWindow'));
-                      setIsTimeWindow(value.includes('timeWindow'));
-                    }}>
-                      <Row gutter={24}>
-                        <Col span={isUseWindow ? 12 : 24}>
-                          <Checkbox value="useWindow" style={{ lineHeight: '32px' }}>使用窗口</Checkbox>
-                        </Col>
-                        <Col span={12}>
-                          {isUseWindow && <Checkbox value="timeWindow" style={{ lineHeight: '32px' }}>时间窗口</Checkbox>}
-                        </Col>
-                      </Row>
-                    </Checkbox.Group>
-                  )}
-                </Form.Item>
+                {isVirtual && (
+                  <>
+                    <Form.Item wrapperCol={{ span: 24 }}>
+                      {getFieldDecorator('expands.virtualRule.script', {
+                        rules: [{ required: true }],
+                        initialValue: initState.data.expands?.virtualRule?.script
+                      })(
+                        <VirtualEditorComponent metaDataList={props.dataList} data={props.data} />
+                      )}
+                    </Form.Item>
+                    <Form.Item label="">
+                      {getFieldDecorator('windows', {
+                        initialValue: windows,
+                      })(
+                        <Checkbox.Group onChange={(value) => {
+                          setIsUseWindow(value.includes('useWindow'));
+                          setIsTimeWindow(value.includes('timeWindow'));
+                        }}>
+                          <Row gutter={24}>
+                            <Col span={isUseWindow ? 12 : 24}>
+                              <Checkbox value="useWindow" style={{ lineHeight: '32px' }}>使用窗口</Checkbox>
+                            </Col>
+                            <Col span={12}>
+                              {isUseWindow && <Checkbox value="timeWindow" style={{ lineHeight: '32px' }}>时间窗口</Checkbox>}
+                            </Col>
+                          </Row>
+                        </Checkbox.Group>
+                      )}
+                    </Form.Item>
+                  </>
+                )}
                 {isUseWindow && (
                   <>
                     <Form.Item label="聚合函数">

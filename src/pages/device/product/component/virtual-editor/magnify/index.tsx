@@ -17,11 +17,15 @@ const MagnifyComponent: React.FC<Props> = (props) => {
     const [quickInsertVisible, setQuickInsertVisible] = useState<boolean>(props.data.isAssign);
     const [assignVisible, setAssignVisible] = useState<boolean>(props.data.isAssign);
     const [dataList, setDataList] = useState<any[]>([]);
-    const [result, setResult] = useState<string>('结果输出。。。');
+    const [result, setResult] = useState<string>('');
     const [subs, setSubs] = useState<any>();
+    const [sub, setSub] = useState<any>();
     const [otherList, setOtherList] = useState<any[]>([]);
     const [isBeginning, setIsBeginning] = useState(true);
     const [editor, setEditor] = useState<any>(null);
+    const [script, setScript] = useState(props.data.expands?.virtualRule?.script || '');
+    const [virtualRule, setVirtualRule] = useState(props.data.expands?.virtualRule || {});
+    const [virtualId, setVirtualId] = useState('');
     const symbolList = [
         {
             key: 'add', 
@@ -45,6 +49,55 @@ const MagnifyComponent: React.FC<Props> = (props) => {
         {
             key: 'cubic',
             value: '^'
+        }
+    ]
+    const otherSymbolList = [
+        {
+            key: 'dayu', 
+            value: '>'
+        },
+        {
+            key: 'dayudengyu', 
+            value: '>='
+        },
+        {
+            key: 'dengyudengyu', 
+            value: '=='
+        },
+        {
+            key: 'xiaoyudengyu', 
+            value: '<='
+        },{
+            key: 'xiaoyu',
+            value: '<'
+        },
+        {
+            key: 'jiankuohao',
+            value: '<>'
+        },
+        {
+            key: 'andand',
+            value: '&&'
+        },
+        {
+            key: 'huohuo',
+            value: '||'
+        },
+        {
+            key: 'fei',
+            value: '!'
+        },
+        {
+            key: 'and',
+            value: '&'
+        },
+        {
+            key: 'huo',
+            value: '|'
+        },
+        {
+            key: 'bolang',
+            value: '~'
         }
     ]
 
@@ -101,21 +154,43 @@ const MagnifyComponent: React.FC<Props> = (props) => {
             subs.unsubscribe()
         }
         const ws = getWebsocket(
-            `virtual-property-debug-${props.data.id}`,
+            `virtual-property-debug-${props.data.id}-${new Date().getTime()}`,
             `/virtual-property-debug`,
             {
-                virtualId: new Date().getTime(),
+                virtualId: virtualId,
                 property: props.data.id,
-                virtualRule: props.data.expands.virtualRule,
+                virtualRule: virtualRule,
                 properties: [...dataList]
             },
         ).subscribe(
             (resp: any) => {
                 const { payload } = resp;
                 setResult(payload);
+                setIsBeginning(true);
             }
         );
         setSubs(ws);
+    };
+
+    const debugPropertyAgain = () => {
+        if (sub) {
+            sub.unsubscribe()
+        }
+        const ws = getWebsocket(
+            `virtual-property-debug-${props.data.id}-${new Date().getTime()}`,
+            `/virtual-property-debug`,
+            {
+                virtualId: virtualId,
+                property: props.data.id,
+                virtualRule: virtualRule,
+                properties: [...dataList]
+            },
+        ).subscribe(
+            (resp: any) => {
+                console.log(resp);
+            }
+        );
+        setSub(ws);
     };
 
     const insertContent = (content: string) => {
@@ -135,6 +210,7 @@ const MagnifyComponent: React.FC<Props> = (props) => {
 
 
     useEffect(() => {
+        setVirtualId(`${new Date().getTime()}-virtual-id`)
         if (props.metaDataList.length > 0) {
             let data: any[] = [];
             props.metaDataList.map(item => {
@@ -148,30 +224,20 @@ const MagnifyComponent: React.FC<Props> = (props) => {
 
     const menu = () => {
         return (
-            <Menu onClick={(item) => {
-                console.log(item)
+            <Menu onClick={(e) => {
+                console.log(e.key)
                 // insertContent(item)
             }}>
-                <Menu.Item >&gt;</Menu.Item>
-                <Menu.Item>&gt;=</Menu.Item>
-                <Menu.Item>&gt;</Menu.Item>
-                <Menu.Item>&gt;=</Menu.Item>
-                <Menu.Item>==</Menu.Item>
-                <Menu.Item>&lt;=</Menu.Item>
-                <Menu.Item>&lt;</Menu.Item>
-                <Menu.Item>&lt;&gt;</Menu.Item>
-                <Menu.Item>&amp;&amp;</Menu.Item>
-                <Menu.Item>||</Menu.Item>
-                <Menu.Item>!</Menu.Item>
-                <Menu.Item>&amp;</Menu.Item>
-                <Menu.Item>|</Menu.Item>
-                <Menu.Item>~</Menu.Item>
+                {
+                    otherSymbolList.map(item => {
+                        <Menu.Item key={item.key}>{item.value}</Menu.Item>
+                    })
+                }
             </Menu>
         )
     }
 
     const editorDidMountHandle = (editor: any, monaco: any) => {
-        console.log(editor)
         editor.focus();
     }
 
@@ -191,14 +257,23 @@ const MagnifyComponent: React.FC<Props> = (props) => {
                     <div className={styles.editorBox} style={{ height: assignVisible ? '400px' : '740px' }}>
                         <div className={styles.editorTop}>
                             <div className={styles.topLeft}>
-                                {symbolList.map((item: any) => {
-                                    return <span onClick={(item) => {
-                                        console.log(item)
-                                        // insertContent(item)
-                                    }} key={item.key}>{item.value}</span>
+                                {symbolList.map((item: any, index: number) => {
+                                    return <span key={item.key} onClick={() => {
+                                        insertContent(symbolList[index].value)
+                                    }}>{item.value}</span>
                                 })}
                                 <span>
-                                    <Dropdown overlay={menu}>
+                                    <Dropdown overlay={() => (
+                                        <Menu>
+                                            {
+                                                otherSymbolList.map((item, index) => (
+                                                    <Menu.Item key={item.key} onClick={() => {
+                                                        insertContent(otherSymbolList[index].value)
+                                                    }}>{item.value}</Menu.Item>
+                                                ))
+                                            }
+                                        </Menu>
+                                    )}>
                                         <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
                                             <MoreOutlined />
                                         </a>
@@ -214,13 +289,15 @@ const MagnifyComponent: React.FC<Props> = (props) => {
                             ref={l => setEditor(l && l.editor)}
                             height={assignVisible ? 350 : 700}
                             language='groovy'
-                            theme={'vs'}
-                            value={''}
+                            theme='vs'
+                            value={script}
                             options={{
                                 selectOnLineNumbers: true
                             }}
                             onChange={(value) => {
-
+                                setScript(value);
+                                virtualRule.script = value;
+                                setVirtualRule(virtualRule);
                             }}
                             editorDidMount={(editor, monaco) => editorDidMountHandle(editor, monaco)}
                         />
@@ -230,6 +307,9 @@ const MagnifyComponent: React.FC<Props> = (props) => {
                             <div className={styles.leftHeader}>
                                 <div className={styles.itemLeft}>属性赋值</div>
                                 <div className={styles.itemRight}>请对上方规则使用的属性进行赋值</div>
+                                {!isBeginning && props.data.expands?.virtualRule?.type === 'window' && (<div className={styles.item} onClick={() => {
+                                    debugPropertyAgain();
+                                }}><a>发送数据</a></div>)}
                             </div>
                             <Table rowKey="key" size="middle" columns={columns} dataSource={dataList} pagination={false} scroll={{ y: 195 }}
                                 footer={() => <a onClick={() => {
@@ -239,7 +319,6 @@ const MagnifyComponent: React.FC<Props> = (props) => {
                                         current: '',
                                         last: ''
                                     })
-                                    console.log(dataList)
                                     setDataList([...dataList]);
                                 }}><Icon type="plus-circle" /> 添加</a>}
                             />
@@ -247,8 +326,9 @@ const MagnifyComponent: React.FC<Props> = (props) => {
                         <div className={styles.assignBoxRight}>
                             <div className={styles.editorTop}>
                                 <div className={styles.topLeft}>
-                                    <div>运行详情</div>
-                                    <div>错误</div>
+                                    {/* <div>运行详情</div>
+                                    <div>错误</div> */}
+                                    <div>运行结果</div>
                                 </div>
                                 <div className={styles.topRight}>
                                     <div>
@@ -267,8 +347,8 @@ const MagnifyComponent: React.FC<Props> = (props) => {
                             </div>
                             <MonacoEditor
                                 height={295}
-                                language={'javascript'}
-                                theme={'vs'}
+                                language='groovy'
+                                theme='vs'
                                 value={result}
                                 options={{
                                     selectOnLineNumbers: true,
@@ -284,7 +364,7 @@ const MagnifyComponent: React.FC<Props> = (props) => {
                         <span>快速添加</span>
                         <div onClick={() => { setQuickInsertVisible(false) }}><Icon type="close" /></div>
                     </div>
-                    <QuickInsertComponent metaDataList={props.metaDataList} close={() => { }} />
+                    <QuickInsertComponent insertContent={(data: string) => {insertContent(data)}} metaDataList={props.metaDataList} close={() => { }} />
                 </div>}
             </div>
         </Modal>
@@ -315,4 +395,3 @@ export default MagnifyComponent;
     //         </Menu>
     //     )
     // }
-

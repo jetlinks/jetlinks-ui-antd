@@ -36,6 +36,31 @@ class Service extends BaseService<any> {
       ),
     );
 
+  public getPropertyDevice = (deviceId: string, params: any) =>
+    defer(() =>
+      from(
+        request(`/jetlinks/edge/operations/${deviceId}/device-property-read/invoke`, {
+          method: 'POST',
+          data: params
+        }),
+      ).pipe(
+        filter(resp => resp.status === 200),
+        map(resp => resp.result[0]),
+      ),
+    );
+  public invokedFunction = (deviceId: string, params: any) =>
+    defer(() =>
+      from(
+        request(`/jetlinks/edge/operations/${deviceId}/device-function-invoke/invoke`, {
+          method: 'POST',
+          data: params
+        }),
+      ).pipe(
+        filter(resp => resp.status === 200),
+        map(resp => resp),
+      ),
+    );
+
   public eventCount = (id: string, event: string) =>
     defer(() =>
       from(
