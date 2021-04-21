@@ -10,6 +10,7 @@ import VirtualEditorComponent from '../virtual-editor';
 
 interface Props extends FormComponentProps {
   data: Partial<PropertiesMeta>;
+  dataList: Partial<PropertiesMeta>[];
   unitsData: any;
   save: Function;
   close: Function;
@@ -884,7 +885,7 @@ const PropertiesDefin: React.FC<Props> = props => {
               )}
             </Form.Item>
             {/* 虚拟属性 */}
-            {/* {version === 'pro' && (
+            {version === 'pro' && (
               <>
                 <Form.Item label="虚拟属性">
                   {getFieldDecorator('expands.virtual', {
@@ -905,7 +906,7 @@ const PropertiesDefin: React.FC<Props> = props => {
                     rules: [{ required: true }],
                     initialValue: initState.data.expands?.virtualRule?.script
                   })(
-                    <VirtualEditorComponent initialValue={initState.data.expands?.virtualRule?.script} />
+                    <VirtualEditorComponent metaDataList={props.dataList} data={props.data} />
                   )}
                 </Form.Item>)}
                 <Form.Item label="">
@@ -917,7 +918,7 @@ const PropertiesDefin: React.FC<Props> = props => {
                       setIsTimeWindow(value.includes('timeWindow'));
                     }}>
                       <Row gutter={24}>
-                        <Col span={12}>
+                        <Col span={isUseWindow ? 12 : 24}>
                           <Checkbox value="useWindow" style={{ lineHeight: '32px' }}>使用窗口</Checkbox>
                         </Col>
                         <Col span={12}>
@@ -954,7 +955,7 @@ const PropertiesDefin: React.FC<Props> = props => {
                       </Col>
                       <Col span={4}></Col>
                       <Col span={10}>
-                        <Form.Item label={`步长${isTimeWindow ? '秒' : '次'}）`}>
+                        <Form.Item label={`步长(${isTimeWindow ? '秒' : '次'}）`}>
                           {getFieldDecorator('expands.virtualRule.window.every', {
                             rules: [
                               { required: true }
@@ -967,7 +968,7 @@ const PropertiesDefin: React.FC<Props> = props => {
                   </>
                 )}
               </>
-            )} */}
+            )}
             {!loadConfig && renderConfigMetadata()}
             <Form.Item label="描述">
               {getFieldDecorator('description', {

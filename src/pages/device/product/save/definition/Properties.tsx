@@ -113,6 +113,7 @@ const Properties: React.FC<Props> = (props: Props) => {
       </Card>
       {visible && (
         <PropertiesDefin
+          dataList={data}
           data={current}
           unitsData={props.unitsData}
           save={(item: PropertiesMeta, onlySave: boolean) => {

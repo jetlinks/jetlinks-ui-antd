@@ -47,6 +47,23 @@ class Service extends BaseService<any> {
                 filter(resp => resp.status === 200),
                 map(resp => resp.result)
             ));
+    //设备告警启动停止
+    public _start = (deviceId: string, params: any) => defer(
+        () => from(request(`/jetlinks/edge/operations/${deviceId}/rule-engine-alarm-start/invoke`, {
+            method: 'POST',
+            data: params
+        })).pipe(
+            filter(resp => resp.status === 200),
+            map(resp => resp.result[0])
+        ));
+    public _stop = (deviceId: string, params: any) => defer(
+        () => from(request(`/jetlinks/edge/operations/${deviceId}/rule-engine-alarm-stop/invoke`, {
+            method: 'POST',
+            data: params
+        })).pipe(
+            filter(resp => resp.status === 200),
+            map(resp => resp.result[0])
+        ));
 
     public startRuleInstance = (deviceId: string, ruleInstanceId: string) => defer(
         () => from(request(`/jetlinks/edge/operations/${deviceId}/rule-instance-start/invoke`, {

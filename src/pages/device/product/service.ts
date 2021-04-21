@@ -177,6 +177,16 @@ export async function configMetadata(params: {
     {method: 'GET'})
 }
 
+export async function deviceConfigMetadata(params: {
+  productId: string,
+  modelType: string,
+  modelId: string,
+  typeId: string
+}) {
+  return request(`/jetlinks/device/instance/${params.productId}/config-metadata/${params.modelType}/${params.modelId}/${params.typeId}`,
+    {method: 'GET'})
+}
+
 //获取物模型格式
 export async function getModelFormat() {
   return request(`/jetlinks/device/product/metadata/codecs`, {
