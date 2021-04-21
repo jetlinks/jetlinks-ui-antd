@@ -153,6 +153,7 @@ const Save: React.FC<Props> = props => {
               <Form.Item key="id" label="场景联动ID">
                 <Input placeholder="输入场景联动ID"
                        defaultValue={props.data.id}
+                       readOnly={data?.id}
                        onBlur={event => {
                          setData({...data, id: event.target.value})
                        }}/>

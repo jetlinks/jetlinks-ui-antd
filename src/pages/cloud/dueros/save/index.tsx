@@ -295,6 +295,12 @@ const Save: React.FC<Props> = props => {
                                             "span": 1,
                                         },
                                         "title": "设备类型",
+                                        "x-rules": [
+                                            {
+                                                "required": true,
+                                                "message": "此字段必填"
+                                            }
+                                        ],
                                         "x-component": "select",
                                         "visible": false,
                                         "enum": productInfo.type

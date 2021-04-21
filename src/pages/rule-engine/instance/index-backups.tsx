@@ -76,7 +76,7 @@ const RuleInstanceList: React.FC<Props> = props => {
       .start(record.id)
       .then(response => {
         if (response.status === 200) {
-          message.success('启动成功');
+          message.success('操作成功');
           handleSearch(searchParam);
         }
       })
@@ -89,7 +89,7 @@ const RuleInstanceList: React.FC<Props> = props => {
       .stop(record.id)
       .then(response => {
         if (response.status === 200) {
-          message.success('停止成功');
+          message.success('操作成功');
           handleSearch(searchParam);
         }
       })
