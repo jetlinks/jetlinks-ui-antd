@@ -658,8 +658,8 @@ const FunctionDefin: React.FC<Props> = props => {
 
     if (data.id && data.output.type) {
       setLoadConfig(true);
-      apis.deviceProdcut.configMetadata({
-        productId: product.productId,
+      apis.deviceProdcut.deviceConfigMetadata({
+        productId: product.id,
         modelType: 'function',
         modelId: data.id,
         typeId: data.output.type

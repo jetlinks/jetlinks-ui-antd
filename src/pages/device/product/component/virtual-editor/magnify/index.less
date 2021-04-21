@@ -1,0 +1,120 @@
+.box{
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    .boxLeft{
+        width: 68%;
+        .header{
+            font-weight: 600;
+            font-size: 15px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .editorBox{
+            width: 100%;
+            margin: 10px 0px 20px 0px;
+            border: 1px solid lightgray;
+            .editorTop{
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              width: 100%;
+              border-bottom: 1px solid lightgray;
+              .topLeft{
+                margin: 0px 5px;
+                display: flex;
+                align-items: center;
+                span{
+                  display: inline-block;
+                  height: 40px;
+                  margin: 0px 10px;
+                  line-height: 40px;
+                  cursor: pointer;
+                }
+              }
+              .topRight{
+                margin: 0px 5px;
+                display: flex;
+                span{
+                  margin: 0px 10px;
+                }
+              }
+            }
+        }
+        .assignBox{
+            width: 100%;
+            display: flex;
+            .assignBoxLeft{
+                width: 50%;
+                height: 340px;
+                border-bottom: 1px solid lightgray;
+                border-top: 1px solid lightgray;
+                border-left: 1px solid lightgray;
+                .leftHeader{
+                    display: flex;
+                    height: 40px;
+                    width: 100%;
+                    border-bottom: 1px solid lightgray;
+                    align-items: center;
+                    justify-content: flex-start;
+                    .itemLeft{
+                        font-size: 16px;
+                        margin: 0px 20px;
+                        font-weight: 600;
+                    }
+                    .itemRight{
+                        font-size: 12px;
+                        color: lightgray;
+                    }
+                }
+            }
+            .assignBoxRight{
+                width: 50%;
+                height: 340px;
+                border: 1px solid lightgray;
+                .editorTop{
+                    display: flex;
+                    height: 40px;
+                    width: 100%;
+                    align-items: center;
+                    border-bottom: 1px solid lightgray;
+                    justify-content: space-between;
+                    .topLeft{
+                        display: flex;
+                        div{
+                            margin: 0px 10px;
+                        }
+                    }
+                    .topRight{
+                        display: flex;
+                        div{
+                            margin: 0px 10px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    .boxRight{
+        width: 30%;
+        border-left: 1px solid lightgray;
+        padding-left: 10px;
+        margin-left: 10px;
+        .rightHeader{
+            margin-bottom: 10px;
+            font-weight: 600;
+            font-size: 16px;
+            display: flex;
+            justify-content: space-between;
+        }
+    }
+}
+// .menuBox{
+//     width: 180px;
+//     display: grid;
+//     grid-template-columns: repeat(auto-fill, 30px);
+//     div{
+//         text-align: center;
+//         font-size: 10px;
+//     }
+// }
