@@ -61,60 +61,103 @@ const OrgChart = () => {
         });
     }
   };
-  const menu = (nodeData: any) => (
-    <Menu>
-      <Menu.Item>
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={() => {
-            setParentId(null);
-            setCurrent(nodeData);
-            setEdit(true);
-          }}
-        >
-          编辑
-        </a>
-      </Menu.Item>
-      <Menu.Item>
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={() => {
-            setCurrent({});
-            setParentId(nodeData.id);
-            setEdit(true);
-          }}
-        >
-          添加下级
-        </a>
-      </Menu.Item>
-      <Menu.Item>
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={() => {
-            setCurrent(nodeData);
-            setAutzVisible(true);
-          }}
-        >
-          权限分配
-        </a>
-      </Menu.Item>
-      <Menu.Item>
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={() => {
-            setCurrent(nodeData);
-            setUserVisible(true);
-          }}
-        >
-          绑定用户
-        </a>
-      </Menu.Item>
-    </Menu>
-  );
+
+  const remove = (id: string) => {
+    apis.org
+      .remove(id)
+      .then(resp => {
+        if (resp.status === 200) {
+          message.success('操作成功');
+        }
+      })
+      .finally(() => {
+        handleSearch();
+      });
+  };
+  const menu = (nodeData: any) => {
+    return nodeData.id === '' ? (
+      <Menu>
+        <Menu.Item>
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => {
+              setCurrent({});
+              setParentId(nodeData.id);
+              setEdit(true);
+            }}
+          >
+            添加下级
+          </a>
+        </Menu.Item>
+      </Menu>
+    ) : (
+      <Menu>
+        <Menu.Item>
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => {
+              setParentId(null);
+              setCurrent(nodeData);
+              setEdit(true);
+            }}
+          >
+            编辑
+          </a>
+        </Menu.Item>
+        <Menu.Item>
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => {
+              setCurrent({});
+              setParentId(nodeData.id);
+              setEdit(true);
+            }}
+          >
+            添加下级
+          </a>
+        </Menu.Item>
+        <Menu.Item>
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => {
+              setCurrent(nodeData);
+              setAutzVisible(true);
+            }}
+          >
+            权限分配
+          </a>
+        </Menu.Item>
+        <Menu.Item>
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => {
+              setCurrent(nodeData);
+              setUserVisible(true);
+            }}
+          >
+            绑定用户
+          </a>
+        </Menu.Item>
+        <Menu.Item>
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => {
+              remove(nodeData.id);
+            }}
+          >
+            删除
+          </a>
+        </Menu.Item>
+      </Menu>
+    );
+  };
+
   return (
     <PageHeaderWrapper title="机构管理">
       <div className={styles.orgContainer}>
