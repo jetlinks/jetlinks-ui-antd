@@ -213,7 +213,7 @@ const MagnifyComponent: React.FC<Props> = (props) => {
                         <MonacoEditor
                             ref={l => setEditor(l && l.editor)}
                             height={assignVisible ? 350 : 700}
-                            language={'javascript'}
+                            language='groovy'
                             theme={'vs'}
                             value={''}
                             options={{

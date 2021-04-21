@@ -89,6 +89,7 @@
     "lodash": "^4.17.20",
     "lodash-decorators": "^6.0.1",
     "moment": "^2.29.0",
+    "monaco-ace-tokenizer": "^0.2.1",
     "monaco-editor": "^0.23.0",
     "monaco-editor-webpack-plugin": "^3.0.1",
     "numeral": "^2.0.6",
