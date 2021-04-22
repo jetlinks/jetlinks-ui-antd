@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
-import MonacoEditor from 'react-monaco-editor';
+// import MonacoEditor from 'react-monaco-editor';
 import styles from './index.less';
 import { MoreOutlined } from '@ant-design/icons';
 import { Drawer, Dropdown, Icon, Menu, Tooltip } from 'antd';
 import MagnifyComponent from './magnify';
 import QuickInsertComponent from './quick-insert';
+import AceEditor from "react-ace";
 
 interface Props {
     data: any;
     metaDataList: any[];
+    scriptValue: Function;
 }
 
-const VirtualEditorComponent = (props: Props) => {
+const VirtualEditorComponent: React.FC<Props> = props => {
 
     const [isMagnify, setIsMagnify] = useState<boolean>(false);
     const [isQuickInsert, setIsQuickInsert] = useState<boolean>(false);
@@ -45,21 +47,21 @@ const VirtualEditorComponent = (props: Props) => {
     ]
     const otherSymbolList = [
         {
-            key: 'dayu', 
+            key: 'dayu',
             value: '>'
         },
         {
-            key: 'dayudengyu', 
+            key: 'dayudengyu',
             value: '>='
         },
         {
-            key: 'dengyudengyu', 
+            key: 'dengyudengyu',
             value: '=='
         },
         {
-            key: 'xiaoyudengyu', 
+            key: 'xiaoyudengyu',
             value: '<='
-        },{
+        }, {
             key: 'xiaoyu',
             value: '<'
         },
@@ -92,22 +94,9 @@ const VirtualEditorComponent = (props: Props) => {
             value: '~'
         }
     ]
-    const editorDidMountHandle = (editor: any, monaco: any) => {
-        editor.focus();
-    }
     const insertContent = (content: string) => {
-        const position = editor.getPosition();
-        editor.executeEdits('', [
-            {
-                range: {
-                    startLineNumber: position.lineNumber,
-                    startColumn: position.column,
-                    endLineNumber: position.lineNumber,
-                    endColumn: position.column
-                },
-                text: content
-            }
-        ]);
+        const cursorPosition = editor.getCursorPosition();
+        editor.session.insert(cursorPosition, content);
     }
     return (
         <div className={styles.editorBox}>
@@ -150,31 +139,59 @@ const VirtualEditorComponent = (props: Props) => {
                     }}><Icon type="fullscreen" /></span>
                 </div>
             </div>
-            <MonacoEditor
+            <AceEditor
                 ref={l => setEditor(l && l.editor)}
-                height="400"
+                mode='json'
+                theme="eclipse"
+                name="app_code_editor"
+                key='simulator'
+                fontSize={14}
+                value={script}
+                showPrintMargin
+                showGutter
+                wrapEnabled
+                highlightActiveLine  //突出活动线
+                enableSnippets  //启用代码段
+                style={{ height: 300 }}
+                onChange={(value) => {
+                    props.scriptValue(value);
+                    setScript(value);
+                }}
+                setOptions={{
+                    enableBasicAutocompletion: true,   //启用基本自动完成功能
+                    enableLiveAutocompletion: true,   //启用实时自动完成功能 （比如：智能代码提示）
+                    enableSnippets: true,  //启用代码段
+                    showLineNumbers: true,
+                    tabSize: 2,
+                }}
+            />
+            {/* <MonacoEditor
+                // ref={l => setEditor(l && l.editor)}
+                height="300"
                 language='groovy'
                 theme='vs'
-                value={script}
+                value={'test'}
                 options={{
                     selectOnLineNumbers: true
                 }}
-                onChange={(value) => {
-                    setScript(value);
-                }}
+                // onChange={(value) => {
+                //     props.scriptValue(value);
+                //     setScript(value);
+                // }}
                 editorDidMount={(editor, monaco) => editorDidMountHandle(editor, monaco)}
-            />
+            /> */}
             {isMagnify && (
                 <MagnifyComponent metaDataList={props.metaDataList} data={{
                     isAssign: isAssign,
+                    script: script,
                     ...props.data
-                }} close={() => { setIsMagnify(false) }} />
+                }} close={(data: any) => { setIsMagnify(false); setScript(data) }} />
             )}
             <Drawer title="快速添加" visible={isQuickInsert} width={400} onClose={() => { setIsQuickInsert(false); }}>
                 <QuickInsertComponent insertContent={(data: string) => { insertContent(data) }} metaDataList={props.metaDataList} close={() => { setIsQuickInsert(false); }} />
             </Drawer>
         </div>
     );
-};
+}
 
 export default VirtualEditorComponent;

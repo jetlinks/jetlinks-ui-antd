@@ -45,7 +45,7 @@ const Alarm: React.FC<Props> = props => {
   const [solveVisible, setSolveVisible] = useState(false);
   const [saveAlarmData, setSaveAlarmData] = useState(initState.saveAlarmData);
   const [alarmActiveKey, setAlarmActiveKey] = useState('');
-  const [alarmLogId, setAlarmId] = useState<string>("");
+  const [alarmLogId, setAlarmLogId] = useState<string>("");
   const [solveAlarmLog, setSolveAlarmLog] = useState<any>({});
   const [searchParam, setSearchParam] = useState(initState.searchParam);
   const [alarmLogData, setAlarmLogData] = useState(initState.alarmLogData);
@@ -143,7 +143,8 @@ const Alarm: React.FC<Props> = props => {
           }}>编辑</a>
           <Divider type="vertical" />
           <a onClick={() => {
-            setAlarmId(record.id);
+            setAlarmLogId(record.id);
+            onAlarmProduct(record.id);
             setAlarmActiveKey('logList');
           }}>告警日志</a>
           <Divider type="vertical" />
@@ -285,7 +286,7 @@ const Alarm: React.FC<Props> = props => {
     )
   };
 
-  const onAlarmProduct = (value: string) => {
+  const onAlarmProduct = (value?: string) => {
     handleSearch({
       pageIndex: searchParam.pageIndex,
       pageSize: searchParam.pageSize,
@@ -293,9 +294,9 @@ const Alarm: React.FC<Props> = props => {
     });
   };
 
-  useEffect(() => {
-    handleSearch(searchParam);
-  }, [alarmActiveKey]);
+  // useEffect(() => {
+  //   handleSearch(searchParam);
+  // }, [alarmActiveKey]);
 
   const onTableChange = (
     pagination: PaginationConfig,
@@ -314,8 +315,14 @@ const Alarm: React.FC<Props> = props => {
     <Spin tip="加载中..." spinning={spinning}>
       <Card>
         <Tabs tabPosition="top" type="card" activeKey={alarmActiveKey} onTabClick={(key: any) => {
-          setAlarmId(undefined);
           setAlarmActiveKey(key);
+          if(key='logList'){
+            setAlarmLogId("");
+            handleSearch({
+              pageIndex: searchParam.pageIndex,
+              pageSize: searchParam.pageSize
+          });
+          }
         }}>
           <Tabs.TabPane tab="告警设置" key="info">
             <Card title={
@@ -335,8 +342,9 @@ const Alarm: React.FC<Props> = props => {
           </Tabs.TabPane>
           <Tabs.TabPane tab="告警记录" key="logList">
             <div style={{display: 'flex', justifyContent: 'space-between'}}>
-              <Select placeholder="选择设告警设置" allowClear style={{ width: 300 }} defaultValue={alarmLogId}
+              <Select placeholder="选择设告警设置" allowClear style={{ width: 300 }} value={alarmLogId}
                 onChange={(value: string) => {
+                  setAlarmLogId(value);
                   if(value !== '' && value !== undefined){
                     onAlarmProduct(value);
                   }else{

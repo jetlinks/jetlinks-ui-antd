@@ -117,3 +117,9 @@ export async function reload(deviceId: string) {
     method: 'POST'
   });
 }
+
+export async function getProperty(deviceId: string, id: string) {
+  return request(`/jetlinks/edge/operations/${deviceId}/property/${id}`, {
+    method: 'GET'
+  });
+}

@@ -1,7 +1,7 @@
 import { PageHeaderWrapper } from "@ant-design/pro-layout";
 import React, { useEffect, useState } from "react";
 import styles from '@/utils/table.less';
-import { Avatar, Badge, Button, Card, Dropdown, Icon, List, Menu, message, Popconfirm, Tooltip } from "antd";
+import { Avatar, Badge, Button, Card, Icon, List, Tooltip } from "antd";
 import apis from '@/services';
 import SearchForm from "@/components/SearchForm";
 import encodeQueryParam from "@/utils/encodeParam";

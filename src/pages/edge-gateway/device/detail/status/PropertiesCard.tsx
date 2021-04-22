@@ -3,7 +3,8 @@ import ChartCard from "@/pages/analysis/components/Charts/ChartCard";
 import { Tooltip, Icon, Spin } from "antd";
 import AutoHide from "@/pages/device/location/info/autoHide";
 import { MiniArea } from "@/pages/analysis/components/Charts";
-import Service from "@/pages/device/instance/editor/service";
+import apis from "@/services";
+// import Service from "@/pages/device/instance/editor/service";
 
 interface Props {
     item: {
@@ -31,7 +32,6 @@ interface Props {
     device: any;
 }
 const PropertiesCard: React.FC<Props> = props => {
-    const service = new Service();
 
     const { item, device } = props;
     const [loading, setLoading] = useState<boolean>(false);
@@ -89,7 +89,9 @@ const PropertiesCard: React.FC<Props> = props => {
     const refreshProperty = (item: any) => {
         setLoading(true);
         // 刷新数据
-        service.getProperty(device.id, item.id).subscribe(() => { }, () => { }, () => { setLoading(false) });
+        apis.edgeDevice.getProperty(device.id, item.id).then(() => {
+            setLoading(false);
+        })
     };
 
     return (

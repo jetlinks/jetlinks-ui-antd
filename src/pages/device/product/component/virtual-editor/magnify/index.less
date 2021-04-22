@@ -3,7 +3,6 @@
     display: flex;
     justify-content: flex-start;
     .boxLeft{
-        width: 68%;
         .header{
             font-weight: 600;
             font-size: 15px;
@@ -58,16 +57,24 @@
                     align-items: center;
                     justify-content: space-around;
                     .itemLeft{
-                        font-size: 16px;
-                        margin: 0px 20px;
-                        font-weight: 600;
-                    }
-                    .itemRight{
-                        font-size: 12px;
-                        color: lightgray;
+                        display: flex;
+                        justify-content: flex-start;
+                        height: 100%;
+                        width: 100%;
+                        align-items: center;
+                        .itemLeftHeader{
+                            font-size: 16px;
+                            margin: 0px 10px;
+                            font-weight: 600;
+                        }
+                        .itemRight{
+                            font-size: 12px;
+                            color: lightgray;
+                        }
                     }
                     .item{
                         font-size: 14px;
+                        width: 150px;
                     }
                 }
             }

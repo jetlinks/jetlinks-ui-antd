@@ -138,7 +138,12 @@ const QuickInsertComponent: React.FC<Props> = (props) => {
                     <ReactMarkdown>{data.description}</ReactMarkdown>
                 </div>
             </div>
-            {propertyVisible && <PropertyComponent data={property} close={() => {}} ok={() => {}}/>}
+            {propertyVisible && <PropertyComponent data={property} close={() => {
+                setPropertyVisible(false);
+            }} ok={(data: any) => {
+                props.insertContent(data);
+                setPropertyVisible(false);
+            }}/>}
         </Spin>
     );
 }

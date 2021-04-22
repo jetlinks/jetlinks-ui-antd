@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { AutoComplete, Dropdown, Icon, Input, Menu, Modal, Table, Tabs, Tooltip } from "antd";
+import { AutoComplete, Dropdown, Icon, Input, Menu, Modal, Table, Tooltip } from "antd";
 import QuickInsertComponent from '../quick-insert';
 import styles from './index.less';
 import { MoreOutlined } from "@ant-design/icons";
 import MonacoEditor from 'react-monaco-editor';
 import { getWebsocket } from "@/layouts/GlobalWebSocket";
+import AceEditor from "react-ace";
 
 interface Props {
     close: Function;
@@ -23,26 +24,26 @@ const MagnifyComponent: React.FC<Props> = (props) => {
     const [otherList, setOtherList] = useState<any[]>([]);
     const [isBeginning, setIsBeginning] = useState(true);
     const [editor, setEditor] = useState<any>(null);
-    const [script, setScript] = useState(props.data.expands?.virtualRule?.script || '');
+    const [script, setScript] = useState(props.data.script || '');
     const [virtualRule, setVirtualRule] = useState(props.data.expands?.virtualRule || {});
     const [virtualId, setVirtualId] = useState('');
     const symbolList = [
         {
-            key: 'add', 
+            key: 'add',
             value: '+'
         },
         {
-            key: 'subtract', 
+            key: 'subtract',
             value: '-'
         },
         {
-            key: 'multiply', 
+            key: 'multiply',
             value: '*'
         },
         {
-            key: 'divide', 
+            key: 'divide',
             value: '/'
-        },{
+        }, {
             key: 'parentheses',
             value: '()'
         },
@@ -53,21 +54,21 @@ const MagnifyComponent: React.FC<Props> = (props) => {
     ]
     const otherSymbolList = [
         {
-            key: 'dayu', 
+            key: 'dayu',
             value: '>'
         },
         {
-            key: 'dayudengyu', 
+            key: 'dayudengyu',
             value: '>='
         },
         {
-            key: 'dengyudengyu', 
+            key: 'dengyudengyu',
             value: '=='
         },
         {
-            key: 'xiaoyudengyu', 
+            key: 'xiaoyudengyu',
             value: '<='
-        },{
+        }, {
             key: 'xiaoyu',
             value: '<'
         },
@@ -116,7 +117,9 @@ const MagnifyComponent: React.FC<Props> = (props) => {
             dataIndex: 'id',
             key: 'id',
             align: 'center',
-            render: (text: string, record: any) => <AutoComplete dataSource={otherList} />
+            render: (text: string, record: any) => <AutoComplete dataSource={otherList} onChange={(value) => {
+                handleChange({ id: value }, record);
+            }} />
         },
         {
             title: '属性当前值',
@@ -149,7 +152,18 @@ const MagnifyComponent: React.FC<Props> = (props) => {
         }
     ];
     const debugProperty = () => {
-        console.log('开始调试');
+
+        console.log('开始调试...');
+
+        let data: any[] = [];
+        dataList.map(item => {
+            data.push({
+                id: item.id,
+                current: item.current,
+                last: item.current
+            })
+        })
+
         if (subs) {
             subs.unsubscribe()
         }
@@ -160,7 +174,7 @@ const MagnifyComponent: React.FC<Props> = (props) => {
                 virtualId: virtualId,
                 property: props.data.id,
                 virtualRule: virtualRule,
-                properties: [...dataList]
+                properties: [...data]
             },
         ).subscribe(
             (resp: any) => {
@@ -173,6 +187,17 @@ const MagnifyComponent: React.FC<Props> = (props) => {
     };
 
     const debugPropertyAgain = () => {
+
+        let data: any[] = [];
+
+        dataList.map(item => {
+            data.push({
+                id: item.id,
+                current: item.current,
+                last: item.current
+            })
+        })
+
         if (sub) {
             sub.unsubscribe()
         }
@@ -183,7 +208,7 @@ const MagnifyComponent: React.FC<Props> = (props) => {
                 virtualId: virtualId,
                 property: props.data.id,
                 virtualRule: virtualRule,
-                properties: [...dataList]
+                properties: [...data]
             },
         ).subscribe(
             (resp: any) => {
@@ -194,18 +219,20 @@ const MagnifyComponent: React.FC<Props> = (props) => {
     };
 
     const insertContent = (content: string) => {
-        const position = editor.getPosition();
-        editor.executeEdits('', [
-            {
-                range: {
-                    startLineNumber: position.lineNumber,
-                    startColumn: position.column,
-                    endLineNumber: position.lineNumber,
-                    endColumn: position.column
-                },
-                text: content
-            }
-        ]);
+        const cursorPosition = editor.getCursorPosition();
+        editor.session.insert(cursorPosition, content);
+        // const position = editor.getPosition();
+        // editor.executeEdits('', [
+        //     {
+        //         range: {
+        //             startLineNumber: position.lineNumber,
+        //             startColumn: position.column,
+        //             endLineNumber: position.lineNumber,
+        //             endColumn: position.column
+        //         },
+        //         text: content
+        //     }
+        // ]);
     }
 
 
@@ -222,21 +249,6 @@ const MagnifyComponent: React.FC<Props> = (props) => {
         }
     }, []);
 
-    const menu = () => {
-        return (
-            <Menu onClick={(e) => {
-                console.log(e.key)
-                // insertContent(item)
-            }}>
-                {
-                    otherSymbolList.map(item => {
-                        <Menu.Item key={item.key}>{item.value}</Menu.Item>
-                    })
-                }
-            </Menu>
-        )
-    }
-
     const editorDidMountHandle = (editor: any, monaco: any) => {
         editor.focus();
     }
@@ -245,14 +257,14 @@ const MagnifyComponent: React.FC<Props> = (props) => {
         <Modal
             closable={false}
             visible
-            width={quickInsertVisible ? 1200 : 840}
+            width={quickInsertVisible ? 1200 : 850}
             footer={false}
         >
             <div className={styles.box}>
-                <div className={styles.boxLeft} style={{ width: quickInsertVisible ? '68%' : "100%" }}>
+                <div className={styles.boxLeft} style={{ width: quickInsertVisible ? '70%' : "100%" }}>
                     <div className={styles.header}>
                         <span>设置属性计算规则</span>
-                        <div onClick={() => { props.close() }}><Icon type="fullscreen-exit" /></div>
+                        <div onClick={() => { props.close(script) }}><Icon type="fullscreen-exit" /></div>
                     </div>
                     <div className={styles.editorBox} style={{ height: assignVisible ? '400px' : '740px' }}>
                         <div className={styles.editorTop}>
@@ -285,9 +297,9 @@ const MagnifyComponent: React.FC<Props> = (props) => {
                                 <span onClick={() => { setQuickInsertVisible(true) }}><Tooltip title="快速添加"><a>快速添加</a></Tooltip></span>
                             </div>
                         </div>
-                        <MonacoEditor
+                        {/* <MonacoEditor
                             ref={l => setEditor(l && l.editor)}
-                            height={assignVisible ? 350 : 700}
+                            height={assignVisible ? 350 : 690}
                             language='groovy'
                             theme='vs'
                             value={script}
@@ -300,13 +312,42 @@ const MagnifyComponent: React.FC<Props> = (props) => {
                                 setVirtualRule(virtualRule);
                             }}
                             editorDidMount={(editor, monaco) => editorDidMountHandle(editor, monaco)}
+                        /> */}
+                        <AceEditor
+                            ref={l => setEditor(l && l.editor)}
+                            mode='json'
+                            theme="eclipse"
+                            name="app_code_editor"
+                            key='simulator'
+                            fontSize={14}
+                            value={script}
+                            showPrintMargin
+                            showGutter
+                            wrapEnabled
+                            highlightActiveLine  //突出活动线
+                            enableSnippets  //启用代码段
+                            style={{ height:assignVisible ? 350 : 690 }}
+                            onChange={(value) => {
+                                setScript(value);
+                                virtualRule.script = value;
+                                setVirtualRule(virtualRule);
+                            }}
+                            setOptions={{
+                                enableBasicAutocompletion: true,   //启用基本自动完成功能
+                                enableLiveAutocompletion: true,   //启用实时自动完成功能 （比如：智能代码提示）
+                                enableSnippets: true,  //启用代码段
+                                showLineNumbers: true,
+                                tabSize: 2,
+                            }}
                         />
                     </div>
                     {assignVisible && <div className={styles.assignBox}>
                         <div className={styles.assignBoxLeft}>
                             <div className={styles.leftHeader}>
-                                <div className={styles.itemLeft}>属性赋值</div>
-                                <div className={styles.itemRight}>请对上方规则使用的属性进行赋值</div>
+                                <div className={styles.itemLeft}>
+                                    <div className={styles.itemLeftHeader}>属性赋值</div>
+                                    <div className={styles.itemRight}>请对上方规则使用的属性进行赋值</div>
+                                </div>
                                 {!isBeginning && props.data.expands?.virtualRule?.type === 'window' && (<div className={styles.item} onClick={() => {
                                     debugPropertyAgain();
                                 }}><a>发送数据</a></div>)}
@@ -364,34 +405,10 @@ const MagnifyComponent: React.FC<Props> = (props) => {
                         <span>快速添加</span>
                         <div onClick={() => { setQuickInsertVisible(false) }}><Icon type="close" /></div>
                     </div>
-                    <QuickInsertComponent insertContent={(data: string) => {insertContent(data)}} metaDataList={props.metaDataList} close={() => { }} />
+                    <QuickInsertComponent insertContent={(data: string) => { insertContent(data) }} metaDataList={props.metaDataList} close={() => { }} />
                 </div>}
             </div>
         </Modal>
     );
 }
 export default MagnifyComponent;
-
-
- // const menu = () => {
-    //     return (
-    //         <Menu>
-    //             <Menu.Item>
-    //                 <div className={styles.menuBox}>
-    //                     <div>&gt;</div>
-    //                     <div>&gt;=</div>
-    //                     <div>==</div>
-    //                     <div>&lt;=</div>
-    //                     <div>&lt;</div>
-    //                     <div>&lt;&gt;</div>
-    //                     <div>&amp;&amp;</div>
-    //                     <div>||</div>
-    //                     <div>!</div>
-    //                     <div>&amp;</div>
-    //                     <div>|</div>
-    //                     <div>~</div>
-    //                 </div>
-    //             </Menu.Item>
-    //         </Menu>
-    //     )
-    // }
