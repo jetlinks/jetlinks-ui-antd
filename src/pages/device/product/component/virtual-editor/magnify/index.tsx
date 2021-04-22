@@ -326,7 +326,7 @@ const MagnifyComponent: React.FC<Props> = (props) => {
                             wrapEnabled
                             highlightActiveLine  //突出活动线
                             enableSnippets  //启用代码段
-                            style={{ height:assignVisible ? 350 : 690 }}
+                            style={{ width: '100%',height:assignVisible ? 350 : 690 }}
                             onChange={(value) => {
                                 setScript(value);
                                 virtualRule.script = value;
