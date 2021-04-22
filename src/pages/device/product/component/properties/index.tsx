@@ -7,6 +7,7 @@ import Paramter from '../paramter';
 import apis from '@/services';
 import { ProductContext } from '../../context';
 import VirtualEditorComponent from '../virtual-editor';
+import { format } from 'prettier';
 
 interface Props extends FormComponentProps {
   data: Partial<PropertiesMeta>;
@@ -38,7 +39,6 @@ interface State {
 
 const PropertiesDefin: React.FC<Props> = props => {
   const version = localStorage.getItem('system-version');
-  const ref = React.createRef();
   const initState: State = {
     dataType: props.data.valueType?.type || '',
     aType: props.data.valueType?.elementType?.type || '',
@@ -52,7 +52,7 @@ const PropertiesDefin: React.FC<Props> = props => {
     currentParameter: {},
     parameters: [],
 
-    isVirtual: props.data.expands?.virtual,
+    isVirtual: props.data.expands?.virtual || props.data.expands?.virtual === 'true' ? true : false,
     aggTypeList: [],
     isUseWindow: props.data.expands?.virtualRule?.type === 'window' ? true : false,
     isTimeWindow: props.data.expands?.virtualRule?.windowType === 'time' ? true : false,
@@ -83,7 +83,6 @@ const PropertiesDefin: React.FC<Props> = props => {
   const [script, setScript] = useState(props.data.expands?.virtualRule?.script || '');
 
   useEffect(() => {
-    console.log(props.data.expands)
     if (dataType === 'enum') {
       const elements = props.data.valueType?.elements || [];
       setEnumData(elements);
@@ -912,11 +911,11 @@ const PropertiesDefin: React.FC<Props> = props => {
                     <Form.Item wrapperCol={{ span: 24 }}>
                       {getFieldDecorator('expands.virtualRule.script', {
                         // rules: [{ required: true }],
-                        // initialValue: initState.data.expands?.virtualRule.script
+                        initialValue: initState.data.expands?.virtualRule.script
                       })(
                         <VirtualEditorComponent scriptValue={(value: string) => {
                           setScript(value);
-                        }} metaDataList={props.dataList} data={props.data} />
+                        }} metaDataList={props.dataList} data={props.data} formData={getFieldsValue()}/>
                       )}
                     </Form.Item> 
                     <Form.Item label="">
@@ -967,9 +966,9 @@ const PropertiesDefin: React.FC<Props> = props => {
                           <Col span={10}>
                             <Form.Item label={`步长(${isTimeWindow ? '秒' : '次'}）`}>
                               {getFieldDecorator('expands.virtualRule.window.every', {
-                                rules: [
-                                  { required: true }
-                                ],
+                                // rules: [
+                                //   // { required: true }
+                                // ],
                                 initialValue: initState.data.expands?.virtualRule?.window?.every,
                               })(<Input placeholder="请输入" />)}
                             </Form.Item>

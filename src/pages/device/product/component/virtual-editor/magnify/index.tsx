@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { AutoComplete, Dropdown, Icon, Input, Menu, Modal, Table, Tooltip } from "antd";
+import { AutoComplete, Descriptions, Dropdown, Icon, Input, Menu, Modal, Table, Tooltip } from "antd";
 import QuickInsertComponent from '../quick-insert';
 import styles from './index.less';
 import { MoreOutlined } from "@ant-design/icons";
-import MonacoEditor from 'react-monaco-editor';
+// import MonacoEditor from 'react-monaco-editor';
 import { getWebsocket } from "@/layouts/GlobalWebSocket";
 import AceEditor from "react-ace";
+import moment from "moment";
 
 interface Props {
     close: Function;
     data: any;
     metaDataList: any[];
+    formData: any;
 }
 
 const MagnifyComponent: React.FC<Props> = (props) => {
@@ -18,7 +20,7 @@ const MagnifyComponent: React.FC<Props> = (props) => {
     const [quickInsertVisible, setQuickInsertVisible] = useState<boolean>(props.data.isAssign);
     const [assignVisible, setAssignVisible] = useState<boolean>(props.data.isAssign);
     const [dataList, setDataList] = useState<any[]>([]);
-    const [result, setResult] = useState<string>('');
+    const [result, setResult] = useState<any[]>([]);
     const [subs, setSubs] = useState<any>();
     const [sub, setSub] = useState<any>();
     const [otherList, setOtherList] = useState<any[]>([]);
@@ -152,7 +154,6 @@ const MagnifyComponent: React.FC<Props> = (props) => {
         }
     ];
     const debugProperty = () => {
-
         console.log('开始调试...');
 
         let data: any[] = [];
@@ -173,16 +174,26 @@ const MagnifyComponent: React.FC<Props> = (props) => {
             {
                 virtualId: virtualId,
                 property: props.data.id,
-                virtualRule: virtualRule,
+                virtualRule: {
+                    ...virtualRule,
+                    script: script
+                },
                 properties: [...data]
             },
         ).subscribe(
             (resp: any) => {
                 const { payload } = resp;
-                setResult(payload);
+                result.push({
+                    time: new Date().getTime(),
+                    log: JSON.stringify(payload)
+                })
+                setResult([...result]);
+            },
+            () => {}
+            ,() => {
                 setIsBeginning(true);
             }
-        );
+        )
         setSubs(ws);
     };
 
@@ -207,12 +218,15 @@ const MagnifyComponent: React.FC<Props> = (props) => {
             {
                 virtualId: virtualId,
                 property: props.data.id,
-                virtualRule: virtualRule,
+                virtualRule: {
+                    ...virtualRule,
+                    script: script
+                },
                 properties: [...data]
             },
         ).subscribe(
             (resp: any) => {
-                console.log(resp);
+                // console.log(resp);
             }
         );
         setSub(ws);
@@ -221,22 +235,28 @@ const MagnifyComponent: React.FC<Props> = (props) => {
     const insertContent = (content: string) => {
         const cursorPosition = editor.getCursorPosition();
         editor.session.insert(cursorPosition, content);
-        // const position = editor.getPosition();
-        // editor.executeEdits('', [
-        //     {
-        //         range: {
-        //             startLineNumber: position.lineNumber,
-        //             startColumn: position.column,
-        //             endLineNumber: position.lineNumber,
-        //             endColumn: position.column
-        //         },
-        //         text: content
-        //     }
-        // ]);
     }
 
 
     useEffect(() => {
+        let formData = props.formData.expands?.virtualRule || {};
+        let data = props.data.expands?.virtualRule || {};
+        let isUseWindow = props.formData?.windows.includes('useWindow');
+        let isTimeWindow = props.formData.windows.includes('timeWindow');
+        if(isUseWindow){
+            setVirtualRule({
+                aggType: formData?.aggType || data?.aggType,
+                script: formData?.script || data?.script,
+                type: 'window',
+                window: formData?.window || data?.window,
+                windowType: isTimeWindow ? 'time' : 'num'
+            })
+        }else{
+            setVirtualRule({
+                type: 'script'
+            })
+        }
+        
         setVirtualId(`${new Date().getTime()}-virtual-id`)
         if (props.metaDataList.length > 0) {
             let data: any[] = [];
@@ -249,9 +269,9 @@ const MagnifyComponent: React.FC<Props> = (props) => {
         }
     }, []);
 
-    const editorDidMountHandle = (editor: any, monaco: any) => {
-        editor.focus();
-    }
+    // const editorDidMountHandle = (editor: any, monaco: any) => {
+    //     editor.focus();
+    // }
 
     return (
         <Modal
@@ -264,7 +284,11 @@ const MagnifyComponent: React.FC<Props> = (props) => {
                 <div className={styles.boxLeft} style={{ width: quickInsertVisible ? '70%' : "100%" }}>
                     <div className={styles.header}>
                         <span>设置属性计算规则</span>
-                        <div onClick={() => { props.close(script) }}><Icon type="fullscreen-exit" /></div>
+                        <div onClick={() => { 
+                            props.close(script);
+                            sub && sub.unsubscribe();
+                            subs && subs.unsubscribe();
+                        }}><Icon type="fullscreen-exit" /></div>
                     </div>
                     <div className={styles.editorBox} style={{ height: assignVisible ? '400px' : '740px' }}>
                         <div className={styles.editorTop}>
@@ -315,7 +339,7 @@ const MagnifyComponent: React.FC<Props> = (props) => {
                         /> */}
                         <AceEditor
                             ref={l => setEditor(l && l.editor)}
-                            mode='json'
+                            mode='groovy'
                             theme="eclipse"
                             name="app_code_editor"
                             key='simulator'
@@ -326,7 +350,7 @@ const MagnifyComponent: React.FC<Props> = (props) => {
                             wrapEnabled
                             highlightActiveLine  //突出活动线
                             enableSnippets  //启用代码段
-                            style={{ width: '100%',height:assignVisible ? 350 : 690 }}
+                            style={{ width: '100%', height: assignVisible ? 350 : 690 }}
                             onChange={(value) => {
                                 setScript(value);
                                 virtualRule.script = value;
@@ -348,7 +372,7 @@ const MagnifyComponent: React.FC<Props> = (props) => {
                                     <div className={styles.itemLeftHeader}>属性赋值</div>
                                     <div className={styles.itemRight}>请对上方规则使用的属性进行赋值</div>
                                 </div>
-                                {!isBeginning && props.data.expands?.virtualRule?.type === 'window' && (<div className={styles.item} onClick={() => {
+                                {!isBeginning && virtualRule?.type === 'window' && (<div className={styles.item} onClick={() => {
                                     debugPropertyAgain();
                                 }}><a>发送数据</a></div>)}
                             </div>
@@ -358,7 +382,8 @@ const MagnifyComponent: React.FC<Props> = (props) => {
                                         key: `${new Date().getTime()}`,
                                         id: '',
                                         current: '',
-                                        last: ''
+                                        last: '',
+                                        type: ''
                                     })
                                     setDataList([...dataList]);
                                 }}><Icon type="plus-circle" /> 添加</a>}
@@ -378,15 +403,15 @@ const MagnifyComponent: React.FC<Props> = (props) => {
                                             debugProperty()
                                         }}>开始运行</a>) : (<a onClick={() => {
                                             setIsBeginning(true);
-                                            subs.unsubscribe();
+                                            subs && subs.unsubscribe();
                                         }}>停止运行</a>)}
                                     </div>
                                     <div onClick={() => {
-                                        setResult('')
+                                        setResult([]);
                                     }}><a>清空</a></div>
                                 </div>
                             </div>
-                            <MonacoEditor
+                            {/* <MonacoEditor
                                 height={295}
                                 language='groovy'
                                 theme='vs'
@@ -396,7 +421,17 @@ const MagnifyComponent: React.FC<Props> = (props) => {
                                     readOnly: true
                                 }}
                                 editorDidMount={(editor, monaco) => editorDidMountHandle(editor, monaco)}
-                            />
+                            /> */}
+                            <div className={styles.logBox}>
+                                <Descriptions>
+                                    {result.map((item: any, index: number) => {
+                                        return <Descriptions.Item key={index} span={3}
+                                            label={moment(item.time).format('HH:mm:ss')}>
+                                            <Tooltip placement="top" title={item.log}>{item.log}</Tooltip>
+                                        </Descriptions.Item>
+                                    })}
+                                </Descriptions>
+                            </div>
                         </div>
                     </div>}
                 </div>

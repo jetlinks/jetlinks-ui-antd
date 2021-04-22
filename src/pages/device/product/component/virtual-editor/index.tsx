@@ -11,6 +11,7 @@ interface Props {
     data: any;
     metaDataList: any[];
     scriptValue: Function;
+    formData: any;
 }
 
 const VirtualEditorComponent: React.FC<Props> = props => {
@@ -141,7 +142,7 @@ const VirtualEditorComponent: React.FC<Props> = props => {
             </div>
             <AceEditor
                 ref={l => setEditor(l && l.editor)}
-                mode='json'
+                mode='groovy'
                 theme="eclipse"
                 name="app_code_editor"
                 key='simulator'
@@ -181,7 +182,9 @@ const VirtualEditorComponent: React.FC<Props> = props => {
                 editorDidMount={(editor, monaco) => editorDidMountHandle(editor, monaco)}
             /> */}
             {isMagnify && (
-                <MagnifyComponent metaDataList={props.metaDataList} data={{
+                <MagnifyComponent formData={
+                    props.formData
+                }metaDataList={props.metaDataList} data={{
                     isAssign: isAssign,
                     script: script,
                     ...props.data
