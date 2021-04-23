@@ -119,9 +119,17 @@ const MagnifyComponent: React.FC<Props> = (props) => {
             dataIndex: 'id',
             key: 'id',
             align: 'center',
-            render: (text: string, record: any) => <AutoComplete dataSource={otherList} onChange={(value) => {
-                handleChange({ id: value }, record);
-            }} />
+            render: (text: string, record: any) =>
+                <AutoComplete onChange={(value) => {
+                    let data: any = otherList.find((item) => {
+                        return item.id === value
+                    })
+                    handleChange({ id: value, type: data?.type }, record);
+                }}>
+                    {
+                        otherList.map(item => <AutoComplete.Option key={item.id}>{item.id}</AutoComplete.Option>)
+                    }
+                </AutoComplete>
         },
         {
             title: '属性当前值',
@@ -189,8 +197,8 @@ const MagnifyComponent: React.FC<Props> = (props) => {
                 })
                 setResult([...result]);
             },
-            () => {}
-            ,() => {
+            () => { }
+            , () => {
                 setIsBeginning(true);
             }
         )
@@ -239,11 +247,13 @@ const MagnifyComponent: React.FC<Props> = (props) => {
 
 
     useEffect(() => {
-        let formData = props.formData.expands?.virtualRule || {};
+        let formData = props.formData.expands?.virtualRule || {
+            windows: []
+        };
         let data = props.data.expands?.virtualRule || {};
-        let isUseWindow = props.formData?.windows.includes('useWindow');
-        let isTimeWindow = props.formData.windows.includes('timeWindow');
-        if(isUseWindow){
+        let isUseWindow = props.formData?.windows?.includes('useWindow') || false;
+        let isTimeWindow = props.formData.windows?.includes('timeWindow') || false;
+        if (isUseWindow) {
             setVirtualRule({
                 aggType: formData?.aggType || data?.aggType,
                 script: formData?.script || data?.script,
@@ -251,18 +261,18 @@ const MagnifyComponent: React.FC<Props> = (props) => {
                 window: formData?.window || data?.window,
                 windowType: isTimeWindow ? 'time' : 'num'
             })
-        }else{
+        } else {
             setVirtualRule({
                 type: 'script'
             })
         }
-        
+
         setVirtualId(`${new Date().getTime()}-virtual-id`)
         if (props.metaDataList.length > 0) {
             let data: any[] = [];
             props.metaDataList.map(item => {
                 if (item.id !== props.data.id) {
-                    data.push(item.id)
+                    data.push({ id: item.id, type: item.valueType?.type })
                 }
             })
             setOtherList([...data]);
@@ -284,7 +294,7 @@ const MagnifyComponent: React.FC<Props> = (props) => {
                 <div className={styles.boxLeft} style={{ width: quickInsertVisible ? '70%' : "100%" }}>
                     <div className={styles.header}>
                         <span>设置属性计算规则</span>
-                        <div onClick={() => { 
+                        <div onClick={() => {
                             props.close(script);
                             sub && sub.unsubscribe();
                             subs && subs.unsubscribe();
