@@ -169,7 +169,8 @@ const MagnifyComponent: React.FC<Props> = (props) => {
             data.push({
                 id: item.id,
                 current: item.current,
-                last: item.current
+                last: item.current,
+                type: item.type
             })
         })
 
@@ -213,7 +214,8 @@ const MagnifyComponent: React.FC<Props> = (props) => {
             data.push({
                 id: item.id,
                 current: item.current,
-                last: item.current
+                last: item.current,
+                type: item.type
             })
         })
 
