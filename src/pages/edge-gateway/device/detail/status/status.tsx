@@ -24,19 +24,7 @@ const topColResponsiveProps = {
 const Status: React.FC<Props> = props => {
     const { device, edgeTag } = props;
     const metadata = JSON.parse(device.metadata);
-    // const events = metadata.events
-    //     .map((item: any) => {
-    //         item.listener = [];
-    //         item.subscribe = (callback: Function) => {
-    //             item.listener.push(callback)
-    //         }
-    //         item.next = (data: any) => {
-    //             item.listener.forEach((element: any) => {
-    //                 element(data);
-    //             });
-    //         }
-    //         return item;
-    //     });
+    
     const [properties, setProperties] = useState<any[]>(metadata.properties
         .map((item: any) => {
             item.listener = [];
@@ -63,16 +51,6 @@ const Status: React.FC<Props> = props => {
         map(result => result.payload)
     );
 
-    // const eventsWs: Observable<any> = getWebsocket(
-    //     `instance-info-event-${device.id}-${device.productId}`,
-    //     `/dashboard/device/${device.productId}/events/realTime`,
-    //     {
-    //         deviceId: device.id,
-    //     },
-    // ).pipe(
-    //     map(result => result.payload)
-    // );
-
     const propertiesEdge: Observable<any> = getWebSocket(
         `instance-info-property-${device.id}-${device.productId}`,
         `/edge-gateway-state/device/${device.productId}/properties/realTime`,
@@ -84,26 +62,13 @@ const Status: React.FC<Props> = props => {
         map(result => result.payload)
     );
 
-    // const eventsEdge: Observable<any> = getWebSocket(
-    //     `instance-info-event-${device.id}-${device.productId}`,
-    //     `/dashboard/device/${device.productId}/events/realTime`,
-    //     {
-    //         deviceId: device.id,
-    //     },
-    // ).pipe(
-    //     map(result => result.payload)
-    // );
-
     let propertiesMap = {};
     properties.forEach(item => propertiesMap[item.id] = item);
-    // let eventsMap = {};
-    // events.forEach((item: any) => eventsMap[item.id] = item);
 
     const [index, setIndex] = useState<number>(20);
 
     useEffect(() => {
         let properties$: Subscription | null = null;
-        // let events$: Subscription | null = null;
 
         if (edgeTag) {
             properties$ = propertiesEdge.subscribe((resp) => {
@@ -113,14 +78,6 @@ const Status: React.FC<Props> = props => {
                     item.next(resp);
                 }
             });
-
-            // events$ = eventsEdge.subscribe((resp) => {
-            //     const event = resp.value.event;
-            //     const item = eventsMap[event];
-            //     if (item) {
-            //         item.next(resp);
-            //     }
-            // });
         } else {
             properties$ = propertiesWs.subscribe((resp) => {
                 const property = resp.value.property;
@@ -129,18 +86,9 @@ const Status: React.FC<Props> = props => {
                     item.next(resp);
                 }
             });
-
-            // events$ = eventsWs.subscribe((resp) => {
-            //     const event = resp.value.event;
-            //     const item = eventsMap[event];
-            //     if (item) {
-            //         item.next(resp);
-            //     }
-            // });
         }
         return () => {
             properties$ && properties$.unsubscribe();
-            // events$ && events$.unsubscribe()
         };
     }, []);
 
