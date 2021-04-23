@@ -6,7 +6,7 @@ import { filter, map } from "rxjs/operators";
 class Service extends BaseService<any> {
 
     public getDescriptionList = (params: any) => defer(
-        () => from(request(`/jetlinks/property-calculate-rule/description`, {///property-calculate-rule/description
+        () => from(request(`/jetlinks/property-calculate-rule/description`, {
             method: 'GET',
             params
         })).pipe(

@@ -7,6 +7,7 @@ import Paramter from '../paramter';
 import apis from '@/services';
 import { ProductContext } from '../../context';
 import VirtualEditorComponent from '../virtual-editor';
+import { format } from 'prettier';
 
 interface Props extends FormComponentProps {
   data: Partial<PropertiesMeta>;
@@ -51,7 +52,7 @@ const PropertiesDefin: React.FC<Props> = props => {
     currentParameter: {},
     parameters: [],
 
-    isVirtual: props.data.expands?.virtual === 'true' ? true : false,
+    isVirtual: props.data.expands?.virtual || props.data.expands?.virtual === 'true' ? true : false,
     aggTypeList: [],
     isUseWindow: props.data.expands?.virtualRule?.type === 'window' ? true : false,
     isTimeWindow: props.data.expands?.virtualRule?.windowType === 'time' ? true : false,
@@ -79,6 +80,7 @@ const PropertiesDefin: React.FC<Props> = props => {
   const [isUseWindow, setIsUseWindow] = useState(initState.isUseWindow);
   const [isTimeWindow, setIsTimeWindow] = useState(initState.isTimeWindow);
   const [windows, setWindows] = useState(initState.windows);
+  const [script, setScript] = useState(props.data.expands?.virtualRule?.script || '');
 
   useEffect(() => {
     if (dataType === 'enum') {
@@ -126,11 +128,14 @@ const PropertiesDefin: React.FC<Props> = props => {
       if (dataType === 'array' && data.valueType.elementType.type === 'object') {
         data.valueType.elementType.properties = arrayProperties;
       }
-      // if (version === 'pro') {
-      //   data.expands.virtualRule.type = isUseWindow ? 'window' : 'script';
-      //   data.expands.virtualRule.windowType = isTimeWindow ? 'time' : 'num';
-      //   data.windows = undefined;
-      // }
+      if (version === 'pro' && isVirtual) {
+        data.expands.virtualRule.type = isUseWindow ? 'window' : 'script';
+        if (isUseWindow) {
+          data.expands.virtualRule.windowType = isTimeWindow ? 'time' : 'num';
+          data.windows = undefined;
+          data.expands.virtualRule.script = script;
+        }
+      }
       props.save({ ...data }, onlySave);
     });
   };
@@ -876,7 +881,7 @@ const PropertiesDefin: React.FC<Props> = props => {
             <Form.Item label="是否只读">
               {getFieldDecorator('expands.readOnly', {
                 rules: [{ required: true }],
-                initialValue: initState.data.expands?.readOnly.toString(),
+                initialValue: initState.data.expands?.readOnly?.toString(),
               })(
                 <Radio.Group>
                   <Radio value="true">是</Radio>
@@ -890,81 +895,87 @@ const PropertiesDefin: React.FC<Props> = props => {
                 <Form.Item label="虚拟属性">
                   {getFieldDecorator('expands.virtual', {
                     rules: [{ required: true }],
-                    initialValue: initState.data.expands?.virtual?.toString(),
+                    initialValue: isVirtual,
                   })(
                     <Radio.Group onChange={(e) => {
-                      let value = e.target.value === 'true' ? true : false;
+                      let value = e.target.value;
                       setIsVirtual(value)
                     }}>
-                      <Radio value="true">是</Radio>
-                      <Radio value="false">否</Radio>
+                      <Radio value={true}>是</Radio>
+                      <Radio value={false}>否</Radio>
                     </Radio.Group>,
                   )}
                 </Form.Item>
-                {isVirtual && (<Form.Item wrapperCol={{ span: 24 }}>
-                  {getFieldDecorator('expands.virtualRule.script', {
-                    rules: [{ required: true }],
-                    initialValue: initState.data.expands?.virtualRule?.script
-                  })(
-                    <VirtualEditorComponent metaDataList={props.dataList} data={props.data} />
-                  )}
-                </Form.Item>)}
-                <Form.Item label="">
-                  {getFieldDecorator('windows', {
-                    initialValue: windows,
-                  })(
-                    <Checkbox.Group onChange={(value) => {
-                      setIsUseWindow(value.includes('useWindow'));
-                      setIsTimeWindow(value.includes('timeWindow'));
-                    }}>
-                      <Row gutter={24}>
-                        <Col span={isUseWindow ? 12 : 24}>
-                          <Checkbox value="useWindow" style={{ lineHeight: '32px' }}>使用窗口</Checkbox>
-                        </Col>
-                        <Col span={12}>
-                          {isUseWindow && <Checkbox value="timeWindow" style={{ lineHeight: '32px' }}>时间窗口</Checkbox>}
-                        </Col>
-                      </Row>
-                    </Checkbox.Group>
-                  )}
-                </Form.Item>
-                {isUseWindow && (
+                {isVirtual && (
                   <>
-                    <Form.Item label="聚合函数">
-                      {getFieldDecorator('expands.virtualRule.aggType', {
-                        rules: [{ required: true }],
-                        initialValue: initState.data.expands?.virtualRule?.aggType
+                    <Form.Item wrapperCol={{ span: 24 }}>
+                      {getFieldDecorator('expands.virtualRule.script', {
+                        // rules: [{ required: true }],
+                        initialValue: initState.data.expands?.virtualRule.script
                       })(
-                        <Select>
-                          {aggTypeList.map((item: any, index: number) => (
-                            <Select.Option value={item.value} key={index}>{`${item.value}(${item.text})`}</Select.Option>
-                          ))}
-                        </Select>
+                        <VirtualEditorComponent scriptValue={(value: string) => {
+                          setScript(value);
+                        }} metaDataList={props.dataList} data={props.data} formData={getFieldsValue()}/>
+                      )}
+                    </Form.Item> 
+                    <Form.Item label="">
+                      {getFieldDecorator('windows', {
+                        initialValue: windows,
+                      })(
+                        <Checkbox.Group onChange={(value) => {
+                          setIsUseWindow(value.includes('useWindow'));
+                          setIsTimeWindow(value.includes('timeWindow'));
+                        }}>
+                          <Row gutter={24}>
+                            <Col span={isUseWindow ? 12 : 24}>
+                              <Checkbox value="useWindow" style={{ lineHeight: '32px' }}>使用窗口</Checkbox>
+                            </Col>
+                            <Col span={12}>
+                              {isUseWindow && <Checkbox value="timeWindow" style={{ lineHeight: '32px' }}>时间窗口</Checkbox>}
+                            </Col>
+                          </Row>
+                        </Checkbox.Group>
                       )}
                     </Form.Item>
-                    <Row>
-                      <Col span={10}>
-                        <Form.Item label={`窗口长度（${isTimeWindow ? '秒' : '次'}）`}>
-                          {getFieldDecorator('expands.virtualRule.window.span', {
-                            rules: [
-                              { required: true }
-                            ],
-                            initialValue: initState.data.expands?.virtualRule?.window?.span,
-                          })(<Input placeholder="请输入" />)}
+                    {isUseWindow && (
+                      <>
+                        <Form.Item label="聚合函数">
+                          {getFieldDecorator('expands.virtualRule.aggType', {
+                            rules: [{ required: true }],
+                            initialValue: initState.data.expands?.virtualRule?.aggType
+                          })(
+                            <Select>
+                              {aggTypeList.map((item: any, index: number) => (
+                                <Select.Option value={item.value} key={index}>{`${item.value}(${item.text})`}</Select.Option>
+                              ))}
+                            </Select>
+                          )}
                         </Form.Item>
-                      </Col>
-                      <Col span={4}></Col>
-                      <Col span={10}>
-                        <Form.Item label={`步长(${isTimeWindow ? '秒' : '次'}）`}>
-                          {getFieldDecorator('expands.virtualRule.window.every', {
-                            rules: [
-                              { required: true }
-                            ],
-                            initialValue: initState.data.expands?.virtualRule?.window?.every,
-                          })(<Input placeholder="请输入" />)}
-                        </Form.Item>
-                      </Col>
-                    </Row>
+                        <Row>
+                          <Col span={10}>
+                            <Form.Item label={`窗口长度（${isTimeWindow ? '秒' : '次'}）`}>
+                              {getFieldDecorator('expands.virtualRule.window.span', {
+                                rules: [
+                                  { required: true }
+                                ],
+                                initialValue: initState.data.expands?.virtualRule?.window?.span,
+                              })(<Input placeholder="请输入" />)}
+                            </Form.Item>
+                          </Col>
+                          <Col span={4}></Col>
+                          <Col span={10}>
+                            <Form.Item label={`步长(${isTimeWindow ? '秒' : '次'}）`}>
+                              {getFieldDecorator('expands.virtualRule.window.every', {
+                                // rules: [
+                                //   // { required: true }
+                                // ],
+                                initialValue: initState.data.expands?.virtualRule?.window?.every,
+                              })(<Input placeholder="请输入" />)}
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                      </>
+                    )}
                   </>
                 )}
               </>

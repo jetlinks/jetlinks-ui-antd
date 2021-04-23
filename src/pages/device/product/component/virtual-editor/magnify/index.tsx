@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { AutoComplete, Dropdown, Icon, Input, Menu, Modal, Table, Tabs, Tooltip } from "antd";
+import { AutoComplete, Descriptions, Dropdown, Icon, Input, Menu, Modal, Table, Tooltip } from "antd";
 import QuickInsertComponent from '../quick-insert';
 import styles from './index.less';
 import { MoreOutlined } from "@ant-design/icons";
-import MonacoEditor from 'react-monaco-editor';
+// import MonacoEditor from 'react-monaco-editor';
 import { getWebsocket } from "@/layouts/GlobalWebSocket";
+import AceEditor from "react-ace";
+import moment from "moment";
 
 interface Props {
     close: Function;
     data: any;
     metaDataList: any[];
+    formData: any;
 }
 
 const MagnifyComponent: React.FC<Props> = (props) => {
@@ -17,34 +20,87 @@ const MagnifyComponent: React.FC<Props> = (props) => {
     const [quickInsertVisible, setQuickInsertVisible] = useState<boolean>(props.data.isAssign);
     const [assignVisible, setAssignVisible] = useState<boolean>(props.data.isAssign);
     const [dataList, setDataList] = useState<any[]>([]);
-    const [result, setResult] = useState<string>('结果输出。。。');
+    const [result, setResult] = useState<any[]>([]);
     const [subs, setSubs] = useState<any>();
+    const [sub, setSub] = useState<any>();
     const [otherList, setOtherList] = useState<any[]>([]);
     const [isBeginning, setIsBeginning] = useState(true);
     const [editor, setEditor] = useState<any>(null);
+    const [script, setScript] = useState(props.data.script || '');
+    const [virtualRule, setVirtualRule] = useState(props.data.expands?.virtualRule || {});
+    const [virtualId, setVirtualId] = useState('');
     const symbolList = [
         {
-            key: 'add', 
+            key: 'add',
             value: '+'
         },
         {
-            key: 'subtract', 
+            key: 'subtract',
             value: '-'
         },
         {
-            key: 'multiply', 
+            key: 'multiply',
             value: '*'
         },
         {
-            key: 'divide', 
+            key: 'divide',
             value: '/'
-        },{
+        }, {
             key: 'parentheses',
             value: '()'
         },
         {
             key: 'cubic',
             value: '^'
+        }
+    ]
+    const otherSymbolList = [
+        {
+            key: 'dayu',
+            value: '>'
+        },
+        {
+            key: 'dayudengyu',
+            value: '>='
+        },
+        {
+            key: 'dengyudengyu',
+            value: '=='
+        },
+        {
+            key: 'xiaoyudengyu',
+            value: '<='
+        }, {
+            key: 'xiaoyu',
+            value: '<'
+        },
+        {
+            key: 'jiankuohao',
+            value: '<>'
+        },
+        {
+            key: 'andand',
+            value: '&&'
+        },
+        {
+            key: 'huohuo',
+            value: '||'
+        },
+        {
+            key: 'fei',
+            value: '!'
+        },
+        {
+            key: 'and',
+            value: '&'
+        },
+        {
+            key: 'huo',
+            value: '|'
+        },
+        {
+            key: 'bolang',
+            value: '~'
         }
     ]
 
@@ -63,7 +119,17 @@ const MagnifyComponent: React.FC<Props> = (props) => {
             dataIndex: 'id',
             key: 'id',
             align: 'center',
-            render: (text: string, record: any) => <AutoComplete dataSource={otherList} />
+            render: (text: string, record: any) =>
+                <AutoComplete onChange={(value) => {
+                    let data: any = otherList.find((item) => {
+                        return item.id === value
+                    })
+                    handleChange({ id: value, type: data?.type }, record);
+                }}>
+                    {
+                        otherList.map(item => <AutoComplete.Option key={item.id}>{item.id}</AutoComplete.Option>)
+                    }
+                </AutoComplete>
         },
         {
             title: '属性当前值',
@@ -96,109 +162,166 @@ const MagnifyComponent: React.FC<Props> = (props) => {
         }
     ];
     const debugProperty = () => {
-        console.log('开始调试');
+        console.log('开始调试...');
+
+        let data: any[] = [];
+        dataList.map(item => {
+            data.push({
+                id: item.id,
+                current: item.current,
+                last: item.last,
+                type: item.type
+            })
+        })
+
         if (subs) {
             subs.unsubscribe()
         }
         const ws = getWebsocket(
-            `virtual-property-debug-${props.data.id}`,
+            `virtual-property-debug-${props.data.id}-${new Date().getTime()}`,
             `/virtual-property-debug`,
             {
-                virtualId: new Date().getTime(),
+                virtualId: virtualId,
                 property: props.data.id,
-                virtualRule: props.data.expands.virtualRule,
-                properties: [...dataList]
+                virtualRule: {
+                    ...virtualRule,
+                    script: script
+                },
+                properties: [...data]
             },
         ).subscribe(
             (resp: any) => {
                 const { payload } = resp;
-                setResult(payload);
+                result.push({
+                    time: new Date().getTime(),
+                    log: JSON.stringify(payload)
+                })
+                setResult([...result]);
+            },
+            () => { }
+            , () => {
+                setIsBeginning(true);
             }
-        );
+        )
         setSubs(ws);
     };
 
-    const insertContent = (content: string) => {
-        const position = editor.getPosition();
-        editor.executeEdits('', [
+    const debugPropertyAgain = () => {
+
+        let data: any[] = [];
+
+        dataList.map(item => {
+            data.push({
+                id: item.id,
+                current: item.current,
+                last: item.last,
+                type: item.type
+            })
+        })
+
+        if (sub) {
+            sub.unsubscribe()
+        }
+        const ws = getWebsocket(
+            `virtual-property-debug-${props.data.id}-${new Date().getTime()}`,
+            `/virtual-property-debug`,
             {
-                range: {
-                    startLineNumber: position.lineNumber,
-                    startColumn: position.column,
-                    endLineNumber: position.lineNumber,
-                    endColumn: position.column
+                virtualId: virtualId,
+                property: props.data.id,
+                virtualRule: {
+                    ...virtualRule,
+                    script: script
                 },
-                text: content
+                properties: [...data]
+            },
+        ).subscribe(
+            (resp: any) => {
+                // console.log(resp);
             }
-        ]);
+        );
+        setSub(ws);
+    };
+
+    const insertContent = (content: string) => {
+        const cursorPosition = editor.getCursorPosition();
+        editor.session.insert(cursorPosition, content);
     }
 
 
     useEffect(() => {
+        let formData = props.formData.expands?.virtualRule || {
+            windows: []
+        };
+        let data = props.data.expands?.virtualRule || {};
+        let isUseWindow = props.formData?.windows?.includes('useWindow') || false;
+        let isTimeWindow = props.formData.windows?.includes('timeWindow') || false;
+        if (isUseWindow) {
+            setVirtualRule({
+                aggType: formData?.aggType || data?.aggType,
+                script: formData?.script || data?.script,
+                type: 'window',
+                window: formData?.window || data?.window,
+                windowType: isTimeWindow ? 'time' : 'num'
+            })
+        } else {
+            setVirtualRule({
+                type: 'script'
+            })
+        }
+
+        setVirtualId(`${new Date().getTime()}-virtual-id`)
         if (props.metaDataList.length > 0) {
             let data: any[] = [];
             props.metaDataList.map(item => {
                 if (item.id !== props.data.id) {
-                    data.push(item.id)
+                    data.push({ id: item.id, type: item.valueType?.type })
                 }
             })
             setOtherList([...data]);
         }
     }, []);
 
-    const menu = () => {
-        return (
-            <Menu onClick={(item) => {
-                console.log(item)
-                // insertContent(item)
-            }}>
-                <Menu.Item >&gt;</Menu.Item>
-                <Menu.Item>&gt;=</Menu.Item>
-                <Menu.Item>&gt;</Menu.Item>
-                <Menu.Item>&gt;=</Menu.Item>
-                <Menu.Item>==</Menu.Item>
-                <Menu.Item>&lt;=</Menu.Item>
-                <Menu.Item>&lt;</Menu.Item>
-                <Menu.Item>&lt;&gt;</Menu.Item>
-                <Menu.Item>&amp;&amp;</Menu.Item>
-                <Menu.Item>||</Menu.Item>
-                <Menu.Item>!</Menu.Item>
-                <Menu.Item>&amp;</Menu.Item>
-                <Menu.Item>|</Menu.Item>
-                <Menu.Item>~</Menu.Item>
-            </Menu>
-        )
-    }
-
-    const editorDidMountHandle = (editor: any, monaco: any) => {
-        console.log(editor)
-        editor.focus();
-    }
+    // const editorDidMountHandle = (editor: any, monaco: any) => {
+    //     editor.focus();
+    // }
 
     return (
         <Modal
             closable={false}
             visible
-            width={quickInsertVisible ? 1200 : 840}
+            width={quickInsertVisible ? 1200 : 850}
             footer={false}
         >
             <div className={styles.box}>
-                <div className={styles.boxLeft} style={{ width: quickInsertVisible ? '68%' : "100%" }}>
+                <div className={styles.boxLeft} style={{ width: quickInsertVisible ? '70%' : "100%" }}>
                     <div className={styles.header}>
                         <span>设置属性计算规则</span>
-                        <div onClick={() => { props.close() }}><Icon type="fullscreen-exit" /></div>
+                        <div onClick={() => {
+                            props.close(script);
+                            sub && sub.unsubscribe();
+                            subs && subs.unsubscribe();
+                        }}><Icon type="fullscreen-exit" /></div>
                     </div>
                     <div className={styles.editorBox} style={{ height: assignVisible ? '400px' : '740px' }}>
                         <div className={styles.editorTop}>
                             <div className={styles.topLeft}>
-                                {symbolList.map((item: any) => {
-                                    return <span onClick={(item) => {
-                                        console.log(item)
-                                        // insertContent(item)
-                                    }} key={item.key}>{item.value}</span>
+                                {symbolList.map((item: any, index: number) => {
+                                    return <span key={item.key} onClick={() => {
+                                        insertContent(symbolList[index].value)
+                                    }}>{item.value}</span>
                                 })}
                                 <span>
-                                    <Dropdown overlay={menu}>
+                                    <Dropdown overlay={() => (
+                                        <Menu>
+                                            {
+                                                otherSymbolList.map((item, index) => (
+                                                    <Menu.Item key={item.key} onClick={() => {
+                                                        insertContent(otherSymbolList[index].value)
+                                                    }}>{item.value}</Menu.Item>
+                                                ))
+                                            }
+                                        </Menu>
+                                    )}>
                                         <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
                                             <MoreOutlined />
                                         </a>
@@ -210,26 +333,60 @@ const MagnifyComponent: React.FC<Props> = (props) => {
                                 <span onClick={() => { setQuickInsertVisible(true) }}><Tooltip title="快速添加"><a>快速添加</a></Tooltip></span>
                             </div>
                         </div>
-                        <MonacoEditor
+                        {/* <MonacoEditor
                             ref={l => setEditor(l && l.editor)}
-                            height={assignVisible ? 350 : 700}
+                            height={assignVisible ? 350 : 690}
                             language='groovy'
-                            theme={'vs'}
-                            value={''}
+                            theme='vs'
+                            value={script}
                             options={{
                                 selectOnLineNumbers: true
                             }}
                             onChange={(value) => {
-
+                                setScript(value);
+                                virtualRule.script = value;
+                                setVirtualRule(virtualRule);
                             }}
                             editorDidMount={(editor, monaco) => editorDidMountHandle(editor, monaco)}
+                        /> */}
+                        <AceEditor
+                            ref={l => setEditor(l && l.editor)}
+                            mode='groovy'
+                            theme="eclipse"
+                            name="app_code_editor"
+                            key='simulator'
+                            fontSize={14}
+                            value={script}
+                            showPrintMargin
+                            showGutter
+                            wrapEnabled
+                            highlightActiveLine  //突出活动线
+                            enableSnippets  //启用代码段
+                            style={{ width: '100%', height: assignVisible ? 350 : 690 }}
+                            onChange={(value) => {
+                                setScript(value);
+                                virtualRule.script = value;
+                                setVirtualRule(virtualRule);
+                            }}
+                            setOptions={{
+                                enableBasicAutocompletion: true,   //启用基本自动完成功能
+                                enableLiveAutocompletion: true,   //启用实时自动完成功能 （比如：智能代码提示）
+                                enableSnippets: true,  //启用代码段
+                                showLineNumbers: true,
+                                tabSize: 2,
+                            }}
                         />
                     </div>
                     {assignVisible && <div className={styles.assignBox}>
                         <div className={styles.assignBoxLeft}>
                             <div className={styles.leftHeader}>
-                                <div className={styles.itemLeft}>属性赋值</div>
-                                <div className={styles.itemRight}>请对上方规则使用的属性进行赋值</div>
+                                <div className={styles.itemLeft}>
+                                    <div className={styles.itemLeftHeader}>属性赋值</div>
+                                    <div className={styles.itemRight}>请对上方规则使用的属性进行赋值</div>
+                                </div>
+                                {!isBeginning && virtualRule?.type === 'window' && (<div className={styles.item} onClick={() => {
+                                    debugPropertyAgain();
+                                }}><a>发送数据</a></div>)}
                             </div>
                             <Table rowKey="key" size="middle" columns={columns} dataSource={dataList} pagination={false} scroll={{ y: 195 }}
                                 footer={() => <a onClick={() => {
@@ -237,9 +394,9 @@ const MagnifyComponent: React.FC<Props> = (props) => {
                                         key: `${new Date().getTime()}`,
                                         id: '',
                                         current: '',
-                                        last: ''
+                                        last: '',
+                                        type: ''
                                     })
-                                    console.log(dataList)
                                     setDataList([...dataList]);
                                 }}><Icon type="plus-circle" /> 添加</a>}
                             />
@@ -247,8 +404,9 @@ const MagnifyComponent: React.FC<Props> = (props) => {
                         <div className={styles.assignBoxRight}>
                             <div className={styles.editorTop}>
                                 <div className={styles.topLeft}>
-                                    <div>运行详情</div>
-                                    <div>错误</div>
+                                    {/* <div>运行详情</div>
+                                    <div>错误</div> */}
+                                    <div>运行结果</div>
                                 </div>
                                 <div className={styles.topRight}>
                                     <div>
@@ -257,25 +415,35 @@ const MagnifyComponent: React.FC<Props> = (props) => {
                                             debugProperty()
                                         }}>开始运行</a>) : (<a onClick={() => {
                                             setIsBeginning(true);
-                                            subs.unsubscribe();
+                                            subs && subs.unsubscribe();
                                         }}>停止运行</a>)}
                                     </div>
                                     <div onClick={() => {
-                                        setResult('')
+                                        setResult([]);
                                     }}><a>清空</a></div>
                                 </div>
                             </div>
-                            <MonacoEditor
+                            {/* <MonacoEditor
                                 height={295}
-                                language={'javascript'}
-                                theme={'vs'}
+                                language='groovy'
+                                theme='vs'
                                 value={result}
                                 options={{
                                     selectOnLineNumbers: true,
                                     readOnly: true
                                 }}
                                 editorDidMount={(editor, monaco) => editorDidMountHandle(editor, monaco)}
-                            />
+                            /> */}
+                            <div className={styles.logBox}>
+                                <Descriptions>
+                                    {result.map((item: any, index: number) => {
+                                        return <Descriptions.Item key={index} span={3}
+                                            label={moment(item.time).format('HH:mm:ss')}>
+                                            <Tooltip placement="top" title={item.log}>{item.log}</Tooltip>
+                                        </Descriptions.Item>
+                                    })}
+                                </Descriptions>
+                            </div>
                         </div>
                     </div>}
                 </div>
@@ -284,35 +452,10 @@ const MagnifyComponent: React.FC<Props> = (props) => {
                         <span>快速添加</span>
                         <div onClick={() => { setQuickInsertVisible(false) }}><Icon type="close" /></div>
                     </div>
-                    <QuickInsertComponent metaDataList={props.metaDataList} close={() => { }} />
+                    <QuickInsertComponent insertContent={(data: string) => { insertContent(data) }} metaDataList={props.metaDataList} close={() => { }} />
                 </div>}
             </div>
         </Modal>
     );
 }
 export default MagnifyComponent;
-
-
- // const menu = () => {
-    //     return (
-    //         <Menu>
-    //             <Menu.Item>
-    //                 <div className={styles.menuBox}>
-    //                     <div>&gt;</div>
-    //                     <div>&gt;=</div>
-    //                     <div>==</div>
-    //                     <div>&lt;=</div>
-    //                     <div>&lt;</div>
-    //                     <div>&lt;&gt;</div>
-    //                     <div>&amp;&amp;</div>
-    //                     <div>||</div>
-    //                     <div>!</div>
-    //                     <div>&amp;</div>
-    //                     <div>|</div>
-    //                     <div>~</div>
-    //                 </div>
-    //             </Menu.Item>
-    //         </Menu>
-    //     )
-    // }
-

@@ -4,12 +4,14 @@ import styles from './index.less';
 import ReactMarkdown from 'react-markdown';
 import { Spin, Tree } from "antd";
 import Service from '../service';
+import PropertyComponent from './addProperty';
 
 const { TreeNode } = Tree;
 
 interface Props {
     close: Function;
     metaDataList: any[];
+    insertContent: Function;
 }
 
 const QuickInsertComponent: React.FC<Props> = (props) => {
@@ -20,6 +22,8 @@ const QuickInsertComponent: React.FC<Props> = (props) => {
     const [enterKey, setEnterKey] = useState<string>('property');
     const [data, setData] = useState<any>({});
     const [loading, setLoading] = useState<boolean>(false);
+    const [propertyVisible, setPropertyVisible] = useState(false);
+    const [property, setProperty] = useState({});
 
     const onSearch = (value: any) => {
         let data: any[] = [];
@@ -46,27 +50,33 @@ const QuickInsertComponent: React.FC<Props> = (props) => {
             id: 'property',
             name: '属性',
             children: [...children],
-            description: ''
+            description: '',
+            code: ''
         }
         setLoading(true);
-        // service.getDescriptionList({}).subscribe(
-        //     res => {
-        //         if (res.status === 200) {
-        //             setMetaDataList([metaData, ...res.result]);
-        //             setMetaList([metaData, ...res.result]);//获取全部数据
-        //         }
-        //         setLoading(false);
-        //     }
-        // )
+        service.getDescriptionList({}).subscribe(
+            res => {
+                if (res.status === 200) {
+                    setMetaDataList([metaData, ...res.result]);
+                    setMetaList([metaData, ...res.result]);//获取全部数据
+                }
+                setLoading(false);
+            }
+        )
     }, []);
 
     const rendertitle = (item: any) => (
-        <div style={{ display: 'flex', justifyContent: 'space-between', width: '250px' }} onMouseEnter={() => {
+        <div style={{ display: 'flex', justifyContent: 'space-between', width: '220px' }} onMouseEnter={() => {
             setEnterKey(item.id);
         }}>
             <div>{item.name}</div>
             {item.children.length === 0 && enterKey === item.id && (<div onClick={() => {
-                console.log(item.id)
+                if(item.code === undefined){
+                    setPropertyVisible(true);
+                    setProperty(item);
+                }else{
+                    props.insertContent(item.code)
+                }
             }}><a>添加</a></div>)}
         </div>
     )
@@ -128,6 +138,12 @@ const QuickInsertComponent: React.FC<Props> = (props) => {
                     <ReactMarkdown>{data.description}</ReactMarkdown>
                 </div>
             </div>
+            {propertyVisible && <PropertyComponent data={property} close={() => {
+                setPropertyVisible(false);
+            }} ok={(data: any) => {
+                props.insertContent(data);
+                setPropertyVisible(false);
+            }}/>}
         </Spin>
     );
 }
