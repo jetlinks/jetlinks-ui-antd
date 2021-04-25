@@ -10,6 +10,7 @@ interface Item {
     key: string,
     type: string,
     props?: any,
+    value?:any;
 }
 
 interface Props extends FormComponentProps {
@@ -127,7 +128,9 @@ const SearchForm = (props: Props) => {
                         <Form.Item
                             label={item.label}
                         >
-                            {getFieldDecorator(item.key)(
+                            {getFieldDecorator(item.key,{
+                                initialValue:item?.value
+                            })(
                                 renderItem(item.type, item.label, item.props)
                             )}
                         </Form.Item>
