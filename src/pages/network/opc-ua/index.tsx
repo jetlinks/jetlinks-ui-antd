@@ -11,6 +11,7 @@ import BindSave from './save/bind-save';
 import PointSave from './save/point-save';
 import Import from './operation/import';
 import Export from './operation/export';
+import BindDevice from './operation/bind-device';
 
 interface Props {
     certificate: any;
@@ -25,6 +26,7 @@ interface State {
     bindSaveVisible: boolean;
     pointSaveVisible: boolean;
     pointVisible: boolean;
+    bindDeviceVisible: boolean;
     currentChannel: any;
     currentBind: any;
     currentPoint: any;
@@ -44,6 +46,7 @@ const OpcUaComponent: React.FC<Props> = props => {
         bindSaveVisible: false,
         pointSaveVisible: false,
         channelSaveVisible: false,
+        bindDeviceVisible: false,
         currentChannel: {},
         currentBind: {},
         currentPoint: {},
@@ -62,6 +65,7 @@ const OpcUaComponent: React.FC<Props> = props => {
     const [channelSaveVisible, setChannelSaveVisible] = useState(initState.channelSaveVisible);
     const [bindSaveVisible, setBindSaveVisible] = useState(initState.bindSaveVisible);
     const [pointSaveVisible, setPointSaveVisible] = useState(initState.pointSaveVisible);
+    const [bindDeviceVisible, setBindDeviceVisible] = useState(initState.bindDeviceVisible);
     const [currentChannel, setCurrentChannel] = useState(initState.currentChannel);
     const [currentBind, setCurrentBind] = useState(initState.currentBind);
     const [currentPoint, setCurrentPoint] = useState(initState.currentPoint);
@@ -70,6 +74,7 @@ const OpcUaComponent: React.FC<Props> = props => {
     const [deviceId, setDeviceId] = useState(initState.deviceId);
     const [importVisible, setImportVisible] = useState(false);
     const [exportVisible, setExportVisible] = useState(false);
+    const [treeNode, setTreeNode] = useState<any>({});
     const [spinning, setSpinning] = useState(true);
 
     const getListNoPaging = () => {
@@ -82,7 +87,8 @@ const OpcUaComponent: React.FC<Props> = props => {
                         key: item.id,
                         title: rendertitle(item),
                         isLeaf: false,
-                        children: []
+                        children: [],
+                        id: item.id
                     })
                 })
                 setDataListNoPaing([...data]);
@@ -152,21 +158,15 @@ const OpcUaComponent: React.FC<Props> = props => {
 
     const rendertitle = (item: any) => (
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <div style={{ marginRight: '150px' }} onClick={() => {
-                setOpcId(item.id);
-                getDeviceBindList({
-                    pageSize: 10,
-                    terms: {
-                        opcUaId: item.id
-                    }
-                });
-                setPointVisible(false);
-            }}>{item.name}</div>
+            <div style={{ marginRight: '105px' }}>{item.name}</div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <div style={{ marginRight: '10px' }} onClick={() => {
                     setCurrentChannel(item);
                     setChannelSaveVisible(true);
                 }}><a>编辑</a></div>
+                <div style={{ marginRight: '10px' }} onClick={() => {
+                    setBindDeviceVisible(true);
+                }}><a>绑定设备</a></div>
                 {item.state.value === 'disabled' ?
                     <div onClick={() => {
                         apis.opcUa.start(item.id).then(res => {
@@ -185,12 +185,12 @@ const OpcUaComponent: React.FC<Props> = props => {
             </div>
         </div>
     )
-
+    //绑定设备
     const columns = [
         {
-            title: 'ID',
+            title: '设备ID',
             align: 'center',
-            dataIndex: 'id',
+            dataIndex: 'deviceId'
         },
         {
             title: '设备名称',
@@ -201,6 +201,11 @@ const OpcUaComponent: React.FC<Props> = props => {
             title: '产品名称',
             align: 'center',
             dataIndex: 'productName'
+        },
+        {
+            title: '服务ID',
+            align: 'center',
+            dataIndex: 'serverId'
         },
         {
             title: '采集状态',
@@ -242,28 +247,29 @@ const OpcUaComponent: React.FC<Props> = props => {
                                         },
                                         pageSize: 10
                                     });
+                                    onLoadData(treeNode);
                                     message.success('操作成功！');
                                 }
                             })
                         }}>
-                            <a>删除</a>
+                            <a>解绑</a>
                         </Popconfirm>
                     </> : <>
-                            <Divider type="vertical" />
-                            <a onClick={() => {
-                                apis.opcUa.stopBind(record.id).then(res => {
-                                    if (res.status === 200) {
-                                        getDeviceBindList({
-                                            terms: {
-                                                opcUaId: opcId
-                                            },
-                                            pageSize: 10
-                                        });
-                                        message.success('操作成功！');
-                                    }
-                                })
-                            }}>停止采集</a>
-                        </>}
+                        <Divider type="vertical" />
+                        <a onClick={() => {
+                            apis.opcUa.stopBind(record.id).then(res => {
+                                if (res.status === 200) {
+                                    getDeviceBindList({
+                                        terms: {
+                                            opcUaId: opcId
+                                        },
+                                        pageSize: 10
+                                    });
+                                    message.success('操作成功！');
+                                }
+                            })
+                        }}>停止采集</a>
+                    </>}
                 </Fragment>
             ),
         }
@@ -300,17 +306,17 @@ const OpcUaComponent: React.FC<Props> = props => {
             align: 'center',
             dataIndex: 'description'
         },
-        {
-            title: '操作',
-            render: (text: string, record: any) => (
-                <Fragment>
-                    <a onClick={() => {
-                        setPointSaveVisible(true);
-                        setCurrentPoint(record);
-                    }}>编辑</a>
-                </Fragment>
-            ),
-        },
+        // {
+        //     title: '操作',
+        //     render: (text: string, record: any) => (
+        //         <Fragment>
+        //             <a onClick={() => {
+        //                 setPointSaveVisible(true);
+        //                 setCurrentPoint(record);
+        //             }}>编辑</a>
+        //         </Fragment>
+        //     ),
+        // },
     ];
 
     const updateTreeData = (list: any[], key: React.Key, children: any[]): any[] => {
@@ -348,6 +354,7 @@ const OpcUaComponent: React.FC<Props> = props => {
                         key: item.id,
                         title: item.name,
                         isLeaf: true,
+                        id: item.deviceId,
                         children: []
                     })
                 })
@@ -376,16 +383,26 @@ const OpcUaComponent: React.FC<Props> = props => {
                                 loadData={onLoadData}
                                 onSelect={(key, e) => {
                                     if (key.length > 0) {
-                                        const { isLeaf } = e.node.props;
+                                        setTreeNode(e.node);
+                                        const { isLeaf, id } = e.node.props;
                                         if (isLeaf) {
-                                            setDeviceId(key[0]);
+                                            setDeviceId(id);
                                             getDevicePointList({
                                                 pageSize: 10,
                                                 terms: {
-                                                    deviceId: key[0]
+                                                    deviceId: id
                                                 }
                                             });
                                             setPointVisible(true);
+                                        } else {
+                                            setOpcId(id);
+                                            getDeviceBindList({
+                                                pageSize: 10,
+                                                terms: {
+                                                    opcUaId: id
+                                                }
+                                            });
+                                            setPointVisible(false);
                                         }
                                     }
                                 }}
@@ -397,10 +414,10 @@ const OpcUaComponent: React.FC<Props> = props => {
                                     {pointVisible ?
                                         <>
                                             <div style={{ display: 'flex', marginBottom: '20px', width: '100%', justifyContent: 'flex-end' }}>
-                                                <div><Button icon="plus" type="primary" onClick={() => {
+                                                {/* <div><Button icon="plus" type="primary" onClick={() => {
                                                     setPointSaveVisible(true);
                                                     setCurrentPoint({});
-                                                }}>新增</Button></div>
+                                                }}>新增</Button></div> */}
                                             </div>
                                             <Table
                                                 loading={props.loading}
@@ -424,9 +441,26 @@ const OpcUaComponent: React.FC<Props> = props => {
                                                 <div style={{ marginRight: '20px' }}><Button icon="vertical-align-bottom" type="dashed" onClick={() => {
                                                     setImportVisible(true);
                                                 }}>导入</Button></div>
-                                                <div><Button type="dashed" icon="vertical-align-top" onClick={() => {
+                                                <div style={{ marginRight: '20px' }}><Button type="dashed" icon="vertical-align-top" onClick={() => {
                                                     setExportVisible(true);
                                                 }}>导出</Button></div>
+                                                <div>
+                                                    <Popconfirm title="确认全部开始采集" onConfirm={() => {
+                                                        apis.opcUa.startAllDevice(opcId).then(res => {
+                                                            if (res.status === 200) {
+                                                                message.success('操作成功！');
+                                                                getDeviceBindList({
+                                                                    terms: {
+                                                                        opcUaId: opcId
+                                                                    },
+                                                                    pageSize: 10
+                                                                });
+                                                            }
+                                                        })
+                                                    }}>
+                                                        <Button type="dashed">全部开始采集</Button>
+                                                    </Popconfirm>
+                                                </div>
                                             </div>
                                             <Table
                                                 loading={props.loading}
@@ -489,6 +523,7 @@ const OpcUaComponent: React.FC<Props> = props => {
                     setBindSaveVisible(false);
                 }} opcId={opcId} save={() => {
                     setBindSaveVisible(false);
+                    onLoadData(treeNode);
                     getDeviceBindList({
                         terms: {
                             opcUaId: opcId
@@ -512,6 +547,17 @@ const OpcUaComponent: React.FC<Props> = props => {
                         }}
                     />
                 )}
+                {bindDeviceVisible && <BindDevice opcId={opcId}
+                    close={() => {
+                        setBindDeviceVisible(false);
+                        onLoadData(treeNode);
+                        getDeviceBindList({
+                            pageSize: 10,
+                            terms: {
+                                opcUaId: opcId
+                            }
+                        });
+                    }} />}
             </PageHeaderWrapper>
         </Spin>
     );

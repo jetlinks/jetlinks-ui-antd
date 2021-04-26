@@ -119,7 +119,7 @@ const BindSave: React.FC<Props> = props => {
         >
             <Spin spinning={loading}>
                 <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
-                    <Form.Item key="id" label="设备id">
+                    {!props.data.id && <Form.Item key="id" label="设备id">
                         {getFieldDecorator('id', {
                             rules: [
                                 { required: true, message: '请输入设备id' },
@@ -128,7 +128,7 @@ const BindSave: React.FC<Props> = props => {
                             ],
                             initialValue: props.data.id,
                         })(<Input placeholder="请输入设备id" disabled={!!props.data.id} />)}
-                    </Form.Item>
+                    </Form.Item>}
                     <Form.Item key="name" label="设备名称">
                         {getFieldDecorator('name', {
                             rules: [
@@ -159,7 +159,7 @@ const BindSave: React.FC<Props> = props => {
                     <Form.Item key="serverId" label="服务ID">
                         {getFieldDecorator('serverId', {
                             rules: [{ required: true }],
-                            initialValue: props.data.configuration?.opcClusterNodeId,
+                            initialValue: props.data.configuration?.opcServerId,
                         })(
                             <Select placeholder="请选择">
                                 {(clusterList || []).map(item => (
