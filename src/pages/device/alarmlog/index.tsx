@@ -21,7 +21,7 @@ const Alarmlog: React.FC<Props> = props => {
   const [solveAlarmLogId, setSolveAlarmLogId] = useState();
   const [result, setResult] = useState<any>({});
   const productList = useRef<any[]>([]);
-  const [searchParam, setSearchParam] = useState({
+  const [searchParam, setSearchParam] = useState<any>({
     pageSize: 10,
     sorts: {
       order: 'descend',
@@ -194,7 +194,7 @@ const Alarmlog: React.FC<Props> = props => {
           columns={alarmLogColumns}
           rowKey="id"
           onSearch={(params: any) => {
-            handleSearch(params);
+            handleSearch({ ...params, terms: { ...searchParam.terms, ...params.terms } });
           }}
           paginationConfig={result}
         />
