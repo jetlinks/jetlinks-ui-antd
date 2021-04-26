@@ -376,37 +376,39 @@ const OpcUaComponent: React.FC<Props> = props => {
                                     setCurrentChannel({});
                                 }}>新增</Button>
                             </div>
-                            <Tree
-                                showIcon
-                                defaultExpandAll
-                                treeData={dataListNoPaing}
-                                loadData={onLoadData}
-                                onSelect={(key, e) => {
-                                    if (key.length > 0) {
-                                        setTreeNode(e.node);
-                                        const { isLeaf, id } = e.node.props;
-                                        if (isLeaf) {
-                                            setDeviceId(id);
-                                            getDevicePointList({
-                                                pageSize: 10,
-                                                terms: {
-                                                    deviceId: id
-                                                }
-                                            });
-                                            setPointVisible(true);
-                                        } else {
-                                            setOpcId(id);
-                                            getDeviceBindList({
-                                                pageSize: 10,
-                                                terms: {
-                                                    opcUaId: id
-                                                }
-                                            });
-                                            setPointVisible(false);
+                            <div style={{ width: '320px', height: '650px', overflowY: 'scroll' }}>
+                                <Tree
+                                    showIcon
+                                    defaultExpandAll
+                                    treeData={dataListNoPaing}
+                                    loadData={onLoadData}
+                                    onSelect={(key, e) => {
+                                        if (key.length > 0) {
+                                            setTreeNode(e.node);
+                                            const { isLeaf, id } = e.node.props;
+                                            if (isLeaf) {
+                                                setDeviceId(id);
+                                                getDevicePointList({
+                                                    pageSize: 10,
+                                                    terms: {
+                                                        deviceId: id
+                                                    }
+                                                });
+                                                setPointVisible(true);
+                                            } else {
+                                                setOpcId(id);
+                                                getDeviceBindList({
+                                                    pageSize: 10,
+                                                    terms: {
+                                                        opcUaId: id
+                                                    }
+                                                });
+                                                setPointVisible(false);
+                                            }
                                         }
-                                    }
-                                }}
-                            />
+                                    }}
+                                />
+                            </div>
                         </Card>
                         <Card style={{ width: 'calc(100% - 360px)' }}>
                             <div className={styles.tableList}>
