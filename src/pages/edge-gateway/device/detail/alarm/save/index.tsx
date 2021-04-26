@@ -277,7 +277,7 @@ const AlarmSave: React.FC<Props> = props => {
                   }}
                   trigger={item}
                   key={`trigger_${Math.round(Math.random() * 100000)}`}
-                  metaData={device.metaData}
+                  metaData={device?.metaData}
                   position={index}
                   remove={(position: number) => {
                     trigger.splice(position, 1);

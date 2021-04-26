@@ -86,7 +86,7 @@ const Import: React.FC<Props> = props => {
       source.onmessage = (e: any) => {
         const res = JSON.parse(e.data);
         if (res.success) {
-          const temp = res.result.total;
+          const temp = res.result;
           dt += temp;
           setCount(dt);
         } else {

@@ -16,7 +16,7 @@ const Save1: React.FC<Props> = props => {
 
     return (
         <Modal
-            title={data.id ? '复制规则实例' : '新增规则实例'}
+            title={'新增规则实例'}
             visible
             onCancel={() => { props.close() }}
             onOk={() => {

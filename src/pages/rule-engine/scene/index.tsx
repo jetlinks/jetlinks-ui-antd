@@ -76,6 +76,15 @@ const RuleInstanceList: React.FC<Props> = props => {
     })
   };
 
+  const onChange = (page: number, pageSize: number) => {
+    handleSearch({
+      pageIndex: page - 1,
+      pageSize,
+      terms: searchParam.terms,
+      sorts: searchParam.sorts,
+    });
+  };
+
   useEffect(() => {
     handleSearch(searchParam);
   }, []);
@@ -143,6 +152,7 @@ const RuleInstanceList: React.FC<Props> = props => {
             loading={props.loading}
             grid={{ gutter: 24, xl: 4, lg: 3, md: 3, sm: 2, xs: 1 }}
             dataSource={(sceneList || {}).data}
+            on
             pagination={{
               current: sceneList?.pageIndex + 1,
               total: sceneList?.total,
@@ -152,6 +162,7 @@ const RuleInstanceList: React.FC<Props> = props => {
               hideOnSinglePage: true,
               pageSizeOptions: ['8', '16', '40', '80'],
               style: { marginTop: -20 },
+              onChange,
               showTotal: (total: number) =>
                 `共 ${total} 条记录 第  ${sceneList.pageIndex + 1}/${Math.ceil(
                   sceneList.total / sceneList.pageSize,

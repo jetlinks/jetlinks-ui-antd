@@ -59,28 +59,32 @@ const Save: React.FC<Props> = props => {
       }
       props.save({ ...params });
     }else if (instanceType === 'rule-scene') {
-      let tri = trigger.map(item => {
-        if (item.trigger === 'scene') {
-          return { scene: item.scene, trigger: 'scene' }
-        } else if (item.trigger === 'manual') {
-          return {
-            trigger: 'manual'
+      if(action[0].executor){
+        let tri = trigger.map(item => {
+          if (item.trigger === 'scene') {
+            return { scene: item.scene, trigger: 'scene' }
+          } else if (item.trigger === 'manual') {
+            return {
+              trigger: 'manual'
+            }
+          } else if (item.trigger === 'timer') {
+            return { cron: item.cron, trigger: 'timer' }
+          } else {
+            return { device: item.device, trigger: 'device' }
           }
-        } else if (item.trigger === 'timer') {
-          return { cron: item.cron, trigger: 'timer' }
-        } else {
-          return { device: item.device, trigger: 'device' }
-        }
-      });
-      let items = {
-        id: id,
-        name: name,
-        triggers: tri,
-        actions: action,
-        parallel: parallel,
-        instanceType: 'rule-scene'
-      };
-      props.save(items);
+        });
+        let items = {
+          id: id,
+          name: name,
+          triggers: tri,
+          actions: action,
+          parallel: parallel,
+          instanceType: 'rule-scene'
+        };
+        props.save(items);
+      }else{
+        message.error('请输入执行动作')
+      }
     }
   };
 
@@ -175,7 +179,7 @@ const Save: React.FC<Props> = props => {
 
   return (
     <Modal
-      title={`${props.data?.id ? '编辑' : '新建'}规则实例`}
+      title={`新建规则实例`}
       visible
       okText="确定"
       cancelText="取消"

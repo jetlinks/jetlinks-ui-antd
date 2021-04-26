@@ -64,11 +64,16 @@ const Functions: React.FC<Props> = (props) => {
         functionId: fileValue.functionId,
         properties: JSON.parse(fileValue.functionData)
       }).subscribe(response => {
-        const tempResult = response?.result[0][0];
+        const tempResult = response?.result[0];
+        let result = response?.result;
         if (response.status === 200) {
-          typeof tempResult === 'object' ?
-            setFieldsValue({ logs: JSON.stringify(tempResult) }) :
-            setFieldsValue({ logs: tempResult })
+          if(typeof result === 'string'){
+            setFieldsValue({ logs: result });
+          }else if(typeof tempResult === 'object'){
+            setFieldsValue({ logs: JSON.stringify(tempResult) });
+          }else{
+            setFieldsValue({ logs: tempResult });
+          }
         }else{
           setFieldsValue({ logs: '调试错误' });
         }
