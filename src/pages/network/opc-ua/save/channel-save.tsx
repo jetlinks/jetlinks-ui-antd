@@ -14,7 +14,7 @@ interface State {
     securityMode: string;
 }
 
-const Save: React.FC<Props> = props => {
+const ChannelSave: React.FC<Props> = props => {
     const initState: State = {
        certIdList: [],
        securityMode: ""
@@ -22,11 +22,11 @@ const Save: React.FC<Props> = props => {
 
     const {
         form: { getFieldDecorator },
-        form,
-        data,
+        form
     } = props;
 
     const [certIdList, setcertIdList] = useState(initState.certIdList);
+    const [data, setData] = useState(props.data.clientConfigs ? props.data : {clientConfigs: [{}]});
     const [securityMode, setSecurityMode] = useState(initState.securityMode);
 
     useEffect(() => {
@@ -116,4 +116,4 @@ const Save: React.FC<Props> = props => {
         </Modal>
     );
 };
-export default Form.create<Props>()(Save);
+export default Form.create<Props>()(ChannelSave);
