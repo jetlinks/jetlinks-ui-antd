@@ -25,6 +25,10 @@ const BindDevice: React.FC<Props> = props => {
     const [searchParam, setSearchParam] = useState({ pageSize: 10, terms: {} });
 
     const handleSearch = (params: any) => {
+        params.terms = {
+            ...params.terms,
+            'productId$dev-protocol': 'opc-ua'
+        }
         setSearchParam(params);
         apis.deviceInstance.list(encodeQueryParam(params))
             .then(response => {

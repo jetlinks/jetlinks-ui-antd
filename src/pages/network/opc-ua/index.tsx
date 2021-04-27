@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { PaginationConfig } from 'antd/es/table';
-import { Card, Table, Badge, Tree, Divider, Button, message, Popconfirm, Spin } from 'antd';
+import { Card, Table, Badge, Tree, Divider, Button, message, Popconfirm, Spin, Dropdown, Icon, Menu, Modal } from 'antd';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import styles from '@/utils/table.less';
 import style from './index.less';
@@ -12,6 +12,7 @@ import PointSave from './save/point-save';
 import Import from './operation/import';
 import Export from './operation/export';
 import BindDevice from './operation/bind-device';
+import SearchForm from '@/components/SearchForm';
 
 interface Props {
     certificate: any;
@@ -135,14 +136,26 @@ const OpcUaComponent: React.FC<Props> = props => {
     statusMap.set('notActive', 'processing');
     statusMap.set('enabled', 'success');
     statusMap.set('disabled', 'error');
+    statusMap.set('disconnected', 'processing');
 
     const onTableChange = (
-        pagination: PaginationConfig
+        pagination: PaginationConfig,
+        filters: any,
     ) => {
+        let { terms } = searchParam;
+        if (filters.opcUaState) {
+            if (terms) {
+                terms.opcUaState = filters.opcUaState[0];
+            } else {
+                terms = {
+                    opcUaState: filters.opcUaState[0],
+                };
+            }
+        }
         getDeviceBindList({
             pageIndex: Number(pagination.current) - 1,
             pageSize: pagination.pageSize,
-            terms: searchParam.terms
+            terms
         });
     };
 
@@ -212,6 +225,21 @@ const OpcUaComponent: React.FC<Props> = props => {
             align: 'center',
             dataIndex: 'opcUaState',
             render: (record: any) => record ? <Badge status={statusMap.get(record.value)} text={record.text} /> : '/',
+            filters: [
+                {
+                    text: '禁用',
+                    value: 'disabled',
+                }, 
+                {
+                    text: '启用',
+                    value: 'enabled',
+                },
+                {
+                    text: '已断开',
+                    value: 'disconnected',
+                }
+            ],
+            filterMultiple: false,
         },
         {
             title: '操作',
@@ -227,12 +255,7 @@ const OpcUaComponent: React.FC<Props> = props => {
                         <a onClick={() => {
                             apis.opcUa.startBind(record.id).then(res => {
                                 if (res.status === 200) {
-                                    getDeviceBindList({
-                                        terms: {
-                                            opcUaId: opcId
-                                        },
-                                        pageSize: 10
-                                    });
+                                    getDeviceBindList(searchParam);
                                     message.success('操作成功！');
                                 }
                             })
@@ -241,13 +264,10 @@ const OpcUaComponent: React.FC<Props> = props => {
                         <Popconfirm title="确认删除？" onConfirm={() => {
                             apis.opcUa.removeBind(record.id).then(res => {
                                 if (res.status === 200) {
-                                    getDeviceBindList({
-                                        terms: {
-                                            opcUaId: opcId
-                                        },
-                                        pageSize: 10
-                                    });
-                                    onLoadData(treeNode);
+                                    getDeviceBindList(searchParam);
+                                    if(treeNode !== {}){
+                                        onLoadData(treeNode);
+                                    }
                                     message.success('操作成功！');
                                 }
                             })
@@ -259,12 +279,7 @@ const OpcUaComponent: React.FC<Props> = props => {
                         <a onClick={() => {
                             apis.opcUa.stopBind(record.id).then(res => {
                                 if (res.status === 200) {
-                                    getDeviceBindList({
-                                        terms: {
-                                            opcUaId: opcId
-                                        },
-                                        pageSize: 10
-                                    });
+                                    getDeviceBindList(searchParam);
                                     message.success('操作成功！');
                                 }
                             })
@@ -364,6 +379,55 @@ const OpcUaComponent: React.FC<Props> = props => {
         });
     }
 
+    const menu = (
+        <Menu>
+            <Menu.Item key="1">
+                <Button
+                    icon="download"
+                    type="default"
+                    onClick={() => {
+                        setExportVisible(true);
+                    }}
+                >
+                    批量导出设备
+            </Button>
+            </Menu.Item>
+            <Menu.Item key="2">
+                <Button
+                    icon="upload"
+                    onClick={() => {
+                        setImportVisible(true);
+                    }}
+                >
+                    批量导入设备
+            </Button>
+            </Menu.Item>
+            <Menu.Item key="5">
+                <Button icon="check-circle" type="danger" onClick={() => {
+                    Modal.confirm({
+                        title: `确认全部开始采集`,
+                        okText: '确定',
+                        okType: 'primary',
+                        cancelText: '取消',
+                        onOk() {
+                            apis.opcUa.startAllDevice(opcId).then(res => {
+                                if (res.status === 200) {
+                                    message.success('操作成功！');
+                                    getDeviceBindList({
+                                        terms: {
+                                            opcUaId: opcId
+                                        },
+                                        pageSize: 10
+                                    });
+                                }
+                            })
+                        },
+                    });
+                }}>全部开始采集</Button>
+            </Menu.Item>
+        </Menu>
+    );
+
     return (
         <Spin spinning={spinning}>
             <PageHeaderWrapper title="OPC UA">
@@ -416,10 +480,10 @@ const OpcUaComponent: React.FC<Props> = props => {
                                     {pointVisible ?
                                         <>
                                             <div style={{ display: 'flex', marginBottom: '20px', width: '100%', justifyContent: 'flex-end' }}>
-                                                {/* <div><Button icon="plus" type="primary" onClick={() => {
+                                                 {/* <div><Button icon="plus" type="primary" onClick={() => {
                                                     setPointSaveVisible(true);
                                                     setCurrentPoint({});
-                                                }}>新增</Button></div> */}
+                                                }}>新增</Button></div>  */}
                                             </div>
                                             <Table
                                                 loading={props.loading}
@@ -435,34 +499,36 @@ const OpcUaComponent: React.FC<Props> = props => {
                                             />
                                         </> :
                                         <>
-                                            <div style={{ display: 'flex', marginBottom: '20px', width: '100%', justifyContent: 'flex-end' }}>
+                                            <div style={{ display: 'flex', marginBottom: '20px', width: '100%', flexWrap: 'wrap' }}>
+                                                <div style={{ width: '100%' }}>
+                                                    <SearchForm
+                                                        search={(params: any) => {
+                                                            getDeviceBindList({ terms: { ...params, opcUaId: opcId }, pageSize: 10 });
+                                                        }}
+                                                        formItems={[
+                                                            {
+                                                                label: '设备ID',
+                                                                key: 'deviceId$LIKE',
+                                                                type: 'string'
+                                                            },
+                                                            // {
+                                                            //     label: '设备名称',
+                                                            //     key: 'name$LIKE',
+                                                            //     type: 'string'
+                                                            // }
+                                                        ]}
+                                                    />
+                                                </div>
                                                 <div style={{ marginRight: '20px' }}><Button type="primary" icon="plus" onClick={() => {
                                                     setBindSaveVisible(true);
                                                     setCurrentBind({});
-                                                }}>新增</Button></div>
-                                                <div style={{ marginRight: '20px' }}><Button icon="vertical-align-bottom" type="dashed" onClick={() => {
-                                                    setImportVisible(true);
-                                                }}>导入</Button></div>
-                                                <div style={{ marginRight: '20px' }}><Button type="dashed" icon="vertical-align-top" onClick={() => {
-                                                    setExportVisible(true);
-                                                }}>导出</Button></div>
-                                                <div>
-                                                    <Popconfirm title="确认全部开始采集" onConfirm={() => {
-                                                        apis.opcUa.startAllDevice(opcId).then(res => {
-                                                            if (res.status === 200) {
-                                                                message.success('操作成功！');
-                                                                getDeviceBindList({
-                                                                    terms: {
-                                                                        opcUaId: opcId
-                                                                    },
-                                                                    pageSize: 10
-                                                                });
-                                                            }
-                                                        })
-                                                    }}>
-                                                        <Button type="dashed">全部开始采集</Button>
-                                                    </Popconfirm>
-                                                </div>
+                                                }}>新增设备</Button></div>
+                                                <Dropdown overlay={menu}>
+                                                    <Button icon="menu">
+                                                        其他批量操作
+                                                        <Icon type="down" />
+                                                    </Button>
+                                                </Dropdown>
                                             </div>
                                             <Table
                                                 loading={props.loading}
@@ -525,19 +591,25 @@ const OpcUaComponent: React.FC<Props> = props => {
                     setBindSaveVisible(false);
                 }} opcId={opcId} save={() => {
                     setBindSaveVisible(false);
-                    onLoadData(treeNode);
-                    getDeviceBindList({
-                        terms: {
-                            opcUaId: opcId
-                        },
-                        pageSize: 10
-                    });
+                    if(treeNode !== {}){
+                        onLoadData(treeNode);
+                    }
+                    getDeviceBindList(searchParam);
                 }} />}
                 {importVisible && (
                     <Import
                         opcId={opcId}
                         close={() => {
                             setImportVisible(false);
+                            if(treeNode !== {}){
+                                onLoadData(treeNode);
+                            }
+                            getDeviceBindList({
+                                pageSize: 10,
+                                terms: {
+                                    opcUaId: opcId
+                                }
+                            });
                         }}
                     />
                 )}
@@ -552,7 +624,9 @@ const OpcUaComponent: React.FC<Props> = props => {
                 {bindDeviceVisible && <BindDevice opcId={opcId}
                     close={() => {
                         setBindDeviceVisible(false);
-                        onLoadData(treeNode);
+                        if(treeNode !== {}){
+                            onLoadData(treeNode);
+                        }
                         getDeviceBindList({
                             pageSize: 10,
                             terms: {
