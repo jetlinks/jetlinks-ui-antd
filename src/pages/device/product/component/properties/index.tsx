@@ -881,7 +881,7 @@ const PropertiesDefin: React.FC<Props> = props => {
             <Form.Item label="是否只读">
               {getFieldDecorator('expands.readOnly', {
                 rules: [{ required: true }],
-                initialValue: initState.data.expands?.readOnly?.toString(),
+                initialValue: initState.data.expands?.readOnly?.toString?.(),
               })(
                 <Radio.Group>
                   <Radio value="true">是</Radio>
@@ -911,7 +911,7 @@ const PropertiesDefin: React.FC<Props> = props => {
                     <Form.Item wrapperCol={{ span: 24 }}>
                       {getFieldDecorator('expands.virtualRule.script', {
                         // rules: [{ required: true }],
-                        initialValue: initState.data.expands?.virtualRule.script
+                        initialValue: initState.data.expands?.virtualRule?.script
                       })(
                         <VirtualEditorComponent scriptValue={(value: string) => {
                           setScript(value);
