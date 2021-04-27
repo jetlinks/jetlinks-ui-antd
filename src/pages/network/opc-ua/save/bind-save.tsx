@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Form from 'antd/es/form';
 import { FormComponentProps } from 'antd/lib/form';
-import { Input, message, Modal, Select, Spin } from 'antd';
+import { Icon, Input, message, Modal, Select, Spin, Tooltip } from 'antd';
 import { ConnectState } from '@/models/connect';
 import { connect } from 'dva';
 import apis from '@/services';
@@ -110,6 +110,7 @@ const BindSave: React.FC<Props> = props => {
         <Modal
             title={`${props.data.id ? '编辑' : '新建'}设备`}
             visible
+            width={600}
             okText="确定"
             cancelText="取消"
             onOk={() => {
@@ -156,10 +157,16 @@ const BindSave: React.FC<Props> = props => {
                             </Select>,
                         )}
                     </Form.Item>
-                    <Form.Item key="serverId" label="服务ID">
+                    <Form.Item key="serverId" label={(
+                        <span>
+                            集群节点&nbsp;
+                            <Tooltip title="在指定的集群节点中拉取此设备的数据">
+                                <Icon type="question-circle-o" />
+                            </Tooltip>
+                        </span>
+                    )}>
                         {getFieldDecorator('serverId', {
-                            rules: [{ required: true }],
-                            initialValue: props.data.configuration?.opcServerId,
+                            initialValue: props.data.serverId,
                         })(
                             <Select placeholder="请选择">
                                 {(clusterList || []).map(item => (
@@ -180,4 +187,3 @@ export default connect(({ deviceProduct, loading }: ConnectState) => ({
     deviceProduct,
     loading,
 }))(Form.create<Props>()(BindSave));
-

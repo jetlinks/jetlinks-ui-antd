@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { PaginationConfig } from 'antd/es/table';
-import { Card, Table, Badge, Tree, Divider, Button, message, Popconfirm, Spin, Dropdown, Icon, Menu, Modal } from 'antd';
+import { Card, Table, Badge, Tree, Divider, Button, message, Popconfirm, Spin, Dropdown, Icon, Menu, Modal, Tooltip } from 'antd';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import styles from '@/utils/table.less';
 import style from './index.less';
@@ -143,12 +143,12 @@ const OpcUaComponent: React.FC<Props> = props => {
         filters: any,
     ) => {
         let { terms } = searchParam;
-        if (filters.opcUaState) {
+        if (filters.state) {
             if (terms) {
-                terms.opcUaState = filters.opcUaState[0];
+                terms.state = filters.state[0];
             } else {
                 terms = {
-                    opcUaState: filters.opcUaState[0],
+                    state: filters.state[0],
                 };
             }
         }
@@ -171,7 +171,11 @@ const OpcUaComponent: React.FC<Props> = props => {
 
     const rendertitle = (item: any) => (
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <div style={{ marginRight: '105px' }}>{item.name}</div>
+            <div style={{ width: '130px', overflow: 'hidden', marginRight: '10px', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <Tooltip title={item.name}>
+                    {item.name}
+                </Tooltip>
+            </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <div style={{ marginRight: '10px' }} onClick={() => {
                     setCurrentChannel(item);
@@ -216,14 +220,14 @@ const OpcUaComponent: React.FC<Props> = props => {
             dataIndex: 'productName'
         },
         {
-            title: '服务ID',
+            title: '集群节点',
             align: 'center',
             dataIndex: 'serverId'
         },
         {
             title: '采集状态',
             align: 'center',
-            dataIndex: 'opcUaState',
+            dataIndex: 'state',
             render: (record: any) => record ? <Badge status={statusMap.get(record.value)} text={record.text} /> : '/',
             filters: [
                 {
@@ -250,7 +254,7 @@ const OpcUaComponent: React.FC<Props> = props => {
                         setBindSaveVisible(true);
                         setCurrentBind(record);
                     }}>编辑</a>
-                    {record.opcUaState.value === 'disabled' ? <>
+                    {record.state.value === 'disabled' ? <>
                         <Divider type="vertical" />
                         <a onClick={() => {
                             apis.opcUa.startBind(record.id).then(res => {
