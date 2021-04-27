@@ -1,5 +1,5 @@
 import {PageHeaderWrapper} from '@ant-design/pro-layout';
-import {Badge, Button, Card, Divider, message, Popconfirm} from 'antd';
+import {Badge, Card, Divider, message, Popconfirm} from 'antd';
 import React, {Fragment, useEffect, useState} from 'react';
 import styles from '@/utils/table.less';
 import SearchForm from '@/components/SearchForm';
@@ -258,7 +258,6 @@ const MediaDevice: React.FC<Props> = () => {
             rowKey="id"
             scroll={{x: '150%'}}
             onSearch={(params: any) => {
-              params.pageSize = 10;
               params.sorts = params.sorts.field ? params.sorts : {field: 'id', order: 'desc'};
               handleSearch(params);
             }}
