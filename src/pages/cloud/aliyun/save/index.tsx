@@ -186,22 +186,24 @@ const Save: React.FC<Props> = props => {
                                             option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
                                         }
                                         onBlur={(value) => {
-                                            let temp = form.getFieldValue('accessConfig.productKey');
-                                            form.setFieldsValue({
-                                                accessConfig: {
-                                                    apiEndpoint: `https://iot.${value}.aliyuncs.com`,
-                                                    authEndpoint: `https://iot-auth.${value}.aliyuncs.com/auth/bridge`,
-                                                    http2Endpoint: `https://${temp}.iot-as-http2.${value}.aliyuncs.com`,
-                                                }
-                                            });
-                                            let params = form.getFieldValue('accessConfig');
-                                            getBridge({
-                                                regionId: value,
-                                                accessSecret: params.accessSecret,
-                                                apiEndpoint: params.apiEndpoint,
-                                                authEndpoint: params.authEndpoint,
-                                                accessKeyId: params.accessKeyId,
-                                            })
+                                            if (value) {
+                                                let temp = form.getFieldValue('accessConfig.productKey');
+                                                form.setFieldsValue({
+                                                    accessConfig: {
+                                                        apiEndpoint: `https://iot.${value}.aliyuncs.com`,
+                                                        authEndpoint: `https://iot-auth.${value}.aliyuncs.com/auth/bridge`,
+                                                        http2Endpoint: `https://${temp}.iot-as-http2.${value}.aliyuncs.com`,
+                                                    }
+                                                });
+                                                let params = form.getFieldValue('accessConfig');
+                                                getBridge({
+                                                    regionId: value,
+                                                    accessSecret: params.accessSecret,
+                                                    apiEndpoint: params.apiEndpoint,
+                                                    authEndpoint: params.authEndpoint,
+                                                    accessKeyId: params.accessKeyId,
+                                                })
+                                            }
                                         }}
                                     >
                                     </AutoComplete>
@@ -350,7 +352,7 @@ const Save: React.FC<Props> = props => {
                                                                     let data: any[] = deviceList[index].filter((i: any) => {
                                                                         return i.deviceName === value
                                                                     });
-                                                                    if(data.length > 0){
+                                                                    if (data.length > 0) {
                                                                         secret = data[0].deviceSecret
                                                                     }
                                                                 }

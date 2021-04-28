@@ -67,8 +67,15 @@ export async function getDevicePointList(params: any) {
 }
 
 export async function removeBind(id: string) {
-    return request(`/jetlinks/device-instance/${id}`, {
+    return request(`/jetlinks/opc/device-bind/${id}`, {
         method: 'DELETE',
+    });
+}
+//批量解绑
+export async function removeManyBind(params: any) {
+    return request(`/jetlinks/opc/device-bind/batch/_delete`, {
+        method: 'POST',
+        data: params
     });
 }
 
@@ -108,5 +115,18 @@ export async function saveDevice(params: any) {
     return request(`/jetlinks/opc/device-bind/_create`, {
         method: 'POST',
         data: params,
+    });
+}
+//设备全部开始采集
+export async function startAllDevice(clientId: string) {
+    return request(`/jetlinks/opc/device-bind/${clientId}/batch/_enable`, {
+        method: 'POST'
+    });
+}
+//批量绑定数据
+export async function bindManyDevice(params: any) {
+    return request(`/jetlinks/opc/device-bind/batch/_create`, {
+        method: 'POST',
+        data: params
     });
 }

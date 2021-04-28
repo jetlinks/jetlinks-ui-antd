@@ -1410,7 +1410,7 @@ const Save: React.FC<Props> = props => {
   };
   return (
     <Drawer
-      title={`${props.data.id ? '编辑' : '新建'}网络组件1`}
+      title={`${props.data.id ? '编辑' : '新建'}网络组件`}
       visible
       onClose={() => props.close()}
       width="30VW"

@@ -37,7 +37,7 @@ const AddDevice: React.FC<Props> = props => {
                         </Form.Item>
                         <Form.Item key="username" label="用户名">
                             {getFieldDecorator('username', {
-                                rules: [{ required: true }],
+                                // rules: [{ required: true }],
                                 initialValue: data?.others?.username
                             })(
                                 <Input />
@@ -45,7 +45,7 @@ const AddDevice: React.FC<Props> = props => {
                         </Form.Item>
                         <Form.Item key="password" label="密码">
                             {getFieldDecorator('password', {
-                                rules: [{ required: true }],
+                                // rules: [{ required: true }],
                                 initialValue: data?.others?.password
                             })(
                                 <Input type="password" />

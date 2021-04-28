@@ -14,6 +14,8 @@ $ npm start         # visit http://localhost:8000
 - npm v6.x
 - Chrome v80.0+
 
+⚠️本项目基于[Ant Design 3.x](https://3x.ant.design/index-cn)开发,二次开发需要对Ant Design有一定基础。
+
 本地开发项目建议使用如下命令启动项目
 
 ```bash
