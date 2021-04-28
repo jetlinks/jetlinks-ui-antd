@@ -171,7 +171,7 @@ const UserList: React.FC<Props> = props => {
             if (response.status === 200) {
               message.success('删除成功');
               if (result.data.length === 1) {
-                handleSearch({ ...searchParam, pageIndex: searchParam.pageIndex - 1 });
+                handleSearch({ ...searchParam, pageIndex:( searchParam.pageIndex||1) - 1 });
               } else {
                 handleSearch(searchParam);
               }
@@ -191,7 +191,7 @@ const UserList: React.FC<Props> = props => {
     extra: any,
   ) => {
     handleSearch({
-      pageIndex: Number(pagination.current) - 1,
+      pageIndex: Number(pagination.current) - 1 || 0,
       pageSize: pagination.pageSize,
       terms: searchParam.terms,
       sorts: sorter,
