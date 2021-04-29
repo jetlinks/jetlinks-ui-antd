@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { PaginationConfig } from 'antd/es/table';
 import { Card, Table, Badge, Tree, Divider, Button, message, Popconfirm, Spin, Dropdown, Icon, Menu, Modal, Tooltip } from 'antd';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
@@ -84,7 +84,7 @@ const OpcUaComponent: React.FC<Props> = props => {
     const [spinning, setSpinning] = useState(true);
     const [properties$, setProperties$] = useState<any>();
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-    const [flag, setFlag] = useState(false);
+    const wsCallback = useRef();
 
     const getListNoPaging = () => {
         setSpinning(true);
@@ -124,8 +124,9 @@ const OpcUaComponent: React.FC<Props> = props => {
 
     const getDevicePointList = (params?: any) => {
         setSpinning(true);
+        let flag = false;
         if (params.terms.deviceId === searchPointParam.terms?.deviceId) {
-            setFlag(true);
+            flag = true;
         }
         setSearchPointParam(params);
         apis.opcUa.getDevicePointList(encodeQueryParam(params)).then(resp => {
@@ -521,8 +522,13 @@ const OpcUaComponent: React.FC<Props> = props => {
     }
 
     useEffect(() => {
+        wsCallback.current = properties$;
+    })
+
+    useEffect(() => {
         return () => {
-            properties$ && properties$.unsubscribe();
+            let properties = wsCallback.current;
+            properties && properties.unsubscribe();
         }
     }, []);
 
