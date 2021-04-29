@@ -130,3 +130,24 @@ export async function bindManyDevice(params: any) {
         data: params
     });
 }
+//启动点位
+export async function startPoint(deviceId: string, params: any) {
+    return request(`/jetlinks/opc/device-bind/points/${deviceId}/_start`, {
+        method: 'POST',
+        data: params
+    });
+}
+
+//停止点位
+export async function stopPoint(deviceId: string, params: any) {
+    return request(`/jetlinks/opc/device-bind/points/${deviceId}/_stop`, {
+        method: 'POST',
+        data: params
+    });
+}
+//删除点位
+export async function delPoint(pointId: string) {
+    return request(`/jetlinks/opc/device-bind/start/${pointId}`, {
+        method: 'DELETE'
+    });
+}

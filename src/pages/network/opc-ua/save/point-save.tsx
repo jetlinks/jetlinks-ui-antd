@@ -34,7 +34,7 @@ const PointSave: React.FC<Props> = props => {
     return (
         <Modal
             width={760}
-            title={`${props.data.id ? '编辑' : '新建'}测点`}
+            title={`${props.data.id ? '编辑' : '新建'}点位`}
             visible
             onCancel={() => props.close()}
             onOk={() => {
@@ -48,7 +48,7 @@ const PointSave: React.FC<Props> = props => {
                         initialValue: data.name,
                     })(<Input />)}
                 </Form.Item>
-                <Form.Item label="OPC测点ID">
+                <Form.Item label="OPC点位ID">
                     {getFieldDecorator('opcPointId', {
                         rules: [{ required: true, message: '请输入' }],
                         initialValue: data.opcPointId

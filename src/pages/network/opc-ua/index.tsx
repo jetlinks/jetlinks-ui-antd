@@ -13,6 +13,7 @@ import Import from './operation/import';
 import Export from './operation/export';
 import BindDevice from './operation/bind-device';
 import SearchForm from '@/components/SearchForm';
+import { getWebsocket } from '@/layouts/GlobalWebSocket';
 
 interface Props {
     certificate: any;
@@ -36,6 +37,8 @@ interface State {
     dataListNoPaing: any[];
     opcId: string;
     deviceId: string;
+    propertyList: any[];
+    selectedRowKeys: any[];
 }
 
 const OpcUaComponent: React.FC<Props> = props => {
@@ -56,6 +59,8 @@ const OpcUaComponent: React.FC<Props> = props => {
         dataListNoPaing: [],
         opcId: '',
         deviceId: '',
+        propertyList: [],
+        selectedRowKeys: []
     };
 
     const [searchParam, setSearchParam] = useState(initState.searchParam);
@@ -77,6 +82,9 @@ const OpcUaComponent: React.FC<Props> = props => {
     const [exportVisible, setExportVisible] = useState(false);
     const [treeNode, setTreeNode] = useState<any>({});
     const [spinning, setSpinning] = useState(true);
+    const [properties$, setProperties$] = useState<any>();
+    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+    const [flag, setFlag] = useState(false);
 
     const getListNoPaging = () => {
         setSpinning(true);
@@ -116,9 +124,15 @@ const OpcUaComponent: React.FC<Props> = props => {
 
     const getDevicePointList = (params?: any) => {
         setSpinning(true);
+        if (params.terms.deviceId === searchPointParam.terms?.deviceId) {
+            setFlag(true);
+        }
         setSearchPointParam(params);
         apis.opcUa.getDevicePointList(encodeQueryParam(params)).then(resp => {
-            setResultPoint(resp.result);
+            if (resp.status === 200) {
+                setResultPoint(resp.result);
+                propertiesWs(params.terms.deviceId, resp.result, flag);
+            }
             setSpinning(false);
         })
     }
@@ -160,8 +174,19 @@ const OpcUaComponent: React.FC<Props> = props => {
     };
 
     const onTablePointChange = (
-        pagination: PaginationConfig
+        pagination: PaginationConfig,
+        filters: any
     ) => {
+        let { terms } = searchPointParam;
+        if (filters.sate) {
+            if (terms) {
+                terms.sate = filters.sate[0];
+            } else {
+                terms = {
+                    sate: filters.sate[0]
+                };
+            }
+        }
         getDevicePointList({
             pageIndex: Number(pagination.current) - 1,
             pageSize: pagination.pageSize,
@@ -233,7 +258,7 @@ const OpcUaComponent: React.FC<Props> = props => {
                 {
                     text: '禁用',
                     value: 'disabled',
-                }, 
+                },
                 {
                     text: '启用',
                     value: 'enabled',
@@ -269,7 +294,7 @@ const OpcUaComponent: React.FC<Props> = props => {
                             apis.opcUa.removeBind(record.id).then(res => {
                                 if (res.status === 200) {
                                     getDeviceBindList(searchParam);
-                                    if(treeNode !== {}){
+                                    if (treeNode !== {}) {
                                         onLoadData(treeNode);
                                     }
                                     message.success('操作成功！');
@@ -289,6 +314,17 @@ const OpcUaComponent: React.FC<Props> = props => {
                             })
                         }}>停止采集</a>
                     </>}
+                    <Divider type="vertical" />
+                    <a onClick={() => {
+                        setDeviceId(record.deviceId);
+                        getDevicePointList({
+                            pageSize: 10,
+                            terms: {
+                                deviceId: record.deviceId
+                            }
+                        });
+                        setPointVisible(true);
+                    }}>查看点位</a>
                 </Fragment>
             ),
         }
@@ -306,7 +342,7 @@ const OpcUaComponent: React.FC<Props> = props => {
             dataIndex: 'deviceId'
         },
         {
-            title: 'OPC测点ID',
+            title: 'OPC点位ID',
             align: 'center',
             dataIndex: 'opcPointId'
         },
@@ -321,21 +357,72 @@ const OpcUaComponent: React.FC<Props> = props => {
             dataIndex: 'dataType'
         },
         {
+            title: '值',
+            align: 'center',
+            dataIndex: 'value'
+        },
+        {
+            title: '点位状态',
+            align: 'center',
+            dataIndex: 'sate',
+            render: (text: any) => <Badge status={text === 'good' ? 'success' : 'error'}
+                text={text === 'good' ? '正常' : '停止'} />,
+            filters: [
+                {
+                    text: '正常',
+                    value: 'good',
+                },
+                {
+                    text: '停止',
+                    value: 'failed',
+                }
+            ],
+            filterMultiple: false,
+        },
+        {
             title: '说明',
             align: 'center',
             dataIndex: 'description'
         },
-        // {
-        //     title: '操作',
-        //     render: (text: string, record: any) => (
-        //         <Fragment>
-        //             <a onClick={() => {
-        //                 setPointSaveVisible(true);
-        //                 setCurrentPoint(record);
-        //             }}>编辑</a>
-        //         </Fragment>
-        //     ),
-        // },
+        {
+            title: '操作',
+            render: (text: string, record: any) => (
+                <Fragment>
+                    <a onClick={() => {
+                        setPointSaveVisible(true);
+                        setCurrentPoint(record);
+                    }}>编辑</a>
+                    {record.sate === 'good' ?
+                        <>
+                            <Divider type="vertical" />
+                            <a onClick={() => {
+                                stopPoint([record.id]);
+                            }}>停止</a>
+                        </> :
+                        <>
+                            <Divider type="vertical" />
+                            <a onClick={() => {
+                                startPoint([record.id])
+                            }}>启动</a>
+                            <Divider type="vertical" />
+                            <Popconfirm
+                                placement="topRight"
+                                title="确定删除吗？"
+                                onConfirm={() => {
+                                    apis.opcUa.delPoint(record.id).then(res => {
+                                        if (res.status === 200) {
+                                            getDevicePointList(searchPointParam);
+                                        }
+                                    })
+                                }}
+                            >
+                                <a>删除</a>
+                            </Popconfirm>
+                        </>
+                    }
+                </Fragment>
+            ),
+        },
     ];
 
     const updateTreeData = (list: any[], key: React.Key, children: any[]): any[] => {
@@ -382,6 +469,62 @@ const OpcUaComponent: React.FC<Props> = props => {
             })
         });
     }
+
+    const propertiesWs = (deviceId: string, result: any, flag: boolean) => {
+        if (properties$ && !flag) {
+            properties$.unsubscribe();
+        }
+        let propertiesWs = getWebsocket(
+            `${deviceId}-opc-ua-device-point-value`,
+            `/device/*/${deviceId}/message/property/report`,
+            {},
+        ).subscribe((resp: any) => {
+            const { payload } = resp;
+            let resultList = [...result.data];
+            resultList.map((item: any) => {
+                if (payload.properties[item.property] !== undefined) {
+                    item.value = payload.properties[item.property]
+                }
+            })
+            setResultPoint({
+                data: [...resultList],
+                pageIndex: result.pageIndex,
+                pageSize: result.pageSize,
+                total: result.total
+            })
+        },
+            () => { setResultPoint(result) },
+            () => { setResultPoint(result) });
+        setProperties$(propertiesWs);
+    };
+
+    const rowSelection = {
+        onChange: (selectedRowKeys: any) => {
+            setSelectedRowKeys(selectedRowKeys);
+        },
+    };
+
+    const stopPoint = (list: any[]) => {
+        apis.opcUa.stopPoint(deviceId, [...list]).then(res => {
+            if (res.status === 200) {
+                getDevicePointList(searchPointParam);
+            }
+        })
+    }
+
+    const startPoint = (list: any[]) => {
+        apis.opcUa.startPoint(deviceId, [...list]).then(res => {
+            if (res.status === 200) {
+                getDevicePointList(searchPointParam);
+            }
+        })
+    }
+
+    useEffect(() => {
+        return () => {
+            properties$ && properties$.unsubscribe();
+        }
+    }, []);
 
     const menu = (
         <Menu>
@@ -483,11 +626,57 @@ const OpcUaComponent: React.FC<Props> = props => {
                                 <div className={styles.StandardTable}>
                                     {pointVisible ?
                                         <>
-                                            <div style={{ display: 'flex', marginBottom: '20px', width: '100%', justifyContent: 'flex-end' }}>
-                                                 {/* <div><Button icon="plus" type="primary" onClick={() => {
+                                            <div style={{ width: '100%' }}>
+                                                <SearchForm
+                                                    search={(params: any) => {
+                                                        getDevicePointList({ terms: { ...params, deviceId: deviceId }, pageSize: 10 });
+                                                    }}
+                                                    formItems={[
+                                                        {
+                                                            label: 'OPC点位ID',
+                                                            key: 'opcPointId$LIKE',
+                                                            type: 'string'
+                                                        },
+                                                        {
+                                                            label: '点位名称',
+                                                            key: 'name$LIKE',
+                                                            type: 'string'
+                                                        }
+                                                    ]}
+                                                />
+                                            </div>
+                                            <div style={{ display: 'flex', marginBottom: '20px', width: '100%' }}>
+                                                <div style={{ marginRight: '10px' }}><Button icon="plus" type="primary" onClick={() => {
                                                     setPointSaveVisible(true);
                                                     setCurrentPoint({});
-                                                }}>新增</Button></div>  */}
+                                                }}>新增</Button></div>
+                                                {selectedRowKeys.length > 0 &&
+                                                    <>
+                                                        <div style={{ marginRight: '10px' }}>
+                                                            <Button
+                                                                icon="check-circle"
+                                                                type="default"
+                                                                onClick={() => {
+                                                                    startPoint(selectedRowKeys);
+                                                                }}
+                                                            >
+                                                                批量启动点位
+                                                            </Button>
+                                                        </div>
+                                                        <div style={{ marginRight: '10px' }}>
+                                                            <Button
+                                                                icon="stop"
+                                                                type="danger"
+                                                                ghost
+                                                                onClick={() => {
+                                                                    stopPoint(selectedRowKeys);
+                                                                }}
+                                                            >
+                                                                批量停止点位
+                                                             </Button>
+                                                        </div>
+                                                    </>
+                                                }
                                             </div>
                                             <Table
                                                 loading={props.loading}
@@ -495,6 +684,10 @@ const OpcUaComponent: React.FC<Props> = props => {
                                                 columns={columnsPoint}
                                                 rowKey="id"
                                                 onChange={onTablePointChange}
+                                                rowSelection={{
+                                                    type: 'checkbox',
+                                                    ...rowSelection,
+                                                }}
                                                 pagination={{
                                                     current: resultPoint.pageIndex + 1,
                                                     total: resultPoint.total,
@@ -595,7 +788,7 @@ const OpcUaComponent: React.FC<Props> = props => {
                     setBindSaveVisible(false);
                 }} opcId={opcId} save={() => {
                     setBindSaveVisible(false);
-                    if(treeNode !== {}){
+                    if (treeNode !== {}) {
                         onLoadData(treeNode);
                     }
                     getDeviceBindList(searchParam);
@@ -605,7 +798,7 @@ const OpcUaComponent: React.FC<Props> = props => {
                         opcId={opcId}
                         close={() => {
                             setImportVisible(false);
-                            if(treeNode !== {}){
+                            if (treeNode !== {}) {
                                 onLoadData(treeNode);
                             }
                             getDeviceBindList({
@@ -628,7 +821,7 @@ const OpcUaComponent: React.FC<Props> = props => {
                 {bindDeviceVisible && <BindDevice opcId={opcId}
                     close={() => {
                         setBindDeviceVisible(false);
-                        if(treeNode !== {}){
+                        if (treeNode !== {}) {
                             onLoadData(treeNode);
                         }
                         getDeviceBindList({
