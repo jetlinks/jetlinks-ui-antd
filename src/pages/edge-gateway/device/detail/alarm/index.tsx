@@ -91,7 +91,9 @@ const Alarm: React.FC<Props> = props => {
       () => {
         message.success('启动成功');
         getProductAlarms();
+        setSpinning(false)
       },
+      () => {},
       () => setSpinning(false)
     )
   };
@@ -101,7 +103,9 @@ const Alarm: React.FC<Props> = props => {
       () => {
         message.success('停止成功');
         getProductAlarms();
+        setSpinning(false)
       },
+      () => {},
       () => setSpinning(false)
     )
   };
@@ -111,7 +115,9 @@ const Alarm: React.FC<Props> = props => {
       () => {
         message.success('删除成功');
         getProductAlarms();
+        setSpinning(false)
       },
+      () => {},
       () => setSpinning(false)
     )
   };

@@ -78,7 +78,8 @@ const Functions: React.FC<Props> = (props) => {
           setFieldsValue({ logs: '调试错误' });
         }
         setSpinning(false);
-      })
+      },() => {},
+      () => {setSpinning(false);})
     });
   };
 
