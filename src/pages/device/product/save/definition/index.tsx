@@ -102,6 +102,16 @@ const Definition: React.FC<Props> = props => {
                   save={(data: any, onlySave: boolean) => {
                     props.saveProperty(data, onlySave);
                   }}
+                  update={(item: any) => {
+                    setSpinning(true);
+                    let data = {
+                      functions: props.functionsData || [],
+                      properties: item || [],
+                      events: props.eventsData || [],
+                      tags: props.tagsData || []
+                    }
+                    updateModel({metadata: JSON.stringify(data)});
+                  }}
                 />
               </Tabs.TabPane>
               <Tabs.TabPane tab="功能定义" key="2">

@@ -1,39 +1,53 @@
-import React, {Fragment, useContext, useEffect, useState} from 'react';
-import {FormComponentProps} from 'antd/es/form';
-import {Button, Card, Divider, Form, Table} from 'antd';
-import {ColumnProps} from 'antd/lib/table';
-import {PropertiesMeta} from '../../component/data.d';
+import React, { Fragment, useContext, useEffect, useState } from 'react';
+import { FormComponentProps } from 'antd/es/form';
+import { Button, Card, Divider, Form, List, Table } from 'antd';
+import { ColumnProps } from 'antd/lib/table';
+import { PropertiesMeta } from '../../component/data.d';
 import PropertiesDefin from '../../component/properties';
-import {TenantContext} from "@/pages/device/product/save/definition/index";
+import { TenantContext } from "@/pages/device/product/save/definition/index";
+import {ProductContext} from '../../context';
+import Import from '../../component/import-properties';
 
 interface Props extends FormComponentProps {
   save: Function;
   data: any[];
   unitsData: any;
+  update: Function;
 }
 
 interface State {
   data: PropertiesMeta[];
   current: Partial<PropertiesMeta>;
   visible: boolean;
+  importVisible: boolean;
+  product: any;
 }
 
 const Properties: React.FC<Props> = (props: Props) => {
   const tenantContextData = useContext(TenantContext);
+  const productContext = useContext(ProductContext);
 
   const initState: State = {
     data: props.data || [],
     current: {},
     visible: false,
+    importVisible: false,
+    product: {}
   };
 
   const [visible, setVisible] = useState(initState.visible);
+  const [importVisible, setImportVisible] = useState(initState.importVisible);
   const [data, setData] = useState(initState.data);
+  const [product, setProduct] = useState(initState.product);
   const [current, setCurrent] = useState(initState.current);
 
   useEffect(() => {
     setData(tenantContextData.properties || [])
   }, [tenantContextData]);
+
+  useEffect(() => {
+    setProduct(productContext || {});
+  },[productContext])
 
   const editItem = (item: any) => {
     setVisible(true);
@@ -76,14 +90,14 @@ const Properties: React.FC<Props> = (props: Props) => {
       render: (text, record) => (
         <Fragment>
           <a onClick={() => editItem(record)}>编辑</a>
-          <Divider type="vertical"/>
+          <Divider type="vertical" />
           <a onClick={() => deleteItem(record)}>删除</a>
         </Fragment>
       ),
     },
   ];
 
-  const savePropertiesData = (item: PropertiesMeta, onlySave:boolean) => {
+  const savePropertiesData = (item: PropertiesMeta, onlySave: boolean) => {
     const i = data.findIndex((j: any) => j.id === item.id);
     if (i > -1) {
       data[i] = item;
@@ -99,17 +113,22 @@ const Properties: React.FC<Props> = (props: Props) => {
     <div>
       <Card
         title="属性定义"
-        style={{marginBottom: 20}}
+        style={{ marginBottom: 20 }}
         extra={
-          <Button type="primary" onClick={() => {
-            setCurrent({});
-            setVisible(true);
-          }}>
-            添加
+          <>
+            <Button style={{marginRight: '10px'}} onClick={() => {
+              setImportVisible(true);
+            }}>导入属性</Button>
+            <Button type="primary" onClick={() => {
+              setCurrent({});
+              setVisible(true);
+            }}>
+              添加
           </Button>
+          </>
         }
       >
-        <Table rowKey="id" columns={columns} dataSource={data}/>
+        <Table rowKey="id" columns={columns} dataSource={data} pagination={false} />
       </Card>
       {visible && (
         <PropertiesDefin
@@ -125,6 +144,19 @@ const Properties: React.FC<Props> = (props: Props) => {
           }}
         />
       )}
+      {importVisible && <Import data={{
+        productId: product?.id
+      }} close={() => {
+        setImportVisible(false);
+      }}
+        save={(params: any) => {
+          setImportVisible(false);
+          let dataParams = JSON.parse(params) || {};
+          let list = dataParams?.properties || [];
+          props.update(list);
+          setData(list);
+        }}
+      />}
     </div>
   );
 };
