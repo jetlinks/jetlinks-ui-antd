@@ -158,7 +158,7 @@ const UserTenant = () => {
                               </a>
                             </Popconfirm>) :
                           (
-                            <Popconfirm title="确认禁用此租户？"
+                            <Popconfirm title="确认启用此租户？"
                               onConfirm={() => {
                                 changeState(item, 'enabled');
                               }}>
