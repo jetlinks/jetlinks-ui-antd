@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { PaginationConfig } from 'antd/es/table';
-import { Card, Table, Badge, Tree, Divider, Button, message, Popconfirm, Spin, Dropdown, Icon, Menu, Modal, Tooltip } from 'antd';
+import { Card, Table, Badge, Tree, Divider, Button, message, Popconfirm, Spin, Dropdown, Icon, Menu, Modal, Tooltip, List } from 'antd';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import styles from '@/utils/table.less';
 import style from './index.less';
@@ -124,15 +124,15 @@ const OpcUaComponent: React.FC<Props> = props => {
 
     const getDevicePointList = (params?: any) => {
         setSpinning(true);
-        let flag = false;
-        if (params.terms.deviceId === searchPointParam.terms?.deviceId) {
-            flag = true;
-        }
+        // let flag = false;
+        // if (params.terms.deviceId === searchPointParam.terms?.deviceId) { //判断deviceId是否发生了变化了
+        //     flag = true;
+        // }
         setSearchPointParam(params);
         apis.opcUa.getDevicePointList(encodeQueryParam(params)).then(resp => {
             if (resp.status === 200) {
                 setResultPoint(resp.result);
-                propertiesWs(params.terms.deviceId, resp.result, flag);
+                propertiesWs(params.terms.deviceId, resp.result);
             }
             setSpinning(false);
         })
@@ -335,36 +335,51 @@ const OpcUaComponent: React.FC<Props> = props => {
         {
             title: '名称',
             align: 'center',
+            width: '150px',
             dataIndex: 'name',
+            ellipsis: true,
         },
         {
             title: '设备ID',
             align: 'center',
+            width: '100px',
+            ellipsis: true,
             dataIndex: 'deviceId'
         },
         {
             title: 'OPC点位ID',
             align: 'center',
-            dataIndex: 'opcPointId'
+            width: '200px',
+            ellipsis: true,
+            dataIndex: 'opcPointId',
+            render: (text: any) => <Tooltip title={text}>{text}</Tooltip>
         },
         {
             title: '数据模式',
+            width: '100px',
             align: 'center',
+            ellipsis: true,
             dataIndex: 'dataMode'
         },
         {
             title: '数据类型',
             align: 'center',
+            width: '100px',
+            ellipsis: true,
             dataIndex: 'dataType'
         },
         {
             title: '值',
             align: 'center',
-            dataIndex: 'value'
+            width: '100px',
+            ellipsis: true,
+            dataIndex: 'value',
+            render: (text: any) => <Tooltip title={text}>{text}</Tooltip>
         },
         {
             title: '点位状态',
             align: 'center',
+            width: '100px',
             dataIndex: 'sate',
             render: (text: any) => <Badge status={text === 'good' ? 'success' : 'error'}
                 text={text === 'good' ? '正常' : '停止'} />,
@@ -383,10 +398,14 @@ const OpcUaComponent: React.FC<Props> = props => {
         {
             title: '说明',
             align: 'center',
+            width: '100px',
+            ellipsis: true,
             dataIndex: 'description'
         },
         {
             title: '操作',
+            align: 'center',
+            width: '200px',
             render: (text: string, record: any) => (
                 <Fragment>
                     <a onClick={() => {
@@ -471,20 +490,30 @@ const OpcUaComponent: React.FC<Props> = props => {
         });
     }
 
-    const propertiesWs = (deviceId: string, result: any, flag: boolean) => {
-        if (properties$ && !flag) {
+    const propertiesWs = (deviceId: string, result: any) => {
+        if (properties$) {
             properties$.unsubscribe();
         }
+        let points: any[] = []
+        result.data.map((item: any) => {
+            points.push(item.property)
+        })
+        let str = points.join("-");
         let propertiesWs = getWebsocket(
-            `${deviceId}-opc-ua-device-point-value`,
-            `/device/*/${deviceId}/message/property/report`,
-            {},
+            // `${deviceId}-opc-ua-device-point-value`,
+            // `/device/*/${deviceId}/message/property/report`,
+            // {},
+            `${deviceId}-opc-ua-device-point-value-${str}`,
+            `/opc-ua-point-value/${deviceId}`,
+            {
+                points: points
+            }
         ).subscribe((resp: any) => {
             const { payload } = resp;
             let resultList = [...result.data];
             resultList.map((item: any) => {
                 if (payload.properties[item.property] !== undefined) {
-                    item.value = payload.properties[item.property]
+                    item.value = payload.properties[item.property].toString()
                 }
             })
             setResultPoint({

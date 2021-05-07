@@ -1,6 +1,6 @@
 import React, { Fragment, useContext, useEffect, useState } from 'react';
 import { FormComponentProps } from 'antd/es/form';
-import { Button, Card, Divider, Form, List, Table } from 'antd';
+import { Button, Card, Divider, Form, Table } from 'antd';
 import { ColumnProps } from 'antd/lib/table';
 import { PropertiesMeta } from '../../component/data.d';
 import PropertiesDefin from '../../component/properties';
