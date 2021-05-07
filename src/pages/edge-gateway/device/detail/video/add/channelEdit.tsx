@@ -52,7 +52,7 @@ const ChannelEdit: React.FC<Props> = props => {
                 <Form.Item label="设备名称">
                     {getFieldDecorator('deviceId', {
                         // rules: [{ required: true }],
-                        initialValue: info?.deviceId,
+                        initialValue: info?.deviceName,
                     })(
                         <Input readOnly={true}/>
                     )}

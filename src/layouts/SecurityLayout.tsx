@@ -38,17 +38,17 @@ const SecurityLayout = (props: SecurityLayoutProps) => {
   /**
  * constructor
  */
-  useEffect(() => {
-    if (dispatch) {
-      dispatch({
-        type: 'settings/fetchConfig',
-        callback: () => {
-          document.getElementById('title-icon')!.href = settings.titleIcon;
-          setIsReady(true);
-        }
-      });
-    }
-  }, [settings.title]);
+  // useEffect(() => {
+  //   if (dispatch) {
+  //     dispatch({
+  //       type: 'settings/fetchConfig',
+  //       callback: () => {
+  //         document.getElementById('title-icon')!.href = settings.titleIcon;
+  //         setIsReady(true);
+  //       }
+  //     });
+  //   }
+  // }, [settings.title]);
 
   const render = () => {
     if (isLogin) {

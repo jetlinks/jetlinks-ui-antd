@@ -31,6 +31,7 @@ interface Props {
         subscribe: Function
     };
     device: any;
+    deviceId: string;
 }
 const PropertiesCard: React.FC<Props> = props => {
     const service = new Service();
@@ -94,7 +95,10 @@ const PropertiesCard: React.FC<Props> = props => {
     const refreshProperty = (item: any) => {
         setLoading(true);
         // 刷新数据
-        service.getProperty(device.id, item.id).subscribe(() => { }, () => { }, () => { setLoading(false) });
+        service.getPropertyDevice(props.deviceId, {
+            property: item.id,
+            deviceId: device.id
+        }).subscribe(() => { }, () => { }, () => { setLoading(false) });
     };
 
     const updateProperty = (item: any) => {

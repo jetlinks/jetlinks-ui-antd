@@ -146,12 +146,6 @@ const MediaCascade: React.FC<Props> = props => {
             ellipsis: true,
         },
         {
-            title: '说明',
-            dataIndex: 'description',
-            width: '5%',
-            ellipsis: true,
-        },
-        {
             title: '操作',
             key: 'center',
             fixed: 'right',

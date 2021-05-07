@@ -58,61 +58,70 @@ const Model: LoginModelType = {
       });
       // Login successfully
       if (response.status === 200) {
+        // window.location.href = '/';
         setAccessToken(response.result.token);
         setAutz(response.result);
-
-        const tenants = response.result?.user?.tenants;
-        if (tenants && tenants[0]) {
-          localStorage.removeItem('tenants-admin');
-          //找到主租户
-          const temp = (response.result?.user?.tenants || []).find((i: any) => i.mainTenant)
-            .adminMember;
-          localStorage.setItem('tenants-admin', temp);
-        }
-        reloadAuthorized();
-        const version = yield call(systemVersion);
-        if (version) {
-          localStorage.setItem('system-version', version?.result?.edition);
-        }
-        let result = getQueryString(window.location.hash);
-        if (
-          result.client_id != undefined &&
-          result.response_type != undefined &&
-          result.redirect_uri != undefined &&
-          result.state != undefined
-        ) {
-          apis.login.oauth(result).then(res => {
-            if (res.status === 200) {
-              window.location.href = res.result;
-            }
-          });
-        } else {
-          const urlParams = new URL(window.location.href);
-          const params = getPageQuery();
-          let { redirect } = params as { redirect: string };
-
-          const id = localStorage.getItem('u-i-1');
-
-          if (id === response.result.userId && redirect) {
-            const redirectUrlParams = new URL(redirect);
-            if (redirectUrlParams.origin === urlParams.origin) {
-              redirect = redirect.substr(urlParams.origin.length);
-              if (redirect.match(/^\/.*#/)) {
-                redirect = redirect.substr(redirect.indexOf('#') + 1);
-              }
-              router.replace(redirect);
-              return;
-            } else {
-              window.location.href = '/';
-              return;
-            }
+        apis.login.info('edge-device').then(res => {
+          if (res.status === 200) {
+            let id = res.result.id
+            console.log(id)
+            window.location.href = `/device/product/save/${id}?edgeTag=true`;
+            // router.replace(`/device/product/save/${id}?edgeTag=true`)
           }
-          localStorage.setItem('u-i-1', response.result.userId);
-          // yield put(routerRedux.replace(redirect || '/'));
-          router.replace('/');
+        })
+        // const tenants = response.result?.user?.tenants;
+        // if (tenants && tenants[0]) {
+        //   localStorage.removeItem('tenants-admin');
+        //   //找到主租户
+        //   const temp = (response.result?.user?.tenants || []).find((i: any) => i.mainTenant)
+        //     .adminMember;
+        //   localStorage.setItem('tenants-admin', temp);
+        // }
+        // reloadAuthorized();
+        // const version = yield call(systemVersion);
+        // if (version) {
+        //   localStorage.setItem('system-version', version?.result?.edition);
+        // }
+        // let result = getQueryString(window.location.hash);
+        // if (
+        //   result.client_id != undefined &&
+        //   result.response_type != undefined &&
+        //   result.redirect_uri != undefined &&
+        //   result.state != undefined
+        // ) {
+        //   apis.login.oauth(result).then(res => {
+        //     if (res.status === 200) {
+        //       window.location.href = res.result;
+        //     }
+        //   });
+        // } else {
+        //   const urlParams = new URL(window.location.href);
+        //   const params = getPageQuery();
+        //   let { redirect } = params as { redirect: string };
+
+        //   const id = localStorage.getItem('u-i-1');
+
+        //   if (id === response.result.userId && redirect) {
+        //     const redirectUrlParams = new URL(redirect);
+        //     if (redirectUrlParams.origin === urlParams.origin) {
+        //       redirect = redirect.substr(urlParams.origin.length);
+        //       if (redirect.match(/^\/.*#/)) {
+        //         redirect = redirect.substr(redirect.indexOf('#') + 1);
+        //       }
+        //       router.replace(redirect);
+        //       return;
+        //     } else {
+        //       window.location.href = '/';
+        //       return;
+        //     }
+        //   }
+        //   localStorage.setItem('u-i-1', response.result.userId);
+        //   // yield put(routerRedux.replace(redirect || '/'));
+        //   router.replace('/');
           // router.replace('/');
-        }
-      } else callback();
+        // }
+      } 
+      // else callback();
     },
 
     *logout(_, { call, put }) {

@@ -77,20 +77,20 @@ const Trigger: React.FC<Props> = props => {
     dataSource.push(value);
     if (type === 'function') {
       if (data.output.type === 'object') {
-        data.valueType.properties.map((p: any) => {
+        data.valueType?.properties.map((p: any) => {
           dataSource.push(`${value}.${p.id}`);
         });
       }
     } else if (type === 'event') {
       dataSource.push('this');
       if (data.valueType.type === 'object') {
-        data.valueType.properties.map((p: any) => {
+        data.valueType?.properties.map((p: any) => {
           dataSource.push(`${p.id}`);
         });
       }
     } else if (type === 'properties') {
       if (data.valueType.type === 'object') {
-        data.valueType.properties.map((p: any) => {
+        data.valueType?.properties.map((p: any) => {
           dataSource.push(`${value}.${p.id}`);
         });
       }
@@ -111,7 +111,7 @@ const Trigger: React.FC<Props> = props => {
                       submitData();
                     }}
             >
-              {JSON.parse(props.metaData).properties?.map((item: any) => (
+              {JSON.parse(props.metaData || '[]').properties?.map((item: any) => (
                 <Select.Option key={item.id} data={item}>{`${item.name}（${item.id}）`}</Select.Option>
               ))}
             </Select>
@@ -128,7 +128,7 @@ const Trigger: React.FC<Props> = props => {
                       submitData();
                     }}
             >
-              {JSON.parse(props.metaData).events?.map((item: any) => (
+              {JSON.parse(props.metaData || '[]').events?.map((item: any) => (
                 <Select.Option key={item.id} data={item}>{`${item.name}（${item.id}）`}</Select.Option>
               ))}
             </Select>
@@ -178,9 +178,9 @@ const Trigger: React.FC<Props> = props => {
                   {props.metaData && JSON.parse(props.metaData).events && (
                     <Select.Option value="event">事件</Select.Option>
                   )}
-                  {/*{props.metaData && JSON.parse(props.metaData).functions && (
+                  {props.metaData && JSON.parse(props.metaData).functions && (
                   <Select.Option value="function">功能</Select.Option>
-                )}*/}
+                )}
                 </Select>
               </Col>
               {renderType()}
@@ -268,11 +268,6 @@ const Trigger: React.FC<Props> = props => {
                        setTrigger(trigger);
                        submitData();
                      }}
-                /*onChange={event => {
-                  trigger.cron = event.target.value;
-                  setTrigger(trigger);
-                  submitData();
-                }}*/
               />
             </Col>
             <Col span={24}>
@@ -287,12 +282,12 @@ const Trigger: React.FC<Props> = props => {
                   {props.metaData && JSON.parse(props.metaData).properties && (
                     <Select.Option value="properties">属性</Select.Option>
                   )}
-                  {props.metaData && JSON.parse(props.metaData).events && (
+                  {/* {props.metaData && JSON.parse(props.metaData).events && (
                     <Select.Option value="event">事件</Select.Option>
-                  )}
-                  {/*{props.metaData && JSON.parse(props.metaData).functions && (
+                  )} */}
+                  {props.metaData && JSON.parse(props.metaData).functions && (
                   <Select.Option value="function">功能</Select.Option>
-                )}*/}
+                )}
                 </Select>
               </Col>
               {renderType()}

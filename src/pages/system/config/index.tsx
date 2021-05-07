@@ -102,11 +102,11 @@ const Config: React.FC<Props> = props => {
                                             rows={4}
                                         />
                                     </Form.Item>
-                                    <Form.Item>
+                                    {/* <Form.Item>
                                         <Button htmlType="submit" type="primary" onClick={updateSetting}>
                                             更新基本信息
                                     </Button>
-                                    </Form.Item>
+                                    </Form.Item> */}
                                 </Form>
                             </div>
                             <div className={styles.right}>

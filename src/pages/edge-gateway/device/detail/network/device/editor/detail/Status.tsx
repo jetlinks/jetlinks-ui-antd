@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Row, Col, message, Spin } from "antd";
 import DeviceState from "./status/DeviceState";
 import PropertiesCard from "./status/PropertiesCard";
-import EventCard from "./status/EventCard";
+// import EventCard from "./status/EventCard";
 import Service from "../service";
 import { groupBy, flatMap, toArray, map } from "rxjs/operators";
 import { getWebsocket } from "@/layouts/GlobalWebSocket";
@@ -11,6 +11,7 @@ import { Observable } from "rxjs";
 interface Props {
     refresh: Function;
     device: any;
+    deviceId: string;
 }
 const topColResponsiveProps = {
     xs: 24,
@@ -23,19 +24,19 @@ const topColResponsiveProps = {
 const Status: React.FC<Props> = props => {
     const { device } = props;
     const metadata = JSON.parse(device.metadata);
-    const events = metadata.events
-        .map((item: any) => {
-            item.listener = [];
-            item.subscribe = (callback: Function) => {
-                item.listener.push(callback)
-            }
-            item.next = (data: any) => {
-                item.listener.forEach((element: any) => {
-                    element(data);
-                });
-            }
-            return item;
-        });
+    // const events = metadata.events
+    //     .map((item: any) => {
+    //         item.listener = [];
+    //         item.subscribe = (callback: Function) => {
+    //             item.listener.push(callback)
+    //         }
+    //         item.next = (data: any) => {
+    //             item.listener.forEach((element: any) => {
+    //                 element(data);
+    //             });
+    //         }
+    //         return item;
+    //     });
     const [properties, setProperties] = useState<any[]>(metadata.properties
         .map((item: any) => {
             item.listener = [];
@@ -62,20 +63,20 @@ const Status: React.FC<Props> = props => {
         map(result => result.payload)
     );
 
-    const eventsWs: Observable<any> = getWebsocket(
-        `instance-info-event-${device.id}-${device.productId}`,
-        `/dashboard/device/${device.productId}/events/realTime`,
-        {
-            deviceId: device.id,
-        },
-    ).pipe(
-        map(result => result.payload)
-    );
+    // const eventsWs: Observable<any> = getWebsocket(
+    //     `instance-info-event-${device.id}-${device.productId}`,
+    //     `/dashboard/device/${device.productId}/events/realTime`,
+    //     {
+    //         deviceId: device.id,
+    //     },
+    // ).pipe(
+    //     map(result => result.payload)
+    // );
 
     let propertiesMap = {};
     properties.forEach(item => propertiesMap[item.id] = item);
-    let eventsMap = {};
-    events.forEach((item: any) => eventsMap[item.id] = item);
+    // let eventsMap = {};
+    // events.forEach((item: any) => eventsMap[item.id] = item);
 
     const [index, setIndex] = useState<number>(20);
     useEffect(() => {
@@ -88,17 +89,17 @@ const Status: React.FC<Props> = props => {
             }
         });
 
-        const events$ = eventsWs.subscribe((resp) => {
-            const event = resp.value.event;
-            const item = eventsMap[event];
-            if (item) {
-                item.next(resp);
-            }
-        });
+        // const events$ = eventsWs.subscribe((resp) => {
+        //     const event = resp.value.event;
+        //     const item = eventsMap[event];
+        //     if (item) {
+        //         item.next(resp);
+        //     }
+        // });
 
         return () => {
             properties$.unsubscribe();
-            events$.unsubscribe()
+            // events$.unsubscribe()
         };
 
     }, []);
@@ -112,15 +113,16 @@ const Status: React.FC<Props> = props => {
                         item={item}
                         key={item.id}
                         device={device}
+                        deviceId={props.deviceId}
                     />
                 </Col>
             ))
-            const eventCard = events.map((item: any) => (
-                <Col {...topColResponsiveProps} key={item.id}>
-                    <EventCard item={item} device={device} key={item.id} />
-                </Col>
-            ));
-            return [...propertyCard, ...eventCard].splice(0, index)
+            // const eventCard = events.map((item: any) => (
+            //     <Col {...topColResponsiveProps} key={item.id}>
+            //         <EventCard item={item} device={device} key={item.id} />
+            //     </Col>
+            // ));
+            return [...propertyCard].splice(0, index)
         }, [device, index]);
 
     const service = new Service();

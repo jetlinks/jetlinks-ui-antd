@@ -19,3 +19,11 @@ export async function oauth(params: any): Promise<any> {
     params,
   });
 }
+
+export async function info(deviceId: string) {
+  return request(`/jetlinks/edge/operations/${deviceId}/detail`, {
+    method: 'GET',
+  });
+}
+
+

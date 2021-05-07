@@ -15,7 +15,7 @@ const auth$ = defer(() => from(request(`/jetlinks/authorize/me`, {
     method: 'GET',
 })));
 
-const systemInfo$ = defer(() => from(request('/jetlinks/system/config/front', { method: 'GET' })))
+//const systemInfo$ = defer(() => from(request('/jetlinks/system/config/front', { method: 'GET' })))
 // const systemInfo$ = ajax({
 //     url: '/jetlinks/system/config/front',
 //     method: 'GET',
@@ -24,7 +24,11 @@ const systemInfo$ = defer(() => from(request('/jetlinks/system/config/front', { 
 //     }
 // });
 
-export const root$ = zip(auth$, systemInfo$)
+// export const root$ = zip(auth$, systemInfo$)
+//     .pipe(
+//         map(([auth, systemInfo]) => ({ auth, systemInfo })),
+//         shareReplay(1));
+export const root$ = zip(auth$)
     .pipe(
-        map(([auth, systemInfo]) => ({ auth, systemInfo })),
+        map(([auth]) => ({ auth })),
         shareReplay(1));

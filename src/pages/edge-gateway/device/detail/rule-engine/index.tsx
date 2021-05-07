@@ -56,25 +56,45 @@ const RuleEngine: React.FC<Props> = props => {
     }, []);
 
     const startInstance = (params?: any) => {
-        service.startRuleInstance(props.device.id, params.id).subscribe(
-            () => {
-                handleSearch(searchParam);
-                message.success('操作成功！');
-            },
-            () => {
-            },
-            () => setLoading(false))
+        if(params.modelType === 'device_alarm'){
+            service._start(props.device.id, { id: params.id }).subscribe(
+                () => {
+                    handleSearch(searchParam);
+                    message.success('操作成功！');
+                },
+                () => setLoading(false)
+              )
+        }else{
+            service.startRuleInstance(props.device.id, params.id).subscribe(
+                () => {
+                    handleSearch(searchParam);
+                    message.success('操作成功！');
+                },
+                () => {
+                },
+                () => setLoading(false))
+        }
     };
 
     const stopInstance = (params?: any) => {
-        service.stopRuleInstance(props.device.id, params.id).subscribe(
-            () => {
-                handleSearch(searchParam);
-                message.success('操作成功！');
-            },
-            () => {
-            },
-            () => setLoading(false))
+        if(params.modelType === 'device_alarm'){
+            service._stop(props.device.id, { id: params.id }).subscribe(
+                () => {
+                    handleSearch(searchParam);
+                    message.success('操作成功！');
+                },
+                () => setLoading(false)
+              )
+        }else{
+            service.stopRuleInstance(props.device.id, params.id).subscribe(
+                () => {
+                    handleSearch(searchParam);
+                    message.success('操作成功！');
+                },
+                () => {
+                },
+                () => setLoading(false))
+        }
     };
 
     const handleDelete = (params?: any) => {

@@ -15,17 +15,17 @@ interface Props {
 
 const Login: React.FC<Props> = props => {
   const { dispatch, settings, location: { query } } = props;
-  const token = localStorage.getItem('x-access-token');
-  const service = new Service('');
+  // const token = localStorage.getItem('x-access-token');
+  // const service = new Service('');
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [expires, setExpires] = useState<number>(3600000);
-  const [isReady, setIsReady] = useState(false);
+  // const [isReady, setIsReady] = useState(false);
 
-  const [captcha, setCaptcha] = useState<string>('');
-  const [captchaImg, setCaptchaImg] = useState<string>('');
-  const [code, setCode] = useState<string>("");
-  const [enable, setEnable] = useState<boolean>(false);
+  // const [captcha, setCaptcha] = useState<string>('');
+  // const [captchaImg, setCaptchaImg] = useState<string>('');
+  // const [code, setCode] = useState<string>("");
+  // const [enable, setEnable] = useState<boolean>(false);
   const [current, setCurrent] = useState<boolean>(false);
 
   const handleSubmit = () => {
@@ -36,72 +36,72 @@ const Login: React.FC<Props> = props => {
         password,
         expires,
         tokenType: 'default',
-        verifyKey: captcha,
-        verifyCode: code,
+        // verifyKey: captcha,
+        // verifyCode: code,
         bindCode: query?.code
       },
-      callback: () => { getCodeImg() }
+      callback: () => { console.log('login') }
     });
   };
 
-  const getCodeImg = () => {
-    if (enable) {
-      service.getCaptcha().subscribe((resp) => {
-        setCaptcha(resp.key);
-        setCaptchaImg(resp.base64);
-      });
-    }
-  }
+  // const getCodeImg = () => {
+  //   if (enable) {
+  //     service.getCaptcha().subscribe((resp) => {
+  //       setCaptcha(resp.key);
+  //       setCaptchaImg(resp.base64);
+  //     });
+  //   }
+  // }
 
-  useEffect(() => {
-    if (dispatch) {
-      dispatch({
-        type: 'settings/fetchConfig',
-        callback: () => {
-          const title = document.getElementById('sys-title');
-          const icon = document.getElementById('title-icon');
-          if (title && settings.title) {
-            title.textContent = settings.title;
-          }
-          if (icon && settings.titleIcon) {
-            icon.href = settings.titleIcon;
-          }
-          if (token) {
-            service.queryCurrent().subscribe((resp) => {
-              if (resp.status === 200) {
-                setCurrent(true)
-              } else {
-                setCurrent(false)
-              }
-              setIsReady(true);
-            })
-          } else {
-            setIsReady(true);
-          }
-        }
-      });
-    }
+  // useEffect(() => {
+    // if (dispatch) {
+    //   dispatch({
+    //     type: 'settings/fetchConfig',
+    //     callback: () => {
+    //       const title = document.getElementById('sys-title');
+    //       const icon = document.getElementById('title-icon');
+    //       if (title && settings.title) {
+    //         title.textContent = settings.title;
+    //       }
+    //       if (icon && settings.titleIcon) {
+    //         icon.href = settings.titleIcon;
+    //       }
+    //       if (token) {
+    //         service.queryCurrent().subscribe((resp) => {
+    //           if (resp.status === 200) {
+    //             setCurrent(true)
+    //           } else {
+    //             setCurrent(false)
+    //           }
+    //           setIsReady(true);
+    //         })
+    //       } else {
+    //         setIsReady(true);
+    //       }
+    //     }
+    //   });
+    // }
 
-    //判断是否开启验证码
-    service.captchaConfig().subscribe((resp) => {
-      if (resp) {
-        setEnable(resp.enabled)
-        if (resp.enabled) {
-          //获取验证码
-          service.getCaptcha().subscribe((resp) => {
-            setCaptcha(resp.key);
-            setCaptchaImg(resp.base64);
-          });
-          // getCodeImg();
-        } else {
-          //未开启验证码
-        }
-      }
-    });
+    // //判断是否开启验证码
+    // service.captchaConfig().subscribe((resp) => {
+    //   if (resp) {
+    //     setEnable(resp.enabled)
+    //     if (resp.enabled) {
+    //       //获取验证码
+    //       service.getCaptcha().subscribe((resp) => {
+    //         setCaptcha(resp.key);
+    //         setCaptchaImg(resp.base64);
+    //       });
+    //       // getCodeImg();
+    //     } else {
+    //       //未开启验证码
+    //     }
+    //   }
+    // });
 
 
 
-  }, [settings.title]);
+  // }, [settings.title]);
 
   const Login = () => {
     const information = JSON.parse(localStorage.getItem('user-detail') || '{}');
@@ -180,7 +180,8 @@ const Login: React.FC<Props> = props => {
               type="text"
             />
           </div>
-          <div className={style.item} onKeyUp={e => { if (e.keyCode === 13 && !enable) { handleSubmit(); } }}>
+          {/* <div className={style.item} onKeyUp={e => { if (e.keyCode === 13 && !enable) { handleSubmit(); } }}> */}
+          <div className={style.item}>
             <div className={style.userLabel}>
               密<span style={{ marginLeft: '1em' }} />码
             </div>
@@ -191,7 +192,7 @@ const Login: React.FC<Props> = props => {
               type="password"
             />
           </div>
-          {
+          {/* {
             enable ? <div className={style.item}>
               <div className={style.userLabel}>验证码</div>
               <input onKeyUp={e => { if (e.keyCode === 13) { handleSubmit(); } }}
@@ -202,7 +203,7 @@ const Login: React.FC<Props> = props => {
               />
               <div className={style.code} onClick={() => { getCodeImg(); }}><img src={captchaImg} className={style.code_img} /></div>
             </div> : <div></div>
-          }
+          } */}
 
 
           <div className={style.remember}>
@@ -232,7 +233,8 @@ const Login: React.FC<Props> = props => {
     </div>
   )
   // return isReady ? renderLogin() : <Spin spinning={isReady} />;
-  return isReady ? Login() : <Spin spinning={isReady} />;
+  // return isReady ? Login() : <Spin spinning={isReady} />;
+  return Login();
 };
 export default connect(({ login, loading, settings }: ConnectState) => ({
   userLogin: login,

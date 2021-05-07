@@ -184,10 +184,10 @@ const Editor: React.FC<Props> = props => {
     info: <Info data={data} deviceId={parantDeviceId} configuration={config} refresh={() => {
       getInfo(parantDeviceId, data.id);
     }} />,
-    status: <Status device={data} refresh={() => {
+    status: <Status deviceId={parantDeviceId} device={data} refresh={() => {
       getInfo(parantDeviceId, data.id);
     }} />,
-    functions: <Functions device={data} />
+    functions: <Functions device={data} deviceId={parantDeviceId}/>
   };
 
   const content = (

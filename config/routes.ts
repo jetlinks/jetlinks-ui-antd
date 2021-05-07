@@ -21,7 +21,7 @@ export const routes = [
         routes: [
           {
             path: '/',
-            redirect: '/edge-gateway/device/detail/edge-gateway-device-001',
+            redirect: '/edge-gateway/device/detail/:id?edgeTag=true',
           },
           {
             name: '统计分析',
