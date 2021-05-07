@@ -78,7 +78,7 @@ const TopSearch = ({ loading }: { loading: boolean; }) => {
           setSelectionTime(calculationDate(0));
           setTime('1d');
 
-          gatewayMonitor(formatData(da), calculationDate(0), '1d',defaultList);
+          gatewayMonitor(formatData(da), calculationDate(0), '1d', defaultList);
         }
       })
       .catch(() => {
@@ -120,7 +120,7 @@ const TopSearch = ({ loading }: { loading: boolean; }) => {
       });
   };
 
-  function handleChange(value:any) {
+  function handleChange(value: any) {
     if (value.length > 6) {
       message.error('产品最多只能勾选6个');
       return false;
@@ -130,8 +130,8 @@ const TopSearch = ({ loading }: { loading: boolean; }) => {
     gatewayMonitor(formatData(dd), formatData(new Date()), time, value);
   }
 
-  function deviceTime(e:any) {
-    const {value} = e.target;
+  function deviceTime(e: any) {
+    const { value } = e.target;
     setTime(value);
     const dd = new Date(selectionTime);
 
@@ -152,19 +152,21 @@ const TopSearch = ({ loading }: { loading: boolean; }) => {
     return `${dd.getFullYear()}-${(dd.getMonth() + 1) < 10 ? `0${dd.getMonth() + 1}` : (dd.getMonth() + 1)}-${dd.getDate() < 10 ? `0${dd.getDate()}` : dd.getDate()} ${dd.getHours() < 10 ? `0${dd.getHours()}` : dd.getHours()}:${dd.getMinutes() < 10 ? `0${dd.getMinutes()}` : dd.getMinutes()}:${dd.getSeconds() < 10 ? `0${dd.getSeconds()}` : dd.getSeconds()}`;
   };
 
-  function onOk(value:any) {
-    setSelectionTime(value);
-    const dd = new Date(value);
-    if (time === '1h') {
-      dd.setHours(dd.getHours() - 1);
-    } else if (time === '1d') {
-      dd.setDate(dd.getDate() - 1);
-    } else if (time === '7d') {
-      dd.setDate(dd.getDate() - 7);
-    } else if (time === '30d') {
-      dd.setDate(dd.getDate() - 30);
+  function onOk(value: any) {
+    if (value) {
+      setSelectionTime(value);
+      const dd = new Date(value);
+      if (time === '1h') {
+        dd.setHours(dd.getHours() - 1);
+      } else if (time === '1d') {
+        dd.setDate(dd.getDate() - 1);
+      } else if (time === '7d') {
+        dd.setDate(dd.getDate() - 7);
+      } else if (time === '30d') {
+        dd.setDate(dd.getDate() - 30);
+      }
+      gatewayMonitor(formatData(dd), formatData(value), time, productId);
     }
-    gatewayMonitor(formatData(dd), formatData(value), time, productId);
   }
 
   return (
@@ -188,8 +190,8 @@ const TopSearch = ({ loading }: { loading: boolean; }) => {
                     30天
                   </Radio.Button>
                 </Radio.Group>
-                <DatePicker showTime defaultValue={moment(new Date(), 'YYYY-MM-DD HH:mm:ss')}
-                            placeholder="结束时间" onOk={onOk} format="YYYY-MM-DD HH:mm:ss"/>
+                <DatePicker defaultValue={moment(new Date(), 'YYYY-MM-DD HH:mm:ss')}
+                  placeholder="结束时间" onChange={onOk} format="YYYY-MM-DD HH:mm:ss" />
               </div>
             </Row>
           }
@@ -200,15 +202,15 @@ const TopSearch = ({ loading }: { loading: boolean; }) => {
             <Row>
               <div>
                 <Select mode="tags" defaultValue={defaultList} maxTagTextLength={3}
-                        maxTagCount={3}
-                        style={{ width: '50%', float: 'right', marginBottom: 32, marginRight: 25 }}
-                        placeholder="产品" onChange={handleChange}>
+                  maxTagCount={3}
+                  style={{ width: '50%', float: 'right', marginBottom: 32, marginRight: 25 }}
+                  placeholder="产品" onChange={handleChange}>
                   {productDataList}
                 </Select>
               </div>
               <Col>
                 <div className={styles.salesBar} style={{ marginTop: 30 }}>
-                  <Grouped height={300} data={gatewayData}/>
+                  <Grouped height={300} data={gatewayData} />
                 </div>
               </Col>
             </Row>

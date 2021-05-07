@@ -131,18 +131,20 @@ const SalesCard = ({ loading }: { loading: boolean; }) => {
   };
 
   function onOk(value: any) {
-    setSelectionTime(value);
-    const dd = new Date(value);
-    if (time === '1m') {
-      dd.setHours(dd.getHours() - 1);
-    } else if (time === '24m') {
-      dd.setDate(dd.getDate() - 1);
-    } else if (time === '168m') {
-      dd.setDate(dd.getDate() - 7);
-    } else if (time === '12h') {
-      dd.setDate(dd.getDate() - 30);
+    if (value) {
+      setSelectionTime(value);
+      const dd = new Date(value);
+      if (time === '1m') {
+        dd.setHours(dd.getHours() - 1);
+      } else if (time === '24m') {
+        dd.setDate(dd.getDate() - 1);
+      } else if (time === '168m') {
+        dd.setDate(dd.getDate() - 7);
+      } else if (time === '12h') {
+        dd.setDate(dd.getDate() - 30);
+      }
+      gatewayMonitor(formatData(dd), formatData(value), time);
     }
-    gatewayMonitor(formatData(dd), formatData(value), time);
   }
 
   return (
@@ -167,8 +169,8 @@ const SalesCard = ({ loading }: { loading: boolean; }) => {
                   </Radio.Button>
                 </Radio.Group>
               </div>
-              <DatePicker showTime defaultValue={moment(new Date(), 'YYYY-MM-DD HH:mm:ss')}
-                placeholder="结束时间" onOk={onOk} format="YYYY-MM-DD HH:mm:ss" />
+              <DatePicker defaultValue={moment(new Date(), 'YYYY-MM-DD HH:mm:ss')}
+                placeholder="结束时间" onChange={onOk} format="YYYY-MM-DD HH:mm:ss" />
             </div>
           }
           size="large"
