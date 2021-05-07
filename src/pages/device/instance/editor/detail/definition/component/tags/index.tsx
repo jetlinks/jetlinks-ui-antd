@@ -772,7 +772,7 @@ const TagsDefin: React.FC<Props> = props => {
   return (
     <div>
       <Drawer
-        title="编辑标签"
+        title={!initState.data.id ? `添加标签` : `编辑标签`}
         placement="right"
         closable={false}
         onClose={() => props.close()}

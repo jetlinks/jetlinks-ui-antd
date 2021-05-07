@@ -808,7 +808,7 @@ const PropertiesDefin: React.FC<Props> = props => {
   return (
     <div>
       <Drawer
-        title="编辑属性"
+        title={!initState.data.id ? `添加属性` : `编辑属性`}
         placement="right"
         closable={false}
         onClose={() => props.close()}

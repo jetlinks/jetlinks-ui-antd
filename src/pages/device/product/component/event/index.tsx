@@ -761,7 +761,7 @@ const EventDefin: React.FC<Props> = props => {
   }
   return (
     <Drawer
-      title="编辑事件定义"
+      title={!initState.data.id ? `添加事件定义` : `编辑事件定义`}
       placement="right"
       closable={false}
       onClose={() => props.close()}

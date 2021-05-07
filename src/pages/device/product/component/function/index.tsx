@@ -724,7 +724,7 @@ const FunctionDefin: React.FC<Props> = props => {
   }
   return (
     <Drawer
-      title="编辑功能定义"
+      title={!initState.data.id ? `添加功能定义` : `编辑功能定义`}
       placement="right"
       closable={false}
       onClose={() => props.close()}
