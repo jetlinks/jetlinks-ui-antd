@@ -91,23 +91,25 @@ const OpcUaComponent: React.FC<Props> = props => {
         apis.opcUa.listNoPaging({}).then((res: any) => {
             if (res.status === 200) {
                 let data: any[] = [];
-                res.result.map((item: any) => {
-                    data.push({
-                        key: item.id,
-                        title: rendertitle(item),
-                        isLeaf: false,
-                        children: [],
-                        id: item.id
+                if(res.result.length > 0){
+                    res.result.map((item: any) => {
+                        data.push({
+                            key: item.id,
+                            title: rendertitle(item),
+                            isLeaf: false,
+                            children: [],
+                            id: item.id
+                        })
                     })
-                })
-                setDataListNoPaing([...data]);
-                setOpcId(data[0].key);
-                getDeviceBindList({
-                    terms: {
-                        opcUaId: data[0].key
-                    },
-                    pageSize: 10
-                });
+                    setDataListNoPaing([...data]);
+                    setOpcId(data[0].key);
+                    getDeviceBindList({
+                        terms: {
+                            opcUaId: data[0].key
+                        },
+                        pageSize: 10
+                    });
+                }
             }
             setSpinning(false);
         })

@@ -21,7 +21,7 @@ const PropertyComponent: React.FC<Props> = (props) => {
             visible
             width={650}
             title="请选择使用值"
-            onCancel={() => {props.close}}
+            onCancel={() => {props.close()}}
             onOk={() => {
                 props.ok(value)
             }}
