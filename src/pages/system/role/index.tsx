@@ -103,7 +103,11 @@ const RoleList: React.FC<Props> = props => {
       .then((response: any) => {
         if (response.status === 200) {
           message.success('删除成功');
-          handleSearch(searchParam);
+          if (result?.data.length === 1 && searchParam.pageIndex > 0) {
+            handleSearch({ ...searchParam, pageIndex: searchParam.pageIndex - 1 });
+          } else {
+            handleSearch(searchParam);
+          }
         }
       })
       .catch(() => {});
@@ -170,6 +174,7 @@ const RoleList: React.FC<Props> = props => {
     },
   ];
 
+  console.log(result, 'cccc');
   return (
     <PageHeaderWrapper title="角色管理">
       <Card bordered={false}>
