@@ -53,9 +53,6 @@ const Properties: React.FC<Props> = (props: Props) => {
     setVisible(true);
     setCurrent(item);
   };
-  useEffect(() => {
-    console.log(data)
-  },[])
 
   const deleteItem = (item: any) => {
     const temp = data.filter(e => e.id !== item.id);
