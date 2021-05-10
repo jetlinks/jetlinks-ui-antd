@@ -64,7 +64,16 @@ const PointSave: React.FC<Props> = props => {
                     {getFieldDecorator('dataType', {
                         rules: [{ required: true, message: '请选择' }],
                         initialValue: data.dataType
-                    })(<Input />)}
+                    })(
+                        <Select placeholder="请选择">
+                            <Select.Option value="int">int(整数型)</Select.Option>
+                            <Select.Option value="long">long(长整数型)</Select.Option>
+                            <Select.Option value="float">float(单精度浮点型)</Select.Option>
+                            <Select.Option value="double">double(双精度浮点数)</Select.Option>
+                            <Select.Option value="string">text(字符串)</Select.Option>
+                            <Select.Option value="boolean">bool(布尔型)</Select.Option>
+                        </Select>
+                    )}
                 </Form.Item>
                 <Form.Item label="数据模式">
                     {getFieldDecorator('dataMode', {

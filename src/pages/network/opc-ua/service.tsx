@@ -147,7 +147,7 @@ export async function stopPoint(deviceId: string, params: any) {
 }
 //删除点位
 export async function delPoint(pointId: string) {
-    return request(`/jetlinks/opc/device-bind/start/${pointId}`, {
+    return request(`/jetlinks/opc/device-bind/point/${pointId}`, {
         method: 'DELETE'
     });
 }

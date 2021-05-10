@@ -114,7 +114,7 @@ const Save: React.FC<Props> = props => {
             trigger: '', cron: '',
             device: {
               shakeLimit: {enabled: false},
-              filters: [{_id: Math.round(Math.random() * 100000), key: '', value: '', operator: ''}],
+              filters: [{_id: Math.round(Math.random() * 100000)}],
               productId: '',
               deviceId: '',
               type: '',

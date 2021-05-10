@@ -91,7 +91,7 @@ const OpcUaComponent: React.FC<Props> = props => {
         apis.opcUa.listNoPaging({}).then((res: any) => {
             if (res.status === 200) {
                 let data: any[] = [];
-                if(res.result.length > 0){
+                if (res.result.length > 0) {
                     res.result.map((item: any) => {
                         data.push({
                             key: item.id,
@@ -142,6 +142,7 @@ const OpcUaComponent: React.FC<Props> = props => {
 
     useEffect(() => {
         getListNoPaging();
+        console.log(statusPointMap.get('good'))
     }, []);
 
     const statusMap = new Map();
@@ -154,6 +155,18 @@ const OpcUaComponent: React.FC<Props> = props => {
     statusMap.set('enabled', 'success');
     statusMap.set('disabled', 'error');
     statusMap.set('disconnected', 'processing');
+
+    const textPointMap = new Map();
+    textPointMap.set('good', '正常');
+    textPointMap.set('failed', '异常');
+    textPointMap.set('enable', '启用');
+    textPointMap.set('disable', '禁用');
+
+    const statusPointMap = new Map();
+    statusPointMap.set('failed', 'error');
+    statusPointMap.set('enable', 'processing');
+    statusPointMap.set('good', 'success');
+    statusPointMap.set('disable', 'warning');
 
     const onTableChange = (
         pagination: PaginationConfig,
@@ -337,7 +350,7 @@ const OpcUaComponent: React.FC<Props> = props => {
         {
             title: '名称',
             align: 'center',
-            width: '150px',
+            width: '120px',
             dataIndex: 'name',
             ellipsis: true,
         },
@@ -379,20 +392,28 @@ const OpcUaComponent: React.FC<Props> = props => {
             render: (text: any) => <Tooltip title={text}>{text}</Tooltip>
         },
         {
-            title: '点位状态',
+            title: '状态',
             align: 'center',
-            width: '100px',
-            dataIndex: 'sate',
-            render: (text: any) => <Badge status={text === 'good' ? 'success' : 'error'}
-                text={text === 'good' ? '正常' : '停止'} />,
+            width: '80px',
+            dataIndex: 'state',
+            render: (text: any) => <Badge status={statusPointMap.get(text)}
+                text={text ? textPointMap.get(text) : '/'} />,
             filters: [
                 {
                     text: '正常',
                     value: 'good',
                 },
                 {
-                    text: '停止',
+                    text: '异常',
                     value: 'failed',
+                },
+                {
+                    text: '启用',
+                    value: 'enable',
+                },
+                {
+                    text: '禁用',
+                    value: 'disable',
                 }
             ],
             filterMultiple: false,
@@ -400,7 +421,7 @@ const OpcUaComponent: React.FC<Props> = props => {
         {
             title: '说明',
             align: 'center',
-            width: '100px',
+            width: '80px',
             ellipsis: true,
             dataIndex: 'description'
         },
@@ -414,34 +435,34 @@ const OpcUaComponent: React.FC<Props> = props => {
                         setPointSaveVisible(true);
                         setCurrentPoint(record);
                     }}>编辑</a>
-                    {record.sate === 'good' ?
-                        <>
-                            <Divider type="vertical" />
-                            <a onClick={() => {
-                                stopPoint([record.id]);
-                            }}>停止</a>
-                        </> :
+                    {record.state === 'disable' ?
                         <>
                             <Divider type="vertical" />
                             <a onClick={() => {
                                 startPoint([record.id])
                             }}>启动</a>
+                        </> :
+                        <>
                             <Divider type="vertical" />
-                            <Popconfirm
-                                placement="topRight"
-                                title="确定删除吗？"
-                                onConfirm={() => {
-                                    apis.opcUa.delPoint(record.id).then(res => {
-                                        if (res.status === 200) {
-                                            getDevicePointList(searchPointParam);
-                                        }
-                                    })
-                                }}
-                            >
-                                <a>删除</a>
-                            </Popconfirm>
+                            <a onClick={() => {
+                                stopPoint([record.id]);
+                            }}>禁用</a>
                         </>
                     }
+                    <Divider type="vertical" />
+                    <Popconfirm
+                        placement="topRight"
+                        title="确定删除吗？"
+                        onConfirm={() => {
+                            apis.opcUa.delPoint(record.id).then(res => {
+                                if (res.status === 200) {
+                                    getDevicePointList(searchPointParam);
+                                }
+                            })
+                        }}
+                    >
+                        <a>删除</a>
+                    </Popconfirm>
                 </Fragment>
             ),
         },

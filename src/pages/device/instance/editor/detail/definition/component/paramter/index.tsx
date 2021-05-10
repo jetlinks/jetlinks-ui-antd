@@ -574,10 +574,10 @@ const Paramter: React.FC<Props> = props => {
             <Form.Item label="元素类型">
               <Select
                 placeholder="请选择"
-                value={data.valueType?.expands?.elementType?.type}
+                value={data.valueType?.elementType?.type}
                 onChange={(value: string) => {
                   setAType(value);
-                  _.set(data, 'valueType.expands.elementType.type', value);
+                  _.set(data, 'valueType.elementType.type', value);
                   setData({ ...data });
                 }}
               >
@@ -776,6 +776,9 @@ const Paramter: React.FC<Props> = props => {
     if (data.valueType.type === 'enum') {
       data.valueType.elements = enumData;
     }
+    if(data.valueType.type === 'array' && arrayProperties.length > 0){
+      data.valueType.elementType.properties = arrayProperties
+    }
     props.save(data);
     message.success('保存成功');
     props.close();
@@ -784,7 +787,9 @@ const Paramter: React.FC<Props> = props => {
 
   const product = useContext<any>(ProductContext);
 
-  useEffect(() => getMetadata(), []);
+  useEffect(() => {
+    getMetadata();
+  }, []);
   const getMetadata = (id?: any, type?: any) => {
 
     if (id) {
