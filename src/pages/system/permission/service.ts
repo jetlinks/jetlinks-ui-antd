@@ -30,6 +30,13 @@ export async function remove(id: string) {
 
 export async function save(params: PermissionItem) {
   return request(`/jetlinks/permission`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+export async function importData(params: PermissionItem) {
+  return request(`/jetlinks/permission`, {
     method: 'PATCH',
     data: params,
   });

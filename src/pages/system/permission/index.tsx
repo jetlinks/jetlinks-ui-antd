@@ -209,7 +209,7 @@ const PermissionList: React.FC<Props> = props => {
                 reader.onload = (result: any) => {
                   try {
                     let data = JSON.parse(result.target.result);
-                    apis.permission.add(data).then(resp => {
+                    apis.permission.importData(data).then(resp => {
                       if (resp.status === 200) {
                         message.success('导入成功');
                       }
