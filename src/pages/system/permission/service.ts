@@ -12,7 +12,7 @@ export async function list(params?: any) {
 export async function listNoPaging(params?: any) {
   return request(`/jetlinks/permission/_query/no-paging?paging=false`, {
     method: 'GET',
-    params
+    params,
   });
 }
 
@@ -37,7 +37,7 @@ export async function save(params: PermissionItem) {
 
 export async function add(params: PermissionItem) {
   return request(`/jetlinks/permission`, {
-    method: 'POST',
+    method: 'PATCH',
     data: params,
   });
 }
