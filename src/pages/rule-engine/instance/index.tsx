@@ -342,7 +342,7 @@ const RuleInstanceList: React.FC<Props> = props => {
               pageSize: result?.pageSize,
               showQuickJumper: true,
               showSizeChanger: true,
-              hideOnSinglePage: true,
+              // hideOnSinglePage: true,
               pageSizeOptions: ['8', '16', '40', '80'],
               style: { marginTop: -20 },
               showTotal: (total: number) =>
