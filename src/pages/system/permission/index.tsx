@@ -99,8 +99,8 @@ const PermissionList: React.FC<Props> = props => {
   const handleDelete = (params: any) => {
     dispatch({
       type: 'permission/remove',
-      payload: params.id,
-      callback: (res) => {
+      payload: encodeURIComponent(params.id),
+      callback: (res:any) => {
         if(res.status === 200){
           message.success('删除成功');
           handleSearch(searchParam);
