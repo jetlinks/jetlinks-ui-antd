@@ -64,7 +64,7 @@ const Save: React.FC<Props> = props => {
     form.validateFields((err, fileValue) => {
       if (err) return;
       if (props.data.id) {
-        service.updataCascade(fileValue).subscribe(() => {
+        service.updateCascade(fileValue).subscribe(() => {
           props.close();
         }, () => {
           message.error("保存错误");

@@ -21,7 +21,7 @@ class Service extends BaseService<any> {
       map(resp => resp.result)
     ));
 
-  public updataCascade = (data: any) => defer(
+  public updateCascade = (data: any) => defer(
     () => from(request(`/jetlinks/media/gb28181-cascade/`, {
       method: 'PATCH',
       data: data
