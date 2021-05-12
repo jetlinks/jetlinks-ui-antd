@@ -68,7 +68,7 @@ const PermissionList: React.FC<Props> = props => {
     setSaveLoading(true);
     if(!!currentItem.id){
       dispatch({
-        type: 'permission/updata',
+        type: 'permission/update',
         payload: encodeQueryParam(permission),
         callback: (response: any) => {
           if (response.status === 200) {

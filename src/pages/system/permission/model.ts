@@ -15,7 +15,7 @@ export interface PermissionModelType {
         queryById: Effect;
         insert: Effect;
         remove: Effect;
-        updata: Effect;
+        update: Effect;
     };
     reducers: {
         save: Reducer<any, any>;
@@ -43,7 +43,7 @@ const PermissionModel: PermissionModelType = {
             const response: SimpleResponse = yield call(apis.permission.add, payload);
             callback(response);
         },
-        *updata({ payload, callback }, { call }) {
+        *update({ payload, callback }, { call }) {
             const response: SimpleResponse = yield call(apis.permission.save, payload);
             callback(response);
         },

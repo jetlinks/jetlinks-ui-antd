@@ -30,7 +30,7 @@ export async function remove(id: string) {
 
 export async function save(params: PermissionItem) {
   return request(`/jetlinks/permission`, {
-    method: 'POST',
+    method: 'PATCH',
     data: params,
   });
 }
@@ -44,7 +44,7 @@ export async function importData(params: PermissionItem) {
 
 export async function add(params: PermissionItem) {
   return request(`/jetlinks/permission`, {
-    method: 'PATCH',
+    method: 'POST',
     data: params,
   });
 }
