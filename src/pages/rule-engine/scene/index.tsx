@@ -174,15 +174,15 @@ const RuleInstanceList: React.FC<Props> = props => {
                   <List.Item key={item.id}>
                     <Card hoverable bodyStyle={{ paddingBottom: 20 }}
                       actions={[
-                        <Tooltip key="seeProduct" title="查看">
-                          <Icon
-                            type="eye"
-                            onClick={() => {
-                              setDetailVisible(true);
-                              setDetailData(item);
-                            }}
-                          />
-                        </Tooltip>,
+                        // <Tooltip key="seeProduct" title="查看">
+                        //   <Icon
+                        //     type="eye"
+                        //     onClick={() => {
+                        //       setDetailVisible(true);
+                        //       setDetailData(item);
+                        //     }}
+                        //   />
+                        // </Tooltip>,
                         <Tooltip key="update" title='编辑'>
                           <Icon
                             type="edit"

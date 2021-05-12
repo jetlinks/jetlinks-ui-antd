@@ -142,7 +142,6 @@ const OpcUaComponent: React.FC<Props> = props => {
 
     useEffect(() => {
         getListNoPaging();
-        console.log(statusPointMap.get('good'))
     }, []);
 
     const statusMap = new Map();
@@ -212,7 +211,7 @@ const OpcUaComponent: React.FC<Props> = props => {
 
     const rendertitle = (item: any) => (
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <div style={{ width: '130px', overflow: 'hidden', marginRight: '10px', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <div style={{ width: '100px', overflow: 'hidden', marginRight: '10px', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 <Tooltip title={item.name}>
                     {item.name}
                 </Tooltip>
@@ -226,7 +225,7 @@ const OpcUaComponent: React.FC<Props> = props => {
                     setBindDeviceVisible(true);
                 }}><a>绑定设备</a></div>
                 {item.state.value === 'disabled' ?
-                    <div onClick={() => {
+                    <div style={{ marginRight: '10px' }} onClick={() => {
                         apis.opcUa.start(item.id).then(res => {
                             if (res.status === 200) {
                                 getListNoPaging();
@@ -234,12 +233,27 @@ const OpcUaComponent: React.FC<Props> = props => {
                             }
                         })
                     }}><a>启用</a></div> :
-                    <div onClick={() => {
+                    <div style={{ marginRight: '10px' }} onClick={() => {
                         apis.opcUa.stop(item.id).then(res => {
                             getListNoPaging();
                             message.success('操作成功！');
                         })
                     }}><a>禁用</a></div>}
+                <div style={{ marginRight: '10px' }}>
+                    <Popconfirm
+                        placement="topRight"
+                        title="确定删除吗？"
+                        onConfirm={() => {
+                            apis.opcUa.remove(item.id).then(res => {
+                                if (res.status === 200) {
+                                    getListNoPaging();
+                                }
+                            })
+                        }}
+                    >
+                        <a>删除</a>
+                    </Popconfirm>
+                </div>
             </div>
         </div>
     )
@@ -454,7 +468,7 @@ const OpcUaComponent: React.FC<Props> = props => {
                         placement="topRight"
                         title="确定删除吗？"
                         onConfirm={() => {
-                            apis.opcUa.delPoint(record.id).then(res => {
+                            apis.opcUa.delPoint([record.id]).then(res => {
                                 if (res.status === 200) {
                                     getDevicePointList(searchPointParam);
                                 }
@@ -730,8 +744,23 @@ const OpcUaComponent: React.FC<Props> = props => {
                                                                     stopPoint(selectedRowKeys);
                                                                 }}
                                                             >
-                                                                批量停止点位
+                                                                批量禁用点位
                                                              </Button>
+                                                        </div>
+                                                        <div style={{ marginRight: '10px' }}>
+                                                            <Button
+                                                                icon="check-circle"
+                                                                type="danger"
+                                                                onClick={() => {
+                                                                    apis.opcUa.delPoint(selectedRowKeys).then(res => {
+                                                                        if (res.status === 200) {
+                                                                            getDevicePointList(searchPointParam);
+                                                                        }
+                                                                    })
+                                                                }}
+                                                            >
+                                                                批量删除点位
+                                                            </Button>
                                                         </div>
                                                     </>
                                                 }
@@ -807,7 +836,7 @@ const OpcUaComponent: React.FC<Props> = props => {
                     setChannelSaveVisible(false);
                 }} save={(data: any) => {
                     if (currentChannel.id) {
-                        apis.opcUa.updata(data).then(res => {
+                        apis.opcUa.update(data).then(res => {
                             if (res.status === 200) {
                                 message.success('保存成功！');
                                 getListNoPaging();

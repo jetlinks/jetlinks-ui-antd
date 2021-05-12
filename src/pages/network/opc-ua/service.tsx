@@ -21,7 +21,7 @@ export async function save(params: any) {
     });
 }
 
-export async function updata(params: any) {
+export async function update(params: any) {
     return request(`/jetlinks/opc/client/${params.id}`, {
         method: 'PUT',
         data: params,
@@ -146,8 +146,9 @@ export async function stopPoint(deviceId: string, params: any) {
     });
 }
 //删除点位
-export async function delPoint(pointId: string) {
-    return request(`/jetlinks/opc/device-bind/point/${pointId}`, {
-        method: 'DELETE'
+export async function delPoint(pointIds: string[]) {
+    return request(`/jetlinksopc/device-bind/batch/point/_delete`, {
+        method: 'POST',
+        data: pointIds
     });
 }

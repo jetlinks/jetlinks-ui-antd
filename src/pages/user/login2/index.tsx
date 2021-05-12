@@ -6,6 +6,8 @@ import { Spin, Avatar } from 'antd';
 import style from './index.less';
 import Service from './service';
 import { router } from 'umi';
+import { getQueryString } from '@/utils/tools';
+import apis from '@/services';
 
 interface Props {
   dispatch: Dispatch;
@@ -122,8 +124,21 @@ const Login: React.FC<Props> = props => {
               </div>
               <input
                 onClick={() => {
-                  router.replace('/');
-                  // window.history.back()
+                  let result = getQueryString(window.location.hash);
+                  if (result && 
+                    result.client_id !== undefined &&
+                    result.response_type !== undefined &&
+                    result.redirect_uri !== undefined &&
+                    result.state !== undefined
+                  ) {
+                    apis.login.oauth(result).then(res => {
+                      if (res.status === 200) {
+                        window.location.href = res.result;
+                      }
+                    });
+                  } else {
+                    router.replace('/');
+                  }
                 }}
                 className={style.btn}
                 type="button"

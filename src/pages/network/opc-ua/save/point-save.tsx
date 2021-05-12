@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Form, Input, Select } from 'antd';
 import { FormComponentProps } from 'antd/es/form';
-import apis from '@/services';
 
 interface Props extends FormComponentProps {
     data: any;
@@ -18,10 +17,10 @@ const PointSave: React.FC<Props> = props => {
         data,
     } = props;
 
-    const [dataMode, setDataMode] = useState("pull");
+    const [dataMode, setDataMode] = useState(data.dataMode);
 
     useEffect(() => {
-
+        
     }, []);
 
     const saveData = () => {

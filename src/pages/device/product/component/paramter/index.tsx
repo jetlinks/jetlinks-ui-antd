@@ -577,7 +577,7 @@ const Paramter: React.FC<Props> = props => {
                 value={data.valueType?.expands?.elementType?.type}
                 onChange={(value: string) => {
                   setAType(value);
-                  _.set(data, 'valueType.expands.elementType.type', value);
+                  _.set(data, 'valueType.elementType.type', value);
                   setData({ ...data });
                 }}
               >
@@ -775,6 +775,9 @@ const Paramter: React.FC<Props> = props => {
     // 递归保存数据
     if (data.valueType.type === 'enum') {
       data.valueType.elements = enumData;
+    }
+    if(data.valueType.type === 'array' && arrayProperties.length > 0){
+      data.valueType.elementType.properties = arrayProperties
     }
     props.save(data);
     message.success('保存成功');

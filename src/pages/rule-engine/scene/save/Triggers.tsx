@@ -88,6 +88,9 @@ const Trigger: React.FC<Props> = props => {
   };
 
   const submitData = () => {
+    if(trigger.device.type === 'online' || trigger.device.type === 'offline'){
+      trigger.device.filters = []
+    }
     props.save({
       ...trigger,
     });
