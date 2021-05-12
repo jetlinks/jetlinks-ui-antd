@@ -28,6 +28,7 @@ import SearchForm from '@/components/SearchForm';
 import apis from '@/services';
 import numeral from 'numeral';
 import AutoHide from '@/pages/device/location/info/autoHide';
+import { getAccessToken } from '@/utils/authority';
 
 interface Props {
   dispatch: Dispatch;
@@ -305,6 +306,10 @@ const DeviceModel: React.FC<Props> = props => {
               <Divider type="vertical" />
 
               <Upload
+              action="/jetlinks/file/static"
+              headers={{
+                'X-Access-Token': getAccessToken(),
+              }}
                 showUploadList={false}
                 accept=".json"
                 beforeUpload={file => {

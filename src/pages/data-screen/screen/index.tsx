@@ -186,7 +186,12 @@ const Screen = (props: Props) => {
           <div className={styles.tableListOperator}>
             <Button icon="plus" type="primary" onClick={() => setSaveVisible(true)}>新建大屏</Button>
             <Divider type="vertical"/>
-            <Upload showUploadList={false} accept='.json' beforeUpload={(file) => {
+            <Upload
+            action="/jetlinks/file/static"
+              headers={{
+                'X-Access-Token': getAccessToken(),
+              }}
+            showUploadList={false} accept='.json' beforeUpload={(file) => {
               const reader = new FileReader();
               reader.readAsText(file);
               reader.onload = (result) => {

@@ -12,6 +12,7 @@ import { downloadObject } from '@/utils/utils';
 import { FormComponentProps } from 'antd/lib/form';
 import moment from 'moment';
 import SearchForm from '@/components/SearchForm';
+import { getAccessToken } from '@/utils/authority';
 
 interface Props extends FormComponentProps {
   dispatch: Dispatch;
@@ -230,6 +231,10 @@ const SqlRuleList: React.FC<Props> = props => {
               新建
             </Button>
             <Upload
+            action="/jetlinks/file/static"
+            headers={{
+              'X-Access-Token': getAccessToken(),
+            }}
               showUploadList={false} accept='.json'
               beforeUpload={(file) => {
                 setLoading(true);

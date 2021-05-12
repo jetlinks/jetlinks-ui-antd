@@ -16,6 +16,7 @@ import 'ace-builds/src-noconflict/theme-eclipse';
 import apis from "@/services";
 import { DeviceProduct } from "@/pages/device/product/data";
 import encodeQueryParam from "@/utils/encodeParam";
+import { getAccessToken } from '@/utils/authority';
 
 interface Props extends FormComponentProps {
   close: Function;
@@ -157,6 +158,10 @@ const QuickImport: React.FC<Props> = props => {
           <Row gutter={24}>
             <Col span={6}>
               <Upload
+              action="/jetlinks/file/static"
+              headers={{
+                'X-Access-Token': getAccessToken(),
+              }}
                 showUploadList={false} accept='.json'
                 beforeUpload={(file) => {
                   const reader = new FileReader();

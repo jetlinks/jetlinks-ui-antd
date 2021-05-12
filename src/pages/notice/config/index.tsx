@@ -15,6 +15,7 @@ import TagSelect from '../components/tag-select';
 import styles from '../index.less';
 import Debug from './debugger';
 import Logger from './log';
+import { getAccessToken } from '@/utils/authority';
 
 interface Props extends FormComponentProps {
   dispatch: Dispatch;
@@ -246,6 +247,10 @@ const Config: React.FC<Props> = props => {
             </Button>
           </Upload>*/}
           <Upload
+          action="/jetlinks/file/static"
+          headers={{
+            'X-Access-Token': getAccessToken(),
+          }}
             showUploadList={false} accept='.json'
             beforeUpload={(file) => {
               const reader = new FileReader();

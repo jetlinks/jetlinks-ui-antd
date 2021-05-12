@@ -160,6 +160,10 @@ const QuickImport: React.FC<Props> = props => {
           <Row gutter={24}>
             <Col span={6}>
               <Upload
+              action="/jetlinks/file/static"
+              headers={{
+                'X-Access-Token': getAccessToken(),
+              }}
                 showUploadList={false} accept='.json'
                 beforeUpload={(file) => {
                   const reader = new FileReader();
