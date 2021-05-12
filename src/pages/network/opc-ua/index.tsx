@@ -468,7 +468,7 @@ const OpcUaComponent: React.FC<Props> = props => {
                         placement="topRight"
                         title="确定删除吗？"
                         onConfirm={() => {
-                            apis.opcUa.delPoint([record.id]).then(res => {
+                            apis.opcUa.delPoint(deviceId, [record.id]).then(res => {
                                 if (res.status === 200) {
                                     getDevicePointList(searchPointParam);
                                 }
@@ -752,7 +752,7 @@ const OpcUaComponent: React.FC<Props> = props => {
                                                                 icon="check-circle"
                                                                 type="danger"
                                                                 onClick={() => {
-                                                                    apis.opcUa.delPoint(selectedRowKeys).then(res => {
+                                                                    apis.opcUa.delPoint(deviceId, selectedRowKeys).then(res => {
                                                                         if (res.status === 200) {
                                                                             getDevicePointList(searchPointParam);
                                                                         }

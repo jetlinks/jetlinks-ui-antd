@@ -184,7 +184,7 @@ const Editor: React.FC<Props> = props => {
   const statusMap = new Map();
   statusMap.set('online', <Badge status="success" text={'在线'} />);
   statusMap.set('offline', <Badge status="error" text={'离线'} />);
-  statusMap.set('notActive', <Badge status="processing" text={'未激活'} />);
+  statusMap.set('notActive', <Badge status="processing" text={'未启用'} />);
 
   useEffect(() => {
     apis.deviceProdcut
@@ -244,12 +244,12 @@ const Editor: React.FC<Props> = props => {
       .changeDeploy(deviceId)
       .then(response => {
         if (response.status === 200) {
-          message.success('激活成功');
+          message.success('操作成功');
           data.state = { value: 'offline', text: '离线' };
           setData(data);
           setSpinning(false);
         } else {
-          message.error('激活失败');
+          message.error('操作失败');
           setSpinning(false);
         }
       })
@@ -408,12 +408,12 @@ const Editor: React.FC<Props> = props => {
           </Popconfirm>
         ) : data.state?.value === 'notActive' ? (
           <Popconfirm
-            title="确认激活此设备？"
+            title="确认启动此设备？"
             onConfirm={() => {
               changeDeploy(data.id);
             }}
           >
-            <a {...deviceStateStyle}>激活设备</a>
+            <a {...deviceStateStyle}>启动设备</a>
           </Popconfirm>
         ) : (
           <span />
