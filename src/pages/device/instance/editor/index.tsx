@@ -353,16 +353,16 @@ const Editor: React.FC<Props> = props => {
         name={data.name}
       />
     ),
-    shadow: <Shadow deviceId={data.id} />,
-    visualization: (
-      <Visualization
-        type="device"
-        target={data.id}
-        name={data.name}
-        productId={data.productId}
-        metaData={data.metadata}
-      />
-    ),
+    // shadow: <Shadow deviceId={data.id} />,
+    // visualization: (
+    //   <Visualization
+    //     type="device"
+    //     target={data.id}
+    //     name={data.name}
+    //     productId={data.productId}
+    //     metaData={data.metadata}
+    //   />
+    // ),
   };
 
   const content = (

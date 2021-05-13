@@ -87,11 +87,14 @@ const OpcUaComponent: React.FC<Props> = props => {
     const [spinning, setSpinning] = useState(true);
     const [properties$, setProperties$] = useState<any>();
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+    const [loadedKeys, setLoadedKeys] = useState<string[]>([]);
     const wsCallback = useRef();
 
-    const getListNoPaging = () => {
+    const getListNoPaging = (id?: string) => {
         setSpinning(true);
-        apis.opcUa.listNoPaging({}).then((res: any) => {
+        apis.opcUa.listNoPaging(encodeQueryParam({
+            sorts: { field: 'name', order: 'desc' }
+        })).then((res: any) => {
             if (res.status === 200) {
                 let data: any[] = [];
                 if (res.result.length > 0) {
@@ -112,6 +115,10 @@ const OpcUaComponent: React.FC<Props> = props => {
                         },
                         pageSize: 10
                     });
+                }else{
+                    setDataListNoPaing([]);
+                    setResult({});
+                    setCurrentPoint({});
                 }
             }
             setSpinning(false);
@@ -215,7 +222,16 @@ const OpcUaComponent: React.FC<Props> = props => {
 
     const rendertitle = (item: any) => (
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <div style={{ width: '100px', overflow: 'hidden', marginRight: '10px', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <div style={{ width: '100px', overflow: 'hidden', marginRight: '10px', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} onClick={() => {
+                setOpcId(item.id);
+                getDeviceBindList({
+                    pageSize: 10,
+                    terms: {
+                        opcUaId: item.id
+                    }
+                });
+                setPointVisible(false);
+            }}>
                 <Tooltip title={item.name}>
                     {item.name}
                 </Tooltip>
@@ -232,14 +248,14 @@ const OpcUaComponent: React.FC<Props> = props => {
                     <div style={{ marginRight: '10px' }} onClick={() => {
                         apis.opcUa.start(item.id).then(res => {
                             if (res.status === 200) {
-                                getListNoPaging();
+                                getListNoPaging(item.id);
                                 message.success('操作成功！');
                             }
                         })
                     }}><a>启用</a></div> :
                     <div style={{ marginRight: '10px' }} onClick={() => {
                         apis.opcUa.stop(item.id).then(res => {
-                            getListNoPaging();
+                            getListNoPaging(item.id);
                             message.success('操作成功！');
                         })
                     }}><a>禁用</a></div>}
@@ -506,7 +522,8 @@ const OpcUaComponent: React.FC<Props> = props => {
     };
 
     const onLoadData = (treeNode: any) => {
-        const { eventKey, isLeaf } = treeNode.props;
+        const { id, isLeaf } = treeNode.props;
+        setLoadedKeys([id]);
         return new Promise<void>(resolve => {
             if (isLeaf) {
                 resolve();
@@ -514,7 +531,7 @@ const OpcUaComponent: React.FC<Props> = props => {
             }
             apis.opcUa.getDeviceBindListNoPaging(encodeQueryParam({
                 terms: {
-                    opcUaId: eventKey
+                    opcUaId: id
                 }
             })).then(resp => {
                 let children1: any[] = [];
@@ -527,7 +544,7 @@ const OpcUaComponent: React.FC<Props> = props => {
                         children: []
                     })
                 })
-                setDataListNoPaing(origin => updateTreeData(origin, eventKey, children1));
+                setDataListNoPaing(origin => updateTreeData(origin, id, children1));
                 resolve();
             })
         });
@@ -671,6 +688,7 @@ const OpcUaComponent: React.FC<Props> = props => {
                                     defaultExpandAll
                                     treeData={dataListNoPaing}
                                     loadData={onLoadData}
+                                    loadedKeys={loadedKeys}
                                     onSelect={(key, e) => {
                                         if (key.length > 0) {
                                             setTreeNode(e.node);
@@ -686,16 +704,19 @@ const OpcUaComponent: React.FC<Props> = props => {
                                                     sorts: searchPointParam.sorts
                                                 });
                                                 setPointVisible(true);
-                                            } else {
-                                                setOpcId(id);
-                                                getDeviceBindList({
-                                                    pageSize: 10,
-                                                    terms: {
-                                                        opcUaId: id
-                                                    }
-                                                });
-                                                setPointVisible(false);
                                             }
+                                            // else {
+                                            //     // setTreeNode(e.node)
+                                            //     // onLoadData();
+                                            //     // setOpcId(id);
+                                            //     // getDeviceBindList({
+                                            //     //     pageSize: 10,
+                                            //     //     terms: {
+                                            //     //         opcUaId: id
+                                            //     //     }
+                                            //     // });
+                                            //     // setPointVisible(false);
+                                            // }
                                         }
                                     }}
                                 />
@@ -843,21 +864,20 @@ const OpcUaComponent: React.FC<Props> = props => {
                 {channelSaveVisible && <ChannelSave data={currentChannel} close={() => {
                     setChannelSaveVisible(false);
                 }} save={(data: any) => {
+                    setChannelSaveVisible(false);
                     if (currentChannel.id) {
                         apis.opcUa.update(data).then(res => {
                             if (res.status === 200) {
                                 message.success('保存成功！');
-                                getListNoPaging();
+                                getListNoPaging(data.id);
                             }
-                            setChannelSaveVisible(false);
                         })
                     } else {
                         apis.opcUa.save(data).then(res => {
                             if (res.status === 200) {
                                 message.success('保存成功！');
-                                getListNoPaging();
+                                getListNoPaging(data.id);
                             }
-                            setChannelSaveVisible(false);
                         })
                     }
                 }} />}
