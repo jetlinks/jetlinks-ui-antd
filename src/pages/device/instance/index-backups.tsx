@@ -296,7 +296,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
   };
 
   const uploadProps: UploadProps = {
-    accept: '.xlsx',
+    accept: '.xlsx, .xls',
     action: '/jetlinks/file/static',
     headers: {
       'X-Access-Token': getAccessToken(),

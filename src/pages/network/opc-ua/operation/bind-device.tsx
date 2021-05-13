@@ -186,7 +186,7 @@ const BindDevice: React.FC<Props> = props => {
     };
 
     const _unbind = (deviceIds: string[]) => {
-        apis.opcUa.removeManyBind(deviceIds).then(res => {
+        apis.opcUa.removeManyBind(props.opcId, deviceIds).then(res => {
             if (res.status === 200) {
                 message.success('解绑成功！');
             }else{

@@ -72,8 +72,8 @@ export async function removeBind(id: string) {
     });
 }
 //批量解绑
-export async function removeManyBind(params: any) {
-    return request(`/jetlinks/opc/device-bind/batch/_delete`, {
+export async function removeManyBind(opcUaId: string, params: any) {
+    return request(`/jetlinks/opc/device-bind/batch/${opcUaId}/_delete`, {
         method: 'POST',
         data: params
     });

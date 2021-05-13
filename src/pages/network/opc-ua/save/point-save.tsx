@@ -7,6 +7,7 @@ interface Props extends FormComponentProps {
     close: Function;
     save: Function;
     deviceId: string;
+    opcUaId: string;
 }
 
 const PointSave: React.FC<Props> = props => {
@@ -20,13 +21,13 @@ const PointSave: React.FC<Props> = props => {
     const [dataMode, setDataMode] = useState(data.dataMode);
 
     useEffect(() => {
-        
+
     }, []);
 
     const saveData = () => {
         form.validateFields((err, fileValue) => {
             if (err) return;
-            props.save({ ...data, ...fileValue, deviceId: props.deviceId });
+            props.save({ ...data, ...fileValue, deviceId: props.deviceId, opcUaId: props.opcUaId });
         })
     };
 

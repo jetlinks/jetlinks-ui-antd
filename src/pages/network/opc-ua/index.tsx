@@ -37,6 +37,7 @@ interface State {
     dataListNoPaing: any[];
     opcId: string;
     deviceId: string;
+    deviceBindId: string;
     propertyList: any[];
     selectedRowKeys: any[];
 }
@@ -45,7 +46,7 @@ const OpcUaComponent: React.FC<Props> = props => {
 
     const initState: State = {
         searchParam: { pageSize: 10 },
-        searchPointParam: { pageSize: 10 },
+        searchPointParam: { pageSize: 10, sorts: { field: 'property', order: 'desc' } },
         pointVisible: false,
         bindSaveVisible: false,
         pointSaveVisible: false,
@@ -59,6 +60,7 @@ const OpcUaComponent: React.FC<Props> = props => {
         dataListNoPaing: [],
         opcId: '',
         deviceId: '',
+        deviceBindId: '',
         propertyList: [],
         selectedRowKeys: []
     };
@@ -78,6 +80,7 @@ const OpcUaComponent: React.FC<Props> = props => {
     const [dataListNoPaing, setDataListNoPaing] = useState(initState.dataListNoPaing);
     const [opcId, setOpcId] = useState(initState.opcId);
     const [deviceId, setDeviceId] = useState(initState.deviceId);
+    const [deviceBindId, setDeviceBindId] = useState(initState.deviceBindId);
     const [importVisible, setImportVisible] = useState(false);
     const [exportVisible, setExportVisible] = useState(false);
     const [treeNode, setTreeNode] = useState<any>({});
@@ -184,7 +187,7 @@ const OpcUaComponent: React.FC<Props> = props => {
         getDeviceBindList({
             pageIndex: Number(pagination.current) - 1,
             pageSize: pagination.pageSize,
-            terms
+            terms,
         });
     };
 
@@ -192,20 +195,21 @@ const OpcUaComponent: React.FC<Props> = props => {
         pagination: PaginationConfig,
         filters: any
     ) => {
-        let { terms } = searchPointParam;
-        if (filters.sate) {
+        let { terms, sorter } = searchPointParam;
+        if (filters.state) {
             if (terms) {
-                terms.sate = filters.sate[0];
+                terms.state = filters.state[0];
             } else {
                 terms = {
-                    sate: filters.sate[0]
+                    state: filters.state[0]
                 };
             }
         }
         getDevicePointList({
             pageIndex: Number(pagination.current) - 1,
             pageSize: pagination.pageSize,
-            terms: searchPointParam.terms
+            terms: searchPointParam.terms,
+            sorts: sorter,
         });
     };
 
@@ -347,11 +351,13 @@ const OpcUaComponent: React.FC<Props> = props => {
                     <Divider type="vertical" />
                     <a onClick={() => {
                         setDeviceId(record.deviceId);
+                        setDeviceBindId(record.id);
                         getDevicePointList({
                             pageSize: 10,
                             terms: {
                                 deviceId: record.deviceId
-                            }
+                            },
+                            sorts: searchPointParam.sorts
                         });
                         setPointVisible(true);
                     }}>查看点位</a>
@@ -468,7 +474,7 @@ const OpcUaComponent: React.FC<Props> = props => {
                         placement="topRight"
                         title="确定删除吗？"
                         onConfirm={() => {
-                            apis.opcUa.delPoint(deviceId, [record.id]).then(res => {
+                            apis.opcUa.delPoint(deviceBindId, [record.id]).then(res => {
                                 if (res.status === 200) {
                                     getDevicePointList(searchPointParam);
                                 }
@@ -572,7 +578,7 @@ const OpcUaComponent: React.FC<Props> = props => {
     };
 
     const stopPoint = (list: any[]) => {
-        apis.opcUa.stopPoint(deviceId, [...list]).then(res => {
+        apis.opcUa.stopPoint(deviceBindId, [...list]).then(res => {
             if (res.status === 200) {
                 getDevicePointList(searchPointParam);
             }
@@ -580,7 +586,7 @@ const OpcUaComponent: React.FC<Props> = props => {
     }
 
     const startPoint = (list: any[]) => {
-        apis.opcUa.startPoint(deviceId, [...list]).then(res => {
+        apis.opcUa.startPoint(deviceBindId, [...list]).then(res => {
             if (res.status === 200) {
                 getDevicePointList(searchPointParam);
             }
@@ -668,14 +674,16 @@ const OpcUaComponent: React.FC<Props> = props => {
                                     onSelect={(key, e) => {
                                         if (key.length > 0) {
                                             setTreeNode(e.node);
-                                            const { isLeaf, id } = e.node.props;
+                                            const { eventKey, isLeaf, id} = e.node.props;
                                             if (isLeaf) {
                                                 setDeviceId(id);
+                                                setDeviceBindId(eventKey || key[0]);
                                                 getDevicePointList({
                                                     pageSize: 10,
                                                     terms: {
                                                         deviceId: id
-                                                    }
+                                                    },
+                                                    sorts: searchPointParam.sorts
                                                 });
                                                 setPointVisible(true);
                                             } else {
@@ -701,7 +709,7 @@ const OpcUaComponent: React.FC<Props> = props => {
                                             <div style={{ width: '100%' }}>
                                                 <SearchForm
                                                     search={(params: any) => {
-                                                        getDevicePointList({ terms: { ...params, deviceId: deviceId }, pageSize: 10 });
+                                                        getDevicePointList({ terms: { ...params, deviceId: deviceId }, pageSize: 10, sorts: searchPointParam.sorts });
                                                     }}
                                                     formItems={[
                                                         {
@@ -752,7 +760,7 @@ const OpcUaComponent: React.FC<Props> = props => {
                                                                 icon="check-circle"
                                                                 type="danger"
                                                                 onClick={() => {
-                                                                    apis.opcUa.delPoint(deviceId, selectedRowKeys).then(res => {
+                                                                    apis.opcUa.delPoint(deviceBindId, selectedRowKeys).then(res => {
                                                                         if (res.status === 200) {
                                                                             getDevicePointList(searchPointParam);
                                                                         }
@@ -855,6 +863,7 @@ const OpcUaComponent: React.FC<Props> = props => {
                 }} />}
                 {pointSaveVisible && <PointSave data={currentPoint}
                     deviceId={deviceId}
+                    opcUaId={opcId}
                     close={() => {
                         setPointSaveVisible(false);
                     }} save={(data: any) => {
@@ -866,7 +875,8 @@ const OpcUaComponent: React.FC<Props> = props => {
                                     pageSize: 10,
                                     terms: {
                                         deviceId: deviceId
-                                    }
+                                    },
+                                    sorts: searchPointParam.sorts
                                 });
                             }
                         })

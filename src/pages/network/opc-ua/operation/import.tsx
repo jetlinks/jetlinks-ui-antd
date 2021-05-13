@@ -105,7 +105,7 @@ const Import: React.FC<Props> = props => {
   };
 
   const uploadProps: UploadProps = {
-    accept: fileType,
+    accept: fileType === ".xlsx" ? ".xlsx, .xls" : fileType,
     action: '/jetlinks/file/static',
     headers: {
       'X-Access-Token': getAccessToken(),
