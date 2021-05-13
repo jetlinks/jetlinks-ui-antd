@@ -216,6 +216,7 @@ const OpcUaComponent: React.FC<Props> = props => {
                 };
             }
         }
+        setSelectedRowKeys([]);
         getDevicePointList({
             pageIndex: Number(pagination.current) - 1,
             pageSize: pagination.pageSize,
