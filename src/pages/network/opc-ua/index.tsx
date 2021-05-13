@@ -87,7 +87,7 @@ const OpcUaComponent: React.FC<Props> = props => {
     const [spinning, setSpinning] = useState(true);
     const [properties$, setProperties$] = useState<any>();
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-    // const [loadedKeys, setLoadedKeys] = useState<string[]>([]);
+    const [list, setList] = useState<string[]>([]);
     const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
     const wsCallback = useRef();
 
@@ -842,6 +842,7 @@ const OpcUaComponent: React.FC<Props> = props => {
                                                 rowSelection={{
                                                     type: 'checkbox',
                                                     ...rowSelection,
+                                                    selectedRowKeys: selectedRowKeys
                                                 }}
                                                 pagination={{
                                                     current: resultPoint.pageIndex + 1,
