@@ -206,7 +206,7 @@ const OpcUaComponent: React.FC<Props> = props => {
         pagination: PaginationConfig,
         filters: any
     ) => {
-        let { terms, sorter } = searchPointParam;
+        let { terms, sorts } = searchPointParam;
         if (filters.state) {
             if (terms) {
                 terms.state = filters.state[0];
@@ -220,7 +220,7 @@ const OpcUaComponent: React.FC<Props> = props => {
             pageIndex: Number(pagination.current) - 1,
             pageSize: pagination.pageSize,
             terms: searchPointParam.terms,
-            sorts: sorter,
+            sorts: sorts,
         });
     };
 
