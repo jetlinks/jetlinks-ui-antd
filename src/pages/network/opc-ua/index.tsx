@@ -109,6 +109,9 @@ const OpcUaComponent: React.FC<Props> = props => {
                     })
                     setDataListNoPaing([...data]);
                     setOpcId(data[0].key);
+                    if(id){
+                        onLoadData1(id)
+                    }
                     getDeviceBindList({
                         terms: {
                             opcUaId: data[0].key
@@ -529,6 +532,29 @@ const OpcUaComponent: React.FC<Props> = props => {
                 resolve();
                 return;
             }
+            apis.opcUa.getDeviceBindListNoPaging(encodeQueryParam({
+                terms: {
+                    opcUaId: id
+                }
+            })).then(resp => {
+                let children1: any[] = [];
+                resp.result.map((item: any) => {
+                    children1.push({
+                        key: item.id,
+                        title: item.name,
+                        isLeaf: true,
+                        id: item.deviceId,
+                        children: []
+                    })
+                })
+                setDataListNoPaing(origin => updateTreeData(origin, id, children1));
+                resolve();
+            })
+        });
+    }
+
+    const onLoadData1 = (id: string) => {
+        return new Promise<void>(resolve => {
             apis.opcUa.getDeviceBindListNoPaging(encodeQueryParam({
                 terms: {
                     opcUaId: id
