@@ -87,7 +87,8 @@ const OpcUaComponent: React.FC<Props> = props => {
     const [spinning, setSpinning] = useState(true);
     const [properties$, setProperties$] = useState<any>();
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-    const [loadedKeys, setLoadedKeys] = useState<string[]>([]);
+    // const [loadedKeys, setLoadedKeys] = useState<string[]>([]);
+    const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
     const wsCallback = useRef();
 
     const getListNoPaging = (id?: string) => {
@@ -249,6 +250,7 @@ const OpcUaComponent: React.FC<Props> = props => {
                 }}><a>绑定设备</a></div>
                 {item.state.value === 'disabled' ?
                     <div style={{ marginRight: '10px' }} onClick={() => {
+                        setExpandedKeys([item.id])
                         apis.opcUa.start(item.id).then(res => {
                             if (res.status === 200) {
                                 getListNoPaging(item.id);
@@ -257,6 +259,7 @@ const OpcUaComponent: React.FC<Props> = props => {
                         })
                     }}><a>启用</a></div> :
                     <div style={{ marginRight: '10px' }} onClick={() => {
+                        setExpandedKeys([item.id])
                         apis.opcUa.stop(item.id).then(res => {
                             getListNoPaging(item.id);
                             message.success('操作成功！');
@@ -526,7 +529,6 @@ const OpcUaComponent: React.FC<Props> = props => {
 
     const onLoadData = (treeNode: any) => {
         const { id, isLeaf } = treeNode.props;
-        setLoadedKeys([id]);
         return new Promise<void>(resolve => {
             if (isLeaf) {
                 resolve();
@@ -714,7 +716,16 @@ const OpcUaComponent: React.FC<Props> = props => {
                                     defaultExpandAll
                                     treeData={dataListNoPaing}
                                     loadData={onLoadData}
-                                    loadedKeys={loadedKeys}
+                                    // loadedKeys={loadedKeys}
+                                    expandedKeys={expandedKeys}
+                                    onExpand={(expandedKeys, {expanded}) => {
+                                        if(expanded && expandedKeys.length > 0){
+                                            let keys = expandedKeys[expandedKeys.length - 1];
+                                            setExpandedKeys([keys])
+                                        }else{
+                                            setExpandedKeys([])
+                                        }
+                                    }}
                                     onSelect={(key, e) => {
                                         if (key.length > 0) {
                                             setTreeNode(e.node);
@@ -731,18 +742,19 @@ const OpcUaComponent: React.FC<Props> = props => {
                                                 });
                                                 setPointVisible(true);
                                             }
-                                            // else {
-                                            //     // setTreeNode(e.node)
-                                            //     // onLoadData();
-                                            //     // setOpcId(id);
-                                            //     // getDeviceBindList({
-                                            //     //     pageSize: 10,
-                                            //     //     terms: {
-                                            //     //         opcUaId: id
-                                            //     //     }
-                                            //     // });
-                                            //     // setPointVisible(false);
-                                            // }
+                                            else {
+                                                // setLoadedKeys(key)
+                                                // setTreeNode(e.node)
+                                                // onLoadData();
+                                                // setOpcId(id);
+                                                // getDeviceBindList({
+                                                //     pageSize: 10,
+                                                //     terms: {
+                                                //         opcUaId: id
+                                                //     }
+                                                // });
+                                                // setPointVisible(false);
+                                            }
                                         }
                                     }}
                                 />
