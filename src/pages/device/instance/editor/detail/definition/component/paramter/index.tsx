@@ -97,7 +97,7 @@ const Paramter: React.FC<Props> = props => {
             <Form.Item label="单位">
               <Select
                 onChange={(value: string) => {
-                  data.valueType.lementType.unit = value;
+                  data.valueType.elementType.unit = value;
                   setData({ ...data });
                 }}
                 value={data.valueType?.elementType?.unit}
@@ -128,7 +128,7 @@ const Paramter: React.FC<Props> = props => {
             <Form.Item label="单位">
               <Select
                 onChange={(value: string) => {
-                  data.valueType.lementType.unit = value;
+                  data.valueType.elementType.unit = value;
                   setData({ ...data });
                 }}
                 value={data.valueType?.elementType?.unit}
@@ -157,6 +157,9 @@ const Paramter: React.FC<Props> = props => {
             <Form.Item label="最大长度">
               <Input
                 onChange={(value) => {
+                  if (!data.valueType.elementType.expands) {
+                    data.valueType.elementType.expands = {};
+                  }
                   data.valueType.elementType.expands.maxLength = value.target.value;
                   setData({ ...data });
                 }}
@@ -175,7 +178,7 @@ const Paramter: React.FC<Props> = props => {
                     data.valueType.elementType.trueText = value.target.value;
                     setData({ ...data });
                   }}
-                  value={data.valueType?.elementType?.trueText || '是'}
+                  value={data.valueType?.elementType?.trueText}
 
                   placeholder="trueText" />
               </Col>
@@ -189,7 +192,7 @@ const Paramter: React.FC<Props> = props => {
                       data.valueType.elementType.trueValue = value.target.value;
                       setData({ ...data });
                     }}
-                    value={data.valueType?.elementType?.trueValue || true}
+                    value={data.valueType?.elementType?.trueValue}
                     placeholder="trueValue" />
                 </Form.Item>
               </Col>
@@ -198,10 +201,10 @@ const Paramter: React.FC<Props> = props => {
               <Col span={11}>
                 <Input
                   onChange={(value) => {
-                    data.valueType.elementType.falseText = value.target.value || '否';
+                    data.valueType.elementType.falseText = value.target.value;
                     setData({ ...data });
                   }}
-                  value={data.valueType?.elementType?.falseText || true}
+                  value={data.valueType?.elementType?.falseText}
                   placeholder="falseText" />
               </Col>
               <Col span={2} push={1}>
@@ -211,10 +214,10 @@ const Paramter: React.FC<Props> = props => {
                 <Form.Item>
                   <Input
                     onChange={(value) => {
-                      data.valueType.elementType.falseValue = value.target.value || '否';
+                      data.valueType.elementType.falseValue = value.target.value;
                       setData({ ...data });
                     }}
-                    value={data.valueType?.elementType?.falseValue || false}
+                    value={data.valueType?.elementType?.falseValue}
                     placeholder="falseValue" />
                 </Form.Item>
               </Col>
@@ -388,8 +391,11 @@ const Paramter: React.FC<Props> = props => {
           <div>
             <Form.Item label="密码长度">
               <Input
-                onChange={(value: any) => {
-                  data.valueType.elementType.expands.maxLength = value;
+                onChange={(e: any) => {
+                  if (!data.valueType.elementType.expands) {
+                    data.valueType.elementType.expands = {};
+                  }
+                  data.valueType.elementType.expands.maxLength = e.target.value;
                   setData({ ...data });
                 }}
                 value={data.valueType?.elementType?.expands?.maxLength}
@@ -501,7 +507,7 @@ const Paramter: React.FC<Props> = props => {
                   value={data.valueType?.trueText}
                   placeholder="trueText"
                   onChange={event => {
-                    data.valueType.trueText = event.target.value || '是';
+                    data.valueType.trueText = event.target.value;
                     setData({ ...data });
                   }}
                 />
@@ -515,7 +521,7 @@ const Paramter: React.FC<Props> = props => {
                     value={data.valueType?.trueValue}
                     placeholder="trueValue"
                     onChange={event => {
-                      data.valueType.trueValue = event.target.value || true;
+                      data.valueType.trueValue = event.target.value;
                       setData({ ...data });
                     }}
                   />
@@ -528,7 +534,7 @@ const Paramter: React.FC<Props> = props => {
                   value={data.valueType?.falseText}
                   placeholder="falseText"
                   onChange={event => {
-                    data.valueType.falseText = event.target.value || '否';
+                    data.valueType.falseText = event.target.value;
                     setData({ ...data });
                   }}
                 />
@@ -542,7 +548,7 @@ const Paramter: React.FC<Props> = props => {
                     value={data.valueType?.falseValue}
                     placeholder="falseValue"
                     onChange={event => {
-                      data.valueType.falseValue = event.target.value || false;
+                      data.valueType.falseValue = event.target.value;
                       setData({ ...data });
                     }}
                   />
@@ -759,6 +765,9 @@ const Paramter: React.FC<Props> = props => {
                 addonAfter="字节"
                 value={data.valueType?.expands?.maxLength}
                 onChange={event => {
+                  if (!data.valueType.expands) {
+                    data.valueType.expands = {};
+                  }
                   data.valueType.expands.maxLength = event.target.value;
                   setData({ ...data });
                 }}
