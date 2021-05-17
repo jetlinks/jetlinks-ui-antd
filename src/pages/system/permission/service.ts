@@ -10,7 +10,8 @@ export async function list(params?: any) {
 }
 
 export async function listNoPaging(params?: any) {
-  return request(`/jetlinks/permission/_query/no-paging?paging=false`, {
+  // return request(`/jetlinks/permission/_query/no-paging?paging=false`, {
+  return request(`/jetlinks/permission/_query/for-grant`, {
     method: 'GET',
     params,
   });

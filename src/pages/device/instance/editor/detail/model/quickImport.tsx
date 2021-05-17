@@ -16,6 +16,7 @@ import 'ace-builds/src-noconflict/theme-eclipse';
 import apis from "@/services";
 import encodeQueryParam from "@/utils/encodeParam";
 import {DeviceInstance} from '@/pages/device/instance/data';
+import { getAccessToken } from '@/utils/authority';
 
 interface Props extends FormComponentProps {
   close: Function;

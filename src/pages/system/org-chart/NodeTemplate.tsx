@@ -18,9 +18,9 @@ const NodeTemplate = (props: Props) => {
 
         <div className={styles.content}>
           <div className={styles.item}>
-            {data.id!==''&&(<div>
-              <span className={styles.mark}>标识</span>
-              <span>{data.id}</span>
+            {data.code!==''&&(<div>
+              <span className={styles.mark}>编码</span>
+              <span>{data.code}</span>
             </div>)}
             <div>
               <span className={styles.mark}>子节点</span>

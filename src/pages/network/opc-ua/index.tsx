@@ -252,8 +252,10 @@ const OpcUaComponent: React.FC<Props> = props => {
                 {item.state.value === 'disabled' ?
                     <div style={{ marginRight: '10px' }} onClick={() => {
                         setExpandedKeys([item.id])
+                        setSpinning(true);
                         apis.opcUa.start(item.id).then(res => {
                             if (res.status === 200) {
+                                setSpinning(false);
                                 getListNoPaging(item.id);
                                 message.success('操作成功！');
                             }
@@ -261,7 +263,9 @@ const OpcUaComponent: React.FC<Props> = props => {
                     }}><a>启用</a></div> :
                     <div style={{ marginRight: '10px' }} onClick={() => {
                         setExpandedKeys([item.id])
+                        setSpinning(true);
                         apis.opcUa.stop(item.id).then(res => {
+                            setSpinning(false);
                             getListNoPaging(item.id);
                             message.success('操作成功！');
                         })
