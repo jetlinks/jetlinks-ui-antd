@@ -68,8 +68,12 @@ const UserTenant = () => {
     showQuickJumper: true,
     pageSize: 5,
     total: list?.total || 0,
+    showTotal: (total: number) =>
+      `共 ${total} 条记录 第  ${(searchParam.pageIndex || 0) + 1}/${Math.ceil(
+        total / (searchParam.pageSize || 5),
+      )}页`,
     onChange: (page, pageSize) => {
-      handleSearch({...searchParam, pageIndex: page - 1, pageSize: 5,  });
+      handleSearch({ ...searchParam, pageIndex: page - 1, pageSize: 5 });
     },
   };
 
