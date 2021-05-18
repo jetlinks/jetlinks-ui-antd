@@ -122,6 +122,7 @@ const Save = (props: Props) => {
   return (
     <Drawer visible width="40VW" title="添加用户" onClose={() => props.close()}>
       <Input.Search
+        placeholder="输入姓名搜索"
         style={{ marginBottom: 10 }}
         onSearch={value => {
           handleSearch({
