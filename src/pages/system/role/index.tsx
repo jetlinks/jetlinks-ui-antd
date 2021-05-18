@@ -174,7 +174,7 @@ const RoleList: React.FC<Props> = props => {
     },
   ];
 
-  console.log(result, 'cccc');
+  // console.log(result, 'cccc');
   return (
     <PageHeaderWrapper title="角色管理">
       <Card bordered={false}>

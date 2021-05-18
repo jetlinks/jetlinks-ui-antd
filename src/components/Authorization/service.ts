@@ -1,6 +1,7 @@
 import request from '@/utils/request';
 
 export async function list(params?: any) {
+    ///jetlinks/permission/_query/for-grant
     return request(`/jetlinks/autz-setting/_query/no-paging`, {
         method: 'GET',
         params,
