@@ -213,7 +213,7 @@ const OpenApiList: React.FC<Props> = props => {
               }}
               formItems={[{
                 label: "名称",
-                key: "name$LIKE",
+                key: "clientName$LIKE",
                 type: 'string',
               },
               {
