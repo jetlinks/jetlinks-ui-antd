@@ -401,7 +401,7 @@ const Alarm: React.FC<Props> = props => {
           </Tabs.TabPane>
           <Tabs.TabPane tab="告警记录" key="logList">
             <div>
-              <Select placeholder="选择设告警设置" allowClear style={{width: 300}} defaultValue={alarmLogId}
+              <Select placeholder="选择告警设置" allowClear style={{width: 300}} defaultValue={alarmLogId}
                       onChange={(value: string) => {
                         onAlarmProduct(value);
                       }}
