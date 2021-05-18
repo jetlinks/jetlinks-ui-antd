@@ -51,6 +51,8 @@ const Model: LoginModelType = {
 
   effects: {
     *login({ payload, callback }, { call, put }) {
+      localStorage.removeItem('tenants-admin');
+
       const response = yield call(apis.login.login, payload);
       yield put({
         type: 'changeLoginStatus',
@@ -63,7 +65,6 @@ const Model: LoginModelType = {
 
         const tenants = response.result?.user?.tenants;
         if (tenants && tenants[0]) {
-          localStorage.removeItem('tenants-admin');
           //找到主租户
           const temp = (response.result?.user?.tenants || []).find((i: any) => i.mainTenant)
             .adminMember;
@@ -116,6 +117,7 @@ const Model: LoginModelType = {
     },
 
     *logout(_, { call, put }) {
+      localStorage.removeItem('tenants-admin');
       const response = yield call(apis.login.logout);
       if (response.status === 200) {
         yield put({
@@ -127,7 +129,6 @@ const Model: LoginModelType = {
             },
           },
         });
-        localStorage.removeItem('tenants-admin');
         clearAutz();
         reloadAuthorized();
         const { redirect } = getPageQuery();
