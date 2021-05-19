@@ -2,7 +2,7 @@ import { zip, from, defer } from "rxjs";
 import { map, shareReplay } from "rxjs/operators";
 // import { getAccessToken } from "@/utils/authority";
 // import { ajax } from "rxjs/ajax";
-import request from "umi-request";
+import request from "@/utils/request";
 
 // const auth$ = ajax({
 //     url: '/jetlinks/authorize/me',

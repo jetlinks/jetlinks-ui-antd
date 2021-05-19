@@ -1,4 +1,4 @@
-import request from 'umi-request';
+import request from '@/utils/request';
 import getFakeChartData from './mock-data';
 import { getAccessToken } from '@/utils/authority';
 
