@@ -237,20 +237,20 @@ const OpenApiList: React.FC<Props> = props => {
           <div className={styles.StandardTable}>
             <Table
               loading={props.loading}
-              dataSource={(result || {}).data}
+              dataSource={result?.data}
               columns={columns}
               rowKey="id"
               onChange={onTableChange}
               pagination={{
-                current: result.pageIndex + 1,
-                total: result.total,
-                pageSize: result.pageSize,
+                current: result?.pageIndex + 1,
+                total: result?.total,
+                pageSize: result?.pageSize,
                 showQuickJumper: true,
                 showSizeChanger: true,
                 pageSizeOptions: ['10', '20', '50', '100'],
                 showTotal: (total: number) =>
-                  `共 ${total} 条记录 第  ${result.pageIndex + 1}/${Math.ceil(
-                    result.total / result.pageSize,
+                  `共 ${total} 条记录 第  ${result?.pageIndex + 1}/${Math.ceil(
+                    result?.total / result?.pageSize,
                   )}页`,
               }}
             />
