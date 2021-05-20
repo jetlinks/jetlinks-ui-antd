@@ -42,39 +42,59 @@ const BindUser: React.FC<Props> = props => {
   // }, [bindVisible]);
 
   const remove = (item: any) => {
-    apis.org.unBindUser(item.id).then(repsonse => {
+    apis.org.unBindUserList(props.data.id, [item.userId]).then(repsonse => {
       if (repsonse) {
         message.success('解绑成功');
         const temp = selectRow.filter(i => i !== item.id);
         setSelectRow(temp);
       }
       handleSearch();
-    });
+    })
+    // apis.org.unBindUser(item.id).then(repsonse => {
+    //   if (repsonse) {
+    //     message.success('解绑成功');
+    //     const temp = selectRow.filter(i => i !== item.id);
+    //     setSelectRow(temp);
+    //   }
+    //   handleSearch();
+    // });
   };
 
   const batchRemove = () => {
     setLoading(true);
-    let count = 0;
-    selectRow.forEach(i => {
-      apis.org
-        .unBindUser(i.id)
-        .then(response => {
-          if (response) {
-            count += 1;
-            if (count === selectRow.length) {
-              message.success('解绑成功');
-              setLoading(false);
-              setSelectRow([]);
-              handleSearch();
-            }
-          }
-        })
-        .catch(() => {
-          message.error('解绑失败');
+    let list: any[] = [];
+    selectRow.map(item => {
+      list.push(item.userId);
+    })
+    apis.org.unBindUserList(props.data.id, list).then(response => {
+      if (response) {
+          message.success('解绑成功');
           setLoading(false);
+          setSelectRow([]);
           handleSearch();
-        });
-    });
+      }
+    })
+    // let count = 0
+    // selectRow.forEach(i => {
+    //   apis.org
+    //     .unBindUser(i.id)
+    //     .then(response => {
+    //       if (response) {
+    //         count += 1;
+    //         if (count === selectRow.length) {
+    //           message.success('解绑成功');
+    //           setLoading(false);
+    //           setSelectRow([]);
+    //           handleSearch();
+    //         }
+    //       }
+    //     })
+    //     .catch(() => {
+    //       message.error('解绑失败');
+    //       setLoading(false);
+    //       handleSearch();
+    //     });
+    // });
   };
 
   const rowSelection = {

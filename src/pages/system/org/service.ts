@@ -40,8 +40,22 @@ export async function unBindUser(id: string) {
   });
 }
 
+export async function unBindUserList(id: string, params: any) {
+  return request(`/jetlinks/organization/${id}/users/_unbind `, {
+    method: 'POST',
+    data: params,
+  });
+}
+
 export async function bind(params: any) {
   return request(`/jetlinks/dimension-user`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+export async function bindUserList(id: string, params: any) {
+  return request(`/jetlinks/organization/${id}/users/_bind `, {
     method: 'POST',
     data: params,
   });
