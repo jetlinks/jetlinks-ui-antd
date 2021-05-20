@@ -50,18 +50,18 @@ const errorHandler = (error: { response: Response }): Response | undefined => {
         key: 'error',
         message: '未登录或登录已过期，请重新登录。',
       });
-      const { redirect } = getPageQuery();
+      // const { redirect } = getPageQuery();
+      router.push('/user/login');
+      // if (window.location.pathname !== '/user/login' && !redirect) {
+      //   router.replace({
+      //     pathname: '/user/login',
+      //     search: stringify({
+      //       // redirect: window.location.href,
+      //     }),
+      //   });
+      // } else {
 
-      if (window.location.pathname !== '/user/login' && !redirect) {
-        router.replace({
-          pathname: '/user/login',
-          search: stringify({
-            // redirect: window.location.href,
-          }),
-        });
-      } else {
-        router.push('/user/login');
-      }
+      // }
     } else if (response.status === 400) {
       response.text().then(resp => {
         if (resp) {
