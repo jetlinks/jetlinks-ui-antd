@@ -76,27 +76,38 @@ const UserList: React.FC<Props> = props => {
   // { "dimensionTypeId": "org", "dimensionId": "org1", "dimensionName": "机构1", "userId": "1209763126217355264", "userName": "antd" }
   const bindUser = () => {
     setLoading(true);
-    selectRow.forEach((item, index) => {
-      apis.org
-        .bind({
-          userId: item.id,
-          userName: item.username,
-          dimensionTypeId: props.data.typeId,
-          dimensionId: props.data.id,
-          dimensionName: props.data.name,
-        })
-        .then(() => {
-          if (index === selectRow.length - 1) {
-            message.success('操作成功！');
-            props.close();
-            setLoading(false);
-          }
-        })
-        .catch(() => {
-          message.success('绑定失败！');
-          setLoading(false);
-        });
-    });
+    let list: any[] = [];
+    selectRow.map(item => {
+      list.push(item.id);
+    })
+    apis.org.bindUserList(props.data.id, list).then((res) => {
+      if (res.status === 200) {
+        message.success('操作成功！');
+        props.close();
+        setLoading(false);
+      }
+    })
+    // selectRow.forEach((item, index) => {
+    //   apis.org
+    //     .bind({
+    //       userId: item.id,
+    //       userName: item.username,
+    //       dimensionTypeId: props.data.typeId,
+    //       dimensionId: props.data.id,
+    //       dimensionName: props.data.name,
+    //     })
+    //     .then(() => {
+    //       if (index === selectRow.length - 1) {
+    //         message.success('操作成功！');
+    //         props.close();
+    //         setLoading(false);
+    //       }
+    //     })
+    //     .catch(() => {
+    //       message.success('绑定失败！');
+    //       setLoading(false);
+    //     });
+    // });
   };
   return (
     <Drawer visible title="选择用户" onClose={() => props.close()} width={800}>
