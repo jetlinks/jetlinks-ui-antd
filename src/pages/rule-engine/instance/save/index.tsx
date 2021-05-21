@@ -31,7 +31,7 @@ const Save = (props: Props) => {
   return (
     <Modal
       visible
-      title={`${props.data ? '复制' : '新增'}规则实例`}
+      title="新建规则实例"
       onCancel={() => props.close()}
       onOk={() => {
         save()
