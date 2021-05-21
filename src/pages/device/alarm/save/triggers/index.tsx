@@ -178,9 +178,9 @@ const Trigger: React.FC<Props> = props => {
                   {props.metaData && JSON.parse(props.metaData).events && (
                     <Select.Option value="event">事件</Select.Option>
                   )}
-                  {props.metaData && JSON.parse(props.metaData).functions && (
+                  {/* {props.metaData && JSON.parse(props.metaData).functions && (
                   <Select.Option value="function">功能</Select.Option>
-                )}
+                )} */}
                 </Select>
               </Col>
               {renderType()}
