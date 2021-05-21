@@ -121,7 +121,7 @@ const Screen = (props: Props) => {
     });
   };
 
-  const onChange = (page: number, pageSize: number) => {
+  const onListChange = (page: number, pageSize: number) => {
     console.log(page, pageSize, 'jahaha');
     handleSearch({
       pageIndex: page - 1,
@@ -257,10 +257,15 @@ const Screen = (props: Props) => {
               current: dataList.pageIndex + 1,
               total: dataList.total,
               pageSize: dataList.pageSize,
-              onChange: () => onChange,
+              onChange: (page, pageSize) => {
+                onListChange(page, pageSize || 8);
+              },
+              onShowSizeChange: (page, size) => {
+                onListChange(page, size);
+              },
               showQuickJumper: true,
               showSizeChanger: true,
-              hideOnSinglePage: true,
+              // hideOnSinglePage: true,
               pageSizeOptions: ['8', '16', '40', '80'],
               style: { marginTop: -20 },
               showTotal: (total: number) =>
