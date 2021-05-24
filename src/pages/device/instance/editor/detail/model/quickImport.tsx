@@ -120,7 +120,7 @@ const QuickImport: React.FC<Props> = props => {
       <Tabs onChange={(key: string) => {
         setOperateType(key);
       }} type="card">
-        <Tabs.TabPane tab="拷贝设备" key="copy">
+        {/* <Tabs.TabPane tab="拷贝设备" key="copy">
           <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
             <Form.Item key="deviceId" label="选择设备">
               {getFieldDecorator('deviceId', {
@@ -141,7 +141,7 @@ const QuickImport: React.FC<Props> = props => {
               </Select>)}
             </Form.Item>
           </Form>
-        </Tabs.TabPane>
+        </Tabs.TabPane> */}
         <Tabs.TabPane tab={
           <>
             导入物模型&nbsp;&nbsp;

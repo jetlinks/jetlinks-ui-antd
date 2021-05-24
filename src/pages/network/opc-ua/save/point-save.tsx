@@ -75,6 +75,18 @@ const PointSave: React.FC<Props> = props => {
                         </Select>
                     )}
                 </Form.Item>
+                <Form.Item label="初始值">
+                    {getFieldDecorator('initialValue', {
+                        // rules: [{ required: true, message: '请选择' }],
+                        initialValue: data.initialValue
+                    })(<Input />)}
+                </Form.Item>
+                <Form.Item label="倍数">
+                    {getFieldDecorator('multiple', {
+                        // rules: [{ required: true, message: '请选择' }],
+                        initialValue: data.multiple
+                    })(<Input />)}
+                </Form.Item>
                 <Form.Item label="数据模式">
                     {getFieldDecorator('dataMode', {
                         rules: [{ required: true, message: '请选择' }],
