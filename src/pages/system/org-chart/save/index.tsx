@@ -1,4 +1,4 @@
-import { Modal, Form, Input } from 'antd';
+import { Modal, Form, Input, InputNumber } from 'antd';
 import React from 'react';
 import { FormComponentProps } from 'antd/lib/form';
 
@@ -19,20 +19,21 @@ const Save: React.FC<Props> = props => {
   } = props;
   const saveData = () => {
     const value = form.getFieldsValue();
-    let tempData = {}
+    let tempData = {};
     //添加下级
-    if(parentId){
+    if (parentId) {
       tempData = {
         parentId,
         typeId: 'org',
-        ...value
-      }
-    }else{//编辑
+        ...value,
+      };
+    } else {
+      //编辑
       tempData = {
         ...data,
-        typeId: 'org', 
-        ...value
-      }
+        typeId: 'org',
+        ...value,
+      };
     }
     // console.log(tempData)
     // const tempData = parentId ? {
@@ -74,9 +75,9 @@ const Save: React.FC<Props> = props => {
         </Form.Item>
         <Form.Item label="排序序号">
           {getFieldDecorator('sortIndex', {
-            rules: [{ message: '请输入排序序号' }],
+            rules: [{ required: true, message: '请输入排序序号' }],
             initialValue: data.sortIndex,
-          })(<Input placeholder="请输入排序序号" />)}
+          })(<InputNumber style={{ width: '100%' }} placeholder="请输入排序序号" />)}
         </Form.Item>
         <Form.Item label="描述">
           {getFieldDecorator('describe', {

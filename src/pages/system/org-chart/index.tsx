@@ -45,7 +45,9 @@ const OrgChart = () => {
       apis.org
         .saveOrUpdate(data)
         .then(res => {
-          message.success('保存成功');
+          if(res.status===200){
+            message.success('保存成功');
+          }
         })
         .then(() => {
           handleSearch();
@@ -54,7 +56,9 @@ const OrgChart = () => {
       apis.org
         .add(data)
         .then(res => {
-          message.success('保存成功');
+          if(res.status===200){
+            message.success('保存成功');
+          }
         })
         .then(() => {
           handleSearch();
