@@ -65,7 +65,7 @@ const Save: React.FC<Props> = props => {
           {getFieldDecorator('code', {
             rules: [{ required: true, message: '请输入机构编码' }],
             initialValue: data.code,
-          })(<Input placeholder="请输入机构编码" disabled={!!data.id} />)}
+          })(<Input placeholder="请输入机构编码" />)}
         </Form.Item>
         <Form.Item label="机构名称">
           {getFieldDecorator('name', {
