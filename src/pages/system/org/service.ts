@@ -49,7 +49,7 @@ export async function unBindUserList(id: string, params: any) {
 
 export async function bind(params: any) {
   return request(`/jetlinks/dimension-user`, {
-    method: 'POST',
+    method: 'PATCH',
     data: params,
   });
 }

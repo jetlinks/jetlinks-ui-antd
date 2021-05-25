@@ -6,20 +6,43 @@ import { RoleItem } from './data';
 import { ApiResponse } from '@/services/response';
 
 class RoleService<T> extends Service<T> {
-  public bindUser = (params: any) => from(request(`/jetlinks/dimension-user/_query/no-paging`, {
-    method: 'GET',
-    params
-  })).pipe(map((response: ApiResponse<T>) => response, catchError(error => of(error))));
+  public bindUser = (params: any) =>
+    from(
+      request(`/jetlinks/dimension-user/_query/no-paging`, {
+        method: 'GET',
+        params,
+      }),
+    ).pipe(
+      map(
+        (response: ApiResponse<T>) => response,
+        catchError(error => of(error)),
+      ),
+    );
 
-  public unBindUser = (id: string) => from(request(`/jetlinks/dimension-user/${id}`, {
-    method: 'DELETE',
-  })).pipe(map((response: ApiResponse<T>) => response, catchError(error => of(error))));
+  public unBindUser = (id: string) =>
+    from(
+      request(`/jetlinks/dimension-user/${id}`, {
+        method: 'DELETE',
+      }),
+    ).pipe(
+      map(
+        (response: ApiResponse<T>) => response,
+        catchError(error => of(error)),
+      ),
+    );
 
-  public bind = (params: any) => from(request(`/jetlinks/dimension-user`, {
-    method: "POST",
-    data: params
-  })).pipe(map((response: ApiResponse<T>) => response, catchError(error => of(error))));
-
+  public bind = (params: any) =>
+    from(
+      request(`/jetlinks/dimension-user`, {
+        method: 'POST',
+        data: params,
+      }),
+    ).pipe(
+      map(
+        (response: ApiResponse<T>) => response,
+        catchError(error => of(error)),
+      ),
+    );
 }
 
 export default RoleService;
@@ -29,9 +52,10 @@ export async function bindUser(params: any) {
     params,
   });
 }
-export async function unBindUser(id: string) {
-  return request(`/jetlinks/dimension-user/${id}`, {
-    method: 'DELETE',
+export async function unBindUser(id: string, data: any) {
+  return request(`/jetlinks/dimension-user/user/role/${id}/_unbind`, {
+    method: 'POST',
+    data,
   });
 }
 
@@ -41,7 +65,6 @@ export async function bind(params: any) {
     data: params,
   });
 }
-
 
 export async function list(params: any) {
   return request(`/jetlinks/dimension/_query`, {

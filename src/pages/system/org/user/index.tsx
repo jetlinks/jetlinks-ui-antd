@@ -71,7 +71,7 @@ const BindUser: React.FC<Props> = props => {
     setLoading(true);
     let list: any[] = [];
     selectRow.map(item => {
-      list.push(item.userId);
+      list.push(item.id);
     });
     apis.org.unBindUserList(props.data.id, list).then(response => {
       if (response) {

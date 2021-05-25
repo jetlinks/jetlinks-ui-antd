@@ -25,20 +25,38 @@ const BindUser: React.FC<Props> = props => {
   const [bindVisible, setBindVisible] = useState(initState.bindVisible);
   const [selectRow, setSelectRow] = useState(initState.selectRow);
   const [loading, setLoading] = useState(initState.loading);
-
-  const handleSearch = () => {
-    apis.role.bindUser(encodeQueryParam({ terms: { dimensionId: props.data.id } })).then(res => {
-      if (res) {
-        setUserList(res.result);
-      }
-    });
+  const [searchParam, setSearchParam] = useState({
+    pageIndex: 0,
+    pageSize: 5,
+  });
+  const [result, setResult] = useState<any>({});
+  const handleSearch = (params?: any) => {
+    apis.users
+      .list(
+        encodeQueryParam({
+          ...searchParam,
+          ...params,
+          terms: { 'id$in-dimension$role': props.data.id },
+        }),
+      )
+      .then(res => {
+        if (res.status) {
+          setResult(res?.result);
+          setUserList(res?.result.data);
+        }
+      });
+    // apis.role.bindUser(encodeQueryParam({ terms: { dimensionId: props.data.id } })).then(res => {
+    //   if (res) {
+    //     setUserList(res.result);
+    //   }
+    // });
   };
   useEffect(() => {
     handleSearch();
   }, []);
 
   const remove = (item: any) => {
-    apis.role.unBindUser(item.id).then(repsonse => {
+    apis.role.unBindUser(props.data.id, [item.id]).then(repsonse => {
       if (repsonse) {
         message.success('解绑成功');
         const temp = selectRow.filter(i => i !== item.id);
@@ -50,33 +68,29 @@ const BindUser: React.FC<Props> = props => {
 
   const batchRemove = () => {
     setLoading(true);
-    let count = 0;
-    selectRow.forEach(i => {
-      apis.role
-        .unBindUser(i.id)
-        .then(response => {
-          if (response) {
-            count += 1;
-            if (count === selectRow.length) {
-              message.success('解绑成功');
-              setLoading(false);
-              setSelectRow([]);
-              handleSearch();
-            }
-          }
-        })
-        .catch(() => {
-          message.error('解绑失败');
-          setLoading(false);
-          handleSearch();
-        });
-    });
+    apis.role
+      .unBindUser(props.data.id, selectRow)
+      .then(response => {
+        if (response.status === 200) {
+          message.success('解绑成功');
+        }
+      })
+      .catch(() => {
+        message.error('解绑失败');
+        setLoading(false);
+        handleSearch();
+      })
+      .finally(() => {
+        setLoading(false);
+        handleSearch();
+        setSelectRow([]);
+      });
   };
 
   const rowSelection = {
-    onChange: (selectedRowKeys: any, selectedRows: any) => {
+    onChange: (selectedRowKeys: any, rows: any) => {
       // setSelectRowKeys();
-      setSelectRow(selectedRows);
+      setSelectRow(selectedRowKeys);
       // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
     },
     getCheckboxProps: (record: any) => ({
@@ -110,16 +124,27 @@ const BindUser: React.FC<Props> = props => {
         loading={loading}
         rowKey="id"
         rowSelection={rowSelection}
+        pagination={{
+          pageSize: result?.pageSize,
+          total: result?.total,
+        }}
+        onChange={pagination => {
+          handleSearch({ pageIndex: (pagination.current || 1) - 1 });
+        }}
         columns={[
           {
-            dataIndex: 'userName',
+            dataIndex: 'username',
             title: '用户名',
+          },
+          {
+            dataIndex: 'name',
+            title: '姓名',
           },
           {
             title: '操作',
             render: (record: any) => (
               <Popconfirm title="确认删除绑定关系吗？" onConfirm={() => remove(record)}>
-                <a>删除</a>
+                <a>解绑</a>
               </Popconfirm>
             ),
           },

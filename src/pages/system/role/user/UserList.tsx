@@ -47,8 +47,9 @@ const UserList: React.FC<Props> = props => {
       .list(
         encodeQueryParam({
           terms: {
-            id$nin: idList,
-            ...params,
+            'id$in-dimension$role$not':props.data.id
+            // id$nin: idList,
+            // ...params,
           },
         }),
       )
@@ -66,35 +67,36 @@ const UserList: React.FC<Props> = props => {
   // { "dimensionTypeId": "org", "dimensionId": "org1", "dimensionName": "机构1", "userId": "1209763126217355264", "userName": "antd" }
 
   const bindUser = async () => {
-
     setLoading(true);
 
-    await selectRow.forEach((item, index) => {
-      apis.org
-        .bind({
+    // await selectRow.forEach((item, index) => {
+    apis.org
+      .bind(
+        selectRow.map(item => ({
           userId: item.id,
           userName: item.username,
           dimensionTypeId: props.data.typeId,
           dimensionId: props.data.id,
           dimensionName: props.data.name,
-        })
-        .then((response) => {
-          if (response) {
-              message.success('操作成功');
-              setLoading(false);
-              props.close();
-          }
-        })
-        .catch(() => {
-          message.success('绑定失败！');
-        });
-      // if (index === selectRow.length - 1) {
-      //   message.success('操作成功！');
-      //   props.close();
-      //   setLoading(false);
-      // }
-    });
+        })),
+      )
+      .then(response => {
+        if (response) {
+          message.success('操作成功');
+          setLoading(false);
+          props.close();
+        }
+      })
+      .catch(() => {
+        message.success('绑定失败！');
+      });
+    // if (index === selectRow.length - 1) {
+    //   message.success('操作成功！');
+    //   props.close();
+    //   setLoading(false);
   };
+  // });
+  // };
   return (
     <Drawer visible title="选择用户" onClose={() => props.close()} width={800}>
       <Row>
