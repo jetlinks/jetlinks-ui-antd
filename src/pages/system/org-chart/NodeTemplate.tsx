@@ -18,12 +18,12 @@ const NodeTemplate = (props: Props) => {
 
         <div className={styles.content}>
           <div className={styles.item}>
-            {data.code!==''&&(<div>
+            {data.code!==null&&(<div>
               <span className={styles.mark}>编码</span>
               <span>{data.code}</span>
             </div>)}
             <div>
-              <span className={styles.mark}>子节点</span>
+              <span className={styles.mark}>下级数量</span>
               <span>{data?.children?.length || 0}</span>
             </div>
           </div>

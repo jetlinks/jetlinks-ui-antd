@@ -27,7 +27,7 @@ const OrgChart = () => {
   const handleSearch = () => {
     apis.org.list(encodeQueryParam({ paging: false, terms: { typeId: 'org' } })).then(resp => {
       const data = {
-        id: '',
+        code: null,
         name: '机构管理',
         title: '组织架构',
         children: resp.result,
@@ -45,7 +45,7 @@ const OrgChart = () => {
       apis.org
         .saveOrUpdate(data)
         .then(res => {
-          if(res.status===200){
+          if (res.status === 200) {
             message.success('保存成功');
           }
         })
@@ -56,7 +56,7 @@ const OrgChart = () => {
       apis.org
         .add(data)
         .then(res => {
-          if(res.status===200){
+          if (res.status === 200) {
             message.success('保存成功');
           }
         })
