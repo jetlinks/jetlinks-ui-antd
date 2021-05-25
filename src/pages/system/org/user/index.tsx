@@ -27,11 +27,18 @@ const BindUser: React.FC<Props> = props => {
   const [loading, setLoading] = useState(initState.loading);
 
   const handleSearch = () => {
-    apis.org.bindUser(encodeQueryParam({ terms: { dimensionId: props.data.id } })).then(res => {
-      if (res) {
-        setUserList(res.result);
-      }
-    });
+    apis.users
+      .list(encodeQueryParam({ terms: { 'id$in-dimension$org': props.data.id } }))
+      .then(res => {
+        if (res) {
+          setUserList(res.result.data);
+        }
+      });
+    // apis.org.bindUser(encodeQueryParam({ terms: { dimensionId: props.data.id } })).then(res => {
+    //   if (res) {
+    //     setUserList(res.result);
+    //   }
+    // });
   };
   useEffect(() => {
     handleSearch();
@@ -42,14 +49,14 @@ const BindUser: React.FC<Props> = props => {
   // }, [bindVisible]);
 
   const remove = (item: any) => {
-    apis.org.unBindUserList(props.data.id, [item.userId]).then(repsonse => {
+    apis.org.unBindUserList(props.data.id, [item.id]).then(repsonse => {
       if (repsonse) {
         message.success('解绑成功');
         const temp = selectRow.filter(i => i !== item.id);
         setSelectRow(temp);
       }
       handleSearch();
-    })
+    });
     // apis.org.unBindUser(item.id).then(repsonse => {
     //   if (repsonse) {
     //     message.success('解绑成功');
@@ -65,15 +72,15 @@ const BindUser: React.FC<Props> = props => {
     let list: any[] = [];
     selectRow.map(item => {
       list.push(item.userId);
-    })
+    });
     apis.org.unBindUserList(props.data.id, list).then(response => {
       if (response) {
-          message.success('解绑成功');
-          setLoading(false);
-          setSelectRow([]);
-          handleSearch();
+        message.success('解绑成功');
+        setLoading(false);
+        setSelectRow([]);
+        handleSearch();
       }
-    })
+    });
     // let count = 0
     // selectRow.forEach(i => {
     //   apis.org
@@ -136,14 +143,18 @@ const BindUser: React.FC<Props> = props => {
         rowSelection={rowSelection}
         columns={[
           {
-            dataIndex: 'userName',
+            dataIndex: 'username',
             title: '用户名',
+          },
+          {
+            dataIndex: 'name',
+            title: '姓名',
           },
           {
             title: '操作',
             render: (record: any) => (
               <Popconfirm title="确认删除绑定关系吗？" onConfirm={() => remove(record)}>
-                <a>删除</a>
+                <a>解绑</a>
               </Popconfirm>
             ),
           },

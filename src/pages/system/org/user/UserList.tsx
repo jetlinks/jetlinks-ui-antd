@@ -47,8 +47,8 @@ const UserList: React.FC<Props> = props => {
       .list(
         encodeQueryParam({
           terms: {
-            id$nin: idList,
-            ...params,
+            'id$in-dimension$org$not': props.data.id,
+            // ...params,
           },
         }),
       )
