@@ -143,12 +143,12 @@ const BindUser: React.FC<Props> = props => {
         rowSelection={rowSelection}
         columns={[
           {
-            dataIndex: 'username',
-            title: '用户名',
-          },
-          {
             dataIndex: 'name',
             title: '姓名',
+          },
+          {
+            dataIndex: 'username',
+            title: '用户名',
           },
           {
             title: '操作',

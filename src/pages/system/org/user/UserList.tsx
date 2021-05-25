@@ -113,7 +113,7 @@ const UserList: React.FC<Props> = props => {
     <Drawer visible title="选择用户" onClose={() => props.close()} width={800}>
       <Row>
         <Col span={20}>
-          <Form.Item label="用户姓名" labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
+          <Form.Item label="姓名" labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
             <Input value={keyword} onChange={e => setKeyword(e.target.value)} />
           </Form.Item>
         </Col>
@@ -158,7 +158,7 @@ const UserList: React.FC<Props> = props => {
           columns={[
             {
               dataIndex: 'name',
-              title: '用户姓名',
+              title: '姓名',
             },
             {
               dataIndex: 'username',
