@@ -523,7 +523,7 @@ const PropertiesInfo: React.FC<Props> = props => {
           }}
         >
           <Tabs.TabPane tab="列表" key="1">
-            {/* <Table
+            <Table
               rowKey="timestamp"
               dataSource={propertiesInfo.data}
               size="small"
@@ -535,10 +535,10 @@ const PropertiesInfo: React.FC<Props> = props => {
                 simple: true
               }}
               columns={initState.eventColumns}
-            /> */}
+            />
 
 
-            <ProTable
+            {/* <ProTable
               size="small"
               // loading={loading}
               dataSource={propertiesInfo?.data}
@@ -548,7 +548,7 @@ const PropertiesInfo: React.FC<Props> = props => {
                 handleSearch(params);
               }}
               paginationConfig={propertiesInfo}
-            />
+            /> */}
           </Tabs.TabPane>
 
           {statistics && (
