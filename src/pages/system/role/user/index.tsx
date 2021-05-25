@@ -143,7 +143,7 @@ const BindUser: React.FC<Props> = props => {
           {
             title: '操作',
             render: (record: any) => (
-              <Popconfirm title="确认删除绑定关系吗？" onConfirm={() => remove(record)}>
+              <Popconfirm title="确认解除绑定关系吗？" onConfirm={() => remove(record)}>
                 <a>解绑</a>
               </Popconfirm>
             ),
