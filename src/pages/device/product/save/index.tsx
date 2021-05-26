@@ -434,7 +434,18 @@ const Save: React.FC<Props> = props => {
             </>
           </Form.Item>
           <Row gutter={16}>
-            {(systemVersion === 'pro' ? basicForm : basicForm.filter(i => i.key !== 'storePolicy')).map(item => (
+            {
+              basicForm.map(item => (
+                <Col
+                  key={item.key}
+                >
+                  <Form.Item label={item.label}>
+                    {getFieldDecorator(item.key, item.options)(item.component)}
+                  </Form.Item>
+                </Col>
+              ))
+            }
+            {/* {(systemVersion === 'pro' ? basicForm : basicForm.filter(i => i.key !== 'storePolicy')).map(item => (
               <Col
                 key={item.key}
               >
@@ -442,7 +453,7 @@ const Save: React.FC<Props> = props => {
                   {getFieldDecorator(item.key, item.options)(item.component)}
                 </Form.Item>
               </Col>
-            ))}
+            ))} */}
           </Row>
         </Card>
       </Form>
