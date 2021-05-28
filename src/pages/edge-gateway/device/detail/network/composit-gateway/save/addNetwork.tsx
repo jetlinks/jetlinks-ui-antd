@@ -116,11 +116,13 @@ const Add: React.FC<Props> = props => {
                         </Form.Item>
                         <Form.Item label="HOST">
                             {getFieldDecorator('configuration.host', {
+                                rules:[{required:true,message:'HOST必填'}],
                                 initialValue: '0.0.0.0',
                             })(<Input />)}
                         </Form.Item>
                         <Form.Item label="PORT">
                             {getFieldDecorator('configuration.port', {
+                                rules:[{required:true,message:'PORT必填'}],
                             })(<Input />)}
                         </Form.Item>
 
@@ -136,15 +138,19 @@ const Add: React.FC<Props> = props => {
                     <div>
                         <Form.Item label="clientId">
                             {getFieldDecorator('configuration.clientId', {
+                                rules:[{required:true,message:'clientId必填'}],
                             })(<Input />)}
                         </Form.Item>
                         <Form.Item label="HOST">
                             {getFieldDecorator('configuration.host', {
-                                initialValue: '0.0.0.0',
+                                rules:[{required:true,message:'HOST必填'}],
+                                initialValue: '127.0.0.1',
                             })(<Input />)}
                         </Form.Item>
                         <Form.Item label="PORT">
                             {getFieldDecorator('configuration.port', {
+                                rules:[{required:true,message:'PORT必填'}],
+                                initialValue:'1883'
                             })(<Input />)}
                         </Form.Item>
                         <Form.Item label="用户名">
