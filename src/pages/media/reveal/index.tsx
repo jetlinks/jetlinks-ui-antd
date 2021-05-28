@@ -143,7 +143,7 @@ const Reveal: React.FC<Props> = props => {
               deviceId: it.deviceId,
               children: []
             })
-          })
+          });
           setTreeData(origin => updateTreeData(origin, eventKey, children1));
           resolve();
         }
@@ -159,12 +159,12 @@ const Reveal: React.FC<Props> = props => {
         let data = players || [];
         data.forEach((item, index) => {
           if (index === setting) {
-            item.url = getPlayer(res).url
-            item.protocol = getPlayer(res).protocol
-            item.deviceId = deviceId
+            item.url = getPlayer(res).url;
+            item.protocol = getPlayer(res).protocol;
+            item.deviceId = deviceId;
             item.channelId = channelId
           }
-        })
+        });
         let i = 0;
         if (players.length - 1 > setting) {
           i = setting + 1;
@@ -193,20 +193,20 @@ const Reveal: React.FC<Props> = props => {
     } else {
       return { url: '', protocol: '' }
     }
-  }
+  };
 
   const controlStart = (deviceId: string, channelId: string, direct: string) => {
     if (playing && deviceId !== '' && channelId !== '' && deviceId !== undefined && channelId !== undefined) {
       service.getControlStart(deviceId, channelId, direct, 90).subscribe(() => {
       })
     }
-  }
+  };
   const controlStop = (deviceId: string, channelId: string) => {
     if (playing && deviceId !== '' && channelId !== '' && deviceId !== undefined && channelId !== undefined) {
       service.getControlStop(deviceId, channelId).subscribe(() => {
       })
     }
-  }
+  };
 
   const fullScreen = () => {
     let dom = document.getElementById('video_show');
@@ -224,17 +224,16 @@ const Reveal: React.FC<Props> = props => {
         let data = players || [];
         data.forEach((item, index) => {
           if (index === setting) {
-            ` `
-            item.url = getPlayer(res).url
-            item.protocol = getPlayer(res).protocol
-            item.deviceId = deviceId
+            item.url = getPlayer(res).url;
+            item.protocol = getPlayer(res).protocol;
+            item.deviceId = deviceId;
             item.channelId = channelId
           }
-        })
+        });
         setPlayers([...data])
       })
     });
-  }
+  };
 
   return (
     <PageHeaderWrapper title="分屏展示">
