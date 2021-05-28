@@ -251,12 +251,14 @@ const Save: React.FC<Props> = props => {
               </Form.Item>
               <Form.Item label="HOST">
                 {getFieldDecorator('configuration.host', {
+                  rules:[{required:true,message:'HOST必填'}],
                   initialValue: props.data?.configuration?.host || '0.0.0.0',
                 })(<Input />)}
               </Form.Item>
               <Form.Item label="PORT">
                 {getFieldDecorator('configuration.port', {
-                  initialValue: props.data?.configuration?.port,
+                  rules:[{required:true,message:'PORT必填'}],
+                  initialValue: props.data?.configuration?.port||'1883',
                 })(<Input />)}
               </Form.Item>
               <Form.Item label="TLS">
@@ -294,17 +296,20 @@ const Save: React.FC<Props> = props => {
             <div>
               <Form.Item label="clientId">
                 {getFieldDecorator('configuration.clientId', {
+                  rules:[{required:true,message:'ClientId必填'}],
                   initialValue: props.data?.configuration?.clientId,
                 })(<Input />)}
               </Form.Item>
               <Form.Item label="HOST">
                 {getFieldDecorator('configuration.host', {
-                  initialValue: props.data?.configuration?.host || '0.0.0.0',
+                  rules:[{required:true,message:'HOST必填'}],
+                  initialValue: props.data?.configuration?.host || '127.0.0.1',
                 })(<Input />)}
               </Form.Item>
               <Form.Item label="PORT">
                 {getFieldDecorator('configuration.port', {
-                  initialValue: props.data?.configuration?.port,
+                  rules:[{required:true,message:'PORT必填'}],
+                  initialValue: props.data?.configuration?.port||'1883',
                 })(<Input />)}
               </Form.Item>
               <Form.Item label="TLS">
