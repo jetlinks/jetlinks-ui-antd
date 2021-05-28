@@ -20,7 +20,7 @@ const Play = (props: Props) => {
     const [playRight, setPlayRight] = useState<boolean>(true);
     const [playIn, setPlayIn] = useState<boolean>(true);
     const [playOut, setPlayOut] = useState<boolean>(true);
-    const playerBtnGroup = [{ name: 'MP4', value: "mp4" },{ name: 'FLV', value: "flv" }, { name: 'RTSP', value: "rtsp" }, { name: 'RTMP', value: "rtmp" }, { name: 'HLS', value: "hls" }, { name: 'RTC', value: "rtc" }];
+    const playerBtnGroup = [{ name: 'FLV', value: "flv" }, { name: 'RTSP', value: "rtsp" }, { name: 'RTMP', value: "rtmp" },{ name: 'MP4', value: "mp4" }, { name: 'HLS', value: "hls" }, { name: 'RTC', value: "rtc" }];
     const [urlItem, setUrlItem] = useState({});
     const [url, setUrl] = useState('');
     const [bloading, setBloading] = useState(true);
@@ -28,8 +28,8 @@ const Play = (props: Props) => {
     useEffect(() => {
         setPlaying(true);
         service.getPlay(props.data.deviceId, props.data.channelId).subscribe(res => {
-            setUrl(res['mp4']);
-            setProtocol('mp4');
+            setUrl(res['flv']);
+            setProtocol('flv');
             setBloading(false);
             setUrlItem(res);
         });
