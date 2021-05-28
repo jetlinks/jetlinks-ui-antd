@@ -132,7 +132,7 @@ const Save: React.FC<Props> = props => {
           {getFieldDecorator('version', {
             rules: [
               { required: true, message: '版本号必填' },
-              { pattern: new RegExp(/^[0-9]+\.[0-9]+\.[0-9]+$/, "g"), message: '版本号格式：0.0.0' }
+              // { pattern: new RegExp(/^[0-9]+\.[0-9]+\.[0-9]+$/, "g"), message: '版本号格式：0.0.0' }
             ],
             initialValue: props.data.version,
           })(<Input placeholder="输入版本号" />)}
