@@ -43,7 +43,7 @@ const QuickImport: React.FC<Props> = props => {
     form,
   } = props;
 
-  const [deviceList, setDeviceList] = useState(initState.deviceList);
+  // const [deviceList, setDeviceList] = useState(initState.deviceList);
   const [metaData, setMetaData] = useState<string>();
   const [operateType, setOperateType] = useState(initState.operateType);
   const [modelFormat, setModelFormat] = useState(initState.modelFormat);
@@ -51,13 +51,13 @@ const QuickImport: React.FC<Props> = props => {
 
   useEffect(() => {
     // 获取下拉框数据
-    apis.deviceInstance
-      .queryNoPagin(encodeQueryParam({ paging: false }))
-      .then(response => {
-        setDeviceList(response.result);
-      })
-      .catch(() => {
-      });
+    // apis.deviceInstance
+    //   .queryNoPagin(encodeQueryParam({ paging: false }))
+    //   .then(response => {
+    //     setDeviceList(response.result);
+    //   })
+    //   .catch(() => {
+    //   });
     apis.deviceProdcut
       .getModelFormat().then(res => {
         setModelFormat(res.result)
