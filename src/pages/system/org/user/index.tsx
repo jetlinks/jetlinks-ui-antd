@@ -3,20 +3,21 @@ import React, { useEffect, useState } from 'react';
 import apis from '@/services';
 import encodeQueryParam from '@/utils/encodeParam';
 import UserList from './UserList';
+import ProTable from '../../permission/component/ProTable';
 
 interface Props {
   close: Function;
   data: any;
 }
 interface State {
-  userList: any[];
+  userList: any;
   bindVisible: boolean;
   selectRow: any[];
   loading: boolean;
 }
 const BindUser: React.FC<Props> = props => {
   const initState: State = {
-    userList: [],
+    userList: {},
     bindVisible: false,
     selectRow: [],
     loading: false,
@@ -25,13 +26,24 @@ const BindUser: React.FC<Props> = props => {
   const [bindVisible, setBindVisible] = useState(initState.bindVisible);
   const [selectRow, setSelectRow] = useState(initState.selectRow);
   const [loading, setLoading] = useState(initState.loading);
+  const [searchParam, setSearchParam] = useState({
+    terms: { 'id$in-dimension$org': props.data.id },
+    pageIndex: 0,
+    pageSize: 10,
+  });
 
-  const handleSearch = () => {
+  const handleSearch = (params?: any) => {
+    setSearchParam(params);
     apis.users
-      .list(encodeQueryParam({ terms: { 'id$in-dimension$org': props.data.id } }))
+      .list(
+        encodeQueryParam({
+          ...params,
+          terms: { ...params?.terms },
+        }),
+      )
       .then(res => {
         if (res) {
-          setUserList(res.result.data);
+          setUserList(res.result);
         }
       });
     // apis.org.bindUser(encodeQueryParam({ terms: { dimensionId: props.data.id } })).then(res => {
@@ -41,22 +53,22 @@ const BindUser: React.FC<Props> = props => {
     // });
   };
   useEffect(() => {
-    handleSearch();
+    handleSearch(searchParam);
   }, []);
 
-  // useEffect(() => {
-  //     console.log('123');
-  // }, [bindVisible]);
-
   const remove = (item: any) => {
-    apis.org.unBindUserList(props.data.id, [item.id]).then(repsonse => {
-      if (repsonse) {
-        message.success('解绑成功');
-        const temp = selectRow.filter(i => i !== item.id);
-        setSelectRow(temp);
-      }
-      handleSearch();
-    });
+    apis.org
+      .unBindUserList(props.data.id, [item.id])
+      .then(repsonse => {
+        if (repsonse) {
+          message.success('解绑成功');
+          const temp = selectRow.filter(i => i === item.id);
+          setSelectRow(temp);
+        }
+      })
+      .finally(() => {
+        handleSearch(searchParam);
+      });
     // apis.org.unBindUser(item.id).then(repsonse => {
     //   if (repsonse) {
     //     message.success('解绑成功');
@@ -78,7 +90,7 @@ const BindUser: React.FC<Props> = props => {
         message.success('解绑成功');
         setLoading(false);
         setSelectRow([]);
-        handleSearch();
+        handleSearch(searchParam);
       }
     });
     // let count = 0
@@ -137,10 +149,17 @@ const BindUser: React.FC<Props> = props => {
           {`解除绑定：${selectRow.length}项`}
         </Button>
       )}
-      <Table
-        loading={loading}
+
+      <ProTable
+        dataSource={userList.data}
+        paginationConfig={userList}
         rowKey="id"
         rowSelection={rowSelection}
+        loading={loading}
+        onSearch={(params: any) => {
+          console.log(params, 'pa');
+          handleSearch({ ...params, terms: { ...params?.terms, ...searchParam?.terms } });
+        }}
         columns={[
           {
             dataIndex: 'name',
@@ -159,7 +178,6 @@ const BindUser: React.FC<Props> = props => {
             ),
           },
         ]}
-        dataSource={userList}
       />
       {bindVisible && (
         <UserList
@@ -167,7 +185,7 @@ const BindUser: React.FC<Props> = props => {
           checkedUser={userList}
           close={() => {
             setBindVisible(false);
-            handleSearch();
+            handleSearch(searchParam);
           }}
         />
       )}
