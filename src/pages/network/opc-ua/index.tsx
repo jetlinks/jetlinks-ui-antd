@@ -40,6 +40,7 @@ interface State {
     deviceBindId: string;
     propertyList: any[];
     selectedRowKeys: any[];
+    device: any;
 }
 
 const OpcUaComponent: React.FC<Props> = props => {
@@ -62,7 +63,8 @@ const OpcUaComponent: React.FC<Props> = props => {
         deviceId: '',
         deviceBindId: '',
         propertyList: [],
-        selectedRowKeys: []
+        selectedRowKeys: [],
+        device: {}
     };
 
     const [searchParam, setSearchParam] = useState(initState.searchParam);
@@ -79,6 +81,7 @@ const OpcUaComponent: React.FC<Props> = props => {
     const [currentPoint, setCurrentPoint] = useState(initState.currentPoint);
     const [dataListNoPaing, setDataListNoPaing] = useState(initState.dataListNoPaing);
     const [opcId, setOpcId] = useState(initState.opcId);
+    const [device, setDevice] = useState(initState.device);
     const [deviceId, setDeviceId] = useState(initState.deviceId);
     const [deviceBindId, setDeviceBindId] = useState(initState.deviceBindId);
     const [importVisible, setImportVisible] = useState(false);
@@ -109,10 +112,10 @@ const OpcUaComponent: React.FC<Props> = props => {
                     })
                     setDataListNoPaing([...data]);
                     let opcUaId = id;
-                    if(id){
+                    if (id) {
                         setOpcId(id);
                         opcUaId = id;
-                    }else{
+                    } else {
                         setOpcId(data[0].key);//初始化第一个
                         opcUaId = data[0].key;
                     }
@@ -122,7 +125,7 @@ const OpcUaComponent: React.FC<Props> = props => {
                         },
                         pageSize: 10
                     });
-                }else{
+                } else {
                     setDataListNoPaing([]);
                     setResult({});
                     setCurrentPoint({});
@@ -136,20 +139,25 @@ const OpcUaComponent: React.FC<Props> = props => {
         setSpinning(true);
         setSearchParam(params);
         apis.opcUa.getDeviceBindList(encodeQueryParam(params)).then(resp => {
-            if(resp.status === 200){
+            if (resp.status === 200) {
                 setResult(resp.result);
             }
             setSpinning(false);
         })
     }
 
-    const getDevicePointList = (params?: any) => {
+    const getDevicePointList = (params?: any, devices?: any) => {
         setSpinning(true);
         setSearchPointParam(params);
         apis.opcUa.getDevicePointList(encodeQueryParam(params)).then(resp => {
             if (resp.status === 200) {
                 setResultPoint(resp.result);
-                propertiesWs(params.terms.deviceId, resp.result);
+                if(devices){
+                    setDevice(devices);
+                    propertiesWs(params.terms.deviceId, resp.result, devices);
+                }else{
+                    propertiesWs(params.terms.deviceId, resp.result, device);
+                }
             }
             setSpinning(false);
         })
@@ -388,7 +396,7 @@ const OpcUaComponent: React.FC<Props> = props => {
                                 deviceId: record.deviceId
                             },
                             sorts: searchPointParam.sorts
-                        });
+                        }, record);
                         setPointVisible(true);
                     }}>查看点位</a>
                 </Fragment>
@@ -554,6 +562,7 @@ const OpcUaComponent: React.FC<Props> = props => {
                         title: item.name,
                         isLeaf: true,
                         id: item.deviceId,
+                        item: item,
                         children: []
                     })
                 })
@@ -577,6 +586,7 @@ const OpcUaComponent: React.FC<Props> = props => {
                         title: item.name,
                         isLeaf: true,
                         id: item.deviceId,
+                        item: item,
                         children: []
                     })
                 })
@@ -586,7 +596,7 @@ const OpcUaComponent: React.FC<Props> = props => {
         });
     }
 
-    const propertiesWs = (deviceId: string, result: any) => {
+    const propertiesWs = (deviceId: string, result: any, device: any) => {
         if (properties$) {
             properties$.unsubscribe();
         }
@@ -599,17 +609,27 @@ const OpcUaComponent: React.FC<Props> = props => {
             // `${deviceId}-opc-ua-device-point-value`,
             // `/device/*/${deviceId}/message/property/report`,
             // {},
-            `${deviceId}-opc-ua-device-point-value-${str}`,
-            `/opc-ua-point-value/${deviceId}`,
+            // `${deviceId}-opc-ua-device-point-value-${str}`,
+            // `/opc-ua-point-value/${deviceId}`,
+            // {
+            //     points: points
+            // }
+            `instance-info-property-${deviceId}-${device.productId}-${str}`,
+            `/dashboard/device/${device.productId}/properties/realTime`,
             {
-                points: points
-            }
+                deviceId: deviceId,
+                properties: points,
+                history: 0,
+            },
         ).subscribe((resp: any) => {
             const { payload } = resp;
             let resultList = [...result.data];
             resultList.map((item: any) => {
-                if (payload.properties[item.property] !== undefined) {
-                    item.value = payload.properties[item.property].formatValue
+                // if (payload.properties[item.property] !== undefined) {
+                //     item.value = payload.properties[item.property].formatValue
+                // }
+                if (payload.value.property === item.property) {
+                    item.value = payload.value.formatValue
                 }
             })
             setResultPoint({
@@ -724,19 +744,19 @@ const OpcUaComponent: React.FC<Props> = props => {
                                     treeData={dataListNoPaing}
                                     // loadData={onLoadData}
                                     expandedKeys={expandedKeys}
-                                    onExpand={(expandedKeys, {expanded}) => { //只展开一个
-                                        if(expanded && expandedKeys.length > 0){
+                                    onExpand={(expandedKeys, { expanded }) => { //只展开一个
+                                        if (expanded && expandedKeys.length > 0) {
                                             let keys = expandedKeys[expandedKeys.length - 1];
                                             setExpandedKeys([keys])
                                             onLoadChildrenData(keys)
-                                        }else{
+                                        } else {
                                             setExpandedKeys([])
                                         }
                                     }}
                                     onSelect={(key, e) => {
                                         if (key.length > 0) {
                                             setTreeNode(e.node);
-                                            const { eventKey, isLeaf, id} = e.node.props;
+                                            const { eventKey, isLeaf, id } = e.node.props;
                                             if (isLeaf) {//选择孩子节点时的操作
                                                 setDeviceId(id);
                                                 setDeviceBindId(eventKey || key[0]);
@@ -746,7 +766,7 @@ const OpcUaComponent: React.FC<Props> = props => {
                                                         deviceId: id
                                                     },
                                                     sorts: searchPointParam.sorts
-                                                });
+                                                }, e.node.props.item);
                                                 setPointVisible(true);
                                             }
                                         }

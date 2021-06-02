@@ -163,7 +163,7 @@ const PropertiesCard: React.FC<Props> = props => {
               title={
                 typeof data.formatValue === 'object'
                   ? JSON.stringify(data.formatValue)
-                  : data.formatValue || '/'
+                  : data.formatValue
               }
               style={{ width: '100%' }}
             />
