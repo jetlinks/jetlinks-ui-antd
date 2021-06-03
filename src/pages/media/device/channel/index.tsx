@@ -93,12 +93,13 @@ const MediaDevice: React.FC<Props> = props => {
     {
       title: '厂商',
       dataIndex: 'manufacturer',
+      width: 100,
       ellipsis: true,
     },
     {
       title: '安装地址',
       dataIndex: 'address',
-      width: '15%',
+      width: '10%',
       ellipsis: true,
     },
     {
@@ -124,6 +125,14 @@ const MediaDevice: React.FC<Props> = props => {
         },
       ],
       filterMultiple: false,
+    },
+    {
+      title: '经纬度',
+      width: 200,
+      ellipsis: true,
+      render: (record: any) => (
+        <span>{record.longitude ? `${record.longitude ? record.longitude : ''},${record.latitude ? record.latitude : ''}` : ''}</span>
+      )
     },
     {
       title: '子通道数',
