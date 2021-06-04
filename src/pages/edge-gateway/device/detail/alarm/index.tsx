@@ -9,6 +9,7 @@ import { FormComponentProps } from 'antd/lib/form';
 import { PaginationConfig } from 'antd/lib/table';
 import Service from './service';
 import styles from '@/utils/table.less';
+import encodeQueryParam from '@/utils/encodeParam';
 
 interface Props extends FormComponentProps {
   device: any;
@@ -34,7 +35,8 @@ const Alarm: React.FC<Props> = props => {
     data: {},
     saveAlarmData: {},
     searchParam: {
-      pageSize: 10
+      pageSize: 10,
+      sorts:[{name:"alarmTime",order: 'desc' }]
     },
     searchAlarmParam: {
       pageSize: 10
@@ -97,6 +99,7 @@ const Alarm: React.FC<Props> = props => {
         message.success('保存成功');
         setSaveVisible(false);
         getProductAlarms();
+        getData(searchAlarmParam);
       },
       () => setSpinning(false)
     )
@@ -107,6 +110,7 @@ const Alarm: React.FC<Props> = props => {
       () => {
         message.success('启动成功');
         getProductAlarms();
+        getData(searchAlarmParam);
         setSpinning(false)
       },
       () => { },
@@ -119,6 +123,7 @@ const Alarm: React.FC<Props> = props => {
       () => {
         message.success('停止成功');
         getProductAlarms();
+        getData(searchAlarmParam);
         setSpinning(false)
       },
       () => { },
@@ -131,6 +136,7 @@ const Alarm: React.FC<Props> = props => {
       () => {
         message.success('删除成功');
         getProductAlarms();
+        getData(searchAlarmParam);
         setSpinning(false)
       },
       () => { },
@@ -310,8 +316,7 @@ const Alarm: React.FC<Props> = props => {
 
   const onAlarmProduct = (value?: string) => {
     handleSearch({
-      pageIndex: searchParam.pageIndex,
-      pageSize: searchParam.pageSize,
+      pageSize: 10,
       where: `alarmId=${value}`
     });
   };
@@ -321,12 +326,15 @@ const Alarm: React.FC<Props> = props => {
   // }, [alarmActiveKey]);
 
   const onTableChange = (
-    pagination: PaginationConfig
+    pagination: PaginationConfig,
+    filters: any,
+    sorter: SorterResult<AlarmLog>,
   ) => {
     handleSearch({
+      ...searchParam,
       pageIndex: Number(pagination.current) - 1,
       pageSize: pagination.pageSize,
-      terms: searchAlarmParam.terms,
+      sorts:[{name:"alarmTime",order: sorter.order ? (sorter.order === 'descend' ? 'desc' : 'asc') : searchParam.sorts[0].order}]
     });
   };
 
@@ -347,10 +355,7 @@ const Alarm: React.FC<Props> = props => {
           setAlarmActiveKey(key);
           if (key = 'logList') {
             setAlarmLogId("");
-            handleSearch({
-              pageIndex: searchParam.pageIndex,
-              pageSize: searchParam.pageSize
-            });
+            handleSearch(searchParam);
           }
         }}>
           <Tabs.TabPane tab="告警设置" key="info">
