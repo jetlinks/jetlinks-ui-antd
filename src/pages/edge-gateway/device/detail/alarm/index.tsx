@@ -353,10 +353,10 @@ const Alarm: React.FC<Props> = props => {
       <Card>
         <Tabs tabPosition="top" type="card" activeKey={alarmActiveKey} onTabClick={(key: any) => {
           setAlarmActiveKey(key);
-          if (key = 'logList') {
-            setAlarmLogId("");
-            handleSearch(searchParam);
-          }
+          // if (key = 'logList') {
+          //   setAlarmLogId("");
+          //   handleSearch(searchParam);
+          // }
         }}>
           <Tabs.TabPane tab="告警设置" key="info">
             <Card title={
