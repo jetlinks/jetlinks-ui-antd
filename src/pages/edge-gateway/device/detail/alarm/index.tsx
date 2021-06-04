@@ -316,6 +316,7 @@ const Alarm: React.FC<Props> = props => {
 
   const onAlarmProduct = (value?: string) => {
     handleSearch({
+      ...searchParam,
       pageSize: 10,
       where: `alarmId=${value}`
     });
@@ -389,8 +390,8 @@ const Alarm: React.FC<Props> = props => {
                     onAlarmProduct(value);
                   } else {
                     handleSearch({
-                      pageIndex: searchParam.pageIndex,
-                      pageSize: searchParam.pageSize
+                      pageSize: 10,
+                      sorts: searchParam.sorts,
                     });
                   }
                 }}
