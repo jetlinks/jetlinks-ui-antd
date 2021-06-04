@@ -136,8 +136,8 @@ const Device: React.FC<Props> = props => {
             title: '注册时间',
             dataIndex: 'registryTime',
             width: '200px',
-            render: (text: any) => text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/',
-            sorter: true,
+            // render: (text: any) => text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/',
+            // sorter: true,
         },
         {
             title: '状态',

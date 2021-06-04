@@ -131,6 +131,9 @@ const AlarmSave: React.FC<Props> = props => {
     if(deviceId !== ''){
       getInstanceDetail(deviceId);
     }
+    if(productId !== ''){
+      getProductInfo(productId);
+    }
     getProductList();
     if (props.data.alarmRule) {
       setShakeLimit(props.data.alarmRule.shakeLimit ? props.data.alarmRule.shakeLimit : {
@@ -156,7 +159,7 @@ const AlarmSave: React.FC<Props> = props => {
 
   return (
     <Modal
-      title={`${props.data?.id ? '编辑' : '新建'}告警`}
+      title={`${props.data?.id ? '编辑' : '新建'}告警1`}
       visible
       okText="确定"
       cancelText="取消"

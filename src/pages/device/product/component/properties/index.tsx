@@ -134,6 +134,8 @@ const PropertiesDefin: React.FC<Props> = props => {
           data.expands.virtualRule.windowType = isTimeWindow ? 'time' : 'num';
           data.windows = undefined;
           data.expands.virtualRule.script = script;
+        }else{
+          data.expands.virtualRule.script = script;
         }
       }
       props.save({ ...data }, onlySave);

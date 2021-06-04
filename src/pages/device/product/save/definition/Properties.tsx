@@ -46,6 +46,7 @@ const Properties: React.FC<Props> = (props: Props) => {
   }, [tenantContextData]);
 
   useEffect(() => {
+    
     setProduct(productContext || {});
   },[productContext])
 
