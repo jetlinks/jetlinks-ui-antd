@@ -22,11 +22,19 @@ const Config: React.FC<Props> = props => {
     const [titleIcon, setTitleIcon] = useState(settings.titleIcon);
     const updateSetting = () => {
         const { dispatch } = props;
-        dispatch({
-            type: 'settings/settingData',
-            payload: { ...settings, ...getFieldsValue(), titleIcon },
-            callback:()=>{message.success('保存成功')}
-        })
+        if(!titleIcon){
+            dispatch({
+                type: 'settings/settingData',
+                payload: { ...settings, ...getFieldsValue() },
+                callback:()=>{message.success('保存成功')}
+            })
+        }else{
+            dispatch({
+                type: 'settings/settingData',
+                payload: { ...settings, ...getFieldsValue(), titleIcon },
+                callback:()=>{message.success('保存成功')}
+            })
+        }
     }
 
 
