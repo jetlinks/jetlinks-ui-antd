@@ -23,7 +23,7 @@ const DuerOS: React.FC<Props> = props => {
         pageSize: 10,
     });
     useEffect(() => {
-        handleSearch(encodeQueryParam(searchParam));
+        handleSearch(searchParam);
         service.productTypes().subscribe((data) => {
             const temp = data.map((item: any) => ({ value: item.id, label: item.name, ...item }))
             setProductType(temp);
@@ -37,6 +37,16 @@ const DuerOS: React.FC<Props> = props => {
             () => { },
             () => setLoading(false))
     };
+    const getApplianceTypeName = (id: string) => {
+        let index =  productType.findIndex(item => {
+            return item.id === id
+        })
+        if(index !== -1){
+            return productType[index].name
+        }else{
+            return '/'
+        }
+    }
     const columns: ColumnProps<any>[] = [
         {
             title: 'ID',
@@ -49,6 +59,7 @@ const DuerOS: React.FC<Props> = props => {
         {
             title: '设备类型',
             dataIndex: 'applianceType',
+            render: text => text ? getApplianceTypeName(text) : '/'
         },
         {
             title: '厂商名称',
@@ -151,7 +162,9 @@ const DuerOS: React.FC<Props> = props => {
                                 },
                                     () => { },
                                     () => {
-                                        handleSearch();
+                                        handleSearch({
+                                            pageSize: 10,
+                                        });
                                         setSaveVisible(false);
                                     });
                             } else {
@@ -160,7 +173,9 @@ const DuerOS: React.FC<Props> = props => {
                                 },
                                     () => { },
                                     () => {
-                                        handleSearch();
+                                        handleSearch({
+                                            pageSize: 10,
+                                        });
                                         setSaveVisible(false);
                                     });
                             }
