@@ -145,14 +145,25 @@ const DuerOS: React.FC<Props> = props => {
                         data={current}
                         close={() => setSaveVisible(false)}
                         save={(item: any) => {
-                            service.save(item).subscribe(data => {
-                                message.success('添加成功');
-                            },
-                                () => { },
-                                () => {
-                                    handleSearch();
-                                    setSaveVisible(false);
-                                });
+                            if (current.id) {
+                                service.update(item).subscribe(data => {
+                                    message.success('保存成功');
+                                },
+                                    () => { },
+                                    () => {
+                                        handleSearch();
+                                        setSaveVisible(false);
+                                    });
+                            } else {
+                                service.save(item).subscribe(data => {
+                                    message.success('保存成功');
+                                },
+                                    () => { },
+                                    () => {
+                                        handleSearch();
+                                        setSaveVisible(false);
+                                    });
+                            }
                         }}
                     />
                 )

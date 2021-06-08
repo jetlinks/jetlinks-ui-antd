@@ -619,7 +619,7 @@ const OpcUaComponent: React.FC<Props> = props => {
             {
                 deviceId: deviceId,
                 properties: points,
-                history: 0,
+                history: 1,
             },
         ).subscribe((resp: any) => {
             const { payload } = resp;
