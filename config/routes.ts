@@ -291,6 +291,12 @@ export const routes = [
                 authority: ['device-alarm', 'admin'],
                 component: './device/alarmlog',
               },
+              {
+                path:'/device/command',
+                name:'指令下发',
+                icon:'arrow-down',
+                component:'./device/command'
+              }
             ],
           },
           {
