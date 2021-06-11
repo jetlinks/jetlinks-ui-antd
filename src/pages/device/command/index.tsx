@@ -8,6 +8,7 @@ import Cat from './cat';
 import ProTable from '@/pages/system/permission/component/ProTable';
 import encodeQueryParam from '@/utils/encodeParam';
 import Send from './send';
+import moment from 'moment';
 
 const Command = () => {
   const service = new Service('device/message/task');
@@ -40,15 +41,32 @@ const Command = () => {
     {
       title: '指令类型',
       dataIndex: 'messageType',
+      filters: [
+        { text: '读取属性', value: 'READ_PROPERTY' },
+        { text: '设置属性', value: 'WRITE_PROPERTY' },
+        { text: '调用功能', value: 'INVOKE_FUNCTION' },
+      ],
     },
     {
       title: '状态',
       dataIndex: 'state',
+      filters: [
+        { text: '等待中', value: 'wait' },
+        { text: '发送失败', value: 'sendError' },
+        { text: '发送成功', value: 'success' },
+      ],
       render: (value: any) => value.text,
     },
     {
       title: '错误信息',
       dataIndex: 'lastError',
+    },
+    {
+      title: '发送时间',
+      dataIndex: 'sendTimestamp',
+      render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
+      sorter: true,
+      defaultSortOrder: 'descend',
     },
     {
       title: '操作',
@@ -85,39 +103,6 @@ const Command = () => {
     },
   ];
 
-  const menu = (
-    <Menu>
-      <Menu.Item key="1">
-        <Button
-          icon="arrow-down"
-          type="danger"
-          onClick={() => {
-            service
-              .sendBatchCommand(encodeQueryParam({ terms: { id: deviceIds } }))
-              .subscribe(data => {
-                message.success('操作成功');
-              });
-          }}
-        >
-          重新发送选中指令
-        </Button>
-      </Menu.Item>
-      <Menu.Item key="2">
-        <Button
-          icon="arrow-down"
-          type="danger"
-          onClick={() => {
-            service.sendBatchCommand(encodeQueryParam(searchParam)).subscribe(data => {
-              message.success('操作成功');
-            });
-          }}
-        >
-          重新发送全部指令
-        </Button>
-      </Menu.Item>
-    </Menu>
-  );
-
   return (
     <PageHeaderWrapper title="指令下发">
       <Card bordered={false} style={{ marginBottom: 16 }}>
@@ -140,18 +125,8 @@ const Command = () => {
                   type: 'string',
                 },
                 {
-                  label: '指令类型',
-                  key: 'messageType',
-                  type: 'string',
-                },
-                {
-                  label: '指令状态',
-                  key: 'state',
-                  type: 'string',
-                },
-                {
                   label: '下发时间',
-                  key: 'sendTimestamp',
+                  key: 'sendTimestamp$btw',
                   type: 'time',
                 },
               ]}
@@ -167,12 +142,35 @@ const Command = () => {
                 下发指令
               </Button>
               <Divider type="vertical" />
-              <Dropdown overlay={menu}>
-                <Button icon="menu">
-                  其他批量操作
-                  <Icon type="down" />
+              {deviceIds.length > 0 ? (
+                <Button
+                  icon="arrow-down"
+                  type="danger"
+                  onClick={() => {
+                    service
+                      .sendBatchCommand(encodeQueryParam({ terms: { id: deviceIds } }))
+                      .subscribe(data => {
+                        message.success('操作成功');
+                      });
+                  }}
+                >
+                  重新发送选中指令
                 </Button>
-              </Dropdown>
+              ) : (
+                <Button
+                  icon="arrow-down"
+                  type="danger"
+                  onClick={() => {
+                    service
+                      .sendBatchCommand(encodeQueryParam({ terms: searchParam.terms }))
+                      .subscribe(data => {
+                        message.success('操作成功');
+                      });
+                  }}
+                >
+                  重新发送全部指令
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -187,7 +185,9 @@ const Command = () => {
               type: 'checkbox',
               onChange: (selectedRowKeys: any) => setDeviceids(selectedRowKeys),
             }}
-            onSearch={(params: any) => handleSearch({ ...params, terms: searchParam.terms })}
+            onSearch={(params: any) => {
+              handleSearch({ ...params, terms: { ...searchParam.terms, ...params.terms } });
+            }}
             paginationConfig={result}
           />
         </div>

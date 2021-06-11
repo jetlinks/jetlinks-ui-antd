@@ -37,11 +37,25 @@ const Send = (props: Props) => {
       setFieldState(`*(message.functionId,message.inputs)`, state => {
         state.visible = value === 'INVOKE_FUNCTION';
       });
+      setFieldState(`*(message.properties.$A_read)`, state => {
+        state.visible = value === 'READ_PROPERTY';
+        state.props['x-component-props'] = {
+          mode: 'multiple',
+        };
+      });
     });
     onFieldValueChange$('productId').subscribe(({ value }) => {
       const product = productList.current.find((item: any) => item.id === value);
       productRef.current = product;
       if (!product?.metadata) return;
+
+      linkage.enum(
+        'message.properties.$A_read',
+        JSON.parse(product?.metadata).properties.map((item: any) => ({
+          label: item.name,
+          value: item.id,
+        })),
+      );
       linkage.enum(
         'message.properties.$A_key',
         JSON.parse(product?.metadata).properties.map((item: any) => ({
@@ -139,6 +153,10 @@ const Send = (props: Props) => {
       data.message.properties[property.$A_key] = property.$A_value;
       delete data.message.properties.$A_key;
       delete data.message.properties.$A_value;
+      if (property.$A_read) {
+        data.message.properties = property.$A_read;
+        delete data.message.properties.$A_read;
+      }
     }
     service.sendCommand(data).subscribe(
       resp => {
@@ -229,6 +247,22 @@ const Send = (props: Props) => {
                     { label: '设置属性', value: 'WRITE_PROPERTY' },
                     { label: '调用功能', value: 'INVOKE_FUNCTION' },
                   ],
+                  'x-rules': [
+                    {
+                      required: true,
+                      message: '此字段必填',
+                    },
+                  ],
+                },
+                'message.properties.$A_read': {
+                  visible: false,
+                  'x-mega-props': {
+                    span: 2,
+                    labelCol: 4,
+                  },
+                  title: '属性',
+                  'x-component': 'select',
+                  enum: [],
                   'x-rules': [
                     {
                       required: true,
