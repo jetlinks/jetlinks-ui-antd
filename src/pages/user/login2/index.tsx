@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'dva';
 import { Dispatch, ConnectState } from '@/models/connect';
 import { Settings } from '@ant-design/pro-layout';
-import { Spin, Avatar } from 'antd';
+import { Avatar } from 'antd';
 import style from './index.less';
 import Service from './service';
 import { router } from 'umi';
@@ -14,7 +14,11 @@ interface Props {
 }
 
 const Login: React.FC<Props> = props => {
-  const { dispatch, settings, location: { query } } = props;
+  const {
+    dispatch,
+    settings,
+    location: { query },
+  } = props;
   // const token = localStorage.getItem('x-access-token');
   // const service = new Service('');
   const [username, setUsername] = useState<string>('');
@@ -36,11 +40,13 @@ const Login: React.FC<Props> = props => {
         password,
         expires,
         tokenType: 'default',
-        // verifyKey: captcha,
-        // verifyCode: code,
-        bindCode: query?.code
+        // verifyKey: "19f5c042-d26b-4d54-83d2-99c62042ada9",
+        // verifyCode: '',
+        bindCode: query?.code,
       },
-      callback: () => { console.log('login') }
+      callback: () => {
+        console.log('login');
+      },
     });
   };
 
@@ -54,52 +60,50 @@ const Login: React.FC<Props> = props => {
   // }
 
   // useEffect(() => {
-    // if (dispatch) {
-    //   dispatch({
-    //     type: 'settings/fetchConfig',
-    //     callback: () => {
-    //       const title = document.getElementById('sys-title');
-    //       const icon = document.getElementById('title-icon');
-    //       if (title && settings.title) {
-    //         title.textContent = settings.title;
-    //       }
-    //       if (icon && settings.titleIcon) {
-    //         icon.href = settings.titleIcon;
-    //       }
-    //       if (token) {
-    //         service.queryCurrent().subscribe((resp) => {
-    //           if (resp.status === 200) {
-    //             setCurrent(true)
-    //           } else {
-    //             setCurrent(false)
-    //           }
-    //           setIsReady(true);
-    //         })
-    //       } else {
-    //         setIsReady(true);
-    //       }
-    //     }
-    //   });
-    // }
+  // if (dispatch) {
+  //   dispatch({
+  //     type: 'settings/fetchConfig',
+  //     callback: () => {
+  //       const title = document.getElementById('sys-title');
+  //       const icon = document.getElementById('title-icon');
+  //       if (title && settings.title) {
+  //         title.textContent = settings.title;
+  //       }
+  //       if (icon && settings.titleIcon) {
+  //         icon.href = settings.titleIcon;
+  //       }
+  //       if (token) {
+  //         service.queryCurrent().subscribe((resp) => {
+  //           if (resp.status === 200) {
+  //             setCurrent(true)
+  //           } else {
+  //             setCurrent(false)
+  //           }
+  //           setIsReady(true);
+  //         })
+  //       } else {
+  //         setIsReady(true);
+  //       }
+  //     }
+  //   });
+  // }
 
-    // //判断是否开启验证码
-    // service.captchaConfig().subscribe((resp) => {
-    //   if (resp) {
-    //     setEnable(resp.enabled)
-    //     if (resp.enabled) {
-    //       //获取验证码
-    //       service.getCaptcha().subscribe((resp) => {
-    //         setCaptcha(resp.key);
-    //         setCaptchaImg(resp.base64);
-    //       });
-    //       // getCodeImg();
-    //     } else {
-    //       //未开启验证码
-    //     }
-    //   }
-    // });
-
-
+  // //判断是否开启验证码
+  // service.captchaConfig().subscribe((resp) => {
+  //   if (resp) {
+  //     setEnable(resp.enabled)
+  //     if (resp.enabled) {
+  //       //获取验证码
+  //       service.getCaptcha().subscribe((resp) => {
+  //         setCaptcha(resp.key);
+  //         setCaptchaImg(resp.base64);
+  //       });
+  //       // getCodeImg();
+  //     } else {
+  //       //未开启验证码
+  //     }
+  //   }
+  // });
 
   // }, [settings.title]);
 
@@ -108,17 +112,25 @@ const Login: React.FC<Props> = props => {
     if (current) {
       return (
         <div className={style.login}>
-          <div className={style.bg1} />
+          {/* <div className={style.bg1} />
           <div className={style.gyl}>
             物联网平台
         <div className={style.gy2}>MQTT TCP CoAP HTTP , 多消息协议适配 , 可视化规则引擎
         </div>
-          </div>
+          </div> */}
           <div className={style.box}>
-            <div className={style.box1} >
+            <div className={style.box1}>
               <div style={{ width: '100%', height: '30px' }}></div>
               <div className={style.avatar}>
-                <Avatar size="small" className={style.avatarx} src={information.avatar || 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3273016457,3482023254&fm=26&gp=0.jpg'} alt="avatar" />
+                <Avatar
+                  size="small"
+                  className={style.avatarx}
+                  src={
+                    information.avatar ||
+                    'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3273016457,3482023254&fm=26&gp=0.jpg'
+                  }
+                  alt="avatar"
+                />
               </div>
               <input
                 onClick={() => {
@@ -134,10 +146,10 @@ const Login: React.FC<Props> = props => {
               <input
                 onClick={() => {
                   localStorage.setItem('x-access-token', '');
-                  setCurrent(false)
+                  setCurrent(false);
                   if (window.location.pathname !== '/user/login') {
                     router.replace({
-                      pathname: '/user/login'
+                      pathname: '/user/login',
                     });
                   } else {
                     router.push('/user/login');
@@ -152,60 +164,51 @@ const Login: React.FC<Props> = props => {
             </div>
           </div>
         </div>
-      )
+      );
     } else {
-      return renderLogin()
+      return renderLogin();
     }
-  }
+  };
   const renderLogin = () => (
     <div className={style.login}>
-
-      <div className={style.bg1} />
-      <div className={style.gyl}>
+      {/* <div className={style.bg1} /> */}
+      {/* <div className={style.gyl}>
         物联网平台
         <div className={style.gy2}>MQTT TCP CoAP HTTP , 多消息协议适配 , 可视化规则引擎
         </div>
-      </div>
+      </div> */}
       {/* style={{ height: enable ? '387px' : '330px' }} */}
       <div className={style.box}>
-        <div className={style.box1} >
-          <div className={style.header}>用户登录</div>
+        <div className={style.logo}>
+          <img src={require('@/assets/logo.png')} alt="" />
+          <span>Jetlinks-Edge</span>
+        </div>
+        <div className={style.box1}>
+          <div className={style.header}>登录</div>
 
           <div className={style.item}>
-            <div className={style.userLabel}>用户名</div>
+            <div className={style.userLabel}>
+              <img src={require('@/assets/username.png')} alt="" />
+            </div>
             <input
-              style={{ borderStyle: 'none none solid none' }}
               onChange={e => setUsername(e.target.value)}
               value={username}
+              placeholder="请输入用户名"
               type="text"
             />
           </div>
           {/* <div className={style.item} onKeyUp={e => { if (e.keyCode === 13 && !enable) { handleSubmit(); } }}> */}
           <div className={style.item}>
             <div className={style.userLabel}>
-              密<span style={{ marginLeft: '1em' }} />码
+              <img src={require('@/assets/password.png')} alt="" />
             </div>
             <input
-              style={{ borderStyle: 'none none solid none' }}
               onChange={e => setPassword(e.target.value)}
               value={password}
+              placeholder="请输入密码"
               type="password"
             />
           </div>
-          {/* {
-            enable ? <div className={style.item}>
-              <div className={style.userLabel}>验证码</div>
-              <input onKeyUp={e => { if (e.keyCode === 13) { handleSubmit(); } }}
-                style={{ borderStyle: 'none none solid none' }}
-                onChange={e => setCode(e.target.value)}
-                value={code}
-                type="text"
-              />
-              <div className={style.code} onClick={() => { getCodeImg(); }}><img src={captchaImg} className={style.code_img} /></div>
-            </div> : <div></div>
-          } */}
-
-
           <div className={style.remember}>
             <div className={style.remember_box}>
               <input
@@ -215,7 +218,7 @@ const Login: React.FC<Props> = props => {
                   setExpires(expires === -1 ? 3600000 : -1);
                 }}
               />
-              <div className={style.text}>记住我</div>
+              <div className={style.text}>记住密码</div>
             </div>
           </div>
 
@@ -231,7 +234,7 @@ const Login: React.FC<Props> = props => {
         </div>
       </div>
     </div>
-  )
+  );
   // return isReady ? renderLogin() : <Spin spinning={isReady} />;
   // return isReady ? Login() : <Spin spinning={isReady} />;
   return Login();
@@ -239,5 +242,5 @@ const Login: React.FC<Props> = props => {
 export default connect(({ login, loading, settings }: ConnectState) => ({
   userLogin: login,
   submitting: loading.effects['login/login'],
-  settings
+  settings,
 }))(Login);

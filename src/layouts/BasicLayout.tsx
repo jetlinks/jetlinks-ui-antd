@@ -7,6 +7,7 @@ import ProLayout, {
   MenuDataItem,
   BasicLayoutProps as ProLayoutProps,
   Settings,
+  GridContent
 } from '@ant-design/pro-layout';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'umi';
@@ -14,12 +15,10 @@ import { Dispatch } from 'redux';
 import { connect } from 'dva';
 import { Result, Button } from 'antd';
 import Authorized, { reloadAuthorized } from '@/utils/Authorized';
-import RightContent from '@/components/GlobalHeader/RightContent';
 import { ConnectState } from '@/models/connect';
 import { isAntDesignPro, getAuthorityFromRouter } from '@/utils/utils';
+import TopLayout from './TopLayout';
 import logo from '../assets/logo.svg';
-import apis from '@/services';
-import { getAuthority } from '@/utils/authority';
 
 // import PubSub from 'pubsub-js';
 
@@ -60,11 +59,14 @@ export type BasicLayoutContext = { [K in 'location']: BasicLayoutProps[K] } & {
 const menuDataRender = (menuList: MenuDataItem[]): MenuDataItem[] => {
   const version = localStorage.getItem('system-version');
   const tenant = localStorage.getItem('tenants-admin');
+
   reloadAuthorized();
-  if (tenant === 'true') {
-    return menuList
-      .filter(j => j.tenant)
-      .filter(i => i.tenant.indexOf('admin') > -1)
+
+  if (tenant === 'true' || tenant === 'false') {
+
+    const tenantKey = tenant === 'true' ? 'admin' : 'member'
+
+    return menuList.filter(a => a.tenant && a.tenant.include(tenantKey))
       .map(item => {
         const localItem: any = {
           ...item,
@@ -74,21 +76,7 @@ const menuDataRender = (menuList: MenuDataItem[]): MenuDataItem[] => {
         return localItem?.version && version === 'community'
           ? []
           : (Authorized.check(item.authority, localItem, null) as MenuDataItem);
-      });
-  } else if (tenant === 'false') {
-    return menuList
-      .filter(j => j.tenant)
-      .filter(i => i.tenant.indexOf('member') > -1)
-      .map(item => {
-        const localItem: any = {
-          ...item,
-          // icon: <MenuFont type={item.iconfont} />,
-          children: item.children ? menuDataRender(item.children) : [],
-        };
-        return localItem?.version && version === 'community'
-          ? []
-          : (Authorized.check(item.authority, localItem, null) as MenuDataItem);
-      });
+      })
   }
   //  else {
   //   return menuList.filter(j => j.tenant).map(item => {
@@ -177,14 +165,18 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
     authority: undefined,
   };
 
+
   return mark === 'true' ? (
     <Authorized authority={authorized!.authority} noMatch={noMatch}>
       {children}
     </Authorized>
   ) : (
     <ProLayout
-      // logo={logo}
-      logo={settings.titleIcon || logo}
+      logo={logo}
+      title='Jetlinks-Edge'
+      headerRender={(data) => {
+        return <TopLayout {...data} />
+      }}
       menuHeaderRender={(logoDom, titleDom) => (
         <Link to="/">
           {logoDom}
@@ -196,7 +188,6 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
         if (menuItemProps.isUrl || menuItemProps.children || !menuItemProps.path) {
           return defaultDom;
         }
-
         return <Link to={menuItemProps.path}>{defaultDom}</Link>;
       }}
       breadcrumbRender={(routers = []) => [
@@ -208,6 +199,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
       ]}
       itemRender={(route, params, routes, paths) => {
         const first = routes.indexOf(route) === 0;
+
         return first ? (
           <Link to={paths.join('/')}>{route.breadcrumbName}</Link>
         ) : (
@@ -217,9 +209,11 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
       footerRender={footerRender}
       menuDataRender={menuDataRender}
       // menuDataRender={()=>menuData}
-      rightContentRender={() => <RightContent />}
+      // rightContentRender={() => <RightContent />}
+
       {...props}
       {...settings}
+      layout='topmenu'
     >
       <Authorized authority={authorized!.authority} noMatch={noMatch}>
         {children}

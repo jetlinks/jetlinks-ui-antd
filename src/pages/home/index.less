@@ -1,0 +1,104 @@
+
+.home {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.layout {
+    width: 100%;
+    display: flex;  
+}
+
+.layout:not(:last-child) {
+    margin-bottom: 15px;
+}
+
+.item {
+    background-color: #fff;
+    padding: 15px 25px;
+    display: flex;
+}
+
+
+.address {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.address img {
+    margin-right: 25px;
+}
+
+.internet {
+    width: calc(66% - 15px);
+    margin-right: 15px;
+    
+}
+
+.basis {
+    flex-grow: 1;
+}
+
+.device {
+    width: calc(66% - 15px);
+    margin-right: 15px;
+}
+
+.alert {
+    flex-grow: 1;
+}
+
+.title {
+    font-size: 16px;
+    font-weight: 600;
+    padding-bottom: 15px;
+}
+
+.itemContent {
+    display: flex;
+    flex-direction: column;
+}
+
+.content {
+    flex-grow: 1;
+    display: flex;
+}
+
+// 网络配置
+
+.networkPort {
+    width: 50%;
+    border: 1px solid #E9E9E9;
+    border-radius: 2px;
+    height: 232px;
+}
+
+.networkPort:first-child {
+    margin-right: 15px;
+}
+
+.networkTitle {
+    background: #F7F9FA;
+    border-radius: 2px 2px 0px 0px;
+    border-bottom: 1px solid #E9E9E9;
+    padding: 12px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    >div {
+        font-size: 14px;
+        font-weight: 600;
+    }
+}
+
+.networkContent {
+    padding: 15px 10px;
+}
+
+.status {
+    flex-grow: 1;
+    height: 146px;
+}

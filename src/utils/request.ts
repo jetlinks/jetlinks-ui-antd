@@ -61,8 +61,7 @@ const errorHandler = (error: { response: Response }): Response | undefined => {
       } else {
         router.push('/user/login');
       }
-    }
-    else if (response.status === 400) {
+    } else if (response.status === 400) {
       response.text().then(resp => {
         if (resp) {
           notification.error({
@@ -79,20 +78,21 @@ const errorHandler = (error: { response: Response }): Response | undefined => {
         }
       });
       return response;
-    }
-    else if (response.status === 500) {
-      response.json().then((res: any) => {
-        notification.error({
-          key: 'error',
-          message: `${res.message}`,
+    } else if (response.status === 500) {
+      response
+        .json()
+        .then((res: any) => {
+          notification.error({
+            key: 'error',
+            message: `${res.message}`,
+          });
+        })
+        .catch(() => {
+          notification.error({
+            key: 'error',
+            message: response.statusText,
+          });
         });
-      }).catch(() => {
-        notification.error({
-          key: 'error',
-          message: response.statusText,
-        });
-      })
-
     } else if (response.status === 504) {
       notification.error({
         key: 'error',
@@ -146,8 +146,8 @@ const request = extend({
 request.interceptors.request.use((url, options) => ({
   // url: url.replace('jetlinks', ''),//使用mock数据
   // url: 'http://localhost:8000' + url.replace('/jetlinks', ''),
-  
-  url: url.replace('/jetlinks', ''),
+
+  // url: url.replace('/jetlinks', ''),
   options: {
     ...options,
     headers: {

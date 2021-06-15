@@ -78,8 +78,8 @@ export default {
     ie: 11,
   },
   history: 'hash',
-  base: './',
-  publicPath: "./",
+  // base: './',
+  // publicPath: "./",
   // umi routes: https://umijs.org/zh/guide/router.html
   routes: routes,
   // Theme for antd: https://ant.design/docs/react/customize-theme-cn

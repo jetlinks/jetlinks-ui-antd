@@ -1,0 +1,36 @@
+.echarts {
+    flex-grow: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.echarts:not(:first-child) {
+    padding-left: 20px;
+}
+
+.echarts:not(:last-child)::after {
+    content: ' ';
+    position: absolute;
+    height: 80%;
+    top: 10%;
+    right: 0;
+    width: 1px;
+    background-color: rgba(0,0,0,.1);
+}
+
+.content {
+    margin-right: 10px;
+}
+
+.right {
+
+}
+
+.title {
+    color: rgba(0,0,0,.65);
+}
+
+.value {
+    font-size: 24px;
+}

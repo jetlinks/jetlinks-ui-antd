@@ -52,6 +52,7 @@ const Model: LoginModelType = {
   effects: {
     *login({ payload, callback }, { call, put }) {
       const response = yield call(apis.login.login, payload);
+      console.log(response);
       yield put({
         type: 'changeLoginStatus',
         payload: response,
@@ -61,14 +62,15 @@ const Model: LoginModelType = {
         // window.location.href = '/';
         setAccessToken(response.result.token);
         setAutz(response.result);
-        apis.login.info('edge-device').then(res => {
-          if (res.status === 200) {
-            let id = res.result.id
-            console.log(id)
-            window.location.href = `/device/product/save/${id}?edgeTag=true`;
-            // router.replace(`/device/product/save/${id}?edgeTag=true`)
-          }
-        })
+        router.push('/')
+        // apis.login.info('edge-device').then(res => {
+        //   if (res.status === 200) {
+        //     let id = res.result.id
+        //     console.log(id)
+        //     window.location.href = `/device/product/save/${id}?edgeTag=true`;
+        //     // router.replace(`/device/product/save/${id}?edgeTag=true`)
+        //   }
+        // })
         // const tenants = response.result?.user?.tenants;
         // if (tenants && tenants[0]) {
         //   localStorage.removeItem('tenants-admin');
@@ -118,9 +120,9 @@ const Model: LoginModelType = {
         //   localStorage.setItem('u-i-1', response.result.userId);
         //   // yield put(routerRedux.replace(redirect || '/'));
         //   router.replace('/');
-          // router.replace('/');
+        // router.replace('/');
         // }
-      } 
+      }
       // else callback();
     },
 
