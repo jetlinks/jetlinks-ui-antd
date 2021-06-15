@@ -27,7 +27,7 @@ const OrgChart = () => {
   const handleSearch = () => {
     apis.org.list(encodeQueryParam({ paging: false, terms: { typeId: 'org' } })).then(resp => {
       const data = {
-        code: null,
+        id: null,
         name: '机构管理',
         title: '组织架构',
         children: resp.result,
@@ -79,7 +79,7 @@ const OrgChart = () => {
       });
   };
   const menu = (nodeData: any) => {
-    return nodeData.id === '' ? (
+    return nodeData.id === null ? (
       <Menu>
         <Menu.Item>
           <a
