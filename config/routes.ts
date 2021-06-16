@@ -295,6 +295,8 @@ export const routes = [
                 path:'/device/command',
                 name:'指令下发',
                 icon:'arrow-down',
+                authority:['device-msg-task','admin'],
+                version: 'pro',
                 component:'./device/command'
               }
             ],
