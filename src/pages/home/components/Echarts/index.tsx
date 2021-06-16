@@ -38,14 +38,12 @@ function Echarts(props: EchartsProps) {
             type="rect"
             eachView={(view, facet) => {
               const _data = facet.data;
-              console.log('facet.data', _data);
               const dv = new DataView();
               let _color = color || '#FF4D4F'
               _data.push({
                 type: '其他',
                 value: (100 - _data[0].value)
               })
-              console.log(_data[0].value, (100 - _data[0].value));
               dv.source(_data).transform({
                 type: "percent",
                 field: "value",

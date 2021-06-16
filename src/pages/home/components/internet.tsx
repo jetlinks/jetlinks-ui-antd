@@ -1,9 +1,45 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Layout from '../items';
 import styles from '../index.less';
 import { Button, Descriptions, Result } from 'antd'
+import InternetModel from './model/InternetSetting';
 
 function Internet() {
+
+  const [internetVisible, setInternetVisible] = useState(false)
+  const [title, setTitle] = useState('网口1')
+  const [data, setData] = useState<object | undefined>(undefined)
+
+  const openEditModel = (type: number) => {
+    let title = '编辑网口' + type
+    setTitle(title)
+    setData({
+      test: true,
+      test2: 1,
+      test3: '1',
+      test4: '4',
+      test5: '5',
+      test6: '6',
+      test7: '7'
+    })
+    setInternetVisible(true)
+  }
+
+  const openAddModel = (type: number) => {
+    let title = '配置网口' + type
+    setTitle(title)
+    setData({
+      test: true,
+      test2: 1
+    })
+    setInternetVisible(true)
+  }
+
+
+  const InternetVisibleEvent = () => {
+    setInternetVisible(false)
+  }
+
   return (
     <div className={`${styles.item} ${styles.internet}`}>
       <Layout
@@ -14,7 +50,7 @@ function Internet() {
             <div>
               网口1
             </div>
-            <Button type="primary">编辑</Button>
+            <Button type="primary" onClick={() => { openEditModel(1) }}>编辑</Button>
           </div>
           <div className={styles.networkContent}>
             <Descriptions column={2}>
@@ -35,7 +71,7 @@ function Internet() {
             <div>
               网口2
             </div>
-            <Button type="primary">立即配置</Button>
+            <Button type="primary" onClick={() => { openAddModel(2) }}>立即配置</Button>
           </div>
           <div className={styles.networkContent}>
             <Result
@@ -44,6 +80,14 @@ function Internet() {
           </div>
         </div>
       </Layout>
+      {/* 网络配置 */}
+      <InternetModel
+        title={title}
+        data={data}
+        visible={internetVisible}
+        onOk={InternetVisibleEvent}
+        onCancel={InternetVisibleEvent}
+      />
     </div>
   );
 }
