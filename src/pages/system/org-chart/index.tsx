@@ -87,7 +87,7 @@ const OrgChart = () => {
             rel="noopener noreferrer"
             onClick={() => {
               setCurrent({});
-              setParentId(nodeData.id);
+              setParentId(nodeData);
               setEdit(true);
             }}
           >
@@ -116,7 +116,7 @@ const OrgChart = () => {
             rel="noopener noreferrer"
             onClick={() => {
               setCurrent({});
-              setParentId(nodeData.id);
+              setParentId(nodeData);
               setEdit(true);
             }}
           >

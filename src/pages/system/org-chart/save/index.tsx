@@ -6,7 +6,7 @@ interface Props extends FormComponentProps {
   close: Function;
   save: Function;
   data: any;
-  parentId: string | null;
+  parentId: any;
 }
 
 const Save: React.FC<Props> = props => {
@@ -23,7 +23,7 @@ const Save: React.FC<Props> = props => {
     //添加下级
     if (parentId) {
       tempData = {
-        parentId,
+        parentId:parentId.id,
         typeId: 'org',
         ...value,
       };
@@ -51,8 +51,9 @@ const Save: React.FC<Props> = props => {
     } else {
       title += '添加';
     }
+    
     if (parentId) {
-      title += `${parentId}子`;
+      title += `${parentId.name}子`;
     }
     title += '机构';
     return title;
