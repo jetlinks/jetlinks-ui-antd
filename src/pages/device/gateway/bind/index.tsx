@@ -1,14 +1,14 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import Form from 'antd/es/form';
-import {FormComponentProps} from 'antd/lib/form';
-import {Badge, Modal, Table} from 'antd';
-import {ConnectState} from '@/models/connect';
-import {connect} from 'dva';
+import { FormComponentProps } from 'antd/lib/form';
+import { Badge, Modal, Table } from 'antd';
+import { ConnectState } from '@/models/connect';
+import { connect } from 'dva';
 import apis from '@/services';
-import {DeviceInstance} from '../../instance/data.d';
+import { DeviceInstance } from '../../instance/data.d';
 import styles from '@/utils/table.less';
 import Search from '@/pages/device/gateway/Search';
-import {ColumnProps, PaginationConfig, SorterResult} from 'antd/lib/table';
+import { ColumnProps, PaginationConfig, SorterResult } from 'antd/lib/table';
 import moment from 'moment';
 import encodeQueryParam from '@/utils/encodeParam';
 
@@ -16,6 +16,7 @@ interface Props extends FormComponentProps {
   selectionType: string;
   close: Function;
   save: Function;
+  gatewayId: string;
 }
 
 interface State {
@@ -26,7 +27,7 @@ interface State {
 
 const DeviceGatewayBind: React.FC<Props> = props => {
   const initState: State = {
-    searchParam: {pageSize: 10},
+    searchParam: { pageSize: 10, terms: { 'parentId$not@or': props.gatewayId } },
     deviceData: {},
     deviceId: [],
   };
@@ -48,13 +49,12 @@ const DeviceGatewayBind: React.FC<Props> = props => {
           setDeviceData(response.result);
         }
       })
-      .catch(() => {
-      });
+      .catch(() => {});
   };
 
   useEffect(() => {
     if (props.selectionType === 'checkbox') {
-      searchParam.terms = {parentId$isnull: 1};
+      searchParam.terms = { parentId$isnull: 1, 'parentId$not@or': props.gatewayId };
     }
     handleSearch(searchParam);
   }, []);
@@ -73,8 +73,7 @@ const DeviceGatewayBind: React.FC<Props> = props => {
           setDeviceData(response.result);
         }
       })
-      .catch(() => {
-      });
+      .catch(() => {});
   };
 
   const rowSelection = {
@@ -118,8 +117,8 @@ const DeviceGatewayBind: React.FC<Props> = props => {
       dataIndex: 'state',
       width: '120px',
       render: record =>
-        record ? <Badge status={statusMap.get(record.text)} text={record.text}/> : '',
-    }
+        record ? <Badge status={statusMap.get(record.text)} text={record.text} /> : '',
+    },
   ];
 
   return (
@@ -132,10 +131,13 @@ const DeviceGatewayBind: React.FC<Props> = props => {
         submitData();
       }}
       width="60%"
-      style={{marginTop: -30}}
+      style={{ marginTop: -30 }}
       onCancel={() => props.close()}
     >
-      <div className={styles.tableList} style={{maxHeight: 600, overflowY: 'auto', overflowX: 'hidden'}}>
+      <div
+        className={styles.tableList}
+        style={{ maxHeight: 600, overflowY: 'auto', overflowX: 'hidden' }}
+      >
         <div className={styles.tableListForm}>
           <Search
             search={(params: any) => {
@@ -143,7 +145,8 @@ const DeviceGatewayBind: React.FC<Props> = props => {
               if (props.selectionType === 'checkbox') {
                 params['parentId$isnull'] = 1;
               }
-              handleSearch({terms: params, sorter: searchParam.sorter, pageSize: 10});
+              params['parentId$not@or'] = props.gatewayId;
+              handleSearch({ terms: params, sorter: searchParam.sorter, pageSize: 10 });
             }}
           />
         </div>
@@ -177,7 +180,7 @@ const DeviceGatewayBind: React.FC<Props> = props => {
   );
 };
 
-export default connect(({deviceGateway, loading}: ConnectState) => ({
+export default connect(({ deviceGateway, loading }: ConnectState) => ({
   deviceGateway,
   loading,
 }))(Form.create<Props>()(DeviceGatewayBind));

@@ -243,6 +243,7 @@ const DeviceGateway: React.FC<Props> = () => {
               close={() => {
                 setBindVisible(false);
               }}
+              gatewayId={gatewayId}
               save={(item: any) => {
                 setBindVisible(false);
                 setSpinning(true);
