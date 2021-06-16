@@ -25,8 +25,18 @@ const Config: React.FC<Props> = props => {
         dispatch({
             type: 'settings/settingData',
             payload: { ...settings, ...getFieldsValue(), titleIcon },
-            callback:()=>{message.success('保存成功')}
+            // callback:()=>{message.success('保存成功')}
+            callback:(response:any)=>{
+                if(response.status === 200){
+                    message.success('更新成功');
+                }else{
+                    message.success('更新失败');
+                }
+            }
+            
         })
+        
+        
     }
 
 
