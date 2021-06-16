@@ -37,9 +37,10 @@ const SettingModel: SettingModelType = {
         })
       }
     },
-    *settingData({ payload }, { call, put }) {
+    *settingData({ payload,callback }, { call, put }) {
       const response: any = yield call(apis.systemConfig.update, payload);
       if (response.status === 200) {
+        callback(response)
         document.getElementById('title-icon')!.href = payload.titleIcon;
         yield put({
           type: 'changeSetting',
