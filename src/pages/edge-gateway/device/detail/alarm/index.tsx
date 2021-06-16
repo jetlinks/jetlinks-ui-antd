@@ -316,7 +316,6 @@ const Alarm: React.FC<Props> = props => {
 
   const onAlarmProduct = (value?: string) => {
     handleSearch({
-      ...searchParam,
       pageSize: 10,
       where: `alarmId=${value}`
     });
@@ -354,10 +353,10 @@ const Alarm: React.FC<Props> = props => {
       <Card>
         <Tabs tabPosition="top" type="card" activeKey={alarmActiveKey} onTabClick={(key: any) => {
           setAlarmActiveKey(key);
-          if (key = 'logList') {
-            // setAlarmLogId("");
-            handleSearch(searchParam);
-          }
+          // if (key = 'logList') {
+          //   setAlarmLogId("");
+          //   handleSearch(searchParam);
+          // }
         }}>
           <Tabs.TabPane tab="告警设置" key="info">
             <Card title={
@@ -383,15 +382,15 @@ const Alarm: React.FC<Props> = props => {
           </Tabs.TabPane>
           <Tabs.TabPane tab="告警记录" key="logList">
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <Select allowClear style={{ width: 300 }} value={alarmLogId}
+              <Select placeholder="选择告警设置" allowClear style={{ width: 300 }} value={alarmLogId}
                 onChange={(value: string) => {
                   setAlarmLogId(value);
                   if (value !== '' && value !== undefined) {
                     onAlarmProduct(value);
                   } else {
                     handleSearch({
-                      pageSize: 10,
-                      sorts: searchParam.sorts,
+                      pageIndex: searchParam.pageIndex,
+                      pageSize: searchParam.pageSize
                     });
                   }
                 }}

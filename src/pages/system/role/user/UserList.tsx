@@ -3,6 +3,7 @@ import { Table, Alert, Button, Row, Col, Drawer, message, Spin, Form, Input } fr
 import React, { useEffect, useState } from 'react';
 import apis from '@/services';
 import encodeQueryParam from '@/utils/encodeParam';
+import ProTable from '../../permission/component/ProTable';
 
 interface Props {
   close: Function;
@@ -10,14 +11,24 @@ interface Props {
   checkedUser: any[];
 }
 interface State {
-  list: any[];
+  list: {
+    pageIndex: number;
+    pageSize: number;
+    total: number;
+    data: any[];
+  };
   selectRow: any[];
   loading: boolean;
   keyword: string;
 }
 const UserList: React.FC<Props> = props => {
   const initState: State = {
-    list: [],
+    list: {
+      pageIndex: 0,
+      pageSize: 10,
+      total: 0,
+      data: [],
+    },
     selectRow: [],
     loading: false,
     keyword: '',
@@ -27,7 +38,13 @@ const UserList: React.FC<Props> = props => {
   const [selectRow, setSelectRow] = useState(initState.selectRow);
   const [loading, setLoading] = useState(initState.loading);
   const [keyword, setKeyword] = useState(initState.keyword);
-
+  const [searchParam, setSearchParam] = useState<any>({
+    terms: {
+      'id$in-dimension$role$not': props.data.id,
+    },
+    pageIndex: 0,
+    pageSize: 10,
+  });
   const rowSelection = {
     onChange: (selectedRowKeys: any, selectedRows: any) => {
       // setSelectRowKeys();
@@ -40,63 +57,51 @@ const UserList: React.FC<Props> = props => {
     }),
   };
 
-  const search = (params?: any) => {
-    const idList = props.checkedUser.map(i => i.userId).join(',');
-
-    apis.users
-      .list(
-        encodeQueryParam({
-          terms: {
-            'id$in-dimension$role$not':props.data.id
-            // id$nin: idList,
-            // ...params,
-          },
-        }),
-      )
-      .then(response => {
-        if (response.status === 200) {
-          setList(response.result.data);
-        }
-      });
+  const handleSearch = (params?: any) => {
+    const temp = { ...searchParam, ...params };
+    setSearchParam(temp);
+    apis.users.list(encodeQueryParam(temp)).then(response => {
+      if (response) {
+        setList(response.result);
+      }
+    });
   };
 
   useEffect(() => {
-    search();
+    // const idList = props.checkedUser.map(i => i.userId).join(',');
+    // apis.users.list(encodeQueryParam({
+    //   terms: {
+    //     id$nin: idList
+    //   }
+    // })).then(response => {
+    //   if (response) {
+    //     setList(response.result.data);
+    //   }
+    // });
+    handleSearch();
   }, []);
 
   // { "dimensionTypeId": "org", "dimensionId": "org1", "dimensionName": "机构1", "userId": "1209763126217355264", "userName": "antd" }
-
-  const bindUser = async () => {
+  const bindUser = () => {
     setLoading(true);
-
-    // await selectRow.forEach((item, index) => {
-    apis.org
-      .bind(
-        selectRow.map(item => ({
-          userId: item.id,
-          userName: item.username,
-          dimensionTypeId: props.data.typeId,
-          dimensionId: props.data.id,
-          dimensionName: props.data.name,
-        })),
-      )
-      .then(response => {
-        if (response) {
-          message.success('操作成功');
-          setLoading(false);
-          props.close();
-        }
-      })
-      .catch(() => {
-        message.success('绑定失败！');
-      });
-    // if (index === selectRow.length - 1) {
-    //   message.success('操作成功！');
-    //   props.close();
-    //   setLoading(false);
+    
+    apis.org.bind(
+       selectRow.map(item => ({
+      userId: item.id,
+      userName: item.username,
+      dimensionTypeId: props.data.typeId,
+      dimensionId: props.data.id,
+      dimensionName: props.data.name,
+    }))
+    ).then(res => {
+      if (res.status === 200) {
+        message.success('操作成功！');
+        props.close();
+        setLoading(false);
+      }
+    });
+   
   };
-  // });
-  // };
   return (
     <Drawer visible title="选择用户" onClose={() => props.close()} width={800}>
       <Row>
@@ -110,8 +115,10 @@ const UserList: React.FC<Props> = props => {
             type="primary"
             style={{ marginTop: 3 }}
             onClick={() =>
-              search({
-                name$LIKE: keyword,
+              handleSearch({
+                terms: {
+                  name$LIKE: keyword,
+                },
                 // 'username$LIKE@and': keyword,
               })
             }
@@ -140,9 +147,14 @@ const UserList: React.FC<Props> = props => {
           </Row>
         )}
 
-        <Table
-          rowKey="id"
+        <ProTable
+          dataSource={list.data}
+          paginationConfig={list}
           rowSelection={rowSelection}
+          rowKey="id"
+          onSearch={(params: any) => {
+            handleSearch({ ...params, terms: { ...searchParam.terms, ...params.terms } });
+          }}
           columns={[
             {
               dataIndex: 'name',
@@ -153,7 +165,6 @@ const UserList: React.FC<Props> = props => {
               title: '用户名',
             },
           ]}
-          dataSource={list}
         />
       </Spin>
     </Drawer>
