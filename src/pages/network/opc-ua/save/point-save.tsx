@@ -76,15 +76,15 @@ const PointSave: React.FC<Props> = props => {
                     )}
                 </Form.Item>
                 <Form.Item label="初始值">
-                    {getFieldDecorator('initialValue', {
+                    {getFieldDecorator('configuration.initialValue', {
                         // rules: [{ required: true, message: '请选择' }],
-                        initialValue: data.initialValue
+                        initialValue: data.configuration?.initialValue
                     })(<Input />)}
                 </Form.Item>
                 <Form.Item label="倍数">
-                    {getFieldDecorator('multiple', {
+                    {getFieldDecorator('configuration.multiple', {
                         // rules: [{ required: true, message: '请选择' }],
-                        initialValue: data.multiple
+                        initialValue: data.configuration?.multiple
                     })(<Input />)}
                 </Form.Item>
                 <Form.Item label="数据模式">
