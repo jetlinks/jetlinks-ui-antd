@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Card, Divider, Form, Input, Select, Spin } from 'antd';
+import { Button, Card, Divider, Form, Input, message, Select, Spin } from 'antd';
 import { FormComponentProps } from "antd/lib/form";
 import AceEditor from "react-ace";
 import 'ace-builds/src-noconflict/mode-json';
@@ -56,13 +56,26 @@ const Functions: React.FC<Props> = (props) => {
     setSpinning(true);
 
     form.validateFields((err, fileValue) => {
-      if (err) return;
+      if (err) {
+        setSpinning(false);
+        return;
+      }
 
       localStorage.setItem(`function-debug-data-${props.device.id}-${fileValue.functionId}`, fileValue.functionData);
+
+      let data;
+      try {
+        data = JSON.parse(fileValue.functionData);
+      } catch (error) {
+        message.error('参数错误');
+        setSpinning(false);
+        return;
+      }
+      
       service.invokedFunction(props.deviceId, {
         deviceId: props.device.id,
         functionId: fileValue.functionId,
-        properties: JSON.parse(fileValue.functionData)
+        properties: data
       }).subscribe(response => {
         const tempResult = response?.result[0];
         let result = response?.result;
