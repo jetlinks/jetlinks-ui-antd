@@ -105,14 +105,14 @@ const Config: React.FC<Props> = props => {
                                             </Select>
                                         )}
                                     </Form.Item>
-                                    <Form.Item
+                                    {/* <Form.Item
                                         label="系统简介"
                                     >
                                         <Input.TextArea
                                             placeholder="系统简介"
                                             rows={4}
                                         />
-                                    </Form.Item>
+                                    </Form.Item> */}
                                     <Form.Item>
                                         <Button htmlType="submit" type="primary" onClick={updateSetting}>
                                             更新基本信息
