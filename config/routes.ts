@@ -29,6 +29,12 @@ export const routes = [
             icon: '',
             component: './home',
           },
+          {
+            name: '视频接入',
+            path: '/video',
+            icon: '',
+            component: './video',
+          },
           // {
           //   name: '统计分析',
           //   path: '/analysis',

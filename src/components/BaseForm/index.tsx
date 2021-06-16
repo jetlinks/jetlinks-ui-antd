@@ -52,10 +52,15 @@ const WrappedBaseForm = Form.create<BaseFormProps>({
   mapPropsToFields(props) {
     const { data, items } = props
     let _data = {}
-    items.forEach(item => {
-      _data[item.name] = Form.createFormField({ value: data[item.name] })
-    })
-    return data ? _data : {}
+    if (data) {
+      items.forEach(item => {
+        _data[item.name] =
+          Form.createFormField({
+            value: data[item.name]
+          })
+      })
+    }
+    return _data
   }
 })(BaseForm);
 

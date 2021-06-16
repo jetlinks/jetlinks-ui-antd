@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import logo from '../assets/logo.svg';
 import { BasicLayoutProps } from './BasicLayout';
-import { connect } from 'dva';
+import { connect, useHistory } from 'dva';
 import { Menu, Button, Badge, Spin } from 'antd'
 import { CurrentUser } from '@/models/user';
 import { ConnectProps, ConnectState } from '@/models/connect';
@@ -18,6 +18,7 @@ function TopLayout(props: TopLayoutProps) {
   const { currentUser, dispatch } = props;
   const service = new Service('user/detail');
   const [current, setCurrent] = useState('')
+  const history = useHistory()
 
   const fetchData = () => {
     if (dispatch) {
@@ -29,6 +30,7 @@ function TopLayout(props: TopLayoutProps) {
 
   const handleClick = (param: ClickParam) => {
     setCurrent(param.key)
+    history.push(param.key)
   }
 
   useEffect(() => {
