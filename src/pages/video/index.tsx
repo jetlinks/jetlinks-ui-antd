@@ -1,5 +1,6 @@
 import React from 'react';
 import TabsPage from '@/components/TabsPage';
+import Configuration from './configuration';
 
 const { TabsPane } = TabsPage
 
@@ -8,9 +9,7 @@ function Video() {
     <div>
       <TabsPage>
         <TabsPane title='国标配置' key={1} International='National standard configuration' img={require('@/assets/video/guobiao.png')}>
-          <div>
-            测试1
-          </div>
+          <Configuration />
         </TabsPane>
         <TabsPane title='视频设备' key={2} International='Video equipment' img={require('@/assets/video/shebei.png')}>
           <div>

@@ -29,7 +29,7 @@ class BaseForm extends PureComponent<BaseFormProps> {
     return items.map(item => {
       const { name, render, options, ...extra } = item
       const _column = (24 / column) * (item.column || 1)
-      return <Col span={_column} key={`form_col_${name}`}>
+      return <Col span={_column} key={`form_col_${name}`} style={{ padding: '0 12px' }}>
         <FormItem {...extra}>
           {
             getFieldDecorator(name, options)(render())
@@ -41,9 +41,11 @@ class BaseForm extends PureComponent<BaseFormProps> {
 
   render() {
     const { items, form, data, column, ...extra } = this.props
-    return <Form {...extra}>
-      {this.handleItems(this.props)}
-    </Form>
+    return <div style={{ overflow: 'hidden' }}>
+      <Form {...extra}>
+        {this.handleItems(this.props)}
+      </Form>
+    </div>
   }
 }
 
