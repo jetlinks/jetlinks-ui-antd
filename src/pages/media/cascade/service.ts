@@ -39,6 +39,16 @@ class Service extends BaseService<any> {
         filter(resp => resp.status === 200),
         map(resp => resp.result)
       ));
+ 
+      public deviceChannel = (params: any) => defer(
+        () => from(request(`/jetlinks/media/channel/_query`, {
+          method: 'GET',
+          params
+        }))
+          .pipe(
+            filter(resp => resp.status === 200),
+            map(resp => resp.result)
+          ));        
 
   public deviceChannelNoPaging = (params: any) => defer(
     () => from(request(`/jetlinks/media/channel/_query/no-paging?paging=false`, {
