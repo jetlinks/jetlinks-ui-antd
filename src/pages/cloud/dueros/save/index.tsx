@@ -1,6 +1,6 @@
 import createRichTextUtils from "@/utils/textUtils";
 import { createFormActions, FormEffectHooks, FormPath, SchemaForm, } from "@formily/antd";
-import { Modal, Spin } from "antd";
+import { message, Modal, Spin } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { DatePicker, Input, Select, ArrayTable, FormCard, NumberPicker } from '@formily/antd-components'
 import ArrayPanels from '@/components/ArrayPanel';
@@ -126,10 +126,16 @@ const Save: React.FC<Props> = props => {
             if (!fieldState.value) return;
 
             const product = testRef.current.list.find((item: any) => item.id === fieldState.value);
-            product.metadata = JSON.parse(product.metadata);
+            try {
+                product.metadata = JSON.parse(product.metadata);
+            } catch (error) {
+                message.error('解析产品数据错误，请检查产品是否存在！');
+                props.close();
+                return;                
+            }
             productRef.current = product;
             linkage.show('applianceType', true);
-            linkage.value('name', product.name);
+            !props.data.id&& linkage.value('name', product.name);
         });
         onFieldValueChange$('actionMappings.*.command.message.functionId').subscribe(fieldState => {
             if (!fieldState.value) return;
@@ -220,7 +226,6 @@ const Save: React.FC<Props> = props => {
                                 return item
                             });
                         }
-                        //console.log(data, 'dddd');
                         props.save(data);
                     }}
                     components={{ DatePicker, Input, Select, ArrayPanels, ArrayTable, FormCard, NumberPicker }}
@@ -248,6 +253,7 @@ const Save: React.FC<Props> = props => {
                                                 "message": "此字段必填"
                                             }
                                         ],
+                                        readOnly:!!props.data.id,
                                         "enum": productInfo.list,
                                         "x-component": "select"
                                     },
