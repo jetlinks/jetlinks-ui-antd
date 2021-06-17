@@ -5,6 +5,7 @@ import SearchForm from "@/components/SearchForm";
 import {ColumnProps} from "antd/lib/table";
 import Service from "../service";
 import encodeQueryParam from "@/utils/encodeParam";
+import ProTable from "@/pages/system/permission/component/ProTable";
 
 interface Props {
   cascadeId: string;
@@ -16,7 +17,7 @@ interface State {
 }
 
 const initState: State = {
-  searchParam: {terms: {}, sorts: {field: 'id', order: 'desc'}},
+  searchParam: {pageIndex:0,pageSize: 10, terms: location?.query?.terms, sorts: {field: 'id', order: 'desc'}},
 };
 const ChoiceChannel: React.FC<Props> = props => {
 
@@ -64,11 +65,8 @@ const ChoiceChannel: React.FC<Props> = props => {
 
   const _channel = (params?: any) => {
     setSearchParam(params);
-    service.deviceChannelNoPaging(encodeQueryParam(params)).subscribe(
-      (data) => {
-        const temp = data.map((item: any) => ({parentId: item.parentChannelId, ...item}));
-        setResult(temp);
-      },
+    service.deviceChannel(encodeQueryParam(params)).subscribe(
+      (data) => setResult(data),
       () => {
       },
       () => setLoading(false));
@@ -205,18 +203,20 @@ const ChoiceChannel: React.FC<Props> = props => {
         </div>
       </div>
       <div className={styles.StandardTable}>
-        <Table
+        <ProTable
           loading={loading}
-          dataSource={result}
+          dataSource={result?.data}
           columns={columns}
           rowKey="id"
           rowSelection={{
             selectedRowKeys: bindList,
             ...unbindSelection,
           }}
-          pagination={{
-            pageSize: 10
-          }}/>
+          onSearch={(params: any) => {
+            params.sorts = params.sorts.field ? params.sorts : {field: 'id', order: 'desc'};
+            _channel(params);
+          }}
+          paginationConfig={result}/>
       </div>
 
     </Modal>
