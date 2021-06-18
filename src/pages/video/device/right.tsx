@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import styles from './index.less';
 import { Table, Button, Badge, Icon } from 'antd';
 import ChannelModel from './channelModel';
+import Play from './play';
 
 function Right() {
 
   const [visible, setVisible] = useState(false)
+  const [playVisible, setPlayVisible] = useState(false)
 
   return (
     <div className={styles.right}>
@@ -47,8 +49,12 @@ function Right() {
               return <>
                 <Button type='link' onClick={() => {
                   setVisible(true)
-                }}>编辑</Button>
-                <Button type='link'>播放</Button>
+                }}>
+                  编辑
+                </Button>
+                <Button type='link' onClick={() => {
+                  setPlayVisible(true)
+                }}>播放</Button>
                 <Button type='link'>删除</Button>
               </>
             },
@@ -58,6 +64,17 @@ function Right() {
       />
       <ChannelModel
         visible={visible}
+      />
+      <Play
+        visible={playVisible}
+        deviceId='1'
+        close={() => {
+          setPlayVisible(false)
+        }}
+        save={() => {
+          setPlayVisible(false)
+        }}
+        data={{}}
       />
     </div>
   );
