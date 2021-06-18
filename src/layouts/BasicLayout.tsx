@@ -19,6 +19,7 @@ import { ConnectState } from '@/models/connect';
 import { isAntDesignPro, getAuthorityFromRouter } from '@/utils/utils';
 import TopLayout from './TopLayout';
 import logo from '../assets/logo.svg';
+import styles from './BasicLayout.less';
 
 // import PubSub from 'pubsub-js';
 
@@ -206,7 +207,6 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
           <span>{route.breadcrumbName}</span>
         );
       }}
-      footerRender={footerRender}
       menuDataRender={menuDataRender}
       // menuDataRender={()=>menuData}
       // rightContentRender={() => <RightContent />}
@@ -214,10 +214,10 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
       {...props}
       {...settings}
       layout='topmenu'
+      className={styles.topmenu}
+      footerRender={null}
     >
-      <Authorized authority={authorized!.authority} noMatch={noMatch}>
-        {children}
-      </Authorized>
+      {children}
     </ProLayout>
   );
 };

@@ -17,7 +17,7 @@ function TabPane({
   className,
   active,
 }: TabPaneProps) {
-  console.log(active);
+
   const mergedStyle: React.CSSProperties = {};
   if (!active) {
     mergedStyle.display = 'none';

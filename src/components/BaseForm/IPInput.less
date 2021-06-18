@@ -1,0 +1,60 @@
+.box {
+    height: 40px;
+    display: flex;
+    align-items: center;
+}
+
+.border {
+    background-color: #fff;
+    border-radius: 4px;
+    display: flex;
+    border: 1px solid #d9d9d9;
+    box-sizing: border-box;
+    height: 32px;
+    width: 100%;
+    :global {
+        .ant-input-number {
+            border: none;
+            box-shadow: none;
+            height: 100%;
+            flex-grow: 1;
+            .ant-input-number-input-wrap {
+                height: 100%;
+                >input {
+                    height: 100%;
+                }
+            }
+        }
+        .ant-input-number:not(:last-child)::after {
+           content: " ";
+           height: 2px;
+           width: 2px;
+           border-radius: 50%;
+           position: absolute;
+           background: #555;
+           right: 10%;
+           bottom: 8px;
+
+        }
+        // .ant-input-number:hover {
+        //     border:none
+        // }
+    }
+}
+
+.point {
+    display: flex;
+    align-items: flex-end;
+    line-height: 34px;
+    height: 38px;
+}
+
+.focus {
+    border-color:#40a9ff;
+    box-shadow: 0 0 0 2px rgba(24,144,255, .2);
+}
+
+.disabled {
+    background-color: #f5f5f5;
+    cursor: no-drop;
+}

@@ -16,11 +16,11 @@ function Internet() {
     setData({
       test: true,
       test2: 1,
-      test3: '1',
-      test4: '4',
-      test5: '5',
-      test6: '6',
-      test7: '7'
+      test3: '192.168.1.1',
+      test4: '192.168.1.1',
+      test5: '192.168.1.1',
+      test6: '192.168.1.1',
+      test7: '192.168.1.1'
     })
     setInternetVisible(true)
   }

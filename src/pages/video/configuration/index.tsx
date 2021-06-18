@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { Button, Input, Radio } from 'antd';
 import styles from './index.less';
 import Form from '@/components/BaseForm';
+import IPInput from '@/components/BaseForm/IPInput';
 
 function Configuration() {
   const [data, setData] = useState({
     test7: 1
   })
   return (
-    <div>
+    <div className={styles.configuration}>
       <div className={styles.header}>
         国标配置
       </div>
@@ -52,7 +53,7 @@ function Configuration() {
               options: {
                 rules: [{ required: true, message: '' }]
               },
-              render: () => <Input placeholder='请输入SIP HOST' />,
+              render: () => <IPInput />,
             },
             {
               name: 'test5',

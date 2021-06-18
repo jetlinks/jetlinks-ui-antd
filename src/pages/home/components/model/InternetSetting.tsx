@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Modal, Input, Switch, Radio } from 'antd';
 import Form from '@/components/BaseForm';
 import { RadioChangeEvent } from 'antd/lib/radio';
-
+import IPInput from '@/components/BaseForm/IPInput';
 interface InternetSettingProps {
   visible?: boolean
   title: string
@@ -69,7 +69,7 @@ function InternetSetting(props: InternetSettingProps) {
                 rules: [{ required: true, message: '请输入IP地址' }],
               },
               render: () => {
-                return <Input disabled={hidden} />
+                return <IPInput disabled={hidden} />
               }
             },
             {
@@ -80,7 +80,7 @@ function InternetSetting(props: InternetSettingProps) {
                 rules: [{ required: true, message: '请输入子网掩码' }],
               },
               render: () => {
-                return <Input disabled={hidden} />
+                return <IPInput disabled={hidden} />
               }
             },
             {
@@ -91,21 +91,21 @@ function InternetSetting(props: InternetSettingProps) {
                 rules: [{ required: true, message: '请输入网关' }],
               },
               render: () => {
-                return <Input disabled={hidden} />
+                return <IPInput disabled={hidden} />
               }
             },
             {
               name: 'test6',
               label: '首选DNS服务器',
               render: () => {
-                return <Input disabled={hidden} />
+                return <IPInput disabled={hidden} />
               }
             },
             {
               name: 'test7',
               label: '备用DNS服务器',
               render: () => {
-                return <Input disabled={hidden} />
+                return <IPInput disabled={hidden} />
               }
             }
           ]}

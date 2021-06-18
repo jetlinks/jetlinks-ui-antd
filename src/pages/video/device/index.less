@@ -1,0 +1,58 @@
+.device {
+    display: flex;
+    height: 100%;
+}
+
+.left {
+    width: 600px;
+    margin-right: 1px;
+    background-color: #fff;
+    height: 100%;
+    padding: 18px;
+}
+
+.right {
+    flex-grow: 1;
+    background-color: #fff;
+    height: 100%;
+    padding: 18px;
+}
+
+.advanced {
+    height: 0;
+    overflow: hidden;
+    transition: all .3s;
+}
+
+.advancedTool {
+    padding-left: 76px;
+    >button:first-child{
+        margin-right: 10px;
+    }
+}
+
+.active {
+    height: 120px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    >span{
+        font-size: 16px;
+        font-weight: 600;
+    }
+}
+
+.tool {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    cursor: default;
+    >span{
+        font-weight: 600;
+    }
+}
