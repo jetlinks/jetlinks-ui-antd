@@ -2,15 +2,17 @@ import React, { PureComponent } from 'react';
 import { Form, Col } from 'antd'
 import { FormComponentProps, FormProps, GetFieldDecoratorOptions } from 'antd/es/form/Form';
 import { FormItemProps } from 'antd/es/form/FormItem';
+import styles from './index.less'
 
 const FormItem = Form.Item
 
 interface ItemProps extends FormItemProps {
-  name: string
-  render: () => React.ReactNode
+  name?: string
+  render?: () => React.ReactNode
   rules?: Array<{}>
   column?: number
   options?: GetFieldDecoratorOptions
+  title?: string | React.ReactNode
 }
 
 type Items = Array<ItemProps>
@@ -26,17 +28,32 @@ class BaseForm extends PureComponent<BaseFormProps> {
   handleItems(props: BaseFormProps) {
     const { items, column = 1, form } = props
     const { getFieldDecorator } = form
-    return items.map(item => {
-      const { name, render, options, ...extra } = item
-      const _column = (24 / column) * (item.column || 1)
-      return <Col span={_column} key={`form_col_${name}`} style={{ padding: '0 12px' }}>
-        <FormItem {...extra}>
-          {
-            getFieldDecorator(name, options)(render())
-          }
-        </FormItem>
+    return items.map((item, index) => {
+      //
+      const { name, render, options, title, ...extra } = item
+      const _column = title ? 24 : (24 / column) * (item.column || 1)
+
+      return <Col span={_column} key={`form_col_${name || index}`} style={{ padding: '0 12px' }}>
+        {
+          !title ?
+            <FormItem {...extra}>
+              {
+                name ? getFieldDecorator(name, options)(render!()) : render!()
+              }
+            </FormItem>
+            : this.handleTitle(title)
+        }
       </Col>
     })
+  }
+
+  handleTitle(title: ItemProps['title']) {
+
+    if (typeof title === 'string') {
+      return <div className={styles.form_title}>{title}</div>
+    } else {
+      return title
+    }
   }
 
   render() {
@@ -56,10 +73,12 @@ const WrappedBaseForm = Form.create<BaseFormProps>({
     let _data = {}
     if (data) {
       items.forEach(item => {
-        _data[item.name] =
-          Form.createFormField({
-            value: data[item.name]
-          })
+        if (item.name) {
+          _data[item.name] =
+            Form.createFormField({
+              value: data[item.name]
+            })
+        }
       })
     }
     return _data

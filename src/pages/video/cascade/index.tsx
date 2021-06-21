@@ -1,14 +1,25 @@
-import React from 'react';
-import { Table, Button, Input, Select, Badge, Switch } from 'antd';
+import React, { useState, useRef } from 'react';
+import { Table, Button, Modal, Badge, Switch } from 'antd';
 import styles from './index.less';
+import CascadeModel from './cascadeModel';
 
 function Cascade() {
+
+  const [visible, setVisible] = useState(false)
+  const [deleteVisible, setDeleteVisible] = useState(false)
+
+  const clickId = useRef('')
+
+  const deleteOk = () => {
+
+  }
+
   return (
     <div style={{ height: '100%', backgroundColor: '#fff', padding: 16 }}>
       <div className={styles.header}>
         <span>国标级联</span>
         <div>
-          <Button type='primary'>新增国标级联</Button>
+          <Button type='primary' onClick={() => { setVisible(true) }}>新增国标级联</Button>
         </div>
       </div>
       <div>
@@ -64,17 +75,39 @@ function Cascade() {
               }
             }, {
               title: "操作",
-              render: () => {
+              render: (value, data) => {
                 return <>
                   <Button type="link">编辑</Button>
                   <Button type="link">选择通道</Button>
-                  <Button type="link">删除</Button>
+                  <Button type="link" onClick={() => {
+                    // clickId.current = data.id
+                    setDeleteVisible(true)
+                  }}>删除</Button>
                 </>
               }
             }
           ]}
         />
       </div>
+      <CascadeModel
+        visible={visible}
+        onCancel={() => {
+          setVisible(false)
+        }}
+        onOk={() => {
+          setVisible(false)
+        }}
+      />
+      <Modal
+        title='删除'
+        visible={deleteVisible}
+        onOk={deleteOk}
+        onCancel={() => {
+          setDeleteVisible(false)
+        }}
+      >
+        确认删除该国标级联吗
+      </Modal>
     </div>
   );
 }

@@ -64,6 +64,12 @@ function Right() {
       />
       <ChannelModel
         visible={visible}
+        onCancel={() => {
+          setVisible(false)
+        }}
+        onOk={() => {
+          setVisible(false)
+        }}
       />
       <Play
         visible={playVisible}
