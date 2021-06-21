@@ -5,7 +5,7 @@ export interface TabPaneProps {
   title: string
   International?: string | React.ReactNode
   img?: string
-  children?: React.ReactNode;
+  children: React.ReactNode;
   tabKey?: string
   className?: string
   active?: boolean;

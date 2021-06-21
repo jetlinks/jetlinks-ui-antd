@@ -34,7 +34,24 @@ export const routes = [
             path: '/video',
             icon: '',
             component: './video',
+            routes: [
+              {
+                path: '/video/cascade', component: './video/cascade'
+              },
+              {
+                path: '/video/configuration', component: './video/configuration'
+              },
+              {
+                path: '/video/device', component: './video/device'
+              },
+            ]
           },
+          {
+            name: '规则引擎',
+            path: '/rule',
+            icon: '',
+            component: './rule',
+          }
           // {
           //   name: '统计分析',
           //   path: '/analysis',
