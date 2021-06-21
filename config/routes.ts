@@ -51,7 +51,13 @@ export const routes = [
             path: '/rule',
             icon: '',
             component: './rule',
-          }
+          },
+          {
+            name: '设备接入',
+            path: '/network',
+            icon: '',
+            component: './network',
+          },
           // {
           //   name: '统计分析',
           //   path: '/analysis',

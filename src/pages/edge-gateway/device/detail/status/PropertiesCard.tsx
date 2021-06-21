@@ -2,7 +2,7 @@ import React, { memo, useState, useEffect } from "react";
 import ChartCard from "@/pages/analysis/components/Charts/ChartCard";
 import { Tooltip, Icon, Spin } from "antd";
 import AutoHide from "@/pages/device/location/info/autoHide";
-import { MiniArea } from "@/pages/analysis/components/Charts";
+import { GaugeColor, MiniArea } from "@/pages/analysis/components/Charts";
 import apis from "@/services";
 // import Service from "@/pages/device/instance/editor/service";
 
@@ -97,27 +97,36 @@ const PropertiesCard: React.FC<Props> = props => {
     return (
         <>
             <Spin spinning={loading}>
-                <ChartCard
+                {/* <ChartCard
                     title={item.name}
                     contentHeight={46}
-                    action={
-                        <div>
-                            <Tooltip placement="top" title="从设备端获取属性值">
-                                <Icon
-                                    title="刷新"
-                                    style={{ marginLeft: '10px' }}
-                                    type="sync"
-                                    onClick={() => refreshProperty(item)}
-                                />
-                            </Tooltip>
-                        </div>
-                    }
-                    total={
-                        <AutoHide title={typeof (data.formatValue) === 'object' ? JSON.stringify(data.formatValue) : data.formatValue || '/'} style={{ width: '100%' }} />
-                    }
+                    // action={
+                    //     <div>
+                    //         <Tooltip placement="top" title="从设备端获取属性值">
+                    //             <Icon
+                    //                 title="刷新"
+                    //                 style={{ marginLeft: '10px' }}
+                    //                 type="sync"
+                    //                 onClick={() => refreshProperty(item)}
+                    //             />
+                    //         </Tooltip>
+                    //     </div>
+                    // }
+                    // total={
+                    //     <AutoHide title={typeof (data.formatValue) === 'object' ? JSON.stringify(data.formatValue) : data.formatValue || '/'} style={{ width: '100%' }} />
+                    // }
                 >
-                    <MiniArea height={40} color="#975FE4" data={data.visitData} />
-                </ChartCard >
+                    <MiniArea height={40} color="#975FE4" data={data.visitData} /> 
+                
+                </ChartCard > */}
+                <ChartCard
+                    loading={loading}
+                    bordered={false}
+                    title='CPU使用率'
+                    contentHeight={120}
+                >
+                    <GaugeColor height={169} percent={Number(data.formatValue)} />
+                </ChartCard>
             </Spin>
         </>
     );
