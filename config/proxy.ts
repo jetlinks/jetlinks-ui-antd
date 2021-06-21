@@ -5,9 +5,13 @@
  * For details, please see
  * https://pro.ant.design/docs/deploy
  */
-export default {
+ export default {
   dev: {
     '/jetlinks': {
+      // target: 'http://192.168.22.222:8844/',
+      // ws: 'ws://192.168.22.222:8844/',
+      // target: 'http://192.168.32.4:8844/',
+      // ws: 'ws://192.168.32.4:8844/',
       target: 'http://192.168.33.233:8844/',
       ws: 'ws://192.168.33.233:8844/',
       // target: 'http://water.zlkjhb.com:9000/jetlinks',
@@ -16,25 +20,25 @@ export default {
       // target: 'http://demo.jetlinks.cn/jetlinks',
       // target: 'http://127.0.0.1:8848/',
       // ws: 'ws://127.0.0.1:8848/',
-      // ws: 'ws://demo.jetlinks.cn/jetlinks',
-      // target: 'http://demo.jetlinks.cn/jetlinks',
+      // ws: 'ws://test.jetlinks.cn/jetlinks',
+      // target: 'http://test.jetlinks.cn/jetlinks',
       changeOrigin: true,
       pathRewrite: { '^/jetlinks': '' },
     },
-    // '/jetlinks-edge': {
-    //   // target: 'http://192.168.3.146:8844/',
-    //   // ws: 'ws://192.168.3.146:8844/',
-    //   // target: 'http://water.zlkjhb.com:9000/jetlinks',
-    //   // ws: 'http://water.zlkjhb.com:9000/jetlinks',
-    //   // ws: 'ws://demo.jetlinks.cn/jetlinks',
-    //   // target: 'http://demo.jetlinks.cn/jetlinks',
-    //   // target: 'http://127.0.0.1:8848/',
-    //   // ws: 'ws://127.0.0.1:8848/',
-    //   ws: 'ws://demo.jetlinks.cn/jetlinks',
-    //   target: 'http://demo.jetlinks.cn/jetlinks',
-    //   changeOrigin: true,
-    //   pathRewrite: { '^/jetlinks-edge': '' },
-    // },
+    '/jetlinks-edge': {
+      // target: 'http://192.168.3.146:8844/',
+      // ws: 'ws://192.168.3.146:8844/',
+      // target: 'http://water.zlkjhb.com:9000/jetlinks',
+      // ws: 'http://water.zlkjhb.com:9000/jetlinks',
+      // ws: 'ws://demo.jetlinks.cn/jetlinks',
+      // target: 'http://demo.jetlinks.cn/jetlinks',
+      target: 'http://127.0.0.1:8848/',
+      ws: 'ws://127.0.0.1:8848/',
+      // ws: 'ws://demo.jetlinks.cn/jetlinks',
+      // target: 'http://demo.jetlinks.cn/jetlinks',
+      changeOrigin: true,
+      pathRewrite: { '^/jetlinks-edge': '' },
+    },
   },
   test: {
     '/jetlinks': {
