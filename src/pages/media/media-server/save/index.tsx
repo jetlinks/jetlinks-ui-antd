@@ -64,8 +64,6 @@ const Save: React.FC<Props> = props => {
 
       //todo 统一界面，后期有需求就开放多网关和流媒体服务
       fileValue.id = id;
-      console.log(fileValue);
-      // setLoading(false);
       service.saveMediaServer(fileValue).subscribe(() => {
           message.success('保存成功');
         },
@@ -119,7 +117,6 @@ const Save: React.FC<Props> = props => {
     const configuration = item.configuration ?
       (typeof item.configuration === "string" ? JSON.parse(item.configuration) : item.configuration)
       : {};
-    console.log(configuration);
     switch (providerType) {
       case 'srs-media':
         return (
