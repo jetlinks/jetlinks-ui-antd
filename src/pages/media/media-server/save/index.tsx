@@ -1,4 +1,4 @@
-import {Button, Card, Checkbox, Col, Input, InputNumber, message, Row, Select, Spin} from "antd";
+import {Button, Card, Checkbox, Col, Icon, Input, InputNumber, message, Row, Select, Spin, Tooltip} from "antd";
 import React, {useEffect, useState} from "react";
 import Service from "../service";
 import Form from "antd/es/form";
@@ -34,11 +34,20 @@ const Save: React.FC<Props> = props => {
   const initValue = () => {
     service.mediaServerInfo(id).subscribe(data => {
       setProviderType(data.provider);
+      console.log(data.configuration);
       data.configuration.playerConfig = data.configuration.playerConfig ?
-        data.configuration.playerConfig : [{format: 'rtmp', enabled: false}, {format: 'rtsp', enabled: false},
-          {format: 'flv', enabled: false}, {format: 'mp4', enabled: false}, {
+        data.configuration.playerConfig : [{format: 'rtmp', enabled: false, port: 1935}, {
+          format: 'rtsp',
+          enabled: false,
+          port: 554
+        },
+          {format: 'flv', enabled: false, port: data.configuration.apiPort}, {
+            format: 'mp4',
+            enabled: false,
+            port: data.configuration.apiPort
+          }, {
             format: 'hls',
-            enabled: false
+            enabled: false, port: data.configuration.apiPort
           }, {format: 'rtc', enabled: false}];
       setItem(data);
     }, () => {
@@ -209,14 +218,13 @@ const Save: React.FC<Props> = props => {
           <div>
             <Row>
               <Col span={12}>
-                <Form.Item label="密钥" labelCol={{span: 10}} wrapperCol={{span: 14}}>
-                  {getFieldDecorator('configuration.secret', {
-                    initialValue: configuration.secret,
-                  })(<Input placeholder='请输入密钥'/>)}
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item label="公网 Host" labelCol={{span: 10}} wrapperCol={{span: 14}}>
+                <Form.Item label={
+                  <span> 公网 Host&nbsp;
+                    <Tooltip title={'在线播放时请求服务地址，域名或服务器IP地址'}>
+                      <Icon type="question-circle-o"/>
+                    </Tooltip>
+                  </span>
+                } labelCol={{span: 10}} wrapperCol={{span: 14}}>
                   {getFieldDecorator('configuration.publicHost', {
                     rules: [
                       {required: true, message: '请输入公网 Host'}
@@ -225,18 +233,24 @@ const Save: React.FC<Props> = props => {
                   })(<Input placeholder='请输入公网 Host'/>)}
                 </Form.Item>
               </Col>
+              {/*<Col span={12}>*/}
+              {/*  <Form.Item label="HTTP端口" labelCol={{span: 10}} wrapperCol={{span: 14}}>*/}
+              {/*    {getFieldDecorator('configuration.httpPort', {*/}
+              {/*      rules: [*/}
+              {/*        {required: true, message: '请输入HTTP端口'}*/}
+              {/*      ],*/}
+              {/*      initialValue: configuration.httpPort,*/}
+              {/*    })(<InputNumber style={{width: '100%'}} placeholder='请输入HTTP端口'/>)}*/}
+              {/*  </Form.Item>*/}
+              {/*</Col>*/}
               <Col span={12}>
-                <Form.Item label="HTTP端口" labelCol={{span: 10}} wrapperCol={{span: 14}}>
-                  {getFieldDecorator('configuration.httpPort', {
-                    rules: [
-                      {required: true, message: '请输入HTTP端口'}
-                    ],
-                    initialValue: configuration.httpPort,
-                  })(<InputNumber style={{width: '100%'}} placeholder='请输入HTTP端口'/>)}
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item label="API Host" labelCol={{span: 10}} wrapperCol={{span: 14}}>
+                <Form.Item label={
+                  <span> API Host&nbsp;
+                    <Tooltip title={'调用流媒体接口时请求的服务地址'}>
+                      <Icon type="question-circle-o"/>
+                    </Tooltip>
+                  </span>
+                } labelCol={{span: 10}} wrapperCol={{span: 14}}>
                   <Col span={16}>
                     {getFieldDecorator('configuration.apiHost', {
                       rules: [
@@ -255,9 +269,22 @@ const Save: React.FC<Props> = props => {
                   </Col>
                 </Form.Item>
               </Col>
+              <Col span={12}>
+                <Form.Item label="密钥" labelCol={{span: 10}} wrapperCol={{span: 14}}>
+                  {getFieldDecorator('configuration.secret', {
+                    initialValue: configuration.secret,
+                  })(<Input placeholder='请输入密钥'/>)}
+                </Form.Item>
+              </Col>
             </Row>
             <Row>
-              <Form.Item label="RTP IP" labelCol={{span: 5}} wrapperCol={{span: 19}}>
+              <Form.Item label={
+                <span> RTP IP&nbsp;
+                  <Tooltip title={'视频设备将流推送到该IP地址下，部分设备仅支持IP地址，建议全是用IP地址'}>
+                    <Icon type="question-circle-o"/>
+                  </Tooltip>
+                </span>
+              } labelCol={{span: 5}} wrapperCol={{span: 19}}>
                 <Col span={6} style={{paddingRight: 5}}>
                   {getFieldDecorator('configuration.rtpIp', {
                     rules: [
