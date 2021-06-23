@@ -169,7 +169,7 @@ export class Authentication {
 }
 
 export function getAccessToken(): string {
-  return localStorage.getItem('x-access-token') || `${new Date().getTime()}`;
+  return localStorage.getItem('x-access-token') || 'null';
 }
 
 export function setAccessToken(token: string) {

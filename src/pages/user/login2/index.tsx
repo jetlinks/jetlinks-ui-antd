@@ -8,6 +8,7 @@ import Service from './service';
 import { router } from 'umi';
 import { getQueryString } from '@/utils/tools';
 import apis from '@/services';
+import { getAccessToken } from '@/utils/authority';
 
 interface Props {
   dispatch: Dispatch;
@@ -17,7 +18,7 @@ interface Props {
 
 const Login: React.FC<Props> = props => {
   const { dispatch, settings, location: { query } } = props;
-  const token = localStorage.getItem('x-access-token');
+  const token = getAccessToken();
   const service = new Service('');
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -68,7 +69,7 @@ const Login: React.FC<Props> = props => {
           if (icon && settings.titleIcon) {
             icon.href = settings.titleIcon;
           }
-          if (token) {
+          if (token!=='null') {
             service.queryCurrent().subscribe((resp) => {
               if (resp.status === 200) {
                 setCurrent(true)

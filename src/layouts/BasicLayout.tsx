@@ -9,7 +9,7 @@ import ProLayout, {
   Settings,
 } from '@ant-design/pro-layout';
 import React, { useEffect, useState } from 'react';
-import { Link } from 'umi';
+import { Link, router } from 'umi';
 import { Dispatch } from 'redux';
 import { connect } from 'dva';
 import { Result, Button } from 'antd';
@@ -19,7 +19,7 @@ import { ConnectState } from '@/models/connect';
 import { isAntDesignPro, getAuthorityFromRouter } from '@/utils/utils';
 import logo from '../assets/logo.svg';
 import apis from '@/services';
-import { getAuthority } from '@/utils/authority';
+import { getAccessToken, getAuthority } from '@/utils/authority';
 
 // import PubSub from 'pubsub-js';
 
@@ -152,11 +152,17 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
 
   const [mark, setMark] = useState<string | boolean>(localStorage.getItem('hide_menu') || "false");
   const hide_menu = props.location?.query?.hide_menu;
+  const token = getAccessToken();
   useEffect(() => {
     if (dispatch) {
-      dispatch({
-        type: 'user/fetchCurrent',
-      });
+        if(token!=='null'){
+            dispatch({
+                type: 'user/fetchCurrent',
+              });
+        }else{
+            router.push('/user/login');
+        }
+
     }
     if (hide_menu) {
       setMark(hide_menu);
