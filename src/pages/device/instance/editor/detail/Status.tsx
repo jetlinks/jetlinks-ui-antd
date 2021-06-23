@@ -4,7 +4,7 @@ import DeviceState from "./status/DeviceState";
 import PropertiesCard from "./status/PropertiesCard";
 import EventCard from "./status/EventCard";
 import Service from "../service";
-import { groupBy, flatMap, toArray, map } from "rxjs/operators";
+import { groupBy, mergeMap, toArray, map } from "rxjs/operators";
 import { getWebsocket } from "@/layouts/GlobalWebSocket";
 import { Observable } from "rxjs";
 
@@ -99,7 +99,7 @@ const Status: React.FC<Props> = props => {
 
             service.propertiesRealTime(list).pipe(
                 groupBy((group$: any) => group$.property),
-                flatMap(group => group.pipe(toArray())),
+                mergeMap(group => group.pipe(toArray())),
                 map(arr => ({
                     list: arr.sort((a, b) => a.timestamp - b.timestamp),
                     property: arr[0].property
@@ -115,6 +115,8 @@ const Status: React.FC<Props> = props => {
                 setLoading(true);
                 setProperties(properties);
             })
+        }else{
+            setLoading(true)
         }
     }, [propertiesList]);
 
