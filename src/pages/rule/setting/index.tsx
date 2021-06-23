@@ -9,7 +9,7 @@ function Setting() {
     <div style={{ height: '100%' }}>
       <Cards
         title='规则引擎设置'
-        carItemRender={(data: any) => <div style={{ height: 200, backgroundColor: '#fff' }}> </div>}
+        cardItemRender={(data: any) => <div style={{ height: 200, backgroundColor: '#fff' }}> </div>}
         toolNode={<Button>新增规则引擎</Button>}
         pagination={{
           pageSize: 10,

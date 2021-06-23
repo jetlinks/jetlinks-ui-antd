@@ -9,7 +9,7 @@ interface CardsProps {
   columns: ColumnProps<any>[]
   dataSource: any[]
   pagination: PaginationProps
-  carItemRender: (data: any) => JSX.Element
+  cardItemRender: (data: any) => JSX.Element
   carItemClassName?: string
   col?: number
   toolNode?: React.ReactNode
@@ -39,9 +39,7 @@ function Cards(props: CardsProps) {
           </Radio.Group>
         </div>
       </div>
-      {
-        props.extraTool ? <div className={styles.extra_tool_dom}>{props.extraTool}</div> : null
-      }
+      {props.extraTool}
       <div className={styles.content}>
         {
           type === 'card' ?
@@ -56,7 +54,7 @@ function Cards(props: CardsProps) {
                         key={`car_${index}`}
                       >
 
-                        {props.carItemRender(item)}
+                        {props.cardItemRender(item)}
                       </Col>
                     )
                   }
