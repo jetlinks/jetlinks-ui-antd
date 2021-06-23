@@ -2,11 +2,20 @@ import React from 'react';
 import Cards from '@/components/Cards';
 import { Button } from 'antd';
 import { } from 'react-router-dom';
+
 function Setting() {
+
   return (
     <div style={{ height: '100%' }}>
       <Cards
         title='规则引擎设置'
+        carItemRender={(data: any) => <div style={{ height: 200, backgroundColor: '#fff' }}> </div>}
+        toolNode={<Button>新增规则引擎</Button>}
+        pagination={{
+          pageSize: 10,
+          current: 1,
+          total: 6
+        }}
         dataSource={[
           {
             name: 1,
@@ -75,11 +84,12 @@ function Setting() {
           {
             title: '操作',
             render: () => <>
-              <Button type='primary'>编辑</Button>
-              <Button type='primary'>重启</Button>
-              <Button type='primary'>复制</Button>
-              <Button type='primary'>删除</Button>
-            </>
+              <Button type='link'>编辑</Button>
+              <Button type='link'>重启</Button>
+              <Button type='link'>复制</Button>
+              <Button type='link'>删除</Button>
+            </>,
+            width: 280
           },
         ]}
       />

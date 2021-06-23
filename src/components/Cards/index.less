@@ -1,5 +1,6 @@
 .cards{
     display: flex;
+    flex-direction: column;
     flex-grow: 1;
     height: 100%;
 }
@@ -8,9 +9,33 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding: 10px 0;
+    >span{
+        font-weight: 600;
+        font-size: 16px;
+    }
+    .header_tool {
+        display: flex;
+    }
+    .header_tool_extra {
+        margin-right: 16px;
+    }
 }
 
 .content{
     display: flex;
+    flex-direction: column;
     flex-grow: 1;
+}
+
+.cards_items {
+    margin-bottom: 16px;
+}
+
+.pages>ul {
+    float: right;
+}
+
+.extra_tool_dom {
+    background-color: #fff;
 }

@@ -13,8 +13,8 @@ import * as scene from '@/pages/rule-engine/scene/service'
 import * as ruleModel from '@/pages/rule-engine/model/service';
 import * as protocol from '@/pages/device/protocol/service';
 import * as openApi from '@/pages/system/open-api/service';
-import * as mqttClient from '@/pages/network/mqtt-client/service';
-import * as certificate from '@/pages/network/certificate/service';
+// import * as mqttClient from '@/pages/network/mqtt-client/service';
+// import * as certificate from '@/pages/network/certificate/service';
 import * as sqlRule from '@/pages/rule-engine/sqlRule/service';
 import * as location from '@/pages/device/location/service';
 import * as firmware from '@/pages/device/firmware/service';
@@ -26,8 +26,8 @@ import * as deviceGroup from '@/pages/device/group/service';
 import * as accessLogger from '@/pages/logger/access/service';
 import * as systemLogger from '@/pages/logger/system/service';
 import * as authorization from '@/components/Authorization/service';
-import * as network from '@/pages/network/type/service';
-import * as gateway from '@/pages/network/gateway/service';
+// import * as network from '@/pages/network/type/service';
+// import * as gateway from '@/pages/network/gateway/service';
 import * as deviceGateway from '@/pages/device/gateway/service';
 import * as notifier from '@/pages/notice/service';
 import * as org from '@/pages/system/org/service';
@@ -62,8 +62,8 @@ const apis = {
   ruleModel,
   protocol,
   openApi,
-  certificate,
-  mqttClient,
+  // certificate,
+  // mqttClient,
   // coapClient,
   // httpClient,
   // tcpClient,
@@ -71,8 +71,8 @@ const apis = {
   accessLogger,
   systemLogger,
   authorization,
-  network,
-  gateway,
+  // network,
+  // gateway,
   deviceGateway,
   notifier,
   org,
