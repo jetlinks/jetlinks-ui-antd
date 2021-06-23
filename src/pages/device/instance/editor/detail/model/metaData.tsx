@@ -41,7 +41,6 @@ const MetaData: React.FC<Props> = props => {
       .catch(() => {
       });
     apis.deviceProdcut.getModelFormat().then(res => {
-      console.log(res)
       setModelFormat(res.result)
     })
   }, []);

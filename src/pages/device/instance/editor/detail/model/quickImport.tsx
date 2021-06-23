@@ -68,19 +68,19 @@ const QuickImport: React.FC<Props> = props => {
 
   const submitData = () => {
     let data:string = '';
-    if (operateType === 'copy') {
-      form.validateFields((err, fileValue) => {
-        if (err) return;
-        let device: Partial<DeviceInstance>= {};
-        if(fileValue.deviceId !== ''){
-          apis.deviceInstance.info(fileValue.deviceId)
-          .then((response: any) => {
-            device = response.result;
-            props.update(device.metadata || '');
-          })
-        }
-      });
-    } else {
+    // if (operateType === 'copy') {
+    //   form.validateFields((err, fileValue) => {
+    //     if (err) return;
+    //     let device: Partial<DeviceInstance>= {};
+    //     if(fileValue.deviceId !== ''){
+    //       apis.deviceInstance.info(fileValue.deviceId)
+    //       .then((response: any) => {
+    //         device = response.result;
+    //         props.update(device?.metadata || '');
+    //       })
+    //     }
+    //   });
+    // } else {
       if(modelId !== ''){
         apis.deviceProdcut.getModel(modelId, metaData).then(res => {
           if(res.status === 200){
@@ -92,7 +92,7 @@ const QuickImport: React.FC<Props> = props => {
         data = metaData;
         props.update(data);
       }
-    }
+    // }
   };
 
   return (

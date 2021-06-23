@@ -171,12 +171,19 @@ const Save: React.FC<Props> = props => {
               <Card>
                 {(routesData.length > 0 ? routesData : [{ id: '1001', url: '', protocol: '' }]).map((i, index) => {
                   return (
-                    <Row key={i.id} style={{ marginBottom: 5 }}>
+                    <Row key={index} style={{ marginBottom: 5 }}>
                       <Col span={9}>
                         <Input
                           value={i.url}
                           onChange={e => {
-                            routesData[index].url = e.target.value;
+                            if(routesData[index]?.url){
+                              routesData[index].url = e.target.value;
+                            }else{
+                              routesData[index] = {
+                                ...routesData[index],
+                                url: e.target.value
+                              }
+                            }
                             setRoutesData([...routesData]);
                           }}
                           placeholder="/**"
@@ -189,7 +196,14 @@ const Save: React.FC<Props> = props => {
                         <Select
                           value={routesData[index]?.protocol}
                           onChange={(e: string) => {
-                            routesData[index].protocol = e;
+                            if(routesData[index]?.protocol){
+                              routesData[index].protocol = e;
+                            }else{
+                              routesData[index] = {
+                                ...routesData[index],
+                                protocol: e
+                              }
+                            }
                             setRoutesData([...routesData]);
                           }}
                         >

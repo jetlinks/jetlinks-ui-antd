@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Modal, Form, Input, Select } from 'antd';
+import React, { useState } from 'react';
+import { Modal, Form, Input, Select, Switch } from 'antd';
 import { FormComponentProps } from 'antd/es/form';
 
 interface Props extends FormComponentProps {
@@ -19,14 +19,16 @@ const PointSave: React.FC<Props> = props => {
     } = props;
 
     const [dataMode, setDataMode] = useState(data.dataMode);
-
-    useEffect(() => {
-
-    }, []);
+    const [enableCalculate, setEnableCalculate] = useState<boolean>(data.enableCalculate || false);
+    const [calculateType, setCalculateTypee] = useState(data.calculateType);
 
     const saveData = () => {
         form.validateFields((err, fileValue) => {
             if (err) return;
+            if(!fileValue.enableCalculate){
+                fileValue.configuration = {},
+                fileValue.calculateType = ""
+            }
             props.save({ ...data, ...fileValue, deviceId: props.deviceId, opcUaId: props.opcUaId });
         })
     };
@@ -75,18 +77,6 @@ const PointSave: React.FC<Props> = props => {
                         </Select>
                     )}
                 </Form.Item>
-                <Form.Item label="初始值">
-                    {getFieldDecorator('configuration.initialValue', {
-                        // rules: [{ required: true, message: '请选择' }],
-                        initialValue: data.configuration?.initialValue
-                    })(<Input />)}
-                </Form.Item>
-                <Form.Item label="倍数">
-                    {getFieldDecorator('configuration.multiple', {
-                        // rules: [{ required: true, message: '请选择' }],
-                        initialValue: data.configuration?.multiple
-                    })(<Input />)}
-                </Form.Item>
                 <Form.Item label="数据模式">
                     {getFieldDecorator('dataMode', {
                         rules: [{ required: true, message: '请选择' }],
@@ -113,6 +103,49 @@ const PointSave: React.FC<Props> = props => {
                             initialValue: data.interval
                         })(<Input />)}
                     </Form.Item>}
+                <Form.Item label="是否开启计算">
+                    {getFieldDecorator('enableCalculate', {
+                        initialValue: data.enableCalculate,
+                        valuePropName: 'checked',
+                        rules: [{ required: true }]
+                    })(<Switch onChange={(value) => {
+                        setEnableCalculate(value)
+                    }} />)}
+                </Form.Item>
+                {
+                    enableCalculate && (
+                        <>
+                            <Form.Item label="计算类型">
+                                {getFieldDecorator('calculateType', {
+                                    rules: [{ required: true, message: '请选择' }],
+                                    initialValue: data.calculateType
+                                })(<Select onChange={(value: string) => {
+                                    setCalculateTypee(value);
+                                }}>
+                                    <Select.Option key="number" value="number">数值计算</Select.Option>
+                                </Select>)}
+                            </Form.Item>
+                            {
+                                calculateType === 'number' && (
+                                    <>
+                                        <Form.Item label="初始值">
+                                            {getFieldDecorator('configuration.initialValue', {
+                                                rules: [{ required: true, message: '请输入' }],
+                                                initialValue: data.configuration?.initialValue
+                                            })(<Input />)}
+                                        </Form.Item>
+                                        <Form.Item label="倍数">
+                                            {getFieldDecorator('configuration.multiple', {
+                                                rules: [{ required: true, message: '请输入' }],
+                                                initialValue: data.configuration?.multiple
+                                            })(<Input />)}
+                                        </Form.Item>
+                                    </>
+                                )
+                            }
+                        </>
+                    )
+                }
                 <Form.Item label="描述">
                     {getFieldDecorator('description', {
                         initialValue: data.description,

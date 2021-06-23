@@ -26,8 +26,39 @@ const QuickInsertComponent: React.FC<Props> = (props) => {
     const [property, setProperty] = useState({});
 
     const onSearch = (value: any) => {
+        if(!value){
+            setMetaDataList([...metaList])
+            return;
+        }
         let data: any[] = [];
-        searchMetaList(data, metaList, value);
+        //只要满足就返回这个节点及其父节点
+        metaList.map((item: any) => {
+            let list1: any[] = []
+            let list3: any[] = []
+            if (item.children && item.children.length > 0) {
+                item.children.map((child1: any) => {
+                    let list2: any[] = []
+                    if (child1.children && child1.children.length > 0) {
+                        child1.children.map((child2: any) => {
+                            if (child2.name.includes(value) && child2.children.length === 0){
+                                list2.push(child2)
+                            }
+                        })
+                    }else if (child1.name.includes(value) && child1.children.length === 0){
+                        list1.push(child1)
+                    }
+                    if(list2.length > 0){
+                        list3.push({...child1, children: [...list2]})
+                    }
+                })
+            }
+            if(list3.length > 0){
+                data.push({...item, children: [...list3]})
+            }
+            if(list1.length > 0){
+                data.push({...item, children: [...list1]})
+            }
+        })
         setMetaDataList([...data])
     }
 
@@ -104,22 +135,10 @@ const QuickInsertComponent: React.FC<Props> = (props) => {
         })
     }; //metaList
 
-    //搜索
-    const searchMetaList = (data: any[], dataList: any[], value: string) => {
-        dataList.map((item: any) => {
-            if (item.name.includes(value) && item.item.children.length === 0) {
-                data.push(item)
-            }
-            if (item.children && item.children.length > 0) {
-                searchMetaList(data, item.children, value);
-            }
-        })
-    };
-
     return (
         <Spin spinning={loading}>
             <div className={styles.box}>
-                <Search placeholder="搜索关键字" onSearch={onSearch} style={{ width: '100%' }} />
+                <Search placeholder="搜索关键字" allowClear onSearch={onSearch} style={{ width: '100%' }} />
                 <div className={styles.treeBox}>
                     <Tree
                         defaultExpandedKeys={['property']}
