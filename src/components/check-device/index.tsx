@@ -13,7 +13,11 @@ const CheckDevice = (props: Props) => {
 
   return (
     <div style={{ width: '100%' }}>
-      <Input value={deviceId} addonAfter={<Icon type="gold" onClick={() => setVisible(true)} />} />
+      <Input
+        value={deviceId}
+        placeholder="全部设备"
+        addonAfter={<Icon type="gold" onClick={() => setVisible(true)} />}
+      />
       {visible && (
         <DeviceList
           data={deviceId}

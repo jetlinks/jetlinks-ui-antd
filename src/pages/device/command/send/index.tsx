@@ -228,12 +228,6 @@ const Send = (props: Props) => {
                   },
                   title: '设备',
                   'x-component': 'CheckDevice',
-                  'x-rules': [
-                    {
-                      required: true,
-                      message: '此字段必填',
-                    },
-                  ],
                 },
                 'message.messageType': {
                   'x-mega-props': {
