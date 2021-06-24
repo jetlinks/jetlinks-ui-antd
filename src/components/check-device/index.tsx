@@ -1,4 +1,4 @@
-import { Icon, Input } from 'antd';
+import { Divider, Icon, Input } from 'antd';
 import React, { useState } from 'react';
 import DeviceList from './device';
 interface Props {
@@ -16,7 +16,13 @@ const CheckDevice = (props: Props) => {
       <Input
         value={deviceId}
         placeholder="全部设备"
-        addonAfter={<Icon type="gold" onClick={() => setVisible(true)} />}
+        addonAfter={<>
+            <Icon type="close" onClick={() => {
+                setDeviceId([]);
+                props.mutators.change([])
+            }} />
+            <Divider type="vertical"/>
+            <Icon type="plus" onClick={() => setVisible(true)} /></>}
       />
       {visible && (
         <DeviceList
