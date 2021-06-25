@@ -9,7 +9,7 @@ import { UploadProps } from "antd/lib/upload";
 import { DefaultSettings } from "../../../../config/defaultSettings";
 import styles from './index.less';
 import { getAccessToken } from "@/utils/authority";
-
+import logo from '../../../assets/icon.png';
 
 interface Props extends FormComponentProps {
     dispatch: Dispatch;
@@ -126,7 +126,7 @@ const Config: React.FC<Props> = props => {
                                         系统LOGO
                                 </div>
                                     <div className={styles.avatar}>
-                                        <img src={titleIcon || settings.titleIcon} alt="avatar" />
+                                       <img src={titleIcon||logo} alt='default'/>
                                     </div>
                                     <Upload {...uploadProps} showUploadList={false}>
                                         <div className={styles.button_view}>
