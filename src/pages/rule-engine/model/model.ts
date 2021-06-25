@@ -44,6 +44,7 @@ const RuleModelModel: RuleModelModelType = {
             callback(response);
         },
         *remove({ payload, callback }, { call, put }) {
+            console.log(apis.ruleModel.remove, payload)
             const response: SimpleResponse = yield call(apis.ruleModel.remove, payload);
             callback(response);
         },

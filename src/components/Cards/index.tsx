@@ -3,14 +3,16 @@ import { Radio, Icon, Pagination, Row, Col } from 'antd';
 import Table, { ColumnProps } from 'antd/lib/table';
 import styles from './index.less';
 import { PaginationProps } from 'antd/lib/pagination';
+import { isFunction } from 'lodash';
 
 interface CardsProps {
-  title: string
+  title: string | (() => React.ReactDOM | JSX.Element)
   columns: ColumnProps<any>[]
   dataSource: any[]
   pagination: PaginationProps
   cardItemRender: (data: any) => JSX.Element
   carItemClassName?: string
+  bodyClassName?: string
   col?: number
   toolNode?: React.ReactNode
   extraTool?: React.ReactNode
@@ -22,7 +24,9 @@ function Cards(props: CardsProps) {
   return (
     <div className={styles.cards}>
       <div className={styles.header}>
-        <span>{props.title}</span>
+        {
+          isFunction(props.title) ? props.title() : <span>{props.title}</span>
+        }
         <div className={styles.header_tool}>
           <div className={styles.header_tool_extra}>
             {props.toolNode}
@@ -40,7 +44,7 @@ function Cards(props: CardsProps) {
         </div>
       </div>
       {props.extraTool}
-      <div className={styles.content}>
+      <div className={`${styles.content} ${props.bodyClassName || ''}`}>
         {
           type === 'card' ?
             <>
@@ -68,6 +72,7 @@ function Cards(props: CardsProps) {
               columns={props.columns}
               dataSource={props.dataSource}
               pagination={props.pagination}
+              bodyStyle={{ backgroundColor: '#fff' }}
             />
         }
       </div>

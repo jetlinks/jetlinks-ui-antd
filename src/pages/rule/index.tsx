@@ -9,10 +9,10 @@ function Rule() {
   return (
     <div style={{ height: '100%' }}>
       <TabsPage>
-        <TabsPane title='规则引擎配置' key='/setting' International='National standard configuration' img={require('@/assets/video/guobiao.png')}>
+        <TabsPane title='规则引擎配置' key='/setting' International='Rules engine setting' img={require('@/assets/rule/top1.png')}>
           <Setting />
         </TabsPane>
-        <TabsPane title='规则引擎记录' key='/device' International='Video equipment' img={require('@/assets/video/shebei.png')}>
+        <TabsPane title='规则引擎记录' key='/device' International='Rules engine records' img={require('@/assets/rule/top2.png')}>
           <Records />
         </TabsPane>
       </TabsPage>
