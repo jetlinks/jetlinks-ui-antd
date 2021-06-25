@@ -227,13 +227,14 @@ const Trigger: React.FC<Props> = props => {
                     }}
                   />
                 </Col>
-                <a onClick={() => {
+                <Icon onClick={() => {
                   filters.splice(index, 1);
                   setFilters([...filters]);
                   trigger.device.filters = filters;
                   setTrigger({ ...trigger });
-                }}
-                ><Icon type="delete" /></a>
+                }} type="delete" />
+                {/* <a 
+                ><Icon type="delete" /></a> */}
                 {/* <Col span={5} style={{ textAlign: 'right', marginTop: 6, paddingBottom: 10 }}>
                   </Col> */}
               </div>
@@ -257,7 +258,7 @@ const Trigger: React.FC<Props> = props => {
         );
       case 'timer':
         return (
-          <Col span={12} style={{ paddingBottom: 10 }}>
+          <Col span={24} style={{ paddingBottom: 10 }}>
             <Input placeholder="cron表达式" defaultValue={trigger.cron} key="cron"
               onBlur={event => {
                 trigger.cron = event.target.value;
@@ -295,12 +296,12 @@ const Trigger: React.FC<Props> = props => {
   return (
     <div style={{ paddingBottom: 5 }} key={props.position}>
       {/* <Card size="small" bordered={false} style={{ backgroundColor: 'transparent' }}> */}
-      <Row style={{ marginLeft: -2, paddingBottom: 10 }}>
+      <Row style={{ paddingBottom: 10 }}>
         <span style={{ fontSize: 14, fontWeight: 600 }}>触发器: {props.position + 1}</span>
         <Popconfirm title="确认删除此触发器？"
           onConfirm={() => props.remove(props.position)}
         >
-          <a style={{ paddingLeft: 16 }}><Icon type="delete" /></a>
+          <Icon type="delete" style={{ paddingLeft: 14 }} />
         </Popconfirm>
       </Row>
 
@@ -339,38 +340,38 @@ const Trigger: React.FC<Props> = props => {
                 />
               )
             }
-            {shakeLimit.enabled && triggerType == 'device' && (
-              <Col span={12}>
-                <Col span={24} style={{ paddingBottom: 16, paddingLeft: -1, paddingRight: 12 }}>
-                  <Input style={{ width: 80, marginLeft: 3 }} size='small' key='shakeLimit.time'
-                    defaultValue={shakeLimit.time}
-                    onBlur={event => {
-                      trigger.device.shakeLimit.time = event.target.value;
-                      setTrigger(trigger)
-                    }}
-                  />秒内发生
-                  <Input style={{ width: 80 }} size='small' key='shakeLimit.threshold'
-                    defaultValue={shakeLimit.threshold}
-                    onBlur={event => {
-                      trigger.device.shakeLimit.threshold = event.target.value;
-                      setTrigger(trigger)
-                    }}
-                  />次及以上时，处理
-                  <Radio.Group defaultValue={shakeLimit.alarmFirst} key='shakeLimit.alarmFirst' size='small'
-                    buttonStyle="solid"
-                    onChange={event => {
-                      trigger.device.shakeLimit.alarmFirst = Boolean(event.target.value);
-                      setTrigger(trigger)
-                    }}
-                  >
-                    <Radio.Button value={true}>第一次</Radio.Button>
-                    <Radio.Button value={false}>最后一次</Radio.Button>
-                  </Radio.Group>
-                </Col>
-              </Col>
-            )}
           </div>
         </Col>
+        {shakeLimit.enabled && triggerType == 'device' && (
+          <Col span={24} style={{ paddingBottom: 16 }}>
+            <Input style={{ width: 80, }} key='shakeLimit.time'
+              defaultValue={shakeLimit.time}
+              onBlur={event => {
+                trigger.device.shakeLimit.time = event.target.value;
+                setTrigger(trigger)
+              }}
+            />
+            <span style={{ padding: '0 12px' }}>秒内发生</span>
+            <Input style={{ width: 80 }} key='shakeLimit.threshold'
+              defaultValue={shakeLimit.threshold}
+              onBlur={event => {
+                trigger.device.shakeLimit.threshold = event.target.value;
+                setTrigger(trigger)
+              }}
+            />
+            <span style={{ padding: '0 12px' }}>次及以上时，处理</span>
+            <Radio.Group defaultValue={shakeLimit.alarmFirst} key='shakeLimit.alarmFirst'
+              buttonStyle="solid"
+              onChange={event => {
+                trigger.device.shakeLimit.alarmFirst = Boolean(event.target.value);
+                setTrigger(trigger)
+              }}
+            >
+              <Radio.Button value={true}>第一次</Radio.Button>
+              <Radio.Button value={false}>最后一次</Radio.Button>
+            </Radio.Group>
+          </Col>
+        )}
         {renderDataType()}
       </Row>
       {/* </Card> */}

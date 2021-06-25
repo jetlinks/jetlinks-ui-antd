@@ -491,7 +491,7 @@ const Action: React.FC<Props> = props => {
       case 'notifier':
         return (
           <div>
-            <Col span={4}>
+            <Col span={12} >
               <Select placeholder="选择通知类型" value={actionData.configuration?.notifyType || undefined}
                 onChange={(value: string, event: any) => {
                   findNotifier(event.props.data);
@@ -505,7 +505,7 @@ const Action: React.FC<Props> = props => {
                 ))}
               </Select>
             </Col>
-            <Col span={6}>
+            <Col span={12} >
               <Select placeholder="选择通知配置" value={actionData.configuration?.notifierId || undefined}
                 onChange={(value: string, event: any) => {
                   findTemplate(event.props.data);
@@ -519,7 +519,7 @@ const Action: React.FC<Props> = props => {
                 ))}
               </Select>
             </Col>
-            <Col span={6}>
+            <Col span={12} >
               <Select placeholder="选择通知模板" value={actionData.configuration?.templateId || undefined}
                 onChange={(value: string) => {
                   actionData.configuration.templateId = value;
@@ -536,8 +536,8 @@ const Action: React.FC<Props> = props => {
         );
       case 'device-message-sender':
         return (
-          <div>
-            <Col span={4}>
+          <div >
+            <Col span={12}>
               <Input addonAfter={<Icon onClick={() => {
                 setBindVisible(true);
               }} type='gold' title="点击选择设备" />}
@@ -547,7 +547,7 @@ const Action: React.FC<Props> = props => {
                 readOnly />
             </Col>
             {deviceData.name && (
-              <Col span={4}>
+              <Col span={12}>
                 <Select placeholder="选择类型，如：属性/功能"
                   defaultValue={actionData.configuration.message.messageType || undefined}
                   onChange={(value: string) => {
@@ -571,33 +571,33 @@ const Action: React.FC<Props> = props => {
 
   return (
     <div style={{ paddingBottom: 5 }}>
-      <Card size="small" bordered={false}>
-        <Row>
-          <span>执行动作: {props.position + 1}</span>
-          <Popconfirm title="确认删除此执行动作？"
-            onConfirm={() => props.remove(props.position)}
-          >
-            <a style={{ paddingLeft: 30 }}>删除</a>
-          </Popconfirm>
-        </Row>
+      {/* <Card size="small" bordered={false}> */}
+      <Row style={{ marginLeft: -2, paddingBottom: 10 }}>
+        <span style={{ fontSize: 14, fontWeight: 600 }}>执行动作: {props.position + 1}</span>
+        <Popconfirm title="确认删除此执行动作？"
+          onConfirm={() => props.remove(props.position)}
+        >
+          <Icon type="delete" style={{ paddingLeft: 14 }} />
+        </Popconfirm>
+      </Row>
 
-        <Row gutter={16} key={props.position + 1} style={{ paddingLeft: 10 }}>
-          <Col span={4}>
-            <Select placeholder="选择动作类型" value={actionData.executor} key="trigger"
-              onChange={(value: string) => {
-                setActionType(value);
-                actionData.executor = value;
-                setActionData({ ...actionData });
-                submitData();
-              }}
-            >
-              <Select.Option value="notifier">消息通知</Select.Option>
-              <Select.Option value="device-message-sender">设备输出</Select.Option>
-            </Select>
-          </Col>
-          {renderActionType()}
-        </Row>
-      </Card>
+      <Row key={props.position + 1} gutter={[16, 16]}>
+        <Col span={12} >
+          <Select placeholder="选择动作类型" value={actionData.executor} key="trigger"
+            onChange={(value: string) => {
+              setActionType(value);
+              actionData.executor = value;
+              setActionData({ ...actionData });
+              submitData();
+            }}
+          >
+            <Select.Option value="notifier">消息通知</Select.Option>
+            <Select.Option value="device-message-sender">设备输出</Select.Option>
+          </Select>
+        </Col>
+        {renderActionType()}
+      </Row>
+      {/* </Card> */}
       {bindVisible && (
         <Bind selectionType='radio'
           close={() => {

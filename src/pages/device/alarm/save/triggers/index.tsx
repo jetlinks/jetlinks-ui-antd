@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from 'react';
-import Form, {FormComponentProps} from 'antd/lib/form';
-import {AutoComplete, Card, Col, Icon, Input, Popconfirm, Row, Select} from 'antd';
-import {AlarmTrigger} from '@/pages/device/alarm/data';
+import React, { useEffect, useState } from 'react';
+import Form, { FormComponentProps } from 'antd/lib/form';
+import { AutoComplete, Button, Card, Col, Icon, Input, Popconfirm, Row, Select } from 'antd';
+import { AlarmTrigger } from '@/pages/device/alarm/data';
 
 interface Props extends FormComponentProps {
   trigger: Partial<AlarmTrigger>;
@@ -25,9 +25,9 @@ const Trigger: React.FC<Props> = props => {
     triggerType: '',
     messageType: '',
     parameters: props.trigger.parameters ? (props.trigger.parameters.length > 0 ? props.trigger.parameters
-      : [{_id: 0}]) : [{_id: 0}],
+      : [{ _id: 0 }]) : [{ _id: 0 }],
     trigger: props.trigger,
-    filters: props.trigger.filters ? (props.trigger.filters.length > 0 ? props.trigger.filters : [{_id: 0}]) : [{_id: 0}],
+    filters: props.trigger.filters ? (props.trigger.filters.length > 0 ? props.trigger.filters : [{ _id: 0 }]) : [{ _id: 0 }],
     dataSource: [],
   };
 
@@ -102,14 +102,14 @@ const Trigger: React.FC<Props> = props => {
     switch (messageType) {
       case 'properties':
         return (
-          <Col span={6} style={{paddingBottom: 10, paddingLeft: 3, paddingRight: 9}}>
+          <Col span={12} style={{ paddingBottom: 10, paddingLeft: 3, paddingRight: 9 }}>
             <Select placeholder="物模型属性" defaultValue={trigger.modelId}
-                    onChange={(value: string, data: any) => {
-                      setDataSourceValue('properties', data.props.data, value);
-                      trigger.modelId = value;
-                      setTrigger(trigger);
-                      submitData();
-                    }}
+              onChange={(value: string, data: any) => {
+                setDataSourceValue('properties', data.props.data, value);
+                trigger.modelId = value;
+                setTrigger(trigger);
+                submitData();
+              }}
             >
               {JSON.parse(props.metaData).properties?.map((item: any) => (
                 <Select.Option key={item.id} data={item}>{`${item.name}（${item.id}）`}</Select.Option>
@@ -119,14 +119,14 @@ const Trigger: React.FC<Props> = props => {
         );
       case 'event':
         return (
-          <Col span={6} style={{paddingBottom: 10, paddingLeft: 3, paddingRight: 9}}>
+          <Col span={12} style={{ paddingBottom: 10, paddingLeft: 3, paddingRight: 9 }}>
             <Select placeholder="物模型事件" defaultValue={trigger.modelId}
-                    onChange={(value: string, data: any) => {
-                      setDataSourceValue('event', data.props.data, value);
-                      trigger.modelId = value;
-                      setTrigger(trigger);
-                      submitData();
-                    }}
+              onChange={(value: string, data: any) => {
+                setDataSourceValue('event', data.props.data, value);
+                trigger.modelId = value;
+                setTrigger(trigger);
+                submitData();
+              }}
             >
               {JSON.parse(props.metaData).events?.map((item: any) => (
                 <Select.Option key={item.id} data={item}>{`${item.name}（${item.id}）`}</Select.Option>
@@ -136,14 +136,14 @@ const Trigger: React.FC<Props> = props => {
         );
       case 'function':
         return (
-          <Col span={6} style={{paddingBottom: 10, paddingLeft: 3, paddingRight: 9}}>
+          <Col span={12} style={{ paddingBottom: 10, paddingLeft: 3, paddingRight: 9 }}>
             <Select placeholder="物模型功能" defaultValue={trigger.modelId}
-                    onChange={(value: string, data: any) => {
-                      setDataSourceValue('function', data.props.data, value);
-                      trigger.modelId = value;
-                      setTrigger(trigger);
-                      submitData();
-                    }}
+              onChange={(value: string, data: any) => {
+                setDataSourceValue('function', data.props.data, value);
+                trigger.modelId = value;
+                setTrigger(trigger);
+                submitData();
+              }}
             >
               {JSON.parse(props.metaData).functions?.map((item: any) => (
                 <Select.Option key={item.id} data={item}>{`${item.name}（${item.id}）`}</Select.Option>
@@ -161,15 +161,17 @@ const Trigger: React.FC<Props> = props => {
       case 'device':
         return (
           <div>
-            <Col span={24}>
-              <Col span={6} style={{paddingBottom: 10, paddingLeft: -1, paddingRight: 12}}>
+            <Col span={24} style={{ padding: 0 }}>
+              <Col span={12}>
                 <Select placeholder="选择类型，如：属性/事件" defaultValue={trigger.type}
-                        onChange={(value: string) => {
-                          setMessageType(() => value);
-                          trigger.type = value;
-                          setTrigger(trigger);
-                          submitData();
-                        }}>
+                  onChange={(value: string) => {
+                    setMessageType(() => value);
+                    trigger.type = value;
+                    setTrigger(trigger);
+                    submitData();
+                  }}
+                  style={{ width: '100%' }}
+                >
                   <Select.Option value="online">上线</Select.Option>
                   <Select.Option value="offline">离线</Select.Option>
                   {props.metaData && JSON.parse(props.metaData).properties && (
@@ -179,181 +181,183 @@ const Trigger: React.FC<Props> = props => {
                     <Select.Option value="event">事件</Select.Option>
                   )}
                   {/*{props.metaData && JSON.parse(props.metaData).functions && (
-                  <Select.Option value="function">功能</Select.Option>
-                )}*/}
+                    <Select.Option value="function">功能</Select.Option>
+                  )}*/}
                 </Select>
               </Col>
               {renderType()}
             </Col>
-            <Col span={24}>
-              {filters.map((item: any, index) => (
-                <div className="ant-row">
-                  <Col span={6} style={{paddingLeft: -1, paddingRight: 12, paddingBottom: 10}}>
-                    <AutoComplete dataSource={dataSource} placeholder="过滤条件KEY" children={item.key}
-                                  defaultValue={item.key}
-                                  onBlur={value => {
-                                    filters[index].key = value;
-                                    trigger.filters = filters;
-                                    setTrigger(trigger);
-                                    submitData();
-                                  }}
-                      /*onChange={value => {
-                        filters[index].key = value;
-                        trigger.filters = filters;
-                        setTrigger(trigger);
-                        submitData();
-                      }}*/
-                                  filterOption={(inputValue, option) =>
-                                    option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
-                                  }
-                    />
-                  </Col>
-                  <Col span={6} style={{paddingLeft: 3, paddingRight: 9, paddingBottom: 10}}>
-                    <Select placeholder="操作符" defaultValue={item.operator}
-                            onChange={(value: string) => {
-                              filters[index].operator = value;
-                              trigger.filters = filters;
-                              setTrigger(trigger);
-                              submitData();
-                            }}>
-                      <Select.Option value="eq">等于(=)</Select.Option>
-                      <Select.Option value="not">不等于(!=)</Select.Option>
-                      <Select.Option value="gt">大于(&gt;)</Select.Option>
-                      <Select.Option value="lt">小于(&lt;)</Select.Option>
-                      <Select.Option value="gte">大于等于(&gt;=)</Select.Option>
-                      <Select.Option value="lte">小于等于(&lt;=)</Select.Option>
-                      <Select.Option value="like">模糊(%)</Select.Option>
-                    </Select>
-                  </Col>
-                  <Col span={7} style={{paddingLeft: 7, paddingRight: 3, paddingBottom: 10}}>
-                    <Input placeholder="过滤条件值" defaultValue={item.value}
-                           onChange={event => {
-                             filters[index].value = event.target.value;
-                             trigger.filters = filters;
-                             setTrigger(trigger);
-                             submitData();
-                           }}
-                    />
-                  </Col>
-                  <Col span={5} style={{textAlign: 'right', marginTop: 6, paddingBottom: 10}}>
-                    <a style={{paddingLeft: 10, paddingTop: 7}}
-                       onClick={() => {
-                         filters.splice(index, 1);
-                         setFilters([...filters]);
-                         trigger.filters = filters;
-                         setTrigger({...trigger});
-                         submitData();
-                       }}
-                    >删除</a>
-                  </Col>
-                </div>
-              ))}
-            </Col>
-            <Col span={24}>
-              <div>
-                <a onClick={() => {
-                  setFilters([...filters, {_id: Math.round(Math.random() * 100000)}]);
-                }}>添加</a>
+            {/* <Col span={24}> */}
+            {filters.map((item: any, index) => (
+              <div className="ant-row" style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                <Col span={8} >
+                  <AutoComplete dataSource={dataSource} placeholder="过滤条件KEY" children={item.key}
+                    defaultValue={item.key}
+                    onBlur={value => {
+                      filters[index].key = value;
+                      trigger.filters = filters;
+                      setTrigger(trigger);
+                      submitData();
+                    }}
+                    /*onChange={value => {
+                      filters[index].key = value;
+                      trigger.filters = filters;
+                      setTrigger(trigger);
+                      submitData();
+                    }}*/
+                    filterOption={(inputValue, option) =>
+                      option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
+                    }
+                  />
+                </Col>
+                <Col span={8} >
+                  <Select placeholder="操作符" defaultValue={item.operator}
+                    onChange={(value: string) => {
+                      filters[index].operator = value;
+                      trigger.filters = filters;
+                      setTrigger(trigger);
+                      submitData();
+                    }}>
+                    <Select.Option value="eq">等于(=)</Select.Option>
+                    <Select.Option value="not">不等于(!=)</Select.Option>
+                    <Select.Option value="gt">大于(&gt;)</Select.Option>
+                    <Select.Option value="lt">小于(&lt;)</Select.Option>
+                    <Select.Option value="gte">大于等于(&gt;=)</Select.Option>
+                    <Select.Option value="lte">小于等于(&lt;=)</Select.Option>
+                    <Select.Option value="like">模糊(%)</Select.Option>
+                  </Select>
+                </Col>
+                <Col span={7} >
+                  <Input placeholder="过滤条件值" defaultValue={item.value}
+                    onChange={event => {
+                      filters[index].value = event.target.value;
+                      trigger.filters = filters;
+                      setTrigger(trigger);
+                      submitData();
+                    }}
+                  />
+                </Col>
+                <Col span={1} >
+                  <Icon onClick={() => {
+                    filters.splice(index, 1);
+                    setFilters([...filters]);
+                    trigger.filters = filters;
+                    setTrigger({ ...trigger });
+                    submitData();
+                  }} type="delete" />
+                </Col>
               </div>
+            ))}
+            {/* </Col> */}
+            <Col span={24}>
+              <Button
+                type='dashed'
+                onClick={() => {
+                  setFilters([...filters, { _id: Math.round(Math.random() * 100000) }]);
+                }}
+                style={{ paddingBottom: 16 }}
+              >添加过滤条件</Button>
             </Col>
           </div>
         );
       case 'timer':
         return (
           <div>
-            <Col span={6} style={{paddingBottom: 10}}>
+            <Col span={24}>
               <Input placeholder="cron表达式" defaultValue={trigger.cron} key="cron"
-                     onBlur={event => {
-                       trigger.cron = event.target.value;
-                       setTrigger(trigger);
-                       submitData();
-                     }}
-                /*onChange={event => {
+                onBlur={event => {
                   trigger.cron = event.target.value;
                   setTrigger(trigger);
                   submitData();
-                }}*/
+                }}
+              /*onChange={event => {
+                trigger.cron = event.target.value;
+                setTrigger(trigger);
+                submitData();
+              }}*/
               />
             </Col>
-            <Col span={24}>
-              <Col span={6} style={{paddingBottom: 10, paddingLeft: -1, paddingRight: 12}}>
-                <Select placeholder="选择类型，如：属性/事件" defaultValue={trigger.type}
-                        onChange={(value: string) => {
-                          setMessageType(() => value);
-                          trigger.type = value;
-                          setTrigger(trigger);
-                          submitData();
-                        }}>
-                  {props.metaData && JSON.parse(props.metaData).properties && (
-                    <Select.Option value="properties">属性</Select.Option>
-                  )}
-                  {props.metaData && JSON.parse(props.metaData).events && (
-                    <Select.Option value="event">事件</Select.Option>
-                  )}
-                  {/*{props.metaData && JSON.parse(props.metaData).functions && (
-                  <Select.Option value="function">功能</Select.Option>
-                )}*/}
-                </Select>
+            <div>
+              <Col span={24} style={{ padding: 0 }}>
+                <Col span={12} >
+                  <Select placeholder="选择类型，如：属性/事件" defaultValue={trigger.type}
+                    onChange={(value: string) => {
+                      setMessageType(() => value);
+                      trigger.type = value;
+                      setTrigger(trigger);
+                      submitData();
+                    }}>
+                    {props.metaData && JSON.parse(props.metaData).properties && (
+                      <Select.Option value="properties">属性</Select.Option>
+                    )}
+                    {props.metaData && JSON.parse(props.metaData).events && (
+                      <Select.Option value="event">事件</Select.Option>
+                    )}
+                    {/*{props.metaData && JSON.parse(props.metaData).functions && (
+                    <Select.Option value="function">功能</Select.Option>
+                  )}*/}
+                  </Select>
+                </Col>
+                {renderType()}
               </Col>
-              {renderType()}
-            </Col>
+            </div>
             {triggerType === 'timer' && messageType === 'function' && (
-              <Col span={24} style={{backgroundColor: '#F5F5F6', paddingBottom: 10}}>
+              <Col span={24} >
                 {parameters.map((item: any, index) => (
-                  <Row style={{paddingBottom: 5, paddingTop: 5}}>
+                  <Row style={{ paddingBottom: 5, paddingTop: 5 }}>
                     <Col span={7}>
                       <Input placeholder="请输入属性" value={item.property}
-                             onChange={event => {
-                               parameters[index].property = event.target.value;
-                               setParameters([...parameters]);
-                               trigger.parameters = parameters;
-                               setTrigger({...trigger});
-                               submitData();
-                             }}
+                        onChange={event => {
+                          parameters[index].property = event.target.value;
+                          setParameters([...parameters]);
+                          trigger.parameters = parameters;
+                          setTrigger({ ...trigger });
+                          submitData();
+                        }}
                       />
                     </Col>
-                    <Col span={1} style={{textAlign: 'center'}}/>
+                    <Col span={1} style={{ textAlign: 'center' }} />
                     <Col span={7}>
                       <Input placeholder="请输入别名" value={item.alias}
-                             onChange={event => {
-                               parameters[index].alias = event.target.value;
-                               setParameters([...parameters]);
-                               trigger.parameters = parameters;
-                               setTrigger({...trigger});
-                               submitData();
-                             }}
+                        onChange={event => {
+                          parameters[index].alias = event.target.value;
+                          setParameters([...parameters]);
+                          trigger.parameters = parameters;
+                          setTrigger({ ...trigger });
+                          submitData();
+                        }}
                       />
                     </Col>
-                    <Col span={1} style={{textAlign: 'center'}}>
+                    <Col span={1} style={{ textAlign: 'center' }}>
                       {index === 0 ? (
                         <Row>
                           <Icon type="plus-circle" title="新增转换"
-                                style={{fontSize: 20, paddingTop: 7}}
-                                onClick={() => {
-                                  setParameters([...parameters, {_id: Math.round(Math.random() * 100000)}]);
-                                }}
+                            style={{ fontSize: 20, paddingTop: 7 }}
+                            onClick={() => {
+                              setParameters([...parameters, { _id: Math.round(Math.random() * 100000) }]);
+                            }}
                           />
-                          <Icon style={{paddingLeft: 10, paddingTop: 7, fontSize: 20}}
-                                type="minus-circle" title="删除转换"
-                                onClick={() => {
-                                  parameters.splice(index, 1);
-                                  setParameters([...parameters]);
-                                  trigger.parameters = parameters;
-                                  setTrigger({...trigger});
-                                  submitData();
-                                }}
+                          <Icon style={{ paddingLeft: 10, paddingTop: 7, fontSize: 20 }}
+                            type="minus-circle" title="删除转换"
+                            onClick={() => {
+                              parameters.splice(index, 1);
+                              setParameters([...parameters]);
+                              trigger.parameters = parameters;
+                              setTrigger({ ...trigger });
+                              submitData();
+                            }}
                           />
                         </Row>
                       ) : (
                         <Icon type="minus-circle" title="删除转换"
-                              style={{fontSize: 20, paddingTop: 7}}
-                              onClick={() => {
-                                parameters.splice(index, 1);
-                                setParameters([...parameters]);
-                                trigger.parameters = parameters;
-                                setTrigger({...trigger});
-                                submitData();
-                              }}
+                          style={{ fontSize: 20, paddingTop: 7 }}
+                          onClick={() => {
+                            parameters.splice(index, 1);
+                            setParameters([...parameters]);
+                            trigger.parameters = parameters;
+                            setTrigger({ ...trigger });
+                            submitData();
+                          }}
                         />
                       )}
                     </Col>
@@ -361,84 +365,88 @@ const Trigger: React.FC<Props> = props => {
                 ))}
               </Col>
             )}
-            <Col span={24}>
-              {filters.map((item: any, index) => (
-                <div className="ant-row">
-                  <Col span={6} style={{paddingLeft: -1, paddingRight: 12, paddingBottom: 10}}>
-                    <AutoComplete dataSource={dataSource} placeholder="过滤条件KEY" children={item.key}
-                                  defaultValue={item.key}
-                                  onBlur={value => {
-                                    filters[index].key = value;
-                                    trigger.filters = filters;
-                                    setTrigger(trigger);
-                                    submitData();
-                                  }}
-                      /*onChange={value => {
-                        filters[index].key = value;
-                        trigger.filters = filters;
-                        setTrigger(trigger);
-                        submitData();
-                      }}*/
-                                  filterOption={(inputValue, option) =>
-                                    option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
-                                  }
-                    />
-                  </Col>
-                  <Col span={6} style={{paddingLeft: 3, paddingRight: 9, paddingBottom: 10}}>
-                    <Select placeholder="操作符" defaultValue={item.operator}
-                            onChange={(value: string) => {
-                              filters[index].operator = value;
-                              trigger.filters = filters;
-                              setTrigger(trigger);
-                              submitData();
-                            }}>
-                      <Select.Option value="eq">等于(=)</Select.Option>
-                      <Select.Option value="not">不等于(!=)</Select.Option>
-                      <Select.Option value="gt">大于(&gt;)</Select.Option>
-                      <Select.Option value="lt">小于(&lt;)</Select.Option>
-                      <Select.Option value="gte">大于等于(&gt;=)</Select.Option>
-                      <Select.Option value="lte">小于等于(&lt;=)</Select.Option>
-                      <Select.Option value="like">模糊(%)</Select.Option>
-                    </Select>
-                  </Col>
-                  <Col span={7} style={{paddingLeft: 7, paddingRight: 3, paddingBottom: 10}}>
-                    <Input placeholder="过滤条件值" defaultValue={item.value}
-                           onBlur={event => {
-                             filters[index].value = event.target.value;
-                             trigger.filters = filters;
-                             setTrigger(trigger);
-                             submitData();
-                           }}
-                      /*onChange={event => {
-                        filters[index].value = event.target.value;
-                        trigger.filters = filters;
-                        setTrigger(trigger);
-                        submitData();
-                      }}*/
-                    />
-                  </Col>
-                  <Col span={5} style={{textAlign: 'right', marginTop: 6, paddingBottom: 10}}>
-                    <a style={{paddingLeft: 10, paddingTop: 7}}
-                       onClick={() => {
-                         filters.splice(index, 1);
-                         setFilters([...filters]);
-                         if (filters.length > 0) {
-                           trigger.filters = filters;
-                           setTrigger({...trigger});
-                         }
-                         submitData();
-                       }}
-                    >删除</a>
-                  </Col>
-                </div>
-              ))}
-            </Col>
-            <Col span={24}>
-              <div>
-                <a onClick={() => {
-                  setFilters([...filters, {_id: Math.round(Math.random() * 100000)}]);
-                }}>添加</a>
+            {/* <Col span={24}> */}
+            {filters.map((item: any, index) => (
+              <div className="ant-row">
+                <Col span={8} >
+                  <AutoComplete dataSource={dataSource} placeholder="过滤条件KEY" children={item.key}
+                    defaultValue={item.key}
+                    onBlur={value => {
+                      filters[index].key = value;
+                      trigger.filters = filters;
+                      setTrigger(trigger);
+                      submitData();
+                    }}
+                    /*onChange={value => {
+                      filters[index].key = value;
+                      trigger.filters = filters;
+                      setTrigger(trigger);
+                      submitData();
+                    }}*/
+                    filterOption={(inputValue, option) =>
+                      option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
+                    }
+                  />
+                </Col>
+                <Col span={8} >
+                  <Select placeholder="操作符" defaultValue={item.operator}
+                    onChange={(value: string) => {
+                      filters[index].operator = value;
+                      trigger.filters = filters;
+                      setTrigger(trigger);
+                      submitData();
+                    }}>
+                    <Select.Option value="eq">等于(=)</Select.Option>
+                    <Select.Option value="not">不等于(!=)</Select.Option>
+                    <Select.Option value="gt">大于(&gt;)</Select.Option>
+                    <Select.Option value="lt">小于(&lt;)</Select.Option>
+                    <Select.Option value="gte">大于等于(&gt;=)</Select.Option>
+                    <Select.Option value="lte">小于等于(&lt;=)</Select.Option>
+                    <Select.Option value="like">模糊(%)</Select.Option>
+                  </Select>
+                </Col>
+                <Col span={7} >
+                  <Input placeholder="过滤条件值" defaultValue={item.value}
+                    onBlur={event => {
+                      filters[index].value = event.target.value;
+                      trigger.filters = filters;
+                      setTrigger(trigger);
+                      submitData();
+                    }}
+                  /*onChange={event => {
+                    filters[index].value = event.target.value;
+                    trigger.filters = filters;
+                    setTrigger(trigger);
+                    submitData();
+                  }}*/
+                  />
+                </Col>
+                <Col span={1} >
+                  <Icon onClick={() => {
+                    filters.splice(index, 1);
+                    setFilters([...filters]);
+                    if (filters.length > 0) {
+                      trigger.filters = filters;
+                      setTrigger({ ...trigger });
+                    }
+                    submitData();
+                  }} type="delete" />
+                </Col>
               </div>
+            ))}
+            {/* </Col> */}
+            <Col span={24}>
+              {/* <div>
+                <a onClick={() => {
+                  setFilters([...filters, { _id: Math.round(Math.random() * 100000) }]);
+                }}>添加</a>
+              </div> */}
+              <Button
+                type='dashed'
+                onClick={() => {
+                  setFilters([...filters, { _id: Math.round(Math.random() * 100000) }]);
+                }}
+              >添加过滤条件</Button>
             </Col>
           </div>
         );
@@ -448,38 +456,37 @@ const Trigger: React.FC<Props> = props => {
   };
 
   return (
-    <div style={{paddingBottom: 5}}>
-      <Card size="small" bordered={false} style={{backgroundColor: '#F5F5F6'}}>
-        <Row style={{marginLeft: -2}}>
-          <span>触发器: {props.position + 1}</span>
-          <Popconfirm
-            title="确认删除此触发器？"
-            onConfirm={() => {
-              props.remove(props.position);
+    <div style={{ paddingBottom: 10 }}>
+      <Row style={{ paddingBottom: 10 }}>
+        <span style={{ fontSize: 14, fontWeight: 600 }}>触发器: {props.position + 1}</span>
+        <Popconfirm
+          title="确认删除此触发器？"
+          onConfirm={() => {
+            props.remove(props.position);
+          }}
+        >
+          <Icon type="delete" style={{ paddingLeft: 14 }} />
+          {/* <a style={{ paddingLeft: 30 }}>删除</a> */}
+        </Popconfirm>
+      </Row>
+
+      <Row gutter={[16, 16]} >
+        <Col span={24}>
+          <Select
+            placeholder="选择触发器类型"
+            value={trigger.trigger}
+            onChange={(value: string) => {
+              setTriggerType(() => value);
+              trigger.trigger = value;
+              submitData();
             }}
           >
-            <a style={{paddingLeft: 30}}>删除</a>
-          </Popconfirm>
-        </Row>
-
-        <Row gutter={16} style={{paddingLeft: 10}}>
-          <Col span={6} style={{paddingBottom: 10}}>
-            <Select
-              placeholder="选择触发器类型"
-              value={trigger.trigger}
-              onChange={(value: string) => {
-                setTriggerType(() => value);
-                trigger.trigger = value;
-                submitData();
-              }}
-            >
-              <Select.Option value="device">设备触发</Select.Option>
-              <Select.Option value="timer">定时触发</Select.Option>
-            </Select>
-          </Col>
-          {renderDataType()}
-        </Row>
-      </Card>
+            <Select.Option value="device">设备触发</Select.Option>
+            <Select.Option value="timer">定时触发</Select.Option>
+          </Select>
+        </Col>
+        {renderDataType()}
+      </Row>
     </div>
   );
 };

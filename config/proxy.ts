@@ -5,7 +5,7 @@
  * For details, please see
  * https://pro.ant.design/docs/deploy
  */
- export default {
+export default {
   dev: {
     '/jetlinks': {
       // target: 'http://192.168.22.222:8844/',

@@ -240,6 +240,7 @@ const Setting: React.FC<Props> = props => {
 
   const updateDeviceAlarm = (item: any) => {
     let data: any;
+    setSaveAlarmVisible(true);
     try {
       data = JSON.parse(item.modelMeta);
     } catch (error) {
@@ -293,8 +294,8 @@ const Setting: React.FC<Props> = props => {
     if (item.modelType === 'node-red') {
       window.open(`/jetlinks/rule-editor/index.html#flow/${item.id}`)
     } else if (item.modelType === 'sql_rule') {
+      setSaveSqlRuleVisible(true);
       try {
-        setSaveSqlRuleVisible(true);
         let data = JSON.parse(item.modelMeta);
         data['id'] = item.id;
         setCurrent(data);
@@ -471,10 +472,13 @@ const Setting: React.FC<Props> = props => {
         save={(data: any) => {
           submitData(data);
         }}
-        data={deviceAlarm} targetId={deviceAlarm.targetId}
-        target={deviceAlarm.target} metaData={deviceMateData}
-        name={deviceAlarm.name} productName={deviceAlarm.alarmRule.productName}
-        productId={deviceAlarm.alarmRule.productId}
+        data={deviceAlarm}
+        targetId={deviceAlarm.targetId}
+        target={deviceAlarm.target}
+        metaData={deviceMateData}
+        name={deviceAlarm.name}
+        productName={deviceAlarm.alarmRule ? deviceAlarm.alarmRule.productName : ''}
+        productId={deviceAlarm.alarmRule ? deviceAlarm.alarmRule.productId : ''}
       />}
     </div>
   );

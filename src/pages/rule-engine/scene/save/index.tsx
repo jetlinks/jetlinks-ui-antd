@@ -221,7 +221,7 @@ const Save: React.FC<Props> = props => {
             </p>
             <div style={{ backgroundColor: 'rgba(0,0,0,0.02)', padding: '10px 14px' }}>
               {action.length > 0 && action.map((item: any, index) => (
-                <div key={index}>
+                <div key={index} style={{ paddingBottom: 12 }}>
                   <ActionAssembly key={index + Math.random()} save={(actionData: any) => {
                     action.splice(index, 1, actionData);
                   }} action={item} position={index} remove={(position: number) => {
