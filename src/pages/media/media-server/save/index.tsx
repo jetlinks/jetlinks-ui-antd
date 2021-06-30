@@ -220,7 +220,7 @@ const Save: React.FC<Props> = props => {
               <Col span={12}>
                 <Form.Item label={
                   <span> 公网 Host&nbsp;
-                    <Tooltip title={'在线播放时请求服务地址，域名或服务器IP地址'}>
+                    <Tooltip title={'在线播放时请求服务地址，域名或服务器IP地址，由于分屏展示需利用h2请求，请使用带证书的域名'}>
                       <Icon type="question-circle-o"/>
                     </Tooltip>
                   </span>
@@ -233,16 +233,6 @@ const Save: React.FC<Props> = props => {
                   })(<Input placeholder='请输入公网 Host'/>)}
                 </Form.Item>
               </Col>
-              {/*<Col span={12}>*/}
-              {/*  <Form.Item label="HTTP端口" labelCol={{span: 10}} wrapperCol={{span: 14}}>*/}
-              {/*    {getFieldDecorator('configuration.httpPort', {*/}
-              {/*      rules: [*/}
-              {/*        {required: true, message: '请输入HTTP端口'}*/}
-              {/*      ],*/}
-              {/*      initialValue: configuration.httpPort,*/}
-              {/*    })(<InputNumber style={{width: '100%'}} placeholder='请输入HTTP端口'/>)}*/}
-              {/*  </Form.Item>*/}
-              {/*</Col>*/}
               <Col span={12}>
                 <Form.Item label={
                   <span> API Host&nbsp;
@@ -273,7 +263,14 @@ const Save: React.FC<Props> = props => {
                 <Form.Item label="密钥" labelCol={{span: 10}} wrapperCol={{span: 14}}>
                   {getFieldDecorator('configuration.secret', {
                     initialValue: configuration.secret,
-                  })(<Input placeholder='请输入密钥'/>)}
+                  })(<Input.Password placeholder='请输入密钥'/>)}
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item label="流ID前缀" labelCol={{span: 10}} wrapperCol={{span: 14}}>
+                  {getFieldDecorator('configuration.streamIdPrefix', {
+                    initialValue: configuration.streamIdPrefix,
+                  })(<Input/>)}
                 </Form.Item>
               </Col>
             </Row>
@@ -365,15 +362,6 @@ const Save: React.FC<Props> = props => {
                   }
                 </Card>
               </Form.Item>
-            </Row>
-            <Row>
-              <Col span={12}>
-                <Form.Item label="流ID前缀" labelCol={{span: 10}} wrapperCol={{span: 14}}>
-                  {getFieldDecorator('configuration.streamIdPrefix', {
-                    initialValue: configuration.streamIdPrefix,
-                  })(<Input/>)}
-                </Form.Item>
-              </Col>
             </Row>
           </div>
         );
