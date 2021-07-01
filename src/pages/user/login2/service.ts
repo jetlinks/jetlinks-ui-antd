@@ -22,7 +22,7 @@ class Service extends BaseService<any>{
         ));
 
     public queryCurrent = () => defer(
-        () => from(request('/jetlinks/authorize/me',{
+        () => from(request('/jetlinks/authorize/me', {
             method: 'GET'
         })).pipe(
             map(resp => resp)

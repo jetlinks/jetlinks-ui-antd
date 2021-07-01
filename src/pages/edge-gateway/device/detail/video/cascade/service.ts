@@ -3,6 +3,71 @@ import request from "@/utils/request";
 import { defer, from } from "rxjs";
 import { filter, map } from "rxjs/operators";
 
+type StatusType = {
+  text: string
+  value: string
+}
+
+interface SipConfigs {
+  sipId: string
+  domain: string
+  stackName: string
+  charset: string
+  password: string
+  publicAddress: string
+  localAddress: string
+  port: number
+  publicPort: number
+  clusterNodeId: string
+  remoteAddress: string
+  remotePort: number
+  user: string
+  localSipId: string
+  name: string
+  manufacturer: string
+  model: string
+  firmware: string
+  transport: string
+  registerInterval: number
+  keepaliveInterval: number
+  keepaliveTimeoutTimes: string
+}
+export interface CascadeList {
+  id: string
+  name: string
+  status: StatusType
+  onlineStatus: StatusType
+  sipConfigs: Array<SipConfigs>
+  proxyStream: boolean
+  mediaServerId: string
+}
+
+export const getCascadeList = (deviceId: string, params: any) => request(`/jetlinks/edge/operations/${deviceId}/gb28181-cascade-list/invoke`, {
+  method: 'POST',
+  data: params
+})
+
+export const saveCascade = (deviceId: string, params: any) => request(`/jetlinks/edge/operations/${deviceId}/gb28181-cascade-save/invoke`, {
+  method: 'POST',
+  data: params
+})
+
+export const CascadeEnabled = (deviceId: string, params?: any) => request(`/jetlinks/edge/operations/${deviceId}/gb28181-cascade-enable/invoke`, {
+  method: 'POST',
+  data: params
+})
+
+export const CascadeDisabled = (deviceId: string, params?: any) => request(`/jetlinks/edge/operations/${deviceId}/gb28181-cascade-disable/invoke`, {
+  method: 'POST',
+  data: params
+})
+
+export const removeCascade = (deviceId: string, id: string) => request(`/jetlinks/edge/operations/${deviceId}/gb28181-cascade-delete/invoke`, {
+  method: 'POST',
+  data: {
+    cascadeId: id
+  }
+})
 class Service extends BaseService<any> {
 
   public getCascadeList = (deviceId: string, params: any) => defer(

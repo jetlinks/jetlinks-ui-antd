@@ -1,13 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Button, Input, Radio } from 'antd';
 import styles from './index.less';
 import Form from '@/components/BaseForm';
 import IPInput from '@/components/BaseForm/IPInput';
+import { CascadeDisabled, CascadeEnabled, CascadeList, getCascadeList, removeCascade } from '@/pages/edge-gateway/device/detail/video/cascade/service';
+import { useRequest } from 'ahooks';
 
 function Configuration() {
+
   const [data, setData] = useState({
     test7: 1
   })
+
+  const [isEdit, setIsEdit] = useState(false)
+
+  // const {data, run: DetailRun} = useRequest()
+
+  const form: any = useRef(null)
+
+
   return (
     <div className={styles.configuration}>
       <div className={styles.header}>
@@ -17,6 +28,7 @@ function Configuration() {
         <Form
           column={2}
           data={data}
+          ref={form}
           items={[
             {
               name: 'test1',
@@ -25,7 +37,7 @@ function Configuration() {
               options: {
                 rules: [{ required: true, message: '' }]
               },
-              render: () => <Input placeholder='请输入信令名称' />,
+              render: () => <Input placeholder='请输入信令名称' disabled={!isEdit} />,
               column: 2
             },
             {
@@ -35,7 +47,7 @@ function Configuration() {
               options: {
                 rules: [{ required: true, message: '' }]
               },
-              render: () => <Input placeholder='请输入SIP ID' />,
+              render: () => <Input placeholder='请输入SIP ID' disabled={!isEdit} />,
             },
             {
               name: 'test3',
@@ -44,7 +56,7 @@ function Configuration() {
               options: {
                 rules: [{ required: true, message: '' }]
               },
-              render: () => <Input placeholder='请输入SIP域' />,
+              render: () => <Input placeholder='请输入SIP域' disabled={!isEdit} />,
             },
             {
               name: 'test4',
@@ -53,7 +65,7 @@ function Configuration() {
               options: {
                 rules: [{ required: true, message: '' }]
               },
-              render: () => <IPInput />,
+              render: () => <IPInput disabled={!isEdit} />,
             },
             {
               name: 'test5',
@@ -62,7 +74,7 @@ function Configuration() {
               options: {
                 rules: [{ required: true, message: '' }]
               },
-              render: () => <Input placeholder='请输入接入密码' />,
+              render: () => <Input placeholder='请输入接入密码' disabled={!isEdit} />,
             },
             {
               name: 'test6',
@@ -71,7 +83,7 @@ function Configuration() {
               options: {
                 rules: [{ required: true, message: '' }]
               },
-              render: () => <Input placeholder='请输入端口' />,
+              render: () => <Input placeholder='请输入端口' disabled={!isEdit} />,
             },
             {
               name: 'test7',
@@ -80,7 +92,7 @@ function Configuration() {
               options: {
                 rules: [{ required: true, message: '' }]
               },
-              render: () => <Radio.Group buttonStyle="solid">
+              render: () => <Radio.Group buttonStyle="solid" disabled={!isEdit}>
                 <Radio.Button value={1}>GB2312</Radio.Button>
                 <Radio.Button value={2}>UTF-8</Radio.Button>
               </Radio.Group>,
@@ -88,7 +100,7 @@ function Configuration() {
             {
               name: 'test8',
               label: '说明',
-              render: () => <Input.TextArea placeholder='请输入至少5个字符' rows={3} />,
+              render: () => <Input.TextArea placeholder='请输入至少5个字符' rows={3} disabled={!isEdit} />,
               column: 2
             },
 
@@ -98,8 +110,20 @@ function Configuration() {
       </div>
 
       <div className={styles.tool}>
-        <Button style={{ marginRight: 12 }}>取消</Button>
-        <Button type="primary">保存</Button>
+        {
+          !isEdit ?
+            <Button type="primary" onClick={() => {
+              setIsEdit(true)
+            }}>编辑</Button> :
+            <>
+              <Button style={{ marginRight: 12 }} onClick={() => { setIsEdit(false) }}>取消</Button>
+              <Button type="primary" onClick={() => {
+                console.log(form);
+                setIsEdit(false)
+                form.current.validateFields()
+              }}>保存</Button>
+            </>
+        }
       </div>
     </div>
   );

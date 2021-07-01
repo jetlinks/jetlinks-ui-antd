@@ -5,10 +5,14 @@ import Right from './right';
 
 function Device() {
 
+  const [rowData, setRowData] = useState(null)
+
   return (
     <div className={styles.device}>
-      <Left />
-      <Right />
+      <Left onRowClick={setRowData} />
+      <Right
+        rowData={rowData}
+      />
     </div>
   );
 }

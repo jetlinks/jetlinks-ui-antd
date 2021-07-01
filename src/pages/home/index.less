@@ -21,11 +21,16 @@
 
 
 .address {
-    width: 100%;
     display: flex;
+    align-items: center;
     justify-content: space-between;
+    width: 100%;
     font-weight: bold;
     font-size: 16px;
+    >div {
+        display: flex;
+        align-items: center;
+    }
 }
 
 .address img {
@@ -33,22 +38,25 @@
 }
 
 .internet {
-    width: calc(66% - 15px);
+    flex-grow: 2;
+    width: 0;
     margin-right: 15px;
-    
 }
 
 .basis {
     flex-grow: 1;
+    width: 0;
 }
 
 .device {
-    width: calc(66% - 15px);
+    flex-grow: 2;
+    width: 0;
     margin-right: 15px;
 }
 
 .alert {
     flex-grow: 1;
+    width: 0;
 }
 
 .title {

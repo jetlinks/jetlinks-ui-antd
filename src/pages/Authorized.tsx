@@ -26,6 +26,7 @@ const AuthComponent: React.FC<AuthComponentProps> = ({
   const isLogin = currentUser && currentUser.name;
 
   const autz = localStorage.getItem('hsweb-autz');
+
   if (!autz) {
     dispatch!({
       type: 'user/fetchCurrent',

@@ -1,17 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Cards from '@/components/Cards';
 import { connect } from 'dva';
 import { ConnectState, Dispatch } from '@/models/connect';
-import { Button, Checkbox, message } from 'antd';
+import { Button, Checkbox, message, Modal } from 'antd';
 import CardItem from './card';
 import styles from './index.less';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 import Save from '@/pages/rule-engine/instance/save';
-import apis from '@/services';
 import encodeQueryParam from '@/utils/encodeParam';
 import AlarmSave from "@/pages/device/alarm/save/index";
 import SqlRuleSave from '@/pages/rule-engine/sqlRule/save/index';
 import SceneSave from '@/pages/rule-engine/scene/save';
+import { ruleList, ListData, remove } from '@/pages/rule-engine/instance/service';
+import { useRequest } from 'ahooks';
+import { ApiResponse } from '@/services/response';
+import apis from '@/services';
+import { EdgeModelState } from '@/models/edge';
 export interface RuleInstanceItem {
   createTime: number;
   description: string;
@@ -29,6 +33,7 @@ interface Props {
   dispatch: Dispatch;
   location: Location;
   loading: boolean;
+  edge: EdgeModelState
 }
 interface State {
   data: any;
@@ -41,11 +46,16 @@ interface State {
   detailData: any;
 }
 
-const ExtraTool = () => {
+interface ExtraToolProps {
+  onChange: (data: CheckboxValueType[]) => void
+}
+const ExtraTool = (props: ExtraToolProps) => {
 
-  const [options, setOptions] = useState([
-    { label: '规则实例', value: '1' },
-    { label: '场景联动', value: '2' },
+  const [options] = useState([
+    { label: '规则实例', value: 'node-red' },
+    // { label: '数据转发', value: 'sql_rule' },
+    // { label: '设备报警', value: 'device_alarm' },
+    { label: '场景联动', value: 'rule-scene' },
   ])
 
   const [checkAll, setCheckAll] = useState(false)
@@ -58,6 +68,9 @@ const ExtraTool = () => {
         setCheckAll(e.target.checked)
         setCheckList(e.target.checked ? options.map(item => item.value) : [])
         setIndeterminate(false)
+        if (props.onChange) {
+          props.onChange(e.target.checked ? options.map(item => item.value) : [])
+        }
       }}
       checked={checkAll}
       indeterminate={indeterminate}
@@ -69,6 +82,9 @@ const ExtraTool = () => {
         setCheckList(e)
         setCheckAll(e.length === options.length)
         setIndeterminate(!!e.length && e.length < options.length)
+        if (props.onChange) {
+          props.onChange(e)
+        }
       }}
     />
   </div>
@@ -80,10 +96,15 @@ const Setting: React.FC<Props> = props => {
 
   // const { result } = props.ruleInstance;
 
+  const { data, run } = useRequest<ApiResponse<ListData>>(ruleList, {
+    manual: true
+  })
+
   const initState: State = {
     data: [],
     searchParam: {
-      pageSize: 8, sorts: {
+      pageSize: 8,
+      sorts: {
         order: "descend",
         field: "createTime"
       }
@@ -107,103 +128,116 @@ const Setting: React.FC<Props> = props => {
   const [deviceAlarm, setDeviceAlarm] = useState(initState.deviceAlarm);
   const [deviceMateData, setDeviceMateData] = useState(initState.deviceMateData);
   const [sceneVisible, setSceneVisible] = useState(false);
+  const [deleteVisible, setDeleteVisible] = useState(false)
+  const [deleteId, setDeleteId] = useState('')
 
+  const { run: deleteRun } = useRequest<ApiResponse<any>>(remove, {
+    manual: true,
+    onSuccess(res) {
+      if (res.status === 200) {
+        message.success('删除成功');
+        setDeleteVisible(false)
+        handleSearch(searchParam);
+      }
+    }
+  })
 
   const handleSearch = (params?: any) => {
     setSearchParam(params);
-    dispatch({
-      type: 'ruleInstance/query',
-      payload: encodeQueryParam(params),
-    });
+    // dispatch({
+    //   type: 'ruleInstance/query',
+    //   payload: encodeQueryParam(params),
+    // });
+    if (props.edge) {
+      run(props.edge.id, encodeQueryParam(params))
+    }
   };
 
   useEffect(() => {
     handleSearch(searchParam);
   }, []);
 
-  const startInstance = (record: any) => {
-    if (record.modelType === "device_alarm") {
-      apis.ruleInstance
-        .startDeviceAlarm(record.id)
-        .then(response => {
-          if (response.status === 200) {
-            message.success('启动成功');
-            handleSearch(searchParam);
-          }
-        })
-        .catch(() => {
-        });
-    } else if (record.modelType === "rule-scene") {
-      apis.ruleInstance
-        .startScene(record.id)
-        .then(response => {
-          if (response.status === 200) {
-            message.success('启动成功');
-            handleSearch(searchParam);
-          }
-        })
-        .catch(() => {
-        });
-    } else {
-      apis.ruleInstance
-        .start(record.id)
-        .then(response => {
-          if (response.status === 200) {
-            message.success('启动成功');
-            handleSearch(searchParam);
-          }
-        })
-        .catch(() => {
-        });
+  const startInstance = useCallback((record: ListData) => {
+    if (props.edge) {
+      if (record.modelType === "device_alarm") {
+        apis.ruleInstance
+          .startDeviceAlarm(props.edge.id!, record.id)
+          .then(response => {
+            if (response.status === 200) {
+              message.success('启动成功');
+              handleSearch(searchParam);
+            }
+          })
+          .catch(() => {
+          });
+      } else if (record.modelType === "rule-scene") {
+        apis.ruleInstance
+          .startScene(props.edge.id!, record.id)
+          .then(response => {
+            if (response.status === 200) {
+              message.success('启动成功');
+              handleSearch(searchParam);
+            }
+          })
+          .catch(() => {
+          });
+      } else {
+        apis.ruleInstance
+          .start(props.edge.id!, { ruleInstanceId: record.id })
+          .then(response => {
+            if (response.status === 200) {
+              message.success('启动成功');
+              handleSearch(searchParam);
+            }
+          })
+          .catch(() => {
+          });
+      }
     }
-  };
+  }, [props.edge])
 
-  const stopInstance = (record: any) => {
-    if (record.modelType === "device_alarm") {
-      apis.ruleInstance
-        .stopDeviceAlarm(record.id)
-        .then(response => {
-          if (response.status === 200) {
-            message.success('停止成功');
-            handleSearch(searchParam);
-          }
-        })
-        .catch(() => {
-        });
-    } else if (record.modelType === "rule-scene") {
-      apis.ruleInstance
-        .stopScene(record.id)
-        .then(response => {
-          if (response.status === 200) {
-            message.success('启动成功');
-            handleSearch(searchParam);
-          }
-        })
-        .catch(() => {
-        });
-    } else {
-      apis.ruleInstance
-        .stop(record.id)
-        .then(response => {
-          if (response.status === 200) {
-            message.success('启动成功');
-            handleSearch(searchParam);
-          }
-        })
-        .catch(() => {
-        });
+  const stopInstance = useCallback((record: any) => {
+    if (props.edge) {
+      if (record.modelType === "device_alarm") {
+        apis.ruleInstance
+          .stopDeviceAlarm(props.edge.id!, record.id)
+          .then(response => {
+            if (response.status === 200) {
+              message.success('停止成功');
+              handleSearch(searchParam);
+            }
+          })
+          .catch(() => {
+          });
+      } else if (record.modelType === "rule-scene") {
+        apis.ruleInstance
+          .stopScene(props.edge.id!, record.id)
+          .then(response => {
+            if (response.status === 200) {
+              message.success('停止成功');
+              handleSearch(searchParam);
+            }
+          })
+          .catch(() => {
+          });
+      } else {
+        apis.ruleInstance
+          .stop(props.edge.id!, { ruleInstanceId: record.id })
+          .then(response => {
+            if (response.status === 200) {
+              message.success('停止成功');
+              handleSearch(searchParam);
+            }
+          })
+          .catch(() => {
+          });
+      }
     }
-  };
+  }, [props.edge])
 
   const handleDelete = (params: any) => {
-    dispatch({
-      type: 'ruleInstance/remove',
-      payload: params.id,
-      callback: () => {
-        message.success('删除成功');
-        handleSearch(searchParam);
-      },
-    });
+    setDeleteId(params.id)
+    setDeleteVisible(true)
   };
 
   const onChange = (page: number, pageSize: number) => {
@@ -224,21 +258,24 @@ const Setting: React.FC<Props> = props => {
     });
   };
 
-  const saveOrUpdate = (item: RuleInstanceItem) => {
-    apis.sqlRule.saveOrUpdate(item)
-      .then((response: any) => {
-        if (response.status === 200) {
-          message.success('保存成功');
-          setSaveSqlRuleVisible(false);
-          setCurrent({});
-          handleSearch(searchParam);
-        }
-      })
-      .catch(() => {
-      });
-  };
+  const saveOrUpdate = useCallback((item: RuleInstanceItem) => {
+    if (props.edge) {
 
-  const updateDeviceAlarm = (item: any) => {
+      apis.sqlRule.saveOrUpdate(props.edge.id!, item)
+        .then((response: any) => {
+          if (response.status === 200) {
+            message.success('保存成功');
+            setSaveSqlRuleVisible(false);
+            setCurrent({});
+            handleSearch(searchParam);
+          }
+        })
+        .catch(() => {
+        });
+    }
+  }, [props.edge])
+
+  const updateDeviceAlarm = useCallback((item: any) => {
     let data: any;
     setSaveAlarmVisible(true);
     try {
@@ -247,55 +284,60 @@ const Setting: React.FC<Props> = props => {
       message.error("数据结构异常");
       return;
     }
-    if (data.target === 'product') {
-      apis.deviceProdcut.info(data.targetId)
-        .then((response: any) => {
-          if (response.status === 200 && response.result) {
-            setDeviceMateData(response.result.metadata);
-            setDeviceAlarm(data);
-            setSaveAlarmVisible(true);
-          } else {
-            message.error("告警相关产品不存在。");
-          }
-        })
-        .catch(() => {
-        })
-    } else {
-      apis.deviceInstance.info(data.targetId)
-        .then((response: any) => {
-          if (response.status === 200 && response.result) {
-            setDeviceMateData(response.result.metadata);
-            setDeviceAlarm(data);
-            setSaveAlarmVisible(true);
-          } else {
-            message.error("告警相关设备不存在。");
-          }
-        })
-        .catch(() => {
-        })
+    if (props.edge) {
+      if (data.target === 'product') {
+        apis.deviceProdcut.info(props.edge.id!, data.targetId)
+          .then((response: any) => {
+            if (response.status === 200 && response.result) {
+              setDeviceMateData(response.result.metadata);
+              setDeviceAlarm(data);
+              setSaveAlarmVisible(true);
+            } else {
+              message.error("告警相关产品不存在。");
+            }
+          })
+          .catch(() => {
+          })
+      } else {
+        apis.deviceInstance.info(props.edge.id!, data.targetId)
+          .then((response: any) => {
+            if (response.status === 200 && response.result) {
+              setDeviceMateData(response.result.metadata);
+              setDeviceAlarm(data);
+              setSaveAlarmVisible(true);
+            } else {
+              message.error("告警相关设备不存在。");
+            }
+          })
+          .catch(() => {
+          })
+      }
     }
-  };
+  }, [props.edge])
 
-  const submitData = (data: any) => {
-    apis.deviceAlarm.saveProductAlarms(deviceAlarm.target, deviceAlarm.targetId, data)
-      .then((response: any) => {
-        if (response.status === 200) {
-          message.success('保存成功');
-          setSaveAlarmVisible(false);
-          handleSearch(searchParam);
-        }
-      })
-      .catch(() => {
-      });
-  };
+  const submitData = useCallback((data: any) => {
+    if (props.edge) {
+
+      apis.deviceAlarm.saveProductAlarms(props.edge.id!, data)
+        .then((response: any) => {
+          if (response.status === 200) {
+            message.success('保存成功');
+            setSaveAlarmVisible(false);
+            handleSearch(searchParam);
+          }
+        })
+        .catch(() => {
+        });
+    }
+  }, [props.edge])
 
   const onEdit = (item: any) => {
-    console.log(item);
+
     if (item.modelType === 'node-red') {
       window.open(`/jetlinks/rule-editor/index.html#flow/${item.id}`)
     } else if (item.modelType === 'sql_rule') {
-      setSaveSqlRuleVisible(true);
       try {
+        setSaveSqlRuleVisible(true);
         let data = JSON.parse(item.modelMeta);
         data['id'] = item.id;
         setCurrent(data);
@@ -311,7 +353,7 @@ const Setting: React.FC<Props> = props => {
   }
 
 
-  const onReboot = (item: any) => {
+  const onReboot = (item: ListData) => {
     startInstance(item);
   }
 
@@ -320,92 +362,69 @@ const Setting: React.FC<Props> = props => {
     setSaveVisible(true);
   }
 
-  console.log(detailData);
-
   return (
     <div style={{ height: '100%' }}>
-      <Cards
+      <Cards<ListData>
         title='规则引擎设置'
-        cardItemRender={(data: any) =>
+        cardItemRender={data =>
           <CardItem
+            id={props.edge.id}
             data={data}
             onCopy={() => { onCopy(data) }}
             onReboot={() => { onReboot(data) }}
             onDelete={() => { handleDelete(data) }}
             onEdit={() => { onEdit(data) }}
+            onStart={() => { startInstance(data) }}
+            onStop={() => { stopInstance(data) }}
           />}
-        toolNode={<Button type='primary'>新增规则引擎</Button>}
-        extraTool={<ExtraTool />}
+        toolNode={<Button type='primary' onClick={() => {
+          onCopy(undefined)
+        }}>新增规则引擎</Button>}
+        extraTool={<ExtraTool onChange={(str) => {
+          let obj = searchParam
+          if (str.length && str.length !== 4) {
+            obj = {
+              ...searchParam,
+              where: `modelType in (${str.join(',')})`
+            }
+          } else {
+            delete obj.where
+          }
+          handleSearch(obj)
+        }} />}
         bodyClassName={styles.body}
         pagination={{
           pageSize: 10,
           current: 1,
           total: 6
         }}
-        dataSource={[
-          {
-            name: 1,
-            id: '12153122',
-            modelType: 'node-red',
-            description: '这是描述',
-            status: 1
-          },
-          {
-            name: 2,
-            id: '12113121',
-            modelType: 'sql_rule',
-            description: '-',
-            status: 1
-          },
-          {
-            name: 3,
-            id: '12123222',
-            modelType: 'device_alarm',
-            description: '-',
-            status: 1
-          },
-          {
-            name: 4,
-            id: '12123133',
-            modelType: '规则实例',
-            description: '-',
-            status: 1
-          },
-          {
-            name: 5,
-            id: '12123144',
-            modelType: 'rule-scene',
-            description: '-',
-            status: 1
-          },
-          {
-            name: 6,
-            id: '12123155',
-            modelType: 'rule-scene',
-            description: '-',
-            status: 1
-          },
-        ]}
+        dataSource={data && data.result && data.result.length ? data.result[0].data : []}
         columns={[
           {
             title: '规则名称',
             dataIndex: 'name',
+            ellipsis: true,
+            width: 120
           },
           {
             title: '规则ID',
             dataIndex: 'id',
+            width: 200
           },
           {
             title: '规则类型',
             dataIndex: 'modelType',
+            width: 120
           },
           {
             title: '规则描述',
+            ellipsis: true,
             dataIndex: 'description',
           },
           {
             title: '状态',
             dataIndex: 'status',
+            width: 120
           },
           {
             title: '操作',
@@ -432,13 +451,19 @@ const Setting: React.FC<Props> = props => {
           }}
         />
       )}
+      {/* 新增复制 */}
       {saveVisible && (
         <Save
           data={ruleData}
+          id={props.edge ? props.edge.id : ''}
+          onOk={() => {
+            setSaveVisible(false);
+            handleSearch(searchParam);
+          }}
           close={() => {
             setSaveVisible(false);
             setRuleData({});
-            handleSearch(searchParam);
+
           }}
         />
       )}
@@ -480,11 +505,28 @@ const Setting: React.FC<Props> = props => {
         productName={deviceAlarm.alarmRule ? deviceAlarm.alarmRule.productName : ''}
         productId={deviceAlarm.alarmRule ? deviceAlarm.alarmRule.productId : ''}
       />}
+      <Modal
+        title={<span style={{ fontWeight: 600 }}>删除</span>}
+        visible={deleteVisible}
+        onOk={() => {
+          if (deleteId && props.edge) {
+            deleteRun(props.edge.id, deleteId)
+          }
+        }}
+        onCancel={() => {
+          setDeleteVisible(false)
+        }}
+        okText="确认"
+        cancelText="取消"
+      >
+        <span style={{ fontSize: 14 }}>确认删除该规则实例吗？</span>
+      </Modal>
     </div>
   );
 }
 
-export default connect(({ ruleInstance, loading }: ConnectState) => ({
+export default connect(({ ruleInstance, loading, edge }: ConnectState) => ({
   ruleInstance,
+  edge,
   loading: loading.models.ruleInstance,
 }))(Setting);

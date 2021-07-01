@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Radio, Icon } from "antd";
 import styles from './play.less';
-
+import Service from '@/pages/edge-gateway/device/detail/video/play/service';
 interface Props {
   data: any;
   close: (e: any) => void,
@@ -11,15 +11,8 @@ interface Props {
 }
 
 const Play = (props: Props) => {
-  // const service = new Service('media/channel-play');
+  const service = new Service('media/channel-play');
   const [playing, setPlaying] = useState<boolean>(false);
-  const [playUp, setPlayUp] = useState<boolean>(true);
-  const [playDown, setPlayDown] = useState<boolean>(true);
-  const [playLeft, setPlayLeft] = useState<boolean>(true);
-  const [playCenter, setPlayCenter] = useState<boolean>(false);
-  const [playRight, setPlayRight] = useState<boolean>(true);
-  const [playIn, setPlayIn] = useState<boolean>(true);
-  const [playOut, setPlayOut] = useState<boolean>(true);
   const playerBtnGroup = [{ name: 'FLV', value: "flv" }, { name: 'RTSP', value: "rtsp" }, { name: 'RTMP', value: "rtmp" }, { name: 'MP4', value: "mp4" }, { name: 'HLS', value: "hls" }, { name: 'RTC', value: "rtc" }];
   const [urlItem, setUrlItem] = useState({});
   const [url, setUrl] = useState('');
@@ -33,14 +26,18 @@ const Play = (props: Props) => {
   ])
   const [toolActive, setToolActive] = useState('')
   useEffect(() => {
-    setPlaying(true);
-    // service.getPlay(props.deviceId, {deviceId: props.data.deviceId, channelId: props.data.channelId}).subscribe(res => {
-    //     setUrl(res[0]['flv'])
-    //     setProtocol('flv')
-    //     setBloading(false);
-    //     setUrlItem(res[0]);
-    // });
-  }, []);
+    if (props.visible) {
+      setPlaying(true);
+      service.getPlay(props.deviceId, { deviceId: props.data.deviceId, channelId: props.data.channelId }).subscribe((res: any) => {
+        if (res.length) {
+          setUrl(res[0]['flv'])
+          setProtocol('flv')
+          setBloading(false);
+          setUrlItem(res[0]);
+        }
+      });
+    }
+  }, [props.visible]);
 
   const play = (value: string) => {
     setUrl(urlItem[value])
@@ -50,15 +47,15 @@ const Play = (props: Props) => {
   const controlStart = (direct: string) => {
     setToolActive(direct || '')
     if (playing) {
-      // service.getControlStart(props.deviceId, {deviceId: props.data.deviceId, channelId: props.data.channelId, direct: direct, speed: 90, stopDelaySeconds: 0}).subscribe(() => {
-      // })
+      service.getControlStart(props.deviceId, { deviceId: props.data.deviceId, channelId: props.data.channelId, direct: direct, speed: 90, stopDelaySeconds: 0 }).subscribe(() => {
+      })
     }
   }
   const controlStop = () => {
     setToolActive('')
     if (playing) {
-      // service.getControlStop(props.deviceId, {deviceId: props.data.deviceId, channelId: props.data.channelId}).subscribe(() => {
-      // })
+      service.getControlStop(props.deviceId, { deviceId: props.data.deviceId, channelId: props.data.channelId }).subscribe(() => {
+      })
     }
   }
 
@@ -66,15 +63,15 @@ const Play = (props: Props) => {
   const refresh = () => {
     setBloading(true);
     //关闭流
-    // service.getStop(props.deviceId, {deviceId: props.data.deviceId, channelId: props.data.channelId}).subscribe(() => {
-    //     //开启流
-    //     service.getPlay(props.deviceId, {deviceId: props.data.deviceId, channelId: props.data.channelId}).subscribe(res => {
-    //         setUrl(res[protocol]);
-    //         setProtocol(protocol);
-    //         setBloading(false);
-    //         setUrlItem(res);
-    //     });
-    // })
+    service.getStop(props.deviceId, { deviceId: props.data.deviceId, channelId: props.data.channelId }).subscribe(() => {
+      //开启流
+      service.getPlay(props.deviceId, { deviceId: props.data.deviceId, channelId: props.data.channelId }).subscribe((res: any) => {
+        setUrl(res[protocol]);
+        setProtocol(protocol);
+        setBloading(false);
+        setUrlItem(res);
+      });
+    })
   }
 
   const toolMouseDown = (type: string) => {

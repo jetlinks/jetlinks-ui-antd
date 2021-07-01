@@ -3,6 +3,7 @@ import { AnyAction } from 'redux';
 import { RouterTypes } from 'umi';
 import { GlobalModelState } from './global';
 import { UserModelState } from './user';
+import { EdgeModelType } from './edge'
 import { DefaultSettings as SettingModelState } from '../../config/defaultSettings';
 import { MenuDataItem } from '@ant-design/pro-layout';
 import { DeviceProductModelState } from '@/pages/device/product/model';
@@ -55,6 +56,7 @@ export interface Loading {
     global: boolean;
     menu: boolean;
     setting: boolean;
+    edge: boolean;
     user: boolean; // 当前登录用户
     users: boolean; // 用户管理
     role: boolean;
@@ -89,6 +91,7 @@ export interface ConnectState {
   global: GlobalModelState;
   loading: Loading;
   settings: SettingModelState;
+  edge: EdgeModelState;
   user: UserModelState;
   users: UsersModelState;
   role: RoleModelState;

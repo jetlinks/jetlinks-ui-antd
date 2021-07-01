@@ -5,6 +5,7 @@ import styles from './IPInput.less';
 interface IPInputProps {
   onChange?: (e: any) => void
   disabled?: boolean
+  readOnly?: boolean
   value?: string
 }
 
@@ -13,11 +14,20 @@ function IpInput(props: IPInputProps) {
 
   const [focus, setFocus] = useState(false)
 
+
   useEffect(() => {
     if (props.value) {
-      setArr(props.value.split('.').map(Number))
+      setArr(handleValue(props.value))
     }
   }, [props.value])
+
+  const handleValue = (value: string) => {
+    let _str = value
+    if (value.includes('http://')) {
+      _str = _str.replace('http://', '')
+    }
+    return _str.split('.').map(Number)
+  }
 
   const onChange = (value: number | undefined, type: number) => {
     arr[type] = value
@@ -47,7 +57,9 @@ function IpInput(props: IPInputProps) {
           placeholder='请输入'
           onChange={e => { onChange(e, index) }}
           onFocus={() => { setFocus(true) }}
-          onBlur={() => { setFocus(false) }} />
+          onBlur={() => { setFocus(false) }}
+          readOnly={props.readOnly}
+        />
       )
       // if (index !== arr.length - 1) {
       //   children.push(<div className={`${styles.point} ${props.disabled ? styles.disabled : ''}`}>.</div>)

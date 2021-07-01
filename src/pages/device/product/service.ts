@@ -1,6 +1,6 @@
 import request from "@/utils/request";
-import {DeviceProduct} from "./data";
-import {notification} from "antd";
+import { DeviceProduct } from "./data";
+import { notification } from "antd";
 
 export async function list(params: any) {
   return request(`/jetlinks/device-product/_query`, {
@@ -30,9 +30,10 @@ export async function update(params: DeviceProduct, productId?: string) {
   });
 }
 
-export async function info(id: string) {
-  return request(`/jetlinks/device-product/${id}`, {
-    method: 'GET',
+export async function info(deviceId: string, id: string) {
+  return request(`/jetlinks/edge/operations/${deviceId}/device-product-info/invoke`, {
+    method: 'POST',
+    data: { id }
   });
 }
 
@@ -174,7 +175,7 @@ export async function configMetadata(params: {
   typeId: string
 }) {
   return request(`/jetlinks/device/product/${params.productId}/config-metadata/${params.modelType}/${params.modelId}/${params.typeId}`,
-    {method: 'GET'})
+    { method: 'GET' })
 }
 
 //获取物模型格式
@@ -205,7 +206,7 @@ export async function getDefaultModel(id: string, transport: string) {
   return request(`/jetlinks/protocol/${id}/${transport}/metadata`, {
     method: 'get',
     errorHandler: (error) => {
-      const {response} = error;
+      const { response } = error;
       if (response.status === 404 || response.status === 500) {
         console.error(response)
       } else {

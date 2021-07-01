@@ -1,31 +1,118 @@
-import React, { useState, useCallback } from 'react';
-import { Modal, Input, Button, Select, Table, Badge } from 'antd';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
+import { Modal, Input, Button, Select, Table, message } from 'antd';
 import Form from '@/components/BaseForm';
+import StatusBadge from '@/components/StatusBadge';
+import Service from "@/pages/edge-gateway/device/detail/video/cascade/service";
 
 interface ChannelProps {
   visible?: boolean
-  data?: object
-  onOk?: (e: string[] | number[]) => void
+  cascadeId?: string
+  id?: string
+  onOk?: () => void
   onCancel?: (e: React.MouseEvent<HTMLElement>) => void
 }
 
 
 function ChannelModel(props: ChannelProps) {
-
+  const { cascadeId, id } = props;
   const { onOk, ...extra } = props
-  const [selectedRowKeys, setSelectedRowKeys] = useState<string[] | number[]>([])
-  const [data, setData] = useState([])
+  const [bindList, setBindList] = useState<string[]>([])
+  const [loading, setLoading] = useState<boolean>(false);
+  const [fixedParam] = useState({ terms: [{ column: 'id$cascade_channel', value: props.cascadeId }] });
+  const [searchParam, setSearchParam] = useState({
+    pageSize: 8
+  })
+  const [result, setResult] = useState<any[]>([]);
+  const service = new Service('media/channel');
+  const form: any = useRef(null)
 
   const OnOk = useCallback(() => {
     // 提交数据
     if (props.onOk) {
-      props.onOk(selectedRowKeys)
+      props.onOk()
     }
-  }, [selectedRowKeys])
+  }, [])
 
-  const onSelectChange = (e: string[] | number[]) => {
-    setSelectedRowKeys(e)
+  const _channel = (params?: any) => {
+    setLoading(true);
+    setSearchParam(params);
+    if (id) {
+      service.getChannelList(id, params).subscribe(
+        (res: any) => {
+          setResult(res.data);
+        },
+        () => {
+        },
+        () => setLoading(false));
+    }
+  };
+
+  useEffect(() => {
+    setLoading(true);
+    _channel(searchParam);
+    _bind_cascade_channel();
+  }, []);
+
+
+  const _bind_cascade_channel = () => {
+    if (id) {
+      service.getChannelList(id, fixedParam).subscribe(
+        (res) => {
+          let list: string[] = [];
+          res.data.map((item: any) => {
+            list.push(item.id);
+          });
+          setBindList(list);
+        },
+        () => {
+        },
+        () => setLoading(false));
+    }
+  };
+
+  const _bind = (channelId: any[]) => {
+    if (cascadeId && id) {
+      service._bind(id!, cascadeId, channelId).subscribe(
+        () => {
+          message.success('绑定成功');
+          _bind_cascade_channel();
+        },
+        () => {
+          message.error('绑定失败')
+        },
+        () => {
+        });
+    }
+  };
+
+  const _unbind = (channelId: string[]) => {
+    if (cascadeId && id) {
+      service._unbind(id, cascadeId, channelId).subscribe(
+        () => {
+          message.success('解绑成功');
+          _bind_cascade_channel();
+        },
+        () => {
+          message.error('解绑失败')
+        },
+        () => {
+        });
+    }
+  };
+
+  const AdvancedFilter = useCallback(async () => {
+    const data = await form.current.getFieldsValue()
+    const arrStr = Object.keys(data).filter((item: string) => data[item]).map((item: string) => `${item}${data[item]}`).join(' and ')
+    _channel(arrStr ? { where: arrStr } : undefined)
+  }, [])
+
+  const resetFields = () => {
+    form.current.resetFields()
+    _channel({
+      pageSize: 8
+    })
   }
+
 
   return (
     <Modal
@@ -37,28 +124,31 @@ function ChannelModel(props: ChannelProps) {
       <div>
         <Form
           column={2}
-          data={props.data}
+          ref={form}
           items={[
             {
-              name: 'test00',
+              name: 'gb28181ChannelId$LIKE',
               label: '通道国际编号',
               render: () => {
                 return <Input placeholder='请输入通道国际编号' />
               }
             },
             {
-              name: 'test22',
+              name: 'name$LIKE',
               label: '通道名称',
               render: () => {
                 return <Input placeholder='请输入通道名称' />
               }
             },
             {
-              name: 'test33',
+              name: 'status=',
               label: '在线状态',
+
               render: () => {
                 return <Select>
                   <Select.Option value=''>全部</Select.Option>
+                  <Select.Option value='online'>在线</Select.Option>
+                  <Select.Option value='offline'>离线</Select.Option>
                 </Select>
               }
             },
@@ -71,8 +161,8 @@ function ChannelModel(props: ChannelProps) {
                   alignItems: 'flex-end'
                 }}
               >
-                <Button style={{ marginRight: 8 }}>重置</Button>
-                <Button type='primary'>查询</Button>
+                <Button style={{ marginRight: 8 }} onClick={resetFields}>重置</Button>
+                <Button type='primary' onClick={AdvancedFilter}>查询</Button>
               </div>
             }
           ]}
@@ -81,15 +171,40 @@ function ChannelModel(props: ChannelProps) {
       <div>
         <h2>通道详情</h2>
         <Table
+          loading={loading}
           rowSelection={{
-            selectedRowKeys,
-            onChange: onSelectChange
+            selectedRowKeys: bindList,
+            onChange: (selectedRowKeys: any) => {
+              setBindList(selectedRowKeys);
+            },
+            onSelect: (record: any, selected: any) => {
+              setLoading(true);
+              let list: string[] = [record.id];
+              if (selected) {
+                _bind(list);
+              } else {
+                _unbind(list);
+              }
+            },
+            onSelectAll: (selected: any, selectedRows: any, changeRows: any) => {
+              setLoading(true);
+              let list: string[] = [];
+              changeRows.map((item: any) => {
+                list.push(item.id);
+              });
+              if (selected) {
+                _bind(list);
+              } else {
+                _unbind(list);
+              }
+            }
           }}
-          dataSource={data}
+          rowKey="id"
+          dataSource={result}
           columns={[
             {
               title: '通道国际编号',
-              dataIndex: 'no'
+              dataIndex: 'gb28181ChannelId'
             },
             {
               title: '通道名称',
@@ -97,19 +212,23 @@ function ChannelModel(props: ChannelProps) {
             },
             {
               title: '厂商',
-              dataIndex: 'cs'
+              dataIndex: 'manufacturer'
             },
             {
               title: '云台类型',
-              dataIndex: 'type'
+              dataIndex: 'ptzType',
+              width: 120,
+              render(value) {
+                return value.text
+              }
             },
             {
               title: '状态',
               dataIndex: 'status',
               render: value => {
-                return <Badge color="#f50" text="离线" />
+                return <StatusBadge value={value.value} />
               },
-              width: 60
+              width: 80
             },
           ]}
         />

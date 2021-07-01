@@ -37,7 +37,7 @@ const Add: React.FC<Props> = (props) => {
     statusMap.set('离线', 'error');
     statusMap.set('未激活', 'processing');
 
-    const columnsLeft = [
+    const columnsLeft: any = [
         {
             title: '序号',
             align: 'center',
@@ -104,7 +104,7 @@ const Add: React.FC<Props> = (props) => {
             ),
         },
     ];
-    const columnsRight = [
+    const columnsRight: any = [
         {
             title: '序号',
             align: 'center',
@@ -194,6 +194,7 @@ const Add: React.FC<Props> = (props) => {
         setDeviceParams(params);
         apis.edgeDevice.getDeviceList(id, params).then(res => {
             if (res.status === 200) {
+                console.log(res.result);
                 setLeftData(res.result[0]);
                 setSpin(false);
                 setDeviceLength(res.result[0].total)
@@ -263,7 +264,7 @@ const Add: React.FC<Props> = (props) => {
                             getDevice(props.device.id, deviceParams);
                         })
                     }
-                }else{
+                } else {
                     setSpin(false);
                 }
             })
@@ -278,7 +279,7 @@ const Add: React.FC<Props> = (props) => {
             pageSize: pagination.pageSize
         });
     };
-    
+
     const onRightTableChange = (
         pagination: PaginationConfig
     ) => {
@@ -316,7 +317,7 @@ const Add: React.FC<Props> = (props) => {
                         </div>
                     }>
                         <div className={styles.leftTable}>
-                            <Table rowKey="id"
+                            <Table<any> rowKey="id"
                                 rowClassName={backgroundStyle}
                                 onRow={record => {
                                     return {
@@ -346,9 +347,9 @@ const Add: React.FC<Props> = (props) => {
                 <div className={styles.right}>
                     <Card title="视频通道" bordered={false} extra={
                         <Button type="primary" onClick={() => {
-                            if(deviceId === ''){
+                            if (deviceId === '') {
                                 getChannel(props.device.id, channelParams);
-                            }else{
+                            } else {
                                 getChannel(props.device.id, {
                                     where: `deviceId = ${deviceId}`,
                                     pageSize: 8

@@ -1,19 +1,22 @@
-import { Form, Input, Modal, Select } from "antd";
+import { Form, Input, InputNumber, Modal, Select } from "antd";
 import { FormComponentProps } from "antd/es/form";
 import React, { useEffect, useState } from "react";
-
+import IPInput from '@/components/BaseForm/IPInput';
+import { MediaDeviceList } from "../../../service";
 interface Props extends FormComponentProps {
-    data: any;
+    data: MediaDeviceList;
     close: Function;
     save: Function;
     deviceId: string;
+    loading?: boolean
 }
 
 const AddDevice: React.FC<Props> = props => {
     const {
         form: { getFieldDecorator },
         form,
-        data
+        data,
+        loading
     } = props;
 
     const [dataType, setDataType] = useState("");
@@ -27,12 +30,20 @@ const AddDevice: React.FC<Props> = props => {
             case 'onvif':
                 return (
                     <>
+                        <Form.Item label="端口">
+                            {getFieldDecorator('port', {
+                                rules: [{ required: true }],
+                                initialValue: data?.port
+                            })(
+                                <InputNumber readOnly={!!data?.port} style={{ width: '100%' }} placeholder='请输入端口' />
+                            )}
+                        </Form.Item>
                         <Form.Item label="IP地址">
                             {getFieldDecorator('url', {
                                 rules: [{ required: true }],
                                 initialValue: data?.others?.url
                             })(
-                                <Input readOnly={!!data.id} />
+                                <IPInput readOnly={!!data?.others?.url} />
                             )}
                         </Form.Item>
                         <Form.Item key="username" label="用户名">
@@ -40,7 +51,7 @@ const AddDevice: React.FC<Props> = props => {
                                 // rules: [{ required: true }],
                                 initialValue: data?.others?.username
                             })(
-                                <Input />
+                                <Input placeholder='请输入用户名' />
                             )}
                         </Form.Item>
                         <Form.Item key="password" label="密码">
@@ -48,7 +59,7 @@ const AddDevice: React.FC<Props> = props => {
                                 // rules: [{ required: true }],
                                 initialValue: data?.others?.password
                             })(
-                                <Input type="password" />
+                                <Input type="password" placeholder='请输入密码' />
                             )}
                         </Form.Item>
                     </>
@@ -62,10 +73,12 @@ const AddDevice: React.FC<Props> = props => {
         <Modal
             title={data.id ? "编辑视频设备" : '添加视频设备'}
             visible
-            width="40vw"
+            width={520}
             onCancel={() => { props.close() }}
+            confirmLoading={loading}
             onOk={() => {
                 form.validateFields((err, fileValue) => {
+                    console.log(err, fileValue);
                     if (err) return;
                     if (!data.id) {
                         props.save({ ...fileValue });
@@ -73,6 +86,7 @@ const AddDevice: React.FC<Props> = props => {
                         let params = {
                             id: data.id,
                             url: data.others.url,
+                            port: data.port,
                             name: fileValue.name || data.name,
                             username: fileValue.username,
                             password: fileValue.password,
@@ -86,8 +100,6 @@ const AddDevice: React.FC<Props> = props => {
             }}
         >
             <Form
-                labelCol={{ span: 6 }}
-                wrapperCol={{ span: 18 }}
             >
                 {/* <Form.Item label="id">
                     {getFieldDecorator('id', {

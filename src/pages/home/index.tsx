@@ -4,10 +4,12 @@ import Internet from './components/internet';
 import Alert from './components/alert';
 import Basis from './components/basis';
 import Device from './components/device';
-import { Button } from 'antd'
+import { Button, Icon } from 'antd'
 import Echarts from './components/Echarts';
 import AddressModel from './components/model/addressSetting';
 import { getWebsocket } from '@/layouts/GlobalWebSocket';
+import { geteWayInfo } from '@/services/edge';
+import { useRequest } from 'ahooks';
 
 function Home() {
 
@@ -19,25 +21,27 @@ function Home() {
   const [memoryUse, setMemoryUse] = useState<number>(0);
   const [diskUse, setDiskUse] = useState<number>(0);
   const [cpuTemperature, setCpuTemperature] = useState<number>(0);
+  const [address, setAddress] = useState('192.168.1.1')
 
-  // useEffect(() => {
-  //   let propertiesWs = getWebsocket(
-  //     `instance-info-property-${deviceId}-${productId}`,
-  //     // `/edge-gateway-state/device/${productId}/properties/realTime`,
-  //     `/dashboard/device/${productId}/properties/realTime`,
-  //     {
-  //       deviceId: deviceId,
-  //       history: 0,
-  //     },
-  //   ).subscribe(resp => {
-  //     const {payload} = resp;
-  //     console.log(payload.value.property)
-  //     // console.log(resp)
-  //   })
-  //   return () => {
-  //     propertiesWs && propertiesWs.unsubscribe();
-  //   };
-  // }, []);
+  const { data } = useRequest(geteWayInfo('20212223'))
+  useEffect(() => {
+    //   let propertiesWs = getWebsocket(
+    //     `instance-info-property-${deviceId}-${productId}`,
+    //     // `/edge-gateway-state/device/${productId}/properties/realTime`,
+    //     `/dashboard/device/${productId}/properties/realTime`,
+    //     {
+    //       deviceId: deviceId,
+    //       history: 0,
+    //     },
+    //   ).subscribe(resp => {
+    //     const {payload} = resp;
+    //     console.log(payload.value.property)
+    //     // console.log(resp)
+    //   })
+    //   return () => {
+    //     propertiesWs && propertiesWs.unsubscribe();
+    //   };
+  }, []);
 
 
   const AddressVisibleEvent = () => {
@@ -49,9 +53,21 @@ function Home() {
       <div className={`${styles.layout} ${styles.item} ${styles.address}`}>
         <div>
           <img src={require('@/assets/home/setting.png')} alt="" />
-          立刻配置平台地址
+          {
+            address ?
+              <>
+                <span>
+                  {`平台地址：${address}`}
+                </span>
+                <span style={{ color: '#52C41A', paddingLeft: 10, fontWeight: 400 }}>
+                  <Icon type="check-circle" theme="filled" /> 连接成功
+                </span>
+              </>
+              :
+              '立刻配置平台地址'
+          }
         </div>
-        <Button type="primary" onClick={() => { setAddressVisible(true) }}>立即配置</Button>
+        <Button type="primary" onClick={() => { setAddressVisible(true) }}>{address ? '编辑' : '立即配置'}</Button>
       </div>
       <div className={styles.layout}>
         <Internet />

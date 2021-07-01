@@ -60,6 +60,12 @@ function InternetSetting(props: InternetSettingProps) {
       <div style={{ padding: 10, backgroundColor: '#fafafa', overflow: 'hidden' }}>
         <Form
           data={props.data}
+          onValuesChange={(changeValue, allValues) => {
+            console.log(changeValue, allValues);
+            if (changeValue.provider) {
+              // setDataType(changeValue.provider);
+            }
+          }}
           items={[
             {
               name: 'test3',
@@ -109,6 +115,7 @@ function InternetSetting(props: InternetSettingProps) {
               }
             }
           ]}
+
         />
       </div>
     </div>

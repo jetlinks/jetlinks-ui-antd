@@ -1,5 +1,68 @@
 import request from "@/utils/request";
 
+interface GetDeviceList {
+  where?: string
+  orderBy?: string
+  total?: string
+  paging?: string
+  firstPageIndex?: string
+  pageSize?: number
+}
+
+
+interface MediaDeviceListOther {
+  password: string
+  url: string
+  username: string
+  mediaProfiles: Array<MediaProfiles>
+}
+interface MediaProfiles {
+  id: string
+  name: string
+  token: string
+}
+
+type StatusType = {
+  text: string
+  value: string
+}
+export interface MediaDeviceList {
+  channelNumber: number
+  createTime: number
+  port: number
+  firmware: string
+  host: string
+  id: string
+  manufacturer: string
+  model: string
+  name: string
+  provider: string
+  others: MediaDeviceListOther
+  state: StatusType
+}
+
+type catalogType = {
+  text: string
+  value: string
+}
+
+type ptzType = {
+  text: string
+  value: string | number
+}
+export interface ChannelList extends Omit<MediaDeviceList, 'channelNumber' | 'createTime' | 'port' | 'firmware' | 'others' | 'host' | 'state'> {
+  catalogType: catalogType
+  channelId: string
+  deviceId: string
+  deviceName: string
+  features: []
+  gb28181ChannelId: string
+  gb28181ProxyStream: true
+  others: MediaProfiles
+  ptzType: ptzType
+  status: StatusType
+}
+
 export async function list(params: any) {
   return request(`/jetlinks/device/instance/_query`, {
     method: 'GET',
@@ -26,7 +89,7 @@ export async function update(params: any) {
 //   });
 // }
 export async function info(deviceId: string) {
-  return request(`/jetlinks/edge/operations/${deviceId}/detail`, {
+  return request(`/jetlinks/edge/operations/localDevice/detail`, {
     method: 'GET',
   });
 }
@@ -63,7 +126,7 @@ export async function getOnvifStream(id: string) {
   });
 }
 
-export async function getDeviceList(id: string, params: any) {
+export async function getDeviceList(id: string, params: GetDeviceList = {}) {
   return request(`/jetlinks/edge/operations/${id}/media-device-list/invoke`, {
     method: 'POST',
     data: params

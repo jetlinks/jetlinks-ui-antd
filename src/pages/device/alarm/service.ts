@@ -1,13 +1,28 @@
 import request from '@/utils/request';
 
+interface SaveAlarmsRequest {
+  /**	Id */
+  id: string
+  /**	名称 */
+  name: string
+  /**	说明 */
+  description: string
+  /**	device或者product */
+  target: string
+  /**	deviceId或者productId */
+  targetId: string
+  /**	规则配置 */
+  alarmRule: {}
+}
+
 export async function getProductAlarms(target: string, targetId: string | undefined) {
   return request(`/jetlinks/device/alarm/${target}/${targetId}`, {
     method: 'GET',
   });
 }
 
-export async function saveProductAlarms(target: string, targetId: string | undefined, data: any) {
-  return request(`/jetlinks/device/alarm/${target}/${targetId}`, {
+export async function saveProductAlarms(deviceId: string, data: SaveAlarmsRequest) {
+  return request(`/jetlinks/edge/operations/${deviceId}/rule-engine-alarm-save/invoke`, {
     method: 'PATCH',
     data,
   });

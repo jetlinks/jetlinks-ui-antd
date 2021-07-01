@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import logo from '../assets/logo.svg';
 import { BasicLayoutProps } from './BasicLayout';
 import { connect, useHistory } from 'dva';
@@ -6,18 +6,22 @@ import { Menu, Button, Badge, Spin } from 'antd'
 import { CurrentUser } from '@/models/user';
 import { ConnectProps, ConnectState } from '@/models/connect';
 import styles from './TopLayout.less';
-import Service from '@/pages/account/settings/service';
 import { ClickParam } from 'antd/es/menu';
 import { HeaderViewProps } from '@ant-design/pro-layout/lib/Header';
-
+import { EdgeModelState } from '@/models/edge';
+import StatusBadge from '@/components/StatusBadge';
+import { getEdgeState } from '@/services/edge';
+import { getWebsocket } from './GlobalWebSocket';
 interface TopLayoutProps extends Omit<HeaderViewProps, 'logo'>, BasicLayoutProps {
   currentUser?: CurrentUser;
+  edge: EdgeModelState
 }
 
 function TopLayout(props: TopLayoutProps) {
-  const { currentUser, dispatch } = props;
-  const service = new Service('user/detail');
+  const { currentUser, edge, dispatch } = props;
+  // const service = new Service('user/detail');
   const [current, setCurrent] = useState('')
+  const [wsTask, setWsTask] = useState<any>(null)
   const history = useHistory()
 
   const fetchData = () => {
@@ -33,15 +37,62 @@ function TopLayout(props: TopLayoutProps) {
     history.push(param.key)
   }
 
-  useEffect(() => {
-    const u = service.get().subscribe(resp => {
-      localStorage.setItem('user-detail', JSON.stringify(resp));
-      // localStorage.setItem('tenants-admin', resp.tenants[0]?.adminMember);
+  const getDeviceInfo = () => {
+    if (dispatch) {
+      dispatch({
+        type: 'edge/getID',
+      });
+    }
+  }
+
+  const getUserInfo = () => {
+    dispatch({
+      type: 'user/fetchCurrent',
     });
+  }
+
+  const getEdgeState = useCallback((payload: string) => {
+    let taskPush = getWebsocket(
+      `firmware-push-upgrade-by-${props.edge || 'edge'}`,
+      `/edge/operations/${payload}/state`,
+      {
+        deviceId: payload,
+      },
+    ).subscribe((res) => {
+      console.log(res);
+      // taskStatus.processing = (taskStatus.processing + 1);
+      // taskStatus.waiting = (taskStatus.waiting - 1);
+      // setTaskStatus({...taskStatus});
+    });
+    setWsTask(taskPush)
+  }, [props.edge])
+
+
+  useEffect(() => {
+    getUserInfo()
+    getDeviceInfo()
     return () => {
-      u.unsubscribe();
-    };
-  }, [currentUser]);
+      if (wsTask) {
+        wsTask.unsubscribe()
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    if (edge.id) {
+      getEdgeState(edge.id)
+    }
+  }, [edge.id])
+
+  // useEffect(() => {
+  //   const u = service.get().subscribe(resp => {
+  //     localStorage.setItem('user-detail', JSON.stringify(resp));
+  //     // localStorage.setItem('tenants-admin', resp.tenants[0]?.adminMember);
+  //   });
+  //   return () => {
+  //     u.unsubscribe();
+  //   };
+  // }, [currentUser]);
 
   useEffect(() => {
     if (props.location?.pathname) {
@@ -60,7 +111,8 @@ function TopLayout(props: TopLayoutProps) {
         <img className={styles.things} src={require('@/assets/things.png')} alt="" />
       </div>
       <div className={styles.status}>
-        <Badge style={{ color: '#fff' }} color='green' text='在线' />
+        {/* <Badge style={{ color: '#fff' }} color='green' text='在线' /> */}
+        <StatusBadge value={edge?.online} textColor='#fff' />
       </div>
     </div>
     <div className={styles.center}>
@@ -94,6 +146,9 @@ function TopLayout(props: TopLayoutProps) {
   </div>
 }
 
-export default connect(({ user }: ConnectState) => ({
-  currentUser: user.currentUser,
-}))(TopLayout)
+export default connect(({ user, edge }: ConnectState) => {
+  return {
+    currentUser: user.currentUser,
+    edge: edge,
+  }
+})(TopLayout)

@@ -22,9 +22,10 @@ export async function count(params: any) {
   });
 }
 
-export async function info(id: string) {
-  return request(`/jetlinks/device/instance/${id}/detail`, {
-    method: 'GET',
+export async function info(deviceId: string, id: string) {
+  return request(`/jetlinks/edge/operations/${deviceId}/device-instance-info/invoke`, {
+    method: 'POST',
+    data: { id }
   });
 }
 

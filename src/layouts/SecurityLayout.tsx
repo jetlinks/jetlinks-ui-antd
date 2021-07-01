@@ -28,11 +28,11 @@ const SecurityLayout = (props: SecurityLayoutProps) => {
   });
   useEffect(() => {
     setIsReady(true);
-    if (dispatch) {
-      dispatch({
-        type: 'user/fetchCurrent',
-      });
-    }
+    // if (dispatch) {
+    //   dispatch({
+    //     type: 'user/fetchCurrent',
+    //   });
+    // }
   }, []);
 
   /**

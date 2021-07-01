@@ -52,6 +52,7 @@ const UserModel: UserModelType = {
       });
     },
     *fetchCurrent(_, { call, put }) {
+
       const response = yield call(queryCurrent);
       if (response) {
         // 取出login 后缓存的数据

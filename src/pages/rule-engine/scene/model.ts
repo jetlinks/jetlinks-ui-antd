@@ -43,7 +43,7 @@ const RuleInstanceModel: RuleInstanceModelType = {
             callback(response);
         },
         *remove({ payload, callback }, { call, put }) {
-            const response: SimpleResponse = yield call(apis.ruleInstance.remove, payload);
+            const response: SimpleResponse = yield call(apis.ruleInstance.remove, payload.id, payload.ruleInstanceId);
             callback(response);
         }
     },

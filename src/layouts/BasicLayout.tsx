@@ -142,11 +142,13 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
   const [mark, setMark] = useState<string | boolean>(localStorage.getItem('hide_menu') || "false");
   const hide_menu = props.location?.query?.hide_menu;
   useEffect(() => {
-    if (dispatch) {
-      dispatch({
-        type: 'user/fetchCurrent',
-      });
-    }
+    // if (dispatch) {
+    //   console.log('BasicLayout');
+    //   dispatch({
+    //     type: 'user/fetchCurrent',
+    //   });
+    // }
+
     if (hide_menu) {
       setMark(hide_menu);
       localStorage.setItem('hide_menu', hide_menu);
@@ -167,11 +169,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
   };
 
 
-  return mark === 'true' ? (
-    <Authorized authority={authorized!.authority} noMatch={noMatch}>
-      {children}
-    </Authorized>
-  ) : (
+  return mark === 'true' ? children : (
     <ProLayout
       logo={logo}
       title='Jetlinks-Edge'

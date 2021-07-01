@@ -5,12 +5,12 @@ import styles from './index.less';
 import { PaginationProps } from 'antd/lib/pagination';
 import { isFunction } from 'lodash';
 
-interface CardsProps {
+interface CardsProps<T> {
   title: string | (() => React.ReactDOM | JSX.Element)
   columns: ColumnProps<any>[]
   dataSource: any[]
   pagination: PaginationProps
-  cardItemRender: (data: any) => JSX.Element
+  cardItemRender: (data: T) => JSX.Element
   carItemClassName?: string
   bodyClassName?: string
   col?: number
@@ -18,9 +18,9 @@ interface CardsProps {
   extraTool?: React.ReactNode
 }
 
-function Cards(props: CardsProps) {
+function Cards<T>(props: CardsProps<T>) {
   const [type, setType] = useState('card')
-
+  const { dataSource = [] } = props
   return (
     <div className={styles.cards}>
       <div className={styles.header}>
@@ -51,7 +51,7 @@ function Cards(props: CardsProps) {
               <div className={styles.cards_items}>
                 <Row gutter={[24, 16]}>
                   {
-                    props.dataSource.map((item, index) =>
+                    dataSource.map((item, index) =>
                       <Col
                         className={`${props.carItemClassName || ''}`}
                         span={24 / (props.col || 4)}
@@ -68,9 +68,9 @@ function Cards(props: CardsProps) {
                 <Pagination {...props.pagination} />
               </div>
             </> :
-            <Table
+            <Table<T>
               columns={props.columns}
-              dataSource={props.dataSource}
+              dataSource={dataSource}
               pagination={props.pagination}
               bodyStyle={{ backgroundColor: '#fff' }}
             />

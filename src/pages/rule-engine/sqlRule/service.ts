@@ -8,8 +8,8 @@ export async function list(params?: any) {
   });
 }
 
-export async function saveOrUpdate(params: RuleInstanceItem) {
-  return request(`/jetlinks/rule-engine/instance/`, {
+export async function saveOrUpdate(deviceId: string, params: RuleInstanceItem) {
+  return request(`/jetlinks/edge/operations/${deviceId}/rule-instance-save/invoke`, {
     method: 'PATCH',
     data: params,
   });
@@ -34,7 +34,7 @@ export async function _stop(id: string) {
   });
 }
 
-export async function remove(id:string) {
+export async function remove(id: string) {
   return request(`/jetlinks/rule-engine/instance/${id}`, {
     method: 'DELETE',
   });

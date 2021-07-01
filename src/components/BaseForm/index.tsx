@@ -13,6 +13,7 @@ interface ItemProps extends FormItemProps {
   column?: number
   options?: GetFieldDecoratorOptions
   title?: string | React.ReactNode
+
 }
 
 type Items = Array<ItemProps>
@@ -21,6 +22,7 @@ interface BaseFormProps extends FormComponentProps, Omit<FormProps, 'form'> {
   items: Items
   data?: any
   column?: number
+  onValuesChange?: (changeValue: any, allValues: any) => void
 }
 
 class BaseForm extends PureComponent<BaseFormProps> {
@@ -30,9 +32,14 @@ class BaseForm extends PureComponent<BaseFormProps> {
     const { getFieldDecorator } = form
     return items.map((item, index) => {
       //
-      const { name, render, options, title, ...extra } = item
+      let { name, render, options, title, ...extra } = item
       const _column = title ? 24 : (24 / column) * (item.column || 1)
-
+      if (props.data && name) {
+        options = {
+          ...options,
+          initialValue: eval(`props.data.${name}`)
+        }
+      }
       return <Col span={_column} key={`form_col_${name || index}`} style={{ padding: '0 12px' }}>
         {
           !title ?
@@ -68,20 +75,25 @@ class BaseForm extends PureComponent<BaseFormProps> {
 
 const WrappedBaseForm = Form.create<BaseFormProps>({
   name: 'base_form',
-  mapPropsToFields(props) {
-    const { data, items } = props
-    let _data = {}
-    if (data) {
-      items.forEach(item => {
-        if (item.name) {
-          _data[item.name] =
-            Form.createFormField({
-              value: data[item.name]
-            })
-        }
-      })
+  // mapPropsToFields(props) {
+  //   const { data, items } = props
+  //   let _data = {}
+
+  //   items.forEach(item => {
+  //     if (item.name) {
+  //       _data[item.name] =
+  //         Form.createFormField({
+  //           value: data ? data[item.name] : undefined
+  //         })
+  //     }
+  //   })
+  //   return _data
+
+  // },
+  onValuesChange(props, changeValues, allValues) {
+    if (props.onValuesChange) {
+      props.onValuesChange(changeValues, allValues)
     }
-    return _data
   }
 })(BaseForm);
 
