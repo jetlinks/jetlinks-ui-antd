@@ -1,247 +1,397 @@
-import AutoHide from '@/pages/analysis/components/Hide/autoHide';
-import { Avatar, Badge, Card, Icon, List, Modal, Switch, Table, Tooltip } from 'antd';
+import { Avatar, Badge, Card, Form, Icon, message, Modal, Popconfirm, Row, Select, Spin, Tooltip } from 'antd';
 import Button from 'antd/es/button';
 import React from 'react';
 import Img from '../img/产品.png';
 import { useState } from 'react';
-import styles from '../material/index.less';
+import styles from './index.less';
 import Input from 'antd/es/input';
-import SearchForm from '@/components/SearchForm';
-import Edit from './edit';
+import Save from './save';
+import Detail from './detail';
+import Cards from '@/components/Cards';
+import Service from './service';
+import { useEffect } from 'react';
+import encodeQueryParam from '@/utils/encodeParam';
+import moment from 'moment';
+import { FormComponentProps } from 'antd/lib/form';
+import Col from 'antd/es/grid/col';
 
-function Device() {
+interface Props extends FormComponentProps { }
 
-  const [active, setActive] = useState<boolean>(true);
+function Device(props: Props) {
+
+  const deviceId = 'edge-pi';
+  const service = new Service('/network/material');
+  const { form: { getFieldDecorator }, form } = props;
   const [delVisible, setDelVisible] = useState<boolean>(false);
   const [editVisible, setEditVisible] = useState<boolean>(false);
+  const [detailVisible, setDetailVisible] = useState<boolean>(false);
   const [currentData, setCurrentData] = useState<any>({});
   const [searchVisible, setSearchVisible] = useState<boolean>(false);
-  const [dataList, setDataList] = useState<any>({});
+  const [loading, setLoading] = useState<boolean>(false);
+  const [productList, setProductList] = useState<any[]>([]);
+  const [searchParam, setSearchParam] = useState<any>({
+    pageSize: 10
+  });
+  const [searchValue, setSearchValue] = useState<string>("");
+  const [dataList, setDataList] = useState<any>({
+    data: [],
+    pageIndex: 0,
+    pageSize: 8,
+    total: 0
+  });
 
-  const iconStyles = {
-    color: '#1890FF',
-    border: '1px solid #1890FF'
-  }
-  const renderTitle = (item: any) => {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ width: '95%', fontWeight: 600, fontSize: '16px' }}><AutoHide title={item.name} /></div>
-        <div><Switch defaultChecked={item.state?.value === 'enabled'} onChange={(checked: boolean) => {
-          console.log(checked)
-        }} /></div>
-      </div>
+  const statusMap = new Map();
+  statusMap.set('在线', 'success');
+  statusMap.set('离线', 'error');
+  statusMap.set('未激活', 'processing');
+  statusMap.set('online', 'success');
+  statusMap.set('offline', 'error');
+  statusMap.set('notActive', 'processing');
+
+  const handleSearch = (params: any) => {
+    setSearchParam(params);
+    setLoading(true);
+    service.getDeviceList(deviceId, encodeQueryParam(params)).subscribe(
+      (res) => {
+        setDataList(res)
+      },
+      () => {
+      },
+      () => setLoading(false))
+  };
+
+  const getProductList = () => {
+    service.getDeviceGatewayList(deviceId, { paging: false }).subscribe(
+      (res) => {
+        setProductList(res);
+      }
     )
   }
-  const columns = [
-    {
-      title: '产品名称',
-      dataIndex: 'productName',
-      ellipsis: true,
-    },
-    {
-      title: '网关类型',
-      dataIndex: 'gatewayProvider',
-      ellipsis: true,
-    },
-    {
-      title: '说明',
-      dataIndex: 'name',
-      ellipsis: true,
-    },
-    {
-      title: '状态',
-      dataIndex: 'state',
-      width: '120px',
-      // render: record =>
-      //   record ? <Badge status={statusMap.get(record.text)} text={record.text} /> : '',
-    },
-    {
-      title: '接入设备树',
-      dataIndex: 'registryTime',
-      width: '200px',
-    },
-    {
-      title: '操作',
-      dataIndex: 'registryTime',
-      width: '200px',
-    }
-  ];
 
-  return (
-    <div>
-      <div className={styles.header}>
-        <div className={styles.title}>设备管理</div>
-        <div className={styles.right}>
-          <Input.Search style={{ marginRight: '16px' }} />
-          <Button style={{ marginRight: '16px' }}>批量导入设备</Button>
-          <Button type="primary" style={{ marginRight: '16px' }} onClick={() => {
-            setEditVisible(true);
-            setCurrentData({});
-          }}>新增设备</Button>
-          <div className={styles.iconBox}>
-            <div className={styles.icon} style={active ? iconStyles : { borderRight: 'none' }} onClick={() => {
-              setActive(true);
-            }}><Icon type="unordered-list" /></div>
-            <div className={styles.icon} style={!active ? iconStyles : { borderLeft: 'none' }} onClick={() => {
-              setActive(false);
-            }}><Icon type="appstore" /></div>
-          </div>
-        </div>
-      </div>
-      <div style={{ backgroundColor: 'white', padding: '20px', marginBottom: '16px' }}>
-        <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
-          <div>
-            <span style={{ fontWeight: 600, fontSize: '14px' }}>总设备数： 20</span>
-            <span></span>
-            <span style={{ marginLeft: '20px', color: 'rgba(0, 0, 0, 0.45)' }}><Badge color={'green'} text="在线数" />1</span>
-            <span style={{ marginLeft: '20px', color: 'rgba(0, 0, 0, 0.45)' }}><Badge color={'red'} text="离线数" />1</span>
-          </div>
-          <div><a onClick={() => {
-            setSearchVisible(!searchVisible)
-          }}>高级筛选<Icon type="up" /></a></div>
-        </div>
-        {
-          searchVisible && (
-            <div>
-              <SearchForm
-                formItems={[
-                  {
-                    label: '设备ID',
-                    key: 'deviceId$LIKE',
-                    type: 'string',
-                  },
-                  {
-                    label: '产品名称',
-                    key: 'name$IN',
-                    type: 'list',
-                    props: {
-                      data: [
-                        { id: 'stopped', name: '已停止' },
-                        { id: 'started', name: '运行中' },
-                        { id: 'disable', name: '已禁用' },
-                      ]
-                    }
-                  },
-                  {
-                    label: '设备状态',
-                    key: 'state$IN',
-                    type: 'list',
-                    props: {
-                      data: [
-                        { id: 'stopped', name: '已停止' },
-                        { id: 'started', name: '运行中' },
-                        { id: 'disable', name: '已禁用' },
-                      ]
-                    }
-                  },
-                ]}
-                search={(params: any) => {
+  const deploy = (id: string) => {
+    service.deployDevice(deviceId, id).subscribe(
+      () => {
+        handleSearch(searchParam);
+        message.success('操作成功！');
+      },
+      () => {
+      },
+      () => setLoading(false))
+  };
 
-                }}
-              />
-            </div>
-          )
+  const undeploy = (id: string) => {
+    service.undeployDevice(deviceId, id).subscribe(
+      () => {
+        handleSearch(searchParam);
+        message.success('操作成功！');
+      },
+      () => {
+      },
+      () => setLoading(false))
+  };
+
+  useEffect(() => {
+    handleSearch({ pageSize: 8 });
+    getProductList();
+  }, []);
+
+  const saveData = (params?: any) => {
+    if (currentData.id) {
+      service.saveDevice(deviceId, params).subscribe(
+        (res) => {
+          if (res.status === 200) {
+            message.success('操作成功！');
+            handleSearch({ pageSize: 8 });
+          }
+        });
+    } else {
+      service.insertDevice(deviceId, params).subscribe(
+        (res) => {
+          if (res.status === 200) {
+            message.success('操作成功！');
+            handleSearch({ pageSize: 8 });
+          }
         }
-      </div>
-      <div>
-        {active ? <div>
-          <List<any>
-            rowKey="id"
-            grid={{ gutter: 24, xl: 4, lg: 3, md: 2, sm: 2, xs: 1 }}
-            dataSource={dataList.data || []}
+      );
+    }
+  };
+  return (
+    <div style={{ width: '100%' }}>
+      <Spin spinning={loading}>
+        {!detailVisible ?
+          <Cards
+            title='设备管理'
+            cardItemRender={(item: any) => <div style={{ height: 200, backgroundColor: '#fff' }}>
+              <Card hoverable bodyStyle={{ paddingBottom: 20 }}
+                actions={[
+                  <a onClick={() => {
+                    setCurrentData(item);
+                    setEditVisible(true);
+                  }}>编辑</a>,
+                  <a onClick={() => {
+                    setCurrentData(item);
+                    setDetailVisible(true);
+                  }}>查看</a>,
+                  <Popconfirm
+                    title={`确认${item.state?.value === 'notActive' ? '启动' : '禁用'}吗？`}
+                    onConfirm={() => {
+                      if (item.state?.value === 'notActive') {
+                        deploy(item.id);
+                      } else {
+                        undeploy(item.id);
+                      }
+                    }}>
+                    <a>{item.state?.value === 'notActive' ? '启动' : '禁用'}</a>
+                  </Popconfirm>
+                ]}
+              >
+                <Card.Meta
+                  avatar={<Avatar size={60} src={Img} />}
+                  title={item.name}
+                  description={`ID：${item.id}`}
+                />
+                <div className={styles.content}>
+                  <div className={styles.item}>
+                    <p className={styles.itemTitle}>状态</p>
+                    <p className={styles.itemText}><Badge status={statusMap.get(item?.state?.value)} text={item?.state?.text} /></p>
+                  </div>
+                  <div className={styles.item}>
+                    <p className={styles.itemTitle}>产品名称</p>
+                    <p className={styles.itemText}>{item.productName}</p>
+                  </div>
+                </div>
+                <div style={{ color: 'rgba(0, 0, 0, 0.45)', fontSize: '12px', width: '100%', display: 'flex', justifyContent: 'center' }}>注册时间：2021-05-06 17:20:05</div>
+              </Card>
+            </div>}
+            toolNode={
+              <div style={{ display: 'flex' }}>
+                <Input.Search style={{ marginRight: '16px' }} allowClear placeholder="请输入设备名称" onSearch={(value: string) => {
+                  setSearchValue(value);
+                  let list = searchParam.where ? searchParam.where.split(' and ') : [];
+                  let where: string[] = list.filter((item: string) => {
+                    return item.includes('=');
+                  });
+                  where.push(`name like '%${value}%'`);
+                  handleSearch({
+                    where: where.join(' and '),
+                    pageSize: 8
+                  });
+                }} />
+                <Button style={{ marginRight: '16px' }} onClick={() => {
+                  message.error('此功能还在开发中。。。')
+                }}>批量导入设备</Button>
+                <Button type="primary" style={{ marginRight: '16px' }} onClick={() => {
+                  setEditVisible(true);
+                  setCurrentData({});
+                }}>新增设备</Button>
+              </div>
+            }
             pagination={{
-              // current: dataList.pageIndex + 1,
-              // total: dataList.total,
-              // pageSize: dataList.pageSize,
-              // // onChange,
-              // showQuickJumper: true,
-              // showSizeChanger: true,
-              // hideOnSinglePage: true,
-              // pageSizeOptions: ['8', '16', '40', '80'],
-              // style: { marginTop: -20 },
-              // showTotal: (total: number) =>
-              //     `共 ${total} 条记录 第  ${dataList.pageIndex + 1}/${Math.ceil(
-              //         dataList.total / dataList.pageSize,
-              //     )}页`
+              current: dataList?.pageIndex + 1,
+              total: dataList?.total,
+              pageSize: dataList?.pageSize,
+              onChange: (page: number, pageSize?: number) => {
+                handleSearch({
+                  ...searchParam,
+                  pageIndex: page - 1,
+                  pageSize: pageSize || searchParam.pageSize
+                })
+              },
+              onShowSizeChange: (current, size) => {
+                handleSearch({
+                  ...searchParam,
+                  pageIndex: current,
+                  pageSize: size || searchParam.pageSize
+                })
+              },
+              showQuickJumper: true,
+              showSizeChanger: true,
+              pageSizeOptions: ['8', '16', '40', '80'],
+              showTotal: (total: number) =>
+                `共 ${total} 条记录 第  ${dataList?.pageIndex + 1}/${Math.ceil(
+                  dataList?.total / dataList?.pageSize,
+                )}页`
             }}
-            renderItem={item => {
-              if (item && item.id) {
-                return (
-                  <List.Item key={item.id}>
-                    <Card hoverable bodyStyle={{ paddingBottom: 20 }}
-                      actions={[
-                        <Tooltip placement="bottom" title="编辑">
-                          <a onClick={() => {
-                            setCurrentData(item);
-                            setEditVisible(true);
-                          }}>编辑</a>
-                        </Tooltip>,
-                        <Tooltip placement="bottom" title="查看">
-                          <a onClick={() => {
-
-                          }}>查看</a>
-                        </Tooltip>,
-                        <Tooltip placement="bottom" title="删除">
-                          <a onClick={() => {
-                            setDelVisible(true);
-                          }}>删除</a>
-                        </Tooltip>
-                      ]}
-                    >
-                      <Card.Meta
-                        avatar={<Avatar size={60} src={Img} />}
-                        title={renderTitle(item)}
-                        description={`ID：${item.id}`}
-                      />
-                      <div className={styles.content}>
-                        <div className={styles.item}>
-                          <p className={styles.itemTitle}>状态</p>
-                          <p className={styles.itemText}><Badge color={'red'} text="离线" /></p>
-                        </div>
-                        <div className={styles.item}>
-                          <p className={styles.itemTitle}>产品名称</p>
-                          <p className={styles.itemText}>树莓派产品</p>
-                        </div>
-                      </div>
-                      <div style={{ color: 'rgba(0, 0, 0, 0.45)', fontSize: '12px', width: '100%', display: 'flex', justifyContent: 'center' }}>注册时间：2021-05-06 17:20:05</div>
-                    </Card>
-                  </List.Item>
-                );
-              }
-              return;
-            }}
-          />
-        </div> : <div>
-          <Table
-            columns={columns}
+            extraTool={
+              <div style={{ backgroundColor: 'white', padding: '20px', marginBottom: '16px' }}>
+                <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
+                  <div>
+                    <span style={{ fontWeight: 600, fontSize: '14px' }}>总设备数： 20</span>
+                    <span></span>
+                    <span style={{ marginLeft: '20px', color: 'rgba(0, 0, 0, 0.45)' }}><Badge color={'green'} text="在线数" />1</span>
+                    <span style={{ marginLeft: '20px', color: 'rgba(0, 0, 0, 0.45)' }}><Badge color={'red'} text="离线数" />1</span>
+                  </div>
+                  <div onClick={() => { setSearchVisible(!searchVisible) }} style={{ color: '#1890FF', cursor: 'pointer' }}>
+                    高级筛选 <Icon style={{ transform: `rotate( ${searchVisible ? 0 : '-180deg'})`, transition: 'all .3s' }} type="down" />
+                  </div>
+                </div>
+                <div style={!searchVisible ? { height: 0, overflow: 'hidden', transition: 'all .3s' } : { height: '100px', marginTop: '20px' }}>
+                  <Form
+                    labelCol={{
+                      xs: { span: 6 },
+                      sm: { span: 3 },
+                    }}
+                    wrapperCol={{
+                      xs: { span: 36 },
+                      sm: { span: 18 },
+                    }}>
+                    <Row gutter={24}>
+                      <Col span={8}>
+                        <Form.Item label="设备ID">
+                          {getFieldDecorator('id', {})(
+                            <Input />,
+                          )}
+                        </Form.Item>
+                      </Col>
+                      <Col span={8}>
+                        <Form.Item label="产品名称">
+                          {getFieldDecorator('productName', {})(
+                            <Select allowClear>
+                              {
+                                productList.map((item, index) => (
+                                  <Select.Option key={index} value={item.name}>{item.name}</Select.Option>
+                                ))
+                              }
+                            </Select>
+                          )}
+                        </Form.Item>
+                      </Col>
+                      <Col span={8}>
+                        <Form.Item label="设备状态">
+                          {getFieldDecorator('state', {})(
+                            <Select allowClear>
+                              {/* <Select.Option value="">全部</Select.Option> */}
+                              <Select.Option value="online">在线</Select.Option>
+                              <Select.Option value="offline">离线</Select.Option>
+                              <Select.Option value="notActive">未启用</Select.Option>
+                            </Select>,
+                          )}
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                  </Form>
+                  <div style={{ paddingLeft: '76px' }}>
+                    <Button style={{ marginRight: '10px' }} onClick={() => {
+                      form.resetFields();
+                      handleSearch({
+                        where: `name like '%${searchValue}%'`,
+                        pageSize: 8
+                      })
+                    }}>重置</Button>
+                    <Button type="primary" onClick={() => {
+                      const data = form.getFieldsValue();
+                      let list = searchParam.where.split(' and ');
+                      let where: string[] = list.filter((item: string) => {
+                        return item.includes('like');
+                      });
+                      Object.keys(data).forEach(i => {
+                        if (data[i]) {
+                          where.push(`${i}=${data[i]}`)
+                        }
+                      })
+                      handleSearch({
+                        where: where.join(' and '),
+                        pageSize: 8
+                      });
+                    }}>查询</Button>
+                  </div>
+                </div>
+              </div>
+            }
             dataSource={dataList.data}
-            rowKey="id"
-          // onChange={onTableChange}
-          // pagination={{
-          //   current: deviceData.pageIndex + 1,
-          //   total: deviceData.total,
-          //   pageSize: deviceData.pageSize,
-          //   showQuickJumper: true,
-          //   showSizeChanger: true,
-          //   pageSizeOptions: ['10', '20', '50', '100'],
-          //   showTotal: (total: number) =>
-          //     `共 ${total} 条记录 第  ${deviceData.pageIndex + 1}/${Math.ceil(
-          //       deviceData.total / deviceData.pageSize,
-          //     )}页`,
-          // }}
+            columns={[
+              {
+                title: '设备ID',
+                dataIndex: 'id',
+                ellipsis: true,
+                align: 'center'
+              },
+              {
+                title: '设备名称',
+                dataIndex: 'name',
+                ellipsis: true,
+                align: 'center'
+              },
+              {
+                title: '产品名称',
+                dataIndex: 'productName',
+                ellipsis: true,
+                align: 'center'
+              },
+              {
+                title: '注册时间',
+                dataIndex: 'registryTime',
+                render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
+                width: '200px',
+                align: 'center'
+              },
+              {
+                title: '状态',
+                dataIndex: 'state',
+                width: '120px',
+                align: 'center',
+                render: record =>
+                  record ? <Badge status={statusMap.get(record.value)} text={record.text} /> : '',
+              },
+              {
+                title: '说明',
+                align: 'center',
+                dataIndex: 'describe',
+                width: '200px',
+              },
+              {
+                title: '操作',
+                align: 'center',
+                render: (record) => <>
+                  <Button type='link' onClick={() => {
+                    setCurrentData(record);
+                    setDetailVisible(true);
+                  }}>查看</Button>
+                  <Button type='link' onClick={() => {
+                    setCurrentData(record);
+                    setEditVisible(true);
+                  }}>编辑</Button>
+                  {
+                    record?.state?.value === 'notActive' ?
+                      <Popconfirm
+                        title="确认启动吗？"
+                        onConfirm={() => {
+                          deploy(record.id)
+                        }}>
+                        <Button type='link'>启动</Button>
+                      </Popconfirm>
+                      :
+                      <Popconfirm
+                        title="确认禁用吗？"
+                        onConfirm={() => {
+                          undeploy(record.id)
+                        }}>
+                        <Button type='link'>禁用</Button>
+                      </Popconfirm>
+                  }
+                </>,
+                width: 280
+              },
+            ]}
           />
-        </div>}
-      </div>
-      <Edit
+          : <Detail data={currentData} reBack={() => {
+            setDetailVisible(false);
+          }} />
+        }
+      </Spin>
+      {editVisible && <Save
         data={currentData}
-        visible={editVisible}
-        onOk={() => {
-
+        deviceId={deviceId}
+        close={() => {
+          setEditVisible(false);
+          setCurrentData({});
         }}
-        onCancel={() => {
-          setEditVisible(false)
-        }}
-      />
+        save={(item: any) => {
+          saveData(item);
+          setEditVisible(false);
+          setCurrentData({});
+        }} />
+      }
       <Modal
         title="确认删除"
         visible={delVisible}
@@ -255,4 +405,5 @@ function Device() {
   );
 }
 
-export default Device;
+// export default Device;
+export default Form.create<Props>()(Device);

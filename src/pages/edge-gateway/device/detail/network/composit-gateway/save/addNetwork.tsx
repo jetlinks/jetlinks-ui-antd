@@ -11,7 +11,7 @@ import 'ace-builds/src-noconflict/snippets/groovy';
 import 'ace-builds/src-noconflict/ext-language_tools';
 import 'ace-builds/src-noconflict/ext-searchbox';
 import 'ace-builds/src-noconflict/theme-eclipse';
-import apis from '@/services';
+import Service from '../../service';
 
 interface Props extends FormComponentProps {
     data: string;
@@ -25,6 +25,7 @@ const Add: React.FC<Props> = props => {
         form
     } = props;
 
+    const service = new Service('device-network');
 
     const [supportsType, setSupportsType] = useState([]);
     const [dataType, setDataType] = useState(props.data);
@@ -32,15 +33,11 @@ const Add: React.FC<Props> = props => {
     const [mode, setMode] = useState('');
 
     useEffect(() => {
-        apis.network
-            .support()
-            .then(response => {
-                if (response.status === 200) {
-                    setSupportsType(response.result || []);
-                }
-            })
-            .catch(() => {
-            });
+        service.getSupports({}).subscribe(response => {
+            if (response.status === 200) {
+                setSupportsType(response.result || []);
+            }
+        })
     }, []);
 
     const renderTcpServerParse = () => {
@@ -397,7 +394,7 @@ const Add: React.FC<Props> = props => {
         <Modal
             title={'新增网络组件'}
             visible
-            width={800}
+            width={600}
             onCancel={() => { props.close() }}
             onOk={() => {
                 form.validateFields((err, fileValue) => {
@@ -413,10 +410,7 @@ const Add: React.FC<Props> = props => {
                 });
             }}
         >
-            <Form
-                labelCol={{ span: 4 }}
-                wrapperCol={{ span: 20 }}
-            >
+            <Form layout="vertical">
                 <Form.Item label="名称">
                     {getFieldDecorator('name', {
                         rules: [{ required: true }]

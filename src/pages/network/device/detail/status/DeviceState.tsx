@@ -1,10 +1,8 @@
 import React, { memo } from "react";
-import { Tooltip, Icon } from "antd";
 import ChartCard from "@/pages/analysis/components/Charts/ChartCard";
 import moment from "moment";
 
 interface Props {
-    refresh: Function,
     state: {
         text?: string,
         value?: string
@@ -18,14 +16,10 @@ const DeviceState: React.FC<Props> = props => {
     const { state, runInfo } = props;
     return (
         <ChartCard
-            bordered={false}
             title="设备状态"
             hoverable
-            // action={
-                
-            // }
             contentHeight={46}
-            total={state.text}
+            total={state?.text}
         >
             {
                 state.value === 'online' ?
