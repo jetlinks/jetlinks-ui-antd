@@ -94,7 +94,8 @@ const Definition: React.FC<Props> = props => {
                 })
               }
               message.success('重置成功！');
-          })
+          }).catch(() => {
+        }).finally(() => props.update());
         }}>
         <Button>重置</Button>
       </Popconfirm>

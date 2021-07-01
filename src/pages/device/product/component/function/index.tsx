@@ -365,7 +365,7 @@ const FunctionDefin: React.FC<Props> = props => {
           <div>
             <Form.Item label="密码长度">
               {getFieldDecorator('valueType.elementType.expands.maxLength', {
-                initialValue: initState.data.valueType?.elementType.expands.maxLength,
+                initialValue: initState.data.valueType?.elementType?.expands?.maxLength,
               })(<Input addonAfter="字节" />)}
             </Form.Item>
           </div>
@@ -651,7 +651,7 @@ const FunctionDefin: React.FC<Props> = props => {
           <div>
             <Form.Item label="密码长度">
               {getFieldDecorator('valueType.expands.maxLength', {
-                initialValue: initState.data.output?.expands.maxLength,
+                initialValue: initState.data.output?.expands?.maxLength,
               })(<Input addonAfter="字节" />)}
             </Form.Item>
           </div>
