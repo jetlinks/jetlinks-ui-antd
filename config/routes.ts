@@ -58,6 +58,12 @@ export const routes = [
             icon: '',
             component: './network',
           },
+          {
+            name: '告警',
+            path: '/alarm',
+            icon: '',
+            component: './alarm',
+          },
           // {
           //   name: '统计分析',
           //   path: '/analysis',
