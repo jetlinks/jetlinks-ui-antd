@@ -104,8 +104,8 @@ const Save: React.FC<Props> = props => {
                   initialValue: props.data?.id,
                   rules: [
                     { required: true, message: '请输入级联ID' },
-                    { max: 64, message: '级联ID不超过64个字符' },
-                    { pattern: new RegExp(/^[0-9a-zA-Z_\-]+$/, "g"), message: '级联ID只能由数字、字母、下划线、中划线组成' }
+                    { max: 20, message: '级联ID不超过20个字符' },
+                    { pattern: new RegExp(/^[0-9\-]+$/, "g"), message: '级联ID只能由纯数字组成' }
                   ],
                 })(
                   <Input placeholder="请输入级联ID" readOnly={!!props.data.id} />

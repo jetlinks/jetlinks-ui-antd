@@ -54,7 +54,7 @@ const Alarm: React.FC<Props> = props => {
   const [solveVisible, setSolveVisible] = useState(false);
   const [saveAlarmData, setSaveAlarmData] = useState(initState.saveAlarmData);
   const [alarmActiveKey, setAlarmActiveKey] = useState('');
-  const [alarmLogId, setAlarmId] = useState();
+  const [alarmLogId, setAlarmLogId] = useState<any>(null);
   const [solveAlarmLogId, setSolveAlarmLogId] = useState();
   const [searchParam, setSearchParam] = useState(initState.searchParam);
   const [alarmLogData, setAlarmLogData] = useState(initState.alarmLogData);
@@ -178,7 +178,7 @@ const Alarm: React.FC<Props> = props => {
           }}>查看</a>
           <Divider type="vertical"/>
           <a onClick={() => {
-            setAlarmId(record.id);
+            setAlarmLogId(record.id);
             setAlarmActiveKey('logList');
           }}>告警日志</a>
           <Divider type="vertical"/>
@@ -296,7 +296,7 @@ const Alarm: React.FC<Props> = props => {
     form.validateFields((err, fileValue) => {
       if (err) return;
 
-      apis.deviceAlarm.alarmLogSolve(solveAlarmLogId, fileValue.description)
+      apis.deviceAlarm.alarmLogSolve(solveAlarmLogId || '', fileValue.description)
         .then((response: any) => {
           if (response.status === 200) {
             message.success('保存成功');
@@ -380,7 +380,7 @@ const Alarm: React.FC<Props> = props => {
     <Spin tip="加载中..." spinning={spinning}>
       <Card>
         <Tabs activeKey={alarmActiveKey} onTabClick={(key: any) => {
-          setAlarmId(undefined);
+          setAlarmLogId(undefined);
           setAlarmActiveKey(key);
         }}>
           <Tabs.TabPane tab="告警设置" key="info">
@@ -401,9 +401,10 @@ const Alarm: React.FC<Props> = props => {
           </Tabs.TabPane>
           <Tabs.TabPane tab="告警记录" key="logList">
             <div>
-              <Select placeholder="选择告警设置" allowClear style={{width: 300}} defaultValue={alarmLogId}
+              <Select placeholder="选择告警设置" allowClear style={{width: 300}} value={alarmLogId}
                       onChange={(value: string) => {
                         onAlarmProduct(value);
+                        setAlarmLogId(value);
                       }}
               >
                 {alarmDataList.length > 0 && alarmDataList.map(item => (

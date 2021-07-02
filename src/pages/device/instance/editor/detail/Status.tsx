@@ -115,8 +115,8 @@ const Status: React.FC<Props> = props => {
                 setLoading(true);
                 setProperties(properties);
             })
-        }else{
-            setLoading(true)
+        }else if(metadata.properties.length === 0){
+            setLoading(true);
         }
     }, [propertiesList]);
 
