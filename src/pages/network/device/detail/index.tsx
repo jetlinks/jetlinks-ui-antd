@@ -1,4 +1,4 @@
-import { Badge, Button, Descriptions, Icon, Radio, Spin, Tabs, Tooltip } from 'antd';
+import { Badge, Button, Descriptions, Icon, message, Popconfirm, Radio, Spin, Tabs, Tooltip } from 'antd';
 import React, { useEffect } from 'react';
 import { useState } from 'react';
 import Save from '../save';
@@ -6,7 +6,7 @@ import Service from '../service';
 import moment from 'moment';
 import Functions from './functions';
 import Status from './status';
-import apis from '@/services';
+import Configuration from './configuration';
 
 interface DetailProps {
     data: object;
@@ -18,11 +18,12 @@ function Detail(props: DetailProps) {
     const service = new Service('/network/material');
     const deviceId = 'edge-pi';
     const [editVisible, setEditVisible] = useState(false);
-    const [info, setInfo] = useState<any>({});
+    const [info, setInfo] = useState<any>(props.data);
     const [spinning, setSpinning] = useState<boolean>(true);
     const [type, setType] = useState<string>('card');
     const [tabKey, setTabKey] = useState<string>('1');
     const [config, setConfig] = useState<any[]>([]);
+    const [updateVisible, setUpdateVisible] = useState(false);
 
     const statusMap = new Map();
     statusMap.set('在线', 'success');
@@ -32,15 +33,46 @@ function Detail(props: DetailProps) {
     statusMap.set('offline', 'error');
     statusMap.set('notActive', 'processing');
 
-    useEffect(() => {
+    const initData = () => {
+        setSpinning(true);
         service.getInstanceDetail(deviceId, props.data.id).subscribe(resp => {
             setInfo(resp);
             setSpinning(false);
-            apis.deviceProdcut.productConfiguration(resp.id).then(res => {
-                setConfig(res.result);
-            })
+            service.getIinstanceConfigMetadata(deviceId, props.data.id).subscribe(
+                (resp) => {
+                    setConfig(resp);
+                }
+            )
         })
+    }
+
+    useEffect(() => {
+        initData();
     }, []);
+
+    const changeDeploy = (deviceId: string) => {
+        service.deployDevice(deviceId, props.data.id).subscribe(() => {
+            initData();
+            message.success('操作成功！');
+        });
+    };
+
+    const updateData = (item?: any) => {
+        setUpdateVisible(false);
+        let params = {
+          ...item,
+          id: info.id,
+          name: info.name,
+          productId: info.productId,
+          productName: info.productName,
+        };
+        service.saveDevice(deviceId, params).subscribe(res => {
+          if (res.status === 200) {
+            message.success('配置信息修改成功');
+            initData();
+          }
+        });
+      };
 
     return (
         <div>
@@ -94,15 +126,30 @@ function Detail(props: DetailProps) {
                         <Descriptions
                             title={
                                 <span>配置
-                                    <Icon type="edit" style={{ marginLeft: 20 }} onClick={() => { }} />
-                                    <Button
-                                        icon="file-done"
-                                        style={{ marginLeft: 10 }}
-                                        type="link"
-                                        onClick={() => { }}
-                                    >
-                                        应用配置
-                                    </Button>
+                                    <Icon type="edit" style={{ marginLeft: 20 }} onClick={() => {
+                                        setUpdateVisible(true);
+                                    }} />
+                                    {info.state?.value != 'notActive' && (
+                                        <Popconfirm
+                                            title="确认重新应用该配置？"
+                                            onConfirm={() => {
+                                                changeDeploy(info.id);
+                                            }}
+                                        >
+                                            <Button
+                                                icon="file-done"
+                                                style={{ marginLeft: 10 }}
+                                                type="link"
+                                                onClick={() => { }}
+                                            >
+                                                应用配置
+                                            </Button>
+                                            <Tooltip title="修改配置后需重新应用后才能生效。">
+                                                <Icon type="question-circle-o" />
+                                            </Tooltip>
+                                        </Popconfirm>
+                                    )}
+
                                 </span>
                             }
                         ></Descriptions>
@@ -143,7 +190,9 @@ function Detail(props: DetailProps) {
                     <Tabs tabBarExtraContent={
                         tabKey === '1' ? (
                             <div>
-                                <Icon type="sync" style={{ marginRight: '20px' }} />
+                                <Icon type="sync" style={{ marginRight: '20px' }} onClick={() => {
+                                    message.error('此功能还在开发中');
+                                }} />
                                 <Radio.Group value={type} onChange={e => {
                                     setType(e.target.value);
                                 }}>
@@ -164,7 +213,7 @@ function Detail(props: DetailProps) {
                     >
                         <Tabs.TabPane tab="运行状态" key="1">
                             <Status device={info} type={type} refresh={() => {
-
+                                
                             }} />
                         </Tabs.TabPane>
                         <Tabs.TabPane tab="设备功能" key="2">
@@ -180,10 +229,28 @@ function Detail(props: DetailProps) {
                     setEditVisible(false);
                 }}
                 save={(item: any) => {
-                    // saveData(item);
-                    setEditVisible(false);
+                    service.saveDevice(deviceId, item).subscribe(
+                        (res) => {
+                            if (res.status === 200) {
+                                message.success('操作成功！');
+                                initData();
+                            }
+                            setEditVisible(false);
+                        });
                 }} />
             }
+            {updateVisible && (
+                <Configuration
+                    data={props.data}
+                    configuration={config}
+                    close={() => {
+                        setUpdateVisible(false);
+                    }}
+                    save={(item: any) => {
+                        updateData(item);
+                    }}
+                />
+            )}
         </div>
     );
 }

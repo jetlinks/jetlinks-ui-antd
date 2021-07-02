@@ -52,11 +52,10 @@ const Functions: React.FC<Props> = (props) => {
     }, []);
 
     const debugFunction = () => {
-        setSpinning(true);
 
         form.validateFields((err, fileValue) => {
             if (err) return;
-
+            setSpinning(true);
             localStorage.setItem(`function-debug-data-${props.device.id}-${fileValue.functionId}`, fileValue.functionData);
 
             apis.deviceInstance

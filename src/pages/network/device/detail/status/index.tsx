@@ -1,7 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { Row, Col, Spin, Table } from "antd";
+import React, { useCallback, useEffect, useState } from "react";
+import { Row, Col, Spin, Table, message } from "antd";
 import PropertiesCard from './PropertiesCard';
 import DeviceState from './DeviceState';
+import { getWebsocket } from "@/layouts/GlobalWebSocket";
+import { Observable } from "rxjs";
+import { flatMap, groupBy, map, toArray } from "rxjs/operators";
+
 interface Props {
     refresh: Function;
     device: any;
@@ -16,63 +20,49 @@ const topColResponsiveProps = {
     style: { marginBottom: 24 },
 };
 const Status: React.FC<Props> = props => {
+
     const { device, type } = props;
-    const [properties, setProperties] = useState<any[]>([]);
+    const metadata = JSON.parse(device.metadata);
+    const [properties, setProperties] = useState<any[]>(metadata.properties);
 
     const [loading, setLoading] = useState<boolean>(false);
-    // const propertiesWs: Observable<any> = getWebsocket(
-    //     `instance-info-property-${device.id}-${device.productId}`,
-    //     `/dashboard/device/${device.productId}/properties/realTime`,
-    //     {
-    //         deviceId: device.id,
-    //         history: 0,
-    //     },
-    // ).pipe(
-    //     map(result => result.payload)
-    // );
+    const propertiesWs: Observable<any> = getWebsocket(
+        `instance-info-property-${device.id}-${device.productId}`,
+        `/dashboard/device/${device.productId}/properties/realTime`,
+        {
+            deviceId: device.id,
+            history: 1,
+        },
+    ).pipe(
+        map(result => result.payload)
+    );
 
-    // const eventsWs: Observable<any> = getWebsocket(
-    //     `instance-info-event-${device.id}-${device.productId}`,
-    //     `/dashboard/device/${device.productId}/events/realTime`,
-    //     {
-    //         deviceId: device.id,
-    //     },
-    // ).pipe(
-    //     map(result => result.payload)
-    // );
+    let propertiesMap = {};
+    properties.forEach(item => propertiesMap[item.id] = item);
 
-    // let propertiesMap = {};
-    // properties.forEach(item => propertiesMap[item.id] = item);
-    // let eventsMap = {};
-    // events.forEach((item: any) => eventsMap[item.id] = item);
-
-    // const [index, setIndex] = useState<number>(20);
     useEffect(() => {
-        let data = JSON.parse(device?.metadata || "{}");
-        setProperties(data.properties || []);
-        setLoading(true);
-        // const properties$ = propertiesWs.subscribe((resp) => {
-        //     const property = resp.value.property;
-        //     const item = propertiesMap[property];
-        //     if (item) {
-        //         item.next(resp);
-        //     }
-        // });
 
-        // const events$ = eventsWs.subscribe((resp) => {
-        //     const event = resp.value.event;
-        //     const item = eventsMap[event];
-        //     if (item) {
-        //         item.next(resp);
-        //     }
-        // });
+        const properties$ = propertiesWs.subscribe((resp) => {
+            // const property = resp.value.property;
+            console.log(resp)
+        });
+        return () => {
+            properties$.unsubscribe();
+        };
+    }, []);
 
-        // return () => {
-        //     properties$.unsubscribe();
-        //     events$.unsubscribe()
-        // };
-
-    }, [device]);
+    // const renderProperties = useCallback(
+    //     () => {
+    //         const propertyCard = properties.map((item: any) => (
+    //             <Col {...topColResponsiveProps} key={item.id}>
+    //                 <PropertiesCard
+    //                     item={item}
+    //                     key={item.id}
+    //                 />
+    //             </Col>
+    //         ))
+    //         return [...propertyCard];
+    //     }, [device]);
 
     return (
         <Spin spinning={!loading}>
@@ -110,7 +100,7 @@ const Status: React.FC<Props> = props => {
                                     [
                                         {
                                             dataIndex: 'time',
-                                            title: '权限名称',
+                                            title: '基准时间',
                                         },
                                         {
                                             dataIndex: 'name',

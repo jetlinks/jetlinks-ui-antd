@@ -76,7 +76,7 @@ class Service extends BaseService<any> {
             map(resp => resp.result)
         ));
 
-    
+
 
     public getDeviceInfo = (deviceId: string, id: string) => defer(
         () => from(request(`/jetlinks/edge/operations/${deviceId}/device-instance-info/invoke`, {
@@ -140,6 +140,16 @@ class Service extends BaseService<any> {
         ));
     public getInstanceDetail = (deviceId: string, id: string) => defer(
         () => from(request(`/jetlinks/edge/operations/${deviceId}/device-instance-detail/invoke`, {
+            method: 'POST',
+            data: {
+                deviceId: id
+            }
+        })).pipe(
+            filter(resp => resp.status === 200),
+            map(resp => resp.result[0])
+        ))
+    public getIinstanceConfigMetadata = (deviceId: string, id: string) => defer(
+        () => from(request(`/jetlinks/edge/operations/${deviceId}/device-config-metadata/invoke`, {
             method: 'POST',
             data: {
                 deviceId: id
