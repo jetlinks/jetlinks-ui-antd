@@ -5,8 +5,8 @@ import { filter, map } from "rxjs/operators";
 
 class Service extends BaseService<any> {
 
-    public getDeviceGatewayList = (deviceId: any, data: any) => defer(
-        () => from(request(`/jetlinks/edge/operations/${deviceId}/device-gateway-list/invoke`, {
+    public getDeviceGatewayList = (data: any) => defer(
+        () => from(request(`/jetlinks/edge/operations/local/device-gateway-list/invoke`, {
             method: 'POST',
             data: data
         }))
@@ -15,8 +15,8 @@ class Service extends BaseService<any> {
                 map(resp => resp.result[0])
             ));
 
-    public getDeviceList = (deviceId: string, params?: any) => defer(
-        () => from(request(`/jetlinks/edge/operations/${deviceId}/device-instance-page-list/invoke`, {
+    public getDeviceList = (params?: any) => defer(
+        () => from(request(`/jetlinks/edge/operations/local/device-instance-page-list/invoke`, {
             method: 'POST',
             data: params
         })).pipe(
@@ -89,8 +89,8 @@ class Service extends BaseService<any> {
             map(resp => resp.result[0])
         ));
 
-    public insertDevice = (deviceId: string, params?: any) => defer(
-        () => from(request(`/jetlinks/edge/operations/${deviceId}/device-instance-insert/invoke`, {
+    public insertDevice = (params?: any) => defer(
+        () => from(request(`/jetlinks/edge/operations/local/device-instance-insert/invoke`, {
             method: 'POST',
             data: params
         })).pipe(
@@ -98,8 +98,8 @@ class Service extends BaseService<any> {
             map(resp => resp)
         ));
 
-    public saveDevice = (deviceId: string, params?: any) => defer(
-        () => from(request(`/jetlinks/edge/operations/${deviceId}/device-instance-save/invoke`, {
+    public saveDevice = (params?: any) => defer(
+        () => from(request(`/jetlinks/edge/operations/local/device-instance-save/invoke`, {
             method: 'POST',
             data: params
         })).pipe(
@@ -107,8 +107,8 @@ class Service extends BaseService<any> {
             map(resp => resp)
         ));
 
-    public deployDevice = (deviceId: string, id: string) => defer(
-        () => from(request(`/jetlinks/edge/operations/${deviceId}/device-instance-deploy/invoke`, {
+    public deployDevice = (id: string) => defer(
+        () => from(request(`/jetlinks/edge/operations/local/device-instance-deploy/invoke`, {
             method: 'POST',
             data: {
                 deviceId: id
@@ -118,8 +118,8 @@ class Service extends BaseService<any> {
             map(resp => resp)
         ));
 
-    public undeployDevice = (deviceId: string, id: string) => defer(
-        () => from(request(`/jetlinks/edge/operations/${deviceId}/device-instance-undeploy/invoke`, {
+    public undeployDevice = (id: string) => defer(
+        () => from(request(`/jetlinks/edge/operations/local/device-instance-undeploy/invoke`, {
             method: 'POST',
             data: {
                 deviceId: id
@@ -128,8 +128,8 @@ class Service extends BaseService<any> {
             filter(resp => resp.status === 200),
             map(resp => resp)
         ));
-    public delIinstance = (deviceId: string, id: string) => defer(
-        () => from(request(`/jetlinks/edge/operations/${deviceId}/device-instance-delete/invoke`, {
+    public delIinstance = (id: string) => defer(
+        () => from(request(`/jetlinks/edge/operations/local/device-instance-delete/invoke`, {
             method: 'POST',
             data: {
                 deviceId: id
@@ -138,8 +138,8 @@ class Service extends BaseService<any> {
             filter(resp => resp.status === 200),
             map(resp => resp)
         ));
-    public getInstanceDetail = (deviceId: string, id: string) => defer(
-        () => from(request(`/jetlinks/edge/operations/${deviceId}/device-instance-detail/invoke`, {
+    public getInstanceDetail = (id: string) => defer(
+        () => from(request(`/jetlinks/edge/operations/local/device-instance-detail/invoke`, {
             method: 'POST',
             data: {
                 deviceId: id
@@ -148,8 +148,8 @@ class Service extends BaseService<any> {
             filter(resp => resp.status === 200),
             map(resp => resp.result[0])
         ))
-    public getIinstanceConfigMetadata = (deviceId: string, id: string) => defer(
-        () => from(request(`/jetlinks/edge/operations/${deviceId}/device-config-metadata/invoke`, {
+    public getIinstanceConfigMetadata = (id: string) => defer(
+        () => from(request(`/jetlinks/edge/operations/local/device-config-metadata/invoke`, {
             method: 'POST',
             data: {
                 deviceId: id
@@ -158,5 +158,14 @@ class Service extends BaseService<any> {
             filter(resp => resp.status === 200),
             map(resp => resp.result[0])
         ))
+    public getDeviceCount = (data?: any) => defer(
+        () => from(request(`/jetlinks/edge/operations/local/device-instances-status/invoke`, {
+            method: 'POST',
+            data
+        }))
+            .pipe(
+                filter(resp => resp.status === 200),
+                map(resp => resp)
+            ));
 }
 export default Service;

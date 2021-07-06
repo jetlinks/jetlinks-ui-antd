@@ -68,7 +68,7 @@ function InternetSetting(props: InternetSettingProps) {
           }}
           items={[
             {
-              name: 'test3',
+              name: 'ipAdd',
               label: 'IP地址',
               required: true,
               options: {
@@ -79,7 +79,7 @@ function InternetSetting(props: InternetSettingProps) {
               }
             },
             {
-              name: 'test4',
+              name: 'mask',
               label: '子网掩码',
               required: true,
               options: {
@@ -90,7 +90,7 @@ function InternetSetting(props: InternetSettingProps) {
               }
             },
             {
-              name: 'test5',
+              name: 'gateWayAdd',
               label: '网关',
               required: true,
               options: {
@@ -101,21 +101,13 @@ function InternetSetting(props: InternetSettingProps) {
               }
             },
             {
-              name: 'test6',
+              name: 'dns',
               label: '首选DNS服务器',
-              render: () => {
-                return <IPInput disabled={hidden} />
-              }
-            },
-            {
-              name: 'test7',
-              label: '备用DNS服务器',
               render: () => {
                 return <IPInput disabled={hidden} />
               }
             }
           ]}
-
         />
       </div>
     </div>

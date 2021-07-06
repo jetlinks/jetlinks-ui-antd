@@ -9,7 +9,7 @@ interface ChannelProps {
   data?: MediaDeviceList
   onOk?: () => void
   onCancel?: (e: React.MouseEvent<HTMLElement>) => void
-  edgeId?: string
+  // edgeId?: string
 }
 
 function ChannelModel(props: ChannelProps) {
@@ -24,12 +24,10 @@ function ChannelModel(props: ChannelProps) {
     // 提交数据
     form.current.validateFields((err: any, values: any) => {
       if (err) return
-      if (props.edgeId) {
-        if (props.data && props.data.id) {
-          values.id = props.data.id
-        }
-        run(props.edgeId, values)
+      if (props.data && props.data.id) {
+        values.id = props.data.id
       }
+      run('local', values)
     })
     if (props.onOk) {
       props.onOk()

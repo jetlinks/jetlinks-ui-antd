@@ -10,7 +10,6 @@ import { useState } from 'react';
 interface DetailProps {
     data: object;
     reBack: Function;
-    deviceId: string;
 }
 
 function Detail(props: DetailProps) {
@@ -19,7 +18,7 @@ function Detail(props: DetailProps) {
     const [data, setData] = useState<any>(props.data);
 
     useEffect(() => {
-        service.getDeviceGatewayInfo(props.deviceId, props.data.id).subscribe(resp => {
+        service.getDeviceGatewayInfo(props.data.id).subscribe(resp => {
             if(resp.status === 200){
                 setData(resp.result[0])
             }

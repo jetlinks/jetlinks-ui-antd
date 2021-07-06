@@ -19,13 +19,13 @@ function Alert() {
             </div>
           </div>
           <div className={deviceStyle.bottom}>
-            <Badge color="red" text={<span style={{ color: 'rgba(0, 0, 0, 0.45)' }}>离线设备</span>} />
+            <Badge color="green" text={<span style={{ color: 'rgba(0, 0, 0, 0.45)' }}>已处理</span>} />
             <div>
               20
             </div>
           </div>
           <div className={deviceStyle.bottom}>
-            <Badge color="red" text={<span style={{ color: 'rgba(0, 0, 0, 0.45)' }}>离线设备</span>} />
+            <Badge color="red" text={<span style={{ color: 'rgba(0, 0, 0, 0.45)' }}>未处理</span>} />
             <div>
               20
             </div>

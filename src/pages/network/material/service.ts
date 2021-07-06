@@ -5,8 +5,8 @@ import { filter, map } from "rxjs/operators";
 
 class Service extends BaseService<any> {
 
-    public getDeviceGatewayList = (deviceId: any, data: any) => defer(
-        () => from(request(`/jetlinks/edge/operations/${deviceId}/device-gateway-list/invoke`, {
+    public getDeviceGatewayList = (data: any) => defer(
+        () => from(request(`/jetlinks/edge/operations/local/device-gateway-list/invoke`, {
             method: 'POST',
             data: data
         }))
@@ -14,8 +14,8 @@ class Service extends BaseService<any> {
                 filter(resp => resp.status === 200),
                 map(resp => resp.result[0])
             ));
-    public saveDeviceGateway = (deviceId: string, params: any) => defer(
-        () => from(request(`/jetlinks/edge/operations/${deviceId}/device-gateway-save/invoke`, {
+    public saveDeviceGateway = (params: any) => defer(
+        () => from(request(`/jetlinks/edge/operations/local/device-gateway-save/invoke`, {
             method: 'POST',
             data: params
         })).pipe(
@@ -23,8 +23,8 @@ class Service extends BaseService<any> {
             map(resp => resp)
         ));
 
-    public getDeviceGatewayInfo = (deviceId: string, id: string) => defer(
-        () => from(request(`/jetlinks/edge/operations/${deviceId}/device-gateway-info/invoke`, {
+    public getDeviceGatewayInfo = (id: string) => defer(
+        () => from(request(`/jetlinks/edge/operations/local/device-gateway-info/invoke`, {
             method: 'POST',
             data: {
                 id: id
@@ -34,8 +34,8 @@ class Service extends BaseService<any> {
             map(resp => resp)
         ));
 
-    public start = (deviceId: any, id: string) => defer(
-        () => from(request(`/jetlinks/edge/operations/${deviceId}/device-gateway-start/invoke`, {
+    public start = (id: string) => defer(
+        () => from(request(`/jetlinks/edge/operations/local/device-gateway-start/invoke`, {
             method: 'POST',
             data: {
                 id: id
@@ -46,8 +46,8 @@ class Service extends BaseService<any> {
                 map(resp => resp)
             ));
 
-    public stop = (deviceId: any, id: string) => defer(
-        () => from(request(`/jetlinks/edge/operations/${deviceId}/device-gateway-stop/invoke`, {
+    public stop = (id: string) => defer(
+        () => from(request(`/jetlinks/edge/operations/local/device-gateway-stop/invoke`, {
             method: 'POST',
             data: {
                 id: id
@@ -57,8 +57,8 @@ class Service extends BaseService<any> {
                 filter(resp => resp.status === 200),
                 map(resp => resp)
             ));
-    public del = (deviceId: any, id: string) => defer(
-        () => from(request(`/jetlinks/edge/operations/${deviceId}/device-gateway-delete/invoke`, {
+    public del = (id: string) => defer(
+        () => from(request(`/jetlinks/edge/operations/local/device-gateway-delete/invoke`, {
             method: 'POST',
             data: {
                 id: id
@@ -68,17 +68,17 @@ class Service extends BaseService<any> {
                 filter(resp => resp.status === 200),
                 map(resp => resp)
             ));
-    public getProductList = (params: any) => defer(
-        () => from(request(`/jetlinks/device-product/_query/no-paging?paging=false`, {
-            method: 'GET',
-            params
+    public getProductList = ( params: any) => defer(
+        () => from(request(`/jetlinks/edge/operations/local/device-product-list/invoke`, {
+            method: 'POST',
+            data: params
         })).pipe(
             filter(resp => resp.status === 200),
-            map(resp => resp.result)
+            map(resp => resp.result[0])
         ));
     //获取协议
-    public getProtocolList = (deviceId: string, params: any) => defer(
-        () => from(request(`/jetlinks/edge/operations/${deviceId}/protocol-list/invoke`, {
+    public getProtocolList = (params: any) => defer(
+        () => from(request(`/jetlinks/edge/operations/local/protocol-list/invoke`, {
             method: 'POST',
             data: params
         })).pipe(
@@ -92,8 +92,8 @@ class Service extends BaseService<any> {
             filter(resp => resp.status === 200),
             map(resp => resp)
         ))
-    public addProtocol = (deviceId: string, params: any) => defer(
-        () => from(request(`/jetlinks/edge/operations/${deviceId}/protocol-add/invoke`, {
+    public addProtocol = ( params: any) => defer(
+        () => from(request(`/jetlinks/edge/operations/local/protocol-add/invoke`, {
             method: 'POST',
             data: params
         })).pipe(
@@ -112,8 +112,8 @@ class Service extends BaseService<any> {
 
 
 
-    public getGatewaytypeList = (deviceId: string, transportProtocol: string) => defer(
-        () => from(request(`/jetlinks/edge/operations/${deviceId}/device-gateway-providers/invoke`, {
+    public getGatewaytypeList = (transportProtocol: string) => defer(
+        () => from(request(`/jetlinks/edge/operations/local/device-gateway-providers/invoke`, {
             method: 'POST',
             data: {
                 transportProtocol: transportProtocol
@@ -125,8 +125,8 @@ class Service extends BaseService<any> {
             ));
 
 
-    public getNetworkConfigList = (deviceId: any, data: any) => defer(
-        () => from(request(`/jetlinks/edge/operations/${deviceId}/network-config-list/invoke`, {
+    public getNetworkConfigList = (data: any) => defer(
+        () => from(request(`/jetlinks/edge/operations/local/network-config-list/invoke`, {
             method: 'POST',
             data: data
         }))

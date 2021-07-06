@@ -14,7 +14,6 @@ export interface CardProps {
   onStop: (data: ListData) => void
   onStart: (data: ListData) => void
   data: ListData
-  id?: string
 }
 
 function Cards(props: CardProps) {

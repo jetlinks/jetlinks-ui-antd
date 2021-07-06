@@ -8,15 +8,13 @@ import { addOnvif, delDevice, getDeviceList, getOnvif, MediaDeviceList } from '@
 import DeviceModel from '@/pages/edge-gateway/device/detail/video/add/addDevice';
 import { connect } from 'dva';
 import { ConnectState } from '@/models/connect';
-import { EdgeModelState } from '@/models/edge';
 import StatusBadge from '@/components/StatusBadge';
 interface LeftProps {
   onRowClick?: (record: any) => void
-  edge: EdgeModelState
 }
 
 function Left(props: LeftProps) {
-  const { edge } = props
+  // const { edge } = props
 
   const { data, loading, run } = useRequest(getDeviceList, {
     manual: true,
@@ -75,23 +73,21 @@ function Left(props: LeftProps) {
 
   // 添加视频设备请求
   const addOnvifRequest = async (data: any) => {
-    if (edge.id) {
-      const result = await addOnvif(edge.id, data)
-      if (result.status === 200) {
-        message.success('保存成功！');
-      }
-      setAddOnvifLoading(false)
-      setVisible(false);
-      // 刷新table
-      run(edge.id, deviceParams);
+    const result = await addOnvif('local', data)
+    if (result.status === 200) {
+      message.success('保存成功！');
     }
+    setAddOnvifLoading(false)
+    setVisible(false);
+    // 刷新table
+    run('local', deviceParams)
   }
 
   /**
    * 添加设备确认事件
    */
   const saveOnvifSubmit = useCallback(async (fileValue: any) => {
-    if (!!fileValue.id && edge.id) {
+    if (!!fileValue.id) {
       addOnvifRequest(fileValue)
     } else {
       let param = {
@@ -99,52 +95,48 @@ function Left(props: LeftProps) {
         username: fileValue.username,
         password: fileValue.password,
       }
-      if (edge.id) {
 
-        const res = await getOnvif(edge.id, param)
-        if (res.status === 200) {
-          if (res.result.length > 0) {
-            let data = res.result[0];
-            let mediaProfiles = (res.result[0]?.mediaProfiles || []).map((item: any, index: number) => {
-              let ra = Math.round(Math.random() * 10000000000);
-              return {
-                name: item.name,
-                token: item.token,
-                id: `channel${index}${ra}`
-              }
-            })
-            let params = {
-              id: `device${Math.round(Math.random() * 10000000000)}`,
-              firmwareVersion: data.firmwareVersion,
-              hardwareId: data.hardwareId,
-              description: fileValue.description,
-              manufacturer: data.manufacturer,
-              mediaProfiles: mediaProfiles,
-              model: data.model,
-              name: fileValue.name || data.name,
-              password: data.password,
-              serialNumber: data.serialNumber,
-              url: data.url,
-              username: data.username
+      const res = await getOnvif('local', param)
+      if (res.status === 200) {
+        if (res.result.length > 0) {
+          let data = res.result[0];
+          let mediaProfiles = (res.result[0]?.mediaProfiles || []).map((item: any, index: number) => {
+            let ra = Math.round(Math.random() * 10000000000);
+            return {
+              name: item.name,
+              token: item.token,
+              id: `channel${index}${ra}`
             }
-            addOnvifRequest(params)
+          })
+          let params = {
+            id: `device${Math.round(Math.random() * 10000000000)}`,
+            firmwareVersion: data.firmwareVersion,
+            hardwareId: data.hardwareId,
+            description: fileValue.description,
+            manufacturer: data.manufacturer,
+            mediaProfiles: mediaProfiles,
+            model: data.model,
+            name: fileValue.name || data.name,
+            password: data.password,
+            serialNumber: data.serialNumber,
+            url: data.url,
+            username: data.username
           }
+          addOnvifRequest(params)
         }
       }
     }
-  }, [edge.id])
+  }, [])
 
   useEffect(() => {
     tableRequest()
-  }, [edge.id])
+  }, [])
 
   /**
    * table数据请求
    */
   const tableRequest = (data?: any) => {
-    if (edge.id) {
-      run(edge.id, data ? data : {})
-    }
+    run('local', data ? data : {})
   }
 
   const AdvancedFilter = useCallback(async () => {
@@ -287,9 +279,7 @@ function Left(props: LeftProps) {
         visible={deleteVisible}
         confirmLoading={deleteLoading}
         onOk={() => {
-          if (edge.id) {
-            deleteDevice(edge.id, { deviceId: deleteId })
-          }
+          deleteDevice('local', { deviceId: deleteId })
         }}
         onCancel={() => {
           setDeleteVisible(false)
@@ -303,6 +293,7 @@ function Left(props: LeftProps) {
   );
 }
 
-export default connect(({ edge }: ConnectState) => ({
-  edge
-}))(Left);
+export default Left;
+// connect(({ edge }: ConnectState) => ({
+//   edge
+// }))(Left);

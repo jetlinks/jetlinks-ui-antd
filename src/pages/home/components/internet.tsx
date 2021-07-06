@@ -3,25 +3,22 @@ import Layout from '../items';
 import styles from '../index.less';
 import { Button, Descriptions, Result } from 'antd'
 import InternetModel from './model/InternetSetting';
+import Service from './service';
+import { useEffect } from 'react';
 
 function Internet() {
+
+  const service = new Service('edge/network')
 
   const [internetVisible, setInternetVisible] = useState(false)
   const [title, setTitle] = useState('网口1')
   const [data, setData] = useState<object | undefined>(undefined)
+  const [network, setNetwork] = useState<any>({});
 
   const openEditModel = (type: number) => {
     let title = '编辑网口' + type
     setTitle(title)
-    setData({
-      test: true,
-      test2: 1,
-      test3: '192.168.1.1',
-      test4: '192.168.1.1',
-      test5: '192.168.1.1',
-      test6: '192.168.1.1',
-      test7: '192.168.1.1'
-    })
+    setData(network)
     setInternetVisible(true)
   }
 
@@ -39,6 +36,12 @@ function Internet() {
   const InternetVisibleEvent = () => {
     setInternetVisible(false)
   }
+
+  useEffect(() => {
+    service.getEdgeNetworkList().subscribe(resp => {
+      setNetwork(resp);
+    })
+  }, []);
 
   return (
     <div className={`${styles.item} ${styles.internet}`}>
@@ -58,11 +61,10 @@ function Internet() {
                 1
               </Descriptions.Item>
               <Descriptions.Item label="IP地址获取方式">手动配置</Descriptions.Item>
-              <Descriptions.Item label="IP地址">192.168.1.1</Descriptions.Item>
-              <Descriptions.Item label="子网掩码">255.255.255.0</Descriptions.Item>
-              <Descriptions.Item label="网关">192.168.1.255</Descriptions.Item>
-              <Descriptions.Item label="首选DNS服务器">59.59.59.59</Descriptions.Item>
-              <Descriptions.Item label="首选DNS服务器">59.59.59.59</Descriptions.Item>
+              <Descriptions.Item label="IP地址">{network.idAdd}</Descriptions.Item>
+              <Descriptions.Item label="子网掩码">{network.mask}</Descriptions.Item>
+              <Descriptions.Item label="网关">{network.gateWayAdd}</Descriptions.Item>
+              <Descriptions.Item label="首选DNS服务器">{network.dns}</Descriptions.Item>
             </Descriptions>
           </div>
         </div>

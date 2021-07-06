@@ -11,36 +11,53 @@ import { getWebsocket } from '@/layouts/GlobalWebSocket';
 import { geteWayInfo } from '@/services/edge';
 import { useRequest } from 'ahooks';
 
+interface RealDataProps {
+  cpuTemp: number;
+  cpuUsage: number;
+  diskUsage: number;
+  jvmMemUsage: number;
+  sysMemUsage: number;
+}
+
 function Home() {
 
   const [addressVisible, setAddressVisible] = useState(false)
   const deviceId = 'jetlinks-agent';
   const productId = 'edge-gateway';
-  const [cpuUse, setCpuUse] = useState<number>(0);
-  const [jvmUse, setJvmUse] = useState<number>(0);
-  const [memoryUse, setMemoryUse] = useState<number>(0);
-  const [diskUse, setDiskUse] = useState<number>(0);
-  const [cpuTemperature, setCpuTemperature] = useState<number>(0);
+  const [realData, setRealData] = useState<RealDataProps>({
+    cpuTemp: 0,
+    cpuUsage: 0,
+    diskUsage: 0,
+    jvmMemUsage: 0,
+    sysMemUsage: 0
+  });
   const [address, setAddress] = useState('192.168.1.1')
 
-  const { data } = useRequest(geteWayInfo('20212223'))
+  // const { data, run } = useRequest(geteWayInfo,{
+  //   manual: true
+  // });
+
   useEffect(() => {
-    //   let propertiesWs = getWebsocket(
-    //     `instance-info-property-${deviceId}-${productId}`,
-    //     // `/edge-gateway-state/device/${productId}/properties/realTime`,
-    //     `/dashboard/device/${productId}/properties/realTime`,
-    //     {
-    //       deviceId: deviceId,
-    //       history: 0,
-    //     },
-    //   ).subscribe(resp => {
-    //     const {payload} = resp;
-    //     console.log(payload.value.property)
-    //     // console.log(resp)
-    //   })
-    //   return () => {
-    //     propertiesWs && propertiesWs.unsubscribe();
-    //   };
+    // run('123456');
+    
+  }, []);
+
+  useEffect(() => {
+    let propertiesWs = getWebsocket(
+      `instance-info-property-${deviceId}-${productId}`,
+      `/edge-gateway-state/device/${productId}/properties/realTime`, //网关侧
+      // `/dashboard/device/${productId}/properties/realTime`, //平台侧
+      {
+        deviceId: deviceId,
+        history: 1,
+      },
+    ).subscribe(resp => {
+      const { payload } = resp;
+      setRealData({...payload});
+    })
+    return () => {
+      propertiesWs && propertiesWs.unsubscribe();
+    };
   }, []);
 
 
@@ -78,11 +95,11 @@ function Home() {
         <Alert />
       </div>
       <div className={`${styles.layout} ${styles.item} ${styles.status}`}>
-        <Echarts title='CPU使用率' color="#FF4D4F" value={32.55} />
-        <Echarts title='JVM使用率' color="#63DAAB" value={20} />
-        <Echarts title='系统内存使用率' color="#FAAD14" value={0} />
-        <Echarts title='磁盘使用率' color="#5B8FF9" value={10} />
-        <Echarts title='CPU温度' color="#014D88" value={1} />
+        <Echarts title='CPU使用率' color="#FF4D4F" value={realData.cpuUsage} />
+        <Echarts title='JVM使用率' color="#63DAAB" value={realData.jvmMemUsage} />
+        <Echarts title='系统内存使用率' color="#FAAD14" value={realData.sysMemUsage} />
+        <Echarts title='磁盘使用率' color="#5B8FF9" value={realData.diskUsage} />
+        <Echarts title='CPU温度' color="#014D88" value={realData.cpuTemp} />
       </div>
       {/* 平台地址 */}
       <AddressModel

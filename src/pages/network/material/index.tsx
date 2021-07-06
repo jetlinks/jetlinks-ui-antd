@@ -1,5 +1,5 @@
 import AutoHide from '@/pages/analysis/components/Hide/autoHide';
-import { Avatar, Badge, Card, message, Modal, Spin, Switch } from 'antd';
+import { Avatar, Card, message, Modal, Popconfirm, Spin, Switch } from 'antd';
 import Button from 'antd/es/button';
 import React from 'react';
 import Img from '../img/产品.png';
@@ -13,7 +13,7 @@ import Cards from '@/components/Cards';
 import encodeQueryParam from '@/utils/encodeParam';
 
 function Material() {
-    const deviceId = 'edge-pi';
+
     const service = new Service('/network/material');
     const [delVisible, setDelVisible] = useState<boolean>(false);
     const [editVisible, setEditVisible] = useState<boolean>(false);
@@ -45,9 +45,7 @@ function Material() {
 
     const handleSearch = (params: any) => {
         setSpinning(true);
-        service.getDeviceGatewayList(deviceId, encodeQueryParam({
-            params
-        })).subscribe(resp => {
+        service.getDeviceGatewayList(encodeQueryParam(params)).subscribe(resp => {
             setSpinning(false);
             setDataList({
                 data: [...resp]
@@ -60,7 +58,7 @@ function Material() {
     }, []);
 
     const _start = (id: string) => {
-        service.start(deviceId, id).subscribe(resp => {
+        service.start(id).subscribe(resp => {
             if (resp.status === 200) {
                 message.success('操作成功！');
                 handleSearch({ pageSize: 10 });
@@ -69,7 +67,7 @@ function Material() {
     }
 
     const _stop = (id: string) => {
-        service.start(deviceId, id).subscribe(resp => {
+        service.start(id).subscribe(resp => {
             if (resp.status === 200) {
                 message.success('操作成功！');
                 handleSearch({ pageSize: 10 });
@@ -78,7 +76,7 @@ function Material() {
     }
 
     const _del = (id: string) => {
-        service.del(deviceId, id).subscribe(resp => {
+        service.del(id).subscribe(resp => {
             if (resp.status === 200) {
                 message.success('操作成功！');
                 handleSearch({ pageSize: 10 });
@@ -87,7 +85,7 @@ function Material() {
     }
 
     const saveData = (params?: any) => {
-        service.saveDeviceGateway(deviceId, params).subscribe(
+        service.saveDeviceGateway(params).subscribe(
             (res) => {
                 if (res.status === 200) {
                     message.success('操作成功！');
@@ -113,10 +111,16 @@ function Material() {
                                         setCurrentData(item);
                                         setDetailVisible(true);
                                     }}>查看</a>,
-                                    <a onClick={() => {
-                                        setDelVisible(true);
-                                        setCurrentData(item);
-                                    }}>删除</a>
+                                    <Popconfirm
+                                        title="确认删除吗？"
+                                        onConfirm={() => {
+                                            setDelVisible(true);
+                                            setCurrentData(item);
+                                        }}>
+                                        <a onClick={() => {
+
+                                        }}>删除</a>
+                                    </Popconfirm>
                                 ]}
                             >
                                 <Card.Meta
@@ -141,23 +145,7 @@ function Material() {
                                 setCurrentData({});
                             }}>新增物</Button>
                         }
-                        pagination={{}
-                            //     {
-                            //     // current: dataList.pageIndex + 1,
-                            //     // total: dataList.total,
-                            //     // pageSize: dataList.pageSize,
-                            //     // onChange,
-                            //     // showQuickJumper: true,
-                            //     // showSizeChanger: true,
-                            //     // hideOnSinglePage: true,
-                            //     // pageSizeOptions: ['8', '16', '40', '80'],
-                            //     // style: { marginTop: -20 },
-                            //     // showTotal: (total: number) =>
-                            //     //     `共 ${total} 条记录 第  ${dataList.pageIndex + 1}/${Math.ceil(
-                            //     //         dataList.total / dataList.pageSize,
-                            //     //     )}页`
-                            // }
-                        }
+                        // pagination={{}}
                         dataSource={dataList.data}
                         columns={[
                             {
@@ -211,14 +199,13 @@ function Material() {
                                 width: 280
                             },
                         ]}
-                    /> : <Detail deviceId={deviceId} data={currentData} reBack={() => {
+                    /> : <Detail data={currentData} reBack={() => {
                         setDetailVisible(false);
                     }} />
                 }
             </Spin>
             {editVisible && <Save
                 data={currentData}
-                deviceId={deviceId}
                 close={() => {
                     setEditVisible(false);
                     setCurrentData({});
