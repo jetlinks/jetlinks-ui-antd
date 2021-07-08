@@ -1,5 +1,5 @@
 import React, { useEffect, useState, Fragment } from 'react';
-import { Modal, Form, Input, Select, Card, Row, Col, Icon, Divider, Tooltip } from 'antd';
+import { Modal, Form, Input, Select, Card, Row, Col, Icon, Divider, Tooltip, Radio } from 'antd';
 import { FormComponentProps } from 'antd/es/form';
 import apis from '@/services';
 import encodeQueryParam from '@/utils/encodeParam';
@@ -140,6 +140,11 @@ const Save: React.FC<Props> = props => {
               {getFieldDecorator('configuration.topics', {
                 initialValue: props.data.configuration?.topics,
               })(<Input.TextArea rows={3} placeholder="从MQTT服务订阅Topic.多个使用,分割" />)}
+            </Form.Item>
+            <Form.Item label="Qos">
+              {getFieldDecorator('configuration.qos', {
+                initialValue: props.data.configuration?.qos||'0',
+              })(<Radio.Group options={['0','1','2']} />)}
             </Form.Item>
           </div>
         );
