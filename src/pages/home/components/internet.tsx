@@ -61,7 +61,7 @@ function Internet() {
                 1
               </Descriptions.Item>
               <Descriptions.Item label="IP地址获取方式">手动配置</Descriptions.Item>
-              <Descriptions.Item label="IP地址">{network.idAdd}</Descriptions.Item>
+              <Descriptions.Item label="IP地址">{network.ipAdd}</Descriptions.Item>
               <Descriptions.Item label="子网掩码">{network.mask}</Descriptions.Item>
               <Descriptions.Item label="网关">{network.gateWayAdd}</Descriptions.Item>
               <Descriptions.Item label="首选DNS服务器">{network.dns}</Descriptions.Item>

@@ -1,10 +1,10 @@
 import React from 'react';
-import { Modal, Input } from 'antd';
+import { Modal, Input, Alert } from 'antd';
 import Form from '@/components/BaseForm';
 
-interface AddressSettingProps {
+interface AddressSettingProps{
   visible?: boolean
-  data?: object
+  data?: string
   onOk?: () => void
   onCancel?: (e: React.MouseEvent<HTMLElement>) => void
 }
@@ -25,6 +25,9 @@ const AddressSetting = (props: AddressSettingProps) => {
 
   const onSearch = (value: string) => {
     console.log(value);
+    if(!!value){
+
+    }
   }
 
   const OnOk = () => {
@@ -33,6 +36,7 @@ const AddressSetting = (props: AddressSettingProps) => {
       props.onOk()
     }
   }
+  
 
   return <>
     <Modal
@@ -50,14 +54,16 @@ const AddressSetting = (props: AddressSettingProps) => {
               label: '平台地址',
               required: true,
               options: {
+                initialValue: props.data,
                 rules: [{ required: true, message: '请输入平台地址' }],
               },
               render: () => {
-                return <Input.Search onSearch={onSearch} />
+                return <Input.Search onSearch={onSearch} enterButton="校验"/>
               }
             }
           ]}
         />
+        <Alert message="Warning" type="warning" showIcon />
       </div>
     </Modal>
   </>
