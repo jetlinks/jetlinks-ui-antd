@@ -10,8 +10,8 @@ interface Props {
         value?: string
     };
     runInfo: {
-        onlineTime?: string;
-        offlineTime?: string;
+        onlineTime?: string
+        offlineTime?: string
     };
 }
 const DeviceState: React.FC<Props> = props => {
