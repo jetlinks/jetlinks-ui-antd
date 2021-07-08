@@ -1,20 +1,23 @@
 import React, {useEffect, useState} from 'react';
 import Form from 'antd/es/form';
 import {FormComponentProps} from 'antd/lib/form';
-import {Button, Card, Col, Icon, Input, Modal, Row, Radio, Switch, Tooltip,Select} from 'antd';
+import {Button, Card, Col, Icon, Input, Modal, Row, Radio, Switch, Tooltip,Select,message} from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import {alarm} from '../data';
 import Triggers from './Triggers';
-import ActionAssembly from './actions'
+import ActionAssembly from './actions';
+import Bind from './bind';
+import Service from './service';
 // import Triggers from '@/pages/device/alarm/save/triggers/index';
 // import ActionAssembly from '@/pages/device/alarm/save/actions/index';
 
 interface Props extends FormComponentProps {
   close: Function;
   save: Function;
-  data: Partial<alarm>;
+  data: any;
+  deviceId: any;
   // target: string;
-  targetId?: string;
+  // targetId?: string;
   metaData?: string;
   name?: string;
   productName?: string;
@@ -27,56 +30,111 @@ interface State {
   trigger: any[];
   action: any[];
   shakeLimit: any;
+  alarmType: string;
+  deviceList: any[];
+  name: string;
+  productId: string;
+  deviceId: string;
+  productList: any[];
+  device: any;
+  product: any;
 }
 
 const Edit: React.FC<Props> = props => {
 
+  const service = new Service('rule-engine-alarm');
   const initState: State = {
     properties: [],
     data: props.data,
     trigger: [],
     action: [],
     shakeLimit: {},
+    alarmType: props.data.target || 'product',
+    deviceList: [],
+    name: props.data.name || '',
+    deviceId: props.data.target === 'device' && props.data.targetId ? props.data.targetId : '',
+    productId: props.data.targetId || '',
+    productList: [],
+    device: {},
+    product: {},
   };
 
   const [data] = useState(initState.data);
+  const [alarmType, setAlarmType] = useState(initState.alarmType);
   const [properties, setProperties] = useState(initState.properties);
   const [trigger, setTrigger] = useState(initState.trigger);
   const [action, setAction] = useState(initState.action);
+  const [bindVisible, setBindVisible] = useState(false);
   const [shakeLimit, setShakeLimit] = useState(initState.shakeLimit);
+  // const [deviceList, setDeviceList] = useState(initState.deviceList);
+  const [productList, setProductList] = useState(initState.productList);
+  const [name, setName] = useState(initState.name);
+  const [deviceId, setDeviceId] = useState(initState.deviceId);
+  const [productId, setProductId] = useState(initState.productId);
+  const [device, setDevice] = useState(initState.device);
+  const [product, setProduct] = useState(initState.product);
 
   const submitData = () => {
-    data.name = props.data.name;
-    data.target = props.target;
-    data.targetId = props.targetId;
-    if (props.target === 'device') {
+    data.name = name;
+    data.target = alarmType;
+    if (alarmType === 'device') {
+      data.targetId = deviceId;
       data.alarmRule = {
-        name: props.name,
-        deviceId: props.targetId,
-        deviceName: props.name,
+        name: device.name,
+        deviceId: device.id,
+        deviceName: device.name,
         triggers: trigger,
         actions: action,
         properties: properties,
-        productId: props.productId,
-        productName: props.productName,
+        productId: device.productId,
+        productName: device.productName,
         shakeLimit: shakeLimit,
       };
     } else {
+      data.targetId = productId;
       data.alarmRule = {
-        name: props.name,
-        productId: props.targetId,
-        productName: props.name,
+        name: product.name,
+        productId: product.id,
+        productName: product.name,
         triggers: trigger,
         actions: action,
         properties: properties,
         shakeLimit: shakeLimit,
       };
     }
-    props.save({...data});
-  };
+    data.state = undefined;
+    props.save({ ...data });
+  }
+
+  const getProductList = () => {
+    service.getProductList(props.deviceId, { paging: false }).subscribe(
+      (res) => {
+        setProductList(res)
+      }
+    )
+  }
+
+  const getProductInfo = (id: string) => {
+    service.getProductInfo(props.deviceId, { id: id }).subscribe(
+      res => {
+        setProduct(res);
+      }
+    )
+  }
+
+  const getInstanceDetail = (id: string) => {
+    service.getInstanceDetail(props.deviceId, id).subscribe(
+      (res) => {
+        setDevice(res);
+      }
+    )
+  }
 
   useEffect(() => {
-
+    if(deviceId !== ''){
+      getInstanceDetail(deviceId);
+    }
+    getProductList();
     if (props.data.alarmRule) {
       setShakeLimit(props.data.alarmRule.shakeLimit ? props.data.alarmRule.shakeLimit : {
         enabled: false,
@@ -84,13 +142,13 @@ const Edit: React.FC<Props> = props => {
         threshold: undefined,
         alarmFirst: true
       });
-      setTrigger(props.data.alarmRule.triggers.length > 0 ? [...props.data.alarmRule.triggers] : [{_id: 0}]);
-      setAction(props.data.alarmRule.actions.length > 0 ? [...props.data.alarmRule.actions] : [{_id: 0}]);
-      setProperties(props.data.alarmRule.properties.length > 0 ? [...props.data.alarmRule.properties] : [{_id: 0}]);
+      setTrigger(props.data.alarmRule.triggers.length > 0 ? [...props.data.alarmRule.triggers] : [{ _id: 0 }]);
+      setAction(props.data.alarmRule.actions.length > 0 ? [...props.data.alarmRule.actions] : [{ _id: 0 }]);
+      setProperties(props.data.alarmRule.properties.length > 0 ? [...props.data.alarmRule.properties] : [{ _id: 0 }]);
     } else {
-      setTrigger([{_id: 0}]);
-      setAction([{_id: 0}]);
-      setProperties([{_id: 0}]);
+      setTrigger([{ _id: 0 }]);
+      setAction([{ _id: 0 }]);
+      setProperties([{ _id: 0 }]);
     }
   }, []);
 
@@ -117,27 +175,65 @@ const Edit: React.FC<Props> = props => {
           <Row gutter={16}
                style={{marginLeft: '0.1%'}}>
             <Col span={22}>
-              <Form.Item key="name" label="告警名称">
-                <Input placeholder="输入告警名称" 
-                       onBlur={event => {
-                         props.data.name = event.target.value;
-                       }}/>
+              <Form.Item key="name" label="告警名称" >
+                <Input placeholder="输入告警名称"
+                      defaultValue={props.data.name} 
+                      onBlur={event => {
+                        setName(event.target.value);
+                      }}/>
               </Form.Item>
             </Col>
             <Col span={11}>
-              <Form.Item key="name" label="告警类型">
-              <Select placeholder="请选择告警类型" >
-                    <Select.Option key={1} value={1}>树莓派产品</Select.Option>
+            <Form.Item key="alarmType" label="告警类型">
+                <Select placeholder="请选择" defaultValue={props.data.target}
+                  disabled={!!props.data.id}
+                  onChange={(value: string) => {
+                    setAlarmType(value);
+                  }}
+                >
+                  <Select.Option key='product' value="product">产品</Select.Option>
+                  <Select.Option key='device' value="device">设备</Select.Option>
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={11}>
-              <Form.Item key="name" label="产品">
-                <Select placeholder="请选择产品" >
-                    <Select.Option key={1} value={1}>树莓派产品</Select.Option>
-                </Select>
-              </Form.Item>
-            </Col>
+            {
+              alarmType === 'product' && <Col span={12}>
+                <Form.Item key="productId" label="产品" >
+                  <Select disabled={!!props.data.id} placeholder="请选择" defaultValue={productId} onChange={(value: string) => {
+                    setProductId(value);
+                    getProductInfo(value);
+                  }}>
+                    {productList.map((item: any) => {
+                      return (
+                        <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
+                      )
+                    })}
+                  </Select>
+                </Form.Item>
+              </Col>
+            }
+            {
+              alarmType === 'device' && <Col span={12}>
+                <Form.Item key="deviceId" label="设备">
+                  <Input disabled={!!props.data.id} addonAfter={<Icon onClick={() => {
+                    setBindVisible(true);
+                  }} type='gold' title="点击选择设备" />}
+                    defaultValue={deviceId || ''}
+                    placeholder="点击选择设备"
+                    value={device?.name}
+                    readOnly />
+                  {/* <Select placeholder="请选择" defaultValue={props.data.targetId} onChange={(value: string) => {
+                    getInstanceDetail(value);
+                  }}>
+                    {deviceList.map((item: any) => {
+                      return (
+                        <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
+                      )
+                    })}
+                  </Select> */}
+                </Form.Item>
+              </Col>
+            }
           </Row>
           <Card style={{marginBottom: 10}} bordered={false} size="small">
             <p style={{fontSize: 16}}>触发条件
@@ -279,6 +375,7 @@ const Edit: React.FC<Props> = props => {
                 }}
                 key={`action_${Math.round(Math.random() * 100000)}`}
                 action={item}
+                deviceId={props.deviceId}
                 position={index}
                 remove={(position: number) => {
                   action.splice(position, 1);
@@ -288,7 +385,7 @@ const Edit: React.FC<Props> = props => {
                 }}/>
             ))}
             <Button icon="plus" type="dashed"
-            style={{width:'540px',position:'relative',left:10}}
+            style={{width:'530px',position:'relative',left:20}}
                     onClick={() => {
                       setAction([...action, {_id: Math.round(Math.random() * 100000)}]);
                     }}
@@ -300,6 +397,24 @@ const Edit: React.FC<Props> = props => {
           </Card>
         </Form>
       </div>
+      {bindVisible && (
+        <Bind selectionType='radio'
+              close={() => {
+                setBindVisible(false);
+              }}
+              deviceId={props.deviceId}
+              save={(item: any) => {
+                if (item[0]) {
+                  setBindVisible(false);
+                  getInstanceDetail(item[0]);
+                  setDeviceId(item[0]);
+                } else {
+                  message.error('请勾选设备');
+                  return;
+                }
+              }}
+        />
+      )}
     </Modal>
   );
 };

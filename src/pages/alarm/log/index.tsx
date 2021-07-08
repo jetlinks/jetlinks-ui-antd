@@ -1,50 +1,82 @@
 
-import { Avatar, Badge, Card, Icon, List, Modal, Switch, Table, Select } from 'antd';
+import { Row, Badge, Form, Icon, Table, Select } from 'antd';
 import {CheckCircleOutlined,ExclamationCircleOutlined} from '@ant-design/icons';
 import Button from 'antd/es/button';
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './index.less';
 import Input from 'antd/es/input';
-import BaseForm from '@/components/BaseForm';
 import { ReloadOutlined } from '@ant-design/icons';
 import Detail from './detail'
 import Handle from './handle';
+import Service from './service';
+import { FormComponentProps } from 'antd/lib/form';
+import Col from 'antd/es/grid/col';
 
-function Log() {
-  const [visible, setVisible] = useState(false)
-  const [handlevisible, setHandleVisible] = useState(false)
+interface Props extends FormComponentProps { }
+
+function Log(props: Props) {
+  const { form: { getFieldDecorator }, form } = props;
+  const [visible, setVisible] = useState(false);
+  const [handlevisible, setHandleVisible] = useState(false);
   const [searchVisible, setSearchVisible] = useState<boolean>(false);
+  const [productList, setProductList] = useState<any[]>([]);
+  const [alarmList, setAlarmList] = useState<any>({
+    pageIndex: 0,
+    pageSize: 8,
+  });
+  const [searchParam, setSearchParam] = useState<any>({
+    pageSize: 10
+  });
+  const deviceId = 'local';
+  const service = new Service('/alarm/log');
 
-  
+//获取列表
+  const handleSearch = (params:any) =>{
+    setSearchParam(params);
+    service.getAlarmLog(deviceId, params).subscribe(
+      (res) => {
+        setAlarmList(res)
+      }
+    )
+  }; 
+  //获取产品
+  const getProductList = () => {
+    service.getDeviceGatewayList(deviceId, { paging: false }).subscribe(
+      (res) => {
+        setProductList(res);
+      }
+    )
+  }
+
   const columns = [
     {
       title: '设备ID',
-      dataIndex: 'id',
+      dataIndex: 'deviceId',
       width: '200px',
       ellipsis: true,
     },
     {
       title: '设备名称',
       dataIndex: 'name',
-      width: '200px',
+      width: 'deviceName',
       ellipsis: true,
     },
     {
       title: '告警内容',
-      dataIndex: 'text',
+      dataIndex: 'description',
       ellipsis: true,
     },
     {
       title: '告警时间',
-      dataIndex: 'time',
+      dataIndex: 'alarmTime',
       width: '220px',
       // render: record =>
       //   record ? <Badge status={statusMap.get(record.text)} text={record.text} /> : '',
     },
     {
       title: '处理状态',
-      dataIndex: 'status',
+      dataIndex: 'state',
       width: '200px',
       render:(record:any)=>{
         return <div>
@@ -76,38 +108,16 @@ function Log() {
             </div>
     }
   ];
-  
-const dataSource = [
-  {
-    id: '1',
-    name: '警告一',
-    text: '规则实例',
-    time: '-',
-    status: true,
-    res:'ok'
-  },
-  {
-    id: '2',
-    name: '警告一',
-    text: '规则实例撒大苏打实打实大苏打',
-    time: '2021-05-01 09:23:44',
-    status: false,
-    res:'ok'
-  },
-  {
-    id: '3',
-    name: '警告一',
-    text: '规则实例',
-    time: '-',
-    status: false,
-    res:'ok'
-  },
-];
-const status = dataSource.map(item=>item.status);
+
+useEffect(() => {
+  handleSearch({pageSize: 10});
+  getProductList();
+}, []);
+
   return (
     <div>
       <div className={styles.header}>
-        <div className={styles.title}>设备管理</div>
+        <div className={styles.title}>告警记录</div>
         <div className={styles.right}>
           <div style={{
             width:120,
@@ -134,43 +144,67 @@ const status = dataSource.map(item=>item.status);
         </div>
         {
           searchVisible && (
-            <div >
-              <BaseForm
-                style={{paddingTop:25,display:'flex',justifyContent:'flex-start'}}
-                labelCol={{
-                  xs: { span: 6 },
-                  sm: { span: 3 },
-                }}
-                wrapperCol={{
-                  xs: { span: 36 },
-                  sm: { span: 18 },
-                }}
-                column={3}
-                items={[
-                  {
-                    name: 'test',
-                    label: '设备ID',
-                    render: () => <Input />
-                  },
-                  {
-                    name: 'test',
-                    label: '产品名称',
-                    render: () => <Input />
-                  },
-                  {
-                    name: 'test2',
-                    label: '设备状态',
-                    render: () => <Select>
-                      <Select.Option value={0}>全部</Select.Option>
-                      <Select.Option value={1}>在线</Select.Option>
-                      <Select.Option value={2}>离线</Select.Option>
-                    </Select>
-                  }
-                ]}
-        />
-              <div style={{marginLeft:85}}>
-                <Button style={{marginRight:5}}>重置</Button>
-                <Button type="primary">查询</Button>
+            <div style={{marginTop:10}}>
+              <Form
+                    labelCol={{
+                      xs: { span: 6 },
+                      sm: { span: 6 },
+                    }}
+                    wrapperCol={{
+                      xs: { span: 36 },
+                      sm: { span: 18 },
+                    }}>
+                    <Row gutter={24}>
+                      <Col span={6}>
+                        <Form.Item label="设备ID">
+                          {getFieldDecorator('deviceId', {})(
+                            <Input />,
+                          )}
+                        </Form.Item>
+                      </Col>
+                      <Col span={6}>
+                        <Form.Item label="产品名称">
+                          {getFieldDecorator('productName', {})(
+                            <Select allowClear>
+                              {
+                                productList.map((item, index) => (
+                                  <Select.Option key={index} value={item.name}>{item.name}</Select.Option>
+                                ))
+                              }
+                            </Select>
+                          )}
+                        </Form.Item>
+                      </Col>
+                      <Col span={6}>
+                        <Form.Item label="告警状态">
+                          {getFieldDecorator('state', {})(
+                            <Select allowClear>
+                            <Select.Option value="solve">已处理</Select.Option>
+                            <Select.Option value="newer">未处理</Select.Option>
+                          </Select>,
+                          )}
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                  </Form>
+              <div style={{marginLeft:110}}>
+                <Button style={{marginRight:5}} onClick={()=>{
+                  form.resetFields();
+                  handleSearch({
+                    pageSize: 10,
+                  })
+                }}>重置</Button>
+                <Button type="primary" onClick={()=>{
+                  const data = form.getFieldsValue();
+                  handleSearch({
+                    pageSize: 10,
+                    terms:[
+                      {deviceId:data.deviceId},
+                      {productName:data.productName},
+                      {state:data.state},
+                    ]
+                  });
+                }}>查询</Button>
               </div>
             </div>
           )
@@ -180,7 +214,7 @@ const status = dataSource.map(item=>item.status);
         <div>
           <Table
             columns={columns}
-            dataSource={dataSource}
+            dataSource={alarmList.data}
             rowKey="id"
             bodyStyle={{ backgroundColor: '#fff' }}
           // onChange={onTableChange}
@@ -221,4 +255,5 @@ const status = dataSource.map(item=>item.status);
   );
 }
 
-export default Log;
+// export default Log;
+export default Form.create<Props>()(Log);

@@ -16,6 +16,7 @@ interface Props extends FormComponentProps {
   selectionType: string;
   close: Function;
   save: Function;
+  deviceId: string;
 }
 
 interface State {

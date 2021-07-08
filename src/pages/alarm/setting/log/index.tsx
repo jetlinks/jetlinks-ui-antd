@@ -1,55 +1,96 @@
 //告警日志
-import { Badge, Table, Select } from 'antd';
+import { Badge, Table, Select ,Form,Row} from 'antd';
 import Button from 'antd/es/button';
 import React from 'react';
-import { useState } from 'react';
+import { useState ,useEffect} from 'react';
 import styles from './index.less';
 import Input from 'antd/es/input';
-import BaseForm from '@/components/BaseForm';
+import Col from 'antd/es/grid/col';
+import { FormComponentProps } from 'antd/lib/form';
 import Detali from '@/pages/alarm/log/detail';
 import Handle from '@/pages/alarm/log/handle'
 import {CheckCircleOutlined,ExclamationCircleOutlined} from '@ant-design/icons';
+import Service from '../service';
+import encodeQueryParam from '@/utils/encodeParam';
 
-interface Props  {
-    
+interface Props extends FormComponentProps  {
     close: Function;
+    id:string;
+    deviceId:string;
+    name:string;
+    
+  }
+
+  interface State {
+    id:string;
+    deviceId: string;
+    name:string;
+    AlarmLogList:any;
+    searchParam:any;
   }
 
   const Log: React.FC<Props> = props => {
 
-    const [visible, setVisible] = useState(false)
-    const [handlevisible, setHandleVisible] = useState(false)
+    const initState: State = {
+      deviceId: props.deviceId,
+      id:props.id,
+      AlarmLogList:[],
+      name:props.name,
+      searchParam: {
+        
+      },
+    }
+    const { form: { getFieldDecorator }, form } = props;
+    const service = new Service('/alarm/setting');
+    const [visible, setVisible] = useState(false);
+    const [handlevisible, setHandleVisible] = useState(false);
+    const [AlarmLogList, setAlarmLogList] =  useState(initState.AlarmLogList);
+    const [searchParam, setSearchParam] = useState(initState.searchParam);
 
 
+//获取告警日志
+const handleSearch = (params: any) =>{
+  setSearchParam(params);
+    service.getAlarmInfo(props.deviceId, encodeQueryParam(params)).subscribe(
+      (resp) => {
+        setAlarmLogList(resp);
+      }
+    )
+};
 
+
+    useEffect(() => {
+      handleSearch({id:props.id});
+    }, []);
+    
   const columns = [
     {
       title: '设备ID',
-      dataIndex: 'id',
+      dataIndex: 'deviceId',
       width: '200px',
       ellipsis: true,
     },
     {
       title: '设备名称',
-      dataIndex: 'name',
+      dataIndex: 'deviceName',
       width: '200px',
       ellipsis: true,
     },
     {
       title: '告警内容',
-      dataIndex: 'text',
+      dataIndex: 'description',
       ellipsis: true,
     },
     {
       title: '告警时间',
-      dataIndex: 'time',
+      dataIndex: 'alarmTime',
       width: '220px',
       // render: record =>
       //   record ? <Badge status={statusMap.get(record.text)} text={record.text} /> : '',
     },
     {
       title: '处理状态',
-      dataIndex: 'status',
+      dataIndex: 'state',
       width: '200px',
       render:(record:any)=>{
         return <div>
@@ -81,33 +122,6 @@ interface Props  {
     }
   ];
   
-const dataSource = [
-  {
-    id: '1',
-    name: '警告一',
-    text: '规则实例',
-    time: '-',
-    status: false,
-    res:'ok'
-  },
-  {
-    id: '2',
-    name: '警告一',
-    text: '规则实例撒大苏打实打实大苏打',
-    time: '2021-05-01 09:23:44',
-    status: false,
-    res:'ok'
-  },
-  {
-    id: '3',
-    name: '警告一',
-    text: '规则实例',
-    time: '-',
-    status: true,
-    res:'ok'
-  },
-];
-
   return (
     <div>
       <div className={styles.header}>
@@ -120,46 +134,70 @@ const dataSource = [
                     fontWeight:600,
                     paddingTop:20,
                     marginLeft:10
-                    }}>test告警</div>
+                    }}>{props.name}</div>
       </div>
       <div style={{
             backgroundColor: '#fff',
             marginBottom:10,
+            paddingLeft:15,
             display:"flex",
             justifyContent:'space-between',
             alignItems:'center'
             }}>
-      <BaseForm
-      style={{width:'650px',paddingTop:5}}
-          labelCol={{
-            xs: { span: 12 },
-            sm: { span: 6 },
-          }}
-          wrapperCol={{
-            xs: { span: 36 },
-            sm: { span: 18 },
-          }}
-          column={2}
-          items={[
-            {
-              name: 'test',
-              label: '设备',
-              render: () => <Input placeholder='设备ID/名称'/>
-            },
-            {
-              name: 'test2',
-              label: '处理状态',
-              render: () => <Select placeholder='全部'>
-                <Select.Option value={0}>已处理</Select.Option>
-                <Select.Option value={1}>未处理</Select.Option>
-                
-              </Select>
-            },
-          ]}
-        />
+      <Form
+            style={{width:'600px',paddingTop:25}}
+            labelCol={{
+              xs: { span: 12 },
+              sm: { span: 6 },
+            }}
+            wrapperCol={{
+              xs: { span: 36 },
+              sm: { span: 18 },
+            }}>
+            <Row gutter={24}>
+              <Col span={12}>
+                <Form.Item label="设备名称">
+                  {getFieldDecorator('deviceName', {})(
+                    <Input/>,
+                  )}
+                </Form.Item>
+              </Col>
+              
+              <Col span={12}>
+                <Form.Item label="处理状态">
+                  {getFieldDecorator('state', {})(
+                    <Select allowClear>
+                      <Select.Option value="solve">已处理</Select.Option>
+                      <Select.Option value="newer">未处理</Select.Option>
+                    </Select>,
+                  )}
+                </Form.Item>
+              </Col>
+            </Row>
+          </Form>
         <div style={{marginRight:20}}>
-          <Button style={{marginRight:5}}>重置</Button>
-          <Button type="primary">查询</Button>
+          <Button style={{marginRight:5}} onClick={()=>{
+            form.resetFields();
+            handleSearch({
+              id:props.id,
+            })
+          }}>重置</Button>
+          <Button type="primary" onClick={()=>{
+            const data = form.getFieldsValue();
+            let list = searchParam.where ? searchParam.where.split(' and ') : [];
+            let where: string[] = list.filter((item: string) => {
+              return item.includes('like');
+            });
+            Object.keys(data).forEach(i => {
+              if (data[i]) {
+                where.push(`${i}=${data[i]}`)
+              }
+            })
+            handleSearch({
+              where: where.join(' and '),
+              id:props.id,
+            });
+          }}>查询</Button>
         </div>
         
   </div>
@@ -181,7 +219,7 @@ const dataSource = [
         <div>
           <Table
             columns={columns}
-            dataSource={dataSource}
+            dataSource={AlarmLogList}
             rowKey="id"
             bodyStyle={{ backgroundColor: '#fff' }}
           // onChange={onTableChange}
@@ -222,4 +260,5 @@ const dataSource = [
   );
 }
 
-export default Log;
+// export default Log;
+export default Form.create<Props>()(Log);
