@@ -20,16 +20,16 @@ export async function update(params: any) {
   });
 }
 
-// export async function info(id: string) {
-//   return request(`/jetlinks/device/instance/${id}/detail`, {
-//     method: 'GET',
-//   });
-// }
-export async function info(deviceId: string) {
-  return request(`/jetlinks/edge/operations/${deviceId}/detail`, {
+export async function info(id: string) {
+  return request(`/jetlinks/device/instance/${id}/detail`, {
     method: 'GET',
   });
 }
+// export async function info(deviceId: string) {
+//   return request(`/jetlinks/edge/operations/${deviceId}/detail`, {
+//     method: 'GET',
+//   });
+// }
 
 export async function remove(id: string) {
   return request(`/jetlinks/device-instance/${id}`, {
