@@ -115,7 +115,7 @@ const Save: React.FC<Props> = props => {
             </Button>
           </Upload>
           {getFieldDecorator('configs.keystoreBase64', {
-            rules: [{ required: true }],
+            // rules: [{ required: true }],
             initialValue: keystoreBase64,
           })(<Input.TextArea rows={3} />)}
         </Form.Item>
