@@ -3,8 +3,6 @@ import { Button, Input, Radio } from 'antd';
 import styles from './index.less';
 import Form from '@/components/BaseForm';
 import IPInput from '@/components/BaseForm/IPInput';
-import { CascadeDisabled, CascadeEnabled, CascadeList, getCascadeList, removeCascade } from '@/pages/edge-gateway/device/detail/video/cascade/service';
-import { useRequest } from 'ahooks';
 
 function Configuration() {
 

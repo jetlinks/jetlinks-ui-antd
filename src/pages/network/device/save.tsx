@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import Service from './service';
 interface Props extends FormComponentProps {
     data: any;
-    deviceId: string;
     close: Function;
     save: Function;
 }
@@ -21,7 +20,7 @@ const Save: React.FC<Props> = props => {
     const [product, setProduct] = useState<any>({});
 
     const getProductList = () => {
-        service.getDeviceGatewayList(props.deviceId, {paging: false}).subscribe(
+        service.getDeviceGatewayList({paging: false}).subscribe(
             (res) => {
                 setProductList(res);
                 if(data.id){

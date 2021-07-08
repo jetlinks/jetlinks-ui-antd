@@ -14,7 +14,7 @@ const getUrl = (url: string) => {
 
 const initWebSocket = () => {
     clearInterval(timer);
-    const host = process.env.NODE_ENV === 'development' ? `192.168.22.233:8881` : document.location.host
+    const host = document.location.host //process.env.NODE_ENV === 'development' ? `192.168.22.233:8844` : 
     const wsUrl = `${document.location.protocol.replace('http', 'ws')}//${host}/jetlinks/messaging/${getAccessToken()}?:X_Access_Token=${getAccessToken()}`;
     if (!ws && count < 5) {
         try {

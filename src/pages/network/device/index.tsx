@@ -15,13 +15,18 @@ import moment from 'moment';
 import { FormComponentProps } from 'antd/lib/form';
 import Col from 'antd/es/grid/col';
 
-interface Props extends FormComponentProps { }
+interface Props extends FormComponentProps { 
+  
+}
 
 function Device(props: Props) {
 
-  const deviceId = 'edge-pi';
   const service = new Service('/network/material');
+
   const { form: { getFieldDecorator }, form } = props;
+  const [deviceCount, setDeviceCount] = useState<number>(0);
+  const [deviceOfflineCount, setDeviceOfflineCount] = useState<number>(0);
+  const [deviceOnlineCount, setDeviceOnlineCount] = useState<number>(0);
   const [delVisible, setDelVisible] = useState<boolean>(false);
   const [editVisible, setEditVisible] = useState<boolean>(false);
   const [detailVisible, setDetailVisible] = useState<boolean>(false);
@@ -51,7 +56,7 @@ function Device(props: Props) {
   const handleSearch = (params: any) => {
     setSearchParam(params);
     setLoading(true);
-    service.getDeviceList(deviceId, encodeQueryParam(params)).subscribe(
+    service.getDeviceList(encodeQueryParam(params)).subscribe(
       (res) => {
         setDataList(res)
       },
@@ -61,7 +66,7 @@ function Device(props: Props) {
   };
 
   const getProductList = () => {
-    service.getDeviceGatewayList(deviceId, { paging: false }).subscribe(
+    service.getDeviceGatewayList({ paging: false }).subscribe(
       (res) => {
         setProductList(res);
       }
@@ -69,7 +74,7 @@ function Device(props: Props) {
   }
 
   const deploy = (id: string) => {
-    service.deployDevice(deviceId, id).subscribe(
+    service.deployDevice(id).subscribe(
       () => {
         handleSearch(searchParam);
         message.success('操作成功！');
@@ -80,7 +85,7 @@ function Device(props: Props) {
   };
 
   const undeploy = (id: string) => {
-    service.undeployDevice(deviceId, id).subscribe(
+    service.undeployDevice(id).subscribe(
       () => {
         handleSearch(searchParam);
         message.success('操作成功！');
@@ -91,13 +96,32 @@ function Device(props: Props) {
   };
 
   useEffect(() => {
+    service.getDeviceCount().subscribe(resp => {
+      if (resp.status === 200) {
+        setDeviceCount(resp.result[0])
+      }
+    })
+    service.getDeviceCount({
+      terms: [
+        { column: "state", value: "online" }
+      ]
+    }).subscribe(resp => {
+      if (resp.status === 200) {
+        setDeviceOnlineCount(resp.result[0])
+      }
+    })
+    service.getDeviceCount({ column: "state", value: "offline" }).subscribe(resp => {
+      if (resp.status === 200) {
+        setDeviceOfflineCount(resp.result[0])
+      }
+    })
     handleSearch({ pageSize: 8 });
     getProductList();
   }, []);
 
   const saveData = (params?: any) => {
     if (currentData.id) {
-      service.saveDevice(deviceId, params).subscribe(
+      service.saveDevice(params).subscribe(
         (res) => {
           if (res.status === 200) {
             message.success('操作成功！');
@@ -105,7 +129,7 @@ function Device(props: Props) {
           }
         });
     } else {
-      service.insertDevice(deviceId, params).subscribe(
+      service.insertDevice(params).subscribe(
         (res) => {
           if (res.status === 200) {
             message.success('操作成功！');
@@ -216,10 +240,10 @@ function Device(props: Props) {
               <div style={{ backgroundColor: 'white', padding: '20px', marginBottom: '16px' }}>
                 <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
                   <div>
-                    <span style={{ fontWeight: 600, fontSize: '14px' }}>总设备数： 20</span>
+                    <span style={{ fontWeight: 600, fontSize: '14px' }}>总设备数： {deviceCount}</span>
                     <span></span>
-                    <span style={{ marginLeft: '20px', color: 'rgba(0, 0, 0, 0.45)' }}><Badge color={'green'} text="在线数" />1</span>
-                    <span style={{ marginLeft: '20px', color: 'rgba(0, 0, 0, 0.45)' }}><Badge color={'red'} text="离线数" />1</span>
+                    <span style={{ marginLeft: '20px', color: 'rgba(0, 0, 0, 0.45)' }}><Badge color={'green'} text="在线数" />{deviceOnlineCount}</span>
+                    <span style={{ marginLeft: '20px', color: 'rgba(0, 0, 0, 0.45)' }}><Badge color={'red'} text="离线数" />{deviceOfflineCount}</span>
                   </div>
                   <div onClick={() => { setSearchVisible(!searchVisible) }} style={{ color: '#1890FF', cursor: 'pointer' }}>
                     高级筛选 <Icon style={{ transform: `rotate( ${searchVisible ? 0 : '-180deg'})`, transition: 'all .3s' }} type="down" />
@@ -280,7 +304,7 @@ function Device(props: Props) {
                     }}>重置</Button>
                     <Button type="primary" onClick={() => {
                       const data = form.getFieldsValue();
-                      let list = searchParam.where.split(' and ');
+                      let list = searchParam.where ? searchParam.where.split(' and ') : [];
                       let where: string[] = list.filter((item: string) => {
                         return item.includes('like');
                       });
@@ -381,7 +405,6 @@ function Device(props: Props) {
       </Spin>
       {editVisible && <Save
         data={currentData}
-        deviceId={deviceId}
         close={() => {
           setEditVisible(false);
           setCurrentData({});

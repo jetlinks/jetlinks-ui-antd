@@ -1,10 +1,11 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { Row, Col, Spin, Table, message } from "antd";
+import React, {  useEffect, useState } from "react";
+import { Row, Col, Spin, Table } from "antd";
 import PropertiesCard from './PropertiesCard';
 import DeviceState from './DeviceState';
 import { getWebsocket } from "@/layouts/GlobalWebSocket";
 import { Observable } from "rxjs";
-import { flatMap, groupBy, map, toArray } from "rxjs/operators";
+import { map } from "rxjs/operators";
+import _ from "lodash";
 
 interface Props {
     refresh: Function;
@@ -22,13 +23,14 @@ const topColResponsiveProps = {
 const Status: React.FC<Props> = props => {
 
     const { device, type } = props;
-    const metadata = JSON.parse(device.metadata);
-    const [properties, setProperties] = useState<any[]>(metadata.properties);
+    const [properties, setProperties] = useState<any[]>([]);
+    const [list, setList] = useState<any[]>([]);
 
     const [loading, setLoading] = useState<boolean>(false);
     const propertiesWs: Observable<any> = getWebsocket(
         `instance-info-property-${device.id}-${device.productId}`,
         `/dashboard/device/${device.productId}/properties/realTime`,
+        // `/edge-gateway-state/device/${device.productId}/properties/realTime`,
         {
             deviceId: device.id,
             history: 1,
@@ -37,32 +39,33 @@ const Status: React.FC<Props> = props => {
         map(result => result.payload)
     );
 
+    useEffect(() => {
+        let metadata = JSON.parse(props.device?.metadata || '{}');
+        setProperties(metadata.properties || []);
+        setLoading(true);
+        setList(_.map(metadata.properties, (item) => {
+            return {
+                id: item.id,
+                name: item.name,
+                time: '/',
+                value: '/'
+            }
+        }))
+    }, [props.device]);
+
     let propertiesMap = {};
     properties.forEach(item => propertiesMap[item.id] = item);
 
     useEffect(() => {
 
         const properties$ = propertiesWs.subscribe((resp) => {
-            // const property = resp.value.property;
             console.log(resp)
+            //组合数据
         });
         return () => {
             properties$.unsubscribe();
         };
     }, []);
-
-    // const renderProperties = useCallback(
-    //     () => {
-    //         const propertyCard = properties.map((item: any) => (
-    //             <Col {...topColResponsiveProps} key={item.id}>
-    //                 <PropertiesCard
-    //                     item={item}
-    //                     key={item.id}
-    //                 />
-    //             </Col>
-    //         ))
-    //         return [...propertyCard];
-    //     }, [device]);
 
     return (
         <Spin spinning={!loading}>
@@ -112,7 +115,7 @@ const Status: React.FC<Props> = props => {
                                         },
                                     ]
                                 }
-                                dataSource={properties} />
+                                dataSource={list} />
                         )
                 }
             </div>

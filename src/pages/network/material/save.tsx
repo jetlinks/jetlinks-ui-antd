@@ -1,4 +1,3 @@
-import encodeQueryParam from "@/utils/encodeParam";
 import { Button, Card, Col, Divider, Form, Icon, Input, Modal, Row, Select, Tooltip } from "antd";
 import { FormComponentProps } from "antd/es/form";
 import React, { Fragment, useEffect, useState } from "react";
@@ -8,7 +7,6 @@ import Add from '@/pages/edge-gateway/device/detail/network/composit-gateway/sav
 
 interface Props extends FormComponentProps {
     data: any;
-    deviceId: string;
     close: Function;
     save: Function;
 }
@@ -38,11 +36,7 @@ const Save: React.FC<Props> = props => {
     }]);
 
     const getProductList = (value: string) => {
-        service.getProductList(encodeQueryParam({
-            terms: {
-                messageProtocol: value
-            }
-        })).subscribe(
+        service.getProductList({paging: false, where: `messageProtocol=${value}`}).subscribe(
             (res) => {
                 setProductList([...res]);
             },
@@ -51,14 +45,14 @@ const Save: React.FC<Props> = props => {
             () => { })
     }
     const getGatetypeList = (transportProtocol: string) => {
-        service.getGatewaytypeList(props.deviceId, transportProtocol).subscribe(
+        service.getGatewaytypeList(transportProtocol).subscribe(
             (res) => {
                 setGatetypeList([...res]);
             }
         )
     }
     const getNetworkConfigList = (id: string) => {
-        service.getNetworkConfigList(props.deviceId, { where: `type=${id}` }).subscribe(
+        service.getNetworkConfigList({ where: `type=${id}` }).subscribe(
             (res) => {
                 setNetworkConfigList([...res]);
                 if (data.id) {
@@ -82,16 +76,9 @@ const Save: React.FC<Props> = props => {
             }
         )
     }
-    // const getSupportList = () => {
-    //     service.getSupportList().subscribe(
-    //         (res) => {
-    //             setSupportList(res);
-    //         }
-    //     )
-    // }
 
     const getProtocolList = () => {
-        service.getProtocolList(props.deviceId, { paging: false }).subscribe(
+        service.getProtocolList({ paging: false }).subscribe(
             (res) => {
                 setProtocolList(res);
             }
@@ -104,7 +91,7 @@ const Save: React.FC<Props> = props => {
                 if (res.status === 200) {
                     let data = res.result || [];
                     if (data.length > 0) {
-                        service.addProtocol(props.deviceId, { entities: data }).subscribe(
+                        service.addProtocol({ entities: data }).subscribe(
                             (resp) => {
                                 if (resp.status === 200) {
                                     getProtocolList();
@@ -119,18 +106,21 @@ const Save: React.FC<Props> = props => {
 
     useEffect(() => {
         if (data.id) {
-            service.getProductList({}).subscribe(
+            service.getProductList({
+                paging: false,
+                where: `messageProtocol=${data.procotol}`
+            }).subscribe(
                 (res) => {
                     setProductList([...res]);
                     let pro: any = [...res].filter(item => item.id === data.productId);
                     setProduct(pro[0]);
-                    getProcotolInfo(pro[0].messageProtocol);
-                    service.getGatewaytypeList(props.deviceId, pro[0].transportProtocol).subscribe(
+                    getProcotolInfo(pro[0]?.messageProtocol);
+                    service.getGatewaytypeList(pro[0]?.transportProtocol).subscribe(
                         (response) => {
                             setGatetypeList([...response]);
                             let type: any = [...response].filter(item => item.id === data.gatewayProvider);
-                            getNetworkConfigList(type[0].networkType?.value);
-                            setDataType(type[0].networkType?.value);
+                            getNetworkConfigList(type[0]?.networkType?.value);
+                            setDataType(type[0]?.networkType?.value);
                         }
                     )
                 })

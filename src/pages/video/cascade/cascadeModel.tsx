@@ -11,7 +11,7 @@ import { ApiResponse } from '@/services/response';
 interface CascadeProps {
   visible?: boolean
   data?: CascadeList
-  id: string
+  // id: string
   onOk?: () => void
   onCancel?: (e: React.MouseEvent<HTMLElement>) => void
 }
@@ -258,7 +258,7 @@ function CascadeModel(props: CascadeProps) {
       if (props.data && props.data.id) {
         data.id = props.data.id
       }
-      run(props.id, data)
+      run('local', data)
 
     })
   }

@@ -1,10 +1,78 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Layout from '../items';
 import styles from '../index.less';
 import deviceStyle from './device.less';
 import { Badge } from 'antd';
+import Service from './service';
 
 function Device() {
+
+  const service = new Service('edge/network');
+  const [deviceCount, setDeviceCount] = useState<number>(0);
+  const [deviceOfflineCount, setDeviceOfflineCount] = useState<number>(0);
+  const [deviceOnlineCount, setDeviceOnlineCount] = useState<number>(0);
+  const [videoCount, setVideoCount] = useState<number>(0);
+  const [videoOnlineCount, setVideoOnlineCount] = useState<number>(0);
+  const [videoOfflineCount, setVideoOfflineCount] = useState<number>(0);
+
+
+  useEffect(() => {
+    service.getDeviceCount().subscribe(resp => {
+      if (resp.status === 200) {
+        setDeviceCount(resp.result[0])
+      }
+    })
+    service.getDeviceCount({
+      terms: [
+        { column: "state", value: "online" }
+      ]
+    }).subscribe(resp => {
+      if (resp.status === 200) {
+        setDeviceOnlineCount(resp.result[0])
+      }
+    })
+    service.getDeviceCount({ column: "state", value: "offline" }).subscribe(resp => {
+      if (resp.status === 200) {
+        setDeviceOfflineCount(resp.result[0])
+      }
+    })
+    service.getDeviceCount(
+      {
+        terms: [
+          { column: "productId", value: "onvif-media-device" }
+        ]
+      }
+    ).subscribe(resp => {
+      if (resp.status === 200) {
+        setVideoCount(resp.result[0])
+      }
+    })
+    service.getDeviceCount(
+      {
+        terms: [
+          { column: "productId", value: "onvif-media-device" },
+          { column: "state", value: "online" }
+        ]
+      }
+    ).subscribe(resp => {
+      if (resp.status === 200) {
+        setVideoOnlineCount(resp.result[0])
+      }
+    })
+    service.getDeviceCount(
+      {
+        terms: [
+          { column: "productId", value: "onvif-media-device" },
+          { column: "state", value: "offline" }
+        ]
+      }
+    ).subscribe(resp => {
+      if (resp.status === 200) {
+        setVideoOfflineCount(resp.result[0])
+      }
+    })
+  }, []);
+
   return (
     <div className={`${styles.item} ${styles.device}`}>
       <Layout
@@ -15,19 +83,19 @@ function Device() {
             <img src={require('@/assets/home/video.png')} alt="" />
             <div>
               <div>视频设备接入总数</div>
-              <h2>20</h2>
+              <h2>{videoCount}</h2>
             </div>
           </div>
           <div className={deviceStyle.bottom}>
             <Badge color="green" text={<span style={{ color: 'rgba(0, 0, 0, 0.45)' }}>当前在线设备</span>} />
             <div>
-              20
+              {videoOnlineCount}
             </div>
           </div>
           <div className={deviceStyle.bottom}>
             <Badge color="red" text={<span style={{ color: 'rgba(0, 0, 0, 0.45)' }}>离线设备</span>} />
             <div>
-              20
+              {videoOfflineCount}
             </div>
           </div>
         </div>
@@ -36,19 +104,19 @@ function Device() {
             <img src={require('@/assets/home/things.png')} alt="" />
             <div>
               <div>物联设备接入总数</div>
-              <h2>20</h2>
+              <h2>{deviceCount}</h2>
             </div>
           </div>
           <div className={deviceStyle.bottom}>
             <Badge color="green" text={<span style={{ color: 'rgba(0, 0, 0, 0.45)' }}>当前在线设备</span>} />
             <div>
-              20
+              {deviceOnlineCount}
             </div>
           </div>
           <div className={deviceStyle.bottom}>
             <Badge color="#f50" text={<span style={{ color: 'rgba(0, 0, 0, 0.45)' }}>离线设备</span>} />
             <div>
-              20
+              {deviceOfflineCount}
             </div>
           </div>
         </div>

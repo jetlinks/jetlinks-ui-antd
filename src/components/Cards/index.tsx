@@ -9,7 +9,7 @@ interface CardsProps<T> {
   title: string | (() => React.ReactDOM | JSX.Element)
   columns: ColumnProps<any>[]
   dataSource: any[]
-  pagination: PaginationProps
+  pagination?: PaginationProps
   cardItemRender: (data: T) => JSX.Element
   carItemClassName?: string
   bodyClassName?: string
@@ -64,9 +64,13 @@ function Cards<T>(props: CardsProps<T>) {
                   }
                 </Row>
               </div>
-              <div className={styles.pages}>
-                <Pagination {...props.pagination} />
-              </div>
+              {
+                props.pagination && (
+                  <div className={styles.pages}>
+                    <Pagination {...props.pagination} />
+                  </div>
+                )
+              }
             </> :
             <Table<T>
               columns={props.columns}

@@ -1,24 +1,19 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import logo from '../assets/logo.svg';
 import { BasicLayoutProps } from './BasicLayout';
 import { connect, useHistory } from 'dva';
 import { Menu, Button, Badge, Spin } from 'antd'
 import { CurrentUser } from '@/models/user';
-import { ConnectProps, ConnectState } from '@/models/connect';
+import { ConnectState } from '@/models/connect';
 import styles from './TopLayout.less';
 import { ClickParam } from 'antd/es/menu';
 import { HeaderViewProps } from '@ant-design/pro-layout/lib/Header';
-import { EdgeModelState } from '@/models/edge';
-import StatusBadge from '@/components/StatusBadge';
-import { getEdgeState } from '@/services/edge';
-import { getWebsocket } from './GlobalWebSocket';
 interface TopLayoutProps extends Omit<HeaderViewProps, 'logo'>, BasicLayoutProps {
   currentUser?: CurrentUser;
-  edge: EdgeModelState
 }
 
 function TopLayout(props: TopLayoutProps) {
-  const { currentUser, edge, dispatch } = props;
+  const { currentUser, dispatch } = props;
   // const service = new Service('user/detail');
   const [current, setCurrent] = useState('')
   const [wsTask, setWsTask] = useState<any>(null)
@@ -51,21 +46,21 @@ function TopLayout(props: TopLayoutProps) {
     });
   }
 
-  const getEdgeState = useCallback((payload: string) => {
-    let taskPush = getWebsocket(
-      `firmware-push-upgrade-by-${props.edge || 'edge'}`,
-      `/edge/operations/${payload}/state`,
-      {
-        deviceId: payload,
-      },
-    ).subscribe((res) => {
-      console.log(res);
-      // taskStatus.processing = (taskStatus.processing + 1);
-      // taskStatus.waiting = (taskStatus.waiting - 1);
-      // setTaskStatus({...taskStatus});
-    });
-    setWsTask(taskPush)
-  }, [props.edge])
+  // const getEdgeState = useCallback((payload: string) => {
+  //   let taskPush = getWebsocket(
+  //     `firmware-push-upgrade-by-${props.edge || 'edge'}`,
+  //     `/edge/operations/${payload}/state`,
+  //     {
+  //       deviceId: payload,
+  //     },
+  //   ).subscribe((res) => {
+  //     console.log(res);
+  //     // taskStatus.processing = (taskStatus.processing + 1);
+  //     // taskStatus.waiting = (taskStatus.waiting - 1);
+  //     // setTaskStatus({...taskStatus});
+  //   });
+  //   setWsTask(taskPush)
+  // }, [props.edge])
 
 
   useEffect(() => {
@@ -78,11 +73,11 @@ function TopLayout(props: TopLayoutProps) {
     }
   }, [])
 
-  useEffect(() => {
-    if (edge.id) {
-      getEdgeState(edge.id)
-    }
-  }, [edge.id])
+  // useEffect(() => {
+  //   if (edge.edgeInfo.deviceId) {
+  //     getEdgeState(edge.edgeInfo.deviceId)
+  //   }
+  // }, [edge.edgeInfo.deviceId])
 
   // useEffect(() => {
   //   const u = service.get().subscribe(resp => {
@@ -111,8 +106,8 @@ function TopLayout(props: TopLayoutProps) {
         <img className={styles.things} src={require('@/assets/things.png')} alt="" />
       </div>
       <div className={styles.status}>
-        {/* <Badge style={{ color: '#fff' }} color='green' text='在线' /> */}
-        <StatusBadge value={edge?.online} textColor='#fff' />
+        <Badge style={{ color: '#fff' }} color='green' text='在线' />
+        {/* <StatusBadge value={edge?.online} textColor='#fff' /> */}
       </div>
     </div>
     <div className={styles.center}>
@@ -146,9 +141,9 @@ function TopLayout(props: TopLayoutProps) {
   </div>
 }
 
-export default connect(({ user, edge }: ConnectState) => {
+export default connect(({ user }: ConnectState) => {
   return {
     currentUser: user.currentUser,
-    edge: edge,
+    // edge: edge,
   }
 })(TopLayout)

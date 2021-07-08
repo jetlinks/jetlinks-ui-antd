@@ -7,14 +7,14 @@ import Service from "@/pages/edge-gateway/device/detail/video/cascade/service";
 interface ChannelProps {
   visible?: boolean
   cascadeId?: string
-  id?: string
+  // id?: string
   onOk?: () => void
   onCancel?: (e: React.MouseEvent<HTMLElement>) => void
 }
 
 
 function ChannelModel(props: ChannelProps) {
-  const { cascadeId, id } = props;
+  const { cascadeId} = props;
   const { onOk, ...extra } = props
   const [bindList, setBindList] = useState<string[]>([])
   const [loading, setLoading] = useState<boolean>(false);
@@ -36,15 +36,13 @@ function ChannelModel(props: ChannelProps) {
   const _channel = (params?: any) => {
     setLoading(true);
     setSearchParam(params);
-    if (id) {
-      service.getChannelList(id, params).subscribe(
-        (res: any) => {
-          setResult(res.data);
-        },
-        () => {
-        },
-        () => setLoading(false));
-    }
+    service.getChannelList('local', params).subscribe(
+      (res: any) => {
+        setResult(res.data);
+      },
+      () => {
+      },
+      () => setLoading(false));
   };
 
   useEffect(() => {
@@ -55,24 +53,22 @@ function ChannelModel(props: ChannelProps) {
 
 
   const _bind_cascade_channel = () => {
-    if (id) {
-      service.getChannelList(id, fixedParam).subscribe(
-        (res) => {
-          let list: string[] = [];
-          res.data.map((item: any) => {
-            list.push(item.id);
-          });
-          setBindList(list);
-        },
-        () => {
-        },
-        () => setLoading(false));
-    }
+    service.getChannelList('local', fixedParam).subscribe(
+      (res) => {
+        let list: string[] = [];
+        res.data.map((item: any) => {
+          list.push(item.id);
+        });
+        setBindList(list);
+      },
+      () => {
+      },
+      () => setLoading(false));
   };
 
   const _bind = (channelId: any[]) => {
-    if (cascadeId && id) {
-      service._bind(id!, cascadeId, channelId).subscribe(
+    if (cascadeId) {
+      service._bind('local', cascadeId, channelId).subscribe(
         () => {
           message.success('绑定成功');
           _bind_cascade_channel();
@@ -86,8 +82,8 @@ function ChannelModel(props: ChannelProps) {
   };
 
   const _unbind = (channelId: string[]) => {
-    if (cascadeId && id) {
-      service._unbind(id, cascadeId, channelId).subscribe(
+    if (cascadeId) {
+      service._unbind('local', cascadeId, channelId).subscribe(
         () => {
           message.success('解绑成功');
           _bind_cascade_channel();

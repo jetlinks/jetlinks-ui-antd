@@ -6,7 +6,6 @@ interface Props {
   data: any;
   close: (e: any) => void,
   save: (e: any) => void,
-  deviceId: string
   visible: boolean
 }
 
@@ -28,7 +27,7 @@ const Play = (props: Props) => {
   useEffect(() => {
     if (props.visible) {
       setPlaying(true);
-      service.getPlay(props.deviceId, { deviceId: props.data.deviceId, channelId: props.data.channelId }).subscribe((res: any) => {
+      service.getPlay('local', { deviceId: props.data.deviceId, channelId: props.data.channelId }).subscribe((res: any) => {
         if (res.length) {
           setUrl(res[0]['flv'])
           setProtocol('flv')
@@ -47,14 +46,14 @@ const Play = (props: Props) => {
   const controlStart = (direct: string) => {
     setToolActive(direct || '')
     if (playing) {
-      service.getControlStart(props.deviceId, { deviceId: props.data.deviceId, channelId: props.data.channelId, direct: direct, speed: 90, stopDelaySeconds: 0 }).subscribe(() => {
+      service.getControlStart('local', { deviceId: props.data.deviceId, channelId: props.data.channelId, direct: direct, speed: 90, stopDelaySeconds: 0 }).subscribe(() => {
       })
     }
   }
   const controlStop = () => {
     setToolActive('')
     if (playing) {
-      service.getControlStop(props.deviceId, { deviceId: props.data.deviceId, channelId: props.data.channelId }).subscribe(() => {
+      service.getControlStop('local', { deviceId: props.data.deviceId, channelId: props.data.channelId }).subscribe(() => {
       })
     }
   }
@@ -63,9 +62,9 @@ const Play = (props: Props) => {
   const refresh = () => {
     setBloading(true);
     //关闭流
-    service.getStop(props.deviceId, { deviceId: props.data.deviceId, channelId: props.data.channelId }).subscribe(() => {
+    service.getStop('local', { deviceId: props.data.deviceId, channelId: props.data.channelId }).subscribe(() => {
       //开启流
-      service.getPlay(props.deviceId, { deviceId: props.data.deviceId, channelId: props.data.channelId }).subscribe((res: any) => {
+      service.getPlay('local', { deviceId: props.data.deviceId, channelId: props.data.channelId }).subscribe((res: any) => {
         setUrl(res[protocol]);
         setProtocol(protocol);
         setBloading(false);

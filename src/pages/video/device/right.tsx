@@ -8,10 +8,8 @@ import { ChannelList, delChannel, getChannelList, MediaDeviceList } from '@/page
 import StatusBadge from '@/components/StatusBadge';
 import { connect } from 'dva';
 import { ConnectState } from '@/models/connect';
-import { EdgeModelState } from '@/models/edge';
 interface RightProps {
   rowData?: MediaDeviceList
-  edge: EdgeModelState
 }
 
 function Right(props: RightProps) {
@@ -121,7 +119,7 @@ function Right(props: RightProps) {
       {
         visible && <ChannelModel
           visible={visible}
-          edgeId={props.edge.id}
+          // edgeId={props.edge.id}
           data={editData}
           onCancel={() => {
             setVisible(false)
@@ -167,6 +165,7 @@ function Right(props: RightProps) {
   );
 }
 
-export default connect(({ edge }: ConnectState) => ({
-  edge
-}))(Right);
+export default Right;
+// connect(({ edge }: ConnectState) => ({
+//   edge
+// }))(Right);

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Table, Button, Modal, Switch } from 'antd';
 import styles from './index.less';
 import CascadeModel from './cascadeModel';
@@ -6,15 +6,10 @@ import StatusBadge from '@/components/StatusBadge';
 import { CascadeDisabled, CascadeEnabled, CascadeList, getCascadeList, removeCascade } from '@/pages/edge-gateway/device/detail/video/cascade/service';
 import { useRequest } from 'ahooks';
 import { ApiResponse } from '@/services/response';
-import { EdgeModelState } from '@/models/edge';
-import { connect } from 'dva';
-import { ConnectState } from '@/models/connect';
 import ChannelModel from './channelModel';
-interface CascadeProps {
-  edge: EdgeModelState
-}
+
 // TODO 绑定通道未做
-function Cascade(props: CascadeProps) {
+function Cascade() {
 
   const [visible, setVisible] = useState(false)
   const [deleteVisible, setDeleteVisible] = useState(false)
@@ -58,9 +53,9 @@ function Cascade(props: CascadeProps) {
 
   const deleteOk = useCallback(
     () => {
-      RemoveCascade(props.edge.id, deleteId)
+      RemoveCascade('local', deleteId)
     },
-    [deleteId, props.edge.id],
+    [deleteId, 'local'],
   )
 
   return (
@@ -129,12 +124,10 @@ function Cascade(props: CascadeProps) {
               width: 140,
               render: (data, record) => {
                 return <Switch checked={data.value === 'enabled' ? true : false} onChange={(e) => {
-                  if (props.edge.id) {
-                    if (e) {
-                      EnabledRun(props.edge.id, { id: record.id })
-                    } else {
-                      DisabledRun(props.edge.id, { id: record.id })
-                    }
+                  if (e) {
+                    EnabledRun('local', { id: record.id })
+                  } else {
+                    DisabledRun('local', { id: record.id })
                   }
                 }} />
               }
@@ -176,7 +169,7 @@ function Cascade(props: CascadeProps) {
         <CascadeModel
           data={editData}
           visible={visible}
-          id={props.edge.id || ''}
+          // id={props.edge.id || ''}
           onCancel={() => {
             setVisible(false)
           }}
@@ -191,7 +184,7 @@ function Cascade(props: CascadeProps) {
         <ChannelModel
           cascadeId={editData ? editData.id : ''}
           visible={channelVisible}
-          id={props.edge.id || ''}
+          // id={props.edge.id || ''}
           onCancel={() => { setChannelVisible(false) }}
           onOk={() => {
             setChannelVisible(false)
@@ -212,7 +205,8 @@ function Cascade(props: CascadeProps) {
   );
 }
 
-export default connect(({ edge }: ConnectState) => ({
-  edge
-}))(Cascade);
+export default Cascade;
+// connect(({ edge }: ConnectState) => ({
+//   edge
+// }))(Cascade);
 

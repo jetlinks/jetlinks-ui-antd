@@ -8,11 +8,10 @@ interface Props extends FormComponentProps {
   data?: Partial<RuleInstanceItem>
   close: Function
   onOk: Function
-  id?: string
 }
 
 const Save = (props: Props) => {
-  const { form, form: { getFieldDecorator }, id } = props;
+  const { form, form: { getFieldDecorator } } = props;
   const save = () => {
     form.validateFields((err, fileValue) => {
       if (err) return;
@@ -21,15 +20,13 @@ const Save = (props: Props) => {
         fileValue.modelType = props.data.modelType;
         fileValue.modelMeta = props.data.modelMeta;
       }
-      if (id) {
-        apis.ruleInstance.create(fileValue, id).then(resp => {
-          if (resp.status === 200) {
-            message.success('保存成功');
-            props.onOk();
-            window.open(`/jetlinks/rule-editor/index.html#flow/${fileValue.id}`);
-          }
-        })
-      }
+      apis.ruleInstance.create(fileValue, 'local').then(resp => {
+        if (resp.status === 200) {
+          message.success('保存成功');
+          props.onOk();
+          window.open(`/jetlinks/rule-editor/index.html#flow/${fileValue.id}`);
+        }
+      })
     })
   };
   return (

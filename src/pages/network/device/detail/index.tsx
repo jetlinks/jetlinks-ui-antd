@@ -16,7 +16,7 @@ interface DetailProps {
 function Detail(props: DetailProps) {
 
     const service = new Service('/network/material');
-    const deviceId = 'edge-pi';
+
     const [editVisible, setEditVisible] = useState(false);
     const [info, setInfo] = useState<any>(props.data);
     const [spinning, setSpinning] = useState<boolean>(true);
@@ -35,10 +35,10 @@ function Detail(props: DetailProps) {
 
     const initData = () => {
         setSpinning(true);
-        service.getInstanceDetail(deviceId, props.data.id).subscribe(resp => {
+        service.getInstanceDetail(props.data.id).subscribe(resp => {
             setInfo(resp);
             setSpinning(false);
-            service.getIinstanceConfigMetadata(deviceId, props.data.id).subscribe(
+            service.getIinstanceConfigMetadata(props.data.id).subscribe(
                 (resp) => {
                     setConfig(resp);
                 }
@@ -50,8 +50,8 @@ function Detail(props: DetailProps) {
         initData();
     }, []);
 
-    const changeDeploy = (deviceId: string) => {
-        service.deployDevice(deviceId, props.data.id).subscribe(() => {
+    const changeDeploy = (id: string) => {
+        service.deployDevice(id).subscribe(() => {
             initData();
             message.success('操作成功！');
         });
@@ -66,7 +66,7 @@ function Detail(props: DetailProps) {
           productId: info.productId,
           productName: info.productName,
         };
-        service.saveDevice(deviceId, params).subscribe(res => {
+        service.saveDevice(params).subscribe(res => {
           if (res.status === 200) {
             message.success('配置信息修改成功');
             initData();
@@ -224,12 +224,11 @@ function Detail(props: DetailProps) {
             </Spin>
             {editVisible && <Save
                 data={props.data}
-                deviceId={deviceId}
                 close={() => {
                     setEditVisible(false);
                 }}
                 save={(item: any) => {
-                    service.saveDevice(deviceId, item).subscribe(
+                    service.saveDevice(item).subscribe(
                         (res) => {
                             if (res.status === 200) {
                                 message.success('操作成功！');
