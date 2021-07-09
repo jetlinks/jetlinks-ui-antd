@@ -112,7 +112,7 @@ const Trigger: React.FC<Props> = props => {
                       submitData();
                     }}
             >
-              {JSON.parse(props.metaData).properties?.map((item: any) => (
+              {JSON.parse(props.metaData || '[]').properties?.map((item: any) => (
                 <Select.Option key={item.id} data={item}>{`${item.name}（${item.id}）`}</Select.Option>
               ))}
             </Select>
@@ -129,7 +129,7 @@ const Trigger: React.FC<Props> = props => {
                       submitData();
                     }}
             >
-              {JSON.parse(props.metaData).events?.map((item: any) => (
+              {JSON.parse(props.metaData || '[]').events?.map((item: any) => (
                 <Select.Option key={item.id} data={item}>{`${item.name}（${item.id}）`}</Select.Option>
               ))}
             </Select>

@@ -43,7 +43,15 @@ class Service extends BaseService<any>{
                 filter(resp => resp.status === 200),
                 map(resp => resp.result[0])
         ));
-
+        public getDeviceCount = (data?: any) => defer(
+          () => from(request(`/jetlinks/edge/operations/local/device-instances-status/invoke`, {
+              method: 'POST',
+              data
+          }))
+              .pipe(
+                  filter(resp => resp.status === 200),
+                  map(resp => resp)
+              ));
         public getAlarmsList = (deviceId: string, params: any) => defer(
             () => from(request(`/jetlinks/edge/operations/${deviceId}/rule-engine-alarm-page-list/invoke`, {
               method: 'POST',
