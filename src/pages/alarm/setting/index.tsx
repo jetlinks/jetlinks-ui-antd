@@ -32,6 +32,7 @@ function Setting(props: Props) {
     data: {},
     currentData: {},
     searchParam: {
+      pageIndex: 0,
       pageSize: 8, 
     },
     
@@ -46,12 +47,16 @@ function Setting(props: Props) {
   const [logVisble, setlogVisble] = useState(initState.setlogVisble);
   const [delVisible, setDelVisible] = useState<boolean>(false);
   const [currentData, setCurrentData] = useState<any>({})
-  const [alarmList, setAlarmList] = useState<any>({});
+  const [alarmList, setAlarmList] = useState<any>({
+    data: [],
+    pageIndex: 0,
+    pageSize: 8,
+    total: 0
+  });
   const [alarmLogId, setAlarmLogId] = useState<string>("");
   const [alarmLogName, setalarmLogName] = useState<string>("");
   const [searchParam, setSearchParam] = useState(initState.searchParam);
   const { form: { getFieldDecorator }, form } = props;
-  const [searchValue, setSearchValue] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
  
@@ -150,8 +155,8 @@ useEffect(() => {
                 title={
                   <div style={{ display: "flex", justifyContent: 'space-between' }}>
                     <AutoHide title={data.name} style={{ flexGrow: 1, fontWeight: 600,fontSize:16}} />
-                    <Switch checked={data.state.value !=='stopped'} onChange={(e)=>{
-                      console.log(data.state)
+                    <Switch checked={data.state.value==='stopped'? false : true} onChange={(e)=>{
+                      console.log(data.state.value)
                       if(e){
                         start(data)
                       }else{
@@ -248,9 +253,30 @@ useEffect(() => {
       </div>
     </div>}
         pagination={{
-          pageSize: 10,
-          current: 1,
-          total: 6
+          current: alarmList?.pageIndex + 1,
+          total: alarmList?.total,
+          pageSize: alarmList?.pageSize,
+          onChange: (page: number, pageSize?: number) => {
+            handleSearch({
+              ...searchParam,
+              pageIndex: page - 1,
+              pageSize: pageSize || searchParam.pageSize
+            })
+          },
+          onShowSizeChange: (current, size) => {
+            handleSearch({
+              ...searchParam,
+              pageIndex: current,
+              pageSize: size || searchParam.pageSize
+            })
+          },
+          showQuickJumper: true,
+          showSizeChanger: true,
+          pageSizeOptions: ['8', '16', '40', '80'],
+          showTotal: (total: number) =>
+            `共 ${total} 条记录 第  ${alarmList?.pageIndex + 1}/${Math.ceil(
+              alarmList?.total / alarmList?.pageSize,
+            )}页`
         }}
         dataSource={alarmList.data}
         columns={[
@@ -266,13 +292,21 @@ useEffect(() => {
           {
             title: '创建时间',
             dataIndex: 'createTime',
+            align: 'center',
             render: (text: any) => text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/',
           },
           {
             title: '状态',
             dataIndex: 'state',
             render: (record)=><>
-              <Switch></Switch>
+              <Switch checked={record.value ==='stopped' ? false:true} onChange={(e)=>{
+                      console.log(record.value)
+                      if(e){
+                        start(record)
+                      }else{
+                        stop(record)
+                      }
+                    }}/>
             </>
           },
           {

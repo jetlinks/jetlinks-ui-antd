@@ -12,6 +12,7 @@ import Handle from '@/pages/alarm/log/handle'
 import {CheckCircleOutlined,ExclamationCircleOutlined} from '@ant-design/icons';
 import Service from '../service';
 import encodeQueryParam from '@/utils/encodeParam';
+import moment from 'moment';
 
 interface Props extends FormComponentProps  {
     close: Function;
@@ -37,30 +38,60 @@ interface Props extends FormComponentProps  {
       AlarmLogList:[],
       name:props.name,
       searchParam: {
-        
+        pageIndex:0,
+        pageSize: 8,
       },
     }
     const { form: { getFieldDecorator }, form } = props;
     const service = new Service('/alarm/setting');
+    const [deviceCount, setDeviceCount] = useState<number>(0);
+    const [deviceOfflineCount, setDeviceOfflineCount] = useState<number>(0);
+    const [deviceOnlineCount, setDeviceOnlineCount] = useState<number>(0);
     const [visible, setVisible] = useState(false);
     const [handlevisible, setHandleVisible] = useState(false);
     const [AlarmLogList, setAlarmLogList] =  useState(initState.AlarmLogList);
     const [searchParam, setSearchParam] = useState(initState.searchParam);
-
+    const [alarmLog, setAlarmLog] = useState<string>("");
+    const [alarmSolveId, setalarmSolveId] = useState<string>("");
 
 //获取告警日志
 const handleSearch = (params: any) =>{
   setSearchParam(params);
-    service.getAlarmInfo(props.deviceId, encodeQueryParam(params)).subscribe(
+    service.getAlarmLogList(props.deviceId, encodeQueryParam(params)).subscribe(
       (resp) => {
         setAlarmLogList(resp);
       }
     )
 };
-
+const getDeviceCount = () => {
+  service.getDeviceCount().subscribe(resp => {
+    if (resp.status === 200) {
+      setDeviceCount(resp.result[0])
+    }
+  })
+  service.getDeviceCount({
+    terms: [
+      { column: "state", value: "online" }
+    ]
+  }).subscribe(resp => {
+    if (resp.status === 200) {
+      setDeviceOnlineCount(resp.result[0])
+    }
+  })
+  service.getDeviceCount({ column: "state", value: "offline" }).subscribe(resp => {
+    if (resp.status === 200) {
+      setDeviceOfflineCount(resp.result[0])
+    }
+  })
+};
 
     useEffect(() => {
-      handleSearch({id:props.id});
+      getDeviceCount();
+      handleSearch({
+        pageIndex: searchParam.pageIndex,
+        pageSize: searchParam.pageSize,
+        where: `alarmName=${props.name}`,
+      })
     }, []);
     
   const columns = [
@@ -78,13 +109,16 @@ const handleSearch = (params: any) =>{
     },
     {
       title: '告警内容',
-      dataIndex: 'description',
+      dataIndex: 'content',
+      width: '200px',
       ellipsis: true,
+      render: (text: any) => text ? <div>{text}</div>: '-',
     },
     {
       title: '告警时间',
       dataIndex: 'alarmTime',
       width: '220px',
+      render: (text: any) => text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/',
       // render: record =>
       //   record ? <Badge status={statusMap.get(record.text)} text={record.text} /> : '',
     },
@@ -92,20 +126,14 @@ const handleSearch = (params: any) =>{
       title: '处理状态',
       dataIndex: 'state',
       width: '200px',
-      render:(record:any)=>{
-        return <div>
-          {record ? <div>
-                    <CheckCircleOutlined style={{color:'#52C41A'}}/> 已处理</div>
-                :<div>
-                    <ExclamationCircleOutlined style={{color:'#FF4D4F'}} /> 未处理
-                </div>}
-        </div>
-      }
+      render: (text:any) => text === 'solve' ? <div><CheckCircleOutlined style={{color:'#52C41A'}}/> 已处理</div>: 
+      <div><ExclamationCircleOutlined style={{color:'#FF4D4F'}} /> 未处理</div>
     },
     {
       title: '处理结果',
-      dataIndex: 'res',
+      dataIndex: 'description',
       width: '200px',
+      render: (text: any) => text ? <div>{text}</div>: '-',
     },
     {
       title: '操作',
@@ -114,9 +142,11 @@ const handleSearch = (params: any) =>{
       render: (record:any) => <div style={{position:'relative',right:15}}>
               <Button type='link' onClick={()=>{
                 setVisible(true)
+                setAlarmLog(record)
               }}>详情</Button>
-              {record.status ? '' :<Button type='link' onClick={()=>{
+              {record.state==='solve' ? '' :<Button type='link' onClick={()=>{
                 setHandleVisible(true)
+                setalarmSolveId(record.id)
               }}>处理</Button> }
             </div>,
     }
@@ -179,7 +209,9 @@ const handleSearch = (params: any) =>{
           <Button style={{marginRight:5}} onClick={()=>{
             form.resetFields();
             handleSearch({
-              id:props.id,
+              pageIndex: searchParam.pageIndex,
+              pageSize: searchParam.pageSize,
+              where: `alarmName=${props.name}`,
             })
           }}>重置</Button>
           <Button type="primary" onClick={()=>{
@@ -194,8 +226,9 @@ const handleSearch = (params: any) =>{
               }
             })
             handleSearch({
-              where: where.join(' and '),
-              id:props.id,
+              pageIndex: searchParam.pageIndex,
+              pageSize: searchParam.pageSize,
+              where:`alarmName=${props.name}`+` and `+where.join(' and '),
             });
           }}>查询</Button>
         </div>
@@ -205,10 +238,10 @@ const handleSearch = (params: any) =>{
       <div style={{ backgroundColor: 'white', padding: '20px', marginBottom: '16px' }}>
         <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
           <div>
-            <span style={{ fontWeight: 600, fontSize: '14px' }}>总设备数： 20</span>
+            <span style={{ fontWeight: 600, fontSize: '14px' }}>总设备数： {deviceCount}</span>
             <span></span>
-            <span style={{ marginLeft: '20px', color: 'rgba(0, 0, 0, 0.45)' }}><Badge color={'green'} text="在线数" />1</span>
-            <span style={{ marginLeft: '20px', color: 'rgba(0, 0, 0, 0.45)' }}><Badge color={'red'} text="离线数" />1</span>
+            <span style={{ marginLeft: '20px', color: 'rgba(0, 0, 0, 0.45)' }}><Badge color={'green'} text="在线数" />{deviceOnlineCount}</span>
+            <span style={{ marginLeft: '20px', color: 'rgba(0, 0, 0, 0.45)' }}><Badge color={'red'} text="离线数" />{deviceOfflineCount}</span>
           </div>
         </div>
 
@@ -219,27 +252,41 @@ const handleSearch = (params: any) =>{
         <div>
           <Table
             columns={columns}
-            dataSource={AlarmLogList}
+            dataSource={AlarmLogList.data}
             rowKey="id"
             bodyStyle={{ backgroundColor: '#fff' }}
-          // onChange={onTableChange}
-          // pagination={{
-          //   current: deviceData.pageIndex + 1,
-          //   total: deviceData.total,
-          //   pageSize: deviceData.pageSize,
-          //   showQuickJumper: true,
-          //   showSizeChanger: true,
-          //   pageSizeOptions: ['10', '20', '50', '100'],
-          //   showTotal: (total: number) =>
-          //     `共 ${total} 条记录 第  ${deviceData.pageIndex + 1}/${Math.ceil(
-          //       deviceData.total / deviceData.pageSize,
-          //     )}页`,
-          // }}
+            pagination={{
+              current: AlarmLogList?.pageIndex + 1,
+              total: AlarmLogList?.total,
+              pageSize: AlarmLogList?.pageSize,
+              onChange: (page: number, pageSize?: number) => {
+                handleSearch({
+                  ...searchParam,
+                  pageIndex: page - 1,
+                  pageSize: pageSize || searchParam.pageSize
+                })
+              },
+              onShowSizeChange: (current, size) => {
+                handleSearch({
+                  ...searchParam,
+                  pageIndex: current,
+                  pageSize: size || searchParam.pageSize
+                })
+              },
+              showQuickJumper: true,
+              showSizeChanger: true,
+              pageSizeOptions: ['8', '16', '40', '80'],
+              showTotal: (total: number) =>
+                `共 ${total} 条记录 第  ${AlarmLogList?.pageIndex + 1}/${Math.ceil(
+                  AlarmLogList?.total / AlarmLogList?.pageSize,
+                )}页`
+            }}
           />
         </div>
       </div>
       <Detali
         visible={visible}
+        datalist={alarmLog}
         onCancel={() => {
           setVisible(false)
         }}
@@ -248,12 +295,19 @@ const handleSearch = (params: any) =>{
         }}
       />
       <Handle
+        deviceId={props.deviceId}
+        id={alarmSolveId}
         visible={handlevisible}
         onCancel={() => {
           setHandleVisible(false)
         }}
         onOk={() => {
           setHandleVisible(false)
+          handleSearch({
+            pageIndex: searchParam.pageIndex,
+            pageSize: searchParam.pageSize,
+            where: `alarmName=${props.name}`,
+          })
         }}
       />
     </div>

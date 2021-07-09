@@ -1,25 +1,27 @@
 import React from 'react';
 import { Modal, Icon } from 'antd';
-import { useState } from 'react';
+import { useState ,useEffect} from 'react';
 
 interface Props {
   visible?: boolean
   data?: object
+  datalist:any
   onOk?: () => void
   onCancel?: (e: React.MouseEvent<HTMLElement>) => void
 }
 
 function Detail(props: Props) {
-const [show, setShow] = useState(false)
-  const { onOk, ...extra } = props
 
+
+const [Details, setDetails] = useState<any>({});
+const { onOk, ...extra } = props
   const OnOk = () => {
-    // 提交数据
     if (props.onOk) {
+      console.log(props.data)
       props.onOk()
     }
   }
-
+const  content = JSON.stringify(props.datalist.alarmData, null, 2);
   return (
     <Modal
       title='详情'
@@ -30,12 +32,12 @@ const [show, setShow] = useState(false)
       <div style={{height:332,color:'#000000'}}>
         <div>
             <p style={{fontSize:14,fontWeight:400}}>告警数据<Icon type="question-circle-o" style={{paddingLeft: 10}}/></p>
-            <div>[***************]</div>
+            <div>{content}</div>
         </div>
         <div style={{marginTop:10}}>
             <div
                 style={{display:'flex',justifyItems:'center'}}
-            >处理结果：{show ? <div style={{color:'#FF4D4F'}}>未处理</div>:<div style={{color:'#52C41A'}}>已处理</div>} </div>
+            >处理结果：{props.datalist.state !=='solve' ? <div style={{color:'#FF4D4F'}}>-</div>:<div style={{color:'#52C41A'}}>{props.datalist.description}</div>} </div>
         </div>
       </div>
     </Modal>
