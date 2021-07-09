@@ -7,10 +7,8 @@ import Device from './components/device';
 import { Button, Icon } from 'antd'
 import Echarts from './components/Echarts';
 import AddressModel from './components/model/addressSetting';
+import Service from './service';
 import { getWebsocket } from '@/layouts/GlobalWebSocket';
-import { geteWayInfo } from '@/services/edge';
-import { useRequest } from 'ahooks';
-
 interface RealDataProps {
   cpuTemp: number;
   cpuUsage: number;
@@ -21,9 +19,10 @@ interface RealDataProps {
 
 function Home() {
 
+  const service = new Service('edge/network')
   const [addressVisible, setAddressVisible] = useState(false)
-  const deviceId = 'jetlinks-agent';
-  const productId = 'edge-gateway';
+  const [info, setInfo] = useState<any>({});
+  let propertiesWs: any;
   const [realData, setRealData] = useState<RealDataProps>({
     cpuTemp: 0,
     cpuUsage: 0,
@@ -31,39 +30,38 @@ function Home() {
     jvmMemUsage: 0,
     sysMemUsage: 0
   });
-  const [address, setAddress] = useState('192.168.1.1')
-
-  // const { data, run } = useRequest(geteWayInfo,{
-  //   manual: true
-  // });
 
   useEffect(() => {
-    // run('123456');
-    
-  }, []);
-
-  useEffect(() => {
-    let propertiesWs = getWebsocket(
-      `instance-info-property-${deviceId}-${productId}`,
-      `/edge-gateway-state/device/${productId}/properties/realTime`, //网关侧
-      // `/dashboard/device/${productId}/properties/realTime`, //平台侧
-      {
-        deviceId: deviceId,
-        history: 1,
-      },
-    ).subscribe(resp => {
-      const { payload } = resp;
-      setRealData({...payload});
+    service.getEdgeInfo().subscribe(resp => {
+      if (resp.status === 200) {
+        setInfo(resp.result);
+      }
     })
-    return () => {
-      propertiesWs && propertiesWs.unsubscribe();
-    };
   }, []);
-
 
   const AddressVisibleEvent = () => {
     setAddressVisible(false)
   }
+
+  useEffect(() => {
+    if (info.deviceId && info.productId) {
+      propertiesWs = getWebsocket(
+        `instance-info-property-${info.deviceId}-${info.productId}`,
+        `/edge-gateway-state/device/${info.productId}/properties/realTime`, //网关侧
+        {
+          deviceId: info.deviceId,
+          history: 1,
+        },
+      ).subscribe(resp => {
+        const { payload } = resp;
+        setRealData({ ...payload });
+      })
+    }
+
+    return () => {
+      propertiesWs && propertiesWs.unsubscribe();
+    };
+  }, [info]);
 
   return (
     <div className={styles.home}>
@@ -71,24 +69,28 @@ function Home() {
         <div>
           <img src={require('@/assets/home/setting.png')} alt="" />
           {
-            address ?
+            info.host ?
               <>
                 <span>
-                  {`平台地址：${address}`}
+                  {`平台地址：${info.host}`}
                 </span>
-                <span style={{ color: '#52C41A', paddingLeft: 10, fontWeight: 400 }}>
-                  <Icon type="check-circle" theme="filled" /> 连接成功
-                </span>
+                {
+                  info.connected && (
+                    <span style={{ color: '#52C41A', paddingLeft: 10, fontWeight: 400 }}>
+                      <Icon type="check-circle" theme="filled" /> 连接成功
+                    </span>
+                  )
+                }
               </>
               :
               '立刻配置平台地址'
           }
         </div>
-        <Button type="primary" onClick={() => { setAddressVisible(true) }}>{address ? '编辑' : '立即配置'}</Button>
+        <Button type="primary" onClick={() => { setAddressVisible(true) }}>{info.host ? '编辑' : '立即配置'}</Button>
       </div>
       <div className={styles.layout}>
         <Internet />
-        <Basis />
+        <Basis data={info} />
       </div>
       <div className={styles.layout}>
         <Device />
@@ -103,6 +105,7 @@ function Home() {
       </div>
       {/* 平台地址 */}
       <AddressModel
+        data={info.host}
         visible={addressVisible}
         onOk={AddressVisibleEvent}
         onCancel={AddressVisibleEvent}
@@ -113,3 +116,4 @@ function Home() {
 }
 
 export default Home;
+

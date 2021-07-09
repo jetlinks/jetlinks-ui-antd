@@ -14,17 +14,17 @@ class Service extends BaseService<any> {
                 map(resp => resp.result[0])
             ));
 
-    public getEdgeInfo = () => defer(
-        () => from(request(`/jetlinks/edge/operations/localDevice/detail`, {
-            method: 'GET',
+    public getDeviceCount = (data?: any) => defer(
+        () => from(request(`/jetlinks/edge/operations/local/device-instances-status/invoke`, {
+            method: 'POST',
+            data
         }))
             .pipe(
                 filter(resp => resp.status === 200),
                 map(resp => resp)
             ));
-
-    public getDeviceCount = (data?: any) => defer(
-        () => from(request(`/jetlinks/edge/operations/local/device-instances-status/invoke`, {
+    public getAlarmsCount = (data?: any) => defer(
+        () => from(request(`/jetlinks/edge/operations/rule/rule-engine-alarm-history-status/invoke`, {
             method: 'POST',
             data
         }))

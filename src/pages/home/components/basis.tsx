@@ -4,7 +4,11 @@ import styles from '../index.less';
 import { Descriptions, Input, Button } from 'antd';
 import Service from './service';
 
-function Basis() {
+interface Props {
+  data: any;
+}
+
+function Basis(props: Props) {
 
   const service = new Service('edge/network')
   const [isUpdate, setIsUpdate] = useState(false)
@@ -26,14 +30,12 @@ function Basis() {
   )
 
   useEffect(() => {
-    service.getEdgeInfo().subscribe(resp => {
-      if(resp.status === 200){
-        setInfo(resp.result);
-        setValue(resp.result.geoAdder);
-        setInput(resp.result.geoAdder);
-      }
-    })
-  }, []);
+    if (props.data) {
+      setInfo(props.data);
+      setValue(props.data.geoAdder);
+      setInput(props.data.geoAdder);
+    }
+  }, [props.data]);
 
   return (
     <div className={`${styles.item} ${styles.basis}`}>
@@ -42,7 +44,7 @@ function Basis() {
       >
         <Descriptions column={1} bordered size="middle" style={{ height: '241px', width: '100%' }}>
           <Descriptions.Item label="设备名称">{info.edgeName}</Descriptions.Item>
-          <Descriptions.Item label="设备ID">{info.edgeInfo?.deviceId}</Descriptions.Item>
+          <Descriptions.Item label="设备ID">{info.deviceId}</Descriptions.Item>
           <Descriptions.Item label="固件版本">{info.firmwareVer}</Descriptions.Item>
           <Descriptions.Item label="操作系统">{info.osInfo}</Descriptions.Item>
           <Descriptions.Item label="地址">{

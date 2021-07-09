@@ -96,21 +96,34 @@ function Device(props: Props) {
   };
 
   useEffect(() => {
-    service.getDeviceCount().subscribe(resp => {
+    service.getDeviceCount({
+      "terms":
+        [
+          { "column": "productId", "value": "onvif-media-device", "termType": "not" }
+        ]
+    }).subscribe(resp => {
       if (resp.status === 200) {
         setDeviceCount(resp.result[0])
       }
     })
     service.getDeviceCount({
-      terms: [
-        { column: "state", value: "online" }
-      ]
+      "terms":
+        [
+          { "column": "productId", "value": "onvif-media-device", "termType": "not" },
+          { "column": "state", "value": "online" }
+        ]
     }).subscribe(resp => {
       if (resp.status === 200) {
         setDeviceOnlineCount(resp.result[0])
       }
     })
-    service.getDeviceCount({ column: "state", value: "offline" }).subscribe(resp => {
+    service.getDeviceCount({
+      "terms":
+        [
+          { "column": "productId", "value": "onvif-media-device", "termType": "not" },
+          { "column": "state", "value": "offline" }
+        ]
+    }).subscribe(resp => {
       if (resp.status === 200) {
         setDeviceOfflineCount(resp.result[0])
       }
