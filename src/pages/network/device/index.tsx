@@ -1,4 +1,4 @@
-import { Avatar, Badge, Card, Form, Icon, message, Modal, Popconfirm, Row, Select, Spin, Tooltip } from 'antd';
+import { Avatar, Badge, Card, Form, Icon, message, Modal, Popconfirm, Row, Select, Spin } from 'antd';
 import Button from 'antd/es/button';
 import React from 'react';
 import Img from '../img/产品.png';
@@ -14,9 +14,10 @@ import encodeQueryParam from '@/utils/encodeParam';
 import moment from 'moment';
 import { FormComponentProps } from 'antd/lib/form';
 import Col from 'antd/es/grid/col';
+import ImportModel from "@/pages/device/instance/operation/import";
 
-interface Props extends FormComponentProps { 
-  
+interface Props extends FormComponentProps {
+
 }
 
 function Device(props: Props) {
@@ -30,6 +31,7 @@ function Device(props: Props) {
   const [delVisible, setDelVisible] = useState<boolean>(false);
   const [editVisible, setEditVisible] = useState<boolean>(false);
   const [detailVisible, setDetailVisible] = useState<boolean>(false);
+  const [importVisible, setImportVisible] = useState<boolean>(false);
   const [currentData, setCurrentData] = useState<any>({});
   const [searchVisible, setSearchVisible] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -152,6 +154,18 @@ function Device(props: Props) {
       );
     }
   };
+
+  const BatchImport = (productId: string, fileUrl: string) => {
+    service.batchImport({ productId, fileUrl }).subscribe(
+      (res) => {
+        if (res.status === 200) {
+          message.success('操作成功！')
+          handleSearch({ pageSize: 8 });
+        }
+      }
+    )
+  }
+
   return (
     <div style={{ width: '100%' }}>
       <Spin spinning={loading}>
@@ -214,9 +228,7 @@ function Device(props: Props) {
                     pageSize: 8
                   });
                 }} />
-                <Button style={{ marginRight: '16px' }} onClick={() => {
-                  message.error('此功能还在开发中。。。')
-                }}>批量导入设备</Button>
+                <Button style={{ marginRight: '16px' }} onClick={() => { setImportVisible(true) }}>批量导入设备</Button>
                 <Button type="primary" style={{ marginRight: '16px' }} onClick={() => {
                   setEditVisible(true);
                   setCurrentData({});
@@ -427,6 +439,15 @@ function Device(props: Props) {
           setEditVisible(false);
           setCurrentData({});
         }} />
+      }
+      {
+        importVisible &&
+        <ImportModel
+          productId=''
+          close={() => {
+            setImportVisible(false)
+          }}
+        />
       }
       <Modal
         title="确认删除"

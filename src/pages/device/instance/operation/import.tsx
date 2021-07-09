@@ -1,13 +1,11 @@
-import React, {useEffect, useState} from 'react';
-import {FormComponentProps} from 'antd/lib/form';
+import React, { useEffect, useState } from 'react';
+import { FormComponentProps } from 'antd/lib/form';
 import Form from 'antd/es/form';
-import {Badge, Button, Checkbox, message, Modal, Radio, Select, Spin, Upload} from 'antd';
+import { Badge, Button, Checkbox, message, Modal, Radio, Select, Spin, Upload } from 'antd';
 import apis from '@/services';
-import {DeviceProduct} from '@/pages/device/product/data';
-import {UploadProps} from 'antd/lib/upload';
-import {getAccessToken} from '@/utils/authority';
-import {EventSourcePolyfill} from "event-source-polyfill";
-import {wrapAPI} from '@/utils/utils';
+import { DeviceProduct } from '@/pages/device/product/data';
+import { UploadProps } from 'antd/lib/upload';
+import { getAccessToken } from '@/utils/authority';
 
 interface Props extends FormComponentProps {
   productId: string;
@@ -49,7 +47,7 @@ const Import: React.FC<Props> = props => {
     apis.deviceProdcut
       .queryNoPagin()
       .then(response => {
-        setProductList(response.result);
+        setProductList(response.result[0]);
       })
       .catch(() => {
       });
@@ -63,29 +61,44 @@ const Import: React.FC<Props> = props => {
 
   const submitData = (fileUrl: string) => {
     if (fileUrl) {
-      setImportLoading(true);
-      let dt = 0;
-      // todo:后期需优化，更换为：websocket
-      const source = new EventSourcePolyfill(
-        wrapAPI(`/jetlinks/device/instance/${product}/import?fileUrl=${fileUrl}&autoDeploy=${autoDeploy}&:X_Access_Token=${getAccessToken()}`)
-      );
-      setSource(source);
-      source.onmessage = (e: any) => {
-        const res = JSON.parse(e.data);
-        if (res.success) {
-          const temp = res.result.total;
-          dt += temp;
-          setCount(dt);
-        } else {
-          setErrMessage(res.message);
+      apis.deviceProdcut.batchImport({
+        productId: product,
+        fileUrl
+      }).then(res => {
+        if (res.status === 200) {
+          if (props.close) {
+            props.close()
+          }
         }
-      };
-      source.onerror = () => {
-        setFlag(false);
-        source.close();
-      };
-      source.onopen = () => {
-      };
+      })
+      // setImportLoading(true);
+      // let dt = 0;
+      // // todo:后期需优化，更换为：websocket
+      // const source = new EventSourcePolyfill(
+      //   wrapAPI(`/jetlinks/edge/operations/local/device-instance-batch-import/import`),
+      //   {
+      //     headers: {
+      //       'X_Access_Token': getAccessToken(),
+      //     }
+      //   }
+      // );
+      // setSource(source);
+      // source.onmessage = (e: any) => {
+      //   const res = JSON.parse(e.data);
+      //   if (res.success) {
+      //     const temp = res.result.total;
+      //     dt += temp;
+      //     setCount(dt);
+      //   } else {
+      //     setErrMessage(res.message);
+      //   }
+      // };
+      // source.onerror = () => {
+      //   setFlag(false);
+      //   source.close();
+      // };
+      // source.onopen = () => {
+      // };
     } else {
       message.error("请先上传文件");
     }
@@ -93,7 +106,7 @@ const Import: React.FC<Props> = props => {
 
   const uploadProps: UploadProps = {
     accept: fileType,
-    action: '/jetlinks/file/static',
+    action: '/jetlinks-edge/file/static',
     headers: {
       'X-Access-Token': getAccessToken(),
     },
@@ -152,21 +165,23 @@ const Import: React.FC<Props> = props => {
       }}
     >
       <Spin spinning={uploading} tip="上传中...">
-        <Form labelCol={{span: 4}} wrapperCol={{span: 20}}>
+        <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
           <Form.Item key="productId" label="产品">
             <Select placeholder="请选择产品" defaultValue={props.productId}
-                    disabled={!!props.productId}
-                    onChange={(event: string) => {
-                      setProduct(event);
-                    }}>
-              {(productList || []).map(item => (
-                <Select.Option
-                  key={JSON.stringify({productId: item.id, productName: item.name})}
-                  value={item.id}
-                >
-                  {item.name}
-                </Select.Option>
-              ))}
+              disabled={!!props.productId}
+              onChange={(event: string) => {
+                setProduct(event);
+              }}>
+              {(productList || []).map(item => {
+                return (
+                  <Select.Option
+                    key={JSON.stringify({ productId: item.id, productName: item.name })}
+                    value={item.id}
+                  >
+                    {item.name}
+                  </Select.Option>
+                )
+              })}
             </Select>
           </Form.Item>
           {(product || props.productId) && (
@@ -181,27 +196,27 @@ const Import: React.FC<Props> = props => {
 
                 <Checkbox onChange={(e) => {
                   setAutoDeploy(e.target.checked);
-                }} style={{marginLeft: 15}}>自动启用</Checkbox>
+                }} style={{ marginLeft: 15 }}>自动启用</Checkbox>
               </Form.Item>
               <Form.Item label="文件上传">
                 <Upload {...uploadProps}>
                   <Button icon="upload">上传文件</Button>
                 </Upload>
-                <span style={{marginLeft: 10}}>
+                <span style={{ marginLeft: 10 }}>
                   下载模版
-                  <a style={{marginLeft: 10}} onClick={() => downloadTemplate('xlsx')}>.xlsx</a>
-                  <a style={{marginLeft: 10}} onClick={() => downloadTemplate('csv')}>.csv</a>
+                  <a style={{ marginLeft: 10 }} onClick={() => downloadTemplate('xlsx')}>.xlsx</a>
+                  <a style={{ marginLeft: 10 }} onClick={() => downloadTemplate('csv')}>.csv</a>
                 </span>
-                <br/>
+                <br />
                 {importLoading && (
                   <div>
                     {flag ? (
-                      <Badge status="processing" text="进行中"/>
+                      <Badge status="processing" text="进行中" />
                     ) : (
-                      <Badge status="success" text="已完成"/>
+                      <Badge status="success" text="已完成" />
                     )}
-                    <span style={{marginLeft: 15}}>总数量:{count}</span>
-                    <p style={{color: 'red'}}>{errMessage}</p>
+                    <span style={{ marginLeft: 15 }}>总数量:{count}</span>
+                    <p style={{ color: 'red' }}>{errMessage}</p>
                   </div>
                 )}
               </Form.Item>

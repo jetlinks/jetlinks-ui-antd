@@ -173,4 +173,12 @@ class Service extends BaseService<any> {
       ));
 }
 
+export const getGBInfo = () => request.post('/jetlinks/edge/operations/local/gb28181-gateway-info/invoke', {
+  data: {
+    id: 'gb28181_gateway'
+  }
+})
+
+export const saveGBInfo = (data: any) => request.post('/jetlinks/edge/operations/local/save-gb28181-gateway/invoke', { data })
+
 export default Service;
