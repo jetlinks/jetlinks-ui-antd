@@ -1,6 +1,5 @@
 import React from 'react';
 import { Modal, Icon } from 'antd';
-import { useState ,useEffect} from 'react';
 
 interface Props {
   visible?: boolean
@@ -11,9 +10,6 @@ interface Props {
 }
 
 function Detail(props: Props) {
-
-
-const [Details, setDetails] = useState<any>({});
 const { onOk, ...extra } = props
   const OnOk = () => {
     if (props.onOk) {
@@ -21,7 +17,7 @@ const { onOk, ...extra } = props
       props.onOk()
     }
   }
-const  content = JSON.stringify(props.datalist.alarmData, null, 2);
+const  content=JSON.stringify(props.datalist.alarmData, null, 2)
   return (
     <Modal
       title='详情'
@@ -29,10 +25,10 @@ const  content = JSON.stringify(props.datalist.alarmData, null, 2);
       {...extra}
       width='570px'
     >
-      <div style={{height:332,color:'#000000'}}>
+      <div style={{color:'#000000'}}>
         <div>
             <p style={{fontSize:14,fontWeight:400}}>告警数据<Icon type="question-circle-o" style={{paddingLeft: 10}}/></p>
-            <div>{content}</div>
+            <div><pre>{content}</pre></div>
         </div>
         <div style={{marginTop:10}}>
             <div
