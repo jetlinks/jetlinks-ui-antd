@@ -45,7 +45,7 @@ const Log: React.FC<Props> = props => {
       pageIndex: 0,
       pageSize: 10,
       sorts: {
-        field: 'createTime',
+        field: 'timestamp',
         order: 'desc',
       },
     });
@@ -123,7 +123,7 @@ const Log: React.FC<Props> = props => {
       pageIndex: 0,
       terms: { ...params, deviceId: props.deviceId },
       sorts: {
-        field: 'createTime',
+        field: 'timestamp',
         order: 'desc',
       },
     });
@@ -138,7 +138,7 @@ const Log: React.FC<Props> = props => {
         deviceId: props.deviceId,
       },
       sorts: {
-        field: 'createTime',
+        field: 'timestamp',
         order: 'desc',
       },
     });
@@ -149,7 +149,7 @@ const Log: React.FC<Props> = props => {
       pageSize: pagination.pageSize,
       terms: params,
       sorts: {
-        field: 'createTime',
+        field: 'timestamp',
         order: 'desc',
       },
     });
