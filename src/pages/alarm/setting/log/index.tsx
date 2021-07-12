@@ -63,30 +63,48 @@ const handleSearch = (params: any) =>{
       }
     )
 };
-const getDeviceCount = () => {
-  service.getDeviceCount().subscribe(resp => {
-    if (resp.status === 200) {
-      setDeviceCount(resp.result[0])
-    }
-  })
-  service.getDeviceCount({
-    terms: [
-      { column: "state", value: "online" }
-    ]
-  }).subscribe(resp => {
-    if (resp.status === 200) {
-      setDeviceOnlineCount(resp.result[0])
-    }
-  })
-  service.getDeviceCount({ column: "state", value: "offline" }).subscribe(resp => {
-    if (resp.status === 200) {
-      setDeviceOfflineCount(resp.result[0])
-    }
-  })
-};
+// const getDeviceCount = () => {
+//   service.getDeviceCount().subscribe(resp => {
+//     if (resp.status === 200) {
+//       setDeviceCount(resp.result[0])
+//     }
+//   })
+//   service.getDeviceCount({
+//     terms: [
+//       { column: "state", value: "online" }
+//     ]
+//   }).subscribe(resp => {
+//     if (resp.status === 200) {
+//       setDeviceOnlineCount(resp.result[0])
+//     }
+//   })
+//   service.getDeviceCount({ column: "state", value: "offline" }).subscribe(resp => {
+//     if (resp.status === 200) {
+//       setDeviceOfflineCount(resp.result[0])
+//     }
+//   })
+// };
 
     useEffect(() => {
-      getDeviceCount();
+      service.getDeviceCount().subscribe(resp => {
+        if (resp.status === 200) {
+          setDeviceCount(resp.result[0])
+        }
+      })
+      service.getDeviceCount({
+        terms: [
+          { column: "state", value: "online" }
+        ]
+      }).subscribe(resp => {
+        if (resp.status === 200) {
+          setDeviceOnlineCount(resp.result[0])
+        }
+      })
+      service.getDeviceCount({ column: "state", value: "offline" }).subscribe(resp => {
+        if (resp.status === 200) {
+          setDeviceOfflineCount(resp.result[0])
+        }
+      })
       handleSearch({
         pageIndex: searchParam.pageIndex,
         pageSize: searchParam.pageSize,
