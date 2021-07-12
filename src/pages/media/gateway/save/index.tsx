@@ -35,11 +35,6 @@ const Save: React.FC<Props> = props => {
     }, () => {
     }, () => setLoading(false));
 
-    service.queryProduct({}).subscribe(data => {
-      setProductList(data);
-    }, () => {
-    }, () => setLoading(false));
-
     // service.mediaServer({}).subscribe((data) => {
     //   setMediaServerList(data);
     // }, () => {
@@ -47,6 +42,12 @@ const Save: React.FC<Props> = props => {
   };
 
   useEffect(() => {
+
+    service.queryProduct({}).subscribe(data => {
+      setProductList(data);
+    }, () => {
+    }, () => setLoading(false));
+
     initValue();
   }, [props.loading]);
 
