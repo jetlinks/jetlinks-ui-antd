@@ -58,11 +58,16 @@ export async function query(params: any) {
 }
 
 export async function queryNoPagin(params?: any) {
-  return request(`/jetlinks/device-product/_query/no-paging`, {
-    method: 'GET',
+  return request(`/jetlinks/edge/operations/local/device-product-list/invoke`, {
+    method: 'post',
     params: params,
   })
 }
+
+export const batchImport = (data: any) => request(`/edge/operations/local/device-instance-batch-import/invoke`, {
+  method: 'POST',
+  data: data
+})
 
 export async function deleteById(id: string) {
   return request(`/jetlinks/device-product/${id}`, {

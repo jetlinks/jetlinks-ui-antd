@@ -125,7 +125,7 @@ const BaseView: React.FC<Props> = (props) => {
                 <div className={styles.right}>
                     <div className={styles.avatar_title}>
                         头像
-                </div>
+                    </div>
                     <div className={styles.avatar}>
                         <img src={avatar || defaultImg} alt="avatar" />
                     </div>

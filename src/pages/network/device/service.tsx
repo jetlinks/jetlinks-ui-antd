@@ -49,6 +49,16 @@ class Service extends BaseService<any> {
                 map(resp => resp.result[0])
             ));
 
+    public batchImport = (data: any) => defer(
+        () => from(request(`/edge/operations/local/device-instance-batch-import/invoke`, {
+            method: 'POST',
+            data: data
+        }))
+            .pipe(
+                filter(resp => resp.status === 200),
+                map(resp => resp.result[0])
+            ));
+
     public getNetworkConfigInfo = (deviceId: string, id: string) => defer(
         () => from(request(`/jetlinks/edge/operations/${deviceId}/network-config-info/invoke`, {
             method: 'POST',
