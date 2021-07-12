@@ -63,6 +63,7 @@ const DeviceGatewayBind: React.FC<Props> = props => {
     apis.deviceInstance
       .list(
         encodeQueryParam({
+          terms: searchParam.terms,
           pageIndex: Number(pagination.current) - 1,
           pageSize: pagination.pageSize,
           sorts: sorter,
