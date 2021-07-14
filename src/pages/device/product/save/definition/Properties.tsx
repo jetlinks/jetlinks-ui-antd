@@ -1,12 +1,14 @@
 import React, { Fragment, useContext, useEffect, useState } from 'react';
 import { FormComponentProps } from 'antd/es/form';
 import { Button, Card, Divider, Form, Table } from 'antd';
-import { ColumnProps } from 'antd/lib/table';
+import { ColumnProps, PaginationConfig } from 'antd/lib/table';
 import { PropertiesMeta } from '../../component/data.d';
 import PropertiesDefin from '../../component/properties';
 import { TenantContext } from "@/pages/device/product/save/definition/index";
-import {ProductContext} from '../../context';
+import { ProductContext } from '../../context';
 import Import from '../../component/import-properties';
+import Input from 'antd/es/input';
+import _ from 'lodash';
 
 interface Props extends FormComponentProps {
   save: Function;
@@ -40,15 +42,20 @@ const Properties: React.FC<Props> = (props: Props) => {
   const [data, setData] = useState(initState.data);
   const [product, setProduct] = useState(initState.product);
   const [current, setCurrent] = useState(initState.current);
+  const [searchParam, setSearchParam] = useState<any>({});
+  const [dataList, setDataList] = useState(initState.data);
+  const sourceList = new Map();
+  sourceList.set('device', '设备');
+  sourceList.set('manual', '手动');
+  sourceList.set('rule', '规则');
 
   useEffect(() => {
     setData(tenantContextData.properties || [])
   }, [tenantContextData]);
 
   useEffect(() => {
-    
     setProduct(productContext || {});
-  },[productContext])
+  }, [productContext])
 
   const editItem = (item: any) => {
     setVisible(true);
@@ -57,7 +64,7 @@ const Properties: React.FC<Props> = (props: Props) => {
 
   const deleteItem = (item: any) => {
     const temp = data.filter(e => e.id !== item.id);
-    setData(temp);
+    setData([...temp]);
     props.save(temp, true);
   };
 
@@ -65,25 +72,105 @@ const Properties: React.FC<Props> = (props: Props) => {
     {
       title: '属性标识',
       dataIndex: 'id',
+      align: 'center',
     },
     {
       title: '属性名称',
       dataIndex: 'name',
+      align: 'center',
     },
     {
       title: '数据类型',
-      dataIndex: 'valueType',
-      render: text => text?.type,
+      dataIndex: 'valueType.type',
+      align: 'center',
+      render: text => text,
+      filters: [
+        {
+          value: 'int',
+          text: '整数型',
+        },
+        {
+          value: 'long',
+          text: '长整数型',
+        },
+        {
+          value: 'float',
+          text: '单精度浮点型',
+        },
+        {
+          value: 'double',
+          text: '双精度浮点数',
+        },
+        {
+          value: 'string',
+          text: '字符串',
+        },
+        {
+          value: 'boolean',
+          text: '布尔型',
+        },
+        {
+          value: 'date',
+          text: '时间型',
+        },
+        {
+          value: 'enum',
+          text: '枚举',
+        },
+        {
+          value: 'array',
+          text: '数组',
+        },
+        {
+          value: 'object',
+          text: '结构体',
+        },
+        {
+          value: 'file',
+          text: '文件',
+        },
+        {
+          value: 'password',
+          text: '密码',
+        },
+        {
+          value: 'geoPoint',
+          text: '地理位置',
+        },
+      ],
+      filterMultiple: false,
+    },
+    {
+      title: '属性值来源',
+      dataIndex: 'expands.source',
+      align: 'center',
+      render: text => sourceList.get(text),
+      filters: [
+        {
+          value: 'device',
+          text: '设备',
+        },
+        {
+          value: 'manual',
+          text: '手动',
+        },
+        {
+          value: 'rule',
+          text: '规则',
+        }
+      ],
+      filterMultiple: false,
     },
     {
       title: '是否只读',
       dataIndex: 'expands.readOnly',
+      align: 'center',
       render: text => ((text === 'true' || text === true) ? '是' : '否'),
     },
     {
       title: '说明',
       dataIndex: 'description',
-      width: '30%',
+      align: 'center',
       ellipsis: true
     },
     {
@@ -105,11 +192,39 @@ const Properties: React.FC<Props> = (props: Props) => {
     } else {
       data.push(item);
     }
-    // }
-    setVisible(false);
-    setData(data);
+    setData([...data]);
     props.save(data, onlySave);
+    setVisible(false);
   };
+
+  const onTableChange = (
+    pagination: PaginationConfig,
+    filters: any) => {
+    let params = { ...searchParam }
+    Object.keys(filters || {}).forEach((i: string) => {
+      params[i] = filters[i][0]
+    })
+    handleSearch(params);
+  }
+
+  const handleSearch = (params?: any) => {
+    setSearchParam(params);
+    let items = [...data]
+    Object.keys(params || {}).forEach((item) => {
+      if (!!params[item]) {
+        items = items.filter((i) => {
+          return !!_.at(i, item)[0] && _.at(i, item)[0].indexOf(params[item]) !== -1
+        })
+      }
+    })
+    setDataList([...items]);
+  }
+
+  useEffect(() => {
+    handleSearch(searchParam);
+  }, [data])
+
+
   return (
     <div>
       <Card
@@ -117,7 +232,7 @@ const Properties: React.FC<Props> = (props: Props) => {
         style={{ marginBottom: 20 }}
         extra={
           <>
-            <Button style={{marginRight: '10px'}} onClick={() => {
+            <Button style={{ marginRight: '10px' }} onClick={() => {
               setImportVisible(true);
             }}>导入属性</Button>
             <Button type="primary" onClick={() => {
@@ -125,11 +240,19 @@ const Properties: React.FC<Props> = (props: Props) => {
               setVisible(true);
             }}>
               添加
-          </Button>
+            </Button>
           </>
         }
       >
-        <Table rowKey="id" columns={columns} dataSource={data} pagination={false} />
+        <div style={{ margin: '10px 0px 20px', display: 'flex', alignItems: 'center' }}>
+          <Input.Search allowClear style={{ width: 300 }} placeholder="请输入属性名称" onSearch={(value) => {
+            handleSearch({
+              ...searchParam,
+              name: value
+            })
+          }} />
+        </div>
+        <Table rowKey="id" columns={columns} dataSource={dataList} onChange={onTableChange} />
       </Card>
       {visible && (
         <PropertiesDefin
