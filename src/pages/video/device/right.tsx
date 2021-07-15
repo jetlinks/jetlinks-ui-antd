@@ -6,8 +6,6 @@ import Play from './play';
 import { useRequest } from 'ahooks';
 import { ChannelList, delChannel, getChannelList, MediaDeviceList } from '@/pages/edge-gateway/device/service';
 import StatusBadge from '@/components/StatusBadge';
-import { connect } from 'dva';
-import { ConnectState } from '@/models/connect';
 interface RightProps {
   rowData?: MediaDeviceList
 }
@@ -44,9 +42,11 @@ function Right(props: RightProps) {
 
   const tableRequest = useCallback(() => {
     if (props.rowData && props.rowData.id) {
-      run(props.rowData.id, channelParams)
+      run('local', {
+        where:  `deviceId = ${props.rowData.id}`
+      })
     }
-  }, [channelParams, props.rowData])
+  }, [props.rowData])
 
   return (
     <div className={styles.right}>

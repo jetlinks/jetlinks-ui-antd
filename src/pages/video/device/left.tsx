@@ -4,10 +4,8 @@ import { Table, Button, Input, Select, Modal, Icon, message } from 'antd';
 import BaseForm from '@/components/BaseForm';
 // import DeviceModel from './deviceModel';
 import { useRequest } from 'ahooks';
-import { addOnvif, delDevice, getDeviceList, getOnvif, MediaDeviceList } from '@/pages/edge-gateway/device/service';
+import { addOnvif, delDevice, getDeviceList, getOnvif, MediaDeviceList, getDeviceCount } from '@/pages/edge-gateway/device/service';
 import DeviceModel from '@/pages/edge-gateway/device/detail/video/add/addDevice';
-import { connect } from 'dva';
-import { ConnectState } from '@/models/connect';
 import StatusBadge from '@/components/StatusBadge';
 interface LeftProps {
   onRowClick?: (record: any) => void
@@ -23,6 +21,13 @@ function Left(props: LeftProps) {
         setDeviceId(data.result[0].data[0].id)
         tableRowClick(data.result[0].data[0])
       }
+    }
+  })
+
+  const { run: DeviceCount } = useRequest(getDeviceCount, {
+    manual: true,
+    onSuccess: (data: any) => {
+      setDeviceCount(data.result[0])
     }
   })
 
@@ -49,6 +54,7 @@ function Left(props: LeftProps) {
 
   const [deleteVisible, setDeleteVisible] = useState(false)
   const [deleteId, setDeleteId] = useState('')
+  const [deviceCount, setDeviceCount] = useState<number>(0)
 
   const [queryFormItems] = useState([
     {
@@ -130,6 +136,7 @@ function Left(props: LeftProps) {
 
   useEffect(() => {
     tableRequest()
+    DeviceCount({ "terms": [{ "column": "productId", "value": "onvif-media-device" }, { "column": "productId", "value": "GB28181-PRO", "type": "or" }] })
   }, [])
 
   /**
@@ -179,7 +186,7 @@ function Left(props: LeftProps) {
         </div>
       </div>
       <div className={styles.tool}>
-        <span>已接入设备数 20</span>
+        <span>已接入设备数 {deviceCount}</span>
         <div onClick={() => { setAdvanced(!advanced) }} style={{ color: '#1890FF', cursor: 'pointer' }}>
           高级筛选 <Icon style={{ transform: `rotate( ${advanced ? 0 : '-180deg'})`, transition: 'all .3s' }} type="down" />
         </div>
@@ -215,7 +222,7 @@ function Left(props: LeftProps) {
           }}
           rowClassName={backgroundStyle}
           onRow={record => ({
-            click: (_) => {
+            onClick: (_) => {
               setDeviceId(record.id)
               tableRowClick(record)
             }

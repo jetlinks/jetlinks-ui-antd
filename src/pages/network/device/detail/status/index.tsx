@@ -1,11 +1,12 @@
-import React, {  useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Row, Col, Spin, Table } from "antd";
-import PropertiesCard from './PropertiesCard';
+import ChartCard from '@/pages/analysis/components/Charts/ChartCard';
 import DeviceState from './DeviceState';
 import { getWebsocket } from "@/layouts/GlobalWebSocket";
-import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
 import _ from "lodash";
+import AutoHide from "@/pages/analysis/components/Hide/autoHide";
+import moment from "moment";
+import { useCallback } from "react";
 
 interface Props {
     refresh: Function;
@@ -27,45 +28,59 @@ const Status: React.FC<Props> = props => {
     const [list, setList] = useState<any[]>([]);
 
     const [loading, setLoading] = useState<boolean>(false);
-    const propertiesWs: Observable<any> = getWebsocket(
-        `instance-info-property-${device.id}-${device.productId}`,
-        `/dashboard/device/${device.productId}/properties/realTime`,
-        // `/edge-gateway-state/device/${device.productId}/properties/realTime`,
-        {
-            deviceId: device.id,
-            history: 1,
-        },
-    ).pipe(
-        map(result => result.payload)
-    );
+
+    const [propertiesMap, setPropertiesMap] = useState<any>({});
+    let properties$: any;
+
 
     useEffect(() => {
-        let metadata = JSON.parse(props.device?.metadata || '{}');
-        setProperties(metadata.properties || []);
-        setLoading(true);
-        setList(_.map(metadata.properties, (item) => {
-            return {
-                id: item.id,
-                name: item.name,
-                time: '/',
-                value: '/'
+        if (props.device && props.device?.metadata) {
+            let metadata = JSON.parse(props.device?.metadata || '{}');
+            setProperties(metadata.properties || []);
+            setLoading(true);
+
+            if (metadata.properties) {
+                let datalist: any[] = []
+                metadata.properties = metadata.properties.map((item: any) => {
+                    propertiesMap[item.id] = '/';
+                    datalist.push({
+                        id: item.id,
+                        name: item.name,
+                        time: '/',
+                        value: '/'
+                    })
+                })
+                setList([...datalist]);
             }
-        }))
+            properties$ && properties$.unsubscribe();
+
+            properties$ = getWebsocket(
+                `instance-info-property-${device.id}-${device.productId}`,
+                `/dashboard/device/${device.productId}/properties/realTime`,
+                {
+                    deviceId: device.id,
+                    history: 1,
+                },
+            ).subscribe((resp) => {
+                const { payload } = resp;
+                const dataValue = payload.value;
+                if (!propertiesMap[dataValue.property]) return;
+                propertiesMap[dataValue.property] = dataValue.value
+                setPropertiesMap({ ...propertiesMap });
+
+                list.map(item => {
+                    if (item.id === dataValue.property) {
+                        item.time = payload.timestamp,
+                            item.value = dataValue.value
+                    }
+                })
+                setList([...list])
+            });
+            return () => {
+                properties$ && properties$.unsubscribe();
+            };
+        }
     }, [props.device]);
-
-    let propertiesMap = {};
-    properties.forEach(item => propertiesMap[item.id] = item);
-
-    useEffect(() => {
-
-        const properties$ = propertiesWs.subscribe((resp) => {
-            console.log(resp)
-            //组合数据
-        });
-        return () => {
-            properties$.unsubscribe();
-        };
-    }, []);
 
     return (
         <Spin spinning={!loading}>
@@ -87,10 +102,19 @@ const Status: React.FC<Props> = props => {
                             {
                                 properties.map(item => (
                                     <Col {...topColResponsiveProps} key={item.id}>
-                                        <PropertiesCard
-                                            item={item}
-                                            key={item.id}
-                                        />
+                                        <ChartCard
+                                            title={item.id}
+                                            contentHeight={46}
+                                            hoverable
+                                            total={
+                                                <AutoHide
+                                                    title={propertiesMap[item.id] || '/'}
+                                                    style={{ width: '100%' }}
+                                                />
+                                            }
+                                        >
+                                            <span></span>
+                                        </ChartCard>
                                     </Col>
                                 ))
                             }
@@ -104,6 +128,7 @@ const Status: React.FC<Props> = props => {
                                         {
                                             dataIndex: 'time',
                                             title: '基准时间',
+                                            render: (text) => text !== '/' ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/'
                                         },
                                         {
                                             dataIndex: 'name',

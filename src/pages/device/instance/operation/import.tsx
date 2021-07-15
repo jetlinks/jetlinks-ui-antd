@@ -6,6 +6,7 @@ import apis from '@/services';
 import { DeviceProduct } from '@/pages/device/product/data';
 import { UploadProps } from 'antd/lib/upload';
 import { getAccessToken } from '@/utils/authority';
+import encodeQueryParam from '@/utils/encodeParam';
 
 interface Props extends FormComponentProps {
   productId: string;
@@ -106,7 +107,7 @@ const Import: React.FC<Props> = props => {
 
   const uploadProps: UploadProps = {
     accept: fileType,
-    action: '/jetlinks-edge/file/static',
+    action: '/jetlinks/file/static',
     headers: {
       'X-Access-Token': getAccessToken(),
     },
@@ -128,13 +129,26 @@ const Import: React.FC<Props> = props => {
   const downloadTemplate = (type: string) => {
     const formElement = document.createElement('form');
     formElement.style.display = 'display:none;';
-    formElement.method = 'GET';
-    formElement.action = `/jetlinks/device/instance/${product}/template.${type}`;
-    const inputElement = document.createElement('input');
-    inputElement.type = 'hidden';
-    inputElement.name = ':X_Access_Token';
-    inputElement.value = getAccessToken();
-    formElement.appendChild(inputElement);
+    formElement.method = 'POST';
+    formElement.action = `/jetlinks/edge/operations/local/device-instance-template/invoke`;
+    
+    const params = encodeQueryParam({
+      productId: product,
+      format: type
+    });
+    Object.keys(params).forEach((key: string) => {
+      const inputElement = document.createElement('input');
+      inputElement.type = 'hidden';
+      inputElement.name = key;
+      inputElement.value = params[key];
+      formElement.appendChild(inputElement);
+    });
+    // const inputElement = document.createElement('input');
+    // inputElement.type = 'hidden';
+    // inputElement.name = ':X_Access_Token';
+    // inputElement.value = getAccessToken();
+    // formElement.appendChild(inputElement);
+
     document.body.appendChild(formElement);
     formElement.submit();
     document.body.removeChild(formElement);
@@ -194,9 +208,9 @@ const Import: React.FC<Props> = props => {
                   <Radio.Button value=".csv">csv</Radio.Button>
                 </Radio.Group>
 
-                <Checkbox onChange={(e) => {
+                {/* <Checkbox onChange={(e) => {
                   setAutoDeploy(e.target.checked);
-                }} style={{ marginLeft: 15 }}>自动启用</Checkbox>
+                }} style={{ marginLeft: 15 }}>自动启用</Checkbox> */}
               </Form.Item>
               <Form.Item label="文件上传">
                 <Upload {...uploadProps}>
@@ -215,7 +229,7 @@ const Import: React.FC<Props> = props => {
                     ) : (
                       <Badge status="success" text="已完成" />
                     )}
-                    <span style={{ marginLeft: 15 }}>总数量:{count}</span>
+                    {/* <span style={{ marginLeft: 15 }}>总数量:{count}</span> */}
                     <p style={{ color: 'red' }}>{errMessage}</p>
                   </div>
                 )}

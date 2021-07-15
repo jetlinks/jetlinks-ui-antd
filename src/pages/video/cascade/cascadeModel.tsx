@@ -5,7 +5,7 @@ import IpInput from '@/components/BaseForm/IPInput'
 import AliFont from '@/components/AliFont';
 
 import { useRequest } from 'ahooks';
-import { CascadeList, saveCascade } from '@/pages/edge-gateway/device/detail/video/cascade/service';
+import { CascadeList, saveCascade, getPlatformInfo } from '@/pages/edge-gateway/device/detail/video/cascade/service';
 import { ApiResponse } from '@/services/response';
 
 interface CascadeProps {
@@ -20,9 +20,28 @@ interface CascadeProps {
 function CascadeModel(props: CascadeProps) {
   const { onOk, ...extra } = props
 
+  const form: any = useRef(null)
 
+  const { run: platformInfo } = useRequest<ApiResponse<any>>(getPlatformInfo, {
+    manual: true,
+    onSuccess(res) {
+      if (res.status === 200) {
+        let data = res.result[0]
+        let sipConfigs = [{
+          name: data.name,
+          sipId: data.configuration.sipId,
+          domain: data.configuration.domain,
+          remoteAddress: data.configuration.publicAddress,
+          remotePort: data.configuration.publicPort,
+          user: data.configuration?.user,
+          password: data.configuration.password,
+        }]
+        form.current.setFieldsValue({'sipConfigs': sipConfigs})
+      }
+    }
+  })
   const [defaultData] = useState({
-    id: Math.floor((Math.random() + Math.floor(Math.random() * 9 + 1)) * Math.pow(10, 17 - 1)),
+    // id: Math.floor((Math.random() + Math.floor(Math.random() * 9 + 1)) * Math.pow(10, 17 - 1)),
     sipConfigs: [{
       transport: 'udp',
       charset: 'gb2312',
@@ -36,26 +55,27 @@ function CascadeModel(props: CascadeProps) {
     {
       title: '基本信息'
     },
-    {
-      name: 'id',
-      label: '级联ID',
-      required: true,
-      options: {
-        // TODO 级联ID自动生成且不可更改
-        rules: [
-          { required: true, message: '请输入级联ID' },
-          { max: 64, message: '级联ID不超过64个字符' },
-          { pattern: new RegExp(/^[0-9a-zA-Z_\-]+$/, "g"), message: '级联ID只能由数字、字母、下划线、中划线组成' }
-        ],
-      },
-      render: () => {
-        return <Input placeholder='请输入级联ID' readOnly />
-      }
-    },
+    // {
+    //   name: 'id',
+    //   label: '级联ID',
+    //   required: true,
+    //   options: {
+    //     // TODO 级联ID自动生成且不可更改
+    //     rules: [
+    //       { required: true, message: '请输入级联ID' },
+    //       { max: 64, message: '级联ID不超过64个字符' },
+    //       { pattern: new RegExp(/^[0-9a-zA-Z_\-]+$/, "g"), message: '级联ID只能由数字、字母、下划线、中划线组成' }
+    //     ],
+    //   },
+    //   render: () => {
+    //     return <Input placeholder='请输入级联ID' readOnly />
+    //   }
+    // },
     {
       name: 'name',
       label: '级联名称',
       required: true,
+      // column: 2,
       options: {
         rules: [{ required: true, message: '请输入级联名称' }],
       },
@@ -77,7 +97,9 @@ function CascadeModel(props: CascadeProps) {
     {
       title: <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <span style={{ fontSize: 16, fontWeight: 600 }}>上级SIP配置</span>
-        <Button type='link' onClick={() => { }}>
+        <Button type='link' onClick={() => { 
+          platformInfo()
+        }}>
           <AliFont type='icon-huoquduixiang' />获取平台配置
         </Button>
       </div>
@@ -113,7 +135,7 @@ function CascadeModel(props: CascadeProps) {
         rules: [{ required: true, message: '请输入SIP域' }],
       },
       render: () => {
-        return <IpInput />
+        return <Input placeholder='请输入SIP域'/>
       }
     },
     {
@@ -142,16 +164,12 @@ function CascadeModel(props: CascadeProps) {
       name: 'sipConfigs[0].user',
       label: '用户名',
       render: () => {
-        return <Input placeholder='请输入联级名称' />
+        return <Input placeholder='请输入用户名' />
       }
     },
     {
       name: 'sipConfigs[0].password',
       label: '接入密码',
-      required: true,
-      options: {
-        rules: [{ required: true, message: '请输入平台侧的密码' }],
-      },
       render: () => {
         return <Input placeholder='请输入平台侧的密码' />
       }
@@ -249,17 +267,19 @@ function CascadeModel(props: CascadeProps) {
     }
   })
 
-  const form: any = useRef(null)
-
   const OnOk = () => {
     // 提交数据
     form.current.validateFields((err: any, data: any) => {
       if (err) return
       if (props.data && props.data.id) {
         data.id = props.data.id
+      }else{
+        data.id = String(Math.floor((Math.random() + Math.floor(Math.random() * 9 + 1)) * Math.pow(10, 17 - 1)));
+      }
+      if(!data.sipConfigs[0].user){
+        data.sipConfigs[0].user = data.sipConfigs[0].localSipId
       }
       run('local', data)
-
     })
   }
   return (

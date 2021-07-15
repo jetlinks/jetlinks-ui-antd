@@ -1,20 +1,55 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Button, Input, Radio } from 'antd';
+import { Button, Input, message, Radio } from 'antd';
 import styles from './index.less';
 import Form from '@/components/BaseForm';
 import IPInput from '@/components/BaseForm/IPInput';
 import { useRequest } from 'ahooks';
-import { getGBInfo, saveGBInfo } from '@/pages/edge-gateway/device/detail/video/cascade/service'
+import { getGBInfo, saveGBInfo, _disabled, _enabled } from '@/pages/edge-gateway/device/detail/video/cascade/service'
 function Configuration() {
 
-  const [isEdit, setIsEdit] = useState(false)
+  const [isEdit, setIsEdit] = useState(false);
+  const [data, setData] = useState<any>(undefined);
 
-  const { data, run } = useRequest(getGBInfo, {
+  const { run } = useRequest(getGBInfo, {
     manual: true,
+    onSuccess: (res) => {
+      if (res.status === 200) {
+        setData(res.result[0])
+      }
+    }
   })
 
   const { run: SaveData } = useRequest(saveGBInfo, {
     manual: true,
+    onSuccess: (res) => {
+      if (res.status === 200) {
+        message.success('操作成功')
+        setIsEdit(false)
+        run()
+      }
+    }
+  })
+
+  const { run: Disabled } = useRequest(_disabled, {
+    manual: true,
+    onSuccess: (res) => {
+      if (res.status === 200) {
+        message.success('操作成功')
+        setIsEdit(false)
+        run()
+      }
+    }
+  })
+
+  const { run: Enabled } = useRequest(_enabled, {
+    manual: true,
+    onSuccess: (res) => {
+      if (res.status === 200) {
+        message.success('操作成功')
+        setIsEdit(false)
+        run()
+      }
+    }
   })
 
   const form: any = useRef(null)
@@ -24,11 +59,21 @@ function Configuration() {
   }, [])
 
   const submit = () => {
-    form.current.validateFields().then(async (err: any, data: any) => {
+    form.current.validateFields().then(async (data: any, err: any) => {
       if (err) return;
-      const res = await SaveData(data)
+      if (data.configuration) {
+        data.configuration = {
+          ...data.configuration,
+          publicPort: data.configuration?.port,
+          publicAddress: data.configuration?.localAddress
+        }
+      }
+
+      let params = { ...data, id: `GB2818-${Math.round(Math.random() * 10000000000)}`, productId: 'GB28181-PRO', mediaServerId: 'default-zlm-server', provider: 'gb28181-2016' }
+      let res = await SaveData(params)
       if (res.status === 200) {
         setIsEdit(false)
+        run()
       }
     })
   }
@@ -53,7 +98,7 @@ function Configuration() {
               label: '信令名称',
               required: true,
               options: {
-                rules: [{ required: true, message: '' }]
+                rules: [{ required: true, message: '请输入' }]
               },
               render: () => <Input placeholder='请输入信令名称' disabled={!isEdit} />,
               column: 2
@@ -63,7 +108,7 @@ function Configuration() {
               label: 'SIP ID',
               required: true,
               options: {
-                rules: [{ required: true, message: '' }]
+                rules: [{ required: true, message: '请输入' }]
               },
               render: () => <Input placeholder='请输入SIP ID' disabled={!isEdit} />,
             },
@@ -72,7 +117,7 @@ function Configuration() {
               label: 'SIP域',
               required: true,
               options: {
-                rules: [{ required: true, message: '' }]
+                rules: [{ required: true, message: '请输入' }]
               },
               render: () => <Input placeholder='请输入SIP域' disabled={!isEdit} />,
             },
@@ -81,7 +126,7 @@ function Configuration() {
               label: 'SIP HOST',
               required: true,
               options: {
-                rules: [{ required: true, message: '' }]
+                rules: [{ required: true, message: '请输入' }]
               },
               render: () => <IPInput disabled={!isEdit} />,
             },
@@ -90,7 +135,7 @@ function Configuration() {
               label: '接入密码',
               required: true,
               options: {
-                rules: [{ required: true, message: '' }]
+                rules: [{ required: true, message: '请输入' }]
               },
               render: () => <Input placeholder='请输入接入密码' disabled={!isEdit} />,
             },
@@ -99,7 +144,7 @@ function Configuration() {
               label: '端口',
               required: true,
               options: {
-                rules: [{ required: true, message: '' }]
+                rules: [{ required: true, message: '请输入' }]
               },
               render: () => <Input placeholder='请输入端口' disabled={!isEdit} />,
             },
@@ -108,7 +153,7 @@ function Configuration() {
               label: '字符集',
               required: true,
               options: {
-                rules: [{ required: true, message: '' }]
+                rules: [{ required: true, message: '请输入' }]
               },
               render: () => <Radio.Group buttonStyle="solid" disabled={!isEdit}>
                 <Radio.Button value='gb2312'>GB2312</Radio.Button>
@@ -116,12 +161,11 @@ function Configuration() {
               </Radio.Group>,
             },
             {
-              name: 'test8',
+              name: 'description',
               label: '说明',
               render: () => <Input.TextArea placeholder='请输入至少5个字符' rows={3} disabled={!isEdit} />,
               column: 2
             },
-
           ]}
         />
 
@@ -130,9 +174,18 @@ function Configuration() {
       <div className={styles.tool}>
         {
           !isEdit ?
-            <Button type="primary" onClick={() => {
-              setIsEdit(true)
-            }}>编辑</Button> :
+            <>
+              {
+                data?.status?.value === "disabled" ? <Button type="primary" onClick={() => {
+                  Enabled({id: data.id})
+                }}>启用</Button> : <Button type="danger" onClick={() => {
+                  Disabled({id: data.id})
+                }}>禁用</Button>
+              }
+              <Button type="primary" style={{ marginLeft: 12 }} onClick={() => {
+                setIsEdit(true)
+              }}>编辑</Button>
+            </> :
             <>
               <Button style={{ marginRight: 12 }} onClick={() => { setIsEdit(false) }}>取消</Button>
               <Button type="primary" onClick={submit}>保存</Button>

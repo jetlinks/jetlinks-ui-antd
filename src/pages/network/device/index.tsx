@@ -15,6 +15,7 @@ import moment from 'moment';
 import { FormComponentProps } from 'antd/lib/form';
 import Col from 'antd/es/grid/col';
 import ImportModel from "@/pages/device/instance/operation/import";
+import _ from 'lodash';
 
 interface Props extends FormComponentProps {
 
@@ -37,7 +38,11 @@ function Device(props: Props) {
   const [loading, setLoading] = useState<boolean>(false);
   const [productList, setProductList] = useState<any[]>([]);
   const [searchParam, setSearchParam] = useState<any>({
-    pageSize: 10
+    pageSize: 8,
+    "terms": [
+      { "column": "productId", "value": "onvif-media-device", "termType": "not" },
+      { "column": "productId", "value": "GB28181-PRO", "termType": "not" }
+    ]
   });
   const [searchValue, setSearchValue] = useState<string>("");
   const [dataList, setDataList] = useState<any>({
@@ -58,7 +63,7 @@ function Device(props: Props) {
   const handleSearch = (params: any) => {
     setSearchParam(params);
     setLoading(true);
-    service.getDeviceList(encodeQueryParam(params)).subscribe(
+    service.getDeviceList(params).subscribe(
       (res) => {
         setDataList(res)
       },
@@ -98,23 +103,20 @@ function Device(props: Props) {
   };
 
   useEffect(() => {
-    service.getDeviceCount({
-      "terms":
-        [
-          { "column": "productId", "value": "onvif-media-device", "termType": "not" }
-        ]
-    }).subscribe(resp => {
+    service.getDeviceCount({ "terms": [{ "column": "productId", "value": "onvif-media-device", "termType": "not" }, { "column": "productId", "value": "GB28181-PRO", "termType": "not" }] }).subscribe(resp => {
       if (resp.status === 200) {
         setDeviceCount(resp.result[0])
       }
     })
-    service.getDeviceCount({
-      "terms":
-        [
+    service.getDeviceCount(
+      {
+        "terms": [
           { "column": "productId", "value": "onvif-media-device", "termType": "not" },
+          { "column": "productId", "value": "GB28181-PRO", "termType": "not" },
           { "column": "state", "value": "online" }
         ]
-    }).subscribe(resp => {
+      }
+    ).subscribe(resp => {
       if (resp.status === 200) {
         setDeviceOnlineCount(resp.result[0])
       }
@@ -123,6 +125,7 @@ function Device(props: Props) {
       "terms":
         [
           { "column": "productId", "value": "onvif-media-device", "termType": "not" },
+          { "column": "productId", "value": "GB28181-PRO", "termType": "not" },
           { "column": "state", "value": "offline" }
         ]
     }).subscribe(resp => {
@@ -130,7 +133,7 @@ function Device(props: Props) {
         setDeviceOfflineCount(resp.result[0])
       }
     })
-    handleSearch({ pageSize: 8 });
+    handleSearch(searchParam);
     getProductList();
   }, []);
 
@@ -140,7 +143,12 @@ function Device(props: Props) {
         (res) => {
           if (res.status === 200) {
             message.success('操作成功！');
-            handleSearch({ pageSize: 8 });
+            handleSearch({
+              pageSize: 8, "terms": [
+                { "column": "productId", "value": "onvif-media-device", "termType": "not" },
+                { "column": "productId", "value": "GB28181-PRO", "termType": "not" }
+              ]
+            });
           }
         });
     } else {
@@ -148,7 +156,12 @@ function Device(props: Props) {
         (res) => {
           if (res.status === 200) {
             message.success('操作成功！');
-            handleSearch({ pageSize: 8 });
+            handleSearch({
+              pageSize: 8, "terms": [
+                { "column": "productId", "value": "onvif-media-device", "termType": "not" },
+                { "column": "productId", "value": "GB28181-PRO", "termType": "not" }
+              ]
+            });
           }
         }
       );
@@ -160,7 +173,12 @@ function Device(props: Props) {
       (res) => {
         if (res.status === 200) {
           message.success('操作成功！')
-          handleSearch({ pageSize: 8 });
+          handleSearch({
+            pageSize: 8, "terms": [
+              { "column": "productId", "value": "onvif-media-device", "termType": "not" },
+              { "column": "productId", "value": "GB28181-PRO", "termType": "not" }
+            ]
+          });
         }
       }
     )
@@ -218,14 +236,15 @@ function Device(props: Props) {
               <div style={{ display: 'flex' }}>
                 <Input.Search style={{ marginRight: '16px' }} allowClear placeholder="请输入设备名称" onSearch={(value: string) => {
                   setSearchValue(value);
-                  let list = searchParam.where ? searchParam.where.split(' and ') : [];
-                  let where: string[] = list.filter((item: string) => {
-                    return item.includes('=');
-                  });
-                  where.push(`name like '%${value}%'`);
+                  let terms = searchParam.terms.filter(it => {
+                    return it.column !== 'name'
+                  })
                   handleSearch({
-                    where: where.join(' and '),
-                    pageSize: 8
+                    pageSize: 8,
+                    terms:[
+                      ...terms, 
+                      { "column": "name", "value": `%${value}%`, "termType": "like" }
+                    ]
                   });
                 }} />
                 <Button style={{ marginRight: '16px' }} onClick={() => { setImportVisible(true) }}>批量导入设备</Button>
@@ -323,23 +342,32 @@ function Device(props: Props) {
                     <Button style={{ marginRight: '10px' }} onClick={() => {
                       form.resetFields();
                       handleSearch({
-                        where: `name like '%${searchValue}%'`,
+                        terms: [
+                          { "column": "productId", "value": "onvif-media-device", "termType": "not" },
+                          { "column": "productId", "value": "GB28181-PRO", "termType": "not" },
+                          { "column": "name", "value": `%${searchValue}%`, "termType": "like" }
+                        ],
                         pageSize: 8
                       })
                     }}>重置</Button>
                     <Button type="primary" onClick={() => {
                       const data = form.getFieldsValue();
-                      let list = searchParam.where ? searchParam.where.split(' and ') : [];
-                      let where: string[] = list.filter((item: string) => {
-                        return item.includes('like');
-                      });
+                      let terms: any[] = [
+                        { "column": "productId", "value": "onvif-media-device", "termType": "not" },
+                        { "column": "productId", "value": "GB28181-PRO", "termType": "not" },
+                        { "column": "name", "value": `%${searchValue}%`, "termType": "like" }
+                      ]
                       Object.keys(data).forEach(i => {
                         if (data[i]) {
-                          where.push(`${i}=${data[i]}`)
+                          terms.push({
+                            "column": i, "value": data[i],
+                          })
                         }
                       })
                       handleSearch({
-                        where: where.join(' and '),
+                        terms: [
+                         ...terms
+                        ],
                         pageSize: 8
                       });
                     }}>查询</Button>

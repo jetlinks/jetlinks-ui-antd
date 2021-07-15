@@ -69,6 +69,11 @@ export const batchImport = (data: any) => request(`/edge/operations/local/device
   data: data
 })
 
+export const downloadTemplate = (data: any) => request(`/edge/operations/{deviceId}/device-instance-template/invoke`, {
+  method: 'POST',
+  data: data
+})
+
 export async function deleteById(id: string) {
   return request(`/jetlinks/device-product/${id}`, {
     method: 'DELETE',

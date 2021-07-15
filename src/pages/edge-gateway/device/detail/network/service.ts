@@ -234,9 +234,9 @@ class Service extends BaseService<any> {
         ))
 
     public getSupports = (params: any) => defer(
-        () => from(request(`/jetlinks/network/config/supports`, {
-            method: 'GET',
-            params
+        () => from(request(`/jetlinks/edge/operations/local/network-config-list/invoke`, {
+            method: 'POST',
+            data: params
         })).pipe(
             filter(resp => resp.status === 200),
             map(resp => resp.result)

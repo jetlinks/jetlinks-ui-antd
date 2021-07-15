@@ -33,9 +33,9 @@ const Add: React.FC<Props> = props => {
     const [mode, setMode] = useState('');
 
     useEffect(() => {
-        service.getSupports({}).subscribe(response => {
+        service.getSupports({paging: false}).subscribe(response => {
             if (response.status === 200) {
-                setSupportsType(response.result || []);
+                setSupportsType(response.result[0] || []);
             }
         })
     }, []);

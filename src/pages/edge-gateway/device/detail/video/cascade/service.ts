@@ -68,6 +68,21 @@ export const removeCascade = (deviceId: string, id: string) => request(`/jetlink
     cascadeId: id
   }
 })
+
+export const getPlatformInfo = () => request(`/jetlinks/edge/operations/local/gb28181-gateway-platform-info/invoke`, {
+  method: 'POST'
+})
+
+export const _disabled = (params: any) => request(`/jetlinks/edge/operations/local/gb28181-gateway-disabled/invoke`, {
+  method: 'POST',
+  data: params
+})
+
+export const _enabled = (params: any) => request(`/jetlinks/edge/operations/local/gb28181-gateway-enable/invoke`, {
+  method: 'POST',
+  data: params
+})
+
 class Service extends BaseService<any> {
 
   public getCascadeList = (deviceId: string, params: any) => defer(
@@ -173,11 +188,8 @@ class Service extends BaseService<any> {
       ));
 }
 
-export const getGBInfo = () => request.post('/jetlinks/edge/operations/local/gb28181-gateway-info/invoke', {
-  data: {
-    id: 'gb28181_gateway'
-  }
-})
+export const getGBInfo = () => request.post('/jetlinks/edge/operations/local/query-gb28181-gateway-info/invoke'
+)
 
 export const saveGBInfo = (data: any) => request.post('/jetlinks/edge/operations/local/save-gb28181-gateway/invoke', { data })
 

@@ -36,7 +36,7 @@ const Save: React.FC<Props> = props => {
     }]);
 
     const getProductList = (value: string) => {
-        service.getProductList({paging: false, where: `messageProtocol=${value}`}).subscribe(
+        service.getProductList({ paging: false, where: `messageProtocol=${value}` }).subscribe(
             (res) => {
                 setProductList([...res]);
             },
@@ -107,8 +107,7 @@ const Save: React.FC<Props> = props => {
     useEffect(() => {
         if (data.id) {
             service.getProductList({
-                paging: false,
-                where: `messageProtocol=${data.procotol}`
+                paging: false
             }).subscribe(
                 (res) => {
                     setProductList([...res]);
@@ -307,32 +306,32 @@ const Save: React.FC<Props> = props => {
                 });
             }}
         >
-            <div style={{margin: '0px 20px'}}>
+            <div style={{ margin: '0px 20px' }}>
                 <Form layout="vertical">
                     {!!!data.id && <Form.Item label="协议">
                         {getFieldDecorator('procotol', {
                             rules: [{ required: true }],
                             initialValue: data.name
                         })(
-                            <Row gutter={24}>
-                                <Col span={18}>
-                                    <Select onChange={(value: string) => {
-                                        getProductList(value);
-                                        form.setFieldsValue({ 'procotol': value });
-                                    }} allowClear>
-                                        {
-                                            protocolList.map((item: any, index: number) => (
-                                                <Select.Option key={index} value={item.id}>{item.name}</Select.Option>
-                                            ))
-                                        }
-                                    </Select>
-                                </Col>
-                                <Col span={6}>
-                                    <Button icon="sync" onClick={() => {
-                                        syncPlatform()
-                                    }}>同步平台</Button>
-                                </Col>
-                            </Row>
+                            // <Row gutter={24}>
+                            //     <Col span={18}>
+                            <Select onChange={(value: string) => {
+                                getProductList(value);
+                                form.setFieldsValue({ 'procotol': value });
+                            }} allowClear>
+                                {
+                                    protocolList.map((item: any, index: number) => (
+                                        <Select.Option key={index} value={item.id}>{item.name}</Select.Option>
+                                    ))
+                                }
+                            </Select>
+                            //     </Col>
+                            //     <Col span={6}>
+                            //         <Button icon="sync" onClick={() => {
+                            //             syncPlatform()
+                            //         }}>同步平台</Button>
+                            //     </Col>
+                            // </Row>
                         )}
                     </Form.Item>}
                     <Form.Item label="产品">
@@ -420,7 +419,7 @@ const Save: React.FC<Props> = props => {
                 }} close={() => {
                     setAddVisible(false);
                 }} data={dataType} />
-            )} 
+            )}
         </Modal>
     )
 }

@@ -68,7 +68,7 @@ class Service extends BaseService<any> {
                 filter(resp => resp.status === 200),
                 map(resp => resp)
             ));
-    public getProductList = ( params: any) => defer(
+    public getProductList = (params: any) => defer(
         () => from(request(`/jetlinks/edge/operations/local/device-product-list/invoke`, {
             method: 'POST',
             data: params
@@ -92,7 +92,7 @@ class Service extends BaseService<any> {
             filter(resp => resp.status === 200),
             map(resp => resp)
         ))
-    public addProtocol = ( params: any) => defer(
+    public addProtocol = (params: any) => defer(
         () => from(request(`/jetlinks/edge/operations/local/protocol-add/invoke`, {
             method: 'POST',
             data: params
@@ -147,8 +147,11 @@ class Service extends BaseService<any> {
         ));
 
     public getProtocolInfo = (id: string) => defer(
-        () => from(request(`/jetlinks/protocol/${id}`, {
-            method: 'GET',
+        () => from(request(`/jetlinks/edge/operations/local/protocol-info/invoke`, {
+            method: 'POST',
+            data: {
+                protocolId: id
+            },
             errorHandler: () => { }
         })).pipe(
             map(resp => resp?.result)
@@ -240,6 +243,16 @@ class Service extends BaseService<any> {
         })).pipe(
             filter(resp => resp.status === 200),
             map(resp => resp.result[0])
+        ))
+    public getMetaDataInfo = (id: string) => defer(
+        () => from(request(`/jetlinks/edge/operations/local/device-product-info/invoke`, {
+            method: 'POST',
+            data: {
+                id
+            }
+        })).pipe(
+            filter(resp => resp.status === 200),
+            map(resp => resp)
         ))
 }
 export default Service;

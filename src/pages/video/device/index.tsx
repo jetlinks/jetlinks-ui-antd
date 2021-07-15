@@ -9,7 +9,9 @@ function Device() {
 
   return (
     <div className={styles.device}>
-      <Left onRowClick={setRowData} />
+      <Left onRowClick={(data) => {
+        setRowData(data)
+      }} />
       <Right
         rowData={rowData}
       />

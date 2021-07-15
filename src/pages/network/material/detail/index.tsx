@@ -16,11 +16,24 @@ function Detail(props: DetailProps) {
 
     const service = new Service('/network/material');
     const [data, setData] = useState<any>(props.data);
+    const [metadata, setMetadata] = useState<any>({
+        properties: [],
+        functions: [],
+        events: []
+    });
 
     useEffect(() => {
         service.getDeviceGatewayInfo(props.data.id).subscribe(resp => {
             if(resp.status === 200){
-                setData(resp.result[0])
+                setData(resp.result[0]);
+                if(resp.result[0].productId){
+                    service.getMetaDataInfo(resp.result[0].productId).subscribe(res => {
+                        if(res.status === 200){
+                            let meta = res.result[0]?.metadata || "{}";
+                            setMetadata(JSON.parse(meta));
+                        }
+                    })
+                }
             }
         })
     }, [])
@@ -34,42 +47,24 @@ function Detail(props: DetailProps) {
                 <div style={{ color: 'rgba(0, 0, 0, 0.85)', fontSize: '24px', fontWeight: 600, margin: '5px 0px 19px' }}>{data.name}</div>
                 <Descriptions title="基本信息">
                     <Descriptions.Item label="产品ID">{data.productId}</Descriptions.Item>
-                    <Descriptions.Item label="所属品类">{data.productId}</Descriptions.Item>
-                    <Descriptions.Item label="所属机构">{data.productId}g</Descriptions.Item>
-                    <Descriptions.Item label="消息协议">{data.transport}</Descriptions.Item>
-                    <Descriptions.Item label="链接协议">{data.transport}</Descriptions.Item>
-                    <Descriptions.Item label="设备类型">{data.productId}</Descriptions.Item>
-                    <Descriptions.Item label="说明">{data.productId}</Descriptions.Item>
+                    <Descriptions.Item label="产品名称">{data.productName}</Descriptions.Item>
+                    <Descriptions.Item label="传输协议">{data.transport}</Descriptions.Item>
+                    <Descriptions.Item label="网络组件ID">{data.networkId}</Descriptions.Item>
+                    <Descriptions.Item label="网络组件名称">{data.networkName}</Descriptions.Item>
+                    <Descriptions.Item label="网关类型">{data.gatewayProvider}</Descriptions.Item>
+                    <Descriptions.Item label="说明">{data.description}</Descriptions.Item>
                 </Descriptions>
             </div>
             <Card title="物模型">
                 <Tabs type="card">
                     <Tabs.TabPane tab="属性定义" key="1">
-                        <Property
-                            data={[]}
-                            unitsData={{}}
-                            save={(data: any, onlySave: boolean) => {
-                                // props.saveProperty(data, onlySave);
-                            }}
-                        />
+                        <Property data={metadata.properties}/>
                     </Tabs.TabPane>
                     <Tabs.TabPane tab="功能定义" key="2">
-                        <Functions
-                            data={[]}
-                            unitsData={{}}
-                            save={(data: any, onlySave: boolean) => {
-                                // props.saveProperty(data, onlySave);
-                            }}
-                        />
+                        <Functions data={metadata.functions}/>
                     </Tabs.TabPane>
                     <Tabs.TabPane tab="事件定义" key="3">
-                        <Events
-                            data={[]}
-                            unitsData={{}}
-                            save={(data: any, onlySave: boolean) => {
-                                // props.saveProperty(data, onlySave);
-                            }}
-                        />
+                        <Events data={metadata.events} />
                     </Tabs.TabPane>
                 </Tabs>
             </Card>

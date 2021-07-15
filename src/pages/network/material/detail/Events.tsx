@@ -4,9 +4,7 @@ import {ColumnProps} from 'antd/es/table';
 import Detail from './event-detail';
 
 interface Props {
-  save: Function;
   data: any[];
-  unitsData: any;
 }
 
 const gradeText = {
@@ -32,11 +30,8 @@ const Events: React.FC<Props> = props => {
   const [current, setCurrent] = useState(initState.current);
 
   useEffect(() => {
-    setData([{
-      id: '1',
-      name: '1'
-    }])
-  }, []);
+    setData(props.data)
+  }, [props.data]);
 
   const columns: ColumnProps<any>[] = [
     {

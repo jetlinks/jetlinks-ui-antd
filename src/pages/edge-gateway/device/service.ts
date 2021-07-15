@@ -186,3 +186,11 @@ export async function getProperty(deviceId: string, id: string) {
     method: 'GET'
   });
 }
+
+
+export async function getDeviceCount(data: any) {
+  return request(`/jetlinks/edge/operations/local/device-instances-status/invoke`, {
+    method: 'POST',
+    data
+  });
+}

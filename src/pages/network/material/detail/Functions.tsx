@@ -4,9 +4,7 @@ import { ColumnProps } from 'antd/es/table';
 import Detail from './function-detail';
 
 interface Props {
-  save: Function;
   data: any[];
-  unitsData: any;
 }
 
 interface State {
@@ -27,11 +25,8 @@ const Functions: React.FC<Props> = props => {
   const [data, setData] = useState(initState.data);
 
   useEffect(() => {
-    setData([{
-      id: '1',
-      name: '1'
-    }])
-  }, []);
+    setData(props.data)
+  }, [props.data]);
 
   const columns: ColumnProps<any>[] = [
     {

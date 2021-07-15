@@ -5,9 +5,7 @@ import {ColumnProps} from 'antd/lib/table';
 import Detail from './properties-detail';
 
 interface Props extends FormComponentProps {
-  save: Function;
   data: any[];
-  unitsData: any;
 }
 
 interface State {
@@ -17,7 +15,6 @@ interface State {
 }
 
 const Properties: React.FC<Props> = (props: Props) => {
-  // const tenantContextData = useContext(TenantContext);
 
   const initState: State = {
     data: props.data || [
@@ -30,15 +27,9 @@ const Properties: React.FC<Props> = (props: Props) => {
   const [data, setData] = useState(initState.data);
   const [current, setCurrent] = useState(initState.current);
 
-  // useEffect(() => {
-    // setData(tenantContextData.properties || [])
-  // }, [tenantContextData]);
   useEffect(() => {
-    setData([{
-      id: '1',
-      name: '1'
-    }])
-  }, []);
+    setData(props.data)
+  }, [props.data]);
 
   const columns: ColumnProps<any>[] = [
     {
