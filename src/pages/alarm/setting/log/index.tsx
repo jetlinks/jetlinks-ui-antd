@@ -253,7 +253,7 @@ const handleSearch = (params: any) =>{
             });
             Object.keys(data).forEach(i => {
               if (data[i]) {
-                where.push(`${i}=${data[i]}`)
+                where.push(`${i} like %${data[i]}%`)
               }
             })
             handleSearch({
