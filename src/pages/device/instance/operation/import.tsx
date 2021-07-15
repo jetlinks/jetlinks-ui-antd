@@ -129,26 +129,13 @@ const Import: React.FC<Props> = props => {
   const downloadTemplate = (type: string) => {
     const formElement = document.createElement('form');
     formElement.style.display = 'display:none;';
-    formElement.method = 'POST';
-    formElement.action = `/jetlinks/edge/operations/local/device-instance-template/invoke`;
-    
-    const params = encodeQueryParam({
-      productId: product,
-      format: type
-    });
-    Object.keys(params).forEach((key: string) => {
-      const inputElement = document.createElement('input');
-      inputElement.type = 'hidden';
-      inputElement.name = key;
-      inputElement.value = params[key];
-      formElement.appendChild(inputElement);
-    });
-    // const inputElement = document.createElement('input');
-    // inputElement.type = 'hidden';
-    // inputElement.name = ':X_Access_Token';
-    // inputElement.value = getAccessToken();
-    // formElement.appendChild(inputElement);
-
+    formElement.method = 'GET';
+    formElement.action = `/jetlinks/device/instance/${product}/template.${type}`;
+    const inputElement = document.createElement('input');
+    inputElement.type = 'hidden';
+    inputElement.name = ':X_Access_Token';
+    inputElement.value = getAccessToken();
+    formElement.appendChild(inputElement);
     document.body.appendChild(formElement);
     formElement.submit();
     document.body.removeChild(formElement);
