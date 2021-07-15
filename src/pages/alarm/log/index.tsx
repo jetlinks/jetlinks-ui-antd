@@ -268,10 +268,11 @@ useEffect(() => {
                 }}>重置</Button>
                 <Button type="primary" onClick={()=>{
                   const data = form.getFieldsValue();
+                  // const deviceId=data.deviceId;
                   handleSearch({
                     pageSize: 8,
                     terms:[
-                      {column:'deviceId',value:data.deviceId},
+                      {column:'deviceId',value:`%${data.deviceId}%`,termType:'like'},
                       {column:'productName',value:data.productName},
                       {column:'state',value:data.state},
                     ]

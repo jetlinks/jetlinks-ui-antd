@@ -287,7 +287,8 @@ useEffect(() => {
           {
             title: '规则描述',
             dataIndex: 'description',
-            width:600
+            width:600,
+            render: (text: any) => text ? <div>{text}</div>: '-',
           },
           {
             title: '创建时间',
