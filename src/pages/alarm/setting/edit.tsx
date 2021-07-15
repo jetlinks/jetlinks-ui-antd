@@ -8,8 +8,6 @@ import Triggers from './Triggers';
 import ActionAssembly from './actions';
 import Bind from './bind';
 import Service from './service';
-// import Triggers from '@/pages/device/alarm/save/triggers/index';
-// import ActionAssembly from '@/pages/device/alarm/save/actions/index';
 
 interface Props extends FormComponentProps {
   close: Function;
