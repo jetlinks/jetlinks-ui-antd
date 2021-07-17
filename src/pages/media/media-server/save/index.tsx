@@ -34,7 +34,6 @@ const Save: React.FC<Props> = props => {
   const initValue = () => {
     service.mediaServerInfo(id).subscribe(data => {
       setProviderType(data.provider);
-      console.log(data.configuration);
       data.configuration.playerConfig = data.configuration.playerConfig ?
         data.configuration.playerConfig : [{format: 'rtmp', enabled: false, port: 1935}, {
           format: 'rtsp',
@@ -125,7 +124,20 @@ const Save: React.FC<Props> = props => {
   const renderConfig = () => {
     const configuration = item.configuration ?
       (typeof item.configuration === "string" ? JSON.parse(item.configuration) : item.configuration)
-      : {};
+      : {
+        playerConfig:[{format: 'rtmp', enabled: false, port: 1935}, {
+          format: 'rtsp',
+          enabled: false,
+          port: 554
+        },
+          {format: 'flv', enabled: false}, {
+            format: 'mp4',
+            enabled: false
+          }, {
+            format: 'hls',
+            enabled: false
+          }, {format: 'rtc', enabled: false}]
+      };
     switch (providerType) {
       case 'srs-media':
         return (
