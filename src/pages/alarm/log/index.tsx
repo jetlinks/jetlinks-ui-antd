@@ -268,13 +268,27 @@ useEffect(() => {
                 }}>重置</Button>
                 <Button type="primary" onClick={()=>{
                   const data = form.getFieldsValue();
-                  // const deviceId=data.deviceId;
+                  let terms: any[]=[];
+                  Object.keys(data).forEach(i=>{
+                    if(data[i]){
+                      if(i=== 'deviceId'){
+                        terms.push({
+                          "column": i, "value": `%${data[i]}%`,"termType": "like"
+                        })
+                      }else{
+                        terms.push({
+                          "column": i, "value": data[i],
+                        })
+                      }
+                    }
+                  })
                   handleSearch({
                     pageSize: 8,
                     terms:[
-                      {column:'deviceId',value:`%${data.deviceId}%`,termType:'like'},
-                      {column:'productName',value:data.productName},
-                      {column:'state',value:data.state},
+                      // {column:'deviceId',value:`%${data.deviceId}%`,termType:'like'},
+                      // {column:'productName',value:data.productName},
+                      // {column:'state',value:data.state},
+                      ...terms
                     ]
                   });
                 }}>查询</Button>
