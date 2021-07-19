@@ -148,8 +148,9 @@ export async function deviceCategory() {
   });
 }
 
-export async function deviceCategoryTree() {
+export async function deviceCategoryTree(params: any) {
   return request(`/jetlinks/device/category/_tree`, {
+    params,
     method: 'get'
   });
 }

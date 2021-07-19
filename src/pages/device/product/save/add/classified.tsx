@@ -7,6 +7,7 @@ import styles from "@/utils/table.less";
 import {ColumnProps} from "antd/lib/table";
 import treeTool from 'tree-tool';
 import Search from "antd/es/input/Search";
+import encodeQueryParam from "@/utils/encodeParam";
 
 interface Props extends FormComponentProps {
   data?: any;
@@ -21,7 +22,7 @@ const Classified: React.FC<Props> = props => {
   const [categoryAllLIst, setCategoryAllLIst] = useState<any[]>([]);
 
   useEffect(() => {
-    apis.deviceProdcut.deviceCategoryTree()
+    apis.deviceProdcut.deviceCategoryTree(encodeQueryParam({paging: false, sorts: {field: 'id', order: 'desc'}}))
       .then((response: any) => {
         if (response.status === 200) {
           setCategoryLIst(response.result);
