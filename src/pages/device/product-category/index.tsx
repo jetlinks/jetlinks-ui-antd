@@ -117,7 +117,7 @@ const Category = (props: Props) => {
   };
   const handleSearch = () => {
     api.productCategoty
-      .query_tree(encodeQueryParam({ sorts: { field: 'id', order: 'desc' } }))
+      .query_tree(encodeQueryParam({paging: false, sorts: {field: 'id', order: 'desc'}}))
       .then(res => {
         if (res.status === 200) {
           setCategoryList(res.result);
