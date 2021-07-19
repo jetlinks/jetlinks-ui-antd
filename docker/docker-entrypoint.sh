@@ -7,7 +7,7 @@ if [ -z "$API_BASE_PATH" ]; then
 fi
 
 apiUrl="proxy_pass  $API_BASE_PATH\$1;"
-resolver="resolver $NAMESERVERS ipv6=off;"
+resolver="resolver $NAMESERVERS;"
 
 sed -i '10c '"$resolver"'' /etc/nginx/conf.d/default.conf
 sed -i '19c '"$apiUrl"'' /etc/nginx/conf.d/default.conf

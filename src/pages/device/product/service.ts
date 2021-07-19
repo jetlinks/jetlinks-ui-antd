@@ -60,7 +60,7 @@ export async function query(params: any) {
 export async function queryNoPagin(params?: any) {
   return request(`/jetlinks/edge/operations/local/device-product-list/invoke`, {
     method: 'post',
-    params: params,
+    data: params,
   })
 }
 
