@@ -192,16 +192,16 @@ const AccessLoggerList: React.FC<Props> = props => {
                   type: 'string',
                 },
 
-                {
-                  label: '操作',
-                  key: 'action',
-                  type: 'string',
-                },
-                {
-                  label: '请求ID',
-                  key: 'id',
-                  type: 'string',
-                },
+                // {
+                //   label: '操作',
+                //   key: 'action',
+                //   type: 'string',
+                // },
+                // {
+                //   label: '请求ID',
+                //   key: 'id',
+                //   type: 'string',
+                // },
                 {
                   label: '日志时间',
                   key: 'requestTime$btw',
