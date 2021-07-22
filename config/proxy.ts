@@ -22,6 +22,8 @@ export default {
       // ws: 'ws://127.0.0.1:8848/',
       // ws: 'ws://test.jetlinks.cn/jetlinks',
       // target: 'http://test.jetlinks.cn/jetlinks',
+      // target: 'http://192.168.32.22:8881/',
+      // ws: 'ws://192.168.32.22:8881/',
       changeOrigin: true,
       pathRewrite: { '^/jetlinks': '' },
     },

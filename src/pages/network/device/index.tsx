@@ -360,7 +360,7 @@ function Device(props: Props) {
                       Object.keys(data).forEach(i => {
                         if (data[i]) {
                           terms.push({
-                            "column": i, "value": data[i],
+                            "column": i, "value": `%${data[i]}%`, "termType": "like"
                           })
                         }
                       })

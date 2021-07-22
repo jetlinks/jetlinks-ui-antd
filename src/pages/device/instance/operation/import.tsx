@@ -46,7 +46,13 @@ const Import: React.FC<Props> = props => {
     }
     // 获取下拉框数据
     apis.deviceProdcut
-      .queryNoPagin()
+      .queryNoPagin({
+        paging: false,
+        terms: [
+          { "column": "id", "value": "onvif-media-device", "termType": "not" },
+          { "column": "id", "value": "GB28181-PRO", "termType": "not" },
+        ]
+      })
       .then(response => {
         setProductList(response.result[0]);
       })
