@@ -67,7 +67,7 @@ function Material() {
     }
 
     const _stop = (id: string) => {
-        service.start(id).subscribe(resp => {
+        service.stop(id).subscribe(resp => {
             if (resp.status === 200) {
                 message.success('操作成功！');
                 handleSearch({ pageSize: 10 });
