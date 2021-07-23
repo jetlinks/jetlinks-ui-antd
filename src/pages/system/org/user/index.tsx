@@ -157,7 +157,6 @@ const BindUser: React.FC<Props> = props => {
         rowSelection={rowSelection}
         loading={loading}
         onSearch={(params: any) => {
-          console.log(params, 'pa');
           handleSearch({ ...params, terms: { ...params?.terms, ...searchParam?.terms } });
         }}
         columns={[

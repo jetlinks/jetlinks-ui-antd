@@ -133,6 +133,14 @@ export const routes = [
                 version: 'pro',
                 component: './system/tenant/detail',
               },
+              {
+                path:'/system/datasource',
+                name:'数据源管理',
+                icon:'database',
+                // authority:['datasource-config','admin'],
+                // version:'pro',
+                component:'./system/datasource'
+              }
             ],
           },
           {
