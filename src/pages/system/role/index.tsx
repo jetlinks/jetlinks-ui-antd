@@ -40,6 +40,10 @@ const RoleList: React.FC<Props> = props => {
       terms: {
         typeId: 'role',
       },
+      sorts: {
+        order: 'descend',
+        field: 'id',
+      },
     },
     saveVisible: false,
     currentItem: {},
