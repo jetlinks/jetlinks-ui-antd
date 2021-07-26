@@ -1,19 +1,19 @@
-import React, {Fragment, useEffect, useState} from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import styles from '@/utils/table.less';
-import {FirmwareData} from './data';
-import {PageHeaderWrapper} from '@ant-design/pro-layout';
-import {Button, Card, Divider, message, Popconfirm, Spin, Table} from 'antd';
-import {ColumnProps, PaginationConfig} from 'antd/lib/table';
+import { FirmwareData } from './data';
+import { PageHeaderWrapper } from '@ant-design/pro-layout';
+import { Button, Card, Divider, message, Popconfirm, Spin, Table } from 'antd';
+import { ColumnProps, PaginationConfig } from 'antd/lib/table';
 import moment from 'moment';
-import {Dispatch} from '@/models/connect';
-import {SorterResult} from 'antd/es/table';
+import { Dispatch } from '@/models/connect';
+import { SorterResult } from 'antd/es/table';
 import SearchForm from '@/components/SearchForm';
 import apis from '@/services';
 import Form from 'antd/es/form';
-import {FormComponentProps} from 'antd/lib/form';
+import { FormComponentProps } from 'antd/lib/form';
 import Save from '@/pages/device/firmware/save';
 import encodeQueryParam from '@/utils/encodeParam';
-import {router} from 'umi';
+import { router } from 'umi';
 
 interface Props extends FormComponentProps {
   dispatch: Dispatch;
@@ -24,13 +24,19 @@ interface Props extends FormComponentProps {
 interface State {
   searchParam: any;
   saveVisible: boolean;
-  firmwareData: any,
-  saveFirmwareData: any,
+  firmwareData: any;
+  saveFirmwareData: any;
 }
 
 const Firmware: React.FC<Props> = props => {
   const initState: State = {
-    searchParam: {pageSize: 10},
+    searchParam: {
+      pageSize: 10,
+      sorts: {
+        order: 'descend',
+        field: 'id',
+      },
+    },
     saveVisible: false,
     firmwareData: {},
     saveFirmwareData: {},
@@ -45,46 +51,49 @@ const Firmware: React.FC<Props> = props => {
 
   const handleSearch = (params?: any) => {
     setSearchParam(params);
-    apis.firmware.list(encodeQueryParam(params))
+    apis.firmware
+      .list(encodeQueryParam(params))
       .then((response: any) => {
         if (response.status === 200) {
           setFirmwareData(response.result);
         }
         setSpinning(false);
-      }).catch(() => {
-    });
+      })
+      .catch(() => {});
   };
 
   useEffect(() => {
-    apis.deviceProdcut.queryNoPagin()
+    apis.deviceProdcut
+      .queryNoPagin()
       .then(response => {
         setProductList(response.result);
       })
-      .catch(() => {
-      });
+      .catch(() => {});
     handleSearch(searchParam);
   }, []);
 
   const handleDelete = (params: FirmwareData) => {
-    apis.firmware.remove(params.id)
+    apis.firmware
+      .remove(params.id)
       .then((response: any) => {
         if (response.status === 200) {
           message.success('删除成功');
           handleSearch(searchParam);
         }
-      }).catch(() => {
-    });
+      })
+      .catch(() => {});
   };
 
   const handleSave = (item: any) => {
-    apis.firmware.saveOrUpdate(item)
+    apis.firmware
+      .saveOrUpdate(item)
       .then((response: any) => {
         if (response.status === 200) {
           message.success('保存成功');
           handleSearch(searchParam);
         }
-      }).catch(() => {
-    });
+      })
+      .catch(() => {});
   };
 
   const columns: ColumnProps<FirmwareData>[] = [
@@ -119,12 +128,14 @@ const Firmware: React.FC<Props> = props => {
       align: 'center',
       render: (record: FirmwareData) => (
         <Fragment>
-          <a onClick={() => {
-            router.push(`/device/firmware/save/${record.id}`);
-          }}>
+          <a
+            onClick={() => {
+              router.push(`/device/firmware/save/${record.id}`);
+            }}
+          >
             查看
           </a>
-          <Divider type="vertical"/>
+          <Divider type="vertical" />
           <a
             onClick={() => {
               setSaveFirmwareData(record);
@@ -133,10 +144,13 @@ const Firmware: React.FC<Props> = props => {
           >
             编辑
           </a>
-          <Divider type="vertical"/>
-          <Popconfirm title="确定删除？" onConfirm={() => {
-            handleDelete(record);
-          }}>
+          <Divider type="vertical" />
+          <Popconfirm
+            title="确定删除？"
+            onConfirm={() => {
+              handleDelete(record);
+            }}
+          >
             <a>删除</a>
           </Popconfirm>
         </Fragment>
@@ -173,11 +187,12 @@ const Firmware: React.FC<Props> = props => {
                     sorts: searchParam.sorts,
                   });
                 }}
-                formItems={[{
-                  label: '固件名称',
-                  key: 'name$LIKE',
-                  type: 'string',
-                },
+                formItems={[
+                  {
+                    label: '固件名称',
+                    key: 'name$LIKE',
+                    type: 'string',
+                  },
                   {
                     label: '所属产品',
                     key: 'productId',
@@ -186,14 +201,19 @@ const Firmware: React.FC<Props> = props => {
                       data: productList,
                       mode: 'tags',
                     },
-                  }]}
+                  },
+                ]}
               />
             </div>
             <div className={styles.tableListOperator}>
-              <Button icon="plus" type="primary" onClick={() => {
-                setSaveFirmwareData({});
-                setSaveVisible(true);
-              }}>
+              <Button
+                icon="plus"
+                type="primary"
+                onClick={() => {
+                  setSaveFirmwareData({});
+                  setSaveVisible(true);
+                }}
+              >
                 新建
               </Button>
             </div>
@@ -202,7 +222,7 @@ const Firmware: React.FC<Props> = props => {
                 loading={props.loading}
                 dataSource={(firmwareData || {}).data}
                 columns={columns}
-                rowKey='id'
+                rowKey="id"
                 onChange={onTableChange}
                 pagination={{
                   current: firmwareData?.pageIndex + 1,
@@ -211,29 +231,31 @@ const Firmware: React.FC<Props> = props => {
                   showQuickJumper: true,
                   showSizeChanger: true,
                   pageSizeOptions: ['10', '20', '50', '100'],
-                  showTotal: (total: number) => (
-                    `共 ${total} 条记录 第  ${
-                      firmwareData?.pageIndex + 1
-                    }/${
-                      Math.ceil(firmwareData?.total / firmwareData?.pageSize)
-                    }页`
-                  ),
+                  showTotal: (total: number) =>
+                    `共 ${total} 条记录 第  ${firmwareData?.pageIndex + 1}/${Math.ceil(
+                      firmwareData?.total / firmwareData?.pageSize,
+                    )}页`,
                 }}
               />
             </div>
           </div>
         </Card>
       </Spin>
-      {saveVisible &&
-      <Save data={saveFirmwareData} close={() => {
-        setSaveVisible(false);
-        setSpinning(true);
-        handleSearch(searchParam);
-      }} save={(item: any) => {
-        setSaveVisible(false);
-        setSpinning(true);
-        handleSave(item);
-      }}/>}
+      {saveVisible && (
+        <Save
+          data={saveFirmwareData}
+          close={() => {
+            setSaveVisible(false);
+            setSpinning(true);
+            handleSearch(searchParam);
+          }}
+          save={(item: any) => {
+            setSaveVisible(false);
+            setSpinning(true);
+            handleSave(item);
+          }}
+        />
+      )}
     </PageHeaderWrapper>
   );
 };

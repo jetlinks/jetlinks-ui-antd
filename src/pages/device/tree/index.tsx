@@ -16,7 +16,13 @@ const GroupList: React.FC<Props> = props => {
   const [current, setCurrnet] = useState<any>({});
   const [list, setList] = useState<any>({});
   const [add, setAdd] = useState<boolean>(false);
-  const [searchParam, setSearchParam] = useState<any>({ pageSize: 10 });
+  const [searchParam, setSearchParam] = useState<any>({
+    pageSize: 10,
+    sorts: {
+      order: 'descend',
+      field: 'id',
+    },
+  });
   const search = (params?: any) => {
     setSearchParam(params);
     setLoading(true);

@@ -73,7 +73,14 @@ const DeviceInstancePage: React.FC<Props> = props => {
 
   const initState: State = {
     data: result,
-    searchParam: { pageSize: 10, terms: location?.query?.terms },
+    searchParam: {
+      pageSize: 10,
+      terms: location?.query?.terms,
+      sorts: {
+        order: 'descend',
+        field: 'id',
+      },
+    },
     addVisible: false,
     currentItem: {},
     processVisible: false,
@@ -328,7 +335,15 @@ const DeviceInstancePage: React.FC<Props> = props => {
       })
       .catch();
     apis.deviceInstance
-      .count(encodeQueryParam({ terms: { productId, ...location?.query?.terms,...(location?.query.iop && JSON.parse(location?.query.iop)?.terms) } }))
+      .count(
+        encodeQueryParam({
+          terms: {
+            productId,
+            ...location?.query?.terms,
+            ...(location?.query.iop && JSON.parse(location?.query.iop)?.terms),
+          },
+        }),
+      )
       .then(res => {
         if (res.status === 200) {
           map.deviceTotal = res.result;
