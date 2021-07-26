@@ -48,8 +48,6 @@ const Datasource = () => {
         <Fragment>
           <a
             onClick={() => {
-              console.log(record, 'cucuc');
-
               setCurrent(record);
               setVisible(true);
             }}
@@ -166,8 +164,9 @@ const Datasource = () => {
           close={() => {
             setVisible(false);
             setCurrent({});
+            handleSearch(searchParam);
           }}
-        //   visible={visible}
+          //   visible={visible}
           data={current}
         />
       )}

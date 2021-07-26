@@ -11,7 +11,6 @@ import styles from '../index.less';
 import _ from 'lodash';
 
 interface Props {
-  //   visible: boolean;
   close: () => void;
   data: any;
 }
@@ -26,7 +25,7 @@ type Type = {
 const actions = createFormActions();
 
 const Save = (props: Props) => {
-  const { visible, close, data } = props;
+  const {  close, data } = props;
 
   const [types, setTypes] = useState<Type[]>([]);
 
@@ -54,12 +53,12 @@ const Save = (props: Props) => {
         `*(shareConfig.adminUrl,shareConfig.addresses,shareConfig.virtualHost,shareConfig.username,shareConfig.password)`,
         state => {
           state.visible = value === 'RabbitMQ';
-          state.value = null;
+          state.value = undefined;
         },
       );
       setFieldState(`*(shareConfig.bootstrapServers)`, state => {
         state.visible = value === 'Kafka';
-        state.value = null;
+        state.value = undefined;
       });
     });
   };
@@ -91,6 +90,9 @@ const Save = (props: Props) => {
           typeId: {
             title: '类型',
             'x-component': 'Select',
+            'x-component-props': {
+              disabled: !!data.typeId,
+            },
             'x-mega-props': {
               span: 2,
               labelCol: 6,
@@ -103,6 +105,8 @@ const Save = (props: Props) => {
               span: 4,
               labelCol: 3,
             },
+            required: true,
+            default: 'http://localhost:15672',
             visible: false,
             'x-component': 'Input',
           },
@@ -112,6 +116,8 @@ const Save = (props: Props) => {
               span: 2,
               labelCol: 6,
             },
+            required: true,
+            default: 'localhost:5672',
             visible: false,
             'x-component': 'Input',
           },
@@ -121,7 +127,9 @@ const Save = (props: Props) => {
               span: 2,
               labelCol: 6,
             },
+            required: true,
             visible: false,
+            default: '/',
             'x-component': 'Input',
           },
           'shareConfig.username': {
@@ -131,6 +139,12 @@ const Save = (props: Props) => {
               labelCol: 6,
             },
             visible: false,
+            'x-rules': [
+              {
+                required: true,
+                message: '用户名必填',
+              },
+            ],
             'x-component': 'Input',
           },
           'shareConfig.password': {
@@ -140,6 +154,12 @@ const Save = (props: Props) => {
               labelCol: 6,
             },
             visible: false,
+            'x-rules': [
+              {
+                required: true,
+                message: '密码必填',
+              },
+            ],
             'x-component': 'Input',
           },
           'shareConfig.bootstrapServers': {
@@ -148,6 +168,12 @@ const Save = (props: Props) => {
               span: 4,
               labelCol: 3,
             },
+            'x-rules': [
+              {
+                required: true,
+                message: '地址必填',
+              },
+            ],
             visible: false,
             'x-component': 'Select',
             'x-component-props': {
