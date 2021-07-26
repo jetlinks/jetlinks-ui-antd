@@ -15,8 +15,10 @@ const GroupList: React.FC<Props> = props => {
   const [saveVisible, setSaveVisible] = useState<boolean>(false);
   const [current, setCurrnet] = useState<any>({});
   const [list, setList] = useState<any>({});
-  const [add,setAdd] = useState<boolean>(false);
+  const [add, setAdd] = useState<boolean>(false);
+  const [searchParam, setSearchParam] = useState<any>({ pageSize: 10 });
   const search = (params?: any) => {
+    setSearchParam(params);
     setLoading(true);
     const defaultTerms = { parentId$isnull: true };
     service
@@ -33,26 +35,28 @@ const GroupList: React.FC<Props> = props => {
       );
   };
   useEffect(() => {
-    search({ pageSize: 10 });
+    search(searchParam);
   }, []);
 
   const saveGroup = (item: GroupItem) => {
-    if(current.id){//编辑
+    if (current.id) {
+      //编辑
       service.saveOrUpdataGroup(item).subscribe(
         () => message.success('保存成功'),
         () => {},
         () => {
           setSaveVisible(false);
-          search();
+          search(searchParam);
         },
       );
-    }else{  //新增
+    } else {
+      //新增
       service.saveGroup(item).subscribe(
         () => message.success('保存成功'),
         () => {},
         () => {
           setSaveVisible(false);
-          search();
+          search(searchParam);
         },
       );
     }
@@ -83,6 +87,7 @@ const GroupList: React.FC<Props> = props => {
                   terms: {
                     name$LIKE: value,
                   },
+                  pageSize: searchParam.pageSize,
                 });
               }}
             />
