@@ -26,6 +26,10 @@ const edgeDevice: React.FC<Props> = () => {
     const [searchParam, setSearchParam] = useState({
         pageSize: 8, terms: {
             'productId$edge-product': 1
+        },
+        sorts: {
+            order: "desc",
+            field: "id"
         }
     });
     const [saveVisible, setSaveVisible] = useState(false);
@@ -117,6 +121,10 @@ const edgeDevice: React.FC<Props> = () => {
                                 setSearchParam(params);
                                 handleSearch({
                                     terms: { ...params, 'productId$edge-product': 1 },
+                                    sorts: {
+                                        order: "desc",
+                                        field: "id"
+                                    },
                                     pageSize: 8
                                 });
                             }}
