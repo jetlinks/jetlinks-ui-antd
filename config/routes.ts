@@ -137,8 +137,8 @@ export const routes = [
                 path:'/system/datasource',
                 name:'数据源管理',
                 icon:'database',
-                // authority:['datasource-config','admin'],
-                // version:'pro',
+                authority:['datasource-config','admin'],
+                version:'pro',
                 component:'./system/datasource'
               }
             ],
