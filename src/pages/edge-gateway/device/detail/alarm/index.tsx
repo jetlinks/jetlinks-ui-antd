@@ -91,6 +91,7 @@ const Alarm: React.FC<Props> = props => {
     setAlarmActiveKey('info');
     getProductAlarms();
     getData(searchAlarmParam);
+    handleSearch(searchParam);
   }, []);
 
   const submitData = (data: any) => {
