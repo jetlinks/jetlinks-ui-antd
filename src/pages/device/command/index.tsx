@@ -201,8 +201,23 @@ const Command = () => {
         </div>
       </Card>
 
-      {visible && <Cat close={() => setVisible(false)} data={current} />}
-      {send && <Send close={() => setSend(false)} />}
+      {visible && (
+        <Cat
+          close={() => {
+            setVisible(false);
+            handleSearch(searchParam);
+          }}
+          data={current}
+        />
+      )}
+      {send && (
+        <Send
+          close={() => {
+            setSend(false);
+            handleSearch(searchParam);
+          }}
+        />
+      )}
     </PageHeaderWrapper>
   );
 };
