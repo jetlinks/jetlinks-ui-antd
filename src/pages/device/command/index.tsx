@@ -1,5 +1,5 @@
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import { Button, Card, Divider, Dropdown, Icon, Menu, message } from 'antd';
+import { Button, Card, Divider, message } from 'antd';
 import React, { Fragment, useEffect, useState } from 'react';
 import Service from './service';
 import styles from '@/utils/table.less';
@@ -13,7 +13,11 @@ import moment from 'moment';
 const Command = () => {
   const service = new Service('device/message/task');
   const [result, setResult] = useState<any>({});
-  const [searchParam, setSearchParam] = useState<any>({ pageIndex: 0, pageSize: 10 });
+  const [searchParam, setSearchParam] = useState<any>({
+    pageIndex: 0,
+    pageSize: 10,
+    sorts: { field: 'id', order: 'desc' },
+  });
   const [visible, setVisible] = useState<boolean>(false);
   const [current, setCurrent] = useState<any>({});
   const [send, setSend] = useState<boolean>(false);
@@ -65,8 +69,8 @@ const Command = () => {
       title: '发送时间',
       dataIndex: 'sendTimestamp',
       render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
-      sorter: true,
-      defaultSortOrder: 'descend',
+      //   sorter: true,
+      //   defaultSortOrder: 'descend',
     },
     {
       title: '操作',
@@ -186,7 +190,11 @@ const Command = () => {
               onChange: (selectedRowKeys: any) => setDeviceids(selectedRowKeys),
             }}
             onSearch={(params: any) => {
-              handleSearch({ ...params, terms: { ...searchParam.terms, ...params.terms } });
+              handleSearch({
+                ...params,
+                terms: { ...searchParam.terms, ...params.terms },
+                sorts: searchParam.sorts,
+              });
             }}
             paginationConfig={result}
           />
