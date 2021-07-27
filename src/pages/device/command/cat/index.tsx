@@ -7,7 +7,7 @@ interface Props {
 }
 const Cat = (props: Props) => {
   return (
-    <Modal title="查看指令" visible onCancel={() => props.close()} width="70VW">
+    <Modal footer={null} title="查看指令" visible onCancel={() => props.close()} width="70VW">
       下发指令:
       <Input.TextArea
         rows={7}
