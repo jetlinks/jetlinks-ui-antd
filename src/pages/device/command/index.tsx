@@ -111,7 +111,7 @@ const Command = () => {
             <SearchForm
               search={(params: any) => {
                 setSearchParam(params);
-                handleSearch({ terms: params, pageSize: 10 });
+                handleSearch({ ...searchParam, terms: { ...params, ...searchParam.terms } });
               }}
               formItems={[
                 {
