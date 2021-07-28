@@ -101,8 +101,8 @@ function Device(props: Props) {
       },
       () => setLoading(false))
   };
-
-  useEffect(() => {
+  
+  const count = () =>{
     service.getDeviceCount({ "terms": [{ "column": "productId", "value": "onvif-media-device", "termType": "not" }, { "column": "productId", "value": "GB28181-PRO", "termType": "not" }] }).subscribe(resp => {
       if (resp.status === 200) {
         setDeviceCount(resp.result[0])
@@ -133,6 +133,11 @@ function Device(props: Props) {
         setDeviceOfflineCount(resp.result[0])
       }
     })
+  }
+
+
+  useEffect(() => {
+    count();
     handleSearch(searchParam);
     getProductList();
   }, []);
@@ -206,8 +211,10 @@ function Device(props: Props) {
                     onConfirm={() => {
                       if (item.state?.value === 'notActive') {
                         deploy(item.id);
+                        count();
                       } else {
                         undeploy(item.id);
+                        count();
                       }
                     }}>
                     <a>{item.state?.value === 'notActive' ? '启动' : '禁用'}</a>
@@ -229,14 +236,14 @@ function Device(props: Props) {
                     <p className={styles.itemText}>{item.productName}</p>
                   </div>
                 </div>
-                <div style={{ color: 'rgba(0, 0, 0, 0.45)', fontSize: '12px', width: '100%', display: 'flex', justifyContent: 'center' }}>注册时间：2021-05-06 17:20:05</div>
+                <div style={{ color: 'rgba(0, 0, 0, 0.45)', fontSize: '12px', width: '100%', display: 'flex', justifyContent: 'center' }}>注册时间：{moment(item.registryTime).format('YYYY-MM-DD HH:mm:ss')}</div>
               </Card>
             </div>}
             toolNode={
               <div style={{ display: 'flex' }}>
                 <Input.Search style={{ marginRight: '16px' }} allowClear placeholder="请输入设备名称" onSearch={(value: string) => {
                   setSearchValue(value);
-                  let terms = searchParam.terms.filter(it => {
+                  let terms = searchParam.terms.filter((it:any) => {
                     return it.column !== 'name'
                   })
                   handleSearch({
@@ -252,6 +259,10 @@ function Device(props: Props) {
                   setEditVisible(true);
                   setCurrentData({});
                 }}>新增设备</Button>
+                <Button type="primary" style={{ marginRight: '16px' }} onClick={() => {
+                  count();
+                  handleSearch(searchParam)
+                }}>刷新</Button>
               </div>
             }
             pagination={{
@@ -434,6 +445,7 @@ function Device(props: Props) {
                         title="确认启动吗？"
                         onConfirm={() => {
                           deploy(record.id)
+                          count();
                         }}>
                         <Button type='link'>启动</Button>
                       </Popconfirm>
@@ -442,6 +454,7 @@ function Device(props: Props) {
                         title="确认禁用吗？"
                         onConfirm={() => {
                           undeploy(record.id)
+                          count();
                         }}>
                         <Button type='link'>禁用</Button>
                       </Popconfirm>

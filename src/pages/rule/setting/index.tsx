@@ -357,7 +357,7 @@ const Setting: React.FC<Props> = props => {
             onCopy={() => { onCopy(data) }}
             onReboot={() => { onReboot(data) }}
             onDelete={() => { handleDelete(data) }}
-            onEdit={() => { onEdit(data) }}
+            onEdit={() => { onEdit(data)}}
             onStart={() => { startInstance(data) }}
             onStop={() => { stopInstance(data) }}
           />}

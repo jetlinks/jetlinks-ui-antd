@@ -20,7 +20,8 @@ function Device() {
     service.getDeviceCount({
       "terms":
         [
-          { "column": "productId", "value": "onvif-media-device", "termType": "not" }
+          { "column": "productId", "value": "onvif-media-device", "termType": "not" },
+          { "column": "productId", "value": "GB28181-PRO", "termType": "not" }
         ]
     }).subscribe(resp => {
       if (resp.status === 200) {
@@ -31,7 +32,8 @@ function Device() {
       "terms":
         [
           { "column": "productId", "value": "onvif-media-device", "termType": "not" },
-          { "column": "state", "value": "online" }
+          { "column": "state", "value": "online" },
+          { "column": "productId", "value": "GB28181-PRO", "termType": "not" }
         ]
     }).subscribe(resp => {
       if (resp.status === 200) {
@@ -42,7 +44,8 @@ function Device() {
       "terms":
         [
           { "column": "productId", "value": "onvif-media-device", "termType": "not" },
-          { "column": "state", "value": "offline" }
+          { "column": "state", "value": "offline" },
+          { "column": "productId", "value": "GB28181-PRO", "termType": "not" }
         ]
     }).subscribe(resp => {
       if (resp.status === 200) {
@@ -50,11 +53,11 @@ function Device() {
       }
     })
     service.getDeviceCount(
-      {
-        terms: [
-          { column: "productId", value: "onvif-media-device" }
+      {"terms":[
+        {"column": "productId", "value": "onvif-media-device" ,"type":"or"},
+        {"column": "productId", "value": "GB28181-PRO","type":"or"}
         ]
-      }
+        } 
     ).subscribe(resp => {
       if (resp.status === 200) {
         setVideoCount(resp.result[0])
@@ -63,8 +66,9 @@ function Device() {
     service.getDeviceCount(
       {
         terms: [
-          { column: "productId", value: "onvif-media-device" },
-          { column: "state", value: "online" }
+          { column: "productId", value: "onvif-media-device" ,"type":"or"},
+          { column: "state", value: "online" },
+          {"column": "productId", "value": "GB28181-PRO","type":"or"}
         ]
       }
     ).subscribe(resp => {
@@ -74,9 +78,12 @@ function Device() {
     })
     service.getDeviceCount(
       {
-        terms: [
-          { column: "productId", value: "onvif-media-device" },
-          { column: "state", value: "offline" }
+        "terms": [
+          { "column": "productId", "value": "onvif-media-device" ,"type":"or"},
+          {"column": "state", "value": "offline","type":"and"},
+          {"column": "productId", "value": "GB28181-PRO","type":"or"},
+          {"column": "state", "value": "offline","type":"and"}
+          
         ]
       }
     ).subscribe(resp => {

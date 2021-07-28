@@ -50,7 +50,7 @@ class Service extends BaseService<any> {
             ));
 
     public batchImport = (data: any) => defer(
-        () => from(request(`/edge/operations/local/device-instance-batch-import/invoke`, {
+        () => from(request(`/jetlinks/edge/operations/local/device-instance-batch-import/invoke`, {
             method: 'POST',
             data: data
         }))

@@ -300,6 +300,7 @@ const Edit: React.FC<Props> = props => {
                     style={{width:'540px',position:'relative',left:5}}
                     onClick={() => {
                       setTrigger([...trigger, {_id: Math.round(Math.random() * 100000)}]);
+                      console.log(props.metaData)
                     }}
             >
               新增触发器

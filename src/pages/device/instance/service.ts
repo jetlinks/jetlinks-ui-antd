@@ -23,9 +23,11 @@ export async function count(params: any) {
 }
 
 export async function info(deviceId: string, id: string) {
-  return request(`/jetlinks/edge/operations/${deviceId}/device-instance-info/invoke`, {
+  return request(`/jetlinks/edge/operations/${deviceId}/device-instance-detail/invoke`, {
     method: 'POST',
-    data: { id }
+    data: {
+      deviceId: id
+    }
   });
 }
 

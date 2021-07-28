@@ -155,7 +155,7 @@ useEffect(() => {
                 title={
                   <div style={{ display: "flex", justifyContent: 'space-between' }}>
                     <AutoHide title={data.name} style={{ flexGrow: 1, fontWeight: 600,fontSize:16}} />
-                    <Switch checked={data.state.value==='stopped'? false : true} onChange={(e)=>{
+                    <Switch defaultChecked={data?.state?.value==='stopped'? false : true} onChange={(e)=>{
                       console.log(data.state.value)
                       if(e){
                         start(data)
@@ -228,12 +228,7 @@ useEffect(() => {
             </Row>
           </Form>
           <div >
-        <Button style={{marginRight:5}} onClick={()=>{
-          form.resetFields();
-          handleSearch({
-            pageSize: 8
-          })
-        }}>重置</Button>
+        
         <Button type="primary" onClick={()=>{
           const data = form.getFieldsValue();
           let list = searchParam.where ? searchParam.where.split(' and ') : [];
@@ -250,6 +245,12 @@ useEffect(() => {
             pageSize: 8
           });
         }}>查询</Button>
+        <Button style={{marginRight:5}} onClick={()=>{
+          form.resetFields();
+          handleSearch({
+            pageSize: 8
+          })
+        }}>重置</Button>
       </div>
     </div>}
         pagination={{

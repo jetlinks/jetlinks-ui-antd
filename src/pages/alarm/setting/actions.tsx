@@ -580,7 +580,7 @@ const Action: React.FC<Props> = props => {
                       submitData();
                     }}
             >
-              <Select.Option value="notifier">消息通知</Select.Option>
+              {/* <Select.Option value="notifier">消息通知</Select.Option> */}
               <Select.Option value="device-message-sender">设备输出</Select.Option>
             </Select>
           </Col>

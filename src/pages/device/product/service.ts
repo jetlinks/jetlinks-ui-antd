@@ -64,7 +64,7 @@ export async function queryNoPagin(params?: any) {
   })
 }
 
-export const batchImport = (data: any) => request(`/edge/operations/local/device-instance-batch-import/invoke`, {
+export const batchImport = (data: any) => request(`/jetlinks/edge/operations/local/device-instance-batch-import/invoke`, {
   method: 'POST',
   data: data
 })

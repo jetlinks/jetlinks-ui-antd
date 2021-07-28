@@ -75,10 +75,12 @@ function Left(props: LeftProps) {
 
   const openModel = (type: string) => {
     setVisible(true)
+    setFormData({})
   }
 
   // 添加视频设备请求
   const addOnvifRequest = async (data: any) => {
+    setAddOnvifLoading(true)
     const result = await addOnvif('local', data)
     if (result.status === 200) {
       message.success('保存成功！');

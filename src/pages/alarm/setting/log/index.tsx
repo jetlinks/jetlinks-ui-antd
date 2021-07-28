@@ -66,10 +66,10 @@ const handleSearch = (params: any) =>{
 
     useEffect(() => {
       service.getDeviceCount({
-        "terms":
-          [
-            { "column": "productId", "value": "onvif-media-device", "termType": "not" }
-          ]
+        "terms": 
+        [
+          { "column": "productId", "value": "onvif-media-device", "termType": "not" },
+         { "column": "productId", "value": "GB28181-PRO", "termType": "not" }]
       }).subscribe(resp => {
         if (resp.status === 200) {
           setDeviceCount(resp.result[0])
@@ -79,6 +79,7 @@ const handleSearch = (params: any) =>{
         "terms":
           [
             { "column": "productId", "value": "onvif-media-device", "termType": "not" },
+            { "column": "productId", "value": "GB28181-PRO", "termType": "not" },
             { "column": "state", "value": "online" }
           ]
       }).subscribe(resp => {
@@ -90,6 +91,7 @@ const handleSearch = (params: any) =>{
         "terms":
           [
             { "column": "productId", "value": "onvif-media-device", "termType": "not" },
+            { "column": "productId", "value": "GB28181-PRO", "termType": "not" },
             { "column": "state", "value": "offline" }
           ]
       }).subscribe(resp => {
@@ -216,14 +218,7 @@ const handleSearch = (params: any) =>{
             </Row>
           </Form>
         <div style={{marginRight:20}}>
-          <Button style={{marginRight:5}} onClick={()=>{
-            form.resetFields();
-            handleSearch({
-              pageIndex: searchParam.pageIndex,
-              pageSize: searchParam.pageSize,
-              where: `alarmName=${props.name}`,
-            })
-          }}>重置</Button>
+          
           <Button type="primary" onClick={()=>{
             const data = form.getFieldsValue();
             let list = searchParam.where ? searchParam.where.split(' and ') : [];
@@ -241,6 +236,14 @@ const handleSearch = (params: any) =>{
               where:`alarmName=${props.name}`+` and `+where.join(' and '),
             });
           }}>查询</Button>
+          <Button style={{marginRight:5}} onClick={()=>{
+            form.resetFields();
+            handleSearch({
+              pageIndex: searchParam.pageIndex,
+              pageSize: searchParam.pageSize,
+              where: `alarmName=${props.name}`,
+            })
+          }}>重置</Button>
         </div>
         
   </div>

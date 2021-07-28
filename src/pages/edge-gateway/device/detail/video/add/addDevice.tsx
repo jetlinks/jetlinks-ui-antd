@@ -75,10 +75,10 @@ const AddDevice: React.FC<Props> = props => {
             visible
             width={520}
             onCancel={() => { props.close() }}
-            confirmLoading={loading}
+            confirmLoading={props.loading}
             onOk={() => {
                 form.validateFields((err, fileValue) => {
-                    console.log(err, fileValue);
+                    console.log(props.loading);
                     if (err) return;
                     if (!data.id) {
                         props.save({ ...fileValue });
