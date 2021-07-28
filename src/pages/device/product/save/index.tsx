@@ -133,14 +133,11 @@ const Save: React.FC<Props> = props => {
       })
       .catch(() => {});
 
-    // apis.deviceProdcut.deviceCategoryNoPaing().then(r => {
-    //   console.log(r, 'r');
-    // });
+
     apis.deviceProdcut
       .deviceCategoryNoPaing()
       .then((response: any) => {
         if (response.status === 200) {
-          console.log(response.result, 'result');
 
           setCategoryLIst(response.result);
           if (props.data.classifiedId) {
