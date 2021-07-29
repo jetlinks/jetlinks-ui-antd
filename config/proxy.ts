@@ -8,10 +8,11 @@
  */
 export default {
   dev: {
-    '/api/': {
-      target: 'https://preview.pro.ant.design',
+    '/jetlinks': {
+      ws: 'ws://demo.jetlinks.cn/jetlinks',
+      target: 'http://demo.jetlinks.cn/jetlinks',
       changeOrigin: true,
-      pathRewrite: { '^': '' },
+      pathRewrite: { '^/jetlinks': '' },
     },
   },
   test: {
