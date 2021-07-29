@@ -129,9 +129,16 @@ const Edit: React.FC<Props> = props => {
   }
 
   useEffect(() => {
+    
     if(deviceId !== ''){
       getInstanceDetail(deviceId);
+      
     }
+    if(productId !== ''){
+      getProductInfo(productId);
+      
+    }
+
     getProductList();
     if (props.data.alarmRule) {
       setShakeLimit(props.data.alarmRule.shakeLimit ? props.data.alarmRule.shakeLimit : {
@@ -286,7 +293,7 @@ const Edit: React.FC<Props> = props => {
                   }}
                   trigger={item}
                   key={`trigger_${Math.round(Math.random() * 100000)}`}
-                  metaData={props.metaData}
+                  metaData={alarmType === 'product' ? product?.metadata : device?.metadata}
                   position={index}
                   remove={(position: number) => {
                     trigger.splice(position, 1);

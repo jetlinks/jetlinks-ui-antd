@@ -154,7 +154,7 @@ const DeviceGatewayBind: React.FC<Props> = props => {
             columns={columns}
             dataSource={deviceData.data}
             rowKey="id"
-            onChange={onTableChange}
+            // onChange={onTableChange}
             rowSelection={{
               type: props.selectionType,
               ...rowSelection,
@@ -166,6 +166,21 @@ const DeviceGatewayBind: React.FC<Props> = props => {
               showQuickJumper: true,
               showSizeChanger: true,
               pageSizeOptions: ['10', '20', '50', '100'],
+              onChange:(page: number, pageSize?: number) =>{
+                handleSearch({
+                  ...searchParam,
+                  pageIndex: page - 1,
+                  pageSize: pageSize || searchParam.pageSize
+                })
+              },
+              onShowSizeChange: (current, size) => {
+                handleSearch({
+                  ...searchParam,
+                  sorter: searchParam.sorter, 
+                  pageIndex: current-1,
+                  pageSize: size || searchParam.pageSize
+                })
+              },
               showTotal: (total: number) =>
                 `共 ${total} 条记录 第  ${deviceData.pageIndex + 1}/${Math.ceil(
                   deviceData.total / deviceData.pageSize,

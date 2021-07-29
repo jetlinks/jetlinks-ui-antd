@@ -65,7 +65,7 @@ function Setting(props: Props) {
 const handleSearch = (params: any) => {
   setSearchParam(params);
   setLoading(true);
-  service.getAlarmPage(deviceId, encodeQueryParam(params)).subscribe(
+  service.getAlarmPage(deviceId, params).subscribe(
     (res) => {
       setAlarmList(res)
     },
@@ -155,7 +155,7 @@ useEffect(() => {
                 title={
                   <div style={{ display: "flex", justifyContent: 'space-between' }}>
                     <AutoHide title={data.name} style={{ flexGrow: 1, fontWeight: 600,fontSize:16}} />
-                    <Switch defaultChecked={data?.state?.value==='stopped'? false : true} onChange={(e)=>{
+                    <Switch checked={data?.state?.value==='stopped'? false : true} onChange={(e)=>{
                       console.log(data.state.value)
                       if(e){
                         start(data)
@@ -186,6 +186,7 @@ useEffect(() => {
         toolNode={<Button type="primary" onClick={()=>{
           setEditVisible(true);
           setCurrentData({});
+
         }}>新增告警</Button>}
 
         extraTool={<div style={{ padding: 16, 
@@ -231,19 +232,28 @@ useEffect(() => {
         
         <Button type="primary" onClick={()=>{
           const data = form.getFieldsValue();
-          let list = searchParam.where ? searchParam.where.split(' and ') : [];
-          let where: string[] = list.filter((item: string) => {
-            return item.includes('like');
-          });
-          Object.keys(data).forEach(i => {
-            if (data[i]) {
-              where.push(`${i} like %${data[i]}%`)
+          let terms: any[]=[];
+          Object.keys(data).forEach(i=>{
+            if(data[i]){
+              if(i=== 'name'){
+                terms.push({
+                  "column": i, "value": `%${data[i]}%`,"termType": "like"
+                })
+              }else{
+                terms.push({
+                  "column": i, "value": data[i],
+                })
+              }
             }
           })
+          console.log([...terms])
           handleSearch({
-            where: where.join(' and '),
-            pageSize: 8
-          });
+            terms:[
+              ...terms
+            ],
+            pageSize: 8,
+            
+          })
         }}>查询</Button>
         <Button style={{marginRight:5}} onClick={()=>{
           form.resetFields();

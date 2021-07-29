@@ -40,6 +40,7 @@ const Trigger: React.FC<Props> = props => {
   const [trigger, setTrigger] = useState(initState.trigger);
 
   useEffect(() => {
+    console.log(props.metaData)
     setTriggerType(trigger.trigger);
     setMessageType(trigger.type);
 
@@ -77,8 +78,8 @@ const Trigger: React.FC<Props> = props => {
     dataSource.length = 0;
     dataSource.push(value);
     if (type === 'function') {
-      if (data.output.type === 'object') {
-        data.valueType.properties.map((p: any) => {
+      if (data.output?.type === 'object') {
+        data.valueType?.properties.map((p: any) => {
           dataSource.push(`${value}.${p.id}`);
         });
       }
@@ -137,7 +138,7 @@ const Trigger: React.FC<Props> = props => {
         );
       case 'function':
         return (
-          <Col span={6} style={{paddingBottom: 10, paddingLeft: 3, paddingRight: 9}}>
+          <Col span={12} style={{paddingBottom: 10, paddingLeft: 3, paddingRight: 9}}>
             <Select placeholder="物模型功能" defaultValue={trigger.modelId}
                     onChange={(value: string, data: any) => {
                       setDataSourceValue('function', data.props.data, value);
@@ -146,7 +147,7 @@ const Trigger: React.FC<Props> = props => {
                       submitData();
                     }}
             >
-              {JSON.parse(props.metaData).functions?.map((item: any) => (
+              {JSON.parse(props.metaData || '{}').functions?.map((item: any) => (
                 <Select.Option key={item.id} data={item}>{`${item.name}（${item.id}）`}</Select.Option>
               ))}
             </Select>
@@ -158,6 +159,7 @@ const Trigger: React.FC<Props> = props => {
   };
 
   const renderDataType = () => {
+    
     switch (triggerType) {
       case 'device':
         return (
@@ -179,9 +181,10 @@ const Trigger: React.FC<Props> = props => {
                   {props.metaData && JSON.parse(props.metaData).events && (
                     <Select.Option value="event">事件</Select.Option>
                   )}
-                  {/*{props.metaData && JSON.parse(props.metaData).functions && (
+                  {props.metaData && JSON.parse(props.metaData).functions && (
                   <Select.Option value="function">功能</Select.Option>
-                )}*/}
+                )}
+                {/* <Select.Option value="function">功能</Select.Option> */}
                 </Select>
               </Col>
               {renderType()}

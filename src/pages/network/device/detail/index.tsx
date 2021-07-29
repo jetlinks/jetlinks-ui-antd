@@ -115,10 +115,10 @@ function Detail(props: DetailProps) {
                                 {moment(info.registerTime).format('YYYY-MM-DD HH:mm:ss')}
                         </Descriptions.Item>
                         <Descriptions.Item label="最后上线时间">
-                            {/* {info.state?.value !== 'notActive' && !!info.onlineTime
+                            {info.state?.value !== 'notActive' && !!info.onlineTime
                                 ? moment(info.onlineTime).format('YYYY-MM-DD HH:mm:ss')
-                                : '/'} */}
-                                {moment(info.onlineTime).format('YYYY-MM-DD HH:mm:ss')}
+                                : '/'}
+                                {/* {moment(info.onlineTime).format('YYYY-MM-DD HH:mm:ss')} */}
                         </Descriptions.Item>
                         <Descriptions.Item label="说明">{info.description}</Descriptions.Item>
                     </Descriptions>

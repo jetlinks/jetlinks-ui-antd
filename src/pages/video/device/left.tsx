@@ -58,12 +58,12 @@ function Left(props: LeftProps) {
 
   const [queryFormItems] = useState([
     {
-      name: 'deviceId$LIKE',
+      name: 'manufacturer',
       label: '设备名称',
       render: () => <Input />
     },
     {
-      name: 'state=',
+      name: 'state',
       label: '状态',
       render: () => <Select>
         <Select.Option value=''>全部</Select.Option>
@@ -150,7 +150,8 @@ function Left(props: LeftProps) {
 
   const AdvancedFilter = useCallback(async () => {
     const data = await queryForm.current.getFieldsValue()
-    const arrStr = Object.keys(data).filter((item: string) => data[item]).map((item: string) => `${item}${data[item]}`).join(' and ')
+    console.log(data)
+    const arrStr = Object.keys(data).filter((item: string) => data[item]).map((item: string) => `${item} like %${data[item]}%`).join(' and ')
     tableRequest(arrStr ? { where: arrStr } : undefined)
   }, [])
 

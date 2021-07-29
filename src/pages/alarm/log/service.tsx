@@ -61,6 +61,16 @@ class Service extends BaseService<any>{
           filter(resp => resp.status === 200),
           map(resp => resp.result[0])
         ))
+      //告警次数  
+     public getAlarmsCount = (data?: any) => defer(
+            () => from(request(`/jetlinks/edge/operations/rule/rule-engine-alarm-history-status/invoke`, {
+                method: 'POST',
+                data
+            }))
+                .pipe(
+                    filter(resp => resp.status === 200),
+                    map(resp => resp)
+                ));       
 }
 
 export default Service;
