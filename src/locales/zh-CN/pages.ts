@@ -1,12 +1,12 @@
 export default {
-  'pages.layouts.userLayout.title': 'Ant Design 是西湖区最具影响力的 Web 设计规范',
+  'pages.layouts.userLayout.title': 'Jetlinks 物联网基础平台',
   'pages.login.accountLogin.tab': '账户密码登录',
   'pages.login.accountLogin.errorMessage': '错误的用户名和密码(admin/ant.design)',
   'pages.login.failure': '登录失败，请重试！',
   'pages.login.success': '登录成功！',
-  'pages.login.username.placeholder': '用户名: admin or user',
+  'pages.login.username.placeholder': '用户名',
   'pages.login.username.required': '用户名是必填项！',
-  'pages.login.password.placeholder': '密码: ant.design',
+  'pages.login.password.placeholder': '密码',
   'pages.login.password.required': '密码是必填项！',
   'pages.login.phoneLogin.tab': '手机号登录',
   'pages.login.phoneLogin.errorMessage': '验证码错误',
@@ -64,4 +64,65 @@ export default {
   'pages.searchTable.tenThousand': '万',
   'pages.searchTable.batchDeletion': '批量删除',
   'pages.searchTable.batchApproval': '批量审批',
+
+  // 通用的数据操作
+  'pages.data.option': '操作',
+  'pages.data.option.remove': '删除',
+  'pages.data.option.remove.tips': '确认删除?',
+  'pages.data.option.disable': '禁用',
+  'pages.data.option.disable.tips': '确认禁用？',
+  'pages.data.option.enable': '启用',
+  'pages.data.option.enable.tips': '确认启用？',
+  'pages.data.option.add': '新增',
+  'pages.data.option.edit': '编辑',
+  'pages.data.option.preview': '预览',
+  'pages.data.option.authorize': '授权',
+  'pages.data.option.success': '操作成功!',
+  'pages.data.option.error': '操作失败!',
+  'pages.data.option.detail': '详情',
+  'pages.data.option.download': '下载',
+
+  // 系统设置-用户管理
+  'pages.system.user': '用户管理',
+  'pages.system.user.name': '姓名',
+  'pages.system.user.username': '用户名',
+  'pages.system.user.status': '状态',
+  'pages.system.user.password': '密码',
+  'pages.system.user.confirmPassword': '确认密码',
+
+  // 角色管理
+  'pages.system.role': '角色管理',
+  'pages.system.role.id': '标识',
+  'pages.system.role.name': '名称',
+  'pages.system.role.describe': '描述',
+  'pages.system.role.option.bindUser': '绑定用户',
+
+  // 权限管理
+  'pages.system.permission': '权限管理',
+  'pages.system.permission.id': '标识',
+  'pages.system.permission.name': '名称',
+  'pages.system.permission.status': '状态',
+
+  // 机构管理
+  'pages.system.org': '机构管理',
+  'pages.system.org.code': '编码',
+  'pages.system.org.count': '下级数量',
+
+  // 第三方平台
+  'pages.system.open-api': '第三方平台',
+
+  // 租户管理
+  'pages.system.tenant': '租户管理',
+
+  // 系统日志
+  'pages.log.access': '访问日志',
+  'pages.log.system': '系统日志',
+
+  // 设备管理
+  'pages.device.product': '产品',
+  'pages.device.product-detail': '产品详情',
+  'pages.device.instance': '设备',
+  'pages.device.command': '指令下发',
+  'pages.device.firmware': '固件升级',
+  'pages.device.alarm': '告警记录',
 };

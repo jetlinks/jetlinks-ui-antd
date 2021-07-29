@@ -1,13 +1,12 @@
 export default {
-  'pages.layouts.userLayout.title':
-    'Ant Design is the most influential web design specification in Xihu district',
+  'pages.layouts.userLayout.title': 'Jetlinks is an open source Internet of Things basic platform',
   'pages.login.accountLogin.tab': 'Account Login',
   'pages.login.accountLogin.errorMessage': 'Incorrect username/password(admin/ant.design)',
   'pages.login.failure': 'Login failed, please try again!',
   'pages.login.success': 'Login successful!',
-  'pages.login.username.placeholder': 'Username: admin or user',
+  'pages.login.username.placeholder': 'Username',
   'pages.login.username.required': 'Please input your username!',
-  'pages.login.password.placeholder': 'Password: ant.design',
+  'pages.login.password.placeholder': 'Password',
   'pages.login.password.required': 'Please input your password!',
   'pages.login.phoneLogin.tab': 'Phone Login',
   'pages.login.phoneLogin.errorMessage': 'Verification Code Error',
@@ -67,4 +66,65 @@ export default {
   'pages.searchTable.tenThousand': '0000',
   'pages.searchTable.batchDeletion': 'bacth deletion',
   'pages.searchTable.batchApproval': 'batch approval',
+
+  // 通用的数据操作
+  'pages.data.option': 'option',
+  'pages.data.option.remove': 'delete',
+  'pages.data.option.remove.tips': 'Confirm to delete?',
+  'pages.data.option.disable': 'disable',
+  'pages.data.option.disable.tips': 'Confirm to disable?',
+  'pages.data.option.enable': 'enable',
+  'pages.data.option.enable.tips': 'Confirm to enable?',
+  'pages.data.option.add': 'Add',
+  'pages.data.option.edit': 'Edit',
+  'pages.data.option.preview': 'Preview',
+  'pages.data.option.authorize': 'Authorization',
+  'pages.data.option.success': 'Successful operation!',
+  'pages.data.option.error': 'Operation failed!',
+  'pages.data.option.detail': 'Detail',
+  'pages.data.option.download': 'Download',
+
+  // 系统设置-用户管理
+  'pages.system.user': 'User',
+  'pages.system.user.name': 'name',
+  'pages.system.user.username': 'username',
+  'pages.system.user.status': 'status',
+  'pages.system.user.password': 'password',
+  'pages.system.user.confirmPassword': 'confirmPassword',
+
+  // 角色管理
+  'pages.system.role': 'Role',
+  'pages.system.role.id': 'ID',
+  'pages.system.role.name': 'Name',
+  'pages.system.role.describe': 'Describe',
+  'pages.system.role.option.bindUser': 'Bind User',
+
+  // 权限管理
+  'pages.system.permission': 'Permission',
+  'pages.system.permission.id': 'ID',
+  'pages.system.permission.name': 'Name',
+  'pages.system.permission.status': 'Status',
+
+  // 机构管理
+  'pages.system.org': 'Organization',
+  'pages.system.org.code': 'Code',
+  'pages.system.org.count': 'Count',
+
+  // 第三方平台
+  'pages.system.open-api': 'OpenAPI',
+
+  // 租户管理
+  'pages.system.tenant': 'Tenant',
+
+  // 日志管理
+  'pages.log.access': 'AccessLog',
+  'pages.log.System': 'SystemLog',
+
+  // 设备管理
+  'pages.device.product': 'Product',
+  'pages.device.product-detail': 'ProductDetail',
+  'pages.device.instance': 'Instance',
+  'pages.device.command': 'Command',
+  'pages.device.firmware': 'Firmware',
+  'pages.device.alarm': 'Alarm',
 };
