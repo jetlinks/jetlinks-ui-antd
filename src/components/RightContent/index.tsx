@@ -30,7 +30,7 @@ const GlobalHeaderRight: React.FC = () => {
         options={[
           { label: <a href="https://umijs.org/zh/guide/umi-ui.html">umi ui</a>, value: 'umi ui' },
           {
-            label: <a href="next.ant.design">Ant Design</a>,
+            label: <a href="https://ant.design/">Ant Design</a>,
             value: 'Ant Design',
           },
           {
@@ -54,7 +54,7 @@ const GlobalHeaderRight: React.FC = () => {
       >
         <QuestionCircleOutlined />
       </span>
-      <Avatar />
+      <Avatar menu={true} />
       <SelectLang className={styles.action} />
     </Space>
   );

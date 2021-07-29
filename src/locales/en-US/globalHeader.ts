@@ -1,4 +1,7 @@
 export default {
+  'component.globalHeader.person.center': 'Personal Center',
+  'component.globalHeader.person.setting': 'Personal settings',
+  'component.globalHeader.logout': 'Log out',
   'component.globalHeader.search': 'Search',
   'component.globalHeader.search.example1': 'Search example 1',
   'component.globalHeader.search.example2': 'Search example 2',

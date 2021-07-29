@@ -7,6 +7,7 @@ import HeaderDropdown from '../HeaderDropdown';
 import styles from './index.less';
 import { outLogin } from '@/services/ant-design-pro/api';
 import type { MenuInfo } from 'rc-menu/lib/interface';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 export type GlobalHeaderRightProps = {
   menu?: boolean;
@@ -33,17 +34,19 @@ const loginOut = async () => {
 const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
   const { initialState, setInitialState } = useModel('@@initialState');
 
+  const intl = useIntl();
+
   const onMenuClick = useCallback(
-    (event: MenuInfo) => {
+    async (event: MenuInfo) => {
       const { key } = event;
-      if (key === 'logout') {
-        setInitialState((s) => ({ ...s, currentUser: undefined }));
-        loginOut();
+      if (key === 'logout' && initialState) {
+        setInitialState({ ...initialState, currentUser: undefined });
+        await loginOut();
         return;
       }
       history.push(`/account/${key}`);
     },
-    [setInitialState],
+    [initialState, setInitialState],
   );
 
   const loading = (
@@ -64,7 +67,7 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
 
   const { currentUser } = initialState;
 
-  if (!currentUser || !currentUser.name) {
+  if (!currentUser || !currentUser.user.name) {
     return loading;
   }
 
@@ -73,28 +76,37 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
       {menu && (
         <Menu.Item key="center">
           <UserOutlined />
-          个人中心
+          {intl.formatMessage({
+            id: 'component.globalHeader.person.center',
+            defaultMessage: '个人中心',
+          })}
         </Menu.Item>
       )}
       {menu && (
         <Menu.Item key="settings">
           <SettingOutlined />
-          个人设置
+          {intl.formatMessage({
+            id: 'component.globalHeader.person.setting',
+            defaultMessage: '个人设置',
+          })}
         </Menu.Item>
       )}
       {menu && <Menu.Divider />}
 
       <Menu.Item key="logout">
         <LogoutOutlined />
-        退出登录
+        {intl.formatMessage({
+          id: 'component.globalHeader.logout',
+          defaultMessage: '退出登录',
+        })}
       </Menu.Item>
     </Menu>
   );
   return (
     <HeaderDropdown overlay={menuHeaderDropdown}>
       <span className={`${styles.action} ${styles.account}`}>
-        <Avatar size="small" className={styles.avatar} src={currentUser.avatar} alt="avatar" />
-        <span className={`${styles.name} anticon`}>{currentUser.name}</span>
+        <Avatar size="small" className={styles.avatar} src={currentUser.user.avatar} alt="avatar" />
+        <span className={`${styles.name} anticon`}>{currentUser.user.name}</span>
       </span>
     </HeaderDropdown>
   );
