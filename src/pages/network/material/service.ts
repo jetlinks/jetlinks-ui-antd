@@ -6,7 +6,7 @@ import { filter, map } from "rxjs/operators";
 class Service extends BaseService<any> {
 
     public getDeviceGatewayList = (data: any) => defer(
-        () => from(request(`/jetlinks/edge/operations/local/device-gateway-list/invoke`, {
+        () => from(request(`/jetlinks/edge/operations/local/device-gateway-page-list/invoke`, {
             method: 'POST',
             data: data
         }))
@@ -14,6 +14,16 @@ class Service extends BaseService<any> {
                 filter(resp => resp.status === 200),
                 map(resp => resp.result[0])
             ));
+    
+    public count = (params: any) => defer(
+        () => from(request(`/jetlinks/device-instance/_count`, {
+            method: 'GET',
+            params
+        })).pipe(
+            filter(resp => resp.status === 200),
+            map(resp => resp)
+        ))
+
     public saveDeviceGateway = (params: any) => defer(
         () => from(request(`/jetlinks/edge/operations/local/device-gateway-save/invoke`, {
             method: 'POST',

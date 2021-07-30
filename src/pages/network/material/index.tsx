@@ -19,9 +19,16 @@ function Material() {
     const [editVisible, setEditVisible] = useState<boolean>(false);
     const [detailVisible, setDetailVisible] = useState<boolean>(false);
     const [currentData, setCurrentData] = useState<any>({});
+    const [deviceCount, setDeviceCount] = useState<any>({});
     const [spinning, setSpinning] = useState<boolean>(true);
+    const [searchParam, setSearchParam] = useState<any>({
+        pageSize: 8
+    })
     const [dataList, setDataList] = useState<any>({
-        data: []
+        data: [],
+        pageIndex: 0,
+        pageSize: 8,
+        total: 0
     });
 
     const statusMap = new Map();
@@ -44,18 +51,35 @@ function Material() {
     }
 
     const handleSearch = (params: any) => {
+        setSearchParam(params);
         setSpinning(true);
         service.getDeviceGatewayList(encodeQueryParam(params)).subscribe(resp => {
             setSpinning(false);
-            setDataList({
-                data: [...resp]
-            })
+            setDataList(resp)
+            
         })
+        
     }
 
+ 
     useEffect(() => {
-        handleSearch({ pageSize: 10 });
+        handleSearch({ pageSize: 8 });
+        
     }, []);
+    useEffect(() => {
+        dataList.data?.map((item: any) => {
+            service.count(encodeQueryParam({ terms: { 'productId': item.productId } }))
+                .subscribe(res => {
+                    if (res.status === 200) {
+                        deviceCount[item.productId] = String(res.result);
+                        setDeviceCount({ ...deviceCount });
+                    } else {
+                        deviceCount[item.productId] = '/';
+                        setDeviceCount({ ...deviceCount });
+                    }
+                })
+        });
+    }, [dataList]);
 
     const _start = (id: string) => {
         service.start(id).subscribe(resp => {
@@ -130,7 +154,7 @@ function Material() {
                                 <div className={styles.content}>
                                     <div className={styles.item}>
                                         <p className={styles.itemTitle}>设备数量</p>
-                                        <p className={styles.itemText}>1</p>
+                                        <p className={styles.itemText}>{deviceCount[item.productId]}</p>
                                     </div>
                                     <div className={styles.item}>
                                         <p className={styles.itemTitle}>网关类型</p>
@@ -143,9 +167,37 @@ function Material() {
                             <Button type="primary" style={{ marginRight: '16px' }} onClick={() => {
                                 setEditVisible(true);
                                 setCurrentData({});
+                                const a = dataList.data.map((item:any)=>{item.productId})
+                                console.log(dataList.data)
+                                console.log(a)
                             }}>新增物</Button>
                         }
-                        // pagination={{}}
+                        pagination={{
+                            current: dataList?.pageIndex + 1,
+                            total: dataList?.total,
+                            pageSize: dataList?.pageSize,
+                            onChange: (page: number, pageSize?: number) => {
+                              handleSearch({
+                                ...searchParam,
+                                pageIndex: page - 1,
+                                pageSize: pageSize || searchParam.pageSize
+                              })
+                            },
+                            onShowSizeChange: (current, size) => {
+                              handleSearch({
+                                ...searchParam,
+                                pageIndex: current-1,
+                                pageSize: size || searchParam.pageSize
+                              })
+                            },
+                            showQuickJumper: true,
+                            showSizeChanger: true,
+                            pageSizeOptions: ['8', '16', '40', '80'],
+                            showTotal: (total: number) =>
+                              `共 ${total} 条记录 第  ${dataList?.pageIndex + 1}/${Math.ceil(
+                                dataList?.total / dataList?.pageSize,
+                              )}页`
+                          }}
                         dataSource={dataList.data}
                         columns={[
                             {

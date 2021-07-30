@@ -103,7 +103,7 @@ const Status: React.FC<Props> = props => {
                                 properties.map(item => (
                                     <Col {...topColResponsiveProps} key={item.id}>
                                         <ChartCard
-                                            title={item.id}
+                                            title={item.name}
                                             contentHeight={46}
                                             hoverable
                                             total={

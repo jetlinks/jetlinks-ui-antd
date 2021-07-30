@@ -277,7 +277,7 @@ useEffect(() => {
           onShowSizeChange: (current, size) => {
             handleSearch({
               ...searchParam,
-              pageIndex: current,
+              pageIndex: current-1,
               pageSize: size || searchParam.pageSize
             })
           },

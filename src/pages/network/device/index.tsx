@@ -10,7 +10,6 @@ import Detail from './detail';
 import Cards from '@/components/Cards';
 import Service from './service';
 import { useEffect } from 'react';
-import encodeQueryParam from '@/utils/encodeParam';
 import moment from 'moment';
 import { FormComponentProps } from 'antd/lib/form';
 import Col from 'antd/es/grid/col';
@@ -37,6 +36,7 @@ function Device(props: Props) {
   const [searchVisible, setSearchVisible] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [productList, setProductList] = useState<any[]>([]);
+  
   const [searchParam, setSearchParam] = useState<any>({
     pageSize: 8,
     "terms": [
@@ -63,6 +63,7 @@ function Device(props: Props) {
   const handleSearch = (params: any) => {
     setSearchParam(params);
     setLoading(true);
+    count();
     service.getDeviceList(params).subscribe(
       (res) => {
         setDataList(res)
@@ -76,6 +77,7 @@ function Device(props: Props) {
     service.getDeviceGatewayList({ paging: false }).subscribe(
       (res) => {
         setProductList(res);
+        console.log(productList)
       }
     )
   }
@@ -102,6 +104,17 @@ function Device(props: Props) {
       () => setLoading(false))
   };
   
+  const delIinstance = (id: string) => {
+    service.delIinstance(id).subscribe(
+      () => {
+        handleSearch(searchParam);
+        message.success('操作成功！');
+      },
+      () => {
+      },
+      () => setLoading(false))
+  }; 
+
   const count = () =>{
     service.getDeviceCount({ "terms": [{ "column": "productId", "value": "onvif-media-device", "termType": "not" }, { "column": "productId", "value": "GB28181-PRO", "termType": "not" }] }).subscribe(resp => {
       if (resp.status === 200) {
@@ -196,7 +209,7 @@ function Device(props: Props) {
           <Cards
             title='设备管理'
             cardItemRender={(item: any) => <div style={{ height: 200, backgroundColor: '#fff' }}>
-              <Card hoverable bodyStyle={{ paddingBottom: 20 }}
+              {item.state?.value === 'notActive' ? <Card hoverable bodyStyle={{ paddingBottom: 20 }}
                 actions={[
                   <a onClick={() => {
                     setCurrentData(item);
@@ -211,14 +224,19 @@ function Device(props: Props) {
                     onConfirm={() => {
                       if (item.state?.value === 'notActive') {
                         deploy(item.id);
-                        count();
                       } else {
                         undeploy(item.id);
-                        count();
                       }
                     }}>
                     <a>{item.state?.value === 'notActive' ? '启动' : '禁用'}</a>
-                  </Popconfirm>
+                  </Popconfirm>,
+                  <Popconfirm
+                        title="确认删除吗？"
+                        onConfirm={() => {
+                          delIinstance(item.id)
+                        }}>
+                        <a>删除</a>
+                    </Popconfirm>
                 ]}
               >
                 <Card.Meta
@@ -237,7 +255,51 @@ function Device(props: Props) {
                   </div>
                 </div>
                 <div style={{ color: 'rgba(0, 0, 0, 0.45)', fontSize: '12px', width: '100%', display: 'flex', justifyContent: 'center' }}>注册时间：{moment(item.registryTime).format('YYYY-MM-DD HH:mm:ss')}</div>
-              </Card>
+              </Card>:  <Card hoverable bodyStyle={{ paddingBottom: 20 }}
+                actions={[
+                  <a onClick={() => {
+                    setCurrentData(item);
+                    setEditVisible(true);
+                  }}>编辑</a>,
+                  <a onClick={() => {
+                    setCurrentData(item);
+                    setDetailVisible(true);
+                  }}>查看</a>,
+                  <Popconfirm
+                    title={`确认${item.state?.value === 'notActive' ? '启动' : '禁用'}吗？`}
+                    onConfirm={() => {
+                      if (item.state?.value === 'notActive') {
+                        deploy(item.id);
+                        count();
+                        console.log(item.state.value)
+                      } else {
+                        undeploy(item.id);
+                        count();
+                        console.log(item.state.value)
+                      }
+                    }}>
+                    <a>{item.state?.value === 'notActive' ? '启动' : '禁用'}</a>
+                  </Popconfirm>,
+                ]}
+              >
+                <Card.Meta
+                  avatar={<Avatar size={60} src={Img} />}
+                  title={item.name}
+                  description={`ID：${item.id}`}
+                />
+                <div className={styles.content}>
+                  <div className={styles.item}>
+                    <p className={styles.itemTitle}>状态</p>
+                    <p className={styles.itemText}><Badge status={statusMap.get(item?.state?.value)} text={item?.state?.text} /></p>
+                  </div>
+                  <div className={styles.item}>
+                    <p className={styles.itemTitle}>产品名称</p>
+                    <p className={styles.itemText}>{item.productName}</p>
+                  </div>
+                </div>
+                <div style={{ color: 'rgba(0, 0, 0, 0.45)', fontSize: '12px', width: '100%', display: 'flex', justifyContent: 'center' }}>注册时间：{moment(item.registryTime).format('YYYY-MM-DD HH:mm:ss')}</div>
+              </Card>}
+              
             </div>}
             toolNode={
               <div style={{ display: 'flex' }}>
@@ -279,7 +341,7 @@ function Device(props: Props) {
               onShowSizeChange: (current, size) => {
                 handleSearch({
                   ...searchParam,
-                  pageIndex: current,
+                  pageIndex: current-1,
                   pageSize: size || searchParam.pageSize
                 })
               },
@@ -350,18 +412,8 @@ function Device(props: Props) {
                     </Row>
                   </Form>
                   <div style={{ paddingLeft: '76px' }}>
-                    <Button style={{ marginRight: '10px' }} onClick={() => {
-                      form.resetFields();
-                      handleSearch({
-                        terms: [
-                          { "column": "productId", "value": "onvif-media-device", "termType": "not" },
-                          { "column": "productId", "value": "GB28181-PRO", "termType": "not" },
-                          { "column": "name", "value": `%${searchValue}%`, "termType": "like" }
-                        ],
-                        pageSize: 8
-                      })
-                    }}>重置</Button>
-                    <Button type="primary" onClick={() => {
+                    <Button type="primary" style={{ marginRight: '10px' }}
+                      onClick={() => {
                       const data = form.getFieldsValue();
                       let terms: any[] = [
                         { "column": "productId", "value": "onvif-media-device", "termType": "not" },
@@ -382,6 +434,17 @@ function Device(props: Props) {
                         pageSize: 8
                       });
                     }}>查询</Button>
+                    <Button  onClick={() => {
+                      form.resetFields();
+                      handleSearch({
+                        terms: [
+                          { "column": "productId", "value": "onvif-media-device", "termType": "not" },
+                          { "column": "productId", "value": "GB28181-PRO", "termType": "not" },
+                          { "column": "name", "value": `%${searchValue}%`, "termType": "like" }
+                        ],
+                        pageSize: 8
+                      })
+                    }}>重置</Button>
                   </div>
                 </div>
               </div>
@@ -458,6 +521,15 @@ function Device(props: Props) {
                         }}>
                         <Button type='link'>禁用</Button>
                       </Popconfirm>
+                  },
+                  {
+                    record?.state?.value === 'notActive' ? <Popconfirm
+                    title="确认删除吗？"
+                    onConfirm={() => {
+                      delIinstance(record.id)
+                    }}>
+                    <a>删除</a>
+                </Popconfirm>:''
                   }
                 </>,
                 width: 280
