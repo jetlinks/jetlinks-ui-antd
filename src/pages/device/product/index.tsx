@@ -270,7 +270,7 @@ const DeviceModel: React.FC<Props> = props => {
                   },
                   {
                     label: '产品类型',
-                    key: 'deviceType',
+                    key: 'deviceType$IN',
                     type: 'list',
                     props: {
                       data: [
