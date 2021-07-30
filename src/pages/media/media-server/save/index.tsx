@@ -35,11 +35,7 @@ const Save: React.FC<Props> = props => {
     service.mediaServerInfo(id).subscribe(data => {
       setProviderType(data.provider);
       data.configuration.playerConfig = data.configuration.playerConfig ?
-        data.configuration.playerConfig : [{format: 'rtmp', enabled: false, port: 1935}, {
-          format: 'rtsp',
-          enabled: false,
-          port: 554
-        },
+        data.configuration.playerConfig : [
           {format: 'flv', enabled: false, port: data.configuration.apiPort}, {
             format: 'mp4',
             enabled: false,
@@ -50,6 +46,18 @@ const Save: React.FC<Props> = props => {
           }, {format: 'rtc', enabled: false}];
       setItem(data);
     }, () => {
+      setItem({
+        configuration: {
+          playerConfig: [
+            {format: 'flv', enabled: false}, {
+              format: 'mp4',
+              enabled: false
+            }, {
+              format: 'hls',
+              enabled: false
+            }, {format: 'rtc', enabled: false}]
+        }
+      })
     }, () => setLoading(false));
 
     service.providersList().subscribe(data => {
@@ -125,11 +133,7 @@ const Save: React.FC<Props> = props => {
     const configuration = item.configuration ?
       (typeof item.configuration === "string" ? JSON.parse(item.configuration) : item.configuration)
       : {
-        playerConfig:[{format: 'rtmp', enabled: false, port: 1935}, {
-          format: 'rtsp',
-          enabled: false,
-          port: 554
-        },
+        playerConfig: [
           {format: 'flv', enabled: false}, {
             format: 'mp4',
             enabled: false
