@@ -15,9 +15,9 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import { lastValueFrom } from 'rxjs';
 import Service from '@/pages/device/Product/service';
 import { observer } from '@formily/react';
-import { Link } from '@umijs/preset-dumi/lib/theme';
 import { model } from '@formily/reactive';
 import encodeQuery from '@/utils/encodeQuery';
+import { Link } from 'umi';
 
 export const service = new Service('device-product');
 export const statusMap = {
@@ -156,7 +156,6 @@ const Product = observer(() => {
                     <EditOutlined />
                   </a>
                 </Tooltip>,
-
                 <Tooltip
                   title={intl.formatMessage({
                     id: 'pages.data.option.download',
