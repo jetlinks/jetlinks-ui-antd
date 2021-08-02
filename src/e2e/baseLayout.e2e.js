@@ -26,12 +26,14 @@ beforeEach(async () => {
   await page.goto(`${BASE_URL}`);
   await page.evaluate(() => {
     localStorage.setItem('antd-pro-authority', '["admin"]');
+    localStorage.setItem('X-Access-Token', 'a688358d5d1b48b6b7249ca01dd0cefe');
   });
 });
 
 describe('Ant Design Pro E2E test', () => {
   const testPage = (path) => async () => {
     await page.goto(`${BASE_URL}${path}`);
+    console.log(await page.waitForSelector('footer'), 'footer');
     await page.waitForSelector('footer', {
       timeout: 2000,
     });
