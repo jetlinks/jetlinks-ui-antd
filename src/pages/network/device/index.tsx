@@ -28,6 +28,7 @@ function Device(props: Props) {
   const [deviceCount, setDeviceCount] = useState<number>(0);
   const [deviceOfflineCount, setDeviceOfflineCount] = useState<number>(0);
   const [deviceOnlineCount, setDeviceOnlineCount] = useState<number>(0);
+  const [devicenotActiveCount, setDevicenotActiveCount] = useState<number>(0);
   const [delVisible, setDelVisible] = useState<boolean>(false);
   const [editVisible, setEditVisible] = useState<boolean>(false);
   const [detailVisible, setDetailVisible] = useState<boolean>(false);
@@ -144,6 +145,18 @@ function Device(props: Props) {
     }).subscribe(resp => {
       if (resp.status === 200) {
         setDeviceOfflineCount(resp.result[0])
+      }
+    }),
+    service.getDeviceCount({
+      "terms":
+        [
+          { "column": "productId", "value": "onvif-media-device", "termType": "not" },
+          { "column": "productId", "value": "GB28181-PRO", "termType": "not" },
+          { "column": "state", "value": "notActive" }
+        ]
+    }).subscribe(resp => {
+      if (resp.status === 200) {
+        setDevicenotActiveCount(resp.result[0])
       }
     })
   }
@@ -361,6 +374,7 @@ function Device(props: Props) {
                     <span></span>
                     <span style={{ marginLeft: '20px', color: 'rgba(0, 0, 0, 0.45)' }}><Badge color={'green'} text="在线数" />{deviceOnlineCount}</span>
                     <span style={{ marginLeft: '20px', color: 'rgba(0, 0, 0, 0.45)' }}><Badge color={'red'} text="离线数" />{deviceOfflineCount}</span>
+                    <span style={{ marginLeft: '20px', color: 'rgba(0, 0, 0, 0.45)' }}><Badge color={'blue'} text="未启用数" />{devicenotActiveCount}</span>
                   </div>
                   <div onClick={() => { setSearchVisible(!searchVisible) }} style={{ color: '#1890FF', cursor: 'pointer' }}>
                     高级筛选 <Icon style={{ transform: `rotate( ${searchVisible ? 0 : '-180deg'})`, transition: 'all .3s' }} type="down" />

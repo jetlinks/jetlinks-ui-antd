@@ -101,7 +101,7 @@ export async function stop(id: string, data: { ruleInstanceId: string }) {
 }
 
 export async function startDeviceAlarm(deviceId: string, id: string) {
-  return request(`/jetlinks/edge/operations/${deviceId}/rule-engine-alarm-delete/invoke`, {
+  return request(`/jetlinks/edge/operations/${deviceId}/rule-engine-alarm-start/invoke`, {
     method: 'POST',
     data: { id }
   });

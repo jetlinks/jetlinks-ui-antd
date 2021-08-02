@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Cards from '@/components/Cards';
 import { connect } from 'dva';
 import { ConnectState, Dispatch } from '@/models/connect';
-import { Button, Checkbox, message, Modal } from 'antd';
+import { Button, Checkbox, message, Modal,Switch } from 'antd';
 import CardItem from './card';
 import styles from './index.less';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
@@ -15,6 +15,7 @@ import { ruleList, ListData, remove } from '@/pages/rule-engine/instance/service
 import { useRequest } from 'ahooks';
 import { ApiResponse } from '@/services/response';
 import apis from '@/services';
+import { options } from 'numeral';
 export interface RuleInstanceItem {
   createTime: number;
   description: string;
@@ -51,11 +52,12 @@ const ExtraTool = (props: ExtraToolProps) => {
 
   const [options] = useState([
     { label: '规则实例', value: 'node-red' },
-    // { label: '数据转发', value: 'sql_rule' },
-    // { label: '设备报警', value: 'device_alarm' },
+    { label: '数据转发', value: 'sql_rule' },
+    { label: '设备报警', value: 'device_alarm' },
     { label: '场景联动', value: 'rule-scene' },
   ])
-
+  
+  
   const [checkAll, setCheckAll] = useState(false)
   const [indeterminate, setIndeterminate] = useState(false)
   const [checkList, setCheckList] = useState<CheckboxValueType[]>([])
@@ -93,9 +95,19 @@ const Setting: React.FC<Props> = props => {
   const { dispatch } = props;
 
   // const { result } = props.ruleInstance;
+  const modelType = new Map();
+  modelType.set('device_alarm', '设备告警');
+  modelType.set('sql_rule', '数据转发');
+  modelType.set('node-red', '规则实例');
+  modelType.set('rule-scene', '场景联动');
 
   const { data, run } = useRequest<ApiResponse<ListData>>(ruleList, {
-    manual: true
+    manual: true,
+    onSuccess(res) {
+      if (res.status === 200) {
+        setDatalist(data?.result[0])
+      }
+    }
   })
 
   const initState: State = {
@@ -128,7 +140,12 @@ const Setting: React.FC<Props> = props => {
   const [sceneVisible, setSceneVisible] = useState(false);
   const [deleteVisible, setDeleteVisible] = useState(false)
   const [deleteId, setDeleteId] = useState('')
-
+  const [datalist, setDatalist] = useState<any>({
+    data: [],
+    pageIndex: 0,
+    pageSize: 8,
+    total: 0
+  });
   const { run: deleteRun } = useRequest<ApiResponse<any>>(remove, {
     manual: true,
     onSuccess(res) {
@@ -141,6 +158,7 @@ const Setting: React.FC<Props> = props => {
   })
 
   const handleSearch = (params?: any) => {
+    
     setSearchParam(params);
     // dispatch({
     //   type: 'ruleInstance/query',
@@ -153,7 +171,7 @@ const Setting: React.FC<Props> = props => {
     handleSearch(searchParam);
   }, []);
 
-  const startInstance = useCallback((record: ListData) => {
+  const startInstance = (record: ListData) => {
     if (record.modelType === "device_alarm") {
       apis.ruleInstance
         .startDeviceAlarm('local', record.id)
@@ -188,9 +206,9 @@ const Setting: React.FC<Props> = props => {
         .catch(() => {
         });
     }
-  }, [])
+  }
 
-  const stopInstance = useCallback((record: any) => {
+  const stopInstance =(record: any) => {
     if (record.modelType === "device_alarm") {
       apis.ruleInstance
         .stopDeviceAlarm('local', record.id)
@@ -225,7 +243,7 @@ const Setting: React.FC<Props> = props => {
         .catch(() => {
         });
     }
-  }, [])
+  }
 
   const handleDelete = (params: any) => {
     setDeleteId(params.id)
@@ -378,11 +396,35 @@ const Setting: React.FC<Props> = props => {
         }} />}
         bodyClassName={styles.body}
         pagination={{
-          pageSize: 10,
-          current: 1,
-          total: 6
+          current: datalist?.pageIndex + 1,
+          total: datalist?.total,
+          pageSize: datalist?.pageSize,
+          onChange: (page: number, pageSize?: number) => {
+            handleSearch({
+              pageIndex: page - 1,
+              pageSize,
+              where: searchParam.where,
+              sorts: searchParam.sorts,
+            });
+          },
+          onShowSizeChange: (current, size) => {
+            handleSearch({
+              pageIndex: current - 1,
+              pageSize: size,
+              where: searchParam.where,
+              sorts: searchParam.sorts,
+            });
+          },
+          showQuickJumper: true,
+          showSizeChanger: true,
+          pageSizeOptions: ['8', '16', '40', '80'],
+          showTotal: (total: number) =>
+            `共 ${total} 条记录 第  ${datalist?.pageIndex + 1}/${Math.ceil(
+              datalist?.total / datalist?.pageSize,
+            )}页`
         }}
-        dataSource={data && data.result && data.result.length ? data.result[0].data : []}
+        // dataSource={data && data.result && data.result.length ? data.result[0].data : []}
+        dataSource={datalist.data}
         columns={[
           {
             title: '规则名称',
@@ -398,7 +440,8 @@ const Setting: React.FC<Props> = props => {
           {
             title: '规则类型',
             dataIndex: 'modelType',
-            width: 120
+            width: 120,
+            render: (text: any) => text ? <div>{modelType.get(text)}</div>: '-',
           },
           {
             title: '规则描述',
@@ -407,8 +450,16 @@ const Setting: React.FC<Props> = props => {
           },
           {
             title: '状态',
-            dataIndex: 'status',
-            width: 120
+            width:120,
+            render: (record)=><>
+              <Switch checked={record.state.value !== 'stopped'} onChange={(e) => {
+              if (e) {
+                startInstance(record)
+              } else {
+                stopInstance(record)
+              }
+            }} />
+            </>
           },
           {
             title: '操作',
@@ -416,7 +467,7 @@ const Setting: React.FC<Props> = props => {
               <Button type='link' onClick={() => { onEdit(data) }}>编辑</Button>
               <Button type='link' onClick={() => { onReboot(data) }}>重启</Button>
               <Button type='link' onClick={() => { onCopy(data) }}>复制</Button>
-              <Button type='link' onClick={() => { handleDelete(data) }}>删除</Button>
+              {data.state.value==='stopped'?<Button type='link' onClick={() => { handleDelete(data) }}>删除</Button>:''}
             </>,
             width: 280
           },

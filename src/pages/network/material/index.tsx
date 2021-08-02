@@ -16,6 +16,7 @@ function Material() {
 
     const service = new Service('/network/material');
     const [delVisible, setDelVisible] = useState<boolean>(false);
+    const [visible, setVisible] = useState<boolean>(false);
     const [editVisible, setEditVisible] = useState<boolean>(false);
     const [detailVisible, setDetailVisible] = useState<boolean>(false);
     const [currentData, setCurrentData] = useState<any>({});
@@ -40,6 +41,7 @@ function Material() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div style={{ width: '95%', fontWeight: 600, fontSize: '16px' }}><AutoHide title={item.name} /></div>
                 <div><Switch defaultChecked={item.state.value === 'disabled' ? false : true} onChange={(checked: boolean) => {
+                    console.log(item.state)
                     if (checked) {
                         _start(item.id)
                     } else {
@@ -84,7 +86,7 @@ function Material() {
     const _start = (id: string) => {
         service.start(id).subscribe(resp => {
             if (resp.status === 200) {
-                message.success('操作成功！');
+                message.success('启动成功！');
                 handleSearch({ pageSize: 10 });
             }
         })
@@ -93,7 +95,7 @@ function Material() {
     const _stop = (id: string) => {
         service.stop(id).subscribe(resp => {
             if (resp.status === 200) {
-                message.success('操作成功！');
+                message.success('停止成功！');
                 handleSearch({ pageSize: 10 });
             }
         })
@@ -125,7 +127,7 @@ function Material() {
                     <Cards
                         title='物管理'
                         cardItemRender={(item: any) => <div style={{ height: 200, backgroundColor: '#fff' }}>
-                            <Card hoverable bodyStyle={{ paddingBottom: 20 }}
+                        {item.state?.value === 'disabled' ? <Card hoverable bodyStyle={{ paddingBottom: 20 }}
                                 actions={[
                                     <a onClick={() => {
                                         setCurrentData(item);
@@ -161,7 +163,34 @@ function Material() {
                                         <p className={styles.itemText}>{item.gatewayProvider}</p>
                                     </div>
                                 </div>
-                            </Card>
+                            </Card>: <Card hoverable bodyStyle={{ paddingBottom: 20 }}
+                                actions={[
+                                    <a onClick={() => {
+                                        setCurrentData(item);
+                                        setEditVisible(true);
+                                    }}>编辑</a>,
+                                    <a onClick={() => {
+                                        setCurrentData(item);
+                                        setDetailVisible(true);
+                                    }}>查看</a>,
+                                ]}
+                            >
+                                <Card.Meta
+                                    avatar={<Avatar size={60} src={Img} />}
+                                    title={renderTitle(item)}
+                                />
+                                <div className={styles.content}>
+                                    <div className={styles.item}>
+                                        <p className={styles.itemTitle}>设备数量</p>
+                                        <p className={styles.itemText}>{deviceCount[item.productId]}</p>
+                                    </div>
+                                    <div className={styles.item}>
+                                        <p className={styles.itemTitle}>网关类型</p>
+                                        <p className={styles.itemText}>{item.gatewayProvider}</p>
+                                    </div>
+                                </div>
+                            </Card>}
+                            
                         </div>}
                         toolNode={
                             <Button type="primary" style={{ marginRight: '16px' }} onClick={() => {
@@ -243,10 +272,11 @@ function Material() {
                                         setCurrentData(record);
                                         setDetailVisible(true);
                                     }}>查看</Button>
-                                    <Button type='link' onClick={() => {
+                                    {record.state?.value === 'disabled' ? <Button type='link' onClick={() => {
                                         setDelVisible(true);
                                         setCurrentData(record);
-                                    }}>删除</Button>
+                                    }}>删除</Button>: ''}
+                                    
                                 </>,
                                 width: 280
                             },

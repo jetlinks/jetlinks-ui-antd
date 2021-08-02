@@ -53,7 +53,9 @@ function Right(props: RightProps) {
       <div className={styles.header}>
         <span>视频通道</span>
         <div>
-          <Icon style={{ color: 'rgba(0,0,0,.45)', marginLeft: 25, cursor: 'pointer' }} type="redo" />
+          <Icon style={{ color: 'rgba(0,0,0,.45)', marginLeft: 25, cursor: 'pointer' }} type="redo" onClick={()=>{
+            tableRequest();
+          }}/>
         </div>
       </div>
       <Table<ChannelList>

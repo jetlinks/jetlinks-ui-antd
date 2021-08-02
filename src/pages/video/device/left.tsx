@@ -184,7 +184,7 @@ function Left(props: LeftProps) {
             openModel('add')
           }}>添加设备</Button>
           <Icon onClick={() => {
-            tableRequest()
+            AdvancedFilter()
           }} style={{ color: 'rgba(0,0,0,.45)', marginLeft: 25, cursor: 'pointer' }} type="redo" />
         </div>
       </div>

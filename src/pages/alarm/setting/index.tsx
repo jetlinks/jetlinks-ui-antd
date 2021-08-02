@@ -133,7 +133,7 @@ useEffect(() => {
       <Cards
         title='告警设置'
         cardItemRender={(data: any) => <div style={{ height: 200, backgroundColor: '#fff' }}>
-            <Card hoverable bodyStyle={{ paddingBottom: 20 }}
+          {data.state?.value==='stopped' ? <Card hoverable bodyStyle={{ paddingBottom: 20 }}
               actions={[
                 <a onClick={()=>{
                   setEditVisible(true);
@@ -156,7 +156,7 @@ useEffect(() => {
                   <div style={{ display: "flex", justifyContent: 'space-between' }}>
                     <AutoHide title={data.name} style={{ flexGrow: 1, fontWeight: 600,fontSize:16}} />
                     <Switch checked={data?.state?.value==='stopped'? false : true} onChange={(e)=>{
-                      console.log(data.state.value)
+                      console.log(data)
                       if(e){
                         start(data)
                       }else{
@@ -180,7 +180,52 @@ useEffect(() => {
                     </Tooltip>
                   </div>
                 </div> 
-            </Card>
+            </Card>:<Card hoverable bodyStyle={{ paddingBottom: 20 }}
+              actions={[
+                <a onClick={()=>{
+                  setEditVisible(true);
+                  setCurrentData(data);
+                }}>编辑</a>,
+                <a onClick={()=>{
+                  setlogVisble(true)
+                  setAlarmLogId(data.id)
+                  setalarmLogName(data.name)
+                }}>告警日志</a>,
+                
+              ]}
+            >
+                <Card.Meta
+                avatar={<AliFont type='icon-touxiang5' style={{ fontSize: 46 }}/>}
+                title={
+                  <div style={{ display: "flex", justifyContent: 'space-between' }}>
+                    <AutoHide title={data.name} style={{ flexGrow: 1, fontWeight: 600,fontSize:16}} />
+                    <Switch checked={data?.state?.value==='stopped'? false : true} onChange={(e)=>{
+                      console.log(data)
+                      if(e){
+                        start(data)
+                      }else{
+                        stop(data)
+                      }
+                    }}/>
+                  </div>
+                }
+                />
+                
+                <div className={styles.content}>
+                  <div className={styles.item}>
+                    <p>创建时间：{moment(data.createTime).format('YYYY-MM-DD HH:mm:ss')}</p>
+                  </div>
+                  <div className={styles.itemContent}>
+                    <p className={styles.itemTitle}>规则描述</p>
+                    <Tooltip placement='top' title={data.description} >
+                        <div className={styles.itemtext}>
+                          规则描述
+                        </div>
+                    </Tooltip>
+                  </div>
+                </div> 
+            </Card>}
+            
         </div>}
 
         toolNode={<Button type="primary" onClick={()=>{
@@ -230,7 +275,7 @@ useEffect(() => {
           </Form>
           <div >
         
-        <Button type="primary" onClick={()=>{
+        <Button type="primary" style={{marginRight:5}} onClick={()=>{
           const data = form.getFieldsValue();
           let terms: any[]=[];
           Object.keys(data).forEach(i=>{
@@ -255,7 +300,7 @@ useEffect(() => {
             
           })
         }}>查询</Button>
-        <Button style={{marginRight:5}} onClick={()=>{
+        <Button  onClick={()=>{
           form.resetFields();
           handleSearch({
             pageSize: 8
@@ -309,10 +354,10 @@ useEffect(() => {
           },
           {
             title: '状态',
-            dataIndex: 'state',
+            // dataIndex: 'state',
             render: (record)=><>
-              <Switch checked={record.value ==='stopped' ? false:true} onChange={(e)=>{
-                      console.log(record.value)
+              <Switch checked={record?.state?.value ==='stopped' ? false:true} onChange={(e)=>{
+                      console.log(record)
                       if(e){
                         start(record)
                       }else{
@@ -334,10 +379,11 @@ useEffect(() => {
                 setAlarmLogId(record.id)
                 setalarmLogName(record.name)
               }}>告警日志</Button>
-              <Button type='link'  onClick={()=>{
+              {record.state?.value ==='stopped' ? <Button type='link'  onClick={()=>{
                   setDelVisible(true);
                   setCurrentData(record);
-                }}>删除</Button>
+                }}>删除</Button>:''}
+              
             </div>
             
           },
