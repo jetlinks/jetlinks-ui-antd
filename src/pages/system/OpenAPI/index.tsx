@@ -1,6 +1,6 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import React, { useRef } from 'react';
-import type { ProColumns, ActionType } from '@ant-design/pro-table';
+import type { ProColumns, ActionType } from '@jetlinks/pro-table';
 import type { OpenApiItem } from '@/pages/system/OpenAPI/typings';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { CurdModel } from '@/components/BaseCrud/model';

@@ -7,7 +7,7 @@ import {
   PlayCircleOutlined,
 } from '@ant-design/icons';
 import { Menu, Tooltip, Popconfirm, message } from 'antd';
-import type { ProColumns, ActionType } from '@ant-design/pro-table';
+import type { ProColumns, ActionType } from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import BaseCrud from '@/components/BaseCrud';
 import { CurdModel } from '@/components/BaseCrud/model';

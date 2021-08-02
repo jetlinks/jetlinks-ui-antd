@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { useRef } from 'react';
-import type { ProColumns, ActionType } from '@ant-design/pro-table';
+import type { ProColumns, ActionType } from '@jetlinks/pro-table';
 import type { SystemLogItem } from '@/pages/log/System/typings';
 import { Tag, Tooltip } from 'antd';
 import moment from 'moment';

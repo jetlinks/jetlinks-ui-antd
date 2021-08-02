@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import BaseService from '@/utils/BaseService';
 import React, { useRef } from 'react';
-import type { ProColumns, ActionType } from '@ant-design/pro-table';
+import type { ProColumns, ActionType } from '@jetlinks/pro-table';
 import type { AccessLogItem } from '@/pages/log/Access/typings';
 import moment from 'moment';
 import { Tag, Tooltip } from 'antd';

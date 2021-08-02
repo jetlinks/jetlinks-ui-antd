@@ -1,5 +1,5 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import type { ProColumns, ActionType } from '@ant-design/pro-table';
+import type { ProColumns, ActionType } from '@jetlinks/pro-table';
 import type { DeviceInstance } from '@/pages/device/Instance/typings';
 import moment from 'moment';
 import { Badge, Divider, Popconfirm } from 'antd';

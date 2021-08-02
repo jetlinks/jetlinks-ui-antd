@@ -1,5 +1,5 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import ProList from '@ant-design/pro-list';
+import ProList from '@jetlinks/pro-list';
 import { Badge, Button, Card, message, Space, Tag, Tooltip, Typography } from 'antd';
 import type { ProductItem } from '@/pages/device/Product/typings';
 import {

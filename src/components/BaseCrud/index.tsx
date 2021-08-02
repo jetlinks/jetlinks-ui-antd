@@ -1,7 +1,7 @@
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { Button, Dropdown } from 'antd';
-import ProTable from '@ant-design/pro-table';
-import type { ProColumns, ActionType, RequestData } from '@ant-design/pro-table';
+import ProTable from '@jetlinks/pro-table';
+import type { ProColumns, ActionType, RequestData } from '@jetlinks/pro-table';
 
 import { EllipsisOutlined, PlusOutlined } from '@ant-design/icons';
 import type BaseService from '@/utils/BaseService';

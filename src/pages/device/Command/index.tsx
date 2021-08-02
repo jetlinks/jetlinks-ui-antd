@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import BaseService from '@/utils/BaseService';
 import { useRef } from 'react';
-import type { ProColumns, ActionType } from '@ant-design/pro-table';
+import type { ProColumns, ActionType } from '@jetlinks/pro-table';
 import type { CommandItem } from '@/pages/device/Command/typings';
 import { Divider } from 'antd';
 import moment from 'moment';

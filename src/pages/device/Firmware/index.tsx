@@ -1,6 +1,6 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import BaseService from '@/utils/BaseService';
-import type { ProColumns, ActionType } from '@ant-design/pro-table';
+import type { ProColumns, ActionType } from '@jetlinks/pro-table';
 import { Divider, Popconfirm } from 'antd';
 import moment from 'moment';
 import { useRef } from 'react';

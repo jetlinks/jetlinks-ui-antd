@@ -41,7 +41,7 @@ export default (): React.ReactNode => {
             <FormattedMessage id="pages.welcome.link" defaultMessage="Welcome" />
           </a>
         </Typography.Text>
-        <CodePreview>yarn add @ant-design/pro-table</CodePreview>
+        <CodePreview>yarn add @jetlinks/pro-table</CodePreview>
         <Typography.Text
           strong
           style={{

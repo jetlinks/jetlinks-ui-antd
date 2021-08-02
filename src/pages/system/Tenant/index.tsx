@@ -1,5 +1,5 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import type { ProColumns, ActionType } from '@ant-design/pro-table';
+import type { ProColumns, ActionType } from '@jetlinks/pro-table';
 import type { TenantDetail } from '@/pages/system/Tenant/typings';
 import type { TenantItem } from '@/pages/system/Tenant/typings';
 import BaseCrud from '@/components/BaseCrud';
