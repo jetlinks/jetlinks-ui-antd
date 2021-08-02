@@ -27,6 +27,10 @@
     icon: 'crown',
     routes: [
       {
+        path: '/system',
+        redirect: '/system/user',
+      },
+      {
         path: '/system/user',
         name: 'user',
         icon: 'smile',
@@ -70,6 +74,10 @@
     icon: 'crown',
     routes: [
       {
+        path: '/device',
+        redirect: '/device/product',
+      },
+      {
         path: '/device/product',
         name: 'product',
         icon: 'smile',
@@ -109,10 +117,14 @@
     ],
   },
   {
-    path: 'log',
+    path: '/log',
     name: 'log',
     icon: 'crown',
     routes: [
+      {
+        path: '/log',
+        redirect: '/log/access',
+      },
       {
         path: '/log/access',
         name: 'access',

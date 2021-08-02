@@ -1,6 +1,6 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import ProList from '@ant-design/pro-list';
-import { Badge, Button, Card, message, Space, Tag, Tooltip } from 'antd';
+import { Badge, Button, Card, message, Space, Tag, Tooltip, Typography } from 'antd';
 import type { ProductItem } from '@/pages/device/Product/typings';
 import {
   CloseCircleOutlined,
@@ -17,8 +17,9 @@ import Service from '@/pages/device/Product/service';
 import { observer } from '@formily/react';
 import { Link } from '@umijs/preset-dumi/lib/theme';
 import { model } from '@formily/reactive';
+import encodeQuery from '@/utils/encodeQuery';
 
-const service = new Service('device-product');
+export const service = new Service('device-product');
 export const statusMap = {
   1: <Badge status="processing" text="已发布" />,
   0: <Badge status="error" text="未发布" />,
@@ -47,9 +48,9 @@ const Product = observer(() => {
           rowKey={'id'}
           headerTitle="产品列表"
           request={async (params = {}) => {
-            return await lastValueFrom(service.list(params));
-            // console.log(ii, 'i')
-            // return await service.query(params);
+            return await lastValueFrom(
+              service.list(encodeQuery({ ...params, sorts: { id: 'ascend' } })),
+            );
           }}
           pagination={{
             pageSize: 5,
@@ -93,7 +94,10 @@ const Product = observer(() => {
                     }}
                   >
                     <div>ID</div>
-                    {row.id}
+                    <Typography.Paragraph copyable={{ text: row.id }}>
+                      {' '}
+                      {row.id}
+                    </Typography.Paragraph>
                   </div>
                   <div
                     style={{
@@ -193,17 +197,17 @@ const Product = observer(() => {
               ],
               search: false,
             },
-            status: {
+            state: {
               // 自己扩展的字段，主要用于筛选，不在列表中显示
               title: '状态',
               valueType: 'select',
               valueEnum: {
                 all: { text: '全部', status: 'Default' },
-                0: {
+                1: {
                   text: '已发布',
                   status: 'Error',
                 },
-                1: {
+                0: {
                   text: '未发布',
                   status: 'Success',
                 },

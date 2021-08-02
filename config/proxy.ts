@@ -9,6 +9,8 @@
 export default {
   dev: {
     '/jetlinks': {
+      // target: 'http://192.168.22.222:8844/',
+      // ws: 'ws://192.168.22.222:8844/',
       ws: 'ws://demo.jetlinks.cn/jetlinks',
       target: 'http://demo.jetlinks.cn/jetlinks',
       changeOrigin: true,

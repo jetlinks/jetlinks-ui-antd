@@ -18,3 +18,22 @@ export type ProductItem = {
   state: number;
   transportProtocol: string;
 };
+
+export type ConfigProperty = {
+  property: string;
+  name: string;
+  description: string;
+  type: {
+    name: string;
+    id: string;
+    type: string;
+  };
+  scopes: any[];
+};
+
+export type ConfigMetadata = {
+  name: string;
+  description: string;
+  scopes: any[];
+  properties: ConfigProperty[];
+};

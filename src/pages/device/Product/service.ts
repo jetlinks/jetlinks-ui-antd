@@ -2,22 +2,21 @@ import BaseService from '@/utils/BaseService';
 import type { ProductItem } from '@/pages/device/Product/typings';
 import { request } from 'umi';
 import SystemConst from '@/utils/const';
-import { from, toArray } from 'rxjs';
-import { map, mergeMap } from 'rxjs/operators';
+import { concatMap, from, toArray } from 'rxjs';
+import { map } from 'rxjs/operators';
 import encodeQuery from '@/utils/encodeQuery';
 import type { Response } from '@/utils/typings';
 import _ from 'lodash';
 
 class Service extends BaseService<ProductItem> {
-  public instanceCount = (params: Record<string, any>) => {
-    return request(`/${SystemConst.API_BASE}/device-instance/_count`, { params, method: 'GET' });
-  };
+  public instanceCount = (params: Record<string, any>) =>
+    request(`/${SystemConst.API_BASE}/device-instance/_count`, { params, method: 'GET' });
 
   public list = (params: any) =>
     from(this.query(params)).pipe(
-      mergeMap((i: Response<ProductItem>) =>
+      concatMap((i: Response<ProductItem>) =>
         from(i.result.data as ProductItem[]).pipe(
-          mergeMap((t: ProductItem) =>
+          concatMap((t: ProductItem) =>
             from(this.instanceCount(encodeQuery({ terms: { productId: t.id } }))).pipe(
               map((count) => ({ ...t, count: count.result })),
             ),
@@ -27,6 +26,9 @@ class Service extends BaseService<ProductItem> {
         ),
       ),
     );
+
+  public getConfigMetadata = (id: string) =>
+    request(`/${SystemConst.API_BASE}/device/product/${id}/config-metadata`, { method: 'GET' });
 }
 
 export default Service;
