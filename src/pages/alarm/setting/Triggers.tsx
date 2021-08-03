@@ -40,7 +40,7 @@ const Trigger: React.FC<Props> = props => {
   const [trigger, setTrigger] = useState(initState.trigger);
 
   useEffect(() => {
-    console.log(props.metaData)
+    
     setTriggerType(trigger.trigger);
     setMessageType(trigger.type);
 

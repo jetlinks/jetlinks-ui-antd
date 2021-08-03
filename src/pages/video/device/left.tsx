@@ -185,6 +185,7 @@ function Left(props: LeftProps) {
           }}>添加设备</Button>
           <Icon onClick={() => {
             AdvancedFilter()
+            DeviceCount({ "terms": [{ "column": "productId", "value": "onvif-media-device" }, { "column": "productId", "value": "GB28181-PRO", "type": "or" }] })
           }} style={{ color: 'rgba(0,0,0,.45)', marginLeft: 25, cursor: 'pointer' }} type="redo" />
         </div>
       </div>
@@ -209,8 +210,9 @@ function Left(props: LeftProps) {
           items={queryFormItems}
         />
         <div className={styles.advancedTool}>
-          <Button onClick={resetFields}>重置</Button>
           <Button type="primary" onClick={AdvancedFilter}>查询</Button>
+          <Button onClick={resetFields}>重置</Button>
+          
         </div>
       </div>
       <div className={styles.table}>

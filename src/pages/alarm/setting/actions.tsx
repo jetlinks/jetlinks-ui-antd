@@ -124,7 +124,7 @@ const Action: React.FC<Props> = props => {
                 }
               });
             } else {
-              JSON.parse(response?.metadata).functions?.map((item: any) => {
+              JSON.parse(response?.metadata || '{}').functions?.map((item: any) => {
                 if (item.id === actionData.configuration.message.functionId) {
                   setFunctionData(item);
                 }
@@ -441,7 +441,7 @@ const Action: React.FC<Props> = props => {
                         submitData();
                       }}
               >
-                {JSON.parse(deviceData.metadata).functions?.map((item: any) => (
+                {JSON.parse(deviceData.metadata || '{}').functions?.map((item: any) => (
                   <Select.Option key={item.id} data={item}>{`${item.name}（${item.id}）`}</Select.Option>
                 ))}
               </Select>

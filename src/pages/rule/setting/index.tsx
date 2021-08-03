@@ -6,7 +6,7 @@ import { Button, Checkbox, message, Modal,Switch } from 'antd';
 import CardItem from './card';
 import styles from './index.less';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
-import Save from '@/pages/rule-engine/instance/save';
+import Save from './save';
 import encodeQueryParam from '@/utils/encodeParam';
 import AlarmSave from "@/pages/device/alarm/save/index";
 import SqlRuleSave from '@/pages/rule-engine/sqlRule/save/index';
@@ -52,7 +52,7 @@ const ExtraTool = (props: ExtraToolProps) => {
 
   const [options] = useState([
     { label: '规则实例', value: 'node-red' },
-    { label: '数据转发', value: 'sql_rule' },
+    // { label: '数据转发', value: 'sql_rule' },
     { label: '设备报警', value: 'device_alarm' },
     { label: '场景联动', value: 'rule-scene' },
   ])
@@ -97,7 +97,7 @@ const Setting: React.FC<Props> = props => {
   // const { result } = props.ruleInstance;
   const modelType = new Map();
   modelType.set('device_alarm', '设备告警');
-  modelType.set('sql_rule', '数据转发');
+  // modelType.set('sql_rule', '数据转发');
   modelType.set('node-red', '规则实例');
   modelType.set('rule-scene', '场景联动');
 
@@ -250,23 +250,7 @@ const Setting: React.FC<Props> = props => {
     setDeleteVisible(true)
   };
 
-  const onChange = (page: number, pageSize: number) => {
-    handleSearch({
-      pageIndex: page - 1,
-      pageSize,
-      terms: searchParam.terms,
-      sorts: searchParam.sorts,
-    });
-  };
 
-  const onShowSizeChange = (current: number, size: number) => {
-    handleSearch({
-      pageIndex: current - 1,
-      pageSize: size,
-      terms: searchParam.terms,
-      sorts: searchParam.sorts,
-    });
-  };
 
   const saveOrUpdate = useCallback((item: RuleInstanceItem) => {
 
@@ -487,7 +471,38 @@ const Setting: React.FC<Props> = props => {
         />
       )}
       {/* 新增复制 */}
-      {saveVisible && (
+      {saveVisible && <Save
+                    data={ruleData}
+                    deviceId={'local'}
+                    close={() => {
+                        setSaveVisible(false);
+                    }}
+                    save={(item: any) => {
+                        setSaveVisible(false);
+                        if (item.instanceType === 'node-red') {
+                            apis.ruleInstance.create({
+                                id: item.id,
+                                name: item.name,
+                                description: item.description
+                            },'local').then((response: any) => {
+                              if (response.status === 200) {
+                                message.success('保存成功');
+                                handleSearch(searchParam);
+                              }
+                            })
+                        } else if (item.instanceType === 'rule-scene') {
+                            let param: any = {...item};
+                            param.instanceType = undefined;
+                            apis.ruleInstance.saveScene(param,'local').then((response: any) => {
+                            if (response.status === 200) {
+                              message.success('保存成功');
+                              handleSearch(searchParam);
+                            }
+                          })
+                        }
+                    }} />
+                }
+      {/* {saveVisible && (
         <Save
           data={ruleData}
           onOk={() => {
@@ -500,7 +515,7 @@ const Setting: React.FC<Props> = props => {
 
           }}
         />
-      )}
+      )} */}
       {/* {detailVisible && (
         <Detail
           data={detailData}

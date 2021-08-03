@@ -41,6 +41,11 @@ interface State {
 const Edit: React.FC<Props> = props => {
 
   const service = new Service('rule-engine-alarm');
+  const {
+    form: { getFieldDecorator },
+    form,
+    // data
+} = props;
   const initState: State = {
     properties: [],
     data: props.data,
@@ -73,35 +78,67 @@ const Edit: React.FC<Props> = props => {
   const [product, setProduct] = useState(initState.product);
 
   const submitData = () => {
-    data.name = name;
-    data.target = alarmType;
-    if (alarmType === 'device') {
-      data.targetId = deviceId;
-      data.alarmRule = {
-        name: device.name,
-        deviceId: device.id,
-        deviceName: device.name,
-        triggers: trigger,
-        actions: action,
-        properties: properties,
-        productId: device.productId,
-        productName: device.productName,
-        shakeLimit: shakeLimit,
-      };
-    } else {
-      data.targetId = productId;
-      data.alarmRule = {
-        name: product.name,
-        productId: product.id,
-        productName: product.name,
-        triggers: trigger,
-        actions: action,
-        properties: properties,
-        shakeLimit: shakeLimit,
-      };
-    }
-    data.state = undefined;
-    props.save({ ...data });
+    form.validateFields((err,fileValue)=>{
+      if(err) return;
+      data.name = fileValue.name;
+      data.target = alarmType;
+        if (alarmType === 'device') {
+          data.targetId = deviceId;
+          data.alarmRule = {
+            name: device.name,
+            deviceId: device.id,
+            deviceName: device.name,
+            triggers: trigger,
+            actions: action,
+            properties: properties,
+            productId: device.productId,
+            productName: device.productName,
+            shakeLimit: shakeLimit,
+          };
+        } else {
+          data.targetId = productId;
+          data.alarmRule = {
+            name: product.name,
+            productId: product.id,
+            productName: product.name,
+            triggers: trigger,
+            actions: action,
+            properties: properties,
+            shakeLimit: shakeLimit,
+          };
+        }
+      data.state = undefined;
+      props.save({ ...data });
+    })
+    // data.name = name;
+    // data.target = alarmType;
+    // if (alarmType === 'device') {
+    //   data.targetId = deviceId;
+    //   data.alarmRule = {
+    //     name: device.name,
+    //     deviceId: device.id,
+    //     deviceName: device.name,
+    //     triggers: trigger,
+    //     actions: action,
+    //     properties: properties,
+    //     productId: device.productId,
+    //     productName: device.productName,
+    //     shakeLimit: shakeLimit,
+    //   };
+    // } else {
+    //   data.targetId = productId;
+    //   data.alarmRule = {
+    //     name: product.name,
+    //     productId: product.id,
+    //     productName: product.name,
+    //     triggers: trigger,
+    //     actions: action,
+    //     properties: properties,
+    //     shakeLimit: shakeLimit,
+    //   };
+    // }
+    // data.state = undefined;
+    // props.save({ ...data });
   }
 
   const getProductList = () => {
@@ -181,11 +218,17 @@ const Edit: React.FC<Props> = props => {
                style={{marginLeft: '0.1%'}}>
             <Col span={22}>
               <Form.Item key="name" label="告警名称" >
-                <Input placeholder="输入告警名称"
+                {/* <Input placeholder="输入告警名称"
                       defaultValue={props.data.name} 
                       onBlur={event => {
                         setName(event.target.value);
-                      }}/>
+                      }}/> */}
+                      {getFieldDecorator('name', {
+                        rules: [{ required: true }],
+                        initialValue: data?.name
+                    })(
+                        <Input />
+                    )}
               </Form.Item>
             </Col>
             <Col span={11}>
@@ -307,7 +350,7 @@ const Edit: React.FC<Props> = props => {
                     style={{width:'540px',position:'relative',left:5}}
                     onClick={() => {
                       setTrigger([...trigger, {_id: Math.round(Math.random() * 100000)}]);
-                      console.log(props.metaData)
+                      
                     }}
             >
               新增触发器

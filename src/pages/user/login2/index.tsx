@@ -218,7 +218,7 @@ const Login: React.FC<Props> = props => {
                   setExpires(expires === -1 ? 3600000 : -1);
                 }}
               />
-              <div className={style.text}>记住密码</div>
+              <div className={style.text}>记住我</div>
             </div>
           </div>
 

@@ -84,7 +84,7 @@ const Status: React.FC<Props> = props => {
 
     return (
         <Spin spinning={!loading}>
-            <div>
+            <div style={{height:530}}>
                 {
                     type === 'card' ? (
                         <Row gutter={24} id="device-instance-status" >

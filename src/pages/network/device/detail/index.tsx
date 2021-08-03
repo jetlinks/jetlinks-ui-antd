@@ -130,6 +130,8 @@ function Detail(props: DetailProps) {
                                 <span>配置
                                     <Icon type="edit" style={{ marginLeft: 20 }} onClick={() => {
                                         setUpdateVisible(true);
+                                        console.log(config)
+                                        console.log(props.data)
                                     }} />
                                     {info.state?.value != 'notActive' && (
                                         <Popconfirm
@@ -242,7 +244,7 @@ function Detail(props: DetailProps) {
             }
             {updateVisible && (
                 <Configuration
-                    data={props.data}
+                    data={info}
                     configuration={config}
                     close={() => {
                         setUpdateVisible(false);

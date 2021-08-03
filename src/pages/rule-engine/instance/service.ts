@@ -162,3 +162,10 @@ export async function create(params: any, deviceId: string) {
     data: params
   });
 }
+
+export async function saveScene(params: any, deviceId: string) {
+  return request(`/jetlinks/edge/operations/${deviceId}/rule-engine-scene-save/invoke`, {
+    method: 'POST',
+    data: params
+  });
+}
