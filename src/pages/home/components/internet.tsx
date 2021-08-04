@@ -13,34 +13,38 @@ function Internet() {
   const [internetVisible, setInternetVisible] = useState(false)
   const [title, setTitle] = useState('网口1')
   const [data, setData] = useState<object | undefined>(undefined)
-  const [network, setNetwork] = useState<any>({});
+  const [network1, setNetwork1] = useState<any>({});
+  const [network2, setNetwork2] = useState<any>({});
 
   const openEditModel = (type: number) => {
     let title = '编辑网口' + type
     setTitle(title)
-    setData(network)
+    if(type === 0){
+      setData(network1)
+    }else{
+      setData(network2)
+    }
     setInternetVisible(true)
   }
-
-  const openAddModel = (type: number) => {
-    let title = '配置网口' + type
-    setTitle(title)
-    setData({
-      test: true,
-      test2: 1
-    })
-    setInternetVisible(true)
-  }
-
 
   const InternetVisibleEvent = () => {
     setInternetVisible(false)
   }
 
-  useEffect(() => {
+  const getNetwork = () => {
     service.getEdgeNetworkList().subscribe(resp => {
-      setNetwork(resp);
+      resp.map((item: any) => {
+        if(item.ethName === 'enp2s0'){
+          setNetwork1(item)
+        }
+        if(item.ethName === 'enp3s0'){
+          setNetwork2(item)
+        }
+      })
     })
+  }
+  useEffect(() => {
+    getNetwork()
   }, []);
 
   return (
@@ -53,18 +57,17 @@ function Internet() {
             <div>
               网口1
             </div>
-            <Button type="primary" onClick={() => { openEditModel(1) }}>编辑</Button>
+            {
+              network1 && Object.keys(network1).length > 0 && <Button type="primary" onClick={() => { openEditModel(0) }}>编辑</Button>
+            }
           </div>
           <div className={styles.networkContent}>
             <Descriptions column={2}>
-              <Descriptions.Item span={2} label="状态">
-                1
-              </Descriptions.Item>
-              <Descriptions.Item label="IP地址获取方式">手动配置</Descriptions.Item>
-              <Descriptions.Item label="IP地址">{network.ipAdd}</Descriptions.Item>
-              <Descriptions.Item label="子网掩码">{network.mask}</Descriptions.Item>
-              <Descriptions.Item label="网关">{network.gateWayAdd}</Descriptions.Item>
-              <Descriptions.Item label="首选DNS服务器">{network.dns}</Descriptions.Item>
+              <Descriptions.Item label="IP地址获取方式">{network1?.netWay || '---'}</Descriptions.Item>
+              <Descriptions.Item label="IP地址">{network1?.ipAdd || '---'}</Descriptions.Item>
+              <Descriptions.Item label="子网掩码">{network1?.mask || '---'}</Descriptions.Item>
+              <Descriptions.Item label="网关">{network1?.gateWayAdd || '---'}</Descriptions.Item>
+              {/* <Descriptions.Item label="首选DNS服务器">{network[0]?.dns || '---'}</Descriptions.Item> */}
             </Descriptions>
           </div>
         </div>
@@ -73,12 +76,23 @@ function Internet() {
             <div>
               网口2
             </div>
-            <Button type="primary" onClick={() => { openAddModel(2) }}>立即配置</Button>
+            {
+              network2 && Object.keys(network2).length > 0 && <Button type="primary" onClick={() => { openEditModel(1) }}>编辑</Button>
+            }
           </div>
           <div className={styles.networkContent}>
-            <Result
+            {/* <Result
               icon={<img src={require('@/assets/noData.png')} alt="" />}
-            />
+            /> */}
+            <div className={styles.networkContent}>
+              <Descriptions column={2}>
+                <Descriptions.Item label="IP地址获取方式">{network2?.netWay || '---'}</Descriptions.Item>
+                <Descriptions.Item label="IP地址">{network2?.ipAdd || '---'}</Descriptions.Item>
+                <Descriptions.Item label="子网掩码">{network2?.mask || '---'}</Descriptions.Item>
+                <Descriptions.Item label="网关">{network2?.gateWayAdd || '---'}</Descriptions.Item>
+                {/* <Descriptions.Item label="首选DNS服务器">{network[1]?.dns || '---'}</Descriptions.Item> */}
+              </Descriptions>
+            </div>
           </div>
         </div>
       </Layout>
@@ -87,7 +101,10 @@ function Internet() {
         title={title}
         data={data}
         visible={internetVisible}
-        onOk={InternetVisibleEvent}
+        onOk={() => {
+          getNetwork()
+          InternetVisibleEvent()
+        }}
         onCancel={InternetVisibleEvent}
       />
     </div>

@@ -57,16 +57,16 @@ function Material() {
         setSpinning(true);
         service.getDeviceGatewayList(encodeQueryParam(params)).subscribe(resp => {
             setSpinning(false);
-            setDataList(resp)
-            
+            if (resp) {
+                setDataList(resp)
+            }
         })
-        
+
     }
 
- 
+
     useEffect(() => {
         handleSearch({ pageSize: 8 });
-        
     }, []);
     useEffect(() => {
         dataList.data?.map((item: any) => {
@@ -127,7 +127,7 @@ function Material() {
                     <Cards
                         title='物管理'
                         cardItemRender={(item: any) => <div style={{ height: 200, backgroundColor: '#fff' }}>
-                        {item.state?.value === 'disabled' ? <Card hoverable bodyStyle={{ paddingBottom: 20 }}
+                            {item.state?.value === 'disabled' ? <Card hoverable bodyStyle={{ paddingBottom: 20 }}
                                 actions={[
                                     <a onClick={() => {
                                         setCurrentData(item);
@@ -163,7 +163,7 @@ function Material() {
                                         <p className={styles.itemText}>{item.gatewayProvider}</p>
                                     </div>
                                 </div>
-                            </Card>: <Card hoverable bodyStyle={{ paddingBottom: 20 }}
+                            </Card> : <Card hoverable bodyStyle={{ paddingBottom: 20 }}
                                 actions={[
                                     <a onClick={() => {
                                         setCurrentData(item);
@@ -190,13 +190,13 @@ function Material() {
                                     </div>
                                 </div>
                             </Card>}
-                            
+
                         </div>}
                         toolNode={
                             <Button type="primary" style={{ marginRight: '16px' }} onClick={() => {
                                 setEditVisible(true);
                                 setCurrentData({});
-                                const a = dataList.data.map((item:any)=>{item.productId})
+                                const a = dataList.data.map((item: any) => { item.productId })
                                 console.log(dataList.data)
                                 console.log(a)
                             }}>新增物</Button>
@@ -206,28 +206,28 @@ function Material() {
                             total: dataList?.total,
                             pageSize: dataList?.pageSize,
                             onChange: (page: number, pageSize?: number) => {
-                              handleSearch({
-                                ...searchParam,
-                                pageIndex: page - 1,
-                                pageSize: pageSize || searchParam.pageSize
-                              })
+                                handleSearch({
+                                    ...searchParam,
+                                    pageIndex: page - 1,
+                                    pageSize: pageSize || searchParam.pageSize
+                                })
                             },
                             onShowSizeChange: (current, size) => {
-                              handleSearch({
-                                ...searchParam,
-                                pageIndex: current-1,
-                                pageSize: size || searchParam.pageSize
-                              })
+                                handleSearch({
+                                    ...searchParam,
+                                    pageIndex: current - 1,
+                                    pageSize: size || searchParam.pageSize
+                                })
                             },
                             showQuickJumper: true,
                             showSizeChanger: true,
                             pageSizeOptions: ['8', '16', '40', '80'],
                             showTotal: (total: number) =>
-                              `共 ${total} 条记录 第  ${dataList?.pageIndex + 1}/${Math.ceil(
-                                dataList?.total / dataList?.pageSize,
-                              )}页`
-                          }}
-                        dataSource={dataList.data}
+                                `共 ${total} 条记录 第  ${dataList?.pageIndex + 1}/${Math.ceil(
+                                    dataList?.total / dataList?.pageSize,
+                                )}页`
+                        }}
+                        dataSource={dataList?.data}
                         columns={[
                             {
                                 title: '产品名称',
@@ -275,8 +275,8 @@ function Material() {
                                     {record.state?.value === 'disabled' ? <Button type='link' onClick={() => {
                                         setDelVisible(true);
                                         setCurrentData(record);
-                                    }}>删除</Button>: ''}
-                                    
+                                    }}>删除</Button> : ''}
+
                                 </>,
                                 width: 280
                             },

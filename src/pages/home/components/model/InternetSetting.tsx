@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Modal, Input, Switch, Radio } from 'antd';
 import Form from '@/components/BaseForm';
 import { RadioChangeEvent } from 'antd/lib/radio';
 import IPInput from '@/components/BaseForm/IPInput';
+import Service from '../service';
+import { useEffect } from 'react';
 interface InternetSettingProps {
   visible?: boolean
   title: string
@@ -13,19 +15,61 @@ interface InternetSettingProps {
 
 function InternetSetting(props: InternetSettingProps) {
 
+  const service = new Service('edge/network');
   const { onOk, ...extra } = props
-  const [hidden, setHidden] = useState(true)
+  const [hidden, setHidden] = useState(props.data?.netWay === 'DHCP' ? true : false)
+  const form: any = useRef(null)
 
   const OnOk = () => {
-    // 提交数据
-    if (props.onOk) {
-      props.onOk()
+    if(hidden){
+      service.saveNetworkConfiguration(
+        {
+          netWay: 'DHCP',
+          // deviceId: 'local',
+          ethName: props.data?.ethName,
+          // ipAdd: props.data?.ipAdd,
+          // mask: props.data?.mask,
+          // gateWayAdd: props.data?.gateWayAdd,
+        }
+      ).subscribe(resp => {
+        // 提交数据
+        if(resp.status === 200){
+          if (props.onOk) {
+            props.onOk()
+          }
+        }
+      })
+    }else{
+    form.current.validateFields().then(async (data: any, err: any) => {
+      if (err) return;
+      service.saveNetworkConfiguration(
+        {
+          deviceId: 'local',
+          ethName: props.data?.ethName,
+          ipAdd: data.ipAdd,
+          mask: data.mask,
+          gateWayAdd: data.gateWayAdd,
+          netWay: 'STATIC'
+          // dns: data.dns
+        }
+      ).subscribe(resp => {
+        if(resp.status === 200){
+          if (props.onOk) {
+            props.onOk()
+          }
+        }
+      })
+      })
     }
   }
 
   const changeIPStatus = (e: RadioChangeEvent) => {
-    setHidden(e.target.value === 1 ? true : false)
+    setHidden(e.target.value === 'DHCP' ? true : false)
   }
+
+  useEffect(() => {
+    setHidden(props.data?.netWay === 'DHCP' ? true : false)
+  }, [props.data])
 
   return <Modal
     onOk={OnOk}
@@ -35,23 +79,23 @@ function InternetSetting(props: InternetSettingProps) {
       <Form
         data={props.data}
         items={[
+          // {
+          //   name: 'test',
+          //   label: '启用网口配置',
+          //   options: {
+          //     valuePropName: 'checked',
+          //   },
+          //   render: () => {
+          //     return <Switch />
+          //   }
+          // },
           {
-            name: 'test',
-            label: '启用网口配置',
-            options: {
-              valuePropName: 'checked',
-            },
-            render: () => {
-              return <Switch />
-            }
-          },
-          {
-            name: 'test2',
+            name: 'netWay',
             label: 'IP地址获取方式',
             render: () => {
               return <Radio.Group onChange={changeIPStatus}>
-                <Radio value={1}>自动获取</Radio>
-                <Radio value={2}>手动配置</Radio>
+                <Radio value={'DHCP'}>自动获取</Radio>
+                <Radio value={'STATIC'}>手动配置</Radio>
               </Radio.Group>
             }
           }
@@ -60,8 +104,8 @@ function InternetSetting(props: InternetSettingProps) {
       <div style={{ padding: 10, backgroundColor: '#fafafa', overflow: 'hidden' }}>
         <Form
           data={props.data}
+          ref={form}
           onValuesChange={(changeValue, allValues) => {
-            console.log(changeValue, allValues);
             if (changeValue.provider) {
               // setDataType(changeValue.provider);
             }
@@ -100,13 +144,13 @@ function InternetSetting(props: InternetSettingProps) {
                 return <IPInput disabled={hidden} />
               }
             },
-            {
-              name: 'dns',
-              label: '首选DNS服务器',
-              render: () => {
-                return <IPInput disabled={hidden} />
-              }
-            }
+            // {
+            //   name: 'dns',
+            //   label: '首选DNS服务器',
+            //   render: () => {
+            //     return <IPInput disabled={hidden} />
+            //   }
+            // }
           ]}
         />
       </div>
