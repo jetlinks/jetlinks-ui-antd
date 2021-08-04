@@ -3,8 +3,10 @@ import Form from 'antd/es/form';
 import { FormComponentProps } from 'antd/lib/form';
 import { Button, Card, Col, Icon, Input, Modal, Row, Switch, Tooltip, Select, message } from 'antd';
 // import Service from '../service';
-import Trigger from '@/pages/alarm/setting/Triggers';
-import ActionAssembly from '@/pages/alarm/setting/actions';
+import Trigger from './scenesave/Triggers';
+import ActionAssembly from './scenesave/action';
+// import Trigger from '@/pages/edge-gateway/device/detail/rule-engine/scene-save/Triggers';
+// import ActionAssembly from '@/pages/edge-gateway/device/detail/rule-engine/scene-save/action';
 import Bind from '@/pages/alarm/setting/bind';
 
 interface Props extends FormComponentProps {
@@ -111,25 +113,26 @@ const Save: React.FC<Props> = props => {
                   <Icon type="question-circle-o" style={{ paddingLeft: 10 }} />
                 </Tooltip>
               </p>
-              {trigger.length > 0 && trigger.map((item: any, index) => (
-                <div key={index}>
-                  <Trigger
-                    save={(data: any) => {
-                      trigger.splice(index, 1, data);
-                    }}
-                    // deviceId={props.deviceId}
-                    key={index + Math.random()}
-                    trigger={item}
-                    position={index}
-                    remove={(position: number) => {
-                      trigger.splice(position, 1);
-                      let data = [...trigger];
-                      setTrigger([...data]);
-                    }}
-                  />
-                </div>
-              ))}
-              <Button icon="plus" type="dashed"
+              <div style={{ backgroundColor: 'rgba(0,0,0,0.02)', padding: '10px 14px' }}>
+                {trigger.length > 0 && trigger.map((item: any, index) => (
+                  <div key={index}>
+                    <Trigger
+                      save={(data: any) => {
+                        trigger.splice(index, 1, data);
+                      }}
+                      deviceId={props.deviceId}
+                      key={index + Math.random()}
+                      trigger={item}
+                      position={index}
+                      remove={(position: number) => {
+                        trigger.splice(position, 1);
+                        let data = [...trigger];
+                        setTrigger([...data]);
+                      }}
+                    />
+                  </div>
+                ))}
+                <Button icon="plus" type="dashed"
                 onClick={() => {
                   setTrigger([...trigger, {
                     _id: Math.round(Math.random() * 100000), name: '', trigger: '', cron: '',
@@ -141,6 +144,9 @@ const Save: React.FC<Props> = props => {
               >
                 新增触发器
             </Button>
+              </div>
+              
+              
             </Card>
             <Card bordered={false} size="small">
               <p style={{ fontSize: 16 }}>
@@ -154,24 +160,28 @@ const Save: React.FC<Props> = props => {
                   }}
                 />
               </p>
-              {action.length > 0 && action.map((item: any, index) => (
-                <div key={index}>
-                  <ActionAssembly deviceId={props.deviceId} key={index + Math.random()} save={(actionData: any) => {
-                    action.splice(index, 1, actionData);
-                  }} action={item} position={index} remove={(position: number) => {
-                    action.splice(position, 1);
-                    setAction([...action]);
-                  }} />
-                </div>
-              ))}
-              <Button icon="plus" type="dashed"
-                onClick={() => {
-                  setAction([...action, { _id: Math.round(Math.random() * 100000) }]);
-                }}
-                style={{ width: '100%' }}
-              >
-                执行动作
-            </Button>
+              <div style={{ backgroundColor: 'rgba(0,0,0,0.02)', padding: '10px 14px' }}>
+                  {action.length > 0 && action.map((item: any, index) => (
+                    <div key={index}>
+                      <ActionAssembly deviceId={props.deviceId} key={index + Math.random()} save={(actionData: any) => {
+                        action.splice(index, 1, actionData);
+                      }} action={item} position={index} remove={(position: number) => {
+                        action.splice(position, 1);
+                        setAction([...action]);
+                      }} />
+                    </div>
+                  ))}
+                  <Button icon="plus" type="dashed"
+                    onClick={() => {
+                      setAction([...action, { _id: Math.round(Math.random() * 100000) }]);
+                    }}
+                    style={{ width: '100%' }}
+                  >
+                    执行动作
+                </Button>
+              </div>
+              
+              
             </Card>
           </>
         );

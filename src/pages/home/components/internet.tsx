@@ -35,6 +35,7 @@ function Internet() {
 
   const InternetVisibleEvent = () => {
     setInternetVisible(false)
+    setNetwork({});
   }
 
   useEffect(() => {

@@ -62,7 +62,7 @@ const Edit: React.FC<Props> = props => {
     product: {},
   };
 
-  const [data] = useState(initState.data);
+  const [data,setData] = useState(initState.data);
   const [alarmType, setAlarmType] = useState(initState.alarmType);
   const [properties, setProperties] = useState(initState.properties);
   const [trigger, setTrigger] = useState(initState.trigger);
@@ -166,14 +166,15 @@ const Edit: React.FC<Props> = props => {
   }
 
   useEffect(() => {
-    
-    if(deviceId !== ''){
-      getInstanceDetail(deviceId);
-      
+    setAlarmType(props.data.target)
+    setData(props.data)
+    if(props.data.targetId !== '' && props.data.target === 'device'  ){
+      getInstanceDetail(props.data.targetId);
+      setDevice(props.data.targetId)
     }
-    if(productId !== ''){
-      getProductInfo(productId);
-      
+    if(props.data.targetId !== '' && props.data.target === 'product' ){
+      getProductInfo(props.data.targetId);
+      setDevice(props.data.targetId)
     }
 
     getProductList();
@@ -192,7 +193,7 @@ const Edit: React.FC<Props> = props => {
       setAction([{ _id: 0 }]);
       setProperties([{ _id: 0 }]);
     }
-  }, []);
+  }, [props.data]);
 
   const removeProperties = (val: number) => {
     properties.splice(val, 1);
@@ -225,7 +226,7 @@ const Edit: React.FC<Props> = props => {
                       }}/> */}
                       {getFieldDecorator('name', {
                         rules: [{ required: true }],
-                        initialValue: data?.name
+                        initialValue: props.data?.name
                     })(
                         <Input />
                     )}
@@ -233,7 +234,7 @@ const Edit: React.FC<Props> = props => {
             </Col>
             <Col span={11}>
             <Form.Item key="alarmType" label="告警类型">
-                <Select placeholder="请选择" defaultValue={props.data.target}
+                <Select placeholder="请选择" value={alarmType}
                   disabled={!!props.data.id}
                   onChange={(value: string) => {
                     setAlarmType(value);
