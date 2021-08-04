@@ -67,7 +67,9 @@ function Device(props: Props) {
     count();
     service.getDeviceList(params).subscribe(
       (res) => {
-        setDataList(res)
+        if(res){
+          setDataList(res)
+        }
       },
       () => {
       },
@@ -78,7 +80,6 @@ function Device(props: Props) {
     service.getDeviceGatewayList({ paging: false }).subscribe(
       (res) => {
         setProductList(res);
-        console.log(productList)
       }
     )
   }
@@ -463,7 +464,7 @@ function Device(props: Props) {
                 </div>
               </div>
             }
-            dataSource={dataList.data}
+            dataSource={dataList?.data}
             columns={[
               {
                 title: '设备ID',

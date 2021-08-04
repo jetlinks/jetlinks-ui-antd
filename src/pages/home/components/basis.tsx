@@ -47,7 +47,7 @@ function Basis(props: Props) {
           <Descriptions.Item label="设备ID">{info.deviceId}</Descriptions.Item>
           <Descriptions.Item label="固件版本">{info.firmwareVer}</Descriptions.Item>
           <Descriptions.Item label="操作系统">{info.osInfo}</Descriptions.Item>
-          <Descriptions.Item label="地址">{
+          {/* <Descriptions.Item label="地址">{
             isUpdate ?
               <div>
                 <Input style={{ width: 'calc(100% - 88px)' }} value={input} onChange={(e) => { setInput(e.target.value) }} />
@@ -59,7 +59,7 @@ function Basis(props: Props) {
                   setIsUpdate(true)
                 }} />
               </>
-          }</Descriptions.Item>
+          }</Descriptions.Item> */}
         </Descriptions>
       </Layout>
     </div>

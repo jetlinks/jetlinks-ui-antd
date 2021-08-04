@@ -11,7 +11,7 @@ class Service extends BaseService<any> {
         }))
             .pipe(
                 filter(resp => resp.status === 200),
-                map(resp => resp.result[0])
+                map(resp => resp.result)
             ));
 
     public getDeviceCount = (data?: any) => defer(
@@ -24,7 +24,16 @@ class Service extends BaseService<any> {
                 map(resp => resp)
             ));
     public getAlarmsCount = (data?: any) => defer(
-        () => from(request(`/jetlinks/edge/operations/rule/rule-engine-alarm-history-status/invoke`, {
+        () => from(request(`/jetlinks/edge/operations/local/rule-engine-alarm-history-status/invoke`, {
+            method: 'POST',
+            data
+        }))
+            .pipe(
+                filter(resp => resp.status === 200),
+                map(resp => resp)
+            ));
+    public saveNetworkConfiguration = (data?: any) => defer(
+        () => from(request(`/jetlinks/edge/operations/local/edge-network-save/invoke`, {
             method: 'POST',
             data
         }))
