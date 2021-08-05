@@ -7,6 +7,7 @@ import moment from 'moment';
 import Functions from './functions';
 import Status from './status';
 import Configuration from './configuration';
+import { getWebsocket } from "@/layouts/GlobalWebSocket";
 
 interface DetailProps {
     data: object;
@@ -16,9 +17,10 @@ interface DetailProps {
 function Detail(props: DetailProps) {
 
     const service = new Service('/network/material');
-
+    let deviceStatus: any;
     const [editVisible, setEditVisible] = useState(false);
     const [info, setInfo] = useState<any>(props.data);
+    const [status, setStatus] = useState<any>(props.data);
     const [spinning, setSpinning] = useState<boolean>(true);
     const [type, setType] = useState<string>('card');
     const [tabKey, setTabKey] = useState<string>('1');
@@ -46,9 +48,40 @@ function Detail(props: DetailProps) {
         })
     }
 
+    const subscribeDeviceState = (deviceId: string) => {
+        const deviceData={
+            state:{},
+            onlineTime:'',
+            offlineTime:'',
+        }
+        deviceStatus && deviceStatus.unsubscribe();
+        deviceStatus = getWebsocket(
+          `instance-editor-info-status-${deviceId}`,
+          `/dashboard/device/status/change/realTime`,
+          {
+            deviceId: deviceId,
+          },
+        ).subscribe(
+          (resp: any) => {
+            const { payload } = resp;
+            deviceData.state = payload.value.type === 'online' ? { value: 'online', text: '在线' } : {
+              value: 'offline',
+              text: '离线'
+            };
+            if (payload.value.type === 'online') {
+              deviceData.onlineTime = payload.timestamp;
+            } else {
+              deviceData.offlineTime = payload.timestamp;
+            }
+            setStatus({ ...deviceData });
+          },
+        );
+      };
+
     useEffect(() => {
         initData();
-    }, []);
+        subscribeDeviceState(props.data.id);
+    }, [props.data]);
 
     const changeDeploy = (id: string) => {
         service.deployDevice(id).subscribe(() => {
@@ -94,7 +127,7 @@ function Detail(props: DetailProps) {
                         </div>
                         <div style={{ marginLeft: '45px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start' }}>
                             <p style={{ color: 'rgba(0, 0, 0, 0.45)' }}>状态</p>
-                            <p style={{ fontSize: '24px', fontWeight: 600 }}><Badge status={statusMap.get(info?.state?.value)} />{info?.state?.text}</p>
+                            <p style={{ fontSize: '24px', fontWeight: 600 }}><Badge status={statusMap.get(status?.state?.value)} />{status?.state?.text}</p>
                         </div>
                     </div>
                 </div>
@@ -216,7 +249,7 @@ function Detail(props: DetailProps) {
                         }}
                     >
                         <Tabs.TabPane tab="运行状态" key="1">
-                            <Status device={info} type={type} refresh={() => {
+                            <Status device={info} type={type} status={status} refresh={() => {
                                 
                             }} />
                         </Tabs.TabPane>
