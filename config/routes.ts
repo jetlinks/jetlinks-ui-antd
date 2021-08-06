@@ -19,7 +19,7 @@
     path: '/analysis',
     name: 'analysis',
     icon: 'smile',
-    component: './Welcome',
+    component: './Analysis',
   },
   {
     path: '/system',
@@ -34,12 +34,14 @@
         path: '/system/user',
         name: 'user',
         icon: 'smile',
+        access: 'user',
         component: './system/User',
       },
       {
         path: '/system/role',
         name: 'role',
         icon: 'smile',
+        access: 'role',
         component: './system/Role',
       },
       {
@@ -52,6 +54,7 @@
         path: '/system/org',
         name: 'org',
         icon: 'smile',
+        access: 'organization',
         component: './system/Org',
       },
       {
