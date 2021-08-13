@@ -5,7 +5,7 @@ import { map, filter, flatMap } from 'rxjs/operators';
 import { TenantItem } from './data';
 
 class Service extends BaseService<TenantItem> {
-  private tenant = localStorage.getItem('tenants-admin');
+  private tenant = localStorage.getItem('tenants-admin') || 'true';
   public create = (params: any) =>
     defer(() =>
       from(
@@ -170,8 +170,8 @@ class Service extends BaseService<TenantItem> {
         from(
           request(
             this.tenant === 'true'
-              ? `/jetlinks/tenant/assets/_bind`
-              : `/jetlinks/tenant/${id}/assets/_bind`,
+              ? `/jetlinks/tenant/${id}/assets/${data[0].assetType}/_bind`
+              : `/jetlinks/tenant/assets/${data[0].assetType}/_bind`,
             {
               method: 'POST',
               data,
@@ -194,8 +194,8 @@ class Service extends BaseService<TenantItem> {
         from(
           request(
             this.tenant === 'true'
-              ? `/jetlinks/tenant/assets/_unbind`
-              : `/jetlinks/tenant/${id}/assets/_unbind`,
+              ? `/jetlinks/tenant/${id}/assets/${data[0].assetType}/_unbind`
+              : `/jetlinks/tenant/assets/${data[0].assetType}/_unbind`,
             {
               method: 'POST',
               data,
