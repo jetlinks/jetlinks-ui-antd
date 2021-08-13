@@ -4,8 +4,11 @@ import request from '@/utils/request';
 import { map, filter, flatMap } from 'rxjs/operators';
 import { TenantItem } from './data';
 
+const userDetail =localStorage.getItem('user-detail')||"";
+const user =JSON.parse(userDetail);
 class Service extends BaseService<TenantItem> {
-  private tenant = localStorage.getItem('tenants-admin') || 'true';
+  private tenant = (user.tenants as any[]).length>0;
+  
   public create = (params: any) =>
     defer(() =>
       from(
@@ -95,11 +98,12 @@ class Service extends BaseService<TenantItem> {
           flatMap(resp => from(resp.result)),
         ),
       ),
+      
     bind: (id: string, data: { name: string; userId: string; admin: boolean }[]) =>
       defer(() =>
         from(
           request(
-            this.tenant === 'true'
+            this.tenant === true
               ? `/jetlinks/tenant/members/_bind`
               : `/jetlinks/tenant/${id}/members/_bind`,
             {
@@ -116,7 +120,7 @@ class Service extends BaseService<TenantItem> {
       defer(() =>
         from(
           request(
-            this.tenant === 'true'
+            this.tenant === true
               ? `/jetlinks/tenant/members/_unbind`
               : `/jetlinks/tenant/${id}/members/_unbind`,
             {
@@ -169,7 +173,7 @@ class Service extends BaseService<TenantItem> {
       defer(() =>
         from(
           request(
-            this.tenant === 'true'
+            this.tenant === false
               ? `/jetlinks/tenant/${id}/assets/${data[0].assetType}/_bind`
               : `/jetlinks/tenant/assets/${data[0].assetType}/_bind`,
             {
@@ -193,7 +197,7 @@ class Service extends BaseService<TenantItem> {
       defer(() =>
         from(
           request(
-            this.tenant === 'true'
+            this.tenant === false
               ? `/jetlinks/tenant/${id}/assets/${data[0].assetType}/_unbind`
               : `/jetlinks/tenant/assets/${data[0].assetType}/_unbind`,
             {
