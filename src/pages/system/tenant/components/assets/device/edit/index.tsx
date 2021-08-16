@@ -1,11 +1,11 @@
-import { Button, Drawer, message, } from "antd";
-import React, { Fragment, useEffect, useState } from "react";
-import Service from "@/pages/system/tenant/service";
-import encodeQueryParam from "@/utils/encodeParam";
-import SearchForm from "@/components/SearchForm";
-import ProTable from "@/pages/system/permission/component/ProTable";
-import Add from "./add";
-import User from "./user";
+import { Button, Drawer, message } from 'antd';
+import React, { Fragment, useEffect, useState } from 'react';
+import Service from '@/pages/system/tenant/service';
+import encodeQueryParam from '@/utils/encodeParam';
+import SearchForm from '@/components/SearchForm';
+import ProTable from '@/pages/system/permission/component/ProTable';
+import Add from './add';
+import User from './user';
 import { router } from 'umi';
 
 interface Props {
@@ -15,14 +15,14 @@ interface Props {
 }
 
 interface State {
-  list: any
+  list: any;
 }
 
 const Edit = (props: Props) => {
   const service = new Service('tenant');
 
   const initState: State = {
-    list: {}
+    list: {},
   };
 
   const [list, setList] = useState(initState.list);
@@ -40,7 +40,7 @@ const Edit = (props: Props) => {
         assetType: 'device',
         memberId: props.user,
         // not: true,
-      })
+      }),
     },
     pageIndex: 0,
     pageSize: 10,
@@ -49,7 +49,10 @@ const Edit = (props: Props) => {
   useEffect(() => {
     list.data?.map((item: any) => {
       service.assets.members(data.id, 'device', item.id).subscribe(resp => {
-        tenant[item.id] = resp.filter((item: any) => item.binding === true).map((i: any) => i.userName).join('、')
+        tenant[item.id] = resp
+          .filter((item: any) => item.binding === true)
+          .map((i: any) => i.userName)
+          .join('、');
         setTenant({ ...tenant });
       });
     });
@@ -93,7 +96,7 @@ const Edit = (props: Props) => {
   // };
 
   const handleSearch = (params: any) => {
-    const tempParam = { ...searchParam, ...params, };
+    const tempParam = { ...searchParam, ...params };
     const defaultItem = searchParam.terms;
     const tempTerms = params?.terms;
     const terms = tempTerms ? { ...defaultItem, ...tempTerms } : initSearch;
@@ -101,9 +104,9 @@ const Edit = (props: Props) => {
 
     if (tempTerms) {
       tempParam.terms = terms;
-      tempSearch = tempParam
+      tempSearch = tempParam;
     } else {
-      tempSearch = initSearch
+      tempSearch = initSearch;
     }
     setSearchParam(tempSearch);
     service.assets.device(encodeQueryParam(tempSearch)).subscribe(res => {
@@ -112,24 +115,24 @@ const Edit = (props: Props) => {
         res.data.forEach((value: any) => {
           datalist.push({
             id: value.id,
-            name: value.name
-          })
-        })
+            name: value.name,
+          });
+        });
         setList({
           pageIndex: res.pageIndex,
           pageSize: res.pageSize,
           total: res.total,
-          data: datalist
-        })
+          data: datalist,
+        });
       } else {
         setList({
           pageIndex: res.pageIndex,
           pageSize: res.pageSize,
           total: res.total,
-          data: []
-        })
+          data: [],
+        });
       }
-    })
+    });
   };
 
   useEffect(() => {
@@ -147,8 +150,9 @@ const Edit = (props: Props) => {
     {
       title: 'ID',
       dataIndex: 'id',
-      align: 'center'
-    }, {
+      align: 'center',
+    },
+    {
       title: '名称',
       dataIndex: 'name',
       align: 'center',
@@ -158,76 +162,82 @@ const Edit = (props: Props) => {
       ellipsis: true,
       align: 'left',
       width: 400,
-      render: (record: any) => <div
-        style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}
-        onClick={() => {
-          setAsset(record);
-          setCat(true);
-        }}><span style={{ color: '#1890ff' }}>{tenant[record.id]}</span></div>
+      render: (record: any) => (
+        <div
+          style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}
+          onClick={() => {
+            setAsset(record);
+            setCat(true);
+          }}
+        >
+          <span style={{ color: '#1890ff' }}>{tenant[record.id]}</span>
+        </div>
+      ),
     },
     {
       title: '操作',
       align: 'center',
       render: (_: string, record: any) => (
         <Fragment>
-          <a onClick={() => {
-            router.push(`/device/instance/save/${record.id}`);
-          }}>查看</a>
+          <a
+            onClick={() => {
+              router.push(`/device/instance/save/${record.id}`);
+            }}
+          >
+            查看
+          </a>
         </Fragment>
-      )
-    }
+      ),
+    },
   ];
   const unbind = () => {
-    service.assets.unbind(data.id, [{
-      assetIdList: selected.map(item => item.id),
-      assetType: 'device'
-    }]).subscribe(() => {
-      message.success('解绑成功');
-      setSelected([]);
-      handleSearch(searchParam);
-    })
+    service.assets
+      .unbind(data.id, [
+        {
+          assetIdList: selected.map(item => item.id),
+          assetType: 'device',
+          userId: props?.user,
+        },
+      ])
+      .subscribe(() => {
+        message.success('解绑成功');
+        setSelected([]);
+        handleSearch(searchParam);
+      });
   };
   return (
-    <Drawer
-      title="编辑设备资产"
-      visible
-      width='75VW'
-      onClose={() => props.close()}
-    >
-
+    <Drawer title="编辑设备资产" visible width="75VW" onClose={() => props.close()}>
       <SearchForm
         search={(params: any) => {
-          handleSearch({ terms: params })
+          handleSearch({ terms: params });
         }}
         formItems={[
           {
-            label: "ID",
-            key: "id$LIKE",
-            type: 'string'
+            label: 'ID',
+            key: 'id$LIKE',
+            type: 'string',
           },
           {
-            label: "名称",
-            key: "name$LIKE",
-            type: 'string'
-          }
+            label: '名称',
+            key: 'name$LIKE',
+            type: 'string',
+          },
         ]}
       />
-      <Button
-        type="primary"
-        style={{ marginBottom: 10 }}
-        onClick={() => setAdd(true)}>添加</Button>
-      {
-        selected.length > 0 && (
-          <Button
-            type="danger"
-            style={{ marginBottom: 10, marginLeft: 10 }}
-            onClick={() => {
-              unbind()
-            }}>
-            {`解绑${selected.length}项`}
-          </Button>
-        )
-      }
+      <Button type="primary" style={{ marginBottom: 10 }} onClick={() => setAdd(true)}>
+        添加
+      </Button>
+      {selected.length > 0 && (
+        <Button
+          type="danger"
+          style={{ marginBottom: 10, marginLeft: 10 }}
+          onClick={() => {
+            unbind();
+          }}
+        >
+          {`解绑${selected.length}项`}
+        </Button>
+      )}
       <ProTable
         rowKey="id"
         rowSelection={rowSelection}
@@ -265,13 +275,19 @@ const Edit = (props: Props) => {
           close={() => {
             setAdd(false);
             handleSearch(searchParam);
-          }} />
+          }}
+        />
       )}
-      {cat && <User asset={asset} close={() => {
-        setCat(false);
-        handleSearch(searchParam);
-      }} />}
+      {cat && (
+        <User
+          asset={asset}
+          close={() => {
+            setCat(false);
+            handleSearch(searchParam);
+          }}
+        />
+      )}
     </Drawer>
-  )
+  );
 };
 export default Edit;
