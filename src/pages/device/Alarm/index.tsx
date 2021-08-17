@@ -3,12 +3,15 @@ import BaseService from '@/utils/BaseService';
 import { useRef } from 'react';
 import type { ProColumns, ActionType } from '@jetlinks/pro-table';
 import moment from 'moment';
-import { Divider, Modal, Tag } from 'antd';
+import { Modal, Tag, Tooltip } from 'antd';
 import BaseCrud from '@/components/BaseCrud';
+import { CheckOutlined, EyeOutlined } from '@ant-design/icons';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 const service = new BaseService<AlarmItem>('device/alarm/history');
 const Alarm = () => {
   const actionRef = useRef<ActionType>();
+  const intl = useIntl();
 
   const columns: ProColumns<AlarmItem>[] = [
     {
@@ -43,44 +46,58 @@ const Alarm = () => {
       title: '操作',
       width: '120px',
       align: 'center',
-      render: (record: any) => (
-        <>
-          <a
-            onClick={() => {
-              let content: string;
-              try {
-                content = JSON.stringify(record.alarmData, null, 2);
-              } catch (error) {
-                content = record.alarmData;
-              }
-              Modal.confirm({
-                width: '40VW',
-                title: '告警数据',
-                content: (
-                  <pre>
-                    {content}
-                    {record.state === 'solve' && (
-                      <>
-                        <br />
-                        <br />
-                        <span style={{ fontSize: 16 }}>处理结果：</span>
-                        <br />
-                        <p>{record.description}</p>
-                      </>
-                    )}
-                  </pre>
-                ),
-                okText: '确定',
-                cancelText: '关闭',
-              });
-            }}
+      valueType: 'option',
+      render: (record: any) => [
+        <a
+          onClick={() => {
+            let content: string;
+            try {
+              content = JSON.stringify(record.alarmData, null, 2);
+            } catch (error) {
+              content = record.alarmData;
+            }
+            Modal.confirm({
+              width: '40VW',
+              title: '告警数据',
+              content: (
+                <pre>
+                  {content}
+                  {record.state === 'solve' && (
+                    <>
+                      <br />
+                      <br />
+                      <span style={{ fontSize: 16 }}>处理结果：</span>
+                      <br />
+                      <p>{record.description}</p>
+                    </>
+                  )}
+                </pre>
+              ),
+              okText: '确定',
+              cancelText: '关闭',
+            });
+          }}
+        >
+          <Tooltip
+            title={intl.formatMessage({
+              id: 'pages.data.option.detail',
+              defaultMessage: '查看',
+            })}
+            key={'detail'}
           >
-            详情
-          </a>
-          {record.state !== 'solve' ? <Divider type="vertical" /> : ''}
-          {record.state !== 'solve' && <a onClick={() => {}}>处理</a>}
-        </>
-      ),
+            <EyeOutlined />
+          </Tooltip>
+        </a>,
+        <>
+          {record.state !== 'solve' && (
+            <a onClick={() => {}}>
+              <Tooltip title={'处理'}>
+                <CheckOutlined />
+              </Tooltip>
+            </a>
+          )}
+        </>,
+      ],
     },
   ];
 

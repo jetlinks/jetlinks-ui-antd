@@ -1,16 +1,23 @@
 import { Space } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useModel, SelectLang } from 'umi';
 import Avatar from './AvatarDropdown';
 import HeaderSearch from '../HeaderSearch';
 import styles from './index.less';
+import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
+import { Store } from 'jetlinks-store';
 
 export type SiderTheme = 'light' | 'dark';
 
 const GlobalHeaderRight: React.FC = () => {
   const { initialState } = useModel('@@initialState');
 
+  const [subscribeTopic] = useSendWebsocketMessage();
+
+  useEffect(() => {
+    Store.set('sendMessage', subscribeTopic);
+  }, []);
   if (!initialState || !initialState.settings) {
     return null;
   }

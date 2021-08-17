@@ -3,6 +3,7 @@ import { StatisticCard } from '@ant-design/pro-card';
 import RcResizeObserver from 'rc-resize-observer';
 import { useState } from 'react';
 import CPU from '@/pages/Analysis/CPU';
+import Jvm from '@/pages/Analysis/Jvm';
 
 const { Divider } = StatisticCard;
 
@@ -21,25 +22,15 @@ const Analysis = () => {
           <StatisticCard
             statistic={{
               title: 'CPU使用率',
-              // value: 20190102,
-              // precision: 2,
-              // suffix: '元',
             }}
             chart={<CPU />}
           />
           <Divider type={responsive ? 'horizontal' : 'vertical'} />
           <StatisticCard
             statistic={{
-              title: '今日设备消息量',
-              value: 234,
+              title: 'JVM内存',
             }}
-            chart={
-              <img
-                src="https://gw.alipayobjects.com/zos/alicdn/RLeBTRNWv/bianzu%25252043x.png"
-                alt="直方图"
-                width="100%"
-              />
-            }
+            chart={<Jvm />}
           />
           <Divider type={responsive ? 'horizontal' : 'vertical'} />
           <StatisticCard

@@ -4,19 +4,19 @@ import WebsocketTopic from '@/utils/topic';
 import { useEffect, useState } from 'react';
 import type { WebsocketPayload } from '@/hooks/websocket/typings';
 
-const CPU = () => {
+const Jvm = () => {
   const [subscribeTopic] = useSendWebsocketMessage();
   const [value, setValue] = useState<number>(0);
   useEffect(() => {
-    const cpuRealTime = subscribeTopic?.(
-      WebsocketTopic.CPURealTime.id,
-      WebsocketTopic.CPURealTime.topic,
+    const JvmRealTime = subscribeTopic?.(
+      WebsocketTopic.JVMRealTime.id,
+      WebsocketTopic.JVMRealTime.topic,
       { params: { history: 1 } },
     )?.subscribe((data: WebsocketPayload) => {
       // +0.01为了解决0.00图表异常
-      setValue(((data.payload.value as number) + 0.01) / 100);
+      setValue((((data.payload.value as Record<string, any>).usage as number) + 0.01) / 100);
     });
-    return () => cpuRealTime?.unsubscribe();
+    return () => JvmRealTime?.unsubscribe();
   }, []);
   const config = {
     width: 200,
@@ -42,4 +42,4 @@ const CPU = () => {
   return <Gauge {...config} percent={value} />;
 };
 
-export default CPU;
+export default Jvm;

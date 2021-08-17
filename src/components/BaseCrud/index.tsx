@@ -33,6 +33,7 @@ export type Props<T> = {
   actionRef: React.MutableRefObject<ActionType | undefined>;
   modelConfig?: ModalProps;
   request?: (params: any) => Promise<Partial<RequestData<T>>>;
+  toolBar?: React.ReactNode[];
 };
 
 const BaseCrud = <T extends Record<string, any>>(props: Props<T>) => {
@@ -49,6 +50,7 @@ const BaseCrud = <T extends Record<string, any>>(props: Props<T>) => {
     schemaConfig,
     modelConfig,
     request,
+    toolBar,
   } = props;
 
   return (
@@ -74,21 +76,23 @@ const BaseCrud = <T extends Record<string, any>>(props: Props<T>) => {
         dateFormatter="string"
         headerTitle={title}
         defaultParams={defaultParams}
-        toolBarRender={() => [
-          <Button onClick={CurdModel.add} key="button" icon={<PlusOutlined />} type="primary">
-            {intl.formatMessage({
-              id: 'pages.data.option.add',
-              defaultMessage: '新增',
-            })}
-          </Button>,
-          menu && (
-            <Dropdown key="menu" overlay={menu}>
-              <Button>
-                <EllipsisOutlined />
-              </Button>
-            </Dropdown>
-          ),
-        ]}
+        toolBarRender={() =>
+          toolBar || [
+            <Button onClick={CurdModel.add} key="button" icon={<PlusOutlined />} type="primary">
+              {intl.formatMessage({
+                id: 'pages.data.option.add',
+                defaultMessage: '新增',
+              })}
+            </Button>,
+            menu && (
+              <Dropdown key="menu" overlay={menu}>
+                <Button>
+                  <EllipsisOutlined />
+                </Button>
+              </Dropdown>
+            ),
+          ]
+        }
       />
       <Save
         reload={() => actionRef.current?.reload()}

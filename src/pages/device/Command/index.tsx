@@ -3,13 +3,16 @@ import BaseService from '@/utils/BaseService';
 import { useRef } from 'react';
 import type { ProColumns, ActionType } from '@jetlinks/pro-table';
 import type { CommandItem } from '@/pages/device/Command/typings';
-import { Divider } from 'antd';
+import { Tooltip } from 'antd';
 import moment from 'moment';
 import BaseCrud from '@/components/BaseCrud';
+import { EyeOutlined, SyncOutlined } from '@ant-design/icons';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 const service = new BaseService('device/message/task');
 const Command = () => {
   const actionRef = useRef<ActionType>();
+  const intl = useIntl();
 
   const columns: ProColumns<CommandItem>[] = [
     {
@@ -51,37 +54,50 @@ const Command = () => {
       defaultSortOrder: 'descend',
     },
     {
-      title: '操作',
-      render: (text, record) => (
-        <>
-          <a
-            onClick={() => {
-              // setVisible(true);
-              // setCurrent(record);
-            }}
+      title: intl.formatMessage({
+        id: 'pages.data.option',
+        defaultMessage: '操作',
+      }),
+      valueType: 'option',
+      align: 'center',
+      width: 200,
+      render: (text, record) => [
+        <a
+          onClick={() => {
+            // setVisible(true);
+            // setCurrent(record);
+          }}
+        >
+          <Tooltip
+            title={intl.formatMessage({
+              id: 'pages.data.option.detail',
+              defaultMessage: '查看',
+            })}
+            key={'detail'}
           >
-            查看指令
-          </a>
+            <EyeOutlined />
+          </Tooltip>
+        </a>,
+        <a>
           {record.state.value !== 'wait' && (
-            <>
-              <Divider type="vertical" />
-              <a
-                onClick={() => {
-                  // service.resend(encodeQueryParam({ terms: { id: record.id } })).subscribe(
-                  //   data => {
-                  //     message.success('操作成功');
-                  //   },
-                  //   () => {},
-                  //   () => handleSearch(searchParam),
-                  // );
-                }}
-              >
-                重新发送
-              </a>
-            </>
+            <a
+              onClick={() => {
+                // service.resend(encodeQueryParam({ terms: { id: record.id } })).subscribe(
+                //   data => {
+                //     message.success('操作成功');
+                //   },
+                //   () => {},
+                //   () => handleSearch(searchParam),
+                // );
+              }}
+            >
+              <Tooltip title="重新发送">
+                <SyncOutlined />
+              </Tooltip>
+            </a>
           )}
-        </>
-      ),
+        </a>,
+      ],
     },
   ];
 

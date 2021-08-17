@@ -13,7 +13,7 @@ const ProductDetail = observer(() => {
   return (
     <PageContainer
       onBack={() => history.goBack()}
-      extraContent={<Space size={24}></Space>}
+      extraContent={<Space size={24} />}
       content={
         <Descriptions size="small" column={2}>
           <Descriptions.Item label="产品ID">{productModel.current?.id}</Descriptions.Item>

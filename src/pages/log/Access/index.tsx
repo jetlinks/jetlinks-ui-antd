@@ -87,6 +87,7 @@ const Access: React.FC = () => {
         service={service}
         title="访问日志"
         schema={{}}
+        toolBar={[]}
         actionRef={actionRef}
       />
     </PageContainer>

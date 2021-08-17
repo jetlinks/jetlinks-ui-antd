@@ -71,6 +71,7 @@
     "@jetlinks/pro-list": "^1.10.8",
     "@jetlinks/pro-table": "^2.43.7",
     "@umijs/route-utils": "^1.0.36",
+    "ahooks": "^2.10.9",
     "antd": "^4.14.0",
     "classnames": "^2.2.6",
     "isomorphic-form-data": "^2.0.0",
@@ -83,6 +84,7 @@
     "react-dom": "^17.0.0",
     "react-helmet-async": "^1.0.4",
     "rxjs": "^7.2.0",
+    "rxjs-websockets": "8",
     "umi": "^3.5.0",
     "umi-serve": "^1.9.10"
   },

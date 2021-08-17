@@ -1,15 +1,19 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import BaseService from '@/utils/BaseService';
 import type { ProColumns, ActionType } from '@jetlinks/pro-table';
-import { Divider, Popconfirm } from 'antd';
+import { message, Popconfirm, Tooltip } from 'antd';
 import moment from 'moment';
 import { useRef } from 'react';
 import BaseCrud from '@/components/BaseCrud';
+import { useIntl } from '@@/plugin-locale/localeExports';
+import { EditOutlined, EyeOutlined, MinusOutlined } from '@ant-design/icons';
+import { CurdModel } from '@/components/BaseCrud/model';
 
 const service = new BaseService('firmware');
 
 const Firmware = () => {
   const actionRef = useRef<ActionType>();
+  const intl = useIntl();
 
   const columns: ProColumns<FirmwareItem>[] = [
     {
@@ -38,26 +42,68 @@ const Firmware = () => {
       defaultSortOrder: 'descend',
     },
     {
-      title: '操作',
-      width: '300px',
+      title: intl.formatMessage({
+        id: 'pages.data.option',
+        defaultMessage: '操作',
+      }),
+      valueType: 'option',
       align: 'center',
-      renderText: () => (
-        <>
-          <a
-            onClick={() => {
-              // router.push(`/device/firmware/save/${record.id}`);
+      width: 200,
+
+      render: (text, record) => [
+        <a
+          onClick={() => {
+            // router.push(`/device/firmware/save/${record.id}`);
+          }}
+        >
+          <Tooltip
+            title={intl.formatMessage({
+              id: 'pages.data.option.detail',
+              defaultMessage: '查看',
+            })}
+            key={'detail'}
+          >
+            <EyeOutlined />
+          </Tooltip>
+        </a>,
+        <a key="editable" onClick={() => CurdModel.update(record)}>
+          <Tooltip
+            title={intl.formatMessage({
+              id: 'pages.data.option.edit',
+              defaultMessage: '编辑',
+            })}
+          >
+            <EditOutlined />
+          </Tooltip>
+        </a>,
+        <a>
+          <Popconfirm
+            title={intl.formatMessage({
+              id: 'pages.data.option.remove.tips',
+              defaultMessage: '确认删除？',
+            })}
+            onConfirm={async () => {
+              await service.remove(record.id);
+              message.success(
+                intl.formatMessage({
+                  id: 'pages.data.option.success',
+                  defaultMessage: '操作成功!',
+                }),
+              );
+              actionRef.current?.reload();
             }}
           >
-            查看
-          </a>
-          <Divider type="vertical" />
-          <a onClick={() => {}}>编辑</a>
-          <Divider type="vertical" />
-          <Popconfirm title="确定删除？" onConfirm={() => {}}>
-            <a>删除</a>
+            <Tooltip
+              title={intl.formatMessage({
+                id: 'pages.data.option.remove',
+                defaultMessage: '删除',
+              })}
+            >
+              <MinusOutlined />
+            </Tooltip>
           </Popconfirm>
-        </>
-      ),
+        </a>,
+      ],
     },
   ];
 

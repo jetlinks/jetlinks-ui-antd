@@ -100,6 +100,13 @@
         component: './device/Instance',
       },
       {
+        hideInMenu: true,
+        path: '/device/instance/detail/:id',
+        name: 'instance-detail',
+        icon: 'smile',
+        component: './device/Instance/Detail',
+      },
+      {
         path: '/device/command',
         name: 'command',
         icon: 'smile',

@@ -2,10 +2,20 @@ import { PageContainer } from '@ant-design/pro-layout';
 import type { ProColumns, ActionType } from '@jetlinks/pro-table';
 import type { DeviceInstance } from '@/pages/device/Instance/typings';
 import moment from 'moment';
-import { Badge, Divider, Popconfirm } from 'antd';
+import { Badge, message, Popconfirm, Tooltip } from 'antd';
 import { useRef } from 'react';
 import BaseCrud from '@/components/BaseCrud';
 import BaseService from '@/utils/BaseService';
+import { Link } from 'umi';
+import {
+  CloseCircleOutlined,
+  EditOutlined,
+  EyeOutlined,
+  PlayCircleOutlined,
+} from '@ant-design/icons';
+import { useIntl } from '@@/plugin-locale/localeExports';
+import { CurdModel } from '@/components/BaseCrud/model';
+import { model } from '@formily/reactive';
 
 const statusMap = new Map();
 statusMap.set('在线', 'success');
@@ -15,10 +25,15 @@ statusMap.set('online', 'success');
 statusMap.set('offline', 'error');
 statusMap.set('notActive', 'processing');
 
+export const InstanceModel = model<{
+  current: DeviceInstance | undefined;
+}>({
+  current: undefined,
+});
 const service = new BaseService<DeviceInstance>('device/instance');
 const Instance = () => {
   const actionRef = useRef<ActionType>();
-
+  const intl = useIntl();
   const columns: ProColumns<DeviceInstance>[] = [
     {
       title: 'ID',
@@ -70,60 +85,73 @@ const Instance = () => {
       ellipsis: true,
     },
     {
-      title: '操作',
-      width: '200px',
+      title: intl.formatMessage({
+        id: 'pages.data.option',
+        defaultMessage: '操作',
+      }),
+      valueType: 'option',
       align: 'center',
-      render: (record: any) => (
-        <>
-          <a
-            onClick={() => {
-              // router.push(`/device/instance/save/${record.id}`);
+      width: 200,
+      render: (text, record) => [
+        <Link
+          onClick={() => {
+            InstanceModel.current = record;
+          }}
+          to={`/device/instance/detail/${record.id}`}
+          key="link"
+        >
+          <Tooltip
+            title={intl.formatMessage({
+              id: 'pages.data.option.detail',
+              defaultMessage: '查看',
+            })}
+            key={'detail'}
+          >
+            <EyeOutlined />
+          </Tooltip>
+        </Link>,
+        <a key="editable" onClick={() => CurdModel.update(record)}>
+          <Tooltip
+            title={intl.formatMessage({
+              id: 'pages.data.option.edit',
+              defaultMessage: '编辑',
+            })}
+          >
+            <EditOutlined />
+          </Tooltip>
+        </a>,
+
+        <a href={record.id} target="_blank" rel="noopener noreferrer" key="view">
+          <Popconfirm
+            title={intl.formatMessage({
+              id: 'pages.data.option.disable.tips',
+              defaultMessage: '确认禁用？',
+            })}
+            onConfirm={async () => {
+              await service.update({
+                id: record.id,
+                // status: record.state?.value ? 0 : 1,
+              });
+              message.success(
+                intl.formatMessage({
+                  id: 'pages.data.option.success',
+                  defaultMessage: '操作成功!',
+                }),
+              );
+              actionRef.current?.reload();
             }}
           >
-            查看
-          </a>
-          <Divider type="vertical" />
-          <a
-            onClick={() => {
-              // setCurrentItem(record);
-              // setAddVisible(true);
-            }}
-          >
-            编辑
-          </a>
-          <Divider type="vertical" />
-          {record.state?.value === 'notActive' ? (
-            <span>
-              <Popconfirm
-                title="确认启用？"
-                onConfirm={() => {
-                  // changeDeploy(record);
-                }}
-              >
-                <a>启用</a>
-              </Popconfirm>
-              <Divider type="vertical" />
-              <Popconfirm
-                title="确认删除？"
-                onConfirm={() => {
-                  // deleteInstance(record);
-                }}
-              >
-                <a>删除</a>
-              </Popconfirm>
-            </span>
-          ) : (
-            <Popconfirm
-              title="确认禁用设备？"
-              onConfirm={() => {
-                // unDeploy(record);
-              }}
+            <Tooltip
+              title={intl.formatMessage({
+                id: `pages.data.option.${record.state.value ? 'disable' : 'enable'}`,
+                defaultMessage: record.state.value ? '禁用' : '启用',
+              })}
             >
-              <a>禁用</a>
-            </Popconfirm>
-          )}
-        </>
-      ),
+              {record.state.value ? <CloseCircleOutlined /> : <PlayCircleOutlined />}
+            </Tooltip>
+          </Popconfirm>
+        </a>,
+      ],
     },
   ];
 
