@@ -1,5 +1,5 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import React, { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   EditOutlined,
   KeyOutlined,
@@ -12,6 +12,9 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import BaseCrud from '@/components/BaseCrud';
 import { CurdModel } from '@/components/BaseCrud/model';
 import BaseService from '@/utils/BaseService';
+import { observer } from '@formily/react';
+import { Store } from 'jetlinks-store';
+import SystemConst from '@/utils/const';
 
 const menu = (
   <Menu>
@@ -22,9 +25,16 @@ const menu = (
 );
 
 export const service = new BaseService<UserItem>('user');
-const User: React.FC = () => {
+const User = observer(() => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
+
+  const [model, setModel] = useState(CurdModel.model);
+
+  useEffect(() => {
+    const modelSubscription = Store.subscribe(SystemConst.BASE_CURD_MODEL, setModel);
+    return () => modelSubscription.unsubscribe();
+  }, [CurdModel.model]);
 
   const columns: ProColumns<UserItem>[] = [
     {
@@ -109,7 +119,14 @@ const User: React.FC = () => {
       align: 'center',
       width: 200,
       render: (text, record) => [
-        <a key="editable" onClick={() => CurdModel.update(record)}>
+        <a
+          key="editable"
+          onClick={() => {
+            CurdModel.update(record);
+            CurdModel.model = 'edit';
+            setModel('edit');
+          }}
+        >
           <Tooltip
             title={intl.formatMessage({
               id: 'pages.data.option.edit',
@@ -207,6 +224,7 @@ const User: React.FC = () => {
         'x-component-props': {
           checkStrength: true,
         },
+        'x-hidden': model === 'edit',
         'x-reactions': [
           {
             dependencies: ['.confirmPassword'],
@@ -232,6 +250,7 @@ const User: React.FC = () => {
         }),
         'x-decorator': 'FormItem',
         'x-component': 'Password',
+        'x-hidden': model === 'edit',
         'x-component-props': {
           checkStrength: true,
         },
@@ -271,6 +290,6 @@ const User: React.FC = () => {
       />
     </PageContainer>
   );
-};
+});
 
 export default User;
