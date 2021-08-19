@@ -112,7 +112,6 @@ const requestInterceptor = (url: string, options: RequestOptionsInit) => {
 export const request: RequestConfig = {
   errorHandler: (error: any) => {
     const { response } = error;
-
     if (response.status === 401) {
       history.push('/user/login');
       return;
