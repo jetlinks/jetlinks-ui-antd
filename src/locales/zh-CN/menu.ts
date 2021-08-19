@@ -14,6 +14,7 @@ export default {
   'menu.device.product': '产品',
   'menu.device.product-detail': '产品详情',
   'menu.device.instance': '设备',
+  'menu.device.instance-detail': '设备详情',
   'menu.device.command': '指令下发',
   'menu.device.firmware': '固件升级',
   'menu.device.alarm': '告警记录',

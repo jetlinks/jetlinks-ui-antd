@@ -5,7 +5,6 @@ import moment from 'moment';
 import { Badge, message, Popconfirm, Tooltip } from 'antd';
 import { useRef } from 'react';
 import BaseCrud from '@/components/BaseCrud';
-import BaseService from '@/utils/BaseService';
 import { Link } from 'umi';
 import {
   CloseCircleOutlined,
@@ -16,6 +15,7 @@ import {
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { CurdModel } from '@/components/BaseCrud/model';
 import { model } from '@formily/reactive';
+import Service from '@/pages/device/Instance/service';
 
 const statusMap = new Map();
 statusMap.set('在线', 'success');
@@ -27,10 +27,14 @@ statusMap.set('notActive', 'processing');
 
 export const InstanceModel = model<{
   current: DeviceInstance | undefined;
+  detail: Partial<DeviceInstance>;
+  config: any;
 }>({
   current: undefined,
+  detail: {},
+  config: {},
 });
-const service = new BaseService<DeviceInstance>('device/instance');
+export const service = new Service('device/instance');
 const Instance = () => {
   const actionRef = useRef<ActionType>();
   const intl = useIntl();

@@ -15,6 +15,7 @@ export default {
   'menu.device.product': 'Product',
   'menu.device.product-detail': 'ProductDetail',
   'menu.device.instance': 'Instance',
+  'menu.device.instance-detail': 'InstanceDetail',
   'menu.device.command': 'Command',
   'menu.device.firmware': 'Firmware',
   'menu.device.alarm': 'Alarm',
