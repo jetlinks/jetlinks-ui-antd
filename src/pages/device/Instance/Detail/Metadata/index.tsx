@@ -16,66 +16,47 @@ const Metadata = observer(() => {
       }}
     >
       <ProCard.TabPane tab="属性" key="property" style={{ overflowX: 'auto' }}>
-        <ProCard gutter={[16, 16]} style={{ height: '50vh' }}>
-          <ProCard
-            bordered={true}
-            colSpan={5}
-            extra={
-              <Row>
-                <Col span={18}>
-                  <Input.Search size="small" />
-                </Col>
-                <Col span={2} />
-                <Col span={4} style={{ alignItems: 'center' }}>
-                  <a>新增</a>
-                </Col>
-              </Row>
-            }
-            style={{ height: '40vh', marginRight: 10 }}
-          >
-            <ItemList metadata={metadata} />
-          </ProCard>
-          <ProCard
-            extra={<a>保存</a>}
-            bordered={true}
-            colSpan={7}
-            style={{ height: '40vh', marginRight: 10 }}
-          >
-            <ItemDetail />
-          </ProCard>
-          <ProCard
-            extra={<a>保存</a>}
-            bordered={true}
-            colSpan={7}
-            style={{ height: '40vh', marginRight: 10 }}
-          >
+        <Row gutter={[16, 16]} style={{ height: '50vh' }} wrap={false}>
+          <Col span={7}>
+            <ProCard
+              bordered={true}
+              extra={
+                <Row>
+                  <Col span={18}>
+                    <Input.Search size="small" />
+                  </Col>
+                  <Col span={2} />
+                  <Col span={4} style={{ alignItems: 'center' }}>
+                    <a>新增</a>
+                  </Col>
+                </Row>
+              }
+              style={{ height: '40vh', marginRight: 10 }}
+            >
+              <ItemList metadata={metadata} />
+            </ProCard>
+          </Col>
+          <Col span={7}>
+            <ProCard
+              extra={<a>保存</a>}
+              bordered={true}
+              colSpan={12}
+              style={{ height: '40vh', marginRight: 10 }}
+            >
+              <ItemDetail />
+            </ProCard>
+          </Col>
+
+          <Col span={7}>
             <ItemParam />
-          </ProCard>
-          <ProCard
-            extra={<a>保存</a>}
-            bordered={true}
-            colSpan={7}
-            style={{ height: '40vh', marginRight: 10 }}
-          >
+          </Col>
+          <Col span={7}>
             <ItemParam />
-          </ProCard>
-          <ProCard
-            extra={<a>保存</a>}
-            bordered={true}
-            colSpan={7}
-            style={{ height: '40vh', marginRight: 10 }}
-          >
+          </Col>
+          <Col span={7}>
             <ItemParam />
-          </ProCard>
-          <ProCard
-            extra={<a>保存</a>}
-            bordered={true}
-            colSpan={7}
-            style={{ height: '40vh', marginRight: 10, display: '' }}
-          >
-            <ItemParam />
-          </ProCard>
-        </ProCard>
+          </Col>
+        </Row>
       </ProCard.TabPane>
       <ProCard.TabPane tab="事件" key="events">
         事件

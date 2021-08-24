@@ -17,6 +17,12 @@ import {
 import { service } from '@/pages/device/Instance';
 import type { Unit } from '@/pages/device/Instance/typings';
 import type { ISchema } from '@formily/json-schema';
+import ProCard from '@ant-design/pro-card';
+
+// interface Props {
+//   value: any;
+//   onChange: (data: any) => void;
+// }
 
 const ItemParam = observer(() => {
   const form = createForm({
@@ -35,6 +41,7 @@ const ItemParam = observer(() => {
       ArrayItems,
       Editable,
       Radio,
+      // ItemParamComponent
     },
     scope: {
       fetchUnits: async (field: IFieldState) => {
@@ -95,11 +102,59 @@ const ItemParam = observer(() => {
           dependencies: ['type'],
           fulfill: {
             state: {
-              display: '{{$deps[0]==="int"?"visible"∑:"none"}}',
+              display: '{{($deps[0]==="float"||$deps[0]==="double")?"visible":"none"}}',
             },
           },
         },
       },
+      maxLength: {
+        type: 'number',
+        title: '最大长度',
+        'x-display': 'none',
+        'x-decorator': 'FormItem',
+        'x-component': 'Input',
+        'x-reactions': {
+          dependencies: ['type'],
+          fulfill: {
+            state: {
+              display: '{{($deps[0]==="string")?"visible":"none"}}',
+            },
+          },
+        },
+      },
+      format: {
+        type: 'string',
+        title: '时间格式',
+        'x-display': 'none',
+        'x-decorator': 'FormItem',
+        'x-component': 'Input',
+        'x-component-props': {
+          placeholder: '默认格式：String类型的UTC时间戳 (毫秒)',
+        },
+        'x-reactions': {
+          dependencies: ['type'],
+          fulfill: {
+            state: {
+              display: '{{($deps[0]==="date")?"visible":"none"}}',
+            },
+          },
+        },
+      },
+      // json: {
+      //   type: 'object',
+      //   title: 'JSON对象',
+      //   'x-display': 'none',
+      //   'x-decorator': 'FormItem',
+      //   'x-component': 'ItemParamComponent',
+      //   'x-reactions': {
+      //     dependencies: ['type'],
+      //     fulfill: {
+      //       state: {
+      //         display: '{{($deps[0]==="object")?"visible":"none"}}',
+      //       },
+      //     },
+      //   },
+      // },
       unit: {
         type: 'string',
         title: '单位',
@@ -118,9 +173,30 @@ const ItemParam = observer(() => {
     },
   };
   return (
-    <Form form={form} labelCol={8} wrapperCol={13} size="small">
-      <SchemaField schema={schema} />
-    </Form>
+    <ProCard
+      extra={<a>保存</a>}
+      bordered={true}
+      colSpan={500}
+      style={{ height: '40vh', marginRight: 10 }}
+    >
+      <Form form={form} labelCol={8} wrapperCol={13} size="small">
+        <SchemaField schema={schema} />
+      </Form>
+    </ProCard>
   );
 });
 export default ItemParam;
+//
+// const ItemParamComponent = connect(
+//   ItemParam,
+//   mapProps({}, props => {
+//     const {onChange} = props;
+//     return {
+//       ...props,
+//       onChange(value: string) {
+//         onChange?.(value);
+//       }
+//     };
+//   })
+// );
+// export default ItemParamComponent;
