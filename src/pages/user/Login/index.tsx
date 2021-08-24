@@ -127,7 +127,7 @@ const Login: React.FC = () => {
   };
 
   const doLogin = async (data: LoginParam) =>
-    Service.login({ verifyKey: captcha.key, ...data }).subscribe({
+    Service.login({ expires: -1, verifyKey: captcha.key, ...data }).subscribe({
       next: async (userInfo: UserInfo) => {
         message.success(
           intl.formatMessage({

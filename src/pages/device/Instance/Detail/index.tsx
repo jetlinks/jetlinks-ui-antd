@@ -73,7 +73,7 @@ const InstanceDetail = observer(() => {
 
   return (
     <PageContainer
-      onBack={() => history.goBack()}
+      onBack={history.goBack}
       onTabChange={setTab}
       tabList={list}
       content={<Info />}

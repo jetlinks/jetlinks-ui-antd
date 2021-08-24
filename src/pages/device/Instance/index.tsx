@@ -16,6 +16,7 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import { CurdModel } from '@/components/BaseCrud/model';
 import { model } from '@formily/reactive';
 import Service from '@/pages/device/Instance/service';
+import type { MetadataItem } from '@/pages/device/Product/typings';
 
 const statusMap = new Map();
 statusMap.set('在线', 'success');
@@ -29,10 +30,12 @@ export const InstanceModel = model<{
   current: DeviceInstance | undefined;
   detail: Partial<DeviceInstance>;
   config: any;
+  metadataItem: MetadataItem;
 }>({
   current: undefined,
   detail: {},
   config: {},
+  metadataItem: {},
 });
 export const service = new Service('device/instance');
 const Instance = () => {

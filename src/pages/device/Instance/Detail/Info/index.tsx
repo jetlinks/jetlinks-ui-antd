@@ -1,8 +1,9 @@
 import { Descriptions } from 'antd';
 import { InstanceModel } from '@/pages/device/Instance';
 import moment from 'moment';
+import { observer } from '@formily/react';
 
-const Info = () => {
+const Info = observer(() => {
   return (
     <>
       <Descriptions size="small" column={3}>
@@ -24,5 +25,5 @@ const Info = () => {
       </Descriptions>
     </>
   );
-};
+});
 export default Info;
