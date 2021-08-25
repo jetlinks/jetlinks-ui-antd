@@ -49,7 +49,7 @@ class Service extends BaseService<any> {
       }
     }))
       .pipe(
-        filter(resp => resp.status === 200),
+        filter(resp => resp.status === 200 || resp.status === 404),
         map(resp => resp.result)
       ));
 

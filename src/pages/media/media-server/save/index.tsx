@@ -63,6 +63,7 @@ const Save: React.FC<Props> = props => {
     service.providersList().subscribe(data => {
       setProvidersList(data);
     }, () => {
+      setLoading(false)
     }, () => setLoading(false));
   };
 

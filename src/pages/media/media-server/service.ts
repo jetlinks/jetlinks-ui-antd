@@ -6,9 +6,12 @@ import {filter, map} from "rxjs/operators";
 class Service extends BaseService<any> {
 
   public providersList = () => defer(
-    () => from(request(`/jetlinks/media/server/providers`, {method: 'GET'}))
+    () => from(request(`/jetlinks/media/server/providers`, {
+      method: 'GET', errorHandler: () => {
+      }
+    }))
       .pipe(
-        filter(resp => resp.status === 200),
+        filter(resp => resp.status === 200 || resp.status === 404),
         map(resp => resp.result)
       ));
 
