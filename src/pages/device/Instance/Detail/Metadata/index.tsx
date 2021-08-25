@@ -6,9 +6,13 @@ import type { DeviceMetadata } from '@/pages/device/Product/typings';
 import ItemList from '@/pages/device/Instance/Detail/Metadata/ItemList';
 import ItemDetail from '@/pages/device/Instance/Detail/Metadata/ItemDetail';
 import ItemParam from '@/pages/device/Instance/Detail/Metadata/ItemParam';
+import { useEffect } from 'react';
 
 const Metadata = observer(() => {
   const metadata = JSON.parse(InstanceModel.detail.metadata as string) as DeviceMetadata;
+  useEffect(() => {
+    InstanceModel.params = new Set<string>(['test']);
+  }, []);
   return (
     <ProCard
       tabs={{
@@ -17,7 +21,7 @@ const Metadata = observer(() => {
     >
       <ProCard.TabPane tab="属性" key="property" style={{ overflowX: 'auto' }}>
         <Row gutter={[16, 16]} style={{ height: '50vh' }} wrap={false}>
-          <Col span={7}>
+          <Col span={6}>
             <ProCard
               bordered={true}
               extra={
@@ -36,26 +40,21 @@ const Metadata = observer(() => {
               <ItemList metadata={metadata} />
             </ProCard>
           </Col>
-          <Col span={7}>
+          <Col span={5}>
             <ProCard
               extra={<a>保存</a>}
               bordered={true}
-              colSpan={12}
               style={{ height: '40vh', marginRight: 10 }}
             >
               <ItemDetail />
             </ProCard>
           </Col>
 
-          <Col span={7}>
-            <ItemParam />
-          </Col>
-          <Col span={7}>
-            <ItemParam />
-          </Col>
-          <Col span={7}>
-            <ItemParam />
-          </Col>
+          {Array.from(InstanceModel.params).map((item, index) => (
+            <Col span={5} key={index}>
+              <ItemParam />
+            </Col>
+          ))}
         </Row>
       </ProCard.TabPane>
       <ProCard.TabPane tab="事件" key="events">

@@ -60,7 +60,35 @@ const ItemDetail = observer(() => {
         title: '数据类型',
         required: true,
         'x-decorator': 'FormItem',
-        'x-component': 'Input',
+        'x-component': 'Select',
+        enum: [
+          { label: 'int(整数型)', value: 'int' },
+          { label: 'long(长整数型)', value: 'long' },
+          { label: 'double(双精度浮点数)', value: 'double' },
+          { label: 'float(单精度浮点数)', value: 'float' },
+          { label: 'text(字符串)', value: 'string' },
+          { label: 'bool(布尔型)', value: 'boolean' },
+          { label: 'date(时间型)', value: 'date' },
+          { label: 'enum(枚举)', value: 'enum' },
+          { label: 'array(数组)', value: 'array' },
+          { label: 'object(结构体)', value: 'object' },
+          { label: 'geoPoint(地理位置)', value: 'geoPoint' },
+        ],
+      },
+      json: {
+        type: 'object',
+        title: 'JSON对象',
+        'x-display': 'none',
+        'x-decorator': 'FormItem',
+        'x-component': 'JsonParamComponent',
+        'x-reactions': {
+          dependencies: ['dataType'],
+          fulfill: {
+            state: {
+              display: '{{($deps[0]==="object")?"visible":"none"}}',
+            },
+          },
+        },
       },
       readOnly: {
         type: 'string',
@@ -89,7 +117,7 @@ const ItemDetail = observer(() => {
   };
   return (
     <>
-      <Form form={form} labelCol={5} wrapperCol={16} onAutoSubmit={console.log} size="small">
+      <Form form={form} labelCol={8} wrapperCol={16} onAutoSubmit={console.log} size="small">
         <SchemaField schema={schema} />
       </Form>
     </>

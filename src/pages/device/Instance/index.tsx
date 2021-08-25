@@ -31,11 +31,14 @@ export const InstanceModel = model<{
   detail: Partial<DeviceInstance>;
   config: any;
   metadataItem: MetadataItem;
+  params: Set<string>; // 处理无限循环Card
+  active?: string; // 当前编辑的Card
 }>({
   current: undefined,
   detail: {},
   config: {},
   metadataItem: {},
+  params: new Set<string>(['test']),
 });
 export const service = new Service('device/instance');
 const Instance = () => {

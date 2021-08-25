@@ -1,6 +1,6 @@
 import { createSchemaField, observer } from '@formily/react';
 import type { IFieldState } from '@formily/core';
-import { createForm } from '@formily/core';
+import { createForm, onFieldValueChange } from '@formily/core';
 import {
   FormItem,
   Form,
@@ -13,20 +13,30 @@ import {
   ArrayItems,
   Editable,
   Radio,
+  PreviewText,
 } from '@formily/antd';
-import { service } from '@/pages/device/Instance';
+import { InstanceModel, service } from '@/pages/device/Instance';
 import type { Unit } from '@/pages/device/Instance/typings';
 import type { ISchema } from '@formily/json-schema';
 import ProCard from '@ant-design/pro-card';
 
-// interface Props {
-//   value: any;
-//   onChange: (data: any) => void;
-// }
-
 const ItemParam = observer(() => {
   const form = createForm({
     validateFirst: true,
+    readPretty: true,
+    effects() {
+      onFieldValueChange('type', (field) => {
+        const type = field.query('type').value();
+        const id = field.query('id').value();
+        const temp = Array.from(InstanceModel.params).map((item) => item.split('-$')[0]);
+        const includes = new Set(temp).has(id);
+        if (includes && type !== 'object') {
+          InstanceModel.params.delete(`${id}-$${InstanceModel.params.size - 1}`);
+        } else if (id && type === 'object') {
+          InstanceModel.params.add(`${id}-$${InstanceModel.params.size}`);
+        }
+      });
+    },
   });
 
   const SchemaField = createSchemaField({
@@ -41,7 +51,6 @@ const ItemParam = observer(() => {
       ArrayItems,
       Editable,
       Radio,
-      // ItemParamComponent
     },
     scope: {
       fetchUnits: async (field: IFieldState) => {
@@ -140,21 +149,6 @@ const ItemParam = observer(() => {
           },
         },
       },
-      // json: {
-      //   type: 'object',
-      //   title: 'JSON对象',
-      //   'x-display': 'none',
-      //   'x-decorator': 'FormItem',
-      //   'x-component': 'ItemParamComponent',
-      //   'x-reactions': {
-      //     dependencies: ['type'],
-      //     fulfill: {
-      //       state: {
-      //         display: '{{($deps[0]==="object")?"visible":"none"}}',
-      //       },
-      //     },
-      //   },
-      // },
       unit: {
         type: 'string',
         title: '单位',
@@ -179,24 +173,12 @@ const ItemParam = observer(() => {
       colSpan={500}
       style={{ height: '40vh', marginRight: 10 }}
     >
-      <Form form={form} labelCol={8} wrapperCol={13} size="small">
-        <SchemaField schema={schema} />
-      </Form>
+      <PreviewText.Placeholder value="-">
+        <Form form={form} labelCol={8} wrapperCol={13} size="small">
+          <SchemaField schema={schema} />
+        </Form>
+      </PreviewText.Placeholder>
     </ProCard>
   );
 });
 export default ItemParam;
-//
-// const ItemParamComponent = connect(
-//   ItemParam,
-//   mapProps({}, props => {
-//     const {onChange} = props;
-//     return {
-//       ...props,
-//       onChange(value: string) {
-//         onChange?.(value);
-//       }
-//     };
-//   })
-// );
-// export default ItemParamComponent;
