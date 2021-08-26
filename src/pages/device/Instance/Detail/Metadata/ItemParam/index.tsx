@@ -19,20 +19,24 @@ import { InstanceModel, service } from '@/pages/device/Instance';
 import type { Unit } from '@/pages/device/Instance/typings';
 import type { ISchema } from '@formily/json-schema';
 import ProCard from '@ant-design/pro-card';
+import { useState } from 'react';
 
 const ItemParam = observer(() => {
+  const [cardId, setCardId] = useState<string>('');
   const form = createForm({
     validateFirst: true,
-    readPretty: true,
+    readPretty: InstanceModel.active === cardId,
     effects() {
       onFieldValueChange('type', (field) => {
         const type = field.query('type').value();
         const id = field.query('id').value();
+        setCardId(`${id}-$${InstanceModel.params.size}`);
         const temp = Array.from(InstanceModel.params).map((item) => item.split('-$')[0]);
         const includes = new Set(temp).has(id);
         if (includes && type !== 'object') {
           InstanceModel.params.delete(`${id}-$${InstanceModel.params.size - 1}`);
         } else if (id && type === 'object') {
+          InstanceModel.active = `${id}-$${InstanceModel.params.size}`;
           InstanceModel.params.add(`${id}-$${InstanceModel.params.size}`);
         }
       });
@@ -166,9 +170,16 @@ const ItemParam = observer(() => {
       },
     },
   };
+
+  const saveParam = async () => {
+    console.log(cardId, InstanceModel.params);
+    const values = await form.submit();
+    console.log(values, 'vv');
+    InstanceModel.params.delete(cardId);
+  };
   return (
     <ProCard
-      extra={<a>保存</a>}
+      extra={<a onClick={saveParam}>保存</a>}
       bordered={true}
       colSpan={500}
       style={{ height: '40vh', marginRight: 10 }}

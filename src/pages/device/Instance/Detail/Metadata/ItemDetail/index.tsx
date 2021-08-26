@@ -75,21 +75,6 @@ const ItemDetail = observer(() => {
           { label: 'geoPoint(地理位置)', value: 'geoPoint' },
         ],
       },
-      json: {
-        type: 'object',
-        title: 'JSON对象',
-        'x-display': 'none',
-        'x-decorator': 'FormItem',
-        'x-component': 'JsonParamComponent',
-        'x-reactions': {
-          dependencies: ['dataType'],
-          fulfill: {
-            state: {
-              display: '{{($deps[0]==="object")?"visible":"none"}}',
-            },
-          },
-        },
-      },
       readOnly: {
         type: 'string',
         title: '只读',
