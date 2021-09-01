@@ -50,5 +50,25 @@ class Service extends BaseService<any> {
                 filter(resp => resp.status === 200),
                 map(resp => resp)
             ));
+    //查询网关持久化
+    public findPersistence = (data?: any) => defer(
+            () => from(request(`/jetlinks/edge/operations/local/edge-persistence-find/invoke`, {
+                method: 'POST',
+                data
+            }))
+                .pipe(
+                    filter(resp => resp.status === 200),
+                    map(resp => resp)
+                ));
+    //修改网关持久化
+    public updatePersistence = (data: any) => defer(
+        () => from(request(`/jetlinks/edge/operations/local/edge-persistence-update/invoke`, {
+            method: 'POST',
+            data
+        }))
+            .pipe(
+                filter(resp => resp.status === 200),
+                map(resp => resp)
+            ));
 }
 export default Service;

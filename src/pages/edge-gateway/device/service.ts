@@ -39,6 +39,7 @@ export interface MediaDeviceList {
   provider: string
   others: MediaDeviceListOther
   state: StatusType
+  description:string
 }
 
 type catalogType = {

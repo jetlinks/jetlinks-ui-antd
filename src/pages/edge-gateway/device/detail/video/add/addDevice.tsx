@@ -132,6 +132,23 @@ const AddDevice: React.FC<Props> = props => {
                     )}
                 </Form.Item>
                 {renderType(dataType)}
+                {
+                    data.id && <>
+                    <Form.Item label="设备厂商">
+                    {getFieldDecorator('manufacturer', {
+                        initialValue: data?.manufacturer
+                    })(
+                        <Input disabled />
+                    )}
+                </Form.Item>
+                <Form.Item label="设备型号">
+                    {getFieldDecorator('model', {
+                        initialValue: data?.model
+                    })(
+                        <Input disabled />
+                    )}
+                </Form.Item></>
+                }
                 <Form.Item key="description" label="说明">
                     {getFieldDecorator('description', {
                         initialValue: data?.description

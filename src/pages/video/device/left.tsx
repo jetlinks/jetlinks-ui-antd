@@ -243,7 +243,7 @@ function Left(props: LeftProps) {
             },
             {
               title: '设备名称',
-              dataIndex: 'manufacturer',
+              dataIndex: 'name',
               render: (data, result) => {
                 return <div>
                   <div style={{ color: 'rgba(0,0,0,1)', fontSize: 14 }}>{data}</div>

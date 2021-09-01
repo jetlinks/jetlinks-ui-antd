@@ -1,7 +1,7 @@
-import React, { useRef } from 'react';
+import React, { useRef,useEffect ,useState} from 'react';
 import Form from '@/components/BaseForm';
 import Service from '../service';
-import { Input, Modal } from 'antd';
+import { Input, Modal, Radio,Row,Col} from 'antd';
 
 interface AddressSettingProps {
   visible?: boolean
@@ -23,6 +23,7 @@ const formItemLayout = {
 
 const AddressSetting = (props: AddressSettingProps) => {
   const { onOk, ...extra } = props
+  const[enabled,setEnabled]=useState();
   const form: any = useRef(null)
   const service = new Service('edge/network');
 
@@ -40,6 +41,27 @@ const AddressSetting = (props: AddressSettingProps) => {
     })
   }
 
+  //查询持久化
+  const find = () =>{
+    service.findPersistence().subscribe(
+      (res)=>{
+        setEnabled(res.result[0])
+      }
+    )
+  };
+  //修改持续化
+  const update = (data:boolean) =>{
+    service.updatePersistence({enabled:data}).subscribe(
+      (res)=>{
+        if(res.status===200){
+          find();
+        }
+      }
+    )
+  };
+  useEffect(()=>{
+    find();
+  },[])
 
   return <>
     <Modal
@@ -132,9 +154,22 @@ const AddressSetting = (props: AddressSettingProps) => {
               render: () => {
                 return <Input />
               }
-            }
+            },
           ]}
         />
+        <div style={{marginLeft:55,color:'#000000d9'}}>
+          <Row>
+            <Col span={8}>断线时保存数据：</Col>
+            <Col span={10}>
+              <Radio.Group defaultValue={enabled} onChange={(e)=>{
+                update(e.target.value)
+              }}>
+                <Radio value={true}>开启</Radio>
+                <Radio value={false}>关闭</Radio>
+              </Radio.Group>
+            </Col>
+          </Row>
+        </div>
       </div>
     </Modal>
   </>

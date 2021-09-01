@@ -47,24 +47,6 @@ function ChannelModel(props: ChannelProps) {
           ref={form}
           items={[
             {
-              name: 'deviceId',
-              label: '设备名称',
-              render: () => {
-                return <Input placeholder='请输入名称' readOnly={true} />
-              }
-            },
-            {
-              name: 'channelId',
-              label: '通道ID',
-              required: true,
-              options: {
-                rules: [{ required: true, message: '请输入通道ID' }],
-              },
-              render: () => {
-                return <Input placeholder='请输入通道ID' />
-              }
-            },
-            {
               name: 'name',
               label: '通道名称',
               required: true,
@@ -76,10 +58,24 @@ function ChannelModel(props: ChannelProps) {
               }
             },
             {
+              name: 'deviceName',
+              label: '设备名称',
+              render: () => {
+                return <Input placeholder='请输入名称' readOnly={true} disabled />
+              }
+            },
+            {
+              name: 'channelId',
+              label: '通道ID',
+              render: () => {
+                return <Input placeholder='请输入通道ID' disabled />
+              }
+            },
+            {
               name: 'provider',
               label: '接入协议',
               render: () => {
-                return <Input placeholder='请输入接入协议' readOnly={true} />
+                return <Input placeholder='请输入接入协议' readOnly={true} disabled />
               }
             }
           ]}
