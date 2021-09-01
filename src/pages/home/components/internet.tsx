@@ -29,6 +29,7 @@ function Internet() {
 
   const InternetVisibleEvent = () => {
     setInternetVisible(false)
+    
   }
 
   const getNetwork = () => {

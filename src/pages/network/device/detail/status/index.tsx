@@ -12,6 +12,7 @@ interface Props {
     refresh: Function;
     device: any;
     type: string;
+    status: any
 }
 const topColResponsiveProps = {
     xs: 24,
@@ -23,14 +24,13 @@ const topColResponsiveProps = {
 };
 const Status: React.FC<Props> = props => {
 
-    const { device, type } = props;
+    const { device, type, status } = props;
     const [properties, setProperties] = useState<any[]>([]);
     const [list, setList] = useState<any[]>([]);
-
     const [loading, setLoading] = useState<boolean>(false);
-
     const [propertiesMap, setPropertiesMap] = useState<any>({});
     let properties$: any;
+
 
 
     useEffect(() => {
@@ -52,49 +52,52 @@ const Status: React.FC<Props> = props => {
                 })
                 setList([...datalist]);
             }
-            properties$ && properties$.unsubscribe();
-
-            properties$ = getWebsocket(
-                `instance-info-property-${device.id}-${device.productId}`,
-                `/dashboard/device/${device.productId}/properties/realTime`,
-                {
-                    deviceId: device.id,
-                    history: 1,
-                },
-            ).subscribe((resp) => {
-                const { payload } = resp;
-                const dataValue = payload.value;
-                if (!propertiesMap[dataValue.property]) return;
-                propertiesMap[dataValue.property] = dataValue.value
-                setPropertiesMap({ ...propertiesMap });
-
-                list.map(item => {
-                    if (item.id === dataValue.property) {
-                        item.time = payload.timestamp,
-                            item.value = dataValue.value
-                    }
-                })
-                setList([...list])
-            });
-            return () => {
-                properties$ && properties$.unsubscribe();
-            };
         }
     }, [props.device]);
 
+    useEffect(() => {
+        properties$ && properties$.unsubscribe();
+        properties$ = getWebsocket(
+            `instance-info-property-${device.id}-${device.productId}`,
+            `/dashboard/device/${device.productId}/properties/realTime`,
+            {
+                deviceId: device.id,
+                history: 1,
+            },
+        ).subscribe((resp) => {
+            const { payload } = resp;
+            const dataValue = payload.value;
+            if (!propertiesMap[dataValue.property]) return;
+            propertiesMap[dataValue.property] = dataValue.formatValue
+            setPropertiesMap({ ...propertiesMap });
+            list.map(item => {
+                if (item.id === dataValue.property) {
+                    item.time = payload.timestamp,
+                        item.value = dataValue.formatValue
+                }
+            })
+            setList([...list])
+        },
+        );
+        return () => {
+            properties$ && properties$.unsubscribe();
+        };
+    }, [list]);
+
     return (
         <Spin spinning={!loading}>
-            <div style={{height:530}}>
+            <div style={{ height: 530 }}>
+
                 {
                     type === 'card' ? (
                         <Row gutter={24} id="device-instance-status" >
                             <Col {...topColResponsiveProps}>
                                 <DeviceState
-                                    state={device?.state || {}}
+                                    state={status?.state || {}}
                                     runInfo={
                                         {
-                                            'onlineTime': device?.onlineTime,
-                                            'offlineTime': device?.offlineTime
+                                            'onlineTime': status?.onlineTime,
+                                            'offlineTime': status?.offlineTime
                                         }
                                     }
                                 />

@@ -1,0 +1,405 @@
+import React, { useEffect, useState } from 'react';
+import Form, { FormComponentProps } from 'antd/lib/form';
+import { AutoComplete, Card, Col, Icon, Input, message, Popconfirm, Radio, Row, Select, Switch ,Button} from 'antd';
+import { Triggers } from '@/pages/rule-engine/scene/data';
+import Service from "@/pages/edge-gateway/device/detail/rule-engine/service";
+import Bind from './bind';
+
+interface Props extends FormComponentProps {
+  trigger: Partial<Triggers>;
+  save: Function;
+  remove: Function;
+  position: number;
+  deviceId: string;
+}
+
+const Trigger: React.FC<Props> = props => {
+  const service = new Service('rule-engine');
+  const [deviceName, setDeviceName] = useState('');
+  const [sceneListNoPage, setSceneListNoPage] = useState([]);
+  const [shakeLimit, setShakeLimit] = useState(props.trigger.device && props.trigger.device.shakeLimit ? props.trigger.device.shakeLimit : { enabled: false });
+  const [bindVisible, setBindVisible] = useState(false);
+  const [deviceData, setDeviceData] = useState({});
+  const [metaData, setMetaData] = useState({
+    properties: [],
+    events: [],
+    functions: []
+  });
+  const [triggerType, setTriggerType] = useState(props.trigger.trigger);
+  const [messageType, setMessageType] = useState(props.trigger.device && props.trigger.device?.type ? props.trigger.device.type : '');
+  const [filters, setFilters] = useState(props.trigger.device && props.trigger.device?.filters ? props.trigger.device.filters : []);
+  const [dataSource, setDataSource] = useState([]);
+
+  const [trigger, setTrigger] = useState(props.trigger);
+  useEffect(() => {
+    service.getSceneList(props.deviceId, {paging: false}).subscribe(
+      res => {
+        setSceneListNoPage(res);
+      }
+    );
+    if (props.trigger.device && props.trigger.device.deviceId) {
+      findDeviceById(props.trigger.device.deviceId)
+    }
+  }, []);
+
+  const setDataSourceValue = (type: string, data: any, value: string) => {
+    let dataSource = [];
+    data.map((item: any) => {
+      if (item.id === trigger.device.modelId) {
+        data = item
+      } else {
+        data = []
+      }
+    });
+    dataSource.push(value);
+    if (type === 'function') {
+      if (data.output !== undefined && data.output.type === 'object') {
+        data.valueType.properties.map((p: any) => {
+          dataSource.push(`${value}.${p.id}`);
+        });
+      }
+    } else if (type === 'event') {
+      dataSource.push('this');
+      if (data.valueType !== undefined && data.valueType.type === 'object') {
+        data.valueType.properties.map((p: any) => {
+          dataSource.push(`${p.id}`);
+        });
+      }
+    } else if (type === 'properties') {
+      if (data.valueType !== undefined && data.valueType.type === 'object') {
+        data.valueType.properties.map((p: any) => {
+          dataSource.push(`${value}.${p.id}`);
+        });
+      }
+    }
+    setDataSource(dataSource);
+  };
+
+  const findDeviceById = (deviceId: string) => {
+    service.getInstanceDetail(props.deviceId, deviceId).subscribe((response: any) => {
+      setDeviceData(response);
+      if(trigger.device){
+        trigger.device.productId = response?.productId || '';
+        trigger.device.deviceId = response?.id || '';
+      }else{
+        trigger.device = {
+          productId: response?.productId || '',
+          deviceId: response?.id || '',
+        }
+      }
+      setMetaData(JSON.parse(response?.metadata || '[]'));
+      setDeviceName(response?.name || '')
+    })
+  };
+
+  const submitData = () => {
+    props.save({
+      ...trigger,
+    });
+  };
+
+  const renderType = () => {
+    switch (messageType) {
+      case 'properties':
+        return (
+          <Col span={12} style={{ paddingBottom: 10, paddingLeft: 3, paddingRight: 9 }}>
+            <Select placeholder="物模型属性" defaultValue={props.trigger.device?.modelId}
+              onChange={(value: string) => {
+                setDataSourceValue('properties', metaData.properties, value);
+                trigger.device.modelId = value;
+                setTrigger(trigger);
+                submitData();
+              }}
+            >
+              {metaData.properties?.map((item: any) => (
+                <Select.Option key={item.id} data={item}>{`${item.name}（${item.id}）`}</Select.Option>
+              ))}
+            </Select>
+          </Col>
+        );
+      case 'event':
+        return (
+          <Col span={12} style={{ paddingBottom: 10, paddingLeft: 3, paddingRight: 9 }}>
+            <Select placeholder="物模型事件" defaultValue={props.trigger.device?.modelId}
+              onChange={(value: string) => {
+                setDataSourceValue('events', metaData.events, value);
+                trigger.device.modelId = value;
+                setTrigger(trigger);
+                submitData();
+              }}
+            >
+              {metaData.events?.map((item: any) => (
+                <Select.Option key={item.id} data={item}>{`${item.name}（${item.id}）`}</Select.Option>
+              ))}
+            </Select>
+          </Col>
+        );
+      case 'function':
+        return (
+          <Col span={12} style={{ paddingBottom: 10, paddingLeft: 3, paddingRight: 9 }}>
+            <Select placeholder="物模型功能" defaultValue={props.trigger.device?.modelId}
+              onChange={(value: string) => {
+                setDataSourceValue('function', metaData.functions, value);
+                trigger.device.modelId = value;
+                setTrigger(trigger);
+                submitData();
+              }}
+            >
+              {metaData.functions?.map((item: any) => (
+                <Select.Option key={item.id} data={item}>{`${item.name}（${item.id}）`}</Select.Option>
+              ))}
+            </Select>
+          </Col>
+        );
+      default:
+        return null;
+    }
+  };
+
+  const renderDataType = () => {
+    switch (triggerType) {
+      case 'device':
+        return (
+          <div>
+            <Col span={24}>
+              <Col span={12} style={{ paddingBottom: 10, paddingLeft: -1, paddingRight: 12 }}>
+                <Input addonAfter={<Icon onClick={() => {
+                  setBindVisible(true);
+                }} type='gold' title="点击选择设备" />}
+                  defaultValue={deviceName}
+                  placeholder="点击选择设备"
+                  readOnly={true}
+                  value={deviceData?.name}
+                />
+              </Col>
+            </Col>
+            <Col span={24}>
+              <Col span={12} style={{ paddingBottom: 16, paddingLeft: -1, paddingRight: 12 }}>
+                <Select placeholder="选择消息类型" defaultValue={props.trigger.device?.type}
+                  onChange={(value: string) => {
+                    setMessageType(() => value);
+                    trigger.device.type = value;
+                    setTrigger(trigger);
+                    submitData();
+                  }}>
+                  <Select.Option value="online">上线</Select.Option>
+                  <Select.Option value="offline">离线</Select.Option>
+                  <Select.Option value="properties">属性</Select.Option>
+                  <Select.Option value="event">事件</Select.Option>
+                  <Select.Option value="function">功能</Select.Option>
+                </Select>
+              </Col>
+              {renderType()}
+            </Col>
+            {/* <Col span={24}> */}
+              {filters.map((item: any, index: number) => (
+                <div className="ant-row" key={index} style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: 16 }}>
+                  <Col span={8} >
+                    <AutoComplete dataSource={dataSource} placeholder="过滤条件KEY" children={item.key}
+                      defaultValue={item.key}
+                      onBlur={value => {
+                        filters[index].key = value;
+                        trigger.device.filters = filters;
+                        setTrigger(trigger);
+                      }}
+                      filterOption={(inputValue, option) =>
+                        option?.props?.children?.toUpperCase()?.indexOf(inputValue.toUpperCase()) !== -1
+                      }
+                    />
+                  </Col>
+                  <Col span={8} style={{ padding: '0 12px' }}>
+                    <Select placeholder="操作符" defaultValue={item.operator}
+                      onChange={(value: string) => {
+                        filters[index].operator = value;
+                        trigger.device.filters = filters;
+                        setTrigger(trigger);
+                      }}>
+                      <Select.Option value="eq">等于(=)</Select.Option>
+                      <Select.Option value="not">不等于(!=)</Select.Option>
+                      <Select.Option value="gt">大于(&gt;)</Select.Option>
+                      <Select.Option value="lt">小于(&lt;)</Select.Option>
+                      <Select.Option value="gte">大于等于(&gt;=)</Select.Option>
+                      <Select.Option value="lte">小于等于(&lt;=)</Select.Option>
+                      <Select.Option value="like">模糊(%)</Select.Option>
+                    </Select>
+                  </Col>
+                  <Col span={7} style={{ marginRight: 6 }}>
+                    <Input placeholder="过滤条件值" defaultValue={item.value}
+                      onChange={event => {
+                        filters[index].value = event.target.value;
+                        trigger.device.filters = filters;
+                        setTrigger(trigger);
+                      }}
+                    />
+                  </Col>
+                  <Icon onClick={() => {
+                  filters.splice(index, 1);
+                  setFilters([...filters]);
+                  trigger.device.filters = filters;
+                  setTrigger({ ...trigger });
+                }} type="delete" />
+                </div>
+              ))}
+            {/* </Col> */}
+            <Col span={24}>
+            <Button
+                type='dashed'
+                onClick={() => {
+                  setFilters([...filters, { _id: Math.round(Math.random() * 100000) }]);
+                }}
+                style={{ marginBottom: 16 }}
+              >添加过滤条件</Button>
+              {/* <div>
+                <a onClick={() => {
+                  setFilters([...filters, { _id: Math.round(Math.random() * 100000) }]);
+                }}>添加</a>
+              </div> */}
+            </Col>
+          </div>
+        );
+      case 'timer':
+        return (
+          <div>
+            <Col span={24} style={{ paddingBottom: 10 }}>
+              <Input placeholder="cron表达式" defaultValue={trigger.cron} key="cron"
+                onBlur={event => {
+                  trigger.cron = event.target.value;
+                  setTrigger(trigger);
+                }}
+              />
+            </Col>
+          </div>
+        );
+      case 'scene':
+        return (
+          <div>
+            <Col span={24} style={{ paddingBottom: 10 }}>
+              <Select placeholder="请选择场景" mode="multiple" defaultValue={trigger.scene?.sceneIds}
+                onChange={(value: string) => {
+                  trigger.scene.sceneIds = value;
+                  setTrigger(trigger);
+                }}
+              >
+                {
+                  sceneListNoPage.map((item, index) => {
+                    return <Select.Option key={index} value={item.id}>{item.name}</Select.Option>
+                  })
+                }
+              </Select>
+            </Col>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div style={{ paddingBottom: 5 }} key={props.position}>
+      {/* <Card size="small" bordered={false} style={{ backgroundColor: '#F5F5F6' }}> */}
+      <Row style={{ paddingBottom: 10 }}>
+      <span style={{ fontSize: 14, fontWeight: 600 }}>触发器: {props.position + 1}</span>
+          <Popconfirm title="确认删除此触发器？"
+            onConfirm={() => props.remove(props.position)}
+          >
+            <Icon type="delete" style={{ paddingLeft: 14 }} />
+          </Popconfirm>
+        </Row>
+
+        <Row>
+          <Col span={24} style={{ paddingBottom: 16 }}>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+            <Col span={triggerType === 'device' ? 18 : 24}>
+                <Select placeholder="选择触发器类型" value={trigger.trigger}
+                  onChange={(value: string) => {
+                    setTriggerType(value);
+                    trigger.trigger = value;
+                    if (value === 'scene' && trigger.scene === undefined) {
+                      trigger.scene = {};
+                      trigger.scene.sceneIds = [];
+                    }
+                    if(value === 'device' && trigger.device === undefined){
+                      trigger.device = {}
+                    }
+                    setTrigger(trigger);
+                  }}
+                >
+                  <Select.Option value="manual">手动触发</Select.Option>
+                  <Select.Option value="timer">定时触发</Select.Option>
+                  <Select.Option value="device">设备触发</Select.Option>
+                  <Select.Option value="scene">场景触发</Select.Option>
+                </Select>
+              </Col>
+              {
+                triggerType === 'device' && (
+                  <Switch key='shakeLimit.enabled' checkedChildren="开启防抖" unCheckedChildren="关闭防抖"
+                    defaultChecked={shakeLimit.enabled ? shakeLimit.enabled : false}
+                    style={{ marginLeft: 20, width: '100px' }}
+                    onChange={(value: boolean) => {
+                      let shake = {...shakeLimit, enabled: value};
+                      setShakeLimit({ ...shake });
+                      trigger.device.shakeLimit = {...shake};
+                      setTrigger(trigger);
+                    }}
+                  />
+                )
+              }
+              
+            </div>
+          </Col>
+          {shakeLimit.enabled && triggerType == 'device' && (
+          <Col span={24} style={{ paddingBottom: 16 }}>
+            <Input style={{ width: 80, }} key='shakeLimit.time'
+              defaultValue={shakeLimit.time}
+              onBlur={event => {
+                trigger.device.shakeLimit.time = event.target.value;
+                setTrigger(trigger)
+              }}
+            />
+            <span style={{ padding: '0 12px' }}>秒内发生</span>
+            <Input style={{ width: 80 }} key='shakeLimit.threshold'
+              defaultValue={shakeLimit.threshold}
+              onBlur={event => {
+                trigger.device.shakeLimit.threshold = event.target.value;
+                setTrigger(trigger)
+              }}
+            />
+            <span style={{ padding: '0 12px' }}>次及以上时，处理</span>
+            <Radio.Group defaultValue={shakeLimit.alarmFirst} key='shakeLimit.alarmFirst'
+              buttonStyle="solid"
+              onChange={event => {
+                trigger.device.shakeLimit.alarmFirst = Boolean(event.target.value);
+                setTrigger(trigger)
+              }}
+            >
+              <Radio.Button value={true}>第一次</Radio.Button>
+              <Radio.Button value={false}>最后一次</Radio.Button>
+            </Radio.Group>
+          </Col>
+        )}
+            {renderDataType()}
+          
+        </Row>
+      {/* </Card> */}
+      {bindVisible && (
+        <Bind selectionType='radio'
+          close={() => {
+            setBindVisible(false);
+          }}
+          deviceId={props.deviceId}
+          save={(item: any) => {
+            if (item[0]) {
+              setBindVisible(false);
+              findDeviceById(item[0]);
+            } else {
+              message.error('请勾选设备');
+              return;
+            }
+          }}
+        />
+      )}
+    </div>
+  );
+};
+
+export default Form.create<Props>()(Trigger);

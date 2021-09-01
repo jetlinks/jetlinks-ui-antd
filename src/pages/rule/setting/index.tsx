@@ -8,9 +8,10 @@ import styles from './index.less';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 import Save from './save';
 import encodeQueryParam from '@/utils/encodeParam';
-import AlarmSave from "@/pages/device/alarm/save/index";
+import Edit from '@/pages/alarm/setting/edit';
 import SqlRuleSave from '@/pages/rule-engine/sqlRule/save/index';
-import SceneSave from '@/pages/rule-engine/scene/save';
+import SceneSave from './scenesave';
+// import SceneSave from '@/pages/rule-engine/scene/save';
 import { ruleList, ListData, remove } from '@/pages/rule-engine/instance/service';
 import { useRequest } from 'ahooks';
 import { ApiResponse } from '@/services/response';
@@ -93,7 +94,7 @@ const ExtraTool = (props: ExtraToolProps) => {
 const Setting: React.FC<Props> = props => {
 
   const { dispatch } = props;
-
+  const deviceId = 'local';
   // const { result } = props.ruleInstance;
   const modelType = new Map();
   modelType.set('device_alarm', '设备告警');
@@ -295,6 +296,7 @@ const Setting: React.FC<Props> = props => {
           if (response.status === 200 && response.result) {
             setDeviceMateData(response.result.metadata);
             setDeviceAlarm(data);
+            console.log(data)
             setSaveAlarmVisible(true);
           } else {
             message.error("告警相关设备不存在。");
@@ -448,7 +450,8 @@ const Setting: React.FC<Props> = props => {
           {
             title: '操作',
             render: (data) => <>
-              <Button type='link' onClick={() => { onEdit(data) }}>编辑</Button>
+              <Button type='link' onClick={() => { onEdit(data)
+              console.log(deviceAlarm)}}>编辑</Button>
               <Button type='link' onClick={() => { onReboot(data) }}>重启</Button>
               <Button type='link' onClick={() => { onCopy(data) }}>复制</Button>
               {data.state.value==='stopped'?<Button type='link' onClick={() => { handleDelete(data) }}>删除</Button>:''}
@@ -460,6 +463,7 @@ const Setting: React.FC<Props> = props => {
       {sceneVisible && (
         <SceneSave
           data={detailData}
+          deviceId={deviceId}
           close={() => {
             setSceneVisible(false);
             setDetailData({});
@@ -473,7 +477,7 @@ const Setting: React.FC<Props> = props => {
       {/* 新增复制 */}
       {saveVisible && <Save
                     data={ruleData}
-                    deviceId={'local'}
+                    deviceId={deviceId}
                     close={() => {
                         setSaveVisible(false);
                     }}
@@ -537,7 +541,7 @@ const Setting: React.FC<Props> = props => {
           }}
         />
       )}
-      {saveAlarmVisible && <AlarmSave
+      {saveAlarmVisible && <Edit
         close={() => {
           setDeviceAlarm({});
           setDeviceMateData("");
@@ -547,12 +551,8 @@ const Setting: React.FC<Props> = props => {
           submitData(data);
         }}
         data={deviceAlarm}
-        targetId={deviceAlarm.targetId}
-        target={deviceAlarm.target}
-        metaData={deviceMateData}
-        name={deviceAlarm.name}
-        productName={deviceAlarm.alarmRule ? deviceAlarm.alarmRule.productName : ''}
-        productId={deviceAlarm.alarmRule ? deviceAlarm.alarmRule.productId : ''}
+        // data={{ ...JSON.parse(deviceAlarm.modelMeta || '[]') }}
+        deviceId={deviceId}
       />}
       <Modal
         title={<span style={{ fontWeight: 600 }}>删除</span>}
