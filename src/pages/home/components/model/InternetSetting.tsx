@@ -17,14 +17,14 @@ function InternetSetting(props: InternetSettingProps) {
 
   const service = new Service('edge/network');
   const { onOk, ...extra } = props
-  const [hidden, setHidden] = useState(props.data?.netWay === 'DHCP' ? true : false)
+  const [hidden, setHidden] = useState(props.data?.netWay === 'dhcp' ? true : false)
   const form: any = useRef(null)
 
   const OnOk = () => {
     if(hidden){
       service.saveNetworkConfiguration(
         {
-          netWay: 'DHCP',
+          netWay: 'dhcp',
           // deviceId: 'local',
           ethName: props.data?.ethName,
           // ipAdd: props.data?.ipAdd,
@@ -49,7 +49,7 @@ function InternetSetting(props: InternetSettingProps) {
           ipAdd: data.ipAdd,
           mask: data.mask,
           gateWayAdd: data.gateWayAdd,
-          netWay: 'STATIC'
+          netWay: 'static'
           // dns: data.dns
         }
       ).subscribe(resp => {
@@ -64,11 +64,11 @@ function InternetSetting(props: InternetSettingProps) {
   }
 
   const changeIPStatus = (e: RadioChangeEvent) => {
-    setHidden(e.target.value === 'DHCP' ? true : false)
+    setHidden(e.target.value=== 'dhcp' ? true : false)
   }
 
   useEffect(() => {
-    setHidden(props.data?.netWay === 'DHCP' ? true : false)
+    setHidden(props.data?.netWay === 'dhcp' ? true : false)
   }, [props.data])
 
   return <Modal
@@ -94,8 +94,8 @@ function InternetSetting(props: InternetSettingProps) {
             label: 'IP地址获取方式',
             render: () => {
               return <Radio.Group onChange={changeIPStatus}>
-                <Radio value={'DHCP'}>自动获取</Radio>
-                <Radio value={'STATIC'}>手动配置</Radio>
+                <Radio value={'dhcp'}>自动获取</Radio>
+                <Radio value={'static'}>手动配置</Radio>
               </Radio.Group>
             }
           }

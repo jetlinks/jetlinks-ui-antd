@@ -86,7 +86,7 @@ function Home() {
               '立刻配置平台地址'
           }
         </div>
-        {/* <Button type="primary" onClick={() => { setAddressVisible(true) }}>{info.host ? '编辑' : '立即配置'}</Button> */}
+        <Button type="primary" onClick={() => { setAddressVisible(true) }}>{info.host ? '编辑' : '立即配置'}</Button>
       </div>
       <div className={styles.layout}>
         <Internet />
@@ -105,7 +105,7 @@ function Home() {
       </div>
       {/* 平台地址 */}
       <AddressModel
-        data={info.host}
+        data={info}
         visible={addressVisible}
         onOk={AddressVisibleEvent}
         onCancel={AddressVisibleEvent}

@@ -41,5 +41,14 @@ class Service extends BaseService<any> {
                 filter(resp => resp.status === 200),
                 map(resp => resp)
             ));
+    public editPlateInfo = (data?: any) => defer(
+        () => from(request(`/jetlinks/edge/operations/local/edge-base-config-update/invoke`, {
+            method: 'POST',
+            data
+        }))
+            .pipe(
+                filter(resp => resp.status === 200),
+                map(resp => resp)
+            ));
 }
 export default Service;

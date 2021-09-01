@@ -33,14 +33,8 @@ function Internet() {
 
   const getNetwork = () => {
     service.getEdgeNetworkList().subscribe(resp => {
-      resp.map((item: any) => {
-        if(item.ethName === 'enp2s0'){
-          setNetwork1(item)
-        }
-        if(item.ethName === 'enp3s0'){
-          setNetwork2(item)
-        }
-      })
+      setNetwork1(resp[0])
+      setNetwork2(resp[1])
     })
   }
   useEffect(() => {
