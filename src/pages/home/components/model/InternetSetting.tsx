@@ -74,6 +74,7 @@ function InternetSetting(props: InternetSettingProps) {
   return <Modal
     onOk={OnOk}
     {...extra}
+    destroyOnClose
   >
     <div style={{ overflow: 'hidden' }}>
       <Form
