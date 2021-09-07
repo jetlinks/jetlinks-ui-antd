@@ -67,6 +67,7 @@ const AddressSetting = (props: AddressSettingProps) => {
     <Modal
       title='平台配置'
       onOk={OnOk}
+      destroyOnClose
       {...extra}
     >
       <div style={{ overflow: 'hidden' }}>
