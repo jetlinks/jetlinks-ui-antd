@@ -22,7 +22,7 @@ export default {
 
   'menu.log': 'Log',
   'menu.log.access': 'AccessLog',
-  'menu.log.System': 'SystemLog',
+  'menu.log.System': 'System Log',
   'menu.admin.sub-page': 'Sub-Page',
   'menu.login': 'Login',
   'menu.register': 'Register',

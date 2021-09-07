@@ -34,25 +34,37 @@ const Tenant = () => {
     },
     {
       dataIndex: 'tenant',
-      title: '头像',
+      title:intl.formatMessage({
+        id:'pages.system.tenant.avatar',
+        defaultMessage:'头像',
+      }),
       align: 'center',
       search: false,
       renderText: (text: TenantDetail) => <Avatar src={text.photo} />,
     },
     {
       dataIndex: 'tenant',
-      title: '名称',
+      title:intl.formatMessage({
+        id:'pages.system.tenant.name',
+        defaultMessage:'名称',
+      }),
       align: 'center',
       renderText: (text: TenantDetail) => text.name,
     },
     {
       dataIndex: 'members',
-      title: '成员数',
+      title:intl.formatMessage({
+        id:'pages.system.tenant.members',
+        defaultMessage:'成员数',
+      }),
       align: 'center',
     },
     {
       dataIndex: 'tenant',
-      title: '状态',
+      title:intl.formatMessage({
+        id:'pages.searchTable.titleStatus',
+        defaultMessage:'状态',
+      }),
       align: 'center',
       renderText: (text: TenantDetail) => text.state.text,
       valueType: 'select',
@@ -60,15 +72,24 @@ const Tenant = () => {
       onFilter: true,
       valueEnum: [
         {
-          text: '全部',
+          text: intl.formatMessage({
+            id:'pages.searchTable.titleStatus.all',
+            defaultMessage: '全部',
+          }), 
           status: 'Default',
         },
         {
-          text: '正常',
+          text:intl.formatMessage({
+            id:'pages.searchTable.titleStatus.normal',
+            defaultMessage: '正常',
+          }), 
           status: '1',
         },
         {
-          text: '禁用',
+          text:intl.formatMessage({
+            id:'pages.searchTable.titleStatus.disable',
+            defaultMessage: '禁用',
+          }), 
           status: '0',
         },
       ],
@@ -144,7 +165,10 @@ const Tenant = () => {
         request={(params = {}) => service.queryDetail(params)}
         columns={columns}
         service={service}
-        title="租户列表"
+        title={intl.formatMessage({
+          id: 'pages.system.tenant.list',
+          defaultMessage: '租户列表',
+        })}
         schema={{}}
         menu={menu}
         actionRef={actionRef}

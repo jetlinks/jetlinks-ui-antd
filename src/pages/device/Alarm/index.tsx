@@ -15,19 +15,31 @@ const Alarm = () => {
 
   const columns: ProColumns<AlarmItem>[] = [
     {
-      title: '设备ID',
+      title: intl.formatMessage({
+        id: 'pages.device.alarm.deviceID',
+        defaultMessage: '设备ID',
+      }),
       dataIndex: 'deviceId',
     },
     {
-      title: '设备名称',
+      title: intl.formatMessage({
+        id: 'pages.device.alarm.equipmentName',
+        defaultMessage: '设备名称',
+      }),
       dataIndex: 'deviceName',
     },
     {
-      title: '告警名称',
+      title: intl.formatMessage({
+        id: 'pages.device.alarm.alarmName',
+        defaultMessage: '告警名称',
+      }),
       dataIndex: 'alarmName',
     },
     {
-      title: '告警时间',
+      title: intl.formatMessage({
+        id: 'pages.device.alarm.alarmTime',
+        defaultMessage: '告警时间',
+      }),
       dataIndex: 'alarmTime',
       width: '300px',
       render: (text: any) => (text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/'),
@@ -35,7 +47,10 @@ const Alarm = () => {
       defaultSortOrder: 'descend',
     },
     {
-      title: '处理状态',
+      title: intl.formatMessage({
+        id: 'pages.device.alarm.status',
+        defaultMessage: '处理状态',
+      }),
       dataIndex: 'state',
       align: 'center',
       width: '100px',
@@ -43,7 +58,10 @@ const Alarm = () => {
         text === 'solve' ? <Tag color="#87d068">已处理</Tag> : <Tag color="#f50">未处理</Tag>,
     },
     {
-      title: '操作',
+      title: intl.formatMessage({
+        id: 'pages.data.option',
+        defaultMessage: '操作',
+      }),
       width: '120px',
       align: 'center',
       valueType: 'option',

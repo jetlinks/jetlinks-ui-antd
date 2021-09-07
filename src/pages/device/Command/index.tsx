@@ -16,38 +16,92 @@ const Command = () => {
 
   const columns: ProColumns<CommandItem>[] = [
     {
-      title: '设备ID',
+      title:  intl.formatMessage({
+        id: 'pages.device.command.deviceID',
+        defaultMessage: '设备ID',
+      }),
       dataIndex: 'deviceId',
     },
     {
-      title: '设备名称',
+      title: intl.formatMessage({
+        id: 'pages.device.command.equipmentName',
+        defaultMessage: '设备名称',
+      }),
       dataIndex: 'deviceName',
     },
     {
-      title: '指令类型',
+      title: intl.formatMessage({
+        id: 'pages.device.command.instructionType',
+        defaultMessage: '指令类型',
+      }),
       dataIndex: 'messageType',
       filters: [
-        { text: '读取属性', value: 'READ_PROPERTY' },
-        { text: '设置属性', value: 'WRITE_PROPERTY' },
-        { text: '调用功能', value: 'INVOKE_FUNCTION' },
+        { 
+          text: intl.formatMessage({
+            id: 'pages.device.command.instructionType.readAttributes',
+            defaultMessage: '读取属性',
+          }),
+          value: 'READ_PROPERTY' 
+        },
+        { 
+          text: intl.formatMessage({
+            id: 'pages.device.command.instructionType.setProperties',
+            defaultMessage: '设置属性',
+          }),
+          value: 'WRITE_PROPERTY' 
+        },
+        { 
+          text: intl.formatMessage({
+            id: 'pages.device.command.instructionType.callAttribute',
+            defaultMessage: '调用属性',
+          }),
+          value: 'INVOKE_FUNCTION' 
+        },
       ],
     },
     {
-      title: '状态',
+      title: intl.formatMessage({
+        id: 'pages.device.command.status',
+        defaultMessage: '状态',
+      }),
       dataIndex: 'state',
       filters: [
-        { text: '等待中', value: 'wait' },
-        { text: '发送失败', value: 'sendError' },
-        { text: '发送成功', value: 'success' },
+        { 
+          text: intl.formatMessage({
+            id: 'pages.device.command.status.waiting',
+            defaultMessage: '等待中',
+          }),
+          value: 'wait' 
+        },
+        { 
+          text: intl.formatMessage({
+            id: 'pages.device.command.status.failed ',
+            defaultMessage: '发送失败',
+          }),
+          value: 'sendError' 
+        },
+        { 
+          text: intl.formatMessage({
+            id: 'pages.device.command.status.succeed',
+            defaultMessage: '发送成功',
+          }),
+          value: 'success' 
+        },
       ],
       render: (value: any) => value.text,
     },
     {
-      title: '错误信息',
+      title: intl.formatMessage({
+        id: 'pages.device.command.errorMessage',
+        defaultMessage: '错误信息',
+      }),
       dataIndex: 'lastError',
     },
     {
-      title: '发送时间',
+      title: intl.formatMessage({
+        id: 'pages.device.command.sendTime',
+        defaultMessage: '发送时间',
+      }),
       dataIndex: 'sendTimestamp',
       render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
       sorter: true,
@@ -56,7 +110,7 @@ const Command = () => {
     {
       title: intl.formatMessage({
         id: 'pages.data.option',
-        defaultMessage: '操作',
+          defaultMessage: '操作',
       }),
       valueType: 'option',
       align: 'center',

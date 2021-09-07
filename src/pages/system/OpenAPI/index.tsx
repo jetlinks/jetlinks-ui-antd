@@ -30,11 +30,18 @@ const OpenAPI: React.FC = () => {
       dataIndex: 'id',
     },
     {
-      title: '名称',
-      dataIndex: 'clientName',
+      title:intl.formatMessage({
+        id:'pages.system.open-api.Name',
+        defaultMessage:'名称',
+      }),
+      dataIndex: 'Name',
+
     },
     {
-      title: '用户名',
+      title:intl.formatMessage({
+        id:'pages.system.open-api.userName',
+        defaultMessage:'用户名',
+      }),
       dataIndex: 'username',
     },
     {
@@ -51,15 +58,24 @@ const OpenAPI: React.FC = () => {
       onFilter: true,
       valueEnum: [
         {
-          text: '全部',
+          text: intl.formatMessage({
+            id:'pages.searchTable.titleStatus.all',
+            defaultMessage: '全部',
+          }), 
           status: 'Default',
         },
         {
-          text: '正常',
+          text:intl.formatMessage({
+            id:'pages.searchTable.titleStatus.normal',
+            defaultMessage: '正常',
+          }), 
           status: '1',
         },
         {
-          text: '禁用',
+          text:intl.formatMessage({
+            id:'pages.searchTable.titleStatus.disable',
+            defaultMessage: '禁用',
+          }), 
           status: '0',
         },
       ],
@@ -142,7 +158,10 @@ const OpenAPI: React.FC = () => {
         name: 'oy139sts87c',
         properties: {
           clientName: {
-            title: '名称',
+            title:intl.formatMessage({
+              id:'pages.system.open-api.Name',
+              defaultMessage:'名称',
+            }),
             type: 'string',
             'x-decorator': 'FormItem',
             'x-component': 'Input',
@@ -198,7 +217,10 @@ const OpenAPI: React.FC = () => {
             name: 'secureKey',
           },
           username: {
-            title: '用户名',
+            title:intl.formatMessage({
+              id:'pages.system.open-api.userName',
+              defaultMessage:'用户名',
+            }),
             type: 'string',
             'x-decorator': 'FormItem',
             'x-component': 'Input',
@@ -214,7 +236,10 @@ const OpenAPI: React.FC = () => {
             name: 'username',
           },
           password: {
-            title: '密码',
+            title:intl.formatMessage({
+              id:'pages.system.open-api.passWord',
+              defaultMessage:'密码',
+            }),
             type: 'string',
             'x-decorator': 'FormItem',
             'x-component': 'Input',
@@ -263,7 +288,10 @@ const OpenAPI: React.FC = () => {
         },
       },
       ipWhiteList: {
-        title: 'IP白名单',
+        title:intl.formatMessage({
+          id:'pages.system.open-api.ipWhileList',
+          defaultMessage:'IP白名单',
+        }),
         type: 'string',
         'x-decorator': 'FormItem',
         'x-component': 'Input.TextArea',
@@ -277,7 +305,10 @@ const OpenAPI: React.FC = () => {
         'x-index': 1,
       },
       description: {
-        title: '描述',
+        title:intl.formatMessage({
+          id:'pages.system.open-api.describe',
+          defaultMessage:'描述',
+        }),
         type: 'string',
         'x-decorator': 'FormItem',
         'x-component': 'Input.TextArea',
@@ -299,7 +330,10 @@ const OpenAPI: React.FC = () => {
       <BaseCrud<OpenApiItem>
         columns={columns}
         service={service}
-        title="第三方平台"
+        title={intl.formatMessage({
+          id: 'pages.system.open-api',
+          defaultMessage: '第三方平台',
+        })}
         schema={schema}
         modelConfig={{ width: 900 }}
         actionRef={actionRef}

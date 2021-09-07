@@ -10,6 +10,7 @@ import Service from '@/pages/system/Org/service';
 import encodeQuery from '@/utils/encodeQuery';
 import type { ObsModel, OrgItem } from '@/pages/system/Org/typings';
 import Save from '@/pages/system/Org/Save';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 const obs = model<ObsModel>({
   edit: false,
@@ -42,6 +43,7 @@ const obs = model<ObsModel>({
 
 const service = new Service('organization');
 const Org = observer(() => {
+  const intl = useIntl();
   const hitCenter = () => {
     const orgChart = document.getElementsByClassName('orgchart-container')[0];
     const { width } = orgChart.getBoundingClientRect();
@@ -57,7 +59,10 @@ const Org = observer(() => {
     );
     obs.data = {
       id: null,
-      name: '机构管理',
+      name: intl.formatMessage({
+        id:'pages.system.org',
+        defaultMessage:'机构管理',
+      }),
       title: '组织架构',
       children: response.result,
     };

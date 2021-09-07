@@ -2,6 +2,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { StatisticCard } from '@ant-design/pro-card';
 import RcResizeObserver from 'rc-resize-observer';
 import { useState } from 'react';
+import { useIntl } from '@@/plugin-locale/localeExports';
 import CPU from '@/pages/Analysis/CPU';
 import Jvm from '@/pages/Analysis/Jvm';
 
@@ -9,6 +10,7 @@ const { Divider } = StatisticCard;
 
 const Analysis = () => {
   const [responsive, setResponsive] = useState(false);
+  const intl = useIntl();
 
   return (
     <PageContainer>
@@ -21,21 +23,30 @@ const Analysis = () => {
         <StatisticCard.Group direction={responsive ? 'column' : 'row'}>
           <StatisticCard
             statistic={{
-              title: 'CPU使用率',
+              title:intl.formatMessage({
+                id:'pages.analysis.cpu',
+                defaultMessage:'CPU使用率',
+              }),
             }}
             chart={<CPU />}
           />
           <Divider type={responsive ? 'horizontal' : 'vertical'} />
           <StatisticCard
             statistic={{
-              title: 'JVM内存',
+              title:intl.formatMessage({
+                id:'pages.analysis.jvm',
+                defaultMessage:'JVM内存',
+              }),
             }}
             chart={<Jvm />}
           />
           <Divider type={responsive ? 'horizontal' : 'vertical'} />
           <StatisticCard
             statistic={{
-              title: '信息完成度',
+              title:intl.formatMessage({
+                id:'pages.analysis.information',
+                defaultMessage:'信息完成度',
+              }),
               value: 5,
               suffix: '/ 100',
             }}

@@ -22,34 +22,52 @@ const System = () => {
       width: 48,
     },
     {
-      title: '线程',
+      title:intl.formatMessage({
+        id:'pages.log.system.thread',
+        defaultMessage:'线程',
+      }),
       dataIndex: 'threadName',
       ellipsis: true,
     },
     {
-      title: '名称',
+      title:intl.formatMessage({
+        id:'pages.log.system.name',
+        defaultMessage:'名称',
+      }),
       dataIndex: 'name',
       ellipsis: true,
     },
     {
-      title: '级别',
+      title:intl.formatMessage({
+        id:'pages.log.system.level',
+        defaultMessage:'级别',
+      }),
       dataIndex: 'level',
       width: 80,
       render: (text) => <Tag color={text === 'ERROR' ? 'red' : 'orange'}>{text}</Tag>,
     },
     {
-      title: '日志内容',
+      title:intl.formatMessage({
+        id:'pages.log.system.logContent',
+        defaultMessage:'日志内容',
+      }),
       dataIndex: 'exceptionStack',
       ellipsis: true,
     },
     {
-      title: '服务名',
+      title:intl.formatMessage({
+        id:'pages.log.system.serviceName',
+        defaultMessage:'服务名',
+      }),
       dataIndex: 'context.server',
       width: 150,
       ellipsis: true,
     },
     {
-      title: '创建时间',
+      title:intl.formatMessage({
+        id:'pages.log.system.creationTime',
+        defaultMessage:'创建时间',
+      }),
       dataIndex: 'createTime',
       width: 200,
       sorter: true,
@@ -84,7 +102,10 @@ const System = () => {
       <BaseCrud<SystemLogItem>
         columns={columns}
         service={service}
-        title="系统日志"
+        title={intl.formatMessage({
+          id: 'pages.log.system',
+          defaultMessage: '系统日志',
+        })}
         schema={{}}
         actionRef={actionRef}
       />

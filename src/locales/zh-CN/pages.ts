@@ -47,6 +47,9 @@ export default {
   'pages.searchTable.ruleName': '规则名称为必填项',
   'pages.searchTable.titleCallNo': '服务调用次数',
   'pages.searchTable.titleStatus': '状态',
+  'pages.searchTable.titleStatus.all': '全部',
+  'pages.searchTable.titleStatus.normal': '正常',
+  'pages.searchTable.titleStatus.disable': '禁用',
   'pages.searchTable.nameStatus.default': '关闭',
   'pages.searchTable.nameStatus.running': '运行中',
   'pages.searchTable.nameStatus.online': '已上线',
@@ -82,6 +85,11 @@ export default {
   'pages.data.option.detail': '详情',
   'pages.data.option.download': '下载',
 
+  // 统计分析
+  'pages.analysis.cpu': 'CPU使用率',
+  'pages.analysis.jvm': 'JVM内存',
+  'pages.analysis.information': '信息完成度',
+
   // 系统设置-用户管理
   'pages.system.user': '用户管理',
   'pages.system.user.name': '姓名',
@@ -97,32 +105,111 @@ export default {
   'pages.system.role.describe': '描述',
   'pages.system.role.option.bindUser': '绑定用户',
 
-  // 权限管理
+  // 系统设置-权限管理
   'pages.system.permission': '权限管理',
   'pages.system.permission.id': '标识',
   'pages.system.permission.name': '名称',
+  'pages.system.permission.name.tip': '名称过长会自动收缩',
   'pages.system.permission.status': '状态',
+  'pages.system.permission.add': '添加条目',
+  'pages.system.permission.basicInformation': '基础信息',
+  'pages.system.permission.operationConfiguration': '操作配置',
+  'pages.system.permission.operationConfiguration.type': '操作类型',
+  'pages.system.permission.operationConfiguration.name': '名称',
+  'pages.system.permission.operationConfiguration.describe': '描述',
+  'pages.system.permission.associatedPermissions': '关联权限',
+  'pages.system.permission.associatedPermissions.preOperation': '前置操作',
+  'pages.system.permission.associatedPermissions.associatedPermissions': '关联权限',
+  'pages.system.permission.associatedPermissions.associatedOperation': '关联操作',
+  'pages.system.permission.dataView': '数据视图',
 
-  // 机构管理
+  // 系统设置-机构管理
   'pages.system.org': '机构管理',
   'pages.system.org.code': '编码',
   'pages.system.org.count': '下级数量',
 
-  // 第三方平台
+  // 系统设置-第三方平台
   'pages.system.open-api': '第三方平台',
+  'pages.system.open-api.clientName': '名称',
+  'pages.system.open-api.userName': '用户名',
+  'pages.system.open-api.passWord': '密码',
+  'pages.system.open-api.ipWhileList': 'IP白名单',
+  'pages.system.open-api.describe': '描述',
 
-  // 租户管理
+  // 系统设置-租户管理
   'pages.system.tenant': '租户管理',
+  'pages.system.tenant.list': '租户列表',
+  'pages.system.tenant.avatar': '头像',
+  'pages.system.tenant.name': '名称',
+  'pages.system.tenant.members': '成员数',
 
-  // 系统日志
-  'pages.log.access': '访问日志',
-  'pages.log.system': '系统日志',
-
-  // 设备管理
+  // 设备管理-产品
   'pages.device.product': '产品',
+  'pages.device.product.list': '产品列表',
+  'pages.device.product.name': '名称',
+  'pages.device.product.status': '状态',
+  'pages.device.product.status.published': '已发布',
+  'pages.device.product.status.unpublished': '未发布',
+  'pages.device.product.status.all': '全部',
   'pages.device.product-detail': '产品详情',
+
+  // 设备管理-设备
   'pages.device.instance': '设备',
+  'pages.device.instance.management': '设备管理',
+  'pages.device.instance.equipmentName': '设备名称',
+  'pages.device.instance.productName': '产品名称',
+  'pages.device.instance.registrationTime': '注册时间',
+  'pages.device.instance.status': '状态',
+  'pages.device.instance.status.notEnabled': '未启用',
+  'pages.device.instance.status.offLine': '离线',
+  'pages.device.instance.status.onLine': '在线',
+  'pages.device.instance.explain': '说明',
+
+  // 设备管理-指令下发
   'pages.device.command': '指令下发',
+  'pages.device.command.deviceID': '设备ID',
+  'pages.device.command.equipmentName': '设备名称',
+  'pages.device.command.instructionType': '指令类型',
+  'pages.device.command.instructionType.readAttributes': '读取属性',
+  'pages.device.command.instructionType.setProperties': '设置属性',
+  'pages.device.command.instructionType.callAttribute': '调用属性',
+  'pages.device.command.status': '状态',
+  'pages.device.command.status.waiting': '等待中',
+  'pages.device.command.status.failed ': '发送失败',
+  'pages.device.command.status.succeed': '发送成功',
+  'pages.device.command.errorMessage': '错误信息',
+  'pages.device.command.sendTime': '发送时间',
+
+  // 设备管理-固件升级
   'pages.device.firmware': '固件升级',
+  'pages.device.firmware.name': '固件名称',
+  'pages.device.firmware.versions': '固件版本',
+  'pages.device.firmware.products': '所属产品',
+  'pages.device.firmware.signature': '签名方式',
+  'pages.device.firmware.creationTime': '创建时间',
+
+  // 设备管理-告警记录
   'pages.device.alarm': '告警记录',
+  'pages.device.alarm.deviceID': '设备ID',
+  'pages.device.alarm.equipmentName': '设备名称',
+  'pages.device.alarm.alarmName': '告警名称',
+  'pages.device.alarm.alarmTime': '告警时间',
+  'pages.device.alarm.status': '处理状态',
+
+  // 日志管理-访问日志
+  'pages.log.access': '访问日志',
+  'pages.log.access.requestPath': '请求路径',
+  'pages.log.access.explain': '说明',
+  'pages.log.access.requestTime': '请求时间',
+  'pages.log.access.requestTimeConsuming': '请求耗时',
+  'pages.log.access.requestUser': '请求用户',
+
+  // 日志管理-系统日志
+  'pages.log.system': '系统日志',
+  'pages.log.system.thread': '线程',
+  'pages.log.system.name': '名称',
+  'pages.log.system.level': '级别',
+  'pages.log.system.logContent': '日志内容',
+  'pages.log.system.serviceName': '服务名',
+  'pages.log.system.creationTime': '创建时间',
 };

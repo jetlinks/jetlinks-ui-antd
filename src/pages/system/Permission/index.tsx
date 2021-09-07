@@ -66,7 +66,10 @@ const Permission: React.FC = () => {
       copyable: true,
       ellipsis: true,
       align: 'center',
-      tip: '名称过长会自动收缩',
+      tip:intl.formatMessage({
+        id: 'pages.system.permission.name.tip',
+        defaultMessage: '名称过长会自动收缩',
+      }),
       formItemProps: {
         rules: [
           {
@@ -90,13 +93,25 @@ const Permission: React.FC = () => {
       onFilter: true,
       valueType: 'select',
       valueEnum: {
-        all: { text: '全部', status: 'Default' },
+        all: {
+          text: intl.formatMessage({
+            id:'pages.searchTable.titleStatus.all',
+            defaultMessage: '全部',
+          }), 
+           status: 'Default' 
+          },
         1: {
-          text: '正常',
+          text:intl.formatMessage({
+            id:'pages.searchTable.titleStatus.normal',
+            defaultMessage: '正常',
+          }), 
           status: 1,
         },
         0: {
-          text: '禁用',
+          text:intl.formatMessage({
+            id:'pages.searchTable.titleStatus.disable',
+            defaultMessage: '禁用',
+          }), 
           status: 0,
         },
       },
@@ -180,7 +195,10 @@ const Permission: React.FC = () => {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              tab: '基础信息',
+              tab: intl.formatMessage({
+                id: 'pages.system.permission.basicInformation',
+                defaultMessage: '基础信息',
+              }),
             },
             properties: {
               id: {
@@ -225,7 +243,10 @@ const Permission: React.FC = () => {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              tab: '操作配置',
+              tab: intl.formatMessage({
+                id: 'pages.system.permission.operationConfiguration',
+                defaultMessage: '操作配置',
+              }),
             },
             properties: {
               array: {
@@ -250,7 +271,13 @@ const Permission: React.FC = () => {
                     column3: {
                       type: 'void',
                       'x-component': 'ArrayTable.Column',
-                      'x-component-props': { width: 200, title: '操作类型' },
+                      'x-component-props': { 
+                        width: 200, 
+                        title: intl.formatMessage({
+                          id: 'pages.system.permission.operationConfiguration.type',
+                          defaultMessage: '操作类型',
+                        }),
+                      },
                       properties: {
                         a1: {
                           type: 'string',
@@ -262,7 +289,13 @@ const Permission: React.FC = () => {
                     column4: {
                       type: 'void',
                       'x-component': 'ArrayTable.Column',
-                      'x-component-props': { width: 200, title: '名称' },
+                      'x-component-props': { 
+                        width: 200, 
+                        title:  intl.formatMessage({
+                          id: 'pages.system.permission.operationConfiguration.name',
+                          defaultMessage: '名称',
+                        }),
+                      },
                       properties: {
                         a2: {
                           type: 'string',
@@ -274,7 +307,13 @@ const Permission: React.FC = () => {
                     column5: {
                       type: 'void',
                       'x-component': 'ArrayTable.Column',
-                      'x-component-props': { width: 200, title: '描述' },
+                      'x-component-props': { 
+                        width: 200, 
+                        title:  intl.formatMessage({
+                          id: 'pages.system.permission.operationConfiguration.describe',
+                          defaultMessage: '描述',
+                        }), 
+                      },
                       properties: {
                         a3: {
                           type: 'string',
@@ -287,7 +326,10 @@ const Permission: React.FC = () => {
                       type: 'void',
                       'x-component': 'ArrayTable.Column',
                       'x-component-props': {
-                        title: '操作',
+                        title:  intl.formatMessage({
+                          id: 'pages.data.option',
+                          defaultMessage: '操作',
+                        }),
                         dataIndex: 'operations',
                         width: 200,
                         fixed: 'right',
@@ -319,7 +361,10 @@ const Permission: React.FC = () => {
                   add: {
                     type: 'void',
                     'x-component': 'ArrayTable.Addition',
-                    title: '添加条目',
+                    title: intl.formatMessage({
+                      id:'pages.system.permission.add',
+                      defaultMessage:'添加条目'
+                    })
                   },
                 },
               },
@@ -329,7 +374,10 @@ const Permission: React.FC = () => {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              tab: '关联权限',
+              tab:intl.formatMessage({
+                id: 'pages.system.permission.associatedPermissions',
+                defaultMessage: '关联权限',
+              }),
             },
             properties: {
               array1: {
@@ -354,7 +402,13 @@ const Permission: React.FC = () => {
                     column3: {
                       type: 'void',
                       'x-component': 'ArrayTable.Column',
-                      'x-component-props': { width: 200, title: '前置操作' },
+                      'x-component-props': { 
+                        width: 200, 
+                        title: intl.formatMessage({
+                          id: 'pages.system.permission.associatedPermissions.preOperation',
+                          defaultMessage: '前置操作',
+                        }),
+                      },
                       properties: {
                         a1: {
                           type: 'string',
@@ -366,7 +420,13 @@ const Permission: React.FC = () => {
                     column4: {
                       type: 'void',
                       'x-component': 'ArrayTable.Column',
-                      'x-component-props': { width: 200, title: '关联权限' },
+                      'x-component-props': { 
+                        width: 200, 
+                        title: intl.formatMessage({
+                          id: 'pages.system.permission.associatedPermissions.associatedPermissions',
+                          defaultMessage: '关联权限',
+                        }),
+                      },
                       properties: {
                         a2: {
                           type: 'string',
@@ -378,7 +438,13 @@ const Permission: React.FC = () => {
                     column5: {
                       type: 'void',
                       'x-component': 'ArrayTable.Column',
-                      'x-component-props': { width: 200, title: '关联操作' },
+                      'x-component-props': { 
+                        width: 200, 
+                        title: intl.formatMessage({
+                          id: 'pages.system.permission.associatedPermissions.associatedOperation',
+                          defaultMessage: '关联操作',
+                        }),
+                      },
                       properties: {
                         a3: {
                           type: 'string',
@@ -391,7 +457,10 @@ const Permission: React.FC = () => {
                       type: 'void',
                       'x-component': 'ArrayTable.Column',
                       'x-component-props': {
-                        title: '操作',
+                        title: intl.formatMessage({
+                          id: 'pages.data.option',
+                          defaultMessage: '操作',
+                        }),
                         dataIndex: 'operations',
                         width: 200,
                         fixed: 'right',
@@ -423,7 +492,10 @@ const Permission: React.FC = () => {
                   add: {
                     type: 'void',
                     'x-component': 'ArrayTable.Addition',
-                    title: '添加条目',
+                    title: intl.formatMessage({
+                      id:'pages.system.permission.add',
+                      defaultMessage:'添加条目'
+                    }),
                   },
                 },
               },
@@ -433,7 +505,10 @@ const Permission: React.FC = () => {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              tab: '数据视图',
+              tab: intl.formatMessage({
+                id: 'pages.system.permission.dataView',
+                defaultMessage: '数据视图',
+              }),
             },
           },
         },

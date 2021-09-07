@@ -1,3 +1,5 @@
+import Firmware from '@/pages/device/Firmware';
+
 export default {
   'pages.layouts.userLayout.title': 'Jetlinks is an open source Internet of Things basic platform',
   'pages.login.accountLogin.tab': 'Account Login',
@@ -49,6 +51,9 @@ export default {
   'pages.searchTable.ruleName': 'Rule name is required',
   'pages.searchTable.titleCallNo': 'Number of Service Calls',
   'pages.searchTable.titleStatus': 'Status',
+  'pages.searchTable.titleStatus.all': 'All',
+  'pages.searchTable.titleStatus.normal': 'Normal',
+  'pages.searchTable.titleStatus.disable': 'Disable',
   'pages.searchTable.nameStatus.default': 'default',
   'pages.searchTable.nameStatus.running': 'running',
   'pages.searchTable.nameStatus.online': 'online',
@@ -64,7 +69,7 @@ export default {
   'pages.searchTable.item': 'item',
   'pages.searchTable.totalServiceCalls': 'Total Number of Service Calls',
   'pages.searchTable.tenThousand': '0000',
-  'pages.searchTable.batchDeletion': 'bacth deletion',
+  'pages.searchTable.batchDeletion': 'batch deletion',
   'pages.searchTable.batchApproval': 'batch approval',
 
   // 通用的数据操作
@@ -84,6 +89,11 @@ export default {
   'pages.data.option.detail': 'Detail',
   'pages.data.option.download': 'Download',
 
+  // 统计分析
+  'pages.analysis.cpu': 'CPU Usage',
+  'pages.analysis.jvm': 'JVM Memory',
+  'pages.analysis.information': 'Information Completeness',
+
   // 系统设置-用户管理
   'pages.system.user': 'User',
   'pages.system.user.name': 'name',
@@ -99,32 +109,111 @@ export default {
   'pages.system.role.describe': 'Describe',
   'pages.system.role.option.bindUser': 'Bind User',
 
-  // 权限管理
+  // 系统设置-权限管理
   'pages.system.permission': 'Permission',
   'pages.system.permission.id': 'ID',
   'pages.system.permission.name': 'Name',
+  'pages.system.permission.name.tip': 'If the name is too long, it will automatically shrink',
   'pages.system.permission.status': 'Status',
+  'pages.system.permission.add': 'Add Entry',
+  'pages.system.permission.basicInformation': 'Basic Information',
+  'pages.system.permission.operationConfiguration': 'Operation Configuration',
+  'pages.system.permission.operationConfiguration.type': 'Operation Type',
+  'pages.system.permission.operationConfiguration.name': 'Name',
+  'pages.system.permission.operationConfiguration.describe': 'Describe',
+  'pages.system.permission.associatedPermissions': 'Associated Permissions',
+  'pages.system.permission.associatedPermissions.preOperation': 'Pre Operation',
+  'pages.system.permission.associatedPermissions.associatedPermissions': 'Associated Permissions',
+  'pages.system.permission.associatedPermissions.associatedOperation': 'Associated Operation',
+  'pages.system.permission.dataView': 'Data View',
 
-  // 机构管理
+  // 系统设置-机构管理
   'pages.system.org': 'Organization',
   'pages.system.org.code': 'Code',
   'pages.system.org.count': 'Count',
 
-  // 第三方平台
+  // 系统设置-第三方平台
   'pages.system.open-api': 'OpenAPI',
+  'pages.system.open-api.Name': 'Name',
+  'pages.system.open-api.userName': 'UserName',
+  'pages.system.open-api.passWord': 'passWord',
+  'pages.system.open-api.ipWhileList': 'ipWhileList',
+  'pages.system.open-api.describe': 'Describe',
 
-  // 租户管理
+  // 系统设置-租户管理
   'pages.system.tenant': 'Tenant',
+  'pages.system.tenant.list': 'Tenant List',
+  'pages.system.tenant.avatar': 'Avatar',
+  'pages.system.tenant.name': 'Name',
+  'pages.system.tenant.members': 'Members',
 
-  // 日志管理
-  'pages.log.access': 'AccessLog',
-  'pages.log.System': 'SystemLog',
-
-  // 设备管理
+  // 设备管理-产品
   'pages.device.product': 'Product',
+  'pages.device.product.list': 'Product List',
+  'pages.device.product.name': 'Name',
+  'pages.device.product.status': 'Status',
+  'pages.device.product.status.published': 'Published',
+  'pages.device.product.status.unpublished': 'Unpublished',
+  'pages.device.product.status.all': 'All',
   'pages.device.product-detail': 'ProductDetail',
-  'pages.device.instance': 'Instance',
+
+  // 设备管理-设备
+  'pages.device.instance': 'Equipment',
+  'pages.device.instance.management': 'Equipment Management',
+  'pages.device.instance.equipmentName': 'Equipment Name',
+  'pages.device.instance.productName': 'Product Name',
+  'pages.device.instance.registrationTime': 'Registration Time',
+  'pages.device.instance.status': 'Status',
+  'pages.device.instance.status.notEnabled': 'Not Enabled',
+  'pages.device.instance.status.offLine': 'Off-Line',
+  'pages.device.instance.status.onLine': 'On-Line',
+  'pages.device.instance.explain': 'Explain',
+
+  // 设备管理-指令下发
   'pages.device.command': 'Command',
+  'pages.device.command.deviceID': 'Device ID',
+  'pages.device.command.equipmentName': 'Equipment Name',
+  'pages.device.command.instructionType': 'Instruction Type',
+  'pages.device.command.instructionType.readAttributes': 'Read Attributes',
+  'pages.device.command.instructionType.setProperties': 'Set Properties',
+  'pages.device.command.instructionType.callAttribute': 'Call Attribute',
+  'pages.device.command.status': 'Status',
+  'pages.device.command.status.waiting': 'Waiting',
+  'pages.device.command.status.failed ': 'Failed to send',
+  'pages.device.command.status.succeed': 'Sent successfully',
+  'pages.device.command.errorMessage': 'Error Message',
+  'pages.device.command.sendTime': 'Send Time',
+
+  // 设备管理-固件升级
   'pages.device.firmware': 'Firmware',
+  'pages.device.firmware.name': 'Firmware Name',
+  'pages.device.firmware.version': 'Firmware version',
+  'pages.device.firmware.products': 'Products',
+  'pages.device.firmware.signature': 'Signature Method',
+  'pages.device.firmware.creationTime': 'Creation Time',
+
+  // 设备管理-告警记录
   'pages.device.alarm': 'Alarm',
+  'pages.device.alarm.deviceID': 'Device ID',
+  'pages.device.alarm.equipmentName': 'Equipment Name',
+  'pages.device.alarm.alarmName': 'Alarm Name',
+  'pages.device.alarm.alarmTime': 'Alarm Time',
+  'pages.device.alarm.status': 'Processing Status',
+
+  // 日志管理-访问日志
+  'pages.log.access': 'Access Log',
+  'pages.log.access.requestPath': 'Request Path',
+  'pages.log.access.explain': 'Explain',
+  'pages.log.access.requestTime': 'Request Time',
+  'pages.log.access.requestTimeConsuming': 'Request Time Consuming',
+  'pages.log.access.requestUser': 'Request User',
+
+  // 日志管理-系统日志
+  'pages.log.system': 'System Log',
+  'pages.log.system.thread': 'Thread',
+  'pages.log.system.name': 'Name',
+  'pages.log.system.level': 'Level',
+  'pages.log.system.logContent': 'Log Content',
+  'pages.log.system.serviceName': 'Service Name',
+  'pages.log.system.creationTime': 'Creation Time',
 };

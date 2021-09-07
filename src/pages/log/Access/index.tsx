@@ -26,12 +26,18 @@ const Access: React.FC = () => {
       // ellipsis: true
     },
     {
-      title: '请求路径',
+      title:intl.formatMessage({
+        id:'pages.log.access.requestPath',
+        defaultMessage:'请求路径',
+      }),
       dataIndex: 'url',
-      // ellipsis: true,
+       // ellipsis: true,
     },
     {
-      title: '说明',
+       title:intl.formatMessage({
+        id:'pages.log.access.explain',
+        defaultMessage:'说明',
+      }),
       dataIndex: 'describe',
       // ellipsis: true,
       render: (text, record) => {
@@ -39,7 +45,10 @@ const Access: React.FC = () => {
       },
     },
     {
-      title: '请求时间',
+      title:intl.formatMessage({
+        id:'pages.log.access.requestTime',
+        defaultMessage:'请求时间',
+      }),
       dataIndex: 'requestTime',
       sorter: true,
       defaultSortOrder: 'descend',
@@ -47,14 +56,20 @@ const Access: React.FC = () => {
       renderText: (text: string) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
-      title: '请求耗时',
+      title:intl.formatMessage({
+        id:'pages.log.access.requestTimeConsuming',
+        defaultMessage:'请求耗时',
+      }),
       // width: 100,
       renderText: (record: AccessLogItem) => (
         <Tag color="purple">{record.responseTime - record.requestTime}ms</Tag>
       ),
     },
     {
-      title: '请求用户',
+      title:intl.formatMessage({
+        id:'pages.log.access.requestUser',
+        defaultMessage:'请求用户',
+      }),
       dataIndex: 'context.username',
       render: (text) => <Tag color="geekblue">{text}</Tag>,
     },
@@ -85,7 +100,10 @@ const Access: React.FC = () => {
       <BaseCrud<AccessLogItem>
         columns={columns}
         service={service}
-        title="访问日志"
+        title={intl.formatMessage({
+          id: 'pages.log.access',
+          defaultMessage: '访问日志',
+        })}
         schema={{}}
         toolBar={[]}
         actionRef={actionRef}

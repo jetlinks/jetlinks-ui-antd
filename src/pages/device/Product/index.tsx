@@ -38,7 +38,10 @@ const Product = observer(() => {
           toolBarRender={() => {
             return [
               <Button key="3" type="primary">
-                新建
+                { intl.formatMessage({
+                  id: 'pages.searchTable.new',
+                  defaultMessage: '新建',
+                 })}
               </Button>,
             ];
           }}
@@ -46,7 +49,10 @@ const Product = observer(() => {
             filterType: 'light',
           }}
           rowKey={'id'}
-          headerTitle="产品列表"
+          headerTitle={intl.formatMessage({
+            id: 'pages.device.product.list',
+            defaultMessage: '产品列表',
+          })}
           request={async (params = {}) => {
             return await lastValueFrom(
               service.list(encodeQuery({ ...params, sorts: { id: 'ascend' } })),
@@ -63,7 +69,10 @@ const Product = observer(() => {
             },
             title: {
               dataIndex: 'name',
-              title: '名称',
+              title: intl.formatMessage({
+                id:'pages.device.product.name',
+                defaultMessage:'名称',
+              }),
             },
             avatar: {
               dataIndex: 'id',
@@ -198,16 +207,31 @@ const Product = observer(() => {
             },
             state: {
               // 自己扩展的字段，主要用于筛选，不在列表中显示
-              title: '状态',
+             title: intl.formatMessage({
+                id:'pages.device.product.status',
+                defaultMessage:'状态',
+              }),
               valueType: 'select',
               valueEnum: {
-                all: { text: '全部', status: 'Default' },
+                all: {
+                   text: intl.formatMessage({
+                    id:'pages.device.product.status.all',
+                    defaultMessage:'状态',
+                  }),
+                    status: 'Default' 
+                  },
                 1: {
-                  text: '已发布',
+                  text: intl.formatMessage({
+                    id:'pages.device.product.status.published',
+                    defaultMessage:'已发布',
+                  }),
                   status: 'Error',
                 },
                 0: {
-                  text: '未发布',
+                  text: intl.formatMessage({
+                    id:'pages.device.product.status.unpublished',
+                    defaultMessage:'未发布',
+                  }),
                   status: 'Success',
                 },
               },

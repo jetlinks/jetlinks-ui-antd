@@ -17,23 +17,38 @@ const Firmware = () => {
 
   const columns: ProColumns<FirmwareItem>[] = [
     {
-      title: '固件名称',
+      title:  intl.formatMessage({
+        id: 'pages.device.firmware.name',
+        defaultMessage: '固件名称',
+      }),
       dataIndex: 'name',
     },
     {
-      title: '固件版本',
+      title: intl.formatMessage({
+        id: 'pages.device.firmware.version',
+        defaultMessage: '固件版本',
+      }),
       dataIndex: 'version',
     },
     {
-      title: '所属产品',
+      title: intl.formatMessage({
+        id: 'pages.device.firmware.products',
+        defaultMessage: '所属产品',
+      }),
       dataIndex: 'productName',
     },
     {
-      title: '签名方式',
+      title: intl.formatMessage({
+        id: 'pages.device.firmware.signature',
+        defaultMessage: '签名方式',
+      }),
       dataIndex: 'signMethod',
     },
     {
-      title: '创建时间',
+      title: intl.formatMessage({
+        id: 'pages.device.firmware.creationTime',
+        defaultMessage: '创建时间',
+      }),
       dataIndex: 'createTime',
       width: '200px',
       align: 'center',
@@ -114,7 +129,10 @@ const Firmware = () => {
       <BaseCrud<FirmwareItem>
         columns={columns}
         service={service}
-        title={'固件升级'}
+        title={intl.formatMessage({
+          id: 'pages.device.firmware',
+          defaultMessage: '固件升级',
+        })}
         schema={schema}
         actionRef={actionRef}
       />

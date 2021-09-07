@@ -50,46 +50,70 @@ const Instance = () => {
       dataIndex: 'id',
     },
     {
-      title: '设备名称',
+      title: intl.formatMessage({
+        id:'pages.device.instance.equipmentName',
+        defaultMessage:'设备名称',
+      }),
       dataIndex: 'name',
       ellipsis: true,
     },
     {
-      title: '产品名称',
+      title: intl.formatMessage({
+        id:'pages.device.instance.productName',
+        defaultMessage:'产品名称',
+      }),
       dataIndex: 'productName',
       ellipsis: true,
     },
     {
-      title: '注册时间',
+      title: intl.formatMessage({
+        id:'pages.device.instance.registrationTime',
+        defaultMessage:'注册时间',
+      }),
       dataIndex: 'registryTime',
       width: '200px',
       render: (text: any) => (text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/'),
       sorter: true,
     },
     {
-      title: '状态',
+      title: intl.formatMessage({
+        id:'pages.device.instance.status',
+        defaultMessage:'状态',
+      }),
       dataIndex: 'state',
       width: '90px',
       renderText: (record) =>
         record ? <Badge status={statusMap.get(record.value)} text={record.text} /> : '',
       filters: [
         {
-          text: '未启用',
+          text: intl.formatMessage({
+            id:'pages.device.instance.status.notEnabled',
+            defaultMessage:'未启用',
+          }),
           value: 'notActive',
         },
         {
-          text: '离线',
+          text: intl.formatMessage({
+            id:'pages.device.instance.status.offLine',
+            defaultMessage:'离线',
+          }),
           value: 'offline',
         },
         {
-          text: '在线',
+          text: intl.formatMessage({
+            id:'pages.device.instance.status.onLine',
+            defaultMessage:'在线',
+          }),
           value: 'online',
         },
       ],
       filterMultiple: false,
     },
     {
-      title: '说明',
+      title:intl.formatMessage({
+        id:'pages.device.instance.explain',
+        defaultMessage:'说明',
+      }),
       dataIndex: 'describe',
       width: '15%',
       ellipsis: true,
@@ -172,7 +196,10 @@ const Instance = () => {
       <BaseCrud
         columns={columns}
         service={service}
-        title={'设备管理'}
+        title={intl.formatMessage({
+          id: 'pages.device.instance.management',
+          defaultMessage: '设备管理',
+        })}
         schema={schema}
         actionRef={actionRef}
       />
