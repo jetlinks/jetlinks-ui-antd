@@ -548,7 +548,10 @@ const Trigger: React.FC<Props> = props => {
               value={trigger.trigger}
               onChange={(value: string) => {
                 setTriggerType(() => value);
-                trigger.trigger = value;
+                setTrigger({
+                  trigger :value
+                });
+                setFilters([{}])
                 submitData();
               }}
             >
