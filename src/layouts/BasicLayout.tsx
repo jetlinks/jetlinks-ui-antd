@@ -191,6 +191,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
     <ProLayout
       // logo={logo}
       logo={settings.titleIcon || logo}
+      
       menuHeaderRender={(logoDom, titleDom) => (
         <Link to="/">
           {logoDom}
@@ -226,6 +227,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
       rightContentRender={() => <RightContent />}
       {...props}
       {...settings}
+      fixSiderbar
     >
       <Authorized authority={authorized!.authority} noMatch={noMatch}>
         {children}

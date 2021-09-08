@@ -150,7 +150,7 @@ const Category = (props: Props) => {
             新增
           </Button>
           <TenantContext.Provider value={categoryList}>
-            <Table dataSource={categoryList || []} rowKey="id" columns={columns} />
+            <Table dataSource={categoryList || []} rowKey="id" columns={columns}  scroll={{ x: 1200 }}/>
           </TenantContext.Provider>
         </Card>
       </PageHeaderWrapper>
