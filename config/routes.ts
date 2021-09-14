@@ -69,6 +69,12 @@
         icon: 'smile',
         component: './system/Tenant',
       },
+      {
+        path: '/system/datasource',
+        name: 'datasource',
+        icon: 'smile',
+        component: './system/DataSource',
+      },
     ],
   },
   {

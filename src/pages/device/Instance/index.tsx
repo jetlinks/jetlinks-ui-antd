@@ -51,24 +51,24 @@ const Instance = () => {
     },
     {
       title: intl.formatMessage({
-        id:'pages.device.instance.equipmentName',
-        defaultMessage:'设备名称',
+        id: 'pages.device.instance.equipmentName',
+        defaultMessage: '设备名称',
       }),
       dataIndex: 'name',
       ellipsis: true,
     },
     {
       title: intl.formatMessage({
-        id:'pages.device.instance.productName',
-        defaultMessage:'产品名称',
+        id: 'pages.device.instance.productName',
+        defaultMessage: '产品名称',
       }),
       dataIndex: 'productName',
       ellipsis: true,
     },
     {
       title: intl.formatMessage({
-        id:'pages.device.instance.registrationTime',
-        defaultMessage:'注册时间',
+        id: 'pages.device.instance.registrationTime',
+        defaultMessage: '注册时间',
       }),
       dataIndex: 'registryTime',
       width: '200px',
@@ -77,8 +77,8 @@ const Instance = () => {
     },
     {
       title: intl.formatMessage({
-        id:'pages.device.instance.status',
-        defaultMessage:'状态',
+        id: 'pages.device.instance.status',
+        defaultMessage: '状态',
       }),
       dataIndex: 'state',
       width: '90px',
@@ -87,22 +87,22 @@ const Instance = () => {
       filters: [
         {
           text: intl.formatMessage({
-            id:'pages.device.instance.status.notEnabled',
-            defaultMessage:'未启用',
+            id: 'pages.device.instance.status.notEnabled',
+            defaultMessage: '未启用',
           }),
           value: 'notActive',
         },
         {
           text: intl.formatMessage({
-            id:'pages.device.instance.status.offLine',
-            defaultMessage:'离线',
+            id: 'pages.device.instance.status.offLine',
+            defaultMessage: '离线',
           }),
           value: 'offline',
         },
         {
           text: intl.formatMessage({
-            id:'pages.device.instance.status.onLine',
-            defaultMessage:'在线',
+            id: 'pages.device.instance.status.onLine',
+            defaultMessage: '在线',
           }),
           value: 'online',
         },
@@ -110,9 +110,9 @@ const Instance = () => {
       filterMultiple: false,
     },
     {
-      title:intl.formatMessage({
-        id:'pages.device.instance.explain',
-        defaultMessage:'说明',
+      title: intl.formatMessage({
+        id: 'pages.device.instance.explain',
+        defaultMessage: '说明',
       }),
       dataIndex: 'describe',
       width: '15%',

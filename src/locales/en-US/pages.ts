@@ -1,5 +1,3 @@
-import Firmware from '@/pages/device/Firmware';
-
 export default {
   'pages.layouts.userLayout.title': 'Jetlinks is an open source Internet of Things basic platform',
   'pages.login.accountLogin.tab': 'Account Login',
@@ -396,18 +394,24 @@ export default {
   'pages.simulator.device.add.operationInformation.networkCard.tip':
     'This is the prompt for binding the network card',
   'pages.simulator.device.add.operationInformation.total': 'Total number of simulations',
-  'pages.simulator.device.add.operationInformation.total.tip': 'This is a hint for the simulated total',
+  'pages.simulator.device.add.operationInformation.total.tip':
+    'This is a hint for the simulated total',
   'pages.simulator.device.add.operationInformation.index': 'Starting index',
-  'pages.simulator.device.add.operationInformation.index.tip': 'This is the tip of the starting engine',
+  'pages.simulator.device.add.operationInformation.index.tip':
+    'This is the tip of the starting engine',
   'pages.simulator.device.add.operationInformation.concurrency': 'Concurrency',
-  'pages.simulator.device.add.operationInformation.concurrency.tip': 'This is a reminder of the number of concurrent',
+  'pages.simulator.device.add.operationInformation.concurrency.tip':
+    'This is a reminder of the number of concurrent',
   'pages.simulator.device.add.operationInformation.otherFunctions': 'Other functions',
-  'pages.simulator.device.add.operationInformation.otherFunctions.tip': 'This is a hint for other functions',
-  'pages.simulator.device.add.operationInformation.otherFunctions.simulationData': 'Simulation data reporting',
+  'pages.simulator.device.add.operationInformation.otherFunctions.tip':
+    'This is a hint for other functions',
+  'pages.simulator.device.add.operationInformation.otherFunctions.simulationData':
+    'Simulation data reporting',
   'pages.simulator.device.add.operationInformation.otherFunctions.simulationData.name': 'Name',
   'pages.simulator.device.add.operationInformation.otherFunctions.simulationData.name.tip':
     'This is a hint of the name',
-  'pages.simulator.device.add.operationInformation.otherFunctions.simulationData.function': 'function',
+  'pages.simulator.device.add.operationInformation.otherFunctions.simulationData.function':
+    'function',
   'pages.simulator.device.add.operationInformation.otherFunctions.simulationData.function.tip':
     'This is a hint of the function',
   'pages.simulator.device.add.operationInformation.otherFunctions.simulationData.scriptingLanguage':
@@ -443,21 +447,26 @@ export default {
   'pages.cloud.alibabaCloud.add': 'Add product',
   'pages.cloud.alibabaCloud.add.codecProtocol': 'Codec protocol',
   'pages.cloud.alibabaCloud.add.explain': 'explain',
-  'pages.cloud.alibabaCloud.add.certificationInformationConfiguration': 'Certification information configuration',
+  'pages.cloud.alibabaCloud.add.certificationInformationConfiguration':
+    'Certification information configuration',
   'pages.cloud.alibabaCloud.add.certificationInformationConfiguration.zoneID': 'Zone ID',
-  'pages.cloud.alibabaCloud.add.certificationInformationConfiguration.tip': 'Regions and Availability Zones',
+  'pages.cloud.alibabaCloud.add.certificationInformationConfiguration.tip':
+    'Regions and Availability Zones',
   'pages.cloud.alibabaCloud.add.certificationInformationConfiguration.apiInterfaceAddress':
     'API interface address',
   'pages.cloud.alibabaCloud.add.certificationInformationConfiguration.authenticationInterfaceAddress':
     'Authentication interface address',
   'pages.cloud.alibabaCloud.add.bridgeConfiguration': 'Bridge configuration',
   'pages.cloud.alibabaCloud.add.bridgeConfiguration.localServiceID': 'Local service ID',
-  'pages.cloud.alibabaCloud.add.bridgeConfiguration.http2InterfaceAddress': 'HTTP2 interface address',
+  'pages.cloud.alibabaCloud.add.bridgeConfiguration.http2InterfaceAddress':
+    'HTTP2 interface address',
 
   // 视频网关-基本配置
   'pages.videoGateway.basicConfiguration': 'basic configuration',
-  'pages.videoGateway.basicConfiguration.streamingMediaServiceConfiguration': 'Streaming media service configuration',
-  'pages.videoGateway.basicConfiguration.streamingMediaServiceConfiguration.name': 'Streaming media name',
+  'pages.videoGateway.basicConfiguration.streamingMediaServiceConfiguration':
+    'Streaming media service configuration',
+  'pages.videoGateway.basicConfiguration.streamingMediaServiceConfiguration.name':
+    'Streaming media name',
   'pages.videoGateway.basicConfiguration.streamingMediaServiceConfiguration.serviceProvider':
     'Service provider',
   'pages.videoGateway.basicConfiguration.streamingMediaServiceConfiguration.publicHost':
@@ -482,28 +491,36 @@ export default {
   'pages.videoGateway.basicConfiguration.GB.name': 'Signaling name',
   'pages.videoGateway.basicConfiguration.GB.name.placeholder': 'Please enter the signaling name',
   'pages.videoGateway.basicConfiguration.GB.relatedProducts': 'related products',
-  'pages.videoGateway.basicConfiguration.GB.relatedProducts.placeholder': 'Please select related products',
-  'pages.videoGateway.basicConfiguration.GB.SIPId.placeholder': 'Please enter the signaling SIP  ID',
+  'pages.videoGateway.basicConfiguration.GB.relatedProducts.placeholder':
+    'Please select related products',
+  'pages.videoGateway.basicConfiguration.GB.SIPId.placeholder':
+    'Please enter the signaling SIP  ID',
   'pages.videoGateway.basicConfiguration.GB.SIPRegion': 'SIP Region',
   'pages.videoGateway.basicConfiguration.GB.SIPRegion.placeholder': '',
-  'pages.videoGateway.basicConfiguration.GB.SIPHost.placeholder': 'Please enter the signaling SIP domain',
+  'pages.videoGateway.basicConfiguration.GB.SIPHost.placeholder':
+    'Please enter the signaling SIP domain',
   'pages.videoGateway.basicConfiguration.GB.publicNetworkHost': 'Public network host',
-  'pages.videoGateway.basicConfiguration.GB.publicNetworkHost.placeholder': 'Please enter the signaling public network Host',
+  'pages.videoGateway.basicConfiguration.GB.publicNetworkHost.placeholder':
+    'Please enter the signaling public network Host',
   'pages.videoGateway.basicConfiguration.GB.accessCode': 'Access code',
-  'pages.videoGateway.basicConfiguration.GB.accessCode.tip': 'Please enter the signaling access password',
+  'pages.videoGateway.basicConfiguration.GB.accessCode.tip':
+    'Please enter the signaling access password',
   'pages.videoGateway.basicConfiguration.GB.port': 'Port',
   'pages.videoGateway.basicConfiguration.GB.port.placeholder': 'Port',
   'pages.videoGateway.basicConfiguration.GB.publicNetworkPort': 'public network port',
-  'pages.videoGateway.basicConfiguration.GB.publicNetworkPort.placeholder': 'Please enter the signaling port',
+  'pages.videoGateway.basicConfiguration.GB.publicNetworkPort.placeholder':
+    'Please enter the signaling port',
   'pages.videoGateway.basicConfiguration.GB.characterSet': 'Character Set',
   'pages.videoGateway.basicConfiguration.GB.explain': 'explain',
-  'pages.videoGateway.basicConfiguration.GB.explain.placeholder': 'Please enter at least five characters',
+  'pages.videoGateway.basicConfiguration.GB.explain.placeholder':
+    'Please enter at least five characters',
 
   // 视频网关-视频设备
   'pages.videoGateway.videoEquipment': 'Video equipment',
   'pages.videoGateway.videoEquipment.name': 'Equipment name',
   'pages.videoGateway.videoEquipment.name.tip': 'Please enter the device name',
-  'pages.videoGateway.videoEquipment.nationalStandardEquipmentNumber': 'National standard equipment number',
+  'pages.videoGateway.videoEquipment.nationalStandardEquipmentNumber':
+    'National standard equipment number',
   'pages.videoGateway.videoEquipment.signalingTransmission': 'Signaling transmission',
   'pages.videoGateway.videoEquipment.streamingMode': 'Streaming mode',
   'pages.videoGateway.videoEquipment.numberOfChannels': 'Number of channels',
@@ -517,7 +534,8 @@ export default {
 
   // 视频网关-视频设备-通道列表
   'pages.videoGateway.videoEquipment.channelList': 'Channel list',
-  'pages.videoGateway.videoEquipment.channelList.channelNationalStandard': 'Channel national standard',
+  'pages.videoGateway.videoEquipment.channelList.channelNationalStandard':
+    'Channel national standard',
   'pages.videoGateway.videoEquipment.channelList.name': 'Channel name',
   'pages.videoGateway.videoEquipment.channelList.manufacturer': 'Manufacturer',
   'pages.videoGateway.videoEquipment.channelList.installationAddress': 'Installation address',
@@ -543,13 +561,16 @@ export default {
   'pages.videoGateway.internationalCascade.explain': 'Explain',
   'pages.videoGateway.internationalCascade.add': 'Add national standard cascade',
   'pages.videoGateway.internationalCascade.add.cascadeId': 'Cascade ID',
-  'pages.videoGateway.internationalCascade.add.cascadeId.placeholder': 'Please enter the cascade ID',
+  'pages.videoGateway.internationalCascade.add.cascadeId.placeholder':
+    'Please enter the cascade ID',
   'pages.videoGateway.internationalCascade.add.cascadeName': 'Cascade name',
-  'pages.videoGateway.internationalCascade.add.cascadeName.placeholder': 'Please enter a cascade name',
+  'pages.videoGateway.internationalCascade.add.cascadeName.placeholder':
+    'Please enter a cascade name',
   'pages.videoGateway.internationalCascade.add.streamingService': 'Please enter streaming service',
   'pages.videoGateway.internationalCascade.add.streamingService.placeholder': '',
   'pages.videoGateway.internationalCascade.add.proxyVideoStreaming': 'Proxy video streaming',
-  'pages.videoGateway.internationalCascade.add.signalingServiceConfiguration': 'Signaling service configuration',
+  'pages.videoGateway.internationalCascade.add.signalingServiceConfiguration':
+    'Signaling service configuration',
   'pages.videoGateway.internationalCascade.add.signalingServiceConfiguration.clusterNodeId':
     'Cluster node ID',
   'pages.videoGateway.internationalCascade.add.signalingServiceConfiguration.clusterNodeId.placeholder':
@@ -559,7 +580,8 @@ export default {
     'Please enter a name',
   'pages.videoGateway.internationalCascade.add.signalingServiceConfiguration.SIPIp.placeholder':
     'Please enter SIP ID',
-  'pages.videoGateway.internationalCascade.add.signalingServiceConfiguration.SIPRegion': 'SIP Region',
+  'pages.videoGateway.internationalCascade.add.signalingServiceConfiguration.SIPRegion':
+    'SIP Region',
   'pages.videoGateway.internationalCascade.add.signalingServiceConfiguration.SIPRegion.placeholder':
     'Please enter the SIP domain',
   'pages.videoGateway.internationalCascade.add.signalingServiceConfiguration.SIPHost.placeholder':
@@ -585,7 +607,8 @@ export default {
     'Access code',
   'pages.videoGateway.internationalCascade.add.signalingServiceConfiguration.accessCode.placeholder':
     'Please enter the access code',
-  'pages.videoGateway.internationalCascade.add.signalingServiceConfiguration.manufacturer': 'Manufacturer',
+  'pages.videoGateway.internationalCascade.add.signalingServiceConfiguration.manufacturer':
+    'Manufacturer',
   'pages.videoGateway.internationalCascade.add.signalingServiceConfiguration.manufacturer.placeholder':
     'Please enter the manufacturer',
   'pages.videoGateway.internationalCascade.add.signalingServiceConfiguration.model': 'Model',
