@@ -15,6 +15,11 @@ const Alarm = () => {
 
   const columns: ProColumns<AlarmItem>[] = [
     {
+      dataIndex: 'index',
+      valueType: 'indexBorder',
+      width: 48,
+    },
+    {
       title: intl.formatMessage({
         id: 'pages.device.alarm.deviceID',
         defaultMessage: '设备ID',

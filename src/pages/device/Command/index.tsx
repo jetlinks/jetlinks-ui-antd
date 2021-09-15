@@ -16,6 +16,11 @@ const Command = () => {
 
   const columns: ProColumns<CommandItem>[] = [
     {
+      dataIndex: 'index',
+      valueType: 'indexBorder',
+      width: 48,
+    },
+    {
       title: intl.formatMessage({
         id: 'pages.device.command.deviceID',
         defaultMessage: '设备ID',

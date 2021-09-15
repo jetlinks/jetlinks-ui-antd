@@ -6,40 +6,42 @@ import { message, Popconfirm, Tooltip } from 'antd';
 import { CloseCircleOutlined, EditOutlined, PlayCircleOutlined } from '@ant-design/icons';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import type { ActionType } from '@jetlinks/pro-table';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { ISchema } from '@formily/json-schema';
-import { model } from '@formily/reactive';
 import Service from '@/pages/system/DataSource/service';
 import { from, mergeMap, toArray } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 export const service = new Service('datasource/config');
-export const DataSourceModel = model<{
-  types: Partial<DataSourceType>[];
-}>({
-  types: [],
-});
+
 const DataSource = () => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
 
+  const [type, setType] = useState<DataSourceType[]>([]);
   useEffect(() => {
     service
       .getType()
       .pipe(
         mergeMap((data: DataSourceType[]) => from(data)),
-        map((i: DataSourceType) => ({ label: i.id, value: i.name })),
+        map((i: DataSourceType) => ({ label: i.name, value: i.id })),
         toArray(),
       )
       .subscribe((data: Partial<DataSourceType>[]) => {
-        DataSourceModel.types = data;
+        setType(data as DataSourceType[]);
       });
   }, []);
 
   const columns: ProColumns<DataSourceItem>[] = [
     {
+      dataIndex: 'index',
+      valueType: 'indexBorder',
+      width: 48,
+    },
+    {
       title: 'ID',
       dataIndex: 'id',
+      width: 200,
     },
     {
       title: '名称',
@@ -126,7 +128,7 @@ const DataSource = () => {
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               gridSpan: 1,
-              labelCol: 4,
+              labelCol: 6,
             },
           },
           typeId: {
@@ -135,66 +137,105 @@ const DataSource = () => {
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               gridSpan: 1,
-              labelCol: 4,
+              labelCol: 6,
             },
-            enum: [],
+            enum: type,
           },
           'shareConfig.adminUrl': {
             title: '管理地址',
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               gridSpan: 1,
-              labelCol: 4,
+              labelCol: 6,
             },
             required: true,
             default: 'http://localhost:15672',
             'x-visible': false,
             'x-component': 'Input',
+            'x-display': 'none',
+            'x-reactions': {
+              dependencies: ['typeId'],
+              fulfill: {
+                state: {
+                  display: '{{$deps[0]==="rabbitmq"?"visible":"none"}}',
+                },
+              },
+            },
           },
           'shareConfig.addresses': {
             title: '链接地址',
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               gridSpan: 1,
-              labelCol: 4,
+              labelCol: 6,
             },
             required: true,
             default: 'localhost:5672',
-            'x-visible': false,
             'x-component': 'Input',
+            'x-display': 'none',
+            'x-reactions': {
+              dependencies: ['typeId'],
+              fulfill: {
+                state: {
+                  display: '{{$deps[0]==="rabbitmq"?"visible":"none"}}',
+                },
+              },
+            },
           },
           'shareConfig.virtualHost': {
             title: '虚拟域',
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               gridSpan: 1,
-              labelCol: 4,
+              labelCol: 6,
             },
             required: true,
-            'x-visible': false,
             default: '/',
             'x-component': 'Input',
+            'x-display': 'none',
+            'x-reactions': {
+              dependencies: ['typeId'],
+              fulfill: {
+                state: {
+                  display: '{{$deps[0]==="rabbitmq"?"visible":"none"}}',
+                },
+              },
+            },
           },
           'shareConfig.username': {
             title: '用户名',
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               gridSpan: 1,
-              labelCol: 4,
+              labelCol: 6,
             },
-            'x-visible': false,
-
             'x-component': 'Input',
+            'x-display': 'none',
+            'x-reactions': {
+              dependencies: ['typeId'],
+              fulfill: {
+                state: {
+                  display: '{{$deps[0]==="rabbitmq"?"visible":"none"}}',
+                },
+              },
+            },
           },
           'shareConfig.password': {
             title: '密码',
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               gridSpan: 1,
-              labelCol: 4,
+              labelCol: 6,
             },
-            'x-visible': false,
-
+            'x-display': 'none',
+            'x-reactions': {
+              dependencies: ['typeId'],
+              fulfill: {
+                state: {
+                  display: '{{$deps[0]==="rabbitmq"?"visible":"none"}}',
+                },
+              },
+            },
             'x-component': 'Input',
           },
           'shareConfig.bootstrapServers': {
@@ -202,13 +243,21 @@ const DataSource = () => {
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               gridSpan: 2,
-              labelCol: 2,
+              labelCol: 3,
               wrapperCol: 20,
             },
-            'x-visible': false,
             'x-component': 'Select',
             'x-component-props': {
               mode: 'tags',
+            },
+            'x-display': 'none',
+            'x-reactions': {
+              dependencies: ['typeId'],
+              fulfill: {
+                state: {
+                  display: '{{$deps[0]==="kafka"?"visible":"none"}}',
+                },
+              },
             },
           },
           description: {
@@ -216,7 +265,7 @@ const DataSource = () => {
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               gridSpan: 2,
-              labelCol: 2,
+              labelCol: 3,
               wrapperCol: 20,
             },
             'x-component': 'Input.TextArea',
@@ -233,7 +282,7 @@ const DataSource = () => {
     <PageContainer>
       <BaseCrud<DataSourceItem>
         modelConfig={{
-          width: 800,
+          width: 1000,
         }}
         columns={columns}
         service={service}

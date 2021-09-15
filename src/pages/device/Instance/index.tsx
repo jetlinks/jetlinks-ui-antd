@@ -46,6 +46,11 @@ const Instance = () => {
   const intl = useIntl();
   const columns: ProColumns<DeviceInstance>[] = [
     {
+      dataIndex: 'index',
+      valueType: 'indexBorder',
+      width: 48,
+    },
+    {
       title: 'ID',
       dataIndex: 'id',
     },
