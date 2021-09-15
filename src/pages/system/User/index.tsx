@@ -99,25 +99,25 @@ const User = observer(() => {
       onFilter: true,
       valueType: 'select',
       valueEnum: {
-        all: { 
+        all: {
           text: intl.formatMessage({
-            id:'pages.searchTable.titleStatus.all',
+            id: 'pages.searchTable.titleStatus.all',
             defaultMessage: '全部',
-          }), 
-          status: 'Default' 
+          }),
+          status: 'Default',
         },
         1: {
-          text:intl.formatMessage({
-            id:'pages.searchTable.titleStatus.normal',
+          text: intl.formatMessage({
+            id: 'pages.searchTable.titleStatus.normal',
             defaultMessage: '正常',
-          }), 
+          }),
           status: 1,
         },
         0: {
-          text:intl.formatMessage({
-            id:'pages.searchTable.titleStatus.disable',
+          text: intl.formatMessage({
+            id: 'pages.searchTable.titleStatus.disable',
             defaultMessage: '禁用',
-          }), 
+          }),
           status: 0,
         },
       },
