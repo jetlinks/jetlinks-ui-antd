@@ -49,7 +49,7 @@ const Role: React.FC = () => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.system.role.name',
+        id: 'pages.indexBorder.name',
         defaultMessage: '名称',
       }),
       dataIndex: 'name',
@@ -67,7 +67,7 @@ const Role: React.FC = () => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.system.role.describe',
+        id: 'pages.indexBorder.describe',
         defaultMessage: '描述',
       }),
       dataIndex: 'describe',
@@ -170,7 +170,7 @@ const Role: React.FC = () => {
       },
       name: {
         title: intl.formatMessage({
-          id: 'pages.system.role.name',
+          id: 'pages.indexBorder.name',
           defaultMessage: '角色名称',
         }),
         type: 'string',
@@ -186,7 +186,7 @@ const Role: React.FC = () => {
       describe: {
         type: 'string',
         title: intl.formatMessage({
-          id: 'pages.system.role.describe',
+          id: 'pages.indexBorder.describe',
           defaultMessage: '描述',
         }),
         'x-decorator': 'FormItem',

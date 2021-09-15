@@ -35,7 +35,7 @@ const Access: React.FC = () => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.log.access.explain',
+        id: 'pages.log.access.describe',
         defaultMessage: '说明',
       }),
       dataIndex: 'describe',

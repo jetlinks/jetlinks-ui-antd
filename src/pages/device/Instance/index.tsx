@@ -51,7 +51,7 @@ const Instance = () => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.device.instance.equipmentName',
+        id: 'pages.indexBorder.equipmentName',
         defaultMessage: '设备名称',
       }),
       dataIndex: 'name',
@@ -77,7 +77,7 @@ const Instance = () => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.device.instance.status',
+        id: 'pages.searchTable.titleStatus',
         defaultMessage: '状态',
       }),
       dataIndex: 'state',
@@ -111,7 +111,7 @@ const Instance = () => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.device.instance.explain',
+        id: 'pages.device.instance.describe',
         defaultMessage: '说明',
       }),
       dataIndex: 'describe',

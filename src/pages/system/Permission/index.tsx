@@ -59,7 +59,7 @@ const Permission: React.FC = () => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.system.permission.name',
+        id: 'pages.indexBorder.name',
         defaultMessage: '名称',
       }),
       dataIndex: 'name',
@@ -84,7 +84,7 @@ const Permission: React.FC = () => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.system.permission.status',
+        id: 'pages.searchTable.titleStatus',
         defaultMessage: '状态',
       }),
       dataIndex: 'status',
@@ -196,7 +196,7 @@ const Permission: React.FC = () => {
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
               tab: intl.formatMessage({
-                id: 'pages.system.permission.basicInformation',
+                id: 'pages.system.permission.addInformation',
                 defaultMessage: '基础信息',
               }),
             },
@@ -214,7 +214,7 @@ const Permission: React.FC = () => {
               },
               name: {
                 title: intl.formatMessage({
-                  id: 'pages.system.permission.name',
+                  id: 'pages.indexBorder.name',
                   defaultMessage: '名称',
                 }),
                 type: 'string',
@@ -226,7 +226,7 @@ const Permission: React.FC = () => {
               'properties.type': {
                 type: 'string',
                 title: intl.formatMessage({
-                  id: 'pages.system.permission.status',
+                  id: 'pages.searchTable.titleStatus',
                   defaultMessage: '分类',
                 }),
                 'x-decorator': 'FormItem',
@@ -244,7 +244,7 @@ const Permission: React.FC = () => {
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
               tab: intl.formatMessage({
-                id: 'pages.system.permission.operationConfiguration',
+                id: 'pages.system.permission.addConfiguration',
                 defaultMessage: '操作配置',
               }),
             },
@@ -274,7 +274,7 @@ const Permission: React.FC = () => {
                       'x-component-props': {
                         width: 200,
                         title: intl.formatMessage({
-                          id: 'pages.system.permission.operationConfiguration.type',
+                          id: 'pages.system.permission.addConfigurationType',
                           defaultMessage: '操作类型',
                         }),
                       },
@@ -292,7 +292,7 @@ const Permission: React.FC = () => {
                       'x-component-props': {
                         width: 200,
                         title: intl.formatMessage({
-                          id: 'pages.system.permission.operationConfiguration.name',
+                          id: 'pages.indexBorder.name',
                           defaultMessage: '名称',
                         }),
                       },
@@ -310,7 +310,7 @@ const Permission: React.FC = () => {
                       'x-component-props': {
                         width: 200,
                         title: intl.formatMessage({
-                          id: 'pages.system.permission.operationConfiguration.describe',
+                          id: 'pages.indexBorder.describe',
                           defaultMessage: '描述',
                         }),
                       },
@@ -375,7 +375,7 @@ const Permission: React.FC = () => {
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
               tab: intl.formatMessage({
-                id: 'pages.system.permission.associatedPermissions',
+                id: 'pages.system.permission.addPermissionOperation',
                 defaultMessage: '关联权限',
               }),
             },
@@ -405,7 +405,7 @@ const Permission: React.FC = () => {
                       'x-component-props': {
                         width: 200,
                         title: intl.formatMessage({
-                          id: 'pages.system.permission.associatedPermissions.preOperation',
+                          id: 'pages.system.permission.addPermissionPreOperation',
                           defaultMessage: '前置操作',
                         }),
                       },
@@ -423,7 +423,7 @@ const Permission: React.FC = () => {
                       'x-component-props': {
                         width: 200,
                         title: intl.formatMessage({
-                          id: 'pages.system.permission.associatedPermissions.associatedPermissions',
+                          id: 'pages.system.permission.addPermission',
                           defaultMessage: '关联权限',
                         }),
                       },
@@ -441,7 +441,7 @@ const Permission: React.FC = () => {
                       'x-component-props': {
                         width: 200,
                         title: intl.formatMessage({
-                          id: 'pages.system.permission.associatedPermissions.associatedOperation',
+                          id: 'pages.system.permission.addPermissionOperation',
                           defaultMessage: '关联操作',
                         }),
                       },
@@ -506,7 +506,7 @@ const Permission: React.FC = () => {
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
               tab: intl.formatMessage({
-                id: 'pages.system.permission.dataView',
+                id: 'pages.system.permission.addDataView',
                 defaultMessage: '数据视图',
               }),
             },

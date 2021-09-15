@@ -70,7 +70,7 @@ const Product = observer(() => {
             title: {
               dataIndex: 'name',
               title: intl.formatMessage({
-                id: 'pages.device.product.name',
+                id: 'pages.indexBorder.name',
                 defaultMessage: '名称',
               }),
             },
@@ -208,14 +208,14 @@ const Product = observer(() => {
             state: {
               // 自己扩展的字段，主要用于筛选，不在列表中显示
               title: intl.formatMessage({
-                id: 'pages.device.product.status',
+                id: 'pages.searchTable.titleStatus',
                 defaultMessage: '状态',
               }),
               valueType: 'select',
               valueEnum: {
                 all: {
                   text: intl.formatMessage({
-                    id: 'pages.device.product.status.all',
+                    id: 'pages.searchTable.titleStatus.all',
                     defaultMessage: '状态',
                   }),
                   status: 'Default',

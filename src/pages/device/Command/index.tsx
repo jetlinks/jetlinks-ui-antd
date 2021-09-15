@@ -24,7 +24,7 @@ const Command = () => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.device.command.equipmentName',
+        id: 'pages.indexBorder.equipmentName',
         defaultMessage: '设备名称',
       }),
       dataIndex: 'deviceName',
@@ -61,7 +61,7 @@ const Command = () => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.device.command.status',
+        id: 'pages.searchTable.titleStatus',
         defaultMessage: '状态',
       }),
       dataIndex: 'state',

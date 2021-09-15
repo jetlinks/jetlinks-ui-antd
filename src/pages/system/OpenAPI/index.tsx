@@ -31,21 +31,21 @@ const OpenAPI: React.FC = () => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.system.open-api.Name',
+        id: 'pages.indexBorder.name',
         defaultMessage: '名称',
       }),
       dataIndex: 'Name',
     },
     {
       title: intl.formatMessage({
-        id: 'pages.system.open-api.userName',
+        id: 'pages.indexBorder.username',
         defaultMessage: '用户名',
       }),
       dataIndex: 'username',
     },
     {
       title: intl.formatMessage({
-        id: 'pages.system.user.status',
+        id: 'pages.searchTable.titleStatus',
         defaultMessage: '状态',
       }),
       dataIndex: 'status',
@@ -158,7 +158,7 @@ const OpenAPI: React.FC = () => {
         properties: {
           clientName: {
             title: intl.formatMessage({
-              id: 'pages.system.open-api.Name',
+              id: 'pages.indexBorder.name',
               defaultMessage: '名称',
             }),
             type: 'string',
@@ -217,7 +217,7 @@ const OpenAPI: React.FC = () => {
           },
           username: {
             title: intl.formatMessage({
-              id: 'pages.system.open-api.userName',
+              id: 'pages.indexBorder.username',
               defaultMessage: '用户名',
             }),
             type: 'string',
@@ -236,7 +236,7 @@ const OpenAPI: React.FC = () => {
           },
           password: {
             title: intl.formatMessage({
-              id: 'pages.system.open-api.passWord',
+              id: 'pages.system.openApi.passWord',
               defaultMessage: '密码',
             }),
             type: 'string',
@@ -288,7 +288,7 @@ const OpenAPI: React.FC = () => {
       },
       ipWhiteList: {
         title: intl.formatMessage({
-          id: 'pages.system.open-api.ipWhileList',
+          id: 'pages.system.openApi.ipWhileList',
           defaultMessage: 'IP白名单',
         }),
         type: 'string',
@@ -305,7 +305,7 @@ const OpenAPI: React.FC = () => {
       },
       description: {
         title: intl.formatMessage({
-          id: 'pages.system.open-api.describe',
+          id: 'pages.indexBorder.describe',
           defaultMessage: '描述',
         }),
         type: 'string',
@@ -330,7 +330,7 @@ const OpenAPI: React.FC = () => {
         columns={columns}
         service={service}
         title={intl.formatMessage({
-          id: 'pages.system.open-api',
+          id: 'pages.system.openApi',
           defaultMessage: '第三方平台',
         })}
         schema={schema}
