@@ -93,6 +93,12 @@
         component: './device/Product',
       },
       {
+        path: '/device/category',
+        name: 'category',
+        icon: 'smile',
+        component: './device/Category',
+      },
+      {
         hideInMenu: true,
         path: '/device/product/detail/:id',
         name: 'product-detail',

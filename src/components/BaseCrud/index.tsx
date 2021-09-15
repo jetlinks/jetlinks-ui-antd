@@ -11,6 +11,8 @@ import type { ISchema } from '@formily/json-schema';
 import { CurdModel } from '@/components/BaseCrud/model';
 import type { ISchemaFieldProps } from '@formily/react/lib/types';
 import type { ModalProps } from 'antd/lib/modal/Modal';
+import type { TablePaginationConfig } from 'antd/lib/table/interface';
+import type { SearchConfig } from '@jetlinks/pro-table/lib/components/Form/FormRender';
 
 export type Option = {
   model: 'edit' | 'preview' | 'add';
@@ -34,6 +36,8 @@ export type Props<T> = {
   modelConfig?: ModalProps;
   request?: (params: any) => Promise<Partial<RequestData<T>>>;
   toolBar?: React.ReactNode[];
+  pagination?: false | TablePaginationConfig;
+  search?: false | SearchConfig;
 };
 
 const BaseCrud = <T extends Record<string, any>>(props: Props<T>) => {
@@ -51,6 +55,8 @@ const BaseCrud = <T extends Record<string, any>>(props: Props<T>) => {
     modelConfig,
     request,
     toolBar,
+    pagination,
+    search,
   } = props;
 
   return (
@@ -64,15 +70,23 @@ const BaseCrud = <T extends Record<string, any>>(props: Props<T>) => {
           type: 'multiple',
         }}
         rowKey="id"
-        search={{
-          labelWidth: 'auto',
-        }}
+        search={
+          search === false
+            ? false
+            : {
+                labelWidth: 'auto',
+              }
+        }
         form={{
           syncToUrl: false,
         }}
-        pagination={{
-          pageSize: 10,
-        }}
+        pagination={
+          pagination === false
+            ? false
+            : {
+                pageSize: 10,
+              }
+        }
         dateFormatter="string"
         headerTitle={title}
         defaultParams={defaultParams}
