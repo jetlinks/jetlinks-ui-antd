@@ -14,6 +14,11 @@ import { map } from 'rxjs/operators';
 
 export const service = new Service('datasource/config');
 
+const stateIconMap = {
+  enabled: <CloseCircleOutlined />,
+  disabled: <PlayCircleOutlined />,
+};
+
 const DataSource = () => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
@@ -41,7 +46,9 @@ const DataSource = () => {
     {
       title: 'ID',
       dataIndex: 'id',
-      width: 200,
+      width: 240,
+      sorter: true,
+      defaultSortOrder: 'ascend',
     },
     {
       title: '名称',
@@ -65,7 +72,6 @@ const DataSource = () => {
       valueType: 'option',
       align: 'center',
       width: 200,
-
       render: (text, record) => [
         <a key="editable" onClick={() => CurdModel.update(record)}>
           <Tooltip
@@ -77,17 +83,17 @@ const DataSource = () => {
             <EditOutlined />
           </Tooltip>
         </a>,
-        <a href={record.id} target="_blank" rel="noopener noreferrer" key="view">
+        <a key="status">
           <Popconfirm
             title={intl.formatMessage({
-              id: 'pages.data.option.disable.tips',
-              defaultMessage: '确认禁用？',
+              id: `pages.data.option.${
+                record.state.value === 'disabled' ? 'enabled' : 'disabled'
+              }.tips`,
+              defaultMessage: `确认${record.state.value === 'disabled' ? '启' : '禁'}用？`,
             })}
             onConfirm={async () => {
-              await service.update({
-                id: record.id,
-                // state: record.state ? 0 : 1,
-              });
+              const state = record.state.value === 'disabled' ? 'enable' : 'disable';
+              await service.changeStatus(record.id, state);
               message.success(
                 intl.formatMessage({
                   id: 'pages.data.option.success',
@@ -99,11 +105,13 @@ const DataSource = () => {
           >
             <Tooltip
               title={intl.formatMessage({
-                id: `pages.data.option.${record.state ? 'disable' : 'enable'}`,
-                defaultMessage: record.state ? '禁用' : '启用',
+                id: `pages.data.option.${
+                  record.state.value === 'enabled' ? 'disabled' : 'enabled'
+                }`,
+                defaultMessage: record.state.text,
               })}
             >
-              {record.state ? <CloseCircleOutlined /> : <PlayCircleOutlined />}
+              {stateIconMap[record.state.value]}
             </Tooltip>
           </Popconfirm>
         </a>,
