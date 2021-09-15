@@ -4,10 +4,11 @@ import { Observable } from 'rxjs';
 import Token from '@/utils/token';
 import type { WebsocketPayload } from '@/hooks/websocket/typings';
 import { notification } from 'antd';
+import SystemConst from '@/utils/const';
 
-const url = `${document.location.protocol.replace('http', 'ws')}//${
-  document.location.host
-}/jetlinks/messaging/${Token.get()}?:X_Access_Token=${Token.get()}`;
+const url = `${document.location.protocol.replace('http', 'ws')}//${document.location.host}/${
+  SystemConst.API_BASE
+}/messaging/${Token.get()}?:X_Access_Token=${Token.get()}`;
 
 enum MsgType {
   sub = 'sub',

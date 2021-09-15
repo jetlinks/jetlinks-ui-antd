@@ -23,9 +23,9 @@ const Analysis = () => {
         <StatisticCard.Group direction={responsive ? 'column' : 'row'}>
           <StatisticCard
             statistic={{
-              title:intl.formatMessage({
-                id:'pages.analysis.cpu',
-                defaultMessage:'CPU使用率',
+              title: intl.formatMessage({
+                id: 'pages.analysis.cpu',
+                defaultMessage: 'CPU使用率',
               }),
             }}
             chart={<CPU />}
@@ -33,9 +33,9 @@ const Analysis = () => {
           <Divider type={responsive ? 'horizontal' : 'vertical'} />
           <StatisticCard
             statistic={{
-              title:intl.formatMessage({
-                id:'pages.analysis.jvm',
-                defaultMessage:'JVM内存',
+              title: intl.formatMessage({
+                id: 'pages.analysis.jvm',
+                defaultMessage: 'JVM内存',
               }),
             }}
             chart={<Jvm />}
@@ -43,9 +43,9 @@ const Analysis = () => {
           <Divider type={responsive ? 'horizontal' : 'vertical'} />
           <StatisticCard
             statistic={{
-              title:intl.formatMessage({
-                id:'pages.analysis.information',
-                defaultMessage:'信息完成度',
+              title: intl.formatMessage({
+                id: 'pages.analysis.information',
+                defaultMessage: '信息完成度',
               }),
               value: 5,
               suffix: '/ 100',

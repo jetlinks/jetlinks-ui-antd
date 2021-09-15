@@ -16,7 +16,7 @@ const Command = () => {
 
   const columns: ProColumns<CommandItem>[] = [
     {
-      title:  intl.formatMessage({
+      title: intl.formatMessage({
         id: 'pages.device.command.deviceID',
         defaultMessage: '设备ID',
       }),
@@ -36,26 +36,26 @@ const Command = () => {
       }),
       dataIndex: 'messageType',
       filters: [
-        { 
+        {
           text: intl.formatMessage({
             id: 'pages.device.command.instructionType.readAttributes',
             defaultMessage: '读取属性',
           }),
-          value: 'READ_PROPERTY' 
+          value: 'READ_PROPERTY',
         },
-        { 
+        {
           text: intl.formatMessage({
             id: 'pages.device.command.instructionType.setProperties',
             defaultMessage: '设置属性',
           }),
-          value: 'WRITE_PROPERTY' 
+          value: 'WRITE_PROPERTY',
         },
-        { 
+        {
           text: intl.formatMessage({
             id: 'pages.device.command.instructionType.callAttribute',
             defaultMessage: '调用属性',
           }),
-          value: 'INVOKE_FUNCTION' 
+          value: 'INVOKE_FUNCTION',
         },
       ],
     },
@@ -66,26 +66,26 @@ const Command = () => {
       }),
       dataIndex: 'state',
       filters: [
-        { 
+        {
           text: intl.formatMessage({
             id: 'pages.device.command.status.waiting',
             defaultMessage: '等待中',
           }),
-          value: 'wait' 
+          value: 'wait',
         },
-        { 
+        {
           text: intl.formatMessage({
             id: 'pages.device.command.status.failed ',
             defaultMessage: '发送失败',
           }),
-          value: 'sendError' 
+          value: 'sendError',
         },
-        { 
+        {
           text: intl.formatMessage({
             id: 'pages.device.command.status.succeed',
             defaultMessage: '发送成功',
           }),
-          value: 'success' 
+          value: 'success',
         },
       ],
       render: (value: any) => value.text,
@@ -110,7 +110,7 @@ const Command = () => {
     {
       title: intl.formatMessage({
         id: 'pages.data.option',
-          defaultMessage: '操作',
+        defaultMessage: '操作',
       }),
       valueType: 'option',
       align: 'center',

@@ -26,17 +26,17 @@ const Access: React.FC = () => {
       // ellipsis: true
     },
     {
-      title:intl.formatMessage({
-        id:'pages.log.access.requestPath',
-        defaultMessage:'请求路径',
+      title: intl.formatMessage({
+        id: 'pages.log.access.requestPath',
+        defaultMessage: '请求路径',
       }),
       dataIndex: 'url',
-       // ellipsis: true,
+      // ellipsis: true,
     },
     {
-       title:intl.formatMessage({
-        id:'pages.log.access.explain',
-        defaultMessage:'说明',
+      title: intl.formatMessage({
+        id: 'pages.log.access.explain',
+        defaultMessage: '说明',
       }),
       dataIndex: 'describe',
       // ellipsis: true,
@@ -45,9 +45,9 @@ const Access: React.FC = () => {
       },
     },
     {
-      title:intl.formatMessage({
-        id:'pages.log.access.requestTime',
-        defaultMessage:'请求时间',
+      title: intl.formatMessage({
+        id: 'pages.log.access.requestTime',
+        defaultMessage: '请求时间',
       }),
       dataIndex: 'requestTime',
       sorter: true,
@@ -56,9 +56,9 @@ const Access: React.FC = () => {
       renderText: (text: string) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
-      title:intl.formatMessage({
-        id:'pages.log.access.requestTimeConsuming',
-        defaultMessage:'请求耗时',
+      title: intl.formatMessage({
+        id: 'pages.log.access.requestTimeConsuming',
+        defaultMessage: '请求耗时',
       }),
       // width: 100,
       renderText: (record: AccessLogItem) => (
@@ -66,9 +66,9 @@ const Access: React.FC = () => {
       ),
     },
     {
-      title:intl.formatMessage({
-        id:'pages.log.access.requestUser',
-        defaultMessage:'请求用户',
+      title: intl.formatMessage({
+        id: 'pages.log.access.requestUser',
+        defaultMessage: '请求用户',
       }),
       dataIndex: 'context.username',
       render: (text) => <Tag color="geekblue">{text}</Tag>,

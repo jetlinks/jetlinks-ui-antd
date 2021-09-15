@@ -34,9 +34,9 @@ const Tenant = () => {
     },
     {
       dataIndex: 'tenant',
-      title:intl.formatMessage({
-        id:'pages.system.tenant.avatar',
-        defaultMessage:'头像',
+      title: intl.formatMessage({
+        id: 'pages.system.tenant.avatar',
+        defaultMessage: '头像',
       }),
       align: 'center',
       search: false,
@@ -44,26 +44,26 @@ const Tenant = () => {
     },
     {
       dataIndex: 'tenant',
-      title:intl.formatMessage({
-        id:'pages.system.tenant.name',
-        defaultMessage:'名称',
+      title: intl.formatMessage({
+        id: 'pages.system.tenant.name',
+        defaultMessage: '名称',
       }),
       align: 'center',
       renderText: (text: TenantDetail) => text.name,
     },
     {
       dataIndex: 'members',
-      title:intl.formatMessage({
-        id:'pages.system.tenant.members',
-        defaultMessage:'成员数',
+      title: intl.formatMessage({
+        id: 'pages.system.tenant.members',
+        defaultMessage: '成员数',
       }),
       align: 'center',
     },
     {
       dataIndex: 'tenant',
-      title:intl.formatMessage({
-        id:'pages.searchTable.titleStatus',
-        defaultMessage:'状态',
+      title: intl.formatMessage({
+        id: 'pages.searchTable.titleStatus',
+        defaultMessage: '状态',
       }),
       align: 'center',
       renderText: (text: TenantDetail) => text.state.text,
@@ -73,23 +73,23 @@ const Tenant = () => {
       valueEnum: [
         {
           text: intl.formatMessage({
-            id:'pages.searchTable.titleStatus.all',
+            id: 'pages.searchTable.titleStatus.all',
             defaultMessage: '全部',
-          }), 
+          }),
           status: 'Default',
         },
         {
-          text:intl.formatMessage({
-            id:'pages.searchTable.titleStatus.normal',
+          text: intl.formatMessage({
+            id: 'pages.searchTable.titleStatus.normal',
             defaultMessage: '正常',
-          }), 
+          }),
           status: '1',
         },
         {
-          text:intl.formatMessage({
-            id:'pages.searchTable.titleStatus.disable',
+          text: intl.formatMessage({
+            id: 'pages.searchTable.titleStatus.disable',
             defaultMessage: '禁用',
-          }), 
+          }),
           status: '0',
         },
       ],

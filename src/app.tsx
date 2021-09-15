@@ -9,11 +9,9 @@ import { BookOutlined, LinkOutlined } from '@ant-design/icons';
 import Service from '@/pages/user/Login/service';
 import Token from '@/utils/token';
 import type { RequestOptionsInit } from 'umi-request';
-import { useIntl } from '@@/plugin-locale/localeExports';
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
-
 
 /** 获取用户信息比较慢的时候会展示一个 loading */
 export const initialStateConfig = {
@@ -150,7 +148,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
           <Link to="/umi/plugin/openapi" target="_blank">
             <LinkOutlined />
             <span>OpenAPI 文档</span>
-          {/* <span>
+            {/* <span>
           { intl.formatMessage({
                   id: 'pages.searchTable.new',
                   defaultMessage: '新建',

@@ -17,7 +17,7 @@ const Firmware = () => {
 
   const columns: ProColumns<FirmwareItem>[] = [
     {
-      title:  intl.formatMessage({
+      title: intl.formatMessage({
         id: 'pages.device.firmware.name',
         defaultMessage: '固件名称',
       }),

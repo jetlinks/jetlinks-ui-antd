@@ -60,8 +60,8 @@ const Org = observer(() => {
     obs.data = {
       id: null,
       name: intl.formatMessage({
-        id:'pages.system.org',
-        defaultMessage:'机构管理',
+        id: 'pages.system.org',
+        defaultMessage: '机构管理',
       }),
       title: '组织架构',
       children: response.result,

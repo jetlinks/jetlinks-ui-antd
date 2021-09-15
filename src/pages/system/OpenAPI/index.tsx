@@ -30,17 +30,16 @@ const OpenAPI: React.FC = () => {
       dataIndex: 'id',
     },
     {
-      title:intl.formatMessage({
-        id:'pages.system.open-api.Name',
-        defaultMessage:'名称',
+      title: intl.formatMessage({
+        id: 'pages.system.open-api.Name',
+        defaultMessage: '名称',
       }),
       dataIndex: 'Name',
-
     },
     {
-      title:intl.formatMessage({
-        id:'pages.system.open-api.userName',
-        defaultMessage:'用户名',
+      title: intl.formatMessage({
+        id: 'pages.system.open-api.userName',
+        defaultMessage: '用户名',
       }),
       dataIndex: 'username',
     },
@@ -59,23 +58,23 @@ const OpenAPI: React.FC = () => {
       valueEnum: [
         {
           text: intl.formatMessage({
-            id:'pages.searchTable.titleStatus.all',
+            id: 'pages.searchTable.titleStatus.all',
             defaultMessage: '全部',
-          }), 
+          }),
           status: 'Default',
         },
         {
-          text:intl.formatMessage({
-            id:'pages.searchTable.titleStatus.normal',
+          text: intl.formatMessage({
+            id: 'pages.searchTable.titleStatus.normal',
             defaultMessage: '正常',
-          }), 
+          }),
           status: '1',
         },
         {
-          text:intl.formatMessage({
-            id:'pages.searchTable.titleStatus.disable',
+          text: intl.formatMessage({
+            id: 'pages.searchTable.titleStatus.disable',
             defaultMessage: '禁用',
-          }), 
+          }),
           status: '0',
         },
       ],
@@ -158,9 +157,9 @@ const OpenAPI: React.FC = () => {
         name: 'oy139sts87c',
         properties: {
           clientName: {
-            title:intl.formatMessage({
-              id:'pages.system.open-api.Name',
-              defaultMessage:'名称',
+            title: intl.formatMessage({
+              id: 'pages.system.open-api.Name',
+              defaultMessage: '名称',
             }),
             type: 'string',
             'x-decorator': 'FormItem',
@@ -217,9 +216,9 @@ const OpenAPI: React.FC = () => {
             name: 'secureKey',
           },
           username: {
-            title:intl.formatMessage({
-              id:'pages.system.open-api.userName',
-              defaultMessage:'用户名',
+            title: intl.formatMessage({
+              id: 'pages.system.open-api.userName',
+              defaultMessage: '用户名',
             }),
             type: 'string',
             'x-decorator': 'FormItem',
@@ -236,9 +235,9 @@ const OpenAPI: React.FC = () => {
             name: 'username',
           },
           password: {
-            title:intl.formatMessage({
-              id:'pages.system.open-api.passWord',
-              defaultMessage:'密码',
+            title: intl.formatMessage({
+              id: 'pages.system.open-api.passWord',
+              defaultMessage: '密码',
             }),
             type: 'string',
             'x-decorator': 'FormItem',
@@ -288,9 +287,9 @@ const OpenAPI: React.FC = () => {
         },
       },
       ipWhiteList: {
-        title:intl.formatMessage({
-          id:'pages.system.open-api.ipWhileList',
-          defaultMessage:'IP白名单',
+        title: intl.formatMessage({
+          id: 'pages.system.open-api.ipWhileList',
+          defaultMessage: 'IP白名单',
         }),
         type: 'string',
         'x-decorator': 'FormItem',
@@ -305,9 +304,9 @@ const OpenAPI: React.FC = () => {
         'x-index': 1,
       },
       description: {
-        title:intl.formatMessage({
-          id:'pages.system.open-api.describe',
-          defaultMessage:'描述',
+        title: intl.formatMessage({
+          id: 'pages.system.open-api.describe',
+          defaultMessage: '描述',
         }),
         type: 'string',
         'x-decorator': 'FormItem',
