@@ -15,7 +15,7 @@ export default function access(initialState: { currentUser?: UserInfo | undefine
     currentUser && includesKey(keys, currentUser!.permissions);
   return {
     user: checkAccess(['user']),
-    role: checkAccess(['role']),
+    role: checkAccess(['dimension']),
     org: checkAccess(['org']),
   };
 }
