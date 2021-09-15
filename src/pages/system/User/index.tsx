@@ -51,7 +51,10 @@ const User = observer(() => {
       copyable: true,
       ellipsis: true,
       align: 'center',
-      tip: '姓名过长会自动收缩',
+      tip: intl.formatMessage({
+        id: 'pages.system.user.name.tips',
+        defaultMessage: '姓名过长会自动收缩',
+      }),
       sorter: true,
       defaultSortOrder: 'ascend',
       formItemProps: {
@@ -68,14 +71,17 @@ const User = observer(() => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.system.user.username',
+        id: 'pages.indexBorder.username',
         defaultMessage: '用户名',
       }),
       dataIndex: 'username',
       copyable: true,
       ellipsis: true,
       align: 'center',
-      tip: '用户名过长会自动收缩',
+      tip: intl.formatMessage({
+        id: 'pages.system.userName.tip',
+        defaultMessage: '用户名过长会自动收缩',
+      }),
       formItemProps: {
         rules: [
           {
@@ -90,7 +96,7 @@ const User = observer(() => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.system.user.status',
+        id: 'pages.searchTable.titleStatus',
         defaultMessage: '状态',
       }),
       dataIndex: 'status',
@@ -212,7 +218,7 @@ const User = observer(() => {
       },
       username: {
         title: intl.formatMessage({
-          id: 'pages.system.user.username',
+          id: 'pages.indexBorder.username',
           defaultMessage: '用户名',
         }),
         type: 'string',

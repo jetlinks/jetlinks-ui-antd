@@ -28,21 +28,21 @@ const Alarm = () => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.device.alarm.equipmentName',
+        id: 'pages.indexBorder.equipmentName',
         defaultMessage: '设备名称',
       }),
       dataIndex: 'deviceName',
     },
     {
       title: intl.formatMessage({
-        id: 'pages.device.alarm.alarmName',
+        id: 'pages.device.alarm.name',
         defaultMessage: '告警名称',
       }),
       dataIndex: 'alarmName',
     },
     {
       title: intl.formatMessage({
-        id: 'pages.device.alarm.alarmTime',
+        id: 'pages.device.alarm.time',
         defaultMessage: '告警时间',
       }),
       dataIndex: 'alarmTime',
@@ -131,7 +131,10 @@ const Alarm = () => {
       <BaseCrud
         columns={columns}
         service={service}
-        title={'告警记录'}
+        title={intl.formatMessage({
+          id: 'pages.device.alarm',
+          defaultMessage: '告警记录',
+        })}
         schema={schema}
         actionRef={actionRef}
       />
