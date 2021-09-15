@@ -84,7 +84,7 @@ export default function useWebSocket(socketUrl: string, options: Options = {}): 
         };
         Store.set(SystemConst.GLOBAL_WEBSOCKET, websocketRef.current);
       } catch (error) {
-        throw new Error(error);
+        throw new Error(error as string);
       }
     }
   });
