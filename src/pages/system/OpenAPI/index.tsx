@@ -31,14 +31,14 @@ const OpenAPI: React.FC = () => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.indexBorder.name',
+        id: 'pages.table.name',
         defaultMessage: '名称',
       }),
       dataIndex: 'Name',
     },
     {
       title: intl.formatMessage({
-        id: 'pages.indexBorder.username',
+        id: 'pages.table.username',
         defaultMessage: '用户名',
       }),
       dataIndex: 'username',
@@ -158,7 +158,7 @@ const OpenAPI: React.FC = () => {
         properties: {
           clientName: {
             title: intl.formatMessage({
-              id: 'pages.indexBorder.name',
+              id: 'pages.table.name',
               defaultMessage: '名称',
             }),
             type: 'string',
@@ -217,7 +217,7 @@ const OpenAPI: React.FC = () => {
           },
           username: {
             title: intl.formatMessage({
-              id: 'pages.indexBorder.username',
+              id: 'pages.table.username',
               defaultMessage: '用户名',
             }),
             type: 'string',
@@ -305,7 +305,7 @@ const OpenAPI: React.FC = () => {
       },
       description: {
         title: intl.formatMessage({
-          id: 'pages.indexBorder.describe',
+          id: 'pages.table.describe',
           defaultMessage: '描述',
         }),
         type: 'string',

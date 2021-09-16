@@ -70,7 +70,7 @@ const Product = observer(() => {
             title: {
               dataIndex: 'name',
               title: intl.formatMessage({
-                id: 'pages.indexBorder.name',
+                id: 'pages.table.name',
                 defaultMessage: '名称',
               }),
             },

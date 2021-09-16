@@ -32,10 +32,11 @@ export default {
   'pages.searchTable.titleStatus.normal': 'Normal',
   'pages.searchTable.titleStatus.disable': 'Disable',
   'pages.searchTable.titleOption': 'Option',
-  'pages.indexBorder.username': 'userName',
-  'pages.indexBorder.name': 'Name',
-  'pages.indexBorder.equipmentName': 'Equipment Name',
-  'pages.indexBorder.describe': 'Describe',
+  'pages.table.username': 'userName',
+  'pages.table.name': 'Name',
+  'pages.table.equipmentName': 'Equipment Name',
+  'pages.table.describe': 'Describe',
+  'pages.table.description': 'Explain',
 
   // 统计分析
   'pages.analysis.cpu': 'CPU Usage',
@@ -83,6 +84,10 @@ export default {
   'pages.system.tenant.list': 'Tenant List',
   'pages.system.tenant.avatar': 'Avatar',
   'pages.system.tenant.members': 'Members',
+
+  // 系统设置-数据源管理
+  'pages.datasource.title':'Data Source',
+  'pages.datasource.type':'Type',
 
   // 设备管理-产品
   'pages.device.product': 'Product',
@@ -145,4 +150,5 @@ export default {
   'pages.log.system.logContent': 'Log Content',
   'pages.log.system.serviceName': 'Service Name',
   'pages.log.system.creationTime': 'Creation Time',
+
 };

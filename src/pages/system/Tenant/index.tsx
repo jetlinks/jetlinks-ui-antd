@@ -45,7 +45,7 @@ const Tenant = () => {
     {
       dataIndex: 'tenant',
       title: intl.formatMessage({
-        id: 'pages.indexBorder.name',
+        id: 'pages.table.name',
         defaultMessage: '名称',
       }),
       align: 'center',

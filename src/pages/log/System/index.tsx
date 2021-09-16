@@ -31,7 +31,7 @@ const System = () => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.indexBorder.name',
+        id: 'pages.table.name',
         defaultMessage: '名称',
       }),
       dataIndex: 'name',

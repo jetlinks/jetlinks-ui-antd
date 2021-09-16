@@ -56,7 +56,7 @@ const Instance = () => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.indexBorder.equipmentName',
+        id: 'pages.table.equipmentName',
         defaultMessage: '设备名称',
       }),
       dataIndex: 'name',
@@ -116,10 +116,10 @@ const Instance = () => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.device.instance.describe',
+        id: 'pages.table.description',
         defaultMessage: '说明',
       }),
-      dataIndex: 'describe',
+      dataIndex: 'description',
       width: '15%',
       ellipsis: true,
     },

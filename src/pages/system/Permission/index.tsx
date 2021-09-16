@@ -59,7 +59,7 @@ const Permission: React.FC = () => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.indexBorder.name',
+        id: 'pages.table.name',
         defaultMessage: '名称',
       }),
       dataIndex: 'name',
@@ -214,7 +214,7 @@ const Permission: React.FC = () => {
               },
               name: {
                 title: intl.formatMessage({
-                  id: 'pages.indexBorder.name',
+                  id: 'pages.table.name',
                   defaultMessage: '名称',
                 }),
                 type: 'string',
@@ -292,7 +292,7 @@ const Permission: React.FC = () => {
                       'x-component-props': {
                         width: 200,
                         title: intl.formatMessage({
-                          id: 'pages.indexBorder.name',
+                          id: 'pages.table.name',
                           defaultMessage: '名称',
                         }),
                       },
@@ -310,7 +310,7 @@ const Permission: React.FC = () => {
                       'x-component-props': {
                         width: 200,
                         title: intl.formatMessage({
-                          id: 'pages.indexBorder.describe',
+                          id: 'pages.table.describe',
                           defaultMessage: '描述',
                         }),
                       },

@@ -71,7 +71,7 @@ const User = observer(() => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.indexBorder.username',
+        id: 'pages.table.username',
         defaultMessage: '用户名',
       }),
       dataIndex: 'username',
@@ -218,7 +218,7 @@ const User = observer(() => {
       },
       username: {
         title: intl.formatMessage({
-          id: 'pages.indexBorder.username',
+          id: 'pages.table.username',
           defaultMessage: '用户名',
         }),
         type: 'string',

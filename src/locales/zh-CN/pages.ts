@@ -32,10 +32,11 @@ export default {
   'pages.searchTable.titleStatus.normal': '正常',
   'pages.searchTable.titleStatus.disable': '禁用',
   'pages.searchTable.titleOption': '操作',
-  'pages.indexBorder.username': '用户名',
-  'pages.indexBorder.name': '名称',
-  'pages.indexBorder.equipmentName': '设备名称',
-  'pages.indexBorder.describe': '描述',
+  'pages.table.username': '用户名',
+  'pages.table.name': '名称',
+  'pages.table.equipmentName': '设备名称',
+  'pages.table.describe': '描述',
+  'pages.table.description': '说明',
 
   // 统计分析
   'pages.analysis.cpu': 'CPU使用率',
@@ -84,6 +85,10 @@ export default {
   'pages.system.tenant.avatar': '头像',
   'pages.system.tenant.members': '成员数',
 
+  // 系统设置-数据源管理
+  'pages.datasource.title':'数据源管理',
+  'pages.datasource.type':'类型',
+
   // 设备管理-产品
   'pages.device.product': '产品',
   'pages.device.product.list': '产品列表',
@@ -100,7 +105,6 @@ export default {
   'pages.device.instance.status.notEnabled': '未启用',
   'pages.device.instance.status.offLine': '离线',
   'pages.device.instance.status.onLine': '在线',
-  'pages.device.instance.describe': '说明',
 
   // 设备管理-指令下发
   'pages.device.command': '指令下发',
@@ -133,7 +137,6 @@ export default {
   // 日志管理-访问日志
   'pages.log.access': '访问日志',
   'pages.log.access.requestPath': '请求路径',
-  'pages.log.access.describe': '说明',
   'pages.log.access.requestTime': '请求时间',
   'pages.log.access.requestTimeConsuming': '请求耗时',
   'pages.log.access.requestUser': '请求用户',
@@ -146,5 +149,5 @@ export default {
   'pages.log.system.serviceName': '服务名',
   'pages.log.system.creationTime': '创建时间',
 
-  // datasource
+
 };

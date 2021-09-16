@@ -38,7 +38,7 @@ const Access: React.FC = () => {
         id: 'pages.log.access.describe',
         defaultMessage: '说明',
       }),
-      dataIndex: 'describe',
+      dataIndex: 'description',
       // ellipsis: true,
       render: (text, record) => {
         return `${record.action}-${record.describe}`;

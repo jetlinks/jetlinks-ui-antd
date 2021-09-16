@@ -29,7 +29,7 @@ const Command = () => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.indexBorder.equipmentName',
+        id: 'pages.table.equipmentName',
         defaultMessage: '设备名称',
       }),
       dataIndex: 'deviceName',

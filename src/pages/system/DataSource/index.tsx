@@ -51,24 +51,39 @@ const DataSource = () => {
       defaultSortOrder: 'ascend',
     },
     {
-      title: '名称',
+      title: intl.formatMessage({
+      id:   'pages.table.name',
+      defaultMessage: '名称',
+    }),
       dataIndex: 'name',
     },
     {
-      title: '类型',
+      title: intl.formatMessage({
+        id:  'pages.datasource.type',
+        defaultMessage: '类型',
+      }),
       dataIndex: 'typeId',
     },
     {
-      title: '说明',
+      title: intl.formatMessage({
+        id:  'pages.table.description',
+        defaultMessage: '说明',
+      }),
       dataIndex: 'description',
     },
     {
-      title: '状态',
+      title: intl.formatMessage({
+        id: 'pages.searchTable.titleStatus',
+        defaultMessage: '说明',
+      }),
       dataIndex: 'state',
       render: (value: any) => value.text,
     },
     {
-      title: '操作',
+      title: intl.formatMessage({
+        id:'pages.data.option',
+        defaultMessage: '说明',
+      }),
       valueType: 'option',
       align: 'center',
       width: 200,
@@ -131,7 +146,10 @@ const DataSource = () => {
         },
         properties: {
           name: {
-            title: '名称',
+            title: intl.formatMessage({
+              id:   'pages.table.name',
+              defaultMessage: '名称',
+            }),
             'x-component': 'Input',
             'x-decorator': 'FormItem',
             'x-decorator-props': {
@@ -140,7 +158,10 @@ const DataSource = () => {
             },
           },
           typeId: {
-            title: '类型',
+            title: intl.formatMessage({
+              id:  'pages.datasource.type',
+              defaultMessage: '类型',
+            }),
             'x-component': 'Select',
             'x-decorator': 'FormItem',
             'x-decorator-props': {
@@ -269,7 +290,10 @@ const DataSource = () => {
             },
           },
           description: {
-            title: '说明',
+            title: intl.formatMessage({
+              id: 'pages.table.description',
+              defaultMessage: '说明',
+            }),
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               gridSpan: 2,
@@ -294,7 +318,10 @@ const DataSource = () => {
         }}
         columns={columns}
         service={service}
-        title="数据源管理"
+        title={intl.formatMessage({
+            id: 'pages.datasource.title',
+            defaultMessage: '数据源管理',
+          })}
         schema={schema}
         actionRef={actionRef}
       />
