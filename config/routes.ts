@@ -203,6 +203,35 @@
     ],
   },
   {
+    path: '/rule-engine',
+    name: 'rule-engine',
+    icon: 'crown',
+    routes: [
+      {
+        path: '/rule-engine',
+        redirect: 'rule-engine/instance',
+      },
+      {
+        path: '/rule-engine/instance',
+        name: 'instance',
+        icon: 'smile',
+        component: './rule-engine/Instance',
+      },
+      {
+        path: '/rule-engine/sqlrule',
+        name: 'sqlrule',
+        icon: 'smile',
+        component: './rule-engine/SQLRule',
+      },
+      {
+        path: '/rule-engine/scene',
+        name: 'scene',
+        icon: 'smile',
+        component: './rule-engine/Scene',
+      },
+    ],
+  },
+  {
     path: '/log',
     name: 'log',
     icon: 'crown',
