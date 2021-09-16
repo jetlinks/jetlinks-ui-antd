@@ -180,6 +180,29 @@
     ],
   },
   {
+    path: '/notice',
+    name: 'notice',
+    icon: 'crown',
+    routes: [
+      {
+        path: '/notice',
+        redirect: '/notice/config',
+      },
+      {
+        path: '/notice/config',
+        name: 'config',
+        icon: 'smile',
+        component: './notice/Config',
+      },
+      {
+        path: '/notice/template',
+        name: 'template',
+        icon: 'smile',
+        component: './notice/Template',
+      },
+    ],
+  },
+  {
     path: '/log',
     name: 'log',
     icon: 'crown',
