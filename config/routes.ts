@@ -209,7 +209,7 @@
     routes: [
       {
         path: '/rule-engine',
-        redirect: 'rule-engine/instance',
+        redirect: '/rule-engine/instance',
       },
       {
         path: '/rule-engine/instance',
@@ -232,32 +232,49 @@
     ],
   },
   {
-    path:'/visualization',
-    name:'visualization',
-    icon:'crown',
+    path: '/visualization',
+    name: 'visualization',
+    icon: 'crown',
     routes:[
       {
-        path:'/visualization',
-        redirect: 'visualization/category'
+        path: '/visualization',
+        redirect: '/visualization/category'
       },
       {
-        path:'/visualization/category',
-        name:'category',
-        icon:'smile',
+        path: '/visualization/category',
+        name: 'category',
+        icon: 'smile',
         component: './visualization/Category',
       },
       {
-        path:'/visualization/screen',
-        name:'screen',
-        icon:'smile',
+        path: '/visualization/screen',
+        name: 'screen',
+        icon: 'smile',
         component: './visualization/Screen',
       },
       {
-        path:'/visualization/configuration',
-        name:'configuration',
-        icon:'smile',
+        path: '/visualization/configuration',
+        name: 'configuration',
+        icon: 'smile',
         component: './visualization/configuration',
       },
+    ]
+  },
+  {
+    path: '/simulator',
+    name: 'simulator',
+    icon: 'crown',
+    routes:[
+      {
+        path:'/simulator',
+        redirect: '/simulator/device',
+      },
+      {
+        path:'/simulator/device',
+        name:'device',
+        icon:'smile',
+        component: './simulator/Device'
+      }
     ]
   },
   {
