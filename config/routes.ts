@@ -324,6 +324,41 @@
     ]
   },
   {
+    path:'/media',
+    name:'media',
+    icon:'crown',
+    routes:[
+      {
+        path:'/media',
+        redirect: '/media/config',
+      },
+      {
+        path:'/media/config',
+        name:'config',
+        icon:'smile',
+        component: './media/Config',
+      },
+      {
+        path:'/media/device',
+        name:'device',
+        icon:'smile',
+        component: './media/device'
+      },
+      {
+        path:'/media/reveal',
+        name:'reveal',
+        icon:'smile',
+        component: './media/reveal',
+      },
+      {
+        path:'/media/cascade',
+        name:'cascade',
+        icon:'smile',
+        component: './media/Cascade',
+      }
+      ]
+  },
+  {
     path: '/',
     redirect: '/analysis',
   },
