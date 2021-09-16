@@ -139,6 +139,47 @@
     ],
   },
   {
+    path: '/link',
+    name: 'link',
+    icon: 'crown',
+    routes: [
+      {
+        path: '/link',
+        redirect: '/link/certificate',
+      },
+      {
+        path: '/link/certificate',
+        name: 'certificate',
+        icon: 'smile',
+        component: './link/Certificate',
+      },
+      {
+        path: '/link/gateway',
+        name: 'gateway',
+        icon: 'smile',
+        component: './link/Gateway',
+      },
+      {
+        path: '/link/opcua',
+        name: 'opcua',
+        icon: 'smile',
+        component: './link/Opcua',
+      },
+      {
+        path: '/link/protocol',
+        name: 'protocol',
+        icon: 'smile',
+        component: './link/Protocol',
+      },
+      {
+        path: 'link/type',
+        name: 'type',
+        icon: 'smile',
+        component: './link/Type',
+      },
+    ],
+  },
+  {
     path: '/log',
     name: 'log',
     icon: 'crown',
