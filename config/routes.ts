@@ -218,8 +218,8 @@
         component: './rule-engine/Instance',
       },
       {
-        path: '/rule-engine/sqlrule',
-        name: 'sqlrule',
+        path: '/rule-engine/sqlRule',
+        name: 'sqlRule',
         icon: 'smile',
         component: './rule-engine/SQLRule',
       },
@@ -299,6 +299,29 @@
         component: './log/System',
       },
     ],
+  },
+  {
+    path:'/cloud',
+    name:'cloud',
+    icon:"crown",
+    routes: [
+      {
+        path:'/cloud',
+        redirect: '/cloud/duer'
+      },
+      {
+        path:'/cloud/duer',
+        name:'duerOS',
+        icon:'smile',
+        component: './cloud/DuerOS',
+      },
+      {
+        path:'/cloud/aliyun',
+        name:'aliyun',
+        icon:'smile',
+        component: './cloud/Aliyun'
+      }
+    ]
   },
   {
     path: '/',
