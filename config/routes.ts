@@ -232,6 +232,35 @@
     ],
   },
   {
+    path:'/visualization',
+    name:'visualization',
+    icon:'crown',
+    routes:[
+      {
+        path:'/visualization',
+        redirect: 'visualization/category'
+      },
+      {
+        path:'/visualization/category',
+        name:'category',
+        icon:'smile',
+        component: './visualization/Category',
+      },
+      {
+        path:'/visualization/screen',
+        name:'screen',
+        icon:'smile',
+        component: './visualization/Screen',
+      },
+      {
+        path:'/visualization/configuration',
+        name:'configuration',
+        icon:'smile',
+        component: './visualization/configuration',
+      },
+    ]
+  },
+  {
     path: '/log',
     name: 'log',
     icon: 'crown',
