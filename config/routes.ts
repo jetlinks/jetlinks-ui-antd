@@ -319,7 +319,6 @@ export const routes = [
               'device-gateway',
               'protocol-supports',
               'opc-client',
-              'admin',
             ],
             routes: [
               {

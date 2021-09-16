@@ -1,4 +1,3 @@
-import { router } from 'umi';
 import { reloadAuthorized } from './Authorized';
 
 // use localStorage to store the authority info, which might be sent from server in actual project.
@@ -32,9 +31,6 @@ export function getAuthority(): string | string[] {
         authority = autz.currentAuthority;
       } else {
         authority = autz.permissions.map((item: any) => item.id);
-      }
-      if (autz.user?.username === 'admin') {
-        return ['admin'];
       }
       return authority;
     } catch (error) {
