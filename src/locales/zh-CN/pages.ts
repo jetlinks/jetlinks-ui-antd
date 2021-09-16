@@ -50,12 +50,10 @@ export default {
   'pages.system.user.confirmPassword': '确认密码',
   'pages.system.userName.tips': '用户名过长会自动收缩',
   'pages.system.user.name.tips': '姓名过长会自动收缩',
-
   // 角色管理
   'pages.system.role': '角色管理',
   'pages.system.role.id': '标识',
   'pages.system.role.option.bindUser': '绑定用户',
-
   // 系统设置-权限管理
   'pages.system.permission': '权限管理',
   'pages.system.permission.id': '标识',
@@ -68,26 +66,22 @@ export default {
   'pages.system.permission.addPermissionPreOperation': '前置操作',
   'pages.system.permission.addPermissionOperation': '关联操作',
   'pages.system.permission.addDataView': '数据视图',
-
   // 系统设置-机构管理
   'pages.system.org': '机构管理',
   'pages.system.org.code': '编码',
   'pages.system.org.count': '下级数量',
-
   // 系统设置-第三方平台
   'pages.system.openApi': '第三方平台',
   'pages.system.openApi.passWord': '密码',
   'pages.system.openApi.ipWhileList': 'IP白名单',
-
   // 系统设置-租户管理
   'pages.system.tenant': '租户管理',
   'pages.system.tenant.list': '租户列表',
   'pages.system.tenant.avatar': '头像',
   'pages.system.tenant.members': '成员数',
-
   // 系统设置-数据源管理
-  'pages.datasource.title':'数据源管理',
-  'pages.datasource.type':'类型',
+  'pages.system.datasource.':'数据源管理',
+  'pages.system.datasource.type':'类型',
 
   // 设备管理-产品
   'pages.device.product': '产品',
@@ -96,7 +90,11 @@ export default {
   'pages.device.product.status.unpublished': '未发布',
   'pages.device.product.status.all': '全部',
   'pages.device.productDetail': '产品详情',
-
+  // 设备管理-产品分类
+  'pages.device.category':'产品分类',
+  'pages.device.category.id':'分类ID',
+  'pages.device.category.logotype':'标识',
+  'pages.device.category.name':'分类名称',
   // 设备管理-设备
   'pages.device.instance': '设备',
   'pages.device.instance.management': '设备管理',
@@ -105,7 +103,6 @@ export default {
   'pages.device.instance.status.notEnabled': '未启用',
   'pages.device.instance.status.offLine': '离线',
   'pages.device.instance.status.onLine': '在线',
-
   // 设备管理-指令下发
   'pages.device.command': '指令下发',
   'pages.device.command.deviceID': '设备ID',
@@ -118,7 +115,6 @@ export default {
   'pages.device.command.status.succeed': '发送成功',
   'pages.device.command.errorMessage': '错误信息',
   'pages.device.command.sendTime': '发送时间',
-
   // 设备管理-固件升级
   'pages.device.firmware': '固件升级',
   'pages.device.firmware.name': '固件名称',
@@ -126,7 +122,6 @@ export default {
   'pages.device.firmware.products': '所属产品',
   'pages.device.firmware.signature': '签名方式',
   'pages.device.firmware.creationTime': '创建时间',
-
   // 设备管理-告警记录
   'pages.device.alarm': '告警记录',
   'pages.device.alarm.deviceID': '设备ID',
@@ -140,7 +135,6 @@ export default {
   'pages.log.access.requestTime': '请求时间',
   'pages.log.access.requestTimeConsuming': '请求耗时',
   'pages.log.access.requestUser': '请求用户',
-
   // 日志管理-系统日志
   'pages.log.system': '系统日志',
   'pages.log.system.thread': '线程',

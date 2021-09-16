@@ -50,12 +50,10 @@ export default {
   'pages.system.user.confirmPassword': 'confirmPassword',
   'pages.system.userName.tip': 'If the username is too long, it will automatically shrink',
   'pages.system.user.name.tips': 'Names that are too long automatically shrink',
-
   // 角色管理
   'pages.system.role': 'Role',
   'pages.system.role.id': 'ID',
   'pages.system.role.option.bindUser': 'Bind User',
-
   // 系统设置-权限管理
   'pages.system.permission': 'Permission',
   'pages.system.permission.id': 'ID',
@@ -68,26 +66,22 @@ export default {
   'pages.system.permission.addPermissionPreOperation': 'Pre Operation',
   'pages.system.permission.addPermissionOperation': 'Associated Operation',
   'pages.system.permission.addDataView': 'Data View',
-
   // 系统设置-机构管理
   'pages.system.org': 'Organization',
   'pages.system.org.code': 'Code',
   'pages.system.org.count': 'Count',
-
   // 系统设置-第三方平台
   'pages.system.openApi': 'OpenAPI',
   'pages.system.openApi.passWord': 'passWord',
   'pages.system.openApi.ipWhileList': 'ipWhileList',
-
   // 系统设置-租户管理
   'pages.system.tenant': 'Tenant',
   'pages.system.tenant.list': 'Tenant List',
   'pages.system.tenant.avatar': 'Avatar',
   'pages.system.tenant.members': 'Members',
-
   // 系统设置-数据源管理
-  'pages.datasource.title':'Data Source',
-  'pages.datasource.type':'Type',
+  'pages.system.datasource.':'Data Source',
+  'pages.system.datasource.type':'Type',
 
   // 设备管理-产品
   'pages.device.product': 'Product',
@@ -96,7 +90,11 @@ export default {
   'pages.device.product.status.unpublished': 'Unpublished',
   'pages.device.product.status.all': 'All',
   'pages.device.productDetail': 'ProductDetail',
-
+  // 设备管理-产品分类
+  'pages.device.category':'Product Classification',
+  'pages.device.category.id':'Classification ID',
+  'pages.device.category.logotype':'Logotype',
+  'pages.device.category.name':'Classification Name',
   // 设备管理-设备
   'pages.device.instance': 'Equipment',
   'pages.device.instance.management': 'Equipment Management',
@@ -106,7 +104,6 @@ export default {
   'pages.device.instance.status.offLine': 'Off Line',
   'pages.device.instance.status.onLine': 'On Line',
   'pages.device.instance.describe': 'Explain',
-
   // 设备管理-指令下发
   'pages.device.command': 'Command',
   'pages.device.command.deviceID': 'Device ID',
@@ -119,7 +116,6 @@ export default {
   'pages.device.command.status.succeed': 'Sent successfully',
   'pages.device.command.errorMessage': 'Error Message',
   'pages.device.command.sendTime': 'Send Time',
-
   // 设备管理-固件升级
   'pages.device.firmware': 'Firmware',
   'pages.device.firmware.name': 'Firmware Name',
@@ -127,7 +123,6 @@ export default {
   'pages.device.firmware.products': 'Products',
   'pages.device.firmware.signature': 'Signature Method',
   'pages.device.firmware.creationTime': 'Creation Time',
-
   // 设备管理-告警记录
   'pages.device.alarm': 'Alarm',
   'pages.device.alarm.deviceID': 'Device ID',
@@ -142,7 +137,6 @@ export default {
   'pages.log.access.requestTime': 'Request Time',
   'pages.log.access.requestTimeConsuming': 'Request Time Consuming',
   'pages.log.access.requestUser': 'Request User',
-
   // 日志管理-系统日志
   'pages.log.system': 'System Log',
   'pages.log.system.thread': 'Thread',

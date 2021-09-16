@@ -16,30 +16,45 @@ const Category = () => {
   const intl = useIntl();
   const columns: ProColumns<CategoryItem>[] = [
     {
-      title: '分类ID',
+      title:intl.formatMessage({
+        id:  'pages.device.category.id',
+        defaultMessage: '分类ID',
+      }),
       align: 'left',
       width: 200,
       dataIndex: 'id',
     },
     {
-      title: '标识',
+      title: intl.formatMessage({
+        id:  'pages.device.category.logotype',
+        defaultMessage: '标识',
+      }),
       align: 'left',
       dataIndex: 'key',
     },
     {
-      title: '分类名称',
+      title: intl.formatMessage({
+        id:  'pages.device.category.name',
+        defaultMessage: '分类名称',
+      }),
       dataIndex: 'name',
       align: 'center',
     },
     {
-      title: '说明',
+      title: intl.formatMessage({
+        id:  'pages.table.description',
+        defaultMessage: '说明',
+      }),
       dataIndex: 'description',
       width: 300,
       align: 'center',
       ellipsis: true,
     },
     {
-      title: '操作',
+      title: intl.formatMessage({
+          id: 'pages.data.option',
+          defaultMessage: '操作',
+        }),
       valueType: 'option',
       align: 'center',
       render: (text, record) => [
@@ -87,14 +102,20 @@ const Category = () => {
         name: 'id',
       },
       name: {
-        title: '名称',
+        title:intl.formatMessage({
+          id:  'pages.table.name',
+          defaultMessage: '名称',
+        }),
         'x-decorator': 'FormItem',
         'x-component': 'Input',
         required: true,
         name: 'name',
       },
       key: {
-        title: '标识',
+        title: intl.formatMessage({
+          id:  'pages.device.category.logotype',
+          defaultMessage: '标识',
+        }),
         'x-decorator': 'FormItem',
         'x-component': 'Input',
         required: true,
@@ -102,7 +123,10 @@ const Category = () => {
       },
       description: {
         type: 'string',
-        title: '描述信息',
+        title: intl.formatMessage({
+          id:  'pages.table.describe',
+          defaultMessage: '描述信息',
+        }),
         'x-decorator': 'FormItem',
         'x-component': 'Input.TextArea',
         'x-component-props': {
@@ -133,7 +157,10 @@ const Category = () => {
         pagination={false}
         columns={columns}
         service={service}
-        title="产品分类"
+        title= {intl.formatMessage({
+          id: 'pages.device.category',
+          defaultMessage: '产品分类',
+        })}
         schema={schema}
         actionRef={actionRef}
       />

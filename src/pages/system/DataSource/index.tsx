@@ -59,7 +59,7 @@ const DataSource = () => {
     },
     {
       title: intl.formatMessage({
-        id:  'pages.datasource.type',
+        id:  'pages.system.datasource.type',
         defaultMessage: '类型',
       }),
       dataIndex: 'typeId',
@@ -159,7 +159,7 @@ const DataSource = () => {
           },
           typeId: {
             title: intl.formatMessage({
-              id:  'pages.datasource.type',
+              id:  'pages.system.datasource.type',
               defaultMessage: '类型',
             }),
             'x-component': 'Select',
@@ -319,7 +319,7 @@ const DataSource = () => {
         columns={columns}
         service={service}
         title={intl.formatMessage({
-            id: 'pages.datasource.title',
+            id: 'pages.system.datasource.',
             defaultMessage: '数据源管理',
           })}
         schema={schema}
