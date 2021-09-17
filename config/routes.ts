@@ -154,18 +154,6 @@
         component: './link/Certificate',
       },
       {
-        path: '/link/gateway',
-        name: 'gateway',
-        icon: 'smile',
-        component: './link/Gateway',
-      },
-      {
-        path: '/link/opcua',
-        name: 'opcua',
-        icon: 'smile',
-        component: './link/Opcua',
-      },
-      {
         path: '/link/protocol',
         name: 'protocol',
         icon: 'smile',
@@ -176,6 +164,18 @@
         name: 'type',
         icon: 'smile',
         component: './link/Type',
+      },
+      {
+        path: '/link/gateway',
+        name: 'gateway',
+        icon: 'smile',
+        component: './link/Gateway',
+      },
+      {
+        path: '/link/opcua',
+        name: 'opcua',
+        icon: 'smile',
+        component: './link/Opcua',
       },
     ],
   },
@@ -357,6 +357,29 @@
         component: './media/Cascade',
       }
       ]
+  },
+  {
+    path:'/edge',
+    name:'edge',
+    icon:"crown",
+    routes: [
+      {
+        path:'/edge',
+        redirect: '/edge/product'
+      },
+      {
+        path:'/edge/product',
+        name:'product',
+        icon:'smile',
+        component: './edge/Product',
+      },
+      {
+        path:'/edge/device',
+        name:'device',
+        icon:'smile',
+        component: './edge/Device'
+      }
+    ]
   },
   {
     path: '/',

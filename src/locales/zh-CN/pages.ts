@@ -131,6 +131,7 @@ export default {
 
   // 设备接入
   'pages.link.certificate':'证书管理',
+  'pages.link.protocol':'协议管理',
   'pages.link.type':'网络组件',
   'pages.link.gateway':'设备网关',
   'pages.link.opcua':'OPC UA',
@@ -175,4 +176,8 @@ export default {
   'pages.media.device':'视频设备',
   'pages.media.reveal':'分屏展示',
   'pages.media.cascade':'国标级联',
+
+  // 边缘网关
+  'pages.edge.product':'产品',
+  'pages.edge.device':'设备'
 };

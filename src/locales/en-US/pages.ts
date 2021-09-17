@@ -132,6 +132,7 @@ export default {
 
   // 设备接入
   'pages.link.certificate':'Certificate',
+  'pages.link.protocol':'protocol',
   'pages.link.type':'Type',
   'pages.link.gateway':'Gateway',
   'pages.link.opcua':'OPC UA',
@@ -177,4 +178,8 @@ export default {
   'pages.media.device':'Device',
   'pages.media.reveal':'Reveal',
   'pages.media.cascade':'Cascade',
+
+  // 边缘网关
+  'pages.edge.product':'Product',
+  'pages.edge.device':'Device'
 };
