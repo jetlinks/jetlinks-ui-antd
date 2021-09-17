@@ -172,6 +172,8 @@ export default {
   // 云云对接
   'pages.cloud.duerOS':'Duer OS',
   'pages.cloud.aliyun':'Aliyun',
+  'pages.cloud.onenet':'移动OneNet',
+  'pages.cloud.ctwing':'电信CTWing',
 
   // 视频网关
   'pages.media.config':'Config',

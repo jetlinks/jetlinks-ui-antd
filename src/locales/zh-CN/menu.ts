@@ -45,6 +45,8 @@ export default {
   'menu.cloud':'云云对接',
   'menu.cloud.duer':'DuerOS',
   'menu.cloud.aliyun':'阿里云',
+  'menu.cloud.onenet':'移动OneNet',
+  'menu.cloud.ctwing':'电信CTWing',
   'menu.media':'视频网关',
   'menu.media.config':'基本配置',
   'menu.media.device':'视频设备',

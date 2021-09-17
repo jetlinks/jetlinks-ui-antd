@@ -311,7 +311,7 @@
       },
       {
         path:'/cloud/duer',
-        name:'duerOS',
+        name:'DuerOS',
         icon:'smile',
         component: './cloud/DuerOS',
       },
@@ -320,6 +320,18 @@
         name:'aliyun',
         icon:'smile',
         component: './cloud/Aliyun'
+      },
+      {
+        path:'/cloud/ctwing',
+        name:'ctwing',
+        icon:'smile',
+        component: './cloud/Ctwing'
+      },
+      {
+        path:'/cloud/onenet',
+        name:'onenet',
+        icon:'smile',
+        component: './cloud/Onenet'
       }
     ]
   },
