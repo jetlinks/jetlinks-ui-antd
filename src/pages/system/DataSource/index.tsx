@@ -74,7 +74,7 @@ const DataSource = () => {
     {
       title: intl.formatMessage({
         id: 'pages.searchTable.titleStatus',
-        defaultMessage: '说明',
+        defaultMessage: '状态',
       }),
       dataIndex: 'state',
       render: (value: any) => value.text,
@@ -82,7 +82,7 @@ const DataSource = () => {
     {
       title: intl.formatMessage({
         id:'pages.data.option',
-        defaultMessage: '说明',
+        defaultMessage: '操作',
       }),
       valueType: 'option',
       align: 'center',

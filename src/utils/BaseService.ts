@@ -10,6 +10,9 @@ interface IBaseService<T> {
 }
 
 class BaseService<T> implements IBaseService<T> {
+  changeStatus(id: string, state: string) {
+    throw new Error('Method not implemented.');
+  }
   protected uri: string;
 
   protected headers = {

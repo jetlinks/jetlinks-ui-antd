@@ -235,10 +235,10 @@
     path: '/visualization',
     name: 'visualization',
     icon: 'crown',
-    routes:[
+    routes: [
       {
         path: '/visualization',
-        redirect: '/visualization/category'
+        redirect: '/visualization/category',
       },
       {
         path: '/visualization/category',
@@ -258,24 +258,24 @@
         icon: 'smile',
         component: './visualization/configuration',
       },
-    ]
+    ],
   },
   {
     path: '/simulator',
     name: 'simulator',
     icon: 'crown',
-    routes:[
+    routes: [
       {
-        path:'/simulator',
+        path: '/simulator',
         redirect: '/simulator/device',
       },
       {
-        path:'/simulator/device',
-        name:'device',
-        icon:'smile',
-        component: './simulator/Device'
-      }
-    ]
+        path: '/simulator/device',
+        name: 'device',
+        icon: 'smile',
+        component: './simulator/Device',
+      },
+    ],
   },
   {
     path: '/log',
@@ -301,97 +301,97 @@
     ],
   },
   {
-    path:'/cloud',
-    name:'cloud',
-    icon:"crown",
+    path: '/cloud',
+    name: 'cloud',
+    icon: 'crown',
     routes: [
       {
-        path:'/cloud',
-        redirect: '/cloud/duer'
+        path: '/cloud',
+        redirect: '/cloud/duer',
       },
       {
-        path:'/cloud/duer',
-        name:'DuerOS',
-        icon:'smile',
+        path: '/cloud/duer',
+        name: 'DuerOS',
+        icon: 'smile',
         component: './cloud/DuerOS',
       },
       {
-        path:'/cloud/aliyun',
-        name:'aliyun',
-        icon:'smile',
-        component: './cloud/Aliyun'
+        path: '/cloud/aliyun',
+        name: 'aliyun',
+        icon: 'smile',
+        component: './cloud/Aliyun',
       },
       {
-        path:'/cloud/ctwing',
-        name:'ctwing',
-        icon:'smile',
-        component: './cloud/Ctwing'
+        path: '/cloud/onenet',
+        name: 'onenet',
+        icon: 'smile',
+        component: './cloud/Onenet',
       },
       {
-        path:'/cloud/onenet',
-        name:'onenet',
-        icon:'smile',
-        component: './cloud/Onenet'
-      }
-    ]
+        path: '/cloud/ctwing',
+        name: 'ctwing',
+        icon: 'smile',
+        component: './cloud/Ctwing',
+      },
+    ],
   },
   {
-    path:'/media',
-    name:'media',
-    icon:'crown',
-    routes:[
+    path: '/media',
+    name: 'media',
+    icon: 'crown',
+    routes: [
       {
-        path:'/media',
+        path: '/media',
         redirect: '/media/config',
       },
       {
-        path:'/media/config',
-        name:'config',
-        icon:'smile',
+        path: '/media/config',
+        name: 'config',
+        icon: 'smile',
         component: './media/Config',
       },
       {
-        path:'/media/device',
-        name:'device',
-        icon:'smile',
-        component: './media/device'
+        path: '/media/device',
+        name: 'device',
+        icon: 'smile',
+        component: './media/device',
       },
       {
-        path:'/media/reveal',
-        name:'reveal',
-        icon:'smile',
+        path: '/media/reveal',
+        name: 'reveal',
+        icon: 'smile',
         component: './media/reveal',
       },
       {
-        path:'/media/cascade',
-        name:'cascade',
-        icon:'smile',
+        path: '/media/cascade',
+        name: 'cascade',
+        icon: 'smile',
         component: './media/Cascade',
-      }
-      ]
+      },
+    ],
   },
   {
-    path:'/edge',
-    name:'edge',
-    icon:"crown",
+    path: '/edge',
+    name: 'edge',
+    icon: 'crown',
     routes: [
       {
-        path:'/edge',
-        redirect: '/edge/product'
+        path: '/edge',
+        redirect: '/edge/product',
       },
       {
-        path:'/edge/product',
-        name:'product',
-        icon:'smile',
+        path: '/edge/product',
+        name: 'product',
+        icon: 'smile',
         component: './edge/Product',
       },
       {
-        path:'/edge/device',
-        name:'device',
-        icon:'smile',
-        component: './edge/Device'
-      }
-    ]
+        path: '/edge/device',
+        name: 'device',
+        icon: 'smile',
+        component: './edge/Device',
+      },
+    ],
   },
   {
     path: '/',
