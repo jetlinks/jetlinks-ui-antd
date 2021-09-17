@@ -130,6 +130,29 @@ export default {
   'pages.device.alarm.time': 'Alarm Time',
   'pages.device.alarm.status': 'Processing State',
 
+  // 设备接入
+  'pages.link.certificate':'Certificate',
+  'pages.link.type':'Type',
+  'pages.link.gateway':'Gateway',
+  'pages.link.opcua':'OPC UA',
+
+  // 通知管理
+  'pages.notice.config':'Config',
+  'pages.notice.template':'Template',
+
+  // 规则引擎
+  'pages.ruleEngine.instance':'Instance',
+  'pages.ruleEngine.sqlRule':'SQL Rule',
+  'pages.ruleEngine.scene':'Scene',
+
+  // 可视化
+  'pages.visualization.category':'Category',
+  'pages.visualization.screen':'Screen',
+  'pages.visualization.configuration':'Configuration',
+
+  // 模拟测试
+  'pages.simulator.device':'Device',
+
   // 日志管理-访问日志
   'pages.log.access': 'Access Log',
   'pages.log.access.requestPath': 'Request Path',
@@ -145,4 +168,13 @@ export default {
   'pages.log.system.serviceName': 'Service Name',
   'pages.log.system.creationTime': 'Creation Time',
 
+  // 云云对接
+  'pages.cloud.duerOS':'Duer OS',
+  'pages.cloud.aliyun':'Aliyun',
+
+  // 视频网关
+  'pages.media.config':'Config',
+  'pages.media.device':'Device',
+  'pages.media.reveal':'Reveal',
+  'pages.media.cascade':'Cascade',
 };

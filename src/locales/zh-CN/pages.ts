@@ -129,6 +129,29 @@ export default {
   'pages.device.alarm.time': '告警时间',
   'pages.device.alarm.status': '处理状态',
 
+  // 设备接入
+  'pages.link.certificate':'证书管理',
+  'pages.link.type':'网络组件',
+  'pages.link.gateway':'设备网关',
+  'pages.link.opcua':'OPC UA',
+
+  // 通知管理
+  'pages.notice.config':'通知配置',
+  'pages.notice.template':'通知模板',
+
+  // 规则引擎
+  'pages.ruleEngine.instance':'规则实例',
+  'pages.ruleEngine.sqlRule':'数据转发',
+  'pages.ruleEngine.scene':'场景联动',
+
+  // 可视化
+  'pages.visualization.category':'分类管理',
+  'pages.visualization.screen':'大屏管理',
+  'pages.visualization.configuration':'组态管理',
+
+  // 模拟测试
+  'pages.simulator.device':'设备模拟器',
+
   // 日志管理-访问日志
   'pages.log.access': '访问日志',
   'pages.log.access.requestPath': '请求路径',
@@ -143,5 +166,13 @@ export default {
   'pages.log.system.serviceName': '服务名',
   'pages.log.system.creationTime': '创建时间',
 
+  // 云云对接
+  'pages.cloud.duerOS':'Duer OS',
+  'pages.cloud.aliyun':'阿里云',
 
+  // 视频网关
+  'pages.media.config':'基本配置',
+  'pages.media.device':'视频设备',
+  'pages.media.reveal':'分屏展示',
+  'pages.media.cascade':'国标级联',
 };
