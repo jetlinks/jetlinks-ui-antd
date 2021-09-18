@@ -1,4 +1,3 @@
-type Item = {
-  id: string;
-  name: string;
-};
+import type { InstanceItem } from '@/pages/rule-engine/Instance/typings';
+
+type SQLRuleItem = InstanceItem;

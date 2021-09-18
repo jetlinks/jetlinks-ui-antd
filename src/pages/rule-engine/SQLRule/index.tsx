@@ -1,6 +1,97 @@
 import { PageContainer } from '@ant-design/pro-layout';
+import { useRef } from 'react';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import type { SQLRuleItem } from '@/pages/rule-engine/SQLRule/typings';
+import { message, Tooltip } from 'antd';
+import {
+  CaretRightOutlined,
+  DownloadOutlined,
+  EditOutlined,
+  MinusOutlined,
+  ReloadOutlined,
+  StopOutlined,
+} from '@ant-design/icons';
+import BaseCrud from '@/components/BaseCrud';
+import { service } from '@/pages/rule-engine/Instance';
 
 const SQLRule = () => {
-  return <PageContainer>SQLRule</PageContainer>;
+  const actionRef = useRef<ActionType>();
+
+  const columns: ProColumns<SQLRuleItem>[] = [
+    {
+      dataIndex: 'index',
+      valueType: 'indexBorder',
+      width: 48,
+    },
+    {
+      dataIndex: 'name',
+      title: '名称',
+    },
+    {
+      dataIndex: 'createTime',
+      title: '创建时间',
+    },
+    {
+      dataIndex: 'state',
+      title: '状态',
+      render: (text, record) => record.state.value,
+    },
+    {
+      title: '操作',
+      valueType: 'option',
+      align: 'center',
+      width: 200,
+      render: (text, record) => [
+        <a onClick={() => console.log(record)}>
+          <Tooltip title="编辑">
+            <EditOutlined />
+          </Tooltip>
+        </a>,
+        <a onClick={() => console.log(record)}>
+          <Tooltip title="启动">
+            <CaretRightOutlined />
+          </Tooltip>
+        </a>,
+        <a onClick={() => console.log(record)}>
+          <Tooltip title="重启">
+            <ReloadOutlined />
+          </Tooltip>
+        </a>,
+        <a onClick={() => console.log(record)}>
+          <Tooltip title="停止">
+            <StopOutlined />
+          </Tooltip>
+        </a>,
+        <a>
+          <Tooltip title="删除">
+            <MinusOutlined />
+          </Tooltip>
+        </a>,
+        <a key="download">
+          <Tooltip title="下载配置">
+            <DownloadOutlined
+              onClick={() => {
+                message.success('下载');
+              }}
+            />
+          </Tooltip>
+        </a>,
+      ],
+    },
+  ];
+
+  const schema = {};
+  return (
+    <PageContainer>
+      <BaseCrud
+        columns={columns}
+        service={service}
+        title="数据转发"
+        schema={schema}
+        defaultParams={{ modelType: 'sql_rule' }}
+        actionRef={actionRef}
+      />
+    </PageContainer>
+  );
 };
 export default SQLRule;
