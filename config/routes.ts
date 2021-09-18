@@ -310,7 +310,7 @@
         redirect: '/cloud/duer',
       },
       {
-        path: '/cloud/duer',
+        path: '/cloud/dueros',
         name: 'DuerOS',
         icon: 'smile',
         component: './cloud/DuerOS',
