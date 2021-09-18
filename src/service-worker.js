@@ -3,8 +3,8 @@
 /* eslint-disable no-underscore-dangle */
 /* globals workbox */
 workbox.core.setCacheNameDetails({
-  prefix: 'antd-pro',
-  suffix: 'v5',
+  prefix: 'jeltinks',
+  suffix: '2.x',
 });
 // Control all opened tabs ASAP
 workbox.clientsClaim();
