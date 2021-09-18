@@ -80,8 +80,8 @@ export default {
   'pages.system.tenant.avatar': 'Avatar',
   'pages.system.tenant.members': 'Members',
   // 系统设置-数据源管理
-  'pages.system.datasource.':'Data Source',
-  'pages.system.datasource.type':'Type',
+  'pages.system.datasource.': 'Data Source',
+  'pages.system.datasource.type': 'Type',
 
   // 设备管理-产品
   'pages.device.product': 'Product',
@@ -91,10 +91,10 @@ export default {
   'pages.device.product.status.all': 'All',
   'pages.device.productDetail': 'ProductDetail',
   // 设备管理-产品分类
-  'pages.device.category':'Product Classification',
-  'pages.device.category.id':'Classification ID',
-  'pages.device.category.logotype':'Logotype',
-  'pages.device.category.name':'Classification Name',
+  'pages.device.category': 'Product Classification',
+  'pages.device.category.id': 'Classification ID',
+  'pages.device.category.logotype': 'Logotype',
+  'pages.device.category.name': 'Classification Name',
   // 设备管理-设备
   'pages.device.instance': 'Equipment',
   'pages.device.instance.management': 'Equipment Management',
@@ -131,27 +131,28 @@ export default {
   'pages.device.alarm.status': 'Processing State',
 
   // 设备接入
-  'pages.link.certificate':'Certificate',
-  'pages.link.type':'Type',
-  'pages.link.gateway':'Gateway',
-  'pages.link.opcua':'OPC UA',
+  'pages.link.certificate': 'Certificate',
+  'pages.link.protocol': 'protocol',
+  'pages.link.type': 'Type',
+  'pages.link.gateway': 'Gateway',
+  'pages.link.opcua': 'OPC UA',
 
   // 通知管理
-  'pages.notice.config':'Config',
-  'pages.notice.template':'Template',
+  'pages.notice.config': 'Config',
+  'pages.notice.template': 'Template',
 
   // 规则引擎
-  'pages.ruleEngine.instance':'Instance',
-  'pages.ruleEngine.sqlRule':'SQL Rule',
-  'pages.ruleEngine.scene':'Scene',
+  'pages.ruleEngine.instance': 'Instance',
+  'pages.ruleEngine.sqlRule': 'SQL Rule',
+  'pages.ruleEngine.scene': 'Scene',
 
   // 可视化
-  'pages.visualization.category':'Category',
-  'pages.visualization.screen':'Screen',
-  'pages.visualization.configuration':'Configuration',
+  'pages.visualization.category': 'Category',
+  'pages.visualization.screen': 'Screen',
+  'pages.visualization.configuration': 'Configuration',
 
   // 模拟测试
-  'pages.simulator.device':'Device',
+  'pages.simulator.device': 'Device',
 
   // 日志管理-访问日志
   'pages.log.access': 'Access Log',
@@ -169,12 +170,18 @@ export default {
   'pages.log.system.creationTime': 'Creation Time',
 
   // 云云对接
-  'pages.cloud.duerOS':'Duer OS',
-  'pages.cloud.aliyun':'Aliyun',
+  'pages.cloud.duerOS': 'Duer OS',
+  'pages.cloud.aliyun': 'Aliyun',
+  'pages.cloud.onenet': '移动OneNet',
+  'pages.cloud.ctwing': '电信CTWing',
 
   // 视频网关
-  'pages.media.config':'Config',
-  'pages.media.device':'Device',
-  'pages.media.reveal':'Reveal',
-  'pages.media.cascade':'Cascade',
+  'pages.media.config': 'Config',
+  'pages.media.device': 'Device',
+  'pages.media.reveal': 'Reveal',
+  'pages.media.cascade': 'Cascade',
+
+  // 边缘网关
+  'pages.edge.product': 'Product',
+  'pages.edge.device': 'Device',
 };
