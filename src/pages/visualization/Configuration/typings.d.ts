@@ -1,4 +1,3 @@
-type Item = {
-  id: string;
-  name: string;
-};
+import type { ScreenItem } from '@/pages/visualization/Screen/typings';
+
+type ConfigurationItem = ScreenItem;
