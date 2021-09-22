@@ -45,7 +45,7 @@ const Network = () => {
     {
       dataIndex: 'provider',
       title: intl.formatMessage({
-        id: 'pages.link.provider',
+        id: 'pages.table.provider',
         defaultMessage: '服务商',
       }),
     },

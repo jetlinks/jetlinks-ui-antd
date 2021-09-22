@@ -37,6 +37,7 @@ export default {
   'pages.table.equipmentName': '设备名称',
   'pages.table.describe': '描述',
   'pages.table.description': '说明',
+  'pages.table.provider': '服务商',
 
   // 统计分析
   'pages.analysis.cpu': 'CPU使用率',
@@ -138,12 +139,10 @@ export default {
   'pages.link.gateway': '设备网关',
   'pages.link.opcua': 'OPC UA',
   'pages.link.type': 'Type',
-  'pages.link.provider': '服务商',
   'pages.link.option.debug': '调试',
   'pages.link.option.record': '通知记录',
   // 通知管理
   'pages.notice.config': '通知配置',
-  'pages.notice.config.provider': '服务商',
   'pages.notice.config.type': '通知类型',
   'pages.notice.template': '通知模板',
   'pages.notice.option.debug': '调试',

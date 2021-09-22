@@ -38,7 +38,7 @@ export default {
   'pages.table.describe': 'Describe',
   'pages.table.description': 'Explain',
   'pages.table.type': 'Type',
-
+  'pages.table.provider': 'Provider',
   // 统计分析
   'pages.analysis.cpu': 'CPU Usage',
   'pages.analysis.jvm': 'JVM Memory',
