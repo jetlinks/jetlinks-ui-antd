@@ -12,9 +12,11 @@ import {
 } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import BaseCrud from '@/components/BaseCrud';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 export const service = new BaseService<InstanceItem>('rule-engine/instance');
 const Instance = () => {
+  const intl = useIntl();
   const actionRef = useRef<ActionType>();
 
   const columns: ProColumns<InstanceItem>[] = [
@@ -25,19 +27,31 @@ const Instance = () => {
     },
     {
       dataIndex: 'name',
-      title: '名称',
+      title: intl.formatMessage({
+        id: 'pages.table.name',
+        defaultMessage: '名称',
+      }),
     },
     {
       dataIndex: 'modelType',
-      title: '类型',
+      title: intl.formatMessage({
+        id: 'pages.table.type',
+        defaultMessage: '类型',
+      }),
     },
     {
       dataIndex: 'state',
-      title: '状态',
+      title: intl.formatMessage({
+        id: 'pages.searchTable.titleStatus',
+        defaultMessage: '状态',
+      }),
       render: (text, record) => record.state.value,
     },
     {
-      title: '操作',
+      title: intl.formatMessage({
+        id: 'pages.data.option',
+        defaultMessage: '操作',
+      }),
       valueType: 'option',
       align: 'center',
       width: 200,
@@ -79,7 +93,10 @@ const Instance = () => {
       <BaseCrud
         columns={columns}
         service={service}
-        title="规则实例"
+        title={intl.formatMessage({
+          id: 'pages.ruleEngine.instance',
+          defaultMessage: '规则实例',
+        })}
         schema={schema}
         actionRef={actionRef}
       />

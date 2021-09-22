@@ -52,21 +52,21 @@ const DataSource = () => {
     },
     {
       title: intl.formatMessage({
-      id:   'pages.table.name',
-      defaultMessage: '名称',
-    }),
+        id: 'pages.table.name',
+        defaultMessage: '名称',
+      }),
       dataIndex: 'name',
     },
     {
       title: intl.formatMessage({
-        id:  'pages.system.datasource.type',
+        id: 'pages.table.type',
         defaultMessage: '类型',
       }),
       dataIndex: 'typeId',
     },
     {
       title: intl.formatMessage({
-        id:  'pages.table.description',
+        id: 'pages.table.description',
         defaultMessage: '说明',
       }),
       dataIndex: 'description',
@@ -81,7 +81,7 @@ const DataSource = () => {
     },
     {
       title: intl.formatMessage({
-        id:'pages.data.option',
+        id: 'pages.data.option',
         defaultMessage: '说明',
       }),
       valueType: 'option',
@@ -147,7 +147,7 @@ const DataSource = () => {
         properties: {
           name: {
             title: intl.formatMessage({
-              id:   'pages.table.name',
+              id: 'pages.table.name',
               defaultMessage: '名称',
             }),
             'x-component': 'Input',
@@ -159,7 +159,7 @@ const DataSource = () => {
           },
           typeId: {
             title: intl.formatMessage({
-              id:  'pages.system.datasource.type',
+              id: 'pages.table.type',
               defaultMessage: '类型',
             }),
             'x-component': 'Select',
@@ -319,9 +319,9 @@ const DataSource = () => {
         columns={columns}
         service={service}
         title={intl.formatMessage({
-            id: 'pages.system.datasource.',
-            defaultMessage: '数据源管理',
-          })}
+          id: 'pages.system.datasource.',
+          defaultMessage: '数据源管理',
+        })}
         schema={schema}
         actionRef={actionRef}
       />

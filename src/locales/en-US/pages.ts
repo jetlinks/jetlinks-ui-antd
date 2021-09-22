@@ -11,7 +11,7 @@ export default {
   'pages.notification.error': 'Your network is abnormal and you cannot connect to the server',
 
   // 通用的数据操作
-  'pages.data.option': 'option',
+  'pages.data.option': 'Option',
   'pages.data.option.remove': 'delete',
   'pages.data.option.remove.tips': 'Confirm to delete?',
   'pages.data.option.disabled': 'disable',
@@ -37,6 +37,7 @@ export default {
   'pages.table.equipmentName': 'Equipment Name',
   'pages.table.describe': 'Describe',
   'pages.table.description': 'Explain',
+  'pages.table.type': 'Type',
 
   // 统计分析
   'pages.analysis.cpu': 'CPU Usage',
@@ -81,7 +82,6 @@ export default {
   'pages.system.tenant.members': 'Members',
   // 系统设置-数据源管理
   'pages.system.datasource.': 'Data Source',
-  'pages.system.datasource.type': 'Type',
 
   // 设备管理-产品
   'pages.device.product': 'Product',
@@ -133,18 +133,22 @@ export default {
   // 设备接入
   'pages.link.certificate': 'Certificate',
   'pages.link.protocol': 'protocol',
-  'pages.link.type': 'Type',
+  'pages.link.type': 'Network components',
   'pages.link.gateway': 'Gateway',
   'pages.link.opcua': 'OPC UA',
 
   // 通知管理
   'pages.notice.config': 'Config',
+  'pages.notice.config.service': 'Service',
+  'pages.notice.config.type': 'Type',
   'pages.notice.template': 'Template',
 
   // 规则引擎
   'pages.ruleEngine.instance': 'Instance',
   'pages.ruleEngine.sqlRule': 'SQL Rule',
+  'pages.ruleEngine.sqlRule.time': 'Create Time',
   'pages.ruleEngine.scene': 'Scene',
+  'pages.ruleEngine.scene.trigger': 'Trigger',
 
   // 可视化
   'pages.visualization.category': 'Category',
@@ -171,9 +175,12 @@ export default {
 
   // 云云对接
   'pages.cloud.duerOS': 'Duer OS',
+  'pages.cloud.duerOS.applianceType': 'Appliance Type',
+  'pages.cloud.duerOS.manufacturerName': 'Manufacture Name',
+  'pages.cloud.duerOS.version': 'Version',
   'pages.cloud.aliyun': 'Aliyun',
-  'pages.cloud.onenet': '移动OneNet',
-  'pages.cloud.ctwing': '电信CTWing',
+  'pages.cloud.onenet': 'Mobile OneNet',
+  'pages.cloud.ctwing': 'Telecom CTWing',
 
   // 视频网关
   'pages.media.config': 'Config',

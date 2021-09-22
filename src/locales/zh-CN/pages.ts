@@ -37,6 +37,7 @@ export default {
   'pages.table.equipmentName': '设备名称',
   'pages.table.describe': '描述',
   'pages.table.description': '说明',
+  'pages.table.type': '类型',
 
   // 统计分析
   'pages.analysis.cpu': 'CPU使用率',
@@ -81,7 +82,6 @@ export default {
   'pages.system.tenant.members': '成员数',
   // 系统设置-数据源管理
   'pages.system.datasource.': '数据源管理',
-  'pages.system.datasource.type': '类型',
 
   // 设备管理-产品
   'pages.device.product': '产品',
@@ -138,12 +138,16 @@ export default {
 
   // 通知管理
   'pages.notice.config': '通知配置',
+  'pages.notice.config.service': '服务商',
+  'pages.notice.config.type': '通知类型',
   'pages.notice.template': '通知模板',
 
   // 规则引擎
   'pages.ruleEngine.instance': '规则实例',
   'pages.ruleEngine.sqlRule': '数据转发',
+  'pages.ruleEngine.sqlRule.time': '创建时间',
   'pages.ruleEngine.scene': '场景联动',
+  'pages.ruleEngine.scene.trigger': '触发方式',
 
   // 可视化
   'pages.visualization.category': '分类管理',
@@ -169,6 +173,9 @@ export default {
 
   // 云云对接
   'pages.cloud.duerOS': 'Duer OS',
+  'pages.cloud.duerOS.applianceType': '设备类型',
+  'pages.cloud.duerOS.manufacturerName': '厂家名称',
+  'pages.cloud.duerOS.version': '动作数量',
   'pages.cloud.aliyun': '阿里云',
   'pages.cloud.onenet': '移动OneNet',
   'pages.cloud.ctwing': '电信CTWing',
