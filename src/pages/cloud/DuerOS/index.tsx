@@ -1,12 +1,12 @@
 import BaseService from '@/utils/BaseService';
 import type { ProColumns, ActionType } from '@jetlinks/pro-table';
-import { useIntl } from '@@/plugin-locale/localeExports';
 import { PageContainer } from '@ant-design/pro-layout';
 import BaseCrud from '@/components/BaseCrud';
 import { useRef } from 'react';
 import { Tooltip } from 'antd';
 import { EditOutlined, MinusOutlined } from '@ant-design/icons';
 import type { DuerOSItem } from '@/pages/cloud/DuerOS/typings';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 export const service = new BaseService<DuerOSItem>('dueros/product');
 const DuerOS = () => {
@@ -19,23 +19,38 @@ const DuerOS = () => {
       width: 48,
     },
     {
-      title: '名称',
+      title: intl.formatMessage({
+        id: 'pages.table.name',
+        defaultMessage: '名称',
+      }),
       dataIndex: 'name',
     },
     {
-      title: '设备类型',
+      title: intl.formatMessage({
+        id: 'pages.cloud.duerOS.applianceType',
+        defaultMessage: '设备类型',
+      }),
       dataIndex: 'applianceType',
     },
     {
-      title: '厂商名称',
+      title: intl.formatMessage({
+        id: 'pages.cloud.duerOS.manufacturerName',
+        defaultMessage: '厂家名称',
+      }),
       dataIndex: 'manufacturerName',
     },
     {
-      title: '动作数量',
+      title: intl.formatMessage({
+        id: 'pages.cloud.duerOS.version',
+        defaultMessage: '动作数量',
+      }),
       dataIndex: 'version',
     },
     {
-      title: '操作',
+      title: intl.formatMessage({
+        id: 'pages.data.option',
+        defaultMessage: '操作',
+      }),
       valueType: 'option',
       align: 'center',
       width: 200,

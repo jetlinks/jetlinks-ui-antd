@@ -1,6 +1,5 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import BaseService from '@/utils/BaseService';
-import { useIntl } from '@@/plugin-locale/localeExports';
 import { useRef } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { message, Popconfirm, Tooltip } from 'antd';
@@ -13,6 +12,7 @@ import {
 import BaseCrud from '@/components/BaseCrud';
 import { CurdModel } from '@/components/BaseCrud/model';
 import type { OnenetItem } from '@/pages/cloud/Onenet/typings';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 export const service = new BaseService<OnenetItem>('one-net/product');
 
@@ -31,24 +31,33 @@ const Onenet = () => {
       width: 48,
     },
     {
-      title: '名称',
+      title: intl.formatMessage({
+        id: 'pages.table.name',
+        defaultMessage: '名称',
+      }),
       align: 'center',
       dataIndex: 'name',
     },
     {
-      title: '状态',
+      title: intl.formatMessage({
+        id: 'pages.searchTable.titleStatus',
+        defaultMessage: '状态',
+      }),
       align: 'center',
       dataIndex: 'state.text',
     },
     {
-      title: '说明',
+      title: intl.formatMessage({
+        id: 'pages.table.description',
+        defaultMessage: '说明',
+      }),
       align: 'center',
       dataIndex: 'description',
     },
     {
       title: intl.formatMessage({
         id: 'pages.data.option',
-        defaultMessage: '',
+        defaultMessage: '操作',
       }),
       valueType: 'option',
       align: 'center',

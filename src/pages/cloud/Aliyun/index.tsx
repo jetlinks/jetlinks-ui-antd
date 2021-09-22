@@ -2,7 +2,6 @@ import { PageContainer } from '@ant-design/pro-layout';
 import BaseService from '@/utils/BaseService';
 import { useRef } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { useIntl } from '@@/plugin-locale/localeExports';
 import BaseCrud from '@/components/BaseCrud';
 import { message, Popconfirm, Tooltip } from 'antd';
 import {
@@ -13,6 +12,7 @@ import {
 } from '@ant-design/icons';
 import { CurdModel } from '@/components/BaseCrud/model';
 import type { AliyunItem } from '@/pages/cloud/Aliyun/typings';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 export const service = new BaseService<AliyunItem>('device/aliyun/bridge');
 
@@ -31,12 +31,18 @@ const Aliyun = () => {
       width: 48,
     },
     {
-      title: '名称',
+      title: intl.formatMessage({
+        id: 'pages.table.name',
+        defaultMessage: '名称',
+      }),
       align: 'center',
       dataIndex: 'name',
     },
     {
-      title: '说明',
+      title: intl.formatMessage({
+        id: 'pages.table.description',
+        defaultMessage: '说明',
+      }),
       align: 'center',
       dataIndex: 'description',
     },
