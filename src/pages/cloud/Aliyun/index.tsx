@@ -31,12 +31,18 @@ const Aliyun = () => {
       width: 48,
     },
     {
-      title: '名称',
+      title: intl.formatMessage({
+        id: 'pages.table.name',
+        defaultMessage: '名称',
+      }),
       align: 'center',
       dataIndex: 'name',
     },
     {
-      title: '说明',
+      title: intl.formatMessage({
+        id: 'pages.table.description',
+        defaultMessage: '说明',
+      }),
       align: 'center',
       dataIndex: 'description',
     },

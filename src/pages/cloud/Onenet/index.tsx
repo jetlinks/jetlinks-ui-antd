@@ -31,17 +31,26 @@ const Onenet = () => {
       width: 48,
     },
     {
-      title: '名称',
+      title: intl.formatMessage({
+        id: 'pages.table.name',
+        defaultMessage: '名称',
+      }),
       align: 'center',
       dataIndex: 'name',
     },
     {
-      title: '状态',
+      title: intl.formatMessage({
+        id: 'pages.searchTable.titleStatus',
+        defaultMessage: '状态',
+      }),
       align: 'center',
       dataIndex: 'state.text',
     },
     {
-      title: '说明',
+      title: intl.formatMessage({
+        id: 'pages.table.description',
+        defaultMessage: '说明',
+      }),
       align: 'center',
       dataIndex: 'description',
     },
