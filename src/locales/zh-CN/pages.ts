@@ -169,6 +169,7 @@ export default {
 
   // 模拟测试
   'pages.simulator.device': '设备模拟器',
+  'pages.simulator.device.networkType': '类型',
 
   // 日志管理-访问日志
   'pages.log.access': '访问日志',
@@ -195,6 +196,14 @@ export default {
 
   // 视频网关
   'pages.media.config': '基本配置',
+  'pages.media.device.transport': '信令传输',
+  'pages.media.device.streamMode': '流传输模式',
+  'pages.media.device.channelNumber': '通道数',
+  'pages.media.device.port': '端口',
+  'pages.media.device.manufacturer': '设备厂家',
+  'pages.media.device.model': '型号',
+  'pages.media.device.firmware': '固件版本',
+  'pages.media.device.networkType': '类型',
   'pages.media.device': '视频设备',
   'pages.media.reveal': '分屏展示',
   'pages.media.cascade': '国标级联',

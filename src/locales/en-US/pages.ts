@@ -172,6 +172,7 @@ export default {
 
   // 模拟测试
   'pages.simulator.device': 'Device',
+  'pages.simulator.device.networkType': 'Type',
 
   // 日志管理-访问日志
   'pages.log.access': 'Access Log',
@@ -199,6 +200,14 @@ export default {
 
   // 视频网关
   'pages.media.config': 'Config',
+  'pages.media.device.transport': 'Transport',
+  'pages.media.device.streamMode': 'Stream Mode',
+  'pages.media.device.channelNumber': 'Channel Number',
+  'pages.media.device.port': 'Port',
+  'pages.media.device.manufacturer': 'Manufacturer',
+  'pages.media.device.model': 'Model',
+  'pages.media.device.firmware': 'Firmware',
+  'pages.media.device.networkType': 'Type',
   'pages.media.device': 'Device',
   'pages.media.reveal': 'Reveal',
   'pages.media.cascade': 'Cascade',
