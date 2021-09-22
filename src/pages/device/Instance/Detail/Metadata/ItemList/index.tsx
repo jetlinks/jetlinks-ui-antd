@@ -1,4 +1,4 @@
-import { MetadataItem } from '@/pages/device/Product/typings';
+import type { MetadataItem } from '@/pages/device/Product/typings';
 import { InstanceModel } from '@/pages/device/Instance';
 import { Popconfirm, Tooltip } from 'antd';
 import { CloseCircleOutlined } from '@ant-design/icons';
@@ -47,7 +47,7 @@ const ItemList = (props: Props) => {
           ],
         },
       }}
-    ></ProList>
+    />
   );
 };
 export default ItemList;
