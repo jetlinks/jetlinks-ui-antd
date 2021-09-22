@@ -11,3 +11,13 @@ export type Response<T> = {
   status: number;
   timestamp: number;
 };
+
+type BaseItem = {
+  id: string;
+  name: string;
+};
+
+type State = {
+  value: string;
+  text: string;
+};
