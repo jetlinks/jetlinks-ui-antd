@@ -21,7 +21,7 @@ const Alarm = () => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.device.alarm.deviceID',
+        id: 'pages.device.alarm.id',
         defaultMessage: '设备ID',
       }),
       dataIndex: 'deviceId',
@@ -81,7 +81,10 @@ const Alarm = () => {
             }
             Modal.confirm({
               width: '40VW',
-              title: '告警数据',
+              title: intl.formatMessage({
+                id: 'pages.device.alarm.option.data',
+                defaultMessage: '告警数据',
+              }),
               content: (
                 <pre>
                   {content}
@@ -114,7 +117,12 @@ const Alarm = () => {
         <>
           {record.state !== 'solve' && (
             <a onClick={() => {}}>
-              <Tooltip title={'处理'}>
+              <Tooltip
+                title={intl.formatMessage({
+                  id: 'pages.device.alarm.option.dispose',
+                  defaultMessage: '处理',
+                })}
+              >
                 <CheckOutlined />
               </Tooltip>
             </a>
