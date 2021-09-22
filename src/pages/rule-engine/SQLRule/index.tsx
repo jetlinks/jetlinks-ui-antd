@@ -13,8 +13,10 @@ import {
 } from '@ant-design/icons';
 import BaseCrud from '@/components/BaseCrud';
 import { service } from '@/pages/rule-engine/Instance';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 const SQLRule = () => {
+  const intl = useIntl();
   const actionRef = useRef<ActionType>();
 
   const columns: ProColumns<SQLRuleItem>[] = [

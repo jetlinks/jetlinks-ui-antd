@@ -12,9 +12,11 @@ import {
 } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import BaseCrud from '@/components/BaseCrud';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 export const service = new BaseService<InstanceItem>('rule-engine/instance');
 const Instance = () => {
+  const intl = useIntl();
   const actionRef = useRef<ActionType>();
 
   const columns: ProColumns<InstanceItem>[] = [

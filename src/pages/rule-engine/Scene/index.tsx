@@ -13,9 +13,11 @@ import {
   StopOutlined,
 } from '@ant-design/icons';
 import BaseCrud from '@/components/BaseCrud';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 export const service = new BaseService<SceneItem>('rule-engine/scene');
 const Scene = () => {
+  const intl = useIntl();
   const actionRef = useRef<ActionType>();
 
   const columns: ProColumns<SceneItem>[] = [

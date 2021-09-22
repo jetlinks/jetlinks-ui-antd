@@ -5,9 +5,11 @@ import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import BaseCrud from '@/components/BaseCrud';
 import { ArrowDownOutlined, BugOutlined, EditOutlined, MinusOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 export const service = new BaseService<TemplateItem>('notifier/template');
 const Template = () => {
+  const intl = useIntl();
   const actionRef = useRef<ActionType>();
 
   const columns: ProColumns<TemplateItem>[] = [
