@@ -215,4 +215,5 @@ export default {
   // 边缘网关
   'pages.edge.product': 'Product',
   'pages.edge.device': 'Device',
+  'pages.edge.device.productName': 'Product Name',
 };
