@@ -134,13 +134,16 @@ export default {
   // 设备接入
   'pages.link.certificate': '证书管理',
   'pages.link.protocol': '协议管理',
-  'pages.link.type': '网络组件',
+  'pages.link.component': '网络组件',
   'pages.link.gateway': '设备网关',
   'pages.link.opcua': 'OPC UA',
-
+  'pages.link.type': 'Type',
+  'pages.link.provider': '服务商',
+  'pages.link.option.debug': '调试',
+  'pages.link.option.record': '通知记录',
   // 通知管理
   'pages.notice.config': '通知配置',
-  'pages.notice.config.service': '服务商',
+  'pages.notice.config.provider': '服务商',
   'pages.notice.config.type': '通知类型',
   'pages.notice.template': '通知模板',
   'pages.notice.option.debug': '调试',
@@ -161,6 +164,9 @@ export default {
   'pages.visualization.category': '分类管理',
   'pages.visualization.screen': '大屏管理',
   'pages.visualization.configuration': '组态管理',
+  'pages.visualization.option.addClass': '添加子分类',
+  'pages.visualization.option.record': '通知记录',
+  'pages.visualization.option.copy': '复制',
 
   // 模拟测试
   'pages.simulator.device': '设备模拟器',
