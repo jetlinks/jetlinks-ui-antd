@@ -11,10 +11,12 @@ import {
 import { Tooltip } from 'antd';
 import { useRef } from 'react';
 import BaseCrud from '@/components/BaseCrud';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 export const service = new BaseService<ConfigItem>('notifier/config');
 
 const Config = () => {
+  const intl = useIntl();
   const actionRef = useRef<ActionType>();
 
   const columns: ProColumns<ConfigItem>[] = [
@@ -42,27 +44,52 @@ const Config = () => {
       width: 200,
       render: (text, record) => [
         <a onClick={() => console.log(record)}>
-          <Tooltip title="编辑">
+          <Tooltip
+            title={intl.formatMessage({
+              id: 'pages.data.option.edit',
+              defaultMessage: '编辑',
+            })}
+          >
             <EditOutlined />
           </Tooltip>
         </a>,
         <a>
-          <Tooltip title="删除">
+          <Tooltip
+            title={intl.formatMessage({
+              id: 'pages.data.option.remove',
+              defaultMessage: '删除',
+            })}
+          >
             <MinusOutlined />
           </Tooltip>
         </a>,
         <a>
-          <Tooltip title="下载配置">
+          <Tooltip
+            title={intl.formatMessage({
+              id: 'pages.data.option.download',
+              defaultMessage: '下载配置',
+            })}
+          >
             <ArrowDownOutlined />
           </Tooltip>
         </a>,
         <a>
-          <Tooltip title="调试">
+          <Tooltip
+            title={intl.formatMessage({
+              id: 'pages.notice.option.debug',
+              defaultMessage: '调试',
+            })}
+          >
             <BugOutlined />
           </Tooltip>
         </a>,
         <a>
-          <Tooltip title="通知记录">
+          <Tooltip
+            title={intl.formatMessage({
+              id: 'pages.notice.option.record',
+              defaultMessage: '通知记录',
+            })}
+          >
             <BarsOutlined />
           </Tooltip>
         </a>,

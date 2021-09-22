@@ -73,7 +73,12 @@ const Category = () => {
           </Tooltip>
         </a>,
         <a onClick={() => {}}>
-          <Tooltip title="添加子分类">
+          <Tooltip
+            title={intl.formatMessage({
+              id: 'pages.device.category.addClass',
+              defaultMessage: '添加子分类',
+            })}
+          >
             <PlusOutlined />
           </Tooltip>
         </a>,

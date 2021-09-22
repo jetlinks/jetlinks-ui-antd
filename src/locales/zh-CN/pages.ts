@@ -81,7 +81,6 @@ export default {
   'pages.system.tenant.members': '成员数',
   // 系统设置-数据源管理
   'pages.system.datasource.': '数据源管理',
-  'pages.system.datasource.type': '类型',
 
   // 设备管理-产品
   'pages.device.product': '产品',
@@ -95,6 +94,7 @@ export default {
   'pages.device.category.id': '分类ID',
   'pages.device.category.logotype': '标识',
   'pages.device.category.name': '分类名称',
+  'pages.device.category.addClass': '添加子分类',
   // 设备管理-设备
   'pages.device.instance': '设备',
   'pages.device.instance.management': '设备管理',
@@ -105,11 +105,12 @@ export default {
   'pages.device.instance.status.onLine': '在线',
   // 设备管理-指令下发
   'pages.device.command': '指令下发',
-  'pages.device.command.deviceID': '设备ID',
-  'pages.device.command.instructionType': '指令类型',
-  'pages.device.command.instructionType.readAttributes': '读取属性',
-  'pages.device.command.instructionType.setProperties': '设置属性',
-  'pages.device.command.instructionType.callAttribute': '调用属性',
+  'pages.device.command.id': '设备ID',
+  'pages.device.command.type': '指令类型',
+  'pages.device.command.type.readAttributes': '读取属性',
+  'pages.device.command.type.setProperties': '设置属性',
+  'pages.device.command.type.callAttribute': '调用属性',
+  'pages.device.command.option.send': '重新发送',
   'pages.device.command.status.waiting': '等待中',
   'pages.device.command.status.failed ': '发送失败',
   'pages.device.command.status.succeed': '发送成功',
@@ -124,11 +125,12 @@ export default {
   'pages.device.firmware.creationTime': '创建时间',
   // 设备管理-告警记录
   'pages.device.alarm': '告警记录',
-  'pages.device.alarm.deviceID': '设备ID',
+  'pages.device.alarm.id': '设备ID',
   'pages.device.alarm.name': '告警名称',
   'pages.device.alarm.time': '告警时间',
   'pages.device.alarm.status': '处理状态',
-
+  'pages.device.alarm.option.dispose': '处理',
+  'pages.device.alarm.option.data': '告警数据',
   // 设备接入
   'pages.link.certificate': '证书管理',
   'pages.link.protocol': '协议管理',
@@ -138,12 +140,22 @@ export default {
 
   // 通知管理
   'pages.notice.config': '通知配置',
+  'pages.notice.config.service': '服务商',
+  'pages.notice.config.type': '通知类型',
   'pages.notice.template': '通知模板',
+  'pages.notice.option.debug': '调试',
+  'pages.notice.option.record': '通知记录',
 
   // 规则引擎
   'pages.ruleEngine.instance': '规则实例',
   'pages.ruleEngine.sqlRule': '数据转发',
+  'pages.ruleEngine.sqlRule.time': '创建时间',
   'pages.ruleEngine.scene': '场景联动',
+  'pages.ruleEngine.scene.trigger': '触发方式',
+  'pages.ruleEngine.option.detail': '查看',
+  'pages.ruleEngine.option.start': '启动',
+  'pages.ruleEngine.option.restart': '重启',
+  'pages.ruleEngine.option.stop': '停止',
 
   // 可视化
   'pages.visualization.category': '分类管理',
@@ -169,6 +181,9 @@ export default {
 
   // 云云对接
   'pages.cloud.duerOS': 'Duer OS',
+  'pages.cloud.duerOS.applianceType': '设备类型',
+  'pages.cloud.duerOS.manufacturerName': '厂家名称',
+  'pages.cloud.duerOS.version': '动作数量',
   'pages.cloud.aliyun': '阿里云',
   'pages.cloud.onenet': '移动OneNet',
   'pages.cloud.ctwing': '电信CTWing',

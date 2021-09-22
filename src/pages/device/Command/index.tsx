@@ -22,7 +22,7 @@ const Command = () => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.device.command.deviceID',
+        id: 'pages.device.command.id',
         defaultMessage: '设备ID',
       }),
       dataIndex: 'deviceId',
@@ -36,28 +36,28 @@ const Command = () => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.device.command.instructionType',
+        id: 'pages.device.command.type',
         defaultMessage: '指令类型',
       }),
       dataIndex: 'messageType',
       filters: [
         {
           text: intl.formatMessage({
-            id: 'pages.device.command.instructionType.readAttributes',
+            id: 'pages.device.command.type.readAttributes',
             defaultMessage: '读取属性',
           }),
           value: 'READ_PROPERTY',
         },
         {
           text: intl.formatMessage({
-            id: 'pages.device.command.instructionType.setProperties',
+            id: 'pages.device.command.type.setProperties',
             defaultMessage: '设置属性',
           }),
           value: 'WRITE_PROPERTY',
         },
         {
           text: intl.formatMessage({
-            id: 'pages.device.command.instructionType.callAttribute',
+            id: 'pages.device.command.type.callAttribute',
             defaultMessage: '调用属性',
           }),
           value: 'INVOKE_FUNCTION',
@@ -150,7 +150,12 @@ const Command = () => {
                 // );
               }}
             >
-              <Tooltip title="重新发送">
+              <Tooltip
+                title={intl.formatMessage({
+                  id: 'pages.device.command.option.send',
+                  defaultMessage: '重新发送',
+                })}
+              >
                 <SyncOutlined />
               </Tooltip>
             </a>
@@ -166,7 +171,10 @@ const Command = () => {
       <BaseCrud<CommandItem>
         columns={columns}
         service={service}
-        title={'指令下发'}
+        title={intl.formatMessage({
+          id: 'pages.device.command',
+          defaultMessage: '指令下发',
+        })}
         schema={schema}
         actionRef={actionRef}
       />

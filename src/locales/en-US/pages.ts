@@ -11,10 +11,10 @@ export default {
   'pages.notification.error': 'Your network is abnormal and you cannot connect to the server',
 
   // 通用的数据操作
-  'pages.data.option': 'option',
-  'pages.data.option.remove': 'delete',
+  'pages.data.option': 'Option',
+  'pages.data.option.remove': 'Delete',
   'pages.data.option.remove.tips': 'Confirm to delete?',
-  'pages.data.option.disabled': 'disable',
+  'pages.data.option.disabled': 'Disable',
   'pages.data.option.disabled.tips': 'Confirm to disable?',
   'pages.data.option.enabled': 'enable',
   'pages.data.option.enabled.tips': 'Confirm to enable?',
@@ -37,6 +37,7 @@ export default {
   'pages.table.equipmentName': 'Equipment Name',
   'pages.table.describe': 'Describe',
   'pages.table.description': 'Explain',
+  'pages.table.type': 'Type',
 
   // 统计分析
   'pages.analysis.cpu': 'CPU Usage',
@@ -81,7 +82,6 @@ export default {
   'pages.system.tenant.members': 'Members',
   // 系统设置-数据源管理
   'pages.system.datasource.': 'Data Source',
-  'pages.system.datasource.type': 'Type',
 
   // 设备管理-产品
   'pages.device.product': 'Product',
@@ -106,11 +106,12 @@ export default {
   'pages.device.instance.describe': 'Explain',
   // 设备管理-指令下发
   'pages.device.command': 'Command',
-  'pages.device.command.deviceID': 'Device ID',
-  'pages.device.command.instructionType': 'Instruction Type',
-  'pages.device.command.instructionType.readAttributes': 'Read Attributes',
-  'pages.device.command.instructionType.setProperties': 'Set Properties',
-  'pages.device.command.instructionType.callAttribute': 'Call Attribute',
+  'pages.device.command.id': 'Device ID',
+  'pages.device.command.type': 'Instruction Type',
+  'pages.device.command.type.readAttributes': 'Read Attributes',
+  'pages.device.command.type.setProperties': 'Set Properties',
+  'pages.device.command.type.callAttribute': 'Call Attribute',
+  'pages.device.command.option.send': 'Resend',
   'pages.device.command.status.waiting': 'Waiting',
   'pages.device.command.status.failed ': 'Failed to send',
   'pages.device.command.status.succeed': 'Sent successfully',
@@ -125,26 +126,38 @@ export default {
   'pages.device.firmware.creationTime': 'Creation Time',
   // 设备管理-告警记录
   'pages.device.alarm': 'Alarm',
-  'pages.device.alarm.deviceID': 'Device ID',
+  'pages.device.alarm.id': 'Device ID',
   'pages.device.alarm.name': 'Alarm Name',
   'pages.device.alarm.time': 'Alarm Time',
   'pages.device.alarm.status': 'Processing State',
-
+  'pages.device.alarm.option.dispose': 'Dispose',
+  'pages.device.alarm.option.data': 'Alarm Data',
   // 设备接入
   'pages.link.certificate': 'Certificate',
   'pages.link.protocol': 'protocol',
-  'pages.link.type': 'Type',
+  'pages.link.type': 'Network components',
   'pages.link.gateway': 'Gateway',
   'pages.link.opcua': 'OPC UA',
 
   // 通知管理
   'pages.notice.config': 'Config',
+  'pages.notice.config.service': 'Service',
+  'pages.notice.config.type': 'Type',
   'pages.notice.template': 'Template',
+  'pages.notice.option.download': 'Download Configuration',
+  'pages.notice.option.debug': 'Debug',
+  'pages.notice.option.record': 'Notification Records',
 
   // 规则引擎
   'pages.ruleEngine.instance': 'Instance',
   'pages.ruleEngine.sqlRule': 'SQL Rule',
+  'pages.ruleEngine.sqlRule.time': 'Create Time',
   'pages.ruleEngine.scene': 'Scene',
+  'pages.ruleEngine.scene.trigger': 'Trigger',
+  'pages.ruleEngine.option.detail': 'Detail',
+  'pages.ruleEngine.option.start': 'Start',
+  'pages.ruleEngine.option.restart': 'Restart',
+  'pages.ruleEngine.option.stop': 'Stop',
 
   // 可视化
   'pages.visualization.category': 'Category',
@@ -171,9 +184,12 @@ export default {
 
   // 云云对接
   'pages.cloud.duerOS': 'Duer OS',
+  'pages.cloud.duerOS.applianceType': 'Appliance Type',
+  'pages.cloud.duerOS.manufacturerName': 'Manufacture Name',
+  'pages.cloud.duerOS.version': 'Version',
   'pages.cloud.aliyun': 'Aliyun',
-  'pages.cloud.onenet': '移动OneNet',
-  'pages.cloud.ctwing': '电信CTWing',
+  'pages.cloud.onenet': 'Mobile OneNet',
+  'pages.cloud.ctwing': 'Telecom CTWing',
 
   // 视频网关
   'pages.media.config': 'Config',

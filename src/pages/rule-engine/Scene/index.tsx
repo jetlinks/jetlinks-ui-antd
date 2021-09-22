@@ -45,33 +45,63 @@ const Scene = () => {
       width: 200,
       render: (text, record) => [
         <a>
-          <Tooltip title="查看">
+          <Tooltip
+            title={intl.formatMessage({
+              id: 'pages.ruleEngine.option.detail',
+              defaultMessage: '查看',
+            })}
+          >
             <EyeOutlined />
           </Tooltip>
         </a>,
         <a onClick={() => console.log(record)}>
-          <Tooltip title="编辑">
+          <Tooltip
+            title={intl.formatMessage({
+              id: 'pages.data.option.edit',
+              defaultMessage: '编辑',
+            })}
+          >
             <EditOutlined />
           </Tooltip>
         </a>,
         <a onClick={() => console.log(record)}>
-          <Tooltip title="启动">
+          <Tooltip
+            title={intl.formatMessage({
+              id: 'pages.ruleEngine.option.start',
+              defaultMessage: '启动',
+            })}
+          >
             <CaretRightOutlined />
           </Tooltip>
         </a>,
         <a onClick={() => console.log(record)}>
-          <Tooltip title="启动">
+          <Tooltip
+            title={intl.formatMessage({
+              id: 'pages.ruleEngine.option.stop',
+              defaultMessage: '停止',
+            })}
+          >
             <StopOutlined />
           </Tooltip>
         </a>,
         <a onClick={() => console.log(record)}>
-          <Tooltip title="执行">
+          <Tooltip
+            title={intl.formatMessage({
+              id: 'pages.ruleEngine.option.restart',
+              defaultMessage: '重启',
+            })}
+          >
             <ReloadOutlined />
           </Tooltip>
         </a>,
 
         <a>
-          <Tooltip title="删除">
+          <Tooltip
+            title={intl.formatMessage({
+              id: 'pages.data.option.remove',
+              defaultMessage: '删除',
+            })}
+          >
             <MinusOutlined />
           </Tooltip>
         </a>,
