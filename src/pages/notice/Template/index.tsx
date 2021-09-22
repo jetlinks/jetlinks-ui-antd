@@ -5,9 +5,11 @@ import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import BaseCrud from '@/components/BaseCrud';
 import { ArrowDownOutlined, BugOutlined, EditOutlined, MinusOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 export const service = new BaseService<TemplateItem>('notifier/template');
 const Template = () => {
+  const intl = useIntl();
   const actionRef = useRef<ActionType>();
 
   const columns: ProColumns<TemplateItem>[] = [
@@ -18,18 +20,30 @@ const Template = () => {
     },
     {
       dataIndex: 'name',
-      title: '名称',
+      title: intl.formatMessage({
+        id: 'pages.table.name',
+        defaultMessage: '名称',
+      }),
     },
     {
       dataIndex: 'type',
-      title: '通知类型',
+      title: intl.formatMessage({
+        id: 'pages.notice.config.type',
+        defaultMessage: '通知类型',
+      }),
     },
     {
       dataIndex: 'provider',
-      title: '服务商',
+      title: intl.formatMessage({
+        id: 'pages.notice.config.service',
+        defaultMessage: '服务商',
+      }),
     },
     {
-      title: '操作',
+      title: intl.formatMessage({
+        id: 'pages.data.option',
+        defaultMessage: '操作',
+      }),
       valueType: 'option',
       align: 'center',
       width: 200,
@@ -64,7 +78,10 @@ const Template = () => {
       <BaseCrud
         columns={columns}
         service={service}
-        title="通知模版"
+        title={intl.formatMessage({
+          id: 'pages.notice.template',
+          defaultMessage: '通知模板',
+        })}
         schema={schema}
         actionRef={actionRef}
       />

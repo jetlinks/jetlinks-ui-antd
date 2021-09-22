@@ -16,8 +16,8 @@ const Category = () => {
   const intl = useIntl();
   const columns: ProColumns<CategoryItem>[] = [
     {
-      title:intl.formatMessage({
-        id:  'pages.device.category.id',
+      title: intl.formatMessage({
+        id: 'pages.device.category.id',
         defaultMessage: '分类ID',
       }),
       align: 'left',
@@ -26,7 +26,7 @@ const Category = () => {
     },
     {
       title: intl.formatMessage({
-        id:  'pages.device.category.logotype',
+        id: 'pages.device.category.logotype',
         defaultMessage: '标识',
       }),
       align: 'left',
@@ -34,7 +34,7 @@ const Category = () => {
     },
     {
       title: intl.formatMessage({
-        id:  'pages.device.category.name',
+        id: 'pages.device.category.name',
         defaultMessage: '分类名称',
       }),
       dataIndex: 'name',
@@ -42,7 +42,7 @@ const Category = () => {
     },
     {
       title: intl.formatMessage({
-        id:  'pages.table.description',
+        id: 'pages.table.description',
         defaultMessage: '说明',
       }),
       dataIndex: 'description',
@@ -52,9 +52,9 @@ const Category = () => {
     },
     {
       title: intl.formatMessage({
-          id: 'pages.data.option',
-          defaultMessage: '操作',
-        }),
+        id: 'pages.data.option',
+        defaultMessage: '操作',
+      }),
       valueType: 'option',
       align: 'center',
       render: (text, record) => [
@@ -102,8 +102,8 @@ const Category = () => {
         name: 'id',
       },
       name: {
-        title:intl.formatMessage({
-          id:  'pages.table.name',
+        title: intl.formatMessage({
+          id: 'pages.table.name',
           defaultMessage: '名称',
         }),
         'x-decorator': 'FormItem',
@@ -113,7 +113,7 @@ const Category = () => {
       },
       key: {
         title: intl.formatMessage({
-          id:  'pages.device.category.logotype',
+          id: 'pages.device.category.logotype',
           defaultMessage: '标识',
         }),
         'x-decorator': 'FormItem',
@@ -124,7 +124,7 @@ const Category = () => {
       description: {
         type: 'string',
         title: intl.formatMessage({
-          id:  'pages.table.describe',
+          id: 'pages.table.describe',
           defaultMessage: '描述信息',
         }),
         'x-decorator': 'FormItem',
@@ -157,7 +157,7 @@ const Category = () => {
         pagination={false}
         columns={columns}
         service={service}
-        title= {intl.formatMessage({
+        title={intl.formatMessage({
           id: 'pages.device.category',
           defaultMessage: '产品分类',
         })}

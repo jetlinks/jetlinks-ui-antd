@@ -11,10 +11,12 @@ import {
 import { Tooltip } from 'antd';
 import { useRef } from 'react';
 import BaseCrud from '@/components/BaseCrud';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 export const service = new BaseService<ConfigItem>('notifier/config');
 
 const Config = () => {
+  const intl = useIntl();
   const actionRef = useRef<ActionType>();
 
   const columns: ProColumns<ConfigItem>[] = [
@@ -25,18 +27,30 @@ const Config = () => {
     },
     {
       dataIndex: 'name',
-      title: '名称',
+      title: intl.formatMessage({
+        id: 'pages.table.name',
+        defaultMessage: '名称',
+      }),
     },
     {
       dataIndex: 'type',
-      title: '通知类型',
+      title: intl.formatMessage({
+        id: 'pages.notice.config.type',
+        defaultMessage: '通知类型',
+      }),
     },
     {
       dataIndex: 'provider',
-      title: '服务商',
+      title: intl.formatMessage({
+        id: 'pages.notice.config.service',
+        defaultMessage: '服务商',
+      }),
     },
     {
-      title: '操作',
+      title: intl.formatMessage({
+        id: 'pages.data.option',
+        defaultMessage: '操作',
+      }),
       valueType: 'option',
       align: 'center',
       width: 200,
@@ -77,7 +91,10 @@ const Config = () => {
       <BaseCrud
         columns={columns}
         service={service}
-        title="通知配置"
+        title={intl.formatMessage({
+          id: 'pages.notice.config',
+          defaultMessage: '通知配置',
+        })}
         schema={schema}
         actionRef={actionRef}
       />
