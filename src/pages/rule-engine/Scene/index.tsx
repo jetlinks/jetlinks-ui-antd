@@ -28,20 +28,32 @@ const Scene = () => {
     },
     {
       dataIndex: 'name',
-      title: '名称',
+      title: intl.formatMessage({
+        id: 'pages.table.name',
+        defaultMessage: '名称',
+      }),
     },
     {
       dataIndex: 'triggers',
-      title: '触发方式',
+      title: intl.formatMessage({
+        id: 'pages.ruleEngine.scene.trigger',
+        defaultMessage: '触发方式',
+      }),
       render: () => 'todo',
     },
     {
       dataIndex: 'state',
-      title: '状态',
+      title: intl.formatMessage({
+        id: 'pages.searchTable.titleStatus',
+        defaultMessage: '状态',
+      }),
       render: (text, record) => record.state.value,
     },
     {
-      title: '操作',
+      title: intl.formatMessage({
+        id: 'pages.data.option',
+        defaultMessage: '操作',
+      }),
       valueType: 'option',
       align: 'center',
       width: 200,
@@ -118,7 +130,10 @@ const Scene = () => {
       <BaseCrud
         columns={columns}
         service={service}
-        title="场景联动"
+        title={intl.formatMessage({
+          id: 'pages.ruleEngine.scene',
+          defaultMessage: '场景联动',
+        })}
         schema={schema}
         actionRef={actionRef}
       />
