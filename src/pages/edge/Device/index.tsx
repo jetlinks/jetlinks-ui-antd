@@ -25,20 +25,31 @@ const Device = () => {
     },
     {
       dataIndex: 'name',
-      title: '名称',
+      title: intl.formatMessage({
+        id: 'pages.table.name',
+        defaultMessage: '名称',
+      }),
     },
     {
       dataIndex: 'state',
-      title: '状态',
+      title: intl.formatMessage({
+        id: 'pages.searchTable.titleStatus',
+        defaultMessage: '状态',
+      }),
       render: (text, record) => record.state.value,
     },
     {
       dataIndex: 'productName',
-      title: '产品名称',
+      title: intl.formatMessage({
+        id: 'pages.edge.device.productName',
+        defaultMessage: '产品名称',
+      }),
     },
-
     {
-      title: '操作',
+      title: intl.formatMessage({
+        id: 'pages.data.option',
+        defaultMessage: '操作',
+      }),
       valueType: 'option',
       align: 'center',
       width: 200,
@@ -94,7 +105,10 @@ const Device = () => {
       <BaseCrud
         columns={columns}
         service={service}
-        title="通知配置"
+        title={intl.formatMessage({
+          id: 'pages.edge.device',
+          defaultMessage: '通知配置',
+        })}
         schema={schema}
         actionRef={actionRef}
       />

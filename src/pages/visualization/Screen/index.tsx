@@ -14,10 +14,12 @@ import {
   MinusOutlined,
 } from '@ant-design/icons';
 import BaseCrud from '@/components/BaseCrud';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 export const service = new BaseService<ScreenItem>('visualization');
 
 const Screen = () => {
+  const intl = useIntl();
   const actionRef = useRef<ActionType>();
 
   const columns: ProColumns<ConfigurationItem>[] = [
@@ -28,50 +30,92 @@ const Screen = () => {
     },
     {
       dataIndex: 'name',
-      title: '名称',
+      title: intl.formatMessage({
+        id: 'pages.table.name',
+        defaultMessage: '名称',
+      }),
     },
     {
       dataIndex: 'state',
-      title: '状态',
+      title: intl.formatMessage({
+        id: 'pages.searchTable.titleStatus',
+        defaultMessage: '状态',
+      }),
       render: (text, record) => record.state.value,
     },
     {
       dataIndex: 'description',
-      title: '描述',
+      title: intl.formatMessage({
+        id: 'pages.table.describe',
+        defaultMessage: '描述',
+      }),
     },
     {
-      title: '操作',
+      title: intl.formatMessage({
+        id: 'pages.data.option',
+        defaultMessage: '操作',
+      }),
       valueType: 'option',
       align: 'center',
       width: 200,
       render: (text, record) => [
         <a onClick={() => console.log(record)}>
-          <Tooltip title="编辑">
+          <Tooltip
+            title={intl.formatMessage({
+              id: 'pages.data.option.edit',
+              defaultMessage: '编辑',
+            })}
+          >
             <EditOutlined />
           </Tooltip>
         </a>,
         <a>
-          <Tooltip title="预览">
+          <Tooltip
+            title={intl.formatMessage({
+              id: 'pages.data.option.preview',
+              defaultMessage: '预览',
+            })}
+          >
             <EyeOutlined />
           </Tooltip>
         </a>,
         <a>
-          <Tooltip title="下载配置">
+          <Tooltip
+            title={intl.formatMessage({
+              id: 'pages.data.option.download',
+              defaultMessage: '下载配置',
+            })}
+          >
             <ArrowDownOutlined />
           </Tooltip>
         </a>,
         <a>
-          <Tooltip title="复制">
+          <Tooltip
+            title={intl.formatMessage({
+              id: 'pages.visualization.option.copy',
+              defaultMessage: '复制',
+            })}
+          >
             <CopyOutlined />
           </Tooltip>
         </a>,
         <a>
-          <Tooltip title="通知记录">
+          <Tooltip
+            title={intl.formatMessage({
+              id: 'pages.link.option.record',
+              defaultMessage: '通知记录',
+            })}
+          >
             <BarsOutlined />
           </Tooltip>
         </a>,
         <a>
-          <Tooltip title="删除">
+          <Tooltip
+            title={intl.formatMessage({
+              id: 'pages.data.option.remove',
+              defaultMessage: '删除',
+            })}
+          >
             <MinusOutlined />
           </Tooltip>
         </a>,
@@ -87,7 +131,10 @@ const Screen = () => {
         defaultParams={{ type: 'big_screen' }}
         columns={columns}
         service={service}
-        title="大屏管理"
+        title={intl.formatMessage({
+          id: 'pages.visualization.screen',
+          defaultMessage: '大屏管理',
+        })}
         schema={schema}
         actionRef={actionRef}
       />

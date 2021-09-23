@@ -22,19 +22,31 @@ const Device = () => {
     },
     {
       dataIndex: 'name',
-      title: '名称',
+      title: intl.formatMessage({
+        id: 'pages.table.name',
+        defaultMessage: '名称',
+      }),
     },
     {
       dataIndex: 'networkType',
-      title: '类型',
+      title: intl.formatMessage({
+        id: 'pages.simulator.device.networkType',
+        defaultMessage: '类型',
+      }),
     },
     {
       dataIndex: 'state',
-      title: '状态',
+      title: intl.formatMessage({
+        id: 'pages.searchTable.titleStatus',
+        defaultMessage: '状态',
+      }),
       render: (text, record) => record.state.value,
     },
     {
-      title: '操作',
+      title: intl.formatMessage({
+        id: 'pages.data.option',
+        defaultMessage: '操作',
+      }),
       valueType: 'option',
       align: 'center',
       width: 200,
@@ -90,7 +102,10 @@ const Device = () => {
       <BaseCrud
         columns={columns}
         service={service}
-        title="模拟测试"
+        title={intl.formatMessage({
+          id: 'pages.simulator.device',
+          defaultMessage: '模拟测试',
+        })}
         schema={schema}
         actionRef={actionRef}
       />

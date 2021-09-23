@@ -27,18 +27,30 @@ const Config = () => {
     },
     {
       dataIndex: 'name',
-      title: '名称',
+      title: intl.formatMessage({
+        id: 'pages.table.name',
+        defaultMessage: '名称',
+      }),
     },
     {
       dataIndex: 'type',
-      title: '通知类型',
+      title: intl.formatMessage({
+        id: 'pages.notice.config.type',
+        defaultMessage: '通知类型',
+      }),
     },
     {
       dataIndex: 'provider',
-      title: '服务商',
+      title: intl.formatMessage({
+        id: 'pages.table.provider',
+        defaultMessage: '服务商',
+      }),
     },
     {
-      title: '操作',
+      title: intl.formatMessage({
+        id: 'pages.data.option',
+        defaultMessage: '操作',
+      }),
       valueType: 'option',
       align: 'center',
       width: 200,
@@ -104,7 +116,10 @@ const Config = () => {
       <BaseCrud
         columns={columns}
         service={service}
-        title="通知配置"
+        title={intl.formatMessage({
+          id: 'pages.notice.template',
+          defaultMessage: '通知配置',
+        })}
         schema={schema}
         actionRef={actionRef}
       />
