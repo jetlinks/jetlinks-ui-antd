@@ -6,9 +6,11 @@ import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { Tooltip } from 'antd';
 import { EditOutlined, MinusOutlined } from '@ant-design/icons';
 import BaseCrud from '@/components/BaseCrud';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 export const service = new BaseService<CertificateItem>('network/certificate');
 const Certificate = () => {
+  const intl = useIntl();
   const actionRef = useRef<ActionType>();
 
   const columns: ProColumns<CertificateItem>[] = [
@@ -19,29 +21,51 @@ const Certificate = () => {
     },
     {
       dataIndex: 'name',
-      title: '名称',
+      title: intl.formatMessage({
+        id: 'pages.table.name',
+        defaultMessage: '名称',
+      }),
     },
     {
       dataIndex: 'instance',
-      title: '类型',
+      title: intl.formatMessage({
+        id: 'pages.link.type',
+        defaultMessage: '类型',
+      }),
     },
     {
       dataIndex: 'description',
-      title: '描述',
+      title: intl.formatMessage({
+        id: 'pages.table.describe',
+        defaultMessage: '描述',
+      }),
     },
     {
-      title: '操作',
+      title: intl.formatMessage({
+        id: 'pages.data.option',
+        defaultMessage: '操作',
+      }),
       valueType: 'option',
       align: 'center',
       width: 200,
       render: (text, record) => [
         <a onClick={() => console.log(record)}>
-          <Tooltip title="编辑">
+          <Tooltip
+            title={intl.formatMessage({
+              id: 'pages.data.option.edit',
+              defaultMessage: '编辑',
+            })}
+          >
             <EditOutlined />
           </Tooltip>
         </a>,
         <a>
-          <Tooltip title="删除">
+          <Tooltip
+            title={intl.formatMessage({
+              id: 'pages.data.option.remove',
+              defaultMessage: '删除',
+            })}
+          >
             <MinusOutlined />
           </Tooltip>
         </a>,
@@ -56,7 +80,10 @@ const Certificate = () => {
       <BaseCrud
         columns={columns}
         service={service}
-        title="证书管理"
+        title={intl.formatMessage({
+          id: 'pages.link.certificate',
+          defaultMessage: '证书管理',
+        })}
         schema={schema}
         actionRef={actionRef}
       />

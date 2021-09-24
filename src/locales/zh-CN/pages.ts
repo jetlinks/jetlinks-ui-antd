@@ -37,6 +37,7 @@ export default {
   'pages.table.equipmentName': '设备名称',
   'pages.table.describe': '描述',
   'pages.table.description': '说明',
+  'pages.table.provider': '服务商',
 
   // 统计分析
   'pages.analysis.cpu': 'CPU使用率',
@@ -134,13 +135,14 @@ export default {
   // 设备接入
   'pages.link.certificate': '证书管理',
   'pages.link.protocol': '协议管理',
-  'pages.link.type': '网络组件',
+  'pages.link.component': '网络组件',
   'pages.link.gateway': '设备网关',
   'pages.link.opcua': 'OPC UA',
-
+  'pages.link.type': 'Type',
+  'pages.link.option.debug': '调试',
+  'pages.link.option.record': '通知记录',
   // 通知管理
   'pages.notice.config': '通知配置',
-  'pages.notice.config.service': '服务商',
   'pages.notice.config.type': '通知类型',
   'pages.notice.template': '通知模板',
   'pages.notice.option.debug': '调试',
@@ -161,9 +163,13 @@ export default {
   'pages.visualization.category': '分类管理',
   'pages.visualization.screen': '大屏管理',
   'pages.visualization.configuration': '组态管理',
+  'pages.visualization.option.addClass': '添加子分类',
+  'pages.visualization.option.record': '通知记录',
+  'pages.visualization.option.copy': '复制',
 
   // 模拟测试
   'pages.simulator.device': '设备模拟器',
+  'pages.simulator.device.networkType': '类型',
 
   // 日志管理-访问日志
   'pages.log.access': '访问日志',
@@ -190,6 +196,14 @@ export default {
 
   // 视频网关
   'pages.media.config': '基本配置',
+  'pages.media.device.transport': '信令传输',
+  'pages.media.device.streamMode': '流传输模式',
+  'pages.media.device.channelNumber': '通道数',
+  'pages.media.device.port': '端口',
+  'pages.media.device.manufacturer': '设备厂家',
+  'pages.media.device.model': '型号',
+  'pages.media.device.firmware': '固件版本',
+  'pages.media.device.networkType': '类型',
   'pages.media.device': '视频设备',
   'pages.media.reveal': '分屏展示',
   'pages.media.cascade': '国标级联',
@@ -197,4 +211,5 @@ export default {
   // 边缘网关
   'pages.edge.product': '产品',
   'pages.edge.device': '设备',
+  'pages.edge.device.productName': '产品名称',
 };

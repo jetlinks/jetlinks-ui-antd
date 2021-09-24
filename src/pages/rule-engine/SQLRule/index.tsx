@@ -27,19 +27,31 @@ const SQLRule = () => {
     },
     {
       dataIndex: 'name',
-      title: '名称',
+      title: intl.formatMessage({
+        id: 'pages.table.name',
+        defaultMessage: '名称',
+      }),
     },
     {
       dataIndex: 'createTime',
-      title: '创建时间',
+      title: intl.formatMessage({
+        id: 'pages.ruleEngine.sqlRule.time',
+        defaultMessage: '创建时间',
+      }),
     },
     {
       dataIndex: 'state',
-      title: '状态',
+      title: intl.formatMessage({
+        id: 'pages.searchTable.titleStatus',
+        defaultMessage: '状态',
+      }),
       render: (text, record) => record.state.value,
     },
     {
-      title: '操作',
+      title: intl.formatMessage({
+        id: 'pages.data.option',
+        defaultMessage: '操作',
+      }),
       valueType: 'option',
       align: 'center',
       width: 200,
@@ -118,7 +130,10 @@ const SQLRule = () => {
       <BaseCrud
         columns={columns}
         service={service}
-        title="数据转发"
+        title={intl.formatMessage({
+          id: 'pages.ruleEngine.sqlRule',
+          defaultMessage: '数据转发',
+        })}
         schema={schema}
         defaultParams={{ modelType: 'sql_rule' }}
         actionRef={actionRef}

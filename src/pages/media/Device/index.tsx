@@ -21,23 +21,38 @@ const Device = () => {
     },
     {
       dataIndex: 'name',
-      title: '名称',
+      title: intl.formatMessage({
+        id: 'pages.table.name',
+        defaultMessage: '名称',
+      }),
     },
     {
       dataIndex: 'transport',
-      title: '信令传输',
+      title: intl.formatMessage({
+        id: 'pages.media.device.transport',
+        defaultMessage: '信令传输',
+      }),
     },
     {
       dataIndex: 'streamMode',
-      title: '流传输模式',
+      title: intl.formatMessage({
+        id: 'pages.media.device.streamMode',
+        defaultMessage: '流传输模式',
+      }),
     },
     {
       dataIndex: 'channelNumber',
-      title: '通道数',
+      title: intl.formatMessage({
+        id: 'pages.media.device.channelNumber',
+        defaultMessage: '通道数',
+      }),
     },
     {
       dataIndex: 'state',
-      title: '状态',
+      title: intl.formatMessage({
+        id: 'pages.searchTable.titleStatus',
+        defaultMessage: '状态',
+      }),
       render: (text, record) => record.state.value,
     },
     {
@@ -46,31 +61,52 @@ const Device = () => {
     },
     {
       dataIndex: '端口',
-      title: 'port',
+      title: intl.formatMessage({
+        id: 'pages.media.device.port',
+        defaultMessage: '端口',
+      }),
     },
     {
       dataIndex: 'manufacturer',
-      title: '设备厂家',
+      title: intl.formatMessage({
+        id: 'pages.media.device.manufacturer',
+        defaultMessage: '设备厂家',
+      }),
     },
     {
       dataIndex: 'model',
-      title: '型号',
+      title: intl.formatMessage({
+        id: 'pages.media.device.model',
+        defaultMessage: '型号',
+      }),
     },
     {
       dataIndex: 'firmware',
-      title: '固件版本',
+      title: intl.formatMessage({
+        id: 'pages.media.device.firmware',
+        defaultMessage: '固件版本',
+      }),
     },
     {
       dataIndex: 'networkType',
-      title: '类型',
+      title: intl.formatMessage({
+        id: 'pages.media.device.networkType',
+        defaultMessage: '类型',
+      }),
     },
     {
       dataIndex: 'state',
-      title: '状态',
+      title: intl.formatMessage({
+        id: 'pages.searchTable.titleStatus',
+        defaultMessage: '状态',
+      }),
       render: (text, record) => record.state.value,
     },
     {
-      title: '操作',
+      title: intl.formatMessage({
+        id: 'pages.data.option',
+        defaultMessage: '操作',
+      }),
       valueType: 'option',
       align: 'center',
       width: 200,

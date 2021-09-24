@@ -38,7 +38,7 @@ export default {
   'pages.table.describe': 'Describe',
   'pages.table.description': 'Explain',
   'pages.table.type': 'Type',
-
+  'pages.table.provider': 'Provider',
   // 统计分析
   'pages.analysis.cpu': 'CPU Usage',
   'pages.analysis.jvm': 'JVM Memory',
@@ -134,14 +134,17 @@ export default {
   'pages.device.alarm.option.data': 'Alarm Data',
   // 设备接入
   'pages.link.certificate': 'Certificate',
-  'pages.link.protocol': 'protocol',
-  'pages.link.type': 'Network components',
+  'pages.link.protocol': 'Protocol',
+  'pages.link.component': 'Network components',
   'pages.link.gateway': 'Gateway',
   'pages.link.opcua': 'OPC UA',
-
+  'pages.link.type': 'Type',
+  'pages.link.provider': 'Provider',
+  'pages.link.option.debug': 'Debug',
+  'pages.link.option.record': 'Record',
   // 通知管理
   'pages.notice.config': 'Config',
-  'pages.notice.config.service': 'Service',
+  'pages.notice.config.provider': 'Provider',
   'pages.notice.config.type': 'Type',
   'pages.notice.template': 'Template',
   'pages.notice.option.download': 'Download Configuration',
@@ -163,9 +166,13 @@ export default {
   'pages.visualization.category': 'Category',
   'pages.visualization.screen': 'Screen',
   'pages.visualization.configuration': 'Configuration',
+  'pages.visualization.option.addClass': 'Add Subclasses',
+  'pages.visualization.option.record': 'Notification Records',
+  'pages.visualization.option.copy': 'Copy',
 
   // 模拟测试
   'pages.simulator.device': 'Device',
+  'pages.simulator.device.networkType': 'Type',
 
   // 日志管理-访问日志
   'pages.log.access': 'Access Log',
@@ -193,6 +200,14 @@ export default {
 
   // 视频网关
   'pages.media.config': 'Config',
+  'pages.media.device.transport': 'Transport',
+  'pages.media.device.streamMode': 'Stream Mode',
+  'pages.media.device.channelNumber': 'Channel Number',
+  'pages.media.device.port': 'Port',
+  'pages.media.device.manufacturer': 'Manufacturer',
+  'pages.media.device.model': 'Model',
+  'pages.media.device.firmware': 'Firmware',
+  'pages.media.device.networkType': 'Type',
   'pages.media.device': 'Device',
   'pages.media.reveal': 'Reveal',
   'pages.media.cascade': 'Cascade',
@@ -200,4 +215,5 @@ export default {
   // 边缘网关
   'pages.edge.product': 'Product',
   'pages.edge.device': 'Device',
+  'pages.edge.device.productName': 'Product Name',
 };

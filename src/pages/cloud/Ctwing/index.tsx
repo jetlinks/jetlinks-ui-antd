@@ -6,8 +6,8 @@ import { PageContainer } from '@ant-design/pro-layout';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { message, Popconfirm, Tooltip } from 'antd';
 import { useRef } from 'react';
-import { useIntl } from '@@/plugin-locale/localeExports';
 import type { CtwingItem } from '@/pages/cloud/Ctwing/typings';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 export const service = new BaseService<CtwingItem>('ctwing/product');
 
@@ -26,7 +26,10 @@ const Ctwing = () => {
       width: 48,
     },
     {
-      title: '名称',
+      title: intl.formatMessage({
+        id: 'pages.table.name',
+        defaultMessage: '名称',
+      }),
       align: 'center',
       dataIndex: 'name',
     },
@@ -39,7 +42,10 @@ const Ctwing = () => {
       render: (value: any) => value.text,
     },
     {
-      title: '说明',
+      title: intl.formatMessage({
+        id: 'pages.table.description',
+        defaultMessage: '说明',
+      }),
       align: 'center',
       dataIndex: 'description',
     },
