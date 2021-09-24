@@ -20,8 +20,10 @@ import type { Unit } from '@/pages/device/Instance/typings';
 import type { ISchema } from '@formily/json-schema';
 import ProCard from '@ant-design/pro-card';
 import { useState } from 'react';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 const ItemParam = observer(() => {
+  const intl = useIntl();
   const [cardId, setCardId] = useState<string>('');
   const form = createForm({
     validateFirst: true,
@@ -73,21 +75,30 @@ const ItemParam = observer(() => {
     properties: {
       id: {
         type: 'string',
-        title: '参数标识',
+        title: intl.formatMessage({
+          id: 'pages.device.instanceDetail.metadata.logotype',
+          defaultMessage: '属性标识',
+        }),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input',
       },
       name: {
         type: 'string',
-        title: '参数名称',
+        title: intl.formatMessage({
+          id: 'pages.device.instanceDetail.metadata.parameterName',
+          defaultMessage: '参数名称',
+        }),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input',
       },
       type: {
         type: 'string',
-        title: '数据类型',
+        title: intl.formatMessage({
+          id: 'pages.device.instanceDetail.metadata.dataType',
+          defaultMessage: '数据类型',
+        }),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Select',
@@ -155,7 +166,10 @@ const ItemParam = observer(() => {
       },
       unit: {
         type: 'string',
-        title: '单位',
+        title: intl.formatMessage({
+          id: 'pages.device.instanceDetail.metadata.unit',
+          defaultMessage: '单位',
+        }),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Select',
@@ -163,7 +177,10 @@ const ItemParam = observer(() => {
       },
       description: {
         type: 'string',
-        title: '描述',
+        title: intl.formatMessage({
+          id: 'pages.table.describe',
+          defaultMessage: '描述',
+        }),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input.TextArea',
@@ -179,7 +196,14 @@ const ItemParam = observer(() => {
   };
   return (
     <ProCard
-      extra={<a onClick={saveParam}>保存</a>}
+      extra={
+        <a onClick={saveParam}>
+          {intl.formatMessage({
+            id: 'pages.device.instanceDetail.save',
+            defaultMessage: '保存',
+          })}
+        </a>
+      }
       bordered={true}
       colSpan={500}
       style={{ height: '40vh', marginRight: 10 }}

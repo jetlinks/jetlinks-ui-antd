@@ -98,7 +98,7 @@ const Protocol = () => {
         <a>
           <Tooltip
             title={intl.formatMessage({
-              id: 'pages.link.option.record',
+              id: 'pages.data.option.record',
               defaultMessage: '通知记录',
             })}
           >

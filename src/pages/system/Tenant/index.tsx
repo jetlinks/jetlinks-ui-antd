@@ -126,7 +126,7 @@ const Tenant = () => {
         <a href={record.tenant.id} target="_blank" rel="noopener noreferrer" key="view">
           <Popconfirm
             title={intl.formatMessage({
-              id: 'pages.data.option.disable.tips',
+              id: 'pages.data.option.disabled.tips',
               defaultMessage: '确认禁用？',
             })}
             onConfirm={async () => {
@@ -147,7 +147,7 @@ const Tenant = () => {
           >
             <Tooltip
               title={intl.formatMessage({
-                id: `pages.data.option.${record.tenant?.state.value ? 'disable' : 'enable'}`,
+                id: `pages.data.option.${record.tenant?.state.value ? 'disabled' : 'enabled'}`,
                 defaultMessage: record.tenant?.state?.value ? '禁用' : '启用',
               })}
             >

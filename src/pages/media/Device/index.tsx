@@ -1,5 +1,4 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { useIntl } from '@@/plugin-locale/localeExports';
 import { useRef } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { Tooltip } from 'antd';
@@ -7,6 +6,7 @@ import { ArrowDownOutlined, BugOutlined, EditOutlined, MinusOutlined } from '@an
 import BaseCrud from '@/components/BaseCrud';
 import BaseService from '@/utils/BaseService';
 import type { DeviceItem } from '@/pages/media/Device/typings';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 export const service = new BaseService<DeviceItem>('media/device');
 const Device = () => {
@@ -90,7 +90,7 @@ const Device = () => {
     {
       dataIndex: 'networkType',
       title: intl.formatMessage({
-        id: 'pages.media.device.networkType',
+        id: 'pages.table.type',
         defaultMessage: '类型',
       }),
     },
@@ -161,7 +161,10 @@ const Device = () => {
       <BaseCrud
         columns={columns}
         service={service}
-        title="国标设备"
+        title={intl.formatMessage({
+          id: 'pages.media.device',
+          defaultMessage: '模拟测试',
+        })}
         schema={schema}
         actionRef={actionRef}
       />

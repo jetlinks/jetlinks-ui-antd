@@ -12,6 +12,7 @@ import Alarm from '@/pages/device/Instance/Detail/Alarm';
 import Info from '@/pages/device/Instance/Detail/Info';
 import Functions from '@/pages/device/Instance/Detail/Functions';
 import Running from '@/pages/device/Instance/Detail/Running';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 const list = [
   {
@@ -56,6 +57,7 @@ const list = [
   },
 ];
 const InstanceDetail = observer(() => {
+  const intl = useIntl();
   const [tab, setTab] = useState<string>('detail');
   const getDetail = (id: string) => {
     service.detail(id).then((response) => {
@@ -79,9 +81,17 @@ const InstanceDetail = observer(() => {
       content={<Info />}
       extra={[
         statusMap[0],
-        <Button key="2">停用</Button>,
+        <Button key="2">
+          {intl.formatMessage({
+            id: 'pages.device.productDetail.disable',
+            defaultMessage: '停用',
+          })}
+        </Button>,
         <Button key="1" type="primary">
-          应用配置
+          {intl.formatMessage({
+            id: 'pages.device.productDetail.setting',
+            defaultMessage: '应用配置',
+          })}
         </Button>,
       ]}
     >

@@ -8,13 +8,13 @@ import {
 } from '@ant-design/icons';
 import { Menu, Tooltip, Popconfirm, message } from 'antd';
 import type { ProColumns, ActionType } from '@jetlinks/pro-table';
-import { useIntl } from '@@/plugin-locale/localeExports';
 import BaseCrud from '@/components/BaseCrud';
 import { CurdModel } from '@/components/BaseCrud/model';
 import BaseService from '@/utils/BaseService';
 import { observer } from '@formily/react';
 import { Store } from 'jetlinks-store';
 import SystemConst from '@/utils/const';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 const menu = (
   <Menu>
@@ -52,7 +52,7 @@ const User = observer(() => {
       ellipsis: true,
       align: 'center',
       tip: intl.formatMessage({
-        id: 'pages.system.user.name.tips',
+        id: 'pages.system.name.tips',
         defaultMessage: '姓名过长会自动收缩',
       }),
       sorter: true,
@@ -79,7 +79,7 @@ const User = observer(() => {
       ellipsis: true,
       align: 'center',
       tip: intl.formatMessage({
-        id: 'pages.system.userName.tip',
+        id: 'pages.system.userName.tips',
         defaultMessage: '用户名过长会自动收缩',
       }),
       formItemProps: {
@@ -167,7 +167,7 @@ const User = observer(() => {
         <a href={record.id} target="_blank" rel="noopener noreferrer" key="view">
           <Popconfirm
             title={intl.formatMessage({
-              id: 'pages.data.option.disable.tips',
+              id: 'pages.data.option.disabled.tips',
               defaultMessage: '确认禁用？',
             })}
             onConfirm={async () => {
@@ -186,7 +186,7 @@ const User = observer(() => {
           >
             <Tooltip
               title={intl.formatMessage({
-                id: `pages.data.option.${record.status ? 'disable' : 'enable'}`,
+                id: `pages.data.option.${record.status ? 'disabled' : 'enabled'}`,
                 defaultMessage: record.status ? '禁用' : '启用',
               })}
             >

@@ -21,14 +21,14 @@ const Alarm = () => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.device.alarm.id',
+        id: 'pages.table.deviceId',
         defaultMessage: '设备ID',
       }),
       dataIndex: 'deviceId',
     },
     {
       title: intl.formatMessage({
-        id: 'pages.table.equipmentName',
+        id: 'pages.table.deviceName',
         defaultMessage: '设备名称',
       }),
       dataIndex: 'deviceName',

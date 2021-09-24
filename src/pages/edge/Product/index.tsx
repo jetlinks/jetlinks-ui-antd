@@ -1,12 +1,12 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import BaseService from '@/utils/BaseService';
-import { useIntl } from '@@/plugin-locale/localeExports';
 import { useRef } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { Tooltip } from 'antd';
 import { ArrowDownOutlined, BugOutlined, EditOutlined, MinusOutlined } from '@ant-design/icons';
 import BaseCrud from '@/components/BaseCrud';
 import type { ProductItem } from '@/pages/edge/Product/typings';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 export const service = new BaseService<ProductItem>('edge/product');
 const Product = () => {
@@ -21,18 +21,30 @@ const Product = () => {
     },
     {
       dataIndex: 'name',
-      title: '名称',
+      title: intl.formatMessage({
+        id: 'pages.table.name',
+        defaultMessage: '名称',
+      }),
     },
     {
       dataIndex: 'model',
-      title: '型号',
+      title: intl.formatMessage({
+        id: 'pages.media.device.model',
+        defaultMessage: '型号',
+      }),
     },
     {
       dataIndex: 'manufacturer',
-      title: '厂家',
+      title: intl.formatMessage({
+        id: 'pages.media.device.manufacturer',
+        defaultMessage: '厂家',
+      }),
     },
     {
-      title: '操作',
+      title: intl.formatMessage({
+        id: 'pages.data.option',
+        defaultMessage: '操作',
+      }),
       valueType: 'option',
       align: 'center',
       width: 200,
@@ -88,7 +100,10 @@ const Product = () => {
       <BaseCrud
         columns={columns}
         service={service}
-        title="通知配置"
+        title={intl.formatMessage({
+          id: 'pages.edge.product',
+          defaultMessage: '产品',
+        })}
         schema={schema}
         actionRef={actionRef}
       />

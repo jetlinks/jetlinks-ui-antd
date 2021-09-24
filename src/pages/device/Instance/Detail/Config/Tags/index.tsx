@@ -2,6 +2,7 @@ import { createSchemaField, FormProvider, observer } from '@formily/react';
 import { Editable, FormItem, Input, ArrayTable } from '@formily/antd';
 import { createForm } from '@formily/core';
 import { Card } from 'antd';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 const SchemaField = createSchemaField({
   components: {
@@ -118,8 +119,22 @@ const schema = {
 };
 
 const Tags = observer(() => {
+  const intl = useIntl();
   return (
-    <Card title="标签" extra={<a>保存</a>}>
+    <Card
+      title={intl.formatMessage({
+        id: 'pages.device.instanceDetail.tags',
+        defaultMessage: '标签',
+      })}
+      extra={
+        <a>
+          {intl.formatMessage({
+            id: 'pages.device.instanceDetail.save',
+            defaultMessage: '保存',
+          })}
+        </a>
+      }
+    >
       <FormProvider form={form}>
         <SchemaField schema={schema} />
       </FormProvider>

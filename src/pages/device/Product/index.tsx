@@ -11,13 +11,13 @@ import {
   MinusOutlined,
   PlayCircleOutlined,
 } from '@ant-design/icons';
-import { useIntl } from '@@/plugin-locale/localeExports';
 import { lastValueFrom } from 'rxjs';
 import Service from '@/pages/device/Product/service';
 import { observer } from '@formily/react';
 import { model } from '@formily/reactive';
 import encodeQuery from '@/utils/encodeQuery';
 import { Link } from 'umi';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 export const service = new Service('device-product');
 export const statusMap = {
@@ -175,14 +175,19 @@ const Product = observer(() => {
                   <a key="download">
                     <DownloadOutlined
                       onClick={() => {
-                        message.success('下载');
+                        message.success(
+                          `${intl.formatMessage({
+                            id: 'pages.data.option.download',
+                            defaultMessage: '下载',
+                          })}`,
+                        );
                       }}
                     />
                   </a>
                 </Tooltip>,
                 <Tooltip
                   title={intl.formatMessage({
-                    id: `pages.data.option.${record.state ? 'disable' : 'enable'}`,
+                    id: `pages.data.option.${record.state ? 'disabled' : 'enabled'}`,
                     defaultMessage: record.state ? '禁用' : '启用',
                   })}
                   key={'state'}

@@ -7,8 +7,10 @@ import ItemList from '@/pages/device/Instance/Detail/Metadata/ItemList';
 import ItemDetail from '@/pages/device/Instance/Detail/Metadata/ItemDetail';
 import ItemParam from '@/pages/device/Instance/Detail/Metadata/ItemParam';
 import { useEffect } from 'react';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 const Metadata = observer(() => {
+  const intl = useIntl();
   const metadata = JSON.parse(InstanceModel.detail.metadata as string) as DeviceMetadata;
   useEffect(() => {
     InstanceModel.params = new Set<string>(['test']);
@@ -19,7 +21,14 @@ const Metadata = observer(() => {
         tabPosition: 'left',
       }}
     >
-      <ProCard.TabPane tab="属性" key="property" style={{ overflowX: 'auto' }}>
+      <ProCard.TabPane
+        tab={intl.formatMessage({
+          id: 'pages.device.instanceDetail.property',
+          defaultMessage: '属性',
+        })}
+        key="property"
+        style={{ overflowX: 'auto' }}
+      >
         <Row gutter={[16, 16]} style={{ height: '50vh' }} wrap={false}>
           <Col span={6}>
             <ProCard
@@ -31,7 +40,12 @@ const Metadata = observer(() => {
                   </Col>
                   <Col span={2} />
                   <Col span={4} style={{ alignItems: 'center' }}>
-                    <a>新增</a>
+                    <a>
+                      {intl.formatMessage({
+                        id: 'pages.data.option.add',
+                        defaultMessage: '新增',
+                      })}
+                    </a>
                   </Col>
                 </Row>
               }
@@ -42,7 +56,14 @@ const Metadata = observer(() => {
           </Col>
           <Col span={5}>
             <ProCard
-              extra={<a>保存</a>}
+              extra={
+                <a>
+                  {intl.formatMessage({
+                    id: 'pages.device.instanceDetail.save',
+                    defaultMessage: '保存',
+                  })}
+                </a>
+              }
               bordered={true}
               style={{ height: '40vh', marginRight: 10 }}
             >
@@ -57,13 +78,31 @@ const Metadata = observer(() => {
           ))}
         </Row>
       </ProCard.TabPane>
-      <ProCard.TabPane tab="事件" key="events">
+      <ProCard.TabPane
+        tab={intl.formatMessage({
+          id: 'pages.device.instanceDetail.events',
+          defaultMessage: '事件',
+        })}
+        key="events"
+      >
         事件
       </ProCard.TabPane>
-      <ProCard.TabPane tab="功能" key="functions">
+      <ProCard.TabPane
+        tab={intl.formatMessage({
+          id: 'pages.device.instanceDetail.function',
+          defaultMessage: '功能',
+        })}
+        key="functions"
+      >
         功能
       </ProCard.TabPane>
-      <ProCard.TabPane tab="标签" key="tags">
+      <ProCard.TabPane
+        tab={intl.formatMessage({
+          id: 'pages.device.instanceDetail.tags',
+          defaultMessage: '标签',
+        })}
+        key="tags"
+      >
         标签
       </ProCard.TabPane>
     </ProCard>

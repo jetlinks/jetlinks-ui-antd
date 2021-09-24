@@ -4,13 +4,13 @@ import type { ProColumns } from '@jetlinks/pro-table';
 import { CurdModel } from '@/components/BaseCrud/model';
 import { message, Popconfirm, Tooltip } from 'antd';
 import { CloseCircleOutlined, EditOutlined, PlayCircleOutlined } from '@ant-design/icons';
-import { useIntl } from '@@/plugin-locale/localeExports';
 import type { ActionType } from '@jetlinks/pro-table';
 import { useEffect, useRef, useState } from 'react';
 import type { ISchema } from '@formily/json-schema';
 import Service from '@/pages/system/DataSource/service';
 import { from, mergeMap, toArray } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 export const service = new Service('datasource/config');
 
@@ -59,7 +59,7 @@ const DataSource = () => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.system.datasource.type',
+        id: 'pages.table.type',
         defaultMessage: '类型',
       }),
       dataIndex: 'typeId',
@@ -159,7 +159,7 @@ const DataSource = () => {
           },
           typeId: {
             title: intl.formatMessage({
-              id: 'pages.system.datasource.type',
+              id: 'pages.table.type',
               defaultMessage: '类型',
             }),
             'x-component': 'Select',
