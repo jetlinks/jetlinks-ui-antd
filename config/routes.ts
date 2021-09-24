@@ -99,6 +99,14 @@ export const routes = [
                 component: './system/org-chart',
               },
               {
+                hideInMenu: true,
+                path: '/system/org-chart/assets/:id/:type',
+                name: '资产分配',
+                authority: ['organization', 'admin'],
+                tenant: ['admin', 'member'],
+                component: './assets',
+              },
+              {
                 path: '/system/role',
                 name: '角色管理',
                 icon: 'usergroup-add',
@@ -584,20 +592,13 @@ export const routes = [
             name: '视频网关',
             icon: 'youtube',
             version: 'pro',
-            authority: [
-              'gb28181-gateway',
-              'media-gateway',
-              'media-channel',
-              'media-server',
-              'media-stream',
-              'gb28181-cascade',
-            ],
+            authority: ['gb28181-gateway','media-gateway','media-channel','media-server','media-stream','gb28181-cascade'],
             routes: [
               {
                 path: '/media/basic',
                 name: '基本配置',
                 version: 'pro',
-                authority: ['gb28181-gateway', 'media-gateway', 'media-server'],
+                authority: ['gb28181-gateway','media-gateway','media-server'],
                 icon: 'video-camera',
                 component: './media/basic',
               },
@@ -650,7 +651,7 @@ export const routes = [
                 icon: 'cloud-upload',
                 component: './media/cascade',
               },
-            ],
+            ]
           },
           {
             path: 'edge-gateway',
