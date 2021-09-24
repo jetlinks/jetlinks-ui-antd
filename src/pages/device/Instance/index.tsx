@@ -202,7 +202,7 @@ const Instance = () => {
         columns={columns}
         service={service}
         title={intl.formatMessage({
-          id: 'pages.device.instance.management',
+          id: 'pages.device.instance',
           defaultMessage: '设备管理',
         })}
         schema={schema}

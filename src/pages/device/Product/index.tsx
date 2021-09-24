@@ -50,7 +50,7 @@ const Product = observer(() => {
           }}
           rowKey={'id'}
           headerTitle={intl.formatMessage({
-            id: 'pages.device.product.list',
+            id: 'pages.device.product',
             defaultMessage: '产品列表',
           })}
           request={async (params = {}) => {

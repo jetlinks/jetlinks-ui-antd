@@ -236,7 +236,7 @@ const OpenAPI: React.FC = () => {
           },
           password: {
             title: intl.formatMessage({
-              id: 'pages.system.openApi.passWord',
+              id: 'pages.system.openApi.password',
               defaultMessage: '密码',
             }),
             type: 'string',
