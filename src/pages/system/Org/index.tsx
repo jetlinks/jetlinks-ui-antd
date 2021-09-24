@@ -72,7 +72,12 @@ const Org = observer(() => {
 
   const remove = async (id: string) => {
     await service.remove(id);
-    message.success('操作成功');
+    message.success(
+      intl.formatMessage({
+        id: 'pages.data.option.success',
+        defaultMessage: '操作成功!',
+      }),
+    );
   };
   useEffect(() => {
     query();
@@ -83,7 +88,10 @@ const Org = observer(() => {
       <Menu>
         <Menu.Item>
           <a target="_blank" rel="noopener noreferrer" onClick={() => obs.addNext(nodeData)}>
-            添加下级
+            {intl.formatMessage({
+              id: 'pages.system.org.option.add',
+              defaultMessage: '添加下级',
+            })}
           </a>
         </Menu.Item>
       </Menu>
@@ -99,12 +107,18 @@ const Org = observer(() => {
               // setEdit(true);
             }}
           >
-            编辑
+            {intl.formatMessage({
+              id: 'pages.data.option.edit',
+              defaultMessage: '编辑',
+            })}
           </a>
         </Menu.Item>
         <Menu.Item>
           <a target="_blank" rel="noopener noreferrer" onClick={() => obs.addNext(nodeData)}>
-            添加下级
+            {intl.formatMessage({
+              id: 'pages.system.org.option.add',
+              defaultMessage: '添加下级',
+            })}
           </a>
         </Menu.Item>
         <Menu.Item>
@@ -116,7 +130,10 @@ const Org = observer(() => {
               // setAutzVisible(true);
             }}
           >
-            权限分配
+            {intl.formatMessage({
+              id: 'pages.system.org.option.permission',
+              defaultMessage: '权限分配',
+            })}
           </a>
         </Menu.Item>
         <Menu.Item>
@@ -128,12 +145,18 @@ const Org = observer(() => {
               // setUserVisible(true);
             }}
           >
-            绑定用户
+            {intl.formatMessage({
+              id: 'pages.system.org.option.bindUser',
+              defaultMessage: '绑定用户',
+            })}
           </a>
         </Menu.Item>
         <Menu.Item>
           <a target="_blank" rel="noopener noreferrer" onClick={() => remove(nodeData.id)}>
-            删除
+            {intl.formatMessage({
+              id: 'pages.data.option.remove',
+              defaultMessage: '删除',
+            })}
           </a>
         </Menu.Item>
       </Menu>

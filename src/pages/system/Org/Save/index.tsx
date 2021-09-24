@@ -4,12 +4,14 @@ import { createSchemaField, observer } from '@formily/react';
 import { Form, Input, FormItem } from '@formily/antd';
 import React from 'react';
 import type { ObsModel } from '@/pages/system/Org/typings';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 interface Props {
   obs: ObsModel;
 }
 
 const Save: React.FC<Props> = observer((props) => {
+  const intl = useIntl();
   const { obs } = props;
   const form = createForm({});
 
@@ -24,7 +26,10 @@ const Save: React.FC<Props> = observer((props) => {
     type: 'object',
     properties: {
       code: {
-        title: '编码',
+        title: intl.formatMessage({
+          id: 'pages.system.org.encoding',
+          defaultMessage: '编码',
+        }),
         type: 'string',
         'x-decorator': 'FormItem',
         'x-component': 'Input',
@@ -34,7 +39,10 @@ const Save: React.FC<Props> = observer((props) => {
         required: true,
       },
       name: {
-        title: '名称',
+        title: intl.formatMessage({
+          id: 'pages.table.name',
+          defaultMessage: '名称',
+        }),
         type: 'string',
         'x-decorator': 'FormItem',
         'x-component': 'Input',
@@ -44,7 +52,10 @@ const Save: React.FC<Props> = observer((props) => {
         required: true,
       },
       sort: {
-        title: '名称',
+        title: intl.formatMessage({
+          id: 'pages.system.org.add.orderNumber',
+          defaultMessage: '序号',
+        }),
         type: 'string',
         'x-decorator': 'FormItem',
         'x-component': 'Input',
@@ -54,7 +65,10 @@ const Save: React.FC<Props> = observer((props) => {
         required: true,
       },
       describe: {
-        title: '描述',
+        title: intl.formatMessage({
+          id: 'pages.table.describe',
+          defaultMessage: '描述',
+        }),
         type: 'string',
         'x-decorator': 'FormItem',
         'x-component': 'Input.TextArea',

@@ -3,6 +3,7 @@ import { Avatar, Dropdown } from 'antd';
 import { SmallDashOutlined, UserOutlined } from '@ant-design/icons';
 import React from 'react';
 import type { OrgItem } from '@/pages/system/Org/typings';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 declare type OverlayFunc = () => React.ReactElement;
 
@@ -12,6 +13,7 @@ interface Props {
 }
 
 const NodeTemplate: React.FC<Props> = (props) => {
+  const intl = useIntl();
   const { data, action } = props;
   return (
     <div className={styles.node}>
@@ -24,12 +26,22 @@ const NodeTemplate: React.FC<Props> = (props) => {
         <div className={styles.item}>
           {data.code !== null && (
             <div>
-              <span className={styles.mark}>编码</span>
+              <span className={styles.mark}>
+                {intl.formatMessage({
+                  id: 'pages.system.org.encoding',
+                  defaultMessage: '编码',
+                })}
+              </span>
               <span>{data.code}</span>
             </div>
           )}
           <div>
-            <span className={styles.mark}>下级数量</span>
+            <span className={styles.mark}>
+              {intl.formatMessage({
+                id: 'pages.system.org.count',
+                defaultMessage: '下级数量',
+              })}
+            </span>
             <span>{data?.children?.length || 0}</span>
           </div>
         </div>
