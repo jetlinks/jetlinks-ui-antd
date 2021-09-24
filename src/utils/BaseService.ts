@@ -16,7 +16,7 @@ class BaseService<T> implements IBaseService<T> {
     'X-Access-Token': Token.get(),
   };
 
-  constructor(uri: string) {
+  constructor(uri?: string) {
     this.uri = `/${SystemConst.API_BASE}/${uri}`;
   }
 
