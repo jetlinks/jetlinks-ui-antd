@@ -4,7 +4,7 @@ import { Form, FormItem, FormGrid, Password, FormLayout, PreviewText, Input } fr
 import { createForm } from '@formily/core';
 import { Card, Empty } from 'antd';
 import type { ISchema } from '@formily/json-schema';
-import { useEffect, useState } from 'react';
+import { SetStateAction, useEffect, useState } from 'react';
 import type { ConfigMetadata, ConfigProperty } from '@/pages/device/Product/typings';
 
 const componentMap = {
@@ -24,7 +24,7 @@ const BaseInfo = observer(() => {
 
   useEffect(() => {
     if (id) {
-      service.getConfigMetadata(id).then((config) => {
+      service.getConfigMetadata(id).then((config: { result: SetStateAction<ConfigMetadata[]> }) => {
         setMetadata(config.result);
       });
     }

@@ -101,7 +101,7 @@ const Network = () => {
         service={service}
         title={intl.formatMessage({
           id: 'pages.link.component',
-          defaultMessage: '网络组建',
+          defaultMessage: '网络组件',
         })}
         schema={schema}
         actionRef={actionRef}

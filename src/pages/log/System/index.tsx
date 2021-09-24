@@ -23,7 +23,7 @@ const System = () => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.log.system.thread',
+        id: 'pages.log.system.threadName',
         defaultMessage: '线程',
       }),
       dataIndex: 'threadName',

@@ -36,7 +36,7 @@ const Scene = () => {
     {
       dataIndex: 'triggers',
       title: intl.formatMessage({
-        id: 'pages.ruleEngine.scene.trigger',
+        id: 'pages.ruleEngine.scene.triggers',
         defaultMessage: '触发方式',
       }),
       render: () => 'todo',

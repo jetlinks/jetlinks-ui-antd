@@ -12,11 +12,11 @@ import {
   EyeOutlined,
   PlayCircleOutlined,
 } from '@ant-design/icons';
-import { useIntl } from '@@/plugin-locale/localeExports';
 import { CurdModel } from '@/components/BaseCrud/model';
 import { model } from '@formily/reactive';
 import Service from '@/pages/device/Instance/service';
 import type { MetadataItem } from '@/pages/device/Product/typings';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 const statusMap = new Map();
 statusMap.set('在线', 'success');
@@ -56,7 +56,7 @@ const Instance = () => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.table.equipmentName',
+        id: 'pages.table.deviceName',
         defaultMessage: '设备名称',
       }),
       dataIndex: 'name',
@@ -64,7 +64,7 @@ const Instance = () => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.device.instance.productName',
+        id: 'pages.table.productName',
         defaultMessage: '产品名称',
       }),
       dataIndex: 'productName',
@@ -92,7 +92,7 @@ const Instance = () => {
       filters: [
         {
           text: intl.formatMessage({
-            id: 'pages.device.instance.status.notEnabled',
+            id: 'pages.device.instance.status.notActive',
             defaultMessage: '未启用',
           }),
           value: 'notActive',
@@ -163,7 +163,7 @@ const Instance = () => {
         <a href={record.id} target="_blank" rel="noopener noreferrer" key="view">
           <Popconfirm
             title={intl.formatMessage({
-              id: 'pages.data.option.disable.tips',
+              id: 'pages.data.option.disabled.tips',
               defaultMessage: '确认禁用？',
             })}
             onConfirm={async () => {
@@ -182,7 +182,7 @@ const Instance = () => {
           >
             <Tooltip
               title={intl.formatMessage({
-                id: `pages.data.option.${record.state.value ? 'disable' : 'enable'}`,
+                id: `pages.data.option.${record.state.value ? 'disabled' : 'enabled'}`,
                 defaultMessage: record.state.value ? '禁用' : '启用',
               })}
             >
@@ -202,7 +202,7 @@ const Instance = () => {
         columns={columns}
         service={service}
         title={intl.formatMessage({
-          id: 'pages.device.instance.management',
+          id: 'pages.device.instance',
           defaultMessage: '设备管理',
         })}
         schema={schema}

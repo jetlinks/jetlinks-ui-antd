@@ -27,7 +27,7 @@ const Access: React.FC = () => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.log.access.requestPath',
+        id: 'pages.log.access.url',
         defaultMessage: '请求路径',
       }),
       dataIndex: 'url',
@@ -35,7 +35,7 @@ const Access: React.FC = () => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.log.access.describe',
+        id: 'pages.table.description',
         defaultMessage: '说明',
       }),
       dataIndex: 'description',

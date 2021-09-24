@@ -148,12 +148,6 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
           <Link to="/umi/plugin/openapi" target="_blank">
             <LinkOutlined />
             <span>OpenAPI 文档</span>
-            {/* <span>
-          { intl.formatMessage({
-                  id: 'pages.searchTable.new',
-                  defaultMessage: '新建',
-                 })}
-          </span> */}
           </Link>,
           <Link to="/~docs">
             <BookOutlined />

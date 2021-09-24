@@ -98,7 +98,7 @@ const Config = () => {
         <a>
           <Tooltip
             title={intl.formatMessage({
-              id: 'pages.notice.option.record',
+              id: 'pages.data.option.record',
               defaultMessage: '通知记录',
             })}
           >
@@ -117,7 +117,7 @@ const Config = () => {
         columns={columns}
         service={service}
         title={intl.formatMessage({
-          id: 'pages.notice.template',
+          id: 'pages.notice.config',
           defaultMessage: '通知配置',
         })}
         schema={schema}

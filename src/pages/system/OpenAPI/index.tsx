@@ -111,7 +111,7 @@ const OpenAPI: React.FC = () => {
         <a href={record.id} target="_blank" rel="noopener noreferrer" key="view">
           <Popconfirm
             title={intl.formatMessage({
-              id: 'pages.data.option.disable.tips',
+              id: 'pages.data.option.disabled.tips',
               defaultMessage: '确认禁用？',
             })}
             onConfirm={async () => {
@@ -130,7 +130,7 @@ const OpenAPI: React.FC = () => {
           >
             <Tooltip
               title={intl.formatMessage({
-                id: `pages.data.option.${record.status ? 'disable' : 'enable'}`,
+                id: `pages.data.option.${record.status ? 'disabled' : 'enabled'}`,
                 defaultMessage: record.status ? '禁用' : '启用',
               })}
             >
@@ -236,7 +236,7 @@ const OpenAPI: React.FC = () => {
           },
           password: {
             title: intl.formatMessage({
-              id: 'pages.system.openApi.passWord',
+              id: 'pages.system.openApi.password',
               defaultMessage: '密码',
             }),
             type: 'string',

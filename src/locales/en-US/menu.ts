@@ -11,7 +11,7 @@ export default {
   'menu.system.open-api': 'OpenAPI',
   'menu.system.permission': 'Permission',
   'menu.system.tenant': 'Tenant',
-  'menu.system.datasource': 'Data Source',
+  'menu.system.datasource': 'DataSource',
   'menu.device': 'Device',
   'menu.device.product': 'Product',
   'menu.device.product-detail': 'ProductDetail',

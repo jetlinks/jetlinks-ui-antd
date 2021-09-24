@@ -1,12 +1,12 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import BaseService from '@/utils/BaseService';
 import type { DeviceItem } from '@/pages/simulator/Device/typings';
-import { useIntl } from '@@/plugin-locale/localeExports';
 import { useRef } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { Tooltip } from 'antd';
 import { ArrowDownOutlined, BugOutlined, EditOutlined, MinusOutlined } from '@ant-design/icons';
 import BaseCrud from '@/components/BaseCrud';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 export const service = new BaseService<DeviceItem>('network/simulator');
 const Device = () => {
@@ -30,7 +30,7 @@ const Device = () => {
     {
       dataIndex: 'networkType',
       title: intl.formatMessage({
-        id: 'pages.simulator.device.networkType',
+        id: 'pages.table.type',
         defaultMessage: '类型',
       }),
     },

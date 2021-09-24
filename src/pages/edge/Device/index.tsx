@@ -1,5 +1,4 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { useIntl } from '@@/plugin-locale/localeExports';
 import { useRef } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { Tooltip } from 'antd';
@@ -7,6 +6,7 @@ import { ArrowDownOutlined, BugOutlined, EditOutlined, MinusOutlined } from '@an
 import BaseCrud from '@/components/BaseCrud';
 import BaseService from '@/utils/BaseService';
 import type { DeviceItem } from '@/pages/edge/Device/typings';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 export const service = new BaseService<DeviceItem>('device/instance');
 const Device = () => {
@@ -41,7 +41,7 @@ const Device = () => {
     {
       dataIndex: 'productName',
       title: intl.formatMessage({
-        id: 'pages.edge.device.productName',
+        id: 'pages.table.productName',
         defaultMessage: '产品名称',
       }),
     },

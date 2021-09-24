@@ -82,8 +82,6 @@ const Onenet = () => {
               defaultMessage: `确认${record.state.value === 'disabled' ? '启' : '禁'}用？`,
             })}
             onConfirm={async () => {
-              // const state = record.state.value === 'disabled' ? 'enable' : 'disable';
-              // await service.changeStatus(record.id, state);
               message.success(
                 intl.formatMessage({
                   id: 'pages.data.option.success',

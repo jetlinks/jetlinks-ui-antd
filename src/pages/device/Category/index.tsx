@@ -3,11 +3,11 @@ import Service from '@/pages/device/Category/service';
 import type { ProColumns } from '@jetlinks/pro-table';
 import { EditOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
-import { useIntl } from '@@/plugin-locale/localeExports';
 import { useRef } from 'react';
 import type { ActionType } from '@jetlinks/pro-table';
 import BaseCrud from '@/components/BaseCrud';
 import type { ISchema } from '@formily/json-schema';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 const service = new Service('device/category');
 const Category = () => {
@@ -26,7 +26,7 @@ const Category = () => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.device.category.logotype',
+        id: 'pages.device.category.key',
         defaultMessage: '标识',
       }),
       align: 'left',
@@ -118,7 +118,7 @@ const Category = () => {
       },
       key: {
         title: intl.formatMessage({
-          id: 'pages.device.category.logotype',
+          id: 'pages.device.category.key',
           defaultMessage: '标识',
         }),
         'x-decorator': 'FormItem',

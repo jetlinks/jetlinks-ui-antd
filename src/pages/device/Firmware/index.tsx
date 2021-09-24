@@ -37,21 +37,21 @@ const Firmware = () => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.device.firmware.products',
+        id: 'pages.device.firmware.productName',
         defaultMessage: '所属产品',
       }),
       dataIndex: 'productName',
     },
     {
       title: intl.formatMessage({
-        id: 'pages.device.firmware.signature',
+        id: 'pages.device.firmware.signMethod',
         defaultMessage: '签名方式',
       }),
       dataIndex: 'signMethod',
     },
     {
       title: intl.formatMessage({
-        id: 'pages.device.firmware.creationTime',
+        id: 'pages.device.firmware.createTime',
         defaultMessage: '创建时间',
       }),
       dataIndex: 'createTime',

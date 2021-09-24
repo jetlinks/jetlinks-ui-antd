@@ -22,14 +22,14 @@ const Command = () => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.device.command.id',
+        id: 'pages.table.deviceId',
         defaultMessage: '设备ID',
       }),
       dataIndex: 'deviceId',
     },
     {
       title: intl.formatMessage({
-        id: 'pages.table.equipmentName',
+        id: 'pages.table.deviceName',
         defaultMessage: '设备名称',
       }),
       dataIndex: 'deviceName',
@@ -43,21 +43,21 @@ const Command = () => {
       filters: [
         {
           text: intl.formatMessage({
-            id: 'pages.device.command.type.readAttributes',
+            id: 'pages.device.command.type.readProperty',
             defaultMessage: '读取属性',
           }),
           value: 'READ_PROPERTY',
         },
         {
           text: intl.formatMessage({
-            id: 'pages.device.command.type.setProperties',
+            id: 'pages.device.command.type.writeProperty',
             defaultMessage: '设置属性',
           }),
           value: 'WRITE_PROPERTY',
         },
         {
           text: intl.formatMessage({
-            id: 'pages.device.command.type.callAttribute',
+            id: 'pages.device.command.type.invokeFunction',
             defaultMessage: '调用属性',
           }),
           value: 'INVOKE_FUNCTION',
@@ -73,21 +73,21 @@ const Command = () => {
       filters: [
         {
           text: intl.formatMessage({
-            id: 'pages.device.command.status.waiting',
+            id: 'pages.device.command.status.wait',
             defaultMessage: '等待中',
           }),
           value: 'wait',
         },
         {
           text: intl.formatMessage({
-            id: 'pages.device.command.status.failed ',
+            id: 'pages.device.command.status.sendError',
             defaultMessage: '发送失败',
           }),
           value: 'sendError',
         },
         {
           text: intl.formatMessage({
-            id: 'pages.device.command.status.succeed',
+            id: 'pages.device.command.status.success',
             defaultMessage: '发送成功',
           }),
           value: 'success',
@@ -97,7 +97,7 @@ const Command = () => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.device.command.errorMessage',
+        id: 'pages.device.command.lastError',
         defaultMessage: '错误信息',
       }),
       dataIndex: 'lastError',

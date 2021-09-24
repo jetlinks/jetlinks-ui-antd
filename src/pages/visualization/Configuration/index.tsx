@@ -90,7 +90,7 @@ const Configuration = () => {
         <a>
           <Tooltip
             title={intl.formatMessage({
-              id: 'pages.visualization.option.record',
+              id: 'pages.visualization.option.copy',
               defaultMessage: '复制',
             })}
           >
@@ -100,7 +100,7 @@ const Configuration = () => {
         <a>
           <Tooltip
             title={intl.formatMessage({
-              id: 'pages.visualization.option.record',
+              id: 'pages.data.option.record',
               defaultMessage: '通知记录',
             })}
           >

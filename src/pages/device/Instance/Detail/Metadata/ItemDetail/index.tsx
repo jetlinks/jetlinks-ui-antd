@@ -17,8 +17,10 @@ import {
   Radio,
 } from '@formily/antd';
 import type { MetadataItem } from '@/pages/device/Product/typings';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 const ItemDetail = observer(() => {
+  const intl = useIntl();
   const form = createForm<MetadataItem>({
     validateFirst: true,
     initialValues: InstanceModel.metadataItem,
@@ -43,21 +45,30 @@ const ItemDetail = observer(() => {
     properties: {
       id: {
         type: 'string',
-        title: '属性标识',
+        title: intl.formatMessage({
+          id: 'pages.device.instanceDetail.metadata.logotype',
+          defaultMessage: '',
+        }),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input',
       },
       name: {
         type: 'string',
-        title: '属性名称',
+        title: intl.formatMessage({
+          id: 'pages.device.instanceDetail.metadata.attributeName',
+          defaultMessage: '属性名称',
+        }),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input',
       },
       dataType: {
         type: 'string',
-        title: '数据类型',
+        title: intl.formatMessage({
+          id: 'pages.device.instanceDetail.metadata.dataType',
+          defaultMessage: '数据类型',
+        }),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Select',
@@ -77,14 +88,23 @@ const ItemDetail = observer(() => {
       },
       readOnly: {
         type: 'string',
-        title: '只读',
+        title: intl.formatMessage({
+          id: 'pages.device.instanceDetail.metadata.readOnly',
+          defaultMessage: '只读',
+        }),
         enum: [
           {
-            label: '是',
+            label: intl.formatMessage({
+              id: 'pages.device.instanceDetail.metadata.readOnly.yes',
+              defaultMessage: '是',
+            }),
             value: 1,
           },
           {
-            label: '否',
+            label: intl.formatMessage({
+              id: 'pages.device.instanceDetail.metadata.readOnly.no',
+              defaultMessage: '否',
+            }),
             value: 2,
           },
         ],
@@ -94,7 +114,10 @@ const ItemDetail = observer(() => {
       description: {
         type: 'string',
         required: true,
-        title: '描述',
+        title: intl.formatMessage({
+          id: 'pages.table.describe',
+          defaultMessage: '描述',
+        }),
         'x-decorator': 'FormItem',
         'x-component': 'Input.TextArea',
       },

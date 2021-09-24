@@ -3,10 +3,10 @@ import React, { useRef } from 'react';
 import { EditOutlined, KeyOutlined, MinusOutlined, UserAddOutlined } from '@ant-design/icons';
 import { Menu, message, Popconfirm, Tooltip } from 'antd';
 import type { ProColumns, ActionType } from '@jetlinks/pro-table';
-import { useIntl } from '@@/plugin-locale/localeExports';
 import BaseCrud from '@/components/BaseCrud';
 import { CurdModel } from '@/components/BaseCrud/model';
 import BaseService from '@/utils/BaseService';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 const menu = (
   <Menu>
@@ -55,7 +55,10 @@ const Role: React.FC = () => {
       dataIndex: 'name',
       copyable: true,
       ellipsis: true,
-      tip: '名称过长会自动收缩',
+      tip: intl.formatMessage({
+        id: 'pages.system.userName.tips',
+        defaultMessage: '用户名过长会自动收缩',
+      }),
       formItemProps: {
         rules: [
           {
