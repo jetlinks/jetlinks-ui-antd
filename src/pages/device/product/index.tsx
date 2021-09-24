@@ -114,7 +114,7 @@ const DeviceModel: React.FC<Props> = props => {
 
   useEffect(() => {
     apis.deviceProdcut
-      .deviceCategory()
+      .deviceCategory({paging:false})
       .then((response: any) => {
         if (response.status === 200) {
           setCategoryList(

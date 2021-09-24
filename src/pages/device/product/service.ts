@@ -142,9 +142,10 @@ export async function units() {
 }
 
 //获取品类分类
-export async function deviceCategory() {
+export async function deviceCategory(params:any) {
   return request(`/jetlinks/device/category`, {
     method: 'get',
+    params
   });
 }
 
