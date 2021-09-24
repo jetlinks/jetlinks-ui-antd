@@ -25,6 +25,13 @@ export default function encodeQueryParam(params: any) {
             queryParam[`terms[${index}].column`] = temp[0];
             // eslint-disable-next-line prefer-destructuring
             queryParam[`terms[${index}].type`] = temp[1];
+          } else if(k.indexOf('#') > -1){
+            const temp = k.split('#');
+            // eslint-disable-next-line prefer-destructuring
+            queryParam[`terms[${index}].column`] = temp[0];
+            // eslint-disable-next-line prefer-destructuring
+            //queryParam[`terms[${index}].type`] = temp[1];
+            queryParam[`terms[${index}].termType`] = temp[1];
           } else {
             queryParam[`terms[${index}].column`] = k;
           }
