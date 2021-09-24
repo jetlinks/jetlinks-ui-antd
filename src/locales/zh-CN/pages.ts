@@ -36,12 +36,13 @@ export default {
   'pages.table.username': '用户名',
   'pages.table.name': '名称',
   'pages.table.deviceName': '设备名称',
+  'pages.table.productName': '产品名称',
   'pages.table.describe': '描述',
   'pages.table.description': '说明',
   'pages.table.provider': '服务商',
   'pages.table.type': '类型',
   'pages.table.deviceId': '设备ID',
-  'pages.table.productName': '产品名称',
+
   // 统计分析
   'pages.analysis.cpu': 'CPU使用率',
   'pages.analysis.jvm': 'JVM内存',
@@ -80,7 +81,7 @@ export default {
   'pages.system.org.option.add': '添加下级',
   // 系统设置-第三方平台
   'pages.system.openApi': '第三方平台',
-  'pages.system.openApi.passWord': '密码',
+  'pages.system.openApi.password': '密码',
   'pages.system.openApi.ipWhileList': 'IP白名单',
   // 系统设置-租户管理
   'pages.system.tenant': '租户管理',
@@ -92,7 +93,6 @@ export default {
 
   // 设备管理-产品
   'pages.device.product': '产品',
-  'pages.device.product.list': '产品列表',
   'pages.device.product.status.published': '已发布',
   'pages.device.product.status.unpublished': '未发布',
   'pages.device.product.status.all': '全部',
@@ -115,7 +115,6 @@ export default {
   'pages.device.category.addClass': '添加子分类',
   // 设备管理-设备
   'pages.device.instance': '设备',
-  'pages.device.instance.management': '设备管理',
   'pages.device.instance.registrationTime': '注册时间',
   'pages.device.instance.status.notActive': '未启用',
   'pages.device.instance.status.offLine': '离线',
@@ -132,6 +131,8 @@ export default {
   'pages.device.instanceDetail.tags': '标签',
   'pages.device.instanceDetail.save': '保存',
   'pages.device.instanceDetail.detail': '实例信息',
+  'pages.device.instanceDetail.detail.sort': '排序',
+  'pages.device.instanceDetail.detail.value': '值',
   'pages.device.instanceDetail.detail.tags': '标签',
   'pages.device.instanceDetail.detail.addTags': '添加标签',
   'pages.device.instanceDetail.running': '运行状态',

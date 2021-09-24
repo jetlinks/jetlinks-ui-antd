@@ -36,12 +36,13 @@ export default {
   'pages.table.username': 'userName',
   'pages.table.name': 'Name',
   'pages.table.deviceName': 'Device Name',
+  'pages.table.productName': 'Product Name',
   'pages.table.describe': 'Describe',
   'pages.table.description': 'Explain',
-  'pages.table.type': 'Type',
   'pages.table.provider': 'Provider',
+  'pages.table.type': 'Type',
   'pages.table.deviceId': 'Device ID',
-  'pages.table.productName': 'Product Name',
+
   // 统计分析
   'pages.analysis.cpu': 'CPU Usage',
   'pages.analysis.jvm': 'JVM Memory',
@@ -61,7 +62,7 @@ export default {
   // 系统设置-权限管理
   'pages.system.permission': 'Permission',
   'pages.system.permission.id': 'ID',
-  'pages.system.permission.name.tip': 'If the name is too long, it will automatically shrink',
+  'pages.system.permission.name.tips': 'If the name is too long, it will automatically shrink',
   'pages.system.permission.add': 'Add Entry',
   'pages.system.permission.addInformation': 'Basic Information',
   'pages.system.permission.addConfiguration': 'Operation Configuration',
@@ -80,7 +81,7 @@ export default {
   'pages.system.org.option.add': 'Add the lower',
   // 系统设置-第三方平台
   'pages.system.openApi': 'OpenAPI',
-  'pages.system.openApi.passWord': 'passWord',
+  'pages.system.openApi.password': 'password',
   'pages.system.openApi.ipWhileList': 'ipWhileList',
   // 系统设置-租户管理
   'pages.system.tenant': 'Tenant',
@@ -88,11 +89,10 @@ export default {
   'pages.system.tenant.avatar': 'Avatar',
   'pages.system.tenant.members': 'Members',
   // 系统设置-数据源管理
-  'pages.system.datasource.': 'Data Source',
+  'pages.system.datasource.': 'DataSource',
 
   // 设备管理-产品
-  'pages.device.product': 'Product',
-  'pages.device.product.list': 'Product List',
+  'pages.device.product': 'Product Manage',
   'pages.device.product.status.published': 'Published',
   'pages.device.product.status.unpublished': 'Unpublished',
   'pages.device.product.status.all': 'All',
@@ -102,20 +102,19 @@ export default {
   'pages.device.productDetail.protocolName': 'Message Protocol',
   'pages.device.productDetail.transportProtocol': 'Link Protocol',
   'pages.device.productDetail.createTime': 'Create Time',
-  'pages.device.productDetail.base': 'Configuration Information ',
+  'pages.device.productDetail.base': 'Configuration Information',
   'pages.device.productDetail.metadata': 'Metadata',
   'pages.device.productDetail.alarm': 'Alarm Set',
   'pages.device.productDetail.setting': 'Application Settings',
   'pages.device.productDetail.disable': 'Disable',
   // 设备管理-产品分类
-  'pages.device.category': 'Product Classification',
+  'pages.device.category': 'Category Manage',
   'pages.device.category.id': 'Classification ID',
   'pages.device.category.key': 'Key',
   'pages.device.category.name': 'Classification Name',
   'pages.device.category.addClass': 'Add Subclasses',
   // 设备管理-设备
-  'pages.device.instance': 'Equipment',
-  'pages.device.instance.management': 'Equipment Management',
+  'pages.device.instance': 'Instance Manage',
   'pages.device.instance.registrationTime': 'Registration Time',
   'pages.device.instance.status.notActive': 'Not Active',
   'pages.device.instance.status.offLine': 'Off Line',
@@ -132,6 +131,8 @@ export default {
   'pages.device.instanceDetail.tags': 'Tags',
   'pages.device.instanceDetail.save': 'Save',
   'pages.device.instanceDetail.detail': 'Detail',
+  'pages.device.instanceDetail.detail.sort': 'Sort',
+  'pages.device.instanceDetail.detail.value': 'Value',
   'pages.device.instanceDetail.detail.tags': 'Tags',
   'pages.device.instanceDetail.detail.addTags': 'Add Tags',
   'pages.device.instanceDetail.running': 'Running',
@@ -171,7 +172,7 @@ export default {
   'pages.device.firmware.signMethod': 'Sign Method',
   'pages.device.firmware.createTime': 'Create Time',
   // 设备管理-告警记录
-  'pages.device.alarm': 'Alarm',
+  'pages.device.alarm': 'Alarm Record',
   'pages.device.alarm.name': 'Alarm Name',
   'pages.device.alarm.time': 'Alarm Time',
   'pages.device.alarm.status': 'State',
@@ -180,18 +181,16 @@ export default {
   // 设备接入
   'pages.link.certificate': 'Certificate',
   'pages.link.protocol': 'Protocol',
-  'pages.link.component': 'Network components',
+  'pages.link.component': 'Component Manage',
   'pages.link.gateway': 'Gateway',
   'pages.link.opcua': 'OPC UA',
   'pages.link.type': 'Type',
   'pages.link.option.debug': 'Debug',
-  'pages.link.option.record': 'Record',
   // 通知管理
   'pages.notice.config': 'Config',
   'pages.notice.config.type': 'Type',
   'pages.notice.template': 'Template',
   'pages.notice.option.debug': 'Debug',
-  'pages.notice.option.record': 'Notification Records',
 
   // 规则引擎
   'pages.ruleEngine.instance': 'Instance',
@@ -251,6 +250,6 @@ export default {
   'pages.media.cascade': 'Cascade',
 
   // 边缘网关
-  'pages.edge.product': 'Product',
-  'pages.edge.device': 'Device',
+  'pages.edge.product': 'Product Manage',
+  'pages.edge.device': 'Device Manage',
 };
