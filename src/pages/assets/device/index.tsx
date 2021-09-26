@@ -80,6 +80,7 @@ const deviceBind: React.FC<Props> = (props) => {
         {
             title: 'ID',
             dataIndex: 'id',
+            ellipsis: true,
         },
         {
             title: '设备名称',
