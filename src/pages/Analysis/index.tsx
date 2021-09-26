@@ -45,13 +45,8 @@ const Analysis = () => {
         <DeviceChart />
       </StatisticCard.Group>
       <Divider type={responsive ? 'horizontal' : 'vertical'} />
-      <StatisticCard
-        statistic={{
-          title: '设备消息',
-        }}
-      >
-        <DeviceMessageChart />
-      </StatisticCard>
+
+      <DeviceMessageChart />
     </RcResizeObserver>
   );
 };
