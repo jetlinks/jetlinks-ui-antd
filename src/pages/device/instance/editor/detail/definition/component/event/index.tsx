@@ -103,7 +103,7 @@ const EventDefin: React.FC<Props> = props => {
       props.save({ ...data });
     });
   };
-  
+
   let dataSource = [{
     text: 'String类型的UTC时间戳 (毫秒)',
     value: 'string',
@@ -482,7 +482,7 @@ const EventDefin: React.FC<Props> = props => {
           <div>
             <Form.Item label="元素类型">
               {getFieldDecorator('valueType.elementType.type', {
-                initialValue: initState.data.valueType?.elementType.type,
+                initialValue: initState.data.valueType?.elementType?.type,
               })(
                 <Select
                   placeholder="请选择"
