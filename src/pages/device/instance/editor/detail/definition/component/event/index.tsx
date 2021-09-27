@@ -482,7 +482,7 @@ const EventDefin: React.FC<Props> = props => {
           <div>
             <Form.Item label="元素类型">
               {getFieldDecorator('valueType.elementType.type', {
-                initialValue: initState.data.valueType?.elementType.type,
+                initialValue: initState.data.valueType?.elementType?.type,
               })(
                 <Select
                   placeholder="请选择"
