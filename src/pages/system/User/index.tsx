@@ -6,7 +6,7 @@ import {
   CloseCircleOutlined,
   PlayCircleOutlined,
 } from '@ant-design/icons';
-import { Menu, Tooltip, Popconfirm, message } from 'antd';
+import { Menu, Tooltip, Popconfirm, message, Drawer } from 'antd';
 import type { ProColumns, ActionType } from '@jetlinks/pro-table';
 import BaseCrud from '@/components/BaseCrud';
 import { CurdModel } from '@/components/BaseCrud/model';
@@ -15,6 +15,8 @@ import { observer } from '@formily/react';
 import { Store } from 'jetlinks-store';
 import SystemConst from '@/utils/const';
 import { useIntl } from '@@/plugin-locale/localeExports';
+import type { ISchema } from '@formily/json-schema';
+import Authorization from '@/pages/system/User/Authorization';
 
 const menu = (
   <Menu>
@@ -154,7 +156,7 @@ const User = observer(() => {
             <EditOutlined />
           </Tooltip>
         </a>,
-        <a onClick={() => console.log('授权')}>
+        <a key="auth" onClick={() => console.log('授权')}>
           <Tooltip
             title={intl.formatMessage({
               id: 'pages.data.option.authorize',
@@ -164,11 +166,11 @@ const User = observer(() => {
             <KeyOutlined />
           </Tooltip>
         </a>,
-        <a href={record.id} target="_blank" rel="noopener noreferrer" key="view">
+        <a key="changeState">
           <Popconfirm
             title={intl.formatMessage({
-              id: 'pages.data.option.disabled.tips',
-              defaultMessage: '确认禁用？',
+              id: `pages.data.option.${record.status ? 'disabled' : 'enabled'}`,
+              defaultMessage: `确认${record.status ? '禁用' : '启用'}?`,
             })}
             onConfirm={async () => {
               await service.update({
@@ -198,9 +200,24 @@ const User = observer(() => {
     },
   ];
 
-  const schema = {
+  const schema: ISchema = {
     type: 'object',
     properties: {
+      username: {
+        title: intl.formatMessage({
+          id: 'pages.table.username',
+          defaultMessage: '用户名',
+        }),
+        type: 'string',
+        'x-decorator': 'FormItem',
+        'x-component': 'Input',
+        'x-component-props': {
+          disabled: model === 'edit',
+        },
+        'x-decorator-props': {},
+        name: 'username',
+        required: true,
+      },
       name: {
         title: intl.formatMessage({
           id: 'pages.system.user.name',
@@ -213,23 +230,6 @@ const User = observer(() => {
         'x-decorator-props': {},
         name: 'name',
         required: true,
-        _designableId: '1jq1ln7nzji',
-        'x-index': 0,
-      },
-      username: {
-        title: intl.formatMessage({
-          id: 'pages.table.username',
-          defaultMessage: '用户名',
-        }),
-        type: 'string',
-        'x-decorator': 'FormItem',
-        'x-component': 'Input',
-        'x-component-props': {},
-        'x-decorator-props': {},
-        name: 'username',
-        required: true,
-        _designableId: '9vf50ad9n1h',
-        'x-index': 1,
       },
       password: {
         type: 'string',
@@ -242,7 +242,7 @@ const User = observer(() => {
         'x-component-props': {
           checkStrength: true,
         },
-        'x-hidden': model === 'edit',
+        // 'x-hidden': model === 'edit',
         'x-reactions': [
           {
             dependencies: ['.confirmPassword'],
@@ -257,8 +257,6 @@ const User = observer(() => {
         'x-decorator-props': {},
         name: 'password',
         required: false,
-        _designableId: 'weg6kt6izlt',
-        'x-index': 2,
       },
       confirmPassword: {
         type: 'string',
@@ -268,7 +266,7 @@ const User = observer(() => {
         }),
         'x-decorator': 'FormItem',
         'x-component': 'Password',
-        'x-hidden': model === 'edit',
+        // 'x-hidden': model === 'edit',
         'x-component-props': {
           checkStrength: true,
         },
@@ -286,11 +284,8 @@ const User = observer(() => {
         'x-decorator-props': {},
         name: 'confirmPassword',
         required: false,
-        _designableId: 'mhsm2fk573e',
-        'x-index': 3,
       },
     },
-    _designableId: 'zd740kqp5hf',
   };
 
   return (
@@ -306,6 +301,9 @@ const User = observer(() => {
         menu={menu}
         schema={schema}
       />
+      <Drawer title="授权" width="70vw" visible={true}>
+        <Authorization />
+      </Drawer>
     </PageContainer>
   );
 });

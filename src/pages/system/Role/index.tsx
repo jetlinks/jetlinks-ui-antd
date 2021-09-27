@@ -7,6 +7,7 @@ import BaseCrud from '@/components/BaseCrud';
 import { CurdModel } from '@/components/BaseCrud/model';
 import BaseService from '@/utils/BaseService';
 import { useIntl } from '@@/plugin-locale/localeExports';
+import { observer } from '@formily/react';
 
 const menu = (
   <Menu>
@@ -18,7 +19,7 @@ const menu = (
 
 const service = new BaseService<RoleItem>('dimension');
 
-const Role: React.FC = () => {
+const Role: React.FC = observer(() => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
 
@@ -164,12 +165,12 @@ const Role: React.FC = () => {
         type: 'string',
         'x-decorator': 'FormItem',
         'x-component': 'Input',
-        'x-component-props': {},
+        'x-component-props': {
+          disabled: CurdModel.model === 'edit',
+        },
         'x-decorator-props': {},
         name: 'id',
         required: true,
-        _designableId: '1jq1ln7nzji',
-        'x-index': 0,
       },
       name: {
         title: intl.formatMessage({
@@ -183,8 +184,6 @@ const Role: React.FC = () => {
         'x-decorator-props': {},
         name: 'name',
         required: true,
-        _designableId: '9vf50ad9n1h',
-        'x-index': 1,
       },
       describe: {
         type: 'string',
@@ -200,8 +199,6 @@ const Role: React.FC = () => {
         'x-decorator-props': {},
         name: 'password',
         required: false,
-        _designableId: 'weg6kt6izlt',
-        'x-index': 2,
       },
       typeId: {
         type: 'string',
@@ -212,7 +209,6 @@ const Role: React.FC = () => {
         default: 'role',
       },
     },
-    _designableId: 'zd740kqp5hf',
   };
 
   return (
@@ -231,5 +227,5 @@ const Role: React.FC = () => {
       />
     </PageContainer>
   );
-};
+});
 export default Role;
