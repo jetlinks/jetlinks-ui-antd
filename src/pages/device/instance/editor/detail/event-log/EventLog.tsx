@@ -31,7 +31,8 @@ const EventLog: React.FC<Props> = props => {
     }) : [{
       title: "数据",
       dataIndex: `value`,
-      ellipsis: true
+      ellipsis: true,
+      render:(text)=>JSON.stringify(text)
     }],
     logData: {},
   };
@@ -104,6 +105,7 @@ const EventLog: React.FC<Props> = props => {
       }),
     ).then(response => {
       setLogData(response.result);
+      console.log(response.result);
     }).catch(() => {
 
     });
