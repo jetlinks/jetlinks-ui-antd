@@ -74,6 +74,7 @@
     "ahooks": "^2.10.9",
     "antd": "^4.14.0",
     "classnames": "^2.2.6",
+    "dexie": "^3.0.3",
     "isomorphic-form-data": "^2.0.0",
     "jetlinks-store": "^0.0.3",
     "lodash": "^4.17.11",
