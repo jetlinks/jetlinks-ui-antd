@@ -168,7 +168,7 @@ const deviceBind: React.FC<Props> = (props) => {
                         formItems={[
                             {
                                 label: '设备ID',
-                                key: 'id$LIKE',
+                                key: 'id$like',
                                 type: 'string',
                             },
                             {

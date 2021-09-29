@@ -153,7 +153,7 @@ const BindDecide: React.FC<Props> = props => {
                     formItems={[
                         {
                             label: '设备ID',
-                            key: 'id$LIKE',
+                            key: 'id$like',// id
                             type: 'string',
                         },
                         {
