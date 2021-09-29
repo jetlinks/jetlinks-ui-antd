@@ -6,7 +6,7 @@ import {
   CloseCircleOutlined,
   PlayCircleOutlined,
 } from '@ant-design/icons';
-import { Menu, Tooltip, Popconfirm, message, Drawer } from 'antd';
+import { Tooltip, Popconfirm, message, Drawer } from 'antd';
 import type { ProColumns, ActionType } from '@jetlinks/pro-table';
 import BaseCrud from '@/components/BaseCrud';
 import { CurdModel } from '@/components/BaseCrud/model';
@@ -16,22 +16,15 @@ import { Store } from 'jetlinks-store';
 import SystemConst from '@/utils/const';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import type { ISchema } from '@formily/json-schema';
-import Authorization from '@/pages/system/User/Authorization';
-
-const menu = (
-  <Menu>
-    <Menu.Item key="1">1st item</Menu.Item>
-    <Menu.Item key="2">2nd item</Menu.Item>
-    <Menu.Item key="3">3rd item</Menu.Item>
-  </Menu>
-);
+import Authorization from '@/components/Authorization';
+import autzModel from '@/components/Authorization/autz';
 
 export const service = new BaseService<UserItem>('user');
 const User = observer(() => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
 
-  const [model, setModel] = useState(CurdModel.model);
+  const [model1, setModel] = useState(CurdModel.model);
 
   useEffect(() => {
     const modelSubscription = Store.subscribe(SystemConst.BASE_CURD_MODEL, setModel);
@@ -156,7 +149,14 @@ const User = observer(() => {
             <EditOutlined />
           </Tooltip>
         </a>,
-        <a key="auth" onClick={() => console.log('授权')}>
+        <a
+          key="auth"
+          onClick={() => {
+            autzModel.autzTarget.id = record.id;
+            autzModel.autzTarget.name = record.name;
+            autzModel.visible = true;
+          }}
+        >
           <Tooltip
             title={intl.formatMessage({
               id: 'pages.data.option.authorize',
@@ -212,7 +212,7 @@ const User = observer(() => {
         'x-decorator': 'FormItem',
         'x-component': 'Input',
         'x-component-props': {
-          disabled: model === 'edit',
+          disabled: model1 === 'edit',
         },
         'x-decorator-props': {},
         name: 'username',
@@ -298,11 +298,22 @@ const User = observer(() => {
           id: 'pages.system.user',
           defaultMessage: '用户管理',
         })}
-        menu={menu}
         schema={schema}
       />
-      <Drawer title="授权" width="70vw" visible={true}>
-        <Authorization />
+      <Drawer
+        title="授权"
+        width="50vw"
+        visible={autzModel.visible}
+        onClose={() => {
+          autzModel.visible = false;
+        }}
+      >
+        <Authorization
+          close={() => {
+            autzModel.visible = false;
+          }}
+          target={autzModel.autzTarget}
+        />
       </Drawer>
     </PageContainer>
   );

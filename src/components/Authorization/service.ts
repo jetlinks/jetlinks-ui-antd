@@ -26,7 +26,7 @@ class Service extends BaseService<unknown> {
       mergeMap((item) => item.result as PermissionItem[]),
     );
 
-  public getAutzSetting = (params?: Record<string, any>) =>
+  public getAutzSetting = (params?: Record<string, unknown>) =>
     defer(() =>
       from(
         request(`/${SystemConst.API_BASE}/autz-setting/_query/no-paging`, {
@@ -38,6 +38,16 @@ class Service extends BaseService<unknown> {
       filter((item) => item.status === 200),
       mergeMap((item) => item.result as AuthorizationItem[]),
     );
+
+  public setAutzInfo = (data?: Record<string, unknown>) =>
+    defer(() =>
+      from(
+        request(`/${SystemConst.API_BASE}/autz-setting/detail/_save`, {
+          method: 'POST',
+          data,
+        }),
+      ),
+    ).pipe(filter((item) => item.status === 200));
 }
 
 export default Service;

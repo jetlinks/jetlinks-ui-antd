@@ -4,7 +4,7 @@ import type { ProColumns, ActionType } from '@jetlinks/pro-table';
 import type { OpenApiItem } from '@/pages/system/OpenAPI/typings';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { CurdModel } from '@/components/BaseCrud/model';
-import { message, Popconfirm, Tooltip } from 'antd';
+import { Drawer, message, Popconfirm, Tooltip } from 'antd';
 import {
   CloseCircleOutlined,
   EditOutlined,
@@ -13,9 +13,12 @@ import {
 } from '@ant-design/icons';
 import BaseCrud from '@/components/BaseCrud';
 import BaseService from '@/utils/BaseService';
+import autzModel from '@/components/Authorization/autz';
+import Authorization from '@/components/Authorization';
+import { observer } from '@formily/react';
 
 const service = new BaseService<OpenApiItem>('open-api');
-const OpenAPI: React.FC = () => {
+const OpenAPI: React.FC = observer(() => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
 
@@ -28,13 +31,14 @@ const OpenAPI: React.FC = () => {
     {
       title: 'clientId',
       dataIndex: 'id',
+      width: 200,
     },
     {
       title: intl.formatMessage({
         id: 'pages.table.name',
         defaultMessage: '名称',
       }),
-      dataIndex: 'Name',
+      dataIndex: 'clientName',
     },
     {
       title: intl.formatMessage({
@@ -98,7 +102,14 @@ const OpenAPI: React.FC = () => {
             <EditOutlined />
           </Tooltip>
         </a>,
-        <a onClick={() => console.log('授权')}>
+        <a
+          key="auth"
+          onClick={() => {
+            autzModel.autzTarget.id = record.id;
+            autzModel.autzTarget.name = record.clientName;
+            autzModel.visible = true;
+          }}
+        >
           <Tooltip
             title={intl.formatMessage({
               id: 'pages.data.option.authorize',
@@ -108,7 +119,7 @@ const OpenAPI: React.FC = () => {
             <KeyOutlined />
           </Tooltip>
         </a>,
-        <a href={record.id} target="_blank" rel="noopener noreferrer" key="view">
+        <a key="state">
           <Popconfirm
             title={intl.formatMessage({
               id: 'pages.data.option.disabled.tips',
@@ -337,8 +348,23 @@ const OpenAPI: React.FC = () => {
         modelConfig={{ width: 900 }}
         actionRef={actionRef}
       />
+      <Drawer
+        title="授权"
+        width="70vw"
+        visible={autzModel.visible}
+        onClose={() => {
+          autzModel.visible = false;
+        }}
+      >
+        <Authorization
+          close={() => {
+            autzModel.visible = false;
+          }}
+          target={autzModel.autzTarget}
+        />
+      </Drawer>
     </PageContainer>
   );
-};
+});
 
 export default OpenAPI;

@@ -29,3 +29,12 @@ type AuthorizationItem = {
   priority: number;
   state: number;
 };
+
+interface AuthorizationProps {
+  target: {
+    id: string;
+    name: string;
+    type: string;
+  };
+  close: () => void;
+}

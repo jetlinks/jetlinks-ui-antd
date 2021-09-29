@@ -1,13 +1,15 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import React, { useRef } from 'react';
 import { EditOutlined, KeyOutlined, MinusOutlined, UserAddOutlined } from '@ant-design/icons';
-import { Menu, message, Popconfirm, Tooltip } from 'antd';
+import { Drawer, Menu, message, Popconfirm, Tooltip } from 'antd';
 import type { ProColumns, ActionType } from '@jetlinks/pro-table';
 import BaseCrud from '@/components/BaseCrud';
 import { CurdModel } from '@/components/BaseCrud/model';
 import BaseService from '@/utils/BaseService';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { observer } from '@formily/react';
+import autzModel from '@/components/Authorization/autz';
+import Authorization from '@/components/Authorization';
 
 const menu = (
   <Menu>
@@ -97,7 +99,15 @@ const Role: React.FC = observer(() => {
             <EditOutlined />
           </Tooltip>
         </a>,
-        <a onClick={() => console.log('授权')}>
+        <a
+          key="autz"
+          onClick={() => {
+            autzModel.autzTarget.id = record.id;
+            autzModel.autzTarget.name = record.name;
+            autzModel.autzTarget.type = 'role';
+            autzModel.visible = true;
+          }}
+        >
           <Tooltip
             title={intl.formatMessage({
               id: 'pages.data.option.authorize',
@@ -109,6 +119,7 @@ const Role: React.FC = observer(() => {
         </a>,
 
         <a
+          key="bind"
           onClick={() => {
             console.log('绑定用户');
             actionRef.current?.reload();
@@ -123,7 +134,7 @@ const Role: React.FC = observer(() => {
             <UserAddOutlined />
           </Tooltip>
         </a>,
-        <a>
+        <a key="delete">
           <Popconfirm
             title={intl.formatMessage({
               id: 'pages.data.option.remove.tips',
@@ -225,6 +236,21 @@ const Role: React.FC = observer(() => {
         schema={schema}
         defaultParams={{ typeId: 'role' }}
       />
+      <Drawer
+        title="授权"
+        width="70vw"
+        visible={autzModel.visible}
+        onClose={() => {
+          autzModel.visible = false;
+        }}
+      >
+        <Authorization
+          close={() => {
+            autzModel.visible = false;
+          }}
+          target={autzModel.autzTarget}
+        />
+      </Drawer>
     </PageContainer>
   );
 });
