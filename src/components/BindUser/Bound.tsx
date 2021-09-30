@@ -19,24 +19,43 @@ const Bound = observer(() => {
     return () => listener.unsubscribe();
   });
 
-  const handleUnBindData = () => {
-    const {
-      dimension: { id, type },
-    } = BindModel;
-    service.unBindData(BindModel.unBindUsers, type!, id!).subscribe({
-      next: async () => {
-        message.success('解绑成功');
-      },
-      error: async () => {
-        message.error('操作失败');
-      },
-      complete: () => {
-        // 通知右侧组建刷新
-        Store.set(SystemConst.BIND_USER_STATE, 'true');
-        actionRef.current?.reload();
-        BindModel.unBindUsers = [];
-      },
-    });
+  const handleUnBindResult = {
+    next: async () => {
+      message.success('解绑成功');
+    },
+    error: async () => {
+      message.error('操作失败');
+    },
+    complete: () => {
+      // 通知右侧组建刷新
+      Store.set(SystemConst.BIND_USER_STATE, 'true');
+      actionRef.current?.reload();
+      BindModel.unBindUsers = [];
+    },
+  };
+  const {
+    dimension: { id, type },
+  } = BindModel;
+  const handleRoleUnBind = () => {
+    service.unBindRole(BindModel.unBindUsers, type!, id!).subscribe(handleUnBindResult);
+  };
+
+  const handleOrgUnBind = () => {
+    service.unBindOrg(BindModel.unBindUsers, id!).subscribe(handleUnBindResult);
+  };
+
+  const handleUnbind = async () => {
+    const bindType = BindModel.dimension.type;
+    switch (bindType) {
+      case 'role':
+        handleRoleUnBind();
+        break;
+      case 'org':
+        handleOrgUnBind();
+        break;
+      default:
+        message.error('解绑类型数据错误');
+    }
   };
 
   return (
@@ -62,7 +81,7 @@ const Bound = observer(() => {
         )}
         tableAlertOptionRender={() => (
           <Space size={16}>
-            <a onClick={handleUnBindData}>批量解绑</a>
+            <a onClick={handleUnbind}>批量解绑</a>
           </Space>
         )}
         actionRef={actionRef}
@@ -72,7 +91,7 @@ const Bound = observer(() => {
         }}
         request={async (params) => service.query(params)}
         defaultParams={{
-          'id$in-dimension$role': BindModel.dimension.id,
+          [`id$in-dimension$${BindModel.dimension.type}`]: BindModel.dimension.id,
         }}
         toolBarRender={() => [
           <Button

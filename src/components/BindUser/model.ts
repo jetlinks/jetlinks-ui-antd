@@ -10,10 +10,12 @@ export const BindModel = model<{
     name?: string;
     type?: string;
   };
+  queryUserTerms: string;
 }>({
   visible: false,
   bind: false,
   bindUsers: [],
   unBindUsers: [],
   dimension: {},
+  queryUserTerms: '',
 });

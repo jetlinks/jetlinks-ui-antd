@@ -19,7 +19,29 @@ const Unbound = observer(() => {
     return () => listener.unsubscribe();
   });
 
-  const handleBindData = () => {
+  const handleBindResult = {
+    next: () => message.success('绑定成功'),
+    error: async () => {
+      message.success('绑定失败');
+    },
+    complete: () => {
+      // 通知左侧组件刷新
+      Store.set(SystemConst.BIND_USER_STATE, 'true');
+      actionRef.current?.reload();
+      BindModel.bindUsers = [];
+    },
+  };
+
+  const handleOrgBind = () => {
+    service
+      .saveOrgBind(
+        BindModel.bindUsers.map((item) => item.userId),
+        BindModel.dimension.id!,
+      )
+      .subscribe(handleBindResult);
+  };
+
+  const handleRoleBind = () => {
     const data = BindModel.bindUsers.map(
       (item) =>
         ({
@@ -29,16 +51,21 @@ const Unbound = observer(() => {
           dimensionName: BindModel.dimension.name,
         } as BindDataItem),
     );
-    service.saveBindData(data).subscribe({
-      next: () => message.success('绑定成功'),
-      error: () => {},
-      complete: () => {
-        // 通知左侧组件刷新
-        Store.set(SystemConst.BIND_USER_STATE, 'true');
-        actionRef.current?.reload();
-        BindModel.bindUsers = [];
-      },
-    });
+    service.saveRoleBind(data).subscribe(handleBindResult);
+  };
+
+  const handleBind = async () => {
+    const bindType = BindModel.dimension.type;
+    switch (bindType) {
+      case 'role':
+        handleRoleBind();
+        break;
+      case 'org':
+        handleOrgBind();
+        break;
+      default:
+        message.error('绑定类型数据错误');
+    }
   };
 
   return (
@@ -76,7 +103,7 @@ const Unbound = observer(() => {
         )}
         tableAlertOptionRender={() => (
           <Space size={16}>
-            <a onClick={handleBindData}>批量绑定</a>
+            <a onClick={handleBind}>批量绑定</a>
           </Space>
         )}
         size="small"
@@ -86,7 +113,7 @@ const Unbound = observer(() => {
         }}
         request={async (params) => service.query(params)}
         defaultParams={{
-          'id$in-dimension$role$not': BindModel.dimension.id,
+          [`id$in-dimension$${BindModel.dimension.type}$not`]: BindModel.dimension.id,
         }}
       />
     </Card>

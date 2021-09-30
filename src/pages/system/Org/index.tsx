@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import OrganizationChart from '@dabeng/react-orgchart';
 import styles from './index.less';
-import { Drawer, Menu, message } from 'antd';
+import { Drawer, Menu, message, Modal } from 'antd';
 import NodeTemplate from '@/pages/system/Org/NodeTemplate';
 import { model } from '@formily/reactive';
 import { observer } from '@formily/react';
@@ -13,6 +13,8 @@ import Save from '@/pages/system/Org/Save';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import autzModel from '@/components/Authorization/autz';
 import Authorization from '@/components/Authorization';
+import { BindModel } from '@/components/BindUser/model';
+import BindUser from '@/components/BindUser';
 
 const obs = model<ObsModel>({
   edit: false,
@@ -101,8 +103,7 @@ const Org = observer(() => {
       <Menu>
         <Menu.Item>
           <a
-            target="_blank"
-            rel="noopener noreferrer"
+            key="edit"
             onClick={() => {
               // setParentId(null);
               // setCurrent(nodeData);
@@ -116,7 +117,7 @@ const Org = observer(() => {
           </a>
         </Menu.Item>
         <Menu.Item>
-          <a target="_blank" rel="noopener noreferrer" onClick={() => obs.addNext(nodeData)}>
+          <a key="addNext" onClick={() => obs.addNext(nodeData)}>
             {intl.formatMessage({
               id: 'pages.system.org.option.add',
               defaultMessage: '添加下级',
@@ -125,8 +126,7 @@ const Org = observer(() => {
         </Menu.Item>
         <Menu.Item>
           <a
-            target="_blank"
-            rel="noopener noreferrer"
+            key="autz"
             onClick={() => {
               autzModel.autzTarget.id = nodeData.id;
               autzModel.autzTarget.name = nodeData.name;
@@ -141,11 +141,14 @@ const Org = observer(() => {
         </Menu.Item>
         <Menu.Item>
           <a
-            target="_blank"
-            rel="noopener noreferrer"
+            key="bindUser"
             onClick={() => {
-              // setCurrent(nodeData);
-              // setUserVisible(true);
+              BindModel.dimension = {
+                id: nodeData.id,
+                name: nodeData.name,
+                type: 'org',
+              };
+              BindModel.visible = true;
             }}
           >
             {intl.formatMessage({
@@ -177,6 +180,17 @@ const Org = observer(() => {
         />
       </div>
       <Save obs={obs} />
+      <Modal
+        visible={BindModel.visible}
+        closable={false}
+        onCancel={() => {
+          BindModel.visible = false;
+          BindModel.bind = false;
+        }}
+        width={BindModel.bind ? '90vw' : '60vw'}
+      >
+        <BindUser />
+      </Modal>
       <Drawer
         title="授权"
         width="50vw"

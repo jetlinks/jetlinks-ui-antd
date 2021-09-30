@@ -14,7 +14,7 @@ class Service extends BaseService<UserItem> {
       ),
     );
 
-  public saveBindData = (data: BindDataItem[]) =>
+  public saveRoleBind = (data: BindDataItem[]) =>
     defer(() =>
       from(
         request(`/${SystemConst.API_BASE}/dimension-user`, {
@@ -24,7 +24,7 @@ class Service extends BaseService<UserItem> {
       ),
     );
 
-  public unBindData = (data: string[], dimensionType: string, dimensionId: string) =>
+  public unBindRole = (data: string[], dimensionType: string, dimensionId: string) =>
     defer(() =>
       from(
         request(
@@ -34,6 +34,26 @@ class Service extends BaseService<UserItem> {
             data,
           },
         ),
+      ),
+    );
+
+  public saveOrgBind = (data: string[], orgId: string) =>
+    defer(() =>
+      from(
+        request(`/${SystemConst.API_BASE}/organization/${orgId}/users/_bind`, {
+          method: 'POST',
+          data,
+        }),
+      ),
+    );
+
+  public unBindOrg = (data: string[], orgId: string) =>
+    defer(() =>
+      from(
+        request(`/${SystemConst.API_BASE}/organization/${orgId}/users/_unbind`, {
+          method: 'POST',
+          data,
+        }),
       ),
     );
 }
