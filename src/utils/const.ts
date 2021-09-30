@@ -14,6 +14,8 @@ class SystemConst {
   static BASE_CURD_MODEL = 'BASE_CURD_MODEL';
 
   static GLOBAL_WEBSOCKET = 'GLOBAL-WEBSOCKET';
+
+  static BIND_USER_STATE = 'false';
 }
 
 export default SystemConst;

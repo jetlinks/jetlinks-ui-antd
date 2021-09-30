@@ -83,10 +83,15 @@ const Authorization = observer((props: AuthorizationProps) => {
         }, {}),
         takeLast(1),
       )
-      .subscribe((data) => {
-        form.setFieldsValue(data);
-        AuthorizationModel.checkAll = calculationSelectAll(permissionDB, data);
-        AuthorizationModel.spinning = false;
+      .subscribe({
+        next: (data) => {
+          form.setFieldsValue(data);
+          AuthorizationModel.checkAll = calculationSelectAll(permissionDB, data);
+        },
+        error: () => {},
+        complete: () => {
+          AuthorizationModel.spinning = false;
+        },
       });
   }, [target.id]);
 

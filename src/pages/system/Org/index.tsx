@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import OrganizationChart from '@dabeng/react-orgchart';
 import styles from './index.less';
-import { Menu, message } from 'antd';
+import { Drawer, Menu, message } from 'antd';
 import NodeTemplate from '@/pages/system/Org/NodeTemplate';
 import { model } from '@formily/reactive';
 import { observer } from '@formily/react';
@@ -11,6 +11,8 @@ import encodeQuery from '@/utils/encodeQuery';
 import type { ObsModel, OrgItem } from '@/pages/system/Org/typings';
 import Save from '@/pages/system/Org/Save';
 import { useIntl } from '@@/plugin-locale/localeExports';
+import autzModel from '@/components/Authorization/autz';
+import Authorization from '@/components/Authorization';
 
 const obs = model<ObsModel>({
   edit: false,
@@ -126,8 +128,9 @@ const Org = observer(() => {
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => {
-              // setCurrent(nodeData);
-              // setAutzVisible(true);
+              autzModel.autzTarget.id = nodeData.id;
+              autzModel.autzTarget.name = nodeData.name;
+              autzModel.visible = true;
             }}
           >
             {intl.formatMessage({
@@ -174,6 +177,21 @@ const Org = observer(() => {
         />
       </div>
       <Save obs={obs} />
+      <Drawer
+        title="授权"
+        width="50vw"
+        visible={autzModel.visible}
+        onClose={() => {
+          autzModel.visible = false;
+        }}
+      >
+        <Authorization
+          close={() => {
+            autzModel.visible = false;
+          }}
+          target={autzModel.autzTarget}
+        />
+      </Drawer>
     </PageContainer>
   );
 });
