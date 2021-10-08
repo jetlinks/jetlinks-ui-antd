@@ -1,5 +1,5 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   EditOutlined,
   KeyOutlined,
@@ -11,9 +11,14 @@ import type { ProColumns, ActionType } from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import BaseCrud from '@/components/BaseCrud';
 import { CurdModel } from '@/components/BaseCrud/model';
-import BaseService from '@/utils/BaseService';
 import type { PermissionItem } from '@/pages/system/Permission/typings';
 import { FormTab } from '@formily/antd';
+import type { ISchema } from '@formily/json-schema';
+import Service from '@/pages/system/Permission/service';
+import { model } from '@formily/reactive';
+import { observer } from '@formily/react';
+import { map } from 'rxjs/operators';
+import { toArray } from 'rxjs';
 
 const menu = (
   <Menu>
@@ -23,8 +28,33 @@ const menu = (
   </Menu>
 );
 
-export const service = new BaseService<PermissionItem>('permission');
-const Permission: React.FC = () => {
+export const service = new Service('permission');
+
+const defaultAction = [
+  { value: 'query', label: '查询' },
+  { value: 'save', label: '保存' },
+  { value: 'delete', label: '删除' },
+  { value: 'import', label: '导入' },
+  { value: 'export', label: '导出' },
+];
+
+const PermissionModel = model<{
+  permissionList: { label: string; value: string }[];
+}>({
+  permissionList: [],
+});
+const Permission: React.FC = observer(() => {
+  useEffect(() => {
+    service
+      .getPermission()
+      .pipe(
+        map((item) => ({ label: item.name, value: item.id })),
+        toArray(),
+      )
+      .subscribe((data) => {
+        PermissionModel.permissionList = data;
+      });
+  }, []);
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
 
@@ -54,7 +84,7 @@ const Permission: React.FC = () => {
         ],
       },
       search: {
-        transform: (value) => ({ name$LIKE: value }),
+        transform: (value) => ({ id$LIKE: value }),
       },
     },
     {
@@ -79,7 +109,7 @@ const Permission: React.FC = () => {
         ],
       },
       search: {
-        transform: (value) => ({ username$LIKE: value }),
+        transform: (value) => ({ name$LIKE: value }),
       },
     },
     {
@@ -125,7 +155,13 @@ const Permission: React.FC = () => {
       align: 'center',
       width: 200,
       render: (text, record) => [
-        <a key="editable" onClick={() => CurdModel.update(record)}>
+        <a
+          key="editable"
+          onClick={() => {
+            console.log(record);
+            CurdModel.update(record);
+          }}
+        >
           <Tooltip
             title={intl.formatMessage({
               id: 'pages.data.option.edit',
@@ -135,7 +171,7 @@ const Permission: React.FC = () => {
             <EditOutlined />
           </Tooltip>
         </a>,
-        <a onClick={() => console.log('授权')}>
+        <a key="authorized" onClick={() => console.log('授权')}>
           <Tooltip
             title={intl.formatMessage({
               id: 'pages.data.option.authorize',
@@ -145,7 +181,7 @@ const Permission: React.FC = () => {
             <KeyOutlined />
           </Tooltip>
         </a>,
-        <a href={record.id} target="_blank" rel="noopener noreferrer" key="view">
+        <a key="view">
           <Popconfirm
             title={intl.formatMessage({
               id: 'pages.data.option.disabled.tips',
@@ -181,7 +217,7 @@ const Permission: React.FC = () => {
 
   const formTab = FormTab.createFormTab!();
 
-  const schema = {
+  const schema: ISchema = {
     type: 'object',
     properties: {
       collapse: {
@@ -191,7 +227,7 @@ const Permission: React.FC = () => {
           formTab: '{{formTab}}',
         },
         properties: {
-          tab1: {
+          baseTab: {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
@@ -231,15 +267,12 @@ const Permission: React.FC = () => {
                 }),
                 'x-decorator': 'FormItem',
                 'x-component': 'Select',
-                'x-component-props': {
-                  checkStrength: true,
-                },
                 name: 'properties.type',
                 required: false,
               },
             },
           },
-          tab2: {
+          actionsTab: {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
@@ -249,18 +282,17 @@ const Permission: React.FC = () => {
               }),
             },
             properties: {
-              array: {
+              actions: {
                 type: 'array',
                 'x-decorator': 'FormItem',
                 'x-component': 'ArrayTable',
-                'x-component-props': {},
                 items: {
                   type: 'object',
                   properties: {
-                    column2: {
+                    column1: {
                       type: 'void',
                       'x-component': 'ArrayTable.Column',
-                      'x-component-props': { width: 80, title: 'Index', align: 'center' },
+                      'x-component-props': { width: 80, title: '-', align: 'center' },
                       properties: {
                         index: {
                           type: 'void',
@@ -268,7 +300,7 @@ const Permission: React.FC = () => {
                         },
                       },
                     },
-                    column3: {
+                    column2: {
                       type: 'void',
                       'x-component': 'ArrayTable.Column',
                       'x-component-props': {
@@ -279,14 +311,14 @@ const Permission: React.FC = () => {
                         }),
                       },
                       properties: {
-                        a1: {
+                        action: {
                           type: 'string',
                           'x-decorator': 'Editable',
                           'x-component': 'Input',
                         },
                       },
                     },
-                    column4: {
+                    column3: {
                       type: 'void',
                       'x-component': 'ArrayTable.Column',
                       'x-component-props': {
@@ -297,120 +329,7 @@ const Permission: React.FC = () => {
                         }),
                       },
                       properties: {
-                        a2: {
-                          type: 'string',
-                          'x-decorator': 'FormItem',
-                          'x-component': 'Input',
-                        },
-                      },
-                    },
-                    column5: {
-                      type: 'void',
-                      'x-component': 'ArrayTable.Column',
-                      'x-component-props': {
-                        width: 200,
-                        title: intl.formatMessage({
-                          id: 'pages.table.describe',
-                          defaultMessage: '描述',
-                        }),
-                      },
-                      properties: {
-                        a3: {
-                          type: 'string',
-                          'x-decorator': 'FormItem',
-                          'x-component': 'Input',
-                        },
-                      },
-                    },
-                    column6: {
-                      type: 'void',
-                      'x-component': 'ArrayTable.Column',
-                      'x-component-props': {
-                        title: intl.formatMessage({
-                          id: 'pages.data.option',
-                          defaultMessage: '操作',
-                        }),
-                        dataIndex: 'operations',
-                        width: 200,
-                        fixed: 'right',
-                      },
-                      properties: {
-                        item: {
-                          type: 'void',
-                          'x-component': 'FormItem',
-                          properties: {
-                            remove: {
-                              type: 'void',
-                              'x-component': 'ArrayTable.Remove',
-                            },
-                            moveDown: {
-                              type: 'void',
-                              'x-component': 'ArrayTable.MoveDown',
-                            },
-                            moveUp: {
-                              type: 'void',
-                              'x-component': 'ArrayTable.MoveUp',
-                            },
-                          },
-                        },
-                      },
-                    },
-                  },
-                },
-                properties: {
-                  add: {
-                    type: 'void',
-                    'x-component': 'ArrayTable.Addition',
-                    title: intl.formatMessage({
-                      id: 'pages.system.permission.add',
-                      defaultMessage: '添加条目',
-                    }),
-                  },
-                },
-              },
-            },
-          },
-          tab3: {
-            type: 'void',
-            'x-component': 'FormTab.TabPane',
-            'x-component-props': {
-              tab: intl.formatMessage({
-                id: 'pages.system.permission.addPermissionOperation',
-                defaultMessage: '关联权限',
-              }),
-            },
-            properties: {
-              array1: {
-                type: 'array',
-                'x-decorator': 'FormItem',
-                'x-component': 'ArrayTable',
-                'x-component-props': {},
-                items: {
-                  type: 'object',
-                  properties: {
-                    column2: {
-                      type: 'void',
-                      'x-component': 'ArrayTable.Column',
-                      'x-component-props': { width: 80, title: 'Index', align: 'center' },
-                      properties: {
-                        index: {
-                          type: 'void',
-                          'x-component': 'ArrayTable.Index',
-                        },
-                      },
-                    },
-                    column3: {
-                      type: 'void',
-                      'x-component': 'ArrayTable.Column',
-                      'x-component-props': {
-                        width: 200,
-                        title: intl.formatMessage({
-                          id: 'pages.system.permission.addPermissionPreOperation',
-                          defaultMessage: '前置操作',
-                        }),
-                      },
-                      properties: {
-                        a1: {
+                        name: {
                           type: 'string',
                           'x-decorator': 'Editable',
                           'x-component': 'Input',
@@ -423,37 +342,19 @@ const Permission: React.FC = () => {
                       'x-component-props': {
                         width: 200,
                         title: intl.formatMessage({
-                          id: 'pages.system.permission.addPermission',
-                          defaultMessage: '关联权限',
+                          id: 'pages.table.describe',
+                          defaultMessage: '描述',
                         }),
                       },
                       properties: {
-                        a2: {
+                        describe: {
                           type: 'string',
-                          'x-decorator': 'FormItem',
+                          'x-decorator': 'Editable',
                           'x-component': 'Input',
                         },
                       },
                     },
                     column5: {
-                      type: 'void',
-                      'x-component': 'ArrayTable.Column',
-                      'x-component-props': {
-                        width: 200,
-                        title: intl.formatMessage({
-                          id: 'pages.system.permission.addPermissionOperation',
-                          defaultMessage: '关联操作',
-                        }),
-                      },
-                      properties: {
-                        a3: {
-                          type: 'string',
-                          'x-decorator': 'FormItem',
-                          'x-component': 'Input',
-                        },
-                      },
-                    },
-                    column6: {
                       type: 'void',
                       'x-component': 'ArrayTable.Column',
                       'x-component-props': {
@@ -501,7 +402,152 @@ const Permission: React.FC = () => {
               },
             },
           },
-          tab4: {
+          relationTab: {
+            type: 'void',
+            'x-component': 'FormTab.TabPane',
+            'x-component-props': {
+              tab: intl.formatMessage({
+                id: 'pages.system.permission.addPermissionOperation',
+                defaultMessage: '关联权限',
+              }),
+            },
+            properties: {
+              parents: {
+                type: 'array',
+                'x-decorator': 'FormItem',
+                'x-component': 'ArrayTable',
+                'x-component-props': {},
+                items: {
+                  type: 'object',
+                  properties: {
+                    column1: {
+                      type: 'void',
+                      'x-component': 'ArrayTable.Column',
+                      'x-component-props': { width: 80, title: '-', align: 'center' },
+                      properties: {
+                        index: {
+                          type: 'void',
+                          'x-component': 'ArrayTable.Index',
+                        },
+                      },
+                    },
+                    column2: {
+                      type: 'void',
+                      'x-component': 'ArrayTable.Column',
+                      'x-component-props': {
+                        width: 200,
+                        title: intl.formatMessage({
+                          id: 'pages.system.permission.addPermissionPreOperation',
+                          defaultMessage: '前置操作',
+                        }),
+                      },
+                      properties: {
+                        preActions: {
+                          type: 'string',
+                          'x-decorator': 'Editable',
+                          'x-component': 'Select',
+                          enum: defaultAction,
+                          'x-component-props': {
+                            mode: 'multiple',
+                            style: { minWidth: 100 },
+                          },
+                        },
+                      },
+                    },
+                    column3: {
+                      type: 'void',
+                      'x-component': 'ArrayTable.Column',
+                      'x-component-props': {
+                        width: 200,
+                        title: intl.formatMessage({
+                          id: 'pages.system.permission.addPermission',
+                          defaultMessage: '关联权限',
+                        }),
+                      },
+                      properties: {
+                        permission: {
+                          type: 'string',
+                          'x-decorator': 'Editable',
+                          'x-component': 'Select',
+                          enum: PermissionModel.permissionList,
+                          'x-component-props': {
+                            style: { minWidth: 200, maxWidth: 300 },
+                          },
+                        },
+                      },
+                    },
+                    column4: {
+                      type: 'void',
+                      'x-component': 'ArrayTable.Column',
+                      'x-component-props': {
+                        width: 200,
+                        title: intl.formatMessage({
+                          id: 'pages.system.permission.addPermissionOperation',
+                          defaultMessage: '关联操作',
+                        }),
+                      },
+                      properties: {
+                        actions: {
+                          type: 'string',
+                          'x-decorator': 'Editable',
+                          'x-component': 'Select',
+                          'x-component-props': {
+                            mode: 'multiple',
+                            style: { minWidth: 100 },
+                          },
+                          enum: defaultAction,
+                        },
+                      },
+                    },
+                    column5: {
+                      type: 'void',
+                      'x-component': 'ArrayTable.Column',
+                      'x-component-props': {
+                        title: intl.formatMessage({
+                          id: 'pages.data.option',
+                          defaultMessage: '操作',
+                        }),
+                        dataIndex: 'operations',
+                        width: 200,
+                        fixed: 'right',
+                      },
+                      properties: {
+                        item: {
+                          type: 'void',
+                          'x-component': 'FormItem',
+                          properties: {
+                            remove: {
+                              type: 'void',
+                              'x-component': 'ArrayTable.Remove',
+                            },
+                            moveDown: {
+                              type: 'void',
+                              'x-component': 'ArrayTable.MoveDown',
+                            },
+                            moveUp: {
+                              type: 'void',
+                              'x-component': 'ArrayTable.MoveUp',
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+                properties: {
+                  add: {
+                    type: 'void',
+                    'x-component': 'ArrayTable.Addition',
+                    title: intl.formatMessage({
+                      id: 'pages.system.permission.add',
+                      defaultMessage: '添加条目',
+                    }),
+                  },
+                },
+              },
+            },
+          },
+          optionalFieldsTab: {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
@@ -510,11 +556,106 @@ const Permission: React.FC = () => {
                 defaultMessage: '数据视图',
               }),
             },
+            properties: {
+              optionalFields: {
+                type: 'array',
+                'x-decorator': 'FormItem',
+                'x-component': 'ArrayTable',
+                items: {
+                  type: 'object',
+                  properties: {
+                    column1: {
+                      type: 'void',
+                      'x-component': 'ArrayTable.Column',
+                      'x-component-props': { width: 80, title: '-', align: 'center' },
+                      properties: {
+                        index: {
+                          type: 'void',
+                          'x-component': 'ArrayTable.Index',
+                        },
+                      },
+                    },
+                    column2: {
+                      type: 'void',
+                      'x-component': 'ArrayTable.Column',
+                      'x-component-props': {
+                        width: 200,
+                        title: '字段',
+                      },
+                      properties: {
+                        name: {
+                          type: 'string',
+                          'x-decorator': 'Editable',
+                          'x-component': 'Input',
+                        },
+                      },
+                    },
+                    column3: {
+                      type: 'void',
+                      'x-component': 'ArrayTable.Column',
+                      'x-component-props': {
+                        width: 200,
+                        title: '描述',
+                      },
+                      properties: {
+                        describe: {
+                          type: 'string',
+                          'x-decorator': 'Editable',
+                          'x-component': 'Input',
+                        },
+                      },
+                    },
+                    column4: {
+                      type: 'void',
+                      'x-component': 'ArrayTable.Column',
+                      'x-component-props': {
+                        title: intl.formatMessage({
+                          id: 'pages.data.option',
+                          defaultMessage: '操作',
+                        }),
+                        dataIndex: 'operations',
+                        width: 200,
+                        fixed: 'right',
+                      },
+                      properties: {
+                        item: {
+                          type: 'void',
+                          'x-component': 'FormItem',
+                          properties: {
+                            remove: {
+                              type: 'void',
+                              'x-component': 'ArrayTable.Remove',
+                            },
+                            moveDown: {
+                              type: 'void',
+                              'x-component': 'ArrayTable.MoveDown',
+                            },
+                            moveUp: {
+                              type: 'void',
+                              'x-component': 'ArrayTable.MoveUp',
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+                properties: {
+                  add: {
+                    type: 'void',
+                    'x-component': 'ArrayTable.Addition',
+                    title: intl.formatMessage({
+                      id: 'pages.system.permission.add',
+                      defaultMessage: '添加条目',
+                    }),
+                  },
+                },
+              },
+            },
           },
         },
       },
     },
-    _designableId: 'zd740kqp5hf',
   };
 
   return (
@@ -531,13 +672,13 @@ const Permission: React.FC = () => {
           scope: { formTab },
         }}
         modelConfig={{
-          width: 800,
+          width: 1000,
         }}
         menu={menu}
         schema={schema}
       />
     </PageContainer>
   );
-};
+});
 
 export default Permission;

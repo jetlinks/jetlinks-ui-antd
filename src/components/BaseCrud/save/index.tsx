@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { message, Modal } from 'antd';
 import {
+  Editable,
   Form,
   FormItem,
   Input,
@@ -68,6 +69,7 @@ const Save = <T extends Record<string, any>>(props: Props<T>) => {
       ArrayTable,
       Switch,
       FormGrid,
+      Editable,
     },
     scope: {
       icon(name: any) {
