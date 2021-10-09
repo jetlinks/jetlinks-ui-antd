@@ -1,6 +1,6 @@
 export type OrgItem = {
   id: string;
-  parentId: string;
+  parentId: string | undefined;
   path: string;
   sortIndex: number;
   level: number;
@@ -14,7 +14,7 @@ export type OrgItem = {
   children?: OrgItem[];
 };
 
-export type ObsModel = {
+export type OrgModelType = {
   data: Partial<{
     id: null;
     name: string;

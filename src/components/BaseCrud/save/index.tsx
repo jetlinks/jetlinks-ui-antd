@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { message, Modal } from 'antd';
 import {
+  NumberPicker,
   Editable,
   Form,
   FormItem,
@@ -70,6 +71,7 @@ const Save = <T extends Record<string, any>>(props: Props<T>) => {
       Switch,
       FormGrid,
       Editable,
+      NumberPicker,
     },
     scope: {
       icon(name: any) {

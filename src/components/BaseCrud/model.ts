@@ -20,6 +20,7 @@ export const CurdModel = model<Option>({
     Store.set(SystemConst.BASE_CURD_MODAL_VISIBLE, true);
     Store.set(SystemConst.BASE_CURD_CURRENT, current);
     this.model = 'edit';
+    this.current = current;
   },
 
   close() {

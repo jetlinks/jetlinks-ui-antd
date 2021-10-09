@@ -24,15 +24,15 @@ class BaseService<T> implements IBaseService<T> {
     return request(`${this.uri}/_query/`, { params, method: 'GET' });
   }
 
-  queryNoPaging(params: any): Promise<any> {
+  queryNoPaging(params: any): Promise<unknown> {
     return request(`${this.uri}/_query/no-paging?paging=false`, { params, method: 'GET' });
   }
 
-  remove(id: string): Promise<any> {
+  remove(id: string): Promise<unknown> {
     return request(`${this.uri}/${id}`, { method: 'DELETE' });
   }
 
-  save(data: T): Promise<any> {
+  save(data: T): Promise<unknown> {
     return request(this.uri, { data, method: 'POST' });
   }
 

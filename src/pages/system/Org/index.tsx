@@ -3,50 +3,20 @@ import OrganizationChart from '@dabeng/react-orgchart';
 import styles from './index.less';
 import { Drawer, Menu, message, Modal } from 'antd';
 import NodeTemplate from '@/pages/system/Org/NodeTemplate';
-import { model } from '@formily/reactive';
 import { observer } from '@formily/react';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import Service from '@/pages/system/Org/service';
 import encodeQuery from '@/utils/encodeQuery';
-import type { ObsModel, OrgItem } from '@/pages/system/Org/typings';
 import Save from '@/pages/system/Org/Save';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import autzModel from '@/components/Authorization/autz';
 import Authorization from '@/components/Authorization';
 import { BindModel } from '@/components/BindUser/model';
 import BindUser from '@/components/BindUser';
+import OrgModel from '@/pages/system/Org/model';
 
-const obs = model<ObsModel>({
-  edit: false,
-  parentId: '',
-  data: {},
-  current: {},
-  authorize: true,
-
-  update(data: Partial<OrgItem>) {
-    this.current = data;
-    this.edit = true;
-    this.parentId = undefined;
-  },
-
-  addNext(parentData: Partial<OrgItem>) {
-    this.parentId = parentData.id;
-    this.edit = true;
-    this.current = {};
-  },
-
-  authorized(data: Partial<OrgItem>) {
-    this.current = data;
-    this.authorize = true;
-  },
-  closeEdit() {
-    this.current = {};
-    this.edit = false;
-  },
-});
-
-const service = new Service('organization');
-const Org = observer(() => {
+export const service = new Service('organization');
+const Org: React.FC = observer(() => {
   const intl = useIntl();
   const hitCenter = () => {
     const orgChart = document.getElementsByClassName('orgchart-container')[0];
@@ -61,7 +31,7 @@ const Org = observer(() => {
         terms: { typeId: 'org' },
       }),
     );
-    obs.data = {
+    OrgModel.data = {
       id: null,
       name: intl.formatMessage({
         id: 'pages.system.org',
@@ -71,11 +41,12 @@ const Org = observer(() => {
       children: response.result,
     };
     hitCenter();
-    return obs;
+    return OrgModel;
   };
 
   const remove = async (id: string) => {
     await service.remove(id);
+    await query();
     message.success(
       intl.formatMessage({
         id: 'pages.data.option.success',
@@ -88,26 +59,25 @@ const Org = observer(() => {
   }, []);
 
   const menu = (nodeData: any) => {
+    const addNext = (
+      <Menu.Item key="addNext">
+        <a key="addNext" onClick={() => OrgModel.addNext(nodeData)}>
+          {intl.formatMessage({
+            id: 'pages.system.org.option.add',
+            defaultMessage: '添加下级',
+          })}
+        </a>
+      </Menu.Item>
+    );
     return nodeData.id === null ? (
-      <Menu>
-        <Menu.Item>
-          <a target="_blank" rel="noopener noreferrer" onClick={() => obs.addNext(nodeData)}>
-            {intl.formatMessage({
-              id: 'pages.system.org.option.add',
-              defaultMessage: '添加下级',
-            })}
-          </a>
-        </Menu.Item>
-      </Menu>
+      <Menu>{addNext}</Menu>
     ) : (
       <Menu>
-        <Menu.Item>
+        <Menu.Item key="edit">
           <a
             key="edit"
             onClick={() => {
-              // setParentId(null);
-              // setCurrent(nodeData);
-              // setEdit(true);
+              OrgModel.update(nodeData);
             }}
           >
             {intl.formatMessage({
@@ -116,15 +86,8 @@ const Org = observer(() => {
             })}
           </a>
         </Menu.Item>
-        <Menu.Item>
-          <a key="addNext" onClick={() => obs.addNext(nodeData)}>
-            {intl.formatMessage({
-              id: 'pages.system.org.option.add',
-              defaultMessage: '添加下级',
-            })}
-          </a>
-        </Menu.Item>
-        <Menu.Item>
+        {addNext}
+        <Menu.Item key="autz">
           <a
             key="autz"
             onClick={() => {
@@ -139,7 +102,7 @@ const Org = observer(() => {
             })}
           </a>
         </Menu.Item>
-        <Menu.Item>
+        <Menu.Item key="bindUser">
           <a
             key="bindUser"
             onClick={() => {
@@ -157,8 +120,8 @@ const Org = observer(() => {
             })}
           </a>
         </Menu.Item>
-        <Menu.Item>
-          <a target="_blank" rel="noopener noreferrer" onClick={() => remove(nodeData.id)}>
+        <Menu.Item key="delete">
+          <a key="delete" onClick={() => remove(nodeData.id)}>
             {intl.formatMessage({
               id: 'pages.data.option.remove',
               defaultMessage: '删除',
@@ -172,14 +135,14 @@ const Org = observer(() => {
     <PageContainer>
       <div className={styles.orgContainer}>
         <OrganizationChart
-          datasource={obs.data}
+          datasource={OrgModel.data}
           pan={true}
           NodeTemplate={(nodeData: any) => (
             <NodeTemplate data={nodeData.nodeData} action={menu(nodeData.nodeData)} />
           )}
         />
       </div>
-      <Save obs={obs} />
+      <Save refresh={query} />
       <Modal
         visible={BindModel.visible}
         closable={false}
