@@ -16,6 +16,8 @@ import BaseService from '@/utils/BaseService';
 import autzModel from '@/components/Authorization/autz';
 import Authorization from '@/components/Authorization';
 import { observer } from '@formily/react';
+import type { ISchema } from '@formily/json-schema';
+import _ from 'lodash';
 
 const service = new BaseService<OpenApiItem>('open-api');
 const OpenAPI: React.FC = observer(() => {
@@ -31,6 +33,8 @@ const OpenAPI: React.FC = observer(() => {
     {
       title: 'clientId',
       dataIndex: 'id',
+      sorter: true,
+      defaultSortOrder: 'ascend',
       width: 200,
     },
     {
@@ -92,7 +96,13 @@ const OpenAPI: React.FC = observer(() => {
       align: 'center',
       width: 200,
       render: (text, record) => [
-        <a key="editable" onClick={() => CurdModel.update(record)}>
+        <a
+          key="editable"
+          onClick={() => {
+            const temp = _.omit(record, ['createTime', 'creatorId', 'status']);
+            CurdModel.update(temp);
+          }}
+        >
           <Tooltip
             title={intl.formatMessage({
               id: 'pages.data.option.edit',
@@ -153,19 +163,15 @@ const OpenAPI: React.FC = observer(() => {
     },
   ];
 
-  const schema = {
+  const schema: ISchema = {
     type: 'object',
     properties: {
-      oy139sts87c: {
+      layout: {
         type: 'void',
         'x-component': 'FormGrid',
         'x-component-props': {
           maxColumns: 2,
         },
-        'x-decorator-props': {},
-        _designableId: 'oy139sts87c',
-        'x-index': 0,
-        name: 'oy139sts87c',
         properties: {
           clientName: {
             title: intl.formatMessage({
@@ -175,13 +181,10 @@ const OpenAPI: React.FC = observer(() => {
             type: 'string',
             'x-decorator': 'FormItem',
             'x-component': 'Input',
-            'x-component-props': {},
             'x-decorator-props': {
               labelCol: 6,
               wrapperCol: 18,
             },
-            _designableId: 'nke56so9n3l',
-            'x-index': 0,
             name: 'clientName',
           },
           enableOAuth2: {
@@ -189,27 +192,21 @@ const OpenAPI: React.FC = observer(() => {
             title: 'OAuth2',
             'x-decorator': 'FormItem',
             'x-component': 'Switch',
-            'x-component-props': {},
             'x-decorator-props': {
               labelCol: 6,
               wrapperCol: 18,
             },
-            _designableId: 'czwwqejzeps',
-            'x-index': 1,
             name: 'enableOAuth2',
           },
-          clientId: {
+          id: {
             title: 'clientId',
             type: 'string',
             'x-decorator': 'FormItem',
             'x-component': 'Input',
-            'x-component-props': {},
             'x-decorator-props': {
               labelCol: 6,
               wrapperCol: 18,
             },
-            _designableId: 'dcwl7x7e6q4',
-            'x-index': 2,
             name: 'clientId',
           },
           secureKey: {
@@ -217,13 +214,10 @@ const OpenAPI: React.FC = observer(() => {
             type: 'string',
             'x-decorator': 'FormItem',
             'x-component': 'Input',
-            'x-component-props': {},
             'x-decorator-props': {
               labelCol: 6,
               wrapperCol: 18,
             },
-            _designableId: 'npbrt1asayi',
-            'x-index': 3,
             name: 'secureKey',
           },
           username: {
@@ -234,15 +228,12 @@ const OpenAPI: React.FC = observer(() => {
             type: 'string',
             'x-decorator': 'FormItem',
             'x-component': 'Input',
-            'x-component-props': {},
             'x-decorator-props': {
               labelWrap: false,
               wrapperWrap: false,
               labelCol: 6,
               wrapperCol: 18,
             },
-            _designableId: 'wu5jed7kzrk',
-            'x-index': 4,
             name: 'username',
           },
           password: {
@@ -253,13 +244,10 @@ const OpenAPI: React.FC = observer(() => {
             type: 'string',
             'x-decorator': 'FormItem',
             'x-component': 'Input',
-            'x-component-props': {},
             'x-decorator-props': {
               labelCol: 6,
               wrapperCol: 18,
             },
-            _designableId: 'au7sgavkj8o',
-            'x-index': 5,
             name: 'password',
           },
           redirectUrl: {
@@ -267,7 +255,7 @@ const OpenAPI: React.FC = observer(() => {
             type: 'string',
             'x-decorator': 'FormItem',
             'x-component': 'Input',
-            'x-component-props': {},
+            'x-visible': false,
             'x-decorator-props': {
               fullness: false,
               gridSpan: 2,
@@ -276,15 +264,12 @@ const OpenAPI: React.FC = observer(() => {
               labelCol: 3,
               wrapperCol: 21,
             },
-            _designableId: 'jr9ye81b03p',
-            'x-index': 6,
             name: 'redirectUrl',
             'x-reactions': {
               dependencies: [
                 {
                   property: 'value',
-                  type: 'any',
-                  source: 'oy139sts87c.enableOAuth2',
+                  source: '.enableOAuth2',
                   name: 'enableOAuth2',
                 },
               ],
@@ -311,8 +296,6 @@ const OpenAPI: React.FC = observer(() => {
           wrapperCol: 21,
         },
         name: 'ipWhiteList',
-        _designableId: 'g2xv6coqilq',
-        'x-index': 1,
       },
       description: {
         title: intl.formatMessage({
@@ -328,11 +311,8 @@ const OpenAPI: React.FC = observer(() => {
           wrapperCol: 21,
         },
         name: 'description',
-        _designableId: 'j0t2lxx6k3r',
-        'x-index': 2,
       },
     },
-    _designableId: 'wmcf6s4ssie',
   };
 
   return (
