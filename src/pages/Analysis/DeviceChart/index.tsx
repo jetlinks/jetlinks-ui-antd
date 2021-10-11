@@ -9,6 +9,7 @@ import { observer } from '@formily/react';
 import { Column } from '@ant-design/charts';
 import { Badge, Col, Row } from 'antd';
 import { SyncOutlined } from '@ant-design/icons';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 type DeviceChartType = {
   deviceOnline: number;
@@ -23,6 +24,7 @@ const DeviceChartModel = model<DeviceChartType>({
   deviceNotActive: 0,
 });
 const DeviceChart = observer(() => {
+  const intl = useIntl();
   const getDeviceData = () => {
     const requestParams = [
       // 设备状态信息-在线
@@ -110,7 +112,10 @@ const DeviceChart = observer(() => {
 
   return (
     <StatisticCard
-      title="设备统计"
+      title={intl.formatMessage({
+        id: 'pages.analysis.deviceStatistics',
+        defaultMessage: '设备统计',
+      })}
       extra={<SyncOutlined onClick={() => getDeviceData()} />}
       chart={
         <Column
@@ -143,19 +148,39 @@ const DeviceChart = observer(() => {
           <Col span={8}>
             <>
               {' '}
-              <Badge status="warning" text="未激活" />
+              <Badge
+                status="warning"
+                text={intl.formatMessage({
+                  id: 'pages.analysis.cpu',
+                  defaultMessage: '未激活',
+                })}
+              />
               {DeviceChartModel.deviceNotActive}
             </>
           </Col>
           <Col span={8}>
             <>
               {' '}
-              <Badge status="processing" text="总数" />· {DeviceChartModel.deviceCount}
+              <Badge
+                status="processing"
+                text={intl.formatMessage({
+                  id: 'pages.analysis.deviceStatistics.total',
+                  defaultMessage: '总数',
+                })}
+              />
+              · {DeviceChartModel.deviceCount}
             </>
           </Col>
           <Col span={8}>
             <>
-              <Badge status="success" text="在线" /> {DeviceChartModel.deviceOnline}
+              <Badge
+                status="success"
+                text={intl.formatMessage({
+                  id: 'pages.analysis.deviceStatistics.online',
+                  defaultMessage: '在线',
+                })}
+              />
+              {DeviceChartModel.deviceOnline}
             </>
           </Col>
         </Row>

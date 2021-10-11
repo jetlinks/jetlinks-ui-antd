@@ -10,6 +10,7 @@ import Service from '@/components/Authorization/service';
 import styles from './index.less';
 import _ from 'lodash';
 import { AuthorizationModel } from '@/components/Authorization/autz';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 const service = new Service();
 
@@ -27,7 +28,7 @@ const tableName = 'permission';
 const Authorization = observer((props: AuthorizationProps) => {
   const [form] = Form.useForm();
   const { target, close } = props;
-
+  const intl = useIntl();
   const calculationSelectAll = useMemo(
     () => (permissionDB: PermissionItem[], data: Record<string, any>) => {
       // 计算是否全选
@@ -153,12 +154,18 @@ const Authorization = observer((props: AuthorizationProps) => {
 
   const columns: TableColumnsType<PermissionItem> = [
     {
-      title: '名称',
+      title: intl.formatMessage({
+        id: 'pages.table.name',
+        defaultMessage: '名称',
+      }),
       dataIndex: 'name',
       width: 200,
     },
     {
-      title: '权限操作',
+      title: intl.formatMessage({
+        id: 'pages.system.authorization.actions',
+        defaultMessage: '权限操作',
+      }),
       dataIndex: 'actions',
       render: (text: { action: string; name: string; id: string }[], record) => (
         <Form.Item name={record.id}>
@@ -200,7 +207,10 @@ const Authorization = observer((props: AuthorizationProps) => {
             form.setFieldsValue(tempForm);
           }}
         >
-          全选
+          {intl.formatMessage({
+            id: 'pages.system.authorization.selectAll',
+            defaultMessage: '全选',
+          })}
         </Checkbox>
       ),
       width: 200,
@@ -215,7 +225,10 @@ const Authorization = observer((props: AuthorizationProps) => {
               });
             }}
           >
-            全选
+            {intl.formatMessage({
+              id: 'pages.system.authorization.selectAll',
+              defaultMessage: '全选',
+            })}
           </Checkbox>
         </Form.Item>
       ),
@@ -231,10 +244,20 @@ const Authorization = observer((props: AuthorizationProps) => {
         wrapperCol={{ span: 20 }}
         labelCol={{ span: 3 }}
       >
-        <Form.Item label="被授权主体">
+        <Form.Item
+          label={intl.formatMessage({
+            id: 'pages.analysis.cpu',
+            defaultMessage: '被授权主体',
+          })}
+        >
           <Input value={target.name} disabled={true} />
         </Form.Item>
-        <Form.Item label="筛选权限">
+        <Form.Item
+          label={intl.formatMessage({
+            id: 'pages.system.authorization.screen',
+            defaultMessage: '筛选权限',
+          })}
+        >
           <Input.Group>
             <Row>
               <Col span={4}>
@@ -249,7 +272,10 @@ const Authorization = observer((props: AuthorizationProps) => {
               </Col>
               <Col span={20}>
                 <Input.Search
-                  placeholder="请输入权限名称"
+                  placeholder={intl.formatMessage({
+                    id: 'pages.system.authorization.screen.tip',
+                    defaultMessage: '请输入权限名称',
+                  })}
                   onSearch={(name: string) =>
                     searchPermission(name, AuthorizationModel.filterParam?.type)
                   }
@@ -269,10 +295,16 @@ const Authorization = observer((props: AuthorizationProps) => {
       </Form>
       <div className={styles.action}>
         <Button onClick={close} style={{ marginRight: 8 }}>
-          关闭
+          {intl.formatMessage({
+            id: 'pages.system.authorization.close',
+            defaultMessage: '关闭',
+          })}
         </Button>
         <Button onClick={form.submit} type="primary">
-          保存
+          {intl.formatMessage({
+            id: 'pages.system.authorization.save',
+            defaultMessage: '保存',
+          })}
         </Button>
       </div>
     </Spin>

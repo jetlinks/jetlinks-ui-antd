@@ -33,7 +33,6 @@ export default {
   'pages.searchTable.titleStatus.normal': 'Normal',
   'pages.searchTable.titleStatus.disable': 'Disable',
   'pages.searchTable.titleOption': 'Option',
-  'pages.table.username': 'userName',
   'pages.table.name': 'Name',
   'pages.table.deviceName': 'Device Name',
   'pages.table.productName': 'Product Name',
@@ -44,21 +43,49 @@ export default {
   'pages.table.deviceId': 'Device ID',
 
   // 统计分析
+  'pages.analysis.volume': 'Device Message Volume Today',
+  'pages.analysis.deviceStatistics': 'Device Statistics',
+  'pages.analysis.deviceStatistics.notActive': 'Not Active',
+  'pages.analysis.deviceStatistics.total': 'Total',
+  'pages.analysis.deviceStatistics.online': 'Online',
+  'pages.analysis.deviceMessage': 'Device Message',
+  'pages.analysis.deviceMessage.hour': 'hour',
+  'pages.analysis.deviceMessage.minute': 'minute',
+  'pages.analysis.deviceMessage.1hour': '1 hour',
+  'pages.analysis.deviceMessage.1day': '1 day',
+  'pages.analysis.deviceMessage.7days': '7 days',
+  'pages.analysis.deviceMessage.30days': '30 days',
   'pages.analysis.cpu': 'CPU Usage',
   'pages.analysis.jvm': 'JVM Memory',
   'pages.analysis.information': 'Information Completeness',
 
   // 系统设置-用户管理
   'pages.system.user': 'User',
-  'pages.system.user.name': 'name',
-  'pages.system.user.password': 'password',
-  'pages.system.user.confirmPassword': 'confirmPassword',
+  'pages.system.name': 'name',
+  'pages.system.username': 'username',
+  'pages.system.password': 'password',
+  'pages.system.confirmPassword': 'confirmPassword',
   'pages.system.userName.tips': 'If the username is too long, it will automatically shrink',
   'pages.system.name.tips': 'Names that are too long automatically shrink',
-  // 角色管理
+  // 系统设置-用户管理-授权
+  'pages.system.authorization.subject': 'The Authorized Principal',
+  'pages.system.authorization.screen': 'Filter Permissions',
+  'pages.system.authorization.screen.all': 'All',
+  'pages.system.authorization.screen.default': 'Default',
+  'pages.system.authorization.screen.system': 'System',
+  'pages.system.authorization.screen.business': 'Business Functions',
+  'pages.system.authorization.screen.multiTenant': 'Multi Tenant',
+  'pages.system.authorization.screen.tip': 'Please enter the permission name',
+  'pages.system.authorization.actions': 'Permission To Operate',
+  'pages.system.authorization.selectAll': 'Select All',
+  'pages.system.authorization.close': 'Close',
+  'pages.system.authorization.save': 'Save',
+  // 系统设置-角色管理
   'pages.system.role': 'Role',
   'pages.system.role.id': 'ID',
   'pages.system.role.option.bindUser': 'Bind User',
+  // 系统设置-角色管理-绑定用户
+  'pages.bindUser.theBoundUser': 'The Bound User',
   // 系统设置-权限管理
   'pages.system.permission': 'Permission',
   'pages.system.permission.id': 'ID',
@@ -71,6 +98,7 @@ export default {
   'pages.system.permission.addPermissionPreOperation': 'Pre Operation',
   'pages.system.permission.addPermissionOperation': 'Associated Operation',
   'pages.system.permission.addDataView': 'Data View',
+  'pages.system.permission.addDataViewField': 'Field',
   // 系统设置-机构管理
   'pages.system.org': 'Organization',
   'pages.system.org.encoding': 'Code',
@@ -81,6 +109,7 @@ export default {
   'pages.system.org.option.add': 'Add the lower',
   // 系统设置-第三方平台
   'pages.system.openApi': 'OpenAPI',
+  'pages.system.openApi.username': 'username',
   'pages.system.openApi.password': 'password',
   'pages.system.openApi.ipWhileList': 'ipWhileList',
   // 系统设置-租户管理

@@ -39,7 +39,7 @@ const User = observer(() => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.system.user.name',
+        id: 'pages.system.name',
         defaultMessage: '姓名',
       }),
       dataIndex: 'name',
@@ -66,7 +66,7 @@ const User = observer(() => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.table.username',
+        id: 'pages.system.username',
         defaultMessage: '用户名',
       }),
       dataIndex: 'username',
@@ -205,7 +205,7 @@ const User = observer(() => {
     properties: {
       username: {
         title: intl.formatMessage({
-          id: 'pages.table.username',
+          id: 'pages.system.username',
           defaultMessage: '用户名',
         }),
         type: 'string',
@@ -220,7 +220,7 @@ const User = observer(() => {
       },
       name: {
         title: intl.formatMessage({
-          id: 'pages.system.user.name',
+          id: 'pages.system.name',
           defaultMessage: '姓名',
         }),
         type: 'string',
@@ -234,7 +234,7 @@ const User = observer(() => {
       password: {
         type: 'string',
         title: intl.formatMessage({
-          id: 'pages.system.user.password',
+          id: 'pages.system.password',
           defaultMessage: '密码',
         }),
         'x-decorator': 'FormItem',
@@ -261,7 +261,7 @@ const User = observer(() => {
       confirmPassword: {
         type: 'string',
         title: intl.formatMessage({
-          id: 'pages.system.user.confirmPassword',
+          id: 'pages.system.confirmPassword',
           defaultMessage: '确认密码？',
         }),
         'x-decorator': 'FormItem',
@@ -301,7 +301,10 @@ const User = observer(() => {
         schema={schema}
       />
       <Drawer
-        title="授权"
+        title={intl.formatMessage({
+          id: 'pages.data.option.authorize',
+          defaultMessage: '授权',
+        })}
         width="50vw"
         visible={autzModel.visible}
         onClose={() => {

@@ -155,7 +155,10 @@ const Org: React.FC = observer(() => {
         <BindUser />
       </Modal>
       <Drawer
-        title="授权"
+        title={intl.formatMessage({
+          id: 'pages.data.option.authorize',
+          defaultMessage: '授权',
+        })}
         width="50vw"
         visible={autzModel.visible}
         onClose={() => {

@@ -40,7 +40,13 @@ const Analysis = () => {
           chart={<Jvm />}
         />
         <Divider type={responsive ? 'horizontal' : 'vertical'} />
-        <StatisticCard title="今日设备消息量" chart={<MessageChart />} />
+        <StatisticCard
+          title={intl.formatMessage({
+            id: 'pages.analysis.volume',
+            defaultMessage: '今日设备消息量',
+          })}
+          chart={<MessageChart />}
+        />
         <Divider type={responsive ? 'horizontal' : 'vertical'} />
         <DeviceChart />
       </StatisticCard.Group>

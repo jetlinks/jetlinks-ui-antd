@@ -115,7 +115,12 @@ const SQLRule = () => {
           >
             <DownloadOutlined
               onClick={() => {
-                message.success('下载');
+                message.success(
+                  `${intl.formatMessage({
+                    id: 'pages.data.option.download',
+                    defaultMessage: '下载',
+                  })}`,
+                );
               }}
             />
           </Tooltip>
