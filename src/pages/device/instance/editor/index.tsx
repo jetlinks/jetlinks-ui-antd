@@ -127,6 +127,7 @@ const Editor: React.FC<Props> = props => {
             deviceData.orgName = orgInfo[deviceData.orgId];
           }
           setData({ ...deviceData });
+          
           if (deviceData.metadata) {
             const metadata = JSON.parse(deviceData.metadata);
             setEvents(metadata.events);
