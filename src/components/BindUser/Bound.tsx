@@ -1,14 +1,14 @@
-import { Button, Card, message, Space } from 'antd';
-import type { ActionType } from '@jetlinks/pro-table';
+import {Button, Card, message, Space} from 'antd';
+import type {ActionType} from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { PlusOutlined } from '@ant-design/icons';
-import { useEffect, useRef } from 'react';
-import { Store } from 'jetlinks-store';
+import {PlusOutlined} from '@ant-design/icons';
+import {useEffect, useRef} from 'react';
+import {Store} from 'jetlinks-store';
 import SystemConst from '@/utils/const';
-import { observer } from '@formily/react';
-import { BindModel } from '@/components/BindUser/model';
-import { columns, service } from '@/components/BindUser/index';
-import { useIntl } from '@@/plugin-locale/localeExports';
+import {observer} from '@formily/react';
+import {BindModel} from '@/components/BindUser/model';
+import {columns, service} from '@/components/BindUser/index';
+import {useIntl} from '@@/plugin-locale/localeExports';
 
 const Bound = observer(() => {
   const intl = useIntl();
@@ -36,7 +36,7 @@ const Bound = observer(() => {
     },
   };
   const {
-    dimension: { id, type },
+    dimension: {id, type},
   } = BindModel;
   const handleRoleUnBind = () => {
     service.unBindRole(BindModel.unBindUsers, type!, id!).subscribe(handleUnBindResult);
@@ -76,19 +76,33 @@ const Bound = observer(() => {
             BindModel.unBindUsers = selectedRowKeys as string[];
           },
         }}
-        tableAlertRender={({ selectedRowKeys, onCleanSelected }) => (
+        tableAlertRender={({selectedRowKeys, onCleanSelected}) => (
           <Space size={24}>
             <span>
-              已选 {selectedRowKeys.length} 项
-              <a style={{ marginLeft: 8 }} onClick={onCleanSelected}>
-                取消选择
+              {intl.formatMessage({
+                id: 'pages.bindUser.bindTheNewUser.selected',
+                defaultMessage: '已选',
+              })} {selectedRowKeys.length} {intl.formatMessage({
+              id: 'pages.bindUser.bindTheNewUser.item',
+              defaultMessage: '项',
+            })}
+              <a style={{marginLeft: 8}} onClick={onCleanSelected}>
+                {intl.formatMessage({
+                  id: 'pages.bindUser.bindTheNewUser.deselect',
+                  defaultMessage: '取消选择',
+                })}
               </a>
             </span>
           </Space>
         )}
         tableAlertOptionRender={() => (
           <Space size={16}>
-            <a onClick={handleUnbind}>批量解绑</a>
+            <a onClick={handleUnbind}>
+              {intl.formatMessage({
+                id: 'pages.bindUser.bindTheNewUser.untieInBulk',
+                defaultMessage: '批量解绑',
+              })}
+            </a>
           </Space>
         )}
         actionRef={actionRef}
@@ -106,7 +120,7 @@ const Bound = observer(() => {
               BindModel.bind = true;
             }}
             key="button"
-            icon={<PlusOutlined />}
+            icon={<PlusOutlined/>}
             type="primary"
           >
             {intl.formatMessage({

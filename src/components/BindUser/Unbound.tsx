@@ -1,15 +1,17 @@
-import { CloseOutlined } from '@ant-design/icons';
-import type { ActionType } from '@jetlinks/pro-table';
+import {CloseOutlined} from '@ant-design/icons';
+import type {ActionType} from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { Card, message, Space } from 'antd';
-import { observer } from '@formily/react';
-import { Store } from 'jetlinks-store';
+import {Card, message, Space} from 'antd';
+import {observer} from '@formily/react';
+import {Store} from 'jetlinks-store';
 import SystemConst from '@/utils/const';
-import { useEffect, useRef } from 'react';
-import { BindModel } from '@/components/BindUser/model';
-import { columns, service } from '@/components/BindUser/index';
+import {useEffect, useRef} from 'react';
+import {BindModel} from '@/components/BindUser/model';
+import {columns, service} from '@/components/BindUser/index';
+import {useIntl} from '@@/plugin-locale/localeExports';
 
 const Unbound = observer(() => {
+  const intl = useIntl();
   const actionRef = useRef<ActionType>();
 
   useEffect(() => {
@@ -70,7 +72,10 @@ const Unbound = observer(() => {
 
   return (
     <Card
-      title="绑定新用户"
+      title={intl.formatMessage({
+        id: 'pages.bindUser.bindTheNewUser',
+        defaultMessage: '绑定新用户',
+      })}
       extra={
         <CloseOutlined
           onClick={() => {
@@ -91,19 +96,33 @@ const Unbound = observer(() => {
             }));
           },
         }}
-        tableAlertRender={({ selectedRowKeys, onCleanSelected }) => (
+        tableAlertRender={({selectedRowKeys, onCleanSelected}) => (
           <Space size={24}>
             <span>
-              已选 {selectedRowKeys.length} 项
-              <a style={{ marginLeft: 8 }} onClick={onCleanSelected}>
-                取消选择
+              {intl.formatMessage({
+                id: 'pages.bindUser.bindTheNewUser.selected',
+                defaultMessage: '已选',
+              })} {selectedRowKeys.length} {intl.formatMessage({
+              id: 'pages.bindUser.bindTheNewUser.item',
+              defaultMessage: '项',
+            })}
+              <a style={{marginLeft: 8}} onClick={onCleanSelected}>
+                {intl.formatMessage({
+                  id: 'pages.bindUser.bindTheNewUser.deselect',
+                  defaultMessage: '取消选择',
+                })}
               </a>
             </span>
           </Space>
         )}
         tableAlertOptionRender={() => (
           <Space size={16}>
-            <a onClick={handleBind}>批量绑定</a>
+            <a onClick={handleBind}>
+              {intl.formatMessage({
+                id: 'pages.bindUser.bindTheNewUser.bulkBinds',
+                defaultMessage: '批量绑定',
+              })}
+            </a>
           </Space>
         )}
         size="small"
