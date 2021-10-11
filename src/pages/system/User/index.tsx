@@ -169,7 +169,7 @@ const User = observer(() => {
         <a key="changeState">
           <Popconfirm
             title={intl.formatMessage({
-              id: `pages.data.option.${record.status ? 'disabled' : 'enabled'}`,
+              id: `pages.data.option.${record.status ? 'disabled' : 'enabled'}.tips`,
               defaultMessage: `确认${record.status ? '禁用' : '启用'}?`,
             })}
             onConfirm={async () => {

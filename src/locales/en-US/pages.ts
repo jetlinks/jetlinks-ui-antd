@@ -86,12 +86,18 @@ export default {
   'pages.system.role.option.bindUser': 'Bind User',
   // 系统设置-角色管理-绑定用户
   'pages.bindUser.theBoundUser': 'The Bound User',
+  'pages.bindUser.theBoundUser.success': 'Unbundling success',
+  'pages.bindUser.theBoundUser.fail': 'Operation failure',
+  'pages.bindUser.theBoundUser.typeError': 'Unbind type data error',
   'pages.bindUser.bindTheNewUser': 'Bind The New User',
   'pages.bindUser.bindTheNewUser.selected': 'Selected',
   'pages.bindUser.bindTheNewUser.item': 'item',
   'pages.bindUser.bindTheNewUser.deselect': 'Deselect',
   'pages.bindUser.bindTheNewUser.bulkBinds': 'Bulk Binds',
   'pages.bindUser.bindTheNewUser.untieInBulk': 'Untie In Bulk',
+  'pages.bindUser.bindTheNewUser.success': 'Binding success',
+  'pages.bindUser.bindTheNewUser.fail': 'Binding failure',
+  'pages.bindUser.bindTheNewUser.typeError': 'Error binding type data',
   // 系统设置-权限管理
   'pages.system.permission': 'Permission',
   'pages.system.permission.id': 'ID',

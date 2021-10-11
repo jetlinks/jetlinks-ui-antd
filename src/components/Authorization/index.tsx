@@ -260,7 +260,7 @@ const Authorization = observer((props: AuthorizationProps) => {
       >
         <Form.Item
           label={intl.formatMessage({
-            id: 'pages.analysis.cpu',
+            id: 'pages.system.authorization.subject',
             defaultMessage: '被授权主体',
           })}
         >

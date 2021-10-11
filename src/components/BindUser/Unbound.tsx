@@ -22,9 +22,19 @@ const Unbound = observer(() => {
   });
 
   const handleBindResult = {
-    next: () => message.success('绑定成功'),
+    next: () =>
+      message.success(
+        intl.formatMessage({
+          id: 'pages.bindUser.bindTheNewUser.success',
+          defaultMessage: '绑定成功',
+        })
+      ),
     error: async () => {
-      message.success('绑定失败');
+      message.success(
+        intl.formatMessage({
+          id: 'pages.bindUser.bindTheNewUser.fail',
+          defaultMessage: '绑定失败',
+        }));
     },
     complete: () => {
       // 通知左侧组件刷新
@@ -66,7 +76,11 @@ const Unbound = observer(() => {
         handleOrgBind();
         break;
       default:
-        message.error('绑定类型数据错误');
+        message.error(
+          intl.formatMessage({
+            id: 'pages.bindUser.bindTheNewUser.typeError',
+            defaultMessage: '绑定类型数据错误',
+          }));
     }
   };
 
