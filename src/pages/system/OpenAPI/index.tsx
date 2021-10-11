@@ -46,7 +46,7 @@ const OpenAPI: React.FC = observer(() => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.table.username',
+        id: 'pages.system.openApi.username',
         defaultMessage: '用户名',
       }),
       dataIndex: 'username',
@@ -222,7 +222,7 @@ const OpenAPI: React.FC = observer(() => {
           },
           username: {
             title: intl.formatMessage({
-              id: 'pages.table.username',
+              id: 'pages.system.openApi.username',
               defaultMessage: '用户名',
             }),
             type: 'string',
@@ -329,7 +329,10 @@ const OpenAPI: React.FC = observer(() => {
         actionRef={actionRef}
       />
       <Drawer
-        title="授权"
+        title={intl.formatMessage({
+          id: 'pages.data.option.authorize',
+          defaultMessage: '授权',
+        })}
         width="70vw"
         visible={autzModel.visible}
         onClose={() => {

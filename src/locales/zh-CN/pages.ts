@@ -33,7 +33,6 @@ export default {
   'pages.searchTable.titleStatus.normal': '正常',
   'pages.searchTable.titleStatus.disable': '禁用',
   'pages.searchTable.titleOption': '操作',
-  'pages.table.username': '用户名',
   'pages.table.name': '名称',
   'pages.table.deviceName': '设备名称',
   'pages.table.productName': '产品名称',
@@ -44,21 +43,49 @@ export default {
   'pages.table.deviceId': '设备ID',
 
   // 统计分析
+  'pages.analysis.volume': '今日设备消息量',
+  'pages.analysis.deviceStatistics': '设备统计',
+  'pages.analysis.deviceStatistics.notActive': '未激活',
+  'pages.analysis.deviceStatistics.total': '总数',
+  'pages.analysis.deviceStatistics.online': '在线',
+  'pages.analysis.deviceMessage': '设备消息',
+  'pages.analysis.deviceMessage.hour': '时',
+  'pages.analysis.deviceMessage.minute': '分',
+  'pages.analysis.deviceMessage.1hour': '1小时',
+  'pages.analysis.deviceMessage.1day': '1天',
+  'pages.analysis.deviceMessage.7days': '7天',
+  'pages.analysis.deviceMessage.30days': '30天',
   'pages.analysis.cpu': 'CPU使用率',
   'pages.analysis.jvm': 'JVM内存',
   'pages.analysis.information': '信息完成度',
 
   // 系统设置-用户管理
   'pages.system.user': '用户管理',
-  'pages.system.user.name': '姓名',
-  'pages.system.user.password': '密码',
-  'pages.system.user.confirmPassword': '确认密码',
+  'pages.system.name': '姓名',
+  'pages.system.username': '用户名',
+  'pages.system.password': '密码',
+  'pages.system.confirmPassword': '确认密码',
   'pages.system.userName.tips': '用户名过长会自动收缩',
   'pages.system.name.tips': '姓名过长会自动收缩',
-  // 角色管理
+  // 系统设置-用户管理-授权
+  'pages.system.authorization.subject': '被授权主体',
+  'pages.system.authorization.screen': '筛选权限',
+  'pages.system.authorization.screen.all': '全部',
+  'pages.system.authorization.screen.default': '默认',
+  'pages.system.authorization.screen.system': '系统',
+  'pages.system.authorization.screen.business': '业务功能',
+  'pages.system.authorization.screen.multiTenant': '多租户',
+  'pages.system.authorization.screen.tip': '请输入权限名称',
+  'pages.system.authorization.actions': '权限操作',
+  'pages.system.authorization.selectAll': '全选',
+  'pages.system.authorization.close': '关闭',
+  'pages.system.authorization.save': '保存',
+  // 系统设置-角色管理
   'pages.system.role': '角色管理',
   'pages.system.role.id': '标识',
   'pages.system.role.option.bindUser': '绑定用户',
+  // 系统设置-角色管理-绑定用户
+  'pages.bindUser.theBoundUser': '已绑定用户',
   // 系统设置-权限管理
   'pages.system.permission': '权限管理',
   'pages.system.permission.id': '标识',
@@ -71,6 +98,7 @@ export default {
   'pages.system.permission.addPermissionPreOperation': '前置操作',
   'pages.system.permission.addPermissionOperation': '关联操作',
   'pages.system.permission.addDataView': '数据视图',
+  'pages.system.permission.addDataViewField': '字段',
   // 系统设置-机构管理
   'pages.system.org': '机构管理',
   'pages.system.org.encoding': '编码',
@@ -81,6 +109,7 @@ export default {
   'pages.system.org.option.add': '添加下级',
   // 系统设置-第三方平台
   'pages.system.openApi': '第三方平台',
+  'pages.system.openApi.username': '用户名',
   'pages.system.openApi.password': '密码',
   'pages.system.openApi.ipWhileList': 'IP白名单',
   // 系统设置-租户管理
