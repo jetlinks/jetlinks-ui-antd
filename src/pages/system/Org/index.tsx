@@ -4,7 +4,7 @@ import styles from './index.less';
 import { Drawer, Menu, message, Modal } from 'antd';
 import NodeTemplate from '@/pages/system/Org/NodeTemplate';
 import { observer } from '@formily/react';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import Service from '@/pages/system/Org/service';
 import encodeQuery from '@/utils/encodeQuery';
 import Save from '@/pages/system/Org/Save';
@@ -16,7 +16,7 @@ import BindUser from '@/components/BindUser';
 import OrgModel from '@/pages/system/Org/model';
 
 export const service = new Service('organization');
-const Org: React.FC = observer(() => {
+const Org = observer(() => {
   const intl = useIntl();
   const hitCenter = () => {
     const orgChart = document.getElementsByClassName('orgchart-container')[0];
@@ -142,7 +142,7 @@ const Org: React.FC = observer(() => {
           )}
         />
       </div>
-      <Save refresh={query} />
+      <Save refresh={query} visible={OrgModel.edit} />
       <Modal
         visible={BindModel.visible}
         closable={false}
