@@ -71,16 +71,16 @@ const Status: React.FC<Props> = props => {
     let eventsMap = {};
     events.forEach((item: any) => eventsMap[item.id] = item);
 
-    const [index, setIndex] = useState<number>(20);
+    const [index, setIndex] = useState<number>(15);
 
     const service = new Service();
 
     useEffect(() => {
-        let list1: any = []
-        metadata.properties.slice(0, 20).map(item => {
+        const list1: any = []
+        metadata.properties.slice(0, 15).map((item: any) => {
             list1.push(item.id)
         })
-        setPropertiesList(list1)
+        setPropertiesList([...list1])
     }, []);
 
     useEffect(() => {
@@ -115,32 +115,28 @@ const Status: React.FC<Props> = props => {
                 setLoading(true);
                 setProperties(properties);
             })
+          // websocket
+          const propertiesWs: Observable<any> = getWebsocket(
+            `instance-info-property-${device.id}-${device.productId}-${propertiesList.join('-')}`,
+            `/dashboard/device/${device.productId}/properties/realTime`,
+            {
+              deviceId: device.id,
+              properties: propertiesList,
+              history: 0,
+            },
+          ).pipe(
+            map(result => result.payload)
+          ).subscribe((resp) => {
+            const property = resp.value.property;
+            const item = propertiesMap[property];
+            if (item) {
+              item.next(resp);
+            }
+          });
+          properties$.push(propertiesWs)
+          setProperties$([...properties$])
         }else if(metadata.properties.length === 0){
             setLoading(true);
-        }
-    }, [propertiesList]);
-
-    useEffect(() => {
-        if (propertiesList.length > 0) {
-            const propertiesWs: Observable<any> = getWebsocket(
-                `instance-info-property-${device.id}-${device.productId}-${propertiesList.join('-')}`,
-                `/dashboard/device/${device.productId}/properties/realTime`,
-                {
-                    deviceId: device.id,
-                    properties: propertiesList,
-                    history: 0,
-                },
-            ).pipe(
-                map(result => result.payload)
-            ).subscribe((resp) => {
-                const property = resp.value.property;
-                const item = propertiesMap[property];
-                if (item) {
-                    item.next(resp);
-                }
-            });
-            properties$.push(propertiesWs)
-            setProperties$([...properties$])
         }
     }, [propertiesList]);
 
@@ -163,13 +159,13 @@ const Status: React.FC<Props> = props => {
     const renderProperties = useCallback(
         () => {
             const propertyCard = properties.map((item: any) => (
-                <Col {...topColResponsiveProps} key={item.id}>
-                    <PropertiesCard
-                        item={item}
-                        key={item.id}
-                        device={device}
-                    />
-                </Col>
+              <Col {...topColResponsiveProps} key={item.id}>
+                <PropertiesCard
+                  item={item}
+                  key={item.id}
+                  device={device}
+                />
+              </Col>
             ))
             const eventCard = events.map((item: any) => (
                 <Col {...topColResponsiveProps} key={item.id}>
@@ -186,12 +182,12 @@ const Status: React.FC<Props> = props => {
 
         var b = document.body.clientHeight;
         if (a + b >= c - 50) {
-            let list: any = [];
-            metadata.properties.slice(index, index + 20).map(item => {
+            const list: any = [];
+            metadata.properties.slice(index, index + 15).map(item => {
                 list.push(item.id)
             })
-            setPropertiesList(list);
-            setIndex(index + 20);
+            setPropertiesList([...list]);
+            setIndex(index + 15);
         }
     }
 

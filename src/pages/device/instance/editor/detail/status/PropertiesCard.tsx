@@ -73,10 +73,18 @@ const PropertiesCard: React.FC<Props> = props => {
     return item;
   };
 
-  const [data, setData] = useState(getValue);
+  const [data, setData] = useState<any>(item);
 
   const [visible, setVisible] = useState<boolean>(false);
   const [edit, setEdit] = useState<boolean>(false);
+
+  useEffect(() => {
+    setLoading(true)
+    setTimeout(() => {
+      setData({ ...getValue() })
+      setLoading(false)
+    }, 500)
+  }, []);
 
   useEffect(() => {
     item.subscribe((resp: any) => {
@@ -97,7 +105,8 @@ const PropertiesCard: React.FC<Props> = props => {
       });
       setLoading(false);
     });
-  }, []);
+  }, [])
+
 
   const refreshProperty = (item: any) => {
     setLoading(true);
