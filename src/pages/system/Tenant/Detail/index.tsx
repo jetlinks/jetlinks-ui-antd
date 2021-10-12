@@ -7,7 +7,6 @@ import { service } from '@/pages/system/Tenant';
 import Assets from '@/pages/system/Tenant/Detail/Assets';
 import Member from '@/pages/system/Tenant/Detail/Member';
 import Info from '@/pages/system/Tenant/Detail/Info';
-import Permission from './Permission';
 
 const TenantDetail = observer(() => {
   const [tab, setTab] = useState<string>('assets');
@@ -28,11 +27,6 @@ const TenantDetail = observer(() => {
   }, [params.id]);
 
   const list = [
-    // {
-    //   key: 'detail',
-    //   tab: '基本信息',
-    //   component: <Info/>
-    // },
     {
       key: 'assets',
       tab: '资产信息',
@@ -42,11 +36,6 @@ const TenantDetail = observer(() => {
       key: 'member',
       tab: '成员管理',
       component: <Member />,
-    },
-    {
-      key: 'permission',
-      tab: '权限管理',
-      component: <Permission />,
     },
   ];
 

@@ -54,6 +54,19 @@ const Authorization = observer((props: AuthorizationProps) => {
     [AuthorizationModel.data],
   );
 
+  const searchPermission = async (name: string, type: string) => {
+    AuthorizationModel.filterParam.name = name;
+    AuthorizationModel.filterParam.type = type;
+    AuthorizationModel.data = await db
+      .table(tableName)
+      .where('name')
+      .startsWith(name)
+      .filter((item) => (type === 'all' ? item : (item.type || []).includes(type)))
+      .distinct()
+      .reverse()
+      .sortBy('name');
+  };
+
   const initAutzInfo = useCallback(async () => {
     if (!target.id) {
       message.error('被授权对象数据缺失!');
@@ -92,6 +105,10 @@ const Authorization = observer((props: AuthorizationProps) => {
         error: () => {},
         complete: () => {
           AuthorizationModel.spinning = false;
+
+          if (props.type) {
+            searchPermission('', props.type);
+          }
         },
       });
   }, [target.id]);
@@ -115,24 +132,12 @@ const Authorization = observer((props: AuthorizationProps) => {
 
   useEffect(() => {
     initPermission();
+
     return () => {
       db.table(tableName).clear();
       AuthorizationModel.spinning = true;
     };
   }, [target.id]);
-
-  const searchPermission = async (name: string, type: string) => {
-    AuthorizationModel.filterParam.name = name;
-    AuthorizationModel.filterParam.type = type;
-    AuthorizationModel.data = await db
-      .table(tableName)
-      .where('name')
-      .startsWith(name)
-      .filter((item) => (type === 'all' ? item : (item.type || []).includes(type)))
-      .distinct()
-      .reverse()
-      .sortBy('name');
-  };
 
   const setAutz = (data: unknown[]) => {
     const permissions = Object.keys(data)
@@ -244,12 +249,7 @@ const Authorization = observer((props: AuthorizationProps) => {
         wrapperCol={{ span: 20 }}
         labelCol={{ span: 3 }}
       >
-        <Form.Item
-          label={intl.formatMessage({
-            id: 'pages.analysis.cpu',
-            defaultMessage: '被授权主体',
-          })}
-        >
+        <Form.Item label="被授权主体">
           <Input value={target.name} disabled={true} />
         </Form.Item>
         <Form.Item
@@ -263,10 +263,12 @@ const Authorization = observer((props: AuthorizationProps) => {
               <Col span={4}>
                 <Select
                   onSelect={(type: string) =>
-                    searchPermission(AuthorizationModel.filterParam.name, type)
+                    searchPermission(AuthorizationModel.filterParam.name, props.type || type)
                   }
                   style={{ width: '100%' }}
-                  defaultValue={'all'}
+                  defaultValue={props.type || 'all'}
+                  // 如果传了类型，那么授权不能更改类型
+                  disabled={!!props.type}
                   options={permissionType}
                 />
               </Col>
@@ -277,7 +279,7 @@ const Authorization = observer((props: AuthorizationProps) => {
                     defaultMessage: '请输入权限名称',
                   })}
                   onSearch={(name: string) =>
-                    searchPermission(name, AuthorizationModel.filterParam?.type)
+                    searchPermission(name, props.type || AuthorizationModel.filterParam?.type)
                   }
                 />
               </Col>
