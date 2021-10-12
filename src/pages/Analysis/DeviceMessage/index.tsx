@@ -9,6 +9,7 @@ import { StatisticCard } from '@ant-design/pro-card';
 import { Radio } from 'antd';
 import type { DurationInputArg1, DurationInputArg2 } from 'moment';
 import moment from 'moment';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 type DeviceMessage = {
   chartData: any[];
@@ -28,6 +29,7 @@ const DeviceMessageModel = model<DeviceMessage>({
 });
 
 const DeviceMessageChart = observer(() => {
+  const intl = useIntl();
   const gatewayMonitor = (from: string, to: string, time: string) => {
     const params = [
       {
@@ -135,14 +137,41 @@ const DeviceMessageChart = observer(() => {
     },
   };
   const options = [
-    { label: '1小时', value: '1h' },
-    { label: '1天', value: '1d' },
-    { label: '7天', value: '7d' },
-    { label: '30天', value: '30d' },
+    {
+      label: intl.formatMessage({
+        id: 'pages.analysis.deviceMessage.1hour',
+        defaultMessage: '1小时',
+      }),
+      value: '1h',
+    },
+    {
+      label: intl.formatMessage({
+        id: 'pages.analysis.deviceMessage.1day',
+        defaultMessage: '1天',
+      }),
+      value: '1d',
+    },
+    {
+      label: intl.formatMessage({
+        id: 'pages.analysis.deviceMessage.7days',
+        defaultMessage: '7天',
+      }),
+      value: '7d',
+    },
+    {
+      label: intl.formatMessage({
+        id: 'pages.analysis.deviceMessage.30days',
+        defaultMessage: '30天',
+      }),
+      value: '30d',
+    },
   ];
   return (
     <StatisticCard
-      title="设备消息"
+      title={intl.formatMessage({
+        id: 'pages.analysis.deviceMessage',
+        defaultMessage: '设备消息',
+      })}
       extra={
         <Radio.Group
           options={options}

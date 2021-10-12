@@ -580,7 +580,10 @@ const Permission: React.FC = observer(() => {
                       'x-component': 'ArrayTable.Column',
                       'x-component-props': {
                         width: 200,
-                        title: '字段',
+                        title: intl.formatMessage({
+                          id: 'pages.system.permission.addDataViewField',
+                          defaultMessage: '字段',
+                        }),
                       },
                       properties: {
                         name: {
@@ -595,7 +598,10 @@ const Permission: React.FC = observer(() => {
                       'x-component': 'ArrayTable.Column',
                       'x-component-props': {
                         width: 200,
-                        title: '描述',
+                        title: intl.formatMessage({
+                          id: 'pages.table.describe',
+                          defaultMessage: '描述',
+                        }),
                       },
                       properties: {
                         describe: {

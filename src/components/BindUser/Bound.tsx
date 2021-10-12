@@ -8,8 +8,10 @@ import SystemConst from '@/utils/const';
 import { observer } from '@formily/react';
 import { BindModel } from '@/components/BindUser/model';
 import { columns, service } from '@/components/BindUser/index';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 const Bound = observer(() => {
+  const intl = useIntl();
   const actionRef = useRef<ActionType>();
 
   useEffect(() => {
@@ -59,7 +61,12 @@ const Bound = observer(() => {
   };
 
   return (
-    <Card title="已绑定用户">
+    <Card
+      title={intl.formatMessage({
+        id: 'pages.bindUser.theBoundUser',
+        defaultMessage: '已绑定用户',
+      })}
+    >
       <ProTable
         size="small"
         rowKey="id"
@@ -102,7 +109,10 @@ const Bound = observer(() => {
             icon={<PlusOutlined />}
             type="primary"
           >
-            绑定用户
+            {intl.formatMessage({
+              id: 'pages.system.role.option.bindUser',
+              defaultMessage: '绑定用户',
+            })}
           </Button>,
         ]}
       />
