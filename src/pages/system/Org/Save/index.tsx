@@ -1,17 +1,17 @@
 import { message, Modal } from 'antd';
 import { createForm } from '@formily/core';
-import { createSchemaField, observer } from '@formily/react';
+import { createSchemaField } from '@formily/react';
 import { NumberPicker, Form, Input, FormItem } from '@formily/antd';
-import React from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import OrgModel from '@/pages/system/Org/model';
 import { service } from '@/pages/system/Org';
 
 interface Props {
-  refresh: () => void;
+  refresh?: () => void;
+  visible: boolean;
 }
 
-const Save: React.FC<Props> = observer((props: Props) => {
+const Save = (props: Props) => {
   const intl = useIntl();
   const form = createForm({
     initialValues: OrgModel.current,
@@ -79,17 +79,17 @@ const Save: React.FC<Props> = observer((props: Props) => {
     await service.update({ ...data, parentId: OrgModel.parentId });
     message.success('保存成功');
     OrgModel.closeEdit();
-    props.refresh();
+    props.refresh?.();
   };
 
   return (
     <Modal
-      onOk={save}
+      onOk={() => save()}
       title={`${OrgModel.parentId ? '添加下级' : '编辑'}`}
-      visible={OrgModel.edit}
+      visible={props.visible}
       onCancel={() => {
         OrgModel.closeEdit();
-        props.refresh();
+        props.refresh?.();
       }}
     >
       <Form form={form} labelCol={5} wrapperCol={16}>
@@ -97,5 +97,5 @@ const Save: React.FC<Props> = observer((props: Props) => {
       </Form>
     </Modal>
   );
-});
+};
 export default Save;

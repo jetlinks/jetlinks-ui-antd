@@ -70,6 +70,13 @@
         component: './system/Tenant',
       },
       {
+        hideInMenu: true,
+        path: '/system/tenant/detail/:id',
+        name: 'tenant-detail',
+        icon: 'smile',
+        component: './system/Tenant/Detail',
+      },
+      {
         path: '/system/datasource',
         name: 'datasource',
         icon: 'smile',

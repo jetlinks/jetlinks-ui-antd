@@ -37,4 +37,5 @@ interface AuthorizationProps {
     type: string;
   };
   close: () => void;
+  type?: string;
 }
