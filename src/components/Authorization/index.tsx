@@ -14,21 +14,35 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 
 const service = new Service();
 
-const permissionType = [
-  { label: '全部', value: 'all' },
-  { label: '默认', value: 'default' },
-  { label: '系统', value: 'system' },
-  { label: '业务功能', value: 'business' },
-  { label: 'OpenAPI', value: 'open-api' },
-  { label: '多租户', value: 'tenant' },
-];
-
 const tableName = 'permission';
 
 const Authorization = observer((props: AuthorizationProps) => {
   const [form] = Form.useForm();
   const { target, close } = props;
   const intl = useIntl();
+  const permissionType = [
+    { label: intl.formatMessage({
+        id: 'pages.system.authorization.screen.all',
+        defaultMessage: '全部',
+      }),  value: 'all' },
+    { label: intl.formatMessage({
+        id: 'pages.system.authorization.screen.default',
+        defaultMessage: '默认',
+      }), value: 'default' },
+    { label: intl.formatMessage({
+        id: 'pages.system.authorization.screen.system',
+        defaultMessage: '系统',
+      }), value: 'system' },
+    { label: intl.formatMessage({
+        id: 'pages.system.authorization.screen.business',
+        defaultMessage: '业务功能',
+      }), value: 'business' },
+    { label: 'OpenAPI', value: 'open-api' },
+    { label: intl.formatMessage({
+        id: 'pages.system.authorization.screen.tenant',
+        defaultMessage: '多租户',
+      }), value: 'tenant' },
+  ];
   const calculationSelectAll = useMemo(
     () => (permissionDB: PermissionItem[], data: Record<string, any>) => {
       // 计算是否全选
@@ -249,7 +263,12 @@ const Authorization = observer((props: AuthorizationProps) => {
         wrapperCol={{ span: 20 }}
         labelCol={{ span: 3 }}
       >
-        <Form.Item label="被授权主体">
+        <Form.Item
+          label={intl.formatMessage({
+            id: 'pages.system.authorization.subject',
+            defaultMessage: '被授权主体',
+          })}
+        >
           <Input value={target.name} disabled={true} />
         </Form.Item>
         <Form.Item
