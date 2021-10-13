@@ -106,19 +106,6 @@ const HttpClient: React.FC<Props> = props => {
           </Button>
           <Divider type="vertical" />
           <Button
-            type="danger"
-            onClick={() => {
-              setLogs(l => [...l, '关闭订阅']);
-              if (subs) {
-                subs.unsubscribe()
-              }
-              // setLogs(`${logs}关闭订阅\n`);
-            }}
-          >
-            结束
-          </Button>
-          <Divider type="vertical" />
-          <Button
             type="ghost"
             onClick={() => {
               setLogs([]);
