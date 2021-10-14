@@ -95,7 +95,10 @@ const Tenant = observer(() => {
       ],
     },
     {
-      title: '创建时间',
+      title: intl.formatMessage({
+        id: 'pages.device.productDetail.createTime',
+        defaultMessage: '创建时间',
+      }),
       dataIndex: 'tenant',
       width: '200px',
       align: 'center',
@@ -157,21 +160,30 @@ const Tenant = observer(() => {
     properties: {
       name: {
         type: 'string',
-        title: '名称',
+        title: intl.formatMessage({
+          id: 'pages.table.name',
+          defaultMessage: '名称',
+        }),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input',
       },
       username: {
         type: 'string',
-        title: '用户名',
+        title: intl.formatMessage({
+          id: 'pages.system.username',
+          defaultMessage: '用户名',
+        }),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input',
       },
       password: {
         type: 'string',
-        title: '密码',
+        title: intl.formatMessage({
+          id: 'pages.system.password',
+          defaultMessage: '密码',
+        }),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Password',
@@ -192,7 +204,10 @@ const Tenant = observer(() => {
       },
       confirmPassword: {
         type: 'string',
-        title: '确认密码',
+        title: intl.formatMessage({
+          id: 'pages.system.confirmPassword',
+          defaultMessage: '确认密码',
+        }),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Password',
@@ -213,7 +228,10 @@ const Tenant = observer(() => {
       },
       description: {
         type: 'string',
-        title: '备注',
+        title: intl.formatMessage({
+          id: 'pages.system.remark',
+          defaultMessage: '备注',
+        }),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input.TextArea',

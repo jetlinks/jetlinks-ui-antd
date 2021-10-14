@@ -9,9 +9,11 @@ import { useParams } from 'umi';
 import TenantModel from '@/pages/system/Tenant/model';
 import type { TenantMember } from '@/pages/system/Tenant/typings';
 import encodeQuery from '@/utils/encodeQuery';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 const Assets = observer(() => {
   const param = useParams<{ id: string }>();
+  const intl = useIntl();
 
   const getDeviceCount = (type: 'online' | 'offline') => {
     // 查询资产数量
@@ -68,7 +70,13 @@ const Assets = observer(() => {
   }, [TenantModel.assetsMemberId]);
   return (
     <Card>
-      <Form.Item label="成员" style={{ width: 200 }}>
+      <Form.Item
+        label={intl.formatMessage({
+          id: 'pages.system.tenant.member',
+          defaultMessage: '成员',
+        })}
+        style={{ width: 200 }}
+      >
         <Select
           onChange={(id: string) => {
             TenantModel.assetsMemberId = id;
@@ -78,33 +86,63 @@ const Assets = observer(() => {
       </Form.Item>
       <ProCard gutter={[16, 16]} style={{ marginTop: 16 }}>
         <ProCard
-          title="产品"
+          title={intl.formatMessage({
+            id: 'pages.device.product',
+            defaultMessage: '产品',
+          })}
           colSpan="25%"
           bordered
           actions={[<EyeOutlined key="setting" />, <EditOutlined key="edit" />]}
         >
           <Row>
             <Col span={12}>
-              <Statistic title="已发布" value={TenantModel.assets.product['1']} />
+              <Statistic
+                title={intl.formatMessage({
+                  id: 'pages.device.product.status.published',
+                  defaultMessage: '已发布',
+                })}
+                value={TenantModel.assets.product['1']}
+              />
             </Col>
             <Col span={12}>
-              <Statistic title="未发布" value={TenantModel.assets.product['0']} />
+              <Statistic
+                title={intl.formatMessage({
+                  id: 'pages.device.product.status.unpublished',
+                  defaultMessage: '未发布',
+                })}
+                value={TenantModel.assets.product['0']}
+              />
             </Col>
           </Row>
         </ProCard>
 
         <ProCard
-          title="设备"
+          title={intl.formatMessage({
+            id: 'pages.device.instance',
+            defaultMessage: '设备',
+          })}
           colSpan="25%"
           bordered
           actions={[<EyeOutlined key="setting" />, <EditOutlined key="edit" />]}
         >
           <Row>
             <Col span={12}>
-              <Statistic title="在线" value={TenantModel.assets.device.online} />
+              <Statistic
+                title={intl.formatMessage({
+                  id: 'pages.device.instance.status.onLine',
+                  defaultMessage: '在线',
+                })}
+                value={TenantModel.assets.device.online}
+              />
             </Col>
             <Col span={12}>
-              <Statistic title="离线" value={TenantModel.assets.device.offline} />
+              <Statistic
+                title={intl.formatMessage({
+                  id: 'pages.device.instance.status.offLine',
+                  defaultMessage: '离线',
+                })}
+                value={TenantModel.assets.device.offline}
+              />
             </Col>
           </Row>
         </ProCard>
