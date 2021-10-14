@@ -35,8 +35,6 @@ import 'ace-builds/src-noconflict/snippets/json';
 import 'ace-builds/src-noconflict/ext-language_tools';
 import 'ace-builds/src-noconflict/ext-searchbox';
 import 'ace-builds/src-noconflict/theme-eclipse';
-import { propertieInfo } from '../../../service';
-import ProTable from '@/pages/system/permission/component/ProTable';
 
 interface Props extends FormComponentProps {
   close: Function;
@@ -140,7 +138,7 @@ const PropertiesInfo: React.FC<Props> = props => {
 
   const [marksCreated, setMarksCreated] = useState(initState.marksCreated);
   const [mapCenter, setMapCenter] = useState(initState.mapCenter);
-  const [propertiesInfo, setPropertiesInfo] = useState(initState.propertiesInfo);
+  const [propertiesInfo, setPropertiesInfo] = useState<any>({});
   const [gatewayData, setGatewayData] = useState(initState.gatewayDataList);
   const [lineArr, setLineArr] = useState(initState.lineArr);
   const [spinning, setSpinning] = useState(true);
@@ -524,31 +522,25 @@ const PropertiesInfo: React.FC<Props> = props => {
         >
           <Tabs.TabPane tab="列表" key="1">
             <Table
-              rowKey="timestamp"
-              dataSource={propertiesInfo.data}
-              size="small"
-              onChange={onTableChange}
-              pagination={{
-                current: propertiesInfo.pageIndex + 1,
-                total: propertiesInfo.total,
-                pageSize: propertiesInfo.pageSize,
-                simple: true
-              }}
-              columns={initState.eventColumns}
+                loading={spinning}
+                columns={initState.eventColumns}
+                dataSource={(propertiesInfo || {}).data}
+                rowKey="id"
+                size="small"
+                onChange={onTableChange}
+                pagination={{
+                  current: propertiesInfo.pageIndex + 1,
+                  total: propertiesInfo.total,
+                  pageSize: propertiesInfo.pageSize,
+                  showQuickJumper: true,
+                  showSizeChanger: true,
+                  pageSizeOptions: ['10', '20', '50', '100'],
+                  showTotal: (total: number) =>
+                      `共 ${total} 条记录 第  ${propertiesInfo.pageIndex + 1}/${Math.ceil(
+                          propertiesInfo.total / propertiesInfo.pageSize,
+                      )}页`,
+                }}
             />
-
-
-            {/* <ProTable
-              size="small"
-              // loading={loading}
-              dataSource={propertiesInfo?.data}
-              columns={initState.eventColumns}
-              rowKey="id"
-              onSearch={(params: any) => {
-                handleSearch(params);
-              }}
-              paginationConfig={propertiesInfo}
-            /> */}
           </Tabs.TabPane>
 
           {statistics && (
