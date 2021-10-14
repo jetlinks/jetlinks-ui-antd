@@ -32,7 +32,7 @@ const Debugger: React.FC<Props> = (props) => {
             </Row>
             <Tabs>
                 <Tabs.TabPane tab="订阅消息" key="subscribe">
-                    <Form.Item label="订阅Topic">
+                    <Form.Item label="订阅Topic" required={true}>
                         <Input.TextArea rows={4} />
                     </Form.Item>
                     <Form.Item label="订阅数据类型">

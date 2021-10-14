@@ -114,6 +114,7 @@ const Save: React.FC<Props> = props => {
           return (
             <Form.Item label="分隔符">
               {getFieldDecorator('configuration.parserConfiguration.delimited', {
+                rules:[{required:true,message:'分隔符必填'}],
                 initialValue: props.data?.configuration?.parserConfiguration?.delimited,
               })(<Input />)}
             </Form.Item>
@@ -165,6 +166,7 @@ const Save: React.FC<Props> = props => {
           return (
             <Form.Item label="长度值">
               {getFieldDecorator('configuration.parserConfiguration.size', {
+                rules:[{required:true,message:'长度值必填'}],
                 initialValue: props.data?.configuration?.parserConfiguration?.size,
               })(<Input />)}
             </Form.Item>
@@ -178,6 +180,7 @@ const Save: React.FC<Props> = props => {
           return (
             <Form.Item label="分隔符">
               {getFieldDecorator(`cluster[${index}].configuration.parserConfiguration.delimited`, {
+                rules:[{required:true,message:'分隔符必填'}],
                 initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.parserConfiguration?.delimited : '',
               })(<Input />)}
             </Form.Item>
@@ -229,6 +232,7 @@ const Save: React.FC<Props> = props => {
           return (
             <Form.Item label="长度值">
               {getFieldDecorator(`cluster[${index}].configuration.parserConfiguration.size`, {
+                rules:[{required:true,message:'长度值必填'}],
                 initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.parserConfiguration?.size : '',
               })(<Input />)}
             </Form.Item>
@@ -249,7 +253,7 @@ const Save: React.FC<Props> = props => {
                   initialValue: props.data?.configuration?.instance,
                 })(<InputNumber min={1} style={{ width: '100%' }} />)}
               </Form.Item>
-              <Form.Item label="HOST">
+              <Form.Item label="绑定网卡">
                 {getFieldDecorator('configuration.host', {
                   rules:[{required:true,message:'HOST必填'}],
                   initialValue: props.data?.configuration?.host || '0.0.0.0',
@@ -275,7 +279,7 @@ const Save: React.FC<Props> = props => {
                 {getFieldDecorator('configuration.certId', {
                   initialValue: props.data?.configuration?.certId,
                 })(
-                  <Select>
+                  <Select placeholder="请选择">
                     {certificateList.map(item => (
                       <Select.Option key={item.id} value={item.id}>
                         {item.name}
@@ -294,7 +298,7 @@ const Save: React.FC<Props> = props => {
         case 'MQTT_CLIENT':
           return (
             <div>
-              <Form.Item label="clientId">
+              <Form.Item label="客户端ID">
                 {getFieldDecorator('configuration.clientId', {
                   rules:[{required:true,message:'ClientId必填'}],
                   initialValue: props.data?.configuration?.clientId,
@@ -326,7 +330,7 @@ const Save: React.FC<Props> = props => {
                 {getFieldDecorator('configuration.certId', {
                   initialValue: props.data?.configuration?.certId,
                 })(
-                  <Select>
+                  <Select placeholder="请选择">
                     {certificateList.map(item => (
                       <Select.Option key={item.id} value={item.id}>
                         {item.name}
@@ -369,7 +373,7 @@ const Save: React.FC<Props> = props => {
                 {getFieldDecorator('configuration.certId', {
                   initialValue: props.data?.configuration?.certId,
                 })(
-                  <Select>
+                  <Select placeholder="请选择">
                     {certificateList.map(item => (
                       <Select.Option key={item.id} value={item.id}>
                         {item.name}
@@ -435,7 +439,7 @@ const Save: React.FC<Props> = props => {
                 {getFieldDecorator('configuration.certId', {
                   initialValue: props.data?.configuration?.certId,
                 })(
-                  <Select>
+                  <Select placeholder="请选择">
                     {certificateList.map(item => (
                       <Select.Option key={item.id} value={item.id}>
                         {item.name}
@@ -487,15 +491,17 @@ const Save: React.FC<Props> = props => {
         case 'COAP_SERVER':
           return (
             <div>
-              <Form.Item label="本地IP">
+              <Form.Item label="绑定网卡">
                 {getFieldDecorator('configuration.address', {
+                  rules:[{required:true,message:'绑定网卡必填'}],
                   initialValue: props.data?.configuration?.address || '0.0.0.0',
                 })(<Input placeholder="0.0.0.0" />)}
               </Form.Item>
-              <Form.Item label="端口">
+              <Form.Item label="PORT">
                 {getFieldDecorator('configuration.port', {
+                  rules:[{required:true,message:'PORT必填'}],
                   initialValue: props.data?.configuration?.port,
-                })(<Input />)}
+                })(<Input placeholder="请输入"/>)}
               </Form.Item>
 
               <Form.Item label="开启DTLS">
@@ -511,13 +517,13 @@ const Save: React.FC<Props> = props => {
               <Form.Item label="私钥别名">
                 {getFieldDecorator('configuration.privateKeyAlias', {
                   initialValue: props.data?.configuration?.privateKeyAlias,
-                })(<Input />)}
+                })(<Input placeholder="请输入" />)}
               </Form.Item>
               <Form.Item label="证书">
                 {getFieldDecorator('configuration.certId', {
                   initialValue: props.data?.configuration?.certId,
                 })(
-                  <Select>
+                  <Select placeholder="请选择">
                     {certificateList.map(item => (
                       <Select.Option key={item.id} value={item.id}>
                         {item.name}
@@ -531,10 +537,10 @@ const Save: React.FC<Props> = props => {
         case 'COAP_CLIENT':
           return (
             <div>
-              <Form.Item label="URL">
+              <Form.Item label="BaseUrl">
                 {getFieldDecorator('configuration.url', {
                   initialValue: props.data?.configuration?.url,
-                })(<Input />)}
+                })(<Input placeholder="请输入" />)}
               </Form.Item>
               <Form.Item label="超时时间">
                 {getFieldDecorator('configuration.timeout', {
@@ -556,7 +562,7 @@ const Save: React.FC<Props> = props => {
                 {getFieldDecorator('configuration.certId', {
                   initialValue: props.data?.configuration?.certId,
                 })(
-                  <Select>
+                  <Select placeholder="请选择">
                     {certificateList.map(item => (
                       <Select.Option key={item.id} value={item.id}>
                         {item.name}
@@ -576,19 +582,6 @@ const Save: React.FC<Props> = props => {
                   initialValue: props.data?.configuration?.port,
                 })(<Input />)}
               </Form.Item>
-              <Form.Item label="证书">
-                {getFieldDecorator('configuration.certId', {
-                  initialValue: props.data?.configuration?.certId,
-                })(
-                  <Select>
-                    {certificateList.map(item => (
-                      <Select.Option key={item.id} value={item.id}>
-                        {item.name}
-                      </Select.Option>
-                    ))}
-                  </Select>,
-                )}
-              </Form.Item>
               <Form.Item label="开启SSL">
                 {getFieldDecorator('configuration.ssl', {
                   initialValue: props.data?.configuration?.ssl,
@@ -597,6 +590,19 @@ const Save: React.FC<Props> = props => {
                     <Radio value>是</Radio>
                     <Radio value={false}>否</Radio>
                   </Radio.Group>,
+                )}
+              </Form.Item>
+              <Form.Item label="证书">
+                {getFieldDecorator('configuration.certId', {
+                  initialValue: props.data?.configuration?.certId,
+                })(
+                  <Select placeholder="请选择">
+                    {certificateList.map(item => (
+                      <Select.Option key={item.id} value={item.id}>
+                        {item.name}
+                      </Select.Option>
+                    ))}
+                  </Select>,
                 )}
               </Form.Item>
             </div>
@@ -607,20 +613,7 @@ const Save: React.FC<Props> = props => {
               <Form.Item label="baseUrl">
                 {getFieldDecorator('configuration.baseUrl', {
                   initialValue: props.data?.configuration?.baseUrl,
-                })(<Input />)}
-              </Form.Item>
-              <Form.Item label="证书">
-                {getFieldDecorator('configuration.certId', {
-                  initialValue: props.data?.configuration?.certId,
-                })(
-                  <Select>
-                    {certificateList.map(item => (
-                      <Select.Option key={item.id} value={item.id}>
-                        {item.name}
-                      </Select.Option>
-                    ))}
-                  </Select>,
-                )}
+                })(<Input placeholder="请输入" />)}
               </Form.Item>
               <Form.Item label="开启SSL">
                 {getFieldDecorator('configuration.ssl', {
@@ -630,6 +623,19 @@ const Save: React.FC<Props> = props => {
                     <Radio value>是</Radio>
                     <Radio value={false}>否</Radio>
                   </Radio.Group>,
+                )}
+              </Form.Item>
+              <Form.Item label="证书">
+                {getFieldDecorator('configuration.certId', {
+                  initialValue: props.data?.configuration?.certId,
+                })(
+                  <Select placeholder="请选择">
+                    {certificateList.map(item => (
+                      <Select.Option key={item.id} value={item.id}>
+                        {item.name}
+                      </Select.Option>
+                    ))}
+                  </Select>,
                 )}
               </Form.Item>
               <Form.Item label="验证HOST">
@@ -676,7 +682,7 @@ const Save: React.FC<Props> = props => {
                 {getFieldDecorator('configuration.certId', {
                   initialValue: props.data?.configuration?.certId,
                 })(
-                  <Select>
+                  <Select placeholder="请选择">
                     {certificateList.map(item => (
                       <Select.Option key={item.id} value={item.id}>
                         {item.name}
@@ -686,7 +692,7 @@ const Save: React.FC<Props> = props => {
                 )}
               </Form.Item>
 
-              <Form.Item label="HOST">
+              <Form.Item label="绑定网卡">
                 {getFieldDecorator('configuration.host', {
                   rules:[{required:true,message:'HOST必填'}],
                   initialValue: props.data?.configuration?.host || '0.0.0.0',
@@ -703,7 +709,7 @@ const Save: React.FC<Props> = props => {
         case 'WEB_SOCKET_CLIENT':
           return (
             <div>
-              <Form.Item label="uri">
+              <Form.Item label="BaseURL">
                 {getFieldDecorator('configuration.uri', {
                   initialValue: props.data?.configuration?.uri,
                 })(<Input />)}
@@ -732,7 +738,7 @@ const Save: React.FC<Props> = props => {
                 {getFieldDecorator('configuration.certId', {
                   initialValue: props.data?.configuration?.certId,
                 })(
-                  <Select>
+                  <Select placeholder="请选择">
                     {certificateList.map(item => (
                       <Select.Option key={item.id} value={item.id}>
                         {item.name}
@@ -773,7 +779,7 @@ const Save: React.FC<Props> = props => {
                 {getFieldDecorator('configuration.certId', {
                   initialValue: props.data?.configuration?.certId,
                 })(
-                  <Select>
+                  <Select placeholder="请选择">
                     {certificateList.map(item => (
                       <Select.Option key={item.id} value={item.id}>
                         {item.name}
@@ -786,7 +792,7 @@ const Save: React.FC<Props> = props => {
               <Form.Item label="私钥别名">
                 {getFieldDecorator('configuration.privateKeyAlias', {
                   initialValue: props.data?.configuration?.privateKeyAlias,
-                })(<Input />)}
+                })(<Input placeholder="请输入" />)}
               </Form.Item>
               <Form.Item label="远程地址">
                 {getFieldDecorator('configuration.remoteAddress', {
@@ -825,7 +831,7 @@ const Save: React.FC<Props> = props => {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.instance : '',
                 })(<InputNumber min={1} style={{ width: '100%' }} />)}
               </Form.Item>
-              <Form.Item label="HOST">
+              <Form.Item label="绑定网卡">
                 {getFieldDecorator(`cluster[${index}].configuration.host`, {
                   rules:[{required:true,message:'HOST必填'}],
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.host : '0.0.0.0',
@@ -851,7 +857,7 @@ const Save: React.FC<Props> = props => {
                 {getFieldDecorator(`cluster[${index}].configuration.certId`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.certId : '',
                 })(
-                  <Select>
+                  <Select placeholder="请选择">
                     {certificateList.map(item => (
                       <Select.Option key={item.id} value={item.id}>
                         {item.name}
@@ -870,8 +876,9 @@ const Save: React.FC<Props> = props => {
         case 'MQTT_CLIENT':
           return (
             <div>
-              <Form.Item label="clientId">
+              <Form.Item label="客户端ID">
                 {getFieldDecorator(`cluster[${index}].configuration.clientId`, {
+                  rules:[{required:true,message:'ClientId必填'}],
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.clientId : '',
                 })(<Input />)}
               </Form.Item>
@@ -901,7 +908,7 @@ const Save: React.FC<Props> = props => {
                 {getFieldDecorator(`cluster[${index}].configuration.certId`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.certId : '',
                 })(
-                  <Select>
+                  <Select placeholder="请选择">
                     {certificateList.map(item => (
                       <Select.Option key={item.id} value={item.id}>
                         {item.name}
@@ -944,7 +951,7 @@ const Save: React.FC<Props> = props => {
                 {getFieldDecorator(`cluster[${index}].configuration.certId`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.certId : '',
                 })(
-                  <Select>
+                  <Select placeholder="请选择">
                     {certificateList.map(item => (
                       <Select.Option key={item.id} value={item.id}>
                         {item.name}
@@ -1010,7 +1017,7 @@ const Save: React.FC<Props> = props => {
                 {getFieldDecorator(`cluster[${index}].configuration.certId`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.certId : '',
                 })(
-                  <Select>
+                  <Select placeholder="请选择">
                     {certificateList.map(item => (
                       <Select.Option key={item.id} value={item.id}>
                         {item.name}
@@ -1062,15 +1069,17 @@ const Save: React.FC<Props> = props => {
         case 'COAP_SERVER':
           return (
             <div>
-              <Form.Item label="本地IP">
+              <Form.Item label="绑定网卡">
                 {getFieldDecorator(`cluster[${index}].configuration.address`, {
+                  rules:[{required:true,message:'绑定网卡必填'}],
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.address : '0.0.0.0',
                 })(<Input placeholder="0.0.0.0" />)}
               </Form.Item>
-              <Form.Item label="端口">
+              <Form.Item label="PORT">
                 {getFieldDecorator(`cluster[${index}].configuration.port`, {
+                  rules:[{required:true,message:'PORT必填'}],
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.port : '',
-                })(<Input />)}
+                })(<Input placeholder="请输入"/>)}
               </Form.Item>
 
               <Form.Item label="开启DTLS">
@@ -1086,13 +1095,13 @@ const Save: React.FC<Props> = props => {
               <Form.Item label="私钥别名">
                 {getFieldDecorator(`cluster[${index}].configuration.privateKeyAlias`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.privateKeyAlias : '',
-                })(<Input />)}
+                })(<Input placeholder="请输入" />)}
               </Form.Item>
               <Form.Item label="证书">
                 {getFieldDecorator(`cluster[${index}].configuration.certId`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.certId : '',
                 })(
-                  <Select>
+                  <Select placeholder="请选择">
                     {certificateList.map(item => (
                       <Select.Option key={item.id} value={item.id}>
                         {item.name}
@@ -1106,10 +1115,10 @@ const Save: React.FC<Props> = props => {
         case 'COAP_CLIENT':
           return (
             <div>
-              <Form.Item label="URL">
+              <Form.Item label="BaseUrl">
                 {getFieldDecorator(`cluster[${index}].configuration.url`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.url : '',
-                })(<Input />)}
+                })(<Input placeholder="请输入" />)}
               </Form.Item>
               <Form.Item label="超时时间">
                 {getFieldDecorator(`cluster[${index}].configuration.timeout`, {
@@ -1131,7 +1140,7 @@ const Save: React.FC<Props> = props => {
                 {getFieldDecorator(`cluster[${index}].configuration.certId`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.certId : '',
                 })(
-                  <Select>
+                  <Select placeholder="请选择">
                     {certificateList.map(item => (
                       <Select.Option key={item.id} value={item.id}>
                         {item.name}
@@ -1147,21 +1156,9 @@ const Save: React.FC<Props> = props => {
             <div>
               <Form.Item label="PORT">
                 {getFieldDecorator(`cluster[${index}].configuration.port`, {
+                  rules:[{required:true,message:'PORT必填'}],
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.port : '',
                 })(<Input />)}
-              </Form.Item>
-              <Form.Item label="证书">
-                {getFieldDecorator(`cluster[${index}].configuration.certId`, {
-                  initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.certId : '',
-                })(
-                  <Select>
-                    {certificateList.map(item => (
-                      <Select.Option key={item.id} value={item.id}>
-                        {item.name}
-                      </Select.Option>
-                    ))}
-                  </Select>,
-                )}
               </Form.Item>
               <Form.Item label="开启SSL">
                 {getFieldDecorator(`cluster[${index}].configuration.ssl`, {
@@ -1171,6 +1168,19 @@ const Save: React.FC<Props> = props => {
                     <Radio value>是</Radio>
                     <Radio value={false}>否</Radio>
                   </Radio.Group>,
+                )}
+              </Form.Item>
+              <Form.Item label="证书">
+                {getFieldDecorator(`cluster[${index}].configuration.certId`, {
+                  initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.certId : '',
+                })(
+                  <Select placeholder="请选择">
+                    {certificateList.map(item => (
+                      <Select.Option key={item.id} value={item.id}>
+                        {item.name}
+                      </Select.Option>
+                    ))}
+                  </Select>,
                 )}
               </Form.Item>
             </div>
@@ -1181,20 +1191,7 @@ const Save: React.FC<Props> = props => {
               <Form.Item label="baseUrl">
                 {getFieldDecorator(`cluster[${index}].configuration.baseUrl`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.baseUrl : '',
-                })(<Input />)}
-              </Form.Item>
-              <Form.Item label="证书">
-                {getFieldDecorator(`cluster[${index}].configuration.certId`, {
-                  initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.certId : '',
-                })(
-                  <Select>
-                    {certificateList.map(item => (
-                      <Select.Option key={item.id} value={item.id}>
-                        {item.name}
-                      </Select.Option>
-                    ))}
-                  </Select>,
-                )}
+                })(<Input placeholder="请输入" />)}
               </Form.Item>
               <Form.Item label="开启SSL">
                 {getFieldDecorator(`cluster[${index}].configuration.ssl`, {
@@ -1204,6 +1201,19 @@ const Save: React.FC<Props> = props => {
                     <Radio value>是</Radio>
                     <Radio value={false}>否</Radio>
                   </Radio.Group>,
+                )}
+              </Form.Item>
+              <Form.Item label="证书">
+                {getFieldDecorator(`cluster[${index}].configuration.certId`, {
+                  initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.certId : '',
+                })(
+                  <Select placeholder="请选择">
+                    {certificateList.map(item => (
+                      <Select.Option key={item.id} value={item.id}>
+                        {item.name}
+                      </Select.Option>
+                    ))}
+                  </Select>,
                 )}
               </Form.Item>
               <Form.Item label="验证HOST">
@@ -1250,7 +1260,7 @@ const Save: React.FC<Props> = props => {
                 {getFieldDecorator(`cluster[${index}].configuration.certId`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.certId : '',
                 })(
-                  <Select>
+                  <Select placeholder="请选择">
                     {certificateList.map(item => (
                       <Select.Option key={item.id} value={item.id}>
                         {item.name}
@@ -1260,7 +1270,7 @@ const Save: React.FC<Props> = props => {
                 )}
               </Form.Item>
 
-              <Form.Item label="HOST">
+              <Form.Item label="绑定网卡">
                 {getFieldDecorator(`cluster[${index}].configuration.host`, {
                   rules:[{required:true,message:'HOST必填'}],
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.host : '0.0.0.0',
@@ -1277,7 +1287,7 @@ const Save: React.FC<Props> = props => {
         case 'WEB_SOCKET_CLIENT':
           return (
             <div>
-              <Form.Item label="uri">
+              <Form.Item label="BaseURL">
                 {getFieldDecorator(`cluster[${index}].configuration.uri`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.uri : '',
                 })(<Input />)}
@@ -1306,7 +1316,7 @@ const Save: React.FC<Props> = props => {
                 {getFieldDecorator(`cluster[${index}].configuration.certId`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.certId : '',
                 })(
-                  <Select>
+                  <Select placeholder="请选择">
                     {certificateList.map(item => (
                       <Select.Option key={item.id} value={item.id}>
                         {item.name}
@@ -1347,7 +1357,7 @@ const Save: React.FC<Props> = props => {
                 {getFieldDecorator(`cluster[${index}].configuration.certId`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.certId : '',
                 })(
-                  <Select>
+                  <Select placeholder="请选择">
                     {certificateList.map(item => (
                       <Select.Option key={item.id} value={item.id}>
                         {item.name}
@@ -1360,7 +1370,7 @@ const Save: React.FC<Props> = props => {
               <Form.Item label="私钥别名">
                 {getFieldDecorator(`cluster[${index}].configuration.privateKeyAlias`, {
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.privateKeyAlias : '',
-                })(<Input />)}
+                })(<Input placeholder="请输入" />)}
               </Form.Item>
               <Form.Item label="远程地址">
                 {getFieldDecorator(`cluster[${index}].configuration.remoteAddress`, {

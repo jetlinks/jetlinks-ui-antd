@@ -157,7 +157,7 @@ const MqttClient: React.FC<Props> = props => {
       <Tabs defaultActiveKey={action} onChange={e => setAction(e)}>
         <Tabs.TabPane tab="订阅消息" key="_subscribe">
           <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
-            <Form.Item label="订阅Topic">
+            <Form.Item label="订阅Topic" required={true}>
               <Input.TextArea
                 rows={2}
                 onChange={e => {
@@ -189,7 +189,7 @@ const MqttClient: React.FC<Props> = props => {
 
         <Tabs.TabPane tab="推送消息" key="_publish">
           <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
-            <Form.Item label="推送Topic">
+            <Form.Item label="推送Topic" required= {true}>
               <Input
                 onChange={e => {
                   publishData.topic = e.target.value;
