@@ -83,7 +83,7 @@ const BindUser: React.FC<Props> = props => {
     setLoading(true);
     let list: any[] = [];
     selectRow.map(item => {
-      list.push(item.id);
+      list.push(item);
     });
     apis.role.unBindUser(props.data.id, list).then(response => {
       if (response) {
@@ -119,7 +119,7 @@ const BindUser: React.FC<Props> = props => {
   const rowSelection = {
     selectedRowKeys:selectRow,
     onChange: (selectedRowKeys: any, selectedRows: any) => {
-      
+
       setSelectRow(selectedRowKeys);
       // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
     },
@@ -185,7 +185,7 @@ const BindUser: React.FC<Props> = props => {
           data={props.data}
           checkedUser={userList}
           close={() => {
-            
+
             setBindVisible(false);
             handleSearch(searchParam);
           }}

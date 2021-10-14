@@ -380,11 +380,13 @@ const Save: React.FC<Props> = props => {
               </Form.Item>
               <Form.Item label="HOST">
                 {getFieldDecorator('configuration.host', {
+                  rules:[{required:true,message:'HOST必填'}],
                   initialValue: props.data?.configuration?.host || '0.0.0.0',
                 })(<Input />)}
               </Form.Item>
               <Form.Item label="PORT">
                 {getFieldDecorator('configuration.port', {
+                  rules:[{required:true,message:'PORT必填'}],
                   initialValue: props.data?.configuration?.port,
                 })(<Input />)}
               </Form.Item>
@@ -444,11 +446,13 @@ const Save: React.FC<Props> = props => {
               </Form.Item>
               <Form.Item label="HOST">
                 {getFieldDecorator('configuration.host', {
+                  rules:[{required:true,message:'HOST必填'}],
                   initialValue: props.data?.configuration?.host || '0.0.0.0',
                 })(<Input />)}
               </Form.Item>
               <Form.Item label="PORT">
                 {getFieldDecorator('configuration.port', {
+                  rules:[{required:true,message:'PORT必填'}],
                   initialValue: props.data?.configuration?.port,
                 })(<Input />)}
               </Form.Item>
@@ -568,6 +572,7 @@ const Save: React.FC<Props> = props => {
             <div>
               <Form.Item label="PORT">
                 {getFieldDecorator('configuration.port', {
+                  rules:[{required:true,message:'PORT必填'}],
                   initialValue: props.data?.configuration?.port,
                 })(<Input />)}
               </Form.Item>
@@ -683,11 +688,13 @@ const Save: React.FC<Props> = props => {
 
               <Form.Item label="HOST">
                 {getFieldDecorator('configuration.host', {
+                  rules:[{required:true,message:'HOST必填'}],
                   initialValue: props.data?.configuration?.host || '0.0.0.0',
                 })(<Input />)}
               </Form.Item>
               <Form.Item label="PORT">
                 {getFieldDecorator('configuration.port', {
+                  rules:[{required:true,message:'POST必填'}],
                   initialValue: props.data?.configuration?.port,
                 })(<Input />)}
               </Form.Item>
@@ -737,11 +744,13 @@ const Save: React.FC<Props> = props => {
 
               <Form.Item label="HOST">
                 {getFieldDecorator('configuration.host', {
+                  rules:[{required:true,message:'HOST必填'}],
                   initialValue: props.data?.configuration?.host || '0.0.0.0',
                 })(<Input />)}
               </Form.Item>
               <Form.Item label="PORT">
                 {getFieldDecorator('configuration.port', {
+                  rules:[{required:true,message:'PORT必填'}],
                   initialValue: props.data?.configuration?.port,
                 })(<Input />)}
               </Form.Item>
@@ -818,11 +827,13 @@ const Save: React.FC<Props> = props => {
               </Form.Item>
               <Form.Item label="HOST">
                 {getFieldDecorator(`cluster[${index}].configuration.host`, {
+                  rules:[{required:true,message:'HOST必填'}],
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.host : '0.0.0.0',
                 })(<Input />)}
               </Form.Item>
               <Form.Item label="PORT">
                 {getFieldDecorator(`cluster[${index}].configuration.port`, {
+                  rules:[{required:true,message:'PORT必填'}],
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.port : '',
                 })(<Input />)}
               </Form.Item>
@@ -866,11 +877,13 @@ const Save: React.FC<Props> = props => {
               </Form.Item>
               <Form.Item label="HOST">
                 {getFieldDecorator(`cluster[${index}].configuration.host`, {
+                  rules:[{required:true,message:'HOST必填'}],
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.host : '0.0.0.0',
                 })(<Input />)}
               </Form.Item>
               <Form.Item label="PORT">
                 {getFieldDecorator(`cluster[${index}].configuration.port`, {
+                  rules:[{required:true,message:'PORT必填'}],
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.port : '',
                 })(<Input />)}
               </Form.Item>
@@ -942,11 +955,13 @@ const Save: React.FC<Props> = props => {
               </Form.Item>
               <Form.Item label="HOST">
                 {getFieldDecorator(`cluster[${index}].configuration.host`, {
+                  rules:[{required:true,message:'HOST必填'}],
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.host : '0.0.0.0',
                 })(<Input />)}
               </Form.Item>
               <Form.Item label="PORT">
                 {getFieldDecorator(`cluster[${index}].configuration.port`, {
+                  rules:[{required:true,message:'PORT必填'}],
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.port : '',
                 })(<Input />)}
               </Form.Item>
@@ -1006,11 +1021,13 @@ const Save: React.FC<Props> = props => {
               </Form.Item>
               <Form.Item label="HOST">
                 {getFieldDecorator(`cluster[${index}].configuration.host`, {
+                  rules:[{required:true,message:'HOST必填'}],
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.host : '0.0.0.0',
                 })(<Input />)}
               </Form.Item>
               <Form.Item label="PORT">
                 {getFieldDecorator(`cluster[${index}].configuration.port`, {
+                  rules:[{required:true,message:'PORT必填'}],
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.port : '',
                 })(<Input />)}
               </Form.Item>
@@ -1245,11 +1262,13 @@ const Save: React.FC<Props> = props => {
 
               <Form.Item label="HOST">
                 {getFieldDecorator(`cluster[${index}].configuration.host`, {
+                  rules:[{required:true,message:'HOST必填'}],
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.host : '0.0.0.0',
                 })(<Input />)}
               </Form.Item>
               <Form.Item label="PORT">
                 {getFieldDecorator(`cluster[${index}].configuration.port`, {
+                  rules:[{required:true,message:'PORT必填'}],
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.port : '',
                 })(<Input />)}
               </Form.Item>
@@ -1299,11 +1318,13 @@ const Save: React.FC<Props> = props => {
 
               <Form.Item label="HOST">
                 {getFieldDecorator(`cluster[${index}].configuration.host`, {
+                  rules:[{required:true,message:'HOST必填'}],
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.host : '0.0.0.0',
                 })(<Input />)}
               </Form.Item>
               <Form.Item label="PORT">
                 {getFieldDecorator(`cluster[${index}].configuration.port`, {
+                  rules:[{required:true,message:'PORT必填'}],
                   initialValue: props.data?.cluster ? props.data?.cluster[index]?.configuration?.port : '',
                 })(<Input />)}
               </Form.Item>
