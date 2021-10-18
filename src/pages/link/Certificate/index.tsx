@@ -1,12 +1,13 @@
-import { PageContainer } from '@ant-design/pro-layout';
+import {PageContainer} from '@ant-design/pro-layout';
 import BaseService from '@/utils/BaseService';
-import type { CertificateItem } from '@/pages/link/Certificate/typings';
-import { useRef } from 'react';
-import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { Tooltip } from 'antd';
-import { EditOutlined, MinusOutlined } from '@ant-design/icons';
+import type {CertificateItem} from '@/pages/link/Certificate/typings';
+import {useRef} from 'react';
+import type {ActionType, ProColumns} from '@jetlinks/pro-table';
+import {Tooltip} from 'antd';
+import {EditOutlined, MinusOutlined} from '@ant-design/icons';
 import BaseCrud from '@/components/BaseCrud';
-import { useIntl } from '@@/plugin-locale/localeExports';
+import {useIntl} from '@@/plugin-locale/localeExports';
+import {ISchema} from "@formily/json-schema";
 
 export const service = new BaseService<CertificateItem>('network/certificate');
 const Certificate = () => {
@@ -56,7 +57,7 @@ const Certificate = () => {
               defaultMessage: '编辑',
             })}
           >
-            <EditOutlined />
+            <EditOutlined/>
           </Tooltip>
         </a>,
         <a>
@@ -66,14 +67,73 @@ const Certificate = () => {
               defaultMessage: '删除',
             })}
           >
-            <MinusOutlined />
+            <MinusOutlined/>
           </Tooltip>
         </a>,
       ],
     },
   ];
 
-  const schema = {};
+  // todo Upload 组件思考
+  const schema: ISchema = {
+    type: 'object',
+    properties: {
+      name: {
+        title: '名称',
+        'x-component': 'Input',
+        'x-decorator': 'FormItem',
+      },
+      instance: {
+        title: '类型',
+        'x-component': 'Select',
+        'x-decorator': 'FormItem',
+        default: 'PEM',
+        enum: [
+          {label: 'PFX', value: 'PFX'},
+          {label: 'JKS', value: 'JKS'},
+          {label: 'PEM', value: 'PEM'},
+        ]
+      },
+      'configs.keystoreBase64': {
+        title: '密钥库',
+        'x-component': 'Upload',
+        'x-decorator': 'FormItem',
+      },
+      'configs.keystorePwd': {
+        title: '密钥库密码',
+        'x-component': 'Password',
+        'x-decorator': 'FormItem',
+        'x-visible': false,
+        'x-component-props': {
+          style: {
+            width: '100%'
+          }
+        }
+      },
+      'configs.trustKeyStoreBase64': {
+        title: '信任库',
+        'x-component': 'Upload',
+        'x-decorator': 'FormItem',
+        'x-component-props': {
+          style: {
+            width: '100px'
+          }
+        }
+      },
+      'configs.trustKeyStorePwd': {
+        title: '信任库密码',
+        'x-visible': false,
+        'x-decorator': 'FormItem',
+        'x-component': 'Password',
+
+      },
+      description: {
+        title: '描述',
+        'x-component': 'Input.TextArea',
+        'x-decorator': 'FormItem',
+      }
+    }
+  };
 
   return (
     <PageContainer>
