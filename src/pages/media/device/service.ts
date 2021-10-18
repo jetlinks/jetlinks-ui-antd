@@ -75,7 +75,7 @@ class Service extends BaseService<any> {
         request(`/jetlinks/media/device/${deviceId}/${channelId}/_stop`, { method: 'POST' }),
       ).pipe(
         filter(resp => resp.status === 200),
-        map(resp => resp.result),
+        map(resp => resp),
       ),
     );
 

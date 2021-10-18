@@ -53,20 +53,26 @@ const Play = (props: Props) => {
         }
     };
 
-    //刷新
+    // 刷新
     const refresh = () => {
         setBloading(true);
-        //关闭流
-        service.getStop(props.data.deviceId, props.data.channelId).subscribe(() => {
-            //开启流
-            service.getPlay(props.data.deviceId, props.data.channelId).subscribe(res => {
-                setUrl(res[protocol]);
-                setProtocol(protocol);
-                setBloading(false);
-                setUrlItem(res);
-            });
-        })
+        // 开启流
+        service.getPlay(props.data.deviceId, props.data.channelId).subscribe(res => {
+            setUrl(res[protocol]);
+            setProtocol(protocol);
+            setBloading(false);
+            setUrlItem(res);
+        });
     };
+
+    // 重置
+    const reload = () => {
+      setBloading(true);
+      // 关闭流
+      service.getStop(props.data.deviceId, props.data.channelId).subscribe(() => {
+        setBloading(false);
+      });
+    }
 
     return (
         <Modal
@@ -81,8 +87,10 @@ const Play = (props: Props) => {
             <div className={styles.player_box}>
                 <div className={styles.player_left}>
                     <div className={styles.video_box}>
-                        <live-player muted fluent loading={bloading} autoplay live protocol={protocol} video-url={url}></live-player>
+                        {/*<live-player muted fluent loading={bloading} autoplay live protocol={protocol} video-url={url}></live-player>*/}
+                        <easy-player muted fluent loading={bloading} autoplay live protocol={protocol} video-url={url}></easy-player>
                         <div className={styles.video_lose} onClick={() => {refresh()}}>刷新</div>
+                        <div className={styles.video_refresh} onClick={() => {reload()}}>重置</div>
                     </div>
                     <div className={styles.bottom}>
                         <Radio.Group defaultValue="mp4" buttonStyle="solid" onChange={(e) => {

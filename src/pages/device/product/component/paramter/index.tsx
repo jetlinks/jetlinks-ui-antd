@@ -687,10 +687,10 @@ const Paramter: React.FC<Props> = props => {
       case 'object':
         return (
           <Form.Item label="JSON对象">
-            {(data.valueType.parameters || []).length > 0 && (
+            {(data.valueType.properties || []).length > 0 && (
               <List
                 bordered
-                dataSource={data.valueType.parameters || []}
+                dataSource={data.valueType.properties || []}
                 renderItem={(item: any) => (
                   <List.Item
                     actions={[
@@ -706,10 +706,10 @@ const Paramter: React.FC<Props> = props => {
                       <Button
                         type="link"
                         onClick={() => {
-                          const index = data.valueType.parameters.findIndex(
+                          const index = data.valueType.properties.findIndex(
                             (i: any) => i.id === item.id,
                           );
-                          data.valueType.parameters.splice(index, 1);
+                          data.valueType.properties.splice(index, 1);
                           setData({ ...data });
                         }}
                       >
@@ -976,14 +976,14 @@ const Paramter: React.FC<Props> = props => {
           data={currentParameter}
           unitsData={props.unitsData}
           save={item => {
-            if (!data.valueType.parameters) {
-              data.valueType.parameters = [];
+            if (!data.valueType.properties) {
+              data.valueType.properties = [];
             }
-            const index = data.valueType.parameters.findIndex((e: any) => e.id === item.id);
+            const index = data.valueType.properties.findIndex((e: any) => e.id === item.id);
             if (index === -1) {
-              data.valueType.parameters.push(item);
+              data.valueType.properties.push(item);
             } else {
-              data.valueType.parameters[index] = item;
+              data.valueType.properties[index] = item;
             }
             setData({ ...data });
             // props.close();

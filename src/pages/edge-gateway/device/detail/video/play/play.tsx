@@ -50,7 +50,7 @@ const Play = (props: Props) => {
         if (playing) {
             service.getControlStop(props.deviceId, {deviceId: props.data.deviceId, channelId: props.data.channelId}).subscribe(() => {
             })
-        }  
+        }
     }
 
     //刷新
@@ -81,7 +81,8 @@ const Play = (props: Props) => {
             <div className={styles.player_box}>
                 <div className={styles.player_left}>
                     <div className={styles.video_box}>
-                        <live-player muted fluent loading={bloading} autoplay live protocol={protocol} video-url={url}></live-player>
+                        {/*<live-player muted fluent loading={bloading} autoplay live protocol={protocol} video-url={url}></live-player>*/}
+                        <easy-player muted fluent loading={bloading} autoplay live protocol={protocol} video-url={url}></easy-player>
                         <div className={styles.video_lose} onClick={() => {refresh()}}>刷新</div>
                     </div>
                     <div className={styles.bottom}>
