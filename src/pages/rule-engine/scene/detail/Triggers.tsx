@@ -136,9 +136,9 @@ const Trigger: React.FC<Props> = props => {
                                         <Select placeholder="操作符" defaultValue={item.operator}>
                                             <Select.Option value="eq">等于(=)</Select.Option>
                                             <Select.Option value="not">不等于(!=)</Select.Option>
-                                            <Select.Option value="gt">大于(>)</Select.Option>
+                                            <Select.Option value="gt">大于({'>'})</Select.Option>
                                             <Select.Option value="lt">小于(&lt;)</Select.Option>
-                                            <Select.Option value="gte">大于等于(>=)</Select.Option>
+                                            <Select.Option value="gte">大于等于({'>'}=)</Select.Option>
                                             <Select.Option value="lte">小于等于(&lt;=)</Select.Option>
                                             <Select.Option value="like">模糊(%)</Select.Option>
                                         </Select>
