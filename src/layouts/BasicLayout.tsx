@@ -191,7 +191,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
     <ProLayout
       // logo={logo}
       logo={settings.titleIcon || logo}
-      
+
       menuHeaderRender={(logoDom, titleDom) => (
         <Link to="/">
           {logoDom}
@@ -203,7 +203,9 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
         if (menuItemProps.isUrl || menuItemProps.children || !menuItemProps.path) {
           return defaultDom;
         }
-
+        if(menuItemProps.path === '/data-screen/big-screen'){
+          return <a target="_blank" href={`http://117.78.17.29/jetlinks-view/api/implant/v3/project/${token}`}>{defaultDom}</a>
+        }
         return <Link to={menuItemProps.path}>{defaultDom}</Link>;
       }}
       breadcrumbRender={(routers = []) => [
