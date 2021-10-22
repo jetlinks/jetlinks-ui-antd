@@ -475,7 +475,8 @@ export const routes = [
                   tenant: ['admin', 'big-screen'],
                   iconfont: 'icon-screen',
                   authority: ['big-screen'],
-                  version: 'pro'
+                  version: 'pro',
+                  component: './data-screen/screen',
               }
               // {
               //   path: '/data-screen/category',
