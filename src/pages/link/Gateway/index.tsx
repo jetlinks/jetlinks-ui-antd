@@ -1,9 +1,8 @@
-import { PageContainer } from '@ant-design/pro-layout';
-import BaseService from '@/utils/BaseService';
-import type { GatewayItem } from '@/pages/link/Gateway/typings';
-import { useRef } from 'react';
-import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { Tooltip } from 'antd';
+import {PageContainer} from '@ant-design/pro-layout';
+import type {GatewayItem} from '@/pages/link/Gateway/typings';
+import {useEffect, useRef} from 'react';
+import type {ActionType, ProColumns} from '@jetlinks/pro-table';
+import {Tooltip} from 'antd';
 import {
   ArrowDownOutlined,
   BarsOutlined,
@@ -12,9 +11,14 @@ import {
   MinusOutlined,
 } from '@ant-design/icons';
 import BaseCrud from '@/components/BaseCrud';
-import { useIntl } from '@@/plugin-locale/localeExports';
+import {useIntl} from '@@/plugin-locale/localeExports';
+import {ISchema} from "@formily/json-schema";
+import Service from "@/pages/link/Gateway/service";
+import linkService from "@/pages/link/service";
+import GatewayModel from "@/pages/link/Gateway/model";
 
-export const service = new BaseService<GatewayItem>('network/config');
+export const service = new Service('network/config');
+
 const Gateway = () => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
@@ -63,7 +67,7 @@ const Gateway = () => {
               defaultMessage: '编辑',
             })}
           >
-            <EditOutlined />
+            <EditOutlined/>
           </Tooltip>
         </a>,
         <a>
@@ -73,7 +77,7 @@ const Gateway = () => {
               defaultMessage: '删除',
             })}
           >
-            <MinusOutlined />
+            <MinusOutlined/>
           </Tooltip>
         </a>,
         <a>
@@ -83,7 +87,7 @@ const Gateway = () => {
               defaultMessage: '下载配置',
             })}
           >
-            <ArrowDownOutlined />
+            <ArrowDownOutlined/>
           </Tooltip>
         </a>,
         <a>
@@ -93,7 +97,7 @@ const Gateway = () => {
               defaultMessage: '调试',
             })}
           >
-            <BugOutlined />
+            <BugOutlined/>
           </Tooltip>
         </a>,
         <a>
@@ -103,14 +107,36 @@ const Gateway = () => {
               defaultMessage: '通知记录',
             })}
           >
-            <BarsOutlined />
+            <BarsOutlined/>
           </Tooltip>
         </a>,
       ],
     },
   ];
 
-  const schema = {};
+  const getProviders = () => {
+    linkService.getProviders().subscribe(data => {
+      GatewayModel.provider = data;
+    });
+  }
+
+  useEffect(() => {
+    getProviders();
+  }, []);
+
+  const schema: ISchema = {
+    type: 'object',
+    properties: {
+      name: {},
+      type: {
+        title: '类型',
+        'x-component': 'Select',
+        enum: GatewayModel.provider
+      },
+      network: {},
+      description: {}
+    }
+  };
 
   return (
     <PageContainer>

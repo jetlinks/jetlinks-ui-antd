@@ -1,4 +1,4 @@
-import type { BaseItem, State } from '@/utils/typings';
+import type {BaseItem, State} from '@/utils/typings';
 
 type GatewayItem = {
   networkId: string;

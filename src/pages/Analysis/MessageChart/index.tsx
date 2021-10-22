@@ -1,7 +1,7 @@
-import { Column } from '@ant-design/charts';
+import {Column, ColumnConfig} from '@ant-design/charts';
 import moment from 'moment';
-import { useEffect } from 'react';
-import { service } from '@/pages/Analysis';
+import {useEffect} from 'react';
+import {service} from '@/pages/Analysis';
 
 const calculationDate = () => {
   const dd = new Date();
@@ -97,13 +97,13 @@ const MessageChart = () => {
 
   const paletteSemanticRed = '#F4664A';
   const brandColor = '#5B8FF9';
-  const config = {
+  const config: ColumnConfig = {
     data,
     xField: 'type',
     yField: 'value',
     seriesField: '',
     color: function color(_ref: any) {
-      const { type } = _ref;
+      const {type} = _ref;
       if (type === '10-30分' || type === '30+分') {
         return paletteSemanticRed;
       }
