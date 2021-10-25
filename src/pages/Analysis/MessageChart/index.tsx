@@ -1,4 +1,4 @@
-import { Column } from '@ant-design/charts';
+import { Column, ColumnConfig } from '@ant-design/charts';
 import moment from 'moment';
 import { useEffect } from 'react';
 import { service } from '@/pages/Analysis';
@@ -97,7 +97,7 @@ const MessageChart = () => {
 
   const paletteSemanticRed = '#F4664A';
   const brandColor = '#5B8FF9';
-  const config = {
+  const config: ColumnConfig = {
     data,
     xField: 'type',
     yField: 'value',

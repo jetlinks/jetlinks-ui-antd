@@ -8,8 +8,10 @@ import SystemConst from '@/utils/const';
 import { useEffect, useRef } from 'react';
 import { BindModel } from '@/components/BindUser/model';
 import { columns, service } from '@/components/BindUser/index';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 const Unbound = observer(() => {
+  const intl = useIntl();
   const actionRef = useRef<ActionType>();
 
   useEffect(() => {
@@ -20,9 +22,20 @@ const Unbound = observer(() => {
   });
 
   const handleBindResult = {
-    next: () => message.success('绑定成功'),
+    next: () =>
+      message.success(
+        intl.formatMessage({
+          id: 'pages.bindUser.bindTheNewUser.success',
+          defaultMessage: '绑定成功',
+        }),
+      ),
     error: async () => {
-      message.success('绑定失败');
+      message.success(
+        intl.formatMessage({
+          id: 'pages.bindUser.bindTheNewUser.fail',
+          defaultMessage: '绑定失败',
+        }),
+      );
     },
     complete: () => {
       // 通知左侧组件刷新
@@ -64,13 +77,21 @@ const Unbound = observer(() => {
         handleOrgBind();
         break;
       default:
-        message.error('绑定类型数据错误');
+        message.error(
+          intl.formatMessage({
+            id: 'pages.bindUser.bindTheNewUser.typeError',
+            defaultMessage: '绑定类型数据错误',
+          }),
+        );
     }
   };
 
   return (
     <Card
-      title="绑定新用户"
+      title={intl.formatMessage({
+        id: 'pages.bindUser.bindTheNewUser',
+        defaultMessage: '绑定新用户',
+      })}
       extra={
         <CloseOutlined
           onClick={() => {
@@ -94,16 +115,32 @@ const Unbound = observer(() => {
         tableAlertRender={({ selectedRowKeys, onCleanSelected }) => (
           <Space size={24}>
             <span>
-              已选 {selectedRowKeys.length} 项
+              {intl.formatMessage({
+                id: 'pages.bindUser.bindTheNewUser.selected',
+                defaultMessage: '已选',
+              })}{' '}
+              {selectedRowKeys.length}{' '}
+              {intl.formatMessage({
+                id: 'pages.bindUser.bindTheNewUser.item',
+                defaultMessage: '项',
+              })}
               <a style={{ marginLeft: 8 }} onClick={onCleanSelected}>
-                取消选择
+                {intl.formatMessage({
+                  id: 'pages.bindUser.bindTheNewUser.deselect',
+                  defaultMessage: '取消选择',
+                })}
               </a>
             </span>
           </Space>
         )}
         tableAlertOptionRender={() => (
           <Space size={16}>
-            <a onClick={handleBind}>批量绑定</a>
+            <a onClick={handleBind}>
+              {intl.formatMessage({
+                id: 'pages.bindUser.bindTheNewUser.bulkBinds',
+                defaultMessage: '批量绑定',
+              })}
+            </a>
           </Space>
         )}
         size="small"

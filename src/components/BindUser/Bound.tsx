@@ -23,10 +23,20 @@ const Bound = observer(() => {
 
   const handleUnBindResult = {
     next: async () => {
-      message.success('解绑成功');
+      message.success(
+        intl.formatMessage({
+          id: 'pages.bindUser.theBoundUser.success',
+          defaultMessage: '解绑成功',
+        }),
+      );
     },
     error: async () => {
-      message.error('操作失败');
+      message.error(
+        intl.formatMessage({
+          id: 'pages.bindUser.theBoundUser.fail',
+          defaultMessage: '操作失败',
+        }),
+      );
     },
     complete: () => {
       // 通知右侧组建刷新
@@ -56,7 +66,12 @@ const Bound = observer(() => {
         handleOrgUnBind();
         break;
       default:
-        message.error('解绑类型数据错误');
+        message.error(
+          intl.formatMessage({
+            id: 'pages.bindUser.theBoundUser.typeError',
+            defaultMessage: '解绑类型数据错误',
+          }),
+        );
     }
   };
 
@@ -79,16 +94,32 @@ const Bound = observer(() => {
         tableAlertRender={({ selectedRowKeys, onCleanSelected }) => (
           <Space size={24}>
             <span>
-              已选 {selectedRowKeys.length} 项
+              {intl.formatMessage({
+                id: 'pages.bindUser.bindTheNewUser.selected',
+                defaultMessage: '已选',
+              })}{' '}
+              {selectedRowKeys.length}{' '}
+              {intl.formatMessage({
+                id: 'pages.bindUser.bindTheNewUser.item',
+                defaultMessage: '项',
+              })}
               <a style={{ marginLeft: 8 }} onClick={onCleanSelected}>
-                取消选择
+                {intl.formatMessage({
+                  id: 'pages.bindUser.bindTheNewUser.deselect',
+                  defaultMessage: '取消选择',
+                })}
               </a>
             </span>
           </Space>
         )}
         tableAlertOptionRender={() => (
           <Space size={16}>
-            <a onClick={handleUnbind}>批量解绑</a>
+            <a onClick={handleUnbind}>
+              {intl.formatMessage({
+                id: 'pages.bindUser.bindTheNewUser.untieInBulk',
+                defaultMessage: '批量解绑',
+              })}
+            </a>
           </Space>
         )}
         actionRef={actionRef}
