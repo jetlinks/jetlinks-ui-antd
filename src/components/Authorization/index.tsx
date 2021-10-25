@@ -5,12 +5,12 @@ import { useCallback, useEffect, useMemo } from 'react';
 import encodeQuery from '@/utils/encodeQuery';
 import { map, scan, takeLast } from 'rxjs/operators';
 import { toArray } from 'rxjs';
-import db from '@/db';
 import Service from '@/components/Authorization/service';
 import styles from './index.less';
 import _ from 'lodash';
 import { AuthorizationModel } from '@/components/Authorization/autz';
 import { useIntl } from '@@/plugin-locale/localeExports';
+import DB from '@/db';
 
 const service = new Service();
 
@@ -43,12 +43,12 @@ const Authorization = observer((props: AuthorizationProps) => {
     [target.id],
   );
 
-  const queryDB = () => db.table(tableName).reverse().sortBy('name');
+  const queryDB = () => DB.getDB().table(tableName).reverse().sortBy('name');
 
   const insertDB = useCallback(
     async (permission: PermissionItem[]) => {
-      db.table(tableName).clear();
-      db.table(tableName).bulkAdd(permission);
+      DB.getDB().table(tableName).clear();
+      DB.getDB().table(tableName).bulkAdd(permission);
       AuthorizationModel.data = await queryDB();
     },
     [AuthorizationModel.data],
@@ -57,7 +57,7 @@ const Authorization = observer((props: AuthorizationProps) => {
   const searchPermission = async (name: string, type: string) => {
     AuthorizationModel.filterParam.name = name;
     AuthorizationModel.filterParam.type = type;
-    AuthorizationModel.data = await db
+    AuthorizationModel.data = await DB.getDB()
       .table(tableName)
       .where('name')
       .startsWith(name)
@@ -131,11 +131,16 @@ const Authorization = observer((props: AuthorizationProps) => {
   }, []);
 
   useEffect(() => {
-    initPermission();
+    DB.updateSchema({
+      permission: 'id,name,status,describe,type',
+    }).then(() => {
+      initPermission();
+    });
 
     return () => {
-      db.table(tableName).clear();
+      DB.getDB().table(tableName).clear();
       AuthorizationModel.spinning = true;
+      DB.updateSchema({ permission: null });
     };
   }, [target.id]);
 
@@ -199,7 +204,7 @@ const Authorization = observer((props: AuthorizationProps) => {
         <Checkbox
           checked={AuthorizationModel.checkAll}
           onChange={async (e) => {
-            const permissionDB: PermissionItem[] = await db
+            const permissionDB: PermissionItem[] = await DB.getDB()
               .table(tableName)
               .reverse()
               .sortBy('name');

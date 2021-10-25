@@ -2,8 +2,8 @@ import BaseService from '@/utils/BaseService';
 import type { ProductItem } from '@/pages/device/Product/typings';
 import { request } from 'umi';
 import SystemConst from '@/utils/const';
-import { concatMap, from, toArray } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { concatMap, defer, from, toArray } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 import encodeQuery from '@/utils/encodeQuery';
 import type { Response } from '@/utils/typings';
 import _ from 'lodash';
@@ -29,6 +29,12 @@ class Service extends BaseService<ProductItem> {
 
   public getConfigMetadata = (id: string) =>
     request(`/${SystemConst.API_BASE}/device/product/${id}/config-metadata`, { method: 'GET' });
+
+  public getProductDetail = (id: string) =>
+    defer(() => from(this.detail(id))).pipe(
+      filter((resp) => resp.status === 200),
+      map((resp) => resp.result),
+    );
 }
 
 export default Service;

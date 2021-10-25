@@ -1,4 +1,3 @@
-// import request from "@/utils/request";
 import Token from '@/utils/token';
 import SystemConst from '@/utils/const';
 import { request } from 'umi';
@@ -38,6 +37,10 @@ class BaseService<T> implements IBaseService<T> {
 
   update(data: Partial<T>): Promise<any> {
     return request(this.uri, { data, method: 'PATCH' });
+  }
+
+  detail(id: string): Promise<any> {
+    return request(`${this.uri}/${id}`, { method: 'GET' });
   }
 }
 

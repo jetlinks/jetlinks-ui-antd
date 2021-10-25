@@ -54,11 +54,13 @@ export default function useWebSocket(socketUrl: string, options: Options = {}): 
     } else {
       if (reconnectTimerRef.current) clearTimeout(reconnectTimerRef.current);
 
-      if (websocketRef.current) {
-        websocketRef.current.close();
-      }
+      // if (websocketRef.current) {
+      //   // 此处应考虑状态。
+      //   websocketRef.current.close();
+      // }
 
       try {
+        console.log(websocketRef.current, 'current');
         websocketRef.current = new WebSocket(socketUrl);
 
         websocketRef.current.onerror = (event) => {
@@ -118,7 +120,10 @@ export default function useWebSocket(socketUrl: string, options: Options = {}): 
       ws.send(message);
     } else {
       connectWs();
-      ws.send(message);
+      // todo 考虑重写
+      setTimeout(() => {
+        ws.send(message);
+      }, 3000);
       // throw new Error('WebSocket disconnected');
     }
   });

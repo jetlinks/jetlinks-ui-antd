@@ -1,3 +1,5 @@
+import { BaseItem, State } from '@/utils/typings';
+
 export type ProductItem = {
   id: string;
   name: string;
@@ -97,4 +99,48 @@ type TagMetadata = {
     type: string;
   } & Record<string, any>;
   expands: Record<string, any>;
+};
+
+type AlarmRule = {
+  actions: {
+    configuration: Record<string, unknown>;
+    executor: string;
+  }[];
+  productId: string;
+  productName: string;
+  properties: Record<string, unknown>[];
+  shakeLimit: Record<string, unknown>;
+  triggers: Record<string, unknown>[];
+} & BaseItem;
+
+type AlarmSetting = {
+  state: State;
+  createTime: number;
+  target: string;
+  targetId: string;
+  alarmRule: AlarmRule[];
+} & BaseItem;
+
+type AlarmRecord = {
+  id: string;
+  alarmId: string;
+  alarmName: string;
+  alarmTime: number;
+  description: string;
+  deviceId: string;
+  deviceName: string;
+  productId: string;
+  productName: string;
+  state: string;
+  updateTime: number;
+  alarmData: {
+    alarmId: string;
+    alarmName: string;
+    deviceId: string;
+    deviceName: string;
+    id: string;
+    productId: string;
+    productName: string;
+    timestamp: number;
+  } & Record<string, unknown>;
 };

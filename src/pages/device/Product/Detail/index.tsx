@@ -1,17 +1,71 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { history } from 'umi';
-import { Button, Card, Descriptions, Space, Tabs } from 'antd';
+import { history, useParams } from 'umi';
+import { Button, Card, Descriptions, message, Space, Tabs } from 'antd';
 import BaseInfo from '@/pages/device/Product/Detail/BaseInfo';
 import { observer } from '@formily/react';
-import { productModel, statusMap } from '@/pages/device/Product';
+import { productModel, service, statusMap } from '@/pages/device/Product';
 import { useEffect } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
+import Metadata from '@/pages/device/Product/Detail/Metadata';
+import Alarm from '@/pages/device/Product/Detail/Alarm';
+import type { DeviceMetadata } from '@/pages/device/Product/typings';
+import DB from '@/db';
 
 const ProductDetail = observer(() => {
   const intl = useIntl();
+  const param = useParams<{ id: string }>();
+
   useEffect(() => {
-    if (!productModel.current) history.goBack();
-  }, []);
+    if (!productModel.current) {
+      history.goBack();
+    } else {
+      service.getProductDetail(param.id).subscribe((data) => {
+        // 存储到数据库
+        // events  functions  properties  tags
+        // 数据库存储 按设备名称-物模型类别存储  如：yanshi-tags
+        const metadata: DeviceMetadata = JSON.parse(data.metadata);
+
+        DB.updateSchema({
+          [`${param.id}-events`]: 'id,name',
+          [`${param.id}-property`]: 'id,name',
+          [`${param.id}-function`]: 'id,name',
+          [`${param.id}-tag`]: 'id,name',
+        })
+          .then(() => {
+            /// 应该先判断是否存在数据
+            const EventTable = DB.getDB().table(`${param.id}-events`);
+            EventTable.clear().then(() => {
+              EventTable.bulkAdd(metadata.events || []);
+            });
+            const PropertyTable = DB.getDB().table(`${param.id}-property`);
+            PropertyTable.clear().then(() => {
+              PropertyTable.bulkAdd(metadata.properties || []);
+            });
+            const FunctionTable = DB.getDB().table(`${param.id}-function`);
+            FunctionTable.clear().then(() => {
+              FunctionTable.bulkAdd(metadata.functions || []);
+            });
+            const TagTable = DB.getDB().table(`${param.id}-tag`);
+            TagTable.clear().then(() => {
+              TagTable.bulkAdd(metadata.tags || []);
+            });
+          })
+          .catch((error) => {
+            console.log(error, 'error');
+            message.error(JSON.stringify(error));
+          });
+      });
+    }
+    return () => {
+      // 删除表是把index 设置为空
+      DB.updateSchema({
+        [`${param.id}-events`]: null,
+        [`${param.id}-property`]: null,
+        [`${param.id}-function`]: null,
+        [`${param.id}-tag`]: null,
+      });
+    };
+  }, [param.id]);
   return (
     <PageContainer
       onBack={() => history.goBack()}
@@ -84,14 +138,15 @@ const ProductDetail = observer(() => {
         </Button>,
       ]}
     >
+      {JSON.stringify(productModel.current)}
       <Card>
-        <Tabs defaultActiveKey={'base'}>
+        <Tabs tabPosition="left" defaultActiveKey="base">
           <Tabs.TabPane
             tab={intl.formatMessage({
               id: 'pages.device.productDetail.base',
               defaultMessage: '配置信息',
             })}
-            key={'base'}
+            key="base"
           >
             <BaseInfo />
           </Tabs.TabPane>
@@ -100,18 +155,18 @@ const ProductDetail = observer(() => {
               id: 'pages.device.productDetail.metadata',
               defaultMessage: '物模型',
             })}
-            key={'metadata'}
+            key="metadata"
           >
-            物模型
+            <Metadata />
           </Tabs.TabPane>
           <Tabs.TabPane
             tab={intl.formatMessage({
               id: 'pages.device.productDetail.alarm',
               defaultMessage: '告警设置',
             })}
-            key={'alarm'}
+            key="alarm"
           >
-            告警设置
+            <Alarm />
           </Tabs.TabPane>
         </Tabs>
       </Card>

@@ -1,18 +1,20 @@
-import { createSchemaField, observer } from '@formily/react';
+import { createSchemaField } from '@formily/react';
 import { productModel, service } from '@/pages/device/Product';
 import { Form, FormItem, FormGrid, Password, FormLayout, PreviewText, Input } from '@formily/antd';
 import { createForm } from '@formily/core';
 import { Card, Empty } from 'antd';
 import type { ISchema } from '@formily/json-schema';
-import { SetStateAction, useEffect, useState } from 'react';
+import type { SetStateAction } from 'react';
+import { useEffect, useState } from 'react';
 import type { ConfigMetadata, ConfigProperty } from '@/pages/device/Product/typings';
+import { useParams } from 'umi';
 
 const componentMap = {
   string: 'Input',
   password: 'Password',
 };
-const BaseInfo = observer(() => {
-  const id = productModel.current?.id;
+const BaseInfo = () => {
+  const param = useParams<{ id: string }>();
   const [metadata, setMetadata] = useState<ConfigMetadata[]>([]);
   const [state, setState] = useState<boolean>(false);
 
@@ -23,22 +25,22 @@ const BaseInfo = observer(() => {
   });
 
   useEffect(() => {
-    if (id) {
-      service.getConfigMetadata(id).then((config: { result: SetStateAction<ConfigMetadata[]> }) => {
-        setMetadata(config.result);
-      });
+    if (param.id) {
+      service
+        .getConfigMetadata(param.id)
+        .then((config: { result: SetStateAction<ConfigMetadata[]> }) => {
+          setMetadata(config.result);
+        });
     }
-
-    return () => {};
-  }, [id]);
+  }, [param.id]);
 
   const SchemaField = createSchemaField({
     components: {
-      FormItem,
-      Input,
       Password,
       FormGrid,
       PreviewText,
+      FormItem,
+      Input,
     },
   });
 
@@ -78,6 +80,7 @@ const BaseInfo = observer(() => {
 
         return (
           <Card
+            key={item.name}
             title={item.name}
             extra={<a onClick={() => setState(!state)}>{state ? '编辑' : '保存'}</a>}
           >
@@ -97,5 +100,5 @@ const BaseInfo = observer(() => {
   };
 
   return <>{renderConfigCard()}</>;
-});
+};
 export default BaseInfo;

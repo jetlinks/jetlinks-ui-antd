@@ -84,6 +84,7 @@
     "react-dev-inspector": "^1.1.1",
     "react-dom": "^17.0.0",
     "react-helmet-async": "^1.0.4",
+    "reconnecting-websocket": "^4.4.0",
     "rxjs": "^7.2.0",
     "rxjs-websockets": "8",
     "umi": "^3.5.0",
@@ -121,7 +122,7 @@
     "prettier": "^2.3.2",
     "puppeteer-core": "^8.0.0",
     "stylelint": "^13.0.0",
-    "typescript": "^4.2.2"
+    "typescript": "^4.4.4"
   },
   "engines": {
     "node": ">=10.0.0"

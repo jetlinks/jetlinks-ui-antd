@@ -1,11 +1,6 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import React, { useEffect, useRef } from 'react';
-import {
-  EditOutlined,
-  KeyOutlined,
-  CloseCircleOutlined,
-  PlayCircleOutlined,
-} from '@ant-design/icons';
+import { EditOutlined, CloseCircleOutlined, PlayCircleOutlined } from '@ant-design/icons';
 import { Menu, Tooltip, Popconfirm, message } from 'antd';
 import type { ProColumns, ActionType } from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
@@ -169,16 +164,6 @@ const Permission: React.FC = observer(() => {
             })}
           >
             <EditOutlined />
-          </Tooltip>
-        </a>,
-        <a key="authorized" onClick={() => console.log('授权')}>
-          <Tooltip
-            title={intl.formatMessage({
-              id: 'pages.data.option.authorize',
-              defaultMessage: '授权',
-            })}
-          >
-            <KeyOutlined />
           </Tooltip>
         </a>,
         <a key="view">
