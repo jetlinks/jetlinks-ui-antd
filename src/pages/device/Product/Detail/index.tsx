@@ -1,6 +1,6 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { history, useParams } from 'umi';
-import { Button, Card, Descriptions, message, Space, Tabs } from 'antd';
+import { Button, Card, Descriptions, Space, Tabs } from 'antd';
 import BaseInfo from '@/pages/device/Product/Detail/BaseInfo';
 import { observer } from '@formily/react';
 import { productModel, service, statusMap } from '@/pages/device/Product';
@@ -51,8 +51,8 @@ const ProductDetail = observer(() => {
             });
           })
           .catch((error) => {
-            console.log(error, 'error');
-            message.error(JSON.stringify(error));
+            console.error(error);
+            throw new Error('IndexDB add Data Error');
           });
       });
     }
@@ -138,7 +138,6 @@ const ProductDetail = observer(() => {
         </Button>,
       ]}
     >
-      {JSON.stringify(productModel.current)}
       <Card>
         <Tabs tabPosition="left" defaultActiveKey="base">
           <Tabs.TabPane

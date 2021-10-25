@@ -1,5 +1,9 @@
-import ProTable, { ProColumns } from '@jetlinks/pro-table';
-import { FunctionMetadata } from '@/pages/device/Product/typings';
+import type { ProColumns } from '@jetlinks/pro-table';
+import ProTable from '@jetlinks/pro-table';
+import type { FunctionMetadata } from '@/pages/device/Product/typings';
+import { useParams } from 'umi';
+import { useEffect, useState } from 'react';
+import DB from '@/db';
 
 const Function = () => {
   const columns: ProColumns<FunctionMetadata>[] = [
@@ -32,6 +36,18 @@ const Function = () => {
     },
   ];
 
-  return <ProTable columns={columns} rowKey="id" search={false} />;
+  const param = useParams<{ id: string }>();
+
+  const [data, setData] = useState<FunctionMetadata[]>([]);
+
+  const initData = async () => {
+    const result = await DB.getDB().table(`${param.id}-function`).toArray();
+    setData(result);
+  };
+  useEffect(() => {
+    initData();
+    // setData(propertyTable);
+  }, [param]);
+  return <ProTable size={'small'} dataSource={data} columns={columns} rowKey="id" search={false} />;
 };
 export default Function;

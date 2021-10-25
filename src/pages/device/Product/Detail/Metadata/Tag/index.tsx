@@ -1,6 +1,9 @@
 import type { TagMetadata } from '@/pages/device/Product/typings';
 import type { ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
+import { useParams } from 'umi';
+import { useEffect, useState } from 'react';
+import DB from '@/db';
 
 const Tag = () => {
   const columns: ProColumns<TagMetadata>[] = [
@@ -32,7 +35,18 @@ const Tag = () => {
       ellipsis: true,
     },
   ];
+  const param = useParams<{ id: string }>();
 
-  return <ProTable columns={columns} rowKey="id" search={false} />;
+  const [data, setData] = useState<TagMetadata[]>([]);
+
+  const initData = async () => {
+    const result = await DB.getDB().table(`${param.id}-tag`).toArray();
+    setData(result);
+  };
+  useEffect(() => {
+    initData();
+    // setData(propertyTable);
+  }, [param]);
+  return <ProTable dataSource={data} size={'small'} columns={columns} rowKey="id" search={false} />;
 };
 export default Tag;

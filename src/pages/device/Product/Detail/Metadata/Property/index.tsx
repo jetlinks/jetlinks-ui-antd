@@ -1,6 +1,9 @@
 import type { ProColumns } from '@jetlinks/pro-table';
 import type { PropertyMetadata } from '@/pages/device/Product/typings';
 import ProTable from '@jetlinks/pro-table';
+import { useEffect, useState } from 'react';
+import DB from '@/db';
+import { useParams } from 'umi';
 
 const Property = () => {
   const columns: ProColumns<PropertyMetadata>[] = [
@@ -33,6 +36,18 @@ const Property = () => {
     },
   ];
 
-  return <ProTable columns={columns} rowKey="id" search={false} />;
+  const param = useParams<{ id: string }>();
+
+  const [data, setData] = useState<PropertyMetadata[]>([]);
+
+  const initData = async () => {
+    const result = await DB.getDB().table(`${param.id}-property`).toArray();
+    setData(result);
+  };
+  useEffect(() => {
+    initData();
+    // setData(propertyTable);
+  }, [param]);
+  return <ProTable size={'small'} dataSource={data} columns={columns} rowKey="id" search={false} />;
 };
 export default Property;
