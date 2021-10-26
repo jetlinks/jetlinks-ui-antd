@@ -8,7 +8,6 @@ import { useState } from 'react';
 import { map, mergeMap, toArray } from 'rxjs/operators';
 import { from } from 'rxjs';
 import styles from '../index.less';
-import _ from 'lodash';
 
 interface Props {
   close: () => void;
@@ -34,10 +33,12 @@ const Save = (props: Props) => {
       .type()
       .pipe(
         mergeMap((data: Type[]) => from(data)),
-        map((i: Type) => ({ label: i.id, value: i.name })),
+        map((i: Type) => ({ label: i.name, value: i.id })),
         toArray(),
       )
-      .subscribe((data: any) => setTypes(data));
+      .subscribe((data: any) => {
+        setTypes([...data])
+      });
   };
   useEffect(() => {
     queryType();
@@ -52,16 +53,24 @@ const Save = (props: Props) => {
       setFieldState(
         `*(shareConfig.adminUrl,shareConfig.addresses,shareConfig.virtualHost,shareConfig.username,shareConfig.password)`,
         state => {
-          state.visible = value === 'RabbitMQ';
+          state.visible = value === 'rabbitmq';
+          state.value = undefined;
+        },
+      );
+      setFieldState(
+        `*(shareConfig.url,shareConfig.username,shareConfig.password, button)`,
+        state => {
+          state.visible = value === 'rdb';
           state.value = undefined;
         },
       );
       setFieldState(`*(shareConfig.bootstrapServers)`, state => {
-        state.visible = value === 'Kafka';
+        state.visible = value === 'kafka';
         state.value = undefined;
       });
     });
   };
+
   const schema: ISchema = {
     type: 'object',
     properties: {
@@ -71,6 +80,7 @@ const Save = (props: Props) => {
         'x-component-props': {
           grid: true,
           autoRow: true,
+          full: true,
           responsive: {
             lg: 4,
             m: 2,
@@ -91,13 +101,13 @@ const Save = (props: Props) => {
             title: '类型',
             'x-component': 'Select',
             'x-component-props': {
-              disabled: !!data.typeId,
+              disabled: !!data.typeId
             },
             'x-mega-props': {
               span: 2,
               labelCol: 6,
             },
-            enum: types,
+            enum: types
           },
           'shareConfig.adminUrl': {
             title: '管理地址',
@@ -131,6 +141,24 @@ const Save = (props: Props) => {
             visible: false,
             default: '/',
             'x-component': 'Input',
+          },
+          'shareConfig.url': {
+            title: 'URL',
+            'x-mega-props': {
+              span: 2,
+              labelCol: 6,
+            },
+            visible: false,
+            'x-rules': [
+              {
+                required: true,
+                message: 'URL必填',
+              },
+            ],
+            'x-component': 'Input',
+            "x-component-props": {
+              placeholder: '请输入r2dbc或者jdbc连接地址'
+            }
           },
           'shareConfig.username': {
             title: '用户名',
@@ -216,7 +244,7 @@ const Save = (props: Props) => {
           Input,
           Select,
           ArrayTable,
-          TextArea: Input.TextArea,
+          TextArea: Input.TextArea
         }}
       />
     </Modal>
