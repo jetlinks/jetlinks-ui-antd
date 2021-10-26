@@ -1,4 +1,4 @@
-import { BaseItem, State } from '@/utils/typings';
+import type { BaseItem, State } from '@/utils/typings';
 
 export type ProductItem = {
   id: string;
