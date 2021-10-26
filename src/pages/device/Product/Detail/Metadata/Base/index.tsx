@@ -7,12 +7,15 @@ import type { MetadataItem } from '@/pages/device/Product/typings';
 import MetadataMapping from '@/pages/device/Product/Detail/Metadata/Base/columns';
 import { Popconfirm, Tooltip } from 'antd';
 import { EditOutlined, MinusOutlined } from '@ant-design/icons';
+import Edit from '@/pages/device/Product/Detail/Metadata/Base/Edit';
+import { observer } from '@formily/react';
+import MetadataModel from '@/pages/device/Product/Detail/Metadata/Base/model';
 
 interface Props {
   type: 'events' | 'function' | 'property' | 'tag';
 }
 
-const BaseMetadata = (props: Props) => {
+const BaseMetadata = observer((props: Props) => {
   const { type } = props;
   const param = useParams<{ id: string }>();
 
@@ -29,7 +32,9 @@ const BaseMetadata = (props: Props) => {
         <a
           key="editable"
           onClick={() => {
-            console.log(record);
+            MetadataModel.edit = true;
+            MetadataModel.item = record;
+            MetadataModel.type = type;
           }}
         >
           <Tooltip title="编辑">
@@ -55,15 +60,19 @@ const BaseMetadata = (props: Props) => {
   useEffect(() => {
     initData().then(() => setLoading(false));
   }, [initData]);
+
   return (
-    <ProTable
-      loading={loading}
-      dataSource={data}
-      size={'small'}
-      columns={MetadataMapping.get(type)!.concat(actions)}
-      rowKey="id"
-      search={false}
-    />
+    <>
+      <ProTable
+        loading={loading}
+        dataSource={data}
+        size="small"
+        columns={MetadataMapping.get(type)!.concat(actions)}
+        rowKey="id"
+        search={false}
+      />
+      {MetadataModel.edit && <Edit />}
+    </>
   );
-};
+});
 export default BaseMetadata;
