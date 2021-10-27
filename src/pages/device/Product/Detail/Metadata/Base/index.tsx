@@ -5,8 +5,8 @@ import { useParams } from 'umi';
 import DB from '@/db';
 import type { MetadataItem } from '@/pages/device/Product/typings';
 import MetadataMapping from '@/pages/device/Product/Detail/Metadata/Base/columns';
-import { Popconfirm, Tooltip } from 'antd';
-import { EditOutlined, MinusOutlined } from '@ant-design/icons';
+import { Button, Popconfirm, Tooltip } from 'antd';
+import { EditOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import Edit from '@/pages/device/Product/Detail/Metadata/Base/Edit';
 import { observer } from '@formily/react';
 import MetadataModel from '@/pages/device/Product/Detail/Metadata/Base/model';
@@ -35,6 +35,7 @@ const BaseMetadata = observer((props: Props) => {
             MetadataModel.edit = true;
             MetadataModel.item = record;
             MetadataModel.type = type;
+            MetadataModel.action = 'edit';
           }}
         >
           <Tooltip title="编辑">
@@ -70,6 +71,21 @@ const BaseMetadata = observer((props: Props) => {
         columns={MetadataMapping.get(type)!.concat(actions)}
         rowKey="id"
         search={false}
+        toolBarRender={() => [
+          <Button
+            onClick={() => {
+              MetadataModel.edit = true;
+              MetadataModel.item = undefined;
+              MetadataModel.type = type;
+              MetadataModel.action = 'add';
+            }}
+            key="button"
+            icon={<PlusOutlined />}
+            type="primary"
+          >
+            新建
+          </Button>,
+        ]}
       />
       {MetadataModel.edit && <Edit />}
     </>

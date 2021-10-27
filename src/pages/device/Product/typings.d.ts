@@ -144,3 +144,13 @@ type AlarmRecord = {
     timestamp: number;
   } & Record<string, unknown>;
 };
+
+type UnitType = {
+  id: string;
+  name: string;
+  description: string;
+  symbol: string;
+  text: string;
+  type: string;
+  value: string;
+};

@@ -132,6 +132,11 @@ export default {
   // 系统设置-数据源管理
   'pages.system.datasource.': '数据源管理',
 
+  // 设备管理-物模型
+  'pages.device.metadata.function': '功能',
+  'pages.device.metadata.property': '属性',
+  'pages.device.metadata.events': '事件',
+  'pages.device.metadata.tag': '标签',
   // 设备管理-产品
   'pages.device.product': '产品',
   'pages.device.product.status.published': '已发布',

@@ -35,6 +35,30 @@ class Service extends BaseService<ProductItem> {
       filter((resp) => resp.status === 200),
       map((resp) => resp.result),
     );
+
+  public getMetadataConfig = (params: {
+    deviceId: string;
+    metadata: {
+      type: 'function' | 'property' | 'events' | 'tag';
+      id: string;
+      dataType: string;
+    };
+  }) =>
+    defer(() =>
+      from(
+        request(
+          `/${SystemConst.API_BASE}/device/product/${params.deviceId}/config-metadata/${params.metadata.type}/${params.metadata.id}/${params.metadata.dataType}`,
+        ),
+      ),
+    ).pipe(
+      filter((resp) => resp.status === 200),
+      map((resp) => resp.result),
+    );
+
+  public getUnit = () =>
+    request(`/${SystemConst.API_BASE}/protocol/units`, {
+      method: 'GET',
+    });
 }
 
 export default Service;

@@ -1,9 +1,5 @@
 import { observer } from '@formily/react';
 import { Button, Space, Tabs } from 'antd';
-// import Property from '@/pages/device/Product/Detail/Metadata/Property';
-// import Function from '@/pages/device/Product/Detail/Metadata/Function';
-// import Event from '@/pages/device/Product/Detail/Metadata/Event';
-// import Tag from '@/pages/device/Product/Detail/Metadata/Tag';
 import BaseMetadata from '@/pages/device/Product/Detail/Metadata/Base';
 
 const Metadata = observer(() => {
@@ -15,6 +11,7 @@ const Metadata = observer(() => {
           <Button>物模型TSL</Button>
         </Space>
       }
+      destroyInactiveTabPane
     >
       <Tabs.TabPane tab="属性定义" key="property">
         <BaseMetadata type={'property'} />
