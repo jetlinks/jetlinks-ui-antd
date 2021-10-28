@@ -97,3 +97,26 @@ export const EventLevel: { label: string; value: string }[] = [
     value: '紧急',
   },
 ];
+
+export const DateTypeList = [
+  {
+    label: 'String类型的UTC时间戳 (毫秒)',
+    value: 'string',
+  },
+  {
+    label: 'yyyy-MM-dd',
+    value: 'yyyy-MM-dd',
+  },
+  {
+    label: 'yyyy-MM-dd HH:mm:ss',
+    value: 'yyyy-MM-dd HH:mm:ss',
+  },
+  {
+    label: 'yyyy-MM-dd HH:mm:ss EE',
+    value: 'yyyy-MM-dd HH:mm:ss EE',
+  },
+  {
+    label: 'yyyy-MM-dd HH:mm:ss zzz',
+    value: 'yyyy-MM-dd HH:mm:ss zzz',
+  },
+];
