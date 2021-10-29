@@ -1,4 +1,4 @@
-import { Drawer } from 'antd';
+import { Button, Drawer } from 'antd';
 import { createSchemaField } from '@formily/react';
 import MetadataModel from '@/pages/device/Product/Detail/Metadata/Base/model';
 import { createForm } from '@formily/core';
@@ -27,6 +27,7 @@ import { service } from '@/pages/device/Product';
 import { Store } from 'jetlinks-store';
 import type { UnitType } from '@/pages/device/Product/typings';
 import { useIntl } from 'umi';
+import MetadataParam from '@/components/MetadataParam';
 
 const Edit = () => {
   const form = createForm({
@@ -44,6 +45,7 @@ const Edit = () => {
       ArrayItems,
       Space,
       FormLayout,
+      MetadataParam,
     },
   });
 
@@ -90,6 +92,25 @@ const Edit = () => {
             },
           },
         },
+      },
+      'valueType.elementType.type': {
+        title: '元素类型',
+        'x-decorator': 'FormItem',
+        'x-component': 'Select',
+        enum: DataTypeList,
+        'x-reactions': {
+          dependencies: ['valueType.type'],
+          fulfill: {
+            state: {
+              visible: "{{['array'].includes($deps[0])}}",
+            },
+          },
+        },
+      },
+      jsonConfig: {
+        title: 'JSON对象',
+        'x-decorator': 'FormItem',
+        'x-component': 'MetadataParam',
       },
       enumConfig: {
         title: '枚举项',
@@ -494,6 +515,7 @@ const Edit = () => {
 
   useEffect(() => {
     getUnits().then((data) => {
+      Store.set('units', data);
       setUnits(data);
     });
   }, [getUnits]);
@@ -521,6 +543,15 @@ const Edit = () => {
       <Form form={form} layout="vertical" size="small">
         <SchemaField schema={metadataTypeMapping[MetadataModel.type].schema} />
       </Form>
+      <Button
+        onClick={async () => {
+          const data = await form.submit();
+          console.log(data, '提交数据');
+        }}
+      >
+        {' '}
+        获取数据
+      </Button>
     </Drawer>
   );
 };
