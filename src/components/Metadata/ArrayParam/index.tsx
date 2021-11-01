@@ -62,7 +62,7 @@ const ArrayParam = () => {
               },
             },
           },
-          units: {
+          unit: {
             title: '单位',
             'x-decorator': 'FormItem',
             'x-component': 'Select',
@@ -77,23 +77,47 @@ const ArrayParam = () => {
               },
             },
           },
-          maxLength: {
-            title: '最大长度',
+          format: {
+            title: '时间格式',
             'x-decorator': 'FormItem',
-            'x-component': 'NumberPicker',
+            'x-component': 'Select',
+            enum: DateTypeList,
             'x-reactions': {
               dependencies: ['.type'],
               fulfill: {
                 state: {
-                  visible: "{{['string'].includes($deps[0])}}",
+                  visible: "{{['date'].includes($deps[0])}}",
                 },
               },
             },
           },
+          expands: {
+            type: 'object',
+            properties: {
+              maxLength: {
+                title: '最大长度',
+                'x-decorator': 'FormItem',
+                'x-component': 'NumberPicker',
+                'x-decorator-props': {
+                  tooltip: '字节',
+                },
+                'x-reactions': {
+                  dependencies: ['..type'],
+                  fulfill: {
+                    state: {
+                      visible: "{{['string','password'].includes($deps[0])}}",
+                    },
+                  },
+                },
+              },
+            },
+          },
+
           booleanConfig: {
             title: '布尔值',
             'x-decorator': 'FormItem',
             'x-component': 'BooleanEnum',
+            type: 'void',
             'x-reactions': {
               dependencies: ['.type'],
               fulfill: {
@@ -105,6 +129,7 @@ const ArrayParam = () => {
           },
           enumConfig: {
             title: '枚举项',
+            type: 'void',
             'x-decorator': 'FormItem',
             'x-component': 'EnumParam',
             'x-reactions': {
@@ -116,14 +141,14 @@ const ArrayParam = () => {
               },
             },
           },
-          'valueType.elementType.fileType': {
+          fileType: {
             title: '文件类型',
             'x-decorator': 'FormItem',
             'x-component': 'Select',
             'x-visible': false,
             enum: FileTypeList,
             'x-reactions': {
-              dependencies: ['...type'],
+              dependencies: ['.type'],
               fulfill: {
                 state: {
                   visible: "{{['file'].includes($deps[0])}}",
@@ -133,6 +158,7 @@ const ArrayParam = () => {
           },
           jsonConfig: {
             title: 'JSON对象',
+            type: 'void',
             'x-decorator': 'FormItem',
             'x-component': 'JsonParam',
             'x-reactions': {
@@ -144,37 +170,7 @@ const ArrayParam = () => {
               },
             },
           },
-          'valueType.elementType.expands.maxLength': {
-            title: '密码长度',
-            'x-decorator': 'FormItem',
-            'x-component': 'NumberPicker',
-            'x-decorator-props': {
-              tooltip: '字节',
-            },
-            'x-visible': false,
-            'x-reactions': {
-              dependencies: ['....type'],
-              fulfill: {
-                state: {
-                  visible: "{{['password'].includes($deps[0])}}",
-                },
-              },
-            },
-          },
-          'valueType.elementType.format': {
-            title: '时间格式',
-            'x-decorator': 'FormItem',
-            'x-component': 'Select',
-            enum: DateTypeList,
-            'x-reactions': {
-              dependencies: ['...type'],
-              fulfill: {
-                state: {
-                  visible: "{{['date'].includes($deps[0])}}",
-                },
-              },
-            },
-          },
+
           description: {
             title: '描述',
             'x-decorator': 'FormItem',

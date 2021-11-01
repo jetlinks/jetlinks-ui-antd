@@ -29,7 +29,7 @@ const JsonParam = () => {
   const schema: ISchema = {
     type: 'object',
     properties: {
-      json2: {
+      properties: {
         type: 'array',
         'x-component': 'ArrayItems',
         'x-decorator': 'FormItem',
@@ -43,7 +43,7 @@ const JsonParam = () => {
               'x-component': 'ArrayItems.SortHandle',
             },
             config: {
-              type: 'object',
+              type: 'void',
               title: '配置参数',
               'x-decorator': 'Editable.Popover',
               'x-component': 'FormLayout',
@@ -54,7 +54,7 @@ const JsonParam = () => {
                 placement: 'left',
               },
               'x-reactions':
-                '{{(field)=>field.title = field.value && (field.value.name) || field.title}}',
+                '{{(field)=>field.title = field.query(".config.name").get("value") || field.title}}',
               properties: {
                 id: {
                   title: '标识',
@@ -68,28 +68,52 @@ const JsonParam = () => {
                   'x-decorator': 'FormItem',
                   'x-component': 'Input',
                 },
-                'valueType.type': {
-                  title: '数据类型',
-                  required: true,
-                  'x-decorator': 'FormItem',
-                  'x-component': 'Select',
-                  enum: DataTypeList,
-                },
-                'valueType.unit': {
-                  title: '单位',
-                  'x-decorator': 'FormItem',
-                  'x-component': 'Select',
-                  'x-visible': false,
-                  enum: Store.get('units'), // 理论上首层已经就缓存了单位数据，此处可直接获取
-                  'x-reactions': {
-                    dependencies: ['..valueType.type'],
-                    fulfill: {
-                      state: {
-                        visible: "{{['int','float','long','double'].includes($deps[0])}}",
+                valueType: {
+                  type: 'object',
+                  properties: {
+                    type: {
+                      title: '数据类型',
+                      required: true,
+                      'x-decorator': 'FormItem',
+                      'x-component': 'Select',
+                      enum: DataTypeList,
+                    },
+                    unit: {
+                      title: '单位',
+                      'x-decorator': 'FormItem',
+                      'x-component': 'Select',
+                      'x-visible': false,
+                      enum: Store.get('units'), // 理论上首层已经就缓存了单位数据，此处可直接获取
+                      'x-reactions': {
+                        dependencies: ['..valueType.type'],
+                        fulfill: {
+                          state: {
+                            visible: "{{['int','float','long','double'].includes($deps[0])}}",
+                          },
+                        },
+                      },
+                    },
+                    expands: {
+                      type: 'object',
+                      properties: {
+                        maxLength: {
+                          title: '最大长度',
+                          'x-decorator': 'FormItem',
+                          'x-component': 'NumberPicker',
+                          'x-reactions': {
+                            dependencies: ['..type'],
+                            fulfill: {
+                              state: {
+                                visible: "{{['string'].includes($deps[0])}}",
+                              },
+                            },
+                          },
+                        },
                       },
                     },
                   },
                 },
+
                 'valueType.scale': {
                   title: '精度',
                   'x-decorator': 'FormItem',

@@ -14,9 +14,9 @@ const EnumParam = () => {
   });
 
   const schema: ISchema = {
-    type: 'void',
+    type: 'object',
     properties: {
-      config: {
+      elements: {
         type: 'array',
         'x-component': 'ArrayItems',
         items: {
@@ -36,19 +36,12 @@ const EnumParam = () => {
               'x-component-props': {
                 layout: 'vertical',
               },
-              'x-reactions': [
-                {
-                  fulfill: {
-                    schema: {
-                      title: '{{$self.query(".label").value()}}',
-                    },
-                  },
-                },
-              ],
+              'x-reactions':
+                '{{(field)=>field.title = field.value && (field.value.text) || field.title}}',
               properties: {
-                label: {
+                text: {
                   type: 'string',
-                  title: 'Label',
+                  title: 'Text',
                   required: true,
                   'x-decorator': 'FormItem',
                   'x-component': 'Input',
@@ -87,4 +80,5 @@ const EnumParam = () => {
   };
   return <SchemaField schema={schema} />;
 };
+
 export default EnumParam;
