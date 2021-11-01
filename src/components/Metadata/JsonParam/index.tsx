@@ -4,39 +4,28 @@ import {
   Editable,
   ArrayItems,
   FormItem,
-  Form,
   Input,
   Select,
 } from '@formily/antd';
-import { createForm } from '@formily/core';
-import { connect, createSchemaField } from '@formily/react';
+import { createSchemaField } from '@formily/react';
 import type { ISchema } from '@formily/json-schema';
 import { DataTypeList } from '@/pages/device/data';
 import { Store } from 'jetlinks-store';
 
-interface Props {
-  value: Record<string, unknown>;
-  onChange: () => void;
-}
-
-const MetadataParam = connect((props: Props) => {
-  const form = createForm({
-    initialValues: props.value,
-  });
-
+// 不算是自定义组件。只是抽离了JSONSchema
+const JsonParam = () => {
   const SchemaField = createSchemaField({
     components: {
       FormItem,
       Input,
       Select,
-      MetadataParam,
+      JsonParam,
       ArrayItems,
       Editable,
       FormLayout,
       NumberPicker,
     },
   });
-
   const schema: ISchema = {
     type: 'object',
     properties: {
@@ -121,7 +110,7 @@ const MetadataParam = connect((props: Props) => {
                   title: 'JSON对象',
                   'x-visible': false,
                   'x-decorator': 'FormItem',
-                  'x-component': 'MetadataParam',
+                  'x-component': 'JsonParam',
                   'x-reactions': {
                     dependencies: ['.valueType.type'],
                     fulfill: {
@@ -150,11 +139,6 @@ const MetadataParam = connect((props: Props) => {
       },
     },
   };
-
-  return (
-    <Form form={form} layout={'vertical'} size={'small'}>
-      <SchemaField schema={schema} />
-    </Form>
-  );
-});
-export default MetadataParam;
+  return <SchemaField schema={schema} />;
+};
+export default JsonParam;

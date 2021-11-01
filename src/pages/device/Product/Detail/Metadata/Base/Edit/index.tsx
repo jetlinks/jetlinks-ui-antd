@@ -27,7 +27,10 @@ import { service } from '@/pages/device/Product';
 import { Store } from 'jetlinks-store';
 import type { UnitType } from '@/pages/device/Product/typings';
 import { useIntl } from 'umi';
-import MetadataParam from '@/components/MetadataParam';
+import JsonParam from '@/components/Metadata/JsonParam';
+import ArrayParam from '@/components/Metadata/ArrayParam';
+import EnumParam from '@/components/Metadata/EnumParam';
+import BooleanEnum from '@/components/Metadata/BooleanParam';
 
 const Edit = () => {
   const form = createForm({
@@ -45,7 +48,10 @@ const Edit = () => {
       ArrayItems,
       Space,
       FormLayout,
-      MetadataParam,
+      JsonParam,
+      ArrayParam,
+      EnumParam,
+      BooleanEnum,
     },
   });
 
@@ -93,13 +99,25 @@ const Edit = () => {
           },
         },
       },
-      'valueType.elementType.type': {
-        title: '元素类型',
+      jsonConfig: {
+        title: 'JSON对象',
         'x-decorator': 'FormItem',
-        'x-component': 'Select',
-        enum: DataTypeList,
+        'x-component': 'JsonParam',
         'x-reactions': {
-          dependencies: ['valueType.type'],
+          dependencies: ['.valueType.type'],
+          fulfill: {
+            state: {
+              visible: "{{['object'].includes($deps[0])}}",
+            },
+          },
+        },
+      },
+      arrayConfig: {
+        title: '元素配置',
+        'x-decorator': 'FormItem',
+        'x-component': 'ArrayParam',
+        'x-reactions': {
+          dependencies: ['.valueType.type'],
           fulfill: {
             state: {
               visible: "{{['array'].includes($deps[0])}}",
@@ -107,81 +125,12 @@ const Edit = () => {
           },
         },
       },
-      jsonConfig: {
-        title: 'JSON对象',
-        'x-decorator': 'FormItem',
-        'x-component': 'MetadataParam',
-      },
       enumConfig: {
         title: '枚举项',
-        type: 'array',
         'x-decorator': 'FormItem',
-        'x-component': 'ArrayItems',
-        items: {
-          type: 'object',
-          'x-component': 'ArrayItems.Item',
-          properties: {
-            sort: {
-              type: 'void',
-              'x-decorator': 'FormItem',
-              'x-component': 'ArrayItems.SortHandle',
-            },
-            popover: {
-              type: 'void',
-              title: '枚举项配置',
-              'x-decorator': 'Editable.Popover',
-              'x-component': 'FormLayout',
-              'x-component-props': {
-                layout: 'vertical',
-              },
-              'x-reactions': [
-                {
-                  fulfill: {
-                    schema: {
-                      title: '{{$self.query(".label").value() : $self.query(".value").value() }}',
-                    },
-                  },
-                },
-              ],
-              properties: {
-                label: {
-                  type: 'string',
-                  title: 'Label',
-                  required: true,
-                  'x-decorator': 'FormItem',
-                  'x-component': 'Input',
-                  'x-component-props': {
-                    placeholder: '标识',
-                  },
-                },
-                value: {
-                  type: 'string',
-                  title: 'Value',
-                  required: true,
-                  'x-decorator': 'FormItem',
-                  'x-component': 'Input',
-                  'x-component-props': {
-                    placeholder: '对该枚举项的描述',
-                  },
-                },
-              },
-            },
-            remove: {
-              type: 'void',
-              'x-decorator': 'FormItem',
-              'x-component': 'ArrayItems.Remove',
-            },
-          },
-        },
-        properties: {
-          addition: {
-            type: 'void',
-            title: '新增枚举项',
-            'x-component': 'ArrayItems.Addition',
-          },
-        },
+        'x-component': 'EnumParam',
         'x-reactions': {
-          dependencies: ['valueType.type'],
+          dependencies: ['.valueType.type'],
           fulfill: {
             state: {
               visible: "{{['enum'].includes($deps[0])}}",
@@ -189,73 +138,15 @@ const Edit = () => {
           },
         },
       },
-      trueConfig: {
+      booleanConfig: {
         title: '布尔值',
-        type: 'void',
         'x-decorator': 'FormItem',
-        'x-decorator-props': {
-          asterisk: true,
-          feedbackLayout: 'none',
-        },
+        'x-component': 'BooleanEnum',
         'x-reactions': {
-          dependencies: ['valueType.type'],
+          dependencies: ['.valueType.type'],
           fulfill: {
             state: {
               visible: "{{['boolean'].includes($deps[0])}}",
-            },
-          },
-        },
-        'x-component': 'Space',
-        properties: {
-          'valueType.elementType.trueText': {
-            'x-decorator': 'FormItem',
-            'x-component': 'Input',
-            default: '是',
-            'x-component-props': {
-              placeholder: 'trueText',
-            },
-          },
-          'valueType.elementType.trueValue': {
-            'x-decorator': 'FormItem',
-            'x-component': 'Input',
-            default: true,
-            'x-component-props': {
-              placeholder: 'trueValue',
-            },
-          },
-        },
-      },
-      falseConfig: {
-        type: 'void',
-        'x-decorator': 'FormItem',
-        'x-decorator-props': {
-          asterisk: true,
-          feedbackLayout: 'none',
-        },
-        'x-reactions': {
-          dependencies: ['valueType.type'],
-          fulfill: {
-            state: {
-              visible: "{{['boolean'].includes($deps[0])}}",
-            },
-          },
-        },
-        'x-component': 'Space',
-        properties: {
-          'valueType.elementType.falseText': {
-            'x-decorator': 'FormItem',
-            'x-component': 'Input',
-            default: '否',
-            'x-component-props': {
-              placeholder: 'falseText',
-            },
-          },
-          'valueType.elementType.falseValue': {
-            'x-decorator': 'FormItem',
-            'x-component': 'Input',
-            default: false,
-            'x-component-props': {
-              placeholder: 'falseValue',
             },
           },
         },
@@ -549,7 +440,6 @@ const Edit = () => {
           console.log(data, '提交数据');
         }}
       >
-        {' '}
         获取数据
       </Button>
     </Drawer>
