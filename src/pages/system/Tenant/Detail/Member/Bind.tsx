@@ -6,25 +6,33 @@ import { useParams } from 'umi';
 import TenantModel from '@/pages/system/Tenant/model';
 import { observer } from '@formily/react';
 import { useRef } from 'react';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 interface Props {
   reload: () => void;
 }
 
 const Bind = observer((props: Props) => {
+  const intl = useIntl();
   const param = useParams<{ id: string }>();
   const actionRef = useRef<ActionType>();
   const columns: ProColumns<UserItem>[] = [
     {
       dataIndex: 'name',
-      title: '姓名',
+      title: intl.formatMessage({
+        id: 'pages.system.name',
+        defaultMessage: '姓名',
+      }),
       search: {
         transform: (value) => ({ name$LIKE: value }),
       },
     },
     {
       dataIndex: 'username',
-      title: '用户名',
+      title: intl.formatMessage({
+        id: 'pages.system.username',
+        defaultMessage: '用户名',
+      }),
       search: {
         transform: (value) => ({ username$LIKE: value }),
       },

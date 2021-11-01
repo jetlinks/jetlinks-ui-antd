@@ -9,8 +9,10 @@ import Bind from '@/pages/system/Tenant/Detail/Member/Bind';
 import { observer } from '@formily/react';
 import TenantModel from '@/pages/system/Tenant/model';
 import { useRef } from 'react';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 const Member = observer(() => {
+  const intl = useIntl();
   const actionRef = useRef<ActionType>();
 
   const param = useParams<{ id: string }>();
@@ -22,19 +24,28 @@ const Member = observer(() => {
     },
     {
       dataIndex: 'name',
-      title: '姓名',
+      title: intl.formatMessage({
+        id: 'pages.system.name',
+        defaultMessage: '姓名',
+      }),
       search: {
         transform: (value) => ({ name$LIKE: value }),
       },
     },
     {
-      title: '管理员',
+      title: intl.formatMessage({
+        id: 'pages.system.tenant.memberManagement.administrators',
+        defaultMessage: '管理员',
+      }),
       dataIndex: 'adminMember',
       renderText: (text) => (text ? '是' : '否'),
       search: false,
     },
     {
-      title: '状态',
+      title: intl.formatMessage({
+        id: 'pages.searchTable.titleStatus',
+        defaultMessage: '状态',
+      }),
       dataIndex: 'state',
       renderText: (text) => text.text,
       search: false,
@@ -53,7 +64,12 @@ const Member = observer(() => {
   return (
     <Row gutter={[16, 16]}>
       <Col span={TenantModel.bind ? 12 : 24}>
-        <Card title="租户成员">
+        <Card
+          title={intl.formatMessage({
+            id: 'pages.system.tenant.memberManagement.tenantMember',
+            defaultMessage: '租户成员',
+          })}
+        >
           <ProTable
             actionRef={actionRef}
             columns={columns}
@@ -93,7 +109,10 @@ const Member = observer(() => {
                 type="primary"
                 key="bind"
               >
-                绑定用户
+                {intl.formatMessage({
+                  id: 'pages.system.role.option.bindUser',
+                  defaultMessage: '绑定用户',
+                })}
               </Button>,
             ]}
           />
@@ -102,7 +121,10 @@ const Member = observer(() => {
       {TenantModel.bind && (
         <Col span={12}>
           <Card
-            title="添加用户"
+            title={intl.formatMessage({
+              id: 'pages.system.tenant.memberManagement.addUser',
+              defaultMessage: '添加用户',
+            })}
             extra={
               <CloseOutlined
                 onClick={() => {

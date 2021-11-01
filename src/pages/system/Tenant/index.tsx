@@ -95,7 +95,10 @@ const Tenant = observer(() => {
       ],
     },
     {
-      title: '创建时间',
+      title: intl.formatMessage({
+        id: 'pages.system.tenant.createTime',
+        defaultMessage: '创建时间',
+      }),
       dataIndex: 'tenant',
       width: '200px',
       align: 'center',
