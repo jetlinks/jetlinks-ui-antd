@@ -31,6 +31,26 @@ export const productModel = model<{
 });
 const Product = observer(() => {
   const intl = useIntl();
+  const status = {
+    1: (
+      <Badge
+        status="processing"
+        text={intl.formatMessage({
+          id: 'pages.system.tenant.assetInformation.published',
+          defaultMessage: '已发布',
+        })}
+      />
+    ),
+    0: (
+      <Badge
+        status="error"
+        text={intl.formatMessage({
+          id: 'pages.system.tenant.assetInformation.unpublished',
+          defaultMessage: '未发布',
+        })}
+      />
+    ),
+  };
   return (
     <PageContainer>
       <Card>
@@ -84,7 +104,7 @@ const Product = observer(() => {
             },
             subTitle: {
               dataIndex: 'state',
-              render: (_, row) => <Space size={0}>{statusMap[row.state]}</Space>,
+              render: (_, row) => <Space size={0}>{status[row.state]}</Space>,
               search: false,
             },
             content: {
@@ -113,7 +133,12 @@ const Product = observer(() => {
                       width: 200,
                     }}
                   >
-                    <div>设备数量</div>
+                    <div>
+                      {intl.formatMessage({
+                        id: 'pages.device.product.deviceNumber',
+                        defaultMessage: '设备数量',
+                      })}
+                    </div>
                     <Badge
                       showZero={true}
                       className="site-badge-count-109"
@@ -126,7 +151,12 @@ const Product = observer(() => {
                       width: 200,
                     }}
                   >
-                    <div>设备分类</div>
+                    <div>
+                      {intl.formatMessage({
+                        id: 'pages.device.product.deviceClass',
+                        defaultMessage: '设备分类',
+                      })}
+                    </div>
                     <Tag icon={<GoldOutlined />} color="#55acee">
                       {' '}
                       {row.deviceType.text}

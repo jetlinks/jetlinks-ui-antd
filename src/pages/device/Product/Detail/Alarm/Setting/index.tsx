@@ -2,8 +2,10 @@ import type { ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import type { AlarmSetting } from '@/pages/device/Product/typings';
 import { Button, Space } from 'antd';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 const Setting = () => {
+  const intl = useIntl();
   const columns: ProColumns<AlarmSetting>[] = [
     {
       dataIndex: 'index',
@@ -11,19 +13,31 @@ const Setting = () => {
       width: 48,
     },
     {
-      title: '标识',
+      title: intl.formatMessage({
+        id: 'pages.device.category.key',
+        defaultMessage: '标识',
+      }),
       dataIndex: 'id',
     },
     {
-      title: '名称',
+      title: intl.formatMessage({
+        id: 'pages.table.name',
+        defaultMessage: '名称',
+      }),
       dataIndex: 'name',
     },
     {
-      title: '创建时间',
+      title: intl.formatMessage({
+        id: 'pages.table.createTime',
+        defaultMessage: '创建时间',
+      }),
       dataIndex: 'createTime',
     },
     {
-      title: '状态',
+      title: intl.formatMessage({
+        id: 'pages.searchTable.titleStatus',
+        defaultMessage: '状态',
+      }),
       dataIndex: 'state.text',
     },
   ];

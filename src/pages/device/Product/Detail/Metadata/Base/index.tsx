@@ -10,6 +10,7 @@ import { EditOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import Edit from '@/pages/device/Product/Detail/Metadata/Base/Edit';
 import { observer } from '@formily/react';
 import MetadataModel from '@/pages/device/Product/Detail/Metadata/Base/model';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 interface Props {
   type: 'events' | 'function' | 'property' | 'tag';
@@ -17,6 +18,7 @@ interface Props {
 
 const BaseMetadata = observer((props: Props) => {
   const { type } = props;
+  const intl = useIntl();
   const param = useParams<{ id: string }>();
 
   const [loading, setLoading] = useState<boolean>(true);
@@ -83,7 +85,10 @@ const BaseMetadata = observer((props: Props) => {
             icon={<PlusOutlined />}
             type="primary"
           >
-            新建
+            {intl.formatMessage({
+              id: 'pages.searchTable.new',
+              defaultMessage: '新建',
+            })}
           </Button>,
         ]}
       />

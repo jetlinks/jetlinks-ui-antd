@@ -41,6 +41,7 @@ export default {
   'pages.table.provider': 'Provider',
   'pages.table.type': 'Type',
   'pages.table.deviceId': 'Device ID',
+  'pages.table.createTime': 'Create Time',
 
   // 统计分析
   'pages.analysis.volume': 'Device Message Volume Today',
@@ -147,6 +148,8 @@ export default {
 
   // 设备管理-产品
   'pages.device.product': 'Product Manage',
+  'pages.device.product.deviceNumber': 'Number of Devices',
+  'pages.device.product.deviceClass': 'Device Class',
   'pages.device.product.status.published': 'Published',
   'pages.device.product.status.unpublished': 'Unpublished',
   'pages.device.product.status.all': 'All',
@@ -157,8 +160,22 @@ export default {
   'pages.device.productDetail.transportProtocol': 'Link Protocol',
   'pages.device.productDetail.createTime': 'Create Time',
   'pages.device.productDetail.base': 'Configuration Information',
+  'pages.device.productDetail.base.save': 'Save',
   'pages.device.productDetail.metadata': 'Metadata',
+  'pages.device.productDetail.metadata.quickImport': 'Quick Import',
+  'pages.device.productDetail.metadata.attributeDefinition': 'Attribute Definition',
+  'pages.device.productDetail.metadata.functionDefinition': 'Function Definition',
+  'pages.device.productDetail.metadata.eventDefinition': 'Event Definition',
+  'pages.device.productDetail.metadata.labelDefinition': 'Label Definition',
+  'pages.device.productDetail.metadata.lidentification': 'Lidentification',
+  'pages.device.productDetail.metadata.eventLevel': 'Event Level',
+  'pages.device.productDetail.metadata.whetherAsync': 'Whether Async',
+  'pages.device.productDetail.metadata.whetherReadOnly': 'Whether ReadOnly',
+  'pages.device.productDetail.metadata.dataType': 'Data Type',
   'pages.device.productDetail.alarm': 'Alarm Set',
+  'pages.device.productDetail.alarmLog': 'Alarm Log',
+  'pages.device.productDetail.alarmLog.deviceId': 'Device Id',
+  'pages.device.productDetail.alarmLog.deviceName': 'Device Name',
   'pages.device.productDetail.setting': 'Application Settings',
   'pages.device.productDetail.disable': 'Disable',
   // 设备管理-产品分类
