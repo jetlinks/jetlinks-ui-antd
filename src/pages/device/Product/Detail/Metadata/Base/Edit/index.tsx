@@ -27,7 +27,10 @@ import { service } from '@/pages/device/Product';
 import { Store } from 'jetlinks-store';
 import type { UnitType } from '@/pages/device/Product/typings';
 import { useIntl } from 'umi';
-import MetadataParam from '@/components/MetadataParam';
+import JsonParam from '@/components/Metadata/JsonParam';
+import ArrayParam from '@/components/Metadata/ArrayParam';
+import EnumParam from '@/components/Metadata/EnumParam';
+import BooleanEnum from '@/components/Metadata/BooleanParam';
 
 const Edit = () => {
   const form = createForm({
@@ -45,7 +48,10 @@ const Edit = () => {
       ArrayItems,
       Space,
       FormLayout,
-      MetadataParam,
+      JsonParam,
+      ArrayParam,
+      EnumParam,
+      BooleanEnum,
     },
   });
 
@@ -66,290 +72,180 @@ const Edit = () => {
         'x-decorator': 'FormItem',
         'x-component': 'Input',
       },
-      'expands.source': {
-        title: '来源',
-        required: true,
-        'x-decorator': 'FormItem',
-        'x-component': 'Select',
-        enum: PropertySource,
-      },
-      'valueType.type': {
-        title: '数据类型',
-        required: true,
-        'x-decorator': 'FormItem',
-        'x-component': 'Select',
-        enum: DataTypeList,
-      },
-      'expands.maxLength': {
-        title: '最大长度',
-        'x-decorator': 'FormItem',
-        'x-component': 'NumberPicker',
-        'x-reactions': {
-          dependencies: ['valueType.type'],
-          fulfill: {
-            state: {
-              visible: "{{['string'].includes($deps[0])}}",
-            },
+      valueType: {
+        type: 'object',
+        properties: {
+          type: {
+            title: '数据类型',
+            required: true,
+            'x-decorator': 'FormItem',
+            'x-component': 'Select',
+            enum: DataTypeList,
           },
-        },
-      },
-      'valueType.elementType.type': {
-        title: '元素类型',
-        'x-decorator': 'FormItem',
-        'x-component': 'Select',
-        enum: DataTypeList,
-        'x-reactions': {
-          dependencies: ['valueType.type'],
-          fulfill: {
-            state: {
-              visible: "{{['array'].includes($deps[0])}}",
-            },
-          },
-        },
-      },
-      jsonConfig: {
-        title: 'JSON对象',
-        'x-decorator': 'FormItem',
-        'x-component': 'MetadataParam',
-      },
-      enumConfig: {
-        title: '枚举项',
-        type: 'array',
-        'x-decorator': 'FormItem',
-        'x-component': 'ArrayItems',
-        items: {
-          type: 'object',
-          'x-component': 'ArrayItems.Item',
-          properties: {
-            sort: {
-              type: 'void',
-              'x-decorator': 'FormItem',
-              'x-component': 'ArrayItems.SortHandle',
-            },
-            popover: {
-              type: 'void',
-              title: '枚举项配置',
-              'x-decorator': 'Editable.Popover',
-              'x-component': 'FormLayout',
-              'x-component-props': {
-                layout: 'vertical',
+          unit: {
+            title: '单位',
+            'x-decorator': 'FormItem',
+            'x-component': 'Select',
+            'x-visible': false,
+            enum: units,
+            'x-reactions': {
+              dependencies: ['.type'],
+              fulfill: {
+                state: {
+                  visible: "{{['int','float','long','double'].includes($deps[0])}}",
+                },
               },
-              'x-reactions': [
-                {
+            },
+          },
+          scale: {
+            title: '精度',
+            'x-decorator': 'FormItem',
+            'x-component': 'NumberPicker',
+            'x-reactions': {
+              dependencies: ['.type'],
+              fulfill: {
+                state: {
+                  visible: "{{['float','double'].includes($deps[0])}}",
+                },
+              },
+            },
+          },
+          booleanConfig: {
+            title: '布尔值',
+            type: 'void',
+            'x-decorator': 'FormItem',
+            'x-component': 'BooleanEnum',
+            'x-reactions': {
+              dependencies: ['.type'],
+              fulfill: {
+                state: {
+                  visible: "{{['boolean'].includes($deps[0])}}",
+                },
+              },
+            },
+          },
+          format: {
+            title: '时间格式',
+            'x-decorator': 'FormItem',
+            'x-component': 'Select',
+            enum: DateTypeList,
+            'x-reactions': {
+              dependencies: ['.type'],
+              fulfill: {
+                state: {
+                  visible: "{{['date'].includes($deps[0])}}",
+                },
+              },
+            },
+          },
+          enumConfig: {
+            title: '枚举项',
+            type: 'void',
+            'x-decorator': 'FormItem',
+            'x-component': 'EnumParam',
+            'x-reactions': {
+              dependencies: ['.type'],
+              fulfill: {
+                state: {
+                  visible: "{{['enum'].includes($deps[0])}}",
+                },
+              },
+            },
+          },
+          expands: {
+            type: 'object',
+            properties: {
+              maxLength: {
+                title: '最大长度',
+                'x-decorator': 'FormItem',
+                'x-component': 'NumberPicker',
+                'x-decorator-props': {
+                  tooltip: '字节',
+                },
+                'x-reactions': {
+                  dependencies: ['..type'],
                   fulfill: {
-                    schema: {
-                      title: '{{$self.query(".label").value() : $self.query(".value").value() }}',
+                    state: {
+                      visible: "{{['string','password'].includes($deps[0])}}",
                     },
                   },
                 },
-              ],
-              properties: {
-                label: {
-                  type: 'string',
-                  title: 'Label',
-                  required: true,
-                  'x-decorator': 'FormItem',
-                  'x-component': 'Input',
-                  'x-component-props': {
-                    placeholder: '标识',
-                  },
-                },
-                value: {
-                  type: 'string',
-                  title: 'Value',
-                  required: true,
-                  'x-decorator': 'FormItem',
-                  'x-component': 'Input',
-                  'x-component-props': {
-                    placeholder: '对该枚举项的描述',
-                  },
+              },
+            },
+          },
+          elementType: {
+            title: '元素配置',
+            'x-decorator': 'FormItem',
+            'x-component': 'ArrayParam',
+            'x-reactions': {
+              dependencies: ['.type'],
+              fulfill: {
+                state: {
+                  visible: "{{['array'].includes($deps[0])}}",
                 },
               },
             },
-            remove: {
-              type: 'void',
-              'x-decorator': 'FormItem',
-              'x-component': 'ArrayItems.Remove',
-            },
           },
-        },
-        properties: {
-          addition: {
+          jsonConfig: {
+            title: 'JSON对象',
             type: 'void',
-            title: '新增枚举项',
-            'x-component': 'ArrayItems.Addition',
+            'x-decorator': 'FormItem',
+            'x-component': 'JsonParam',
+            'x-reactions': {
+              dependencies: ['.type'],
+              fulfill: {
+                state: {
+                  visible: "{{['object'].includes($deps[0])}}",
+                },
+              },
+            },
           },
-        },
-        'x-reactions': {
-          dependencies: ['valueType.type'],
-          fulfill: {
-            state: {
-              visible: "{{['enum'].includes($deps[0])}}",
+          fileType: {
+            title: '文件类型',
+            'x-decorator': 'FormItem',
+            'x-component': 'Select',
+            'x-visible': false,
+            enum: FileTypeList,
+            'x-reactions': {
+              dependencies: ['.type'],
+              fulfill: {
+                state: {
+                  visible: "{{['file'].includes($deps[0])}}",
+                },
+              },
             },
           },
         },
       },
-      trueConfig: {
-        title: '布尔值',
-        type: 'void',
-        'x-decorator': 'FormItem',
-        'x-decorator-props': {
-          asterisk: true,
-          feedbackLayout: 'none',
-        },
-        'x-reactions': {
-          dependencies: ['valueType.type'],
-          fulfill: {
-            state: {
-              visible: "{{['boolean'].includes($deps[0])}}",
-            },
-          },
-        },
-        'x-component': 'Space',
+      expands: {
+        type: 'object',
         properties: {
-          'valueType.elementType.trueText': {
+          source: {
+            title: '来源',
+            required: true,
             'x-decorator': 'FormItem',
-            'x-component': 'Input',
-            default: '是',
-            'x-component-props': {
-              placeholder: 'trueText',
-            },
+            'x-component': 'Select',
+            enum: PropertySource,
           },
-          'valueType.elementType.trueValue': {
+          readOnly: {
+            title: '是否只读',
+            required: true,
             'x-decorator': 'FormItem',
-            'x-component': 'Input',
-            default: true,
-            'x-component-props': {
-              placeholder: 'trueValue',
-            },
+            'x-component': 'Radio.Group',
+            enum: [
+              {
+                label: '是',
+                value: true,
+              },
+              {
+                label: '否',
+                value: false,
+              },
+            ],
           },
         },
       },
-      falseConfig: {
-        type: 'void',
-        'x-decorator': 'FormItem',
-        'x-decorator-props': {
-          asterisk: true,
-          feedbackLayout: 'none',
-        },
-        'x-reactions': {
-          dependencies: ['valueType.type'],
-          fulfill: {
-            state: {
-              visible: "{{['boolean'].includes($deps[0])}}",
-            },
-          },
-        },
-        'x-component': 'Space',
-        properties: {
-          'valueType.elementType.falseText': {
-            'x-decorator': 'FormItem',
-            'x-component': 'Input',
-            default: '否',
-            'x-component-props': {
-              placeholder: 'falseText',
-            },
-          },
-          'valueType.elementType.falseValue': {
-            'x-decorator': 'FormItem',
-            'x-component': 'Input',
-            default: false,
-            'x-component-props': {
-              placeholder: 'falseValue',
-            },
-          },
-        },
-      },
-      'valueType.elementType.format': {
-        title: '时间格式',
-        'x-decorator': 'FormItem',
-        'x-component': 'Select',
-        enum: DateTypeList,
-        'x-reactions': {
-          dependencies: ['valueType.type'],
-          fulfill: {
-            state: {
-              visible: "{{['date'].includes($deps[0])}}",
-            },
-          },
-        },
-      },
-      'valueType.scale': {
-        title: '精度',
-        'x-decorator': 'FormItem',
-        'x-component': 'NumberPicker',
-        'x-reactions': {
-          dependencies: ['valueType.type'],
-          fulfill: {
-            state: {
-              visible: "{{['float','double'].includes($deps[0])}}",
-            },
-          },
-        },
-      },
-      'valueType.elementType.fileType': {
-        title: '文件类型',
-        'x-decorator': 'FormItem',
-        'x-component': 'Select',
-        'x-visible': false,
-        enum: FileTypeList,
-        'x-reactions': {
-          dependencies: ['valueType.type'],
-          fulfill: {
-            state: {
-              visible: "{{['file'].includes($deps[0])}}",
-            },
-          },
-        },
-      },
-      'valueType.elementType.expands.maxLength': {
-        title: '密码长度',
-        'x-decorator': 'FormItem',
-        'x-component': 'NumberPicker',
-        'x-decorator-props': {
-          tooltip: '字节',
-        },
-        'x-visible': false,
-        'x-reactions': {
-          dependencies: ['valueType.type'],
-          fulfill: {
-            state: {
-              visible: "{{['password'].includes($deps[0])}}",
-            },
-          },
-        },
-      },
-      'valueType.unit': {
-        title: '单位',
-        'x-decorator': 'FormItem',
-        'x-component': 'Select',
-        'x-visible': false,
-        enum: units,
-        'x-reactions': {
-          dependencies: ['valueType.type'],
-          fulfill: {
-            state: {
-              visible: "{{['int','float','long','double'].includes($deps[0])}}",
-            },
-          },
-        },
-      },
-      'expands.readOnly': {
-        title: '是否只读',
-        required: true,
-        'x-decorator': 'FormItem',
-        'x-component': 'Radio.Group',
-        enum: [
-          {
-            label: '是',
-            value: true,
-          },
-          {
-            label: '否',
-            value: false,
-          },
-        ],
-      },
+
       description: {
         title: '描述',
         'x-decorator': 'FormItem',
@@ -549,7 +445,6 @@ const Edit = () => {
           console.log(data, '提交数据');
         }}
       >
-        {' '}
         获取数据
       </Button>
     </Drawer>
