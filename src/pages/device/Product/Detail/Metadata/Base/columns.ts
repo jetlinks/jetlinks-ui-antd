@@ -66,9 +66,9 @@ const TagColumns: ProColumns<MetadataItem>[] = BaseColumns.concat([
 ]);
 
 const MetadataMapping = new Map<string, ProColumns<MetadataItem>[]>();
-MetadataMapping.set('property', PropertyColumns);
+MetadataMapping.set('properties', PropertyColumns);
 MetadataMapping.set('events', EventColumns);
-MetadataMapping.set('tag', TagColumns);
-MetadataMapping.set('function', FunctionColumns);
+MetadataMapping.set('tags', TagColumns);
+MetadataMapping.set('functions', FunctionColumns);
 
 export default MetadataMapping;

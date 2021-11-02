@@ -40,6 +40,8 @@ export type ConfigMetadata = {
   properties: ConfigProperty[];
 };
 
+export type MetadataType = 'events' | 'functions' | 'properties' | 'tags';
+
 export type DeviceMetadata = {
   events: Partial<EventMetadata>[];
   properties: Partial<PropertyMetadata>[];

@@ -31,9 +31,9 @@ const Metadata = observer(() => {
           id: 'pages.device.productDetail.metadata.attributeDefinition',
           defaultMessage: '属性定义',
         })}
-        key="property"
+        key="properties"
       >
-        <BaseMetadata type={'property'} />
+        <BaseMetadata type={'properties'} />
       </Tabs.TabPane>
       <Tabs.TabPane
         tab={intl.formatMessage({
@@ -42,7 +42,7 @@ const Metadata = observer(() => {
         })}
         key="functions"
       >
-        <BaseMetadata type={'function'} />
+        <BaseMetadata type={'functions'} />
       </Tabs.TabPane>
       <Tabs.TabPane
         tab={intl.formatMessage({
@@ -58,9 +58,9 @@ const Metadata = observer(() => {
           id: 'pages.device.productDetail.metadata.labelDefinition',
           defaultMessage: '标签定义',
         })}
-        key="tag"
+        key="tags"
       >
-        <BaseMetadata type={'tag'} />
+        <BaseMetadata type={'tags'} />
       </Tabs.TabPane>
     </Tabs>
   );

@@ -1,5 +1,5 @@
 import BaseService from '@/utils/BaseService';
-import type { ProductItem } from '@/pages/device/Product/typings';
+import type { MetadataType, ProductItem } from '@/pages/device/Product/typings';
 import { request } from 'umi';
 import SystemConst from '@/utils/const';
 import { concatMap, defer, from, toArray } from 'rxjs';
@@ -39,7 +39,7 @@ class Service extends BaseService<ProductItem> {
   public getMetadataConfig = (params: {
     deviceId: string;
     metadata: {
-      type: 'function' | 'property' | 'events' | 'tag';
+      type: MetadataType | 'property';
       id: string;
       dataType: string;
     };

@@ -1,6 +1,7 @@
 import { Button, Drawer } from 'antd';
 import { createSchemaField } from '@formily/react';
 import MetadataModel from '@/pages/device/Product/Detail/Metadata/Base/model';
+import type { Field, IFieldState } from '@formily/core';
 import { createForm } from '@formily/core';
 import {
   FormLayout,
@@ -23,14 +24,17 @@ import {
   PropertySource,
 } from '@/pages/device/data';
 import { useCallback, useEffect, useState } from 'react';
-import { service } from '@/pages/device/Product';
+import { productModel, service } from '@/pages/device/Product';
 import { Store } from 'jetlinks-store';
 import type { UnitType } from '@/pages/device/Product/typings';
-import { useIntl } from 'umi';
+
 import JsonParam from '@/components/Metadata/JsonParam';
 import ArrayParam from '@/components/Metadata/ArrayParam';
 import EnumParam from '@/components/Metadata/EnumParam';
 import BooleanEnum from '@/components/Metadata/BooleanParam';
+import ConfigParam from '@/components/Metadata/ConfigParam';
+import { useIntl } from '@@/plugin-locale/localeExports';
+import { lastValueFrom } from 'rxjs';
 
 const Edit = () => {
   const form = createForm({
@@ -52,6 +56,35 @@ const Edit = () => {
       ArrayParam,
       EnumParam,
       BooleanEnum,
+      ConfigParam,
+    },
+    scope: {
+      async asyncOtherConfig(field: Field) {
+        const typeField = field.query('..valueType.type').take() as IFieldState;
+        const idField = field.query('..id').take() as IFieldState;
+        if (!typeField || !idField) return;
+        const type = typeField.value;
+        const id = idField.value;
+        // 获取配置
+        const productId = productModel.current?.id;
+        if (!productId || !id || !type) return;
+        const config = (await lastValueFrom(
+          service.getMetadataConfig({
+            deviceId: productId,
+            metadata: {
+              id,
+              type: 'property',
+              dataType: type,
+            },
+          }),
+        )) as unknown[];
+        field.setState({
+          visible: config.length > 0,
+        });
+        field.setComponentProps({
+          config,
+        });
+      },
     },
   });
 
@@ -243,6 +276,15 @@ const Edit = () => {
               },
             ],
           },
+          // 存储配置
+          configConfig: {
+            type: 'void',
+            title: '其他配置',
+            'x-visible': false,
+            'x-decorator': 'FormItem',
+            'x-component': 'ConfigParam',
+            'x-reactions': '{{asyncOtherConfig}}',
+          },
         },
       },
 
@@ -377,7 +419,7 @@ const Edit = () => {
   };
 
   const metadataTypeMapping: Record<string, { name: string; schema: ISchema }> = {
-    property: {
+    properties: {
       name: '属性',
       schema: propertySchema,
     },
@@ -385,11 +427,11 @@ const Edit = () => {
       name: '事件',
       schema: eventSchema,
     },
-    function: {
+    functions: {
       name: '功能',
       schema: functionSchema,
     },
-    tag: {
+    tags: {
       name: '标签',
       schema: tagSchema,
     },
@@ -420,7 +462,7 @@ const Edit = () => {
 
   return (
     <Drawer
-      width="20vw"
+      width="25vw"
       visible
       title={`${intl.formatMessage({
         id: `pages.data.option.${MetadataModel.action}`,
@@ -435,18 +477,21 @@ const Edit = () => {
       }}
       destroyOnClose
       zIndex={1000}
+      footer={
+        <Button
+          onClick={async () => {
+            // const data = await form.submit() as MetadataItem;
+            // const {type} = MetadataModel;
+            // saveMetadata(type, data);
+          }}
+        >
+          获取数据
+        </Button>
+      }
     >
       <Form form={form} layout="vertical" size="small">
         <SchemaField schema={metadataTypeMapping[MetadataModel.type].schema} />
       </Form>
-      <Button
-        onClick={async () => {
-          const data = await form.submit();
-          console.log(data, '提交数据');
-        }}
-      >
-        获取数据
-      </Button>
     </Drawer>
   );
 };
