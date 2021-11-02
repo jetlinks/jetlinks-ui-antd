@@ -1,10 +1,10 @@
 import { model } from '@formily/reactive';
-import type { MetadataItem } from '@/pages/device/Product/typings';
+import type { MetadataItem, MetadataType } from '@/pages/device/Product/typings';
 
 type MetadataModelType = {
   item: MetadataItem | unknown;
   edit: boolean;
-  type: 'events' | 'function' | 'property' | 'tag';
+  type: MetadataType;
   action: 'edit' | 'add';
 };
 const MetadataModel = model<MetadataModelType>({

@@ -13,17 +13,17 @@ const Metadata = observer(() => {
       }
       destroyInactiveTabPane
     >
-      <Tabs.TabPane tab="属性定义" key="property">
-        <BaseMetadata type={'property'} />
+      <Tabs.TabPane tab="属性定义" key="properties">
+        <BaseMetadata type={'properties'} />
       </Tabs.TabPane>
       <Tabs.TabPane tab="功能定义" key="functions">
-        <BaseMetadata type={'function'} />
+        <BaseMetadata type={'functions'} />
       </Tabs.TabPane>
       <Tabs.TabPane tab="事件定义" key="events">
         <BaseMetadata type={'events'} />
       </Tabs.TabPane>
-      <Tabs.TabPane tab="标签定义" key="tag">
-        <BaseMetadata type={'tag'} />
+      <Tabs.TabPane tab="标签定义" key="tags">
+        <BaseMetadata type={'tags'} />
       </Tabs.TabPane>
     </Tabs>
   );

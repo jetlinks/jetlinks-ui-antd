@@ -27,9 +27,9 @@ const ProductDetail = observer(() => {
 
         DB.updateSchema({
           [`${param.id}-events`]: 'id,name',
-          [`${param.id}-property`]: 'id,name',
-          [`${param.id}-function`]: 'id,name',
-          [`${param.id}-tag`]: 'id,name',
+          [`${param.id}-properties`]: 'id,name',
+          [`${param.id}-functions`]: 'id,name',
+          [`${param.id}-tags`]: 'id,name',
         })
           .then(() => {
             /// 应该先判断是否存在数据
@@ -37,15 +37,15 @@ const ProductDetail = observer(() => {
             EventTable.clear().then(() => {
               EventTable.bulkAdd(metadata.events || []);
             });
-            const PropertyTable = DB.getDB().table(`${param.id}-property`);
+            const PropertyTable = DB.getDB().table(`${param.id}-properties`);
             PropertyTable.clear().then(() => {
               PropertyTable.bulkAdd(metadata.properties || []);
             });
-            const FunctionTable = DB.getDB().table(`${param.id}-function`);
+            const FunctionTable = DB.getDB().table(`${param.id}-functions`);
             FunctionTable.clear().then(() => {
               FunctionTable.bulkAdd(metadata.functions || []);
             });
-            const TagTable = DB.getDB().table(`${param.id}-tag`);
+            const TagTable = DB.getDB().table(`${param.id}-tags`);
             TagTable.clear().then(() => {
               TagTable.bulkAdd(metadata.tags || []);
             });
@@ -60,9 +60,9 @@ const ProductDetail = observer(() => {
       // 删除表是把index 设置为空
       DB.updateSchema({
         [`${param.id}-events`]: null,
-        [`${param.id}-property`]: null,
-        [`${param.id}-function`]: null,
-        [`${param.id}-tag`]: null,
+        [`${param.id}-properties`]: null,
+        [`${param.id}-functions`]: null,
+        [`${param.id}-tags`]: null,
       });
     };
   }, [param.id]);

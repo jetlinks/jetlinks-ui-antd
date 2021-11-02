@@ -3,7 +3,7 @@ import ProTable from '@jetlinks/pro-table';
 import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'umi';
 import DB from '@/db';
-import type { MetadataItem } from '@/pages/device/Product/typings';
+import type { MetadataItem, MetadataType } from '@/pages/device/Product/typings';
 import MetadataMapping from '@/pages/device/Product/Detail/Metadata/Base/columns';
 import { Button, Popconfirm, Tooltip } from 'antd';
 import { EditOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
@@ -12,7 +12,7 @@ import { observer } from '@formily/react';
 import MetadataModel from '@/pages/device/Product/Detail/Metadata/Base/model';
 
 interface Props {
-  type: 'events' | 'function' | 'property' | 'tag';
+  type: MetadataType;
 }
 
 const BaseMetadata = observer((props: Props) => {
