@@ -2,10 +2,55 @@
 
 .container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row-reverse;
   height: 100vh;
   overflow: auto;
   background: @layout-body-background;
+}
+
+.left {
+  width: 27%;
+  background: #fff;
+}
+
+.right {
+  //background-image: url('https://gw.alipayobjects.com/zos/rmsportal/TVYTbAXWheQpRcWDaDMu.svg');
+  width: 73%;
+  height: 100%;
+  background-image: url('/images/login.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+
+  .systemName {
+    position: absolute;
+    top: 112px;
+    left: 85px;
+    width: 377px;
+    height: 110px;
+    font-weight: 600;
+    font-size: 90px;
+    font-family: Montserrat, fangsong;
+    font-style: normal;
+    line-height: 110px;
+    letter-spacing: 0.03em;
+  }
+
+  .systemDesc {
+    position: absolute;
+    top: 231px;
+    left: 86px;
+    width: 513px;
+    height: 17px;
+    color: #3dc239;
+    font-weight: normal;
+    font-size: 14px;
+    font-family: Montserrat, system-ui;
+    font-style: normal;
+    line-height: 17px;
+    letter-spacing: 0.19em;
+    text-transform: uppercase;
+  }
 }
 
 .lang {
@@ -20,13 +65,21 @@
 }
 
 .content {
-  flex: 1;
-  padding: 32px 0;
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+.remember {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 30px;
 }
 
 @media (min-width: @screen-md-min) {
   .container {
-    background-image: url('https://gw.alipayobjects.com/zos/rmsportal/TVYTbAXWheQpRcWDaDMu.svg');
+    //background-image: url('https://gw.alipayobjects.com/zos/rmsportal/TVYTbAXWheQpRcWDaDMu.svg');
     background-repeat: no-repeat;
     background-position: center 110px;
     background-size: 100%;
@@ -38,7 +91,14 @@
 }
 
 .top {
+  width: 100%;
+  margin-top: 100px;
   text-align: center;
+
+  .footer {
+    position: absolute;
+    bottom: 0;
+  }
 }
 
 .header {
@@ -74,7 +134,7 @@
 
 .main {
   width: 328px;
-  margin: 0 auto;
+  margin: 60px auto 0;
   @media screen and (max-width: @screen-sm) {
     width: 95%;
     max-width: 328px;
