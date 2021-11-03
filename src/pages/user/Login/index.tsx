@@ -13,6 +13,7 @@ import { useModel } from '@@/plugin-model/useModel';
 import SystemConst from '@/utils/const';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { SelectLang } from '@@/plugin-locale/SelectLang';
+import Footer from '@/components/Footer';
 
 /** 此方法会跳转到 redirect 参数所在的位置 */
 const goto = () => {
@@ -179,7 +180,6 @@ const Login: React.FC = () => {
                         loginRef.current.expires = e.target.checked ? -1 : 3600000;
                       }}
                     >
-                      {' '}
                       记住密码
                     </Checkbox>
                   </div>
@@ -192,6 +192,9 @@ const Login: React.FC = () => {
                 </Form>
               </div>
             </div>
+          </div>
+          <div>
+            <Footer />
           </div>
         </div>
         <div className={styles.right}>
