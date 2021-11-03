@@ -28,7 +28,7 @@ const Metadata = observer(() => {
     >
       <Tabs.TabPane
         tab={intl.formatMessage({
-          id: 'pages.device.productDetail.metadata.attributeDefinition',
+          id: 'pages.device.productDetail.metadata.propertyDefinition',
           defaultMessage: '属性定义',
         })}
         key="properties"
@@ -55,7 +55,7 @@ const Metadata = observer(() => {
       </Tabs.TabPane>
       <Tabs.TabPane
         tab={intl.formatMessage({
-          id: 'pages.device.productDetail.metadata.labelDefinition',
+          id: 'pages.device.productDetail.metadata.tagDefinition',
           defaultMessage: '标签定义',
         })}
         key="tags"

@@ -37,6 +37,7 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import { lastValueFrom } from 'rxjs';
 
 const Edit = () => {
+  const intl = useIntl();
   const form = createForm({
     initialValues: MetadataModel.item as Record<string, unknown>,
   });
@@ -94,13 +95,19 @@ const Edit = () => {
     type: 'object',
     properties: {
       id: {
-        title: '标识',
+        title: intl.formatMessage({
+          id: 'pages.device.productDetail.metadata.key',
+          defaultMessage: '标识',
+        }),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input',
       },
       name: {
-        title: '名称',
+        title: intl.formatMessage({
+          id: 'pages.table.name',
+          defaultMessage: '名称',
+        }),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input',
@@ -109,14 +116,20 @@ const Edit = () => {
         type: 'object',
         properties: {
           type: {
-            title: '数据类型',
+            title: intl.formatMessage({
+              id: 'pages.device.productDetail.metadata.dataType',
+              defaultMessage: '数据类型',
+            }),
             required: true,
             'x-decorator': 'FormItem',
             'x-component': 'Select',
             enum: DataTypeList,
           },
           unit: {
-            title: '单位',
+            title: intl.formatMessage({
+              id: 'pages.device.instanceDetail.metadata.unit',
+              defaultMessage: '单位',
+            }),
             'x-decorator': 'FormItem',
             'x-component': 'Select',
             'x-visible': false,
@@ -131,7 +144,10 @@ const Edit = () => {
             },
           },
           scale: {
-            title: '精度',
+            title: intl.formatMessage({
+              id: 'pages.device.productDetail.metadata.accuracy',
+              defaultMessage: '精度',
+            }),
             'x-decorator': 'FormItem',
             'x-component': 'NumberPicker',
             'x-reactions': {
@@ -144,7 +160,10 @@ const Edit = () => {
             },
           },
           booleanConfig: {
-            title: '布尔值',
+            title: intl.formatMessage({
+              id: 'pages.device.productDetail.metadata.boolean',
+              defaultMessage: '布尔值',
+            }),
             type: 'void',
             'x-decorator': 'FormItem',
             'x-component': 'BooleanEnum',
@@ -158,7 +177,10 @@ const Edit = () => {
             },
           },
           format: {
-            title: '时间格式',
+            title: intl.formatMessage({
+              id: 'pages.device.productDetail.metadata.timeFormat',
+              defaultMessage: '时间格式',
+            }),
             'x-decorator': 'FormItem',
             'x-component': 'Select',
             enum: DateTypeList,
@@ -172,7 +194,10 @@ const Edit = () => {
             },
           },
           enumConfig: {
-            title: '枚举项',
+            title: intl.formatMessage({
+              id: 'pages.device.productDetail.metadata.enum',
+              defaultMessage: '枚举项',
+            }),
             type: 'void',
             'x-decorator': 'FormItem',
             'x-component': 'EnumParam',
@@ -189,11 +214,17 @@ const Edit = () => {
             type: 'object',
             properties: {
               maxLength: {
-                title: '最大长度',
+                title: intl.formatMessage({
+                  id: 'pages.device.productDetail.metadata.maxLength',
+                  defaultMessage: '最大长度',
+                }),
                 'x-decorator': 'FormItem',
                 'x-component': 'NumberPicker',
                 'x-decorator-props': {
-                  tooltip: '字节',
+                  tooltip: intl.formatMessage({
+                    id: 'pages.device.productDetail.metadata.maxLength.byte',
+                    defaultMessage: '字节',
+                  }),
                 },
                 'x-reactions': {
                   dependencies: ['..type'],
@@ -207,7 +238,10 @@ const Edit = () => {
             },
           },
           elementType: {
-            title: '元素配置',
+            title: intl.formatMessage({
+              id: 'pages.device.productDetail.metadata.elementConfiguration',
+              defaultMessage: '元素配置',
+            }),
             'x-decorator': 'FormItem',
             'x-component': 'ArrayParam',
             'x-reactions': {
@@ -220,7 +254,10 @@ const Edit = () => {
             },
           },
           jsonConfig: {
-            title: 'JSON对象',
+            title: intl.formatMessage({
+              id: 'pages.device.productDetail.metadata.jsonObject',
+              defaultMessage: 'JSON对象',
+            }),
             type: 'void',
             'x-decorator': 'FormItem',
             'x-component': 'JsonParam',
@@ -234,7 +271,10 @@ const Edit = () => {
             },
           },
           fileType: {
-            title: '文件类型',
+            title: intl.formatMessage({
+              id: 'pages.device.productDetail.metadata.fileType',
+              defaultMessage: '文件类型',
+            }),
             'x-decorator': 'FormItem',
             'x-component': 'Select',
             'x-visible': false,
@@ -254,24 +294,36 @@ const Edit = () => {
         type: 'object',
         properties: {
           source: {
-            title: '来源',
+            title: intl.formatMessage({
+              id: 'pages.device.productDetail.metadata.source',
+              defaultMessage: '来源',
+            }),
             required: true,
             'x-decorator': 'FormItem',
             'x-component': 'Select',
             enum: PropertySource,
           },
           readOnly: {
-            title: '是否只读',
+            title: intl.formatMessage({
+              id: 'pages.device.productDetail.metadata.whetherReadOnly',
+              defaultMessage: '是否只读',
+            }),
             required: true,
             'x-decorator': 'FormItem',
             'x-component': 'Radio.Group',
             enum: [
               {
-                label: '是',
+                label: intl.formatMessage({
+                  id: 'pages.device.productDetail.metadata.true',
+                  defaultMessage: '是',
+                }),
                 value: true,
               },
               {
-                label: '否',
+                label: intl.formatMessage({
+                  id: 'pages.device.productDetail.metadata.false',
+                  defaultMessage: '否',
+                }),
                 value: false,
               },
             ],
@@ -279,7 +331,10 @@ const Edit = () => {
           // 存储配置
           configConfig: {
             type: 'void',
-            title: '其他配置',
+            title: intl.formatMessage({
+              id: 'pages.device.productDetail.metadata.otherConfiguration',
+              defaultMessage: '其他配置',
+            }),
             'x-visible': false,
             'x-decorator': 'FormItem',
             'x-component': 'ConfigParam',
@@ -289,7 +344,10 @@ const Edit = () => {
       },
 
       description: {
-        title: '描述',
+        title: intl.formatMessage({
+          id: 'pages.device.productDetail.metadata.describe',
+          defaultMessage: '描述',
+        }),
         'x-decorator': 'FormItem',
         'x-component': 'Input.TextArea',
       },
@@ -300,47 +358,71 @@ const Edit = () => {
     type: 'object',
     properties: {
       id: {
-        title: '标识',
+        title: intl.formatMessage({
+          id: 'pages.device.productDetail.metadata.key',
+          defaultMessage: '标识',
+        }),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input',
       },
       name: {
-        title: '名称',
+        title: intl.formatMessage({
+          id: 'pages.table.name',
+          defaultMessage: '名称',
+        }),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input',
       },
       async: {
-        title: '是否异步',
+        title: intl.formatMessage({
+          id: 'pages.device.productDetail.metadata.whetherAsync',
+          defaultMessage: '是否异步',
+        }),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Radio.Group',
         enum: [
           {
-            label: '是',
+            label: intl.formatMessage({
+              id: 'pages.device.productDetail.metadata.true',
+              defaultMessage: '是',
+            }),
             value: true,
           },
           {
-            label: '否',
+            label: intl.formatMessage({
+              id: 'pages.device.productDetail.metadata.false',
+              defaultMessage: '否',
+            }),
             value: false,
           },
         ],
       },
       inputParams: {
-        title: '输入参数',
+        title: intl.formatMessage({
+          id: 'pages.device.productDetail.metadata.inputParameter',
+          defaultMessage: '输入参数',
+        }),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input',
       },
       outputParams: {
-        title: '输出参数',
+        title: intl.formatMessage({
+          id: 'pages.device.productDetail.metadata.outputParameters',
+          defaultMessage: '输出参数',
+        }),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input',
       },
       description: {
-        title: '描述',
+        title: intl.formatMessage({
+          id: 'pages.device.productDetail.metadata.describe',
+          defaultMessage: '描述',
+        }),
         'x-decorator': 'FormItem',
         'x-component': 'Input.TextArea',
       },
@@ -351,19 +433,28 @@ const Edit = () => {
     type: 'object',
     properties: {
       id: {
-        title: '标识',
+        title: intl.formatMessage({
+          id: 'pages.device.productDetail.metadata.key',
+          defaultMessage: '标识',
+        }),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input',
       },
       name: {
-        title: '名称',
+        title: intl.formatMessage({
+          id: 'pages.table.name',
+          defaultMessage: '名称',
+        }),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input',
       },
       'expands.level': {
-        title: '级别',
+        title: intl.formatMessage({
+          id: 'pages.device.productDetail.metadata.level',
+          defaultMessage: 'level',
+        }),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Select',
@@ -376,42 +467,63 @@ const Edit = () => {
     type: 'object',
     properties: {
       id: {
-        title: '标识',
+        title: intl.formatMessage({
+          id: 'pages.device.productDetail.metadata.key',
+          defaultMessage: '标识',
+        }),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input',
       },
       name: {
-        title: '名称',
+        title: intl.formatMessage({
+          id: 'pages.table.name',
+          defaultMessage: '名称',
+        }),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input',
       },
       'valueType.type': {
-        title: '数据类型',
+        title: intl.formatMessage({
+          id: 'pages.device.productDetail.metadata.dataType',
+          defaultMessage: '数据类型',
+        }),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Select',
         enum: DataTypeList,
       },
       'expands.readOnly': {
-        title: '是否只读',
+        title: intl.formatMessage({
+          id: 'pages.device.productDetail.metadata.whetherReadOnly',
+          defaultMessage: '是否只读',
+        }),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Radio.Group',
         enum: [
           {
-            label: '是',
+            label: intl.formatMessage({
+              id: 'pages.device.productDetail.metadata.true',
+              defaultMessage: '是',
+            }),
             value: true,
           },
           {
-            label: '否',
+            label: intl.formatMessage({
+              id: 'pages.device.productDetail.metadata.false',
+              defaultMessage: '否',
+            }),
             value: false,
           },
         ],
       },
       description: {
-        title: '描述',
+        title: intl.formatMessage({
+          id: 'pages.device.productDetail.metadata.describe',
+          defaultMessage: '描述',
+        }),
         'x-decorator': 'FormItem',
         'x-component': 'Input.TextArea',
       },
@@ -458,8 +570,6 @@ const Edit = () => {
     });
   }, [getUnits]);
 
-  const intl = useIntl();
-
   return (
     <Drawer
       width="25vw"
@@ -469,7 +579,7 @@ const Edit = () => {
         defaultMessage: '新增',
       })}-${intl.formatMessage({
         id: `pages.device.metadata.${MetadataModel.type}`,
-        defaultMessage: '',
+        defaultMessage: metadataTypeMapping[MetadataModel.type].name,
       })}`}
       onClose={() => {
         MetadataModel.edit = false;
@@ -485,7 +595,10 @@ const Edit = () => {
             // saveMetadata(type, data);
           }}
         >
-          获取数据
+          {intl.formatMessage({
+            id: 'pages.device.productDetail.metadata.getData',
+            defaultMessage: '获取数据',
+          })}
         </Button>
       }
     >
