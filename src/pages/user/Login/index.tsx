@@ -15,18 +15,6 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import { SelectLang } from '@@/plugin-locale/SelectLang';
 import Footer from '@/components/Footer';
 
-/** 此方法会跳转到 redirect 参数所在的位置 */
-const goto = () => {
-  if (!history) return;
-  setTimeout(() => {
-    const { query } = history.location;
-    const { redirect } = query as {
-      redirect: string;
-    };
-    history.push(redirect || '/');
-  }, 10);
-};
-
 const Login: React.FC = () => {
   const [captcha, setCaptcha] = useState<{ key?: string; base64?: string }>({});
 
@@ -49,6 +37,21 @@ const Login: React.FC = () => {
     validateFirst: true,
     initialValues: loginRef.current,
   });
+
+  const [loading, setLoading] = useState<boolean>(false);
+
+  /** 此方法会跳转到 redirect 参数所在的位置 */
+  const goto = () => {
+    if (!history) return;
+    setTimeout(() => {
+      const { query } = history.location;
+      const { redirect } = query as {
+        redirect: string;
+      };
+      history.push(redirect || '/');
+      setLoading(false);
+    }, 10);
+  };
 
   const getCode = () => {
     delete loginForm.values?.verifyCode;
@@ -122,7 +125,6 @@ const Login: React.FC = () => {
     },
   };
 
-  const [loading, setLoading] = useState<boolean>(false);
   const doLogin = async (data: LoginParam) => {
     setLoading(true);
     Service.login({ expires: loginRef.current.expires, verifyKey: captcha.key, ...data }).subscribe(
@@ -131,7 +133,6 @@ const Login: React.FC = () => {
           Token.set(userInfo.token);
           await fetchUserInfo();
           goto();
-          setLoading(false);
         },
         error: () => {
           message.error(
