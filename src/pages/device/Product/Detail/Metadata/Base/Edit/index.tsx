@@ -1,4 +1,4 @@
-import { Button, Drawer } from 'antd';
+import { Button, Drawer, message } from 'antd';
 import { createSchemaField } from '@formily/react';
 import MetadataModel from '@/pages/device/Product/Detail/Metadata/Base/model';
 import type { Field, IFieldState } from '@formily/core';
@@ -26,7 +26,7 @@ import {
 import { useCallback, useEffect, useState } from 'react';
 import { productModel, service } from '@/pages/device/Product';
 import { Store } from 'jetlinks-store';
-import type { UnitType } from '@/pages/device/Product/typings';
+import type { MetadataItem, MetadataType, UnitType } from '@/pages/device/Product/typings';
 
 import JsonParam from '@/components/Metadata/JsonParam';
 import ArrayParam from '@/components/Metadata/ArrayParam';
@@ -35,6 +35,7 @@ import BooleanEnum from '@/components/Metadata/BooleanParam';
 import ConfigParam from '@/components/Metadata/ConfigParam';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { lastValueFrom } from 'rxjs';
+import type { DeviceMetadata } from '@/pages/device/Product/typings';
 
 const Edit = () => {
   const form = createForm({
@@ -98,6 +99,7 @@ const Edit = () => {
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input',
+        'x-disabled': MetadataModel.action === 'edit',
       },
       name: {
         title: '名称',
@@ -460,6 +462,26 @@ const Edit = () => {
 
   const intl = useIntl();
 
+  const saveMetadata = async (type: MetadataType, params: MetadataItem) => {
+    const product = productModel.current;
+    if (!product) return;
+    const metadata = JSON.parse(product.metadata) as DeviceMetadata;
+    const config = metadata[type] as MetadataItem[];
+    const index = config.findIndex((item) => item.id === params.id);
+    // todo 考虑优化
+    if (index > -1) {
+      config[index] = params;
+    } else {
+      config.push(params);
+    }
+    product.metadata = JSON.stringify(metadata);
+    const result = await service.saveProduct(product);
+    if (result.status === 200) {
+      message.success('操作成功！');
+    } else {
+      message.error('操作失败！');
+    }
+  };
   return (
     <Drawer
       width="25vw"
@@ -477,15 +499,17 @@ const Edit = () => {
       }}
       destroyOnClose
       zIndex={1000}
-      footer={
+      placement={'right'}
+      extra={
         <Button
+          type="primary"
           onClick={async () => {
-            // const data = await form.submit() as MetadataItem;
-            // const {type} = MetadataModel;
-            // saveMetadata(type, data);
+            const data = (await form.submit()) as MetadataItem;
+            const { type } = MetadataModel;
+            await saveMetadata(type, data);
           }}
         >
-          获取数据
+          保存数据
         </Button>
       }
     >

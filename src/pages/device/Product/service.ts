@@ -59,6 +59,12 @@ class Service extends BaseService<ProductItem> {
     request(`/${SystemConst.API_BASE}/protocol/units`, {
       method: 'GET',
     });
+
+  public saveProduct = (data: Record<string, unknown>) =>
+    request(`/${SystemConst.API_BASE}/device-product`, {
+      method: 'PATCH',
+      data,
+    });
 }
 
 export default Service;
