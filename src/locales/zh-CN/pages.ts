@@ -1,5 +1,5 @@
 export default {
-  'pages.layouts.userLayout.title': 'Jetlinks 物联网基础平台',
+  'pages.layouts.userLayout.title': '开源物联网基础平台',
   'pages.login.failure': '登录失败，请重试！',
   'pages.login.success': '登录成功！',
   'pages.login.username.placeholder': '用户名',
@@ -133,10 +133,11 @@ export default {
   'pages.system.datasource.': '数据源管理',
 
   // 设备管理-物模型
-  'pages.device.metadata.function': '功能',
-  'pages.device.metadata.property': '属性',
+  'pages.device.metadata.functions': '功能',
+  'pages.device.metadata.properties': '属性',
   'pages.device.metadata.events': '事件',
-  'pages.device.metadata.tag': '标签',
+  'pages.device.metadata.tags': '标签',
+
   // 设备管理-产品
   'pages.device.product': '产品',
   'pages.device.product.status.published': '已发布',

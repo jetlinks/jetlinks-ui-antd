@@ -1,13 +1,12 @@
-import { message } from 'antd';
+import { message, Spin } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, history } from 'umi';
-import Footer from '@/components/Footer';
 import styles from './index.less';
 import Token from '@/utils/token';
 import Service from '@/pages/user/Login/service';
 import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
-import { Form, Submit, Input, Password, FormItem } from '@formily/antd';
+import { Checkbox, Form, Submit, Input, Password, FormItem } from '@formily/antd';
 import { filter, mergeMap } from 'rxjs/operators';
 import * as ICONS from '@ant-design/icons';
 import { useModel } from '@@/plugin-model/useModel';
@@ -61,15 +60,14 @@ const Login: React.FC = () => {
       .subscribe(setCaptcha);
   };
 
-  useEffect(() => {
-    getCode();
-  }, []);
+  useEffect(getCode, []);
 
   const SchemaField = createSchemaField({
     components: {
       FormItem,
       Input,
       Password,
+      Checkbox,
     },
     scope: {
       icon(name: any) {
@@ -83,7 +81,6 @@ const Login: React.FC = () => {
     properties: {
       username: {
         type: 'string',
-        // title: '用户名',
         'x-decorator': 'FormItem',
         'x-validator': { required: true, message: '请输入用户名！' },
         'x-component': 'Input',
@@ -97,7 +94,6 @@ const Login: React.FC = () => {
       },
       password: {
         type: 'string',
-        // title: '密码',
         'x-validator': { required: true, message: '请输入用户名！' },
         'x-decorator': 'FormItem',
         'x-component': 'Password',
@@ -111,7 +107,6 @@ const Login: React.FC = () => {
       },
       verifyCode: {
         type: 'string',
-        // title: '验证码',
         'x-visible': !!captcha.key,
         'x-decorator': 'FormItem',
         'x-component': 'Input',
@@ -126,65 +121,85 @@ const Login: React.FC = () => {
     },
   };
 
-  const doLogin = async (data: LoginParam) =>
-    Service.login({ expires: -1, verifyKey: captcha.key, ...data }).subscribe({
-      next: async (userInfo: UserInfo) => {
-        message.success(
-          intl.formatMessage({
-            id: 'pages.login.success',
-            defaultMessage: '登录成功！',
-          }),
-        );
-        Token.set(userInfo.token);
-        await fetchUserInfo();
-        goto();
+  const [loading, setLoading] = useState<boolean>(false);
+  const doLogin = async (data: LoginParam) => {
+    setLoading(true);
+    Service.login({ expires: loginRef.current.expires, verifyKey: captcha.key, ...data }).subscribe(
+      {
+        next: async (userInfo: UserInfo) => {
+          Token.set(userInfo.token);
+          await fetchUserInfo();
+          goto();
+          setLoading(false);
+        },
+        error: () => {
+          message.error(
+            intl.formatMessage({
+              id: 'pages.login.failure',
+              defaultMessage: '登录失败,请重试！',
+            }),
+          );
+          getCode();
+          setLoading(false);
+        },
+        complete: () => {
+          getCode();
+          setLoading(false);
+        },
       },
-      error: () =>
-        message.error(
-          intl.formatMessage({
-            id: 'pages.login.failure',
-            defaultMessage: '登录失败,请重试！',
-          }),
-        ),
-      complete: () => {
-        getCode();
-      },
-    });
+    );
+  };
   return (
-    <div className={styles.container}>
-      <div className={styles.lang} data-lang="">
-        {SelectLang && <SelectLang />}
-      </div>
-      <div className={styles.content}>
-        <div className={styles.top}>
-          <div className={styles.header}>
-            <Link to="/">
-              <img alt="logo" className={styles.logo} src="/logo.svg" />
-              <span className={styles.title}>{SystemConst.SYSTEM_NAME}</span>
-            </Link>
+    <Spin spinning={loading}>
+      <div className={styles.container}>
+        <div className={styles.left}>
+          <div className={styles.lang} data-lang="">
+            {SelectLang && <SelectLang />}
           </div>
-          <div className={styles.desc}>
-            {intl.formatMessage({
-              id: 'pages.layouts.userLayout.title',
-              defaultMessage: 'Jetlinks',
-            })}
+          <div className={styles.content}>
+            <div className={styles.top}>
+              <div className={styles.header}>
+                <Link to="/">
+                  <img alt="logo" className={styles.logo} src="/logo.svg" />
+                  <span className={styles.title}>{SystemConst.SYSTEM_NAME}</span>
+                </Link>
+              </div>
+              <div className={styles.desc}>
+                {intl.formatMessage({
+                  id: 'pages.layouts.userLayout.title',
+                  defaultMessage: 'Jetlinks',
+                })}
+              </div>
+              <div className={styles.main}>
+                <Form form={loginForm} layout="horizontal" size="large" onAutoSubmit={doLogin}>
+                  <SchemaField schema={schema} />
+                  <div className={styles.remember}>
+                    <Checkbox
+                      onChange={(e) => {
+                        loginRef.current.expires = e.target.checked ? -1 : 3600000;
+                      }}
+                    >
+                      {' '}
+                      记住密码
+                    </Checkbox>
+                  </div>
+                  <Submit block size="large">
+                    {intl.formatMessage({
+                      id: 'pages.login.submit',
+                      defaultMessage: '登录',
+                    })}
+                  </Submit>
+                </Form>
+              </div>
+            </div>
           </div>
         </div>
-
-        <div className={styles.main}>
-          <Form form={loginForm} layout="vertical" size="large" onAutoSubmit={doLogin}>
-            <SchemaField schema={schema} />
-            <Submit block size="large">
-              {intl.formatMessage({
-                id: 'pages.login.submit',
-                defaultMessage: '登录',
-              })}
-            </Submit>
-          </Form>
+        <div className={styles.right}>
+          <div className={styles.systemName}>{SystemConst.SYSTEM_NAME}</div>
+          <div className={styles.systemDesc}>OPEN SOURCE INTERNET OF THINGS BASIC PLATFORM</div>
         </div>
       </div>
-      <Footer />
-    </div>
+    </Spin>
   );
 };
 
