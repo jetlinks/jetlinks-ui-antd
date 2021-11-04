@@ -1,6 +1,8 @@
 import { Table, Input, Popconfirm, Form, Switch, InputNumber } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { FormComponentProps } from 'antd/lib/form';
+import { service } from '../index';
+import _ from 'lodash';
 
 interface PropsEdit extends FormComponentProps{
 
@@ -9,6 +11,8 @@ interface PropsEdit extends FormComponentProps{
 interface Props {
   data: any[];
   save: Function;
+  id: string;
+  table: string;
 }
 export const EditableContext = React.createContext({});
 
@@ -129,7 +133,19 @@ const EditableFormTable = (props: Props) => {
     },
   };
   const handleDelete = (key: string) => {
-    setData([...data.filter(item => item.id !== key)])
+    service.rdbTables(props.id, props.table).subscribe(resp => {
+      if(resp.status === 200){
+        if([..._.map(resp.result.columns, 'name')].includes(key)){
+          service.delRdbTablesColumn(props.id, props.table, [key]).subscribe(resp => {
+            if(resp.status === 200){
+              setData([...data.filter(item => item.id !== key)])
+            }
+          })
+        }else {
+          setData([...data.filter(item => item.id !== key)])
+        }
+      }
+    })
   };
 
   const columns: any[] = [
@@ -175,7 +191,7 @@ const EditableFormTable = (props: Props) => {
       dataIndex: 'operation',
       render: (text: any, record: any) =>
         data.length >= 1 ? (
-          <Popconfirm title="确认删除?" onConfirm={() => handleDelete(record.id)}>
+          <Popconfirm title="确认删除列?" onConfirm={() => handleDelete(record.id)}>
             <a>删除</a>
           </Popconfirm>
         ) : null,

@@ -136,15 +136,18 @@ const SelectForm = (props: Props) => {
               </div>
             }>
               <div style={{height: '600px', overflowY: "auto"}}>
-                <EditableFormTable save={(data: any) => {
-                  const list = data.map((item: any) => {
-                    const obj = { ...item }
-                    delete obj.id
-                    return { ...obj }
-                  })
-                  setData([...list]);
-                  setIsEdit(true);
-                }} data={dataSource?.columns || []} />
+                <EditableFormTable 
+                  id={id}
+                  table={dataSource?.name}
+                  save={(data: any) => {
+                    const list = data.map((item: any) => {
+                      const obj = { ...item }
+                      delete obj.id
+                      return { ...obj }
+                    })
+                    setData([...list]);
+                    setIsEdit(true);
+                  }} data={dataSource?.columns || []} />
               </div>
             </Card>
           </Col>

@@ -42,6 +42,14 @@ class Service extends BaseService<any> {
         map(resp => resp),
       ),
     );
+  // 删除列
+  public delRdbTablesColumn = (datasourceId: string, table: string, data: any) =>
+    defer(() =>
+      from(request(`/jetlinks/datasource/rdb/${datasourceId}/table/${table}/drop-column`, { method: 'POST', data })).pipe(
+        filter(resp => resp.status === 200),
+        map(resp => resp),
+      ),
+    );
 }
 
 export default Service;
