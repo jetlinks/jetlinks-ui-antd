@@ -191,7 +191,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
     <ProLayout
       // logo={logo}
       logo={settings.titleIcon || logo}
-      
+
       menuHeaderRender={(logoDom, titleDom) => (
         <Link to="/">
           {logoDom}
@@ -203,7 +203,6 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
         if (menuItemProps.isUrl || menuItemProps.children || !menuItemProps.path) {
           return defaultDom;
         }
-
         return <Link to={menuItemProps.path}>{defaultDom}</Link>;
       }}
       breadcrumbRender={(routers = []) => [

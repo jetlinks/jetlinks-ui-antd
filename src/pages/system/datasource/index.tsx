@@ -7,6 +7,7 @@ import ProTable from '../permission/component/ProTable';
 import Service from './service';
 import encodeQueryParam from '@/utils/encodeParam';
 import Save from './save';
+import SelectForm from './save/SelectForm';
 
 export const service = new Service('datasource/config');
 
@@ -18,6 +19,7 @@ const Datasource = () => {
     sorts: { field: 'id', order: 'desc' },
   });
   const [visible, setVisible] = useState<boolean>(false);
+  const [manageVisible, setManageVisible] = useState<boolean>(false);
   const [current, setCurrent] = useState<any>({});
 
   const columns = [
@@ -96,6 +98,16 @@ const Datasource = () => {
               </Popconfirm>
             </>
           )}
+          {
+            record.typeId === 'rdb' &&
+            <>
+              <Divider type="vertical" />
+              <a onClick={() => {
+                setCurrent(record);
+                setManageVisible(true);
+              }}>管理</a>
+            </>
+          }
         </Fragment>
       ),
     },
@@ -170,6 +182,14 @@ const Datasource = () => {
           data={current}
         />
       )}
+      {
+        manageVisible && (
+          <SelectForm data={current} save={() => {
+            setManageVisible(false);
+            setCurrent({  });
+          }} />
+        )
+      }
     </PageHeaderWrapper>
   );
 };
