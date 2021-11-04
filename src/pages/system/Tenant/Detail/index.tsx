@@ -7,8 +7,10 @@ import { service } from '@/pages/system/Tenant';
 import Assets from '@/pages/system/Tenant/Detail/Assets';
 import Member from '@/pages/system/Tenant/Detail/Member';
 import Info from '@/pages/system/Tenant/Detail/Info';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 const TenantDetail = observer(() => {
+  const intl = useIntl();
   const [tab, setTab] = useState<string>('assets');
   const params = useParams<{ id: string }>();
   const getDetail = (id: string) => {
@@ -29,12 +31,18 @@ const TenantDetail = observer(() => {
   const list = [
     {
       key: 'assets',
-      tab: '资产信息',
+      tab: intl.formatMessage({
+        id: 'pages.system.tenant.assetInformation',
+        defaultMessage: '资产信息',
+      }),
       component: <Assets />,
     },
     {
       key: 'member',
-      tab: '成员管理',
+      tab: intl.formatMessage({
+        id: 'pages.system.tenant.memberManagement',
+        defaultMessage: '成员管理',
+      }),
       component: <Member />,
     },
   ];
