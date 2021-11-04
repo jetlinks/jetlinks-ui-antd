@@ -181,7 +181,7 @@ export default {
   'pages.device.productDetail.metadata.true': '是',
   'pages.device.productDetail.metadata.false': '否',
   'pages.device.productDetail.metadata.dataType': '数据类型',
-  'pages.device.productDetail.metadata.getData': '获取数据',
+  'pages.device.productDetail.metadata.saveData': '保存数据',
   'pages.device.productDetail.metadata.accuracy': '精度',
   'pages.device.productDetail.metadata.boolean': '布尔值',
   'pages.device.productDetail.metadata.timeFormat': '时间格式',

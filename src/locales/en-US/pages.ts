@@ -179,7 +179,7 @@ export default {
   'pages.device.productDetail.metadata.true': 'true',
   'pages.device.productDetail.metadata.false': 'false',
   'pages.device.productDetail.metadata.dataType': 'Data Type',
-  'pages.device.productDetail.metadata.getData': 'Get Data',
+  'pages.device.productDetail.metadata.saveData': 'Save Data',
   'pages.device.productDetail.metadata.accuracy': 'Accuracy',
   'pages.device.productDetail.metadata.boolean': 'Boolean',
   'pages.device.productDetail.metadata.timeFormat': 'Time Format',
