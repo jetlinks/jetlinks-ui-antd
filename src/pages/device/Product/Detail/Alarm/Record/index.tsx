@@ -1,8 +1,10 @@
 import type { AlarmRecord } from '@/pages/device/Product/typings';
 import type { ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 const Record = () => {
+  const intl = useIntl();
   const columns: ProColumns<AlarmRecord>[] = [
     {
       dataIndex: 'index',
@@ -10,21 +12,33 @@ const Record = () => {
       width: 48,
     },
     {
-      title: '设备ID',
+      title: intl.formatMessage({
+        id: 'pages.device.productDetail.alarmLog.deviceId',
+        defaultMessage: '设备ID',
+      }),
       dataIndex: 'deviceId',
     },
     {
-      title: '设备名称',
+      title: intl.formatMessage({
+        id: 'pages.device.productDetail.alarmLog.deviceName',
+        defaultMessage: '设备ID',
+      }),
       dataIndex: 'deviceName',
     },
     {
-      title: '告警时间',
+      title: intl.formatMessage({
+        id: 'pages.device.alarm.time',
+        defaultMessage: '告警时间',
+      }),
       dataIndex: 'alarmTime',
       defaultSortOrder: 'descend',
       sorter: true,
     },
     {
-      title: '处理状态',
+      title: intl.formatMessage({
+        id: 'pages.device.alarm.status',
+        defaultMessage: '处理状态',
+      }),
       dataIndex: 'state',
     },
   ];

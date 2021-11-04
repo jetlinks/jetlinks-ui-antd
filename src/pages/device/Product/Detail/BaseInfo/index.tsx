@@ -8,12 +8,14 @@ import type { SetStateAction } from 'react';
 import { useEffect, useState } from 'react';
 import type { ConfigMetadata, ConfigProperty } from '@/pages/device/Product/typings';
 import { useParams } from 'umi';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 const componentMap = {
   string: 'Input',
   password: 'Password',
 };
 const BaseInfo = () => {
+  const intl = useIntl();
   const param = useParams<{ id: string }>();
   const [metadata, setMetadata] = useState<ConfigMetadata[]>([]);
   const [state, setState] = useState<boolean>(false);
@@ -82,7 +84,25 @@ const BaseInfo = () => {
           <Card
             key={item.name}
             title={item.name}
-            extra={<a onClick={() => setState(!state)}>{state ? '编辑' : '保存'}</a>}
+            extra={
+              <a onClick={() => setState(!state)}>
+                {state ? (
+                  <>
+                    {intl.formatMessage({
+                      id: 'pages.data.option.edit',
+                      defaultMessage: '编辑',
+                    })}
+                  </>
+                ) : (
+                  <>
+                    {intl.formatMessage({
+                      id: 'pages.device.productDetail.base.save',
+                      defaultMessage: '保存',
+                    })}
+                  </>
+                )}
+              </a>
+            }
           >
             <PreviewText.Placeholder value="-">
               <Form form={form}>

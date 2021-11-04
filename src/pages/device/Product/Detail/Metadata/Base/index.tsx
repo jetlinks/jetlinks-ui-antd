@@ -12,6 +12,7 @@ import { observer } from '@formily/react';
 import MetadataModel from '@/pages/device/Product/Detail/Metadata/Base/model';
 import { Store } from 'jetlinks-store';
 import SystemConst from '@/utils/const';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 interface Props {
   type: MetadataType;
@@ -19,6 +20,7 @@ interface Props {
 
 const BaseMetadata = observer((props: Props) => {
   const { type } = props;
+  const intl = useIntl();
   const param = useParams<{ id: string }>();
 
   const [loading, setLoading] = useState<boolean>(true);
@@ -93,7 +95,10 @@ const BaseMetadata = observer((props: Props) => {
             icon={<PlusOutlined />}
             type="primary"
           >
-            新建
+            {intl.formatMessage({
+              id: 'pages.searchTable.new',
+              defaultMessage: '新建',
+            })}
           </Button>,
         ]}
       />

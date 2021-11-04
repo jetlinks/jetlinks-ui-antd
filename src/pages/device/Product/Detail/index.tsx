@@ -1,9 +1,9 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { history, useParams } from 'umi';
-import { Button, Card, Descriptions, Space, Tabs } from 'antd';
+import { Button, Card, Descriptions, Space, Tabs, Badge } from 'antd';
 import BaseInfo from '@/pages/device/Product/Detail/BaseInfo';
 import { observer } from '@formily/react';
-import { productModel, service, statusMap } from '@/pages/device/Product';
+import { productModel, service } from '@/pages/device/Product';
 import { useEffect } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import Metadata from '@/pages/device/Product/Detail/Metadata';
@@ -13,6 +13,26 @@ import DB from '@/db';
 
 const ProductDetail = observer(() => {
   const intl = useIntl();
+  const statusMap = {
+    1: (
+      <Badge
+        status="processing"
+        text={intl.formatMessage({
+          id: 'pages.system.tenant.assetInformation.published',
+          defaultMessage: '已发布',
+        })}
+      />
+    ),
+    0: (
+      <Badge
+        status="error"
+        text={intl.formatMessage({
+          id: 'pages.system.tenant.assetInformation.unpublished',
+          defaultMessage: '未发布',
+        })}
+      />
+    ),
+  };
   const param = useParams<{ id: string }>();
 
   useEffect(() => {
