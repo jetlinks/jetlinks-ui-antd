@@ -24,9 +24,9 @@ class DexieDB {
   updateSchema = async (extendedSchema: Record<string, string | null>) => {
     // 打开后才能获取正确的版本号
     // console.log(database)
-    this.getDB().close();
+    await this.getDB().close();
     // 关闭后才可以更改表结构
-    this.getDB()
+    await this.getDB()
       .version(this.db.verno + 1)
       .stores(extendedSchema);
     return this.getDB().open();

@@ -10,6 +10,8 @@ import { EditOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import Edit from '@/pages/device/Product/Detail/Metadata/Base/Edit';
 import { observer } from '@formily/react';
 import MetadataModel from '@/pages/device/Product/Detail/Metadata/Base/model';
+import { Store } from 'jetlinks-store';
+import SystemConst from '@/utils/const';
 
 interface Props {
   type: MetadataType;
@@ -62,6 +64,14 @@ const BaseMetadata = observer((props: Props) => {
     initData().then(() => setLoading(false));
   }, [initData]);
 
+  useEffect(() => {
+    const subscription = Store.subscribe(SystemConst.REFRESH_METADATA_TABLE, async (flag) => {
+      if (flag) {
+        await initData();
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, []);
   return (
     <>
       <ProTable

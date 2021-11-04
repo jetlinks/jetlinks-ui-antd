@@ -16,6 +16,10 @@ class SystemConst {
   static GLOBAL_WEBSOCKET = 'GLOBAL-WEBSOCKET';
 
   static BIND_USER_STATE = 'false';
+
+  static REFRESH_METADATA = 'refresh_metadata';
+
+  static REFRESH_METADATA_TABLE = 'refresh_metadata_table';
 }
 
 export default SystemConst;

@@ -25,45 +25,55 @@ const ProductDetail = observer(() => {
         // 数据库存储 按设备名称-物模型类别存储  如：yanshi-tags
         const metadata: DeviceMetadata = JSON.parse(data.metadata);
 
-        DB.updateSchema({
-          [`${param.id}-events`]: 'id,name',
-          [`${param.id}-properties`]: 'id,name',
-          [`${param.id}-functions`]: 'id,name',
-          [`${param.id}-tags`]: 'id,name',
-        })
-          .then(() => {
-            /// 应该先判断是否存在数据
-            const EventTable = DB.getDB().table(`${param.id}-events`);
-            EventTable.clear().then(() => {
-              EventTable.bulkAdd(metadata.events || []);
-            });
-            const PropertyTable = DB.getDB().table(`${param.id}-properties`);
-            PropertyTable.clear().then(() => {
-              PropertyTable.bulkAdd(metadata.properties || []);
-            });
-            const FunctionTable = DB.getDB().table(`${param.id}-functions`);
-            FunctionTable.clear().then(() => {
-              FunctionTable.bulkAdd(metadata.functions || []);
-            });
-            const TagTable = DB.getDB().table(`${param.id}-tags`);
-            TagTable.clear().then(() => {
-              TagTable.bulkAdd(metadata.tags || []);
-            });
+        const schema = {
+          [`${param.id}-functions`]: null,
+          [`${param.id}-tags`]: null,
+          [`${param.id}-events`]: null,
+          [`${param.id}-properties`]: null,
+        };
+        // return 表存在未清除完的情况。所以加载前再清除一次。 考虑优化
+        DB.updateSchema(schema).then(() => {
+          DB.updateSchema({
+            [`${param.id}-events`]: 'id',
+            [`${param.id}-properties`]: 'id',
+            [`${param.id}-functions`]: 'id',
+            [`${param.id}-tags`]: 'id',
           })
-          .catch((error) => {
-            console.error(error);
-            throw new Error('IndexDB add Data Error');
-          });
+            .then(() => {
+              /// 应该先判断是否存在数据
+              const EventTable = DB.getDB().table(`${param.id}-events`);
+              EventTable.clear().then(() => {
+                EventTable.bulkAdd(metadata.events || []);
+              });
+              const PropertyTable = DB.getDB().table(`${param.id}-properties`);
+              PropertyTable.clear().then(() => {
+                PropertyTable.bulkAdd(metadata.properties || []);
+              });
+              const FunctionTable = DB.getDB().table(`${param.id}-functions`);
+              FunctionTable.clear().then(() => {
+                FunctionTable.bulkAdd(metadata.functions || []);
+              });
+              const TagTable = DB.getDB().table(`${param.id}-tags`);
+              TagTable.clear().then(() => {
+                TagTable.bulkAdd(metadata.tags || []);
+              });
+            })
+            .catch((error) => {
+              console.error(error);
+              throw new Error('IndexDB add Data Error');
+            });
+        });
       });
     }
+
     return () => {
-      // 删除表是把index 设置为空
-      DB.updateSchema({
-        [`${param.id}-events`]: null,
-        [`${param.id}-properties`]: null,
+      const schema = {
         [`${param.id}-functions`]: null,
         [`${param.id}-tags`]: null,
-      });
+        [`${param.id}-events`]: null,
+        [`${param.id}-properties`]: null,
+      };
+      DB.updateSchema(schema);
     };
   }, [param.id]);
   return (

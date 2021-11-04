@@ -36,12 +36,16 @@ import ConfigParam from '@/components/Metadata/ConfigParam';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { lastValueFrom } from 'rxjs';
 import type { DeviceMetadata } from '@/pages/device/Product/typings';
+import SystemConst from '@/utils/const';
+import DB from '@/db';
+import { useParams } from 'umi';
 
 const Edit = () => {
   const form = createForm({
     initialValues: MetadataModel.item as Record<string, unknown>,
   });
 
+  const param = useParams<{ id: string }>();
   const SchemaField = createSchemaField({
     components: {
       FormItem,
@@ -471,13 +475,19 @@ const Edit = () => {
     // todo 考虑优化
     if (index > -1) {
       config[index] = params;
+      DB.getDB().table(`${param.id}-${type}`).update(params.id, params);
     } else {
       config.push(params);
+      DB.getDB().table(`${param.id}-${type}`).add(params, params.id);
     }
+    // 保存到服务器
     product.metadata = JSON.stringify(metadata);
     const result = await service.saveProduct(product);
     if (result.status === 200) {
       message.success('操作成功！');
+      MetadataModel.edit = false;
+      MetadataModel.item = {};
+      Store.set(SystemConst.REFRESH_METADATA_TABLE, true);
     } else {
       message.error('操作失败！');
     }
