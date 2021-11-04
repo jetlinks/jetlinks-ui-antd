@@ -39,6 +39,7 @@ import type { DeviceMetadata } from '@/pages/device/Product/typings';
 import SystemConst from '@/utils/const';
 import DB from '@/db';
 import { useParams } from 'umi';
+import _ from 'lodash';
 
 const Edit = () => {
   const intl = useIntl();
@@ -371,6 +372,7 @@ const Edit = () => {
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input',
+        'x-disabled': MetadataModel.action === 'edit',
       },
       name: {
         title: intl.formatMessage({
@@ -446,6 +448,7 @@ const Edit = () => {
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input',
+        'x-disabled': MetadataModel.action === 'edit',
       },
       name: {
         title: intl.formatMessage({
@@ -469,71 +472,11 @@ const Edit = () => {
     },
   };
 
-  const tagSchema: ISchema = {
-    type: 'object',
-    properties: {
-      id: {
-        title: intl.formatMessage({
-          id: 'pages.device.productDetail.metadata.key',
-          defaultMessage: '标识',
-        }),
-        required: true,
-        'x-decorator': 'FormItem',
-        'x-component': 'Input',
-      },
-      name: {
-        title: intl.formatMessage({
-          id: 'pages.table.name',
-          defaultMessage: '名称',
-        }),
-        required: true,
-        'x-decorator': 'FormItem',
-        'x-component': 'Input',
-      },
-      'valueType.type': {
-        title: intl.formatMessage({
-          id: 'pages.device.productDetail.metadata.dataType',
-          defaultMessage: '数据类型',
-        }),
-        required: true,
-        'x-decorator': 'FormItem',
-        'x-component': 'Select',
-        enum: DataTypeList,
-      },
-      'expands.readOnly': {
-        title: intl.formatMessage({
-          id: 'pages.device.productDetail.metadata.whetherReadOnly',
-          defaultMessage: '是否只读',
-        }),
-        required: true,
-        'x-decorator': 'FormItem',
-        'x-component': 'Radio.Group',
-        enum: [
-          {
-            label: intl.formatMessage({
-              id: 'pages.device.productDetail.metadata.true',
-              defaultMessage: '是',
-            }),
-            value: true,
-          },
-          {
-            label: intl.formatMessage({
-              id: 'pages.device.productDetail.metadata.false',
-              defaultMessage: '否',
-            }),
-            value: false,
-          },
-        ],
-      },
-      description: {
-        title: intl.formatMessage({
-          id: 'pages.device.productDetail.metadata.describe',
-          defaultMessage: '描述',
-        }),
-        'x-decorator': 'FormItem',
-        'x-component': 'Input.TextArea',
-      },
-    },
+  // 标签与属性表单相同，仅没有是否只读
+  const createTagSchema = () => {
+    const temp = _.cloneDeep(propertySchema) as any;
+    delete temp.properties?.expands.properties.readOnly;
+    return temp;
   };
 
   const metadataTypeMapping: Record<string, { name: string; schema: ISchema }> = {
@@ -551,7 +494,7 @@ const Edit = () => {
     },
     tags: {
       name: '标签',
-      schema: tagSchema,
+      schema: createTagSchema(),
     },
   };
 
