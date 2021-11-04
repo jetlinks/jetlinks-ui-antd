@@ -273,6 +273,10 @@ export default {
   'pages.device.alarm.option.data': 'Alarm Data',
   // 设备接入
   'pages.link.certificate': 'Certificate',
+  'pages.link.certificate.keyStore': 'Key Store',
+  'pages.link.certificate.keyStorePassword': 'Key Store Password',
+  'pages.link.certificate.trustStore': 'Trust Store',
+  'pages.link.certificate.trustStorePassword': 'Trust Store Password',
   'pages.link.protocol': 'Protocol',
   'pages.link.component': 'Component Manage',
   'pages.link.gateway': 'Gateway',

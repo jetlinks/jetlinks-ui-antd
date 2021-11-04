@@ -79,12 +79,18 @@ const Certificate = () => {
     type: 'object',
     properties: {
       name: {
-        title: '名称',
+        title: intl.formatMessage({
+          id: 'pages.table.name',
+          defaultMessage: '名称',
+        }),
         'x-component': 'Input',
         'x-decorator': 'FormItem',
       },
       instance: {
-        title: '类型',
+        title: intl.formatMessage({
+          id: 'pages.link.type',
+          defaultMessage: '类型',
+        }),
         'x-component': 'Select',
         'x-decorator': 'FormItem',
         default: 'PEM',
@@ -95,12 +101,18 @@ const Certificate = () => {
         ],
       },
       'configs.keystoreBase64': {
-        title: '密钥库',
+        title: intl.formatMessage({
+          id: 'pages.link.certificate.keyStore',
+          defaultMessage: '密钥库',
+        }),
         'x-component': 'Upload',
         'x-decorator': 'FormItem',
       },
       'configs.keystorePwd': {
-        title: '密钥库密码',
+        title: intl.formatMessage({
+          id: 'pages.link.certificate.keyStorePassword',
+          defaultMessage: '密钥库密码',
+        }),
         'x-component': 'Password',
         'x-decorator': 'FormItem',
         'x-visible': false,
@@ -111,7 +123,10 @@ const Certificate = () => {
         },
       },
       'configs.trustKeyStoreBase64': {
-        title: '信任库',
+        title: intl.formatMessage({
+          id: 'pages.link.certificate.trustStore',
+          defaultMessage: '信任库',
+        }),
         'x-component': 'Upload',
         'x-decorator': 'FormItem',
         'x-component-props': {
@@ -121,13 +136,19 @@ const Certificate = () => {
         },
       },
       'configs.trustKeyStorePwd': {
-        title: '信任库密码',
+        title: intl.formatMessage({
+          id: 'pages.link.certificate.trustStorePassword',
+          defaultMessage: '信任库密码',
+        }),
         'x-visible': false,
         'x-decorator': 'FormItem',
         'x-component': 'Password',
       },
       description: {
-        title: '描述',
+        title: intl.formatMessage({
+          id: 'pages.table.describe',
+          defaultMessage: '描述',
+        }),
         'x-component': 'Input.TextArea',
         'x-decorator': 'FormItem',
       },
