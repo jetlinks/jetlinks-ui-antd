@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { FormComponentProps } from 'antd/lib/form';
+import React, {useEffect, useState} from 'react';
+import {FormComponentProps} from 'antd/lib/form';
 import Form from 'antd/es/form';
 import {
   Avatar,
@@ -18,17 +18,17 @@ import {
   TreeSelect,
   Upload,
 } from 'antd';
-import { DeviceProduct } from '../data';
-import { FormItemConfig } from '@/utils/common';
+import {DeviceProduct} from '../data';
+import {FormItemConfig} from '@/utils/common';
 import apis from '@/services';
 import styles from '@/pages/device/product/save/style.less';
 import productImg from '@/pages/device/product/img/product.png';
-import { UploadProps } from 'antd/lib/upload';
-import { getAccessToken } from '@/utils/authority';
-import { UploadOutlined } from '@ant-design/icons/lib';
-import { ProtocolItem } from '@/pages/device/protocol/data';
-import treeTool from 'tree-tool';
+import {UploadProps} from 'antd/lib/upload';
+import {getAccessToken} from '@/utils/authority';
+import {UploadOutlined} from '@ant-design/icons/lib';
+import {ProtocolItem} from '@/pages/device/protocol/data';
 import Classified from '@/pages/device/product/save/add/classified';
+import encodeQueryParam from "@/utils/encodeParam";
 
 interface Props extends FormComponentProps {
   data: Partial<DeviceProduct>;
@@ -135,31 +135,14 @@ const Save: React.FC<Props> = props => {
 
 
     apis.deviceProdcut
-      .deviceCategoryNoPaing()
+      .deviceCategoryTree(encodeQueryParam({paging: false, sorts: {field: 'id', order: 'desc'}}))
       .then((response: any) => {
         if (response.status === 200) {
-
           setCategoryLIst(response.result);
-          if (props.data.classifiedId) {
-            setClassifiedData({ id: props.data.classifiedId, name: props.data.classifiedName });
-
-            let classifiedInfo = treeTool.findNode(response.result, function(node: any) {
-              return node.id == props.data.classifiedId;
-            });
-
-            let idList: string[] = [];
-            const pathList = treeTool.findPath(response.result, function(n: any) {
-              return n.id == classifiedInfo.parentId;
-            }); // pathList所有父级data组成的
-            if (pathList != null && pathList.length > 0) {
-              idList = pathList.map(n => n.id); // idList即为所求的上级所有ID
-            }
-            idList.push(props.data.classifiedId);
-            setFieldsValue({ classifiedId: idList });
-          }
         }
       })
-      .catch(() => {});
+      .catch(() => {
+      });
 
     // if (systemVersion === 'pro') {
     apis.deviceProdcut.storagePolicy().then(res => {
