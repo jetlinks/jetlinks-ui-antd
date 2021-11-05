@@ -198,7 +198,7 @@ export default {
   'pages.device.productDetail.alarmLog': 'Alarm Log',
   'pages.device.productDetail.alarmLog.deviceId': 'Device Id',
   'pages.device.productDetail.alarmLog.deviceName': 'Device Name',
-  'pages.device.productDetail.setting': 'Application Settings',
+  'pages.device.productDetail.setting': 'Application Configuration',
   'pages.device.productDetail.disable': 'Disable',
   // 设备管理-产品分类
   'pages.device.category': 'Category Manage',
