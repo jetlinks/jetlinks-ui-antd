@@ -173,7 +173,7 @@ const Screen = (props: Props) => {
               },
                 {
                   label: '大屏分类',
-                  key: 'classifiedId$LIKE',
+                  key: 'catalogId$LIKE',
                   type: 'list',
                   props: {
                     data: categoryList,
@@ -297,7 +297,7 @@ const Screen = (props: Props) => {
                         <div style={{textAlign: 'center', minWidth: '80px'}}>
                           <p>状态: <span style={{fontWeight:600}}>已{item.state.text}</span></p>
                         </div>
-                        <div style={{textAlign: 'center', minWidth: '80px'}}> 
+                        <div style={{textAlign: 'center', minWidth: '80px'}}>
                           <p>分类: <span style={{fontWeight:600}}>{findCategory(item.catalogId)}</span></p>
                         </div>
                       </div>
