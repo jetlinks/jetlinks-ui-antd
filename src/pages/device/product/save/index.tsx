@@ -29,6 +29,7 @@ import {UploadOutlined} from '@ant-design/icons/lib';
 import {ProtocolItem} from '@/pages/device/protocol/data';
 import Classified from '@/pages/device/product/save/add/classified';
 import encodeQueryParam from "@/utils/encodeParam";
+import treeTool from 'tree-tool';
 
 interface Props extends FormComponentProps {
   data: Partial<DeviceProduct>;
@@ -80,36 +81,19 @@ const Save: React.FC<Props> = props => {
       })
       .catch(() => {});
   };
-  const systemVersion = localStorage.getItem('system-version');
+
+  const setCategory = (list:any) =>{
+    let idList: string[] = [];
+    const pathList = treeTool.findPath(list, function (n: any) {
+      return n.id == props.data.classifiedId
+    }); // pathList所有父级data组成的
+    if (pathList != null && pathList.length > 0) {
+      idList = pathList.map((n: any) => n.id);// idList即为所求的上级所有ID
+    }
+    setFieldsValue({classifiedId: idList});
+  };
 
   useEffect(() => {
-    // if (props.data.classifiedId) {
-    //   setClassifiedData({ id: props.data.classifiedId, name: props.data.classifiedName });
-    //   let classified = props.data?.classifiedId.split('|').filter(function (s: string) {
-    //     return s && s.trim();
-    //   });
-    //   let list: any[] = [];
-    //   classified.map((item: any, index: number) => {
-    //     if (index === 0) {
-    //       list.push('|' + item + '|')
-    //     } else if (index === 1) {
-    //       list.push(list[0] + item + '|')
-    //     }
-    //   });
-    //   list.push(props.data.classifiedId);
-    //   setFieldsValue({ 'classifiedId': list });
-    // }
-
-    // let idList: string[] = [];
-    // const pathList = treeTool.findPath(categoryAllLIst, function (n: any) {
-    //   return n.id == record.parentId
-    // }); // pathList所有父级data组成的
-    // if (pathList != null && pathList.length > 0) {
-    //   idList = pathList.map(n => n.id);// idList即为所求的上级所有ID
-    // }
-    // idList.push(record.id);
-    // record['categoryId'] = idList;
-    // props.choice(record);
 
     apis.deviceProdcut
       .protocolSupport()
@@ -139,6 +123,7 @@ const Save: React.FC<Props> = props => {
       .then((response: any) => {
         if (response.status === 200) {
           setCategoryLIst(response.result);
+          setCategory(response.result);
         }
       })
       .catch(() => {
