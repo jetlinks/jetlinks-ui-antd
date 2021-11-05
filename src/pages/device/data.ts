@@ -93,8 +93,8 @@ export const EventLevel: { label: string; value: string }[] = [
     value: 'warn',
   },
   {
-    label: 'urgent',
-    value: '紧急',
+    value: 'urgent',
+    label: '紧急',
   },
 ];
 
