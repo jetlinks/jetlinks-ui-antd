@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Card, Divider, Form, Input, message, Select, Spin } from 'antd';
+import { Button, Card, Divider, Form, Input, message, Select, Spin, Dropdown, Menu, Icon, Upload } from 'antd';
 import apis from '@/services';
 import { FormComponentProps } from 'antd/lib/form';
 import AceEditor from 'react-ace';
@@ -11,6 +11,8 @@ import 'ace-builds/src-noconflict/snippets/json';
 import 'ace-builds/src-noconflict/ext-language_tools';
 import 'ace-builds/src-noconflict/ext-searchbox';
 import 'ace-builds/src-noconflict/theme-eclipse';
+import { UploadProps } from 'antd/lib/upload';
+import { getAccessToken } from '@/utils/authority';
 
 interface Props extends FormComponentProps {
   device: any;
@@ -39,6 +41,7 @@ const Functions: React.FC<Props> = props => {
   const [functionsSelectList] = useState(initState.functionsSelectList);
   const [functionsInfo, setFunctionsInfo] = useState(initState.functionsInfo);
   const [spinning, setSpinning] = useState(initState.spinning);
+  const [editor, setEditor] = useState<any>(null);
 
   useEffect(() => {
     const { functions } = JSON.parse(props.device.metadata);
@@ -93,6 +96,33 @@ const Functions: React.FC<Props> = props => {
     });
   };
 
+  const uploadProps: UploadProps = {
+    accept: '*',
+    action: '/jetlinks/file/static',
+    headers: {
+      'X-Access-Token': getAccessToken(),
+    },
+    showUploadList: false,
+    onChange(info) {
+      if (info.file.status === 'done') {
+        const content = info.file.response.result
+        message.success('文件上传成功');
+        const cursorPosition = editor.getCursorPosition();
+        editor.session.insert(cursorPosition, content);
+      }
+    },
+  };
+
+  const menu = (
+    <Menu>
+      <Menu.Item>
+        <Upload {...uploadProps}>
+          <Button icon="upload">文件</Button>
+        </Upload>
+      </Menu.Item>
+    </Menu>
+  );
+
   return (
     <div>
       <Spin spinning={spinning}>
@@ -120,11 +150,19 @@ const Functions: React.FC<Props> = props => {
                 </Select>,
               )}
             </Form.Item>
+            <Form.Item>
+              <div style={{marginLeft: '9%'}}>
+                <Dropdown overlay={menu}>
+                  <Button>插入<Icon type="down" /></Button>
+                </Dropdown>
+              </div>
+            </Form.Item>
             <Form.Item label="参数：">
               {getFieldDecorator('functionData', {
                 rules: [{ required: true, message: '请输入功能参数' }],
               })(
                 <AceEditor
+                  ref={l => setEditor(l && l.editor)}
                   mode="json"
                   theme="eclipse"
                   name="app_code_editor"
