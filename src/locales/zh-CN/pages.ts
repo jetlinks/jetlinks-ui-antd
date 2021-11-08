@@ -200,7 +200,7 @@ export default {
   'pages.device.productDetail.alarmLog': '告警记录',
   'pages.device.productDetail.alarmLog.deviceId': '设备ID',
   'pages.device.productDetail.alarmLog.deviceName': '设备名称',
-  'pages.device.productDetail.setting': '应用设置',
+  'pages.device.productDetail.setting': '应用配置',
   'pages.device.productDetail.disable': '停用',
   // 设备管理-产品分类
   'pages.device.category': '产品分类',

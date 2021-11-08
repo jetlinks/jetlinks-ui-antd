@@ -75,7 +75,7 @@ type FunctionMetadata = {
   id: string;
   name: string;
   async: boolean;
-  output: Record<any, any>;
+  output: Record<string, unknown>;
   inputs: ({
     id: string;
     name: string;

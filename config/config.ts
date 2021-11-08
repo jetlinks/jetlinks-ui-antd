@@ -51,7 +51,7 @@ export default defineConfig({
   },
   lessLoader: {
     modifyVars: {
-      'root-entry-name': 'default',
+      'root-entry-name': 'default', // 解决antd 4.17.0-alpha.9 bug 官方发布正式版后可尝试移除
     },
   },
   // Fast Refresh 热更新

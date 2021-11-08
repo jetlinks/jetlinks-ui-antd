@@ -36,6 +36,10 @@ import ConfigParam from '@/components/Metadata/ConfigParam';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { lastValueFrom } from 'rxjs';
 import type { DeviceMetadata } from '@/pages/device/Product/typings';
+import SystemConst from '@/utils/const';
+import DB from '@/db';
+import { useParams } from 'umi';
+import _ from 'lodash';
 
 const Edit = () => {
   const intl = useIntl();
@@ -43,6 +47,34 @@ const Edit = () => {
     initialValues: MetadataModel.item as Record<string, unknown>,
   });
 
+  const schemaTitleMapping = {
+    properties: {
+      title: intl.formatMessage({
+        id: 'pages.device.productDetail.metadata.dataType',
+        defaultMessage: '数据类型',
+      }),
+    },
+    events: {
+      title: intl.formatMessage({
+        id: 'pages.device.productDetail.metadata.inputParameter',
+        defaultMessage: '输出参数',
+      }),
+    },
+    functions: {
+      title: intl.formatMessage({
+        id: 'pages.device.productDetail.metadata.inputParameter',
+        defaultMessage: '输出参数',
+      }),
+    },
+    tags: {
+      title: intl.formatMessage({
+        id: 'pages.device.productDetail.metadata.dataType',
+        defaultMessage: '数据类型',
+      }),
+    },
+  };
+
+  const param = useParams<{ id: string }>();
   const SchemaField = createSchemaField({
     components: {
       FormItem,
@@ -92,207 +124,221 @@ const Edit = () => {
 
   const [units, setUnits] = useState<{ label: string; value: string }[]>();
 
-  const propertySchema: ISchema = {
+  const valueTypeConfig = {
     type: 'object',
+    'x-index': 4,
     properties: {
-      id: {
-        title: intl.formatMessage({
-          id: 'pages.device.productDetail.metadata.key',
-          defaultMessage: '标识',
-        }),
+      type: {
+        title: schemaTitleMapping[MetadataModel.type].title,
         required: true,
         'x-decorator': 'FormItem',
-        'x-component': 'Input',
-        'x-disabled': MetadataModel.action === 'edit',
+        'x-component': 'Select',
+        enum: DataTypeList,
       },
-      name: {
+      unit: {
         title: intl.formatMessage({
-          id: 'pages.table.name',
-          defaultMessage: '名称',
+          id: 'pages.device.instanceDetail.metadata.unit',
+          defaultMessage: '单位',
         }),
-        required: true,
         'x-decorator': 'FormItem',
-        'x-component': 'Input',
-      },
-      valueType: {
-        type: 'object',
-        properties: {
-          type: {
-            title: intl.formatMessage({
-              id: 'pages.device.productDetail.metadata.dataType',
-              defaultMessage: '数据类型',
-            }),
-            required: true,
-            'x-decorator': 'FormItem',
-            'x-component': 'Select',
-            enum: DataTypeList,
-          },
-          unit: {
-            title: intl.formatMessage({
-              id: 'pages.device.instanceDetail.metadata.unit',
-              defaultMessage: '单位',
-            }),
-            'x-decorator': 'FormItem',
-            'x-component': 'Select',
-            'x-visible': false,
-            enum: units,
-            'x-reactions': {
-              dependencies: ['.type'],
-              fulfill: {
-                state: {
-                  visible: "{{['int','float','long','double'].includes($deps[0])}}",
-                },
-              },
+        'x-component': 'Select',
+        'x-visible': false,
+        enum: units,
+        'x-reactions': {
+          dependencies: ['.type'],
+          fulfill: {
+            state: {
+              visible: "{{['int','float','long','double'].includes($deps[0])}}",
             },
           },
-          scale: {
+        },
+      },
+      scale: {
+        title: intl.formatMessage({
+          id: 'pages.device.productDetail.metadata.accuracy',
+          defaultMessage: '精度',
+        }),
+        'x-decorator': 'FormItem',
+        'x-component': 'NumberPicker',
+        'x-reactions': {
+          dependencies: ['.type'],
+          fulfill: {
+            state: {
+              visible: "{{['float','double'].includes($deps[0])}}",
+            },
+          },
+        },
+      },
+      booleanConfig: {
+        title: intl.formatMessage({
+          id: 'pages.device.productDetail.metadata.boolean',
+          defaultMessage: '布尔值',
+        }),
+        type: 'void',
+        'x-decorator': 'FormItem',
+        'x-component': 'BooleanEnum',
+        'x-reactions': {
+          dependencies: ['.type'],
+          fulfill: {
+            state: {
+              visible: "{{['boolean'].includes($deps[0])}}",
+            },
+          },
+        },
+      },
+      format: {
+        title: intl.formatMessage({
+          id: 'pages.device.productDetail.metadata.timeFormat',
+          defaultMessage: '时间格式',
+        }),
+        'x-decorator': 'FormItem',
+        'x-component': 'Select',
+        enum: DateTypeList,
+        'x-reactions': {
+          dependencies: ['.type'],
+          fulfill: {
+            state: {
+              visible: "{{['date'].includes($deps[0])}}",
+            },
+          },
+        },
+      },
+      enumConfig: {
+        title: intl.formatMessage({
+          id: 'pages.device.productDetail.metadata.enum',
+          defaultMessage: '枚举项',
+        }),
+        type: 'void',
+        'x-decorator': 'FormItem',
+        'x-component': 'EnumParam',
+        'x-reactions': {
+          dependencies: ['.type'],
+          fulfill: {
+            state: {
+              visible: "{{['enum'].includes($deps[0])}}",
+            },
+          },
+        },
+      },
+      expands: {
+        type: 'object',
+        properties: {
+          maxLength: {
             title: intl.formatMessage({
-              id: 'pages.device.productDetail.metadata.accuracy',
-              defaultMessage: '精度',
+              id: 'pages.device.productDetail.metadata.maxLength',
+              defaultMessage: '最大长度',
             }),
             'x-decorator': 'FormItem',
             'x-component': 'NumberPicker',
+            'x-decorator-props': {
+              tooltip: intl.formatMessage({
+                id: 'pages.device.productDetail.metadata.maxLength.byte',
+                defaultMessage: '字节',
+              }),
+            },
             'x-reactions': {
-              dependencies: ['.type'],
+              dependencies: ['..type'],
               fulfill: {
                 state: {
-                  visible: "{{['float','double'].includes($deps[0])}}",
-                },
-              },
-            },
-          },
-          booleanConfig: {
-            title: intl.formatMessage({
-              id: 'pages.device.productDetail.metadata.boolean',
-              defaultMessage: '布尔值',
-            }),
-            type: 'void',
-            'x-decorator': 'FormItem',
-            'x-component': 'BooleanEnum',
-            'x-reactions': {
-              dependencies: ['.type'],
-              fulfill: {
-                state: {
-                  visible: "{{['boolean'].includes($deps[0])}}",
-                },
-              },
-            },
-          },
-          format: {
-            title: intl.formatMessage({
-              id: 'pages.device.productDetail.metadata.timeFormat',
-              defaultMessage: '时间格式',
-            }),
-            'x-decorator': 'FormItem',
-            'x-component': 'Select',
-            enum: DateTypeList,
-            'x-reactions': {
-              dependencies: ['.type'],
-              fulfill: {
-                state: {
-                  visible: "{{['date'].includes($deps[0])}}",
-                },
-              },
-            },
-          },
-          enumConfig: {
-            title: intl.formatMessage({
-              id: 'pages.device.productDetail.metadata.enum',
-              defaultMessage: '枚举项',
-            }),
-            type: 'void',
-            'x-decorator': 'FormItem',
-            'x-component': 'EnumParam',
-            'x-reactions': {
-              dependencies: ['.type'],
-              fulfill: {
-                state: {
-                  visible: "{{['enum'].includes($deps[0])}}",
-                },
-              },
-            },
-          },
-          expands: {
-            type: 'object',
-            properties: {
-              maxLength: {
-                title: intl.formatMessage({
-                  id: 'pages.device.productDetail.metadata.maxLength',
-                  defaultMessage: '最大长度',
-                }),
-                'x-decorator': 'FormItem',
-                'x-component': 'NumberPicker',
-                'x-decorator-props': {
-                  tooltip: intl.formatMessage({
-                    id: 'pages.device.productDetail.metadata.maxLength.byte',
-                    defaultMessage: '字节',
-                  }),
-                },
-                'x-reactions': {
-                  dependencies: ['..type'],
-                  fulfill: {
-                    state: {
-                      visible: "{{['string','password'].includes($deps[0])}}",
-                    },
-                  },
-                },
-              },
-            },
-          },
-          elementType: {
-            title: intl.formatMessage({
-              id: 'pages.device.productDetail.metadata.elementConfiguration',
-              defaultMessage: '元素配置',
-            }),
-            'x-decorator': 'FormItem',
-            'x-component': 'ArrayParam',
-            'x-reactions': {
-              dependencies: ['.type'],
-              fulfill: {
-                state: {
-                  visible: "{{['array'].includes($deps[0])}}",
-                },
-              },
-            },
-          },
-          jsonConfig: {
-            title: intl.formatMessage({
-              id: 'pages.device.productDetail.metadata.jsonObject',
-              defaultMessage: 'JSON对象',
-            }),
-            type: 'void',
-            'x-decorator': 'FormItem',
-            'x-component': 'JsonParam',
-            'x-reactions': {
-              dependencies: ['.type'],
-              fulfill: {
-                state: {
-                  visible: "{{['object'].includes($deps[0])}}",
-                },
-              },
-            },
-          },
-          fileType: {
-            title: intl.formatMessage({
-              id: 'pages.device.productDetail.metadata.fileType',
-              defaultMessage: '文件类型',
-            }),
-            'x-decorator': 'FormItem',
-            'x-component': 'Select',
-            'x-visible': false,
-            enum: FileTypeList,
-            'x-reactions': {
-              dependencies: ['.type'],
-              fulfill: {
-                state: {
-                  visible: "{{['file'].includes($deps[0])}}",
+                  visible: "{{['string','password'].includes($deps[0])}}",
                 },
               },
             },
           },
         },
       },
+      elementType: {
+        title: intl.formatMessage({
+          id: 'pages.device.productDetail.metadata.elementConfiguration',
+          defaultMessage: '元素配置',
+        }),
+        'x-decorator': 'FormItem',
+        'x-component': 'ArrayParam',
+        'x-reactions': {
+          dependencies: ['.type'],
+          fulfill: {
+            state: {
+              visible: "{{['array'].includes($deps[0])}}",
+            },
+          },
+        },
+      },
+      jsonConfig: {
+        title: intl.formatMessage({
+          id: 'pages.device.productDetail.metadata.jsonObject',
+          defaultMessage: 'JSON对象',
+        }),
+        type: 'void',
+        'x-decorator': 'FormItem',
+        'x-component': 'JsonParam',
+        'x-reactions': {
+          dependencies: ['.type'],
+          fulfill: {
+            state: {
+              visible: "{{['object'].includes($deps[0])}}",
+            },
+          },
+        },
+      },
+      fileType: {
+        title: intl.formatMessage({
+          id: 'pages.device.productDetail.metadata.fileType',
+          defaultMessage: '文件类型',
+        }),
+        'x-decorator': 'FormItem',
+        'x-component': 'Select',
+        'x-visible': false,
+        enum: FileTypeList,
+        'x-reactions': {
+          dependencies: ['.type'],
+          fulfill: {
+            state: {
+              visible: "{{['file'].includes($deps[0])}}",
+            },
+          },
+        },
+      },
+    },
+  } as any;
+  const commonConfig = {
+    id: {
+      title: intl.formatMessage({
+        id: 'pages.device.productDetail.metadata.key',
+        defaultMessage: '标识',
+      }),
+      required: true,
+      'x-decorator': 'FormItem',
+      'x-component': 'Input',
+      'x-disabled': MetadataModel.action === 'edit',
+      'x-index': 0,
+    },
+    name: {
+      title: intl.formatMessage({
+        id: 'pages.table.name',
+        defaultMessage: '名称',
+      }),
+      required: true,
+      'x-decorator': 'FormItem',
+      'x-component': 'Input',
+      'x-index': 1,
+    },
+    description: {
+      title: intl.formatMessage({
+        id: 'pages.device.productDetail.metadata.describe',
+        defaultMessage: '描述',
+      }),
+      'x-decorator': 'FormItem',
+      'x-component': 'Input.TextArea',
+      'x-index': 100,
+    },
+  } as any;
+  const propertySchema: ISchema = {
+    type: 'object',
+    properties: {
+      ...commonConfig,
+      valueType: valueTypeConfig,
       expands: {
+        'x-index': 5,
         type: 'object',
         properties: {
           source: {
@@ -344,39 +390,12 @@ const Edit = () => {
           },
         },
       },
-
-      description: {
-        title: intl.formatMessage({
-          id: 'pages.device.productDetail.metadata.describe',
-          defaultMessage: '描述',
-        }),
-        'x-decorator': 'FormItem',
-        'x-component': 'Input.TextArea',
-      },
     },
   };
-
   const functionSchema: ISchema = {
     type: 'object',
     properties: {
-      id: {
-        title: intl.formatMessage({
-          id: 'pages.device.productDetail.metadata.key',
-          defaultMessage: '标识',
-        }),
-        required: true,
-        'x-decorator': 'FormItem',
-        'x-component': 'Input',
-      },
-      name: {
-        title: intl.formatMessage({
-          id: 'pages.table.name',
-          defaultMessage: '名称',
-        }),
-        required: true,
-        'x-decorator': 'FormItem',
-        'x-component': 'Input',
-      },
+      ...commonConfig,
       async: {
         title: intl.formatMessage({
           id: 'pages.device.productDetail.metadata.whetherAsync',
@@ -401,137 +420,52 @@ const Edit = () => {
             value: false,
           },
         ],
+        'x-index': 2,
       },
-      inputParams: {
+      inputs: {
+        type: 'void',
+        'x-index': 3,
         title: intl.formatMessage({
           id: 'pages.device.productDetail.metadata.inputParameter',
           defaultMessage: '输入参数',
         }),
-        required: true,
         'x-decorator': 'FormItem',
-        'x-component': 'Input',
+        'x-component': 'JsonParam',
+        'x-reactions': (field) => {
+          field.setComponentProps({ keys: 'inputs' });
+        },
       },
-      outputParams: {
-        title: intl.formatMessage({
-          id: 'pages.device.productDetail.metadata.outputParameters',
-          defaultMessage: '输出参数',
-        }),
-        required: true,
-        'x-decorator': 'FormItem',
-        'x-component': 'Input',
-      },
-      description: {
-        title: intl.formatMessage({
-          id: 'pages.device.productDetail.metadata.describe',
-          defaultMessage: '描述',
-        }),
-        'x-decorator': 'FormItem',
-        'x-component': 'Input.TextArea',
-      },
+      output: valueTypeConfig,
     },
   };
-
   const eventSchema: ISchema = {
     type: 'object',
     properties: {
-      id: {
-        title: intl.formatMessage({
-          id: 'pages.device.productDetail.metadata.key',
-          defaultMessage: '标识',
-        }),
-        required: true,
-        'x-decorator': 'FormItem',
-        'x-component': 'Input',
+      ...commonConfig,
+      expands: {
+        type: 'object',
+        'x-index': 2,
+        properties: {
+          level: {
+            title: intl.formatMessage({
+              id: 'pages.device.productDetail.metadata.level',
+              defaultMessage: 'level',
+            }),
+            required: true,
+            'x-decorator': 'FormItem',
+            'x-component': 'Select',
+            enum: EventLevel,
+          },
+        },
       },
-      name: {
-        title: intl.formatMessage({
-          id: 'pages.table.name',
-          defaultMessage: '名称',
-        }),
-        required: true,
-        'x-decorator': 'FormItem',
-        'x-component': 'Input',
-      },
-      'expands.level': {
-        title: intl.formatMessage({
-          id: 'pages.device.productDetail.metadata.level',
-          defaultMessage: 'level',
-        }),
-        required: true,
-        'x-decorator': 'FormItem',
-        'x-component': 'Select',
-        enum: EventLevel,
-      },
+      valueType: valueTypeConfig,
     },
   };
-
-  const tagSchema: ISchema = {
-    type: 'object',
-    properties: {
-      id: {
-        title: intl.formatMessage({
-          id: 'pages.device.productDetail.metadata.key',
-          defaultMessage: '标识',
-        }),
-        required: true,
-        'x-decorator': 'FormItem',
-        'x-component': 'Input',
-      },
-      name: {
-        title: intl.formatMessage({
-          id: 'pages.table.name',
-          defaultMessage: '名称',
-        }),
-        required: true,
-        'x-decorator': 'FormItem',
-        'x-component': 'Input',
-      },
-      'valueType.type': {
-        title: intl.formatMessage({
-          id: 'pages.device.productDetail.metadata.dataType',
-          defaultMessage: '数据类型',
-        }),
-        required: true,
-        'x-decorator': 'FormItem',
-        'x-component': 'Select',
-        enum: DataTypeList,
-      },
-      'expands.readOnly': {
-        title: intl.formatMessage({
-          id: 'pages.device.productDetail.metadata.whetherReadOnly',
-          defaultMessage: '是否只读',
-        }),
-        required: true,
-        'x-decorator': 'FormItem',
-        'x-component': 'Radio.Group',
-        enum: [
-          {
-            label: intl.formatMessage({
-              id: 'pages.device.productDetail.metadata.true',
-              defaultMessage: '是',
-            }),
-            value: true,
-          },
-          {
-            label: intl.formatMessage({
-              id: 'pages.device.productDetail.metadata.false',
-              defaultMessage: '否',
-            }),
-            value: false,
-          },
-        ],
-      },
-      description: {
-        title: intl.formatMessage({
-          id: 'pages.device.productDetail.metadata.describe',
-          defaultMessage: '描述',
-        }),
-        'x-decorator': 'FormItem',
-        'x-component': 'Input.TextArea',
-      },
-    },
+  const createTagSchema = () => {
+    const temp = _.cloneDeep(propertySchema) as any;
+    delete temp.properties?.expands.properties.readOnly;
+    return temp;
   };
-
   const metadataTypeMapping: Record<string, { name: string; schema: ISchema }> = {
     properties: {
       name: '属性',
@@ -547,7 +481,7 @@ const Edit = () => {
     },
     tags: {
       name: '标签',
-      schema: tagSchema,
+      schema: createTagSchema(),
     },
   };
 
@@ -581,13 +515,19 @@ const Edit = () => {
     // todo 考虑优化
     if (index > -1) {
       config[index] = params;
+      DB.getDB().table(`${param.id}-${type}`).update(params.id, params);
     } else {
       config.push(params);
+      DB.getDB().table(`${param.id}-${type}`).add(params, params.id);
     }
+    // 保存到服务器
     product.metadata = JSON.stringify(metadata);
     const result = await service.saveProduct(product);
     if (result.status === 200) {
       message.success('操作成功！');
+      MetadataModel.edit = false;
+      MetadataModel.item = {};
+      Store.set(SystemConst.REFRESH_METADATA_TABLE, true);
     } else {
       message.error('操作失败！');
     }

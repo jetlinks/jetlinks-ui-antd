@@ -13,7 +13,11 @@ import { DataTypeList } from '@/pages/device/data';
 import { Store } from 'jetlinks-store';
 
 // 不算是自定义组件。只是抽离了JSONSchema
-const JsonParam = () => {
+interface Props {
+  keys?: string;
+}
+
+const JsonParam = (props: Props) => {
   const SchemaField = createSchemaField({
     components: {
       FormItem,
@@ -29,7 +33,7 @@ const JsonParam = () => {
   const schema: ISchema = {
     type: 'object',
     properties: {
-      properties: {
+      [props?.keys || 'properties']: {
         type: 'array',
         'x-component': 'ArrayItems',
         'x-decorator': 'FormItem',
