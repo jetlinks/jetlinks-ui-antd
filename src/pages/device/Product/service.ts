@@ -65,6 +65,18 @@ class Service extends BaseService<ProductItem> {
       method: 'PATCH',
       data,
     });
+
+  public changeDeploy = (id: string, state: 'deploy' | 'undeploy') =>
+    defer(() =>
+      from(
+        request(`${this.uri}/${id}/${state}`, {
+          method: 'POST',
+        }),
+      ),
+    ).pipe(
+      filter((resp) => resp.status === 200),
+      map((resp) => resp.result),
+    );
 }
 
 export default Service;

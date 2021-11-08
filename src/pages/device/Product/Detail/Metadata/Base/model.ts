@@ -6,11 +6,13 @@ type MetadataModelType = {
   edit: boolean;
   type: MetadataType;
   action: 'edit' | 'add';
+  import: boolean;
 };
 const MetadataModel = model<MetadataModelType>({
   item: undefined,
   edit: false,
   type: 'events',
   action: 'add',
+  import: false,
 });
 export default MetadataModel;

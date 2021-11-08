@@ -29,6 +29,7 @@ export const productModel = model<{
 }>({
   current: undefined,
 });
+
 const Product = observer(() => {
   const intl = useIntl();
   const status = {
@@ -124,7 +125,6 @@ const Product = observer(() => {
                   >
                     <div>ID</div>
                     <Typography.Paragraph copyable={{ text: row.id }}>
-                      {' '}
                       {row.id}
                     </Typography.Paragraph>
                   </div>
@@ -204,8 +204,8 @@ const Product = observer(() => {
                 >
                   <a key="download">
                     <DownloadOutlined
-                      onClick={() => {
-                        message.success(
+                      onClick={async () => {
+                        await message.success(
                           `${intl.formatMessage({
                             id: 'pages.data.option.download',
                             defaultMessage: '下载',

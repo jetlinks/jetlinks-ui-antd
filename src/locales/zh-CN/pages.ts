@@ -202,6 +202,7 @@ export default {
   'pages.device.productDetail.alarmLog.deviceName': '设备名称',
   'pages.device.productDetail.setting': '应用配置',
   'pages.device.productDetail.disable': '停用',
+  'pages.device.productDetail.enabled': '启用',
   // 设备管理-产品分类
   'pages.device.category': '产品分类',
   'pages.device.category.id': '分类ID',
