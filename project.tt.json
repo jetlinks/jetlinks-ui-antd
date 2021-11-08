@@ -1,0 +1,13 @@
+{
+  "miniprogramRoot": "./",
+  "projectname": "jetlinks-app",
+  "description": "jetlinks小程序",
+  "appid": "wxe4ab2605f41f4d7d",
+  "setting": {
+    "urlCheck": true,
+    "es6": false,
+    "postcss": false,
+    "minified": false
+  },
+  "compileType": "miniprogram"
+}
