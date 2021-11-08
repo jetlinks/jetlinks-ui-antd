@@ -1,7 +1,7 @@
 import { View } from '@tarojs/components';
-import Taro from '@tarojs/taro';
 import { useState, useEffect } from 'react';
 import { AtButton, AtList, AtListItem } from 'taro-ui';
+import Service from './service';
 
 import "taro-ui/dist/style/components/list.scss";
 import "taro-ui/dist/style/components/icon.scss";
@@ -10,28 +10,18 @@ import './index.less';
 
 const Index = () => {
   const [data, setData] = useState<any>([]);
-  const getData=()=>{
-    Taro.request({
-      url: 'https://demo.jetlinks.cn/jetlinks/user/_query?pageSize=10',
-      header: {
-        'x-access-token': '7ab4c7232bf6580afd2f4586d368be0f'
-      }
+
+  const getList = (data?:any) =>{
+    Service.getlist(data).then((res:any)=>{
+      setData(res.data.result.data)
+    }).catch(err => {
     })
-      .then(res => {
-        console.log(res.data?.result?.data);
-        
-        setData(res.data?.result?.data);
-      })
-      .catch(() => {
-        Taro.showToast({
-          title: '载入远程数据错误'
-        });
-      });
   }
+  
+
+
   useEffect(() => {
-    console.log(data.result,'result');
-    
-    getData();
+    // getList();
   }, []);
 
   return (
@@ -60,7 +50,7 @@ const Index = () => {
       }
       </AtList>
 
-      <AtButton onClick={()=>getData()} type='secondary' circle>
+      <AtButton onClick={()=>getList()} type='secondary' circle>
         加载数据
       </AtButton>
     </View>

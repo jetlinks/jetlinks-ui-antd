@@ -2,9 +2,9 @@
   "miniprogramRoot": "dist/",
   "projectname": "jetlinks-app",
   "description": "jetlinks小程序",
-  "appid": "wxe4ab2605f41f4d7d",
+  "appid": "wx90c21786f95756d4",
   "setting": {
-    "urlCheck": true,
+    "urlCheck": false,
     "es6": false,
     "enhance": true,
     "postcss": false,
@@ -36,7 +36,10 @@
     "packNpmManually": false,
     "packNpmRelationList": [],
     "minifyWXSS": true,
-    "showES6CompileOption": false
+    "disableUseStrict": false,
+    "minifyWXML": true,
+    "showES6CompileOption": false,
+    "useCompilerPlugins": false
   },
   "compileType": "miniprogram",
   "simulatorType": "wechat",
