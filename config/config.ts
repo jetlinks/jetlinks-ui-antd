@@ -6,6 +6,8 @@ import defaultSettings from './defaultSettings';
 import proxy from './proxy';
 import routes from './routes';
 
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
+
 const { REACT_APP_ENV } = process.env;
 
 export default defineConfig({
@@ -74,4 +76,11 @@ export default defineConfig({
   // mfsu: {},
   webpack5: {},
   // exportStatic: {},
+  chainWebpack(memo, { env, webpack, createCSSRule }) {
+    memo.plugin('monaco-editor').use(
+      new MonacoWebpackPlugin({
+        languages: ['json', 'javascript', 'typescript', 'sql'],
+      }),
+    );
+  },
 });
