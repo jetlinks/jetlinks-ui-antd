@@ -1,4 +1,4 @@
-import { message, Spin } from 'antd';
+import { Checkbox, message, Spin } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, history } from 'umi';
 import styles from './index.less';
@@ -6,7 +6,7 @@ import Token from '@/utils/token';
 import Service from '@/pages/user/Login/service';
 import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
-import { Checkbox, Form, Submit, Input, Password, FormItem } from '@formily/antd';
+import { Form, Submit, Input, Password, FormItem } from '@formily/antd';
 import { filter, mergeMap } from 'rxjs/operators';
 import * as ICONS from '@ant-design/icons';
 import { useModel } from '@@/plugin-model/useModel';
@@ -71,7 +71,7 @@ const Login: React.FC = () => {
       FormItem,
       Input,
       Password,
-      Checkbox,
+      // Checkbox,
     },
     scope: {
       icon(name: any) {
@@ -146,7 +146,6 @@ const Login: React.FC = () => {
         },
         complete: () => {
           getCode();
-          setLoading(false);
         },
       },
     );
