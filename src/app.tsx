@@ -53,7 +53,7 @@ export async function getInitialState(): Promise<{
 
   const ws = new ReconnectingWebSocket(url);
 
-  ws.send('sss');
+  // ws.send('sss');
   ws.onerror = () => {
     console.log('链接错误。ws');
   };

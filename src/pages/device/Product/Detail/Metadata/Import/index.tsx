@@ -72,6 +72,36 @@ const Import = (props: Props) => {
         ],
       },
       metadata: {
+        title: '物模型类型',
+        'x-decorator': 'FormItem',
+        'x-component': 'Select',
+        'x-decorator-props': {
+          width: '800px',
+        },
+        'x-component-props': {
+          width: '800px',
+        },
+        default: 'jetlinks',
+        'x-reactions': {
+          dependencies: ['.type'],
+          fulfill: {
+            state: {
+              visible: "{{$deps[0]==='import'}}",
+            },
+          },
+        },
+        enum: [
+          {
+            label: 'Jetlinks物模型',
+            value: 'jetlinks',
+          },
+          {
+            label: '阿里云物模型TSL',
+            value: 'alink',
+          },
+        ],
+      },
+      layout: {
         type: 'void',
         'x-component': 'Space',
         'x-visible': false,
@@ -83,6 +113,7 @@ const Import = (props: Props) => {
             },
           },
         },
+
         properties: {
           upload: {
             'x-decorator': 'FormItem',
@@ -103,27 +134,6 @@ const Import = (props: Props) => {
                 };
               },
             },
-          },
-          metadata: {
-            'x-decorator': 'FormItem',
-            'x-component': 'Select',
-            'x-decorator-props': {
-              width: '800px',
-            },
-            'x-component-props': {
-              width: '800px',
-            },
-            default: 'jetlinks',
-            enum: [
-              {
-                label: 'Jetlinks物模型',
-                value: 'jetlinks',
-              },
-              {
-                label: '阿里云物模型TSL',
-                value: 'alink',
-              },
-            ],
           },
         },
       },
@@ -156,7 +166,16 @@ const Import = (props: Props) => {
 
   const handleImport = async () => {
     const data = (await form.submit()) as any;
-    await service.modify(param.id, { metadata: data[data.type] });
+
+    if (data.metadata === 'alink') {
+      service.convertMetadata('from', 'alink', data.import).subscribe({
+        next: async (meta) => {
+          await service.modify(param.id, { metadata: JSON.stringify(meta) });
+        },
+      });
+    } else {
+      await service.modify(param.id, { metadata: data[data.type] });
+    }
     message.success('导入成功');
   };
   return (

@@ -4,10 +4,12 @@ import BaseMetadata from '@/pages/device/Product/Detail/Metadata/Base';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import Import from '@/pages/device/Product/Detail/Metadata/Import';
 import { useState } from 'react';
+import Cat from '@/pages/device/Product/Detail/Metadata/Cat';
 
 const Metadata = observer(() => {
   const intl = useIntl();
   const [visible, setVisible] = useState<boolean>(false);
+  const [cat, setCat] = useState<boolean>(false);
   return (
     <>
       <Tabs
@@ -19,7 +21,7 @@ const Metadata = observer(() => {
                 defaultMessage: '快速导入',
               })}
             </Button>
-            <Button>
+            <Button onClick={() => setCat(true)}>
               {intl.formatMessage({
                 id: 'pages.device.productDetail.metadata',
                 defaultMessage: '物模型',
@@ -68,6 +70,7 @@ const Metadata = observer(() => {
         </Tabs.TabPane>
       </Tabs>
       <Import visible={visible} close={() => setVisible(false)} />
+      <Cat visible={cat} close={() => setCat(false)} />
     </>
   );
 });

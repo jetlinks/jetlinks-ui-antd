@@ -78,12 +78,30 @@ class Service extends BaseService<ProductItem> {
       map((resp) => resp.result),
     );
 
-  public convertMetadata = (type: string, data: any) => {
-    request(`${this.uri}/device/product/metadata/convert-from/${type}`, {
-      method: 'POST',
-      data,
-    });
-  };
+  public codecs = () =>
+    defer(() =>
+      from(
+        request(`/${SystemConst.API_BASE}/device/product/metadata/codecs`, {
+          method: 'GET',
+        }),
+      ),
+    ).pipe(
+      filter((resp) => resp.status === 200),
+      map((resp) => resp.result),
+    );
+
+  public convertMetadata = (direction: 'from' | 'to', type: string, data: any) =>
+    defer(() =>
+      from(
+        request(`/${SystemConst.API_BASE}/device/product/metadata/convert-${direction}/${type}`, {
+          method: 'POST',
+          data,
+        }),
+      ),
+    ).pipe(
+      filter((resp) => resp.status === 200),
+      map((resp) => resp.result),
+    );
 }
 
 export default Service;
