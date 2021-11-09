@@ -29,9 +29,6 @@ const Index = () => {
     // getList({
     //   pageSize:10
     // });
-    console.log(encodeQuery({
-      pageSize:10
-    }))
   }, []);
 
   return (

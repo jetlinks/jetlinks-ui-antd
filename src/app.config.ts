@@ -1,7 +1,7 @@
 export default {
   pages: [
-    'pages/index/index',
     'pages/device/index',
+    'pages/index/index',
     'pages/me/index',
   ],
   tabBar:{
