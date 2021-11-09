@@ -2,6 +2,7 @@ import { View } from '@tarojs/components';
 import { useState, useEffect } from 'react';
 import { AtButton, AtList, AtListItem } from 'taro-ui';
 import Service from './service';
+import encodeQuery from '../../utils/encodeQuery';
 
 import "taro-ui/dist/style/components/list.scss";
 import "taro-ui/dist/style/components/icon.scss";
@@ -10,9 +11,13 @@ import './index.less';
 
 const Index = () => {
   const [data, setData] = useState<any>([]);
+  const [params,setParams] = useState<any>({
+    pageSize:10,
+    sorts: { field: 'name', order: 'desc' }
+  })
 
-  const getList = (data?:any) =>{
-    Service.getlist(data).then((res:any)=>{
+  const getList = (data:any) =>{
+    Service.getlist(encodeQuery(data)).then((res:any)=>{
       setData(res.data.result.data)
     }).catch(err => {
     })
@@ -21,7 +26,12 @@ const Index = () => {
 
 
   useEffect(() => {
-    // getList();
+    // getList({
+    //   pageSize:10
+    // });
+    console.log(encodeQuery({
+      pageSize:10
+    }))
   }, []);
 
   return (
@@ -50,7 +60,7 @@ const Index = () => {
       }
       </AtList>
 
-      <AtButton onClick={()=>getList()} type='secondary' circle>
+      <AtButton onClick={()=>getList(params)} type='secondary' circle>
         加载数据
       </AtButton>
     </View>

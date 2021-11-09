@@ -24,12 +24,17 @@ class httpRequest {
     return  Taro.request(option)
   }
 
-  get(url:string,params?:any){
+  get(url:string,data:any){
     return this.baseOptions({
       url,
-      params
+      data
     },'GET')
   };
+  
+  // get(url:string, params:any) {
+  //   let option = { url, params };
+  //   return this.baseOptions(option,'GET');
+  // }
 
   post(url:string, data:any, contentType:string){
     return this.baseOptions({
