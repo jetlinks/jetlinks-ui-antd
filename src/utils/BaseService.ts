@@ -42,6 +42,13 @@ class BaseService<T> implements IBaseService<T> {
   detail(id: string): Promise<any> {
     return request(`${this.uri}/${id}`, { method: 'GET' });
   }
+
+  modify(id: string, data: Partial<T>): Promise<any> {
+    return request(`${this.uri}/${id}`, {
+      method: 'PUT',
+      data,
+    });
+  }
 }
 
 export default BaseService;

@@ -1,10 +1,13 @@
-import { Modal } from 'antd';
+import { Button, Drawer, message } from 'antd';
 import { createSchemaField } from '@formily/react';
+import type { Field } from '@formily/core';
 import { createForm } from '@formily/core';
-import { Form, FormItem, Input, Select } from '@formily/antd';
+import { Form, FormItem, Input, Select, Space } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
 import FMonacoEditor from '@/components/FMonacoEditor';
-import Upload from '@/components/Upload/Upload';
+import FUpload from '@/components/Upload';
+import { service } from '@/pages/device/Product';
+import { useParams } from 'umi';
 
 interface Props {
   visible: boolean;
@@ -12,6 +15,7 @@ interface Props {
 }
 
 const Import = (props: Props) => {
+  const param = useParams<{ id: string }>();
   const form = createForm({
     initialValues: {},
   });
@@ -22,9 +26,22 @@ const Import = (props: Props) => {
       Input,
       Select,
       FMonacoEditor,
-      Upload,
+      FUpload,
+      Space,
     },
   });
+
+  const loadData = () => async (field: Field) => {
+    field.loading = true;
+    const product = (await service.queryNoPaging({})) as any;
+    field.dataSource = product.result.map((item: any) => ({
+      label: item.name,
+      value: item.metadata,
+      key: item.id,
+    }));
+    field.loading = false;
+  };
+
   const schema: ISchema = {
     type: 'object',
     properties: {
@@ -37,42 +54,27 @@ const Import = (props: Props) => {
           { label: '导入物模型', value: 'import' },
         ],
       },
-      device: {
+      copy: {
         title: '选择设备',
         'x-decorator': 'FormItem',
         'x-component': 'Select',
-        enum: [],
         'x-visible': false,
-        'x-reactions': {
-          dependencies: ['.type'],
-          fulfill: {
-            state: {
-              visible: "{{$deps[0]==='copy'}}",
+        'x-reactions': [
+          '{{loadData()}}',
+          {
+            dependencies: ['.type'],
+            fulfill: {
+              state: {
+                visible: "{{$deps[0]==='copy'}}",
+              },
             },
           },
-        },
-      },
-      upload: {
-        title: '快速导入',
-        'x-decorator': 'FormItem',
-        'x-component': 'Upload',
+        ],
       },
       metadata: {
-        title: '类型',
-        'x-decorator': 'FormItem',
-        'x-component': 'Select',
-        enum: [
-          {
-            label: 'Jetlinks物模型',
-            value: 'jetlinks',
-          },
-          {
-            label: '阿里云物模型TSL',
-            value: 'aliyun-tsl',
-          },
-        ],
+        type: 'void',
+        'x-component': 'Space',
         'x-visible': false,
-        default: 'jetlinks',
         'x-reactions': {
           dependencies: ['.type'],
           fulfill: {
@@ -81,15 +83,63 @@ const Import = (props: Props) => {
             },
           },
         },
+        properties: {
+          upload: {
+            'x-decorator': 'FormItem',
+            'x-component': 'FUpload',
+            'x-component-props': {
+              title: '快速导入',
+              showUploadList: false,
+              accept: '.json',
+              formatOnType: true,
+              formatOnPaste: true,
+              beforeUpload: (file: any) => {
+                const reader = new FileReader();
+                reader.readAsText(file);
+                reader.onload = (json) => {
+                  form.setValues({
+                    import: json.target?.result,
+                  });
+                };
+              },
+            },
+          },
+          metadata: {
+            'x-decorator': 'FormItem',
+            'x-component': 'Select',
+            'x-decorator-props': {
+              width: '800px',
+            },
+            'x-component-props': {
+              width: '800px',
+            },
+            default: 'jetlinks',
+            enum: [
+              {
+                label: 'Jetlinks物模型',
+                value: 'jetlinks',
+              },
+              {
+                label: '阿里云物模型TSL',
+                value: 'alink',
+              },
+            ],
+          },
+        },
       },
-      editor: {
+      import: {
         title: '物模型',
         'x-decorator': 'FormItem',
         'x-component': 'FMonacoEditor',
         'x-component-props': {
-          height: 200,
+          height: 350,
           theme: 'vs',
           language: 'json',
+          editorDidMount: (editor1: any) => {
+            editor1.onDidScrollChange?.(() => {
+              editor1.getAction('editor.action.formatDocument').run();
+            });
+          },
         },
         'x-visible': false,
         'x-reactions': {
@@ -104,8 +154,25 @@ const Import = (props: Props) => {
     },
   };
 
+  const handleImport = async () => {
+    const data = (await form.submit()) as any;
+    await service.modify(param.id, { metadata: data[data.type] });
+    message.success('导入成功');
+  };
   return (
-    <Modal title="导入物模型" visible={props.visible} onCancel={() => props.close()}>
+    <Drawer
+      title="导入物模型"
+      destroyOnClose
+      visible={props.visible}
+      onClose={() => props.close()}
+      extra={
+        <Space>
+          <Button type="primary" onClick={handleImport}>
+            确定
+          </Button>
+        </Space>
+      }
+    >
       <div style={{ background: 'rgb(236, 237, 238)' }}>
         <p style={{ padding: 10 }}>
           <span style={{ color: '#f5222d' }}>注</span>
@@ -121,9 +188,9 @@ const Import = (props: Props) => {
         </p>
       </div>
       <Form form={form} layout="vertical">
-        <SchemaField schema={schema} />
+        <SchemaField scope={{ loadData }} schema={schema} />
       </Form>
-    </Modal>
+    </Drawer>
   );
 };
 

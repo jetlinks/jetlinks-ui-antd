@@ -77,6 +77,13 @@ class Service extends BaseService<ProductItem> {
       filter((resp) => resp.status === 200),
       map((resp) => resp.result),
     );
+
+  public convertMetadata = (type: string, data: any) => {
+    request(`${this.uri}/device/product/metadata/convert-from/${type}`, {
+      method: 'POST',
+      data,
+    });
+  };
 }
 
 export default Service;
