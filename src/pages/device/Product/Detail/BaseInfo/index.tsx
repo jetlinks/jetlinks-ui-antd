@@ -63,7 +63,7 @@ const BaseInfo = () => {
   };
 
   const renderConfigCard = () => {
-    return metadata ? (
+    return metadata && metadata.length > 0 ? (
       metadata?.map((item) => {
         const itemSchema: ISchema = {
           type: 'object',
@@ -115,7 +115,7 @@ const BaseInfo = () => {
         );
       })
     ) : (
-      <Empty />
+      <Empty description={'暂无配置'} />
     );
   };
 
