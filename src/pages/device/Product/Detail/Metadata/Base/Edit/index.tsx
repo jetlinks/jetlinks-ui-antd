@@ -38,7 +38,6 @@ import { lastValueFrom } from 'rxjs';
 import type { DeviceMetadata } from '@/pages/device/Product/typings';
 import SystemConst from '@/utils/const';
 import DB from '@/db';
-import { useParams } from 'umi';
 import _ from 'lodash';
 
 const Edit = () => {
@@ -74,7 +73,6 @@ const Edit = () => {
     },
   };
 
-  const param = useParams<{ id: string }>();
   const SchemaField = createSchemaField({
     components: {
       FormItem,
@@ -517,10 +515,10 @@ const Edit = () => {
     // todo 考虑优化
     if (index > -1) {
       config[index] = params;
-      DB.getDB().table(`${param.id}-${type}`).update(params.id, params);
+      DB.getDB().table(`${type}`).update(params.id, params);
     } else {
       config.push(params);
-      DB.getDB().table(`${param.id}-${type}`).add(params, params.id);
+      DB.getDB().table(`${type}`).add(params, params.id);
     }
     // 保存到服务器
     product.metadata = JSON.stringify(metadata);
