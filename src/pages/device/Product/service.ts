@@ -102,6 +102,11 @@ class Service extends BaseService<ProductItem> {
       filter((resp) => resp.status === 200),
       map((resp) => resp.result),
     );
+
+  public productAlarm = (id: string) =>
+    request(`/${SystemConst.API_BASE}/device/alarm/product/${id}`, {
+      method: 'GET',
+    });
 }
 
 export default Service;
