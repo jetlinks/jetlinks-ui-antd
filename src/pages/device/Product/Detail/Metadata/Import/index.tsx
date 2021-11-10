@@ -172,6 +172,9 @@ const Import = (props: Props) => {
         next: async (meta) => {
           await service.modify(param.id, { metadata: JSON.stringify(meta) });
         },
+        error: () => {
+          message.error('发生错误!');
+        },
       });
     } else {
       await service.modify(param.id, { metadata: data[data.type] });

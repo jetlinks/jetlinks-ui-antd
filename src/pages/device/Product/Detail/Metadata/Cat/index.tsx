@@ -22,6 +22,7 @@ const Cat = (props: Props) => {
 
   const convertMetadata = (key: string) => {
     if (key === 'alink') {
+      setValue('');
       service.convertMetadata('to', 'alink', JSON.parse(metadata)).subscribe({
         next: (data) => {
           setValue(JSON.stringify(data));
