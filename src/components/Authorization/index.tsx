@@ -160,16 +160,11 @@ const Authorization = observer((props: AuthorizationProps) => {
   }, []);
 
   useEffect(() => {
-    DB.updateSchema({
-      permission: 'id,name,status,describe,type',
-    }).then(() => {
-      initPermission();
-    });
+    initPermission();
 
     return () => {
       DB.getDB().table(tableName).clear();
       AuthorizationModel.spinning = true;
-      DB.updateSchema({ permission: null });
     };
   }, [target.id]);
 
