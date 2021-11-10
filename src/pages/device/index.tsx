@@ -1,5 +1,6 @@
 import { View } from "@tarojs/components";
-import { AtSearchBar, AtTabs, AtTabsPane, AtMessage, AtCard, AtDivider } from 'taro-ui'
+import Taro from "@tarojs/taro"
+import { AtSearchBar, AtTabs, AtTabsPane, AtMessage, AtCard, AtTag } from 'taro-ui'
 import React, { useEffect, useState } from "react";
 import Service from "./service";
 import encodeQuery from '../../utils/encodeQuery';
@@ -10,7 +11,7 @@ const Device = () => {
   const [current, setCurrent] = useState<any>(0);
   const [data, setData] = useState<any>([]);
   const [searchParam, setSearchParam] = useState<any>({
-    pageSize: 10
+    pageSize: 10,
   });
 
 
@@ -29,11 +30,58 @@ const Device = () => {
 
   //获取设备列表
   const getDeviceList = (params: any) => {
+    // setSearchParam(params)
+    // console.log(params)
     Service.getDeviceList(encodeQuery(params))
       .then((res: any) => {
         setData(res.data.result.data)
       })
       .catch(err => <AtMessage>{err}</AtMessage>)
+  }
+
+  //状态样式
+  const extraStyle = (data: any) => {
+    if (data === '离线') {
+      return { color: 'red' }
+    }
+    if (data === '在线') {
+      return { color: 'green' }
+    }
+    if (data === '未启用') {
+      return { color: 'volcano' }
+    }
+  }
+  //切换标签  value:tabindex data:searchdata
+  const changeTab = (value: number,data?:string) => {
+    switch (value) {
+      case 0: getDeviceList({
+        pageSize: 10,
+        terms: {
+          "name$LIKE": data
+        }
+      }); break;
+      case 1: getDeviceList({
+        ...searchParam,
+        terms: {
+          "state": 'online',
+          "name$LIKE": data
+        }
+      }); break;
+      case 2: getDeviceList({
+        ...searchParam,
+        terms: {
+          "state": 'offline',
+          "name$LIKE": data
+        }
+      }); break;
+      case 3: getDeviceList({
+        ...searchParam,
+        terms: {
+          "state": 'notActive'
+          ,"name$LIKE": data
+        }
+      }); break;
+    }
   }
 
   useEffect(() => {
@@ -46,15 +94,13 @@ const Device = () => {
         value={searchData}
         onChange={(value) => {
           setSearchData(value)
-          setSearchParam({
-            ...searchParam,
-            terms: {
-              "name$LIKE": value
-            }
-          })
         }}
         onActionClick={() => {
-          getDeviceList(searchParam)
+          changeTab(current,searchData)
+        }}
+        onClear={() => {
+          setSearchData('')
+          changeTab(current)
         }}
       />
 
@@ -63,30 +109,85 @@ const Device = () => {
         tabList={tabList}
         onClick={(value) => {
           setCurrent(value)
-          console.log(value)
+          changeTab(value)
+          setSearchData('')
         }}
       >
         <AtTabsPane index={0} current={current}>
           <View>
             {
               data.map((item: any) => (
-                <View style={{paddingTop:10}}>
+                <View style={{ paddingTop: 10, }}>
                   <AtCard
-                  note={`ID${item.id}`}
-                  extra={item.state.text}
-                  title={item.name}
-                  thumb='http://img10.360buyimg.com/jdphoto/s72x72_jfs/t5872/209/5240187906/2872/8fa98cd/595c3b2aN4155b931.png'
-                >
-                  产品信息：{item.productName}
-                </AtCard>
+                    note={`ID：${item.id}`}
+                    extra={` ${item.state.text} `}
+                    extraStyle={extraStyle(item.state.text)}
+                    title={item.name}
+                    thumb='http://img10.360buyimg.com/jdphoto/s72x72_jfs/t5872/209/5240187906/2872/8fa98cd/595c3b2aN4155b931.png'
+                    onClick={()=>{
+                      Taro.navigateTo({
+                        url: `/pages/device/detail/index?id=${item.id}`
+                      })
+                    }}
+                  >
+                    产品信息：{item.productName}
+                  </AtCard>
                 </View>
               ))
             }
           </View>
         </AtTabsPane>
-        <AtTabsPane index={1} current={current}>2</AtTabsPane>
-        <AtTabsPane index={2} current={current}>3</AtTabsPane>
-        <AtTabsPane index={3} current={current}>4</AtTabsPane>
+        <AtTabsPane index={1} current={current}>
+          {
+            data.map((item: any) => (
+              <View style={{ paddingTop: 10, }}>
+                <AtCard
+                  note={`ID：${item.id}`}
+                  extra={` ${item.state.text} `}
+                  extraStyle={extraStyle(item.state.text)}
+                  title={item.name}
+                  thumb='http://img10.360buyimg.com/jdphoto/s72x72_jfs/t5872/209/5240187906/2872/8fa98cd/595c3b2aN4155b931.png'
+                >
+                  产品信息：{item.productName}
+                </AtCard>
+              </View>
+            ))
+          }
+        </AtTabsPane>
+        <AtTabsPane index={2} current={current}>
+          {
+            data.map((item: any) => (
+              <View style={{ paddingTop: 10, }}>
+                <AtCard
+                  note={`ID：${item.id}`}
+                  extra={` ${item.state.text} `}
+                  extraStyle={extraStyle(item.state.text)}
+                  title={item.name}
+                  thumb='http://img10.360buyimg.com/jdphoto/s72x72_jfs/t5872/209/5240187906/2872/8fa98cd/595c3b2aN4155b931.png'
+                >
+                  产品信息：{item.productName}
+                </AtCard>
+              </View>
+            ))
+          }
+        </AtTabsPane>
+        <AtTabsPane index={3} current={current}>
+          {
+            data.map((item: any) => (
+              <View style={{ paddingTop: 10, }}>
+                <AtCard
+                  note={`ID：${item.id}`}
+                  extra={` ${item.state.text} `}
+                  extraStyle={extraStyle(item.state.text)}
+                  title={item.name}
+                  thumb='http://img10.360buyimg.com/jdphoto/s72x72_jfs/t5872/209/5240187906/2872/8fa98cd/595c3b2aN4155b931.png'
+                >
+                  产品信息：{item.productName}
+                </AtCard>
+              </View>
+            ))
+          }
+        </AtTabsPane>
       </AtTabs>
     </View>
   )
