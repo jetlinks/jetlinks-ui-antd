@@ -58,7 +58,7 @@ const BaseMetadata = observer((props: Props) => {
   ];
 
   const initData = useCallback(async () => {
-    const result = await DB.getDB().table(`${param.id}-${type}`).toArray();
+    const result = await DB.getDB().table(`${type}`).toArray();
     setData(result);
   }, [param.id, type]);
 

@@ -168,7 +168,7 @@ const Import = (props: Props) => {
     const data = (await form.submit()) as any;
 
     if (data.metadata === 'alink') {
-      service.convertMetadata('from', 'alink', data.import).subscribe({
+      service.convertMetadata('to', 'alink', data.import).subscribe({
         next: async (meta) => {
           await service.modify(param.id, { metadata: JSON.stringify(meta) });
         },

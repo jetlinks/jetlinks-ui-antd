@@ -130,6 +130,24 @@ export const request: RequestConfig = {
       history.push('/user/login');
       return;
     }
+    if (response.status === 400) {
+      response.text().then((resp: string) => {
+        if (resp) {
+          notification.error({
+            key: 'error',
+            message: JSON.parse(resp).message,
+          });
+        } else {
+          response.json().then((res: any) => {
+            notification.error({
+              key: 'error',
+              message: `请求错误：${res.message}`,
+            });
+          });
+        }
+      });
+      return response;
+    }
     if (!response) {
       notification.error({
         description: '您的网络发生异常，无法连接服务器',

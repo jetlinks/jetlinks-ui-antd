@@ -6,6 +6,15 @@ class DexieDB {
 
   constructor() {
     this.db = new Dexie(SystemConst.API_BASE);
+    // 第一版本考虑动态创建表。但开关数据库造成数据库状态错误。
+    // 所以改为初始化就创建系统所需要的表。
+    this.db.version(1).stores({
+      permission: 'id,name,status,describe,type',
+      events: 'id,name',
+      properties: 'id,name',
+      functions: 'id,name',
+      tags: 'id,name',
+    });
   }
 
   getDB() {
@@ -21,11 +30,13 @@ class DexieDB {
     return this.db;
   }
 
+  /**
+   * 会造成数据库状态错误
+   * @deprecated
+   * @param extendedSchema
+   */
   updateSchema = async (extendedSchema: Record<string, string | null>) => {
-    // 打开后才能获取正确的版本号
-    // console.log(database)
     await this.getDB().close();
-    // 关闭后才可以更改表结构
     await this.getDB()
       .version(this.db.verno + 1)
       .stores(extendedSchema);
