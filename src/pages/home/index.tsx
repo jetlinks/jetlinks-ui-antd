@@ -41,6 +41,11 @@ function Home() {
 
   const AddressVisibleEvent = () => {
     setAddressVisible(false)
+    service.getEdgeInfo().subscribe(resp => {
+      if (resp.status === 200) {
+        setInfo(resp.result);
+      }
+    })
   }
 
   useEffect(() => {

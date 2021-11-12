@@ -17,7 +17,7 @@ function Internet() {
   const [network2, setNetwork2] = useState<any>({});
 
   const openEditModel = (type: number) => {
-    let title = '编辑网口' + type
+    let title = '编辑网口' + `${type+1}`
     setTitle(title)
     if(type === 0){
       setData(network1)

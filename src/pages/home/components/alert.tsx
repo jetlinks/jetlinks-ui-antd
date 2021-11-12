@@ -50,7 +50,7 @@ function Alert() {
           <div className={deviceStyle.top}>
             <img src={require('@/assets/home/alarm.png')} alt="" />
             <div>
-              <div>总告警次数（次）</div>
+              <div>总告警次数</div>
               <h2>{count}</h2>
             </div>
           </div>

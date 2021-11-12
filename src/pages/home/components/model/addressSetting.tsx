@@ -1,7 +1,7 @@
 import React, { useRef,useEffect ,useState} from 'react';
 import Form from '@/components/BaseForm';
 import Service from '../service';
-import { Input, Modal, Radio,Row,Col} from 'antd';
+import { Input, Modal, Radio,Row,Col, message} from 'antd';
 
 interface AddressSettingProps {
   visible?: boolean
@@ -33,6 +33,7 @@ const AddressSetting = (props: AddressSettingProps) => {
       if (err) return;
       service.editPlateInfo(data).subscribe(resp => {
         if (resp.status === 200) {
+          message.success('提交成功')
           if (props.onOk) {
             props.onOk()
           }
