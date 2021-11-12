@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Modal, Input, Radio, Button, InputNumber } from 'antd';
+import { Modal, Input, Radio, Button, InputNumber, message } from 'antd';
 import Form from '@/components/BaseForm';
 import IpInput from '@/components/BaseForm/IPInput'
 import AliFont from '@/components/AliFont';
@@ -26,6 +26,9 @@ function CascadeModel(props: CascadeProps) {
     manual: true,
     onSuccess(res) {
       if (res.status === 200) {
+        if(res.result.length===0){
+          message.warn('请到平台下发配置')
+        }
         let data = res.result[0]
         let sipConfigs = [{
           name: data.name,
@@ -206,6 +209,39 @@ function CascadeModel(props: CascadeProps) {
       },
       render: () => {
         return <InputNumber placeholder='请输入网关侧SIP的端口' style={{ width: '100%' }} />
+      }
+    },
+    {
+      name: 'sipConfigs[0].manufacturer',
+      label: '厂商',
+      required: true,
+      options: {
+        rules: [{ required: true, message: '请输入厂商' }],
+      },
+      render: () => {
+        return <Input placeholder='请输入厂商' style={{ width: '100%' }} />
+      }
+    },
+    {
+      name: 'sipConfigs[0].model',
+      label: '型号',
+      required: true,
+      options: {
+        rules: [{ required: true, message: '请输入型号' }],
+      },
+      render: () => {
+        return <Input placeholder='请输入型号' style={{ width: '100%' }} />
+      }
+    },
+    {
+      name: 'sipConfigs[0].firmware',
+      label: '版本号',
+      required: true,
+      options: {
+        rules: [{ required: true, message: '请输入版本号' }],
+      },
+      render: () => {
+        return <Input placeholder='请输入版本号' style={{ width: '100%' }} />
       }
     },
     { title: '其他信息' },
