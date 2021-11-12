@@ -12,7 +12,7 @@ class Service extends BaseService<ProductItem> {
   public instanceCount = (params: Record<string, any>) =>
     request(`/${SystemConst.API_BASE}/device-instance/_count`, { params, method: 'GET' });
 
-  public list = (params: any) =>
+  public queryZipCount = (params: any) =>
     from(this.query(params)).pipe(
       concatMap((i: Response<ProductItem>) =>
         from(i.result.data as ProductItem[]).pipe(

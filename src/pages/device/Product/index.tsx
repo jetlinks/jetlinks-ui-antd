@@ -1,23 +1,26 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import ProList from '@jetlinks/pro-list';
-import { Badge, Button, Card, message, Space, Tag, Tooltip, Typography } from 'antd';
+import { Badge, Button, message, Space, Tooltip } from 'antd';
 import type { ProductItem } from '@/pages/device/Product/typings';
 import {
   CloseCircleOutlined,
   DownloadOutlined,
   EditOutlined,
   EyeOutlined,
-  GoldOutlined,
   MinusOutlined,
   PlayCircleOutlined,
+  PlusOutlined,
 } from '@ant-design/icons';
-import { lastValueFrom } from 'rxjs';
 import Service from '@/pages/device/Product/service';
 import { observer } from '@formily/react';
 import { model } from '@formily/reactive';
-import encodeQuery from '@/utils/encodeQuery';
 import { Link } from 'umi';
 import { useIntl } from '@@/plugin-locale/localeExports';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import { useRef } from 'react';
+import ProTable from '@jetlinks/pro-table';
+import { lastValueFrom } from 'rxjs';
+import encodeQuery from '@/utils/encodeQuery';
+import { CurdModel } from '@/components/BaseCrud/model';
 
 export const service = new Service('device-product');
 export const statusMap = {
@@ -31,6 +34,7 @@ export const productModel = model<{
 });
 
 const Product = observer(() => {
+  const actionRef = useRef<ActionType>();
   const intl = useIntl();
   const status = {
     1: (
@@ -52,228 +56,136 @@ const Product = observer(() => {
       />
     ),
   };
-  return (
-    <PageContainer>
-      <Card>
-        <ProList<ProductItem>
-          toolBarRender={() => {
-            return [
-              <Button key="3" type="primary">
-                {intl.formatMessage({
-                  id: 'pages.searchTable.new',
-                  defaultMessage: '新建',
-                })}
-              </Button>,
-            ];
-          }}
-          search={{
-            filterType: 'light',
-          }}
-          rowKey={'id'}
-          headerTitle={intl.formatMessage({
-            id: 'pages.device.product',
-            defaultMessage: '产品列表',
+  const columns: ProColumns<ProductItem>[] = [
+    {
+      dataIndex: 'index',
+      valueType: 'indexBorder',
+      width: 48,
+    },
+    {
+      title: 'ID',
+      dataIndex: 'id',
+    },
+    {
+      title: '产品名称',
+      dataIndex: 'name',
+    },
+    {
+      title: '状态',
+      render: (_, row) => <Space size={0}>{status[row.state]}</Space>,
+    },
+    {
+      title: '设备数量',
+      dataIndex: 'count',
+    },
+    {
+      title: '设备分类',
+      dataIndex: 'classifiedName',
+    },
+    {
+      title: intl.formatMessage({
+        id: 'pages.data.option',
+        defaultMessage: '操作',
+      }),
+      valueType: 'option',
+      align: 'center',
+      width: 200,
+      render: (_, record) => [
+        <Tooltip
+          title={intl.formatMessage({
+            id: 'pages.data.option.detail',
+            defaultMessage: '查看',
           })}
-          request={async (params = {}) => {
-            return await lastValueFrom(
-              service.list(encodeQuery({ ...params, sorts: { id: 'ascend' } })),
-            );
-          }}
-          pagination={{
-            pageSize: 5,
-          }}
-          // showActions="hover"
-          metas={{
-            id: {
-              dataIndex: 'id',
-              title: 'ID',
-            },
-            title: {
-              dataIndex: 'name',
-              title: intl.formatMessage({
-                id: 'pages.table.name',
-                defaultMessage: '名称',
-              }),
-            },
-            avatar: {
-              dataIndex: 'id',
-              search: false,
-            },
-            description: {
-              dataIndex: 'classifiedName',
-              search: false,
-            },
-            subTitle: {
-              dataIndex: 'state',
-              render: (_, row) => <Space size={0}>{status[row.state]}</Space>,
-              search: false,
-            },
-            content: {
-              search: false,
-              render: (_, row) => (
-                <div
-                  style={{
-                    flex: 1,
-                    display: 'flex',
-                    justifyContent: 'flex-start',
-                  }}
-                >
-                  <div
-                    style={{
-                      width: 200,
-                    }}
-                  >
-                    <div>ID</div>
-                    <Typography.Paragraph copyable={{ text: row.id }}>
-                      {row.id}
-                    </Typography.Paragraph>
-                  </div>
-                  <div
-                    style={{
-                      width: 200,
-                    }}
-                  >
-                    <div>
-                      {intl.formatMessage({
-                        id: 'pages.device.product.deviceNumber',
-                        defaultMessage: '设备数量',
-                      })}
-                    </div>
-                    <Badge
-                      showZero={true}
-                      className="site-badge-count-109"
-                      count={row.count}
-                      style={{ backgroundColor: '#52c41a' }}
-                    />
-                  </div>
-                  <div
-                    style={{
-                      width: 200,
-                    }}
-                  >
-                    <div>
-                      {intl.formatMessage({
-                        id: 'pages.device.product.deviceClass',
-                        defaultMessage: '设备分类',
-                      })}
-                    </div>
-                    <Tag icon={<GoldOutlined />} color="#55acee">
-                      {' '}
-                      {row.deviceType.text}
-                    </Tag>
-                  </div>
-                </div>
-              ),
-            },
-            actions: {
-              render: (_, record) => [
-                <Tooltip
-                  title={intl.formatMessage({
-                    id: 'pages.data.option.detail',
-                    defaultMessage: '查看',
-                  })}
-                  key={'detail'}
-                >
-                  <Link
-                    onClick={() => {
-                      productModel.current = record;
-                    }}
-                    to={`/device/product/detail/${record.id}`}
-                    key="link"
-                  >
-                    <EyeOutlined />
-                  </Link>
-                </Tooltip>,
-                <Tooltip
-                  title={intl.formatMessage({
-                    id: 'pages.data.option.edit',
-                    defaultMessage: '编辑',
-                  })}
-                  key={'edit'}
-                >
-                  <a key="warning">
-                    <EditOutlined />
-                  </a>
-                </Tooltip>,
-                <Tooltip
-                  title={intl.formatMessage({
+          key={'detail'}
+        >
+          <Link
+            onClick={() => {
+              productModel.current = record;
+            }}
+            to={`/device/product/detail/${record.id}`}
+            key="link"
+          >
+            <EyeOutlined />
+          </Link>
+        </Tooltip>,
+        <Tooltip
+          title={intl.formatMessage({
+            id: 'pages.data.option.edit',
+            defaultMessage: '编辑',
+          })}
+          key={'edit'}
+        >
+          <a key="warning">
+            <EditOutlined />
+          </a>
+        </Tooltip>,
+        <Tooltip
+          title={intl.formatMessage({
+            id: 'pages.data.option.download',
+            defaultMessage: '下载',
+          })}
+          key={'download'}
+        >
+          <a key="download">
+            <DownloadOutlined
+              onClick={async () => {
+                await message.success(
+                  `${intl.formatMessage({
                     id: 'pages.data.option.download',
                     defaultMessage: '下载',
-                  })}
-                  key={'download'}
-                >
-                  <a key="download">
-                    <DownloadOutlined
-                      onClick={async () => {
-                        await message.success(
-                          `${intl.formatMessage({
-                            id: 'pages.data.option.download',
-                            defaultMessage: '下载',
-                          })}`,
-                        );
-                      }}
-                    />
-                  </a>
-                </Tooltip>,
-                <Tooltip
-                  title={intl.formatMessage({
-                    id: `pages.data.option.${record.state ? 'disabled' : 'enabled'}`,
-                    defaultMessage: record.state ? '禁用' : '启用',
-                  })}
-                  key={'state'}
-                >
-                  <a key="state">
-                    {record.state ? <CloseCircleOutlined /> : <PlayCircleOutlined />}
-                  </a>
-                </Tooltip>,
-                <Tooltip
-                  title={intl.formatMessage({
-                    id: 'pages.data.option.remove',
-                    defaultMessage: '删除',
-                  })}
-                  key={'remove'}
-                >
-                  <a key="delete">
-                    <MinusOutlined />
-                  </a>
-                </Tooltip>,
-              ],
-              search: false,
-            },
-            state: {
-              // 自己扩展的字段，主要用于筛选，不在列表中显示
-              title: intl.formatMessage({
-                id: 'pages.searchTable.titleStatus',
-                defaultMessage: '状态',
-              }),
-              valueType: 'select',
-              valueEnum: {
-                all: {
-                  text: intl.formatMessage({
-                    id: 'pages.searchTable.titleStatus.all',
-                    defaultMessage: '状态',
-                  }),
-                  status: 'Default',
-                },
-                1: {
-                  text: intl.formatMessage({
-                    id: 'pages.device.product.status.published',
-                    defaultMessage: '已发布',
-                  }),
-                  status: 'Error',
-                },
-                0: {
-                  text: intl.formatMessage({
-                    id: 'pages.device.product.status.unpublished',
-                    defaultMessage: '未发布',
-                  }),
-                  status: 'Success',
-                },
-              },
-            },
-          }}
-        />
-      </Card>
+                  })}`,
+                );
+              }}
+            />
+          </a>
+        </Tooltip>,
+        <Tooltip
+          title={intl.formatMessage({
+            id: `pages.data.option.${record.state ? 'disabled' : 'enabled'}`,
+            defaultMessage: record.state ? '禁用' : '启用',
+          })}
+          key={'state'}
+        >
+          <a key="state">{record.state ? <CloseCircleOutlined /> : <PlayCircleOutlined />}</a>
+        </Tooltip>,
+        <Tooltip
+          title={intl.formatMessage({
+            id: 'pages.data.option.remove',
+            defaultMessage: '删除',
+          })}
+          key={'remove'}
+        >
+          <a key="delete">
+            <MinusOutlined />
+          </a>
+        </Tooltip>,
+      ],
+    },
+  ];
+
+  // const schema = {};
+  return (
+    <PageContainer>
+      <ProTable<ProductItem>
+        columns={columns}
+        actionRef={actionRef}
+        options={{ fullScreen: true }}
+        request={async (params = {}) => {
+          return await lastValueFrom(
+            service.queryZipCount(encodeQuery({ ...params, sorts: { id: 'ascend' } })),
+          );
+        }}
+        rowKey="id"
+        pagination={{ pageSize: 10 }}
+        toolBarRender={() => [
+          <Button onClick={CurdModel.add} key="button" icon={<PlusOutlined />} type="primary">
+            {intl.formatMessage({
+              id: 'pages.data.option.add',
+              defaultMessage: '新增',
+            })}
+          </Button>,
+        ]}
+      />
     </PageContainer>
   );
 });
