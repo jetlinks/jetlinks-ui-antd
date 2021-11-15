@@ -1,36 +1,55 @@
-import { AtModal, AtModalHeader, AtModalContent, AtModalAction, AtButton } from "taro-ui";
+import { AtModal, AtModalHeader, AtModalContent, AtModalAction, AtButton ,AtTextarea} from "taro-ui";
 import React, { useEffect, useState } from "react";
 import { View } from "@tarojs/components";
 
 interface Props {
     close: () => void;
-    state: string;
+    data:any;
 }
 const Model: React.FC<Props> = (props) => {
     const [handle, setHandle] = useState<boolean>(false);
-    const [handleModel, setHandleModel] = useState<boolean>(false);
+
 
     const HandleAlarm = () => {
         return (
             <AtModal isOpened>
                 <AtModalHeader>告警处理结果</AtModalHeader>
                 <AtModalContent>
-                    <View>11111111111</View>
+                    <View>
+                        <AtTextarea
+                            value={''}
+                            onChange={()=>{}}
+                        />
+                    </View>
                 </AtModalContent>
                 <AtModalAction>  
                     <AtButton
+                    customStyle={{width:'100%'}}
                         onClick={()=>{
-                            console.log(111)
+                            setHandle(false)
+                            props.close()
                         }}
                     >确定</AtButton>
+                    <AtButton
+                    customStyle={{width:'100%'}}
+                        onClick={()=>{
+                            setHandle(false)
+                            props.close()
+                        }}
+                    >取消</AtButton>
                  </AtModalAction>
             </AtModal>
         )
     }
+
+    useEffect(()=>{
+        console.log(props.data.state)
+    },[])
+
     return (
         <View>
             {
-                props.state === 'solve' ? <AtModal
+                props.data.state === 'solve' ? <AtModal
                     isOpened
                     title='告警数据'
                     confirmText='确认'
@@ -40,7 +59,7 @@ const Model: React.FC<Props> = (props) => {
                     onConfirm={() => {
                         props.close()
                     }}
-                    content='欢迎加入京东凹凸实验室\n\r欢迎加入京东凹凸实验室'
+                    content={JSON.stringify(props.data.alarmData,null, 2)}
                 /> : <AtModal
                     isOpened
                     title='告警数据'
@@ -53,17 +72,10 @@ const Model: React.FC<Props> = (props) => {
                         props.close()
                     }}
                     onConfirm={() => {
-                        console.log(handle)
                         setHandle(true)
-                        console.log(handle)
                         // props.close()
-                        if (handle) {
-                            console.log(handle)
-                            props.close()
-                        }
-
                     }}
-                    content='欢迎加入京东凹凸实验室\n\r欢迎加入京东凹凸实验室'
+                    content={JSON.stringify(props.data.alarmData,null, 2)}
                 />
             }
             {

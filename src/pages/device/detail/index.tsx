@@ -1,6 +1,6 @@
 import { View } from "@tarojs/components";
 import React, { useEffect, useState } from "react";
-import Taro from "@tarojs/taro";
+import Taro, { useReachBottom } from "@tarojs/taro";
 import { AtSegmentedControl, AtDivider, AtCard, AtList, AtListItem } from 'taro-ui';
 import Service from "../service";
 import encodeQuery from '../../../utils/encodeQuery';
@@ -12,13 +12,19 @@ const Detail = () => {
 
   const [current, setCurrent] = useState<number>(0);
   const [data, setData] = useState<any>({});
+  const [alarmData, setAlarmData] = useState<any>({});
   const [isOpened, setIsOpened] = useState<boolean>(false);
+  const [modelData, setModelData] = useState<any>({});
+  const [searchParam, setSearchParam] = useState<any>({
+    pageIndex: 0,
+    pageSize: 10,
+  });
 
   const extraStyle = (data: any) => {
-    if (data === '离线') {
+    if (data === '离线' || data === 'newer') {
       return { color: 'red' }
     }
-    if (data === '在线') {
+    if (data === '在线' || data === 'solve') {
       return { color: 'green' }
     }
     if (data === '未启用') {
@@ -30,14 +36,48 @@ const Detail = () => {
   const getInfo = (id: string) => {
     Service.getInfo(id).then((res: any) => {
       setData(res.data.result)
-      // console.log(res.data.result)
     })
   }
+  //获取告警
+  const getAlarmLog = (params: any) => {
+    setSearchParam(params)
+    Service.getAlarmLog(encodeQuery(params)).then((res: any) => {
+      setAlarmData(res.data.result.data)
+      console.log(res.data.result)
+    })
+  }
+
+  //触底刷新
+  useReachBottom(() => {
+    if (alarmData && alarmData.length >= 10) {
+      const newSearchParam = {
+        ...searchParam,
+        pageIndex: searchParam.pageIndex + 1,
+        pageSize: 10,
+      }
+      Service.getAlarmLog(encodeQuery(newSearchParam))
+        .then((res: any) => {
+          const newData = res.data.result.data;
+          alarmData.push(...newData)
+          setSearchParam(newSearchParam)
+        })
+    }
+  })
 
   useEffect(() => {
     const props = Taro.getCurrentInstance().router.params
     if (props.id) {
       getInfo(props.id)
+      getAlarmLog({
+        ...searchParam,
+        sorts: {
+          order: 'descend',
+          field: 'alarmTime',
+        },
+        terms: {
+          deviceId: props.id
+        }
+      })
     }
   }, [])
 
@@ -114,36 +154,40 @@ const Detail = () => {
         {
           //设备告警
           current === 1 && <View>
-            <View style={{ paddingTop: 10 }}>
-              <AtCard
-                note={`告警时间:1970-01-01 08:00:00`}
-                extra={`已处理`}
-                title={`告警名称`}
-                extraStyle={{ color: 'green' }}
-                onClick={()=>{
-                  console.log("model")
-                  setIsOpened(true)
-                }}
-              >
-                <View className='item'>
-                  <View>设备ID：</View>
-                  <View className='itemText'>{5464456}</View>
+            {
+              alarmData?.map((item: any) => (
+                <View style={{ paddingTop: 10 }}>
+                  <AtCard
+                    note={`告警时间:${FormatTime(item.alarmTime, 'Y-M-D h:m:s')}`}
+                    extra={item.state === 'solve' ? '已处理' : '未处理'}
+                    title={`告警名称:${item.alarmName}`}
+                    extraStyle={extraStyle(item.state)}
+                    onClick={() => {
+                      setIsOpened(true)
+                      setModelData(item)
+                    }}
+                  >
+                    <View className='item'>
+                      <View>设备ID：</View>
+                      <View className='itemText'>{item.deviceId}</View>
+                    </View>
+                    <View className='item'>
+                      <View>设备名称：</View>
+                      <View className='itemText'>{item.deviceName}</View>
+                    </View>
+                  </AtCard>
                 </View>
-                <View className='item'>
-                  <View>设备名称：</View>
-                  <View className='itemText'>{'演示设备'}</View>
-                </View>
-              </AtCard>
-            </View>
+              ))
+            }
           </View>
         }
       </View>
       {
         isOpened && <Model
-          close={()=>{
+          close={() => {
             setIsOpened(false)
           }}
-          state={'solv1e'}
+          data={modelData}
         />
       }
     </View>

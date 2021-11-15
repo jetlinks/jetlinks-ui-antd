@@ -1,6 +1,6 @@
 import { View } from "@tarojs/components";
-import Taro from "@tarojs/taro"
-import { AtSearchBar, AtTabs, AtTabsPane, AtMessage, AtCard, AtTag } from 'taro-ui'
+import Taro, { useReachBottom } from "@tarojs/taro"
+import { AtSearchBar, AtTabs, AtTabsPane, AtMessage, AtCard, AtButton } from 'taro-ui'
 import React, { useEffect, useState } from "react";
 import Service from "./service";
 import encodeQuery from '../../utils/encodeQuery';
@@ -11,6 +11,7 @@ const Device = () => {
   const [current, setCurrent] = useState<any>(0);
   const [data, setData] = useState<any>([]);
   const [searchParam, setSearchParam] = useState<any>({
+    pageIndex: 0,
     pageSize: 10,
   });
 
@@ -30,8 +31,7 @@ const Device = () => {
 
   //获取设备列表
   const getDeviceList = (params: any) => {
-    // setSearchParam(params)
-    // console.log(params)
+    setSearchParam(params)
     Service.getDeviceList(encodeQuery(params))
       .then((res: any) => {
         setData(res.data.result.data)
@@ -52,41 +52,64 @@ const Device = () => {
     }
   }
   //切换标签  value:tabindex data:searchdata
-  const changeTab = (value: number,data?:string) => {
+  const changeTab = (value: number, data?: string) => {
+    const params ={
+      pageIndex: 0,
+      pageSize: 10,
+    }
     switch (value) {
       case 0: getDeviceList({
-        pageSize: 10,
+        ...params,
         terms: {
           "name$LIKE": data
         }
       }); break;
       case 1: getDeviceList({
-        ...searchParam,
+        ...params,
         terms: {
           "state": 'online',
           "name$LIKE": data
         }
       }); break;
       case 2: getDeviceList({
-        ...searchParam,
+        ...params,
         terms: {
           "state": 'offline',
           "name$LIKE": data
         }
       }); break;
       case 3: getDeviceList({
-        ...searchParam,
+        ...params,
         terms: {
           "state": 'notActive'
-          ,"name$LIKE": data
+          , "name$LIKE": data
         }
       }); break;
     }
   }
 
+  //触底刷新
+  useReachBottom(() => {
+    if (data && data.length >= 10) {
+      const newSearchParam = {
+        ...searchParam,
+        pageIndex: searchParam.pageIndex + 1,
+        pageSize: 10,
+      }
+      Service.getDeviceList(encodeQuery(newSearchParam))
+        .then((res: any) => {
+          const newData = res.data.result.data;
+          data.push(...newData)
+          setSearchParam(newSearchParam)
+        })
+    }
+  })
+
   useEffect(() => {
     getDeviceList(searchParam)
   }, [])
+
+
 
   return (
     <View>
@@ -96,7 +119,7 @@ const Device = () => {
           setSearchData(value)
         }}
         onActionClick={() => {
-          changeTab(current,searchData)
+          changeTab(current, searchData)
         }}
         onClear={() => {
           setSearchData('')
@@ -124,7 +147,7 @@ const Device = () => {
                     extraStyle={extraStyle(item.state.text)}
                     title={item.name}
                     thumb='http://img10.360buyimg.com/jdphoto/s72x72_jfs/t5872/209/5240187906/2872/8fa98cd/595c3b2aN4155b931.png'
-                    onClick={()=>{
+                    onClick={() => {
                       Taro.navigateTo({
                         url: `/pages/device/detail/index?id=${item.id}`
                       })
@@ -147,6 +170,11 @@ const Device = () => {
                   extraStyle={extraStyle(item.state.text)}
                   title={item.name}
                   thumb='http://img10.360buyimg.com/jdphoto/s72x72_jfs/t5872/209/5240187906/2872/8fa98cd/595c3b2aN4155b931.png'
+                  onClick={() => {
+                    Taro.navigateTo({
+                      url: `/pages/device/detail/index?id=${item.id}`
+                    })
+                  }}
                 >
                   产品信息：{item.productName}
                 </AtCard>
@@ -164,6 +192,11 @@ const Device = () => {
                   extraStyle={extraStyle(item.state.text)}
                   title={item.name}
                   thumb='http://img10.360buyimg.com/jdphoto/s72x72_jfs/t5872/209/5240187906/2872/8fa98cd/595c3b2aN4155b931.png'
+                  onClick={() => {
+                    Taro.navigateTo({
+                      url: `/pages/device/detail/index?id=${item.id}`
+                    })
+                  }}
                 >
                   产品信息：{item.productName}
                 </AtCard>
@@ -181,6 +214,11 @@ const Device = () => {
                   extraStyle={extraStyle(item.state.text)}
                   title={item.name}
                   thumb='http://img10.360buyimg.com/jdphoto/s72x72_jfs/t5872/209/5240187906/2872/8fa98cd/595c3b2aN4155b931.png'
+                  onClick={() => {
+                    Taro.navigateTo({
+                      url: `/pages/device/detail/index?id=${item.id}`
+                    })
+                  }}
                 >
                   产品信息：{item.productName}
                 </AtCard>
