@@ -107,6 +107,23 @@ class Service extends BaseService<ProductItem> {
     request(`/${SystemConst.API_BASE}/device/alarm/product/${id}`, {
       method: 'GET',
     });
+
+  public notifier = {
+    types: () =>
+      request(`/${SystemConst.API_BASE}/notifier/config/types`, {
+        method: 'GET',
+      }),
+    config: (params: Record<string, unknown>) =>
+      request(`/${SystemConst.API_BASE}/notifier/config/_query/no-paging`, {
+        method: 'GET',
+        params,
+      }),
+    template: (params: Record<string, unknown>) =>
+      request(`/${SystemConst.API_BASE}/notifier/template/_query/no-paging`, {
+        method: 'GET',
+        params,
+      }),
+  };
 }
 
 export default Service;
