@@ -19,6 +19,7 @@ const Detail = () => {
     pageIndex: 0,
     pageSize: 10,
   });
+  const [id, setId] = useState<string>('')
 
   const extraStyle = (data: any) => {
     if (data === '离线' || data === 'newer') {
@@ -49,7 +50,7 @@ const Detail = () => {
 
   //触底刷新
   useReachBottom(() => {
-    if (alarmData && alarmData.length >= 10) {
+    if (alarmData && alarmData.length >= 10 && current === 1) {
       const newSearchParam = {
         ...searchParam,
         pageIndex: searchParam.pageIndex + 1,
@@ -68,6 +69,7 @@ const Detail = () => {
     const props = Taro.getCurrentInstance().router.params
     if (props.id) {
       getInfo(props.id)
+      setId(props.id)
       getAlarmLog({
         ...searchParam,
         sorts: {
@@ -153,31 +155,35 @@ const Detail = () => {
         }
         {
           //设备告警
-          current === 1 && <View>
+          current === 1 && <View style={{display:'flex',justifyContent:'center'}}>
             {
-              alarmData?.map((item: any) => (
-                <View style={{ paddingTop: 10 }}>
-                  <AtCard
-                    note={`告警时间:${FormatTime(item.alarmTime, 'Y-M-D h:m:s')}`}
-                    extra={item.state === 'solve' ? '已处理' : '未处理'}
-                    title={`告警名称:${item.alarmName}`}
-                    extraStyle={extraStyle(item.state)}
-                    onClick={() => {
-                      setIsOpened(true)
-                      setModelData(item)
-                    }}
-                  >
-                    <View className='item'>
-                      <View>设备ID：</View>
-                      <View className='itemText'>{item.deviceId}</View>
-                    </View>
-                    <View className='item'>
-                      <View>设备名称：</View>
-                      <View className='itemText'>{item.deviceName}</View>
-                    </View>
-                  </AtCard>
+              alarmData.length !== 0 ?
+                alarmData.map((item: any) => (
+                  <View style={{ paddingTop: 10 }}>
+                    <AtCard
+                      note={`告警时间:${FormatTime(item.alarmTime, 'Y-M-D h:m:s')}`}
+                      extra={item.state === 'solve' ? '已处理' : '未处理'}
+                      title={`告警名称:${item.alarmName}`}
+                      extraStyle={extraStyle(item.state)}
+                      onClick={() => {
+                        setIsOpened(true)
+                        setModelData(item)
+                      }}
+                    >
+                      <View className='item'>
+                        <View>设备ID：</View>
+                        <View className='itemText'>{item.deviceId}</View>
+                      </View>
+                      <View className='item'>
+                        <View>设备名称：</View>
+                        <View className='itemText'>{item.deviceName}</View>
+                      </View>
+                    </AtCard>
+                  </View>
+                ))
+                : <View className='itemNone'>
+                  暂无数据
                 </View>
-              ))
             }
           </View>
         }
@@ -186,6 +192,17 @@ const Detail = () => {
         isOpened && <Model
           close={() => {
             setIsOpened(false)
+            getAlarmLog({
+              pageIndex: 0,
+              pageSize: 10,
+              sorts: {
+                order: 'descend',
+                field: 'alarmTime',
+              },
+              terms: {
+                deviceId: id
+              }
+            })
           }}
           data={modelData}
         />
