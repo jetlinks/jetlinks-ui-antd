@@ -96,7 +96,7 @@ const FunctionDefin: React.FC<Props> = props => {
       if (type === 'object') {
         data.output.properties = outputParameter;
       } else if (type === 'enum') {
-        data.valueType.elements = enumData;
+        data.output.elements = enumData;
       }
       if (dataType === 'array' && data.output.elementType.type === 'object') {
         data.output.elementType.properties = arrayProperties;
@@ -695,7 +695,7 @@ const FunctionDefin: React.FC<Props> = props => {
         return (
           <Select>
             {config.type.elements.map(i => (
-              <Select.Option value={i.value}>{i.text}</Select.Option>
+              <Select.Option key={i.value} value={i.value}>{i.text}</Select.Option>
             ))}
           </Select>
         );
