@@ -111,7 +111,7 @@ const NodeType = () => {
             <SearchForm
               search={(params: any) => {
                 setSearchParam(params);
-                handleSearch({ terms: params, pageSize: 10 });
+                handleSearch({ terms: params });
               }}
               formItems={[
                 {
