@@ -70,18 +70,18 @@ const Events: React.FC<Props> = props => {
       width:'30%',
       ellipsis:true
     },
-    {
-      title: '操作',
-      width: '250px',
-      align: 'center',
-      render: (text, record) => (
-        <Fragment>
-          <a onClick={() => editItem(record)}>编辑</a>
-          <Divider type="vertical"/>
-          <a onClick={() => deleteItem(record)}>删除</a>
-        </Fragment>
-      ),
-    },
+    // {
+    //   title: '操作',
+    //   width: '250px',
+    //   align: 'center',
+    //   render: (text, record) => (
+    //     <Fragment>
+    //       <a onClick={() => editItem(record)}>编辑</a>
+    //       <Divider type="vertical"/>
+    //       <a onClick={() => deleteItem(record)}>删除</a>
+    //     </Fragment>
+    //   ),
+    // },
   ];
 
   const saveEventData = (item: EventsMeta) => {
@@ -101,14 +101,14 @@ const Events: React.FC<Props> = props => {
       <Card
         title="事件定义"
         style={{marginBottom: 20}}
-        extra={
-          <Button type="primary" onClick={() => {
-            setCurrent({});
-            setVisible(true);
-          }}>
-            添加
-          </Button>
-        }
+        // extra={
+        //   <Button type="primary" onClick={() => {
+        //     setCurrent({});
+        //     setVisible(true);
+        //   }}>
+        //     添加
+        //   </Button>
+        // }
       >
         <Table rowKey="id" columns={columns} dataSource={data}/>
       </Card>

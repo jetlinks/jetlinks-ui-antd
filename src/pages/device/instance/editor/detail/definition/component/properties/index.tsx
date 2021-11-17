@@ -87,6 +87,9 @@ const PropertiesDefin: React.FC<Props> = props => {
       if (dataType === 'array' && data.valueType.elementType.type === 'object') {
         data.valueType.elementType.properties = arrayProperties;
       }
+      if(data.expands?.source && data.expands.source === 'rule'){
+        delete data.expands.virtualRule
+      }
       props.save({ ...data });
     });
   };

@@ -6,6 +6,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import styles from '@/utils/table.less';
 import Save from './save';
 import Service from './service';
+import encodeQueryParam from '@/utils/encodeParam';
 
 export type NodeItem = {
   id: string;
@@ -59,15 +60,16 @@ const NodeType = () => {
     },
   ];
 
+  const handleSearch = (params?: any) => {
+    service.queryTree(encodeQueryParam(params)).subscribe(data => {
+      setResult(data);
+    });
+  };
+
   useEffect(() => {
     handleSearch(searchParam);
   }, []);
 
-  const handleSearch = (params?: any) => {
-    service.queryTree(params).subscribe(data => {
-      setResult(data);
-    });
-  };
   const save = (data: Partial<NodeItem>) => {
     service.saveOrUpdate(data).subscribe(
       () => {
