@@ -402,13 +402,14 @@ function Device(props: Props) {
                       <Col span={8}>
                         <Form.Item label="产品名称">
                           {getFieldDecorator('productName', {})(
-                            <Select allowClear>
-                              {
-                                productList.map((item, index) => (
-                                  <Select.Option key={index} value={item.name}>{item.name}</Select.Option>
-                                ))
-                              }
-                            </Select>
+                            // <Select allowClear>
+                            //   {
+                            //     productList.map((item, index) => (
+                            //       <Select.Option key={item.id} value={item.name}>{item.name}</Select.Option>
+                            //     ))
+                            //   }
+                            // </Select>
+                            <Input />
                           )}
                         </Form.Item>
                       </Col>
@@ -430,6 +431,7 @@ function Device(props: Props) {
                     <Button type="primary" style={{ marginRight: '10px' }}
                       onClick={() => {
                       const data = form.getFieldsValue();
+                      console.log(data)
                       let terms: any[] = [
                         { "column": "productId", "value": "onvif-media-device", "termType": "not" },
                         { "column": "productId", "value": "GB28181-PRO", "termType": "not" },

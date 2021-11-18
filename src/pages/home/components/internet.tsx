@@ -34,8 +34,11 @@ function Internet() {
 
   const getNetwork = () => {
     service.getEdgeNetworkList().subscribe(resp => {
-      setNetwork1(resp[0])
-      setNetwork2(resp[1])
+      resp.forEach((item:any)=>{
+        setNetwork1(item[0])
+      setNetwork2(item[1])
+      })
+      
     })
   }
   useEffect(() => {
