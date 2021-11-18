@@ -6,7 +6,11 @@ interface EditProps {
     data?: any
     onCancel?: (e: React.MouseEvent<HTMLElement>) => void
 }
-
+const gradeText = {
+    ordinary: '普通',
+    warn: '警告',
+    urgent: '紧急',
+  };
 const Detail = (props: EditProps) => {
     const { data, ...extra } = props;
 
@@ -20,7 +24,7 @@ const Detail = (props: EditProps) => {
             <Descriptions bordered>
                 <Descriptions.Item label="事件标识" span={1}>{data.id}</Descriptions.Item>
                 <Descriptions.Item label="事件名称" span={1}>{data.name}</Descriptions.Item>
-                <Descriptions.Item label="事件级别" span={1}>{data.expands?.level || ''}</Descriptions.Item>
+                <Descriptions.Item label="事件级别" span={1}>{  gradeText[data.expands?.level] || ''}</Descriptions.Item>
                 <Descriptions.Item label="输出参数" span={1}>{data.valueType?.type}</Descriptions.Item>
                 <Descriptions.Item label="单位" span={2}>{data.valueType?.unit}</Descriptions.Item>
                 <Descriptions.Item label="描述" span={3}>

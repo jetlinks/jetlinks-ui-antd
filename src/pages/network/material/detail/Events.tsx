@@ -31,6 +31,7 @@ const Events: React.FC<Props> = props => {
 
   useEffect(() => {
     setData(props.data)
+    console.log(props.data)
   }, [props.data]);
 
   const columns: ColumnProps<any>[] = [
@@ -44,7 +45,7 @@ const Events: React.FC<Props> = props => {
     },
     {
       title: '事件级别',
-      dataIndex: 'expands?.level',
+      dataIndex: 'expands.level',
       render: text => gradeText[text],
     },
     {

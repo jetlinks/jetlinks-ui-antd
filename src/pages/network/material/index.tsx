@@ -170,6 +170,7 @@ function Material() {
                                         setEditVisible(true);
                                     }}>编辑</a>,
                                     <a onClick={() => {
+                                        // console.log(item)
                                         setCurrentData(item);
                                         setDetailVisible(true);
                                     }}>查看</a>,
@@ -258,7 +259,7 @@ function Material() {
                             {
                                 title: '接入设备数',
                                 align: 'center',
-                                render: (text) => <a>1</a>
+                                render: (record) => <a>{deviceCount[record.productId]}</a>
                             },
                             {
                                 title: '操作',
