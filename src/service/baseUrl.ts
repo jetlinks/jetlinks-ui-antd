@@ -3,9 +3,9 @@ const getBaseUrl = (url:string) => {
     if (process.env.NODE_ENV === 'development') {
         //开发环境 - 根据请求不同返回不同的BASE_URL
         if (url.includes('/jetlinks/')) {
-          BASE_URL = 'https://demo.jetlinks.cn'
+          BASE_URL = 'http://demo.jetlinks.cn'
         } else if (url.includes('/iatadatabase/')) {
-          BASE_URL = 'https://demo.jetlinks.cn'
+          BASE_URL = 'http://demo.jetlinks.cn'
         }
       } else {
         // 生产环境

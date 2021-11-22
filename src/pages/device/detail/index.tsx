@@ -1,12 +1,14 @@
 import { View } from "@tarojs/components";
 import React, { useEffect, useState } from "react";
-import Taro, { useReachBottom } from "@tarojs/taro";
+import Taro, {  useReachBottom ,useDidShow,useDidHide} from "@tarojs/taro";
 import { AtSegmentedControl, AtDivider, AtCard, AtList, AtListItem } from 'taro-ui';
 import Service from "../service";
+import getBaseUrl from "../../../service/baseUrl";
 import encodeQuery from '../../../utils/encodeQuery';
 import './index.less';
 import FormatTime from "../../../utils/formatDate";
 import Model from "./model";
+import getToken from "../../../utils/getToken";
 
 const Detail = () => {
 
@@ -19,7 +21,11 @@ const Detail = () => {
     pageIndex: 0,
     pageSize: 10,
   });
-  const [id, setId] = useState<string>('')
+  const [id, setId] = useState<string>('');
+  const [properties, setProperties] = useState<any>();
+  const [list, setList] = useState<any[]>([]);
+  const wsUrl = `${getBaseUrl('/jetlinks/messaging').replace('http', 'ws')}`;
+  let ws:any =[]
 
   const extraStyle = (data: any) => {
     if (data === '离线' || data === 'newer') {
@@ -37,6 +43,8 @@ const Detail = () => {
   const getInfo = (id: string) => {
     Service.getInfo(id).then((res: any) => {
       setData(res.data.result)
+      const properties = JSON.parse(res.data.result.metadata)
+      setProperties(properties.properties)
     })
   }
   //获取告警
@@ -44,7 +52,6 @@ const Detail = () => {
     setSearchParam(params)
     Service.getAlarmLog(encodeQuery(params)).then((res: any) => {
       setAlarmData(res.data.result.data)
-      console.log(res.data.result)
     })
   }
 
@@ -65,6 +72,13 @@ const Detail = () => {
     }
   })
 
+  // useDidShow(() => {
+  //   console.log('useDidShow')
+  // })
+  // useDidHide(()=>{
+  //   console.log('qqqqq')
+  // })
+
   useEffect(() => {
     const props = Taro.getCurrentInstance().router.params
     if (props.id) {
@@ -82,6 +96,70 @@ const Detail = () => {
       })
     }
   }, [])
+
+  useEffect(() => {
+    const arr = []; 
+    const propertiesList = []; //websocket参数
+    if (properties && properties.length!==0) {
+      properties.forEach((item: any) => {
+        arr.push({
+          id: item.id,
+          name: item.name
+        })
+        propertiesList.push(item.id)
+      })
+      setList(arr)
+
+      //websocket
+      const msg = JSON.stringify({
+        id: `instance-info-property-${data.id}-${data.productId}-${propertiesList.join('-')}`,
+        topic: `/dashboard/device/${data.productId}/properties/realTime`,
+        type: "sub",
+        parameter: {
+          deviceId: data.id,
+          history: 1,
+          properties: propertiesList
+        }
+      });
+
+      ws=Taro.connectSocket({
+        url: `${wsUrl}/jetlinks/messaging/${getToken()}?:X_Access_Token=${getToken()}`
+      })
+        .then((res) => {
+          res.onOpen(() => {
+            res.send({ data: msg })
+            // res.close
+          })
+
+          res.onMessage((message) => {
+            const { value } = JSON.parse(message.data).payload;
+            arr.map(item=>{
+              if(item.id===value.property){
+                item.value= value.formatValue
+              }
+            })
+            setList([...arr])
+          })
+          res.onClose(() => {
+            console.log('WebSocket 已关闭！')
+          })
+        })
+
+    }
+    return () => {
+      ws &&  Taro.closeSocket
+      // Taro.connectSocket({
+      //   url: `${wsUrl}/jetlinks/messaging/${getToken()}?:X_Access_Token=${getToken()}`
+      // })
+      // Taro.closeSocket;
+      // ws && Taro.closeSocket;
+      // Taro.onSocketClose(function (res) {
+      //   console.log('WebSocket 已关闭！')
+      // })
+    }
+  }, [properties])
+
+
 
   return (
     <View>
@@ -144,18 +222,19 @@ const Detail = () => {
             </AtCard>
             <AtDivider content='运行状态' />
             <AtList>
-              <AtListItem title='CPU使用率' extraText='33' />
-              <AtListItem title='JVM内存使用率' extraText='44' />
-              <AtListItem title='系统内存使用率' extraText='22' />
-              <AtListItem title='磁盘使用率' extraText='42' />
-              <AtListItem title='CPU温度' extraText='24' />
+              {
+                list?.map((item: any) => (
+                    <AtListItem title={item.name} extraText={item.value || '/'} />
+                  )
+                )
+              }
             </AtList>
             <AtDivider />
           </View>
         }
         {
           //设备告警
-          current === 1 && <View style={{display:'flex',justifyContent:'center'}}>
+          current === 1 && <View>
             {
               alarmData.length !== 0 ?
                 alarmData.map((item: any) => (
@@ -170,13 +249,13 @@ const Detail = () => {
                         setModelData(item)
                       }}
                     >
-                      <View className='item'>
+                      <View className='itemAlarm'>
                         <View>设备ID：</View>
-                        <View className='itemText'>{item.deviceId}</View>
+                        <View className='itemAlarmText'>{item.deviceId}</View>
                       </View>
-                      <View className='item'>
+                      <View className='itemAlarm'>
                         <View>设备名称：</View>
-                        <View className='itemText'>{item.deviceName}</View>
+                        <View className='itemAlarmText'>{item.deviceName}</View>
                       </View>
                     </AtCard>
                   </View>
