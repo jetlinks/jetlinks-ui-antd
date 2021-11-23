@@ -98,7 +98,7 @@ function ChannelModel(props: ChannelProps) {
 
   const AdvancedFilter = useCallback(async () => {
     const data = await form.current.getFieldsValue()
-    const arrStr = Object.keys(data).filter((item: string) => data[item]).map((item: string) => `${item}${data[item]}`).join(' and ')
+    const arrStr = Object.keys(data).filter((item: string) => data[item]).map((item: string) => `${item}%${data[item]}%`).join(' and ')
     _channel(arrStr ? { where: arrStr } : undefined)
   }, [])
 
@@ -123,14 +123,14 @@ function ChannelModel(props: ChannelProps) {
           ref={form}
           items={[
             {
-              name: 'gb28181ChannelId$LIKE',
+              name: 'channelId$LIKE=',
               label: '通道国际编号',
               render: () => {
                 return <Input placeholder='请输入通道国际编号' />
               }
             },
             {
-              name: 'name$LIKE',
+              name: 'name$LIKE=',
               label: '通道名称',
               render: () => {
                 return <Input placeholder='请输入通道名称' />

@@ -35,7 +35,7 @@ const AddDevice: React.FC<Props> = props => {
                                 rules: [{ required: true }],
                                 initialValue: data?.port
                             })(
-                                <InputNumber readOnly={!!data?.port} style={{ width: '100%' }} placeholder='请输入端口' />
+                                <InputNumber min={0} readOnly={!!data?.port} style={{ width: '100%' }} placeholder='请输入端口' />
                             )}
                         </Form.Item>
                         <Form.Item label="IP地址">

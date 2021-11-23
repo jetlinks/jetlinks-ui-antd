@@ -1,8 +1,9 @@
-import React, { useRef } from 'react';
+import React, { useRef} from 'react';
 import { Modal, Input } from 'antd';
 import Form from '@/components/BaseForm';
 import { useRequest } from 'ahooks';
 import { MediaDeviceList, saveChannel } from '@/pages/edge-gateway/device/service';
+
 
 interface ChannelProps {
   visible?: boolean
@@ -27,7 +28,10 @@ function ChannelModel(props: ChannelProps) {
       if (props.data && props.data.id) {
         values.id = props.data.id
       }
-      run('local', values)
+      run('local', {
+        ...values,
+        deviceId:props.data?.deviceId
+      })
     })
     if (props.onOk) {
       props.onOk()
@@ -57,13 +61,13 @@ function ChannelModel(props: ChannelProps) {
                 return <Input placeholder='请输入通道名称' />
               }
             },
-            {
-              name: 'deviceName',
-              label: '设备名称',
-              render: () => {
-                return <Input placeholder='请输入名称' readOnly={true} disabled />
-              }
-            },
+            // {
+            //   name: 'deviceName',
+            //   label: '设备名称',
+            //   render: () => {
+            //     return <Input placeholder='请输入名称' readOnly={true} disabled />
+            //   }
+            // },
             {
               name: 'channelId',
               label: '通道ID',

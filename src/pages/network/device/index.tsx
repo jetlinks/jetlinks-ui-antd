@@ -576,6 +576,7 @@ function Device(props: Props) {
           productId=''
           close={() => {
             setImportVisible(false)
+            handleSearch(searchParam)
           }}
         />
       }

@@ -39,15 +39,15 @@ function Material() {
     const renderTitle = (item: any) => {
         return (
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ width: '95%', fontWeight: 600, fontSize: '16px' }}><AutoHide title={item.name} /></div>
-                <div><Switch defaultChecked={item.state.value === 'disabled' ? false : true} onChange={(checked: boolean) => {
+                <AutoHide title={item.name} style={{ flexGrow: 1, fontWeight: 600,fontSize:16}}/>
+                <Switch checked={item.state.value === 'disabled' ? false : true} onChange={(checked: boolean) => {
                     console.log(item.state)
                     if (checked) {
                         _start(item.id)
                     } else {
                         _stop(item.id)
                     }
-                }} /></div>
+                }} />
             </div>
         )
     }
@@ -87,7 +87,7 @@ function Material() {
         service.start(id).subscribe(resp => {
             if (resp.status === 200) {
                 message.success('启动成功！');
-                handleSearch({ pageSize: 10 });
+                handleSearch({ pageSize: 8 });
             }
         })
     }
@@ -96,7 +96,7 @@ function Material() {
         service.stop(id).subscribe(resp => {
             if (resp.status === 200) {
                 message.success('停止成功！');
-                handleSearch({ pageSize: 10 });
+                handleSearch({ pageSize: 8 });
             }
         })
     }
@@ -105,7 +105,7 @@ function Material() {
         service.del(id).subscribe(resp => {
             if (resp.status === 200) {
                 message.success('操作成功！');
-                handleSearch({ pageSize: 10 });
+                handleSearch({ pageSize: 8 });
             }
         })
     }
@@ -115,7 +115,7 @@ function Material() {
             (res) => {
                 if (res.status === 200) {
                     message.success('操作成功！');
-                    handleSearch({ pageSize: 10 });
+                    handleSearch({ pageSize: 8 });
                 }
             })
     };
@@ -248,13 +248,15 @@ function Material() {
                             {
                                 title: '状态',
                                 align: 'center',
-                                render: (record: any) => record ? <Switch defaultChecked={record?.state?.value === 'disabled' ? false : true} onChange={(checked: boolean) => {
+                                render: (record: any) => <>
+                                <Switch  checked={record?.state?.value === 'disabled' ? false : true} onChange={(checked: boolean) => {
                                     if (checked) {
                                         _start(record.id)
                                     } else {
                                         _stop(record.id)
                                     }
-                                }} /> : '/'
+                                }} /> 
+                                </>
                             },
                             {
                                 title: '接入设备数',

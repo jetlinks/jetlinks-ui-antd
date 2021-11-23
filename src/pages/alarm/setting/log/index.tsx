@@ -57,7 +57,7 @@ interface Props extends FormComponentProps  {
 //获取告警日志
 const handleSearch = (params: any) =>{
   setSearchParam(params);
-    service.getAlarmLogList(props.deviceId, encodeQueryParam(params)).subscribe(
+    service.getAlarmLogList(props.deviceId, params).subscribe(
       (resp) => {
         setAlarmLogList(resp);
       }
@@ -221,20 +221,28 @@ const handleSearch = (params: any) =>{
           
           <Button type="primary" onClick={()=>{
             const data = form.getFieldsValue();
-            let list = searchParam.where ? searchParam.where.split(' and ') : [];
-            let where: string[] = list.filter((item: string) => {
-              return item.includes('like');
-            });
-            Object.keys(data).forEach(i => {
-              if (data[i]) {
-                where.push(`${i} like %${data[i]}%`)
+            let terms: any[]=[];
+            Object.keys(data).forEach(i=>{
+              if(data[i]){
+                if(i=== 'deviceName'){
+                  terms.push({
+                    "column": i, "value": `%${data[i]}%`,"termType": "like"
+                  })
+                }else{
+                  terms.push({
+                    "column": i, "value": data[i],
+                  })
+                }
               }
             })
             handleSearch({
-              pageIndex: searchParam.pageIndex,
-              pageSize: searchParam.pageSize,
-              where:`alarmName=${props.name}`+` and `+where.join(' and '),
-            });
+              terms:[
+                ...terms,
+                {"column": 'alarmName', "value": props.name,}
+              ],
+              pageSize: 10,
+              
+            })
           }}>查询</Button>
           <Button style={{marginRight:5}} onClick={()=>{
             form.resetFields();

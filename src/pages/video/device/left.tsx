@@ -58,7 +58,7 @@ function Left(props: LeftProps) {
 
   const [queryFormItems] = useState([
     {
-      name: 'manufacturer',
+      name: 'name',
       label: '设备名称',
       render: () => <Input />
     },
@@ -260,6 +260,7 @@ function Left(props: LeftProps) {
             },
             {
               title: '操作',
+              align:'center',
               render: (_, record) => {
                 return <>
                   <Button type='link' onClick={() => {

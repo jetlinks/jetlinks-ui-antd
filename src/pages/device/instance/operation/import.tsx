@@ -118,12 +118,20 @@ const Import: React.FC<Props> = props => {
       'X-Access-Token': getAccessToken(),
     },
     showUploadList: false,
+    beforeUpload:(file)=>{
+      // console.log(file)
+      const type =file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || file.type==='application/vnd.ms-excel'
+      if(!type){
+        message.error('文件格式错误')
+      }
+      return type;
+    },
     onChange(info) {
       setCount(0);
       setErrMessage('');
       setFlag(true);
       setImportLoading(false);
-      setUploading(true);
+      // setUploading(true);
       if (info.file.status === 'done') {
         setUploading(false);
         message.success('文件上传成功');

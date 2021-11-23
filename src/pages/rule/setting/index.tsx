@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Cards from '@/components/Cards';
 import { connect } from 'dva';
 import { ConnectState, Dispatch } from '@/models/connect';
-import { Button, Checkbox, message, Modal,Switch } from 'antd';
+import { Button, Checkbox, message, Modal, Switch } from 'antd';
 import CardItem from './card';
 import styles from './index.less';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
@@ -57,8 +57,8 @@ const ExtraTool = (props: ExtraToolProps) => {
     { label: '设备报警', value: 'device_alarm' },
     { label: '场景联动', value: 'rule-scene' },
   ])
-  
-  
+
+
   const [checkAll, setCheckAll] = useState(false)
   const [indeterminate, setIndeterminate] = useState(false)
   const [checkList, setCheckList] = useState<CheckboxValueType[]>([])
@@ -159,7 +159,7 @@ const Setting: React.FC<Props> = props => {
   })
 
   const handleSearch = (params?: any) => {
-    
+
     setSearchParam(params);
     // dispatch({
     //   type: 'ruleInstance/query',
@@ -209,7 +209,7 @@ const Setting: React.FC<Props> = props => {
     }
   }
 
-  const stopInstance =(record: any) => {
+  const stopInstance = (record: any) => {
     if (record.modelType === "device_alarm") {
       apis.ruleInstance
         .stopDeviceAlarm('local', record.id)
@@ -361,7 +361,7 @@ const Setting: React.FC<Props> = props => {
             onCopy={() => { onCopy(data) }}
             onReboot={() => { onReboot(data) }}
             onDelete={() => { handleDelete(data) }}
-            onEdit={() => { onEdit(data)}}
+            onEdit={() => { onEdit(data) }}
             onStart={() => { startInstance(data) }}
             onStop={() => { stopInstance(data) }}
           />}
@@ -427,7 +427,7 @@ const Setting: React.FC<Props> = props => {
             title: '规则类型',
             dataIndex: 'modelType',
             width: 120,
-            render: (text: any) => text ? <div>{modelType.get(text)}</div>: '-',
+            render: (text: any) => text ? <div>{modelType.get(text)}</div> : '-',
           },
           {
             title: '规则描述',
@@ -436,25 +436,27 @@ const Setting: React.FC<Props> = props => {
           },
           {
             title: '状态',
-            width:120,
-            render: (record)=><>
+            width: 120,
+            render: (record) => <>
               <Switch checked={record.state.value !== 'stopped'} onChange={(e) => {
-              if (e) {
-                startInstance(record)
-              } else {
-                stopInstance(record)
-              }
-            }} />
+                if (e) {
+                  startInstance(record)
+                } else {
+                  stopInstance(record)
+                }
+              }} />
             </>
           },
           {
             title: '操作',
             render: (data) => <>
-              <Button type='link' onClick={() => { onEdit(data)
-              console.log(deviceAlarm)}}>编辑</Button>
+              <Button type='link' onClick={() => {
+                onEdit(data)
+                console.log(deviceAlarm)
+              }}>编辑</Button>
               <Button type='link' onClick={() => { onReboot(data) }}>重启</Button>
               <Button type='link' onClick={() => { onCopy(data) }}>复制</Button>
-              {data.state.value==='stopped'?<Button type='link' onClick={() => { handleDelete(data) }}>删除</Button>:''}
+              {data.state.value === 'stopped' ? <Button type='link' onClick={() => { handleDelete(data) }}>删除</Button> : ''}
             </>,
             width: 280
           },
@@ -469,43 +471,51 @@ const Setting: React.FC<Props> = props => {
             setDetailData({});
             handleSearch(searchParam);
           }}
-          save={() => {
-            setSceneVisible(false);
+          save={(item: any) => {
+            let param: any = { ...item };
+            param.instanceType = undefined;
+            apis.ruleInstance.saveScene(param, 'local').then((response: any) => {
+              if (response.status === 200) {
+                message.success('保存成功');
+                handleSearch(searchParam);
+                setSceneVisible(false);
+              }
+            })
           }}
         />
       )}
       {/* 新增复制 */}
       {saveVisible && <Save
-                    data={ruleData}
-                    deviceId={deviceId}
-                    close={() => {
-                        setSaveVisible(false);
-                    }}
-                    save={(item: any) => {
-                        setSaveVisible(false);
-                        if (item.instanceType === 'node-red') {
-                            apis.ruleInstance.create({
-                                id: item.id,
-                                name: item.name,
-                                description: item.description
-                            },'local').then((response: any) => {
-                              if (response.status === 200) {
-                                message.success('保存成功');
-                                handleSearch(searchParam);
-                              }
-                            })
-                        } else if (item.instanceType === 'rule-scene') {
-                            let param: any = {...item};
-                            param.instanceType = undefined;
-                            apis.ruleInstance.saveScene(param,'local').then((response: any) => {
-                            if (response.status === 200) {
-                              message.success('保存成功');
-                              handleSearch(searchParam);
-                            }
-                          })
-                        }
-                    }} />
-                }
+        data={ruleData}
+        deviceId={deviceId}
+        close={() => {
+          setSaveVisible(false);
+        }}
+        save={(item: any) => {
+          setSaveVisible(false);
+          if (item.instanceType === 'node-red') {
+            apis.ruleInstance.create({
+              id: item.id,
+              name: item.name,
+              description: item.description
+            }, 'local').then((response: any) => {
+              if (response.status === 200) {
+                message.success('保存成功');
+                handleSearch(searchParam);
+              }
+            })
+          } else if (item.instanceType === 'rule-scene') {
+            let param: any = { ...item };
+            param.instanceType = undefined;
+            apis.ruleInstance.saveScene(param, 'local').then((response: any) => {
+              if (response.status === 200) {
+                message.success('保存成功');
+                handleSearch(searchParam);
+              }
+            })
+          }
+        }} />
+      }
       {/* {saveVisible && (
         <Save
           data={ruleData}
@@ -574,7 +584,7 @@ const Setting: React.FC<Props> = props => {
   );
 }
 
-export default connect(({ ruleInstance, loading}: ConnectState) => ({
+export default connect(({ ruleInstance, loading }: ConnectState) => ({
   ruleInstance,
   loading: loading.models.ruleInstance,
 }))(Setting);

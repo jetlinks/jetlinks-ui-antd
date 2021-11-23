@@ -92,6 +92,7 @@ function Right(props: RightProps) {
           },
           {
             title: '操作',
+            align:'center',
             render: (_, record) => {
               return <>
                 <Button type='link' onClick={() => {

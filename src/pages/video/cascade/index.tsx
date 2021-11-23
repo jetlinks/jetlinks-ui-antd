@@ -141,6 +141,7 @@ function Cascade() {
               }
             }, {
               title: "操作",
+              align:'center',
               className: styles.td_top,
               width: 250,
               render: (_, record) => {

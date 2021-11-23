@@ -33,6 +33,7 @@ export interface MediaDeviceList {
   firmware: string
   host: string
   id: string
+  deviceId:string
   manufacturer: string
   model: string
   name: string

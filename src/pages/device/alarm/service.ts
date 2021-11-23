@@ -23,7 +23,7 @@ export async function getProductAlarms(target: string, targetId: string | undefi
 
 export async function saveProductAlarms(deviceId: string, data: SaveAlarmsRequest) {
   return request(`/jetlinks/edge/operations/${deviceId}/rule-engine-alarm-save/invoke`, {
-    method: 'PATCH',
+    method: 'POST',
     data,
   });
 }

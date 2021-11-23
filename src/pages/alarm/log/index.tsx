@@ -245,13 +245,14 @@ useEffect(() => {
                       <Col span={6}>
                         <Form.Item label="产品名称">
                           {getFieldDecorator('productName', {})(
-                            <Select allowClear>
-                              {
-                                productList.map((item, index) => (
-                                  <Select.Option key={index} value={item.name}>{item.name}</Select.Option>
-                                ))
-                              }
-                            </Select>
+                            // <Select allowClear>
+                            //   {
+                            //     productList.map((item, index) => (
+                            //       <Select.Option key={index} value={item.name}>{item.name}</Select.Option>
+                            //     ))
+                            //   }
+                            // </Select>
+                            <Input />,
                           )}
                         </Form.Item>
                       </Col>
@@ -270,6 +271,7 @@ useEffect(() => {
               <div style={{marginLeft:110}}>
                 <Button style={{marginRight:5}} onClick={()=>{
                   form.resetFields();
+                  setAlarmId('')
                   handleSearch({
                     pageSize: 8,
                   })

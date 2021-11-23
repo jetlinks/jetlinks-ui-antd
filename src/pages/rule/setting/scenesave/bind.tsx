@@ -139,7 +139,7 @@ const DeviceGatewayBind: React.FC<Props> = props => {
           <SearchForm
             formItems={[
               {
-                label: '名称',
+                label: '设备名称',
                 key: 'name',
                 type: 'string',
               }
