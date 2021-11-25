@@ -1,5 +1,6 @@
 import { Input, Modal } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
+import type { Key } from 'react';
 import { useRef, useState } from 'react';
 import { connect } from '@formily/react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
@@ -10,8 +11,8 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import Service from '@/pages/device/Instance/service';
 
 interface Props {
-  value: string;
-  onChange: (id: string) => void;
+  value: Partial<DeviceInstance>;
+  onChange: (data: Partial<DeviceInstance>) => void;
 }
 
 export const service = new Service('device/instance');
@@ -66,11 +67,20 @@ const FSelectDevice = connect((props: Props) => {
     },
   ];
 
+  const [data, setData] = useState<Partial<DeviceInstance>>(props.value);
+  const rowSelection = {
+    onChange: (selectedRowKeys: Key[], selectedRows: DeviceInstance[]) => {
+      setData(selectedRows[0]);
+    },
+    selectedRowKeys: [data?.id] as Key[],
+  };
+  console.log(props?.value, 'de-name');
   return (
     <>
       <Input
         size="small"
-        value={props.value}
+        disabled
+        value={props.value?.name}
         addonAfter={<EditOutlined onClick={() => setVisible(true)} />}
       />
       {visible && (
@@ -81,12 +91,20 @@ const FSelectDevice = connect((props: Props) => {
           onCancel={() => setVisible(false)}
           onOk={() => {
             setVisible(false);
-            props.onChange('test');
+            console.log(data, 'dd');
+            props.onChange(data);
           }}
         >
           <ProTable<DeviceInstance>
+            tableAlertRender={false}
             rowSelection={{
               type: 'radio',
+              ...rowSelection,
+            }}
+            toolBarRender={false}
+            rowKey="id"
+            pagination={{
+              pageSize: 10,
             }}
             columns={columns}
             actionRef={actionRef}

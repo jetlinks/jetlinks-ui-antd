@@ -1,7 +1,7 @@
 import type { ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import type { AlarmSetting } from '@/pages/device/Product/typings';
-import { Button, message, Space, Tooltip } from 'antd';
+import { Button, Space, Tooltip } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { service } from '@/pages/device/Product';
 import { useParams } from 'umi';
@@ -19,6 +19,7 @@ const Setting = () => {
   const intl = useIntl();
   const param = useParams<{ id: string }>();
   const [edit, setEdit] = useState<boolean>(true);
+  const [data, setData] = useState<Record<string, unknown>>();
   const columns: ProColumns<AlarmSetting>[] = [
     {
       dataIndex: 'index',
@@ -66,7 +67,8 @@ const Setting = () => {
         <a
           key="editable"
           onClick={async () => {
-            message.success(record.id);
+            setEdit(true);
+            setData(record);
           }}
         >
           <Tooltip
@@ -111,7 +113,15 @@ const Setting = () => {
           </Space>
         )}
         toolBarRender={() => [
-          <Button onClick={() => setEdit(true)} key="button" icon={<PlusOutlined />} type="primary">
+          <Button
+            onClick={() => {
+              setEdit(true);
+              setData({});
+            }}
+            key="button"
+            icon={<PlusOutlined />}
+            type="primary"
+          >
             {intl.formatMessage({
               id: 'pages.data.option.add',
               defaultMessage: '新增',
@@ -124,13 +134,21 @@ const Setting = () => {
           return {
             result: { data: response.result },
             success: true,
+            status: 200,
           } as any;
         }}
         columns={columns}
         rowKey="id"
         search={false}
       />
-      <Edit visible={edit} close={() => setEdit(false)} />
+      <Edit
+        data={data}
+        visible={edit}
+        close={() => {
+          setEdit(false);
+          setData({});
+        }}
+      />
     </>
   );
 };
