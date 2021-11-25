@@ -1,4 +1,5 @@
-import { Column, ColumnConfig } from '@ant-design/charts';
+import type { ColumnConfig } from '@ant-design/charts';
+import { Column } from '@ant-design/charts';
 import moment from 'moment';
 import { useEffect } from 'react';
 import { service } from '@/pages/Analysis';
