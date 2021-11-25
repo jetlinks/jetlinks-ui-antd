@@ -198,8 +198,8 @@ const Login: React.FC = () => {
           </div>
         </div>
         <div className={styles.right}>
-          <div className={styles.systemName}>{SystemConst.SYSTEM_NAME}</div>
-          <div className={styles.systemDesc}>OPEN SOURCE INTERNET OF THINGS BASIC PLATFORM</div>
+          {/*<div className={styles.systemName}>{SystemConst.SYSTEM_NAME}</div>*/}
+          {/*<div className={styles.systemDesc}>OPEN SOURCE INTERNET OF THINGS BASIC PLATFORM</div>*/}
         </div>
       </div>
     </Spin>
