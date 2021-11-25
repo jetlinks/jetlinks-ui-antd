@@ -3,15 +3,17 @@ import type { BaseItem, State } from '@/utils/typings';
 export type ProductItem = {
   id: string;
   name: string;
-  classifiedId: string;
+  classifiedId: string | string[];
   classifiedName: string;
   configuration: Record<string, any>;
   createTime: number;
   creatorId: string;
-  deviceType: {
-    text: string;
-    value: string;
-  };
+  deviceType:
+    | {
+        text: string;
+        value: string;
+      }
+    | string;
   count?: number;
   messageProtocol: string;
   metadata: string;

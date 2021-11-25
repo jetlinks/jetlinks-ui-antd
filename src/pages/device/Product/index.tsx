@@ -16,11 +16,11 @@ import { model } from '@formily/reactive';
 import { Link } from 'umi';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import ProTable from '@jetlinks/pro-table';
 import { lastValueFrom } from 'rxjs';
 import encodeQuery from '@/utils/encodeQuery';
-import { CurdModel } from '@/components/BaseCrud/model';
+import Save from '@/pages/device/Product/Save';
 
 export const service = new Service('device-product');
 export const statusMap = {
@@ -34,6 +34,8 @@ export const productModel = model<{
 });
 
 const Product = observer(() => {
+  const [visible, setVisible] = useState<boolean>(false);
+  const [current, setCurrent] = useState<ProductItem>();
   const actionRef = useRef<ActionType>();
   const intl = useIntl();
   const status = {
@@ -115,7 +117,13 @@ const Product = observer(() => {
           })}
           key={'edit'}
         >
-          <a key="warning">
+          <a
+            key="warning"
+            onClick={() => {
+              setCurrent(record);
+              setVisible(true);
+            }}
+          >
             <EditOutlined />
           </a>
         </Tooltip>,
@@ -163,7 +171,6 @@ const Product = observer(() => {
     },
   ];
 
-  // const schema = {};
   return (
     <PageContainer>
       <ProTable<ProductItem>
@@ -178,13 +185,26 @@ const Product = observer(() => {
         rowKey="id"
         pagination={{ pageSize: 10 }}
         toolBarRender={() => [
-          <Button onClick={CurdModel.add} key="button" icon={<PlusOutlined />} type="primary">
+          <Button
+            onClick={() => setVisible(true)}
+            key="button"
+            icon={<PlusOutlined />}
+            type="primary"
+          >
             {intl.formatMessage({
               id: 'pages.data.option.add',
               defaultMessage: '新增',
             })}
           </Button>,
         ]}
+      />
+      <Save
+        data={current}
+        close={() => {
+          setVisible(false);
+          actionRef.current?.reload();
+        }}
+        visible={visible}
       />
     </PageContainer>
   );

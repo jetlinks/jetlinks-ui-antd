@@ -5,7 +5,7 @@ import SystemConst from '@/utils/const';
 import { concatMap, defer, from, toArray } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import encodeQuery from '@/utils/encodeQuery';
-import type { Response } from '@/utils/typings';
+import type { PageResult, Response } from '@/utils/typings';
 import _ from 'lodash';
 
 class Service extends BaseService<ProductItem> {
@@ -15,7 +15,7 @@ class Service extends BaseService<ProductItem> {
   public queryZipCount = (params: any) =>
     from(this.query(params)).pipe(
       concatMap((i: Response<ProductItem>) =>
-        from(i.result.data as ProductItem[]).pipe(
+        from((i.result as PageResult)?.data).pipe(
           concatMap((t: ProductItem) =>
             from(this.instanceCount(encodeQuery({ terms: { productId: t.id } }))).pipe(
               map((count) => ({ ...t, count: count.result })),
@@ -124,6 +124,43 @@ class Service extends BaseService<ProductItem> {
         params,
       }),
   };
+
+  public deviceDetail = (id: string) =>
+    request(`/${SystemConst.API_BASE}/device/instance/${id}/detail`, {
+      method: 'GET',
+    });
+
+  public saveAlarm = (id: string, data: Record<string, unknown>) =>
+    request(`/${SystemConst.API_BASE}/device/alarm/product/${id}`, {
+      method: 'PATCH',
+      data,
+    });
+
+  public category = () =>
+    request(`/${SystemConst.API_BASE}/device/category/_tree?paging=false`, {
+      method: 'GET',
+      params: encodeQuery({ sorts: { id: 'desc' } }),
+    });
+
+  public getOrg = () =>
+    request(`/${SystemConst.API_BASE}/organization/_all`, {
+      method: 'GET',
+    });
+
+  public getProtocol = () =>
+    request(`/${SystemConst.API_BASE}/protocol/supports`, {
+      method: 'GET',
+    });
+
+  public getStorage = () =>
+    request(`/${SystemConst.API_BASE}/device/product/storage/policies`, {
+      method: 'GET',
+    });
+
+  public getTransport = (protocol: string) =>
+    request(`/${SystemConst.API_BASE}/protocol/${protocol}/transports`, {
+      method: 'GET',
+    });
 }
 
 export default Service;

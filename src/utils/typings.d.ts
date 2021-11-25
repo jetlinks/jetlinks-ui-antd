@@ -1,15 +1,14 @@
 export type Response<T> = {
   message: 'success' | 'error';
-  result:
-    | {
-        pageIndex: number;
-        pageSize: number;
-        total: number;
-        data: T[];
-      }
-    | Record<string, any>;
+  result: PageResult | Record<string, any> | T | T[];
   status: number;
   timestamp: number;
+};
+type PageResult = {
+  pageIndex: number;
+  pageSize: number;
+  total: number;
+  data: T[];
 };
 
 type BaseItem = {
