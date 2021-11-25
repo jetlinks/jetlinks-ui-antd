@@ -18,7 +18,7 @@ import { useState } from 'react';
 const Setting = () => {
   const intl = useIntl();
   const param = useParams<{ id: string }>();
-  const [edit, setEdit] = useState<boolean>(true);
+  const [edit, setEdit] = useState<boolean>(false);
   const [data, setData] = useState<Record<string, unknown>>();
   const columns: ProColumns<AlarmSetting>[] = [
     {

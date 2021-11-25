@@ -1,12 +1,12 @@
 import { Card, Divider, Empty } from 'antd';
 import { InstanceModel, service } from '@/pages/device/Instance';
 import { useEffect, useState } from 'react';
-import { createSchemaField, observer } from '@formily/react';
+import { createSchemaField } from '@formily/react';
 import type { ConfigMetadata, ConfigProperty } from '@/pages/device/Product/typings';
 import type { ISchema } from '@formily/json-schema';
 import { Form, FormGrid, FormItem, FormLayout, Input, Password, PreviewText } from '@formily/antd';
 import { createForm } from '@formily/core';
-import { history } from 'umi';
+import { history, useParams } from 'umi';
 import Tags from '@/pages/device/Instance/Detail/Config/Tags';
 
 const componentMap = {
@@ -14,13 +14,18 @@ const componentMap = {
   password: 'Password',
 };
 
-const Config = observer(() => {
+const Config = () => {
+  const params = useParams<{ id: string }>();
   useEffect(() => {
-    if (InstanceModel.current?.id) {
-      service.getConfigMetadata(InstanceModel.current.id).then((response) => {
+    console.log(params, 'parasm');
+    const id = InstanceModel.current?.id || params.id;
+    console.log(id, 'id');
+    if (id) {
+      service.getConfigMetadata(id).then((response) => {
         InstanceModel.config = response?.result;
       });
     } else {
+      console.log('推出');
       history.goBack();
     }
   }, []);
@@ -117,6 +122,6 @@ const Config = observer(() => {
       <Tags />
     </>
   );
-});
+};
 
 export default Config;

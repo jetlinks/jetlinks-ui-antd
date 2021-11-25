@@ -1,6 +1,6 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { InstanceModel, service } from '@/pages/device/Instance';
-import { history } from 'umi';
+import { history, useParams } from 'umi';
 import { Button } from 'antd';
 import { useEffect, useState } from 'react';
 import { statusMap } from '@/pages/device/Product';
@@ -22,12 +22,12 @@ const InstanceDetail = observer(() => {
       InstanceModel.detail = response?.result;
     });
   };
-
+  const params = useParams<{ id: string }>();
   useEffect(() => {
-    if (!InstanceModel.current) {
+    if (!InstanceModel.current && !params.id) {
       history.goBack();
     } else {
-      getDetail(InstanceModel.current?.id);
+      getDetail(InstanceModel.current?.id || params.id);
     }
   }, []);
 

@@ -1,4 +1,4 @@
-import { createSchemaField, observer } from '@formily/react';
+import { createSchemaField } from '@formily/react';
 import type { IFieldState } from '@formily/core';
 import { createForm, onFieldValueChange } from '@formily/core';
 import {
@@ -22,7 +22,7 @@ import ProCard from '@ant-design/pro-card';
 import { useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 
-const ItemParam = observer(() => {
+const ItemParam = () => {
   const intl = useIntl();
   const [cardId, setCardId] = useState<string>('');
   const form = createForm({
@@ -215,5 +215,5 @@ const ItemParam = observer(() => {
       </PreviewText.Placeholder>
     </ProCard>
   );
-});
+};
 export default ItemParam;

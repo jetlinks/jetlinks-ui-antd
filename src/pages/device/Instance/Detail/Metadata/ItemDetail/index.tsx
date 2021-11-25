@@ -1,5 +1,4 @@
 import { InstanceModel } from '@/pages/device/Instance';
-import { observer } from '@formily/react';
 
 import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
@@ -19,7 +18,7 @@ import {
 import type { MetadataItem } from '@/pages/device/Product/typings';
 import { useIntl } from '@@/plugin-locale/localeExports';
 
-const ItemDetail = observer(() => {
+const ItemDetail = () => {
   const intl = useIntl();
   const form = createForm<MetadataItem>({
     validateFirst: true,
@@ -130,6 +129,6 @@ const ItemDetail = observer(() => {
       </Form>
     </>
   );
-});
+};
 
 export default ItemDetail;

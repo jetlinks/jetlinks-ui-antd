@@ -1,4 +1,3 @@
-import { observer } from '@formily/react';
 import ProCard from '@ant-design/pro-card';
 import { Col, Input, Row } from 'antd';
 import { InstanceModel } from '@/pages/device/Instance';
@@ -9,7 +8,7 @@ import ItemParam from '@/pages/device/Instance/Detail/Metadata/ItemParam';
 import { useEffect } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 
-const Metadata = observer(() => {
+const Metadata = () => {
   const intl = useIntl();
   const metadata = JSON.parse(InstanceModel.detail.metadata as string) as DeviceMetadata;
   useEffect(() => {
@@ -107,5 +106,5 @@ const Metadata = observer(() => {
       </ProCard.TabPane>
     </ProCard>
   );
-});
+};
 export default Metadata;
