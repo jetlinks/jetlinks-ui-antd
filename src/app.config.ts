@@ -1,7 +1,7 @@
 export default {
   pages: [
-    'pages/device/index',
     'pages/index/index',
+    'pages/device/index',
     'pages/device/detail/index',
     'pages/me/index',
   ],
