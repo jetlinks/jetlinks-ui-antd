@@ -1,11 +1,12 @@
-import { InstanceModel } from '@/pages/device/Instance';
+import { InstanceModel, service } from '@/pages/device/Instance';
 import { Badge, Card, Col, Row } from 'antd';
 import type { DeviceMetadata } from '@/pages/device/Product/typings';
 import { useIntl } from '@@/plugin-locale/localeExports';
-// import useSendWebsocketMessage from "@/hooks/websocket/useSendWebsocketMessage";
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Property from '@/pages/device/Instance/Detail/Running/Property';
 import Event from '@/pages/device/Instance/Detail/Running/Event';
+import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
+import { map } from 'rxjs/operators';
 
 const ColResponsiveProps = {
   xs: 24,
@@ -20,7 +21,7 @@ const Running = () => {
   const metadata = JSON.parse(InstanceModel.detail.metadata as string) as DeviceMetadata;
 
   const device = InstanceModel.detail;
-  // const [subscribeTopic] = useSendWebsocketMessage();
+  const [subscribeTopic] = useSendWebsocketMessage();
 
   const addObserver = (item: Record<string, any>) => {
     item.listener = [];
@@ -35,15 +36,58 @@ const Running = () => {
     return item;
   };
 
+  const [propertiesList, setPropertiesList] = useState<string[]>([]);
   // const eventWS = {
   //   id: `instance-info-event-${device.id}-${device.productId}`,
   //   topic: `/dashboard/device/${device.productId}/events/realTime`,
   // }
-  // const propertyWs = {
-  //   // id: `instance-info-property-${device.id}-${device.productId}-${propertiesList.join('-')}`,
-  //   topic: `/dashboard/device/${device.productId}/properties/realTime`,
-  // }
+  useEffect(() => {
+    const list = metadata.properties.map((item: any) => item.id);
+    setPropertiesList(list);
+  }, []);
+  const propertyWs = {
+    id: `instance-info-property-${device.id}-${device.productId}-${propertiesList.join('-')}`,
+    topic: `/dashboard/device/${device.productId}/properties/realTime`,
+  };
 
+  const getProperty = () => {
+    subscribeTopic!(propertyWs.id, propertyWs.topic, {
+      deviceId: device.id,
+      properties: propertiesList,
+      history: 0,
+    })
+      ?.pipe(map((res) => res.result))
+      .subscribe((resp: any) => {
+        console.log(resp, 'resp');
+      });
+  };
+
+  const getDashboard = () => {
+    const params = [
+      {
+        dashboard: 'device',
+        object: device.productId,
+        measurement: 'properties',
+        dimension: 'history',
+        params: {
+          deviceId: device.id,
+          history: 15,
+          properties: propertiesList,
+        },
+      },
+    ];
+
+    service.propertyRealTime(params).subscribe((data) => {
+      const index = metadata.properties.findIndex((i) => i.id === data.property);
+      if (index > -1) {
+        metadata.properties[index].list = data.list as any;
+      }
+    });
+  };
+  useEffect(() => {
+    getProperty();
+    getDashboard();
+  }, []);
   metadata.events = metadata.events.map(addObserver);
   metadata.properties = metadata.properties.map(addObserver);
 

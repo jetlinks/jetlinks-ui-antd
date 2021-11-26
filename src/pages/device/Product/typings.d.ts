@@ -95,6 +95,14 @@ type PropertyMetadata = {
   } & Record<any, any>;
   expands: Record<string, any>;
   description?: string;
+  // 运行状态处需要数据
+  list?: {
+    timeString: string;
+    timestamp: number;
+    formatValue: string;
+    property: string;
+    value: number;
+  } & Record<string, unknown>;
 };
 type TagMetadata = {
   id: string;

@@ -60,6 +60,7 @@ export const useSendWebsocketMessage = () => {
     topic: string,
     parameter: Record<string, any>,
   ): Observable<any> => {
+    console.log(parameter, 'par');
     return new Observable((subscriber) => {
       if (!subscribeList[id]) {
         subscribeList[id] = [];
@@ -69,7 +70,11 @@ export const useSendWebsocketMessage = () => {
         complete: () => subscriber.complete(),
       });
       const message = JSON.stringify({ id, topic, parameter, type: MsgType.sub });
-      sendMessage?.(message);
+      if (sendMessage) {
+        sendMessage(message);
+      } else {
+        console.error('sendMessage错误');
+      }
       return () => {
         const unsub = JSON.stringify({ id, type: MsgType.unsub });
         delete subscribeList[id];
