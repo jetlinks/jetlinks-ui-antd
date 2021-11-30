@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal, Form, Input, Select, Switch } from 'antd';
 import { FormComponentProps } from 'antd/es/form';
 
@@ -80,7 +80,7 @@ const PointSave: React.FC<Props> = props => {
                 <Form.Item label="数据模式">
                     {getFieldDecorator('dataMode', {
                         rules: [{ required: true, message: '请选择' }],
-                        initialValue: data.dataMode
+                        initialValue: data.dataMode?.value || ''
                     })(
                         <Select onChange={(value: string) => {
                             setDataMode(value);
