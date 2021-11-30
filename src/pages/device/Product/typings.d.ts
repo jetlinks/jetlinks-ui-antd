@@ -96,13 +96,7 @@ type PropertyMetadata = {
   expands: Record<string, any>;
   description?: string;
   // 运行状态处需要数据
-  list?: {
-    timeString: string;
-    timestamp: number;
-    formatValue: string;
-    property: string;
-    value: number;
-  } & Record<string, unknown>;
+  list?: Record<string, unknown>[];
 };
 type TagMetadata = {
   id: string;
@@ -165,4 +159,10 @@ type UnitType = {
   text: string;
   type: string;
   value: string;
+};
+
+type ObserverMetadata = {
+  type: unknown[];
+  subscribe: (data: any) => void;
+  next: (data: any) => void;
 };

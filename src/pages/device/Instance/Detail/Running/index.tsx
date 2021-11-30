@@ -1,6 +1,10 @@
 import { InstanceModel, service } from '@/pages/device/Instance';
 import { Badge, Card, Col, Row } from 'antd';
-import type { DeviceMetadata } from '@/pages/device/Product/typings';
+import type {
+  DeviceMetadata,
+  ObserverMetadata,
+  PropertyMetadata,
+} from '@/pages/device/Product/typings';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { useCallback, useEffect, useState } from 'react';
 import Property from '@/pages/device/Instance/Detail/Running/Property';
@@ -16,6 +20,7 @@ const ColResponsiveProps = {
   xl: 6,
   style: { marginBottom: 24 },
 };
+
 const Running = () => {
   const intl = useIntl();
   const metadata = JSON.parse(InstanceModel.detail.metadata as string) as DeviceMetadata;
@@ -35,7 +40,8 @@ const Running = () => {
     };
     return item;
   };
-
+  metadata.events = metadata.events.map(addObserver);
+  metadata.properties = metadata.properties.map(addObserver);
   const [propertiesList, setPropertiesList] = useState<string[]>([]);
   // const eventWS = {
   //   id: `instance-info-event-${device.id}-${device.productId}`,
@@ -50,15 +56,23 @@ const Running = () => {
     topic: `/dashboard/device/${device.productId}/properties/realTime`,
   };
 
-  const getProperty = () => {
+  /**
+   * 获取ws下发属性数据
+   */
+  const subscribeProperty = () => {
     subscribeTopic!(propertyWs.id, propertyWs.topic, {
       deviceId: device.id,
       properties: propertiesList,
       history: 0,
     })
-      ?.pipe(map((res) => res.result))
-      .subscribe((resp: any) => {
-        console.log(resp, 'resp');
+      ?.pipe(map((res) => res.payload))
+      .subscribe((payload: any) => {
+        const property = metadata.properties.find(
+          (i) => i.id === payload.value.property,
+        ) as PropertyMetadata & ObserverMetadata;
+        if (property) {
+          property.next(payload);
+        }
       });
   };
 
@@ -77,25 +91,27 @@ const Running = () => {
       },
     ];
 
-    service.propertyRealTime(params).subscribe((data) => {
-      const index = metadata.properties.findIndex((i) => i.id === data.property);
-      if (index > -1) {
-        metadata.properties[index].list = data.list as any;
-      }
+    service.propertyRealTime(params).subscribe({
+      next: (data) => {
+        const index = metadata.properties.findIndex((i) => i.id === data.property);
+        if (index > -1) {
+          const property = metadata.properties[index] as PropertyMetadata & ObserverMetadata;
+          property.list = data.list as Record<string, unknown>[];
+          property.next(data.list);
+        }
+      },
     });
   };
   useEffect(() => {
-    getProperty();
+    subscribeProperty();
     getDashboard();
   }, []);
-  metadata.events = metadata.events.map(addObserver);
-  metadata.properties = metadata.properties.map(addObserver);
 
   const renderCard = useCallback(() => {
     return [
       ...metadata.properties.map((item) => (
         <Col {...ColResponsiveProps} key={item.id}>
-          <Property data={item} />
+          <Property data={item as Partial<PropertyMetadata> & ObserverMetadata} />
         </Col>
       )),
       ...metadata.events.map((item) => (

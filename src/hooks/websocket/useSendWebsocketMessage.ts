@@ -60,7 +60,6 @@ export const useSendWebsocketMessage = () => {
     topic: string,
     parameter: Record<string, any>,
   ): Observable<any> => {
-    console.log(parameter, 'par');
     return new Observable((subscriber) => {
       if (!subscribeList[id]) {
         subscribeList[id] = [];

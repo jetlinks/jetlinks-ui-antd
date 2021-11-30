@@ -130,7 +130,7 @@ export const request: RequestConfig = {
       history.push('/user/login');
       return;
     }
-    if (response.status === 400) {
+    if (response.status === 400 || response.status === 500) {
       response.text().then((resp: string) => {
         if (resp) {
           notification.error({
@@ -154,7 +154,7 @@ export const request: RequestConfig = {
         message: '网络异常',
       });
     }
-    throw error;
+    return response;
   },
   requestInterceptors: [requestInterceptor],
 };

@@ -38,6 +38,11 @@ class Service extends BaseService<DeviceInstance> {
         // toArray()
       ),
     );
+
+  public getProperty = (id: string, type: string) =>
+    request(`/${SystemConst.API_BASE}/device/standard/${id}/property/${type}`, {
+      method: 'GET',
+    });
 }
 
 export default Service;
