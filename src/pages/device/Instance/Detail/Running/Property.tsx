@@ -6,7 +6,7 @@ import { Line } from '@ant-design/charts';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { service } from '@/pages/device/Instance';
 import { useParams } from 'umi';
-import PropertyList from '@/pages/device/Instance/Detail/PropertyList';
+import PropertyLog from '@/pages/device/Instance/Detail/PropertyLog';
 
 interface Props {
   data: Partial<PropertyMetadata> & ObserverMetadata;
@@ -156,12 +156,7 @@ const Property = (props: Props) => {
       <Spin spinning={loading}>
         <div style={{ height: 60 }}>{chart()}</div>
       </Spin>
-      <PropertyList
-        data={data}
-        property={data.id!}
-        visible={visible}
-        close={() => setVisible(false)}
-      />
+      <PropertyLog data={data} visible={visible} close={() => setVisible(false)} />
     </ProCard>
   );
 };

@@ -2,6 +2,7 @@ import { InstanceModel, service } from '@/pages/device/Instance';
 import { Badge, Card, Col, Row } from 'antd';
 import type {
   DeviceMetadata,
+  EventMetadata,
   ObserverMetadata,
   PropertyMetadata,
 } from '@/pages/device/Product/typings';
@@ -43,24 +44,21 @@ const Running = () => {
   metadata.events = metadata.events.map(addObserver);
   metadata.properties = metadata.properties.map(addObserver);
   const [propertiesList, setPropertiesList] = useState<string[]>([]);
-  // const eventWS = {
-  //   id: `instance-info-event-${device.id}-${device.productId}`,
-  //   topic: `/dashboard/device/${device.productId}/events/realTime`,
-  // }
+
   useEffect(() => {
     const list = metadata.properties.map((item: any) => item.id);
     setPropertiesList(list);
   }, []);
-  const propertyWs = {
-    id: `instance-info-property-${device.id}-${device.productId}-${propertiesList.join('-')}`,
-    topic: `/dashboard/device/${device.productId}/properties/realTime`,
-  };
 
   /**
-   * 获取ws下发属性数据
+   * 订阅属性数据
    */
   const subscribeProperty = () => {
-    subscribeTopic!(propertyWs.id, propertyWs.topic, {
+    const id = `instance-info-property-${device.id}-${device.productId}-${propertiesList.join(
+      '-',
+    )}`;
+    const topic = `/dashboard/device/${device.productId}/properties/realTime`;
+    subscribeTopic!(id, topic, {
       deviceId: device.id,
       properties: propertiesList,
       history: 0,
@@ -102,8 +100,26 @@ const Running = () => {
       },
     });
   };
+
+  /**
+   * 订阅事件数据
+   */
+  const subscribeEvent = () => {
+    const id = `instance-info-event-${device.id}-${device.productId}`;
+    const topic = `/dashboard/device/${device.productId}/events/realTime`;
+    subscribeTopic!(id, topic, { deviceId: device.id })
+      ?.pipe(map((res) => res.payload))
+      .subscribe((payload: any) => {
+        const event = metadata.events.find((i) => i.id === payload.value.event) as EventMetadata &
+          ObserverMetadata;
+        if (event) {
+          event.next(payload);
+        }
+      });
+  };
   useEffect(() => {
     subscribeProperty();
+    subscribeEvent();
     getDashboard();
   }, []);
 
@@ -116,7 +132,7 @@ const Running = () => {
       )),
       ...metadata.events.map((item) => (
         <Col {...ColResponsiveProps} key={item.id}>
-          <Event data={item} />
+          <Event data={item as Partial<EventMetadata> & ObserverMetadata} />
         </Col>
       )),
     ];

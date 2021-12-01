@@ -55,6 +55,11 @@ class Service extends BaseService<DeviceInstance> {
       method: 'GET',
       params,
     });
+
+  public getEventCount = (deviceId: string, eventId: string) =>
+    request(
+      `/${SystemConst.API_BASE}/device/instance/${deviceId}/event/${eventId}?format=true&pageSize=1`,
+    );
 }
 
 export default Service;
