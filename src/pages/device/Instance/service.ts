@@ -43,6 +43,18 @@ class Service extends BaseService<DeviceInstance> {
     request(`/${SystemConst.API_BASE}/device/standard/${id}/property/${type}`, {
       method: 'GET',
     });
+
+  public setProperty = (deviceId: string, data: Record<string, unknown>) =>
+    request(`/${SystemConst.API_BASE}/device/instance/${deviceId}/property`, {
+      method: 'PUT',
+      data,
+    });
+
+  public getPropertyData = (deviceId: string, params: Record<string, unknown>) =>
+    request(`/${SystemConst.API_BASE}/device-instance/${deviceId}/properties/_query`, {
+      method: 'GET',
+      params,
+    });
 }
 
 export default Service;
