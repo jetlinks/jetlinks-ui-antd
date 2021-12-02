@@ -38,14 +38,11 @@ const Save = (props: Props) => {
   const { visible, close, data } = props;
   const handleData = () => {
     // 特殊处理deviceType字段
-    console.log(data, '处理钱');
     if (data) {
       if (typeof data.deviceType !== 'string') {
         data.deviceType = data.deviceType?.value;
       }
     }
-
-    console.log(data, '初始化数据');
     return data;
   };
   const form = createForm({

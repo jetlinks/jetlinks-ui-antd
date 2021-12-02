@@ -1,18 +1,20 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { InstanceModel, service } from '@/pages/device/Instance';
 import { history, useParams } from 'umi';
-import { Badge, Button, Divider } from 'antd';
+import { Badge, Button, Card, Divider } from 'antd';
 import { useEffect, useState } from 'react';
 import { statusMap } from '@/pages/device/Product';
 import { observer } from '@formily/react';
 import Config from '@/pages/device/Instance/Detail/Config';
-import Metadata from '@/pages/device/Instance/Detail/Metadata';
 import Log from '@/pages/device/Instance/Detail/Log';
 import Alarm from '@/pages/device/Instance/Detail/Alarm';
 import Info from '@/pages/device/Instance/Detail/Info';
 import Functions from '@/pages/device/Instance/Detail/Functions';
 import Running from '@/pages/device/Instance/Detail/Running';
 import { useIntl } from '@@/plugin-locale/localeExports';
+import Metadata from '../../components/Metadata';
+import { DeviceMetadata } from '@/pages/device/Product/typings';
+import MetadataAction from '@/pages/device/components/Metadata/DataBaseAction';
 
 export const deviceStatus = new Map();
 deviceStatus.set('online', <Badge status="success" text={'在线'} />);
@@ -24,6 +26,9 @@ const InstanceDetail = observer(() => {
   const getDetail = (id: string) => {
     service.detail(id).then((response) => {
       InstanceModel.detail = response?.result;
+      // 写入物模型数据
+      const metadata: DeviceMetadata = JSON.parse(response.result?.metadata);
+      MetadataAction.insert(metadata);
     });
   };
   const params = useParams<{ id: string }>();
@@ -33,7 +38,10 @@ const InstanceDetail = observer(() => {
     } else {
       getDetail(InstanceModel.current?.id || params.id);
     }
-  }, []);
+    return () => {
+      MetadataAction.clean();
+    };
+  }, [params.id]);
 
   const list = [
     {
@@ -58,7 +66,11 @@ const InstanceDetail = observer(() => {
         id: 'pages.device.instanceDetail.metadata',
         defaultMessage: '物模型',
       }),
-      component: <Metadata />,
+      component: (
+        <Card>
+          <Metadata />
+        </Card>
+      ),
     },
     {
       key: 'functions',

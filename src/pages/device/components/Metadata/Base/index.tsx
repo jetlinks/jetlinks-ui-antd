@@ -5,7 +5,7 @@ import { useParams } from 'umi';
 import DB from '@/db';
 import type { MetadataItem, MetadataType } from '@/pages/device/Product/typings';
 import MetadataMapping from './columns';
-import { Button, Popconfirm, Tooltip } from 'antd';
+import { Button, message, Popconfirm, Tooltip } from 'antd';
 import { EditOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import Edit from './Edit';
 import { observer } from '@formily/react';
@@ -83,6 +83,24 @@ const BaseMetadata = observer((props: Props) => {
         columns={MetadataMapping.get(type)!.concat(actions)}
         rowKey="id"
         search={false}
+        pagination={{
+          pageSize: 5,
+        }}
+        options={{
+          density: false,
+          fullScreen: false,
+          reload: false,
+          setting: false,
+          search: true,
+        }}
+        toolbar={{
+          search: {
+            onSearch: (value) => {
+              // Todo 物模型属性搜索
+              message.success(value);
+            },
+          },
+        }}
         toolBarRender={() => [
           <Button
             onClick={() => {

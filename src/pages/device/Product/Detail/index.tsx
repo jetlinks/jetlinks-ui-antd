@@ -9,9 +9,9 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import Metadata from '@/pages/device/components/Metadata';
 import Alarm from '@/pages/device/Product/Detail/Alarm';
 import type { DeviceMetadata } from '@/pages/device/Product/typings';
-import DB from '@/db';
 import { Link } from 'umi';
 import { Store } from 'jetlinks-store';
+import MetadataAction from '@/pages/device/components/Metadata/DataBaseAction';
 
 const ProductDetail = observer(() => {
   const intl = useIntl();
@@ -48,38 +48,18 @@ const ProductDetail = observer(() => {
   };
   const param = useParams<{ id: string }>();
 
-  const EventTable = DB.getDB().table(`events`);
-  const PropertyTable = DB.getDB().table(`properties`);
-  const FunctionTable = DB.getDB().table(`functions`);
-  const TagTable = DB.getDB().table(`tags`);
-
   useEffect(() => {
     if (!productModel.current) {
       history.goBack();
     } else {
       service.getProductDetail(param.id).subscribe((data) => {
         const metadata: DeviceMetadata = JSON.parse(data.metadata);
-
-        EventTable.clear().then(() => {
-          EventTable.bulkAdd(metadata.events || []);
-        });
-        PropertyTable.clear().then(() => {
-          PropertyTable.bulkAdd(metadata.properties || []);
-        });
-        FunctionTable.clear().then(() => {
-          FunctionTable.bulkAdd(metadata.functions || []);
-        });
-        TagTable.clear().then(() => {
-          TagTable.bulkAdd(metadata.tags || []);
-        });
+        MetadataAction.insert(metadata);
       });
     }
 
     return () => {
-      EventTable.clear();
-      PropertyTable.clear();
-      FunctionTable.clear();
-      TagTable.clear();
+      MetadataAction.clean();
     };
   }, [param.id]);
 
