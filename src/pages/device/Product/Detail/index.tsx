@@ -6,7 +6,7 @@ import { observer } from '@formily/react';
 import { productModel, service } from '@/pages/device/Product';
 import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import Metadata from '@/pages/device/Product/Detail/Metadata';
+import Metadata from '@/pages/device/components/Metadata';
 import Alarm from '@/pages/device/Product/Detail/Alarm';
 import type { DeviceMetadata } from '@/pages/device/Product/typings';
 import DB from '@/db';

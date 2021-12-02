@@ -1,6 +1,6 @@
 import { Drawer, Dropdown, Menu, message } from 'antd';
 import { createSchemaField } from '@formily/react';
-import MetadataModel from '@/pages/device/Product/Detail/Metadata/Base/model';
+import MetadataModel from '../model';
 import type { Field, IFieldState } from '@formily/core';
 import { createForm } from '@formily/core';
 import {
@@ -526,7 +526,6 @@ const Edit = () => {
     if (result.status === 200) {
       message.success('操作成功！');
       Store.set(SystemConst.REFRESH_METADATA_TABLE, true);
-      console.log(deploy, 'dep');
       if (deploy) {
         // 不阻塞主流程。发布更新通知
         Store.set('product-deploy', deploy);

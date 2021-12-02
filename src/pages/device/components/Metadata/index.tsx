@@ -1,10 +1,10 @@
 import { observer } from '@formily/react';
 import { Button, Space, Tabs } from 'antd';
-import BaseMetadata from '@/pages/device/Product/Detail/Metadata/Base';
+import BaseMetadata from './Base';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import Import from '@/pages/device/Product/Detail/Metadata/Import';
+import Import from './Import';
 import { useState } from 'react';
-import Cat from '@/pages/device/Product/Detail/Metadata/Cat';
+import Cat from './Cat';
 
 const Metadata = observer(() => {
   const intl = useIntl();
