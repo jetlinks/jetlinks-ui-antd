@@ -1,5 +1,5 @@
 import { SyncOutlined, UnorderedListOutlined } from '@ant-design/icons';
-import { Badge, Divider, message, Tooltip } from 'antd';
+import { Badge, Divider, Tooltip } from 'antd';
 import ProCard from '@ant-design/pro-card';
 import type { EventMetadata, ObserverMetadata } from '@/pages/device/Product/typings';
 import { useEffect, useRef, useState } from 'react';
@@ -22,21 +22,30 @@ const Event = (props: Props) => {
 
   const [count, setCount] = useState<number>(0);
   const cacheCount = useRef<number>(count);
-  useEffect(() => {
-    if (data.id) {
-      service.getEventCount(params.id, data.id).then((resp) => {
-        if (resp.status === 200) {
-          setCount(resp.result?.total);
-          cacheCount.current = resp.result?.total;
-        }
-      });
-    }
 
+  const [loading, setLoading] = useState<boolean>(false);
+  const initCount = () => {
+    setLoading(true);
+    if (data.id) {
+      service
+        .getEventCount(params.id, data.id, {
+          format: true,
+          pageSize: 1,
+        })
+        .then((resp) => {
+          if (resp.status === 200) {
+            setCount(resp.result?.total);
+            cacheCount.current = resp.result?.total;
+          }
+        })
+        .finally(() => setLoading(false));
+    }
+  };
+  useEffect(() => {
+    initCount();
     data.subscribe((payload: unknown) => {
-      console.log('订阅到消息', payload);
       if (payload) {
         cacheCount.current = cacheCount.current + 1;
-        console.log(cacheCount.current, 'currnt');
         setCount(cacheCount.current);
       }
     });
@@ -48,7 +57,7 @@ const Event = (props: Props) => {
       title={`${data.name}: ${count}`}
       extra={
         <>
-          <SyncOutlined onClick={() => message.success('刷新')} />
+          <SyncOutlined onClick={initCount} />
           <Divider type="vertical" />
           <Tooltip placement="top" title="详情">
             <UnorderedListOutlined
@@ -59,6 +68,7 @@ const Event = (props: Props) => {
           </Tooltip>
         </>
       }
+      loading={loading}
       layout="center"
       bordered
       headerBordered

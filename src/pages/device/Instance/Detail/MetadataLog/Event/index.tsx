@@ -1,6 +1,6 @@
+import type { ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { service } from '@/pages/device/Instance';
-import encodeQuery from '@/utils/encodeQuery';
 import { Drawer } from 'antd';
 import { useParams } from 'umi';
 import type { EventMetadata } from '@/pages/device/Product/typings';
@@ -16,25 +16,41 @@ const EventLog = (props: Props) => {
   const params = useParams<{ id: string }>();
   const { data, visible, close } = props;
 
+  const createColumn = (): ProColumns[] =>
+    data.valueType?.type === 'object'
+      ? data.valueType.properties.map(
+          (i: any) =>
+            ({
+              key: i.id,
+              title: i.name,
+              dataIndex: i.id,
+              renderText: (text) => (typeof text === 'object' ? JSON.stringify(text) : text),
+            } as ProColumns),
+        )
+      : [
+          {
+            title: '数据',
+            dataIndex: `value`,
+            ellipsis: true,
+            render: (text) => JSON.stringify(text),
+          },
+        ];
+
   return (
     <Drawer title={data.name} visible={visible} onClose={() => close()} width="45vw">
       <ProTable
         size="small"
+        rowKey="id"
         toolBarRender={false}
         request={async (param) =>
-          service.getPropertyData(
-            params.id,
-            encodeQuery({
-              ...param,
-              terms: { property: data.id },
-              sorts: { timestamp: 'desc' },
-            }),
-          )
+          service.getEventCount(params.id, data.id!, {
+            ...param,
+          })
         }
         pagination={{
           pageSize: 15,
         }}
-        columns={columns}
+        columns={[...columns, ...createColumn()]}
       />
     </Drawer>
   );

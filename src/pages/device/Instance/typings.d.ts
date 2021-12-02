@@ -35,6 +35,7 @@ export type DeviceInstance = {
   address: string;
   registerTime: number;
   onlineTime: string | number;
+  offlineTime: string | number;
   tags: any;
 };
 

@@ -6,7 +6,7 @@ import { Line } from '@ant-design/charts';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { service } from '@/pages/device/Instance';
 import { useParams } from 'umi';
-import PropertyLog from '@/pages/device/Instance/Detail/PropertyLog';
+import PropertyLog from '@/pages/device/Instance/Detail/MetadataLog/Property';
 
 interface Props {
   data: Partial<PropertyMetadata> & ObserverMetadata;

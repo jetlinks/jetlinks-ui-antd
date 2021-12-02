@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { InstanceModel, service } from '@/pages/device/Instance';
 import { history, useParams } from 'umi';
-import { Button } from 'antd';
+import { Badge, Button, Divider } from 'antd';
 import { useEffect, useState } from 'react';
 import { statusMap } from '@/pages/device/Product';
 import { observer } from '@formily/react';
@@ -14,6 +14,10 @@ import Functions from '@/pages/device/Instance/Detail/Functions';
 import Running from '@/pages/device/Instance/Detail/Running';
 import { useIntl } from '@@/plugin-locale/localeExports';
 
+export const deviceStatus = new Map();
+deviceStatus.set('online', <Badge status="success" text={'在线'} />);
+deviceStatus.set('offline', <Badge status="error" text={'离线'} />);
+deviceStatus.set('notActive', <Badge status="processing" text={'未启用'} />);
 const InstanceDetail = observer(() => {
   const intl = useIntl();
   const [tab, setTab] = useState<string>('detail');
@@ -36,7 +40,7 @@ const InstanceDetail = observer(() => {
       key: 'detail',
       tab: intl.formatMessage({
         id: 'pages.device.instanceDetail.detail',
-        defaultMessage: '实例信息',
+        defaultMessage: '配置信息',
       }),
       component: <Config />,
     },
@@ -104,6 +108,13 @@ const InstanceDetail = observer(() => {
       onTabChange={setTab}
       tabList={list}
       content={<Info />}
+      title={
+        <>
+          {InstanceModel.detail.name}
+          <Divider type="vertical" />
+          {deviceStatus.get(InstanceModel.detail.state?.value)}
+        </>
+      }
       extra={[
         statusMap[0],
         <Button key="2">

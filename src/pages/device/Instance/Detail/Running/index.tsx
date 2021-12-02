@@ -1,5 +1,5 @@
 import { InstanceModel, service } from '@/pages/device/Instance';
-import { Badge, Card, Col, Row } from 'antd';
+import { Card, Col, Row } from 'antd';
 import type {
   DeviceMetadata,
   EventMetadata,
@@ -12,6 +12,8 @@ import Property from '@/pages/device/Instance/Detail/Running/Property';
 import Event from '@/pages/device/Instance/Detail/Running/Event';
 import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
 import { map } from 'rxjs/operators';
+import moment from 'moment';
+import { deviceStatus } from '@/pages/device/Instance/Detail';
 
 const ColResponsiveProps = {
   xs: 24,
@@ -43,12 +45,9 @@ const Running = () => {
   };
   metadata.events = metadata.events.map(addObserver);
   metadata.properties = metadata.properties.map(addObserver);
-  const [propertiesList, setPropertiesList] = useState<string[]>([]);
-
-  useEffect(() => {
-    const list = metadata.properties.map((item: any) => item.id);
-    setPropertiesList(list);
-  }, []);
+  const [propertiesList, setPropertiesList] = useState<string[]>(
+    metadata.properties.map((item: any) => item.id),
+  );
 
   /**
    * 订阅属性数据
@@ -123,6 +122,21 @@ const Running = () => {
     getDashboard();
   }, []);
 
+  const [renderCount, setRenderCount] = useState<number>(15);
+  window.onscroll = () => {
+    const a = document.documentElement.scrollTop;
+    const c = document.documentElement.scrollHeight;
+    const b = document.body.clientHeight;
+    if (a + b >= c - 50) {
+      const list: any = [];
+      metadata.properties.slice(renderCount, renderCount + 15).map((item) => {
+        list.push(item.id);
+      });
+      setPropertiesList([...list]);
+      setRenderCount(renderCount + 15);
+    }
+  };
+
   const renderCard = useCallback(() => {
     return [
       ...metadata.properties.map((item) => (
@@ -135,8 +149,8 @@ const Running = () => {
           <Event data={item as Partial<EventMetadata> & ObserverMetadata} />
         </Col>
       )),
-    ];
-  }, [device]);
+    ].splice(0, renderCount);
+  }, [device, renderCount]);
 
   return (
     <Row gutter={24}>
@@ -149,21 +163,18 @@ const Running = () => {
         >
           <div style={{ height: 60 }}>
             <Row gutter={[16, 16]}>
+              <Col span={24}>{deviceStatus.get(InstanceModel.detail.state?.value)}</Col>
               <Col span={24}>
-                <Badge status="success" text={<span style={{ fontSize: 25 }}>在线</span>} />
-              </Col>
-              <Col span={24}>
-                {intl.formatMessage({
-                  id: 'pages.device.instanceDetail.running.onlineTime',
-                  defaultMessage: '在线时间',
-                })}
-                : 2021-8-20 12:20:33
+                {device.state?.value === 'online' ? (
+                  <span>上线时间：{moment(device?.onlineTime).format('YYYY-MM-DD HH:mm:ss')}</span>
+                ) : (
+                  <span>离线时间：{moment(device?.offlineTime).format('YYYY-MM-DD HH:mm:ss')}</span>
+                )}
               </Col>
             </Row>
           </div>
         </Card>
       </Col>
-
       {renderCard()}
     </Row>
   );

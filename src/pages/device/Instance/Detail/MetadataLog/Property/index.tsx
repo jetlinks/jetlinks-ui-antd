@@ -34,7 +34,14 @@ const PropertyLog = (props: Props) => {
         pagination={{
           pageSize: 15,
         }}
-        columns={columns}
+        columns={[
+          ...columns,
+          {
+            dataIndex: 'formatValue',
+            title: '数据',
+            copyable: true,
+          },
+        ]}
       />
     </Drawer>
   );
