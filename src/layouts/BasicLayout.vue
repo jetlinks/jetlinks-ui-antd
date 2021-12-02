@@ -48,12 +48,13 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, reactive, ref, watchEffect } from 'vue'
+import { computed, defineComponent, onMounted, reactive, ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons-vue'
 import { getMenuData, clearMenuItem } from '@ant-design-vue/pro-layout'
 import type { RouteContextProps } from '@ant-design-vue/pro-layout'
 import { layoutState } from './layout'
+import { initWebSocket } from '@/utils/websocket'
 const i18n = (t: string) => t
 export default defineComponent({
   name: 'BasicLayout',
@@ -63,6 +64,7 @@ export default defineComponent({
     UserOutlined
   },
   setup () {
+    initWebSocket()
     const loading = ref(false)
     const userDetail = JSON.parse(localStorage.getItem('user-detail') || '{}')
     const router = useRouter()

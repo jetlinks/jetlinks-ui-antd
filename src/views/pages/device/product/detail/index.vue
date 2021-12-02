@@ -15,7 +15,13 @@
       </a-descriptions>
     </template>
     <a-card>
-      产品详情
+      <a-tabs>
+        <a-tab-pane key="1" tab="产品信息">
+          test
+        </a-tab-pane>
+        <a-tab-pane key="2" tab="物模型">Content of Tab Pane 2</a-tab-pane>
+        <a-tab-pane key="3" tab="告警设置">Content of Tab Pane 3</a-tab-pane>
+      </a-tabs>
     </a-card>
   </page-container>
 </template>
