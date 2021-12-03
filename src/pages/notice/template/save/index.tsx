@@ -52,7 +52,19 @@ const Save: React.FC<Props> = props => {
   const [emailEditor, setEmailEditor] = useState(initState.emailEditor);
   const [fileList, setFileList] = useState(initState.fileList);
   const [provider, setProvider] = useState<string>('');
+  const [robotMessageType, setRobotMessageType] = useState<string>(
+    JSON.parse(item.template || '{}')?.messageType,
+  );
 
+  const typeMap = new Map();
+  typeMap.set(
+    'HTTP_CLIENT',
+    'POST http://[host]:[port]/api\nContent-Type: application/json\n\n${T(com.alibaba.fastjson.JSON).toJSONString(#this)}',
+  );
+  typeMap.set(
+    'MQTT_CLIENT',
+    'qos1 /device/${#deviceId}\n\n${T(com.alibaba.fastjson.JSON).toJSONString(#this)}',
+  );
   const uploadProps: UploadProps = {
     action: '/jetlinks/file/static',
     headers: {
@@ -122,7 +134,7 @@ const Save: React.FC<Props> = props => {
                   {getFieldDecorator('template.code', {
                     rules: [{ required: true, message: '请输入模板编码' }],
                     initialValue: template.code,
-                  })(<Input placeholder='阿里云短信模板编码' />)}
+                  })(<Input placeholder="阿里云短信模板编码" />)}
                 </Form.Item>
               </Col>
               <Col span={12}>
@@ -130,7 +142,7 @@ const Save: React.FC<Props> = props => {
                   {getFieldDecorator('template.signName', {
                     rules: [{ required: true, message: '请输入签名信息' }],
                     initialValue: template.signName,
-                  })(<Input placeholder='阿里云短信模板签名' />)}
+                  })(<Input placeholder="阿里云短信模板签名" />)}
                 </Form.Item>
               </Col>
             </Row>
@@ -139,7 +151,7 @@ const Save: React.FC<Props> = props => {
                 {getFieldDecorator('template.phoneNumber', {
                   rules: [{ required: true, message: '请输入收件人' }],
                   initialValue: template.phoneNumber,
-                })(<Input placeholder='短信接收者，暂只支持单个联系人' />)}
+                })(<Input placeholder="短信接收者，暂只支持单个联系人" />)}
               </Tooltip>
             </Form.Item>
           </>
@@ -148,20 +160,98 @@ const Save: React.FC<Props> = props => {
         return;
     }
   };
+  const template = item.template ? JSON.parse(item.template) : {};
 
-  const renderConfig = () => {
-    const { type } = item;
-    const template = item.template ? JSON.parse(item.template) : {};
-    const typeMap = new Map();
-    typeMap.set('HTTP_CLIENT', 'POST http://[host]:[port]/api\nContent-Type: application/json\n\n${T(com.alibaba.fastjson.JSON).toJSONString(#this)}');
-    typeMap.set('MQTT_CLIENT', 'qos1 /device/${#deviceId}\n\n${T(com.alibaba.fastjson.JSON).toJSONString(#this)}');
-    switch (type) {
-      case 'sms':
+  const checkUrl = async (_: any, value: any, callback: any) => {
+    const urlReg = `(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]`;
+    const pat = new RegExp(urlReg, 'g');
+    if (!pat.test(value)) {
+      callback('输入正确的URL');
+    } else {
+      callback();
+    }
+  };
+
+  const renderRobotConfig = () => {
+    switch (robotMessageType) {
+      case 'text':
+        return (
+          <Form.Item label="通知内容">
+            {getFieldDecorator('template.text.content', {
+              initialValue: template.text?.content,
+            })(<Input.TextArea rows={3} />)}
+          </Form.Item>
+        );
+      case 'markdown':
         return (
           <>
-            {smsProvider()}
+            <Form.Item label="标题">
+              {getFieldDecorator('template.markdown.title', {
+                initialValue: template.markdown?.title,
+              })(<Input />)}
+            </Form.Item>
+            <Form.Item label="内容">
+              {getFieldDecorator('template.markdown.text', {
+                initialValue: template.markdown?.text,
+              })(<Input.TextArea rows={3} />)}
+            </Form.Item>
           </>
         );
+      case 'link':
+        return (
+          <>
+            <Form.Item label="标题">
+              {getFieldDecorator('template.link.title', {
+                initialValue: template.link?.title,
+              })(<Input />)}
+            </Form.Item>
+            <Form.Item label="内容">
+              {getFieldDecorator('template.link.text', {
+                initialValue: template.link?.text,
+              })(<Input />)}
+            </Form.Item>
+            <Form.Item label="图片链接">
+              {getFieldDecorator('template.link.picUrl', {
+                initialValue: template.link?.picUrl,
+                rules: [{ validator: checkUrl }],
+              })(
+                <Input
+                  addonAfter={
+                    <Upload
+                      {...uploadProps}
+                      showUploadList={false}
+                      onChange={info => {
+                        if (info.file.status === 'done') {
+                          let url = info.file.response.result;
+                          form.setFieldsValue({ 'template.link.picUrl': url });
+                        }
+                      }}
+                    >
+                      <Icon type="upload" /> 上传附件
+                    </Upload>
+                  }
+                />,
+              )}
+            </Form.Item>
+            <Form.Item label="内容链接">
+              {getFieldDecorator('template.link.messageUrl', {
+                initialValue: template.link?.messageUrl,
+                rules: [{ validator: checkUrl }],
+              })(<Input />)}
+            </Form.Item>
+          </>
+        );
+      default:
+        return null;
+    }
+  };
+  const renderConfig = () => {
+    const { type } = item;
+    console.log(type, 'tt', item);
+
+    switch (type) {
+      case 'sms':
+        return <>{smsProvider()}</>;
       case 'voice':
         return (
           <div>
@@ -205,7 +295,7 @@ const Save: React.FC<Props> = props => {
             <Form.Item label="附件">
               <Upload {...uploadProps}>
                 <Button>
-                  <Icon type="upload" /> 上传附件
+                  <Icon type="upload" /> 上传图片
                 </Button>
               </Upload>
             </Form.Item>
@@ -252,41 +342,60 @@ const Save: React.FC<Props> = props => {
           </div>
         );
       case 'dingTalk':
-        return (
-          <div>
-            <Form.Item label="应用ID">
-              {getFieldDecorator('template.agentId', {
-                initialValue: template.agentId,
-              })(<Input />)}
-            </Form.Item>
-            <Form.Item label="收信人ID">
-              {getFieldDecorator('template.userIdList', {
-                initialValue: template.userIdList,
-              })(<Input />)}
-            </Form.Item>
-            <Form.Item label="收信部门ID">
-              {getFieldDecorator('template.departmentIdList', {
-                initialValue: template.departmentIdList,
-              })(<Input />)}
-            </Form.Item>
-            <Form.Item label="全部用户">
-              {getFieldDecorator('template.toAllUser', {
-                initialValue: template.toAllUser,
-              })(
-                <Radio.Group buttonStyle="solid">
-                  <Radio.Button value="true">是</Radio.Button>
-                  <Radio.Button value="false">否</Radio.Button>
-                </Radio.Group>,
-              )}
-            </Form.Item>
-            <Form.Item label="内容">
-              {getFieldDecorator('template.message', {
-                rules: [{ required: true, message: '请输入' }],
-                initialValue: template.message,
-              })(<Input.TextArea rows={3} />)}
-            </Form.Item>
-          </div>
-        );
+        if (item.provider === 'dingTalkRobotWebHook') {
+          return (
+            <div>
+              <Form.Item label="消息类型">
+                {getFieldDecorator('template.messageType', {
+                  initialValue: template.messageType,
+                })(
+                  <Select onChange={setRobotMessageType}>
+                    <Select.Option value="text">text</Select.Option>
+                    <Select.Option value="markdown">markdown</Select.Option>
+                    <Select.Option value="link">link</Select.Option>
+                  </Select>,
+                )}
+              </Form.Item>
+              {renderRobotConfig()}
+            </div>
+          );
+        } else if (item.provider === 'dingTalkMessage') {
+          return (
+            <div>
+              <Form.Item label="应用ID">
+                {getFieldDecorator('template.agentId', {
+                  initialValue: template.agentId,
+                })(<Input />)}
+              </Form.Item>
+              <Form.Item label="收信人ID">
+                {getFieldDecorator('template.userIdList', {
+                  initialValue: template.userIdList,
+                })(<Input />)}
+              </Form.Item>
+              <Form.Item label="收信部门ID">
+                {getFieldDecorator('template.departmentIdList', {
+                  initialValue: template.departmentIdList,
+                })(<Input />)}
+              </Form.Item>
+              <Form.Item label="全部用户">
+                {getFieldDecorator('template.toAllUser', {
+                  initialValue: template.toAllUser,
+                })(
+                  <Radio.Group buttonStyle="solid">
+                    <Radio.Button value="true">是</Radio.Button>
+                    <Radio.Button value="false">否</Radio.Button>
+                  </Radio.Group>,
+                )}
+              </Form.Item>
+              <Form.Item label="内容">
+                {getFieldDecorator('template.message', {
+                  rules: [{ required: true, message: '请输入' }],
+                  initialValue: template.message,
+                })(<Input.TextArea rows={3} />)}
+              </Form.Item>
+            </div>
+          );
+        }
       case 'network':
         return (
           <div>
@@ -326,7 +435,7 @@ const Save: React.FC<Props> = props => {
   return (
     <Modal
       visible
-      title={props.data?.id ? "编辑通知模版" : '新建通知模版'}
+      title={props.data?.id ? '编辑通知模版' : '新建通知模版'}
       onCancel={() => props.close()}
       onOk={() => {
         saveData();
@@ -363,7 +472,13 @@ const Save: React.FC<Props> = props => {
                 rules: [{ required: true, message: '请选择服务商' }],
                 initialValue: item.provider,
               })(
-                <Select onChange={e => setProvider(e)}>
+                <Select
+                  onChange={e => {
+                    setProvider(e);
+                    item.provider = e;
+                    setItem(item);
+                  }}
+                >
                   {(typeList.find(i => i.id === item.type)?.providerInfos || []).map((e: any) => (
                     <Select.Option key={e.id} value={e.id}>
                       {e.name}

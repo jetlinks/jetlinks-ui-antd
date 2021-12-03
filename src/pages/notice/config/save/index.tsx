@@ -49,20 +49,24 @@ const Save: React.FC<Props> = props => {
     apis.notifier.configMetadata(item.type, provider || item.provider).then(res => {
       setMetadata(res.result);
     });
-    apis.network.list(encodeQueryParam({
-      paging: false,
-      sorts: {
-        field: 'id',
-        order: 'desc'
-      },
-      terms: {
-        type: provider || item.provider
-      }
-    })).then(resp => {
-      if (resp.status === 200) {
-        setNetworkList(resp.result);
-      }
-    })
+    apis.network
+      .list(
+        encodeQueryParam({
+          paging: false,
+          sorts: {
+            field: 'id',
+            order: 'desc',
+          },
+          terms: {
+            type: provider || item.provider,
+          },
+        }),
+      )
+      .then(resp => {
+        if (resp.status === 200) {
+          setNetworkList(resp.result);
+        }
+      });
   };
 
   useEffect(() => {
@@ -96,9 +100,13 @@ const Save: React.FC<Props> = props => {
         if (property === 'networkId') {
           return (
             <Select>
-              {networkList.map(i => <Select.Option key={i.id} value={i.id}>{i.name}</Select.Option>)}
+              {networkList.map(i => (
+                <Select.Option key={i.id} value={i.id}>
+                  {i.name}
+                </Select.Option>
+              ))}
             </Select>
-          )
+          );
         }
         return <Input />;
       case 'array':
@@ -160,18 +168,18 @@ const Save: React.FC<Props> = props => {
                           }}
                         />
                       ) : (
-                          <Icon
-                            type="minus"
-                            onClick={() => {
-                              const config = otherConfig.filter(temp => temp.id !== i.id);
-                              // debugData.headers.push({ id: randomString(8), key: '', value: '' });
-                              setOtherConfig([...config]);
-                            }}
-                          />
-                        )}
+                        <Icon
+                          type="minus"
+                          onClick={() => {
+                            const config = otherConfig.filter(temp => temp.id !== i.id);
+                            // debugData.headers.push({ id: randomString(8), key: '', value: '' });
+                            setOtherConfig([...config]);
+                          }}
+                        />
+                      )}
                     </Col>
                   </Row>
-                )
+                );
               })}
             </Card>
           );
@@ -181,15 +189,34 @@ const Save: React.FC<Props> = props => {
     }
   };
 
+  const checkUrl = async (_: any, value: any, callback: any) => {
+    const urlReg = `(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]`;
+    const pat = new RegExp(urlReg, 'g');
+    if (!pat.test(value)) {
+      callback('输入正确的URL');
+    } else {
+      callback();
+    }
+  };
+
   const renderConfig = () => {
     if (metadata && metadata.properties) {
-      return metadata.properties.map((i: any) => (
-        <Form.Item label={i.name} key={i.property}>
-          {form.getFieldDecorator(`configuration.${i.property}`, {
-            initialValue: item.configuration && item.configuration[i.property],
-          })(getDataType(i))}
-        </Form.Item>
-      ));
+      return metadata.properties.map((i: any) => {
+        const rule = [];
+        if (i.property === 'url') {
+          rule.push({
+            validator: checkUrl,
+          });
+        }
+        return (
+          <Form.Item label={i.name} key={i.property}>
+            {form.getFieldDecorator(`configuration.${i.property}`, {
+              initialValue: item.configuration && item.configuration[i.property],
+              rules: rule,
+            })(getDataType(i))}
+          </Form.Item>
+        );
+      });
     }
     return null;
   };
