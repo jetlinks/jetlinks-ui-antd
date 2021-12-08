@@ -17,15 +17,12 @@ const componentMap = {
 const Config = () => {
   const params = useParams<{ id: string }>();
   useEffect(() => {
-    console.log(params, 'parasm');
     const id = InstanceModel.current?.id || params.id;
-    console.log(id, 'id');
     if (id) {
       service.getConfigMetadata(id).then((response) => {
         InstanceModel.config = response?.result;
       });
     } else {
-      console.log('推出');
       history.goBack();
     }
   }, []);

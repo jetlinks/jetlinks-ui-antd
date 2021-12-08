@@ -76,6 +76,7 @@ const InstanceDetail = observer(() => {
       component: (
         <Card>
           <Metadata
+            type="device"
             tabAction={
               <Tooltip title="重置后将使用产品的物模型配置">
                 <Button onClick={resetMetadata}>重置操作</Button>
@@ -86,6 +87,7 @@ const InstanceDetail = observer(() => {
       ),
     },
     {
+      // 物模型中有事件信息，且设备状态是在线的情况下才显示此模块
       key: 'functions',
       tab: intl.formatMessage({
         id: 'pages.device.instanceDetail.functions',

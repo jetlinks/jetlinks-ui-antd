@@ -66,6 +66,12 @@ class Service extends BaseService<DeviceInstance> {
     request(`/${SystemConst.API_BASE}/device/instance/${deviceId}/metadata`, {
       method: 'DELETE',
     });
+
+  public invokeFunction = (deviceId: string, functionId: string, data: Record<string, unknown>) =>
+    request(`/${SystemConst.API_BASE}/device/invoked/${deviceId}/function/${functionId}`, {
+      method: 'POST',
+      data,
+    });
 }
 
 export default Service;
