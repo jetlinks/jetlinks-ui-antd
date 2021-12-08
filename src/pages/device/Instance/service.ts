@@ -72,6 +72,17 @@ class Service extends BaseService<DeviceInstance> {
       method: 'POST',
       data,
     });
+
+  public queryLog = (deviceId: string, params: Record<string, unknown>) =>
+    request(`/${SystemConst.API_BASE}/device-instance/${deviceId}/logs`, {
+      method: 'GET',
+      params,
+    });
+
+  public getLogType = () =>
+    request(`/${SystemConst.API_BASE}/dictionary/device-log-type/items`, {
+      method: 'GET',
+    });
 }
 
 export default Service;
