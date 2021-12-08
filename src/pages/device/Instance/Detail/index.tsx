@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { InstanceModel, service } from '@/pages/device/Instance';
 import { history, useParams } from 'umi';
-import { Badge, Button, Card, Divider } from 'antd';
+import { Badge, Button, Card, Divider, message, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 import { statusMap } from '@/pages/device/Product';
 import { observer } from '@formily/react';
@@ -13,7 +13,7 @@ import Functions from '@/pages/device/Instance/Detail/Functions';
 import Running from '@/pages/device/Instance/Detail/Running';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import Metadata from '../../components/Metadata';
-import { DeviceMetadata } from '@/pages/device/Product/typings';
+import type { DeviceMetadata } from '@/pages/device/Product/typings';
 import MetadataAction from '@/pages/device/components/Metadata/DataBaseAction';
 
 export const deviceStatus = new Map();
@@ -43,6 +43,13 @@ const InstanceDetail = observer(() => {
     };
   }, [params.id]);
 
+  const resetMetadata = async () => {
+    const resp = await service.deleteMetadata(params.id);
+    if (resp.status === 200) {
+      message.success('操作成功');
+      getDetail(params.id);
+    }
+  };
   const list = [
     {
       key: 'detail',
@@ -68,7 +75,13 @@ const InstanceDetail = observer(() => {
       }),
       component: (
         <Card>
-          <Metadata />
+          <Metadata
+            tabAction={
+              <Tooltip title="重置后将使用产品的物模型配置">
+                <Button onClick={resetMetadata}>重置操作</Button>
+              </Tooltip>
+            }
+          />
         </Card>
       ),
     },

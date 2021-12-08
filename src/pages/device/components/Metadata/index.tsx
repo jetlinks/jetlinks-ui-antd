@@ -3,10 +3,16 @@ import { Button, Space, Tabs } from 'antd';
 import BaseMetadata from './Base';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import Import from './Import';
+import type { ReactNode } from 'react';
 import { useState } from 'react';
 import Cat from './Cat';
 
-const Metadata = observer(() => {
+interface Props {
+  tabAction?: ReactNode;
+  type: 'product' | 'device';
+}
+
+const Metadata = observer((props: Props) => {
   const intl = useIntl();
   const [visible, setVisible] = useState<boolean>(false);
   const [cat, setCat] = useState<boolean>(false);
@@ -15,6 +21,7 @@ const Metadata = observer(() => {
       <Tabs
         tabBarExtraContent={
           <Space>
+            {props?.tabAction}
             <Button onClick={() => setVisible(true)}>
               {intl.formatMessage({
                 id: 'pages.device.productDetail.metadata.quickImport',

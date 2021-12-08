@@ -61,6 +61,11 @@ class Service extends BaseService<DeviceInstance> {
       method: 'GET',
       params,
     });
+
+  public deleteMetadata = (deviceId: string) =>
+    request(`/${SystemConst.API_BASE}/device/instance/${deviceId}/metadata`, {
+      method: 'DELETE',
+    });
 }
 
 export default Service;
