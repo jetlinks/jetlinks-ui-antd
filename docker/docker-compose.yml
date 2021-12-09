@@ -1,17 +1,17 @@
 version: '3.5'
 
 services:
-  ant-design-pro_build:
+  jetlinks_build:
     build: ../
-    container_name: 'ant-design-pro_build'
+    container_name: 'jetlinks_build'
     volumes:
       - dist:/usr/src/app/dist
 
-  ant-design-pro_web:
+  jetlinks_web:
     image: nginx
     ports:
       - 80:80
-    container_name: 'ant-design-pro_web'
+    container_name: 'jetlinks_web'
     restart: unless-stopped
     volumes:
       - dist:/usr/share/nginx/html:ro
