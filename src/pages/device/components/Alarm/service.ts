@@ -25,7 +25,6 @@ class Service extends BaseService<any> {
       }),
   };
 
-  // 查询产品告警记录
   public record = (params: Record<string, unknown>) =>
     request(`/${SystemConst.API_BASE}/device/alarm/history/_query`, {
       method: 'GET',
@@ -41,6 +40,22 @@ class Service extends BaseService<any> {
   public deviceDetail = (id: string) =>
     request(`/${SystemConst.API_BASE}/device/instance/${id}/detail`, {
       method: 'GET',
+    });
+
+  public remove = (id: string) =>
+    request(`/${SystemConst.API_BASE}/device/alarm/${id}`, {
+      method: 'DELETE',
+    });
+
+  public action = (id: string, action: 'stop' | 'start') =>
+    request(`/${SystemConst.API_BASE}/device/alarm/${id}/_${action}`, {
+      method: 'POST',
+    });
+
+  public solve = (id: string, data: string) =>
+    request(`/${SystemConst.API_BASE}/device/alarm/history/${id}/_solve`, {
+      method: 'PUT',
+      data,
     });
 }
 

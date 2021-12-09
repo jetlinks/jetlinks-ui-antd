@@ -1,18 +1,19 @@
 import type { ProColumns } from '@jetlinks/pro-table';
-import ProTable from '@jetlinks/pro-table';
+import ProTable, { ActionType } from '@jetlinks/pro-table';
 import type { AlarmSetting } from '@/pages/device/Product/typings';
-import { Button, Space, Tooltip } from 'antd';
+import { Button, message, Popconfirm, Space, Tooltip } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { useParams } from 'umi';
 import {
   EditOutlined,
   MinusOutlined,
+  PauseCircleOutlined,
   PlayCircleOutlined,
   PlusOutlined,
   UnorderedListOutlined,
 } from '@ant-design/icons';
 import Edit from '../Edit';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { service } from '@/pages/device/components/Alarm';
 
 interface Props {
@@ -25,6 +26,15 @@ const Setting = (props: Props) => {
   const param = useParams<{ id: string }>();
   const [edit, setEdit] = useState<boolean>(false);
   const [data, setData] = useState<Record<string, unknown>>();
+  const actionRef = useRef<ActionType>();
+
+  const action = async (id: string, ac: 'start' | 'stop') => {
+    const resp = await service.action(id, ac);
+    if (resp.status === 200) {
+      message.success('操作成功');
+    }
+    actionRef.current?.reload();
+  };
   const columns: ProColumns<AlarmSetting>[] = [
     {
       dataIndex: 'index',
@@ -91,21 +101,40 @@ const Setting = (props: Props) => {
             <UnorderedListOutlined />
           </Tooltip>
         </a>,
-        <a key="start">
-          <Tooltip title="启动">
-            <PlayCircleOutlined />
-          </Tooltip>
-        </a>,
-        <a key="stop">
-          <Tooltip title="停止">
-            <PlayCircleOutlined />
-          </Tooltip>
-        </a>,
-        <a key="remove">
-          <Tooltip title="删除">
-            <MinusOutlined />
-          </Tooltip>
-        </a>,
+        record.state.value === 'stopped' ? (
+          <Popconfirm onConfirm={() => action(record.id, 'start')} title="启动此告警？">
+            <a key="start">
+              <Tooltip title="启动">
+                <PauseCircleOutlined />
+              </Tooltip>
+            </a>
+          </Popconfirm>
+        ) : (
+          <Popconfirm onConfirm={() => action(record.id, 'stop')} title="停止此告警？">
+            <a key="stop">
+              <Tooltip title="停止">
+                <PlayCircleOutlined />
+              </Tooltip>
+            </a>
+          </Popconfirm>
+        ),
+
+        <Popconfirm
+          onConfirm={async () => {
+            const resp = await service.remove(record.id);
+            if (resp.status === 200) {
+              message.success('操作成功');
+            }
+            actionRef.current?.reload();
+          }}
+          title="确认删除此告警设置？"
+        >
+          <a key="remove">
+            <Tooltip title="删除">
+              <MinusOutlined />
+            </Tooltip>
+          </a>
+        </Popconfirm>,
       ],
     },
   ];
@@ -113,6 +142,7 @@ const Setting = (props: Props) => {
   return (
     <>
       <ProTable
+        actionRef={actionRef}
         tableAlertOptionRender={() => (
           <Space size={16}>
             <Button onClick={() => {}}>新增告警</Button>
