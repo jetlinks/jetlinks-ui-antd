@@ -1,0 +1,28 @@
+name: build images
+on: [push]
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    # runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+      - name: Cache npm Repository
+        uses: actions/cache@v1
+        with:
+          path: ./node_modules
+          key: jetlinks-ui-pro-repository
+      - name: Install 🔧
+        run: |
+          npm install
+          npm run-script build
+          cp -r dist docker/
+          docker build -t registry.cn-shenzhen.aliyuncs.com/jetlinks/jetlinks-ui-pro:$(node -p "require('./package.json').version") ./docker
+
+      - name: Login Docker Repo
+        run: echo "${{ secrets.ALIYUN_DOCKER_REPO_PWD }}" | docker login registry.cn-shenzhen.aliyuncs.com -u ${{ secrets.ALIYUN_DOCKER_REPO_USERNAME }} --password-stdin
+
+      - name: Push Docker
+        run: docker push registry.cn-shenzhen.aliyuncs.com/jetlinks/jetlinks-ui-pro:$(node -p "require('./package.json').version")
