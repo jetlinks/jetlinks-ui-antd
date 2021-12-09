@@ -7,7 +7,7 @@ import { statusMap } from '@/pages/device/Product';
 import { observer } from '@formily/react';
 import Config from '@/pages/device/Instance/Detail/Config';
 import Log from '@/pages/device/Instance/Detail/Log';
-import Alarm from '@/pages/device/Instance/Detail/Alarm';
+import Alarm from '@/pages/device/components/Alarm';
 import Info from '@/pages/device/Instance/Detail/Info';
 import Functions from '@/pages/device/Instance/Detail/Functions';
 import Running from '@/pages/device/Instance/Detail/Running';
@@ -109,7 +109,11 @@ const InstanceDetail = observer(() => {
         id: 'pages.device.instanceDetail.alarm',
         defaultMessage: '告警设置',
       }),
-      component: <Alarm />,
+      component: (
+        <Card>
+          <Alarm type="device" />
+        </Card>
+      ),
     },
     {
       key: 'visualization',
@@ -117,15 +121,7 @@ const InstanceDetail = observer(() => {
         id: 'pages.device.instanceDetail.visualization',
         defaultMessage: '可视化',
       }),
-      component: null,
-    },
-    {
-      key: 'shadow',
-      tab: intl.formatMessage({
-        id: 'pages.device.instanceDetail.shadow',
-        defaultMessage: '设备影子',
-      }),
-      component: null,
+      component: <div>开发中...</div>,
     },
   ];
 

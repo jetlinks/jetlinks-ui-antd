@@ -1,15 +1,30 @@
 import type { ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import type { LogItem } from '@/pages/device/Instance/Detail/Log/typings';
-import moment from 'moment';
 import { Modal, Tooltip } from 'antd';
 import { EyeOutlined } from '@ant-design/icons';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { InstanceModel, service } from '@/pages/device/Instance';
+import { useEffect, useState } from 'react';
 
 const Log = () => {
   const intl = useIntl();
 
+  const [type, setType] = useState<any>({});
+  useEffect(() => {
+    service.getLogType().then((resp) => {
+      if (resp.status === 200) {
+        const list = (resp.result as { text: string; value: string }[]).reduce(
+          (previousValue, currentValue) => {
+            previousValue[currentValue.value] = currentValue;
+            return previousValue;
+          },
+          {},
+        );
+        setType(list);
+      }
+    });
+  }, []);
   const columns: ProColumns<LogItem>[] = [
     {
       dataIndex: 'index',
@@ -19,14 +34,29 @@ const Log = () => {
     {
       title: '类型',
       dataIndex: 'type',
-      renderText: (type) => type.text,
-      valueEnum: [], //TODO
+      renderText: (text) => text.text,
+      valueEnum: type,
     },
     {
       title: '时间',
       dataIndex: 'timestamp',
       defaultSortOrder: 'descend',
-      renderText: (text: string) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
+      valueType: 'dateTime',
+      sorter: true,
+      hideInSearch: true,
+    },
+    {
+      title: '时间',
+      dataIndex: 'timestamp',
+      defaultSortOrder: 'descend',
+      valueType: 'dateTimeRange',
+      sorter: true,
+      hideInTable: true,
+      search: {
+        transform: (value) => ({
+          timestamp$BTW: value.toString(),
+        }),
+      },
     },
     {
       title: intl.formatMessage({
@@ -63,6 +93,7 @@ const Log = () => {
       defaultParams={{
         deviceId: InstanceModel.detail.id,
       }}
+      rowKey="id"
       pagination={{
         pageSize: 10,
       }}

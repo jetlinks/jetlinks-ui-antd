@@ -1,6 +1,6 @@
 import type { Field } from '@formily/core';
 import { FormPath, onFieldReact } from '@formily/core';
-import { service } from '@/pages/device/Product';
+import { service } from '@/pages/device/components/Alarm';
 import encodeQuery from '@/utils/encodeQuery';
 import type { Response } from '@/utils/typings';
 import type { DeviceInstance } from '@/pages/device/Instance/typings';

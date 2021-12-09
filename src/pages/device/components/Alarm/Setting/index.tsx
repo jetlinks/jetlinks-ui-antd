@@ -3,7 +3,6 @@ import ProTable from '@jetlinks/pro-table';
 import type { AlarmSetting } from '@/pages/device/Product/typings';
 import { Button, Space, Tooltip } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { service } from '@/pages/device/Product';
 import { useParams } from 'umi';
 import {
   EditOutlined,
@@ -14,8 +13,14 @@ import {
 } from '@ant-design/icons';
 import Edit from '../Edit';
 import { useState } from 'react';
+import { service } from '@/pages/device/components/Alarm';
 
-const Setting = () => {
+interface Props {
+  type: 'product' | 'device';
+}
+
+const Setting = (props: Props) => {
+  const { type } = props;
   const intl = useIntl();
   const param = useParams<{ id: string }>();
   const [edit, setEdit] = useState<boolean>(false);
@@ -45,6 +50,7 @@ const Setting = () => {
         id: 'pages.table.createTime',
         defaultMessage: '创建时间',
       }),
+      valueType: 'dateTime',
       dataIndex: 'createTime',
     },
     {
@@ -130,7 +136,7 @@ const Setting = () => {
         ]}
         pagination={false}
         request={async () => {
-          const response = await service.productAlarm(param.id);
+          const response = await service.alarmList(type, param.id);
           return {
             result: { data: response.result },
             success: true,
@@ -142,6 +148,7 @@ const Setting = () => {
         search={false}
       />
       <Edit
+        type={type}
         data={data}
         visible={edit}
         close={() => {

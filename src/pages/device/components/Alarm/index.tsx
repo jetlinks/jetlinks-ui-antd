@@ -1,9 +1,16 @@
 import { Tabs } from 'antd';
-import Setting from '@/pages/device/Product/Detail/Alarm/Setting';
-import Record from '@/pages/device/Product/Detail/Alarm/Record';
+import Setting from './Setting';
+import Record from './Record';
 import { useIntl } from '@@/plugin-locale/localeExports';
+import Service from './service';
 
-const Alarm = () => {
+interface Props {
+  type: 'product' | 'device';
+}
+
+export const service = new Service();
+
+const Alarm = (props: Props) => {
   const intl = useIntl();
   return (
     <Tabs>
@@ -14,7 +21,7 @@ const Alarm = () => {
           defaultMessage: '告警设置',
         })}
       >
-        <Setting />
+        <Setting type={props.type} />
       </Tabs.TabPane>
       <Tabs.TabPane
         key="record"
@@ -23,7 +30,7 @@ const Alarm = () => {
           defaultMessage: '告警记录',
         })}
       >
-        <Record />
+        <Record type={props.type} />
       </Tabs.TabPane>
     </Tabs>
   );

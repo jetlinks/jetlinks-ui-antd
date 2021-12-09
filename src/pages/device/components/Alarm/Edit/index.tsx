@@ -23,20 +23,24 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import './index.less';
 import FAutoComplete from '@/components/FAutoComplete';
 import { action } from '@formily/reactive';
-import { productModel, service } from '@/pages/device/Product';
+import { productModel } from '@/pages/device/Product';
 import FSelectDevice from '@/components/FSelectDevice';
 import Trigger from '@/components/AlarmEditor/Trigger';
 import Action from '@/components/AlarmEditor/Action';
+import { service } from '@/pages/device/components/Alarm';
+import { useParams } from 'umi';
 
 interface Props {
   visible: boolean;
   close: () => void;
   data: any;
+  type: 'product' | 'device';
 }
 
 const EditAlarm = (props: Props) => {
-  const { visible, close } = props;
+  const { visible, close, type } = props;
 
+  const params = useParams<{ id: string }>();
   const intl = useIntl();
   const form = createForm({
     initialValues: props.data?.alarmRule,
@@ -286,23 +290,22 @@ const EditAlarm = (props: Props) => {
 
   const handleSubmit = async () => {
     const alarmRule = (await form.submit()) as any;
-    const id = productModel.current?.id;
+    const id = params?.id;
     if (id) {
       const data = {
         name: alarmRule?.name,
-        target: 'product',
+        target: type,
         targetId: id,
+        id: props.data.id,
         alarmRule: {
           ...alarmRule,
           productId: productModel.current?.id,
           productName: productModel.current?.name,
         },
       };
-      await service.saveAlarm(id, data);
+      await service.saveAlarm(type, id, data);
       message.success('保存成功');
       props.close();
-    } else {
-      message.error('刷新页面重试');
     }
   };
   return (

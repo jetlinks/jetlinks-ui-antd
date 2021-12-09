@@ -108,34 +108,6 @@ class Service extends BaseService<ProductItem> {
       method: 'GET',
     });
 
-  public notifier = {
-    types: () =>
-      request(`/${SystemConst.API_BASE}/notifier/config/types`, {
-        method: 'GET',
-      }),
-    config: (params: Record<string, unknown>) =>
-      request(`/${SystemConst.API_BASE}/notifier/config/_query/no-paging`, {
-        method: 'GET',
-        params,
-      }),
-    template: (params: Record<string, unknown>) =>
-      request(`/${SystemConst.API_BASE}/notifier/template/_query/no-paging`, {
-        method: 'GET',
-        params,
-      }),
-  };
-
-  public deviceDetail = (id: string) =>
-    request(`/${SystemConst.API_BASE}/device/instance/${id}/detail`, {
-      method: 'GET',
-    });
-
-  public saveAlarm = (id: string, data: Record<string, unknown>) =>
-    request(`/${SystemConst.API_BASE}/device/alarm/product/${id}`, {
-      method: 'PATCH',
-      data,
-    });
-
   public category = () =>
     request(`/${SystemConst.API_BASE}/device/category/_tree?paging=false`, {
       method: 'GET',

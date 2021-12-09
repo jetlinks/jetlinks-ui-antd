@@ -2,8 +2,15 @@ import type { AlarmRecord } from '@/pages/device/Product/typings';
 import type { ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
+import { service } from '@/pages/device/components/Alarm';
+import { useParams } from 'umi';
 
-const Record = () => {
+interface Props {
+  type: 'device' | 'product';
+}
+
+const Record = (props: Props) => {
+  const { type } = props;
   const intl = useIntl();
   const columns: ProColumns<AlarmRecord>[] = [
     {
@@ -30,6 +37,7 @@ const Record = () => {
         id: 'pages.device.alarm.time',
         defaultMessage: '告警时间',
       }),
+      valueType: 'dateTime',
       dataIndex: 'alarmTime',
       defaultSortOrder: 'descend',
       sorter: true,
@@ -43,6 +51,20 @@ const Record = () => {
     },
   ];
 
-  return <ProTable columns={columns} rowKey="id" search={false} />;
+  const params = useParams<{ id: string }>();
+  return (
+    <ProTable
+      columns={columns}
+      rowKey="id"
+      request={(param) => service.record(param)}
+      pagination={{
+        pageSize: 10,
+      }}
+      defaultParams={{
+        [`${type}Id`]: params.id,
+      }}
+      search={false}
+    />
+  );
 };
 export default Record;

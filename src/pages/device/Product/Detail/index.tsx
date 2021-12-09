@@ -7,7 +7,7 @@ import { productModel, service } from '@/pages/device/Product';
 import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import Metadata from '@/pages/device/components/Metadata';
-import Alarm from '@/pages/device/Product/Detail/Alarm';
+import Alarm from '@/pages/device/components/Alarm';
 import type { DeviceMetadata } from '@/pages/device/Product/typings';
 import { Link } from 'umi';
 import { Store } from 'jetlinks-store';
@@ -199,7 +199,7 @@ const ProductDetail = observer(() => {
             })}
             key="metadata"
           >
-            <Metadata />
+            <Metadata type="product" />
           </Tabs.TabPane>
           <Tabs.TabPane
             tab={intl.formatMessage({
@@ -208,7 +208,7 @@ const ProductDetail = observer(() => {
             })}
             key="alarm"
           >
-            <Alarm />
+            <Alarm type="product" />
           </Tabs.TabPane>
         </Tabs>
       </Card>
