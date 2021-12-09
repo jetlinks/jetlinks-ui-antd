@@ -4,7 +4,7 @@ import ProTable from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { service } from '@/pages/device/components/Alarm';
 import { useParams } from 'umi';
-import { Input, Modal, Tag, Tooltip } from 'antd';
+import { Input, message, Modal, Tag, Tooltip } from 'antd';
 import { AuditOutlined, EyeOutlined } from '@ant-design/icons';
 import { useRef, useState } from 'react';
 
@@ -86,17 +86,19 @@ const Record = (props: Props) => {
             <EyeOutlined />
           </Tooltip>
         </a>,
-        <a
-          key="handle"
-          onClick={() => {
-            setVisible(true);
-            setId(record.id);
-          }}
-        >
-          <Tooltip title="处理告警">
-            <AuditOutlined />
-          </Tooltip>
-        </a>,
+        record.state !== 'solve' && (
+          <a
+            key="handle"
+            onClick={() => {
+              setVisible(true);
+              setId(record.id);
+            }}
+          >
+            <Tooltip title="处理告警">
+              <AuditOutlined />
+            </Tooltip>
+          </a>
+        ),
       ],
     },
   ];
@@ -120,12 +122,17 @@ const Record = (props: Props) => {
       <Modal
         title="处理告警"
         visible={visible}
+        onCancel={() => setVisible(false)}
         onOk={async () => {
-          const resp = await service.solve(id, handleText);
-          if (resp.status === 200) {
-            setVisible(false);
-            setText('');
-            actionRef.current?.reload();
+          if (handleText === '') {
+            message.success('请填写处理结果');
+          } else {
+            const resp = await service.solve(id, handleText);
+            if (resp.status === 200) {
+              setVisible(false);
+              setText('');
+              actionRef.current?.reload();
+            }
           }
         }}
       >
