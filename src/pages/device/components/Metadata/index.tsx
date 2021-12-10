@@ -6,12 +6,14 @@ import Import from './Import';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 import Cat from './Cat';
+import Service from '@/pages/device/components/Metadata/service';
 
 interface Props {
   tabAction?: ReactNode;
   type: 'product' | 'device';
 }
 
+export const service = new Service();
 const Metadata = observer((props: Props) => {
   const intl = useIntl();
   const [visible, setVisible] = useState<boolean>(false);
@@ -46,7 +48,7 @@ const Metadata = observer((props: Props) => {
           })}
           key="properties"
         >
-          <BaseMetadata type={'properties'} />
+          <BaseMetadata target={props.type} type={'properties'} />
         </Tabs.TabPane>
         <Tabs.TabPane
           tab={intl.formatMessage({
@@ -55,7 +57,7 @@ const Metadata = observer((props: Props) => {
           })}
           key="functions"
         >
-          <BaseMetadata type={'functions'} />
+          <BaseMetadata target={props.type} type={'functions'} />
         </Tabs.TabPane>
         <Tabs.TabPane
           tab={intl.formatMessage({
@@ -64,7 +66,7 @@ const Metadata = observer((props: Props) => {
           })}
           key="events"
         >
-          <BaseMetadata type={'events'} />
+          <BaseMetadata target={props.type} type={'events'} />
         </Tabs.TabPane>
         <Tabs.TabPane
           tab={intl.formatMessage({
@@ -73,7 +75,7 @@ const Metadata = observer((props: Props) => {
           })}
           key="tags"
         >
-          <BaseMetadata type={'tags'} />
+          <BaseMetadata target={props.type} type={'tags'} />
         </Tabs.TabPane>
       </Tabs>
       <Import visible={visible} close={() => setVisible(false)} />

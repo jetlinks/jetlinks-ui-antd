@@ -1,5 +1,5 @@
 import BaseService from '@/utils/BaseService';
-import type { MetadataType, ProductItem } from '@/pages/device/Product/typings';
+import type { ProductItem } from '@/pages/device/Product/typings';
 import { request } from 'umi';
 import SystemConst from '@/utils/const';
 import { concatMap, defer, from, toArray } from 'rxjs';
@@ -36,35 +36,35 @@ class Service extends BaseService<ProductItem> {
       map((resp) => resp.result),
     );
 
-  public getMetadataConfig = (params: {
-    deviceId: string;
-    metadata: {
-      type: MetadataType | 'property';
-      id: string;
-      dataType: string;
-    };
-  }) =>
-    defer(() =>
-      from(
-        request(
-          `/${SystemConst.API_BASE}/device/product/${params.deviceId}/config-metadata/${params.metadata.type}/${params.metadata.id}/${params.metadata.dataType}`,
-        ),
-      ),
-    ).pipe(
-      filter((resp) => resp.status === 200),
-      map((resp) => resp.result),
-    );
+  // public getMetadataConfig = (params: {
+  //   deviceId: string;
+  //   metadata: {
+  //     type: MetadataType | 'property';
+  //     id: string;
+  //     dataType: string;
+  //   };
+  // }) =>
+  //   defer(() =>
+  //     from(
+  //       request(
+  //         `/${SystemConst.API_BASE}/device/product/${params.deviceId}/config-metadata/${params.metadata.type}/${params.metadata.id}/${params.metadata.dataType}`,
+  //       ),
+  //     ),
+  //   ).pipe(
+  //     filter((resp) => resp.status === 200),
+  //     map((resp) => resp.result),
+  //   );
 
-  public getUnit = () =>
-    request(`/${SystemConst.API_BASE}/protocol/units`, {
-      method: 'GET',
-    });
+  // public getUnit = () =>
+  //   request(`/${SystemConst.API_BASE}/protocol/units`, {
+  //     method: 'GET',
+  //   });
 
-  public saveProduct = (data: Record<string, unknown>) =>
-    request(`/${SystemConst.API_BASE}/device-product`, {
-      method: 'PATCH',
-      data,
-    });
+  // public saveProduct = (data: Record<string, unknown>) =>
+  //   request(`/${SystemConst.API_BASE}/device-product`, {
+  //     method: 'PATCH',
+  //     data,
+  //   });
 
   public changeDeploy = (id: string, state: 'deploy' | 'undeploy') =>
     defer(() =>

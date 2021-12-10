@@ -1,4 +1,4 @@
-import { Drawer, Dropdown, Menu, message } from 'antd';
+import { Button, Drawer, Dropdown, Menu, message } from 'antd';
 import { createSchemaField } from '@formily/react';
 import MetadataModel from '../model';
 import type { Field, IFieldState } from '@formily/core';
@@ -24,7 +24,8 @@ import {
   PropertySource,
 } from '@/pages/device/data';
 import { useCallback, useEffect, useState } from 'react';
-import { productModel, service } from '@/pages/device/Product';
+import { productModel } from '@/pages/device/Product';
+import { service } from '@/pages/device/components/Metadata';
 import { Store } from 'jetlinks-store';
 import type { MetadataItem, UnitType } from '@/pages/device/Product/typings';
 
@@ -39,8 +40,14 @@ import type { DeviceMetadata } from '@/pages/device/Product/typings';
 import SystemConst from '@/utils/const';
 import DB from '@/db';
 import _ from 'lodash';
+import { useParams } from 'umi';
+import { InstanceModel } from '@/pages/device/Instance';
 
-const Edit = () => {
+interface Props {
+  type: 'product' | 'device';
+}
+
+const Edit = (props: Props) => {
   const intl = useIntl();
   const form = createForm({
     initialValues: MetadataModel.item as Record<string, unknown>,
@@ -504,15 +511,21 @@ const Edit = () => {
     });
   }, [getUnits]);
 
+  const param = useParams<{ id: string }>();
+  const typeMap = new Map<string, any>();
+
+  typeMap.set('product', productModel.current);
+  typeMap.set('device', InstanceModel.detail);
+  const saveMap = new Map<string, Promise<any>>();
+  const { type } = MetadataModel;
+
   const saveMetadata = async (deploy?: boolean) => {
     const params = (await form.submit()) as MetadataItem;
-    const { type } = MetadataModel;
-    const product = productModel.current;
-    if (!product) return;
-    const metadata = JSON.parse(product.metadata) as DeviceMetadata;
+
+    if (!typeMap.get(props.type)) return;
+    const metadata = JSON.parse(typeMap.get(props.type).metadata) as DeviceMetadata;
     const config = metadata[type] as MetadataItem[];
     const index = config.findIndex((item) => item.id === params.id);
-    // todo 考虑优化
     if (index > -1) {
       config[index] = params;
       DB.getDB().table(`${type}`).update(params.id, params);
@@ -520,14 +533,21 @@ const Edit = () => {
       config.push(params);
       DB.getDB().table(`${type}`).add(params, params.id);
     }
-    // 保存到服务器
-    product.metadata = JSON.stringify(metadata);
-    const result = await service.saveProduct(product);
+
+    if (props.type === 'product') {
+      const product = typeMap.get('product');
+      product.metadata = JSON.stringify(metadata);
+      saveMap.set('product', service.saveProductMetadata(product));
+    } else {
+      saveMap.set('device', service.saveDeviceMetadata(param.id, metadata));
+    }
+
+    console.log(props.type, 'type', deploy);
+    const result = await saveMap.get(props.type);
     if (result.status === 200) {
       message.success('操作成功！');
       Store.set(SystemConst.REFRESH_METADATA_TABLE, true);
       if (deploy) {
-        // 不阻塞主流程。发布更新通知
         Store.set('product-deploy', deploy);
       }
       MetadataModel.edit = false;
@@ -563,9 +583,15 @@ const Edit = () => {
       zIndex={1000}
       placement={'right'}
       extra={
-        <Dropdown.Button type="primary" onClick={() => saveMetadata()} overlay={menu}>
-          保存数据
-        </Dropdown.Button>
+        props.type === 'product' ? (
+          <Dropdown.Button type="primary" onClick={() => saveMetadata()} overlay={menu}>
+            保存数据
+          </Dropdown.Button>
+        ) : (
+          <Button type="primary" onClick={() => saveMetadata()}>
+            保存数据
+          </Button>
+        )
       }
     >
       <Form form={form} layout="vertical" size="small">

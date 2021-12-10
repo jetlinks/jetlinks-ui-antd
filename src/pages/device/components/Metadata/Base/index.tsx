@@ -16,10 +16,11 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 
 interface Props {
   type: MetadataType;
+  target: 'product' | 'device';
 }
 
 const BaseMetadata = observer((props: Props) => {
-  const { type } = props;
+  const { type, target } = props;
   const intl = useIntl();
   const param = useParams<{ id: string }>();
 
@@ -95,7 +96,7 @@ const BaseMetadata = observer((props: Props) => {
         }}
         toolbar={{
           search: {
-            onSearch: (value) => {
+            onSearch: async (value) => {
               // Todo 物模型属性搜索
               message.success(value);
             },
@@ -120,7 +121,7 @@ const BaseMetadata = observer((props: Props) => {
           </Button>,
         ]}
       />
-      {MetadataModel.edit && <Edit />}
+      {MetadataModel.edit && <Edit type={target} />}
     </>
   );
 });
