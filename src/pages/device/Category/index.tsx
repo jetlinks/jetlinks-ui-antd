@@ -2,18 +2,29 @@ import { PageContainer } from '@ant-design/pro-layout';
 import Service from '@/pages/device/Category/service';
 import type { ProColumns } from '@jetlinks/pro-table';
 import { EditOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import { Tooltip } from 'antd';
+import { Button, Tooltip } from 'antd';
 import { useRef } from 'react';
 import type { ActionType } from '@jetlinks/pro-table';
-import BaseCrud from '@/components/BaseCrud';
-import type { ISchema } from '@formily/json-schema';
 import { useIntl } from '@@/plugin-locale/localeExports';
+import ProTable from '@jetlinks/pro-table';
+import Save from '@/pages/device/Category/Save';
+import { model } from '@formily/reactive';
+import { observer } from '@formily/react';
 
 const service = new Service('device/category');
-const Category = () => {
+
+const state = model<{
+  visible: boolean;
+  current: Partial<CategoryItem>;
+}>({
+  visible: false,
+  current: {},
+});
+const Category = observer(() => {
   const actionRef = useRef<ActionType>();
 
   const intl = useIntl();
+
   const columns: ProColumns<CategoryItem>[] = [
     {
       title: intl.formatMessage({
@@ -60,7 +71,8 @@ const Category = () => {
       render: (text, record) => [
         <a
           onClick={() => {
-            console.log(record);
+            state.visible = true;
+            state.current = record;
           }}
         >
           <Tooltip
@@ -72,7 +84,11 @@ const Category = () => {
             <EditOutlined />
           </Tooltip>
         </a>,
-        <a onClick={() => {}}>
+        <a
+          onClick={() => {
+            state.visible = true;
+          }}
+        >
           <Tooltip
             title={intl.formatMessage({
               id: 'pages.device.category.addClass',
@@ -96,55 +112,9 @@ const Category = () => {
     },
   ];
 
-  const schema: ISchema = {
-    type: 'object',
-    properties: {
-      id: {
-        title: 'ID',
-        'x-decorator': 'FormItem',
-        'x-component': 'Input',
-        required: true,
-        name: 'id',
-      },
-      name: {
-        title: intl.formatMessage({
-          id: 'pages.table.name',
-          defaultMessage: '名称',
-        }),
-        'x-decorator': 'FormItem',
-        'x-component': 'Input',
-        required: true,
-        name: 'name',
-      },
-      key: {
-        title: intl.formatMessage({
-          id: 'pages.device.category.key',
-          defaultMessage: '标识',
-        }),
-        'x-decorator': 'FormItem',
-        'x-component': 'Input',
-        required: true,
-        name: 'name',
-      },
-      description: {
-        type: 'string',
-        title: intl.formatMessage({
-          id: 'pages.table.describe',
-          defaultMessage: '描述信息',
-        }),
-        'x-decorator': 'FormItem',
-        'x-component': 'Input.TextArea',
-        'x-component-props': {
-          rows: 3,
-        },
-        name: 'description',
-      },
-    },
-  };
-
   return (
     <PageContainer>
-      <BaseCrud
+      <ProTable
         request={async () => {
           const response = await service.queryTree();
           return {
@@ -158,19 +128,37 @@ const Category = () => {
             status: response.status,
           };
         }}
-        search={false}
-        pagination={false}
         columns={columns}
-        service={service}
-        title={intl.formatMessage({
+        headerTitle={intl.formatMessage({
           id: 'pages.device.category',
           defaultMessage: '产品分类',
         })}
-        schema={schema}
+        toolBarRender={() => [
+          <Button
+            onClick={() => (state.visible = true)}
+            key="button"
+            icon={<PlusOutlined />}
+            type="primary"
+          >
+            {intl.formatMessage({
+              id: 'pages.data.option.add',
+              defaultMessage: '新增',
+            })}
+          </Button>,
+        ]}
+        pagination={false}
         actionRef={actionRef}
+      />
+      <Save
+        data={state.current}
+        visible={state.visible}
+        close={() => {
+          state.visible = false;
+          state.current = {};
+        }}
       />
     </PageContainer>
   );
-};
+});
 
 export default Category;
