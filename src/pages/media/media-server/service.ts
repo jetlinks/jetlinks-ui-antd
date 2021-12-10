@@ -7,7 +7,8 @@ class Service extends BaseService<any> {
 
   public providersList = () => defer(
     () => from(request(`/jetlinks/media/server/providers`, {
-      method: 'GET', errorHandler: () => {
+      method: 'GET',
+      errorHandler: () => {
       }
     }))
       .pipe(
