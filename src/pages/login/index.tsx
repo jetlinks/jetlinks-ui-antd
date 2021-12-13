@@ -5,7 +5,7 @@ import './index.less'
 
 const Login: React.FC = () => {
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e:any) => {
         console.log(e.detail.value)
     }
 
@@ -38,6 +38,11 @@ const Login: React.FC = () => {
                         form-type="submit"
                         // size='mini'
                         className='btn'
+                        onClick={()=>{
+                            Taro.switchTab({
+                                url:'/pages/index/index'
+                            })
+                        }}
                     >
                         登 录
                     </Button>

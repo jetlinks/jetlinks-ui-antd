@@ -5,6 +5,7 @@ import DevicePie from '../../components/charts/devicePie';
 import Alarm from '../../components/charts/alarm';
 import Status from '../../components/charts/status';
 import './index.less';
+import { getWebSocket } from '../../utils/websocket'
 
 const Index = () => {
   let updata = null;
@@ -53,57 +54,39 @@ const Index = () => {
   }];
 
 
-  // useEffect(() => {
-  //   // updata = setInterval(() => {
-  //   //   // const y = Math.floor(Math.random() * 60 + 20);
-  //   //   // const num = [{
-  //   //   //   x: '1',
-  //   //   //   y: y
-  //   //   // }];
-  //   //   // setData(num)
-  //   //   console.log('定时触发')
-  //   // }, 3000)
-  //   // return () => {
-  //   //   clearInterval(updata)
-  //   //   console.log(22)
-  //   // }
-  //   // setData(num)
-  //   console.log(data)
-  // }, [data])
 
 
 
+
+  useEffect(() => {
+    // console.log(11111111)
+  }, [])
+
+
+  useReady(() => {
+
+  })
   useDidShow(() => {
-    updata = setInterval(() => {
-      console.log('定时触发')
-      const y = Math.floor(Math.random() * 60 + 20);
-      const num = [{
-        x: '1',
-        y: y
-      }]
-      // setData(num)
-      // console.log(num)
-      // console.log([num])
-    }, 5000)
+
+    getWebSocket(
+      `home-page-statistics-cpu-realTime`,
+      `/dashboard/systemMonitor/cpu/usage/realTime`,
+      {
+        params: {
+          'history': 1,
+        },
+      },
+    ).then((res: any) => {
+      console.log(res)
+
+    })
+
   })
 
   useDidHide(() => {
-    clearInterval(updata);
-    console.log('清除', updata)
+
   })
-  // useEffect(()=>{
-  //   updata = setInterval(() => {
-  //     console.log('定时触发')
-  //     const y = Math.floor(Math.random() * 60 + 20);
-  //     const num = [{
-  //       x: '1',
-  //       y: y
-  //     }]
-  //     // setData(num)
-  //     console.log(num)
-  //     // console.log([num])
-  //   }, 3000)
-  // },[updata])
+
 
   return (
 
