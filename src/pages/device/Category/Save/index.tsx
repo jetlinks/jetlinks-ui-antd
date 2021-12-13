@@ -17,10 +17,12 @@ import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import FUpload from '@/components/Upload';
 import * as ICONS from '@ant-design/icons';
-import { Modal } from 'antd';
+import { message, Modal } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import type { ISchema } from '@formily/json-schema';
 import type { CategoryItem } from '@/pages/visualization/Category/typings';
+import { service, state } from '@/pages/device/Category';
+import type { Response } from '@/utils/typings';
 
 interface Props {
   visible: boolean;
@@ -58,17 +60,38 @@ const Save = (props: Props) => {
     },
   });
 
-  const save = () => {};
+  const save = async () => {
+    const value = await form.submit();
+    const resp = props.data.id
+      ? await service.update(value as CategoryItem)
+      : ((await service.save(value as any)) as Response<CategoryItem>);
+    if (resp.status === 200) {
+      message.success('操作成功!');
+    } else {
+      message.error('操作失败');
+    }
+    props.close();
+  };
 
   const schema: ISchema = {
     type: 'object',
     properties: {
+      parentId: {
+        title: '上级分类',
+        'x-decorator': 'FormItem',
+        'x-component': 'Input',
+        name: 'parentId',
+        'x-disabled': true,
+        'x-visible': !!state.parentId,
+        'x-value': state.parentId,
+      },
       id: {
         title: 'ID',
         'x-decorator': 'FormItem',
         'x-component': 'Input',
         required: true,
         name: 'id',
+        'x-disabled': !!props.data.id,
       },
       name: {
         title: intl.formatMessage({
@@ -109,8 +132,8 @@ const Save = (props: Props) => {
   return (
     <Modal
       title={intl.formatMessage({
-        id: `pages.data.option.add`,
-        defaultMessage: '编辑',
+        id: `pages.data.option.${props.data.id ? 'edit' : 'add'}`,
+        defaultMessage: '新增',
       })}
       visible={props.visible}
       onCancel={() => props.close()}

@@ -2,7 +2,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import Service from '@/pages/device/Category/service';
 import type { ProColumns } from '@jetlinks/pro-table';
 import { EditOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Tooltip } from 'antd';
+import { Button, message, Popconfirm, Tooltip } from 'antd';
 import { useRef } from 'react';
 import type { ActionType } from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
@@ -10,15 +10,18 @@ import ProTable from '@jetlinks/pro-table';
 import Save from '@/pages/device/Category/Save';
 import { model } from '@formily/reactive';
 import { observer } from '@formily/react';
+import { Response } from '@/utils/typings';
 
-const service = new Service('device/category');
+export const service = new Service('device/category');
 
-const state = model<{
+export const state = model<{
   visible: boolean;
   current: Partial<CategoryItem>;
+  parentId: string | undefined;
 }>({
   visible: false,
   current: {},
+  parentId: undefined,
 });
 const Category = observer(() => {
   const actionRef = useRef<ActionType>();
@@ -32,8 +35,9 @@ const Category = observer(() => {
         defaultMessage: '分类ID',
       }),
       align: 'left',
-      width: 200,
+      width: 400,
       dataIndex: 'id',
+      sorter: true,
     },
     {
       title: intl.formatMessage({
@@ -87,6 +91,7 @@ const Category = observer(() => {
         <a
           onClick={() => {
             state.visible = true;
+            state.parentId = record.id;
           }}
         >
           <Tooltip
@@ -98,16 +103,29 @@ const Category = observer(() => {
             <PlusOutlined />
           </Tooltip>
         </a>,
-        <a>
-          <Tooltip
-            title={intl.formatMessage({
-              id: 'pages.data.option.remove',
-              defaultMessage: '删除',
-            })}
-          >
-            <MinusOutlined />
-          </Tooltip>
-        </a>,
+        <Popconfirm
+          onConfirm={async () => {
+            const resp = (await service.remove(record.id)) as Response<any>;
+            if (resp.status === 200) {
+              message.success('操作成功');
+            } else {
+              message.error('操作失败');
+            }
+            actionRef.current?.reload();
+          }}
+          title={'确认删除吗？'}
+        >
+          <a>
+            <Tooltip
+              title={intl.formatMessage({
+                id: 'pages.data.option.remove',
+                defaultMessage: '删除',
+              })}
+            >
+              <MinusOutlined />
+            </Tooltip>
+          </a>
+        </Popconfirm>,
       ],
     },
   ];
@@ -115,8 +133,9 @@ const Category = observer(() => {
   return (
     <PageContainer>
       <ProTable
-        request={async () => {
-          const response = await service.queryTree();
+        request={async (params) => {
+          delete params.pageIndex;
+          const response = await service.queryTree({ paging: false, ...params });
           return {
             code: response.message,
             result: {
@@ -128,6 +147,7 @@ const Category = observer(() => {
             status: response.status,
           };
         }}
+        rowKey="id"
         columns={columns}
         headerTitle={intl.formatMessage({
           id: 'pages.device.category',
@@ -155,6 +175,8 @@ const Category = observer(() => {
         close={() => {
           state.visible = false;
           state.current = {};
+          state.parentId = undefined;
+          actionRef.current?.reload();
         }}
       />
     </PageContainer>
