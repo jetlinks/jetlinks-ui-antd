@@ -1,6 +1,6 @@
 import { View } from "@tarojs/components";
 import React, { useEffect, useState } from "react";
-import Taro, {  useReachBottom ,useDidShow,useDidHide} from "@tarojs/taro";
+import Taro, { useReachBottom, useDidShow, useDidHide } from "@tarojs/taro";
 import { AtSegmentedControl, AtDivider, AtCard, AtList, AtListItem } from 'taro-ui';
 import Service from "../service";
 import getBaseUrl from "../../../service/baseUrl";
@@ -25,8 +25,8 @@ const Detail = () => {
   const [properties, setProperties] = useState<any>();
   const [list, setList] = useState<any[]>([]);
   const wsUrl = `${getBaseUrl('/jetlinks/messaging').replace('http', 'ws')}`;
-  let ws:any =[]
-
+  let ws: any
+  let connect: any
   const extraStyle = (data: any) => {
     if (data === '离线' || data === 'newer') {
       return { color: 'red' }
@@ -72,12 +72,10 @@ const Detail = () => {
     }
   })
 
-  // useDidShow(() => {
-  //   console.log('useDidShow')
-  // })
-  // useDidHide(()=>{
-  //   console.log('qqqqq')
-  // })
+  useDidShow(() => {
+    console.log('useDidShow')
+  })
+
 
   useEffect(() => {
     const props = Taro.getCurrentInstance().router.params
@@ -95,12 +93,15 @@ const Detail = () => {
         }
       })
     }
+    // return ()=>{
+    //   console.log(ws)
+    // }
   }, [])
 
   useEffect(() => {
-    const arr = []; 
+    const arr = [];
     const propertiesList = []; //websocket参数
-    if (properties && properties.length!==0) {
+    if (properties && properties.length !== 0) {
       properties.forEach((item: any) => {
         arr.push({
           id: item.id,
@@ -122,20 +123,23 @@ const Detail = () => {
         }
       });
 
-      ws=Taro.connectSocket({
+      Taro.connectSocket({
         url: `${wsUrl}/jetlinks/messaging/${getToken()}?:X_Access_Token=${getToken()}`
       })
         .then((res) => {
+          // console.log(res)
           res.onOpen(() => {
             res.send({ data: msg })
+            connect=res
+
             // res.close
           })
 
           res.onMessage((message) => {
             const { value } = JSON.parse(message.data).payload;
-            arr.map(item=>{
-              if(item.id===value.property){
-                item.value= value.formatValue
+            arr.map(item => {
+              if (item.id === value.property) {
+                item.value = value.formatValue
               }
             })
             setList([...arr])
@@ -144,18 +148,14 @@ const Detail = () => {
             console.log('WebSocket 已关闭！')
           })
         })
-
+      // console.log(ws)
     }
     return () => {
-      ws &&  Taro.closeSocket
-      // Taro.connectSocket({
-      //   url: `${wsUrl}/jetlinks/messaging/${getToken()}?:X_Access_Token=${getToken()}`
-      // })
-      // Taro.closeSocket;
-      // ws && Taro.closeSocket;
-      // Taro.onSocketClose(function (res) {
-      //   console.log('WebSocket 已关闭！')
-      // })
+      if(connect){
+        console.log(connect)
+        connect.close()
+      }
+      
     }
   }, [properties])
 
@@ -224,8 +224,8 @@ const Detail = () => {
             <AtList>
               {
                 list?.map((item: any) => (
-                    <AtListItem title={item.name} extraText={item.value || '/'} />
-                  )
+                  <AtListItem title={item.name} extraText={item.value || '/'} />
+                )
                 )
               }
             </AtList>

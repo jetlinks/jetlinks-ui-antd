@@ -1,5 +1,5 @@
 import { View } from "@tarojs/components";
-import Taro, { useReachBottom } from "@tarojs/taro"
+import Taro, { useReachBottom ,useDidHide} from "@tarojs/taro"
 import { AtSearchBar, AtTabs, AtTabsPane, AtMessage, AtCard, AtButton } from 'taro-ui'
 import React, { useEffect, useState } from "react";
 import Service from "./service";
@@ -105,6 +105,9 @@ const Device = () => {
     }
   })
 
+  useDidHide(()=>{
+    // console.log(111)
+  })
   useEffect(() => {
     getDeviceList(searchParam)
   }, [])
