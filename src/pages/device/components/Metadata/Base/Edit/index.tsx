@@ -542,7 +542,6 @@ const Edit = (props: Props) => {
       saveMap.set('device', service.saveDeviceMetadata(param.id, metadata));
     }
 
-    console.log(props.type, 'type', deploy);
     const result = await saveMap.get(props.type);
     if (result.status === 200) {
       message.success('操作成功！');

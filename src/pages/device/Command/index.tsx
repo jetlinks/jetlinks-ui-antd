@@ -1,15 +1,16 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import BaseService from '@/utils/BaseService';
 import { useRef } from 'react';
 import type { ProColumns, ActionType } from '@jetlinks/pro-table';
 import type { CommandItem } from '@/pages/device/Command/typings';
-import { Tooltip } from 'antd';
+import { Button, Tooltip } from 'antd';
 import moment from 'moment';
-import BaseCrud from '@/components/BaseCrud';
-import { EyeOutlined, SyncOutlined } from '@ant-design/icons';
+import { EyeOutlined, PlusOutlined, SyncOutlined } from '@ant-design/icons';
 import { useIntl } from '@@/plugin-locale/localeExports';
+import Service from '@/pages/device/Command/service';
+import ProTable from '@jetlinks/pro-table';
+import Create from '@/pages/device/Command/create';
 
-const service = new BaseService('device/message/task');
+export const service = new Service('device/message/task');
 const Command = () => {
   const actionRef = useRef<ActionType>();
   const intl = useIntl();
@@ -165,19 +166,23 @@ const Command = () => {
     },
   ];
 
-  const schema = {};
   return (
     <PageContainer>
-      <BaseCrud<CommandItem>
+      <ProTable<CommandItem>
+        toolBarRender={() => [
+          <Button onClick={() => {}} key="button" icon={<PlusOutlined />} type="primary">
+            {intl.formatMessage({
+              id: 'pages.data.option.add',
+              defaultMessage: '新增',
+            })}
+          </Button>,
+        ]}
+        request={async (params) => service.query(params)}
         columns={columns}
-        service={service}
-        title={intl.formatMessage({
-          id: 'pages.device.command',
-          defaultMessage: '指令下发',
-        })}
-        schema={schema}
         actionRef={actionRef}
+        rowKey="id"
       />
+      <Create />
     </PageContainer>
   );
 };
