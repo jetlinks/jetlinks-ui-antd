@@ -2,16 +2,29 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { useRef } from 'react';
 import type { ProColumns, ActionType } from '@jetlinks/pro-table';
 import type { CommandItem } from '@/pages/device/Command/typings';
-import { Button, Tooltip } from 'antd';
+import { Button, message, Tooltip } from 'antd';
 import moment from 'moment';
 import { EyeOutlined, PlusOutlined, SyncOutlined } from '@ant-design/icons';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import Service from '@/pages/device/Command/service';
 import ProTable from '@jetlinks/pro-table';
 import Create from '@/pages/device/Command/create';
+import encodeQuery from '@/utils/encodeQuery';
+import { model } from '@formily/reactive';
+import { observer } from '@formily/react';
+import Cat from '@/pages/device/Command/cat';
 
 export const service = new Service('device/message/task');
-const Command = () => {
+
+export const state = model<{
+  visible: boolean;
+  cat: boolean;
+  data?: CommandItem;
+}>({
+  visible: false,
+  cat: false,
+});
+const Command = observer(() => {
   const actionRef = useRef<ActionType>();
   const intl = useIntl();
 
@@ -123,9 +136,10 @@ const Command = () => {
       width: 200,
       render: (text, record) => [
         <a
+          key="cat"
           onClick={() => {
-            // setVisible(true);
-            // setCurrent(record);
+            state.cat = true;
+            state.data = record;
           }}
         >
           <Tooltip
@@ -133,35 +147,33 @@ const Command = () => {
               id: 'pages.data.option.detail',
               defaultMessage: '查看',
             })}
-            key={'detail'}
+            key="detail"
           >
             <EyeOutlined />
           </Tooltip>
         </a>,
-        <a>
-          {record.state.value !== 'wait' && (
-            <a
-              onClick={() => {
-                // service.resend(encodeQueryParam({ terms: { id: record.id } })).subscribe(
-                //   data => {
-                //     message.success('操作成功');
-                //   },
-                //   () => {},
-                //   () => handleSearch(searchParam),
-                // );
-              }}
+        record.state.value !== 'wait' && (
+          <a
+            key="action"
+            onClick={async () => {
+              const resp = await service.resend(encodeQuery({ terms: { id: record.id } }));
+              if (resp.status === 200) {
+                message.success('操作成功！');
+              } else {
+                message.error('操作失败！');
+              }
+            }}
+          >
+            <Tooltip
+              title={intl.formatMessage({
+                id: 'pages.device.command.option.send',
+                defaultMessage: '重新发送',
+              })}
             >
-              <Tooltip
-                title={intl.formatMessage({
-                  id: 'pages.device.command.option.send',
-                  defaultMessage: '重新发送',
-                })}
-              >
-                <SyncOutlined />
-              </Tooltip>
-            </a>
-          )}
-        </a>,
+              <SyncOutlined />
+            </Tooltip>
+          </a>
+        ),
       ],
     },
   ];
@@ -170,11 +182,15 @@ const Command = () => {
     <PageContainer>
       <ProTable<CommandItem>
         toolBarRender={() => [
-          <Button onClick={() => {}} key="button" icon={<PlusOutlined />} type="primary">
-            {intl.formatMessage({
-              id: 'pages.data.option.add',
-              defaultMessage: '新增',
-            })}
+          <Button
+            onClick={() => {
+              state.visible = true;
+            }}
+            key="button"
+            icon={<PlusOutlined />}
+            type="primary"
+          >
+            下发指令
           </Button>,
         ]}
         request={async (params) => service.query(params)}
@@ -182,8 +198,20 @@ const Command = () => {
         actionRef={actionRef}
         rowKey="id"
       />
-      <Create />
+      <Create
+        visible={state.visible}
+        close={() => {
+          state.visible = false;
+        }}
+      />
+      <Cat
+        close={() => {
+          state.cat = false;
+        }}
+        data={state.data}
+        visible={state.cat}
+      />
     </PageContainer>
   );
-};
+});
 export default Command;
