@@ -47,6 +47,15 @@ const Device: React.FC<Props> = props => {
         handleSearch(searchParam);
     }, []);
 
+
+    const syncState = (deviceId: string,params: any) => {
+        service.syncState(deviceId,params).subscribe(
+            ()=>{
+                handleSearch(searchParam);
+                message.success('操作成功！');
+            }
+        )
+    }
     const saveData = (params?: any) => {
         if (currentItem.id) {
             service.saveDevice(props.device.id, params).subscribe(
@@ -241,6 +250,13 @@ const Device: React.FC<Props> = props => {
                         setSaveVisible(true);
                         setCurrentItem({});
                     }}><Icon type="plus" />新增设备</Button>
+                    <Button 
+                        type="primary"
+                        style={{marginLeft: '20px'}}
+                        onClick={()=>{
+                            syncState(props.device.id,{})
+                        }}
+                        >同步设备真实状态</Button>
                 </div>
                 <Table
                     loading={loading}
