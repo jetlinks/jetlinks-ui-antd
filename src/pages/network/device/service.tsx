@@ -177,5 +177,13 @@ class Service extends BaseService<any> {
                 filter(resp => resp.status === 200),
                 map(resp => resp)
             ));
+    public syncDevice = (data: any) => defer(
+        () => from(request(`/jetlinks/edge/operations/local/sync-device-state/invoke`, {
+            method: 'POST',
+            data: data
+        })).pipe(
+            filter(resp => resp.status === 200),
+            map(resp => resp.result[0])
+        ))
 }
 export default Service;

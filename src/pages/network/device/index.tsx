@@ -1,4 +1,4 @@
-import { Avatar, Badge, Card, Form, Icon, message, Modal, Popconfirm, Row, Select, Spin } from 'antd';
+import { Avatar, Badge, Card, Form, Icon, message, Modal, Popconfirm, Row, Select, Spin, Menu, Dropdown } from 'antd';
 import Button from 'antd/es/button';
 import React from 'react';
 import Img from '../img/产品.png';
@@ -37,7 +37,7 @@ function Device(props: Props) {
   const [searchVisible, setSearchVisible] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [productList, setProductList] = useState<any[]>([]);
-  
+
   const [searchParam, setSearchParam] = useState<any>({
     pageSize: 8,
     "terms": [
@@ -67,7 +67,7 @@ function Device(props: Props) {
     count();
     service.getDeviceList(params).subscribe(
       (res) => {
-        if(res){
+        if (res) {
           setDataList(res)
         }
       },
@@ -105,7 +105,7 @@ function Device(props: Props) {
       },
       () => setLoading(false))
   };
-  
+
   const delIinstance = (id: string) => {
     service.delIinstance(id).subscribe(
       () => {
@@ -115,9 +115,9 @@ function Device(props: Props) {
       () => {
       },
       () => setLoading(false))
-  }; 
+  };
 
-  const count = () =>{
+  const count = () => {
     service.getDeviceCount({ "terms": [{ "column": "productId", "value": "onvif-media-device", "termType": "not" }, { "column": "productId", "value": "GB28181-PRO", "termType": "not" }] }).subscribe(resp => {
       if (resp.status === 200) {
         setDeviceCount(resp.result[0])
@@ -148,18 +148,18 @@ function Device(props: Props) {
         setDeviceOfflineCount(resp.result[0])
       }
     }),
-    service.getDeviceCount({
-      "terms":
-        [
-          { "column": "productId", "value": "onvif-media-device", "termType": "not" },
-          { "column": "productId", "value": "GB28181-PRO", "termType": "not" },
-          { "column": "state", "value": "notActive" }
-        ]
-    }).subscribe(resp => {
-      if (resp.status === 200) {
-        setDevicenotActiveCount(resp.result[0])
-      }
-    })
+      service.getDeviceCount({
+        "terms":
+          [
+            { "column": "productId", "value": "onvif-media-device", "termType": "not" },
+            { "column": "productId", "value": "GB28181-PRO", "termType": "not" },
+            { "column": "state", "value": "notActive" }
+          ]
+      }).subscribe(resp => {
+        if (resp.status === 200) {
+          setDevicenotActiveCount(resp.result[0])
+        }
+      })
   }
 
 
@@ -216,6 +216,28 @@ function Device(props: Props) {
     )
   }
 
+  const syncDevice = (data:any) =>{
+    service.syncDevice(data).subscribe(()=>{
+      handleSearch(searchParam);
+      message.success('操作成功！');
+    })
+  }
+
+  const menu = (
+    <Menu>
+      <Menu.Item key="1">
+        <Button icon="upload" onClick={() => { setImportVisible(true) }}>批量导入设备</Button>
+      </Menu.Item>
+      <Menu.Item key="2">
+        <Button icon="sync" onClick={() => {
+          syncDevice({})
+        }}>
+          同步设备状态
+        </Button>
+      </Menu.Item>
+    </Menu>
+  );
+
   return (
     <div style={{ width: '100%' }}>
       <Spin spinning={loading}>
@@ -245,12 +267,12 @@ function Device(props: Props) {
                     <a>{item.state?.value === 'notActive' ? '启动' : '禁用'}</a>
                   </Popconfirm>,
                   <Popconfirm
-                        title="确认删除吗？"
-                        onConfirm={() => {
-                          delIinstance(item.id)
-                        }}>
-                        <a>删除</a>
-                    </Popconfirm>
+                    title="确认删除吗？"
+                    onConfirm={() => {
+                      delIinstance(item.id)
+                    }}>
+                    <a>删除</a>
+                  </Popconfirm>
                 ]}
               >
                 <Card.Meta
@@ -269,7 +291,7 @@ function Device(props: Props) {
                   </div>
                 </div>
                 <div style={{ color: 'rgba(0, 0, 0, 0.45)', fontSize: '12px', width: '100%', display: 'flex', justifyContent: 'center' }}>注册时间：{moment(item.registryTime).format('YYYY-MM-DD HH:mm:ss')}</div>
-              </Card>:  <Card hoverable bodyStyle={{ paddingBottom: 20 }}
+              </Card> : <Card hoverable bodyStyle={{ paddingBottom: 20 }}
                 actions={[
                   <a onClick={() => {
                     setCurrentData(item);
@@ -313,32 +335,48 @@ function Device(props: Props) {
                 </div>
                 <div style={{ color: 'rgba(0, 0, 0, 0.45)', fontSize: '12px', width: '100%', display: 'flex', justifyContent: 'center' }}>注册时间：{moment(item.registryTime).format('YYYY-MM-DD HH:mm:ss')}</div>
               </Card>}
-              
+
             </div>}
             toolNode={
               <div style={{ display: 'flex' }}>
                 <Input.Search style={{ marginRight: '16px' }} allowClear placeholder="请输入设备名称" onSearch={(value: string) => {
                   setSearchValue(value);
-                  let terms = searchParam.terms.filter((it:any) => {
+                  let terms = searchParam.terms.filter((it: any) => {
                     return it.column !== 'name'
                   })
                   handleSearch({
                     pageSize: 8,
-                    terms:[
-                      ...terms, 
+                    terms: [
+                      ...terms,
                       { "column": "name", "value": `%${value}%`, "termType": "like" }
                     ]
                   });
                 }} />
-                <Button style={{ marginRight: '16px' }} onClick={() => { setImportVisible(true) }}>批量导入设备</Button>
-                <Button type="primary" style={{ marginRight: '16px' }} onClick={() => {
+                <Dropdown overlay={menu}>
+                  <Button icon="menu">
+                    其他操作<Icon type="down" />
+                  </Button>
+                </Dropdown>
+                {/* <Button style={{ marginRight: '16px' }} onClick={() => { setImportVisible(true) }}>批量导入设备</Button> */}
+                <Button type="primary" style={{ marginRight: '16px', marginLeft: '16px' }} onClick={() => {
                   setEditVisible(true);
                   setCurrentData({});
                 }}>新增设备</Button>
-                <Button type="primary" style={{ marginRight: '16px' }} onClick={() => {
+
+                {/* <Button  style={{ marginRight: '16px' }} onClick={() => {
                   count();
                   handleSearch(searchParam)
-                }}>刷新</Button>
+                }}><Icon type="redo" onClick={()=>{
+                  count();
+                  handleSearch(searchParam)
+                }}/></Button> */}
+                <Icon
+                  type="redo"
+                  style={{ marginTop: '7px' }}
+                  onClick={() => {
+                    count();
+                    handleSearch(searchParam)
+                  }} />
               </div>
             }
             pagination={{
@@ -355,7 +393,7 @@ function Device(props: Props) {
               onShowSizeChange: (current, size) => {
                 handleSearch({
                   ...searchParam,
-                  pageIndex: current-1,
+                  pageIndex: current - 1,
                   pageSize: size || searchParam.pageSize
                 })
               },
@@ -377,6 +415,7 @@ function Device(props: Props) {
                     <span style={{ marginLeft: '20px', color: 'rgba(0, 0, 0, 0.45)' }}><Badge color={'red'} text="离线数" />{deviceOfflineCount}</span>
                     <span style={{ marginLeft: '20px', color: 'rgba(0, 0, 0, 0.45)' }}><Badge color={'blue'} text="未启用数" />{devicenotActiveCount}</span>
                   </div>
+                  {/* <div><Button>同步状态</Button></div> */}
                   <div onClick={() => { setSearchVisible(!searchVisible) }} style={{ color: '#1890FF', cursor: 'pointer' }}>
                     高级筛选 <Icon style={{ transform: `rotate( ${searchVisible ? 0 : '-180deg'})`, transition: 'all .3s' }} type="down" />
                   </div>
@@ -430,28 +469,28 @@ function Device(props: Props) {
                   <div style={{ paddingLeft: '76px' }}>
                     <Button type="primary" style={{ marginRight: '10px' }}
                       onClick={() => {
-                      const data = form.getFieldsValue();
-                      console.log(data)
-                      let terms: any[] = [
-                        { "column": "productId", "value": "onvif-media-device", "termType": "not" },
-                        { "column": "productId", "value": "GB28181-PRO", "termType": "not" },
-                        { "column": "name", "value": `%${searchValue}%`, "termType": "like" }
-                      ]
-                      Object.keys(data).forEach(i => {
-                        if (data[i]) {
-                          terms.push({
-                            "column": i, "value": `%${data[i]}%`, "termType": "like"
-                          })
-                        }
-                      })
-                      handleSearch({
-                        terms: [
-                         ...terms
-                        ],
-                        pageSize: 8
-                      });
-                    }}>查询</Button>
-                    <Button  onClick={() => {
+                        const data = form.getFieldsValue();
+                        console.log(data)
+                        let terms: any[] = [
+                          { "column": "productId", "value": "onvif-media-device", "termType": "not" },
+                          { "column": "productId", "value": "GB28181-PRO", "termType": "not" },
+                          { "column": "name", "value": `%${searchValue}%`, "termType": "like" }
+                        ]
+                        Object.keys(data).forEach(i => {
+                          if (data[i]) {
+                            terms.push({
+                              "column": i, "value": `%${data[i]}%`, "termType": "like"
+                            })
+                          }
+                        })
+                        handleSearch({
+                          terms: [
+                            ...terms
+                          ],
+                          pageSize: 8
+                        });
+                      }}>查询</Button>
+                    <Button onClick={() => {
                       form.resetFields();
                       handleSearch({
                         terms: [
@@ -541,12 +580,12 @@ function Device(props: Props) {
                   },
                   {
                     record?.state?.value === 'notActive' ? <Popconfirm
-                    title="确认删除吗？"
-                    onConfirm={() => {
-                      delIinstance(record.id)
-                    }}>
-                    <a>删除</a>
-                </Popconfirm>:''
+                      title="确认删除吗？"
+                      onConfirm={() => {
+                        delIinstance(record.id)
+                      }}>
+                      <a>删除</a>
+                    </Popconfirm> : ''
                   }
                 </>,
                 width: 280
