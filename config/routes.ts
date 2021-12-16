@@ -138,6 +138,13 @@
         component: './device/Firmware',
       },
       {
+        hideInMenu: true,
+        path: '/device/firmware/detail/:id',
+        name: 'firmware-detail',
+        icon: 'smile',
+        component: './device/Firmware/Detail',
+      },
+      {
         path: '/device/alarm',
         name: 'alarm',
         icon: 'smile',

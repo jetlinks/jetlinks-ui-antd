@@ -12,7 +12,6 @@ interface Props {
 }
 
 const FUploadImage = connect((props: Props) => {
-  console.log(props, 'pro');
   const [url, setUrl] = useState<string>(props?.value);
   const [loading, setLoading] = useState<boolean>(false);
   const uploadButton = (
