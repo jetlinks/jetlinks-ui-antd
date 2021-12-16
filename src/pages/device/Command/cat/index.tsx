@@ -17,13 +17,11 @@ const Cat = (props: Props) => {
         height={300}
         language={'json'}
         editorDidMount={(editor) => {
-          editor.onDidScrollChange?.(() => {
-            editor
-              .getAction('editor.action.formatDocument')
-              .run()
-              .finally(() => {
-                editor.updateOptions({ readOnly: true });
-              });
+          editor.onDidContentSizeChange?.(() => {
+            editor.getAction('editor.action.formatDocument').run();
+            // .finally(() => {
+            //   editor.updateOptions({ readOnly: true });
+            // });
           });
         }}
         value={JSON.stringify(data?.downstream)}
