@@ -15,6 +15,9 @@ class Service extends BaseService<FirmwareItem> {
       method: 'GET',
       params,
     });
+
+  queryProduct = () =>
+    request(`/${SystemConst.API_BASE}/device/product/_query/no-paging?paging=false`);
 }
 
 export default Service;

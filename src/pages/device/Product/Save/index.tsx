@@ -4,7 +4,7 @@ import { createForm, onFieldValueChange } from '@formily/core';
 import { TreeSelect, Form, FormItem, FormLayout, Input, Radio, Select } from '@formily/antd';
 import { createSchemaField } from '@formily/react';
 import type { ISchema } from '@formily/json-schema';
-import FUploadImage from '@/components/Upload';
+import FUpload from '@/components/Upload';
 import { service } from '@/pages/device/Product';
 import { action } from '@formily/reactive';
 import 'antd/lib/tree-select/style/index.less';
@@ -69,7 +69,7 @@ const Save = (props: Props) => {
       Input,
       Select,
       Radio,
-      FUploadImage,
+      FUpload,
       FormLayout,
       TreeSelect,
     },
@@ -135,7 +135,7 @@ const Save = (props: Props) => {
         properties: {
           photoUrl: {
             title: '图标',
-            'x-component': 'FUploadImage',
+            'x-component': 'FUpload',
             'x-decorator': 'FormItem',
           },
           id: {

@@ -1,40 +1,85 @@
-import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+import { LoadingOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import SystemConst from '@/utils/const';
 import Token from '@/utils/token';
+import type { ReactNode } from 'react';
 import { useState } from 'react';
 import { connect } from '@formily/react';
-import { Upload } from 'antd';
+import { Input, Upload } from 'antd';
 import type { UploadChangeParam } from 'antd/lib/upload/interface';
+import type { UploadListType } from 'antd/es/upload/interface';
+import './index.less';
 
 interface Props {
   value: string;
-  onChange: (value: string) => void;
+  onChange: (value: string | FileProperty) => void;
+  type?: 'file' | 'image';
 }
 
-const FUploadImage = connect((props: Props) => {
-  const [url, setUrl] = useState<string>(props?.value);
+type FileProperty = {
+  url: string;
+  size: number;
+};
+
+const FUpload = connect((props: Props) => {
+  const [url, setUrl] = useState<string | FileProperty>(props?.value);
   const [loading, setLoading] = useState<boolean>(false);
-  const uploadButton = (
-    <div>
-      {loading ? <LoadingOutlined /> : <PlusOutlined />}
-      <div style={{ marginTop: 8 }}>选择图片</div>
-    </div>
-  );
+
   const handleChange = (info: UploadChangeParam) => {
-    console.log(info);
     if (info.file.status === 'uploading') {
       setLoading(false);
     }
     if (info.file.status === 'done') {
       info.file.url = info.file.response?.result;
       setLoading(false);
-      setUrl(info.file.response?.result);
-      props.onChange(info.file.response?.result);
+      const f = {
+        size: info.file.size || 0,
+        url: info.file.response?.result,
+      };
+      setUrl(f);
+      props.onChange(f);
     }
   };
+
+  const map = new Map<
+    string,
+    {
+      node: ReactNode;
+      type: UploadListType;
+    }
+  >();
+  map.set('image', {
+    node: (
+      <>
+        {url ? (
+          <img src={url as string} alt="avatar" style={{ width: '100%' }} />
+        ) : (
+          <div>
+            {loading ? <LoadingOutlined /> : <PlusOutlined />}
+            <div style={{ marginTop: 8 }}>选择图片</div>
+          </div>
+        )}
+      </>
+    ),
+    type: 'picture-card',
+  });
+  map.set('file', {
+    node: (
+      <>
+        <Input
+          value={(url as FileProperty).url}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+          addonAfter={<UploadOutlined />}
+        />
+      </>
+    ),
+    type: 'text',
+  });
   return (
     <Upload
-      listType="picture-card"
+      listType={map.get(props.type || 'image')?.type}
       action={`/${SystemConst.API_BASE}/file/static`}
       headers={{
         'X-Access-Token': Token.get(),
@@ -42,8 +87,8 @@ const FUploadImage = connect((props: Props) => {
       onChange={handleChange}
       showUploadList={false}
     >
-      {url ? <img src={url} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+      {map.get(props.type || 'image')?.node}
     </Upload>
   );
 });
-export default FUploadImage;
+export default FUpload;

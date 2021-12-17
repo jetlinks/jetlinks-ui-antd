@@ -19,7 +19,7 @@ export const state = model<{
   current?: FirmwareItem;
   visible: boolean;
 }>({
-  visible: false,
+  visible: true,
 });
 const Firmware = observer(() => {
   const actionRef = useRef<ActionType>();
