@@ -9,7 +9,7 @@ import { Link } from 'umi';
 import { model } from '@formily/reactive';
 import ProTable from '@jetlinks/pro-table';
 import { observer } from '@formily/react';
-import type { FirmwareItem } from '@/pages/device/Firmware/typings';
+import type { FirmwareItem, TaskItem } from '@/pages/device/Firmware/typings';
 import Service from '@/pages/device/Firmware/service';
 import Save from '@/pages/device/Firmware/Save';
 
@@ -18,8 +18,13 @@ export const service = new Service('firmware');
 export const state = model<{
   current?: FirmwareItem;
   visible: boolean;
+  task: boolean;
+  release: boolean;
+  taskItem?: TaskItem;
 }>({
-  visible: true,
+  visible: false,
+  task: false,
+  release: false,
 });
 const Firmware = observer(() => {
   const actionRef = useRef<ActionType>();

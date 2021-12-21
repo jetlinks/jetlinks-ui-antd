@@ -1,12 +1,20 @@
 import type { ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import type { TaskItem } from '@/pages/device/Firmware/typings';
-import { service } from '@/pages/device/Firmware';
+import { service, state } from '@/pages/device/Firmware';
 import { Button, Tooltip } from 'antd';
-import { DeleteOutlined, EyeOutlined, PlusOutlined } from '@ant-design/icons';
+import {
+  CloudDownloadOutlined,
+  DeleteOutlined,
+  EyeOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
 import { useIntl, useParams } from 'umi';
+import Save from '@/pages/device/Firmware/Detail/Task/Save';
+import { observer } from '@formily/react';
+import Release from '@/pages/device/Firmware/Detail/Task/Release';
 
-const Task = () => {
+const Task = observer(() => {
   const intl = useIntl();
   const param = useParams<{ id: string }>();
   const columns: ProColumns<TaskItem>[] = [
@@ -46,11 +54,22 @@ const Task = () => {
         <a
           key="cat"
           onClick={() => {
-            console.log(record);
+            state.task = true;
           }}
         >
           <Tooltip title="查看">
             <EyeOutlined />
+          </Tooltip>
+        </a>,
+        <a
+          key="task"
+          onClick={() => {
+            state.release = true;
+            state.taskItem = record;
+          }}
+        >
+          <Tooltip title="下发任务">
+            <CloudDownloadOutlined />
           </Tooltip>
         </a>,
         <a key="remove">
@@ -62,22 +81,36 @@ const Task = () => {
     },
   ];
   return (
-    <ProTable
-      columns={columns}
-      rowKey="id"
-      defaultParams={{
-        firmwareId: param.id,
-      }}
-      toolBarRender={() => [
-        <Button onClick={() => {}} key="button" icon={<PlusOutlined />} type="primary">
-          {intl.formatMessage({
-            id: 'pages.data.option.add',
-            defaultMessage: '新增',
-          })}
-        </Button>,
-      ]}
-      request={async (params) => service.task(params)}
-    />
+    <>
+      <ProTable
+        columns={columns}
+        rowKey="id"
+        defaultParams={{
+          firmwareId: param.id,
+        }}
+        toolBarRender={() => [
+          <Button onClick={() => {}} key="button" icon={<PlusOutlined />} type="primary">
+            {intl.formatMessage({
+              id: 'pages.data.option.add',
+              defaultMessage: '新增',
+            })}
+          </Button>,
+        ]}
+        request={async (params) => service.task(params)}
+      />
+      <Save
+        close={() => {
+          state.task = false;
+        }}
+        visible={state.task}
+      />
+      <Release
+        close={() => {
+          state.release = false;
+        }}
+        visible={state.release}
+      />
+    </>
   );
-};
+});
 export default Task;

@@ -10,6 +10,21 @@ class Service extends BaseService<FirmwareItem> {
       params,
     });
 
+  saveTask = (data: Record<string, unknown>) =>
+    request(`/${SystemConst.API_BASE}/firmware/upgrade/task`, {
+      method: 'POST',
+      data,
+    });
+
+  deploy = (id: string, type?: 'all' | 'part', deviceId?: string[]) =>
+    request(
+      `/${SystemConst.API_BASE}/firmware/upgrade/task/${id}${type === 'all' ? '/all' : ''}/_deploy`,
+      {
+        method: 'POST',
+        data: deviceId,
+      },
+    );
+
   history = (params: Record<string, unknown>) =>
     request(`/${SystemConst.API_BASE}/firmware/upgrade/history/_query`, {
       method: 'GET',
