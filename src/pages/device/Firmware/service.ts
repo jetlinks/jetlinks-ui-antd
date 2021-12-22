@@ -31,6 +31,12 @@ class Service extends BaseService<FirmwareItem> {
       params,
     });
 
+  historyCount = (params: Record<string, unknown>) =>
+    request(`/${SystemConst.API_BASE}/firmware/upgrade/history/_count`, {
+      method: 'GET',
+      params,
+    });
+
   queryProduct = () =>
     request(`/${SystemConst.API_BASE}/device/product/_query/no-paging?paging=false`);
 }

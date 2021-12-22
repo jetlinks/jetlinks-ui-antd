@@ -21,10 +21,12 @@ export const state = model<{
   task: boolean;
   release: boolean;
   taskItem?: TaskItem;
+  taskDetail: boolean;
 }>({
   visible: false,
   task: false,
   release: false,
+  taskDetail: false,
 });
 const Firmware = observer(() => {
   const actionRef = useRef<ActionType>();

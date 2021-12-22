@@ -7,12 +7,14 @@ import {
   CloudDownloadOutlined,
   DeleteOutlined,
   EyeOutlined,
+  PieChartOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
 import { useIntl, useParams } from 'umi';
 import Save from '@/pages/device/Firmware/Detail/Task/Save';
 import { observer } from '@formily/react';
 import Release from '@/pages/device/Firmware/Detail/Task/Release';
+import Detail from '@/pages/device/Firmware/Detail/Task/Detail';
 
 const Task = observer(() => {
   const intl = useIntl();
@@ -72,6 +74,17 @@ const Task = observer(() => {
             <CloudDownloadOutlined />
           </Tooltip>
         </a>,
+        <a
+          key="detail"
+          onClick={() => {
+            state.taskDetail = true;
+            state.taskItem = record;
+          }}
+        >
+          <Tooltip title="任务详情">
+            <PieChartOutlined />
+          </Tooltip>
+        </a>,
         <a key="remove">
           <Tooltip title="删除">
             <DeleteOutlined />
@@ -109,6 +122,13 @@ const Task = observer(() => {
           state.release = false;
         }}
         visible={state.release}
+      />
+      <Detail
+        visible={state.taskDetail}
+        close={() => {
+          state.taskDetail = false;
+          state.taskItem = undefined;
+        }}
       />
     </>
   );

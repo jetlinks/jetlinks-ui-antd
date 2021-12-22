@@ -5,7 +5,7 @@ import { Form, FormItem, Select } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
 import FSelectDevices from '@/components/FSelectDevices';
 import { service, state } from '@/pages/device/Firmware';
-import { DeviceInstance } from '@/pages/device/Instance/typings';
+import type { DeviceInstance } from '@/pages/device/Instance/typings';
 
 interface Props {
   close: () => void;
@@ -27,7 +27,6 @@ const Release = (props: Props) => {
 
   const save = async () => {
     const values: { releaseType: 'all' | 'part'; part: DeviceInstance[] } = await form.submit();
-    console.log(!(values.part?.length && values.part?.length <= 0), 'lent');
     if (!(values.part?.length && values.part?.length <= 0)) {
       values.releaseType = 'all';
     }
