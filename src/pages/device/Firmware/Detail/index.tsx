@@ -6,8 +6,9 @@ import History from './History';
 import { useEffect, useState } from 'react';
 import type { FirmwareItem } from '@/pages/device/Firmware/typings';
 import Task from '@/pages/device/Firmware/Detail/Task';
+import { observer } from '@formily/react';
 
-const Detail = () => {
+const Detail = observer(() => {
   const [data, setData] = useState<FirmwareItem | undefined>(state.current);
   const param = useParams<{ id: string }>();
   useEffect(() => {
@@ -19,7 +20,7 @@ const Detail = () => {
       });
     }
   }, [param.id]);
-  const [tab, setTab] = useState<string>('task');
+
   const list = [
     {
       key: 'task',
@@ -34,8 +35,11 @@ const Detail = () => {
   ];
   return (
     <PageContainer
+      tabActiveKey={state.tab}
       onBack={history.goBack}
-      onTabChange={setTab}
+      onTabChange={(key) => {
+        state.tab = key as 'task' | 'history';
+      }}
       content={
         <>
           <Descriptions size="small" column={3}>
@@ -47,7 +51,9 @@ const Detail = () => {
               { key: '签名方式', value: data?.signMethod },
               { key: '签名', value: data?.sign },
             ].map((item) => (
-              <Descriptions.Item label={item.key}>{item.value}</Descriptions.Item>
+              <Descriptions.Item key={item.key} label={item.key}>
+                {item.value}
+              </Descriptions.Item>
             ))}
           </Descriptions>
         </>
@@ -55,8 +61,8 @@ const Detail = () => {
       title={<>固件: {state.current?.name}</>}
       tabList={list}
     >
-      {list.find((k) => k.key === tab)?.component}
+      {list.find((k) => k.key === state.tab)?.component}
     </PageContainer>
   );
-};
+});
 export default Detail;

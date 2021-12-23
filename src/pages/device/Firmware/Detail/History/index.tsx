@@ -1,12 +1,19 @@
 import type { ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { service } from '@/pages/device/Firmware';
+import { service, state } from '@/pages/device/Firmware';
 import type { HistoryItem } from '@/pages/device/Firmware/typings';
 import { useParams } from 'umi';
+import { useEffect, useState } from 'react';
 
 const History = () => {
   const param = useParams<{ id: string }>();
 
+  const [defaultParams, setParams] = useState<Record<string, unknown>>();
+  useEffect(() => {
+    if (state.historyParams) {
+      setParams({ ...state.historyParams });
+    }
+  }, []);
   const columns: ProColumns<HistoryItem>[] = [
     {
       dataIndex: 'index',
@@ -44,6 +51,7 @@ const History = () => {
     <ProTable
       columns={columns}
       defaultParams={{
+        ...defaultParams,
         firmwareId: param.id,
       }}
       request={(params) => service.history(params)}

@@ -51,38 +51,56 @@ const Detail = (props: Props) => {
         }),
       )
       .then((resp) => {
-        setCount({ ...count, [`${status}`]: resp.result });
+        count[`${status}`] = resp.result;
+        setCount({ ...count });
       });
 
   useEffect(() => {
     (['waiting', 'processing', 'success', 'failed'] as TaskState[]).forEach((s) => {
-      getStateCount(s);
+      if (state.taskItem?.id) {
+        getStateCount(s);
+      }
     });
   }, [state.taskItem]);
 
   return (
     <Modal width="30vw" visible={props.visible} onCancel={() => props.close()} title="任务详情">
       <Row gutter={16}>
-        {
-          // todo 数据展示错误
-          Object.keys(count)
-            .reduce((previousValue: any[], currentValue) => {
-              previousValue.push({
-                key: currentValue,
-                value: count[currentValue],
-                ...map[currentValue],
-              });
-              return previousValue;
-            }, [])
-            .map((item) => (
-              <Col span={6}>
-                <Statistic
-                  title={<Badge status={item.status} text={item.text} />}
-                  value={item.value}
-                />
-              </Col>
-            ))
-        }
+        {Object.keys(count)
+          .reduce((previousValue: any[], currentValue) => {
+            previousValue.push({
+              key: currentValue,
+              value: count[currentValue],
+              ...map[currentValue],
+            });
+            return previousValue;
+          }, [])
+          .map((item) => (
+            <Col span={6} key={item.key}>
+              <Statistic
+                title={
+                  <Badge
+                    status={item.status}
+                    text={
+                      <a
+                        onClick={() => {
+                          state.taskDetail = false;
+                          state.tab = 'history';
+                          state.historyParams = {
+                            taskId: state.taskItem?.id,
+                            state: item.key,
+                          };
+                        }}
+                      >
+                        {item.text}
+                      </a>
+                    }
+                  />
+                }
+                value={item.value}
+              />
+            </Col>
+          ))}
       </Row>
     </Modal>
   );

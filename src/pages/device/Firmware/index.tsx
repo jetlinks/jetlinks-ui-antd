@@ -22,11 +22,14 @@ export const state = model<{
   release: boolean;
   taskItem?: TaskItem;
   taskDetail: boolean;
+  tab: 'task' | 'history';
+  historyParams?: Record<string, unknown>;
 }>({
   visible: false,
   task: false,
   release: false,
   taskDetail: false,
+  tab: 'task',
 });
 const Firmware = observer(() => {
   const actionRef = useRef<ActionType>();
