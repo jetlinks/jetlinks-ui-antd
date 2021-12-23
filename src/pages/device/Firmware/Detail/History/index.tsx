@@ -13,6 +13,10 @@ const History = () => {
     if (state.historyParams) {
       setParams({ ...state.historyParams });
     }
+    return () => {
+      state.historyParams = undefined;
+      state.taskItem = undefined;
+    };
   }, []);
   const columns: ProColumns<HistoryItem>[] = [
     {
