@@ -3,16 +3,19 @@ import BaseService from '@/utils/BaseService';
 import { useRef } from 'react';
 import type { ProColumns, ActionType } from '@jetlinks/pro-table';
 import moment from 'moment';
-import { Modal, Tag, Tooltip } from 'antd';
-import BaseCrud from '@/components/BaseCrud';
+import { Form, Input, message, Modal, Tag, Tooltip } from 'antd';
 import { CheckOutlined, EyeOutlined } from '@ant-design/icons';
 import { useIntl } from '@@/plugin-locale/localeExports';
+import ProTable from '@jetlinks/pro-table';
+import { request } from 'umi';
+import SystemConst from '@/utils/const';
 
 const service = new BaseService<AlarmItem>('device/alarm/history');
 const Alarm = () => {
   const actionRef = useRef<ActionType>();
   const intl = useIntl();
 
+  const [form] = Form.useForm();
   const columns: ProColumns<AlarmItem>[] = [
     {
       dataIndex: 'index',
@@ -70,7 +73,7 @@ const Alarm = () => {
       width: '120px',
       align: 'center',
       valueType: 'option',
-      render: (record: any) => [
+      render: (text, record: any) => [
         <a
           onClick={() => {
             let content: string;
@@ -116,7 +119,38 @@ const Alarm = () => {
         </a>,
         <>
           {record.state !== 'solve' && (
-            <a onClick={() => {}}>
+            <a
+              onClick={() => {
+                Modal.confirm({
+                  title: '处理告警',
+                  width: '30vw',
+                  icon: <CheckOutlined />,
+                  content: (
+                    <Form form={form}>
+                      <Form.Item name="handle">
+                        <Input.TextArea rows={4} />
+                      </Form.Item>
+                    </Form>
+                  ),
+                  onOk: async () => {
+                    const values = await form.getFieldsValue();
+                    const resp = await request(
+                      `/${SystemConst.API_BASE}/device/alarm/history/${record.id}/_solve`,
+                      {
+                        method: 'put',
+                        data: values.handle,
+                      },
+                    );
+                    if (resp.status === 200) {
+                      message.success('操作成功');
+                    } else {
+                      message.error('操作失败');
+                    }
+                    actionRef.current?.reload();
+                  },
+                });
+              }}
+            >
               <Tooltip
                 title={intl.formatMessage({
                   id: 'pages.device.alarm.option.dispose',
@@ -132,18 +166,14 @@ const Alarm = () => {
     },
   ];
 
-  const schema = {};
-
   return (
     <PageContainer>
-      <BaseCrud
+      <ProTable
+        request={async (params) => service.query(params)}
         columns={columns}
-        service={service}
-        title={intl.formatMessage({
-          id: 'pages.device.alarm',
-          defaultMessage: '告警记录',
-        })}
-        schema={schema}
+        pagination={{
+          pageSize: 10,
+        }}
         actionRef={actionRef}
       />
     </PageContainer>
