@@ -232,5 +232,14 @@ class Service extends BaseService<any> {
             filter(resp => resp.status === 200),
             map(resp => resp)
         ))
+        //同步网关真实状态
+        public syncState = (deviceId: string,params: any) => defer(
+            () => from(request(`/jetlinks/edge/operations/${deviceId}/sync-device-state/invoke`, {
+                method: 'POST',
+                data:params
+            })).pipe(
+                filter(resp => resp.status === 200),
+                map(resp => resp)
+            ))
 }
 export default Service;

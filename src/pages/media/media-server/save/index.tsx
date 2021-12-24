@@ -304,7 +304,7 @@ const Save: React.FC<Props> = props => {
                     rules: [
                       {required: true, message: '请输入RTP IP'}
                     ],
-                    initialValue: configuration.apiHost,
+                    initialValue: configuration.rtpIp,
                   })(<Input placeholder='请输入RTP IP'/>)}
                 </Col>
                 {dynamic()}

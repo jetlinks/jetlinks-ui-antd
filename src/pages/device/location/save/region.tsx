@@ -207,7 +207,7 @@ const SaveRegion: React.FC<Props> = props => {
       });
 
       polyEditor.on('end', function (event: any) {
-        setGeoJsonPoint(event.target.Ce.path);
+        setGeoJsonPoint(event.target.De.path);
       });
     });
   };
@@ -320,7 +320,7 @@ const SaveRegion: React.FC<Props> = props => {
             </Button>
             <Button style={{marginLeft: 10}} type="primary"
                     onClick={() => {
-                      if (polyEditor.kb) {
+                      if (polyEditor.bu) {
                         polyEditor.close();
                       }
                     }}
