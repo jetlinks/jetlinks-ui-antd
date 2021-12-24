@@ -65,10 +65,10 @@ const Play = (props: Props) => {
     service.getStop('local', { deviceId: props.data.deviceId, channelId: props.data.channelId }).subscribe(() => {
       //开启流
       service.getPlay('local', { deviceId: props.data.deviceId, channelId: props.data.channelId }).subscribe((res: any) => {
-        setUrl(res[protocol]);
+        setUrl(res[0][protocol]);
         setProtocol(protocol);
         setBloading(false);
-        setUrlItem(res);
+        setUrlItem(res[0]);
       });
     })
   }
