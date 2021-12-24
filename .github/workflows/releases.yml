@@ -16,7 +16,7 @@ jobs:
             key: jetlinks-ui-antd-repository
         - name: Install 🔧
           run: |
-            npm install
+            npm install --force
             npm run-script build
             cp -r dist docker/
             docker build -t registry.cn-shenzhen.aliyuncs.com/jetlinks/jetlinks-ui-antd:$(node -p "require('./package.json').version") ./docker
