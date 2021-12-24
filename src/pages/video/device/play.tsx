@@ -12,7 +12,13 @@ interface Props {
 const Play = (props: Props) => {
   const service = new Service('media/channel-play');
   const [playing, setPlaying] = useState<boolean>(false);
-  const playerBtnGroup = [{ name: 'FLV', value: "flv" }, { name: 'RTSP', value: "rtsp" }, { name: 'RTMP', value: "rtmp" }, { name: 'MP4', value: "mp4" }, { name: 'HLS', value: "hls" }, { name: 'RTC', value: "rtc" }];
+  const playerBtnGroup = [{ name: 'FLV', value: "flv" }, 
+      // { name: 'RTSP', value: "rtsp" }, 
+      // { name: 'RTMP', value: "rtmp" }, 
+      { name: 'MP4', value: "mp4" }, 
+      // { name: 'HLS', value: "hls" }, 
+      // { name: 'RTC', value: "rtc" }
+    ];
   const [urlItem, setUrlItem] = useState({});
   const [url, setUrl] = useState('');
   const [bloading, setBloading] = useState(true);
