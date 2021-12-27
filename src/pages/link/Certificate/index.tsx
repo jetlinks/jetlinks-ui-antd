@@ -3,11 +3,12 @@ import BaseService from '@/utils/BaseService';
 import type { CertificateItem } from '@/pages/link/Certificate/typings';
 import { useRef } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { Tooltip } from 'antd';
+import { message, Popconfirm, Tooltip } from 'antd';
 import { EditOutlined, MinusOutlined } from '@ant-design/icons';
 import BaseCrud from '@/components/BaseCrud';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { ISchema } from '@formily/json-schema';
+import type { ISchema } from '@formily/json-schema';
+import { CurdModel } from '@/components/BaseCrud/model';
 
 export const service = new BaseService<CertificateItem>('network/certificate');
 const Certificate = () => {
@@ -50,7 +51,13 @@ const Certificate = () => {
       align: 'center',
       width: 200,
       render: (text, record) => [
-        <a onClick={() => console.log(record)}>
+        <a
+          key="edit"
+          onClick={() => {
+            CurdModel.update(record);
+            CurdModel.model = 'edit';
+          }}
+        >
           <Tooltip
             title={intl.formatMessage({
               id: 'pages.data.option.edit',
@@ -60,21 +67,37 @@ const Certificate = () => {
             <EditOutlined />
           </Tooltip>
         </a>,
-        <a>
-          <Tooltip
+        <a key="delete">
+          <Popconfirm
             title={intl.formatMessage({
-              id: 'pages.data.option.remove',
-              defaultMessage: '删除',
+              id: 'pages.data.option.remove.tips',
+              defaultMessage: '确认删除？',
             })}
+            onConfirm={async () => {
+              await service.remove(record.id);
+              message.success(
+                intl.formatMessage({
+                  id: 'pages.data.option.success',
+                  defaultMessage: '操作成功!',
+                }),
+              );
+              actionRef.current?.reload();
+            }}
           >
-            <MinusOutlined />
-          </Tooltip>
+            <Tooltip
+              title={intl.formatMessage({
+                id: 'pages.data.option.remove',
+                defaultMessage: '删除',
+              })}
+            >
+              <MinusOutlined />
+            </Tooltip>
+          </Popconfirm>
         </a>,
       ],
     },
   ];
 
-  // todo Upload 组件思考
   const schema: ISchema = {
     type: 'object',
     properties: {
@@ -94,37 +117,62 @@ const Certificate = () => {
           { label: 'PEM', value: 'PEM' },
         ],
       },
-      'configs.keystoreBase64': {
-        title: '密钥库',
-        'x-component': 'Upload',
-        'x-decorator': 'FormItem',
-      },
-      'configs.keystorePwd': {
-        title: '密钥库密码',
-        'x-component': 'Password',
-        'x-decorator': 'FormItem',
-        'x-visible': false,
-        'x-component-props': {
-          style: {
-            width: '100%',
+      configs: {
+        type: 'object',
+        properties: {
+          '{url:keystoreBase64}': {
+            title: '密钥库',
+            'x-component': 'FUpload',
+            'x-decorator': 'FormItem',
+            'x-component-props': {
+              type: 'file',
+            },
+          },
+          keystorePwd: {
+            title: '密钥库密码',
+            'x-component': 'Password',
+            'x-decorator': 'FormItem',
+            'x-visible': false,
+            'x-component-props': {
+              style: {
+                width: '100%',
+              },
+            },
+            'x-reactions': {
+              dependencies: ['..instance'],
+              fulfill: {
+                state: {
+                  visible: '{{["JKS","PFX"].includes($deps[0])}}',
+                },
+              },
+            },
+          },
+          '{url:trustKeyStoreBase64}': {
+            title: '信任库',
+            'x-component': 'FUpload',
+            'x-decorator': 'FormItem',
+            'x-component-props': {
+              style: {
+                width: '100px',
+              },
+              type: 'file',
+            },
+          },
+          trustKeyStorePwd: {
+            title: '信任库密码',
+            'x-visible': false,
+            'x-decorator': 'FormItem',
+            'x-component': 'Password',
+            'x-reactions': {
+              dependencies: ['..instance'],
+              fulfill: {
+                state: {
+                  visible: '{{["JKS","PFX"].includes($deps[0])}}',
+                },
+              },
+            },
           },
         },
-      },
-      'configs.trustKeyStoreBase64': {
-        title: '信任库',
-        'x-component': 'Upload',
-        'x-decorator': 'FormItem',
-        'x-component-props': {
-          style: {
-            width: '100px',
-          },
-        },
-      },
-      'configs.trustKeyStorePwd': {
-        title: '信任库密码',
-        'x-visible': false,
-        'x-decorator': 'FormItem',
-        'x-component': 'Password',
       },
       description: {
         title: '描述',
