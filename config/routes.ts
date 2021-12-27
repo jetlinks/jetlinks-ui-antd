@@ -150,6 +150,12 @@
         icon: 'smile',
         component: './device/Alarm',
       },
+      {
+        path: '/device/location',
+        name: 'location',
+        icon: 'smile',
+        component: './device/Location',
+      },
     ],
   },
   {
