@@ -153,7 +153,6 @@ const Permission: React.FC = observer(() => {
         <a
           key="editable"
           onClick={() => {
-            console.log(record);
             CurdModel.update(record);
           }}
         >

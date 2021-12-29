@@ -27,6 +27,7 @@ import { CurdModel } from '@/components/BaseCrud/model';
 import type { ISchemaFieldProps } from '@formily/react/lib/types';
 import type { ModalProps } from 'antd/lib/modal/Modal';
 import FUpload from '@/components/Upload';
+import FMonacoEditor from '@/components/FMonacoEditor';
 
 interface Props<T> {
   schema: ISchema;
@@ -74,6 +75,7 @@ const Save = <T extends Record<string, any>>(props: Props<T>) => {
       Editable,
       NumberPicker,
       FUpload,
+      FMonacoEditor,
     },
     scope: {
       icon(name: any) {

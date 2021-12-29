@@ -66,7 +66,7 @@ const FUpload = connect((props: Props) => {
     node: (
       <>
         <Input
-          value={(url as FileProperty).url}
+          value={(url as FileProperty)?.url}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
