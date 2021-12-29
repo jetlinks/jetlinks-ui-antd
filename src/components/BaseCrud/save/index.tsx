@@ -14,6 +14,9 @@ import {
   ArrayTable,
   Switch,
   FormGrid,
+  ArrayItems,
+  Space,
+  Radio,
 } from '@formily/antd';
 import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
@@ -35,11 +38,12 @@ interface Props<T> {
   reload: () => void;
   schemaConfig?: ISchemaFieldProps;
   modelConfig?: ModalProps;
+  formEffect?: () => void;
 }
 
 const Save = <T extends Record<string, any>>(props: Props<T>) => {
   const intl = useIntl();
-  const { service, schema, reload, schemaConfig, modelConfig } = props;
+  const { service, schema, reload, schemaConfig, modelConfig, formEffect } = props;
 
   const [visible, setVisible] = useState<boolean>(false);
   const [current, setCurrent] = useState<T>();
@@ -59,6 +63,7 @@ const Save = <T extends Record<string, any>>(props: Props<T>) => {
   const form = createForm({
     validateFirst: true,
     initialValues: current,
+    effects: formEffect,
   });
 
   const SchemaField = createSchemaField({
@@ -76,6 +81,9 @@ const Save = <T extends Record<string, any>>(props: Props<T>) => {
       NumberPicker,
       FUpload,
       FMonacoEditor,
+      ArrayItems,
+      Space,
+      Radio,
     },
     scope: {
       icon(name: any) {

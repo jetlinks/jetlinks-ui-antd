@@ -280,7 +280,7 @@ export default {
   'pages.link.component': '网络组件',
   'pages.link.gateway': '设备网关',
   'pages.link.opcua': 'OPC UA',
-  'pages.link.type': 'Type',
+  'pages.link.type': '类型',
   'pages.link.option.debug': '调试',
   // 通知管理
   'pages.notice.config': '通知配置',

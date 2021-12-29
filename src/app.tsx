@@ -138,12 +138,20 @@ export const request: RequestConfig = {
             message: JSON.parse(resp).message,
           });
         } else {
-          response.json().then((res: any) => {
-            notification.error({
-              key: 'error',
-              message: `请求错误：${res.message}`,
+          response
+            .json()
+            .then((res: any) => {
+              notification.error({
+                key: 'error',
+                message: `请求错误：${res.message}`,
+              });
+            })
+            .catch(() => {
+              notification.error({
+                key: 'error',
+                message: '系统错误',
+              });
             });
-          });
         }
       });
       return response;

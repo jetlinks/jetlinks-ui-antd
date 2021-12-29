@@ -38,6 +38,7 @@ export type Props<T> = {
   toolBar?: React.ReactNode[];
   pagination?: false | TablePaginationConfig;
   search?: false | SearchConfig;
+  formEffect?: () => void;
 };
 
 const BaseCrud = <T extends Record<string, any>>(props: Props<T>) => {
@@ -57,6 +58,7 @@ const BaseCrud = <T extends Record<string, any>>(props: Props<T>) => {
     toolBar,
     pagination,
     search,
+    formEffect,
   } = props;
 
   return (
@@ -114,6 +116,7 @@ const BaseCrud = <T extends Record<string, any>>(props: Props<T>) => {
         schema={schema}
         schemaConfig={schemaConfig}
         modelConfig={modelConfig}
+        formEffect={formEffect}
       />
     </>
   );
