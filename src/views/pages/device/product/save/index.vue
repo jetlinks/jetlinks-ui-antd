@@ -199,14 +199,24 @@ export default defineComponent({
         getDefaultMetadata(form.messageProtocol, newValue)
       }
     })
+    const getTreeNode = (tree: any[], str: string) => {
+      for (const data of tree) {
+        if (data.value === str) return data
+        if (data.children) {
+          const res:any = getTreeNode(data.children, str)
+          if (res) return res
+        }
+      }
+      return null
+    }
     const okBtn = () => {
       const protocol = messageProtocolList.find(item => form.messageProtocol === item.id)
-      const classified = categoryList.find(item => form.classifiedId === item.value)
+      const classified = getTreeNode(categoryList, form.classifiedId)
       const data = {
         ...toRaw(form),
         metadata: defaultMetadata.value,
         protocolName: protocol.name,
-        classifiedName: classified.title
+        classifiedName: classified ? classified.title : ''
       }
       emit('ok-btn', data)
       modalVisible.value = false

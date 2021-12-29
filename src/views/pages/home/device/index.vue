@@ -150,8 +150,14 @@ export default defineComponent({
       })
     }
     onMounted(() => {
-      echartsInit()
       deviceStatus()
+      /**
+       * echarts图形只绘制一次,且绘制时自动获取父级大小填写宽度
+       * 考虑让echarts延迟绘制 使用setTimeout
+       */
+      setTimeout(() => {
+        echartsInit()
+      })
     })
     return {
       ...toRefs(state),

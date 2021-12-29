@@ -101,7 +101,7 @@ export default defineComponent({
               width: 4,
               offsetCenter: [0, '-40%'],
               itemStyle: {
-                color: 'auto'
+                color: 'inherit'
               }
             },
             axisTick: {
@@ -121,14 +121,14 @@ export default defineComponent({
               }
             },
             axisLabel: {
-              color: 'auto',
+              color: 'inherit',
               distance: 25,
               fontSize: 10
             },
             detail: {
               valueAnimation: true,
               formatter: '{value} %',
-              color: 'auto',
+              color: 'inherit',
               fontSize: 25,
               offsetCenter: [0, '0%']
             },

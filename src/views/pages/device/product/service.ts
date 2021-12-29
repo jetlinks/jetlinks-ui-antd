@@ -75,3 +75,25 @@ export function setUnDeploy (id: string): Promise<any> {
     data: {}
   })
 }
+
+export function productConfiguration (id: string): Promise<any> {
+  return Axios({
+    url: `/jetlinks/device/product/${id}/config-metadata`,
+    method: 'GET'
+  })
+}
+
+export function getUnit (): Promise<any> {
+  return Axios({
+    url: '/jetlinks/protocol/units',
+    method: 'GET'
+  })
+}
+
+export function updateProduct (id: string, data: any): Promise<any> {
+  return Axios({
+    url: `/jetlinks/device-product/${id}`,
+    method: 'PUT',
+    data
+  })
+}

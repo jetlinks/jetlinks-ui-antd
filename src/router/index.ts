@@ -137,7 +137,7 @@ const routes: Array<RouteRecordRaw> = [
             path: 'alarm',
             name: 'alarm',
             meta: { title: '设备告警', icon: 'ExclamationOutlined' },
-            component: () => import(/* webpackChunkName: "about" */ '@/views/pages/device/alarm/index.vue')
+            component: () => import(/* webpackChunkName: "about" */ '@/views/pages/device/alarmLog/index.vue')
           },
           {
             path: 'command',

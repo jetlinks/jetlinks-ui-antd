@@ -158,7 +158,9 @@ export default defineComponent({
     }
     onMounted(() => {
       deviceMessage()
-      echartsInit()
+      setTimeout(() => {
+        echartsInit()
+      })
     })
     return {
       ...toRefs(state),

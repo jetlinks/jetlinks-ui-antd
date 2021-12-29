@@ -1,5 +1,5 @@
 <template>
-  <a-card title="设备消息" style="margin-top: 20px">
+  <a-card title="设备消息" style="margin-top: 20px;">
     <template #extra>
       <div>
         <a-radio-group button-style="solid" v-model:value="time" style="margin-right: 20px;" @change="deviceTime">
@@ -12,7 +12,7 @@
       </div>
     </template>
     <a-spin :spinning="spinning">
-      <div ref="echarts" style="height: 500px;"></div>
+      <div ref="echarts" style="width: 100%; height: 500px;"></div>
     </a-spin>
   </a-card>
 </template>
@@ -107,7 +107,9 @@ export default defineComponent({
       return moment(value).format('YYYY-MM-DD HH:mm:ss')
     }
     onMounted(() => {
-      myChart = echarts.init(state.echarts)
+      setTimeout(() => {
+        myChart = echarts.init(state.echarts)
+      })
       const da = new Date()
       da.setHours(da.getHours() - 1)
       gatewayMonitor(formatData(da), calculationDate(0), '1m')

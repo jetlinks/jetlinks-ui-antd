@@ -50,7 +50,7 @@
                   :placeholder="item.formItemOptions.placeholder" />
               </template>
               <template v-if="item.formItemOptions.type === 'select'">
-                <a-select @change="eventChange($event, item.name)" v-bind:value="setInputValue(item.name)" :placeholder="item.formItemOptions.placeholder">
+                <a-select :disabled="item.formItemOptions.disabled" @change="eventChange($event, item.name)" v-bind:value="setInputValue(item.name)" :placeholder="item.formItemOptions.placeholder">
                   <template v-for="option in item.formItemOptions.enum" :key="option.value">
                     <a-select-option :value="option.value">{{ option.label }}</a-select-option>
                   </template>
