@@ -202,6 +202,7 @@ const Import = (props: Props) => {
           <br />
           物模型格式请参考文档：
           <a
+            rel="noopener"
             target="_blank"
             href="http://doc.jetlinks.cn/basics-guide/device-manager.html#%E8%AE%BE%E5%A4%87%E5%9E%8B%E5%8F%B7"
           >
