@@ -1,4 +1,4 @@
-import { Modal, Button, Divider, Tabs, Form, Input, Select, message } from 'antd';
+import { Modal, Button, Divider, Tabs, Form, Input, Select } from 'antd';
 import React, { Fragment, useState } from 'react';
 import { getWebsocket } from '@/layouts/GlobalWebSocket';
 import { map } from 'rxjs/operators';
@@ -45,7 +45,7 @@ const WebSocketClient: React.FC<Props> = props => {
     {},
   ).pipe(map(result => result.payload));
 
-  const debugPub:Observable<any>= getWebsocket(
+  const debugPub: Observable<any> = getWebsocket(
     `websocket-client-debug`,
     `/network/websocket/client/${item.id}/_publish/JSON`,
     {},
