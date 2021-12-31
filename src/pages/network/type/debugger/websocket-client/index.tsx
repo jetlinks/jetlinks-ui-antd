@@ -1,9 +1,8 @@
 import { Modal, Button, Divider, Tabs, Form, Input, Select, message } from 'antd';
 import React, { Fragment, useState } from 'react';
-import { getAccessToken } from '@/utils/authority';
-import apis from '@/services';
-import { wrapAPI } from '@/utils/utils';
-import { EventSourcePolyfill } from 'event-source-polyfill';
+import { getWebsocket } from '@/layouts/GlobalWebSocket';
+import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 interface Props {
   close: Function;
@@ -39,41 +38,33 @@ const WebSocketClient: React.FC<Props> = props => {
   const [subscribeData, setSubscribeData] = useState(initState.subscribeData);
   const [publishData, setPublishData] = useState(initState.publishData);
   const [logs, setLogs] = useState(initState.logs);
-  const [sourceState, setSourceState] = useState<any>();
+
+  const debugSub: Observable<any> = getWebsocket(
+    `websocket-client-debug`,
+    `/network/websocket/client/${item.id}/_subscribe`,
+    {},
+  ).pipe(map(result => result.payload));
+
+  const debugPub:Observable<any>= getWebsocket(
+    `websocket-client-debug`,
+    `/network/websocket/client/${item.id}/_publish/JSON`,
+    {},
+  ).pipe(map(result => result.payload));
 
   // const { item: { type: { text } } } = props;
   const debugMqttClient = () => {
+    // 需要测试
     logs.push('开始调试');
     if (action === '_subscribe') {
-      // console.log('debugMqtt', data);
-      const eventSource = new EventSourcePolyfill(
-        wrapAPI(
-          `/jetlinks/network/websocket/client/${item.id}/_subscribe/${
-          subscribeData.type
-          }/?:X_Access_Token=${getAccessToken()}`,
-        ),
-      );
-
-      setSourceState(eventSource);
-      eventSource.onerror = () => {
-        setLogs([...logs, '断开连接']);
-      };
-      eventSource.onmessage = e => {
-        setLogs(l => [...l, e.data]);
-      };
-      eventSource.onopen = () => {
-        // console.log('opne');
-      };
+      debugSub.subscribe(data => {
+        setLogs([...logs, data]);
+      });
     } else if (action === '_publish') {
-      apis.network
-        .debugWebSocketClient(item.id, publishData.type, publishData.data)
-        .then(response => {
-          if (response) {
-            message.success('推送成功');
-          }
-        })
-        .catch(() => { });
+      debugPub.subscribe(data => {
+        setLogs([...logs, data]);
+      });
     }
+    setLogs([...logs]);
   };
 
   return (
@@ -99,7 +90,7 @@ const WebSocketClient: React.FC<Props> = props => {
               onClick={() => {
                 logs.push('结束调试');
                 setLogs([...logs]);
-                if (sourceState) sourceState.close();
+                // todo 取消订阅
               }}
             >
               关闭
@@ -116,27 +107,27 @@ const WebSocketClient: React.FC<Props> = props => {
             </Button>
           </Fragment>
         ) : (
-            <Fragment>
-              <Button
-                type="primary"
-                onClick={() => {
-                  debugMqttClient();
-                }}
-              >
-                提交
+          <Fragment>
+            <Button
+              type="primary"
+              onClick={() => {
+                debugMqttClient();
+              }}
+            >
+              提交
             </Button>
-              <Divider type="vertical" />
-              <Button
-                type="ghost"
-                onClick={() => {
-                  logs.splice(0, logs.length);
-                  setLogs([]);
-                }}
-              >
-                清空
+            <Divider type="vertical" />
+            <Button
+              type="ghost"
+              onClick={() => {
+                logs.splice(0, logs.length);
+                setLogs([]);
+              }}
+            >
+              清空
             </Button>
-            </Fragment>
-          )
+          </Fragment>
+        )
       }
     >
       <Tabs defaultActiveKey={action} onChange={e => setAction(e)}>
