@@ -107,7 +107,7 @@ const Type: React.FC<Props> = props => {
           setSupportsType(response.result);
         }
       })
-      .catch(() => { });
+      .catch(() => {});
   }, []);
 
   const remove = (id: string) => {
@@ -147,7 +147,7 @@ const Type: React.FC<Props> = props => {
         message.success('操作成功');
         handleSearch();
       })
-      .catch(() => { });
+      .catch(() => {});
   };
 
   const onSearch = (type?: string[], name?: string) => {
@@ -168,10 +168,8 @@ const Type: React.FC<Props> = props => {
   };
 
   const renderDebug = () => {
-    const {
-      type,
-    } = currentItem;
-    let value = type
+    const { type } = currentItem;
+    let value = type;
     if (value === 'MQTT_CLIENT') {
       return <MqttClient close={() => setDebuggerVisible(false)} item={currentItem} />;
     }
@@ -233,7 +231,6 @@ const Type: React.FC<Props> = props => {
                   </Form.Item>
                 </Col>
               </Row>
-
             </StandardFormRow>
             <StandardFormRow title="其它选项" grid last>
               <Row gutter={16}>
@@ -310,16 +307,22 @@ const Type: React.FC<Props> = props => {
                   >
                     <Card.Meta
                       avatar={<Avatar size="small" src={item.avatar} />}
-                      title={<AutoHide title={item.name} style={{ width: '95%', fontWeight: 600 }} />}
+                      title={
+                        <AutoHide title={item.name} style={{ width: '95%', fontWeight: 600 }} />
+                      }
                       style={{ fontWeight: 600 }}
                     />
                     <div className={styles.cardItemContent}>
                       <div className={styles.cardInfo}>
-                        <div style={{ width: '50%', textAlign: 'center' }}>
+                        <div style={{ width: '33%', textAlign: 'center' }}>
                           <p>组件类型</p>
                           <p style={{ fontWeight: 600 }}>{item.type}</p>
                         </div>
-                        <div style={{ width: '50%', textAlign: 'center' }}>
+                        <div style={{ width: '33%', textAlign: 'center' }}>
+                          <p>端口号</p>
+                          <p style={{ fontWeight: 600 }}>{item.configuration?.port}</p>
+                        </div>
+                        <div style={{ width: '33%', textAlign: 'center' }}>
                           <p>启动状态</p>
                           <p style={{ color: 'red' }}>
                             <Popconfirm
@@ -378,7 +381,7 @@ const Type: React.FC<Props> = props => {
         />
       )}
       {debuggerVisible && renderDebug()
-        // <Debugger close={() => setDebuggerVisible(false)} item={currentItem} />
+      // <Debugger close={() => setDebuggerVisible(false)} item={currentItem} />
       }
     </PageHeaderWrapper>
   );
