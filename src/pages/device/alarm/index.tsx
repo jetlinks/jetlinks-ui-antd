@@ -1,13 +1,27 @@
-import React, {Fragment, useEffect, useState} from 'react';
-import {Badge, Button, Card, Divider, Input, message, Modal, Popconfirm, Select, Spin, Table, Tabs, Tag} from 'antd';
+import React, { Fragment, useEffect, useState } from 'react';
+import {
+  Badge,
+  Button,
+  Card,
+  Divider,
+  Input,
+  message,
+  Modal,
+  Popconfirm,
+  Select,
+  Spin,
+  Table,
+  Tabs,
+  Tag,
+} from 'antd';
 import apis from '@/services';
-import {ColumnProps, SorterResult} from 'antd/es/table';
-import {alarm, AlarmLog} from '@/pages/device/alarm/data';
+import { ColumnProps, SorterResult } from 'antd/es/table';
+import { alarm, AlarmLog } from '@/pages/device/alarm/data';
 import moment from 'moment';
 import Save from '@/pages/device/alarm/save';
 import Form from 'antd/es/form';
-import {FormComponentProps} from 'antd/lib/form';
-import {PaginationConfig} from 'antd/lib/table';
+import { FormComponentProps } from 'antd/lib/form';
+import { PaginationConfig } from 'antd/lib/table';
 import encodeQueryParam from '@/utils/encodeParam';
 import styles from '@/utils/table.less';
 
@@ -29,9 +43,8 @@ interface State {
 }
 
 const Alarm: React.FC<Props> = props => {
-
   const {
-    form: {getFieldDecorator},
+    form: { getFieldDecorator },
     form,
   } = props;
 
@@ -39,10 +52,11 @@ const Alarm: React.FC<Props> = props => {
     data: [],
     saveAlarmData: {},
     searchParam: {
-      pageSize: 10, sorts: {
-        order: "descend",
-        field: "alarmTime"
-      }
+      pageSize: 10,
+      sorts: {
+        order: 'descend',
+        field: 'alarmTime',
+      },
     },
     alarmLogData: {},
     alarmDataList: [],
@@ -66,7 +80,8 @@ const Alarm: React.FC<Props> = props => {
 
   const getProductAlarms = () => {
     alarmDataList.splice(0, alarmDataList.length);
-    apis.deviceAlarm.getProductAlarms(props.target, props.targetId)
+    apis.deviceAlarm
+      .getProductAlarms(props.target, props.targetId)
       .then((response: any) => {
         if (response.status === 200) {
           setData(response.result);
@@ -76,11 +91,12 @@ const Alarm: React.FC<Props> = props => {
           setAlarmDataList([...alarmDataList]);
         }
         setSpinning(false);
-      }).catch(() => {
-    });
+      })
+      .catch(() => {});
 
     if (props.target === 'device') {
-      apis.deviceAlarm.getProductAlarms('product', props.productId)
+      apis.deviceAlarm
+        .getProductAlarms('product', props.productId)
         .then((response: any) => {
           if (response.status === 200) {
             response.result.map((item: any) => {
@@ -88,8 +104,8 @@ const Alarm: React.FC<Props> = props => {
             });
             setAlarmDataList([...alarmDataList]);
           }
-        }).catch(() => {
-      });
+        })
+        .catch(() => {});
     }
   };
 
@@ -99,7 +115,8 @@ const Alarm: React.FC<Props> = props => {
   }, []);
 
   const submitData = (data: any) => {
-    apis.deviceAlarm.saveProductAlarms(props.target, props.targetId, data)
+    apis.deviceAlarm
+      .saveProductAlarms(props.target, props.targetId, data)
       .then((response: any) => {
         if (response.status === 200) {
           message.success('保存成功');
@@ -108,12 +125,12 @@ const Alarm: React.FC<Props> = props => {
         }
         setSpinning(false);
       })
-      .catch(() => {
-      });
+      .catch(() => {});
   };
 
   const _start = (item: alarm) => {
-    apis.deviceAlarm._start(item.id)
+    apis.deviceAlarm
+      ._start(item.id)
       .then((response: any) => {
         if (response.status === 200) {
           message.success('启动成功');
@@ -126,7 +143,8 @@ const Alarm: React.FC<Props> = props => {
   };
 
   const _stop = (item: any) => {
-    apis.deviceAlarm._stop(item.id)
+    apis.deviceAlarm
+      ._stop(item.id)
       .then((response: any) => {
         if (response.status === 200) {
           message.success('停止成功');
@@ -139,7 +157,8 @@ const Alarm: React.FC<Props> = props => {
   };
 
   const deleteAlarm = (id: string) => {
-    apis.deviceAlarm.remove(id)
+    apis.deviceAlarm
+      .remove(id)
       .then((response: any) => {
         if (response.status === 200) {
           getProductAlarms();
@@ -147,8 +166,7 @@ const Alarm: React.FC<Props> = props => {
           setSpinning(false);
         }
       })
-      .catch(() => {
-      });
+      .catch(() => {});
   };
 
   const columns: ColumnProps<alarm>[] = [
@@ -159,12 +177,13 @@ const Alarm: React.FC<Props> = props => {
     {
       title: '创建时间',
       dataIndex: 'createTime',
-      render: (text: any) => text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/',
+      render: (text: any) => (text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/'),
     },
     {
       title: '运行状态',
       dataIndex: 'state',
-      render: record => record ? <Badge status={statusMap.get(record.text)} text={record.text}/> : '',
+      render: record =>
+        record ? <Badge status={statusMap.get(record.text)} text={record.text} /> : '',
     },
     {
       title: '操作',
@@ -172,16 +191,24 @@ const Alarm: React.FC<Props> = props => {
       align: 'center',
       render: (record: any) => (
         <Fragment>
-          <a onClick={() => {
-            setSaveAlarmData(record);
-            setSaveVisible(true);
-          }}>查看</a>
-          <Divider type="vertical"/>
-          <a onClick={() => {
-            setAlarmLogId(record.id);
-            setAlarmActiveKey('logList');
-          }}>告警日志</a>
-          <Divider type="vertical"/>
+          <a
+            onClick={() => {
+              setSaveAlarmData(record);
+              setSaveVisible(true);
+            }}
+          >
+            编辑
+          </a>
+          <Divider type="vertical" />
+          <a
+            onClick={() => {
+              setAlarmLogId(record.id);
+              setAlarmActiveKey('logList');
+            }}
+          >
+            告警日志
+          </a>
+          <Divider type="vertical" />
           {record.state?.value === 'stopped' ? (
             <span>
               <Popconfirm
@@ -193,7 +220,7 @@ const Alarm: React.FC<Props> = props => {
               >
                 <a>启动</a>
               </Popconfirm>
-              <Divider type="vertical"/>
+              <Divider type="vertical" />
               <Popconfirm
                 title="确认删除此告警？"
                 onConfirm={() => {
@@ -237,16 +264,17 @@ const Alarm: React.FC<Props> = props => {
       title: '告警时间',
       dataIndex: 'alarmTime',
       width: '300px',
-      render: (text: any) => text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/',
+      render: (text: any) => (text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/'),
       sorter: true,
-      defaultSortOrder: 'descend'
+      defaultSortOrder: 'descend',
     },
     {
       title: '处理状态',
       dataIndex: 'state',
       align: 'center',
       width: '100px',
-      render: text => text === 'solve' ? <Tag color="#87d068">已处理</Tag> : <Tag color="#f50">未处理</Tag>,
+      render: text =>
+        text === 'solve' ? <Tag color="#87d068">已处理</Tag> : <Tag color="#f50">未处理</Tag>,
     },
     {
       title: '操作',
@@ -254,41 +282,51 @@ const Alarm: React.FC<Props> = props => {
       align: 'center',
       render: (record: any) => (
         <Fragment>
-          <a onClick={() => {
-            let content: string;
-            try {
-              content = JSON.stringify(record.alarmData, null, 2);
-            } catch (error) {
-              content = record.alarmData;
-            }
-            Modal.confirm({
-              width: '40VW',
-              title: '告警数据',
-              content: <pre>{content}
-                {record.state === 'solve' && (
-                  <>
-                    <br/><br/>
-                    <span style={{fontSize: 16}}>处理结果：</span>
-                    <br/>
-                    <p>{record.description}</p>
-                  </>
-                )}
-                       </pre>,
-              okText: '确定',
-              cancelText: '关闭',
-            })
-          }}>详情</a>
-          <Divider type="vertical"/>
-          {
-            record.state !== 'solve' && (
-              <a onClick={() => {
+          <a
+            onClick={() => {
+              let content: string;
+              try {
+                content = JSON.stringify(record.alarmData, null, 2);
+              } catch (error) {
+                content = record.alarmData;
+              }
+              Modal.confirm({
+                width: '40VW',
+                title: '告警数据',
+                content: (
+                  <pre>
+                    {content}
+                    {record.state === 'solve' && (
+                      <>
+                        <br />
+                        <br />
+                        <span style={{ fontSize: 16 }}>处理结果：</span>
+                        <br />
+                        <p>{record.description}</p>
+                      </>
+                    )}
+                  </pre>
+                ),
+                okText: '确定',
+                cancelText: '关闭',
+              });
+            }}
+          >
+            详情
+          </a>
+          <Divider type="vertical" />
+          {record.state !== 'solve' && (
+            <a
+              onClick={() => {
                 setSolveAlarmLogId(record.id);
                 setSolveVisible(true);
-              }}>处理</a>
-            )
-          }
+              }}
+            >
+              处理
+            </a>
+          )}
         </Fragment>
-      )
+      ),
     },
   ];
 
@@ -296,7 +334,8 @@ const Alarm: React.FC<Props> = props => {
     form.validateFields((err, fileValue) => {
       if (err) return;
 
-      apis.deviceAlarm.alarmLogSolve(solveAlarmLogId || '', fileValue.description)
+      apis.deviceAlarm
+        .alarmLogSolve(solveAlarmLogId || '', fileValue.description)
         .then((response: any) => {
           if (response.status === 200) {
             message.success('保存成功');
@@ -305,25 +344,24 @@ const Alarm: React.FC<Props> = props => {
             handleSearch(searchParam);
           }
         })
-        .catch(() => {
-        })
+        .catch(() => {});
     });
   };
 
   const handleSearch = (params?: any) => {
     setSearchParam(params);
-    apis.deviceAlarm.findAlarmLog(encodeQueryParam(params))
+    apis.deviceAlarm
+      .findAlarmLog(encodeQueryParam(params))
       .then((response: any) => {
         if (response.status === 200) {
           setAlarmLogData(response.result);
         }
       })
-      .catch(() => {
-      });
+      .catch(() => {});
   };
 
   const onAlarmProduct = (value: string) => {
-    let {terms} = searchParam;
+    let { terms } = searchParam;
     if (terms) {
       terms.alarmId = value;
     } else {
@@ -336,8 +374,8 @@ const Alarm: React.FC<Props> = props => {
       pageSize: searchParam.pageSize,
       terms,
       sorts: searchParam.sorter || {
-        order: "descend",
-        field: "alarmTime"
+        order: 'descend',
+        field: 'alarmTime',
       },
     });
   };
@@ -379,44 +417,55 @@ const Alarm: React.FC<Props> = props => {
   return (
     <Spin tip="加载中..." spinning={spinning}>
       <Card>
-        <Tabs activeKey={alarmActiveKey} onTabClick={(key: any) => {
-          setAlarmLogId(undefined);
-          setAlarmActiveKey(key);
-        }}>
+        <Tabs
+          activeKey={alarmActiveKey}
+          onTabClick={(key: any) => {
+            setAlarmLogId(undefined);
+            setAlarmActiveKey(key);
+          }}
+        >
           <Tabs.TabPane tab="告警设置" key="info">
-            <Card title={
-              <Button
-                icon="plus"
-                type="primary"
-                onClick={() => {
-                  setSaveAlarmData({});
-                  setSaveVisible(true);
-                }}
-              >
-                新增告警
-              </Button>
-            } bordered={false}>
-              <Table rowKey="id" columns={columns} dataSource={data} pagination={false}/>
+            <Card
+              title={
+                <Button
+                  icon="plus"
+                  type="primary"
+                  onClick={() => {
+                    setSaveAlarmData({});
+                    setSaveVisible(true);
+                  }}
+                >
+                  新增告警
+                </Button>
+              }
+              bordered={false}
+            >
+              <Table rowKey="id" columns={columns} dataSource={data} pagination={false} />
             </Card>
           </Tabs.TabPane>
           <Tabs.TabPane tab="告警记录" key="logList">
             <div>
-              <Select placeholder="选择告警设置" allowClear style={{width: 300}} value={alarmLogId}
-                      onChange={(value: string) => {
-                        onAlarmProduct(value);
-                        setAlarmLogId(value);
-                      }}
+              <Select
+                placeholder="选择告警设置"
+                allowClear
+                style={{ width: 300 }}
+                value={alarmLogId}
+                onChange={(value: string) => {
+                  onAlarmProduct(value);
+                  setAlarmLogId(value);
+                }}
               >
-                {alarmDataList.length > 0 && alarmDataList.map(item => (
-                  <Select.Option key={item.id}>{item.name}</Select.Option>
-                ))}
+                {alarmDataList.length > 0 &&
+                  alarmDataList.map(item => (
+                    <Select.Option key={item.id}>{item.name}</Select.Option>
+                  ))}
               </Select>
             </div>
-            <div className={styles.StandardTable} style={{marginTop: 10}}>
+            <div className={styles.StandardTable} style={{ marginTop: 10 }}>
               <Table
                 dataSource={alarmLogData.data}
                 columns={alarmLogColumns}
-                rowKey='id'
+                rowKey="id"
                 onChange={onTableChange}
                 pagination={{
                   current: alarmLogData.pageIndex + 1,
@@ -425,13 +474,10 @@ const Alarm: React.FC<Props> = props => {
                   showQuickJumper: true,
                   showSizeChanger: true,
                   pageSizeOptions: ['10', '20', '50', '100'],
-                  showTotal: (total: number) => (
-                    `共 ${total} 条记录 第  ${
-                      alarmLogData.pageIndex + 1
-                    }/${
-                      Math.ceil(alarmLogData.total / alarmLogData.pageSize)
-                    }页`
-                  ),
+                  showTotal: (total: number) =>
+                    `共 ${total} 条记录 第  ${alarmLogData.pageIndex + 1}/${Math.ceil(
+                      alarmLogData.total / alarmLogData.pageSize,
+                    )}页`,
                 }}
               />
             </div>
@@ -439,29 +485,34 @@ const Alarm: React.FC<Props> = props => {
         </Tabs>
       </Card>
 
-      {saveVisible && <Save
-        close={() => {
-          setSaveAlarmData({});
-          setSaveVisible(false);
-          getProductAlarms();
-        }}
-        save={(data: any) => {
-          setSpinning(true);
-          submitData(data);
-        }}
-        data={saveAlarmData} targetId={props.targetId}
-        target={props.target} metaData={props.metaData}
-        name={props.name} productName={props.productName}
-        productId={props.productId}
-      />}
+      {saveVisible && (
+        <Save
+          close={() => {
+            setSaveAlarmData({});
+            setSaveVisible(false);
+            getProductAlarms();
+          }}
+          save={(data: any) => {
+            setSpinning(true);
+            submitData(data);
+          }}
+          data={saveAlarmData}
+          targetId={props.targetId}
+          target={props.target}
+          metaData={props.metaData}
+          name={props.name}
+          productName={props.productName}
+          productId={props.productId}
+        />
+      )}
 
       {solveVisible && (
         <Modal
-          title='告警处理结果'
+          title="告警处理结果"
           visible
           okText="确定"
           cancelText="取消"
-          width='700px'
+          width="700px"
           onOk={() => {
             alarmSolve();
           }}
@@ -470,16 +521,14 @@ const Alarm: React.FC<Props> = props => {
             setSolveAlarmLogId(undefined);
           }}
         >
-          <Form labelCol={{span: 3}} wrapperCol={{span: 21}} key="solve_form">
+          <Form labelCol={{ span: 3 }} wrapperCol={{ span: 21 }} key="solve_form">
             <Form.Item key="description" label="处理结果">
               {getFieldDecorator('description', {
                 rules: [
-                  {required: true, message: '请输入处理结果'},
-                  {max: 2000, message: '处理结果不超过2000个字符'}
+                  { required: true, message: '请输入处理结果' },
+                  { max: 2000, message: '处理结果不超过2000个字符' },
                 ],
-              })(
-                <Input.TextArea rows={8} placeholder="请输入处理结果"/>,
-              )}
+              })(<Input.TextArea rows={8} placeholder="请输入处理结果" />)}
             </Form.Item>
           </Form>
         </Modal>
