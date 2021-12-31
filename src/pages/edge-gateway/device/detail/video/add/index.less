@@ -1,46 +1,54 @@
-.box{
-    display: flex;
+.box {
+  display: flex;
+  width: 100%;
+}
+
+.left {
+  width: 48%;
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+  margin-right: 30px;
+  padding-right: 30px;
+  //   overflow-x: auto;
+
+  .leftTop {
     width: 100%;
-} 
-.left{
-    width: 48%;
-    border-right: 1px solid rgba(0, 0, 0, 0.1);
-    margin-right: 30px;
-    padding-right: 30px;
-    .leftTop{
-        width: 100%;
-        display: flex;
-        div{
-            margin: 0px 10px;
-            height: 32px;
-            line-height: 32px;
-        }
+    display: flex;
+
+    div {
+      margin: 0px 10px;
+      height: 32px;
+      line-height: 32px;
     }
-    .leftTable{
-        width: 100%;
-    }
+  }
+
+  .leftTable {
+    width: 100%;
+  }
 }
 
 
-.right{
-    width: 48%;
-    .rightTop{
-        width: calc(100% - 20px);
-        padding: 10px;
-        display: flex;
-        flex-wrap: wrap;
-        div{
-            float: left;
-            margin: 20px 10px;
-            height: 30px;
-            line-height: 30px;
-        }
+.right {
+  width: 48%;
+
+  .rightTop {
+    width: calc(100% - 20px);
+    padding: 10px;
+    display: flex;
+    flex-wrap: wrap;
+
+    div {
+      float: left;
+      margin: 20px 10px;
+      height: 30px;
+      line-height: 30px;
     }
-    .rightTable{
-        width: 100%;
-    }
+  }
+
+  .rightTable {
+    width: 100%;
+  }
 }
 
 .clickRowStyl {
-    background-color: #dff6fe;
+  background-color: #dff6fe;
 }
