@@ -1,5 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Badge, Button, Card, Descriptions, Icon, message, Popconfirm, Row, Spin, Tabs, Tooltip } from 'antd';
+import {
+  Badge,
+  Button,
+  Card,
+  Descriptions,
+  Icon,
+  message,
+  Popconfirm,
+  Row,
+  Spin,
+  Tabs,
+  Tooltip,
+} from 'antd';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { connect } from 'dva';
 import { router } from 'umi';
@@ -11,7 +23,7 @@ import Save from '.';
 import numeral from 'numeral';
 import encodeQueryParam from '@/utils/encodeParam';
 import Alarm from '@/pages/device/alarm';
-import Configuration from "@/pages/device/product/save/configuration";
+import Configuration from '@/pages/device/product/save/configuration';
 
 interface Props {
   dispatch: Dispatch;
@@ -56,7 +68,7 @@ const Detail: React.FC<Props> = props => {
   const [spinning, setSpinning] = useState(initState.spinning);
   const [units, setUnits] = useState(initState.units);
   const [updateVisible, setUpdateVisible] = useState(false);
-  const [productId, setProductId] = useState("");
+  const [productId, setProductId] = useState('');
 
   const handleSearch = (id?: string) => {
     const list = pathname.split('/');
@@ -84,17 +96,19 @@ const Detail: React.FC<Props> = props => {
           //   });
           apis.deviceProdcut.productConfiguration(data.id).then(resp => {
             setConfig(resp.result);
-          })
+          });
         }
       },
     });
 
-    apis.deviceInstance.count(encodeQueryParam({ terms: { 'productId': id } }))
+    apis.deviceInstance
+      .count(encodeQueryParam({ terms: { productId: id } }))
       .then(res => {
         if (res.status === 200) {
           setDeviceCount(res.result);
         }
-      }).catch();
+      })
+      .catch();
   };
 
   useEffect(() => {
@@ -102,19 +116,19 @@ const Detail: React.FC<Props> = props => {
       .queryOrganization()
       .then(res => {
         if (res.status === 200) {
-          res.result.map((e: any) => (
-            orgInfo[e.id] = e.name
-          ));
+          res.result.map((e: any) => (orgInfo[e.id] = e.name));
         }
-      }).catch(() => {
-      });
+      })
+      .catch(() => {});
 
-    apis.deviceProdcut.units().then((response: any) => {
-      if (response.status === 200) {
-        setUnits(response.result);
-      }
-    }).catch(() => {
-    });
+    apis.deviceProdcut
+      .units()
+      .then((response: any) => {
+        if (response.status === 200) {
+          setUnits(response.result);
+        }
+      })
+      .catch(() => {});
 
     if (pathname.indexOf('save') > 0) {
       const list = pathname.split('/');
@@ -143,8 +157,7 @@ const Detail: React.FC<Props> = props => {
           handleSearch(list[list.length - 1]);
         }
       })
-      .catch(() => {
-      });
+      .catch(() => {});
   };
 
   const updateData = (type: string, item: any, onlySave: boolean) => {
@@ -160,18 +173,18 @@ const Detail: React.FC<Props> = props => {
     }
 
     const data = { ...basicInfo, metadata };
+    setBasicInfo({ ...data });
     apis.deviceProdcut
       .saveOrUpdate(data)
       .then((re: any) => {
         if (re.status === 200) {
           message.success('保存成功');
           if (!onlySave) {
-            deploy(data)
+            deploy(data);
           }
         }
       })
-      .catch(() => {
-      });
+      .catch(() => {});
   };
 
   const deploy = (record: any) => {
@@ -235,8 +248,7 @@ const Detail: React.FC<Props> = props => {
           }
         }
       })
-      .catch(() => {
-      });
+      .catch(() => {});
   };
 
   const content = (
@@ -245,11 +257,14 @@ const Detail: React.FC<Props> = props => {
         <Descriptions.Item label="设备数量">
           <div>
             {numeral(deviceCount).format('0,0')}
-            <a style={{ marginLeft: 10 }}
+            <a
+              style={{ marginLeft: 10 }}
               onClick={() => {
                 router.push(`/device/instance?productId=${basicInfo.id}`);
               }}
-            >查看</a>
+            >
+              查看
+            </a>
           </div>
         </Descriptions.Item>
       </Descriptions>
@@ -259,31 +274,43 @@ const Detail: React.FC<Props> = props => {
   const titleInfo = (
     <Row>
       <div>
-        <span>
-          产品：{basicInfo.name}
-        </span>
-        <Badge style={{ marginLeft: 20 }} color={basicInfo.state === 1 ? 'green' : 'red'}
-          text={basicInfo.state === 1 ? '已发布' : '未发布'} />
+        <span>产品：{basicInfo.name}</span>
+        <Badge
+          style={{ marginLeft: 20 }}
+          color={basicInfo.state === 1 ? 'green' : 'red'}
+          text={basicInfo.state === 1 ? '已发布' : '未发布'}
+        />
         {basicInfo.state === 1 ? (
-          <Popconfirm title="确认停用？" onConfirm={() => {
-            unDeploy(basicInfo);
-          }}>
+          <Popconfirm
+            title="确认停用？"
+            onConfirm={() => {
+              unDeploy(basicInfo);
+            }}
+          >
             <a style={{ fontSize: 12, marginLeft: 20 }}>停用</a>
           </Popconfirm>
-        ) : (<Popconfirm title="确认发布？" onConfirm={() => {
-          deploy(basicInfo);
-        }}>
-          <a style={{ fontSize: 12, marginLeft: 20 }}>发布</a>
-        </Popconfirm>)}
+        ) : (
+          <Popconfirm
+            title="确认发布？"
+            onConfirm={() => {
+              deploy(basicInfo);
+            }}
+          >
+            <a style={{ fontSize: 12, marginLeft: 20 }}>发布</a>
+          </Popconfirm>
+        )}
       </div>
     </Row>
   );
 
   const action = (
     <Tooltip title="编辑产品信息后请重新应用配置">
-      <Popconfirm title="确认重新应用该配置？" onConfirm={() => {
-        deploy(basicInfo);
-      }}>
+      <Popconfirm
+        title="确认重新应用该配置？"
+        onConfirm={() => {
+          deploy(basicInfo);
+        }}
+      >
         <Button icon="sync" type="primary">
           应用配置
         </Button>
@@ -293,10 +320,7 @@ const Detail: React.FC<Props> = props => {
 
   return (
     <Spin tip="加载中..." spinning={spinning}>
-      <PageHeaderWrapper title={titleInfo}
-        content={content}
-        extra={action}
-      >
+      <PageHeaderWrapper title={titleInfo} content={content} extra={action}>
         <Card>
           <Tabs>
             <Tabs.TabPane tab="产品信息" key="info">
@@ -349,14 +373,14 @@ const Detail: React.FC<Props> = props => {
                     title={
                       <span>
                         配置
-                      <Button
+                        <Button
                           icon="edit"
                           style={{ marginLeft: 20 }}
                           type="link"
                           onClick={() => setUpdateVisible(true)}
                         >
                           编辑
-                    </Button>
+                        </Button>
                         {/* <Button
                           style={{ marginLeft: 10 }}
                           type="link"
@@ -367,30 +391,40 @@ const Detail: React.FC<Props> = props => {
                       </span>
                     }
                   ></Descriptions>
-                  {
-                    config.map((i: any) => (
-                      <div style={{ marginBottom: "20px" }} key={i.name}>
-                        <h3>{i.name}</h3>
-                        <Descriptions bordered column={2} title="">
-                          {
-                            i.properties && i.properties.map((item: any) => (
-                              <Descriptions.Item label={item.description ? (<div><span style={{ marginRight: '10px' }}>{item.name}</span>
-                                <Tooltip title={item.description}>
-                                  <Icon type="question-circle-o" />
-                                </Tooltip></div>) : item.name} span={1} key={item.property}>
-                                {basicInfo.configuration ? (
-                                  item.type.type === 'password' ? (
-                                    basicInfo.configuration[item.property]?.length > 0 ? '••••••' : null
-                                  ) :
-                                    basicInfo.configuration[item.property]
-                                ) : null}
-                              </Descriptions.Item>
-                            ))
-                          }
-                        </Descriptions>
-                      </div>
-                    ))
-                  }
+                  {config.map((i: any) => (
+                    <div style={{ marginBottom: '20px' }} key={i.name}>
+                      <h3>{i.name}</h3>
+                      <Descriptions bordered column={2} title="">
+                        {i.properties &&
+                          i.properties.map((item: any) => (
+                            <Descriptions.Item
+                              label={
+                                item.description ? (
+                                  <div>
+                                    <span style={{ marginRight: '10px' }}>{item.name}</span>
+                                    <Tooltip title={item.description}>
+                                      <Icon type="question-circle-o" />
+                                    </Tooltip>
+                                  </div>
+                                ) : (
+                                  item.name
+                                )
+                              }
+                              span={1}
+                              key={item.property}
+                            >
+                              {basicInfo.configuration
+                                ? item.type.type === 'password'
+                                  ? basicInfo.configuration[item.property]?.length > 0
+                                    ? '••••••'
+                                    : null
+                                  : basicInfo.configuration[item.property]
+                                : null}
+                            </Descriptions.Item>
+                          ))}
+                      </Descriptions>
+                    </div>
+                  ))}
                 </div>
               )}
             </Tabs.TabPane>
@@ -422,9 +456,14 @@ const Detail: React.FC<Props> = props => {
               />
             </Tabs.TabPane>
             <Tabs.TabPane tab="告警设置" key="metadata1">
-              <Alarm target="product" productId={basicInfo.id} productName={basicInfo.name} targetId={basicInfo.id}
+              <Alarm
+                target="product"
+                productId={basicInfo.id}
+                productName={basicInfo.name}
+                targetId={basicInfo.id}
                 metaData={basicInfo.metadata}
-                name={basicInfo.name} />
+                name={basicInfo.name}
+              />
             </Tabs.TabPane>
           </Tabs>
         </Card>
