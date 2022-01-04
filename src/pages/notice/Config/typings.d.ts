@@ -8,3 +8,28 @@ type ConfigItem = {
   createTime: number;
   configuration: Record<string, unknown>;
 };
+
+type Provider = {
+  type: string;
+  id: string;
+  name: string;
+};
+
+type NetworkType = {
+  id: string;
+  name: string;
+  providerInfos: Provider[];
+};
+
+type ConfigMetadata = {
+  property: string;
+  name: string;
+  description: string;
+  type: {
+    name: string;
+    id: string;
+    type: string;
+    expands?: Record<string, any>;
+  };
+  scopes: any[];
+};

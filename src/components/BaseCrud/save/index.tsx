@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { message, Modal } from 'antd';
+import { message, Modal, Spin } from 'antd';
 import {
   NumberPicker,
   Editable,
@@ -31,19 +31,21 @@ import type { ISchemaFieldProps } from '@formily/react/lib/types';
 import type { ModalProps } from 'antd/lib/modal/Modal';
 import FUpload from '@/components/Upload';
 import FMonacoEditor from '@/components/FMonacoEditor';
+import type { Form as Form1 } from '@formily/core';
 
 interface Props<T> {
   schema: ISchema;
   service: BaseService<T>;
   reload: () => void;
   schemaConfig?: ISchemaFieldProps;
-  modelConfig?: ModalProps;
+  modelConfig?: ModalProps & { loading?: boolean };
   formEffect?: () => void;
+  customForm?: Form1;
 }
 
 const Save = <T extends Record<string, any>>(props: Props<T>) => {
   const intl = useIntl();
-  const { service, schema, reload, schemaConfig, modelConfig, formEffect } = props;
+  const { service, schema, reload, schemaConfig, modelConfig, formEffect, customForm } = props;
 
   const [visible, setVisible] = useState<boolean>(false);
   const [current, setCurrent] = useState<T>();
@@ -93,7 +95,7 @@ const Save = <T extends Record<string, any>>(props: Props<T>) => {
   });
 
   const save = async () => {
-    const values: T = await form.submit();
+    const values: T = await (customForm || form).submit();
     await service.update(values);
     message.success(
       intl.formatMessage({
@@ -116,11 +118,13 @@ const Save = <T extends Record<string, any>>(props: Props<T>) => {
       onOk={save}
       {...modelConfig}
     >
-      <PreviewText.Placeholder value="-">
-        <Form form={form} labelCol={5} wrapperCol={16}>
-          <SchemaField schema={schema} {...schemaConfig} />
-        </Form>
-      </PreviewText.Placeholder>
+      <Spin spinning={modelConfig?.loading || false}>
+        <PreviewText.Placeholder value="-">
+          <Form form={customForm || form} labelCol={5} wrapperCol={16}>
+            <SchemaField schema={schema} {...schemaConfig} />
+          </Form>
+        </PreviewText.Placeholder>
+      </Spin>
     </Modal>
   );
 };

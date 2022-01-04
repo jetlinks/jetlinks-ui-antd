@@ -10,7 +10,7 @@ import ProTable from '@jetlinks/pro-table';
 import Save from '@/pages/device/Category/Save';
 import { model } from '@formily/reactive';
 import { observer } from '@formily/react';
-import { Response } from '@/utils/typings';
+import type { Response } from '@/utils/typings';
 
 export const service = new Service('device/category');
 

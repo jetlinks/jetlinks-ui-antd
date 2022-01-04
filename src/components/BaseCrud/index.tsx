@@ -13,6 +13,7 @@ import type { ISchemaFieldProps } from '@formily/react/lib/types';
 import type { ModalProps } from 'antd/lib/modal/Modal';
 import type { TablePaginationConfig } from 'antd/lib/table/interface';
 import type { SearchConfig } from '@jetlinks/pro-table/lib/components/Form/FormRender';
+import type { Form } from '@formily/core';
 
 export type Option = {
   model: 'edit' | 'preview' | 'add';
@@ -33,12 +34,13 @@ export type Props<T> = {
   schemaConfig?: ISchemaFieldProps;
   defaultParams?: Record<string, any>;
   actionRef: React.MutableRefObject<ActionType | undefined>;
-  modelConfig?: ModalProps;
+  modelConfig?: ModalProps & { loading?: boolean };
   request?: (params: any) => Promise<Partial<RequestData<T>>>;
   toolBar?: React.ReactNode[];
   pagination?: false | TablePaginationConfig;
   search?: false | SearchConfig;
-  formEffect?: () => void;
+  formEffect?: () => void; // 与form参数 只有一个生效
+  form?: Form;
 };
 
 const BaseCrud = <T extends Record<string, any>>(props: Props<T>) => {
@@ -59,6 +61,7 @@ const BaseCrud = <T extends Record<string, any>>(props: Props<T>) => {
     pagination,
     search,
     formEffect,
+    form,
   } = props;
 
   return (
@@ -117,6 +120,7 @@ const BaseCrud = <T extends Record<string, any>>(props: Props<T>) => {
         schemaConfig={schemaConfig}
         modelConfig={modelConfig}
         formEffect={formEffect}
+        customForm={form}
       />
     </>
   );
