@@ -102,11 +102,11 @@ const Save: React.FC<Props> = props => {
       setAction(
         props.data.alarmRule.actions.length > 0 ? [...props.data.alarmRule.actions] : [{ _id: 0 }],
       );
-      setProperties(
-        props.data.alarmRule.properties.length > 0
-          ? [...props.data.alarmRule.properties]
-          : [{ _id: 0 }],
-      );
+      // setProperties(
+      //   props.data.alarmRule?.properties.length > 0
+      //     ? [...props.data.alarmRule?.properties]
+      //     : [{ _id: 0 }],
+      // );
     } else {
       setTrigger([{ _id: 0 }]);
       setAction([{ _id: 0 }]);
