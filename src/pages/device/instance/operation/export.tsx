@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FormComponentProps } from 'antd/lib/form';
 import Form from 'antd/es/form';
-import { Modal, Radio, Select } from 'antd';
+import { Modal, Radio, Select, Spin } from 'antd';
 import apis from '@/services';
 import { DeviceProduct } from '@/pages/device/product/data';
 import { getAccessToken } from '@/utils/authority';
@@ -29,20 +29,20 @@ const Export: React.FC<Props> = props => {
   const [product, setProduct] = useState(initState.product);
   const [fileType, setFileType] = useState(initState.fileType);
 
+  const [fetching, setFetching] = useState<boolean>(false);
+
   useEffect(() => {
     if (props.productId) {
       setProduct(props.productId);
     }
     // 获取下拉框数据
     apis.deviceProdcut
-      .queryNoPagin()
+      .queryNoPagin({ paging: false })
       .then(response => {
         setProductList(response.result);
       })
-      .catch(() => {
-      });
+      .catch(() => {});
   }, []);
-
 
   const downloadTemplate = () => {
     const formElement = document.createElement('form');
@@ -76,7 +76,7 @@ const Export: React.FC<Props> = props => {
 
   return (
     <Modal
-      title='批量导出设备'
+      title="批量导出设备"
       visible
       okText="确定"
       cancelText="取消"
@@ -89,11 +89,26 @@ const Export: React.FC<Props> = props => {
     >
       <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
         <Form.Item key="productId" label="产品">
-          <Select placeholder="请选择产品" defaultValue={props.productId}
-                  disabled={!!props.productId}
-                  onChange={(event: string) => {
-                    setProduct(event);
-                  }}>
+          <Select
+            placeholder="请选择产品"
+            defaultValue={props.productId}
+            // mode="multiple"
+            disabled={!!props.productId}
+            onChange={(event: string) => {
+              setProduct(event);
+            }}
+            filterOption={false}
+            notFoundContent={fetching ? <Spin size="small" /> : null}
+            onSearch={value => {
+              setFetching(true);
+              apis.deviceProdcut
+                .queryNoPagin(encodeQueryParam({ paging: false, terms: { name$LIKE: value } }))
+                .then(response => {
+                  setProductList(response.result);
+                })
+                .finally(() => setFetching(false));
+            }}
+          >
             {(productList || []).map(item => (
               <Select.Option
                 key={JSON.stringify({ productId: item.id, productName: item.name })}
@@ -107,9 +122,12 @@ const Export: React.FC<Props> = props => {
         {(product || props.productId) && (
           <div>
             <Form.Item label="文件格式">
-              <Radio.Group onChange={e => {
-                setFileType(e.target.value);
-              }} defaultValue="xlsx">
+              <Radio.Group
+                onChange={e => {
+                  setFileType(e.target.value);
+                }}
+                defaultValue="xlsx"
+              >
                 <Radio.Button value="xlsx">xlsx</Radio.Button>
                 <Radio.Button value="csv">csv</Radio.Button>
               </Radio.Group>
