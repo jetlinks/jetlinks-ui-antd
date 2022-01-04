@@ -296,7 +296,7 @@ const Authorization = observer((props: AuthorizationProps) => {
             <Row>
               <Col span={4}>
                 <Select
-                  onSelect={(type: string) =>
+                  onSelect={(type: any) =>
                     searchPermission(AuthorizationModel.filterParam.name, props.type || type)
                   }
                   style={{ width: '100%' }}
