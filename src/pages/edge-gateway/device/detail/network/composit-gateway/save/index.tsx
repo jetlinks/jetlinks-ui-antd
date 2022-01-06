@@ -31,11 +31,11 @@ const Save: React.FC<Props> = props => {
     // const [supportList, setSupportList] = useState([]);
     const [protocolList, setProtocolList] = useState([]);
     const [networkConfigList, setNetworkConfigList] = useState<any[]>([]);
-    const [routesData, setRoutesData] = useState<{ id: string, url: string, protocol: string }[]>([{
+    const [routesData, setRoutesData] = useState<{ id: string, url: string, protocol: string }[]>(data.configuration?.routes || [{
         id: '1001',
         url: '',
         protocol: ''
-    }]);
+      }]);
 
     const getProductList = (value: string) => {
         service.getProductList(encodeQueryParam({
@@ -93,6 +93,7 @@ const Save: React.FC<Props> = props => {
     const getProtocolList = () => {
         service.getProtocolList(props.deviceId, { paging: false }).subscribe(
             (res) => {
+                // console.log(res)
                 setProtocolList(res);
             }
         )
@@ -133,8 +134,9 @@ const Save: React.FC<Props> = props => {
                             setDataType(type[0].networkType?.value);
                         }
                     )
+                    getProtocolList();
                 })
-        }else{
+        } else {
             getProtocolList();
         }
     }, []);
@@ -198,7 +200,14 @@ const Save: React.FC<Props> = props => {
                                                 <Input
                                                     value={i.url}
                                                     onChange={e => {
-                                                        routesData[index].url = e.target.value;
+                                                        if (routesData[index]?.url) {
+                                                            routesData[index].url = e.target.value;
+                                                        } else {
+                                                            routesData[index] = {
+                                                                ...routesData[index],
+                                                                url: e.target.value
+                                                            }
+                                                        }
                                                         setRoutesData([...routesData]);
                                                     }}
                                                     placeholder="/**"
@@ -211,7 +220,14 @@ const Save: React.FC<Props> = props => {
                                                 <Select
                                                     value={routesData[index]?.protocol}
                                                     onChange={(e: string) => {
-                                                        routesData[index].protocol = e;
+                                                        if (routesData[index]?.protocol) {
+                                                            routesData[index].protocol = e;
+                                                        } else {
+                                                            routesData[index] = {
+                                                                ...routesData[index],
+                                                                protocol: e
+                                                            }
+                                                        }
                                                         setRoutesData([...routesData]);
                                                     }}
                                                 >
@@ -269,7 +285,7 @@ const Save: React.FC<Props> = props => {
                         <Form.Item label={
                             <span>
                                 认证协议
-                    <Tooltip title='使用特定的协议进行MQTT认证'>
+                                <Tooltip title='使用特定的协议进行MQTT认证'>
                                     <Icon type="question-circle-o" style={{ paddingLeft: 5 }} />
                                 </Tooltip>
                             </span>
@@ -294,6 +310,51 @@ const Save: React.FC<Props> = props => {
         }
     };
 
+    const saveData = () => {
+        form.validateFields((err, tempData) => {
+            if (err) return;
+            if (tempData.gatewayProvider === 'websocket-server' || tempData.gatewayProvider === 'http-server-gateway') {
+                // console.log(tempData)
+                props.save({
+                    id: tempData.id,
+                    name: tempData.name,
+                    product: product,
+                    network: network,
+                    protocol: protocol,
+                    gatewayProvider: tempData.gatewayProvider,
+                    description: tempData.description,
+                    configuration: { routes: routesData }
+                })
+                
+            } else {
+                props.save({
+                    id: tempData.id,
+                    name: tempData.name,
+                    product: product,
+                    network: network,
+                    protocol: protocol,
+                    gatewayProvider: tempData.gatewayProvider,
+                    description: tempData.description,
+                });
+            }
+        })
+
+        // form.validateFields((err, fileValue) => {
+        //     if (err) return;
+        //     let params = {
+        //         id: fileValue.id,
+        //         name: fileValue.name,
+        //         product: product,
+        //         network: network,
+        //         protocol: protocol,
+        //         gatewayProvider: fileValue.gatewayProvider,
+        //         configuration: fileValue.configuration,
+        //         description: fileValue.description,
+        //     }
+        //     console.log(params)
+        //     // props.save(params);
+        // });
+    };
     return (
         <Modal
             title={data.id ? '编辑复合网关' : '新增复合网关'}
@@ -301,20 +362,7 @@ const Save: React.FC<Props> = props => {
             width={800}
             onCancel={() => { props.close() }}
             onOk={() => {
-                form.validateFields((err, fileValue) => {
-                    if (err) return;
-                    let params = {
-                        id: fileValue.id,
-                        name: fileValue.name,
-                        product: product,
-                        network: network,
-                        protocol: protocol,
-                        gatewayProvider: fileValue.gatewayProvider,
-                        configuration: fileValue.configuration,
-                        description: fileValue.description,
-                    }
-                    props.save(params);
-                });
+                saveData();
             }}
         >
             <Form
@@ -346,7 +394,7 @@ const Save: React.FC<Props> = props => {
                             <Col span={18}>
                                 <Select onChange={(value: string) => {
                                     getProductList(value);
-                                    form.setFieldsValue({'procotol': value});
+                                    form.setFieldsValue({ 'procotol': value });
                                 }} allowClear>
                                     {
                                         protocolList.map((item: any, index: number) => (
@@ -369,7 +417,7 @@ const Save: React.FC<Props> = props => {
                         initialValue: data.productId
                     })(
                         <Select allowClear onChange={(value: string) => {
-                            if(value !== ''){
+                            if (value !== '') {
                                 let pro: any = productList.filter(item => item.id === value);
                                 setProduct(pro[0]);
                                 getGatetypeList(pro[0].transportProtocol);
@@ -429,7 +477,7 @@ const Save: React.FC<Props> = props => {
                             }}
                         >
                             <Icon type="plus" />新增网络组件
-                    </Button>
+                        </Button>
                     </div>
                 )}
                 {renderForm()}
