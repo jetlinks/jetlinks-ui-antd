@@ -196,7 +196,7 @@ const Detail: React.FC<Props> = props => {
       callback: response => {
         if (response.status === 200) {
           basicInfo.state = 1;
-          setBasicInfo(basicInfo);
+          setBasicInfo({ ...basicInfo });
           message.success('操作成功');
           setSpinning(false);
         }
