@@ -185,7 +185,7 @@ const Detail: React.FC<Props> = props => {
         }
       })
       .catch(() => {})
-      .finally(() => setBasicInfo({ ...data }));
+      .finally(() => setBasicInfo({ ...data, state: onlySave ? basicInfo.state : 1 }));
   };
 
   const deploy = (record: any) => {
@@ -195,8 +195,8 @@ const Detail: React.FC<Props> = props => {
       payload: record.id,
       callback: response => {
         if (response.status === 200) {
-          basicInfo.state = 1;
-          setBasicInfo({ ...basicInfo });
+          // basicInfo.state = 1;
+          // setBasicInfo({ ...basicInfo });
           message.success('操作成功');
           setSpinning(false);
         }
