@@ -173,7 +173,7 @@ const Detail: React.FC<Props> = props => {
     }
 
     const data = { ...basicInfo, metadata };
-    setBasicInfo({ ...data });
+
     apis.deviceProdcut
       .saveOrUpdate(data)
       .then((re: any) => {
@@ -184,7 +184,8 @@ const Detail: React.FC<Props> = props => {
           }
         }
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setBasicInfo({ ...data }));
   };
 
   const deploy = (record: any) => {

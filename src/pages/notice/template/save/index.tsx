@@ -247,7 +247,6 @@ const Save: React.FC<Props> = props => {
   };
   const renderConfig = () => {
     const { type } = item;
-    console.log(type, 'tt', item);
 
     switch (type) {
       case 'sms':
