@@ -49,6 +49,10 @@ class BaseService<T> implements IBaseService<T> {
       data,
     });
   }
+
+  getUri() {
+    return this.uri;
+  }
 }
 
 export default BaseService;

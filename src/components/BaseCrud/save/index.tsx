@@ -32,6 +32,7 @@ import type { ModalProps } from 'antd/lib/modal/Modal';
 import FUpload from '@/components/Upload';
 import FMonacoEditor from '@/components/FMonacoEditor';
 import type { Form as Form1 } from '@formily/core';
+import FBraftEditor from '@/components/FBraftEditor';
 
 interface Props<T> {
   schema: ISchema;
@@ -86,6 +87,7 @@ const Save = <T extends Record<string, any>>(props: Props<T>) => {
       ArrayItems,
       Space,
       Radio,
+      FBraftEditor,
     },
     scope: {
       icon(name: any) {
@@ -96,7 +98,14 @@ const Save = <T extends Record<string, any>>(props: Props<T>) => {
 
   const save = async () => {
     const values: T = await (customForm || form).submit();
+    // 特殊处理通知模版
+    if (service?.getUri().includes('/notifier/template')) {
+      (values as T & { template: Record<string, any> | string }).template = JSON.stringify(
+        values.template,
+      );
+    }
     await service.update(values);
+
     message.success(
       intl.formatMessage({
         id: 'pages.data.option.success',
@@ -120,7 +129,7 @@ const Save = <T extends Record<string, any>>(props: Props<T>) => {
     >
       <Spin spinning={modelConfig?.loading || false}>
         <PreviewText.Placeholder value="-">
-          <Form form={customForm || form} labelCol={5} wrapperCol={16}>
+          <Form form={customForm || form} labelCol={4} wrapperCol={18}>
             <SchemaField schema={schema} {...schemaConfig} />
           </Form>
         </PreviewText.Placeholder>
