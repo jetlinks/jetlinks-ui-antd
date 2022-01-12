@@ -28,11 +28,11 @@ const initWebSocket = () => {
                     if (data.type === 'complete') {
                         subs[data.requestId].forEach((element: any) => {
                             element.complete();
-                        });;
+                        });
                     } else if (data.type === 'result') {
                         subs[data.requestId].forEach((element: any) => {
                             element.next(data)
-                        });;
+                        });
                     }
                 }
             }

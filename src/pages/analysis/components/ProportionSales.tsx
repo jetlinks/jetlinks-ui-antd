@@ -5,6 +5,7 @@ import styles from '../style.less';
 import { ISalesData } from '../data.d';
 import apis from '@/services';
 import Select from 'antd/es/select';
+import encodeQueryParam from '@/utils/encodeParam';
 
 const { Pie } = Charts;
 
@@ -67,7 +68,9 @@ const ProportionSales = ({ loading, }: { loading: boolean; }) => {
 
   useEffect(() => {
     apis.deviceProdcut
-      .queryNoPagin()
+      .queryNoPagin(encodeQueryParam({
+        paging: false,
+      }))
       .then(response => {
         const tempResult = response?.result;
         if (response.status === 200) {

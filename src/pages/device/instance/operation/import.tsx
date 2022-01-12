@@ -47,7 +47,7 @@ const Import: React.FC<Props> = props => {
     }
     // 获取下拉框数据
     apis.deviceProdcut
-      .queryNoPagin()
+      .queryNoPagin({paging: false})
       .then(response => {
         setProductList(response.result);
       })

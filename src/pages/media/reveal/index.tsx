@@ -267,7 +267,7 @@ const Reveal: React.FC<Props> = props => {
                 {
                   players.length > 0 && players.map((item: any, index: number) => (
                     <div onClick={() => { if (!document.fullscreenElement) { setSetting(index); setDeviceId(item.deviceId); setChannelId(item.channelId); } }} className={styles.video} key={index} style={players.length === 1 ? { border: setting === index ? "1px solid red" : null, width: 'calc(100% - 10px)' } : players.length === 9 ? { border: setting === index ? "1px solid red" : null, width: "calc((100% -  30px) / 3)" } : { width: "calc((100% -  20px) / 2)", border: setting === index ? "1px solid red" : null }}>
-                      <easy-player loading={item.bLoading} muted stretch protocol={item.protocol} element-loading-text="加载中..." element-loading-background="#000" autoplay live video-url={item.url}></easy-player>
+                      <live-player loading={item.bLoading} muted stretch protocol={item.protocol} element-loading-text="加载中..." element-loading-background="#000" autoplay live video-url={item.url}></live-player>
                       {item.deviceId !== '' && item.channelId !== '' && <div className={styles.video_lose} onClick={() => { refresh(item.deviceId, item.channelId) }}>刷新</div>}
                     </div>
                   ))
