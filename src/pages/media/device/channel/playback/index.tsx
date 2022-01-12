@@ -48,7 +48,7 @@ const Playback = (props: Props) => {
 
     const onRadioChange = (e: any) => {
         setRadioValue(e.target.value)
-        setUrl('')
+        setUrl(e.target.value)
     }
 
     useEffect(() => {
@@ -102,8 +102,9 @@ const Playback = (props: Props) => {
                                 if(type === 'local'){
                                     setUrl(`/jetlinks/media/device/${props.data.deviceId}/${props.data.channelId}/playback.mp4?:X_Access_Token=${localStorage.getItem('x-access-token')}&startTime=${moment(data.start).format('YYYY-MM-DD HH:mm:ss')}&endTime=${moment(data.end).format('YYYY-MM-DD HH:mm:ss')}&speed=1`)
                                 } else {
-                                    console.log(data)
                                     setFilesList(data.files)
+                                    setRadioValue(data.files[0]?.url)
+                                    setUrl(data.files[0]?.url)
                                 }
                             }
                     }} />
@@ -212,7 +213,7 @@ const Playback = (props: Props) => {
                         <Radio.Group onChange={onRadioChange} value={radioValue}>
                             {
                                 filesList.map(item => {
-                                    return <Radio key={item} style={radioStyle} value={item}></Radio>
+                                    return <Radio key={item} style={radioStyle} value={item.url}>{moment(item.time).format('YYYY-MM-DD HH:mm:ss')}</Radio>
                                 })
                             }
                         </Radio.Group>
