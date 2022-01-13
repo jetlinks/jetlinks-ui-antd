@@ -101,7 +101,8 @@ const Save = (props: Props) => {
             title: '类型',
             'x-component': 'Select',
             'x-component-props': {
-              disabled: !!data.typeId
+              disabled: !!data.typeId,
+              showSearch:true
             },
             'x-mega-props': {
               span: 2,

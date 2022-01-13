@@ -267,6 +267,7 @@ const Save: React.FC<Props> = props => {
       component: (
         <Select
           placeholder="请选择"
+          showSearch
           onChange={(value: string) => {
             onMessageProtocolChange(value);
           }}
@@ -295,6 +296,7 @@ const Save: React.FC<Props> = props => {
       component: (
         <Select
           placeholder="请选择"
+          showSearch
           onChange={(value: string) => {
             if (
               value !== '' &&

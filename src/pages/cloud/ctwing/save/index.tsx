@@ -51,16 +51,18 @@ const Save: React.FC<Props> = props => {
                                     initialValue: props.data?.id,
                                     rules: [{ required: true, message: '请选择' }],
                                 })(
-                                    <Select disabled={!!props.data.id} placeholder="请选择" allowClear onChange={(value: string) => {
-                                        let data = '';
-                                        if(value !== '' && productList){
-                                            data = productList.filter((item: any) => {
-                                                return item.id === value
-                                            })[0].name
-                                        }
-                                        form.setFieldsValue({
-                                            name: data
-                                        })
+                                    <Select disabled={!!props.data.id} placeholder="请选择" allowClear
+                                        showSearch 
+                                        onChange={(value: string) => {
+                                            let data = '';
+                                            if(value !== '' && productList){
+                                                data = productList.filter((item: any) => {
+                                                    return item.id === value
+                                                })[0].name
+                                            }
+                                            form.setFieldsValue({
+                                                name: data
+                                            })
                                     }}>
                                         {productList && productList.map((i: any, index: number) => {
                                             return <Select.Option key={index} value={i.id}>{i.id}</Select.Option>

@@ -177,7 +177,8 @@ const Screen = (props: Props) => {
                   type: 'list',
                   props: {
                     data: categoryList,
-                    mode: 'default'
+                    // mode: 'default',
+                    showSearch:true
                   }
                 }]}
             />
