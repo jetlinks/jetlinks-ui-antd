@@ -174,7 +174,7 @@ const Aliyun: React.FC<{}> = () => {
                             columns={columns}
                             rowKey="id"
                             onSearch={(params: any) => {
-                                handleSearch(params);
+                                handleSearch({ ...params, terms: searchParam.terms });
                             }}
                             paginationConfig={resultList}
                         />
