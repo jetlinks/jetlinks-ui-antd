@@ -8,6 +8,7 @@ import Service from "../service";
 import encodeQueryParam from "@/utils/encodeParam";
 import {Dispatch} from "@/models/connect";
 import Play from './play';
+import Playback from './playback'
 import ChannelEdit from './edit/index';
 import {DeviceInstance} from "@/pages/device/instance/data";
 
@@ -33,6 +34,7 @@ const MediaDevice: React.FC<Props> = props => {
   const [channel, setChannel] = useState<boolean>(false);
   const [channelInfo, setChannelInfo] = useState<any>({});
   const [playing, setPlaying] = useState<boolean>(false);
+  const [playback, setPalyback] = useState<boolean>(false)
   const [data, setData] = useState<any>({});
 
   const [searchParam, setSearchParam] = useState(initState.searchParam);
@@ -47,16 +49,6 @@ const MediaDevice: React.FC<Props> = props => {
   ptzType.set(2, '半球体');
   ptzType.set(3, '固定枪机');
   ptzType.set(4, '遥控枪机');
-
-  useEffect(() => {
-    if (pathname.indexOf('channel') > 0) {
-      const list = pathname.split('/');
-      deviceDetail(list[list.length - 1]);
-      setDeviceId(list[list.length - 1]);
-      searchParam.terms = {deviceId: list[list.length - 1]};
-      handleSearch(searchParam);
-    }
-  }, [window.location.hash]);
 
   const deviceDetail = (deviceId: string) => {
     service.mediaDevice(deviceId).subscribe((data) => {
@@ -161,14 +153,25 @@ const MediaDevice: React.FC<Props> = props => {
           </a>
           <Divider type="vertical"/>
           {record.status.value === 'online' ? (
-            <a
-              onClick={() => {
-                setPlaying(true);
-                setData(record)
-              }}
-            >
-              播放
-            </a>
+            <>
+              <a
+                onClick={() => {
+                  setPlaying(true);
+                  setData(record)
+                }}
+              >
+                播放
+              </a>
+              <Divider type="vertical"/>
+              <a
+                onClick={() => {
+                  setPalyback(true);
+                  setData(record)
+                }}
+              >
+                回放
+              </a>
+            </>
           ) : (
             <Popconfirm
               placement="topRight"
@@ -197,12 +200,23 @@ const MediaDevice: React.FC<Props> = props => {
     },
   ];
 
+  useEffect(() => {
+    if (pathname.indexOf('channel') > 0) {
+      const list = pathname.split('/');
+      deviceDetail(list[list.length - 1]);
+      setDeviceId(list[list.length - 1]);
+      searchParam.terms = {deviceId: list[list.length - 1]};
+      handleSearch(searchParam);
+    }
+  }, [window.location.hash]);
+
+
   const onTableChange = (
     pagination: PaginationConfig,
     filters: any,
     sorter: SorterResult<DeviceInstance>,
   ) => {
-    let {terms} = searchParam;
+    const {terms} = searchParam;
 
     handleSearch({
       pageIndex: Number(pagination.current) - 1,
@@ -218,11 +232,6 @@ const MediaDevice: React.FC<Props> = props => {
         <Descriptions.Item label="设备名称">
           <div>
             {deviceInfo.name}
-            {/*<a style={{marginLeft: 10}}
-               onClick={() => {
-                 router.push(`/device/instance/save/${deviceInfo.id}`);
-               }}
-            >查看</a>*/}
           </div>
         </Descriptions.Item>
       </Descriptions>
@@ -283,17 +292,6 @@ const MediaDevice: React.FC<Props> = props => {
                 )}页`,
             }}
           />
-
-          {/*<ProTable
-            loading={loading}
-            dataSource={result?.data}
-            columns={columns}
-            rowKey="id"
-            onSearch={() => {
-              handleSearch({terms: {deviceId: deviceId}, sorts: {field: 'id', order: 'desc'}});
-            }}
-            paginationConfig={result}
-          />*/}
         </div>
       </Card>
       {playing && <Play data={data} close={() => {
@@ -306,8 +304,12 @@ const MediaDevice: React.FC<Props> = props => {
         setChannel(false);
         handleSearch(searchParam);
       }}/>
-
       }
+      {playback && <Playback data={data} close={() => {
+        setPalyback(false)
+      }} ok={() => {
+        setPalyback(false)
+      }} />}
     </PageHeaderWrapper>
   )
 };

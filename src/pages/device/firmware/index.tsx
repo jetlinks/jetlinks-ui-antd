@@ -64,7 +64,9 @@ const Firmware: React.FC<Props> = props => {
 
   useEffect(() => {
     apis.deviceProdcut
-      .queryNoPagin()
+      .queryNoPagin({
+        paging: false
+      })
       .then(response => {
         setProductList(response.result);
       })
