@@ -51,7 +51,9 @@ const Save: React.FC<Props> = props => {
                                     initialValue: props.data?.id,
                                     rules: [{ required: true, message: '请选择' }],
                                 })(
-                                    <Select disabled={!!props.data.id} placeholder="请选择" allowClear onChange={(value: string) => {
+                                    <Select disabled={!!props.data.id} placeholder="请选择"
+                                        showSearch
+                                        allowClear onChange={(value: string) => {
                                         let data = '';
                                         if(value !== '' && productList){
                                             data = productList.filter((item: any) => {

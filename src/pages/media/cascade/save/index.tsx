@@ -130,7 +130,7 @@ const Save: React.FC<Props> = props => {
                   rules: [
                     { required: true, message: '请选择流媒体服务' }
                   ],
-                })(<Select placeholder="请选择流媒体服务">
+                })(<Select placeholder="请选择流媒体服务" showSearch>
                   {(mediaServerList || []).map(item => (
                     <Select.Option
                       key={JSON.stringify({ mediaServerId: item.id, mediaServerName: item.name })}

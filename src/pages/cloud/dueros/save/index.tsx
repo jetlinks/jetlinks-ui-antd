@@ -255,7 +255,10 @@ const Save: React.FC<Props> = props => {
                                         ],
                                         readOnly:!!props.data.id,
                                         "enum": productInfo.list,
-                                        "x-component": "select"
+                                        "x-component": "select",
+                                        "x-component-props":{
+                                            showSearch:true
+                                        }
                                     },
                                     "name": {
                                         "x-mega-props": {
@@ -289,6 +292,9 @@ const Save: React.FC<Props> = props => {
                                         },
                                         "title": "设备版本",
                                         "x-component": "input",
+                                        "x-component-props":{
+                                            showSearch:true
+                                        },
                                         "x-rules": [
                                             {
                                                 "required": true,

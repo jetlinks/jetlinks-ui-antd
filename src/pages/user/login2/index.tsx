@@ -126,7 +126,7 @@ const Login: React.FC<Props> = props => {
               <input
                 onClick={() => {
                   let result = getQueryString(window.location.hash);
-                  if (result && 
+                  if (result &&
                     result.client_id !== undefined &&
                     result.response_type !== undefined &&
                     result.redirect_uri !== undefined &&

@@ -648,6 +648,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
               <Col sm={7} xs={24}>
                 <Select
                   placeholder="选择产品"
+                  showSearch
                   allowClear
                   style={{ width: '70%', marginTop: 7 }}
                   value={product}

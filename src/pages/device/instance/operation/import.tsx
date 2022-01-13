@@ -47,7 +47,7 @@ const Import: React.FC<Props> = props => {
     }
     // 获取下拉框数据
     apis.deviceProdcut
-      .queryNoPagin()
+      .queryNoPagin({paging: false})
       .then(response => {
         setProductList(response.result);
       })
@@ -154,7 +154,7 @@ const Import: React.FC<Props> = props => {
       <Spin spinning={uploading} tip="上传中...">
         <Form labelCol={{span: 4}} wrapperCol={{span: 20}}>
           <Form.Item key="productId" label="产品">
-            <Select placeholder="请选择产品" defaultValue={props.productId}
+            <Select placeholder="请选择产品" defaultValue={props.productId} showSearch
                     disabled={!!props.productId}
                     onChange={(event: string) => {
                       setProduct(event);

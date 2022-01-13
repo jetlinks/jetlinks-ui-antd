@@ -59,7 +59,9 @@ const TopSearch = ({ loading }: { loading: boolean; }) => {
 
   useEffect(() => {
     apis.deviceProdcut
-      .queryNoPagin()
+      .queryNoPagin({
+        paging: false
+      })
       .then(response => {
         const tempResult = response?.result;
         if (response.status === 200) {

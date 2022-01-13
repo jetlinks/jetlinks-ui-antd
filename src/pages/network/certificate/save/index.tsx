@@ -65,6 +65,7 @@ const Save: React.FC<Props> = props => {
           })(
             <Select
               placeholder="请输入"
+              showSearch
               onChange={(e: string) => {
                 setInstance(e);
               }}

@@ -127,7 +127,7 @@ const Save: React.FC<Props> = props => {
                                     initialValue: props.data?.id,
                                     rules: [{ required: false, message: '请选择' }],
                                 })(
-                                    <Select placeholder="请选择" allowClear>
+                                    <Select placeholder="请选择" allowClear showSearch>
                                         {productList && productList.map((i: any, index: number) => {
                                             return <Select.Option key={index} value={i.id}>{i.id}</Select.Option>
                                         })}
@@ -148,7 +148,7 @@ const Save: React.FC<Props> = props => {
                                 {getFieldDecorator('codecProtocol', {
                                     initialValue: props.data?.codecProtocol,
                                     rules: [{ required: true, message: '请选择' }],
-                                })(<Select placeholder="请选择">
+                                })(<Select placeholder="请选择" showSearch>
                                     {protocolSupport && protocolSupport.map((i: any, index: number) => {
                                         return <Select.Option key={index} value={i.id}>{i.name}</Select.Option>
                                     })}

@@ -109,6 +109,9 @@ const Save: React.FC<Props> = props => {
             "networkType": {
                 "title": "{{ text('接入方式',help('这是接入方式的提示'))}}",
                 "x-component": "select",
+                "x-component-props":{
+                    showSearch:true
+                },               
                 "required": true,
                 "type": "string",
                 "enum": [

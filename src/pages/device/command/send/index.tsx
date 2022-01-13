@@ -214,6 +214,9 @@ const Send = (props: Props) => {
                     value: item.id,
                   })),
                   'x-component': 'select',
+                  'x-component-props':{
+                    showSearch:true
+                  },
                   'x-rules': [
                     {
                       required: true,

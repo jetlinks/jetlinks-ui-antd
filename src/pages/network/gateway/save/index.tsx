@@ -330,6 +330,7 @@ const Save: React.FC<Props> = props => {
             initialValue: props.data?.provider,
           })(
             <Select
+              showSearch
               onChange={(value: string) => {
                 setProvider(value);
               }}

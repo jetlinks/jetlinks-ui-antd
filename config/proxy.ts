@@ -8,16 +8,16 @@
 export default {
   dev: {
     '/jetlinks': {
-      target: 'http://192.168.33.188:8844/',
-      ws: 'ws://192.168.33.188:8844/',
+      // target: 'http://192.168.33.188:8844/',
+      // ws: 'ws://192.168.33.188:8844/',
       // target: 'http://water.zlkjhb.com:9000/jetlinks',
       // ws: 'http://water.zlkjhb.com:9000/jetlinks',
       // ws: 'ws://test.jetlinks.cn/jetlinks',
       // target: 'http://test.jetlinks.cn/jetlinks',
       // target: 'http://127.0.0.1:8848/',
       // ws: 'ws://127.0.0.1:8848/',
-      // ws: 'ws://demo.jetlinks.cn/jetlinks',
-      // target: 'http://demo.jetlinks.cn/jetlinks',
+      ws: 'ws://demo.jetlinks.cn/jetlinks',
+      target: 'http://demo.jetlinks.cn/jetlinks',
       changeOrigin: true,
       pathRewrite: { '^/jetlinks': '' },
     },

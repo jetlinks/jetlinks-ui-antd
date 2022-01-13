@@ -93,6 +93,7 @@ const Export: React.FC<Props> = props => {
             placeholder="请选择产品"
             defaultValue={props.productId}
             mode="multiple"
+            showSearch
             disabled={!!props.productId}
             onChange={(event: string) => {
               setProduct(event);

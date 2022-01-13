@@ -108,6 +108,22 @@ class Service extends BaseService<any> {
         map(resp => resp.result),
       ),
     );
+  
+  public getLocalVideoList = (deviceId: string, channelId: string, data: any) =>
+    defer(() =>
+      from(request(`/jetlinks/media/device/${deviceId}/${channelId}/records/in-local`,{ method: 'POST', data })).pipe(
+        filter(resp => resp.status === 200),
+        map(resp => resp.result),
+      ),
+    );
+
+  public getServerVideoList = (deviceId: string, channelId: string, data: any) =>
+    defer(() =>
+      from(request(`/jetlinks/media/device/${deviceId}/${channelId}/records/in-server`,{ method: 'POST', data })).pipe(
+        filter(resp => resp.status === 200),
+        map(resp => resp.result),
+      ),
+    );
 }
 
 export default Service;

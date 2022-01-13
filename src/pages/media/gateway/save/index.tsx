@@ -113,7 +113,7 @@ const Save: React.FC<Props> = props => {
             rules: [{required: true, message: '请选择关联产品'}],
             initialValue: data?.productId,
           })(
-            <Select placeholder="请选择关联产品">
+            <Select placeholder="请选择关联产品" showSearch>
               {(productList || []).map(item => (
                 <Select.Option
                   key={JSON.stringify({productId: item.id, productName: item.name})}
