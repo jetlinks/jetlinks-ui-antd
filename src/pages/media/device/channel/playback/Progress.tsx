@@ -23,9 +23,11 @@ const Progress = (props: Props) => {
             oTime.style.left = `${ob - 10}px`
         }
     }
+
     useEffect(() => {
-        setStartT(new Date(moment(props.dateTime).startOf('day').format('YYYY-MM-DD HH:mm:ss')).getTime())
-        setTimeAndPosition(0)
+     setStartT(new Date(moment(props.dateTime).startOf('day').format('YYYY-MM-DD HH:mm:ss')).getTime())
+    }, [props.dateTime])
+    useEffect(() => {
         if(props.data && Array.isArray(props.data) && props.data.length > 0){
             if (props.type === 'local') {
                 setList([...props.data])
@@ -33,8 +35,11 @@ const Progress = (props: Props) => {
                     start: props.data[0].startTime,
                     end: props.data[0].endTime
                 })
+                setTime(startT)
             } else if (props.type === 'server') {
                 setList([...props.data])
+                const start = props.data[0]?.files[0]?.time
+                props.play({...props.data[0], start})
             }
         } else {
             setList([])
@@ -105,17 +110,23 @@ const Progress = (props: Props) => {
                                 }}
                                 style={listStyle(item.startTime, item.endTime)}>
                             </div>}
-                            return <div key={`${index}key`} onClick={(event) => {
-                                const dt = event.clientX  - getElementLeft()
-                                const start = dt / 800 * 24 * 3600000 + startT
-                                setTime(start)
-                                setTimeAndPosition(dt)
-                                props.play({...item, start})
-                            }} style={listStyle(item.streamStartTime, item.streamEndTime)}></div>
+                            return <div key={`${index}key`} 
+                            // onClick={(event) => {
+                            //     const dt = event.clientX  - getElementLeft()
+                            //     const start = dt / 800 * 24 * 3600000 + startT
+                            //     setTime(start)
+                            //     setTimeAndPosition(dt)
+                            //     props.play({...item, start})
+                            // }} 
+                            style={listStyle(item.streamStartTime, item.streamEndTime)}></div>
                     })}
                 </div>
-                <div id="btn" className={styles.box}></div>
-                <div id="time" className={styles.time}>{moment(time).format('HH:mm:ss')}</div>
+                {
+                    props.type === 'local' && <>
+                        <div id="btn" className={styles.box}></div>
+                        <div id="time" className={styles.time}>{moment(time).format('HH:mm:ss')}</div>
+                    </>
+                }
             </div>
         </div>
     )
