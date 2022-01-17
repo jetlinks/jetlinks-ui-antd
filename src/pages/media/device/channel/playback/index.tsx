@@ -41,7 +41,17 @@ const Playback = (props: Props) => {
             resp.map(item => {
                 list.splice(0, 0, ...item.files)
             })
-            setFilesList(list.reverse())
+            let temp = {}
+            for(let i = 0; i < list.length - 1; i++){
+                for(let j = i + 1; j < list.length; j++){
+                    if(list[i].time > list[j].time) {
+                        temp = list[j]
+                        list[j] = list[i]
+                        list[i] = temp
+                    }
+                }
+            }
+            setFilesList(list)
         })
     }
 
@@ -102,7 +112,7 @@ const Playback = (props: Props) => {
             <div style={{ display: 'flex', justifyContent: 'space-around' }}>
                 <div style={{ width: 800, borderRadius: 4 }}>
                     <div style={{ width: '100%', height: '450px' }}>
-                        <live-player live={true} id="player" muted fluent loading={bloading} autoplay={true} protocol={'mp4'} video-url={url}></live-player>
+                        <live-player live={type === 'local'} id="player" muted fluent loading={bloading} autoplay={true} protocol={'mp4'} video-url={url}></live-player>
                         {/* <easy-player muted fluent loading={bloading} autoplay live protocol={protocol} video-url={url}></easy-player> */}
                     </div>
                     <Progress
@@ -231,15 +241,19 @@ const Playback = (props: Props) => {
                         />
                     </div>
                     {
-                        type === 'server' && filesList.length > 0 && <Card style={{marginTop: '10px', maxHeight: 200, overflowY: 'auto', overflowX: 'hidden'}}>
-                        <Radio.Group onChange={onRadioChange} value={radioValue}>
+                        type === 'server' && 
+                        <Card style={{marginTop: '10px', maxHeight: 200, overflowY: 'auto', overflowX: 'hidden'}}>
                             {
-                                filesList.map(item => {
-                                    return <Radio key={item.time} style={radioStyle} value={item.mp4}>{moment(item.time).format('HH:mm:ss')}</Radio>
-                                })
+                                filesList.length > 0 ? <Radio.Group onChange={onRadioChange} value={radioValue}>
+                                {
+                                    filesList.map(item => {
+                                        return <Radio key={item.time} style={radioStyle} value={item.mp4}>{moment(item.time).format('HH:mm:ss')}</Radio>
+                                    })
+                                }
+                            </Radio.Group> : <span>暂无数据</span>
                             }
-                        </Radio.Group>
-                    </Card>
+                            
+                        </Card>
                     }
                 </div>
             </div>
