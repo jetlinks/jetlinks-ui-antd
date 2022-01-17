@@ -99,13 +99,16 @@ const Editor: React.FC<Props> = props => {
       },
     ).subscribe((resp: any) => {
       const { payload } = resp;
-      deviceData.state =
-        payload.value.type === 'online'
-          ? { value: 'online', text: '在线' }
-          : {
-              value: 'offline',
-              text: '离线',
-            };
+      if(payload.value.type === 'online'){
+        deviceData.state = { value: 'online', text: '在线' }
+      } else if(payload.value.type === 'notActive'){
+        deviceData.state = { value: 'notActive', text: '未启用' }
+      }else{
+        deviceData.state = {
+          value: 'offline',
+          text: '离线',
+        }
+      }
       if (payload.value.type === 'online') {
         deviceData.onlineTime = payload.timestamp;
       } else {
