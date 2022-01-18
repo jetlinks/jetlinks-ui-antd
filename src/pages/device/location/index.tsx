@@ -709,7 +709,7 @@ const Location: React.FC<Props> = props => {
                       form.resetFields();
                       resetPathPolygon();
 
-                      //默认取出区域下拉列表中的第一个区域以及下属区域
+                      // 默认取出区域下拉列表中的第一个区域以及下属区域
                       if (regionList.length > 0) {
                         regionList[0].data.geometry.coordinates.map((path: any) => {
                           pathPolygon.push(path[0]);
