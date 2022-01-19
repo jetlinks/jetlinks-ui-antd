@@ -112,8 +112,15 @@ const errorHandler = (error: { response: Response }): Response | undefined => {
       // router.push('/exception/403');
       // return;
     } else if (response.status === 404) {
+      if(window.location.hash.search("/user/login") != -1){
+        notification.error({
+          key: 'error',
+          message: '404 错误',
+        });
+        return response;
+      }
       // console.log(status, '状态');
-      router.push('/exception/404');
+        router.push('/exception/404');
     } else {
       notification.error({
         key: 'error',
