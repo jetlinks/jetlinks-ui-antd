@@ -314,6 +314,9 @@ const Save: React.FC<Props> = props => {
                                             }
                                         ],
                                         "x-component": "select",
+                                        "x-component-props":{
+                                            showSearch:true
+                                        },
                                         "visible": false,
                                         "enum": productInfo.type
                                     },
