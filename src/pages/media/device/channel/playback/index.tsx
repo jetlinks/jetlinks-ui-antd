@@ -11,7 +11,6 @@ interface Props {
 }
 
 const Playback = (props: Props) => {
-
     const service = new Service('media/channel');
     // const [protocol, setProtocol] = useState('mp4');
     const [type, setType] = useState<'local' | 'server'>('local');
@@ -22,6 +21,7 @@ const Playback = (props: Props) => {
     const [playing, setPlaying] = useState<boolean>(false)
     const [filesList, setFilesList] = useState<any[]>([])
     const [radioValue, setRadioValue] = useState<string>("")
+    // const [time, setTime] = useState<number>(new Date(moment(dateTime).startOf('day').format('YYYY-MM-DD HH:mm:ss')).getTime())
     const getLocalTime = (dateTime: Moment) => {
         service.getLocalVideoList(props.data.deviceId, props.data.channelId, {
             startTime: moment(dateTime).startOf('day').format('YYYY-MM-DD HH:mm:ss'),
@@ -37,6 +37,21 @@ const Playback = (props: Props) => {
             includeFiles: true
         }).subscribe(resp => {
             setLocalVideoList(resp)
+            const list: any[] = []
+            resp.map(item => {
+                list.splice(0, 0, ...item.files)
+            })
+            let temp = {}
+            for(let i = 0; i < list.length - 1; i++){
+                for(let j = i + 1; j < list.length; j++){
+                    if(list[i].time > list[j].time) {
+                        temp = list[j]
+                        list[j] = list[i]
+                        list[i] = temp
+                    }
+                }
+            }
+            setFilesList(list)
         })
     }
 
@@ -49,6 +64,7 @@ const Playback = (props: Props) => {
     const onRadioChange = (e: any) => {
         setRadioValue(e.target.value)
         setUrl(e.target.value)
+
     }
 
     useEffect(() => {
@@ -60,6 +76,15 @@ const Playback = (props: Props) => {
     }
     const endPlay = () => {
         setPlaying(false)
+        if(type === 'server'){
+            let index: number = filesList.findIndex(item => {
+                return item.mp4 === url
+            })
+            index = index >= 0 && index + 1 < filesList.length ? index + 1 : 0
+            setRadioValue(filesList[index]?.mp4)
+            setUrl(filesList[index]?.mp4)
+            // setTime(filesList[index]?.time)
+        }
     }
 
     useEffect(() => {
@@ -87,7 +112,7 @@ const Playback = (props: Props) => {
             <div style={{ display: 'flex', justifyContent: 'space-around' }}>
                 <div style={{ width: 800, borderRadius: 4 }}>
                     <div style={{ width: '100%', height: '450px' }}>
-                        <live-player live={true} id="player" muted fluent loading={bloading} autoplay={true} protocol={'mp4'} video-url={url}></live-player>
+                        <live-player live={type === 'local'} id="player" muted fluent loading={bloading} autoplay={true} protocol={'mp4'} video-url={url}></live-player>
                         {/* <easy-player muted fluent loading={bloading} autoplay live protocol={protocol} video-url={url}></easy-player> */}
                     </div>
                     <Progress
@@ -95,16 +120,23 @@ const Playback = (props: Props) => {
                         dateTime={dateTime}
                         data={localVideoList} 
                         playing={playing}
+                        // time={time}
                         play={(data: any) => {
                             setBloading(false)
                             setPlaying(false)
                             if(data){
                                 if(type === 'local'){
+                                    // setTime(data.start)
                                     setUrl(`/jetlinks/media/device/${props.data.deviceId}/${props.data.channelId}/playback.mp4?:X_Access_Token=${localStorage.getItem('x-access-token')}&startTime=${moment(data.start).format('YYYY-MM-DD HH:mm:ss')}&endTime=${moment(data.end).format('YYYY-MM-DD HH:mm:ss')}&speed=1`)
                                 } else {
-                                    setFilesList(data.files)
-                                    setRadioValue(data.files[0]?.url)
-                                    setUrl(data.files[0]?.url)
+                                    // setTime(data.start)
+                                    const list = data.files.filter(item => {
+                                        return data.start >= item.time
+                                    })
+                                    if(list && list.length > 0) {
+                                        setRadioValue(list[list.length - 1]?.mp4)
+                                        setUrl(list[list.length - 1]?.mp4)
+                                    }
                                 }
                             }
                     }} />
@@ -209,15 +241,19 @@ const Playback = (props: Props) => {
                         />
                     </div>
                     {
-                        type === 'server' && filesList.length > 0 && <Card style={{marginTop: '10px'}}>
-                        <Radio.Group onChange={onRadioChange} value={radioValue}>
+                        type === 'server' && 
+                        <Card style={{marginTop: '10px', maxHeight: 200, overflowY: 'auto', overflowX: 'hidden'}}>
                             {
-                                filesList.map(item => {
-                                    return <Radio key={item} style={radioStyle} value={item.url}>{moment(item.time).format('YYYY-MM-DD HH:mm:ss')}</Radio>
-                                })
+                                filesList.length > 0 ? <Radio.Group onChange={onRadioChange} value={radioValue}>
+                                {
+                                    filesList.map(item => {
+                                        return <Radio key={item.time} style={radioStyle} value={item.mp4}>{moment(item.time).format('HH:mm:ss')}</Radio>
+                                    })
+                                }
+                            </Radio.Group> : <span>暂无数据</span>
                             }
-                        </Radio.Group>
-                    </Card>
+                            
+                        </Card>
                     }
                 </div>
             </div>

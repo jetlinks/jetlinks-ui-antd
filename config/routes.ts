@@ -468,16 +468,6 @@ export const routes = [
             // authority: ['big-screen'],
             authority: ['big-screen', 'vis-configuration'],
             routes: [
-              // {
-              //     path: '/data-screen/big-screen',
-              //     name: '大屏管理',
-              //     icon: 'fund',
-              //     tenant: ['admin', 'big-screen'],
-              //     iconfont: 'icon-screen',
-              //     authority: ['big-screen'],
-              //     version: 'pro',
-              //     component: './data-screen/screen',
-              // }
               {
                 path: '/data-screen/category',
                 name: '分类管理',
@@ -512,6 +502,16 @@ export const routes = [
                 name: '组件管理',
                 icon: 'fund',
                 component: './data-screen/node',
+              },
+               {
+                  path: '/data-screen/project',
+                  name: '项目管理',
+                  icon: 'fund',
+                  // tenant: ['admin', 'big-screen'],
+                  iconfont: 'icon-screen',
+                  // authority: ['big-screen'],
+                  version: 'pro',
+                  component: './data-screen/project',
               }
             ],
           },
