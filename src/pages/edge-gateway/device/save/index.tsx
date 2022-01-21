@@ -112,11 +112,12 @@ const Save: React.FC<Props> = props => {
                         rules: [{ required: true }],
                         initialValue: data?.productId,
                     })(
-                        <Select placeholder="请选择产品" disabled={!!props.data.id} showSearch>
+                        <Select placeholder="请选择产品" disabled={!!props.data.id} showSearch optionFilterProp='label'>
                             {(productList || []).map(item => (
                                 <Select.Option
                                     key={JSON.stringify({ productId: item.id, productName: item.name })}
                                     value={item.id}
+                                    label={item.name}
                                 >
                                     {item.name}
                                 </Select.Option>

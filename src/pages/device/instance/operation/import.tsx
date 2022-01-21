@@ -155,6 +155,7 @@ const Import: React.FC<Props> = props => {
         <Form labelCol={{span: 4}} wrapperCol={{span: 20}}>
           <Form.Item key="productId" label="产品">
             <Select placeholder="请选择产品" defaultValue={props.productId} showSearch
+              optionFilterProp='label'
                     disabled={!!props.productId}
                     onChange={(event: string) => {
                       setProduct(event);
@@ -163,6 +164,7 @@ const Import: React.FC<Props> = props => {
                 <Select.Option
                   key={JSON.stringify({productId: item.id, productName: item.name})}
                   value={item.id}
+                  label={item.name}
                 >
                   {item.name}
                 </Select.Option>
