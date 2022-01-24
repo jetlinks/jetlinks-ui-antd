@@ -268,12 +268,13 @@ const Save: React.FC<Props> = props => {
         <Select
           placeholder="请选择"
           showSearch
+          optionFilterProp='label'
           onChange={(value: string) => {
             onMessageProtocolChange(value);
           }}
         >
           {protocolSupports.map(e => (
-            <Select.Option value={e.id} key={e.id}>
+            <Select.Option value={e.id} key={e.id} label={e.name}>
               {e.name}
             </Select.Option>
           ))}
@@ -297,6 +298,7 @@ const Save: React.FC<Props> = props => {
         <Select
           placeholder="请选择"
           showSearch
+          optionFilterProp='label'
           onChange={(value: string) => {
             if (
               value !== '' &&
@@ -309,7 +311,7 @@ const Save: React.FC<Props> = props => {
           }}
         >
           {protocolTransports.map(e => (
-            <Select.Option value={e.id} key={e.id}>
+            <Select.Option value={e.id} key={e.id} label={e.name}>
               {e.name}
             </Select.Option>
           ))}

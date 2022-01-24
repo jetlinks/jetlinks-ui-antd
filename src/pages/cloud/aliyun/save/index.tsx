@@ -127,7 +127,9 @@ const Save: React.FC<Props> = props => {
                                     initialValue: props.data?.id,
                                     rules: [{ required: false, message: '请选择' }],
                                 })(
-                                    <Select placeholder="请选择" allowClear showSearch>
+                                    <Select placeholder="请选择" allowClear showSearch
+                                    optionFilterProp="value"
+                                    >
                                         {productList && productList.map((i: any, index: number) => {
                                             return <Select.Option key={index} value={i.id}>{i.id}</Select.Option>
                                         })}

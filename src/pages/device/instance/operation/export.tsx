@@ -94,6 +94,7 @@ const Export: React.FC<Props> = props => {
             defaultValue={props.productId}
             mode="multiple"
             showSearch
+            optionFilterProp='label'
             disabled={!!props.productId}
             onChange={(event: string) => {
               setProduct(event);
@@ -114,6 +115,7 @@ const Export: React.FC<Props> = props => {
               <Select.Option
                 key={JSON.stringify({ productId: item.id, productName: item.name })}
                 value={item.id}
+                label={item.name}
               >
                 {item.name}
               </Select.Option>

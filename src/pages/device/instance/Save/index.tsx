@@ -166,6 +166,7 @@ const Save: React.FC<Props> = props => {
             })(
               <Select
                 placeholder="请选择产品" disabled={!!props.data.id} showSearch
+                optionFilterProp='label'
                 onSelect={(value: any, option: any) => {
                   if (option.props.data.orgId && option.props.data.opgId != '') {
                     queryOrganization_children({terms: {id: option.props.data.orgId}});
@@ -179,6 +180,7 @@ const Save: React.FC<Props> = props => {
                     key={JSON.stringify({productId: item.id, productName: item.name})}
                     value={item.id}
                     data={item}
+                    lable={item.name}
                   >
                     {item.name}
                   </Select.Option>
