@@ -83,7 +83,7 @@ const BaseView: React.FC<Props> = (props) => {
                             )}
                         </Form.Item>
                         {
-                            user.tenants && user.tenants.length > 0 && (
+                            user.tenants && user.tenants?.length > 0 && (
                                 <Form.Item label="主租户">
                                     {getFieldDecorator('mainTenant', {
                                         initialValue: user.tenants.find((i: any) => i.mainTenant === true)?.tenantId,

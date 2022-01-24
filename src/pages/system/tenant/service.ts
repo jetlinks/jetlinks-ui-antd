@@ -7,7 +7,7 @@ import { TenantItem } from './data';
 const userDetail = localStorage.getItem('user-detail') || '{}';
 const user = JSON.parse(userDetail);
 class Service extends BaseService<TenantItem> {
-  private tenant1 = (user.tenants as any[]).length > 0;
+  private tenant1 = (user.tenants as any[])?.length > 0;
 
   private tenant = localStorage.getItem('tenants-admin');
 
