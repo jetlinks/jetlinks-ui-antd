@@ -195,8 +195,8 @@ const Detail: React.FC<Props> = props => {
       payload: record.id,
       callback: response => {
         if (response.status === 200) {
-          // basicInfo.state = 1;
-          // setBasicInfo({ ...basicInfo });
+          basicInfo.state = 1;
+          setBasicInfo({ ...basicInfo });
           message.success('操作成功');
           setSpinning(false);
         }

@@ -103,10 +103,10 @@ const Editor: React.FC<Props> = props => {
         deviceData.state = { value: 'online', text: '在线' }
       } else if(payload.value.type === 'notActive'){
         deviceData.state = { value: 'notActive', text: '未启用' }
-      }else{
+      }else if(payload.value.type === 'offline'){
         deviceData.state = {
           value: 'offline',
-          text: '离线',
+          text: '离线'
         }
       }
       if (payload.value.type === 'online') {

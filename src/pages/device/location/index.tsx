@@ -116,7 +116,7 @@ const Location: React.FC<Props> = props => {
     useEffect(() => {
 
       apis.deviceProdcut
-        .queryNoPagin()
+        .queryNoPagin({paging: false})
         .then(response => {
           if (response.status === 200) {
             setProductList(response.result);
@@ -709,7 +709,7 @@ const Location: React.FC<Props> = props => {
                       form.resetFields();
                       resetPathPolygon();
 
-                      //默认取出区域下拉列表中的第一个区域以及下属区域
+                      // 默认取出区域下拉列表中的第一个区域以及下属区域
                       if (regionList.length > 0) {
                         regionList[0].data.geometry.coordinates.map((path: any) => {
                           pathPolygon.push(path[0]);
@@ -724,6 +724,8 @@ const Location: React.FC<Props> = props => {
                         });
                         setPathPolygon([...pathPolygon]);
                       }
+                      onValidateForm().then(() => {
+                      });
                       // 结束
                       handleSearch({pageSize: 10, sorts: {field: 'alarmTime', order: 'desc'}});
                       mapCreated.remove(infoWindow);

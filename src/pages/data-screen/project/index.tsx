@@ -7,7 +7,7 @@ const Screen = () => {
   const token = getAccessToken();
 
   return (
-    <PageHeaderWrapper title="大屏管理">
+    <PageHeaderWrapper title="项目管理">
       <iframe
         style={{width: '100%', height: '800px'}}
         src={`http://117.78.17.29/jetlinks-view/api/implant/v3/project/${token}`}
