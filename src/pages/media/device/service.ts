@@ -112,16 +112,45 @@ class Service extends BaseService<any> {
   public getLocalVideoList = (deviceId: string, channelId: string, data: any) =>
     defer(() =>
       from(request(`/jetlinks/media/device/${deviceId}/${channelId}/records/in-local`,{ method: 'POST', data })).pipe(
-        filter(resp => resp.status === 200),
-        map(resp => resp.result),
+        map(resp => resp),
       ),
     );
 
   public getServerVideoList = (deviceId: string, channelId: string, data: any) =>
     defer(() =>
+      from(request(`/jetlinks/media/device/${deviceId}/${channelId}/records/in-server/files`,{ method: 'POST', data })).pipe(
+        map(resp => resp),
+      ),
+    );
+
+  public getAlreadyServerVideoList = (deviceId: string, channelId: string, data: any) =>
+    defer(() =>
       from(request(`/jetlinks/media/device/${deviceId}/${channelId}/records/in-server`,{ method: 'POST', data })).pipe(
+        map(resp => resp),
+      ),
+    );
+
+  public isVideo = (deviceId: string, channelId: string) =>
+    defer(() =>
+      from(request(`/jetlinks/media/device/${deviceId}/${channelId}/live/recording`,{ method: 'GET' })).pipe(
         filter(resp => resp.status === 200),
         map(resp => resp.result),
+      ),
+    );
+
+  public startVideo = (deviceId: string, channelId: string, data: any) =>
+    defer(() =>
+      from(request(`/jetlinks/media/device/${deviceId}/${channelId}/_record`,{ method: 'POST', data })).pipe(
+        filter(resp => resp.status === 200),
+        map(resp => resp),
+      ),
+    );
+  
+  public endVideo = (deviceId: string, channelId: string, data: any) =>
+    defer(() =>
+      from(request(`/jetlinks/media/device/${deviceId}/${channelId}/_stop-record`,{ method: 'POST', data })).pipe(
+        filter(resp => resp.status === 200),
+        map(resp => resp),
       ),
     );
 }

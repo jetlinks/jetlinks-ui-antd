@@ -10,35 +10,24 @@
             border: 1px solid #000;
             position: relative;
             background-color: #000;
-            .video_lose{
+            .video {
                 position: absolute;
                 top: 5px;
-                right: 55px;
+                right: 0;
+                display: flex;
                 color: white;
                 font-size: 12px;
-                background-color: fade(gray, 80%);
-                padding: 2px 5px;
                 cursor: pointer;
-                border-radius: 2px;
-                max-width: 120px;
-                overflow: hidden;
-                white-space: nowrap;
-                text-overflow: ellipsis;
-            }
-            .video_refresh{
-              position: absolute;
-              top: 5px;
-              right: 5px;
-              color: white;
-              font-size: 12px;
-              background-color: fade(gray, 80%);
-              padding: 2px 5px;
-              cursor: pointer;
-              border-radius: 2px;
-              max-width: 120px;
-              overflow: hidden;
-              white-space: nowrap;
-              text-overflow: ellipsis;
+                .video_btn {
+                    margin: 0 5px;
+                    background-color: fade(gray, 80%);
+                    padding: 2px 5px;
+                    border-radius: 2px;
+                    max-width: 120px;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                }
             }
         }
         .bottom{

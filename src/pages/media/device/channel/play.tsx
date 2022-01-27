@@ -25,6 +25,8 @@ const Play = (props: Props) => {
     const [url, setUrl] = useState('');
     const [bloading, setBloading] = useState(true);
     const [protocol, setProtocol] = useState('');
+    const [video, setVideo] = useState<boolean>(false);
+    const [isStart, setIsStart] = useState<boolean>(true);
     useEffect(() => {
         setPlaying(true);
         service.getPlay(props.data.deviceId, props.data.channelId).subscribe(res => {
@@ -32,6 +34,10 @@ const Play = (props: Props) => {
             setProtocol('mp4');
             setBloading(false);
             setUrlItem(res);
+            service.isVideo(props.data.deviceId, props.data.channelId).subscribe(resp => {
+                setVideo(resp)
+                setIsStart(true)
+            })
         });
     }, []);
 
@@ -86,11 +92,38 @@ const Play = (props: Props) => {
         >
             <div className={styles.player_box}>
                 <div className={styles.player_left}>
-                    <div className={styles.video_box}>
+                    <div className={styles.video_box}
+                    >
                         <live-player muted fluent loading={bloading} autoplay live protocol={protocol} video-url={url}></live-player>
                         {/* <easy-player muted fluent loading={bloading} autoplay live protocol={protocol} video-url={url}></easy-player> */}
-                        <div className={styles.video_lose} onClick={() => {refresh()}}>刷新</div>
-                        <div className={styles.video_refresh} onClick={() => {reload()}}>重置</div>
+                        <div className={styles.video}>
+                            {
+                                video ? <div className={styles.video_btn} onClick={() => {
+                                    if(isStart){
+                                        setIsStart(false)
+                                        service.endVideo(props.data.deviceId, props.data.channelId, {local: false}).subscribe(resp => {
+                                            if(resp.status === 200){
+                                                setVideo(false)
+                                                setIsStart(true)
+                                            }
+                                        })
+                                    }
+                                }}>停止录像</div> :
+                                <div className={styles.video_btn} onClick={() => {
+                                    if(isStart){
+                                        setIsStart(false)
+                                        service.startVideo(props.data.deviceId, props.data.channelId, {local: false}).subscribe(resp => {
+                                            if(resp.status === 200){
+                                                setVideo(true)
+                                                setIsStart(true)
+                                            }
+                                        })
+                                    }
+                                }}>开始录像</div>
+                            }
+                            <div className={styles.video_btn} onClick={() => {refresh()}}>刷新</div>
+                            <div className={styles.video_btn} onClick={() => {reload()}}>重置</div>
+                        </div>
                     </div>
                     <div className={styles.bottom}>
                         <Radio.Group defaultValue="mp4" buttonStyle="solid" onChange={(e) => {

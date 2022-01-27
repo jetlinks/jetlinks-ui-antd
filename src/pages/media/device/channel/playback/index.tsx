@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Calendar, Card, Col, Modal, Radio, Row, Select } from "antd";
+import { Calendar, Card, Col, List, message, Modal, Row, Select, Spin } from "antd";
 import Progress from './Progress'
 import Service from '../../service'
 import moment, { Moment } from "moment";
@@ -12,7 +12,8 @@ interface Props {
 
 const Playback = (props: Props) => {
     const service = new Service('media/channel');
-    // const [protocol, setProtocol] = useState('mp4');
+    const token = localStorage.getItem('x-access-token')
+    const [spinning, setSpinning] = useState<boolean>(true);
     const [type, setType] = useState<'local' | 'server'>('local');
     const [url, setUrl] = useState('');
     const [bloading, setBloading] = useState(true);
@@ -20,51 +21,41 @@ const Playback = (props: Props) => {
     const [dateTime, setDateTime] = useState<Moment>(moment())
     const [playing, setPlaying] = useState<boolean>(false)
     const [filesList, setFilesList] = useState<any[]>([])
-    const [radioValue, setRadioValue] = useState<string>("")
-    // const [time, setTime] = useState<number>(new Date(moment(dateTime).startOf('day').format('YYYY-MM-DD HH:mm:ss')).getTime())
     const getLocalTime = (dateTime: Moment) => {
+        setSpinning(true)
+        const start = moment(dateTime).startOf('day').format('YYYY-MM-DD HH:mm:ss')
+        const end = moment(dateTime).endOf('day').format('YYYY-MM-DD HH:mm:ss')
         service.getLocalVideoList(props.data.deviceId, props.data.channelId, {
-            startTime: moment(dateTime).startOf('day').format('YYYY-MM-DD HH:mm:ss'),
-            endTime: moment(dateTime).endOf('day').format('YYYY-MM-DD HH:mm:ss')
+            startTime: start,
+            endTime: end
         }).subscribe(resp => {
-            setLocalVideoList(resp)
+            setSpinning(false)
+            if (resp.status === 200) {
+                setLocalVideoList(resp.result)
+                service.getAlreadyServerVideoList(props.data.deviceId, props.data.channelId, {
+                    startTime: start,
+                    endTime: end,
+                    includeFiles: false
+                }).subscribe(response => {
+                    if(response.status === 200){
+                        setFilesList(response.result)
+                    }
+                })
+            }
         })
     }
     const getServerTime = (dateTime: Moment) => {
+        setSpinning(true)
         service.getServerVideoList(props.data.deviceId, props.data.channelId, {
             startTime: moment(dateTime).startOf('day').format('YYYY-MM-DD HH:mm:ss'),
             endTime: moment(dateTime).endOf('day').format('YYYY-MM-DD HH:mm:ss'),
             includeFiles: true
         }).subscribe(resp => {
-            setLocalVideoList(resp)
-            const list: any[] = []
-            resp.map(item => {
-                list.splice(0, 0, ...item.files)
-            })
-            let temp = {}
-            for(let i = 0; i < list.length - 1; i++){
-                for(let j = i + 1; j < list.length; j++){
-                    if(list[i].time > list[j].time) {
-                        temp = list[j]
-                        list[j] = list[i]
-                        list[i] = temp
-                    }
-                }
+            setSpinning(false)
+            if (resp.status === 200) {
+                setLocalVideoList(resp.result)
             }
-            setFilesList(list)
         })
-    }
-
-    const radioStyle = {
-        display: 'block',
-        height: '30px',
-        lineHeight: '30px',
-    }
-
-    const onRadioChange = (e: any) => {
-        setRadioValue(e.target.value)
-        setUrl(e.target.value)
-
     }
 
     useEffect(() => {
@@ -76,20 +67,11 @@ const Playback = (props: Props) => {
     }
     const endPlay = () => {
         setPlaying(false)
-        if(type === 'server'){
-            let index: number = filesList.findIndex(item => {
-                return item.mp4 === url
-            })
-            index = index >= 0 && index + 1 < filesList.length ? index + 1 : 0
-            setRadioValue(filesList[index]?.mp4)
-            setUrl(filesList[index]?.mp4)
-            // setTime(filesList[index]?.time)
-        }
     }
 
     useEffect(() => {
         const player = document.getElementById('player')
-        if(player && url !== ''){
+        if (player && url !== '') {
             player.addEventListener('ended', endPlay)
             player.addEventListener('timeupdate', timeupdate)
         }
@@ -118,143 +100,159 @@ const Playback = (props: Props) => {
                     <Progress
                         type={type}
                         dateTime={dateTime}
-                        data={localVideoList} 
+                        data={localVideoList}
                         playing={playing}
-                        // time={time}
                         play={(data: any) => {
                             setBloading(false)
                             setPlaying(false)
-                            if(data){
-                                if(type === 'local'){
-                                    // setTime(data.start)
-                                    setUrl(`/jetlinks/media/device/${props.data.deviceId}/${props.data.channelId}/playback.mp4?:X_Access_Token=${localStorage.getItem('x-access-token')}&startTime=${moment(data.start).format('YYYY-MM-DD HH:mm:ss')}&endTime=${moment(data.end).format('YYYY-MM-DD HH:mm:ss')}&speed=1`)
+                            if (data) {
+                                if (type === 'local') {
+                                    setUrl(`/jetlinks/media/device/${props.data.deviceId}/${props.data.channelId}/playback.mp4?:X_Access_Token=${token}&startTime=${moment(data.start).format('YYYY-MM-DD HH:mm:ss')}&endTime=${moment(data.end).format('YYYY-MM-DD HH:mm:ss')}&speed=1`)
                                 } else {
-                                    // setTime(data.start)
-                                    const list = data.files.filter(item => {
-                                        return data.start >= item.time
-                                    })
-                                    if(list && list.length > 0) {
-                                        setRadioValue(list[list.length - 1]?.mp4)
-                                        setUrl(list[list.length - 1]?.mp4)
-                                    }
+                                    setUrl(`/jetlinks/media/record/${data.id}.mp4?:X_Access_Token=${token}`)
                                 }
                             }
-                    }} />
+                        }} />
                 </div>
                 <div style={{ width: 250 }}>
-                    <Select defaultValue={type} style={{ width: '100%', marginBottom: '30px' }} onChange={(value: 'local' | 'server') => {
-                        setType(value)
-                        setUrl('')
-                        setPlaying(false)
-                        setBloading(true)
-                        if(value === 'server') {
-                            getServerTime(dateTime)
-                        }else {
-                            getLocalTime(dateTime)
-                        }
-                    }}>
-                        <Select.Option value="server">云端</Select.Option>
-                        <Select.Option value="local">本地</Select.Option>
-                    </Select>
-                    <div style={{ width: 250, border: '1px solid #d9d9d9', borderRadius: 4 }}>
-                        <Calendar
-                            fullscreen={false}
-                            headerRender={({ value, type, onChange, onTypeChange }) => {
-                                const start = 0;
-                                const end = 12;
-                                const monthOptions = [];
-
-                                const current = value.clone();
-                                const localeData = value.localeData();
-                                const months = [];
-                                for (let i = 0; i < 12; i++) {
-                                    current.month(i);
-                                    months.push(localeData.monthsShort(current));
-                                }
-
-                                for (let index = start; index < end; index++) {
-                                    monthOptions.push(
-                                        <Select.Option className="month-item" key={`${index}`}>
-                                            {months[index]}
-                                        </Select.Option>,
-                                    );
-                                }
-                                const month = value.month();
-
-                                const year = value.year();
-                                const options = [];
-                                for (let i = year - 10; i < year + 10; i += 1) {
-                                    options.push(
-                                        <Select.Option key={i} value={i} className="year-item">
-                                            {i}
-                                        </Select.Option>,
-                                    );
-                                }
-                                return (
-                                    <div style={{ padding: 10 }}>
-                                        <Row type="flex" justify="space-between">
-                                            <Col>
-                                                <Select
-                                                    size="small"
-                                                    dropdownMatchSelectWidth={false}
-                                                    className="my-year-select"
-                                                    onChange={newYear => {
-                                                        const now = value.clone().year(newYear);
-                                                        onChange(now);
-                                                    }}
-                                                    value={String(year)}
-                                                >
-                                                    {options}
-                                                </Select>
-                                            </Col>
-                                            <Col>
-                                                <Select
-                                                    size="small"
-                                                    dropdownMatchSelectWidth={false}
-                                                    value={String(month)}
-                                                    onChange={selectedMonth => {
-                                                        const newValue = value.clone();
-                                                        newValue.month(parseInt(selectedMonth, 10));
-                                                        onChange(newValue);
-                                                    }}
-                                                >
-                                                    {monthOptions}
-                                                </Select>
-                                            </Col>
-                                        </Row>
-                                    </div>
-                                );
-                            }}
-                            onChange={(date: Moment | undefined) => {
-                                if(date){
-                                    setUrl('')
-                                    setPlaying(false)
-                                    setBloading(true)
-                                    setDateTime(date)
-                                    if(type === 'server') {
-                                        getServerTime(date)
-                                    }else {
-                                        getLocalTime(date)
-                                    }
-                                }
-                            }}
-                        />
-                    </div>
-                    {
-                        type === 'server' && 
-                        <Card style={{marginTop: '10px', maxHeight: 200, overflowY: 'auto', overflowX: 'hidden'}}>
-                            {
-                                filesList.length > 0 ? <Radio.Group onChange={onRadioChange} value={radioValue}>
-                                {
-                                    filesList.map(item => {
-                                        return <Radio key={item.time} style={radioStyle} value={item.mp4}>{moment(item.time).format('HH:mm:ss')}</Radio>
-                                    })
-                                }
-                            </Radio.Group> : <span>暂无数据</span>
+                    <Spin spinning={spinning}>
+                        <Select value={type} style={{ width: '100%', marginBottom: '30px' }} onChange={(value: 'local' | 'server') => {
+                            setType(value)
+                            setUrl('')
+                            setPlaying(false)
+                            setBloading(true)
+                            if (value === 'server') {
+                                getServerTime(dateTime)
+                            } else {
+                                getLocalTime(dateTime)
                             }
-                            
+                        }}>
+                            <Select.Option value="server">云端</Select.Option>
+                            <Select.Option value="local">本地</Select.Option>
+                        </Select>
+                        <div style={{ width: 250, border: '1px solid #d9d9d9', borderRadius: 4 }}>
+                            <Calendar
+                                fullscreen={false}
+                                headerRender={({ value, type, onChange, onTypeChange }) => {
+                                    const start = 0;
+                                    const end = 12;
+                                    const monthOptions = [];
+
+                                    const current = value.clone();
+                                    const localeData = value.localeData();
+                                    const months = [];
+                                    for (let i = 0; i < 12; i++) {
+                                        current.month(i);
+                                        months.push(localeData.monthsShort(current));
+                                    }
+
+                                    for (let index = start; index < end; index++) {
+                                        monthOptions.push(
+                                            <Select.Option className="month-item" key={`${index}`}>
+                                                {months[index]}
+                                            </Select.Option>,
+                                        );
+                                    }
+                                    const month = value.month();
+
+                                    const year = value.year();
+                                    const options = [];
+                                    for (let i = year - 10; i < year + 10; i += 1) {
+                                        options.push(
+                                            <Select.Option key={i} value={i} className="year-item">
+                                                {i}
+                                            </Select.Option>,
+                                        );
+                                    }
+                                    return (
+                                        <div style={{ padding: 10 }}>
+                                            <Row type="flex" justify="space-between">
+                                                <Col>
+                                                    <Select
+                                                        size="small"
+                                                        dropdownMatchSelectWidth={false}
+                                                        className="my-year-select"
+                                                        onChange={newYear => {
+                                                            const now = value.clone().year(newYear);
+                                                            onChange(now);
+                                                        }}
+                                                        value={String(year)}
+                                                    >
+                                                        {options}
+                                                    </Select>
+                                                </Col>
+                                                <Col>
+                                                    <Select
+                                                        size="small"
+                                                        dropdownMatchSelectWidth={false}
+                                                        value={String(month)}
+                                                        onChange={selectedMonth => {
+                                                            const newValue = value.clone();
+                                                            newValue.month(parseInt(selectedMonth, 10));
+                                                            onChange(newValue);
+                                                        }}
+                                                    >
+                                                        {monthOptions}
+                                                    </Select>
+                                                </Col>
+                                            </Row>
+                                        </div>
+                                    );
+                                }}
+                                onChange={(date: Moment | undefined) => {
+                                    if (date) {
+                                        setUrl('')
+                                        setPlaying(false)
+                                        setBloading(true)
+                                        setDateTime(date)
+                                        if (type === 'server') {
+                                            getServerTime(date)
+                                        } else {
+                                            getLocalTime(date)
+                                        }
+                                    }
+                                }}
+                            />
+                        </div>
+                        <Card style={{ marginTop: '10px', maxHeight: 200, overflowY: 'auto', overflowX: 'hidden' }}>
+                            <List
+                                size="small"
+                                bordered={false}
+                                split={false}
+                                dataSource={localVideoList}
+                                renderItem={(item: any) => <List.Item>
+                                    <List.Item.Meta title={type === 'server' ? 
+                                    `${moment(item.mediaStartTime).format('HH:mm:ss')} ～ ${moment(item.mediaEndTime).format('HH:mm:ss')}` : 
+                                    `${moment(item.startTime).format('HH:mm:ss')} ～ ${moment(item.endTime).format('HH:mm:ss')}`
+                                } />
+                                    <div><a onClick={() => {
+                                        if(type === 'local'){
+                                            if(filesList.find(i => item.startTime <= i.streamStartTime && item.endTime >= i.streamEndTime)){
+                                                setType('server')
+                                                getServerTime(dateTime)
+                                                setUrl('')
+                                                setPlaying(false)
+                                                setBloading(true)
+                                            } else {
+                                                service.startVideo(props.data.deviceId, props.data.channelId, {
+                                                    local: false,
+                                                    startTime: item.startTime,
+                                                    endTime: item.endTime,
+                                                    downloadSpeed: 4
+                                                }).subscribe(resp => {
+                                                    if (resp.status === 200) {
+                                                        message.success('操作成功')
+                                                    }
+                                                })
+                                            }
+                                        } else {
+                                            window.open(`/media/record/${item.id}.mp4?:X_Access_Token=${token}&download=true`)
+                                        }
+                                    }}>{type === 'server' ? '下载' : (filesList.find(i => item.startTime <= i.streamStartTime && item.endTime >= i.streamEndTime) ? '查看' : '录像')}</a></div>
+                                </List.Item>}
+                            />
                         </Card>
-                    }
+                    </Spin>
                 </div>
             </div>
         </Modal>

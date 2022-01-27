@@ -38,8 +38,7 @@ const Progress = (props: Props) => {
                 setTime(startT)
             } else if (props.type === 'server') {
                 setList([...props.data])
-                const start = props.data[0]?.files[0]?.time
-                props.play({...props.data[0], start})
+                props.play(props.data[0])
             }
         } else {
             setList([])
@@ -111,22 +110,18 @@ const Progress = (props: Props) => {
                                 style={listStyle(item.startTime, item.endTime)}>
                             </div>}
                             return <div key={`${index}key`} 
-                            // onClick={(event) => {
-                            //     const dt = event.clientX  - getElementLeft()
-                            //     const start = dt / 800 * 24 * 3600000 + startT
-                            //     setTime(start)
-                            //     setTimeAndPosition(dt)
-                            //     props.play({...item, start})
-                            // }} 
-                            style={listStyle(item.streamStartTime, item.streamEndTime)}></div>
+                            onClick={(event) => {
+                                const dt = event.clientX  - getElementLeft()
+                                const start = dt / 800 * 24 * 3600000 + startT
+                                setTime(start)
+                                setTimeAndPosition(dt)
+                                props.play(item)
+                            }} 
+                            style={listStyle(item.mediaStartTime, item.mediaEndTime)}></div>
                     })}
                 </div>
-                {
-                    props.type === 'local' && <>
-                        <div id="btn" className={styles.box}></div>
-                        <div id="time" className={styles.time}>{moment(time).format('HH:mm:ss')}</div>
-                    </>
-                }
+                <div id="btn" className={styles.box}></div>
+                <div id="time" className={styles.time}>{moment(time).format('HH:mm:ss')}</div>
             </div>
         </div>
     )
