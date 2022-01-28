@@ -15,6 +15,7 @@ interface Props {
 
 const Progress = (props: Props) => {
     const [startT, setStartT] = useState<number>(new Date(moment(props.dateTime).startOf('day').format('YYYY-MM-DD HH:mm:ss')).getTime())
+    const endT = new Date(moment(props.dateTime).endOf('day').format('YYYY-MM-DD HH:mm:ss')).getTime()
     const [list, setList] = useState<any[]>([])
     const [time, setTime] = useState<number>(startT)
     const setTimeAndPosition = (ob: number) => {
@@ -48,15 +49,16 @@ const Progress = (props: Props) => {
                         return item.mediaEndTime <= props.localToServer.endTime && item.mediaStartTime >= props.localToServer.startTime
                     })
                     if(list1 && list1.length > 0){
-                        setTime(props.localToServer.startTime)
                         props.getPlayList(list1)
                         props.play(list1[0])
+                        setTime(list1[0].mediaStartTime)
+                        setTime(startT)
                     } else {
                         props.play(undefined)
                         message.error('没有可播放的视频资源')
                     }
                 } else {
-                    setTime(props.server.startTime)
+                    setTime(props.data[0].mediaStartTime)
                     props.play(props.data[0])
                 }
             }
@@ -84,21 +86,21 @@ const Progress = (props: Props) => {
         }
     }, [props.server])
 
-    const getElementLeft = () => {
-        const element = document.getElementById('wrapper')
-        if (element) {
-            let actualLeft = element.offsetLeft;
-            let current = element.offsetParent;
-            while (current !== null) {
-                if (current) {
-                    actualLeft += current?.offsetLeft;
-                    current = current?.offsetParent;
-                }
-            }
-            return actualLeft;
-        }
-        return 0
-    }
+    // const getElementLeft = () => {
+    //     const element = document.getElementById('wrapper')
+    //     if (element) {
+    //         let actualLeft = element.offsetLeft;
+    //         let current = element.offsetParent;
+    //         while (current !== null) {
+    //             if (current) {
+    //                 actualLeft += current?.offsetLeft;
+    //                 current = current?.offsetParent;
+    //             }
+    //         }
+    //         return actualLeft;
+    //     }
+    //     return 0
+    // }
 
     const listStyle = (startTime: number, endTime: number) => {
         const start = startTime - startT > 0 ? startTime - startT : 0
@@ -122,7 +124,9 @@ const Progress = (props: Props) => {
     }, [props.playing]);
 
     useEffect(() => {
-        setTimeAndPosition((time - startT) / 3600000 / 24 * 800)
+        if (time >= startT && time <= endT) {
+            setTimeAndPosition((time - startT) / 3600000 / 24 * 800)
+        }
     }, [time])
 
     return (
@@ -139,22 +143,24 @@ const Progress = (props: Props) => {
                     {
                         list.map((item, index) => {
                             if (props.type === 'local') {
-                                return <div key={`${index}key`} onClick={(event) => {
-                                    const dt = event.clientX - getElementLeft()
-                                    const start = dt / 800 * 24 * 3600000 + startT
-                                    setTime(start)
-                                    props.play({ start, end: item.endTime })
-                                }}
-                                    style={listStyle(item.startTime, item.endTime)}>
+                                return <div key={`${index}key`} 
+                                // onClick={(event) => {
+                                //     const dt = event.clientX - getElementLeft()
+                                //     const start = dt / 800 * 24 * 3600000 + startT
+                                //     setTime(start)
+                                //     props.play({ start, end: item.endTime })
+                                // }}
+                                    style={listStyle(item.startTime, item.endTime)}
+                                    >
                                 </div>
                             }
                             return <div key={`${index}key`}
-                                onClick={(event) => {
-                                    const dt = event.clientX - getElementLeft()
-                                    const start = dt / 800 * 24 * 3600000 + startT
-                                    setTime(start)
-                                    props.play(item)
-                                }}
+                                // onClick={(event) => {
+                                //     const dt = event.clientX - getElementLeft()
+                                //     const start = dt / 800 * 24 * 3600000 + startT
+                                //     setTime(start)
+                                //     props.play(item)
+                                // }}
                                 style={listStyle(item.mediaStartTime, item.mediaEndTime)}></div>
                         })
                     }

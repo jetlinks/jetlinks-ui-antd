@@ -13,6 +13,7 @@ interface Props {
 
 const Playback = (props: Props) => {
     const service = new Service('media/channel');
+    const player = document.getElementById('player')
     const token = localStorage.getItem('x-access-token');
     const [spinning, setSpinning] = useState<boolean>(true);
     const [type, setType] = useState<'local' | 'server'>('local');
@@ -26,6 +27,8 @@ const Playback = (props: Props) => {
     const [localToServer, setLocalToServer] = useState<any>(undefined)
     const [playList, setPlayList] = useState<string[]>([]);
     const [playData, setPlayData] = useState<string | number>('')
+    const [flag, setFlag] = useState<any>({})
+
     const getLocalTime = (dateTime: Moment) => {
         setSpinning(true)
         const start = moment(dateTime).startOf('day').format('YYYY-MM-DD HH:mm:ss')
@@ -44,10 +47,13 @@ const Playback = (props: Props) => {
                 }).subscribe(response => {
                     if (response.status === 200) {
                         const list = {}
+                        const i = {}
                         resp.result.forEach((item: any) => {
                             list[item.startTime] = response.result.find((i: any) => item.startTime <= i.streamStartTime && item.endTime >= i.streamEndTime)
+                            i[item.startTime] = false
                         })
                         setFilesList({ ...list })
+                        setFlag(i)
                     }
                 })
             }
@@ -63,6 +69,11 @@ const Playback = (props: Props) => {
             setSpinning(false)
             if (resp.status === 200) {
                 setLocalVideoList(resp.result)
+                const i = {}
+                resp.result.forEach((item: any) => {
+                    i[item.startTime] = false
+                })
+                setFlag(i)
             }
         })
     }
@@ -86,14 +97,25 @@ const Playback = (props: Props) => {
     }
 
     useEffect(() => {
-        const player = document.getElementById('player')
-        if (player && url !== '') {
-            player.addEventListener('ended', endPlay)
-            player.addEventListener('timeupdate', timeupdate)
-        }
-        return () => {
-            player && player.removeEventListener('ended', endPlay)
-            player && player.removeEventListener('timeupdate', timeupdate)
+        if(player){
+            if (player && url !== '') {
+                player.addEventListener('ended', endPlay)
+                player.addEventListener('timeupdate', timeupdate)
+                player.addEventListener('pause', () => {
+                    flag[playData] = true
+                    setFlag({...flag})
+                    setPlaying(false)
+                })
+                player.addEventListener('play', () => {
+                    flag[playData] = false
+                    setFlag({...flag})
+                    setPlaying(true)
+                })
+            }
+            return () => {
+                player && player.removeEventListener('ended', endPlay)
+                player && player.removeEventListener('timeupdate', timeupdate)
+            }
         }
     }, [url])
 
@@ -229,6 +251,7 @@ const Playback = (props: Props) => {
                                         setBloading(true)
                                         setDateTime(date)
                                         if (type === 'server') {
+                                            setLocalToServer(undefined)
                                             getServerTime(date)
                                         } else {
                                             getLocalTime(date)
@@ -253,10 +276,33 @@ const Playback = (props: Props) => {
                                         }
                                     </span>} />
                                     <div>
-                                        <a style={{ marginRight: '8px' }} onClick={() => {
-                                            setServer(item)
-                                            setLocalToServer(undefined)
-                                        }}><Tooltip title="播放">{((type === 'local' && playData === item.startTime) || type === 'server' && playData === item.id) ? <Icon type="pause-circle" /> : <Icon type="play-circle" />}</Tooltip></a>
+                                        {
+                                            ((type === 'local' && flag[item.startTime]) || (type === 'server' && flag[item.id])) ? <a style={{ marginRight: '8px' }} onClick={() => {
+                                                if(player){
+                                                    if(type === 'local'){
+                                                        flag[item.startTime] = false
+                                                    } else {
+                                                        flag[item.id] = false
+                                                    }
+                                                    setFlag({...flag})
+                                                    player.getVueInstance().play()
+                                                }
+                                            }}><Tooltip title="播放"><Icon type="play-circle" /></Tooltip></a> : (((type === 'local' && playData === item.startTime) || (type === 'server' && playData === item.id)) ? <a style={{ marginRight: '8px' }} onClick={() => {
+                                                if(player){
+                                                    if(type === 'local'){
+                                                        flag[item.startTime] = true
+                                                    } else {
+                                                        flag[item.id] = true
+                                                    }
+                                                    setFlag({...flag})
+                                                    player.getVueInstance().pause()
+                                                }
+                                            }}><Tooltip title="暂停"><Icon type="pause-circle" /></Tooltip></a> : <a style={{ marginRight: '8px' }} onClick={() => {
+                                                setServer(item)
+                                                setLocalToServer(undefined)
+                                            }}><Tooltip title="播放"><Icon type="play-circle" /></Tooltip></a>)
+                                        }
+                                        
                                         <a onClick={() => {
                                             if (type === 'local') { // 查看
                                                 if (filesList[item.startTime]) {
