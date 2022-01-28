@@ -86,21 +86,21 @@ const Progress = (props: Props) => {
         }
     }, [props.server])
 
-    // const getElementLeft = () => {
-    //     const element = document.getElementById('wrapper')
-    //     if (element) {
-    //         let actualLeft = element.offsetLeft;
-    //         let current = element.offsetParent;
-    //         while (current !== null) {
-    //             if (current) {
-    //                 actualLeft += current?.offsetLeft;
-    //                 current = current?.offsetParent;
-    //             }
-    //         }
-    //         return actualLeft;
-    //     }
-    //     return 0
-    // }
+    const getElementLeft = () => {
+        const element = document.getElementById('wrapper')
+        if (element) {
+            let actualLeft = element.offsetLeft;
+            let current = element.offsetParent;
+            while (current !== null) {
+                if (current) {
+                    actualLeft += current?.offsetLeft;
+                    current = current?.offsetParent;
+                }
+            }
+            return actualLeft;
+        }
+        return 0
+    }
 
     const listStyle = (startTime: number, endTime: number) => {
         const start = startTime - startT > 0 ? startTime - startT : 0
@@ -144,12 +144,12 @@ const Progress = (props: Props) => {
                         list.map((item, index) => {
                             if (props.type === 'local') {
                                 return <div key={`${index}key`} 
-                                // onClick={(event) => {
-                                //     const dt = event.clientX - getElementLeft()
-                                //     const start = dt / 800 * 24 * 3600000 + startT
-                                //     setTime(start)
-                                //     props.play({ start, end: item.endTime })
-                                // }}
+                                onClick={(event) => {
+                                    const dt = event.clientX - getElementLeft()
+                                    const start = dt / 800 * 24 * 3600000 + startT
+                                    setTime(start)
+                                    props.play({ start, end: item.endTime })
+                                }}
                                     style={listStyle(item.startTime, item.endTime)}
                                     >
                                 </div>
