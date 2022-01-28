@@ -324,7 +324,7 @@ const Template = () => {
                 'x-component': 'FUpload',
                 'x-decorator': 'FormItem',
                 'x-component-props': {
-                  type: 'file',
+                  type: 'multi',
                 },
               },
               emailEditor: {
