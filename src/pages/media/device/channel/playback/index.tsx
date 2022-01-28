@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Calendar, Card, Col, List, message, Modal, Row, Select, Spin } from "antd";
+import { Calendar, Card, Col, Icon, List, message, Modal, Row, Select, Spin, Tooltip } from "antd";
 import Progress from './Progress'
 import Service from '../../service'
 import moment, { Moment } from "moment";
+import _ from "lodash";
 
 interface Props {
     data: any;
@@ -12,15 +13,19 @@ interface Props {
 
 const Playback = (props: Props) => {
     const service = new Service('media/channel');
-    const token = localStorage.getItem('x-access-token')
+    const token = localStorage.getItem('x-access-token');
     const [spinning, setSpinning] = useState<boolean>(true);
     const [type, setType] = useState<'local' | 'server'>('local');
     const [url, setUrl] = useState('');
     const [bloading, setBloading] = useState(true);
-    const [localVideoList, setLocalVideoList] = useState([])
-    const [dateTime, setDateTime] = useState<Moment>(moment())
-    const [playing, setPlaying] = useState<boolean>(false)
-    const [filesList, setFilesList] = useState<any[]>([])
+    const [localVideoList, setLocalVideoList] = useState([]);
+    const [dateTime, setDateTime] = useState<Moment>(moment());
+    const [playing, setPlaying] = useState<boolean>(false);
+    const [filesList, setFilesList] = useState<any>({});
+    const [server, setServer] = useState<any>({})
+    const [localToServer, setLocalToServer] = useState<any>(undefined)
+    const [playList, setPlayList] = useState<string[]>([]);
+    const [playData, setPlayData] = useState<string | number>('')
     const getLocalTime = (dateTime: Moment) => {
         setSpinning(true)
         const start = moment(dateTime).startOf('day').format('YYYY-MM-DD HH:mm:ss')
@@ -37,8 +42,12 @@ const Playback = (props: Props) => {
                     endTime: end,
                     includeFiles: false
                 }).subscribe(response => {
-                    if(response.status === 200){
-                        setFilesList(response.result)
+                    if (response.status === 200) {
+                        const list = {}
+                        resp.result.forEach((item: any) => {
+                            list[item.startTime] = response.result.find((i: any) => item.startTime <= i.streamStartTime && item.endTime >= i.streamEndTime)
+                        })
+                        setFilesList({ ...list })
                     }
                 })
             }
@@ -61,6 +70,13 @@ const Playback = (props: Props) => {
     useEffect(() => {
         getLocalTime(dateTime)
     }, []);
+
+    const listStyle = (item: any) => {
+        if ((type === 'local' && playList.includes(item.startTime)) || (type === 'server' && playList.includes(item.id))) {
+            return 'yellow'
+        }
+        return 'white'
+    }
 
     const timeupdate = () => {
         setPlaying(true)
@@ -102,13 +118,20 @@ const Playback = (props: Props) => {
                         dateTime={dateTime}
                         data={localVideoList}
                         playing={playing}
+                        server={server}
+                        localToServer={localToServer}
+                        getPlayList={(list: any) => {
+                            setPlayList(_.map(list, 'id'))
+                        }}
                         play={(data: any) => {
                             setBloading(false)
                             setPlaying(false)
                             if (data) {
                                 if (type === 'local') {
+                                    setPlayData(data.start)
                                     setUrl(`/jetlinks/media/device/${props.data.deviceId}/${props.data.channelId}/playback.mp4?:X_Access_Token=${token}&startTime=${moment(data.start).format('YYYY-MM-DD HH:mm:ss')}&endTime=${moment(data.end).format('YYYY-MM-DD HH:mm:ss')}&speed=1`)
                                 } else {
+                                    setPlayData(data.id)
                                     setUrl(`/jetlinks/media/record/${data.id}.mp4?:X_Access_Token=${token}`)
                                 }
                             }
@@ -221,34 +244,64 @@ const Playback = (props: Props) => {
                                 split={false}
                                 dataSource={localVideoList}
                                 renderItem={(item: any) => <List.Item>
-                                    <List.Item.Meta title={type === 'server' ? 
-                                    `${moment(item.mediaStartTime).format('HH:mm:ss')} ～ ${moment(item.mediaEndTime).format('HH:mm:ss')}` : 
-                                    `${moment(item.startTime).format('HH:mm:ss')} ～ ${moment(item.endTime).format('HH:mm:ss')}`
-                                } />
-                                    <div><a onClick={() => {
-                                        if(type === 'local'){
-                                            if(filesList.find(i => item.startTime <= i.streamStartTime && item.endTime >= i.streamEndTime)){
-                                                setType('server')
-                                                getServerTime(dateTime)
-                                                setUrl('')
-                                                setPlaying(false)
-                                                setBloading(true)
-                                            } else {
-                                                service.startVideo(props.data.deviceId, props.data.channelId, {
-                                                    local: false,
-                                                    startTime: item.startTime,
-                                                    endTime: item.endTime,
-                                                    downloadSpeed: 4
-                                                }).subscribe(resp => {
-                                                    if (resp.status === 200) {
-                                                        message.success('操作成功')
-                                                    }
-                                                })
-                                            }
-                                        } else {
-                                            window.open(`/media/record/${item.id}.mp4?:X_Access_Token=${token}&download=true`)
+                                    <List.Item.Meta title={<span style={{ background: listStyle(item) }}>
+                                        {
+                                            type === 'server' ?
+                                                `${moment(item.mediaStartTime).format('HH:mm:ss')} ～ ${moment(item.mediaEndTime).format('HH:mm:ss')}` :
+                                                `${moment(item.startTime).format('HH:mm:ss')} ～ ${moment(item.endTime).format('HH:mm:ss')}`
+
                                         }
-                                    }}>{type === 'server' ? '下载' : (filesList.find(i => item.startTime <= i.streamStartTime && item.endTime >= i.streamEndTime) ? '查看' : '录像')}</a></div>
+                                    </span>} />
+                                    <div>
+                                        <a style={{ marginRight: '8px' }} onClick={() => {
+                                            setServer(item)
+                                            setLocalToServer(undefined)
+                                        }}><Tooltip title="播放">{((type === 'local' && playData === item.startTime) || type === 'server' && playData === item.id) ? <Icon type="pause-circle" /> : <Icon type="play-circle" />}</Tooltip></a>
+                                        <a onClick={() => {
+                                            if (type === 'local') { // 查看
+                                                if (filesList[item.startTime]) {
+                                                    setLocalToServer(item)
+                                                    setUrl('')
+                                                    setPlaying(false)
+                                                    setBloading(true)
+                                                    getServerTime(dateTime)
+                                                    setType('server')
+                                                } else {
+                                                    service.startVideo(props.data.deviceId, props.data.channelId, {
+                                                        local: false,
+                                                        startTime: item.startTime,
+                                                        endTime: item.endTime,
+                                                        downloadSpeed: 4
+                                                    }).subscribe(resp => {
+                                                        if (resp.status === 200) {
+                                                            message.success('操作成功')
+                                                            filesList[item.startTime] = {}
+                                                            setFilesList({ ...filesList })
+                                                        }
+                                                    })
+                                                }
+                                            } else {
+                                                const formElement = document.createElement('form');
+                                                formElement.style.display = 'display:none;';
+                                                formElement.method = 'get';
+                                                formElement.action = `/jetlinks/media/record/${item.id}.mp4?:X_Access_Token=${token}&download=true`;
+                                                const params = {
+                                                    download: true,
+                                                    ':X_Access_Token': token
+                                                }
+                                                Object.keys(params).forEach((key: string) => {
+                                                    const inputElement = document.createElement('input');
+                                                    inputElement.type = 'hidden';
+                                                    inputElement.name = key;
+                                                    inputElement.value = params[key];
+                                                    formElement.appendChild(inputElement);
+                                                });
+                                                document.body.appendChild(formElement);
+                                                formElement.submit();
+                                                document.body.removeChild(formElement);
+                                            }
+                                        }}>{type === 'server' ? <Tooltip title="下载录像文件"><Icon type="download" /></Tooltip>
+                                            : (!!filesList[item.startTime] ? <Tooltip title="查看"><Icon type="eye" /></Tooltip> : <Tooltip title="下载到云端"><Icon type="cloud-download" /></Tooltip>)}</a></div>
                                 </List.Item>}
                             />
                         </Card>
