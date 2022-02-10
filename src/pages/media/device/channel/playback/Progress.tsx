@@ -52,9 +52,9 @@ const Progress = (props: Props) => {
                         props.getPlayList(list1)
                         props.play(list1[0])
                         setTime(list1[0].mediaStartTime)
-                        setTime(startT)
                     } else {
                         props.play(undefined)
+                        setTime(props.localToServer.startTime)
                         message.error('没有可播放的视频资源')
                     }
                 } else {
