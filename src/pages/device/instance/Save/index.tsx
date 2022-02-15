@@ -165,8 +165,12 @@ const Save: React.FC<Props> = props => {
               initialValue: props.data.productId,
             })(
               <Select
-                placeholder="请选择产品" disabled={!!props.data.id} showSearch
+                placeholder="请选择产品" disabled={!!props.data.id} 
+                showSearch
                 optionFilterProp='label'
+                filterOption={(input, option) =>
+                  option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                }
                 onSelect={(value: any, option: any) => {
                   if (option.props.data.orgId && option.props.data.opgId != '') {
                     queryOrganization_children({terms: {id: option.props.data.orgId}});
