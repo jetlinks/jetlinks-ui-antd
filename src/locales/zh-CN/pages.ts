@@ -27,6 +27,7 @@ export default {
   'pages.data.option.detail': '详情',
   'pages.data.option.download': '下载',
   'pages.data.option.record': '通知记录',
+  'pages.data.option.save': '保存',
   'pages.searchTable.new': '新建',
   'pages.searchTable.titleStatus': '状态',
   'pages.searchTable.titleStatus.all': '全部',

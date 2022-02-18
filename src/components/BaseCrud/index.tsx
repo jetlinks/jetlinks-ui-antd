@@ -1,5 +1,5 @@
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { Button, Dropdown } from 'antd';
+import { Button, Card, Divider, Dropdown } from 'antd';
 import ProTable from '@jetlinks/pro-table';
 import type { ProColumns, ActionType, RequestData } from '@jetlinks/pro-table';
 
@@ -12,8 +12,11 @@ import { CurdModel } from '@/components/BaseCrud/model';
 import type { ISchemaFieldProps } from '@formily/react/lib/types';
 import type { ModalProps } from 'antd/lib/modal/Modal';
 import type { TablePaginationConfig } from 'antd/lib/table/interface';
-import type { SearchConfig } from '@jetlinks/pro-table/lib/components/Form/FormRender';
 import type { Form } from '@formily/core';
+import SearchComponent from '@/components/SearchComponent';
+import { useRef, useState } from 'react';
+import type { ProFormInstance } from '@ant-design/pro-form';
+import type { SearchConfig } from '@ant-design/pro-form/lib/components/Submitter';
 
 export type Option = {
   model: 'edit' | 'preview' | 'add';
@@ -41,11 +44,13 @@ export type Props<T> = {
   search?: false | SearchConfig;
   formEffect?: () => void; // 与form参数 只有一个生效
   form?: Form;
+  /** @name 用于存储搜索历史记录的标记*/
+  moduleName: string; //
 };
 
 const BaseCrud = <T extends Record<string, any>>(props: Props<T>) => {
   const intl = useIntl();
-
+  const ref = useRef<ProFormInstance>();
   const {
     columns,
     service,
@@ -62,11 +67,25 @@ const BaseCrud = <T extends Record<string, any>>(props: Props<T>) => {
     search,
     formEffect,
     form,
+    moduleName,
   } = props;
 
+  const [param, setParam] = useState({});
   return (
     <>
+      <Card>
+        <SearchComponent<T>
+          field={columns}
+          onSearch={async (data) => {
+            setParam({ terms: data });
+          }}
+          target={moduleName}
+        />
+      </Card>
+      <Divider />
       <ProTable<T>
+        params={param}
+        formRef={ref}
         columns={columns}
         actionRef={actionRef}
         options={{ fullScreen: true }}
