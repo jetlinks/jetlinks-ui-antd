@@ -37,7 +37,7 @@ const server2Ui = (source: SearchTermsServer): SearchTermsUI => ({
 interface Props<T> {
   field: ProColumns<T>[];
   onSearch: (params: any) => void;
-  target: string;
+  target?: string;
 }
 
 const termType = [

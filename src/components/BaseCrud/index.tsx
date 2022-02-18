@@ -45,7 +45,7 @@ export type Props<T> = {
   formEffect?: () => void; // 与form参数 只有一个生效
   form?: Form;
   /** @name 用于存储搜索历史记录的标记*/
-  moduleName: string; //
+  moduleName?: string; //
 };
 
 const BaseCrud = <T extends Record<string, any>>(props: Props<T>) => {
