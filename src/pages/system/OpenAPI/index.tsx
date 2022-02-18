@@ -63,29 +63,29 @@ const OpenAPI: React.FC = observer(() => {
       valueType: 'select',
       hideInForm: true,
       onFilter: true,
-      valueEnum: [
-        {
+      valueEnum: {
+        default: {
           text: intl.formatMessage({
             id: 'pages.searchTable.titleStatus.all',
             defaultMessage: '全部',
           }),
           status: 'Default',
         },
-        {
+        '1': {
           text: intl.formatMessage({
             id: 'pages.searchTable.titleStatus.normal',
             defaultMessage: '正常',
           }),
           status: '1',
         },
-        {
+        '0': {
           text: intl.formatMessage({
             id: 'pages.searchTable.titleStatus.disable',
             defaultMessage: '禁用',
           }),
           status: '0',
         },
-      ],
+      },
     },
     {
       title: intl.formatMessage({
