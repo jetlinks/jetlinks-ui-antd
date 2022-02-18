@@ -224,7 +224,7 @@ const SearchComponent = <T extends Record<string, any>>({ field, onSearch, targe
             <span style={{ marginRight: '5px' }}>{item.name}</span>
             <Popconfirm
               onConfirm={async () => {
-                const response = await service.history.remove(target, item.key);
+                const response = await service.history.remove(`${target}-search`, item.key);
                 if (response.status === 200) {
                   message.success('操作成功');
                   const temp = history.filter((h: any) => h.key !== item.key);
