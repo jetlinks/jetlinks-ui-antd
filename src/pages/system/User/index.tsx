@@ -18,6 +18,7 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import type { ISchema } from '@formily/json-schema';
 import Authorization from '@/components/Authorization';
 import autzModel from '@/components/Authorization/autz';
+// import SearchComponent from '@/components/SearchComponent';
 
 export const service = new BaseService<UserItem>('user');
 const User = observer(() => {
@@ -288,16 +289,22 @@ const User = observer(() => {
     },
   };
 
+  intl.formatMessage({
+    id: 'pages.system.user',
+    defaultMessage: '默认值',
+  });
   return (
     <PageContainer>
       <BaseCrud<UserItem>
         actionRef={actionRef}
         columns={columns}
+        search={false}
         service={service}
         title={intl.formatMessage({
           id: 'pages.system.user',
           defaultMessage: '用户管理',
         })}
+        moduleName="user"
         schema={schema}
       />
       <Drawer

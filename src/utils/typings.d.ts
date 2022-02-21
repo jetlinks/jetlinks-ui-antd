@@ -20,3 +20,8 @@ type State = {
   value: string;
   text: string;
 };
+
+type EnumData = {
+  label: string;
+  value: string;
+};
