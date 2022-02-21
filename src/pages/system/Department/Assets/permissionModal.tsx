@@ -78,8 +78,12 @@ export default (props: PerModalProps) => {
         type: 'array',
         title: '资产权限',
         'x-decorator': 'FormItem',
-        'x-component': 'Checkbox',
-        'x-options': [],
+        'x-component': 'Checkbox.Group',
+        enum: [
+          { label: '查看', value: 'read' },
+          { label: '编辑', value: 'save' },
+          { label: '删除', value: 'delete' },
+        ],
       },
     },
   };

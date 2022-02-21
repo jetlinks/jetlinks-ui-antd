@@ -84,14 +84,14 @@
       {
         hideInMenu: true,
         path: '/system/department/:id/assets',
-        name: 'Assets',
+        name: 'assets',
         icon: 'smile',
         component: './system/Department/Assets',
       },
       {
         hideInMenu: true,
         path: '/system/department/:id/user',
-        name: 'Member',
+        name: 'member',
         icon: 'smile',
         component: './system/Department/Member',
       },

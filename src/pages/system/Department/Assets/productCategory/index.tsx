@@ -2,7 +2,7 @@
 import ProTable from '@jetlinks/pro-table';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { Button, Popconfirm, Tooltip } from 'antd';
+import { Button, Popconfirm, Tooltip, message } from 'antd';
 import { useRef } from 'react';
 import { useParams } from 'umi';
 import { observer } from '@formily/react';
@@ -14,22 +14,44 @@ import Bind from './bind';
 
 export const service = new Service<ProductCategoryItem>('assets');
 
+export const getTableKeys = (rows: ProductCategoryItem[]): string[] => {
+  let keys: string[] = [];
+  rows.forEach((item) => {
+    keys.push(item.id);
+    if (item.children && item.children.length) {
+      const childrenKeys = getTableKeys(item.children);
+      keys = [...keys, ...childrenKeys];
+    }
+  });
+  return keys;
+};
+
 export default observer(() => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
-
   const param = useParams<{ id: string }>();
 
+  /**
+   * 解除资产绑定
+   */
   const handleUnBind = () => {
-    // service.unBind({})
-    // service.handleUser(param.id, Models.unBindUsers, 'unbind').subscribe({
-    //   next: () => message.success('操作成功'),
-    //   error: () => message.error('操作失败'),
-    //   complete: () => {
-    //     Models.unBindUsers = [];
-    //     actionRef.current?.reload();
-    //   },
-    // });
+    service
+      .unBind('deviceCategory', [
+        {
+          targetType: 'org',
+          targetId: param.id,
+          assetType: 'deviceCategory',
+          assetIdList: Models.unBindKeys,
+        },
+      ])
+      .subscribe({
+        next: () => message.success('操作成功'),
+        error: () => message.error('操作失败'),
+        complete: () => {
+          Models.unBindKeys = [];
+          actionRef.current?.reload();
+        },
+      });
   };
 
   const singleUnBind = (key: string) => {
@@ -41,7 +63,7 @@ export default observer(() => {
     {
       dataIndex: 'id',
       title: 'ID',
-      width: 48,
+      width: 220,
     },
     {
       dataIndex: 'key',
@@ -105,6 +127,7 @@ export default observer(() => {
 
   const closeModal = () => {
     Models.bind = false;
+    Models.bindKeys = [];
   };
 
   return (
@@ -136,9 +159,18 @@ export default observer(() => {
             },
           ],
         }}
-        request={(params) => {
-          console.log(params);
-          return service.queryProductCategoryList(params);
+        request={async (params) => {
+          const response = await service.queryProductCategoryList(params);
+          return {
+            code: response.message,
+            result: {
+              data: response.result,
+              pageIndex: 0,
+              pageSize: 0,
+              total: 0,
+            },
+            status: response.status,
+          };
         }}
         postData={(data) => {
           console.log(data);
@@ -160,8 +192,8 @@ export default observer(() => {
             key="bind"
           >
             {intl.formatMessage({
-              id: 'pages.system.role.option.bindUser',
-              defaultMessage: '分配资产',
+              id: 'pages.data.option.assets',
+              defaultMessage: '资产分配',
             })}
           </Button>,
           <Popconfirm

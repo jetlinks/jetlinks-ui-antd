@@ -28,6 +28,7 @@ export default {
   'pages.data.option.download': '下载',
   'pages.data.option.record': '通知记录',
   'pages.data.option.save': '保存',
+  'pages.data.option.assets': '资产分配',
   'pages.searchTable.new': '新建',
   'pages.searchTable.titleStatus': '状态',
   'pages.searchTable.titleStatus.all': '全部',
@@ -121,6 +122,8 @@ export default {
   'pages.system.org.option.bindUser': '绑定用户',
   'pages.system.org.option.permission': '权限分配',
   'pages.system.org.option.add': '添加下级',
+  // 系统设置-部门管理
+  'pages.system.department.user': '用户',
   // 系统设置-第三方平台
   'pages.system.openApi': '第三方平台',
   'pages.system.openApi.username': '用户名',

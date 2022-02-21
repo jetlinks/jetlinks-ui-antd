@@ -30,7 +30,7 @@ export type ProductItem = {
 };
 
 // 产品分类
-export type ProductCategoryItem = { key: string } & ProductItem;
+export type ProductCategoryItem = { key: string; children: ProductCategoryItem[] } & ProductItem;
 
 // 设备
 export type DeviceItem = {

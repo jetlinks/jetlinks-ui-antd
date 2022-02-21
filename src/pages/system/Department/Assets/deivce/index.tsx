@@ -2,16 +2,30 @@
 import ProTable from '@jetlinks/pro-table';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { Button, Popconfirm, Tooltip } from 'antd';
+import { Button, message, Popconfirm, Tooltip, Badge } from 'antd';
 import { useRef } from 'react';
 import { useParams } from 'umi';
 import { observer } from '@formily/react';
-import type { ProductItem } from '@/pages/system/Department/typings';
+import type { DeviceItem } from '@/pages/system/Department/typings';
 import { DisconnectOutlined, PlusOutlined } from '@ant-design/icons';
-import Models from '@/pages/system/Department/Assets/productCategory/model';
+import Models from './model';
 import Service from '@/pages/system/Department/Assets/service';
+import Bind from './bind';
 
-export const service = new Service<ProductItem>();
+export const service = new Service<DeviceItem>();
+
+type DeviceBadgeProps = {
+  type: string;
+  text: string;
+};
+export const DeviceBadge = (props: DeviceBadgeProps) => {
+  const STATUS = {
+    notActive: 'processing',
+    offline: 'error',
+    online: 'success',
+  };
+  return <Badge status={STATUS[props.type]} text={props.text} />;
+};
 
 export default observer(() => {
   const intl = useIntl();
@@ -19,15 +33,27 @@ export default observer(() => {
 
   const param = useParams<{ id: string }>();
 
+  /**
+   * 解除资产绑定
+   */
   const handleUnBind = () => {
-    // service.handleUser(param.id, Models.unBindUsers, 'unbind').subscribe({
-    //   next: () => message.success('操作成功'),
-    //   error: () => message.error('操作失败'),
-    //   complete: () => {
-    //     Models.unBindUsers = [];
-    //     actionRef.current?.reload();
-    //   },
-    // });
+    service
+      .unBind('device', [
+        {
+          targetType: 'org',
+          targetId: param.id,
+          assetType: 'device',
+          assetIdList: Models.unBindKeys,
+        },
+      ])
+      .subscribe({
+        next: () => message.success('操作成功'),
+        error: () => message.error('操作失败'),
+        complete: () => {
+          Models.unBindKeys = [];
+          actionRef.current?.reload();
+        },
+      });
   };
 
   const singleUnBind = (key: string) => {
@@ -35,17 +61,17 @@ export default observer(() => {
     handleUnBind();
   };
 
-  const columns: ProColumns<ProductItem>[] = [
+  const columns: ProColumns<DeviceItem>[] = [
     {
-      dataIndex: 'index',
-      valueType: 'indexBorder',
-      width: 48,
+      dataIndex: 'id',
+      title: 'ID',
+      width: 220,
     },
     {
       dataIndex: 'name',
       title: intl.formatMessage({
-        id: 'pages.system.name',
-        defaultMessage: '姓名',
+        id: 'pages.table.name',
+        defaultMessage: '名称',
       }),
       search: {
         transform: (value) => ({ name$LIKE: value }),
@@ -53,11 +79,21 @@ export default observer(() => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.system.tenant.memberManagement.administrators',
-        defaultMessage: '管理员',
+        id: 'pages.device.firmware.productName',
+        defaultMessage: '所属产品',
       }),
-      dataIndex: 'adminMember',
-      renderText: (text) => (text ? '是' : '否'),
+      dataIndex: 'configuration',
+      render: (_, row) => {
+        return row.productName;
+      },
+      search: false,
+    },
+    {
+      title: intl.formatMessage({
+        id: 'pages.device.instance.registrationTime',
+        defaultMessage: '注册时间',
+      }),
+      dataIndex: 'registryTime',
       search: false,
     },
     {
@@ -66,7 +102,7 @@ export default observer(() => {
         defaultMessage: '状态',
       }),
       dataIndex: 'state',
-      renderText: (text) => text.text,
+      render: (_, row) => <DeviceBadge type={row.state.value} text={row.state.text} />,
       search: false,
     },
     {
@@ -103,63 +139,78 @@ export default observer(() => {
     },
   ];
 
+  const closeModal = () => {
+    Models.bind = false;
+    Models.bindKeys = [];
+  };
+
   return (
-    <ProTable<ProductItem>
-      actionRef={actionRef}
-      columns={columns}
-      // schema={schema}
-      rowKey="id"
-      defaultParams={{
-        id: {
-          termType: 'dim-assets',
-          value: {
-            assetType: 'device',
-            targets: [
-              {
-                type: 'org',
-                id: param.id,
+    <>
+      <Bind
+        visible={Models.bind}
+        onCancel={closeModal}
+        reload={() => actionRef.current?.reload()}
+      />
+      <ProTable<DeviceItem>
+        actionRef={actionRef}
+        columns={columns}
+        // schema={schema}
+        rowKey="id"
+        params={{
+          terms: [
+            {
+              column: 'id',
+              termType: 'dim-assets',
+              value: {
+                assetType: 'device',
+                targets: [
+                  {
+                    type: 'org',
+                    id: param.id,
+                  },
+                ],
               },
-            ],
+            },
+          ],
+        }}
+        request={(params) => service.queryDeviceList(params)}
+        rowSelection={{
+          selectedRowKeys: Models.unBindKeys,
+          onChange: (selectedRowKeys, selectedRows) => {
+            Models.unBindKeys = selectedRows.map((item) => item.id);
           },
-        },
-      }}
-      request={(params) => service.queryDeviceList(params)}
-      rowSelection={{
-        selectedRowKeys: Models.unBindKeys,
-        onChange: (selectedRowKeys, selectedRows) => {
-          Models.unBindKeys = selectedRows.map((item) => item.id);
-        },
-      }}
-      toolBarRender={() => [
-        <Button
-          onClick={() => {
-            Models.bind = true;
-          }}
-          icon={<PlusOutlined />}
-          type="primary"
-          key="bind"
-        >
-          {intl.formatMessage({
-            id: 'pages.system.role.option.bindUser',
-            defaultMessage: '分配资产',
-          })}
-        </Button>,
-        <Popconfirm
-          title={intl.formatMessage({
-            id: 'pages.system.role.option.unBindUser',
-            defaultMessage: '是否批量解除绑定',
-          })}
-          key="unBind"
-          onConfirm={handleUnBind}
-        >
-          <Button icon={<DisconnectOutlined />} key="bind">
+        }}
+        toolBarRender={() => [
+          <Button
+            onClick={() => {
+              Models.bind = true;
+            }}
+            icon={<PlusOutlined />}
+            type="primary"
+            key="bind"
+          >
             {intl.formatMessage({
-              id: 'pages.system.role.option.unBindUser',
-              defaultMessage: '批量解绑',
+              id: 'pages.data.option.assets',
+              defaultMessage: '资产分配',
             })}
-          </Button>
-        </Popconfirm>,
-      ]}
-    />
+          </Button>,
+          <Popconfirm
+            title={intl.formatMessage({
+              id: 'pages.system.role.option.unBindUser',
+              defaultMessage: '是否批量解除绑定',
+            })}
+            key="unBind"
+            onConfirm={handleUnBind}
+          >
+            <Button icon={<DisconnectOutlined />} key="bind">
+              {intl.formatMessage({
+                id: 'pages.system.role.option.unBindUser',
+                defaultMessage: '批量解绑',
+              })}
+            </Button>
+          </Popconfirm>,
+        ]}
+      />
+    </>
   );
 });

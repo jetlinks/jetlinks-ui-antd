@@ -5,7 +5,14 @@ import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { useRef } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { Button, message, Popconfirm, Tooltip } from 'antd';
-import { EditOutlined, PlusOutlined } from '@ant-design/icons';
+import {
+  EditOutlined,
+  PlusOutlined,
+  PlusCircleOutlined,
+  TeamOutlined,
+  MedicineBoxOutlined,
+  DeleteOutlined,
+} from '@ant-design/icons';
 import Service from '@/pages/system/Department/service';
 import type { ISchema } from '@formily/json-schema';
 import type { DepartmentItem } from '@/pages/system/Department/typings';
@@ -103,27 +110,27 @@ export default observer(() => {
               defaultMessage: '新增子部门',
             })}
           >
-            <EditOutlined />
+            <PlusCircleOutlined />
           </Tooltip>
         </a>,
         <Link key="assets" to={`/system/department/${record.id}/assets`}>
           <Tooltip
             title={intl.formatMessage({
-              id: 'pages.data.option.edit',
+              id: 'pages.data.option.assets',
               defaultMessage: '资产分配',
             })}
           >
-            <EditOutlined />
+            <MedicineBoxOutlined />
           </Tooltip>
         </Link>,
         <Link key="user" to={`/system/department/${record.id}/user`}>
           <Tooltip
             title={intl.formatMessage({
-              id: 'pages.data.option.edit',
+              id: 'pages.system.department.user',
               defaultMessage: '用户',
             })}
           >
-            <EditOutlined />
+            <TeamOutlined />
           </Tooltip>
         </Link>,
         <Popconfirm
@@ -143,7 +150,7 @@ export default observer(() => {
             })}
           >
             <a key="delete">
-              <EditOutlined />
+              <DeleteOutlined />
             </a>
           </Tooltip>
         </Popconfirm>,

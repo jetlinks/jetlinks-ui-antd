@@ -1,14 +1,15 @@
 // 资产-产品分类-绑定
 import type { ProColumns, ActionType } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { service } from './index';
+import { DeviceBadge, service } from './index';
 import { Modal } from 'antd';
 import { useParams } from 'umi';
 import Models from './model';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { observer } from '@formily/react';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import type { ProductCategoryItem } from '@/pages/system/Department/typings';
+import type { DeviceItem } from '@/pages/system/Department/typings';
+import PermissionModal from '@/pages/system/Department/Assets/permissionModal';
 
 interface Props {
   reload: () => void;
@@ -20,45 +21,67 @@ const Bind = observer((props: Props) => {
   const intl = useIntl();
   const param = useParams<{ id: string }>();
   const actionRef = useRef<ActionType>();
-  const columns: ProColumns<ProductCategoryItem>[] = [
+  const [perVisible, setPerVisible] = useState(false);
+
+  const columns: ProColumns<DeviceItem>[] = [
+    {
+      dataIndex: 'id',
+      title: 'ID',
+      width: 220,
+    },
     {
       dataIndex: 'name',
       title: intl.formatMessage({
-        id: 'pages.system.name',
-        defaultMessage: '姓名',
+        id: 'pages.table.name',
+        defaultMessage: '名称',
       }),
       search: {
         transform: (value) => ({ name$LIKE: value }),
       },
     },
     {
-      dataIndex: 'username',
       title: intl.formatMessage({
-        id: 'pages.system.username',
-        defaultMessage: '用户名',
+        id: 'pages.device.firmware.productName',
+        defaultMessage: '所属产品',
       }),
-      search: {
-        transform: (value) => ({ username$LIKE: value }),
+      dataIndex: 'configuration',
+      render: (_, row) => {
+        return row.productName;
       },
+      search: false,
+    },
+    {
+      title: intl.formatMessage({
+        id: 'pages.device.instance.registrationTime',
+        defaultMessage: '注册时间',
+      }),
+      dataIndex: 'registryTime',
+      search: false,
+    },
+    {
+      title: intl.formatMessage({
+        id: 'pages.searchTable.titleStatus',
+        defaultMessage: '状态',
+      }),
+      dataIndex: 'state',
+      render: (_, row) => <DeviceBadge type={row.state.value} text={row.state.text} />,
+      search: false,
     },
   ];
 
   const handleBind = () => {
-    if (Models.bindUsers.length) {
-      // service.handleUser(param.id, Models.bindUsers, 'bind').subscribe({
-      //   next: () => message.success('操作成功'),
-      //   error: () => message.error('操作失败'),
-      //   complete: () => {
-      //     Models.bindUsers = [];
-      //     actionRef.current?.reload();
-      //     props.reload();
-      //     props.onCancel()
-      //   },
-      // });
+    if (Models.bindKeys.length) {
+      setPerVisible(true);
     } else {
       props.onCancel();
     }
   };
+
+  useEffect(() => {
+    if (props.visible) {
+      actionRef.current?.reload();
+    }
+  }, [props.visible]);
 
   return (
     <Modal
@@ -68,7 +91,19 @@ const Bind = observer((props: Props) => {
       width={990}
       title="绑定"
     >
-      <ProTable<ProductCategoryItem>
+      <PermissionModal
+        visible={perVisible}
+        type="device"
+        bindKeys={Models.bindKeys}
+        onCancel={(type) => {
+          setPerVisible(false);
+          if (type) {
+            props.reload();
+            props.onCancel();
+          }
+        }}
+      />
+      <ProTable<DeviceItem>
         actionRef={actionRef}
         columns={columns}
         rowKey="id"
@@ -76,17 +111,28 @@ const Bind = observer((props: Props) => {
           pageSize: 5,
         }}
         rowSelection={{
-          selectedRowKeys: Models.bindUsers.map((item) => item.userId),
+          selectedRowKeys: Models.bindKeys,
           onChange: (selectedRowKeys, selectedRows) => {
-            Models.bindUsers = selectedRows.map((item) => ({
-              name: item.name,
-              userId: item.id,
-            }));
+            Models.bindKeys = selectedRows.map((item) => item.id);
           },
         }}
-        request={(params) => service.queryProductCategoryList(params)}
-        defaultParams={{
-          'id$tenant-user$not': param.id,
+        request={(params) => service.queryDeviceList(params)}
+        params={{
+          terms: [
+            {
+              column: 'id',
+              termType: 'dim-assets$not',
+              value: {
+                assetType: 'device',
+                targets: [
+                  {
+                    type: 'org',
+                    id: param.id,
+                  },
+                ],
+              },
+            },
+          ],
         }}
       />
     </Modal>

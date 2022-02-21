@@ -1,11 +1,11 @@
 // 资产-产品分类-绑定
 import type { ProColumns, ActionType } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { service } from './index';
+import { service, getTableKeys } from './index';
 import { Modal } from 'antd';
 import { useParams } from 'umi';
 import Models from './model';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { observer } from '@formily/react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import type { ProductCategoryItem } from '@/pages/system/Department/typings';
@@ -22,11 +22,12 @@ const Bind = observer((props: Props) => {
   const param = useParams<{ id: string }>();
   const actionRef = useRef<ActionType>();
   const [perVisible, setPerVisible] = useState(false);
+
   const columns: ProColumns<ProductCategoryItem>[] = [
     {
       dataIndex: 'id',
       title: 'ID',
-      width: 48,
+      width: 220,
     },
     {
       dataIndex: 'key',
@@ -50,29 +51,17 @@ const Bind = observer((props: Props) => {
 
   const handleBind = () => {
     if (Models.bindKeys.length) {
-      // service.bind('deviceCategory', [{
-      //   "targetType": "org",
-      //   "targetId": param.id,
-      //   "assetType": "deviceCategory",
-      //   "assetIdList": Models.bindKeys,
-      //   "permission": [
-      //     "read"
-      //   ]
-      // }]).subscribe({
-      //   next: () => message.success('操作成功'),
-      //   error: () => message.error('操作失败'),
-      //   complete: () => {
-      //     Models.bindKeys = [];
-      //     actionRef.current?.reload();
-      //     props.reload();
-      //     props.onCancel()
-      //   },
-      // });
       setPerVisible(true);
     } else {
       props.onCancel();
     }
   };
+
+  useEffect(() => {
+    if (props.visible) {
+      actionRef.current?.reload();
+    }
+  }, [props.visible]);
 
   return (
     <Modal
@@ -98,13 +87,11 @@ const Bind = observer((props: Props) => {
         actionRef={actionRef}
         columns={columns}
         rowKey="id"
-        pagination={{
-          pageSize: 5,
-        }}
+        pagination={false}
         rowSelection={{
           selectedRowKeys: Models.bindKeys,
           onChange: (selectedRowKeys, selectedRows) => {
-            Models.bindKeys = selectedRows.map((item) => item.id);
+            Models.bindKeys = getTableKeys(selectedRows);
           },
         }}
         params={{
@@ -124,7 +111,19 @@ const Bind = observer((props: Props) => {
             },
           ],
         }}
-        request={(params) => service.queryProductCategoryList(params)}
+        request={async (params) => {
+          const response = await service.queryProductCategoryList(params);
+          return {
+            code: response.message,
+            result: {
+              data: response.result,
+              pageIndex: 0,
+              pageSize: 0,
+              total: 0,
+            },
+            status: response.status,
+          };
+        }}
       />
     </Modal>
   );

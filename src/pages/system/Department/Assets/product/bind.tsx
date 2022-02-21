@@ -5,10 +5,11 @@ import { service } from './index';
 import { Modal } from 'antd';
 import { useParams } from 'umi';
 import Models from './model';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { observer } from '@formily/react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import type { ProductCategoryItem } from '@/pages/system/Department/typings';
+import PermissionModal from '@/pages/system/Department/Assets/permissionModal';
 
 interface Props {
   reload: () => void;
@@ -20,11 +21,18 @@ const Bind = observer((props: Props) => {
   const intl = useIntl();
   const param = useParams<{ id: string }>();
   const actionRef = useRef<ActionType>();
+  const [perVisible, setPerVisible] = useState(false);
+
   const columns: ProColumns<ProductCategoryItem>[] = [
+    {
+      dataIndex: 'id',
+      title: 'ID',
+      width: 220,
+    },
     {
       dataIndex: 'name',
       title: intl.formatMessage({
-        id: 'pages.system.name',
+        id: 'pages.table.name',
         defaultMessage: '姓名',
       }),
       search: {
@@ -34,7 +42,7 @@ const Bind = observer((props: Props) => {
     {
       dataIndex: 'username',
       title: intl.formatMessage({
-        id: 'pages.system.username',
+        id: 'pages.table.describe',
         defaultMessage: '用户名',
       }),
       search: {
@@ -44,21 +52,18 @@ const Bind = observer((props: Props) => {
   ];
 
   const handleBind = () => {
-    if (Models.bindUsers.length) {
-      // service.handleUser(param.id, Models.bindUsers, 'bind').subscribe({
-      //   next: () => message.success('操作成功'),
-      //   error: () => message.error('操作失败'),
-      //   complete: () => {
-      //     Models.bindUsers = [];
-      //     actionRef.current?.reload();
-      //     props.reload();
-      //     props.onCancel()
-      //   },
-      // });
+    if (Models.bindKeys.length) {
+      setPerVisible(true);
     } else {
       props.onCancel();
     }
   };
+
+  useEffect(() => {
+    if (props.visible) {
+      actionRef.current?.reload();
+    }
+  }, [props.visible]);
 
   return (
     <Modal
@@ -68,6 +73,18 @@ const Bind = observer((props: Props) => {
       width={990}
       title="绑定"
     >
+      <PermissionModal
+        visible={perVisible}
+        type="product"
+        bindKeys={Models.bindKeys}
+        onCancel={(type) => {
+          setPerVisible(false);
+          if (type) {
+            props.reload();
+            props.onCancel();
+          }
+        }}
+      />
       <ProTable<ProductCategoryItem>
         actionRef={actionRef}
         columns={columns}
@@ -76,17 +93,28 @@ const Bind = observer((props: Props) => {
           pageSize: 5,
         }}
         rowSelection={{
-          selectedRowKeys: Models.bindUsers.map((item) => item.userId),
+          selectedRowKeys: Models.bindKeys,
           onChange: (selectedRowKeys, selectedRows) => {
-            Models.bindUsers = selectedRows.map((item) => ({
-              name: item.name,
-              userId: item.id,
-            }));
+            Models.bindKeys = selectedRows.map((item) => item.id);
           },
         }}
-        request={(params) => service.queryProductCategoryList(params)}
-        defaultParams={{
-          'id$tenant-user$not': param.id,
+        request={(params) => service.queryProductList(params)}
+        params={{
+          terms: [
+            {
+              column: 'id',
+              termType: 'dim-assets$not',
+              value: {
+                assetType: 'product',
+                targets: [
+                  {
+                    type: 'org',
+                    id: param.id,
+                  },
+                ],
+              },
+            },
+          ],
         }}
       />
     </Modal>

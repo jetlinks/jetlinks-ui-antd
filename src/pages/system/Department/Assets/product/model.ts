@@ -3,14 +3,14 @@ import { model } from '@formily/reactive';
 
 type ModelType = {
   bind: boolean;
-  bindUsers: { name: string; userId: string }[];
-  unBindUsers: string[];
+  bindKeys: string[];
+  unBindKeys: string[];
 };
 
 const Models = model<ModelType>({
   bind: false,
-  bindUsers: [],
-  unBindUsers: [],
+  bindKeys: [],
+  unBindKeys: [],
 });
 
 export default Models;

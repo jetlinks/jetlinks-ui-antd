@@ -2,14 +2,15 @@
 import ProTable from '@jetlinks/pro-table';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { Button, Popconfirm, Tooltip } from 'antd';
+import { Button, message, Popconfirm, Tooltip } from 'antd';
 import { useRef } from 'react';
 import { useParams } from 'umi';
 import { observer } from '@formily/react';
 import type { ProductItem } from '@/pages/system/Department/typings';
 import { DisconnectOutlined, PlusOutlined } from '@ant-design/icons';
-import Models from '@/pages/system/Department/Assets/productCategory/model';
 import Service from '@/pages/system/Department/Assets/service';
+import Models from './model';
+import Bind from './bind';
 
 export const service = new Service<ProductItem>();
 
@@ -19,15 +20,27 @@ export default observer(() => {
 
   const param = useParams<{ id: string }>();
 
+  /**
+   * 解除资产绑定
+   */
   const handleUnBind = () => {
-    // service.handleUser(param.id, Models.unBindUsers, 'unbind').subscribe({
-    //   next: () => message.success('操作成功'),
-    //   error: () => message.error('操作失败'),
-    //   complete: () => {
-    //     Models.unBindUsers = [];
-    //     actionRef.current?.reload();
-    //   },
-    // });
+    service
+      .unBind('product', [
+        {
+          targetType: 'org',
+          targetId: param.id,
+          assetType: 'product',
+          assetIdList: Models.unBindKeys,
+        },
+      ])
+      .subscribe({
+        next: () => message.success('操作成功'),
+        error: () => message.error('操作失败'),
+        complete: () => {
+          Models.unBindKeys = [];
+          actionRef.current?.reload();
+        },
+      });
   };
 
   const singleUnBind = (key: string) => {
@@ -37,15 +50,15 @@ export default observer(() => {
 
   const columns: ProColumns<ProductItem>[] = [
     {
-      dataIndex: 'index',
-      valueType: 'indexBorder',
-      width: 48,
+      dataIndex: 'id',
+      title: 'ID',
+      width: 220,
     },
     {
       dataIndex: 'name',
       title: intl.formatMessage({
         id: 'pages.system.name',
-        defaultMessage: '姓名',
+        defaultMessage: '名称',
       }),
       search: {
         transform: (value) => ({ name$LIKE: value }),
@@ -58,15 +71,6 @@ export default observer(() => {
       }),
       dataIndex: 'adminMember',
       renderText: (text) => (text ? '是' : '否'),
-      search: false,
-    },
-    {
-      title: intl.formatMessage({
-        id: 'pages.searchTable.titleStatus',
-        defaultMessage: '状态',
-      }),
-      dataIndex: 'state',
-      renderText: (text) => text.text,
       search: false,
     },
     {
@@ -103,63 +107,78 @@ export default observer(() => {
     },
   ];
 
+  const closeModal = () => {
+    Models.bind = false;
+    Models.bindKeys = [];
+  };
+
   return (
-    <ProTable<ProductItem>
-      actionRef={actionRef}
-      columns={columns}
-      // schema={schema}
-      rowKey="id"
-      defaultParams={{
-        id: {
-          termType: 'dim-assets',
-          value: {
-            assetType: 'product',
-            targets: [
-              {
-                type: 'org',
-                id: param.id,
+    <>
+      <Bind
+        visible={Models.bind}
+        onCancel={closeModal}
+        reload={() => actionRef.current?.reload()}
+      />
+      <ProTable<ProductItem>
+        actionRef={actionRef}
+        columns={columns}
+        // schema={schema}
+        rowKey="id"
+        params={{
+          terms: [
+            {
+              column: 'id',
+              termType: 'dim-assets',
+              value: {
+                assetType: 'product',
+                targets: [
+                  {
+                    type: 'org',
+                    id: param.id,
+                  },
+                ],
               },
-            ],
+            },
+          ],
+        }}
+        request={(params) => service.queryProductList(params)}
+        rowSelection={{
+          selectedRowKeys: Models.unBindKeys,
+          onChange: (selectedRowKeys, selectedRows) => {
+            Models.unBindKeys = selectedRows.map((item) => item.id);
           },
-        },
-      }}
-      request={(params) => service.queryProductList(params)}
-      rowSelection={{
-        selectedRowKeys: Models.unBindKeys,
-        onChange: (selectedRowKeys, selectedRows) => {
-          Models.unBindKeys = selectedRows.map((item) => item.id);
-        },
-      }}
-      toolBarRender={() => [
-        <Button
-          onClick={() => {
-            Models.bind = true;
-          }}
-          icon={<PlusOutlined />}
-          type="primary"
-          key="bind"
-        >
-          {intl.formatMessage({
-            id: 'pages.system.role.option.bindUser',
-            defaultMessage: '分配资产',
-          })}
-        </Button>,
-        <Popconfirm
-          title={intl.formatMessage({
-            id: 'pages.system.role.option.unBindUser',
-            defaultMessage: '是否批量解除绑定',
-          })}
-          key="unBind"
-          onConfirm={handleUnBind}
-        >
-          <Button icon={<DisconnectOutlined />} key="bind">
+        }}
+        toolBarRender={() => [
+          <Button
+            onClick={() => {
+              Models.bind = true;
+            }}
+            icon={<PlusOutlined />}
+            type="primary"
+            key="bind"
+          >
             {intl.formatMessage({
-              id: 'pages.system.role.option.unBindUser',
-              defaultMessage: '批量解绑',
+              id: 'pages.data.option.assets',
+              defaultMessage: '资产分配',
             })}
-          </Button>
-        </Popconfirm>,
-      ]}
-    />
+          </Button>,
+          <Popconfirm
+            title={intl.formatMessage({
+              id: 'pages.system.role.option.unBindUser',
+              defaultMessage: '是否批量解除绑定',
+            })}
+            key="unBind"
+            onConfirm={handleUnBind}
+          >
+            <Button icon={<DisconnectOutlined />} key="bind">
+              {intl.formatMessage({
+                id: 'pages.system.role.option.unBindUser',
+                defaultMessage: '批量解绑',
+              })}
+            </Button>
+          </Popconfirm>,
+        ]}
+      />
+    </>
   );
 });
