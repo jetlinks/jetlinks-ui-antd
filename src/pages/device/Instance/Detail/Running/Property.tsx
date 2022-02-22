@@ -7,6 +7,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { service } from '@/pages/device/Instance';
 import { useParams } from 'umi';
 import PropertyLog from '@/pages/device/Instance/Detail/MetadataLog/Property';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 interface Props {
   data: Partial<PropertyMetadata> & ObserverMetadata;
@@ -20,6 +21,7 @@ type Payload = {
   property: string;
 } & Record<string, unknown>;
 const Property = (props: Props) => {
+  const intl = useIntl();
   const { data } = props;
   const [list, setList] = useState<Record<string, unknown>[]>([]);
   const cacheList = useRef<Record<string, unknown>[]>(list);
@@ -84,7 +86,12 @@ const Property = (props: Props) => {
     const resp = await service.getProperty(params.id, data.id);
     setLoading(false);
     if (resp.status === 200) {
-      message.success('操作成功');
+      message.success(
+        intl.formatMessage({
+          id: 'pages.data.option.success',
+          defaultMessage: '操作成功！',
+        }),
+      );
     }
   };
 
@@ -93,7 +100,12 @@ const Property = (props: Props) => {
   const handleSetPropertyValue = async () => {
     const resp = await service.setProperty(params.id, { [`${data.id}`]: propertyValue });
     if (resp.status === 200) {
-      message.success('操作成功');
+      message.success(
+        intl.formatMessage({
+          id: 'pages.data.option.success',
+          defaultMessage: '操作成功！',
+        }),
+      );
     }
   };
 
@@ -109,9 +121,17 @@ const Property = (props: Props) => {
                 justifyContent: 'space-between',
               }}
             >
-              <span>设置属性</span>
+              <span>
+                {intl.formatMessage({
+                  id: 'pages.device.instance.running.setting.properties',
+                  defaultMessage: '设置属性',
+                })}
+              </span>
               <Button size="small" type="primary" onClick={handleSetPropertyValue}>
-                设置
+                {intl.formatMessage({
+                  id: 'pages.device.instance.running.setting',
+                  defaultMessage: '设置',
+                })}
               </Button>
             </div>
           }
@@ -119,7 +139,13 @@ const Property = (props: Props) => {
             <Input value={propertyValue} onChange={(e) => setPropertyValue(e.target.value)} />
           }
         >
-          <Tooltip placement="top" title="设置属性至设备">
+          <Tooltip
+            placement="top"
+            title={intl.formatMessage({
+              id: 'pages.device.instance.running.setProperties.device',
+              defaultMessage: '设置属性至设备',
+            })}
+          >
             <EditOutlined />
           </Tooltip>
           <Divider type="vertical" />
@@ -135,11 +161,23 @@ const Property = (props: Props) => {
       extra={
         <>
           {renderSetProperty()}
-          <Tooltip placement="top" title="获取最新属性值">
+          <Tooltip
+            placement="top"
+            title={intl.formatMessage({
+              id: 'pages.device.instance.running.get.latestProperty',
+              defaultMessage: '获取最新属性值',
+            })}
+          >
             <SyncOutlined onClick={refreshProperty} />
           </Tooltip>
           <Divider type="vertical" />
-          <Tooltip placement="top" title="详情">
+          <Tooltip
+            placement="top"
+            title={intl.formatMessage({
+              id: 'pages.data.option.detail',
+              defaultMessage: '详情',
+            })}
+          >
             <UnorderedListOutlined
               onClick={() => {
                 setVisible(true);

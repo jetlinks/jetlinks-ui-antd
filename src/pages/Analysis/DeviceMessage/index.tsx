@@ -68,7 +68,10 @@ const DeviceMessageChart = observer(() => {
             of(group$.key),
             group$.pipe(
               map((item) => ({
-                type: '消息量',
+                type: intl.formatMessage({
+                  id: 'pages.analysis.deviceMessage.messageVolume',
+                  defaultMessage: '消息量',
+                }),
                 year: item.data.timeString,
                 value: item.data.value,
               })),

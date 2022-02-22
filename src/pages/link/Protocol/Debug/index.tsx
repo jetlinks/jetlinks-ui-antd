@@ -8,6 +8,7 @@ import FMonacoEditor from '@/components/FMonacoEditor';
 import type { ProtocolItem } from '@/pages/link/Protocol/typings';
 import { service } from '@/pages/link/Protocol';
 import { useEffect, useState } from 'react';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 interface Props {
   close: () => void;
@@ -15,6 +16,7 @@ interface Props {
 }
 
 const Debug = (props: Props) => {
+  const intl = useIntl();
   const { close, data } = props;
 
   const [transport, setTransport] = useState<{ label: string; value: string }[]>([]);
@@ -103,13 +105,28 @@ const Debug = (props: Props) => {
             'x-component': 'Radio.Group',
             'x-decorator': 'FormItem',
             enum: [
-              { label: '编码', value: 'encode' },
-              { label: '解码', value: 'decode' },
+              {
+                label: intl.formatMessage({
+                  id: 'pages.link.protocol.debug.encode',
+                  defaultMessage: '编码',
+                }),
+                value: 'encode',
+              },
+              {
+                label: intl.formatMessage({
+                  id: 'pages.link.protocol.debug.decode',
+                  defaultMessage: '解码',
+                }),
+                value: 'decode',
+              },
             ],
             default: 'encode',
           },
           transport: {
-            title: '链接类型',
+            title: intl.formatMessage({
+              id: 'pages.link.protocol.debug.linkType',
+              defaultMessage: '链接类型',
+            }),
             'x-component': 'Select',
             'x-decorator': 'FormItem',
             'x-component-props': {
@@ -121,7 +138,10 @@ const Debug = (props: Props) => {
             enum: transport,
           },
           payloadType: {
-            title: '消息类型',
+            title: intl.formatMessage({
+              id: 'pages.link.protocol.debug.messageType',
+              defaultMessage: '消息类型',
+            }),
             'x-component': 'Select',
             'x-decorator': 'FormItem',
             'x-decorator-props': {
@@ -140,7 +160,10 @@ const Debug = (props: Props) => {
         },
       },
       payload: {
-        title: '输入',
+        title: intl.formatMessage({
+          id: 'pages.link.protocol.debug.input',
+          defaultMessage: '输入',
+        }),
         'x-decorator': 'FormItem',
         'x-component': 'FMonacoEditor',
         'x-component-props': {
@@ -156,7 +179,10 @@ const Debug = (props: Props) => {
         'x-reactions': '{{setDefaultCode}}',
       },
       output: {
-        title: '输出',
+        title: intl.formatMessage({
+          id: 'pages.link.protocol.debug.output',
+          defaultMessage: '输出',
+        }),
         'x-decorator': 'FormItem',
         'x-component': 'FMonacoEditor',
         'x-component-props': {
@@ -169,13 +195,19 @@ const Debug = (props: Props) => {
 
   return (
     <Modal
-      title="调试"
+      title={intl.formatMessage({
+        id: 'pages.link.protocol.debug.debug',
+        defaultMessage: '调试',
+      })}
       width="60vw"
       onCancel={() => close()}
       visible={true}
       footer={
         <Button type="primary" onClick={debug}>
-          执行
+          {intl.formatMessage({
+            id: 'pages.link.protocol.debug.execute',
+            defaultMessage: '执行',
+          })}
         </Button>
       }
     >

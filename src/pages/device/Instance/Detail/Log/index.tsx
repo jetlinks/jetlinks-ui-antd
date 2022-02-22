@@ -32,13 +32,19 @@ const Log = () => {
       width: 48,
     },
     {
-      title: '类型',
+      title: intl.formatMessage({
+        id: 'pages.device.instance.log.type',
+        defaultMessage: '类型',
+      }),
       dataIndex: 'type',
       renderText: (text) => text.text,
       valueEnum: type,
     },
     {
-      title: '时间',
+      title: intl.formatMessage({
+        id: 'pages.device.instance.log.time',
+        defaultMessage: '时间',
+      }),
       dataIndex: 'timestamp',
       defaultSortOrder: 'descend',
       valueType: 'dateTime',
@@ -46,7 +52,10 @@ const Log = () => {
       hideInSearch: true,
     },
     {
-      title: '时间',
+      title: intl.formatMessage({
+        id: 'pages.device.instance.log.time',
+        defaultMessage: '时间',
+      }),
       dataIndex: 'timestamp',
       defaultSortOrder: 'descend',
       valueType: 'dateTimeRange',
@@ -76,9 +85,22 @@ const Log = () => {
         return [
           <a
             key="editable"
-            onClick={() => Modal.info({ title: '详细信息', content: <pre>{content}</pre> })}
+            onClick={() =>
+              Modal.info({
+                title: intl.formatMessage({
+                  id: 'pages.device.instance.log.details',
+                  defaultMessage: '详细信息',
+                }),
+                content: <pre>{content}</pre>,
+              })
+            }
           >
-            <Tooltip title="查看">
+            <Tooltip
+              title={intl.formatMessage({
+                id: 'pages.data.option.detail',
+                defaultMessage: '查看',
+              })}
+            >
               <EyeOutlined />
             </Tooltip>
           </a>,

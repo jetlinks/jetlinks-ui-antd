@@ -32,24 +32,39 @@ const Task = observer(() => {
     },
     {
       dataIndex: 'name',
-      title: '任务名称',
+      title: intl.formatMessage({
+        id: 'pages.device.components.firmware.detail.task.name',
+        defaultMessage: '任务名称',
+      }),
     },
     {
       dataIndex: 'mode',
-      title: '升级方式',
+      title: intl.formatMessage({
+        id: 'pages.device.components.firmware.detail.task.UpgradeMethod',
+        defaultMessage: '升级方式',
+      }),
       renderText: (text) => text.text,
     },
     {
       dataIndex: 'timeoutSeconds',
-      title: '超时时间(秒)',
+      title: intl.formatMessage({
+        id: 'pages.device.components.firmware.detail.task.timeoutTime',
+        defaultMessage: '超时时间(秒)',
+      }),
     },
     {
       dataIndex: 'createTime',
       valueType: 'dateTime',
-      title: '创建时间',
+      title: intl.formatMessage({
+        id: 'pages.device.components.firmware.detail.task.createTime',
+        defaultMessage: '创建时间',
+      }),
     },
     {
-      title: '操作',
+      title: intl.formatMessage({
+        id: 'pages.data.option',
+        defaultMessage: '操作',
+      }),
       valueType: 'option',
       align: 'center',
       render: (text, record) => [
@@ -59,7 +74,12 @@ const Task = observer(() => {
             state.task = true;
           }}
         >
-          <Tooltip title="查看">
+          <Tooltip
+            title={intl.formatMessage({
+              id: 'pages.device.components.firmware.detail.task.look',
+              defaultMessage: '查看',
+            })}
+          >
             <EyeOutlined />
           </Tooltip>
         </a>,
@@ -70,7 +90,12 @@ const Task = observer(() => {
             state.taskItem = record;
           }}
         >
-          <Tooltip title="下发任务">
+          <Tooltip
+            title={intl.formatMessage({
+              id: 'pages.device.components.firmware.detail.task.issueTask',
+              defaultMessage: '下发任务',
+            })}
+          >
             <CloudDownloadOutlined />
           </Tooltip>
         </a>,
@@ -81,12 +106,22 @@ const Task = observer(() => {
             state.taskItem = record;
           }}
         >
-          <Tooltip title="任务详情">
+          <Tooltip
+            title={intl.formatMessage({
+              id: 'pages.device.components.firmware.detail.task.taskDetails',
+              defaultMessage: '任务详情',
+            })}
+          >
             <PieChartOutlined />
           </Tooltip>
         </a>,
         <a key="remove">
-          <Tooltip title="删除">
+          <Tooltip
+            title={intl.formatMessage({
+              id: 'pages.data.option.remove',
+              defaultMessage: '删除',
+            })}
+          >
             <DeleteOutlined />
           </Tooltip>
         </a>,

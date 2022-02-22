@@ -4,6 +4,7 @@ import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import { Form, FormItem, Input, NumberPicker, Select } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 interface Props {
   visible: boolean;
@@ -11,6 +12,7 @@ interface Props {
 }
 
 const Save = (props: Props) => {
+  const intl = useIntl();
   const form = createForm({
     validateFirst: true,
   });
@@ -28,26 +30,50 @@ const Save = (props: Props) => {
     type: 'object',
     properties: {
       name: {
-        title: '名称',
+        title: intl.formatMessage({
+          id: 'pages.device.components.firmware.detail.task.save.name',
+          defaultMessage: '名称',
+        }),
         'x-component': 'Input',
         'x-decorator': 'FormItem',
       },
       timeoutSeconds: {
-        title: '超时时间',
+        title: intl.formatMessage({
+          id: 'pages.device.components.firmware.detail.task.save.TimeoutTime',
+          defaultMessage: '超时时间',
+        }),
         'x-component': 'NumberPicker',
         'x-decorator': 'FormItem',
       },
       mode: {
-        title: '推送方式',
+        title: intl.formatMessage({
+          id: 'pages.device.components.firmware.detail.task.save.pushWay',
+          defaultMessage: '推送方式',
+        }),
         'x-component': 'Select',
         'x-decorator': 'FormItem',
         enum: [
-          { label: '平台推送', value: 'push' },
-          { label: '设备拉取', value: 'pull' },
+          {
+            label: intl.formatMessage({
+              id: 'pages.device.components.firmware.detail.task.save.platformPush',
+              defaultMessage: '平台推送',
+            }),
+            value: 'push',
+          },
+          {
+            label: intl.formatMessage({
+              id: 'pages.device.components.firmware.detail.task.save.devicePull',
+              defaultMessage: '设备拉取',
+            }),
+            value: 'pull',
+          },
         ],
       },
       description: {
-        title: '名称',
+        title: intl.formatMessage({
+          id: 'pages.device.components.firmware.detail.task.save.name',
+          defaultMessage: '名称',
+        }),
         'x-component': 'Input.TextArea',
         'x-decorator': 'FormItem',
       },
@@ -61,9 +87,19 @@ const Save = (props: Props) => {
     values.firmwareId = state.current?.id;
     const resp = await service.saveTask(values);
     if (resp.status === 200) {
-      message.success('操作成功');
+      message.success(
+        intl.formatMessage({
+          id: 'pages.data.option.success',
+          defaultMessage: '操作成功！',
+        }),
+      );
     } else {
-      message.error('操作失败');
+      message.error(
+        intl.formatMessage({
+          id: 'pages.data.option.error',
+          defaultMessage: '操作失败',
+        }),
+      );
     }
     props.close();
   };
@@ -73,7 +109,10 @@ const Save = (props: Props) => {
       width="40vw"
       visible={props.visible}
       onCancel={() => props.close()}
-      title="新建任务"
+      title={intl.formatMessage({
+        id: 'pages.device.components.firmware.detail.task.save.createTask',
+        defaultMessage: '新建任务',
+      })}
     >
       <Form form={form} labelCol={5} wrapperCol={16}>
         <SchemaField schema={schema} />

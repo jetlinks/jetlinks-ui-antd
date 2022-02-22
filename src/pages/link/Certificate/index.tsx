@@ -102,12 +102,18 @@ const Certificate = () => {
     type: 'object',
     properties: {
       name: {
-        title: '名称',
+        title: intl.formatMessage({
+          id: 'pages.link.certificate.name',
+          defaultMessage: '名称',
+        }),
         'x-component': 'Input',
         'x-decorator': 'FormItem',
       },
       instance: {
-        title: '类型',
+        title: intl.formatMessage({
+          id: 'pages.link.certificate.type',
+          defaultMessage: '类型',
+        }),
         'x-component': 'Select',
         'x-decorator': 'FormItem',
         default: 'PEM',
@@ -121,7 +127,10 @@ const Certificate = () => {
         type: 'object',
         properties: {
           '{url:keystoreBase64}': {
-            title: '密钥库',
+            title: intl.formatMessage({
+              id: 'pages.link.certificate.keystore',
+              defaultMessage: '密钥库',
+            }),
             'x-component': 'FUpload',
             'x-decorator': 'FormItem',
             'x-component-props': {
@@ -129,7 +138,10 @@ const Certificate = () => {
             },
           },
           keystorePwd: {
-            title: '密钥库密码',
+            title: intl.formatMessage({
+              id: 'pages.link.certificate.keystore.password',
+              defaultMessage: '密钥库密码',
+            }),
             'x-component': 'Password',
             'x-decorator': 'FormItem',
             'x-visible': false,
@@ -148,7 +160,10 @@ const Certificate = () => {
             },
           },
           '{url:trustKeyStoreBase64}': {
-            title: '信任库',
+            title: intl.formatMessage({
+              id: 'pages.link.certificate.truststore',
+              defaultMessage: '信任库',
+            }),
             'x-component': 'FUpload',
             'x-decorator': 'FormItem',
             'x-component-props': {
@@ -159,7 +174,10 @@ const Certificate = () => {
             },
           },
           trustKeyStorePwd: {
-            title: '信任库密码',
+            title: intl.formatMessage({
+              id: 'pages.link.certificate.truststore.password',
+              defaultMessage: '信任库密码',
+            }),
             'x-visible': false,
             'x-decorator': 'FormItem',
             'x-component': 'Password',
@@ -175,7 +193,10 @@ const Certificate = () => {
         },
       },
       description: {
-        title: '描述',
+        title: intl.formatMessage({
+          id: 'pages.link.certificate.describe',
+          defaultMessage: '描述',
+        }),
         'x-component': 'Input.TextArea',
         'x-decorator': 'FormItem',
       },

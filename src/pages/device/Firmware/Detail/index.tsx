@@ -1,5 +1,5 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { history, useParams } from 'umi';
+import { history, useIntl, useParams } from 'umi';
 import { Descriptions } from 'antd';
 import { service, state } from '@/pages/device/Firmware';
 import History from './History';
@@ -9,6 +9,7 @@ import Task from '@/pages/device/Firmware/Detail/Task';
 import { observer } from '@formily/react';
 
 const Detail = observer(() => {
+  const intl = useIntl();
   const [data, setData] = useState<FirmwareItem | undefined>(state.current);
   const param = useParams<{ id: string }>();
   useEffect(() => {
@@ -24,12 +25,18 @@ const Detail = observer(() => {
   const list = [
     {
       key: 'task',
-      tab: '升级任务',
+      tab: intl.formatMessage({
+        id: 'pages.device.components.firmware.detail.upgradeTask',
+        defaultMessage: '升级任务',
+      }),
       component: <Task />,
     },
     {
       key: 'history',
-      tab: '升级记录',
+      tab: intl.formatMessage({
+        id: 'pages.device.components.firmware.detail.upgradeRecord',
+        defaultMessage: '升级记录',
+      }),
       component: <History />,
     },
   ];
@@ -45,11 +52,41 @@ const Detail = observer(() => {
           <Descriptions size="small" column={3}>
             {[
               { key: 'ID', value: data?.id },
-              { key: '所属产品', value: data?.productName },
-              { key: '版本号', value: data?.version },
-              { key: '版本序号', value: data?.versionOrder },
-              { key: '签名方式', value: data?.signMethod },
-              { key: '签名', value: data?.sign },
+              {
+                key: intl.formatMessage({
+                  id: 'pages.device.components.firmware.detail.product',
+                  defaultMessage: '所属产品',
+                }),
+                value: data?.productName,
+              },
+              {
+                key: intl.formatMessage({
+                  id: 'pages.device.components.firmware.detail.version',
+                  defaultMessage: '版本号',
+                }),
+                value: data?.version,
+              },
+              {
+                key: intl.formatMessage({
+                  id: 'pages.device.components.firmware.detail.versionOrder',
+                  defaultMessage: '版本序号',
+                }),
+                value: data?.versionOrder,
+              },
+              {
+                key: intl.formatMessage({
+                  id: 'pages.device.components.firmware.detail.signMethod',
+                  defaultMessage: '签名方式',
+                }),
+                value: data?.signMethod,
+              },
+              {
+                key: intl.formatMessage({
+                  id: 'pages.device.components.firmware.detail.sign',
+                  defaultMessage: '签名',
+                }),
+                value: data?.sign,
+              },
             ].map((item) => (
               <Descriptions.Item key={item.key} label={item.key}>
                 {item.value}

@@ -137,8 +137,18 @@ const DeviceChart = observer(() => {
             },
           }}
           meta={{
-            x: { alias: '日期' },
-            y: { alias: '数量' },
+            x: {
+              alias: intl.formatMessage({
+                id: 'pages.analysis.deviceMessage.date',
+                defaultMessage: '日期',
+              }),
+            },
+            y: {
+              alias: intl.formatMessage({
+                id: 'pages.analysis.deviceMessage.quantity',
+                defaultMessage: '数量',
+              }),
+            },
           }}
           data={DeviceChartModel.aggOnline}
         />

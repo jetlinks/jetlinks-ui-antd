@@ -9,6 +9,7 @@ import { service } from '@/pages/device/Product';
 import { action } from '@formily/reactive';
 import 'antd/lib/tree-select/style/index.less';
 import type { ProductItem } from '@/pages/device/Product/typings';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 interface Props {
   visible: boolean;
@@ -35,6 +36,7 @@ const treeToArray = (tree: any) => {
 };
 
 const Save = (props: Props) => {
+  const intl = useIntl();
   const { visible, close, data } = props;
   const handleData = () => {
     // 特殊处理deviceType字段
@@ -118,7 +120,12 @@ const Save = (props: Props) => {
     }
     const resp = (await service.update(values)) as any;
     if (resp.status === 200) {
-      message.success('保存成功');
+      message.success(
+        intl.formatMessage({
+          id: 'pages.data.option.save.success',
+          defaultMessage: '保存成功！',
+        }),
+      );
       props.close();
     }
   };
@@ -134,7 +141,10 @@ const Save = (props: Props) => {
         },
         properties: {
           photoUrl: {
-            title: '图标',
+            title: intl.formatMessage({
+              id: 'pages.device.product.save.icon',
+              defaultMessage: '图标',
+            }),
             'x-component': 'FUpload',
             'x-decorator': 'FormItem',
           },
@@ -144,12 +154,18 @@ const Save = (props: Props) => {
             'x-decorator': 'FormItem',
           },
           name: {
-            title: '名称',
+            title: intl.formatMessage({
+              id: 'pages.device.product.save.name',
+              defaultMessage: '名称',
+            }),
             'x-component': 'Input',
             'x-decorator': 'FormItem',
           },
           classifiedId: {
-            title: '所属品类',
+            title: intl.formatMessage({
+              id: 'pages.device.product.save.category',
+              defaultMessage: '所属品类',
+            }),
             'x-component': 'TreeSelect',
             'x-decorator': 'FormItem',
             'x-component-props': {
@@ -158,40 +174,76 @@ const Save = (props: Props) => {
             'x-reactions': ['{{useAsyncDataSource("classifiedId")}}'],
           },
           orgId: {
-            title: '所属机构',
+            title: intl.formatMessage({
+              id: 'pages.device.product.save.org',
+              defaultMessage: '所属机构',
+            }),
             'x-component': 'Select',
             'x-decorator': 'FormItem',
             'x-reactions': ['{{useAsyncDataSource("org")}}'],
           },
           messageProtocol: {
-            title: '消息协议',
+            title: intl.formatMessage({
+              id: 'pages.device.product.save.message.protocol',
+              defaultMessage: '消息协议',
+            }),
             'x-component': 'Select',
             'x-decorator': 'FormItem',
             'x-reactions': ['{{useAsyncDataSource("protocol")}}'],
           },
           transportProtocol: {
-            title: '传输协议',
+            title: intl.formatMessage({
+              id: 'pages.device.product.save.transfer.protocol',
+              defaultMessage: '传输协议',
+            }),
             'x-component': 'Select',
             'x-decorator': 'FormItem',
           },
           storePolicy: {
-            title: '存储策略',
+            title: intl.formatMessage({
+              id: 'pages.device.product.save.storage.policy',
+              defaultMessage: '存储策略',
+            }),
             'x-component': 'Select',
             'x-decorator': 'FormItem',
             'x-reactions': ['{{useAsyncDataSource("storePolicy")}}'],
           },
           deviceType: {
-            title: '设备类型',
+            title: intl.formatMessage({
+              id: 'pages.device.product.save.deviceType',
+              defaultMessage: '设备类型',
+            }),
             'x-component': 'Radio.Group',
             'x-decorator': 'FormItem',
             enum: [
-              { label: '直连设备', value: 'device' },
-              { label: '网关子设备', value: 'childrenDevice' },
-              { label: '网关设备', value: 'gateway' },
+              {
+                label: intl.formatMessage({
+                  id: 'pages.device.product.save.directly.connectedDevice',
+                  defaultMessage: '直连设备',
+                }),
+                value: 'device',
+              },
+              {
+                label: intl.formatMessage({
+                  id: 'pages.device.product.save.gateway.sub-device',
+                  defaultMessage: '网关子设备',
+                }),
+                value: 'childrenDevice',
+              },
+              {
+                label: intl.formatMessage({
+                  id: 'pages.device.product.save.gatewayDevice',
+                  defaultMessage: '网关设备',
+                }),
+                value: 'gateway',
+              },
             ],
           },
           describe: {
-            title: '描述',
+            title: intl.formatMessage({
+              id: 'pages.device.product.save.describe',
+              defaultMessage: '描述',
+            }),
             'x-component': 'Input.TextArea',
             'x-decorator': 'FormItem',
           },
@@ -204,10 +256,16 @@ const Save = (props: Props) => {
       visible={visible}
       onClose={() => close()}
       width="25vw"
-      title="新增产品"
+      title={intl.formatMessage({
+        id: 'pages.device.product.save.add.product',
+        defaultMessage: '新增产品',
+      })}
       extra={
         <Button type="primary" onClick={handleSave}>
-          保存数据
+          {intl.formatMessage({
+            id: 'pages.device.productDetail.metadata.saveData',
+            defaultMessage: '保存数据',
+          })}
         </Button>
       }
     >

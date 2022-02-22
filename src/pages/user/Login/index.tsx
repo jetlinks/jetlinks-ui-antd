@@ -86,7 +86,13 @@ const Login: React.FC = () => {
       username: {
         type: 'string',
         'x-decorator': 'FormItem',
-        'x-validator': { required: true, message: '请输入用户名！' },
+        'x-validator': {
+          required: true,
+          message: intl.formatMessage({
+            id: 'pages.login.username.tips',
+            defaultMessage: '请输入用户名！',
+          }),
+        },
         'x-component': 'Input',
         'x-component-props': {
           placeholder: intl.formatMessage({
@@ -98,7 +104,13 @@ const Login: React.FC = () => {
       },
       password: {
         type: 'string',
-        'x-validator': { required: true, message: '请输入用户名！' },
+        'x-validator': {
+          required: true,
+          message: intl.formatMessage({
+            id: 'pages.login.password.tips',
+            defaultMessage: '请输入密码！',
+          }),
+        },
         'x-decorator': 'FormItem',
         'x-component': 'Password',
         'x-component-props': {

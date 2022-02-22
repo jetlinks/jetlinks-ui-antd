@@ -171,7 +171,10 @@ const DataSource = () => {
             enum: type,
           },
           'shareConfig.adminUrl': {
-            title: '管理地址',
+            title: intl.formatMessage({
+              id: 'pages.form.input.manageAddresses',
+              defaultMessage: '管理地址',
+            }),
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               gridSpan: 1,
@@ -192,7 +195,10 @@ const DataSource = () => {
             },
           },
           'shareConfig.addresses': {
-            title: '链接地址',
+            title: intl.formatMessage({
+              id: 'pages.form.input.addressesUrl',
+              defaultMessage: '链接地址',
+            }),
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               gridSpan: 1,
@@ -212,7 +218,10 @@ const DataSource = () => {
             },
           },
           'shareConfig.virtualHost': {
-            title: '虚拟域',
+            title: intl.formatMessage({
+              id: 'pages.form.input.virtualHost',
+              defaultMessage: '虚拟域',
+            }),
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               gridSpan: 1,
@@ -232,7 +241,10 @@ const DataSource = () => {
             },
           },
           'shareConfig.username': {
-            title: '用户名',
+            title: intl.formatMessage({
+              id: 'pages.form.input.username',
+              defaultMessage: '用户名',
+            }),
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               gridSpan: 1,
@@ -250,7 +262,10 @@ const DataSource = () => {
             },
           },
           'shareConfig.password': {
-            title: '密码',
+            title: intl.formatMessage({
+              id: 'pages.form.input.password',
+              defaultMessage: '密码',
+            }),
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               gridSpan: 1,
@@ -268,7 +283,10 @@ const DataSource = () => {
             'x-component': 'Input',
           },
           'shareConfig.bootstrapServers': {
-            title: '地址',
+            title: intl.formatMessage({
+              id: 'pages.form.input.addresses',
+              defaultMessage: '地址',
+            }),
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               gridSpan: 2,

@@ -19,8 +19,8 @@ class BaseService<T> implements IBaseService<T> {
     this.uri = `/${SystemConst.API_BASE}/${uri}`;
   }
 
-  query(data: any): Promise<any> {
-    return request(`${this.uri}/_query/`, { data, method: 'POST' });
+  query(params: any): Promise<any> {
+    return request(`${this.uri}/_query/`, { params, method: 'GET' });
   }
 
   queryNoPaging(params: any): Promise<unknown> {

@@ -1,6 +1,7 @@
 import { Input, Modal } from 'antd';
 import type { CommandItem } from '@/pages/device/Command/typings';
 import MonacoEditor from 'react-monaco-editor';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 interface Props {
   close: () => void;
@@ -9,10 +10,24 @@ interface Props {
 }
 
 const Cat = (props: Props) => {
+  const intl = useIntl();
   const { close, data, visible } = props;
   return (
-    <Modal width="40vw" visible={visible} onCancel={() => close()} footer={null} title="查看指令">
-      下发指令:
+    <Modal
+      width="40vw"
+      visible={visible}
+      onCancel={() => close()}
+      footer={null}
+      title={intl.formatMessage({
+        id: 'pages.device.command.look.command',
+        defaultMessage: '查看指令',
+      })}
+    >
+      {intl.formatMessage({
+        id: 'pages.device.command',
+        defaultMessage: '下发指令',
+      })}
+      :
       <MonacoEditor
         height={300}
         language={'json'}
@@ -26,7 +41,11 @@ const Cat = (props: Props) => {
         }}
         value={JSON.stringify(data?.downstream)}
       />
-      回复结果:
+      {intl.formatMessage({
+        id: 'pages.device.command.reply.result',
+        defaultMessage: '回复结果',
+      })}
+      :
       <Input.TextArea rows={3} />
     </Modal>
   );

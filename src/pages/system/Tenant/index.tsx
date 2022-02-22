@@ -70,29 +70,29 @@ const Tenant = observer(() => {
       hideInForm: true,
       onFilter: true,
       search: false,
-      valueEnum: {
-        default: {
+      valueEnum: [
+        {
           text: intl.formatMessage({
             id: 'pages.searchTable.titleStatus.all',
             defaultMessage: '全部',
           }),
           status: 'Default',
         },
-        '1': {
+        {
           text: intl.formatMessage({
             id: 'pages.searchTable.titleStatus.normal',
             defaultMessage: '正常',
           }),
           status: '1',
         },
-        '0': {
+        {
           text: intl.formatMessage({
             id: 'pages.searchTable.titleStatus.disable',
             defaultMessage: '禁用',
           }),
           status: '0',
         },
-      },
+      ],
     },
     {
       title: intl.formatMessage({
@@ -160,21 +160,30 @@ const Tenant = observer(() => {
     properties: {
       name: {
         type: 'string',
-        title: '名称',
+        title: intl.formatMessage({
+          id: 'pages.system.tenant.add.name',
+          defaultMessage: '名称',
+        }),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input',
       },
       username: {
         type: 'string',
-        title: '用户名',
+        title: intl.formatMessage({
+          id: 'pages.system.tenant.add.username',
+          defaultMessage: '用户名',
+        }),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input',
       },
       password: {
         type: 'string',
-        title: '密码',
+        title: intl.formatMessage({
+          id: 'pages.system.tenant.add.password',
+          defaultMessage: '密码',
+        }),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Password',
@@ -195,7 +204,10 @@ const Tenant = observer(() => {
       },
       confirmPassword: {
         type: 'string',
-        title: '确认密码',
+        title: intl.formatMessage({
+          id: 'pages.system.tenant.add.confirmPassword',
+          defaultMessage: '确认密码',
+        }),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Password',
@@ -216,7 +228,10 @@ const Tenant = observer(() => {
       },
       description: {
         type: 'string',
-        title: '备注',
+        title: intl.formatMessage({
+          id: 'pages.system.tenant.add.description',
+          defaultMessage: '备注',
+        }),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input.TextArea',

@@ -19,7 +19,10 @@ const ProductDetail = observer(() => {
   const statusMap = {
     1: {
       key: 'disable',
-      name: '停用',
+      name: intl.formatMessage({
+        id: 'pages.device.productDetail.disable',
+        defaultMessage: '停用',
+      }),
       action: 'undeploy',
       component: (
         <Badge
@@ -33,7 +36,10 @@ const ProductDetail = observer(() => {
     },
     0: {
       key: 'enabled',
-      name: '启用',
+      name: intl.formatMessage({
+        id: 'pages.device.productDetail.enabled',
+        defaultMessage: '启用',
+      }),
       action: 'deploy',
       component: (
         <Badge
@@ -79,10 +85,20 @@ const ProductDetail = observer(() => {
             }
           }
           productModel.current = item;
-          message.success('操作成功');
+          message.success(
+            intl.formatMessage({
+              id: 'pages.data.option.success',
+              defaultMessage: '操作成功！',
+            }),
+          );
         },
         error: async () => {
-          message.success('操作失败');
+          message.success(
+            intl.formatMessage({
+              id: 'pages.data.option.error',
+              defaultMessage: '操作失败',
+            }),
+          );
         },
         complete: () => {
           setLoading(false);

@@ -63,7 +63,21 @@ const Alarm = () => {
       align: 'center',
       width: '100px',
       render: (text) =>
-        text === 'solve' ? <Tag color="#87d068">已处理</Tag> : <Tag color="#f50">未处理</Tag>,
+        text === 'solve' ? (
+          <Tag color="#87d068">
+            {intl.formatMessage({
+              id: 'pages.device.alarm.processed',
+              defaultMessage: '已处理',
+            })}
+          </Tag>
+        ) : (
+          <Tag color="#f50">
+            {intl.formatMessage({
+              id: 'pages.device.alarm.not.processed',
+              defaultMessage: '未处理',
+            })}
+          </Tag>
+        ),
     },
     {
       title: intl.formatMessage({
@@ -102,8 +116,14 @@ const Alarm = () => {
                   )}
                 </pre>
               ),
-              okText: '确定',
-              cancelText: '关闭',
+              okText: intl.formatMessage({
+                id: 'pages.device.alarm.confirm',
+                defaultMessage: '确定',
+              }),
+              cancelText: intl.formatMessage({
+                id: 'pages.device.alarm.close',
+                defaultMessage: '关闭',
+              }),
             });
           }}
         >
@@ -122,7 +142,10 @@ const Alarm = () => {
             <a
               onClick={() => {
                 Modal.confirm({
-                  title: '处理告警',
+                  title: intl.formatMessage({
+                    id: 'pages.device.alarm.Handling.alerts',
+                    defaultMessage: '处理告警',
+                  }),
                   width: '30vw',
                   icon: <CheckOutlined />,
                   content: (
@@ -142,9 +165,19 @@ const Alarm = () => {
                       },
                     );
                     if (resp.status === 200) {
-                      message.success('操作成功');
+                      message.success(
+                        intl.formatMessage({
+                          id: 'pages.data.option.success',
+                          defaultMessage: '操作成功！',
+                        }),
+                      );
                     } else {
-                      message.error('操作失败');
+                      message.error(
+                        intl.formatMessage({
+                          id: 'pages.data.option.error',
+                          defaultMessage: '操作失败',
+                        }),
+                      );
                     }
                     actionRef.current?.reload();
                   },

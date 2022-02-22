@@ -7,8 +7,10 @@ import type { ISchema } from '@formily/json-schema';
 import FMonacoEditor from '@/components/FMonacoEditor';
 import { InstanceModel, service } from '@/pages/device/Instance';
 import type { FunctionMetadata } from '@/pages/device/Product/typings';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 const Functions = () => {
+  const intl = useIntl();
   const functionList = JSON.parse(InstanceModel.detail.metadata || '{}')
     .functions as FunctionMetadata[];
   const form = createForm({
@@ -52,7 +54,10 @@ const Functions = () => {
     type: 'object',
     properties: {
       function: {
-        title: '功能列表',
+        title: intl.formatMessage({
+          id: 'pages.device.instance.functions.functionList',
+          defaultMessage: '功能列表',
+        }),
         'x-decorator': 'FormItem',
         'x-component': 'Select',
         enum: functionList.map((item: any) => ({
@@ -61,7 +66,10 @@ const Functions = () => {
         })),
       },
       params: {
-        title: '参数',
+        title: intl.formatMessage({
+          id: 'pages.device.instance.functions.parameter',
+          defaultMessage: '参数',
+        }),
         'x-decorator': 'FormItem',
         'x-component': 'FMonacoEditor',
         'x-component-props': {
@@ -76,7 +84,10 @@ const Functions = () => {
         },
       },
       result: {
-        title: '结果',
+        title: intl.formatMessage({
+          id: 'pages.device.instance.functions.result',
+          defaultMessage: '结果',
+        }),
         'x-decorator': 'FormItem',
         'x-component': 'Input.TextArea',
       },
@@ -96,11 +107,21 @@ const Functions = () => {
     });
   };
   return (
-    <Card title="功能调试">
+    <Card
+      title={intl.formatMessage({
+        id: 'pages.device.instance.functions.debug',
+        defaultMessage: '功能调试',
+      })}
+    >
       <Form form={form} layout={'vertical'}>
         <SchemaField schema={schema} />
         <FormButtonGroup>
-          <Submit onSubmit={invokeFunction}>提交</Submit>
+          <Submit onSubmit={invokeFunction}>
+            {intl.formatMessage({
+              id: 'pages.device.instance.functions.submit',
+              defaultMessage: '提交',
+            })}
+          </Submit>
         </FormButtonGroup>
       </Form>
     </Card>

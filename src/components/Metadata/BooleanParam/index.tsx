@@ -1,8 +1,10 @@
 import { createSchemaField } from '@formily/react';
 import { FormGrid, FormItem, Input } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 const BooleanParam = () => {
+  const intl = useIntl();
   const SchemaField = createSchemaField({
     components: {
       FormItem,
@@ -25,7 +27,10 @@ const BooleanParam = () => {
           trueText: {
             'x-decorator': 'FormItem',
             'x-component': 'Input',
-            default: '是',
+            default: intl.formatMessage({
+              id: 'component.metadata.boolean.true',
+              defaultMessage: '是',
+            }),
             'x-decorator-props': {
               gridSpan: 1,
             },
@@ -50,7 +55,10 @@ const BooleanParam = () => {
           falseText: {
             'x-decorator': 'FormItem',
             'x-component': 'Input',
-            default: '否',
+            default: intl.formatMessage({
+              id: 'component.metadata.boolean.false',
+              defaultMessage: '否',
+            }),
             'x-decorator-props': {
               gridSpan: 1,
             },

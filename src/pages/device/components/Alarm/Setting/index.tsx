@@ -31,7 +31,12 @@ const Setting = (props: Props) => {
   const action = async (id: string, ac: 'start' | 'stop') => {
     const resp = await service.action(id, ac);
     if (resp.status === 200) {
-      message.success('操作成功');
+      message.success(
+        intl.formatMessage({
+          id: 'pages.data.option.success',
+          defaultMessage: '操作成功！',
+        }),
+      );
     }
     actionRef.current?.reload();
   };
@@ -97,14 +102,30 @@ const Setting = (props: Props) => {
           </Tooltip>
         </a>,
         <a key="record">
-          <Tooltip title="告警日志">
+          <Tooltip
+            title={intl.formatMessage({
+              id: 'pages.device.components.alarm.setting.alarm.log',
+              defaultMessage: '告警日志',
+            })}
+          >
             <UnorderedListOutlined />
           </Tooltip>
         </a>,
         record.state.value === 'stopped' ? (
-          <Popconfirm onConfirm={() => action(record.id, 'start')} title="启动此告警？">
+          <Popconfirm
+            onConfirm={() => action(record.id, 'start')}
+            title={intl.formatMessage({
+              id: 'pages.device.components.alarm.setting.isActivateAlarm',
+              defaultMessage: '启动此告警？',
+            })}
+          >
             <a key="start">
-              <Tooltip title="启动">
+              <Tooltip
+                title={intl.formatMessage({
+                  id: 'pages.device.components.alarm.setting.startUp',
+                  defaultMessage: '启动',
+                })}
+              >
                 <PauseCircleOutlined />
               </Tooltip>
             </a>
@@ -112,7 +133,12 @@ const Setting = (props: Props) => {
         ) : (
           <Popconfirm onConfirm={() => action(record.id, 'stop')} title="停止此告警？">
             <a key="stop">
-              <Tooltip title="停止">
+              <Tooltip
+                title={intl.formatMessage({
+                  id: 'pages.device.components.alarm.setting.stop',
+                  defaultMessage: '停止',
+                })}
+              >
                 <PlayCircleOutlined />
               </Tooltip>
             </a>
@@ -123,14 +149,27 @@ const Setting = (props: Props) => {
           onConfirm={async () => {
             const resp = await service.remove(record.id);
             if (resp.status === 200) {
-              message.success('操作成功');
+              message.success(
+                intl.formatMessage({
+                  id: 'pages.data.option.success',
+                  defaultMessage: '操作成功！',
+                }),
+              );
             }
             actionRef.current?.reload();
           }}
-          title="确认删除此告警设置？"
+          title={intl.formatMessage({
+            id: 'pages.device.components.alarm.setting.confirmDelete',
+            defaultMessage: '确认删除此告警设置？',
+          })}
         >
           <a key="remove">
-            <Tooltip title="删除">
+            <Tooltip
+              title={intl.formatMessage({
+                id: 'pages.device.components.alarm.setting.delete',
+                defaultMessage: '删除',
+              })}
+            >
               <MinusOutlined />
             </Tooltip>
           </a>
@@ -145,7 +184,12 @@ const Setting = (props: Props) => {
         actionRef={actionRef}
         tableAlertOptionRender={() => (
           <Space size={16}>
-            <Button onClick={() => {}}>新增告警</Button>
+            <Button onClick={() => {}}>
+              {intl.formatMessage({
+                id: 'pages.device.components.alarm.setting.add',
+                defaultMessage: '新增告警',
+              })}
+            </Button>
           </Space>
         )}
         toolBarRender={() => [

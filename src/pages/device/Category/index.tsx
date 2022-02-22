@@ -107,13 +107,26 @@ const Category = observer(() => {
           onConfirm={async () => {
             const resp = (await service.remove(record.id)) as Response<any>;
             if (resp.status === 200) {
-              message.success('操作成功');
+              message.success(
+                intl.formatMessage({
+                  id: 'pages.data.option.success',
+                  defaultMessage: '操作成功！',
+                }),
+              );
             } else {
-              message.error('操作失败');
+              message.error(
+                intl.formatMessage({
+                  id: 'pages.data.option.error',
+                  defaultMessage: '操作失败',
+                }),
+              );
             }
             actionRef.current?.reload();
           }}
-          title={'确认删除吗？'}
+          title={intl.formatMessage({
+            id: 'pages.data.option.remove.tips',
+            defaultMessage: '确认删除吗？',
+          })}
         >
           <a>
             <Tooltip

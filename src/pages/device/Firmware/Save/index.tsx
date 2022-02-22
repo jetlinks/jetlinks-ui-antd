@@ -11,6 +11,7 @@ import { service } from '@/pages/device/Firmware';
 import type { Response } from '@/utils/typings';
 import { useRef } from 'react';
 import type { ProductItem } from '@/pages/device/Product/typings';
+import { useIntl } from 'umi';
 
 interface Props {
   data?: FirmwareItem;
@@ -19,6 +20,7 @@ interface Props {
 }
 
 const Save = (props: Props) => {
+  const intl = useIntl();
   const { data, close, visible } = props;
 
   const form = createForm({
@@ -54,9 +56,19 @@ const Save = (props: Props) => {
     values.productName = product?.name || '';
     const resp = (await service.save(values)) as Response<FirmwareItem>;
     if (resp.status === 200) {
-      message.success('保存成功！');
+      message.success(
+        intl.formatMessage({
+          id: 'pages.data.option.save.success',
+          defaultMessage: '保存成功！',
+        }),
+      );
     } else {
-      message.error('保存失败！');
+      message.error(
+        intl.formatMessage({
+          id: 'pages.data.option.save.error',
+          defaultMessage: '保存失败！',
+        }),
+      );
     }
   };
   const schema: ISchema = {
@@ -71,28 +83,43 @@ const Save = (props: Props) => {
         },
         properties: {
           productId: {
-            title: '产品',
+            title: intl.formatMessage({
+              id: 'pages.device.components.firmware.save.product',
+              defaultMessage: '产品',
+            }),
             'x-decorator': 'FormItem',
             'x-component': 'Select',
             'x-reactions': ['{{useAsyncDataSource(loadData)}}'],
           },
           name: {
-            title: '名称',
+            title: intl.formatMessage({
+              id: 'pages.device.components.firmware.save.name',
+              defaultMessage: '名称',
+            }),
             'x-decorator': 'FormItem',
             'x-component': 'Input',
           },
           version: {
-            title: '版本号',
+            title: intl.formatMessage({
+              id: 'pages.device.components.firmware.detail.version',
+              defaultMessage: '版本号',
+            }),
             'x-decorator': 'FormItem',
             'x-component': 'Input',
           },
           versionOrder: {
-            title: '版本序号',
+            title: intl.formatMessage({
+              id: 'pages.device.components.firmware.detail.versionOrder',
+              defaultMessage: '版本序号',
+            }),
             'x-decorator': 'FormItem',
             'x-component': 'Input',
           },
           signMethod: {
-            title: '签名方式',
+            title: intl.formatMessage({
+              id: 'pages.device.components.firmware.detail.signMethod',
+              defaultMessage: '签名方式',
+            }),
             'x-decorator': 'FormItem',
             'x-component': 'Select',
             enum: [
@@ -101,12 +128,18 @@ const Save = (props: Props) => {
             ],
           },
           sign: {
-            title: '签名',
+            title: intl.formatMessage({
+              id: 'pages.device.components.firmware.detail.sign',
+              defaultMessage: '签名',
+            }),
             'x-decorator': 'FormItem',
             'x-component': 'Input',
           },
           '{url,size}': {
-            title: '文件上传',
+            title: intl.formatMessage({
+              id: 'pages.device.components.firmware.save.fileUpload',
+              defaultMessage: '文件上传',
+            }),
             'x-decorator': 'FormItem',
             'x-component': 'FUpload',
             'x-component-props': {
@@ -121,7 +154,10 @@ const Save = (props: Props) => {
   return (
     <Modal
       width="50vw"
-      title="新增固件版本"
+      title={intl.formatMessage({
+        id: 'pages.device.components.firmware.save.newFirmwareVersion',
+        defaultMessage: '新增固件版本',
+      })}
       onCancel={() => close()}
       onOk={() => save()}
       visible={visible}

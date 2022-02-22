@@ -53,8 +53,20 @@ const Member = observer(() => {
   ];
   const handleUnBind = () => {
     service.handleUser(param.id, TenantModel.unBindUsers, 'unbind').subscribe({
-      next: () => message.success('操作成功'),
-      error: () => message.error('操作失败'),
+      next: () =>
+        message.success(
+          intl.formatMessage({
+            id: 'pages.data.option.success',
+            defaultMessage: '操作成功!',
+          }),
+        ),
+      error: () =>
+        message.error(
+          intl.formatMessage({
+            id: 'pages.data.option.success',
+            defaultMessage: '操作失败!',
+          }),
+        ),
       complete: () => {
         TenantModel.unBindUsers = [];
         actionRef.current?.reload();
@@ -80,16 +92,32 @@ const Member = observer(() => {
             tableAlertRender={({ selectedRowKeys, onCleanSelected }) => (
               <Space size={24}>
                 <span>
-                  已选 {selectedRowKeys.length} 项
+                  {intl.formatMessage({
+                    id: 'pages.system.tenant.memberManagement.selected',
+                    defaultMessage: '已选 ',
+                  })}
+                  {selectedRowKeys.length}
+                  {intl.formatMessage({
+                    id: 'pages.system.tenant.memberManagement.item',
+                    defaultMessage: ' 项',
+                  })}
                   <a style={{ marginLeft: 8 }} onClick={onCleanSelected}>
-                    取消选择
+                    {intl.formatMessage({
+                      id: 'pages.system.tenant.memberManagement.cancelSelection',
+                      defaultMessage: '取消选择',
+                    })}
                   </a>
                 </span>
               </Space>
             )}
             tableAlertOptionRender={() => (
               <Space size={16}>
-                <a onClick={handleUnBind}>批量解绑</a>
+                <a onClick={handleUnBind}>
+                  {intl.formatMessage({
+                    id: 'pages.system.tenant.memberManagement.batchUnbind',
+                    defaultMessage: '批量解绑',
+                  })}
+                </a>
               </Space>
             )}
             rowSelection={{

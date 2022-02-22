@@ -46,7 +46,10 @@ const Config = observer(() => {
           // 单独处理邮件的其他配置功能
           previousValue[currentValue.property] = {
             type: 'array',
-            title: '其他配置',
+            title: intl.formatMessage({
+              id: 'pages.notice.config.other',
+              defaultMessage: '其他配置',
+            }),
             'x-component': 'ArrayItems',
             'x-decorator': 'FormItem',
             items: {
@@ -75,7 +78,10 @@ const Config = observer(() => {
                     },
                     description: {
                       type: 'string',
-                      title: '备注',
+                      title: intl.formatMessage({
+                        id: 'pages.notice.config.remark',
+                        defaultMessage: '备注',
+                      }),
                       'x-decorator': 'FormItem',
                       'x-component': 'Input',
                     },
@@ -91,7 +97,10 @@ const Config = observer(() => {
             properties: {
               add: {
                 type: 'void',
-                title: '添加条目',
+                title: intl.formatMessage({
+                  id: 'pages.notice.config.add.entry',
+                  defaultMessage: '添加条目',
+                }),
                 'x-component': 'ArrayItems.Addition',
               },
             },
@@ -114,18 +123,27 @@ const Config = observer(() => {
     type: 'object',
     properties: {
       name: {
-        title: '名称',
+        title: intl.formatMessage({
+          id: 'pages.notice.config.schema.name',
+          defaultMessage: '名称',
+        }),
         'x-component': 'Input',
         'x-decorator': 'FormItem',
       },
       type: {
-        title: '类型',
+        title: intl.formatMessage({
+          id: 'pages.notice.config.schema.type',
+          defaultMessage: '类型',
+        }),
         'x-component': 'Select',
         'x-decorator': 'FormItem',
         'x-reactions': ['{{useAsyncDataSource(getTypes)}}'],
       },
       provider: {
-        title: '服务商',
+        title: intl.formatMessage({
+          id: 'pages.notice.config.schema.service.provider',
+          defaultMessage: '服务商',
+        }),
         'x-component': 'Select',
         'x-decorator': 'FormItem',
       },
@@ -222,7 +240,18 @@ const Config = observer(() => {
             <EditOutlined />
           </Tooltip>
         </a>,
-        <a onClick={() => downObject(record, '通知配置')} key="download">
+        <a
+          onClick={() =>
+            downObject(
+              record,
+              intl.formatMessage({
+                id: 'pages.notice.config',
+                defaultMessage: '通知配置',
+              }),
+            )
+          }
+          key="download"
+        >
           <Tooltip
             title={intl.formatMessage({
               id: 'pages.data.option.download',
@@ -264,7 +293,10 @@ const Config = observer(() => {
               );
               actionRef.current?.reload();
             }}
-            title="确认删除?"
+            title={intl.formatMessage({
+              id: 'pages.data.option.remove.tips',
+              defaultMessage: '确认删除?',
+            })}
           >
             <Tooltip
               title={intl.formatMessage({

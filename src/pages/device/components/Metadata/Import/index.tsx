@@ -8,6 +8,7 @@ import FMonacoEditor from '@/components/FMonacoEditor';
 import FUpload from '@/components/Upload';
 import { service } from '@/pages/device/Product';
 import { useParams } from 'umi';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 interface Props {
   visible: boolean;
@@ -15,6 +16,7 @@ interface Props {
 }
 
 const Import = (props: Props) => {
+  const intl = useIntl();
   const param = useParams<{ id: string }>();
   const form = createForm({
     initialValues: {},
@@ -46,16 +48,34 @@ const Import = (props: Props) => {
     type: 'object',
     properties: {
       type: {
-        title: '导入方式',
+        title: intl.formatMessage({
+          id: 'pages.device.components.metadata.import.way',
+          defaultMessage: '导入方式',
+        }),
         'x-decorator': 'FormItem',
         'x-component': 'Select',
         enum: [
-          { label: '拷贝产品', value: 'copy' },
-          { label: '导入物模型', value: 'import' },
+          {
+            label: intl.formatMessage({
+              id: 'pages.device.components.metadata.import.copyProducts',
+              defaultMessage: '拷贝产品',
+            }),
+            value: 'copy',
+          },
+          {
+            label: intl.formatMessage({
+              id: 'pages.device.components.metadata.import.model',
+              defaultMessage: '导入物模型',
+            }),
+            value: 'import',
+          },
         ],
       },
       copy: {
-        title: '选择设备',
+        title: intl.formatMessage({
+          id: 'pages.device.components.metadata.import.choiceDevice',
+          defaultMessage: '选择设备',
+        }),
         'x-decorator': 'FormItem',
         'x-component': 'Select',
         'x-visible': false,
@@ -72,7 +92,10 @@ const Import = (props: Props) => {
         ],
       },
       metadata: {
-        title: '物模型类型',
+        title: intl.formatMessage({
+          id: 'pages.device.components.metadata.import.modelType',
+          defaultMessage: '物模型类型',
+        }),
         'x-decorator': 'FormItem',
         'x-component': 'Select',
         'x-decorator-props': {
@@ -92,11 +115,17 @@ const Import = (props: Props) => {
         },
         enum: [
           {
-            label: 'Jetlinks物模型',
+            label: intl.formatMessage({
+              id: 'pages.device.components.metadata.import.jetlinksModel',
+              defaultMessage: 'Jetlinks物模型',
+            }),
             value: 'jetlinks',
           },
           {
-            label: '阿里云物模型TSL',
+            label: intl.formatMessage({
+              id: 'pages.device.components.metadata.import.TSLModel',
+              defaultMessage: '阿里云物模型TSL',
+            }),
             value: 'alink',
           },
         ],
@@ -119,7 +148,10 @@ const Import = (props: Props) => {
             'x-decorator': 'FormItem',
             'x-component': 'FUpload',
             'x-component-props': {
-              title: '快速导入',
+              title: intl.formatMessage({
+                id: 'pages.device.components.metadata.import.fast',
+                defaultMessage: '快速导入',
+              }),
               showUploadList: false,
               accept: '.json',
               formatOnType: true,
@@ -138,7 +170,10 @@ const Import = (props: Props) => {
         },
       },
       import: {
-        title: '物模型',
+        title: intl.formatMessage({
+          id: 'pages.device.components.metadata.import.physicalModel',
+          defaultMessage: '物模型',
+        }),
         'x-decorator': 'FormItem',
         'x-component': 'FMonacoEditor',
         'x-component-props': {
@@ -173,40 +208,71 @@ const Import = (props: Props) => {
           await service.modify(param.id, { metadata: JSON.stringify(meta) });
         },
         error: () => {
-          message.error('发生错误!');
+          message.error(
+            intl.formatMessage({
+              id: 'pages.device.components.metadata.import.error',
+              defaultMessage: '发生错误!',
+            }),
+          );
         },
       });
     } else {
       await service.modify(param.id, { metadata: data[data.type] });
     }
-    message.success('导入成功');
+    message.success(
+      intl.formatMessage({
+        id: 'pages.device.components.metadata.import.success',
+        defaultMessage: '导入成功',
+      }),
+    );
   };
   return (
     <Drawer
-      title="导入物模型"
+      title={intl.formatMessage({
+        id: 'pages.device.components.metadata.import.model',
+        defaultMessage: '导入物模型',
+      })}
       destroyOnClose
       visible={props.visible}
       onClose={() => props.close()}
       extra={
         <Space>
           <Button type="primary" onClick={handleImport}>
-            确定
+            {intl.formatMessage({
+              id: 'pages.device.components.metadata.import.confirm',
+              defaultMessage: '确定',
+            })}
           </Button>
         </Space>
       }
     >
       <div style={{ background: 'rgb(236, 237, 238)' }}>
         <p style={{ padding: 10 }}>
-          <span style={{ color: '#f5222d' }}>注</span>
-          ：导入的物模型会覆盖原来的属性、功能、事件、标签，请谨慎操作。
+          <span style={{ color: '#f5222d' }}>
+            {intl.formatMessage({
+              id: 'pages.device.components.metadata.import.notice',
+              defaultMessage: '注',
+            })}
+          </span>
+          {intl.formatMessage({
+            id: 'pages.device.components.metadata.import.noticeContent',
+            defaultMessage: '：导入的物模型会覆盖原来的属性、功能、事件、标签，请谨慎操作。',
+          })}
           <br />
-          物模型格式请参考文档：
+          {intl.formatMessage({
+            id: 'pages.device.components.metadata.import.document',
+            defaultMessage: '物模型格式请参考文档：',
+          })}
+
           <a
             rel="noopener noreferrer"
             target="_blank"
             href="http://doc.jetlinks.cn/basics-guide/device-manager.html#%E8%AE%BE%E5%A4%87%E5%9E%8B%E5%8F%B7"
           >
-            设备型号
+            {intl.formatMessage({
+              id: 'pages.device.components.metadata.import.deviceModel',
+              defaultMessage: '设备型号',
+            })}
           </a>
         </p>
       </div>

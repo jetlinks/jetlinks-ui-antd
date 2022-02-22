@@ -1,8 +1,10 @@
 import { createSchemaField } from '@formily/react';
 import { ArrayItems, Editable, FormItem, FormLayout, Input } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 const EnumParam = () => {
+  const intl = useIntl();
   const SchemaField = createSchemaField({
     components: {
       FormItem,
@@ -30,7 +32,10 @@ const EnumParam = () => {
             },
             popover: {
               type: 'object',
-              title: '枚举项配置',
+              title: intl.formatMessage({
+                id: 'component.metadata.enum.config',
+                defaultMessage: '枚举项配置',
+              }),
               'x-decorator': 'Editable.Popover',
               'x-component': 'FormLayout',
               'x-component-props': {
@@ -46,7 +51,10 @@ const EnumParam = () => {
                   'x-decorator': 'FormItem',
                   'x-component': 'Input',
                   'x-component-props': {
-                    placeholder: '标识',
+                    placeholder: intl.formatMessage({
+                      id: 'component.metadata.enum.id',
+                      defaultMessage: '标识',
+                    }),
                   },
                 },
                 value: {
@@ -56,7 +64,10 @@ const EnumParam = () => {
                   'x-decorator': 'FormItem',
                   'x-component': 'Input',
                   'x-component-props': {
-                    placeholder: '对该枚举项的描述',
+                    placeholder: intl.formatMessage({
+                      id: 'component.metadata.enum.describe',
+                      defaultMessage: '对该枚举项的描述',
+                    }),
                   },
                 },
               },
@@ -71,7 +82,10 @@ const EnumParam = () => {
         properties: {
           addition: {
             type: 'void',
-            title: '新增枚举项',
+            title: intl.formatMessage({
+              id: 'component.metadata.enum.add',
+              defaultMessage: '新增枚举项',
+            }),
             'x-component': 'ArrayItems.Addition',
           },
         },

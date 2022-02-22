@@ -74,7 +74,10 @@ const Permission: React.FC = observer(() => {
         rules: [
           {
             required: true,
-            message: '此项为必填项',
+            message: intl.formatMessage({
+              id: 'pages.system.input.required.tips',
+              defaultMessage: '此项为必填项',
+            }),
           },
         ],
       },
@@ -92,14 +95,17 @@ const Permission: React.FC = observer(() => {
       ellipsis: true,
       align: 'center',
       tip: intl.formatMessage({
-        id: 'pages.system.permission.name.tip',
+        id: 'pages.system.permission.name.tips',
         defaultMessage: '名称过长会自动收缩',
       }),
       formItemProps: {
         rules: [
           {
             required: true,
-            message: '此项为必填项',
+            message: intl.formatMessage({
+              id: 'pages.system.input.required.tips',
+              defaultMessage: '此项为必填项',
+            }),
           },
         ],
       },

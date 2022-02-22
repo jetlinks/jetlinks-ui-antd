@@ -166,7 +166,10 @@ const Firmware = observer(() => {
             icon={<PlusOutlined />}
             type="primary"
           >
-            新增
+            {intl.formatMessage({
+              id: 'pages.data.option.add',
+              defaultMessage: '新增',
+            })}
           </Button>,
         ]}
         request={async (params) => service.query(params)}

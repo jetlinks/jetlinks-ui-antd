@@ -158,9 +158,19 @@ const Command = observer(() => {
             onClick={async () => {
               const resp = await service.resend(encodeQuery({ terms: { id: record.id } }));
               if (resp.status === 200) {
-                message.success('操作成功！');
+                message.success(
+                  intl.formatMessage({
+                    id: 'pages.data.option.success',
+                    defaultMessage: '操作成功！',
+                  }),
+                );
               } else {
-                message.error('操作失败！');
+                message.error(
+                  intl.formatMessage({
+                    id: 'pages.data.option.error',
+                    defaultMessage: '操作失败',
+                  }),
+                );
               }
             }}
           >
@@ -190,7 +200,10 @@ const Command = observer(() => {
             icon={<PlusOutlined />}
             type="primary"
           >
-            下发指令
+            {intl.formatMessage({
+              id: 'pages.device.command',
+              defaultMessage: '下发指令',
+            })}
           </Button>,
         ]}
         request={async (params) => service.query(params)}

@@ -3,8 +3,10 @@ import AMapLoader from '@amap/amap-jsapi-loader';
 import classNames from 'classnames';
 import { LeftOutlined } from '@ant-design/icons';
 import './index.less';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 const AMapComponent = () => {
+  const intl = useIntl();
   const mapRef = useRef({});
 
   useEffect(() => {
@@ -64,7 +66,12 @@ const AMapComponent = () => {
           >
             <LeftOutlined className={classNames('draw-button-icon', { active: show })} />
           </div>
-          <div className="draw-content">....内容信息</div>
+          <div className="draw-content">
+            {intl.formatMessage({
+              id: 'component.AMapComponent.content',
+              defaultMessage: '....内容信息',
+            })}
+          </div>
         </div>
       </div>
     </div>

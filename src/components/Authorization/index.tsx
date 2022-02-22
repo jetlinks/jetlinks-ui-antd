@@ -98,7 +98,12 @@ const Authorization = observer((props: AuthorizationProps) => {
 
   const initAutzInfo = useCallback(async () => {
     if (!target.id) {
-      message.error('被授权对象数据缺失!');
+      message.error(
+        intl.formatMessage({
+          id: 'component.Authorization.error',
+          defaultMessage: '被授权对象数据缺失!',
+        }),
+      );
       return;
     }
     const permissionDB: PermissionItem[] = await queryDB();
@@ -182,7 +187,12 @@ const Authorization = observer((props: AuthorizationProps) => {
         permissionList: permissions,
       })
       .subscribe(async () => {
-        await message.success('授权成功');
+        await message.success(
+          intl.formatMessage({
+            id: 'component.Authorization.success',
+            defaultMessage: '授权成功!',
+          }),
+        );
       });
   };
 
@@ -270,7 +280,13 @@ const Authorization = observer((props: AuthorizationProps) => {
   ];
 
   return (
-    <Spin spinning={AuthorizationModel.spinning} tip="数据加载中...">
+    <Spin
+      spinning={AuthorizationModel.spinning}
+      tip={intl.formatMessage({
+        id: 'component.Authorization.tip.loading',
+        defaultMessage: '数据加载中...',
+      })}
+    >
       <Form
         onFinish={setAutz}
         size={'small'}

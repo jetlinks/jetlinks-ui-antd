@@ -11,6 +11,7 @@ import { createSchemaField } from '@formily/react';
 import type { ISchema } from '@formily/json-schema';
 import { DataTypeList } from '@/pages/device/data';
 import { Store } from 'jetlinks-store';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 // 不算是自定义组件。只是抽离了JSONSchema
 interface Props {
@@ -18,6 +19,7 @@ interface Props {
 }
 
 const JsonParam = (props: Props) => {
+  const intl = useIntl();
   const SchemaField = createSchemaField({
     components: {
       FormItem,
@@ -48,7 +50,10 @@ const JsonParam = (props: Props) => {
             },
             config: {
               type: 'void',
-              title: '配置参数',
+              title: intl.formatMessage({
+                id: 'component.metadata.json.configParameter',
+                defaultMessage: '配置参数',
+              }),
               'x-decorator': 'Editable.Popover',
               'x-component': 'FormLayout',
               'x-component-props': {
@@ -61,13 +66,19 @@ const JsonParam = (props: Props) => {
                 '{{(field)=>field.title = field.query(".config.name").get("value") || field.title}}',
               properties: {
                 id: {
-                  title: '标识',
+                  title: intl.formatMessage({
+                    id: 'component.metadata.json.id',
+                    defaultMessage: '标识',
+                  }),
                   required: true,
                   'x-decorator': 'FormItem',
                   'x-component': 'Input',
                 },
                 name: {
-                  title: '名称',
+                  title: intl.formatMessage({
+                    id: 'component.metadata.json.name',
+                    defaultMessage: '名称',
+                  }),
                   required: true,
                   'x-decorator': 'FormItem',
                   'x-component': 'Input',
@@ -76,14 +87,20 @@ const JsonParam = (props: Props) => {
                   type: 'object',
                   properties: {
                     type: {
-                      title: '数据类型',
+                      title: intl.formatMessage({
+                        id: 'component.metadata.json.dataType',
+                        defaultMessage: '数据类型',
+                      }),
                       required: true,
                       'x-decorator': 'FormItem',
                       'x-component': 'Select',
                       enum: DataTypeList,
                     },
                     unit: {
-                      title: '单位',
+                      title: intl.formatMessage({
+                        id: 'component.metadata.unit',
+                        defaultMessage: '单位',
+                      }),
                       'x-decorator': 'FormItem',
                       'x-component': 'Select',
                       'x-visible': false,
@@ -101,7 +118,10 @@ const JsonParam = (props: Props) => {
                       type: 'object',
                       properties: {
                         maxLength: {
-                          title: '最大长度',
+                          title: intl.formatMessage({
+                            id: 'component.metadata.maxLength',
+                            defaultMessage: '最大长度',
+                          }),
                           'x-decorator': 'FormItem',
                           'x-component': 'NumberPicker',
                           'x-reactions': {
@@ -119,7 +139,10 @@ const JsonParam = (props: Props) => {
                 },
 
                 'valueType.scale': {
-                  title: '精度',
+                  title: intl.formatMessage({
+                    id: 'component.metadata.accuracy',
+                    defaultMessage: '精度',
+                  }),
                   'x-decorator': 'FormItem',
                   'x-component': 'NumberPicker',
                   'x-visible': false,
@@ -135,7 +158,10 @@ const JsonParam = (props: Props) => {
 
                 json: {
                   type: 'string',
-                  title: 'JSON对象',
+                  title: intl.formatMessage({
+                    id: 'component.metadata.json',
+                    defaultMessage: 'JSON对象',
+                  }),
                   'x-visible': false,
                   'x-decorator': 'FormItem',
                   'x-component': 'JsonParam',
@@ -160,7 +186,10 @@ const JsonParam = (props: Props) => {
         properties: {
           add: {
             type: 'void',
-            title: '添加参数',
+            title: intl.formatMessage({
+              id: 'component.metadata.json.add',
+              defaultMessage: '添加参数',
+            }),
             'x-component': 'ArrayItems.Addition',
           },
         },

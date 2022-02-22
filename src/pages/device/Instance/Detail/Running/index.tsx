@@ -166,9 +166,21 @@ const Running = () => {
               <Col span={24}>{deviceStatus.get(InstanceModel.detail.state?.value)}</Col>
               <Col span={24}>
                 {device.state?.value === 'online' ? (
-                  <span>上线时间：{moment(device?.onlineTime).format('YYYY-MM-DD HH:mm:ss')}</span>
+                  <span>
+                    {intl.formatMessage({
+                      id: 'pages.device.instanceDetail.running.onlineTime',
+                      defaultMessage: '上线时间',
+                    })}
+                    ：{moment(device?.onlineTime).format('YYYY-MM-DD HH:mm:ss')}
+                  </span>
                 ) : (
-                  <span>离线时间：{moment(device?.offlineTime).format('YYYY-MM-DD HH:mm:ss')}</span>
+                  <span>
+                    {intl.formatMessage({
+                      id: 'pages.device.instanceDetail.running.offlineTime',
+                      defaultMessage: '离线时间',
+                    })}
+                    ：{moment(device?.offlineTime).format('YYYY-MM-DD HH:mm:ss')}
+                  </span>
                 )}
               </Col>
             </Row>

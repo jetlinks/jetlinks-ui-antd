@@ -66,9 +66,19 @@ const Save = (props: Props) => {
       ? await service.update(value as CategoryItem)
       : ((await service.save(value as any)) as Response<CategoryItem>);
     if (resp.status === 200) {
-      message.success('操作成功!');
+      message.success(
+        intl.formatMessage({
+          id: 'pages.data.option.success',
+          defaultMessage: '操作成功！',
+        }),
+      );
     } else {
-      message.error('操作失败');
+      message.error(
+        intl.formatMessage({
+          id: 'pages.data.option.error',
+          defaultMessage: '操作失败',
+        }),
+      );
     }
     props.close();
   };
@@ -77,7 +87,10 @@ const Save = (props: Props) => {
     type: 'object',
     properties: {
       parentId: {
-        title: '上级分类',
+        title: intl.formatMessage({
+          id: 'pages.device.category.save.superior.classification',
+          defaultMessage: '上级分类',
+        }),
         'x-decorator': 'FormItem',
         'x-component': 'Input',
         name: 'parentId',

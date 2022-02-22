@@ -6,7 +6,7 @@ import {
   CloseCircleOutlined,
   PlayCircleOutlined,
 } from '@ant-design/icons';
-import { Tooltip, Popconfirm, message, Drawer } from 'antd';
+import { Tooltip, Popconfirm, message, Drawer, Card, Divider } from 'antd';
 import type { ProColumns, ActionType } from '@jetlinks/pro-table';
 import BaseCrud from '@/components/BaseCrud';
 import { CurdModel } from '@/components/BaseCrud/model';
@@ -18,7 +18,7 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import type { ISchema } from '@formily/json-schema';
 import Authorization from '@/components/Authorization';
 import autzModel from '@/components/Authorization/autz';
-// import SearchComponent from '@/components/SearchComponent';
+import SearchComponent from '@/components/SearchComponent';
 
 export const service = new BaseService<UserItem>('user');
 const User = observer(() => {
@@ -57,7 +57,10 @@ const User = observer(() => {
         rules: [
           {
             required: true,
-            message: '此项为必填项',
+            message: intl.formatMessage({
+              id: 'pages.system.input.required.tips',
+              defaultMessage: '此项为必填项',
+            }),
           },
         ],
       },
@@ -82,7 +85,10 @@ const User = observer(() => {
         rules: [
           {
             required: true,
-            message: '此项为必填项',
+            message: intl.formatMessage({
+              id: 'pages.system.input.required.tips',
+              defaultMessage: '此项为必填项',
+            }),
           },
         ],
       },
@@ -289,12 +295,18 @@ const User = observer(() => {
     },
   };
 
-  intl.formatMessage({
-    id: 'pages.system.user',
-    defaultMessage: '默认值',
-  });
   return (
     <PageContainer>
+      <Card>
+        <SearchComponent<UserItem>
+          field={columns}
+          onSearch={async (data) => {
+            message.success(JSON.stringify(data));
+          }}
+          target="user-search"
+        />
+      </Card>
+      <Divider />
       <BaseCrud<UserItem>
         actionRef={actionRef}
         columns={columns}
@@ -304,7 +316,6 @@ const User = observer(() => {
           id: 'pages.system.user',
           defaultMessage: '用户管理',
         })}
-        moduleName="user"
         schema={schema}
       />
       <Drawer

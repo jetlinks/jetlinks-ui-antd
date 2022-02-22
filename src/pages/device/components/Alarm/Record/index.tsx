@@ -56,7 +56,21 @@ const Record = (props: Props) => {
       }),
       dataIndex: 'state',
       render: (text) =>
-        text === 'solve' ? <Tag color="#87d068">已处理</Tag> : <Tag color="#f50">未处理</Tag>,
+        text === 'solve' ? (
+          <Tag color="#87d068">
+            {intl.formatMessage({
+              id: 'pages.device.alarm.processed',
+              defaultMessage: '已处理',
+            })}
+          </Tag>
+        ) : (
+          <Tag color="#f50">
+            {intl.formatMessage({
+              id: 'pages.device.alarm.not.processed',
+              defaultMessage: '未处理',
+            })}
+          </Tag>
+        ),
     },
     {
       title: intl.formatMessage({
@@ -71,7 +85,10 @@ const Record = (props: Props) => {
           key="info"
           onClick={async () =>
             Modal.info({
-              title: '告警数据',
+              title: intl.formatMessage({
+                id: 'pages.device.alarm.option.data',
+                defaultMessage: '告警数据',
+              }),
               width: 600,
               content: <pre>{JSON.stringify(record.alarmData, null, 2)}</pre>,
             })
@@ -94,7 +111,12 @@ const Record = (props: Props) => {
               setId(record.id);
             }}
           >
-            <Tooltip title="处理告警">
+            <Tooltip
+              title={intl.formatMessage({
+                id: 'pages.device.alarm.Handling.alerts',
+                defaultMessage: '处理告警',
+              })}
+            >
               <AuditOutlined />
             </Tooltip>
           </a>
@@ -120,12 +142,20 @@ const Record = (props: Props) => {
         search={false}
       />
       <Modal
-        title="处理告警"
+        title={intl.formatMessage({
+          id: 'pages.device.alarm.Handling.alerts',
+          defaultMessage: '处理告警',
+        })}
         visible={visible}
         onCancel={() => setVisible(false)}
         onOk={async () => {
           if (handleText === '') {
-            message.success('请填写处理结果');
+            message.success(
+              intl.formatMessage({
+                id: 'pages.device.components.alarm.record.processing.result',
+                defaultMessage: '请填写处理结果',
+              }),
+            );
           } else {
             const resp = await service.solve(id, handleText);
             if (resp.status === 200) {

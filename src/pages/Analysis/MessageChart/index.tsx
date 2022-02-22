@@ -3,6 +3,7 @@ import moment from 'moment';
 import { useEffect } from 'react';
 import { service } from '@/pages/Analysis';
 import type { ColumnConfig } from '@ant-design/plots/es/components/column';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 const calculationDate = () => {
   const dd = new Date();
@@ -14,6 +15,7 @@ const calculationDate = () => {
 };
 
 const MessageChart = () => {
+  const intl = useIntl();
   const list = [
     {
       dashboard: 'device',
@@ -63,35 +65,75 @@ const MessageChart = () => {
 
   const data = [
     {
-      type: '1-3秒',
+      type:
+        '1-3' +
+        intl.formatMessage({
+          id: 'pages.analysis.deviceMessage.s',
+          defaultMessage: '秒',
+        }),
       value: 0.16,
     },
     {
-      type: '4-10秒',
+      type:
+        '4-10' +
+        intl.formatMessage({
+          id: 'pages.analysis.deviceMessage.s',
+          defaultMessage: '秒',
+        }),
       value: 0.125,
     },
     {
-      type: '11-30秒',
+      type:
+        '11-30' +
+        intl.formatMessage({
+          id: 'pages.analysis.deviceMessage.s',
+          defaultMessage: '秒',
+        }),
       value: 0.24,
     },
     {
-      type: '31-60秒',
+      type:
+        '31-60' +
+        intl.formatMessage({
+          id: 'pages.analysis.deviceMessage.s',
+          defaultMessage: '秒',
+        }),
       value: 0.19,
     },
     {
-      type: '1-3分',
+      type:
+        '1-3' +
+        intl.formatMessage({
+          id: 'pages.analysis.deviceMessage.m',
+          defaultMessage: '分',
+        }),
       value: 0.22,
     },
     {
-      type: '3-10分',
+      type:
+        '3-10' +
+        intl.formatMessage({
+          id: 'pages.analysis.deviceMessage.m',
+          defaultMessage: '分',
+        }),
       value: 0.05,
     },
     {
-      type: '10-30分',
+      type:
+        '10-30' +
+        intl.formatMessage({
+          id: 'pages.analysis.deviceMessage.m',
+          defaultMessage: '分',
+        }),
       value: 0.01,
     },
     {
-      type: '30+分',
+      type:
+        '30+' +
+        intl.formatMessage({
+          id: 'pages.analysis.deviceMessage.m',
+          defaultMessage: '分',
+        }),
       value: 0.015,
     },
   ];

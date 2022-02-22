@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import { service } from '@/pages/device/Instance';
 import { useParams } from 'umi';
 import EventLog from '@/pages/device/Instance/Detail/MetadataLog/Event';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 interface Props {
   data: Partial<EventMetadata> & ObserverMetadata;
@@ -17,6 +18,7 @@ eventLevel.set('warn', <Badge status="warning" text="警告" />);
 eventLevel.set('urgent', <Badge status="error" text="紧急" />);
 
 const Event = (props: Props) => {
+  const intl = useIntl();
   const { data } = props;
   const params = useParams<{ id: string }>();
 
@@ -59,7 +61,13 @@ const Event = (props: Props) => {
         <>
           <SyncOutlined onClick={initCount} />
           <Divider type="vertical" />
-          <Tooltip placement="top" title="详情">
+          <Tooltip
+            placement="top"
+            title={intl.formatMessage({
+              id: 'pages.data.option.detail',
+              defaultMessage: '详情',
+            })}
+          >
             <UnorderedListOutlined
               onClick={() => {
                 setVisible(true);

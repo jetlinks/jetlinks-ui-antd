@@ -5,6 +5,7 @@ import { Drawer } from 'antd';
 import { useParams } from 'umi';
 import type { EventMetadata } from '@/pages/device/Product/typings';
 import columns from '@/pages/device/Instance/Detail/MetadataLog/columns';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 interface Props {
   visible: boolean;
@@ -13,6 +14,7 @@ interface Props {
 }
 
 const EventLog = (props: Props) => {
+  const intl = useIntl();
   const params = useParams<{ id: string }>();
   const { data, visible, close } = props;
 
@@ -29,7 +31,10 @@ const EventLog = (props: Props) => {
         )
       : [
           {
-            title: '数据',
+            title: intl.formatMessage({
+              id: 'pages.device.instance.meatdataLog.event.data',
+              defaultMessage: '数据',
+            }),
             dataIndex: `value`,
             ellipsis: true,
             render: (text) => JSON.stringify(text),

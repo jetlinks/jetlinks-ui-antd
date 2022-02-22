@@ -9,6 +9,7 @@ import { message, Modal } from 'antd';
 import FSelectDevices from '@/components/FSelectDevices';
 import { useRef } from 'react';
 import type { DeviceMetadata, ProductItem } from '@/pages/device/Product/typings';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 interface Props {
   close: () => void;
@@ -16,6 +17,7 @@ interface Props {
 }
 
 const Create = (props: Props) => {
+  const intl = useIntl();
   const { close, visible } = props;
   const products = useRef<ProductItem[]>([]);
 
@@ -89,13 +91,19 @@ const Create = (props: Props) => {
     type: 'object',
     properties: {
       productId: {
-        title: '产品',
+        title: intl.formatMessage({
+          id: 'pages.device.command.product',
+          defaultMessage: '产品',
+        }),
         'x-decorator': 'FormItem',
         'x-component': 'Select',
         'x-reactions': ['{{useAsyncDataSource(loadData)}}'],
       },
       deviceId: {
-        title: '设备',
+        title: intl.formatMessage({
+          id: 'pages.device.command.device',
+          defaultMessage: '设备',
+        }),
         'x-decorator': 'FormItem',
         'x-component': 'FSelectDevices',
         'x-component-props': {
@@ -106,20 +114,44 @@ const Create = (props: Props) => {
         type: 'object',
         properties: {
           messageType: {
-            title: '指令',
+            title: intl.formatMessage({
+              id: 'pages.device.command.command',
+              defaultMessage: '指令',
+            }),
             'x-decorator': 'FormItem',
             'x-component': 'Select',
             enum: [
-              { label: '读取属性', value: 'READ_PROPERTY' },
-              { label: '设置属性', value: 'WRITE_PROPERTY' },
-              { label: '调用功能', value: 'INVOKE_FUNCTION' },
+              {
+                label: intl.formatMessage({
+                  id: 'pages.device.command.type.readProperty',
+                  defaultMessage: '读取属性',
+                }),
+                value: 'READ_PROPERTY',
+              },
+              {
+                label: intl.formatMessage({
+                  id: 'pages.device.command.type.writeProperty',
+                  defaultMessage: '设置属性',
+                }),
+                value: 'WRITE_PROPERTY',
+              },
+              {
+                label: intl.formatMessage({
+                  id: 'pages.device.command.type.invokeFunction',
+                  defaultMessage: '调用功能',
+                }),
+                value: 'INVOKE_FUNCTION',
+              },
             ],
           },
           properties: {
             type: 'object',
             properties: {
               key: {
-                title: '属性',
+                title: intl.formatMessage({
+                  id: 'pages.device.command.property',
+                  defaultMessage: '属性',
+                }),
                 'x-decorator': 'FormItem',
                 'x-component': 'Select',
                 enum: [],
@@ -137,7 +169,10 @@ const Create = (props: Props) => {
                 'x-visible': false,
               },
               value: {
-                title: '设置值',
+                title: intl.formatMessage({
+                  id: 'pages.device.command.set.value',
+                  defaultMessage: '设置值',
+                }),
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
                 'x-reactions': {
@@ -153,7 +188,10 @@ const Create = (props: Props) => {
             },
           },
           functionId: {
-            title: '功能',
+            title: intl.formatMessage({
+              id: 'pages.device.command.function',
+              defaultMessage: '功能',
+            }),
             'x-decorator': 'FormItem',
             'x-component': 'Select',
             enum: [],
@@ -168,7 +206,10 @@ const Create = (props: Props) => {
             'x-visible': false,
           },
           inputs: {
-            title: '参数',
+            title: intl.formatMessage({
+              id: 'pages.device.command.parameter',
+              defaultMessage: '参数',
+            }),
             'x-decorator': 'FormItem',
             'x-component': 'ArrayTable',
             type: 'array',
@@ -178,7 +219,12 @@ const Create = (props: Props) => {
                 column1: {
                   type: 'void',
                   'x-component': 'ArrayTable.Column',
-                  'x-component-props': { title: '键' },
+                  'x-component-props': {
+                    title: intl.formatMessage({
+                      id: 'pages.device.command.key',
+                      defaultMessage: '键',
+                    }),
+                  },
                   properties: {
                     key: {
                       type: 'string',
@@ -191,7 +237,12 @@ const Create = (props: Props) => {
                 column2: {
                   type: 'void',
                   'x-component': 'ArrayTable.Column',
-                  'x-component-props': { title: '值' },
+                  'x-component-props': {
+                    title: intl.formatMessage({
+                      id: 'pages.device.command.value',
+                      defaultMessage: '值',
+                    }),
+                  },
                   properties: {
                     value: {
                       type: 'string',
@@ -235,9 +286,19 @@ const Create = (props: Props) => {
     }
     const resp = await service.task(values);
     if (resp.status === 200) {
-      message.success('操作成功');
+      message.success(
+        intl.formatMessage({
+          id: 'pages.data.option.success',
+          defaultMessage: '操作成功！',
+        }),
+      );
     } else {
-      message.error('操作失败');
+      message.error(
+        intl.formatMessage({
+          id: 'pages.data.option.error',
+          defaultMessage: '操作失败',
+        }),
+      );
     }
     close();
   };
@@ -247,7 +308,10 @@ const Create = (props: Props) => {
       onCancel={() => close()}
       width="50vw"
       visible={visible}
-      title="下发指令"
+      title={intl.formatMessage({
+        id: 'pages.device.command',
+        defaultMessage: '下发指令',
+      })}
     >
       <Form form={form} labelCol={5} wrapperCol={16}>
         <SchemaField schema={schema} scope={{ useAsyncDataSource, loadData }} />

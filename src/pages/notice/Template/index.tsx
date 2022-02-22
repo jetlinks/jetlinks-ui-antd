@@ -140,7 +140,10 @@ const Template = () => {
     properties: {
       name: {
         type: 'string',
-        title: '名称',
+        title: intl.formatMessage({
+          id: 'pages.notice.config.schema.name',
+          defaultMessage: '名称',
+        }),
         required: true,
         'x-component': 'Input',
         'x-decorator': 'FormItem',
@@ -152,7 +155,10 @@ const Template = () => {
         properties: {
           type: {
             type: 'string',
-            title: '通知类型',
+            title: intl.formatMessage({
+              id: 'pages.notice.config.type',
+              defaultMessage: '通知类型',
+            }),
             'x-component': 'Select',
             'x-decorator': 'FormItem',
             'x-decorator-props': {
@@ -163,7 +169,10 @@ const Template = () => {
           },
           provider: {
             type: 'string',
-            title: '服务商',
+            title: intl.formatMessage({
+              id: 'pages.notice.config.schema.service.provider',
+              defaultMessage: '服务商',
+            }),
             'x-component': 'Select',
             'x-decorator-props': {
               labelCol: 4,
@@ -181,25 +190,37 @@ const Template = () => {
             properties: {
               ttsCode: {
                 type: 'string',
-                title: '模版ID',
+                title: intl.formatMessage({
+                  id: 'pages.notice.template.id',
+                  defaultMessage: '模版ID',
+                }),
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
               },
               calledShowNumbers: {
                 type: 'string',
-                title: '被叫显号',
+                title: intl.formatMessage({
+                  id: 'pages.notice.template.calledShowNumbers',
+                  defaultMessage: '被叫显号',
+                }),
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
               },
               CalledNumber: {
                 type: 'string',
-                title: '被叫号码',
+                title: intl.formatMessage({
+                  id: 'pages.notice.template.calledNumber',
+                  defaultMessage: '被叫号码',
+                }),
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
               },
               PlayTimes: {
                 type: 'string',
-                title: '播放次数',
+                title: intl.formatMessage({
+                  id: 'pages.notice.template.play.times',
+                  defaultMessage: '播放次数',
+                }),
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
               },
@@ -222,17 +243,26 @@ const Template = () => {
                 properties: {
                   text: {
                     type: 'string',
-                    title: '应用ID',
+                    title: intl.formatMessage({
+                      id: 'pages.notice.template.app.id',
+                      defaultMessage: '应用ID',
+                    }),
                     'x-component': 'Input.TextArea',
                     'x-decorator': 'FormItem',
                   },
                   sendTo: {
                     type: 'string',
-                    title: '收件人',
+                    title: intl.formatMessage({
+                      id: 'pages.notice.template.recipient',
+                      defaultMessage: '收件人',
+                    }),
                     'x-component': 'Input.TextArea',
                     'x-decorator': 'FormItem',
                     'x-component-props': {
-                      placeholder: '多个收件人以 , 分割',
+                      placeholder: intl.formatMessage({
+                        id: 'pages.notice.template.recipients.split',
+                        defaultMessage: '多个收件人以 , 分割',
+                      }),
                     },
                   },
                 },
@@ -251,31 +281,49 @@ const Template = () => {
                 properties: {
                   code: {
                     type: 'string',
-                    title: '模版编码',
+                    title: intl.formatMessage({
+                      id: 'pages.notice.template.sms.templateCode',
+                      defaultMessage: '模版编码',
+                    }),
                     'x-component': 'Input.TextArea',
                     'x-decorator': 'FormItem',
                     required: true,
                     'x-component-props': {
-                      placeholder: '阿里云短信模版编码',
+                      placeholder: intl.formatMessage({
+                        id: 'pages.notice.template.sms.Aliyun.templateCode',
+                        defaultMessage: '阿里云短信模版编码',
+                      }),
                     },
                   },
                   signName: {
                     type: 'string',
-                    title: '签名',
+                    title: intl.formatMessage({
+                      id: 'pages.notice.template.sms.signature',
+                      defaultMessage: '签名',
+                    }),
                     'x-component': 'Input.TextArea',
                     'x-decorator': 'FormItem',
                     required: true,
                     'x-component-props': {
-                      placeholder: '阿里云短信模版签名',
+                      placeholder: intl.formatMessage({
+                        id: 'pages.notice.template.sms.Aliyun.templateSignature',
+                        defaultMessage: '阿里云短信模版签名',
+                      }),
                     },
                   },
                   phoneNumber: {
                     type: 'string',
-                    title: '收件人',
+                    title: intl.formatMessage({
+                      id: 'pages.notice.template.recipient',
+                      defaultMessage: '收件人',
+                    }),
                     'x-component': 'Input.TextArea',
                     'x-decorator': 'FormItem',
                     'x-component-props': {
-                      placeholder: '短信接收者,暂只支持单个联系人',
+                      placeholder: intl.formatMessage({
+                        id: 'pages.notice.template.sms.recipient.single',
+                        defaultMessage: '短信接收者,暂只支持单个联系人',
+                      }),
                     },
                   },
                 },
@@ -305,22 +353,34 @@ const Template = () => {
             properties: {
               subject: {
                 type: 'string',
-                title: '标题',
+                title: intl.formatMessage({
+                  id: 'pages.notice.template.title',
+                  defaultMessage: '标题',
+                }),
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
               },
               sendTo: {
                 type: 'string',
-                title: '收件人',
+                title: intl.formatMessage({
+                  id: 'pages.notice.template.recipient',
+                  defaultMessage: '收件人',
+                }),
                 'x-component': 'Input.TextArea',
                 'x-decorator': 'FormItem',
                 'x-component-props': {
-                  placeholder: '多个收件人以  ,  分隔',
+                  placeholder: intl.formatMessage({
+                    id: 'pages.notice.template.recipients.split',
+                    defaultMessage: '多个收件人以  ,  分隔',
+                  }),
                 },
               },
               attachments: {
                 type: 'string',
-                title: '附件',
+                title: intl.formatMessage({
+                  id: 'pages.notice.template.email.attachments',
+                  defaultMessage: '附件',
+                }),
                 'x-component': 'FUpload',
                 'x-decorator': 'FormItem',
                 'x-component-props': {
@@ -329,7 +389,10 @@ const Template = () => {
               },
               emailEditor: {
                 type: 'string',
-                title: '正文',
+                title: intl.formatMessage({
+                  id: 'pages.notice.template.email.text',
+                  defaultMessage: '正文',
+                }),
                 'x-component': 'FBraftEditor',
                 'x-decorator': 'FormItem',
                 'x-component-props': {
@@ -358,31 +421,46 @@ const Template = () => {
             properties: {
               agentId: {
                 type: 'string',
-                title: '应用ID',
+                title: intl.formatMessage({
+                  id: 'pages.notice.template.app.id',
+                  defaultMessage: '应用ID',
+                }),
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
               },
               toUser: {
                 type: 'string',
-                title: '收信人ID',
+                title: intl.formatMessage({
+                  id: 'pages.notice.template.recipient.id',
+                  defaultMessage: '收信人ID',
+                }),
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
               },
               toParty: {
                 type: 'string',
-                title: '收信部门ID',
+                title: intl.formatMessage({
+                  id: 'pages.notice.template.recipient.department.id',
+                  defaultMessage: '收信部门ID',
+                }),
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
               },
               toTag: {
                 type: 'string',
-                title: '按标签推送',
+                title: intl.formatMessage({
+                  id: 'pages.notice.template.weixin.push.tag',
+                  defaultMessage: '按标签推送',
+                }),
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
               },
               message: {
                 type: 'string',
-                title: '内容',
+                title: intl.formatMessage({
+                  id: 'pages.notice.template.content',
+                  defaultMessage: '内容',
+                }),
                 'x-component': 'Input.TextArea',
                 'x-decorator': 'FormItem',
               },
@@ -404,7 +482,10 @@ const Template = () => {
                 type: 'void',
                 properties: {
                   messageType: {
-                    title: '消息类型',
+                    title: intl.formatMessage({
+                      id: 'pages.notice.template.dingTalk.messageType',
+                      defaultMessage: '消息类型',
+                    }),
                     type: 'string',
                     'x-component': 'Select',
                     'x-decorator': 'FormItem',
@@ -414,7 +495,10 @@ const Template = () => {
                     type: 'object',
                     properties: {
                       content: {
-                        title: '通知内容',
+                        title: intl.formatMessage({
+                          id: 'pages.notice.template.dingTalk.notificationContent',
+                          defaultMessage: '通知内容',
+                        }),
                         type: 'string',
                         'x-decorator': 'FormItem',
                         'x-component': 'Input.TextArea',
@@ -434,13 +518,19 @@ const Template = () => {
                     type: 'object',
                     properties: {
                       title: {
-                        title: '标题',
+                        title: intl.formatMessage({
+                          id: 'pages.notice.template.title',
+                          defaultMessage: '标题',
+                        }),
                         type: 'string',
                         'x-decorator': 'FormItem',
                         'x-component': 'Input',
                       },
                       text: {
-                        title: '内容',
+                        title: intl.formatMessage({
+                          id: 'pages.notice.template.content',
+                          defaultMessage: '内容',
+                        }),
                         type: 'string',
                         'x-decorator': 'FormItem',
                         'x-component': 'Input.TextArea',
@@ -460,24 +550,36 @@ const Template = () => {
                     type: 'object',
                     properties: {
                       title: {
-                        title: '标题',
+                        title: intl.formatMessage({
+                          id: 'pages.notice.template.title',
+                          defaultMessage: '标题',
+                        }),
                         type: 'string',
                         'x-decorator': 'FormItem',
                         'x-component': 'Input',
                       },
                       text: {
-                        title: '内容',
+                        title: intl.formatMessage({
+                          id: 'pages.notice.template.content',
+                          defaultMessage: '内容',
+                        }),
                         type: 'string',
                         'x-decorator': 'FormItem',
                         'x-component': 'Input.TextArea',
                       },
                       picUrl: {
-                        title: '图片连接',
+                        title: intl.formatMessage({
+                          id: 'pages.notice.template.picUrl',
+                          defaultMessage: '图片连接',
+                        }),
                         'x-decorator': 'FormItem',
                         'x-component': 'FUpload',
                       },
                       messageUrl: {
-                        title: '内容连接',
+                        title: intl.formatMessage({
+                          id: 'pages.notice.template.messageUrl',
+                          defaultMessage: '内容连接',
+                        }),
                         'x-decorator': 'FormItem',
                         'x-component': 'Input.TextArea',
                       },
@@ -508,35 +610,62 @@ const Template = () => {
                 properties: {
                   agentId: {
                     type: 'string',
-                    title: '应用ID',
+                    title: intl.formatMessage({
+                      id: 'pages.notice.template.app.id',
+                      defaultMessage: '应用ID',
+                    }),
                     'x-component': 'Input',
                     'x-decorator': 'FormItem',
                   },
                   userIdList: {
                     type: 'string',
-                    title: '收信人ID',
+                    title: intl.formatMessage({
+                      id: 'pages.notice.template.recipient.id',
+                      defaultMessage: '收信人ID',
+                    }),
                     'x-component': 'Input',
                     'x-decorator': 'FormItem',
                   },
                   departmentIdList: {
                     type: 'string',
-                    title: '收信部门ID',
+                    title: intl.formatMessage({
+                      id: 'pages.notice.template.recipient.department.id',
+                      defaultMessage: '收信部门ID',
+                    }),
                     'x-component': 'Input',
                     'x-decorator': 'FormItem',
                   },
                   toAllUser: {
                     type: 'string',
-                    title: '全部用户',
+                    title: intl.formatMessage({
+                      id: 'pages.notice.template.dingTalkMessage.allUser',
+                      defaultMessage: '全部用户',
+                    }),
                     'x-component': 'Select',
                     'x-decorator': 'FormItem',
                     enum: [
-                      { label: '是', value: true },
-                      { label: '否', value: false },
+                      {
+                        label: intl.formatMessage({
+                          id: 'pages.notice.template.dingTalkMessage.yes',
+                          defaultMessage: '是',
+                        }),
+                        value: true,
+                      },
+                      {
+                        label: intl.formatMessage({
+                          id: 'pages.notice.template.dingTalkMessage.no',
+                          defaultMessage: '否',
+                        }),
+                        value: false,
+                      },
                     ],
                   },
                   message: {
                     type: 'string',
-                    title: '内容',
+                    title: intl.formatMessage({
+                      id: 'pages.notice.template.content',
+                      defaultMessage: '内容',
+                    }),
                     'x-component': 'Input.TextArea',
                     'x-decorator': 'FormItem',
                   },
@@ -567,7 +696,10 @@ const Template = () => {
             properties: {
               text: {
                 type: 'string',
-                title: '消息',
+                title: intl.formatMessage({
+                  id: 'pages.notice.template.network.message',
+                  defaultMessage: '消息',
+                }),
                 'x-component': 'Input.TextArea',
                 'x-decorator': 'FormItem',
                 'x-component-props': {

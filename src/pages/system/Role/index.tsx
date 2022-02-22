@@ -39,7 +39,10 @@ const Role: React.FC = observer(() => {
         rules: [
           {
             required: true,
-            message: '此项为必填项',
+            message: intl.formatMessage({
+              id: 'pages.system.input.required.tips',
+              defaultMessage: '此项为必填项',
+            }),
           },
         ],
       },
@@ -60,7 +63,10 @@ const Role: React.FC = observer(() => {
         rules: [
           {
             required: true,
-            message: '此项为必填项',
+            message: intl.formatMessage({
+              id: 'pages.system.input.required.tips',
+              defaultMessage: '此项为必填项',
+            }),
           },
         ],
       },

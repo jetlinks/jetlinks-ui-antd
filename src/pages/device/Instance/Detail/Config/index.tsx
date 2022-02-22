@@ -8,6 +8,7 @@ import { Form, FormGrid, FormItem, FormLayout, Input, Password, PreviewText } fr
 import { createForm } from '@formily/core';
 import { history, useParams } from 'umi';
 import Tags from '@/pages/device/Instance/Detail/Config/Tags';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 const componentMap = {
   string: 'Input',
@@ -15,6 +16,7 @@ const componentMap = {
 };
 
 const Config = () => {
+  const intl = useIntl();
   const params = useParams<{ id: string }>();
   useEffect(() => {
     const id = InstanceModel.current?.id || params.id;
@@ -95,7 +97,19 @@ const Config = () => {
         return (
           <Card
             title={item.name}
-            extra={<a onClick={() => setState(!state)}>{state ? '编辑' : '保存'}</a>}
+            extra={
+              <a onClick={() => setState(!state)}>
+                {state
+                  ? intl.formatMessage({
+                      id: 'pages.data.option.edit',
+                      defaultMessage: '编辑',
+                    })
+                  : intl.formatMessage({
+                      id: 'pages.data.option.save',
+                      defaultMessage: '保存',
+                    })}
+              </a>
+            }
           >
             <PreviewText.Placeholder value="-">
               <Form form={form}>

@@ -11,9 +11,6 @@ export default {
   'menu.system.permission': '权限管理',
   'menu.system.tenant': '租户管理',
   'menu.system.datasource': '数据源管理',
-  'menu.system.department': '部门管理',
-  'menu.system.assets': '资产分配',
-  'menu.system.member': '用户',
   'menu.device': '设备管理',
   'menu.device.product': '产品',
   'menu.device.product-detail': '产品详情',
@@ -104,4 +101,6 @@ export default {
   'menu.editor.flow': '流程编辑器',
   'menu.editor.mind': '脑图编辑器',
   'menu.editor.koni': '拓扑编辑器',
+  // 'menu.app.openApi.document':'OpenAPI 文档',
+  // 'menu.app.business.component.document':'业务组件文档',
 };

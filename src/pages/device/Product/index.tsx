@@ -69,19 +69,31 @@ const Product = observer(() => {
       dataIndex: 'id',
     },
     {
-      title: '产品名称',
+      title: intl.formatMessage({
+        id: 'pages.device.product.name',
+        defaultMessage: '产品名称',
+      }),
       dataIndex: 'name',
     },
     {
-      title: '状态',
+      title: intl.formatMessage({
+        id: 'pages.device.product.state',
+        defaultMessage: '状态',
+      }),
       render: (_, row) => <Space size={0}>{status[row.state]}</Space>,
     },
     {
-      title: '设备数量',
+      title: intl.formatMessage({
+        id: 'pages.device.product.device.count',
+        defaultMessage: '设备数量',
+      }),
       dataIndex: 'count',
     },
     {
-      title: '设备分类',
+      title: intl.formatMessage({
+        id: 'pages.device.product.device.classified',
+        defaultMessage: '设备分类',
+      }),
       dataIndex: 'classifiedName',
     },
     {

@@ -29,7 +29,10 @@ const BaseMetadata = observer((props: Props) => {
 
   const actions: ProColumns<MetadataItem>[] = [
     {
-      title: '操作',
+      title: intl.formatMessage({
+        id: 'pages.data.option',
+        defaultMessage: '操作',
+      }),
       valueType: 'option',
       align: 'center',
       width: 200,
@@ -43,13 +46,29 @@ const BaseMetadata = observer((props: Props) => {
             MetadataModel.action = 'edit';
           }}
         >
-          <Tooltip title="编辑">
+          <Tooltip
+            title={intl.formatMessage({
+              id: 'pages.data.option.edit',
+              defaultMessage: '编辑',
+            })}
+          >
             <EditOutlined />
           </Tooltip>
         </a>,
         <a key="delete">
-          <Popconfirm title="确认删除？" onConfirm={async () => {}}>
-            <Tooltip title="删除">
+          <Popconfirm
+            title={intl.formatMessage({
+              id: 'pages.data.option.remove.tips',
+              defaultMessage: '确认删除吗？',
+            })}
+            onConfirm={async () => {}}
+          >
+            <Tooltip
+              title={intl.formatMessage({
+                id: 'pages.data.option.remove',
+                defaultMessage: '删除',
+              })}
+            >
               <MinusOutlined />
             </Tooltip>
           </Popconfirm>

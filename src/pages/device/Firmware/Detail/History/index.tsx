@@ -4,8 +4,10 @@ import { service, state } from '@/pages/device/Firmware';
 import type { HistoryItem } from '@/pages/device/Firmware/typings';
 import { useParams } from 'umi';
 import { useEffect, useState } from 'react';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 const History = () => {
+  const intl = useIntl();
   const param = useParams<{ id: string }>();
 
   const [defaultParams, setParams] = useState<Record<string, unknown>>();
@@ -25,28 +27,46 @@ const History = () => {
       width: 48,
     },
     {
-      title: '设备名称',
+      title: intl.formatMessage({
+        id: 'pages.device.components.firmware.detail.history.deviceName',
+        defaultMessage: '设备名称',
+      }),
       dataIndex: 'deviceName',
     },
     {
-      title: '任务名称',
+      title: intl.formatMessage({
+        id: 'pages.device.components.firmware.detail.history.taskName',
+        defaultMessage: '任务名称',
+      }),
       dataIndex: 'taskName',
     },
     {
-      title: '版本',
+      title: intl.formatMessage({
+        id: 'pages.device.components.firmware.detail.history.version',
+        defaultMessage: '版本',
+      }),
       dataIndex: 'version',
     },
     {
-      title: '状态',
+      title: intl.formatMessage({
+        id: 'pages.device.components.firmware.detail.history.state',
+        defaultMessage: '状态',
+      }),
       dataIndex: 'state',
       renderText: (text) => text.text,
     },
     {
-      title: '进度(%)',
+      title: intl.formatMessage({
+        id: 'pages.device.components.firmware.detail.history.progress',
+        defaultMessage: '进度(%)',
+      }),
       dataIndex: 'progress',
     },
     {
-      title: '创建时间',
+      title: intl.formatMessage({
+        id: 'pages.device.components.firmware.detail.history.createTime',
+        defaultMessage: '创建时间',
+      }),
       dataIndex: 'createTime',
       valueType: 'dateTime',
     },

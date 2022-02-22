@@ -28,9 +28,19 @@ const Protocol = () => {
   const modifyState = async (id: string, type: 'deploy' | 'un-deploy') => {
     const resp = await service.modifyState(id, type);
     if (resp.status === 200) {
-      message.success('操作成功!');
+      message.success(
+        intl.formatMessage({
+          id: 'pages.data.option.success',
+          defaultMessage: '操作成功！',
+        }),
+      );
     } else {
-      message.error('操作失败!');
+      message.error(
+        intl.formatMessage({
+          id: 'pages.data.option.error',
+          defaultMessage: '操作失败',
+        }),
+      );
     }
     actionRef.current?.reload();
   };
@@ -56,13 +66,19 @@ const Protocol = () => {
     },
     {
       dataIndex: 'state',
-      title: '状态',
+      title: intl.formatMessage({
+        id: 'pages.link.protocol.state',
+        defaultMessage: '状态',
+      }),
       renderText: (text) =>
         text === 1 ? <Tag color="#108ee9">正常</Tag> : <Tag color="#F50">禁用</Tag>,
     },
     {
       dataIndex: 'type',
-      title: '类型',
+      title: intl.formatMessage({
+        id: 'pages.link.protocol.type',
+        defaultMessage: '类型',
+      }),
     },
     {
       dataIndex: 'provider',
@@ -98,8 +114,19 @@ const Protocol = () => {
         </a>,
         record.state !== 1 && (
           <a key="publish">
-            <Popconfirm title="发布？" onConfirm={() => modifyState(record.id, 'deploy')}>
-              <Tooltip title="发布">
+            <Popconfirm
+              title={intl.formatMessage({
+                id: 'pages.link.protocol.isPublish',
+                defaultMessage: '发布？',
+              })}
+              onConfirm={() => modifyState(record.id, 'deploy')}
+            >
+              <Tooltip
+                title={intl.formatMessage({
+                  id: 'pages.link.protocol.publish',
+                  defaultMessage: '发布',
+                })}
+              >
                 <PlayCircleOutlined />
               </Tooltip>
             </Popconfirm>
@@ -107,8 +134,19 @@ const Protocol = () => {
         ),
         record.state === 1 && (
           <a key="reload">
-            <Popconfirm title="重新发布？" onConfirm={() => modifyState(record.id, 'deploy')}>
-              <Tooltip title="重新发布">
+            <Popconfirm
+              title={intl.formatMessage({
+                id: 'pages.link.protocol.isRepublish',
+                defaultMessage: '重新发布？',
+              })}
+              onConfirm={() => modifyState(record.id, 'deploy')}
+            >
+              <Tooltip
+                title={intl.formatMessage({
+                  id: 'pages.link.protocol.republish',
+                  defaultMessage: '重新发布',
+                })}
+              >
                 <CloudSyncOutlined />
               </Tooltip>
             </Popconfirm>
@@ -116,8 +154,19 @@ const Protocol = () => {
         ),
         record.state === 1 && (
           <a key="unDeploy">
-            <Popconfirm onConfirm={() => modifyState(record.id, 'un-deploy')} title="发布？">
-              <Tooltip title="取消发布">
+            <Popconfirm
+              onConfirm={() => modifyState(record.id, 'un-deploy')}
+              title={intl.formatMessage({
+                id: 'pages.link.protocol.isPublish',
+                defaultMessage: '发布？',
+              })}
+            >
+              <Tooltip
+                title={intl.formatMessage({
+                  id: 'pages.link.protocol.unpublish',
+                  defaultMessage: '取消发布',
+                })}
+              >
                 <CloseOutlined />
               </Tooltip>
             </Popconfirm>
@@ -193,7 +242,10 @@ const Protocol = () => {
             },
           },
           name: {
-            title: '名称',
+            title: intl.formatMessage({
+              id: 'pages.link.protocol.schema.name',
+              defaultMessage: '名称',
+            }),
             required: true,
             'x-component': 'Input',
             'x-decorator': 'FormItem',
@@ -202,7 +254,10 @@ const Protocol = () => {
             },
           },
           type: {
-            title: '类型',
+            title: intl.formatMessage({
+              id: 'pages.link.protocol.schema.type',
+              defaultMessage: '类型',
+            }),
             'x-component': 'Select',
             'x-decorator': 'FormItem',
             required: true,
@@ -216,7 +271,10 @@ const Protocol = () => {
             type: 'object',
             properties: {
               provider: {
-                title: '类名',
+                title: intl.formatMessage({
+                  id: 'pages.link.protocol.schema.className',
+                  defaultMessage: '类名',
+                }),
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
                 'x-visible': false,
@@ -230,7 +288,10 @@ const Protocol = () => {
                 },
               },
               '{url:location}': {
-                title: '文件地址',
+                title: intl.formatMessage({
+                  id: 'pages.link.protocol.schema.fileLocation',
+                  defaultMessage: '文件地址',
+                }),
                 'x-component': 'FUpload',
                 'x-decorator': 'FormItem',
                 'x-component-props': {
@@ -255,12 +316,18 @@ const Protocol = () => {
                 },
               },
               protocol: {
-                title: '协议标识',
+                title: intl.formatMessage({
+                  id: 'pages.link.protocol.schema.protocolId',
+                  defaultMessage: '协议标识',
+                }),
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
               },
               transport: {
-                title: '链接协议',
+                title: intl.formatMessage({
+                  id: 'pages.link.protocol.schema.linkingAgreement',
+                  defaultMessage: '链接协议',
+                }),
                 'x-component': 'Select',
                 'x-decorator': 'FormItem',
                 enum: [
@@ -273,7 +340,10 @@ const Protocol = () => {
                 ],
               },
               script: {
-                title: '脚本',
+                title: intl.formatMessage({
+                  id: 'pages.link.protocol.schema.script',
+                  defaultMessage: '脚本',
+                }),
                 'x-component': 'FMonacoEditor',
                 'x-decorator': 'FormItem',
                 'x-decorator-props': {

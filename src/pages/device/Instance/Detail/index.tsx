@@ -46,7 +46,12 @@ const InstanceDetail = observer(() => {
   const resetMetadata = async () => {
     const resp = await service.deleteMetadata(params.id);
     if (resp.status === 200) {
-      message.success('操作成功');
+      message.success(
+        intl.formatMessage({
+          id: 'pages.data.option.success',
+          defaultMessage: '操作成功',
+        }),
+      );
       getDetail(params.id);
     }
   };
@@ -78,8 +83,18 @@ const InstanceDetail = observer(() => {
           <Metadata
             type="device"
             tabAction={
-              <Tooltip title="重置后将使用产品的物模型配置">
-                <Button onClick={resetMetadata}>重置操作</Button>
+              <Tooltip
+                title={intl.formatMessage({
+                  id: 'pages.device.instanceDetail.reset.productConfig',
+                  defaultMessage: '重置后将使用产品的物模型配置',
+                })}
+              >
+                <Button onClick={resetMetadata}>
+                  {intl.formatMessage({
+                    id: 'pages.device.instanceDetail.reset',
+                    defaultMessage: '重置操作',
+                  })}
+                </Button>
               </Tooltip>
             }
           />

@@ -2,6 +2,7 @@ import { Drawer, Tabs } from 'antd';
 import { useEffect, useState } from 'react';
 import { productModel, service } from '@/pages/device/Product';
 import MonacoEditor from 'react-monaco-editor';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 interface Props {
   visible: boolean;
@@ -9,6 +10,7 @@ interface Props {
 }
 
 const Cat = (props: Props) => {
+  const intl = useIntl();
   const [codecs, setCodecs] = useState<{ id: string; name: string }[]>();
   const metadata = productModel.current?.metadata as string;
   const [value, setValue] = useState(metadata);
@@ -33,12 +35,23 @@ const Cat = (props: Props) => {
     }
   };
   return (
-    <Drawer title="查看物模型" onClose={() => props.close()} visible={props.visible}>
+    <Drawer
+      title={intl.formatMessage({
+        id: 'pages.device.components.metadata.cat.lookModel',
+        defaultMessage: '查看物模型',
+      })}
+      onClose={() => props.close()}
+      visible={props.visible}
+    >
       <div style={{ background: 'rgb(236, 237, 238)' }}>
         <p style={{ padding: 10 }}>
-          物模型是对设备在云端的功能描述，包括设备的属性、服务和事件。物联网平台通过定义一种物的描述语言来描述物模型，称之为
-          TSL（即 Thing Specification Language），采用 JSON 格式，您可以根据 TSL
-          组装上报设备的数据。您可以导出完整物模型，用于云端应用开发。
+          {intl.formatMessage({
+            id: 'pages.device.components.metadata.cat.introduce',
+            defaultMessage:
+              '物模型是对设备在云端的功能描述，包括设备的属性、服务和事件。物联网平台通过定义一种物的描述语言来描述物模型，称之为\n' +
+              '          TSL（即 Thing Specification Language），采用 JSON 格式，您可以根据 TSL\n' +
+              '          组装上报设备的数据。您可以导出完整物模型，用于云端应用开发。',
+          })}
         </p>
       </div>
       <Tabs onChange={convertMetadata}>

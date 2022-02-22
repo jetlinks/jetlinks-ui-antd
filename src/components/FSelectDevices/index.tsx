@@ -86,7 +86,10 @@ const FSelectDevices = connect((props: Props) => {
       {visible && (
         <Modal
           visible
-          title="选择设备"
+          title={intl.formatMessage({
+            id: 'pages.device.components.metadata.import.choiceDevice',
+            defaultMessage: '选择设备',
+          })}
           width="80vw"
           onCancel={() => setVisible(false)}
           onOk={() => {

@@ -7,8 +7,10 @@ import { Store } from 'jetlinks-store';
 import JsonParam from '@/components/Metadata/JsonParam';
 import EnumParam from '@/components/Metadata/EnumParam';
 import BooleanEnum from '@/components/Metadata/BooleanParam';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 const ArrayParam = () => {
+  const intl = useIntl();
   const SchemaField = createSchemaField({
     components: {
       FormItem,
@@ -29,7 +31,10 @@ const ArrayParam = () => {
     properties: {
       config: {
         type: 'void',
-        title: '配置元素',
+        title: intl.formatMessage({
+          id: 'component.metadata.array.element',
+          defaultMessage: '配置元素',
+        }),
         'x-component': 'FormLayout',
         'x-component-props': {
           layout: 'vertical',
@@ -43,14 +48,20 @@ const ArrayParam = () => {
           "{{(field) => field.title = field.query('.void.date2').get('value') || field.title}}",
         properties: {
           type: {
-            title: '元素类型',
+            title: intl.formatMessage({
+              id: 'component.metadata.array.elementType',
+              defaultMessage: '元素类型',
+            }),
             'x-decorator': 'FormItem',
             'x-component': 'Select',
             enum: DataTypeList.filter((item) => item.value !== 'array'),
           },
 
           scale: {
-            title: '精度',
+            title: intl.formatMessage({
+              id: 'component.metadata.accuracy',
+              defaultMessage: '精度',
+            }),
             'x-decorator': 'FormItem',
             'x-component': 'NumberPicker',
             'x-reactions': {
@@ -63,7 +74,10 @@ const ArrayParam = () => {
             },
           },
           unit: {
-            title: '单位',
+            title: intl.formatMessage({
+              id: 'component.metadata.unit',
+              defaultMessage: '单位',
+            }),
             'x-decorator': 'FormItem',
             'x-component': 'Select',
             'x-visible': false,
@@ -78,7 +92,10 @@ const ArrayParam = () => {
             },
           },
           format: {
-            title: '时间格式',
+            title: intl.formatMessage({
+              id: 'component.metadata.array.dateFormat',
+              defaultMessage: '时间格式',
+            }),
             'x-decorator': 'FormItem',
             'x-component': 'Select',
             enum: DateTypeList,
@@ -95,11 +112,17 @@ const ArrayParam = () => {
             type: 'object',
             properties: {
               maxLength: {
-                title: '最大长度',
+                title: intl.formatMessage({
+                  id: 'component.metadata.maxLength',
+                  defaultMessage: '最大长度',
+                }),
                 'x-decorator': 'FormItem',
                 'x-component': 'NumberPicker',
                 'x-decorator-props': {
-                  tooltip: '字节',
+                  tooltip: intl.formatMessage({
+                    id: 'component.metadata.array.byte',
+                    defaultMessage: '字节',
+                  }),
                 },
                 'x-reactions': {
                   dependencies: ['..type'],
@@ -114,7 +137,10 @@ const ArrayParam = () => {
           },
 
           booleanConfig: {
-            title: '布尔值',
+            title: intl.formatMessage({
+              id: 'component.metadata.array.boolean',
+              defaultMessage: '布尔值',
+            }),
             'x-decorator': 'FormItem',
             'x-component': 'BooleanEnum',
             type: 'void',
@@ -128,7 +154,10 @@ const ArrayParam = () => {
             },
           },
           enumConfig: {
-            title: '枚举项',
+            title: intl.formatMessage({
+              id: 'component.metadata.array.enum',
+              defaultMessage: '枚举项',
+            }),
             type: 'void',
             'x-decorator': 'FormItem',
             'x-component': 'EnumParam',
@@ -142,7 +171,10 @@ const ArrayParam = () => {
             },
           },
           fileType: {
-            title: '文件类型',
+            title: intl.formatMessage({
+              id: 'component.metadata.array.fileType',
+              defaultMessage: '文件类型',
+            }),
             'x-decorator': 'FormItem',
             'x-component': 'Select',
             'x-visible': false,
@@ -157,7 +189,10 @@ const ArrayParam = () => {
             },
           },
           jsonConfig: {
-            title: 'JSON对象',
+            title: intl.formatMessage({
+              id: 'component.metadata.json',
+              defaultMessage: 'JSON对象',
+            }),
             type: 'void',
             'x-decorator': 'FormItem',
             'x-component': 'JsonParam',
@@ -172,7 +207,10 @@ const ArrayParam = () => {
           },
 
           description: {
-            title: '描述',
+            title: intl.formatMessage({
+              id: 'component.metadata.array.describe',
+              defaultMessage: '描述',
+            }),
             'x-decorator': 'FormItem',
             'x-component': 'Input.TextArea',
           },

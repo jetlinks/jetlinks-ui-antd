@@ -30,9 +30,19 @@ const Gateway = () => {
   const handleAction = async (id: string, type: 'shutdown' | 'startup' | 'pause') => {
     const resp = await service.action(id, type);
     if (resp.status === 200) {
-      message.success('操作成功！');
+      message.success(
+        intl.formatMessage({
+          id: 'pages.data.option.success',
+          defaultMessage: '操作成功！',
+        }),
+      );
     } else {
-      message.error('操作失败');
+      message.error(
+        intl.formatMessage({
+          id: 'pages.data.option.error',
+          defaultMessage: '操作失败',
+        }),
+      );
     }
     actionRef.current?.reload();
   };
@@ -60,7 +70,10 @@ const Gateway = () => {
     },
     {
       dataIndex: 'networkId',
-      title: '网络组件',
+      title: intl.formatMessage({
+        id: 'pages.link.gateway.network.components',
+        defaultMessage: '网络组件',
+      }),
     },
     {
       dataIndex: 'state',
@@ -72,7 +85,10 @@ const Gateway = () => {
     },
     {
       dataIndex: 'createTime',
-      title: '创建时间',
+      title: intl.formatMessage({
+        id: 'pages.link.gateway.creation.time',
+        defaultMessage: '创建时间',
+      }),
       valueType: 'dateTime',
     },
     {
@@ -101,28 +117,48 @@ const Gateway = () => {
         </a>,
         record.state.value === 'disabled' && (
           <a key="startup" onClick={() => handleAction(record.id, 'startup')}>
-            <Tooltip title="启动">
+            <Tooltip
+              title={intl.formatMessage({
+                id: 'pages.link.gateway.startUp',
+                defaultMessage: '启动',
+              })}
+            >
               <PlayCircleOutlined />
             </Tooltip>
           </a>
         ),
         record.state.value === 'enabled' && (
           <a key="shutdown" onClick={() => handleAction(record.id, 'shutdown')}>
-            <Tooltip title="停止">
+            <Tooltip
+              title={intl.formatMessage({
+                id: 'pages.link.gateway.stop',
+                defaultMessage: '停止',
+              })}
+            >
               <StopOutlined />
             </Tooltip>
           </a>
         ),
         record.state.value === 'enabled' && (
           <a key="pause" onClick={() => handleAction(record.id, 'pause')}>
-            <Tooltip title="暂停">
+            <Tooltip
+              title={intl.formatMessage({
+                id: 'pages.link.gateway.pause',
+                defaultMessage: '暂停',
+              })}
+            >
               <PauseCircleOutlined />
             </Tooltip>
           </a>
         ),
         record.state.value === 'paused' && (
           <a key="restart" onClick={() => handleAction(record.id, 'startup')}>
-            <Tooltip title="恢复">
+            <Tooltip
+              title={intl.formatMessage({
+                id: 'pages.link.gateway.recover',
+                defaultMessage: '恢复',
+              })}
+            >
               <RedoOutlined />
             </Tooltip>
           </a>
@@ -140,7 +176,10 @@ const Gateway = () => {
                 );
                 actionRef.current?.reload();
               }}
-              title={'确认删除？'}
+              title={intl.formatMessage({
+                id: 'pages.data.option.remove.tips',
+                defaultMessage: '确认删除？',
+              })}
             >
               <Tooltip
                 title={intl.formatMessage({
@@ -208,12 +247,18 @@ const Gateway = () => {
     type: 'object',
     properties: {
       name: {
-        title: '名称',
+        title: intl.formatMessage({
+          id: 'pages.link.gateway.schema.name',
+          defaultMessage: '名称',
+        }),
         'x-component': 'Input',
         'x-decorator': 'FormItem',
       },
       provider: {
-        title: '类型',
+        title: intl.formatMessage({
+          id: 'pages.link.gateway.schema.type',
+          defaultMessage: '类型',
+        }),
         'x-component': 'Select',
         'x-decorator': 'FormItem',
         'x-reactions': ['{{useAsyncDataSource(getProviders)}}'],
@@ -223,7 +268,10 @@ const Gateway = () => {
         type: 'object',
         properties: {
           routes: {
-            title: '协议路由',
+            title: intl.formatMessage({
+              id: 'pages.link.gateway.schema.protocolRouting',
+              defaultMessage: '协议路由',
+            }),
             type: 'array',
             'x-component': 'ArrayItems',
             'x-decorator': 'FormItem',
@@ -251,7 +299,10 @@ const Gateway = () => {
                     },
                     protocol: {
                       type: 'string',
-                      title: '协议',
+                      title: intl.formatMessage({
+                        id: 'pages.link.gateway.schema.protocol',
+                        defaultMessage: '协议',
+                      }),
                       'x-decorator': 'FormItem',
                       'x-component': 'Select',
                       'x-reactions': ['{{useAsyncDataSource(getProtocol)}}'],
@@ -273,7 +324,10 @@ const Gateway = () => {
             properties: {
               add: {
                 type: 'void',
-                title: '添加条目',
+                title: intl.formatMessage({
+                  id: 'pages.link.gateway.schema.add.entry',
+                  defaultMessage: '添加条目',
+                }),
                 'x-component': 'ArrayItems.Addition',
               },
             },
@@ -288,7 +342,10 @@ const Gateway = () => {
           },
           protocol: {
             type: 'string',
-            title: '消息协议',
+            title: intl.formatMessage({
+              id: 'pages.link.gateway.schema.message.protocol',
+              defaultMessage: '消息协议',
+            }),
             'x-decorator': 'FormItem',
             'x-component': 'Select',
             'x-reactions': [
@@ -342,12 +399,18 @@ const Gateway = () => {
       },
 
       networkId: {
-        title: '网络组件',
+        title: intl.formatMessage({
+          id: 'pages.link.gateway.network.components',
+          defaultMessage: '网络组件',
+        }),
         'x-component': 'Select',
         'x-decorator': 'FormItem',
       },
       describe: {
-        title: '描述',
+        title: intl.formatMessage({
+          id: 'pages.link.gateway.schema.describe',
+          defaultMessage: '描述',
+        }),
         'x-component': 'Input.TextArea',
         'x-decorator': 'FormItem',
         'x-component-props': {

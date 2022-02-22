@@ -473,19 +473,31 @@ const Edit = (props: Props) => {
   };
   const metadataTypeMapping: Record<string, { name: string; schema: ISchema }> = {
     properties: {
-      name: '属性',
+      name: intl.formatMessage({
+        id: 'pages.device.metadata.properties',
+        defaultMessage: '属性',
+      }),
       schema: propertySchema,
     },
     events: {
-      name: '事件',
+      name: intl.formatMessage({
+        id: 'pages.device.metadata.events',
+        defaultMessage: '事件',
+      }),
       schema: eventSchema,
     },
     functions: {
-      name: '功能',
+      name: intl.formatMessage({
+        id: 'pages.device.metadata.functions',
+        defaultMessage: '功能',
+      }),
       schema: functionSchema,
     },
     tags: {
-      name: '标签',
+      name: intl.formatMessage({
+        id: 'pages.device.metadata.tags',
+        defaultMessage: '标签',
+      }),
       schema: createTagSchema(),
     },
   };
@@ -544,7 +556,12 @@ const Edit = (props: Props) => {
 
     const result = await saveMap.get(props.type);
     if (result.status === 200) {
-      message.success('操作成功！');
+      message.success(
+        intl.formatMessage({
+          id: 'pages.data.option.success',
+          defaultMessage: '操作成功！',
+        }),
+      );
       Store.set(SystemConst.REFRESH_METADATA_TABLE, true);
       if (deploy) {
         Store.set('product-deploy', deploy);
@@ -552,14 +569,22 @@ const Edit = (props: Props) => {
       MetadataModel.edit = false;
       MetadataModel.item = {};
     } else {
-      message.error('操作失败！');
+      message.error(
+        intl.formatMessage({
+          id: 'pages.data.option.error',
+          defaultMessage: '操作失败',
+        }),
+      );
     }
   };
 
   const menu = (
     <Menu>
       <Menu.Item key="1" onClick={() => saveMetadata(true)}>
-        保存并生效
+        {intl.formatMessage({
+          id: 'pages.device.components.metadata.base.edit.saveValid',
+          defaultMessage: '保存并生效',
+        })}
       </Menu.Item>
     </Menu>
   );
@@ -584,11 +609,17 @@ const Edit = (props: Props) => {
       extra={
         props.type === 'product' ? (
           <Dropdown.Button type="primary" onClick={() => saveMetadata()} overlay={menu}>
-            保存数据
+            {intl.formatMessage({
+              id: 'pages.device.components.metadata.base.edit.saveData',
+              defaultMessage: '保存数据',
+            })}
           </Dropdown.Button>
         ) : (
           <Button type="primary" onClick={() => saveMetadata()}>
-            保存数据
+            {intl.formatMessage({
+              id: 'pages.device.components.metadata.base.edit.saveData',
+              defaultMessage: '保存数据',
+            })}
           </Button>
         )
       }

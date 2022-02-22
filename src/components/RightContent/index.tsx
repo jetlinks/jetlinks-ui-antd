@@ -7,10 +7,12 @@ import HeaderSearch from '../HeaderSearch';
 import styles from './index.less';
 import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
 import { Store } from 'jetlinks-store';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 export type SiderTheme = 'light' | 'dark';
 
 const GlobalHeaderRight: React.FC = () => {
+  const intl = useIntl();
   const { initialState } = useModel('@@initialState');
 
   const [subscribeTopic] = useSendWebsocketMessage();
@@ -32,7 +34,10 @@ const GlobalHeaderRight: React.FC = () => {
     <Space className={className}>
       <HeaderSearch
         className={`${styles.action} ${styles.search}`}
-        placeholder="站内搜索"
+        placeholder={intl.formatMessage({
+          id: 'component.globalHeader.search',
+          defaultMessage: '站内搜索',
+        })}
         defaultValue="umi ui"
         options={[
           { label: <a href="https://umijs.org/zh/guide/umi-ui.html">umi ui</a>, value: 'umi ui' },

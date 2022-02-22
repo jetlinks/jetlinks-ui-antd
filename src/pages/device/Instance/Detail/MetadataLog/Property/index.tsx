@@ -5,6 +5,7 @@ import { Drawer } from 'antd';
 import encodeQuery from '@/utils/encodeQuery';
 import type { PropertyMetadata } from '@/pages/device/Product/typings';
 import columns from '@/pages/device/Instance/Detail/MetadataLog/columns';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 interface Props {
   visible: boolean;
@@ -13,6 +14,7 @@ interface Props {
 }
 
 const PropertyLog = (props: Props) => {
+  const intl = useIntl();
   const params = useParams<{ id: string }>();
   const { visible, close, data } = props;
 
@@ -38,7 +40,10 @@ const PropertyLog = (props: Props) => {
           ...columns,
           {
             dataIndex: 'formatValue',
-            title: '数据',
+            title: intl.formatMessage({
+              id: 'pages.device.instance.meatdataLog.event.data',
+              defaultMessage: '数据',
+            }),
             copyable: true,
           },
         ]}

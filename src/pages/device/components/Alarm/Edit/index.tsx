@@ -105,7 +105,10 @@ const EditAlarm = (props: Props) => {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              tab: '触发条件',
+              tab: intl.formatMessage({
+                id: 'pages.device.components.alarm.edit.trigger.condition',
+                defaultMessage: '触发条件',
+              }),
             },
             properties: Trigger.schema,
           },
@@ -113,7 +116,10 @@ const EditAlarm = (props: Props) => {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              tab: '转换配置',
+              tab: intl.formatMessage({
+                id: 'pages.device.components.alarm.edit.conversion.config',
+                defaultMessage: '转换配置',
+              }),
             },
             properties: {
               properties: {
@@ -139,7 +145,10 @@ const EditAlarm = (props: Props) => {
                           'x-decorator': 'FormItem',
                           'x-component': 'Input',
                           'x-component-props': {
-                            placeholder: '属性',
+                            placeholder: intl.formatMessage({
+                              id: 'pages.device.components.alarm.edit.property',
+                              defaultMessage: '属性',
+                            }),
                           },
                         },
                         alias: {
@@ -147,7 +156,10 @@ const EditAlarm = (props: Props) => {
                           'x-decorator': 'FormItem',
                           'x-component': 'Input',
                           'x-component-props': {
-                            placeholder: '别名',
+                            placeholder: intl.formatMessage({
+                              id: 'pages.device.components.alarm.edit.alias',
+                              defaultMessage: '别名',
+                            }),
                           },
                         },
                         remove: {
@@ -172,7 +184,10 @@ const EditAlarm = (props: Props) => {
                 properties: {
                   add: {
                     type: 'void',
-                    title: '添加条目',
+                    title: intl.formatMessage({
+                      id: 'pages.device.components.alarm.edit.add.entry',
+                      defaultMessage: '添加条目',
+                    }),
                     'x-component': 'ArrayItems.Addition',
                   },
                 },
@@ -183,7 +198,10 @@ const EditAlarm = (props: Props) => {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              tab: '执行动作',
+              tab: intl.formatMessage({
+                id: 'pages.device.components.alarm.edit.perform.action',
+                defaultMessage: '执行动作',
+              }),
             },
             properties: Action.schema,
           },
@@ -208,8 +226,14 @@ const EditAlarm = (props: Props) => {
             'x-component': 'Switch',
             'x-decorator': 'FormItem',
             'x-component-props': {
-              checkedChildren: '防抖',
-              unCheckedChildren: '防抖',
+              checkedChildren: intl.formatMessage({
+                id: 'pages.device.components.alarm.edit.anti-shake',
+                defaultMessage: '防抖',
+              }),
+              unCheckedChildren: intl.formatMessage({
+                id: 'pages.device.components.alarm.edit.anti-shake',
+                defaultMessage: '防抖',
+              }),
             },
           },
           config: {
@@ -235,7 +259,10 @@ const EditAlarm = (props: Props) => {
                 'x-component': 'NumberPicker',
                 'x-decorator': 'FormItem',
                 'x-decorator-props': {
-                  addonAfter: '秒内发生',
+                  addonAfter: intl.formatMessage({
+                    id: 'pages.device.components.alarm.edit.happens.seconds',
+                    defaultMessage: '秒内发生',
+                  }),
                 },
                 required: true,
               },
@@ -245,7 +272,10 @@ const EditAlarm = (props: Props) => {
                 'x-decorator': 'FormItem',
 
                 'x-decorator-props': {
-                  addonAfter: '次及以上时,处理',
+                  addonAfter: intl.formatMessage({
+                    id: 'pages.device.components.alarm.edit.more.deal',
+                    defaultMessage: '次及以上时,处理',
+                  }),
                 },
               },
               alarmFirst: {
@@ -264,11 +294,17 @@ const EditAlarm = (props: Props) => {
                 },
                 enum: [
                   {
-                    label: '第一次',
+                    label: intl.formatMessage({
+                      id: 'pages.device.components.alarm.edit.firstTime',
+                      defaultMessage: '第一次',
+                    }),
                     value: true,
                   },
                   {
-                    label: '最后一次',
+                    label: intl.formatMessage({
+                      id: 'pages.device.components.alarm.edit.lastTime',
+                      defaultMessage: '最后一次',
+                    }),
                     value: false,
                   },
                 ],
@@ -278,7 +314,10 @@ const EditAlarm = (props: Props) => {
         },
       },
       description: {
-        title: '说明',
+        title: intl.formatMessage({
+          id: 'pages.device.components.alarm.edit.explain',
+          defaultMessage: '说明',
+        }),
         'x-decorator': 'FormItem',
         'x-component': 'Input.TextArea',
         'x-component-props': {
@@ -304,7 +343,12 @@ const EditAlarm = (props: Props) => {
         },
       };
       await service.saveAlarm(type, id, data);
-      message.success('保存成功');
+      message.success(
+        intl.formatMessage({
+          id: 'pages.data.option.save.success',
+          defaultMessage: '保存成功',
+        }),
+      );
       props.close();
     }
   };
@@ -316,7 +360,10 @@ const EditAlarm = (props: Props) => {
       width="40vw"
       extra={
         <Button type="primary" onClick={handleSubmit}>
-          保存数据
+          {intl.formatMessage({
+            id: 'pages.device.components.alarm.edit.saveData',
+            defaultMessage: '保存数据',
+          })}
         </Button>
       }
     >
