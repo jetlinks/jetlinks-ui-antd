@@ -6,19 +6,21 @@ import Service from "../service";
 
 interface Props extends FormComponentProps { }
 const SecurityView: React.FC<Props> = (props) => {
-    const { form: { getFieldDecorator, getFieldsValue, getFieldValue, validateFields } } = props;
+    const { form: { getFieldDecorator, getFieldsValue, getFieldValue, validateFields, validateFieldsAndScroll } } = props;
 
     const service = new Service('user/passwd');
     const [confirmDirty, setConfirmDirty] = useState(false);
     const update = () => {
-        const data = getFieldsValue();
-        service.update(data).subscribe((resp) => {
-            if (resp) {
-                message.success('修改成功');
-            }
-        }, (error) => {
-            // message.error('修改失败!');
-        })
+        validateFieldsAndScroll((err, data) => {
+            if (err) return;
+            service.update(data).subscribe((resp) => {
+                if (resp) {
+                    message.success('修改成功');
+                }
+            }, (error) => {
+                // message.error('修改失败!');
+            })
+        });
     };
 
 

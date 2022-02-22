@@ -135,7 +135,10 @@ const Association: React.FC<EditableTableProps> = (props) => {
         });
     }, []);
 
-    const cancel = () => {
+    const cancel = (key: any) => {
+        const newData = data.filter(item => item.key !== key);
+        setData(newData);
+        props.save(newData);
         setEditingKey('');
     };
 
@@ -216,7 +219,7 @@ const Association: React.FC<EditableTableProps> = (props) => {
                                 保存
                                 </a>
                         }
-                        <Popconfirm title="确认取消？" onConfirm={() => cancel()}>
+                        <Popconfirm title="确认取消？" onConfirm={() => cancel(record.key)}>
                             <a>取消</a>
                         </Popconfirm>
                     </span >
