@@ -58,13 +58,6 @@
         component: './system/Permission',
       },
       {
-        path: '/system/org',
-        name: 'org',
-        icon: 'smile',
-        access: 'organization',
-        component: './system/Org',
-      },
-      {
         path: '/system/open-api',
         name: 'open-api',
         icon: 'smile',
