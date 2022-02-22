@@ -124,6 +124,7 @@ export default {
   'pages.system.org.option.add': '添加下级',
   // 系统设置-部门管理
   'pages.system.department.user': '用户',
+  'pages.system.department.option.add': '新增子部门',
   // 系统设置-第三方平台
   'pages.system.openApi': '第三方平台',
   'pages.system.openApi.username': '用户名',

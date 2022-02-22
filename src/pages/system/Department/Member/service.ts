@@ -8,8 +8,8 @@ import { filter, map } from 'rxjs/operators';
 class Service extends BaseService<MemberItem> {
   queryUser = (params: Record<string, unknown>) =>
     request(`/${SystemConst.API_BASE}/user/_query`, {
-      method: 'GET',
-      params,
+      method: 'POST',
+      data: params,
     });
 
   handleUser = (id: string, data: Record<string, unknown>[] | string[], type: 'bind' | 'unbind') =>

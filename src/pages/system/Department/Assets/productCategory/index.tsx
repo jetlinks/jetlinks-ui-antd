@@ -3,7 +3,7 @@ import ProTable from '@jetlinks/pro-table';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { Button, Popconfirm, Tooltip, message } from 'antd';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useParams } from 'umi';
 import { observer } from '@formily/react';
 import type { ProductCategoryItem } from '@/pages/system/Department/typings';
@@ -11,6 +11,7 @@ import { DisconnectOutlined, PlusOutlined } from '@ant-design/icons';
 import Models from '@/pages/system/Department/Assets/productCategory/model';
 import Service from '@/pages/system/Department/Assets/service';
 import Bind from './bind';
+import SearchComponent from '@/components/SearchComponent';
 
 export const service = new Service<ProductCategoryItem>('assets');
 
@@ -30,6 +31,23 @@ export default observer(() => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
   const param = useParams<{ id: string }>();
+  const [searchParam, setSearchParam] = useState({
+    terms: [
+      {
+        column: 'id',
+        termType: 'dim-assets',
+        value: {
+          assetType: 'deviceCategory',
+          targets: [
+            {
+              type: 'org',
+              id: param.id,
+            },
+          ],
+        },
+      },
+    ],
+  });
 
   /**
    * 解除资产绑定
@@ -137,28 +155,36 @@ export default observer(() => {
         onCancel={closeModal}
         reload={() => actionRef.current?.reload()}
       />
+      <SearchComponent<ProductCategoryItem>
+        field={columns}
+        onSearch={async (data) => {
+          setSearchParam({
+            terms: [
+              ...data,
+              {
+                column: 'id',
+                termType: 'dim-assets',
+                value: {
+                  assetType: 'deviceCategory',
+                  targets: [
+                    {
+                      type: 'org',
+                      id: param.id,
+                    },
+                  ],
+                },
+              },
+            ],
+          });
+        }}
+        target="department-assets-category"
+      />
       <ProTable<ProductCategoryItem>
         actionRef={actionRef}
         columns={columns}
-        // schema={schema}
+        params={searchParam}
+        search={false}
         rowKey="id"
-        params={{
-          terms: [
-            {
-              column: 'id',
-              termType: 'dim-assets',
-              value: {
-                assetType: 'deviceCategory',
-                targets: [
-                  {
-                    type: 'org',
-                    id: param.id,
-                  },
-                ],
-              },
-            },
-          ],
-        }}
         request={async (params) => {
           const response = await service.queryProductCategoryList(params);
           return {

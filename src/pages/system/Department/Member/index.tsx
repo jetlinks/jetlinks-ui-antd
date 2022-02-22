@@ -3,8 +3,8 @@ import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@jetlinks/pro-table';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { Button, message, Popconfirm, Tooltip } from 'antd';
-import { useRef } from 'react';
+import { Badge, Button, Card, Divider, message, Popconfirm, Tooltip } from 'antd';
+import { useRef, useState } from 'react';
 import { useParams } from 'umi';
 import { observer } from '@formily/react';
 import MemberModel from '@/pages/system/Department/Member/model';
@@ -12,6 +12,7 @@ import type { MemberItem } from '@/pages/system/Department/typings';
 import Service from '@/pages/system/Department/Member/service';
 import { PlusOutlined, DisconnectOutlined } from '@ant-design/icons';
 import Bind from './bind';
+import SearchComponent from '@/components/SearchComponent';
 
 export const service = new Service('tenant');
 
@@ -20,6 +21,9 @@ const Member = observer(() => {
   const actionRef = useRef<ActionType>();
 
   const param = useParams<{ id: string }>();
+  const [searchParam, setSearchParam] = useState({
+    terms: [{ column: 'id$in-dimension$org', value: param.id }],
+  });
 
   const handleUnBind = () => {
     service.handleUser(param.id, MemberModel.unBindUsers, 'unbind').subscribe({
@@ -55,12 +59,52 @@ const Member = observer(() => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.system.tenant.memberManagement.administrators',
-        defaultMessage: '管理员',
+        id: 'pages.searchTable.titleStatus',
+        defaultMessage: '状态',
       }),
-      dataIndex: 'adminMember',
-      renderText: (text) => (text ? '是' : '否'),
-      search: false,
+      dataIndex: 'status',
+      filters: true,
+      onFilter: true,
+      valueType: 'select',
+      valueEnum: {
+        all: {
+          text: intl.formatMessage({
+            id: 'pages.searchTable.titleStatus.all',
+            defaultMessage: '全部',
+          }),
+          status: 'Default',
+        },
+        1: {
+          text: intl.formatMessage({
+            id: 'pages.searchTable.titleStatus.normal',
+            defaultMessage: '正常',
+          }),
+          status: 1,
+        },
+        0: {
+          text: intl.formatMessage({
+            id: 'pages.searchTable.titleStatus.disable',
+            defaultMessage: '禁用',
+          }),
+          status: 0,
+        },
+      },
+      render: (value) => (
+        <Badge
+          status={value === 1 ? 'success' : 'error'}
+          text={
+            value === 1
+              ? intl.formatMessage({
+                  id: 'pages.searchTable.titleStatus.normal',
+                  defaultMessage: '正常',
+                })
+              : intl.formatMessage({
+                  id: 'pages.searchTable.titleStatus.disable',
+                  defaultMessage: '禁用',
+                })
+          }
+        />
+      ),
     },
     {
       title: intl.formatMessage({
@@ -107,10 +151,22 @@ const Member = observer(() => {
         onCancel={closeModal}
         reload={() => actionRef.current?.reload()}
       />
+      <Card>
+        <SearchComponent<MemberItem>
+          field={columns}
+          onSearch={async (data) => {
+            setSearchParam({
+              terms: [...data, { column: 'id$in-dimension$org', value: param.id }],
+            });
+          }}
+          target="department-user"
+        />
+      </Card>
+      <Divider />
       <ProTable<MemberItem>
         actionRef={actionRef}
         columns={columns}
-        // schema={schema}
+        search={false}
         rowKey="id"
         request={(params) => service.queryUser(params)}
         rowSelection={{
@@ -119,9 +175,7 @@ const Member = observer(() => {
             MemberModel.unBindUsers = selectedRows.map((item) => item.id);
           },
         }}
-        defaultParams={{
-          'id$in-dimension$org': param.id,
-        }}
+        params={searchParam}
         toolBarRender={() => [
           <Button
             onClick={() => {

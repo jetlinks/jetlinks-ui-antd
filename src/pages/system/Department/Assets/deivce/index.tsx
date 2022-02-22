@@ -3,7 +3,7 @@ import ProTable from '@jetlinks/pro-table';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { Button, message, Popconfirm, Tooltip, Badge } from 'antd';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useParams } from 'umi';
 import { observer } from '@formily/react';
 import type { DeviceItem } from '@/pages/system/Department/typings';
@@ -11,6 +11,7 @@ import { DisconnectOutlined, PlusOutlined } from '@ant-design/icons';
 import Models from './model';
 import Service from '@/pages/system/Department/Assets/service';
 import Bind from './bind';
+import SearchComponent from '@/components/SearchComponent';
 
 export const service = new Service<DeviceItem>();
 
@@ -32,7 +33,23 @@ export default observer(() => {
   const actionRef = useRef<ActionType>();
 
   const param = useParams<{ id: string }>();
-
+  const [searchParam, setSearchParam] = useState({
+    terms: [
+      {
+        column: 'id',
+        termType: 'dim-assets',
+        value: {
+          assetType: 'device',
+          targets: [
+            {
+              type: 'org',
+              id: param.id,
+            },
+          ],
+        },
+      },
+    ],
+  });
   /**
    * 解除资产绑定
    */
@@ -102,6 +119,39 @@ export default observer(() => {
         defaultMessage: '状态',
       }),
       dataIndex: 'state',
+      filters: true,
+      onFilter: true,
+      valueType: 'select',
+      valueEnum: {
+        all: {
+          text: intl.formatMessage({
+            id: 'pages.searchTable.titleStatus.all',
+            defaultMessage: '全部',
+          }),
+          status: 'Default',
+        },
+        onLine: {
+          text: intl.formatMessage({
+            id: 'pages.device.instance.status.onLine',
+            defaultMessage: '在线',
+          }),
+          status: 'onLine',
+        },
+        offLine: {
+          text: intl.formatMessage({
+            id: 'pages.device.instance.status.offLine',
+            defaultMessage: '离线',
+          }),
+          status: 'offLine',
+        },
+        notActive: {
+          text: intl.formatMessage({
+            id: 'pages.device.instance.status.notActive',
+            defaultMessage: '未启用',
+          }),
+          status: 'notActive',
+        },
+      },
       render: (_, row) => <DeviceBadge type={row.state.value} text={row.state.text} />,
       search: false,
     },
@@ -151,28 +201,36 @@ export default observer(() => {
         onCancel={closeModal}
         reload={() => actionRef.current?.reload()}
       />
+      <SearchComponent<DeviceItem>
+        field={columns}
+        onSearch={async (data) => {
+          setSearchParam({
+            terms: [
+              ...data,
+              {
+                column: 'id',
+                termType: 'dim-assets',
+                value: {
+                  assetType: 'device',
+                  targets: [
+                    {
+                      type: 'org',
+                      id: param.id,
+                    },
+                  ],
+                },
+              },
+            ],
+          });
+        }}
+        target="department-assets-device"
+      />
       <ProTable<DeviceItem>
         actionRef={actionRef}
         columns={columns}
-        // schema={schema}
         rowKey="id"
-        params={{
-          terms: [
-            {
-              column: 'id',
-              termType: 'dim-assets',
-              value: {
-                assetType: 'device',
-                targets: [
-                  {
-                    type: 'org',
-                    id: param.id,
-                  },
-                ],
-              },
-            },
-          ],
-        }}
+        search={false}
+        params={searchParam}
         request={(params) => service.queryDeviceList(params)}
         rowSelection={{
           selectedRowKeys: Models.unBindKeys,

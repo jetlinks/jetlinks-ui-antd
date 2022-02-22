@@ -2,9 +2,9 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@jetlinks/pro-table';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { Button, message, Popconfirm, Tooltip } from 'antd';
+import { Button, message, Popconfirm, Tooltip, Card, Divider } from 'antd';
 import {
   EditOutlined,
   PlusOutlined,
@@ -20,6 +20,7 @@ import { observer } from '@formily/react';
 import { model } from '@formily/reactive';
 import { Link } from 'umi';
 import Save from './save';
+import SearchComponent from '@/components/SearchComponent';
 
 export const service = new Service('organization');
 
@@ -37,6 +38,9 @@ export const State = model<ModelType>({
 export default observer(() => {
   const actionRef = useRef<ActionType>();
   const intl = useIntl();
+  const [param, setParam] = useState({
+    terms: [{ column: 'typeId', value: 'org' }],
+  });
 
   /**
    * 根据部门ID删除数据
@@ -68,6 +72,7 @@ export default observer(() => {
         id: 'pages.device.instanceDetail.detail.sort',
         defaultMessage: '排序',
       }),
+      search: false,
       dataIndex: 'sortIndex',
     },
     {
@@ -106,7 +111,7 @@ export default observer(() => {
         >
           <Tooltip
             title={intl.formatMessage({
-              id: 'pages.data.option.edit',
+              id: 'pages.system.department.option.add',
               defaultMessage: '新增子部门',
             })}
           >
@@ -179,16 +184,25 @@ export default observer(() => {
 
   return (
     <PageContainer>
-      <ProTable<any>
+      <Card>
+        <SearchComponent<DepartmentItem>
+          field={columns}
+          onSearch={async (data) => {
+            setParam({ terms: [...data, { column: 'typeId', value: 'org' }] });
+          }}
+          target="department"
+        />
+      </Card>
+      <Divider />
+      <ProTable<DepartmentItem>
         columns={columns}
         actionRef={actionRef}
         request={async (params) => {
-          delete params.pageIndex;
           const response = await service.queryOrgThree({ paging: false, ...params });
           return {
             code: response.message,
             result: {
-              data: response.result as CategoryItem[],
+              data: response.result,
               pageIndex: 0,
               pageSize: 0,
               total: 0,
@@ -198,6 +212,8 @@ export default observer(() => {
         }}
         rowKey="id"
         pagination={false}
+        search={false}
+        params={param}
         toolBarRender={() => [
           <Button
             onClick={() => (State.visible = true)}
@@ -215,7 +231,6 @@ export default observer(() => {
           id: 'pages.system.department',
           defaultMessage: '部门列表',
         })}
-        defaultParams={{ typeId: 'org' }}
       />
       <Save<DepartmentItem>
         service={service}
