@@ -7,6 +7,7 @@ export default {
   'menu.system': 'System',
   'menu.system.user': 'User',
   'menu.system.role': 'Role',
+  'menu.system.role-edit': 'Access Configuration',
   'menu.system.org': 'Organization',
   'menu.system.open-api': 'OpenAPI',
   'menu.system.permission': 'Permission',

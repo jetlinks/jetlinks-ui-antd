@@ -4,5 +4,5 @@ type RoleItem = {
   name: string;
   path: string;
   sortIndex: number;
-  typeId: string;
+  description: string;
 };

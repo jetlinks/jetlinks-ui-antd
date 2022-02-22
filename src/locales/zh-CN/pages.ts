@@ -87,6 +87,9 @@ export default {
   'pages.system.role': '角色管理',
   'pages.system.role.id': '标识',
   'pages.system.role.option.bindUser': '绑定用户',
+  'pages.system.role.access.baseInfo': '基本信息',
+  'pages.system.role.access.permission': '权限分配',
+  'pages.system.role.access.userManagement': '用户管理',
   // 系统设置-角色管理-绑定用户
   'pages.bindUser.theBoundUser': '已绑定用户',
   'pages.bindUser.theBoundUser.success': '解绑成功',

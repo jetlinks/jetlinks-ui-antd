@@ -1,20 +1,19 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import React, { useEffect, useRef } from 'react';
-import { EditOutlined, KeyOutlined, MinusOutlined, UserAddOutlined } from '@ant-design/icons';
-import { Drawer, message, Modal, Popconfirm, Tooltip } from 'antd';
+import React, { useRef } from 'react';
+import { EditOutlined, MinusOutlined } from '@ant-design/icons';
+import { message, Popconfirm, Tooltip } from 'antd';
 import type { ProColumns, ActionType } from '@jetlinks/pro-table';
 import BaseCrud from '@/components/BaseCrud';
-import { CurdModel } from '@/components/BaseCrud/model';
 import BaseService from '@/utils/BaseService';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { observer } from '@formily/react';
-import autzModel from '@/components/Authorization/autz';
-import Authorization from '@/components/Authorization';
-import { BindModel } from '@/components/BindUser/model';
-import BindUser from '@/components/BindUser';
-// import { useParams } from 'umi';
+// import autzModel from '@/components/Authorization/autz';
+// import Authorization from '@/components/Authorization';
+// import { BindModel } from '@/components/BindUser/model';
+// import BindUser from '@/components/BindUser';
+import { Link } from 'umi';
 
-const service = new BaseService<RoleItem>('dimension');
+export const service = new BaseService<RoleItem>('role');
 
 const Role: React.FC = observer(() => {
   const intl = useIntl();
@@ -71,7 +70,7 @@ const Role: React.FC = observer(() => {
         id: 'pages.table.describe',
         defaultMessage: '描述',
       }),
-      dataIndex: 'describe',
+      dataIndex: 'description',
       filters: true,
       onFilter: true,
     },
@@ -84,56 +83,17 @@ const Role: React.FC = observer(() => {
       align: 'center',
       width: 200,
       render: (text, record) => [
-        <a key="editable" onClick={() => CurdModel.update(record)}>
+        <Link to={`/system/role/edit/${record.id}`} key="link">
           <Tooltip
             title={intl.formatMessage({
               id: 'pages.data.option.edit',
               defaultMessage: '编辑',
             })}
+            key={'edit'}
           >
             <EditOutlined />
           </Tooltip>
-        </a>,
-        <a
-          key="autz"
-          onClick={() => {
-            autzModel.autzTarget.id = record.id;
-            autzModel.autzTarget.name = record.name;
-            autzModel.autzTarget.type = 'role';
-            autzModel.visible = true;
-          }}
-        >
-          <Tooltip
-            title={intl.formatMessage({
-              id: 'pages.data.option.authorize',
-              defaultMessage: '授权',
-            })}
-          >
-            <KeyOutlined />
-          </Tooltip>
-        </a>,
-
-        <a
-          key="bind"
-          onClick={() => {
-            BindModel.dimension = {
-              id: record.id,
-              name: record.name,
-              type: 'role',
-            };
-            BindModel.visible = true;
-            actionRef.current?.reload();
-          }}
-        >
-          <Tooltip
-            title={intl.formatMessage({
-              id: 'pages.system.role.option.bindUser',
-              defaultMessage: '绑定用户',
-            })}
-          >
-            <UserAddOutlined />
-          </Tooltip>
-        </a>,
+        </Link>,
         <a key="delete">
           <Popconfirm
             title={intl.formatMessage({
@@ -168,21 +128,6 @@ const Role: React.FC = observer(() => {
   const schema = {
     type: 'object',
     properties: {
-      id: {
-        title: intl.formatMessage({
-          id: 'pages.system.role.id',
-          defaultMessage: '角色标识',
-        }),
-        type: 'string',
-        'x-decorator': 'FormItem',
-        'x-component': 'Input',
-        'x-component-props': {
-          disabled: CurdModel.model === 'edit',
-        },
-        'x-decorator-props': {},
-        name: 'id',
-        required: true,
-      },
       name: {
         title: intl.formatMessage({
           id: 'pages.table.name',
@@ -196,7 +141,7 @@ const Role: React.FC = observer(() => {
         name: 'name',
         required: true,
       },
-      describe: {
+      description: {
         type: 'string',
         title: intl.formatMessage({
           id: 'pages.table.describe',
@@ -211,38 +156,24 @@ const Role: React.FC = observer(() => {
         name: 'password',
         required: false,
       },
-      typeId: {
-        type: 'string',
-        'x-visible': false,
-        'x-decorator': 'FormItem',
-        'x-component': 'Input',
-        name: 'typeId',
-        default: 'role',
-      },
     },
   };
-
-  // const params = useParams<{ tag: boolean }>({ tag: false });
-  useEffect(() => {
-    // console.log(params.tag);
-    // if (params.tag) {
-    //   CurdModel.add();
-    // }
-  });
   return (
     <PageContainer>
       <BaseCrud<RoleItem>
         actionRef={actionRef}
+        moduleName="role"
         columns={columns}
         service={service}
+        search={false}
         title={intl.formatMessage({
           id: 'pages.system.role',
           defaultMessage: '角色管理',
         })}
         schema={schema}
-        defaultParams={{ typeId: 'role' }}
+        // defaultParams={{ typeId: 'role' }}
       />
-      <Modal
+      {/* <Modal
         visible={BindModel.visible}
         closable={false}
         onCancel={() => {
@@ -252,8 +183,8 @@ const Role: React.FC = observer(() => {
         width={BindModel.bind ? '90vw' : '60vw'}
       >
         <BindUser />
-      </Modal>
-      <Drawer
+      </Modal> */}
+      {/* <Drawer
         title={intl.formatMessage({
           id: 'pages.data.option.authorize',
           defaultMessage: '授权',
@@ -270,7 +201,7 @@ const Role: React.FC = observer(() => {
           }}
           target={autzModel.autzTarget}
         />
-      </Drawer>
+      </Drawer> */}
     </PageContainer>
   );
 });
