@@ -75,6 +75,26 @@
         icon: 'smile',
         component: './system/DataSource',
       },
+      {
+        path: '/system/department',
+        name: 'department',
+        icon: 'smile',
+        component: './system/Department',
+      },
+      {
+        hideInMenu: true,
+        path: '/system/department/:id/assets',
+        name: 'assets',
+        icon: 'smile',
+        component: './system/Department/Assets',
+      },
+      {
+        hideInMenu: true,
+        path: '/system/department/:id/user',
+        name: 'member',
+        icon: 'smile',
+        component: './system/Department/Member',
+      },
     ],
   },
   {
