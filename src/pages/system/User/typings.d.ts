@@ -8,4 +8,9 @@ type UserItem = {
   telephone?: string;
   avatar?: string;
   description?: string;
+
+  orgList?: { id: string; name: string }[] | string[];
+  roleList?: { id: string; name: string }[] | string[];
+  orgIdList?: string[];
+  roleIdList?: string[];
 };

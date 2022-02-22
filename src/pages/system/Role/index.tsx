@@ -1,5 +1,5 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { EditOutlined, KeyOutlined, MinusOutlined, UserAddOutlined } from '@ant-design/icons';
 import { Drawer, message, Modal, Popconfirm, Tooltip } from 'antd';
 import type { ProColumns, ActionType } from '@jetlinks/pro-table';
@@ -12,6 +12,7 @@ import autzModel from '@/components/Authorization/autz';
 import Authorization from '@/components/Authorization';
 import { BindModel } from '@/components/BindUser/model';
 import BindUser from '@/components/BindUser';
+// import { useParams } from 'umi';
 
 const service = new BaseService<RoleItem>('dimension');
 
@@ -221,6 +222,13 @@ const Role: React.FC = observer(() => {
     },
   };
 
+  // const params = useParams<{ tag: boolean }>({ tag: false });
+  useEffect(() => {
+    // console.log(params.tag);
+    // if (params.tag) {
+    //   CurdModel.add();
+    // }
+  });
   return (
     <PageContainer>
       <BaseCrud<RoleItem>

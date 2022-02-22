@@ -11,6 +11,8 @@ export default {
     '/jetlinks': {
       target: 'http://192.168.33.222:8844/',
       ws: 'ws://192.168.33.222:8844/',
+      // target: 'http://192.168.32.44:8844/',
+      // ws: 'ws://192.168.32.44:8844/',
       // ws: 'ws://demo.jetlinks.cn/jetlinks',
       // target: 'http://demo.jetlinks.cn/jetlinks',
       changeOrigin: true,
