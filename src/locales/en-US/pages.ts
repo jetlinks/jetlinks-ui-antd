@@ -85,6 +85,9 @@ export default {
   'pages.system.role': 'Role',
   'pages.system.role.id': 'ID',
   'pages.system.role.option.bindUser': 'Bind User',
+  'pages.system.role.access.baseInfo': 'Basic Information',
+  'pages.system.role.access.permission': 'Access Configuration',
+  'pages.system.role.access.userManagement': 'User Management',
   // 系统设置-角色管理-绑定用户
   'pages.bindUser.theBoundUser': 'The Bound User',
   'pages.bindUser.theBoundUser.success': 'Unbundling success',

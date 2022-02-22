@@ -3,7 +3,7 @@ import type { PermissionItem } from '@/pages/system/Permission/typings';
 import { defer, from } from 'rxjs';
 import { request } from '@@/plugin-request/request';
 import SystemConst from '@/utils/const';
-import { filter, mergeMap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 class Service extends BaseService<PermissionItem> {
   public getPermission = () =>
@@ -13,10 +13,24 @@ class Service extends BaseService<PermissionItem> {
           method: 'GET',
         }),
       ),
-    ).pipe(
-      filter((item) => item.status === 200),
-      mergeMap((item) => item.result as PermissionItem[]),
-    );
+    ).pipe(map((item) => item));
+  public getAssetTypes = () =>
+    defer(() =>
+      from(
+        request(`/${SystemConst.API_BASE}/asset/types`, {
+          method: 'GET',
+        }),
+      ),
+    ).pipe(map((item) => item));
+  public batchAdd = (data: any) =>
+    defer(() =>
+      from(
+        request(`/${SystemConst.API_BASE}/dimension/_batch`, {
+          method: 'POST',
+          data,
+        }),
+      ),
+    ).pipe(map((item) => item));
 }
 
 export default Service;
