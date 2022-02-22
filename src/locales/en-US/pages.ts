@@ -27,6 +27,7 @@ export default {
   'pages.data.option.detail': 'Detail',
   'pages.data.option.download': 'Download',
   'pages.data.option.record': 'Records',
+  'pages.data.option.save': 'Save',
   'pages.searchTable.new': 'New',
   'pages.searchTable.titleStatus': 'Status',
   'pages.searchTable.titleStatus.all': 'All',

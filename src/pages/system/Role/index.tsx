@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import React, { useRef } from 'react';
 import { EditOutlined, MinusOutlined } from '@ant-design/icons';
-import { Card, message, Popconfirm, Tooltip } from 'antd';
+import { message, Popconfirm, Tooltip } from 'antd';
 import type { ProColumns, ActionType } from '@jetlinks/pro-table';
 import BaseCrud from '@/components/BaseCrud';
 import BaseService from '@/utils/BaseService';
@@ -12,7 +12,6 @@ import { observer } from '@formily/react';
 // import { BindModel } from '@/components/BindUser/model';
 // import BindUser from '@/components/BindUser';
 import { Link } from 'umi';
-import SearchComponent from '@/components/SearchComponent';
 
 export const service = new BaseService<RoleItem>('role');
 
@@ -159,20 +158,11 @@ const Role: React.FC = observer(() => {
       },
     },
   };
-
   return (
     <PageContainer>
-      <Card style={{ marginBottom: '20px' }}>
-        <SearchComponent<RoleItem>
-          field={columns}
-          onSearch={async (data) => {
-            message.success(JSON.stringify(data));
-          }}
-          target="role-search"
-        />
-      </Card>
       <BaseCrud<RoleItem>
         actionRef={actionRef}
+        moduleName="role"
         columns={columns}
         service={service}
         search={false}

@@ -16,6 +16,7 @@ export const CurdModel = model<Option>({
   },
 
   update(current: any) {
+    console.log('触发编辑');
     Store.set(SystemConst.BASE_CURD_MODEL, 'edit');
     Store.set(SystemConst.BASE_CURD_MODAL_VISIBLE, true);
     Store.set(SystemConst.BASE_CURD_CURRENT, current);

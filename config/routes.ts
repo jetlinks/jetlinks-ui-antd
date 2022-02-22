@@ -45,6 +45,13 @@
         component: './system/Role',
       },
       {
+        hideInMenu: true,
+        path: '/system/role/edit/:id',
+        name: 'role-edit',
+        icon: 'smile',
+        component: './system/Role/Edit',
+      },
+      {
         path: '/system/permission',
         name: 'permission',
         icon: 'smile',

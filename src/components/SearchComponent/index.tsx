@@ -14,12 +14,14 @@ import {
 import { createForm } from '@formily/core';
 import GroupNameControl from '@/components/SearchComponent/GroupNameControl';
 import { DeleteOutlined, DoubleRightOutlined } from '@ant-design/icons';
-import { Button, Dropdown, Menu, message, Popconfirm, Popover, Input as AInput } from 'antd';
+import { Button, Dropdown, Input as AInput, Menu, message, Popconfirm, Popover } from 'antd';
 import { useState } from 'react';
 import type { ProColumns } from '@jetlinks/pro-table';
 import type { EnumData } from '@/utils/typings';
 import styles from './index.less';
 import Service from '@/components/SearchComponent/service';
+import _ from 'lodash';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 const ui2Server = (source: SearchTermsUI): SearchTermsServer => [
   { terms: source.terms1, type: source.type },
@@ -35,7 +37,7 @@ const server2Ui = (source: SearchTermsServer): SearchTermsUI => ({
 interface Props<T> {
   field: ProColumns<T>[];
   onSearch: (params: any) => void;
-  target: string;
+  target?: string;
 }
 
 const termType = [
@@ -49,41 +51,32 @@ const termType = [
   { label: '<=', value: 'lte' },
   { label: '属于', value: 'in' },
   { label: '不属于', value: 'not in' },
-
-  // { label: '为空', value: '=\'\'' },
-  // { label: '不为空', value: '!=\'\'' },
-  // { label: 'isnull', value: 'is null' },
-  // { label: 'notnull', value: 'not null' },
-  // { label: '介于', value: 'between' },
-  // { label: '不介于', value: 'not between' },
 ];
 
 const service = new Service();
+const defaultTerm = { termType: 'like' };
+
 const SearchComponent = <T extends Record<string, any>>({ field, onSearch, target }: Props<T>) => {
+  const intl = useIntl();
   const [expand, setExpand] = useState<boolean>(true);
+  const initForm = server2Ui([{ terms: [defaultTerm], type: 'and' }, { terms: [defaultTerm] }]);
   const [logVisible, setLogVisible] = useState<boolean>(false);
   const [alias, setAlias] = useState<string>('');
   const [aliasVisible, setAliasVisible] = useState<boolean>(false);
-  const [initParams, setInitParams] = useState<SearchTermsServer>([
-    { terms: [{ column: null }], type: 'and' },
-    { terms: [{ column: null }] },
-  ]);
+  const [initParams, setInitParams] = useState<SearchTermsUI>(initForm);
   const [history, setHistory] = useState([]);
+
   const form = createForm<SearchTermsUI>({
     validateFirst: true,
-    initialValues: server2Ui(initParams),
+    initialValues: initParams,
   });
 
   const queryHistory = async () => {
-    const response = await service.history.query(target);
+    const response = await service.history.query(`${target}-search`);
     if (response.status === 200) {
       setHistory(response.result);
     }
   };
-
-  // useEffect(() => {
-  //   (queryHistory)();
-  // }, [target]);
 
   const handleExpand = () => {
     const value = form.values;
@@ -91,10 +84,10 @@ const SearchComponent = <T extends Record<string, any>>({ field, onSearch, targe
       value.terms1.splice(1, 2);
       value.terms2.splice(1, 2);
     } else {
-      value.terms2.push({ column: null }, { column: null });
-      value.terms1.push({ column: null }, { column: null });
+      value.terms2.push(defaultTerm, defaultTerm);
+      value.terms1.push(defaultTerm, defaultTerm);
     }
-    setInitParams(ui2Server(value));
+    setInitParams(value);
     setExpand(!expand);
   };
   const SchemaField = createSchemaField({
@@ -123,7 +116,7 @@ const SearchComponent = <T extends Record<string, any>>({ field, onSearch, targe
     },
     'x-component': 'ArrayItems',
     type: 'array',
-    'x-value': new Array(expand ? 1 : 3).fill({ column: null }),
+    'x-value': new Array(expand ? 1 : 3).fill({ termType: 'like' }),
     items: {
       type: 'object',
       'x-component': 'FormGrid',
@@ -211,61 +204,87 @@ const SearchComponent = <T extends Record<string, any>>({ field, onSearch, targe
     },
   };
 
-  const menu = () => {
-    return (
-      <Menu>
-        {history.map((item: any) => (
-          <Menu.Item onClick={() => message.success(item.name)} key={item.id}>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              <span style={{ marginRight: '5px' }}>{item.name}</span>
-              <Popconfirm
-                onConfirm={async () => {
-                  const response = await service.history.remove(target, item.key);
-                  if (response.status === 200) {
-                    message.success('操作成功');
-                    const temp = history.filter((h: any) => h.key !== item.key);
-                    setHistory(temp);
-                  }
-                }}
-                title={'确认删除吗？'}
-              >
-                <DeleteOutlined />
-              </Popconfirm>
-            </div>
-          </Menu.Item>
-        ))}
-      </Menu>
-    );
+  const handleHistory = (item: SearchHistory) => {
+    const log = JSON.parse(item.content) as SearchTermsUI;
+    form.setValues(log);
+    setExpand(!(log.terms1?.length > 1 || log.terms2?.length > 1));
+    setInitParams(log);
   };
+  const historyDom = (
+    <Menu>
+      {history.map((item: SearchHistory) => (
+        <Menu.Item onClick={() => handleHistory(item)} key={item.id}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <span style={{ marginRight: '5px' }}>{item.name}</span>
+            <Popconfirm
+              onConfirm={async () => {
+                const response = await service.history.remove(`${target}-search`, item.key);
+                if (response.status === 200) {
+                  message.success('操作成功');
+                  const temp = history.filter((h: any) => h.key !== item.key);
+                  setHistory(temp);
+                }
+              }}
+              title={'确认删除吗？'}
+            >
+              <DeleteOutlined />
+            </Popconfirm>
+          </div>
+        </Menu.Item>
+      ))}
+    </Menu>
+  );
+
+  const formatValue = (value: SearchTermsUI): SearchTermsServer =>
+    ui2Server(value).map((term) => {
+      term.terms.map((item) => {
+        if (item.termType === 'like') {
+          item.value = `%${item.value}%`;
+          return item;
+        }
+        return item;
+      });
+      return term;
+    });
 
   const handleSearch = async () => {
-    const value = await form.submit<SearchTermsUI>();
-    // TODO
-    value.terms1 = value.terms1.filter((item) => item.column != null).filter((item) => item.value);
-    value.terms2 = value.terms2.filter((item) => item.column != null).filter((item) => item.value);
-    onSearch(value);
+    const value = form.values;
+    setInitParams(value);
+    const filterTerms = (data: Partial<Term>[]) =>
+      data.filter((item) => item.column != null).filter((item) => item.value);
+    const temp = _.cloneDeep(value);
+    temp.terms1 = filterTerms(temp.terms1);
+    temp.terms2 = filterTerms(temp.terms2);
+    onSearch(formatValue(temp));
   };
 
   const handleSaveLog = async () => {
     const value = await form.submit<SearchTermsUI>();
-    const response = await service.history.save(target, {
+    const response = await service.history.save(`${target}-search`, {
       name: alias,
-      content: JSON.stringify(ui2Server(value)),
+      content: JSON.stringify(value),
     });
     if (response.status === 200) {
       message.success('保存成功!');
     } else {
-      message.success('保存失败');
+      message.error('保存失败');
     }
     setAliasVisible(!aliasVisible);
   };
 
+  const resetForm = async () => {
+    const temp = initParams;
+    temp.terms1 = temp.terms1.map(() => defaultTerm);
+    temp.terms2 = temp.terms2.map(() => defaultTerm);
+    setInitParams(temp);
+    await form.reset();
+  };
   return (
     <div>
       <Form form={form} labelCol={4} wrapperCol={18}>
@@ -273,6 +292,7 @@ const SearchComponent = <T extends Record<string, any>>({ field, onSearch, targe
         <div className={styles.action}>
           <FormButtonGroup.FormItem labelCol={10} wrapperCol={14}>
             <Dropdown.Button
+              placement={'bottomLeft'}
               trigger={['click']}
               onClick={handleSearch}
               visible={logVisible}
@@ -280,11 +300,10 @@ const SearchComponent = <T extends Record<string, any>>({ field, onSearch, targe
                 setLogVisible(visible);
                 if (visible) {
                   await queryHistory();
-                  console.log('test');
                 }
               }}
               type="primary"
-              overlay={menu}
+              overlay={historyDom}
             >
               搜索
             </Dropdown.Button>
@@ -304,15 +323,22 @@ const SearchComponent = <T extends Record<string, any>>({ field, onSearch, targe
               visible={aliasVisible}
               onVisibleChange={(visible) => {
                 setAlias('');
-                setInitParams(ui2Server(form.values));
+                setInitParams(form.values);
                 setAliasVisible(visible);
               }}
               title="搜索名称"
               trigger="click"
             >
-              <Button block>保存</Button>
+              <Button block>
+                {intl.formatMessage({
+                  id: 'pages.data.option.save',
+                  defaultMessage: '保存',
+                })}
+              </Button>
             </Popover>
-            <Button block>重置</Button>
+            <Button block onClick={resetForm}>
+              重置
+            </Button>
           </FormButtonGroup.FormItem>
           <div>
             <DoubleRightOutlined

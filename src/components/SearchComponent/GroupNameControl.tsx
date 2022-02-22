@@ -1,7 +1,13 @@
 import { ArrayItems } from '@formily/antd';
 import { Select } from 'antd';
 
-const GroupNameControl = (props: { name: string }) => {
+interface Props {
+  name?: string;
+  value: string;
+  onChange: () => void;
+}
+
+const GroupNameControl = (props: Props) => {
   const index = ArrayItems.useIndex!();
   return (
     <>
@@ -9,6 +15,8 @@ const GroupNameControl = (props: { name: string }) => {
         <div style={{ textAlign: 'center', fontWeight: 600 }}>{props?.name || '第一组'}</div>
       ) : (
         <Select
+          onChange={props.onChange}
+          value={props.value}
           options={[
             { label: '并且', value: 'and' },
             { label: '或者', value: 'or' },

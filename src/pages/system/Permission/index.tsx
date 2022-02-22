@@ -6,7 +6,7 @@ import {
   PlayCircleOutlined,
   MinusOutlined,
 } from '@ant-design/icons';
-import { Menu, Tooltip, Popconfirm, message, Card, Button, Upload } from 'antd';
+import { Menu, Tooltip, Popconfirm, message, Button, Upload } from 'antd';
 import type { ProColumns, ActionType } from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import BaseCrud from '@/components/BaseCrud';
@@ -17,7 +17,6 @@ import type { ISchema } from '@formily/json-schema';
 import Service from '@/pages/system/Permission/service';
 import { model } from '@formily/reactive';
 import { observer } from '@formily/react';
-import SearchComponent from '@/components/SearchComponent';
 import moment from 'moment';
 import SystemConst from '@/utils/const';
 import Token from '@/utils/token';
@@ -461,16 +460,8 @@ const Permission: React.FC = observer(() => {
   };
   return (
     <PageContainer>
-      <Card style={{ marginBottom: '20px' }}>
-        <SearchComponent<PermissionItem>
-          field={columns}
-          onSearch={async (data) => {
-            message.success(JSON.stringify(data));
-          }}
-          target="permission-search"
-        />
-      </Card>
       <BaseCrud<PermissionItem>
+        moduleName="permission"
         actionRef={actionRef}
         columns={columns}
         service={service}
