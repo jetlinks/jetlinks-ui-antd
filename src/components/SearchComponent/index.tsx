@@ -14,7 +14,7 @@ import {
 import { createForm } from '@formily/core';
 import GroupNameControl from '@/components/SearchComponent/GroupNameControl';
 import { DeleteOutlined, DoubleRightOutlined } from '@ant-design/icons';
-import { Button, Dropdown, Input as AInput, Menu, message, Popconfirm, Popover } from 'antd';
+import { Button, Dropdown, Menu, message, Popconfirm, Popover, Typography } from 'antd';
 import { useState } from 'react';
 import type { ProColumns } from '@jetlinks/pro-table';
 import type { EnumData } from '@/utils/typings';
@@ -24,8 +24,8 @@ import _ from 'lodash';
 import { useIntl } from '@@/plugin-locale/localeExports';
 
 const ui2Server = (source: SearchTermsUI): SearchTermsServer => [
-  { terms: source.terms1, type: source.type },
-  { terms: source.terms2 },
+  { terms: source.terms1 },
+  { terms: source.terms2, type: source.type },
 ];
 
 const server2Ui = (source: SearchTermsServer): SearchTermsUI => ({
@@ -61,7 +61,6 @@ const SearchComponent = <T extends Record<string, any>>({ field, onSearch, targe
   const [expand, setExpand] = useState<boolean>(true);
   const initForm = server2Ui([{ terms: [defaultTerm], type: 'and' }, { terms: [defaultTerm] }]);
   const [logVisible, setLogVisible] = useState<boolean>(false);
-  const [alias, setAlias] = useState<string>('');
   const [aliasVisible, setAliasVisible] = useState<boolean>(false);
   const [initParams, setInitParams] = useState<SearchTermsUI>(initForm);
   const [history, setHistory] = useState([]);
@@ -70,6 +69,8 @@ const SearchComponent = <T extends Record<string, any>>({ field, onSearch, targe
     validateFirst: true,
     initialValues: initParams,
   });
+
+  const historyForm = createForm();
 
   const queryHistory = async () => {
     const response = await service.history.query(`${target}-search`);
@@ -211,33 +212,38 @@ const SearchComponent = <T extends Record<string, any>>({ field, onSearch, targe
     setInitParams(log);
   };
   const historyDom = (
-    <Menu>
-      {history.map((item: SearchHistory) => (
-        <Menu.Item onClick={() => handleHistory(item)} key={item.id}>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
-            <span style={{ marginRight: '5px' }}>{item.name}</span>
-            <Popconfirm
-              onConfirm={async () => {
-                const response = await service.history.remove(`${target}-search`, item.key);
-                if (response.status === 200) {
-                  message.success('操作成功');
-                  const temp = history.filter((h: any) => h.key !== item.key);
-                  setHistory(temp);
-                }
+    <Menu style={{ width: '176px' }}>
+      {history.length > 0 ? (
+        history.map((item: SearchHistory) => (
+          <Menu.Item onClick={() => handleHistory(item)} key={item.id}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                width: '148px',
               }}
-              title={'确认删除吗？'}
             >
-              <DeleteOutlined />
-            </Popconfirm>
-          </div>
-        </Menu.Item>
-      ))}
+              <Typography.Text ellipsis={{ tooltip: item.name }}>{item.name}</Typography.Text>
+              <Popconfirm
+                onConfirm={async () => {
+                  const response = await service.history.remove(`${target}-search`, item.key);
+                  if (response.status === 200) {
+                    message.success('操作成功');
+                    const temp = history.filter((h: any) => h.key !== item.key);
+                    setHistory(temp);
+                  }
+                }}
+                title={'确认删除吗？'}
+              >
+                <DeleteOutlined />
+              </Popconfirm>
+            </div>
+          </Menu.Item>
+        ))
+      ) : (
+        <Menu.Item>暂无数据</Menu.Item>
+      )}
     </Menu>
   );
 
@@ -266,8 +272,10 @@ const SearchComponent = <T extends Record<string, any>>({ field, onSearch, targe
 
   const handleSaveLog = async () => {
     const value = await form.submit<SearchTermsUI>();
+    const value2 = await historyForm.submit<{ alias: string }>();
+    console.log(value2, 'test');
     const response = await service.history.save(`${target}-search`, {
-      name: alias,
+      name: value2.alias,
       content: JSON.stringify(value),
     });
     if (response.status === 200) {
@@ -279,7 +287,7 @@ const SearchComponent = <T extends Record<string, any>>({ field, onSearch, targe
   };
 
   const resetForm = async () => {
-    const temp = initParams;
+    const temp = initForm;
     temp.terms1 = temp.terms1.map(() => defaultTerm);
     temp.terms2 = temp.terms2.map(() => defaultTerm);
     setInitParams(temp);
@@ -298,6 +306,8 @@ const SearchComponent = <T extends Record<string, any>>({ field, onSearch, targe
               visible={logVisible}
               onVisibleChange={async (visible) => {
                 setLogVisible(visible);
+                const value = form.values;
+                setInitParams(value);
                 if (visible) {
                   await queryHistory();
                 }
@@ -309,20 +319,26 @@ const SearchComponent = <T extends Record<string, any>>({ field, onSearch, targe
             </Dropdown.Button>
             <Popover
               content={
-                <>
-                  <AInput.TextArea
-                    rows={3}
-                    value={alias}
-                    onChange={(e) => setAlias(e.target.value)}
+                <Form style={{ width: '217px' }} form={historyForm}>
+                  <SchemaField
+                    schema={{
+                      type: 'object',
+                      properties: {
+                        alias: {
+                          'x-decorator': 'FormItem',
+                          'x-component': 'Input.TextArea',
+                          maxLength: 50,
+                        },
+                      },
+                    }}
                   />
                   <Button onClick={handleSaveLog} type="primary" className={styles.saveLog}>
                     保存
                   </Button>
-                </>
+                </Form>
               }
               visible={aliasVisible}
               onVisibleChange={(visible) => {
-                setAlias('');
                 setInitParams(form.values);
                 setAliasVisible(visible);
               }}

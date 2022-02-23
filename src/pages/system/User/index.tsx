@@ -6,12 +6,11 @@ import ProTable from '@jetlinks/pro-table';
 import { Button, Card, message, Popconfirm, Tooltip } from 'antd';
 import {
   CloseCircleOutlined,
+  DeleteOutlined,
   EditOutlined,
-  KeyOutlined,
   PlayCircleOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
-import autzModel from '@/components/Authorization/autz';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { useRef, useState } from 'react';
 import Save from './Save';
@@ -28,14 +27,6 @@ const User = observer(() => {
   const edit = async (record: UserItem) => {
     setMode('edit');
     setCurrent(record);
-    // const response: Response<UserItem> = await service.queryDetail(record.id);
-    // if (response.status === 200) {
-    //   const temp = response.result as UserItem;
-    //   temp.orgIdList = (temp.orgList as { id: string, name: string }[]).map((item) => item.id);
-    //   temp.roleIdList = (temp.roleList as { id: string, name: string }[]).map(item => item.id);
-    //   state.model = 'edit';
-    //   state.current = temp;
-    // }
   };
 
   const columns: ProColumns<UserItem>[] = [
@@ -53,12 +44,12 @@ const User = observer(() => {
       copyable: true,
       ellipsis: true,
       align: 'center',
-      tip: intl.formatMessage({
-        id: 'pages.system.name.tips',
-        defaultMessage: '姓名过长会自动收缩',
-      }),
-      sorter: true,
-      defaultSortOrder: 'ascend',
+      // tip: intl.formatMessage({
+      //   id: 'pages.system.name.tips',
+      //   defaultMessage: '姓名过长会自动收缩',
+      // }),
+      // sorter: true,
+      // defaultSortOrder: 'ascend',
       formItemProps: {
         rules: [
           {
@@ -80,10 +71,10 @@ const User = observer(() => {
       copyable: true,
       ellipsis: true,
       align: 'center',
-      tip: intl.formatMessage({
-        id: 'pages.system.userName.tips',
-        defaultMessage: '用户名过长会自动收缩',
-      }),
+      // tip: intl.formatMessage({
+      //   id: 'pages.system.userName.tips',
+      //   defaultMessage: '用户名过长会自动收缩',
+      // }),
       formItemProps: {
         rules: [
           {
@@ -102,9 +93,9 @@ const User = observer(() => {
         defaultMessage: '状态',
       }),
       dataIndex: 'status',
-      filters: true,
+      // filters: true,
       align: 'center',
-      onFilter: true,
+      // onFilter: true,
       valueType: 'select',
       valueEnum: {
         all: {
@@ -131,6 +122,14 @@ const User = observer(() => {
       },
     },
     {
+      title: '创建时间',
+      dataIndex: 'createTime',
+      align: 'center',
+      sorter: true,
+      hideInTable: true,
+      defaultSortOrder: 'descend',
+    },
+    {
       title: intl.formatMessage({
         id: 'pages.data.option',
         defaultMessage: '操作',
@@ -147,23 +146,6 @@ const User = observer(() => {
             })}
           >
             <EditOutlined />
-          </Tooltip>
-        </a>,
-        <a
-          key="auth"
-          onClick={() => {
-            autzModel.autzTarget.id = record.id;
-            autzModel.autzTarget.name = record.name;
-            autzModel.visible = true;
-          }}
-        >
-          <Tooltip
-            title={intl.formatMessage({
-              id: 'pages.data.option.authorize',
-              defaultMessage: '授权',
-            })}
-          >
-            <KeyOutlined />
           </Tooltip>
         </a>,
         <a key="changeState">
@@ -196,6 +178,19 @@ const User = observer(() => {
             </Tooltip>
           </Popconfirm>
         </a>,
+        <a key="delete">
+          <Popconfirm
+            onConfirm={async () => {
+              await service.remove(record.id);
+              actionRef.current?.reload();
+            }}
+            title="确认删除?"
+          >
+            <Tooltip title="删除">
+              <DeleteOutlined />
+            </Tooltip>
+          </Popconfirm>
+        </a>,
       ],
     },
   ];
@@ -211,10 +206,13 @@ const User = observer(() => {
         />
       </Card>
       <ProTable<UserItem>
+        actionRef={actionRef}
         params={param}
         columns={columns}
         search={false}
-        request={async (params = {}) => service.query(params)}
+        request={async (params) =>
+          service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
+        }
         toolBarRender={() => [
           <Button
             onClick={() => {
@@ -231,7 +229,14 @@ const User = observer(() => {
           </Button>,
         ]}
       />
-      <Save model={model} close={() => setMode('query')} data={current} />
+      <Save
+        model={model}
+        close={() => {
+          setMode('query');
+          actionRef.current?.reload();
+        }}
+        data={current}
+      />
     </PageContainer>
   );
 });

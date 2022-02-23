@@ -92,10 +92,18 @@ const Save = (props: Props) => {
         type: 'string',
         'x-decorator': 'FormItem',
         'x-component': 'Input',
-        'x-component-props': {},
-        'x-decorator-props': {},
         name: 'name',
-        required: true,
+        'x-validator': [
+          {
+            max: 50,
+            message: '最多可输入50个字符',
+          },
+          {
+            required: true,
+            message: '请输入姓名',
+          },
+        ],
+        // required: true,
       },
       username: {
         title: intl.formatMessage({
@@ -108,7 +116,16 @@ const Save = (props: Props) => {
         'x-component-props': {
           disabled: model === 'edit',
         },
-        'x-decorator-props': {},
+        'x-validator': [
+          {
+            max: 50,
+            message: '最多可输入50个字符',
+          },
+          {
+            required: true,
+            message: '请输入用户名',
+          },
+        ],
         name: 'username',
         required: true,
       },
@@ -124,20 +141,34 @@ const Save = (props: Props) => {
           checkStrength: true,
           placeholder: '********',
         },
-        required: model === 'add',
+        maxLength: 128,
+        minLength: 6,
         'x-reactions': [
           {
             dependencies: ['.confirmPassword'],
             fulfill: {
               state: {
                 selfErrors:
-                  '{{$deps[0] && $self.value && $self.value !==$deps[0] ? "确认密码不匹配" : ""}}',
+                  '{{$deps[0] && $self.value && $self.value !==$deps[0] ? "两次密码输入不一致" : ""}}',
               },
             },
           },
         ],
-        'x-decorator-props': {},
         name: 'password',
+        'x-validator': [
+          {
+            max: 128,
+            message: '密码最多可输入128位',
+          },
+          {
+            min: 6,
+            message: '密码不能少于6位',
+          },
+          {
+            required: model === 'add',
+            message: '请输入密码',
+          },
+        ],
       },
       confirmPassword: {
         type: 'string',
@@ -151,20 +182,35 @@ const Save = (props: Props) => {
           checkStrength: true,
           placeholder: '********',
         },
+        maxLength: 128,
+        minLength: 6,
+        'x-validator': [
+          {
+            max: 128,
+            message: '密码最多可输入128位',
+          },
+          {
+            min: 6,
+            message: '密码不能少于6位',
+          },
+          {
+            required: model === 'add',
+            message: '请输入确认密码',
+          },
+        ],
         'x-reactions': [
           {
             dependencies: ['.password'],
             fulfill: {
               state: {
                 selfErrors:
-                  '{{$deps[0] && $self.value && $self.value !== $deps[0] ? "确认密码不匹配" : ""}}',
+                  '{{$deps[0] && $self.value && $self.value !== $deps[0] ? "两次密码输入不一致" : ""}}',
               },
             },
           },
         ],
         'x-decorator-props': {},
         name: 'confirmPassword',
-        required: model === 'add',
       },
       roleIdList: {
         title: '角色',
@@ -240,10 +286,10 @@ const Save = (props: Props) => {
           defaultMessage: '操作成功',
         }),
       );
+      props.close();
     } else {
       message.error('操作失败！');
     }
-    props.close();
   };
 
   return (
@@ -256,6 +302,7 @@ const Save = (props: Props) => {
       visible={model !== 'query'}
       onCancel={props.close}
       onOk={save}
+      width="30vw"
     >
       <Form form={form} labelCol={4} wrapperCol={18}>
         <SchemaField schema={schema} scope={{ useAsyncDataSource, getRole, getOrg }} />
