@@ -11,7 +11,8 @@ import {
   PreviewText,
   Select,
 } from '@formily/antd';
-import { createForm } from '@formily/core';
+import type { Field } from '@formily/core';
+import { createForm, onFieldReact } from '@formily/core';
 import GroupNameControl from '@/components/SearchComponent/GroupNameControl';
 import { DeleteOutlined, DoubleRightOutlined } from '@ant-design/icons';
 import { Button, Dropdown, Empty, Menu, message, Popconfirm, Popover, Typography } from 'antd';
@@ -68,6 +69,28 @@ const SearchComponent = <T extends Record<string, any>>({ field, onSearch, targe
   const form = createForm<SearchTermsUI>({
     validateFirst: true,
     initialValues: initParams,
+    effects() {
+      onFieldReact('*.*.column', (typeFiled, f) => {
+        const _column = (typeFiled as Field).value;
+        const _field = field.find((item) => item.dataIndex === _column);
+        if (_field?.valueType === 'select') {
+          const option = Object.values(_field?.valueEnum || {}).map((item) => ({
+            label: item.text,
+            value: item.status,
+          }));
+
+          f.setFieldState(typeFiled.query('.termType'), async (state) => {
+            state.value = 'eq';
+          });
+          f.setFieldState(typeFiled.query('.value'), async (state) => {
+            state.componentType = 'Select';
+            state.loading = true;
+            state.dataSource = option;
+            state.loading = false;
+          });
+        }
+      });
+    },
   });
 
   const historyForm = createForm();
@@ -274,7 +297,7 @@ const SearchComponent = <T extends Record<string, any>>({ field, onSearch, targe
     const value = form.values;
     setInitParams(value);
     const filterTerms = (data: Partial<Term>[]) =>
-      data.filter((item) => item.column != null).filter((item) => item.value);
+      data.filter((item) => item.column != null).filter((item) => item.value != null);
     const temp = _.cloneDeep(value);
     temp.terms1 = filterTerms(temp.terms1);
     temp.terms2 = filterTerms(temp.terms2);
@@ -284,7 +307,6 @@ const SearchComponent = <T extends Record<string, any>>({ field, onSearch, targe
   const handleSaveLog = async () => {
     const value = await form.submit<SearchTermsUI>();
     const value2 = await historyForm.submit<{ alias: string }>();
-    console.log(value2, 'test');
     const response = await service.history.save(`${target}-search`, {
       name: value2.alias,
       content: JSON.stringify(value),

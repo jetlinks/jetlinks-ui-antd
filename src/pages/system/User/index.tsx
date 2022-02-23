@@ -93,13 +93,6 @@ const User = observer(() => {
       // onFilter: true,
       valueType: 'select',
       valueEnum: {
-        all: {
-          text: intl.formatMessage({
-            id: 'pages.searchTable.titleStatus.all',
-            defaultMessage: '全部',
-          }),
-          status: 'Default',
-        },
         1: {
           text: intl.formatMessage({
             id: 'pages.searchTable.titleStatus.normal',
