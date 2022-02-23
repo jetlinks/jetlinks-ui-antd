@@ -327,8 +327,9 @@ const SearchComponent = <T extends Record<string, any>>({
 
   const resetForm = async () => {
     const temp = initForm;
-    temp.terms1 = temp.terms1.map(() => defaultTerm);
-    temp.terms2 = temp.terms2.map(() => defaultTerm);
+    const expandData = Array(expand ? 1 : 3).fill(defaultTerm);
+    temp.terms1 = expandData;
+    temp.terms2 = expandData;
     setInitParams(temp);
     await form.reset();
     onReset?.();
