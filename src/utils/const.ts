@@ -13,6 +13,8 @@ class SystemConst {
 
   static BASE_CURD_MODEL = 'BASE_CURD_MODEL';
 
+  static BASE_UPDATE_DATA = 'BASE_UPDATE_DATA';
+
   static GLOBAL_WEBSOCKET = 'GLOBAL-WEBSOCKET';
 
   static BIND_USER_STATE = 'false';

@@ -31,12 +31,13 @@ class BaseService<T> implements IBaseService<T> {
     return request(`${this.uri}/${id}`, { method: 'DELETE' });
   }
 
-  save(data: T): Promise<unknown> {
+  save(data: Partial<T>): Promise<unknown> {
     return request(this.uri, { data, method: 'POST' });
   }
 
   update(data: Partial<T>): Promise<any> {
-    return request(this.uri, { data, method: 'PATCH' });
+    // @ts-ignore
+    return data.id ? request(this.uri, { data, method: 'PATCH' }) : this.save(data);
   }
 
   detail(id: string): Promise<any> {

@@ -2,7 +2,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@jetlinks/pro-table';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { Button, message, Popconfirm, Tooltip, Card, Divider } from 'antd';
 import {
@@ -18,7 +18,7 @@ import type { ISchema } from '@formily/json-schema';
 import type { DepartmentItem } from '@/pages/system/Department/typings';
 import { observer } from '@formily/react';
 import { model } from '@formily/reactive';
-import { Link } from 'umi';
+import { Link, useLocation } from 'umi';
 import Save from './save';
 import SearchComponent from '@/components/SearchComponent';
 
@@ -182,6 +182,12 @@ export default observer(() => {
     },
   };
 
+  const location = useLocation();
+  useEffect(() => {
+    if ((location as any).query?.save === 'true') {
+      State.visible = true;
+    }
+  }, []);
   return (
     <PageContainer>
       <Card>

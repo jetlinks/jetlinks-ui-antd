@@ -177,19 +177,15 @@ const Save = (props: Props) => {
         'x-decorator-props': {
           addonAfter: (
             <a
-              // href={`${origin}/#/system/role`}
-              // target='_blank'
-              // rel='noreferrer'
               onClick={() => {
-                // const test = window.open(`${origin}/#/system/role`);
-                // test!.onSuccess1 = (data: any) => {
-                //   form.setFieldState('role', state => {
-                //     state.dataSource = [...testEnum, { label: '测试数据A', value: 'testA' }];
-                //   });
-                // console.log(JSON.stringify(data));
-                // testEnum.push({label:'测试数据A',value:'testA'});
-                // setTestEnum([...testEnum, { label: '测试数据A', value: 'testA' }]);
-                // };
+                const tab: any = window.open(`${origin}/#/system/role?save=true`);
+                tab!.onTabSaveSuccess = (value: any) => {
+                  form.setFieldState('roleIdList', (state) => {
+                    state.dataSource = state.dataSource?.concat([
+                      { label: value.name, value: value.id },
+                    ]);
+                  });
+                };
               }}
             >
               <PlusOutlined />
@@ -207,7 +203,19 @@ const Save = (props: Props) => {
         },
         'x-decorator-props': {
           addonAfter: (
-            <a>
+            <a
+              onClick={() => {
+                const tab: any = window.open(`${origin}/#/system/department?save=true`);
+                tab!.onTabSaveSuccess = (value: any) => {
+                  form.setFieldState('orgIdList', (state) => {
+                    console.log(value, 'value');
+                    state.dataSource = state.dataSource?.concat([
+                      { label: value.name, value: value.id },
+                    ]);
+                  });
+                };
+              }}
+            >
               <PlusOutlined />
             </a>
           ),

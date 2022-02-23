@@ -1,5 +1,5 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { EditOutlined, MinusOutlined } from '@ant-design/icons';
 import { message, Popconfirm, Tooltip } from 'antd';
 import type { ProColumns, ActionType } from '@jetlinks/pro-table';
@@ -11,7 +11,10 @@ import { observer } from '@formily/react';
 // import Authorization from '@/components/Authorization';
 // import { BindModel } from '@/components/BindUser/model';
 // import BindUser from '@/components/BindUser';
-import { Link } from 'umi';
+import { Link, useLocation } from 'umi';
+import { Store } from 'jetlinks-store';
+import SystemConst from '@/utils/const';
+import { CurdModel } from '@/components/BaseCrud/model';
 
 export const service = new BaseService<RoleItem>('role');
 
@@ -158,6 +161,21 @@ const Role: React.FC = observer(() => {
       },
     },
   };
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if ((location as any).query?.save === 'true') {
+      CurdModel.add();
+    }
+    const subscription = Store.subscribe(SystemConst.BASE_UPDATE_DATA, (data) => {
+      if ((window as any).onTabSaveSuccess) {
+        (window as any).onTabSaveSuccess(data);
+        setTimeout(() => window.close(), 300);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, []);
   return (
     <PageContainer>
       <BaseCrud<RoleItem>
