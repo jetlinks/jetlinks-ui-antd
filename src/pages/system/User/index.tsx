@@ -31,11 +31,6 @@ const User = observer(() => {
 
   const columns: ProColumns<UserItem>[] = [
     {
-      dataIndex: 'index',
-      valueType: 'indexBorder',
-      width: 48,
-    },
-    {
       title: intl.formatMessage({
         id: 'pages.system.name',
         defaultMessage: '姓名',
@@ -120,14 +115,6 @@ const User = observer(() => {
           status: 0,
         },
       },
-    },
-    {
-      title: '创建时间',
-      dataIndex: 'createTime',
-      align: 'center',
-      sorter: true,
-      hideInTable: true,
-      defaultSortOrder: 'descend',
     },
     {
       title: intl.formatMessage({

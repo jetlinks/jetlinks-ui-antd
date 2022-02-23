@@ -14,7 +14,7 @@ import {
 import { createForm } from '@formily/core';
 import GroupNameControl from '@/components/SearchComponent/GroupNameControl';
 import { DeleteOutlined, DoubleRightOutlined } from '@ant-design/icons';
-import { Button, Dropdown, Menu, message, Popconfirm, Popover, Typography } from 'antd';
+import { Button, Dropdown, Empty, Menu, message, Popconfirm, Popover, Typography } from 'antd';
 import { useState } from 'react';
 import type { ProColumns } from '@jetlinks/pro-table';
 import type { EnumData } from '@/utils/typings';
@@ -242,7 +242,18 @@ const SearchComponent = <T extends Record<string, any>>({ field, onSearch, targe
           </Menu.Item>
         ))
       ) : (
-        <Menu.Item>暂无数据</Menu.Item>
+        <Menu.Item>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: '148px',
+            }}
+          >
+            <Empty />
+          </div>
+        </Menu.Item>
       )}
     </Menu>
   );
