@@ -181,8 +181,12 @@ const User = observer(() => {
       <Card style={{ marginBottom: '20px' }}>
         <SearchComponent
           field={columns}
-          onSearch={(data) => setParam({ terms: data })}
+          onSearch={(data) => setParam({ terms: data, total: null })}
           target="user"
+          onReset={() => {
+            setParam({});
+            actionRef.current?.reset?.();
+          }}
         />
       </Card>
       <ProTable<UserItem>

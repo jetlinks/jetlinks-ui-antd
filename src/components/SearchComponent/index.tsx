@@ -39,6 +39,7 @@ interface Props<T> {
   field: ProColumns<T>[];
   onSearch: (params: any) => void;
   target?: string;
+  onReset?: () => void;
 }
 
 const termType = [
@@ -57,7 +58,12 @@ const termType = [
 const service = new Service();
 const defaultTerm = { termType: 'like' };
 
-const SearchComponent = <T extends Record<string, any>>({ field, onSearch, target }: Props<T>) => {
+const SearchComponent = <T extends Record<string, any>>({
+  field,
+  onSearch,
+  target,
+  onReset,
+}: Props<T>) => {
   const intl = useIntl();
   const [expand, setExpand] = useState<boolean>(true);
   const initForm = server2Ui([{ terms: [defaultTerm], type: 'and' }, { terms: [defaultTerm] }]);
@@ -325,6 +331,7 @@ const SearchComponent = <T extends Record<string, any>>({ field, onSearch, targe
     temp.terms2 = temp.terms2.map(() => defaultTerm);
     setInitParams(temp);
     await form.reset();
+    onReset?.();
   };
   return (
     <div>

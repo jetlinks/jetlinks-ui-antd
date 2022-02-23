@@ -70,7 +70,7 @@
     "@formily/reactive-react": "2.0.0-rc.17",
     "@formily/shared": "2.0.0-rc.17",
     "@jetlinks/pro-list": "^1.10.8",
-    "@jetlinks/pro-table": "^2.63.8",
+    "@jetlinks/pro-table": "^2.63.9",
     "@umijs/route-utils": "^1.0.36",
     "ahooks": "^2.10.9",
     "antd": "^4.17.0-alpha.9",
