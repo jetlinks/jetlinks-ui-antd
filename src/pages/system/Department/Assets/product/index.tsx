@@ -13,7 +13,7 @@ import Models from './model';
 import Bind from './bind';
 import SearchComponent from '@/components/SearchComponent';
 
-export const service = new Service<ProductItem>();
+export const service = new Service<ProductItem>('assets');
 
 export default observer(() => {
   const intl = useIntl();

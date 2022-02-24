@@ -43,11 +43,6 @@ const Member = observer(() => {
 
   const columns: ProColumns<MemberItem>[] = [
     {
-      dataIndex: 'index',
-      valueType: 'indexBorder',
-      width: 48,
-    },
-    {
       dataIndex: 'name',
       title: intl.formatMessage({
         id: 'pages.system.name',
@@ -55,6 +50,16 @@ const Member = observer(() => {
       }),
       search: {
         transform: (value) => ({ name$LIKE: value }),
+      },
+    },
+    {
+      dataIndex: 'username',
+      title: intl.formatMessage({
+        id: 'pages.system.username',
+        defaultMessage: '用户名',
+      }),
+      search: {
+        transform: (value) => ({ username$LIKE: value }),
       },
     },
     {
@@ -192,7 +197,7 @@ const Member = observer(() => {
           </Button>,
           <Popconfirm
             title={intl.formatMessage({
-              id: 'pages.system.role.option.unBindUser',
+              id: 'pages.system.role.option.unBinds',
               defaultMessage: '是否批量解除绑定',
             })}
             key="unBind"

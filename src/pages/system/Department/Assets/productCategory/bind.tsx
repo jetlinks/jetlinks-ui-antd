@@ -2,7 +2,7 @@
 import type { ProColumns, ActionType } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { service, getTableKeys } from './index';
-import { Modal } from 'antd';
+import { Modal, message } from 'antd';
 import { useParams } from 'umi';
 import Models from './model';
 import { useRef, useState, useEffect } from 'react';
@@ -53,7 +53,8 @@ const Bind = observer((props: Props) => {
     if (Models.bindKeys.length) {
       setPerVisible(true);
     } else {
-      props.onCancel();
+      message.warn('请先勾选数据')
+      // props.onCancel();
     }
   };
 
