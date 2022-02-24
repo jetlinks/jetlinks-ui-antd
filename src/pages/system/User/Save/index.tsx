@@ -5,7 +5,7 @@ import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import React, { useEffect, useState } from 'react';
 import * as ICONS from '@ant-design/icons';
-import { Form, FormItem, Input, Password, Select, Switch } from '@formily/antd';
+import { Form, FormItem, Input, Password, Select, Switch, TreeSelect } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
 import { PlusOutlined } from '@ant-design/icons';
 import { action } from '@formily/reactive';
@@ -33,6 +33,7 @@ const Save = (props: Props) => {
     api(field).then(
       action.bound!((resp: Response<any>) => {
         field.dataSource = resp.result?.map((item: Record<string, unknown>) => ({
+          ...item,
           label: item.name,
           value: item.id,
         }));
@@ -43,7 +44,6 @@ const Save = (props: Props) => {
 
   const getUser = async () => {
     if (props.data.id) {
-      console.log('id');
       const response: Response<UserItem> = await service.queryDetail(props.data?.id);
       if (response.status === 200) {
         const temp = response.result as UserItem;
@@ -73,6 +73,7 @@ const Save = (props: Props) => {
       Password,
       Switch,
       Select,
+      TreeSelect,
     },
     scope: {
       icon(name: any) {
@@ -245,12 +246,17 @@ const Save = (props: Props) => {
       orgIdList: {
         title: '部门',
         'x-decorator': 'FormItem',
-        'x-component': 'Select',
+        'x-component': 'TreeSelect',
         'x-component-props': {
-          mode: 'multiple',
+          multiple: true,
           showArrow: true,
           filterOption: (input: string, option: any) =>
             option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
+          fieldNames: {
+            label: 'name',
+            value: 'id',
+          },
+          treeNodeFilterProp: 'name',
         },
         'x-decorator-props': {
           addonAfter: (
@@ -259,7 +265,6 @@ const Save = (props: Props) => {
                 const tab: any = window.open(`${origin}/#/system/department?save=true`);
                 tab!.onTabSaveSuccess = (value: any) => {
                   form.setFieldState('orgIdList', (state) => {
-                    console.log(value, 'value');
                     state.dataSource = state.dataSource?.concat([
                       { label: value.name, value: value.id },
                     ]);
