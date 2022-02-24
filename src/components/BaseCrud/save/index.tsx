@@ -104,8 +104,11 @@ const Save = <T extends Record<string, any>>(props: Props<T>) => {
         values.template,
       );
     }
-    await service.update(values);
+    const response = await service.update(values);
 
+    if (response.status === 200) {
+      Store.set(SystemConst.BASE_UPDATE_DATA, response.result);
+    }
     message.success(
       intl.formatMessage({
         id: 'pages.data.option.success',

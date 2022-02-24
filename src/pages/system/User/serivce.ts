@@ -1,0 +1,41 @@
+import BaseService from '@/utils/BaseService';
+import { request } from 'umi';
+import SystemConst from '@/utils/const';
+
+class Service extends BaseService<UserItem> {
+  queryRoleList = (params?: any) =>
+    request(`${SystemConst.API_BASE}/role/_query/no-paging?paging=false`, {
+      method: 'GET',
+      params,
+    });
+
+  queryOrgList = (params?: any) =>
+    request(`${SystemConst.API_BASE}/organization/_all/tree`, {
+      method: 'GET',
+      params,
+    });
+
+  queryDetail = (id: string) =>
+    request(`/${SystemConst.API_BASE}/user/detail/${id}`, {
+      method: 'GET',
+    });
+
+  saveUser = (data: UserItem, type: 'add' | 'edit' | 'query') => {
+    const map = {
+      add: {
+        api: '_create',
+        method: 'POST',
+      },
+      edit: {
+        api: `${data.id}/_update`,
+        method: 'PUT',
+      },
+    };
+    return request(`/${SystemConst.API_BASE}/user/detail/${map[type].api}`, {
+      method: map[type].method,
+      data,
+    });
+  };
+}
+
+export default Service;
