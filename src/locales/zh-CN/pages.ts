@@ -125,6 +125,9 @@ export default {
   // 系统设置-部门管理
   'pages.system.department.user': '用户',
   'pages.system.department.option.add': '新增子部门',
+  'pages.system.role.option.unBind': '是否解除绑定',
+  'pages.system.role.option.unBinds': '是否批量解除绑定?',
+  'pages.system.role.option.delete': '确定要删除吗？',
   // 系统设置-第三方平台
   'pages.system.openApi': '第三方平台',
   'pages.system.openApi.username': '用户名',

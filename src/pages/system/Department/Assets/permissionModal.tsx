@@ -80,10 +80,11 @@ export default (props: PerModalProps) => {
         'x-decorator': 'FormItem',
         'x-component': 'Checkbox.Group',
         enum: [
-          { label: '查看', value: 'read' },
+          { label: '查看', value: 'read', disabled: true },
           { label: '编辑', value: 'save' },
           { label: '删除', value: 'delete' },
         ],
+        'x-value': ['read']
       },
     },
   };

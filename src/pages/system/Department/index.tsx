@@ -2,7 +2,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@jetlinks/pro-table';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { Button, message, Popconfirm, Tooltip, Card, Divider } from 'antd';
 import {
@@ -18,7 +18,7 @@ import type { ISchema } from '@formily/json-schema';
 import type { DepartmentItem } from '@/pages/system/Department/typings';
 import { observer } from '@formily/react';
 import { model } from '@formily/reactive';
-import { Link } from 'umi';
+import { Link, useLocation } from 'umi';
 import Save from './save';
 import SearchComponent from '@/components/SearchComponent';
 
@@ -141,8 +141,8 @@ export default observer(() => {
         <Popconfirm
           key="unBindUser"
           title={intl.formatMessage({
-            id: 'pages.system.role.option.unBindUser',
-            defaultMessage: '是否批量解除绑定',
+            id: 'pages.system.role.option.delete',
+            defaultMessage: '确定要删除吗',
           })}
           onConfirm={() => {
             deleteItem(record.id);
@@ -181,6 +181,15 @@ export default observer(() => {
       },
     },
   };
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if ((location as any).query?.save === 'true') {
+      State.visible = true;
+    }
+    /* eslint-disable */
+  }, []);
 
   return (
     <PageContainer>
@@ -233,6 +242,10 @@ export default observer(() => {
         })}
       />
       <Save<DepartmentItem>
+        title={State.current.parentId ? intl.formatMessage({
+          id: 'pages.system.department.option.add',
+          defaultMessage: '新增子部门'
+        }) : undefined}
         service={service}
         onCancel={(type) => {
           if (type) {

@@ -13,7 +13,7 @@ import Service from '@/pages/system/Department/Assets/service';
 import Bind from './bind';
 import SearchComponent from '@/components/SearchComponent';
 
-export const service = new Service<DeviceItem>();
+export const service = new Service<DeviceItem>('assets');
 
 type DeviceBadgeProps = {
   type: string;

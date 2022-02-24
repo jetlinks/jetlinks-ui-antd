@@ -90,6 +90,10 @@ const Save = <T extends object>(props: SaveModalProps<T>) => {
     if (response.status === 200) {
       message.success('操作成功！');
       modalClose(true);
+      if ((window as any).onTabSaveSuccess) {
+        (window as any).onTabSaveSuccess(response.result);
+        setTimeout(() => window.close(), 300);
+      }
     } else {
       message.error('操作成功！');
     }
@@ -97,7 +101,7 @@ const Save = <T extends object>(props: SaveModalProps<T>) => {
 
   return (
     <Modal
-      title={intl.formatMessage({
+      title={props.title ? props.title : intl.formatMessage({
         id: `pages.data.option.${data && 'id' in data ? 'edit' : 'add'}`,
         defaultMessage: '新增',
       })}
