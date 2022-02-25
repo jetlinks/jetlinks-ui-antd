@@ -8,6 +8,7 @@ import {
   FormItem,
   FormTab,
   Input,
+  NumberPicker,
   PreviewText,
   Select,
 } from '@formily/antd';
@@ -15,8 +16,18 @@ import type { Field } from '@formily/core';
 import { createForm, onFieldReact } from '@formily/core';
 import GroupNameControl from '@/components/SearchComponent/GroupNameControl';
 import { DeleteOutlined, DoubleRightOutlined } from '@ant-design/icons';
-import { Button, Dropdown, Empty, Menu, message, Popconfirm, Popover, Typography } from 'antd';
-import { useState } from 'react';
+import {
+  Button,
+  Card,
+  Dropdown,
+  Empty,
+  Menu,
+  message,
+  Popconfirm,
+  Popover,
+  Typography,
+} from 'antd';
+import { useEffect, useMemo, useState } from 'react';
 import type { ProColumns } from '@jetlinks/pro-table';
 import type { EnumData } from '@/utils/typings';
 import styles from './index.less';
@@ -36,10 +47,13 @@ const server2Ui = (source: SearchTermsServer): SearchTermsUI => ({
 });
 
 interface Props<T> {
+  /** @name 搜索条件 */
   field: ProColumns<T>[];
-  onSearch: (params: any) => void;
+  onSearch: (params: { terms: SearchTermsServer }) => void;
   target?: string;
   onReset?: () => void;
+  /** @name 固定查询参数*/
+  defaultParam?: Term[];
 }
 
 const termType = [
@@ -56,48 +70,67 @@ const termType = [
 ];
 
 const service = new Service();
-const defaultTerm = { termType: 'like' };
+const initTerm = { termType: 'like' };
+const SchemaField = createSchemaField({
+  components: {
+    FormItem,
+    FormTab,
+    Input,
+    Select,
+    NumberPicker,
+    FormGrid,
+    ArrayItems,
+    PreviewText,
+    GroupNameControl,
+  },
+});
 
-const SearchComponent = <T extends Record<string, any>>({
-  field,
-  onSearch,
-  target,
-  onReset,
-}: Props<T>) => {
+const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
+  const { field, target, onReset, onSearch, defaultParam } = props;
   const intl = useIntl();
   const [expand, setExpand] = useState<boolean>(true);
-  const initForm = server2Ui([{ terms: [defaultTerm], type: 'and' }, { terms: [defaultTerm] }]);
+  const initForm = server2Ui([{ terms: [initTerm], type: 'and' }, { terms: [initTerm] }]);
   const [logVisible, setLogVisible] = useState<boolean>(false);
   const [aliasVisible, setAliasVisible] = useState<boolean>(false);
   const [initParams, setInitParams] = useState<SearchTermsUI>(initForm);
   const [history, setHistory] = useState([]);
 
-  const form = createForm<SearchTermsUI>({
-    validateFirst: true,
-    initialValues: initParams,
-    effects() {
-      onFieldReact('*.*.column', (typeFiled, f) => {
-        const _column = (typeFiled as Field).value;
-        const _field = field.find((item) => item.dataIndex === _column);
-        if (_field?.valueType === 'select') {
-          const option = Object.values(_field?.valueEnum || {}).map((item) => ({
-            label: item.text,
-            value: item.status,
-          }));
-
-          f.setFieldState(typeFiled.query('.termType'), async (state) => {
-            state.value = 'eq';
+  const form = useMemo(
+    () =>
+      createForm<SearchTermsUI>({
+        validateFirst: true,
+        initialValues: initParams,
+        effects() {
+          onFieldReact('*.*.column', (typeFiled, f) => {
+            const _column = (typeFiled as Field).value;
+            const _field = field.find((item) => item.dataIndex === _column);
+            if (_field?.valueType === 'select') {
+              const option = Object.values(_field?.valueEnum || {}).map((item) => ({
+                label: item.text,
+                value: item.status,
+              }));
+              f.setFieldState(typeFiled.query('.termType'), async (state) => {
+                state.value = 'eq';
+              });
+              f.setFieldState(typeFiled.query('.value'), async (state) => {
+                state.componentType = 'Select';
+                state.loading = true;
+                state.dataSource = option;
+                state.loading = false;
+              });
+            } else if (_field?.valueType === 'digit') {
+              f.setFieldState(typeFiled.query('.value'), async (state) => {
+                state.componentType = 'NumberPicker';
+              });
+              f.setFieldState(typeFiled.query('.termType'), async (state) => {
+                state.value = 'eq';
+              });
+            }
           });
-          f.setFieldState(typeFiled.query('.value'), async (state) => {
-            state.componentType = 'Select';
-            state.loading = true;
-            state.dataSource = option;
-            state.loading = false;
-          });
-        }
-      });
-    },
-  });
+        },
+      }),
+    [expand],
+  );
 
   const historyForm = createForm();
 
@@ -114,24 +147,12 @@ const SearchComponent = <T extends Record<string, any>>({
       value.terms1.splice(1, 2);
       value.terms2.splice(1, 2);
     } else {
-      value.terms2.push(defaultTerm, defaultTerm);
-      value.terms1.push(defaultTerm, defaultTerm);
+      value.terms2.push(initTerm, initTerm);
+      value.terms1.push(initTerm, initTerm);
     }
     setInitParams(value);
     setExpand(!expand);
   };
-  const SchemaField = createSchemaField({
-    components: {
-      FormItem,
-      FormTab,
-      Input,
-      Select,
-      FormGrid,
-      ArrayItems,
-      PreviewText,
-      GroupNameControl,
-    },
-  });
 
   const filterSearchTerm = (): EnumData[] =>
     field
@@ -238,8 +259,9 @@ const SearchComponent = <T extends Record<string, any>>({
     const log = JSON.parse(item.content) as SearchTermsUI;
     form.setValues(log);
     setExpand(!(log.terms1?.length > 1 || log.terms2?.length > 1));
-    setInitParams(log);
+    // setInitParams(log);
   };
+
   const historyDom = (
     <Menu style={{ width: '176px' }}>
       {history.length > 0 ? (
@@ -301,14 +323,23 @@ const SearchComponent = <T extends Record<string, any>>({
 
   const handleSearch = async () => {
     const value = form.values;
-    setInitParams(value);
+    // setInitParams(value);
     const filterTerms = (data: Partial<Term>[]) =>
       data.filter((item) => item.column != null).filter((item) => item.value != null);
-    const temp = _.cloneDeep(value);
-    temp.terms1 = filterTerms(temp.terms1);
-    temp.terms2 = filterTerms(temp.terms2);
-    onSearch(formatValue(temp));
+    const _terms = _.cloneDeep(value);
+    _terms.terms1 = filterTerms(_terms.terms1);
+    _terms.terms2 = filterTerms(_terms.terms2);
+    if (defaultParam) {
+      _terms.terms1 = _terms.terms1.concat(defaultParam);
+    }
+    onSearch({ terms: formatValue(_terms) });
   };
+
+  useEffect(() => {
+    if (defaultParam) {
+      handleSearch();
+    }
+  }, []);
 
   const handleSaveLog = async () => {
     const value = await form.submit<SearchTermsUI>();
@@ -326,16 +357,18 @@ const SearchComponent = <T extends Record<string, any>>({
   };
 
   const resetForm = async () => {
+    console.log('test');
     const temp = initForm;
-    const expandData = Array(expand ? 1 : 3).fill(defaultTerm);
+    const expandData = Array(expand ? 1 : 3).fill(initTerm);
     temp.terms1 = expandData;
     temp.terms2 = expandData;
-    setInitParams(temp);
+    // setInitParams(temp);
     await form.reset();
     onReset?.();
   };
+
   return (
-    <div>
+    <Card style={{ marginBottom: '20px' }}>
       <Form form={form} labelCol={4} wrapperCol={18}>
         <SchemaField schema={schema} />
         <div className={styles.action}>
@@ -347,8 +380,6 @@ const SearchComponent = <T extends Record<string, any>>({
               visible={logVisible}
               onVisibleChange={async (visible) => {
                 setLogVisible(visible);
-                const value = form.values;
-                setInitParams(value);
                 if (visible) {
                   await queryHistory();
                 }
@@ -379,10 +410,7 @@ const SearchComponent = <T extends Record<string, any>>({
                 </Form>
               }
               visible={aliasVisible}
-              onVisibleChange={(visible) => {
-                setInitParams(form.values);
-                setAliasVisible(visible);
-              }}
+              onVisibleChange={setAliasVisible}
               title="搜索名称"
               trigger="click"
             >
@@ -406,7 +434,7 @@ const SearchComponent = <T extends Record<string, any>>({
           </div>
         </div>
       </Form>
-    </div>
+    </Card>
   );
 };
 export default SearchComponent;
