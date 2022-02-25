@@ -168,7 +168,10 @@ export default observer(() => {
     properties: {
       name: {
         type: 'string',
-        title: '名称',
+        title: intl.formatMessage({
+          id: 'pages.table.name',
+          defaultMessage: '名称'
+        }),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input',
@@ -179,13 +182,16 @@ export default observer(() => {
           },
           {
             required: true,
-            message: '请输入用户名',
+            message: '请输入名称',
           },
         ],
       },
       sortIndex: {
         type: 'string',
-        title: '排序',
+        title: intl.formatMessage({
+          id: 'pages.device.instanceDetail.detail.sort',
+          defaultMessage: '排序'
+        }),
         'x-decorator': 'FormItem',
         'x-component': 'NumberPicker',
       },
