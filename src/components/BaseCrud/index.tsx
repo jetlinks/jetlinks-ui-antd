@@ -76,8 +76,9 @@ const BaseCrud = <T extends Record<string, any>>(props: Props<T>) => {
       <SearchComponent<T>
         field={columns}
         onSearch={async (data) => {
-          actionRef.current?.reset?.();
-          setParam({ terms: data });
+          // actionRef.current?.reset?.();
+          actionRef.current?.setPageInfo?.({ pageSize: 10 });
+          setParam(data);
         }}
         target={moduleName}
         onReset={() => {

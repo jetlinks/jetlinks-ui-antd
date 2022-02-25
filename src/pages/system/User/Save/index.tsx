@@ -312,7 +312,7 @@ const Save = (props: Props) => {
       visible={model !== 'query'}
       onCancel={props.close}
       onOk={save}
-      width="30vw"
+      width="35vw"
     >
       <Form form={form} labelCol={4} wrapperCol={18}>
         <SchemaField schema={schema} scope={{ useAsyncDataSource, getRole, getOrg }} />
