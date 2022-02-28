@@ -169,7 +169,7 @@ export default observer(() => {
         type: 'string',
         title: intl.formatMessage({
           id: 'pages.table.name',
-          defaultMessage: '名称'
+          defaultMessage: '名称',
         }),
         required: true,
         'x-decorator': 'FormItem',
@@ -189,7 +189,7 @@ export default observer(() => {
         type: 'string',
         title: intl.formatMessage({
           id: 'pages.device.instanceDetail.detail.sort',
-          defaultMessage: '排序'
+          defaultMessage: '排序',
         }),
         'x-decorator': 'FormItem',
         'x-component': 'NumberPicker',

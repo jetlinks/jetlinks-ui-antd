@@ -21,9 +21,7 @@ const Member = observer(() => {
   const actionRef = useRef<ActionType>();
 
   const param = useParams<{ id: string }>();
-  const [searchParam, setSearchParam] = useState({
-    terms: [{ column: 'id$in-dimension$org', value: param.id }],
-  });
+  const [searchParam, setSearchParam] = useState({});
 
   const handleUnBind = () => {
     service.handleUser(param.id, MemberModel.unBindUsers, 'unbind').subscribe({
@@ -159,10 +157,10 @@ const Member = observer(() => {
       <Card>
         <SearchComponent<MemberItem>
           field={columns}
+          defaultParam={[{ column: 'id$in-dimension$org', value: param.id, termType: 'eq' }]}
           onSearch={async (data) => {
-            setSearchParam({
-              terms: [...data, { column: 'id$in-dimension$org', value: param.id }],
-            });
+            actionRef.current?.reset?.();
+            setSearchParam(data);
           }}
           target="department-user"
         />

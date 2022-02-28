@@ -33,23 +33,7 @@ export default observer(() => {
   const actionRef = useRef<ActionType>();
 
   const param = useParams<{ id: string }>();
-  const [searchParam, setSearchParam] = useState({
-    terms: [
-      {
-        column: 'id',
-        termType: 'dim-assets',
-        value: {
-          assetType: 'device',
-          targets: [
-            {
-              type: 'org',
-              id: param.id,
-            },
-          ],
-        },
-      },
-    ],
-  });
+  const [searchParam, setSearchParam] = useState({});
   /**
    * 解除资产绑定
    */
@@ -203,25 +187,24 @@ export default observer(() => {
       />
       <SearchComponent<DeviceItem>
         field={columns}
-        onSearch={async (data) => {
-          setSearchParam({
-            terms: [
-              ...data,
-              {
-                column: 'id',
-                termType: 'dim-assets',
-                value: {
-                  assetType: 'device',
-                  targets: [
-                    {
-                      type: 'org',
-                      id: param.id,
-                    },
-                  ],
+        defaultParam={[
+          {
+            column: 'id',
+            termType: 'dim-assets',
+            value: {
+              assetType: 'device',
+              targets: [
+                {
+                  type: 'org',
+                  id: param.id,
                 },
-              },
-            ],
-          });
+              ],
+            },
+          },
+        ]}
+        onSearch={async (data) => {
+          actionRef.current?.reset?.();
+          setSearchParam(data);
         }}
         target="department-assets-device"
       />
