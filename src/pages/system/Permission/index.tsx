@@ -6,7 +6,7 @@ import {
   PlayCircleOutlined,
   DeleteOutlined,
 } from '@ant-design/icons';
-import { Menu, Tooltip, Popconfirm, message, Button, Upload } from 'antd';
+import { Menu, Tooltip, Popconfirm, message, Button, Upload, Badge } from 'antd';
 import type { ProColumns, ActionType } from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import BaseCrud from '@/components/BaseCrud';
@@ -167,6 +167,9 @@ const Permission: React.FC = observer(() => {
           status: 0,
         },
       },
+      render: (text, record) => (
+        <Badge status={record.status === 1 ? 'success' : 'error'} text={text} />
+      ),
     },
     {
       title: intl.formatMessage({
@@ -223,33 +226,38 @@ const Permission: React.FC = observer(() => {
             </Tooltip>
           </Popconfirm>
         </a>,
-        <a key="delete">
-          <Popconfirm
-            title={intl.formatMessage({
-              id: 'pages.data.option.remove.tips',
-              defaultMessage: '确认删除？',
-            })}
-            onConfirm={async () => {
-              await service.remove(record.id);
-              message.success(
-                intl.formatMessage({
-                  id: 'pages.data.option.success',
-                  defaultMessage: '操作成功!',
-                }),
-              );
-              actionRef.current?.reload();
-            }}
-          >
-            <Tooltip
+        <Tooltip
+          key="delete"
+          title={
+            record.status === 0
+              ? intl.formatMessage({
+                  id: 'pages.data.option.remove',
+                  defaultMessage: '删除',
+                })
+              : '请先禁用该权限，再删除。'
+          }
+        >
+          <Button type="link" style={{ padding: 0 }} disabled={record.status === 1}>
+            <Popconfirm
               title={intl.formatMessage({
-                id: 'pages.data.option.remove',
-                defaultMessage: '删除',
+                id: 'pages.data.option.remove.tips',
+                defaultMessage: '确认删除？',
               })}
+              onConfirm={async () => {
+                await service.remove(record.id);
+                message.success(
+                  intl.formatMessage({
+                    id: 'pages.data.option.success',
+                    defaultMessage: '操作成功!',
+                  }),
+                );
+                actionRef.current?.reload();
+              }}
             >
               <DeleteOutlined />
-            </Tooltip>
-          </Popconfirm>
-        </a>,
+            </Popconfirm>
+          </Button>
+        </Tooltip>,
       ],
     },
   ];
