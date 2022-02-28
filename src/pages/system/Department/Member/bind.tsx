@@ -81,6 +81,12 @@ const Bind = observer((props: Props) => {
         pagination={{
           pageSize: 5,
         }}
+        params={{
+          terms: [{
+            column: 'id$in-dimension$org$not',
+            value: param.id
+          }]
+        }}
         rowSelection={{
           selectedRowKeys: MemberModel.bindUsers,
           onChange: (selectedRowKeys, selectedRows) => {
@@ -88,9 +94,6 @@ const Bind = observer((props: Props) => {
           },
         }}
         request={(params) => service.queryUser(params)}
-        defaultParams={{
-          'id$in-dimension$org$not': param.id,
-        }}
       />
     </Modal>
   );

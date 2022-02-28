@@ -94,11 +94,11 @@ const Member = observer(() => {
           status: 0,
         },
       },
-      render: (value) => (
+      render: (_, data) => (
         <Badge
-          status={value === 1 ? 'success' : 'error'}
+          status={data.status === 1 ? 'success' : 'error'}
           text={
-            value === 1
+            data.status === 1
               ? intl.formatMessage({
                   id: 'pages.searchTable.titleStatus.normal',
                   defaultMessage: '正常',

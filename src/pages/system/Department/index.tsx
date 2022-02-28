@@ -3,7 +3,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@jetlinks/pro-table';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { useEffect, useRef, useState } from 'react';
-import { useIntl } from '@@/plugin-locale/localeExports';
+import { useIntl } from 'umi';
 import { Button, message, Popconfirm, Tooltip } from 'antd';
 import {
   EditOutlined,
@@ -167,16 +167,32 @@ export default observer(() => {
     properties: {
       name: {
         type: 'string',
-        title: '名称',
+        title: intl.formatMessage({
+          id: 'pages.table.name',
+          defaultMessage: '名称'
+        }),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input',
+        'x-validator': [
+          {
+            max: 50,
+            message: '最多可输入50个字符',
+          },
+          {
+            required: true,
+            message: '请输入名称',
+          },
+        ],
       },
       sortIndex: {
         type: 'string',
-        title: '排序',
+        title: intl.formatMessage({
+          id: 'pages.device.instanceDetail.detail.sort',
+          defaultMessage: '排序'
+        }),
         'x-decorator': 'FormItem',
-        'x-component': 'Input',
+        'x-component': 'NumberPicker',
       },
     },
   };
