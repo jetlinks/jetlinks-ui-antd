@@ -32,8 +32,8 @@ const Role: React.FC = observer(() => {
       dataIndex: 'id',
       copyable: true,
       ellipsis: true,
-      sorter: true,
-      defaultSortOrder: 'ascend',
+      // sorter: true,
+      // defaultSortOrder: 'ascend',
       formItemProps: {
         rules: [
           {
@@ -51,10 +51,10 @@ const Role: React.FC = observer(() => {
       dataIndex: 'name',
       copyable: true,
       ellipsis: true,
-      tip: intl.formatMessage({
-        id: 'pages.system.userName.tips',
-        defaultMessage: '用户名过长会自动收缩',
-      }),
+      // tip: intl.formatMessage({
+      //   id: 'pages.system.userName.tips',
+      //   defaultMessage: '用户名过长会自动收缩',
+      // }),
       formItemProps: {
         rules: [
           {

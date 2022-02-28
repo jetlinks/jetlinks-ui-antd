@@ -11,6 +11,7 @@ import {
   NumberPicker,
   PreviewText,
   Select,
+  Space,
 } from '@formily/antd';
 import type { Field } from '@formily/core';
 import { createForm, onFieldReact } from '@formily/core';
@@ -42,8 +43,8 @@ const ui2Server = (source: SearchTermsUI): SearchTermsServer => [
 
 const server2Ui = (source: SearchTermsServer): SearchTermsUI => ({
   terms1: source[0].terms,
-  terms2: source[1].terms,
-  type: source[0].type || 'and',
+  terms2: source[1]?.terms,
+  type: source[0]?.type || 'and',
 });
 
 interface Props<T> {
@@ -54,6 +55,7 @@ interface Props<T> {
   onReset?: () => void;
   /** @name 固定查询参数*/
   defaultParam?: Term[];
+  pattern?: 'simple' | 'advance';
 }
 
 const termType = [
@@ -82,14 +84,25 @@ const SchemaField = createSchemaField({
     ArrayItems,
     PreviewText,
     GroupNameControl,
+    Space,
   },
 });
 
 const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
-  const { field, target, onReset, onSearch, defaultParam } = props;
+  const { field, target, onReset, onSearch, defaultParam, pattern = 'advance' } = props;
   const intl = useIntl();
   const [expand, setExpand] = useState<boolean>(true);
-  const initForm = server2Ui([{ terms: [initTerm], type: 'and' }, { terms: [initTerm] }]);
+  const initForm = server2Ui(
+    pattern === 'advance'
+      ? [
+          {
+            terms: [initTerm],
+            type: 'and',
+          },
+          { terms: [initTerm] },
+        ]
+      : [{ terms: [initTerm] }],
+  );
   const [logVisible, setLogVisible] = useState<boolean>(false);
   const [aliasVisible, setAliasVisible] = useState<boolean>(false);
   const [initParams, setInitParams] = useState<SearchTermsUI>(initForm);
@@ -185,6 +198,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
           'x-component-props': {
             name: name,
           },
+          'x-visible': pattern === 'advance',
         },
         column: {
           type: 'string',
@@ -255,29 +269,28 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
     },
   };
 
+  const simpleSchema: ISchema = {
+    type: 'object',
+    properties: {
+      terms1: createGroup('第一组'),
+    },
+  };
   const handleHistory = (item: SearchHistory) => {
     const log = JSON.parse(item.content) as SearchTermsUI;
     form.setValues(log);
     setExpand(!(log.terms1?.length > 1 || log.terms2?.length > 1));
-    // setInitParams(log);
   };
 
   const historyDom = (
-    <Menu style={{ width: '176px' }}>
+    <Menu className={styles.history}>
       {history.length > 0 ? (
         history.map((item: SearchHistory) => (
           <Menu.Item onClick={() => handleHistory(item)} key={item.id}>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                width: '148px',
-              }}
-            >
+            <div className={styles.list}>
               <Typography.Text ellipsis={{ tooltip: item.name }}>{item.name}</Typography.Text>
               <Popconfirm
-                onConfirm={async () => {
+                onConfirm={async (e) => {
+                  e?.stopPropagation();
                   const response = await service.history.remove(`${target}-search`, item.key);
                   if (response.status === 200) {
                     message.success('操作成功');
@@ -287,7 +300,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                 }}
                 title={'确认删除吗？'}
               >
-                <DeleteOutlined />
+                <DeleteOutlined onClick={(e) => e.stopPropagation()} />
               </Popconfirm>
             </div>
           </Menu.Item>
@@ -311,7 +324,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
 
   const formatValue = (value: SearchTermsUI): SearchTermsServer =>
     ui2Server(value).map((term) => {
-      term.terms.map((item) => {
+      term.terms?.map((item) => {
         if (item.termType === 'like') {
           item.value = `%${item.value}%`;
           return item;
@@ -323,9 +336,8 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
 
   const handleSearch = async () => {
     const value = form.values;
-    // setInitParams(value);
     const filterTerms = (data: Partial<Term>[]) =>
-      data.filter((item) => item.column != null).filter((item) => item.value != null);
+      data && data.filter((item) => item.column != null).filter((item) => item.value != null);
     const _terms = _.cloneDeep(value);
     _terms.terms1 = filterTerms(_terms.terms1);
     _terms.terms2 = filterTerms(_terms.terms2);
@@ -357,7 +369,6 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
   };
 
   const resetForm = async () => {
-    console.log('test');
     const temp = initForm;
     const expandData = Array(expand ? 1 : 3).fill(initTerm);
     temp.terms1 = expandData;
@@ -367,9 +378,9 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
     onReset?.();
   };
 
-  return (
-    <Card style={{ marginBottom: '20px' }}>
-      <Form form={form} labelCol={4} wrapperCol={18}>
+  const renderAdvance = () => {
+    return (
+      <>
         <SchemaField schema={schema} />
         <div className={styles.action}>
           <FormButtonGroup.FormItem labelCol={10} wrapperCol={14}>
@@ -433,6 +444,28 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
             />
           </div>
         </div>
+      </>
+    );
+  };
+  const renderSimple = () => {
+    return (
+      <div className={styles.simple}>
+        <SchemaField schema={simpleSchema} />
+        <FormButtonGroup.FormItem labelCol={0} wrapperCol={14}>
+          <Button onClick={handleSearch} type="primary">
+            搜索
+          </Button>
+          <Button block onClick={resetForm}>
+            重置
+          </Button>
+        </FormButtonGroup.FormItem>
+      </div>
+    );
+  };
+  return (
+    <Card style={{ marginBottom: '20px' }}>
+      <Form form={form} className={styles.form} labelCol={4} wrapperCol={18}>
+        {pattern === 'advance' ? renderAdvance() : renderSimple()}
       </Form>
     </Card>
   );

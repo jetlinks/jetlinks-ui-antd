@@ -93,7 +93,14 @@ const BaseCrud = <T extends Record<string, any>>(props: Props<T>) => {
         columns={columns}
         actionRef={actionRef}
         options={{ fullScreen: true }}
-        request={request || (async (params = {}) => service.query(params))}
+        request={
+          request ||
+          (async (params = {}) =>
+            service.query({
+              ...params,
+              sorts: [{ name: 'createTime', order: 'desc' }], // 默认排序
+            }))
+        }
         editable={{
           type: 'multiple',
         }}

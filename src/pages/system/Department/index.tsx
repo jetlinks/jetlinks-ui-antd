@@ -211,7 +211,11 @@ export default observer(() => {
         columns={columns}
         actionRef={actionRef}
         request={async (params) => {
-          const response = await service.queryOrgThree({ paging: false, ...params });
+          const response = await service.queryOrgThree({
+            paging: false,
+            ...params,
+            sorts: [{ name: 'createTime', order: 'desc' }],
+          });
           return {
             code: response.message,
             result: {

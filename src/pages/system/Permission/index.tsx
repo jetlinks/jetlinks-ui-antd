@@ -148,7 +148,7 @@ const Permission: React.FC = observer(() => {
         defaultMessage: '状态',
       }),
       dataIndex: 'status',
-      filters: true,
+      // filters: true,
       align: 'center',
       valueType: 'select',
       valueEnum: {
