@@ -1,6 +1,6 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import React, { useEffect, useRef } from 'react';
-import { EditOutlined, MinusOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { message, Popconfirm, Tooltip } from 'antd';
 import type { ProColumns, ActionType } from '@jetlinks/pro-table';
 import BaseCrud from '@/components/BaseCrud';
@@ -116,7 +116,7 @@ const Role: React.FC = observer(() => {
                 defaultMessage: '删除',
               })}
             >
-              <MinusOutlined />
+              <DeleteOutlined />
             </Tooltip>
           </Popconfirm>
         </a>,

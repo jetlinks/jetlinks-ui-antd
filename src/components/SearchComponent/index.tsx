@@ -463,7 +463,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
     );
   };
   return (
-    <Card style={{ marginBottom: '20px' }}>
+    <Card bordered={false} style={{ marginBottom: '20px', borderBottom: '1px solid #f0f0f0' }}>
       <Form form={form} className={styles.form} labelCol={4} wrapperCol={18}>
         {pattern === 'advance' ? renderAdvance() : renderSimple()}
       </Form>

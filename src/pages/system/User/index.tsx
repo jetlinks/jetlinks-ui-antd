@@ -3,7 +3,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import SearchComponent from '@/components/SearchComponent';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { Button, message, Popconfirm, Tooltip } from 'antd';
+import { Badge, Button, message, Popconfirm, Tooltip } from 'antd';
 import {
   CloseCircleOutlined,
   DeleteOutlined,
@@ -108,6 +108,9 @@ const User = observer(() => {
           status: 0,
         },
       },
+      render: (text, record) => (
+        <Badge status={record.status === 1 ? 'success' : 'error'} text={text} />
+      ),
     },
     {
       title: intl.formatMessage({
@@ -158,19 +161,19 @@ const User = observer(() => {
             </Tooltip>
           </Popconfirm>
         </a>,
-        <a key="delete">
-          <Popconfirm
-            onConfirm={async () => {
-              await service.remove(record.id);
-              actionRef.current?.reload();
-            }}
-            title="确认删除?"
-          >
-            <Tooltip title="删除">
+        <Tooltip title={record.status === 0 ? '删除' : '请先禁用该用户，再删除。'} key="delete">
+          <Button type="link" style={{ padding: 0 }} disabled={record.status === 1}>
+            <Popconfirm
+              onConfirm={async () => {
+                await service.remove(record.id);
+                actionRef.current?.reload();
+              }}
+              title="确认删除?"
+            >
               <DeleteOutlined />
-            </Tooltip>
-          </Popconfirm>
-        </a>,
+            </Popconfirm>
+          </Button>
+        </Tooltip>,
       ],
     },
   ];

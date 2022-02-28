@@ -74,9 +74,6 @@ export default observer(() => {
         id: 'pages.table.name',
         defaultMessage: '名称',
       }),
-      search: {
-        transform: (value) => ({ name$LIKE: value }),
-      },
     },
     {
       title: intl.formatMessage({
@@ -87,7 +84,6 @@ export default observer(() => {
       render: (_, row) => {
         return row.productName;
       },
-      search: false,
     },
     {
       title: intl.formatMessage({
@@ -95,7 +91,6 @@ export default observer(() => {
         defaultMessage: '注册时间',
       }),
       dataIndex: 'registryTime',
-      search: false,
     },
     {
       title: intl.formatMessage({
@@ -103,8 +98,8 @@ export default observer(() => {
         defaultMessage: '状态',
       }),
       dataIndex: 'state',
-      filters: true,
-      onFilter: true,
+      // filters: true,
+      // onFilter: true,
       valueType: 'select',
       valueEnum: {
         all: {
@@ -187,6 +182,7 @@ export default observer(() => {
       />
       <SearchComponent<DeviceItem>
         field={columns}
+        pattern={'simple'}
         defaultParam={[
           {
             column: 'id',

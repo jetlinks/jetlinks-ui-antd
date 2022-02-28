@@ -141,6 +141,7 @@ export default observer(() => {
       />
       <SearchComponent<ProductCategoryItem>
         field={columns}
+        pattern="simple"
         defaultParam={[
           {
             column: 'id',

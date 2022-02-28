@@ -3,7 +3,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@jetlinks/pro-table';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { Badge, Button, Card, Divider, message, Popconfirm, Tooltip } from 'antd';
+import { Badge, Button, message, Popconfirm, Tooltip } from 'antd';
 import { useRef, useState } from 'react';
 import { useParams } from 'umi';
 import { observer } from '@formily/react';
@@ -154,18 +154,16 @@ const Member = observer(() => {
         onCancel={closeModal}
         reload={() => actionRef.current?.reload()}
       />
-      <Card>
-        <SearchComponent<MemberItem>
-          field={columns}
-          defaultParam={[{ column: 'id$in-dimension$org', value: param.id, termType: 'eq' }]}
-          onSearch={async (data) => {
-            actionRef.current?.reset?.();
-            setSearchParam(data);
-          }}
-          target="department-user"
-        />
-      </Card>
-      <Divider />
+      <SearchComponent<MemberItem>
+        pattern={'simple'}
+        field={columns}
+        defaultParam={[{ column: 'id$in-dimension$org', value: param.id, termType: 'eq' }]}
+        onSearch={async (data) => {
+          actionRef.current?.reset?.();
+          setSearchParam(data);
+        }}
+        target="department-user"
+      />
       <ProTable<MemberItem>
         actionRef={actionRef}
         columns={columns}

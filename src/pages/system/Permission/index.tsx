@@ -4,7 +4,7 @@ import {
   EditOutlined,
   CloseCircleOutlined,
   PlayCircleOutlined,
-  MinusOutlined,
+  DeleteOutlined,
 } from '@ant-design/icons';
 import { Menu, Tooltip, Popconfirm, message, Button, Upload } from 'antd';
 import type { ProColumns, ActionType } from '@jetlinks/pro-table';
@@ -246,7 +246,7 @@ const Permission: React.FC = observer(() => {
                 defaultMessage: '删除',
               })}
             >
-              <MinusOutlined />
+              <DeleteOutlined />
             </Tooltip>
           </Popconfirm>
         </a>,
