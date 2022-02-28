@@ -53,7 +53,7 @@ const Bind = observer((props: Props) => {
     if (Models.bindKeys.length) {
       setPerVisible(true);
     } else {
-      message.warn('请先勾选数据')
+      message.warn('请先勾选数据');
       // props.onCancel();
     }
   };

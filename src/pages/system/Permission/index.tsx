@@ -121,11 +121,6 @@ const Permission: React.FC = observer(() => {
 
   const columns: ProColumns<PermissionItem>[] = [
     {
-      dataIndex: 'index',
-      valueType: 'indexBorder',
-      width: 48,
-    },
-    {
       title: intl.formatMessage({
         id: 'pages.system.permission.id',
         defaultMessage: '标识',
@@ -134,19 +129,8 @@ const Permission: React.FC = observer(() => {
       copyable: true,
       ellipsis: true,
       align: 'center',
-      sorter: true,
+      // sorter: true,
       defaultSortOrder: 'ascend',
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: '此项为必填项',
-          },
-        ],
-      },
-      search: {
-        transform: (value) => ({ id$LIKE: value }),
-      },
     },
     {
       title: intl.formatMessage({
@@ -157,21 +141,6 @@ const Permission: React.FC = observer(() => {
       copyable: true,
       ellipsis: true,
       align: 'center',
-      tip: intl.formatMessage({
-        id: 'pages.system.permission.name.tip',
-        defaultMessage: '名称过长会自动收缩',
-      }),
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: '此项为必填项',
-          },
-        ],
-      },
-      search: {
-        transform: (value) => ({ name$LIKE: value }),
-      },
     },
     {
       title: intl.formatMessage({
@@ -179,18 +148,10 @@ const Permission: React.FC = observer(() => {
         defaultMessage: '状态',
       }),
       dataIndex: 'status',
-      filters: true,
+      // filters: true,
       align: 'center',
-      onFilter: true,
       valueType: 'select',
       valueEnum: {
-        all: {
-          text: intl.formatMessage({
-            id: 'pages.searchTable.titleStatus.all',
-            defaultMessage: '全部',
-          }),
-          status: 'Default',
-        },
         1: {
           text: intl.formatMessage({
             id: 'pages.searchTable.titleStatus.normal',

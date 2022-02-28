@@ -3,6 +3,28 @@
   align-items: center;
 }
 
+.simple {
+  display: flex;
+  flex-direction: row;
+
+  :global {
+    .ant-formily-grid-layout {
+      width: 550px;
+      height: 40px;
+    }
+  }
+}
+
+.history {
+  width: 176px;
+  .list {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 148px;
+  }
+}
+
 .saveLog {
   width: 100%;
   margin-top: 5px;

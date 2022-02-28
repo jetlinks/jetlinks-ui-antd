@@ -101,10 +101,14 @@ const Save = <T extends object>(props: SaveModalProps<T>) => {
 
   return (
     <Modal
-      title={props.title ? props.title : intl.formatMessage({
-        id: `pages.data.option.${data && 'id' in data ? 'edit' : 'add'}`,
-        defaultMessage: '新增',
-      })}
+      title={
+        props.title
+          ? props.title
+          : intl.formatMessage({
+              id: `pages.data.option.${data && 'id' in data ? 'edit' : 'add'}`,
+              defaultMessage: '新增',
+            })
+      }
       visible={props.visible}
       onOk={saveData}
       onCancel={() => {

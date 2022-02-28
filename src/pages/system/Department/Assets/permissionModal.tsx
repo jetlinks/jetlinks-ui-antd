@@ -84,7 +84,7 @@ export default (props: PerModalProps) => {
           { label: '编辑', value: 'save' },
           { label: '删除', value: 'delete' },
         ],
-        'x-value': ['read']
+        'x-value': ['read'],
       },
     },
   };

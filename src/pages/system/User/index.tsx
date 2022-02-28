@@ -3,7 +3,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import SearchComponent from '@/components/SearchComponent';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { Button, Card, message, Popconfirm, Tooltip } from 'antd';
+import { Button, message, Popconfirm, Tooltip } from 'antd';
 import {
   CloseCircleOutlined,
   DeleteOutlined,
@@ -176,24 +176,29 @@ const User = observer(() => {
   ];
 
   const [param, setParam] = useState({});
+
   return (
     <PageContainer>
-      <Card style={{ marginBottom: '20px' }}>
-        <SearchComponent
-          field={columns}
-          onSearch={(data) => setParam({ terms: data, total: null })}
-          target="user"
-          onReset={() => {
-            setParam({});
-            actionRef.current?.reset?.();
-          }}
-        />
-      </Card>
+      <SearchComponent<UserItem>
+        field={columns}
+        target="user"
+        onSearch={(data) => {
+          // 重置分页数据
+          actionRef.current?.reset?.();
+          setParam(data);
+        }}
+        // onReset={() => {
+        //   // 重置分页及搜索参数
+        //   actionRef.current?.reset?.();
+        //   setParam({});
+        // }}
+      />
       <ProTable<UserItem>
         actionRef={actionRef}
         params={param}
         columns={columns}
         search={false}
+        headerTitle={'用户列表'}
         request={async (params) =>
           service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
         }
