@@ -236,7 +236,7 @@ const Info: React.FC<Props> = props => {
                         恢复默认
                       </Button>
                       <Tooltip
-                        title={`该设备单独编辑过${props.configuration.name}，点击此将恢复成默认的配置信息，请谨慎操作。`}
+                        title={`该设备单独编辑过配置信息，点击此将恢复成默认的配置信息，请谨慎操作。`}
                       >
                         <Icon type="question-circle-o" />
                       </Tooltip>
