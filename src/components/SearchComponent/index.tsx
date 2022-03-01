@@ -410,7 +410,12 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                         alias: {
                           'x-decorator': 'FormItem',
                           'x-component': 'Input.TextArea',
-                          maxLength: 50,
+                          'x-validator': [
+                            {
+                              max: 50,
+                              message: '最多可输入50个字符',
+                            },
+                          ],
                         },
                       },
                     }}
