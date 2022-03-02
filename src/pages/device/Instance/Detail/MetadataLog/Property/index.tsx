@@ -39,7 +39,7 @@ const PropertyLog = (props: Props) => {
           {
             dataIndex: 'formatValue',
             title: '数据',
-            copyable: true,
+            // copyable: true,
           },
         ]}
       />

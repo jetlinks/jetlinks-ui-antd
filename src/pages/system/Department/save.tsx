@@ -109,6 +109,7 @@ const Save = <T extends object>(props: SaveModalProps<T>) => {
               defaultMessage: '新增',
             })
       }
+      maskClosable={false}
       visible={props.visible}
       onOk={saveData}
       onCancel={() => {

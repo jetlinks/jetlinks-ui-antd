@@ -125,6 +125,7 @@ const Save = <T extends Record<string, any>>(props: Props<T>) => {
         id: `pages.data.option.${model}`,
         defaultMessage: '编辑',
       })}
+      maskClosable={false}
       visible={visible}
       onCancel={CurdModel.close}
       onOk={save}

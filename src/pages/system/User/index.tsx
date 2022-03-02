@@ -36,7 +36,7 @@ const User = observer(() => {
         defaultMessage: '姓名',
       }),
       dataIndex: 'name',
-      copyable: true,
+      // copyable: true,
       ellipsis: true,
       align: 'center',
       // tip: intl.formatMessage({
@@ -63,7 +63,7 @@ const User = observer(() => {
         defaultMessage: '用户名',
       }),
       dataIndex: 'username',
-      copyable: true,
+      // copyable: true,
       ellipsis: true,
       align: 'center',
       // tip: intl.formatMessage({

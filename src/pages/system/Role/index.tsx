@@ -30,7 +30,7 @@ const Role: React.FC = observer(() => {
         defaultMessage: '标识',
       }),
       dataIndex: 'id',
-      copyable: true,
+      // copyable: true,
       ellipsis: true,
       // sorter: true,
       // defaultSortOrder: 'ascend',
@@ -49,7 +49,7 @@ const Role: React.FC = observer(() => {
         defaultMessage: '名称',
       }),
       dataIndex: 'name',
-      copyable: true,
+      // copyable: true,
       ellipsis: true,
       // tip: intl.formatMessage({
       //   id: 'pages.system.userName.tips',

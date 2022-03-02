@@ -42,6 +42,7 @@ import DB from '@/db';
 import _ from 'lodash';
 import { useParams } from 'umi';
 import { InstanceModel } from '@/pages/device/Instance';
+import FRuleEditor from '@/components/FRuleEditor';
 
 interface Props {
   type: 'product' | 'device';
@@ -96,6 +97,7 @@ const Edit = (props: Props) => {
       EnumParam,
       BooleanEnum,
       ConfigParam,
+      FRuleEditor,
     },
     scope: {
       async asyncOtherConfig(field: Field) {
@@ -355,6 +357,10 @@ const Edit = (props: Props) => {
             'x-decorator': 'FormItem',
             'x-component': 'Select',
             enum: PropertySource,
+          },
+          rule: {
+            type: 'string',
+            'x-component': 'FRuleEditor',
           },
           readOnly: {
             title: intl.formatMessage({
