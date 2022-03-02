@@ -104,6 +104,7 @@ const CertificateList: React.FC<Props> = props => {
     {
       title: '描述',
       dataIndex: 'description',
+      ellipsis: true,
     },
     {
       title: '操作',
