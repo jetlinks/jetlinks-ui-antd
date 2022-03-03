@@ -5,4 +5,5 @@ type RoleItem = {
   path: string;
   sortIndex: number;
   description: string;
+  dataAccess?: any;
 };

@@ -3,7 +3,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { useState } from 'react';
 import { history } from 'umi';
 import UserManage from '@/pages/system/Role/Edit/UserManage';
-// import Permission from '@/pages/system/Role/Edit/Permission';
+import Permission from '@/pages/system/Role/Edit/Permission';
 import Info from '@/pages/system/Role/Edit/Info';
 import { useIntl } from '@@/plugin-locale/localeExports';
 
@@ -20,14 +20,14 @@ const RoleEdit = observer(() => {
       }),
       component: <Info />,
     },
-    // {
-    //     key: 'permission',
-    //     tab: intl.formatMessage({
-    //         id: 'pages.system.role.access.permission',
-    //         defaultMessage: '权限分配',
-    //     }),
-    //     component: <Permission />,
-    // },
+    {
+      key: 'permission',
+      tab: intl.formatMessage({
+        id: 'pages.system.role.access.permission',
+        defaultMessage: '权限分配',
+      }),
+      component: <Permission />,
+    },
     {
       key: 'userManagement',
       tab: intl.formatMessage({
