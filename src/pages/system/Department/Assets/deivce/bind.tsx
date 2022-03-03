@@ -35,9 +35,6 @@ const Bind = observer((props: Props) => {
         id: 'pages.table.name',
         defaultMessage: '名称',
       }),
-      search: {
-        transform: (value) => ({ name$LIKE: value }),
-      },
     },
     {
       title: intl.formatMessage({
@@ -48,7 +45,6 @@ const Bind = observer((props: Props) => {
       render: (_, row) => {
         return row.productName;
       },
-      search: false,
     },
     {
       title: intl.formatMessage({
@@ -56,7 +52,6 @@ const Bind = observer((props: Props) => {
         defaultMessage: '注册时间',
       }),
       dataIndex: 'registryTime',
-      search: false,
     },
     {
       title: intl.formatMessage({
@@ -65,7 +60,6 @@ const Bind = observer((props: Props) => {
       }),
       dataIndex: 'state',
       render: (_, row) => <DeviceBadge type={row.state.value} text={row.state.text} />,
-      search: false,
     },
   ];
 
@@ -73,7 +67,7 @@ const Bind = observer((props: Props) => {
     if (Models.bindKeys.length) {
       setPerVisible(true);
     } else {
-      message.warn('请先勾选数据')
+      message.warn('请先勾选数据');
       // props.onCancel();
     }
   };

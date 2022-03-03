@@ -17,7 +17,7 @@ export const columns: ProColumns<UserItem>[] = [
   {
     title: '姓名',
     dataIndex: 'name',
-    copyable: true,
+    // copyable: true,
     ellipsis: true,
     align: 'center',
   },

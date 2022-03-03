@@ -4,7 +4,7 @@ import ProTable from '@jetlinks/pro-table';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'umi';
-import { Button, message, Popconfirm, Tooltip, Card, Divider } from 'antd';
+import { Button, message, Popconfirm, Tooltip } from 'antd';
 import {
   EditOutlined,
   PlusOutlined,
@@ -38,9 +38,7 @@ export const State = model<ModelType>({
 export default observer(() => {
   const actionRef = useRef<ActionType>();
   const intl = useIntl();
-  const [param, setParam] = useState({
-    terms: [{ column: 'typeId', value: 'org' }],
-  });
+  const [param, setParam] = useState({});
 
   /**
    * 根据部门ID删除数据
@@ -73,6 +71,7 @@ export default observer(() => {
         defaultMessage: '排序',
       }),
       search: false,
+      valueType: 'digit',
       dataIndex: 'sortIndex',
     },
     {
@@ -209,21 +208,30 @@ export default observer(() => {
 
   return (
     <PageContainer>
-      <Card>
-        <SearchComponent<DepartmentItem>
-          field={columns}
-          onSearch={async (data) => {
-            setParam({ terms: [...data, { column: 'typeId', value: 'org' }] });
-          }}
-          target="department"
-        />
-      </Card>
-      <Divider />
+      <SearchComponent<DepartmentItem>
+        field={columns}
+        defaultParam={[{ column: 'typeId', value: 'org', termType: 'eq' }]}
+        onSearch={async (data) => {
+          // 重置分页数据
+          actionRef.current?.reset?.();
+          setParam(data);
+        }}
+        onReset={() => {
+          // 重置分页及搜索参数
+          actionRef.current?.reset?.();
+          setParam({});
+        }}
+        target="department"
+      />
       <ProTable<DepartmentItem>
         columns={columns}
         actionRef={actionRef}
         request={async (params) => {
-          const response = await service.queryOrgThree({ paging: false, ...params });
+          const response = await service.queryOrgThree({
+            paging: false,
+            ...params,
+            sorts: [{ name: 'createTime', order: 'desc' }],
+          });
           return {
             code: response.message,
             result: {

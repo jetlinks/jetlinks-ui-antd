@@ -1,7 +1,7 @@
 type Term = {
   column: string | null;
-  value: string;
-  termType: string;
+  value: string | object;
+  termType?: string;
   type?: 'or' | 'and';
 };
 

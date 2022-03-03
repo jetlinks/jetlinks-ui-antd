@@ -29,7 +29,7 @@ const BindUser = (props: Props) => {
         defaultMessage: '名称',
       }),
       dataIndex: 'name',
-      copyable: true,
+      // copyable: true,
       ellipsis: true,
       tip: intl.formatMessage({
         id: 'pages.system.userName.tips',

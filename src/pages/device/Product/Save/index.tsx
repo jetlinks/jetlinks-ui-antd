@@ -1,4 +1,4 @@
-import { Button, Drawer, message } from 'antd';
+import { message, Modal } from 'antd';
 import type { Field } from '@formily/core';
 import { createForm, onFieldValueChange } from '@formily/core';
 import { TreeSelect, Form, FormItem, FormLayout, Input, Radio, Select } from '@formily/antd';
@@ -142,11 +142,24 @@ const Save = (props: Props) => {
             title: 'ID',
             'x-component': 'Input',
             'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              tooltip: <div>若不填写,系统将自动生成唯一ID</div>,
+            },
           },
           name: {
             title: '名称',
             'x-component': 'Input',
             'x-decorator': 'FormItem',
+            'x-validator': [
+              {
+                required: true,
+                message: '请输入名称',
+              },
+              {
+                max: 64,
+                message: '最多可输入64个字符',
+              },
+            ],
           },
           classifiedId: {
             title: '所属品类',
@@ -157,29 +170,29 @@ const Save = (props: Props) => {
             },
             'x-reactions': ['{{useAsyncDataSource("classifiedId")}}'],
           },
-          orgId: {
-            title: '所属机构',
-            'x-component': 'Select',
-            'x-decorator': 'FormItem',
-            'x-reactions': ['{{useAsyncDataSource("org")}}'],
-          },
-          messageProtocol: {
-            title: '消息协议',
-            'x-component': 'Select',
-            'x-decorator': 'FormItem',
-            'x-reactions': ['{{useAsyncDataSource("protocol")}}'],
-          },
-          transportProtocol: {
-            title: '传输协议',
-            'x-component': 'Select',
-            'x-decorator': 'FormItem',
-          },
-          storePolicy: {
-            title: '存储策略',
-            'x-component': 'Select',
-            'x-decorator': 'FormItem',
-            'x-reactions': ['{{useAsyncDataSource("storePolicy")}}'],
-          },
+          // orgId: {
+          //   title: '所属机构',
+          //   'x-component': 'Select',
+          //   'x-decorator': 'FormItem',
+          //   'x-reactions': ['{{useAsyncDataSource("org")}}'],
+          // },
+          // messageProtocol: {
+          //   title: '消息协议',
+          //   'x-component': 'Select',
+          //   'x-decorator': 'FormItem',
+          //   'x-reactions': ['{{useAsyncDataSource("protocol")}}'],
+          // },
+          // transportProtocol: {
+          //   title: '传输协议',
+          //   'x-component': 'Select',
+          //   'x-decorator': 'FormItem',
+          // },
+          // storePolicy: {
+          //   title: '存储策略',
+          //   'x-component': 'Select',
+          //   'x-decorator': 'FormItem',
+          //   'x-reactions': ['{{useAsyncDataSource("storePolicy")}}'],
+          // },
           deviceType: {
             title: '设备类型',
             'x-component': 'Radio.Group',
@@ -189,32 +202,32 @@ const Save = (props: Props) => {
               { label: '网关子设备', value: 'childrenDevice' },
               { label: '网关设备', value: 'gateway' },
             ],
+            'x-validator': [
+              {
+                required: true,
+                message: '请选择设备类型',
+              },
+            ],
           },
           describe: {
             title: '描述',
             'x-component': 'Input.TextArea',
             'x-decorator': 'FormItem',
+            'x-component-props': {
+              showCount: true,
+              maxLength: 200,
+            },
           },
         },
       },
     },
   };
   return (
-    <Drawer
-      visible={visible}
-      onClose={() => close()}
-      width="25vw"
-      title="新增产品"
-      extra={
-        <Button type="primary" onClick={handleSave}>
-          保存数据
-        </Button>
-      }
-    >
-      <Form form={form} size="small">
+    <Modal visible={visible} onCancel={() => close()} width="30vw" title="新增" onOk={handleSave}>
+      <Form form={form}>
         <SchemaField schema={schema} scope={{ useAsyncDataSource }} />
       </Form>
-    </Drawer>
+    </Modal>
   );
 };
 export default Save;

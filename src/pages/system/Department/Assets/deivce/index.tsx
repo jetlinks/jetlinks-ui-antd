@@ -33,23 +33,7 @@ export default observer(() => {
   const actionRef = useRef<ActionType>();
 
   const param = useParams<{ id: string }>();
-  const [searchParam, setSearchParam] = useState({
-    terms: [
-      {
-        column: 'id',
-        termType: 'dim-assets',
-        value: {
-          assetType: 'device',
-          targets: [
-            {
-              type: 'org',
-              id: param.id,
-            },
-          ],
-        },
-      },
-    ],
-  });
+  const [searchParam, setSearchParam] = useState({});
   /**
    * 解除资产绑定
    */
@@ -90,9 +74,6 @@ export default observer(() => {
         id: 'pages.table.name',
         defaultMessage: '名称',
       }),
-      search: {
-        transform: (value) => ({ name$LIKE: value }),
-      },
     },
     {
       title: intl.formatMessage({
@@ -103,7 +84,6 @@ export default observer(() => {
       render: (_, row) => {
         return row.productName;
       },
-      search: false,
     },
     {
       title: intl.formatMessage({
@@ -111,7 +91,6 @@ export default observer(() => {
         defaultMessage: '注册时间',
       }),
       dataIndex: 'registryTime',
-      search: false,
     },
     {
       title: intl.formatMessage({
@@ -119,8 +98,8 @@ export default observer(() => {
         defaultMessage: '状态',
       }),
       dataIndex: 'state',
-      filters: true,
-      onFilter: true,
+      // filters: true,
+      // onFilter: true,
       valueType: 'select',
       valueEnum: {
         all: {
@@ -203,25 +182,25 @@ export default observer(() => {
       />
       <SearchComponent<DeviceItem>
         field={columns}
-        onSearch={async (data) => {
-          setSearchParam({
-            terms: [
-              ...data,
-              {
-                column: 'id',
-                termType: 'dim-assets',
-                value: {
-                  assetType: 'device',
-                  targets: [
-                    {
-                      type: 'org',
-                      id: param.id,
-                    },
-                  ],
+        pattern={'simple'}
+        defaultParam={[
+          {
+            column: 'id',
+            termType: 'dim-assets',
+            value: {
+              assetType: 'device',
+              targets: [
+                {
+                  type: 'org',
+                  id: param.id,
                 },
-              },
-            ],
-          });
+              ],
+            },
+          },
+        ]}
+        onSearch={async (data) => {
+          actionRef.current?.reset?.();
+          setSearchParam(data);
         }}
         target="department-assets-device"
       />

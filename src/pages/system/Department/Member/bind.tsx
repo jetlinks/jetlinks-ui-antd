@@ -82,10 +82,12 @@ const Bind = observer((props: Props) => {
           pageSize: 5,
         }}
         params={{
-          terms: [{
-            column: 'id$in-dimension$org$not',
-            value: param.id
-          }]
+          terms: [
+            {
+              column: 'id$in-dimension$org$not',
+              value: param.id,
+            },
+          ],
         }}
         rowSelection={{
           selectedRowKeys: MemberModel.bindUsers,

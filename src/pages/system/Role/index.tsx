@@ -1,16 +1,12 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import React, { useEffect, useRef } from 'react';
-import { EditOutlined, MinusOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { message, Popconfirm, Tooltip } from 'antd';
 import type { ProColumns, ActionType } from '@jetlinks/pro-table';
 import BaseCrud from '@/components/BaseCrud';
 import BaseService from '@/utils/BaseService';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { observer } from '@formily/react';
-// import autzModel from '@/components/Authorization/autz';
-// import Authorization from '@/components/Authorization';
-// import { BindModel } from '@/components/BindUser/model';
-// import BindUser from '@/components/BindUser';
 import { Link, useLocation } from 'umi';
 import { Store } from 'jetlinks-store';
 import SystemConst from '@/utils/const';
@@ -23,21 +19,21 @@ const Role: React.FC = observer(() => {
   const actionRef = useRef<ActionType>();
 
   const columns: ProColumns<RoleItem>[] = [
-    {
-      dataIndex: 'index',
-      valueType: 'indexBorder',
-      width: 48,
-    },
+    // {
+    //   dataIndex: 'index',
+    //   valueType: 'indexBorder',
+    //   width: 48,
+    // },
     {
       title: intl.formatMessage({
         id: 'pages.system.role.id',
         defaultMessage: '标识',
       }),
       dataIndex: 'id',
-      copyable: true,
+      // copyable: true,
       ellipsis: true,
-      sorter: true,
-      defaultSortOrder: 'ascend',
+      // sorter: true,
+      // defaultSortOrder: 'ascend',
       formItemProps: {
         rules: [
           {
@@ -53,12 +49,12 @@ const Role: React.FC = observer(() => {
         defaultMessage: '名称',
       }),
       dataIndex: 'name',
-      copyable: true,
+      // copyable: true,
       ellipsis: true,
-      tip: intl.formatMessage({
-        id: 'pages.system.userName.tips',
-        defaultMessage: '用户名过长会自动收缩',
-      }),
+      // tip: intl.formatMessage({
+      //   id: 'pages.system.userName.tips',
+      //   defaultMessage: '用户名过长会自动收缩',
+      // }),
       formItemProps: {
         rules: [
           {
@@ -120,7 +116,7 @@ const Role: React.FC = observer(() => {
                 defaultMessage: '删除',
               })}
             >
-              <MinusOutlined />
+              <DeleteOutlined />
             </Tooltip>
           </Popconfirm>
         </a>,
@@ -186,40 +182,10 @@ const Role: React.FC = observer(() => {
         search={false}
         title={intl.formatMessage({
           id: 'pages.system.role',
-          defaultMessage: '角色管理',
+          defaultMessage: '角色列表',
         })}
         schema={schema}
-        // defaultParams={{ typeId: 'role' }}
       />
-      {/* <Modal
-        visible={BindModel.visible}
-        closable={false}
-        onCancel={() => {
-          BindModel.visible = false;
-          BindModel.bind = false;
-        }}
-        width={BindModel.bind ? '90vw' : '60vw'}
-      >
-        <BindUser />
-      </Modal> */}
-      {/* <Drawer
-        title={intl.formatMessage({
-          id: 'pages.data.option.authorize',
-          defaultMessage: '授权',
-        })}
-        width="70vw"
-        visible={autzModel.visible}
-        onClose={() => {
-          autzModel.visible = false;
-        }}
-      >
-        <Authorization
-          close={() => {
-            autzModel.visible = false;
-          }}
-          target={autzModel.autzTarget}
-        />
-      </Drawer> */}
     </PageContainer>
   );
 });

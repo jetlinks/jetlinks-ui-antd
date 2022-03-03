@@ -4,9 +4,9 @@ import {
   EditOutlined,
   CloseCircleOutlined,
   PlayCircleOutlined,
-  MinusOutlined,
+  DeleteOutlined,
 } from '@ant-design/icons';
-import { Menu, Tooltip, Popconfirm, message, Button, Upload } from 'antd';
+import { Menu, Tooltip, Popconfirm, message, Button, Upload, Badge } from 'antd';
 import type { ProColumns, ActionType } from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import BaseCrud from '@/components/BaseCrud';
@@ -121,32 +121,16 @@ const Permission: React.FC = observer(() => {
 
   const columns: ProColumns<PermissionItem>[] = [
     {
-      dataIndex: 'index',
-      valueType: 'indexBorder',
-      width: 48,
-    },
-    {
       title: intl.formatMessage({
         id: 'pages.system.permission.id',
         defaultMessage: '标识',
       }),
       dataIndex: 'id',
-      copyable: true,
+      // copyable: true,
       ellipsis: true,
       align: 'center',
-      sorter: true,
+      // sorter: true,
       defaultSortOrder: 'ascend',
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: '此项为必填项',
-          },
-        ],
-      },
-      search: {
-        transform: (value) => ({ id$LIKE: value }),
-      },
     },
     {
       title: intl.formatMessage({
@@ -154,24 +138,9 @@ const Permission: React.FC = observer(() => {
         defaultMessage: '名称',
       }),
       dataIndex: 'name',
-      copyable: true,
+      // copyable: true,
       ellipsis: true,
       align: 'center',
-      tip: intl.formatMessage({
-        id: 'pages.system.permission.name.tip',
-        defaultMessage: '名称过长会自动收缩',
-      }),
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: '此项为必填项',
-          },
-        ],
-      },
-      search: {
-        transform: (value) => ({ name$LIKE: value }),
-      },
     },
     {
       title: intl.formatMessage({
@@ -179,18 +148,10 @@ const Permission: React.FC = observer(() => {
         defaultMessage: '状态',
       }),
       dataIndex: 'status',
-      filters: true,
+      // filters: true,
       align: 'center',
-      onFilter: true,
       valueType: 'select',
       valueEnum: {
-        all: {
-          text: intl.formatMessage({
-            id: 'pages.searchTable.titleStatus.all',
-            defaultMessage: '全部',
-          }),
-          status: 'Default',
-        },
         1: {
           text: intl.formatMessage({
             id: 'pages.searchTable.titleStatus.normal',
@@ -206,6 +167,9 @@ const Permission: React.FC = observer(() => {
           status: 0,
         },
       },
+      render: (text, record) => (
+        <Badge status={record.status === 1 ? 'success' : 'error'} text={text} />
+      ),
     },
     {
       title: intl.formatMessage({
@@ -262,33 +226,38 @@ const Permission: React.FC = observer(() => {
             </Tooltip>
           </Popconfirm>
         </a>,
-        <a key="delete">
-          <Popconfirm
-            title={intl.formatMessage({
-              id: 'pages.data.option.remove.tips',
-              defaultMessage: '确认删除？',
-            })}
-            onConfirm={async () => {
-              await service.remove(record.id);
-              message.success(
-                intl.formatMessage({
-                  id: 'pages.data.option.success',
-                  defaultMessage: '操作成功!',
-                }),
-              );
-              actionRef.current?.reload();
-            }}
-          >
-            <Tooltip
+        <Tooltip
+          key="delete"
+          title={
+            record.status === 0
+              ? intl.formatMessage({
+                  id: 'pages.data.option.remove',
+                  defaultMessage: '删除',
+                })
+              : '请先禁用该权限，再删除。'
+          }
+        >
+          <Button type="link" style={{ padding: 0 }} disabled={record.status === 1}>
+            <Popconfirm
               title={intl.formatMessage({
-                id: 'pages.data.option.remove',
-                defaultMessage: '删除',
+                id: 'pages.data.option.remove.tips',
+                defaultMessage: '确认删除？',
               })}
+              onConfirm={async () => {
+                await service.remove(record.id);
+                message.success(
+                  intl.formatMessage({
+                    id: 'pages.data.option.success',
+                    defaultMessage: '操作成功!',
+                  }),
+                );
+                actionRef.current?.reload();
+              }}
             >
-              <MinusOutlined />
-            </Tooltip>
-          </Popconfirm>
-        </a>,
+              <DeleteOutlined />
+            </Popconfirm>
+          </Button>
+        </Tooltip>,
       ],
     },
   ];

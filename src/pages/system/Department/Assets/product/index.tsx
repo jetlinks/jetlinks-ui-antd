@@ -20,23 +20,7 @@ export default observer(() => {
   const actionRef = useRef<ActionType>();
 
   const param = useParams<{ id: string }>();
-  const [searchParam, setSearchParam] = useState({
-    terms: [
-      {
-        column: 'id',
-        termType: 'dim-assets',
-        value: {
-          assetType: 'product',
-          targets: [
-            {
-              type: 'org',
-              id: param.id,
-            },
-          ],
-        },
-      },
-    ],
-  });
+  const [searchParam, setSearchParam] = useState({});
 
   /**
    * 解除资产绑定
@@ -139,25 +123,25 @@ export default observer(() => {
       />
       <SearchComponent<ProductItem>
         field={columns}
-        onSearch={async (data) => {
-          setSearchParam({
-            terms: [
-              ...data,
-              {
-                column: 'id',
-                termType: 'dim-assets',
-                value: {
-                  assetType: 'product',
-                  targets: [
-                    {
-                      type: 'org',
-                      id: param.id,
-                    },
-                  ],
+        pattern={'simple'}
+        defaultParam={[
+          {
+            column: 'id',
+            termType: 'dim-assets',
+            value: {
+              assetType: 'product',
+              targets: [
+                {
+                  type: 'org',
+                  id: param.id,
                 },
-              },
-            ],
-          });
+              ],
+            },
+          },
+        ]}
+        onSearch={async (data) => {
+          actionRef.current?.reset?.();
+          setSearchParam(data);
         }}
         target="department-assets-product"
       />

@@ -1,5 +1,5 @@
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { Button, Card, Divider, Dropdown } from 'antd';
+import { Button, Dropdown } from 'antd';
 import ProTable from '@jetlinks/pro-table';
 import type { ProColumns, ActionType, RequestData } from '@jetlinks/pro-table';
 
@@ -73,23 +73,34 @@ const BaseCrud = <T extends Record<string, any>>(props: Props<T>) => {
   const [param, setParam] = useState({});
   return (
     <>
-      <Card>
-        <SearchComponent<T>
-          field={columns}
-          onSearch={async (data) => {
-            setParam({ terms: data });
-          }}
-          target={moduleName}
-        />
-      </Card>
-      <Divider />
+      <SearchComponent<T>
+        field={columns}
+        onSearch={async (data) => {
+          // actionRef.current?.reset?.();
+          actionRef.current?.setPageInfo?.({ pageSize: 10 });
+          setParam(data);
+        }}
+        target={moduleName}
+        onReset={() => {
+          // 重置分页及搜索参数
+          actionRef.current?.reset?.();
+          setParam({});
+        }}
+      />
       <ProTable<T>
         params={param}
         formRef={ref}
         columns={columns}
         actionRef={actionRef}
         options={{ fullScreen: true }}
-        request={request || (async (params = {}) => service.query(params))}
+        request={
+          request ||
+          (async (params = {}) =>
+            service.query({
+              ...params,
+              sorts: [{ name: 'createTime', order: 'desc' }], // 默认排序
+            }))
+        }
         editable={{
           type: 'multiple',
         }}

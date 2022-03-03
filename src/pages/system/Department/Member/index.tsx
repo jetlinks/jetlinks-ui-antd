@@ -3,7 +3,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@jetlinks/pro-table';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { Badge, Button, Card, Divider, message, Popconfirm, Tooltip } from 'antd';
+import { Badge, Button, message, Popconfirm, Tooltip } from 'antd';
 import { useRef, useState } from 'react';
 import { useParams } from 'umi';
 import { observer } from '@formily/react';
@@ -21,9 +21,7 @@ const Member = observer(() => {
   const actionRef = useRef<ActionType>();
 
   const param = useParams<{ id: string }>();
-  const [searchParam, setSearchParam] = useState({
-    terms: [{ column: 'id$in-dimension$org', value: param.id }],
-  });
+  const [searchParam, setSearchParam] = useState({});
 
   const handleUnBind = () => {
     service.handleUser(param.id, MemberModel.unBindUsers, 'unbind').subscribe({
@@ -156,18 +154,16 @@ const Member = observer(() => {
         onCancel={closeModal}
         reload={() => actionRef.current?.reload()}
       />
-      <Card>
-        <SearchComponent<MemberItem>
-          field={columns}
-          onSearch={async (data) => {
-            setSearchParam({
-              terms: [...data, { column: 'id$in-dimension$org', value: param.id }],
-            });
-          }}
-          target="department-user"
-        />
-      </Card>
-      <Divider />
+      <SearchComponent<MemberItem>
+        pattern={'simple'}
+        field={columns}
+        defaultParam={[{ column: 'id$in-dimension$org', value: param.id, termType: 'eq' }]}
+        onSearch={async (data) => {
+          actionRef.current?.reset?.();
+          setSearchParam(data);
+        }}
+        target="department-user"
+      />
       <ProTable<MemberItem>
         actionRef={actionRef}
         columns={columns}
