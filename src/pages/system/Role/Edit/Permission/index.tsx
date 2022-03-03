@@ -74,7 +74,7 @@ const Permission = () => {
     return [];
   };
 
-  const initToPermission = (list: any[]) => {
+  const initToPermission = (list: any[]): any[] => {
     if (Array.isArray(list) && list.length > 0) {
       return list.map((item) => {
         const data = breadthQuery(dataSource, item.id);
