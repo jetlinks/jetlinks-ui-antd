@@ -600,7 +600,8 @@ const Edit = (props: Props) => {
       }
     >
       <Form form={form} layout="vertical" size="small">
-        <SchemaField schema={metadataTypeMapping[MetadataModel.type].schema} />
+        <SchemaField schema={metadataTypeMapping.properties.schema} />
+        {/*<SchemaField schema={metadataTypeMapping[MetadataModel.type].schema} />*/}
       </Form>
     </Drawer>
   );

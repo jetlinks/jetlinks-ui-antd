@@ -1,0 +1,38 @@
+.border {
+  margin-top: 10px;
+  padding: 10px;
+  border-top: 1px solid lightgray;
+}
+
+.box {
+  width: 100%;
+
+  .explain {
+    .border;
+  }
+
+  .tree {
+    .border;
+
+    height: 350px;
+    overflow-y: auto;
+
+    .node {
+      display: flex;
+      justify-content: space-between;
+      width: 220px;
+
+      .add {
+        display: none;
+      }
+
+      &:hover .add {
+        display: block;
+      }
+
+      .parent {
+        display: none;
+      }
+    }
+  }
+}
