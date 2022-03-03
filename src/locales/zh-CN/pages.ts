@@ -131,6 +131,10 @@ export default {
   'pages.system.role.option.unBind': '是否解除绑定',
   'pages.system.role.option.unBinds': '是否批量解除绑定?',
   'pages.system.role.option.delete': '确定要删除吗？',
+  // 系统设置-菜单管理
+  'pages.system.menu.option.addChildren': '新增子菜单',
+  'pages.system.menu.detail': '基本信息',
+  'pages.system.menu.buttons': '按钮管理',
   // 系统设置-第三方平台
   'pages.system.openApi': '第三方平台',
   'pages.system.openApi.username': '用户名',

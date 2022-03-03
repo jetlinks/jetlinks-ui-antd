@@ -77,6 +77,19 @@
         icon: 'smile',
         component: './system/Permission',
       },
+      {
+        path: '/system/menu',
+        name: 'menu',
+        icon: 'smile',
+        component: './system/Menu',
+      },
+      {
+        path: '/system/menu/detail',
+        name: 'menuDetail',
+        icon: 'smile',
+        hideInMenu: true,
+        component: './system/Menu/Detail',
+      },
       // {
       //   path: '/system/open-api',
       //   name: 'open-api',

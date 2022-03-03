@@ -13,6 +13,8 @@ export default {
   'menu.system.tenant': '租户管理',
   'menu.system.datasource': '数据源管理',
   'menu.system.department': '部门管理',
+  'menu.system.menu': '菜单管理',
+  'menu.system.menuDetail': '菜单详情',
   'menu.system.assets': '资产分配',
   'menu.system.member': '用户',
   'menu.device': '设备管理',

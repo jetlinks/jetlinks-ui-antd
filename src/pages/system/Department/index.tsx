@@ -170,15 +170,15 @@ export default observer(() => {
         type: 'string',
         title: intl.formatMessage({
           id: 'pages.table.name',
-          defaultMessage: '名称'
+          defaultMessage: '名称',
         }),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input',
         'x-validator': [
           {
-            max: 50,
-            message: '最多可输入50个字符',
+            max: 64,
+            message: '最多可输入64个字符',
           },
           {
             required: true,
@@ -190,7 +190,7 @@ export default observer(() => {
         type: 'string',
         title: intl.formatMessage({
           id: 'pages.device.instanceDetail.detail.sort',
-          defaultMessage: '排序'
+          defaultMessage: '排序',
         }),
         'x-decorator': 'FormItem',
         'x-component': 'NumberPicker',
@@ -258,10 +258,14 @@ export default observer(() => {
         })}
       />
       <Save<DepartmentItem>
-        title={State.current.parentId ? intl.formatMessage({
-          id: 'pages.system.department.option.add',
-          defaultMessage: '新增子部门'
-        }) : undefined}
+        title={
+          State.current.parentId
+            ? intl.formatMessage({
+                id: 'pages.system.department.option.add',
+                defaultMessage: '新增子部门',
+              })
+            : undefined
+        }
         service={service}
         onCancel={(type) => {
           if (type) {
