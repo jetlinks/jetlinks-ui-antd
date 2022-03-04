@@ -61,7 +61,10 @@ const Save = (props: Props) => {
   });
 
   const save = async () => {
-    const value = await form.submit();
+    const value: CategoryItem = await form.submit();
+    if (!!state.parentId) {
+      value.parentId = state.parentId;
+    }
     const resp = props.data.id
       ? await service.update(value as CategoryItem)
       : ((await service.save(value as any)) as Response<CategoryItem>);
@@ -76,23 +79,23 @@ const Save = (props: Props) => {
   const schema: ISchema = {
     type: 'object',
     properties: {
-      parentId: {
-        title: '上级分类',
-        'x-decorator': 'FormItem',
-        'x-component': 'Input',
-        name: 'parentId',
-        'x-disabled': true,
-        'x-visible': !!state.parentId,
-        'x-value': state.parentId,
-      },
-      id: {
-        title: 'ID',
-        'x-decorator': 'FormItem',
-        'x-component': 'Input',
-        required: true,
-        name: 'id',
-        'x-disabled': !!props.data.id,
-      },
+      // parentId: {
+      //   title: '上级分类',
+      //   'x-decorator': 'FormItem',
+      //   'x-component': 'Input',
+      //   name: 'parentId',
+      //   'x-disabled': true,
+      //   'x-visible': !!state.parentId,
+      //   'x-value': state.parentId,
+      // },
+      // id: {
+      //   title: 'ID',
+      //   'x-decorator': 'FormItem',
+      //   'x-component': 'Input',
+      //   required: true,
+      //   name: 'id',
+      //   'x-disabled': !!props.data.id,
+      // },
       name: {
         title: intl.formatMessage({
           id: 'pages.table.name',
@@ -103,15 +106,14 @@ const Save = (props: Props) => {
         required: true,
         name: 'name',
       },
-      key: {
+      sortIndex: {
         title: intl.formatMessage({
-          id: 'pages.device.category.key',
-          defaultMessage: '标识',
+          id: 'pages.device.category.sortIndex',
+          defaultMessage: '排序',
         }),
         'x-decorator': 'FormItem',
-        'x-component': 'Input',
-        required: true,
-        name: 'name',
+        'x-component': 'NumberPicker',
+        name: 'sortIndex',
       },
       description: {
         type: 'string',
