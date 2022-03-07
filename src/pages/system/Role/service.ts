@@ -14,6 +14,67 @@ class Service extends BaseService<RoleItem> {
         }),
       ),
     ).pipe(map((item) => item));
+  queryMenuTreeList = (data: any) =>
+    defer(() =>
+      from(
+        request(`/${SystemConst.API_BASE}/menu/_all/tree`, {
+          method: 'POST',
+          data,
+        }),
+      ),
+    ).pipe(map((item) => item));
+  queryPermissionsList = (data: any) =>
+    defer(() =>
+      from(
+        request(`/${SystemConst.API_BASE}/menu/permissions`, {
+          method: 'POST',
+          data,
+        }),
+      ),
+    ).pipe(map((item) => item));
+  queryAssetTypeList = (data: any) =>
+    defer(() =>
+      from(
+        request(`/${SystemConst.API_BASE}/menu/asset-types`, {
+          method: 'POST',
+          data,
+        }),
+      ),
+    ).pipe(map((item) => item));
+  queryDimensionsList = (type: string) =>
+    defer(() =>
+      from(
+        request(`/${SystemConst.API_BASE}/asset/${type}/dimensions`, {
+          method: 'GET',
+        }),
+      ),
+    ).pipe(map((item) => item));
+  queryGrantTree = (targetType: string, targetId: string) =>
+    defer(() =>
+      from(
+        request(`/${SystemConst.API_BASE}/menu/${targetType}/${targetId}/_grant/tree`, {
+          method: 'GET',
+        }),
+      ),
+    ).pipe(map((item) => item));
+  saveGrantTree = (targetType: string, targetId: string, data: any) =>
+    defer(() =>
+      from(
+        request(`/${SystemConst.API_BASE}/menu/${targetType}/${targetId}/_grant`, {
+          method: 'PUT',
+          data,
+        }),
+      ),
+    ).pipe(map((item) => item));
+  saveAutz = (data: any) =>
+    defer(() =>
+      from(
+        request(`/${SystemConst.API_BASE}/autz-setting/detail/_save`, {
+          method: 'POST',
+          data,
+        }),
+      ),
+    ).pipe(map((item) => item));
   bindUser = (roleId: string, params: any) =>
     defer(() =>
       from(

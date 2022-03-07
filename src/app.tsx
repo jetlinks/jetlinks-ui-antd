@@ -215,7 +215,6 @@ export function patchRoutes(routes: any) {
 }
 
 export function render(oldRender: any) {
-  console.log(history.location.pathname !== loginPath && history.location.pathname !== '/');
   if (history.location.pathname !== loginPath && history.location.pathname !== '/') {
     MenuService.queryMenuThree({ paging: false }).then((res) => {
       if (res.status === 200) {
