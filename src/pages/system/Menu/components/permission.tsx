@@ -3,6 +3,7 @@ import { Checkbox } from 'antd';
 import './permission.less';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import type { PermissionInfo } from '../typing';
+import { useIntl } from 'umi';
 
 type PermissionDataType = {
   action: string;
@@ -122,6 +123,7 @@ export default (props: PermissionType) => {
   const [checkAll, setCheckAll] = useState(false);
   const [nodes, setNodes] = useState<React.ReactNode>([]);
   const checkListRef = useRef<CheckItem[]>([]);
+  const intl = useIntl();
 
   const onChange = (list: CheckItem[]) => {
     if (props.onChange) {
@@ -239,7 +241,7 @@ export default (props: PermissionType) => {
   };
 
   useEffect(() => {
-    if (props.data && props.data.length) {
+    if (props.data) {
       initialState(props.data);
     }
     /* eslint-disable */
@@ -257,7 +259,10 @@ export default (props: PermissionType) => {
               checked={checkAll}
               disabled={props.disabled}
             >
-              菜单权限
+              {intl.formatMessage({
+                id: 'pages.system.menu.root',
+                defaultMessage: '菜单权限',
+              })}
             </Checkbox>
           </div>
         </div>

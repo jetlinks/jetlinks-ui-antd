@@ -18,6 +18,7 @@ import SearchComponent from '@/components/SearchComponent';
 import Service from './service';
 import type { MenuItem } from './typing';
 import moment from 'moment';
+import { getMenuPathBuCode, MENUS_CODE } from '@/utils/menu';
 
 export const service = new Service('menu');
 
@@ -54,9 +55,13 @@ export default observer(() => {
     actionRef.current?.reload();
   };
 
+  /**
+   * 跳转详情页
+   * @param id
+   */
   const pageJump = (id: string) => {
     // 跳转详情
-    history.push(`/system/menu/detail?id=${id}`);
+    history.push(`${getMenuPathBuCode(MENUS_CODE['system/Menu/Detail'])}?id=${id}`);
   };
 
   const columns: ProColumns<MenuItem>[] = [
@@ -65,7 +70,7 @@ export default observer(() => {
         id: 'page.system.menu.encoding',
         defaultMessage: '编码',
       }),
-      width: 220,
+      width: 300,
       dataIndex: 'code',
     },
     {
@@ -73,7 +78,7 @@ export default observer(() => {
         id: 'page.system.menu.name',
         defaultMessage: '名称',
       }),
-      width: 300,
+      width: 220,
       dataIndex: 'name',
     },
     {

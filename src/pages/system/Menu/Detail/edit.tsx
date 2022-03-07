@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { service } from '@/pages/system/Menu';
 import { useRequest } from 'umi';
 import type { MenuItem } from '@/pages/system/Menu/typing';
+import { debounce } from 'lodash';
 
 type EditProps = {
   data: MenuItem;
@@ -35,6 +36,16 @@ export default (props: EditProps) => {
     }
   };
 
+  const filterThree = (e: any) => {
+    const _data: any = {
+      paging: false,
+    };
+    if (e.target.value) {
+      _data.terms = [{ column: 'name', value: e.target.value }];
+    }
+    queryPermissions(_data);
+  };
+
   useEffect(() => {
     queryPermissions({ paging: false });
     /* eslint-disable */
@@ -59,7 +70,7 @@ export default (props: EditProps) => {
           required={true}
           rules={[{ required: true, message: '该字段是必填字段' }]}
         >
-          <Input disabled={true} />
+          <Input disabled={disabled} />
         </Form.Item>
         <Form.Item
           name="name"
@@ -89,7 +100,7 @@ export default (props: EditProps) => {
             defaultMessage: '权限',
           })}
         >
-          <Input disabled={disabled} />
+          <Input disabled={disabled} onChange={debounce(filterThree, 300)} />
           <Form.Item name="permissions">
             <Permission
               title={intl.formatMessage({

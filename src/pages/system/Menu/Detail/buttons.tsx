@@ -8,6 +8,7 @@ import { SearchOutlined, PlusOutlined, EditOutlined, DeleteOutlined } from '@ant
 import type { MenuButtonInfo, MenuItem } from '@/pages/system/Menu/typing';
 import Permission from '@/pages/system/Menu/components/permission';
 import { useRequest } from '@@/plugin-request/request';
+import { debounce } from 'lodash';
 
 type ButtonsProps = {
   data: MenuItem;
@@ -47,6 +48,17 @@ export default (props: ButtonsProps) => {
     setId('');
     setDisabled(false);
   };
+
+  const filterThree = (e: any) => {
+    const _data: any = {
+      paging: false,
+    };
+    if (e.target.value) {
+      _data.terms = [{ column: 'name', value: e.target.value }];
+    }
+    queryPermissions(_data);
+  };
+
   /**
    * 更新菜单信息
    * @param data
@@ -297,7 +309,7 @@ export default (props: ButtonsProps) => {
             })}
             required={true}
           >
-            <Input disabled={disabled} />
+            <Input disabled={disabled} onChange={debounce(filterThree, 300)} />
             <Form.Item name="permissions" rules={[{ required: true, message: '请选择权限' }]}>
               <Permission
                 title={intl.formatMessage({

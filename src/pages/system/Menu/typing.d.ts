@@ -57,7 +57,8 @@ export type MenuItem = {
    */
   level: number;
   createTime: number;
-  children: MenuItem;
+  redirect?: string;
+  children?: MenuItem[];
 };
 
 /**
