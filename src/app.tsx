@@ -135,7 +135,7 @@ export const request: RequestConfig = {
         if (resp) {
           notification.error({
             key: 'error',
-            message: JSON.parse(resp).message,
+            message: JSON.parse(resp).message || '服务器内部错误！',
           });
         } else {
           response
