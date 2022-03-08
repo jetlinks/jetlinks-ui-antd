@@ -1,9 +1,9 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import Service from '@/pages/device/Category/service';
 import type { ProColumns } from '@jetlinks/pro-table';
-import { EditOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, message, Popconfirm, Tooltip } from 'antd';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import type { ActionType } from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import ProTable from '@jetlinks/pro-table';
@@ -11,6 +11,7 @@ import Save from '@/pages/device/Category/Save';
 import { model } from '@formily/reactive';
 import { observer } from '@formily/react';
 import type { Response } from '@/utils/typings';
+import SearchComponent from '@/components/SearchComponent';
 
 export const service = new Service('device/category');
 
@@ -25,35 +26,27 @@ export const state = model<{
 });
 const Category = observer(() => {
   const actionRef = useRef<ActionType>();
+  const [param, setParam] = useState({});
 
   const intl = useIntl();
 
   const columns: ProColumns<CategoryItem>[] = [
     {
       title: intl.formatMessage({
-        id: 'pages.device.category.id',
-        defaultMessage: '分类ID',
-      }),
-      align: 'left',
-      width: 400,
-      dataIndex: 'id',
-      sorter: true,
-    },
-    {
-      title: intl.formatMessage({
-        id: 'pages.device.category.key',
-        defaultMessage: '标识',
-      }),
-      align: 'left',
-      dataIndex: 'key',
-    },
-    {
-      title: intl.formatMessage({
         id: 'pages.device.category.name',
         defaultMessage: '分类名称',
       }),
       dataIndex: 'name',
+    },
+    {
+      title: '分类排序',
+      dataIndex: 'sortIndex',
       align: 'center',
+      // render: (text) => (
+      //   <Space>{text}<EditOutlined onClick={() => {
+
+      //   }} /></Space>
+      // )
     },
     {
       title: intl.formatMessage({
@@ -74,6 +67,7 @@ const Category = observer(() => {
       align: 'center',
       render: (text, record) => [
         <a
+          key={'edit'}
           onClick={() => {
             state.visible = true;
             state.current = record;
@@ -89,6 +83,7 @@ const Category = observer(() => {
           </Tooltip>
         </a>,
         <a
+          key={'add-next'}
           onClick={() => {
             state.visible = true;
             state.parentId = record.id;
@@ -104,6 +99,7 @@ const Category = observer(() => {
           </Tooltip>
         </a>,
         <Popconfirm
+          key={'delete'}
           onConfirm={async () => {
             const resp = (await service.remove(record.id)) as Response<any>;
             if (resp.status === 200) {
@@ -122,7 +118,7 @@ const Category = observer(() => {
                 defaultMessage: '删除',
               })}
             >
-              <MinusOutlined />
+              <DeleteOutlined />
             </Tooltip>
           </a>
         </Popconfirm>,
@@ -132,9 +128,17 @@ const Category = observer(() => {
 
   return (
     <PageContainer>
+      <SearchComponent
+        field={columns}
+        onSearch={(data) => {
+          setParam(data);
+        }}
+        target="category"
+      />
       <ProTable
+        params={param}
+        search={false}
         request={async (params) => {
-          delete params.pageIndex;
           const response = await service.queryTree({ paging: false, ...params });
           return {
             code: response.message,
