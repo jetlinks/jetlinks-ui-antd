@@ -24,7 +24,7 @@ const Advance = (props: Props) => {
           <Debug />
         </div>
         <div className={styles.right}>
-          <Operator data={{}} />
+          <Operator />
         </div>
       </div>
     </Modal>
