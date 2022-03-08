@@ -31,6 +31,7 @@ const HeaderSearch: React.FC<HeaderSearchProps> = (props) => {
     ...restProps
   } = props;
 
+  // @ts-ignore
   const inputRef = useRef<Input | null>(null);
 
   const [value, setValue] = useMergedState<string | undefined>(defaultValue, {

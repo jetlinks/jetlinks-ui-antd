@@ -20,7 +20,7 @@ interface Props {
 }
 
 const BaseMetadata = observer((props: Props) => {
-  const { type, target } = props;
+  const { type, target = 'product' } = props;
   const intl = useIntl();
   const param = useParams<{ id: string }>();
 

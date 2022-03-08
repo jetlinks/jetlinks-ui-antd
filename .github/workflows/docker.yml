@@ -16,8 +16,8 @@ jobs:
           key: jetlinks-ui-pro-repository
       - name: Install 🔧
         run: |
-          npm install --force
-          npm run-script build
+          yarn install
+          yarn run build
           cp -r dist docker/
           docker build -t registry.cn-shenzhen.aliyuncs.com/jetlinks/jetlinks-ui-pro:$(node -p "require('./package.json').version") ./docker
 

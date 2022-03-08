@@ -225,6 +225,7 @@ export default {
   'pages.device.category.key': '标识',
   'pages.device.category.name': '分类名称',
   'pages.device.category.addClass': '添加子分类',
+  'pages.device.category.sortIndex': '分类排序',
   // 设备管理-设备
   'pages.device.instance': '设备',
   'pages.device.instance.registrationTime': '注册时间',

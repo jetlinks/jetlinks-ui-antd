@@ -21,9 +21,6 @@ import ProTable from '@jetlinks/pro-table';
 import { lastValueFrom } from 'rxjs';
 import encodeQuery from '@/utils/encodeQuery';
 import Save from '@/pages/device/Product/Save';
-import Edit from '@/pages/device/components/Metadata/Base/Edit';
-// import Operator from '@/pages/device/components/Operator';
-// import Debug from '@/pages/device/components/Debug';
 
 export const service = new Service('device-product');
 export const statusMap = {
@@ -209,9 +206,6 @@ const Product = observer(() => {
         }}
         visible={visible}
       />
-      <Edit type={'product'} />
-      {/*<Operator />*/}
-      {/*<Debug />*/}
     </PageContainer>
   );
 });

@@ -210,6 +210,7 @@ export default {
   'pages.device.category.key': 'Key',
   'pages.device.category.name': 'Classification Name',
   'pages.device.category.addClass': 'Add Subclasses',
+  'pages.device.category.sortIndex': 'Sort',
   // 设备管理-设备
   'pages.device.instance': 'Instance Manage',
   'pages.device.instance.registrationTime': 'Registration Time',
