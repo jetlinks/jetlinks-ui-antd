@@ -42,7 +42,7 @@ import DB from '@/db';
 import _ from 'lodash';
 import { useParams } from 'umi';
 import { InstanceModel } from '@/pages/device/Instance';
-// import FRuleEditor from '@/components/FRuleEditor';
+import FRuleEditor from '@/components/FRuleEditor';
 
 interface Props {
   type: 'product' | 'device';
@@ -97,7 +97,7 @@ const Edit = (props: Props) => {
       EnumParam,
       BooleanEnum,
       ConfigParam,
-      // FRuleEditor,
+      FRuleEditor,
     },
     scope: {
       async asyncOtherConfig(field: Field) {
@@ -361,29 +361,36 @@ const Edit = (props: Props) => {
           rule: {
             type: 'string',
             'x-component': 'FRuleEditor',
+            'x-visible': false,
+            'x-reactions': {
+              dependencies: ['.source'],
+              fulfill: {
+                state: {
+                  visible: '{{$deps[0]==="rule"}}',
+                },
+              },
+            },
           },
-          readOnly: {
-            title: intl.formatMessage({
-              id: 'pages.device.productDetail.metadata.whetherReadOnly',
-              defaultMessage: '是否只读',
-            }),
+          type: {
+            title: '属性类型',
             required: true,
             'x-decorator': 'FormItem',
-            'x-component': 'Radio.Group',
+            'x-component': 'Select',
+            'x-component-props': {
+              mode: 'tags',
+            },
             enum: [
               {
-                label: intl.formatMessage({
-                  id: 'pages.device.productDetail.metadata.true',
-                  defaultMessage: '是',
-                }),
-                value: true,
+                label: '读',
+                value: 'read',
               },
               {
-                label: intl.formatMessage({
-                  id: 'pages.device.productDetail.metadata.false',
-                  defaultMessage: '否',
-                }),
-                value: false,
+                label: '写',
+                value: 'write',
+              },
+              {
+                label: '上报',
+                value: 'report',
               },
             ],
           },
@@ -529,7 +536,10 @@ const Edit = (props: Props) => {
     const params = (await form.submit()) as MetadataItem;
 
     if (!typeMap.get(props.type)) return;
+
+    console.log(props.type, typeMap.get(props.type).metadata, 'JSON-PARSE');
     const metadata = JSON.parse(typeMap.get(props.type).metadata) as DeviceMetadata;
+    console.log(metadata, 'metadata');
     const config = metadata[type] as MetadataItem[];
     const index = config.findIndex((item) => item.id === params.id);
     if (index > -1) {
@@ -570,40 +580,42 @@ const Edit = (props: Props) => {
     </Menu>
   );
   return (
-    <Drawer
-      width="25vw"
-      visible
-      title={`${intl.formatMessage({
-        id: `pages.data.option.${MetadataModel.action}`,
-        defaultMessage: '新增',
-      })}-${intl.formatMessage({
-        id: `pages.device.metadata.${MetadataModel.type}`,
-        defaultMessage: metadataTypeMapping[MetadataModel.type].name,
-      })}`}
-      onClose={() => {
-        MetadataModel.edit = false;
-        MetadataModel.item = {};
-      }}
-      destroyOnClose
-      zIndex={1000}
-      placement={'right'}
-      extra={
-        props.type === 'product' ? (
-          <Dropdown.Button type="primary" onClick={() => saveMetadata()} overlay={menu}>
-            保存数据
-          </Dropdown.Button>
-        ) : (
-          <Button type="primary" onClick={() => saveMetadata()}>
-            保存数据
-          </Button>
-        )
-      }
-    >
-      <Form form={form} layout="vertical" size="small">
-        <SchemaField schema={metadataTypeMapping.properties.schema} />
-        {/*<SchemaField schema={metadataTypeMapping[MetadataModel.type].schema} />*/}
-      </Form>
-    </Drawer>
+    <>
+      <Drawer
+        width="25vw"
+        visible
+        title={`${intl.formatMessage({
+          id: `pages.data.option.${MetadataModel.action}`,
+          defaultMessage: '新增',
+        })}-${intl.formatMessage({
+          id: `pages.device.metadata.${MetadataModel.type}`,
+          defaultMessage: metadataTypeMapping[MetadataModel.type].name,
+        })}`}
+        onClose={() => {
+          MetadataModel.edit = false;
+          MetadataModel.item = {};
+        }}
+        destroyOnClose
+        zIndex={1000}
+        placement={'right'}
+        extra={
+          props.type === 'product' ? (
+            <Dropdown.Button type="primary" onClick={() => saveMetadata()} overlay={menu}>
+              保存数据
+            </Dropdown.Button>
+          ) : (
+            <Button type="primary" onClick={() => saveMetadata()}>
+              保存数据
+            </Button>
+          )
+        }
+      >
+        <Form form={form} layout="vertical" size="small">
+          <SchemaField schema={metadataTypeMapping.properties.schema} />
+          {/*<SchemaField schema={metadataTypeMapping[MetadataModel.type].schema} />*/}
+        </Form>
+      </Drawer>
+    </>
   );
 };
 export default Edit;
