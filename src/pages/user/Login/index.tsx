@@ -48,7 +48,9 @@ const Login: React.FC = () => {
       const { redirect } = query as {
         redirect: string;
       };
-      history.push(redirect || '/');
+      // history.push(redirect || '/');
+      // 用于触发app中的render，生成路由
+      window.location.href = redirect || '/';
       setLoading(false);
     }, 10);
   };

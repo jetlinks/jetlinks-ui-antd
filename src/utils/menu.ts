@@ -100,6 +100,8 @@ export const MENUS_CODE = {
   'visualization/Screen': 'visualization/Screen',
 };
 
+const isRedirect = false;
+
 /**
  * 根据url获取映射的组件
  * @param files
@@ -137,24 +139,33 @@ const getRoutes = (extraRoutes: MenuItem[], level: number = 1) => {
   const Menus: IRouteProps[] = [];
   extraRoutes.forEach((route) => {
     const component = allComponents[route.code] || null;
-    if (level === 1) {
-      Menus.push({
-        key: route.url,
-        name: route.name,
-        path: route.url,
-        children: getRoutes(flatRoute(route.children || []), level + 1),
-      });
+    const _route: IRouteProps = {
+      key: route.url,
+      name: route.name,
+      path: route.url,
+    };
+    if (level === 1 && route.children) {
+      _route.children = [
+        ...getRoutes(flatRoute(route.children || []), level + 1),
+        {
+          path: _route.path,
+          redirect: route.children[0].url,
+        },
+      ];
+      Menus.push(_route);
     }
     if (component) {
-      Menus.push({
-        key: route.url,
-        name: route.name,
-        path: route.url,
-        exact: true,
-        component,
-      });
+      _route.component = component;
+      Menus.push(_route);
     }
   });
+
+  if (level === 1 && !isRedirect && extraRoutes.length) {
+    Menus.push({
+      path: '/',
+      redirect: extraRoutes[0].url,
+    });
+  }
   return Menus;
 };
 
@@ -196,7 +207,7 @@ export const saveMenusCache = (routes: MenuItem[]) => {
  * 通过缓存的数据取出相应的路由url
  * @param code
  */
-export const getMenuPathBuCode = (code: string): string => {
+export const getMenuPathByCode = (code: string): string => {
   const menusStr = localStorage.getItem(MENUS_DATA_CACHE) || '{}';
   const menusData = JSON.parse(menusStr);
   return menusData[code];

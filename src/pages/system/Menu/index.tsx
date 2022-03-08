@@ -18,7 +18,7 @@ import SearchComponent from '@/components/SearchComponent';
 import Service from './service';
 import type { MenuItem } from './typing';
 import moment from 'moment';
-import { getMenuPathBuCode, MENUS_CODE } from '@/utils/menu';
+import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 
 export const service = new Service('menu');
 
@@ -61,7 +61,7 @@ export default observer(() => {
    */
   const pageJump = (id: string) => {
     // 跳转详情
-    history.push(`${getMenuPathBuCode(MENUS_CODE['system/Menu/Detail'])}?id=${id}`);
+    history.push(`${getMenuPathByCode(MENUS_CODE['system/Menu/Detail'])}?id=${id}`);
   };
 
   const columns: ProColumns<MenuItem>[] = [
