@@ -11,9 +11,12 @@ import Token from '@/utils/token';
 import type { RequestOptionsInit } from 'umi-request';
 import ReconnectingWebSocket from 'reconnecting-websocket';
 import SystemConst from '@/utils/const';
+import { service as MenuService } from '@/pages/system/Menu';
+import getRoutes, { getMenus, saveMenusCache } from '@/utils/menu';
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
+let extraRoutes: any[] = [];
 
 /** 获取用户信息比较慢的时候会展示一个 loading */
 export const initialStateConfig = {
@@ -183,13 +186,16 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
         history.push(loginPath);
       }
     },
+    menuDataRender: () => {
+      return getMenus(extraRoutes);
+    },
     links: isDev
       ? [
-          <Link to="/umi/plugin/openapi" target="_blank">
+          <Link key={1} to="/umi/plugin/openapi" target="_blank">
             <LinkOutlined />
             <span>OpenAPI 文档</span>
           </Link>,
-          <Link to="/~docs">
+          <Link key={2} to="/~docs">
             <BookOutlined />
             <span>业务组件文档</span>
           </Link>,
@@ -201,3 +207,23 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
     ...initialState?.settings,
   };
 };
+
+export function patchRoutes(routes: any) {
+  if (extraRoutes && extraRoutes.length) {
+    routes.routes[1].routes = [...routes.routes[1].routes, ...getRoutes(extraRoutes)];
+  }
+}
+
+export function render(oldRender: any) {
+  if (history.location.pathname !== loginPath && history.location.pathname !== '/') {
+    MenuService.queryMenuThree({ paging: false }).then((res) => {
+      if (res.status === 200) {
+        extraRoutes = res.result;
+        saveMenusCache(res.result);
+      }
+      oldRender();
+    });
+  } else {
+    oldRender();
+  }
+}

@@ -176,8 +176,8 @@ export default observer(() => {
         'x-component': 'Input',
         'x-validator': [
           {
-            max: 50,
-            message: '最多可输入50个字符',
+            max: 64,
+            message: '最多可输入64个字符',
           },
           {
             required: true,

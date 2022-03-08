@@ -1,0 +1,42 @@
+@import '~antd/lib/style/themes/variable';
+@border: 1px solid @border-color-base;
+
+.permission-container {
+  margin-top: 20px;
+  border: @border;
+
+  .permission-header {
+    padding: @padding-sm;
+    background-color: @border-color-base;
+  }
+
+  .permission-content {
+    max-height: 400px;
+    overflow-y: auto;
+
+    .permission-items {
+      display: flex;
+      border-bottom: @border;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      > div {
+        padding: @padding-xs 0 @padding-xs @padding-sm;
+      }
+
+      .permission-parent {
+        display: flex;
+        align-items: center;
+        width: 180px;
+      }
+
+      .permission-children-checkbox {
+        flex-grow: 1;
+        width: 0;
+        border-left: @border;
+      }
+    }
+  }
+}
