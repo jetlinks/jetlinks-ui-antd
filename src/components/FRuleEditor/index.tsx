@@ -8,20 +8,27 @@ import { Store } from 'jetlinks-store';
 export const State = model<{
   model: 'simple' | 'advance';
   code: string;
+  property?: string;
+  log: {
+    content: string;
+    time: number;
+  }[];
 }>({
   model: 'simple',
   code: '',
+  log: [],
 });
 
 interface Props {
   value: string;
   onChange: (value: string) => void;
+  property?: string;
 }
 
 const FRuleEditor = observer((props: Props) => {
-  const { value, onChange } = props;
-
+  const { value, onChange, property } = props;
   useEffect(() => {
+    State.property = property;
     const subscription = Store.subscribe('rule-editor-value', onChange);
     State.code = value;
     return () => subscription.unsubscribe();

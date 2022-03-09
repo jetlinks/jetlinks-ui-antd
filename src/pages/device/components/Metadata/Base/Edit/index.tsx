@@ -368,14 +368,22 @@ const Edit = observer((props: Props) => {
             type: 'string',
             'x-component': 'FRuleEditor',
             'x-visible': false,
-            'x-reactions': {
-              dependencies: ['.source'],
-              fulfill: {
-                state: {
-                  visible: '{{$deps[0]==="rule"}}',
+            'x-component-props': {
+              property: 'ggg',
+            },
+            'x-reactions': [
+              {
+                dependencies: ['.source', '..id'],
+                fulfill: {
+                  state: {
+                    visible: '{{$deps[0]==="rule"}}',
+                  },
+                  schema: {
+                    'x-component-props.property': '{{$deps[1]}}',
+                  },
                 },
               },
-            },
+            ],
           },
           type: {
             title: '属性类型',
@@ -537,10 +545,8 @@ const Edit = observer((props: Props) => {
 
     if (!typeMap.get(props.type)) return;
 
-    console.log(props.type, typeMap.get(props.type).metadata, 'JSON-PARSE');
-    const metadata = JSON.parse(typeMap.get(props.type).metadata) as DeviceMetadata;
-    console.log(metadata, 'metadata');
-    const config = metadata[type] as MetadataItem[];
+    const metadata = JSON.parse(typeMap.get(props.type).metadata || '{}') as DeviceMetadata;
+    const config = (metadata[type] || []) as MetadataItem[];
     const index = config.findIndex((item) => item.id === params.id);
     if (index > -1) {
       config[index] = params;
@@ -552,6 +558,9 @@ const Edit = observer((props: Props) => {
 
     if (props.type === 'product') {
       const product = typeMap.get('product');
+      // product.metadata = JSON.stringify(metadata);
+      // @ts-ignore
+      metadata[type] = config;
       product.metadata = JSON.stringify(metadata);
       saveMap.set('product', service.saveProductMetadata(product));
     } else {
