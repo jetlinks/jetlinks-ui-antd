@@ -3,11 +3,6 @@ import moment from 'moment';
 
 const columns: ProColumns<MetadataLogData>[] = [
   {
-    dataIndex: 'index',
-    valueType: 'indexBorder',
-    width: 48,
-  },
-  {
     dataIndex: 'timestamp',
     title: '时间',
     sorter: true,
