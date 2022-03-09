@@ -210,12 +210,13 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
 
 export function patchRoutes(routes: any) {
   if (extraRoutes && extraRoutes.length) {
-    routes.routes[1].routes = [...routes?.routes[1]?.routes, ...getRoutes(extraRoutes)];
+    console.log(getRoutes(extraRoutes));
+    routes.routes[1].routes = [...routes.routes[1].routes, ...getRoutes(extraRoutes)];
   }
 }
 
 export function render(oldRender: any) {
-  if (history.location.pathname !== loginPath && history.location.pathname !== '/') {
+  if (history.location.pathname !== loginPath) {
     MenuService.queryMenuThree({ paging: false }).then((res) => {
       if (res.status === 200) {
         extraRoutes = res.result;

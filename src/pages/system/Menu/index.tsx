@@ -4,7 +4,7 @@ import ProTable from '@jetlinks/pro-table';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { Button, message, Popconfirm, Tooltip, Card, Divider, Modal, Form, Input } from 'antd';
+import { Button, message, Popconfirm, Tooltip, Modal, Form, Input } from 'antd';
 import {
   SearchOutlined,
   PlusOutlined,
@@ -18,7 +18,7 @@ import SearchComponent from '@/components/SearchComponent';
 import Service from './service';
 import type { MenuItem } from './typing';
 import moment from 'moment';
-import { getMenuPathBuCode, MENUS_CODE } from '@/utils/menu';
+import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 
 export const service = new Service('menu');
 
@@ -61,7 +61,7 @@ export default observer(() => {
    */
   const pageJump = (id: string) => {
     // 跳转详情
-    history.push(`${getMenuPathBuCode(MENUS_CODE['system/Menu/Detail'])}?id=${id}`);
+    history.push(`${getMenuPathByCode(MENUS_CODE['system/Menu/Detail'])}?id=${id}`);
   };
 
   const columns: ProColumns<MenuItem>[] = [
@@ -218,10 +218,7 @@ export default observer(() => {
 
   return (
     <PageContainer>
-      <Card>
-        <SearchComponent field={columns} onSearch={searchFn} />
-      </Card>
-      <Divider />
+      <SearchComponent field={columns} onSearch={searchFn} />
       <ProTable<MenuItem>
         columns={columns}
         actionRef={actionRef}

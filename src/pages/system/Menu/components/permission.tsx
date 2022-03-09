@@ -106,12 +106,14 @@ const ParentNode = (props: ParentNodeType) => {
           onChange={onChange}
           value={checkedList}
           disabled={props.disabled}
-          options={props.actions.map((item: any) => {
-            return {
-              label: item.name,
-              value: item.action,
-            };
-          })}
+          options={props.actions
+            .filter((a) => a.action)
+            .map((item) => {
+              return {
+                label: item.name,
+                value: item.action,
+              };
+            })}
         />
       </div>
     </div>
