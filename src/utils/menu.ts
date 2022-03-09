@@ -156,6 +156,7 @@ const getRoutes = (extraRoutes: MenuItem[], level: number = 1) => {
     }
     if (component) {
       _route.component = component;
+      _route.exact = true;
       Menus.push(_route);
     }
   });
@@ -210,7 +211,19 @@ export const saveMenusCache = (routes: MenuItem[]) => {
 export const getMenuPathByCode = (code: string): string => {
   const menusStr = localStorage.getItem(MENUS_DATA_CACHE) || '{}';
   const menusData = JSON.parse(menusStr);
+  console.log(code, menusData);
   return menusData[code];
+};
+
+/**
+ * 通过缓存的数据取出相应的路由url
+ * @param code 路由Code
+ * @param id 路由携带参数
+ * @param regStr 路由参数code
+ */
+export const getMenuPathByParams = (code: string, id: string, regStr: string = ':id') => {
+  const menusData = getMenuPathByCode(code);
+  return menusData.replace(regStr, id);
 };
 
 export default getRoutes;

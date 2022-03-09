@@ -4,7 +4,7 @@ import ProTable from '@jetlinks/pro-table';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { Button, message, Popconfirm, Tooltip, Card, Divider, Modal, Form, Input } from 'antd';
+import { Button, message, Popconfirm, Tooltip, Modal, Form, Input } from 'antd';
 import {
   SearchOutlined,
   PlusOutlined,
@@ -218,10 +218,7 @@ export default observer(() => {
 
   return (
     <PageContainer>
-      <Card>
-        <SearchComponent field={columns} onSearch={searchFn} />
-      </Card>
-      <Divider />
+      <SearchComponent field={columns} onSearch={searchFn} />
       <ProTable<MenuItem>
         columns={columns}
         actionRef={actionRef}
