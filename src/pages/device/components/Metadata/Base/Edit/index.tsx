@@ -1,5 +1,5 @@
 import { Button, Drawer, Dropdown, Menu, message } from 'antd';
-import { createSchemaField } from '@formily/react';
+import { createSchemaField, observer } from '@formily/react';
 import MetadataModel from '../model';
 import type { Field, IFieldState } from '@formily/core';
 import { createForm } from '@formily/core';
@@ -23,7 +23,7 @@ import {
   FileTypeList,
   PropertySource,
 } from '@/pages/device/data';
-import { useCallback, useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { productModel } from '@/pages/device/Product';
 import { service } from '@/pages/device/components/Metadata';
 import { Store } from 'jetlinks-store';
@@ -43,16 +43,22 @@ import _ from 'lodash';
 import { useParams } from 'umi';
 import { InstanceModel } from '@/pages/device/Instance';
 import FRuleEditor from '@/components/FRuleEditor';
+import { action } from '@formily/reactive';
+import type { Response } from '@/utils/typings';
 
 interface Props {
   type: 'product' | 'device';
 }
 
-const Edit = (props: Props) => {
+const Edit = observer((props: Props) => {
   const intl = useIntl();
-  const form = createForm({
-    initialValues: MetadataModel.item as Record<string, unknown>,
-  });
+  const form = useMemo(
+    () =>
+      createForm({
+        initialValues: MetadataModel.item as Record<string, unknown>,
+      }),
+    [],
+  );
 
   const schemaTitleMapping = {
     properties: {
@@ -129,8 +135,6 @@ const Edit = (props: Props) => {
     },
   });
 
-  const [units, setUnits] = useState<{ label: string; value: string }[]>();
-
   const valueTypeConfig = {
     type: 'object',
     'x-index': 4,
@@ -150,15 +154,17 @@ const Edit = (props: Props) => {
         'x-decorator': 'FormItem',
         'x-component': 'Select',
         'x-visible': false,
-        enum: units,
-        'x-reactions': {
-          dependencies: ['.type'],
-          fulfill: {
-            state: {
-              visible: "{{['int','float','long','double'].includes($deps[0])}}",
+        'x-reactions': [
+          {
+            dependencies: ['.type'],
+            fulfill: {
+              state: {
+                visible: "{{['int','float','long','double'].includes($deps[0])}}",
+              },
             },
           },
-        },
+          '{{useAsyncDataSource(getUnit)}}',
+        ],
       },
       scale: {
         title: intl.formatMessage({
@@ -362,14 +368,22 @@ const Edit = (props: Props) => {
             type: 'string',
             'x-component': 'FRuleEditor',
             'x-visible': false,
-            'x-reactions': {
-              dependencies: ['.source'],
-              fulfill: {
-                state: {
-                  visible: '{{$deps[0]==="rule"}}',
+            'x-component-props': {
+              property: 'ggg',
+            },
+            'x-reactions': [
+              {
+                dependencies: ['.source', '..id'],
+                fulfill: {
+                  state: {
+                    visible: '{{$deps[0]==="rule"}}',
+                  },
+                  schema: {
+                    'x-component-props.property': '{{$deps[1]}}',
+                  },
                 },
               },
-            },
+            ],
           },
           type: {
             title: '属性类型',
@@ -503,26 +517,20 @@ const Edit = (props: Props) => {
     },
   };
 
-  const getUnits = useCallback(async () => {
-    const cache = Store.get('units');
-    if (cache) {
-      return cache;
-    }
-    const response = await service.getUnit();
-    const temp = response.result.map((item: UnitType) => ({
-      label: item.description,
-      value: item.id,
-    }));
-    Store.set('units', temp);
-    return temp;
-  }, []);
-
-  useEffect(() => {
-    getUnits().then((data) => {
-      Store.set('units', data);
-      setUnits(data);
-    });
-  }, [getUnits]);
+  const getUnit = () => service.getUnit();
+  const useAsyncDataSource = (services: (arg0: Field) => Promise<any>) => (field: Field) => {
+    field.loading = true;
+    services(field).then(
+      action.bound!((data: Response<UnitType>) => {
+        // products.current = data.result;
+        field.dataSource = (data.result as UnitType[]).map((item: any) => ({
+          label: item.description,
+          value: item.id,
+        }));
+        field.loading = false;
+      }),
+    );
+  };
 
   const param = useParams<{ id: string }>();
   const typeMap = new Map<string, any>();
@@ -537,10 +545,8 @@ const Edit = (props: Props) => {
 
     if (!typeMap.get(props.type)) return;
 
-    console.log(props.type, typeMap.get(props.type).metadata, 'JSON-PARSE');
-    const metadata = JSON.parse(typeMap.get(props.type).metadata) as DeviceMetadata;
-    console.log(metadata, 'metadata');
-    const config = metadata[type] as MetadataItem[];
+    const metadata = JSON.parse(typeMap.get(props.type).metadata || '{}') as DeviceMetadata;
+    const config = (metadata[type] || []) as MetadataItem[];
     const index = config.findIndex((item) => item.id === params.id);
     if (index > -1) {
       config[index] = params;
@@ -552,6 +558,9 @@ const Edit = (props: Props) => {
 
     if (props.type === 'product') {
       const product = typeMap.get('product');
+      // product.metadata = JSON.stringify(metadata);
+      // @ts-ignore
+      metadata[type] = config;
       product.metadata = JSON.stringify(metadata);
       saveMap.set('product', service.saveProductMetadata(product));
     } else {
@@ -611,11 +620,13 @@ const Edit = (props: Props) => {
         }
       >
         <Form form={form} layout="vertical" size="small">
-          <SchemaField schema={metadataTypeMapping.properties.schema} />
-          {/*<SchemaField schema={metadataTypeMapping[MetadataModel.type].schema} />*/}
+          <SchemaField
+            scope={{ useAsyncDataSource, getUnit }}
+            schema={metadataTypeMapping.properties.schema}
+          />
         </Form>
       </Drawer>
     </>
   );
-};
+});
 export default Edit;

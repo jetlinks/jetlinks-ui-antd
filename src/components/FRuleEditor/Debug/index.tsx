@@ -1,12 +1,21 @@
 import styles from './index.less';
-import { createSchemaField } from '@formily/react';
+import { createSchemaField, observer } from '@formily/react';
 import { ArrayTable, Form, FormItem, Input, Select } from '@formily/antd';
 import { useMemo } from 'react';
+import type { Field } from '@formily/core';
 import { createForm } from '@formily/core';
 import type { ISchema } from '@formily/json-schema';
 import FAutoComplete from '@/components/FAutoComplete';
+import { Descriptions, Tooltip } from 'antd';
+import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
+import type { WebsocketPayload } from '@/hooks/websocket/typings';
+import { State } from '@/components/FRuleEditor';
+import moment from 'moment';
+import DB from '@/db';
+import type { PropertyMetadata } from '@/pages/device/Product/typings';
+import { action } from '@formily/reactive';
 
-const Debug = () => {
+const Debug = observer(() => {
   const SchemaField = createSchemaField({
     components: {
       FormItem,
@@ -17,11 +26,25 @@ const Debug = () => {
     },
   });
   const form = useMemo(() => createForm(), []);
+  const useAsyncDataSource = (services: (arg0: Field) => Promise<any>) => (field: Field) => {
+    field.loading = true;
+    services(field).then(
+      action.bound!((data: PropertyMetadata[]) => {
+        field.dataSource = data.map((item) => ({
+          label: item.name,
+          value: item.id,
+        }));
+        field.loading = false;
+      }),
+    );
+  };
+
+  const getProperty = async () => DB.getDB().table('properties').toArray();
 
   const schema: ISchema = {
     type: 'object',
     properties: {
-      array: {
+      properties: {
         type: 'array',
         'x-decorator': 'FormItem',
         'x-component': 'ArrayTable',
@@ -48,7 +71,7 @@ const Debug = () => {
                 id: {
                   'x-decorator': 'FormItem',
                   'x-component': 'FAutoComplete',
-                  enum: [1, 2, 4],
+                  'x-reactions': '{{useAsyncDataSource(getProperty)}}',
                 },
               },
             },
@@ -112,6 +135,26 @@ const Debug = () => {
       },
     },
   };
+
+  const [subscribeTopic] = useSendWebsocketMessage();
+
+  const runScript = async () => {
+    subscribeTopic?.(
+      `virtual-property-debug-${State.property}-${new Date().getTime()}`,
+      '/virtual-property-debug',
+      {
+        virtualId: `${new Date().getTime()}-virtual-id`,
+        property: State.property,
+        virtualRule: {
+          type: 'script',
+          script: State.code,
+        },
+        properties: form.values.properties || [],
+      },
+    )?.subscribe((data: WebsocketPayload) => {
+      State.log.push({ time: new Date().getTime(), content: JSON.stringify(data.payload) });
+    });
+  };
   return (
     <div className={styles.container}>
       <div className={styles.left}>
@@ -124,7 +167,7 @@ const Debug = () => {
           </div>
         </div>
         <Form form={form}>
-          <SchemaField schema={schema} />
+          <SchemaField schema={schema} scope={{ useAsyncDataSource, getProperty }} />
         </Form>
       </div>
       <div className={styles.right}>
@@ -135,17 +178,37 @@ const Debug = () => {
 
           <div className={styles.action}>
             <div>
-              <a>开始运行</a>
-              {/*<a>停止运行</a>*/}
+              <a onClick={runScript}>开始运行</a>
             </div>
             <div>
-              <a>清空</a>
+              <a
+                onClick={() => {
+                  State.log = [];
+                }}
+              >
+                清空
+              </a>
             </div>
           </div>
+        </div>
+        <div className={styles.log}>
+          <Descriptions>
+            {State.log.map((item) => (
+              <Descriptions.Item
+                label={moment(item.time).format('HH:mm:ss')}
+                key={item.time}
+                span={3}
+              >
+                <Tooltip placement="top" title={item.content}>
+                  {item.content}
+                </Tooltip>
+              </Descriptions.Item>
+            ))}
+          </Descriptions>
         </div>
       </div>
     </div>
   );
-};
+});
 
 export default Debug;
