@@ -476,7 +476,7 @@ const FunctionDefin: React.FC<Props> = props => {
           <div>
             <Form.Item label="元素类型">
               {getFieldDecorator('output.elementType.type', {
-                initialValue: props.data.output?.elementType.type,
+                initialValue: props.data.output?.elementType?.type,
               })(
                 <Select
                   placeholder="请选择"
