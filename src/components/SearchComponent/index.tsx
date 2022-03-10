@@ -2,6 +2,7 @@ import type { ISchema } from '@formily/json-schema';
 import { createSchemaField } from '@formily/react';
 import {
   ArrayItems,
+  DatePicker,
   Form,
   FormButtonGroup,
   FormGrid,
@@ -13,7 +14,7 @@ import {
   Select,
   Space,
 } from '@formily/antd';
-import type { Field } from '@formily/core';
+import type { Field, FieldDataSource } from '@formily/core';
 import { createForm, onFieldReact } from '@formily/core';
 import GroupNameControl from '@/components/SearchComponent/GroupNameControl';
 import { DeleteOutlined, DoubleRightOutlined } from '@ant-design/icons';
@@ -82,6 +83,7 @@ const SchemaField = createSchemaField({
     NumberPicker,
     FormGrid,
     ArrayItems,
+    DatePicker,
     PreviewText,
     GroupNameControl,
     Space,
@@ -114,14 +116,19 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
         validateFirst: true,
         initialValues: initParams,
         effects() {
-          onFieldReact('*.*.column', (typeFiled, f) => {
+          onFieldReact('*.*.column', async (typeFiled, f) => {
             const _column = (typeFiled as Field).value;
             const _field = field.find((item) => item.dataIndex === _column);
             if (_field?.valueType === 'select') {
-              const option = Object.values(_field?.valueEnum || {}).map((item) => ({
-                label: item.text,
-                value: item.status,
-              }));
+              let option: { label: any; value: any }[] | FieldDataSource | undefined = [];
+              if (_field?.valueEnum) {
+                option = Object.values(_field?.valueEnum || {}).map((item) => ({
+                  label: item.text,
+                  value: item.status,
+                }));
+              } else if (_field?.request) {
+                option = await _field.request();
+              }
               f.setFieldState(typeFiled.query('.termType'), async (state) => {
                 state.value = 'eq';
               });
@@ -137,6 +144,14 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
               });
               f.setFieldState(typeFiled.query('.termType'), async (state) => {
                 state.value = 'eq';
+              });
+            } else if (_field?.valueType === 'dateTime') {
+              f.setFieldState(typeFiled.query('.value'), async (state) => {
+                state.componentType = 'DatePicker';
+                state.componentProps = { showTime: true };
+              });
+              f.setFieldState(typeFiled.query('.termType'), async (state) => {
+                state.value = 'gt';
               });
             }
           });
