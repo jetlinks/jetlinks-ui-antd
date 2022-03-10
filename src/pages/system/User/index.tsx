@@ -15,7 +15,6 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import { useRef, useState } from 'react';
 import Save from './Save';
 import { observer } from '@formily/react';
-import { request } from 'umi';
 
 export const service = new Service('user');
 
@@ -54,12 +53,6 @@ const User = observer(() => {
           },
         ],
       },
-    },
-    {
-      title: '测试字段',
-      dataIndex: 'test',
-      align: 'center',
-      request: () => request('/jetlinks/dictionary/device-log-type/items'),
     },
     {
       title: intl.formatMessage({

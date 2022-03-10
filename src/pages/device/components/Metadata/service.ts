@@ -41,6 +41,11 @@ class Service extends BaseService<any> {
     request(`/${SystemConst.API_BASE}/protocol/units`, {
       method: 'GET',
     });
+
+  public getStreamingAggType = () =>
+    request(`/${SystemConst.API_BASE}/dictionary/streaming-agg-type/items`, {
+      method: 'GET',
+    });
 }
 
 export default Service;
