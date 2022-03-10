@@ -79,25 +79,31 @@ const Property = (props: Props) => {
       title: '操作',
       key: 'action',
       render: (text: any, record: any) => (
-        <Space size="middle" style={{ color: '#1d39c4' }}>
+        <Space size="middle">
           {(record.expands?.readOnly === false || record.expands?.readOnly === 'false') && (
-            <EditOutlined
+            <a
               onClick={() => {
                 setVisible(true);
               }}
-            />
+            >
+              <EditOutlined />
+            </a>
           )}
-          <SyncOutlined
+          <a
             onClick={() => {
               refreshProperty(record?.id);
             }}
-          />
-          <UnorderedListOutlined
+          >
+            <SyncOutlined />
+          </a>
+          <a
             onClick={() => {
               setCurrentInfo(record);
               setInfoVisible(true);
             }}
-          />
+          >
+            <UnorderedListOutlined />
+          </a>
         </Space>
       ),
     },

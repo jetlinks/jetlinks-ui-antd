@@ -1,13 +1,13 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import React, { useEffect, useRef } from 'react';
 import {
-  EditOutlined,
   CloseCircleOutlined,
-  PlayCircleOutlined,
   DeleteOutlined,
+  EditOutlined,
+  PlayCircleOutlined,
 } from '@ant-design/icons';
-import { Menu, Tooltip, Popconfirm, message, Button, Upload, Badge } from 'antd';
-import type { ProColumns, ActionType } from '@jetlinks/pro-table';
+import { Badge, Button, Menu, message, Popconfirm, Tooltip, Upload } from 'antd';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import BaseCrud from '@/components/BaseCrud';
 import { CurdModel } from '@/components/BaseCrud/model';
@@ -17,9 +17,9 @@ import type { ISchema } from '@formily/json-schema';
 import Service from '@/pages/system/Permission/service';
 import { model } from '@formily/reactive';
 import { observer } from '@formily/react';
-import moment from 'moment';
 import SystemConst from '@/utils/const';
 import Token from '@/utils/token';
+import { downloadObject } from '@/utils/util';
 
 export const service = new Service('permission');
 
@@ -28,23 +28,6 @@ const defaultAction = [
   { action: 'save', name: '保存', describe: '保存' },
   { action: 'delete', name: '删除', describe: '删除' },
 ];
-
-const downloadObject = (record: any, fileName: string) => {
-  // 创建隐藏的可下载链接
-  const eleLink = document.createElement('a');
-  eleLink.download = `${fileName}-${
-    record.name || moment(new Date()).format('YYYY/MM/DD HH:mm:ss')
-  }.json`;
-  eleLink.style.display = 'none';
-  // 字符内容转变成blob地址
-  const blob = new Blob([JSON.stringify(record)]);
-  eleLink.href = URL.createObjectURL(blob);
-  // 触发点击
-  document.body.appendChild(eleLink);
-  eleLink.click();
-  // 然后移除
-  document.body.removeChild(eleLink);
-};
 
 const PermissionModel = model<{
   assetsTypesList: { label: string; value: string }[];
@@ -55,13 +38,12 @@ const Permission: React.FC = observer(() => {
   useEffect(() => {
     service.getAssetTypes().subscribe((resp) => {
       if (resp.status === 200) {
-        const list = resp.result.map((item: { name: string; id: string }) => {
+        PermissionModel.assetsTypesList = resp.result.map((item: { name: string; id: string }) => {
           return {
             label: item.name,
             value: item.id,
           };
         });
-        PermissionModel.assetsTypesList = list;
       }
     });
   }, []);
