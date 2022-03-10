@@ -11,6 +11,7 @@ import Alarm from '@/pages/device/components/Alarm';
 import Info from '@/pages/device/Instance/Detail/Info';
 import Functions from '@/pages/device/Instance/Detail/Functions';
 import Running from '@/pages/device/Instance/Detail/Running';
+import ChildDevice from '@/pages/device/Instance/Detail/ChildDevice'
 import { useIntl } from '@@/plugin-locale/localeExports';
 import Metadata from '../../components/Metadata';
 import type { DeviceMetadata } from '@/pages/device/Product/typings';
@@ -32,16 +33,6 @@ const InstanceDetail = observer(() => {
     });
   };
   const params = useParams<{ id: string }>();
-  useEffect(() => {
-    if (!InstanceModel.current && !params.id) {
-      history.goBack();
-    } else {
-      getDetail(InstanceModel.current?.id || params.id);
-    }
-    return () => {
-      MetadataAction.clean();
-    };
-  }, [params.id]);
 
   const resetMetadata = async () => {
     const resp = await service.deleteMetadata(params.id);
@@ -103,6 +94,12 @@ const InstanceDetail = observer(() => {
       }),
       component: <Log />,
     },
+    // 产品类型为网关的情况下才显示此模块
+    {
+      key: 'child-device',
+      tab: "子设备",
+      component: <ChildDevice />,
+    },
     {
       key: 'alarm',
       tab: intl.formatMessage({
@@ -124,6 +121,17 @@ const InstanceDetail = observer(() => {
       component: <div>开发中...</div>,
     },
   ];
+
+  useEffect(() => {
+    if (!InstanceModel.current && !params.id) {
+      history.goBack();
+    } else {
+      getDetail(InstanceModel.current?.id || params.id);
+    }
+    return () => {
+      MetadataAction.clean();
+    };
+  }, [params.id]);
 
   return (
     <PageContainer

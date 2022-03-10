@@ -1,22 +1,26 @@
-import type { ProColumns } from '@jetlinks/pro-table';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import type { LogItem } from '@/pages/device/Instance/Detail/Log/typings';
-import { Modal, Tooltip } from 'antd';
-import { EyeOutlined } from '@ant-design/icons';
+import { Card, Modal, Tooltip } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { InstanceModel, service } from '@/pages/device/Instance';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import SearchComponent from '@/components/SearchComponent';
 
 const Log = () => {
   const intl = useIntl();
 
   const [type, setType] = useState<any>({});
+  const actionRef = useRef<ActionType>();
+  const [searchParams, setSearchParams] = useState<any>({});
+
   useEffect(() => {
     service.getLogType().then((resp) => {
       if (resp.status === 200) {
-        const list = (resp.result as { text: string; value: string }[]).reduce(
+        const list = (resp.result as { text: string; type: string }[]).reduce(
           (previousValue, currentValue) => {
-            previousValue[currentValue.value] = currentValue;
+            previousValue[currentValue.type] = currentValue;
             return previousValue;
           },
           {},
@@ -25,6 +29,7 @@ const Log = () => {
       }
     });
   }, []);
+
   const columns: ProColumns<LogItem>[] = [
     {
       dataIndex: 'index',
@@ -35,7 +40,8 @@ const Log = () => {
       title: '类型',
       dataIndex: 'type',
       renderText: (text) => text.text,
-      valueEnum: type,
+      valueType: 'select',
+      valueEnum: type
     },
     {
       title: '时间',
@@ -46,17 +52,11 @@ const Log = () => {
       hideInSearch: true,
     },
     {
-      title: '时间',
-      dataIndex: 'timestamp',
-      defaultSortOrder: 'descend',
-      valueType: 'dateTimeRange',
-      sorter: true,
-      hideInTable: true,
-      search: {
-        transform: (value) => ({
-          timestamp$BTW: value.toString(),
-        }),
-      },
+      title: '内容',
+      dataIndex: 'content',
+      valueType: 'option',
+      ellipsis: true,
+      render: (text, record) => <span>{String(record.content)}</span>
     },
     {
       title: intl.formatMessage({
@@ -79,7 +79,7 @@ const Log = () => {
             onClick={() => Modal.info({ title: '详细信息', content: <pre>{content}</pre> })}
           >
             <Tooltip title="查看">
-              <EyeOutlined />
+              <SearchOutlined />
             </Tooltip>
           </a>,
         ];
@@ -88,17 +88,36 @@ const Log = () => {
   ];
 
   return (
-    <ProTable<LogItem>
-      columns={columns}
-      defaultParams={{
-        deviceId: InstanceModel.detail.id,
-      }}
-      rowKey="id"
-      pagination={{
-        pageSize: 10,
-      }}
-      request={(params) => service.queryLog(InstanceModel.detail.id!, params)}
-    />
+    <Card>
+      <SearchComponent<LogItem>
+        field={[...columns]}
+        target="logs"
+        pattern={'simple'}
+        onSearch={(param) => {
+          actionRef.current?.reset?.();
+          setSearchParams(param);
+        }}
+        onReset={() => {// 重置分页及搜索参数
+          actionRef.current?.reset?.();
+          setSearchParams({});
+        }}
+      />
+      <ProTable<LogItem>
+        search={false}
+        columns={columns}
+        size="small"
+        actionRef={actionRef}
+        params={searchParams}
+        toolBarRender={false}
+        rowKey="id"
+        pagination={{
+          pageSize: 10,
+        }}
+        request={async (params) => {
+          return service.queryLog(InstanceModel.detail.id!, params)
+        }}
+      />
+    </Card>
   );
 };
 export default Log;
