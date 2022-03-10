@@ -170,6 +170,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
   const filterSearchTerm = (): EnumData[] =>
     field
       .filter((item) => item.dataIndex)
+      .filter((item) => !item.hideInSearch)
       .filter((item) => !['index', 'option'].includes(item.dataIndex as string))
       .map((i) => ({ label: i.title, value: i.dataIndex } as EnumData));
 

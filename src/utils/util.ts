@@ -2,7 +2,12 @@ import moment from 'moment';
 import type { Field, FieldDataSource } from '@formily/core';
 import { action } from '@formily/reactive';
 
-export const downObject = (record: Record<string, unknown>, fileName: string) => {
+/**
+ * 把数据下载成JSON
+ * @param record
+ * @param fileName
+ */
+export const downloadObject = (record: Record<string, unknown>, fileName: string) => {
   // 创建隐藏的可下载链接
   const ghostLink = document.createElement('a');
   ghostLink.download = `${fileName}-${
