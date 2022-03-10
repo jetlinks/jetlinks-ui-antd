@@ -12,7 +12,7 @@ import { useMemo, useRef, useState } from 'react';
 import BaseCrud from '@/components/BaseCrud';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import type { ISchema } from '@formily/json-schema';
-import { downObject, useAsyncDataSource } from '@/utils/util';
+import { downloadObject, useAsyncDataSource } from '@/utils/util';
 import { CurdModel } from '@/components/BaseCrud/model';
 import Service from '@/pages/notice/Config/service';
 import { createForm, onFieldValueChange } from '@formily/core';
@@ -222,7 +222,7 @@ const Config = observer(() => {
             <EditOutlined />
           </Tooltip>
         </a>,
-        <a onClick={() => downObject(record, '通知配置')} key="download">
+        <a onClick={() => downloadObject(record, '通知配置')} key="download">
           <Tooltip
             title={intl.formatMessage({
               id: 'pages.data.option.download',

@@ -86,17 +86,17 @@ class Service extends BaseService<DeviceInstance> {
   public bindDevice = (deviceId: string, data: string[]) =>
     request(`/${SystemConst.API_BASE}/device/gateway/${deviceId}/bind`, {
       method: 'POST',
-      data
+      data,
     });
   public unbindDevice = (deviceId: string, childrenId: string, data: Record<string, unknown>) =>
     request(`/${SystemConst.API_BASE}/device/gateway/${deviceId}/unbind/${childrenId}`, {
       method: 'POST',
-      data
+      data,
     });
   public unbindBatchDevice = (deviceId: string, data: string[]) =>
     request(`/${SystemConst.API_BASE}/device/gateway/${deviceId}/unbind`, {
       method: 'POST',
-      data
+      data,
     });
 }
 

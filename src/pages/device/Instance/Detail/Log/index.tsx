@@ -41,7 +41,7 @@ const Log = () => {
       dataIndex: 'type',
       renderText: (text) => text.text,
       valueType: 'select',
-      valueEnum: type
+      valueEnum: type,
     },
     {
       title: '时间',
@@ -56,7 +56,7 @@ const Log = () => {
       dataIndex: 'content',
       valueType: 'option',
       ellipsis: true,
-      render: (text, record) => <span>{String(record.content)}</span>
+      render: (text, record) => <span>{String(record.content)}</span>,
     },
     {
       title: intl.formatMessage({
@@ -97,7 +97,8 @@ const Log = () => {
           actionRef.current?.reset?.();
           setSearchParams(param);
         }}
-        onReset={() => {// 重置分页及搜索参数
+        onReset={() => {
+          // 重置分页及搜索参数
           actionRef.current?.reset?.();
           setSearchParams({});
         }}
@@ -114,7 +115,7 @@ const Log = () => {
           pageSize: 10,
         }}
         request={async (params) => {
-          return service.queryLog(InstanceModel.detail.id!, params)
+          return service.queryLog(InstanceModel.detail.id!, params);
         }}
       />
     </Card>

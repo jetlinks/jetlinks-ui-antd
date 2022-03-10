@@ -9,6 +9,7 @@ import { Form, Modal } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { useRef, useState } from 'react';
 import MonacoEditor from 'react-monaco-editor';
+
 interface Props {
   data: Partial<EventMetadata>;
 }
@@ -110,13 +111,9 @@ const EventLog = (props: Props) => {
           param.pageIndex = param.current - 1;
           delete param.current;
           delete param.total;
-          return service.getEventCount(
-            params.id,
-            data.id!,
-            {
-              ...param,
-            }
-          );
+          return service.getEventCount(params.id, data.id!, {
+            ...param,
+          });
         }}
         pagination={{
           pageSize: 10,

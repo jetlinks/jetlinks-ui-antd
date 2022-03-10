@@ -11,7 +11,7 @@ import Alarm from '@/pages/device/components/Alarm';
 import Info from '@/pages/device/Instance/Detail/Info';
 import Functions from '@/pages/device/Instance/Detail/Functions';
 import Running from '@/pages/device/Instance/Detail/Running';
-import ChildDevice from '@/pages/device/Instance/Detail/ChildDevice'
+import ChildDevice from '@/pages/device/Instance/Detail/ChildDevice';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import Metadata from '../../components/Metadata';
 import type { DeviceMetadata } from '@/pages/device/Product/typings';
@@ -97,7 +97,7 @@ const InstanceDetail = observer(() => {
     // 产品类型为网关的情况下才显示此模块
     {
       key: 'child-device',
-      tab: "子设备",
+      tab: '子设备',
       component: <ChildDevice />,
     },
     {
