@@ -9,8 +9,6 @@ import { Form, Modal } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { useRef, useState } from 'react';
 import MonacoEditor from 'react-monaco-editor';
-import encodeQuery from '@/utils/encodeQuery';
-
 interface Props {
   data: Partial<EventMetadata>;
 }
@@ -115,9 +113,9 @@ const EventLog = (props: Props) => {
           return service.getEventCount(
             params.id,
             data.id!,
-            encodeQuery({
+            {
               ...param,
-            }),
+            }
           );
         }}
         pagination={{

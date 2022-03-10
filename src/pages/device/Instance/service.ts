@@ -58,8 +58,8 @@ class Service extends BaseService<DeviceInstance> {
 
   public getEventCount = (deviceId: string, eventId: string, params: Record<string, unknown>) =>
     request(`/${SystemConst.API_BASE}/device/instance/${deviceId}/event/${eventId}`, {
-      method: 'GET',
-      params,
+      method: 'POST',
+      data: params,
     });
 
   public deleteMetadata = (deviceId: string) =>
@@ -75,13 +75,28 @@ class Service extends BaseService<DeviceInstance> {
 
   public queryLog = (deviceId: string, params: Record<string, unknown>) =>
     request(`/${SystemConst.API_BASE}/device-instance/${deviceId}/logs`, {
-      method: 'GET',
-      params,
+      method: 'POST',
+      data: params,
     });
 
   public getLogType = () =>
     request(`/${SystemConst.API_BASE}/dictionary/device-log-type/items`, {
       method: 'GET',
+    });
+  public bindDevice = (deviceId: string, data: string[]) =>
+    request(`/${SystemConst.API_BASE}/device/gateway/${deviceId}/bind`, {
+      method: 'POST',
+      data
+    });
+  public unbindDevice = (deviceId: string, childrenId: string, data: Record<string, unknown>) =>
+    request(`/${SystemConst.API_BASE}/device/gateway/${deviceId}/unbind/${childrenId}`, {
+      method: 'POST',
+      data
+    });
+  public unbindBatchDevice = (deviceId: string, data: string[]) =>
+    request(`/${SystemConst.API_BASE}/device/gateway/${deviceId}/unbind`, {
+      method: 'POST',
+      data
     });
 }
 
