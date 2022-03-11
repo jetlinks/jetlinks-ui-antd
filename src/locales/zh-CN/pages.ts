@@ -29,6 +29,8 @@ export default {
   'pages.data.option.record': '通知记录',
   'pages.data.option.save': '保存',
   'pages.data.option.assets': '资产分配',
+  'pages.data.option.invoke': '执行',
+  'pages.data.option.cancel': '取消',
   'pages.searchTable.new': '新建',
   'pages.searchTable.titleStatus': '状态',
   'pages.searchTable.titleStatus.all': '全部',
