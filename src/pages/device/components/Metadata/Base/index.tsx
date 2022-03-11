@@ -5,8 +5,8 @@ import { useParams } from 'umi';
 import DB from '@/db';
 import type { MetadataItem, MetadataType } from '@/pages/device/Product/typings';
 import MetadataMapping from './columns';
-import { Button, message, Popconfirm, Tooltip } from 'antd';
-import { EditOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, Popconfirm, Tooltip } from 'antd';
+import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import Edit from './Edit';
 import { observer } from '@formily/react';
 import MetadataModel from './model';
@@ -50,7 +50,7 @@ const BaseMetadata = observer((props: Props) => {
         <a key="delete">
           <Popconfirm title="确认删除？" onConfirm={async () => {}}>
             <Tooltip title="删除">
-              <MinusOutlined />
+              <DeleteOutlined />
             </Tooltip>
           </Popconfirm>
         </a>,
@@ -75,6 +75,19 @@ const BaseMetadata = observer((props: Props) => {
     });
     return () => subscription.unsubscribe();
   }, []);
+
+  const handleSearch = async (name: string) => {
+    if (name) {
+      const result = await DB.getDB()
+        .table(`${type}`)
+        .where('id')
+        .startsWithAnyOfIgnoreCase(name)
+        .toArray();
+      setData(result);
+    } else {
+      await initData();
+    }
+  };
   return (
     <>
       <ProTable
@@ -96,10 +109,7 @@ const BaseMetadata = observer((props: Props) => {
         }}
         toolbar={{
           search: {
-            onSearch: async (value) => {
-              // Todo 物模型属性搜索
-              message.success(value);
-            },
+            onSearch: handleSearch,
           },
         }}
         toolBarRender={() => [
