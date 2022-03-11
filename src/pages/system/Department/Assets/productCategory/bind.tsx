@@ -10,6 +10,7 @@ import { observer } from '@formily/react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import type { ProductCategoryItem } from '@/pages/system/Department/typings';
 import PermissionModal from '@/pages/system/Department/Assets/permissionModal';
+import SearchComponent from '@/components/SearchComponent';
 
 interface Props {
   reload: () => void;
@@ -22,6 +23,7 @@ const Bind = observer((props: Props) => {
   const param = useParams<{ id: string }>();
   const actionRef = useRef<ActionType>();
   const [perVisible, setPerVisible] = useState(false);
+  const [searchParam, setSearchParam] = useState({});
 
   const columns: ProColumns<ProductCategoryItem>[] = [
     {
@@ -84,10 +86,35 @@ const Bind = observer((props: Props) => {
           }
         }}
       />
+      <SearchComponent<ProductCategoryItem>
+        field={columns}
+        pattern="simple"
+        defaultParam={[
+          {
+            column: 'id',
+            termType: 'dim-assets$not',
+            value: {
+              assetType: 'deviceCategory',
+              targets: [
+                {
+                  type: 'org',
+                  id: param.id,
+                },
+              ],
+            },
+          },
+        ]}
+        onSearch={async (data) => {
+          actionRef.current?.reset?.();
+          setSearchParam(data);
+        }}
+        target="department-assets-category"
+      />
       <ProTable<ProductCategoryItem>
         actionRef={actionRef}
         columns={columns}
         rowKey="id"
+        search={false}
         pagination={false}
         rowSelection={{
           selectedRowKeys: Models.bindKeys,
@@ -95,23 +122,7 @@ const Bind = observer((props: Props) => {
             Models.bindKeys = getTableKeys(selectedRows);
           },
         }}
-        params={{
-          terms: [
-            {
-              column: 'id',
-              termType: 'dim-assets$not',
-              value: {
-                assetType: 'deviceCategory',
-                targets: [
-                  {
-                    type: 'org',
-                    id: param.id,
-                  },
-                ],
-              },
-            },
-          ],
-        }}
+        params={searchParam}
         request={async (params) => {
           const response = await service.queryProductCategoryList(params);
           return {
