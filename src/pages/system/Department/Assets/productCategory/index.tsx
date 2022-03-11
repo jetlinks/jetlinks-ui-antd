@@ -12,6 +12,7 @@ import Models from '@/pages/system/Department/Assets/productCategory/model';
 import Service from '@/pages/system/Department/Assets/service';
 import Bind from './bind';
 import SearchComponent from '@/components/SearchComponent';
+import { difference } from 'lodash';
 
 export const service = new Service<ProductCategoryItem>('assets');
 
@@ -24,6 +25,7 @@ export const getTableKeys = (rows: ProductCategoryItem[]): string[] => {
       keys = [...keys, ...childrenKeys];
     }
   });
+
   return keys;
 };
 
@@ -187,8 +189,14 @@ export default observer(() => {
         }}
         rowSelection={{
           selectedRowKeys: Models.unBindKeys,
-          onChange: (selectedRowKeys, selectedRows) => {
-            Models.unBindKeys = selectedRows.map((item) => item.id);
+          onSelect: (record, selected, selectedRows) => {
+            const keys = getTableKeys(selected ? selectedRows : [record]);
+            if (selected) {
+              Models.unBindKeys = keys;
+            } else {
+              // 去除重复的key
+              Models.unBindKeys = difference(Models.unBindKeys, keys);
+            }
           },
         }}
         toolBarRender={() => [

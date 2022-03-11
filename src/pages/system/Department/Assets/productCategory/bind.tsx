@@ -11,6 +11,7 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import type { ProductCategoryItem } from '@/pages/system/Department/typings';
 import PermissionModal from '@/pages/system/Department/Assets/permissionModal';
 import SearchComponent from '@/components/SearchComponent';
+import { difference } from 'lodash';
 
 interface Props {
   reload: () => void;
@@ -118,8 +119,14 @@ const Bind = observer((props: Props) => {
         pagination={false}
         rowSelection={{
           selectedRowKeys: Models.bindKeys,
-          onChange: (selectedRowKeys, selectedRows) => {
-            Models.bindKeys = getTableKeys(selectedRows);
+          onSelect: (record, selected, selectedRows) => {
+            const keys = getTableKeys(selected ? selectedRows : [record]);
+            if (selected) {
+              Models.bindKeys = keys;
+            } else {
+              // 去除重复的key
+              Models.bindKeys = difference(Models.bindKeys, keys);
+            }
           },
         }}
         params={searchParam}
