@@ -34,3 +34,10 @@ export const useAsyncDataSource =
       }),
     );
   };
+
+export const getDateFormat = (
+  date: moment.MomentInput,
+  format: string = 'YYYY-MM-DD HH:mm:ss',
+): string => {
+  return date ? moment(date).format(format) : '-';
+};

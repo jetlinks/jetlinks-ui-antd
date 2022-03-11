@@ -18,7 +18,7 @@ class Service extends BaseService<ProductItem> {
         from((i.result as PageResult)?.data).pipe(
           concatMap((t: ProductItem) =>
             from(this.instanceCount(encodeQuery({ terms: { productId: t.id } }))).pipe(
-              map((count) => ({ ...t, count: count.result })),
+              map((count: any) => ({ ...t, count: count.result })),
             ),
           ),
           toArray(),
@@ -74,8 +74,8 @@ class Service extends BaseService<ProductItem> {
         }),
       ),
     ).pipe(
-      filter((resp) => resp.status === 200),
-      map((resp) => resp.result),
+      filter((resp: any) => resp.status === 200),
+      map((resp: any) => resp.result),
     );
 
   public codecs = () =>
@@ -86,8 +86,8 @@ class Service extends BaseService<ProductItem> {
         }),
       ),
     ).pipe(
-      filter((resp) => resp.status === 200),
-      map((resp) => resp.result),
+      filter((resp: any) => resp.status === 200),
+      map((resp: any) => resp.result),
     );
 
   public convertMetadata = (direction: 'from' | 'to', type: string, data: any) =>
@@ -99,8 +99,8 @@ class Service extends BaseService<ProductItem> {
         }),
       ),
     ).pipe(
-      filter((resp) => resp.status === 200),
-      map((resp) => resp.result),
+      filter((resp: any) => resp.status === 200),
+      map((resp: any) => resp.result),
     );
 
   public productAlarm = (id: string) =>

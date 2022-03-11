@@ -181,6 +181,7 @@ export default {
   'pages.device.productDetail.protocolName': '消息协议',
   'pages.device.productDetail.transportProtocol': '链接协议',
   'pages.device.productDetail.createTime': '创建时间',
+  'pages.device.productDetail.updateTime': '创建时间',
   'pages.device.productDetail.base': '配置信息',
   'pages.device.productDetail.base.save': '保存',
   'pages.device.productDetail.metadata': '物模型',
