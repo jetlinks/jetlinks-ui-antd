@@ -6,8 +6,9 @@ import { message, Modal } from 'antd';
 import { useParams } from 'umi';
 import MemberModel from '@/pages/system/Department/Member/model';
 import { observer } from '@formily/react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
+import SearchComponent from '@/components/SearchComponent';
 
 interface Props {
   reload: () => void;
@@ -18,6 +19,7 @@ interface Props {
 const Bind = observer((props: Props) => {
   const intl = useIntl();
   const param = useParams<{ id: string }>();
+  const [searchParam, setSearchParam] = useState({});
   const actionRef = useRef<ActionType>();
 
   useEffect(() => {
@@ -74,21 +76,22 @@ const Bind = observer((props: Props) => {
       width={990}
       title="绑定"
     >
+      <SearchComponent<UserItem>
+        pattern={'simple'}
+        field={columns}
+        defaultParam={[{ column: 'id$in-dimension$org$not', value: param.id }]}
+        onSearch={async (data) => {
+          actionRef.current?.reset?.();
+          setSearchParam(data);
+        }}
+        target="department-user"
+      />
       <ProTable
         actionRef={actionRef}
         columns={columns}
         rowKey="id"
-        pagination={{
-          pageSize: 5,
-        }}
-        params={{
-          terms: [
-            {
-              column: 'id$in-dimension$org$not',
-              value: param.id,
-            },
-          ],
-        }}
+        search={false}
+        params={searchParam}
         rowSelection={{
           selectedRowKeys: MemberModel.bindUsers,
           onChange: (selectedRowKeys, selectedRows) => {

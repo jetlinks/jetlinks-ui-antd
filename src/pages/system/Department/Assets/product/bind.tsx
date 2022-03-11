@@ -8,8 +8,9 @@ import Models from './model';
 import { useEffect, useRef, useState } from 'react';
 import { observer } from '@formily/react';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import type { ProductCategoryItem } from '@/pages/system/Department/typings';
 import PermissionModal from '@/pages/system/Department/Assets/permissionModal';
+import type { ProductItem } from '@/pages/system/Department/typings';
+import SearchComponent from '@/components/SearchComponent';
 
 interface Props {
   reload: () => void;
@@ -22,8 +23,9 @@ const Bind = observer((props: Props) => {
   const param = useParams<{ id: string }>();
   const actionRef = useRef<ActionType>();
   const [perVisible, setPerVisible] = useState(false);
+  const [searchParam, setSearchParam] = useState({});
 
-  const columns: ProColumns<ProductCategoryItem>[] = [
+  const columns: ProColumns<ProductItem>[] = [
     {
       dataIndex: 'id',
       title: 'ID',
@@ -86,10 +88,35 @@ const Bind = observer((props: Props) => {
           }
         }}
       />
-      <ProTable<ProductCategoryItem>
+      <SearchComponent<ProductItem>
+        field={columns}
+        pattern={'simple'}
+        defaultParam={[
+          {
+            column: 'id',
+            termType: 'dim-assets$not',
+            value: {
+              assetType: 'product',
+              targets: [
+                {
+                  type: 'org',
+                  id: param.id,
+                },
+              ],
+            },
+          },
+        ]}
+        onSearch={async (data) => {
+          actionRef.current?.reset?.();
+          setSearchParam(data);
+        }}
+        target="department-assets-product"
+      />
+      <ProTable<ProductItem>
         actionRef={actionRef}
         columns={columns}
         rowKey="id"
+        search={false}
         pagination={{
           pageSize: 5,
         }}
@@ -100,23 +127,7 @@ const Bind = observer((props: Props) => {
           },
         }}
         request={(params) => service.queryProductList(params)}
-        params={{
-          terms: [
-            {
-              column: 'id',
-              termType: 'dim-assets$not',
-              value: {
-                assetType: 'product',
-                targets: [
-                  {
-                    type: 'org',
-                    id: param.id,
-                  },
-                ],
-              },
-            },
-          ],
-        }}
+        params={searchParam}
       />
     </Modal>
   );

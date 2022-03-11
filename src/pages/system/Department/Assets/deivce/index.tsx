@@ -182,7 +182,6 @@ export default observer(() => {
       />
       <SearchComponent<DeviceItem>
         field={columns}
-        pattern={'simple'}
         defaultParam={[
           {
             column: 'id',

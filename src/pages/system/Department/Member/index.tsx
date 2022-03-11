@@ -155,9 +155,9 @@ const Member = observer(() => {
         reload={() => actionRef.current?.reload()}
       />
       <SearchComponent<MemberItem>
-        pattern={'simple'}
+        // pattern={'simple'}
         field={columns}
-        defaultParam={[{ column: 'id$in-dimension$org', value: param.id, termType: 'eq' }]}
+        defaultParam={[{ column: 'id$in-dimension$org', value: param.id }]}
         onSearch={async (data) => {
           actionRef.current?.reset?.();
           setSearchParam(data);
