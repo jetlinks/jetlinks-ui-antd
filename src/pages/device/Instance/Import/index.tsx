@@ -87,7 +87,8 @@ const NormalUpload = (props: any) => {
           onChange={(info) => {
             if (info.file.status === 'done') {
               message.success('上传成功');
-              props.onChange(info?.file?.response?.result || '');
+              const resp: any = info.file.response || { result: '' };
+              props.onChange(resp?.result || '');
             }
           }}
           showUploadList={false}
