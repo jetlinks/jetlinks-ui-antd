@@ -25,8 +25,8 @@ class Service extends BaseService<PermissionItem> {
   public batchAdd = (data: any) =>
     defer(() =>
       from(
-        request(`/${SystemConst.API_BASE}/dimension/_batch`, {
-          method: 'POST',
+        request(`/${SystemConst.API_BASE}/permission`, {
+          method: 'PATCH',
           data,
         }),
       ),

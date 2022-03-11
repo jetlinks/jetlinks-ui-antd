@@ -258,7 +258,19 @@ const Permission: React.FC = observer(() => {
         'x-decorator': 'FormItem',
         'x-component': 'Input',
         name: 'id',
-        required: true,
+        'x-decorator-props': {
+          tooltip: <div>标识ID需与代码中的标识ID一致</div>,
+        },
+        'x-validator': [
+          {
+            max: 64,
+            message: '最多可输入64个字符',
+          },
+          {
+            required: true,
+            message: '请输入标识(ID)',
+          },
+        ],
       },
       name: {
         title: intl.formatMessage({
@@ -269,7 +281,16 @@ const Permission: React.FC = observer(() => {
         'x-decorator': 'FormItem',
         'x-component': 'Input',
         name: 'name',
-        required: true,
+        'x-validator': [
+          {
+            max: 64,
+            message: '最多可输入64个字符',
+          },
+          {
+            required: true,
+            message: '请输入名称',
+          },
+        ],
       },
       status: {
         title: '状态',
@@ -290,6 +311,9 @@ const Permission: React.FC = observer(() => {
         name: 'properties.assetTypes',
         required: false,
         enum: PermissionModel.assetsTypesList,
+        'x-decorator-props': {
+          tooltip: <div>关联资产为角色权限中的权限分配提供数据支持</div>,
+        },
         'x-component-props': {
           showSearch: true,
           mode: 'multiple',
@@ -416,6 +440,7 @@ const Permission: React.FC = observer(() => {
         actionRef={actionRef}
         columns={columns}
         service={service}
+        defaultParams={{ sorts: [{ name: 'modifyTime', order: 'desc' }] }}
         title={intl.formatMessage({
           id: 'pages.system.permission',
           defaultMessage: '',
