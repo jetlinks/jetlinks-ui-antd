@@ -4,15 +4,15 @@ import MetadataModel from '../model';
 import type { Field, IFieldState } from '@formily/core';
 import { createForm } from '@formily/core';
 import {
-  FormLayout,
   ArrayItems,
   Editable,
+  Form,
+  FormItem,
+  FormLayout,
+  Input,
+  NumberPicker,
   Radio,
   Select,
-  Form,
-  Input,
-  FormItem,
-  NumberPicker,
   Space,
 } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
@@ -27,7 +27,7 @@ import { useMemo } from 'react';
 import { productModel } from '@/pages/device/Product';
 import { service } from '@/pages/device/components/Metadata';
 import { Store } from 'jetlinks-store';
-import type { MetadataItem, UnitType } from '@/pages/device/Product/typings';
+import type { DeviceMetadata, MetadataItem } from '@/pages/device/Product/typings';
 
 import JsonParam from '@/components/Metadata/JsonParam';
 import ArrayParam from '@/components/Metadata/ArrayParam';
@@ -36,7 +36,6 @@ import BooleanEnum from '@/components/Metadata/BooleanParam';
 import ConfigParam from '@/components/Metadata/ConfigParam';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { lastValueFrom } from 'rxjs';
-import type { DeviceMetadata } from '@/pages/device/Product/typings';
 import SystemConst from '@/utils/const';
 import DB from '@/db';
 import _ from 'lodash';
@@ -44,7 +43,6 @@ import { useParams } from 'umi';
 import { InstanceModel } from '@/pages/device/Instance';
 import FRuleEditor from '@/components/FRuleEditor';
 import { action } from '@formily/reactive';
-import type { Response } from '@/utils/typings';
 
 interface Props {
   type: 'product' | 'device';
@@ -364,26 +362,146 @@ const Edit = observer((props: Props) => {
             'x-component': 'Select',
             enum: PropertySource,
           },
-          rule: {
-            type: 'string',
-            'x-component': 'FRuleEditor',
+          virtualRule: {
+            type: 'object',
+            title: '规则配置',
             'x-visible': false,
-            'x-component-props': {
-              property: 'ggg',
+            'x-component': 'Editable.Popover',
+            'x-reactions': {
+              dependencies: ['.source'],
+              fulfill: {
+                state: {
+                  visible: '{{$deps[0]==="rule"}}',
+                },
+              },
             },
-            'x-reactions': [
-              {
-                dependencies: ['.source', '..id'],
-                fulfill: {
-                  state: {
-                    visible: '{{$deps[0]==="rule"}}',
+            properties: {
+              script: {
+                type: 'string',
+                'x-component': 'FRuleEditor',
+                'x-visible': false,
+                'x-reactions': [
+                  {
+                    dependencies: ['.source', '..id'],
+                    fulfill: {
+                      state: {
+                        visible: '{{$deps[0]==="rule"}}',
+                      },
+                      schema: {
+                        'x-component-props.property': '{{$deps[1]}}',
+                      },
+                    },
                   },
-                  schema: {
-                    'x-component-props.property': '{{$deps[1]}}',
+                ],
+              },
+
+              windowType: {
+                type: 'string',
+                title: '窗口',
+                'x-decorator': 'FormItem',
+                'x-component': 'Select',
+                enum: [
+                  { label: '时间窗口', value: 'time' },
+                  { label: '次数窗口', value: 'num' },
+                ],
+                'x-component-props': {
+                  allowClear: true,
+                },
+              },
+              type: {
+                type: 'string',
+                'x-visible': false,
+                'x-reactions': {
+                  dependencies: ['.windowType'],
+                  when: '{{$deps[0]}}',
+                  fulfill: {
+                    state: {
+                      value: 'window',
+                    },
                   },
                 },
               },
-            ],
+              aggType: {
+                type: 'string',
+                title: '聚合函数',
+                'x-decorator': 'FormItem',
+                'x-component': 'Select',
+                'x-reactions': '{{useAsyncDataSource(getStreamingAggType)}}',
+              },
+              window: {
+                type: 'object',
+                properties: {
+                  span: {
+                    title: '窗口长度',
+                    'x-component': 'Input',
+                    'x-decorator': 'FormItem',
+                    'x-reactions': [
+                      {
+                        dependencies: ['..windowType'],
+                        when: '{{$deps[0]==="time"}}',
+                        fulfill: {
+                          state: {
+                            title: '窗口长度（秒）',
+                          },
+                        },
+                      },
+                      {
+                        dependencies: ['..windowType'],
+                        when: '{{$deps[0]==="num"}}',
+                        fulfill: {
+                          state: {
+                            title: '窗口长度（次）',
+                          },
+                        },
+                      },
+                      {
+                        dependencies: ['..windowType'],
+                        when: '{{!$deps[0]}}',
+                        fulfill: {
+                          state: {
+                            title: '窗口长度',
+                          },
+                        },
+                      },
+                    ],
+                  },
+                  every: {
+                    title: '步长',
+                    'x-component': 'Input',
+                    'x-decorator': 'FormItem',
+                    'x-reactions': [
+                      {
+                        dependencies: ['..windowType'],
+                        when: '{{$deps[0]==="time"}}',
+                        fulfill: {
+                          state: {
+                            title: '步长（秒）',
+                          },
+                        },
+                      },
+                      {
+                        dependencies: ['..windowType'],
+                        when: '{{$deps[0]==="num"}}',
+                        fulfill: {
+                          state: {
+                            title: '步长（次）',
+                          },
+                        },
+                      },
+                      {
+                        dependencies: ['..windowType'],
+                        when: '{{!$deps[0]}}',
+                        fulfill: {
+                          state: {
+                            title: '步长',
+                          },
+                        },
+                      },
+                    ],
+                  },
+                },
+              },
+            },
           },
           type: {
             title: '属性类型',
@@ -517,16 +635,27 @@ const Edit = observer((props: Props) => {
     },
   };
 
-  const getUnit = () => service.getUnit();
+  const getUnit = () =>
+    service.getUnit().then((resp) =>
+      resp.result.map((item: any) => ({
+        label: item.description,
+        value: item.id,
+      })),
+    );
+
+  const getStreamingAggType = () =>
+    service.getStreamingAggType().then((resp) =>
+      resp.result.map((item: any) => ({
+        label: `${item.value}(${item.text})`,
+        value: item.value,
+      })),
+    );
+
   const useAsyncDataSource = (services: (arg0: Field) => Promise<any>) => (field: Field) => {
     field.loading = true;
     services(field).then(
-      action.bound!((data: Response<UnitType>) => {
-        // products.current = data.result;
-        field.dataSource = (data.result as UnitType[]).map((item: any) => ({
-          label: item.description,
-          value: item.id,
-        }));
+      action.bound!((data: { label: string; value: string }[]) => {
+        field.dataSource = data;
         field.loading = false;
       }),
     );
@@ -621,8 +750,8 @@ const Edit = observer((props: Props) => {
       >
         <Form form={form} layout="vertical" size="small">
           <SchemaField
-            scope={{ useAsyncDataSource, getUnit }}
-            schema={metadataTypeMapping.properties.schema}
+            scope={{ useAsyncDataSource, getUnit, getStreamingAggType }}
+            schema={metadataTypeMapping[MetadataModel.type].schema}
           />
         </Form>
       </Drawer>
