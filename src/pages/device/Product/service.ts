@@ -133,6 +133,15 @@ class Service extends BaseService<ProductItem> {
     request(`/${SystemConst.API_BASE}/protocol/${protocol}/transports`, {
       method: 'GET',
     });
+
+  //上传物模型属性
+  public importProductProperty = (productId: string, fileUrl: string) =>
+    request(
+      `/${SystemConst.API_BASE}/device/product/${productId}/property-metadata/import?fileUrl=${fileUrl}`,
+      {
+        method: 'POST',
+      },
+    );
 }
 
 export default Service;

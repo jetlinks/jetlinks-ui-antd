@@ -41,10 +41,10 @@ class Service extends BaseService<RoleItem> {
         }),
       ),
     ).pipe(map((item) => item));
-  queryDimensionsList = (type: string) =>
+  queryAssetsList = (type: string) =>
     defer(() =>
       from(
-        request(`/${SystemConst.API_BASE}/asset/${type}/dimensions`, {
+        request(`/${SystemConst.API_BASE}/assets/access-support/${type}`, {
           method: 'GET',
         }),
       ),
