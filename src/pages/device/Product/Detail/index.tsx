@@ -1,6 +1,17 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { history, useParams } from 'umi';
-import { Button, Card, Descriptions, Space, Tabs, Badge, message, Spin, Tooltip } from 'antd';
+import { history, Link, useParams } from 'umi';
+import {
+  Badge,
+  Button,
+  Card,
+  Descriptions,
+  message,
+  Space,
+  Spin,
+  Switch,
+  Tabs,
+  Tooltip,
+} from 'antd';
 import BaseInfo from '@/pages/device/Product/Detail/BaseInfo';
 import { observer } from '@formily/react';
 import { productModel, service } from '@/pages/device/Product';
@@ -9,10 +20,11 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import Metadata from '@/pages/device/components/Metadata';
 import Alarm from '@/pages/device/components/Alarm';
 import type { DeviceMetadata } from '@/pages/device/Product/typings';
-import { Link } from 'umi';
 import { Store } from 'jetlinks-store';
 import MetadataAction from '@/pages/device/components/Metadata/DataBaseAction';
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
+import encodeQuery from '@/utils/encodeQuery';
 
 const ProductDetail = observer(() => {
   const intl = useIntl();
@@ -57,6 +69,11 @@ const ProductDetail = observer(() => {
         if (data.metadata) {
           const metadata: DeviceMetadata = JSON.parse(data.metadata);
           MetadataAction.insert(metadata);
+        }
+      });
+      service.instanceCount(encodeQuery({ terms: { productId: param?.id } })).then((res: any) => {
+        if (res.status === 200) {
+          productModel.current!.count = res.result;
         }
       });
     }
@@ -109,73 +126,27 @@ const ProductDetail = observer(() => {
       content={
         <Spin spinning={loading}>
           <Descriptions size="small" column={2}>
-            <Descriptions.Item
-              label={intl.formatMessage({
-                id: 'pages.device.category',
-                defaultMessage: '产品ID',
-              })}
-            >
-              {productModel.current?.id}
-            </Descriptions.Item>
-            <Descriptions.Item
-              label={intl.formatMessage({
-                id: 'pages.table.productName',
-                defaultMessage: '产品名称',
-              })}
-            >
-              {productModel.current?.name}
-            </Descriptions.Item>
-            <Descriptions.Item
-              label={intl.formatMessage({
-                id: 'pages.device.productDetail.classifiedName',
-                defaultMessage: '所属品类',
-              })}
-            >
-              {productModel.current?.classifiedName}
-            </Descriptions.Item>
-            <Descriptions.Item
-              label={intl.formatMessage({
-                id: 'pages.device.productDetail.protocolName',
-                defaultMessage: '消息协议',
-              })}
-            >
-              {productModel.current?.protocolName}
-            </Descriptions.Item>
-            <Descriptions.Item
-              label={intl.formatMessage({
-                id: 'pages.device.productDetail.transportProtocol',
-                defaultMessage: '链接协议',
-              })}
-            >
-              {productModel.current?.transportProtocol}
-            </Descriptions.Item>
             <Descriptions.Item label={'设备数量'}>
-              <Link to={'/device/instance'}> {productModel.current?.count}</Link>
-            </Descriptions.Item>
-            <Descriptions.Item
-              label={intl.formatMessage({
-                id: 'pages.device.productDetail.createTime',
-                defaultMessage: '创建时间',
-              })}
-            >
-              {productModel.current?.createTime}
+              <Link to={getMenuPathByCode(MENUS_CODE['device/Instance'])}>
+                {' '}
+                {productModel.current?.count || 0}
+              </Link>
             </Descriptions.Item>
           </Descriptions>
         </Spin>
       }
-      extra={[
-        statusMap[productModel.current?.state || 0].component,
-        <Button
-          key="2"
-          onClick={() => {
+      title={productModel.current?.name}
+      subTitle={
+        <Switch
+          key={2}
+          checkedChildren="启用"
+          unCheckedChildren="停用"
+          onChange={() => {
             changeDeploy(statusMap[productModel.current?.state || 0].action);
           }}
-        >
-          {intl.formatMessage({
-            id: `pages.device.productDetail.${statusMap[productModel.current?.state || 0].key}`,
-            defaultMessage: statusMap[productModel.current?.state || 1].name,
-          })}
-        </Button>,
+        />
+      }
+      extra={[
         <Button key="1" type="primary" onClick={() => changeDeploy('deploy')}>
           {intl.formatMessage({
             id: 'pages.device.productDetail.setting',
@@ -185,7 +156,7 @@ const ProductDetail = observer(() => {
       ]}
     >
       <Card>
-        <Tabs tabPosition="left" defaultActiveKey="base">
+        <Tabs defaultActiveKey="base">
           <Tabs.TabPane
             tab={intl.formatMessage({
               id: 'pages.device.productDetail.base',

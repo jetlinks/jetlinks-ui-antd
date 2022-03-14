@@ -1,8 +1,8 @@
 // 资产分配-产品分类
-import ProTable from '@jetlinks/pro-table';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import ProTable from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { Button, Popconfirm, Tooltip, message } from 'antd';
+import { Button, message, Popconfirm, Tooltip } from 'antd';
 import { useRef, useState } from 'react';
 import { useParams } from 'umi';
 import { observer } from '@formily/react';
@@ -12,6 +12,7 @@ import Models from '@/pages/system/Department/Assets/productCategory/model';
 import Service from '@/pages/system/Department/Assets/service';
 import Bind from './bind';
 import SearchComponent from '@/components/SearchComponent';
+import { difference } from 'lodash';
 
 export const service = new Service<ProductCategoryItem>('assets');
 
@@ -24,6 +25,7 @@ export const getTableKeys = (rows: ProductCategoryItem[]): string[] => {
       keys = [...keys, ...childrenKeys];
     }
   });
+
   return keys;
 };
 
@@ -141,7 +143,6 @@ export default observer(() => {
       />
       <SearchComponent<ProductCategoryItem>
         field={columns}
-        pattern="simple"
         defaultParam={[
           {
             column: 'id',
@@ -188,8 +189,14 @@ export default observer(() => {
         }}
         rowSelection={{
           selectedRowKeys: Models.unBindKeys,
-          onChange: (selectedRowKeys, selectedRows) => {
-            Models.unBindKeys = selectedRows.map((item) => item.id);
+          onSelect: (record, selected, selectedRows) => {
+            const keys = getTableKeys(selected ? selectedRows : [record]);
+            if (selected) {
+              Models.unBindKeys = keys;
+            } else {
+              // 去除重复的key
+              Models.unBindKeys = difference(Models.unBindKeys, keys);
+            }
           },
         }}
         toolBarRender={() => [

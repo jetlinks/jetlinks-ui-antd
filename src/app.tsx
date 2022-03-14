@@ -210,8 +210,8 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
 
 export function patchRoutes(routes: any) {
   if (extraRoutes && extraRoutes.length) {
-    console.log(getRoutes(extraRoutes));
-    routes.routes[1].routes = [...routes.routes[1].routes, ...getRoutes(extraRoutes)];
+    const basePath = routes.routes.find((_route: any) => _route.path === '/')!;
+    basePath.routes = [...basePath.routes, ...getRoutes(extraRoutes)];
   }
 }
 

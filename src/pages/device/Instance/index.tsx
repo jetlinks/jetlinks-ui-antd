@@ -1,22 +1,33 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import type { ProColumns, ActionType } from '@jetlinks/pro-table';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import ProTable from '@jetlinks/pro-table';
 import type { DeviceInstance } from '@/pages/device/Instance/typings';
 import moment from 'moment';
-import { Badge, message, Popconfirm, Tooltip } from 'antd';
-import { useRef } from 'react';
-import BaseCrud from '@/components/BaseCrud';
+import { Badge, Button, Dropdown, Menu, message, Popconfirm, Tooltip } from 'antd';
+import { useRef, useState } from 'react';
 import { Link } from 'umi';
 import {
-  CloseCircleOutlined,
-  EditOutlined,
-  EyeOutlined,
-  PlayCircleOutlined,
+  CheckCircleOutlined,
+  DeleteOutlined,
+  ExportOutlined,
+  ImportOutlined,
+  PlusOutlined,
+  SearchOutlined,
+  StopOutlined,
+  SyncOutlined,
 } from '@ant-design/icons';
-import { CurdModel } from '@/components/BaseCrud/model';
 import { model } from '@formily/reactive';
 import Service from '@/pages/device/Instance/service';
 import type { MetadataItem } from '@/pages/device/Product/typings';
 import { useIntl } from '@@/plugin-locale/localeExports';
+import Save from './Save';
+import Export from './Export';
+import Import from './Import';
+import Process from './Process';
+import encodeQuery from '@/utils/encodeQuery';
+import SearchComponent from '@/components/SearchComponent';
+import SystemConst from '@/utils/const';
+import Token from '@/utils/token';
 
 const statusMap = new Map();
 statusMap.set('在线', 'success');
@@ -43,7 +54,17 @@ export const InstanceModel = model<{
 export const service = new Service('device/instance');
 const Instance = () => {
   const actionRef = useRef<ActionType>();
+  const [visible, setVisible] = useState<boolean>(false);
+  const [exportVisible, setExportVisible] = useState<boolean>(false);
+  const [importVisible, setImportVisible] = useState<boolean>(false);
+  const [operationVisible, setOperationVisible] = useState<boolean>(false);
+  const [type, setType] = useState<'active' | 'sync'>('active');
+  const [api, setApi] = useState<string>('');
+  const [current, setCurrent] = useState<DeviceInstance>();
+  const [searchParams, setSearchParams] = useState<any>({});
+  const [bindKeys, setBindKeys] = useState<any[]>([]);
   const intl = useIntl();
+
   const columns: ProColumns<DeviceInstance>[] = [
     {
       dataIndex: 'index',
@@ -146,19 +167,22 @@ const Instance = () => {
             })}
             key={'detail'}
           >
-            <EyeOutlined />
+            <SearchOutlined />
           </Tooltip>
         </Link>,
-        <a key="editable" onClick={() => CurdModel.update(record)}>
-          <Tooltip
-            title={intl.formatMessage({
-              id: 'pages.data.option.edit',
-              defaultMessage: '编辑',
-            })}
-          >
-            <EditOutlined />
-          </Tooltip>
-        </a>,
+        // <a key="editable" onClick={() => {
+        //   setVisible(true)
+        //   setCurrent(record)
+        // }}>
+        //   <Tooltip
+        //     title={intl.formatMessage({
+        //       id: 'pages.data.option.edit',
+        //       defaultMessage: '编辑',
+        //     })}
+        //   >
+        //     <EditOutlined />
+        //   </Tooltip>
+        // </a>,
 
         <a href={record.id} target="_blank" rel="noopener noreferrer" key="view">
           <Popconfirm
@@ -167,10 +191,11 @@ const Instance = () => {
               defaultMessage: '确认禁用？',
             })}
             onConfirm={async () => {
-              await service.update({
-                id: record.id,
-                // status: record.state?.value ? 0 : 1,
-              });
+              if (record.state.value !== 'notActive') {
+                await service.undeployDevice(record.id);
+              } else {
+                await service.deployDevice(record.id);
+              }
               message.success(
                 intl.formatMessage({
                   id: 'pages.data.option.success',
@@ -182,11 +207,33 @@ const Instance = () => {
           >
             <Tooltip
               title={intl.formatMessage({
-                id: `pages.data.option.${record.state.value ? 'disabled' : 'enabled'}`,
-                defaultMessage: record.state.value ? '禁用' : '启用',
+                id: `pages.data.option.${
+                  record.state.value !== 'notActive' ? 'disabled' : 'enabled'
+                }`,
+                defaultMessage: record.state.value !== 'notActive' ? '禁用' : '启用',
               })}
             >
-              {record.state.value ? <CloseCircleOutlined /> : <PlayCircleOutlined />}
+              {record.state.value !== 'notActive' ? <StopOutlined /> : <CheckCircleOutlined />}
+            </Tooltip>
+          </Popconfirm>
+        </a>,
+
+        <a key={'delete'}>
+          <Popconfirm
+            title="确认删除"
+            onConfirm={async () => {
+              await service.remove(record.id);
+              message.success(
+                intl.formatMessage({
+                  id: 'pages.data.option.success',
+                  defaultMessage: '操作成功!',
+                }),
+              );
+              actionRef.current?.reload();
+            }}
+          >
+            <Tooltip title={'删除'}>
+              <DeleteOutlined />
             </Tooltip>
           </Popconfirm>
         </a>,
@@ -194,20 +241,192 @@ const Instance = () => {
     },
   ];
 
-  const schema = {};
+  const menu = (
+    <Menu>
+      <Menu.Item key="1">
+        <Button
+          icon={<ExportOutlined />}
+          type="default"
+          onClick={() => {
+            setExportVisible(true);
+          }}
+        >
+          批量导出设备
+        </Button>
+      </Menu.Item>
+      <Menu.Item key="2">
+        <Button
+          icon={<ImportOutlined />}
+          onClick={() => {
+            setImportVisible(true);
+          }}
+        >
+          批量导入设备
+        </Button>
+      </Menu.Item>
+      <Menu.Item key="4">
+        <Popconfirm
+          title={'确认激活全部设备？'}
+          onConfirm={() => {
+            setType('active');
+            const activeAPI = `/${
+              SystemConst.API_BASE
+            }/device-instance/deploy?:X_Access_Token=${Token.get()}`;
+            setApi(activeAPI);
+            setOperationVisible(true);
+          }}
+        >
+          <Button icon={<CheckCircleOutlined />} type="primary" ghost>
+            激活全部设备
+          </Button>
+        </Popconfirm>
+      </Menu.Item>
+      <Menu.Item key="5">
+        <Button
+          icon={<SyncOutlined />}
+          type="primary"
+          onClick={() => {
+            setType('sync');
+            const syncAPI = `/${
+              SystemConst.API_BASE
+            }/device-instance/state/_sync?:X_Access_Token=${Token.get()}`;
+            setApi(syncAPI);
+            setOperationVisible(true);
+          }}
+        >
+          同步设备状态
+        </Button>
+      </Menu.Item>
+      {bindKeys.length > 0 && (
+        <Menu.Item key="3">
+          <Popconfirm
+            title="确认删除选中设备?"
+            onConfirm={() => {
+              service.batchDeleteDevice(bindKeys).then((resp) => {
+                if (resp.status === 200) {
+                  message.success('操作成功');
+                  actionRef.current?.reset?.();
+                }
+              });
+            }}
+            okText="确认"
+            cancelText="取消"
+          >
+            <Button icon={<DeleteOutlined />} type="primary" danger>
+              删除选中设备
+            </Button>
+          </Popconfirm>
+        </Menu.Item>
+      )}
+      {bindKeys.length > 0 && (
+        <Menu.Item key="6">
+          <Popconfirm
+            title="确认禁用选中设备?"
+            onConfirm={() => {
+              service.batchUndeployDevice(bindKeys).then((resp) => {
+                if (resp.status === 200) {
+                  message.success('操作成功');
+                  actionRef.current?.reset?.();
+                }
+              });
+            }}
+            okText="确认"
+            cancelText="取消"
+          >
+            <Button icon={<StopOutlined />} type="primary" danger>
+              禁用选中设备
+            </Button>
+          </Popconfirm>
+        </Menu.Item>
+      )}
+    </Menu>
+  );
 
   return (
     <PageContainer>
-      <BaseCrud
-        columns={columns}
-        service={service}
-        title={intl.formatMessage({
-          id: 'pages.device.instance',
-          defaultMessage: '设备管理',
-        })}
-        schema={schema}
-        actionRef={actionRef}
+      <SearchComponent<DeviceInstance>
+        field={columns}
+        target="device-instance"
+        onSearch={(data) => {
+          // 重置分页数据
+          actionRef.current?.reset?.();
+          setSearchParams(data);
+        }}
+        onReset={() => {
+          // 重置分页及搜索参数
+          actionRef.current?.reset?.();
+          setSearchParams({});
+        }}
       />
+      <ProTable<DeviceInstance>
+        columns={columns}
+        actionRef={actionRef}
+        params={searchParams}
+        options={{ fullScreen: true }}
+        request={(params) => service.query(encodeQuery({ ...params, sorts: { id: 'ascend' } }))}
+        rowKey="id"
+        search={false}
+        pagination={{ pageSize: 10 }}
+        rowSelection={{
+          selectedRowKeys: bindKeys,
+          onChange: (selectedRowKeys, selectedRows) => {
+            setBindKeys(selectedRows.map((item) => item.id));
+          },
+        }}
+        toolBarRender={() => [
+          <Button
+            onClick={() => {
+              setVisible(true);
+              setCurrent(undefined);
+            }}
+            key="button"
+            icon={<PlusOutlined />}
+            type="primary"
+          >
+            {intl.formatMessage({
+              id: 'pages.data.option.add',
+              defaultMessage: '新增',
+            })}
+          </Button>,
+          <Dropdown key={'more'} overlay={menu} placement="bottom">
+            <Button>批量操作</Button>
+          </Dropdown>,
+        ]}
+      />
+      <Save
+        data={current}
+        close={() => {
+          setVisible(false);
+          actionRef.current?.reload();
+        }}
+        visible={visible}
+      />
+      <Export
+        data={searchParams}
+        close={() => {
+          setExportVisible(false);
+          actionRef.current?.reload();
+        }}
+        visible={exportVisible}
+      />
+      <Import
+        data={current}
+        close={() => {
+          setImportVisible(false);
+          actionRef.current?.reload();
+        }}
+        visible={importVisible}
+      />
+      {operationVisible && (
+        <Process
+          api={api}
+          action={type}
+          closeVisible={() => {
+            setOperationVisible(false);
+            actionRef.current?.reload();
+          }}
+        />
+      )}
     </PageContainer>
   );
 };

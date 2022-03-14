@@ -1,7 +1,7 @@
 // 部门-用户管理
 import { PageContainer } from '@ant-design/pro-layout';
-import ProTable from '@jetlinks/pro-table';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import ProTable from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { Badge, Button, message, Popconfirm, Tooltip } from 'antd';
 import { useRef, useState } from 'react';
@@ -10,7 +10,7 @@ import { observer } from '@formily/react';
 import MemberModel from '@/pages/system/Department/Member/model';
 import type { MemberItem } from '@/pages/system/Department/typings';
 import Service from '@/pages/system/Department/Member/service';
-import { PlusOutlined, DisconnectOutlined } from '@ant-design/icons';
+import { DisconnectOutlined, PlusOutlined } from '@ant-design/icons';
 import Bind from './bind';
 import SearchComponent from '@/components/SearchComponent';
 
@@ -155,9 +155,9 @@ const Member = observer(() => {
         reload={() => actionRef.current?.reload()}
       />
       <SearchComponent<MemberItem>
-        pattern={'simple'}
+        // pattern={'simple'}
         field={columns}
-        defaultParam={[{ column: 'id$in-dimension$org', value: param.id, termType: 'eq' }]}
+        defaultParam={[{ column: 'id$in-dimension$org', value: param.id }]}
         onSearch={async (data) => {
           actionRef.current?.reset?.();
           setSearchParam(data);

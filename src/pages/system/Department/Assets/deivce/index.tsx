@@ -1,8 +1,8 @@
 // 资产分配-产品分类
-import ProTable from '@jetlinks/pro-table';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import ProTable from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { Button, message, Popconfirm, Tooltip, Badge } from 'antd';
+import { Badge, Button, message, Popconfirm, Tooltip } from 'antd';
 import { useRef, useState } from 'react';
 import { useParams } from 'umi';
 import { observer } from '@formily/react';
@@ -182,7 +182,6 @@ export default observer(() => {
       />
       <SearchComponent<DeviceItem>
         field={columns}
-        pattern={'simple'}
         defaultParam={[
           {
             column: 'id',

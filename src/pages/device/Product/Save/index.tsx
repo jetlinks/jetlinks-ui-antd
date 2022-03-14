@@ -1,7 +1,7 @@
 import { message, Modal } from 'antd';
 import type { Field } from '@formily/core';
 import { createForm, onFieldValueChange } from '@formily/core';
-import { TreeSelect, Form, FormItem, FormLayout, Input, Radio, Select } from '@formily/antd';
+import { Form, FormItem, FormLayout, Input, Radio, Select, TreeSelect } from '@formily/antd';
 import { createSchemaField } from '@formily/react';
 import type { ISchema } from '@formily/json-schema';
 import FUpload from '@/components/Upload';
@@ -9,11 +9,14 @@ import { service } from '@/pages/device/Product';
 import { action } from '@formily/reactive';
 import 'antd/lib/tree-select/style/index.less';
 import type { ProductItem } from '@/pages/device/Product/typings';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 interface Props {
   visible: boolean;
   close: () => void;
+  reload: () => void;
   data?: ProductItem;
+  model: 'add' | 'edit';
 }
 
 /**
@@ -36,6 +39,8 @@ const treeToArray = (tree: any) => {
 
 const Save = (props: Props) => {
   const { visible, close, data } = props;
+  const intl = useIntl();
+
   const handleData = () => {
     // 特殊处理deviceType字段
     if (data) {
@@ -119,6 +124,7 @@ const Save = (props: Props) => {
     const resp = (await service.update(values)) as any;
     if (resp.status === 200) {
       message.success('保存成功');
+      props.reload();
       props.close();
     }
   };
@@ -144,6 +150,9 @@ const Save = (props: Props) => {
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               tooltip: <div>若不填写,系统将自动生成唯一ID</div>,
+            },
+            'x-component-props': {
+              disabled: props.model === 'edit',
             },
           },
           name: {
@@ -223,7 +232,16 @@ const Save = (props: Props) => {
     },
   };
   return (
-    <Modal visible={visible} onCancel={() => close()} width="30vw" title="新增" onOk={handleSave}>
+    <Modal
+      visible={visible}
+      onCancel={() => close()}
+      width="30vw"
+      title={intl.formatMessage({
+        id: `pages.data.option.${props.model}`,
+        defaultMessage: '新增',
+      })}
+      onOk={handleSave}
+    >
       <Form form={form}>
         <SchemaField schema={schema} scope={{ useAsyncDataSource }} />
       </Form>

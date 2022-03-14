@@ -1,5 +1,10 @@
 import type { BaseItem, State } from '@/utils/typings';
 
+type DeviceType = {
+  text: string;
+  value: string;
+};
+
 export type ProductItem = {
   id: string;
   name: string;
@@ -7,13 +12,9 @@ export type ProductItem = {
   classifiedName: string;
   configuration: Record<string, any>;
   createTime: number;
+  updateTime: number;
   creatorId: string;
-  deviceType:
-    | {
-        text: string;
-        value: string;
-      }
-    | string;
+  deviceType: string | DeviceType;
   count?: number;
   messageProtocol: string;
   metadata: string;
@@ -21,6 +22,7 @@ export type ProductItem = {
   protocolName: string;
   state: number;
   transportProtocol: string;
+  describe?: string;
 };
 
 export type ConfigProperty = {

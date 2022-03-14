@@ -1,14 +1,14 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { Badge, Button, message, Space, Tooltip } from 'antd';
+import { Badge, Button, message, Popconfirm, Space, Tooltip } from 'antd';
 import type { ProductItem } from '@/pages/device/Product/typings';
 import {
-  CloseCircleOutlined,
+  DeleteOutlined,
   DownloadOutlined,
   EditOutlined,
   EyeOutlined,
-  MinusOutlined,
   PlayCircleOutlined,
   PlusOutlined,
+  StopOutlined,
 } from '@ant-design/icons';
 import Service from '@/pages/device/Product/service';
 import { observer } from '@formily/react';
@@ -16,11 +16,12 @@ import { model } from '@formily/reactive';
 import { Link } from 'umi';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { useRef, useState } from 'react';
 import ProTable from '@jetlinks/pro-table';
-import { lastValueFrom } from 'rxjs';
+import { useRef, useState } from 'react';
 import encodeQuery from '@/utils/encodeQuery';
 import Save from '@/pages/device/Product/Save';
+import SearchComponent from '@/components/SearchComponent';
+import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 
 export const service = new Service('device-product');
 export const statusMap = {
@@ -38,6 +39,8 @@ const Product = observer(() => {
   const [current, setCurrent] = useState<ProductItem>();
   const actionRef = useRef<ActionType>();
   const intl = useIntl();
+  const [param, setParam] = useState({});
+
   const status = {
     1: (
       <Badge
@@ -58,31 +61,54 @@ const Product = observer(() => {
       />
     ),
   };
+
+  const deleteItem = async (id: string) => {
+    const response: any = await service.remove(id);
+    if (response.status === 200) {
+      message.success(
+        intl.formatMessage({
+          id: 'pages.data.option.success',
+          defaultMessage: '操作成功!',
+        }),
+      );
+    }
+    actionRef.current?.reload();
+  };
+
+  /**
+   * table 查询参数
+   * @param data
+   */
+  const searchFn = (data: any) => {
+    setParam({
+      terms: data,
+    });
+  };
+
+  const changeDeploy = (id: string, state: 'deploy' | 'undeploy') => {
+    service.changeDeploy(id, state).subscribe((res) => {
+      if (res) {
+        actionRef?.current?.reload();
+      }
+    });
+  };
+
   const columns: ProColumns<ProductItem>[] = [
-    {
-      dataIndex: 'index',
-      valueType: 'indexBorder',
-      width: 48,
-    },
     {
       title: 'ID',
       dataIndex: 'id',
     },
     {
-      title: '产品名称',
+      title: '名称',
       dataIndex: 'name',
+    },
+    {
+      title: '设备类型',
+      dataIndex: 'classifiedName',
     },
     {
       title: '状态',
       render: (_, row) => <Space size={0}>{status[row.state]}</Space>,
-    },
-    {
-      title: '设备数量',
-      dataIndex: 'count',
-    },
-    {
-      title: '设备分类',
-      dataIndex: 'classifiedName',
     },
     {
       title: intl.formatMessage({
@@ -104,7 +130,7 @@ const Product = observer(() => {
             onClick={() => {
               productModel.current = record;
             }}
-            to={`/device/product/detail/${record.id}`}
+            to={`${getMenuPathByParams(MENUS_CODE['device/Product/Detail'], record.id)}`}
             key="link"
           >
             <EyeOutlined />
@@ -147,46 +173,76 @@ const Product = observer(() => {
             />
           </a>
         </Tooltip>,
-        <Tooltip
-          title={intl.formatMessage({
-            id: `pages.data.option.${record.state ? 'disabled' : 'enabled'}`,
-            defaultMessage: record.state ? '禁用' : '启用',
-          })}
+        <Popconfirm
           key={'state'}
-        >
-          <a key="state">{record.state ? <CloseCircleOutlined /> : <PlayCircleOutlined />}</a>
-        </Tooltip>,
-        <Tooltip
           title={intl.formatMessage({
-            id: 'pages.data.option.remove',
-            defaultMessage: '删除',
+            id: `pages.data.option.${record.state ? 'disabled' : 'enabled'}.tips`,
+            defaultMessage: '是否删除该菜单',
           })}
-          key={'remove'}
+          onConfirm={() => {
+            changeDeploy(record.id, record.state ? 'undeploy' : 'deploy');
+          }}
         >
-          <a key="delete">
-            <MinusOutlined />
-          </a>
-        </Tooltip>,
+          <Tooltip
+            title={intl.formatMessage({
+              id: `pages.data.option.${record.state ? 'disabled' : 'enabled'}`,
+              defaultMessage: record.state ? '禁用' : '启用',
+            })}
+          >
+            <a key="state">{record.state ? <StopOutlined /> : <PlayCircleOutlined />}</a>
+          </Tooltip>
+        </Popconfirm>,
+        <Popconfirm
+          key="unBindUser"
+          title={intl.formatMessage({
+            id: 'page.system.menu.table.delete',
+            defaultMessage: '是否删除该菜单',
+          })}
+          onConfirm={() => {
+            deleteItem(record.id);
+          }}
+        >
+          <Tooltip
+            title={intl.formatMessage({
+              id: 'pages.data.option.remove.tips',
+              defaultMessage: '删除',
+            })}
+            key={'remove'}
+          >
+            <a key="delete">
+              <DeleteOutlined />
+            </a>
+          </Tooltip>
+        </Popconfirm>,
       ],
     },
   ];
 
   return (
     <PageContainer>
+      <SearchComponent field={columns} onSearch={searchFn} />
       <ProTable<ProductItem>
         columns={columns}
         actionRef={actionRef}
         options={{ fullScreen: true }}
-        request={async (params = {}) => {
-          return await lastValueFrom(
-            service.queryZipCount(encodeQuery({ ...params, sorts: { id: 'ascend' } })),
-          );
-        }}
+        // request={async (params = {}) => {
+        //   return await lastValueFrom(
+        //     service.queryZipCount(encodeQuery({ ...params, sorts: { id: 'ascend' } })),
+        //   );
+        // }}
+        params={param}
+        request={(params = {}) =>
+          service.query(encodeQuery({ ...params, sorts: { createTime: 'ascend' } }))
+        }
         rowKey="id"
+        search={false}
         pagination={{ pageSize: 10 }}
         toolBarRender={() => [
           <Button
-            onClick={() => setVisible(true)}
+            onClick={() => {
+              setCurrent(undefined);
+              setVisible(true);
+            }}
             key="button"
             icon={<PlusOutlined />}
             type="primary"
@@ -199,9 +255,12 @@ const Product = observer(() => {
         ]}
       />
       <Save
+        model={!current ? 'add' : 'edit'}
         data={current}
         close={() => {
           setVisible(false);
+        }}
+        reload={() => {
           actionRef.current?.reload();
         }}
         visible={visible}

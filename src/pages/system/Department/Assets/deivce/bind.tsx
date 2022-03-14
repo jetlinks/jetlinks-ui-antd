@@ -1,5 +1,5 @@
 // 资产-产品分类-绑定
-import type { ProColumns, ActionType } from '@jetlinks/pro-table';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { DeviceBadge, service } from './index';
 import { message, Modal } from 'antd';
@@ -10,6 +10,7 @@ import { observer } from '@formily/react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import type { DeviceItem } from '@/pages/system/Department/typings';
 import PermissionModal from '@/pages/system/Department/Assets/permissionModal';
+import SearchComponent from '@/components/SearchComponent';
 
 interface Props {
   reload: () => void;
@@ -22,6 +23,7 @@ const Bind = observer((props: Props) => {
   const param = useParams<{ id: string }>();
   const actionRef = useRef<ActionType>();
   const [perVisible, setPerVisible] = useState(false);
+  const [searchParam, setSearchParam] = useState({});
 
   const columns: ProColumns<DeviceItem>[] = [
     {
@@ -98,13 +100,35 @@ const Bind = observer((props: Props) => {
           }
         }}
       />
+      <SearchComponent<DeviceItem>
+        field={columns}
+        pattern={'simple'}
+        defaultParam={[
+          {
+            column: 'id',
+            termType: 'dim-assets$not',
+            value: {
+              assetType: 'device',
+              targets: [
+                {
+                  type: 'org',
+                  id: param.id,
+                },
+              ],
+            },
+          },
+        ]}
+        onSearch={async (data) => {
+          actionRef.current?.reset?.();
+          setSearchParam(data);
+        }}
+        target="department-assets-device"
+      />
       <ProTable<DeviceItem>
         actionRef={actionRef}
         columns={columns}
         rowKey="id"
-        pagination={{
-          pageSize: 5,
-        }}
+        search={false}
         rowSelection={{
           selectedRowKeys: Models.bindKeys,
           onChange: (selectedRowKeys, selectedRows) => {
@@ -112,23 +136,7 @@ const Bind = observer((props: Props) => {
           },
         }}
         request={(params) => service.queryDeviceList(params)}
-        params={{
-          terms: [
-            {
-              column: 'id',
-              termType: 'dim-assets$not',
-              value: {
-                assetType: 'device',
-                targets: [
-                  {
-                    type: 'org',
-                    id: param.id,
-                  },
-                ],
-              },
-            },
-          ],
-        }}
+        params={searchParam}
       />
     </Modal>
   );
