@@ -6,13 +6,14 @@ import DB from '@/db';
 import type { MetadataItem, MetadataType } from '@/pages/device/Product/typings';
 import MetadataMapping from './columns';
 import { Button, Popconfirm, Tooltip } from 'antd';
-import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, ImportOutlined, PlusOutlined } from '@ant-design/icons';
 import Edit from './Edit';
 import { observer } from '@formily/react';
 import MetadataModel from './model';
 import { Store } from 'jetlinks-store';
 import SystemConst from '@/utils/const';
 import { useIntl } from '@@/plugin-locale/localeExports';
+import PropertyImport from '@/pages/device/Product/Detail/PropertyImport';
 
 interface Props {
   type: MetadataType;
@@ -115,6 +116,16 @@ const BaseMetadata = observer((props: Props) => {
         toolBarRender={() => [
           <Button
             onClick={() => {
+              MetadataModel.importMetadata = true;
+            }}
+            key="button"
+            icon={<ImportOutlined />}
+            type="ghost"
+          >
+            导入属性
+          </Button>,
+          <Button
+            onClick={() => {
               MetadataModel.edit = true;
               MetadataModel.item = undefined;
               MetadataModel.type = type;
@@ -131,6 +142,7 @@ const BaseMetadata = observer((props: Props) => {
           </Button>,
         ]}
       />
+      {MetadataModel.importMetadata && <PropertyImport />}
       {MetadataModel.edit && <Edit type={target} />}
     </>
   );
