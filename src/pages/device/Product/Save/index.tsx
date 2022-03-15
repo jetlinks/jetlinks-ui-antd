@@ -124,7 +124,9 @@ const Save = (props: Props) => {
     const resp = (await service.update(values)) as any;
     if (resp.status === 200) {
       message.success('保存成功');
-      props.reload();
+      if (props.reload) {
+        props.reload();
+      }
       props.close();
     }
   };
@@ -237,7 +239,7 @@ const Save = (props: Props) => {
       onCancel={() => close()}
       width="30vw"
       title={intl.formatMessage({
-        id: `pages.data.option.${props.model}`,
+        id: `pages.data.option.${props.model || 'add'}`,
         defaultMessage: '新增',
       })}
       onOk={handleSave}

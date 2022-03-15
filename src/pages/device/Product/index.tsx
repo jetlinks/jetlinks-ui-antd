@@ -16,12 +16,13 @@ import { model } from '@formily/reactive';
 import { Link } from 'umi';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ProTable from '@jetlinks/pro-table';
 import encodeQuery from '@/utils/encodeQuery';
 import Save from '@/pages/device/Product/Save';
 import SearchComponent from '@/components/SearchComponent';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { useHistory } from 'umi';
 
 export const service = new Service('device-product');
 export const statusMap = {
@@ -39,7 +40,19 @@ const Product = observer(() => {
   const [current, setCurrent] = useState<ProductItem>();
   const actionRef = useRef<ActionType>();
   const intl = useIntl();
-  const [param, setParam] = useState({});
+  const [queryParam, setQueryParam] = useState({});
+  const history = useHistory<Record<string, string>>();
+
+  useEffect(() => {
+    if (history) {
+      const state = history.location.state;
+      if (state) {
+        setQueryParam({
+          terms: history.location.state,
+        });
+      }
+    }
+  }, [history]);
 
   const status = {
     1: (
@@ -80,7 +93,7 @@ const Product = observer(() => {
    * @param data
    */
   const searchFn = (data: any) => {
-    setParam({
+    setQueryParam({
       terms: data,
     });
   };
@@ -230,7 +243,7 @@ const Product = observer(() => {
         //     service.queryZipCount(encodeQuery({ ...params, sorts: { id: 'ascend' } })),
         //   );
         // }}
-        params={param}
+        params={queryParam}
         request={(params = {}) =>
           service.query(encodeQuery({ ...params, sorts: { createTime: 'ascend' } }))
         }

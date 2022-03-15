@@ -268,6 +268,10 @@ export default {
   'pages.device.instanceDetail.alarm': '告警设置',
   'pages.device.instanceDetail.visualization': '可视化',
   'pages.device.instanceDetail.shadow': '设备影子',
+  'pages.device.instanceDetail.IPAddress': 'IP地址',
+  'pages.device.instanceDetail.info': '设备信息',
+  // 设备管理-设备功能
+  'pages.device.instance.function.result': '执行结果',
   // 设备管理-指令下发
   'pages.device.command': '指令下发',
   'pages.device.command.type': '指令类型',

@@ -140,7 +140,7 @@ const Instance = () => {
         id: 'pages.table.description',
         defaultMessage: '说明',
       }),
-      dataIndex: 'description',
+      dataIndex: 'describe',
       width: '15%',
       ellipsis: true,
     },
@@ -395,8 +395,11 @@ const Instance = () => {
       />
       <Save
         data={current}
+        model={!current ? 'add' : 'edit'}
         close={() => {
           setVisible(false);
+        }}
+        reload={() => {
           actionRef.current?.reload();
         }}
         visible={visible}

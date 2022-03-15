@@ -8,19 +8,35 @@ import { service } from '@/pages/device/Instance';
 import 'antd/lib/tree-select/style/index.less';
 import type { DeviceInstance } from '../typings';
 import { useEffect, useState } from 'react';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
 interface Props {
   visible: boolean;
   close: () => void;
-  data?: DeviceInstance;
+  reload: () => void;
+  model?: 'add' | 'edit';
+  data?: Partial<DeviceInstance>;
 }
 
 const Save = (props: Props) => {
   const { visible, close, data } = props;
   const [productList, setProductList] = useState<any[]>([]);
   const form = createForm({
-    initialValues: data,
+    initialValues: {},
   });
+
+  useEffect(() => {
+    if (visible && data) {
+      form.setValues({
+        id: data.id,
+        name: data.name,
+        productId: data.productId,
+        describe: data.describe,
+      });
+    }
+  }, [visible]);
+
+  const intl = useIntl();
 
   useEffect(() => {
     service.getProductList({ paging: false }).then((resp) => {
@@ -46,6 +62,7 @@ const Save = (props: Props) => {
 
   const handleSave = async () => {
     const values = (await form.submit()) as any;
+    console.log(values);
     const productId = values.productId;
     if (productId) {
       const product = productList.find((i) => i.value === productId);
@@ -54,9 +71,13 @@ const Save = (props: Props) => {
     const resp = (await service.update(values)) as any;
     if (resp.status === 200) {
       message.success('保存成功');
+      if (props.reload) {
+        props.reload();
+      }
       props.close();
     }
   };
+
   const schema: ISchema = {
     type: 'object',
     properties: {
@@ -111,7 +132,7 @@ const Save = (props: Props) => {
             enum: [...productList],
           },
           describe: {
-            title: '描述',
+            title: '说明',
             'x-component': 'Input.TextArea',
             'x-decorator': 'FormItem',
             'x-component-props': {
@@ -128,7 +149,10 @@ const Save = (props: Props) => {
       visible={visible}
       onCancel={() => close()}
       width="30vw"
-      title={data?.id ? '编辑' : '新增'}
+      title={intl.formatMessage({
+        id: `pages.data.option.${props.model || 'add'}`,
+        defaultMessage: '新增',
+      })}
       onOk={handleSave}
     >
       <Form form={form}>
