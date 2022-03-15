@@ -1,16 +1,16 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { history, useParams, Link } from 'umi';
+import { history, Link, useParams } from 'umi';
 import {
+  Badge,
   Button,
   Card,
   Descriptions,
-  Space,
-  Tabs,
-  Badge,
   message,
+  Space,
   Spin,
-  Tooltip,
   Switch,
+  Tabs,
+  Tooltip,
 } from 'antd';
 import BaseInfo from '@/pages/device/Product/Detail/BaseInfo';
 import { observer } from '@formily/react';

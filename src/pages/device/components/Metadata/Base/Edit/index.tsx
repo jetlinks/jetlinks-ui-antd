@@ -67,13 +67,13 @@ const Edit = observer((props: Props) => {
     },
     events: {
       title: intl.formatMessage({
-        id: 'pages.device.productDetail.metadata.inputParameter',
+        id: 'pages.device.productDetail.metadata.outputParameters',
         defaultMessage: '输出参数',
       }),
     },
     functions: {
       title: intl.formatMessage({
-        id: 'pages.device.productDetail.metadata.inputParameter',
+        id: 'pages.device.productDetail.metadata.outputParameters',
         defaultMessage: '输出参数',
       }),
     },
@@ -613,7 +613,8 @@ const Edit = observer((props: Props) => {
   };
   const createTagSchema = () => {
     const temp = _.cloneDeep(propertySchema) as any;
-    delete temp.properties?.expands.properties.readOnly;
+    delete temp.properties?.expands.properties.configConfig;
+    delete temp.properties?.expands.properties.source;
     return temp;
   };
   const metadataTypeMapping: Record<string, { name: string; schema: ISchema }> = {
@@ -636,12 +637,15 @@ const Edit = observer((props: Props) => {
   };
 
   const getUnit = () =>
-    service.getUnit().then((resp) =>
-      resp.result.map((item: any) => ({
+    service.getUnit().then((resp) => {
+      const _data = resp.result.map((item: any) => ({
         label: item.description,
         value: item.id,
-      })),
-    );
+      }));
+      // 缓存单位数据
+      Store.set('units', _data);
+      return _data;
+    });
 
   const getStreamingAggType = () =>
     service.getStreamingAggType().then((resp) =>

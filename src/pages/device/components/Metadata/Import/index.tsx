@@ -1,4 +1,4 @@
-import { Button, Drawer, message } from 'antd';
+import { message, Modal } from 'antd';
 import { createSchemaField } from '@formily/react';
 import type { Field } from '@formily/core';
 import { createForm } from '@formily/core';
@@ -124,6 +124,7 @@ const Import = (props: Props) => {
               accept: '.json',
               formatOnType: true,
               formatOnPaste: true,
+              type: 'file',
               beforeUpload: (file: any) => {
                 const reader = new FileReader();
                 reader.readAsText(file);
@@ -182,18 +183,12 @@ const Import = (props: Props) => {
     message.success('导入成功');
   };
   return (
-    <Drawer
+    <Modal
       title="导入物模型"
       destroyOnClose
       visible={props.visible}
-      onClose={() => props.close()}
-      extra={
-        <Space>
-          <Button type="primary" onClick={handleImport}>
-            确定
-          </Button>
-        </Space>
-      }
+      onCancel={() => props.close()}
+      onOk={handleImport}
     >
       <div style={{ background: 'rgb(236, 237, 238)' }}>
         <p style={{ padding: 10 }}>
@@ -213,7 +208,7 @@ const Import = (props: Props) => {
       <Form form={form} layout="vertical">
         <SchemaField scope={{ loadData }} schema={schema} />
       </Form>
-    </Drawer>
+    </Modal>
   );
 };
 

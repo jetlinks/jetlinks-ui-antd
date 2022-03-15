@@ -1,7 +1,7 @@
 import { message, Modal } from 'antd';
 import type { Field } from '@formily/core';
 import { createForm, onFieldValueChange } from '@formily/core';
-import { TreeSelect, Form, FormItem, FormLayout, Input, Radio, Select } from '@formily/antd';
+import { Form, FormItem, FormLayout, Input, Radio, Select, TreeSelect } from '@formily/antd';
 import { createSchemaField } from '@formily/react';
 import type { ISchema } from '@formily/json-schema';
 import FUpload from '@/components/Upload';

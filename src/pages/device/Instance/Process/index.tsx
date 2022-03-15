@@ -1,5 +1,5 @@
-import { Modal, Badge } from 'antd';
-import { useState, useEffect } from 'react';
+import { Badge, Modal } from 'antd';
+import { useEffect, useState } from 'react';
 import { EventSourcePolyfill } from 'event-source-polyfill';
 
 interface Props {
@@ -7,9 +7,11 @@ interface Props {
   closeVisible: () => void;
   action: string;
 }
+
 interface State {
   source: any;
 }
+
 const Process = (props: Props) => {
   const initState: State = {
     source: {},

@@ -1,7 +1,7 @@
-import { FormItem, Select, FormLayout } from '@formily/antd';
+import { FormItem, FormLayout, Select } from '@formily/antd';
 import { createForm, onFieldValueChange } from '@formily/core';
 import { createSchemaField, FormProvider } from '@formily/react';
-import { Modal, Radio, Checkbox, Space, Upload, Button, Badge, message } from 'antd';
+import { Badge, Button, Checkbox, message, Modal, Radio, Space, Upload } from 'antd';
 import 'antd/lib/tree-select/style/index.less';
 import { useEffect, useState } from 'react';
 import { service } from '@/pages/device/Instance';
@@ -76,11 +76,50 @@ const downloadTemplate = (type: string, product: string) => {
 };
 
 const NormalUpload = (props: any) => {
+  const [importLoading, setImportLoading] = useState(false);
+  const [flag, setFlag] = useState<boolean>(true);
+  const [count, setCount] = useState<number>(0);
+  const [errMessage, setErrMessage] = useState<string>('');
+
+  const submitData = (fileUrl: string) => {
+    if (!!fileUrl) {
+      setCount(0);
+      setErrMessage('');
+      setFlag(true);
+      const autoDeploy = !!props?.fileType?.autoDeploy || false;
+      setImportLoading(true);
+      let dt = 0;
+      const source = new EventSourcePolyfill(
+        `/${SystemConst.API_BASE}/device/instance/${
+          props.product
+        }/import?fileUrl=${fileUrl}&autoDeploy=${autoDeploy}&:X_Access_Token=${Token.get()}`,
+      );
+      source.onmessage = (e: any) => {
+        const res = JSON.parse(e.data);
+        if (res.success) {
+          props.onChange(false);
+          const temp = res.result.total;
+          dt += temp;
+          setCount(dt);
+        } else {
+          setErrMessage(res.message);
+        }
+      };
+      source.onerror = () => {
+        setFlag(false);
+        source.close();
+      };
+      source.onopen = () => {};
+    } else {
+      message.error('请先上传文件');
+    }
+  };
   return (
     <div>
       <Space>
         <Upload
           action={`/${SystemConst.API_BASE}/file/static`}
+          accept={`.${props?.fileType?.fileType || 'xlsx'}`}
           headers={{
             'X-Access-Token': Token.get(),
           }}
@@ -88,7 +127,7 @@ const NormalUpload = (props: any) => {
             if (info.file.status === 'done') {
               message.success('上传成功');
               const resp: any = info.file.response || { result: '' };
-              props.onChange(resp?.result || '');
+              submitData(resp?.result || '');
             }
           }}
           showUploadList={false}
@@ -115,6 +154,17 @@ const NormalUpload = (props: any) => {
           </a>
         </div>
       </Space>
+      {importLoading && (
+        <div style={{ marginLeft: 20 }}>
+          {flag ? (
+            <Badge status="processing" text="进行中" />
+          ) : (
+            <Badge status="success" text="已完成" />
+          )}
+          <span style={{ marginLeft: 15 }}>总数量:{count}</span>
+          <p style={{ color: 'red' }}>{errMessage}</p>
+        </div>
+      )}
     </div>
   );
 };
@@ -122,10 +172,6 @@ const NormalUpload = (props: any) => {
 const Import = (props: Props) => {
   const { visible, close } = props;
   const [productList, setProductList] = useState<any[]>([]);
-  const [importLoading, setImportLoading] = useState(false);
-  const [flag, setFlag] = useState<boolean>(true);
-  const [count, setCount] = useState<number>(0);
-  const [errMessage, setErrMessage] = useState<string>('');
 
   const SchemaField = createSchemaField({
     components: {
@@ -157,11 +203,23 @@ const Import = (props: Props) => {
         form.setFieldState('*(fileType, upload)', (state) => {
           state.visible = !!field.value;
         });
-        form.setFieldState('*(fileType)', (state) => {
+        form.setFieldState('*(upload)', (state) => {
           state.componentProps = {
             product: field.value,
           };
         });
+      });
+      onFieldValueChange('fileType', (field) => {
+        form.setFieldState('*(upload)', (state) => {
+          state.componentProps = {
+            fileType: field.value,
+          };
+        });
+      });
+      onFieldValueChange('upload', (field) => {
+        if (!field.value) {
+          close();
+        }
       });
     },
   });
@@ -204,52 +262,18 @@ const Import = (props: Props) => {
     },
   };
 
-  const submitData = () => {
-    const values = form.getFormState().values;
-    if (!!values?.upload) {
-      setCount(0);
-      setErrMessage('');
-      setFlag(true);
-      const autoDeploy = !!values?.fileType?.autoDeploy || false;
-      setImportLoading(true);
-      let dt = 0;
-      const source = new EventSourcePolyfill(
-        `/${SystemConst.API_BASE}/device/instance/${values.product}/import?fileUrl=${
-          values?.upload
-        }&autoDeploy=${autoDeploy}&:X_Access_Token=${Token.get()}`,
-      );
-      source.onmessage = (e: any) => {
-        const res = JSON.parse(e.data);
-        if (res.success) {
-          close();
-          const temp = res.result.total;
-          dt += temp;
-          setCount(dt);
-        } else {
-          setErrMessage(res.message);
-        }
-      };
-      source.onerror = () => {
-        setFlag(false);
-        source.close();
-      };
-      source.onopen = () => {};
-    } else {
-      message.error('请先上传文件');
-    }
-  };
   return (
     <Modal
       visible={visible}
       onCancel={() => close()}
       width="35vw"
       title="导出"
-      onOk={() => submitData()}
+      onOk={() => close()}
       footer={[
         <Button key="cancel" onClick={() => close()}>
           取消
         </Button>,
-        <Button key="ok" type="primary" onClick={() => submitData()}>
+        <Button key="ok" type="primary" onClick={() => close()}>
           确认
         </Button>,
       ]}
@@ -259,17 +283,6 @@ const Import = (props: Props) => {
           <SchemaField schema={schema} />
         </FormProvider>
       </div>
-      {importLoading && (
-        <div style={{ marginLeft: 20 }}>
-          {flag ? (
-            <Badge status="processing" text="进行中" />
-          ) : (
-            <Badge status="success" text="已完成" />
-          )}
-          <span style={{ marginLeft: 15 }}>总数量:{count}</span>
-          <p style={{ color: 'red' }}>{errMessage}</p>
-        </div>
-      )}
     </Modal>
   );
 };

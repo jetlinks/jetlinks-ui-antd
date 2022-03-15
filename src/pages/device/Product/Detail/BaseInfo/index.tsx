@@ -1,5 +1,5 @@
 import { productModel, service } from '@/pages/device/Product';
-import { Descriptions, Button } from 'antd';
+import { Button, Descriptions } from 'antd';
 import { useState } from 'react';
 import { useParams } from 'umi';
 import { useIntl } from '@@/plugin-locale/localeExports';

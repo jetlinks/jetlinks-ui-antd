@@ -1,5 +1,5 @@
 // 部门-用户绑定
-import type { ProColumns, ActionType } from '@jetlinks/pro-table';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { service } from '@/pages/system/Department/Member';
 import { message, Modal } from 'antd';

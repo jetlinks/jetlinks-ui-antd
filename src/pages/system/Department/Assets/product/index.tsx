@@ -1,6 +1,6 @@
 // 资产分配-产品分类
-import ProTable from '@jetlinks/pro-table';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import ProTable from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { Button, message, Popconfirm, Tooltip } from 'antd';
 import { useRef, useState } from 'react';

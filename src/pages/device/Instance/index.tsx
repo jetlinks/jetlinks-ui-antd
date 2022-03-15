@@ -1,5 +1,6 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import type { ProColumns, ActionType } from '@jetlinks/pro-table';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import ProTable from '@jetlinks/pro-table';
 import type { DeviceInstance } from '@/pages/device/Instance/typings';
 import moment from 'moment';
 import { Badge, Button, Dropdown, Menu, message, Popconfirm, Tooltip } from 'antd';
@@ -23,7 +24,6 @@ import Save from './Save';
 import Export from './Export';
 import Import from './Import';
 import Process from './Process';
-import ProTable from '@jetlinks/pro-table';
 import encodeQuery from '@/utils/encodeQuery';
 import SearchComponent from '@/components/SearchComponent';
 import SystemConst from '@/utils/const';

@@ -1,7 +1,7 @@
-import { FormItem, Select, FormLayout } from '@formily/antd';
+import { FormItem, FormLayout, Select, Radio } from '@formily/antd';
 import { createForm } from '@formily/core';
 import { createSchemaField, FormProvider } from '@formily/react';
-import { Alert, Modal, Radio } from 'antd';
+import { Alert, Modal } from 'antd';
 import 'antd/lib/tree-select/style/index.less';
 import { useEffect, useState } from 'react';
 import { service } from '@/pages/device/Instance';
@@ -35,13 +35,13 @@ const Export = (props: Props) => {
           label: item.name,
           value: item.id,
         }));
-        console.log(list);
         setProductList(list);
       }
     });
   }, []);
 
   const form = createForm();
+
   const schema = {
     type: 'object',
     properties: {
@@ -62,9 +62,14 @@ const Export = (props: Props) => {
             enum: [...productList],
           },
           fileType: {
-            type: 'number',
             title: '文件格式',
             default: 'xlsx',
+            'x-decorator': 'FormItem',
+            'x-component': 'Radio.Group',
+            'x-component-props': {
+              optionType: 'button',
+              buttonStyle: 'solid',
+            },
             enum: [
               {
                 label: 'xlsx',
@@ -75,12 +80,6 @@ const Export = (props: Props) => {
                 value: 'csv',
               },
             ],
-            'x-decorator': 'FormItem',
-            'x-component': 'Radio.Group',
-            'x-component-props': {
-              optionType: 'button',
-              buttonStyle: 'solid',
-            },
           },
         },
       },

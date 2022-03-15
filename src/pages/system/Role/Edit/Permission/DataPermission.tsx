@@ -28,7 +28,7 @@ const DataPermission = (props: Props) => {
   useEffect(() => {
     if (typeList.length > 0) {
       typeList.map((item) => {
-        service.queryDimensionsList(item.id).subscribe((resp) => {
+        service.queryAssetsList(item.id).subscribe((resp) => {
           if (resp.status === 200) {
             dimensionsList[item.id] = resp.result;
             setDimensionsList({ ...dimensionsList });

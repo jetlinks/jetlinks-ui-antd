@@ -1,11 +1,11 @@
 // 资产-产品分类-绑定
-import type { ProColumns, ActionType } from '@jetlinks/pro-table';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { service, getTableKeys } from './index';
-import { Modal, message } from 'antd';
+import { getTableKeys, service } from './index';
+import { message, Modal } from 'antd';
 import { useParams } from 'umi';
 import Models from './model';
-import { useRef, useState, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { observer } from '@formily/react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import type { ProductCategoryItem } from '@/pages/system/Department/typings';

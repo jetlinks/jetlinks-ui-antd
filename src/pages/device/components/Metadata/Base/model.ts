@@ -7,6 +7,7 @@ type MetadataModelType = {
   type: MetadataType;
   action: 'edit' | 'add';
   import: boolean;
+  importMetadata: boolean;
 };
 const MetadataModel = model<MetadataModelType>({
   item: undefined,
@@ -14,5 +15,6 @@ const MetadataModel = model<MetadataModelType>({
   type: 'events',
   action: 'add',
   import: false,
+  importMetadata: false,
 });
 export default MetadataModel;

@@ -5,14 +5,15 @@ import { useParams } from 'umi';
 import DB from '@/db';
 import type { MetadataItem, MetadataType } from '@/pages/device/Product/typings';
 import MetadataMapping from './columns';
-import { Button, message, Popconfirm, Tooltip } from 'antd';
-import { EditOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, Popconfirm, Tooltip } from 'antd';
+import { DeleteOutlined, EditOutlined, ImportOutlined, PlusOutlined } from '@ant-design/icons';
 import Edit from './Edit';
 import { observer } from '@formily/react';
 import MetadataModel from './model';
 import { Store } from 'jetlinks-store';
 import SystemConst from '@/utils/const';
 import { useIntl } from '@@/plugin-locale/localeExports';
+import PropertyImport from '@/pages/device/Product/Detail/PropertyImport';
 
 interface Props {
   type: MetadataType;
@@ -50,7 +51,7 @@ const BaseMetadata = observer((props: Props) => {
         <a key="delete">
           <Popconfirm title="确认删除？" onConfirm={async () => {}}>
             <Tooltip title="删除">
-              <MinusOutlined />
+              <DeleteOutlined />
             </Tooltip>
           </Popconfirm>
         </a>,
@@ -75,6 +76,19 @@ const BaseMetadata = observer((props: Props) => {
     });
     return () => subscription.unsubscribe();
   }, []);
+
+  const handleSearch = async (name: string) => {
+    if (name) {
+      const result = await DB.getDB()
+        .table(`${type}`)
+        .where('id')
+        .startsWithAnyOfIgnoreCase(name)
+        .toArray();
+      setData(result);
+    } else {
+      await initData();
+    }
+  };
   return (
     <>
       <ProTable
@@ -96,13 +110,20 @@ const BaseMetadata = observer((props: Props) => {
         }}
         toolbar={{
           search: {
-            onSearch: async (value) => {
-              // Todo 物模型属性搜索
-              message.success(value);
-            },
+            onSearch: handleSearch,
           },
         }}
         toolBarRender={() => [
+          <Button
+            onClick={() => {
+              MetadataModel.importMetadata = true;
+            }}
+            key="button"
+            icon={<ImportOutlined />}
+            type="ghost"
+          >
+            导入属性
+          </Button>,
           <Button
             onClick={() => {
               MetadataModel.edit = true;
@@ -121,6 +142,7 @@ const BaseMetadata = observer((props: Props) => {
           </Button>,
         ]}
       />
+      {MetadataModel.importMetadata && <PropertyImport />}
       {MetadataModel.edit && <Edit type={target} />}
     </>
   );

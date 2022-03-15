@@ -1,5 +1,5 @@
 // 资产-产品分类-绑定
-import type { ProColumns, ActionType } from '@jetlinks/pro-table';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { service } from './index';
 import { message, Modal } from 'antd';
