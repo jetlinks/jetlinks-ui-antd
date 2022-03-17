@@ -16,7 +16,7 @@ import { downloadFile } from '@/utils/util';
 interface Props {
   visible: boolean;
   close: () => void;
-  data?: DeviceInstance;
+  data: Partial<DeviceInstance>;
 }
 
 const FileFormat = (props: any) => {

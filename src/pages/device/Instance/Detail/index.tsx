@@ -5,7 +5,6 @@ import { Badge, Button, Card, Divider, message, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 import { statusMap } from '@/pages/device/Product';
 import { observer } from '@formily/react';
-import Config from '@/pages/device/Instance/Detail/Config';
 import Log from '@/pages/device/Instance/Detail/Log';
 import Alarm from '@/pages/device/components/Alarm';
 import Info from '@/pages/device/Instance/Detail/Info';
@@ -60,9 +59,9 @@ const InstanceDetail = observer(() => {
       key: 'detail',
       tab: intl.formatMessage({
         id: 'pages.device.instanceDetail.detail',
-        defaultMessage: '配置信息',
+        defaultMessage: '实例信息',
       }),
-      component: <Config />,
+      component: <Info />,
     },
     {
       key: 'running',
@@ -152,7 +151,7 @@ const InstanceDetail = observer(() => {
       onBack={history.goBack}
       onTabChange={setTab}
       tabList={list}
-      content={<Info />}
+      // content={<Info />}
       title={
         <>
           {InstanceModel.detail.name}

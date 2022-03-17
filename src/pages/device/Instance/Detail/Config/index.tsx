@@ -1,4 +1,4 @@
-import { Card, Divider, Empty } from 'antd';
+import { Card, Divider, Empty, message, Popconfirm, Space, Tooltip } from 'antd';
 import { InstanceModel, service } from '@/pages/device/Instance';
 import { useEffect, useState } from 'react';
 import { createSchemaField } from '@formily/react';
@@ -8,6 +8,7 @@ import { Form, FormGrid, FormItem, FormLayout, Input, Password, PreviewText } fr
 import { createForm } from '@formily/core';
 import { history, useParams } from 'umi';
 import Tags from '@/pages/device/Instance/Detail/Config/Tags';
+import Icon from '@ant-design/icons';
 
 const componentMap = {
   string: 'Input',
@@ -36,13 +37,19 @@ const Config = () => {
     initialValues: InstanceModel.detail?.configuration,
   });
 
-  const id = InstanceModel.current?.id;
+  const id = InstanceModel.detail?.id;
 
   useEffect(() => {
     if (id) {
       service.getConfigMetadata(id).then((config) => {
         setMetadata(config?.result);
       });
+      setState(
+        !!(
+          InstanceModel.detail?.configuration &&
+          Object.keys(InstanceModel.detail?.configuration).length > 0
+        ),
+      );
     }
 
     return () => {};
@@ -93,18 +100,76 @@ const Config = () => {
         };
 
         return (
-          <Card
-            title={item.name}
-            extra={<a onClick={() => setState(!state)}>{state ? '编辑' : '保存'}</a>}
-          >
-            <PreviewText.Placeholder value="-">
-              <Form form={form}>
-                <FormLayout labelCol={6} wrapperCol={16}>
-                  <SchemaField schema={itemSchema} />
-                </FormLayout>
-              </Form>
-            </PreviewText.Placeholder>
-          </Card>
+          <>
+            <Divider />
+            <Card
+              title={item.name}
+              extra={
+                <Space>
+                  <a
+                    onClick={async () => {
+                      const values = (await form.submit()) as any;
+                      const resp = await service.modify(id || '', {
+                        id,
+                        configuration: { ...values },
+                      });
+                      if (resp.status === 200) {
+                        InstanceModel.detail = {
+                          ...InstanceModel.detail,
+                          configuration: { ...values },
+                        };
+                        setState(!state);
+                      }
+                    }}
+                  >
+                    {state ? '编辑' : '保存'}
+                  </a>
+                  {InstanceModel.detail.state?.value !== 'notActive' && (
+                    <Popconfirm
+                      title="确认重新应用该配置？"
+                      onConfirm={async () => {
+                        const resp = await service.deployDevice(id || '');
+                        if (resp.status === 200) {
+                          message.success('操作成功');
+                        }
+                      }}
+                    >
+                      <a>应用配置</a>
+                      <Tooltip title="修改配置后需重新应用后才能生效。">
+                        <Icon type="question-circle-o" />
+                      </Tooltip>
+                    </Popconfirm>
+                  )}
+                  {InstanceModel.detail?.aloneConfiguration && (
+                    <Popconfirm
+                      title="确认恢复默认配置？"
+                      onConfirm={async () => {
+                        const resp = await service.configurationReset(id || '');
+                        if (resp.status === 200) {
+                          message.success('恢复默认配置成功');
+                        }
+                      }}
+                    >
+                      <a>恢复默认</a>
+                      <Tooltip
+                        title={`该设备单独编辑过配置信息，点击此将恢复成默认的配置信息，请谨慎操作。`}
+                      >
+                        <Icon type="question-circle-o" />
+                      </Tooltip>
+                    </Popconfirm>
+                  )}
+                </Space>
+              }
+            >
+              <PreviewText.Placeholder value="-">
+                <Form form={form}>
+                  <FormLayout labelCol={6} wrapperCol={16}>
+                    <SchemaField schema={itemSchema} />
+                  </FormLayout>
+                </Form>
+              </PreviewText.Placeholder>
+            </Card>
+          </>
         );
       })
     ) : (
