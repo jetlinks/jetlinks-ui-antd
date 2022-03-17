@@ -1,12 +1,15 @@
 import BaseService from '@/utils/BaseService';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { Tooltip } from 'antd';
-import { BugOutlined, EditOutlined, MinusOutlined } from '@ant-design/icons';
+import ProTable from '@jetlinks/pro-table';
+import { Button, Tooltip } from 'antd';
+import { BugOutlined, EditOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-layout';
-import BaseCrud from '@/components/BaseCrud';
 import type { NetworkItem } from '@/pages/link/Type/typings';
 import { useIntl } from '@@/plugin-locale/localeExports';
+import SearchComponent from '@/components/SearchComponent';
+import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { history } from 'umi';
 
 export const service = new BaseService<NetworkItem>('network/config');
 
@@ -92,19 +95,50 @@ const Network = () => {
     },
   ];
 
-  const schema = {};
+  const [param, setParam] = useState({});
+
+  /**
+   * 跳转详情页
+   * @param id
+   */
+  const pageJump = (id?: string) => {
+    // 跳转详情
+    history.push(`${getMenuPathByParams(MENUS_CODE['link/Type/Save'], id)}`);
+  };
 
   return (
     <PageContainer>
-      <BaseCrud
-        columns={columns}
-        service={service}
-        title={intl.formatMessage({
-          id: 'pages.link.component',
-          defaultMessage: '网络组件',
-        })}
-        schema={schema}
+      <SearchComponent
+        field={columns}
+        onSearch={(data) => {
+          actionRef.current?.reset?.();
+          setParam(data);
+        }}
+      />
+      <ProTable<NetworkItem>
         actionRef={actionRef}
+        params={param}
+        columns={columns}
+        search={false}
+        headerTitle={'网络组件'}
+        request={async (params) =>
+          service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
+        }
+        toolBarRender={() => [
+          <Button
+            onClick={() => {
+              pageJump();
+            }}
+            key="button"
+            icon={<PlusOutlined />}
+            type="primary"
+          >
+            {intl.formatMessage({
+              id: 'pages.data.option.add',
+              defaultMessage: '新增',
+            })}
+          </Button>,
+        ]}
       />
     </PageContainer>
   );
