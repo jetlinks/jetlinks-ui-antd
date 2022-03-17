@@ -149,6 +149,16 @@ class Service extends BaseService<DeviceInstance> {
       method: 'POST',
       data,
     });
+  public configurationReset = (deviceId: string) =>
+    request(`/${SystemConst.API_BASE}/device-instance/${deviceId}/configuration/_reset`, {
+      method: 'PUT',
+    });
+
+  public saveTags = (deviceId: string, data: any) =>
+    request(`/${SystemConst.API_BASE}/device-instance/${deviceId}/tag`, {
+      method: 'PATCH',
+      data,
+    });
 }
 
 export default Service;

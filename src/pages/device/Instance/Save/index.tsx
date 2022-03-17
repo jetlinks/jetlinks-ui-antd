@@ -11,15 +11,21 @@ import { useEffect, useState } from 'react';
 
 interface Props {
   visible: boolean;
-  close: () => void;
-  data?: DeviceInstance;
+  close: (data?: DeviceInstance) => void;
+  data: Partial<DeviceInstance>;
 }
 
 const Save = (props: Props) => {
   const { visible, close, data } = props;
   const [productList, setProductList] = useState<any[]>([]);
   const form = createForm({
-    initialValues: data,
+    initialValues: {
+      id: data?.id,
+      name: data?.name,
+      productName: data?.productName,
+      productId: data?.productId,
+      describe: data?.describe,
+    },
   });
 
   useEffect(() => {
@@ -54,7 +60,7 @@ const Save = (props: Props) => {
     const resp = (await service.update(values)) as any;
     if (resp.status === 200) {
       message.success('保存成功');
-      props.close();
+      props.close(values);
     }
   };
   const schema: ISchema = {
@@ -76,17 +82,6 @@ const Save = (props: Props) => {
             'x-decorator-props': {
               tooltip: <div>若不填写,系统将自动生成唯一ID</div>,
             },
-            // 'x-validator': `{{(value) => {
-            //     return service.isExists(value).then(resp => {
-            //         if(resp.status === 200){
-            //             if(!resp.result){
-            //                 resolve('已存在该设备ID')
-            //             }
-            //         } else {
-            //             resolve('')
-            //         }
-            //     })
-            //   }}}`
           },
           name: {
             title: '名称',
@@ -105,6 +100,7 @@ const Save = (props: Props) => {
           },
           productId: {
             title: '所属产品',
+            'x-disabled': !!data?.id,
             required: true,
             'x-component': 'Select',
             'x-decorator': 'FormItem',

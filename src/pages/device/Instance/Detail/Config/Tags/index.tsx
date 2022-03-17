@@ -1,8 +1,10 @@
-import { createSchemaField, FormProvider, observer } from '@formily/react';
+import { createSchemaField, FormProvider } from '@formily/react';
 import { Editable, FormItem, Input, ArrayTable } from '@formily/antd';
 import { createForm } from '@formily/core';
-import { Card } from 'antd';
+import { Card, message } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
+import { InstanceModel, service } from '@/pages/device/Instance';
+import { useEffect, useState } from 'react';
 
 const SchemaField = createSchemaField({
   components: {
@@ -12,14 +14,29 @@ const SchemaField = createSchemaField({
     ArrayTable,
   },
 });
-const form = createForm();
 
-const Tags = observer(() => {
+const Tags = () => {
   const intl = useIntl();
+  const [tags, setTags] = useState<any[]>([]);
+
+  const tag = InstanceModel.detail?.tags;
+
+  useEffect(() => {
+    if (tag) {
+      setTags([...tag] || []);
+    }
+  }, [tag]);
+
+  const form = createForm({
+    initialValues: {
+      tags: tags,
+    },
+  });
+
   const schema = {
     type: 'object',
     properties: {
-      array: {
+      tags: {
         type: 'array',
         'x-decorator': 'FormItem',
         'x-component': 'ArrayTable',
@@ -30,33 +47,16 @@ const Tags = observer(() => {
         items: {
           type: 'object',
           properties: {
-            column1: {
-              type: 'void',
-              'x-component': 'ArrayTable.Column',
-              'x-component-props': {
-                width: 50,
-                title: intl.formatMessage({
-                  id: 'pages.device.instanceDetail.detail.sort',
-                  defaultMessage: '排序',
-                }),
-                align: 'center',
-              },
-              properties: {
-                sort: {
-                  type: 'void',
-                  'x-component': 'ArrayTable.SortHandle',
-                },
-              },
-            },
             column3: {
               type: 'void',
               'x-component': 'ArrayTable.Column',
               'x-component-props': { width: 200, title: 'ID' },
               properties: {
-                a1: {
+                key: {
                   type: 'string',
-                  'x-decorator': 'Editable',
+                  'x-decorator': 'FormItem',
                   'x-component': 'Input',
+                  'x-disabled': true,
                 },
               },
             },
@@ -71,9 +71,9 @@ const Tags = observer(() => {
                 }),
               },
               properties: {
-                a2: {
+                name: {
                   type: 'string',
-                  'x-decorator': 'FormItem',
+                  'x-decorator': 'Editable',
                   'x-component': 'Input',
                 },
               },
@@ -89,56 +89,13 @@ const Tags = observer(() => {
                 }),
               },
               properties: {
-                a3: {
+                value: {
                   type: 'string',
-                  'x-decorator': 'FormItem',
+                  'x-decorator': 'Editable',
                   'x-component': 'Input',
                 },
               },
             },
-            column6: {
-              type: 'void',
-              'x-component': 'ArrayTable.Column',
-              'x-component-props': {
-                title: intl.formatMessage({
-                  id: 'pages.data.option',
-                  defaultMessage: '操作',
-                }),
-                dataIndex: 'operations',
-                width: 200,
-                fixed: 'right',
-              },
-              properties: {
-                item: {
-                  type: 'void',
-                  'x-component': 'FormItem',
-                  properties: {
-                    remove: {
-                      type: 'void',
-                      'x-component': 'ArrayTable.Remove',
-                    },
-                    moveDown: {
-                      type: 'void',
-                      'x-component': 'ArrayTable.MoveDown',
-                    },
-                    moveUp: {
-                      type: 'void',
-                      'x-component': 'ArrayTable.MoveUp',
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-        properties: {
-          add: {
-            type: 'void',
-            'x-component': 'ArrayTable.Addition',
-            title: intl.formatMessage({
-              id: 'pages.device.instanceDetail.detail.value',
-              defaultMessage: '添加标签',
-            }),
           },
         },
       },
@@ -151,7 +108,18 @@ const Tags = observer(() => {
         defaultMessage: '标签',
       })}
       extra={
-        <a>
+        <a
+          onClick={async () => {
+            const values = (await form.submit()) as any;
+            if (values?.tags) {
+              const resp = await service.saveTags(InstanceModel.detail?.id || '', values.tags);
+              if (resp.status === 200) {
+                InstanceModel.detail = { ...InstanceModel.detail, tags: values.tags };
+                message.success('操作成功！');
+              }
+            }
+          }}
+        >
           {intl.formatMessage({
             id: 'pages.device.instanceDetail.save',
             defaultMessage: '保存',
@@ -164,5 +132,6 @@ const Tags = observer(() => {
       </FormProvider>
     </Card>
   );
-});
+};
+
 export default Tags;
