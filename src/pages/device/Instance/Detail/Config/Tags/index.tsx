@@ -47,7 +47,7 @@ const Tags = () => {
         items: {
           type: 'object',
           properties: {
-            column3: {
+            column1: {
               type: 'void',
               'x-component': 'ArrayTable.Column',
               'x-component-props': { width: 200, title: 'ID' },
@@ -60,7 +60,7 @@ const Tags = () => {
                 },
               },
             },
-            column4: {
+            column2: {
               type: 'void',
               'x-component': 'ArrayTable.Column',
               'x-component-props': {
@@ -78,7 +78,7 @@ const Tags = () => {
                 },
               },
             },
-            column5: {
+            column3: {
               type: 'void',
               'x-component': 'ArrayTable.Column',
               'x-component-props': {
