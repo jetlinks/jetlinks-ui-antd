@@ -46,6 +46,14 @@ export default {
   'pages.table.type': '类型',
   'pages.table.deviceId': '设备ID',
   'pages.table.createTime': '创建时间',
+  'pages.form.tip.select': '请选择',
+  'pages.form.tip.input': '请输入',
+  'pages.form.tip.max64': '最多输入64个字符',
+  'pages.form.tip.id': '请输入英文或者数字或者-或者_',
+  'pages.form.tooltip.id': '若不填写，系统将自动生成唯一ID',
+  'pages.form.tip.existsID': 'ID重复',
+  'pages.form.tip.input.props': '请输入{name}',
+  'pages.form.tip.select.props': '请选择{name}',
 
   // 统计分析
   'pages.analysis.volume': '今日设备消息量',
@@ -222,6 +230,12 @@ export default {
   'pages.device.productDetail.setting': '应用配置',
   'pages.device.productDetail.disable': '停用',
   'pages.device.productDetail.enabled': '启用',
+
+  // 设备管理-设备分类
+  'pages.device.type.device': '直连设备',
+  'pages.device.type.childrenDevice': '网关子设备',
+  'pages.device.type.gateway': '网关设备',
+
   // 设备管理-产品分类
   'pages.device.category': '产品分类',
   'pages.device.category.id': '分类ID',
