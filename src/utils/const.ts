@@ -22,6 +22,10 @@ class SystemConst {
   static REFRESH_METADATA = 'refresh_metadata';
 
   static REFRESH_METADATA_TABLE = 'refresh_metadata_table';
+
+  static GET_METADATA = 'get_metadata';
+
+  static REFRESH_DEVICE = 'refresh_device';
 }
 
 export default SystemConst;

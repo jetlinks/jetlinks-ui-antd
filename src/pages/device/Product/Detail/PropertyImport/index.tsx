@@ -11,11 +11,17 @@ import { useParams } from 'umi';
 import { productModel, service } from '../..';
 import { downloadFile } from '@/utils/util';
 import type { DeviceMetadata, ProductItem } from '@/pages/device/Product/typings';
-import { updateMetadata } from '@/utils/metadata';
+import { Store } from 'jetlinks-store';
+import { asyncUpdateMedata, updateMetadata } from '@/pages/device/components/Metadata/metadata';
+import { InstanceModel } from '@/pages/device/Instance';
 
 const NormalUpload = (props: any) => {
   const param = useParams<{ id: string }>();
-  console.log(props?.fileType);
+
+  const typeMap = new Map<string, any>();
+
+  typeMap.set('product', productModel.current);
+  typeMap.set('device', InstanceModel.detail);
 
   const mergeMetadata = async (url: string) => {
     if (!url) return;
@@ -23,14 +29,26 @@ const NormalUpload = (props: any) => {
     const r = await service.importProductProperty(param.id, url);
     const _metadata = JSON.parse(r.result || '{}') as DeviceMetadata;
 
-    const product = productModel.current;
+    const target = typeMap.get(props.type);
 
-    const _product = updateMetadata('properties', _metadata.properties, product!) as ProductItem;
-    const resp = await service.update(_product);
+    const _data = updateMetadata('properties', _metadata.properties, target) as ProductItem;
+    // const resp = await service.update(_product);
+    const resp = await asyncUpdateMedata(props.type, _data);
     console.log(resp);
     if (resp.status === 200) {
       message.success('操作成功');
+      // 刷新物模型
+
+      if (props.type === 'product') {
+        Store.set(SystemConst.GET_METADATA, true);
+      } else if (props.type === 'device') {
+        Store.set(SystemConst.REFRESH_DEVICE, true);
+      }
+      setTimeout(() => {
+        Store.set(SystemConst.REFRESH_METADATA_TABLE, true);
+      }, 300);
     }
+    MetadataModel.importMetadata = false;
   };
 
   return (
@@ -87,7 +105,11 @@ const NormalUpload = (props: any) => {
   );
 };
 
-const PropertyImport = () => {
+interface Props {
+  type: 'product' | 'device';
+}
+
+const PropertyImport = (props: Props) => {
   const SchemaField = createSchemaField({
     components: {
       Radio,
@@ -103,6 +125,7 @@ const PropertyImport = () => {
         form.setFieldState('*(upload)', (state) => {
           state.componentProps = {
             fileType: field.value,
+            type: props.type,
           };
         });
       });

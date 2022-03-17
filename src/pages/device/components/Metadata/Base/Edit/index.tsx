@@ -39,11 +39,10 @@ import { lastValueFrom } from 'rxjs';
 import SystemConst from '@/utils/const';
 import DB from '@/db';
 import _ from 'lodash';
-import { useParams } from 'umi';
 import { InstanceModel } from '@/pages/device/Instance';
 import FRuleEditor from '@/components/FRuleEditor';
 import { action } from '@formily/reactive';
-import { updateMetadata } from '@/utils/metadata';
+import { asyncUpdateMedata, updateMetadata } from '../../metadata';
 
 interface Props {
   type: 'product' | 'device';
@@ -692,12 +691,12 @@ const Edit = observer((props: Props) => {
     );
   };
 
-  const param = useParams<{ id: string }>();
+  // const param = useParams<{ id: string }>();
   const typeMap = new Map<string, any>();
 
   typeMap.set('product', productModel.current);
   typeMap.set('device', InstanceModel.detail);
-  const saveMap = new Map<string, Promise<any>>();
+  // const saveMap = new Map<string, Promise<any>>();
   const { type } = MetadataModel;
 
   const saveMetadata = async (deploy?: boolean) => {
@@ -727,18 +726,21 @@ const Edit = observer((props: Props) => {
       }
     };
 
+    console.log(typeMap.get(props.type), 'log');
     const _data = updateMetadata(type, [params], typeMap.get(props.type), updateDB);
-    if (props.type === 'product') {
-      // const product = typeMap.get('product');
-      // @ts-ignore
-      // metadata[type] = config;
-      // product.metadata = JSON.stringify(metadata);
-      saveMap.set('product', service.saveProductMetadata(_data));
-    } else {
-      saveMap.set('device', service.saveDeviceMetadata(param.id, { metadata: _data.metadata }));
-    }
-
-    const result = await saveMap.get(props.type);
+    // console.log(params, JSON.parse(_data.metadata));
+    // if (props.type === 'product') {
+    //   // const product = typeMap.get('product');
+    //   // @ts-ignore
+    //   // metadata[type] = config;
+    //   // product.metadata = JSON.stringify(metadata);
+    //   saveMap.set('product', service.saveProductMetadata(_data));
+    // } else {
+    //   saveMap.set('device', service.saveDeviceMetadata(param.id, { metadata: _data.metadata }));
+    // }
+    //
+    // const result = await saveMap.get(props.type);
+    const result = await asyncUpdateMedata(props.type, _data);
     if (result.status === 200) {
       message.success('操作成功！');
       Store.set(SystemConst.REFRESH_METADATA_TABLE, true);

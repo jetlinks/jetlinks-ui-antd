@@ -4,7 +4,7 @@ import type { LogItem } from '@/pages/device/Instance/Detail/Log/typings';
 import { Badge, Button, Card, message, Popconfirm, Tooltip } from 'antd';
 import { DisconnectOutlined, SearchOutlined } from '@ant-design/icons';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { InstanceModel, service } from '@/pages/device/Instance';
+import { InstanceModel, service, statusMap } from '@/pages/device/Instance';
 import { useRef, useState } from 'react';
 import SearchComponent from '@/components/SearchComponent';
 import BindChildDevice from './BindChildDevice';
@@ -14,13 +14,6 @@ import { Link } from 'umi';
 const ChildDevice = () => {
   const intl = useIntl();
   const [visible, setVisible] = useState<boolean>(false);
-  const statusMap = new Map();
-  statusMap.set('在线', 'success');
-  statusMap.set('离线', 'error');
-  statusMap.set('未激活', 'processing');
-  statusMap.set('online', 'success');
-  statusMap.set('offline', 'error');
-  statusMap.set('notActive', 'processing');
 
   const actionRef = useRef<ActionType>();
   const [searchParams, setSearchParams] = useState<any>({});

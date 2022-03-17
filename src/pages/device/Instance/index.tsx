@@ -10,9 +10,9 @@ import {
   CheckCircleOutlined,
   DeleteOutlined,
   ExportOutlined,
+  EyeOutlined,
   ImportOutlined,
   PlusOutlined,
-  SearchOutlined,
   StopOutlined,
   SyncOutlined,
 } from '@ant-design/icons';
@@ -29,7 +29,7 @@ import SearchComponent from '@/components/SearchComponent';
 import SystemConst from '@/utils/const';
 import Token from '@/utils/token';
 
-const statusMap = new Map();
+export const statusMap = new Map();
 statusMap.set('在线', 'success');
 statusMap.set('离线', 'error');
 statusMap.set('未激活', 'processing');
@@ -167,7 +167,7 @@ const Instance = () => {
             })}
             key={'detail'}
           >
-            <SearchOutlined />
+            <EyeOutlined />
           </Tooltip>
         </Link>,
         // <a key="editable" onClick={() => {

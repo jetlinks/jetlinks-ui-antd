@@ -25,6 +25,7 @@ import MetadataAction from '@/pages/device/components/Metadata/DataBaseAction';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 import encodeQuery from '@/utils/encodeQuery';
+import SystemConst from '@/utils/const';
 
 const ProductDetail = observer(() => {
   const intl = useIntl();
@@ -61,25 +62,36 @@ const ProductDetail = observer(() => {
   };
   const param = useParams<{ id: string }>();
 
+  const initMetadata = () => {
+    service.getProductDetail(param?.id).subscribe((data) => {
+      if (data.metadata) {
+        const metadata: DeviceMetadata = JSON.parse(data.metadata);
+        productModel.current = data;
+        MetadataAction.insert(metadata);
+      }
+    });
+  };
   useEffect(() => {
+    const subscription = Store.subscribe(SystemConst.GET_METADATA, () => {
+      MetadataAction.clean();
+      setTimeout(() => {
+        initMetadata();
+        Store.set(SystemConst.REFRESH_METADATA_TABLE, true);
+      }, 300);
+    });
     if (!productModel.current) {
       history.goBack();
     } else {
-      service.getProductDetail(param?.id).subscribe((data) => {
-        if (data.metadata) {
-          const metadata: DeviceMetadata = JSON.parse(data.metadata);
-          MetadataAction.insert(metadata);
-        }
-      });
+      initMetadata();
       service.instanceCount(encodeQuery({ terms: { productId: param?.id } })).then((res: any) => {
         if (res.status === 200) {
           productModel.current!.count = res.result;
         }
       });
     }
-
     return () => {
       MetadataAction.clean();
+      subscription.unsubscribe();
     };
   }, [param.id]);
 
