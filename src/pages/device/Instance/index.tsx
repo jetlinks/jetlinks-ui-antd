@@ -1,6 +1,5 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import ProTable from '@jetlinks/pro-table';
 import type { DeviceInstance } from '@/pages/device/Instance/typings';
 import moment from 'moment';
 import { Badge, Button, Dropdown, Menu, message, Popconfirm, Tooltip } from 'antd';
@@ -25,8 +24,10 @@ import Export from './Export';
 import Import from './Import';
 import Process from './Process';
 import SearchComponent from '@/components/SearchComponent';
+import { ProTableCard } from '@/components';
 import SystemConst from '@/utils/const';
 import Token from '@/utils/token';
+import DeviceCard from '@/components/ProTableCard/CardItems/device';
 
 export const statusMap = new Map();
 statusMap.set('在线', 'success');
@@ -343,7 +344,7 @@ const Instance = () => {
           setSearchParams({});
         }}
       />
-      <ProTable<DeviceInstance>
+      <ProTableCard<DeviceInstance>
         columns={columns}
         actionRef={actionRef}
         params={searchParams}
@@ -387,6 +388,7 @@ const Instance = () => {
             <Button>批量操作</Button>
           </Dropdown>,
         ]}
+        cardRender={(item) => <DeviceCard {...item} />}
       />
       <Save
         data={current}
