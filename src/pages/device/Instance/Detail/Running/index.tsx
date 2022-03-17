@@ -13,7 +13,7 @@ const Running = () => {
         <Tabs.TabPane tab="属性" key="1">
           <Property data={metadata?.properties || {}} />
         </Tabs.TabPane>
-        {metadata.events.map((item) => (
+        {metadata.events?.map((item) => (
           <Tabs.TabPane tab={item.name} key={item.id}>
             <Event data={item} />
           </Tabs.TabPane>

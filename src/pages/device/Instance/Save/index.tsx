@@ -9,8 +9,8 @@ import { debounce } from 'lodash';
 
 interface Props {
   visible: boolean;
-  close: () => void;
-  reload: () => void;
+  close: (data: DeviceInstance | undefined) => void;
+  reload?: () => void;
   model?: 'add' | 'edit';
   data?: Partial<DeviceInstance>;
 }
@@ -78,24 +78,26 @@ const Save = (props: Props) => {
         if (props.reload) {
           props.reload();
         }
-        props.close();
+        props.close(resp.result);
       }
     }
   };
 
   const vailId = (_: any, value: any, callback: Function) => {
-    service.isExists(value).then((resp) => {
-      if (resp.status === 200 && resp.result) {
-        callback(
-          intl.formatMessage({
-            id: 'pages.form.tip.existsID',
-            defaultMessage: 'ID重复',
-          }),
-        );
-      } else {
-        callback();
-      }
-    });
+    if (props.model === 'add') {
+      service.isExists(value).then((resp) => {
+        if (resp.status === 200 && resp.result) {
+          callback(
+            intl.formatMessage({
+              id: 'pages.form.tip.existsID',
+              defaultMessage: 'ID重复',
+            }),
+          );
+        } else {
+          callback();
+        }
+      });
+    }
   };
 
   return (
@@ -103,7 +105,7 @@ const Save = (props: Props) => {
       visible={visible}
       onCancel={() => {
         form.resetFields();
-        close();
+        close(undefined);
       }}
       width="30vw"
       title={intl.formatMessage({

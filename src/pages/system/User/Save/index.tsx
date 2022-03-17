@@ -5,9 +5,9 @@ import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import React, { useEffect, useState } from 'react';
 import * as ICONS from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
 import { Form, FormItem, Input, Password, Select, Switch, TreeSelect } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
-import { PlusOutlined } from '@ant-design/icons';
 import { action } from '@formily/reactive';
 import type { Response } from '@/utils/typings';
 import { service } from '@/pages/system/User';
@@ -96,12 +96,28 @@ const Save = (props: Props) => {
         name: 'name',
         'x-validator': [
           {
-            max: 50,
-            message: '最多可输入50个字符',
+            max: 64,
+            message: '最多可输入64个字符',
           },
           {
             required: true,
             message: '请输入姓名',
+          },
+          {
+            triggerType: 'onBlur',
+            validator: (value: string) => {
+              return new Promise((resolve) => {
+                service
+                  .validateField('username', value)
+                  .then((resp) => {
+                    console.log(resp);
+                    resolve('');
+                  })
+                  .catch(() => {
+                    return '验证失败!';
+                  });
+              });
+            },
           },
         ],
         // required: true,

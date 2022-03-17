@@ -11,11 +11,12 @@ import { UploadOutlined } from '@ant-design/icons';
 import SystemConst from '@/utils/const';
 import Token from '@/utils/token';
 import { EventSourcePolyfill } from 'event-source-polyfill';
+import { downloadFile } from '@/utils/util';
 
 interface Props {
   visible: boolean;
   close: () => void;
-  data?: DeviceInstance;
+  data: Partial<DeviceInstance>;
 }
 
 const FileFormat = (props: any) => {
@@ -60,28 +61,13 @@ const FileFormat = (props: any) => {
   );
 };
 
-const downloadTemplate = (type: string, product: string) => {
-  const formElement = document.createElement('form');
-  formElement.style.display = 'display:none;';
-  formElement.method = 'GET';
-  formElement.action = `/${SystemConst.API_BASE}/device-instance/${product}/template.${type}`;
-  const inputElement = document.createElement('input');
-  inputElement.type = 'hidden';
-  inputElement.name = ':X_Access_Token';
-  inputElement.value = Token.get();
-  formElement.appendChild(inputElement);
-  document.body.appendChild(formElement);
-  formElement.submit();
-  document.body.removeChild(formElement);
-};
-
 const NormalUpload = (props: any) => {
   const [importLoading, setImportLoading] = useState(false);
   const [flag, setFlag] = useState<boolean>(true);
   const [count, setCount] = useState<number>(0);
   const [errMessage, setErrMessage] = useState<string>('');
 
-  const submitData = (fileUrl: string) => {
+  const submitData = async (fileUrl: string) => {
     if (!!fileUrl) {
       setCount(0);
       setErrMessage('');
@@ -123,11 +109,11 @@ const NormalUpload = (props: any) => {
           headers={{
             'X-Access-Token': Token.get(),
           }}
-          onChange={(info) => {
+          onChange={async (info) => {
             if (info.file.status === 'done') {
               message.success('上传成功');
               const resp: any = info.file.response || { result: '' };
-              submitData(resp?.result || '');
+              await submitData(resp?.result || '');
             }
           }}
           showUploadList={false}
@@ -139,7 +125,9 @@ const NormalUpload = (props: any) => {
           <a
             style={{ marginLeft: 10 }}
             onClick={() => {
-              downloadTemplate('xlsx', props.product);
+              const url = `/${SystemConst.API_BASE}/device-instance/${props.product}/template.xlsx`;
+              downloadFile(url);
+              // downloadTemplate('xlsx', props.product);
             }}
           >
             .xlsx
@@ -147,7 +135,9 @@ const NormalUpload = (props: any) => {
           <a
             style={{ marginLeft: 10 }}
             onClick={() => {
-              downloadTemplate('csv', props.product);
+              const url = `/${SystemConst.API_BASE}/device-instance/${props.product}/template.csv`;
+              downloadFile(url);
+              // downloadTemplate('csv', props.product);
             }}
           >
             .csv

@@ -5,7 +5,7 @@ import { useParams } from 'umi';
 import DB from '@/db';
 import type { MetadataItem, MetadataType } from '@/pages/device/Product/typings';
 import MetadataMapping from './columns';
-import { Button, Popconfirm, Tooltip } from 'antd';
+import { Button, message, Popconfirm, Tooltip } from 'antd';
 import { DeleteOutlined, EditOutlined, ImportOutlined, PlusOutlined } from '@ant-design/icons';
 import Edit from './Edit';
 import { observer } from '@formily/react';
@@ -14,6 +14,9 @@ import { Store } from 'jetlinks-store';
 import SystemConst from '@/utils/const';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import PropertyImport from '@/pages/device/Product/Detail/PropertyImport';
+import { productModel } from '@/pages/device/Product';
+import { InstanceModel } from '@/pages/device/Instance';
+import { asyncUpdateMedata, removeMetadata } from '../metadata';
 
 interface Props {
   type: MetadataType;
@@ -27,6 +30,26 @@ const BaseMetadata = observer((props: Props) => {
 
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<MetadataItem[]>([]);
+  const typeMap = new Map<string, any>();
+
+  typeMap.set('product', productModel.current);
+  typeMap.set('device', InstanceModel.detail);
+
+  const removeItem = async (record: MetadataItem) => {
+    const removeDB = () => {
+      return DB.getDB().table(`${type}`).delete(record.id!);
+    };
+    const _currentData = removeMetadata(type, [record], typeMap.get(target), removeDB);
+    const result = await asyncUpdateMedata(target, _currentData);
+    if (result.status === 200) {
+      message.success('操作成功！');
+      Store.set(SystemConst.REFRESH_METADATA_TABLE, true);
+      MetadataModel.edit = false;
+      MetadataModel.item = {};
+    } else {
+      message.error('操作失败！');
+    }
+  };
 
   const actions: ProColumns<MetadataItem>[] = [
     {
@@ -49,7 +72,12 @@ const BaseMetadata = observer((props: Props) => {
           </Tooltip>
         </a>,
         <a key="delete">
-          <Popconfirm title="确认删除？" onConfirm={async () => {}}>
+          <Popconfirm
+            title="确认删除？"
+            onConfirm={async () => {
+              await removeItem(record);
+            }}
+          >
             <Tooltip title="删除">
               <DeleteOutlined />
             </Tooltip>
@@ -69,10 +97,12 @@ const BaseMetadata = observer((props: Props) => {
   }, [initData]);
 
   useEffect(() => {
-    const subscription = Store.subscribe(SystemConst.REFRESH_METADATA_TABLE, async (flag) => {
-      if (flag) {
-        await initData();
-      }
+    const subscription = Store.subscribe(SystemConst.REFRESH_METADATA_TABLE, (flag) => {
+      setTimeout(async () => {
+        if (flag) {
+          await initData();
+        }
+      }, 300);
     });
     return () => subscription.unsubscribe();
   }, []);
@@ -142,7 +172,7 @@ const BaseMetadata = observer((props: Props) => {
           </Button>,
         ]}
       />
-      {MetadataModel.importMetadata && <PropertyImport />}
+      {MetadataModel.importMetadata && <PropertyImport type={target} />}
       {MetadataModel.edit && <Edit type={target} />}
     </>
   );

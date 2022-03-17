@@ -4,7 +4,7 @@ import SearchComponent from '@/components/SearchComponent';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { useRef, useState } from 'react';
-import { InstanceModel, service } from '@/pages/device/Instance';
+import { InstanceModel, service, statusMap } from '@/pages/device/Instance';
 import { useIntl } from 'umi';
 import moment from 'moment';
 
@@ -17,14 +17,6 @@ interface Props {
 const BindChildDevice = (props: Props) => {
   const { visible } = props;
   const intl = useIntl();
-  const statusMap = new Map();
-
-  statusMap.set('在线', 'success');
-  statusMap.set('离线', 'error');
-  statusMap.set('未激活', 'processing');
-  statusMap.set('online', 'success');
-  statusMap.set('offline', 'error');
-  statusMap.set('notActive', 'processing');
 
   const actionRef = useRef<ActionType>();
   const [searchParams, setSearchParams] = useState<any>({});

@@ -27,7 +27,7 @@ import { useMemo } from 'react';
 import { productModel } from '@/pages/device/Product';
 import { service } from '@/pages/device/components/Metadata';
 import { Store } from 'jetlinks-store';
-import type { DeviceMetadata, MetadataItem } from '@/pages/device/Product/typings';
+import type { MetadataItem } from '@/pages/device/Product/typings';
 
 import JsonParam from '@/components/Metadata/JsonParam';
 import ArrayParam from '@/components/Metadata/ArrayParam';
@@ -39,10 +39,10 @@ import { lastValueFrom } from 'rxjs';
 import SystemConst from '@/utils/const';
 import DB from '@/db';
 import _ from 'lodash';
-import { useParams } from 'umi';
 import { InstanceModel } from '@/pages/device/Instance';
 import FRuleEditor from '@/components/FRuleEditor';
 import { action } from '@formily/reactive';
+import { asyncUpdateMedata, updateMetadata } from '../../metadata';
 
 interface Props {
   type: 'product' | 'device';
@@ -322,6 +322,16 @@ const Edit = observer((props: Props) => {
       'x-component': 'Input',
       'x-disabled': MetadataModel.action === 'edit',
       'x-index': 0,
+      'x-validator': [
+        {
+          max: 64,
+          message: '最多可输入64个字符',
+        },
+        {
+          required: true,
+          message: '请输入ID',
+        },
+      ],
     },
     name: {
       title: intl.formatMessage({
@@ -332,6 +342,16 @@ const Edit = observer((props: Props) => {
       'x-decorator': 'FormItem',
       'x-component': 'Input',
       'x-index': 1,
+      'x-validator': [
+        {
+          max: 64,
+          message: '最多可输入64个字符',
+        },
+        {
+          required: true,
+          message: '请输入姓名',
+        },
+      ],
     },
     description: {
       title: intl.formatMessage({
@@ -341,6 +361,12 @@ const Edit = observer((props: Props) => {
       'x-decorator': 'FormItem',
       'x-component': 'Input.TextArea',
       'x-index': 100,
+      'x-validator': [
+        {
+          max: 200,
+          message: '最多可输入200个字符',
+        },
+      ],
     },
   } as any;
   const propertySchema: ISchema = {
@@ -665,12 +691,12 @@ const Edit = observer((props: Props) => {
     );
   };
 
-  const param = useParams<{ id: string }>();
+  // const param = useParams<{ id: string }>();
   const typeMap = new Map<string, any>();
 
   typeMap.set('product', productModel.current);
   typeMap.set('device', InstanceModel.detail);
-  const saveMap = new Map<string, Promise<any>>();
+  // const saveMap = new Map<string, Promise<any>>();
   const { type } = MetadataModel;
 
   const saveMetadata = async (deploy?: boolean) => {
@@ -678,29 +704,43 @@ const Edit = observer((props: Props) => {
 
     if (!typeMap.get(props.type)) return;
 
-    const metadata = JSON.parse(typeMap.get(props.type).metadata || '{}') as DeviceMetadata;
-    const config = (metadata[type] || []) as MetadataItem[];
-    const index = config.findIndex((item) => item.id === params.id);
-    if (index > -1) {
-      config[index] = params;
-      DB.getDB().table(`${type}`).update(params.id, params);
-    } else {
-      config.push(params);
-      DB.getDB().table(`${type}`).add(params, params.id);
-    }
+    // const metadata = JSON.parse(typeMap.get(props.type).metadata || '{}') as DeviceMetadata;
+    // const config = (metadata[type] || []) as MetadataItem[];
+    // const index = config.findIndex((item) => item.id === params.id);
+    // if (index > -1) {
+    //   config[index] = params;
+    //   DB.getDB().table(`${type}`).update(params.id, params);
+    // } else {
+    //   config.push(params);
+    //   DB.getDB().table(`${type}`).add(params, params.id);
+    // }
 
-    if (props.type === 'product') {
-      const product = typeMap.get('product');
-      // product.metadata = JSON.stringify(metadata);
-      // @ts-ignore
-      metadata[type] = config;
-      product.metadata = JSON.stringify(metadata);
-      saveMap.set('product', service.saveProductMetadata(product));
-    } else {
-      saveMap.set('device', service.saveDeviceMetadata(param.id, metadata));
-    }
+    const updateDB = (t: 'add' | 'update', item: MetadataItem) => {
+      switch (t) {
+        case 'add':
+          DB.getDB().table(`${type}`).add(item, item.id);
+          return;
+        case 'update':
+          DB.getDB().table(`${type}`).update(item.id, item);
+          return;
+      }
+    };
 
-    const result = await saveMap.get(props.type);
+    console.log(typeMap.get(props.type), 'log');
+    const _data = updateMetadata(type, [params], typeMap.get(props.type), updateDB);
+    // console.log(params, JSON.parse(_data.metadata));
+    // if (props.type === 'product') {
+    //   // const product = typeMap.get('product');
+    //   // @ts-ignore
+    //   // metadata[type] = config;
+    //   // product.metadata = JSON.stringify(metadata);
+    //   saveMap.set('product', service.saveProductMetadata(_data));
+    // } else {
+    //   saveMap.set('device', service.saveDeviceMetadata(param.id, { metadata: _data.metadata }));
+    // }
+    //
+    // const result = await saveMap.get(props.type);
+    const result = await asyncUpdateMedata(props.type, _data);
     if (result.status === 200) {
       message.success('操作成功！');
       Store.set(SystemConst.REFRESH_METADATA_TABLE, true);

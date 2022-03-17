@@ -1,4 +1,4 @@
-import { FormItem, FormLayout, Select, Radio } from '@formily/antd';
+import { FormItem, FormLayout, Radio, Select } from '@formily/antd';
 import { createForm } from '@formily/core';
 import { createSchemaField, FormProvider } from '@formily/react';
 import { Alert, Modal } from 'antd';
@@ -7,8 +7,8 @@ import { useEffect, useState } from 'react';
 import { service } from '@/pages/device/Instance';
 import type { DeviceInstance } from '../typings';
 import SystemConst from '@/utils/const';
-import Token from '@/utils/token';
 import encodeQuery from '@/utils/encodeQuery';
+import { downloadFile } from '@/utils/util';
 
 interface Props {
   visible: boolean;
@@ -60,6 +60,9 @@ const Export = (props: Props) => {
             'x-decorator': 'FormItem',
             'x-component': 'Select',
             enum: [...productList],
+            'x-component-props': {
+              allowClear: true,
+            },
           },
           fileType: {
             title: '文件格式',
@@ -87,31 +90,15 @@ const Export = (props: Props) => {
   };
   const downloadTemplate = async () => {
     const values = (await form.submit()) as any;
-    const formElement = document.createElement('form');
-    formElement.style.display = 'display:none;';
-    formElement.method = 'GET';
-    if (values.product) {
-      formElement.action = `/${SystemConst.API_BASE}/device/instance/${values.product}/export.${values.fileType}`;
-    } else {
-      formElement.action = `/${SystemConst.API_BASE}/device/instance/export.${values.fileType}`;
-    }
     const params = encodeQuery(props.data);
-    Object.keys(params).forEach((key: string) => {
-      const inputElement = document.createElement('input');
-      inputElement.type = 'hidden';
-      inputElement.name = key;
-      inputElement.value = params[key];
-      formElement.appendChild(inputElement);
-    });
-    const inputElement = document.createElement('input');
-    inputElement.type = 'hidden';
-    inputElement.name = ':X_Access_Token';
-    inputElement.value = Token.get();
-    formElement.appendChild(inputElement);
-
-    document.body.appendChild(formElement);
-    formElement.submit();
-    document.body.removeChild(formElement);
+    if (values.product) {
+      downloadFile(
+        `/${SystemConst.API_BASE}/device/instance/${values.product}/export.${values.fileType}`,
+        params,
+      );
+    } else {
+      downloadFile(`/${SystemConst.API_BASE}/device/instance/export.${values.fileType}`, params);
+    }
   };
   return (
     <Modal
@@ -119,9 +106,7 @@ const Export = (props: Props) => {
       onCancel={() => close()}
       width="35vw"
       title="导出"
-      onOk={() => {
-        downloadTemplate();
-      }}
+      onOk={downloadTemplate}
     >
       <Alert
         message="不勾选产品，默认导出所有设备的基础数据，勾选单个产品可导出下属的详细数据"

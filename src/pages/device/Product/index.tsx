@@ -190,7 +190,7 @@ const Product = observer(() => {
           key={'state'}
           title={intl.formatMessage({
             id: `pages.data.option.${record.state ? 'disabled' : 'enabled'}.tips`,
-            defaultMessage: '是否删除该菜单',
+            defaultMessage: '是否删除?',
           })}
           onConfirm={() => {
             changeDeploy(record.id, record.state ? 'undeploy' : 'deploy');
@@ -209,10 +209,10 @@ const Product = observer(() => {
           key="unBindUser"
           title={intl.formatMessage({
             id: 'page.system.menu.table.delete',
-            defaultMessage: '是否删除该菜单',
+            defaultMessage: '是否删除?',
           })}
-          onConfirm={() => {
-            deleteItem(record.id);
+          onConfirm={async () => {
+            await deleteItem(record.id);
           }}
         >
           <Tooltip

@@ -8,6 +8,8 @@ import FMonacoEditor from '@/components/FMonacoEditor';
 import FUpload from '@/components/Upload';
 import { service } from '@/pages/device/Product';
 import { useParams } from 'umi';
+import { Store } from 'jetlinks-store';
+import SystemConst from '@/utils/const';
 
 interface Props {
   visible: boolean;
@@ -180,7 +182,9 @@ const Import = (props: Props) => {
     } else {
       await service.modify(param.id, { metadata: data[data.type] });
     }
+    Store.set(SystemConst.GET_METADATA, true);
     message.success('导入成功');
+    props.close();
   };
   return (
     <Modal

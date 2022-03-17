@@ -1,34 +1,55 @@
-import { Modal } from 'antd';
+import { Button, message, Modal, Space, Upload } from 'antd';
 import MetadataModel from '@/pages/device/components/Metadata/Base/model';
 import { FormItem, FormLayout, Radio } from '@formily/antd';
 import { createForm, onFieldValueChange } from '@formily/core';
 import { createSchemaField, FormProvider } from '@formily/react';
-import { Button, message, Space, Upload } from 'antd';
 import 'antd/lib/tree-select/style/index.less';
 import { UploadOutlined } from '@ant-design/icons';
 import SystemConst from '@/utils/const';
 import Token from '@/utils/token';
 import { useParams } from 'umi';
-import { service } from '../..';
-
-const downloadTemplate = (type: string, productId: string) => {
-  const formElement = document.createElement('form');
-  formElement.style.display = 'display:none;';
-  formElement.method = 'GET';
-  formElement.action = `/${SystemConst.API_BASE}/device/product/${productId}/property-metadata/template.${type}`;
-  const inputElement = document.createElement('input');
-  inputElement.type = 'hidden';
-  inputElement.name = ':X_Access_Token';
-  inputElement.value = Token.get();
-  formElement.appendChild(inputElement);
-  document.body.appendChild(formElement);
-  formElement.submit();
-  document.body.removeChild(formElement);
-};
+import { productModel, service } from '../..';
+import { downloadFile } from '@/utils/util';
+import type { DeviceMetadata, ProductItem } from '@/pages/device/Product/typings';
+import { Store } from 'jetlinks-store';
+import { asyncUpdateMedata, updateMetadata } from '@/pages/device/components/Metadata/metadata';
+import { InstanceModel } from '@/pages/device/Instance';
 
 const NormalUpload = (props: any) => {
   const param = useParams<{ id: string }>();
-  console.log(props?.fileType);
+
+  const typeMap = new Map<string, any>();
+
+  typeMap.set('product', productModel.current);
+  typeMap.set('device', InstanceModel.detail);
+
+  const mergeMetadata = async (url: string) => {
+    if (!url) return;
+    // 解析物模型
+    const r = await service.importProductProperty(param.id, url);
+    const _metadata = JSON.parse(r.result || '{}') as DeviceMetadata;
+
+    const target = typeMap.get(props.type);
+
+    const _data = updateMetadata('properties', _metadata.properties, target) as ProductItem;
+    // const resp = await service.update(_product);
+    const resp = await asyncUpdateMedata(props.type, _data);
+    console.log(resp);
+    if (resp.status === 200) {
+      message.success('操作成功');
+      // 刷新物模型
+
+      if (props.type === 'product') {
+        Store.set(SystemConst.GET_METADATA, true);
+      } else if (props.type === 'device') {
+        Store.set(SystemConst.REFRESH_DEVICE, true);
+      }
+      setTimeout(() => {
+        Store.set(SystemConst.REFRESH_METADATA_TABLE, true);
+      }, 300);
+    }
+    MetadataModel.importMetadata = false;
+  };
 
   return (
     <div>
@@ -39,13 +60,17 @@ const NormalUpload = (props: any) => {
           headers={{
             'X-Access-Token': Token.get(),
           }}
-          onChange={(info) => {
+          onChange={async (info) => {
             if (info.file.status === 'done') {
               message.success('上传成功');
               const resp: any = info.file.response || { result: '' };
-              service.importProductProperty(param.id, resp?.result).then(() => {
-                // 更新产品物模型属性信息
-              });
+              await mergeMetadata(resp?.result);
+              // service.importProductProperty(param.id, resp?.result).then((r) => {
+              //   console.log(r, 'resp');
+              //   const _metadata = JSON.parse(r.result || '{}') as DeviceMetadata;
+              //
+              //   // 更新产品物模型属性信息
+              // });
             }
           }}
           showUploadList={false}
@@ -57,7 +82,9 @@ const NormalUpload = (props: any) => {
           <a
             style={{ marginLeft: 10 }}
             onClick={() => {
-              downloadTemplate('xlsx', param?.id);
+              const url = `/${SystemConst.API_BASE}/device/product/${param?.id}/property-metadata/template.xlsx`;
+              downloadFile(url);
+              // downloadTemplate('xlsx', param?.id);
             }}
           >
             .xlsx
@@ -65,7 +92,9 @@ const NormalUpload = (props: any) => {
           <a
             style={{ marginLeft: 10 }}
             onClick={() => {
-              downloadTemplate('csv', param?.id);
+              const url = `/${SystemConst.API_BASE}/device/product/${param.id}/property-metadata/template.csv`;
+              // downloadTemplate('csv', param?.id);
+              downloadFile(url);
             }}
           >
             .csv
@@ -76,7 +105,11 @@ const NormalUpload = (props: any) => {
   );
 };
 
-const PropertyImport = () => {
+interface Props {
+  type: 'product' | 'device';
+}
+
+const PropertyImport = (props: Props) => {
   const SchemaField = createSchemaField({
     components: {
       Radio,
@@ -92,6 +125,7 @@ const PropertyImport = () => {
         form.setFieldState('*(upload)', (state) => {
           state.componentProps = {
             fileType: field.value,
+            type: props.type,
           };
         });
       });

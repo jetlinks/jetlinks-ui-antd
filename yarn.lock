@@ -385,7 +385,7 @@
 
 "@ant-design/pro-utils@1.35.2":
   version "1.35.2"
-  resolved "https://registry.npmmirror.com/@ant-design/pro-utils/-/pro-utils-1.35.2.tgz#789b4c5d4d63085e02ab24c2ae68c6084bc9a8f1"
+  resolved "https://registry.npmjs.org/@ant-design/pro-utils/-/pro-utils-1.35.2.tgz#789b4c5d4d63085e02ab24c2ae68c6084bc9a8f1"
   integrity sha512-LZfMr821QHD54A9PyRKRl2Xy4FYxJ9gIXMrq4kqTJMBeZr9W7xkx2ZjoeFJqFKnrY3xAf1GzRgz1dMO+VIbc3g==
   dependencies:
     "@ant-design/icons" "^4.3.0"
@@ -3348,7 +3348,7 @@
 
 "@types/event-source-polyfill@^1.0.0":
   version "1.0.0"
-  resolved "https://registry.npmmirror.com/@types/event-source-polyfill/-/event-source-polyfill-1.0.0.tgz#f93f13433f750c8ea0e3cfa69c72e3c7393e0585"
+  resolved "https://registry.npmjs.org/@types/event-source-polyfill/-/event-source-polyfill-1.0.0.tgz#f93f13433f750c8ea0e3cfa69c72e3c7393e0585"
   integrity sha512-b8O8/rg7NIW0iJ8i9MNDBZqPljHA+b7AjC3QFqH3dSyW6vgrl3oBgyIv5dw2fibh5enHHDkkPZG5PHza7U4NRw==
 
 "@types/express-serve-static-core@^4.17.18":
@@ -7906,7 +7906,7 @@ event-emitter@^0.3.5:
 
 event-source-polyfill@^1.0.25:
   version "1.0.25"
-  resolved "https://registry.npmmirror.com/event-source-polyfill/-/event-source-polyfill-1.0.25.tgz#d8bb7f99cb6f8119c2baf086d9f6ee0514b6d9c8"
+  resolved "https://registry.npmjs.org/event-source-polyfill/-/event-source-polyfill-1.0.25.tgz#d8bb7f99cb6f8119c2baf086d9f6ee0514b6d9c8"
   integrity sha512-hQxu6sN1Eq4JjoI7ITdQeGGUN193A2ra83qC0Ltm9I2UJVAten3OFVN6k5RX4YWeCS0BoC8xg/5czOCIHVosQg==
 
 eventemitter3@^4.0.0, eventemitter3@^4.0.4:

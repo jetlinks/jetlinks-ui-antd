@@ -10,9 +10,9 @@ import {
   CheckCircleOutlined,
   DeleteOutlined,
   ExportOutlined,
+  EyeOutlined,
   ImportOutlined,
   PlusOutlined,
-  SearchOutlined,
   StopOutlined,
   SyncOutlined,
 } from '@ant-design/icons';
@@ -24,12 +24,11 @@ import Save from './Save';
 import Export from './Export';
 import Import from './Import';
 import Process from './Process';
-import encodeQuery from '@/utils/encodeQuery';
 import SearchComponent from '@/components/SearchComponent';
 import SystemConst from '@/utils/const';
 import Token from '@/utils/token';
 
-const statusMap = new Map();
+export const statusMap = new Map();
 statusMap.set('在线', 'success');
 statusMap.set('离线', 'error');
 statusMap.set('未激活', 'processing');
@@ -38,14 +37,14 @@ statusMap.set('offline', 'error');
 statusMap.set('notActive', 'processing');
 
 export const InstanceModel = model<{
-  current: DeviceInstance | undefined;
+  current: Partial<DeviceInstance>;
   detail: Partial<DeviceInstance>;
   config: any;
   metadataItem: MetadataItem;
   params: Set<string>; // 处理无限循环Card
   active?: string; // 当前编辑的Card
 }>({
-  current: undefined,
+  current: {},
   detail: {},
   config: {},
   metadataItem: {},
@@ -60,7 +59,7 @@ const Instance = () => {
   const [operationVisible, setOperationVisible] = useState<boolean>(false);
   const [type, setType] = useState<'active' | 'sync'>('active');
   const [api, setApi] = useState<string>('');
-  const [current, setCurrent] = useState<DeviceInstance>();
+  const [current, setCurrent] = useState<Partial<DeviceInstance>>({});
   const [searchParams, setSearchParams] = useState<any>({});
   const [bindKeys, setBindKeys] = useState<any[]>([]);
   const intl = useIntl();
@@ -167,23 +166,9 @@ const Instance = () => {
             })}
             key={'detail'}
           >
-            <SearchOutlined />
+            <EyeOutlined />
           </Tooltip>
         </Link>,
-        // <a key="editable" onClick={() => {
-        //   setVisible(true)
-        //   setCurrent(record)
-        // }}>
-        //   <Tooltip
-        //     title={intl.formatMessage({
-        //       id: 'pages.data.option.edit',
-        //       defaultMessage: '编辑',
-        //     })}
-        //   >
-        //     <EditOutlined />
-        //   </Tooltip>
-        // </a>,
-
         <a href={record.id} target="_blank" rel="noopener noreferrer" key="view">
           <Popconfirm
             title={intl.formatMessage({
@@ -363,7 +348,17 @@ const Instance = () => {
         actionRef={actionRef}
         params={searchParams}
         options={{ fullScreen: true }}
-        request={(params) => service.query(encodeQuery({ ...params, sorts: { id: 'ascend' } }))}
+        request={(params) =>
+          service.query({
+            ...params,
+            sorts: [
+              {
+                name: 'id',
+                order: 'ascend',
+              },
+            ],
+          })
+        }
         rowKey="id"
         search={false}
         pagination={{ pageSize: 10 }}
@@ -377,7 +372,7 @@ const Instance = () => {
           <Button
             onClick={() => {
               setVisible(true);
-              setCurrent(undefined);
+              setCurrent({});
             }}
             key="button"
             icon={<PlusOutlined />}

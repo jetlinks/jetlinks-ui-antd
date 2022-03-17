@@ -83,17 +83,21 @@ const Save = (props: Props) => {
   };
 
   const vailId = (_: any, value: any, callback: Function) => {
-    service.existsID(value).then((res) => {
-      if (res.status === 200 && res.result) {
-        callback(
-          intl.formatMessage({
-            id: 'pages.form.tip.existsID',
-            defaultMessage: 'ID重复',
-          }),
-        );
-      }
+    if (props.model === 'add') {
+      service.existsID(value).then((res) => {
+        if (res.status === 200 && res.result) {
+          callback(
+            intl.formatMessage({
+              id: 'pages.form.tip.existsID',
+              defaultMessage: 'ID重复',
+            }),
+          );
+        }
+        callback();
+      });
+    } else {
       callback();
-    });
+    }
   };
 
   return (
