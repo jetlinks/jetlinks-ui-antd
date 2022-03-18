@@ -54,9 +54,9 @@ const AccessConfig = () => {
                 <div style={{ fontSize: 16 }}>
                   <div>
                     {text}
-                    <a style={{ marginLeft: '10px' }}>
+                    {/* <a style={{ marginLeft: '10px' }}>
                       <EditOutlined />
-                    </a>
+                    </a> */}
                     <Badge
                       color={row.state !== 1 ? 'red' : 'green'}
                       text={row.state !== 1 ? '禁用' : '正常'}

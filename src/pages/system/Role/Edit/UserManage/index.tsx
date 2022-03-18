@@ -18,7 +18,7 @@ const UserManage = () => {
   const actionRef = useRef<ActionType>();
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const [bindUserVisible, setBindUserVisible] = useState<boolean>(false);
-  const [param, setParam] = useState({ terms: [] });
+  const [param, setParam] = useState<any>({ terms: [] });
 
   const unBindUser = (id: string, ids: string[]) => {
     roleService.unbindUser(id, ids).subscribe((resp) => {

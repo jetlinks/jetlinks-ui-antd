@@ -17,7 +17,7 @@ const BindUser = (props: Props) => {
   const intl = useIntl();
   const actionRef = useRef<any>();
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
-  const [param, setParam] = useState({ terms: [] });
+  const [param, setParam] = useState<any>({ terms: [] });
 
   const columns: ProColumns<UserItem>[] = [
     {
@@ -82,7 +82,7 @@ const BindUser = (props: Props) => {
         target="user"
         pattern={'simple'}
         onSearch={(data) => {
-          console.log(data);
+          // console.log(data);
           // 重置分页数据
           actionRef.current?.reset?.();
           setParam(data);
