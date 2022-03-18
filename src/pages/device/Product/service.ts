@@ -142,6 +142,8 @@ class Service extends BaseService<ProductItem> {
         method: 'POST',
       },
     );
+
+  public existsID = (id: string) => request(`${this.uri}/${id}/exists`, { method: 'GET' });
 }
 
 export default Service;

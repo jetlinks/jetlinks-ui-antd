@@ -105,6 +105,7 @@ const Info = observer(() => {
       </Card>
       <Config />
       <Save
+        model={'edit'}
         data={{ ...InstanceModel?.detail, describe: InstanceModel?.detail?.description || '' }}
         close={(data: DeviceInstance | undefined) => {
           setVisible(false);

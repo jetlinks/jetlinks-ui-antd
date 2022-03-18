@@ -130,7 +130,13 @@ export default (props: FunctionProps) => {
         </div>
       </div>
       <div className="right">
-        <p>执行结果：</p>
+        <p>
+          {intl.formatMessage({
+            id: 'pages.device.instance.function.result',
+            defaultMessage: '执行结果',
+          })}
+          ：
+        </p>
         <Input.TextArea value={result} rows={6} />
       </div>
     </div>
