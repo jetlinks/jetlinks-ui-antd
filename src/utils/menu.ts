@@ -62,6 +62,7 @@ export const MENUS_CODE = {
   'link/Protocol/Debug': 'link/Protocol/Debug',
   'link/Protocol': 'link/Protocol',
   'link/Type': 'link/Type',
+  'link/Type/Save': 'link/Type/Save',
   'log/Access': 'log/Access',
   'log/System': 'log/System',
   'media/Cascade': 'media/Cascade',
@@ -218,9 +219,9 @@ export const getMenuPathByCode = (code: string): string => {
  * @param id 路由携带参数
  * @param regStr 路由参数code
  */
-export const getMenuPathByParams = (code: string, id: string, regStr: string = ':id') => {
+export const getMenuPathByParams = (code: string, id?: string, regStr: string = ':id') => {
   const menusData = getMenuPathByCode(code);
-  return menusData.replace(regStr, id);
+  return id ? menusData.replace(regStr, id) : menusData;
 };
 
 export default getRoutes;

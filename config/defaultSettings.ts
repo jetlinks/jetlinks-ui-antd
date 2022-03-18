@@ -9,7 +9,7 @@ const Settings: LayoutSettings & {
   // primaryColor: '#1890ff',
   // 极光绿
   primaryColor: '#1d39c4',
-  layout: 'mix',
+  layout: 'top',
   contentWidth: 'Fluid',
   splitMenus: true,
   fixedHeader: false,
