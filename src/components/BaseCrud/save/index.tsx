@@ -30,6 +30,7 @@ import { CurdModel } from '@/components/BaseCrud/model';
 import type { ISchemaFieldProps } from '@formily/react/lib/types';
 import type { ModalProps } from 'antd/lib/modal/Modal';
 import FUpload from '@/components/Upload';
+import FileUpload from '@/pages/link/Protocol/FileUpload';
 import FMonacoEditor from '@/components/FMonacoEditor';
 import type { Form as Form1 } from '@formily/core';
 import FBraftEditor from '@/components/FBraftEditor';
@@ -83,6 +84,7 @@ const Save = <T extends Record<string, any>>(props: Props<T>) => {
       Editable,
       NumberPicker,
       FUpload,
+      FileUpload,
       FMonacoEditor,
       ArrayItems,
       Space,
@@ -133,7 +135,7 @@ const Save = <T extends Record<string, any>>(props: Props<T>) => {
     >
       <Spin spinning={modelConfig?.loading || false}>
         <PreviewText.Placeholder value="-">
-          <Form form={customForm || form} labelCol={4} wrapperCol={18}>
+          <Form form={customForm || form} layout={'vertical'}>
             <SchemaField schema={schema} {...schemaConfig} />
           </Form>
         </PreviewText.Placeholder>
