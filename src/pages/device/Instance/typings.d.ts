@@ -37,6 +37,7 @@ export type DeviceInstance = {
   onlineTime: string | number;
   offlineTime: string | number;
   tags: any;
+  photoUrl: string;
 };
 
 type Unit = {
