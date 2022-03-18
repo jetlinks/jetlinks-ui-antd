@@ -13,16 +13,10 @@ interface Props {
 
 const FileUpload = connect((props: Props) => {
   const [url, setUrl] = useState<string>(props?.value);
-  // const [loading, setLoading] = useState<boolean>(false);
 
   const handleChange = (info: UploadChangeParam) => {
-    // setLoading(true)
-    if (info.file.status === 'uploading') {
-      // setLoading(false);
-    }
     if (info.file.status === 'done') {
       info.file.url = info.file.response?.result;
-      // setLoading(false);
       setUrl(info.file.response?.result);
       props.onChange(info.file.response?.result);
     }
