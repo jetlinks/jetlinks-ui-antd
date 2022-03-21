@@ -76,7 +76,7 @@
     "ahooks": "^2.10.9",
     "antd": "^4.18.8",
     "braft-editor": "^2.3.9",
-    "classnames": "^2.2.6",
+    "classnames": "^2.3.1",
     "dexie": "^3.0.3",
     "event-source-polyfill": "^1.0.25",
     "isomorphic-form-data": "^2.0.0",

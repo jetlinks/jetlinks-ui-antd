@@ -28,6 +28,11 @@ class Service extends BaseService<NetworkItem> {
     request(`${SystemConst.API_BASE}/network/resources/alive/${id}`, {
       method: 'GET',
     });
+
+  getAllResources = () =>
+    request(`${SystemConst.API_BASE}/network/resources/alive/_all`, {
+      method: 'GET',
+    });
 }
 
 export default Service;

@@ -1,0 +1,40 @@
+@import '../../../node_modules/antd/lib/style/themes/variable';
+
+.pro-table-card {
+  position: relative;
+
+  .pro-table-card-setting-item {
+    color: rgba(0, 0, 0, 0.75);
+    font-size: 16px;
+    cursor: pointer;
+
+    &:hover {
+      color: @primary-color-hover;
+    }
+
+    &.active {
+      color: @primary-color-active;
+    }
+  }
+
+  .pro-table-card-items {
+    display: flex;
+    flex-wrap: wrap;
+    padding-bottom: 32px;
+
+    > div {
+      margin-right: 14px;
+      margin-bottom: 14px;
+    }
+  }
+
+  .pro-table-card-pagination {
+    position: absolute;
+    right: 24px;
+    bottom: 24px;
+
+    > .ant-pagination-item {
+      display: none;
+    }
+  }
+}

@@ -1,6 +1,6 @@
 import type { FunctionMetadata } from '@/pages/device/Product/typings';
-import React, { useState, useEffect, useRef } from 'react';
-import { Input, Button } from 'antd';
+import React, { useEffect, useRef, useState } from 'react';
+import { Button, Input } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import type { ProColumns } from '@jetlinks/pro-table';
 import { EditableProTable } from '@jetlinks/pro-table';
@@ -130,7 +130,13 @@ export default (props: FunctionProps) => {
         </div>
       </div>
       <div className="right">
-        <p>执行结果：</p>
+        <p>
+          {intl.formatMessage({
+            id: 'pages.device.instance.function.result',
+            defaultMessage: '执行结果',
+          })}
+          ：
+        </p>
         <Input.TextArea value={result} rows={6} />
       </div>
     </div>

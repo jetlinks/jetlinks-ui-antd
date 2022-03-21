@@ -1,0 +1,82 @@
+@import '../../../../node_modules/antd/lib/style/themes/variable';
+
+@border: 1px dashed @border-color-base;
+@mask-color: rgba(#000, 0.35);
+@with: 160px;
+@height: 150px;
+
+.flex-center() {
+  align-items: center;
+  justify-content: center;
+}
+
+.upload-image-warp {
+  display: flex;
+  justify-content: flex-start;
+
+  .upload-image-border {
+    position: relative;
+    width: @with;
+    height: @height;
+    overflow: hidden;
+    //border-radius: 50%;
+    border: @border;
+    transition: all 0.3s;
+
+    &:hover {
+      border-color: @primary-color-hover;
+    }
+
+    .upload-image-content {
+      .flex-center();
+
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      width: @with;
+      height: @height;
+      background-color: rgba(#000, 0.06);
+      cursor: pointer;
+
+      .upload-image-mask {
+        .flex-center();
+
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: none;
+        width: 100%;
+        height: 100%;
+        color: #fff;
+        font-size: 16px;
+        background-color: @mask-color;
+      }
+
+      .upload-image {
+        width: 144px;
+        height: 138px;
+        //border-radius: 50%;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover;
+      }
+
+      &:hover .upload-image-mask {
+        display: flex;
+      }
+    }
+  }
+
+  .upload-loading-mask {
+    .flex-center();
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    color: #fff;
+    background-color: @mask-color;
+  }
+}

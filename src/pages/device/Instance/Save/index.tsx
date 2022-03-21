@@ -1,32 +1,36 @@
-import { message, Modal } from 'antd';
-import { createForm } from '@formily/core';
-import { Form, FormItem, FormLayout, Input, Radio, Select } from '@formily/antd';
-import { createSchemaField } from '@formily/react';
-import type { ISchema } from '@formily/json-schema';
-import FUpload from '@/components/Upload';
+import { Col, Form, Input, message, Modal, Row, Select } from 'antd';
 import { service } from '@/pages/device/Instance';
-import 'antd/lib/tree-select/style/index.less';
 import type { DeviceInstance } from '../typings';
 import { useEffect, useState } from 'react';
+import { useIntl } from '@@/plugin-locale/localeExports';
+import { UploadImage } from '@/components';
+import { debounce } from 'lodash';
 
 interface Props {
   visible: boolean;
-  close: (data?: DeviceInstance) => void;
-  data: Partial<DeviceInstance>;
+  close: (data: DeviceInstance | undefined) => void;
+  reload?: () => void;
+  model?: 'add' | 'edit';
+  data?: Partial<DeviceInstance>;
 }
 
 const Save = (props: Props) => {
   const { visible, close, data } = props;
   const [productList, setProductList] = useState<any[]>([]);
-  const form = createForm({
-    initialValues: {
-      id: data?.id,
-      name: data?.name,
-      productName: data?.productName,
-      productId: data?.productId,
-      describe: data?.describe,
-    },
-  });
+  const [form] = Form.useForm();
+
+  useEffect(() => {
+    if (visible && data) {
+      form.setFieldsValue({
+        id: data.id,
+        name: data.name,
+        productId: data.productId,
+        describe: data.describe,
+      });
+    }
+  }, [visible]);
+
+  const intl = useIntl();
 
   useEffect(() => {
     service.getProductList({ paging: false }).then((resp) => {
@@ -39,96 +43,187 @@ const Save = (props: Props) => {
       }
     });
   }, []);
-  const SchemaField = createSchemaField({
-    components: {
-      FormItem,
-      Input,
-      Select,
-      Radio,
-      FUpload,
-      FormLayout,
-    },
-  });
+
+  const intlFormat = (
+    id: string,
+    defaultMessage: string,
+    paramsID?: string,
+    paramsMessage?: string,
+  ) => {
+    const paramsObj: Record<string, string> = {};
+    if (paramsID) {
+      const paramsMsg = intl.formatMessage({
+        id: paramsID,
+        defaultMessage: paramsMessage,
+      });
+      paramsObj.name = paramsMsg;
+    }
+    const msg = intl.formatMessage(
+      {
+        id,
+        defaultMessage,
+      },
+      paramsObj,
+    );
+    return msg;
+  };
 
   const handleSave = async () => {
-    const values = (await form.submit()) as any;
-    const productId = values.productId;
-    if (productId) {
-      const product = productList.find((i) => i.value === productId);
-      values.productName = product.label;
-    }
-    const resp = (await service.update(values)) as any;
-    if (resp.status === 200) {
-      message.success('保存成功');
-      props.close(values);
+    const values = await form.validateFields();
+    if (values) {
+      const resp = (await service.update(values)) as any;
+      if (resp.status === 200) {
+        message.success('保存成功');
+        if (props.reload) {
+          props.reload();
+        }
+        props.close(resp.result);
+      }
     }
   };
-  const schema: ISchema = {
-    type: 'object',
-    properties: {
-      layout: {
-        type: 'void',
-        'x-component': 'FormLayout',
-        'x-component-props': {
-          labelCol: 4,
-          wrapperCol: 18,
-        },
-        properties: {
-          id: {
-            title: 'ID',
-            'x-disabled': !!data?.id,
-            'x-component': 'Input',
-            'x-decorator': 'FormItem',
-            'x-decorator-props': {
-              tooltip: <div>若不填写,系统将自动生成唯一ID</div>,
-            },
-          },
-          name: {
-            title: '名称',
-            'x-component': 'Input',
-            'x-decorator': 'FormItem',
-            'x-validator': [
-              {
-                required: true,
-                message: '请输入名称',
-              },
-              {
-                max: 64,
-                message: '最多可输入64个字符',
-              },
-            ],
-          },
-          productId: {
-            title: '所属产品',
-            'x-disabled': !!data?.id,
-            required: true,
-            'x-component': 'Select',
-            'x-decorator': 'FormItem',
-            enum: [...productList],
-          },
-          describe: {
-            title: '描述',
-            'x-component': 'Input.TextArea',
-            'x-decorator': 'FormItem',
-            'x-component-props': {
-              showCount: true,
-              maxLength: 200,
-            },
-          },
-        },
-      },
-    },
+
+  const vailId = (_: any, value: any, callback: Function) => {
+    if (props.model === 'add') {
+      service.isExists(value).then((resp) => {
+        if (resp.status === 200 && resp.result) {
+          callback(
+            intl.formatMessage({
+              id: 'pages.form.tip.existsID',
+              defaultMessage: 'ID重复',
+            }),
+          );
+        } else {
+          callback();
+        }
+      });
+    }
   };
+
   return (
     <Modal
       visible={visible}
-      onCancel={() => close()}
+      onCancel={() => {
+        form.resetFields();
+        close(undefined);
+      }}
       width="30vw"
-      title={data?.id ? '编辑' : '新增'}
+      title={intl.formatMessage({
+        id: `pages.data.option.${props.model || 'add'}`,
+        defaultMessage: '新增',
+      })}
       onOk={handleSave}
     >
-      <Form form={form}>
-        <SchemaField schema={schema} />
+      <Form
+        form={form}
+        layout={'vertical'}
+        labelAlign={'right'}
+        labelCol={{
+          style: { width: 100 },
+        }}
+      >
+        <Row>
+          <Col span={8}>
+            <Form.Item name={'photoUrl'}>
+              <UploadImage />
+            </Form.Item>
+          </Col>
+          <Col span={16}>
+            <Form.Item
+              label={'ID'}
+              name={'id'}
+              tooltip={intlFormat('pages.form.tooltip.id', '若不填写，系统将自动生成唯一ID')}
+              rules={[
+                {
+                  pattern: /^[a-zA-Z0-9_\-]+$/,
+                  message: intlFormat('pages.form.tip.id', '请输入英文或者数字或者-或者_'),
+                },
+                {
+                  max: 64,
+                  message: intlFormat('pages.form.tip.max64', '最多输入64个字符'),
+                },
+                {
+                  validator: debounce(vailId, 300),
+                },
+              ]}
+            >
+              <Input
+                disabled={props.model === 'edit'}
+                placeholder={intlFormat('pages.form.tip.input', '请输入')}
+              />
+            </Form.Item>
+            <Form.Item
+              label={intlFormat('pages.table.name', '名称')}
+              name={'name'}
+              rules={[
+                {
+                  required: true,
+                  message: intlFormat(
+                    'pages.form.tip.input.props',
+                    '请输入名称',
+                    'pages.table.name',
+                    '名称',
+                  ),
+                },
+                {
+                  max: 64,
+                  message: intl.formatMessage({
+                    id: 'pages.form.tip.max64',
+                    defaultMessage: '最多输入64个字符',
+                  }),
+                },
+              ]}
+              required
+            >
+              <Input placeholder={intlFormat('pages.form.tip.input', '请输入')} />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+            <Form.Item
+              label={'所属产品'}
+              name={'productId'}
+              rules={[
+                {
+                  required: true,
+                  message: intlFormat(
+                    'pages.form.tip.select.props',
+                    '请选择所属产品',
+                    'pages.device.instanceDetail.deviceType',
+                    '设备类型',
+                  ),
+                },
+              ]}
+              required
+            >
+              <Select
+                showSearch
+                options={productList}
+                onSelect={(_: any, node: any) => {
+                  form.setFieldsValue({
+                    productName: node.name,
+                  });
+                }}
+              />
+            </Form.Item>
+            <Form.Item hidden={true} name={'productName'}>
+              <Input />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+            <Form.Item label={intlFormat('pages.table.description', '说明')} name={'describe'}>
+              <Input.TextArea
+                placeholder={intlFormat('pages.form.tip.input', '请输入')}
+                rows={4}
+                style={{ width: '100%' }}
+                maxLength={200}
+                showCount={true}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
       </Form>
     </Modal>
   );

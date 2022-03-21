@@ -1,5 +1,5 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { useParams } from 'umi';
+// import { useParams } from 'umi';
 import { createSchemaField } from '@formily/react';
 import {
   ArrayCollapse,
@@ -14,24 +14,119 @@ import {
   Select,
 } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
-import { useEffect, useMemo } from 'react';
-import { createForm } from '@formily/core';
+import { useEffect, useMemo, useRef } from 'react';
+import type { Field } from '@formily/core';
+import { createForm, onFieldValueChange } from '@formily/core';
 import { Card } from 'antd';
 import styles from './index.less';
 import { useAsyncDataSource } from '@/utils/util';
 import { service } from '..';
+import _ from 'lodash';
+import FAutoComplete from '@/components/FAutoComplete';
 
+/**
+ *  根据类型过滤配置信息
+ * @param data
+ * @param type
+ */
+const filterConfigByType = (data: any[], type: string) => {
+  // 只保留ports 包含type的数据
+  const _config = data.filter((item) => Object.keys(item.ports).includes(type));
+  // 只保留ports的type数据
+  return _config.map((i) => {
+    i.ports = i.ports[type];
+    return i;
+  });
+};
 const Save = () => {
-  const param = useParams<{ id: string }>();
+  // const param = useParams<{ id: string }>();
+
+  // const [config, setConfig] = useState<any[]>([]);
+  const configRef = useRef([]);
+
+  const getResourcesClusters = () => {
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    const checked = form.getValuesIn('config')?.map((i: any) => i?.nodeName) || [];
+    return service.getResourceClusters().then((resp) => {
+      // 获取到已经选择的节点名称。然后过滤、通过form.values获取
+      return resp.result
+        ?.map((item: any) => ({
+          label: item.name,
+          value: item.id,
+        }))
+        .filter((j: any) => !checked.includes(j.value));
+    });
+  };
 
   useEffect(() => {
-    console.log(param.id);
+    service.getResourcesCurrent().then((resp) => {
+      if (resp.status === 200) {
+        // setConfig(resp.result);
+        // console.log('test', resp);
+        configRef.current = resp.result;
+      }
+    });
   }, []);
+
+  const getResourceById = (id: string, type: string) =>
+    service.getResourceClustersById(id).then((resp) => filterConfigByType(resp.result, type));
+
+  // const getAllResources = () =>
+  //   service.getAllResources().then((resp) =>
+  //     resp.result?.map((item: any) => ({
+  //       label: item.clusterNodeId,
+  //       value: item.clusterNodeId,
+  //     })));
 
   const form = useMemo(
     () =>
       createForm({
         initialValues: {},
+        effects() {
+          onFieldValueChange('type', (field, f) => {
+            const value = (field as Field).value;
+            const _host = filterConfigByType(_.cloneDeep(configRef.current), value);
+            f.setFieldState('grid.configuration.panel1.layout2.host', (state) => {
+              state.dataSource = _host.map((item) => ({ label: item.host, value: item.host }));
+            });
+            f.setFieldState('cluster.config.*.host', (state) => {
+              state.dataSource = _host.map((item) => item.host);
+            });
+          });
+          onFieldValueChange('grid.configuration.panel1.layout2.host', (field, f1) => {
+            const value = (field as Field).value;
+            const type = (field.query('type').take() as Field).value;
+            const _port = filterConfigByType(_.cloneDeep(configRef.current), type);
+            const _host = _port.find((item) => item.host === value);
+            f1.setFieldState('grid.configuration.panel1.layout2.port', (state) => {
+              state.dataSource = _host?.ports.map((p: any) => ({ label: p, value: p }));
+            });
+          });
+          onFieldValueChange('shareCluster', (field) => {
+            const value = (field as Field).value;
+            if (!value) {
+              // false 获取独立配置的信息
+            }
+          });
+          onFieldValueChange('grid.cluster.config.*.layout2.nodeName', async (field, f3) => {
+            const value = (field as Field).value;
+            const type = (field.query('type').take() as Field).value;
+            const response = await getResourceById(value, type);
+            f3.setFieldState(field.query('.host'), (state) => {
+              state.dataSource = response.map((item) => ({ label: item.host, value: item.host }));
+            });
+          });
+          onFieldValueChange('grid.cluster.config.*.layout2.host', async (field, f4) => {
+            const host = (field as Field).value;
+            const value = (field.query('.nodeName').take() as Field).value;
+            const type = (field.query('type').take() as Field).value;
+            const response = await getResourceById(value, type);
+            const _ports = response.find((item) => item.host === host);
+            f4.setFieldState(field.query('.port').take(), async (state) => {
+              state.dataSource = _ports?.ports?.map((i: any) => ({ label: i, value: i }));
+            });
+          });
+        },
       }),
     [],
   );
@@ -47,6 +142,7 @@ const Save = () => {
       FormGrid,
       FormCollapse,
       ArrayCollapse,
+      FAutoComplete,
     },
   });
 
@@ -54,7 +150,7 @@ const Save = () => {
 
   const getSupports = () =>
     service.getSupports().then((resp) =>
-      resp.result.map((item: any) => ({
+      resp.result?.map((item: any) => ({
         label: item.name,
         value: item.id,
       })),
@@ -69,6 +165,29 @@ const Save = () => {
       columnGap: 48,
     },
     properties: {
+      nodeName: {
+        title: '节点名称',
+        'x-component': 'Select',
+        'x-decorator': 'FormItem',
+        // 'x-visible': false,
+        'x-decorator-props': {
+          gridSpan: 1,
+          labelAlign: 'left',
+          layout: 'vertical',
+          tooltip: '绑定到服务器上的网卡地址,绑定到所有网卡:0.0.0.0 /',
+        },
+        'x-reactions': [
+          {
+            dependencies: ['....shareCluster'],
+            fulfill: {
+              state: {
+                visible: '{{!$deps[0]}}',
+              },
+            },
+          },
+          '{{useAsyncDataSource(getResourcesClusters)}}',
+        ],
+      },
       host: {
         title: '本地地址',
         'x-decorator': 'FormItem',
@@ -94,8 +213,9 @@ const Save = () => {
           layout: 'vertical',
         },
         required: true,
+        type: 'number',
         'x-decorator': 'FormItem',
-        'x-component': 'NumberPicker',
+        'x-component': 'Select',
         'x-validator': [
           {
             max: 65535,
@@ -156,10 +276,10 @@ const Save = () => {
         'x-decorator': 'FormItem',
         'x-component': 'Select',
         enum: [
-          { label: 'DIRECT', value: '不处理' },
-          { label: 'delimited', value: '分隔符' },
-          { label: 'script', value: '自定义脚本' },
-          { label: 'fixed_length', value: '固定长度' },
+          { value: 'DIRECT', label: '不处理' },
+          { value: 'delimited', label: '分隔符' },
+          { value: 'script', label: '自定义脚本' },
+          { value: 'fixed_length', label: '固定长度' },
         ],
         'x-reactions': {
           dependencies: ['....type'],
@@ -284,13 +404,24 @@ const Save = () => {
                 type: 'array',
                 'x-component': 'ArrayCollapse',
                 'x-decorator': 'FormItem',
+                // maxItems: 2,
+                'x-validator': [
+                  {
+                    maxItems: 2,
+                    message: '集群节点已全部配置，请勿重复添加',
+                  },
+                ],
                 items: {
                   type: 'void',
                   'x-component': 'ArrayCollapse.CollapsePanel',
                   'x-component-props': {
-                    header: '字符串数组',
+                    header: '配置信息',
                   },
                   properties: {
+                    index: {
+                      type: 'void',
+                      'x-component': 'ArrayCollapse.Index',
+                    },
                     layout2: clusterConfig,
                     remove: {
                       type: 'void',
@@ -411,7 +542,10 @@ const Save = () => {
     <PageContainer onBack={() => history.back()}>
       <Card>
         <Form form={form} layout="vertical" style={{ padding: 30 }}>
-          <SchemaField schema={schema} scope={{ formCollapse, useAsyncDataSource, getSupports }} />
+          <SchemaField
+            schema={schema}
+            scope={{ formCollapse, useAsyncDataSource, getSupports, getResourcesClusters }}
+          />
         </Form>
       </Card>
     </PageContainer>

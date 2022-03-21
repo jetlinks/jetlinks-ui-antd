@@ -1,0 +1,74 @@
+@import '~antd/lib/style/themes/variable';
+
+@border: 1px solid @border-color-base;
+
+.radio-card-items {
+  display: flex;
+
+  .radio-card-item {
+    display: flex;
+    align-items: center;
+    min-width: 180px;
+    padding: 16px 20px;
+    overflow: hidden;
+    font-size: 14px;
+    border: @border;
+    border-radius: @border-radius-base;
+
+    > img {
+      width: 32px;
+      height: 32px;
+      margin-right: 24px;
+    }
+
+    > span {
+      cursor: default;
+    }
+
+    &:not(:last-child) {
+      margin-right: 10px;
+    }
+
+    &:hover,
+    &:focus {
+      color: @primary-color-hover;
+      border-color: @primary-color-hover;
+    }
+
+    .checked-icon {
+      position: absolute;
+      right: -22px;
+      bottom: -22px;
+      z-index: 2;
+      display: none;
+      width: 44px;
+      height: 44px;
+      color: #fff;
+      background-color: @primary-color-active;
+      transform: rotate(-45deg);
+
+      > div {
+        position: relative;
+        height: 100%;
+        transform: rotate(45deg);
+
+        > span {
+          position: absolute;
+          top: 6px;
+          left: 6px;
+          font-size: 12px;
+        }
+      }
+    }
+
+    &.checked {
+      position: relative;
+      color: @primary-color-active;
+      border-color: @primary-color-active;
+
+      > .checked-icon {
+        display: block;
+      }
+    }
+  }
+}
