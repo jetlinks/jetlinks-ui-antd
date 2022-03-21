@@ -1,0 +1,26 @@
+@import '~antd/lib/style/themes/variable';
+
+.descriptions-title {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 4px 0 4px 12px;
+  font-weight: bold;
+  font-size: 16px;
+
+  > span {
+    margin-right: 12px;
+  }
+
+  &::before {
+    position: absolute;
+    top: 5px;
+    left: 0;
+    width: 4px;
+    height: calc(100% - 10px);
+    background-color: @primary-color-hover;
+    border-radius: 2px;
+    content: ' ';
+  }
+}

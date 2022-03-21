@@ -146,6 +146,7 @@ export default {
   'pages.system.menu.detail': '基本信息',
   'pages.system.menu.buttons': '按钮管理',
   'pages.system.menu.root': '菜单权限',
+  'page.system.menu.sort': '排序',
   // 系统设置-第三方平台
   'pages.system.openApi': '第三方平台',
   'pages.system.openApi.username': '用户名',
