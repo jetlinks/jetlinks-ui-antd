@@ -1,8 +1,9 @@
 .content {
   display: flex;
   width: 90%;
+  height: 100px;
   margin: 0 78px;
-
+  overflow: hidden;
   .server {
     width: calc(50% - 78px);
 
@@ -14,15 +15,25 @@
   }
 
   .procotol {
+    display: -webkit-box;
     width: calc(50% - 78px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
   }
 }
 
 .desc {
+  width: 50%;
   margin-top: 10px;
+  overflow: hidden;
   color: rgba(0, 0, 0, 0.55);
   font-weight: 400;
   font-size: 13px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  background-color: antiquewhite;
 }
 
 .title {
@@ -39,11 +50,11 @@
 }
 
 .images {
-  width: 136px;
-  height: 108px;
+  width: 64px;
+  height: 64px;
   color: white;
   font-size: 18px;
-  line-height: 108px;
+  line-height: 64px;
   text-align: center;
   background: linear-gradient(
     128.453709216706deg,
