@@ -2,27 +2,26 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { Badge, Button, message, Popconfirm, Space, Tooltip } from 'antd';
 import type { ProductItem } from '@/pages/device/Product/typings';
 import {
-  StopOutlined,
+  DeleteOutlined,
   DownloadOutlined,
   EditOutlined,
   EyeOutlined,
-  DeleteOutlined,
   PlayCircleOutlined,
   PlusOutlined,
+  StopOutlined,
 } from '@ant-design/icons';
 import Service from '@/pages/device/Product/service';
 import { observer } from '@formily/react';
 import { model } from '@formily/reactive';
-import { Link } from 'umi';
+import { Link, useHistory } from 'umi';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { useEffect, useRef, useState } from 'react';
 import ProTable from '@jetlinks/pro-table';
+import { useEffect, useRef, useState } from 'react';
 import encodeQuery from '@/utils/encodeQuery';
 import Save from '@/pages/device/Product/Save';
 import SearchComponent from '@/components/SearchComponent';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
-import { useHistory } from 'umi';
 
 export const service = new Service('device-product');
 export const statusMap = {

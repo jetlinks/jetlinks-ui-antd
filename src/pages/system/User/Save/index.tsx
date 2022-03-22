@@ -280,10 +280,9 @@ const Save = (props: Props) => {
               onClick={() => {
                 const tab: any = window.open(`${origin}/#/system/department?save=true`);
                 tab!.onTabSaveSuccess = (value: any) => {
+                  console.log(value, 'value');
                   form.setFieldState('orgIdList', (state) => {
-                    state.dataSource = state.dataSource?.concat([
-                      { label: value.name, value: value.id },
-                    ]);
+                    state.dataSource = state.dataSource?.concat({ name: value.name, id: value.id });
                   });
                 };
               }}

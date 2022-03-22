@@ -6,6 +6,7 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import { service } from '@/pages/system/User/index';
 import Service from '@/pages/system/Role/service';
 import SearchComponent from '@/components/SearchComponent';
+
 interface Props {
   visible: boolean;
   data: any;

@@ -59,6 +59,7 @@ export type MenuItem = {
   createTime: number;
   redirect?: string;
   children?: MenuItem[];
+  accessSupport?: { text: string; value: string };
 };
 
 /**

@@ -1,5 +1,5 @@
 import { message, Upload } from 'antd';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import SystemConst from '@/utils/const';
 import Token from '@/utils/token';
@@ -19,6 +19,7 @@ interface UploadImageProps {
    * 图片大小限制， 单位 M，默认 4 M
    */
   size?: number;
+  style?: React.CSSProperties;
 }
 
 export default ({ onChange, value, ...extraProps }: UploadImageProps) => {
@@ -70,7 +71,7 @@ export default ({ onChange, value, ...extraProps }: UploadImageProps) => {
           beforeUpload={beforeUpload}
           {...extraProps}
         >
-          <div className={'upload-image-content'}>
+          <div className={'upload-image-content'} style={extraProps.style}>
             {values ? (
               <>
                 {/*<img width={120} height={120} src={values} />*/}
@@ -89,6 +90,7 @@ export default ({ onChange, value, ...extraProps }: UploadImageProps) => {
             )}
           </div>
         </Upload>
+        {extraProps.disabled && <div className={'upload-loading-mask'} />}
         {values && loading ? (
           <div className={'upload-loading-mask'}>
             {loading ? <LoadingOutlined style={{ fontSize: 28 }} /> : null}

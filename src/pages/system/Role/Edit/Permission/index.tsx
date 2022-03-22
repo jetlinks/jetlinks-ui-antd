@@ -1,7 +1,7 @@
 import { Button, Card, Col, Form, Input, message, Row } from 'antd';
 import Allocate from '@/pages/system/Role/Edit/Permission/Allocate';
 import { useEffect, useState } from 'react';
-import { useParams, history } from 'umi';
+import { history, useParams } from 'umi';
 import { service } from '@/pages/system/Role';
 import styles from './index.less';
 

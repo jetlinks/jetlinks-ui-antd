@@ -2,7 +2,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import React, { useEffect, useRef } from 'react';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { message, Popconfirm, Tooltip } from 'antd';
-import type { ProColumns, ActionType } from '@jetlinks/pro-table';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import BaseCrud from '@/components/BaseCrud';
 import Service from './service';
 import { useIntl } from '@@/plugin-locale/localeExports';

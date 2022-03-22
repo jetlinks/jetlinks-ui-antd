@@ -1,23 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { message, Modal, Spin } from 'antd';
 import {
-  NumberPicker,
+  ArrayItems,
+  ArrayTable,
   Editable,
   Form,
-  FormItem,
-  Input,
-  Password,
-  Upload,
-  PreviewText,
-  FormTab,
-  Select,
-  ArrayTable,
-  Switch,
   FormGrid,
-  ArrayItems,
-  Space,
+  FormItem,
+  FormTab,
+  Input,
+  NumberPicker,
+  Password,
+  PreviewText,
   Radio,
+  Select,
+  Space,
+  Switch,
+  Upload,
 } from '@formily/antd';
+import type { Form as Form1 } from '@formily/core';
 import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import * as ICONS from '@ant-design/icons';
@@ -32,7 +33,6 @@ import type { ModalProps } from 'antd/lib/modal/Modal';
 import FUpload from '@/components/Upload';
 import FileUpload from '@/pages/link/Protocol/FileUpload';
 import FMonacoEditor from '@/components/FMonacoEditor';
-import type { Form as Form1 } from '@formily/core';
 import FBraftEditor from '@/components/FBraftEditor';
 
 interface Props<T> {

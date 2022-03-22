@@ -18,13 +18,46 @@
   }
 
   .pro-table-card-items {
-    display: flex;
-    flex-wrap: wrap;
-    padding-bottom: 32px;
+    display: grid;
+    grid-gap: 26px;
+    grid-template-columns: repeat(auto-fit, 340px);
+    //display: flex;
+    //flex-wrap: wrap;
+    padding-bottom: 38px;
 
-    > div {
-      margin-right: 14px;
-      margin-bottom: 14px;
+    .pro-table-card-item {
+      display: flex;
+
+      .card-item-avatar {
+        margin-right: 16px;
+      }
+
+      .card-item-body {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        width: 0;
+
+        .card-item-header {
+          display: flex;
+          width: 100%;
+          margin-bottom: 12px;
+
+          .card-item-header-name {
+            flex: 1;
+            font-weight: bold;
+            font-size: 16px;
+          }
+        }
+
+        .card-item-content {
+          display: flex;
+
+          > span {
+            flex: 1;
+          }
+        }
+      }
     }
   }
 

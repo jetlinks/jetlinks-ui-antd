@@ -1,9 +1,9 @@
 import { DisconnectOutlined, PlusOutlined } from '@ant-design/icons';
-import type { ProColumns, ActionType } from '@jetlinks/pro-table';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import ProTable from '@jetlinks/pro-table';
 import { Badge, Button, Card, message, Popconfirm, Space, Tooltip } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { useRef, useState } from 'react';
-import ProTable from '@jetlinks/pro-table';
 import BindUser from './BindUser';
 import { service } from '@/pages/system/User/index';
 import { useParams } from 'umi';

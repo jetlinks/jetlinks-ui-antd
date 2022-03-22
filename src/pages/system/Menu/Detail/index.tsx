@@ -4,9 +4,8 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import { useEffect, useState } from 'react';
 import BaseDetail from './edit';
 import Buttons from './buttons';
-import { useLocation } from 'umi';
+import { useLocation, useRequest } from 'umi';
 import { service } from '@/pages/system/Menu';
-import { useRequest } from 'umi';
 
 type LocationType = {
   id?: string;
@@ -15,6 +14,7 @@ type LocationType = {
 export default () => {
   const intl = useIntl();
   const [tabKey, setTabKey] = useState('detail');
+  const [pId, setPid] = useState<string | null>(null);
   const location = useLocation<LocationType>();
 
   const { data, run: queryData } = useRequest(service.queryDetail, {
@@ -27,11 +27,15 @@ export default () => {
   /**
    * 获取当前菜单详情
    */
-  const queryDetail = () => {
+  const queryDetail = (editId?: string) => {
     const params = new URLSearchParams(location.search);
-    const id = params.get('id');
+    const id = editId || params.get('id');
+    const _pId = params.get('pId');
     if (id) {
       queryData(id);
+    }
+    if (_pId) {
+      setPid(_pId);
     }
   };
 
@@ -63,11 +67,14 @@ export default () => {
       }}
     >
       {tabKey === 'detail' ? (
-        <div style={{ background: '#fff', padding: '16px 24px' }}>
-          <div style={{ width: 660 }}>
-            {' '}
-            <BaseDetail data={data} onLoad={queryDetail} />{' '}
-          </div>
+        <div style={{ padding: '16px 24px' }}>
+          <BaseDetail
+            data={{
+              ...data,
+              parentId: pId,
+            }}
+            onLoad={queryDetail}
+          />
         </div>
       ) : (
         <Buttons data={data} onLoad={queryDetail} />

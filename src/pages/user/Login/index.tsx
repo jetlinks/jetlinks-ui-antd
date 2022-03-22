@@ -1,13 +1,13 @@
 import { Checkbox, message, Spin } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
-import { Link, history } from 'umi';
+import { history, Link } from 'umi';
 import styles from './index.less';
 import Token from '@/utils/token';
 import Service from '@/pages/user/Login/service';
 import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
-import { Form, Submit, Input, Password, FormItem } from '@formily/antd';
-import { filter, mergeMap } from 'rxjs/operators';
+import { Form, FormItem, Input, Password, Submit } from '@formily/antd';
+import { catchError, filter, mergeMap } from 'rxjs/operators';
 import * as ICONS from '@ant-design/icons';
 import { useModel } from '@@/plugin-model/useModel';
 import SystemConst from '@/utils/const';
@@ -62,6 +62,7 @@ const Login: React.FC = () => {
       .pipe(
         filter((r) => r.enabled),
         mergeMap(Service.getCaptcha),
+        catchError(() => message.error('服务端挂了！')),
       )
       .subscribe(setCaptcha);
   };
@@ -148,6 +149,7 @@ const Login: React.FC = () => {
         },
         complete: () => {
           getCode();
+          setLoading(false);
         },
       },
     );
