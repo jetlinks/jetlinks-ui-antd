@@ -4,7 +4,7 @@ import ProTable from '@jetlinks/pro-table';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { Button, message, Popconfirm, Tooltip, Modal, Form, Input } from 'antd';
+import { Button, message, Popconfirm, Tooltip } from 'antd';
 import {
   SearchOutlined,
   PlusOutlined,
@@ -39,7 +39,7 @@ export default observer(() => {
   const intl = useIntl();
 
   const [param, setParam] = useState({});
-  const [form] = Form.useForm();
+  // const [form] = Form.useForm();
   const history = useHistory();
 
   const deleteItem = async (id: string) => {
@@ -58,10 +58,13 @@ export default observer(() => {
   /**
    * 跳转详情页
    * @param id
+   * @param pId
    */
-  const pageJump = (id: string) => {
+  const pageJump = (id?: string, pId?: string) => {
     // 跳转详情
-    history.push(`${getMenuPathByCode(MENUS_CODE['system/Menu/Detail'])}?id=${id}`);
+    history.push(
+      `${getMenuPathByCode(MENUS_CODE['system/Menu/Detail'])}?id=${id || ''}&pId=${pId || ''}`,
+    );
   };
 
   const columns: ProColumns<MenuItem>[] = [
@@ -145,7 +148,8 @@ export default observer(() => {
             State.current = {
               parentId: record.id,
             };
-            State.visible = true;
+            // State.visible = true;
+            pageJump('', record.id);
           }}
         >
           <Tooltip
@@ -192,29 +196,29 @@ export default observer(() => {
     });
   };
 
-  const modalCancel = () => {
-    State.current = {};
-    State.visible = false;
-    form.resetFields();
-  };
+  // const modalCancel = () => {
+  //   State.current = {};
+  //   State.visible = false;
+  //   form.resetFields();
+  // };
 
-  const saveData = async () => {
-    const formData = await form.validateFields();
-    if (formData) {
-      const _data = {
-        ...formData,
-        parentId: State.current.parentId,
-      };
-      const response: any = await service.save(_data);
-      if (response.status === 200) {
-        message.success('操作成功！');
-        modalCancel();
-        pageJump(response.result.id);
-      } else {
-        message.error('操作成功！');
-      }
-    }
-  };
+  // const saveData = async () => {
+  //   const formData = await form.validateFields();
+  //   if (formData) {
+  //     const _data = {
+  //       ...formData,
+  //       parentId: State.current.parentId,
+  //     };
+  //     const response: any = await service.save(_data);
+  //     if (response.status === 200) {
+  //       message.success('操作成功！');
+  //       modalCancel();
+  //       pageJump(response.result.id);
+  //     } else {
+  //       message.error('操作成功！');
+  //     }
+  //   }
+  // };
 
   return (
     <PageContainer>
@@ -242,7 +246,7 @@ export default observer(() => {
         toolBarRender={() => [
           <Button
             onClick={() => {
-              State.visible = true;
+              pageJump();
             }}
             key="button"
             icon={<PlusOutlined />}
@@ -259,53 +263,53 @@ export default observer(() => {
           defaultMessage: '菜单列表',
         })}
       />
-      <Modal
-        title={intl.formatMessage({
-          id: State.current.parentId
-            ? 'pages.system.menu.option.addChildren'
-            : 'pages.data.option.add',
-          defaultMessage: '新增',
-        })}
-        visible={State.visible}
-        width={660}
-        onOk={saveData}
-        onCancel={modalCancel}
-      >
-        <Form form={form} labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
-          <Form.Item
-            name="code"
-            label={intl.formatMessage({
-              id: 'page.system.menu.encoding',
-              defaultMessage: '编码',
-            })}
-            required={true}
-            rules={[
-              { required: true, message: '请输入编码' },
-              { max: 64, message: '最多可输入64个字符' },
-              {
-                pattern: /^[a-zA-Z0-9`!@#$%^&*()_+\-={}|\\\]\[;':",.\/<>?]+$/,
-                message: '请输入英文+数字+特殊字符（`!@#$%^&*()_+-={}|\\][;\':",./<>?）',
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="name"
-            label={intl.formatMessage({
-              id: 'pages.table.name',
-              defaultMessage: '名称',
-            })}
-            required={true}
-            rules={[
-              { required: true, message: '请输入名称' },
-              { max: 64, message: '最多可输入64个字符' },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-        </Form>
-      </Modal>
+      {/*<Modal*/}
+      {/*  title={intl.formatMessage({*/}
+      {/*    id: State.current.parentId*/}
+      {/*      ? 'pages.system.menu.option.addChildren'*/}
+      {/*      : 'pages.data.option.add',*/}
+      {/*    defaultMessage: '新增',*/}
+      {/*  })}*/}
+      {/*  visible={State.visible}*/}
+      {/*  width={660}*/}
+      {/*  onOk={saveData}*/}
+      {/*  onCancel={modalCancel}*/}
+      {/*>*/}
+      {/*  <Form form={form} labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>*/}
+      {/*    <Form.Item*/}
+      {/*      name="code"*/}
+      {/*      label={intl.formatMessage({*/}
+      {/*        id: 'page.system.menu.encoding',*/}
+      {/*        defaultMessage: '编码',*/}
+      {/*      })}*/}
+      {/*      required={true}*/}
+      {/*      rules={[*/}
+      {/*        { required: true, message: '请输入编码' },*/}
+      {/*        { max: 64, message: '最多可输入64个字符' },*/}
+      {/*        {*/}
+      {/*          pattern: /^[a-zA-Z0-9`!@#$%^&*()_+\-={}|\\\]\[;':",.\/<>?]+$/,*/}
+      {/*          message: '请输入英文+数字+特殊字符（`!@#$%^&*()_+-={}|\\][;\':",./<>?）',*/}
+      {/*        },*/}
+      {/*      ]}*/}
+      {/*    >*/}
+      {/*      <Input />*/}
+      {/*    </Form.Item>*/}
+      {/*    <Form.Item*/}
+      {/*      name="name"*/}
+      {/*      label={intl.formatMessage({*/}
+      {/*        id: 'pages.table.name',*/}
+      {/*        defaultMessage: '名称',*/}
+      {/*      })}*/}
+      {/*      required={true}*/}
+      {/*      rules={[*/}
+      {/*        { required: true, message: '请输入名称' },*/}
+      {/*        { max: 64, message: '最多可输入64个字符' },*/}
+      {/*      ]}*/}
+      {/*    >*/}
+      {/*      <Input />*/}
+      {/*    </Form.Item>*/}
+      {/*  </Form>*/}
+      {/*</Modal>*/}
     </PageContainer>
   );
 });

@@ -65,12 +65,78 @@ const Instance = () => {
   const [bindKeys, setBindKeys] = useState<any[]>([]);
   const intl = useIntl();
 
+  const tools = (record: DeviceInstance) => [
+    <Link
+      onClick={() => {
+        InstanceModel.current = record;
+      }}
+      to={`/device/instance/detail/${record.id}`}
+      key="link"
+    >
+      <Tooltip
+        title={intl.formatMessage({
+          id: 'pages.data.option.detail',
+          defaultMessage: '查看',
+        })}
+        key={'detail'}
+      >
+        <EyeOutlined />
+      </Tooltip>
+    </Link>,
+    <a href={record.id} target="_blank" rel="noopener noreferrer" key="view">
+      <Popconfirm
+        title={intl.formatMessage({
+          id: 'pages.data.option.disabled.tips',
+          defaultMessage: '确认禁用？',
+        })}
+        onConfirm={async () => {
+          if (record.state.value !== 'notActive') {
+            await service.undeployDevice(record.id);
+          } else {
+            await service.deployDevice(record.id);
+          }
+          message.success(
+            intl.formatMessage({
+              id: 'pages.data.option.success',
+              defaultMessage: '操作成功!',
+            }),
+          );
+          actionRef.current?.reload();
+        }}
+      >
+        <Tooltip
+          title={intl.formatMessage({
+            id: `pages.data.option.${record.state.value !== 'notActive' ? 'disabled' : 'enabled'}`,
+            defaultMessage: record.state.value !== 'notActive' ? '禁用' : '启用',
+          })}
+        >
+          {record.state.value !== 'notActive' ? <StopOutlined /> : <CheckCircleOutlined />}
+        </Tooltip>
+      </Popconfirm>
+    </a>,
+
+    <a key={'delete'}>
+      <Popconfirm
+        title="确认删除"
+        onConfirm={async () => {
+          await service.remove(record.id);
+          message.success(
+            intl.formatMessage({
+              id: 'pages.data.option.success',
+              defaultMessage: '操作成功!',
+            }),
+          );
+          actionRef.current?.reload();
+        }}
+      >
+        <Tooltip title={'删除'}>
+          <DeleteOutlined />
+        </Tooltip>
+      </Popconfirm>
+    </a>,
+  ];
+
   const columns: ProColumns<DeviceInstance>[] = [
-    {
-      dataIndex: 'index',
-      valueType: 'indexBorder',
-      width: 48,
-    },
     {
       title: 'ID',
       dataIndex: 'id',
@@ -152,78 +218,7 @@ const Instance = () => {
       valueType: 'option',
       align: 'center',
       width: 200,
-      render: (text, record) => [
-        <Link
-          onClick={() => {
-            InstanceModel.current = record;
-          }}
-          to={`/device/instance/detail/${record.id}`}
-          key="link"
-        >
-          <Tooltip
-            title={intl.formatMessage({
-              id: 'pages.data.option.detail',
-              defaultMessage: '查看',
-            })}
-            key={'detail'}
-          >
-            <EyeOutlined />
-          </Tooltip>
-        </Link>,
-        <a href={record.id} target="_blank" rel="noopener noreferrer" key="view">
-          <Popconfirm
-            title={intl.formatMessage({
-              id: 'pages.data.option.disabled.tips',
-              defaultMessage: '确认禁用？',
-            })}
-            onConfirm={async () => {
-              if (record.state.value !== 'notActive') {
-                await service.undeployDevice(record.id);
-              } else {
-                await service.deployDevice(record.id);
-              }
-              message.success(
-                intl.formatMessage({
-                  id: 'pages.data.option.success',
-                  defaultMessage: '操作成功!',
-                }),
-              );
-              actionRef.current?.reload();
-            }}
-          >
-            <Tooltip
-              title={intl.formatMessage({
-                id: `pages.data.option.${
-                  record.state.value !== 'notActive' ? 'disabled' : 'enabled'
-                }`,
-                defaultMessage: record.state.value !== 'notActive' ? '禁用' : '启用',
-              })}
-            >
-              {record.state.value !== 'notActive' ? <StopOutlined /> : <CheckCircleOutlined />}
-            </Tooltip>
-          </Popconfirm>
-        </a>,
-
-        <a key={'delete'}>
-          <Popconfirm
-            title="确认删除"
-            onConfirm={async () => {
-              await service.remove(record.id);
-              message.success(
-                intl.formatMessage({
-                  id: 'pages.data.option.success',
-                  defaultMessage: '操作成功!',
-                }),
-              );
-              actionRef.current?.reload();
-            }}
-          >
-            <Tooltip title={'删除'}>
-              <DeleteOutlined />
-            </Tooltip>
-          </Popconfirm>
-        </a>,
-      ],
+      render: (text, record) => tools(record),
     },
   ];
 
@@ -369,12 +364,13 @@ const Instance = () => {
             setBindKeys(selectedRows.map((item) => item.id));
           },
         }}
-        toolBarRender={() => [
+        headerTitle={[
           <Button
             onClick={() => {
               setVisible(true);
               setCurrent({});
             }}
+            style={{ marginRight: 12 }}
             key="button"
             icon={<PlusOutlined />}
             type="primary"
@@ -388,11 +384,11 @@ const Instance = () => {
             <Button>批量操作</Button>
           </Dropdown>,
         ]}
-        cardRender={(item) => <DeviceCard {...item} />}
+        cardRender={(record) => <DeviceCard {...record} actions={tools(record)} />}
       />
       <Save
         data={current}
-        model={!current ? 'add' : 'edit'}
+        model={!Object.keys(current).length ? 'add' : 'edit'}
         close={() => {
           setVisible(false);
         }}
