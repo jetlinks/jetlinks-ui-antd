@@ -64,6 +64,7 @@ export const MENUS_CODE = {
   'link/Type': 'link/Type',
   'link/Type/Save': 'link/Type/Save',
   'link/AccessConfig': 'link/AccessConfig',
+  'link/AccessConfig/Detail': 'link/AccessConfig/Detail',
   'log/Access': 'log/Access',
   'log/System': 'log/System',
   'media/Cascade': 'media/Cascade',
