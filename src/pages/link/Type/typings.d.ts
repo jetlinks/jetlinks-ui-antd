@@ -1,4 +1,4 @@
-import type { BaseItem } from '@/utils/typings';
+import type { BaseItem, State } from '@/utils/typings';
 
 type NetworkItem = {
   shareCluster: boolean;
@@ -12,4 +12,5 @@ type NetworkItem = {
   createTime: number;
   creatorId: string;
   configuration: Record<string, any>;
+  cluster: any[];
 } & BaseItem;

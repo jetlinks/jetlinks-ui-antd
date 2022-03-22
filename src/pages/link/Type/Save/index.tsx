@@ -1,9 +1,9 @@
 import { PageContainer } from '@ant-design/pro-layout';
-// import { useParams } from 'umi';
-import { createSchemaField } from '@formily/react';
+import { createSchemaField, observer } from '@formily/react';
 import {
   ArrayCollapse,
   Form,
+  FormButtonGroup,
   FormCollapse,
   FormGrid,
   FormItem,
@@ -12,17 +12,19 @@ import {
   Password,
   Radio,
   Select,
+  Submit,
 } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
 import { useEffect, useMemo, useRef } from 'react';
 import type { Field } from '@formily/core';
 import { createForm, onFieldValueChange } from '@formily/core';
-import { Card } from 'antd';
+import { Button, Card, message } from 'antd';
 import styles from './index.less';
 import { useAsyncDataSource } from '@/utils/util';
 import { service } from '..';
 import _ from 'lodash';
 import FAutoComplete from '@/components/FAutoComplete';
+import { Store } from 'jetlinks-store';
 
 /**
  *  根据类型过滤配置信息
@@ -30,33 +32,30 @@ import FAutoComplete from '@/components/FAutoComplete';
  * @param type
  */
 const filterConfigByType = (data: any[], type: string) => {
+  // UDP、TCP_SERVER、WEB_SOCKET_SERVER、HTTP_SERVER、MQTT_SERVER、COAP_SERVER
+
+  const tcpList = ['TCP_SERVER', 'WEB_SOCKET_SERVER', 'HTTP_SERVER', 'MQTT_SERVER'];
+  const udpList = ['UDP', 'COAP_SERVER'];
+
+  let _temp = type;
+  if (tcpList.includes(type)) {
+    _temp = 'TCP';
+  } else if (udpList.includes(type)) {
+    _temp = 'UDP';
+  }
   // 只保留ports 包含type的数据
-  const _config = data.filter((item) => Object.keys(item.ports).includes(type));
+  const _config = data.filter((item) => Object.keys(item.ports).includes(_temp));
   // 只保留ports的type数据
   return _config.map((i) => {
-    i.ports = i.ports[type];
+    i.ports = i.ports[_temp];
     return i;
   });
 };
-const Save = () => {
+const Save = observer(() => {
   // const param = useParams<{ id: string }>();
 
   // const [config, setConfig] = useState<any[]>([]);
   const configRef = useRef([]);
-
-  const getResourcesClusters = () => {
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    const checked = form.getValuesIn('config')?.map((i: any) => i?.nodeName) || [];
-    return service.getResourceClusters().then((resp) => {
-      // 获取到已经选择的节点名称。然后过滤、通过form.values获取
-      return resp.result
-        ?.map((item: any) => ({
-          label: item.name,
-          value: item.id,
-        }))
-        .filter((j: any) => !checked.includes(j.value));
-    });
-  };
 
   useEffect(() => {
     service.getResourcesCurrent().then((resp) => {
@@ -67,6 +66,26 @@ const Save = () => {
       }
     });
   }, []);
+
+  const getResourcesClusters = () => {
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    const checked = form.getValuesIn('cluster')?.map((i: any) => i?.serverId) || [];
+    // cache resourcesCluster
+    if (Store.get('resources-cluster')?.length > 0) {
+      return new Promise((resolve) => {
+        resolve(Store.get('resources-cluster').filter((j: any) => !checked.includes(j.value)));
+      });
+    } else {
+      return service.getResourceClusters().then((resp) => {
+        const _data = resp.result?.map((item: any) => ({
+          label: item.name,
+          value: item.id,
+        }));
+        Store.set('resources-cluster', _data);
+        return _data.filter((j: any) => !checked.includes(j.value));
+      });
+    }
+  };
 
   const getResourceById = (id: string, type: string) =>
     service.getResourceClustersById(id).then((resp) => filterConfigByType(resp.result, type));
@@ -81,7 +100,8 @@ const Save = () => {
   const form = useMemo(
     () =>
       createForm({
-        initialValues: {},
+        readPretty: false,
+        // initialValues: {},
         effects() {
           onFieldValueChange('type', (field, f) => {
             const value = (field as Field).value;
@@ -90,7 +110,7 @@ const Save = () => {
               state.dataSource = _host.map((item) => ({ label: item.host, value: item.host }));
             });
             f.setFieldState('cluster.config.*.host', (state) => {
-              state.dataSource = _host.map((item) => item.host);
+              state.dataSource = _host.map((item) => ({ label: item.host, value: item.host }));
             });
           });
           onFieldValueChange('grid.configuration.panel1.layout2.host', (field, f1) => {
@@ -98,6 +118,7 @@ const Save = () => {
             const type = (field.query('type').take() as Field).value;
             const _port = filterConfigByType(_.cloneDeep(configRef.current), type);
             const _host = _port.find((item) => item.host === value);
+            console.log(_host, 'host');
             f1.setFieldState('grid.configuration.panel1.layout2.port', (state) => {
               state.dataSource = _host?.ports.map((p: any) => ({ label: p, value: p }));
             });
@@ -108,7 +129,7 @@ const Save = () => {
               // false 获取独立配置的信息
             }
           });
-          onFieldValueChange('grid.cluster.config.*.layout2.nodeName', async (field, f3) => {
+          onFieldValueChange('grid.cluster.cluster.*.layout2.serverId', async (field, f3) => {
             const value = (field as Field).value;
             const type = (field.query('type').take() as Field).value;
             const response = await getResourceById(value, type);
@@ -116,9 +137,9 @@ const Save = () => {
               state.dataSource = response.map((item) => ({ label: item.host, value: item.host }));
             });
           });
-          onFieldValueChange('grid.cluster.config.*.layout2.host', async (field, f4) => {
+          onFieldValueChange('grid.cluster.cluster.*.layout2.host', async (field, f4) => {
             const host = (field as Field).value;
-            const value = (field.query('.nodeName').take() as Field).value;
+            const value = (field.query('.serverId').take() as Field).value;
             const type = (field.query('type').take() as Field).value;
             const response = await getResourceById(value, type);
             const _ports = response.find((item) => item.host === host);
@@ -130,6 +151,18 @@ const Save = () => {
       }),
     [],
   );
+
+  useEffect(() => {
+    Store.subscribe('current-network-data', (data) => {
+      form.readPretty = true;
+      const _data = _.cloneDeep(data);
+      // 处理一下集群模式数据
+      if (!_data.shareCluster) {
+        _data.cluster = _data.cluster?.map((item: any) => ({ ...item.configuration }));
+      }
+      form.setValues(_data);
+    });
+  }, []);
 
   const SchemaField = createSchemaField({
     components: {
@@ -165,7 +198,7 @@ const Save = () => {
       columnGap: 48,
     },
     properties: {
-      nodeName: {
+      serverId: {
         title: '节点名称',
         'x-component': 'Select',
         'x-decorator': 'FormItem',
@@ -178,7 +211,7 @@ const Save = () => {
         },
         'x-reactions': [
           {
-            dependencies: ['....shareCluster'],
+            dependencies: ['shareCluster'],
             fulfill: {
               state: {
                 visible: '{{!$deps[0]}}',
@@ -200,7 +233,14 @@ const Save = () => {
         },
         required: true,
         'x-reactions': {
-          //后台获取数据
+          dependencies: ['type'],
+          fulfill: {
+            state: {
+              // visible: '{{$deps[0]==="UDP"}}',
+              visible:
+                '{{["COAP_SERVER","MQTT_SERVER","WEB_SOCKET_SERVER","TCP_SERVER","UDP"].includes($deps[0])}}',
+            },
+          },
         },
         'x-validator': ['ipv4'],
       },
@@ -216,6 +256,16 @@ const Save = () => {
         type: 'number',
         'x-decorator': 'FormItem',
         'x-component': 'Select',
+        'x-reactions': {
+          dependencies: ['type'],
+          fulfill: {
+            state: {
+              // visible: '{{$deps[0]==="UDP"}}',
+              visible:
+                '{{["COAP_SERVER","MQTT_SERVER","WEB_SOCKET_SERVER","TCP_SERVER","UDP"].includes($deps[0])}}',
+            },
+          },
+        },
         'x-validator': [
           {
             max: 65535,
@@ -239,6 +289,16 @@ const Save = () => {
         'x-decorator': 'FormItem',
         'x-component': 'Input',
         'x-validator': ['ipv4'],
+        'x-reactions': {
+          dependencies: ['type'],
+          fulfill: {
+            state: {
+              // visible: '{{$deps[0]==="UDP"}}',
+              visible:
+                '{{["COAP_SERVER","MQTT_SERVER","WEB_SOCKET_SERVER","TCP_SERVER","UDP"].includes($deps[0])}}',
+            },
+          },
+        },
       },
       publicPort: {
         title: '公网端口',
@@ -251,6 +311,16 @@ const Save = () => {
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'NumberPicker',
+        'x-reactions': {
+          dependencies: ['type'],
+          fulfill: {
+            state: {
+              // visible: '{{$deps[0]==="UDP"}}',
+              visible:
+                '{{["COAP_SERVER","MQTT_SERVER","WEB_SOCKET_SERVER","TCP_SERVER","UDP"].includes($deps[0])}}',
+            },
+          },
+        },
         'x-validator': [
           {
             max: 65535,
@@ -261,6 +331,75 @@ const Save = () => {
             message: '请输入1-65535之间的整整数',
           },
         ],
+      },
+      mqttClient: {
+        type: 'void',
+        'x-reactions': {
+          dependencies: ['type'],
+          fulfill: {
+            state: {
+              // visible: '{{$deps[0]==="UDP"}}',
+              visible: '{{["MQTT_Client"].includes($deps[0])}}',
+            },
+          },
+        },
+        properties: {
+          remoteHost: {
+            title: '远程地址',
+            'x-decorator': 'FormItem',
+            'x-component': 'Input',
+          },
+          remotePort: {
+            title: '远程端口',
+            'x-decorator': 'FormItem',
+            'x-component': 'Input',
+          },
+          clientId: {
+            title: 'clientId',
+            'x-decorator': 'FormItem',
+            'x-component': 'Input',
+          },
+          username: {
+            title: '用户名',
+            'x-decorator': 'FormItem',
+            'x-component': 'Input',
+          },
+          password: {
+            title: '密码',
+            'x-decorator': 'FormItem',
+            'x-component': 'Input',
+          },
+          maxMessageSize: {
+            title: '最大消息长度',
+            'x-decorator': 'FormItem',
+            'x-component': 'Input',
+          },
+          topicPrefix: {
+            title: '订阅前缀',
+            'x-decorator': 'FormItem',
+            'x-component': 'Input',
+          },
+        },
+      },
+      maxMessageSize: {
+        title: '最大消息长度',
+        'x-decorator': 'FormItem',
+        'x-component': 'Input',
+        'x-decorator-props': {
+          gridSpan: 1,
+          labelAlign: 'left',
+          tooltip: '对外提供访问的地址,内网环境是填写服务器的内网IP地址',
+          layout: 'vertical',
+        },
+        'x-reactions': {
+          dependencies: ['type'],
+          fulfill: {
+            state: {
+              // visible: '{{$deps[0]==="UDP"}}',
+              visible: '{{["MQTT_SERVER","MQTT-Client"].includes($deps[0])}}',
+            },
+          },
+        },
       },
       parserType: {
         // TCP
@@ -282,10 +421,11 @@ const Save = () => {
           { value: 'fixed_length', label: '固定长度' },
         ],
         'x-reactions': {
-          dependencies: ['....type'],
+          dependencies: ['type'],
           fulfill: {
             state: {
-              visible: '{{$deps[0]==="UDP"}}',
+              // visible: '{{$deps[0]==="UDP"}}',
+              visible: '{{["TCP_SERVER"].includes($deps[0])}}',
             },
           },
         },
@@ -355,22 +495,24 @@ const Save = () => {
             },
           },
           configuration: {
-            type: 'void',
-            'x-visible': false,
+            type: 'object',
+            // 'x-visible': false,
             'x-decorator': 'FormItem',
             'x-component': 'FormCollapse',
             'x-component-props': {
               formCollapse: '{{formCollapse}}',
               className: styles.configuration,
             },
-            'x-reactions': {
-              dependencies: ['.shareCluster'],
-              fulfill: {
-                state: {
-                  visible: '{{$deps[0]===true}}',
+            'x-reactions': [
+              {
+                dependencies: ['.shareCluster', 'type'],
+                fulfill: {
+                  state: {
+                    visible: '{{!!$deps[1]&&$deps[0]===true}}',
+                  },
                 },
               },
-            },
+            ],
             'x-decorator-props': {
               gridSpan: 3,
             },
@@ -391,26 +533,19 @@ const Save = () => {
               gridSpan: 3,
             },
             'x-reactions': {
-              dependencies: ['.shareCluster'],
+              dependencies: ['.shareCluster', 'type'],
               fulfill: {
                 state: {
-                  visible: '{{$deps[0]===false}}',
+                  visible: '{{!!$deps[1]&&$deps[0]===false}}',
                 },
               },
             },
             'x-visible': false,
             properties: {
-              config: {
+              cluster: {
                 type: 'array',
                 'x-component': 'ArrayCollapse',
                 'x-decorator': 'FormItem',
-                // maxItems: 2,
-                'x-validator': [
-                  {
-                    maxItems: 2,
-                    message: '集群节点已全部配置，请勿重复添加',
-                  },
-                ],
                 items: {
                   type: 'void',
                   'x-component': 'ArrayCollapse.CollapsePanel',
@@ -538,6 +673,20 @@ const Save = () => {
       },
     },
   };
+
+  const handleSave = async (data: any) => {
+    if (data.shareCluster === false) {
+      data.cluster = data.cluster?.map((item: any) => ({
+        serverId: item.serverId,
+        configuration: item,
+      }));
+    }
+    const response: any = data.id ? await service.update(data) : await service.save(data);
+    if (response.status === 200) {
+      message.success('保存成功');
+      history.back();
+    }
+  };
   return (
     <PageContainer onBack={() => history.back()}>
       <Card>
@@ -546,10 +695,19 @@ const Save = () => {
             schema={schema}
             scope={{ formCollapse, useAsyncDataSource, getSupports, getResourcesClusters }}
           />
+          <FormButtonGroup.Sticky>
+            <FormButtonGroup.FormItem>
+              {!form.readPretty ? (
+                <Submit onSubmit={handleSave}>保存</Submit>
+              ) : (
+                <Button onClick={() => (form.readPretty = false)}>编辑</Button>
+              )}
+            </FormButtonGroup.FormItem>
+          </FormButtonGroup.Sticky>
         </Form>
       </Card>
     </PageContainer>
   );
-};
+});
 
 export default Save;
