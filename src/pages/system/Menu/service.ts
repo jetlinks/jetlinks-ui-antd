@@ -18,6 +18,9 @@ class Service extends BaseService<MenuItem> {
     request(`${SystemConst.API_BASE}/permission/_query`, { method: 'POST', data });
 
   queryDetail = (id: string) => request(`${this.uri}/${id}`, { method: 'GET' });
+
+  // 资产类型
+  queryAssetsType = () => request(`${SystemConst.API_BASE}/asset/types`, { method: 'GET' });
 }
 
 export default Service;

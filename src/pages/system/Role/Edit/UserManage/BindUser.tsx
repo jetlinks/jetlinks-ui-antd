@@ -4,8 +4,9 @@ import { message, Modal } from 'antd';
 import { useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { service } from '@/pages/system/User/index';
-import encodeQuery from '@/utils/encodeQuery';
 import Service from '@/pages/system/Role/service';
+import SearchComponent from '@/components/SearchComponent';
+
 interface Props {
   visible: boolean;
   data: any;
@@ -17,7 +18,9 @@ const BindUser = (props: Props) => {
   const intl = useIntl();
   const actionRef = useRef<any>();
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
-  const columns: ProColumns<RoleItem>[] = [
+  const [param, setParam] = useState<any>({ terms: [] });
+
+  const columns: ProColumns<UserItem>[] = [
     {
       dataIndex: 'index',
       valueType: 'indexBorder',
@@ -75,8 +78,25 @@ const BindUser = (props: Props) => {
         props.cancel();
       }}
     >
+      <SearchComponent<UserItem>
+        field={columns}
+        target="user"
+        pattern={'simple'}
+        onSearch={(data) => {
+          // console.log(data);
+          // 重置分页数据
+          actionRef.current?.reset?.();
+          setParam(data);
+        }}
+        onReset={() => {
+          // 重置分页及搜索参数
+          actionRef.current?.reset?.();
+          setParam({});
+        }}
+      />
       <ProTable
         actionRef={actionRef}
+        search={false}
         rowSelection={{
           selectedRowKeys: selectedRowKeys,
           onChange: (key) => {
@@ -86,16 +106,22 @@ const BindUser = (props: Props) => {
         pagination={{
           pageSize: 10,
         }}
-        request={async (param: any) => {
-          const response = await service.query(
-            encodeQuery({
-              pageSize: param.pageSize,
-              pageIndex: param.current,
-              terms: {
-                'id$in-dimension$role$not': props.data.id,
+        request={async (params: any) => {
+          const response = await service.query({
+            pageSize: params.pageSize,
+            pageIndex: params.current,
+            terms: [
+              ...(param?.terms || []),
+              {
+                terms: [
+                  {
+                    column: 'id$in-dimension$role$not',
+                    value: props.data.id,
+                  },
+                ],
               },
-            }),
-          );
+            ],
+          });
           return {
             result: { data: response.result.data },
             success: true,

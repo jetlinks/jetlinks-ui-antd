@@ -16,8 +16,8 @@
 
   .upload-image-border {
     position: relative;
-    width: @with;
-    height: @height;
+    //width: @with;
+    //height: @height;
     overflow: hidden;
     //border-radius: 50%;
     border: @border;
@@ -35,6 +35,7 @@
       flex-direction: column;
       width: @with;
       height: @height;
+      padding: 8px;
       background-color: rgba(#000, 0.06);
       cursor: pointer;
 
@@ -53,8 +54,8 @@
       }
 
       .upload-image {
-        width: 144px;
-        height: 138px;
+        width: 100%;
+        height: 100%;
         //border-radius: 50%;
         background-repeat: no-repeat;
         background-position: center;

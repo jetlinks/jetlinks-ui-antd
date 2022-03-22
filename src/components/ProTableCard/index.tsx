@@ -3,7 +3,7 @@ import ProTable from '@jetlinks/pro-table';
 import type { ParamsType } from '@ant-design/pro-provider';
 import React, { useState } from 'react';
 import { isFunction } from 'lodash';
-import { Pagination, Space } from 'antd';
+import { Empty, Pagination, Space } from 'antd';
 import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 import './index.less';
@@ -12,6 +12,8 @@ enum ModelEnum {
   TABLE = 'TABLE',
   CARD = 'CARD',
 }
+
+const Default_Size = 5;
 
 type ModelType = keyof typeof ModelEnum;
 
@@ -31,7 +33,7 @@ const ProTableCard = <
   const [total, setTotal] = useState<number | undefined>(0);
   const [current, setCurrent] = useState(1); // 当前页
   const [pageIndex, setPageIndex] = useState(0);
-  const [pageSize, setPageSize] = useState(10); // 每页条数
+  const [pageSize, setPageSize] = useState(Default_Size * 2); // 每页条数
 
   /**
    * 处理 Card
@@ -40,11 +42,11 @@ const ProTableCard = <
   const handleCard = (dataSource: readonly T[] | undefined): JSX.Element => {
     return (
       <div className={'pro-table-card-items'}>
-        {dataSource
-          ? dataSource.map((item) =>
-              cardRender && isFunction(cardRender) ? cardRender(item) : null,
-            )
-          : null}
+        {dataSource ? (
+          dataSource.map((item) => (cardRender && isFunction(cardRender) ? cardRender(item) : null))
+        ) : (
+          <Empty />
+        )}
       </div>
     );
   };
@@ -61,6 +63,7 @@ const ProTableCard = <
             pageSize,
           } as any
         }
+        options={model === ModelEnum.CARD ? false : props.options}
         request={async (param, sort, filter) => {
           if (request) {
             const resp = await request(param, sort, filter);
@@ -86,6 +89,7 @@ const ProTableCard = <
           },
           pageSize: pageSize,
           current: current,
+          pageSizeOptions: [Default_Size * 2, Default_Size * 4, 50, 100],
         }}
         toolBarRender={(action, row) => {
           const oldBar = toolBarRender ? toolBarRender(action, row) : [];
@@ -139,6 +143,7 @@ const ProTableCard = <
             setPageIndex(page - 1);
             setPageSize(size);
           }}
+          pageSizeOptions={[Default_Size * 2, Default_Size * 4, 50, 100]}
           pageSize={pageSize}
           showTotal={(num) => {
             const minSize = pageIndex * pageSize + 1;

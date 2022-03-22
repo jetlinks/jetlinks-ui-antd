@@ -1,0 +1,55 @@
+.content {
+  display: flex;
+  width: 90%;
+  margin: 0 78px;
+
+  .server {
+    width: calc(50% - 78px);
+
+    :global {
+      .ant-badge-status-text {
+        color: rgba(0, 0, 0, 0.55);
+      }
+    }
+  }
+
+  .procotol {
+    width: calc(50% - 78px);
+  }
+}
+
+.desc {
+  margin-top: 10px;
+  color: rgba(0, 0, 0, 0.55);
+  font-weight: 400;
+  font-size: 13px;
+}
+
+.title {
+  margin-bottom: 10px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+:global {
+  .ant-list-item-meta-avatar {
+    width: 64px !important;
+    height: 64px !important;
+  }
+}
+
+.images {
+  width: 136px;
+  height: 108px;
+  color: white;
+  font-size: 18px;
+  line-height: 108px;
+  text-align: center;
+  background: linear-gradient(
+    128.453709216706deg,
+    rgba(255, 255, 255, 1) 4%,
+    rgba(113, 187, 255, 1) 43%,
+    rgba(24, 144, 255, 1) 100%
+  );
+  border: 1px solid rgba(242, 242, 242, 1);
+}
