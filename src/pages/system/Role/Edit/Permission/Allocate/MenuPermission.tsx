@@ -120,7 +120,7 @@ const MenuPermission = (props: Props) => {
                   enabled: data.includes(i.id),
                 };
               });
-              const clen = (value?.children || []).filter((i) => i.check !== 3).length;
+              const clen = (value?.children || []).filter((i: any) => i.check !== 3).length;
               let check: number = 3;
               if (data.length + clen === 0) {
                 check = 3;
@@ -211,7 +211,7 @@ const MenuPermission = (props: Props) => {
               level={(props?.level || 0) + 1}
               value={item}
               change={(data: any) => {
-                const children = (value?.children || []).map((i) => {
+                const children = (value?.children || []).map((i: any) => {
                   if (data.id === i.id) {
                     return data;
                   }
