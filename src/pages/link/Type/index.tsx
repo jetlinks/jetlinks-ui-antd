@@ -1,17 +1,26 @@
 import { useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { Button, Tooltip } from 'antd';
-import { BugOutlined, EditOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
+import { Badge, Button, message, Popconfirm, Tooltip } from 'antd';
+import {
+  CheckCircleOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  PlusOutlined,
+  StopOutlined,
+} from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-layout';
 import type { NetworkItem } from '@/pages/link/Type/typings';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import SearchComponent from '@/components/SearchComponent';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { history } from 'umi';
-import Service from '@/pages/link/service';
+import Service from '@/pages/link/Type/service';
 
 export const service = new Service('network/config');
+const statusMap = new Map();
+statusMap.set('enabled', 'success');
+statusMap.set('disabled', 'error');
 
 const Network = () => {
   const intl = useIntl();
@@ -25,6 +34,7 @@ const Network = () => {
     },
     {
       dataIndex: 'name',
+      align: 'center',
       title: intl.formatMessage({
         id: 'pages.table.name',
         defaultMessage: '名称',
@@ -32,25 +42,52 @@ const Network = () => {
     },
     {
       dataIndex: 'type',
+      align: 'center',
       title: intl.formatMessage({
         id: 'pages.link.type',
         defaultMessage: '类型',
       }),
     },
     {
+      dataIndex: 'shareCluster',
+      title: '集群',
+      align: 'center',
+      renderText: (text) => (text ? '共享配置' : '独立配置'),
+    },
+    {
+      dataIndex: 'detail',
+      title: '详情',
+      align: 'center',
+      render: (text, record: any) => {
+        if (record.shareCluster) {
+          return (
+            <div>
+              公网: {record?.configuration?.host}:{record?.configuration?.port}
+            </div>
+          );
+        } else {
+          return (record?.cluster || []).slice(0, 3).map((i: any) => (
+            <div key={i?.serverId}>
+              公网: {i?.configuration?.host}:{i?.configuration?.port}
+            </div>
+          ));
+        }
+      },
+    },
+    {
+      dataIndex: 'description',
+      title: '说明',
+      align: 'center',
+    },
+    {
       dataIndex: 'state',
+      align: 'center',
       title: intl.formatMessage({
         id: 'pages.searchTable.titleStatus',
         defaultMessage: '状态',
       }),
-      render: (text, record) => record.state.value,
-    },
-    {
-      dataIndex: 'provider',
-      title: intl.formatMessage({
-        id: 'pages.table.provider',
-        defaultMessage: '服务商',
-      }),
+      renderText: (record) =>
+        record ? <Badge status={statusMap.get(record.value)} text={record.text} /> : '',
     },
     {
       title: intl.formatMessage({
@@ -61,7 +98,7 @@ const Network = () => {
       align: 'center',
       width: 200,
       render: (text, record) => [
-        <a onClick={() => console.log(record)}>
+        <a key="edit" onClick={() => console.log(record)}>
           <Tooltip
             title={intl.formatMessage({
               id: 'pages.data.option.edit',
@@ -71,25 +108,70 @@ const Network = () => {
             <EditOutlined />
           </Tooltip>
         </a>,
-        <a>
-          <Tooltip
+        <a key="debug">
+          <Popconfirm
             title={intl.formatMessage({
-              id: 'pages.data.option.remove',
-              defaultMessage: '删除',
+              id: `pages.data.option.${
+                record.state.value === 'enabled' ? 'disabled' : 'enabled'
+              }.tips`,
+              defaultMessage: record.state.value === 'enabled' ? '禁用' : '启用',
             })}
+            onConfirm={async () => {
+              let resp = undefined;
+              if (record.state.value !== 'enabled') {
+                resp = await service._start(record.id);
+              } else {
+                resp = await service._shutdown(record.id);
+              }
+              if (resp.status === 200) {
+                message.success(
+                  intl.formatMessage({
+                    id: 'pages.data.option.success',
+                    defaultMessage: '操作成功!',
+                  }),
+                );
+                actionRef.current?.reload();
+              }
+            }}
           >
-            <MinusOutlined />
-          </Tooltip>
+            <Tooltip
+              title={intl.formatMessage({
+                id: `pages.data.option.${
+                  record.state.value === 'enabled' ? 'disabled' : 'enabled'
+                }`,
+                defaultMessage: record.state.value === 'enabled' ? '禁用' : '启用',
+              })}
+            >
+              {record.state.value === 'enabled' ? <StopOutlined /> : <CheckCircleOutlined />}
+            </Tooltip>
+          </Popconfirm>
         </a>,
-        <a>
-          <Tooltip
+        <a key="remove">
+          <Popconfirm
             title={intl.formatMessage({
-              id: 'pages.notice.option.debug',
-              defaultMessage: '调试',
+              id: 'pages.data.option.remove.tips',
+              defaultMessage: '确认删除？',
             })}
+            onConfirm={async () => {
+              await service.remove(record.id);
+              message.success(
+                intl.formatMessage({
+                  id: 'pages.data.option.success',
+                  defaultMessage: '操作成功!',
+                }),
+              );
+              actionRef.current?.reload();
+            }}
           >
-            <BugOutlined />
-          </Tooltip>
+            <Tooltip
+              title={intl.formatMessage({
+                id: 'pages.data.option.remove',
+                defaultMessage: '删除',
+              })}
+            >
+              <DeleteOutlined />
+            </Tooltip>
+          </Popconfirm>
         </a>,
       ],
     },
@@ -113,6 +195,10 @@ const Network = () => {
         onSearch={(data) => {
           actionRef.current?.reset?.();
           setParam(data);
+        }}
+        onReset={() => {
+          actionRef.current?.reset?.();
+          setParam({});
         }}
       />
       <ProTable<NetworkItem>

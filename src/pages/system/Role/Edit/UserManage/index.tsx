@@ -1,14 +1,15 @@
-import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
+import { DisconnectOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ProColumns, ActionType } from '@jetlinks/pro-table';
-import { Button, Card, message, Popconfirm, Space, Tooltip } from 'antd';
+import { Badge, Button, Card, message, Popconfirm, Space, Tooltip } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { useRef, useState } from 'react';
 import ProTable from '@jetlinks/pro-table';
 import BindUser from './BindUser';
 import { service } from '@/pages/system/User/index';
-import encodeQuery from '@/utils/encodeQuery';
 import { useParams } from 'umi';
 import Service from '@/pages/system/Role/service';
+import moment from 'moment';
+import SearchComponent from '@/components/SearchComponent';
 
 const UserManage = () => {
   const roleService = new Service('role');
@@ -17,6 +18,8 @@ const UserManage = () => {
   const actionRef = useRef<ActionType>();
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const [bindUserVisible, setBindUserVisible] = useState<boolean>(false);
+  const [param, setParam] = useState<any>({ terms: [] });
+
   const unBindUser = (id: string, ids: string[]) => {
     roleService.unbindUser(id, ids).subscribe((resp) => {
       if (resp.status === 200) {
@@ -25,41 +28,45 @@ const UserManage = () => {
       }
     });
   };
-  const columns: ProColumns<RoleItem>[] = [
+  const columns: ProColumns<UserItem>[] = [
     {
       dataIndex: 'index',
       valueType: 'indexBorder',
       width: 48,
     },
     {
-      title: intl.formatMessage({
-        id: 'pages.table.name',
-        defaultMessage: '名称',
-      }),
+      title: '姓名',
       dataIndex: 'name',
-      // copyable: true,
       ellipsis: true,
-      tip: intl.formatMessage({
-        id: 'pages.system.userName.tips',
-        defaultMessage: '用户名过长会自动收缩',
-      }),
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: '此项为必填项',
-          },
-        ],
-      },
+      align: 'center',
     },
     {
       title: intl.formatMessage({
         id: 'pages.system.username',
         defaultMessage: '用户名',
       }),
+      align: 'center',
       dataIndex: 'username',
-      filters: true,
-      onFilter: true,
+    },
+    {
+      title: '创建时间',
+      dataIndex: 'createTime',
+      ellipsis: true,
+      width: '200px',
+      align: 'center',
+      render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
+    },
+    {
+      title: '状态',
+      dataIndex: 'status',
+      ellipsis: true,
+      align: 'center',
+      render: (text, record) => (
+        <Badge
+          status={record?.status === 1 ? 'success' : 'error'}
+          text={record?.status === 1 ? '正常' : '禁用'}
+        />
+      ),
     },
     {
       title: intl.formatMessage({
@@ -78,7 +85,7 @@ const UserManage = () => {
             }}
           >
             <Tooltip title={'解绑'}>
-              <MinusOutlined />
+              <DisconnectOutlined />
             </Tooltip>
           </Popconfirm>
         </a>,
@@ -87,8 +94,23 @@ const UserManage = () => {
   ];
   return (
     <Card>
+      <SearchComponent<UserItem>
+        field={columns}
+        target="user"
+        onSearch={(data) => {
+          // 重置分页数据
+          actionRef.current?.reset?.();
+          setParam(data);
+        }}
+        onReset={() => {
+          // 重置分页及搜索参数
+          actionRef.current?.reset?.();
+          setParam({});
+        }}
+      />
       <ProTable
         actionRef={actionRef}
+        search={false}
         tableAlertOptionRender={() => (
           <Space size={16}>
             <a
@@ -122,16 +144,22 @@ const UserManage = () => {
         pagination={{
           pageSize: 10,
         }}
-        request={async (param: any) => {
-          const response = await service.query(
-            encodeQuery({
-              pageSize: param.pageSize,
-              pageIndex: param.current,
-              terms: {
-                'id$in-dimension$role': params.id,
+        request={async (data: any) => {
+          const response = await service.query({
+            pageSize: data.pageSize,
+            pageIndex: data.current,
+            terms: [
+              {
+                terms: [
+                  {
+                    column: 'id$in-dimension$role',
+                    value: params.id,
+                  },
+                ],
               },
-            }),
-          );
+              ...(param?.terms || []),
+            ],
+          });
           return {
             result: { data: response.result.data },
             success: true,
