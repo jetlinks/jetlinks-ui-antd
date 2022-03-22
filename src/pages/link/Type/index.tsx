@@ -18,7 +18,6 @@ import { history } from 'umi';
 import Service from '@/pages/link/Type/service';
 
 export const service = new Service('network/config');
-
 const statusMap = new Map();
 statusMap.set('enabled', 'success');
 statusMap.set('disabled', 'error');
