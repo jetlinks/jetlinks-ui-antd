@@ -101,6 +101,7 @@ const Save = (props: Props) => {
 
   return (
     <Modal
+      maskClosable={false}
       visible={visible}
       onCancel={() => {
         form.resetFields();

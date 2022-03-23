@@ -69,7 +69,13 @@ const PropertyLog = (props: Props) => {
   }, [visible]);
 
   return (
-    <Modal title="详情" visible={visible} onCancel={() => close()} width="45vw">
+    <Modal
+      maskClosable={false}
+      title="详情"
+      visible={visible}
+      onCancel={() => close()}
+      width="45vw"
+    >
       <div style={{ marginBottom: '20px' }}>
         <Space>
           <Radio.Group

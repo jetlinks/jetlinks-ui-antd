@@ -310,6 +310,7 @@ const EditAlarm = (props: Props) => {
   };
   return (
     <Drawer
+      maskClosable={false}
       title="编辑告警"
       visible={visible}
       onClose={() => close()}

@@ -1,10 +1,10 @@
-import { Form, Input, Button, message, Modal, Popconfirm, Tooltip } from 'antd';
+import { Button, Form, Input, message, Modal, Popconfirm, Tooltip } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { useCallback, useEffect, useState } from 'react';
 import { service } from '@/pages/system/Menu';
-import ProTable from '@jetlinks/pro-table';
 import type { ProColumns } from '@jetlinks/pro-table';
-import { SearchOutlined, PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import ProTable from '@jetlinks/pro-table';
+import { DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import type { MenuButtonInfo, MenuItem } from '@/pages/system/Menu/typing';
 import Permission from '@/pages/system/Menu/components/permission';
 import { useRequest } from '@@/plugin-request/request';
@@ -249,6 +249,7 @@ export default (props: ButtonsProps) => {
         ]}
       />
       <Modal
+        maskClosable={false}
         width={660}
         visible={visible}
         title={handleTitle()}

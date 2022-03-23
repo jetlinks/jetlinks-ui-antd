@@ -177,6 +177,7 @@ const PropertyImport = (props: Props) => {
 
   return (
     <Modal
+      maskClosable={false}
       visible
       onCancel={() => (MetadataModel.importMetadata = false)}
       width="35vw"

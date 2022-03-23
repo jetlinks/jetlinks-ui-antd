@@ -11,7 +11,14 @@ interface Props {
 const Cat = (props: Props) => {
   const { close, data, visible } = props;
   return (
-    <Modal width="40vw" visible={visible} onCancel={() => close()} footer={null} title="查看指令">
+    <Modal
+      maskClosable={false}
+      width="40vw"
+      visible={visible}
+      onCancel={() => close()}
+      footer={null}
+      title="查看指令"
+    >
       下发指令:
       <MonacoEditor
         height={300}

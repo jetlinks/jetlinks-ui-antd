@@ -64,6 +64,7 @@ const Process = (props: Props) => {
   }, []);
   return (
     <Modal
+      maskClosable={false}
       title="当前进度"
       visible
       confirmLoading={flag}

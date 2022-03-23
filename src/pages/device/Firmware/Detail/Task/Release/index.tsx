@@ -74,6 +74,7 @@ const Release = (props: Props) => {
   };
   return (
     <Modal
+      maskClosable={false}
       title="发布任务"
       onOk={save}
       visible={props.visible}

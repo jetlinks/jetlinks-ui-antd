@@ -3,7 +3,7 @@ import type { ISchema } from '@formily/json-schema';
 import type { Field } from '@formily/core';
 import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
-import { Input, Radio, Select, FormItem, Form, Space } from '@formily/antd';
+import { Form, FormItem, Input, Radio, Select, Space } from '@formily/antd';
 import FMonacoEditor from '@/components/FMonacoEditor';
 import type { ProtocolItem } from '@/pages/link/Protocol/typings';
 import { service } from '@/pages/link/Protocol';
@@ -169,6 +169,7 @@ const Debug = (props: Props) => {
 
   return (
     <Modal
+      maskClosable={false}
       title="调试"
       width="60vw"
       onCancel={() => close()}

@@ -120,6 +120,7 @@ const Save = (props: Props) => {
 
   return (
     <Modal
+      maskClosable={false}
       width="50vw"
       title="新增固件版本"
       onCancel={() => close()}

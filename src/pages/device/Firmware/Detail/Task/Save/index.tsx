@@ -69,6 +69,7 @@ const Save = (props: Props) => {
   };
   return (
     <Modal
+      maskClosable={false}
       onOk={save}
       width="40vw"
       visible={props.visible}

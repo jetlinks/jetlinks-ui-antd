@@ -37,7 +37,13 @@ const EventLog = (props: Props) => {
         ];
 
   return (
-    <Drawer title={data.name} visible={visible} onClose={() => close()} width="45vw">
+    <Drawer
+      maskClosable={false}
+      title={data.name}
+      visible={visible}
+      onClose={() => close()}
+      width="45vw"
+    >
       <ProTable
         size="small"
         rowKey="id"

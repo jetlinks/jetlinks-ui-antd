@@ -13,6 +13,7 @@ const Advance = (props: Props) => {
   const { model, onChange } = props;
   return (
     <Modal
+      maskClosable={false}
       visible={model === 'advance'}
       width="70vw"
       title="设置属性规则"

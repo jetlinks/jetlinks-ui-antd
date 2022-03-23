@@ -90,6 +90,7 @@ const BindChildDevice = (props: Props) => {
 
   return (
     <Modal
+      maskClosable={false}
       title="绑定子设备"
       visible={visible}
       width={1000}

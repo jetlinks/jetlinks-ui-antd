@@ -1,7 +1,6 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import type { ProColumns, ActionType } from '@jetlinks/pro-table';
-import type { TenantDetail } from '@/pages/system/Tenant/typings';
-import type { TenantItem } from '@/pages/system/Tenant/typings';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import type { TenantDetail, TenantItem } from '@/pages/system/Tenant/typings';
 import BaseCrud from '@/components/BaseCrud';
 import { useRef } from 'react';
 import { Avatar, Drawer, Tooltip } from 'antd';
@@ -238,6 +237,7 @@ const Tenant = observer(() => {
         actionRef={actionRef}
       />
       <Drawer
+        maskClosable={false}
         title={intl.formatMessage({
           id: 'pages.data.option.authorize',
           defaultMessage: '授权',

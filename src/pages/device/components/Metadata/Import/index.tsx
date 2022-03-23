@@ -188,6 +188,7 @@ const Import = (props: Props) => {
   };
   return (
     <Modal
+      maskClosable={false}
       title="导入物模型"
       destroyOnClose
       visible={props.visible}

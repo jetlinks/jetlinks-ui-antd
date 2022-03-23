@@ -1,6 +1,6 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import React, { useRef } from 'react';
-import type { ProColumns, ActionType } from '@jetlinks/pro-table';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import type { OpenApiItem } from '@/pages/system/OpenAPI/typings';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { CurdModel } from '@/components/BaseCrud/model';
@@ -329,6 +329,7 @@ const OpenAPI: React.FC = observer(() => {
         actionRef={actionRef}
       />
       <Drawer
+        maskClosable={false}
         title={intl.formatMessage({
           id: 'pages.data.option.authorize',
           defaultMessage: '授权',
