@@ -178,7 +178,7 @@ const PropertyImport = (props: Props) => {
   return (
     <Modal
       visible
-      onCancel={() => close()}
+      onCancel={() => (MetadataModel.importMetadata = false)}
       width="35vw"
       title="导入属性"
       onOk={() => {
