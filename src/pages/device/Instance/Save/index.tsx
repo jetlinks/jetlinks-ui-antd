@@ -22,10 +22,7 @@ const Save = (props: Props) => {
   useEffect(() => {
     if (visible && data) {
       form.setFieldsValue({
-        id: data.id,
-        name: data.name,
-        productId: data.productId,
-        describe: data.describe,
+        ...data,
       });
     }
   }, [visible]);
@@ -33,7 +30,7 @@ const Save = (props: Props) => {
   const intl = useIntl();
 
   useEffect(() => {
-    service.getProductList({ paging: false }).then((resp) => {
+    service.getProductList({ paging: false }).then((resp: any) => {
       if (resp.status === 200) {
         const list = resp.result.map((item: { name: any; id: any }) => ({
           label: item.name,
@@ -70,6 +67,7 @@ const Save = (props: Props) => {
 
   const handleSave = async () => {
     const values = await form.validateFields();
+    console.log(values);
     if (values) {
       const resp = (await service.update(values)) as any;
       if (resp.status === 200) {
@@ -84,7 +82,7 @@ const Save = (props: Props) => {
 
   const vailId = (_: any, value: any, callback: Function) => {
     if (props.model === 'add') {
-      service.isExists(value).then((resp) => {
+      service.isExists(value).then((resp: any) => {
         if (resp.status === 200 && resp.result) {
           callback(
             intl.formatMessage({
@@ -96,6 +94,8 @@ const Save = (props: Props) => {
           callback();
         }
       });
+    } else {
+      callback();
     }
   };
 
