@@ -1,4 +1,4 @@
-import { message, Modal } from 'antd';
+import { message, Modal, TreeSelect as ATreeSelect } from 'antd';
 import { useIntl } from 'umi';
 import type { Field } from '@formily/core';
 import { createForm } from '@formily/core';
@@ -266,6 +266,7 @@ const Save = (props: Props) => {
         'x-component-props': {
           multiple: true,
           showArrow: true,
+          showCheckedStrategy: ATreeSelect.SHOW_ALL,
           filterOption: (input: string, option: any) =>
             option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
           fieldNames: {
@@ -329,7 +330,7 @@ const Save = (props: Props) => {
       onOk={save}
       width="35vw"
     >
-      <Form form={form} labelCol={4} wrapperCol={18}>
+      <Form form={form} layout="vertical">
         <SchemaField schema={schema} scope={{ useAsyncDataSource, getRole, getOrg }} />
       </Form>
     </Modal>
