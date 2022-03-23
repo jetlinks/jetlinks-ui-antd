@@ -43,11 +43,13 @@ interface Props<T> {
   modelConfig?: ModalProps & { loading?: boolean };
   formEffect?: () => void;
   customForm?: Form1;
+  footer?: React.ReactNode;
 }
 
 const Save = <T extends Record<string, any>>(props: Props<T>) => {
   const intl = useIntl();
-  const { service, schema, reload, schemaConfig, modelConfig, formEffect, customForm } = props;
+  const { service, schema, reload, schemaConfig, modelConfig, formEffect, customForm, footer } =
+    props;
 
   const [visible, setVisible] = useState<boolean>(false);
   const [current, setCurrent] = useState<T>();
@@ -130,6 +132,7 @@ const Save = <T extends Record<string, any>>(props: Props<T>) => {
       maskClosable={false}
       visible={visible}
       onCancel={CurdModel.close}
+      footer={footer}
       onOk={save}
       {...modelConfig}
     >

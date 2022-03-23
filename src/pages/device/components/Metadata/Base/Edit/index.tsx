@@ -136,8 +136,8 @@ const Edit = observer((props: Props) => {
   registerValidateRules({
     validateId(value) {
       if (!value) return '';
-      const reg = new RegExp('^\\w{3,20}$');
-      return reg.exec(value) ? '' : 'ID只能由数字、26个英文字母或者下划线组成';
+      const reg = new RegExp('^[0-9a-zA-Z_\\\\-]+$');
+      return reg.exec(value) ? '' : 'ID只能由数字、字母、下划线、中划线组成';
     },
   });
   const valueTypeConfig = {

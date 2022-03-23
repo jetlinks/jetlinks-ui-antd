@@ -1,10 +1,10 @@
 import {
-  NumberPicker,
-  FormLayout,
-  Editable,
   ArrayItems,
+  Editable,
   FormItem,
+  FormLayout,
   Input,
+  NumberPicker,
   Select,
 } from '@formily/antd';
 import { createSchemaField } from '@formily/react';
@@ -65,6 +65,20 @@ const JsonParam = (props: Props) => {
                   required: true,
                   'x-decorator': 'FormItem',
                   'x-component': 'Input',
+                  'x-validator': [
+                    {
+                      max: 64,
+                      message: '最多可输入64个字符',
+                    },
+                    {
+                      required: true,
+                      message: '请输入标识',
+                    },
+                    {
+                      validateId: true,
+                      message: 'ID只能由数字、26个英文字母或者下划线组成',
+                    },
+                  ],
                 },
                 name: {
                   title: '名称',
