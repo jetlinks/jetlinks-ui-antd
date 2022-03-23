@@ -23,6 +23,8 @@ export type ProductItem = {
   state: number;
   transportProtocol: string;
   describe?: string;
+  accessId?: string;
+  accessName?: string;
 };
 
 export type ConfigProperty = {

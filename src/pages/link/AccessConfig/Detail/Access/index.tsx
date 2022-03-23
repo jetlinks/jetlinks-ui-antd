@@ -11,6 +11,8 @@ import {
   message,
   Row,
   Steps,
+  Table,
+  Tooltip,
 } from 'antd';
 import { useEffect, useState } from 'react';
 import styles from './index.less';
@@ -33,7 +35,7 @@ const Access = (props: Props) => {
   const [procotolList, setProcotolList] = useState<any[]>([]);
   const [procotolCurrent, setProcotolCurrent] = useState<string>('');
   const [networkCurrent, setNetworkCurrent] = useState<string>('');
-  // const [config, setConfig] = useState<any>();
+  const [config, setConfig] = useState<any>();
 
   const MetworkTypeMapping = new Map();
   MetworkTypeMapping.set('websocket-server', 'WEB_SOCKET_SERVER');
@@ -93,7 +95,7 @@ const Access = (props: Props) => {
           .getConfigView(procotolCurrent, ProcotoleMapping.get(props.data?.id))
           .then((resp) => {
             if (resp.status === 200) {
-              // setConfig(resp.result)
+              setConfig(resp.result);
             }
           });
         setCurrent(current + 1);
@@ -117,53 +119,114 @@ const Access = (props: Props) => {
     },
   ];
 
-  // const columns = [
-  //     {
-  //         title: '姓名',
-  //         dataIndex: 'name',
-  //         key: 'name',
-  //     },
-  //     {
-  //         title: '年龄',
-  //         dataIndex: 'age',
-  //         key: 'age',
-  //     },
-  //     {
-  //         title: '住址',
-  //         dataIndex: 'address',
-  //         key: 'address',
-  //     },
-  //     {
-  //         title: '姓名',
-  //         dataIndex: 'name',
-  //         key: 'name',
-  //     },
-  //     {
-  //         title: '年龄',
-  //         dataIndex: 'age',
-  //         key: 'age',
-  //     },
-  //     {
-  //         title: '住址',
-  //         dataIndex: 'address',
-  //         key: 'address',
-  //     },
-  // ];
+  const columnsMQTT: any[] = [
+    {
+      title: '分组',
+      dataIndex: 'group',
+      key: 'group',
+      ellipsis: true,
+      align: 'center',
+      render: (text: any) => (
+        <Tooltip placement="top" title={text}>
+          {text}
+        </Tooltip>
+      ),
+    },
+    {
+      title: 'qos',
+      dataIndex: 'qos',
+      key: 'qos',
+      ellipsis: true,
+      align: 'center',
+    },
+    {
+      title: '地址',
+      dataIndex: 'address',
+      key: 'address',
+      ellipsis: true,
+      align: 'center',
+      render: (text: any) => (
+        <Tooltip placement="top" title={text}>
+          {text}
+        </Tooltip>
+      ),
+    },
+    {
+      title: 'topic',
+      dataIndex: 'topic',
+      key: 'topic',
+      ellipsis: true,
+      align: 'center',
+      render: (text: any) => (
+        <Tooltip placement="top" title={text}>
+          {text}
+        </Tooltip>
+      ),
+    },
+    {
+      title: '说明',
+      dataIndex: 'description',
+      key: 'description',
+      ellipsis: true,
+      align: 'center',
+      render: (text: any) => (
+        <Tooltip placement="top" title={text}>
+          {text}
+        </Tooltip>
+      ),
+    },
+  ];
 
-  // const dataSource = [
-  //     {
-  //         key: '1',
-  //         name: '胡彦斌',
-  //         age: 32,
-  //         address: '西湖区湖底公园1号',
-  //     },
-  //     {
-  //         key: '2',
-  //         name: '胡彦祖',
-  //         age: 42,
-  //         address: '西湖区湖底公园1号',
-  //     },
-  // ];
+  const columnsHTTP: any[] = [
+    {
+      title: '地址',
+      dataIndex: 'address',
+      key: 'address',
+      ellipsis: true,
+      align: 'center',
+      render: (text: any) => (
+        <Tooltip placement="top" title={text}>
+          {text}
+        </Tooltip>
+      ),
+    },
+    {
+      title: '分组',
+      dataIndex: 'group',
+      key: 'group',
+      ellipsis: true,
+      align: 'center',
+      render: (text: any) => (
+        <Tooltip placement="top" title={text}>
+          {text}
+        </Tooltip>
+      ),
+    },
+    {
+      title: '示例',
+      dataIndex: 'example',
+      key: 'example',
+      ellipsis: true,
+      align: 'center',
+      render: (text: any) => (
+        <Tooltip placement="top" title={text}>
+          {text}
+        </Tooltip>
+      ),
+    },
+    {
+      title: '说明',
+      dataIndex: 'description',
+      key: 'description',
+      ellipsis: true,
+      align: 'center',
+      render: (text: any) => (
+        <Tooltip placement="top" title={text}>
+          {text}
+        </Tooltip>
+      ),
+    },
+  ];
 
   const renderSteps = (cur: number) => {
     switch (cur) {
@@ -210,16 +273,10 @@ const Access = (props: Props) => {
                     >
                       <div className={styles.title}>{item.name}</div>
                       <div className={styles.cardContent}>
-                        <div style={{ width: '40%' }}>
-                          <div className={styles.item}>
-                            {MetworkTypeMapping.get(props.data?.id)}
-                          </div>
-                          <div className={styles.item}>共享配置</div>
-                        </div>
-                        <div style={{ width: '60%' }}>
+                        <div style={{ width: '100%', height: '50px' }}>
                           {item.addresses.slice(0, 2).map((i: any) => (
                             <div className={styles.item} key={i.address}>
-                              公网: {i.address}
+                              <Badge color={i.health === -1 ? 'red' : 'green'} text={i.address} />
                             </div>
                           ))}
                         </div>
@@ -296,7 +353,7 @@ const Access = (props: Props) => {
                       }}
                     >
                       <div className={styles.title}>{item.name}</div>
-                      <div className={styles.desc}>这里是协议包中的协议说明</div>
+                      <div className={styles.desc}>缺少描述呀</div>
                     </Card>
                   </Col>
                 ))}
@@ -356,20 +413,28 @@ const Access = (props: Props) => {
                 <Descriptions.Item label="网络组件">
                   {(networkList.find((i) => i.id === networkCurrent)?.addresses || []).map(
                     (item: any) => (
-                      <Badge
-                        key={item.address}
-                        color={item.health === -1 ? 'red' : 'green'}
-                        text={item.address}
-                        style={{ marginLeft: '20px' }}
-                      />
+                      <div key={item.address}>
+                        <Badge
+                          color={item.health === -1 ? 'red' : 'green'}
+                          text={item.address}
+                          style={{ marginLeft: '20px' }}
+                        />
+                      </div>
                     ),
                   )}
                 </Descriptions.Item>
               </Descriptions>
-              {/* <div>
-                            <div>路由信息</div>
-                            <Table dataSource={dataSource} columns={columns} pagination={false} />
-                        </div> */}
+              {config?.routes && config?.routes?.length > 0 && (
+                <div>
+                  <div>路由信息:</div>
+                  <Table
+                    dataSource={config?.routes || []}
+                    columns={config.id === 'MQTT' ? columnsMQTT : columnsHTTP}
+                    pagination={false}
+                    scroll={{ x: 500 }}
+                  />
+                </div>
+              )}
             </div>
           </div>
         );
