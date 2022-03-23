@@ -33,26 +33,7 @@ const Access = () => {
   const [visible, setVisible] = useState<boolean>(true);
   const [config, setConfig] = useState<any>();
 
-  // const [networkList, setNetworkList] = useState<any[]>([]);
-  // const [procotolList, setProcotolList] = useState<any[]>([]);
-
   const [param, setParam] = useState<any>({ pageSize: 10 });
-
-  // const queryNetworkList = () => {
-  //     service1.getNetwork({ paging: false }).then((resp) => {
-  //         if (resp.status === 200) {
-  //             setNetworkList(resp.result);
-  //         }
-  //     });
-  // };
-
-  // const queryProcotolList = () => {
-  //     service1.getProtocol().then((resp) => {
-  //         if (resp.status === 200) {
-  //             setProcotolList(resp.result);
-  //         }
-  //     });
-  // };
 
   const columns: ProColumns<any>[] = [
     {
