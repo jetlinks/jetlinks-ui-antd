@@ -1,0 +1,66 @@
+.content {
+  display: flex;
+  width: 90%;
+  height: 100px;
+  margin: 0 78px;
+  overflow: hidden;
+  .server {
+    width: calc(50% - 78px);
+
+    :global {
+      .ant-badge-status-text {
+        color: rgba(0, 0, 0, 0.55);
+      }
+    }
+  }
+
+  .procotol {
+    display: -webkit-box;
+    width: calc(50% - 78px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+  }
+}
+
+.desc {
+  width: 50%;
+  margin-top: 10px;
+  overflow: hidden;
+  color: rgba(0, 0, 0, 0.55);
+  font-weight: 400;
+  font-size: 13px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  background-color: antiquewhite;
+}
+
+.title {
+  margin-bottom: 10px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+:global {
+  .ant-list-item-meta-avatar {
+    width: 64px !important;
+    height: 64px !important;
+  }
+}
+
+.images {
+  width: 64px;
+  height: 64px;
+  color: white;
+  font-size: 18px;
+  line-height: 64px;
+  text-align: center;
+  background: linear-gradient(
+    128.453709216706deg,
+    rgba(255, 255, 255, 1) 4%,
+    rgba(113, 187, 255, 1) 43%,
+    rgba(24, 144, 255, 1) 100%
+  );
+  border: 1px solid rgba(242, 242, 242, 1);
+}

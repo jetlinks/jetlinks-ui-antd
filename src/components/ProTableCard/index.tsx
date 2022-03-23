@@ -3,7 +3,7 @@ import ProTable from '@jetlinks/pro-table';
 import type { ParamsType } from '@ant-design/pro-provider';
 import React, { useState } from 'react';
 import { isFunction } from 'lodash';
-import { Space, Pagination, Empty } from 'antd';
+import { Empty, Pagination, Space } from 'antd';
 import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 import './index.less';

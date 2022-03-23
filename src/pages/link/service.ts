@@ -33,6 +33,9 @@ class Service extends BaseService<NetworkItem> {
     request(`${SystemConst.API_BASE}/network/resources/alive/_all`, {
       method: 'GET',
     });
+
+  changeState = (id: string, status: 'start' | 'shutdown') =>
+    request(`${SystemConst.API_BASE}/network/config/${id}/_${status}`, { method: 'POST' });
 }
 
 export default Service;

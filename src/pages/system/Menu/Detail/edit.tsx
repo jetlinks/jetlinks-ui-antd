@@ -1,17 +1,17 @@
 import {
+  Button,
+  Card,
+  Col,
   Form,
   Input,
   InputNumber,
-  Button,
   message,
-  Row,
-  Col,
-  Card,
-  Switch,
   Radio,
+  Row,
   Select,
-  TreeSelect,
+  Switch,
   Tooltip,
+  TreeSelect,
 } from 'antd';
 import Permission from '@/pages/system/Menu/components/permission';
 import { useIntl } from '@@/plugin-locale/localeExports';

@@ -1,15 +1,15 @@
 // 菜单管理
 import { PageContainer } from '@ant-design/pro-layout';
-import ProTable from '@jetlinks/pro-table';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import ProTable from '@jetlinks/pro-table';
 import { useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { Button, message, Popconfirm, Tooltip } from 'antd';
 import {
-  SearchOutlined,
-  PlusOutlined,
-  PlusCircleOutlined,
   DeleteOutlined,
+  PlusCircleOutlined,
+  PlusOutlined,
+  SearchOutlined,
 } from '@ant-design/icons';
 import { observer } from '@formily/react';
 import { model } from '@formily/reactive';

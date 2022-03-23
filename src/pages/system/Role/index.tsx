@@ -2,9 +2,9 @@ import { PageContainer } from '@ant-design/pro-layout';
 import React, { useEffect, useRef } from 'react';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { message, Popconfirm, Tooltip } from 'antd';
-import type { ProColumns, ActionType } from '@jetlinks/pro-table';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import BaseCrud from '@/components/BaseCrud';
-import BaseService from '@/utils/BaseService';
+import Service from './service';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { observer } from '@formily/react';
 import { Link, useLocation } from 'umi';
@@ -12,7 +12,7 @@ import { Store } from 'jetlinks-store';
 import SystemConst from '@/utils/const';
 import { CurdModel } from '@/components/BaseCrud/model';
 
-export const service = new BaseService<RoleItem>('role');
+export const service = new Service('role');
 
 const Role: React.FC = observer(() => {
   const intl = useIntl();

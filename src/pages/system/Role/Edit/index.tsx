@@ -4,22 +4,13 @@ import { useState } from 'react';
 import { history } from 'umi';
 import UserManage from '@/pages/system/Role/Edit/UserManage';
 import Permission from '@/pages/system/Role/Edit/Permission';
-import Info from '@/pages/system/Role/Edit/Info';
 import { useIntl } from '@@/plugin-locale/localeExports';
 
 const RoleEdit = observer(() => {
   const intl = useIntl();
-  const [tab, setTab] = useState<string>('baseInfo');
+  const [tab, setTab] = useState<string>('permission');
 
   const list = [
-    {
-      key: 'baseInfo',
-      tab: intl.formatMessage({
-        id: 'pages.system.role.access.baseInfo',
-        defaultMessage: '基本信息',
-      }),
-      component: <Info />,
-    },
     {
       key: 'permission',
       tab: intl.formatMessage({

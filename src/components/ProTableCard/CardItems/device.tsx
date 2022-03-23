@@ -1,4 +1,4 @@
-import { Card, Avatar } from 'antd';
+import { Avatar, Card } from 'antd';
 import React from 'react';
 import type { DeviceInstance } from '@/pages/device/Instance/typings';
 import { BadgeStatus } from '@/components';

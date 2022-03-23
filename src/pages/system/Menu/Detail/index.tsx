@@ -4,9 +4,8 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import { useEffect, useState } from 'react';
 import BaseDetail from './edit';
 import Buttons from './buttons';
-import { useLocation } from 'umi';
+import { useLocation, useRequest } from 'umi';
 import { service } from '@/pages/system/Menu';
-import { useRequest } from 'umi';
 
 type LocationType = {
   id?: string;
