@@ -1,5 +1,5 @@
-import ProTable from '@jetlinks/pro-table';
 import type { ProTableProps } from '@jetlinks/pro-table';
+import ProTable from '@jetlinks/pro-table';
 import type { ParamsType } from '@ant-design/pro-provider';
 import React, { useState } from 'react';
 import { isFunction } from 'lodash';

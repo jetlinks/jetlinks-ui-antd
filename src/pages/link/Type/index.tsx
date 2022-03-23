@@ -1,4 +1,3 @@
-import BaseService from '@/utils/BaseService';
 import { useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
@@ -10,8 +9,9 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import SearchComponent from '@/components/SearchComponent';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { history } from 'umi';
+import Service from '@/pages/link/service';
 
-export const service = new BaseService<NetworkItem>('network/config');
+export const service = new Service('network/config');
 
 const Network = () => {
   const intl = useIntl();
