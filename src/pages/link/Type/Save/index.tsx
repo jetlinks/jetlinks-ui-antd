@@ -160,7 +160,8 @@ const Save = observer(() => {
   );
 
   useEffect(() => {
-    Store.subscribe('current-network-data', (data) => {
+    const subscription = Store.subscribe('current-network-data', (data) => {
+      if (!data) return;
       form.readPretty = true;
       const _data = _.cloneDeep(data);
       // 处理一下集群模式数据
@@ -169,6 +170,10 @@ const Save = observer(() => {
       }
       form.setValues(_data);
     });
+    return () => {
+      subscription.unsubscribe();
+      Store.set('current-network-data', undefined);
+    };
   }, []);
 
   const SchemaField = createSchemaField({
