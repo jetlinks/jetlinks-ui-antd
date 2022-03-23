@@ -414,6 +414,24 @@ const Edit = observer((props: Props) => {
             'x-component': 'Select',
             enum: PropertySource,
           },
+          'virtualRule.script': {
+            type: 'string',
+            'x-component': 'FRuleEditor',
+            'x-visible': false,
+            'x-reactions': [
+              {
+                dependencies: ['..source', 'id'],
+                fulfill: {
+                  state: {
+                    visible: '{{$deps[0]==="rule"}}',
+                  },
+                  schema: {
+                    'x-component-props.property': '{{$deps[1]}}',
+                  },
+                },
+              },
+            ],
+          },
           virtualRule: {
             type: 'object',
             title: '规则配置',
@@ -428,24 +446,24 @@ const Edit = observer((props: Props) => {
               },
             },
             properties: {
-              script: {
-                type: 'string',
-                'x-component': 'FRuleEditor',
-                'x-visible': false,
-                'x-reactions': [
-                  {
-                    dependencies: ['.source', '..id'],
-                    fulfill: {
-                      state: {
-                        visible: '{{$deps[0]==="rule"}}',
-                      },
-                      schema: {
-                        'x-component-props.property': '{{$deps[1]}}',
-                      },
-                    },
-                  },
-                ],
-              },
+              // script: {
+              //   type: 'string',
+              //   'x-component': 'FRuleEditor',
+              //   'x-visible': false,
+              //   'x-reactions': [
+              //     {
+              //       dependencies: ['..source', '..id'],
+              //       fulfill: {
+              //         state: {
+              //           visible: '{{$deps[0]==="rule"}}',
+              //         },
+              //         schema: {
+              //           'x-component-props.property': '{{$deps[1]}}',
+              //         },
+              //       },
+              //     },
+              //   ],
+              // },
 
               windowType: {
                 type: 'string',

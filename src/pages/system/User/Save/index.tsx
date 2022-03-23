@@ -103,22 +103,6 @@ const Save = (props: Props) => {
             required: true,
             message: '请输入姓名',
           },
-          {
-            triggerType: 'onBlur',
-            validator: (value: string) => {
-              return new Promise((resolve) => {
-                service
-                  .validateField('username', value)
-                  .then((resp) => {
-                    console.log(resp);
-                    resolve('');
-                  })
-                  .catch(() => {
-                    return '验证失败!';
-                  });
-              });
-            },
-          },
         ],
         // required: true,
       },
@@ -141,6 +125,22 @@ const Save = (props: Props) => {
           {
             required: true,
             message: '请输入用户名',
+          },
+          {
+            triggerType: 'onBlur',
+            validator: (value: string) => {
+              return new Promise((resolve) => {
+                service
+                  .validateField('username', value)
+                  .then((resp) => {
+                    console.log(resp);
+                    resolve('');
+                  })
+                  .catch(() => {
+                    return '验证失败!';
+                  });
+              });
+            },
           },
         ],
         name: 'username',
