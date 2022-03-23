@@ -110,12 +110,14 @@ const AccessConfig = () => {
                                   service.shutDown(item.id).then((resp) => {
                                     if (resp.status === 200) {
                                       message.success('操作成功！');
+                                      handleSearch(param);
                                     }
                                   });
                                 } else {
                                   service.startUp(item.id).then((resp) => {
                                     if (resp.status === 200) {
                                       message.success('操作成功！');
+                                      handleSearch(param);
                                     }
                                   });
                                 }
@@ -141,6 +143,7 @@ const AccessConfig = () => {
                                 service.remove(item.id).then((resp: any) => {
                                   if (resp.status === 200) {
                                     message.success('操作成功！');
+                                    handleSearch(param);
                                   }
                                 });
                               }}

@@ -28,6 +28,7 @@ const ColResponsiveProps = {
 
 const Property = (props: Props) => {
   const { data } = props;
+  console.log(data);
   const device = InstanceModel.detail;
   const params = useParams<{ id: string }>();
   const [subscribeTopic] = useSendWebsocketMessage();
@@ -193,9 +194,6 @@ const Property = (props: Props) => {
             }}
             style={{ width: 300 }}
           />
-          {/* <Checkbox onChange={() => {
-
-                    }}>仅显示当前有数据的属性</Checkbox> */}
         </Space>
         <CheckButton
           value={check}
@@ -216,25 +214,32 @@ const Property = (props: Props) => {
         ) : (
           <Table pagination={false} columns={columns} dataSource={dataSource.data} rowKey="id" />
         )}
-        <div
-          style={{ marginTop: '20px', width: '100%', display: 'flex', justifyContent: 'flex-end' }}
-        >
-          <Pagination
-            className={styles.page}
-            defaultCurrent={1}
-            total={dataSource.total}
-            showSizeChanger
-            pageSize={dataSource.pageSize}
-            onChange={(page: number, size: number) => {
-              setDataSource({
-                total: propertyList.length,
-                data: (propertyList || []).slice((page - 1) * size, page * size),
-                pageSize: size,
-                currentPage: page - 1,
-              });
+        {dataSource.data.length > 0 && (
+          <div
+            style={{
+              marginTop: '20px',
+              width: '100%',
+              display: 'flex',
+              justifyContent: 'flex-end',
             }}
-          />
-        </div>
+          >
+            <Pagination
+              className={styles.page}
+              defaultCurrent={1}
+              total={dataSource.total}
+              showSizeChanger
+              pageSize={dataSource.pageSize}
+              onChange={(page: number, size: number) => {
+                setDataSource({
+                  total: propertyList.length,
+                  data: (propertyList || []).slice((page - 1) * size, page * size),
+                  pageSize: size,
+                  currentPage: page - 1,
+                });
+              }}
+            />
+          </div>
+        )}
       </div>
       <EditProperty
         data={currentInfo}
