@@ -14,6 +14,7 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import type { ISchema } from '@formily/json-schema';
 import { CurdModel } from '@/components/BaseCrud/model';
 import Service from '@/pages/link/Protocol/service';
+import { onFormMount, registerValidateRules } from '@formily/core';
 
 export const service = new Service('protocol');
 const Protocol = () => {
@@ -139,6 +140,14 @@ const Protocol = () => {
     },
   ];
 
+  registerValidateRules({
+    validateId(value) {
+      if (!value) return '';
+      const reg = new RegExp('^\\w{3,20}$');
+      return reg.exec(value) ? '' : 'ID只能由数字、26个英文字母或者下划线组成';
+    },
+  });
+
   const schema: ISchema = {
     type: 'object',
     properties: {
@@ -165,6 +174,10 @@ const Protocol = () => {
               {
                 max: 64,
                 message: '最多可输入64个字符',
+              },
+              {
+                validateId: true,
+                message: 'ID只能由数字、26个英文字母或者下划线组成',
               },
             ],
           },
@@ -283,6 +296,13 @@ const Protocol = () => {
         modelConfig={{ width: '550px' }}
         schema={schema}
         actionRef={actionRef}
+        formEffect={() => {
+          onFormMount((form) => {
+            form.setFieldState('id', (state) => {
+              state.disabled = CurdModel.model === 'edit';
+            });
+          });
+        }}
       />
       {/* {visible && <Debug data={current} close={() => setVisible(!visible)} />} */}
     </PageContainer>
