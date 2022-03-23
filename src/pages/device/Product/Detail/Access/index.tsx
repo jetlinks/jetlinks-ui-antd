@@ -1,5 +1,4 @@
 import {
-  Alert,
   Badge,
   Button,
   Card,
@@ -192,7 +191,7 @@ const Access = () => {
     <div>
       {!visible ? (
         <div style={{ padding: '20px 0' }}>
-          <Alert message="选择与设备通信的网络组件" type="warning" showIcon />
+          {/* <Alert message="选择与设备通信的网络组件" type="warning" showIcon /> */}
           <SearchComponent
             field={columns}
             pattern={'simple'}
