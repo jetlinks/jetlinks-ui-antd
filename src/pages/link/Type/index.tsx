@@ -57,6 +57,7 @@ const Network = () => {
       dataIndex: 'configuration',
       title: '详情',
       renderText: (text, record) => {
+        console.log(record, '详情');
         if (record.shareCluster) {
           const publicHost = record.configuration.publicHost;
           const publicPort = record.configuration.publicPort;
@@ -66,11 +67,14 @@ const Network = () => {
             </>
           );
         } else {
-          const publicHost = record.cluster?.[0]?.configuration?.publicHost;
-          const publicPort = record.cluster?.[0]?.configuration?.publicPort;
+          const log = record.cluster?.map(
+            (item) => `${item.configuration.publicHost}:${item.configuration.publicPort}`,
+          );
           return (
             <>
-              公网: {publicHost}:{publicPort}
+              {log.map((item) => (
+                <div key={item}>公网:{item}</div>
+              ))}
             </>
           );
         }
