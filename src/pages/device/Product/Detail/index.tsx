@@ -18,7 +18,8 @@ import { productModel, service } from '@/pages/device/Product';
 import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import Metadata from '@/pages/device/components/Metadata';
-import Alarm from '@/pages/device/components/Alarm';
+// import Alarm from '@/pages/device/components/Alarm';
+import Access from '@/pages/device/Product/Detail/Access';
 import type { DeviceMetadata } from '@/pages/device/Product/typings';
 import { Store } from 'jetlinks-store';
 import MetadataAction from '@/pages/device/components/Metadata/DataBaseAction';
@@ -220,7 +221,10 @@ const ProductDetail = observer(() => {
           >
             <Metadata type="product" />
           </Tabs.TabPane>
-          <Tabs.TabPane
+          <Tabs.TabPane tab={'设备接入'} key="access">
+            <Access />
+          </Tabs.TabPane>
+          {/* <Tabs.TabPane
             tab={intl.formatMessage({
               id: 'pages.device.productDetail.alarm',
               defaultMessage: '告警设置',
@@ -228,7 +232,7 @@ const ProductDetail = observer(() => {
             key="alarm"
           >
             <Alarm type="product" />
-          </Tabs.TabPane>
+          </Tabs.TabPane> */}
         </Tabs>
       </Card>
     </PageContainer>
