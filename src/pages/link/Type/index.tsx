@@ -87,7 +87,7 @@ const Network = () => {
         defaultMessage: '状态',
       }),
       render: (text, record) => {
-        if (record.state.value === 'disabled') {
+        if (record.state.value === 'enabled') {
           return <Badge color="lime" text="正常" />;
         }
         return <Badge color="red" text="禁用" />;
@@ -140,10 +140,7 @@ const Network = () => {
         </a>,
         <a key="changeState">
           <Popconfirm
-            title={intl.formatMessage({
-              id: `pages.data.option.${record.state.value}.tips`,
-              defaultMessage: `确认${record.state.value === 'enabled' ? '禁用' : '启用'}?`,
-            })}
+            title={`确认${record.state.value === 'enabled' ? '禁用' : '启用'}?`}
             onConfirm={async () => {
               // await service.update({
               //   id: record.id,
@@ -163,13 +160,8 @@ const Network = () => {
               actionRef.current?.reload();
             }}
           >
-            <Tooltip
-              title={intl.formatMessage({
-                id: `pages.data.option.${record.state.value}`,
-                defaultMessage: record.state.value === 'enabled' ? '禁用' : '启用',
-              })}
-            >
-              {record.state.value === 'disabled' ? <CloseCircleOutlined /> : <PlayCircleOutlined />}
+            <Tooltip title={record.state.value === 'enabled' ? '禁用' : '启用'}>
+              {record.state.value === 'enabled' ? <CloseCircleOutlined /> : <PlayCircleOutlined />}
             </Tooltip>
           </Popconfirm>
         </a>,
