@@ -41,7 +41,7 @@ const Info = observer(() => {
               defaultMessage: '产品名称',
             })}
           >
-            {InstanceModel.detail?.name}
+            {InstanceModel.detail?.productName}
           </Descriptions.Item>
           <Descriptions.Item
             label={intl.formatMessage({
