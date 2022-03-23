@@ -1,12 +1,13 @@
 import type { FunctionMetadata } from '@/pages/device/Product/typings';
 import React, { useState, useEffect, useRef } from 'react';
-import { Input, Button } from 'antd';
+import { Input, Button, DatePicker, Select, InputNumber } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import type { ProColumns } from '@jetlinks/pro-table';
 import { EditableProTable } from '@jetlinks/pro-table';
 import type { ProFormInstance } from '@ant-design/pro-form';
 import ProForm from '@ant-design/pro-form';
 import { InstanceModel, service } from '@/pages/device/Instance';
+import moment from 'moment';
 import './index.less';
 
 type FunctionProps = {
@@ -26,16 +27,41 @@ export default (props: FunctionProps) => {
   const formRef = useRef<ProFormInstance<any>>();
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
 
+  const getItemNode = (type: string) => {
+    switch (type) {
+      case 'boolean':
+        return (
+          <Select
+            style={{ width: '100%', textAlign: 'left' }}
+            options={[
+              { label: 'true', value: true },
+              { label: 'false', value: false },
+            ]}
+            placeholder={'请选择'}
+          />
+        );
+      case 'int':
+      case 'long':
+      case 'float':
+      case 'double':
+        return <InputNumber style={{ width: '100%' }} placeholder={'请输入'} />;
+      case 'date':
+        return <DatePicker style={{ width: '100%' }} />;
+      default:
+        return <Input placeholder={'请输入'} />;
+    }
+  };
+
   const columns: ProColumns<FunctionTableDataType>[] = [
     {
       dataIndex: 'name',
-      title: '1',
+      title: '名称',
       width: 200,
       editable: false,
     },
     {
       dataIndex: 'type',
-      title: '2',
+      title: '类型',
       width: 200,
       editable: false,
     },
@@ -47,19 +73,22 @@ export default (props: FunctionProps) => {
       dataIndex: 'value',
       align: 'center',
       width: 260,
+      renderFormItem: (_, row: any) => {
+        return getItemNode(row.record.type);
+      },
     },
   ];
 
   const handleDataSource = (data: any) => {
     const array = [];
-    const properties = data.valueType ? data.valueType.properties : [];
+    const properties = data.valueType ? data.valueType.properties : data.inputs;
 
     for (const datum of properties) {
       array.push({
         id: datum.id,
         name: datum.name,
         type: datum.valueType ? datum.valueType.type : '-',
-        value: '',
+        value: undefined,
       });
     }
     setEditableRowKeys(array.map((d) => d.id));
@@ -74,12 +103,17 @@ export default (props: FunctionProps) => {
    */
   const actionRun = async () => {
     const formData = await formRef.current?.validateFields();
-    console.log(formData);
     const id = InstanceModel.detail?.id;
     if (id && formData.table) {
       const data = {};
       formData.table.forEach((d: any) => {
-        data[d.id] = d.value;
+        if (d.value) {
+          if (d.type === 'date') {
+            data[d.id] = moment(d.value).format('YYYY-MM-DD HH:mm:ss');
+          } else {
+            data[d.id] = d.value;
+          }
+        }
       });
       const res = await service.invokeFunction(id, props.data.id, data);
       if (res.status === 200) {
