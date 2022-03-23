@@ -32,8 +32,6 @@ import { Store } from 'jetlinks-store';
  * @param type
  */
 const filterConfigByType = (data: any[], type: string) => {
-  // UDP、TCP_SERVER、WEB_SOCKET_SERVER、HTTP_SERVER、MQTT_SERVER、COAP_SERVER
-
   const tcpList = ['TCP_SERVER', 'WEB_SOCKET_SERVER', 'HTTP_SERVER', 'MQTT_SERVER'];
   const udpList = ['UDP', 'COAP_SERVER'];
 
@@ -54,7 +52,6 @@ const filterConfigByType = (data: any[], type: string) => {
 const Save = observer(() => {
   // const param = useParams<{ id: string }>();
 
-  // const [config, setConfig] = useState<any[]>([]);
   const configRef = useRef([]);
 
   useEffect(() => {
@@ -123,10 +120,16 @@ const Save = observer(() => {
               state.dataSource = _host?.ports.map((p: any) => ({ label: p, value: p }));
             });
           });
-          onFieldValueChange('shareCluster', (field) => {
+          onFieldValueChange('shareCluster', (field, f5) => {
             const value = (field as Field).value;
-            if (!value) {
-              // false 获取独立配置的信息
+            if (value) {
+              // 共享配置
+              f5.setFieldState('grid.configuration.panel1.layout2.host', (state) => {
+                state.value = '0.0.0.0';
+                state.disabled = true;
+              });
+            } else {
+              // 独立配置
             }
           });
           onFieldValueChange('grid.cluster.cluster.*.layout2.serverId', async (field, f3) => {
