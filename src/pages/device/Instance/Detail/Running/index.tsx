@@ -11,7 +11,7 @@ const Running = () => {
     <Card>
       <Tabs defaultActiveKey="1" tabPosition="left" style={{ height: 600 }}>
         <Tabs.TabPane tab="属性" key="1">
-          <Property data={metadata?.properties || {}} />
+          <Property data={metadata?.properties || []} />
         </Tabs.TabPane>
         {metadata.events?.map((item) => (
           <Tabs.TabPane tab={item.name} key={item.id}>

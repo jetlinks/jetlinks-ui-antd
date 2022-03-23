@@ -24,6 +24,7 @@ import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 interface Props {
   change: () => void;
   data: any;
+  access: any;
 }
 const Access = (props: Props) => {
   const [form] = Form.useForm();
@@ -33,9 +34,10 @@ const Access = (props: Props) => {
   const [current, setCurrent] = useState<number>(0);
   const [networkList, setNetworkList] = useState<any[]>([]);
   const [procotolList, setProcotolList] = useState<any[]>([]);
-  const [procotolCurrent, setProcotolCurrent] = useState<string>('');
-  const [networkCurrent, setNetworkCurrent] = useState<string>('');
+  const [procotolCurrent, setProcotolCurrent] = useState<string>(props.access?.protocol || '');
+  const [networkCurrent, setNetworkCurrent] = useState<string>(props.access?.channelId || '');
   const [config, setConfig] = useState<any>();
+  const [providers, setProviders] = useState<any[]>([]);
 
   const MetworkTypeMapping = new Map();
   MetworkTypeMapping.set('websocket-server', 'WEB_SOCKET_SERVER');
@@ -56,17 +58,29 @@ const Access = (props: Props) => {
   ProcotoleMapping.set('tcp-server-gateway', 'TCP');
 
   const queryNetworkList = (params?: any) => {
-    service.getNetworkList(MetworkTypeMapping.get(props.data?.id), params).then((resp) => {
-      if (resp.status === 200) {
-        setNetworkList(resp.result);
-      }
-    });
+    service
+      .getNetworkList(MetworkTypeMapping.get(props.data?.id || props.access?.provider), params)
+      .then((resp) => {
+        if (resp.status === 200) {
+          setNetworkList(resp.result);
+        }
+      });
   };
 
   const queryProcotolList = (params?: any) => {
-    service.getProtocolList(ProcotoleMapping.get(props.data?.id), params).then((resp) => {
+    service
+      .getProtocolList(ProcotoleMapping.get(props.data?.id || props.access?.provider), params)
+      .then((resp) => {
+        if (resp.status === 200) {
+          setProcotolList(resp.result);
+        }
+      });
+  };
+
+  const queryProviders = () => {
+    service.getProviders().then((resp) => {
       if (resp.status === 200) {
-        setProcotolList(resp.result);
+        setProviders(resp.result);
       }
     });
   };
@@ -77,6 +91,14 @@ const Access = (props: Props) => {
       setCurrent(0);
     }
   }, [props.data]);
+
+  useEffect(() => {
+    form.setFieldsValue({
+      name: props.access?.name,
+      description: props.access?.name,
+    });
+    queryProviders();
+  }, [props.access]);
 
   const next = () => {
     if (current === 0) {
@@ -92,7 +114,10 @@ const Access = (props: Props) => {
         message.error('请选择消息协议！');
       } else {
         service
-          .getConfigView(procotolCurrent, ProcotoleMapping.get(props.data?.id))
+          .getConfigView(
+            procotolCurrent,
+            ProcotoleMapping.get(props.data?.id || props.access?.provider),
+          )
           .then((resp) => {
             if (resp.status === 200) {
               setConfig(resp.result);
@@ -353,7 +378,7 @@ const Access = (props: Props) => {
                       }}
                     >
                       <div className={styles.title}>{item.name}</div>
-                      <div className={styles.desc}>缺少描述呀</div>
+                      <div className={styles.desc}>{item.description}</div>
                     </Card>
                   </Col>
                 ))}
@@ -401,14 +426,15 @@ const Access = (props: Props) => {
             <div className={styles.config}>
               <div className={styles.title}>配置概览</div>
               <Descriptions column={1}>
-                <Descriptions.Item label="接入方式">{props.data?.name || ''}</Descriptions.Item>
+                <Descriptions.Item label="接入方式">
+                  {props.data?.name || providers.find((i) => i.id === props.access?.provider)?.name}
+                </Descriptions.Item>
                 <Descriptions.Item>{props.data?.description || ''}</Descriptions.Item>
                 <Descriptions.Item label="消息协议">
                   {procotolList.find((i) => i.id === procotolCurrent)?.name || ''}
                 </Descriptions.Item>
                 <Descriptions.Item>
-                  {procotolList.find((i) => i.id === procotolCurrent)?.description ||
-                    '----缺少描述呀----'}
+                  {procotolList.find((i) => i.id === procotolCurrent)?.description || ''}
                 </Descriptions.Item>
                 <Descriptions.Item label="网络组件">
                   {(networkList.find((i) => i.id === networkCurrent)?.addresses || []).map(
@@ -449,6 +475,8 @@ const Access = (props: Props) => {
         type="link"
         onClick={() => {
           props.change();
+          setNetworkCurrent('');
+          setProcotolCurrent('');
         }}
       >
         返回
@@ -463,6 +491,11 @@ const Access = (props: Props) => {
         </div>
         <div className={styles.content}>{renderSteps(current)}</div>
         <div className={styles.action}>
+          {current > 0 && (
+            <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
+              上一步
+            </Button>
+          )}
           {current < steps.length - 1 && (
             <Button type="primary" onClick={() => next()}>
               下一步
@@ -474,34 +507,47 @@ const Access = (props: Props) => {
               onClick={async () => {
                 try {
                   const values = await form.validateFields();
-                  const params = {
-                    name: values.name,
-                    description: values.description,
-                    provider: props.data.id,
-                    protocol: procotolCurrent,
-                    transport: ProcotoleMapping.get(props.data.id),
-                    channel: 'network', // 网络组件
-                    channelId: networkCurrent,
-                  };
-                  service.save(params).then((resp: any) => {
-                    if (resp.status === 200) {
-                      message.success('操作成功！');
-                      setCurrent(0);
-                      setNetworkCurrent('');
-                      setProcotolCurrent('');
-                    }
-                  });
+                  // 编辑还是保存
+                  if (!!props.access.id) {
+                    const params = {
+                      name: values.name,
+                      description: values.description,
+                      provider: props.data.id,
+                      protocol: procotolCurrent,
+                      transport: ProcotoleMapping.get(props.data.id),
+                      channel: 'network', // 网络组件
+                      channelId: networkCurrent,
+                    };
+                    service.save(params).then((resp: any) => {
+                      if (resp.status === 200) {
+                        message.success('操作成功！');
+                        history.push(`${getMenuPathByCode(MENUS_CODE['link/AccessConfig'])}`);
+                      }
+                    });
+                  } else {
+                    const params = {
+                      id: props.access?.id,
+                      name: values.name,
+                      description: values.description,
+                      provider: props.data.id,
+                      protocol: procotolCurrent,
+                      transport: ProcotoleMapping.get(props.data.id),
+                      channel: 'network', // 网络组件
+                      channelId: networkCurrent,
+                    };
+                    service.update(params).then((resp: any) => {
+                      if (resp.status === 200) {
+                        message.success('操作成功！');
+                        history.push(`${getMenuPathByCode(MENUS_CODE['link/AccessConfig'])}`);
+                      }
+                    });
+                  }
                 } catch (errorInfo) {
                   console.error('Failed:', errorInfo);
                 }
               }}
             >
               保存
-            </Button>
-          )}
-          {current > 0 && (
-            <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
-              上一步
             </Button>
           )}
         </div>
