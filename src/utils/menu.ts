@@ -211,7 +211,6 @@ export const saveMenusCache = (routes: MenuItem[]) => {
 export const getMenuPathByCode = (code: string): string => {
   const menusStr = localStorage.getItem(MENUS_DATA_CACHE) || '{}';
   const menusData = JSON.parse(menusStr);
-  console.log(code, menusData);
   return menusData[code];
 };
 

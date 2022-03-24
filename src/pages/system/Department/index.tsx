@@ -193,6 +193,12 @@ export default observer(() => {
         }),
         'x-decorator': 'FormItem',
         'x-component': 'NumberPicker',
+        'x-validator': [
+          {
+            pattern: /^[0-9]*[1-9][0-9]*$/,
+            message: '请输入大于0的整数',
+          },
+        ],
       },
     },
   };
