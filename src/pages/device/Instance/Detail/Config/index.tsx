@@ -108,18 +108,20 @@ const Config = () => {
                 <Space>
                   <a
                     onClick={async () => {
-                      const values = (await form.submit()) as any;
-                      const resp = await service.modify(id || '', {
-                        id,
-                        configuration: { ...values },
-                      });
-                      if (resp.status === 200) {
-                        InstanceModel.detail = {
-                          ...InstanceModel.detail,
+                      if (!state) {
+                        const values = (await form.submit()) as any;
+                        const resp = await service.modify(id || '', {
+                          id,
                           configuration: { ...values },
-                        };
-                        setState(!state);
+                        });
+                        if (resp.status === 200) {
+                          InstanceModel.detail = {
+                            ...InstanceModel.detail,
+                            configuration: { ...values },
+                          };
+                        }
                       }
+                      setState(!state);
                     }}
                   >
                     {state ? '编辑' : '保存'}

@@ -18,14 +18,17 @@ import { useEffect, useState } from 'react';
 import styles from './index.less';
 import { service } from '@/pages/link/AccessConfig';
 import encodeQuery from '@/utils/encodeQuery';
-import { useHistory } from 'umi';
-import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
+import { useHistory, useLocation } from 'umi';
 
 interface Props {
   change: () => void;
   data: any;
-  access: any;
 }
+
+type LocationType = {
+  id?: string;
+};
+
 const Access = (props: Props) => {
   const [form] = Form.useForm();
 
@@ -34,8 +37,9 @@ const Access = (props: Props) => {
   const [current, setCurrent] = useState<number>(0);
   const [networkList, setNetworkList] = useState<any[]>([]);
   const [procotolList, setProcotolList] = useState<any[]>([]);
-  const [procotolCurrent, setProcotolCurrent] = useState<string>(props.access?.protocol || '');
-  const [networkCurrent, setNetworkCurrent] = useState<string>(props.access?.channelId || '');
+  const [access, setAccess] = useState<any>({});
+  const [procotolCurrent, setProcotolCurrent] = useState<string>('');
+  const [networkCurrent, setNetworkCurrent] = useState<string>('');
   const [config, setConfig] = useState<any>();
   const [providers, setProviders] = useState<any[]>([]);
 
@@ -57,24 +61,20 @@ const Access = (props: Props) => {
   ProcotoleMapping.set('mqtt-server-gateway', 'MQTT');
   ProcotoleMapping.set('tcp-server-gateway', 'TCP');
 
-  const queryNetworkList = (params?: any) => {
-    service
-      .getNetworkList(MetworkTypeMapping.get(props.data?.id || props.access?.provider), params)
-      .then((resp) => {
-        if (resp.status === 200) {
-          setNetworkList(resp.result);
-        }
-      });
+  const queryNetworkList = (id: string, params?: any) => {
+    service.getNetworkList(MetworkTypeMapping.get(id), params).then((resp) => {
+      if (resp.status === 200) {
+        setNetworkList(resp.result);
+      }
+    });
   };
 
-  const queryProcotolList = (params?: any) => {
-    service
-      .getProtocolList(ProcotoleMapping.get(props.data?.id || props.access?.provider), params)
-      .then((resp) => {
-        if (resp.status === 200) {
-          setProcotolList(resp.result);
-        }
-      });
+  const queryProcotolList = (id: string, params?: any) => {
+    service.getProtocolList(ProcotoleMapping.get(id), params).then((resp) => {
+      if (resp.status === 200) {
+        setProcotolList(resp.result);
+      }
+    });
   };
 
   const queryProviders = () => {
@@ -86,26 +86,39 @@ const Access = (props: Props) => {
   };
 
   useEffect(() => {
-    if (props.data) {
-      queryNetworkList();
+    if (props.data?.id) {
+      queryNetworkList(props.data?.id);
       setCurrent(0);
     }
   }, [props.data]);
 
+  const location = useLocation<LocationType>();
+
+  const params = new URLSearchParams(location.search);
+
   useEffect(() => {
-    form.setFieldsValue({
-      name: props.access?.name,
-      description: props.access?.name,
-    });
-    queryProviders();
-  }, [props.access]);
+    if (params.get('id')) {
+      service.detail(params.get('id') || '').then((resp) => {
+        setAccess(resp.result);
+        setProcotolCurrent(resp.result?.protocol);
+        setNetworkCurrent(resp.result?.channelId);
+        form.setFieldsValue({
+          name: resp.result?.name,
+          description: resp.result?.description,
+        });
+        queryProviders();
+        setCurrent(0);
+        queryNetworkList(resp.result?.provider);
+      });
+    }
+  }, []);
 
   const next = () => {
     if (current === 0) {
       if (!networkCurrent) {
         message.error('请选择网络组件！');
       } else {
-        queryProcotolList();
+        queryProcotolList(props.data?.id || access?.provider);
         setCurrent(current + 1);
       }
     }
@@ -114,10 +127,7 @@ const Access = (props: Props) => {
         message.error('请选择消息协议！');
       } else {
         service
-          .getConfigView(
-            procotolCurrent,
-            ProcotoleMapping.get(props.data?.id || props.access?.provider),
-          )
+          .getConfigView(procotolCurrent, ProcotoleMapping.get(props.data?.id || access?.provider))
           .then((resp) => {
             if (resp.status === 200) {
               setConfig(resp.result);
@@ -264,6 +274,7 @@ const Access = (props: Props) => {
                 placeholder="请输入名称"
                 onSearch={(value: string) => {
                   queryNetworkList(
+                    props.data?.id || access?.provider,
                     encodeQuery({
                       terms: {
                         name$LIKE: `%${value}%`,
@@ -276,7 +287,12 @@ const Access = (props: Props) => {
               <Button
                 type="primary"
                 onClick={() => {
-                  history.push(`${getMenuPathByCode(MENUS_CODE['link/Type/Save'])}`);
+                  const tab: any = window.open(`${origin}/#/link/Type/Save/:id`);
+                  tab!.onTabSaveSuccess = (value: any) => {
+                    if (value.status === 200) {
+                      queryNetworkList(props.data?.id || access?.provider);
+                    }
+                  };
                 }}
               >
                 新增
@@ -312,16 +328,17 @@ const Access = (props: Props) => {
               </Row>
             ) : (
               <Empty
-                image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
-                imageStyle={{
-                  height: 60,
-                }}
                 description={
                   <span>
                     暂无数据{' '}
                     <a
                       onClick={() => {
-                        history.push(`${getMenuPathByCode(MENUS_CODE['link/Type/Save'])}`);
+                        const tab: any = window.open(`${origin}/#/link/Type/Save/:id`);
+                        tab!.onTabSaveSuccess = (value: any) => {
+                          if (value.status === 200) {
+                            queryNetworkList(props.data?.id || access?.provider);
+                          }
+                        };
                       }}
                     >
                       创建接入方式
@@ -345,6 +362,7 @@ const Access = (props: Props) => {
                 placeholder="请输入名称"
                 onSearch={(value: string) => {
                   queryProcotolList(
+                    props.data?.id || access?.provider,
                     encodeQuery({
                       terms: {
                         name$LIKE: `%${value}%`,
@@ -357,7 +375,12 @@ const Access = (props: Props) => {
               <Button
                 type="primary"
                 onClick={() => {
-                  history.push(`${getMenuPathByCode(MENUS_CODE['link/Protocol'])}`);
+                  const tab: any = window.open(`${origin}/#/link/Protocol?save=true`);
+                  tab!.onTabSaveSuccess = (value: any) => {
+                    if (value) {
+                      queryProcotolList(props.data?.id || access?.provider);
+                    }
+                  };
                 }}
               >
                 新增
@@ -385,16 +408,17 @@ const Access = (props: Props) => {
               </Row>
             ) : (
               <Empty
-                image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
-                imageStyle={{
-                  height: 60,
-                }}
                 description={
                   <span>
                     暂无数据
                     <a
                       onClick={() => {
-                        history.push(`${getMenuPathByCode(MENUS_CODE['link/Protocol'])}`);
+                        const tab: any = window.open(`${origin}/#/link/Protocol?save=true`);
+                        tab!.onTabSaveSuccess = (value: any) => {
+                          if (value) {
+                            queryProcotolList(props.data?.id || access?.provider);
+                          }
+                        };
                       }}
                     >
                       去新增
@@ -427,9 +451,12 @@ const Access = (props: Props) => {
               <div className={styles.title}>配置概览</div>
               <Descriptions column={1}>
                 <Descriptions.Item label="接入方式">
-                  {props.data?.name || providers.find((i) => i.id === props.access?.provider)?.name}
+                  {props.data?.name || providers.find((i) => i.id === access?.provider)?.name}
                 </Descriptions.Item>
-                <Descriptions.Item>{props.data?.description || ''}</Descriptions.Item>
+                <Descriptions.Item>
+                  {props.data?.description ||
+                    providers.find((i) => i.id === access?.provider)?.description}
+                </Descriptions.Item>
                 <Descriptions.Item label="消息协议">
                   {procotolList.find((i) => i.id === procotolCurrent)?.name || ''}
                 </Descriptions.Item>
@@ -471,16 +498,18 @@ const Access = (props: Props) => {
 
   return (
     <Card>
-      <Button
-        type="link"
-        onClick={() => {
-          props.change();
-          setNetworkCurrent('');
-          setProcotolCurrent('');
-        }}
-      >
-        返回
-      </Button>
+      {props.data?.id && (
+        <Button
+          type="link"
+          onClick={() => {
+            props.change();
+            setNetworkCurrent('');
+            setProcotolCurrent('');
+          }}
+        >
+          返回
+        </Button>
+      )}
       <div className={styles.box}>
         <div className={styles.steps}>
           <Steps size="small" current={current}>
@@ -508,8 +537,8 @@ const Access = (props: Props) => {
                 try {
                   const values = await form.validateFields();
                   // 编辑还是保存
-                  if (!!props.access.id) {
-                    const params = {
+                  if (!params.get('id')) {
+                    const param = {
                       name: values.name,
                       description: values.description,
                       provider: props.data.id,
@@ -518,27 +547,35 @@ const Access = (props: Props) => {
                       channel: 'network', // 网络组件
                       channelId: networkCurrent,
                     };
-                    service.save(params).then((resp: any) => {
+                    service.save(param).then((resp: any) => {
                       if (resp.status === 200) {
                         message.success('操作成功！');
-                        history.push(`${getMenuPathByCode(MENUS_CODE['link/AccessConfig'])}`);
+                        history.goBack();
+                        if ((window as any).onTabSaveSuccess) {
+                          (window as any).onTabSaveSuccess(resp);
+                          setTimeout(() => window.close(), 300);
+                        }
                       }
                     });
                   } else {
-                    const params = {
-                      id: props.access?.id,
+                    const param = {
+                      id: access?.id,
                       name: values.name,
                       description: values.description,
-                      provider: props.data.id,
+                      provider: access?.provider,
                       protocol: procotolCurrent,
-                      transport: ProcotoleMapping.get(props.data.id),
+                      transport: access?.transport,
                       channel: 'network', // 网络组件
                       channelId: networkCurrent,
                     };
-                    service.update(params).then((resp: any) => {
+                    service.update(param).then((resp: any) => {
                       if (resp.status === 200) {
                         message.success('操作成功！');
-                        history.push(`${getMenuPathByCode(MENUS_CODE['link/AccessConfig'])}`);
+                        history.goBack();
+                        if ((window as any).onTabSaveSuccess) {
+                          (window as any).onTabSaveSuccess(resp);
+                          setTimeout(() => window.close(), 300);
+                        }
                       }
                     });
                   }

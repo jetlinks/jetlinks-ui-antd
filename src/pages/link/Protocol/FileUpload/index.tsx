@@ -2,7 +2,7 @@ import SystemConst from '@/utils/const';
 import Token from '@/utils/token';
 import { useState } from 'react';
 import { connect } from '@formily/react';
-import { Button, Input, Upload } from 'antd';
+import { Button, Input, message, Upload } from 'antd';
 import type { UploadChangeParam } from 'antd/lib/upload/interface';
 
 interface Props {
@@ -16,6 +16,7 @@ const FileUpload = connect((props: Props) => {
 
   const handleChange = (info: UploadChangeParam) => {
     if (info.file.status === 'done') {
+      message.success('上传成功！');
       info.file.url = info.file.response?.result;
       setUrl(info.file.response?.result);
       props.onChange(info.file.response?.result);

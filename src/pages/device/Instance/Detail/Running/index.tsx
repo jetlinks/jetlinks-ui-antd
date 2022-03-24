@@ -5,7 +5,7 @@ import Property from '@/pages/device/Instance/Detail/Running/Property';
 import Event from '@/pages/device/Instance/Detail/Running/Event';
 
 const Running = () => {
-  const metadata = JSON.parse(InstanceModel.detail.metadata as string) as DeviceMetadata;
+  const metadata = JSON.parse((InstanceModel.detail?.metadata || '{}') as string) as DeviceMetadata;
 
   return (
     <Card>

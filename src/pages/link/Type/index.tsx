@@ -117,27 +117,7 @@ const Network = () => {
             <EyeOutlined />
           </Tooltip>
         </a>,
-        <a key="delete">
-          <Popconfirm
-            title="确认删除?"
-            onConfirm={async () => {
-              const response: any = await service.remove(record.id);
-              if (response.status === 200) {
-                message.success('删除成功');
-                actionRef.current?.reload();
-              }
-            }}
-          >
-            <Tooltip
-              title={intl.formatMessage({
-                id: 'pages.data.option.remove',
-                defaultMessage: '删除',
-              })}
-            >
-              <DeleteOutlined />
-            </Tooltip>
-          </Popconfirm>
-        </a>,
+
         <a key="changeState">
           <Popconfirm
             title={`确认${record.state.value === 'enabled' ? '禁用' : '启用'}?`}
@@ -165,6 +145,32 @@ const Network = () => {
             </Tooltip>
           </Popconfirm>
         </a>,
+        <Tooltip
+          key="delete"
+          title={
+            record.state.value === 'disabled'
+              ? intl.formatMessage({
+                  id: 'pages.data.option.remove',
+                  defaultMessage: '删除',
+                })
+              : '请先禁用该组件，再删除。'
+          }
+        >
+          <Button type="link" style={{ padding: 0 }} disabled={record.state.value === 'enabled'}>
+            <Popconfirm
+              title="确认删除?"
+              onConfirm={async () => {
+                const response: any = await service.remove(record.id);
+                if (response.status === 200) {
+                  message.success('删除成功');
+                  actionRef.current?.reload();
+                }
+              }}
+            >
+              <DeleteOutlined />
+            </Popconfirm>
+          </Button>
+        </Tooltip>,
       ],
     },
   ];

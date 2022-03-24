@@ -1,6 +1,6 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import type { ProtocolItem } from '@/pages/link/Protocol/typings';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { Badge, Button, message, Popconfirm, Tooltip } from 'antd';
 import { CheckCircleOutlined, DeleteOutlined, EditOutlined, StopOutlined } from '@ant-design/icons';
@@ -11,6 +11,8 @@ import { CurdModel } from '@/components/BaseCrud/model';
 import Service from '@/pages/link/Protocol/service';
 import { onFormValuesChange, registerValidateRules } from '@formily/core';
 import { Store } from 'jetlinks-store';
+import { useLocation } from 'umi';
+import SystemConst from '@/utils/const';
 
 export const service = new Service('protocol');
 const Protocol = () => {
@@ -104,7 +106,7 @@ const Protocol = () => {
             </Popconfirm>
           </a>
         ),
-        <a key="delete">
+        <Button key="delete" type="link" disabled={record.state !== 1}>
           <Popconfirm
             title={intl.formatMessage({
               id: 'pages.data.option.remove.tips',
@@ -130,7 +132,7 @@ const Protocol = () => {
               <DeleteOutlined />
             </Tooltip>
           </Popconfirm>
-        </a>,
+        </Button>,
       ],
     },
   ];
@@ -280,6 +282,21 @@ const Protocol = () => {
       },
     },
   };
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if ((location as any).query?.save === 'true') {
+      CurdModel.add();
+    }
+    const subscription = Store.subscribe(SystemConst.BASE_UPDATE_DATA, (data) => {
+      if ((window as any).onTabSaveSuccess) {
+        (window as any).onTabSaveSuccess(data);
+        setTimeout(() => window.close(), 300);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   return (
     <PageContainer>
