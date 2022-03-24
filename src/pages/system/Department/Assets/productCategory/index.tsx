@@ -2,7 +2,7 @@
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { Button, message, Popconfirm, Tooltip } from 'antd';
+import { Button, message, Popconfirm, Space, Tooltip } from 'antd';
 import { useRef, useState } from 'react';
 import { useParams } from 'umi';
 import { observer } from '@formily/react';
@@ -200,13 +200,39 @@ export default observer(() => {
           selectedRowKeys: Models.unBindKeys,
           onSelect: (record, selected, selectedRows) => {
             const keys = getTableKeys(selected ? selectedRows : [record]);
+            console.log(record, selected, selectedRows);
             if (selected) {
-              Models.unBindKeys = keys;
+              const _map = new Map();
+              keys.forEach((k) => {
+                _map.set(k, k);
+              });
+              Models.unBindKeys = [..._map.values()];
             } else {
               // 去除重复的key
               Models.unBindKeys = difference(Models.unBindKeys, keys);
             }
           },
+          onSelectAll: (selected, selectedRows) => {
+            if (selected) {
+              Models.unBindKeys = selectedRows.map((item) => item.id);
+            } else {
+              Models.unBindKeys = [];
+            }
+          },
+        }}
+        tableAlertOptionRender={() => {
+          return (
+            <Space size={16}>
+              <Button
+                type={'link'}
+                onClick={() => {
+                  Models.unBindKeys = [];
+                }}
+              >
+                取消选择
+              </Button>
+            </Space>
+          );
         }}
         toolBarRender={() => [
           <Button
