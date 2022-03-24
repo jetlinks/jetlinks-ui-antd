@@ -112,8 +112,7 @@ const Info = observer(() => {
           if (data) {
             InstanceModel.detail = {
               ...InstanceModel.detail,
-              name: data?.name,
-              description: data?.describe,
+              ...data,
             };
           }
         }}

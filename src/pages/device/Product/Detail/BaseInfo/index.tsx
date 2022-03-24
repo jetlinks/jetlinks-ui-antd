@@ -167,14 +167,7 @@ const BaseInfo = () => {
         ]}
         bordered
       >
-        <Descriptions.Item
-          label={intl.formatMessage({
-            id: 'pages.device.category',
-            defaultMessage: '产品ID',
-          })}
-        >
-          {productModel.current?.id}
-        </Descriptions.Item>
+        <Descriptions.Item label={'ID'}>{productModel.current?.id}</Descriptions.Item>
         <Descriptions.Item
           label={intl.formatMessage({
             id: 'pages.device.productDetail.classifiedName',

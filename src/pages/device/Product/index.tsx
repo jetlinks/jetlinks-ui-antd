@@ -13,7 +13,7 @@ import {
 import Service from '@/pages/device/Product/service';
 import { observer } from '@formily/react';
 import { model } from '@formily/reactive';
-import { Link, useHistory } from 'umi';
+import { useHistory } from 'umi';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { useEffect, useRef, useState } from 'react';
@@ -92,7 +92,6 @@ const Product = observer(() => {
    * @param data
    */
   const searchFn = (data: any) => {
-    actionRef.current?.reset?.();
     setQueryParam(data);
   };
 
@@ -112,15 +111,16 @@ const Product = observer(() => {
       })}
       key={'detail'}
     >
-      <Link
+      <Button
+        type={'link'}
         onClick={() => {
           productModel.current = record;
+          history.push(`${getMenuPathByParams(MENUS_CODE['device/Product/Detail'], record.id)}`);
         }}
-        to={`${getMenuPathByParams(MENUS_CODE['device/Product/Detail'], record.id)}`}
-        key="link"
+        style={{ padding: 0 }}
       >
         <EyeOutlined />
-      </Link>
+      </Button>
     </Tooltip>,
     <Tooltip
       title={intl.formatMessage({
@@ -136,6 +136,7 @@ const Product = observer(() => {
           setVisible(true);
         }}
         type={'link'}
+        style={{ padding: 0 }}
       >
         <EditOutlined />
       </Button>
@@ -147,7 +148,7 @@ const Product = observer(() => {
       })}
       key={'download'}
     >
-      <Button type={'link'}>
+      <Button type={'link'} style={{ padding: 0 }}>
         <DownloadOutlined
           onClick={async () => {
             await message.success(
@@ -176,7 +177,9 @@ const Product = observer(() => {
           defaultMessage: record.state ? '禁用' : '启用',
         })}
       >
-        <Button type={'link'}>{record.state ? <StopOutlined /> : <PlayCircleOutlined />}</Button>
+        <Button style={{ padding: 0 }} type={'link'}>
+          {record.state ? <StopOutlined /> : <PlayCircleOutlined />}
+        </Button>
       </Tooltip>
     </Popconfirm>,
     <Popconfirm
@@ -200,9 +203,9 @@ const Product = observer(() => {
         })}
         key={'remove'}
       >
-        <a key="delete">
+        <Button type={'link'} style={{ padding: 0 }}>
           <DeleteOutlined />
-        </a>
+        </Button>
       </Tooltip>
     </Popconfirm>,
   ];
@@ -260,7 +263,7 @@ const Product = observer(() => {
         onReset={() => {
           // 重置分页及搜索参数
           actionRef.current?.reset?.();
-          setQueryParam({});
+          searchFn({});
         }}
       />
       <ProTableCard<ProductItem>
@@ -301,6 +304,9 @@ const Product = observer(() => {
               id: 'pages.data.option.add',
               defaultMessage: '新增',
             })}
+          </Button>,
+          <Button onClick={() => {}} key={'import'} type={'primary'}>
+            导入
           </Button>,
         ]}
         cardRender={(record) => <ProductCard {...record} actions={tools(record)} />}
