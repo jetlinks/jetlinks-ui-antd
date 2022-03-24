@@ -218,6 +218,21 @@ const Product = observer(() => {
     {
       title: '设备类型',
       dataIndex: 'deviceType',
+      valueType: 'select',
+      valueEnum: {
+        device: {
+          text: '直连设备',
+          status: 'device',
+        },
+        childrenDevice: {
+          text: '网关子设备',
+          status: 'childrenDevice',
+        },
+        gateway: {
+          text: '网关设备',
+          status: 'gateway',
+        },
+      },
       render: (_, row) => <>{row.deviceType ? row.deviceType.text : undefined}</>,
     },
     {
