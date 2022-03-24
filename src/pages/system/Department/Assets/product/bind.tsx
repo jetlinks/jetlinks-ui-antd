@@ -117,9 +117,6 @@ const Bind = observer((props: Props) => {
         columns={columns}
         rowKey="id"
         search={false}
-        pagination={{
-          pageSize: 5,
-        }}
         rowSelection={{
           selectedRowKeys: Models.bindKeys,
           onChange: (selectedRowKeys, selectedRows) => {

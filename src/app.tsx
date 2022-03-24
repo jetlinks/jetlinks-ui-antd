@@ -111,9 +111,13 @@ export async function getInitialState(): Promise<{
  * @param url
  * @param options
  */
+const filterUrl = ['/authorize/captcha/config', '/authorize/login'];
 const requestInterceptor = (url: string, options: RequestOptionsInit) => {
   // const {params} = options;
-  const authHeader = { 'X-Access-Token': Token.get() || '' };
+  let authHeader = {};
+  if (!filterUrl.some((fUrl) => url.includes(fUrl))) {
+    authHeader = { 'X-Access-Token': Token.get() || '' };
+  }
   return {
     url: `${url}`,
     options: {

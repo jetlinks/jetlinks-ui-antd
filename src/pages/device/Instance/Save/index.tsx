@@ -67,7 +67,6 @@ const Save = (props: Props) => {
 
   const handleSave = async () => {
     const values = await form.validateFields();
-    console.log(values);
     if (values) {
       const resp = (await service.update(values)) as any;
       if (resp.status === 200) {

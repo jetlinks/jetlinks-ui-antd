@@ -164,6 +164,12 @@ export default (props: EditProps) => {
                       id: 'page.system.menu.sort',
                       defaultMessage: '排序',
                     })}
+                    rules={[
+                      {
+                        pattern: /^[0-9]*[1-9][0-9]*$/,
+                        message: '请输入大于0的整数',
+                      },
+                    ]}
                   >
                     <InputNumber style={{ width: '100%' }} disabled={disabled} />
                   </Form.Item>

@@ -13,7 +13,7 @@ import {
 import Service from '@/pages/device/Product/service';
 import { observer } from '@formily/react';
 import { model } from '@formily/reactive';
-import { Link, useHistory } from 'umi';
+import { useHistory } from 'umi';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { useEffect, useRef, useState } from 'react';
@@ -113,15 +113,15 @@ const Product = observer(() => {
       })}
       key={'detail'}
     >
-      <Link
+      <Button
+        type={'link'}
         onClick={() => {
           productModel.current = record;
+          history.push(`${getMenuPathByParams(MENUS_CODE['device/Product/Detail'], record.id)}`);
         }}
-        to={`${getMenuPathByParams(MENUS_CODE['device/Product/Detail'], record.id)}`}
-        key="link"
       >
         <EyeOutlined />
-      </Link>
+      </Button>
     </Tooltip>,
     <Tooltip
       title={intl.formatMessage({
@@ -201,9 +201,9 @@ const Product = observer(() => {
         })}
         key={'remove'}
       >
-        <a key="delete">
+        <Button type={'link'}>
           <DeleteOutlined />
-        </a>
+        </Button>
       </Tooltip>
     </Popconfirm>,
   ];

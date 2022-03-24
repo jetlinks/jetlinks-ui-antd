@@ -4,7 +4,7 @@ import type { DeviceInstance } from '@/pages/device/Instance/typings';
 import moment from 'moment';
 import { Badge, Button, Dropdown, Menu, message, Popconfirm, Tooltip } from 'antd';
 import { useRef, useState } from 'react';
-import { Link } from 'umi';
+import { useHistory } from 'umi';
 import {
   CheckCircleOutlined,
   DeleteOutlined,
@@ -28,6 +28,7 @@ import { ProTableCard } from '@/components';
 import SystemConst from '@/utils/const';
 import Token from '@/utils/token';
 import DeviceCard from '@/components/ProTableCard/CardItems/device';
+import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 
 export const statusMap = new Map();
 statusMap.set('在线', 'success');
@@ -63,26 +64,28 @@ const Instance = () => {
   const [current, setCurrent] = useState<Partial<DeviceInstance>>({});
   const [searchParams, setSearchParams] = useState<any>({});
   const [bindKeys, setBindKeys] = useState<any[]>([]);
+  const history = useHistory<Record<string, string>>();
   const intl = useIntl();
 
   const tools = (record: DeviceInstance) => [
-    <Link
-      onClick={() => {
-        InstanceModel.current = record;
-      }}
-      to={`/device/instance/detail/${record.id}`}
-      key="link"
+    <Tooltip
+      title={intl.formatMessage({
+        id: 'pages.data.option.detail',
+        defaultMessage: '查看',
+      })}
+      key={'detail'}
     >
-      <Tooltip
-        title={intl.formatMessage({
-          id: 'pages.data.option.detail',
-          defaultMessage: '查看',
-        })}
-        key={'detail'}
+      <Button
+        type={'link'}
+        onClick={() => {
+          InstanceModel.current = record;
+          const url = getMenuPathByParams(MENUS_CODE['device/Instance/Detail'], record.id);
+          history.push(url);
+        }}
       >
         <EyeOutlined />
-      </Tooltip>
-    </Link>,
+      </Button>
+    </Tooltip>,
     <Popconfirm
       title={intl.formatMessage({
         id: `pages.data.option.${record.state.value !== 'notActive' ? 'disabled' : 'enabled'}.tips`,
