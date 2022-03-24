@@ -414,6 +414,13 @@ const Edit = observer((props: Props) => {
             'x-component': 'Select',
             enum: PropertySource,
           },
+          'virtualRule.type': {
+            type: 'string',
+            'x-value': 'script',
+            'x-component': 'Input',
+            'x-decorator': 'FormItem',
+            'x-hidden': true,
+          },
           'virtualRule.script': {
             type: 'string',
             'x-component': 'FRuleEditor',
