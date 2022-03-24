@@ -88,6 +88,7 @@ const Instance = () => {
       </Button>
     </Tooltip>,
     <Popconfirm
+      key={'state'}
       title={intl.formatMessage({
         id: `pages.data.option.${record.state.value !== 'notActive' ? 'disabled' : 'enabled'}.tips`,
         defaultMessage: '确认禁用？',
@@ -125,6 +126,7 @@ const Instance = () => {
             ? 'pages.data.option.remove.tips'
             : 'pages.device.instance.deleteTip',
       })}
+      key={'delete'}
       onConfirm={async () => {
         if (record.state.value === 'notActive') {
           await service.remove(record.id);

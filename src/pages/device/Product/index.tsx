@@ -1,5 +1,5 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { Badge, Button, message, Popconfirm, Space, Tooltip } from 'antd';
+import { Badge, Button, message, Popconfirm, Space, Tooltip, Upload } from 'antd';
 import type { ProductItem } from '@/pages/device/Product/typings';
 import {
   DeleteOutlined,
@@ -22,6 +22,7 @@ import SearchComponent from '@/components/SearchComponent';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { ProTableCard } from '@/components';
 import ProductCard from '@/components/ProTableCard/CardItems/product';
+import { downloadObject } from '@/utils/util';
 
 export const service = new Service('device-product');
 export const statusMap = {
@@ -151,11 +152,12 @@ const Product = observer(() => {
       <Button type={'link'} style={{ padding: 0 }}>
         <DownloadOutlined
           onClick={async () => {
-            await message.success(
-              `${intl.formatMessage({
-                id: 'pages.data.option.download',
-                defaultMessage: '下载',
-              })}`,
+            downloadObject(
+              record,
+              intl.formatMessage({
+                id: 'pages.device.product',
+                defaultMessage: '产品',
+              }),
             );
           }}
         />
@@ -305,9 +307,41 @@ const Product = observer(() => {
               defaultMessage: '新增',
             })}
           </Button>,
-          <Button onClick={() => {}} key={'import'} type={'primary'}>
-            导入
-          </Button>,
+          <Upload
+            key={'import'}
+            showUploadList={false}
+            beforeUpload={(file) => {
+              const reader = new FileReader();
+              reader.readAsText(file);
+              reader.onload = async (result) => {
+                const text = result.target?.result as string;
+                if (!file.type.includes('json')) {
+                  message.warning('文件内容格式错误');
+                  return;
+                }
+                try {
+                  const data = JSON.parse(text || '{}');
+                  // 设置导入的产品状态为未发布
+                  data.state = 0;
+                  if (Array.isArray(data)) {
+                    message.warning('文件内容格式错误');
+                    return;
+                  }
+
+                  const res = await service.update(data);
+                  if (res.status === 200) {
+                    message.success('操作成功');
+                    actionRef.current?.reload();
+                  }
+                } catch {
+                  message.warning('文件内容格式错误');
+                }
+              };
+              return false;
+            }}
+          >
+            <Button style={{ marginLeft: 12 }}>导入</Button>
+          </Upload>,
         ]}
         cardRender={(record) => <ProductCard {...record} actions={tools(record)} />}
       />

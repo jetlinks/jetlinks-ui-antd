@@ -26,23 +26,27 @@ export default observer(() => {
    * 解除资产绑定
    */
   const handleUnBind = () => {
-    service
-      .unBind('product', [
-        {
-          targetType: 'org',
-          targetId: param.id,
-          assetType: 'product',
-          assetIdList: Models.unBindKeys,
-        },
-      ])
-      .subscribe({
-        next: () => message.success('操作成功'),
-        error: () => message.error('操作失败'),
-        complete: () => {
-          Models.unBindKeys = [];
-          actionRef.current?.reload();
-        },
-      });
+    if (Models.unBindKeys.length) {
+      service
+        .unBind('product', [
+          {
+            targetType: 'org',
+            targetId: param.id,
+            assetType: 'product',
+            assetIdList: Models.unBindKeys,
+          },
+        ])
+        .subscribe({
+          next: () => message.success('操作成功'),
+          error: () => message.error('操作失败'),
+          complete: () => {
+            Models.unBindKeys = [];
+            actionRef.current?.reload();
+          },
+        });
+    } else {
+      message.warning('请勾选需要解绑的数据');
+    }
   };
 
   const singleUnBind = (key: string) => {

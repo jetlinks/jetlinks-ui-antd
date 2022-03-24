@@ -205,6 +205,7 @@ const Save = (props: Props) => {
                     productName: node.label,
                   });
                 }}
+                filterOption={(input, option) => option.label.includes(input)}
               />
             </Form.Item>
             <Form.Item hidden={true} name={'productName'}>
