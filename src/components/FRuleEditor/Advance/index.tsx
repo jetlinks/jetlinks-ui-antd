@@ -13,10 +13,12 @@ const Advance = (props: Props) => {
   const { model, onChange } = props;
   return (
     <Modal
+      maskClosable={false}
       visible={model === 'advance'}
       width="70vw"
       title="设置属性规则"
       onCancel={() => onChange('simple')}
+      onOk={() => onChange('simple')}
     >
       <div className={styles.box}>
         <div className={styles.left}>

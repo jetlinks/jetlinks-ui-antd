@@ -85,6 +85,7 @@ const FSelectDevices = connect((props: Props) => {
       />
       {visible && (
         <Modal
+          maskClosable={false}
           visible
           title="选择设备"
           width="80vw"

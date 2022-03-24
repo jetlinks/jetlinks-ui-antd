@@ -1,7 +1,7 @@
 import { Alert, message, Modal } from 'antd';
-import { Input, FormItem } from '@formily/antd';
+import { FormItem, Input } from '@formily/antd';
 import { createForm } from '@formily/core';
-import { FormProvider, createSchemaField } from '@formily/react';
+import { createSchemaField, FormProvider } from '@formily/react';
 import { service } from '@/pages/device/Instance';
 import { useParams } from 'umi';
 import type { PropertyMetadata } from '@/pages/device/Product/typings';
@@ -45,6 +45,7 @@ const EditProperty = (props: Props) => {
   };
   return (
     <Modal
+      maskClosable={false}
       title="编辑"
       visible={visible}
       onOk={async () => {

@@ -2,7 +2,7 @@ import { Button, Drawer, Dropdown, Menu, message } from 'antd';
 import { createSchemaField, observer } from '@formily/react';
 import MetadataModel from '../model';
 import type { Field, IFieldState } from '@formily/core';
-import { createForm } from '@formily/core';
+import { createForm, registerValidateRules } from '@formily/core';
 import {
   ArrayItems,
   Editable,
@@ -133,6 +133,13 @@ const Edit = observer((props: Props) => {
     },
   });
 
+  registerValidateRules({
+    validateId(value) {
+      if (!value) return '';
+      const reg = new RegExp('^\\w{3,20}$');
+      return reg.exec(value) ? '' : 'ID只能由数字、26个英文字母或者下划线组成';
+    },
+  });
   const valueTypeConfig = {
     type: 'object',
     'x-index': 4,
@@ -142,7 +149,16 @@ const Edit = observer((props: Props) => {
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Select',
-        enum: DataTypeList,
+        default: MetadataModel.type === 'events' ? 'object' : null,
+        enum:
+          MetadataModel.type === 'events'
+            ? [
+                {
+                  value: 'object',
+                  label: 'object(结构体)',
+                },
+              ]
+            : DataTypeList,
       },
       unit: {
         title: intl.formatMessage({
@@ -152,6 +168,12 @@ const Edit = observer((props: Props) => {
         'x-decorator': 'FormItem',
         'x-component': 'Select',
         'x-visible': false,
+        'x-component-props': {
+          showSearch: true,
+          showArrow: true,
+          filterOption: (input: string, option: any) =>
+            option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
+        },
         'x-reactions': [
           {
             dependencies: ['.type'],
@@ -329,7 +351,11 @@ const Edit = observer((props: Props) => {
         },
         {
           required: true,
-          message: '请输入ID',
+          message: '请输入标识',
+        },
+        {
+          validateId: true,
+          message: 'ID只能由数字、26个英文字母或者下划线组成',
         },
       ],
     },
@@ -388,6 +414,24 @@ const Edit = observer((props: Props) => {
             'x-component': 'Select',
             enum: PropertySource,
           },
+          'virtualRule.script': {
+            type: 'string',
+            'x-component': 'FRuleEditor',
+            'x-visible': false,
+            'x-reactions': [
+              {
+                dependencies: ['..source', 'id'],
+                fulfill: {
+                  state: {
+                    visible: '{{$deps[0]==="rule"}}',
+                  },
+                  schema: {
+                    'x-component-props.property': '{{$deps[1]}}',
+                  },
+                },
+              },
+            ],
+          },
           virtualRule: {
             type: 'object',
             title: '规则配置',
@@ -402,24 +446,24 @@ const Edit = observer((props: Props) => {
               },
             },
             properties: {
-              script: {
-                type: 'string',
-                'x-component': 'FRuleEditor',
-                'x-visible': false,
-                'x-reactions': [
-                  {
-                    dependencies: ['.source', '..id'],
-                    fulfill: {
-                      state: {
-                        visible: '{{$deps[0]==="rule"}}',
-                      },
-                      schema: {
-                        'x-component-props.property': '{{$deps[1]}}',
-                      },
-                    },
-                  },
-                ],
-              },
+              // script: {
+              //   type: 'string',
+              //   'x-component': 'FRuleEditor',
+              //   'x-visible': false,
+              //   'x-reactions': [
+              //     {
+              //       dependencies: ['..source', '..id'],
+              //       fulfill: {
+              //         state: {
+              //           visible: '{{$deps[0]==="rule"}}',
+              //         },
+              //         schema: {
+              //           'x-component-props.property': '{{$deps[1]}}',
+              //         },
+              //       },
+              //     },
+              //   ],
+              // },
 
               windowType: {
                 type: 'string',
@@ -764,6 +808,7 @@ const Edit = observer((props: Props) => {
   return (
     <>
       <Drawer
+        maskClosable={false}
         width="25vw"
         visible
         title={`${intl.formatMessage({

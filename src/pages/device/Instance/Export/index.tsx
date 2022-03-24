@@ -102,6 +102,7 @@ const Export = (props: Props) => {
   };
   return (
     <Modal
+      maskClosable={false}
       visible={visible}
       onCancel={() => close()}
       width="35vw"

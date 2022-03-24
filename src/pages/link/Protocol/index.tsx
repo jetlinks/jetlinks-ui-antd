@@ -2,18 +2,14 @@ import { PageContainer } from '@ant-design/pro-layout';
 import type { ProtocolItem } from '@/pages/link/Protocol/typings';
 import { useRef } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { message, Popconfirm, Tag, Tooltip } from 'antd';
-import {
-  CloudSyncOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  PlayCircleOutlined,
-} from '@ant-design/icons';
+import { Badge, message, Popconfirm, Tooltip } from 'antd';
+import { CheckCircleOutlined, DeleteOutlined, EditOutlined, StopOutlined } from '@ant-design/icons';
 import BaseCrud from '@/components/BaseCrud';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import type { ISchema } from '@formily/json-schema';
 import { CurdModel } from '@/components/BaseCrud/model';
 import Service from '@/pages/link/Protocol/service';
+import { onFormMount, registerValidateRules } from '@formily/core';
 
 export const service = new Service('protocol');
 const Protocol = () => {
@@ -56,8 +52,9 @@ const Protocol = () => {
     {
       dataIndex: 'state',
       title: '状态',
-      renderText: (text) =>
-        text === 1 ? <Tag color="#108ee9">正常</Tag> : <Tag color="#F50">禁用</Tag>,
+      renderText: (text) => (
+        <Badge color={text !== 1 ? 'red' : 'green'} text={text !== 1 ? '未发布' : '已发布'} />
+      ),
     },
     {
       dataIndex: 'description',
@@ -90,54 +87,60 @@ const Protocol = () => {
         </a>,
         record.state !== 1 && (
           <a key="publish">
-            <Popconfirm title="发布？" onConfirm={() => modifyState(record.id, 'deploy')}>
+            <Popconfirm title="确认发布？" onConfirm={() => modifyState(record.id, 'deploy')}>
               <Tooltip title="发布">
-                <PlayCircleOutlined />
+                <CheckCircleOutlined />
               </Tooltip>
             </Popconfirm>
           </a>
         ),
         record.state === 1 && (
           <a key="reload">
-            <Popconfirm title="重新发布？" onConfirm={() => modifyState(record.id, 'deploy')}>
-              <Tooltip title="重新发布">
-                <CloudSyncOutlined />
+            <Popconfirm title="确认撤销？" onConfirm={() => modifyState(record.id, 'un-deploy')}>
+              <Tooltip title="撤销">
+                <StopOutlined />
               </Tooltip>
             </Popconfirm>
           </a>
         ),
-        record.state !== 1 && (
-          <a key="delete">
-            <Popconfirm
+        <a key="delete">
+          <Popconfirm
+            title={intl.formatMessage({
+              id: 'pages.data.option.remove.tips',
+              defaultMessage: '确认删除？',
+            })}
+            onConfirm={async () => {
+              await service.remove(record.id);
+              message.success(
+                intl.formatMessage({
+                  id: 'pages.data.option.success',
+                  defaultMessage: '操作成功!',
+                }),
+              );
+              actionRef.current?.reload();
+            }}
+          >
+            <Tooltip
               title={intl.formatMessage({
-                id: 'pages.data.option.remove.tips',
-                defaultMessage: '确认删除？',
+                id: 'pages.data.option.remove',
+                defaultMessage: '删除',
               })}
-              onConfirm={async () => {
-                await service.remove(record.id);
-                message.success(
-                  intl.formatMessage({
-                    id: 'pages.data.option.success',
-                    defaultMessage: '操作成功!',
-                  }),
-                );
-                actionRef.current?.reload();
-              }}
             >
-              <Tooltip
-                title={intl.formatMessage({
-                  id: 'pages.data.option.remove',
-                  defaultMessage: '删除',
-                })}
-              >
-                <DeleteOutlined />
-              </Tooltip>
-            </Popconfirm>
-          </a>
-        ),
+              <DeleteOutlined />
+            </Tooltip>
+          </Popconfirm>
+        </a>,
       ],
     },
   ];
+
+  registerValidateRules({
+    validateId(value) {
+      if (!value) return '';
+      const reg = new RegExp('^\\w{3,20}$');
+      return reg.exec(value) ? '' : 'ID只能由数字、26个英文字母或者下划线组成';
+    },
+  });
 
   const schema: ISchema = {
     type: 'object',
@@ -165,6 +168,10 @@ const Protocol = () => {
               {
                 max: 64,
                 message: '最多可输入64个字符',
+              },
+              {
+                validateId: true,
+                message: 'ID只能由数字、26个英文字母或者下划线组成',
               },
             ],
           },
@@ -283,6 +290,13 @@ const Protocol = () => {
         modelConfig={{ width: '550px' }}
         schema={schema}
         actionRef={actionRef}
+        formEffect={() => {
+          onFormMount((form) => {
+            form.setFieldState('id', (state) => {
+              state.disabled = CurdModel.model === 'edit';
+            });
+          });
+        }}
       />
       {/* {visible && <Debug data={current} close={() => setVisible(!visible)} />} */}
     </PageContainer>

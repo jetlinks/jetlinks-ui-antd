@@ -120,6 +120,7 @@ const Record = (props: Props) => {
         search={false}
       />
       <Modal
+        maskClosable={false}
         title="处理告警"
         visible={visible}
         onCancel={() => setVisible(false)}

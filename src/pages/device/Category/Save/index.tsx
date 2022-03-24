@@ -133,6 +133,7 @@ const Save = (props: Props) => {
 
   return (
     <Modal
+      maskClosable={false}
       title={intl.formatMessage({
         id: `pages.data.option.${props.data.id ? 'edit' : 'add'}`,
         defaultMessage: '新增',

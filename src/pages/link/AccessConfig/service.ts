@@ -14,7 +14,7 @@ class Service extends BaseService<AccessItem> {
       method: 'POST',
     });
   public shutDown = (id: string) =>
-    request(`/${SystemConst.API_BASE}/gateway/device/${id}/__shutdown`, {
+    request(`/${SystemConst.API_BASE}/gateway/device/${id}/_shutdown`, {
       method: 'POST',
     });
   public getProviders = () =>

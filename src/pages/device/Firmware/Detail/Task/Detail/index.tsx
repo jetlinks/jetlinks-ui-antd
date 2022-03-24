@@ -64,7 +64,13 @@ const Detail = (props: Props) => {
   }, [state.taskItem]);
 
   return (
-    <Modal width="30vw" visible={props.visible} onCancel={() => props.close()} title="任务详情">
+    <Modal
+      maskClosable={false}
+      width="30vw"
+      visible={props.visible}
+      onCancel={() => props.close()}
+      title="任务详情"
+    >
       <Row gutter={16}>
         {Object.keys(count)
           .reduce((previousValue: any[], currentValue) => {

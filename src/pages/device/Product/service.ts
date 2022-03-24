@@ -134,6 +134,12 @@ class Service extends BaseService<ProductItem> {
       method: 'GET',
     });
 
+  public getNetwork = (params: any) =>
+    request(`/${SystemConst.API_BASE}/network/config/_query/`, {
+      method: 'GET',
+      params,
+    });
+
   //上传物模型属性
   public importProductProperty = (productId: string, fileUrl: string) =>
     request(

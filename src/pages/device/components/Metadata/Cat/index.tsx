@@ -33,7 +33,12 @@ const Cat = (props: Props) => {
     }
   };
   return (
-    <Drawer title="查看物模型" onClose={() => props.close()} visible={props.visible}>
+    <Drawer
+      maskClosable={false}
+      title="查看物模型"
+      onClose={() => props.close()}
+      visible={props.visible}
+    >
       <div style={{ background: 'rgb(236, 237, 238)' }}>
         <p style={{ padding: 10 }}>
           物模型是对设备在云端的功能描述，包括设备的属性、服务和事件。物联网平台通过定义一种物的描述语言来描述物模型，称之为

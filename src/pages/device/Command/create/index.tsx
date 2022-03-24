@@ -1,7 +1,7 @@
 import type { Field } from '@formily/core';
 import { createForm, onFieldValueChange } from '@formily/core';
 import { createSchemaField } from '@formily/react';
-import { Form, Input, FormItem, Select, Space, ArrayTable } from '@formily/antd';
+import { ArrayTable, Form, FormItem, Input, Select, Space } from '@formily/antd';
 import { action } from '@formily/reactive';
 import type { ISchema } from '@formily/json-schema';
 import { service } from '@/pages/device/Command';
@@ -243,6 +243,7 @@ const Create = (props: Props) => {
   };
   return (
     <Modal
+      maskClosable={false}
       onOk={sendCommand}
       onCancel={() => close()}
       width="50vw"

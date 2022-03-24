@@ -1,4 +1,4 @@
-import { message, Modal } from 'antd';
+import { message, Modal, TreeSelect as ATreeSelect } from 'antd';
 import { useIntl } from 'umi';
 import type { Field } from '@formily/core';
 import { createForm } from '@formily/core';
@@ -103,22 +103,6 @@ const Save = (props: Props) => {
             required: true,
             message: '请输入姓名',
           },
-          {
-            triggerType: 'onBlur',
-            validator: (value: string) => {
-              return new Promise((resolve) => {
-                service
-                  .validateField('username', value)
-                  .then((resp) => {
-                    console.log(resp);
-                    resolve('');
-                  })
-                  .catch(() => {
-                    return '验证失败!';
-                  });
-              });
-            },
-          },
         ],
         // required: true,
       },
@@ -141,6 +125,22 @@ const Save = (props: Props) => {
           {
             required: true,
             message: '请输入用户名',
+          },
+          {
+            triggerType: 'onBlur',
+            validator: (value: string) => {
+              return new Promise((resolve) => {
+                service
+                  .validateField('username', value)
+                  .then((resp) => {
+                    console.log(resp);
+                    resolve('');
+                  })
+                  .catch(() => {
+                    return '验证失败!';
+                  });
+              });
+            },
           },
         ],
         name: 'username',
@@ -266,6 +266,7 @@ const Save = (props: Props) => {
         'x-component-props': {
           multiple: true,
           showArrow: true,
+          showCheckedStrategy: ATreeSelect.SHOW_ALL,
           filterOption: (input: string, option: any) =>
             option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
           fieldNames: {
@@ -329,7 +330,7 @@ const Save = (props: Props) => {
       onOk={save}
       width="35vw"
     >
-      <Form form={form} labelCol={4} wrapperCol={18}>
+      <Form form={form} layout="vertical">
         <SchemaField schema={schema} scope={{ useAsyncDataSource, getRole, getOrg }} />
       </Form>
     </Modal>
