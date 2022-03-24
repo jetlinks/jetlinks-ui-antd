@@ -54,7 +54,7 @@ const Info = observer(() => {
           <Descriptions.Item
             label={intl.formatMessage({
               id: 'pages.device.instanceDetail.transportProtocol',
-              defaultMessage: '链接协议',
+              defaultMessage: '连接协议',
             })}
           >
             {InstanceModel.detail?.protocolName}
