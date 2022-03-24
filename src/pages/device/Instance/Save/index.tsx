@@ -76,6 +76,7 @@ const Save = (props: Props) => {
           props.reload();
         }
         props.close(resp.result);
+        form.resetFields();
       }
     }
   };

@@ -1,17 +1,6 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { history, Link, useParams } from 'umi';
-import {
-  Badge,
-  Button,
-  Card,
-  Descriptions,
-  message,
-  Space,
-  Spin,
-  Switch,
-  Tabs,
-  Tooltip,
-} from 'antd';
+import { Badge, Card, Descriptions, message, Space, Spin, Switch, Tabs, Tooltip } from 'antd';
 import BaseInfo from '@/pages/device/Product/Detail/BaseInfo';
 import { observer } from '@formily/react';
 import { productModel, service } from '@/pages/device/Product';
@@ -152,21 +141,22 @@ const ProductDetail = observer(() => {
       subTitle={
         <Switch
           key={2}
-          checkedChildren="启用"
-          unCheckedChildren="停用"
+          checked={productModel.current?.state === 1}
+          checkedChildren="已发布"
+          unCheckedChildren="未发布"
           onChange={() => {
             changeDeploy(statusMap[productModel.current?.state || 0].action);
           }}
         />
       }
-      extra={[
-        <Button key="1" type="primary" onClick={() => changeDeploy('deploy')}>
-          {intl.formatMessage({
-            id: 'pages.device.productDetail.setting',
-            defaultMessage: '应用配置',
-          })}
-        </Button>,
-      ]}
+      // extra={[
+      //   <Button key="1" type="primary" onClick={() => changeDeploy('deploy')}>
+      //     {intl.formatMessage({
+      //       id: 'pages.device.productDetail.setting',
+      //       defaultMessage: '应用配置',
+      //     })}
+      //   </Button>,
+      // ]}
     >
       <Card>
         <Tabs defaultActiveKey="base">

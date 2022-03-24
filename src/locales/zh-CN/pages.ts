@@ -190,9 +190,9 @@ export default {
   'pages.device.productDetail.id': '产品ID',
   'pages.device.productDetail.classifiedName': '所属品类',
   'pages.device.productDetail.protocolName': '消息协议',
-  'pages.device.productDetail.transportProtocol': '链接协议',
+  'pages.device.productDetail.transportProtocol': '接入方式',
   'pages.device.productDetail.createTime': '创建时间',
-  'pages.device.productDetail.updateTime': '创建时间',
+  'pages.device.productDetail.updateTime': '更新时间',
   'pages.device.productDetail.base': '配置信息',
   'pages.device.productDetail.base.save': '保存',
   'pages.device.productDetail.metadata': '物模型',
@@ -231,6 +231,7 @@ export default {
   'pages.device.productDetail.setting': '应用配置',
   'pages.device.productDetail.disable': '停用',
   'pages.device.productDetail.enabled': '启用',
+  'pages.device.productDetail.deleteTip': '已发布的产品不能进行删除操作',
 
   // 设备管理-设备分类
   'pages.device.type.device': '直连设备',
@@ -250,6 +251,7 @@ export default {
   'pages.device.instance.status.notActive': '未启用',
   'pages.device.instance.status.offLine': '离线',
   'pages.device.instance.status.onLine': '在线',
+  'pages.device.instance.deleteTip': '已启用的设备无法删除',
   'pages.device.instanceDetail.deviceType': '设备类型',
   'pages.device.instanceDetail.transportProtocol': '链接协议',
   'pages.device.instanceDetail.protocolName': '消息协议',
