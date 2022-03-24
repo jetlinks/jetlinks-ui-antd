@@ -41,13 +41,19 @@ const ProTableCard = <
    */
   const handleCard = (dataSource: readonly T[] | undefined): JSX.Element => {
     return (
-      <div className={'pro-table-card-items'}>
-        {dataSource ? (
-          dataSource.map((item) => (cardRender && isFunction(cardRender) ? cardRender(item) : null))
+      <>
+        {dataSource && dataSource.length ? (
+          <div className={'pro-table-card-items'}>
+            {dataSource.map((item) =>
+              cardRender && isFunction(cardRender) ? cardRender(item) : null,
+            )}
+          </div>
         ) : (
-          <Empty />
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <Empty />
+          </div>
         )}
-      </div>
+      </>
     );
   };
 

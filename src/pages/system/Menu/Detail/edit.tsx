@@ -102,7 +102,12 @@ export default (props: EditProps) => {
           <Title title={'基本信息'} />
           <Row>
             <Col span={3}>
-              <Form.Item name={'icon'} label={'菜单图标'} required={true}>
+              <Form.Item
+                name={'icon'}
+                label={'菜单图标'}
+                required={true}
+                rules={[{ required: true, message: '请上传图标' }]}
+              >
                 <UploadImage disabled={disabled} style={{ width: 140, height: 130 }} />
               </Form.Item>
             </Col>
@@ -116,7 +121,7 @@ export default (props: EditProps) => {
                       defaultMessage: '名称',
                     })}
                     required={true}
-                    rules={[{ required: true, message: '该字段是必填字段' }]}
+                    rules={[{ required: true, message: '请输入名称' }]}
                   >
                     <Input disabled={disabled} />
                   </Form.Item>
@@ -129,7 +134,7 @@ export default (props: EditProps) => {
                       defaultMessage: '编码',
                     })}
                     required={true}
-                    rules={[{ required: true, message: '该字段是必填字段' }]}
+                    rules={[{ required: true, message: '请输入编码' }]}
                   >
                     <Input disabled={disabled} />
                   </Form.Item>
@@ -145,7 +150,7 @@ export default (props: EditProps) => {
                     })}
                     required={true}
                     rules={[
-                      { required: true, message: '该字段是必填字段' },
+                      { required: true, message: '请输入页面地址' },
                       { max: 120, message: '最多可输入120字符' },
                     ]}
                   >
@@ -251,6 +256,12 @@ export default (props: EditProps) => {
                     data={permissions}
                   />
                   {/*</Form.Item>*/}
+                </Form.Item>
+                <Form.Item hidden name={'id'}>
+                  <Input />
+                </Form.Item>
+                <Form.Item hidden name={'parentId'}>
+                  <Input />
                 </Form.Item>
               </Col>
             </Row>

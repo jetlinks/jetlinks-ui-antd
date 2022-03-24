@@ -83,42 +83,46 @@ const Instance = () => {
         <EyeOutlined />
       </Tooltip>
     </Link>,
-    <a href={record.id} target="_blank" rel="noopener noreferrer" key="view">
-      <Popconfirm
+    <Popconfirm
+      title={intl.formatMessage({
+        id: `pages.data.option.${record.state.value !== 'notActive' ? 'disabled' : 'enabled'}.tips`,
+        defaultMessage: '确认禁用？',
+      })}
+      onConfirm={async () => {
+        if (record.state.value !== 'notActive') {
+          await service.undeployDevice(record.id);
+        } else {
+          await service.deployDevice(record.id);
+        }
+        message.success(
+          intl.formatMessage({
+            id: 'pages.data.option.success',
+            defaultMessage: '操作成功!',
+          }),
+        );
+        actionRef.current?.reload();
+      }}
+    >
+      <Tooltip
         title={intl.formatMessage({
-          id: 'pages.data.option.disabled.tips',
-          defaultMessage: '确认禁用？',
+          id: `pages.data.option.${record.state.value !== 'notActive' ? 'disabled' : 'enabled'}`,
+          defaultMessage: record.state.value !== 'notActive' ? '禁用' : '启用',
         })}
-        onConfirm={async () => {
-          if (record.state.value !== 'notActive') {
-            await service.undeployDevice(record.id);
-          } else {
-            await service.deployDevice(record.id);
-          }
-          message.success(
-            intl.formatMessage({
-              id: 'pages.data.option.success',
-              defaultMessage: '操作成功!',
-            }),
-          );
-          actionRef.current?.reload();
-        }}
       >
-        <Tooltip
-          title={intl.formatMessage({
-            id: `pages.data.option.${record.state.value !== 'notActive' ? 'disabled' : 'enabled'}`,
-            defaultMessage: record.state.value !== 'notActive' ? '禁用' : '启用',
-          })}
-        >
+        <Button type={'link'}>
           {record.state.value !== 'notActive' ? <StopOutlined /> : <CheckCircleOutlined />}
-        </Tooltip>
-      </Popconfirm>
-    </a>,
-
-    <a key={'delete'}>
-      <Popconfirm
-        title="确认删除"
-        onConfirm={async () => {
+        </Button>
+      </Tooltip>
+    </Popconfirm>,
+    <Popconfirm
+      title={intl.formatMessage({
+        id:
+          record.state.value === 'notActive'
+            ? 'pages.data.option.remove.tips'
+            : 'pages.device.instance.deleteTip',
+      })}
+      onConfirm={async () => {
+        if (record.state.value === 'notActive') {
           await service.remove(record.id);
           message.success(
             intl.formatMessage({
@@ -127,13 +131,22 @@ const Instance = () => {
             }),
           );
           actionRef.current?.reload();
-        }}
+        } else {
+          message.error(intl.formatMessage({ id: 'pages.device.instance.deleteTip' }));
+        }
+      }}
+    >
+      <Tooltip
+        title={intl.formatMessage({
+          id: 'pages.data.option.remove',
+          defaultMessage: '删除',
+        })}
       >
-        <Tooltip title={'删除'}>
+        <Button type={'link'}>
           <DeleteOutlined />
-        </Tooltip>
-      </Popconfirm>
-    </a>,
+        </Button>
+      </Tooltip>
+    </Popconfirm>,
   ];
 
   const columns: ProColumns<DeviceInstance>[] = [
@@ -349,8 +362,8 @@ const Instance = () => {
             ...params,
             sorts: [
               {
-                name: 'id',
-                order: 'ascend',
+                name: 'createTime',
+                order: 'desc',
               },
             ],
           })
