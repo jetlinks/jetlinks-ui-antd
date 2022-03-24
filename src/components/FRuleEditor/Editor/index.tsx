@@ -94,8 +94,9 @@ const Editor = (props: Props) => {
   };
 
   const handleInsertCode = (value: string) => {
+    console.log(value, 'values');
     const editor = editorRef.current;
-    if (!editor) return;
+    if (!editor || !value) return;
     const position = editor.getPosition()!;
     editor?.executeEdits(State.code, [
       {
@@ -113,8 +114,11 @@ const Editor = (props: Props) => {
   useEffect(() => {
     const subscription = Store.subscribe('add-operator-value', handleInsertCode);
     return () => subscription.unsubscribe();
-  }, []);
+  }, [props.mode]);
 
+  useEffect(() => {
+    Store.set('add-operator-value', undefined);
+  }, []);
   return (
     <div className={styles.box}>
       <div className={styles.top}>
