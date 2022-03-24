@@ -4,6 +4,8 @@ html,
 body,
 #root {
   height: 100%;
+  // 变成灰色
+  //-webkit-filter: grayscale(.95);
 }
 
 .colorWeak {
@@ -13,6 +15,7 @@ body,
 .ant-layout {
   min-height: 100vh;
 }
+
 .ant-pro-sider.ant-layout-sider.ant-pro-sider-fixed {
   left: unset;
 }
@@ -36,11 +39,13 @@ ol {
   .ant-table {
     width: 100%;
     overflow-x: auto;
+
     &-thead > tr,
     &-tbody > tr {
       > th,
       > td {
         white-space: pre;
+
         > span {
           display: block;
         }
