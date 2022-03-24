@@ -106,33 +106,45 @@ const Protocol = () => {
             </Popconfirm>
           </a>
         ),
-        <Button key="delete" type="link" disabled={record.state !== 1}>
-          <Popconfirm
-            title={intl.formatMessage({
-              id: 'pages.data.option.remove.tips',
-              defaultMessage: '确认删除？',
-            })}
-            onConfirm={async () => {
-              await service.remove(record.id);
-              message.success(
-                intl.formatMessage({
-                  id: 'pages.data.option.success',
-                  defaultMessage: '操作成功!',
-                }),
-              );
-              actionRef.current?.reload();
-            }}
-          >
-            <Tooltip
+        <Tooltip
+          key="delete"
+          title={
+            record.state !== 1
+              ? intl.formatMessage({
+                  id: 'pages.data.option.remove',
+                  defaultMessage: '删除',
+                })
+              : '请先禁用该组件，再删除。'
+          }
+        >
+          <Button style={{ padding: 0 }} key="delete" type="link" disabled={record.state !== 1}>
+            <Popconfirm
               title={intl.formatMessage({
-                id: 'pages.data.option.remove',
-                defaultMessage: '删除',
+                id: 'pages.data.option.remove.tips',
+                defaultMessage: '确认删除？',
               })}
+              onConfirm={async () => {
+                await service.remove(record.id);
+                message.success(
+                  intl.formatMessage({
+                    id: 'pages.data.option.success',
+                    defaultMessage: '操作成功!',
+                  }),
+                );
+                actionRef.current?.reload();
+              }}
             >
-              <DeleteOutlined />
-            </Tooltip>
-          </Popconfirm>
-        </Button>,
+              <Tooltip
+                title={intl.formatMessage({
+                  id: 'pages.data.option.remove',
+                  defaultMessage: '删除',
+                })}
+              >
+                <DeleteOutlined />
+              </Tooltip>
+            </Popconfirm>
+          </Button>
+        </Tooltip>,
       ],
     },
   ];
