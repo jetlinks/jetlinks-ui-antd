@@ -177,6 +177,7 @@ const Instance = () => {
       }),
       dataIndex: 'registryTime',
       width: '200px',
+      valueType: 'dateTime',
       render: (text: any) => (text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/'),
       sorter: true,
     },
@@ -187,31 +188,32 @@ const Instance = () => {
       }),
       dataIndex: 'state',
       width: '90px',
+      valueType: 'select',
       renderText: (record) =>
         record ? <Badge status={statusMap.get(record.value)} text={record.text} /> : '',
-      filters: [
-        {
+      valueEnum: {
+        notActive: {
           text: intl.formatMessage({
             id: 'pages.device.instance.status.notActive',
             defaultMessage: '未启用',
           }),
-          value: 'notActive',
+          status: 'notActive',
         },
-        {
+        offline: {
           text: intl.formatMessage({
             id: 'pages.device.instance.status.offLine',
             defaultMessage: '离线',
           }),
-          value: 'offline',
+          status: 'offline',
         },
-        {
+        online: {
           text: intl.formatMessage({
             id: 'pages.device.instance.status.onLine',
             defaultMessage: '在线',
           }),
-          value: 'online',
+          status: 'online',
         },
-      ],
+      },
       filterMultiple: false,
     },
     {

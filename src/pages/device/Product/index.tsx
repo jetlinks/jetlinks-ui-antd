@@ -92,6 +92,7 @@ const Product = observer(() => {
    * @param data
    */
   const searchFn = (data: any) => {
+    actionRef.current?.reset?.();
     setQueryParam(data);
   };
 
@@ -253,7 +254,15 @@ const Product = observer(() => {
 
   return (
     <PageContainer>
-      <SearchComponent field={columns} onSearch={searchFn} />
+      <SearchComponent
+        field={columns}
+        onSearch={searchFn}
+        onReset={() => {
+          // 重置分页及搜索参数
+          actionRef.current?.reset?.();
+          setQueryParam({});
+        }}
+      />
       <ProTableCard<ProductItem>
         columns={columns}
         actionRef={actionRef}
