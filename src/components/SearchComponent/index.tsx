@@ -153,6 +153,10 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
               f.setFieldState(typeFiled.query('.termType'), async (state) => {
                 state.value = 'gt';
               });
+            } else {
+              f.setFieldState(typeFiled.query('.value'), async (state) => {
+                state.componentType = 'Input';
+              });
             }
           });
         },
