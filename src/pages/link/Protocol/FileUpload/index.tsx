@@ -37,7 +37,6 @@ const FileUpload = connect((props: Props) => {
         <Input
           style={{ width: 'calc(100% - 100px)' }}
           value={url}
-          readOnly
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();

@@ -1,4 +1,5 @@
 import {
+  Alert,
   Badge,
   Button,
   Card,
@@ -17,6 +18,8 @@ import Service from '@/pages/device/Product/service';
 import { productModel } from '@/pages/device/Product';
 import type { ProColumns } from '@jetlinks/pro-table';
 import SearchComponent from '@/components/SearchComponent';
+import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
+import { useHistory } from 'umi';
 
 const Access = () => {
   const service1 = new Service('device-product');
@@ -31,8 +34,21 @@ const Access = () => {
   });
   const [visible, setVisible] = useState<boolean>(true);
   const [config, setConfig] = useState<any>();
+  const [access, setAccess] = useState<any>();
+  const [providers, setProviders] = useState<any[]>([]);
+  const [networkList, setNetworkList] = useState<any[]>([]);
+
+  const MetworkTypeMapping = new Map();
+  MetworkTypeMapping.set('websocket-server', 'WEB_SOCKET_SERVER');
+  MetworkTypeMapping.set('http-server-gateway', 'HTTP_SERVER');
+  MetworkTypeMapping.set('udp-device-gateway', 'UDP');
+  MetworkTypeMapping.set('coap-server-gateway', 'COAP_SERVER');
+  MetworkTypeMapping.set('mqtt-client-gateway', 'MQTT_CLIENT');
+  MetworkTypeMapping.set('mqtt-server-gateway', 'MQTT_SERVER');
+  MetworkTypeMapping.set('tcp-server-gateway', 'TCP_SERVER');
 
   const [param, setParam] = useState<any>({ pageSize: 10 });
+  const history = useHistory();
 
   const columns: ProColumns<any>[] = [
     {
@@ -40,6 +56,14 @@ const Access = () => {
       dataIndex: 'name',
     },
   ];
+
+  const queryNetworkList = (id: string) => {
+    service.getNetworkList(MetworkTypeMapping.get(id)).then((resp) => {
+      if (resp.status === 200) {
+        setNetworkList(resp.result);
+      }
+    });
+  };
 
   const [dataSource, setDataSource] = useState<any>({
     data: [],
@@ -55,6 +79,24 @@ const Access = () => {
       .then((resp) => {
         setDataSource(resp.result);
       });
+  };
+
+  const queryProviders = () => {
+    service.getProviders().then((resp) => {
+      if (resp.status === 200) {
+        setProviders(resp.result);
+      }
+    });
+  };
+
+  const queryAccess = (id: string) => {
+    service.queryList({ pageSize: 1000 }).then((resp) => {
+      const dt = resp.result.data.find((i: any) => i.id === id);
+      setAccess(dt);
+      if (dt) {
+        queryNetworkList(dt?.provider);
+      }
+    });
   };
   const columnsMQTT: any[] = [
     {
@@ -165,33 +207,33 @@ const Access = () => {
     },
   ];
 
-  const getDetail = () => {
-    service
-      .getConfigView(
-        productModel.current?.messageProtocol || '',
-        productModel.current?.transportProtocol || '',
-      )
-      .then((resp) => {
-        if (resp.status === 200) {
-          setConfig(resp.result);
-        }
-      });
+  const getDetail = (messageProtocol: string, transportProtocol: string) => {
+    service.getConfigView(messageProtocol, transportProtocol).then((resp) => {
+      if (resp.status === 200) {
+        setConfig(resp.result);
+      }
+    });
   };
 
   useEffect(() => {
+    queryProviders();
     setVisible(!!productModel.current?.accessId);
     if (productModel.current?.accessId) {
-      getDetail();
+      getDetail(
+        productModel.current?.messageProtocol || '',
+        productModel.current?.transportProtocol || '',
+      );
+      queryAccess(productModel.current?.accessId);
     } else {
       handleSearch(param);
     }
-  }, [productModel.current?.accessId]);
+  }, []);
 
   return (
     <div>
       {!visible ? (
         <div style={{ padding: '20px 0' }}>
-          {/* <Alert message="选择与设备通信的网络组件" type="warning" showIcon /> */}
+          <Alert message="请选择使用的设备接入网关，用以提供设备接入能力" type="info" showIcon />
           <SearchComponent
             field={columns}
             pattern={'simple'}
@@ -206,6 +248,14 @@ const Access = () => {
               handleSearch({ pageSize: 10 });
             }}
           />
+          <Button
+            type="primary"
+            onClick={() => {
+              history.push(`${getMenuPathByCode(MENUS_CODE['link/AccessConfig/Detail'])}`);
+            }}
+          >
+            新增
+          </Button>
           <Row gutter={[16, 16]} style={{ marginTop: 10 }}>
             {dataSource.data.map((item: any) => (
               <Col key={item.name} span={12}>
@@ -296,9 +346,15 @@ const Access = () => {
                     })
                     .then((resp) => {
                       if (resp.status === 200) {
-                        message.success('操作成功！');
-                        setVisible(true);
-                        getDetail();
+                        service1.detail(productModel.current?.id || '').then((res) => {
+                          if (res.status === 200) {
+                            productModel.current = { ...res.result };
+                            message.success('操作成功！');
+                            setVisible(true);
+                            getDetail(res.result.messageProtocol, res.result.transportProtocol);
+                            queryAccess(res.result.accessId);
+                          }
+                        });
                       }
                     });
                 } else {
@@ -314,25 +370,29 @@ const Access = () => {
         <div className={styles.config}>
           <div className={styles.title}>配置概览</div>
           <Descriptions column={1}>
-            {/* <Descriptions.Item label="接入方式">{config?.id || ''}</Descriptions.Item> */}
-            {/* <Descriptions.Item>{props.data?.description || ''}</Descriptions.Item> */}
-            <Descriptions.Item label="消息协议">
-              {productModel.current?.messageProtocol}
+            <Descriptions.Item label="接入方式">
+              {providers.find((i) => i.id === access?.provider)?.name || ''}
             </Descriptions.Item>
-            {/* <Descriptions.Item>----缺少描述呀----</Descriptions.Item>
-                        <Descriptions.Item label="网络组件">
-                             {(networkList.find((i) => i.id === productModel.current.)?.addresses || []).map(
-                                (item: any) => (
-                                    <div key={item.address}>
-                                        <Badge
-                                            color={item.health === -1 ? 'red' : 'green'}
-                                            text={item.address}
-                                            style={{ marginLeft: '20px' }}
-                                        />
-                                    </div>
-                                ),
-                            )}
-                        </Descriptions.Item> */}
+            <Descriptions.Item>
+              {providers.find((i) => i.id === access?.provider)?.description || ''}
+            </Descriptions.Item>
+            <Descriptions.Item label="消息协议">
+              {access?.protocolDetail?.name || ''}
+            </Descriptions.Item>
+            <Descriptions.Item>{access?.protocolDetail?.description || ''}</Descriptions.Item>
+            <Descriptions.Item label="网络组件">
+              {(networkList.find((i) => i.id === access?.channelId)?.addresses || []).map(
+                (item: any) => (
+                  <div key={item.address}>
+                    <Badge
+                      color={item.health === -1 ? 'red' : 'green'}
+                      text={item.address}
+                      style={{ marginLeft: '20px' }}
+                    />
+                  </div>
+                ),
+              )}
+            </Descriptions.Item>
           </Descriptions>
           {config?.routes && config?.routes?.length > 0 && (
             <div>

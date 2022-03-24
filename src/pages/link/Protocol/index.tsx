@@ -2,13 +2,8 @@ import { PageContainer } from '@ant-design/pro-layout';
 import type { ProtocolItem } from '@/pages/link/Protocol/typings';
 import { useRef } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { Button, message, Popconfirm, Tag, Tooltip } from 'antd';
-import {
-  CloudSyncOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  PlayCircleOutlined,
-} from '@ant-design/icons';
+import { Badge, Button, message, Popconfirm, Tooltip } from 'antd';
+import { CheckCircleOutlined, DeleteOutlined, EditOutlined, StopOutlined } from '@ant-design/icons';
 import BaseCrud from '@/components/BaseCrud';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import type { ISchema } from '@formily/json-schema';
@@ -58,8 +53,9 @@ const Protocol = () => {
     {
       dataIndex: 'state',
       title: '状态',
-      renderText: (text) =>
-        text === 1 ? <Tag color="#108ee9">正常</Tag> : <Tag color="#F50">禁用</Tag>,
+      renderText: (text) => (
+        <Badge color={text !== 1 ? 'red' : 'green'} text={text !== 1 ? '未发布' : '已发布'} />
+      ),
     },
     {
       dataIndex: 'description',
@@ -92,51 +88,49 @@ const Protocol = () => {
         </a>,
         record.state !== 1 && (
           <a key="publish">
-            <Popconfirm title="发布？" onConfirm={() => modifyState(record.id, 'deploy')}>
+            <Popconfirm title="确认发布？" onConfirm={() => modifyState(record.id, 'deploy')}>
               <Tooltip title="发布">
-                <PlayCircleOutlined />
+                <CheckCircleOutlined />
               </Tooltip>
             </Popconfirm>
           </a>
         ),
         record.state === 1 && (
           <a key="reload">
-            <Popconfirm title="重新发布？" onConfirm={() => modifyState(record.id, 'deploy')}>
-              <Tooltip title="重新发布">
-                <CloudSyncOutlined />
+            <Popconfirm title="确认撤销？" onConfirm={() => modifyState(record.id, 'un-deploy')}>
+              <Tooltip title="撤销">
+                <StopOutlined />
               </Tooltip>
             </Popconfirm>
           </a>
         ),
-        record.state !== 1 && (
-          <a key="delete">
-            <Popconfirm
+        <a key="delete">
+          <Popconfirm
+            title={intl.formatMessage({
+              id: 'pages.data.option.remove.tips',
+              defaultMessage: '确认删除？',
+            })}
+            onConfirm={async () => {
+              await service.remove(record.id);
+              message.success(
+                intl.formatMessage({
+                  id: 'pages.data.option.success',
+                  defaultMessage: '操作成功!',
+                }),
+              );
+              actionRef.current?.reload();
+            }}
+          >
+            <Tooltip
               title={intl.formatMessage({
-                id: 'pages.data.option.remove.tips',
-                defaultMessage: '确认删除？',
+                id: 'pages.data.option.remove',
+                defaultMessage: '删除',
               })}
-              onConfirm={async () => {
-                await service.remove(record.id);
-                message.success(
-                  intl.formatMessage({
-                    id: 'pages.data.option.success',
-                    defaultMessage: '操作成功!',
-                  }),
-                );
-                actionRef.current?.reload();
-              }}
             >
-              <Tooltip
-                title={intl.formatMessage({
-                  id: 'pages.data.option.remove',
-                  defaultMessage: '删除',
-                })}
-              >
-                <DeleteOutlined />
-              </Tooltip>
-            </Popconfirm>
-          </a>
-        ),
+              <DeleteOutlined />
+            </Tooltip>
+          </Popconfirm>
+        </a>,
       ],
     },
   ];
