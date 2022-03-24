@@ -251,6 +251,7 @@ export default {
   'pages.device.instance.status.notActive': '未启用',
   'pages.device.instance.status.offLine': '离线',
   'pages.device.instance.status.onLine': '在线',
+  'pages.device.instance.deleteTip': '已启用的设备无法删除',
   'pages.device.instanceDetail.deviceType': '设备类型',
   'pages.device.instanceDetail.transportProtocol': '链接协议',
   'pages.device.instanceDetail.protocolName': '消息协议',

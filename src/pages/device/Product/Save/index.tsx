@@ -30,7 +30,7 @@ const Save = (props: Props) => {
     // 特殊处理deviceType字段
     if (data) {
       if (typeof data.deviceType !== 'string') {
-        data.deviceType = data.deviceType?.value;
+        data.deviceTypeId = data.deviceType?.value;
       }
     }
     return data;
@@ -71,13 +71,16 @@ const Save = (props: Props) => {
   const handleSave = async () => {
     const formData = await form.validateFields();
     if (formData) {
-      const res = await service.update(formData);
+      const { deviceTypeId, ...extraFormData } = formData;
+      extraFormData.deviceType = formData.deviceTypeId;
+      const res = await service.update(extraFormData);
       if (res.status === 200) {
         message.success('保存成功');
         if (props.reload) {
           props.reload();
         }
         props.close();
+        form.resetFields();
       }
     }
   };
@@ -215,7 +218,7 @@ const Save = (props: Props) => {
           <Col span={24}>
             <Form.Item
               label={intlFormat('pages.device.instanceDetail.deviceType', '设备类型')}
-              name={'deviceType'}
+              name={'deviceTypeId'}
               rules={[
                 {
                   required: true,

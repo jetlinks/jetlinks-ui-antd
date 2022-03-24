@@ -17,7 +17,6 @@ import { Link, useHistory } from 'umi';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { useEffect, useRef, useState } from 'react';
-import encodeQuery from '@/utils/encodeQuery';
 import Save from '@/pages/device/Product/Save';
 import SearchComponent from '@/components/SearchComponent';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
@@ -131,15 +130,16 @@ const Product = observer(() => {
       })}
       key={'edit'}
     >
-      <a
+      <Button
         key="warning"
         onClick={() => {
           setCurrent(record);
           setVisible(true);
         }}
+        type={'link'}
       >
         <EditOutlined />
-      </a>
+      </Button>
     </Tooltip>,
     <Tooltip
       title={intl.formatMessage({
@@ -148,7 +148,7 @@ const Product = observer(() => {
       })}
       key={'download'}
     >
-      <a key="download">
+      <Button type={'link'}>
         <DownloadOutlined
           onClick={async () => {
             await message.success(
@@ -159,13 +159,13 @@ const Product = observer(() => {
             );
           }}
         />
-      </a>
+      </Button>
     </Tooltip>,
     <Popconfirm
       key={'state'}
       title={intl.formatMessage({
         id: `pages.data.option.${record.state ? 'disabled' : 'enabled'}.tips`,
-        defaultMessage: '是否删除?',
+        defaultMessage: '是否启用?',
       })}
       onConfirm={() => {
         changeDeploy(record.id, record.state ? 'undeploy' : 'deploy');
@@ -177,16 +177,13 @@ const Product = observer(() => {
           defaultMessage: record.state ? '禁用' : '启用',
         })}
       >
-        <a key="state">{record.state ? <StopOutlined /> : <PlayCircleOutlined />}</a>
+        <Button type={'link'}>{record.state ? <StopOutlined /> : <PlayCircleOutlined />}</Button>
       </Tooltip>
     </Popconfirm>,
     <Popconfirm
       key="unBindUser"
       title={intl.formatMessage({
-        id:
-          record.state === 1
-            ? 'pages.device.productDetail.deleteTip'
-            : 'page.system.menu.table.delete',
+        id: record.state === 1 ? 'pages.device.productDetail.deleteTip' : 'page.table.isDelete',
         defaultMessage: '是否删除?',
       })}
       onConfirm={async () => {
@@ -199,7 +196,7 @@ const Product = observer(() => {
     >
       <Tooltip
         title={intl.formatMessage({
-          id: 'pages.data.option.remove.tips',
+          id: 'pages.data.option.remove',
           defaultMessage: '删除',
         })}
         key={'remove'}
@@ -255,7 +252,15 @@ const Product = observer(() => {
         // }}
         params={queryParam}
         request={(params = {}) =>
-          service.query(encodeQuery({ ...params, sorts: { createTime: 'ascend' } }))
+          service.query({
+            ...params,
+            sorts: [
+              {
+                name: 'createTime',
+                order: 'desc',
+              },
+            ],
+          })
         }
         rowKey="id"
         search={false}
