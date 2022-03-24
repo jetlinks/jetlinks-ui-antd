@@ -73,78 +73,84 @@ const MenuPermission = (props: Props) => {
         </div>
         <div
           style={{
+            display: 'flex',
+            alignItems: 'center',
             width: `calc(50% - ${(props?.level || 0) * 5}px)`,
             borderRight: '1px solid #f0f0f0',
           }}
         >
-          <Checkbox
-            indeterminate={indeterminate}
-            checked={checkAll}
-            style={{
-              padding: '10px 0',
-              width: 250 - (props?.level || 0) * 10,
-              borderRight: '1px solid #f0f0f0',
-              marginRight: 20,
-              fontWeight: value.id === 'menu-permission' ? 600 : 400,
-            }}
-            onChange={(e) => {
-              setCheckAll(e.target.checked);
-              setIndeterminate(false);
-              const buttons = (value?.buttons || []).map((i: any) => {
-                return {
-                  ...i,
-                  enabled: e.target.checked,
+          <div>
+            <Checkbox
+              indeterminate={indeterminate}
+              checked={checkAll}
+              style={{
+                padding: '10px 0',
+                width: 250 - (props?.level || 0) * 10,
+                borderRight: '1px solid #f0f0f0',
+                marginRight: 20,
+                fontWeight: value.id === 'menu-permission' ? 600 : 400,
+              }}
+              onChange={(e) => {
+                setCheckAll(e.target.checked);
+                setIndeterminate(false);
+                const buttons = (value?.buttons || []).map((i: any) => {
+                  return {
+                    ...i,
+                    enabled: e.target.checked,
+                  };
+                });
+                console.log(e.target.checked);
+                props.change({
+                  ...value,
+                  check: e.target.checked ? 1 : 3, // 1: 全选 2: 只选了部分 3: 一个都没选
+                  buttons: [...buttons],
+                  children: checkAllData(value.children || [], e.target.checked),
+                });
+              }}
+            >
+              {value?.name}
+            </Checkbox>
+          </div>
+          <div>
+            <Checkbox.Group
+              name={value?.id}
+              value={_.map(
+                (value?.buttons || []).filter((i: any) => i?.enabled),
+                'id',
+              )}
+              onChange={(data: CheckboxValueType[]) => {
+                const buttons = value.buttons.map((i: any) => {
+                  return {
+                    ...i,
+                    enabled: data.includes(i.id),
+                  };
+                });
+                const clen = (value?.children || []).filter((i: any) => i.check !== 3).length;
+                let check: number = 3;
+                if (data.length + clen === 0) {
+                  check = 3;
+                } else if (
+                  data.length + clen <
+                  value?.buttons.length + (value?.children.length || 0)
+                ) {
+                  check = 2;
+                } else {
+                  check = 1;
+                }
+                const d = {
+                  ...value,
+                  check,
+                  buttons: [...buttons],
                 };
-              });
-              console.log(e.target.checked);
-              props.change({
-                ...value,
-                check: e.target.checked ? 1 : 3, // 1: 全选 2: 只选了部分 3: 一个都没选
-                buttons: [...buttons],
-                children: checkAllData(value.children || [], e.target.checked),
-              });
-            }}
-          >
-            {value?.name}
-          </Checkbox>
-          <Checkbox.Group
-            name={value?.id}
-            value={_.map(
-              (value?.buttons || []).filter((i: any) => i?.enabled),
-              'id',
-            )}
-            onChange={(data: CheckboxValueType[]) => {
-              const buttons = value.buttons.map((i: any) => {
-                return {
-                  ...i,
-                  enabled: data.includes(i.id),
-                };
-              });
-              const clen = (value?.children || []).filter((i: any) => i.check !== 3).length;
-              let check: number = 3;
-              if (data.length + clen === 0) {
-                check = 3;
-              } else if (
-                data.length + clen <
-                value?.buttons.length + (value?.children.length || 0)
-              ) {
-                check = 2;
-              } else {
-                check = 1;
-              }
-              const d = {
-                ...value,
-                check,
-                buttons: [...buttons],
-              };
-              props.change(d);
-            }}
-            options={(value?.buttons || []).map((i: any) => ({
-              label: i.name,
-              value: i.id,
-              key: i.id,
-            }))}
-          />
+                props.change(d);
+              }}
+              options={(value?.buttons || []).map((i: any) => ({
+                label: i.name,
+                value: i.id,
+                key: i.id,
+              }))}
+            />
+          </div>
         </div>
         <div
           style={{

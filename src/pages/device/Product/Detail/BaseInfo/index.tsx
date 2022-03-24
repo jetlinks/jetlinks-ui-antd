@@ -112,8 +112,8 @@ const BaseInfo = () => {
                         message.success('操作成功！');
                         getDetailInfo();
                       }
-                      setState(!state);
                     }
+                    setState(!state);
                   }}
                 >
                   {state ? (
