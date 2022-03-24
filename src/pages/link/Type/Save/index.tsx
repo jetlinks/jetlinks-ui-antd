@@ -102,10 +102,16 @@ const Save = observer(() => {
         effects() {
           onFieldValueChange('type', (field, f) => {
             const value = (field as Field).value;
-            f.deleteValuesIn('configuration');
-            f.deleteValuesIn('cluster');
-            f.clearErrors();
-
+            if (f.modified) {
+              f.deleteValuesIn('configuration');
+              f.deleteValuesIn('cluster');
+              f.clearErrors();
+              // 设置默认值
+              f.setFieldState('grid.configuration.panel1.layout2.host', (state) => {
+                state.value = '0.0.0.0';
+                state.disabled = true;
+              });
+            }
             const _host = filterConfigByType(_.cloneDeep(configRef.current), value);
             f.setFieldState('grid.configuration.panel1.layout2.host', (state) => {
               state.dataSource = _host.map((item) => ({ label: item.host, value: item.host }));
