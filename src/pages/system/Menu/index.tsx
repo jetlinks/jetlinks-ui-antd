@@ -191,9 +191,7 @@ export default observer(() => {
    * @param data
    */
   const searchFn = (data: any) => {
-    setParam({
-      terms: data,
-    });
+    setParam(data);
   };
 
   // const modalCancel = () => {
@@ -222,7 +220,15 @@ export default observer(() => {
 
   return (
     <PageContainer>
-      <SearchComponent field={columns} onSearch={searchFn} />
+      <SearchComponent
+        field={columns}
+        onSearch={searchFn}
+        onReset={() => {
+          // 重置分页及搜索参数
+          actionRef.current?.reset?.();
+          searchFn({});
+        }}
+      />
       <ProTable<MenuItem>
         columns={columns}
         actionRef={actionRef}

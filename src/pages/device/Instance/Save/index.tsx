@@ -74,7 +74,7 @@ const Save = (props: Props) => {
         if (props.reload) {
           props.reload();
         }
-        props.close(resp.result);
+        props.close(values);
         form.resetFields();
       }
     }
@@ -202,7 +202,7 @@ const Save = (props: Props) => {
                 options={productList}
                 onSelect={(_: any, node: any) => {
                   form.setFieldsValue({
-                    productName: node.name,
+                    productName: node.label,
                   });
                 }}
               />

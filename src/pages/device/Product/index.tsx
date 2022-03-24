@@ -92,9 +92,7 @@ const Product = observer(() => {
    * @param data
    */
   const searchFn = (data: any) => {
-    setQueryParam({
-      terms: data,
-    });
+    setQueryParam(data);
   };
 
   const changeDeploy = (id: string, state: 'deploy' | 'undeploy') => {
@@ -119,6 +117,7 @@ const Product = observer(() => {
           productModel.current = record;
           history.push(`${getMenuPathByParams(MENUS_CODE['device/Product/Detail'], record.id)}`);
         }}
+        style={{ padding: 0 }}
       >
         <EyeOutlined />
       </Button>
@@ -137,6 +136,7 @@ const Product = observer(() => {
           setVisible(true);
         }}
         type={'link'}
+        style={{ padding: 0 }}
       >
         <EditOutlined />
       </Button>
@@ -148,7 +148,7 @@ const Product = observer(() => {
       })}
       key={'download'}
     >
-      <Button type={'link'}>
+      <Button type={'link'} style={{ padding: 0 }}>
         <DownloadOutlined
           onClick={async () => {
             await message.success(
@@ -177,7 +177,9 @@ const Product = observer(() => {
           defaultMessage: record.state ? '禁用' : '启用',
         })}
       >
-        <Button type={'link'}>{record.state ? <StopOutlined /> : <PlayCircleOutlined />}</Button>
+        <Button style={{ padding: 0 }} type={'link'}>
+          {record.state ? <StopOutlined /> : <PlayCircleOutlined />}
+        </Button>
       </Tooltip>
     </Popconfirm>,
     <Popconfirm
@@ -201,7 +203,7 @@ const Product = observer(() => {
         })}
         key={'remove'}
       >
-        <Button type={'link'}>
+        <Button type={'link'} style={{ padding: 0 }}>
           <DeleteOutlined />
         </Button>
       </Tooltip>
@@ -240,7 +242,15 @@ const Product = observer(() => {
 
   return (
     <PageContainer>
-      <SearchComponent field={columns} onSearch={searchFn} />
+      <SearchComponent
+        field={columns}
+        onSearch={searchFn}
+        onReset={() => {
+          // 重置分页及搜索参数
+          actionRef.current?.reset?.();
+          searchFn({});
+        }}
+      />
       <ProTableCard<ProductItem>
         columns={columns}
         actionRef={actionRef}
@@ -279,6 +289,9 @@ const Product = observer(() => {
               id: 'pages.data.option.add',
               defaultMessage: '新增',
             })}
+          </Button>,
+          <Button onClick={() => {}} key={'import'} type={'primary'}>
+            导入
           </Button>,
         ]}
         cardRender={(record) => <ProductCard {...record} actions={tools(record)} />}

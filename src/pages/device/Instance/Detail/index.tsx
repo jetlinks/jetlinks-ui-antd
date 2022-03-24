@@ -1,9 +1,8 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { InstanceModel, service } from '@/pages/device/Instance';
 import { history, useParams } from 'umi';
-import { Badge, Button, Card, Divider, message, Tooltip } from 'antd';
+import { Badge, Button, Card, Descriptions, Divider, message, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
-import { statusMap } from '@/pages/device/Product';
 import { observer } from '@formily/react';
 import Log from '@/pages/device/Instance/Detail/Log';
 import Alarm from '@/pages/device/components/Alarm';
@@ -17,6 +16,7 @@ import type { DeviceMetadata } from '@/pages/device/Product/typings';
 import MetadataAction from '@/pages/device/components/Metadata/DataBaseAction';
 import { Store } from 'jetlinks-store';
 import SystemConst from '@/utils/const';
+import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 
 export const deviceStatus = new Map();
 deviceStatus.set('online', <Badge status="success" text={'在线'} />);
@@ -29,7 +29,7 @@ const InstanceDetail = observer(() => {
     service.detail(id).then((response) => {
       InstanceModel.detail = response?.result;
       // 写入物模型数据
-      const metadata: DeviceMetadata = JSON.parse(response.result?.metadata);
+      const metadata: DeviceMetadata = JSON.parse(response.result?.metadata || '{}');
       MetadataAction.insert(metadata);
     });
   };
@@ -151,7 +151,23 @@ const InstanceDetail = observer(() => {
       onBack={history.goBack}
       onTabChange={setTab}
       tabList={list}
-      // content={<Info />}
+      content={
+        <Descriptions size="small" column={4}>
+          <Descriptions.Item label={'ID'}>{InstanceModel.detail.id}</Descriptions.Item>
+          <Descriptions.Item label={'所属产品'}>
+            <Button
+              type={'link'}
+              size={'small'}
+              onClick={() => {
+                const url = getMenuPathByCode(MENUS_CODE['device/Product']);
+                history.push(`${url}?id=${InstanceModel.detail.productId}`);
+              }}
+            >
+              {InstanceModel.detail.productName}
+            </Button>
+          </Descriptions.Item>
+        </Descriptions>
+      }
       title={
         <>
           {InstanceModel.detail.name}
@@ -159,21 +175,21 @@ const InstanceDetail = observer(() => {
           {deviceStatus.get(InstanceModel.detail.state?.value)}
         </>
       }
-      extra={[
-        statusMap[0],
-        <Button key="2">
-          {intl.formatMessage({
-            id: 'pages.device.productDetail.disable',
-            defaultMessage: '停用',
-          })}
-        </Button>,
-        <Button key="1" type="primary">
-          {intl.formatMessage({
-            id: 'pages.device.productDetail.setting',
-            defaultMessage: '应用配置',
-          })}
-        </Button>,
-      ]}
+      // extra={[
+      //   statusMap[0],
+      //   <Button key="2">
+      //     {intl.formatMessage({
+      //       id: 'pages.device.productDetail.disable',
+      //       defaultMessage: '停用',
+      //     })}
+      //   </Button>,
+      //   <Button key="1" type="primary">
+      //     {intl.formatMessage({
+      //       id: 'pages.device.productDetail.setting',
+      //       defaultMessage: '应用配置',
+      //     })}
+      //   </Button>,
+      // ]}
     >
       {list.find((k) => k.key === tab)?.component}
     </PageContainer>

@@ -77,6 +77,7 @@ const Instance = () => {
     >
       <Button
         type={'link'}
+        style={{ padding: 0 }}
         onClick={() => {
           InstanceModel.current = record;
           const url = getMenuPathByParams(MENUS_CODE['device/Instance/Detail'], record.id);
@@ -112,7 +113,7 @@ const Instance = () => {
           defaultMessage: record.state.value !== 'notActive' ? '禁用' : '启用',
         })}
       >
-        <Button type={'link'}>
+        <Button type={'link'} style={{ padding: 0 }}>
           {record.state.value !== 'notActive' ? <StopOutlined /> : <CheckCircleOutlined />}
         </Button>
       </Tooltip>
@@ -145,7 +146,7 @@ const Instance = () => {
           defaultMessage: '删除',
         })}
       >
-        <Button type={'link'}>
+        <Button type={'link'} style={{ padding: 0 }}>
           <DeleteOutlined />
         </Button>
       </Tooltip>
@@ -345,6 +346,7 @@ const Instance = () => {
         field={columns}
         target="device-instance"
         onSearch={(data) => {
+          console.log(data);
           // 重置分页数据
           actionRef.current?.reset?.();
           setSearchParams(data);

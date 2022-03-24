@@ -122,6 +122,11 @@ const Bind = observer((props: Props) => {
           actionRef.current?.reset?.();
           setSearchParam(data);
         }}
+        onReset={() => {
+          // 重置分页及搜索参数
+          actionRef.current?.reset?.();
+          setSearchParam({});
+        }}
         target="department-assets-device"
       />
       <ProTable<DeviceItem>
