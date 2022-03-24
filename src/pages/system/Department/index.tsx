@@ -1,24 +1,23 @@
 // 部门管理
 import { PageContainer } from '@ant-design/pro-layout';
-import ProTable from '@jetlinks/pro-table';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import ProTable from '@jetlinks/pro-table';
 import { useEffect, useRef, useState } from 'react';
-import { useIntl } from 'umi';
+import { Link, useIntl, useLocation } from 'umi';
 import { Button, message, Popconfirm, Tooltip } from 'antd';
 import {
-  EditOutlined,
-  PlusOutlined,
-  PlusCircleOutlined,
-  TeamOutlined,
-  MedicineBoxOutlined,
   DeleteOutlined,
+  EditOutlined,
+  MedicineBoxOutlined,
+  PlusCircleOutlined,
+  PlusOutlined,
+  TeamOutlined,
 } from '@ant-design/icons';
 import Service from '@/pages/system/Department/service';
 import type { ISchema } from '@formily/json-schema';
 import type { DepartmentItem } from '@/pages/system/Department/typings';
 import { observer } from '@formily/react';
 import { model } from '@formily/reactive';
-import { Link, useLocation } from 'umi';
 import Save from './save';
 import SearchComponent from '@/components/SearchComponent';
 
