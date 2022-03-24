@@ -498,16 +498,18 @@ const Access = (props: Props) => {
 
   return (
     <Card>
-      <Button
-        type="link"
-        onClick={() => {
-          props.change();
-          setNetworkCurrent('');
-          setProcotolCurrent('');
-        }}
-      >
-        返回
-      </Button>
+      {props.data?.id && (
+        <Button
+          type="link"
+          onClick={() => {
+            props.change();
+            setNetworkCurrent('');
+            setProcotolCurrent('');
+          }}
+        >
+          返回
+        </Button>
+      )}
       <div className={styles.box}>
         <div className={styles.steps}>
           <Steps size="small" current={current}>

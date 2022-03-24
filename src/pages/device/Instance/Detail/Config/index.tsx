@@ -120,8 +120,8 @@ const Config = () => {
                             configuration: { ...values },
                           };
                         }
-                        setState(!state);
                       }
+                      setState(!state);
                     }}
                   >
                     {state ? '编辑' : '保存'}

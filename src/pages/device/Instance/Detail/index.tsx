@@ -29,7 +29,7 @@ const InstanceDetail = observer(() => {
     service.detail(id).then((response) => {
       InstanceModel.detail = response?.result;
       // 写入物模型数据
-      const metadata: DeviceMetadata = JSON.parse(response.result?.metadata);
+      const metadata: DeviceMetadata = JSON.parse(response.result?.metadata || '{}');
       MetadataAction.insert(metadata);
     });
   };
