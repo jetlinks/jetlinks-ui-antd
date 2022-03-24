@@ -16,12 +16,13 @@ import { model } from '@formily/reactive';
 import { Link, useHistory } from 'umi';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import ProTable from '@jetlinks/pro-table';
 import { useEffect, useRef, useState } from 'react';
 import encodeQuery from '@/utils/encodeQuery';
 import Save from '@/pages/device/Product/Save';
 import SearchComponent from '@/components/SearchComponent';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { ProTableCard } from '@/components';
+import ProductCard from '@/components/ProTableCard/CardItems/product';
 
 export const service = new Service('device-product');
 export const statusMap = {
@@ -105,6 +106,111 @@ const Product = observer(() => {
     });
   };
 
+  const tools = (record: ProductItem) => [
+    <Tooltip
+      title={intl.formatMessage({
+        id: 'pages.data.option.detail',
+        defaultMessage: '查看',
+      })}
+      key={'detail'}
+    >
+      <Link
+        onClick={() => {
+          productModel.current = record;
+        }}
+        to={`${getMenuPathByParams(MENUS_CODE['device/Product/Detail'], record.id)}`}
+        key="link"
+      >
+        <EyeOutlined />
+      </Link>
+    </Tooltip>,
+    <Tooltip
+      title={intl.formatMessage({
+        id: 'pages.data.option.edit',
+        defaultMessage: '编辑',
+      })}
+      key={'edit'}
+    >
+      <a
+        key="warning"
+        onClick={() => {
+          setCurrent(record);
+          setVisible(true);
+        }}
+      >
+        <EditOutlined />
+      </a>
+    </Tooltip>,
+    <Tooltip
+      title={intl.formatMessage({
+        id: 'pages.data.option.download',
+        defaultMessage: '下载',
+      })}
+      key={'download'}
+    >
+      <a key="download">
+        <DownloadOutlined
+          onClick={async () => {
+            await message.success(
+              `${intl.formatMessage({
+                id: 'pages.data.option.download',
+                defaultMessage: '下载',
+              })}`,
+            );
+          }}
+        />
+      </a>
+    </Tooltip>,
+    <Popconfirm
+      key={'state'}
+      title={intl.formatMessage({
+        id: `pages.data.option.${record.state ? 'disabled' : 'enabled'}.tips`,
+        defaultMessage: '是否删除?',
+      })}
+      onConfirm={() => {
+        changeDeploy(record.id, record.state ? 'undeploy' : 'deploy');
+      }}
+    >
+      <Tooltip
+        title={intl.formatMessage({
+          id: `pages.data.option.${record.state ? 'disabled' : 'enabled'}`,
+          defaultMessage: record.state ? '禁用' : '启用',
+        })}
+      >
+        <a key="state">{record.state ? <StopOutlined /> : <PlayCircleOutlined />}</a>
+      </Tooltip>
+    </Popconfirm>,
+    <Popconfirm
+      key="unBindUser"
+      title={intl.formatMessage({
+        id:
+          record.state === 1
+            ? 'pages.device.productDetail.deleteTip'
+            : 'page.system.menu.table.delete',
+        defaultMessage: '是否删除?',
+      })}
+      onConfirm={async () => {
+        if (record.state === 0) {
+          await deleteItem(record.id);
+        } else {
+          message.error('已发布的产品不能进行删除操作');
+        }
+      }}
+    >
+      <Tooltip
+        title={intl.formatMessage({
+          id: 'pages.data.option.remove.tips',
+          defaultMessage: '删除',
+        })}
+        key={'remove'}
+      >
+        <a key="delete">
+          <DeleteOutlined />
+        </a>
+      </Tooltip>
+    </Popconfirm>,
+  ];
+
   const columns: ProColumns<ProductItem>[] = [
     {
       title: 'ID',
@@ -116,7 +222,8 @@ const Product = observer(() => {
     },
     {
       title: '设备类型',
-      dataIndex: 'classifiedName',
+      dataIndex: 'deviceType',
+      render: (_, row) => <>{row.deviceType ? row.deviceType.text : undefined}</>,
     },
     {
       title: '状态',
@@ -130,110 +237,14 @@ const Product = observer(() => {
       valueType: 'option',
       align: 'center',
       width: 200,
-      render: (_, record) => [
-        <Tooltip
-          title={intl.formatMessage({
-            id: 'pages.data.option.detail',
-            defaultMessage: '查看',
-          })}
-          key={'detail'}
-        >
-          <Link
-            onClick={() => {
-              productModel.current = record;
-            }}
-            to={`${getMenuPathByParams(MENUS_CODE['device/Product/Detail'], record.id)}`}
-            key="link"
-          >
-            <EyeOutlined />
-          </Link>
-        </Tooltip>,
-        <Tooltip
-          title={intl.formatMessage({
-            id: 'pages.data.option.edit',
-            defaultMessage: '编辑',
-          })}
-          key={'edit'}
-        >
-          <a
-            key="warning"
-            onClick={() => {
-              setCurrent(record);
-              setVisible(true);
-            }}
-          >
-            <EditOutlined />
-          </a>
-        </Tooltip>,
-        <Tooltip
-          title={intl.formatMessage({
-            id: 'pages.data.option.download',
-            defaultMessage: '下载',
-          })}
-          key={'download'}
-        >
-          <a key="download">
-            <DownloadOutlined
-              onClick={async () => {
-                await message.success(
-                  `${intl.formatMessage({
-                    id: 'pages.data.option.download',
-                    defaultMessage: '下载',
-                  })}`,
-                );
-              }}
-            />
-          </a>
-        </Tooltip>,
-        <Popconfirm
-          key={'state'}
-          title={intl.formatMessage({
-            id: `pages.data.option.${record.state ? 'disabled' : 'enabled'}.tips`,
-            defaultMessage: '是否删除?',
-          })}
-          onConfirm={() => {
-            changeDeploy(record.id, record.state ? 'undeploy' : 'deploy');
-          }}
-        >
-          <Tooltip
-            title={intl.formatMessage({
-              id: `pages.data.option.${record.state ? 'disabled' : 'enabled'}`,
-              defaultMessage: record.state ? '禁用' : '启用',
-            })}
-          >
-            <a key="state">{record.state ? <StopOutlined /> : <PlayCircleOutlined />}</a>
-          </Tooltip>
-        </Popconfirm>,
-        <Popconfirm
-          key="unBindUser"
-          title={intl.formatMessage({
-            id: 'page.system.menu.table.delete',
-            defaultMessage: '是否删除?',
-          })}
-          onConfirm={async () => {
-            await deleteItem(record.id);
-          }}
-        >
-          <Tooltip
-            title={intl.formatMessage({
-              id: 'pages.data.option.remove.tips',
-              defaultMessage: '删除',
-            })}
-            key={'remove'}
-          >
-            <a key="delete">
-              <DeleteOutlined />
-            </a>
-          </Tooltip>
-        </Popconfirm>,
-      ],
+      render: (_, record) => tools(record),
     },
   ];
 
   return (
     <PageContainer>
       <SearchComponent field={columns} onSearch={searchFn} />
-      <ProTable<ProductItem>
+      <ProTableCard<ProductItem>
         columns={columns}
         actionRef={actionRef}
         options={{ fullScreen: true }}
@@ -249,7 +260,7 @@ const Product = observer(() => {
         rowKey="id"
         search={false}
         pagination={{ pageSize: 10 }}
-        toolBarRender={() => [
+        headerTitle={[
           <Button
             onClick={() => {
               setCurrent(undefined);
@@ -265,6 +276,7 @@ const Product = observer(() => {
             })}
           </Button>,
         ]}
+        cardRender={(record) => <ProductCard {...record} actions={tools(record)} />}
       />
       <Save
         model={!current ? 'add' : 'edit'}

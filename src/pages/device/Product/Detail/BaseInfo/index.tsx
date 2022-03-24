@@ -162,19 +162,28 @@ const BaseInfo = () => {
         </Descriptions.Item>
         <Descriptions.Item
           label={intl.formatMessage({
-            id: 'pages.device.productDetail.protocolName',
-            defaultMessage: '消息协议',
+            id: 'pages.device.instanceDetail.deviceType',
+            defaultMessage: '设备类型',
           })}
         >
-          {productModel.current?.protocolName}
+          {productModel.current?.deviceType ? productModel.current?.deviceType.text : '-'}
         </Descriptions.Item>
         <Descriptions.Item
           label={intl.formatMessage({
             id: 'pages.device.productDetail.transportProtocol',
-            defaultMessage: '链接协议',
+            defaultMessage: '接入方式',
           })}
         >
           {productModel.current?.transportProtocol}
+        </Descriptions.Item>
+
+        <Descriptions.Item
+          label={intl.formatMessage({
+            id: 'pages.device.productDetail.createTime',
+            defaultMessage: '创建时间',
+          })}
+        >
+          {getDateFormat(productModel.current?.createTime)}
         </Descriptions.Item>
         <Descriptions.Item
           label={intl.formatMessage({
@@ -183,14 +192,6 @@ const BaseInfo = () => {
           })}
         >
           {getDateFormat(productModel.current?.updateTime)}
-        </Descriptions.Item>
-        <Descriptions.Item
-          label={intl.formatMessage({
-            id: 'pages.device.productDetail.createTime',
-            defaultMessage: '创建时间',
-          })}
-        >
-          {getDateFormat(productModel.current?.createTime)}
         </Descriptions.Item>
         <Descriptions.Item
           span={3}
