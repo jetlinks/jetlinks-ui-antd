@@ -14,7 +14,7 @@ export type ProductItem = {
   createTime: number;
   updateTime: number;
   creatorId: string;
-  deviceType: DeviceType;
+  deviceType: string | DeviceType;
   count?: number;
   messageProtocol: string;
   metadata: string;
@@ -23,6 +23,8 @@ export type ProductItem = {
   state: number;
   transportProtocol: string;
   describe?: string;
+  accessId?: string;
+  accessName?: string;
   photoUrl?: string;
 };
 
