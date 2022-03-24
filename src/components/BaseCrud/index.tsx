@@ -46,6 +46,7 @@ export type Props<T> = {
   form?: Form;
   /** @name 用于存储搜索历史记录的标记*/
   moduleName?: string; //
+  footer?: React.ReactNode;
 };
 
 const BaseCrud = <T extends Record<string, any>>(props: Props<T>) => {
@@ -68,6 +69,7 @@ const BaseCrud = <T extends Record<string, any>>(props: Props<T>) => {
     formEffect,
     form,
     moduleName,
+    footer,
   } = props;
 
   const [param, setParam] = useState({});
@@ -151,6 +153,7 @@ const BaseCrud = <T extends Record<string, any>>(props: Props<T>) => {
         modelConfig={modelConfig}
         formEffect={formEffect}
         customForm={form}
+        footer={footer}
       />
     </>
   );

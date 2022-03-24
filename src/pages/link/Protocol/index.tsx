@@ -2,14 +2,15 @@ import { PageContainer } from '@ant-design/pro-layout';
 import type { ProtocolItem } from '@/pages/link/Protocol/typings';
 import { useRef } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { Badge, message, Popconfirm, Tooltip } from 'antd';
+import { Badge, Button, message, Popconfirm, Tooltip } from 'antd';
 import { CheckCircleOutlined, DeleteOutlined, EditOutlined, StopOutlined } from '@ant-design/icons';
 import BaseCrud from '@/components/BaseCrud';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import type { ISchema } from '@formily/json-schema';
 import { CurdModel } from '@/components/BaseCrud/model';
 import Service from '@/pages/link/Protocol/service';
-import { onFormMount, registerValidateRules } from '@formily/core';
+import { onFormValuesChange, registerValidateRules } from '@formily/core';
+import { Store } from 'jetlinks-store';
 
 export const service = new Service('protocol');
 const Protocol = () => {
@@ -19,9 +20,9 @@ const Protocol = () => {
   const modifyState = async (id: string, type: 'deploy' | 'un-deploy') => {
     const resp = await service.modifyState(id, type);
     if (resp.status === 200) {
-      message.success('操作成功!');
+      message.success('插件发布成功!');
     } else {
-      message.error('操作失败!');
+      message.error('插件发布失败!');
     }
     actionRef.current?.reload();
   };
@@ -137,7 +138,7 @@ const Protocol = () => {
   registerValidateRules({
     validateId(value) {
       if (!value) return '';
-      const reg = new RegExp('^\\w{3,20}$');
+      const reg = new RegExp('^[0-9a-zA-Z_\\\\-]+$');
       return reg.exec(value) ? '' : 'ID只能由数字、26个英文字母或者下划线组成';
     },
   });
@@ -291,12 +292,38 @@ const Protocol = () => {
         schema={schema}
         actionRef={actionRef}
         formEffect={() => {
-          onFormMount((form) => {
+          onFormValuesChange((form) => {
             form.setFieldState('id', (state) => {
               state.disabled = CurdModel.model === 'edit';
             });
           });
         }}
+        footer={
+          <>
+            <Button onClick={CurdModel.close}>取消</Button>
+            <Button
+              type="primary"
+              onClick={() => {
+                Store.set('save-data', true);
+              }}
+            >
+              保存
+            </Button>
+            <Button
+              type="primary"
+              onClick={() => {
+                Store.set('save-data', async (data: any) => {
+                  // 获取到的保存的数据
+                  if (data.id) {
+                    await modifyState(data.id, 'deploy');
+                  }
+                });
+              }}
+            >
+              保存并发布
+            </Button>
+          </>
+        }
       />
       {/* {visible && <Debug data={current} close={() => setVisible(!visible)} />} */}
     </PageContainer>
