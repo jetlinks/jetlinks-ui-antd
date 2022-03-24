@@ -24,14 +24,18 @@ const Member = observer(() => {
   const [searchParam, setSearchParam] = useState({});
 
   const handleUnBind = () => {
-    service.handleUser(param.id, MemberModel.unBindUsers, 'unbind').subscribe({
-      next: () => message.success('操作成功'),
-      error: () => message.error('操作失败'),
-      complete: () => {
-        MemberModel.unBindUsers = [];
-        actionRef.current?.reload();
-      },
-    });
+    if (MemberModel.unBindUsers.length) {
+      service.handleUser(param.id, MemberModel.unBindUsers, 'unbind').subscribe({
+        next: () => message.success('操作成功'),
+        error: () => message.error('操作失败'),
+        complete: () => {
+          MemberModel.unBindUsers = [];
+          actionRef.current?.reload();
+        },
+      });
+    } else {
+      message.warning('请勾选需要解绑的数据');
+    }
   };
 
   const singleUnBind = (key: string) => {

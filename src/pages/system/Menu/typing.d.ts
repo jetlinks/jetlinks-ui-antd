@@ -78,5 +78,6 @@ export type MenuButtonInfo = {
   name: string;
   permissions: PermissionInfo;
   createTime: number;
+  describe?: string;
   options: Record<string, any>;
 };

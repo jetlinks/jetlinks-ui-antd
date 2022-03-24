@@ -16,7 +16,7 @@ import type { DeviceMetadata } from '@/pages/device/Product/typings';
 import MetadataAction from '@/pages/device/components/Metadata/DataBaseAction';
 import { Store } from 'jetlinks-store';
 import SystemConst from '@/utils/const';
-import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
+import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 
 export const deviceStatus = new Map();
 deviceStatus.set('online', <Badge status="success" text={'在线'} />);
@@ -159,8 +159,11 @@ const InstanceDetail = observer(() => {
               type={'link'}
               size={'small'}
               onClick={() => {
-                const url = getMenuPathByCode(MENUS_CODE['device/Product']);
-                history.push(`${url}?id=${InstanceModel.detail.productId}`);
+                const url = getMenuPathByParams(
+                  MENUS_CODE['device/Product/Detail'],
+                  InstanceModel.detail.productId,
+                );
+                history.replace(url);
               }}
             >
               {InstanceModel.detail.productName}
