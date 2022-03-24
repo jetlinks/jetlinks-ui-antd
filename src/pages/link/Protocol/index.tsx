@@ -106,7 +106,7 @@ const Protocol = () => {
             </Popconfirm>
           </a>
         ),
-        <a key="delete">
+        <Button key="delete" type="link" disabled={record.state !== 1}>
           <Popconfirm
             title={intl.formatMessage({
               id: 'pages.data.option.remove.tips',
@@ -132,7 +132,7 @@ const Protocol = () => {
               <DeleteOutlined />
             </Tooltip>
           </Popconfirm>
-        </a>,
+        </Button>,
       ],
     },
   ];

@@ -704,8 +704,12 @@ const Save = observer(() => {
       message.success('保存成功');
       history.back();
       if ((window as any).onTabSaveSuccess) {
-        (window as any).onTabSaveSuccess(response);
-        setTimeout(() => window.close(), 300);
+        if (response.result?.id) {
+          service.changeState(response.result?.id, 'start').then(() => {
+            (window as any).onTabSaveSuccess(response);
+            setTimeout(() => window.close(), 300);
+          });
+        }
       }
     }
   };
