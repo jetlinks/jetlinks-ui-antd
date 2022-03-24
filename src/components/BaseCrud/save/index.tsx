@@ -135,7 +135,7 @@ const Save = <T extends Record<string, any>>(props: Props<T>) => {
       if (!callback) return;
       await save();
       if (typeof callback === 'function') {
-        callback(form);
+        callback(form.values);
       }
     });
     return () => {
