@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { message, Modal, Spin } from 'antd';
 import {
   ArrayItems,
@@ -55,22 +55,27 @@ const Save = <T extends Record<string, any>>(props: Props<T>) => {
   const [current, setCurrent] = useState<T>();
   const [model, setModel] = useState<'edit' | 'add' | 'preview'>('edit');
 
+  const form = useMemo(
+    () =>
+      createForm({
+        validateFirst: true,
+        initialValues: current,
+        effects: formEffect,
+      }),
+    [current, model],
+  );
+
   useEffect(() => {
     const visibleSubscription = Store.subscribe(SystemConst.BASE_CURD_MODAL_VISIBLE, setVisible);
     const dataSubscription = Store.subscribe(SystemConst.BASE_CURD_CURRENT, setCurrent);
     const modelSubscription = Store.subscribe(SystemConst.BASE_CURD_MODEL, setModel);
+
     return () => {
       visibleSubscription.unsubscribe();
       dataSubscription.unsubscribe();
       modelSubscription.unsubscribe();
     };
   }, [current]);
-
-  const form = createForm({
-    validateFirst: true,
-    initialValues: current,
-    effects: formEffect,
-  });
 
   const SchemaField = createSchemaField({
     components: {
@@ -102,7 +107,9 @@ const Save = <T extends Record<string, any>>(props: Props<T>) => {
 
   const save = async () => {
     const values: T = await (customForm || form).submit();
+    console.log(form.values, 'value', values);
     // 特殊处理通知模版
+
     if (service?.getUri().includes('/notifier/template')) {
       (values as T & { template: Record<string, any> | string }).template = JSON.stringify(
         values.template,
@@ -122,6 +129,20 @@ const Save = <T extends Record<string, any>>(props: Props<T>) => {
     CurdModel.close();
     reload();
   };
+
+  useEffect(() => {
+    const subscription = Store.subscribe('save-data', async (callback: (values: any) => void) => {
+      if (!callback) return;
+      await save();
+      if (typeof callback === 'function') {
+        callback(form);
+      }
+    });
+    return () => {
+      Store.set('save-data', undefined);
+      subscription.unsubscribe();
+    };
+  }, [current]);
 
   return (
     <Modal
