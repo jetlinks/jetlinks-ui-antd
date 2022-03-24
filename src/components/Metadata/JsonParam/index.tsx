@@ -9,7 +9,7 @@ import {
 } from '@formily/antd';
 import { createSchemaField } from '@formily/react';
 import type { ISchema } from '@formily/json-schema';
-import { DataTypeList } from '@/pages/device/data';
+import { DataTypeList, DateTypeList } from '@/pages/device/data';
 import { Store } from 'jetlinks-store';
 
 // 不算是自定义组件。只是抽离了JSONSchema
@@ -107,6 +107,21 @@ const JsonParam = (props: Props) => {
                         fulfill: {
                           state: {
                             visible: "{{['int','float','long','double'].includes($deps[0])}}",
+                          },
+                        },
+                      },
+                    },
+                    format: {
+                      title: '时间格式',
+                      'x-decorator': 'FormItem',
+                      'x-component': 'Select',
+                      enum: DateTypeList,
+                      'x-visible': false,
+                      'x-reactions': {
+                        dependencies: ['..valueType.type'],
+                        fulfill: {
+                          state: {
+                            visible: "{{['date'].includes($deps[0])}}",
                           },
                         },
                       },
