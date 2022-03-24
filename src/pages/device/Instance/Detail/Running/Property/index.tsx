@@ -28,7 +28,6 @@ const ColResponsiveProps = {
 
 const Property = (props: Props) => {
   const { data } = props;
-  console.log(data);
   const device = InstanceModel.detail;
   const params = useParams<{ id: string }>();
   const [subscribeTopic] = useSendWebsocketMessage();
