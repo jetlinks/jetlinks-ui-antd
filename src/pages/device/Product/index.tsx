@@ -92,9 +92,7 @@ const Product = observer(() => {
    * @param data
    */
   const searchFn = (data: any) => {
-    setQueryParam({
-      terms: data,
-    });
+    setQueryParam(data);
   };
 
   const changeDeploy = (id: string, state: 'deploy' | 'undeploy') => {
