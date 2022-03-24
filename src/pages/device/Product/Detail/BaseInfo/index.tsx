@@ -68,7 +68,10 @@ const BaseInfo = () => {
   const getDetailInfo = () => {
     service.getProductDetail(id || '').subscribe((data) => {
       if (data) {
-        productModel.current = data;
+        productModel.current = {
+          ...productModel.current,
+          ...data,
+        };
       }
     });
   };
