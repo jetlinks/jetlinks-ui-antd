@@ -1,15 +1,16 @@
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { service } from '@/pages/device/Instance';
+import { InstanceModel, service } from '@/pages/device/Instance';
 import { useParams } from 'umi';
 import type { EventMetadata } from '@/pages/device/Product/typings';
 import SearchComponent from '@/components/SearchComponent';
 import moment from 'moment';
 import { Form, Modal } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import MonacoEditor from 'react-monaco-editor';
-
+import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
+import { map } from 'rxjs/operators';
 interface Props {
   data: Partial<EventMetadata>;
 }
@@ -18,7 +19,9 @@ const EventLog = (props: Props) => {
   const params = useParams<{ id: string }>();
   const { data } = props;
   const actionRef = useRef<ActionType>();
-  const [searchParams, setSearchParams] = useState<any>({});
+  const [searchParams, setSearchParams] = useState<any>({ pageSize: 10 });
+  const device = InstanceModel.detail;
+  const [subscribeTopic] = useSendWebsocketMessage();
 
   const columns: ProColumns<MetadataLogData>[] = [
     {
@@ -62,6 +65,28 @@ const EventLog = (props: Props) => {
       ],
     },
   ];
+
+  /**
+   * 订阅事件数据
+   */
+  const subscribeEvent = () => {
+    const id = `instance-info-event-${device.id}-${device.productId}`;
+    const topic = `/dashboard/device/${device.productId}/events/realTime`;
+    subscribeTopic!(id, topic, {
+      deviceId: device.id,
+    })
+      ?.pipe(map((res) => res.payload))
+      .subscribe((payload: any) => {
+        const { value } = payload;
+        if (value) {
+          actionRef.current?.reload?.();
+        }
+      });
+  };
+
+  useEffect(() => {
+    subscribeEvent();
+  }, []);
 
   const createColumn = (): ProColumns[] =>
     data.valueType?.type === 'object'

@@ -117,7 +117,7 @@ const Protocol = () => {
               : '请先禁用该组件，再删除。'
           }
         >
-          <Button style={{ padding: 0 }} key="delete" type="link" disabled={record.state !== 1}>
+          <Button style={{ padding: 0 }} key="delete" type="link" disabled={record.state === 1}>
             <Popconfirm
               title={intl.formatMessage({
                 id: 'pages.data.option.remove.tips',
