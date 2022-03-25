@@ -187,6 +187,24 @@ const Protocol = () => {
                 validateId: true,
                 message: 'ID只能由数字、26个英文字母或者下划线组成',
               },
+              {
+                triggerType: 'onBlur',
+                validator: (value: string) => {
+                  if (!value) return;
+                  return new Promise((resolve) => {
+                    service
+                      .validator(value)
+                      .then((resp) => {
+                        if (!!resp?.result) {
+                          resolve('ID已存在');
+                        } else {
+                          resolve('');
+                        }
+                      })
+                      .catch(() => '验证失败!');
+                  });
+                },
+              },
             ],
           },
           name: {

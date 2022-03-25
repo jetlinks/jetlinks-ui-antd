@@ -247,7 +247,7 @@ const Save = observer(() => {
           gridSpan: 1,
           labelAlign: 'left',
           layout: 'vertical',
-          tooltip: '绑定到服务器上的网卡地址,绑定到所有网卡:0.0.0.0 /',
+          tooltip: '绑定到服务器上的网卡地址,绑定到所有网卡:0.0.0.0',
         },
         required: true,
         'x-reactions': {
@@ -267,7 +267,7 @@ const Save = observer(() => {
         'x-decorator-props': {
           gridSpan: 1,
           labelAlign: 'left',
-          tooltip: '监听指定端口的UDP请求',
+          tooltip: '监听指定端口的请求',
           layout: 'vertical',
         },
         required: true,
