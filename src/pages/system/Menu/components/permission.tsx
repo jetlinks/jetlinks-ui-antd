@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Checkbox } from 'antd';
 import './permission.less';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
@@ -225,6 +225,7 @@ export default (props: PermissionType) => {
    */
   const initialState = (data: PermissionDataType[]) => {
     const _list = data.map((item) => {
+      console.log(item.name, item.actions);
       const propsPermission =
         props.value && props.value.length
           ? props.value.find((p) => p.permission === item.id)
@@ -232,7 +233,9 @@ export default (props: PermissionType) => {
       const propsActions = propsPermission ? propsPermission.actions : [];
       return {
         ...item,
-        actions: item.actions.map((a) => ({ ...a, checked: propsActions.includes(a.action) })),
+        actions: item.actions
+          .filter((action) => Object.keys(action).length)
+          .map((a) => ({ ...a, checked: propsActions.includes(a.action) })),
         state: false, // 是否为半选中状态
         checked: false, // 是否为全选
       };

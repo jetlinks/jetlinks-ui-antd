@@ -2,7 +2,7 @@
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { getTableKeys, service } from './index';
-import { message, Modal } from 'antd';
+import { Button, message, Modal, Space } from 'antd';
 import { useParams } from 'umi';
 import Models from './model';
 import { useEffect, useRef, useState } from 'react';
@@ -127,12 +127,37 @@ const Bind = observer((props: Props) => {
           onSelect: (record, selected, selectedRows) => {
             const keys = getTableKeys(selected ? selectedRows : [record]);
             if (selected) {
-              Models.bindKeys = keys;
+              const _map = new Map();
+              keys.forEach((k) => {
+                _map.set(k, k);
+              });
+              Models.bindKeys = [..._map.values()];
             } else {
               // 去除重复的key
               Models.bindKeys = difference(Models.bindKeys, keys);
             }
           },
+          onSelectAll: (selected, selectedRows) => {
+            if (selected) {
+              Models.bindKeys = selectedRows.map((item) => item.id);
+            } else {
+              Models.bindKeys = [];
+            }
+          },
+        }}
+        tableAlertOptionRender={() => {
+          return (
+            <Space size={16}>
+              <Button
+                type={'link'}
+                onClick={() => {
+                  Models.bindKeys = [];
+                }}
+              >
+                取消选择
+              </Button>
+            </Space>
+          );
         }}
         params={searchParam}
         request={async (params) => {

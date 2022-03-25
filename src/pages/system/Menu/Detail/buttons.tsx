@@ -8,7 +8,6 @@ import { DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined } from '@ant
 import type { MenuButtonInfo, MenuItem } from '@/pages/system/Menu/typing';
 import Permission from '@/pages/system/Menu/components/permission';
 import { useRequest } from '@@/plugin-request/request';
-import { debounce } from 'lodash';
 
 type ButtonsProps = {
   data: MenuItem;
@@ -49,15 +48,15 @@ export default (props: ButtonsProps) => {
     setDisabled(false);
   };
 
-  const filterThree = (e: any) => {
-    const _data: any = {
-      paging: false,
-    };
-    if (e.target.value) {
-      _data.terms = [{ column: 'name', value: e.target.value }];
-    }
-    queryPermissions(_data);
-  };
+  // const filterThree = (e: any) => {
+  //   const _data: any = {
+  //     paging: false,
+  //   };
+  //   if (e.target.value) {
+  //     _data.terms = [{ column: 'name', value: e.target.value }];
+  //   }
+  //   queryPermissions(_data);
+  // };
 
   /**
    * 更新菜单信息
@@ -65,17 +64,19 @@ export default (props: ButtonsProps) => {
    */
   const updateMenuInfo = useCallback(
     async (data: MenuButtonInfo[]) => {
-      const response = await service.update({
-        ...props.data,
-        buttons: data,
-      });
-      if (response.status === 200) {
-        message.success('操作成功!');
-        props.onLoad();
-        resetForm();
-        setVisible(false);
-      } else {
-        message.error('操作失败!');
+      if (props.data.id) {
+        const response = await service.update({
+          ...props.data,
+          buttons: data,
+        });
+        if (response.status === 200) {
+          message.success('操作成功!');
+          props.onLoad();
+          resetForm();
+          setVisible(false);
+        } else {
+          message.error('操作失败!');
+        }
       }
       /* eslint-disable */
     },
@@ -153,6 +154,10 @@ export default (props: ButtonsProps) => {
         defaultMessage: '备注说明',
       }),
       dataIndex: 'describe',
+      // render: (_, row) => () => {
+      //   console.log(row)
+      //   return (<> {row.describe || '-'}</>)
+      // }
     },
     {
       title: intl.formatMessage({
@@ -234,6 +239,10 @@ export default (props: ButtonsProps) => {
         toolBarRender={() => [
           <Button
             onClick={() => {
+              if (!props.data) {
+                message.warning('请先新增菜单基本信息');
+                return;
+              }
               form.resetFields();
               setVisible(true);
             }}
@@ -310,7 +319,6 @@ export default (props: ButtonsProps) => {
             })}
             required={true}
           >
-            <Input disabled={disabled} onChange={debounce(filterThree, 300)} />
             <Form.Item name="permissions" rules={[{ required: true, message: '请选择权限' }]}>
               <Permission
                 title={intl.formatMessage({

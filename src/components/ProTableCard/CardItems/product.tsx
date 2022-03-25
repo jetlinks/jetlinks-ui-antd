@@ -15,7 +15,7 @@ export default (props: ProductCardProps) => {
   const intl = useIntl();
 
   return (
-    <Card style={{ width: 340 }} cover={null} actions={props.actions}>
+    <Card style={{ width: '100%' }} cover={null} actions={props.actions}>
       <div className={'pro-table-card-item'}>
         <div className={'card-item-avatar'}>
           <Avatar size={props.avatarSize || 64} src={props.photoUrl} />
