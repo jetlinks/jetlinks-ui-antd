@@ -95,7 +95,7 @@ const Permission = () => {
       </Card>
       <Card style={{ marginTop: 20 }}>
         <div className={styles.title}>权限分配</div>
-        <Form.Item label="权限" name="permission" rules={[{ required: true }]}>
+        <Form.Item name="permission" rules={[{ required: true }]}>
           <Allocate />
         </Form.Item>
         <Form.Item>

@@ -5,7 +5,7 @@ import { Badge, Button, Card, Descriptions, Divider, message, Tooltip } from 'an
 import { useEffect, useState } from 'react';
 import { observer } from '@formily/react';
 import Log from '@/pages/device/Instance/Detail/Log';
-import Alarm from '@/pages/device/components/Alarm';
+// import Alarm from '@/pages/device/components/Alarm';
 import Info from '@/pages/device/Instance/Detail/Info';
 import Functions from '@/pages/device/Instance/Detail/Functions';
 import Running from '@/pages/device/Instance/Detail/Running';
@@ -113,26 +113,26 @@ const InstanceDetail = observer(() => {
       tab: '子设备',
       component: <ChildDevice />,
     },
-    {
-      key: 'alarm',
-      tab: intl.formatMessage({
-        id: 'pages.device.instanceDetail.alarm',
-        defaultMessage: '告警设置',
-      }),
-      component: (
-        <Card>
-          <Alarm type="device" />
-        </Card>
-      ),
-    },
-    {
-      key: 'visualization',
-      tab: intl.formatMessage({
-        id: 'pages.device.instanceDetail.visualization',
-        defaultMessage: '可视化',
-      }),
-      component: <div>开发中...</div>,
-    },
+    // {
+    //   key: 'alarm',
+    //   tab: intl.formatMessage({
+    //     id: 'pages.device.instanceDetail.alarm',
+    //     defaultMessage: '告警设置',
+    //   }),
+    //   component: (
+    //     <Card>
+    //       <Alarm type="device" />
+    //     </Card>
+    //   ),
+    // },
+    // {
+    //   key: 'visualization',
+    //   tab: intl.formatMessage({
+    //     id: 'pages.device.instanceDetail.visualization',
+    //     defaultMessage: '可视化',
+    //   }),
+    //   component: <div>开发中...</div>,
+    // },
   ];
 
   useEffect(() => {

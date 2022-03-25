@@ -292,33 +292,33 @@ const Permission: React.FC = observer(() => {
           },
         ],
       },
-      status: {
-        title: '状态',
-        'x-decorator': 'FormItem',
-        'x-component': 'Switch',
-        required: true,
-        default: 1,
-        enum: [
-          { label: '1', value: 1 },
-          { label: '0', value: 0 },
-        ],
-      },
-      'properties.assetTypes': {
-        type: 'string',
-        title: '关联资产',
-        'x-decorator': 'FormItem',
-        'x-component': 'Select',
-        name: 'properties.assetTypes',
-        required: false,
-        enum: PermissionModel.assetsTypesList,
-        'x-decorator-props': {
-          tooltip: <div>关联资产为角色权限中的权限分配提供数据支持</div>,
-        },
-        'x-component-props': {
-          showSearch: true,
-          mode: 'multiple',
-        },
-      },
+      // status: {
+      //   title: '状态',
+      //   'x-decorator': 'FormItem',
+      //   'x-component': 'Switch',
+      //   required: true,
+      //   default: 1,
+      //   enum: [
+      //     { label: '1', value: 1 },
+      //     { label: '0', value: 0 },
+      //   ],
+      // },
+      // 'properties.assetTypes': {
+      //   type: 'string',
+      //   title: '关联资产',
+      //   'x-decorator': 'FormItem',
+      //   'x-component': 'Select',
+      //   name: 'properties.assetTypes',
+      //   required: false,
+      //   enum: PermissionModel.assetsTypesList,
+      //   'x-decorator-props': {
+      //     tooltip: <div>关联资产为角色权限中的权限分配提供数据支持</div>,
+      //   },
+      //   'x-component-props': {
+      //     showSearch: true,
+      //     mode: 'multiple',
+      //   },
+      // },
       actions: {
         type: 'array',
         'x-decorator': 'FormItem',
@@ -440,7 +440,7 @@ const Permission: React.FC = observer(() => {
         actionRef={actionRef}
         columns={columns}
         service={service}
-        defaultParams={{ sorts: [{ name: 'modifyTime', order: 'desc' }] }}
+        defaultParams={{ sorts: [{ name: 'id', order: 'desc' }] }}
         title={intl.formatMessage({
           id: 'pages.system.permission',
           defaultMessage: '',

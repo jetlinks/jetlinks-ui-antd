@@ -168,25 +168,6 @@ const Access = (props: Props) => {
       ),
     },
     {
-      title: 'qos',
-      dataIndex: 'qos',
-      key: 'qos',
-      ellipsis: true,
-      align: 'center',
-    },
-    {
-      title: '地址',
-      dataIndex: 'address',
-      key: 'address',
-      ellipsis: true,
-      align: 'center',
-      render: (text: any) => (
-        <Tooltip placement="top" title={text}>
-          {text}
-        </Tooltip>
-      ),
-    },
-    {
       title: 'topic',
       dataIndex: 'topic',
       key: 'topic',
@@ -196,6 +177,18 @@ const Access = (props: Props) => {
         <Tooltip placement="top" title={text}>
           {text}
         </Tooltip>
+      ),
+    },
+    {
+      title: '上下行',
+      dataIndex: 'stream',
+      key: 'stream',
+      ellipsis: true,
+      align: 'center',
+      render: (text: any, record: any) => (
+        <span>
+          上行: {String(record?.upstream)}, 下行: {String(record?.downstream)}
+        </span>
       ),
     },
     {
@@ -314,13 +307,23 @@ const Access = (props: Props) => {
                     >
                       <div className={styles.title}>{item.name}</div>
                       <div className={styles.cardContent}>
-                        <div style={{ width: '100%', height: '50px' }}>
+                        <div
+                          style={{
+                            width: '100%',
+                            height: '40px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}
+                        >
                           {item.addresses.slice(0, 2).map((i: any) => (
                             <div className={styles.item} key={i.address}>
                               <Badge color={i.health === -1 ? 'red' : 'green'} text={i.address} />
                             </div>
                           ))}
                         </div>
+                        <div className={styles.desc}>{item?.description || ''}</div>
                       </div>
                     </Card>
                   </Col>
@@ -330,7 +333,7 @@ const Access = (props: Props) => {
               <Empty
                 description={
                   <span>
-                    暂无数据{' '}
+                    暂无数据
                     <a
                       onClick={() => {
                         const tab: any = window.open(`${origin}/#/link/Type/Save/:id`);
@@ -400,8 +403,10 @@ const Access = (props: Props) => {
                         setProcotolCurrent(item.id);
                       }}
                     >
-                      <div className={styles.title}>{item.name}</div>
-                      <div className={styles.desc}>{item.description}</div>
+                      <div style={{ height: '45px' }}>
+                        <div className={styles.title}>{item.name}</div>
+                        <div className={styles.desc}>{item.description}</div>
+                      </div>
                     </Card>
                   </Col>
                 ))}
@@ -446,6 +451,68 @@ const Access = (props: Props) => {
                   <Input.TextArea showCount maxLength={200} />
                 </Form.Item>
               </Form>
+              <div className={styles.action}>
+                <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
+                  上一步
+                </Button>
+                <Button
+                  type="primary"
+                  onClick={async () => {
+                    try {
+                      const values = await form.validateFields();
+                      // 编辑还是保存
+                      if (!params.get('id')) {
+                        service
+                          .save({
+                            name: values.name,
+                            description: values.description,
+                            provider: props.data.id,
+                            protocol: procotolCurrent,
+                            transport: ProcotoleMapping.get(props.data.id),
+                            channel: 'network', // 网络组件
+                            channelId: networkCurrent,
+                          })
+                          .then((resp: any) => {
+                            if (resp.status === 200) {
+                              message.success('操作成功！');
+                              history.goBack();
+                              if ((window as any).onTabSaveSuccess) {
+                                (window as any).onTabSaveSuccess(resp);
+                                setTimeout(() => window.close(), 300);
+                              }
+                            }
+                          });
+                      } else {
+                        service
+                          .update({
+                            id: access?.id,
+                            name: values.name,
+                            description: values.description,
+                            provider: access?.provider,
+                            protocol: procotolCurrent,
+                            transport: access?.transport,
+                            channel: 'network', // 网络组件
+                            channelId: networkCurrent,
+                          })
+                          .then((resp: any) => {
+                            if (resp.status === 200) {
+                              message.success('操作成功！');
+                              history.goBack();
+                              if ((window as any).onTabSaveSuccess) {
+                                (window as any).onTabSaveSuccess(resp);
+                                setTimeout(() => window.close(), 300);
+                              }
+                            }
+                          });
+                      }
+                    } catch (errorInfo) {
+                      console.error('Failed:', errorInfo);
+                    }
+                  }}
+                >
+                  保存
+                </Button>
+              </div>
             </div>
             <div className={styles.config}>
               <div className={styles.title}>配置概览</div>
@@ -453,16 +520,25 @@ const Access = (props: Props) => {
                 <Descriptions.Item label="接入方式">
                   {props.data?.name || providers.find((i) => i.id === access?.provider)?.name}
                 </Descriptions.Item>
-                <Descriptions.Item>
-                  {props.data?.description ||
-                    providers.find((i) => i.id === access?.provider)?.description}
-                </Descriptions.Item>
+                {(props.data?.description ||
+                  providers.find((i) => i.id === access?.provider)?.description) && (
+                  <Descriptions.Item>
+                    <span style={{ color: 'rgba(0,0,0,0.55)' }}>
+                      {props.data?.description ||
+                        providers.find((i) => i.id === access?.provider)?.description}
+                    </span>
+                  </Descriptions.Item>
+                )}
                 <Descriptions.Item label="消息协议">
                   {procotolList.find((i) => i.id === procotolCurrent)?.name || ''}
                 </Descriptions.Item>
-                <Descriptions.Item>
-                  {procotolList.find((i) => i.id === procotolCurrent)?.description || ''}
-                </Descriptions.Item>
+                {procotolList.find((i) => i.id === procotolCurrent)?.description && (
+                  <Descriptions.Item style={{ color: 'rgba(0,0,0,0.55)' }}>
+                    <span style={{ color: 'rgba(0,0,0,0.55)' }}>
+                      {procotolList.find((i) => i.id === procotolCurrent)?.description || ''}
+                    </span>
+                  </Descriptions.Item>
+                )}
                 <Descriptions.Item label="网络组件">
                   {(networkList.find((i) => i.id === networkCurrent)?.addresses || []).map(
                     (item: any) => (
@@ -479,12 +555,11 @@ const Access = (props: Props) => {
               </Descriptions>
               {config?.routes && config?.routes?.length > 0 && (
                 <div>
-                  <div>路由信息:</div>
                   <Table
                     dataSource={config?.routes || []}
                     columns={config.id === 'MQTT' ? columnsMQTT : columnsHTTP}
                     pagination={false}
-                    scroll={{ x: 500 }}
+                    scroll={{ y: 240 }}
                   />
                 </div>
               )}
@@ -520,71 +595,14 @@ const Access = (props: Props) => {
         </div>
         <div className={styles.content}>{renderSteps(current)}</div>
         <div className={styles.action}>
-          {current > 0 && (
+          {current === 1 && (
             <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
               上一步
             </Button>
           )}
-          {current < steps.length - 1 && (
+          {(current === 0 || current === 1) && (
             <Button type="primary" onClick={() => next()}>
               下一步
-            </Button>
-          )}
-          {current === steps.length - 1 && (
-            <Button
-              type="primary"
-              onClick={async () => {
-                try {
-                  const values = await form.validateFields();
-                  // 编辑还是保存
-                  if (!params.get('id')) {
-                    const param = {
-                      name: values.name,
-                      description: values.description,
-                      provider: props.data.id,
-                      protocol: procotolCurrent,
-                      transport: ProcotoleMapping.get(props.data.id),
-                      channel: 'network', // 网络组件
-                      channelId: networkCurrent,
-                    };
-                    service.save(param).then((resp: any) => {
-                      if (resp.status === 200) {
-                        message.success('操作成功！');
-                        history.goBack();
-                        if ((window as any).onTabSaveSuccess) {
-                          (window as any).onTabSaveSuccess(resp);
-                          setTimeout(() => window.close(), 300);
-                        }
-                      }
-                    });
-                  } else {
-                    const param = {
-                      id: access?.id,
-                      name: values.name,
-                      description: values.description,
-                      provider: access?.provider,
-                      protocol: procotolCurrent,
-                      transport: access?.transport,
-                      channel: 'network', // 网络组件
-                      channelId: networkCurrent,
-                    };
-                    service.update(param).then((resp: any) => {
-                      if (resp.status === 200) {
-                        message.success('操作成功！');
-                        history.goBack();
-                        if ((window as any).onTabSaveSuccess) {
-                          (window as any).onTabSaveSuccess(resp);
-                          setTimeout(() => window.close(), 300);
-                        }
-                      }
-                    });
-                  }
-                } catch (errorInfo) {
-                  console.error('Failed:', errorInfo);
-                }
-              }}
-            >
-              保存
             </Button>
           )}
         </div>
