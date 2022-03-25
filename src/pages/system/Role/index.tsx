@@ -69,6 +69,7 @@ const Role: React.FC = observer(() => {
         id: 'pages.table.describe',
         defaultMessage: '描述',
       }),
+      ellipsis: true,
       dataIndex: 'description',
       filters: true,
       onFilter: true,

@@ -31,18 +31,15 @@ const Protocol = () => {
 
   const columns: ProColumns<ProtocolItem>[] = [
     {
-      dataIndex: 'index',
-      valueType: 'indexBorder',
-      width: 48,
-    },
-    {
       dataIndex: 'id',
       title: 'ID',
       sorter: true,
+      ellipsis: true,
       defaultSortOrder: 'ascend',
     },
     {
       dataIndex: 'name',
+      ellipsis: true,
       title: intl.formatMessage({
         id: 'pages.table.name',
         defaultMessage: '名称',
@@ -51,6 +48,7 @@ const Protocol = () => {
     {
       dataIndex: 'type',
       title: '类型',
+      ellipsis: true,
     },
     {
       dataIndex: 'state',
@@ -61,6 +59,7 @@ const Protocol = () => {
     },
     {
       dataIndex: 'description',
+      ellipsis: true,
       title: '说明',
     },
     {

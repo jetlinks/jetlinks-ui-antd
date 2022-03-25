@@ -62,25 +62,6 @@ const Access = () => {
       ),
     },
     {
-      title: 'qos',
-      dataIndex: 'qos',
-      key: 'qos',
-      ellipsis: true,
-      align: 'center',
-    },
-    {
-      title: '地址',
-      dataIndex: 'address',
-      key: 'address',
-      ellipsis: true,
-      align: 'center',
-      render: (text: any) => (
-        <Tooltip placement="top" title={text}>
-          {text}
-        </Tooltip>
-      ),
-    },
-    {
       title: 'topic',
       dataIndex: 'topic',
       key: 'topic',
@@ -90,6 +71,18 @@ const Access = () => {
         <Tooltip placement="top" title={text}>
           {text}
         </Tooltip>
+      ),
+    },
+    {
+      title: '上下行',
+      dataIndex: 'stream',
+      key: 'stream',
+      ellipsis: true,
+      align: 'center',
+      render: (text: any, record: any) => (
+        <span>
+          上行: {String(record?.upstream)}, 下行: {String(record?.downstream)}
+        </span>
       ),
     },
     {
@@ -108,9 +101,9 @@ const Access = () => {
 
   const columnsHTTP: any[] = [
     {
-      title: '地址',
-      dataIndex: 'address',
-      key: 'address',
+      title: '分组',
+      dataIndex: 'group',
+      key: 'group',
       ellipsis: true,
       align: 'center',
       render: (text: any) => (
@@ -120,9 +113,9 @@ const Access = () => {
       ),
     },
     {
-      title: '分组',
-      dataIndex: 'group',
-      key: 'group',
+      title: '地址',
+      dataIndex: 'address',
+      key: 'address',
       ellipsis: true,
       align: 'center',
       render: (text: any) => (
@@ -214,13 +207,23 @@ const Access = () => {
             <Descriptions.Item label="接入方式">
               {providers.find((i) => i.id === access?.provider)?.name || ''}
             </Descriptions.Item>
-            <Descriptions.Item>
-              {providers.find((i) => i.id === access?.provider)?.description || ''}
-            </Descriptions.Item>
+            {providers.find((i) => i.id === access?.provider)?.description && (
+              <Descriptions.Item label="">
+                <span style={{ color: 'rgba(0,0,0,0.55)' }}>
+                  {providers.find((i) => i.id === access?.provider)?.description || ''}
+                </span>
+              </Descriptions.Item>
+            )}
             <Descriptions.Item label="消息协议">
               {access?.protocolDetail?.name || ''}
             </Descriptions.Item>
-            <Descriptions.Item>{access?.protocolDetail?.description || ''}</Descriptions.Item>
+            {access?.protocolDetail?.description && (
+              <Descriptions.Item label="">
+                <span style={{ color: 'rgba(0,0,0,0.55)' }}>
+                  {access?.protocolDetail?.description || ''}
+                </span>
+              </Descriptions.Item>
+            )}
             <Descriptions.Item label="网络组件">
               {(networkList.find((i) => i.id === access?.channelId)?.addresses || []).map(
                 (item: any) => (
@@ -237,12 +240,11 @@ const Access = () => {
           </Descriptions>
           {config?.routes && config?.routes?.length > 0 && (
             <div>
-              <div>路由信息:</div>
               <Table
                 dataSource={config?.routes || []}
                 columns={config.id === 'MQTT' ? columnsMQTT : columnsHTTP}
                 pagination={false}
-                scroll={{ x: 500 }}
+                scroll={{ y: 240 }}
               />
             </div>
           )}

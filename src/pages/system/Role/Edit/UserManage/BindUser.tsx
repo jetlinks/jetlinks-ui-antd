@@ -22,17 +22,11 @@ const BindUser = (props: Props) => {
 
   const columns: ProColumns<UserItem>[] = [
     {
-      dataIndex: 'index',
-      valueType: 'indexBorder',
-      width: 48,
-    },
-    {
       title: intl.formatMessage({
         id: 'pages.table.name',
         defaultMessage: '名称',
       }),
       dataIndex: 'name',
-      // copyable: true,
       ellipsis: true,
       tip: intl.formatMessage({
         id: 'pages.system.userName.tips',

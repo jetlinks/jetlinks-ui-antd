@@ -20,6 +20,25 @@ const AccessConfig = () => {
       title: '名称',
       dataIndex: 'name',
     },
+    {
+      title: '状态',
+      dataIndex: 'state',
+      valueType: 'select',
+      valueEnum: {
+        disabled: {
+          text: '已停止',
+          status: 'disabled',
+        },
+        enabled: {
+          text: '已启动',
+          status: 'enabled',
+        },
+      },
+    },
+    {
+      title: '说明',
+      dataIndex: 'description',
+    },
   ];
 
   const [dataSource, setDataSource] = useState<any>({
@@ -154,7 +173,7 @@ const AccessConfig = () => {
                           </a>
                         </div>
                       </div>
-                      <div className={styles.desc}>这里是接入方式的解释说明</div>
+                      <div className={styles.desc}>{item.description}</div>
                     </div>
                     <div className={styles.container}>
                       <div className={styles.server}>
@@ -169,7 +188,9 @@ const AccessConfig = () => {
                       </div>
                       <div className={styles.procotol}>
                         <div className={styles.title}>{item?.protocolDetail?.name}</div>
-                        <p style={{ color: 'rgba(0, 0, 0, .55)' }}>{item.description}</p>
+                        <p style={{ color: 'rgba(0, 0, 0, .55)' }}>
+                          {item.protocolDetail?.description}
+                        </p>
                       </div>
                     </div>
                   </div>

@@ -48,6 +48,25 @@ const AccessConfig = (props: Props) => {
       title: '名称',
       dataIndex: 'name',
     },
+    {
+      title: '状态',
+      dataIndex: 'state',
+      valueType: 'select',
+      valueEnum: {
+        disabled: {
+          text: '已停止',
+          status: 'disabled',
+        },
+        enabled: {
+          text: '已启动',
+          status: 'enabled',
+        },
+      },
+    },
+    {
+      title: '说明',
+      dataIndex: 'description',
+    },
   ];
 
   useEffect(() => {
@@ -89,36 +108,38 @@ const AccessConfig = (props: Props) => {
         }
       }}
     >
-      <SearchComponent
-        field={columns}
-        pattern={'simple'}
-        onSearch={(data: any) => {
-          const dt = {
-            pageSize: 4,
-            terms: [...data.terms],
-          };
-          handleSearch(dt);
-        }}
-        onReset={() => {
-          handleSearch({ pageSize: 4 });
-        }}
-      />
-      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <Button
-          type="primary"
-          onClick={() => {
-            const tab: any = window.open(`${origin}/#/link/AccessConfig/Detail`);
-            tab!.onTabSaveSuccess = (value: any) => {
-              if (value.status === 200) {
-                handleSearch(param);
-              }
+      <div className={styles.search}>
+        <SearchComponent
+          field={columns}
+          pattern={'simple'}
+          onSearch={(data: any) => {
+            const dt = {
+              pageSize: 4,
+              terms: [...data.terms],
             };
+            handleSearch(dt);
           }}
-        >
-          新增
-        </Button>
+          onReset={() => {
+            handleSearch({ pageSize: 4 });
+          }}
+        />
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <Button
+            type="primary"
+            onClick={() => {
+              const tab: any = window.open(`${origin}/#/link/AccessConfig/Detail`);
+              tab!.onTabSaveSuccess = (value: any) => {
+                if (value.status === 200) {
+                  handleSearch(param);
+                }
+              };
+            }}
+          >
+            新增
+          </Button>
+        </div>
       </div>
-      <Row gutter={[16, 16]} style={{ marginTop: 10 }}>
+      <Row gutter={[16, 16]}>
         {dataSource.data.map((item: any) => (
           <Col key={item.name} span={12}>
             <Card
