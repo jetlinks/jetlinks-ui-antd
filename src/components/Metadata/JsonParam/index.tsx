@@ -11,6 +11,8 @@ import { createSchemaField } from '@formily/react';
 import type { ISchema } from '@formily/json-schema';
 import { DataTypeList, DateTypeList } from '@/pages/device/data';
 import { Store } from 'jetlinks-store';
+import { useAsyncDataSource } from '@/utils/util';
+import { service } from '@/pages/device/components/Metadata';
 
 // 不算是自定义组件。只是抽离了JSONSchema
 interface Props {
@@ -30,6 +32,17 @@ const JsonParam = (props: Props) => {
       NumberPicker,
     },
   });
+  const getUnit = () =>
+    service.getUnit().then((resp) => {
+      const _data = resp.result.map((item: any) => ({
+        label: item.description,
+        value: item.id,
+      }));
+      // 缓存单位数据
+      Store.set('units', _data);
+      return _data;
+    });
+
   const schema: ISchema = {
     type: 'object',
     properties: {
@@ -101,15 +114,24 @@ const JsonParam = (props: Props) => {
                       'x-decorator': 'FormItem',
                       'x-component': 'Select',
                       'x-visible': false,
-                      enum: Store.get('units'), // 理论上首层已经就缓存了单位数据，此处可直接获取
-                      'x-reactions': {
-                        dependencies: ['..valueType.type'],
-                        fulfill: {
-                          state: {
-                            visible: "{{['int','float','long','double'].includes($deps[0])}}",
+                      'x-component-props': {
+                        showSearch: true,
+                        showArrow: true,
+                        filterOption: (input: string, option: any) =>
+                          option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
+                      },
+                      enum: Store.get('units'),
+                      'x-reactions': [
+                        {
+                          dependencies: ['..valueType.type'],
+                          fulfill: {
+                            state: {
+                              visible: "{{['int','float','long','double'].includes($deps[0])}}",
+                            },
                           },
                         },
-                      },
+                        '{{useAsyncDataSource(getUnit)}}',
+                      ],
                     },
                     format: {
                       title: '时间格式',
@@ -196,6 +218,6 @@ const JsonParam = (props: Props) => {
       },
     },
   };
-  return <SchemaField schema={schema} />;
+  return <SchemaField schema={schema} scope={{ useAsyncDataSource, getUnit }} />;
 };
 export default JsonParam;

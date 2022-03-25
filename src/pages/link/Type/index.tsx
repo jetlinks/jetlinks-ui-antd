@@ -57,7 +57,6 @@ const Network = () => {
       dataIndex: 'configuration',
       title: '详情',
       renderText: (text, record) => {
-        console.log(record, '详情');
         if (record.shareCluster) {
           const publicHost = record.configuration.publicHost;
           const publicPort = record.configuration.publicPort;
@@ -103,7 +102,6 @@ const Network = () => {
         defaultMessage: '操作',
       }),
       valueType: 'option',
-      align: 'center',
       width: 200,
       render: (text, record) => [
         <a

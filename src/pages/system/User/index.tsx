@@ -38,7 +38,6 @@ const User = observer(() => {
       dataIndex: 'name',
       // copyable: true,
       ellipsis: true,
-      align: 'center',
       // tip: intl.formatMessage({
       //   id: 'pages.system.name.tips',
       //   defaultMessage: '姓名过长会自动收缩',
@@ -62,7 +61,6 @@ const User = observer(() => {
       dataIndex: 'username',
       // copyable: true,
       ellipsis: true,
-      align: 'center',
       // tip: intl.formatMessage({
       //   id: 'pages.system.userName.tips',
       //   defaultMessage: '用户名过长会自动收缩',
@@ -84,7 +82,6 @@ const User = observer(() => {
       }),
       dataIndex: 'status',
       // filters: true,
-      align: 'center',
       // onFilter: true,
       valueType: 'select',
       valueEnum: {
@@ -113,7 +110,6 @@ const User = observer(() => {
         defaultMessage: '操作',
       }),
       valueType: 'option',
-      align: 'center',
       width: 200,
       render: (text, record) => [
         <a key="editable" onClick={() => edit(record)}>
@@ -185,11 +181,11 @@ const User = observer(() => {
           actionRef.current?.reset?.();
           setParam(data);
         }}
-        // onReset={() => {
-        //   // 重置分页及搜索参数
-        //   actionRef.current?.reset?.();
-        //   setParam({});
-        // }}
+        onReset={() => {
+          // 重置分页及搜索参数
+          actionRef.current?.reset?.();
+          setParam({});
+        }}
       />
       <ProTable<UserItem>
         actionRef={actionRef}

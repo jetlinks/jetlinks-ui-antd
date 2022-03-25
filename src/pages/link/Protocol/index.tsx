@@ -31,18 +31,15 @@ const Protocol = () => {
 
   const columns: ProColumns<ProtocolItem>[] = [
     {
-      dataIndex: 'index',
-      valueType: 'indexBorder',
-      width: 48,
-    },
-    {
       dataIndex: 'id',
       title: 'ID',
       sorter: true,
+      ellipsis: true,
       defaultSortOrder: 'ascend',
     },
     {
       dataIndex: 'name',
+      ellipsis: true,
       title: intl.formatMessage({
         id: 'pages.table.name',
         defaultMessage: '名称',
@@ -51,6 +48,7 @@ const Protocol = () => {
     {
       dataIndex: 'type',
       title: '类型',
+      ellipsis: true,
     },
     {
       dataIndex: 'state',
@@ -61,6 +59,7 @@ const Protocol = () => {
     },
     {
       dataIndex: 'description',
+      ellipsis: true,
       title: '说明',
     },
     {
@@ -69,7 +68,6 @@ const Protocol = () => {
         defaultMessage: '操作',
       }),
       valueType: 'option',
-      align: 'center',
       width: 200,
       render: (text, record) => [
         <a
@@ -117,7 +115,7 @@ const Protocol = () => {
               : '请先禁用该组件，再删除。'
           }
         >
-          <Button style={{ padding: 0 }} key="delete" type="link" disabled={record.state !== 1}>
+          <Button style={{ padding: 0 }} key="delete" type="link" disabled={record.state === 1}>
             <Popconfirm
               title={intl.formatMessage({
                 id: 'pages.data.option.remove.tips',
@@ -187,6 +185,24 @@ const Protocol = () => {
               {
                 validateId: true,
                 message: 'ID只能由数字、26个英文字母或者下划线组成',
+              },
+              {
+                triggerType: 'onBlur',
+                validator: (value: string) => {
+                  if (!value) return;
+                  return new Promise((resolve) => {
+                    service
+                      .validator(value)
+                      .then((resp) => {
+                        if (!!resp?.result) {
+                          resolve('ID已存在');
+                        } else {
+                          resolve('');
+                        }
+                      })
+                      .catch(() => '验证失败!');
+                  });
+                },
               },
             ],
           },

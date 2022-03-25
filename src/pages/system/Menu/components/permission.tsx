@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Checkbox } from 'antd';
 import './permission.less';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';

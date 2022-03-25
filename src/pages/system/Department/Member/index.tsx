@@ -119,7 +119,6 @@ const Member = observer(() => {
         defaultMessage: '操作',
       }),
       valueType: 'option',
-      align: 'center',
       width: 200,
       render: (text, record) => [
         <Popconfirm

@@ -16,32 +16,27 @@ const Log = () => {
   const [searchParams, setSearchParams] = useState<any>({});
 
   useEffect(() => {
-    service.getLogType().then((resp) => {
+    service.queryLogsType().then((resp) => {
       if (resp.status === 200) {
-        const list = (resp.result as { text: string; type: string }[]).reduce(
+        const list = (resp.result as { text: string; value: string }[]).reduce(
           (previousValue, currentValue) => {
-            previousValue[currentValue.type] = currentValue;
+            previousValue[currentValue.value] = currentValue;
             return previousValue;
           },
           {},
         );
-        setType(list);
+        setType({ ...list });
       }
     });
   }, []);
 
   const columns: ProColumns<LogItem>[] = [
     {
-      dataIndex: 'index',
-      valueType: 'indexBorder',
-      width: 48,
-    },
-    {
       title: '类型',
       dataIndex: 'type',
       renderText: (text) => text.text,
       valueType: 'select',
-      valueEnum: type,
+      valueEnum: { ...type },
     },
     {
       title: '时间',
@@ -49,7 +44,6 @@ const Log = () => {
       defaultSortOrder: 'descend',
       valueType: 'dateTime',
       sorter: true,
-      hideInSearch: true,
     },
     {
       title: '内容',

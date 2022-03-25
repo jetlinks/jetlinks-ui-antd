@@ -19,7 +19,11 @@
 }
 
 .title {
-  font-weight: 600;
+  width: '100%';
+  overflow: hidden;
+  font-weight: 800;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .desc {
@@ -35,12 +39,12 @@
 
 .cardContent {
   display: flex;
-  margin-top: 10px;
+  flex-direction: column;
+  margin-top: 5px;
   color: rgba(0, 0, 0, 0.55);
 
   .item {
     width: 100%;
-    margin: 5px 0;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;

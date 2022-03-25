@@ -1,12 +1,11 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import Service from '@/pages/device/Category/service';
-import type { ProColumns } from '@jetlinks/pro-table';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import ProTable from '@jetlinks/pro-table';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, message, Popconfirm, Tooltip } from 'antd';
 import { useRef, useState } from 'react';
-import type { ActionType } from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import ProTable from '@jetlinks/pro-table';
 import Save from '@/pages/device/Category/Save';
 import { model } from '@formily/reactive';
 import { observer } from '@formily/react';
@@ -41,7 +40,6 @@ const Category = observer(() => {
     {
       title: '分类排序',
       dataIndex: 'sortIndex',
-      align: 'center',
       // render: (text) => (
       //   <Space>{text}<EditOutlined onClick={() => {
 
@@ -55,7 +53,6 @@ const Category = observer(() => {
       }),
       dataIndex: 'description',
       width: 300,
-      align: 'center',
       ellipsis: true,
     },
     {
@@ -64,7 +61,7 @@ const Category = observer(() => {
         defaultMessage: '操作',
       }),
       valueType: 'option',
-      align: 'center',
+      width: 200,
       render: (text, record) => [
         <a
           key={'edit'}

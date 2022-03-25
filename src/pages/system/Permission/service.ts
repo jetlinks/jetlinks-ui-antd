@@ -6,11 +6,12 @@ import SystemConst from '@/utils/const';
 import { map } from 'rxjs/operators';
 
 class Service extends BaseService<PermissionItem> {
-  public getPermission = () =>
+  public getPermission = (data: any) =>
     defer(() =>
       from(
-        request(`/${SystemConst.API_BASE}/permission/_query/for-grant`, {
-          method: 'GET',
+        request(`/${SystemConst.API_BASE}/permission/_query/no-paging`, {
+          method: 'POST',
+          data,
         }),
       ),
     ).pipe(map((item) => item));

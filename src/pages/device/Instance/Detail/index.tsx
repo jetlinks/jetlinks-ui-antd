@@ -5,7 +5,7 @@ import { Badge, Button, Card, Descriptions, Divider, message, Tooltip } from 'an
 import { useEffect, useState } from 'react';
 import { observer } from '@formily/react';
 import Log from '@/pages/device/Instance/Detail/Log';
-import Alarm from '@/pages/device/components/Alarm';
+// import Alarm from '@/pages/device/components/Alarm';
 import Info from '@/pages/device/Instance/Detail/Info';
 import Functions from '@/pages/device/Instance/Detail/Functions';
 import Running from '@/pages/device/Instance/Detail/Running';
@@ -113,32 +113,33 @@ const InstanceDetail = observer(() => {
       tab: '子设备',
       component: <ChildDevice />,
     },
-    {
-      key: 'alarm',
-      tab: intl.formatMessage({
-        id: 'pages.device.instanceDetail.alarm',
-        defaultMessage: '告警设置',
-      }),
-      component: (
-        <Card>
-          <Alarm type="device" />
-        </Card>
-      ),
-    },
-    {
-      key: 'visualization',
-      tab: intl.formatMessage({
-        id: 'pages.device.instanceDetail.visualization',
-        defaultMessage: '可视化',
-      }),
-      component: <div>开发中...</div>,
-    },
+    // {
+    //   key: 'alarm',
+    //   tab: intl.formatMessage({
+    //     id: 'pages.device.instanceDetail.alarm',
+    //     defaultMessage: '告警设置',
+    //   }),
+    //   component: (
+    //     <Card>
+    //       <Alarm type="device" />
+    //     </Card>
+    //   ),
+    // },
+    // {
+    //   key: 'visualization',
+    //   tab: intl.formatMessage({
+    //     id: 'pages.device.instanceDetail.visualization',
+    //     defaultMessage: '可视化',
+    //   }),
+    //   component: <div>开发中...</div>,
+    // },
   ];
 
   useEffect(() => {
     if (!InstanceModel.current && !params.id) {
       history.goBack();
     } else {
+      setTab('detail');
       getDetail(InstanceModel.current?.id || params.id);
     }
     return () => {
@@ -151,9 +152,10 @@ const InstanceDetail = observer(() => {
       onBack={history.goBack}
       onTabChange={setTab}
       tabList={list}
+      tabActiveKey={tab}
       content={
         <Descriptions size="small" column={4}>
-          <Descriptions.Item label={'ID'}>{InstanceModel.detail.id}</Descriptions.Item>
+          <Descriptions.Item label={'ID'}>{InstanceModel.detail?.id}</Descriptions.Item>
           <Descriptions.Item label={'所属产品'}>
             <Button
               type={'link'}
@@ -161,21 +163,21 @@ const InstanceDetail = observer(() => {
               onClick={() => {
                 const url = getMenuPathByParams(
                   MENUS_CODE['device/Product/Detail'],
-                  InstanceModel.detail.productId,
+                  InstanceModel.detail?.productId,
                 );
                 history.replace(url);
               }}
             >
-              {InstanceModel.detail.productName}
+              {InstanceModel.detail?.productName}
             </Button>
           </Descriptions.Item>
         </Descriptions>
       }
       title={
         <>
-          {InstanceModel.detail.name}
+          {InstanceModel.detail?.name}
           <Divider type="vertical" />
-          {deviceStatus.get(InstanceModel.detail.state?.value)}
+          {deviceStatus.get(InstanceModel.detail?.state?.value)}
         </>
       }
       // extra={[

@@ -233,6 +233,12 @@ const Import = (props: Props) => {
             'x-decorator': 'FormItem',
             'x-component': 'Select',
             enum: [...productList],
+            'x-component-props': {
+              showSearch: true,
+              showArrow: true,
+              filterOption: (input: string, option: any) =>
+                option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
+            },
           },
           fileType: {
             title: '文件格式',
