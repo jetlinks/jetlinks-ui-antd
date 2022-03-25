@@ -215,7 +215,20 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
 export function patchRoutes(routes: any) {
   if (extraRoutes && extraRoutes.length) {
     const basePath = routes.routes.find((_route: any) => _route.path === '/')!;
-    basePath.routes = [...basePath.routes, ...getRoutes(extraRoutes)];
+
+    const _routes = getRoutes(extraRoutes);
+    const baseRedirect = {
+      path: '/',
+      routes: [
+        ..._routes,
+        {
+          path: '/',
+          redirect: _routes[0].path,
+        },
+      ],
+    };
+    basePath.routes = [...basePath.routes, baseRedirect];
+    console.log(basePath.routes);
   }
 }
 

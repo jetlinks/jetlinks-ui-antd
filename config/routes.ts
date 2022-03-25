@@ -116,6 +116,6 @@
   // },
   // {
   //   path: '/',
-  //   redirect: '/system',
+  //   redirect: '/system4',
   // },
 ];

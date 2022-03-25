@@ -225,7 +225,6 @@ export default (props: PermissionType) => {
    */
   const initialState = (data: PermissionDataType[]) => {
     const _list = data.map((item) => {
-      console.log(item.name, item.actions);
       const propsPermission =
         props.value && props.value.length
           ? props.value.find((p) => p.permission === item.id)

@@ -130,7 +130,7 @@ export default observer(() => {
         <a
           key="view"
           onClick={() => {
-            pageJump(record.id);
+            pageJump(record.id, record.parentId || '');
           }}
         >
           <Tooltip
