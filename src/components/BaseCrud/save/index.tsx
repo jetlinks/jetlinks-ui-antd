@@ -107,7 +107,6 @@ const Save = <T extends Record<string, any>>(props: Props<T>) => {
 
   const save = async () => {
     const values: T = await (customForm || form).submit();
-    console.log(form.values, 'value', values);
     // 特殊处理通知模版
 
     if (service?.getUri().includes('/notifier/template')) {

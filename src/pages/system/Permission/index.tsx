@@ -20,6 +20,7 @@ import { observer } from '@formily/react';
 import SystemConst from '@/utils/const';
 import Token from '@/utils/token';
 import { downloadObject } from '@/utils/util';
+import { onFormSubmitStart } from '@formily/core';
 
 export const service = new Service('permission');
 
@@ -288,33 +289,33 @@ const Permission: React.FC = observer(() => {
           },
         ],
       },
-      status: {
-        title: '状态',
-        'x-decorator': 'FormItem',
-        'x-component': 'Switch',
-        required: true,
-        default: 1,
-        enum: [
-          { label: '1', value: 1 },
-          { label: '0', value: 0 },
-        ],
-      },
-      'properties.assetTypes': {
-        type: 'string',
-        title: '关联资产',
-        'x-decorator': 'FormItem',
-        'x-component': 'Select',
-        name: 'properties.assetTypes',
-        required: false,
-        enum: PermissionModel.assetsTypesList,
-        'x-decorator-props': {
-          tooltip: <div>关联资产为角色权限中的权限分配提供数据支持</div>,
-        },
-        'x-component-props': {
-          showSearch: true,
-          mode: 'multiple',
-        },
-      },
+      // status: {
+      //   title: '状态',
+      //   'x-decorator': 'FormItem',
+      //   'x-component': 'Switch',
+      //   required: true,
+      //   default: 1,
+      //   enum: [
+      //     { label: '1', value: 1 },
+      //     { label: '0', value: 0 },
+      //   ],
+      // },
+      // 'properties.assetTypes': {
+      //   type: 'string',
+      //   title: '关联资产',
+      //   'x-decorator': 'FormItem',
+      //   'x-component': 'Select',
+      //   name: 'properties.assetTypes',
+      //   required: false,
+      //   enum: PermissionModel.assetsTypesList,
+      //   'x-decorator-props': {
+      //     tooltip: <div>关联资产为角色权限中的权限分配提供数据支持</div>,
+      //   },
+      //   'x-component-props': {
+      //     showSearch: true,
+      //     mode: 'multiple',
+      //   },
+      // },
       actions: {
         type: 'array',
         'x-decorator': 'FormItem',
@@ -366,6 +367,7 @@ const Permission: React.FC = observer(() => {
               properties: {
                 name: {
                   type: 'string',
+
                   'x-decorator': 'Editable',
                   'x-component': 'Input',
                 },
@@ -449,6 +451,13 @@ const Permission: React.FC = observer(() => {
         }}
         search={false}
         menu={menu}
+        formEffect={() => {
+          onFormSubmitStart((form) => {
+            form.values.actions = form.values.actions?.filter(
+              (item: any) => Object.keys(item).length > 0,
+            );
+          });
+        }}
         schema={schema}
       />
     </PageContainer>
