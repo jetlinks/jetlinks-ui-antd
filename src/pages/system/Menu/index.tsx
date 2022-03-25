@@ -124,7 +124,6 @@ export default observer(() => {
         defaultMessage: '操作',
       }),
       valueType: 'option',
-      align: 'center',
       width: 240,
       render: (_, record) => [
         <a

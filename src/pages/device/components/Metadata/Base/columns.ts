@@ -2,11 +2,11 @@ import type { ProColumns } from '@jetlinks/pro-table';
 import type { MetadataItem } from '@/pages/device/Product/typings';
 
 const BaseColumns: ProColumns<MetadataItem>[] = [
-  {
-    dataIndex: 'index',
-    valueType: 'indexBorder',
-    width: 48,
-  },
+  // {
+  //   dataIndex: 'index',
+  //   valueType: 'indexBorder',
+  //   width: 48,
+  // },
   {
     title: '标识',
     dataIndex: 'id',

@@ -79,7 +79,6 @@ const Role: React.FC = observer(() => {
         defaultMessage: '操作',
       }),
       valueType: 'option',
-      align: 'center',
       width: 200,
       render: (text, record) => [
         <Link to={`/system/role/edit/${record.id}`} key="link">

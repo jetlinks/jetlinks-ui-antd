@@ -110,7 +110,6 @@ const Permission: React.FC = observer(() => {
       dataIndex: 'id',
       // copyable: true,
       ellipsis: true,
-      align: 'center',
       // sorter: true,
       defaultSortOrder: 'ascend',
     },
@@ -122,7 +121,6 @@ const Permission: React.FC = observer(() => {
       dataIndex: 'name',
       // copyable: true,
       ellipsis: true,
-      align: 'center',
     },
     {
       title: intl.formatMessage({
@@ -131,7 +129,6 @@ const Permission: React.FC = observer(() => {
       }),
       dataIndex: 'status',
       // filters: true,
-      align: 'center',
       valueType: 'select',
       valueEnum: {
         1: {
@@ -159,7 +156,6 @@ const Permission: React.FC = observer(() => {
         defaultMessage: '操作',
       }),
       valueType: 'option',
-      align: 'center',
       width: 200,
       render: (text, record) => [
         <a

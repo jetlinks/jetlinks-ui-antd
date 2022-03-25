@@ -54,7 +54,6 @@ const Access = () => {
       dataIndex: 'group',
       key: 'group',
       ellipsis: true,
-      align: 'center',
       render: (text: any) => (
         <Tooltip placement="top" title={text}>
           {text}
@@ -66,14 +65,12 @@ const Access = () => {
       dataIndex: 'qos',
       key: 'qos',
       ellipsis: true,
-      align: 'center',
     },
     {
       title: '地址',
       dataIndex: 'address',
       key: 'address',
       ellipsis: true,
-      align: 'center',
       render: (text: any) => (
         <Tooltip placement="top" title={text}>
           {text}
@@ -85,7 +82,6 @@ const Access = () => {
       dataIndex: 'topic',
       key: 'topic',
       ellipsis: true,
-      align: 'center',
       render: (text: any) => (
         <Tooltip placement="top" title={text}>
           {text}
@@ -97,7 +93,6 @@ const Access = () => {
       dataIndex: 'description',
       key: 'description',
       ellipsis: true,
-      align: 'center',
       render: (text: any) => (
         <Tooltip placement="top" title={text}>
           {text}
@@ -112,7 +107,6 @@ const Access = () => {
       dataIndex: 'address',
       key: 'address',
       ellipsis: true,
-      align: 'center',
       render: (text: any) => (
         <Tooltip placement="top" title={text}>
           {text}
@@ -124,7 +118,6 @@ const Access = () => {
       dataIndex: 'group',
       key: 'group',
       ellipsis: true,
-      align: 'center',
       render: (text: any) => (
         <Tooltip placement="top" title={text}>
           {text}
@@ -136,7 +129,6 @@ const Access = () => {
       dataIndex: 'example',
       key: 'example',
       ellipsis: true,
-      align: 'center',
       render: (text: any) => (
         <Tooltip placement="top" title={text}>
           {text}
@@ -148,7 +140,6 @@ const Access = () => {
       dataIndex: 'description',
       key: 'description',
       ellipsis: true,
-      align: 'center',
       render: (text: any) => (
         <Tooltip placement="top" title={text}>
           {text}
