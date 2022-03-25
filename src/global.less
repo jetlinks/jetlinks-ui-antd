@@ -65,3 +65,26 @@ ol {
   display: flex;
   justify-content: center;
 }
+
+.ant-form-item-required {
+  &::before {
+    position: absolute;
+    right: -12px;
+  }
+}
+
+.ant-formily-item-label-content {
+  position: relative;
+  overflow: unset;
+
+  .ant-formily-item-asterisk {
+    float: right;
+    margin-right: 0;
+    //position: absolute;
+    //right: -8px;
+  }
+}
+
+.ant-formily-item-colon {
+  display: none;
+}

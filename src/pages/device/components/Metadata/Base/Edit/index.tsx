@@ -777,7 +777,6 @@ const Edit = observer((props: Props) => {
       }
     };
 
-    console.log(typeMap.get(props.type), 'log');
     const _data = updateMetadata(type, [params], typeMap.get(props.type), updateDB);
     // console.log(params, JSON.parse(_data.metadata));
     // if (props.type === 'product') {

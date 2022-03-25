@@ -10,7 +10,7 @@ import { Form, FormItem, Input, Password, Submit } from '@formily/antd';
 import { catchError, filter, mergeMap } from 'rxjs/operators';
 import * as ICONS from '@ant-design/icons';
 import { useModel } from '@@/plugin-model/useModel';
-import SystemConst from '@/utils/const';
+// import SystemConst from '@/utils/const';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { SelectLang } from '@@/plugin-locale/SelectLang';
 import Footer from '@/components/Footer';
@@ -166,7 +166,7 @@ const Login: React.FC = () => {
               <div className={styles.header}>
                 <Link to="/">
                   <img alt="logo" className={styles.logo} src="/logo.svg" />
-                  <span className={styles.title}>{SystemConst.SYSTEM_NAME}</span>
+                  {/*<span className={styles.title}>{SystemConst.SYSTEM_NAME}</span>*/}
                 </Link>
               </div>
               <div className={styles.desc}>

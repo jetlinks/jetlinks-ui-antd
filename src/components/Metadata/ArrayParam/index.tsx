@@ -1,5 +1,5 @@
 import { createSchemaField } from '@formily/react';
-import { FormLayout, Editable, Select, FormItem, Input, NumberPicker } from '@formily/antd';
+import { Editable, FormItem, FormLayout, Input, NumberPicker, Select } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
 import './index.less';
 import { DataTypeList, DateTypeList, FileTypeList } from '@/pages/device/data';
@@ -67,6 +67,12 @@ const ArrayParam = () => {
             'x-decorator': 'FormItem',
             'x-component': 'Select',
             'x-visible': false,
+            'x-component-props': {
+              showSearch: true,
+              showArrow: true,
+              filterOption: (input: string, option: any) =>
+                option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
+            },
             enum: Store.get('units'),
             'x-reactions': {
               dependencies: ['.type'],
