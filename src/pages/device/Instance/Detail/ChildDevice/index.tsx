@@ -29,11 +29,6 @@ const ChildDevice = () => {
 
   const columns: ProColumns<LogItem>[] = [
     {
-      dataIndex: 'index',
-      valueType: 'indexBorder',
-      width: 48,
-    },
-    {
       title: 'ID',
       dataIndex: 'id',
     },
@@ -184,6 +179,7 @@ const ChildDevice = () => {
         data={{}}
         onCancel={() => {
           setVisible(false);
+          actionRef.current?.reload?.();
         }}
       />
     </Card>

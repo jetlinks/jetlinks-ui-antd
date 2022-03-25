@@ -130,7 +130,7 @@ class Service extends BaseService<DeviceInstance> {
       data: params,
     });
 
-  public getLogType = () =>
+  public queryLogsType = () =>
     request(`/${SystemConst.API_BASE}/dictionary/device-log-type/items`, {
       method: 'GET',
     });

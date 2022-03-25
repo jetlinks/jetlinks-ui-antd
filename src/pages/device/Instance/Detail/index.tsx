@@ -139,6 +139,7 @@ const InstanceDetail = observer(() => {
     if (!InstanceModel.current && !params.id) {
       history.goBack();
     } else {
+      setTab('detail');
       getDetail(InstanceModel.current?.id || params.id);
     }
     return () => {
@@ -151,9 +152,10 @@ const InstanceDetail = observer(() => {
       onBack={history.goBack}
       onTabChange={setTab}
       tabList={list}
+      tabActiveKey={tab}
       content={
         <Descriptions size="small" column={4}>
-          <Descriptions.Item label={'ID'}>{InstanceModel.detail.id}</Descriptions.Item>
+          <Descriptions.Item label={'ID'}>{InstanceModel.detail?.id}</Descriptions.Item>
           <Descriptions.Item label={'所属产品'}>
             <Button
               type={'link'}
@@ -161,21 +163,21 @@ const InstanceDetail = observer(() => {
               onClick={() => {
                 const url = getMenuPathByParams(
                   MENUS_CODE['device/Product/Detail'],
-                  InstanceModel.detail.productId,
+                  InstanceModel.detail?.productId,
                 );
                 history.replace(url);
               }}
             >
-              {InstanceModel.detail.productName}
+              {InstanceModel.detail?.productName}
             </Button>
           </Descriptions.Item>
         </Descriptions>
       }
       title={
         <>
-          {InstanceModel.detail.name}
+          {InstanceModel.detail?.name}
           <Divider type="vertical" />
-          {deviceStatus.get(InstanceModel.detail.state?.value)}
+          {deviceStatus.get(InstanceModel.detail?.state?.value)}
         </>
       }
       // extra={[

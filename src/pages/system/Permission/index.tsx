@@ -1,55 +1,38 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import React, { useEffect, useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   CloseCircleOutlined,
   DeleteOutlined,
   EditOutlined,
   PlayCircleOutlined,
+  PlusOutlined,
 } from '@ant-design/icons';
-import { Badge, Button, Menu, message, Popconfirm, Tooltip, Upload } from 'antd';
+import { Badge, Button, Dropdown, Menu, message, Popconfirm, Tooltip, Upload } from 'antd';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import BaseCrud from '@/components/BaseCrud';
-import { CurdModel } from '@/components/BaseCrud/model';
 import type { PermissionItem } from '@/pages/system/Permission/typings';
-import { FormTab } from '@formily/antd';
-import type { ISchema } from '@formily/json-schema';
 import Service from '@/pages/system/Permission/service';
-import { model } from '@formily/reactive';
 import { observer } from '@formily/react';
+import SearchComponent from '@/components/SearchComponent';
+import ProTable from '@jetlinks/pro-table';
+import Save from './Save';
 import SystemConst from '@/utils/const';
-import Token from '@/utils/token';
 import { downloadObject } from '@/utils/util';
-import { onFormSubmitStart } from '@formily/core';
+import Token from '@/utils/token';
 
 export const service = new Service('permission');
-
-const defaultAction = [
-  { action: 'query', name: '查询', describe: '查询' },
-  { action: 'save', name: '保存', describe: '保存' },
-  { action: 'delete', name: '删除', describe: '删除' },
-];
-
-const PermissionModel = model<{
-  assetsTypesList: { label: string; value: string }[];
-}>({
-  assetsTypesList: [],
-});
 const Permission: React.FC = observer(() => {
-  useEffect(() => {
-    service.getAssetTypes().subscribe((resp) => {
-      if (resp.status === 200) {
-        PermissionModel.assetsTypesList = resp.result.map((item: { name: string; id: string }) => {
-          return {
-            label: item.name,
-            value: item.id,
-          };
-        });
-      }
-    });
-  }, []);
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
+
+  const [param, setParam] = useState({});
+  const [model, setMode] = useState<'add' | 'edit' | 'query'>('query');
+  const [current, setCurrent] = useState<Partial<PermissionItem>>({});
+
+  const edit = async (record: PermissionItem) => {
+    setMode('edit');
+    setCurrent(record);
+  };
 
   const menu = (
     <Menu>
@@ -86,7 +69,7 @@ const Permission: React.FC = observer(() => {
         <Popconfirm
           title={'确认导出？'}
           onConfirm={() => {
-            service.getPermission().subscribe((resp) => {
+            service.getPermission({ ...param, paging: false }).subscribe((resp) => {
               if (resp.status === 200) {
                 downloadObject(resp.result, '权限数据');
                 message.success('导出成功');
@@ -162,7 +145,7 @@ const Permission: React.FC = observer(() => {
         <a
           key="editable"
           onClick={() => {
-            CurdModel.update(record);
+            edit(record);
           }}
         >
           <Tooltip
@@ -241,224 +224,57 @@ const Permission: React.FC = observer(() => {
     },
   ];
 
-  const formTab = FormTab.createFormTab!();
-
-  const schema: ISchema = {
-    type: 'object',
-    properties: {
-      id: {
-        title: intl.formatMessage({
-          id: 'pages.system.permission.id',
-          defaultMessage: '标识(ID)',
-        }),
-        type: 'string',
-        'x-decorator': 'FormItem',
-        'x-component': 'Input',
-        name: 'id',
-        'x-decorator-props': {
-          tooltip: <div>标识ID需与代码中的标识ID一致</div>,
-        },
-        'x-validator': [
-          {
-            max: 64,
-            message: '最多可输入64个字符',
-          },
-          {
-            required: true,
-            message: '请输入标识(ID)',
-          },
-        ],
-      },
-      name: {
-        title: intl.formatMessage({
-          id: 'pages.table.name',
-          defaultMessage: '名称',
-        }),
-        type: 'string',
-        'x-decorator': 'FormItem',
-        'x-component': 'Input',
-        name: 'name',
-        'x-validator': [
-          {
-            max: 64,
-            message: '最多可输入64个字符',
-          },
-          {
-            required: true,
-            message: '请输入名称',
-          },
-        ],
-      },
-      // status: {
-      //   title: '状态',
-      //   'x-decorator': 'FormItem',
-      //   'x-component': 'Switch',
-      //   required: true,
-      //   default: 1,
-      //   enum: [
-      //     { label: '1', value: 1 },
-      //     { label: '0', value: 0 },
-      //   ],
-      // },
-      // 'properties.assetTypes': {
-      //   type: 'string',
-      //   title: '关联资产',
-      //   'x-decorator': 'FormItem',
-      //   'x-component': 'Select',
-      //   name: 'properties.assetTypes',
-      //   required: false,
-      //   enum: PermissionModel.assetsTypesList,
-      //   'x-decorator-props': {
-      //     tooltip: <div>关联资产为角色权限中的权限分配提供数据支持</div>,
-      //   },
-      //   'x-component-props': {
-      //     showSearch: true,
-      //     mode: 'multiple',
-      //   },
-      // },
-      actions: {
-        type: 'array',
-        'x-decorator': 'FormItem',
-        'x-component': 'ArrayTable',
-        default: defaultAction,
-        title: '操作类型',
-        items: {
-          type: 'object',
-          properties: {
-            column1: {
-              type: 'void',
-              'x-component': 'ArrayTable.Column',
-              'x-component-props': { width: 80, title: '-', align: 'center' },
-              properties: {
-                index: {
-                  type: 'void',
-                  'x-component': 'ArrayTable.Index',
-                },
-              },
-            },
-            column2: {
-              type: 'void',
-              'x-component': 'ArrayTable.Column',
-              'x-component-props': {
-                width: 200,
-                title: intl.formatMessage({
-                  id: 'pages.system.permission.addConfigurationType',
-                  defaultMessage: '操作类型',
-                }),
-              },
-              properties: {
-                action: {
-                  type: 'string',
-                  'x-decorator': 'Editable',
-                  'x-component': 'Input',
-                },
-              },
-            },
-            column3: {
-              type: 'void',
-              'x-component': 'ArrayTable.Column',
-              'x-component-props': {
-                width: 200,
-                title: intl.formatMessage({
-                  id: 'pages.table.name',
-                  defaultMessage: '名称',
-                }),
-              },
-              properties: {
-                name: {
-                  type: 'string',
-
-                  'x-decorator': 'Editable',
-                  'x-component': 'Input',
-                },
-              },
-            },
-            column4: {
-              type: 'void',
-              'x-component': 'ArrayTable.Column',
-              'x-component-props': {
-                width: 200,
-                title: intl.formatMessage({
-                  id: 'pages.table.describe',
-                  defaultMessage: '描述',
-                }),
-              },
-              properties: {
-                describe: {
-                  type: 'string',
-                  'x-decorator': 'Editable',
-                  'x-component': 'Input',
-                },
-              },
-            },
-            column5: {
-              type: 'void',
-              'x-component': 'ArrayTable.Column',
-              'x-component-props': {
-                title: intl.formatMessage({
-                  id: 'pages.data.option',
-                  defaultMessage: '操作',
-                }),
-                dataIndex: 'operations',
-                width: 200,
-                fixed: 'right',
-              },
-              properties: {
-                item: {
-                  type: 'void',
-                  'x-component': 'FormItem',
-                  properties: {
-                    remove: {
-                      type: 'void',
-                      'x-component': 'ArrayTable.Remove',
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-        properties: {
-          add: {
-            type: 'void',
-            'x-component': 'ArrayTable.Addition',
-            title: intl.formatMessage({
-              id: 'pages.system.permission.add',
-              defaultMessage: '添加条目',
-            }),
-          },
-        },
-      },
-    },
-  };
   return (
     <PageContainer>
-      <BaseCrud<PermissionItem>
-        moduleName="permission"
+      <SearchComponent<PermissionItem>
+        field={columns}
+        target="permission"
+        onSearch={(data) => {
+          // 重置分页数据
+          actionRef.current?.reset?.();
+          setParam(data);
+        }}
+        onReset={() => {
+          // 重置分页及搜索参数
+          actionRef.current?.reset?.();
+          setParam({});
+        }}
+      />
+      <ProTable<PermissionItem>
         actionRef={actionRef}
+        params={param}
         columns={columns}
-        service={service}
-        defaultParams={{ sorts: [{ name: 'id', order: 'desc' }] }}
-        title={intl.formatMessage({
-          id: 'pages.system.permission',
-          defaultMessage: '',
-        })}
-        schemaConfig={{
-          scope: { formTab },
-        }}
-        modelConfig={{
-          width: 1000,
-        }}
         search={false}
-        menu={menu}
-        formEffect={() => {
-          onFormSubmitStart((form) => {
-            form.values.actions = form.values.actions?.filter(
-              (item: any) => Object.keys(item).length > 0,
-            );
-          });
+        headerTitle={'权限列表'}
+        request={async (params) =>
+          service.query({ ...params, sorts: [{ name: 'id', order: 'asc' }] })
+        }
+        toolBarRender={() => [
+          <Button
+            onClick={() => {
+              setMode('add');
+            }}
+            key="button"
+            icon={<PlusOutlined />}
+            type="primary"
+          >
+            {intl.formatMessage({
+              id: 'pages.data.option.add',
+              defaultMessage: '新增',
+            })}
+          </Button>,
+          <Dropdown key={'more'} overlay={menu} placement="bottom">
+            <Button>批量操作</Button>
+          </Dropdown>,
+        ]}
+      />
+      <Save
+        model={model}
+        close={() => {
+          setMode('query');
+          actionRef.current?.reload();
         }}
-        schema={schema}
+        data={current}
       />
     </PageContainer>
   );
