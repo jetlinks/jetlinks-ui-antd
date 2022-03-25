@@ -62,6 +62,10 @@ const Export = (props: Props) => {
             enum: [...productList],
             'x-component-props': {
               allowClear: true,
+              showSearch: true,
+              showArrow: true,
+              filterOption: (input: string, option: any) =>
+                option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
             },
           },
           fileType: {

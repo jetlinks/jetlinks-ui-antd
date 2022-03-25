@@ -37,7 +37,15 @@ const Config = () => {
     initialValues: InstanceModel.detail?.configuration,
   });
 
-  const id = InstanceModel.detail?.id;
+  const id = InstanceModel.detail?.id || params?.id;
+
+  const getDetail = () => {
+    service.detail(id || '').then((resp) => {
+      if (resp.status === 200) {
+        InstanceModel.detail = { id, ...resp.result };
+      }
+    });
+  };
 
   useEffect(() => {
     if (id) {
@@ -115,10 +123,7 @@ const Config = () => {
                           configuration: { ...values },
                         });
                         if (resp.status === 200) {
-                          InstanceModel.detail = {
-                            ...InstanceModel.detail,
-                            configuration: { ...values },
-                          };
+                          getDetail();
                         }
                       }
                       setState(!state);
@@ -133,6 +138,7 @@ const Config = () => {
                         const resp = await service.deployDevice(id || '');
                         if (resp.status === 200) {
                           message.success('操作成功');
+                          getDetail();
                         }
                       }}
                     >
@@ -149,6 +155,7 @@ const Config = () => {
                         const resp = await service.configurationReset(id || '');
                         if (resp.status === 200) {
                           message.success('恢复默认配置成功');
+                          getDetail();
                         }
                       }}
                     >

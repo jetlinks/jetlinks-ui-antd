@@ -56,11 +56,16 @@ const ProductDetail = observer(() => {
     service.getProductDetail(param?.id).subscribe((data) => {
       if (data.metadata) {
         const metadata: DeviceMetadata = JSON.parse(data.metadata);
-        productModel.current = data;
         MetadataAction.insert(metadata);
       }
+      service.instanceCount(encodeQuery({ terms: { productId: param?.id } })).then((res: any) => {
+        if (res.status === 200) {
+          productModel.current = { ...data, count: res.result };
+        }
+      });
     });
   };
+
   useEffect(() => {
     const subscription = Store.subscribe(SystemConst.GET_METADATA, () => {
       MetadataAction.clean();
@@ -73,11 +78,6 @@ const ProductDetail = observer(() => {
       history.goBack();
     } else {
       initMetadata();
-      service.instanceCount(encodeQuery({ terms: { productId: param?.id } })).then((res: any) => {
-        if (res.status === 200) {
-          productModel.current!.count = res.result;
-        }
-      });
     }
     return () => {
       MetadataAction.clean();

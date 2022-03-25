@@ -24,11 +24,6 @@ const BindChildDevice = (props: Props) => {
 
   const columns: ProColumns<DeviceInstance>[] = [
     {
-      dataIndex: 'index',
-      valueType: 'indexBorder',
-      width: 48,
-    },
-    {
       title: 'ID',
       dataIndex: 'id',
     },

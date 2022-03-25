@@ -139,6 +139,16 @@ const Role: React.FC = observer(() => {
         'x-decorator-props': {},
         name: 'name',
         required: true,
+        'x-validator': [
+          {
+            max: 64,
+            message: '最多可输入64个字符',
+          },
+          {
+            required: true,
+            message: '请输入名称',
+          },
+        ],
       },
       description: {
         type: 'string',
@@ -154,6 +164,12 @@ const Role: React.FC = observer(() => {
         'x-decorator-props': {},
         name: 'password',
         required: false,
+        'x-validator': [
+          {
+            max: 200,
+            message: '最多可输入200个字符',
+          },
+        ],
       },
     },
   };
