@@ -30,11 +30,6 @@ const UserManage = () => {
   };
   const columns: ProColumns<UserItem>[] = [
     {
-      dataIndex: 'index',
-      valueType: 'indexBorder',
-      width: 48,
-    },
-    {
       title: '姓名',
       dataIndex: 'name',
       ellipsis: true,

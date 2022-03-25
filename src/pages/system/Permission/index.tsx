@@ -438,7 +438,7 @@ const Permission: React.FC = observer(() => {
         actionRef={actionRef}
         columns={columns}
         service={service}
-        defaultParams={{ sorts: [{ name: 'modifyTime', order: 'desc' }] }}
+        defaultParams={{ sorts: [{ name: 'id', order: 'desc' }] }}
         title={intl.formatMessage({
           id: 'pages.system.permission',
           defaultMessage: '',
