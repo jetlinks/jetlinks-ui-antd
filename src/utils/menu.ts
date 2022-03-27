@@ -100,8 +100,6 @@ export const MENUS_CODE = {
   'visualization/Screen': 'visualization/Screen',
 };
 
-const isRedirect = false;
-
 /**
  * 根据url获取映射的组件
  * @param files
@@ -134,59 +132,57 @@ export const flatRoute = (routes: MenuItem[]): MenuItem[] => {
  * @param extraRoutes 后端菜单数据
  * @param level 路由层级
  */
-const getRoutes = (extraRoutes: MenuItem[], level: number = 1) => {
-  const allComponents = findComponents(require.context('@/pages', true, /index(\.tsx)$/));
-  const Menus: IRouteProps[] = [];
-  extraRoutes.forEach((route) => {
+
+const allComponents = findComponents(require.context('@/pages', true, /index(\.tsx)$/));
+const getRoutes = (extraRoutes: MenuItem[], level = 1): IRouteProps[] => {
+  return extraRoutes.map((route) => {
     const component = allComponents[route.code] || null;
     const _route: IRouteProps = {
       key: route.url,
       name: route.name,
       path: route.url,
     };
-    if (level === 1 && route.children) {
-      _route.children = [
-        ...getRoutes(flatRoute(route.children || []), level + 1),
-        {
-          path: _route.path,
-          redirect: route.children[0].url,
-        },
-      ];
-      Menus.push(_route);
+
+    if (route.children && route.children.length) {
+      const flatRoutes = getRoutes(flatRoute(route.children || []), level + 1);
+      const redirect = flatRoutes.filter((r) => r.component)[0]?.path;
+
+      _route.children = redirect
+        ? [
+            ...flatRoutes,
+            {
+              path: _route.path,
+              redirect: redirect,
+            },
+          ]
+        : flatRoutes;
     }
+
     if (component) {
       _route.component = component;
-      _route.exact = true;
-      Menus.push(_route);
     }
-  });
 
-  if (level === 1 && !isRedirect && extraRoutes.length) {
-    Menus.push({
-      path: '/',
-      redirect: extraRoutes[0].url,
-    });
-  }
-  return Menus;
+    if (level !== 1) {
+      _route.exact = true;
+    }
+
+    return _route;
+  });
 };
 
-export const getMenus = (extraRoutes: MenuItem[], level: number = 1): any[] => {
+export const getMenus = (extraRoutes: IRouteProps[], level: number = 1): any[] => {
   return extraRoutes.map((route) => {
     const children =
       route.children && route.children.length ? getMenus(route.children, level + 1) : [];
-    return {
+    const _route = {
       key: route.url,
       name: route.name,
       path: route.url,
-      hideChildrenInMenu: level === 2,
-      exact: true,
-      state: {
-        params: {
-          id: 123,
-        },
-      },
+      icon: route.icon,
+      exact: level !== 1 ? true : false,
       children: children,
     };
+    return _route;
   });
 };
 
