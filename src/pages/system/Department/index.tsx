@@ -20,6 +20,7 @@ import { observer } from '@formily/react';
 import { model } from '@formily/reactive';
 import Save from './save';
 import SearchComponent from '@/components/SearchComponent';
+import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 
 export const service = new Service('organization');
 
@@ -115,7 +116,13 @@ export default observer(() => {
             <PlusCircleOutlined />
           </Tooltip>
         </a>,
-        <Link key="assets" to={`/system/department/${record.id}/assets`}>
+        <Link
+          key="assets"
+          to={`${getMenuPathByParams(
+            MENUS_CODE['system/Department/Detail'],
+            record.id,
+          )}?type=assets`}
+        >
           <Tooltip
             title={intl.formatMessage({
               id: 'pages.data.option.assets',
@@ -125,7 +132,10 @@ export default observer(() => {
             <MedicineBoxOutlined />
           </Tooltip>
         </Link>,
-        <Link key="user" to={`/system/department/${record.id}/user`}>
+        <Link
+          key="user"
+          to={`${getMenuPathByParams(MENUS_CODE['system/Department/Detail'], record.id)}?type=user`}
+        >
           <Tooltip
             title={intl.formatMessage({
               id: 'pages.system.department.user',
