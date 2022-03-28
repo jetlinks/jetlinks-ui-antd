@@ -1,5 +1,4 @@
 // 部门-用户管理
-import { PageContainer } from '@ant-design/pro-layout';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
@@ -151,7 +150,7 @@ const Member = observer(() => {
   };
 
   return (
-    <PageContainer>
+    <>
       <Bind
         visible={MemberModel.bind}
         onCancel={closeModal}
@@ -216,7 +215,7 @@ const Member = observer(() => {
           </Popconfirm>,
         ]}
       />
-    </PageContainer>
+    </>
   );
 });
 

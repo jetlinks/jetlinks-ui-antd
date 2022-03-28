@@ -1,5 +1,4 @@
 // 部门-资产分配
-import { PageContainer } from '@ant-design/pro-layout';
 import { Tabs } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import ProductCategory from './productCategory';
@@ -32,23 +31,21 @@ const Assets = () => {
   const intl = useIntl();
 
   return (
-    <PageContainer>
-      <div style={{ background: '#fff', padding: 12 }}>
-        <Tabs tabPosition="left" defaultActiveKey="ProductCategory">
-          {TabsArray.map((item) => (
-            <Tabs.TabPane
-              tab={intl.formatMessage({
-                id: item.intlTitle,
-                defaultMessage: item.defaultMessage,
-              })}
-              key={item.key}
-            >
-              <item.components />
-            </Tabs.TabPane>
-          ))}
-        </Tabs>
-      </div>
-    </PageContainer>
+    <div style={{ background: '#fff', padding: 12 }}>
+      <Tabs tabPosition="left" defaultActiveKey="ProductCategory">
+        {TabsArray.map((item) => (
+          <Tabs.TabPane
+            tab={intl.formatMessage({
+              id: item.intlTitle,
+              defaultMessage: item.defaultMessage,
+            })}
+            key={item.key}
+          >
+            <item.components />
+          </Tabs.TabPane>
+        ))}
+      </Tabs>
+    </div>
   );
 };
 
