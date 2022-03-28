@@ -267,6 +267,7 @@ const Protocol = () => {
                   dependencies: ['..type'],
                   fulfill: {
                     state: {
+                      value: '',
                       visible: '{{["jar","local"].includes($deps[0])}}',
                       componentType: '{{$deps[0]==="jar"?"FileUpload":"Input"}}',
                       componentProps: '{{$deps[0]==="jar"?{type:"file", accept: ".jar, .zip"}:{}}}',
@@ -274,26 +275,6 @@ const Protocol = () => {
                   },
                 },
               },
-              // provider: {
-              //   title: '类名',
-              //   'x-component': 'Input',
-              //   'x-decorator': 'FormItem',
-              //   'x-visible': false,
-              //   'x-validator': [
-              //     {
-              //       required: true,
-              //       message: '请选择类名',
-              //     },
-              //   ],
-              //   'x-reactions': {
-              //     dependencies: ['..type'],
-              //     fulfill: {
-              //       state: {
-              //         visible: '{{["jar","local"].includes($deps[0])}}',
-              //       },
-              //     },
-              //   },
-              // },
             },
           },
           description: {
@@ -339,6 +320,9 @@ const Protocol = () => {
         formEffect={() => {
           onFormValuesChange((form) => {
             form.setFieldState('id', (state) => {
+              state.disabled = CurdModel.model === 'edit';
+            });
+            form.setFieldState('type', (state) => {
               state.disabled = CurdModel.model === 'edit';
             });
           });
