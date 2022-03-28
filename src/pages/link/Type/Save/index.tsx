@@ -225,7 +225,6 @@ const Save = observer(() => {
           gridSpan: 1,
           labelAlign: 'left',
           layout: 'vertical',
-          tooltip: '绑定到服务器上的网卡地址,绑定到所有网卡:0.0.0.0 /',
         },
         'x-reactions': [
           {
