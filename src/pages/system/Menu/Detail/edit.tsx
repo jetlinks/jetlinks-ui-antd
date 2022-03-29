@@ -67,7 +67,11 @@ export default (props: EditProps) => {
   const saveData = async () => {
     const formData = await form.validateFields();
     if (formData) {
-      const response: any = !props.data.id
+      formData.options = {
+        switch: show,
+      };
+      console.log(formData);
+      const response: any = !formData.id
         ? await service.save(formData)
         : await service.update(formData);
       if (response.status === 200) {
@@ -84,12 +88,15 @@ export default (props: EditProps) => {
   };
 
   useEffect(() => {
-    console.log(props);
     if (form && props.basePath) {
       form.setFieldsValue({
         url: props.basePath,
       });
     }
+    queryPermissions({ paging: false });
+    queryMenuThree({ paging: false });
+    queryAssetsType();
+    /* eslint-disable */
   }, []);
 
   // const filterThree = (e: any) => {
@@ -103,13 +110,6 @@ export default (props: EditProps) => {
   // };
 
   useEffect(() => {
-    queryPermissions({ paging: false });
-    queryMenuThree({ paging: false });
-    queryAssetsType();
-    /* eslint-disable */
-  }, []);
-
-  useEffect(() => {
     if (form) {
       form.setFieldsValue({
         ...props.data,
@@ -118,6 +118,10 @@ export default (props: EditProps) => {
       setAccessSupport(props.data.accessSupport ? props.data.accessSupport.value : 'unsupported');
     }
     setDisabled(!!props.data.id);
+
+    if (props.data.options) {
+      setShow(props.data.options.switch);
+    }
     /* eslint-disable */
   }, [props.data]);
 
@@ -134,7 +138,11 @@ export default (props: EditProps) => {
                 required={true}
                 rules={[{ required: true, message: '请上传图标' }]}
               >
-                <UploadImage disabled={disabled} style={{ width: 140, height: 130 }} />
+                <UploadImage
+                  types={['image/png']}
+                  disabled={disabled}
+                  style={{ width: 140, height: 130 }}
+                />
               </Form.Item>
             </Col>
             <Col span={21}>
@@ -149,7 +157,7 @@ export default (props: EditProps) => {
                     required={true}
                     rules={[{ required: true, message: '请输入名称' }]}
                   >
-                    <Input disabled={disabled} />
+                    <Input disabled={disabled} placeholder={'请输入名称'} />
                   </Form.Item>
                 </Col>
                 <Col span={12}>
@@ -162,7 +170,7 @@ export default (props: EditProps) => {
                     required={true}
                     rules={[{ required: true, message: '请输入编码' }]}
                   >
-                    <Input disabled={disabled} />
+                    <Input disabled={disabled} placeholder={'请输入编码'} />
                   </Form.Item>
                 </Col>
               </Row>
@@ -180,7 +188,7 @@ export default (props: EditProps) => {
                       { max: 120, message: '最多可输入120字符' },
                     ]}
                   >
-                    <Input disabled={disabled} />
+                    <Input disabled={disabled} placeholder={'请输入页面地址'} />
                   </Form.Item>
                 </Col>
                 <Col span={12}>
@@ -197,7 +205,11 @@ export default (props: EditProps) => {
                       },
                     ]}
                   >
-                    <InputNumber style={{ width: '100%' }} disabled={disabled} />
+                    <InputNumber
+                      style={{ width: '100%' }}
+                      disabled={disabled}
+                      placeholder={'请输入排序'}
+                    />
                   </Form.Item>
                 </Col>
               </Row>
@@ -226,6 +238,7 @@ export default (props: EditProps) => {
                   label={'数据权限控制'}
                   tooltip={'此菜单页面数据所对应的资产类型'}
                   name={'accessSupport'}
+                  required
                 >
                   <Radio.Group
                     onChange={(e) => {
@@ -247,10 +260,14 @@ export default (props: EditProps) => {
                   </Radio.Group>
                 </Form.Item>
                 {accessSupport === 'support' && (
-                  <Form.Item name={'assetType'}>
+                  <Form.Item
+                    name={'assetType'}
+                    rules={[{ required: true, message: '请选择资产类型' }]}
+                  >
                     <Select
                       style={{ width: 500 }}
                       disabled={disabled}
+                      placeholder={'请选择资产类型'}
                       options={
                         assetsType
                           ? assetsType.map((item: any) => ({ label: item.name, value: item.id }))
@@ -260,11 +277,15 @@ export default (props: EditProps) => {
                   </Form.Item>
                 )}
                 {accessSupport === 'indirect' && (
-                  <Form.Item name={'indirectMenus'}>
+                  <Form.Item
+                    name={'indirectMenus'}
+                    rules={[{ required: true, message: '请选择关联菜单' }]}
+                  >
                     <TreeSelect
                       style={{ width: 400 }}
                       disabled={disabled}
                       multiple
+                      placeholder={'请选择关联菜单'}
                       fieldNames={{ label: 'name', value: 'id' }}
                       treeData={menuThree}
                     />
@@ -289,12 +310,6 @@ export default (props: EditProps) => {
                   />
                   {/*</Form.Item>*/}
                 </Form.Item>
-                <Form.Item hidden name={'id'}>
-                  <Input />
-                </Form.Item>
-                <Form.Item hidden name={'parentId'}>
-                  <Input />
-                </Form.Item>
               </Col>
             </Row>
           )}
@@ -314,6 +329,12 @@ export default (props: EditProps) => {
             })}
           </Button>
         </Card>
+        <Form.Item hidden name={'id'}>
+          <Input />
+        </Form.Item>
+        <Form.Item hidden name={'parentId'}>
+          <Input />
+        </Form.Item>
       </Form>
     </div>
   );

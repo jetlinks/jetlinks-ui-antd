@@ -26,7 +26,7 @@ export const service = new Service('network/config');
  */
 const pageJump = (id?: string) => {
   // 跳转详情
-  history.push(`${getMenuPathByParams(MENUS_CODE['link/Type/Save'], id)}`);
+  history.push(`${getMenuPathByParams(MENUS_CODE['link/Type/Detail'], id)}`);
 };
 
 const Network = () => {

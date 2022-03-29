@@ -272,7 +272,10 @@ export default observer(() => {
           const response = await service.queryOrgThree({
             paging: false,
             ...params,
-            sorts: [{ name: 'createTime', order: 'desc' }],
+            sorts: [
+              { name: 'createTime', order: 'desc' },
+              { name: 'sortIndex', order: 'asc' },
+            ],
           });
           setTreeData(response.result);
           return {

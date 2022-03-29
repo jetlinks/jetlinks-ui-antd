@@ -19,6 +19,7 @@ import { service } from '@/pages/link/AccessConfig';
 import encodeQuery from '@/utils/encodeQuery';
 import { useHistory, useLocation } from 'umi';
 import ReactMarkdown from 'react-markdown';
+import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 
 interface Props {
   change: () => void;
@@ -309,7 +310,8 @@ const Access = (props: Props) => {
               <Button
                 type="primary"
                 onClick={() => {
-                  const tab: any = window.open(`${origin}/#/link/Type/Save/:id`);
+                  const url = getMenuPathByCode(MENUS_CODE['link/Type/Detail']);
+                  const tab: any = window.open(`${origin}/#${url}`);
                   tab!.onTabSaveSuccess = (value: any) => {
                     if (value.status === 200) {
                       queryNetworkList(props.data?.id || access?.provider);
@@ -365,7 +367,8 @@ const Access = (props: Props) => {
                     暂无数据
                     <a
                       onClick={() => {
-                        const tab: any = window.open(`${origin}/#/link/Type/Save/:id`);
+                        const url = getMenuPathByCode(MENUS_CODE['link/Type/Detail']);
+                        const tab: any = window.open(`${origin}/#${url}`);
                         tab!.onTabSaveSuccess = (value: any) => {
                           if (value.status === 200) {
                             queryNetworkList(props.data?.id || access?.provider);
