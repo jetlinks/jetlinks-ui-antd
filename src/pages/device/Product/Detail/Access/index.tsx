@@ -60,6 +60,18 @@ const Access = () => {
           {text}
         </Tooltip>
       ),
+      onCell: (record: any, index: number) => {
+        const list = (config?.routes || []).sort((a: any, b: any) => a - b) || [];
+        const arr = list.filter((res: any) => {
+          // 这里gpsNumber是我需要判断的字段名（相同就合并）
+          return res?.group == record?.group;
+        });
+        if (index == 0 || list[index - 1]?.group != record?.group) {
+          return { rowSpan: arr.length };
+        } else {
+          return { rowSpan: 0 };
+        }
+      },
     },
     {
       title: 'topic',
@@ -111,6 +123,18 @@ const Access = () => {
           {text}
         </Tooltip>
       ),
+      onCell: (record: any, index: number) => {
+        const list = (config?.routes || []).sort((a: any, b: any) => a - b) || [];
+        const arr = list.filter((res: any) => {
+          // 这里gpsNumber是我需要判断的字段名（相同就合并）
+          return res?.group == record?.group;
+        });
+        if (index == 0 || list[index - 1]?.group != record?.group) {
+          return { rowSpan: arr.length };
+        } else {
+          return { rowSpan: 0 };
+        }
+      },
     },
     {
       title: '地址',
@@ -242,6 +266,7 @@ const Access = () => {
             <div>
               <Table
                 dataSource={config?.routes || []}
+                bordered
                 columns={config.id === 'MQTT' ? columnsMQTT : columnsHTTP}
                 pagination={false}
                 scroll={{ y: 240 }}

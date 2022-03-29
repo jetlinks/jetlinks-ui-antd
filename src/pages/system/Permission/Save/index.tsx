@@ -225,8 +225,13 @@ const Save = (props: Props) => {
 
   const save = async () => {
     const value = await form.submit<UserItem>();
-    const response = await service.update(value);
-    if (response.status === 200) {
+    let response = undefined;
+    if (props.model === 'add') {
+      response = await service.save(value);
+    } else {
+      response = await service.update(value);
+    }
+    if (response && response.status === 200) {
       message.success(
         intl.formatMessage({
           id: 'pages.data.option.success',
@@ -234,8 +239,6 @@ const Save = (props: Props) => {
         }),
       );
       props.close();
-    } else {
-      message.error('操作失败！');
     }
   };
 
