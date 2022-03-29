@@ -263,14 +263,16 @@ export default (props: ButtonsProps) => {
         visible={visible}
         title={handleTitle()}
         onOk={() => {
-          saveData();
+          if (!disabled) {
+            saveData();
+          }
         }}
         onCancel={() => {
           resetForm();
           setVisible(false);
         }}
       >
-        <Form form={form} labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
+        <Form form={form} layout={'vertical'}>
           <Form.Item
             name="id"
             label={intl.formatMessage({
@@ -296,7 +298,7 @@ export default (props: ButtonsProps) => {
               },
             ]}
           >
-            <Input disabled={!!(!disabled && id)} />
+            <Input disabled={!!(disabled || id)} />
           </Form.Item>
           <Form.Item
             name="name"

@@ -31,6 +31,7 @@ export default {
   'pages.data.option.assets': '资产分配',
   'pages.data.option.invoke': '执行',
   'pages.data.option.cancel': '取消',
+  'pages.data.option.view': '查看',
   'pages.searchTable.new': '新建',
   'pages.searchTable.titleStatus': '状态',
   'pages.searchTable.titleStatus.all': '全部',

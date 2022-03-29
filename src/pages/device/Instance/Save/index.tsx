@@ -17,6 +17,7 @@ interface Props {
 const Save = (props: Props) => {
   const { visible, close, data } = props;
   const [productList, setProductList] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -70,7 +71,9 @@ const Save = (props: Props) => {
       if (values.id === '') {
         delete values.id;
       }
+      setLoading(true);
       const resp = (await service.update(values)) as any;
+      setLoading(false);
       if (resp.status === 200) {
         message.success('保存成功');
         if (props.reload) {
@@ -114,6 +117,7 @@ const Save = (props: Props) => {
         id: `pages.data.option.${props.model || 'add'}`,
         defaultMessage: '新增',
       })}
+      confirmLoading={loading}
       onOk={handleSave}
     >
       <Form

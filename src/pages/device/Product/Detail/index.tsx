@@ -1,6 +1,18 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { history, Link, useParams } from 'umi';
-import { Badge, Card, Descriptions, message, Space, Spin, Switch, Tabs, Tooltip } from 'antd';
+import {
+  Badge,
+  Button,
+  Card,
+  Descriptions,
+  message,
+  Popconfirm,
+  Space,
+  Spin,
+  Switch,
+  Tabs,
+  Tooltip,
+} from 'antd';
 import BaseInfo from '@/pages/device/Product/Detail/BaseInfo';
 import { observer } from '@formily/react';
 import { productModel, service } from '@/pages/device/Product';
@@ -149,14 +161,27 @@ const ProductDetail = observer(() => {
           }}
         />
       }
-      // extra={[
-      //   <Button key="1" type="primary" onClick={() => changeDeploy('deploy')}>
-      //     {intl.formatMessage({
-      //       id: 'pages.device.productDetail.setting',
-      //       defaultMessage: '应用配置',
-      //     })}
-      //   </Button>,
-      // ]}
+      extra={[
+        <Popconfirm title={'确定应用配置？'} key="1" onConfirm={() => changeDeploy('deploy')}>
+          {productModel.current?.state === 0 ? (
+            <Tooltip title={'请先发布产品'}>
+              <Button disabled type="primary">
+                {intl.formatMessage({
+                  id: 'pages.device.productDetail.setting',
+                  defaultMessage: '应用配置',
+                })}
+              </Button>
+            </Tooltip>
+          ) : (
+            <Button key="1" type="primary">
+              {intl.formatMessage({
+                id: 'pages.device.productDetail.setting',
+                defaultMessage: '应用配置',
+              })}
+            </Button>
+          )}
+        </Popconfirm>,
+      ]}
     >
       <Card>
         <Tabs defaultActiveKey="base">

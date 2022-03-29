@@ -159,6 +159,7 @@ const Product = observer(() => {
                 defaultMessage: '产品',
               }),
             );
+            message.success('操作成功');
           }}
         />
       </Button>

@@ -185,7 +185,7 @@ export default observer(() => {
         'x-validator': [
           {
             required: true,
-            message: '请输入名称',
+            message: '请选择上级部门',
           },
         ],
         'x-component-props': {

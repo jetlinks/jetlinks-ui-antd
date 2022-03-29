@@ -38,7 +38,6 @@ export const MENUS_CODE = {
   'link/Protocol/Debug': 'link/Protocol/Debug',
   'link/Protocol': 'link/Protocol',
   'link/Type': 'link/Type',
-  'link/Type/Detail': 'link/Type/Detail',
   'link/AccessConfig': 'link/AccessConfig',
   'log/Access': 'log/Access',
   'log/System': 'log/System',

@@ -17,11 +17,13 @@ import MetadataAction from '@/pages/device/components/Metadata/DataBaseAction';
 import { Store } from 'jetlinks-store';
 import SystemConst from '@/utils/const';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
 
 export const deviceStatus = new Map();
 deviceStatus.set('online', <Badge status="success" text={'在线'} />);
 deviceStatus.set('offline', <Badge status="error" text={'离线'} />);
 deviceStatus.set('notActive', <Badge status="processing" text={'未启用'} />);
+
 const InstanceDetail = observer(() => {
   const intl = useIntl();
   const [tab, setTab] = useState<string>('detail');
@@ -34,6 +36,28 @@ const InstanceDetail = observer(() => {
     });
   };
   const params = useParams<{ id: string }>();
+
+  const [subscribeTopic] = useSendWebsocketMessage();
+
+  useEffect(() => {
+    if (subscribeTopic) {
+      subscribeTopic(
+        `instance-editor-info-status-${params.id}`,
+        `/dashboard/device/status/change/realTime`,
+        {
+          deviceId: params.id,
+        },
+        // @ts-ignore
+      ).subscribe((data: any) => {
+        const payload = data.payload;
+        const state = payload.value.type;
+        InstanceModel.detail.state = {
+          value: state,
+          text: '',
+        };
+      });
+    }
+  }, []);
 
   useEffect(() => {
     Store.subscribe(SystemConst.REFRESH_DEVICE, () => {
