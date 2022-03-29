@@ -59,7 +59,7 @@ export const MENUS_CODE = {
   'system/Menu': 'system/Menu',
   'system/OpenAPI': 'system/OpenAPI',
   'system/Permission': 'system/Permission',
-  'system/Role/Edit': 'system/Role/Edit',
+  'system/Role/Detail': 'system/Role/Detail',
   'system/Role': 'system/Role',
   'system/Tenant/Detail/Assets': 'system/Tenant/Detail/Assets',
   'system/Tenant/Detail/Info': 'system/Tenant/Detail/Info',
@@ -101,6 +101,7 @@ export const getDetailNameByCode = {
   'device/Instance/Detail': '设备详情',
   'device/Firmware/Detail': '固件详情',
   'system/Department/Detail': '部门详情',
+  'system/Role/Detail': '权限配置',
   'link/Type/Detail': '网络组件详情',
   'link/AccessConfig/Detail': '配置详情',
 };
