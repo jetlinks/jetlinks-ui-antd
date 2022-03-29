@@ -4,7 +4,6 @@ import {
   Button,
   Card,
   Col,
-  Descriptions,
   Empty,
   Form,
   Input,
@@ -19,6 +18,8 @@ import styles from './index.less';
 import { service } from '@/pages/link/AccessConfig';
 import encodeQuery from '@/utils/encodeQuery';
 import { useHistory, useLocation } from 'umi';
+import ReactMarkdown from 'react-markdown';
+import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 
 interface Props {
   change: () => void;
@@ -197,11 +198,16 @@ const Access = (props: Props) => {
       key: 'stream',
       ellipsis: true,
       align: 'center',
-      render: (text: any, record: any) => (
-        <span>
-          上行: {String(record?.upstream)}, 下行: {String(record?.downstream)}
-        </span>
-      ),
+      render: (text: any, record: any) => {
+        const list = [];
+        if (record?.upstream) {
+          list.push('上行');
+        }
+        if (record?.downstream) {
+          list.push('下行');
+        }
+        return <span>{list.join(',')}</span>;
+      },
     },
     {
       title: '说明',
@@ -304,7 +310,8 @@ const Access = (props: Props) => {
               <Button
                 type="primary"
                 onClick={() => {
-                  const tab: any = window.open(`${origin}/#/link/Type/Save/:id`);
+                  const url = getMenuPathByCode(MENUS_CODE['link/Type/Detail']);
+                  const tab: any = window.open(`${origin}/#${url}`);
                   tab!.onTabSaveSuccess = (value: any) => {
                     if (value.status === 200) {
                       queryNetworkList(props.data?.id || access?.provider);
@@ -360,7 +367,8 @@ const Access = (props: Props) => {
                     暂无数据
                     <a
                       onClick={() => {
-                        const tab: any = window.open(`${origin}/#/link/Type/Save/:id`);
+                        const url = getMenuPathByCode(MENUS_CODE['link/Type/Detail']);
+                        const tab: any = window.open(`${origin}/#${url}`);
                         tab!.onTabSaveSuccess = (value: any) => {
                           if (value.status === 200) {
                             queryNetworkList(props.data?.id || access?.provider);
@@ -539,44 +547,32 @@ const Access = (props: Props) => {
               </div>
             </div>
             <div className={styles.config}>
-              <div className={styles.title}>配置概览</div>
-              <Descriptions column={1}>
-                <Descriptions.Item label="接入方式">
-                  {props.data?.name || providers.find((i) => i.id === access?.provider)?.name}
-                </Descriptions.Item>
-                {(props.data?.description ||
-                  providers.find((i) => i.id === access?.provider)?.description) && (
-                  <Descriptions.Item>
-                    <span style={{ color: 'rgba(0,0,0,0.55)' }}>
-                      {props.data?.description ||
-                        providers.find((i) => i.id === access?.provider)?.description}
-                    </span>
-                  </Descriptions.Item>
-                )}
-                <Descriptions.Item label="消息协议">
-                  {procotolList.find((i) => i.id === procotolCurrent)?.name || ''}
-                </Descriptions.Item>
-                {procotolList.find((i) => i.id === procotolCurrent)?.description && (
-                  <Descriptions.Item style={{ color: 'rgba(0,0,0,0.55)' }}>
-                    <span style={{ color: 'rgba(0,0,0,0.55)' }}>
-                      {procotolList.find((i) => i.id === procotolCurrent)?.description || ''}
-                    </span>
-                  </Descriptions.Item>
-                )}
-                <Descriptions.Item label="网络组件">
-                  {(networkList.find((i) => i.id === networkCurrent)?.addresses || []).map(
-                    (item: any) => (
-                      <div key={item.address}>
-                        <Badge
-                          color={item.health === -1 ? 'red' : 'green'}
-                          text={item.address}
-                          style={{ marginLeft: '20px' }}
-                        />
-                      </div>
-                    ),
-                  )}
-                </Descriptions.Item>
-              </Descriptions>
+              <div className={styles.title}>接入方式</div>
+              <div>
+                {props.data?.name || providers.find((i) => i.id === access?.provider)?.name}
+              </div>
+              {(props.data?.description ||
+                providers.find((i) => i.id === access?.provider)?.description) && (
+                <span>
+                  {props.data?.description ||
+                    providers.find((i) => i.id === access?.provider)?.description}
+                </span>
+              )}
+              <div className={styles.title}>消息协议</div>
+              <div>{procotolList.find((i) => i.id === procotolCurrent)?.name || ''}</div>
+              <ReactMarkdown>{config?.document}</ReactMarkdown>
+              <div className={styles.title}>网络组件</div>
+              {(networkList.find((i) => i.id === networkCurrent)?.addresses || []).map(
+                (item: any) => (
+                  <div key={item.address}>
+                    <Badge
+                      color={item.health === -1 ? 'red' : 'green'}
+                      text={item.address}
+                      style={{ marginLeft: '20px' }}
+                    />
+                  </div>
+                ),
+              )}
               {config?.routes && config?.routes?.length > 0 && (
                 <div>
                   <Table

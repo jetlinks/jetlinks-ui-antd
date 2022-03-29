@@ -1,6 +1,6 @@
 import { Checkbox, message, Spin } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
-import { history, Link } from 'umi';
+import { Link } from 'umi';
 import styles from './index.less';
 import Token from '@/utils/token';
 import Service from '@/pages/user/Login/service';
@@ -42,15 +42,10 @@ const Login: React.FC = () => {
 
   /** 此方法会跳转到 redirect 参数所在的位置 */
   const goto = () => {
-    if (!history) return;
     setTimeout(() => {
-      const { query } = history.location;
-      const { redirect } = query as {
-        redirect: string;
-      };
       // history.push(redirect || '/');
       // 用于触发app中的render，生成路由
-      window.location.href = redirect || '/';
+      window.location.href = '/';
       setLoading(false);
     }, 10);
   };

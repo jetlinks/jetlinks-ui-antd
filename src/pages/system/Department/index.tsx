@@ -185,7 +185,7 @@ export default observer(() => {
         'x-validator': [
           {
             required: true,
-            message: '请输入名称',
+            message: '请选择上级部门',
           },
         ],
         'x-component-props': {
@@ -272,7 +272,10 @@ export default observer(() => {
           const response = await service.queryOrgThree({
             paging: false,
             ...params,
-            sorts: [{ name: 'createTime', order: 'desc' }],
+            sorts: [
+              { name: 'createTime', order: 'desc' },
+              { name: 'sortIndex', order: 'asc' },
+            ],
           });
           setTreeData(response.result);
           return {

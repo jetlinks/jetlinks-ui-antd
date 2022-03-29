@@ -1,9 +1,10 @@
-import { Badge, Descriptions, Empty, Table, Tooltip } from 'antd';
+import { Badge, Empty, Table, Tooltip } from 'antd';
 import { service } from '@/pages/link/AccessConfig';
 import styles from './index.less';
 import { useEffect, useState } from 'react';
 import { productModel } from '@/pages/device/Product';
 import AccessConfig from './AccessConfig';
+import ReactMarkdown from 'react-markdown';
 
 const Access = () => {
   const [visible, setVisible] = useState<boolean>(true);
@@ -91,11 +92,16 @@ const Access = () => {
       key: 'stream',
       ellipsis: true,
       align: 'center',
-      render: (text: any, record: any) => (
-        <span>
-          上行: {String(record?.upstream)}, 下行: {String(record?.downstream)}
-        </span>
-      ),
+      render: (text: any, record: any) => {
+        const list = [];
+        if (record?.upstream) {
+          list.push('上行');
+        }
+        if (record?.downstream) {
+          list.push('下行');
+        }
+        return <span>{list.join(',')}</span>;
+      },
     },
     {
       title: '说明',
@@ -216,52 +222,38 @@ const Access = () => {
         </div>
       ) : (
         <div className={styles.config}>
-          <div className={styles.title}>
-            配置概览
-            <a
-              style={{ marginLeft: 20 }}
-              onClick={() => {
-                setConfigVisible(true);
-              }}
-            >
-              更换
-            </a>
+          <div>
+            <div className={styles.title}>
+              接入方式
+              <a
+                style={{ marginLeft: 20 }}
+                onClick={() => {
+                  setConfigVisible(true);
+                }}
+              >
+                更换
+              </a>
+            </div>
+            {providers.find((i) => i.id === access?.provider)?.name || ''}
           </div>
-          <Descriptions column={1}>
-            <Descriptions.Item label="接入方式">
-              {providers.find((i) => i.id === access?.provider)?.name || ''}
-            </Descriptions.Item>
-            {providers.find((i) => i.id === access?.provider)?.description && (
-              <Descriptions.Item label="">
-                <span style={{ color: 'rgba(0,0,0,0.55)' }}>
-                  {providers.find((i) => i.id === access?.provider)?.description || ''}
-                </span>
-              </Descriptions.Item>
-            )}
-            <Descriptions.Item label="消息协议">
-              {access?.protocolDetail?.name || ''}
-            </Descriptions.Item>
-            {access?.protocolDetail?.description && (
-              <Descriptions.Item label="">
-                <span style={{ color: 'rgba(0,0,0,0.55)' }}>
-                  {access?.protocolDetail?.description || ''}
-                </span>
-              </Descriptions.Item>
-            )}
-            <Descriptions.Item label="网络组件">
-              {(networkList.find((i) => i.id === access?.channelId)?.addresses || []).map(
-                (item: any) => (
-                  <div key={item.address}>
-                    <Badge
-                      color={item.health === -1 ? 'red' : 'green'}
-                      text={item.address}
-                      style={{ marginLeft: '20px' }}
-                    />
-                  </div>
-                ),
-              )}
-            </Descriptions.Item>
-          </Descriptions>
+          {providers.find((i) => i.id === access?.provider)?.description && (
+            <span>{providers.find((i) => i.id === access?.provider)?.description || ''}</span>
+          )}
+          <div className={styles.title}>消息协议</div>
+          {access?.protocolDetail?.name || ''}
+          <ReactMarkdown>{config?.document}</ReactMarkdown>
+          <div className={styles.title}>网络组件</div>
+          {(networkList.find((i) => i.id === access?.channelId)?.addresses || []).map(
+            (item: any) => (
+              <div key={item.address}>
+                <Badge
+                  color={item.health === -1 ? 'red' : 'green'}
+                  text={item.address}
+                  style={{ marginLeft: '20px' }}
+                />
+              </div>
+            ),
+          )}
           {config?.routes && config?.routes?.length > 0 && (
             <div>
               <Table

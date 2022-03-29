@@ -17,6 +17,7 @@ interface Props {
 const Save = (props: Props) => {
   const { visible, close, data } = props;
   const [productList, setProductList] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -55,20 +56,24 @@ const Save = (props: Props) => {
       });
       paramsObj.name = paramsMsg;
     }
-    const msg = intl.formatMessage(
+    return intl.formatMessage(
       {
         id,
         defaultMessage,
       },
       paramsObj,
     );
-    return msg;
   };
 
   const handleSave = async () => {
     const values = await form.validateFields();
     if (values) {
+      if (values.id === '') {
+        delete values.id;
+      }
+      setLoading(true);
       const resp = (await service.update(values)) as any;
+      setLoading(false);
       if (resp.status === 200) {
         message.success('保存成功');
         if (props.reload) {
@@ -81,7 +86,7 @@ const Save = (props: Props) => {
   };
 
   const vailId = (_: any, value: any, callback: Function) => {
-    if (props.model === 'add') {
+    if (props.model === 'add' && value) {
       service.isExists(value).then((resp: any) => {
         if (resp.status === 200 && resp.result) {
           callback(
@@ -107,11 +112,12 @@ const Save = (props: Props) => {
         form.resetFields();
         close(undefined);
       }}
-      width="30vw"
+      width="580px"
       title={intl.formatMessage({
         id: `pages.data.option.${props.model || 'add'}`,
         defaultMessage: '新增',
       })}
+      confirmLoading={loading}
       onOk={handleSave}
     >
       <Form

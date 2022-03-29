@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { service } from '@/pages/device/Product';
 import type { ProductItem } from '@/pages/device/Product/typings';
 import { useIntl } from '@@/plugin-locale/localeExports';
@@ -19,6 +19,7 @@ const Save = (props: Props) => {
   const { visible, close, data } = props;
   const intl = useIntl();
   const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
   const { data: classOptions, run: classRequest } = useRequest(service.category, {
     manual: true,
     formatResult: (response) => {
@@ -50,14 +51,14 @@ const Save = (props: Props) => {
       });
       paramsObj.name = paramsMsg;
     }
-    const msg = intl.formatMessage(
+
+    return intl.formatMessage(
       {
         id,
         defaultMessage,
       },
       paramsObj,
     );
-    return msg;
   };
 
   useEffect(() => {
@@ -71,9 +72,14 @@ const Save = (props: Props) => {
   const handleSave = async () => {
     const formData = await form.validateFields();
     if (formData) {
+      if (formData.id === '') {
+        delete formData.id;
+      }
       const { deviceTypeId, ...extraFormData } = formData;
       extraFormData.deviceType = formData.deviceTypeId;
+      setLoading(true);
       const res = await service.update(extraFormData);
+      setLoading(false);
       if (res.status === 200) {
         message.success('保存成功');
         if (props.reload) {
@@ -86,7 +92,7 @@ const Save = (props: Props) => {
   };
 
   const vailId = (_: any, value: any, callback: Function) => {
-    if (props.model === 'add') {
+    if (props.model === 'add' && value) {
       service.existsID(value).then((res) => {
         if (res.status === 200 && res.result) {
           callback(
@@ -116,6 +122,7 @@ const Save = (props: Props) => {
         id: `pages.data.option.${props.model || 'add'}`,
         defaultMessage: '新增',
       })}
+      confirmLoading={loading}
       onOk={handleSave}
     >
       <Form

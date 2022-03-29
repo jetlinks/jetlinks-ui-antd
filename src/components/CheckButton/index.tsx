@@ -1,36 +1,34 @@
-import { AppstoreFilled, UnorderedListOutlined } from '@ant-design/icons';
+import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
 import classnames from 'classnames';
-import styles from './index.less';
+import './index.less';
+
 interface Props {
   value: boolean;
   change: (value: boolean) => void;
 }
 
 const CheckButton = (props: Props) => {
-  const activeStyle = {
-    border: '1px solid #1d39c4',
-    color: '#1d39c4',
-  };
-
   return (
-    <div className={styles.box}>
+    <div className="box">
       <div
-        className={classnames(styles.item, styles.left)}
-        style={props.value ? activeStyle : {}}
+        className={classnames('item', {
+          active: props.value,
+        })}
         onClick={() => {
           props.change(true);
         }}
       >
-        <AppstoreFilled />
+        <AppstoreOutlined />
       </div>
       <div
-        className={classnames(styles.item, styles.right)}
-        style={!props.value ? activeStyle : {}}
+        className={classnames('item', {
+          active: !props.value,
+        })}
         onClick={() => {
           props.change(false);
         }}
       >
-        <UnorderedListOutlined />
+        <BarsOutlined />
       </div>
     </div>
   );

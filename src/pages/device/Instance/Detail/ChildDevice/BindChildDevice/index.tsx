@@ -26,18 +26,22 @@ const BindChildDevice = (props: Props) => {
     {
       title: 'ID',
       dataIndex: 'id',
+      ellipsis: true,
     },
     {
       title: '设备名称',
+      ellipsis: true,
       dataIndex: 'name',
     },
     {
       title: '所属产品',
+      ellipsis: true,
       dataIndex: 'productName',
     },
     {
       title: '注册时间',
       dataIndex: 'registryTime',
+      ellipsis: true,
       width: '200px',
       render: (text: any) => (!!text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/'),
       sorter: true,
@@ -45,6 +49,8 @@ const BindChildDevice = (props: Props) => {
     {
       title: '状态',
       dataIndex: 'state',
+      ellipsis: true,
+      width: 100,
       renderText: (record) =>
         record ? <Badge status={statusMap.get(record.value)} text={record.text} /> : '',
       valueType: 'select',
@@ -124,7 +130,17 @@ const BindChildDevice = (props: Props) => {
         target="child-device-bind"
         enableSave={false}
         // pattern={'simple'}
-        defaultParam={[{ column: 'parentId$isnull', value: '1' }]}
+        defaultParam={[
+          {
+            terms: [
+              { column: 'parentId$isnull', value: '' },
+              { column: 'parentId$not', value: InstanceModel.detail.id!, type: 'or' },
+            ],
+          },
+          {
+            terms: [{ column: 'id$not', value: InstanceModel.detail.id!, type: 'and' }],
+          },
+        ]}
         onSearch={(param) => {
           actionRef.current?.reset?.();
           setSearchParams(param);

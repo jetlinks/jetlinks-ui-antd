@@ -10,6 +10,7 @@ import SearchComponent from '@/components/SearchComponent';
 import BindChildDevice from './BindChildDevice';
 import moment from 'moment';
 import { Link } from 'umi';
+import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 
 const ChildDevice = () => {
   const intl = useIntl();
@@ -86,7 +87,10 @@ const ChildDevice = () => {
       align: 'center',
       width: 200,
       render: (text, record) => [
-        <Link to={`/device/instance/detail/${record.id}`} key="link">
+        <Link
+          to={`${getMenuPathByParams(MENUS_CODE['device/Instance/Detail'], record.id)}`}
+          key="link"
+        >
           <Tooltip
             title={intl.formatMessage({
               id: 'pages.data.option.detail',
