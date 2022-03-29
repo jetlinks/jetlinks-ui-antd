@@ -4,7 +4,6 @@ import {
   ArrayItems,
   DatePicker,
   Form,
-  FormButtonGroup,
   FormGrid,
   FormItem,
   FormTab,
@@ -17,7 +16,13 @@ import {
 import type { Field, FieldDataSource } from '@formily/core';
 import { createForm, onFieldReact } from '@formily/core';
 import GroupNameControl from '@/components/SearchComponent/GroupNameControl';
-import { DeleteOutlined, DoubleRightOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  DoubleRightOutlined,
+  ReloadOutlined,
+  SaveOutlined,
+  SearchOutlined,
+} from '@ant-design/icons';
 import {
   Button,
   Card,
@@ -36,6 +41,7 @@ import styles from './index.less';
 import Service from '@/components/SearchComponent/service';
 import _ from 'lodash';
 import { useIntl } from '@@/plugin-locale/localeExports';
+import classnames from 'classnames';
 
 const ui2Server = (source: SearchTermsUI): SearchTermsServer => [
   { terms: source.terms1 },
@@ -53,10 +59,20 @@ interface Props<T> {
   field: ProColumns<T>[];
   onSearch: (params: { terms: SearchTermsServer }) => void;
   target?: string;
-  onReset?: () => void;
-  /** @name 固定查询参数*/
-  defaultParam?: Term[];
-  pattern?: 'simple' | 'advance';
+  /**
+   *  @name 固定查询参数
+   *  eg: 1: {[{ column: 'test', value: 'admin' }]}
+   *      2: {[
+   *            {
+   *              terms: [{ column: 'parentId$isnull', value: '' }, { column: 'parentId$not', value: 'test', type: 'or' }],
+   *            },
+   *            {
+   *              terms: [{ column: 'id$not', value: 'test', type: 'and' }],
+   *            },
+   *         ]}
+   * */
+  defaultParam?: SearchTermsServer | Term[];
+  // pattern?: 'simple' | 'advance';
   enableSave?: boolean;
 }
 
@@ -92,28 +108,10 @@ const SchemaField = createSchemaField({
 });
 
 const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
-  const {
-    field,
-    target,
-    onReset,
-    onSearch,
-    defaultParam,
-    pattern = 'advance',
-    enableSave = true,
-  } = props;
+  const { field, target, onSearch, defaultParam, enableSave = true } = props;
   const intl = useIntl();
   const [expand, setExpand] = useState<boolean>(true);
-  const initForm = server2Ui(
-    pattern === 'advance'
-      ? [
-          {
-            terms: [initTerm],
-            type: 'and',
-          },
-          { terms: [initTerm] },
-        ]
-      : [{ terms: [initTerm] }],
-  );
+  const initForm = server2Ui([{ terms: [initTerm] }]);
   const [logVisible, setLogVisible] = useState<boolean>(false);
   const [aliasVisible, setAliasVisible] = useState<boolean>(false);
   const [initParams, setInitParams] = useState<SearchTermsUI>(initForm);
@@ -182,19 +180,6 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
     }
   };
 
-  const handleExpand = () => {
-    const value = form.values;
-    if (!expand) {
-      value.terms1.splice(1, 2);
-      value.terms2.splice(1, 2);
-    } else {
-      value.terms2.push(initTerm, initTerm);
-      value.terms1.push(initTerm, initTerm);
-    }
-    setInitParams(value);
-    setExpand(!expand);
-  };
-
   const filterSearchTerm = (): EnumData[] =>
     field
       .filter((item) => item.dataIndex)
@@ -216,6 +201,8 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
       'x-component-props': {
         minColumns: 14,
         maxColumns: 14,
+        columnGap: 24,
+        // rowGap: 1,
       },
       properties: {
         type: {
@@ -224,10 +211,11 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
           'x-decorator-props': {
             gridSpan: 2,
           },
+          default: 'or',
           'x-component-props': {
             name: name,
           },
-          'x-visible': pattern === 'advance',
+          'x-visible': !expand,
         },
         column: {
           type: 'string',
@@ -298,6 +286,19 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
     },
   };
 
+  const handleExpand = () => {
+    const value = form.values;
+    if (expand) {
+      value.terms1.push(initTerm, initTerm);
+      value.terms2?.push(initTerm, initTerm, initTerm);
+    } else {
+      value.terms1.splice(1, 2);
+      value.terms2 = [];
+    }
+    setInitParams(value);
+    setExpand(!expand);
+  };
+
   const simpleSchema: ISchema = {
     type: 'object',
     properties: {
@@ -351,17 +352,32 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
     </Menu>
   );
 
-  const formatValue = (value: SearchTermsUI): SearchTermsServer =>
-    ui2Server(value).map((term) => {
-      term.terms?.map((item) => {
-        if (item.termType === 'like') {
-          item.value = `%${item.value}%`;
+  const formatValue = (value: SearchTermsUI): SearchTermsServer => {
+    let _value = ui2Server(value);
+
+    // 处理默认查询参数
+    if (defaultParam && defaultParam?.length > 0) {
+      if ('terms' in defaultParam[0]) {
+        console.log(defaultParam, 'terms');
+        _value = _value.concat(defaultParam as SearchTermsServer);
+      } else if ('value' in defaultParam[0]) {
+        console.log(defaultParam, 'value');
+        _value = _value.concat([{ terms: defaultParam }]);
+      }
+    }
+    return _value
+      .filter((i) => i.terms?.length > 0)
+      .map((term) => {
+        term.terms?.map((item) => {
+          if (item.termType === 'like') {
+            item.value = `%${item.value}%`;
+            return item;
+          }
           return item;
-        }
-        return item;
+        });
+        return term;
       });
-      return term;
-    });
+  };
 
   const handleSearch = async () => {
     const value = form.values;
@@ -370,9 +386,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
     const _terms = _.cloneDeep(value);
     _terms.terms1 = filterTerms(_terms.terms1);
     _terms.terms2 = filterTerms(_terms.terms2);
-    if (defaultParam) {
-      _terms.terms1 = _terms.terms1.concat(defaultParam);
-    }
+
     onSearch({ terms: formatValue(_terms) });
   };
 
@@ -402,111 +416,98 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
     const expandData = Array(expand ? 1 : 3).fill(initTerm);
     temp.terms1 = expandData;
     temp.terms2 = expandData;
-    // setInitParams(temp);
     await form.reset();
-    onReset?.();
+    await handleSearch();
   };
 
-  const renderAdvance = () => {
-    return (
-      <>
-        <SchemaField schema={schema} />
-        <div className={styles.action}>
-          <FormButtonGroup.FormItem labelCol={10} wrapperCol={14}>
-            <Dropdown.Button
-              placement={'bottomLeft'}
-              trigger={['click']}
-              onClick={handleSearch}
-              visible={logVisible}
-              onVisibleChange={async (visible) => {
-                setLogVisible(visible);
-                if (visible) {
-                  await queryHistory();
-                }
-              }}
-              type="primary"
-              overlay={historyDom}
-            >
-              搜索
-            </Dropdown.Button>
-            {enableSave && (
-              <Popover
-                content={
-                  <Form style={{ width: '217px' }} form={historyForm}>
-                    <SchemaField
-                      schema={{
-                        type: 'object',
-                        properties: {
-                          alias: {
-                            'x-decorator': 'FormItem',
-                            'x-component': 'Input.TextArea',
-                            'x-validator': [
-                              {
-                                max: 50,
-                                message: '最多可输入50个字符',
-                              },
-                            ],
-                          },
-                        },
-                      }}
-                    />
-                    <Button onClick={handleSaveLog} type="primary" className={styles.saveLog}>
-                      保存
-                    </Button>
-                  </Form>
-                }
-                visible={aliasVisible}
-                onVisibleChange={setAliasVisible}
-                title="搜索名称"
-                trigger="click"
-              >
-                <Button block>
-                  {intl.formatMessage({
-                    id: 'pages.data.option.save',
-                    defaultMessage: '保存',
-                  })}
-                </Button>
-              </Popover>
-            )}
-            <Button block onClick={resetForm}>
-              重置
-            </Button>
-          </FormButtonGroup.FormItem>
-          <div>
-            <DoubleRightOutlined
-              onClick={handleExpand}
-              style={{ fontSize: 20 }}
-              rotate={expand ? 90 : -90}
-            />
+  const SearchBtn = {
+    simple: (
+      <Button icon={<SearchOutlined />} onClick={handleSearch} type="primary">
+        搜索
+      </Button>
+    ),
+    advance: (
+      <Dropdown.Button
+        icon={<SearchOutlined />}
+        placement={'bottomLeft'}
+        trigger={['click']}
+        onClick={handleSearch}
+        visible={logVisible}
+        onVisibleChange={async (visible) => {
+          setLogVisible(visible);
+          if (visible) {
+            await queryHistory();
+          }
+        }}
+        type="primary"
+        overlay={historyDom}
+      >
+        搜索
+      </Dropdown.Button>
+    ),
+  };
+
+  const SaveBtn = (
+    <Popover
+      content={
+        <Form style={{ width: '217px' }} form={historyForm}>
+          <SchemaField
+            schema={{
+              type: 'object',
+              properties: {
+                alias: {
+                  'x-decorator': 'FormItem',
+                  'x-component': 'Input.TextArea',
+                  'x-validator': [
+                    {
+                      max: 50,
+                      message: '最多可输入50个字符',
+                    },
+                  ],
+                },
+              },
+            }}
+          />
+          <Button onClick={handleSaveLog} type="primary" className={styles.saveLog}>
+            保存
+          </Button>
+        </Form>
+      }
+      visible={aliasVisible}
+      onVisibleChange={setAliasVisible}
+      title="搜索名称"
+      trigger="click"
+    >
+      <Button icon={<SaveOutlined />} block>
+        {intl.formatMessage({
+          id: 'pages.data.option.save',
+          defaultMessage: '保存',
+        })}
+      </Button>
+    </Popover>
+  );
+
+  return (
+    <Card bordered={false} className={styles.container}>
+      <Form form={form} className={styles.form} labelCol={4} wrapperCol={18}>
+        <div className={expand && styles.simple}>
+          <SchemaField schema={expand ? simpleSchema : schema} />
+          <div className={styles.action}>
+            <Space>
+              {enableSave ? SearchBtn.advance : SearchBtn.simple}
+              {enableSave && SaveBtn}
+              <Button icon={<ReloadOutlined />} block onClick={resetForm}>
+                重置
+              </Button>
+            </Space>
+            <div className={classnames(styles.more, !expand ? styles.simple : styles.advance)}>
+              <Button type="link" onClick={handleExpand}>
+                更多筛选
+                <DoubleRightOutlined style={{ marginLeft: 32 }} rotate={expand ? 90 : -90} />
+              </Button>
+            </div>
           </div>
         </div>
-      </>
-    );
-  };
-  const renderSimple = () => {
-    return (
-      <div className={styles.simple}>
-        <SchemaField schema={simpleSchema} />
-        <FormButtonGroup.FormItem labelCol={0} wrapperCol={14}>
-          <Button onClick={handleSearch} type="primary">
-            搜索
-          </Button>
-          <Button block onClick={resetForm}>
-            重置
-          </Button>
-          <DoubleRightOutlined
-            onClick={handleExpand}
-            style={{ fontSize: 20 }}
-            rotate={expand ? 90 : -90}
-          />
-        </FormButtonGroup.FormItem>
-      </div>
-    );
-  };
-  return (
-    <Card bordered={false} style={{ marginBottom: '20px', borderBottom: '1px solid #f0f0f0' }}>
-      <Form form={form} className={styles.form} labelCol={4} wrapperCol={18}>
-        {pattern === 'advance' ? renderAdvance() : renderSimple()}
       </Form>
     </Card>
   );
