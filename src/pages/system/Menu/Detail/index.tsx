@@ -4,7 +4,7 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import { useEffect, useState } from 'react';
 import BaseDetail from './edit';
 import Buttons from './buttons';
-import { useLocation, useRequest } from 'umi';
+import { useLocation, useParams, useRequest } from 'umi';
 import { service } from '@/pages/system/Menu';
 
 type LocationType = {
@@ -16,6 +16,8 @@ export default () => {
   const [tabKey, setTabKey] = useState('detail');
   const [pId, setPid] = useState<string | null>(null);
   const location = useLocation<LocationType>();
+  const params: any = new URLSearchParams(location.search);
+  const param = useParams<{ id?: string }>();
 
   const { data, run: queryData } = useRequest(service.queryDetail, {
     manual: true,
@@ -28,10 +30,9 @@ export default () => {
    * 获取当前菜单详情
    */
   const queryDetail = (editId?: string) => {
-    const params = new URLSearchParams(location.search);
-    const id = editId || params.get('id');
+    const id = editId || param.id;
     const _pId = params.get('pId');
-    if (id) {
+    if (id && id !== ':id') {
       queryData(id);
     }
     if (_pId) {
@@ -73,6 +74,7 @@ export default () => {
               ...data,
               parentId: pId,
             }}
+            basePath={params.get('basePath')}
             onLoad={queryDetail}
           />
         </div>

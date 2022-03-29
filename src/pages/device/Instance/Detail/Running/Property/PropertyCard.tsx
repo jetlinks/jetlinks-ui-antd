@@ -7,6 +7,7 @@ import { service } from '@/pages/device/Instance';
 import { useParams } from 'umi';
 import PropertyLog from '@/pages/device/Instance/Detail/MetadataLog/Property';
 import EditProperty from '@/pages/device/Instance/Detail/Running/Property/EditProperty';
+import moment from 'moment';
 
 interface Props {
   data: Partial<PropertyMetadata>;
@@ -67,8 +68,11 @@ const Property = (props: Props) => {
       colSpan={{ xs: 12, sm: 8, md: 6, lg: 6, xl: 6 }}
     >
       <Spin spinning={loading}>
-        <div style={{ height: 60, fontWeight: 600, fontSize: '30px' }}>
-          {value?.formatValue || ''}
+        <div>
+          <div style={{ fontWeight: 600, fontSize: '30px' }}>{value?.formatValue || '--'}</div>
+          <div style={{ marginTop: 10 }}>
+            {value?.timestamp ? moment(value?.timestamp).format('YYYY-MM-DD HH:mm:ss') : '--'}
+          </div>
         </div>
       </Spin>
       <EditProperty

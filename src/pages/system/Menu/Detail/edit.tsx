@@ -17,15 +17,17 @@ import Permission from '@/pages/system/Menu/components/permission';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { useEffect, useState } from 'react';
 import { service } from '@/pages/system/Menu';
-import { useRequest } from 'umi';
+import { useHistory, useRequest } from 'umi';
 import type { MenuItem } from '@/pages/system/Menu/typing';
 // import { debounce } from 'lodash';
 import Title from '../components/Title';
 import { UploadImage } from '@/components';
 import { QuestionCircleFilled } from '@ant-design/icons';
+import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 
 type EditProps = {
   data: MenuItem;
+  basePath?: string;
   onLoad: (id: string) => void;
 };
 
@@ -34,6 +36,7 @@ export default (props: EditProps) => {
   const [disabled, setDisabled] = useState(true);
   const [show, setShow] = useState(true);
   const [accessSupport, setAccessSupport] = useState('unsupported');
+  const history = useHistory();
 
   const [form] = Form.useForm();
 
@@ -52,19 +55,42 @@ export default (props: EditProps) => {
     formatResult: (response) => response.result,
   });
 
+  /**
+   * 跳转详情页
+   * @param id
+   */
+  const pageJump = (id?: string) => {
+    // 跳转详情
+    history.push(`${getMenuPathByParams(MENUS_CODE['system/Menu/Detail'], id)}`);
+  };
+
   const saveData = async () => {
     const formData = await form.validateFields();
     if (formData) {
-      const response: any = await service.update(formData);
+      const response: any = !props.data.id
+        ? await service.save(formData)
+        : await service.update(formData);
       if (response.status === 200) {
         message.success('操作成功！');
         setDisabled(true);
-        props.onLoad(response.result.id);
+        // 新增后刷新页面，编辑则不需要
+        if (!props.data.id) {
+          pageJump(response.result.id);
+        }
       } else {
         message.error('操作失败！');
       }
     }
   };
+
+  useEffect(() => {
+    console.log(props);
+    if (form && props.basePath) {
+      form.setFieldsValue({
+        url: props.basePath,
+      });
+    }
+  }, []);
 
   // const filterThree = (e: any) => {
   //   const _data: any = {

@@ -140,7 +140,7 @@ const InstanceDetail = observer(() => {
       history.goBack();
     } else {
       setTab('detail');
-      getDetail(InstanceModel.current?.id || params.id);
+      getDetail(params?.id || InstanceModel.current?.id || '');
     }
     return () => {
       MetadataAction.clean();

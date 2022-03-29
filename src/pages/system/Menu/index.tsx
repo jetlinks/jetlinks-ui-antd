@@ -18,7 +18,7 @@ import SearchComponent from '@/components/SearchComponent';
 import Service from './service';
 import type { MenuItem } from './typing';
 import moment from 'moment';
-import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
+import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 
 export const service = new Service('menu');
 
@@ -59,11 +59,14 @@ export default observer(() => {
    * 跳转详情页
    * @param id
    * @param pId
+   * @param basePath
    */
-  const pageJump = (id?: string, pId?: string) => {
+  const pageJump = (id?: string, pId?: string, basePath?: string) => {
     // 跳转详情
     history.push(
-      `${getMenuPathByCode(MENUS_CODE['system/Menu/Detail'])}?id=${id || ''}&pId=${pId || ''}`,
+      `${getMenuPathByParams(MENUS_CODE['system/Menu/Detail'], id)}?pId=${pId || ''}&basePath=${
+        basePath || ''
+      }`,
     );
   };
 
@@ -148,7 +151,7 @@ export default observer(() => {
               parentId: record.id,
             };
             // State.visible = true;
-            pageJump('', record.id);
+            pageJump('', record.id, record.url);
           }}
         >
           <Tooltip

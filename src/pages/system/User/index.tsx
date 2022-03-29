@@ -176,6 +176,7 @@ const User = observer(() => {
       <SearchComponent<UserItem>
         field={columns}
         target="user"
+        pattern="simple"
         onSearch={(data) => {
           // 重置分页数据
           actionRef.current?.reset?.();

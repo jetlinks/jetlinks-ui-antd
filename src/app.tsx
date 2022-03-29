@@ -12,7 +12,7 @@ import type { RequestOptionsInit } from 'umi-request';
 import ReconnectingWebSocket from 'reconnecting-websocket';
 import SystemConst from '@/utils/const';
 import { service as MenuService } from '@/pages/system/Menu';
-import getRoutes, { getMenus, saveMenusCache } from '@/utils/menu';
+import getRoutes, { getMenus, handleRoutes, saveMenusCache } from '@/utils/menu';
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
@@ -239,8 +239,8 @@ export function render(oldRender: any) {
   if (history.location.pathname !== loginPath) {
     MenuService.queryMenuThree({ paging: false }).then((res) => {
       if (res.status === 200) {
-        extraRoutes = res.result;
-        saveMenusCache(res.result);
+        extraRoutes = handleRoutes(res.result);
+        saveMenusCache(extraRoutes);
       }
       oldRender();
     });

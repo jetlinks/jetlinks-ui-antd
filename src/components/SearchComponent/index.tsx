@@ -57,6 +57,7 @@ interface Props<T> {
   /** @name 固定查询参数*/
   defaultParam?: Term[];
   pattern?: 'simple' | 'advance';
+  enableSave?: boolean;
 }
 
 const termType = [
@@ -91,7 +92,15 @@ const SchemaField = createSchemaField({
 });
 
 const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
-  const { field, target, onReset, onSearch, defaultParam, pattern = 'advance' } = props;
+  const {
+    field,
+    target,
+    onReset,
+    onSearch,
+    defaultParam,
+    pattern = 'advance',
+    enableSave = true,
+  } = props;
   const intl = useIntl();
   const [expand, setExpand] = useState<boolean>(true);
   const initForm = server2Ui(
@@ -205,15 +214,15 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
       type: 'object',
       'x-component': 'FormGrid',
       'x-component-props': {
-        minColumns: 6,
-        maxColumns: 6,
+        minColumns: 14,
+        maxColumns: 14,
       },
       properties: {
         type: {
           'x-decorator': 'FormItem',
           'x-component': 'GroupNameControl',
           'x-decorator-props': {
-            gridSpan: 1,
+            gridSpan: 2,
           },
           'x-component-props': {
             name: name,
@@ -225,7 +234,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
           'x-decorator': 'FormItem',
           'x-component': 'Select',
           'x-decorator-props': {
-            gridSpan: 2,
+            gridSpan: 3,
           },
           'x-component-props': {
             placeholder: '请选择',
@@ -237,14 +246,14 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
           'x-decorator': 'FormItem',
           'x-component': 'Select',
           'x-decorator-props': {
-            gridSpan: 1,
+            gridSpan: 3,
           },
           default: 'like',
           enum: termType,
         },
         value: {
           'x-decorator-props': {
-            gridSpan: 2,
+            gridSpan: 6,
           },
           'x-decorator': 'FormItem',
           'x-component': 'Input',
@@ -420,43 +429,45 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
             >
               搜索
             </Dropdown.Button>
-            <Popover
-              content={
-                <Form style={{ width: '217px' }} form={historyForm}>
-                  <SchemaField
-                    schema={{
-                      type: 'object',
-                      properties: {
-                        alias: {
-                          'x-decorator': 'FormItem',
-                          'x-component': 'Input.TextArea',
-                          'x-validator': [
-                            {
-                              max: 50,
-                              message: '最多可输入50个字符',
-                            },
-                          ],
+            {enableSave && (
+              <Popover
+                content={
+                  <Form style={{ width: '217px' }} form={historyForm}>
+                    <SchemaField
+                      schema={{
+                        type: 'object',
+                        properties: {
+                          alias: {
+                            'x-decorator': 'FormItem',
+                            'x-component': 'Input.TextArea',
+                            'x-validator': [
+                              {
+                                max: 50,
+                                message: '最多可输入50个字符',
+                              },
+                            ],
+                          },
                         },
-                      },
-                    }}
-                  />
-                  <Button onClick={handleSaveLog} type="primary" className={styles.saveLog}>
-                    保存
-                  </Button>
-                </Form>
-              }
-              visible={aliasVisible}
-              onVisibleChange={setAliasVisible}
-              title="搜索名称"
-              trigger="click"
-            >
-              <Button block>
-                {intl.formatMessage({
-                  id: 'pages.data.option.save',
-                  defaultMessage: '保存',
-                })}
-              </Button>
-            </Popover>
+                      }}
+                    />
+                    <Button onClick={handleSaveLog} type="primary" className={styles.saveLog}>
+                      保存
+                    </Button>
+                  </Form>
+                }
+                visible={aliasVisible}
+                onVisibleChange={setAliasVisible}
+                title="搜索名称"
+                trigger="click"
+              >
+                <Button block>
+                  {intl.formatMessage({
+                    id: 'pages.data.option.save',
+                    defaultMessage: '保存',
+                  })}
+                </Button>
+              </Popover>
+            )}
             <Button block onClick={resetForm}>
               重置
             </Button>
@@ -483,6 +494,11 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
           <Button block onClick={resetForm}>
             重置
           </Button>
+          <DoubleRightOutlined
+            onClick={handleExpand}
+            style={{ fontSize: 20 }}
+            rotate={expand ? 90 : -90}
+          />
         </FormButtonGroup.FormItem>
       </div>
     );
