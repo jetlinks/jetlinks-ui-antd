@@ -156,7 +156,10 @@ export const getMenuPathByCode = (code: string): string => {
  */
 export const getMenuPathByParams = (code: string, id?: string, regStr: string = ':id') => {
   const menusData = getMenuPathByCode(code);
-  return id ? menusData.replace(regStr, id) : menusData;
+  if (!menusData) {
+    console.warn('menusData is', menusData);
+  }
+  return id && menusData ? menusData.replace(regStr, id) : menusData;
 };
 
 export default getRoutes;

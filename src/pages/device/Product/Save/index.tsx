@@ -50,14 +50,14 @@ const Save = (props: Props) => {
       });
       paramsObj.name = paramsMsg;
     }
-    const msg = intl.formatMessage(
+
+    return intl.formatMessage(
       {
         id,
         defaultMessage,
       },
       paramsObj,
     );
-    return msg;
   };
 
   useEffect(() => {
@@ -71,6 +71,9 @@ const Save = (props: Props) => {
   const handleSave = async () => {
     const formData = await form.validateFields();
     if (formData) {
+      if (formData.id === '') {
+        delete formData.id;
+      }
       const { deviceTypeId, ...extraFormData } = formData;
       extraFormData.deviceType = formData.deviceTypeId;
       const res = await service.update(extraFormData);
@@ -86,7 +89,7 @@ const Save = (props: Props) => {
   };
 
   const vailId = (_: any, value: any, callback: Function) => {
-    if (props.model === 'add') {
+    if (props.model === 'add' && value) {
       service.existsID(value).then((res) => {
         if (res.status === 200 && res.result) {
           callback(
