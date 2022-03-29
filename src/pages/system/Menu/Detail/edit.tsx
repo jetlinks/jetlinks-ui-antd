@@ -9,7 +9,6 @@ import {
   Radio,
   Row,
   Select,
-  Switch,
   Tooltip,
   TreeSelect,
 } from 'antd';
@@ -67,10 +66,10 @@ export default (props: EditProps) => {
   const saveData = async () => {
     const formData = await form.validateFields();
     if (formData) {
-      formData.options = {
-        switch: show,
-      };
-      console.log(formData);
+      // formData.options = {
+      //   switch: show,
+      // };
+
       const response: any = !formData.id
         ? await service.save(formData)
         : await service.update(formData);
@@ -224,17 +223,17 @@ export default (props: EditProps) => {
         <Card style={{ marginTop: 24 }}>
           <Title
             title={'权限配置'}
-            toolbarRender={
-              <Switch
-                disabled={disabled}
-                checkedChildren="开启"
-                unCheckedChildren="关闭"
-                checked={show}
-                onChange={(checked) => {
-                  setShow(checked);
-                }}
-              />
-            }
+            // toolbarRender={
+            //   <Switch
+            //     disabled={disabled}
+            //     checkedChildren="开启"
+            //     unCheckedChildren="关闭"
+            //     checked={show}
+            //     onChange={(checked) => {
+            //       setShow(checked);
+            //     }}
+            //   />
+            // }
           />
           {show && (
             <Row gutter={[0, 10]}>

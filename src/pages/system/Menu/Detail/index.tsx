@@ -68,16 +68,14 @@ export default () => {
       }}
     >
       {tabKey === 'detail' ? (
-        <div style={{ padding: '16px 24px' }}>
-          <BaseDetail
-            data={{
-              ...data,
-              parentId: pId,
-            }}
-            basePath={params.get('basePath')}
-            onLoad={queryDetail}
-          />
-        </div>
+        <BaseDetail
+          data={{
+            ...data,
+            parentId: pId,
+          }}
+          basePath={params.get('basePath')}
+          onLoad={queryDetail}
+        />
       ) : (
         <Buttons data={data} onLoad={queryDetail} />
       )}

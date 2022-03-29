@@ -193,7 +193,6 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
       }
     },
     menuDataRender: () => {
-      console.log(getMenus(extraRoutes));
       return getMenus(extraRoutes);
     },
     links: isDev
@@ -238,7 +237,7 @@ export function patchRoutes(routes: any) {
 
 export function render(oldRender: any) {
   if (history.location.pathname !== loginPath) {
-    MenuService.queryMenuThree({ paging: false }).then((res) => {
+    MenuService.queryOwnThree({ paging: false }).then((res) => {
       if (res.status === 200) {
         extraRoutes = handleRoutes(res.result);
         saveMenusCache(extraRoutes);

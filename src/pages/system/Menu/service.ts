@@ -11,6 +11,12 @@ class Service extends BaseService<MenuItem> {
   queryMenuThree = (data: any) => request(`${this.uri}/_all/tree`, { method: 'POST', data });
 
   /**
+   * 当前用户权限菜单
+   * @param data
+   */
+  queryOwnThree = (data: any) => request(`${this.uri}/user-own/tree`, { method: 'POST', data });
+
+  /**
    * 查询权限管理
    * @param data
    */
