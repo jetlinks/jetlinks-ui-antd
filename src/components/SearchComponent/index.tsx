@@ -55,7 +55,7 @@ interface Props<T> {
   target?: string;
   onReset?: () => void;
   /** @name 固定查询参数*/
-  defaultParam?: Term[];
+  defaultParam?: Term[] | any;
   pattern?: 'simple' | 'advance';
 }
 

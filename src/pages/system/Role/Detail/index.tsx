@@ -2,8 +2,8 @@ import { observer } from '@formily/react';
 import { PageContainer } from '@ant-design/pro-layout';
 import { useState } from 'react';
 import { history } from 'umi';
-import UserManage from '@/pages/system/Role/Edit/UserManage';
-import Permission from '@/pages/system/Role/Edit/Permission';
+import UserManage from '@/pages/system/Role/Detail/UserManage';
+import Permission from '@/pages/system/Role/Detail/Permission';
 import { useIntl } from '@@/plugin-locale/localeExports';
 
 const RoleEdit = observer(() => {
