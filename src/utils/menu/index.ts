@@ -6,7 +6,7 @@ import { MENUS_CODE, getDetailNameByCode } from './router';
 /** localStorage key */
 export const MENUS_DATA_CACHE = 'MENUS_DATA_CACHE';
 
-const DetailCode = 'Detail';
+const DetailCode = 'detail';
 
 /**
  * 根据url获取映射的组件
@@ -39,11 +39,11 @@ export const flatRoute = (routes: MenuItem[]): MenuItem[] => {
  * 获取菜单组件
  * @param baseCode
  */
-const findDetailRoute = (baseCode: string): MenuItem | undefined => {
+const findDetailRoute = (baseCode: string, url: string): MenuItem | undefined => {
   if (baseCode) {
     const allComponents = findComponents(require.context('@/pages', true, /index(\.tsx)$/));
-    const code = `${baseCode}/${DetailCode}`;
-    const path = `/${code}/:id`;
+    const code = `${baseCode}/Detail`;
+    const path = `${url}/${DetailCode}/:id`;
     const component = allComponents[code];
     return component
       ? ({ path: path, url: path, name: getDetailNameByCode[code], code } as MenuItem)
@@ -55,7 +55,7 @@ const findDetailRoute = (baseCode: string): MenuItem | undefined => {
 export const handleRoutes = (routes?: MenuItem[], level = 1): MenuItem[] => {
   return routes
     ? routes.map((item) => {
-        const detailComponent = findDetailRoute(item.code);
+        const detailComponent = findDetailRoute(item.code, item.url);
         if (detailComponent) {
           item.children = item.children ? [...item.children, detailComponent] : [detailComponent];
         }
