@@ -1,19 +1,17 @@
+@import '../../../node_modules/antd/lib/style/themes/variable';
+
 .box {
   display: flex;
   .item {
-    width: 30px;
-    height: 30px;
-    font-size: 20px;
-    line-height: 30px;
-    text-align: center;
-    border-top: 1px solid lightgray;
-    border-bottom: 1px solid lightgray;
+    color: rgba(0, 0, 0, 0.75);
+    font-size: 16px;
     cursor: pointer;
-  }
-  .left {
-    border-left: 1px solid lightgray;
-  }
-  .right {
-    border-right: 1px solid lightgray;
+
+    &.active {
+      color: @primary-color-active;
+    }
+    &:hover {
+      color: @primary-color-hover;
+    }
   }
 }
