@@ -86,16 +86,17 @@ const Log = () => {
       <SearchComponent<LogItem>
         field={[...columns]}
         target="logs"
-        pattern={'simple'}
+        enableSave={false}
+        // pattern={'simple'}
         onSearch={(param) => {
           actionRef.current?.reset?.();
           setSearchParams(param);
         }}
-        onReset={() => {
-          // 重置分页及搜索参数
-          actionRef.current?.reset?.();
-          setSearchParams({});
-        }}
+        // onReset={() => {
+        //   // 重置分页及搜索参数
+        //   actionRef.current?.reset?.();
+        //   setSearchParams({});
+        // }}
       />
       <ProTable<LogItem>
         search={false}

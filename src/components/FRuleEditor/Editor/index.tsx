@@ -109,6 +109,7 @@ const Editor = (props: Props) => {
         text: value,
       },
     ]);
+    Store.set('add-operator-value', undefined);
   };
 
   useEffect(() => {
@@ -116,9 +117,6 @@ const Editor = (props: Props) => {
     return () => subscription.unsubscribe();
   }, [props.mode]);
 
-  useEffect(() => {
-    Store.set('add-operator-value', undefined);
-  }, []);
   return (
     <div className={styles.box}>
       <div className={styles.top}>

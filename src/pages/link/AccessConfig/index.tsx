@@ -66,7 +66,8 @@ const AccessConfig = () => {
       <Card>
         <SearchComponent
           field={columns}
-          pattern={'simple'}
+          // pattern={'simple'}
+          enableSave={false}
           onSearch={(data: any) => {
             const dt = {
               pageSize: 10,
@@ -74,9 +75,9 @@ const AccessConfig = () => {
             };
             handleSearch(dt);
           }}
-          onReset={() => {
-            handleSearch({ pageSize: 10 });
-          }}
+          // onReset={() => {
+          //   handleSearch({ pageSize: 10 });
+          // }}
         />
         <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-end' }}>
           <Button

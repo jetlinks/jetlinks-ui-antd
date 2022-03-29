@@ -224,12 +224,13 @@ export default observer(() => {
     <PageContainer>
       <SearchComponent
         field={columns}
+        target="menu"
         onSearch={searchFn}
-        onReset={() => {
-          // 重置分页及搜索参数
-          actionRef.current?.reset?.();
-          searchFn({});
-        }}
+        // onReset={() => {
+        //   // 重置分页及搜索参数
+        //   actionRef.current?.reset?.();
+        //   searchFn({});
+        // }}
       />
       <ProTable<MenuItem>
         columns={columns}

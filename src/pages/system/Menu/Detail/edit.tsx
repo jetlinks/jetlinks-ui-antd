@@ -16,7 +16,7 @@ import Permission from '@/pages/system/Menu/components/permission';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { useEffect, useState } from 'react';
 import { service } from '@/pages/system/Menu';
-import { useRequest, useHistory } from 'umi';
+import { useHistory, useRequest } from 'umi';
 import type { MenuItem } from '@/pages/system/Menu/typing';
 // import { debounce } from 'lodash';
 import Title from '../components/Title';

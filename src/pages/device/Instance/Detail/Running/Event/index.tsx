@@ -112,17 +112,18 @@ const EventLog = (props: Props) => {
       <SearchComponent<any>
         field={[...createColumn(), ...columns]}
         target="events"
-        pattern={'simple'}
+        enableSave={false}
+        // pattern={'simple'}
         onSearch={(param) => {
           // 重置分页数据
           actionRef.current?.reset?.();
           setSearchParams(param);
         }}
-        onReset={() => {
-          // 重置分页及搜索参数
-          actionRef.current?.reset?.();
-          setSearchParams({});
-        }}
+        // onReset={() => {
+        //   // 重置分页及搜索参数
+        //   actionRef.current?.reset?.();
+        //   setSearchParams({});
+        // }}
       />
       <ProTable
         size="small"

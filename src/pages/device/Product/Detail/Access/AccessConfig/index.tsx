@@ -111,7 +111,8 @@ const AccessConfig = (props: Props) => {
       <div className={styles.search}>
         <SearchComponent
           field={columns}
-          pattern={'simple'}
+          // pattern={'simple'}
+          enableSave={false}
           onSearch={(data: any) => {
             const dt = {
               pageSize: 4,
@@ -119,9 +120,9 @@ const AccessConfig = (props: Props) => {
             };
             handleSearch(dt);
           }}
-          onReset={() => {
-            handleSearch({ pageSize: 4 });
-          }}
+          // onReset={() => {
+          //   handleSearch({ pageSize: 4 });
+          // }}
         />
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <Button

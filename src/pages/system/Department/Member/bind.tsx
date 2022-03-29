@@ -77,18 +77,19 @@ const Bind = observer((props: Props) => {
       title="绑定"
     >
       <SearchComponent<UserItem>
-        pattern={'simple'}
+        // pattern={'simple'}
+        enableSave={false}
         field={columns}
         defaultParam={[{ column: 'id$in-dimension$org$not', value: param.id }]}
         onSearch={async (data) => {
           actionRef.current?.reset?.();
           setSearchParam(data);
         }}
-        onReset={() => {
-          // 重置分页及搜索参数
-          actionRef.current?.reset?.();
-          setSearchParam({});
-        }}
+        // onReset={() => {
+        //   // 重置分页及搜索参数
+        //   actionRef.current?.reset?.();
+        //   setSearchParam({});
+        // }}
         target="department-user"
       />
       <ProTable

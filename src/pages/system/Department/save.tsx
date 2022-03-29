@@ -4,6 +4,7 @@ import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import {
   ArrayTable,
+  Checkbox,
   Editable,
   Form,
   FormGrid,
@@ -14,9 +15,8 @@ import {
   Password,
   Select,
   Switch,
-  Upload,
-  Checkbox,
   TreeSelect,
+  Upload,
 } from '@formily/antd';
 import { message, Modal } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';

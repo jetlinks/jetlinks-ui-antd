@@ -2,6 +2,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
+import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useIntl, useLocation } from 'umi';
 import { Button, message, Popconfirm, Tooltip } from 'antd';
@@ -21,7 +22,6 @@ import { model } from '@formily/reactive';
 import Save from './save';
 import SearchComponent from '@/components/SearchComponent';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
-import * as React from 'react';
 
 export const service = new Service('organization');
 
@@ -251,11 +251,11 @@ export default observer(() => {
           actionRef.current?.reset?.();
           setParam(data);
         }}
-        onReset={() => {
-          // 重置分页及搜索参数
-          actionRef.current?.reset?.();
-          setParam({});
-        }}
+        // onReset={() => {
+        //   // 重置分页及搜索参数
+        //   actionRef.current?.reset?.();
+        //   setParam({});
+        // }}
         target="department"
       />
       <ProTable<DepartmentItem>

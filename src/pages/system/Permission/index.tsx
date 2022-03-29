@@ -9,12 +9,12 @@ import {
 } from '@ant-design/icons';
 import { Badge, Button, Dropdown, Menu, message, Popconfirm, Tooltip, Upload } from 'antd';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import ProTable from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import type { PermissionItem } from '@/pages/system/Permission/typings';
 import Service from '@/pages/system/Permission/service';
 import { observer } from '@formily/react';
 import SearchComponent from '@/components/SearchComponent';
-import ProTable from '@jetlinks/pro-table';
 import Save from './Save';
 import SystemConst from '@/utils/const';
 import { downloadObject } from '@/utils/util';
@@ -234,11 +234,11 @@ const Permission: React.FC = observer(() => {
           actionRef.current?.reset?.();
           setParam(data);
         }}
-        onReset={() => {
-          // 重置分页及搜索参数
-          actionRef.current?.reset?.();
-          setParam({});
-        }}
+        // onReset={() => {
+        //   // 重置分页及搜索参数
+        //   actionRef.current?.reset?.();
+        //   setParam({});
+        // }}
       />
       <ProTable<PermissionItem>
         actionRef={actionRef}

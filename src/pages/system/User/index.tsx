@@ -181,11 +181,6 @@ const User = observer(() => {
           actionRef.current?.reset?.();
           setParam(data);
         }}
-        onReset={() => {
-          // 重置分页及搜索参数
-          actionRef.current?.reset?.();
-          setParam({});
-        }}
       />
       <ProTable<UserItem>
         actionRef={actionRef}

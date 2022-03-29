@@ -83,11 +83,11 @@ const BaseCrud = <T extends Record<string, any>>(props: Props<T>) => {
           setParam(data);
         }}
         target={moduleName}
-        onReset={() => {
-          // 重置分页及搜索参数
-          actionRef.current?.reset?.();
-          setParam({});
-        }}
+        // onReset={() => {
+        //   // 重置分页及搜索参数
+        //   actionRef.current?.reset?.();
+        //   setParam({});
+        // }}
       />
       <ProTable<T>
         params={param}

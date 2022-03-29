@@ -4,7 +4,7 @@ import { createForm, onFormSubmitStart } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import React, { useEffect, useState } from 'react';
 import * as ICONS from '@ant-design/icons';
-import { ArrayTable, Form, FormItem, Input, Editable } from '@formily/antd';
+import { ArrayTable, Editable, Form, FormItem, Input } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
 import type { PermissionItem } from '@/pages/system/Permission/typings';
 import { service } from '@/pages/system/Permission';

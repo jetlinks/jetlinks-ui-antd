@@ -1,7 +1,7 @@
 // 路由components映射
 import type { IRouteProps } from 'umi';
 import type { MenuItem } from '@/pages/system/Menu/typing';
-import { MENUS_CODE, getDetailNameByCode } from './router';
+import { getDetailNameByCode, MENUS_CODE } from './router';
 
 /** localStorage key */
 export const MENUS_DATA_CACHE = 'MENUS_DATA_CACHE';

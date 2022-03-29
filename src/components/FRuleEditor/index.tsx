@@ -31,7 +31,10 @@ const FRuleEditor = observer((props: Props) => {
     State.property = property;
     const subscription = Store.subscribe('rule-editor-value', onChange);
     State.code = value;
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+      State.code = '';
+    };
   });
   return (
     <>

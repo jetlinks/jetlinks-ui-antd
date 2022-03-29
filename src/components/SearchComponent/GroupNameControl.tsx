@@ -12,7 +12,7 @@ const GroupNameControl = (props: Props) => {
   return (
     <>
       {index === 0 ? (
-        <div style={{ textAlign: 'center', fontWeight: 600 }}>{props?.name || '第一组'}</div>
+        <div style={{ fontWeight: 600 }}>{props?.name || '第一组'}</div>
       ) : (
         <Select
           onChange={props.onChange}
