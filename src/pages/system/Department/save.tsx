@@ -16,6 +16,7 @@ import {
   Switch,
   Upload,
   Checkbox,
+  TreeSelect,
 } from '@formily/antd';
 import { message, Modal } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
@@ -32,7 +33,7 @@ export interface SaveModalProps<T> extends Omit<ModalProps, 'onOk' | 'onCancel'>
    * Model关闭事件
    * @param type 是否为请求接口后关闭，用于外部table刷新数据
    */
-  onCancel?: (type: boolean) => void;
+  onCancel?: (type: boolean, id?: React.Key) => void;
   schema: ISchema;
 }
 
@@ -55,6 +56,7 @@ const Save = <T extends object>(props: SaveModalProps<T>) => {
       NumberPicker,
       FUpload,
       Checkbox,
+      TreeSelect,
     },
     scope: {
       icon(name: any) {
@@ -71,10 +73,11 @@ const Save = <T extends object>(props: SaveModalProps<T>) => {
   /**
    * 关闭Modal
    * @param type 是否需要刷新外部table数据
+   * @param id 传递上级部门id，用于table展开父节点
    */
-  const modalClose = (type: boolean) => {
+  const modalClose = (type: boolean, id?: string) => {
     if (typeof onCancel === 'function') {
-      onCancel(type);
+      onCancel(type, id);
     }
   };
 
@@ -89,7 +92,7 @@ const Save = <T extends object>(props: SaveModalProps<T>) => {
 
     if (response.status === 200) {
       message.success('操作成功！');
-      modalClose(true);
+      modalClose(true, response.result.parentId);
       if ((window as any).onTabSaveSuccess) {
         (window as any).onTabSaveSuccess(response.result);
         setTimeout(() => window.close(), 300);
@@ -116,7 +119,7 @@ const Save = <T extends object>(props: SaveModalProps<T>) => {
         modalClose(false);
       }}
     >
-      <Form form={form} labelCol={5} wrapperCol={16}>
+      <Form form={form} layout={'vertical'}>
         <SchemaField schema={schema} />
       </Form>
     </Modal>

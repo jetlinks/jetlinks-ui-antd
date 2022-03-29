@@ -92,6 +92,7 @@ export const MENUS_CODE = {
   'link/AccessConfig/Detail': 'link/AccessConfig/Detail',
   'system/Menu/Detail': 'system/Menu/Detail',
   'system/Department/Detail': 'system/Department/Detail',
+  '/link/Type/Detail': '/link/Type/Detail',
 };
 
 export const getDetailNameByCode = {
@@ -100,6 +101,6 @@ export const getDetailNameByCode = {
   'device/Instance/Detail': '设备详情',
   'device/Firmware/Detail': '固件详情',
   'system/Department/Detail': '部门详情',
-  'link/Type/Save': '网络组件详情',
+  'link/Type/Detail': '网络组件详情',
   'link/AccessConfig/Detail': '配置详情',
 };
