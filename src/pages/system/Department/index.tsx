@@ -21,6 +21,7 @@ import { model } from '@formily/reactive';
 import Save from './save';
 import SearchComponent from '@/components/SearchComponent';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import * as React from 'react';
 
 export const service = new Service('organization');
 
@@ -39,7 +40,9 @@ export default observer(() => {
   const actionRef = useRef<ActionType>();
   const intl = useIntl();
   const [param, setParam] = useState({});
-
+  const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>([]);
+  const [treeData, setTreeData] = useState<any[]>([]);
+  const rowKeys = useRef<React.Key[]>([]);
   /**
    * 根据部门ID删除数据
    * @param id
@@ -173,6 +176,26 @@ export default observer(() => {
   const schema: ISchema = {
     type: 'object',
     properties: {
+      parentId: {
+        type: 'string',
+        title: '上级部门',
+        required: true,
+        'x-decorator': 'FormItem',
+        'x-component': 'TreeSelect',
+        'x-validator': [
+          {
+            required: true,
+            message: '请输入名称',
+          },
+        ],
+        'x-component-props': {
+          fieldNames: {
+            label: 'name',
+            value: 'id',
+          },
+        },
+        enum: treeData,
+      },
       name: {
         type: 'string',
         title: intl.formatMessage({
@@ -199,9 +222,14 @@ export default observer(() => {
           id: 'pages.device.instanceDetail.detail.sort',
           defaultMessage: '排序',
         }),
+        required: true,
         'x-decorator': 'FormItem',
         'x-component': 'NumberPicker',
         'x-validator': [
+          {
+            required: true,
+            message: '请输入排序',
+          },
           {
             pattern: /^[0-9]*[1-9][0-9]*$/,
             message: '请输入大于0的整数',
@@ -246,6 +274,7 @@ export default observer(() => {
             ...params,
             sorts: [{ name: 'createTime', order: 'desc' }],
           });
+          setTreeData(response.result);
           return {
             code: response.message,
             result: {
@@ -258,6 +287,13 @@ export default observer(() => {
           };
         }}
         rowKey="id"
+        expandable={{
+          expandedRowKeys: [...rowKeys.current],
+          onExpandedRowsChange: (keys) => {
+            rowKeys.current = keys as React.Key[];
+            setExpandedRowKeys(keys as React.Key[]);
+          },
+        }}
         pagination={false}
         search={false}
         params={param}
@@ -289,7 +325,12 @@ export default observer(() => {
             : undefined
         }
         service={service}
-        onCancel={(type) => {
+        onCancel={(type, pId) => {
+          if (pId) {
+            expandedRowKeys.push(pId);
+            rowKeys.current.push(pId);
+            setExpandedRowKeys(expandedRowKeys);
+          }
           if (type) {
             actionRef.current?.reload();
           }
