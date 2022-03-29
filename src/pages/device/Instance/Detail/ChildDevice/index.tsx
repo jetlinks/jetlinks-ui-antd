@@ -116,7 +116,8 @@ const ChildDevice = () => {
       <SearchComponent<LogItem>
         field={[...columns]}
         target="child-device"
-        pattern={'simple'}
+        enableSave={false}
+        // pattern={'simple'}
         defaultParam={[
           { column: 'parentId', value: InstanceModel?.detail?.id || '', termType: 'eq' },
         ]}
@@ -124,11 +125,11 @@ const ChildDevice = () => {
           actionRef.current?.reset?.();
           setSearchParams(param);
         }}
-        onReset={() => {
-          // 重置分页及搜索参数
-          actionRef.current?.reset?.();
-          setSearchParams({});
-        }}
+        // onReset={() => {
+        //   // 重置分页及搜索参数
+        //   actionRef.current?.reset?.();
+        //   setSearchParams({});
+        // }}
       />
       <ProTable<LogItem>
         search={false}

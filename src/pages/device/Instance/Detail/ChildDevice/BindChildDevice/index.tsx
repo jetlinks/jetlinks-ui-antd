@@ -122,17 +122,18 @@ const BindChildDevice = (props: Props) => {
       <SearchComponent<DeviceInstance>
         field={[...columns]}
         target="child-device-bind"
-        pattern={'simple'}
+        enableSave={false}
+        // pattern={'simple'}
         defaultParam={[{ column: 'parentId$isnull', value: '1' }]}
         onSearch={(param) => {
           actionRef.current?.reset?.();
           setSearchParams(param);
         }}
-        onReset={() => {
-          // 重置分页及搜索参数
-          actionRef.current?.reset?.();
-          setSearchParams({});
-        }}
+        // onReset={() => {
+        //   // 重置分页及搜索参数
+        //   actionRef.current?.reset?.();
+        //   setSearchParams({});
+        // }}
       />
       <ProTable<DeviceInstance>
         search={false}

@@ -354,11 +354,11 @@ const Instance = () => {
           actionRef.current?.reset?.();
           setSearchParams(data);
         }}
-        onReset={() => {
-          // 重置分页及搜索参数
-          actionRef.current?.reset?.();
-          setSearchParams({});
-        }}
+        // onReset={() => {
+        //   // 重置分页及搜索参数
+        //   actionRef.current?.reset?.();
+        //   setSearchParams({});
+        // }}
       />
       <ProTableCard<DeviceInstance>
         columns={columns}

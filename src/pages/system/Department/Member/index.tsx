@@ -164,11 +164,11 @@ const Member = observer(() => {
           actionRef.current?.reset?.();
           setSearchParam(data);
         }}
-        onReset={() => {
-          // 重置分页及搜索参数
-          actionRef.current?.reset?.();
-          setSearchParam({});
-        }}
+        // onReset={() => {
+        //   // 重置分页及搜索参数
+        //   actionRef.current?.reset?.();
+        //   setSearchParam({});
+        // }}
         target="department-user"
       />
       <ProTable<MemberItem>

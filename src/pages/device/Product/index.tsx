@@ -261,11 +261,11 @@ const Product = observer(() => {
       <SearchComponent
         field={columns}
         onSearch={searchFn}
-        onReset={() => {
-          // 重置分页及搜索参数
-          actionRef.current?.reset?.();
-          searchFn({});
-        }}
+        // onReset={() => {
+        //   // 重置分页及搜索参数
+        //   actionRef.current?.reset?.();
+        //   searchFn({});
+        // }}
       />
       <ProTableCard<ProductItem>
         columns={columns}

@@ -176,16 +176,10 @@ const User = observer(() => {
       <SearchComponent<UserItem>
         field={columns}
         target="user"
-        pattern="simple"
         onSearch={(data) => {
           // 重置分页数据
           actionRef.current?.reset?.();
           setParam(data);
-        }}
-        onReset={() => {
-          // 重置分页及搜索参数
-          actionRef.current?.reset?.();
-          setParam({});
         }}
       />
       <ProTable<UserItem>
