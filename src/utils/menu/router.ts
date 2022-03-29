@@ -91,7 +91,7 @@ export const MENUS_CODE = {
   'link/AccessConfig/Detail': 'link/AccessConfig/Detail',
   'system/Menu/Detail': 'system/Menu/Detail',
   'system/Department/Detail': 'system/Department/Detail',
-  '/link/Type/Detail': '/link/Type/Detail',
+  'link/Type/Detail': 'link/Type/Detail',
 };
 
 export const getDetailNameByCode = {
