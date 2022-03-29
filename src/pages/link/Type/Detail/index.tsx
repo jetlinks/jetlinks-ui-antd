@@ -21,7 +21,7 @@ import { createForm, onFieldValueChange } from '@formily/core';
 import { Button, Card, message } from 'antd';
 import styles from './index.less';
 import { useAsyncDataSource } from '@/utils/util';
-import { service } from '..';
+import { service } from '../index';
 import _ from 'lodash';
 import FAutoComplete from '@/components/FAutoComplete';
 import { Store } from 'jetlinks-store';
