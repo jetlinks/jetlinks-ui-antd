@@ -153,7 +153,7 @@ export default (props: ButtonsProps) => {
         id: 'page.system.menu.describe',
         defaultMessage: '备注说明',
       }),
-      dataIndex: 'describe',
+      dataIndex: 'description',
       // render: (_, row) => () => {
       //   console.log(row)
       //   return (<> {row.describe || '-'}</>)
@@ -331,7 +331,7 @@ export default (props: ButtonsProps) => {
             </Form.Item>
           </Form.Item>
           <Form.Item
-            name="describe"
+            name="description"
             label={intl.formatMessage({
               id: 'pages.table.describe',
               defaultMessage: '描述',
