@@ -193,6 +193,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
       }
     },
     menuDataRender: () => {
+      console.log(getMenus(extraRoutes));
       return getMenus(extraRoutes);
     },
     links: isDev
