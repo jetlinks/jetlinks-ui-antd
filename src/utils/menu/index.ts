@@ -57,7 +57,7 @@ export const handleRoutes = (routes?: MenuItem[], level = 1): MenuItem[] => {
     ? routes.map((item) => {
         const detailComponent = findDetailRoute(item.code, item.url);
         if (detailComponent) {
-          item.children = item.children ? [...item.children, detailComponent] : [detailComponent];
+          item.children = item.children ? [detailComponent, ...item.children] : [detailComponent];
         }
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         if (item.children) {
@@ -92,6 +92,7 @@ const getRoutes = (extraRoutes: MenuItem[], level = 1): IRouteProps[] => {
             ...flatRoutes,
             {
               path: _route.path,
+              exact: true,
               redirect: redirect,
             },
           ]

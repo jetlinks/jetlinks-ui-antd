@@ -28,9 +28,20 @@ import { QuestionCircleOutlined } from '@ant-design/icons';
 import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 import encodeQuery from '@/utils/encodeQuery';
 import SystemConst from '@/utils/const';
+import { useLocation } from 'umi';
+
+export const ModelEnum = {
+  base: 'base',
+  metadata: 'metadata',
+  access: 'access',
+};
 
 const ProductDetail = observer(() => {
   const intl = useIntl();
+  const [mode, setMode] = useState('base');
+  const param = useParams<{ id: string }>();
+  const [loading, setLoading] = useState<boolean>(false);
+  const location = useLocation();
 
   const statusMap = {
     1: {
@@ -62,7 +73,6 @@ const ProductDetail = observer(() => {
       ),
     },
   };
-  const param = useParams<{ id: string }>();
 
   const initMetadata = () => {
     service.getProductDetail(param?.id).subscribe((data) => {
@@ -79,6 +89,14 @@ const ProductDetail = observer(() => {
   };
 
   useEffect(() => {
+    const queryParam = new URLSearchParams(location.search);
+    const _mode = queryParam.get('type');
+    if (_mode) {
+      setMode(_mode);
+    }
+  }, []);
+
+  useEffect(() => {
     const subscription = Store.subscribe(SystemConst.GET_METADATA, () => {
       MetadataAction.clean();
       setTimeout(() => {
@@ -86,7 +104,7 @@ const ProductDetail = observer(() => {
         Store.set(SystemConst.REFRESH_METADATA_TABLE, true);
       }, 300);
     });
-    if (!productModel.current) {
+    if (!param.id) {
       history.goBack();
     } else {
       initMetadata();
@@ -96,8 +114,6 @@ const ProductDetail = observer(() => {
       subscription.unsubscribe();
     };
   }, [param.id]);
-
-  const [loading, setLoading] = useState<boolean>(false);
 
   const changeDeploy = useCallback(
     (state: 'deploy' | 'undeploy') => {
@@ -141,7 +157,13 @@ const ProductDetail = observer(() => {
         <Spin spinning={loading}>
           <Descriptions size="small" column={2}>
             <Descriptions.Item label={'设备数量'}>
-              <Link to={getMenuPathByCode(MENUS_CODE['device/Instance'])}>
+              <Link
+                to={
+                  getMenuPathByCode(MENUS_CODE['device/Instance']) +
+                  '?productId=' +
+                  productModel.current?.id
+                }
+              >
                 {' '}
                 {productModel.current?.count || 0}
               </Link>
@@ -151,15 +173,19 @@ const ProductDetail = observer(() => {
       }
       title={productModel.current?.name}
       subTitle={
-        <Switch
-          key={2}
-          checked={productModel.current?.state === 1}
-          checkedChildren="已发布"
-          unCheckedChildren="未发布"
-          onChange={() => {
+        <Popconfirm
+          title={productModel.current?.state === 1 ? '确认取消发布' : '确认发布'}
+          onConfirm={() => {
             changeDeploy(statusMap[productModel.current?.state || 0].action);
           }}
-        />
+        >
+          <Switch
+            key={2}
+            checked={productModel.current?.state === 1}
+            checkedChildren="已发布"
+            unCheckedChildren="未发布"
+          />
+        </Popconfirm>
       }
       extra={[
         <Popconfirm title={'确定应用配置？'} key="1" onConfirm={() => changeDeploy('deploy')}>
@@ -184,13 +210,19 @@ const ProductDetail = observer(() => {
       ]}
     >
       <Card>
-        <Tabs defaultActiveKey="base">
+        <Tabs
+          defaultActiveKey={ModelEnum.base}
+          activeKey={mode}
+          onChange={(key) => {
+            setMode(key);
+          }}
+        >
           <Tabs.TabPane
             tab={intl.formatMessage({
               id: 'pages.device.productDetail.base',
               defaultMessage: '配置信息',
             })}
-            key="base"
+            key={ModelEnum.base}
           >
             <BaseInfo />
           </Tabs.TabPane>
@@ -234,11 +266,11 @@ const ProductDetail = observer(() => {
                 </Tooltip>
               </>
             }
-            key="metadata"
+            key={ModelEnum.metadata}
           >
             <Metadata type="product" />
           </Tabs.TabPane>
-          <Tabs.TabPane tab={'设备接入'} key="access">
+          <Tabs.TabPane tab={'设备接入'} key={ModelEnum.access}>
             <Access />
           </Tabs.TabPane>
           {/* <Tabs.TabPane

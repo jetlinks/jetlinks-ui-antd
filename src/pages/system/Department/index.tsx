@@ -179,15 +179,8 @@ export default observer(() => {
       parentId: {
         type: 'string',
         title: '上级部门',
-        required: true,
         'x-decorator': 'FormItem',
         'x-component': 'TreeSelect',
-        'x-validator': [
-          {
-            required: true,
-            message: '请选择上级部门',
-          },
-        ],
         'x-component-props': {
           fieldNames: {
             label: 'name',
