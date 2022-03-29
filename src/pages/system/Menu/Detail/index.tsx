@@ -43,7 +43,7 @@ export default () => {
   useEffect(() => {
     queryDetail();
     /* eslint-disable */
-  }, []);
+  }, [location]);
 
   return (
     <PageContainer

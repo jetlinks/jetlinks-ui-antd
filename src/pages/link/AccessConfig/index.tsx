@@ -70,7 +70,7 @@ const AccessConfig = () => {
           onSearch={(data: any) => {
             const dt = {
               pageSize: 10,
-              terms: [...data.terms],
+              terms: [...data?.terms],
             };
             handleSearch(dt);
           }}
@@ -89,7 +89,7 @@ const AccessConfig = () => {
           </Button>
         </div>
         <Row gutter={[16, 16]} style={{ marginTop: 10 }}>
-          {dataSource.data.map((item: any) => (
+          {(dataSource?.data || []).map((item: any) => (
             <Col key={item.name} span={12}>
               <Card hoverable>
                 <div className={styles.box}>

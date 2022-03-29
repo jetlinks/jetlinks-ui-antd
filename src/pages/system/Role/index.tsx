@@ -11,6 +11,7 @@ import { Link, useLocation } from 'umi';
 import { Store } from 'jetlinks-store';
 import SystemConst from '@/utils/const';
 import { CurdModel } from '@/components/BaseCrud/model';
+import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 
 export const service = new Service('role');
 
@@ -82,7 +83,7 @@ const Role: React.FC = observer(() => {
       valueType: 'option',
       width: 200,
       render: (text, record) => [
-        <Link to={`/system/role/edit/${record.id}`} key="link">
+        <Link to={`${getMenuPathByParams(MENUS_CODE['system/Role/Detail'], record.id)}`} key="link">
           <Tooltip
             title={intl.formatMessage({
               id: 'pages.data.option.edit',

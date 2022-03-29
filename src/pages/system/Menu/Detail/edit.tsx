@@ -214,6 +214,11 @@ export default (props: EditProps) => {
                 </Col>
               </Row>
             </Col>
+            <Col span={24}>
+              <Form.Item name={'describe'} label={'说明'}>
+                <Input.TextArea rows={4} maxLength={200} showCount placeholder={'请输入说明'} />
+              </Form.Item>
+            </Col>
           </Row>
         </Card>
         <Card style={{ marginTop: 24 }}>

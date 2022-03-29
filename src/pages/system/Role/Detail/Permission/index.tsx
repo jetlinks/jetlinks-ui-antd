@@ -1,5 +1,5 @@
 import { Button, Card, Col, Form, Input, message, Row } from 'antd';
-import Allocate from '@/pages/system/Role/Edit/Permission/Allocate';
+import Allocate from '@/pages/system/Role/Detail/Permission/Allocate';
 import { useEffect, useState } from 'react';
 import { history, useParams } from 'umi';
 import { service } from '@/pages/system/Role';
@@ -38,6 +38,29 @@ const Permission = () => {
     }
   }, [params, params.id]);
 
+  // const getDataList: any = (data1: any[]) => {
+  //   if (Array.isArray(data1) && data1.length > 0) {
+  //     return data1.map((item) => {
+  //       const check = item.check;
+  //       delete item.check;
+  //       return {
+  //         ...item,
+  //         granted: check === 1 || check === 2,
+  //         children: item?.children ? getDataList(item.children) : [],
+  //       };
+  //     });
+  //   }
+  //   return [];
+  // };
+  /**
+   * 扁平化树数组
+   */
+  const flattenArray: any = (arr: any[]) => {
+    return arr.reduce((result, item) => {
+      return result.concat(item, Array.isArray(item.children) ? flattenArray(item.children) : []);
+    }, []);
+  };
+
   const getDataList: any = (data1: any[]) => {
     if (Array.isArray(data1) && data1.length > 0) {
       return data1.map((item) => {
@@ -45,8 +68,8 @@ const Permission = () => {
         delete item.check;
         return {
           ...item,
-          granted: check !== 3,
-          children: item?.children ? getDataList(item.children) : [],
+          granted: check === 1,
+          children: item?.children,
         };
       });
     }
@@ -63,9 +86,10 @@ const Permission = () => {
           name: values?.name,
           description: values?.description || '',
         });
+        const list = getDataList(flattenArray([...values.permission?.children]) || []) || [];
         service
           .saveGrantTree('role', params?.id, {
-            menus: getDataList([...values.permission?.children]),
+            menus: list.filter((item: any) => item.granted) || [],
           })
           .subscribe((resp) => {
             if (resp.status === 200) {
