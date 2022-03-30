@@ -10,9 +10,10 @@ import {
   MinusOutlined,
   ReloadOutlined,
 } from '@ant-design/icons';
-import { Tooltip } from 'antd';
+import { Badge, Tooltip } from 'antd';
 import BaseCrud from '@/components/BaseCrud';
 import { useIntl } from '@@/plugin-locale/localeExports';
+import type { ISchema } from '@formily/json-schema';
 
 export const service = new BaseService<InstanceItem>('rule-engine/instance');
 const Instance = () => {
@@ -21,31 +22,24 @@ const Instance = () => {
 
   const columns: ProColumns<InstanceItem>[] = [
     {
-      dataIndex: 'index',
-      valueType: 'indexBorder',
-      width: 48,
-    },
-    {
       dataIndex: 'name',
       title: intl.formatMessage({
         id: 'pages.table.name',
         defaultMessage: '名称',
       }),
-    },
-    {
-      dataIndex: 'modelType',
-      title: intl.formatMessage({
-        id: 'pages.link.type',
-        defaultMessage: '类型',
-      }),
+      ellipsis: true,
     },
     {
       dataIndex: 'state',
-      title: intl.formatMessage({
-        id: 'pages.searchTable.titleStatus',
-        defaultMessage: '状态',
-      }),
-      render: (text, record) => record.state.value,
+      title: '状态',
+      render: (text: any) => (
+        <Badge color={text?.value === 'stopped' ? 'red' : 'green'} text={text?.text} />
+      ),
+    },
+    {
+      dataIndex: 'description',
+      title: '说明',
+      ellipsis: true,
     },
     {
       title: intl.formatMessage({
@@ -56,17 +50,7 @@ const Instance = () => {
       align: 'center',
       width: 200,
       render: (text, record) => [
-        <a>
-          <Tooltip
-            title={intl.formatMessage({
-              id: 'pages.ruleEngine.option.detail',
-              defaultMessage: '查看',
-            })}
-          >
-            <EyeOutlined />
-          </Tooltip>
-        </a>,
-        <a onClick={() => console.log(record)}>
+        <a key={'edit'} onClick={() => console.log(record)}>
           <Tooltip
             title={intl.formatMessage({
               id: 'pages.data.option.edit',
@@ -76,7 +60,17 @@ const Instance = () => {
             <EditOutlined />
           </Tooltip>
         </a>,
-        <a onClick={() => console.log(record)}>
+        <a key={'see'}>
+          <Tooltip
+            title={intl.formatMessage({
+              id: 'pages.ruleEngine.option.detail',
+              defaultMessage: '查看',
+            })}
+          >
+            <EyeOutlined />
+          </Tooltip>
+        </a>,
+        <a key={'enabled'} onClick={() => console.log(record)}>
           <Tooltip
             title={intl.formatMessage({
               id: 'pages.ruleEngine.option.start',
@@ -86,7 +80,7 @@ const Instance = () => {
             <CaretRightOutlined />
           </Tooltip>
         </a>,
-        <a onClick={() => console.log(record)}>
+        <a key={'reload'} onClick={() => console.log(record)}>
           <Tooltip
             title={intl.formatMessage({
               id: 'pages.ruleEngine.option.restart',
@@ -97,7 +91,7 @@ const Instance = () => {
           </Tooltip>
         </a>,
 
-        <a>
+        <a key={'delete'}>
           <Tooltip
             title={intl.formatMessage({
               id: 'pages.data.option.remove',
@@ -111,13 +105,52 @@ const Instance = () => {
     },
   ];
 
-  const schema = {};
+  const schema: ISchema = {
+    type: 'object',
+    properties: {
+      name: {
+        title: intl.formatMessage({
+          id: 'pages.table.name',
+          defaultMessage: '名称',
+        }),
+        type: 'string',
+        'x-decorator': 'FormItem',
+        'x-component': 'Input',
+        name: 'name',
+        'x-validator': [
+          {
+            max: 64,
+            message: '最多可输入64个字符',
+          },
+          {
+            required: true,
+            message: '请输入名称',
+          },
+        ],
+      },
+      description: {
+        title: '说明',
+        'x-decorator': 'FormItem',
+        'x-component': 'Input.TextArea',
+        'x-component-props': {
+          rows: 5,
+        },
+        'x-validator': [
+          {
+            max: 200,
+            message: '最多可输入200个字符',
+          },
+        ],
+      },
+    },
+  };
 
   return (
     <PageContainer>
       <BaseCrud
         columns={columns}
         service={service}
+        search={false}
         title={intl.formatMessage({
           id: 'pages.ruleEngine.instance',
           defaultMessage: '规则实例',

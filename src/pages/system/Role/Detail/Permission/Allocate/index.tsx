@@ -1,3 +1,5 @@
+import { flattenArray } from '@/utils/util';
+import _ from 'lodash';
 import { useEffect, useState } from 'react';
 import MenuPermission from './MenuPermission';
 
@@ -13,6 +15,7 @@ const Allocate = (props: Props) => {
     name: '菜单权限',
     children: [],
   });
+  const [assetsList, setAssetsList] = useState<any[]>([]);
 
   const getDataList: any = (data1: any[]) => {
     if (Array.isArray(data1) && data1.length > 0) {
@@ -44,8 +47,24 @@ const Allocate = (props: Props) => {
     return [];
   };
 
+  const deRepeat = (arr: any[]) => {
+    const list = new Map();
+    arr.forEach((item) => {
+      list.set(item.supportId, item);
+    });
+    return [...list.values()];
+  };
+
   useEffect(() => {
     if (props?.value) {
+      const list =
+        flattenArray(props.value.children).filter(
+          (item: any) =>
+            item?.accessSupport?.value !== 'unsupported' &&
+            item?.assetAccesses &&
+            item?.assetAccesses?.length > 0,
+        ) || [];
+      setAssetsList(deRepeat(_.flatten(_.map(list, 'assetAccesses') || []) || []) || []);
       if (!props.value?.check) {
         const children = getDataList(props.value?.children || []) || [];
         let check: number = 3;
@@ -73,6 +92,28 @@ const Allocate = (props: Props) => {
     }
   }, [props.value]);
 
+  const getAccessData: any = (arr: any[], str: string) => {
+    if (Array.isArray(arr) && arr.length > 0) {
+      return arr.map((item) => {
+        let li: any[] = [];
+        if (item?.assetAccesses.length > 0) {
+          li = item.assetAccesses.map((i: any) => {
+            return {
+              ...i,
+              granted: i.supportId === str,
+            };
+          });
+        }
+        return {
+          ...item,
+          assetAccesses: li,
+          children: item?.children ? getAccessData(item.children, str) : [],
+        };
+      });
+    }
+    return [];
+  };
+
   return (
     <div style={{ border: '1px solid #f0f0f0', paddingBottom: 10 }}>
       <div style={{ overflowY: 'scroll', maxHeight: '500px' }}>
@@ -80,6 +121,17 @@ const Allocate = (props: Props) => {
           key={'menu-permission'}
           value={dataSource}
           level={1}
+          assetsList={assetsList}
+          checkChange={(data: any) => {
+            const dt = {
+              ...dataSource,
+              children: getAccessData(dataSource.children || [], data),
+            };
+            setDataSource(dt);
+            if (props.onChange) {
+              props.onChange(dt);
+            }
+          }}
           change={(data: any) => {
             setDataSource(data);
             if (props.onChange) {
