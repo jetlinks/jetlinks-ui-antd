@@ -3,8 +3,10 @@ import React from 'react';
 import type { ProductItem } from '@/pages/device/Product/typings';
 import { BadgeStatus } from '@/components';
 import { StatusColorEnum } from '@/components/BadgeStatus';
-import '@/style/common.less';
-import { useIntl } from '@@/plugin-locale/localeExports';
+import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { ModelEnum } from '@/pages/device/Product/Detail';
+import { Link, useIntl } from 'umi';
+import '../index.less';
 
 export interface ProductCardProps extends ProductItem {
   actions?: React.ReactNode[];
@@ -43,7 +45,15 @@ export default (props: ProductCardProps) => {
           </div>
           <div className={'card-item-content'}>
             <label>接入方式：</label>
-            <span className={'ellipsis'}>{props.transportProtocol || '--'}</span>
+            <span className={'ellipsis'}>
+              <Link
+                to={`${getMenuPathByParams(MENUS_CODE['device/Product/Detail'], props.id)}?type=${
+                  ModelEnum.access
+                }`}
+              >
+                {props.transportProtocol || '--'}
+              </Link>
+            </span>
           </div>
         </div>
       </div>
