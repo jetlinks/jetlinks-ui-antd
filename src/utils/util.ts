@@ -71,3 +71,12 @@ export const getDateFormat = (
 ): string => {
   return date ? moment(date).format(format) : '-';
 };
+
+/**
+ * 扁平化树数组
+ */
+export const flattenArray: any = (arr: any[]) => {
+  return arr.reduce((result, item) => {
+    return result.concat(item, Array.isArray(item.children) ? flattenArray(item.children) : []);
+  }, []);
+};

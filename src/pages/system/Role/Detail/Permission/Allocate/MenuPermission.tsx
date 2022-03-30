@@ -1,5 +1,5 @@
 import { CaretDownOutlined, QuestionCircleOutlined } from '@ant-design/icons';
-import { Checkbox, Radio, Tooltip } from 'antd';
+import { Checkbox, Radio, Select, Tooltip } from 'antd';
 import type { CheckboxValueType } from 'antd/lib/checkbox/Group';
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
@@ -8,7 +8,9 @@ interface Props {
   value: any;
   check?: boolean;
   level?: number;
+  assetsList?: any[];
   change: (data: any) => void;
+  checkChange?: (data: any) => void;
 }
 
 const MenuPermission = (props: Props) => {
@@ -16,11 +18,16 @@ const MenuPermission = (props: Props) => {
   const [checkAll, setCheckAll] = useState<boolean>(props.value?.check === 1);
   const [visible, setVisible] = useState<boolean>(value.id === 'menu-permission');
   const [indeterminate, setIndeterminate] = useState<boolean>(props.value?.check === 2);
+  const [checkbox, setCheckbox] = useState<boolean>(false);
+  const [checkValue, setCheckValue] = useState<string>('');
 
   useEffect(() => {
     setValue(props.value);
     setCheckAll(props.value?.check === 1);
     setIndeterminate(props.value?.check === 2);
+    const val =
+      (props.value?.assetAccesses || []).filter((i: any) => i?.granted)[0]?.supportId || '';
+    setCheckValue(val);
   }, [props.value]);
 
   const checkAllData: any = (data: any[], check: boolean) => {
@@ -29,7 +36,7 @@ const MenuPermission = (props: Props) => {
         const buttons = (item?.buttons || []).map((i: any) => {
           return {
             ...i,
-            enabled: check,
+            granted: check,
           };
         });
         return {
@@ -52,6 +59,7 @@ const MenuPermission = (props: Props) => {
           paddingLeft: (props?.level || 0) * 10,
           transition: 'background .3s',
           borderBottom: '1px solid #f0f0f0',
+          height: 50,
         }}
         key={value?.id}
       >
@@ -96,7 +104,7 @@ const MenuPermission = (props: Props) => {
                 const buttons = (value?.buttons || []).map((i: any) => {
                   return {
                     ...i,
-                    enabled: e.target.checked,
+                    granted: e.target.checked,
                   };
                 });
                 props.change({
@@ -113,20 +121,20 @@ const MenuPermission = (props: Props) => {
           <div>
             {value.id === 'menu-permission' ? (
               <span style={{ fontWeight: value.id === 'menu-permission' ? 600 : 400 }}>
-                权限数据
+                操作权限
               </span>
             ) : (
               <Checkbox.Group
                 name={value?.id}
                 value={_.map(
-                  (value?.buttons || []).filter((i: any) => i?.enabled),
+                  (value?.buttons || []).filter((i: any) => i?.granted),
                   'id',
                 )}
                 onChange={(data: CheckboxValueType[]) => {
                   const buttons = value.buttons.map((i: any) => {
                     return {
                       ...i,
-                      enabled: data.includes(i.id),
+                      granted: data.includes(i.id),
                     };
                   });
                   const clen = (value?.children || []).filter((i: any) => i.check !== 3).length;
@@ -164,36 +172,61 @@ const MenuPermission = (props: Props) => {
           }}
         >
           {value.id === 'menu-permission' ? (
-            <span style={{ fontWeight: value.id === 'menu-permission' ? 600 : 400 }}>
-              数据权限
-              <Tooltip title="勾选任意数据权限均能看到自己创建的数据权限">
-                <QuestionCircleOutlined />
-              </Tooltip>
-            </span>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <span style={{ fontWeight: value.id === 'menu-permission' ? 600 : 400 }}>
+                数据权限
+                <Tooltip title="勾选任意数据权限均能看到自己创建的数据权限">
+                  <QuestionCircleOutlined />
+                </Tooltip>
+              </span>
+              <Checkbox
+                checked={checkbox}
+                style={{ margin: '0 10px' }}
+                onChange={(e) => {
+                  setCheckbox(e.target.checked);
+                  setCheckValue('');
+                }}
+              >
+                批量设置
+              </Checkbox>
+              {checkbox && (
+                <Select
+                  showSearch
+                  placeholder="请选择"
+                  optionFilterProp="children"
+                  style={{ width: 200 }}
+                  onChange={(val: string) => {
+                    setCheckValue(val);
+                    if (props.checkChange) {
+                      props.checkChange(val);
+                    }
+                  }}
+                  filterOption={(input: any, option: any) =>
+                    (option?.children || '').toLowerCase().indexOf(input.toLowerCase()) >= 0
+                  }
+                >
+                  {(props?.assetsList || []).map((item) => (
+                    <Select.Option key={`${item?.supportId}`} value={item?.supportId}>
+                      {item?.name}
+                    </Select.Option>
+                  ))}
+                </Select>
+              )}
+            </div>
           ) : (
             <div>
-              {value?.accessSupport?.value === 'unsupported' ? (
+              {value?.accessSupport?.value !== 'support' ? (
                 <div>{value?.accessDescription}</div>
               ) : (
                 <Radio.Group
                   defaultValue={value?.assetAccesses[0]?.supportId}
-                  value={
-                    _.map(
-                      (value?.assetAccesses || []).filter((i: any) => i?.enabled),
-                      'supportId',
-                    )[0]
-                  }
+                  value={checkValue}
                   onChange={(e) => {
+                    setCheckValue(e.target.value);
                     const access = (value?.assetAccesses || []).map((i: any) => {
-                      if (i.supportId === e.target.value) {
-                        return {
-                          ...i,
-                          enabled: true,
-                        };
-                      }
                       return {
                         ...i,
-                        enabled: false,
+                        granted: i.supportId === e.target.value,
                       };
                     });
                     const d = {
@@ -230,7 +263,7 @@ const MenuPermission = (props: Props) => {
                 });
                 let check: number = 3;
                 const blen = value.buttons?.length || 0;
-                const bblen = (value?.buttons || []).filter((i: any) => i.enabled).length || 0;
+                const bblen = (value?.buttons || []).filter((i: any) => i.granted).length || 0;
                 const clen = children.length || 0;
                 const cclen = (children || []).filter((i: any) => i.check !== 3).length || 0;
                 const cclen1 = (children || []).filter((i: any) => i.check === 1).length || 0;
