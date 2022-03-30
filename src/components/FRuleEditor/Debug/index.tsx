@@ -139,6 +139,11 @@ const Debug = observer(() => {
   const [subscribeTopic] = useSendWebsocketMessage();
 
   const runScript = async () => {
+    const propertiesList = await DB.getDB().table('properties').toArray();
+    const _properties = form.values?.properties.map((item: any) => {
+      const _item = propertiesList.find((i) => i.id === item.id);
+      return { ...item, type: _item?.valueType?.type };
+    });
     subscribeTopic?.(
       `virtual-property-debug-${State.property}-${new Date().getTime()}`,
       '/virtual-property-debug',
@@ -149,7 +154,7 @@ const Debug = observer(() => {
           type: 'script',
           script: State.code,
         },
-        properties: form.values.properties || [],
+        properties: _properties || [],
       },
     )?.subscribe((data: WebsocketPayload) => {
       State.log.push({ time: new Date().getTime(), content: JSON.stringify(data.payload) });
