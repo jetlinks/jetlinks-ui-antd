@@ -1,29 +1,29 @@
-import { PageContainer } from '@ant-design/pro-layout';
 import BaseService from '@/utils/BaseService';
-import React, { useRef } from 'react';
+import { useRef, useState } from 'react';
 import type { ProColumns, ActionType } from '@jetlinks/pro-table';
-import type { AccessLogItem } from '@/pages/log/Access/typings';
+import type { AccessLogItem } from '@/pages/Log/Access/typings';
 import moment from 'moment';
 import { Tag, Tooltip } from 'antd';
-import { CurdModel } from '@/components/BaseCrud/model';
-import { EditOutlined } from '@ant-design/icons';
+import { EyeOutlined } from '@ant-design/icons';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import BaseCrud from '@/components/BaseCrud';
+import ProTable from '@jetlinks/pro-table';
+import SearchComponent from '@/components/SearchComponent';
+import Detail from '@/pages/Log/Access/Detail';
 
 const service = new BaseService('logger/access');
-const Access: React.FC = () => {
+
+const Access = () => {
   const actionRef = useRef<ActionType>();
   const intl = useIntl();
+  const [param, setParam] = useState({});
+  const [visible, setVisible] = useState<boolean>(false);
+  const [current, setCurrent] = useState<Partial<AccessLogItem>>({});
+
   const columns: ProColumns<AccessLogItem>[] = [
-    {
-      dataIndex: 'index',
-      valueType: 'indexBorder',
-      width: 48,
-    },
     {
       title: 'IP',
       dataIndex: 'ip',
-      // ellipsis: true
+      ellipsis: true,
     },
     {
       title: intl.formatMessage({
@@ -31,7 +31,12 @@ const Access: React.FC = () => {
         defaultMessage: '请求路径',
       }),
       dataIndex: 'url',
-      // ellipsis: true,
+      ellipsis: true,
+    },
+    {
+      title: '请求方法',
+      dataIndex: 'httpMethod',
+      ellipsis: true,
     },
     {
       title: intl.formatMessage({
@@ -39,7 +44,7 @@ const Access: React.FC = () => {
         defaultMessage: '说明',
       }),
       dataIndex: 'description',
-      // ellipsis: true,
+      ellipsis: true,
       render: (text, record) => {
         return `${record.action}-${record.describe}`;
       },
@@ -51,8 +56,10 @@ const Access: React.FC = () => {
       }),
       dataIndex: 'requestTime',
       sorter: true,
+      valueType: 'dateTime',
       defaultSortOrder: 'descend',
-      // ellipsis: true,
+      ellipsis: true,
+      width: 200,
       renderText: (text: string) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
@@ -60,7 +67,6 @@ const Access: React.FC = () => {
         id: 'pages.log.access.requestTimeConsuming',
         defaultMessage: '请求耗时',
       }),
-      // width: 100,
       renderText: (record: AccessLogItem) => (
         <Tag color="purple">{record.responseTime - record.requestTime}ms</Tag>
       ),
@@ -80,35 +86,51 @@ const Access: React.FC = () => {
       }),
       valueType: 'option',
       align: 'center',
-      width: 200,
       render: (text, record) => [
-        <a key="editable" onClick={() => CurdModel.update(record)}>
-          <Tooltip
-            title={intl.formatMessage({
-              id: 'pages.data.option.edit',
-              defaultMessage: '编辑',
-            })}
-          >
-            <EditOutlined />
+        <a
+          key="editable"
+          onClick={() => {
+            setVisible(true);
+            setCurrent(record);
+          }}
+        >
+          <Tooltip title={'查看'}>
+            <EyeOutlined />
           </Tooltip>
         </a>,
       ],
     },
   ];
   return (
-    <PageContainer>
-      <BaseCrud<AccessLogItem>
+    <>
+      <SearchComponent<AccessLogItem>
+        field={columns}
+        target="access-log"
+        onSearch={(data) => {
+          actionRef.current?.reset?.();
+          setParam(data);
+        }}
+      />
+      <ProTable<AccessLogItem>
         columns={columns}
-        service={service}
-        title={intl.formatMessage({
-          id: 'pages.log.access',
-          defaultMessage: '访问日志',
-        })}
-        schema={{}}
-        toolBar={[]}
+        params={param}
+        request={async (params) =>
+          service.query({ ...params, sorts: [{ name: 'responseTime', order: 'desc' }] })
+        }
+        defaultParams={{ sorts: [{ responseTime: 'desc' }] }}
+        search={false}
         actionRef={actionRef}
       />
-    </PageContainer>
+      {visible && (
+        <Detail
+          data={current}
+          close={() => {
+            setVisible(false);
+            setCurrent({});
+          }}
+        />
+      )}
+    </>
   );
 };
 export default Access;

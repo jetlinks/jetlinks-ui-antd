@@ -6,6 +6,7 @@ type InstanceItem = {
   modelMeta: string;
   modelType: string;
   modelVersion: number;
+  description?: string;
   state: {
     text: string;
     value: string;
