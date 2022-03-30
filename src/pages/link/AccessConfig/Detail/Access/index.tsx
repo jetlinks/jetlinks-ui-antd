@@ -294,6 +294,7 @@ const Access = (props: Props) => {
             <Alert message="选择与设备通信的网络组件" type="warning" showIcon />
             <div className={styles.search}>
               <Input.Search
+                key={'network'}
                 placeholder="请输入名称"
                 onSearch={(value: string) => {
                   queryNetworkList(
@@ -394,6 +395,7 @@ const Access = (props: Props) => {
             />
             <div className={styles.search}>
               <Input.Search
+                key={'protocol'}
                 placeholder="请输入名称"
                 onSearch={(value: string) => {
                   queryProcotolList(
