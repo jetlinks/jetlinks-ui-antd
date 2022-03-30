@@ -100,6 +100,7 @@ export default observer(() => {
         defaultMessage: '排序',
       }),
       width: 80,
+      hideInSearch: true,
       dataIndex: 'sortIndex',
     },
     {
@@ -116,6 +117,7 @@ export default observer(() => {
         defaultMessage: '创建时间',
       }),
       width: 180,
+      valueType: 'dateTime',
       dataIndex: 'createTime',
       render: (_, record) => {
         return record.createTime ? moment(record.createTime).format('YYYY-MM-DD HH:mm:ss') : '-';
