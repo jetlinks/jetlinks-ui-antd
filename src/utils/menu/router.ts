@@ -39,17 +39,13 @@ export const MENUS_CODE = {
   'link/Protocol': 'link/Protocol',
   'link/Type': 'link/Type',
   'link/AccessConfig': 'link/AccessConfig',
-  'log/Access': 'log/Access',
-  'log/System': 'log/System',
+  Log: 'Log',
   'media/Cascade': 'media/Cascade',
   'media/Config': 'media/Config',
   'media/Device': 'media/Device',
   'media/Reveal': 'media/Reveal',
-
-  'notice/Type': 'notice/Type',
   'notice/Config': 'notice/Config',
   'notice/Template': 'notice/Template',
-
   'rule-engine/Instance': 'rule-engine/Instance',
   'rule-engine/SQLRule': 'rule-engine/SQLRule',
   'rule-engine/Scene': 'rule-engine/Scene',
