@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { useState } from 'react';
-import Access from './Access';
-import System from './System';
+import Access from '@/pages/Log/Access';
+import System from '@/pages/Log/System';
 
 const Log = () => {
   const [tab, setTab] = useState<string>('access');

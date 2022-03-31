@@ -9,7 +9,7 @@ interface Props {
 }
 
 const Detail = (props: Props) => {
-  const [data, setDada] = useState<Partial<AccessLogItem>>(props.data);
+  const [data, setDada] = useState<Partial<AccessLogItem>>(props.data || {});
 
   useEffect(() => {
     setDada(props.data);
