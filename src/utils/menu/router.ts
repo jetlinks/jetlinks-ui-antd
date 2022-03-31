@@ -39,8 +39,7 @@ export const MENUS_CODE = {
   'link/Protocol': 'link/Protocol',
   'link/Type': 'link/Type',
   'link/AccessConfig': 'link/AccessConfig',
-  'log/Access': 'log/Access',
-  'log/System': 'log/System',
+  Log: 'Log',
   'media/Cascade': 'media/Cascade',
   'media/Config': 'media/Config',
   'media/Device': 'media/Device',
@@ -108,6 +107,4 @@ export const getDetailNameByCode = {
   'system/Role/Detail': '权限配置',
   'link/Type/Detail': '网络组件详情',
   'link/AccessConfig/Detail': '配置详情',
-  'notice/Config/Detail': '配置详情',
-  'notice/Template/Detail': '模板详情',
 };

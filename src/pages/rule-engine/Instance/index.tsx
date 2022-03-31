@@ -1,24 +1,136 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import BaseService from '@/utils/BaseService';
+import Service from '@/pages/rule-engine/Instance/serivce';
 import type { InstanceItem } from '@/pages/rule-engine/Instance/typings';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import {
-  CaretRightOutlined,
+  CheckCircleOutlined,
+  DeleteOutlined,
   EditOutlined,
   EyeOutlined,
-  MinusOutlined,
-  ReloadOutlined,
+  PlusOutlined,
+  StopOutlined,
 } from '@ant-design/icons';
-import { Badge, Tooltip } from 'antd';
-import BaseCrud from '@/components/BaseCrud';
+import { Badge, Button, message, Popconfirm, Tooltip } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import type { ISchema } from '@formily/json-schema';
+import SearchComponent from '@/components/SearchComponent';
+import { ProTableCard } from '@/components';
+import RuleInstanceCard from '@/components/ProTableCard/CardItems/ruleInstance';
+import Save from '@/pages/rule-engine/Instance/Save';
+import SystemConst from '@/utils/const';
 
-export const service = new BaseService<InstanceItem>('rule-engine/instance');
+export const service = new Service('rule-engine/instance');
+
 const Instance = () => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
+  const [visible, setVisible] = useState<boolean>(false);
+  const [current, setCurrent] = useState<Partial<InstanceItem>>({});
+  const [searchParams, setSearchParams] = useState<any>({});
+
+  const tools = (record: InstanceItem) => [
+    <Tooltip
+      title={intl.formatMessage({
+        id: 'pages.data.option.edit',
+        defaultMessage: '编辑',
+      })}
+      key={'edit'}
+    >
+      <Button
+        type={'link'}
+        style={{ padding: 0 }}
+        onClick={() => {
+          setCurrent(record);
+          setVisible(true);
+        }}
+      >
+        <EditOutlined />
+      </Button>
+    </Tooltip>,
+    <Tooltip
+      title={intl.formatMessage({
+        id: 'pages.data.option.detail',
+        defaultMessage: '查看',
+      })}
+      key={'detail'}
+    >
+      <Button
+        type={'link'}
+        style={{ padding: 0 }}
+        onClick={() => {
+          window.open(`/${SystemConst.API_BASE}/rule-editor/index.html#flow/${record.id}`);
+        }}
+      >
+        <EyeOutlined />
+      </Button>
+    </Tooltip>,
+    <Popconfirm
+      key={'state'}
+      title={intl.formatMessage({
+        id: `pages.data.option.${record.state.value !== 'stopped' ? 'disabled' : 'enabled'}.tips`,
+        defaultMessage: '确认禁用？',
+      })}
+      onConfirm={async () => {
+        if (record.state.value !== 'stopped') {
+          await service.stopRule(record.id);
+        } else {
+          await service.startRule(record.id);
+        }
+        message.success(
+          intl.formatMessage({
+            id: 'pages.data.option.success',
+            defaultMessage: '操作成功!',
+          }),
+        );
+        actionRef.current?.reload();
+      }}
+    >
+      <Tooltip
+        title={intl.formatMessage({
+          id: `pages.data.option.${record.state.value !== 'stopped' ? 'disabled' : 'enabled'}`,
+          defaultMessage: record.state.value !== 'notActive' ? '禁用' : '启用',
+        })}
+      >
+        <Button type={'link'} style={{ padding: 0 }}>
+          {record.state.value !== 'stopped' ? <StopOutlined /> : <CheckCircleOutlined />}
+        </Button>
+      </Tooltip>
+    </Popconfirm>,
+    <Popconfirm
+      title={intl.formatMessage({
+        id:
+          record.state.value === 'notActive'
+            ? 'pages.data.option.remove.tips'
+            : 'pages.device.instance.deleteTip',
+      })}
+      key={'delete'}
+      onConfirm={async () => {
+        if (record.state.value === 'notActive') {
+          await service.remove(record.id);
+          message.success(
+            intl.formatMessage({
+              id: 'pages.data.option.success',
+              defaultMessage: '操作成功!',
+            }),
+          );
+          actionRef.current?.reload();
+        } else {
+          message.error(intl.formatMessage({ id: 'pages.device.instance.deleteTip' }));
+        }
+      }}
+    >
+      <Tooltip
+        title={intl.formatMessage({
+          id: 'pages.data.option.remove',
+          defaultMessage: '删除',
+        })}
+      >
+        <Button type={'link'} style={{ padding: 0 }}>
+          <DeleteOutlined />
+        </Button>
+      </Tooltip>
+    </Popconfirm>,
+  ];
 
   const columns: ProColumns<InstanceItem>[] = [
     {
@@ -35,6 +147,21 @@ const Instance = () => {
       render: (text: any) => (
         <Badge color={text?.value === 'stopped' ? 'red' : 'green'} text={text?.text} />
       ),
+      valueType: 'select',
+      valueEnum: {
+        started: {
+          text: '已启动',
+          status: 'started',
+        },
+        disable: {
+          text: '已禁用',
+          status: 'disable',
+        },
+        stopped: {
+          text: '已停止',
+          status: 'stopped',
+        },
+      },
     },
     {
       dataIndex: 'description',
@@ -50,7 +177,13 @@ const Instance = () => {
       align: 'center',
       width: 200,
       render: (text, record) => [
-        <a key={'edit'} onClick={() => console.log(record)}>
+        <a
+          key={'edit'}
+          onClick={() => {
+            setCurrent(record);
+            setVisible(true);
+          }}
+        >
           <Tooltip
             title={intl.formatMessage({
               id: 'pages.data.option.edit',
@@ -60,7 +193,12 @@ const Instance = () => {
             <EditOutlined />
           </Tooltip>
         </a>,
-        <a key={'see'}>
+        <a
+          key={'see'}
+          onClick={() => {
+            window.open(`/${SystemConst.API_BASE}/rule-editor/index.html#flow/${record.id}`);
+          }}
+        >
           <Tooltip
             title={intl.formatMessage({
               id: 'pages.ruleEngine.option.detail',
@@ -70,94 +208,137 @@ const Instance = () => {
             <EyeOutlined />
           </Tooltip>
         </a>,
-        <a key={'enabled'} onClick={() => console.log(record)}>
+        <Popconfirm
+          key={'state'}
+          title={intl.formatMessage({
+            id: `pages.data.option.${
+              record.state.value !== 'stopped' ? 'disabled' : 'enabled'
+            }.tips`,
+            defaultMessage: '确认禁用？',
+          })}
+          onConfirm={async () => {
+            if (record.state.value !== 'stopped') {
+              await service.stopRule(record.id);
+            } else {
+              await service.startRule(record.id);
+            }
+            message.success(
+              intl.formatMessage({
+                id: 'pages.data.option.success',
+                defaultMessage: '操作成功!',
+              }),
+            );
+            actionRef.current?.reload();
+          }}
+        >
           <Tooltip
             title={intl.formatMessage({
-              id: 'pages.ruleEngine.option.start',
-              defaultMessage: '启动',
+              id: `pages.data.option.${record.state.value !== 'stopped' ? 'disabled' : 'enabled'}`,
+              defaultMessage: record.state.value !== 'notActive' ? '禁用' : '启用',
             })}
           >
-            <CaretRightOutlined />
+            <Button type={'link'} style={{ padding: 0 }}>
+              {record.state.value !== 'stopped' ? <StopOutlined /> : <CheckCircleOutlined />}
+            </Button>
           </Tooltip>
-        </a>,
-        <a key={'reload'} onClick={() => console.log(record)}>
-          <Tooltip
-            title={intl.formatMessage({
-              id: 'pages.ruleEngine.option.restart',
-              defaultMessage: '重启',
-            })}
-          >
-            <ReloadOutlined />
-          </Tooltip>
-        </a>,
-
-        <a key={'delete'}>
+        </Popconfirm>,
+        <Popconfirm
+          title={intl.formatMessage({
+            id:
+              record.state.value === 'notActive'
+                ? 'pages.data.option.remove.tips'
+                : 'pages.device.instance.deleteTip',
+          })}
+          key={'delete'}
+          onConfirm={async () => {
+            if (record.state.value === 'notActive') {
+              await service.remove(record.id);
+              message.success(
+                intl.formatMessage({
+                  id: 'pages.data.option.success',
+                  defaultMessage: '操作成功!',
+                }),
+              );
+              actionRef.current?.reload();
+            } else {
+              message.error(intl.formatMessage({ id: 'pages.device.instance.deleteTip' }));
+            }
+          }}
+        >
           <Tooltip
             title={intl.formatMessage({
               id: 'pages.data.option.remove',
               defaultMessage: '删除',
             })}
           >
-            <MinusOutlined />
+            <Button type={'link'} style={{ padding: 0 }}>
+              <DeleteOutlined />
+            </Button>
           </Tooltip>
-        </a>,
+        </Popconfirm>,
       ],
     },
   ];
 
-  const schema: ISchema = {
-    type: 'object',
-    properties: {
-      name: {
-        title: intl.formatMessage({
-          id: 'pages.table.name',
-          defaultMessage: '名称',
-        }),
-        type: 'string',
-        'x-decorator': 'FormItem',
-        'x-component': 'Input',
-        name: 'name',
-        'x-validator': [
-          {
-            max: 64,
-            message: '最多可输入64个字符',
-          },
-          {
-            required: true,
-            message: '请输入名称',
-          },
-        ],
-      },
-      description: {
-        title: '说明',
-        'x-decorator': 'FormItem',
-        'x-component': 'Input.TextArea',
-        'x-component-props': {
-          rows: 5,
-        },
-        'x-validator': [
-          {
-            max: 200,
-            message: '最多可输入200个字符',
-          },
-        ],
-      },
-    },
-  };
-
   return (
     <PageContainer>
-      <BaseCrud
-        columns={columns}
-        service={service}
-        search={false}
-        title={intl.formatMessage({
-          id: 'pages.ruleEngine.instance',
-          defaultMessage: '规则实例',
-        })}
-        schema={schema}
-        actionRef={actionRef}
+      <SearchComponent<InstanceItem>
+        field={columns}
+        target="device-instance"
+        onSearch={(data) => {
+          console.log(data);
+          // 重置分页数据
+          actionRef.current?.reset?.();
+          setSearchParams(data);
+        }}
       />
+      <ProTableCard<InstanceItem>
+        columns={columns}
+        actionRef={actionRef}
+        params={searchParams}
+        options={{ fullScreen: true }}
+        request={(params) =>
+          service.query({
+            ...params,
+            sorts: [
+              {
+                name: 'createTime',
+                order: 'desc',
+              },
+            ],
+          })
+        }
+        rowKey="id"
+        search={false}
+        pagination={{ pageSize: 10 }}
+        headerTitle={[
+          <Button
+            onClick={() => {
+              setVisible(true);
+              setCurrent({});
+            }}
+            style={{ marginRight: 12 }}
+            key="button"
+            icon={<PlusOutlined />}
+            type="primary"
+          >
+            {intl.formatMessage({
+              id: 'pages.data.option.add',
+              defaultMessage: '新增',
+            })}
+          </Button>,
+        ]}
+        cardRender={(record) => <RuleInstanceCard {...record} actions={tools(record)} />}
+      />
+      {visible && (
+        <Save
+          data={current}
+          close={() => {
+            setVisible(false);
+            actionRef.current?.reload();
+          }}
+        />
+      )}
     </PageContainer>
   );
 };

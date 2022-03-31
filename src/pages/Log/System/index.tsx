@@ -1,34 +1,24 @@
-import { PageContainer } from '@ant-design/pro-layout';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import type { ProColumns, ActionType } from '@jetlinks/pro-table';
-import type { SystemLogItem } from '@/pages/log/System/typings';
+import type { SystemLogItem } from '@/pages/Log/System/typings';
 import { Tag, Tooltip } from 'antd';
 import moment from 'moment';
-import BaseCrud from '@/components/BaseCrud';
 import BaseService from '@/utils/BaseService';
-import { CurdModel } from '@/components/BaseCrud/model';
-import { EditOutlined } from '@ant-design/icons';
+import { EyeOutlined } from '@ant-design/icons';
+import ProTable from '@jetlinks/pro-table';
+import SearchComponent from '@/components/SearchComponent';
+import Detail from '@/pages/Log/System/Detail';
 
 const service = new BaseService<SystemLogItem>('logger/system');
 const System = () => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
+  const [param, setParam] = useState({});
+  const [visible, setVisible] = useState<boolean>(false);
+  const [current, setCurrent] = useState<Partial<SystemLogItem>>({});
 
   const columns: ProColumns<SystemLogItem>[] = [
-    {
-      dataIndex: 'index',
-      valueType: 'indexBorder',
-      width: 48,
-    },
-    {
-      title: intl.formatMessage({
-        id: 'pages.log.system.threadName',
-        defaultMessage: '线程',
-      }),
-      dataIndex: 'threadName',
-      ellipsis: true,
-    },
     {
       title: intl.formatMessage({
         id: 'pages.table.name',
@@ -38,13 +28,29 @@ const System = () => {
       ellipsis: true,
     },
     {
-      title: intl.formatMessage({
-        id: 'pages.log.system.level',
-        defaultMessage: '级别',
-      }),
+      title: '日志级别',
       dataIndex: 'level',
       width: 80,
       render: (text) => <Tag color={text === 'ERROR' ? 'red' : 'orange'}>{text}</Tag>,
+      valueType: 'select',
+      valueEnum: {
+        ERROR: {
+          text: 'ERROR',
+          status: 'ERROR',
+        },
+        INFO: {
+          text: 'INFO',
+          status: 'INFO',
+        },
+        DEBUG: {
+          text: 'DEBUG',
+          status: 'DEBUG',
+        },
+        WARN: {
+          text: 'WARN',
+          status: 'WARN',
+        },
+      },
     },
     {
       title: intl.formatMessage({
@@ -72,6 +78,7 @@ const System = () => {
       width: 200,
       sorter: true,
       ellipsis: true,
+      valueType: 'dateTime',
       defaultSortOrder: 'descend',
       renderText: (text) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
     },
@@ -84,32 +91,50 @@ const System = () => {
       align: 'center',
       width: 200,
       render: (text, record) => [
-        <a key="editable" onClick={() => CurdModel.update(record)}>
-          <Tooltip
-            title={intl.formatMessage({
-              id: 'pages.data.option.edit',
-              defaultMessage: '编辑',
-            })}
-          >
-            <EditOutlined />
+        <a
+          key="editable"
+          onClick={() => {
+            setVisible(true);
+            setCurrent(record);
+          }}
+        >
+          <Tooltip title="查看">
+            <EyeOutlined />
           </Tooltip>
         </a>,
       ],
     },
   ];
   return (
-    <PageContainer>
-      <BaseCrud<SystemLogItem>
+    <>
+      <SearchComponent<SystemLogItem>
+        field={columns}
+        target="system-log"
+        onSearch={(data) => {
+          actionRef.current?.reset?.();
+          setParam(data);
+        }}
+      />
+      <ProTable<SystemLogItem>
         columns={columns}
-        service={service}
-        title={intl.formatMessage({
-          id: 'pages.log.system',
-          defaultMessage: '系统日志',
-        })}
-        schema={{}}
+        params={param}
+        request={async (params) =>
+          service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
+        }
+        defaultParams={{ sorts: [{ createTime: 'desc' }] }}
+        search={false}
         actionRef={actionRef}
       />
-    </PageContainer>
+      {visible && (
+        <Detail
+          data={current}
+          close={() => {
+            setVisible(false);
+            setCurrent({});
+          }}
+        />
+      )}
+    </>
   );
 };
 export default System;
