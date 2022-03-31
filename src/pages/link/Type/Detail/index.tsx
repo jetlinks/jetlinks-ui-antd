@@ -255,7 +255,7 @@ const Save = observer(() => {
             state: {
               // visible: '{{$deps[0]==="UDP"}}',
               visible:
-                '{{["COAP_SERVER","MQTT_SERVER","WEB_SOCKET_SERVER","TCP_SERVER","UDP"].includes($deps[0])}}',
+                '{{["COAP_SERVER","MQTT_SERVER","WEB_SOCKET_SERVER","TCP_SERVER","UDP","HTTP_SERVER","MQTT_CLIENT"].includes($deps[0])}}',
             },
           },
         },
@@ -279,7 +279,7 @@ const Save = observer(() => {
             state: {
               // visible: '{{$deps[0]==="UDP"}}',
               visible:
-                '{{["COAP_SERVER","MQTT_SERVER","WEB_SOCKET_SERVER","TCP_SERVER","UDP"].includes($deps[0])}}',
+                '{{["COAP_SERVER","MQTT_SERVER","WEB_SOCKET_SERVER","TCP_SERVER","UDP","HTTP_SERVER","MQTT_CLIENT"].includes($deps[0])}}',
             },
           },
         },
@@ -312,7 +312,7 @@ const Save = observer(() => {
             state: {
               // visible: '{{$deps[0]==="UDP"}}',
               visible:
-                '{{["COAP_SERVER","MQTT_SERVER","WEB_SOCKET_SERVER","TCP_SERVER","UDP"].includes($deps[0])}}',
+                '{{["COAP_SERVER","MQTT_SERVER","WEB_SOCKET_SERVER","TCP_SERVER","UDP","HTTP_SERVER","MQTT_CLIENT"].includes($deps[0])}}',
             },
           },
         },
@@ -334,7 +334,7 @@ const Save = observer(() => {
             state: {
               // visible: '{{$deps[0]==="UDP"}}',
               visible:
-                '{{["COAP_SERVER","MQTT_SERVER","WEB_SOCKET_SERVER","TCP_SERVER","UDP"].includes($deps[0])}}',
+                '{{["COAP_SERVER","MQTT_SERVER","WEB_SOCKET_SERVER","TCP_SERVER","UDP","HTTP_SERVER","MQTT_CLIENT"].includes($deps[0])}}',
             },
           },
         },
@@ -413,7 +413,26 @@ const Save = observer(() => {
           fulfill: {
             state: {
               // visible: '{{$deps[0]==="UDP"}}',
-              visible: '{{["MQTT_SERVER","MQTT-Client"].includes($deps[0])}}',
+              visible: '{{["MQTT_SERVER","MQTT_CLIENT"].includes($deps[0])}}',
+            },
+          },
+        },
+      },
+      topicPrefix: {
+        title: '订阅前缀',
+        'x-decorator': 'FormItem',
+        'x-component': 'Input',
+        'x-decorator-props': {
+          gridSpan: 1,
+          labelAlign: 'left',
+          layout: 'vertical',
+        },
+        'x-reactions': {
+          dependencies: ['type'],
+          fulfill: {
+            state: {
+              // visible: '{{$deps[0]==="UDP"}}',
+              visible: '{{["MQTT_CLIENT"].includes($deps[0])}}',
             },
           },
         },
