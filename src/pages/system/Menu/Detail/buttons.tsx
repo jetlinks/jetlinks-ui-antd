@@ -265,6 +265,9 @@ export default (props: ButtonsProps) => {
         onOk={() => {
           if (!disabled) {
             saveData();
+          } else {
+            resetForm();
+            setVisible(false);
           }
         }}
         onCancel={() => {

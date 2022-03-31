@@ -44,8 +44,13 @@ export const MENUS_CODE = {
   'media/Config': 'media/Config',
   'media/Device': 'media/Device',
   'media/Reveal': 'media/Reveal',
+
+  'notice/Type': 'notice/Type',
+  'media/SplitScreen': 'media/SplitScreen',
   'notice/Config': 'notice/Config',
+  'notice/Config/Detail': 'notice/Config/Detail',
   'notice/Template': 'notice/Template',
+  'notice/Template/Detail': 'notice/Template/Detail',
   'rule-engine/Instance': 'rule-engine/Instance',
   'rule-engine/SQLRule': 'rule-engine/SQLRule',
   'rule-engine/Scene': 'rule-engine/Scene',
