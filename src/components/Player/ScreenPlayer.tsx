@@ -4,6 +4,15 @@ import LivePlayer from './index';
 import { Radio } from 'antd';
 import { useFullscreen } from 'ahooks';
 import './index.less';
+import {
+  CaretLeftOutlined,
+  CaretUpOutlined,
+  CaretDownOutlined,
+  CaretRightOutlined,
+  PlusOutlined,
+  MinusOutlined,
+  AudioOutlined,
+} from '@ant-design/icons';
 
 type Player = {
   id?: string;
@@ -15,40 +24,16 @@ interface ScreenProps {
   id?: string;
   /**
    *
-   * @param id 当时播发视频ID
-   * @param type 鼠标按下状态，true 为按下， false 为松开
+   * @param id 当前选中播发视频ID
+   * @param type 当前操作动作
    */
-  onLeft?: (id: string, type: boolean) => void;
+  onMouseDown?: (id: string, type: string) => void;
   /**
    *
-   * @param id 当时播发视频ID
-   * @param type 鼠标按下状态，true 为按下， false 为松开
+   * @param id 当前选中播发视频ID
+   * @param type 当前操作动作
    */
-  onUp?: (id: string, type: boolean) => void;
-  /**
-   *
-   * @param id 当时播发视频ID
-   * @param type 鼠标按下状态，true 为按下， false 为松开
-   */
-  onRight?: (id: string, type: boolean) => void;
-  /**
-   *
-   * @param id 当时播发视频ID
-   * @param type 鼠标按下状态，true 为按下， false 为松开
-   */
-  onDown?: (id: string, type: boolean) => void;
-  /**
-   *
-   * @param id 当时播发视频ID
-   * @param type 鼠标按下状态，true 为按下， false 为松开
-   */
-  onZoomIn?: (id: string, type: boolean) => void;
-  /**
-   *
-   * @param id 当时播发视频ID
-   * @param type 鼠标按下状态，true 为按下， false 为松开
-   */
-  onZoomOut?: (id: string, type: boolean) => void;
+  onMouseLeave?: (id: string, type: string) => void;
 }
 
 export default (props: ScreenProps) => {
@@ -136,7 +121,117 @@ export default (props: ScreenProps) => {
           </div>
         </div>
       </div>
-      <div className={'live-player-tools'}></div>
+      <div className={'live-player-tools'}>
+        <div className={'direction'}>
+          <div
+            className={'direction-item up'}
+            onMouseDown={() => {
+              if (props.onMouseDown && props.id) {
+                props.onMouseDown(props.id, '');
+              }
+            }}
+            onMouseLeave={() => {
+              if (props.onMouseLeave && props.id) {
+                props.onMouseLeave(props.id, '');
+              }
+            }}
+          >
+            <CaretUpOutlined className={'direction-icon'} />
+          </div>
+          <div
+            className={'direction-item right'}
+            onMouseDown={() => {
+              if (props.onMouseDown && props.id) {
+                props.onMouseDown(props.id, '');
+              }
+            }}
+            onMouseLeave={() => {
+              if (props.onMouseLeave && props.id) {
+                props.onMouseLeave(props.id, '');
+              }
+            }}
+          >
+            <CaretRightOutlined className={'direction-icon'} />
+          </div>
+          <div
+            className={'direction-item left'}
+            onMouseDown={() => {
+              if (props.onMouseDown && props.id) {
+                props.onMouseDown(props.id, '');
+              }
+            }}
+            onMouseLeave={() => {
+              if (props.onMouseLeave && props.id) {
+                props.onMouseLeave(props.id, '');
+              }
+            }}
+          >
+            <CaretLeftOutlined className={'direction-icon'} />
+          </div>
+          <div
+            className={'direction-item down'}
+            onMouseDown={() => {
+              if (props.onMouseDown && props.id) {
+                props.onMouseDown(props.id, '');
+              }
+            }}
+            onMouseLeave={() => {
+              if (props.onMouseLeave && props.id) {
+                props.onMouseLeave(props.id, '');
+              }
+            }}
+          >
+            <CaretDownOutlined className={'direction-icon'} />
+          </div>
+          <div
+            className={'direction-audio'}
+            onMouseDown={() => {
+              if (props.onMouseDown && props.id) {
+                props.onMouseDown(props.id, '');
+              }
+            }}
+            onMouseLeave={() => {
+              if (props.onMouseLeave && props.id) {
+                props.onMouseLeave(props.id, '');
+              }
+            }}
+          >
+            <AudioOutlined />
+          </div>
+        </div>
+        <div className={'zoom'}>
+          <div
+            className={'zoom-item zoom-in'}
+            onMouseDown={() => {
+              if (props.onMouseDown && props.id) {
+                props.onMouseDown(props.id, '');
+              }
+            }}
+            onMouseLeave={() => {
+              if (props.onMouseLeave && props.id) {
+                props.onMouseLeave(props.id, '');
+              }
+            }}
+          >
+            <PlusOutlined />
+          </div>
+          <div
+            className={'zoom-item zoom-out'}
+            onMouseDown={() => {
+              if (props.onMouseDown && props.id) {
+                props.onMouseDown(props.id, '');
+              }
+            }}
+            onMouseLeave={() => {
+              if (props.onMouseLeave && props.id) {
+                props.onMouseLeave(props.id, '');
+              }
+            }}
+          >
+            <MinusOutlined />
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

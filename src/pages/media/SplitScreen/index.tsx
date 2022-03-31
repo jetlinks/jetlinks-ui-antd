@@ -13,7 +13,6 @@ const SplitScreen = () => {
           <div className="right-content">
             <ScreenPlayer />
           </div>
-          ;
         </div>
       </Card>
     </PageContainer>

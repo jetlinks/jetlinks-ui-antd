@@ -1,4 +1,6 @@
+@import '~antd/es/style/themes/default.less';
 @padding: 20px;
+@grid-gap: 2px;
 
 .live-player-warp {
   display: flex;
@@ -59,6 +61,105 @@
 
   .live-player-tools {
     flex-basis: 290px;
-    padding: 50px 12px 0 12px;
+    padding: 50px 12px 0 40px;
+
+    .direction {
+      position: relative;
+      display: grid;
+      grid-gap: @grid-gap;
+      grid-template-rows: 1fr 1fr;
+      grid-template-columns: 1fr 1fr;
+      margin-bottom: 30px;
+      overflow: hidden;
+      border-radius: 50%;
+      transform: rotateZ(45deg);
+
+      .direction-item {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-bottom: 100%;
+        font-size: 36px;
+        background-color: rgba(#000, 0.1);
+        transition: background-color 0.3s;
+
+        .direction-icon {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%) rotateZ(-45deg);
+        }
+      }
+
+      .direction-audio {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 45%;
+        height: 45%;
+        font-size: 30px;
+        background-color: #fff;
+        border-radius: 50%;
+        transform: translate(-50%, -50%) rotateZ(-45deg);
+      }
+
+      .zoom .zoom-item,
+      & .direction-item {
+        &:hover {
+          color: #fff;
+          background-color: @primary-color-hover;
+        }
+
+        &:active {
+          color: #fff;
+          background-color: @primary-color-active;
+        }
+      }
+
+      > div {
+        cursor: pointer;
+        &.disable {
+          color: @disabled-color;
+        }
+      }
+    }
+
+    .zoom {
+      display: grid;
+      grid-gap: @grid-gap;
+      grid-template-columns: 1fr 1fr;
+
+      .zoom-item {
+        padding: 8px 0;
+        font-size: 24px;
+        text-align: center;
+        background-color: rgba(#000, 0.1);
+        cursor: pointer;
+
+        &:hover {
+          color: #fff;
+          background-color: @primary-color-hover;
+        }
+
+        &:active {
+          color: #fff;
+          background-color: @primary-color-active;
+        }
+      }
+
+      .zoom-in {
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px;
+      }
+
+      .zoom-out {
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+      }
+    }
   }
 }
