@@ -10,7 +10,7 @@ const DetailCode = 'detail';
 
 // 额外子级路由
 const extraRouteObj = {
-  notice: {
+  'notice/Type': {
     children: [
       { code: 'Config', name: '通知配置' },
       { code: 'Template', name: '通知模板' },
@@ -96,6 +96,7 @@ export const handleRoutes = (routes?: MenuItem[], level = 1): MenuItem[] => {
   return routes
     ? routes.map((item) => {
         // 判断当前是否有额外子路由
+        debugger;
         const extraRoutes = extraRouteObj[item.code];
 
         if (extraRoutes) {
