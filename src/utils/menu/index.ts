@@ -84,7 +84,7 @@ const findExtraRoutes = (baseCode: string, children: any[], url: string) => {
       if (route.children && route.children.length) {
         _route.children = findExtraRoutes(code, route.children, path);
       }
-      console.log(code, component);
+
       return component ? _route : undefined;
     })
     .filter((item) => !!item);
@@ -119,7 +119,6 @@ export const handleRoutes = (routes?: MenuItem[], level = 1): MenuItem[] => {
         }
         item.level = level;
 
-        console.log(item.code, item);
         return item;
       })
     : [];
