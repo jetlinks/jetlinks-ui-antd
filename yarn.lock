@@ -3058,6 +3058,11 @@
   dependencies:
     stream "^0.0.2"
 
+"@liveqing/liveplayer@^2.6.4":
+  version "2.6.4"
+  resolved "https://registry.npmmirror.com/@liveqing/liveplayer/-/liveplayer-2.6.4.tgz#740658abd17417829e8dddecf8710dfe74e8edf7"
+  integrity sha512-HONU7dbLIf/NdcfNIVoY+x8olFXkotL+sULHJZDalnc7bCmH0FHmXtVOBca2KpUGHGy2zDWnAQ74L7UCPUw0jQ==
+
 "@mapbox/geojson-area@0.2.2":
   version "0.2.2"
   resolved "https://registry.npmjs.org/@mapbox/geojson-area/-/geojson-area-0.2.2.tgz#18d7814aa36bf23fbbcc379f8e26a22927debf10"

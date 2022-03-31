@@ -47,9 +47,11 @@ export const MENUS_CODE = {
   'media/Reveal': 'media/Reveal',
 
   'notice/Type': 'notice/Type',
+  'media/SplitScreen': 'media/SplitScreen',
   'notice/Config': 'notice/Config',
+  'notice/Config/Detail': 'notice/Config/Detail',
   'notice/Template': 'notice/Template',
-
+  'notice/Template/Detail': 'notice/Template/Detail',
   'rule-engine/Instance': 'rule-engine/Instance',
   'rule-engine/SQLRule': 'rule-engine/SQLRule',
   'rule-engine/Scene': 'rule-engine/Scene',
@@ -106,4 +108,6 @@ export const getDetailNameByCode = {
   'system/Role/Detail': '权限配置',
   'link/Type/Detail': '网络组件详情',
   'link/AccessConfig/Detail': '配置详情',
+  'notice/Config/Detail': '配置详情',
+  'notice/Template/Detail': '模板详情',
 };

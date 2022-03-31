@@ -78,6 +78,12 @@ export default defineConfig({
   nodeModulesTransform: { type: 'none' },
   // mfsu: {},
   webpack5: {},
+  copy: [
+    { from: 'node_modules/@liveqing/liveplayer/dist/element/liveplayer.swf', to: '/' },
+    { from: 'node_modules/@liveqing/liveplayer/dist/element/crossdomain.xml', to: '/' },
+    { from: 'node_modules/@liveqing/liveplayer/dist/element/liveplayer-element.min.js', to: '/' },
+  ],
+  headScripts: [{ src: './liveplayer-element.min.js', defer: true }],
   // exportStatic: {},
   chainWebpack(memo, { env, webpack, createCSSRule }) {
     memo.plugin('monaco-editor').use(

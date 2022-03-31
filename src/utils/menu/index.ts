@@ -8,6 +8,16 @@ export const MENUS_DATA_CACHE = 'MENUS_DATA_CACHE';
 
 const DetailCode = 'detail';
 
+// 额外子级路由
+const extraRouteObj = {
+  notice: {
+    children: [
+      { code: 'Config', name: '通知配置' },
+      { code: 'Template', name: '通知模板' },
+    ],
+  },
+};
+
 /**
  * 根据url获取映射的组件
  * @param files
@@ -36,8 +46,9 @@ export const flatRoute = (routes: MenuItem[]): MenuItem[] => {
 };
 
 /**
- * 获取菜单组件
+ * 获取菜单详情组件
  * @param baseCode
+ * @url 菜单url
  */
 const findDetailRoute = (baseCode: string, url: string): MenuItem | undefined => {
   if (baseCode) {
@@ -46,24 +57,66 @@ const findDetailRoute = (baseCode: string, url: string): MenuItem | undefined =>
     const path = `${url}/${DetailCode}/:id`;
     const component = allComponents[code];
     return component
-      ? ({ path: path, url: path, name: getDetailNameByCode[code], code } as MenuItem)
+      ? ({ path: path, url: path, name: getDetailNameByCode[code], hideInMenu: true, code } as
+          | MenuItem
+          | any)
       : undefined;
   }
   return undefined;
 };
 
+const findExtraRoutes = (baseCode: string, children: any[], url: string) => {
+  const allComponents = findComponents(require.context('@/pages', true, /index(\.tsx)$/));
+  return children.map((route) => {
+    const code = `${baseCode}/${route.code}`;
+    const path = `${url}/${route.code}`;
+    const component = allComponents[code];
+
+    const _route: any = {
+      path: path,
+      url: path,
+      name: route.name,
+      hideInMenu: true,
+      code: code,
+    };
+
+    if (route.children && route.children.length) {
+      _route.children = findExtraRoutes(code, route.children, path);
+    }
+    return component ? _route : undefined;
+  });
+};
+
+/**
+ * 处理实际路由情况，会包含不显示的子级路由，比如详情
+ * @param routes
+ * @param level
+ */
 export const handleRoutes = (routes?: MenuItem[], level = 1): MenuItem[] => {
   return routes
     ? routes.map((item) => {
-        const detailComponent = findDetailRoute(item.code, item.url);
-        if (detailComponent) {
-          item.children = item.children ? [detailComponent, ...item.children] : [detailComponent];
+        // 判断当前是否有额外子路由
+        const extraRoutes = extraRouteObj[item.code];
+
+        if (extraRoutes) {
+          if (extraRoutes) {
+            const eRoutes = findExtraRoutes(item.code, extraRoutes.children, item.url);
+            item.children = item.children ? [...eRoutes, ...item.children] : eRoutes;
+          }
+        } else {
+          const detailComponent = findDetailRoute(item.code, item.url);
+          if (detailComponent) {
+            item.children = item.children ? [detailComponent, ...item.children] : [detailComponent];
+          }
         }
+
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         if (item.children) {
           item.children = handleRoutes(item.children, level + 1);
         }
         item.level = level;
+
+        console.log(item.code, item);
         return item;
       })
     : [];
@@ -118,7 +171,7 @@ export const getMenus = (extraRoutes: IRouteProps[]): any[] => {
       name: route.name,
       path: route.url,
       icon: route.icon,
-      hideChildrenInMenu: children && children.some((item: any) => item.url.includes(DetailCode)),
+      hideInMenu: !!route.hideInMenu,
       exact: route.level !== 1,
       children: getMenus(children),
     };
