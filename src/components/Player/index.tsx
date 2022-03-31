@@ -92,8 +92,10 @@ export default (props: PlayerProps) => {
   };
 
   return (
+    // @ts-ignore: Unreachable code error
     <live-player
-      ref={(r) => {
+      ref={(r: any) => {
+        // @ts-ignore
         player.current = r;
         EventInit();
       }}
