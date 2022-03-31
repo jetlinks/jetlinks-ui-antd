@@ -10,7 +10,7 @@ const DetailCode = 'detail';
 
 // 额外子级路由
 const extraRouteObj = {
-  notice: {
+  'notice/Type': {
     children: [
       { code: 'Config', name: '通知配置' },
       { code: 'Template', name: '通知模板' },
@@ -67,24 +67,27 @@ const findDetailRoute = (baseCode: string, url: string): MenuItem | undefined =>
 
 const findExtraRoutes = (baseCode: string, children: any[], url: string) => {
   const allComponents = findComponents(require.context('@/pages', true, /index(\.tsx)$/));
-  return children.map((route) => {
-    const code = `${baseCode}/${route.code}`;
-    const path = `${url}/${route.code}`;
-    const component = allComponents[code];
+  return children
+    .map((route) => {
+      const code = `${baseCode}/${route.code}`;
+      const path = `${url}/${route.code}`;
+      const component = allComponents[code];
 
-    const _route: any = {
-      path: path,
-      url: path,
-      name: route.name,
-      hideInMenu: true,
-      code: code,
-    };
+      const _route: any = {
+        path: path,
+        url: path,
+        name: route.name,
+        hideInMenu: true,
+        code: code,
+      };
 
-    if (route.children && route.children.length) {
-      _route.children = findExtraRoutes(code, route.children, path);
-    }
-    return component ? _route : undefined;
-  });
+      if (route.children && route.children.length) {
+        _route.children = findExtraRoutes(code, route.children, path);
+      }
+      console.log(code, component);
+      return component ? _route : undefined;
+    })
+    .filter((item) => !!item);
 };
 
 /**
@@ -99,7 +102,7 @@ export const handleRoutes = (routes?: MenuItem[], level = 1): MenuItem[] => {
         const extraRoutes = extraRouteObj[item.code];
 
         if (extraRoutes) {
-          if (extraRoutes) {
+          if (extraRoutes.children) {
             const eRoutes = findExtraRoutes(item.code, extraRoutes.children, item.url);
             item.children = item.children ? [...eRoutes, ...item.children] : eRoutes;
           }
