@@ -16,7 +16,9 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 // import type { ISchema } from '@formily/json-schema';
 import Service from '@/pages/notice/Template/service';
 import SearchComponent from '@/components/SearchComponent';
-import Detail from '@/pages/notice/Template/Detail';
+// import Detail from '@/pages/notice/Template/Detail';
+import { history, useLocation } from 'umi';
+import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 
 export const service = new Service('notifier/template');
 const Template = () => {
@@ -598,6 +600,8 @@ const Template = () => {
   //   },
   // };
 
+  const location = useLocation<{ id: string }>();
+
   const [param, setParam] = useState({});
   return (
     <PageContainer>
@@ -619,7 +623,8 @@ const Template = () => {
         toolBarRender={() => [
           <Button
             onClick={() => {
-              // setMode('add');
+              const id = (location as any).query?.id;
+              history.push(getMenuPathByParams(MENUS_CODE['notice/Template/Detail'], id));
             }}
             key="button"
             icon={<PlusOutlined />}
@@ -633,7 +638,7 @@ const Template = () => {
         ]}
         request={async (params) => service.query(params)}
       />
-      <Detail type={'weixin'} />
+      {/*<Detail />*/}
     </PageContainer>
   );
 };
