@@ -1,4 +1,8 @@
-@import '../../../node_modules/antd/lib/style/themes/variable';
+@import '~antd/es/style/themes/default.less';
+
+@border-color: #e6e6e6;
+@card-content-padding-top: 30px;
+@card-content-padding-left: 30px;
 
 .pro-table-card {
   position: relative;
@@ -21,8 +25,6 @@
     display: grid;
     grid-gap: 26px;
     grid-template-columns: repeat(4, 1fr);
-    //display: flex;
-    //flex-wrap: wrap;
     padding-bottom: 38px;
 
     .pro-table-card-item {
@@ -53,8 +55,21 @@
         .card-item-content {
           display: flex;
 
-          > span {
-            flex: 1;
+          > div:last-child {
+            flex-grow: 1;
+            width: 0;
+            margin-left: 12px;
+          }
+
+          label {
+            color: rgba(#000, 0.75);
+            font-size: 12px;
+          }
+
+          .ellipsis {
+            width: 100%;
+            font-weight: bold;
+            font-size: 14px;
           }
         }
       }
@@ -72,10 +87,13 @@
   }
 }
 
-@border-color: #e6e6e6;
-
 .iot-card {
   width: 100%;
+  background-color: #fff;
+
+  &.hover {
+    box-shadow: 0 0 24px rgba(#000, 0.1);
+  }
 
   .card-warp {
     position: relative;
@@ -83,17 +101,29 @@
 
     .card-content {
       position: relative;
-      padding: 30px 12px 12px 30px;
+      padding: @card-content-padding-top 12px 16px @card-content-padding-left;
       overflow: hidden;
+
+      &::before {
+        position: absolute;
+        top: 0;
+        left: @card-content-padding-left + 10px;
+        display: block;
+        width: 120px;
+        height: 4px;
+        background-image: url('/images/rectangle.png');
+        background-repeat: no-repeat;
+        content: ' ';
+      }
 
       .card-state {
         position: absolute;
-        top: 0;
-        right: 0;
+        top: @card-content-padding-top;
+        right: -12px;
         display: flex;
         justify-content: center;
         width: 100px;
-        padding: 8px 0;
+        padding: 2px 0;
         background-color: @info-color-deprecated-bg;
         transform: skewX(45deg);
 
@@ -119,17 +149,104 @@
       position: absolute;
       top: 0;
       left: 0;
-      display: none;
+      z-index: 2;
+      display: flex;
       align-items: center;
       justify-content: center;
       width: 100%;
       height: 100%;
       color: #fff;
-      background-color: rgba(#000, 0.5);
+      background-color: rgba(#000, 0);
       cursor: pointer;
+      transition: all 0.3s;
 
       &.show {
-        display: flex;
+        background-color: rgba(#000, 0.5);
+      }
+    }
+  }
+
+  .card-tools {
+    display: flex;
+    margin-top: 8px;
+
+    .card-button {
+      display: flex;
+      flex-grow: 1;
+
+      > span,
+      & button {
+        width: 100%;
+        border-radius: 0;
+      }
+
+      button {
+        background: #f6f6f6;
+        border: 1px solid #e6e6e6;
+
+        &:hover {
+          background-color: @primary-color-hover;
+          border-color: @primary-color-hover;
+          span {
+            color: #fff !important;
+          }
+        }
+
+        &:active {
+          background-color: @primary-color-active;
+          border-color: @primary-color-active;
+          span {
+            color: #fff !important;
+          }
+        }
+      }
+
+      &:not(:last-child) {
+        margin-right: 8px;
+      }
+
+      &.delete {
+        flex-basis: 60px;
+        flex-grow: 0;
+
+        button {
+          background: @error-color-deprecated-bg;
+          border: 1px solid @error-color-outline;
+          span {
+            color: @error-color !important;
+          }
+
+          &:hover {
+            background-color: @error-color-hover;
+            span {
+              color: #fff !important;
+            }
+          }
+
+          &:active {
+            background-color: @error-color-active;
+            span {
+              color: #fff !important;
+            }
+          }
+        }
+      }
+
+      button[disabled] {
+        background: @disabled-bg;
+        border-color: @disabled-color;
+
+        span {
+          color: @disabled-color !important;
+        }
+
+        &:hover {
+          background-color: @disabled-active-bg;
+        }
+
+        &:active {
+          background-color: @disabled-active-bg;
+        }
       }
     }
   }

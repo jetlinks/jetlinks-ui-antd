@@ -238,7 +238,7 @@ export function patchRoutes(routes: any) {
 export function render(oldRender: any) {
   if (history.location.pathname !== loginPath) {
     MenuService.queryOwnThree({ paging: false }).then((res) => {
-      if (res.status === 200) {
+      if (res && res.status === 200) {
         extraRoutes = handleRoutes(res.result);
         saveMenusCache(extraRoutes);
       }
