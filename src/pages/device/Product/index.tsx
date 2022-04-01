@@ -343,7 +343,98 @@ const Product = observer(() => {
             <Button style={{ marginLeft: 12 }}>导入</Button>
           </Upload>,
         ]}
-        cardRender={(record) => <ProductCard {...record} actions={tools(record)} />}
+        cardRender={(record) => (
+          <ProductCard
+            {...record}
+            detail={
+              <div
+                style={{ fontSize: 18, padding: 8 }}
+                onClick={() => {
+                  productModel.current = record;
+                  history.push(
+                    `${getMenuPathByParams(MENUS_CODE['device/Product/Detail'], record.id)}`,
+                  );
+                }}
+              >
+                <EyeOutlined />
+              </div>
+            }
+            actions={[
+              <Button
+                key="edit"
+                onClick={() => {
+                  setCurrent(record);
+                  setVisible(true);
+                }}
+                type={'link'}
+                style={{ padding: 0 }}
+              >
+                <EditOutlined />
+                {intl.formatMessage({
+                  id: 'pages.data.option.edit',
+                  defaultMessage: '编辑',
+                })}
+              </Button>,
+              <Button type={'link'} key={'download'} style={{ padding: 0 }}>
+                <DownloadOutlined
+                  onClick={async () => {
+                    downloadObject(
+                      record,
+                      intl.formatMessage({
+                        id: 'pages.device.product',
+                        defaultMessage: '产品',
+                      }),
+                    );
+                    message.success('操作成功');
+                  }}
+                />
+                {intl.formatMessage({
+                  id: 'pages.data.option.download',
+                  defaultMessage: '下载',
+                })}
+              </Button>,
+              <Popconfirm
+                key={'state'}
+                title={intl.formatMessage({
+                  id: `pages.data.option.${record.state ? 'disabled' : 'enabled'}.tips`,
+                  defaultMessage: '是否启用?',
+                })}
+                onConfirm={() => {
+                  changeDeploy(record.id, record.state ? 'undeploy' : 'deploy');
+                }}
+              >
+                <Button style={{ padding: 0 }} type={'link'}>
+                  {record.state ? <StopOutlined /> : <PlayCircleOutlined />}
+                  {intl.formatMessage({
+                    id: `pages.data.option.${record.state ? 'disabled' : 'enabled'}`,
+                    defaultMessage: record.state ? '禁用' : '启用',
+                  })}
+                </Button>
+              </Popconfirm>,
+              <Popconfirm
+                key="delete"
+                title={intl.formatMessage({
+                  id:
+                    record.state === 1
+                      ? 'pages.device.productDetail.deleteTip'
+                      : 'page.table.isDelete',
+                  defaultMessage: '是否删除?',
+                })}
+                onConfirm={async () => {
+                  if (record.state === 0) {
+                    await deleteItem(record.id);
+                  } else {
+                    message.error('已发布的产品不能进行删除操作');
+                  }
+                }}
+              >
+                <Button type={'link'} style={{ padding: 0 }}>
+                  <DeleteOutlined />
+                </Button>
+              </Popconfirm>,
+            ]}
+          />
+        )}
       />
       <Save
         model={!current ? 'add' : 'edit'}
