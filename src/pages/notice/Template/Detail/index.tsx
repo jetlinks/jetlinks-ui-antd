@@ -1,14 +1,15 @@
-import { Modal } from 'antd';
 import {
   ArrayTable,
   Editable,
   Form,
+  FormButtonGroup,
   FormItem,
   Input,
   PreviewText,
   Radio,
   Select,
   Space,
+  Submit,
   Switch,
 } from '@formily/antd';
 import type { Field } from '@formily/core';
@@ -16,19 +17,25 @@ import { createForm, onFieldValueChange } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import type { ISchema } from '@formily/json-schema';
 import styles from './index.less';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import FUpload from '@/components/Upload';
+import { useParams } from 'umi';
+import { PageContainer } from '@ant-design/pro-layout';
+import { Card, Col, Row } from 'antd';
 
-interface Props {
-  type: 'weixin' | 'dingTalk' | 'voice' | 'sms' | 'email';
-}
-
-const Detail = (props: Props) => {
-  const { type = 'dingTalk' } = props;
+const createImageLabel = (image: string, text: string) => {
+  return (
+    <>
+      <img alt="" height="100px" src={image} />
+      <div style={{ textAlign: 'center' }}>{text}</div>
+    </>
+  );
+};
+const Detail = () => {
+  const { id } = useParams<{ id: string }>();
 
   // 正则提取${}里面的值
   const pattern = /(?<=\$\{).*?(?=\})/g;
-  // console.log(pattern.test(str));
   const form = useMemo(
     () =>
       createForm({
@@ -44,7 +51,7 @@ const Detail = (props: Props) => {
           });
         },
       }),
-    [type],
+    [id],
   );
 
   const SchemaField = createSchemaField({
@@ -62,89 +69,59 @@ const Detail = (props: Props) => {
     },
   });
 
+  const [result, setResult] = useState<any>({});
+  const handleSave = async () => {
+    const data = await form.submit();
+    setResult(data);
+  };
+
   const typeList = {
     weixin: [
       {
-        label: (
-          <>
-            <img
-              alt=""
-              height="100px"
-              src="https://lf1-cdn-tos.bytegoofy.com/goofy/lark/passport/staticfiles/passport/OKR.png"
-            />
-            <div style={{ textAlign: 'center' }}>企业消息</div>
-          </>
+        label: createImageLabel(
+          'https://lf1-cdn-tos.bytegoofy.com/goofy/lark/passport/staticfiles/passport/OKR.png',
+          '企业消息',
         ),
         value: 'corpMessage',
       },
       {
-        label: (
-          <>
-            <img
-              alt=""
-              height="100px"
-              src="https://lf1-cdn-tos.bytegoofy.com/goofy/lark/passport/staticfiles/passport/Hire.png"
-            />
-            <div style={{ textAlign: 'center' }}>服务号消息</div>
-          </>
+        label: createImageLabel(
+          'https://lf1-cdn-tos.bytegoofy.com/goofy/lark/passport/staticfiles/passport/Hire.png',
+          '服务号消息',
         ),
         value: 'officialMessage',
       },
     ],
     dingTalk: [
       {
-        label: (
-          <>
-            <img
-              alt=""
-              height="100px"
-              src="https://lf1-cdn-tos.bytegoofy.com/goofy/lark/passport/staticfiles/passport/OKR.png"
-            />
-            <div style={{ textAlign: 'center' }}>钉钉消息</div>
-          </>
+        label: createImageLabel(
+          'https://lf1-cdn-tos.bytegoofy.com/goofy/lark/passport/staticfiles/passport/OKR.png',
+          '钉钉消息',
         ),
         value: 'dingTalkMessage',
       },
       {
-        label: (
-          <>
-            <img
-              alt=""
-              height="100px"
-              src="https://lf1-cdn-tos.bytegoofy.com/goofy/lark/passport/staticfiles/passport/Hire.png"
-            />
-            <div style={{ textAlign: 'center' }}>群机器人消息</div>
-          </>
+        label: createImageLabel(
+          'https://lf1-cdn-tos.bytegoofy.com/goofy/lark/passport/staticfiles/passport/Hire.png',
+          '群机器人消息',
         ),
         value: 'dingTalkRobotWebHook',
       },
     ],
     voice: [
       {
-        label: (
-          <>
-            <img
-              alt=""
-              height="100px"
-              src="https://lf1-cdn-tos.bytegoofy.com/goofy/lark/passport/staticfiles/passport/OKR.png"
-            />
-            <div style={{ textAlign: 'center' }}>阿里云语音</div>
-          </>
+        label: createImageLabel(
+          'https://lf1-cdn-tos.bytegoofy.com/goofy/lark/passport/staticfiles/passport/OKR.png',
+          '阿里云语音',
         ),
         value: 'aliyun',
       },
     ],
     sms: [
       {
-        label: (
-          <>
-            <img
-              alt=""
-              height="100px"
-              src="https://lf1-cdn-tos.bytegoofy.com/goofy/lark/passport/staticfiles/passport/OKR.png"
-            />
-            <div style={{ textAlign: 'center' }}>阿里云短信</div>
-          </>
+        label: createImageLabel(
+          'https://lf1-cdn-tos.bytegoofy.com/goofy/lark/passport/staticfiles/passport/OKR.png',
+          '阿里云短信',
         ),
         value: 'aliyunSms',
       },
@@ -185,20 +162,27 @@ const Detail = (props: Props) => {
         'x-component-props': {
           optionType: 'button',
         },
-        enum: typeList[type] || [],
+        required: true,
+        'x-visible': typeList[id]?.length > 0,
+        enum: typeList[id] || [],
       },
       configId: {
         title: '绑定配置',
         type: 'string',
         'x-decorator': 'FormItem',
         'x-component': 'Select',
+        enum: [
+          { label: '测试配置1', value: 'test1' },
+          { label: '测试配置2', value: 'test2' },
+          { label: '测试配置3', value: 'test3' },
+        ],
       },
       template: {
         type: 'object',
         properties: {
           weixin: {
             type: 'void',
-            'x-visible': type === 'weixin',
+            'x-visible': id === 'weixin',
             properties: {
               agentID: {
                 title: 'AgentId',
@@ -248,7 +232,7 @@ const Detail = (props: Props) => {
           },
           dingTalk: {
             type: 'void',
-            'x-visible': type === 'dingTalk',
+            'x-visible': id === 'dingTalk',
             properties: {
               dingTalkMessage: {
                 type: 'void',
@@ -388,6 +372,7 @@ const Detail = (props: Props) => {
             type: 'void',
             properties: {
               voice: {
+                'x-visible': id === 'voice',
                 type: 'object',
                 properties: {
                   // ttsCode	String	语音-模版ID
@@ -409,6 +394,7 @@ const Detail = (props: Props) => {
                 },
               },
               sms: {
+                'x-visible': id === 'sms',
                 type: 'object',
                 properties: {
                   code: {
@@ -433,6 +419,7 @@ const Detail = (props: Props) => {
           },
           email: {
             type: 'object',
+            'x-visible': id === 'email',
             properties: {
               // subject	String	邮件-模板ID
               // sendTo	Array	邮件-收件人
@@ -441,6 +428,8 @@ const Detail = (props: Props) => {
 
               subject: {
                 title: '模版ID',
+                'x-decorator': 'FormItem',
+                'x-component': 'Input',
               },
             },
           },
@@ -549,11 +538,25 @@ const Detail = (props: Props) => {
     },
   };
   return (
-    <Modal width={'40vw'} visible={true} title="通知模版详情">
-      <Form className={styles.form} form={form} layout={'vertical'}>
-        <SchemaField schema={schema} />
-      </Form>
-    </Modal>
+    <PageContainer>
+      <Card>
+        <Row>
+          <Col span={10}>
+            <Form className={styles.form} form={form} layout={'vertical'}>
+              <SchemaField schema={schema} />
+              <FormButtonGroup.Sticky>
+                <FormButtonGroup.FormItem>
+                  <Submit onSubmit={handleSave}>保存</Submit>
+                </FormButtonGroup.FormItem>
+              </FormButtonGroup.Sticky>
+            </Form>
+          </Col>
+          <Col span={12} push={2}>
+            {JSON.stringify(result, null, 2)}
+          </Col>
+        </Row>
+      </Card>
+    </PageContainer>
   );
 };
 export default Detail;

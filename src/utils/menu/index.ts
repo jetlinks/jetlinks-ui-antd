@@ -10,7 +10,7 @@ const DetailCode = 'detail';
 
 // 额外子级路由
 const extraRouteObj = {
-  'notice/Type': {
+  notice: {
     children: [
       { code: 'Config', name: '通知配置' },
       { code: 'Template', name: '通知模板' },

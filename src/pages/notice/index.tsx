@@ -1,14 +1,16 @@
 import { ContainerFilled, ToolFilled } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-layout';
-import { Button, Card, Col, message, Row } from 'antd';
+import { Button, Card, Col, Row } from 'antd';
 import dingding from '/public/images/dingding.png';
 import styles from './index.less';
 import { observer } from '@formily/react';
+import { history } from 'umi';
+import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 
 const Type = observer(() => {
   const list = [
     {
-      type: 'dingtalk',
+      type: 'dingTalk',
       icon: dingding,
     },
     {
@@ -49,7 +51,9 @@ const Type = observer(() => {
                     <Button
                       type={'link'}
                       onClick={() => {
-                        message.success(i.type);
+                        history.push(
+                          `${getMenuPathByCode(MENUS_CODE['notice/Template'])}?id=${i.type}`,
+                        );
                       }}
                     >
                       <ContainerFilled className={styles.icon} />
@@ -62,7 +66,9 @@ const Type = observer(() => {
                     <Button
                       type={'link'}
                       onClick={() => {
-                        message.success(i.type);
+                        history.push(
+                          `${getMenuPathByCode(MENUS_CODE['notice/Config'])}?id=${i.type}`,
+                        );
                       }}
                     >
                       <ToolFilled className={styles.icon} />
