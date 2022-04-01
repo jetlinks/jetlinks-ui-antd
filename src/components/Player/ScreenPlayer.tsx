@@ -1,17 +1,16 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
 import LivePlayer from './index';
 import { Radio } from 'antd';
 import { useFullscreen } from 'ahooks';
 import './index.less';
 import {
-  CaretLeftOutlined,
-  CaretUpOutlined,
   CaretDownOutlined,
+  CaretLeftOutlined,
   CaretRightOutlined,
-  PlusOutlined,
+  CaretUpOutlined,
   MinusOutlined,
-  // AudioOutlined,
+  PlusOutlined,
 } from '@ant-design/icons';
 
 type Player = {

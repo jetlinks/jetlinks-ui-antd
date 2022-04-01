@@ -142,7 +142,7 @@ const Save = (props: Props) => {
       onCancel={() => props.close()}
       onOk={save}
     >
-      <Form form={form} labelCol={5} wrapperCol={16}>
+      <Form layout={'vertical'} form={form}>
         <SchemaField schema={schema} />
       </Form>
     </Modal>
