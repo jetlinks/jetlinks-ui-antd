@@ -150,6 +150,7 @@ const ProductDetail = observer(() => {
 
   return (
     <PageContainer
+      className={'page-title-show'}
       onBack={() => history.goBack()}
       extraContent={<Space size={24} />}
       content={

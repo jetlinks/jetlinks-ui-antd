@@ -14,7 +14,7 @@ const Detail = () => {
   const [data, setData] = useState<any>({});
 
   return (
-    <PageContainer>
+    <PageContainer className={'page-title-show'}>
       {visible ? (
         <Provider
           change={(param: any) => {

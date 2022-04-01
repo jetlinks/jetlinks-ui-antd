@@ -290,7 +290,7 @@ const Config = observer(() => {
     });
 
   return (
-    <PageContainer>
+    <PageContainer className={'page-title-show'}>
       <BaseCrud
         columns={columns}
         service={service}

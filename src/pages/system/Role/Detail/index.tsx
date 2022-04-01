@@ -30,7 +30,12 @@ const RoleEdit = observer(() => {
   ];
 
   return (
-    <PageContainer onBack={history.goBack} tabList={list} onTabChange={setTab}>
+    <PageContainer
+      className={'page-title-show'}
+      onBack={history.goBack}
+      tabList={list}
+      onTabChange={setTab}
+    >
       {list.find((k) => k.key === tab)?.component}
     </PageContainer>
   );

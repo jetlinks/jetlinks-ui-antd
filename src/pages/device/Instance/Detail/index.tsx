@@ -173,6 +173,7 @@ const InstanceDetail = observer(() => {
 
   return (
     <PageContainer
+      className={'page-title-show'}
       onBack={history.goBack}
       onTabChange={setTab}
       tabList={list}

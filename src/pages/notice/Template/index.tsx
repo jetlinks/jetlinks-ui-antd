@@ -604,7 +604,7 @@ const Template = () => {
 
   const [param, setParam] = useState({});
   return (
-    <PageContainer>
+    <PageContainer className={'page-title-show'}>
       <SearchComponent
         field={columns}
         onSearch={(data) => {
