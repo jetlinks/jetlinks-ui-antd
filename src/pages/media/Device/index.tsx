@@ -1,3 +1,4 @@
+// 视频设备列表
 import { PageContainer } from '@ant-design/pro-layout';
 import { useRef } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
@@ -7,6 +8,8 @@ import BaseCrud from '@/components/BaseCrud';
 import BaseService from '@/utils/BaseService';
 import type { DeviceItem } from '@/pages/media/Device/typings';
 import { useIntl } from '@@/plugin-locale/localeExports';
+import { BadgeStatus } from '@/components';
+import { StatusColorEnum } from '@/components/BadgeStatus';
 
 export const service = new BaseService<DeviceItem>('media/device');
 const Device = () => {
@@ -26,81 +29,83 @@ const Device = () => {
         defaultMessage: '名称',
       }),
     },
-    {
-      dataIndex: 'transport',
-      title: intl.formatMessage({
-        id: 'pages.media.device.transport',
-        defaultMessage: '信令传输',
-      }),
-    },
-    {
-      dataIndex: 'streamMode',
-      title: intl.formatMessage({
-        id: 'pages.media.device.streamMode',
-        defaultMessage: '流传输模式',
-      }),
-    },
-    {
-      dataIndex: 'channelNumber',
-      title: intl.formatMessage({
-        id: 'pages.media.device.channelNumber',
-        defaultMessage: '通道数',
-      }),
-    },
-    {
-      dataIndex: 'state',
-      title: intl.formatMessage({
-        id: 'pages.searchTable.titleStatus',
-        defaultMessage: '状态',
-      }),
-      render: (text, record) => record.state.value,
-    },
-    {
-      dataIndex: 'host',
-      title: 'IP',
-    },
-    {
-      dataIndex: '端口',
-      title: intl.formatMessage({
-        id: 'pages.media.device.port',
-        defaultMessage: '端口',
-      }),
-    },
-    {
-      dataIndex: 'manufacturer',
-      title: intl.formatMessage({
-        id: 'pages.media.device.manufacturer',
-        defaultMessage: '设备厂家',
-      }),
-    },
-    {
-      dataIndex: 'model',
-      title: intl.formatMessage({
-        id: 'pages.media.device.model',
-        defaultMessage: '型号',
-      }),
-    },
-    {
-      dataIndex: 'firmware',
-      title: intl.formatMessage({
-        id: 'pages.media.device.firmware',
-        defaultMessage: '固件版本',
-      }),
-    },
-    {
-      dataIndex: 'networkType',
-      title: intl.formatMessage({
-        id: 'pages.table.type',
-        defaultMessage: '类型',
-      }),
-    },
+    // {
+    //   dataIndex: 'transport',
+    //   title: intl.formatMessage({
+    //     id: 'pages.media.device.transport',
+    //     defaultMessage: '信令传输',
+    //   }),
+    // },
+    // {
+    //   dataIndex: 'streamMode',
+    //   title: intl.formatMessage({
+    //     id: 'pages.media.device.streamMode',
+    //     defaultMessage: '流传输模式',
+    //   }),
+    // },
+    // {
+    //   dataIndex: 'channelNumber',
+    //   title: intl.formatMessage({
+    //     id: 'pages.media.device.channelNumber',
+    //     defaultMessage: '通道数',
+    //   }),
+    // },
+    // {
+    //   dataIndex: 'host',
+    //   title: 'IP',
+    // },
+    // {
+    //   dataIndex: '端口',
+    //   title: intl.formatMessage({
+    //     id: 'pages.media.device.port',
+    //     defaultMessage: '端口',
+    //   }),
+    // },
+    // {
+    //   dataIndex: 'manufacturer',
+    //   title: intl.formatMessage({
+    //     id: 'pages.media.device.manufacturer',
+    //     defaultMessage: '设备厂家',
+    //   }),
+    // },
+    // {
+    //   dataIndex: 'model',
+    //   title: intl.formatMessage({
+    //     id: 'pages.media.device.model',
+    //     defaultMessage: '型号',
+    //   }),
+    // },
+    // {
+    //   dataIndex: 'firmware',
+    //   title: intl.formatMessage({
+    //     id: 'pages.media.device.firmware',
+    //     defaultMessage: '固件版本',
+    //   }),
+    // },
+    // {
+    //   dataIndex: 'networkType',
+    //   title: intl.formatMessage({
+    //     id: 'pages.table.type',
+    //     defaultMessage: '类型',
+    //   }),
+    // },
     {
       dataIndex: 'state',
       title: intl.formatMessage({
         id: 'pages.searchTable.titleStatus',
         defaultMessage: '状态',
       }),
-      render: (text, record) => record.state.value,
+      render: (text, record) => (
+        <BadgeStatus
+          status={record.state.value}
+          statusNames={{
+            online: StatusColorEnum.success,
+            offline: StatusColorEnum.error,
+            notActive: StatusColorEnum.processing,
+          }}
+          text={text}
+        />
+      ),
     },
     {
       title: intl.formatMessage({
@@ -161,6 +166,7 @@ const Device = () => {
       <BaseCrud
         columns={columns}
         service={service}
+        search={false}
         title={intl.formatMessage({
           id: 'pages.media.device',
           defaultMessage: '模拟测试',

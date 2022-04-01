@@ -3,15 +3,49 @@ import React from 'react';
 import type { DeviceInstance } from '@/pages/device/Instance/typings';
 import { BadgeStatus } from '@/components';
 import { StatusColorEnum } from '@/components/BadgeStatus';
-import '@/style/common.less';
+// import classNames from 'classnames';
+import '../index.less';
 
 export interface DeviceCardProps extends DeviceInstance {
   actions?: React.ReactNode[];
   avatarSize?: number;
+  children: React.ReactNode;
 }
 
 export default (props: DeviceCardProps) => {
+  // const [maskShow, setMaskShow] = useState(false)
+  //
+  // const maskClassName = classNames('card-mask', { show: maskShow })
   return (
+    // <div className={'iot-card'}>
+    //   <div className={'card-warp'}>
+    //     <div
+    //       className={'card-content'}
+    //       onMouseEnter={() => {setMaskShow(true)}}
+    //       onMouseLeave={() => {setMaskShow(false)}}
+    //     >
+    //       {
+    //         props.children
+    //       }
+    //       <div
+    //         className={
+    //           classNames(
+    //             'card-state',
+    //             {
+    //
+    //             }
+    //           )
+    //         }
+    //       >
+    //         <div className={'card-state-content'}></div>
+    //       </div>
+    //     </div>
+    //     <div className={maskClassName}></div>
+    //   </div>
+    //   <div className={'card-tools'}>
+    //
+    //   </div>
+    // </div>
     <Card style={{ width: '100%' }} cover={null} actions={props.actions}>
       <div className={'pro-table-card-item'}>
         <div className={'card-item-avatar'}>
