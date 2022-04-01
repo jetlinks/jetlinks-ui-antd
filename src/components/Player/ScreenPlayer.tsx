@@ -11,7 +11,7 @@ import {
   CaretRightOutlined,
   PlusOutlined,
   MinusOutlined,
-  AudioOutlined,
+  // AudioOutlined,
 } from '@ant-design/icons';
 
 type Player = {
@@ -22,18 +22,19 @@ type Player = {
 interface ScreenProps {
   url?: string;
   id?: string;
+  channelId?: string;
   /**
    *
    * @param id 当前选中播发视频ID
    * @param type 当前操作动作
    */
-  onMouseDown?: (id: string, type: string) => void;
+  onMouseDown?: (id: string, channelId: string, type: string) => void;
   /**
    *
    * @param id 当前选中播发视频ID
    * @param type 当前操作动作
    */
-  onMouseLeave?: (id: string, type: string) => void;
+  onMouseUp?: (id: string, channelId: string, type: string) => void;
 }
 
 export default (props: ScreenProps) => {
@@ -126,13 +127,13 @@ export default (props: ScreenProps) => {
           <div
             className={'direction-item up'}
             onMouseDown={() => {
-              if (props.onMouseDown && props.id) {
-                props.onMouseDown(props.id, '');
+              if (props.onMouseDown && props.id && props.channelId) {
+                props.onMouseDown(props.id, props.channelId, 'UP');
               }
             }}
-            onMouseLeave={() => {
-              if (props.onMouseLeave && props.id) {
-                props.onMouseLeave(props.id, '');
+            onMouseUp={() => {
+              if (props.onMouseUp && props.id && props.channelId) {
+                props.onMouseUp(props.id, props.channelId, 'UP');
               }
             }}
           >
@@ -141,13 +142,13 @@ export default (props: ScreenProps) => {
           <div
             className={'direction-item right'}
             onMouseDown={() => {
-              if (props.onMouseDown && props.id) {
-                props.onMouseDown(props.id, '');
+              if (props.onMouseDown && props.id && props.channelId) {
+                props.onMouseDown(props.id, props.channelId, 'RIGHT');
               }
             }}
-            onMouseLeave={() => {
-              if (props.onMouseLeave && props.id) {
-                props.onMouseLeave(props.id, '');
+            onMouseUp={() => {
+              if (props.onMouseUp && props.id && props.channelId) {
+                props.onMouseUp(props.id, props.channelId, 'RIGHT');
               }
             }}
           >
@@ -156,13 +157,13 @@ export default (props: ScreenProps) => {
           <div
             className={'direction-item left'}
             onMouseDown={() => {
-              if (props.onMouseDown && props.id) {
-                props.onMouseDown(props.id, '');
+              if (props.onMouseDown && props.id && props.channelId) {
+                props.onMouseDown(props.id, props.channelId, 'LEFT');
               }
             }}
-            onMouseLeave={() => {
-              if (props.onMouseLeave && props.id) {
-                props.onMouseLeave(props.id, '');
+            onMouseUp={() => {
+              if (props.onMouseUp && props.id && props.channelId) {
+                props.onMouseUp(props.id, props.channelId, 'LEFT');
               }
             }}
           >
@@ -171,13 +172,13 @@ export default (props: ScreenProps) => {
           <div
             className={'direction-item down'}
             onMouseDown={() => {
-              if (props.onMouseDown && props.id) {
-                props.onMouseDown(props.id, '');
+              if (props.onMouseDown && props.id && props.channelId) {
+                props.onMouseDown(props.id, props.channelId, 'DOWN');
               }
             }}
-            onMouseLeave={() => {
-              if (props.onMouseLeave && props.id) {
-                props.onMouseLeave(props.id, '');
+            onMouseUp={() => {
+              if (props.onMouseUp && props.id && props.channelId) {
+                props.onMouseUp(props.id, props.channelId, 'DOWN');
               }
             }}
           >
@@ -186,30 +187,30 @@ export default (props: ScreenProps) => {
           <div
             className={'direction-audio'}
             onMouseDown={() => {
-              if (props.onMouseDown && props.id) {
-                props.onMouseDown(props.id, '');
+              if (props.onMouseDown && props.id && props.channelId) {
+                props.onMouseDown(props.id, props.channelId, 'AUDIO');
               }
             }}
-            onMouseLeave={() => {
-              if (props.onMouseLeave && props.id) {
-                props.onMouseLeave(props.id, '');
+            onMouseUp={() => {
+              if (props.onMouseUp && props.id && props.channelId) {
+                props.onMouseUp(props.id, props.channelId, 'AUDIO');
               }
             }}
           >
-            <AudioOutlined />
+            {/*<AudioOutlined />*/}
           </div>
         </div>
         <div className={'zoom'}>
           <div
             className={'zoom-item zoom-in'}
             onMouseDown={() => {
-              if (props.onMouseDown && props.id) {
-                props.onMouseDown(props.id, '');
+              if (props.onMouseDown && props.id && props.channelId) {
+                props.onMouseDown(props.id, props.channelId, 'ZOOM_IN');
               }
             }}
-            onMouseLeave={() => {
-              if (props.onMouseLeave && props.id) {
-                props.onMouseLeave(props.id, '');
+            onMouseUp={() => {
+              if (props.onMouseUp && props.id && props.channelId) {
+                props.onMouseUp(props.id, props.channelId, 'ZOOM_IN');
               }
             }}
           >
@@ -218,13 +219,13 @@ export default (props: ScreenProps) => {
           <div
             className={'zoom-item zoom-out'}
             onMouseDown={() => {
-              if (props.onMouseDown && props.id) {
-                props.onMouseDown(props.id, '');
+              if (props.onMouseDown && props.id && props.channelId) {
+                props.onMouseDown(props.id, props.channelId, 'ZOOM_OUT');
               }
             }}
-            onMouseLeave={() => {
-              if (props.onMouseLeave && props.id) {
-                props.onMouseLeave(props.id, '');
+            onMouseUp={() => {
+              if (props.onMouseUp && props.id && props.channelId) {
+                props.onMouseUp(props.id, props.channelId, 'ZOOM_OUT');
               }
             }}
           >
