@@ -1,0 +1,31 @@
+.card {
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    .title {
+      width: 50%;
+      overflow: hidden;
+      font-weight: 800;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .title::before {
+      margin-right: 10px;
+      background-color: #2810ff;
+      content: '|';
+    }
+  }
+
+  .content {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 10px;
+    .item {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+}

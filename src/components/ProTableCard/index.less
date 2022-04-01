@@ -71,3 +71,66 @@
     }
   }
 }
+
+@border-color: #e6e6e6;
+
+.iot-card {
+  width: 100%;
+
+  .card-warp {
+    position: relative;
+    border: 1px solid @border-color;
+
+    .card-content {
+      position: relative;
+      padding: 30px 12px 12px 30px;
+      overflow: hidden;
+
+      .card-state {
+        position: absolute;
+        top: 0;
+        right: 0;
+        display: flex;
+        justify-content: center;
+        width: 100px;
+        padding: 8px 0;
+        background-color: @info-color-deprecated-bg;
+        transform: skewX(45deg);
+
+        &.success {
+          background-color: @success-color-deprecated-bg;
+        }
+
+        &.warning {
+          background-color: @warning-color-deprecated-bg;
+        }
+
+        &.error {
+          background-color: @error-color-deprecated-bg;
+        }
+
+        .card-state-content {
+          transform: skewX(-45deg);
+        }
+      }
+    }
+
+    .card-mask {
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      color: #fff;
+      background-color: rgba(#000, 0.5);
+      cursor: pointer;
+
+      &.show {
+        display: flex;
+      }
+    }
+  }
+}

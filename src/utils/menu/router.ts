@@ -44,7 +44,8 @@ export const MENUS_CODE = {
   'media/Config': 'media/Config',
   'media/Device': 'media/Device',
   'media/Reveal': 'media/Reveal',
-
+  'media/Stream': 'media/Stream',
+  'media/Stream/Detail': 'media/Stream/Detail',
   'notice/Type': 'notice/Type',
   'media/SplitScreen': 'media/SplitScreen',
   'notice/Type/Config': 'notice/Config',
@@ -107,4 +108,5 @@ export const getDetailNameByCode = {
   'system/Role/Detail': '权限配置',
   'link/Type/Detail': '网络组件详情',
   'link/AccessConfig/Detail': '配置详情',
+  'media/Stream/Detail': '流媒体详情',
 };

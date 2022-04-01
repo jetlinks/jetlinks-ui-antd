@@ -34,7 +34,7 @@ interface ScreenProps {
    * @param id 当前选中播发视频ID
    * @param type 当前操作动作
    */
-  onMouseLeave?: (id: string, channelId: string, type: string) => void;
+  onMouseUp?: (id: string, channelId: string, type: string) => void;
 }
 
 export default (props: ScreenProps) => {
@@ -131,9 +131,9 @@ export default (props: ScreenProps) => {
                 props.onMouseDown(props.id, props.channelId, 'UP');
               }
             }}
-            onMouseLeave={() => {
-              if (props.onMouseLeave && props.id && props.channelId) {
-                props.onMouseLeave(props.id, props.channelId, 'UP');
+            onMouseUp={() => {
+              if (props.onMouseUp && props.id && props.channelId) {
+                props.onMouseUp(props.id, props.channelId, 'UP');
               }
             }}
           >
@@ -146,9 +146,9 @@ export default (props: ScreenProps) => {
                 props.onMouseDown(props.id, props.channelId, 'RIGHT');
               }
             }}
-            onMouseLeave={() => {
-              if (props.onMouseLeave && props.id && props.channelId) {
-                props.onMouseLeave(props.id, props.channelId, 'RIGHT');
+            onMouseUp={() => {
+              if (props.onMouseUp && props.id && props.channelId) {
+                props.onMouseUp(props.id, props.channelId, 'RIGHT');
               }
             }}
           >
@@ -161,9 +161,9 @@ export default (props: ScreenProps) => {
                 props.onMouseDown(props.id, props.channelId, 'LEFT');
               }
             }}
-            onMouseLeave={() => {
-              if (props.onMouseLeave && props.id && props.channelId) {
-                props.onMouseLeave(props.id, props.channelId, 'LEFT');
+            onMouseUp={() => {
+              if (props.onMouseUp && props.id && props.channelId) {
+                props.onMouseUp(props.id, props.channelId, 'LEFT');
               }
             }}
           >
@@ -176,9 +176,9 @@ export default (props: ScreenProps) => {
                 props.onMouseDown(props.id, props.channelId, 'DOWN');
               }
             }}
-            onMouseLeave={() => {
-              if (props.onMouseLeave && props.id && props.channelId) {
-                props.onMouseLeave(props.id, props.channelId, 'DOWN');
+            onMouseUp={() => {
+              if (props.onMouseUp && props.id && props.channelId) {
+                props.onMouseUp(props.id, props.channelId, 'DOWN');
               }
             }}
           >
@@ -191,9 +191,9 @@ export default (props: ScreenProps) => {
                 props.onMouseDown(props.id, props.channelId, 'AUDIO');
               }
             }}
-            onMouseLeave={() => {
-              if (props.onMouseLeave && props.id && props.channelId) {
-                props.onMouseLeave(props.id, props.channelId, 'AUDIO');
+            onMouseUp={() => {
+              if (props.onMouseUp && props.id && props.channelId) {
+                props.onMouseUp(props.id, props.channelId, 'AUDIO');
               }
             }}
           >
@@ -208,9 +208,9 @@ export default (props: ScreenProps) => {
                 props.onMouseDown(props.id, props.channelId, 'ZOOM_IN');
               }
             }}
-            onMouseLeave={() => {
-              if (props.onMouseLeave && props.id && props.channelId) {
-                props.onMouseLeave(props.id, props.channelId, 'ZOOM_IN');
+            onMouseUp={() => {
+              if (props.onMouseUp && props.id && props.channelId) {
+                props.onMouseUp(props.id, props.channelId, 'ZOOM_IN');
               }
             }}
           >
@@ -223,9 +223,9 @@ export default (props: ScreenProps) => {
                 props.onMouseDown(props.id, props.channelId, 'ZOOM_OUT');
               }
             }}
-            onMouseLeave={() => {
-              if (props.onMouseLeave && props.id && props.channelId) {
-                props.onMouseLeave(props.id, props.channelId, 'ZOOM_OUT');
+            onMouseUp={() => {
+              if (props.onMouseUp && props.id && props.channelId) {
+                props.onMouseUp(props.id, props.channelId, 'ZOOM_OUT');
               }
             }}
           >

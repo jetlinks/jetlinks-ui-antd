@@ -57,9 +57,15 @@ const Import = (props: Props) => {
         ],
       },
       copy: {
-        title: '选择设备',
+        title: '选择产品',
         'x-decorator': 'FormItem',
         'x-component': 'Select',
+        'x-component-props': {
+          showSearch: true,
+          showArrow: true,
+          filterOption: (input: string, option: any) =>
+            option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
+        },
         'x-visible': false,
         'x-reactions': [
           '{{loadData()}}',

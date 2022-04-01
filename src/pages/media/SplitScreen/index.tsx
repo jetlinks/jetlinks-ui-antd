@@ -26,7 +26,7 @@ const SplitScreen = () => {
               id={deviceId}
               url={url}
               channelId={channelId}
-              onMouseLeave={(id, cId) => {
+              onMouseUp={(id, cId) => {
                 ptzStop(id, cId);
               }}
               onMouseDown={(id, cId, type) => {
