@@ -47,7 +47,7 @@ export const MENUS_CODE = {
 
   'notice/Type': 'notice/Type',
   'media/SplitScreen': 'media/SplitScreen',
-  'notice/Config': 'notice/Config',
+  'notice/Type/Config': 'notice/Config',
   'notice/Config/Detail': 'notice/Config/Detail',
   'notice/Template': 'notice/Template',
   'notice/Template/Detail': 'notice/Template/Detail',

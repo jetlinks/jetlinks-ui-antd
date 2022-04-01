@@ -1,4 +1,5 @@
 import { Badge } from 'antd';
+import React from 'react';
 
 /**
  * 状态色
@@ -14,7 +15,7 @@ export enum StatusColorEnum {
 export type StatusColorType = keyof typeof StatusColorEnum;
 
 export interface BadgeStatusProps {
-  text: string;
+  text: string | React.ReactNode;
   status: string | number;
   /**
    * 自定义status值颜色
