@@ -25,8 +25,6 @@
     display: grid;
     grid-gap: 26px;
     grid-template-columns: repeat(4, 1fr);
-    //display: flex;
-    //flex-wrap: wrap;
     padding-bottom: 38px;
 
     .pro-table-card-item {
@@ -57,8 +55,21 @@
         .card-item-content {
           display: flex;
 
-          > span {
-            flex: 1;
+          > div:last-child {
+            flex-grow: 1;
+            width: 0;
+            margin-left: 12px;
+          }
+
+          label {
+            color: rgba(#000, 0.75);
+            font-size: 12px;
+          }
+
+          .ellipsis {
+            width: 100%;
+            font-weight: bold;
+            font-size: 14px;
           }
         }
       }
@@ -162,57 +173,79 @@
     .card-button {
       display: flex;
       flex-grow: 1;
-      justify-content: center;
-      background: #f6f6f6;
-      border: 1px solid #e6e6e6;
-      cursor: pointer;
+
+      > span,
+      & button {
+        width: 100%;
+        border-radius: 0;
+      }
 
       button {
-        width: 100%;
-      }
-
-      &:not(:last-child) {
-        margin-right: 8px;
-      }
-
-      &:hover {
-        background-color: @primary-color-hover;
-        border-color: @primary-color-hover;
-        span {
-          color: #fff !important;
-        }
-      }
-
-      &:active {
-        background-color: @primary-color-active;
-        border-color: @primary-color-active;
-        span {
-          color: #fff !important;
-        }
-      }
-
-      &.delete {
-        flex-basis: 60px;
-        flex-grow: 0;
-        background: @error-color-deprecated-bg;
-        border: 1px solid @error-color-outline;
-
-        span {
-          color: @error-color !important;
-        }
+        background: #f6f6f6;
+        border: 1px solid #e6e6e6;
 
         &:hover {
-          background-color: @error-color-hover;
+          background-color: @primary-color-hover;
+          border-color: @primary-color-hover;
           span {
             color: #fff !important;
           }
         }
 
         &:active {
-          background-color: @error-color-active;
+          background-color: @primary-color-active;
+          border-color: @primary-color-active;
           span {
             color: #fff !important;
           }
+        }
+      }
+
+      &:not(:last-child) {
+        margin-right: 8px;
+      }
+
+      &.delete {
+        flex-basis: 60px;
+        flex-grow: 0;
+
+        button {
+          background: @error-color-deprecated-bg;
+          border: 1px solid @error-color-outline;
+          span {
+            color: @error-color !important;
+          }
+
+          &:hover {
+            background-color: @error-color-hover;
+            span {
+              color: #fff !important;
+            }
+          }
+
+          &:active {
+            background-color: @error-color-active;
+            span {
+              color: #fff !important;
+            }
+          }
+        }
+      }
+
+      button[disabled] {
+        background: @disabled-bg;
+        border-color: @disabled-color;
+
+        span {
+          color: @disabled-color !important;
+        }
+
+        &:hover {
+          background-color: @disabled-active-bg;
+        }
+
+        &:active {
+          background-color: @disabled-active-bg;
         }
       }
     }

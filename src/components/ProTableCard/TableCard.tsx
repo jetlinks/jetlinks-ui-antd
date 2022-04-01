@@ -20,7 +20,14 @@ export interface TableCardProps {
 function getAction(actions: React.ReactNode[]) {
   return actions.map((item: any) => {
     return (
-      <div className={classNames('card-button', { delete: item.key === 'delete' })}>{item}</div>
+      <div
+        className={classNames('card-button', {
+          delete: item.key === 'delete',
+          disabled: item.disabled,
+        })}
+      >
+        {item}
+      </div>
     );
   });
 }
