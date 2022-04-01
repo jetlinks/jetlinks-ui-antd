@@ -14,7 +14,7 @@ import {
   Space,
 } from '@formily/antd';
 import type { Field, FieldDataSource } from '@formily/core';
-import { createForm, onFieldReact } from '@formily/core';
+import { createForm, onFieldReact, onFormInit } from '@formily/core';
 import GroupNameControl from '@/components/SearchComponent/GroupNameControl';
 import {
   DeleteOutlined,
@@ -80,13 +80,13 @@ const termType = [
   { label: '=', value: 'eq' },
   { label: '!=', value: 'not' },
   { label: '包含', value: 'like' },
-  { label: '不包含', value: 'not like' },
+  { label: '不包含', value: 'nlike' },
   { label: '>', value: 'gt' },
   { label: '>=', value: 'gte' },
   { label: '<', value: 'lt' },
   { label: '<=', value: 'lte' },
   { label: '属于', value: 'in' },
-  { label: '不属于', value: 'not in' },
+  { label: '不属于', value: 'nin' },
 ];
 
 const service = new Service();
@@ -107,6 +107,30 @@ const SchemaField = createSchemaField({
   },
 });
 
+const sortField = (field: ProColumns[]) => {
+  let _temp = false;
+  field.forEach((item) => {
+    if (item.index) {
+      _temp = true;
+      return;
+    }
+  });
+
+  if (!_temp) {
+    // 如果没有index 就默认name字段最第一个
+    field.map((item) => {
+      if (item.dataIndex === 'name') {
+        item.index = 0;
+        return item;
+      } else {
+        return item;
+      }
+    });
+  }
+  // index排序
+  return _.sortBy(field, (i) => i.index);
+};
+
 const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
   const { field, target, onSearch, defaultParam, enableSave = true } = props;
   const intl = useIntl();
@@ -123,6 +147,13 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
         validateFirst: true,
         initialValues: initParams,
         effects() {
+          onFormInit((form1) => {
+            if (expand) {
+              form1.setValues({
+                terms1: [{ column: sortField(field)[0]?.dataIndex, termType: 'like' }],
+              });
+            }
+          });
           onFieldReact('*.*.column', async (typeFiled, f) => {
             const _column = (typeFiled as Field).value;
             const _field = field.find((item) => item.dataIndex === _column);
@@ -288,11 +319,21 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
 
   const handleExpand = () => {
     const value = form.values;
+    const _field = sortField(field);
+
     if (expand) {
-      value.terms1.push(initTerm, initTerm);
-      value.terms2?.push(initTerm, initTerm, initTerm);
+      value.terms1 = [0, 1, 2].map((i) => ({
+        termType: 'like',
+        column: (_field[i]?.dataIndex as string) || null,
+        type: 'or',
+      }));
+      value.terms2 = [3, 4, 5].map((i) => ({
+        termType: 'like',
+        column: (_field[i]?.dataIndex as string) || null,
+        type: 'or',
+      }));
     } else {
-      value.terms1.splice(1, 2);
+      value.terms1 = [{ termType: 'like', column: (_field[0].dataIndex as string) || null }];
       value.terms2 = [];
     }
     setInitParams(value);
@@ -492,7 +533,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
       <Form form={form} className={styles.form} labelCol={4} wrapperCol={18}>
         <div className={expand && styles.simple}>
           <SchemaField schema={expand ? simpleSchema : schema} />
-          <div className={styles.action}>
+          <div className={styles.action} style={{ marginTop: expand ? 0 : -12 }}>
             <Space>
               {enableSave ? SearchBtn.advance : SearchBtn.simple}
               {enableSave && SaveBtn}
