@@ -92,13 +92,14 @@ const Stream = () => {
             <Row gutter={[16, 16]} style={{ marginTop: 10 }}>
               {(dataSource?.data || []).map((item: any) => (
                 <Col key={item.id} span={12}>
-                  <Card hoverable>
+                  <Card hoverable className={styles.cardRender}>
                     <div className={styles.card}>
                       <div className={styles.header}>
                         <div className={styles.title}>{item?.name}</div>
                         <div className={styles.actions}>
                           <Space>
-                            <a
+                            <span
+                              className={styles.action}
                               onClick={() => {
                                 history.push(
                                   `${getMenuPathByParams(
@@ -109,9 +110,9 @@ const Stream = () => {
                                 StreamModel.current = { ...item };
                               }}
                             >
-                              <EditOutlined />
-                              编辑
-                            </a>
+                              <EditOutlined style={{ color: '#000000' }} />
+                              <span>编辑</span>
+                            </span>
                             <Popconfirm
                               title={'确认删除？'}
                               onConfirm={() => {
@@ -123,10 +124,10 @@ const Stream = () => {
                                 });
                               }}
                             >
-                              <a>
-                                <DeleteOutlined />
-                                删除
-                              </a>
+                              <span className={styles.action}>
+                                <DeleteOutlined style={{ color: '#E50012' }} />
+                                <span>删除</span>
+                              </span>
                             </Popconfirm>
                           </Space>
                         </div>

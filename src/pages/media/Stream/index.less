@@ -1,34 +1,54 @@
-.card {
-  .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
+.cardRender {
+  width: 100%;
+  background: url('/images/access.png') no-repeat;
+  background-size: 100% 100%;
 
-    .title {
-      width: 50%;
-      overflow: hidden;
-      font-weight: 800;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-    }
-
-    .title::before {
-      margin-right: 10px;
-      background-color: #2810ff;
-      content: '|';
-    }
-  }
-
-  .content {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    margin-top: 10px;
-
-    .item {
+  .card {
+    .header {
       display: flex;
-      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+
+      .title {
+        width: 50%;
+        overflow: hidden;
+        color: rgba(0, 0, 0, 0.85);
+        font-weight: 700;
+        font-size: 16px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+      .actions {
+        .action span {
+          margin-left: 5px;
+          color: #4f4f4f;
+        }
+      }
+    }
+
+    .content {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      margin-top: 20px;
+
+      .item {
+        display: flex;
+        flex-direction: column;
+
+        .itemTitle {
+          color: rgba(0, 0, 0, 0.45);
+          font-size: 12px;
+        }
+
+        p {
+          color: rgba(0, 0, 0, 0.75);
+          font-weight: 700;
+          font-size: 12px;
+        }
+      }
     }
   }
 }
