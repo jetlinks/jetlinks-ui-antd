@@ -1,0 +1,212 @@
+@font-face {
+  font-family: "iconfont"; /* Project id 3183515 */
+  src: url('iconfont.woff2?t=1649052654664') format('woff2'),
+       url('iconfont.woff?t=1649052654664') format('woff'),
+       url('iconfont.ttf?t=1649052654664') format('truetype'),
+       url('iconfont.svg?t=1649052654664#iconfont') format('svg');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-shujumoni:before {
+  content: "\e665";
+}
+
+.icon-tongzhiguanli:before {
+  content: "\e666";
+}
+
+.icon-rizhifuwu:before {
+  content: "\e667";
+}
+
+.icon-keshihua:before {
+  content: "\e668";
+}
+
+.icon-yuanchengshengji:before {
+  content: "\e669";
+}
+
+.icon-shebei:before {
+  content: "\e66a";
+}
+
+.icon-wangluozujian:before {
+  content: "\e66b";
+}
+
+.icon-shipinwangguan:before {
+  content: "\e66c";
+}
+
+.icon-wumoxing:before {
+  content: "\e66d";
+}
+
+.icon-wangguanzishebei:before {
+  content: "\e66e";
+}
+
+.icon-zhihuishequ:before {
+  content: "\e66f";
+}
+
+.icon-chanpinfenlei:before {
+  content: "\e670";
+}
+
+.icon-zhengshuguanli:before {
+  content: "\e671";
+}
+
+.icon-zhihuigongye:before {
+  content: "\e672";
+}
+
+.icon-chanpin:before {
+  content: "\e673";
+}
+
+.icon-changjingliandong:before {
+  content: "\e674";
+}
+
+.icon-zhilianshebei:before {
+  content: "\e676";
+}
+
+.icon-zidingyiguize:before {
+  content: "\e677";
+}
+
+.icon-zhihuichengshi:before {
+  content: "\e678";
+}
+
+.icon-chajianguanli:before {
+  content: "\e679";
+}
+
+.icon-zhihuiyuanqu:before {
+  content: "\e67a";
+}
+
+.icon-Subtract:before {
+  content: "\e664";
+}
+
+.icon-a-Frame2125:before {
+  content: "\e660";
+}
+
+.icon-setting1:before {
+  content: "\e661";
+}
+
+.icon-a-Frame2126:before {
+  content: "\e662";
+}
+
+.icon-caozuo1:before {
+  content: "\e663";
+}
+
+.icon-tiaoshi:before {
+  content: "\e65f";
+}
+
+.icon-caozuo:before {
+  content: "\e65a";
+}
+
+.icon-colum-height1:before {
+  content: "\e65b";
+}
+
+.icon-reload1:before {
+  content: "\e65c";
+}
+
+.icon-setting:before {
+  content: "\e65d";
+}
+
+.icon-a-Group1451:before {
+  content: "\e65e";
+}
+
+.icon-colum-height-1:before {
+  content: "\e649";
+}
+
+.icon-bianji:before {
+  content: "\e64a";
+}
+
+.icon-bianji-1:before {
+  content: "\e64b";
+}
+
+.icon-colum-height:before {
+  content: "\e64c";
+}
+
+.icon-fullscreen-1:before {
+  content: "\e64d";
+}
+
+.icon-reload-1:before {
+  content: "\e64e";
+}
+
+.icon-reload:before {
+  content: "\e64f";
+}
+
+.icon-setting-1:before {
+  content: "\e650";
+}
+
+.icon-setting-2:before {
+  content: "\e651";
+}
+
+.icon-setting-4:before {
+  content: "\e652";
+}
+
+.icon-setting-3:before {
+  content: "\e653";
+}
+
+.icon-setting-7:before {
+  content: "\e654";
+}
+
+.icon-setting-9:before {
+  content: "\e655";
+}
+
+.icon-fullscreen:before {
+  content: "\e656";
+}
+
+.icon-setting-6:before {
+  content: "\e657";
+}
+
+.icon-setting-5:before {
+  content: "\e658";
+}
+
+.icon-setting-8:before {
+  content: "\e659";
+}
+

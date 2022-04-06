@@ -1,0 +1,111 @@
+@import '~antd/es/style/themes/default.less';
+
+@border: 1px dashed @border-color-base;
+@mask-color: rgba(#000, 0.35);
+@with: 160px;
+@height: 150px;
+
+.flex-center() {
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-icon {
+  display: flex;
+
+  .menu-icon-border {
+    position: relative;
+    overflow: hidden;
+    border: @border;
+    transition: all 0.3s;
+
+    &:hover {
+      border-color: @primary-color-hover;
+    }
+
+    .menu-icon-disabled {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 2;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(#000, 0.1);
+      cursor: not-allowed;
+    }
+
+    .menu-icon-content {
+      .flex-center();
+
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      width: @with;
+      height: @height;
+      padding: 8px;
+      background-color: rgba(#000, 0.06);
+      cursor: pointer;
+      > span {
+        font-size: 30px;
+      }
+
+      .menu-select-icon {
+        font-size: 90px;
+      }
+
+      .menu-icon-mask {
+        .flex-center();
+
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: none;
+        width: 100%;
+        height: 100%;
+        color: #fff;
+        font-size: 16px;
+        background-color: @mask-color;
+
+        &.show {
+          display: flex;
+        }
+      }
+    }
+  }
+}
+
+.menu-icon-items {
+  display: grid;
+  grid-gap: 20px;
+  grid-template-columns: repeat(6, 1fr);
+  max-height: 500px;
+  overflow-y: auto;
+
+  .icon-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100px;
+    font-size: 40px;
+    border: 2px solid #efefef;
+    border-radius: 2px;
+    cursor: pointer;
+
+    &:hover {
+      border-color: @primary-color-hover;
+    }
+
+    &.active {
+      color: @primary-color-active;
+      border-color: @primary-color-active;
+    }
+  }
+}
+
+.icon {
+  width: 1em;
+  height: 1em;
+  overflow: hidden;
+  vertical-align: -0.15em;
+  fill: currentColor;
+}

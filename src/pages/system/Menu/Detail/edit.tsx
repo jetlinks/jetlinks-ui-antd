@@ -20,7 +20,7 @@ import { useHistory, useRequest } from 'umi';
 import type { MenuItem } from '@/pages/system/Menu/typing';
 // import { debounce } from 'lodash';
 import Title from '../components/Title';
-import { UploadImage } from '@/components';
+import Icons from '../components/Icons';
 import { QuestionCircleFilled } from '@ant-design/icons';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 
@@ -137,11 +137,12 @@ export default (props: EditProps) => {
                 required={true}
                 rules={[{ required: true, message: '请上传图标' }]}
               >
-                <UploadImage
+                {/* <UploadImage
                   types={['image/png']}
                   disabled={disabled}
                   style={{ width: 140, height: 130 }}
-                />
+                /> */}
+                <Icons disabled={disabled} />
               </Form.Item>
             </Col>
             <Col span={21}>
