@@ -18,7 +18,7 @@ const Settings: LayoutSettings & {
   title: 'Jetlinks',
   pwa: false,
   logo: '/logo.svg',
-  iconfontUrl: '',
+  iconfontUrl: '/icons/iconfont.js',
 };
 
 export default Settings;

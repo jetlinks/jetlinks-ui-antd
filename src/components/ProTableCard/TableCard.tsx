@@ -35,16 +35,16 @@ function getAction(actions: React.ReactNode[]) {
 export default (props: TableCardProps) => {
   const [maskShow, setMaskShow] = useState(false);
 
-  const handleStatusColor = (): StatusColorType | undefined => {
-    if ('statusNames' in props && props.status) {
-      return props.statusNames![props.status];
+  const handleStatusColor = (data: TableCardProps): StatusColorType | undefined => {
+    if ('statusNames' in data && data.status !== undefined) {
+      return data.statusNames![data.status];
     }
     return StatusColorEnum.default;
   };
 
   const statusNode =
     props.showStatus === false ? null : (
-      <div className={classNames('card-state', handleStatusColor())}>
+      <div className={classNames('card-state', handleStatusColor(props))}>
         <div className={'card-state-content'}>
           <BadgeStatus
             status={props.status !== undefined ? props.status : ''}
