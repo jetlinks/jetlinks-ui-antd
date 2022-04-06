@@ -7,6 +7,69 @@ import { observer } from '@formily/react';
 import { history } from 'umi';
 import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 
+const createImageLabel = (image: string, text: string) => {
+  return (
+    <>
+      <img alt="" height="100px" src={image} />
+      <div style={{ textAlign: 'center' }}>{text}</div>
+    </>
+  );
+};
+
+export const typeList = {
+  weixin: [
+    {
+      label: createImageLabel(
+        'https://lf1-cdn-tos.bytegoofy.com/goofy/lark/passport/staticfiles/passport/OKR.png',
+        '企业消息',
+      ),
+      value: 'corpMessage',
+    },
+    {
+      label: createImageLabel(
+        'https://lf1-cdn-tos.bytegoofy.com/goofy/lark/passport/staticfiles/passport/Hire.png',
+        '服务号消息',
+      ),
+      value: 'officialMessage',
+    },
+  ],
+  dingTalk: [
+    {
+      label: createImageLabel(
+        'https://lf1-cdn-tos.bytegoofy.com/goofy/lark/passport/staticfiles/passport/OKR.png',
+        '钉钉消息',
+      ),
+      value: 'dingTalkMessage',
+    },
+    {
+      label: createImageLabel(
+        'https://lf1-cdn-tos.bytegoofy.com/goofy/lark/passport/staticfiles/passport/Hire.png',
+        '群机器人消息',
+      ),
+      value: 'dingTalkRobotWebHook',
+    },
+  ],
+  voice: [
+    {
+      label: createImageLabel(
+        'https://lf1-cdn-tos.bytegoofy.com/goofy/lark/passport/staticfiles/passport/OKR.png',
+        '阿里云语音',
+      ),
+      value: 'aliyun',
+    },
+  ],
+  sms: [
+    {
+      label: createImageLabel(
+        'https://lf1-cdn-tos.bytegoofy.com/goofy/lark/passport/staticfiles/passport/OKR.png',
+        '阿里云短信',
+      ),
+      value: 'aliyunSms',
+    },
+  ],
+  email: [],
+};
+
 const Type = observer(() => {
   const list = [
     {

@@ -47,6 +47,7 @@ export const MENUS_CODE = {
   'media/Stream': 'media/Stream',
   'media/Stream/Detail': 'media/Stream/Detail',
   'notice/Type': 'notice/Type',
+  'notice/Config': 'notice/Config',
   'media/SplitScreen': 'media/SplitScreen',
   'notice/Type/Config': 'notice/Config',
   'notice/Config/Detail': 'notice/Config/Detail',

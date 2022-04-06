@@ -2,7 +2,7 @@ type TemplateItem = {
   id: string;
   name: string;
   type: string;
-  template: string;
+  template: any;
   provider: string;
   creatorId: string;
   createTime: number;

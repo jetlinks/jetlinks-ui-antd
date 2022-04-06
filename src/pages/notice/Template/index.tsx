@@ -7,8 +7,8 @@ import ProTable from '@jetlinks/pro-table';
 import {
   ArrowDownOutlined,
   BugOutlined,
+  DeleteOutlined,
   EditOutlined,
-  MinusOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
 import { Button, Tooltip } from 'antd';
@@ -19,18 +19,19 @@ import SearchComponent from '@/components/SearchComponent';
 // import Detail from '@/pages/notice/Template/Detail';
 import { history, useLocation } from 'umi';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { model } from '@formily/reactive';
 
 export const service = new Service('notifier/template');
+export const state = model<{
+  current?: TemplateItem;
+}>({});
 const Template = () => {
   const intl = useIntl();
+  const location = useLocation<{ id: string }>();
+  const id = (location as any).query?.id;
   const actionRef = useRef<ActionType>();
 
   const columns: ProColumns<TemplateItem>[] = [
-    {
-      dataIndex: 'index',
-      valueType: 'indexBorder',
-      width: 48,
-    },
     {
       dataIndex: 'name',
       title: intl.formatMessage({
@@ -61,7 +62,13 @@ const Template = () => {
       align: 'center',
       width: 200,
       render: (text, record) => [
-        <a key="edit" onClick={() => console.log(record)}>
+        <a
+          key="edit"
+          onClick={() => {
+            state.current = record;
+            history.push(getMenuPathByParams(MENUS_CODE['notice/Template/Detail'], id));
+          }}
+        >
           <Tooltip
             title={intl.formatMessage({
               id: 'pages.data.option.edit',
@@ -78,7 +85,7 @@ const Template = () => {
               defaultMessage: '删除',
             })}
           >
-            <MinusOutlined />
+            <DeleteOutlined />
           </Tooltip>
         </a>,
         <a key="download">
@@ -600,8 +607,6 @@ const Template = () => {
   //   },
   // };
 
-  const location = useLocation<{ id: string }>();
-
   const [param, setParam] = useState({});
   return (
     <PageContainer className={'page-title-show'}>
@@ -623,7 +628,7 @@ const Template = () => {
         toolBarRender={() => [
           <Button
             onClick={() => {
-              const id = (location as any).query?.id;
+              state.current = undefined;
               history.push(getMenuPathByParams(MENUS_CODE['notice/Template/Detail'], id));
             }}
             key="button"
