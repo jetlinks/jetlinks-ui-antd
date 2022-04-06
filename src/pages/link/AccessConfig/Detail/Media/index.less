@@ -1,0 +1,74 @@
+.box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px 30px;
+}
+
+.steps {
+  width: 100%;
+}
+
+.content {
+  width: 100%;
+  margin: 20px 0;
+}
+
+.action {
+  width: 100%;
+}
+
+.title {
+  width: '100%';
+  overflow: hidden;
+  font-weight: 800;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.desc {
+  width: 100%;
+  margin-top: 10px;
+  overflow: hidden;
+  color: rgba(0, 0, 0, 0.55);
+  font-weight: 400;
+  font-size: 13px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  margin-top: 5px;
+  color: rgba(0, 0, 0, 0.55);
+
+  .item {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+
+.view {
+  display: flex;
+  justify-content: space-between;
+
+  .info,
+  .config {
+    width: 48%;
+
+    .title {
+      width: 100%;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .title::before {
+      margin-right: 10px;
+      background-color: #2810ff;
+      content: '|';
+    }
+  }
+}

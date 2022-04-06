@@ -7,10 +7,14 @@ import type { ReactNode } from 'react';
 import { useState } from 'react';
 import Cat from './Cat';
 import Service from '@/pages/device/components/Metadata/service';
+import { InfoCircleOutlined } from '@ant-design/icons';
+import styles from './index.less';
+import { InstanceModel } from '@/pages/device/Instance';
 
 interface Props {
   tabAction?: ReactNode;
   type: 'product' | 'device';
+  independentMetadata?: boolean;
 }
 
 export const service = new Service();
@@ -18,9 +22,17 @@ const Metadata = observer((props: Props) => {
   const intl = useIntl();
   const [visible, setVisible] = useState<boolean>(false);
   const [cat, setCat] = useState<boolean>(false);
+  console.log(InstanceModel.detail, 'test');
   return (
-    <>
+    <div style={{ position: 'relative' }}>
+      <div className={styles.tips}>
+        <InfoCircleOutlined style={{ marginRight: '3px' }} />
+        {InstanceModel.detail?.independentMetadata
+          ? '该设备已脱离产品物模型，修改产品物模型对该设备无影响'
+          : '设备会默认继承产品的物模型，修改设备物模型后将脱离产品物模型'}
+      </div>
       <Tabs
+        className={styles.metadataNav}
         tabBarExtraContent={
           <Space>
             {props?.tabAction}
@@ -80,7 +92,7 @@ const Metadata = observer((props: Props) => {
       </Tabs>
       <Import visible={visible} close={() => setVisible(false)} />
       <Cat visible={cat} close={() => setCat(false)} />
-    </>
+    </div>
   );
 });
 export default Metadata;

@@ -25,3 +25,18 @@
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+
+.title {
+  width: '100%';
+  margin-bottom: 10px;
+  overflow: hidden;
+  font-weight: 800;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.title::before {
+  margin-right: 10px;
+  background-color: #2810ff;
+  content: '|';
+}

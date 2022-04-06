@@ -191,7 +191,7 @@ const Property = (props: Props) => {
                 });
               }
             }}
-            style={{ width: 300 }}
+            style={{ width: 317 }}
           />
         </Space>
         <CheckButton

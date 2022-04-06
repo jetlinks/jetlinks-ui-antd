@@ -8,13 +8,13 @@ import { useHistory } from 'umi';
 import {
   CheckCircleOutlined,
   DeleteOutlined,
+  EditOutlined,
   ExportOutlined,
   EyeOutlined,
   ImportOutlined,
   PlusOutlined,
   StopOutlined,
   SyncOutlined,
-  EditOutlined,
 } from '@ant-design/icons';
 import { model } from '@formily/reactive';
 import Service from '@/pages/device/Instance/service';

@@ -1,5 +1,4 @@
 import {
-  Alert,
   Badge,
   Button,
   Card,
@@ -20,6 +19,7 @@ import encodeQuery from '@/utils/encodeQuery';
 import { useHistory, useLocation } from 'umi';
 import ReactMarkdown from 'react-markdown';
 import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
+import { ExclamationCircleFilled } from '@ant-design/icons';
 
 interface Props {
   change: () => void;
@@ -291,7 +291,10 @@ const Access = (props: Props) => {
       case 0:
         return (
           <div>
-            <Alert message="选择与设备通信的网络组件" type="warning" showIcon />
+            <div className={styles.alert}>
+              <ExclamationCircleFilled style={{ marginRight: 10 }} />
+              选择与设备通信的网络组件
+            </div>
             <div className={styles.search}>
               <Input.Search
                 key={'network'}
@@ -328,34 +331,36 @@ const Access = (props: Props) => {
                 {networkList.map((item) => (
                   <Col key={item.name} span={8}>
                     <Card
+                      className={styles.cardRender}
                       style={{
                         width: '100%',
-                        border: networkCurrent === item.id ? '1px solid #1d39c4' : '',
+                        borderColor:
+                          networkCurrent === item.id ? 'var(--ant-primary-color-active)' : '',
                       }}
                       hoverable
                       onClick={() => {
                         setNetworkCurrent(item.id);
                       }}
                     >
-                      <div className={styles.title}>{item.name}</div>
+                      <div className={styles.title}>{item.name || '--'}</div>
                       <div className={styles.cardContent}>
                         <div
                           style={{
                             width: '100%',
-                            height: '40px',
+                            height: '20px',
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',
                             justifyContent: 'center',
                           }}
                         >
-                          {item.addresses.slice(0, 2).map((i: any) => (
+                          {item.addresses.slice(0, 1).map((i: any) => (
                             <div className={styles.item} key={i.address}>
                               <Badge color={i.health === -1 ? 'red' : 'green'} text={i.address} />
                             </div>
                           ))}
                         </div>
-                        <div className={styles.desc}>{item?.description || ''}</div>
+                        <div className={styles.desc}>{item?.description || '--'}</div>
                       </div>
                     </Card>
                   </Col>
@@ -388,11 +393,10 @@ const Access = (props: Props) => {
       case 1:
         return (
           <div>
-            <Alert
-              message="使用选择的消息协议，对网络组件通信数据进行编解码、认证等操作"
-              type="warning"
-              showIcon
-            />
+            <div className={styles.alert}>
+              <ExclamationCircleFilled style={{ marginRight: 10 }} />
+              使用选择的消息协议，对网络组件通信数据进行编解码、认证等操作
+            </div>
             <div className={styles.search}>
               <Input.Search
                 key={'protocol'}
@@ -428,9 +432,11 @@ const Access = (props: Props) => {
                 {procotolList.map((item) => (
                   <Col key={item.name} span={8}>
                     <Card
+                      className={styles.cardRender}
                       style={{
                         width: '100%',
-                        border: procotolCurrent === item.id ? '1px solid #1d39c4' : '',
+                        borderColor:
+                          networkCurrent === item.id ? 'var(--ant-primary-color-active)' : '',
                       }}
                       hoverable
                       onClick={() => {
@@ -438,8 +444,8 @@ const Access = (props: Props) => {
                       }}
                     >
                       <div style={{ height: '45px' }}>
-                        <div className={styles.title}>{item.name}</div>
-                        <div className={styles.desc}>{item.description}</div>
+                        <div className={styles.title}>{item.name || '--'}</div>
+                        <div className={styles.desc}>{item.description || '--'}</div>
                       </div>
                     </Card>
                   </Col>
@@ -470,124 +476,151 @@ const Access = (props: Props) => {
         );
       case 2:
         return (
-          <div className={styles.view}>
-            <div className={styles.info}>
-              <div className={styles.title}>基本信息</div>
-              <Form name="basic" layout="vertical" form={form}>
-                <Form.Item
-                  label="名称"
-                  name="name"
-                  rules={[{ required: true, message: '请输入名称' }]}
-                >
-                  <Input />
-                </Form.Item>
-                <Form.Item name="description" label="说明">
-                  <Input.TextArea showCount maxLength={200} />
-                </Form.Item>
-              </Form>
-              <div className={styles.action}>
-                <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
-                  上一步
-                </Button>
-                <Button
-                  type="primary"
-                  onClick={async () => {
-                    try {
-                      const values = await form.validateFields();
-                      // 编辑还是保存
-                      if (!params.get('id')) {
-                        service
-                          .save({
-                            name: values.name,
-                            description: values.description,
-                            provider: props.data.id,
-                            protocol: procotolCurrent,
-                            transport: ProcotoleMapping.get(props.data.id),
-                            channel: 'network', // 网络组件
-                            channelId: networkCurrent,
-                          })
-                          .then((resp: any) => {
-                            if (resp.status === 200) {
-                              message.success('操作成功！');
-                              history.goBack();
-                              if ((window as any).onTabSaveSuccess) {
-                                (window as any).onTabSaveSuccess(resp);
-                                setTimeout(() => window.close(), 300);
+          <Row gutter={24}>
+            <Col span={12}>
+              <div className={styles.info}>
+                <div className={styles.title}>基本信息</div>
+                <Form name="basic" layout="vertical" form={form}>
+                  <Form.Item
+                    label="名称"
+                    name="name"
+                    rules={[{ required: true, message: '请输入名称' }]}
+                  >
+                    <Input />
+                  </Form.Item>
+                  <Form.Item name="description" label="说明">
+                    <Input.TextArea showCount maxLength={200} />
+                  </Form.Item>
+                </Form>
+                <div className={styles.action} style={{ marginTop: 50 }}>
+                  <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
+                    上一步
+                  </Button>
+                  <Button
+                    type="primary"
+                    onClick={async () => {
+                      try {
+                        const values = await form.validateFields();
+                        // 编辑还是保存
+                        if (!params.get('id')) {
+                          service
+                            .save({
+                              name: values.name,
+                              description: values.description,
+                              provider: props.data.id,
+                              protocol: procotolCurrent,
+                              transport: ProcotoleMapping.get(props.data.id),
+                              channel: 'network', // 网络组件
+                              channelId: networkCurrent,
+                            })
+                            .then((resp: any) => {
+                              if (resp.status === 200) {
+                                message.success('操作成功！');
+                                history.goBack();
+                                if ((window as any).onTabSaveSuccess) {
+                                  (window as any).onTabSaveSuccess(resp);
+                                  setTimeout(() => window.close(), 300);
+                                }
                               }
-                            }
-                          });
-                      } else {
-                        service
-                          .update({
-                            id: access?.id,
-                            name: values.name,
-                            description: values.description,
-                            provider: access?.provider,
-                            protocol: procotolCurrent,
-                            transport: access?.transport,
-                            channel: 'network', // 网络组件
-                            channelId: networkCurrent,
-                          })
-                          .then((resp: any) => {
-                            if (resp.status === 200) {
-                              message.success('操作成功！');
-                              history.goBack();
-                              if ((window as any).onTabSaveSuccess) {
-                                (window as any).onTabSaveSuccess(resp);
-                                setTimeout(() => window.close(), 300);
+                            });
+                        } else {
+                          service
+                            .update({
+                              id: access?.id,
+                              name: values.name,
+                              description: values.description,
+                              provider: access?.provider,
+                              protocol: procotolCurrent,
+                              transport: access?.transport,
+                              channel: 'network', // 网络组件
+                              channelId: networkCurrent,
+                            })
+                            .then((resp: any) => {
+                              if (resp.status === 200) {
+                                message.success('操作成功！');
+                                history.goBack();
+                                if ((window as any).onTabSaveSuccess) {
+                                  (window as any).onTabSaveSuccess(resp);
+                                  setTimeout(() => window.close(), 300);
+                                }
                               }
-                            }
-                          });
+                            });
+                        }
+                      } catch (errorInfo) {
+                        console.error('Failed:', errorInfo);
                       }
-                    } catch (errorInfo) {
-                      console.error('Failed:', errorInfo);
-                    }
-                  }}
-                >
-                  保存
-                </Button>
+                    }}
+                  >
+                    保存
+                  </Button>
+                </div>
               </div>
-            </div>
-            <div className={styles.config}>
-              <div className={styles.title}>接入方式</div>
-              <div>
-                {props.data?.name || providers.find((i) => i.id === access?.provider)?.name}
-              </div>
-              {(props.data?.description ||
-                providers.find((i) => i.id === access?.provider)?.description) && (
-                <span>
-                  {props.data?.description ||
-                    providers.find((i) => i.id === access?.provider)?.description}
-                </span>
-              )}
-              <div className={styles.title}>消息协议</div>
-              <div>{procotolList.find((i) => i.id === procotolCurrent)?.name || ''}</div>
-              <ReactMarkdown>{config?.document}</ReactMarkdown>
-              <div className={styles.title}>网络组件</div>
-              {(networkList.find((i) => i.id === networkCurrent)?.addresses || []).map(
-                (item: any) => (
-                  <div key={item.address}>
-                    <Badge
-                      color={item.health === -1 ? 'red' : 'green'}
-                      text={item.address}
-                      style={{ marginLeft: '20px' }}
+            </Col>
+            <Col span={12}>
+              <div className={styles.config}>
+                <div className={styles.item}>
+                  <div className={styles.title}>接入方式</div>
+                  <div className={styles.context}>
+                    {props.data?.name ||
+                      providers.find((i) => i.id === access?.provider)?.name ||
+                      '--'}
+                  </div>
+                  <div className={styles.context}>
+                    {((props.data?.description ||
+                      providers.find((i) => i.id === access?.provider)?.description) && (
+                      <span>
+                        {props.data?.description ||
+                          providers.find((i) => i.id === access?.provider)?.description}
+                      </span>
+                    )) ||
+                      '--'}
+                  </div>
+                </div>
+                <div className={styles.item}>
+                  <div className={styles.title}>消息协议</div>
+                  <div className={styles.context}>
+                    {procotolList.find((i) => i.id === procotolCurrent)?.name || '--'}
+                  </div>
+                  <div className={styles.context}>
+                    {config?.document ? <ReactMarkdown>{config?.document}</ReactMarkdown> : '--'}
+                  </div>
+                </div>
+                <div className={styles.item}>
+                  <div className={styles.title}>网络组件</div>
+                  {(networkList.find((i) => i.id === networkCurrent)?.addresses || []).length > 0
+                    ? (networkList.find((i) => i.id === networkCurrent)?.addresses || []).map(
+                        (item: any) => (
+                          <div key={item.address}>
+                            <Badge
+                              color={item.health === -1 ? 'red' : 'green'}
+                              text={item.address}
+                              style={{ marginLeft: '20px' }}
+                            />
+                          </div>
+                        ),
+                      )
+                    : '--'}
+                </div>
+                {config?.routes && config?.routes?.length > 0 && (
+                  <div className={styles.item}>
+                    <div style={{ fontWeight: '600', marginBottom: 10 }}>
+                      {access?.provider === 'mqtt-server-gateway' ||
+                      access?.provider === 'mqtt-client-gateway'
+                        ? 'topic'
+                        : 'URL信息'}
+                    </div>
+                    <Table
+                      bordered
+                      dataSource={config?.routes || []}
+                      columns={config.id === 'MQTT' ? columnsMQTT : columnsHTTP}
+                      pagination={false}
+                      scroll={{ y: 300 }}
                     />
                   </div>
-                ),
-              )}
-              {config?.routes && config?.routes?.length > 0 && (
-                <div>
-                  <Table
-                    bordered
-                    dataSource={config?.routes || []}
-                    columns={config.id === 'MQTT' ? columnsMQTT : columnsHTTP}
-                    pagination={false}
-                    scroll={{ y: 240 }}
-                  />
-                </div>
-              )}
-            </div>
-          </div>
+                )}
+              </div>
+            </Col>
+          </Row>
         );
       default:
         return null;
