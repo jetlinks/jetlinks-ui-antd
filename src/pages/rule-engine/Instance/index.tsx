@@ -245,13 +245,13 @@ const Instance = () => {
         <Popconfirm
           title={intl.formatMessage({
             id:
-              record.state.value === 'notActive'
+              record.state.value === 'stopped'
                 ? 'pages.data.option.remove.tips'
                 : 'pages.device.instance.deleteTip',
           })}
           key={'delete'}
           onConfirm={async () => {
-            if (record.state.value === 'notActive') {
+            if (record.state.value === 'stopped') {
               await service.remove(record.id);
               message.success(
                 intl.formatMessage({
@@ -261,7 +261,7 @@ const Instance = () => {
               );
               actionRef.current?.reload();
             } else {
-              message.error(intl.formatMessage({ id: 'pages.device.instance.deleteTip' }));
+              message.error('未停止不能删除');
             }
           }}
         >

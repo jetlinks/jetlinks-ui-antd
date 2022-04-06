@@ -8,6 +8,7 @@ import { useParams } from 'umi';
 import PropertyLog from '@/pages/device/Instance/Detail/MetadataLog/Property';
 import EditProperty from '@/pages/device/Instance/Detail/Running/Property/EditProperty';
 import moment from 'moment';
+import './PropertyCard.less';
 
 interface Props {
   data: Partial<PropertyMetadata>;
@@ -33,9 +34,17 @@ const Property = (props: Props) => {
   const [visible, setVisible] = useState<boolean>(false);
   const [editVisible, setEditVisible] = useState<boolean>(false);
 
+  const renderTitle = (title: string) => {
+    return (
+      <div className="value" style={{ color: 'rgba(0, 0, 0, .65)', fontSize: 14 }}>
+        {title}
+      </div>
+    );
+  };
+
   return (
     <ProCard
-      title={`${data?.name}`}
+      title={renderTitle(data?.name || '')}
       extra={
         <>
           {(data.expands?.readOnly === false || data.expands?.readOnly === 'false') && (
@@ -66,12 +75,18 @@ const Property = (props: Props) => {
       bordered
       hoverable
       colSpan={{ xs: 12, sm: 8, md: 6, lg: 6, xl: 6 }}
+      style={{ backgroundColor: 'rgba(0, 0, 0, .02)' }}
     >
       <Spin spinning={loading}>
         <div>
-          <div style={{ fontWeight: 600, fontSize: '30px' }}>{value?.formatValue || '--'}</div>
+          <div className="value" style={{ fontWeight: 700, fontSize: '24px', color: '#323130' }}>
+            {value?.formatValue || '--'}
+          </div>
           <div style={{ marginTop: 10 }}>
-            {value?.timestamp ? moment(value?.timestamp).format('YYYY-MM-DD HH:mm:ss') : '--'}
+            <div style={{ color: 'rgba(0, 0, 0, .65)', fontSize: 12 }}>更新时间</div>
+            <div style={{ marginTop: 5, fontSize: 16, color: 'black' }} className="value">
+              {value?.timestamp ? moment(value?.timestamp).format('YYYY-MM-DD HH:mm:ss') : '--'}
+            </div>
           </div>
         </div>
       </Spin>

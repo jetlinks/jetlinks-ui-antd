@@ -14,6 +14,8 @@ export enum StatusColorEnum {
 
 export type StatusColorType = keyof typeof StatusColorEnum;
 
+export type StatusType = string | number;
+
 export interface BadgeStatusProps {
   text: string | React.ReactNode;
   status: string | number;
@@ -32,7 +34,7 @@ export default (props: BadgeStatusProps) => {
     if ('statusNames' in props) {
       return props.statusNames![props.status];
     }
-    return StatusColorEnum['default'];
+    return StatusColorEnum.default;
   };
 
   return <Badge status={handleStatusColor()} text={props.text} />;

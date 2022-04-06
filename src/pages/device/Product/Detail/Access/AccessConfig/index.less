@@ -28,15 +28,17 @@
 
 // .top {
 //   display: flex;
-//   justify-content: space-between;
+// }
 
-//   .left {
-//     display: flex;
-//   }
-
-//   .action a {
-//     margin: 0 5px;
-//   }
+// .desc {
+//   width: 100%;
+//   margin-top: 10px;
+//   overflow: hidden;
+//   color: rgba(0, 0, 0, 0.55);
+//   font-weight: 400;
+//   font-size: 13px;
+//   white-space: nowrap;
+//   text-overflow: ellipsis;
 // }
 
 .context {
@@ -105,5 +107,27 @@
 :global {
   .ant-pagination-item {
     display: none;
+  }
+}
+
+.search {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+
+  :global {
+    .ant-card {
+      margin-bottom: 0 !important;
+      border: none !important;
+    }
+
+    .ant-formily-item-feedback-layout-loose {
+      margin-bottom: 0 !important;
+    }
+
+    .ant-card-body {
+      padding: 24px !important;
+    }
   }
 }

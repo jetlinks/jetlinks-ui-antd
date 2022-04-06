@@ -8,7 +8,7 @@ const Settings: LayoutSettings & {
   // 拂晓蓝
   // primaryColor: '#1890ff',
   // 极光绿
-  primaryColor: '#1d39c4',
+  primaryColor: '#f5222d',
   layout: 'mix',
   contentWidth: 'Fluid',
   splitMenus: true,

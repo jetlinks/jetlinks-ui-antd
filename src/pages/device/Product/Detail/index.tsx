@@ -10,7 +10,6 @@ import {
   Space,
   Spin,
   Switch,
-  Tabs,
   Tooltip,
 } from 'antd';
 import BaseInfo from '@/pages/device/Product/Detail/BaseInfo';
@@ -24,7 +23,6 @@ import Access from '@/pages/device/Product/Detail/Access';
 import type { DeviceMetadata } from '@/pages/device/Product/typings';
 import { Store } from 'jetlinks-store';
 import MetadataAction from '@/pages/device/components/Metadata/DataBaseAction';
-import { QuestionCircleOutlined } from '@ant-design/icons';
 import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 import encodeQuery from '@/utils/encodeQuery';
 import SystemConst from '@/utils/const';
@@ -148,11 +146,40 @@ const ProductDetail = observer(() => {
     return subscription.unsubscribe;
   }, [changeDeploy, param.id]);
 
+  const list = [
+    {
+      key: 'base',
+      tab: intl.formatMessage({
+        id: 'pages.device.productDetail.base',
+        defaultMessage: '配置信息',
+      }),
+      component: <BaseInfo />,
+    },
+    {
+      key: 'metadata',
+      tab: intl.formatMessage({
+        id: 'pages.device.productDetail.metadata',
+        defaultMessage: '物模型',
+      }),
+      component: <Metadata type="product" />,
+    },
+    {
+      key: 'access',
+      tab: '设备接入',
+      component: <Access />,
+    },
+  ];
+
   return (
     <PageContainer
       className={'page-title-show'}
       onBack={() => history.goBack()}
       extraContent={<Space size={24} />}
+      onTabChange={(key) => {
+        setMode(key);
+      }}
+      tabList={list}
+      tabActiveKey={mode}
       content={
         <Spin spinning={loading}>
           <Descriptions size="small" column={2}>
@@ -210,7 +237,8 @@ const ProductDetail = observer(() => {
       ]}
     >
       <Card>
-        <Tabs
+        {list.find((k) => k.key === mode)?.component}
+        {/* <Tabs
           defaultActiveKey={ModelEnum.base}
           activeKey={mode}
           onChange={(key) => {
@@ -273,16 +301,7 @@ const ProductDetail = observer(() => {
           <Tabs.TabPane tab={'设备接入'} key={ModelEnum.access}>
             <Access />
           </Tabs.TabPane>
-          {/* <Tabs.TabPane
-            tab={intl.formatMessage({
-              id: 'pages.device.productDetail.alarm',
-              defaultMessage: '告警设置',
-            })}
-            key="alarm"
-          >
-            <Alarm type="product" />
-          </Tabs.TabPane> */}
-        </Tabs>
+        </Tabs> */}
       </Card>
     </PageContainer>
   );

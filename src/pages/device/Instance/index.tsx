@@ -8,6 +8,7 @@ import { useHistory } from 'umi';
 import {
   CheckCircleOutlined,
   DeleteOutlined,
+  EditOutlined,
   ExportOutlined,
   EyeOutlined,
   ImportOutlined,
@@ -405,7 +406,99 @@ const Instance = () => {
             <Button>批量操作</Button>
           </Dropdown>,
         ]}
-        cardRender={(record) => <DeviceCard {...record} actions={tools(record)} />}
+        cardRender={(record) => (
+          <DeviceCard
+            {...record}
+            detail={
+              <div
+                style={{ padding: 8, fontSize: 24 }}
+                onClick={() => {
+                  InstanceModel.current = record;
+                  const url = getMenuPathByParams(MENUS_CODE['device/Instance/Detail'], record.id);
+                  history.push(url);
+                }}
+              >
+                <EyeOutlined />
+              </div>
+            }
+            actions={[
+              <Button
+                type={'link'}
+                onClick={() => {
+                  setCurrent(record);
+                  setVisible(true);
+                }}
+                key={'edit'}
+              >
+                <EditOutlined />
+                {intl.formatMessage({
+                  id: 'pages.data.option.edit',
+                  defaultMessage: '编辑',
+                })}
+              </Button>,
+              <Popconfirm
+                key={'state'}
+                title={intl.formatMessage({
+                  id: `pages.data.option.${
+                    record.state.value !== 'notActive' ? 'disabled' : 'enabled'
+                  }.tips`,
+                  defaultMessage: '确认禁用？',
+                })}
+                onConfirm={async () => {
+                  if (record.state.value !== 'notActive') {
+                    await service.undeployDevice(record.id);
+                  } else {
+                    await service.deployDevice(record.id);
+                  }
+                  message.success(
+                    intl.formatMessage({
+                      id: 'pages.data.option.success',
+                      defaultMessage: '操作成功!',
+                    }),
+                  );
+                  actionRef.current?.reload();
+                }}
+              >
+                <Button type={'link'} style={{ padding: 0 }}>
+                  {record.state.value !== 'notActive' ? <StopOutlined /> : <CheckCircleOutlined />}
+                  {intl.formatMessage({
+                    id: `pages.data.option.${
+                      record.state.value !== 'notActive' ? 'disabled' : 'enabled'
+                    }`,
+                    defaultMessage: record.state.value !== 'notActive' ? '禁用' : '启用',
+                  })}
+                </Button>
+              </Popconfirm>,
+              <Popconfirm
+                title={intl.formatMessage({
+                  id:
+                    record.state.value === 'notActive'
+                      ? 'pages.data.option.remove.tips'
+                      : 'pages.device.instance.deleteTip',
+                })}
+                key={'delete'}
+                onConfirm={async () => {
+                  if (record.state.value === 'notActive') {
+                    await service.remove(record.id);
+                    message.success(
+                      intl.formatMessage({
+                        id: 'pages.data.option.success',
+                        defaultMessage: '操作成功!',
+                      }),
+                    );
+                    actionRef.current?.reload();
+                  } else {
+                    message.error(intl.formatMessage({ id: 'pages.device.instance.deleteTip' }));
+                  }
+                }}
+              >
+                <Button type={'link'} style={{ padding: 0 }}>
+                  <DeleteOutlined />
+                </Button>
+              </Popconfirm>,
+            ]}
+          />
+        )}
       />
       <Save
         data={current}
