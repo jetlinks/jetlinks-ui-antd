@@ -4,7 +4,7 @@ import {getAccessToken} from '@/utils/authority';
 import api from '@/services'
 import { message } from "antd";
 
-const Screen = () => {
+const DataSource = () => {
 
   const token = getAccessToken();
   const [url, setUrl] = useState('');
@@ -23,7 +23,7 @@ const Screen = () => {
   }, []);
 
   return (
-    <PageHeaderWrapper title="项目管理">
+    <PageHeaderWrapper title="数据源管理">
       <iframe
         style={{width: '100%', height: '800px'}}
         src={`${url.replace('{token}', token)}`}
@@ -33,4 +33,4 @@ const Screen = () => {
   )
 };
 
-export default Screen;
+export default DataSource;
