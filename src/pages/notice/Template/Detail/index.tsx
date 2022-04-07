@@ -14,7 +14,7 @@ import {
   Switch,
 } from '@formily/antd';
 import type { Field } from '@formily/core';
-import { createForm, onFieldValueChange } from '@formily/core';
+import { createForm, onFieldInit, onFieldValueChange } from '@formily/core';
 import { createSchemaField, observer } from '@formily/react';
 import type { ISchema } from '@formily/json-schema';
 import styles from './index.less';
@@ -25,6 +25,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { Card, Col, message, Row } from 'antd';
 import { typeList } from '@/pages/notice';
 import { service, state } from '@/pages/notice/Template';
+import FBraftEditor from '@/components/FBraftEditor';
 
 const Detail = observer(() => {
   const { id } = useParams<{ id: string }>();
@@ -36,8 +37,19 @@ const Detail = observer(() => {
       createForm({
         validateFirst: true,
         effects() {
+          onFieldInit('template.message', (field, form1) => {
+            if (id === 'email') {
+              field.setComponent(FBraftEditor);
+            }
+            console.log(form1);
+            ///给FBraftEditor 设置初始值
+          });
           onFieldValueChange('template.message', (field, form1) => {
-            const value = (field as Field).value;
+            let value = (field as Field).value;
+            if (id === 'email' && form1.modified) {
+              value = value?.toHTML();
+            }
+            console.log(value, 'test');
             const idList = value
               .match(pattern)
               ?.filter((i: string) => i)
@@ -98,6 +110,7 @@ const Detail = observer(() => {
       Space,
       FUpload,
       NumberPicker,
+      FBraftEditor,
     },
   });
 
@@ -127,6 +140,10 @@ const Detail = observer(() => {
         case 'link':
           data.template.link.text = data.template.message;
       }
+    }
+    if (id === 'email') {
+      data.provider = 'embedded';
+      data.template.message = data.template.message.toHTML();
     }
 
     const response: any = await service.save(data);
@@ -172,6 +189,7 @@ const Detail = observer(() => {
         },
         required: true,
         'x-visible': typeList[id]?.length > 0,
+        'x-hidden': id === 'email',
         enum: typeList[id] || [],
       },
       configId: {
@@ -184,6 +202,7 @@ const Detail = observer(() => {
           { label: '测试配置2', value: 'test2' },
           { label: '测试配置3', value: 'test3' },
         ],
+        'x-visible': id !== 'email',
       },
       template: {
         type: 'object',
@@ -482,19 +501,43 @@ const Detail = observer(() => {
             // PlayTimes	String	语音-播放次数
           },
           email: {
-            type: 'object',
+            type: 'void',
             'x-visible': id === 'email',
             properties: {
               // subject	String	邮件-模板ID
               // sendTo	Array	邮件-收件人
               // sendTo	String	邮件-内容
               // attachments	String	邮件-附件信息
-
-              subject: {
-                title: '模版ID',
+              sendTo: {
+                'x-component': 'Input.TextArea',
                 'x-decorator': 'FormItem',
-                'x-component': 'Input',
+                title: '收件人',
+                'x-decorator-props': {
+                  tip: '请输入收件人邮箱,多个收件人用换行分隔',
+                },
               },
+              // message: {
+              //   "x-component": 'FBraftEditor',
+              //   "x-decorator": 'FormItem',
+              //   title: '模版内容',
+              //   "x-decorator-props": {
+              //     tip: '请输入收件人邮箱,多个收件人用换行分隔'
+              //   },
+              // },
+              attachments: {
+                'x-component': 'FUpload',
+                'x-decorator': 'FormItem',
+                title: '附件',
+                'x-component-props': {
+                  type: 'file',
+                  placeholder: '请上传文件',
+                },
+              },
+              // subject: {
+              //   title: '模版ID',
+              //   'x-decorator': 'FormItem',
+              //   'x-component': 'Input',
+              // },
             },
           },
         },
@@ -569,7 +612,7 @@ const Detail = observer(() => {
             column4: {
               type: 'void',
               'x-component': 'ArrayTable.Column',
-              'x-component-props': { title: '格式' },
+              'x-component-props': { title: '格式', width: '150px' },
               properties: {
                 format: {
                   type: 'string',

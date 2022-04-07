@@ -20,6 +20,7 @@ import SearchComponent from '@/components/SearchComponent';
 import ProTable from '@jetlinks/pro-table';
 import { history } from '@@/core/history';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { useLocation } from 'umi';
 
 export const service = new Service('notifier/config');
 
@@ -28,6 +29,9 @@ const Config = observer(() => {
   const actionRef = useRef<ActionType>();
   const providerRef = useRef<NetworkType[]>([]);
   const oldTypeRef = useRef();
+  const location = useLocation<{ id: string }>();
+
+  const id = (location as any).query?.id;
 
   // const [configSchema, setConfigSchema] = useState<ISchema>({});
   // const [loading, setLoading] = useState<boolean>(false);
@@ -305,11 +309,10 @@ const Config = observer(() => {
         search={false}
         params={param}
         columns={columns}
-        headerTitle={'通知模版'}
+        headerTitle={'通知配置'}
         toolBarRender={() => [
           <Button
             onClick={() => {
-              const id = (location as any).query?.id;
               history.push(getMenuPathByParams(MENUS_CODE['notice/Config/Detail'], id));
             }}
             key="button"

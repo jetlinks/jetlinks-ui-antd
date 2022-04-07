@@ -67,7 +67,12 @@ export const typeList = {
       value: 'aliyunSms',
     },
   ],
-  email: [],
+  email: [
+    {
+      value: 'email',
+      label: '默认',
+    },
+  ],
 };
 
 const Type = observer(() => {
