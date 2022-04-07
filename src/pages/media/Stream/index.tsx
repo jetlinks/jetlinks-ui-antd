@@ -29,11 +29,6 @@ const Stream = () => {
       title: '名称',
       ellipsis: true,
     },
-    {
-      dataIndex: 'description',
-      title: '说明',
-      ellipsis: true,
-    },
   ];
 
   const [dataSource, setDataSource] = useState<any>({
@@ -78,17 +73,18 @@ const Stream = () => {
         }}
       />
       <Card>
-        <Button
-          type="primary"
-          onClick={() => {
-            history.push(`${getMenuPathByParams(MENUS_CODE['media/Stream/Detail'])}`);
-            StreamModel.current = {};
-          }}
-        >
-          新增
-        </Button>
         {dataSource.data.length > 0 ? (
           <>
+            <Button
+              type="primary"
+              onClick={() => {
+                history.push(`${getMenuPathByParams(MENUS_CODE['media/Stream/Detail'])}`);
+                StreamModel.current = {};
+              }}
+            >
+              新增
+            </Button>
+
             <Row gutter={[16, 16]} style={{ marginTop: 10 }}>
               {(dataSource?.data || []).map((item: any) => (
                 <Col key={item.id} span={12}>
@@ -176,7 +172,21 @@ const Stream = () => {
             </div>
           </>
         ) : (
-          <Empty />
+          <Empty
+            description={
+              <span>
+                暂无数据，请先
+                <a
+                  onClick={() => {
+                    history.push(`${getMenuPathByParams(MENUS_CODE['media/Stream/Detail'])}`);
+                    StreamModel.current = {};
+                  }}
+                >
+                  新增流媒体服务
+                </a>
+              </span>
+            }
+          />
         )}
       </Card>
     </PageContainer>

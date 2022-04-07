@@ -372,9 +372,11 @@ const Access = () => {
               <div className={styles.item}>
                 <div className={styles.title}>消息协议</div>
                 <div className={styles.context}>{access?.protocolDetail?.name || '--'}</div>
-                <div className={styles.context}>
-                  <ReactMarkdown>{config?.document || '--'}</ReactMarkdown>
-                </div>
+                {config?.document && (
+                  <div className={styles.context}>
+                    <ReactMarkdown>{config?.document || '--'}</ReactMarkdown>
+                  </div>
+                )}
               </div>
 
               <div className={styles.item}>
@@ -391,7 +393,7 @@ const Access = () => {
                         </div>
                       ),
                     )
-                  : '---'}
+                  : '暂无连接信息'}
               </div>
 
               <div className={styles.item}>
@@ -424,7 +426,14 @@ const Access = () => {
                   />
                 </div>
               ) : (
-                <Empty />
+                <Empty
+                  description={`暂无${
+                    access?.provider === 'mqtt-server-gateway' ||
+                    access?.provider === 'mqtt-client-gateway'
+                      ? 'topic'
+                      : 'URL信息'
+                  }`}
+                />
               )}
             </div>
           </Col>
