@@ -13,8 +13,8 @@ const DataSource = () => {
     // 获取跳转url
     api.screen.getUrl().then((res) => {
       if(res.status === 200){
-        if(res.result.urls['big-screen-pm'] !== ''){
-          setUrl(res.result.urls['big-screen-pm'] )
+        if(res.result.urls['big-screen-datasource'] !== ''){
+          setUrl(res.result.urls['big-screen-datasource'] )
         }else{
           message.error('配置错误,请联系管理员');
         }
