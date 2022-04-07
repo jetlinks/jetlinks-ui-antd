@@ -24,7 +24,6 @@
   .pro-table-card-items {
     display: grid;
     grid-gap: 26px;
-    grid-template-columns: repeat(4, 1fr);
     padding-bottom: 38px;
 
     .pro-table-card-item {
@@ -54,11 +53,15 @@
 
         .card-item-content {
           display: flex;
+          flex-wrap: wrap;
 
-          > div:last-child {
-            flex-grow: 1;
-            width: 0;
-            margin-left: 12px;
+          > div {
+            width: 50%;
+
+            &:nth-child(even) {
+              width: calc(50% - 12px);
+              margin-left: 12px;
+            }
           }
 
           label {

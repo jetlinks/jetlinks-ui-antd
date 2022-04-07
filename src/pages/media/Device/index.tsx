@@ -1,20 +1,37 @@
 // 视频设备列表
 import { PageContainer } from '@ant-design/pro-layout';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { Tooltip } from 'antd';
-import { ArrowDownOutlined, BugOutlined, EditOutlined, MinusOutlined } from '@ant-design/icons';
-import BaseCrud from '@/components/BaseCrud';
-import BaseService from '@/utils/BaseService';
+import { Button, message, Popconfirm, Tooltip } from 'antd';
+import {
+  ArrowDownOutlined,
+  BugOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  EyeOutlined,
+  MinusOutlined,
+  PlusOutlined,
+  SyncOutlined,
+} from '@ant-design/icons';
 import type { DeviceItem } from '@/pages/media/Device/typings';
-import { useIntl } from '@@/plugin-locale/localeExports';
-import { BadgeStatus } from '@/components';
+import { useIntl, useHistory } from 'umi';
+import { BadgeStatus, ProTableCard } from '@/components';
 import { StatusColorEnum } from '@/components/BadgeStatus';
+import SearchComponent from '@/components/SearchComponent';
+import MediaDevice from '@/components/ProTableCard/CardItems/mediaDevice';
+import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import Service from './service';
+import Save from './Save';
 
-export const service = new BaseService<DeviceItem>('media/device');
+export const service = new Service('media/device');
+
 const Device = () => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
+  const [visible, setVisible] = useState<boolean>(false);
+  const [current, setCurrent] = useState<DeviceItem>();
+  const [queryParam, setQueryParam] = useState({});
+  const history = useHistory<Record<string, string>>();
 
   const columns: ProColumns<DeviceItem>[] = [
     {
@@ -95,7 +112,7 @@ const Device = () => {
         id: 'pages.searchTable.titleStatus',
         defaultMessage: '状态',
       }),
-      render: (text, record) => (
+      render: (_, record) => (
         <BadgeStatus
           status={record.state.value}
           statusNames={{
@@ -103,7 +120,7 @@ const Device = () => {
             offline: StatusColorEnum.error,
             notActive: StatusColorEnum.processing,
           }}
-          text={text}
+          text={record.state.text}
         />
       ),
     },
@@ -160,19 +177,139 @@ const Device = () => {
     },
   ];
 
-  const schema = {};
+  /**
+   * table 查询参数
+   * @param data
+   */
+  const searchFn = (data: any) => {
+    setQueryParam(data);
+  };
+
+  const deleteItem = async (id: string) => {
+    const response: any = await service.remove(id);
+    if (response.status === 200) {
+      message.success(
+        intl.formatMessage({
+          id: 'pages.data.option.success',
+          defaultMessage: '操作成功!',
+        }),
+      );
+    }
+    actionRef.current?.reload();
+  };
+
   return (
     <PageContainer>
-      <BaseCrud
+      <SearchComponent field={columns} onSearch={searchFn} />
+      <ProTableCard<DeviceItem>
         columns={columns}
-        service={service}
-        search={false}
-        title={intl.formatMessage({
-          id: 'pages.media.device',
-          defaultMessage: '模拟测试',
-        })}
-        schema={schema}
         actionRef={actionRef}
+        options={{ fullScreen: true }}
+        params={queryParam}
+        request={(params = {}) =>
+          service.query({
+            ...params,
+            sorts: [
+              {
+                name: 'createTime',
+                order: 'desc',
+              },
+            ],
+          })
+        }
+        rowKey="id"
+        search={false}
+        headerTitle={[
+          <Button
+            onClick={() => {
+              setCurrent(undefined);
+              setVisible(true);
+            }}
+            key="button"
+            icon={<PlusOutlined />}
+            type="primary"
+          >
+            {intl.formatMessage({
+              id: 'pages.data.option.add',
+              defaultMessage: '新增',
+            })}
+          </Button>,
+        ]}
+        cardRender={(record) => (
+          <MediaDevice
+            {...record}
+            detail={
+              <div
+                style={{ fontSize: 18, padding: 8 }}
+                onClick={() => {
+                  history.push(
+                    `${getMenuPathByParams(MENUS_CODE['device/Product/Detail'], record.id)}`,
+                  );
+                }}
+              >
+                <EyeOutlined />
+              </div>
+            }
+            actions={[
+              <Button
+                key="edit"
+                onClick={() => {
+                  setCurrent(record);
+                  setVisible(true);
+                }}
+                type={'link'}
+                style={{ padding: 0 }}
+              >
+                <EditOutlined />
+                {intl.formatMessage({
+                  id: 'pages.data.option.edit',
+                  defaultMessage: '编辑',
+                })}
+              </Button>,
+              <Button key={'viewChannel'}>查看通道</Button>,
+              <Button key={'updateChannel'} disabled={record.state.value === 'offline'}>
+                <SyncOutlined />
+                更新通道
+              </Button>,
+              <Popconfirm
+                key="delete"
+                title={intl.formatMessage({
+                  id:
+                    record.state.value === 'offline'
+                      ? 'pages.device.productDetail.deleteTip'
+                      : 'page.table.isDelete',
+                  defaultMessage: '是否删除?',
+                })}
+                onConfirm={async () => {
+                  if (record.state.value !== 'offline') {
+                    await deleteItem(record.id);
+                  } else {
+                    message.error('在线设备不能进行删除操作');
+                  }
+                }}
+              >
+                <Button
+                  type={'link'}
+                  style={{ padding: 0 }}
+                  disabled={record.state.value !== 'offline'}
+                >
+                  <DeleteOutlined />
+                </Button>
+              </Popconfirm>,
+            ]}
+          />
+        )}
+      />
+      <Save
+        model={!current ? 'add' : 'edit'}
+        data={current}
+        close={() => {
+          setVisible(false);
+        }}
+        reload={() => {
+          actionRef.current?.reload();
+        }}
+        visible={visible}
       />
     </PageContainer>
   );

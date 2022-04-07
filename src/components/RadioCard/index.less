@@ -71,4 +71,27 @@
       }
     }
   }
+
+  &.disabled {
+    .radio-card-item {
+      color: @disabled-color;
+      border-color: @disabled-bg;
+      cursor: not-allowed;
+
+      .checked-icon {
+        background-color: @disabled-active-bg;
+      }
+
+      &:hover,
+      &:focus {
+        color: @disabled-color;
+        border-color: @disabled-active-bg;
+      }
+
+      &.checked {
+        color: @disabled-color;
+        border-color: @disabled-active-bg;
+      }
+    }
+  }
 }
