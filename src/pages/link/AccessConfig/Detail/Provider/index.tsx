@@ -1,9 +1,9 @@
 import { Button, Card, Col, Row } from 'antd';
-import { service } from '@/pages/link/AccessConfig';
 import { useEffect, useState } from 'react';
 import styles from './index.less';
 
 interface Props {
+  data: any[];
   change: (data: any, type: 'media' | 'network') => void;
 }
 
@@ -11,27 +11,19 @@ const Provider = (props: Props) => {
   const [dataSource, setDataSource] = useState<any[]>([]);
   const [mediaSource, setMediaSource] = useState<any[]>([]);
 
-  const handleSearch = () => {
-    service.getProviders().then((resp) => {
-      if (resp.status === 200) {
-        const media: any[] = [];
-        const data: any = [];
-        resp.result.map((item: any) => {
-          if (item.id === 'fixed-media' || item.id === 'gb28181-2016') {
-            media.push(item);
-          } else {
-            data.push(item);
-          }
-        });
-        setDataSource(data);
-        setMediaSource(media);
+  useEffect(() => {
+    const media: any[] = [];
+    const data: any = [];
+    (props?.data || []).map((item: any) => {
+      if (item.id === 'fixed-media' || item.id === 'gb28181-2016') {
+        media.push(item);
+      } else {
+        data.push(item);
       }
     });
-  };
-
-  useEffect(() => {
-    handleSearch();
-  }, []);
+    setDataSource(data);
+    setMediaSource(media);
+  }, [props.data]);
 
   return (
     <>

@@ -88,7 +88,7 @@ const Instance = () => {
       <Tooltip
         title={intl.formatMessage({
           id: `pages.data.option.${record.state.value !== 'stopped' ? 'disabled' : 'enabled'}`,
-          defaultMessage: record.state.value !== 'notActive' ? '禁用' : '启用',
+          defaultMessage: record.state.value !== 'stopped' ? '禁用' : '启用',
         })}
       >
         <Button type={'link'} style={{ padding: 0 }}>
@@ -97,15 +97,10 @@ const Instance = () => {
       </Tooltip>
     </Popconfirm>,
     <Popconfirm
-      title={intl.formatMessage({
-        id:
-          record.state.value === 'notActive'
-            ? 'pages.data.option.remove.tips'
-            : 'pages.device.instance.deleteTip',
-      })}
+      title={record.state.value === 'stopped' ? '确认删除' : '未停止不能删除'}
       key={'delete'}
       onConfirm={async () => {
-        if (record.state.value === 'notActive') {
+        if (record.state.value === 'stopped') {
           await service.remove(record.id);
           message.success(
             intl.formatMessage({
@@ -115,7 +110,7 @@ const Instance = () => {
           );
           actionRef.current?.reload();
         } else {
-          message.error(intl.formatMessage({ id: 'pages.device.instance.deleteTip' }));
+          message.error('未停止不能删除');
         }
       }}
     >
@@ -234,7 +229,7 @@ const Instance = () => {
           <Tooltip
             title={intl.formatMessage({
               id: `pages.data.option.${record.state.value !== 'stopped' ? 'disabled' : 'enabled'}`,
-              defaultMessage: record.state.value !== 'notActive' ? '禁用' : '启用',
+              defaultMessage: record.state.value !== 'stopped' ? '禁用' : '启用',
             })}
           >
             <Button type={'link'} style={{ padding: 0 }}>
@@ -243,12 +238,7 @@ const Instance = () => {
           </Tooltip>
         </Popconfirm>,
         <Popconfirm
-          title={intl.formatMessage({
-            id:
-              record.state.value === 'stopped'
-                ? 'pages.data.option.remove.tips'
-                : 'pages.device.instance.deleteTip',
-          })}
+          title={record.state.value === 'stopped' ? '确认删除' : '未停止不能删除'}
           key={'delete'}
           onConfirm={async () => {
             if (record.state.value === 'stopped') {
