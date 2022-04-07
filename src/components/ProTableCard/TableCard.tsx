@@ -25,6 +25,7 @@ function getAction(actions: React.ReactNode[]) {
           delete: item.key === 'delete',
           disabled: item.disabled,
         })}
+        key={item.key}
       >
         {item}
       </div>
