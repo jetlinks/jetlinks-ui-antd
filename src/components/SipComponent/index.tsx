@@ -35,7 +35,7 @@ const SipComponent = (props: SipComponentProps) => {
         placeholder="请输入"
       />
       <InputNumber
-        style={{ minWidth: 150 }}
+        style={{ minWidth: 100 }}
         value={data?.port}
         min={1}
         max={65535}

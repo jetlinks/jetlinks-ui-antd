@@ -16,6 +16,12 @@ const extraRouteObj = {
       { code: 'Template', name: '通知模板' },
     ],
   },
+  'media/Cascade': {
+    children: [
+      { code: 'Save', name: '新增' },
+      { code: 'Channel', name: '选择通道' },
+    ],
+  },
 };
 
 /**
