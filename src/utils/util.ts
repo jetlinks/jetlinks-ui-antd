@@ -80,3 +80,11 @@ export const flattenArray: any = (arr: any[]) => {
     return result.concat(item, Array.isArray(item.children) ? flattenArray(item.children) : []);
   }, []);
 };
+/**
+ * 判断是否为正确的IP地址
+ */
+export const testIP = (str: string) => {
+  const re =
+    /^([0-9]|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.([0-9]|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.([0-9]|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.([0-9]|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])$/;
+  return re.test(str);
+};

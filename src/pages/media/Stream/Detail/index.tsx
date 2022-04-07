@@ -225,7 +225,7 @@ const Detail = () => {
   }, [params.id]);
 
   const checkAPI = (_: any, value: { apiHost: string; apiPort: number }) => {
-    if (Number(value.apiPort) < 1 && Number(value.apiPort) > 65535) {
+    if (Number(value.apiPort) < 1 || Number(value.apiPort) > 65535) {
       return Promise.reject(new Error('端口请输入1~65535之间的正整数'));
     }
     if (!re.test(value.apiHost)) {
@@ -249,7 +249,7 @@ const Detail = () => {
       if (value.dynamicRtpPortRange) {
         if (value.dynamicRtpPortRange?.[0]) {
           if (
-            Number(value.dynamicRtpPortRange?.[0]) < 1 &&
+            Number(value.dynamicRtpPortRange?.[0]) < 1 ||
             Number(value.dynamicRtpPortRange?.[0]) > 65535
           ) {
             return Promise.reject(new Error('端口请输入1~65535之间的正整数'));
@@ -257,7 +257,7 @@ const Detail = () => {
         }
         if (value.dynamicRtpPortRange?.[1]) {
           if (
-            Number(value.dynamicRtpPortRange?.[1]) < 1 &&
+            Number(value.dynamicRtpPortRange?.[1]) < 1 ||
             Number(value.dynamicRtpPortRange?.[1]) > 65535
           ) {
             return Promise.reject(new Error('端口请输入1~65535之间的正整数'));
@@ -272,7 +272,7 @@ const Detail = () => {
         }
       }
     } else {
-      if (Number(value.rtpPort) < 1 && Number(value.rtpPort) > 65535) {
+      if (Number(value.rtpPort) < 1 || Number(value.rtpPort) > 65535) {
         return Promise.reject(new Error('端口请输入1~65535之间的正整数'));
       }
     }
