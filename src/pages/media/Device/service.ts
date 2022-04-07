@@ -10,6 +10,9 @@ class Service extends BaseService<DeviceItem> {
   // 新增固定地址接入的设备
   saveFixed = (data?: any) => request(`${this.uri}/fixed-url`, { method: 'PATCH', data });
 
+  // 更新通道
+  updateChannels = (id: string) => request(`${this.uri}/${id}/channels/_sync`, { method: 'POST' });
+
   // 快速添加产品
   saveProduct = (data?: any) =>
     request(`/${SystemConst.API_BASE}/device/product`, { method: 'POST', data });

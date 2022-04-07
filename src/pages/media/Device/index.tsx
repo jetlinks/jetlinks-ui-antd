@@ -4,14 +4,12 @@ import { useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { Button, message, Popconfirm, Tooltip } from 'antd';
 import {
-  ArrowDownOutlined,
-  BugOutlined,
   DeleteOutlined,
   EditOutlined,
   EyeOutlined,
-  MinusOutlined,
   PlusOutlined,
   SyncOutlined,
+  PartitionOutlined,
 } from '@ant-design/icons';
 import type { DeviceItem } from '@/pages/media/Device/typings';
 import { useIntl, useHistory } from 'umi';
@@ -25,6 +23,11 @@ import Save from './Save';
 
 export const service = new Service('media/device');
 
+const providerType = {
+  'gb28181-2016': 'GB/T28181',
+  'fixed-media': '固定地址',
+};
+
 const Device = () => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
@@ -33,11 +36,44 @@ const Device = () => {
   const [queryParam, setQueryParam] = useState({});
   const history = useHistory<Record<string, string>>();
 
+  /**
+   * table 查询参数
+   * @param data
+   */
+  const searchFn = (data: any) => {
+    setQueryParam(data);
+  };
+
+  const deleteItem = async (id: string) => {
+    const response: any = await service.remove(id);
+    if (response.status === 200) {
+      message.success(
+        intl.formatMessage({
+          id: 'pages.data.option.success',
+          defaultMessage: '操作成功!',
+        }),
+      );
+    }
+    actionRef.current?.reload();
+  };
+
+  /**
+   * 更新通道
+   * @param id 视频设备ID
+   */
+  const updateChannel = async (id: string) => {
+    const resp = await service.updateChannels(id);
+    if (resp.status === 200) {
+      message.success('通道更新成功');
+    } else {
+      message.error('通道更新失败');
+    }
+  };
+
   const columns: ProColumns<DeviceItem>[] = [
     {
-      dataIndex: 'index',
-      valueType: 'indexBorder',
-      width: 48,
+      dataIndex: 'id',
+      title: 'ID',
     },
     {
       dataIndex: 'name',
@@ -46,66 +82,41 @@ const Device = () => {
         defaultMessage: '名称',
       }),
     },
-    // {
-    //   dataIndex: 'transport',
-    //   title: intl.formatMessage({
-    //     id: 'pages.media.device.transport',
-    //     defaultMessage: '信令传输',
-    //   }),
-    // },
-    // {
-    //   dataIndex: 'streamMode',
-    //   title: intl.formatMessage({
-    //     id: 'pages.media.device.streamMode',
-    //     defaultMessage: '流传输模式',
-    //   }),
-    // },
-    // {
-    //   dataIndex: 'channelNumber',
-    //   title: intl.formatMessage({
-    //     id: 'pages.media.device.channelNumber',
-    //     defaultMessage: '通道数',
-    //   }),
-    // },
-    // {
-    //   dataIndex: 'host',
-    //   title: 'IP',
-    // },
-    // {
-    //   dataIndex: '端口',
-    //   title: intl.formatMessage({
-    //     id: 'pages.media.device.port',
-    //     defaultMessage: '端口',
-    //   }),
-    // },
-    // {
-    //   dataIndex: 'manufacturer',
-    //   title: intl.formatMessage({
-    //     id: 'pages.media.device.manufacturer',
-    //     defaultMessage: '设备厂家',
-    //   }),
-    // },
-    // {
-    //   dataIndex: 'model',
-    //   title: intl.formatMessage({
-    //     id: 'pages.media.device.model',
-    //     defaultMessage: '型号',
-    //   }),
-    // },
-    // {
-    //   dataIndex: 'firmware',
-    //   title: intl.formatMessage({
-    //     id: 'pages.media.device.firmware',
-    //     defaultMessage: '固件版本',
-    //   }),
-    // },
-    // {
-    //   dataIndex: 'networkType',
-    //   title: intl.formatMessage({
-    //     id: 'pages.table.type',
-    //     defaultMessage: '类型',
-    //   }),
-    // },
+    {
+      dataIndex: 'provider',
+      title: '接入方式',
+      render: (_, row) => {
+        return providerType[row.provider];
+      },
+    },
+    {
+      dataIndex: 'channelNumber',
+      title: intl.formatMessage({
+        id: 'pages.media.device.channelNumber',
+        defaultMessage: '通道数',
+      }),
+    },
+    {
+      dataIndex: 'manufacturer',
+      title: intl.formatMessage({
+        id: 'pages.media.device.manufacturer',
+        defaultMessage: '设备厂家',
+      }),
+    },
+    {
+      dataIndex: 'model',
+      title: intl.formatMessage({
+        id: 'pages.media.device.model',
+        defaultMessage: '型号',
+      }),
+    },
+    {
+      dataIndex: 'firmware',
+      title: intl.formatMessage({
+        id: 'pages.media.device.firmware',
+        defaultMessage: '固件版本',
+      }),
+    },
     {
       dataIndex: 'state',
       title: intl.formatMessage({
@@ -133,70 +144,73 @@ const Device = () => {
       align: 'center',
       width: 200,
       render: (text, record) => [
-        <a onClick={() => console.log(record)}>
-          <Tooltip
-            title={intl.formatMessage({
-              id: 'pages.data.option.edit',
-              defaultMessage: '编辑',
-            })}
+        <Tooltip
+          key="edit"
+          title={intl.formatMessage({
+            id: 'pages.data.option.edit',
+            defaultMessage: '编辑',
+          })}
+        >
+          <a
+            onClick={() => {
+              setCurrent(record);
+              setVisible(true);
+            }}
           >
             <EditOutlined />
-          </Tooltip>
-        </a>,
-        <a>
-          <Tooltip
-            title={intl.formatMessage({
-              id: 'pages.data.option.remove',
-              defaultMessage: '删除',
-            })}
+          </a>
+        </Tooltip>,
+        <Tooltip key={'viewChannel'} title="查看通道">
+          <a
+            onClick={() => {
+              history.push(`${getMenuPathByParams(MENUS_CODE['media/Device/Channel'], record.id)}`);
+            }}
           >
-            <MinusOutlined />
-          </Tooltip>
-        </a>,
-        <a>
-          <Tooltip
-            title={intl.formatMessage({
-              id: 'pages.data.option.download',
-              defaultMessage: '下载配置',
-            })}
+            <PartitionOutlined />
+          </a>
+        </Tooltip>,
+        <Tooltip key={'updateChannel'} title="更新通道">
+          <Button
+            style={{ padding: '4px' }}
+            type={'link'}
+            disabled={record.state.value === 'offline'}
+            onClick={() => {
+              updateChannel(record.id);
+            }}
           >
-            <ArrowDownOutlined />
-          </Tooltip>
-        </a>,
-        <a>
-          <Tooltip
+            <SyncOutlined />
+          </Button>
+        </Tooltip>,
+        <Tooltip key={'updateChannel'} title="删除">
+          <Popconfirm
+            key="delete"
             title={intl.formatMessage({
-              id: 'pages.notice.option.debug',
-              defaultMessage: '调试',
+              id:
+                record.state.value === 'offline'
+                  ? 'pages.device.productDetail.deleteTip'
+                  : 'page.table.isDelete',
+              defaultMessage: '是否删除?',
             })}
+            onConfirm={async () => {
+              if (record.state.value !== 'offline') {
+                await deleteItem(record.id);
+              } else {
+                message.error('在线设备不能进行删除操作');
+              }
+            }}
           >
-            <BugOutlined />
-          </Tooltip>
-        </a>,
+            <Button
+              type={'link'}
+              style={{ padding: '4px' }}
+              disabled={record.state.value !== 'offline'}
+            >
+              <DeleteOutlined />
+            </Button>
+          </Popconfirm>
+        </Tooltip>,
       ],
     },
   ];
-
-  /**
-   * table 查询参数
-   * @param data
-   */
-  const searchFn = (data: any) => {
-    setQueryParam(data);
-  };
-
-  const deleteItem = async (id: string) => {
-    const response: any = await service.remove(id);
-    if (response.status === 200) {
-      message.success(
-        intl.formatMessage({
-          id: 'pages.data.option.success',
-          defaultMessage: '操作成功!',
-        }),
-      );
-    }
-    actionRef.current?.reload();
-  };
 
   return (
     <PageContainer>
@@ -266,8 +280,24 @@ const Device = () => {
                   defaultMessage: '编辑',
                 })}
               </Button>,
-              <Button key={'viewChannel'}>查看通道</Button>,
-              <Button key={'updateChannel'} disabled={record.state.value === 'offline'}>
+              <Button
+                key={'viewChannel'}
+                onClick={() => {
+                  history.push(
+                    `${getMenuPathByParams(MENUS_CODE['media/Device/Channel'], record.id)}`,
+                  );
+                }}
+              >
+                <PartitionOutlined />
+                查看通道
+              </Button>,
+              <Button
+                key={'updateChannel'}
+                disabled={record.state.value === 'offline'}
+                onClick={() => {
+                  updateChannel(record.id);
+                }}
+              >
                 <SyncOutlined />
                 更新通道
               </Button>,

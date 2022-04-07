@@ -63,10 +63,10 @@ export default (props: SaveProps) => {
   const handleSave = async () => {
     const formData = await form.validateFields();
     if (formData) {
-      const { type, ...extraFormData } = formData;
+      const { provider, ...extraFormData } = formData;
       setLoading(true);
       const resp =
-        type === DefaultAccessType
+        provider === DefaultAccessType
           ? await service.saveGB(extraFormData)
           : await service.saveFixed(extraFormData);
       setLoading(false);
@@ -207,20 +207,22 @@ export default (props: SaveProps) => {
                     disabled={props.model === 'edit'}
                     options={productList}
                     placeholder={'请选择所属产品'}
-                    style={{ width: 'calc(100% - 36px)' }}
+                    style={{ width: props.model === 'edit' ? '100%' : 'calc(100% - 36px)' }}
                   />
                 </Form.Item>
-                <Form.Item noStyle>
-                  <Button
-                    type={'link'}
-                    style={{ padding: '4px 10px' }}
-                    onClick={() => {
-                      setProductVisible(true);
-                    }}
-                  >
-                    <PlusOutlined />
-                  </Button>
-                </Form.Item>
+                {props.model !== 'edit' && (
+                  <Form.Item noStyle>
+                    <Button
+                      type={'link'}
+                      style={{ padding: '4px 10px' }}
+                      onClick={() => {
+                        setProductVisible(true);
+                      }}
+                    >
+                      <PlusOutlined />
+                    </Button>
+                  </Form.Item>
+                )}
               </Form.Item>
             </Col>
             {accessType === DefaultAccessType && (

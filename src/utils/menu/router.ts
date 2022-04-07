@@ -45,6 +45,7 @@ export const MENUS_CODE = {
   'media/Cascade/Channel': 'media/Cascade/Channel',
   'media/Config': 'media/Config',
   'media/Device': 'media/Device',
+  'media/Device/Channel': 'media/Device/Channel',
   'media/Reveal': 'media/Reveal',
   'media/Stream': 'media/Stream',
   'media/Stream/Detail': 'media/Stream/Detail',
