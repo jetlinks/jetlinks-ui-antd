@@ -19,6 +19,7 @@ type ModelType = keyof typeof ModelEnum;
 
 interface ProTableCardProps<T> {
   cardRender?: (data: T) => JSX.Element | React.ReactNode;
+  gridColumn?: number;
 }
 
 const ProTableCard = <
@@ -43,7 +44,10 @@ const ProTableCard = <
     return (
       <>
         {dataSource && dataSource.length ? (
-          <div className={'pro-table-card-items'}>
+          <div
+            className={'pro-table-card-items'}
+            style={{ gridTemplateColumns: `repeat(${props.gridColumn || 4}, 1fr)` }}
+          >
             {dataSource.map((item) =>
               cardRender && isFunction(cardRender) ? cardRender(item) : null,
             )}

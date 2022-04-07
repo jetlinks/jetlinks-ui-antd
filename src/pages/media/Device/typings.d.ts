@@ -1,6 +1,7 @@
 import type { BaseItem, State } from '@/utils/typings';
 
-type DeviceItem = {
+export type DeviceItem = {
+  photoUrl?: string;
   channelNumber: number;
   createTime: number;
   firmware: string;

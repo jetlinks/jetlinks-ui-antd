@@ -22,6 +22,12 @@ const extraRouteObj = {
       { code: 'Channel', name: '选择通道' },
     ],
   },
+  'media/Device': {
+    children: [
+      { code: 'Channel', name: '通道列表' },
+      { code: 'Playback', name: '回放' },
+    ],
+  },
 };
 
 /**

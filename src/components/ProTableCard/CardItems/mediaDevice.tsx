@@ -1,32 +1,26 @@
 import React from 'react';
-import type { ProductItem } from '@/pages/device/Product/typings';
+import type { DeviceItem } from '@/pages/media/Device/typings';
 import { StatusColorEnum } from '@/components/BadgeStatus';
-import { useIntl } from 'umi';
 import { TableCard } from '@/components';
 import '@/style/common.less';
 import '../index.less';
 
-export interface ProductCardProps extends ProductItem {
+export interface ProductCardProps extends DeviceItem {
   detail?: React.ReactNode;
   actions?: React.ReactNode[];
-  avatarSize?: number;
 }
-const defaultImage = require('/public/images/device-product.png');
+const defaultImage = require('/public/images/device-media.png');
 
 export default (props: ProductCardProps) => {
-  const intl = useIntl();
   return (
     <TableCard
       detail={props.detail}
       actions={props.actions}
-      status={props.state}
-      statusText={intl.formatMessage({
-        id: `pages.system.tenant.assetInformation.${props.state ? 'published' : 'unpublished'}`,
-        defaultMessage: '已发布',
-      })}
+      status={props.state.value}
+      statusText={props.state.text}
       statusNames={{
-        0: StatusColorEnum.error,
-        1: StatusColorEnum.processing,
+        offline: StatusColorEnum.error,
+        online: StatusColorEnum.processing,
       }}
     >
       <div className={'pro-table-card-item'}>
@@ -39,12 +33,20 @@ export default (props: ProductCardProps) => {
           </div>
           <div className={'card-item-content'}>
             <div>
-              <label>设备类型</label>
-              <div className={'ellipsis'}>{props.deviceType ? props.deviceType.text : '--'}</div>
+              <label>厂商</label>
+              <div className={'ellipsis'}>{props.manufacturer || '--'}</div>
+            </div>
+            <div>
+              <label>通道数量</label>
+              <div className={'ellipsis'}>{props.channelNumber || '--'}</div>
+            </div>
+            <div>
+              <label>型号</label>
+              <div className={'ellipsis'}>{props.model || '--'}</div>
             </div>
             <div>
               <label>接入方式</label>
-              <div className={'ellipsis'}>{props.transportProtocol || '--'}</div>
+              <div className={'ellipsis'}>{props.transport || '--'}</div>
             </div>
           </div>
         </div>
