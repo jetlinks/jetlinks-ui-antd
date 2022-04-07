@@ -29,4 +29,5 @@ type CascadeItem = {
   proxyStream: boolean;
   sipConfigs: Partial<SipConfig>[];
   status: State;
+  count?: number;
 } & BaseItem;

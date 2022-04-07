@@ -2,7 +2,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { InstanceModel, service } from '@/pages/device/Instance';
 import { history, useParams } from 'umi';
 import { Badge, Button, Card, Descriptions, Divider, message, Tooltip } from 'antd';
-import { useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { observer } from '@formily/react';
 import Log from '@/pages/device/Instance/Detail/Log';
 // import Alarm from '@/pages/device/components/Alarm';
@@ -27,47 +27,8 @@ deviceStatus.set('notActive', <Badge status="processing" text={'未启用'} />);
 const InstanceDetail = observer(() => {
   const intl = useIntl();
   const [tab, setTab] = useState<string>('detail');
-  const getDetail = (id: string) => {
-    service.detail(id).then((response) => {
-      InstanceModel.detail = response?.result;
-      // 写入物模型数据
-      const metadata: DeviceMetadata = JSON.parse(response.result?.metadata || '{}');
-      MetadataAction.insert(metadata);
-    });
-  };
   const params = useParams<{ id: string }>();
 
-  const [subscribeTopic] = useSendWebsocketMessage();
-
-  useEffect(() => {
-    if (subscribeTopic) {
-      subscribeTopic(
-        `instance-editor-info-status-${params.id}`,
-        `/dashboard/device/status/change/realTime`,
-        {
-          deviceId: params.id,
-        },
-        // @ts-ignore
-      ).subscribe((data: any) => {
-        const payload = data.payload;
-        const state = payload.value.type;
-        InstanceModel.detail.state = {
-          value: state,
-          text: '',
-        };
-      });
-    }
-  }, []);
-
-  useEffect(() => {
-    Store.subscribe(SystemConst.REFRESH_DEVICE, () => {
-      MetadataAction.clean();
-      setTimeout(() => {
-        getDetail(params.id);
-      }, 200);
-    });
-    // return subscription.unsubscribe();
-  }, []);
   const resetMetadata = async () => {
     const resp = await service.deleteMetadata(params.id);
     if (resp.status === 200) {
@@ -78,7 +39,7 @@ const InstanceDetail = observer(() => {
       }, 400);
     }
   };
-  const list = [
+  const baseList = [
     {
       key: 'detail',
       tab: intl.formatMessage({
@@ -131,33 +92,59 @@ const InstanceDetail = observer(() => {
       }),
       component: <Log />,
     },
-    // 产品类型为网关的情况下才显示此模块
-    {
-      key: 'child-device',
-      tab: '子设备',
-      component: <ChildDevice />,
-    },
-    // {
-    //   key: 'alarm',
-    //   tab: intl.formatMessage({
-    //     id: 'pages.device.instanceDetail.alarm',
-    //     defaultMessage: '告警设置',
-    //   }),
-    //   component: (
-    //     <Card>
-    //       <Alarm type="device" />
-    //     </Card>
-    //   ),
-    // },
-    // {
-    //   key: 'visualization',
-    //   tab: intl.formatMessage({
-    //     id: 'pages.device.instanceDetail.visualization',
-    //     defaultMessage: '可视化',
-    //   }),
-    //   component: <div>开发中...</div>,
-    // },
   ];
+  const [list, setList] = useState<{ key: string; tab: string; component: ReactNode }[]>(baseList);
+
+  const getDetail = (id: string) => {
+    service.detail(id).then((response) => {
+      InstanceModel.detail = response?.result;
+      const datalist = [...baseList];
+      if (response.result.deviceType?.value === 'gateway') {
+        // 产品类型为网关的情况下才显示此模块
+        datalist.push({
+          key: 'child-device',
+          tab: '子设备',
+          component: <ChildDevice />,
+        });
+      }
+      setList(datalist);
+      // 写入物模型数据
+      const metadata: DeviceMetadata = JSON.parse(response.result?.metadata || '{}');
+      MetadataAction.insert(metadata);
+    });
+  };
+
+  const [subscribeTopic] = useSendWebsocketMessage();
+
+  useEffect(() => {
+    if (subscribeTopic) {
+      subscribeTopic(
+        `instance-editor-info-status-${params.id}`,
+        `/dashboard/device/status/change/realTime`,
+        {
+          deviceId: params.id,
+        },
+        // @ts-ignore
+      ).subscribe((data: any) => {
+        const payload = data.payload;
+        const state = payload.value.type;
+        InstanceModel.detail.state = {
+          value: state,
+          text: '',
+        };
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    Store.subscribe(SystemConst.REFRESH_DEVICE, () => {
+      MetadataAction.clean();
+      setTimeout(() => {
+        getDetail(params.id);
+      }, 200);
+    });
+    // return subscription.unsubscribe();
+  }, []);
 
   useEffect(() => {
     if (!InstanceModel.current && !params.id) {

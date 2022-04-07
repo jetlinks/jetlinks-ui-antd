@@ -125,7 +125,7 @@ const Property = (props: Props) => {
       ?.pipe(map((res) => res.payload))
       .subscribe((payload: any) => {
         const { value } = payload;
-        propertyValue[value.property] = value;
+        propertyValue[value.property] = { ...payload, ...value };
         setPropertyValue({ ...propertyValue });
       });
   };
