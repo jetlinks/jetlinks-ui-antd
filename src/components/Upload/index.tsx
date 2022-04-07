@@ -13,6 +13,7 @@ interface Props {
   value: string;
   onChange: (value: string | FileProperty) => void;
   type?: 'file' | 'image';
+  placeholder: string;
 }
 
 type FileProperty = {
@@ -66,6 +67,7 @@ const FUpload = connect((props: Props) => {
     node: (
       <>
         <Input
+          placeholder={props.placeholder}
           value={(url as FileProperty)?.url}
           onClick={(e) => {
             e.preventDefault();

@@ -4,12 +4,27 @@ import { Card, Col, Input, Row } from 'antd';
 import { ISchema } from '@formily/json-schema';
 import { useMemo } from 'react';
 import { createSchemaField } from '@formily/react';
-import { FormButtonGroup, FormItem, Select, Submit, Switch, Form } from '@formily/antd';
+import {
+  FormButtonGroup,
+  FormItem,
+  Select,
+  Submit,
+  Switch,
+  Form,
+  Radio,
+  ArrayTable,
+  Editable,
+  PreviewText,
+  Space,
+  NumberPicker,
+  Checkbox,
+} from '@formily/antd';
 import styles from './index.less';
 import { service } from '@/pages/notice/Config';
 import { useAsyncDataSource } from '@/utils/util';
 import { useParams } from 'umi';
 import { typeList } from '@/pages/notice';
+import FUpload from '@/components/Upload';
 
 const Detail = () => {
   const { id } = useParams<{ id: string }>();
@@ -45,6 +60,14 @@ const Detail = () => {
       Input,
       Select,
       Switch,
+      Radio,
+      ArrayTable,
+      Editable,
+      PreviewText,
+      Space,
+      FUpload,
+      Checkbox,
+      NumberPicker,
     },
   });
 
@@ -68,6 +91,7 @@ const Detail = () => {
         title: '分类',
         'x-component': 'Input',
         'x-value': id,
+        'x-hidden': true,
       },
       provider: {
         title: '类型',
@@ -79,6 +103,7 @@ const Detail = () => {
         },
         required: true,
         'x-visible': typeList[id]?.length > 0,
+        'x-hidden': id === 'email',
         enum: typeList[id] || [],
       },
       configuration: {
@@ -92,53 +117,109 @@ const Detail = () => {
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
                 // 企业消息
+                'x-reactions': {
+                  dependencies: ['provider'],
+                  fulfill: {
+                    state: {
+                      visible: '{{$deps[0]==="corpMessage"}}',
+                    },
+                  },
+                },
               },
               corpSecret: {
                 title: 'corpSecret',
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
-                // 企业消息
+                'x-reactions': {
+                  dependencies: ['provider'],
+                  fulfill: {
+                    state: {
+                      visible: '{{$deps[0]==="corpMessage"}}',
+                    },
+                  },
+                },
               },
               AppId: {
                 title: 'appId',
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
-                // 服务号
+                'x-reactions': {
+                  dependencies: ['provider'],
+                  fulfill: {
+                    state: {
+                      visible: '{{$deps[0]==="officialMessage"}}',
+                    },
+                  },
+                },
               },
               AppSecret: {
                 title: 'appSecret',
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
-                // 服务号
+                'x-reactions': {
+                  dependencies: ['provider'],
+                  fulfill: {
+                    state: {
+                      visible: '{{$deps[0]==="officialMessage"}}',
+                    },
+                  },
+                },
               },
             },
+            'x-visible': id === 'weixin',
           },
           dingTalk: {
             type: 'void',
+            'x-visible': id === 'dingTalk',
             properties: {
               AppKey: {
                 title: 'AppKey',
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
                 // 钉钉消息通知
+                'x-reactions': {
+                  dependencies: ['provider'],
+                  fulfill: {
+                    state: {
+                      visible: '{{$deps[0]==="dingTalkMessage"}}',
+                    },
+                  },
+                },
               },
               AppSecret: {
                 title: 'AppSecret',
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
                 // 钉钉消息通知
+                'x-reactions': {
+                  dependencies: ['provider'],
+                  fulfill: {
+                    state: {
+                      visible: '{{$deps[0]==="dingTalkMessage"}}',
+                    },
+                  },
+                },
               },
               Webhook: {
                 title: 'webHook',
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
                 // 群机器人
+                'x-reactions': {
+                  dependencies: ['provider'],
+                  fulfill: {
+                    state: {
+                      visible: '{{$deps[0]==="dingTalkRobotWebHook"}}',
+                    },
+                  },
+                },
               },
             },
           },
           // 阿里云语音/短信
           voiceOrSms: {
             type: 'void',
+            'x-visible': id === 'voice' || id === 'sms',
             properties: {
               RegionId: {
                 title: 'regionId',
@@ -159,21 +240,36 @@ const Detail = () => {
           },
           email: {
             type: 'void',
+            'x-visible': id === 'email',
             properties: {
-              host: {
+              space: {
                 title: '服务器地址',
-                'x-component': 'Input',
+                type: 'void',
+                'x-component': 'Space',
                 'x-decorator': 'FormItem',
-              },
-              port: {
-                title: '端口',
-                'x-component': 'Input',
-                'x-decorator': 'FormItem',
-              },
-              enableSSL: {
-                title: '开启SSL',
-                'x-component': 'Input',
-                'x-decorator': 'FormItem',
+                'x-decorator-props': {
+                  asterisk: true,
+                  feedbackLayout: 'none',
+                },
+                properties: {
+                  host: {
+                    // title: '服务器地址',
+                    'x-component': 'Input',
+                    'x-decorator': 'FormItem',
+                  },
+                  port: {
+                    // title: '端口',
+                    'x-component': 'NumberPicker',
+                    'x-decorator': 'FormItem',
+                  },
+                  enableSSL: {
+                    // title: '开启SSL',
+                    type: 'boolean',
+                    'x-component': 'Checkbox.Group',
+                    'x-decorator': 'FormItem',
+                    enum: [{ label: '开启SSL', value: true }],
+                  },
+                },
               },
               sender: {
                 title: '发件人',
@@ -192,6 +288,14 @@ const Detail = () => {
               },
             },
           },
+        },
+      },
+      description: {
+        title: '说明',
+        'x-decorator': 'FormItem',
+        'x-component': 'Input.TextArea',
+        'x-component-props': {
+          rows: 4,
         },
       },
     },
