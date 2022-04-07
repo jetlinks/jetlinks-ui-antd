@@ -5,6 +5,7 @@ import {
   FormButtonGroup,
   FormItem,
   Input,
+  NumberPicker,
   PreviewText,
   Radio,
   Select,
@@ -14,24 +15,18 @@ import {
 } from '@formily/antd';
 import type { Field } from '@formily/core';
 import { createForm, onFieldValueChange } from '@formily/core';
-import { createSchemaField } from '@formily/react';
+import { createSchemaField, observer } from '@formily/react';
 import type { ISchema } from '@formily/json-schema';
 import styles from './index.less';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import FUpload from '@/components/Upload';
 import { useParams } from 'umi';
 import { PageContainer } from '@ant-design/pro-layout';
-import { Card, Col, Row } from 'antd';
+import { Card, Col, message, Row } from 'antd';
+import { typeList } from '@/pages/notice';
+import { service, state } from '@/pages/notice/Template';
 
-const createImageLabel = (image: string, text: string) => {
-  return (
-    <>
-      <img alt="" height="100px" src={image} />
-      <div style={{ textAlign: 'center' }}>{text}</div>
-    </>
-  );
-};
-const Detail = () => {
+const Detail = observer(() => {
   const { id } = useParams<{ id: string }>();
 
   // 正则提取${}里面的值
@@ -47,12 +42,48 @@ const Detail = () => {
               .match(pattern)
               ?.filter((i: string) => i)
               .map((item: string) => ({ id: item }));
-            form1.setValuesIn('variableDefinitions', idList);
+            if (form1.modified) {
+              form1.setValuesIn('variableDefinitions', idList);
+            }
+          });
+          onFieldValueChange('variableDefinitions.*.type', () => {
+            // const value = (field as Field).value;
+            // console.log(value, 'value');
+            // const format = field.query('.format').take() as DataField;
+            // console.log(field.query('.format'), field.query('.format').take(), 'values')
+            // switch (format.value) {
+            //   case 'date':
+            //     break;
+            //   case 'string':
+            //     format.setComponent(Input);
+            //     format.setDataSource([])
+            //     break;
+            //   case 'number':
+            //     format.setComponent(Input);
+            //     // format.setValue('%.xf');
+            //     break;
+            //   case 'file':
+            //     format.setComponent(Select);
+            //     format.setDataSource([
+            //       {label: '视频', value: 'video'},
+            //       {label: '图片', value: 'img'},
+            //       {label: '全部', value: 'any'},
+            //       {label: '', value: ''},
+            //     ])
+            //
+            //     break;
+            // }
           });
         },
       }),
     [id],
   );
+
+  useEffect(() => {
+    if (state.current) {
+      form.setValues(state.current);
+    }
+  }, []);
 
   const SchemaField = createSchemaField({
     components: {
@@ -66,74 +97,46 @@ const Detail = () => {
       PreviewText,
       Space,
       FUpload,
+      NumberPicker,
     },
   });
 
-  const [result, setResult] = useState<any>({});
   const handleSave = async () => {
-    const data = await form.submit();
-    setResult(data);
+    const data: TemplateItem = await form.submit();
+
+    // dingTalkRobotWebHook
+
+    // 提交的时候处理内容
+    // 钉钉机器人-->dingTalkRobotWebHook
+    // r如果是text 的话。template.message=>template.text.content
+    // 如果是markdown 的话。 template.message=>template.markdown.text
+    // 如果是link的话。 template.message =>template.markdown.text
+    if (data.provider === 'dingTalkRobotWebHook') {
+      const type = data.template.messageType;
+      // emplate.messageType
+      switch (type) {
+        case 'text':
+          data.template.text = {
+            content: data.template.message,
+          };
+          // data.template.text.content = data.template.message;
+          break;
+        case 'markdown':
+          data.template.markdown.text = data.template.message;
+          break;
+        case 'link':
+          data.template.link.text = data.template.message;
+      }
+    }
+
+    const response: any = await service.save(data);
+
+    if (response?.status === 200) {
+      message.success('保存成功');
+      history.back();
+    }
   };
 
-  const typeList = {
-    weixin: [
-      {
-        label: createImageLabel(
-          'https://lf1-cdn-tos.bytegoofy.com/goofy/lark/passport/staticfiles/passport/OKR.png',
-          '企业消息',
-        ),
-        value: 'corpMessage',
-      },
-      {
-        label: createImageLabel(
-          'https://lf1-cdn-tos.bytegoofy.com/goofy/lark/passport/staticfiles/passport/Hire.png',
-          '服务号消息',
-        ),
-        value: 'officialMessage',
-      },
-    ],
-    dingTalk: [
-      {
-        label: createImageLabel(
-          'https://lf1-cdn-tos.bytegoofy.com/goofy/lark/passport/staticfiles/passport/OKR.png',
-          '钉钉消息',
-        ),
-        value: 'dingTalkMessage',
-      },
-      {
-        label: createImageLabel(
-          'https://lf1-cdn-tos.bytegoofy.com/goofy/lark/passport/staticfiles/passport/Hire.png',
-          '群机器人消息',
-        ),
-        value: 'dingTalkRobotWebHook',
-      },
-    ],
-    voice: [
-      {
-        label: createImageLabel(
-          'https://lf1-cdn-tos.bytegoofy.com/goofy/lark/passport/staticfiles/passport/OKR.png',
-          '阿里云语音',
-        ),
-        value: 'aliyun',
-      },
-    ],
-    sms: [
-      {
-        label: createImageLabel(
-          'https://lf1-cdn-tos.bytegoofy.com/goofy/lark/passport/staticfiles/passport/OKR.png',
-          '阿里云短信',
-        ),
-        value: 'aliyunSms',
-      },
-    ],
-    email: [],
-  };
-
-  // 提交的时候处理内容
-  // 钉钉机器人-->dingTalkRobotWebHook
-  // r如果是text 的话。template.message=>template.text.content
-  // 如果是markdown 的话。 template.message=>template.markdown.text
-  // 如果是link的话。 template.message =>template.markdown.text
   const schema: ISchema = {
     type: 'object',
     properties: {
@@ -153,6 +156,11 @@ const Detail = () => {
             message: '请输入名称',
           },
         ],
+      },
+      type: {
+        title: '类型',
+        'x-value': id,
+        'x-hidden': true,
       },
       provider: {
         title: '类型',
@@ -184,7 +192,7 @@ const Detail = () => {
             type: 'void',
             'x-visible': id === 'weixin',
             properties: {
-              agentID: {
+              agentId: {
                 title: 'AgentId',
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
@@ -237,7 +245,7 @@ const Detail = () => {
               dingTalkMessage: {
                 type: 'void',
                 properties: {
-                  agentID: {
+                  agentId: {
                     title: 'AgentID',
                     'x-component': 'Input',
                     'x-decorator': 'FormItem',
@@ -329,7 +337,7 @@ const Detail = () => {
                         'x-component': 'Input',
                         'x-decorator': 'FormItem',
                       },
-                      picUrl: {
+                      '{url:picUrl}': {
                         title: '图片链接',
                         'x-component': 'FUpload',
                         'x-decorator': 'FormItem',
@@ -373,7 +381,7 @@ const Detail = () => {
             properties: {
               voice: {
                 'x-visible': id === 'voice',
-                type: 'object',
+                type: 'void',
                 properties: {
                   // ttsCode	String	语音-模版ID
                   // calledShowNumbers	String	语音-被叫显号
@@ -381,30 +389,86 @@ const Detail = () => {
                   // PlayTimes	String	语音-播放次数
                   ttsCode: {
                     title: '模版ID',
+                    'x-component': 'Input',
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      tooltip: '请输入模版ID',
+                    },
+                    'x-component-props': {
+                      placeholder: '请输入模版ID',
+                    },
                   },
                   calledShowNumbers: {
                     title: '被叫号码',
+                    'x-component': 'Input',
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      tooltip: '请输入calledShowNumbers',
+                    },
+                    'x-component-props': {
+                      placeholder: '请输入calledShowNumbers',
+                    },
                   },
-                  CalledNumber: {
+                  calledNumber: {
                     title: '被叫显号',
+                    'x-component': 'Input',
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      tooltip: '请输入CalledNumber',
+                    },
+                    'x-component-props': {
+                      placeholder: '请输入CalledNumber',
+                    },
                   },
                   PlayTimes: {
                     title: '播放次数',
+                    'x-component': 'Input',
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      tooltip: '请输入PlayTimes',
+                    },
+                    'x-component-props': {
+                      placeholder: '请输入PlayTimes',
+                    },
                   },
                 },
               },
               sms: {
                 'x-visible': id === 'sms',
-                type: 'object',
+                type: 'void',
                 properties: {
                   code: {
                     title: '模版ID',
+                    'x-component': 'Input',
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      tooltip: '请输入模版ID',
+                    },
+                    'x-component-props': {
+                      placeholder: '请输入模版ID',
+                    },
                   },
                   phoneNumber: {
                     title: '收信人',
+                    'x-component': 'Input',
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      tooltip: '请输入收信人',
+                    },
+                    'x-component-props': {
+                      placeholder: '请输入收信人',
+                    },
                   },
                   signName: {
                     title: '签名',
+                    'x-component': 'Input',
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      tooltip: '请输入签名',
+                    },
+                    'x-component-props': {
+                      placeholder: '请输入签名',
+                    },
                   },
                   // code	String	短信-模板ID
                   // signName	String	短信-签名
@@ -487,27 +551,17 @@ const Detail = () => {
             column3: {
               type: 'void',
               'x-component': 'ArrayTable.Column',
-              'x-component-props': { title: '类型', width: '100px' },
+              'x-component-props': { title: '类型', width: '120px' },
               properties: {
                 type: {
                   type: 'string',
                   'x-decorator': 'FormItem',
                   'x-component': 'Select',
                   enum: [
+                    { label: '时间', value: 'date' },
+                    { label: '数字', value: 'number' },
                     { label: '字符串', value: 'string' },
-                    { label: '日期', value: 'date' },
-                    { label: 'int', value: 'int' },
-                    { label: '数组', value: 'array' },
-                    { label: '布尔', value: 'date' },
-                    { label: 'double', value: 'double' },
-                    { label: '枚举', value: 'enum' },
-                    { label: '浮点', value: 'float' },
-                    { label: 'long', value: 'long' },
-                    { label: '对象', value: 'object' },
                     { label: '文件', value: 'file' },
-                    { label: '密码', value: 'password' },
-                    { label: 'geoShape', value: 'geoShape' },
-                    { label: 'geoPoint', value: 'geoPoint' },
                   ],
                 },
               },
@@ -520,7 +574,14 @@ const Detail = () => {
                 format: {
                   type: 'string',
                   'x-decorator': 'FormItem',
-                  'x-component': 'Input',
+                  'x-component': 'Select',
+                  enum: [
+                    { label: 'String类型的UTC时间戳 (毫秒)', value: 'string' },
+                    { label: 'yyyy-MM-dd', value: 'yyyy-MM-dd' },
+                    { label: 'yyyy-MM-dd HH:mm:ss', value: 'yyyy-MM-dd HH:mm:ss' },
+                    { label: 'yyyy-MM-dd HH:mm:ss EE', value: 'yyyy-MM-dd HH:mm:ss EE' },
+                    { label: 'yyyy-MM-dd HH:mm:ss zzz', value: 'yyyy-MM-dd HH:mm:ss zzz' },
+                  ],
                 },
               },
             },
@@ -552,11 +613,11 @@ const Detail = () => {
             </Form>
           </Col>
           <Col span={12} push={2}>
-            {JSON.stringify(result, null, 2)}
+            这里是放描述信息的
           </Col>
         </Row>
       </Card>
     </PageContainer>
   );
-};
+});
 export default Detail;

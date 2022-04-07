@@ -6,17 +6,20 @@ import {
   BugOutlined,
   EditOutlined,
   MinusOutlined,
+  PlusOutlined,
 } from '@ant-design/icons';
-import { message, Popconfirm, Tooltip } from 'antd';
+import { Button, message, Popconfirm, Tooltip } from 'antd';
 import { useMemo, useRef, useState } from 'react';
-import BaseCrud from '@/components/BaseCrud';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import type { ISchema } from '@formily/json-schema';
-import { downloadObject, useAsyncDataSource } from '@/utils/util';
+import { downloadObject } from '@/utils/util';
 import { CurdModel } from '@/components/BaseCrud/model';
 import Service from '@/pages/notice/Config/service';
 import { createForm, onFieldValueChange } from '@formily/core';
 import { observer } from '@formily/react';
+import SearchComponent from '@/components/SearchComponent';
+import ProTable from '@jetlinks/pro-table';
+import { history } from '@@/core/history';
+import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 
 export const service = new Service('notifier/config');
 
@@ -26,112 +29,112 @@ const Config = observer(() => {
   const providerRef = useRef<NetworkType[]>([]);
   const oldTypeRef = useRef();
 
-  const [configSchema, setConfigSchema] = useState<ISchema>({});
-  const [loading, setLoading] = useState<boolean>(false);
+  // const [configSchema, setConfigSchema] = useState<ISchema>({});
+  // const [loading, setLoading] = useState<boolean>(false);
   const createSchema = async () => {
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     const DForm = form;
     if (!DForm?.values) return;
     DForm.setValuesIn('provider', DForm.values.provider);
-    const resp = await service.getMetadata(
-      DForm?.values?.type,
-      // eslint-disable-next-line @typescript-eslint/no-use-before-define
-      currentType || DForm.values?.provider,
-    );
-    const properties = resp.result?.properties as ConfigMetadata[];
-    setConfigSchema({
-      type: 'object',
-      properties: properties?.reduce((previousValue, currentValue) => {
-        if (currentValue.type?.type === 'array') {
-          // 单独处理邮件的其他配置功能
-          previousValue[currentValue.property] = {
-            type: 'array',
-            title: '其他配置',
-            'x-component': 'ArrayItems',
-            'x-decorator': 'FormItem',
-            items: {
-              type: 'object',
-              properties: {
-                space: {
-                  type: 'void',
-                  'x-component': 'Space',
-                  properties: {
-                    sort: {
-                      type: 'void',
-                      'x-decorator': 'FormItem',
-                      'x-component': 'ArrayItems.SortHandle',
-                    },
-                    name: {
-                      type: 'string',
-                      title: 'key',
-                      'x-decorator': 'FormItem',
-                      'x-component': 'Input',
-                    },
-                    value: {
-                      type: 'string',
-                      title: 'value',
-                      'x-decorator': 'FormItem',
-                      'x-component': 'Input',
-                    },
-                    description: {
-                      type: 'string',
-                      title: '备注',
-                      'x-decorator': 'FormItem',
-                      'x-component': 'Input',
-                    },
-                    remove: {
-                      type: 'void',
-                      'x-decorator': 'FormItem',
-                      'x-component': 'ArrayItems.Remove',
-                    },
-                  },
-                },
-              },
-            },
-            properties: {
-              add: {
-                type: 'void',
-                title: '添加条目',
-                'x-component': 'ArrayItems.Addition',
-              },
-            },
-          };
-        } else {
-          previousValue[currentValue.property] = {
-            title: currentValue.name,
-            type: 'string',
-            'x-component': 'Input',
-            'x-decorator': 'FormItem',
-          };
-        }
-        return previousValue;
-      }, {}),
-    });
-    DForm.setValues(CurdModel.current);
-    setLoading(false);
+    // const resp = await service.getMetadata(
+    //   DForm?.values?.type,
+    //   // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    //   currentType || DForm.values?.provider,
+    // );
+    // const properties = resp.result?.properties as ConfigMetadata[];
+    // setConfigSchema({
+    //   type: 'object',
+    //   properties: properties?.reduce((previousValue, currentValue) => {
+    //     if (currentValue.type?.type === 'array') {
+    //       // 单独处理邮件的其他配置功能
+    //       previousValue[currentValue.property] = {
+    //         type: 'array',
+    //         title: '其他配置',
+    //         'x-component': 'ArrayItems',
+    //         'x-decorator': 'FormItem',
+    //         items: {
+    //           type: 'object',
+    //           properties: {
+    //             space: {
+    //               type: 'void',
+    //               'x-component': 'Space',
+    //               properties: {
+    //                 sort: {
+    //                   type: 'void',
+    //                   'x-decorator': 'FormItem',
+    //                   'x-component': 'ArrayItems.SortHandle',
+    //                 },
+    //                 name: {
+    //                   type: 'string',
+    //                   title: 'key',
+    //                   'x-decorator': 'FormItem',
+    //                   'x-component': 'Input',
+    //                 },
+    //                 value: {
+    //                   type: 'string',
+    //                   title: 'value',
+    //                   'x-decorator': 'FormItem',
+    //                   'x-component': 'Input',
+    //                 },
+    //                 description: {
+    //                   type: 'string',
+    //                   title: '备注',
+    //                   'x-decorator': 'FormItem',
+    //                   'x-component': 'Input',
+    //                 },
+    //                 remove: {
+    //                   type: 'void',
+    //                   'x-decorator': 'FormItem',
+    //                   'x-component': 'ArrayItems.Remove',
+    //                 },
+    //               },
+    //             },
+    //           },
+    //         },
+    //         properties: {
+    //           add: {
+    //             type: 'void',
+    //             title: '添加条目',
+    //             'x-component': 'ArrayItems.Addition',
+    //           },
+    //         },
+    //       };
+    //     } else {
+    //       previousValue[currentValue.property] = {
+    //         title: currentValue.name,
+    //         type: 'string',
+    //         'x-component': 'Input',
+    //         'x-decorator': 'FormItem',
+    //       };
+    //     }
+    //     return previousValue;
+    //   }, {}),
+    // });
+    // DForm.setValues(CurdModel.current);
+    // setLoading(false);
   };
-  const schema: ISchema = {
-    type: 'object',
-    properties: {
-      name: {
-        title: '名称',
-        'x-component': 'Input',
-        'x-decorator': 'FormItem',
-      },
-      type: {
-        title: '类型',
-        'x-component': 'Select',
-        'x-decorator': 'FormItem',
-        'x-reactions': ['{{useAsyncDataSource(getTypes)}}'],
-      },
-      provider: {
-        title: '服务商',
-        'x-component': 'Select',
-        'x-decorator': 'FormItem',
-      },
-      configuration: configSchema,
-    },
-  };
+  // const schema: ISchema = {
+  //   type: 'object',
+  //   properties: {
+  //     name: {
+  //       title: '名称',
+  //       'x-component': 'Input',
+  //       'x-decorator': 'FormItem',
+  //     },
+  //     type: {
+  //       title: '类型',
+  //       'x-component': 'Select',
+  //       'x-decorator': 'FormItem',
+  //       'x-reactions': ['{{useAsyncDataSource(getTypes)}}'],
+  //     },
+  //     provider: {
+  //       title: '服务商',
+  //       'x-component': 'Select',
+  //       'x-decorator': 'FormItem',
+  //     },
+  //     configuration: configSchema,
+  //   },
+  // };
 
   const formEvent = () => {
     onFieldValueChange('type', async (field, f) => {
@@ -206,7 +209,7 @@ const Config = observer(() => {
         <a
           key="edit"
           onClick={async () => {
-            setLoading(true);
+            // setLoading(true);
             CurdModel.update(record);
             form.setValues(record);
             await createSchema();
@@ -280,33 +283,64 @@ const Config = observer(() => {
     },
   ];
 
-  const getTypes = async () =>
-    service.getTypes().then((resp) => {
-      providerRef.current = resp.result;
-      return resp.result.map((item: NetworkType) => ({
-        label: item.name,
-        value: item.id,
-      }));
-    });
-
+  // const getTypes = async () =>
+  //   service.getTypes().then((resp) => {
+  //     providerRef.current = resp.result;
+  //     return resp.result.map((item: NetworkType) => ({
+  //       label: item.name,
+  //       value: item.id,
+  //     }));
+  //   });
+  const [param, setParam] = useState({});
   return (
     <PageContainer className={'page-title-show'}>
-      <BaseCrud
-        columns={columns}
-        service={service}
-        title={intl.formatMessage({
-          id: 'pages.notice.config',
-          defaultMessage: '通知配置',
-        })}
-        modelConfig={{
-          width: '50vw',
-          loading: loading,
+      <SearchComponent
+        field={columns}
+        onSearch={(data) => {
+          actionRef.current?.reset?.();
+          setParam(data);
         }}
-        schema={schema}
-        form={form}
-        schemaConfig={{ scope: { useAsyncDataSource, getTypes } }}
-        actionRef={actionRef}
       />
+      <ProTable<ConfigItem>
+        search={false}
+        params={param}
+        columns={columns}
+        headerTitle={'通知模版'}
+        toolBarRender={() => [
+          <Button
+            onClick={() => {
+              const id = (location as any).query?.id;
+              history.push(getMenuPathByParams(MENUS_CODE['notice/Config/Detail'], id));
+            }}
+            key="button"
+            icon={<PlusOutlined />}
+            type="primary"
+          >
+            {intl.formatMessage({
+              id: 'pages.data.option.add',
+              defaultMessage: '新增',
+            })}
+          </Button>,
+        ]}
+        request={async (params) => service.query(params)}
+      />
+
+      {/*<BaseCrud*/}
+      {/*  columns={columns}*/}
+      {/*  service={service}*/}
+      {/*  title={intl.formatMessage({*/}
+      {/*    id: 'pages.notice.config',*/}
+      {/*    defaultMessage: '通知配置',*/}
+      {/*  })}*/}
+      {/*  modelConfig={{*/}
+      {/*    width: '50vw',*/}
+      {/*    loading: loading,*/}
+      {/*  }}*/}
+      {/*  schema={schema}*/}
+      {/*  form={form}*/}
+      {/*  schemaConfig={{ scope: { useAsyncDataSource, getTypes } }}*/}
+      {/*  actionRef={actionRef}*/}
+      {/*/>*/}
     </PageContainer>
   );
 });

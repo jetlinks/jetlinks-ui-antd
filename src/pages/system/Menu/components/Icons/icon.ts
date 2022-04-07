@@ -22,4 +22,4 @@ export default [
   'icon-zhihuiyuanqu',
   'icon-Subtract',
   'icon-a-Frame2125',
-]
+];

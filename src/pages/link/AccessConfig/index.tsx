@@ -95,7 +95,7 @@ const AccessConfig = () => {
         {dataSource?.data.length > 0 ? (
           <Row gutter={[16, 16]} style={{ marginTop: 10 }}>
             {(dataSource?.data || []).map((item: any) => (
-              <Col key={item.name} span={12}>
+              <Col key={item.id} span={12}>
                 <TableCard
                   showMask={false}
                   actions={[
@@ -155,6 +155,8 @@ const AccessConfig = () => {
                             if (resp.status === 200) {
                               message.success('操作成功！');
                               handleSearch(param);
+                            } else {
+                              message.error(resp.message);
                             }
                           });
                         }}
@@ -183,13 +185,13 @@ const AccessConfig = () => {
                       <div className={styles.container}>
                         <div className={styles.server}>
                           <div className={styles.subTitle}>{item?.channelInfo?.name || '--'}</div>
-                          <p>
-                            {item.channelInfo?.addresses.map((i: any) => (
-                              <div key={i.address}>
+                          <div style={{ width: '100%' }}>
+                            {item.channelInfo?.addresses.map((i: any, index: number) => (
+                              <p key={i.address + `_address${index}`}>
                                 <Badge color={i.health === -1 ? 'red' : 'green'} text={i.address} />
-                              </div>
+                              </p>
                             ))}
-                          </p>
+                          </div>
                         </div>
                         <div className={styles.procotol}>
                           <div className={styles.subTitle}>

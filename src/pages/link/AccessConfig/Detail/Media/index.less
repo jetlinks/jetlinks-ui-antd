@@ -51,24 +51,31 @@
   }
 }
 
-.view {
-  display: flex;
-  justify-content: space-between;
+.config {
+  padding: 10px 20px 20px 20px;
+  color: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.04);
 
-  .info,
-  .config {
-    width: 48%;
+  .title {
+    width: 100%;
+    margin: 10px 0;
+    font-weight: 600;
+  }
 
-    .title {
-      width: 100%;
-      margin-bottom: 10px;
-      font-weight: 600;
-    }
+  .item {
+    margin-bottom: 10px;
 
-    .title::before {
-      margin-right: 10px;
-      background-color: #2810ff;
-      content: '|';
+    .context {
+      margin: 5px 0;
+      color: rgba(0, 0, 0, 0.8);
     }
   }
+}
+
+.alert {
+  height: 40px;
+  padding-left: 10px;
+  color: rgba(0, 0, 0, 0.55);
+  line-height: 40px;
+  background-color: #f6f6f6;
 }
