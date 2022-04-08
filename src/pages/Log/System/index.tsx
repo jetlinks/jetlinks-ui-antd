@@ -57,7 +57,7 @@ const System = () => {
         id: 'pages.log.system.logContent',
         defaultMessage: '日志内容',
       }),
-      dataIndex: 'exceptionStack',
+      dataIndex: 'message',
       ellipsis: true,
     },
     {

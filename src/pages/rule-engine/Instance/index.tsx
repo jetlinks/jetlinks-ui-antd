@@ -11,13 +11,14 @@ import {
   PlusOutlined,
   StopOutlined,
 } from '@ant-design/icons';
-import { Badge, Button, message, Popconfirm, Tooltip } from 'antd';
+import { Button, message, Popconfirm, Tooltip } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import SearchComponent from '@/components/SearchComponent';
-import { ProTableCard } from '@/components';
+import { BadgeStatus, ProTableCard } from '@/components';
 import RuleInstanceCard from '@/components/ProTableCard/CardItems/ruleInstance';
 import Save from '@/pages/rule-engine/Instance/Save';
 import SystemConst from '@/utils/const';
+import { StatusColorEnum } from '@/components/BadgeStatus';
 
 export const service = new Service('rule-engine/instance');
 
@@ -139,8 +140,16 @@ const Instance = () => {
     {
       dataIndex: 'state',
       title: '状态',
-      render: (text: any) => (
-        <Badge color={text?.value === 'stopped' ? 'red' : 'green'} text={text?.text} />
+      render: (text: any, record: any) => (
+        <BadgeStatus
+          status={record.state?.value}
+          text={record.state?.text}
+          statusNames={{
+            started: StatusColorEnum.success,
+            stopped: StatusColorEnum.error,
+            disable: StatusColorEnum.processing,
+          }}
+        />
       ),
       valueType: 'select',
       valueEnum: {
