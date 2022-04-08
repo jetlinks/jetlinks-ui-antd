@@ -55,12 +55,12 @@ const server2Ui = (source: SearchTermsServer): SearchTermsUI => ({
 });
 
 interface Props<T> {
-  /** @name 搜索条件 */
+  /** @name "搜索条件" */
   field: ProColumns<T>[];
   onSearch: (params: { terms: SearchTermsServer }) => void;
   target?: string;
   /**
-   *  @name 固定查询参数
+   *  @name "固定查询参数"
    *  eg: 1: {[{ column: 'test', value: 'admin' }]}
    *      2: {[
    *            {
@@ -427,7 +427,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
 
   const handleSearch = async () => {
     const value = form.values;
-    const filterTerms = (data: Partial<Term>[]) =>
+    const filterTerms = (data: Partial<Term>[] | undefined) =>
       data && data.filter((item) => item.column != null).filter((item) => item.value !== undefined);
     const _terms = _.cloneDeep(value);
     _terms.terms1 = filterTerms(_terms.terms1);
