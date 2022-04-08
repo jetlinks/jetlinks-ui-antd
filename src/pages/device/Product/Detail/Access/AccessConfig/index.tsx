@@ -28,7 +28,7 @@ const AccessConfig = (props: Props) => {
   });
   const [param, setParam] = useState<any>({ pageSize: 4 });
 
-  const [currrent] = useState<any>({
+  const [currrent, setCurrrent] = useState<any>({
     id: productModel.current?.accessId,
     name: productModel.current?.accessName,
     protocol: productModel.current?.messageProtocol,
@@ -147,11 +147,11 @@ const AccessConfig = (props: Props) => {
             span={12}
             // style={{
             //   width: '100%',
-            //   borderColor: currrent?.id === item.id ? 'var(--ant-primary-color-active)' : ''
+            //   borderColor: currrent?.id === item.id ? 'var(--ant-primary-color-active)' : 'red',
             // }}
-            // onClick={() => {
-            //   setCurrrent(item);
-            // }}
+            onClick={() => {
+              setCurrrent(item);
+            }}
           >
             <TableCard
               showMask={false}
@@ -174,13 +174,13 @@ const AccessConfig = (props: Props) => {
                   <div className={styles.container}>
                     <div className={styles.server}>
                       <div className={styles.subTitle}>{item?.channelInfo?.name || '--'}</div>
-                      <p>
+                      <div style={{ width: '100%' }}>
                         {item.channelInfo?.addresses.map((i: any) => (
-                          <div key={i.address}>
+                          <p key={i.address}>
                             <Badge color={i.health === -1 ? 'red' : 'green'} text={i.address} />
-                          </div>
+                          </p>
                         ))}
-                      </p>
+                      </div>
                     </div>
                     <div className={styles.procotol}>
                       <div className={styles.subTitle}>{item?.protocolDetail?.name || '--'}</div>

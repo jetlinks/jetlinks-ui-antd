@@ -76,6 +76,7 @@ const Permission = () => {
             .subscribe((resp) => {
               if (resp.status === 200) {
                 message.success('操作成功');
+                history.goBack();
               }
             });
         }}

@@ -33,6 +33,8 @@ const Access = () => {
   MetworkTypeMapping.set('mqtt-client-gateway', 'MQTT_CLIENT');
   MetworkTypeMapping.set('mqtt-server-gateway', 'MQTT_SERVER');
   MetworkTypeMapping.set('tcp-server-gateway', 'TCP_SERVER');
+  MetworkTypeMapping.set('fixed-media', 'TCP_CLIENT');
+  MetworkTypeMapping.set('gb28181-2016', 'UDP');
 
   const [configVisible, setConfigVisible] = useState<boolean>(false);
 

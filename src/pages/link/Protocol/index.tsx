@@ -267,7 +267,6 @@ const Protocol = () => {
                   dependencies: ['..type'],
                   fulfill: {
                     state: {
-                      value: '',
                       visible: '{{["jar","local"].includes($deps[0])}}',
                       componentType: '{{$deps[0]==="jar"?"FileUpload":"Input"}}',
                       componentProps: '{{$deps[0]==="jar"?{type:"file", accept: ".jar, .zip"}:{}}}',
@@ -354,7 +353,6 @@ const Protocol = () => {
           </>
         }
       />
-      {/* {visible && <Debug data={current} close={() => setVisible(!visible)} />} */}
     </PageContainer>
   );
 };
