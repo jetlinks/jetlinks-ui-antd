@@ -14,6 +14,7 @@ const defaultImage = require('/public/images/device-media.png');
 export default (props: ProductCardProps) => {
   return (
     <TableCard
+      showMask={false}
       detail={props.detail}
       actions={props.actions}
       status={props.state.value}
