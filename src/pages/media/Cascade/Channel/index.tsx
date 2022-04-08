@@ -11,7 +11,7 @@ import BindChannel from './BindChannel';
 import BadgeStatus, { StatusColorEnum } from '@/components/BadgeStatus';
 
 const Channel = () => {
-  const location = useLocation();
+  const location: any = useLocation();
   const actionRef = useRef<ActionType>();
   const [param, setParam] = useState({});
   const intl = useIntl();

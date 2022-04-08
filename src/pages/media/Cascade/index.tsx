@@ -144,6 +144,7 @@ const Cascade = () => {
     {
       dataIndex: 'count',
       title: '通道数量',
+      hideInSearch: true,
     },
     {
       dataIndex: 'status',
@@ -151,16 +152,44 @@ const Cascade = () => {
         id: 'pages.searchTable.titleStatus',
         defaultMessage: '状态',
       }),
-      render: (text: any) => (
-        <Badge status={text?.value === 'disabled' ? 'error' : 'success'} text={text?.text} />
+      render: (text: any, record: any) => (
+        <Badge
+          status={record.status?.value === 'disabled' ? 'error' : 'success'}
+          text={record.status?.text}
+        />
       ),
+      valueType: 'select',
+      valueEnum: {
+        disabled: {
+          text: '已停止',
+          status: 'disabled',
+        },
+        enabled: {
+          text: '已启动',
+          status: 'enabled',
+        },
+      },
     },
     {
       dataIndex: 'onlineStatus',
       title: '级联状态',
-      render: (text: any) => (
-        <Badge status={text?.value === 'offline' ? 'error' : 'success'} text={text?.text} />
+      render: (text: any, record: any) => (
+        <Badge
+          status={record.onlineStatus?.value === 'offline' ? 'error' : 'success'}
+          text={record.onlineStatus?.text}
+        />
       ),
+      valueType: 'select',
+      valueEnum: {
+        online: {
+          text: '在线',
+          status: 'online',
+        },
+        offline: {
+          text: '离线',
+          status: 'offline',
+        },
+      },
     },
     {
       title: intl.formatMessage({

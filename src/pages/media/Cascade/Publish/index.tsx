@@ -28,6 +28,7 @@ const Publish = (props: Props) => {
         const temp = res.result.total;
         dt += temp;
         setCount(dt);
+        // setCountErr(0);
       } else {
         setCountErr(0);
         setErrMessage(res.message);

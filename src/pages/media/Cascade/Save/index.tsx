@@ -21,9 +21,10 @@ import { service } from '../index';
 import { useLocation } from 'umi';
 
 const Save = () => {
-  const location = useLocation();
+  const location: any = useLocation();
   const [form] = Form.useForm();
   const [clusters, setClusters] = useState<any[]>([]);
+  const id = location?.query?.id || '';
 
   const checkSIP = (_: any, value: { host: string; port: number }) => {
     if (!value) {
@@ -42,8 +43,8 @@ const Save = () => {
         setClusters(resp.result);
       }
     });
-    if (location?.query && location?.query?.id) {
-      service.detail(location?.query?.id).then((resp) => {
+    if (!!id) {
+      service.detail(id).then((resp) => {
         if (resp.status === 200) {
           const sipConfigs = resp.result?.sipConfigs[0];
           const data = {
@@ -92,8 +93,8 @@ const Save = () => {
             delete sipConfigs.local;
             const param = { ...values, sipConfigs: [sipConfigs] };
             let resp = undefined;
-            if (location?.query?.id) {
-              resp = await service.update({ ...param, id: location?.query?.id });
+            if (id) {
+              resp = await service.update({ ...param, id });
             } else {
               resp = await service.save(param);
             }
