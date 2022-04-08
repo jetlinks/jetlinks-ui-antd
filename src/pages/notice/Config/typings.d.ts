@@ -31,5 +31,6 @@ type ConfigMetadata = {
     type: string;
     expands?: Record<string, any>;
   };
+  properties: ConfigProperty[];
   scopes: any[];
 };

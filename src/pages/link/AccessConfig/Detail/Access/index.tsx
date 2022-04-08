@@ -16,7 +16,7 @@ import { useEffect, useState } from 'react';
 import styles from './index.less';
 import { service } from '@/pages/link/AccessConfig';
 import encodeQuery from '@/utils/encodeQuery';
-import { useHistory, useLocation } from 'umi';
+import { useHistory } from 'umi';
 import ReactMarkdown from 'react-markdown';
 import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 import { ExclamationCircleFilled } from '@ant-design/icons';
@@ -24,11 +24,8 @@ import { ExclamationCircleFilled } from '@ant-design/icons';
 interface Props {
   change: () => void;
   data: any;
+  provider: any;
 }
-
-type LocationType = {
-  id?: string;
-};
 
 const Access = (props: Props) => {
   const [form] = Form.useForm();
@@ -38,11 +35,9 @@ const Access = (props: Props) => {
   const [current, setCurrent] = useState<number>(0);
   const [networkList, setNetworkList] = useState<any[]>([]);
   const [procotolList, setProcotolList] = useState<any[]>([]);
-  const [access, setAccess] = useState<any>({});
   const [procotolCurrent, setProcotolCurrent] = useState<string>('');
   const [networkCurrent, setNetworkCurrent] = useState<string>('');
   const [config, setConfig] = useState<any>();
-  const [providers, setProviders] = useState<any[]>([]);
 
   const MetworkTypeMapping = new Map();
   MetworkTypeMapping.set('websocket-server', 'WEB_SOCKET_SERVER');
@@ -78,48 +73,32 @@ const Access = (props: Props) => {
     });
   };
 
-  const queryProviders = () => {
-    service.getProviders().then((resp) => {
-      if (resp.status === 200) {
-        setProviders(resp.result);
-      }
-    });
-  };
+  useEffect(() => {
+    if (props.provider?.id) {
+      queryNetworkList(props.provider?.id);
+      setCurrent(0);
+    }
+  }, [props.provider]);
 
   useEffect(() => {
     if (props.data?.id) {
-      queryNetworkList(props.data?.id);
+      setProcotolCurrent(props.data?.protocol);
+      setNetworkCurrent(props.data?.channelId);
+      form.setFieldsValue({
+        name: props.data?.name,
+        description: props.data?.description,
+      });
       setCurrent(0);
+      queryNetworkList(props.data?.provider);
     }
   }, [props.data]);
-
-  const location = useLocation<LocationType>();
-
-  const params = new URLSearchParams(location.search);
-
-  useEffect(() => {
-    if (params.get('id')) {
-      service.detail(params.get('id') || '').then((resp) => {
-        setAccess(resp.result);
-        setProcotolCurrent(resp.result?.protocol);
-        setNetworkCurrent(resp.result?.channelId);
-        form.setFieldsValue({
-          name: resp.result?.name,
-          description: resp.result?.description,
-        });
-        queryProviders();
-        setCurrent(0);
-        queryNetworkList(resp.result?.provider);
-      });
-    }
-  }, []);
 
   const next = () => {
     if (current === 0) {
       if (!networkCurrent) {
         message.error('请选择网络组件！');
       } else {
-        queryProcotolList(props.data?.id || access?.provider);
+        queryProcotolList(props.provider?.id);
         setCurrent(current + 1);
       }
     }
@@ -128,7 +107,7 @@ const Access = (props: Props) => {
         message.error('请选择消息协议！');
       } else {
         service
-          .getConfigView(procotolCurrent, ProcotoleMapping.get(props.data?.id || access?.provider))
+          .getConfigView(procotolCurrent, ProcotoleMapping.get(props.provider?.id))
           .then((resp) => {
             if (resp.status === 200) {
               setConfig(resp.result);
@@ -301,7 +280,7 @@ const Access = (props: Props) => {
                 placeholder="请输入名称"
                 onSearch={(value: string) => {
                   queryNetworkList(
-                    props.data?.id || access?.provider,
+                    props.provider?.id,
                     encodeQuery({
                       terms: {
                         name$LIKE: `%${value}%`,
@@ -318,7 +297,7 @@ const Access = (props: Props) => {
                   const tab: any = window.open(`${origin}/#${url}`);
                   tab!.onTabSaveSuccess = (value: any) => {
                     if (value.status === 200) {
-                      queryNetworkList(props.data?.id || access?.provider);
+                      queryNetworkList(props.provider?.id);
                     }
                   };
                 }}
@@ -377,7 +356,7 @@ const Access = (props: Props) => {
                         const tab: any = window.open(`${origin}/#${url}`);
                         tab!.onTabSaveSuccess = (value: any) => {
                           if (value.status === 200) {
-                            queryNetworkList(props.data?.id || access?.provider);
+                            queryNetworkList(props.provider?.id);
                           }
                         };
                       }}
@@ -403,7 +382,7 @@ const Access = (props: Props) => {
                 placeholder="请输入名称"
                 onSearch={(value: string) => {
                   queryProcotolList(
-                    props.data?.id || access?.provider,
+                    props.provider?.id,
                     encodeQuery({
                       terms: {
                         name$LIKE: `%${value}%`,
@@ -416,10 +395,11 @@ const Access = (props: Props) => {
               <Button
                 type="primary"
                 onClick={() => {
-                  const tab: any = window.open(`${origin}/#/link/Protocol?save=true`);
+                  const url = getMenuPathByCode(MENUS_CODE['link/Protocol?save=true']);
+                  const tab: any = window.open(`${origin}/#${url}`);
                   tab!.onTabSaveSuccess = (value: any) => {
                     if (value) {
-                      queryProcotolList(props.data?.id || access?.provider);
+                      queryProcotolList(props.provider?.id);
                     }
                   };
                 }}
@@ -436,7 +416,7 @@ const Access = (props: Props) => {
                       style={{
                         width: '100%',
                         borderColor:
-                          networkCurrent === item.id ? 'var(--ant-primary-color-active)' : '',
+                          procotolCurrent === item.id ? 'var(--ant-primary-color-active)' : '',
                       }}
                       hoverable
                       onClick={() => {
@@ -458,10 +438,11 @@ const Access = (props: Props) => {
                     暂无数据
                     <a
                       onClick={() => {
-                        const tab: any = window.open(`${origin}/#/link/Protocol?save=true`);
+                        const url = getMenuPathByCode(MENUS_CODE['link/Protocol?save=true']);
+                        const tab: any = window.open(`${origin}/#${url}`);
                         tab!.onTabSaveSuccess = (value: any) => {
                           if (value) {
-                            queryProcotolList(props.data?.id || access?.provider);
+                            queryProcotolList(props.provider?.id);
                           }
                         };
                       }}
@@ -502,14 +483,14 @@ const Access = (props: Props) => {
                       try {
                         const values = await form.validateFields();
                         // 编辑还是保存
-                        if (!params.get('id')) {
+                        if (!props.data?.id) {
                           service
                             .save({
                               name: values.name,
                               description: values.description,
-                              provider: props.data.id,
+                              provider: props.provider.id,
                               protocol: procotolCurrent,
-                              transport: ProcotoleMapping.get(props.data.id),
+                              transport: ProcotoleMapping.get(props.provider.id),
                               channel: 'network', // 网络组件
                               channelId: networkCurrent,
                             })
@@ -526,12 +507,10 @@ const Access = (props: Props) => {
                         } else {
                           service
                             .update({
-                              id: access?.id,
+                              ...props.data,
                               name: values.name,
                               description: values.description,
-                              provider: access?.provider,
                               protocol: procotolCurrent,
-                              transport: access?.transport,
                               channel: 'network', // 网络组件
                               channelId: networkCurrent,
                             })
@@ -560,30 +539,19 @@ const Access = (props: Props) => {
               <div className={styles.config}>
                 <div className={styles.item}>
                   <div className={styles.title}>接入方式</div>
-                  <div className={styles.context}>
-                    {props.data?.name ||
-                      providers.find((i) => i.id === access?.provider)?.name ||
-                      '--'}
-                  </div>
-                  <div className={styles.context}>
-                    {((props.data?.description ||
-                      providers.find((i) => i.id === access?.provider)?.description) && (
-                      <span>
-                        {props.data?.description ||
-                          providers.find((i) => i.id === access?.provider)?.description}
-                      </span>
-                    )) ||
-                      '--'}
-                  </div>
+                  <div className={styles.context}>{props.provider?.name || '--'}</div>
+                  <div className={styles.context}>{props.provider?.description || '--'}</div>
                 </div>
                 <div className={styles.item}>
                   <div className={styles.title}>消息协议</div>
                   <div className={styles.context}>
                     {procotolList.find((i) => i.id === procotolCurrent)?.name || '--'}
                   </div>
-                  <div className={styles.context}>
-                    {config?.document ? <ReactMarkdown>{config?.document}</ReactMarkdown> : '--'}
-                  </div>
+                  {config?.document && (
+                    <div className={styles.context}>
+                      {<ReactMarkdown>{config?.document}</ReactMarkdown> || '--'}
+                    </div>
+                  )}
                 </div>
                 <div className={styles.item}>
                   <div className={styles.title}>网络组件</div>
@@ -604,8 +572,8 @@ const Access = (props: Props) => {
                 {config?.routes && config?.routes?.length > 0 && (
                   <div className={styles.item}>
                     <div style={{ fontWeight: '600', marginBottom: 10 }}>
-                      {access?.provider === 'mqtt-server-gateway' ||
-                      access?.provider === 'mqtt-client-gateway'
+                      {props.data?.provider === 'mqtt-server-gateway' ||
+                      props.data?.provider === 'mqtt-client-gateway'
                         ? 'topic'
                         : 'URL信息'}
                     </div>

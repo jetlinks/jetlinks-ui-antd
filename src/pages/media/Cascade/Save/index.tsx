@@ -27,12 +27,14 @@ const Save = () => {
   const id = location?.query?.id || '';
 
   const checkSIP = (_: any, value: { host: string; port: number }) => {
-    if (!value) {
-      return Promise.reject(new Error('请输入SIP'));
-    } else if (Number(value.port) < 1 || Number(value.port) > 65535) {
-      return Promise.reject(new Error('端口请输入1~65535之间的正整数'));
-    } else if (!testIP(value.host)) {
+    if (!value || !value.host) {
+      return Promise.reject(new Error('请输入API HOST'));
+    } else if (value?.host && !testIP(value.host)) {
       return Promise.reject(new Error('请输入正确的IP地址'));
+    } else if (!value?.port) {
+      return Promise.reject(new Error('请输入端口'));
+    } else if ((value?.port && Number(value.port) < 1) || Number(value.port) > 65535) {
+      return Promise.reject(new Error('端口请输入1~65535之间的正整数'));
     }
     return Promise.resolve();
   };

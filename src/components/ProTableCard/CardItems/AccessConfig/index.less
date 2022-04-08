@@ -10,14 +10,14 @@
   background-size: 100% 100%;
 }
 
-.context {
+.context-access {
   display: flex;
   width: 100%;
   .card {
     display: flex;
     flex-direction: column;
     width: 100%;
-    margin-left: 10px;
+    margin-left: 20px;
     .header {
       .title {
         width: 90%;
@@ -26,6 +26,9 @@
         font-size: 18px;
         white-space: nowrap;
         text-overflow: ellipsis;
+      }
+      .title::before {
+        display: none;
       }
       .desc {
         width: 100%;
