@@ -551,7 +551,7 @@ const PropertiesInfo: React.FC<Props> = props => {
                 scale={{
                   value: { min: 0 },
                   year: {
-                    range: [0, 1],
+                    range: [0, 0.96],
                     type: 'timeCat'
                   },
                 }}

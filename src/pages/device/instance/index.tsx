@@ -78,7 +78,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
       pageSize: 10,
       terms: location?.query?.terms,
       sorts: {
-        order: 'descend',
+        order: 'desc',
         field: 'id',
       },
     },
