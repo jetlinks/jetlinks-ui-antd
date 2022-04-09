@@ -15,6 +15,7 @@ import * as protocol from '@/pages/device/protocol/service';
 import * as openApi from '@/pages/system/open-api/service';
 import * as mqttClient from '@/pages/network/mqtt-client/service';
 import * as opcUa from '@/pages/network/opc-ua/service';
+import * as modbus from '@/pages/network/modbus/service';
 import * as certificate from '@/pages/network/certificate/service';
 import * as sqlRule from '@/pages/rule-engine/sqlRule/service';
 import * as location from '@/pages/device/location/service';
@@ -62,13 +63,14 @@ const apis = {
   email,
   sms,
   ruleInstance,
-  scene, //场景联动
+  scene, // 场景联动
   ruleModel,
   protocol,
   openApi,
   certificate,
   mqttClient,
   opcUa,
+  modbus,
   // coapClient,
   // httpClient,
   // tcpClient,
@@ -92,9 +94,9 @@ const apis = {
   notification,
   screen,
   configuration,
-  categoty, //大屏分类
+  categoty, // 大屏分类
   productCategoty,
-  aliyun, //阿里云
+  aliyun, // 阿里云
   onenet,
   ctwing,
   edgeProduct,
