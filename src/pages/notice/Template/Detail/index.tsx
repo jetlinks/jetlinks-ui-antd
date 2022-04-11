@@ -1,8 +1,10 @@
 import {
+  ArrayItems,
   ArrayTable,
   Editable,
   Form,
   FormButtonGroup,
+  FormGrid,
   FormItem,
   Input,
   NumberPicker,
@@ -36,12 +38,24 @@ const Detail = observer(() => {
       .queryNoPagingPost({
         terms: [{ column: 'type$IN', value: id }],
       })
-      .then((resp) => {
-        return resp.result?.map((item) => ({
+      .then((resp: any) => {
+        return resp.result?.map((item: any) => ({
           label: item.name,
           value: item.id,
         }));
       });
+
+  const getDingTalkDept = (configId: string) => service.dingTalk.getDepartments(configId);
+  const getDingTalkDeptTree = (configId: string) => service.dingTalk.getDepartmentsTree(configId);
+  const getDingTalkUser = (configId: string, departmentId: string) =>
+    service.dingTalk.getUserByDepartment(configId, departmentId);
+
+  const getWeixinDept = (configId: string) => service.weixin.getDepartments(configId);
+  const getWeixinTags = (configId: string) => service.weixin.getTags(configId);
+  const getWeixinUser = (configId: string) => service.weixin.getUserByDepartment(configId);
+
+  const getAliyunSigns = (configId: string) => service.aliyun.getSigns(configId);
+  const getAliyunTemplates = (configId: string) => service.aliyun.getTemplates(configId);
 
   // 正则提取${}里面的值
   const pattern = /(?<=\$\{).*?(?=\})/g;
@@ -53,6 +67,7 @@ const Detail = observer(() => {
           onFieldInit('template.message', (field, form1) => {
             if (id === 'email') {
               field.setComponent(FBraftEditor);
+              // form1.setValuesIn('template.message', 'testtt')
             }
             console.log(form1);
             ///给FBraftEditor 设置初始值
@@ -62,9 +77,8 @@ const Detail = observer(() => {
             if (id === 'email' && form1.modified) {
               value = value?.toHTML();
             }
-            console.log(value, 'test');
             const idList = value
-              .match(pattern)
+              ?.match(pattern)
               ?.filter((i: string) => i)
               .map((item: string) => ({ id: item, type: 'string', format: '--' }));
             if (form1.modified) {
@@ -73,7 +87,7 @@ const Detail = observer(() => {
           });
           onFieldValueChange('variableDefinitions.*.type', (field) => {
             const value = (field as Field).value;
-            const format = field.query('.format').take();
+            const format = field.query('.format').take() as any;
             switch (value) {
               case 'date':
                 format.setComponent(Select);
@@ -109,6 +123,11 @@ const Detail = observer(() => {
                 break;
             }
           });
+          // onFieldValueChange('configId', (field, form1) => {
+          //   const value = (field as Field).value;
+          //
+          //
+          // })
         },
       }),
     [id],
@@ -127,13 +146,15 @@ const Detail = observer(() => {
       Select,
       Switch,
       Radio,
-      ArrayTable,
       Editable,
       PreviewText,
       Space,
       FUpload,
       NumberPicker,
       FBraftEditor,
+      ArrayItems,
+      FormGrid,
+      ArrayTable,
     },
   });
 
@@ -248,35 +269,56 @@ const Detail = observer(() => {
               },
               toUser: {
                 title: '收信人ID',
-                'x-component': 'Input',
+                'x-component': 'Select',
                 'x-decorator': 'FormItem',
                 'x-decorator-props': {
                   tooltip: '请输入收信人ID',
                 },
                 'x-component-props': {
                   placeholder: '请输入收信人ID',
+                  mode: 'tags',
+                },
+                'x-reactions': {
+                  dependencies: ['configId'],
+                  fulfill: {
+                    run: '{{useAsyncDataSource(getWeixinUser($deps[0]))}}',
+                  },
                 },
               },
               toParty: {
                 title: '收信部门ID',
-                'x-component': 'Input',
+                'x-component': 'Select',
                 'x-decorator': 'FormItem',
                 'x-decorator-props': {
                   tooltip: '请输入收信部门ID',
                 },
                 'x-component-props': {
                   placeholder: '请输入收信部门ID',
+                  mode: 'tags',
+                },
+                'x-reactions': {
+                  dependencies: ['configId'],
+                  fulfill: {
+                    run: '{{useAsyncDataSource(getWeixinDept($deps[0]))}}',
+                  },
                 },
               },
               toTag: {
                 title: '标签推送',
-                'x-component': 'Input',
+                'x-component': 'Select',
                 'x-decorator': 'FormItem',
                 'x-decorator-props': {
                   tooltip: '标签推送',
                 },
                 'x-component-props': {
                   placeholder: '请输入标签推送，多个标签用,号分隔',
+                  mode: 'tags',
+                },
+                'x-reactions': {
+                  dependencies: ['configId'],
+                  fulfill: {
+                    run: '{{useAsyncDataSource(getWeixinTags($deps[0]))}}',
+                  },
                 },
               },
             },
@@ -311,7 +353,7 @@ const Detail = observer(() => {
                   },
                   userIdList: {
                     title: '收信人ID',
-                    'x-component': 'Input',
+                    'x-component': 'Select',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       tooltip: '请输入收信人ID',
@@ -319,16 +361,28 @@ const Detail = observer(() => {
                     'x-component-props': {
                       placeholder: '请输入收信人ID',
                     },
+                    'x-reactions': {
+                      dependencies: ['configId'],
+                      fulfill: {
+                        run: '{{useAsyncDataSource(getDingTalkUser($deps[0]))}}',
+                      },
+                    },
                   },
                   departmentIdList: {
                     title: '收信部门ID',
-                    'x-component': 'Input',
+                    'x-component': 'Select',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       tooltip: '请输入收信部门ID',
                     },
                     'x-component-props': {
                       placeholder: '请输入AgentID',
+                    },
+                    'x-reactions': {
+                      dependencies: ['configId'],
+                      fulfill: {
+                        run: '{{useAsyncDataSource(getDingTalkDept($deps[0]))}}',
+                      },
                     },
                   },
                 },
@@ -482,7 +536,7 @@ const Detail = observer(() => {
                 properties: {
                   code: {
                     title: '模版ID',
-                    'x-component': 'Input',
+                    'x-component': 'Select',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       tooltip: '请输入模版ID',
@@ -490,10 +544,16 @@ const Detail = observer(() => {
                     'x-component-props': {
                       placeholder: '请输入模版ID',
                     },
+                    'x-reactions': {
+                      dependencies: ['configId'],
+                      fulfill: {
+                        run: '{{useAsyncDataSource(getAliyunTemplates($deps[0]))}}',
+                      },
+                    },
                   },
                   phoneNumber: {
                     title: '收信人',
-                    'x-component': 'Input',
+                    'x-component': 'Select',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       tooltip: '请输入收信人',
@@ -504,13 +564,19 @@ const Detail = observer(() => {
                   },
                   signName: {
                     title: '签名',
-                    'x-component': 'Input',
+                    'x-component': 'Select',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       tooltip: '请输入签名',
                     },
                     'x-component-props': {
                       placeholder: '请输入签名',
+                    },
+                    'x-reactions': {
+                      dependencies: ['configId'],
+                      fulfill: {
+                        run: '{{useAsyncDataSource(getAliyunSigns($deps[0]))}}',
+                      },
                     },
                   },
                   // code	String	短信-模板ID
@@ -549,12 +615,55 @@ const Detail = observer(() => {
               //   },
               // },
               attachments: {
-                'x-component': 'FUpload',
+                type: 'array',
+                title: '附件信息',
                 'x-decorator': 'FormItem',
-                title: '附件',
-                'x-component-props': {
-                  type: 'file',
-                  placeholder: '请上传文件',
+                'x-component': 'ArrayItems',
+                'x-decorator-props': {
+                  style: {
+                    width: '100%',
+                  },
+                },
+                items: {
+                  type: 'object',
+
+                  'x-component': 'FormGrid',
+                  'x-component-props': {
+                    maxColumns: 24,
+                    minColumns: 24,
+                  },
+
+                  properties: {
+                    file: {
+                      'x-component': 'FUpload',
+                      'x-decorator': 'FormItem',
+                      'x-decorator-props': {
+                        style: {
+                          width: '100%',
+                        },
+                        gridSpan: 23,
+                      },
+                      'x-component-props': {
+                        type: 'file',
+                        placeholder: '请上传文件',
+                      },
+                    },
+                    remove: {
+                      type: 'void',
+                      'x-decorator': 'FormItem',
+                      'x-component': 'ArrayItems.Remove',
+                      'x-decorator-props': {
+                        gridSpan: 1,
+                      },
+                    },
+                  },
+                },
+                properties: {
+                  add: {
+                    type: 'void',
+                    'x-component': 'ArrayItems.Addition',
+                    title: '添加附件',
+                  },
                 },
               },
               // subject: {
@@ -668,7 +777,21 @@ const Detail = observer(() => {
         <Row>
           <Col span={10}>
             <Form className={styles.form} form={form} layout={'vertical'}>
-              <SchemaField schema={schema} scope={{ getConfig, useAsyncDataSource }} />
+              <SchemaField
+                schema={schema}
+                scope={{
+                  getConfig,
+                  getDingTalkDept,
+                  getDingTalkDeptTree,
+                  getDingTalkUser,
+                  getWeixinDept,
+                  getWeixinTags,
+                  getWeixinUser,
+                  getAliyunSigns,
+                  getAliyunTemplates,
+                  useAsyncDataSource,
+                }}
+              />
               <FormButtonGroup.Sticky>
                 <FormButtonGroup.FormItem>
                   <Submit onSubmit={handleSave}>保存</Submit>

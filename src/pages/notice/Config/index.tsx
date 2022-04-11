@@ -4,8 +4,8 @@ import {
   ArrowDownOutlined,
   BarsOutlined,
   BugOutlined,
+  DeleteOutlined,
   EditOutlined,
-  MinusOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
 import { Button, message, Popconfirm, Tooltip } from 'antd';
@@ -18,12 +18,21 @@ import { createForm, onFieldValueChange } from '@formily/core';
 import { observer } from '@formily/react';
 import SearchComponent from '@/components/SearchComponent';
 import ProTable from '@jetlinks/pro-table';
-import { history } from '@@/core/history';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
-import { useLocation } from 'umi';
+import { history, useLocation } from 'umi';
+import { model } from '@formily/reactive';
+import moment from 'moment';
 
 export const service = new Service('notifier/config');
 
+export const state = model<{
+  current?: ConfigItem;
+  debug?: boolean;
+  log?: boolean;
+}>({
+  debug: false,
+  log: false,
+});
 const Config = observer(() => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
@@ -40,113 +49,15 @@ const Config = observer(() => {
     const DForm = form;
     if (!DForm?.values) return;
     DForm.setValuesIn('provider', DForm.values.provider);
-    // const resp = await service.getMetadata(
-    //   DForm?.values?.type,
-    //   // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    //   currentType || DForm.values?.provider,
-    // );
-    // const properties = resp.result?.properties as ConfigMetadata[];
-    // setConfigSchema({
-    //   type: 'object',
-    //   properties: properties?.reduce((previousValue, currentValue) => {
-    //     if (currentValue.type?.type === 'array') {
-    //       // 单独处理邮件的其他配置功能
-    //       previousValue[currentValue.property] = {
-    //         type: 'array',
-    //         title: '其他配置',
-    //         'x-component': 'ArrayItems',
-    //         'x-decorator': 'FormItem',
-    //         items: {
-    //           type: 'object',
-    //           properties: {
-    //             space: {
-    //               type: 'void',
-    //               'x-component': 'Space',
-    //               properties: {
-    //                 sort: {
-    //                   type: 'void',
-    //                   'x-decorator': 'FormItem',
-    //                   'x-component': 'ArrayItems.SortHandle',
-    //                 },
-    //                 name: {
-    //                   type: 'string',
-    //                   title: 'key',
-    //                   'x-decorator': 'FormItem',
-    //                   'x-component': 'Input',
-    //                 },
-    //                 value: {
-    //                   type: 'string',
-    //                   title: 'value',
-    //                   'x-decorator': 'FormItem',
-    //                   'x-component': 'Input',
-    //                 },
-    //                 description: {
-    //                   type: 'string',
-    //                   title: '备注',
-    //                   'x-decorator': 'FormItem',
-    //                   'x-component': 'Input',
-    //                 },
-    //                 remove: {
-    //                   type: 'void',
-    //                   'x-decorator': 'FormItem',
-    //                   'x-component': 'ArrayItems.Remove',
-    //                 },
-    //               },
-    //             },
-    //           },
-    //         },
-    //         properties: {
-    //           add: {
-    //             type: 'void',
-    //             title: '添加条目',
-    //             'x-component': 'ArrayItems.Addition',
-    //           },
-    //         },
-    //       };
-    //     } else {
-    //       previousValue[currentValue.property] = {
-    //         title: currentValue.name,
-    //         type: 'string',
-    //         'x-component': 'Input',
-    //         'x-decorator': 'FormItem',
-    //       };
-    //     }
-    //     return previousValue;
-    //   }, {}),
-    // });
-    // DForm.setValues(CurdModel.current);
-    // setLoading(false);
   };
-  // const schema: ISchema = {
-  //   type: 'object',
-  //   properties: {
-  //     name: {
-  //       title: '名称',
-  //       'x-component': 'Input',
-  //       'x-decorator': 'FormItem',
-  //     },
-  //     type: {
-  //       title: '类型',
-  //       'x-component': 'Select',
-  //       'x-decorator': 'FormItem',
-  //       'x-reactions': ['{{useAsyncDataSource(getTypes)}}'],
-  //     },
-  //     provider: {
-  //       title: '服务商',
-  //       'x-component': 'Select',
-  //       'x-decorator': 'FormItem',
-  //     },
-  //     configuration: configSchema,
-  //   },
-  // };
 
   const formEvent = () => {
     onFieldValueChange('type', async (field, f) => {
       const type = field.value;
       if (!type) return;
-      f.setFieldState('provider', (state) => {
-        state.value = undefined;
-        state.dataSource = providerRef.current
+      f.setFieldState('provider', (state1) => {
+        state1.value = undefined;
+        state1.dataSource = providerRef.current
           .find((item) => type === item.id)
           ?.providerInfos.map((i) => ({ label: i.name, value: i.id }));
       });
@@ -191,7 +102,7 @@ const Config = observer(() => {
       dataIndex: 'type',
       title: intl.formatMessage({
         id: 'pages.notice.config.type',
-        defaultMessage: '通知类型',
+        defaultMessage: '通知方式',
       }),
     },
     {
@@ -214,10 +125,8 @@ const Config = observer(() => {
           key="edit"
           onClick={async () => {
             // setLoading(true);
-            CurdModel.update(record);
-            form.setValues(record);
-            await createSchema();
-            CurdModel.model = 'edit';
+            state.current = record;
+            history.push(getMenuPathByParams(MENUS_CODE['notice/Config/Detail'], id));
           }}
         >
           <Tooltip
@@ -229,7 +138,15 @@ const Config = observer(() => {
             <EditOutlined />
           </Tooltip>
         </a>,
-        <a onClick={() => downloadObject(record, '通知配置')} key="download">
+        <a
+          onClick={() =>
+            downloadObject(
+              record,
+              `通知配置${record.name}-${moment(new Date()).format('YYYY/MM/DD HH:mm:ss')}`,
+            )
+          }
+          key="download"
+        >
           <Tooltip
             title={intl.formatMessage({
               id: 'pages.data.option.download',
@@ -239,7 +156,12 @@ const Config = observer(() => {
             <ArrowDownOutlined />
           </Tooltip>
         </a>,
-        <a key="debug">
+        <a
+          key="debug"
+          onClick={() => {
+            state.debug = true;
+          }}
+        >
           <Tooltip
             title={intl.formatMessage({
               id: 'pages.notice.option.debug',
@@ -249,7 +171,12 @@ const Config = observer(() => {
             <BugOutlined />
           </Tooltip>
         </a>,
-        <a key="record">
+        <a
+          key="record"
+          onClick={() => {
+            state.log = true;
+          }}
+        >
           <Tooltip
             title={intl.formatMessage({
               id: 'pages.data.option.record',
@@ -279,7 +206,7 @@ const Config = observer(() => {
                 defaultMessage: '删除',
               })}
             >
-              <MinusOutlined />
+              <DeleteOutlined />
             </Tooltip>
           </Popconfirm>
         </a>,
@@ -299,6 +226,7 @@ const Config = observer(() => {
   return (
     <PageContainer className={'page-title-show'}>
       <SearchComponent
+        defaultParam={[{ column: 'type$IN', value: id }]}
         field={columns}
         onSearch={(data) => {
           actionRef.current?.reset?.();
@@ -313,6 +241,7 @@ const Config = observer(() => {
         toolBarRender={() => [
           <Button
             onClick={() => {
+              state.current = undefined;
               history.push(getMenuPathByParams(MENUS_CODE['notice/Config/Detail'], id));
             }}
             key="button"
@@ -327,23 +256,6 @@ const Config = observer(() => {
         ]}
         request={async (params) => service.query(params)}
       />
-
-      {/*<BaseCrud*/}
-      {/*  columns={columns}*/}
-      {/*  service={service}*/}
-      {/*  title={intl.formatMessage({*/}
-      {/*    id: 'pages.notice.config',*/}
-      {/*    defaultMessage: '通知配置',*/}
-      {/*  })}*/}
-      {/*  modelConfig={{*/}
-      {/*    width: '50vw',*/}
-      {/*    loading: loading,*/}
-      {/*  }}*/}
-      {/*  schema={schema}*/}
-      {/*  form={form}*/}
-      {/*  schemaConfig={{ scope: { useAsyncDataSource, getTypes } }}*/}
-      {/*  actionRef={actionRef}*/}
-      {/*/>*/}
     </PageContainer>
   );
 });

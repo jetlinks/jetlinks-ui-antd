@@ -119,7 +119,6 @@ const sortField = (field: ProColumns[]) => {
   if (!_temp) {
     // 如果没有index 就默认name字段最第一个
     field.map((item) => {
-      console.log(item, 'items');
       if (item.dataIndex === 'name') {
         item.index = 0;
         return item;
@@ -356,6 +355,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
   const handleHistory = (item: SearchHistory) => {
     const log = JSON.parse(item.content) as SearchTermsUI;
     form.setValues(log);
+    // @ts-ignore
     setExpand(!(log.terms1?.length > 1 || log.terms2?.length > 1));
   };
 
@@ -411,6 +411,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
         _value = _value.concat([{ terms: defaultParam }]);
       }
     }
+
     return _value
       .filter((i) => i.terms?.length > 0)
       .map((term) => {

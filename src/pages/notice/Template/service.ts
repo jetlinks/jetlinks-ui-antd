@@ -12,6 +12,40 @@ class Service extends BaseService<TemplateItem> {
     request(`${this.uri}/${type}/${provider}/metadata`, {
       method: 'GET',
     });
+
+  public getConfigs = (data: any) =>
+    request(`${SystemConst.API_BASE}/notifier/config/_query`, {
+      method: 'POST',
+      data,
+    });
+
+  public sendMessage = (notifierId: string) =>
+    request(`${SystemConst.API_BASE}/notifier/${notifierId}/_send`, {
+      method: 'POST',
+    });
+
+  dingTalk = {
+    getDepartments: (id: string) =>
+      request(`${SystemConst.API_BASE}/notifier/dingtalk/corp/${id}/departments`),
+    getDepartmentsTree: (id: string) =>
+      request(`${SystemConst.API_BASE}/notifier/dingtalk/corp/${id}/departments/tree`),
+    getUserByDepartment: (id: string, departmentId: string) =>
+      request(`${SystemConst.API_BASE}/notifier/dingtalk/corp/${id}/${departmentId}/users`),
+  };
+
+  weixin = {
+    getTags: (id: string) => request(`${SystemConst.API_BASE}/notifier/wechat/corp/${id}/tags`),
+    getDepartments: (id: string) =>
+      request(`${SystemConst.API_BASE}/notifier/wechat/corp/${id}/departments`),
+    getUserByDepartment: (id: string) =>
+      request(`${SystemConst.API_BASE}/notifier/wechat/corp/${id}/users`),
+  };
+
+  aliyun = {
+    getSigns: (id: string) => request(`${SystemConst.API_BASE}/notifier/sms/aliyun/${id}/signs`),
+    getTemplates: (id: string) =>
+      request(`${SystemConst.API_BASE}/notifier/sms/aliyun/${id}/templates`),
+  };
 }
 
 export default Service;
