@@ -182,7 +182,23 @@ export default () => {
     <PageContainer>
       <div className={'device-channel-warp'}>
         <div className={'left'}>
-          <Tree deviceId={deviceId} />
+          <Tree
+            deviceId={deviceId}
+            onSelect={(key) => {
+              if (key === deviceId && actionRef.current?.reset) {
+                actionRef.current?.reset();
+              } else {
+                setQueryParam({
+                  terms: [
+                    {
+                      column: 'parentId',
+                      value: key,
+                    },
+                  ],
+                });
+              }
+            }}
+          />
         </div>
         <div className={'right'}>
           <SearchComponent field={columns} onSearch={searchFn} />

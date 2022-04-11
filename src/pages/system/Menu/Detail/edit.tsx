@@ -41,7 +41,7 @@ export default (props: EditProps) => {
 
   const { data: permissions, run: queryPermissions } = useRequest(service.queryPermission, {
     manual: true,
-    formatResult: (response) => response.result.data,
+    formatResult: (response) => response.result,
   });
 
   const { data: menuThree, run: queryMenuThree } = useRequest(service.queryMenuThree, {

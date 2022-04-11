@@ -1,3 +1,4 @@
+@import '~antd/es/style/themes/default.less';
 @padding: 20px;
 
 .split-screen {
@@ -7,6 +8,18 @@
     width: 300px;
     padding-right: @padding;
     border-right: 1px solid #f0f0f0;
+
+    .online {
+      color: @success-color;
+    }
+
+    .offline {
+      color: @disabled-color;
+    }
+
+    .left-search {
+      margin-bottom: 12px;
+    }
   }
 
   .right-content {
@@ -55,7 +68,7 @@
       }
 
       .player-tools {
-        flex-basis: 290px;
+        flex-basis: 280px;
         padding: 50px 12px 0 12px;
       }
     }
