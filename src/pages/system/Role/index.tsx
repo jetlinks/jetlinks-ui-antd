@@ -136,10 +136,12 @@ const Role: React.FC = observer(() => {
         type: 'string',
         'x-decorator': 'FormItem',
         'x-component': 'Input',
-        'x-component-props': {},
         'x-decorator-props': {},
         name: 'name',
         required: true,
+        'x-component-props': {
+          placeholder: '请输入角色名称',
+        },
         'x-validator': [
           {
             max: 64,
@@ -161,6 +163,7 @@ const Role: React.FC = observer(() => {
         'x-component': 'Input.TextArea',
         'x-component-props': {
           checkStrength: true,
+          placeholder: '请输入描述',
         },
         'x-decorator-props': {},
         name: 'password',
