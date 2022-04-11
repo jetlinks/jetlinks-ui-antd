@@ -72,6 +72,9 @@ const Save = (props: Props) => {
         type: 'string',
         'x-decorator': 'FormItem',
         'x-component': 'Input',
+        'x-component-props': {
+          placeholder: '请输入标识(ID)',
+        },
         name: 'id',
         'x-decorator-props': {
           tooltip: <div>标识ID需与代码中的标识ID一致</div>,
@@ -96,6 +99,9 @@ const Save = (props: Props) => {
         'x-decorator': 'FormItem',
         'x-component': 'Input',
         name: 'name',
+        'x-component-props': {
+          placeholder: '请输入名称',
+        },
         'x-validator': [
           {
             max: 64,

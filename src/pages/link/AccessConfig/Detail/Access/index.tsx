@@ -395,8 +395,8 @@ const Access = (props: Props) => {
               <Button
                 type="primary"
                 onClick={() => {
-                  const url = getMenuPathByCode(MENUS_CODE['link/Protocol?save=true']);
-                  const tab: any = window.open(`${origin}/#${url}`);
+                  const url = getMenuPathByCode(MENUS_CODE[`link/Protocol`]);
+                  const tab: any = window.open(`${origin}/#${url}?save=true`);
                   tab!.onTabSaveSuccess = (value: any) => {
                     if (value) {
                       queryProcotolList(props.provider?.id);
@@ -438,8 +438,8 @@ const Access = (props: Props) => {
                     暂无数据
                     <a
                       onClick={() => {
-                        const url = getMenuPathByCode(MENUS_CODE['link/Protocol?save=true']);
-                        const tab: any = window.open(`${origin}/#${url}`);
+                        const url = getMenuPathByCode(MENUS_CODE[`link/Protocol`]);
+                        const tab: any = window.open(`${origin}/#${url}?save=true`);
                         tab!.onTabSaveSuccess = (value: any) => {
                           if (value) {
                             queryProcotolList(props.provider?.id);
@@ -467,10 +467,10 @@ const Access = (props: Props) => {
                     name="name"
                     rules={[{ required: true, message: '请输入名称' }]}
                   >
-                    <Input />
+                    <Input placeholder="请输入名称" />
                   </Form.Item>
                   <Form.Item name="description" label="说明">
-                    <Input.TextArea showCount maxLength={200} />
+                    <Input.TextArea showCount maxLength={200} placeholder="请输入说明" />
                   </Form.Item>
                 </Form>
                 <div className={styles.action} style={{ marginTop: 50 }}>

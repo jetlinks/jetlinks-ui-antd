@@ -388,10 +388,10 @@ const Media = (props: Props) => {
                 name="name"
                 rules={[{ required: true, message: '请输入名称' }]}
               >
-                <Input />
+                <Input placeholder="请输入名称" />
               </Form.Item>
               <Form.Item name="description" label="说明">
-                <Input.TextArea showCount maxLength={200} />
+                <Input.TextArea showCount maxLength={200} placeholder="请输入说明" />
               </Form.Item>
             </Form>
             <div className={styles.action}>
