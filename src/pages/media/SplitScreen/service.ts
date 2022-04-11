@@ -18,3 +18,7 @@ export const ptzStop = (deviceId: string, channelId: string) =>
 // 云台控制-缩放、转向等
 export const ptzTool = (deviceId: string, channelId: string, direct: string, speed: number = 90) =>
   request(`${url}/device/${deviceId}/${channelId}/_pzt/${direct}/${speed}`, { method: 'POST' });
+
+// 查询设备通道列表
+export const queryChannel = (data: any) =>
+  request(`${url}/channel/_query`, { method: 'POST', data });

@@ -17,6 +17,9 @@ class Service extends BaseService<ChannelItem> {
   saveChannel = (data: any) => request(`${this.uri}/channel`, { method: 'POST', data });
 
   removeChannel = (id: string) => request(`${this.uri}/channel/${id}`, { method: 'DELETE' });
+
+  // 设备详情
+  deviceDetail = (id: string) => request(`${this.uri}/device/${id}`, { method: 'GET' });
 }
 
 export default Service;
