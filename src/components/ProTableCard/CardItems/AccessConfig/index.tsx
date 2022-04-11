@@ -2,7 +2,7 @@ import React from 'react';
 import { StatusColorEnum } from '@/components/BadgeStatus';
 import { TableCard } from '@/components';
 import '@/style/common.less';
-import { Badge } from 'antd';
+import { Badge, Tooltip } from 'antd';
 import type { AccessItem } from '@/pages/link/AccessConfig/typings';
 import './index.less';
 
@@ -10,6 +10,8 @@ export interface AccessConfigCardProps extends AccessItem {
   detail?: React.ReactNode;
   actions?: React.ReactNode[];
   avatarSize?: number;
+  showTool?: boolean;
+  activeStyle?: string;
 }
 
 const defaultImage = require('/public/images/device-access.png');
@@ -25,7 +27,9 @@ export default (props: AccessConfigCardProps) => {
         enabled: StatusColorEnum.processing,
         disabled: StatusColorEnum.error,
       }}
+      showTool={props.showTool}
       contentClassName={props.state.value === 'disabled' ? 'tableCardDisabled' : 'tableCardEnabled'}
+      className={props.activeStyle}
     >
       <div className="context-access">
         <div>
@@ -33,23 +37,23 @@ export default (props: AccessConfigCardProps) => {
         </div>
         <div className="card">
           <div className="header">
-            <div className="title">{props.name || '--'}</div>
+            <div className="title">
+              <Tooltip title={props.name}>{props.name || '--'}</Tooltip>
+            </div>
             <div className="desc">{props.description || '--'}</div>
           </div>
           <div className="container">
             <div className="server">
               <div className="subTitle">{props?.channelInfo?.name || '--'}</div>
-              <div style={{ width: '100%' }}>
-                {props.channelInfo?.addresses.map((i: any, index: number) => (
-                  <p key={i.address + `_address${index}`}>
-                    <Badge color={i.health === -1 ? 'red' : 'green'} text={i.address} />
-                  </p>
-                ))}
-              </div>
+              {props.channelInfo?.addresses.slice(0, 2).map((i: any, index: number) => (
+                <div className="subItem" key={i.address + `_address${index}`}>
+                  <Badge color={i.health === -1 ? 'red' : 'green'} text={i.address} />
+                </div>
+              ))}
             </div>
             <div className="procotol">
               <div className="subTitle">{props?.protocolDetail?.name || '--'}</div>
-              <p>{props.protocolDetail?.description || '--'}</p>
+              <div className="desc">{props.protocolDetail?.description || '--'}</div>
             </div>
           </div>
         </div>
