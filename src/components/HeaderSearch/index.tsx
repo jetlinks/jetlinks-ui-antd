@@ -47,6 +47,7 @@ const HeaderSearch: React.FC<HeaderSearchProps> = (props) => {
   const inputClass = classNames(styles.input, {
     [styles.show]: searchMode,
   });
+  // @ts-ignore
   return (
     <div
       className={classNames(className, styles.headerSearch)}
@@ -70,11 +71,13 @@ const HeaderSearch: React.FC<HeaderSearchProps> = (props) => {
           cursor: 'pointer',
         }}
       />
+
       <AutoComplete
         key="AutoComplete"
         className={inputClass}
         value={value}
         options={restProps.options}
+        // @ts-ignore
         onChange={setValue}
       >
         <Input

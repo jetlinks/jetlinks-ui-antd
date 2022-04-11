@@ -46,6 +46,7 @@ export default (props: FunctionProps) => {
       case 'double':
         return <InputNumber style={{ width: '100%' }} placeholder={'请输入'} />;
       case 'date':
+        // @ts-ignore
         return <DatePicker style={{ width: '100%' }} />;
       default:
         return <Input placeholder={'请输入'} />;
