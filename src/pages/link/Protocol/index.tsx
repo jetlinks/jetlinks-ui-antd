@@ -205,6 +205,9 @@ const Protocol = () => {
                 },
               },
             ],
+            'x-component-props': {
+              placeholder: '请输入ID',
+            },
           },
           name: {
             title: '名称',
@@ -212,6 +215,9 @@ const Protocol = () => {
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               gridSpan: 1,
+            },
+            'x-component-props': {
+              placeholder: '请输入名称',
             },
             'x-validator': [
               {
@@ -230,6 +236,9 @@ const Protocol = () => {
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               tooltip: <div>jar：上传协议jar包，文件格式支持.jar或.zip</div>,
+            },
+            'x-component-props': {
+              placeholder: '请选择类型',
             },
             'x-validator': [
               {
@@ -269,7 +278,8 @@ const Protocol = () => {
                     state: {
                       visible: '{{["jar","local"].includes($deps[0])}}',
                       componentType: '{{$deps[0]==="jar"?"FileUpload":"Input"}}',
-                      componentProps: '{{$deps[0]==="jar"?{type:"file", accept: ".jar, .zip"}:{}}}',
+                      componentProps:
+                        '{{$deps[0]==="jar"?{type:"file", accept: ".jar, .zip"}:{placeholder: "请输入文件地址"}}}',
                     },
                   },
                 },

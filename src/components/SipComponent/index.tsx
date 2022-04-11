@@ -32,11 +32,12 @@ const SipComponent = (props: SipComponentProps) => {
         }}
         value={data?.host}
         style={{ marginRight: 10 }}
-        placeholder="请输入"
+        placeholder="请输入IP地址"
       />
       <InputNumber
         style={{ minWidth: 100 }}
         value={data?.port}
+        placeholder="请输入端口"
         min={1}
         max={65535}
         onChange={(e: number) => {

@@ -46,6 +46,7 @@ const FileUpload = connect((props: Props) => {
               e.preventDefault();
               e.stopPropagation();
             }}
+            placeholder="请上传文件"
           />
           <Button shape="round" style={{ width: '100px', textAlign: 'center' }} type="primary">
             上传jar包

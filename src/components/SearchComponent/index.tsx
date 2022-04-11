@@ -355,8 +355,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
   const handleHistory = (item: SearchHistory) => {
     const log = JSON.parse(item.content) as SearchTermsUI;
     form.setValues(log);
-    // @ts-ignore
-    setExpand(!(log.terms1?.length > 1 || log.terms2?.length > 1));
+    setExpand(!((log.terms1 && log.terms1?.length > 1) || (log.terms2 && log.terms2?.length > 1)));
   };
 
   const historyDom = (
@@ -413,7 +412,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
     }
 
     return _value
-      .filter((i) => i.terms?.length > 0)
+      .filter((i) => i.terms && i.terms?.length > 0)
       .map((term) => {
         term.terms?.map((item) => {
           if (item.termType === 'like') {

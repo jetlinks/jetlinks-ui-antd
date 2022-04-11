@@ -1,7 +1,6 @@
 import { ContainerFilled, ToolFilled } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-layout';
-import { Button, Card, Col, Row } from 'antd';
-import dingding from '/public/images/dingding.png';
+import { Button, Card, Col, Row, Space } from 'antd';
 import styles from './index.less';
 import { observer } from '@formily/react';
 import { history } from 'umi';
@@ -79,25 +78,44 @@ const Type = observer(() => {
   const list = [
     {
       type: 'dingTalk',
-      icon: dingding,
+      name: '钉钉',
+      describe: '支持钉钉消息、群机器人消息类型',
     },
     {
       type: 'weixin',
-      icon: dingding,
+      name: '微信',
+      describe: '支持企业消息、服务号消息类型',
     },
     {
       type: 'email',
-      icon: dingding,
+      name: '邮件',
+      describe: '支持国内通用和自定义邮件类型',
     },
     {
       type: 'voice',
-      icon: dingding,
+      name: '语音',
+      describe: '支持阿里云语音消息类型',
     },
     {
       type: 'sms',
-      icon: dingding,
+      name: '短信',
+      describe: '支持阿里云短信消息类型',
     },
   ];
+
+  const iconMap = new Map();
+  iconMap.set('dingTalk', require('/public/images/notice/dingtalk.png'));
+  iconMap.set('weixin', require('/public/images/notice/wechat.png'));
+  iconMap.set('email', require('/public/images/notice/email.png'));
+  iconMap.set('voice', require('/public/images/notice/voice.png'));
+  iconMap.set('sms', require('/public/images/notice/sms.png'));
+
+  const bGroundMap = new Map();
+  bGroundMap.set('dingTalk', require('/public/images/notice/dingtalk-background.png'));
+  bGroundMap.set('weixin', require('/public/images/notice/wechat-background.png'));
+  bGroundMap.set('email', require('/public/images/notice/email-background.png'));
+  bGroundMap.set('voice', require('/public/images/notice/voice-background.png'));
+  bGroundMap.set('sms', require('/public/images/notice/sms-background.png'));
 
   return (
     <PageContainer
@@ -109,42 +127,55 @@ const Type = observer(() => {
       <Row gutter={[24, 24]}>
         {list.map((i) => (
           <Col span={12} key={i.type}>
-            <Card>
-              <Row>
-                <Col span={12}>
-                  <img style={{ height: 100 }} src={dingding} alt="dingding" />
-                </Col>
-                <Col span={3} push={4}>
-                  <div className={styles.action}>
-                    <Button
-                      type={'link'}
-                      onClick={() => {
-                        history.push(
-                          `${getMenuPathByCode(MENUS_CODE['notice/Template'])}?id=${i.type}`,
-                        );
-                      }}
-                    >
-                      <ContainerFilled className={styles.icon} />
-                      <div>通知模版</div>
-                    </Button>
+            <Card
+              style={{
+                background: `url(${bGroundMap.get(i.type)}) no-repeat`,
+                backgroundSize: '100% 100%',
+              }}
+            >
+              <div className={styles.content}>
+                <div className={styles.left}>
+                  <img style={{ height: 104 }} src={iconMap.get(i.type)} alt="dingding" />
+                  <div className={styles.context}>
+                    <div className={styles.title}>{i.name}</div>
+                    <div className={styles.desc}>{i.describe}</div>
                   </div>
-                </Col>
-                <Col span={3} push={6}>
-                  <div className={styles.action}>
-                    <Button
-                      type={'link'}
-                      onClick={() => {
-                        history.push(
-                          `${getMenuPathByCode(MENUS_CODE['notice/Config'])}?id=${i.type}`,
-                        );
-                      }}
-                    >
-                      <ToolFilled className={styles.icon} />
-                      <div>通知配置</div>
-                    </Button>
-                  </div>
-                </Col>
-              </Row>
+                </div>
+                <div className={styles.right}>
+                  <Space>
+                    <div className={styles.action}>
+                      <Button
+                        type={'link'}
+                        onClick={() => {
+                          history.push(
+                            `${getMenuPathByCode(MENUS_CODE['notice/Template'])}?id=${i.type}`,
+                          );
+                        }}
+                      >
+                        <div className={styles.btn}>
+                          <ContainerFilled className={styles.icon} />
+                          <div>通知模版</div>
+                        </div>
+                      </Button>
+                    </div>
+                    <div className={styles.action}>
+                      <Button
+                        type={'link'}
+                        onClick={() => {
+                          history.push(
+                            `${getMenuPathByCode(MENUS_CODE['notice/Config'])}?id=${i.type}`,
+                          );
+                        }}
+                      >
+                        <div className={styles.btn}>
+                          <ToolFilled className={styles.icon} />
+                          <div>通知配置</div>
+                        </div>
+                      </Button>
+                    </div>
+                  </Space>
+                </div>
+              </div>
             </Card>
           </Col>
         ))}

@@ -1,16 +1,62 @@
-.action {
+@import '~antd/es/style/themes/default.less';
+
+.content {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  height: 70%;
+  justify-content: space-between;
 
-  .icon {
-    margin-bottom: 10px;
-    font-size: 32px;
+  .left {
+    display: flex;
+    .context {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      height: 100px;
+      margin-left: 15px;
+      .title {
+        font-size: 24px;
+      }
+      .desc {
+        color: rgba(0, 0, 0, 0.65);
+        font-size: 14px;
+      }
+    }
   }
+  .right {
+    .action {
+      display: flex;
+      justify-content: center;
+      width: 100px;
+      height: 100px;
+      background-color: #fff;
+      border: 1px solid @primary-color;
 
-  div {
-    font-size: 16px;
+      .btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100px;
+        height: 100px;
+        .icon {
+          margin-bottom: 10px;
+          color: @primary-color;
+          font-size: 32px;
+        }
+
+        div {
+          color: @primary-color;
+          font-size: 16px;
+        }
+      }
+    }
+
+    .action:hover {
+      background-color: @primary-color;
+      .icon,
+      div {
+        color: #fff;
+      }
+    }
   }
 }

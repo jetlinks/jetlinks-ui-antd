@@ -68,6 +68,7 @@ const PropertyLog = (props: Props) => {
     }
   }, [visible]);
 
+  // @ts-ignore
   return (
     <Modal
       maskClosable={false}
@@ -110,28 +111,31 @@ const PropertyLog = (props: Props) => {
             <Radio.Button value="week">近一周</Radio.Button>
             <Radio.Button value="month">近一月</Radio.Button>
           </Radio.Group>
-          <DatePicker.RangePicker
-            value={dateValue}
-            showTime
-            onChange={(dates: any) => {
-              if (dates) {
-                setRadioValue(undefined);
-                setDateValue(dates);
-                const st = dates[0]?.valueOf();
-                const et = dates[1]?.valueOf();
-                setStart(st);
-                setEnd(et);
-                handleSearch(
-                  {
-                    pageSize: 10,
-                    pageIndex: 0,
-                  },
-                  st,
-                  et,
-                );
-              }
-            }}
-          />
+          {
+            // @ts-ignore
+            <DatePicker.RangePicker
+              value={dateValue}
+              showTime
+              onChange={(dates: any) => {
+                if (dates) {
+                  setRadioValue(undefined);
+                  setDateValue(dates);
+                  const st = dates[0]?.valueOf();
+                  const et = dates[1]?.valueOf();
+                  setStart(st);
+                  setEnd(et);
+                  handleSearch(
+                    {
+                      pageSize: 10,
+                      pageIndex: 0,
+                    },
+                    st,
+                    et,
+                  );
+                }
+              }}
+            />
+          }
         </Space>
       </div>
 

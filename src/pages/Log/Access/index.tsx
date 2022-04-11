@@ -43,11 +43,11 @@ const Access = () => {
         id: 'pages.table.description',
         defaultMessage: '说明',
       }),
-      dataIndex: 'description',
+      dataIndex: 'describe',
       ellipsis: true,
-      render: (text, record) => {
-        return `${record.action}-${record.describe}`;
-      },
+      // render: (text, record) => {
+      //   return `${record.action}-${record.describe}`;
+      // },
     },
     {
       title: intl.formatMessage({
@@ -76,8 +76,10 @@ const Access = () => {
         id: 'pages.log.access.requestUser',
         defaultMessage: '请求用户',
       }),
-      dataIndex: 'context.username',
-      render: (text) => <Tag color="geekblue">{text}</Tag>,
+      dataIndex: 'username',
+      render: (text, record: any) => (
+        <Tag color="geekblue">{record?.context?.username || '--'}</Tag>
+      ),
     },
     {
       title: intl.formatMessage({
