@@ -56,6 +56,7 @@ const Detail = () => {
         return (
           <Access
             data={data}
+            provider={provider}
             change={() => {
               setVisible(true);
             }}

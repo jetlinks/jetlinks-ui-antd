@@ -530,7 +530,7 @@ const Media = (props: Props) => {
         </Button>
       )}
       {props?.provider?.id === 'fixed-media' ? (
-        FinishRender()
+        <div style={{ margin: '20px 30px' }}>{FinishRender()}</div>
       ) : (
         <div className={styles.box}>
           <div className={styles.steps}>

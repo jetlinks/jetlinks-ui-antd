@@ -16,64 +16,8 @@ import { useEffect, useState } from 'react';
 import { service, StreamModel } from '@/pages/media/Stream';
 import { useParams } from 'umi';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-
-const re =
-  /^([0-9]|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.([0-9]|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.([0-9]|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.([0-9]|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])$/;
-
-// API host
-interface APIComponentProps {
-  onChange?: (data: any) => void;
-  value?: {
-    apiHost?: string;
-    apiPort?: number;
-  };
-}
-
-const APIComponent = (props: APIComponentProps) => {
-  const { value, onChange } = props;
-  const [data, setData] = useState<{ apiHost?: string; apiPort?: number } | undefined>(value);
-
-  useEffect(() => {
-    setData(value);
-  }, [value]);
-
-  return (
-    <div style={{ display: 'flex', alignItems: 'center' }}>
-      <Input
-        onChange={(e) => {
-          if (onChange) {
-            const item = {
-              ...data,
-              apiHost: e.target.value,
-            };
-            setData(item);
-            onChange(item);
-          }
-        }}
-        value={data?.apiHost}
-        style={{ marginRight: 10 }}
-        placeholder="请输入API Host"
-      />
-      <InputNumber
-        style={{ minWidth: 150 }}
-        value={data?.apiPort}
-        min={1}
-        max={65535}
-        onChange={(e: number) => {
-          if (onChange) {
-            const item = {
-              ...data,
-              apiPort: e,
-            };
-            setData(item);
-            onChange(item);
-          }
-        }}
-      />
-    </div>
-  );
-};
-
+import SipComponent from '@/components/SipComponent';
+import { testIP } from '@/utils/util';
 interface RTPComponentProps {
   onChange?: (data: any) => void;
   value?: {
@@ -224,15 +168,23 @@ const Detail = () => {
     }
   }, [params.id]);
 
-  const checkAPI = (_: any, value: { apiHost: string; apiPort: number }) => {
-    if (Number(value.apiPort) < 1 || Number(value.apiPort) > 65535) {
-      return Promise.reject(new Error('端口请输入1~65535之间的正整数'));
-    }
-    if (!re.test(value.apiHost)) {
+  const checkSIP = (_: any, value: { host: string; port: number }) => {
+    if (!value || !value.host) {
+      return Promise.reject(new Error('请输入API HOST'));
+    } else if (value?.host && !testIP(value.host)) {
       return Promise.reject(new Error('请输入正确的IP地址'));
+    } else if (!value?.port) {
+      return Promise.reject(new Error('请输入端口'));
+    } else if ((value?.port && Number(value.port) < 1) || Number(value.port) > 65535) {
+      return Promise.reject(new Error('端口请输入1~65535之间的正整数'));
     }
     return Promise.resolve();
   };
+
+  const testPort = (value: any) => {
+    return (value && Number(value) < 1) || Number(value) > 65535;
+  };
+
   const checkRIP = (
     _: any,
     value: {
@@ -242,26 +194,31 @@ const Detail = () => {
       dynamicRtpPortRange: number[];
     },
   ) => {
-    if (!re.test(value.rtpIp)) {
+    if (!value || !value.rtpIp) {
+      return Promise.reject(new Error('请输入RTP IP'));
+    } else if (value?.rtpIp && !testIP(value.rtpIp)) {
       return Promise.reject(new Error('请输入正确的IP地址'));
-    }
-    if (value.dynamicRtpPort) {
+    } else if (!value.dynamicRtpPort) {
+      if (value.rtpIp && !testIP(value.rtpIp)) {
+        return Promise.reject(new Error('请输入正确的IP地址'));
+      }
+      if (!value?.rtpPort) {
+        return Promise.reject(new Error('请输入端口'));
+      }
+      if (testPort(value?.rtpPort)) {
+        return Promise.reject(new Error('端口请输入1~65535之间的正整数'));
+      }
+    } else if (value.dynamicRtpPort) {
       if (value.dynamicRtpPortRange) {
-        if (value.dynamicRtpPortRange?.[0]) {
-          if (
-            Number(value.dynamicRtpPortRange?.[0]) < 1 ||
-            Number(value.dynamicRtpPortRange?.[0]) > 65535
-          ) {
-            return Promise.reject(new Error('端口请输入1~65535之间的正整数'));
-          }
+        if (!value.dynamicRtpPortRange?.[0]) {
+          return Promise.reject(new Error('请输入起始端口'));
+        } else if (testPort(value.dynamicRtpPortRange?.[0])) {
+          return Promise.reject(new Error('端口请输入1~65535之间的正整数'));
         }
-        if (value.dynamicRtpPortRange?.[1]) {
-          if (
-            Number(value.dynamicRtpPortRange?.[1]) < 1 ||
-            Number(value.dynamicRtpPortRange?.[1]) > 65535
-          ) {
-            return Promise.reject(new Error('端口请输入1~65535之间的正整数'));
-          }
+        if (!value.dynamicRtpPortRange?.[1]) {
+          return Promise.reject(new Error('请输入终止端口'));
+        } else if (testPort(value.dynamicRtpPortRange?.[1])) {
+          return Promise.reject(new Error('端口请输入1~65535之间的正整数'));
         }
         if (
           value.dynamicRtpPortRange?.[0] &&
@@ -270,10 +227,8 @@ const Detail = () => {
         ) {
           return Promise.reject(new Error('终止端口需大于等于起始端'));
         }
-      }
-    } else {
-      if (Number(value.rtpPort) < 1 || Number(value.rtpPort) > 65535) {
-        return Promise.reject(new Error('端口请输入1~65535之间的正整数'));
+      } else if (!value.dynamicRtpPortRange) {
+        return Promise.reject(new Error('请输入端口'));
       }
     }
     return Promise.resolve();
@@ -370,9 +325,9 @@ const Detail = () => {
                   </span>
                 }
                 name="api"
-                rules={[{ required: true, message: '请输入API Host' }, { validator: checkAPI }]}
+                rules={[{ required: true }, { validator: checkSIP }]}
               >
-                <APIComponent />
+                <SipComponent />
               </Form.Item>
             </Col>
             <Col span={24}>
@@ -389,7 +344,7 @@ const Detail = () => {
                   </span>
                 }
                 name="rtp"
-                rules={[{ required: true, message: '请输入RTP IP' }, { validator: checkRIP }]}
+                rules={[{ required: true }, { validator: checkRIP }]}
               >
                 <RTPComponent />
               </Form.Item>

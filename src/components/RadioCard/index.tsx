@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
 import { isArray } from 'lodash';
 import './index.less';
@@ -9,14 +9,17 @@ type RadioCardModelType = 'multiple' | 'singular';
 interface RadioCardItem {
   label: string;
   value: string;
-  imgUrl: string;
+  imgUrl?: string;
 }
 
 export interface RadioCardProps {
+  options: RadioCardItem[];
   value?: string | string[];
   model?: RadioCardModelType;
-  options: RadioCardItem[];
+  itemStyle?: React.CSSProperties;
+  className?: string;
   onChange?: (keys: string | string[]) => void;
+  disabled?: boolean;
   onSelect?: (key: string, selected: boolean, node: RadioCardItem[]) => void;
 }
 
@@ -62,19 +65,22 @@ export default (props: RadioCardProps) => {
   };
 
   return (
-    <div className={'radio-card-items'}>
+    <div className={classNames('radio-card-items', props.className, { disabled: props.disabled })}>
       {options.map((item) => {
         return (
           <div
             className={classNames('radio-card-item', {
               checked: keys?.includes(item.value),
             })}
+            style={props.itemStyle}
             key={item.value}
             onClick={() => {
-              toggleOption(item.value);
+              if (!props.disabled) {
+                toggleOption(item.value);
+              }
             }}
           >
-            <img width={32} height={32} src={item.imgUrl} alt={''} />
+            {item.imgUrl && <img width={32} height={32} src={item.imgUrl} alt={''} />}
             <span>{item.label}</span>
             <div className={'checked-icon'}>
               <div>

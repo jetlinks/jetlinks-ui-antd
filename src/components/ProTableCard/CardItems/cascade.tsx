@@ -34,7 +34,7 @@ export default (props: CascadeCardProps) => {
           <div className={'card-item-header'}>
             <span className={'card-item-header-name ellipsis'}>{props.name}</span>
           </div>
-          <div>通道数量： 5</div>
+          <div>通道数量： {props?.count || 0}</div>
           <div>
             <Badge
               status={props.onlineStatus?.value === 'offline' ? 'error' : 'success'}

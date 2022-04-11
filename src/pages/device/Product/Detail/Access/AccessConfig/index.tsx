@@ -1,15 +1,13 @@
 import { useEffect, useState } from 'react';
-import { Badge, Button, Col, message, Modal, Pagination, Row } from 'antd';
+import { Button, Col, message, Modal, Pagination, Row } from 'antd';
 import { service } from '@/pages/link/AccessConfig';
 import { productModel } from '@/pages/device/Product';
 import SearchComponent from '@/components/SearchComponent';
 import type { ProColumns } from '@jetlinks/pro-table';
 import styles from './index.less';
 import Service from '@/pages/device/Product/service';
-import { TableCard } from '@/components';
-import { StatusColorEnum } from '@/components/BadgeStatus';
 
-const defaultImage = require('/public/images/device-access.png');
+import AccessConfigCard from '@/components/ProTableCard/CardItems/AccessConfig';
 
 interface Props {
   close: () => void;
@@ -28,7 +26,7 @@ const AccessConfig = (props: Props) => {
   });
   const [param, setParam] = useState<any>({ pageSize: 4 });
 
-  const [currrent] = useState<any>({
+  const [currrent, setCurrrent] = useState<any>({
     id: productModel.current?.accessId,
     name: productModel.current?.accessName,
     protocol: productModel.current?.messageProtocol,
@@ -145,51 +143,15 @@ const AccessConfig = (props: Props) => {
           <Col
             key={item.name}
             span={12}
-            // style={{
-            //   width: '100%',
-            //   borderColor: currrent?.id === item.id ? 'var(--ant-primary-color-active)' : ''
-            // }}
-            // onClick={() => {
-            //   setCurrrent(item);
-            // }}
+            onClick={() => {
+              setCurrrent(item);
+            }}
           >
-            <TableCard
-              showMask={false}
-              status={item.state.value}
-              statusText={item.state.text}
-              statusNames={{
-                enabled: StatusColorEnum.processing,
-                disabled: StatusColorEnum.error,
-              }}
-            >
-              <div className={styles.context}>
-                <div>
-                  <img width={88} height={88} src={defaultImage} alt={''} />
-                </div>
-                <div className={styles.card}>
-                  <div className={styles.header}>
-                    <div className={styles.title}>{item.name || '--'}</div>
-                    <div className={styles.desc}>{item.description || '--'}</div>
-                  </div>
-                  <div className={styles.container}>
-                    <div className={styles.server}>
-                      <div className={styles.subTitle}>{item?.channelInfo?.name || '--'}</div>
-                      <p>
-                        {item.channelInfo?.addresses.map((i: any) => (
-                          <div key={i.address}>
-                            <Badge color={i.health === -1 ? 'red' : 'green'} text={i.address} />
-                          </div>
-                        ))}
-                      </p>
-                    </div>
-                    <div className={styles.procotol}>
-                      <div className={styles.subTitle}>{item?.protocolDetail?.name || '--'}</div>
-                      <p>{item.protocolDetail?.description || '--'}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </TableCard>
+            <AccessConfigCard
+              {...item}
+              showTool={false}
+              activeStyle={currrent?.id === item.id ? 'active' : ''}
+            />
           </Col>
         ))}
       </Row>

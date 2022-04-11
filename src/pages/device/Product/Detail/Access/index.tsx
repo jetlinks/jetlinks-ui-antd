@@ -12,6 +12,7 @@ import type { ConfigProperty } from '@/pages/device/Product/typings';
 import { createSchemaField } from '@formily/react';
 import { createForm } from '@formily/core';
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import TitleComponent from '@/components/TitleComponent';
 
 const componentMap = {
   string: 'Input',
@@ -33,6 +34,8 @@ const Access = () => {
   MetworkTypeMapping.set('mqtt-client-gateway', 'MQTT_CLIENT');
   MetworkTypeMapping.set('mqtt-server-gateway', 'MQTT_SERVER');
   MetworkTypeMapping.set('tcp-server-gateway', 'TCP_SERVER');
+  MetworkTypeMapping.set('fixed-media', 'TCP_CLIENT');
+  MetworkTypeMapping.set('gb28181-2016', 'UDP');
 
   const [configVisible, setConfigVisible] = useState<boolean>(false);
 
@@ -284,6 +287,24 @@ const Access = () => {
                 minColumns: 1,
                 columnGap: 48,
               },
+              title: (
+                <TitleComponent
+                  data={
+                    <span>
+                      {item.name}
+                      <Tooltip title="此配置来自于该产品接入方式所选择的协议">
+                        <QuestionCircleOutlined />
+                      </Tooltip>
+                    </span>
+                  }
+                />
+              ),
+              'x-decorator': 'FormItem',
+              'x-decorator-props': {
+                gridSpan: 1,
+                labelAlign: 'left',
+                layout: 'vertical',
+              },
               properties: configToSchema(item.properties),
             },
           },
@@ -343,20 +364,24 @@ const Access = () => {
           <Col span={12}>
             <div className={styles.config}>
               <div className={styles.item}>
-                <div className={styles.title}>
-                  接入方式
-                  <Button
-                    size="small"
-                    type="primary"
-                    ghost
-                    style={{ marginLeft: 20 }}
-                    onClick={() => {
-                      setConfigVisible(true);
-                    }}
-                  >
-                    更换
-                  </Button>
-                </div>
+                <TitleComponent
+                  data={
+                    <span>
+                      接入方式
+                      <Button
+                        size="small"
+                        type="primary"
+                        ghost
+                        style={{ marginLeft: 20 }}
+                        onClick={() => {
+                          setConfigVisible(true);
+                        }}
+                      >
+                        更换
+                      </Button>
+                    </span>
+                  }
+                />
                 <div className={styles.context}>
                   {providers.find((i) => i.id === access?.provider)?.name || '--'}
                 </div>
@@ -370,7 +395,7 @@ const Access = () => {
               </div>
 
               <div className={styles.item}>
-                <div className={styles.title}>消息协议</div>
+                <TitleComponent data={'消息协议'} />
                 <div className={styles.context}>{access?.protocolDetail?.name || '--'}</div>
                 {config?.document && (
                   <div className={styles.context}>
@@ -380,7 +405,7 @@ const Access = () => {
               </div>
 
               <div className={styles.item}>
-                <div className={styles.title}>连接信息</div>
+                <TitleComponent data={'连接信息'} />
                 {(networkList.find((i) => i.id === access?.channelId)?.addresses || []).length > 0
                   ? (networkList.find((i) => i.id === access?.channelId)?.addresses || []).map(
                       (item: any) => (
@@ -396,15 +421,7 @@ const Access = () => {
                   : '暂无连接信息'}
               </div>
 
-              <div className={styles.item}>
-                <div className={styles.title}>
-                  认证配置
-                  <Tooltip title="此配置来自于该产品接入方式所选择的协议">
-                    <QuestionCircleOutlined />
-                  </Tooltip>
-                </div>
-                {renderConfigCard()}
-              </div>
+              <div className={styles.item}>{renderConfigCard()}</div>
             </div>
           </Col>
           <Col span={12}>

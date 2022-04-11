@@ -11,7 +11,7 @@ export interface ProductCardProps extends ProductItem {
   actions?: React.ReactNode[];
   avatarSize?: number;
 }
-const defaultImage = require('/public/images/device-type-3-big.png');
+const defaultImage = require('/public/images/device-product.png');
 
 export default (props: ProductCardProps) => {
   const intl = useIntl();
