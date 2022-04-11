@@ -1,17 +1,13 @@
-import { TableCard } from '@/components';
 import SearchComponent from '@/components/SearchComponent';
 import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
-import { StatusColorEnum } from '@/components/BadgeStatus';
 import { PageContainer } from '@ant-design/pro-layout';
 import type { ProColumns } from '@jetlinks/pro-table';
-import { Badge, Button, Card, Col, Empty, message, Pagination, Popconfirm, Row } from 'antd';
+import { Button, Card, Col, Empty, message, Pagination, Popconfirm, Row } from 'antd';
 import { useEffect, useState } from 'react';
 import { useHistory } from 'umi';
-import styles from './index.less';
 import Service from './service';
 import { CheckCircleOutlined, DeleteOutlined, EditOutlined, StopOutlined } from '@ant-design/icons';
-
-const defaultImage = require('/public/images/device-access.png');
+import AccessConfigCard from '@/components/ProTableCard/CardItems/AccessConfig';
 
 export const service = new Service('gateway/device');
 
@@ -72,7 +68,6 @@ const AccessConfig = () => {
       <Card>
         <SearchComponent
           field={columns}
-          // pattern={'simple'}
           enableSave={false}
           onSearch={(data: any) => {
             const dt = {
@@ -96,8 +91,8 @@ const AccessConfig = () => {
           <Row gutter={[16, 16]} style={{ marginTop: 10 }}>
             {(dataSource?.data || []).map((item: any) => (
               <Col key={item.id} span={12}>
-                <TableCard
-                  showMask={false}
+                <AccessConfigCard
+                  {...item}
                   actions={[
                     <Button
                       key="edit"
@@ -166,43 +161,7 @@ const AccessConfig = () => {
                       </Popconfirm>
                     </Button>,
                   ]}
-                  status={item.state.value}
-                  statusText={item.state.text}
-                  statusNames={{
-                    enabled: StatusColorEnum.processing,
-                    disabled: StatusColorEnum.error,
-                  }}
-                >
-                  <div className={styles.context}>
-                    <div>
-                      <img width={88} height={88} src={defaultImage} alt={''} />
-                    </div>
-                    <div className={styles.card}>
-                      <div className={styles.header}>
-                        <div className={styles.title}>{item.name || '--'}</div>
-                        <div className={styles.desc}>{item.description || '--'}</div>
-                      </div>
-                      <div className={styles.container}>
-                        <div className={styles.server}>
-                          <div className={styles.subTitle}>{item?.channelInfo?.name || '--'}</div>
-                          <div style={{ width: '100%' }}>
-                            {item.channelInfo?.addresses.map((i: any, index: number) => (
-                              <p key={i.address + `_address${index}`}>
-                                <Badge color={i.health === -1 ? 'red' : 'green'} text={i.address} />
-                              </p>
-                            ))}
-                          </div>
-                        </div>
-                        <div className={styles.procotol}>
-                          <div className={styles.subTitle}>
-                            {item?.protocolDetail?.name || '--'}
-                          </div>
-                          <p>{item.protocolDetail?.description || '--'}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </TableCard>
+                />
               </Col>
             ))}
           </Row>
