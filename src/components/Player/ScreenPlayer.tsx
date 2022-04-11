@@ -34,6 +34,7 @@ interface ScreenProps {
    * @param type 当前操作动作
    */
   onMouseUp?: (id: string, channelId: string, type: string) => void;
+  showScreen?: boolean;
 }
 
 export default (props: ScreenProps) => {
@@ -80,25 +81,27 @@ export default (props: ScreenProps) => {
     <div className={'live-player-warp'}>
       <div className={'live-player-content'}>
         <div className={'player-screen-tool'}>
-          <Radio.Group
-            options={[
-              { label: '单屏', value: 1 },
-              { label: '四分屏', value: 4 },
-              { label: '九分屏', value: 9 },
-              { label: '全屏', value: 0 },
-            ]}
-            value={screen}
-            onChange={(e) => {
-              if (e.target.value) {
-                setScreen(e.target.value);
-              } else {
-                // 全屏操作
-                setFull();
-              }
-            }}
-            optionType={'button'}
-            buttonStyle={'solid'}
-          />
+          {props.showScreen !== false && (
+            <Radio.Group
+              options={[
+                { label: '单屏', value: 1 },
+                { label: '四分屏', value: 4 },
+                { label: '九分屏', value: 9 },
+                { label: '全屏', value: 0 },
+              ]}
+              value={screen}
+              onChange={(e) => {
+                if (e.target.value) {
+                  setScreen(e.target.value);
+                } else {
+                  // 全屏操作
+                  setFull();
+                }
+              }}
+              optionType={'button'}
+              buttonStyle={'solid'}
+            />
+          )}
         </div>
         <div className={'player-body'}>
           <div className={classNames('player-screen', screenClass)} ref={fullscreenRef}>
@@ -107,7 +110,7 @@ export default (props: ScreenProps) => {
                 <div
                   key={`player_body_${index}`}
                   className={classNames({
-                    active: playerActive === index && !isFullscreen,
+                    active: props.showScreen !== false && playerActive === index && !isFullscreen,
                     'full-screen': isFullscreen,
                   })}
                   onClick={() => {

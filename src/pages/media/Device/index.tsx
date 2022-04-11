@@ -6,7 +6,6 @@ import { Button, message, Popconfirm, Tooltip } from 'antd';
 import {
   DeleteOutlined,
   EditOutlined,
-  EyeOutlined,
   PlusOutlined,
   SyncOutlined,
   PartitionOutlined,
@@ -17,7 +16,7 @@ import { BadgeStatus, ProTableCard } from '@/components';
 import { StatusColorEnum } from '@/components/BadgeStatus';
 import SearchComponent from '@/components/SearchComponent';
 import MediaDevice from '@/components/ProTableCard/CardItems/mediaDevice';
-import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 import Service from './service';
 import Save from './Save';
 
@@ -26,6 +25,11 @@ export const service = new Service('media/device');
 const providerType = {
   'gb28181-2016': 'GB/T28181',
   'fixed-media': '固定地址',
+};
+
+export const ProviderValue = {
+  GB281: 'gb28181-2016',
+  FIXED: 'fixed-media',
 };
 
 const Device = () => {
@@ -163,7 +167,11 @@ const Device = () => {
         <Tooltip key={'viewChannel'} title="查看通道">
           <a
             onClick={() => {
-              history.push(`${getMenuPathByParams(MENUS_CODE['media/Device/Channel'], record.id)}`);
+              history.push(
+                `${getMenuPathByCode(MENUS_CODE['media/Device/Channel'])}?id=${record.id}&type=${
+                  record.provider
+                }`,
+              );
             }}
           >
             <PartitionOutlined />
@@ -252,18 +260,6 @@ const Device = () => {
         cardRender={(record) => (
           <MediaDevice
             {...record}
-            detail={
-              <div
-                style={{ fontSize: 18, padding: 8 }}
-                onClick={() => {
-                  history.push(
-                    `${getMenuPathByParams(MENUS_CODE['device/Product/Detail'], record.id)}`,
-                  );
-                }}
-              >
-                <EyeOutlined />
-              </div>
-            }
             actions={[
               <Button
                 key="edit"
@@ -284,7 +280,9 @@ const Device = () => {
                 key={'viewChannel'}
                 onClick={() => {
                   history.push(
-                    `${getMenuPathByParams(MENUS_CODE['media/Device/Channel'], record.id)}`,
+                    `${getMenuPathByCode(MENUS_CODE['media/Device/Channel'])}?id=${
+                      record.id
+                    }&type=${record.provider}`,
                   );
                 }}
               >

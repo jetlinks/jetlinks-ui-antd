@@ -91,7 +91,10 @@ export interface ChannelItem {
   model: string;
   address: string;
   provider: string;
-  status: ChannelStatusType;
+  status: {
+    value: string;
+    text: string;
+  };
   others: object;
   description: string;
   parentChannelId: string;

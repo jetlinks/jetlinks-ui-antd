@@ -223,6 +223,10 @@ const Product = observer(() => {
       dataIndex: 'name',
     },
     {
+      title: '接入方式',
+      dataIndex: 'transportProtocol',
+    },
+    {
       title: '设备类型',
       dataIndex: 'deviceType',
       valueType: 'select',
