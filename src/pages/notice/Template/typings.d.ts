@@ -6,4 +6,12 @@ type TemplateItem = {
   provider: string;
   creatorId: string;
   createTime: number;
+  variableDefinitions: any;
+};
+
+type LogItem = {
+  id: string;
+  config: string;
+  sendTime: number;
+  state: string;
 };

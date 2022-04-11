@@ -1,35 +1,30 @@
-import { createSchemaField, FormProvider } from '@formily/react';
-import { Editable, FormItem, Input, ArrayTable } from '@formily/antd';
 import { createForm } from '@formily/core';
-import { Card, message } from 'antd';
-import { useIntl } from '@@/plugin-locale/localeExports';
+import { createSchemaField, FormProvider } from '@formily/react';
 import { InstanceModel, service } from '@/pages/device/Instance';
-import { useEffect, useState } from 'react';
+import { ArrayTable, FormItem, Input } from '@formily/antd';
+import { message, Modal } from 'antd';
+import { useIntl } from 'umi';
 
-const SchemaField = createSchemaField({
-  components: {
-    FormItem,
-    Editable,
-    Input,
-    ArrayTable,
-  },
-});
+interface Props {
+  close: () => void;
+  tags: any[];
+}
 
-const Tags = () => {
+const Edit = (props: Props) => {
+  const { tags } = props;
   const intl = useIntl();
-  const [tags, setTags] = useState<any[]>([]);
-
-  const tag = InstanceModel.detail?.tags;
-
-  useEffect(() => {
-    if (tag) {
-      setTags([...tag] || []);
-    }
-  }, [tag]);
 
   const form = createForm({
     initialValues: {
       tags: tags,
+    },
+  });
+
+  const SchemaField = createSchemaField({
+    components: {
+      FormItem,
+      Input,
+      ArrayTable,
     },
   });
 
@@ -56,7 +51,7 @@ const Tags = () => {
                   type: 'string',
                   'x-decorator': 'FormItem',
                   'x-component': 'Input',
-                  'x-disabled': true,
+                  // 'x-disabled': true
                 },
               },
             },
@@ -73,7 +68,7 @@ const Tags = () => {
               properties: {
                 name: {
                   type: 'string',
-                  'x-decorator': 'Editable',
+                  'x-decorator': 'FormItem',
                   'x-component': 'Input',
                 },
               },
@@ -91,47 +86,69 @@ const Tags = () => {
               properties: {
                 value: {
                   type: 'string',
-                  'x-decorator': 'Editable',
+                  'x-decorator': 'FormItem',
                   'x-component': 'Input',
+                },
+              },
+            },
+            column4: {
+              type: 'void',
+              'x-component': 'ArrayTable.Column',
+              'x-component-props': {
+                width: 100,
+                title: '操作',
+                dataIndex: 'operations',
+              },
+              properties: {
+                item: {
+                  type: 'void',
+                  'x-component': 'FormItem',
+                  properties: {
+                    remove: {
+                      type: 'void',
+                      'x-component': 'ArrayTable.Remove',
+                    },
+                  },
                 },
               },
             },
           },
         },
+        properties: {
+          add: {
+            type: 'void',
+            'x-component': 'ArrayTable.Addition',
+            title: '添加',
+          },
+        },
       },
     },
   };
+
   return (
-    <Card
-      title={intl.formatMessage({
-        id: 'pages.device.instanceDetail.tags',
-        defaultMessage: '标签',
-      })}
-      extra={
-        <a
-          onClick={async () => {
-            const values = (await form.submit()) as any;
-            if (values?.tags) {
-              const resp = await service.saveTags(InstanceModel.detail?.id || '', values.tags);
-              if (resp.status === 200) {
-                InstanceModel.detail = { ...InstanceModel.detail, tags: values.tags };
-                message.success('操作成功！');
-              }
-            }
-          }}
-        >
-          {intl.formatMessage({
-            id: 'pages.device.instanceDetail.save',
-            defaultMessage: '保存',
-          })}
-        </a>
-      }
+    <Modal
+      title="编辑标签"
+      onCancel={() => {
+        props.close();
+      }}
+      visible
+      width={1000}
+      onOk={async () => {
+        const values: any = (await form.submit()) as any;
+        const list = (values?.tags || []).filter((item: any) => item?.id);
+        const resp = await service.saveTags(InstanceModel.detail?.id || '', list);
+        if (resp.status === 200) {
+          InstanceModel.detail = { ...InstanceModel.detail, tags: values.tags };
+          message.success('操作成功！');
+          props.close();
+        }
+      }}
     >
       <FormProvider form={form}>
         <SchemaField schema={schema} />
       </FormProvider>
-    </Card>
+    </Modal>
   );
 };
 
-export default Tags;
+export default Edit;

@@ -15,7 +15,7 @@ import type { CascadeItem } from '@/pages/media/Cascade/typings';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import SearchComponent from '@/components/SearchComponent';
 import { ProTableCard } from '@/components';
-import CascadeCard from '@/components//ProTableCard/CardItems/cascade';
+import CascadeCard from '@/components/ProTableCard/CardItems/cascade';
 import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 import { useHistory } from 'umi';
 import Service from './service';

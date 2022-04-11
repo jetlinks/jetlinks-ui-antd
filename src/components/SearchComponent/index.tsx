@@ -55,12 +55,12 @@ const server2Ui = (source: SearchTermsServer): SearchTermsUI => ({
 });
 
 interface Props<T> {
-  /** @name 搜索条件 */
+  /** @name "搜索条件" */
   field: ProColumns<T>[];
   onSearch: (params: { terms: SearchTermsServer }) => void;
   target?: string;
   /**
-   *  @name 固定查询参数
+   *  @name "固定查询参数"
    *  eg: 1: {[{ column: 'test', value: 'admin' }]}
    *      2: {[
    *            {
@@ -133,6 +133,7 @@ const sortField = (field: ProColumns[]) => {
 
 const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
   const { field, target, onSearch, defaultParam, enableSave = true } = props;
+
   const intl = useIntl();
   const [expand, setExpand] = useState<boolean>(true);
   const initForm = server2Ui([{ terms: [initTerm] }]);
@@ -140,6 +141,17 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
   const [aliasVisible, setAliasVisible] = useState<boolean>(false);
   const [initParams, setInitParams] = useState<SearchTermsUI>(initForm);
   const [history, setHistory] = useState([]);
+
+  /**
+   * 过滤不参与搜索的数据
+   */
+  const filterSearchTerm = (): ProColumns<T>[] =>
+    field
+      .filter((item) => item.dataIndex)
+      .filter((item) => !item.hideInSearch)
+      .filter((item) => !['index', 'option'].includes(item.dataIndex as string));
+  // 处理后的搜索条件
+  const processedField = sortField(filterSearchTerm());
 
   const form = useMemo(
     () =>
@@ -150,7 +162,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
           onFormInit((form1) => {
             if (expand) {
               form1.setValues({
-                terms1: [{ column: sortField(field)[0]?.dataIndex, termType: 'like' }],
+                terms1: [{ column: processedField[0]?.dataIndex, termType: 'like' }],
               });
             }
           });
@@ -211,13 +223,6 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
     }
   };
 
-  const filterSearchTerm = (): EnumData[] =>
-    field
-      .filter((item) => item.dataIndex)
-      .filter((item) => !item.hideInSearch)
-      .filter((item) => !['index', 'option'].includes(item.dataIndex as string))
-      .map((i) => ({ label: i.title, value: i.dataIndex } as EnumData));
-
   const createGroup = (name: string): ISchema => ({
     'x-decorator': 'FormItem',
     'x-decorator-props': {
@@ -258,7 +263,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
           'x-component-props': {
             placeholder: '请选择',
           },
-          enum: filterSearchTerm(),
+          enum: filterSearchTerm().map((i) => ({ label: i.title, value: i.dataIndex } as EnumData)),
         },
         termType: {
           type: 'enum',
@@ -319,21 +324,22 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
 
   const handleExpand = () => {
     const value = form.values;
-    const _field = sortField(field);
 
     if (expand) {
       value.terms1 = [0, 1, 2].map((i) => ({
         termType: 'like',
-        column: (_field[i]?.dataIndex as string) || null,
+        column: (processedField[i]?.dataIndex as string) || null,
         type: 'or',
       }));
       value.terms2 = [3, 4, 5].map((i) => ({
         termType: 'like',
-        column: (_field[i]?.dataIndex as string) || null,
+        column: (processedField[i]?.dataIndex as string) || null,
         type: 'or',
       }));
     } else {
-      value.terms1 = [{ termType: 'like', column: (_field[0].dataIndex as string) || null }];
+      value.terms1 = [
+        { termType: 'like', column: (processedField[0].dataIndex as string) || null },
+      ];
       value.terms2 = [];
     }
     setInitParams(value);
@@ -349,6 +355,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
   const handleHistory = (item: SearchHistory) => {
     const log = JSON.parse(item.content) as SearchTermsUI;
     form.setValues(log);
+    // @ts-ignore
     setExpand(!(log.terms1?.length > 1 || log.terms2?.length > 1));
   };
 
@@ -399,13 +406,12 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
     // 处理默认查询参数
     if (defaultParam && defaultParam?.length > 0) {
       if ('terms' in defaultParam[0]) {
-        console.log(defaultParam, 'terms');
         _value = _value.concat(defaultParam as SearchTermsServer);
       } else if ('value' in defaultParam[0]) {
-        console.log(defaultParam, 'value');
         _value = _value.concat([{ terms: defaultParam }]);
       }
     }
+
     return _value
       .filter((i) => i.terms?.length > 0)
       .map((term) => {
@@ -422,8 +428,8 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
 
   const handleSearch = async () => {
     const value = form.values;
-    const filterTerms = (data: Partial<Term>[]) =>
-      data && data.filter((item) => item.column != null).filter((item) => item.value != null);
+    const filterTerms = (data: Partial<Term>[] | undefined) =>
+      data && data.filter((item) => item.column != null).filter((item) => item.value !== undefined);
     const _terms = _.cloneDeep(value);
     _terms.terms1 = filterTerms(_terms.terms1);
     _terms.terms2 = filterTerms(_terms.terms2);

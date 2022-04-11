@@ -1,9 +1,9 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { createForm, onFieldValueChange } from '@formily/core';
-import { Card, Col, Input, Row } from 'antd';
+import { Card, Col, Input, message, Row } from 'antd';
 import { ISchema } from '@formily/json-schema';
-import { useMemo } from 'react';
-import { createSchemaField } from '@formily/react';
+import { useEffect, useMemo } from 'react';
+import { createSchemaField, observer } from '@formily/react';
 import {
   FormButtonGroup,
   FormItem,
@@ -25,8 +25,9 @@ import { useAsyncDataSource } from '@/utils/util';
 import { useParams } from 'umi';
 import { typeList } from '@/pages/notice';
 import FUpload from '@/components/Upload';
+import { state } from '@/pages/notice/Config';
 
-const Detail = () => {
+const Detail = observer(() => {
   const { id } = useParams<{ id: string }>();
 
   const form = useMemo(
@@ -37,8 +38,8 @@ const Detail = () => {
           onFieldValueChange('type', async (field, f) => {
             const type = field.value;
             if (!type) return;
-            f.setFieldState('provider', (state) => {
-              state.value = undefined;
+            f.setFieldState('provider', (state1) => {
+              state1.value = undefined;
               // state.dataSource = providerRef.current
               //   .find((item) => type === item.id)
               //   ?.providerInfos.map((i) => ({ label: i.name, value: i.id }));
@@ -53,6 +54,12 @@ const Detail = () => {
       }),
     [id],
   );
+
+  useEffect(() => {
+    if (state.current) {
+      form.setValues(state.current);
+    }
+  }, []);
 
   const SchemaField = createSchemaField({
     components: {
@@ -113,7 +120,7 @@ const Detail = () => {
             type: 'void',
             properties: {
               corpId: {
-                title: 'corpID',
+                title: 'corpId',
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
                 // 企业消息
@@ -139,8 +146,8 @@ const Detail = () => {
                   },
                 },
               },
-              AppId: {
-                title: 'appId',
+              appId: {
+                title: 'appID',
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
                 'x-reactions': {
@@ -152,8 +159,8 @@ const Detail = () => {
                   },
                 },
               },
-              AppSecret: {
-                title: 'appSecret',
+              appSecret: {
+                title: 'AppSecret',
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
                 'x-reactions': {
@@ -172,7 +179,7 @@ const Detail = () => {
             type: 'void',
             'x-visible': id === 'dingTalk',
             properties: {
-              AppKey: {
+              appKey: {
                 title: 'AppKey',
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
@@ -186,7 +193,7 @@ const Detail = () => {
                   },
                 },
               },
-              AppSecret: {
+              appSecret: {
                 title: 'AppSecret',
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
@@ -200,7 +207,7 @@ const Detail = () => {
                   },
                 },
               },
-              Webhook: {
+              webhook: {
                 title: 'webHook',
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
@@ -301,6 +308,14 @@ const Detail = () => {
     },
   };
 
+  const handleSave = async () => {
+    const data: ConfigItem = await form.submit();
+    const response: any = await service.save(data);
+    if (response?.status === 200) {
+      message.success('保存成功');
+      history.back();
+    }
+  };
   return (
     <PageContainer>
       <Card>
@@ -310,7 +325,7 @@ const Detail = () => {
               <SchemaField scope={{ useAsyncDataSource, getTypes }} schema={schema} />
               <FormButtonGroup.Sticky>
                 <FormButtonGroup.FormItem>
-                  <Submit>保存</Submit>
+                  <Submit onSubmit={handleSave}>保存</Submit>
                 </FormButtonGroup.FormItem>
               </FormButtonGroup.Sticky>
             </Form>
@@ -322,6 +337,6 @@ const Detail = () => {
       </Card>
     </PageContainer>
   );
-};
+});
 
 export default Detail;

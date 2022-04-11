@@ -9,7 +9,7 @@ export const getMediaTree = (data?: any) =>
 
 // 开始直播
 export const ptzStart = (deviceId: string, channelId: string) =>
-  request(`${url}/device/${deviceId}/${channelId}/_pzt/_start`, { method: 'POST' });
+  request(`${url}/device/${deviceId}/${channelId}/_start`, { method: 'POST' });
 
 // 云台控制-停止
 export const ptzStop = (deviceId: string, channelId: string) =>

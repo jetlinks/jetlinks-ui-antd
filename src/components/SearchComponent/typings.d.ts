@@ -6,13 +6,13 @@ type Term = {
 };
 
 type SearchTermsUI = {
-  terms1: Partial<Term>[];
+  terms1: Partial<Term>[] | undefined;
   type: 'or' | 'and';
-  terms2: Partial<Term>[];
+  terms2: Partial<Term>[] | undefined;
 };
 
 type SearchTermsServer = {
-  terms: Partial<Term>[];
+  terms: Partial<Term>[] | undefined;
   type?: 'or' | 'and';
 }[];
 

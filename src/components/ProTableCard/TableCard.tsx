@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import classNames from 'classnames';
 import { BadgeStatus } from '@/components';
-import { StatusColorEnum, StatusColorType } from '@/components/BadgeStatus';
+import { StatusColorEnum } from '@/components/BadgeStatus';
+import type { StatusColorType } from '@/components/BadgeStatus';
 import './index.less';
 
 export interface TableCardProps {
@@ -15,6 +16,7 @@ export interface TableCardProps {
   statusNames?: Record<string | number, StatusColorType>;
   children?: React.ReactNode;
   actions?: React.ReactNode[];
+  contentClassName?: string;
 }
 
 function getAction(actions: React.ReactNode[]) {
@@ -72,7 +74,7 @@ export default (props: TableCardProps) => {
     <div className={classNames('iot-card', { hover: maskShow }, props.className)}>
       <div className={'card-warp'}>
         <div
-          className={'card-content'}
+          className={classNames('card-content', props.contentClassName)}
           onMouseEnter={() => {
             setMaskShow(true);
           }}

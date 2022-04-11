@@ -1,11 +1,10 @@
-import { Input, Tree } from 'antd';
+import { Tree } from 'antd';
 import { getMediaTree, queryChannel } from './service';
-import React, { useCallback, useEffect, useState, useRef } from 'react';
-import { SearchOutlined, VideoCameraOutlined } from '@ant-design/icons';
-import { debounce } from 'lodash';
+import React, { useEffect, useState } from 'react';
+import { VideoCameraOutlined } from '@ant-design/icons';
 
 type LeftTreeTYpe = {
-  onSelect?: (deviceId: string) => void;
+  onSelect?: (deviceId: string, channelId: string) => void;
 };
 
 interface DataNode {
@@ -23,7 +22,6 @@ interface DataNode {
 
 const LeftTree = (props: LeftTreeTYpe) => {
   const [treeData, setTreeData] = useState<DataNode[]>([]);
-  const treeDataCache = useRef<DataNode[]>([]);
 
   /**
    * 是否为子节点
@@ -132,36 +130,18 @@ const LeftTree = (props: LeftTreeTYpe) => {
     });
   };
 
-  const ThreeNodeSearch = useCallback(
-    (e: any) => {
-      const value = e.target.value;
-      // 缓存treeData数据
-      if (!treeDataCache.current.length) {
-        treeDataCache.current = treeData;
-      }
-
-      if (value) {
-        setTreeData(treeData.filter((node) => node.name.includes(value)));
-      } else {
-        setTreeData(treeDataCache.current);
-        treeDataCache.current = [];
-      }
-    },
-    [treeData],
-  );
-
   useEffect(() => {
     getDeviceList();
   }, []);
 
   return (
     <div className="left-content">
-      <Input
-        className={'left-search'}
-        placeholder={'请输入设备名称'}
-        suffix={<SearchOutlined />}
-        onChange={debounce(ThreeNodeSearch, 300)}
-      />
+      {/*<Input*/}
+      {/*  className={'left-search'}*/}
+      {/*  placeholder={'请输入设备名称'}*/}
+      {/*  suffix={<SearchOutlined />}*/}
+      {/*  onChange={debounce(ThreeNodeSearch, 300)}*/}
+      {/*/>*/}
       <Tree
         showIcon
         showLine={{ showLeafIcon: false }}
@@ -170,9 +150,9 @@ const LeftTree = (props: LeftTreeTYpe) => {
           title: 'name',
           key: 'id',
         }}
-        onSelect={(key) => {
-          if (props.onSelect) {
-            props.onSelect(key[0] as string);
+        onSelect={(_, { node }: any) => {
+          if (props.onSelect && node.isLeaf) {
+            props.onSelect(node.deviceId, node.channelId);
           }
         }}
         loadData={onLoadData}

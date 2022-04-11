@@ -171,13 +171,20 @@ const Detail = () => {
   const checkSIP = (_: any, value: { host: string; port: number }) => {
     if (!value || !value.host) {
       return Promise.reject(new Error('请输入API HOST'));
-    } else if ((value?.port && Number(value.port) < 1) || Number(value.port) > 65535) {
-      return Promise.reject(new Error('端口请输入1~65535之间的正整数'));
     } else if (value?.host && !testIP(value.host)) {
       return Promise.reject(new Error('请输入正确的IP地址'));
+    } else if (!value?.port) {
+      return Promise.reject(new Error('请输入端口'));
+    } else if ((value?.port && Number(value.port) < 1) || Number(value.port) > 65535) {
+      return Promise.reject(new Error('端口请输入1~65535之间的正整数'));
     }
     return Promise.resolve();
   };
+
+  const testPort = (value: any) => {
+    return (value && Number(value) < 1) || Number(value) > 65535;
+  };
+
   const checkRIP = (
     _: any,
     value: {
@@ -189,25 +196,29 @@ const Detail = () => {
   ) => {
     if (!value || !value.rtpIp) {
       return Promise.reject(new Error('请输入RTP IP'));
-    } else if (value.rtpIp && !testIP(value.rtpIp)) {
+    } else if (value?.rtpIp && !testIP(value.rtpIp)) {
       return Promise.reject(new Error('请输入正确的IP地址'));
+    } else if (!value.dynamicRtpPort) {
+      if (value.rtpIp && !testIP(value.rtpIp)) {
+        return Promise.reject(new Error('请输入正确的IP地址'));
+      }
+      if (!value?.rtpPort) {
+        return Promise.reject(new Error('请输入端口'));
+      }
+      if (testPort(value?.rtpPort)) {
+        return Promise.reject(new Error('端口请输入1~65535之间的正整数'));
+      }
     } else if (value.dynamicRtpPort) {
       if (value.dynamicRtpPortRange) {
-        if (value.dynamicRtpPortRange?.[0]) {
-          if (
-            Number(value.dynamicRtpPortRange?.[0]) < 1 ||
-            Number(value.dynamicRtpPortRange?.[0]) > 65535
-          ) {
-            return Promise.reject(new Error('端口请输入1~65535之间的正整数'));
-          }
+        if (!value.dynamicRtpPortRange?.[0]) {
+          return Promise.reject(new Error('请输入起始端口'));
+        } else if (testPort(value.dynamicRtpPortRange?.[0])) {
+          return Promise.reject(new Error('端口请输入1~65535之间的正整数'));
         }
-        if (value.dynamicRtpPortRange?.[1]) {
-          if (
-            Number(value.dynamicRtpPortRange?.[1]) < 1 ||
-            Number(value.dynamicRtpPortRange?.[1]) > 65535
-          ) {
-            return Promise.reject(new Error('端口请输入1~65535之间的正整数'));
-          }
+        if (!value.dynamicRtpPortRange?.[1]) {
+          return Promise.reject(new Error('请输入终止端口'));
+        } else if (testPort(value.dynamicRtpPortRange?.[1])) {
+          return Promise.reject(new Error('端口请输入1~65535之间的正整数'));
         }
         if (
           value.dynamicRtpPortRange?.[0] &&
@@ -216,10 +227,8 @@ const Detail = () => {
         ) {
           return Promise.reject(new Error('终止端口需大于等于起始端'));
         }
-      }
-    } else {
-      if ((value.rtpPort && Number(value.rtpPort) < 1) || Number(value.rtpPort) > 65535) {
-        return Promise.reject(new Error('端口请输入1~65535之间的正整数'));
+      } else if (!value.dynamicRtpPortRange) {
+        return Promise.reject(new Error('请输入端口'));
       }
     }
     return Promise.resolve();
@@ -316,7 +325,7 @@ const Detail = () => {
                   </span>
                 }
                 name="api"
-                rules={[{ validator: checkSIP }]}
+                rules={[{ required: true }, { validator: checkSIP }]}
               >
                 <SipComponent />
               </Form.Item>
@@ -335,7 +344,7 @@ const Detail = () => {
                   </span>
                 }
                 name="rtp"
-                rules={[{ validator: checkRIP }]}
+                rules={[{ required: true }, { validator: checkRIP }]}
               >
                 <RTPComponent />
               </Form.Item>
