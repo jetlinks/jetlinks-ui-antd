@@ -20,7 +20,7 @@ import { createForm, onFieldInit, onFieldValueChange } from '@formily/core';
 import { createSchemaField, observer } from '@formily/react';
 import type { ISchema } from '@formily/json-schema';
 import styles from './index.less';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import FUpload from '@/components/Upload';
 import { useParams } from 'umi';
 import { PageContainer } from '@ant-design/pro-layout';
@@ -29,6 +29,33 @@ import { typeList } from '@/pages/notice';
 import { configService, service, state } from '@/pages/notice/Template';
 import FBraftEditor from '@/components/FBraftEditor';
 import { useAsyncDataSource } from '@/utils/util';
+import WeixinCorp from '@/pages/notice/Template/Detail/doc/WeixinCorp';
+import WeixinApp from '@/pages/notice/Template/Detail/doc/WeixinApp';
+import DingTalk from '@/pages/notice/Template/Detail/doc/DingTalk';
+import DingTalkRebot from '@/pages/notice/Template/Detail/doc/DingTalkRebot';
+import AliyunVoice from '@/pages/notice/Template/Detail/doc/AliyunVoice';
+import AliyunSms from '@/pages/notice/Template/Detail/doc/AliyunSms';
+import Email from '@/pages/notice/Template/Detail/doc/Email';
+
+export const docMap = {
+  weixin: {
+    corpMessage: <WeixinCorp />,
+    officialMessage: <WeixinApp />,
+  },
+  dingTalk: {
+    dingTalkMessage: <DingTalk />,
+    dingTalkRobotWebHook: <DingTalkRebot />,
+  },
+  voice: {
+    aliyun: <AliyunVoice />,
+  },
+  sms: {
+    aliyunSms: <AliyunSms />,
+  },
+  email: {
+    embedded: <Email />,
+  },
+};
 
 const Detail = observer(() => {
   const { id } = useParams<{ id: string }>();
@@ -57,6 +84,7 @@ const Detail = observer(() => {
   const getAliyunSigns = (configId: string) => service.aliyun.getSigns(configId);
   const getAliyunTemplates = (configId: string) => service.aliyun.getTemplates(configId);
 
+  const [provider, setProvider] = useState<string>();
   // 正则提取${}里面的值
   const pattern = /(?<=\$\{).*?(?=\})/g;
   const form = useMemo(
@@ -72,17 +100,26 @@ const Detail = observer(() => {
             console.log(form1);
             ///给FBraftEditor 设置初始值
           });
+          onFieldValueChange('provider', (field) => {
+            const value = field.value;
+            setProvider(value);
+          });
           onFieldValueChange('template.message', (field, form1) => {
             let value = (field as Field).value;
-            if (id === 'email' && form1.modified) {
-              value = value?.toHTML();
-            }
-            const idList = value
-              ?.match(pattern)
-              ?.filter((i: string) => i)
-              .map((item: string) => ({ id: item, type: 'string', format: '--' }));
-            if (form1.modified) {
-              form1.setValuesIn('variableDefinitions', idList);
+            try {
+              if (id === 'email' && form1.modified) {
+                value = value?.toHTML();
+              }
+              console.log(value, 'value');
+              const idList = value
+                ?.match(pattern)
+                ?.filter((i: string) => i)
+                .map((item: string) => ({ id: item, type: 'string', format: '--' }));
+              if (form1.modified) {
+                form1.setValuesIn('variableDefinitions', idList);
+              }
+            } catch (e) {
+              message.error('邮件数据反显开发中...');
             }
           });
           onFieldValueChange('variableDefinitions.*.type', (field) => {
@@ -123,11 +160,6 @@ const Detail = observer(() => {
                 break;
             }
           });
-          // onFieldValueChange('configId', (field, form1) => {
-          //   const value = (field as Field).value;
-          //
-          //
-          // })
         },
       }),
     [id],
@@ -187,10 +219,15 @@ const Detail = observer(() => {
     }
     if (id === 'email') {
       data.provider = 'embedded';
-      data.template.message = data.template.message.toHTML();
+      data.template.text = data.template.message.toHTML();
     }
 
-    const response: any = await service.save(data);
+    let response;
+    if (data.id) {
+      response = await service.update(data);
+    } else {
+      response = await service.save(data);
+    }
 
     if (response?.status === 200) {
       message.success('保存成功');
@@ -579,25 +616,22 @@ const Detail = observer(() => {
                       },
                     },
                   },
-                  // code	String	短信-模板ID
-                  // signName	String	短信-签名
-                  // phoneNumber	String	短信-收信人
                 },
               },
             },
-            // ttsCode	String	语音-模版ID
-            // calledShowNumbers	String	语音-被叫显号
-            // CalledNumber	String	语音-被叫号码
-            // PlayTimes	String	语音-播放次数
           },
           email: {
             type: 'void',
             'x-visible': id === 'email',
             properties: {
-              // subject	String	邮件-模板ID
-              // sendTo	Array	邮件-收件人
-              // sendTo	String	邮件-内容
-              // attachments	String	邮件-附件信息
+              subject: {
+                'x-component': 'Input',
+                'x-decorator': 'FormItem',
+                title: '标题',
+                'x-decorator-props': {
+                  tip: '请输入邮件标题',
+                },
+              },
               sendTo: {
                 'x-component': 'Input.TextArea',
                 'x-decorator': 'FormItem',
@@ -666,11 +700,6 @@ const Detail = observer(() => {
                   },
                 },
               },
-              // subject: {
-              //   title: '模版ID',
-              //   'x-decorator': 'FormItem',
-              //   'x-component': 'Input',
-              // },
             },
           },
         },
@@ -754,7 +783,7 @@ const Detail = observer(() => {
                 format: {
                   type: 'string',
                   'x-decorator': 'FormItem',
-                  'x-component': 'PreviewText.Input',
+                  'x-component': 'Input',
                 },
               },
             },
@@ -800,7 +829,7 @@ const Detail = observer(() => {
             </Form>
           </Col>
           <Col span={12} push={2}>
-            这里是放描述信息的
+            {docMap[id][provider]}
           </Col>
         </Row>
       </Card>

@@ -5,7 +5,7 @@ import SearchComponent from '@/components/SearchComponent';
 import './index.less';
 import { useEffect, useRef, useState } from 'react';
 import { ChannelItem } from '@/pages/media/Device/Channel/typings';
-import { useIntl, useLocation, useHistory } from 'umi';
+import { useHistory, useIntl, useLocation } from 'umi';
 import { BadgeStatus } from '@/components';
 import { StatusColorEnum } from '@/components/BadgeStatus';
 import { Button, message, Popconfirm, Tooltip } from 'antd';
@@ -13,8 +13,8 @@ import {
   DeleteOutlined,
   EditOutlined,
   PlusOutlined,
-  VideoCameraOutlined,
   VideoCameraAddOutlined,
+  VideoCameraOutlined,
 } from '@ant-design/icons';
 import Save from './Save';
 import Service from './service';

@@ -4,7 +4,7 @@ import { createForm } from '@formily/core';
 import { createSchemaField, observer } from '@formily/react';
 import { Form, FormItem, Input, Select } from '@formily/antd';
 import { ISchema } from '@formily/json-schema';
-import { state } from '@/pages/notice/Template';
+import { service, state } from '@/pages/notice/Config';
 import { useLocation } from 'umi';
 import { useAsyncDataSource } from '@/utils/util';
 
@@ -31,18 +31,14 @@ const Debug = observer(() => {
 
   console.log(id, 'testt');
 
-  const getTemplate = () => {};
-  // const getConfig = () =>
-  //   configService
-  //     .queryNoPagingPost({
-  //       terms: [{column: 'type$IN', value: id}],
-  //     })
-  //     .then((resp: any) => {
-  //       return resp.result?.map((item) => ({
-  //         label: item.name,
-  //         value: item.id,
-  //       }));
-  //     });
+  const getTemplate = () => {
+    return service.getTemplate(id).then((resp) => {
+      return resp.result?.map((item: any) => ({
+        label: item.name,
+        value: item.id,
+      }));
+    });
+  };
 
   const schema: ISchema = {
     type: 'object',
@@ -64,6 +60,7 @@ const Debug = observer(() => {
   };
   return (
     <Modal
+      title="调试"
       width="40vw"
       visible={state.debug}
       onCancel={() => (state.debug = false)}

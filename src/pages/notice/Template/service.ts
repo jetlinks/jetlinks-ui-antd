@@ -13,6 +13,11 @@ class Service extends BaseService<TemplateItem> {
       method: 'GET',
     });
 
+  public batchInsert = () =>
+    request(`${this.uri}/_batch`, {
+      method: 'POST',
+    });
+
   public getConfigs = (data: any) =>
     request(`${SystemConst.API_BASE}/notifier/config/_query`, {
       method: 'POST',

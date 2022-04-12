@@ -7,21 +7,23 @@ import {
   DeleteOutlined,
   EditOutlined,
   PlusOutlined,
+  UnorderedListOutlined,
 } from '@ant-design/icons';
 import { Button, message, Popconfirm, Tooltip } from 'antd';
-import { useMemo, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { downloadObject } from '@/utils/util';
-import { CurdModel } from '@/components/BaseCrud/model';
 import Service from '@/pages/notice/Config/service';
-import { createForm, onFieldValueChange } from '@formily/core';
 import { observer } from '@formily/react';
 import SearchComponent from '@/components/SearchComponent';
-import ProTable from '@jetlinks/pro-table';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { history, useLocation } from 'umi';
 import { model } from '@formily/reactive';
 import moment from 'moment';
+import { ProTableCard } from '@/components';
+import NoticeConfig from '@/components/ProTableCard/CardItems/noticeConfig';
+import Debug from '@/pages/notice/Config/Debug';
+import Log from '@/pages/notice/Config/Log';
 
 export const service = new Service('notifier/config');
 
@@ -36,54 +38,9 @@ export const state = model<{
 const Config = observer(() => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
-  const providerRef = useRef<NetworkType[]>([]);
-  const oldTypeRef = useRef();
   const location = useLocation<{ id: string }>();
 
   const id = (location as any).query?.id;
-
-  // const [configSchema, setConfigSchema] = useState<ISchema>({});
-  // const [loading, setLoading] = useState<boolean>(false);
-  const createSchema = async () => {
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    const DForm = form;
-    if (!DForm?.values) return;
-    DForm.setValuesIn('provider', DForm.values.provider);
-  };
-
-  const formEvent = () => {
-    onFieldValueChange('type', async (field, f) => {
-      const type = field.value;
-      if (!type) return;
-      f.setFieldState('provider', (state1) => {
-        state1.value = undefined;
-        state1.dataSource = providerRef.current
-          .find((item) => type === item.id)
-          ?.providerInfos.map((i) => ({ label: i.name, value: i.id }));
-      });
-    });
-    onFieldValueChange('provider', async (field) => {
-      // eslint-disable-next-line @typescript-eslint/no-use-before-define
-      currentType = field.value;
-      await createSchema();
-    });
-  };
-
-  const form = useMemo(
-    () =>
-      createForm({
-        effects: formEvent,
-        initialValues: CurdModel.current,
-      }),
-    [],
-  );
-
-  let currentType = form.values.provider;
-
-  if (oldTypeRef.current !== currentType) {
-    form.clearFormGraph('configuration.*'); // 回收字段模型
-    form.deleteValuesIn('configuration.*');
-  }
 
   const columns: ProColumns<ConfigItem>[] = [
     {
@@ -233,7 +190,7 @@ const Config = observer(() => {
           setParam(data);
         }}
       />
-      <ProTable<ConfigItem>
+      <ProTableCard<ConfigItem>
         search={false}
         params={param}
         columns={columns}
@@ -254,8 +211,72 @@ const Config = observer(() => {
             })}
           </Button>,
         ]}
+        gridColumn={3}
         request={async (params) => service.query(params)}
+        cardRender={(record) => (
+          <NoticeConfig
+            {...record}
+            type={id}
+            actions={[
+              <Button
+                key="edit"
+                onClick={async () => {
+                  // setLoading(true);
+                  state.current = record;
+                  history.push(getMenuPathByParams(MENUS_CODE['notice/Config/Detail'], id));
+                }}
+              >
+                <EditOutlined />
+                编辑
+              </Button>,
+              <Button
+                key="debug"
+                onClick={() => {
+                  state.debug = true;
+                }}
+              >
+                <BugOutlined />
+                调试
+              </Button>,
+              <Button
+                key="export"
+                onClick={() =>
+                  downloadObject(
+                    record,
+                    `通知配置${record.name}-${moment(new Date()).format('YYYY/MM/DD HH:mm:ss')}`,
+                  )
+                }
+              >
+                <ArrowDownOutlined />
+                导出
+              </Button>,
+              <Button
+                key="log"
+                onClick={() => {
+                  state.log = true;
+                }}
+              >
+                <UnorderedListOutlined />
+                通知记录
+              </Button>,
+              <Popconfirm
+                key="delete"
+                title="确认删除？"
+                onConfirm={async () => {
+                  await service.remove(record.id);
+                  actionRef.current?.reset?.();
+                }}
+              >
+                <Button key="delete">
+                  <DeleteOutlined />
+                </Button>
+              </Popconfirm>,
+            ]}
+          />
+        )}
       />
+      <Debug />
+      <Log />
     </PageContainer>
   );
 });

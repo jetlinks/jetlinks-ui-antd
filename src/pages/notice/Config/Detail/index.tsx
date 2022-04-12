@@ -2,34 +2,61 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { createForm, onFieldValueChange } from '@formily/core';
 import { Card, Col, Input, message, Row } from 'antd';
 import { ISchema } from '@formily/json-schema';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { createSchemaField, observer } from '@formily/react';
 import {
+  ArrayTable,
+  Checkbox,
+  Editable,
+  Form,
   FormButtonGroup,
   FormItem,
+  NumberPicker,
+  PreviewText,
+  Radio,
   Select,
+  Space,
   Submit,
   Switch,
-  Form,
-  Radio,
-  ArrayTable,
-  Editable,
-  PreviewText,
-  Space,
-  NumberPicker,
-  Checkbox,
 } from '@formily/antd';
 import styles from './index.less';
-import { service } from '@/pages/notice/Config';
+import { service, state } from '@/pages/notice/Config';
 import { useAsyncDataSource } from '@/utils/util';
 import { useParams } from 'umi';
 import { typeList } from '@/pages/notice';
 import FUpload from '@/components/Upload';
-import { state } from '@/pages/notice/Config';
+import WeixinCorp from '@/pages/notice/Config/Detail/doc/WeixinCorp';
+import WeixinApp from '@/pages/notice/Config/Detail/doc/WeixinApp';
+import DingTalk from '@/pages/notice/Config/Detail/doc/DingTalk';
+import DingTalkRebot from '@/pages/notice/Config/Detail/doc/DingTalkRebot';
+import AliyunSms from '@/pages/notice/Config/Detail/doc/AliyunSms';
+import AliyunVoice from '@/pages/notice/Config/Detail/doc/AliyunVoice';
+import Email from '@/pages/notice/Config/Detail/doc/Email';
+
+export const docMap = {
+  weixin: {
+    corpMessage: <WeixinCorp />,
+    officialMessage: <WeixinApp />,
+  },
+  dingTalk: {
+    dingTalkMessage: <DingTalk />,
+    dingTalkRobotWebHook: <DingTalkRebot />,
+  },
+  voice: {
+    aliyun: <AliyunVoice />,
+  },
+  sms: {
+    aliyunSms: <AliyunSms />,
+  },
+  email: {
+    embedded: <Email />,
+  },
+};
 
 const Detail = observer(() => {
   const { id } = useParams<{ id: string }>();
 
+  const [provider, setProvider] = useState<string>();
   const form = useMemo(
     () =>
       createForm({
@@ -45,10 +72,8 @@ const Detail = observer(() => {
               //   ?.providerInfos.map((i) => ({ label: i.name, value: i.id }));
             });
           });
-          onFieldValueChange('provider', async () => {
-            // eslint-disable-next-line @typescript-eslint/no-use-before-define
-            // currentType = field.value;
-            // await createSchema();
+          onFieldValueChange('provider', async (field) => {
+            setProvider(field.value);
           });
         },
       }),
@@ -316,6 +341,7 @@ const Detail = observer(() => {
       history.back();
     }
   };
+
   return (
     <PageContainer>
       <Card>
@@ -331,7 +357,7 @@ const Detail = observer(() => {
             </Form>
           </Col>
           <Col span={12} push={2}>
-            结果
+            {docMap[id][provider]}
           </Col>
         </Row>
       </Card>
