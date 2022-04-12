@@ -224,6 +224,10 @@ export const getButtonPermission = (
   code: MENUS_CODE_TYPE,
   permission: BUTTON_PERMISSION | BUTTON_PERMISSION[],
 ): boolean => {
+  if (!code) {
+    return false;
+  }
+
   let buttons = {};
   try {
     const buttonString = localStorage.getItem(MENUS_BUTTONS_CACHE);
@@ -232,8 +236,11 @@ export const getButtonPermission = (
     console.warn(e);
   }
 
-  if (!!Object.keys(buttons).length) {
+  if (!!Object.keys(buttons).length && permission) {
     const _buttonArray = buttons[code];
+    if (!_buttonArray) {
+      return true;
+    }
     return !_buttonArray.some((btnId: string) => {
       if (typeof permission === 'string') {
         return permission === btnId;
