@@ -1,9 +1,6 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-// import type { Field } from '@formily/core';
-// import { onFieldValueChange } from '@formily/core';
-import ProTable from '@jetlinks/pro-table';
 import {
   ArrowDownOutlined,
   BugOutlined,
@@ -14,11 +11,9 @@ import {
 } from '@ant-design/icons';
 import { Button, Popconfirm, Tooltip } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
-// import type { ISchema } from '@formily/json-schema';
 import Service from '@/pages/notice/Template/service';
 import ConfigService from '@/pages/notice/Config/service';
 import SearchComponent from '@/components/SearchComponent';
-// import Detail from '@/pages/notice/Template/Detail';
 import { history, useLocation } from 'umi';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { model } from '@formily/reactive';
@@ -26,6 +21,8 @@ import Debug from './Debug';
 import Log from '@/pages/notice/Template/Log';
 import { downloadObject } from '@/utils/util';
 import moment from 'moment';
+import { ProTableCard } from '@/components';
+import NoticeCard from '@/components/ProTableCard/CardItems/noticeTemplate';
 
 export const service = new Service('notifier/template');
 
@@ -166,7 +163,8 @@ const Template = () => {
           setParam(data);
         }}
       />
-      <ProTable<TemplateItem>
+      <ProTableCard<TemplateItem>
+        actionRef={actionRef}
         rowKey="id"
         search={false}
         params={param}
@@ -191,6 +189,68 @@ const Template = () => {
             })}
           </Button>,
         ]}
+        gridColumn={3}
+        cardRender={(record) => (
+          <NoticeCard
+            {...record}
+            type={id}
+            actions={[
+              <Button
+                key="edit"
+                onClick={() => {
+                  state.current = record;
+                  history.push(getMenuPathByParams(MENUS_CODE['notice/Template/Detail'], id));
+                }}
+              >
+                <EditOutlined />
+                编辑
+              </Button>,
+              <Button
+                key="debug"
+                onClick={() => {
+                  state.debug = true;
+                  state.current = record;
+                }}
+              >
+                <BugOutlined />
+                调试
+              </Button>,
+              <Button
+                key="export"
+                onClick={() => {
+                  downloadObject(
+                    record,
+                    `${record.name}-${moment(new Date()).format('YYYY/MM/DD HH:mm:ss')}`,
+                  );
+                }}
+              >
+                <ArrowDownOutlined />
+                导出
+              </Button>,
+              <Button
+                key="log"
+                onClick={() => {
+                  state.log = true;
+                }}
+              >
+                <UnorderedListOutlined />
+                通知记录
+              </Button>,
+              <Popconfirm
+                key="delete"
+                title="确认删除？"
+                onConfirm={async () => {
+                  await service.remove(record.id);
+                  actionRef.current?.reset?.();
+                }}
+              >
+                <Button key="delete">
+                  <DeleteOutlined />
+                </Button>
+              </Popconfirm>,
+            ]}
+          />
+        )}
         request={async (params) => service.query(params)}
       />
       <Debug />

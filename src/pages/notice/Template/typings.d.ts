@@ -7,6 +7,7 @@ type TemplateItem = {
   creatorId: string;
   createTime: number;
   variableDefinitions: any;
+  description: string;
 };
 
 type LogItem = {

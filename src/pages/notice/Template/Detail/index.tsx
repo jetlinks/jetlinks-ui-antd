@@ -20,7 +20,7 @@ import { createForm, onFieldInit, onFieldValueChange } from '@formily/core';
 import { createSchemaField, observer } from '@formily/react';
 import type { ISchema } from '@formily/json-schema';
 import styles from './index.less';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import FUpload from '@/components/Upload';
 import { useParams } from 'umi';
 import { PageContainer } from '@ant-design/pro-layout';
@@ -29,6 +29,33 @@ import { typeList } from '@/pages/notice';
 import { configService, service, state } from '@/pages/notice/Template';
 import FBraftEditor from '@/components/FBraftEditor';
 import { useAsyncDataSource } from '@/utils/util';
+import WeixinCorp from '@/pages/notice/Template/Detail/doc/WeixinCorp';
+import WeixinApp from '@/pages/notice/Template/Detail/doc/WeixinApp';
+import DingTalk from '@/pages/notice/Template/Detail/doc/DingTalk';
+import DingTalkRebot from '@/pages/notice/Template/Detail/doc/DingTalkRebot';
+import AliyunVoice from '@/pages/notice/Template/Detail/doc/AliyunVoice';
+import AliyunSms from '@/pages/notice/Template/Detail/doc/AliyunSms';
+import Email from '@/pages/notice/Template/Detail/doc/Email';
+
+export const docMap = {
+  weixin: {
+    corpMessage: <WeixinCorp />,
+    officialMessage: <WeixinApp />,
+  },
+  dingTalk: {
+    dingTalkMessage: <DingTalk />,
+    dingTalkRobotWebHook: <DingTalkRebot />,
+  },
+  voice: {
+    aliyun: <AliyunVoice />,
+  },
+  sms: {
+    aliyunSms: <AliyunSms />,
+  },
+  email: {
+    embedded: <Email />,
+  },
+};
 
 const Detail = observer(() => {
   const { id } = useParams<{ id: string }>();
@@ -57,6 +84,7 @@ const Detail = observer(() => {
   const getAliyunSigns = (configId: string) => service.aliyun.getSigns(configId);
   const getAliyunTemplates = (configId: string) => service.aliyun.getTemplates(configId);
 
+  const [provider, setProvider] = useState<string>();
   // 正则提取${}里面的值
   const pattern = /(?<=\$\{).*?(?=\})/g;
   const form = useMemo(
@@ -71,6 +99,10 @@ const Detail = observer(() => {
             }
             console.log(form1);
             ///给FBraftEditor 设置初始值
+          });
+          onFieldValueChange('provider', (field) => {
+            const value = field.value;
+            setProvider(value);
           });
           onFieldValueChange('template.message', (field, form1) => {
             let value = (field as Field).value;
@@ -123,11 +155,6 @@ const Detail = observer(() => {
                 break;
             }
           });
-          // onFieldValueChange('configId', (field, form1) => {
-          //   const value = (field as Field).value;
-          //
-          //
-          // })
         },
       }),
     [id],
@@ -190,7 +217,12 @@ const Detail = observer(() => {
       data.template.message = data.template.message.toHTML();
     }
 
-    const response: any = await service.save(data);
+    let response;
+    if (data.id) {
+      response = await service.update(data);
+    } else {
+      response = await service.save(data);
+    }
 
     if (response?.status === 200) {
       message.success('保存成功');
@@ -754,7 +786,7 @@ const Detail = observer(() => {
                 format: {
                   type: 'string',
                   'x-decorator': 'FormItem',
-                  'x-component': 'PreviewText.Input',
+                  'x-component': 'Input',
                 },
               },
             },
@@ -800,7 +832,7 @@ const Detail = observer(() => {
             </Form>
           </Col>
           <Col span={12} push={2}>
-            这里是放描述信息的
+            {docMap[id][provider]}
           </Col>
         </Row>
       </Card>
