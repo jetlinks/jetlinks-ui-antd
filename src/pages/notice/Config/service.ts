@@ -13,11 +13,26 @@ class Service extends BaseService<ConfigItem> {
       method: 'GET',
     });
 
-  public getTemplate = (configId: string) =>
-    request(`${SystemConst.API_BASE}/notifier/template/${configId}/_query/no-paging`);
+  public getTemplate = (configId: string, data: Record<string, any>) =>
+    request(`${SystemConst.API_BASE}/notifier/template/${configId}/_query`, {
+      method: 'POST',
+      data,
+    });
 
   public getTemplateVariable = (templateId: string) =>
     request(`${SystemConst.API_BASE}/notifier/template/${templateId}/detail`);
+
+  public getHistoryLog = (configId: string, data: Record<string, any>) =>
+    request(`${SystemConst.API_BASE}/notify/history/config/${configId}/_query`, {
+      method: 'POST',
+      data,
+    });
+
+  public debug = (id: string, data: Record<string, any>) =>
+    request(`${SystemConst.API_BASE}/notifier/${id}/_send`, {
+      method: 'POST',
+      data,
+    });
 }
 
 export default Service;

@@ -9,7 +9,7 @@ import {
   PlusOutlined,
   UnorderedListOutlined,
 } from '@ant-design/icons';
-import { Button, message, Popconfirm, Tooltip } from 'antd';
+import { Button, message, Popconfirm, Space, Tooltip, Upload } from 'antd';
 import { useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { downloadObject } from '@/utils/util';
@@ -24,6 +24,7 @@ import { ProTableCard } from '@/components';
 import NoticeConfig from '@/components/ProTableCard/CardItems/noticeConfig';
 import Debug from '@/pages/notice/Config/Debug';
 import Log from '@/pages/notice/Config/Log';
+import { typeList } from '@/components/ProTableCard/CardItems/noticeTemplate';
 
 export const service = new Service('notifier/config');
 
@@ -44,11 +45,6 @@ const Config = observer(() => {
 
   const columns: ProColumns<ConfigItem>[] = [
     {
-      dataIndex: 'index',
-      valueType: 'indexBorder',
-      width: 48,
-    },
-    {
       dataIndex: 'name',
       title: intl.formatMessage({
         id: 'pages.table.name',
@@ -56,18 +52,13 @@ const Config = observer(() => {
       }),
     },
     {
-      dataIndex: 'type',
-      title: intl.formatMessage({
-        id: 'pages.notice.config.type',
-        defaultMessage: '通知方式',
-      }),
+      dataIndex: 'provider',
+      title: '通知方式',
+      renderText: (text, record) => typeList[record.type][record.provider],
     },
     {
-      dataIndex: 'provider',
-      title: intl.formatMessage({
-        id: 'pages.table.provider',
-        defaultMessage: '服务商',
-      }),
+      dataIndex: 'description',
+      title: '说明',
     },
     {
       title: intl.formatMessage({
@@ -117,6 +108,7 @@ const Config = observer(() => {
           key="debug"
           onClick={() => {
             state.debug = true;
+            state.current = record;
           }}
         >
           <Tooltip
@@ -171,17 +163,9 @@ const Config = observer(() => {
     },
   ];
 
-  // const getTypes = async () =>
-  //   service.getTypes().then((resp) => {
-  //     providerRef.current = resp.result;
-  //     return resp.result.map((item: NetworkType) => ({
-  //       label: item.name,
-  //       value: item.id,
-  //     }));
-  //   });
   const [param, setParam] = useState({});
   return (
-    <PageContainer className={'page-title-show'}>
+    <PageContainer>
       <SearchComponent
         defaultParam={[{ column: 'type$IN', value: id }]}
         field={columns}
@@ -191,26 +175,75 @@ const Config = observer(() => {
         }}
       />
       <ProTableCard<ConfigItem>
+        rowKey="id"
+        actionRef={actionRef}
         search={false}
         params={param}
         columns={columns}
-        headerTitle={'通知配置'}
-        toolBarRender={() => [
-          <Button
-            onClick={() => {
-              state.current = undefined;
-              history.push(getMenuPathByParams(MENUS_CODE['notice/Config/Detail'], id));
-            }}
-            key="button"
-            icon={<PlusOutlined />}
-            type="primary"
-          >
-            {intl.formatMessage({
-              id: 'pages.data.option.add',
-              defaultMessage: '新增',
-            })}
-          </Button>,
-        ]}
+        headerTitle={
+          <Space>
+            <Button
+              onClick={() => {
+                state.current = undefined;
+                history.push(getMenuPathByParams(MENUS_CODE['notice/Config/Detail'], id));
+              }}
+              key="button"
+              icon={<PlusOutlined />}
+              type="primary"
+            >
+              {intl.formatMessage({
+                id: 'pages.data.option.add',
+                defaultMessage: '新增',
+              })}
+            </Button>
+            <Upload
+              key={'import'}
+              showUploadList={false}
+              beforeUpload={(file) => {
+                const reader = new FileReader();
+                reader.readAsText(file);
+                reader.onload = async (result) => {
+                  const text = result.target?.result as string;
+                  if (!file.type.includes('json')) {
+                    message.warning('文件内容格式错误');
+                    return;
+                  }
+                  try {
+                    const data = JSON.parse(text || '{}');
+                    if (Array.isArray(data)) {
+                      message.warning('文件内容格式错误');
+                      return;
+                    }
+                    const res: any = await service.savePatch(data);
+                    if (res.status === 200) {
+                      message.success('操作成功');
+                      actionRef.current?.reload();
+                    }
+                  } catch {
+                    message.warning('文件内容格式错误');
+                  }
+                };
+                return false;
+              }}
+            >
+              <Button style={{ marginLeft: 12 }}>导入</Button>
+            </Upload>
+            <Popconfirm
+              title={'确认导出当前页数据？'}
+              onConfirm={async () => {
+                const resp: any = await service.queryNoPagingPost({ ...param, paging: false });
+                if (resp.status === 200) {
+                  downloadObject(resp.result, '通知配置数据');
+                  message.success('导出成功');
+                } else {
+                  message.error('导出错误');
+                }
+              }}
+            >
+              <Button>导出</Button>
+            </Popconfirm>
+          </Space>
+        }
         gridColumn={3}
         request={async (params) => service.query(params)}
         cardRender={(record) => (
@@ -233,6 +266,7 @@ const Config = observer(() => {
                 key="debug"
                 onClick={() => {
                   state.debug = true;
+                  state.current = record;
                 }}
               >
                 <BugOutlined />
@@ -254,6 +288,7 @@ const Config = observer(() => {
                 key="log"
                 onClick={() => {
                   state.log = true;
+                  state.current = record;
                 }}
               >
                 <UnorderedListOutlined />

@@ -87,39 +87,31 @@ const Detail = observer(() => {
   const [provider, setProvider] = useState<string>();
   // 正则提取${}里面的值
   const pattern = /(?<=\$\{).*?(?=\})/g;
+
   const form = useMemo(
     () =>
       createForm({
         validateFirst: true,
         effects() {
-          onFieldInit('template.message', (field, form1) => {
+          onFieldInit('template.message', (field) => {
             if (id === 'email') {
               field.setComponent(FBraftEditor);
-              // form1.setValuesIn('template.message', 'testtt')
             }
-            console.log(form1);
-            ///给FBraftEditor 设置初始值
           });
           onFieldValueChange('provider', (field) => {
             const value = field.value;
             setProvider(value);
           });
           onFieldValueChange('template.message', (field, form1) => {
-            let value = (field as Field).value;
-            try {
-              if (id === 'email' && form1.modified) {
-                value = value?.toHTML();
-              }
-              console.log(value, 'value');
-              const idList = value
+            const value = (field as Field).value;
+            const idList =
+              typeof value === 'string' &&
+              value
                 ?.match(pattern)
                 ?.filter((i: string) => i)
                 .map((item: string) => ({ id: item, type: 'string', format: '--' }));
-              if (form1.modified) {
-                form1.setValuesIn('variableDefinitions', idList);
-              }
-            } catch (e) {
-              message.error('邮件数据反显开发中...');
+            if (form1.modified) {
+              form1.setValuesIn('variableDefinitions', idList);
             }
           });
           onFieldValueChange('variableDefinitions.*.type', (field) => {
@@ -219,7 +211,7 @@ const Detail = observer(() => {
     }
     if (id === 'email') {
       data.provider = 'embedded';
-      data.template.text = data.template.message.toHTML();
+      data.template.text = data.template.message;
     }
 
     let response;
@@ -640,14 +632,6 @@ const Detail = observer(() => {
                   tip: '请输入收件人邮箱,多个收件人用换行分隔',
                 },
               },
-              // message: {
-              //   "x-component": 'FBraftEditor',
-              //   "x-decorator": 'FormItem',
-              //   title: '模版内容',
-              //   "x-decorator-props": {
-              //     tip: '请输入收件人邮箱,多个收件人用换行分隔'
-              //   },
-              // },
               attachments: {
                 type: 'array',
                 title: '附件信息',
@@ -660,15 +644,13 @@ const Detail = observer(() => {
                 },
                 items: {
                   type: 'object',
-
-                  'x-component': 'FormGrid',
-                  'x-component-props': {
+                  'x-decorator': 'FormGrid',
+                  'x-decorator-props': {
                     maxColumns: 24,
                     minColumns: 24,
                   },
-
                   properties: {
-                    file: {
+                    '{url:location,name:name}': {
                       'x-component': 'FUpload',
                       'x-decorator': 'FormItem',
                       'x-decorator-props': {
@@ -679,6 +661,7 @@ const Detail = observer(() => {
                       },
                       'x-component-props': {
                         type: 'file',
+                        display: 'name',
                         placeholder: '请上传文件',
                       },
                     },

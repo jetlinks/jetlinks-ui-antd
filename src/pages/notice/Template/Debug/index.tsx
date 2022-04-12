@@ -1,4 +1,4 @@
-import { Button, Modal } from 'antd';
+import { message, Modal } from 'antd';
 import { useEffect, useMemo } from 'react';
 import { createForm, Field, onFieldReact, onFieldValueChange } from '@formily/core';
 import { createSchemaField, observer } from '@formily/react';
@@ -13,7 +13,7 @@ import {
   Select,
 } from '@formily/antd';
 import { ISchema } from '@formily/json-schema';
-import { configService, state } from '@/pages/notice/Template';
+import { configService, service, state } from '@/pages/notice/Template';
 import { useLocation } from 'umi';
 import { useAsyncDataSource } from '@/utils/util';
 import { Store } from 'jetlinks-store';
@@ -32,7 +32,6 @@ const Debug = observer(() => {
             const value = (field as Field).value;
             const configs = Store.get('notice-config');
             const target = configs.find((item: { id: any }) => item.id === value);
-            console.log(target, 'target');
             // 从缓存中获取通知配置信息
             if (target && target.variableDefinitions) {
               form1.setValuesIn('variableDefinitions', target.variableDefinitions);
@@ -163,17 +162,34 @@ const Debug = observer(() => {
       },
     },
   };
+
+  const start = async () => {
+    const data: { templateId: string; variableDefinitions: any } = await form.submit();
+    // 应该取选择的配置信息
+    if (!state.current) return;
+    const resp = await service.debug(state?.current.id, {
+      template: state.current,
+      context: data.variableDefinitions?.reduce(
+        (previousValue: any, currentValue: { id: any; value: any }) => {
+          return {
+            ...previousValue,
+            [currentValue.id]: currentValue.value,
+          };
+        },
+        {},
+      ),
+    });
+    if (resp.status === 200) {
+      message.success('操作成功!');
+    }
+  };
   return (
     <Modal
       title="调试"
       width="40vw"
       visible={state.debug}
       onCancel={() => (state.debug = false)}
-      footer={
-        <Button type="primary" onClick={() => (state.debug = false)}>
-          关闭
-        </Button>
-      }
+      onOk={start}
     >
       <Form form={form} layout={'vertical'}>
         <SchemaField schema={schema} scope={{ getConfig, useAsyncDataSource }} />

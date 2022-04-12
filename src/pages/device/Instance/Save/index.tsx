@@ -3,7 +3,7 @@ import { service } from '@/pages/device/Instance';
 import type { DeviceInstance } from '../typings';
 import { useEffect, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { UploadImage, Modal } from '@/components';
+import { Modal, UploadImage } from '@/components';
 import { debounce } from 'lodash';
 
 interface Props {

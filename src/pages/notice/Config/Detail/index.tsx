@@ -335,7 +335,13 @@ const Detail = observer(() => {
 
   const handleSave = async () => {
     const data: ConfigItem = await form.submit();
-    const response: any = await service.save(data);
+    let response;
+    if (data.id) {
+      response = await service.update(data);
+    } else {
+      response = await service.save(data);
+    }
+
     if (response?.status === 200) {
       message.success('保存成功');
       history.back();

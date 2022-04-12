@@ -9,7 +9,7 @@ import {
   PlusOutlined,
   UnorderedListOutlined,
 } from '@ant-design/icons';
-import { Button, Popconfirm, Tooltip } from 'antd';
+import { Button, message, Popconfirm, Space, Tooltip, Upload } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import Service from '@/pages/notice/Template/service';
 import ConfigService from '@/pages/notice/Config/service';
@@ -22,7 +22,7 @@ import Log from '@/pages/notice/Template/Log';
 import { downloadObject } from '@/utils/util';
 import moment from 'moment';
 import { ProTableCard } from '@/components';
-import NoticeCard from '@/components/ProTableCard/CardItems/noticeTemplate';
+import NoticeCard, { typeList } from '@/components/ProTableCard/CardItems/noticeTemplate';
 
 export const service = new Service('notifier/template');
 
@@ -44,21 +44,17 @@ const Template = () => {
   const columns: ProColumns<TemplateItem>[] = [
     {
       dataIndex: 'name',
-      title: intl.formatMessage({
-        id: 'pages.table.name',
-        defaultMessage: '名称',
-      }),
+      title: '名称',
     },
     {
-      dataIndex: 'type',
-      title: intl.formatMessage({
-        id: 'pages.notice.config.type',
-        defaultMessage: '通知方式',
-      }),
+      dataIndex: 'provider',
+      title: '通知方式',
+      renderText: (text, record) => typeList[record.type][record.provider],
     },
     {
-      dataIndex: 'description',
-      title: '说明',
+      dataIndex: 'createTime',
+      title: '时间',
+      valueType: 'dateTime',
     },
     {
       title: intl.formatMessage({
@@ -113,12 +109,7 @@ const Template = () => {
             );
           }}
         >
-          <Tooltip
-            title={intl.formatMessage({
-              id: 'pages.data.option.download',
-              defaultMessage: '下载配置',
-            })}
-          >
+          <Tooltip title="导出">
             <ArrowDownOutlined />
           </Tooltip>
         </a>,
@@ -154,7 +145,7 @@ const Template = () => {
 
   const [param, setParam] = useState({});
   return (
-    <PageContainer className={'page-title-show'}>
+    <PageContainer>
       <SearchComponent
         defaultParam={[{ column: 'type$IN', value: id }]}
         field={columns}
@@ -169,26 +160,66 @@ const Template = () => {
         search={false}
         params={param}
         columns={columns}
-        headerTitle={intl.formatMessage({
-          id: 'pages.notice.template',
-          defaultMessage: '通知模版',
-        })}
-        toolBarRender={() => [
-          <Button
-            onClick={() => {
-              state.current = undefined;
-              history.push(getMenuPathByParams(MENUS_CODE['notice/Template/Detail'], id));
-            }}
-            key="button"
-            icon={<PlusOutlined />}
-            type="primary"
-          >
-            {intl.formatMessage({
-              id: 'pages.data.option.add',
-              defaultMessage: '新增',
-            })}
-          </Button>,
-        ]}
+        headerTitle={
+          <Space>
+            <Button
+              onClick={() => {
+                state.current = undefined;
+                history.push(getMenuPathByParams(MENUS_CODE['notice/Template/Detail'], id));
+              }}
+              key="button"
+              icon={<PlusOutlined />}
+              type="primary"
+            >
+              {intl.formatMessage({
+                id: 'pages.data.option.add',
+                defaultMessage: '新增',
+              })}
+            </Button>
+            <Upload
+              key={'import'}
+              showUploadList={false}
+              beforeUpload={(file) => {
+                const reader = new FileReader();
+                reader.readAsText(file);
+                reader.onload = async (result) => {
+                  const text = result.target?.result as string;
+                  if (!file.type.includes('json')) {
+                    message.warning('文件内容格式错误');
+                    return;
+                  }
+                  try {
+                    const data = JSON.parse(text || '{}');
+                    const res: any = await service.savePatch(data);
+                    if (res.status === 200) {
+                      message.success('操作成功');
+                      actionRef.current?.reload();
+                    }
+                  } catch {
+                    message.warning('文件内容格式错误');
+                  }
+                };
+                return false;
+              }}
+            >
+              <Button style={{ marginLeft: 12 }}>导入</Button>
+            </Upload>
+            <Popconfirm
+              title={'确认导出当前页数据？'}
+              onConfirm={async () => {
+                const resp: any = await service.queryNoPagingPost({ ...param, paging: false });
+                if (resp.status === 200) {
+                  downloadObject(resp.result, '通知模版数据');
+                  message.success('导出成功');
+                } else {
+                  message.error('导出错误');
+                }
+              }}
+            >
+              <Button>导出</Button>
+            </Popconfirm>
+          </Space>
+        }
         gridColumn={3}
         cardRender={(record) => (
           <NoticeCard

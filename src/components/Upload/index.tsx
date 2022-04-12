@@ -11,9 +11,10 @@ import './index.less';
 
 interface Props {
   value: string;
-  onChange: (value: string | FileProperty) => void;
+  onChange: (value: string | FileProperty | any) => void;
   type?: 'file' | 'image';
   placeholder: string;
+  display?: string;
 }
 
 type FileProperty = {
@@ -35,6 +36,7 @@ const FUpload = connect((props: Props) => {
       const f = {
         size: info.file.size || 0,
         url: info.file.response?.result,
+        name: info.file.name,
       };
       setUrl(f);
       props.onChange(f);
@@ -63,12 +65,17 @@ const FUpload = connect((props: Props) => {
     ),
     type: 'picture-card',
   });
+
   map.set('file', {
     node: (
       <>
         <Input
           placeholder={props.placeholder}
-          value={(url as FileProperty)?.url}
+          // 如果display 有值的话，显示display 的值
+          value={(url as FileProperty)[props?.display || 'url']}
+          onChange={(value) => {
+            props.onChange({ [props?.display || '_a']: value.target.value, url: null, size: null });
+          }}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();

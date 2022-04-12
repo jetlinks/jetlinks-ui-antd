@@ -39,6 +39,10 @@ class BaseService<T> implements IBaseService<T> {
     return request(this.uri, { data, method: 'POST' });
   }
 
+  savePatch(data: Partial<T>): Promise<unknown> {
+    return request(this.uri, { data, method: 'PATCH' });
+  }
+
   update(data: Partial<T>): Promise<any> {
     // @ts-ignore
     return data.id ? request(this.uri, { data, method: 'PATCH' }) : this.save(data);

@@ -2,7 +2,7 @@ import React from 'react';
 import { TableCard } from '@/components';
 import '@/style/common.less';
 import '../index.less';
-import { imgMap } from './noticeTemplate';
+import { imgMap, typeList } from './noticeTemplate';
 
 export interface NoticeCardProps extends ConfigItem {
   detail?: React.ReactNode;
@@ -24,11 +24,11 @@ export default (props: NoticeCardProps) => {
           <div className={'card-item-content'}>
             <div>
               <label>通知方式</label>
-              <div className={'ellipsis'}>{props.name}</div>
+              <div className={'ellipsis'}>{typeList[props.type][props.provider] || '暂无'}</div>
             </div>
             <div>
               <label>说明</label>
-              <div className={'ellipsis'}>{props.name}</div>
+              <div className={'ellipsis'}>{props.description}</div>
             </div>
           </div>
         </div>

@@ -13,13 +13,26 @@ class Service extends BaseService<TemplateItem> {
       method: 'GET',
     });
 
-  public batchInsert = () =>
+  public batchInsert = (data: Record<any, any>[]) =>
     request(`${this.uri}/_batch`, {
       method: 'POST',
+      data,
     });
 
   public getConfigs = (data: any) =>
     request(`${SystemConst.API_BASE}/notifier/config/_query`, {
+      method: 'POST',
+      data,
+    });
+
+  public getHistoryLog = (templateId: string, data: Record<string, any>) =>
+    request(`${SystemConst.API_BASE}/notify/history/template/${templateId}/_query`, {
+      method: 'POST',
+      data,
+    });
+
+  public debug = (id: string, data: Record<string, any>) =>
+    request(`${SystemConst.API_BASE}/notifier/${id}/_send`, {
       method: 'POST',
       data,
     });
