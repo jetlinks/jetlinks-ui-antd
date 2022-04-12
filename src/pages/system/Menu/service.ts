@@ -21,7 +21,7 @@ class Service extends BaseService<MenuItem> {
    * @param data
    */
   queryPermission = (data: any) =>
-    request(`${SystemConst.API_BASE}/permission/_query`, { method: 'POST', data });
+    request(`${SystemConst.API_BASE}/permission/_query/no-paging`, { method: 'POST', data });
 
   queryDetail = (id: string) => request(`${this.uri}/${id}`, { method: 'GET' });
 
