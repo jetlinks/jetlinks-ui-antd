@@ -106,15 +106,20 @@ const Detail = observer(() => {
           });
           onFieldValueChange('template.message', (field, form1) => {
             let value = (field as Field).value;
-            if (id === 'email' && form1.modified) {
-              value = value?.toHTML();
-            }
-            const idList = value
-              ?.match(pattern)
-              ?.filter((i: string) => i)
-              .map((item: string) => ({ id: item, type: 'string', format: '--' }));
-            if (form1.modified) {
-              form1.setValuesIn('variableDefinitions', idList);
+            try {
+              if (id === 'email' && form1.modified) {
+                value = value?.toHTML();
+              }
+              console.log(value, 'value');
+              const idList = value
+                ?.match(pattern)
+                ?.filter((i: string) => i)
+                .map((item: string) => ({ id: item, type: 'string', format: '--' }));
+              if (form1.modified) {
+                form1.setValuesIn('variableDefinitions', idList);
+              }
+            } catch (e) {
+              message.error('邮件数据反显开发中...');
             }
           });
           onFieldValueChange('variableDefinitions.*.type', (field) => {
@@ -214,7 +219,7 @@ const Detail = observer(() => {
     }
     if (id === 'email') {
       data.provider = 'embedded';
-      data.template.message = data.template.message.toHTML();
+      data.template.text = data.template.message.toHTML();
     }
 
     let response;
@@ -611,25 +616,22 @@ const Detail = observer(() => {
                       },
                     },
                   },
-                  // code	String	短信-模板ID
-                  // signName	String	短信-签名
-                  // phoneNumber	String	短信-收信人
                 },
               },
             },
-            // ttsCode	String	语音-模版ID
-            // calledShowNumbers	String	语音-被叫显号
-            // CalledNumber	String	语音-被叫号码
-            // PlayTimes	String	语音-播放次数
           },
           email: {
             type: 'void',
             'x-visible': id === 'email',
             properties: {
-              // subject	String	邮件-模板ID
-              // sendTo	Array	邮件-收件人
-              // sendTo	String	邮件-内容
-              // attachments	String	邮件-附件信息
+              subject: {
+                'x-component': 'Input',
+                'x-decorator': 'FormItem',
+                title: '标题',
+                'x-decorator-props': {
+                  tip: '请输入邮件标题',
+                },
+              },
               sendTo: {
                 'x-component': 'Input.TextArea',
                 'x-decorator': 'FormItem',
@@ -698,11 +700,6 @@ const Detail = observer(() => {
                   },
                 },
               },
-              // subject: {
-              //   title: '模版ID',
-              //   'x-decorator': 'FormItem',
-              //   'x-component': 'Input',
-              // },
             },
           },
         },
