@@ -25,7 +25,7 @@ export default (props: ButtonsProps) => {
 
   const { data: permissions, run: queryPermissions } = useRequest(service.queryPermission, {
     manual: true,
-    formatResult: (response) => response.result.data,
+    formatResult: (response) => response.result,
   });
 
   useEffect(() => {

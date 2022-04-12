@@ -33,6 +33,7 @@ export default () => {
   const [liveVisible, setLiveVisible] = useState(false);
   const [current, setCurrent] = useState<ChannelItem>();
   const [deviceId, setDeviceId] = useState('');
+  const [channelId, setChannelId] = useState('');
   const [type, setType] = useState('');
 
   const location = useLocation();
@@ -139,6 +140,7 @@ export default () => {
         <Tooltip key={'live'} title={'播发'}>
           <a
             onClick={() => {
+              setChannelId(record.channelId);
               setLiveVisible(true);
             }}
           >
@@ -149,7 +151,9 @@ export default () => {
           <a
             onClick={() => {
               history.push(
-                `${getMenuPathByCode(MENUS_CODE['media/Device/Playback'])}?id=${record.channelId}`,
+                `${getMenuPathByCode(MENUS_CODE['media/Device/Playback'])}?id=${
+                  record.channelId
+                }&channelId=${record.channelId}`,
               );
             }}
           >
@@ -181,25 +185,27 @@ export default () => {
   return (
     <PageContainer>
       <div className={'device-channel-warp'}>
-        <div className={'left'}>
-          <Tree
-            deviceId={deviceId}
-            onSelect={(key) => {
-              if (key === deviceId && actionRef.current?.reset) {
-                actionRef.current?.reset();
-              } else {
-                setQueryParam({
-                  terms: [
-                    {
-                      column: 'parentId',
-                      value: key,
-                    },
-                  ],
-                });
-              }
-            }}
-          />
-        </div>
+        {type === ProviderValue.GB281 && (
+          <div className={'left'}>
+            <Tree
+              deviceId={deviceId}
+              onSelect={(key) => {
+                if (key === deviceId && actionRef.current?.reset) {
+                  actionRef.current?.reset();
+                } else {
+                  setQueryParam({
+                    terms: [
+                      {
+                        column: 'parentId',
+                        value: key,
+                      },
+                    ],
+                  });
+                }
+              }}
+            />
+          </div>
+        )}
         <div className={'right'}>
           <SearchComponent field={columns} onSearch={searchFn} />
           <ProTable<ChannelItem>
@@ -262,13 +268,16 @@ export default () => {
           actionRef.current?.reload();
         }}
       />
-      <Live
-        visible={liveVisible}
-        url={''}
-        onCancel={() => {
-          setLiveVisible(false);
-        }}
-      />
+      {liveVisible && (
+        <Live
+          visible={liveVisible}
+          deviceId={deviceId}
+          channelId={channelId}
+          onCancel={() => {
+            setLiveVisible(false);
+          }}
+        />
+      )}
     </PageContainer>
   );
 };

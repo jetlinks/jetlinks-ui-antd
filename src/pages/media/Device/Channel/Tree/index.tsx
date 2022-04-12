@@ -15,8 +15,9 @@ export default (props: TreeProps) => {
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>(['']);
   const { run: getTreeData } = useRequest(service.queryTree, {
     manual: true,
+    formatResult: (res) => res.result,
     onSuccess: (res) => {
-      treeData[0].children = res.result;
+      treeData[0].children = res.result || [];
       setTreeData(treeData);
     },
   });
