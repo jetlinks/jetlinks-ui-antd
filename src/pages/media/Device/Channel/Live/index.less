@@ -1,4 +1,6 @@
 .media-live {
+  display: flex;
+
   .live-player-tools {
     flex-basis: 230px;
 
@@ -8,6 +10,38 @@
 
     .zoom-item {
       font-size: 20px !important;
+    }
+  }
+
+  .media-live-video {
+    position: relative;
+    flex-grow: 1;
+    width: 0;
+
+    .media-tool {
+      position: absolute;
+      top: 4px;
+      right: 0;
+      z-index: 2;
+      display: flex;
+
+      .tool-item {
+        margin-right: 6px;
+        padding: 4px;
+        color: #fff;
+        font-size: 14px;
+        background-color: hsla(0, 0%, 50.2%, 0.8);
+        border-radius: 2px;
+        cursor: pointer;
+
+        &:hover {
+          background-color: hsla(0, 0%, 50.2%, 0.85);
+        }
+
+        &:active {
+          background-color: hsla(0, 0%, 50.2%, 0.9);
+        }
+      }
     }
   }
 }

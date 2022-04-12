@@ -36,6 +36,10 @@ class Service extends BaseService<ChannelItem> {
       method: 'POST',
     });
 
+  // 重置
+  mediaStop = (deviceId: string, channelId: string) =>
+    request(`${this.uri}/device/${deviceId}/${channelId}/_stop`, { method: 'POST' });
+
   // 查询是否正在录像
   ptzIsRecord = (deviceId: string, channelId: string) =>
     request(`${this.uri}/device/${deviceId}/${channelId}/live/recording`, { method: 'GET' });
