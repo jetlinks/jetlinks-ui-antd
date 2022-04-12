@@ -1,5 +1,5 @@
 import BaseService from '@/utils/BaseService';
-import { request } from 'umi';
+import {request} from 'umi';
 import SystemConst from '@/utils/const';
 
 class Service extends BaseService<TemplateItem> {
@@ -13,9 +13,10 @@ class Service extends BaseService<TemplateItem> {
       method: 'GET',
     });
 
-  public batchInsert = () =>
+  public batchInsert = (data: Record<any, any>[]) =>
     request(`${this.uri}/_batch`, {
       method: 'POST',
+      data
     });
 
   public getConfigs = (data: any) =>
@@ -23,6 +24,18 @@ class Service extends BaseService<TemplateItem> {
       method: 'POST',
       data,
     });
+
+  public getHistoryLog = (templateId: string, data: Record<string, any>) =>
+    request(`${SystemConst.API_BASE}/notify/history/template/${templateId}/_query`, {
+      method: 'POST',
+      data
+    });
+
+  public debug = (id: string, data: Record<string, any>) =>
+    request(`${SystemConst.API_BASE}/notifier/${id}/_send`, {
+      method: 'POST',
+      data
+    })
 
   public sendMessage = (notifierId: string) =>
     request(`${SystemConst.API_BASE}/notifier/${notifierId}/_send`, {

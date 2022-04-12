@@ -7,6 +7,7 @@ type ConfigItem = {
   creatorId: string;
   createTime: number;
   configuration: Record<string, unknown>;
+  description: string
 };
 
 type Provider = {

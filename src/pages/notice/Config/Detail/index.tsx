@@ -1,9 +1,9 @@
-import { PageContainer } from '@ant-design/pro-layout';
-import { createForm, onFieldValueChange } from '@formily/core';
-import { Card, Col, Input, message, Row } from 'antd';
-import { ISchema } from '@formily/json-schema';
-import { useEffect, useMemo, useState } from 'react';
-import { createSchemaField, observer } from '@formily/react';
+import {PageContainer} from '@ant-design/pro-layout';
+import {createForm, onFieldValueChange} from '@formily/core';
+import {Card, Col, Input, message, Row} from 'antd';
+import {ISchema} from '@formily/json-schema';
+import {useEffect, useMemo, useState} from 'react';
+import {createSchemaField, observer} from '@formily/react';
 import {
   ArrayTable,
   Checkbox,
@@ -20,10 +20,10 @@ import {
   Switch,
 } from '@formily/antd';
 import styles from './index.less';
-import { service, state } from '@/pages/notice/Config';
-import { useAsyncDataSource } from '@/utils/util';
-import { useParams } from 'umi';
-import { typeList } from '@/pages/notice';
+import {service, state} from '@/pages/notice/Config';
+import {useAsyncDataSource} from '@/utils/util';
+import {useParams} from 'umi';
+import {typeList} from '@/pages/notice';
 import FUpload from '@/components/Upload';
 import WeixinCorp from '@/pages/notice/Config/Detail/doc/WeixinCorp';
 import WeixinApp from '@/pages/notice/Config/Detail/doc/WeixinApp';
@@ -35,26 +35,26 @@ import Email from '@/pages/notice/Config/Detail/doc/Email';
 
 export const docMap = {
   weixin: {
-    corpMessage: <WeixinCorp />,
-    officialMessage: <WeixinApp />,
+    corpMessage: <WeixinCorp/>,
+    officialMessage: <WeixinApp/>,
   },
   dingTalk: {
-    dingTalkMessage: <DingTalk />,
-    dingTalkRobotWebHook: <DingTalkRebot />,
+    dingTalkMessage: <DingTalk/>,
+    dingTalkRobotWebHook: <DingTalkRebot/>,
   },
   voice: {
-    aliyun: <AliyunVoice />,
+    aliyun: <AliyunVoice/>,
   },
   sms: {
-    aliyunSms: <AliyunSms />,
+    aliyunSms: <AliyunSms/>,
   },
   email: {
-    embedded: <Email />,
+    embedded: <Email/>,
   },
 };
 
 const Detail = observer(() => {
-  const { id } = useParams<{ id: string }>();
+  const {id} = useParams<{ id: string }>();
 
   const [provider, setProvider] = useState<string>();
   const form = useMemo(
@@ -299,7 +299,7 @@ const Detail = observer(() => {
                     type: 'boolean',
                     'x-component': 'Checkbox.Group',
                     'x-decorator': 'FormItem',
-                    enum: [{ label: '开启SSL', value: true }],
+                    enum: [{label: '开启SSL', value: true}],
                   },
                 },
               },
@@ -335,7 +335,13 @@ const Detail = observer(() => {
 
   const handleSave = async () => {
     const data: ConfigItem = await form.submit();
-    const response: any = await service.save(data);
+    let response;
+    if (data.id) {
+      response = await service.update(data);
+    } else {
+      response = await service.save(data);
+    }
+
     if (response?.status === 200) {
       message.success('保存成功');
       history.back();
@@ -348,7 +354,7 @@ const Detail = observer(() => {
         <Row>
           <Col span={10}>
             <Form className={styles.form} form={form} layout={'vertical'}>
-              <SchemaField scope={{ useAsyncDataSource, getTypes }} schema={schema} />
+              <SchemaField scope={{useAsyncDataSource, getTypes}} schema={schema}/>
               <FormButtonGroup.Sticky>
                 <FormButtonGroup.FormItem>
                   <Submit onSubmit={handleSave}>保存</Submit>
