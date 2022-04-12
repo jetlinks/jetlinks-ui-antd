@@ -1,26 +1,23 @@
 // 视频分屏
 import { PageContainer } from '@ant-design/pro-layout';
-import { Card, message } from 'antd';
+import { Card } from 'antd';
 import LeftTree from './tree';
 import { ScreenPlayer } from '@/components';
-import { ptzStart, ptzStop, ptzTool } from './service';
-import { useState } from 'react';
+import { ptzStop, ptzTool } from './service';
+import { useRef, useState } from 'react';
+import { ptzStart } from './service';
 import './index.less';
 
 const SplitScreen = () => {
   const [deviceId, setDeviceId] = useState('');
   const [channelId, setChannelId] = useState('');
-  const [url, setUrl] = useState('');
+  const player = useRef<any>(null);
 
   const mediaStart = async (dId: string, cId: string) => {
-    setChannelId(dId);
-    setDeviceId(cId);
-    const resp = await ptzStart(dId, cId);
-    if (resp.status === 200) {
-      setUrl(resp.result.mp4);
-    } else {
-      message.error(resp.result);
-    }
+    setChannelId(cId);
+    setDeviceId(dId);
+    const url = ptzStart(dId, cId, 'mp4');
+    player.current?.replaceVideo(dId, cId, url);
   };
 
   return (
@@ -30,14 +27,14 @@ const SplitScreen = () => {
           <LeftTree onSelect={mediaStart} />
           <div className="right-content">
             <ScreenPlayer
+              ref={player}
               id={deviceId}
-              url={url}
               channelId={channelId}
               onMouseUp={(id, cId) => {
                 ptzStop(id, cId);
               }}
               onMouseDown={(id, cId, type) => {
-                ptzTool(id, cId, type, 90);
+                ptzTool(id, cId, type);
               }}
             />
           </div>

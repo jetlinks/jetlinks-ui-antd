@@ -29,7 +29,7 @@ import { ProTableCard } from '@/components';
 import SystemConst from '@/utils/const';
 import Token from '@/utils/token';
 import DeviceCard from '@/components/ProTableCard/CardItems/device';
-import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { getMenuPathByParams, MENUS_CODE, getButtonPermission } from '@/utils/menu';
 
 export const statusMap = new Map();
 statusMap.set('在线', 'success');
@@ -393,6 +393,7 @@ const Instance = () => {
               setCurrent({});
             }}
             style={{ marginRight: 12 }}
+            disabled={getButtonPermission('device/Instance', 'delete')}
             key="button"
             icon={<PlusOutlined />}
             type="primary"

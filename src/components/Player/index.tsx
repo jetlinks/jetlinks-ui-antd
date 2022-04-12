@@ -8,6 +8,7 @@ export type PlayerProps = {
   muted?: boolean;
   poster?: string;
   timeout?: number;
+  className?: string;
   onDestroy?: () => void;
   onMessage?: (msg: any) => void;
   onError?: (err: any) => void;
@@ -18,6 +19,7 @@ export type PlayerProps = {
   onSnapOutside?: (base64: any) => void;
   onSnapInside?: (base64: any) => void;
   onCustomButtons?: (name: any) => void;
+  onClick?: () => void;
 };
 
 export default (props: PlayerProps) => {
@@ -99,6 +101,7 @@ export default (props: PlayerProps) => {
         player.current = r;
         EventInit();
       }}
+      class={props.className}
       live={'live' in props ? props.live !== false : true}
       autoplay={'autoplay' in props ? props.autoplay !== false : true}
       muted={'muted' in props ? props.muted !== false : true}

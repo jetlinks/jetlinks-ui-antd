@@ -1,10 +1,11 @@
 // 路由components映射
 import type { IRouteProps } from 'umi';
 import type { MenuItem } from '@/pages/system/Menu/typing';
-import { getDetailNameByCode, MENUS_CODE } from './router';
+import { BUTTON_PERMISSION, getDetailNameByCode, MENUS_CODE, MENUS_CODE_TYPE } from './router';
 
 /** localStorage key */
 export const MENUS_DATA_CACHE = 'MENUS_DATA_CACHE';
+export const MENUS_BUTTONS_CACHE = 'MENUS_BUTTONS_CACHE';
 
 const DetailCode = 'detail';
 
@@ -196,14 +197,53 @@ export const getMenus = (extraRoutes: IRouteProps[]): any[] => {
 export const saveMenusCache = (routes: MenuItem[]) => {
   const list: MenuItem[] = flatRoute(routes);
   const listObject = {};
+  const buttons = {};
   list.forEach((route) => {
     listObject[route.code] = route.url;
   });
+  // 过滤按钮权限
+  list
+    .filter((item) => item.buttons)
+    .forEach((item) => {
+      buttons[item.code] = item.buttons.map((btn) => btn.id);
+    });
   try {
     localStorage.setItem(MENUS_DATA_CACHE, JSON.stringify(listObject));
+    localStorage.setItem(MENUS_BUTTONS_CACHE, JSON.stringify(buttons));
   } catch (e) {
-    console.log(e);
+    console.warn(e);
   }
+};
+
+/**
+ * 匹配按钮权限
+ * @param code 路由code
+ * @param permission {string | string[]} 权限名称
+ */
+export const getButtonPermission = (
+  code: MENUS_CODE_TYPE,
+  permission: BUTTON_PERMISSION | BUTTON_PERMISSION[],
+): boolean => {
+  let buttons = {};
+  try {
+    const buttonString = localStorage.getItem(MENUS_BUTTONS_CACHE);
+    buttons = JSON.parse(buttonString || '{}');
+  } catch (e) {
+    console.warn(e);
+  }
+
+  if (!!Object.keys(buttons).length) {
+    const _buttonArray = buttons[code];
+    return !_buttonArray.some((btnId: string) => {
+      if (typeof permission === 'string') {
+        return permission === btnId;
+      } else {
+        return permission.includes(btnId);
+      }
+      return false;
+    });
+  }
+  return true;
 };
 
 /**

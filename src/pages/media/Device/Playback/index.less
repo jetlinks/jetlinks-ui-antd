@@ -1,0 +1,49 @@
+@borderColor: #d9d9d9;
+
+.playback-warp {
+  display: flex;
+  padding: 24px;
+  background-color: #fff;
+
+  .playback-left {
+    display: flex;
+    flex-grow: 1;
+    width: 0;
+
+    .playback-media {
+      width: 100%;
+    }
+  }
+
+  .playback-right {
+    width: 280px;
+    margin-left: 24px;
+
+    .playback-calendar {
+      margin-top: 16px;
+      border: 1px solid @borderColor;
+      border-radius: 2px;
+
+      .ant-picker-calendar-header {
+        justify-content: space-between;
+
+        > div:nth-child(3) {
+          display: none;
+        }
+      }
+    }
+
+    .playback-list {
+      display: flex;
+      height: 300px;
+      margin-top: 16px;
+      overflow-y: auto;
+      border: 1px solid @borderColor;
+
+      &.no-list {
+        align-items: center;
+        justify-content: center;
+      }
+    }
+  }
+}

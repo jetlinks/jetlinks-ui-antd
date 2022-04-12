@@ -33,7 +33,7 @@ type EditProps = {
 export default (props: EditProps) => {
   const intl = useIntl();
   const [disabled, setDisabled] = useState(true);
-  const [show, setShow] = useState(true);
+  const [show] = useState(true);
   const [accessSupport, setAccessSupport] = useState('unsupported');
   const history = useHistory();
 
@@ -118,9 +118,9 @@ export default (props: EditProps) => {
     }
     setDisabled(!!props.data.id);
 
-    if (props.data.options) {
-      setShow(props.data.options.switch);
-    }
+    // if (props.data.options) {
+    //   setShow(props.data.options.switch);
+    // }
     /* eslint-disable */
   }, [props.data]);
 

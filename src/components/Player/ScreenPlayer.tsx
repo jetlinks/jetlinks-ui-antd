@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, useImperativeHandle, forwardRef } from 'react';
 import classNames from 'classnames';
 import LivePlayer from './index';
 import { Button, Dropdown, Empty, Input, Menu, Popover, Radio, Tooltip } from 'antd';
@@ -19,24 +19,27 @@ import Service from './service';
 type Player = {
   id?: string;
   url?: string;
+  channelId?: string;
+  key: string;
 };
 
 interface ScreenProps {
   url?: string;
   id?: string;
-  channelId?: string;
+  channelId: string;
+  className?: string;
   /**
    *
    * @param id 当前选中播发视频ID
    * @param type 当前操作动作
    */
-  onMouseDown?: (id: string, channelId: string, type: string) => void;
+  onMouseDown?: (deviceId: string, channelId: string, type: string) => void;
   /**
    *
    * @param id 当前选中播发视频ID
    * @param type 当前操作动作
    */
-  onMouseUp?: (id: string, channelId: string, type: string) => void;
+  onMouseUp?: (deviceId: string, channelId: string, type: string) => void;
   showScreen?: boolean;
 }
 
@@ -44,7 +47,7 @@ const service = new Service();
 
 const DEFAULT_SAVE_CODE = 'screen_save';
 
-export default (props: ScreenProps) => {
+export default forwardRef((props: ScreenProps, ref) => {
   const [screen, setScreen] = useState(1);
   const [players, setPlayers] = useState<Player[]>([]);
   const [playerActive, setPlayerActive] = useState(0);
@@ -56,21 +59,17 @@ export default (props: ScreenProps) => {
   const [isFullscreen, { setFull }] = useFullscreen(fullscreenRef);
 
   const replaceVideo = useCallback(
-    (id: string, url: string) => {
-      const videoIndex = players.findIndex((video) => video.url === url);
-      if (videoIndex === -1) {
-        players[playerActive] = { id, url };
-        setPlayers(players);
-
-        if (playerActive === screen) {
-          // 当前位置为分屏最后一位
-          setPlayerActive(0);
-        } else {
-          setPlayerActive(playerActive + 1);
-        }
+    (id: string, channelId: string, url: string) => {
+      players[playerActive] = { id, url, channelId, key: 'time_' + new Date().getTime() };
+      setPlayers(players);
+      if (playerActive === screen - 1) {
+        // 当前位置为分屏最后一位
+        setPlayerActive(0);
+      } else {
+        setPlayerActive(playerActive + 1);
       }
     },
-    [players, playerActive, screen],
+    [players, playerActive, screen, props.showScreen],
   );
 
   const handleHistory = (item: any) => {
@@ -109,16 +108,19 @@ export default (props: ScreenProps) => {
     }
   }, [players, historyTitle, screen]);
 
-  useEffect(() => {
-    const arr = new Array(screen).fill(1).map(() => ({ id: '', url: '' }));
+  const screenChange = (index: number) => {
+    const arr = new Array(index)
+      .fill(1)
+      .map(() => ({ id: '', channelId: '', url: '', key: 'time_' + new Date().getTime() }));
     setPlayers(arr);
     setPlayerActive(0);
-  }, [screen]);
+    setScreen(index);
+  };
 
   useEffect(() => {
     // 查看当前 播放视频位置，如果当前视频位置有视频在播放，则替换
     if (props.url && props.id) {
-      replaceVideo(props.id, props.url);
+      replaceVideo(props.id, props.channelId, props.url);
     }
   }, [props.url]);
 
@@ -126,7 +128,12 @@ export default (props: ScreenProps) => {
     if (props.showScreen !== false) {
       getHistory();
     }
+    screenChange(1);
   }, []);
+
+  useImperativeHandle(ref, () => ({
+    replaceVideo: replaceVideo,
+  }));
 
   const screenClass = `screen-${screen}`;
 
@@ -156,11 +163,30 @@ export default (props: ScreenProps) => {
     </Menu>
   );
 
+  const MediaDom = (data: Player[]) => {
+    return data.map((item, index) => {
+      return (
+        <div
+          key={'player-content' + index}
+          className={classNames({
+            active: props.showScreen !== false && playerActive === index && !isFullscreen,
+            'full-screen': isFullscreen,
+          })}
+          onClick={() => {
+            setPlayerActive(index);
+          }}
+        >
+          <LivePlayer key={item.key} url={item.url} />
+        </div>
+      );
+    });
+  };
+
   return (
-    <div className={'live-player-warp'}>
+    <div className={classNames('live-player-warp', props.className)}>
       <div className={'live-player-content'}>
-        <div className={'player-screen-tool'}>
-          {props.showScreen !== false && (
+        {props.showScreen !== false && (
+          <div className={'player-screen-tool'}>
             <>
               <div></div>
               <div>
@@ -174,7 +200,7 @@ export default (props: ScreenProps) => {
                   value={screen}
                   onChange={(e) => {
                     if (e.target.value) {
-                      setScreen(e.target.value);
+                      screenChange(e.target.value);
                     } else {
                       // 全屏操作
                       setFull();
@@ -230,26 +256,11 @@ export default (props: ScreenProps) => {
                 </Tooltip>
               </div>
             </>
-          )}
-        </div>
+          </div>
+        )}
         <div className={'player-body'}>
           <div className={classNames('player-screen', screenClass)} ref={fullscreenRef}>
-            {players.map((player, index) => {
-              return (
-                <div
-                  key={`player_body_${index}`}
-                  className={classNames({
-                    active: props.showScreen !== false && playerActive === index && !isFullscreen,
-                    'full-screen': isFullscreen,
-                  })}
-                  onClick={() => {
-                    setPlayerActive(index);
-                  }}
-                >
-                  <LivePlayer key={player.id || `player_${index}`} url={player.url || ''} />
-                </div>
-              );
-            })}
+            {MediaDom(players)}
           </div>
         </div>
       </div>
@@ -258,13 +269,15 @@ export default (props: ScreenProps) => {
           <div
             className={'direction-item up'}
             onMouseDown={() => {
-              if (props.onMouseDown && props.id && props.channelId) {
-                props.onMouseDown(props.id, props.channelId, 'UP');
+              const { id, channelId } = players[playerActive];
+              if (id && channelId && props.onMouseDown) {
+                props.onMouseDown(id, channelId, 'UP');
               }
             }}
             onMouseUp={() => {
-              if (props.onMouseUp && props.id && props.channelId) {
-                props.onMouseUp(props.id, props.channelId, 'UP');
+              const { id, channelId } = players[playerActive];
+              if (props.onMouseUp && id && channelId) {
+                props.onMouseUp(id, channelId, 'UP');
               }
             }}
           >
@@ -273,13 +286,15 @@ export default (props: ScreenProps) => {
           <div
             className={'direction-item right'}
             onMouseDown={() => {
-              if (props.onMouseDown && props.id && props.channelId) {
-                props.onMouseDown(props.id, props.channelId, 'RIGHT');
+              const { id, channelId } = players[playerActive];
+              if (props.onMouseDown && id && channelId) {
+                props.onMouseDown(id, channelId, 'RIGHT');
               }
             }}
             onMouseUp={() => {
-              if (props.onMouseUp && props.id && props.channelId) {
-                props.onMouseUp(props.id, props.channelId, 'RIGHT');
+              const { id, channelId } = players[playerActive];
+              if (props.onMouseUp && id && channelId) {
+                props.onMouseUp(id, channelId, 'RIGHT');
               }
             }}
           >
@@ -288,13 +303,15 @@ export default (props: ScreenProps) => {
           <div
             className={'direction-item left'}
             onMouseDown={() => {
-              if (props.onMouseDown && props.id && props.channelId) {
-                props.onMouseDown(props.id, props.channelId, 'LEFT');
+              const { id, channelId } = players[playerActive];
+              if (props.onMouseDown && id && channelId) {
+                props.onMouseDown(id, channelId, 'LEFT');
               }
             }}
             onMouseUp={() => {
-              if (props.onMouseUp && props.id && props.channelId) {
-                props.onMouseUp(props.id, props.channelId, 'LEFT');
+              const { id, channelId } = players[playerActive];
+              if (props.onMouseUp && id && channelId) {
+                props.onMouseUp(id, channelId, 'LEFT');
               }
             }}
           >
@@ -303,13 +320,15 @@ export default (props: ScreenProps) => {
           <div
             className={'direction-item down'}
             onMouseDown={() => {
-              if (props.onMouseDown && props.id && props.channelId) {
-                props.onMouseDown(props.id, props.channelId, 'DOWN');
+              const { id, channelId } = players[playerActive];
+              if (props.onMouseDown && id && channelId) {
+                props.onMouseDown(id, channelId, 'DOWN');
               }
             }}
             onMouseUp={() => {
-              if (props.onMouseUp && props.id && props.channelId) {
-                props.onMouseUp(props.id, props.channelId, 'DOWN');
+              const { id, channelId } = players[playerActive];
+              if (props.onMouseUp && id && channelId) {
+                props.onMouseUp(id, channelId, 'DOWN');
               }
             }}
           >
@@ -317,16 +336,18 @@ export default (props: ScreenProps) => {
           </div>
           <div
             className={'direction-audio'}
-            onMouseDown={() => {
-              if (props.onMouseDown && props.id && props.channelId) {
-                props.onMouseDown(props.id, props.channelId, 'AUDIO');
-              }
-            }}
-            onMouseUp={() => {
-              if (props.onMouseUp && props.id && props.channelId) {
-                props.onMouseUp(props.id, props.channelId, 'AUDIO');
-              }
-            }}
+            // onMouseDown={() => {
+            //   const { id, channelId } = players[playerActive];
+            //   if (props.onMouseDown && id && channelId) {
+            //     props.onMouseDown(id, channelId, 'AUDIO');
+            //   }
+            // }}
+            // onMouseUp={() => {
+            //   const { id, channelId } = players[playerActive];
+            //   if (props.onMouseUp && id && channelId) {
+            //     props.onMouseUp(id, channelId, 'AUDIO');
+            //   }
+            // }}
           >
             {/*<AudioOutlined />*/}
           </div>
@@ -335,13 +356,15 @@ export default (props: ScreenProps) => {
           <div
             className={'zoom-item zoom-in'}
             onMouseDown={() => {
-              if (props.onMouseDown && props.id && props.channelId) {
-                props.onMouseDown(props.id, props.channelId, 'ZOOM_IN');
+              const { id, channelId } = players[playerActive];
+              if (props.onMouseDown && id && channelId) {
+                props.onMouseDown(id, channelId, 'ZOOM_IN');
               }
             }}
             onMouseUp={() => {
-              if (props.onMouseUp && props.id && props.channelId) {
-                props.onMouseUp(props.id, props.channelId, 'ZOOM_IN');
+              const { id, channelId } = players[playerActive];
+              if (props.onMouseUp && id && channelId) {
+                props.onMouseUp(id, channelId, 'ZOOM_IN');
               }
             }}
           >
@@ -350,13 +373,15 @@ export default (props: ScreenProps) => {
           <div
             className={'zoom-item zoom-out'}
             onMouseDown={() => {
-              if (props.onMouseDown && props.id && props.channelId) {
-                props.onMouseDown(props.id, props.channelId, 'ZOOM_OUT');
+              const { id, channelId } = players[playerActive];
+              if (props.onMouseDown && id && channelId) {
+                props.onMouseDown(id, channelId, 'ZOOM_OUT');
               }
             }}
             onMouseUp={() => {
-              if (props.onMouseUp && props.id && props.channelId) {
-                props.onMouseUp(props.id, props.channelId, 'ZOOM_OUT');
+              const { id, channelId } = players[playerActive];
+              if (props.onMouseUp && id && channelId) {
+                props.onMouseUp(id, channelId, 'ZOOM_OUT');
               }
             }}
           >
@@ -366,4 +391,4 @@ export default (props: ScreenProps) => {
       </div>
     </div>
   );
-};
+});
