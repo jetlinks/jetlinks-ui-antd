@@ -1,5 +1,5 @@
-import {PageContainer} from '@ant-design/pro-layout';
-import type {ActionType, ProColumns} from '@jetlinks/pro-table';
+import { PageContainer } from '@ant-design/pro-layout';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import {
   ArrowDownOutlined,
   BarsOutlined,
@@ -9,22 +9,22 @@ import {
   PlusOutlined,
   UnorderedListOutlined,
 } from '@ant-design/icons';
-import {Button, message, Popconfirm, Space, Tooltip, Upload} from 'antd';
-import {useRef, useState} from 'react';
-import {useIntl} from '@@/plugin-locale/localeExports';
-import {downloadObject} from '@/utils/util';
+import { Button, message, Popconfirm, Space, Tooltip, Upload } from 'antd';
+import { useRef, useState } from 'react';
+import { useIntl } from '@@/plugin-locale/localeExports';
+import { downloadObject } from '@/utils/util';
 import Service from '@/pages/notice/Config/service';
-import {observer} from '@formily/react';
+import { observer } from '@formily/react';
 import SearchComponent from '@/components/SearchComponent';
-import {getMenuPathByParams, MENUS_CODE} from '@/utils/menu';
-import {history, useLocation} from 'umi';
-import {model} from '@formily/reactive';
+import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { history, useLocation } from 'umi';
+import { model } from '@formily/reactive';
 import moment from 'moment';
-import {ProTableCard} from '@/components';
+import { ProTableCard } from '@/components';
 import NoticeConfig from '@/components/ProTableCard/CardItems/noticeConfig';
 import Debug from '@/pages/notice/Config/Debug';
 import Log from '@/pages/notice/Config/Log';
-import {typeList} from "@/components/ProTableCard/CardItems/noticeTemplate";
+import { typeList } from '@/components/ProTableCard/CardItems/noticeTemplate';
 
 export const service = new Service('notifier/config');
 
@@ -54,7 +54,7 @@ const Config = observer(() => {
     {
       dataIndex: 'provider',
       title: '通知方式',
-      renderText: (text, record) => typeList[record.type][record.provider]
+      renderText: (text, record) => typeList[record.type][record.provider],
     },
     {
       dataIndex: 'description',
@@ -83,7 +83,7 @@ const Config = observer(() => {
               defaultMessage: '编辑',
             })}
           >
-            <EditOutlined/>
+            <EditOutlined />
           </Tooltip>
         </a>,
         <a
@@ -101,7 +101,7 @@ const Config = observer(() => {
               defaultMessage: '下载配置',
             })}
           >
-            <ArrowDownOutlined/>
+            <ArrowDownOutlined />
           </Tooltip>
         </a>,
         <a
@@ -117,7 +117,7 @@ const Config = observer(() => {
               defaultMessage: '调试',
             })}
           >
-            <BugOutlined/>
+            <BugOutlined />
           </Tooltip>
         </a>,
         <a
@@ -132,7 +132,7 @@ const Config = observer(() => {
               defaultMessage: '通知记录',
             })}
           >
-            <BarsOutlined/>
+            <BarsOutlined />
           </Tooltip>
         </a>,
         <a key="remove">
@@ -155,7 +155,7 @@ const Config = observer(() => {
                 defaultMessage: '删除',
               })}
             >
-              <DeleteOutlined/>
+              <DeleteOutlined />
             </Tooltip>
           </Popconfirm>
         </a>,
@@ -167,7 +167,7 @@ const Config = observer(() => {
   return (
     <PageContainer>
       <SearchComponent
-        defaultParam={[{column: 'type$IN', value: id}]}
+        defaultParam={[{ column: 'type$IN', value: id }]}
         field={columns}
         onSearch={(data) => {
           actionRef.current?.reset?.();
@@ -175,12 +175,12 @@ const Config = observer(() => {
         }}
       />
       <ProTableCard<ConfigItem>
-        rowKey='id'
+        rowKey="id"
         actionRef={actionRef}
         search={false}
         params={param}
         columns={columns}
-        headerTitle={(
+        headerTitle={
           <Space>
             <Button
               onClick={() => {
@@ -188,7 +188,7 @@ const Config = observer(() => {
                 history.push(getMenuPathByParams(MENUS_CODE['notice/Config/Detail'], id));
               }}
               key="button"
-              icon={<PlusOutlined/>}
+              icon={<PlusOutlined />}
               type="primary"
             >
               {intl.formatMessage({
@@ -226,12 +226,12 @@ const Config = observer(() => {
                 return false;
               }}
             >
-              <Button style={{marginLeft: 12}}>导入</Button>
+              <Button style={{ marginLeft: 12 }}>导入</Button>
             </Upload>
             <Popconfirm
               title={'确认导出当前页数据？'}
               onConfirm={async () => {
-                const resp: any = await service.queryNoPagingPost({...param, paging: false});
+                const resp: any = await service.queryNoPagingPost({ ...param, paging: false });
                 if (resp.status === 200) {
                   downloadObject(resp.result, '通知配置数据');
                   message.success('导出成功');
@@ -243,7 +243,7 @@ const Config = observer(() => {
               <Button>导出</Button>
             </Popconfirm>
           </Space>
-        )}
+        }
         gridColumn={3}
         request={async (params) => service.query(params)}
         cardRender={(record) => (
@@ -259,7 +259,7 @@ const Config = observer(() => {
                   history.push(getMenuPathByParams(MENUS_CODE['notice/Config/Detail'], id));
                 }}
               >
-                <EditOutlined/>
+                <EditOutlined />
                 编辑
               </Button>,
               <Button
@@ -269,7 +269,7 @@ const Config = observer(() => {
                   state.current = record;
                 }}
               >
-                <BugOutlined/>
+                <BugOutlined />
                 调试
               </Button>,
               <Button
@@ -281,7 +281,7 @@ const Config = observer(() => {
                   )
                 }
               >
-                <ArrowDownOutlined/>
+                <ArrowDownOutlined />
                 导出
               </Button>,
               <Button
@@ -291,7 +291,7 @@ const Config = observer(() => {
                   state.current = record;
                 }}
               >
-                <UnorderedListOutlined/>
+                <UnorderedListOutlined />
                 通知记录
               </Button>,
               <Popconfirm
@@ -303,15 +303,15 @@ const Config = observer(() => {
                 }}
               >
                 <Button key="delete">
-                  <DeleteOutlined/>
+                  <DeleteOutlined />
                 </Button>
               </Popconfirm>,
             ]}
           />
         )}
       />
-      <Debug/>
-      <Log/>
+      <Debug />
+      <Log />
     </PageContainer>
   );
 });

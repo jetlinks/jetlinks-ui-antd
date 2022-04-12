@@ -1,11 +1,11 @@
-import {Modal} from 'antd';
-import {observer} from '@formily/react';
-import {service, state} from '..';
-import ProTable, {ActionType, ProColumns} from '@jetlinks/pro-table';
+import { Modal } from 'antd';
+import { observer } from '@formily/react';
+import { service, state } from '..';
+import ProTable, { ActionType, ProColumns } from '@jetlinks/pro-table';
 import SearchComponent from '@/components/SearchComponent';
-import {useLocation} from 'umi';
-import {InfoCircleOutlined} from '@ant-design/icons';
-import {useRef, useState} from "react";
+import { useLocation } from 'umi';
+import { InfoCircleOutlined } from '@ant-design/icons';
+import { useRef, useState } from 'react';
 
 const Log = observer(() => {
   const location = useLocation<{ id: string }>();
@@ -23,7 +23,7 @@ const Log = observer(() => {
     {
       dataIndex: 'state',
       title: '状态',
-      renderText: (text) => text.text
+      renderText: (text) => text.text,
     },
     {
       dataIndex: 'action',
@@ -35,16 +35,13 @@ const Log = observer(() => {
               title: '详情信息',
               width: '30vw',
               content: (
-                <div style={{height: '300px', overflowY: 'auto'}}>
-                  {JSON.stringify(record)}
-                </div>
+                <div style={{ height: '300px', overflowY: 'auto' }}>{JSON.stringify(record)}</div>
               ),
-              onOk() {
-              },
+              onOk() {},
             });
           }}
         >
-          <InfoCircleOutlined/>
+          <InfoCircleOutlined />
         </a>,
       ],
     },
@@ -54,7 +51,7 @@ const Log = observer(() => {
   return (
     <Modal onCancel={() => (state.log = false)} title="通知记录" width={'70vw'} visible={state.log}>
       <SearchComponent
-        defaultParam={[{column: 'type$IN', value: id}]}
+        defaultParam={[{ column: 'type$IN', value: id }]}
         field={columns}
         onSearch={(data) => {
           actionRef.current?.reset?.();
@@ -66,10 +63,10 @@ const Log = observer(() => {
         params={param}
         search={false}
         pagination={{
-          pageSize: 5
+          pageSize: 5,
         }}
         columns={columns}
-        request={async (params) => service.getHistoryLog(state.current?.id!, params)}
+        request={async (params) => service.getHistoryLog(state.current?.id || '', params)}
       />
     </Modal>
   );

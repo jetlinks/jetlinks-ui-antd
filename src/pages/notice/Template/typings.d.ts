@@ -15,5 +15,5 @@ type LogItem = {
   config: string;
   sendTime: number;
   state: string;
-  errorStack?: string
+  errorStack?: string;
 };

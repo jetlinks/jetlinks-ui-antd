@@ -15,20 +15,20 @@ import {
   Submit,
   Switch,
 } from '@formily/antd';
-import type {Field} from '@formily/core';
-import {createForm, onFieldInit, onFieldValueChange} from '@formily/core';
-import {createSchemaField, observer} from '@formily/react';
-import type {ISchema} from '@formily/json-schema';
+import type { Field } from '@formily/core';
+import { createForm, onFieldInit, onFieldValueChange } from '@formily/core';
+import { createSchemaField, observer } from '@formily/react';
+import type { ISchema } from '@formily/json-schema';
 import styles from './index.less';
-import {useEffect, useMemo, useState} from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import FUpload from '@/components/Upload';
-import {useParams} from 'umi';
-import {PageContainer} from '@ant-design/pro-layout';
-import {Card, Col, message, Row} from 'antd';
-import {typeList} from '@/pages/notice';
-import {configService, service, state} from '@/pages/notice/Template';
+import { useParams } from 'umi';
+import { PageContainer } from '@ant-design/pro-layout';
+import { Card, Col, message, Row } from 'antd';
+import { typeList } from '@/pages/notice';
+import { configService, service, state } from '@/pages/notice/Template';
 import FBraftEditor from '@/components/FBraftEditor';
-import {useAsyncDataSource} from '@/utils/util';
+import { useAsyncDataSource } from '@/utils/util';
 import WeixinCorp from '@/pages/notice/Template/Detail/doc/WeixinCorp';
 import WeixinApp from '@/pages/notice/Template/Detail/doc/WeixinApp';
 import DingTalk from '@/pages/notice/Template/Detail/doc/DingTalk';
@@ -39,31 +39,31 @@ import Email from '@/pages/notice/Template/Detail/doc/Email';
 
 export const docMap = {
   weixin: {
-    corpMessage: <WeixinCorp/>,
-    officialMessage: <WeixinApp/>,
+    corpMessage: <WeixinCorp />,
+    officialMessage: <WeixinApp />,
   },
   dingTalk: {
-    dingTalkMessage: <DingTalk/>,
-    dingTalkRobotWebHook: <DingTalkRebot/>,
+    dingTalkMessage: <DingTalk />,
+    dingTalkRobotWebHook: <DingTalkRebot />,
   },
   voice: {
-    aliyun: <AliyunVoice/>,
+    aliyun: <AliyunVoice />,
   },
   sms: {
-    aliyunSms: <AliyunSms/>,
+    aliyunSms: <AliyunSms />,
   },
   email: {
-    embedded: <Email/>,
+    embedded: <Email />,
   },
 };
 
 const Detail = observer(() => {
-  const {id} = useParams<{ id: string }>();
+  const { id } = useParams<{ id: string }>();
 
   const getConfig = () =>
     configService
       .queryNoPagingPost({
-        terms: [{column: 'type$IN', value: id}],
+        terms: [{ column: 'type$IN', value: id }],
       })
       .then((resp: any) => {
         return resp.result?.map((item: any) => ({
@@ -104,10 +104,12 @@ const Detail = observer(() => {
           });
           onFieldValueChange('template.message', (field, form1) => {
             const value = (field as Field).value;
-            const idList = (typeof value === 'string') && value
-              ?.match(pattern)
-              ?.filter((i: string) => i)
-              .map((item: string) => ({id: item, type: 'string', format: '--'}));
+            const idList =
+              typeof value === 'string' &&
+              value
+                ?.match(pattern)
+                ?.filter((i: string) => i)
+                .map((item: string) => ({ id: item, type: 'string', format: '--' }));
             if (form1.modified) {
               form1.setValuesIn('variableDefinitions', idList);
             }
@@ -119,11 +121,11 @@ const Detail = observer(() => {
               case 'date':
                 format.setComponent(Select);
                 format.setDataSource([
-                  {label: 'String类型的UTC时间戳 (毫秒)', value: 'string'},
-                  {label: 'yyyy-MM-dd', value: 'yyyy-MM-dd'},
-                  {label: 'yyyy-MM-dd HH:mm:ss', value: 'yyyy-MM-dd HH:mm:ss'},
-                  {label: 'yyyy-MM-dd HH:mm:ss EE', value: 'yyyy-MM-dd HH:mm:ss EE'},
-                  {label: 'yyyy-MM-dd HH:mm:ss zzz', value: 'yyyy-MM-dd HH:mm:ss zzz'},
+                  { label: 'String类型的UTC时间戳 (毫秒)', value: 'string' },
+                  { label: 'yyyy-MM-dd', value: 'yyyy-MM-dd' },
+                  { label: 'yyyy-MM-dd HH:mm:ss', value: 'yyyy-MM-dd HH:mm:ss' },
+                  { label: 'yyyy-MM-dd HH:mm:ss EE', value: 'yyyy-MM-dd HH:mm:ss EE' },
+                  { label: 'yyyy-MM-dd HH:mm:ss zzz', value: 'yyyy-MM-dd HH:mm:ss zzz' },
                 ]);
                 format.setValue('string');
                 break;
@@ -138,9 +140,9 @@ const Detail = observer(() => {
               case 'file':
                 format.setComponent(Select);
                 format.setDataSource([
-                  {label: '视频', value: 'video'},
-                  {label: '图片', value: 'img'},
-                  {label: '全部', value: 'any'},
+                  { label: '视频', value: 'video' },
+                  { label: '图片', value: 'img' },
+                  { label: '全部', value: 'any' },
                 ]);
                 format.setValue('any');
                 break;
@@ -374,8 +376,8 @@ const Detail = observer(() => {
                     'x-component': 'Radio.Group',
                     'x-decorator': 'FormItem',
                     enum: [
-                      {label: '是', value: true},
-                      {label: '否', value: false},
+                      { label: '是', value: true },
+                      { label: '否', value: false },
                     ],
                   },
                   userIdList: {
@@ -430,9 +432,9 @@ const Detail = observer(() => {
                     'x-component': 'Select',
                     'x-decorator': 'FormItem',
                     enum: [
-                      {label: 'markdown', value: 'markdown'},
-                      {label: 'text', value: 'text'},
-                      {label: 'link', value: 'link'},
+                      { label: 'markdown', value: 'markdown' },
+                      { label: 'text', value: 'text' },
+                      { label: 'link', value: 'link' },
                     ],
                   },
                   markdown: {
@@ -703,8 +705,8 @@ const Detail = observer(() => {
         'x-decorator': 'FormItem',
         'x-component': 'ArrayTable',
         'x-component-props': {
-          pagination: {pageSize: 9999},
-          scroll: {x: '100%'},
+          pagination: { pageSize: 9999 },
+          scroll: { x: '100%' },
         },
         items: {
           type: 'object',
@@ -712,7 +714,7 @@ const Detail = observer(() => {
             column1: {
               type: 'void',
               'x-component': 'ArrayTable.Column',
-              'x-component-props': {title: '变量', width: '120px'},
+              'x-component-props': { title: '变量', width: '120px' },
               properties: {
                 id: {
                   type: 'string',
@@ -725,7 +727,7 @@ const Detail = observer(() => {
             column2: {
               type: 'void',
               'x-component': 'ArrayTable.Column',
-              'x-component-props': {title: '名称'},
+              'x-component-props': { title: '名称' },
               properties: {
                 name: {
                   type: 'string',
@@ -738,7 +740,7 @@ const Detail = observer(() => {
             column3: {
               type: 'void',
               'x-component': 'ArrayTable.Column',
-              'x-component-props': {title: '类型', width: '120px'},
+              'x-component-props': { title: '类型', width: '120px' },
               properties: {
                 type: {
                   type: 'string',
@@ -746,11 +748,11 @@ const Detail = observer(() => {
                   'x-component': 'Select',
                   required: true,
                   enum: [
-                    {label: '字符串', value: 'string'},
-                    {label: '时间', value: 'date'},
-                    {label: '数字', value: 'number'},
-                    {label: '文件', value: 'file'},
-                    {label: '其他', value: 'other'},
+                    { label: '字符串', value: 'string' },
+                    { label: '时间', value: 'date' },
+                    { label: '数字', value: 'number' },
+                    { label: '文件', value: 'file' },
+                    { label: '其他', value: 'other' },
                   ],
                 },
               },
@@ -758,7 +760,7 @@ const Detail = observer(() => {
             column4: {
               type: 'void',
               'x-component': 'ArrayTable.Column',
-              'x-component-props': {title: '格式', width: '150px'},
+              'x-component-props': { title: '格式', width: '150px' },
               required: true,
               properties: {
                 format: {

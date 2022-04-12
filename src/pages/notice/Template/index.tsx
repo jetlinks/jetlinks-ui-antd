@@ -1,6 +1,6 @@
-import {PageContainer} from '@ant-design/pro-layout';
-import {useRef, useState} from 'react';
-import type {ActionType, ProColumns} from '@jetlinks/pro-table';
+import { PageContainer } from '@ant-design/pro-layout';
+import { useRef, useState } from 'react';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import {
   ArrowDownOutlined,
   BugOutlined,
@@ -9,20 +9,20 @@ import {
   PlusOutlined,
   UnorderedListOutlined,
 } from '@ant-design/icons';
-import {Button, message, Popconfirm, Space, Tooltip, Upload} from 'antd';
-import {useIntl} from '@@/plugin-locale/localeExports';
+import { Button, message, Popconfirm, Space, Tooltip, Upload } from 'antd';
+import { useIntl } from '@@/plugin-locale/localeExports';
 import Service from '@/pages/notice/Template/service';
 import ConfigService from '@/pages/notice/Config/service';
 import SearchComponent from '@/components/SearchComponent';
-import {history, useLocation} from 'umi';
-import {getMenuPathByParams, MENUS_CODE} from '@/utils/menu';
-import {model} from '@formily/reactive';
+import { history, useLocation } from 'umi';
+import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { model } from '@formily/reactive';
 import Debug from './Debug';
 import Log from '@/pages/notice/Template/Log';
-import {downloadObject} from '@/utils/util';
+import { downloadObject } from '@/utils/util';
 import moment from 'moment';
-import {ProTableCard} from '@/components';
-import NoticeCard, {typeList} from '@/components/ProTableCard/CardItems/noticeTemplate';
+import { ProTableCard } from '@/components';
+import NoticeCard, { typeList } from '@/components/ProTableCard/CardItems/noticeTemplate';
 
 export const service = new Service('notifier/template');
 
@@ -49,12 +49,12 @@ const Template = () => {
     {
       dataIndex: 'provider',
       title: '通知方式',
-      renderText: (text, record) => typeList[record.type][record.provider]
+      renderText: (text, record) => typeList[record.type][record.provider],
     },
     {
       dataIndex: 'createTime',
       title: '时间',
-      valueType: 'dateTime'
+      valueType: 'dateTime',
     },
     {
       title: intl.formatMessage({
@@ -78,7 +78,7 @@ const Template = () => {
               defaultMessage: '编辑',
             })}
           >
-            <EditOutlined/>
+            <EditOutlined />
           </Tooltip>
         </a>,
         <Popconfirm
@@ -96,7 +96,7 @@ const Template = () => {
                 defaultMessage: '删除',
               })}
             >
-              <DeleteOutlined/>
+              <DeleteOutlined />
             </Tooltip>
           </a>
         </Popconfirm>,
@@ -109,10 +109,8 @@ const Template = () => {
             );
           }}
         >
-          <Tooltip
-            title='导出'
-          >
-            <ArrowDownOutlined/>
+          <Tooltip title="导出">
+            <ArrowDownOutlined />
           </Tooltip>
         </a>,
         <a
@@ -128,7 +126,7 @@ const Template = () => {
               defaultMessage: '调试',
             })}
           >
-            <BugOutlined/>
+            <BugOutlined />
           </Tooltip>
         </a>,
         <a
@@ -138,7 +136,7 @@ const Template = () => {
           }}
         >
           <Tooltip title="通知记录">
-            <UnorderedListOutlined/>
+            <UnorderedListOutlined />
           </Tooltip>
         </a>,
       ],
@@ -149,7 +147,7 @@ const Template = () => {
   return (
     <PageContainer>
       <SearchComponent
-        defaultParam={[{column: 'type$IN', value: id}]}
+        defaultParam={[{ column: 'type$IN', value: id }]}
         field={columns}
         onSearch={(data) => {
           actionRef.current?.reset?.();
@@ -162,7 +160,7 @@ const Template = () => {
         search={false}
         params={param}
         columns={columns}
-        headerTitle={(
+        headerTitle={
           <Space>
             <Button
               onClick={() => {
@@ -170,7 +168,7 @@ const Template = () => {
                 history.push(getMenuPathByParams(MENUS_CODE['notice/Template/Detail'], id));
               }}
               key="button"
-              icon={<PlusOutlined/>}
+              icon={<PlusOutlined />}
               type="primary"
             >
               {intl.formatMessage({
@@ -204,12 +202,12 @@ const Template = () => {
                 return false;
               }}
             >
-              <Button style={{marginLeft: 12}}>导入</Button>
+              <Button style={{ marginLeft: 12 }}>导入</Button>
             </Upload>
             <Popconfirm
               title={'确认导出当前页数据？'}
               onConfirm={async () => {
-                const resp: any = await service.queryNoPagingPost({...param, paging: false});
+                const resp: any = await service.queryNoPagingPost({ ...param, paging: false });
                 if (resp.status === 200) {
                   downloadObject(resp.result, '通知模版数据');
                   message.success('导出成功');
@@ -221,7 +219,7 @@ const Template = () => {
               <Button>导出</Button>
             </Popconfirm>
           </Space>
-        )}
+        }
         gridColumn={3}
         cardRender={(record) => (
           <NoticeCard
@@ -235,7 +233,7 @@ const Template = () => {
                   history.push(getMenuPathByParams(MENUS_CODE['notice/Template/Detail'], id));
                 }}
               >
-                <EditOutlined/>
+                <EditOutlined />
                 编辑
               </Button>,
               <Button
@@ -245,7 +243,7 @@ const Template = () => {
                   state.current = record;
                 }}
               >
-                <BugOutlined/>
+                <BugOutlined />
                 调试
               </Button>,
               <Button
@@ -257,7 +255,7 @@ const Template = () => {
                   );
                 }}
               >
-                <ArrowDownOutlined/>
+                <ArrowDownOutlined />
                 导出
               </Button>,
               <Button
@@ -266,7 +264,7 @@ const Template = () => {
                   state.log = true;
                 }}
               >
-                <UnorderedListOutlined/>
+                <UnorderedListOutlined />
                 通知记录
               </Button>,
               <Popconfirm
@@ -278,7 +276,7 @@ const Template = () => {
                 }}
               >
                 <Button key="delete">
-                  <DeleteOutlined/>
+                  <DeleteOutlined />
                 </Button>
               </Popconfirm>,
             ]}
@@ -286,8 +284,8 @@ const Template = () => {
         )}
         request={async (params) => service.query(params)}
       />
-      <Debug/>
-      <Log/>
+      <Debug />
+      <Log />
     </PageContainer>
   );
 };

@@ -1,12 +1,12 @@
-import {LoadingOutlined, PlusOutlined, UploadOutlined} from '@ant-design/icons';
+import { LoadingOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import SystemConst from '@/utils/const';
 import Token from '@/utils/token';
-import type {ReactNode} from 'react';
-import {useState} from 'react';
-import {connect} from '@formily/react';
-import {Input, Upload} from 'antd';
-import type {UploadChangeParam} from 'antd/lib/upload/interface';
-import type {UploadListType} from 'antd/es/upload/interface';
+import type { ReactNode } from 'react';
+import { useState } from 'react';
+import { connect } from '@formily/react';
+import { Input, Upload } from 'antd';
+import type { UploadChangeParam } from 'antd/lib/upload/interface';
+import type { UploadListType } from 'antd/es/upload/interface';
 import './index.less';
 
 interface Props {
@@ -14,7 +14,7 @@ interface Props {
   onChange: (value: string | FileProperty | any) => void;
   type?: 'file' | 'image';
   placeholder: string;
-  display?: string
+  display?: string;
 }
 
 type FileProperty = {
@@ -36,27 +36,29 @@ const FUpload = connect((props: Props) => {
       const f = {
         size: info.file.size || 0,
         url: info.file.response?.result,
-        name: info.file.name
+        name: info.file.name,
       };
       setUrl(f);
       props.onChange(f);
     }
   };
 
-  const map = new Map<string,
+  const map = new Map<
+    string,
     {
       node: ReactNode;
       type: UploadListType;
-    }>();
+    }
+  >();
   map.set('image', {
     node: (
       <>
         {url ? (
-          <img src={url as string} alt="avatar" style={{width: '100%'}}/>
+          <img src={url as string} alt="avatar" style={{ width: '100%' }} />
         ) : (
           <div>
-            {loading ? <LoadingOutlined/> : <PlusOutlined/>}
-            <div style={{marginTop: 8}}>选择图片</div>
+            {loading ? <LoadingOutlined /> : <PlusOutlined />}
+            <div style={{ marginTop: 8 }}>选择图片</div>
           </div>
         )}
       </>
@@ -71,15 +73,14 @@ const FUpload = connect((props: Props) => {
           placeholder={props.placeholder}
           // 如果display 有值的话，显示display 的值
           value={(url as FileProperty)[props?.display || 'url']}
-          onChange={value => {
-            // @ts-ignore
-            props.display && props.onChange({[props?.display]: value.target.value, url: null, size: null})
+          onChange={(value) => {
+            props.onChange({ [props?.display || '_a']: value.target.value, url: null, size: null });
           }}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
           }}
-          addonAfter={<UploadOutlined/>}
+          addonAfter={<UploadOutlined />}
         />
       </>
     ),
