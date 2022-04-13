@@ -159,6 +159,85 @@ class Service extends BaseService<DeviceInstance> {
       method: 'PATCH',
       data,
     });
+  //产品状态
+  public queryProductState = (id: string) =>
+    request(`/${SystemConst.API_BASE}/device/product/${id}`, {
+      method: 'GET',
+    });
+  // 发布产品
+  public deployProduct = (productId: string) =>
+    request(`/${SystemConst.API_BASE}/device/product/${productId}/deploy`, {
+      method: 'POST',
+    });
+  // 产品配置
+  public queryProductConfig = (id: string) =>
+    request(`/${SystemConst.API_BASE}/device/product/${id}/config-metadata`, {
+      method: 'GET',
+    });
+  // 设备接入网关状态
+  public queryGatewayState = (id: string) =>
+    request(`/${SystemConst.API_BASE}/gateway/device/${id}/detail`, {
+      method: 'GET',
+    });
+  public startGateway = (id: string) =>
+    request(`/${SystemConst.API_BASE}/gateway/device/${id}/_startup`, {
+      method: 'POST',
+    });
+  //网络组件状态
+  public queryNetworkState = (id: string) =>
+    request(`/${SystemConst.API_BASE}/network/config/${id}`, {
+      method: 'GET',
+    });
+  //网络组件启用
+  public startNetwork = (id: string) =>
+    request(`/${SystemConst.API_BASE}/network/config/${id}/_start`, {
+      method: 'POST',
+    });
+  // 执行功能
+  public executeFunctions = (deviceId: string, functionId: string, data: any) =>
+    request(`/${SystemConst.API_BASE}device/invoked/${deviceId}/function/${functionId}`, {
+      method: 'POST',
+      data,
+    });
+  // 读取属性
+  public readProperties = (deviceId: string, data: any) =>
+    request(`/${SystemConst.API_BASE}/device/instance/${deviceId}/properties/_read`, {
+      method: 'POST',
+      data,
+    });
+  // 设置属性
+  public settingProperties = (deviceId: string, data: any) =>
+    request(`/${SystemConst.API_BASE}/device/setting/${deviceId}/property`, {
+      method: 'POST',
+      data,
+    });
+  //获取协议设置的默认物模型
+  public queryProtocolMetadata = (id: string, transport: string) =>
+    request(`/${SystemConst.API_BASE}/protocol/${id}/${transport}/metadata`, {
+      method: 'GET',
+    });
+  // 保存设备物模型映射
+  public saveDeviceMetadata = (deviceId: string, data: any) =>
+    request(`/${SystemConst.API_BASE}/device/metadata/mapping/device/${deviceId}`, {
+      method: 'PATCH',
+      data,
+    });
+  //保存产品物模型映射
+  public saveProductMetadata = (productId: string, data: any) =>
+    request(`/${SystemConst.API_BASE}/device/metadata/mapping/product/${productId}`, {
+      method: 'PATCH',
+      data,
+    });
+  //查询设备物模型映射
+  public queryDeviceMetadata = (deviceId: string) =>
+    request(`/${SystemConst.API_BASE}/device/metadata/mapping/device/${deviceId}`, {
+      method: 'GET',
+    });
+  //查询产品物模型映射
+  public queryProductMetadata = (productId: string) =>
+    request(`/${SystemConst.API_BASE}/device/metadata/mapping/product/${productId}`, {
+      method: 'GET',
+    });
 }
 
 export default Service;

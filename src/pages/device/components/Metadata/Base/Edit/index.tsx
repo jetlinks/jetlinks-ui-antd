@@ -793,12 +793,19 @@ const Edit = observer((props: Props) => {
     const result = await asyncUpdateMedata(props.type, _data);
     if (result.status === 200) {
       message.success('操作成功！');
-      Store.set(SystemConst.REFRESH_METADATA_TABLE, true);
-      if (deploy) {
-        Store.set('product-deploy', deploy);
+      if ((window as any).onTabSaveSuccess) {
+        if (result) {
+          (window as any).onTabSaveSuccess(result);
+          setTimeout(() => window.close(), 300);
+        }
+      } else {
+        Store.set(SystemConst.REFRESH_METADATA_TABLE, true);
+        if (deploy) {
+          Store.set('product-deploy', deploy);
+        }
+        MetadataModel.edit = false;
+        MetadataModel.item = {};
       }
-      MetadataModel.edit = false;
-      MetadataModel.item = {};
     } else {
       message.error('操作失败！');
     }
