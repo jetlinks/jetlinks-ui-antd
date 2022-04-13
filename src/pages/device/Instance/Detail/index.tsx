@@ -2,7 +2,8 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { InstanceModel, service } from '@/pages/device/Instance';
 import { history, useParams } from 'umi';
 import { Badge, Button, Card, Descriptions, Divider, message, Tooltip } from 'antd';
-import { ReactNode, useEffect, useState } from 'react';
+import type { ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 import { observer } from '@formily/react';
 import Log from '@/pages/device/Instance/Detail/Log';
 // import Alarm from '@/pages/device/components/Alarm';
@@ -10,6 +11,8 @@ import Info from '@/pages/device/Instance/Detail/Info';
 import Functions from '@/pages/device/Instance/Detail/Functions';
 import Running from '@/pages/device/Instance/Detail/Running';
 import ChildDevice from '@/pages/device/Instance/Detail/ChildDevice';
+import Diagnose from '@/pages/device/Instance/Detail/Diagnose';
+import MetadataMap from '@/pages/device/Instance/Detail/MetadataMap';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import Metadata from '../../components/Metadata';
 import type { DeviceMetadata } from '@/pages/device/Product/typings';
@@ -92,6 +95,16 @@ const InstanceDetail = observer(() => {
       }),
       component: <Log />,
     },
+    {
+      key: 'diagnose',
+      tab: '设备诊断',
+      component: <Diagnose />,
+    },
+    {
+      key: 'metadata-map',
+      tab: '物模型映射',
+      component: <MetadataMap type="device" />,
+    },
   ];
   const [list, setList] = useState<{ key: string; tab: string; component: ReactNode }[]>(baseList);
 
@@ -157,6 +170,19 @@ const InstanceDetail = observer(() => {
       MetadataAction.clean();
     };
   }, [params.id]);
+
+  useEffect(() => {
+    if ((location as any).query?.key) {
+      setTab((location as any).query?.key || 'detail');
+    }
+    const subscription = Store.subscribe(SystemConst.BASE_UPDATE_DATA, (data) => {
+      if ((window as any).onTabSaveSuccess) {
+        (window as any).onTabSaveSuccess(data);
+        setTimeout(() => window.close(), 300);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   return (
     <PageContainer
