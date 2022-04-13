@@ -56,7 +56,7 @@ export const docMap = {
 const Detail = observer(() => {
   const { id } = useParams<{ id: string }>();
 
-  const [provider, setProvider] = useState<string>();
+  const [provider, setProvider] = useState<string>('embedded');
   const form = useMemo(
     () =>
       createForm({
@@ -73,7 +73,11 @@ const Detail = observer(() => {
             });
           });
           onFieldValueChange('provider', async (field) => {
-            setProvider(field.value);
+            if (id === 'email') {
+              setProvider('embedded');
+            } else {
+              setProvider(field.value);
+            }
           });
         },
       }),

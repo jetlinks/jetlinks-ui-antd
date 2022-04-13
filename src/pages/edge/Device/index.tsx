@@ -107,7 +107,7 @@ const Device = () => {
         service={service}
         title={intl.formatMessage({
           id: 'pages.edge.device',
-          defaultMessage: '通知配置',
+          defaultMessage: 'config',
         })}
         schema={schema}
         actionRef={actionRef}
