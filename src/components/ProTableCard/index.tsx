@@ -1,7 +1,7 @@
 import type { ProTableProps } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import type { ParamsType } from '@ant-design/pro-provider';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { isFunction } from 'lodash';
 import { Empty, Pagination, Space } from 'antd';
 import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
@@ -35,6 +35,7 @@ const ProTableCard = <
   const [current, setCurrent] = useState(1); // 当前页
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(Default_Size * 2); // 每页条数
+  const [column, setColumn] = useState(props.gridColumn || 4);
 
   /**
    * 处理 Card
@@ -46,7 +47,7 @@ const ProTableCard = <
         {dataSource && dataSource.length ? (
           <div
             className={'pro-table-card-items'}
-            style={{ gridTemplateColumns: `repeat(${props.gridColumn || 4}, 1fr)` }}
+            style={{ gridTemplateColumns: `repeat(${column}, 1fr)` }}
           >
             {dataSource.map((item) =>
               cardRender && isFunction(cardRender) ? cardRender(item) : null,
@@ -60,6 +61,24 @@ const ProTableCard = <
       </>
     );
   };
+
+  const windowChange = () => {
+    if (window.innerWidth < 1600) {
+      setColumn(props.gridColumn && props.gridColumn < 3 ? props.gridColumn : 3);
+    }
+
+    if (window.innerWidth > 1600) {
+      setColumn(props.gridColumn && props.gridColumn < 4 ? props.gridColumn : 4);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', windowChange);
+    windowChange();
+    return () => {
+      window.removeEventListener('resize', windowChange);
+    };
+  }, []);
 
   return (
     <div className={'pro-table-card'}>

@@ -1,3 +1,4 @@
+@import '~antd/es/style/themes/default.less';
 @borderColor: #d9d9d9;
 
 .playback-warp {
@@ -7,6 +8,7 @@
 
   .playback-left {
     display: flex;
+    flex-direction: column;
     flex-grow: 1;
     width: 0;
 
@@ -16,7 +18,7 @@
   }
 
   .playback-right {
-    width: 280px;
+    width: 300px;
     margin-left: 24px;
 
     .playback-calendar {
@@ -43,6 +45,76 @@
       &.no-list {
         align-items: center;
         justify-content: center;
+      }
+
+      .playback-list-items {
+        width: 100%;
+
+        .ant-list-item {
+          padding-left: 12px;
+        }
+      }
+    }
+  }
+
+  .time-line-warp {
+    padding: 10px 0;
+
+    .time-line-clock {
+      display: flex;
+      align-items: stretch;
+      justify-content: space-between;
+      width: 100%;
+
+      > div {
+        color: #666;
+        font-size: 12px;
+      }
+    }
+
+    .time-line-content {
+      position: relative;
+      padding-bottom: 20px;
+
+      .time-line-progress {
+        position: relative;
+        height: 16px;
+        overflow: hidden;
+        background-color: #d9d9d9;
+        border-radius: 2px;
+
+        > div {
+          position: absolute;
+          top: 0;
+          left: 0;
+          height: 100%;
+          background-color: #52c41a;
+          cursor: pointer;
+        }
+      }
+      .time-line-btn {
+        position: absolute;
+        top: -2px;
+        left: 0;
+        width: 3px;
+        height: 19px;
+        background-color: @primary-color;
+        border-radius: 2px;
+        visibility: hidden;
+      }
+
+      .time-line {
+        position: absolute;
+        bottom: -8px;
+        left: -30px;
+        width: 60px;
+        padding: 2px 0;
+        font-size: 12px;
+        text-align: center;
+        background-color: #d9d9d9;
+        border-radius: 2px;
+        box-shadow: 0 0 12px rgba(#000, 0.15);
+        visibility: hidden;
       }
     }
   }

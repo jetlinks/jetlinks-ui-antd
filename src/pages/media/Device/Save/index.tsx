@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Button, Col, Form, Input, message, Modal, Radio, Row, Select } from 'antd';
 import { useIntl } from 'umi';
 import { RadioCard, UploadImage } from '@/components';
@@ -25,6 +25,7 @@ export default (props: SaveProps) => {
   const [productVisible, setProductVisible] = useState(false);
   const [accessType, setAccessType] = useState(DefaultAccessType);
   const [productList, setProductList] = useState<any[]>([]);
+  const [oldPassword, setOldPassword] = useState('');
 
   const getProductList = async (productParams: any) => {
     const resp = await service.queryProductList(productParams);
@@ -44,6 +45,7 @@ export default (props: SaveProps) => {
 
   useEffect(() => {
     if (visible) {
+      setOldPassword('');
       if (props.model === 'edit') {
         form.setFieldsValue(data);
         const _accessType = data?.provider || DefaultAccessType;
@@ -60,10 +62,13 @@ export default (props: SaveProps) => {
     }
   }, [visible]);
 
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     const formData = await form.validateFields();
     if (formData) {
       const { provider, ...extraFormData } = formData;
+      if (formData.password === oldPassword) {
+        delete extraFormData.password;
+      }
       setLoading(true);
       const resp =
         provider === DefaultAccessType
@@ -81,7 +86,7 @@ export default (props: SaveProps) => {
         message.error('操作失败');
       }
     }
-  };
+  }, [props.model, oldPassword]);
 
   const intlFormat = (
     id: string,
@@ -106,8 +111,6 @@ export default (props: SaveProps) => {
       paramsObj,
     );
   };
-
-  console.log(productList);
 
   return (
     <>
@@ -208,6 +211,13 @@ export default (props: SaveProps) => {
                     options={productList}
                     placeholder={'请选择所属产品'}
                     style={{ width: props.model === 'edit' ? '100%' : 'calc(100% - 36px)' }}
+                    onSelect={(_: any, node: any) => {
+                      const pasd = node.configuration ? node.configuration.access_pwd : '';
+                      form.setFieldsValue({
+                        password: pasd,
+                      });
+                      setOldPassword(pasd);
+                    }}
                   />
                 </Form.Item>
                 {props.model !== 'edit' && (
