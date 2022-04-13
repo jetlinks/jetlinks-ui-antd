@@ -13,6 +13,7 @@ import { onFormValuesChange, registerValidateRules } from '@formily/core';
 import { Store } from 'jetlinks-store';
 import { useLocation } from 'umi';
 import SystemConst from '@/utils/const';
+import { getButtonPermission } from '@/utils/menu';
 
 export const service = new Service('protocol');
 const Protocol = () => {
@@ -70,7 +71,10 @@ const Protocol = () => {
       valueType: 'option',
       width: 200,
       render: (text, record) => [
-        <a
+        <Button
+          type="link"
+          style={{ padding: 0 }}
+          disabled={getButtonPermission('link/Protocol', ['update'])}
           key="edit"
           onClick={() => {
             CurdModel.update(record);
@@ -85,37 +89,52 @@ const Protocol = () => {
           >
             <EditOutlined />
           </Tooltip>
-        </a>,
+        </Button>,
         record.state !== 1 && (
-          <a key="publish">
+          <Button
+            type="link"
+            style={{ padding: 0 }}
+            disabled={getButtonPermission('link/Protocol', ['action'])}
+            key="publish"
+          >
             <Popconfirm title="确认发布？" onConfirm={() => modifyState(record.id, 'deploy')}>
               <Tooltip title="发布">
                 <CheckCircleOutlined />
               </Tooltip>
             </Popconfirm>
-          </a>
+          </Button>
         ),
         record.state === 1 && (
-          <a key="reload">
+          <Button
+            type="link"
+            style={{ padding: 0 }}
+            disabled={getButtonPermission('link/Protocol', ['action'])}
+            key="reload"
+          >
             <Popconfirm title="确认撤销？" onConfirm={() => modifyState(record.id, 'un-deploy')}>
               <Tooltip title="撤销">
                 <StopOutlined />
               </Tooltip>
             </Popconfirm>
-          </a>
+          </Button>
         ),
-        <Tooltip
+        <Button
+          style={{ padding: 0 }}
           key="delete"
-          title={
-            record.state !== 1
-              ? intl.formatMessage({
-                  id: 'pages.data.option.remove',
-                  defaultMessage: '删除',
-                })
-              : '请先禁用该组件，再删除。'
-          }
+          type="link"
+          disabled={record.state === 1 || getButtonPermission('link/Protocol', ['delete'])}
         >
-          <Button style={{ padding: 0 }} key="delete" type="link" disabled={record.state === 1}>
+          <Tooltip
+            key="delete"
+            title={
+              record.state !== 1
+                ? intl.formatMessage({
+                    id: 'pages.data.option.remove',
+                    defaultMessage: '删除',
+                  })
+                : '请先禁用该组件，再删除。'
+            }
+          >
             <Popconfirm
               title={intl.formatMessage({
                 id: 'pages.data.option.remove.tips',
@@ -141,8 +160,8 @@ const Protocol = () => {
                 <DeleteOutlined />
               </Tooltip>
             </Popconfirm>
-          </Button>
-        </Tooltip>,
+          </Tooltip>
+        </Button>,
       ],
     },
   ];
@@ -326,6 +345,7 @@ const Protocol = () => {
         modelConfig={{ width: '550px' }}
         schema={schema}
         actionRef={actionRef}
+        disableAdd={getButtonPermission('link/Protocol', ['add'])}
         formEffect={() => {
           onFormValuesChange((form) => {
             form.setFieldState('id', (state) => {

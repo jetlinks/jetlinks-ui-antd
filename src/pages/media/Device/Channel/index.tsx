@@ -152,7 +152,7 @@ export default () => {
             onClick={() => {
               history.push(
                 `${getMenuPathByCode(MENUS_CODE['media/Device/Playback'])}?id=${
-                  record.channelId
+                  record.deviceId
                 }&channelId=${record.channelId}`,
               );
             }}

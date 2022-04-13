@@ -25,6 +25,7 @@ import { Store } from 'jetlinks-store';
 import MetadataAction from '@/pages/device/components/Metadata/DataBaseAction';
 import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 import encodeQuery from '@/utils/encodeQuery';
+import MetadataMap from '@/pages/device/Instance/Detail/MetadataMap';
 import SystemConst from '@/utils/const';
 
 export const ModelEnum = {
@@ -168,7 +169,25 @@ const ProductDetail = observer(() => {
       tab: '设备接入',
       component: <Access />,
     },
+    {
+      key: 'metadata-map',
+      tab: '物模型映射',
+      component: <MetadataMap type="product" />,
+    },
   ];
+
+  useEffect(() => {
+    if ((location as any).query?.key) {
+      setMode((location as any).query?.key || 'base');
+    }
+    const subscription = Store.subscribe(SystemConst.BASE_UPDATE_DATA, (data) => {
+      if ((window as any).onTabSaveSuccess) {
+        (window as any).onTabSaveSuccess(data);
+        setTimeout(() => window.close(), 300);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   return (
     <PageContainer

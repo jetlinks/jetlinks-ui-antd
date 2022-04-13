@@ -13,7 +13,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import type { NetworkItem } from '@/pages/link/Type/typings';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import SearchComponent from '@/components/SearchComponent';
-import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { getButtonPermission, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { history } from 'umi';
 import Service from '@/pages/link/service';
 import { Store } from 'jetlinks-store';
@@ -104,7 +104,10 @@ const Network = () => {
       valueType: 'option',
       width: 200,
       render: (text, record) => [
-        <a
+        <Button
+          type="link"
+          style={{ padding: 0 }}
+          disabled={getButtonPermission('link/Type', ['view'])}
           key="edit"
           onClick={() => {
             Store.set('current-network-data', record);
@@ -114,9 +117,14 @@ const Network = () => {
           <Tooltip title="查看">
             <EyeOutlined />
           </Tooltip>
-        </a>,
+        </Button>,
 
-        <a key="changeState">
+        <Button
+          type="link"
+          style={{ padding: 0 }}
+          disabled={getButtonPermission('link/Type', ['action'])}
+          key="changeState"
+        >
           <Popconfirm
             title={`确认${record.state.value === 'enabled' ? '禁用' : '启用'}?`}
             onConfirm={async () => {
@@ -142,19 +150,25 @@ const Network = () => {
               {record.state.value === 'enabled' ? <CloseCircleOutlined /> : <PlayCircleOutlined />}
             </Tooltip>
           </Popconfirm>
-        </a>,
-        <Tooltip
-          key="delete"
-          title={
-            record.state.value === 'disabled'
-              ? intl.formatMessage({
-                  id: 'pages.data.option.remove',
-                  defaultMessage: '删除',
-                })
-              : '请先禁用该组件，再删除。'
+        </Button>,
+        <Button
+          type="link"
+          style={{ padding: 0 }}
+          disabled={
+            record.state.value === 'enabled' || getButtonPermission('link/Type', ['delete'])
           }
         >
-          <Button type="link" style={{ padding: 0 }} disabled={record.state.value === 'enabled'}>
+          <Tooltip
+            key="delete"
+            title={
+              record.state.value === 'disabled'
+                ? intl.formatMessage({
+                    id: 'pages.data.option.remove',
+                    defaultMessage: '删除',
+                  })
+                : '请先禁用该组件，再删除。'
+            }
+          >
             <Popconfirm
               title="确认删除?"
               onConfirm={async () => {
@@ -167,8 +181,8 @@ const Network = () => {
             >
               <DeleteOutlined />
             </Popconfirm>
-          </Button>
-        </Tooltip>,
+          </Tooltip>
+        </Button>,
       ],
     },
   ];
@@ -189,12 +203,9 @@ const Network = () => {
         params={param}
         columns={columns}
         search={false}
-        headerTitle={'网络组件'}
-        request={async (params) =>
-          service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
-        }
-        toolBarRender={() => [
+        headerTitle={
           <Button
+            disabled={getButtonPermission('link/Type', ['add'])}
             onClick={() => {
               pageJump();
             }}
@@ -206,8 +217,11 @@ const Network = () => {
               id: 'pages.data.option.add',
               defaultMessage: '新增',
             })}
-          </Button>,
-        ]}
+          </Button>
+        }
+        request={async (params) =>
+          service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
+        }
       />
     </PageContainer>
   );

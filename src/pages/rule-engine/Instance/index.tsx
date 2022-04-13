@@ -19,6 +19,7 @@ import RuleInstanceCard from '@/components/ProTableCard/CardItems/ruleInstance';
 import Save from '@/pages/rule-engine/Instance/Save';
 import SystemConst from '@/utils/const';
 import { StatusColorEnum } from '@/components/BadgeStatus';
+import { getButtonPermission } from '@/utils/menu';
 
 export const service = new Service('rule-engine/instance');
 
@@ -30,79 +31,62 @@ const Instance = () => {
   const [searchParams, setSearchParams] = useState<any>({});
 
   const tools = (record: InstanceItem) => [
-    <Tooltip
-      title={intl.formatMessage({
-        id: 'pages.data.option.edit',
-        defaultMessage: '编辑',
-      })}
+    <Button
       key={'edit'}
-    >
-      <Button
-        type={'link'}
-        style={{ padding: 0 }}
-        onClick={() => {
-          setCurrent(record);
-          setVisible(true);
-        }}
-      >
-        <EditOutlined />
-      </Button>
-    </Tooltip>,
-    <Tooltip
-      title={intl.formatMessage({
-        id: 'pages.data.option.detail',
-        defaultMessage: '查看',
-      })}
-      key={'detail'}
-    >
-      <Button
-        type={'link'}
-        style={{ padding: 0 }}
-        onClick={() => {
-          window.open(`/${SystemConst.API_BASE}/rule-editor/index.html#flow/${record.id}`);
-        }}
-      >
-        <EyeOutlined />
-      </Button>
-    </Tooltip>,
-    <Popconfirm
-      key={'state'}
-      title={intl.formatMessage({
-        id: `pages.data.option.${record.state.value !== 'stopped' ? 'disabled' : 'enabled'}.tips`,
-        defaultMessage: '确认禁用？',
-      })}
-      onConfirm={async () => {
-        if (record.state.value !== 'stopped') {
-          await service.stopRule(record.id);
-        } else {
-          await service.startRule(record.id);
-        }
-        message.success(
-          intl.formatMessage({
-            id: 'pages.data.option.success',
-            defaultMessage: '操作成功!',
-          }),
-        );
-        actionRef.current?.reload();
+      type={'link'}
+      style={{ padding: 0 }}
+      onClick={() => {
+        setCurrent(record);
+        setVisible(true);
       }}
+      disabled={getButtonPermission('rule-engine/Instance', ['update'])}
     >
       <Tooltip
         title={intl.formatMessage({
-          id: `pages.data.option.${record.state.value !== 'stopped' ? 'disabled' : 'enabled'}`,
-          defaultMessage: record.state.value !== 'stopped' ? '禁用' : '启用',
+          id: 'pages.data.option.edit',
+          defaultMessage: '编辑',
         })}
+        key={'edit'}
       >
-        <Button type={'link'} style={{ padding: 0 }}>
-          {record.state.value !== 'stopped' ? <StopOutlined /> : <CheckCircleOutlined />}
-        </Button>
+        <EditOutlined />
       </Tooltip>
-    </Popconfirm>,
-    <Popconfirm
-      title={record.state.value === 'stopped' ? '确认删除' : '未停止不能删除'}
-      key={'delete'}
-      onConfirm={async () => {
-        if (record.state.value === 'stopped') {
-          await service.remove(record.id);
+    </Button>,
+    // <Button key={'view'}
+    //   disabled={getButtonPermission('rule-engine/Instance', ['view'])}
+    //   type={'link'}
+    //   style={{ padding: 0 }}
+    //   onClick={() => {
+    //     window.open(`/${SystemConst.API_BASE}/rule-editor/index.html#flow/${record.id}`);
+    //   }}
+    // >
+    //   <Tooltip
+    //     title={intl.formatMessage({
+    //       id: 'pages.data.option.detail',
+    //       defaultMessage: '查看',
+    //     })}
+    //     key={'detail'}
+    //   >
+    //     <EyeOutlined />
+    //   </Tooltip>
+    // </Button>,
+    <Button
+      key={'operate'}
+      disabled={getButtonPermission('rule-engine/Instance', ['action'])}
+      type={'link'}
+      style={{ padding: 0 }}
+    >
+      <Popconfirm
+        key={'state'}
+        title={intl.formatMessage({
+          id: `pages.data.option.${record.state.value !== 'stopped' ? 'disabled' : 'enabled'}.tips`,
+          defaultMessage: '确认禁用？',
+        })}
+        onConfirm={async () => {
+          if (record.state.value !== 'stopped') {
+            await service.stopRule(record.id);
+          } else {
+            await service.startRule(record.id);
+          }
           message.success(
             intl.formatMessage({
               id: 'pages.data.option.success',
@@ -110,22 +94,52 @@ const Instance = () => {
             }),
           );
           actionRef.current?.reload();
-        } else {
-          message.error('未停止不能删除');
-        }
-      }}
-    >
-      <Tooltip
-        title={intl.formatMessage({
-          id: 'pages.data.option.remove',
-          defaultMessage: '删除',
-        })}
+        }}
       >
-        <Button type={'link'} style={{ padding: 0 }}>
+        <Tooltip
+          title={intl.formatMessage({
+            id: `pages.data.option.${record.state.value !== 'stopped' ? 'disabled' : 'enabled'}`,
+            defaultMessage: record.state.value !== 'stopped' ? '禁用' : '启用',
+          })}
+        >
+          {record.state.value !== 'stopped' ? <StopOutlined /> : <CheckCircleOutlined />}
+        </Tooltip>
+      </Popconfirm>
+    </Button>,
+    <Button
+      type={'link'}
+      key={'delete'}
+      style={{ padding: 0 }}
+      disabled={getButtonPermission('rule-engine/Instance', ['delete'])}
+    >
+      <Popconfirm
+        title={record.state.value === 'stopped' ? '确认删除' : '未停止不能删除'}
+        key={'delete'}
+        onConfirm={async () => {
+          if (record.state.value === 'stopped') {
+            await service.remove(record.id);
+            message.success(
+              intl.formatMessage({
+                id: 'pages.data.option.success',
+                defaultMessage: '操作成功!',
+              }),
+            );
+            actionRef.current?.reload();
+          } else {
+            message.error('未停止不能删除');
+          }
+        }}
+      >
+        <Tooltip
+          title={intl.formatMessage({
+            id: 'pages.data.option.remove',
+            defaultMessage: '删除',
+          })}
+        >
           <DeleteOutlined />
-        </Button>
-      </Tooltip>
-    </Popconfirm>,
+        </Tooltip>
+      </Popconfirm>
+    </Button>,
   ];
 
   const columns: ProColumns<InstanceItem>[] = [
@@ -181,7 +195,10 @@ const Instance = () => {
       align: 'center',
       width: 200,
       render: (text, record) => [
-        <a
+        <Button
+          type="link"
+          style={{ padding: 0 }}
+          disabled={getButtonPermission('rule-engine/Instance', ['update'])}
           key={'edit'}
           onClick={() => {
             setCurrent(record);
@@ -196,9 +213,12 @@ const Instance = () => {
           >
             <EditOutlined />
           </Tooltip>
-        </a>,
-        <a
-          key={'see'}
+        </Button>,
+        <Button
+          type="link"
+          style={{ padding: 0 }}
+          disabled={getButtonPermission('rule-engine/Instance', ['view'])}
+          key={'view'}
           onClick={() => {
             window.open(`/${SystemConst.API_BASE}/rule-editor/index.html#flow/${record.id}`);
           }}
@@ -211,47 +231,27 @@ const Instance = () => {
           >
             <EyeOutlined />
           </Tooltip>
-        </a>,
-        <Popconfirm
-          key={'state'}
-          title={intl.formatMessage({
-            id: `pages.data.option.${
-              record.state.value !== 'stopped' ? 'disabled' : 'enabled'
-            }.tips`,
-            defaultMessage: '确认禁用？',
-          })}
-          onConfirm={async () => {
-            if (record.state.value !== 'stopped') {
-              await service.stopRule(record.id);
-            } else {
-              await service.startRule(record.id);
-            }
-            message.success(
-              intl.formatMessage({
-                id: 'pages.data.option.success',
-                defaultMessage: '操作成功!',
-              }),
-            );
-            actionRef.current?.reload();
-          }}
+        </Button>,
+        <Button
+          type={'link'}
+          style={{ padding: 0 }}
+          key={'operate'}
+          disabled={getButtonPermission('rule-engine/Instance', ['action'])}
         >
-          <Tooltip
+          <Popconfirm
+            key={'state'}
             title={intl.formatMessage({
-              id: `pages.data.option.${record.state.value !== 'stopped' ? 'disabled' : 'enabled'}`,
-              defaultMessage: record.state.value !== 'stopped' ? '禁用' : '启用',
+              id: `pages.data.option.${
+                record.state.value !== 'stopped' ? 'disabled' : 'enabled'
+              }.tips`,
+              defaultMessage: '确认禁用？',
             })}
-          >
-            <Button type={'link'} style={{ padding: 0 }}>
-              {record.state.value !== 'stopped' ? <StopOutlined /> : <CheckCircleOutlined />}
-            </Button>
-          </Tooltip>
-        </Popconfirm>,
-        <Popconfirm
-          title={record.state.value === 'stopped' ? '确认删除' : '未停止不能删除'}
-          key={'delete'}
-          onConfirm={async () => {
-            if (record.state.value === 'stopped') {
-              await service.remove(record.id);
+            onConfirm={async () => {
+              if (record.state.value !== 'stopped') {
+                await service.stopRule(record.id);
+              } else {
+                await service.startRule(record.id);
+              }
               message.success(
                 intl.formatMessage({
                   id: 'pages.data.option.success',
@@ -259,22 +259,54 @@ const Instance = () => {
                 }),
               );
               actionRef.current?.reload();
-            } else {
-              message.error('未停止不能删除');
-            }
-          }}
-        >
-          <Tooltip
-            title={intl.formatMessage({
-              id: 'pages.data.option.remove',
-              defaultMessage: '删除',
-            })}
+            }}
           >
-            <Button type={'link'} style={{ padding: 0 }}>
+            <Tooltip
+              title={intl.formatMessage({
+                id: `pages.data.option.${
+                  record.state.value !== 'stopped' ? 'disabled' : 'enabled'
+                }`,
+                defaultMessage: record.state.value !== 'stopped' ? '禁用' : '启用',
+              })}
+            >
+              {record.state.value !== 'stopped' ? <StopOutlined /> : <CheckCircleOutlined />}
+            </Tooltip>
+          </Popconfirm>
+        </Button>,
+        <Button
+          disabled={getButtonPermission('rule-engine/Instance', ['delete'])}
+          type={'link'}
+          key={'delete'}
+          style={{ padding: 0 }}
+        >
+          <Popconfirm
+            title={record.state.value === 'stopped' ? '确认删除' : '未停止不能删除'}
+            key={'delete'}
+            onConfirm={async () => {
+              if (record.state.value === 'stopped') {
+                await service.remove(record.id);
+                message.success(
+                  intl.formatMessage({
+                    id: 'pages.data.option.success',
+                    defaultMessage: '操作成功!',
+                  }),
+                );
+                actionRef.current?.reload();
+              } else {
+                message.error('未停止不能删除');
+              }
+            }}
+          >
+            <Tooltip
+              title={intl.formatMessage({
+                id: 'pages.data.option.remove',
+                defaultMessage: '删除',
+              })}
+            >
               <DeleteOutlined />
-            </Button>
-          </Tooltip>
-        </Popconfirm>,
+            </Tooltip>
+          </Popconfirm>
+        </Button>,
       ],
     },
   ];
@@ -285,7 +317,6 @@ const Instance = () => {
         field={columns}
         target="device-instance"
         onSearch={(data) => {
-          console.log(data);
           // 重置分页数据
           actionRef.current?.reset?.();
           setSearchParams(data);
@@ -316,6 +347,7 @@ const Instance = () => {
               setVisible(true);
               setCurrent({});
             }}
+            disabled={getButtonPermission('rule-engine/Instance', ['add'])}
             style={{ marginRight: 12 }}
             key="button"
             icon={<PlusOutlined />}
@@ -327,7 +359,26 @@ const Instance = () => {
             })}
           </Button>,
         ]}
-        cardRender={(record) => <RuleInstanceCard {...record} actions={tools(record)} />}
+        cardRender={(record) => (
+          <RuleInstanceCard
+            {...record}
+            actions={tools(record)}
+            detail={
+              <div
+                style={{ padding: 8, fontSize: 24 }}
+                onClick={() => {
+                  if (!getButtonPermission('rule-engine/Instance', ['view'])) {
+                    window.open(
+                      `/${SystemConst.API_BASE}/rule-editor/index.html#flow/${record.id}`,
+                    );
+                  }
+                }}
+              >
+                <EyeOutlined />
+              </div>
+            }
+          />
+        )}
       />
       {visible && (
         <Save

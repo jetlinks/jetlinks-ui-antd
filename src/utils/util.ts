@@ -88,3 +88,15 @@ export const testIP = (str: string) => {
     /^([0-9]|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.([0-9]|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.([0-9]|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.([0-9]|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])$/;
   return re.test(str);
 };
+
+// 生成随机数
+export const randomString = (length?: number) => {
+  const tempLength = length || 32;
+  const chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';
+  const maxPos = chars.length;
+  let pwd = '';
+  for (let i = 0; i < tempLength; i += 1) {
+    pwd += chars.charAt(Math.floor(Math.random() * maxPos));
+  }
+  return pwd;
+};

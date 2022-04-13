@@ -7,7 +7,7 @@ import {
   PlayCircleOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
-import { Badge, Button, Dropdown, Menu, message, Popconfirm, Tooltip, Upload } from 'antd';
+import { Badge, Button, Dropdown, Menu, message, Popconfirm, Space, Tooltip, Upload } from 'antd';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
@@ -19,6 +19,7 @@ import Save from './Save';
 import SystemConst from '@/utils/const';
 import { downloadObject } from '@/utils/util';
 import Token from '@/utils/token';
+import { getButtonPermission } from '@/utils/menu';
 
 export const service = new Service('permission');
 const Permission: React.FC = observer(() => {
@@ -62,11 +63,12 @@ const Permission: React.FC = observer(() => {
             };
           }}
         >
-          <Button>导入</Button>
+          <Button disabled={getButtonPermission('system/Permission', ['import'])}>导入</Button>
         </Upload>
       </Menu.Item>
       <Menu.Item key="export">
         <Popconfirm
+          disabled={getButtonPermission('system/Permission', ['export'])}
           title={'确认导出？'}
           onConfirm={() => {
             service.getPermission({ ...param, paging: false }).subscribe((resp) => {
@@ -79,7 +81,7 @@ const Permission: React.FC = observer(() => {
             });
           }}
         >
-          <Button>导出</Button>
+          <Button disabled={getButtonPermission('system/Permission', ['export'])}>导出</Button>
         </Popconfirm>
       </Menu.Item>
     </Menu>
@@ -142,7 +144,10 @@ const Permission: React.FC = observer(() => {
       valueType: 'option',
       width: 200,
       render: (text, record) => [
-        <a
+        <Button
+          type="link"
+          disabled={getButtonPermission('system/Permission', ['add'])}
+          style={{ padding: 0 }}
           key="editable"
           onClick={() => {
             edit(record);
@@ -156,8 +161,13 @@ const Permission: React.FC = observer(() => {
           >
             <EditOutlined />
           </Tooltip>
-        </a>,
-        <a key="view">
+        </Button>,
+        <Button
+          style={{ padding: 0 }}
+          disabled={getButtonPermission('system/Permission', ['action'])}
+          type="link"
+          key="view"
+        >
           <Popconfirm
             title={intl.formatMessage({
               id: 'pages.data.option.disabled.tips',
@@ -187,19 +197,23 @@ const Permission: React.FC = observer(() => {
               {record.status ? <CloseCircleOutlined /> : <PlayCircleOutlined />}
             </Tooltip>
           </Popconfirm>
-        </a>,
-        <Tooltip
-          key="delete"
-          title={
-            record.status === 0
-              ? intl.formatMessage({
-                  id: 'pages.data.option.remove',
-                  defaultMessage: '删除',
-                })
-              : '请先禁用该权限，再删除。'
-          }
+        </Button>,
+        <Button
+          type="link"
+          style={{ padding: 0 }}
+          disabled={record.status === 1 || getButtonPermission('system/Permission', ['delete'])}
         >
-          <Button type="link" style={{ padding: 0 }} disabled={record.status === 1}>
+          <Tooltip
+            key="delete"
+            title={
+              record.status === 0
+                ? intl.formatMessage({
+                    id: 'pages.data.option.remove',
+                    defaultMessage: '删除',
+                  })
+                : '请先禁用该权限，再删除。'
+            }
+          >
             <Popconfirm
               title={intl.formatMessage({
                 id: 'pages.data.option.remove.tips',
@@ -218,8 +232,8 @@ const Permission: React.FC = observer(() => {
             >
               <DeleteOutlined />
             </Popconfirm>
-          </Button>
-        </Tooltip>,
+          </Tooltip>
+        </Button>,
       ],
     },
   ];
@@ -234,39 +248,36 @@ const Permission: React.FC = observer(() => {
           actionRef.current?.reset?.();
           setParam(data);
         }}
-        // onReset={() => {
-        //   // 重置分页及搜索参数
-        //   actionRef.current?.reset?.();
-        //   setParam({});
-        // }}
       />
       <ProTable<PermissionItem>
         actionRef={actionRef}
         params={param}
         columns={columns}
         search={false}
-        headerTitle={'权限列表'}
+        headerTitle={
+          <Space>
+            <Button
+              onClick={() => {
+                setMode('add');
+              }}
+              disabled={getButtonPermission('system/Permission', ['add'])}
+              key="button"
+              icon={<PlusOutlined />}
+              type="primary"
+            >
+              {intl.formatMessage({
+                id: 'pages.data.option.add',
+                defaultMessage: '新增',
+              })}
+            </Button>
+            <Dropdown key={'more'} overlay={menu} placement="bottom">
+              <Button>批量操作</Button>
+            </Dropdown>
+          </Space>
+        }
         request={async (params) =>
           service.query({ ...params, sorts: [{ name: 'id', order: 'asc' }] })
         }
-        toolBarRender={() => [
-          <Button
-            onClick={() => {
-              setMode('add');
-            }}
-            key="button"
-            icon={<PlusOutlined />}
-            type="primary"
-          >
-            {intl.formatMessage({
-              id: 'pages.data.option.add',
-              defaultMessage: '新增',
-            })}
-          </Button>,
-          <Dropdown key={'more'} overlay={menu} placement="bottom">
-            <Button>批量操作</Button>
-          </Dropdown>,
-        ]}
       />
       <Save
         model={model}

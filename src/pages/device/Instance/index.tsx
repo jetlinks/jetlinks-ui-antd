@@ -29,7 +29,7 @@ import { ProTableCard } from '@/components';
 import SystemConst from '@/utils/const';
 import Token from '@/utils/token';
 import DeviceCard from '@/components/ProTableCard/CardItems/device';
-import { getMenuPathByParams, MENUS_CODE, getButtonPermission } from '@/utils/menu';
+import { getButtonPermission, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 
 export const statusMap = new Map();
 statusMap.set('在线', 'success');
@@ -69,68 +69,45 @@ const Instance = () => {
   const intl = useIntl();
 
   const tools = (record: DeviceInstance) => [
-    <Tooltip
-      title={intl.formatMessage({
-        id: 'pages.data.option.detail',
-        defaultMessage: '查看',
-      })}
-      key={'detail'}
-    >
-      <Button
-        type={'link'}
-        style={{ padding: 0 }}
-        onClick={() => {
-          InstanceModel.current = record;
-          const url = getMenuPathByParams(MENUS_CODE['device/Instance/Detail'], record.id);
-          history.push(url);
-        }}
-      >
-        <EyeOutlined />
-      </Button>
-    </Tooltip>,
-    <Popconfirm
-      key={'state'}
-      title={intl.formatMessage({
-        id: `pages.data.option.${record.state.value !== 'notActive' ? 'disabled' : 'enabled'}.tips`,
-        defaultMessage: '确认禁用？',
-      })}
-      onConfirm={async () => {
-        if (record.state.value !== 'notActive') {
-          await service.undeployDevice(record.id);
-        } else {
-          await service.deployDevice(record.id);
-        }
-        message.success(
-          intl.formatMessage({
-            id: 'pages.data.option.success',
-            defaultMessage: '操作成功!',
-          }),
-        );
-        actionRef.current?.reload();
+    <Button
+      type={'link'}
+      style={{ padding: 0 }}
+      onClick={() => {
+        InstanceModel.current = record;
+        const url = getMenuPathByParams(MENUS_CODE['device/Instance/Detail'], record.id);
+        history.push(url);
       }}
+      disabled={getButtonPermission('device/Instance', ['view'])}
     >
       <Tooltip
         title={intl.formatMessage({
-          id: `pages.data.option.${record.state.value !== 'notActive' ? 'disabled' : 'enabled'}`,
-          defaultMessage: record.state.value !== 'notActive' ? '禁用' : '启用',
+          id: 'pages.data.option.detail',
+          defaultMessage: '查看',
         })}
+        key={'detail'}
       >
-        <Button type={'link'} style={{ padding: 0 }}>
-          {record.state.value !== 'notActive' ? <StopOutlined /> : <CheckCircleOutlined />}
-        </Button>
+        <EyeOutlined />
       </Tooltip>
-    </Popconfirm>,
-    <Popconfirm
-      title={intl.formatMessage({
-        id:
-          record.state.value === 'notActive'
-            ? 'pages.data.option.remove.tips'
-            : 'pages.device.instance.deleteTip',
-      })}
-      key={'delete'}
-      onConfirm={async () => {
-        if (record.state.value === 'notActive') {
-          await service.remove(record.id);
+    </Button>,
+    <Button
+      type={'link'}
+      style={{ padding: 0 }}
+      disabled={getButtonPermission('device/Product', ['action'])}
+    >
+      <Popconfirm
+        key={'state'}
+        title={intl.formatMessage({
+          id: `pages.data.option.${
+            record.state.value !== 'notActive' ? 'disabled' : 'enabled'
+          }.tips`,
+          defaultMessage: '确认禁用？',
+        })}
+        onConfirm={async () => {
+          if (record.state.value !== 'notActive') {
+            await service.undeployDevice(record.id);
+          } else {
+            await service.deployDevice(record.id);
+          }
           message.success(
             intl.formatMessage({
               id: 'pages.data.option.success',
@@ -138,22 +115,57 @@ const Instance = () => {
             }),
           );
           actionRef.current?.reload();
-        } else {
-          message.error(intl.formatMessage({ id: 'pages.device.instance.deleteTip' }));
-        }
-      }}
-    >
-      <Tooltip
-        title={intl.formatMessage({
-          id: 'pages.data.option.remove',
-          defaultMessage: '删除',
-        })}
+        }}
       >
-        <Button type={'link'} style={{ padding: 0 }}>
+        <Tooltip
+          title={intl.formatMessage({
+            id: `pages.data.option.${record.state.value !== 'notActive' ? 'disabled' : 'enabled'}`,
+            defaultMessage: record.state.value !== 'notActive' ? '禁用' : '启用',
+          })}
+        >
+          {record.state.value !== 'notActive' ? <StopOutlined /> : <CheckCircleOutlined />}
+        </Tooltip>
+      </Popconfirm>{' '}
+    </Button>,
+
+    <Button
+      type={'link'}
+      style={{ padding: 0 }}
+      disabled={getButtonPermission('device/Instance', ['delete'])}
+    >
+      <Popconfirm
+        title={intl.formatMessage({
+          id:
+            record.state.value === 'notActive'
+              ? 'pages.data.option.remove.tips'
+              : 'pages.device.instance.deleteTip',
+        })}
+        key={'delete'}
+        onConfirm={async () => {
+          if (record.state.value === 'notActive') {
+            await service.remove(record.id);
+            message.success(
+              intl.formatMessage({
+                id: 'pages.data.option.success',
+                defaultMessage: '操作成功!',
+              }),
+            );
+            actionRef.current?.reload();
+          } else {
+            message.error(intl.formatMessage({ id: 'pages.device.instance.deleteTip' }));
+          }
+        }}
+      >
+        <Tooltip
+          title={intl.formatMessage({
+            id: 'pages.data.option.remove',
+            defaultMessage: '删除',
+          })}
+        >
           <DeleteOutlined />
-        </Button>
-      </Tooltip>
-    </Popconfirm>,
+        </Tooltip>
+      </Popconfirm>
+    </Button>,
   ];
 
   const columns: ProColumns<DeviceInstance>[] = [
@@ -247,6 +259,7 @@ const Instance = () => {
     <Menu>
       <Menu.Item key="1">
         <Button
+          disabled={getButtonPermission('device/Instance', ['export'])}
           icon={<ExportOutlined />}
           type="default"
           onClick={() => {
@@ -258,6 +271,7 @@ const Instance = () => {
       </Menu.Item>
       <Menu.Item key="2">
         <Button
+          disabled={getButtonPermission('device/Instance', ['import'])}
           icon={<ImportOutlined />}
           onClick={() => {
             setImportVisible(true);
@@ -267,24 +281,30 @@ const Instance = () => {
         </Button>
       </Menu.Item>
       <Menu.Item key="4">
-        <Popconfirm
-          title={'确认激活全部设备？'}
-          onConfirm={() => {
-            setType('active');
-            const activeAPI = `/${
-              SystemConst.API_BASE
-            }/device-instance/deploy?:X_Access_Token=${Token.get()}`;
-            setApi(activeAPI);
-            setOperationVisible(true);
-          }}
+        <Button
+          disabled={getButtonPermission('device/Instance', ['active'])}
+          icon={<CheckCircleOutlined />}
+          type="primary"
+          ghost
         >
-          <Button icon={<CheckCircleOutlined />} type="primary" ghost>
+          <Popconfirm
+            title={'确认激活全部设备？'}
+            onConfirm={() => {
+              setType('active');
+              const activeAPI = `/${
+                SystemConst.API_BASE
+              }/device-instance/deploy?:X_Access_Token=${Token.get()}`;
+              setApi(activeAPI);
+              setOperationVisible(true);
+            }}
+          >
             激活全部设备
-          </Button>
-        </Popconfirm>
+          </Popconfirm>
+        </Button>
       </Menu.Item>
       <Menu.Item key="5">
         <Button
+          disabled={getButtonPermission('device/Instance', ['sync'])}
           icon={<SyncOutlined />}
           type="primary"
           onClick={() => {
@@ -301,44 +321,54 @@ const Instance = () => {
       </Menu.Item>
       {bindKeys.length > 0 && (
         <Menu.Item key="3">
-          <Popconfirm
-            title="确认删除选中设备?"
-            onConfirm={() => {
-              service.batchDeleteDevice(bindKeys).then((resp) => {
-                if (resp.status === 200) {
-                  message.success('操作成功');
-                  actionRef.current?.reset?.();
-                }
-              });
-            }}
-            okText="确认"
-            cancelText="取消"
+          <Button
+            disabled={getButtonPermission('device/Instance', ['delete'])}
+            icon={<DeleteOutlined />}
+            type="primary"
+            danger
           >
-            <Button icon={<DeleteOutlined />} type="primary" danger>
+            <Popconfirm
+              title="确认删除选中设备?"
+              onConfirm={() => {
+                service.batchDeleteDevice(bindKeys).then((resp) => {
+                  if (resp.status === 200) {
+                    message.success('操作成功');
+                    actionRef.current?.reset?.();
+                  }
+                });
+              }}
+              okText="确认"
+              cancelText="取消"
+            >
               删除选中设备
-            </Button>
-          </Popconfirm>
+            </Popconfirm>
+          </Button>
         </Menu.Item>
       )}
       {bindKeys.length > 0 && (
         <Menu.Item key="6">
-          <Popconfirm
-            title="确认禁用选中设备?"
-            onConfirm={() => {
-              service.batchUndeployDevice(bindKeys).then((resp) => {
-                if (resp.status === 200) {
-                  message.success('操作成功');
-                  actionRef.current?.reset?.();
-                }
-              });
-            }}
-            okText="确认"
-            cancelText="取消"
+          <Button
+            disabled={getButtonPermission('device/Instance', ['action'])}
+            icon={<StopOutlined />}
+            type="primary"
+            danger
           >
-            <Button icon={<StopOutlined />} type="primary" danger>
+            <Popconfirm
+              title="确认禁用选中设备?"
+              onConfirm={() => {
+                service.batchUndeployDevice(bindKeys).then((resp) => {
+                  if (resp.status === 200) {
+                    message.success('操作成功');
+                    actionRef.current?.reset?.();
+                  }
+                });
+              }}
+              okText="确认"
+              cancelText="取消"
+            >
               禁用选中设备
-            </Button>
-          </Popconfirm>
+            </Popconfirm>
+          </Button>
         </Menu.Item>
       )}
     </Menu>
@@ -350,8 +380,6 @@ const Instance = () => {
         field={columns}
         target="device-instance"
         onSearch={(data) => {
-          console.log(data);
-          // 重置分页数据
           actionRef.current?.reset?.();
           setSearchParams(data);
         }}
@@ -393,7 +421,7 @@ const Instance = () => {
               setCurrent({});
             }}
             style={{ marginRight: 12 }}
-            disabled={getButtonPermission('device/Instance', 'delete')}
+            disabled={getButtonPermission('device/Instance', 'add')}
             key="button"
             icon={<PlusOutlined />}
             type="primary"
@@ -430,6 +458,7 @@ const Instance = () => {
                   setVisible(true);
                 }}
                 key={'edit'}
+                disabled={getButtonPermission('device/Instance', ['update', 'add'])}
               >
                 <EditOutlined />
                 {intl.formatMessage({
@@ -437,50 +466,25 @@ const Instance = () => {
                   defaultMessage: '编辑',
                 })}
               </Button>,
-              <Popconfirm
-                key={'state'}
-                title={intl.formatMessage({
-                  id: `pages.data.option.${
-                    record.state.value !== 'notActive' ? 'disabled' : 'enabled'
-                  }.tips`,
-                  defaultMessage: '确认禁用？',
-                })}
-                onConfirm={async () => {
-                  if (record.state.value !== 'notActive') {
-                    await service.undeployDevice(record.id);
-                  } else {
-                    await service.deployDevice(record.id);
-                  }
-                  message.success(
-                    intl.formatMessage({
-                      id: 'pages.data.option.success',
-                      defaultMessage: '操作成功!',
-                    }),
-                  );
-                  actionRef.current?.reload();
-                }}
+              <Button
+                disabled={getButtonPermission('device/Instance', ['action'])}
+                type={'link'}
+                style={{ padding: 0 }}
               >
-                <Button type={'link'} style={{ padding: 0 }}>
-                  {record.state.value !== 'notActive' ? <StopOutlined /> : <CheckCircleOutlined />}
-                  {intl.formatMessage({
+                <Popconfirm
+                  key={'state'}
+                  title={intl.formatMessage({
                     id: `pages.data.option.${
                       record.state.value !== 'notActive' ? 'disabled' : 'enabled'
-                    }`,
-                    defaultMessage: record.state.value !== 'notActive' ? '禁用' : '启用',
+                    }.tips`,
+                    defaultMessage: '确认禁用？',
                   })}
-                </Button>
-              </Popconfirm>,
-              <Popconfirm
-                title={intl.formatMessage({
-                  id:
-                    record.state.value === 'notActive'
-                      ? 'pages.data.option.remove.tips'
-                      : 'pages.device.instance.deleteTip',
-                })}
-                key={'delete'}
-                onConfirm={async () => {
-                  if (record.state.value === 'notActive') {
-                    await service.remove(record.id);
+                  onConfirm={async () => {
+                    if (record.state.value !== 'notActive') {
+                      await service.undeployDevice(record.id);
+                    } else {
+                      await service.deployDevice(record.id);
+                    }
                     message.success(
                       intl.formatMessage({
                         id: 'pages.data.option.success',
@@ -488,15 +492,50 @@ const Instance = () => {
                       }),
                     );
                     actionRef.current?.reload();
-                  } else {
-                    message.error(intl.formatMessage({ id: 'pages.device.instance.deleteTip' }));
-                  }
-                }}
+                  }}
+                >
+                  {record.state.value !== 'notActive' ? <StopOutlined /> : <CheckCircleOutlined />}
+                  {intl.formatMessage({
+                    id: `pages.data.option.${
+                      record.state.value !== 'notActive' ? 'disabled' : 'enabled'
+                    }`,
+                    defaultMessage: record.state.value !== 'notActive' ? '禁用' : '启用',
+                  })}
+                </Popconfirm>
+              </Button>,
+
+              <Button
+                key="delete"
+                disabled={getButtonPermission('device/Instance', ['delete'])}
+                type={'link'}
+                style={{ padding: 0 }}
               >
-                <Button type={'link'} style={{ padding: 0 }}>
+                <Popconfirm
+                  title={intl.formatMessage({
+                    id:
+                      record.state.value === 'notActive'
+                        ? 'pages.data.option.remove.tips'
+                        : 'pages.device.instance.deleteTip',
+                  })}
+                  key={'delete'}
+                  onConfirm={async () => {
+                    if (record.state.value === 'notActive') {
+                      await service.remove(record.id);
+                      message.success(
+                        intl.formatMessage({
+                          id: 'pages.data.option.success',
+                          defaultMessage: '操作成功!',
+                        }),
+                      );
+                      actionRef.current?.reload();
+                    } else {
+                      message.error(intl.formatMessage({ id: 'pages.device.instance.deleteTip' }));
+                    }
+                  }}
+                >
                   <DeleteOutlined />
-                </Button>
-              </Popconfirm>,
+                </Popconfirm>
+              </Button>,
             ]}
           />
         )}

@@ -72,8 +72,11 @@ const FUpload = connect((props: Props) => {
         <Input
           placeholder={props.placeholder}
           // 如果display 有值的话，显示display 的值
-          value={(url as FileProperty)[props?.display || 'url']}
+          value={url && (url as FileProperty)[props?.display || 'url']}
           onChange={(value) => {
+            setUrl({
+              [props?.display || 'url']: value.target.value,
+            } as any);
             props.onChange({ [props?.display || '_a']: value.target.value, url: null, size: null });
           }}
           onClick={(e) => {

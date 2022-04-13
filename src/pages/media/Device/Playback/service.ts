@@ -8,6 +8,13 @@ class Service extends BaseService<recordsItemType> {
   ptzStart = (deviceId: string, channelId: string, type: string) =>
     `${this.uri}/device/${deviceId}/${channelId}/live.${type}?:X_Access_Token=${Token.get()}`;
 
+  // 查询设备通道详情
+  queryDetail = (deviceId: string, data: any) =>
+    request(`${this.uri}/device/${deviceId}/channel/_query`, {
+      method: 'POST',
+      data,
+    });
+
   // 查询本地回放记录
   queryRecordLocal = (deviceId: string, channelId: string, data?: any) =>
     request(`${this.uri}/device/${deviceId}/${channelId}/records/in-local`, {
@@ -20,8 +27,8 @@ class Service extends BaseService<recordsItemType> {
     deviceId: string,
     channelId: string,
     suffix: string,
-    startTime: number,
-    endTime: number,
+    startTime: string,
+    endTime: string,
     speed: number = 1,
   ) =>
     `${
@@ -48,7 +55,10 @@ class Service extends BaseService<recordsItemType> {
 
   // 播放云端回放
   playbackStart = (recordId: string) =>
-    request(`${this.uri}/record/${recordId}.mp4`, { method: 'GET' });
+    `${this.uri}/record/${recordId}.mp4?:X_Access_Token=${Token.get()}`;
+
+  downLoadFile = (recordId: string) =>
+    `${this.uri}/record/${recordId}.mp4?download=true&:X_Access_Token=${Token.get()}`;
 }
 
 export default Service;

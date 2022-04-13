@@ -5,7 +5,7 @@ import type { ProColumns } from '@jetlinks/pro-table';
 import { Button, Card, Col, Empty, message, Pagination, Popconfirm, Row, Space } from 'antd';
 import { useEffect, useState } from 'react';
 import Service from '@/pages/media/Stream/service';
-import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { getButtonPermission, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { useHistory } from 'umi';
 import styles from './index.less';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
@@ -76,6 +76,7 @@ const Stream = () => {
         {dataSource.data.length > 0 ? (
           <>
             <Button
+              disabled={getButtonPermission('media/Stream', ['add'])}
               type="primary"
               onClick={() => {
                 history.push(`${getMenuPathByParams(MENUS_CODE['media/Stream/Detail'])}`);
@@ -94,7 +95,10 @@ const Stream = () => {
                         <div className={styles.title}>{item?.name}</div>
                         <div className={styles.actions}>
                           <Space>
-                            <span
+                            <Button
+                              type="link"
+                              style={{ padding: 0 }}
+                              disabled={getButtonPermission('media/Stream', ['update'])}
                               className={styles.action}
                               onClick={() => {
                                 history.push(
@@ -108,23 +112,29 @@ const Stream = () => {
                             >
                               <EditOutlined style={{ color: '#000000' }} />
                               <span>编辑</span>
-                            </span>
-                            <Popconfirm
-                              title={'确认删除？'}
-                              onConfirm={() => {
-                                service.remove(item.id).then((resp: any) => {
-                                  if (resp.status === 200) {
-                                    message.success('操作成功！');
-                                    handleSearch({ pageSize: 10, terms: [] });
-                                  }
-                                });
-                              }}
+                            </Button>
+                            <Button
+                              type="link"
+                              style={{ padding: 0 }}
+                              disabled={getButtonPermission('media/Stream', ['delete'])}
                             >
-                              <span className={styles.action}>
-                                <DeleteOutlined style={{ color: '#E50012' }} />
-                                <span>删除</span>
-                              </span>
-                            </Popconfirm>
+                              <Popconfirm
+                                title={'确认删除？'}
+                                onConfirm={() => {
+                                  service.remove(item.id).then((resp: any) => {
+                                    if (resp.status === 200) {
+                                      message.success('操作成功！');
+                                      handleSearch({ pageSize: 10, terms: [] });
+                                    }
+                                  });
+                                }}
+                              >
+                                <span className={styles.action}>
+                                  <DeleteOutlined style={{ color: '#E50012' }} />
+                                  <span>删除</span>
+                                </span>
+                              </Popconfirm>
+                            </Button>
                           </Space>
                         </div>
                       </div>

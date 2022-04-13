@@ -1,9 +1,9 @@
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { Button, Dropdown } from 'antd';
+import { Button } from 'antd';
 import type { ActionType, ProColumns, RequestData } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 
-import { EllipsisOutlined, PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
 import type BaseService from '@/utils/BaseService';
 import * as React from 'react';
 import { useRef, useState } from 'react';
@@ -47,6 +47,7 @@ export type Props<T> = {
   /** @name 用于存储搜索历史记录的标记*/
   moduleName?: string; //
   footer?: React.ReactNode;
+  disableAdd?: boolean;
 };
 
 const BaseCrud = <T extends Record<string, any>>(props: Props<T>) => {
@@ -55,15 +56,15 @@ const BaseCrud = <T extends Record<string, any>>(props: Props<T>) => {
   const {
     columns,
     service,
-    title,
-    menu,
+    // title,
+    // menu,
     schema,
     defaultParams,
     actionRef,
     schemaConfig,
     modelConfig,
     request,
-    toolBar,
+    // toolBar,
     pagination,
     search,
     formEffect,
@@ -78,16 +79,10 @@ const BaseCrud = <T extends Record<string, any>>(props: Props<T>) => {
       <SearchComponent<T>
         field={columns}
         onSearch={async (data) => {
-          // actionRef.current?.reset?.();
           actionRef.current?.setPageInfo?.({ pageSize: 10 });
           setParam(data);
         }}
         target={moduleName}
-        // onReset={() => {
-        //   // 重置分页及搜索参数
-        //   actionRef.current?.reset?.();
-        //   setParam({});
-        // }}
       />
       <ProTable<T>
         params={param}
@@ -125,25 +120,38 @@ const BaseCrud = <T extends Record<string, any>>(props: Props<T>) => {
               }
         }
         dateFormatter="string"
-        headerTitle={title}
-        defaultParams={defaultParams}
-        toolBarRender={() =>
-          toolBar || [
-            <Button onClick={CurdModel.add} key="button" icon={<PlusOutlined />} type="primary">
-              {intl.formatMessage({
-                id: 'pages.data.option.add',
-                defaultMessage: '新增',
-              })}
-            </Button>,
-            menu && (
-              <Dropdown key="menu" overlay={menu}>
-                <Button>
-                  <EllipsisOutlined />
-                </Button>
-              </Dropdown>
-            ),
-          ]
+        headerTitle={
+          <Button
+            disabled={props.disableAdd}
+            onClick={CurdModel.add}
+            key="button"
+            icon={<PlusOutlined />}
+            type="primary"
+          >
+            {intl.formatMessage({
+              id: 'pages.data.option.add',
+              defaultMessage: '新增',
+            })}
+          </Button>
         }
+        defaultParams={defaultParams}
+        // toolBarRender={() =>
+        //   toolBar || [
+        //     <Button onClick={CurdModel.add} key="button" icon={<PlusOutlined />} type="primary">
+        //       {intl.formatMessage({
+        //         id: 'pages.data.option.add',
+        //         defaultMessage: '新增',
+        //       })}
+        //     </Button>,
+        //     menu && (
+        //       <Dropdown key="menu" overlay={menu}>
+        //         <Button>
+        //           <EllipsisOutlined />
+        //         </Button>
+        //       </Dropdown>
+        //     ),
+        //   ]
+        // }
       />
       <Save
         reload={() => actionRef.current?.reload()}

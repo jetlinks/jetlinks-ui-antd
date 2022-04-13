@@ -326,7 +326,14 @@ const Access = () => {
                   });
                   if (resp.status === 200) {
                     message.success('操作成功！');
-                    getDetailInfo();
+                    if ((window as any).onTabSaveSuccess) {
+                      if (resp.result) {
+                        (window as any).onTabSaveSuccess(resp);
+                        setTimeout(() => window.close(), 300);
+                      }
+                    } else {
+                      getDetailInfo();
+                    }
                   }
                 }}
               >

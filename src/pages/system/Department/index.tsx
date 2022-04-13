@@ -4,7 +4,7 @@ import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { Link, useIntl, useLocation } from 'umi';
+import { history, useIntl, useLocation } from 'umi';
 import { Button, message, Popconfirm, Tooltip } from 'antd';
 import {
   DeleteOutlined,
@@ -21,7 +21,7 @@ import { observer } from '@formily/react';
 import { model } from '@formily/reactive';
 import Save from './save';
 import SearchComponent from '@/components/SearchComponent';
-import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { getButtonPermission, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 
 export const service = new Service('organization');
 
@@ -85,7 +85,10 @@ export default observer(() => {
       valueType: 'option',
       width: 240,
       render: (text, record) => [
-        <a
+        <Button
+          style={{ padding: 0 }}
+          type="link"
+          disabled={getButtonPermission('system/Department', ['add', 'update'])}
           key="editable"
           onClick={() => {
             State.current = record;
@@ -100,8 +103,11 @@ export default observer(() => {
           >
             <EditOutlined />
           </Tooltip>
-        </a>,
-        <a
+        </Button>,
+        <Button
+          style={{ padding: 0 }}
+          type="link"
+          disabled={getButtonPermission('system/Department', ['add'])}
           key="editable"
           onClick={() => {
             State.current = {
@@ -118,13 +124,20 @@ export default observer(() => {
           >
             <PlusCircleOutlined />
           </Tooltip>
-        </a>,
-        <Link
+        </Button>,
+        <Button
+          type="link"
+          style={{ padding: 0 }}
           key="assets"
-          to={`${getMenuPathByParams(
-            MENUS_CODE['system/Department/Detail'],
-            record.id,
-          )}?type=assets`}
+          disabled={getButtonPermission('system/Department', ['add', 'view', 'update'])}
+          onClick={() => {
+            history.push(
+              `${getMenuPathByParams(
+                MENUS_CODE['system/Department/Detail'],
+                record.id,
+              )}?type=assets`,
+            );
+          }}
         >
           <Tooltip
             title={intl.formatMessage({
@@ -134,10 +147,17 @@ export default observer(() => {
           >
             <MedicineBoxOutlined />
           </Tooltip>
-        </Link>,
-        <Link
+        </Button>,
+        <Button
+          type="link"
           key="user"
-          to={`${getMenuPathByParams(MENUS_CODE['system/Department/Detail'], record.id)}?type=user`}
+          style={{ padding: 0 }}
+          disabled={getButtonPermission('system/Department', ['add', 'view', 'update'])}
+          onClick={() =>
+            history.push(
+              `${getMenuPathByParams(MENUS_CODE['system/Department/Detail'], record.id)}?type=user`,
+            )
+          }
         >
           <Tooltip
             title={intl.formatMessage({
@@ -147,7 +167,7 @@ export default observer(() => {
           >
             <TeamOutlined />
           </Tooltip>
-        </Link>,
+        </Button>,
         <Popconfirm
           key="unBindUser"
           title={intl.formatMessage({
@@ -157,6 +177,7 @@ export default observer(() => {
           onConfirm={() => {
             deleteItem(record.id);
           }}
+          disabled={getButtonPermission('system/Department', ['delete'])}
         >
           <Tooltip
             title={intl.formatMessage({
@@ -164,9 +185,14 @@ export default observer(() => {
               defaultMessage: '删除',
             })}
           >
-            <a key="delete">
+            <Button
+              style={{ padding: 0 }}
+              type="link"
+              disabled={getButtonPermission('system/Department', ['delete'])}
+              key="delete"
+            >
               <DeleteOutlined />
-            </a>
+            </Button>
           </Tooltip>
         </Popconfirm>,
       ],
@@ -293,8 +319,9 @@ export default observer(() => {
         pagination={false}
         search={false}
         params={param}
-        toolBarRender={() => [
+        headerTitle={
           <Button
+            disabled={getButtonPermission('system/Department', ['add'])}
             onClick={() => (State.visible = true)}
             key="button"
             icon={<PlusOutlined />}
@@ -304,12 +331,8 @@ export default observer(() => {
               id: 'pages.data.option.add',
               defaultMessage: '新增',
             })}
-          </Button>,
-        ]}
-        headerTitle={intl.formatMessage({
-          id: 'pages.system.department',
-          defaultMessage: '部门列表',
-        })}
+          </Button>
+        }
       />
       <Save<DepartmentItem>
         title={

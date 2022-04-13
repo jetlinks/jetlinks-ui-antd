@@ -1,5 +1,5 @@
 import SearchComponent from '@/components/SearchComponent';
-import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
+import { getButtonPermission, getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 import { PageContainer } from '@ant-design/pro-layout';
 import type { ProColumns } from '@jetlinks/pro-table';
 import { Button, Card, Col, Empty, message, Pagination, Popconfirm, Row } from 'antd';
@@ -77,9 +77,10 @@ const AccessConfig = () => {
             handleSearch(dt);
           }}
         />
-        <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-end' }}>
+        <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-start' }}>
           <Button
             type="primary"
+            disabled={getButtonPermission('link/AccessConfig', ['add'])}
             onClick={() => {
               history.push(`${getMenuPathByCode(MENUS_CODE['link/AccessConfig/Detail'])}`);
             }}
@@ -95,6 +96,7 @@ const AccessConfig = () => {
                   {...item}
                   actions={[
                     <Button
+                      disabled={getButtonPermission('link/AccessConfig', ['update'])}
                       key="edit"
                       type="link"
                       onClick={() => {
@@ -108,7 +110,11 @@ const AccessConfig = () => {
                       <EditOutlined />
                       编辑
                     </Button>,
-                    <Button key="warning" type="link">
+                    <Button
+                      key="warning"
+                      type="link"
+                      disabled={getButtonPermission('link/AccessConfig', ['action'])}
+                    >
                       <Popconfirm
                         title={`确认${item.state.value !== 'disabled' ? '禁用' : '启用'}`}
                         onConfirm={() => {
@@ -142,7 +148,11 @@ const AccessConfig = () => {
                         )}
                       </Popconfirm>
                     </Button>,
-                    <Button key="delete" type="link">
+                    <Button
+                      key="delete"
+                      type="link"
+                      disabled={getButtonPermission('link/AccessConfig', ['delete'])}
+                    >
                       <Popconfirm
                         title={'确认删除?'}
                         onConfirm={() => {
