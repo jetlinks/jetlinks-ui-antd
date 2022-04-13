@@ -1,7 +1,8 @@
 // 通道直播
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Radio, Modal } from 'antd';
-import { ScreenPlayer } from '@/components';
+import LivePlayer from '@/components/Player';
+import MediaTool from '@/components/Player/mediaTool';
 import { service } from '../index';
 import './index.less';
 
@@ -14,15 +15,22 @@ interface LiveProps {
 
 const LiveFC = (props: LiveProps) => {
   const [mediaType, setMediaType] = useState('mp4');
-  const player = useRef<any>(null);
+  const [url, setUrl] = useState('');
+  const [isRecord, setIsRecord] = useState(false);
 
   const mediaStart = useCallback(
     async (type) => {
       const _url = service.ptzStart(props.deviceId, props.channelId, type);
-      player.current?.replaceVideo(props.deviceId, props.channelId, _url);
+      setUrl(_url);
     },
     [props.channelId, props.deviceId],
   );
+
+  useEffect(() => {
+    if (props.visible) {
+      mediaStart('mp4');
+    }
+  }, [props.visible]);
 
   return (
     <Modal
@@ -43,23 +51,50 @@ const LiveFC = (props: LiveProps) => {
       }}
     >
       <div className={'media-live'}>
-        {props.visible && (
-          <ScreenPlayer
-            id={props.deviceId}
-            channelId={props.channelId}
-            ref={(ref) => {
-              player.current = ref;
-              mediaStart('mp4');
-            }}
-            showScreen={false}
-            onMouseUp={(id, cId) => {
-              service.ptzStop(id, cId);
-            }}
-            onMouseDown={(id, cId, type) => {
-              service.ptzTool(id, cId, type);
-            }}
-          />
-        )}
+        <div className={'media-live-video'}>
+          <div className={'media-tool'}>
+            <div
+              className={'tool-item'}
+              onClick={async () => {
+                if (isRecord) {
+                  const resp = await service.recordStop(props.deviceId, props.channelId, {
+                    local: false,
+                  });
+                  if (resp.status === 200) {
+                    setIsRecord(!isRecord);
+                  }
+                } else {
+                  const resp = await service.recordStart(props.deviceId, props.channelId, {
+                    local: false,
+                  });
+                  if (resp.status === 200) {
+                    setIsRecord(!isRecord);
+                  }
+                }
+              }}
+            >
+              {isRecord ? '停止录像' : '开始录像'}
+            </div>
+            <div className={'tool-item'}>刷新</div>
+            <div
+              className={'tool-item'}
+              onClick={() => {
+                service.mediaStop(props.deviceId, props.channelId);
+              }}
+            >
+              重置
+            </div>
+          </div>
+          <LivePlayer url={url} />
+        </div>
+        <MediaTool
+          onMouseUp={() => {
+            service.ptzStop(props.deviceId, props.channelId);
+          }}
+          onMouseDown={(type) => {
+            service.ptzTool(props.deviceId, props.channelId, type);
+          }}
+        />
       </div>
       <div className={'media-live-tool'}>
         <Radio.Group

@@ -16,8 +16,17 @@ class Service extends BaseService<recordsItemType> {
     });
 
   // 播放本地回放
-  playbackLocal = (deviceId: string, channelId: string, suffix: string) =>
-    request(`${this.uri}/device/${deviceId}/${channelId}/playback.${suffix}`, { method: 'GET' });
+  playbackLocal = (
+    deviceId: string,
+    channelId: string,
+    suffix: string,
+    startTime: number,
+    endTime: number,
+    speed: number = 1,
+  ) =>
+    `${
+      this.uri
+    }/device/${deviceId}/${channelId}/playback.${suffix}?:X_Access_Token=${Token.get()}&startTime=${startTime}&endTime=${endTime}&speed=${speed}`;
 
   // 本地录像播放控制
   playbackControl = (deviceId: string, channelId: string) =>
@@ -31,9 +40,10 @@ class Service extends BaseService<recordsItemType> {
     });
 
   // 查询云端回放文件信息
-  recordsInServerFiles = (deviceId: string, channelId: string) =>
+  recordsInServerFiles = (deviceId: string, channelId: string, data: any) =>
     request(`${this.uri}/device/${deviceId}/${channelId}/records/in-server/files`, {
       method: 'POST',
+      data,
     });
 
   // 播放云端回放

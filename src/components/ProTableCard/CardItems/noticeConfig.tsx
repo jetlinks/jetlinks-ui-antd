@@ -1,8 +1,8 @@
 import React from 'react';
-import {TableCard} from '@/components';
+import { TableCard } from '@/components';
 import '@/style/common.less';
 import '../index.less';
-import {imgMap, typeList} from './noticeTemplate';
+import { imgMap, typeList } from './noticeTemplate';
 
 export interface NoticeCardProps extends ConfigItem {
   detail?: React.ReactNode;
@@ -15,7 +15,7 @@ export default (props: NoticeCardProps) => {
     <TableCard actions={props.actions} showStatus={false} showMask={false}>
       <div className={'pro-table-card-item'}>
         <div className={'card-item-avatar'}>
-          <img width={88} height={88} src={imgMap[props.type]} alt={props.type}/>
+          <img width={88} height={88} src={imgMap[props.type]} alt={props.type} />
         </div>
         <div className={'card-item-body'}>
           <div className={'card-item-header'}>

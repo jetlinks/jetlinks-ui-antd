@@ -4,17 +4,9 @@ import LivePlayer from './index';
 import { Button, Dropdown, Empty, Input, Menu, Popover, Radio, Tooltip } from 'antd';
 import { useFullscreen } from 'ahooks';
 import './index.less';
-import {
-  CaretDownOutlined,
-  CaretLeftOutlined,
-  CaretRightOutlined,
-  CaretUpOutlined,
-  DeleteOutlined,
-  MinusOutlined,
-  PlusOutlined,
-  QuestionCircleOutlined,
-} from '@ant-design/icons';
+import { DeleteOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import Service from './service';
+import MediaTool from '@/components/Player/mediaTool';
 
 type Player = {
   id?: string;
@@ -264,131 +256,145 @@ export default forwardRef((props: ScreenProps, ref) => {
           </div>
         </div>
       </div>
-      <div className={'live-player-tools'}>
-        <div className={'direction'}>
-          <div
-            className={'direction-item up'}
-            onMouseDown={() => {
-              const { id, channelId } = players[playerActive];
-              if (id && channelId && props.onMouseDown) {
-                props.onMouseDown(id, channelId, 'UP');
-              }
-            }}
-            onMouseUp={() => {
-              const { id, channelId } = players[playerActive];
-              if (props.onMouseUp && id && channelId) {
-                props.onMouseUp(id, channelId, 'UP');
-              }
-            }}
-          >
-            <CaretUpOutlined className={'direction-icon'} />
-          </div>
-          <div
-            className={'direction-item right'}
-            onMouseDown={() => {
-              const { id, channelId } = players[playerActive];
-              if (props.onMouseDown && id && channelId) {
-                props.onMouseDown(id, channelId, 'RIGHT');
-              }
-            }}
-            onMouseUp={() => {
-              const { id, channelId } = players[playerActive];
-              if (props.onMouseUp && id && channelId) {
-                props.onMouseUp(id, channelId, 'RIGHT');
-              }
-            }}
-          >
-            <CaretRightOutlined className={'direction-icon'} />
-          </div>
-          <div
-            className={'direction-item left'}
-            onMouseDown={() => {
-              const { id, channelId } = players[playerActive];
-              if (props.onMouseDown && id && channelId) {
-                props.onMouseDown(id, channelId, 'LEFT');
-              }
-            }}
-            onMouseUp={() => {
-              const { id, channelId } = players[playerActive];
-              if (props.onMouseUp && id && channelId) {
-                props.onMouseUp(id, channelId, 'LEFT');
-              }
-            }}
-          >
-            <CaretLeftOutlined className={'direction-icon'} />
-          </div>
-          <div
-            className={'direction-item down'}
-            onMouseDown={() => {
-              const { id, channelId } = players[playerActive];
-              if (props.onMouseDown && id && channelId) {
-                props.onMouseDown(id, channelId, 'DOWN');
-              }
-            }}
-            onMouseUp={() => {
-              const { id, channelId } = players[playerActive];
-              if (props.onMouseUp && id && channelId) {
-                props.onMouseUp(id, channelId, 'DOWN');
-              }
-            }}
-          >
-            <CaretDownOutlined className={'direction-icon'} />
-          </div>
-          <div
-            className={'direction-audio'}
-            // onMouseDown={() => {
-            //   const { id, channelId } = players[playerActive];
-            //   if (props.onMouseDown && id && channelId) {
-            //     props.onMouseDown(id, channelId, 'AUDIO');
-            //   }
-            // }}
-            // onMouseUp={() => {
-            //   const { id, channelId } = players[playerActive];
-            //   if (props.onMouseUp && id && channelId) {
-            //     props.onMouseUp(id, channelId, 'AUDIO');
-            //   }
-            // }}
-          >
-            {/*<AudioOutlined />*/}
-          </div>
-        </div>
-        <div className={'zoom'}>
-          <div
-            className={'zoom-item zoom-in'}
-            onMouseDown={() => {
-              const { id, channelId } = players[playerActive];
-              if (props.onMouseDown && id && channelId) {
-                props.onMouseDown(id, channelId, 'ZOOM_IN');
-              }
-            }}
-            onMouseUp={() => {
-              const { id, channelId } = players[playerActive];
-              if (props.onMouseUp && id && channelId) {
-                props.onMouseUp(id, channelId, 'ZOOM_IN');
-              }
-            }}
-          >
-            <PlusOutlined />
-          </div>
-          <div
-            className={'zoom-item zoom-out'}
-            onMouseDown={() => {
-              const { id, channelId } = players[playerActive];
-              if (props.onMouseDown && id && channelId) {
-                props.onMouseDown(id, channelId, 'ZOOM_OUT');
-              }
-            }}
-            onMouseUp={() => {
-              const { id, channelId } = players[playerActive];
-              if (props.onMouseUp && id && channelId) {
-                props.onMouseUp(id, channelId, 'ZOOM_OUT');
-              }
-            }}
-          >
-            <MinusOutlined />
-          </div>
-        </div>
-      </div>
+      <MediaTool
+        onMouseDown={(type) => {
+          const { id, channelId } = players[playerActive];
+          if (id && channelId && props.onMouseDown) {
+            props.onMouseDown(id, channelId, type);
+          }
+        }}
+        onMouseUp={(type) => {
+          const { id, channelId } = players[playerActive];
+          if (props.onMouseUp && id && channelId) {
+            props.onMouseUp(id, channelId, type);
+          }
+        }}
+      />
+      {/*<div className={'live-player-tools'}>*/}
+      {/*  <div className={'direction'}>*/}
+      {/*    <div*/}
+      {/*      className={'direction-item up'}*/}
+      {/*      onMouseDown={() => {*/}
+      {/*        const { id, channelId } = players[playerActive];*/}
+      {/*        if (id && channelId && props.onMouseDown) {*/}
+      {/*          props.onMouseDown(id, channelId, 'UP');*/}
+      {/*        }*/}
+      {/*      }}*/}
+      {/*      onMouseUp={() => {*/}
+      {/*        const { id, channelId } = players[playerActive];*/}
+      {/*        if (props.onMouseUp && id && channelId) {*/}
+      {/*          props.onMouseUp(id, channelId, 'UP');*/}
+      {/*        }*/}
+      {/*      }}*/}
+      {/*    >*/}
+      {/*      <CaretUpOutlined className={'direction-icon'} />*/}
+      {/*    </div>*/}
+      {/*    <div*/}
+      {/*      className={'direction-item right'}*/}
+      {/*      onMouseDown={() => {*/}
+      {/*        const { id, channelId } = players[playerActive];*/}
+      {/*        if (props.onMouseDown && id && channelId) {*/}
+      {/*          props.onMouseDown(id, channelId, 'RIGHT');*/}
+      {/*        }*/}
+      {/*      }}*/}
+      {/*      onMouseUp={() => {*/}
+      {/*        const { id, channelId } = players[playerActive];*/}
+      {/*        if (props.onMouseUp && id && channelId) {*/}
+      {/*          props.onMouseUp(id, channelId, 'RIGHT');*/}
+      {/*        }*/}
+      {/*      }}*/}
+      {/*    >*/}
+      {/*      <CaretRightOutlined className={'direction-icon'} />*/}
+      {/*    </div>*/}
+      {/*    <div*/}
+      {/*      className={'direction-item left'}*/}
+      {/*      onMouseDown={() => {*/}
+      {/*        const { id, channelId } = players[playerActive];*/}
+      {/*        if (props.onMouseDown && id && channelId) {*/}
+      {/*          props.onMouseDown(id, channelId, 'LEFT');*/}
+      {/*        }*/}
+      {/*      }}*/}
+      {/*      onMouseUp={() => {*/}
+      {/*        const { id, channelId } = players[playerActive];*/}
+      {/*        if (props.onMouseUp && id && channelId) {*/}
+      {/*          props.onMouseUp(id, channelId, 'LEFT');*/}
+      {/*        }*/}
+      {/*      }}*/}
+      {/*    >*/}
+      {/*      <CaretLeftOutlined className={'direction-icon'} />*/}
+      {/*    </div>*/}
+      {/*    <div*/}
+      {/*      className={'direction-item down'}*/}
+      {/*      onMouseDown={() => {*/}
+      {/*        const { id, channelId } = players[playerActive];*/}
+      {/*        if (props.onMouseDown && id && channelId) {*/}
+      {/*          props.onMouseDown(id, channelId, 'DOWN');*/}
+      {/*        }*/}
+      {/*      }}*/}
+      {/*      onMouseUp={() => {*/}
+      {/*        const { id, channelId } = players[playerActive];*/}
+      {/*        if (props.onMouseUp && id && channelId) {*/}
+      {/*          props.onMouseUp(id, channelId, 'DOWN');*/}
+      {/*        }*/}
+      {/*      }}*/}
+      {/*    >*/}
+      {/*      <CaretDownOutlined className={'direction-icon'} />*/}
+      {/*    </div>*/}
+      {/*    <div*/}
+      {/*      className={'direction-audio'}*/}
+      {/*      // onMouseDown={() => {*/}
+      {/*      //   const { id, channelId } = players[playerActive];*/}
+      {/*      //   if (props.onMouseDown && id && channelId) {*/}
+      {/*      //     props.onMouseDown(id, channelId, 'AUDIO');*/}
+      {/*      //   }*/}
+      {/*      // }}*/}
+      {/*      // onMouseUp={() => {*/}
+      {/*      //   const { id, channelId } = players[playerActive];*/}
+      {/*      //   if (props.onMouseUp && id && channelId) {*/}
+      {/*      //     props.onMouseUp(id, channelId, 'AUDIO');*/}
+      {/*      //   }*/}
+      {/*      // }}*/}
+      {/*    >*/}
+      {/*      /!*<AudioOutlined />*!/*/}
+      {/*    </div>*/}
+      {/*  </div>*/}
+      {/*  <div className={'zoom'}>*/}
+      {/*    <div*/}
+      {/*      className={'zoom-item zoom-in'}*/}
+      {/*      onMouseDown={() => {*/}
+      {/*        const { id, channelId } = players[playerActive];*/}
+      {/*        if (props.onMouseDown && id && channelId) {*/}
+      {/*          props.onMouseDown(id, channelId, 'ZOOM_IN');*/}
+      {/*        }*/}
+      {/*      }}*/}
+      {/*      onMouseUp={() => {*/}
+      {/*        const { id, channelId } = players[playerActive];*/}
+      {/*        if (props.onMouseUp && id && channelId) {*/}
+      {/*          props.onMouseUp(id, channelId, 'ZOOM_IN');*/}
+      {/*        }*/}
+      {/*      }}*/}
+      {/*    >*/}
+      {/*      <PlusOutlined />*/}
+      {/*    </div>*/}
+      {/*    <div*/}
+      {/*      className={'zoom-item zoom-out'}*/}
+      {/*      onMouseDown={() => {*/}
+      {/*        const { id, channelId } = players[playerActive];*/}
+      {/*        if (props.onMouseDown && id && channelId) {*/}
+      {/*          props.onMouseDown(id, channelId, 'ZOOM_OUT');*/}
+      {/*        }*/}
+      {/*      }}*/}
+      {/*      onMouseUp={() => {*/}
+      {/*        const { id, channelId } = players[playerActive];*/}
+      {/*        if (props.onMouseUp && id && channelId) {*/}
+      {/*          props.onMouseUp(id, channelId, 'ZOOM_OUT');*/}
+      {/*        }*/}
+      {/*      }}*/}
+      {/*    >*/}
+      {/*      <MinusOutlined />*/}
+      {/*    </div>*/}
+      {/*  </div>*/}
+      {/*</div>*/}
     </div>
   );
 });

@@ -4,6 +4,7 @@ import { service } from '../index';
 import React, { useEffect, useState } from 'react';
 import './index.less';
 import { SearchOutlined } from '@ant-design/icons';
+import { debounce } from 'lodash';
 
 interface TreeProps {
   deviceId: string;
@@ -41,6 +42,12 @@ export default (props: TreeProps) => {
     }
   };
 
+  const queryTree = (e: any) => {
+    getTreeData(props.deviceId, {
+      terms: [{ column: 'name', termType: 'like', value: `%${e.target.value}%` }],
+    });
+  };
+
   useEffect(() => {
     if (props.deviceId) {
       getDeviceDetail(props.deviceId);
@@ -50,7 +57,11 @@ export default (props: TreeProps) => {
   return (
     <div className={'channel-tree'}>
       <div className={'channel-tree-query'}>
-        <Input placeholder={'请输入目录名称'} suffix={<SearchOutlined />} />
+        <Input
+          placeholder={'请输入目录名称'}
+          suffix={<SearchOutlined />}
+          onChange={debounce(queryTree, 300)}
+        />
       </div>
       <div className={'channel-tree-content'}>
         <Tree
