@@ -39,6 +39,7 @@ const Channel = () => {
     {
       dataIndex: 'channelId',
       title: '国标ID',
+      // render: (text: string) => <span>{text}<EditOutlined /></span>
     },
     {
       dataIndex: 'address',

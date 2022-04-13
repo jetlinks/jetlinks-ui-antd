@@ -80,10 +80,14 @@ const BindChannel = (props: Props) => {
       visible
       onCancel={props.close}
       onOk={async () => {
-        const resp = await service.bindChannel(props.data, selectedRowKey);
-        if (resp.status === 200) {
-          message.success('操作成功！');
-          props.close();
+        if (selectedRowKey.length > 0) {
+          const resp = await service.bindChannel(props.data, selectedRowKey);
+          if (resp.status === 200) {
+            message.success('操作成功！');
+            props.close();
+          }
+        } else {
+          message.error('请勾选数据');
         }
       }}
       width={1200}
