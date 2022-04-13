@@ -18,7 +18,7 @@ import SearchComponent from '@/components/SearchComponent';
 import Service from './service';
 import type { MenuItem } from './typing';
 import moment from 'moment';
-import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { getButtonPermission, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 
 export const service = new Service('menu');
 
@@ -130,11 +130,14 @@ export default observer(() => {
       valueType: 'option',
       width: 240,
       render: (_, record) => [
-        <a
+        <Button
+          type="link"
           key="view"
+          style={{ padding: 0 }}
           onClick={() => {
             pageJump(record.id, record.parentId || '');
           }}
+          disabled={getButtonPermission('system/Menu', ['view'])}
         >
           <Tooltip
             title={intl.formatMessage({
@@ -144,9 +147,12 @@ export default observer(() => {
           >
             <SearchOutlined />
           </Tooltip>
-        </a>,
-        <a
+        </Button>,
+        <Button
+          type="link"
+          style={{ padding: 0 }}
           key="editable"
+          disabled={getButtonPermission('system/Menu', ['add'])}
           onClick={() => {
             State.current = {
               parentId: record.id,
@@ -163,7 +169,7 @@ export default observer(() => {
           >
             <PlusCircleOutlined />
           </Tooltip>
-        </a>,
+        </Button>,
         <Popconfirm
           key="unBindUser"
           title={intl.formatMessage({
@@ -180,9 +186,14 @@ export default observer(() => {
               defaultMessage: '删除',
             })}
           >
-            <a key="delete">
+            <Button
+              type="link"
+              style={{ padding: 0 }}
+              disabled={getButtonPermission('system/Menu', ['delete'])}
+              key="delete"
+            >
               <DeleteOutlined />
-            </a>
+            </Button>
           </Tooltip>
         </Popconfirm>,
       ],
@@ -253,8 +264,9 @@ export default observer(() => {
             status: response.status,
           };
         }}
-        toolBarRender={() => [
+        headerTitle={
           <Button
+            disabled={getButtonPermission('system/Menu', ['add'])}
             onClick={() => {
               pageJump();
             }}
@@ -266,12 +278,8 @@ export default observer(() => {
               id: 'pages.data.option.add',
               defaultMessage: '新增',
             })}
-          </Button>,
-        ]}
-        headerTitle={intl.formatMessage({
-          id: 'pages.system.menu',
-          defaultMessage: '菜单列表',
-        })}
+          </Button>
+        }
       />
       {/*<Modal*/}
       {/*  title={intl.formatMessage({*/}

@@ -11,6 +11,7 @@ import { model } from '@formily/reactive';
 import { observer } from '@formily/react';
 import type { Response } from '@/utils/typings';
 import SearchComponent from '@/components/SearchComponent';
+import { getButtonPermission } from '@/utils/menu';
 
 export const service = new Service('device/category');
 
@@ -63,12 +64,15 @@ const Category = observer(() => {
       valueType: 'option',
       width: 200,
       render: (text, record) => [
-        <a
+        <Button
           key={'edit'}
           onClick={() => {
             state.visible = true;
             state.current = record;
           }}
+          type="link"
+          style={{ padding: 0 }}
+          disabled={getButtonPermission('device/Category', ['update', 'add'])}
         >
           <Tooltip
             title={intl.formatMessage({
@@ -78,13 +82,16 @@ const Category = observer(() => {
           >
             <EditOutlined />
           </Tooltip>
-        </a>,
-        <a
+        </Button>,
+        <Button
+          type="link"
+          style={{ padding: 0 }}
           key={'add-next'}
           onClick={() => {
             state.visible = true;
             state.parentId = record.id;
           }}
+          disabled={getButtonPermission('device/Category', ['update', 'add'])}
         >
           <Tooltip
             title={intl.formatMessage({
@@ -94,21 +101,25 @@ const Category = observer(() => {
           >
             <PlusOutlined />
           </Tooltip>
-        </a>,
-        <Popconfirm
-          key={'delete'}
-          onConfirm={async () => {
-            const resp = (await service.remove(record.id)) as Response<any>;
-            if (resp.status === 200) {
-              message.success('操作成功');
-            } else {
-              message.error('操作失败');
-            }
-            actionRef.current?.reload();
-          }}
-          title={'确认删除吗？'}
+        </Button>,
+        <Button
+          disabled={getButtonPermission('device/Category', ['delete'])}
+          type="link"
+          style={{ padding: 0 }}
         >
-          <a>
+          <Popconfirm
+            key={'delete'}
+            onConfirm={async () => {
+              const resp = (await service.remove(record.id)) as Response<any>;
+              if (resp.status === 200) {
+                message.success('操作成功');
+              } else {
+                message.error('操作失败');
+              }
+              actionRef.current?.reload();
+            }}
+            title={'确认删除吗？'}
+          >
             <Tooltip
               title={intl.formatMessage({
                 id: 'pages.data.option.remove',
@@ -117,8 +128,8 @@ const Category = observer(() => {
             >
               <DeleteOutlined />
             </Tooltip>
-          </a>
-        </Popconfirm>,
+          </Popconfirm>
+        </Button>,
       ],
     },
   ];
@@ -150,12 +161,9 @@ const Category = observer(() => {
         }}
         rowKey="id"
         columns={columns}
-        headerTitle={intl.formatMessage({
-          id: 'pages.device.category',
-          defaultMessage: '产品分类',
-        })}
-        toolBarRender={() => [
+        headerTitle={
           <Button
+            disabled={getButtonPermission('device/Category', ['add'])}
             onClick={() => (state.visible = true)}
             key="button"
             icon={<PlusOutlined />}
@@ -165,8 +173,8 @@ const Category = observer(() => {
               id: 'pages.data.option.add',
               defaultMessage: '新增',
             })}
-          </Button>,
-        ]}
+          </Button>
+        }
         pagination={false}
         actionRef={actionRef}
       />

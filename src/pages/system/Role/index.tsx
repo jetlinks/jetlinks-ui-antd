@@ -1,17 +1,17 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import React, { useEffect, useRef } from 'react';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { message, Popconfirm, Tooltip } from 'antd';
+import { Button, message, Popconfirm, Tooltip } from 'antd';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import BaseCrud from '@/components/BaseCrud';
 import Service from './service';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { observer } from '@formily/react';
-import { Link, useLocation } from 'umi';
+import { history, useLocation } from 'umi';
 import { Store } from 'jetlinks-store';
 import SystemConst from '@/utils/const';
 import { CurdModel } from '@/components/BaseCrud/model';
-import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { getButtonPermission, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 
 export const service = new Service('role');
 
@@ -83,7 +83,14 @@ const Role: React.FC = observer(() => {
       valueType: 'option',
       width: 200,
       render: (text, record) => [
-        <Link to={`${getMenuPathByParams(MENUS_CODE['system/Role/Detail'], record.id)}`} key="link">
+        <Button
+          type="link"
+          style={{ padding: 0 }}
+          disabled={getButtonPermission('system/Role', ['update'])}
+          onClick={() =>
+            history.push(`${getMenuPathByParams(MENUS_CODE['system/Role/Detail'], record.id)}`)
+          }
+        >
           <Tooltip
             title={intl.formatMessage({
               id: 'pages.data.option.edit',
@@ -93,8 +100,13 @@ const Role: React.FC = observer(() => {
           >
             <EditOutlined />
           </Tooltip>
-        </Link>,
-        <a key="delete">
+        </Button>,
+        <Button
+          type="link"
+          disabled={getButtonPermission('system/Role', ['delete'])}
+          style={{ padding: 0 }}
+          key="delete"
+        >
           <Popconfirm
             title={intl.formatMessage({
               id: 'pages.data.option.remove.tips',
@@ -120,7 +132,7 @@ const Role: React.FC = observer(() => {
               <DeleteOutlined />
             </Tooltip>
           </Popconfirm>
-        </a>,
+        </Button>,
       ],
     },
   ];
@@ -195,6 +207,7 @@ const Role: React.FC = observer(() => {
   return (
     <PageContainer>
       <BaseCrud<RoleItem>
+        disableAdd={getButtonPermission('system/Role', ['add'])}
         actionRef={actionRef}
         moduleName="role"
         columns={columns}

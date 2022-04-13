@@ -1,4 +1,4 @@
-import { message, Modal, TreeSelect as ATreeSelect } from 'antd';
+import { message, TreeSelect as ATreeSelect } from 'antd';
 import { useIntl } from 'umi';
 import type { Field } from '@formily/core';
 import { createForm } from '@formily/core';
@@ -11,6 +11,7 @@ import type { ISchema } from '@formily/json-schema';
 import { action } from '@formily/reactive';
 import type { Response } from '@/utils/typings';
 import { service } from '@/pages/system/User';
+import { Modal } from '@/components';
 
 interface Props {
   model: 'add' | 'edit' | 'query';
@@ -329,6 +330,8 @@ const Save = (props: Props) => {
       onCancel={props.close}
       onOk={save}
       width="35vw"
+      permissionCode={'system/User'}
+      permission={['add', 'edit']}
     >
       <Form form={form} layout="vertical">
         <SchemaField schema={schema} scope={{ useAsyncDataSource, getRole, getOrg }} />

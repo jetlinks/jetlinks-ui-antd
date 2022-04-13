@@ -15,6 +15,7 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import { useRef, useState } from 'react';
 import Save from './Save';
 import { observer } from '@formily/react';
+import { getButtonPermission } from '@/utils/menu';
 
 export const service = new Service('user');
 
@@ -112,7 +113,13 @@ const User = observer(() => {
       valueType: 'option',
       width: 200,
       render: (text, record) => [
-        <a key="editable" onClick={() => edit(record)}>
+        <Button
+          style={{ padding: 0 }}
+          type="link"
+          disabled={getButtonPermission('system/User', ['update', 'view'])}
+          key="editable"
+          onClick={() => edit(record)}
+        >
           <Tooltip
             title={intl.formatMessage({
               id: 'pages.data.option.edit',
@@ -121,8 +128,13 @@ const User = observer(() => {
           >
             <EditOutlined />
           </Tooltip>
-        </a>,
-        <a key="changeState">
+        </Button>,
+        <Button
+          style={{ padding: 0 }}
+          disabled={getButtonPermission('system/User', ['action'])}
+          type="link"
+          key="changeState"
+        >
           <Popconfirm
             title={intl.formatMessage({
               id: `pages.data.option.${record.status ? 'disabled' : 'enabled'}.tips`,
@@ -151,9 +163,13 @@ const User = observer(() => {
               {record.status ? <CloseCircleOutlined /> : <PlayCircleOutlined />}
             </Tooltip>
           </Popconfirm>
-        </a>,
-        <Tooltip title={record.status === 0 ? '删除' : '请先禁用该用户，再删除。'} key="delete">
-          <Button type="link" style={{ padding: 0 }} disabled={record.status === 1}>
+        </Button>,
+        <Button
+          type="link"
+          style={{ padding: 0 }}
+          disabled={record.status === 1 || getButtonPermission('system/User', 'delete')}
+        >
+          <Tooltip title={record.status === 0 ? '删除' : '请先禁用该用户，再删除。'} key="delete">
             <Popconfirm
               onConfirm={async () => {
                 await service.remove(record.id);
@@ -163,8 +179,8 @@ const User = observer(() => {
             >
               <DeleteOutlined />
             </Popconfirm>
-          </Button>
-        </Tooltip>,
+          </Tooltip>
+        </Button>,
       ],
     },
   ];
@@ -187,15 +203,12 @@ const User = observer(() => {
         params={param}
         columns={columns}
         search={false}
-        headerTitle={'用户列表'}
-        request={async (params) =>
-          service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
-        }
-        toolBarRender={() => [
+        headerTitle={
           <Button
             onClick={() => {
               setMode('add');
             }}
+            disabled={getButtonPermission('system/User', ['add'])}
             key="button"
             icon={<PlusOutlined />}
             type="primary"
@@ -204,8 +217,11 @@ const User = observer(() => {
               id: 'pages.data.option.add',
               defaultMessage: '新增',
             })}
-          </Button>,
-        ]}
+          </Button>
+        }
+        request={async (params) =>
+          service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
+        }
       />
       <Save
         model={model}

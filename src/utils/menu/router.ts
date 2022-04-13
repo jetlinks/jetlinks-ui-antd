@@ -106,7 +106,15 @@ export enum MENUS_CODE {
 
 export type MENUS_CODE_TYPE = keyof typeof MENUS_CODE;
 
-export type BUTTON_PERMISSION = 'add' | 'delete' | 'import' | 'view' | 'export' | 'update' | string;
+export type BUTTON_PERMISSION =
+  | 'add'
+  | 'delete'
+  | 'import'
+  | 'view'
+  | 'export'
+  | 'update'
+  | 'action'
+  | string;
 
 export const getDetailNameByCode = {
   'system/Menu/Detail': '菜单详情',
