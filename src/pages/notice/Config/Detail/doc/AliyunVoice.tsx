@@ -1,4 +1,6 @@
 const AliyunVoice = () => {
+  const accessKey = require('/public/images/notice/doc/config/aliyun-sms-voice/AccesskeyIDSecret.jpg');
+
   return (
     <div>
       <div
@@ -27,6 +29,9 @@ const AliyunVoice = () => {
       <div>
         <div>用于程序通知方式调用云服务费API的用户标识和秘钥公众号开发者身份的密码</div>
         <div>获取路径：“阿里云管理控制台”--“用户头像”--“”--“AccessKey管理”--“查看”</div>
+      </div>
+      <div>
+        <img style={{ width: '100%' }} src={accessKey} alt="accessKey" />
       </div>
     </div>
   );

@@ -325,9 +325,9 @@ export default {
   'pages.link.type': '类型',
   'pages.link.option.debug': '调试',
   // 通知管理
-  'pages.notice.config': '通知配置',
+  'pages.notice.config': 'config',
   'pages.notice.config.type': '通知类型',
-  'pages.notice.template': '通知模板',
+  'pages.notice.template': 'template',
   'pages.notice.option.debug': '调试',
 
   // 规则引擎

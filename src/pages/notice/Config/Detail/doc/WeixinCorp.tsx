@@ -1,4 +1,6 @@
 const WeixinCorp = () => {
+  const corpId = require('/public/images/notice/doc/config/weixin-corp/01-corpId.jpg');
+  const corpSecret = require('/public/images/notice/doc/config/weixin-corp/02-corpSecret.jpg');
   return (
     <div>
       <div
@@ -20,12 +22,18 @@ const WeixinCorp = () => {
         <div>1. corpId</div>
         <div>企业号的唯一专属编号。</div>
         <div>获取路径：“企业微信”管理后台--“我的企业”--“企业ID”</div>
+        <div>
+          <img style={{ width: '100%' }} src={corpId} alt="corpId" />
+        </div>
       </div>
 
       <b>2. corpSecret</b>
       <div>
         <div>应用的唯一secret,一个企业微信中可以有多个corpSecret</div>
         <div>获取路径：“企业微信”--“应用与小程序”--“自建应用”中获取</div>
+        <div>
+          <img style={{ width: '100%' }} src={corpSecret} alt="corpSecret" />
+        </div>
       </div>
     </div>
   );

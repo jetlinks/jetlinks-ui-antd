@@ -8,61 +8,49 @@ import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 
 const createImageLabel = (image: string, text: string) => {
   return (
-    <>
+    <div style={{ margin: 5 }}>
       <img alt="" height="100px" src={image} />
       <div style={{ textAlign: 'center' }}>{text}</div>
-    </>
+    </div>
   );
 };
+const weixinCorp = require('/public/images/notice/weixin-corp.png');
+const weixinOfficial = require('/public/images/notice/weixin-official.png');
+const dingTalkMessage = require('/public/images/notice/dingTalk-message.png');
+const dingTalkRebot = require('/public/images/notice/dingTalk-rebot.png');
+const sms = require('/public/images/notice/sms.png');
+const vocie = require('/public/images/notice/voice.png');
 
 export const typeList = {
   weixin: [
     {
-      label: createImageLabel(
-        'https://lf1-cdn-tos.bytegoofy.com/goofy/lark/passport/staticfiles/passport/OKR.png',
-        '企业消息',
-      ),
+      label: createImageLabel(weixinCorp, '企业消息'),
       value: 'corpMessage',
     },
     {
-      label: createImageLabel(
-        'https://lf1-cdn-tos.bytegoofy.com/goofy/lark/passport/staticfiles/passport/Hire.png',
-        '服务号消息',
-      ),
+      label: createImageLabel(weixinOfficial, '服务号消息'),
       value: 'officialMessage',
     },
   ],
   dingTalk: [
     {
-      label: createImageLabel(
-        'https://lf1-cdn-tos.bytegoofy.com/goofy/lark/passport/staticfiles/passport/OKR.png',
-        '钉钉消息',
-      ),
+      label: createImageLabel(dingTalkMessage, '钉钉消息'),
       value: 'dingTalkMessage',
     },
     {
-      label: createImageLabel(
-        'https://lf1-cdn-tos.bytegoofy.com/goofy/lark/passport/staticfiles/passport/Hire.png',
-        '群机器人消息',
-      ),
+      label: createImageLabel(dingTalkRebot, '群机器人消息'),
       value: 'dingTalkRobotWebHook',
     },
   ],
   voice: [
     {
-      label: createImageLabel(
-        'https://lf1-cdn-tos.bytegoofy.com/goofy/lark/passport/staticfiles/passport/OKR.png',
-        '阿里云语音',
-      ),
+      label: createImageLabel(vocie, '阿里云语音'),
       value: 'aliyun',
     },
   ],
   sms: [
     {
-      label: createImageLabel(
-        'https://lf1-cdn-tos.bytegoofy.com/goofy/lark/passport/staticfiles/passport/OKR.png',
-        '阿里云短信',
-      ),
+      label: createImageLabel(sms, '阿里云短信'),
       value: 'aliyunSms',
     },
   ],
@@ -121,7 +109,7 @@ const Type = observer(() => {
     <PageContainer
       title={false}
       // breadcrumbRender={() => {
-      //   return <div>通知配置</div>;
+      //   return <div>config</div>;
       // }}
     >
       <Row gutter={[24, 24]}>

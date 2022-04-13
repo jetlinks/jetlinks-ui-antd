@@ -1,4 +1,7 @@
 const WeixinApp = () => {
+  const appId = require('/public/images/notice/doc/config/weixin-official/01-AppID.jpg');
+  const appSecret = require('/public/images/notice/doc/config/weixin-official/02-AppSecret.jpg');
+
   return (
     <div>
       <div
@@ -20,11 +23,17 @@ const WeixinApp = () => {
         <div>1. AppID</div>
         <div>微信服务号的唯一专属编号。</div>
         <div>获取路径：“微信公众平台”管理后台--“设置与开发”--“基本配置”</div>
+        <div>
+          <img style={{ width: '100%' }} src={appId} alt="appId" />
+        </div>
       </div>
       <b>2. AppSecret</b>
       <div>
         <div>公众号开发者身份的密码</div>
         <div>获取路径：“微信公众平台”管理后台--“设置与开发”--“基本配置”</div>
+        <div>
+          <img style={{ width: '100%' }} src={appSecret} alt="appSercet" />
+        </div>
       </div>
     </div>
   );

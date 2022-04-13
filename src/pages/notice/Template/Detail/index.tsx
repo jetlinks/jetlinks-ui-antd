@@ -285,68 +285,190 @@ const Detail = observer(() => {
             type: 'void',
             'x-visible': id === 'weixin',
             properties: {
-              agentId: {
-                title: 'AgentId',
-                'x-component': 'Input',
-                'x-decorator': 'FormItem',
-                'x-decorator-props': {
-                  tooltip: '请输入AgentID',
-                },
-                'x-component-props': {
-                  placeholder: '请输入AgentID',
-                },
-              },
-              toUser: {
-                title: '收信人ID',
-                'x-component': 'Select',
-                'x-decorator': 'FormItem',
-                'x-decorator-props': {
-                  tooltip: '请输入收信人ID',
-                },
-                'x-component-props': {
-                  placeholder: '请输入收信人ID',
-                  mode: 'tags',
+              corpMessage: {
+                type: 'void',
+                properties: {
+                  agentId: {
+                    title: 'AgentId',
+                    'x-component': 'Input',
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      tooltip: '请输入AgentID',
+                    },
+                    'x-component-props': {
+                      placeholder: '请输入AgentID',
+                    },
+                  },
+                  toUser: {
+                    title: '收信人ID',
+                    'x-component': 'Select',
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      tooltip: '请输入收信人ID',
+                    },
+                    'x-component-props': {
+                      placeholder: '请输入收信人ID',
+                      mode: 'tags',
+                    },
+                    'x-reactions': {
+                      dependencies: ['configId'],
+                      fulfill: {
+                        run: '{{useAsyncDataSource(getWeixinUser($deps[0]))}}',
+                      },
+                    },
+                  },
+                  toParty: {
+                    title: '收信部门ID',
+                    'x-component': 'Select',
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      tooltip: '请输入收信部门ID',
+                    },
+                    'x-component-props': {
+                      placeholder: '请输入收信部门ID',
+                      mode: 'tags',
+                    },
+                    'x-reactions': {
+                      dependencies: ['configId'],
+                      fulfill: {
+                        run: '{{useAsyncDataSource(getWeixinDept($deps[0]))}}',
+                      },
+                    },
+                  },
+                  toTag: {
+                    title: '标签推送',
+                    'x-component': 'Select',
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      tooltip: '标签推送',
+                    },
+                    'x-component-props': {
+                      placeholder: '请输入标签推送，多个标签用,号分隔',
+                      mode: 'tags',
+                    },
+                    'x-reactions': {
+                      dependencies: ['configId'],
+                      fulfill: {
+                        run: '{{useAsyncDataSource(getWeixinTags($deps[0]))}}',
+                      },
+                    },
+                  },
                 },
                 'x-reactions': {
-                  dependencies: ['configId'],
+                  dependencies: ['provider'],
                   fulfill: {
-                    run: '{{useAsyncDataSource(getWeixinUser($deps[0]))}}',
+                    state: {
+                      visible: '{{$deps[0]==="corpMessage"}}',
+                    },
                   },
                 },
               },
-              toParty: {
-                title: '收信部门ID',
-                'x-component': 'Select',
-                'x-decorator': 'FormItem',
-                'x-decorator-props': {
-                  tooltip: '请输入收信部门ID',
-                },
-                'x-component-props': {
-                  placeholder: '请输入收信部门ID',
-                  mode: 'tags',
-                },
-                'x-reactions': {
-                  dependencies: ['configId'],
-                  fulfill: {
-                    run: '{{useAsyncDataSource(getWeixinDept($deps[0]))}}',
+              officialMessage: {
+                type: 'void',
+                properties: {
+                  agentId: {
+                    title: 'AgentId',
+                    type: 'string',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Input',
+                    'x-component-props': {
+                      placeholder: '请输入AgentId',
+                    },
+                  },
+                  tagid: {
+                    title: '用户标签',
+                    type: 'string',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Select',
+                    'x-component-props': {
+                      placeholder: '请选择用户标签',
+                    },
+                  },
+                  wxTemplateId: {
+                    title: '消息模版',
+                    type: 'string',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Select',
+                    'x-component-props': {
+                      placeholder: '请选择消息模版',
+                    },
+                  },
+                  url: {
+                    title: '模版跳转链接',
+                    type: 'string',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Input',
+                    'x-component-props': {
+                      placeholder: '请输入模版跳转链接',
+                    },
+                  },
+                  toMiniProgram: {
+                    title: '跳转小程序',
+                    type: 'string',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Radio.Group',
+                    'x-component-props': {
+                      // optionType: 'button'
+                    },
+                    default: false,
+                    enum: [
+                      { label: '是', value: true },
+                      { label: '否', value: false },
+                    ],
+                  },
+                  miniProgram: {
+                    type: 'void',
+                    properties: {
+                      miniProgramId: {
+                        title: '跳转小程序AppId',
+                        type: 'string',
+                        'x-decorator': 'FormItem',
+                        'x-component': 'Input',
+                        'x-component-props': {
+                          placeholder: '请输入跳转小程序AppId',
+                        },
+                      },
+                      miniProgramPath: {
+                        title: '跳转小程序具体路径',
+                        type: 'string',
+                        'x-decorator': 'FormItem',
+                        'x-component': 'Input',
+                        'x-component-props': {
+                          placeholder: '请输入跳转小程序具体路径',
+                        },
+                      },
+                    },
+                    'x-reactions': {
+                      dependencies: ['.toMiniProgram'],
+                      fulfill: {
+                        state: {
+                          visible: '{{$deps[0]===true}}',
+                        },
+                      },
+                    },
+                  },
+                  title: {
+                    title: '模版标题',
+                    type: 'string',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Input',
+                    'x-component-props': {
+                      placeholder: '这里是回显内容',
+                    },
+                  },
+                  content: {
+                    title: '模版内容',
+                    type: 'string',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Input.TextArea',
                   },
                 },
-              },
-              toTag: {
-                title: '标签推送',
-                'x-component': 'Select',
-                'x-decorator': 'FormItem',
-                'x-decorator-props': {
-                  tooltip: '标签推送',
-                },
-                'x-component-props': {
-                  placeholder: '请输入标签推送，多个标签用,号分隔',
-                  mode: 'tags',
-                },
                 'x-reactions': {
-                  dependencies: ['configId'],
+                  dependencies: ['provider'],
                   fulfill: {
-                    run: '{{useAsyncDataSource(getWeixinTags($deps[0]))}}',
+                    state: {
+                      visible: '{{$deps[0]==="officialMessage"}}',
+                    },
                   },
                 },
               },

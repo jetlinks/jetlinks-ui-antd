@@ -184,7 +184,7 @@ const Action = {
                     'x-reactions': ['{{useAsyncDataSource(loadNotifierType)}}'],
                   },
                   notifierId: {
-                    title: '通知配置',
+                    title: 'config',
                     type: 'string',
                     'x-decorator': 'FormItem',
                     required: true,

@@ -14,7 +14,7 @@ const Log = observer(() => {
   const columns: ProColumns<LogItem>[] = [
     {
       dataIndex: 'config',
-      title: '通知配置',
+      title: 'config',
     },
     {
       dataIndex: 'sendTime',

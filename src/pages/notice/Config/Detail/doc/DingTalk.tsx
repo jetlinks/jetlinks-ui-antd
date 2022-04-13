@@ -1,4 +1,6 @@
 const DingTalk = () => {
+  const appKey = require('/public/images/notice/doc/config/dingTalk-message/01-AppKey.jpg');
+  const appSecret = require('/public/images/notice/doc/config/dingTalk-message/02-AppSecret.jpg');
   return (
     <div>
       <div
@@ -22,11 +24,17 @@ const DingTalk = () => {
           企业内部应用的唯一身份标识。在钉钉开发者后台创建企业内部应用后，系统会自动生成一对AppKey和AppSecret。
         </div>
         <div>获取路径：“钉钉开放平台”--“应用开发”--“应用信息”</div>
+        <div>
+          <img style={{ width: '100%' }} src={appKey} alt="appKey" />
+        </div>
       </div>
       <b>2. AppSecret</b>
       <div>
         <div>钉钉应用对应的调用密钥</div>
         <div>获取路径：“钉钉开放平台”--“应用开发”--“应用信息”</div>
+        <div>
+          <img style={{ width: '100%' }} src={appSecret} alt="appSecret" />
+        </div>
       </div>
     </div>
   );

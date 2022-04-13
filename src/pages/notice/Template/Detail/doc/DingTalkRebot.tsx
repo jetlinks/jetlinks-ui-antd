@@ -1,4 +1,8 @@
 const DingTalkRebot = () => {
+  const text = require('/public/images/notice/doc/template/dingTalk-rebot/01-text.jpg');
+  const markdown = require('/public/images/notice/doc/template/dingTalk-rebot/02-markdown.jpg');
+  const link = require('/public/images/notice/doc/template/dingTalk-rebot/03-link.jpg');
+  const b = '{name}';
   return (
     <div>
       <div
@@ -21,10 +25,14 @@ const DingTalkRebot = () => {
         <div> 绑定通知配置</div>
         <div> 2、消息类型</div>
         <div> 目前支持text、markdown、link3种，对应的发送效果示例，如下图：</div>
+        <div>
+          <img style={{ width: '100%' }} src={text} alt="text" />
+          <img style={{ width: '100%' }} src={markdown} alt="markdown" />
+          <img style={{ width: '100%' }} src={link} alt="link" />
+        </div>
         <div> 3. 模板内容</div>
         <div>
-          {' '}
-          支持填写带变量的动态模板。变量填写规范示例：${name}
+          支持填写带变量的动态模板。变量填写规范示例：${b}
           。填写动态参数后，可对变量的名称、类型、格式进行配置，以便告警通知时填写。
         </div>
       </div>
