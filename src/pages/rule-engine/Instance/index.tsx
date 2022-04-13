@@ -32,6 +32,7 @@ const Instance = () => {
 
   const tools = (record: InstanceItem) => [
     <Button
+      key={'edit'}
       type={'link'}
       style={{ padding: 0 }}
       onClick={() => {
@@ -50,25 +51,26 @@ const Instance = () => {
         <EditOutlined />
       </Tooltip>
     </Button>,
+    // <Button key={'view'}
+    //   disabled={getButtonPermission('rule-engine/Instance', ['view'])}
+    //   type={'link'}
+    //   style={{ padding: 0 }}
+    //   onClick={() => {
+    //     window.open(`/${SystemConst.API_BASE}/rule-editor/index.html#flow/${record.id}`);
+    //   }}
+    // >
+    //   <Tooltip
+    //     title={intl.formatMessage({
+    //       id: 'pages.data.option.detail',
+    //       defaultMessage: '查看',
+    //     })}
+    //     key={'detail'}
+    //   >
+    //     <EyeOutlined />
+    //   </Tooltip>
+    // </Button>,
     <Button
-      disabled={getButtonPermission('rule-engine/Instance', ['view'])}
-      type={'link'}
-      style={{ padding: 0 }}
-      onClick={() => {
-        window.open(`/${SystemConst.API_BASE}/rule-editor/index.html#flow/${record.id}`);
-      }}
-    >
-      <Tooltip
-        title={intl.formatMessage({
-          id: 'pages.data.option.detail',
-          defaultMessage: '查看',
-        })}
-        key={'detail'}
-      >
-        <EyeOutlined />
-      </Tooltip>
-    </Button>,
-    <Button
+      key={'operate'}
       disabled={getButtonPermission('rule-engine/Instance', ['action'])}
       type={'link'}
       style={{ padding: 0 }}
@@ -104,9 +106,9 @@ const Instance = () => {
         </Tooltip>
       </Popconfirm>
     </Button>,
-
     <Button
       type={'link'}
+      key={'delete'}
       style={{ padding: 0 }}
       disabled={getButtonPermission('rule-engine/Instance', ['delete'])}
     >
@@ -233,6 +235,7 @@ const Instance = () => {
         <Button
           type={'link'}
           style={{ padding: 0 }}
+          key={'operate'}
           disabled={getButtonPermission('rule-engine/Instance', ['action'])}
         >
           <Popconfirm
@@ -273,6 +276,7 @@ const Instance = () => {
         <Button
           disabled={getButtonPermission('rule-engine/Instance', ['delete'])}
           type={'link'}
+          key={'delete'}
           style={{ padding: 0 }}
         >
           <Popconfirm
@@ -313,7 +317,6 @@ const Instance = () => {
         field={columns}
         target="device-instance"
         onSearch={(data) => {
-          console.log(data);
           // 重置分页数据
           actionRef.current?.reset?.();
           setSearchParams(data);
@@ -356,7 +359,26 @@ const Instance = () => {
             })}
           </Button>,
         ]}
-        cardRender={(record) => <RuleInstanceCard {...record} actions={tools(record)} />}
+        cardRender={(record) => (
+          <RuleInstanceCard
+            {...record}
+            actions={tools(record)}
+            detail={
+              <div
+                style={{ padding: 8, fontSize: 24 }}
+                onClick={() => {
+                  if (!getButtonPermission('rule-engine/Instance', ['view'])) {
+                    window.open(
+                      `/${SystemConst.API_BASE}/rule-editor/index.html#flow/${record.id}`,
+                    );
+                  }
+                }}
+              >
+                <EyeOutlined />
+              </div>
+            }
+          />
+        )}
       />
       {visible && (
         <Save
