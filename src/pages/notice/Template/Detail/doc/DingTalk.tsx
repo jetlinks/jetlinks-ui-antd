@@ -1,3 +1,5 @@
+import { Image } from 'antd';
+
 const DingTalk = () => {
   const agentId = require('/public/images/notice/doc/template/dingTalk-message/01-Agentid.jpg');
   const userId = require('/public/images/notice/doc/template/dingTalk-message/02-user-id.jpg');
@@ -26,7 +28,7 @@ const DingTalk = () => {
       <div> 2. Agentid</div>
       <div> 应用唯一标识</div>
       <div>
-        <img style={{ width: '100%' }} src={agentId} alt="agentId" />
+        <Image width="100%" src={agentId} />
       </div>
       <div> 获取路径：“钉钉开发平台”--“应用开发”--“查看应用”</div>
       <div> 3. 收信人ID、收信部门ID</div>
@@ -36,8 +38,8 @@ const DingTalk = () => {
       <div> 收信人ID获取路径：“钉钉管理后台”--“通讯录”--“查看用户”</div>
       <div> 收信部门ID获取路径：“钉钉管理后台”--“通讯录”--“编辑部门”</div>
       <div>
-        <img style={{ width: '100%' }} src={userId} alt="userId" />
-        <img style={{ width: '100%' }} src={dept} alt="dept" />
+        <Image width="100%" src={userId} />
+        <Image width="100%" src={dept} />
       </div>
       <div> 4. 模板内容</div>
       <div>

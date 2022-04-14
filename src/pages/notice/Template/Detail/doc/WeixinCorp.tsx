@@ -1,3 +1,5 @@
+import { Image } from 'antd';
+
 const WeixinCorp = () => {
   const agentId = require('/public/images/notice/doc/template/weixin-corp/01-Agentid.jpg');
   const userId = require('/public/images/notice/doc/template/weixin-corp/02-userID.jpg');
@@ -28,7 +30,7 @@ const WeixinCorp = () => {
         <div> 应用唯一标识</div>
         <div> 获取路径：“企业微信”管理后台--“应用管理”--“应用”--“查看应用”</div>
         <div>
-          <img style={{ width: '100%' }} src={agentId} alt="agentId" />
+          <Image width="100%" src={agentId} />
         </div>
         <div> 3. 收信人ID、收信部门ID、标签推送</div>
         <div>
@@ -37,9 +39,9 @@ const WeixinCorp = () => {
         <div> 收信人ID获取路径：【通讯录】-{'>'}【成员信息】查看成员账号</div>
         <div> 收信部门ID获取路径：【通讯录】-{'>'}【部门信息】查看部门ID</div>
         <div>
-          <img style={{ width: '100%' }} src={userId} alt="userId" />
-          <img style={{ width: '100%' }} src={toDept} alt="toDept" />
-          <img style={{ width: '100%' }} src={toTags} alt="toTags" />
+          <Image width="100%" src={userId} />
+          <Image width="100%" src={toDept} />
+          <Image width="100%" src={toTags} />
         </div>
       </div>
     </div>

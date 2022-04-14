@@ -1,3 +1,5 @@
+import { Image } from 'antd';
+
 const DingTalkRebot = () => {
   const groupSetting = require('/public/images/notice/doc/config/dingTalk-rebot/01-group-setting.jpg');
 
@@ -16,15 +18,15 @@ const DingTalkRebot = () => {
         <div>在钉钉群内每创建一个钉钉群自定义机器人都会产生唯一的WebHook地址。</div>
         <div>获取路径：“钉钉桌面客户端”--“群设置”--“智能群助手”--“机器人信息”</div>
         <div>
-          <img style={{ width: '100%' }} src={rebot} alt="rebot" />
+          <Image width="100%" src={rebot} />
         </div>
         <div>1、登录钉钉桌面客户端，进入群设置</div>
         <div>
-          <img style={{ width: '100%' }} src={groupSetting} alt="groupSetting" />
+          <Image width="100%" src={groupSetting} />
         </div>
         <div>2、点击智能群助手，查看机器人信息</div>
         <div>
-          <img style={{ width: '100%' }} src={webhook} alt="webhook" />
+          <Image width="100%" src={webhook} />
         </div>
       </div>
     </div>

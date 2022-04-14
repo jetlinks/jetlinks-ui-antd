@@ -1,3 +1,5 @@
+import { Image } from 'antd';
+
 const AliyunVoice = () => {
   const accessKey = require('/public/images/notice/doc/config/aliyun-sms-voice/AccesskeyIDSecret.jpg');
 
@@ -31,7 +33,7 @@ const AliyunVoice = () => {
         <div>获取路径：“阿里云管理控制台”--“用户头像”--“”--“AccessKey管理”--“查看”</div>
       </div>
       <div>
-        <img style={{ width: '100%' }} src={accessKey} alt="accessKey" />
+        <Image width="100%" src={accessKey} />
       </div>
     </div>
   );

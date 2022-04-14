@@ -1,3 +1,5 @@
+import { Image } from 'antd';
+
 const DingTalkRebot = () => {
   const text = require('/public/images/notice/doc/template/dingTalk-rebot/01-text.jpg');
   const markdown = require('/public/images/notice/doc/template/dingTalk-rebot/02-markdown.jpg');
@@ -26,9 +28,9 @@ const DingTalkRebot = () => {
         <div> 2、消息类型</div>
         <div> 目前支持text、markdown、link3种，对应的发送效果示例，如下图：</div>
         <div>
-          <img style={{ width: '100%' }} src={text} alt="text" />
-          <img style={{ width: '100%' }} src={markdown} alt="markdown" />
-          <img style={{ width: '100%' }} src={link} alt="link" />
+          <Image width="100%" src={text} />
+          <Image width="100%" src={markdown} />
+          <Image width="100%" src={link} />
         </div>
         <div> 3. 模板内容</div>
         <div>

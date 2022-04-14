@@ -1,3 +1,5 @@
+import { Image } from 'antd';
+
 const WeixinApp = () => {
   const agentId = require('/public/images/notice/doc/template/weixin-official/01-Agentid.jpg');
   const appId = require('/public/images/notice/doc/template/weixin-official/02-mini-Program-Appid.jpg');
@@ -24,7 +26,7 @@ const WeixinApp = () => {
         <div>微信服务号的唯一专属编号。</div>
         <div>获取路径：“微信公众平台”管理后台--“设置与开发”--“基本配置”</div>
         <div>
-          <img style={{ width: '100%' }} src={agentId} alt="agentId" />
+          <Image width="100%" src={agentId} />
         </div>
       </div>
       <b>2. AppSecret</b>
@@ -32,7 +34,7 @@ const WeixinApp = () => {
         <div>公众号开发者身份的密码</div>
         <div>获取路径：“微信公众平台”管理后台--“设置与开发”--“基本配置”</div>
         <div>
-          <img style={{ width: '100%' }} src={appId} alt="appId" />
+          <Image width="100%" src={appId} />
         </div>
       </div>
     </div>
