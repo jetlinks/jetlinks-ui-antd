@@ -18,7 +18,7 @@ import type { ISchema } from '@formily/json-schema';
 import { useEffect, useMemo, useRef } from 'react';
 import type { Field } from '@formily/core';
 import { createForm, onFieldValueChange } from '@formily/core';
-import { Button, Card, message } from 'antd';
+import { Card, message } from 'antd';
 import styles from './index.less';
 import { useAsyncDataSource } from '@/utils/util';
 import { service } from '../index';
@@ -97,7 +97,7 @@ const Save = observer(() => {
   const form = useMemo(
     () =>
       createForm({
-        readPretty: false,
+        // readPretty: true,
         // initialValues: {},
         effects() {
           onFieldValueChange('type', (field, f) => {
@@ -168,7 +168,7 @@ const Save = observer(() => {
   useEffect(() => {
     const subscription = Store.subscribe('current-network-data', (data) => {
       if (!data) return;
-      form.readPretty = true;
+      // form.readPretty = true;
       const _data = _.cloneDeep(data);
       // 处理一下集群模式数据
       if (!_data.shareCluster) {
@@ -255,7 +255,7 @@ const Save = observer(() => {
             state: {
               // visible: '{{$deps[0]==="UDP"}}',
               visible:
-                '{{["COAP_SERVER","MQTT_SERVER","WEB_SOCKET_SERVER","TCP_SERVER","UDP","HTTP_SERVER","MQTT_CLIENT"].includes($deps[0])}}',
+                '{{["COAP_SERVER","MQTT_SERVER","WEB_SOCKET_SERVER","TCP_SERVER","UDP","HTTP_SERVER"].includes($deps[0])}}',
             },
           },
         },
@@ -279,7 +279,7 @@ const Save = observer(() => {
             state: {
               // visible: '{{$deps[0]==="UDP"}}',
               visible:
-                '{{["COAP_SERVER","MQTT_SERVER","WEB_SOCKET_SERVER","TCP_SERVER","UDP","HTTP_SERVER","MQTT_CLIENT"].includes($deps[0])}}',
+                '{{["COAP_SERVER","MQTT_SERVER","WEB_SOCKET_SERVER","TCP_SERVER","UDP","HTTP_SERVER"].includes($deps[0])}}',
             },
           },
         },
@@ -312,7 +312,7 @@ const Save = observer(() => {
             state: {
               // visible: '{{$deps[0]==="UDP"}}',
               visible:
-                '{{["COAP_SERVER","MQTT_SERVER","WEB_SOCKET_SERVER","TCP_SERVER","UDP","HTTP_SERVER","MQTT_CLIENT"].includes($deps[0])}}',
+                '{{["COAP_SERVER","MQTT_SERVER","WEB_SOCKET_SERVER","TCP_SERVER","UDP","HTTP_SERVER"].includes($deps[0])}}',
             },
           },
         },
@@ -334,7 +334,7 @@ const Save = observer(() => {
             state: {
               // visible: '{{$deps[0]==="UDP"}}',
               visible:
-                '{{["COAP_SERVER","MQTT_SERVER","WEB_SOCKET_SERVER","TCP_SERVER","UDP","HTTP_SERVER","MQTT_CLIENT"].includes($deps[0])}}',
+                '{{["COAP_SERVER","MQTT_SERVER","WEB_SOCKET_SERVER","TCP_SERVER","UDP","HTTP_SERVER"].includes($deps[0])}}',
             },
           },
         },
@@ -356,43 +356,87 @@ const Save = observer(() => {
           fulfill: {
             state: {
               // visible: '{{$deps[0]==="UDP"}}',
-              visible: '{{["MQTT_Client"].includes($deps[0])}}',
+              visible: '{{["MQTT_CLIENT"].includes($deps[0])}}',
             },
           },
         },
         properties: {
           remoteHost: {
             title: '远程地址',
+            'x-decorator-props': {
+              gridSpan: 1,
+              layout: 'vertical',
+              labelAlign: 'left',
+            },
+            required: true,
+            'x-validator': ['ipv4'],
             'x-decorator': 'FormItem',
             'x-component': 'Input',
           },
           remotePort: {
             title: '远程端口',
+            'x-decorator-props': {
+              gridSpan: 1,
+              layout: 'vertical',
+              labelAlign: 'left',
+            },
+            required: true,
             'x-decorator': 'FormItem',
-            'x-component': 'Input',
+            'x-component': 'NumberPicker',
           },
           clientId: {
             title: 'clientId',
+            'x-decorator-props': {
+              gridSpan: 1,
+              layout: 'vertical',
+              labelAlign: 'left',
+            },
+            required: true,
             'x-decorator': 'FormItem',
             'x-component': 'Input',
           },
           username: {
             title: '用户名',
+            'x-decorator-props': {
+              gridSpan: 1,
+              layout: 'vertical',
+              labelAlign: 'left',
+            },
+            required: true,
             'x-decorator': 'FormItem',
             'x-component': 'Input',
           },
           password: {
             title: '密码',
+            'x-decorator-props': {
+              gridSpan: 1,
+              layout: 'vertical',
+              labelAlign: 'left',
+            },
+            required: true,
             'x-decorator': 'FormItem',
             'x-component': 'Input',
           },
           maxMessageSize: {
             title: '最大消息长度',
+            'x-decorator-props': {
+              gridSpan: 1,
+              tooltip: '单次收发消息的最大长度,单位:字节;设置过大可能会影响性能',
+              layout: 'vertical',
+              labelAlign: 'left',
+            },
+            required: true,
             'x-decorator': 'FormItem',
             'x-component': 'Input',
           },
           topicPrefix: {
             title: '订阅前缀',
+            'x-decorator-props': {
+              gridSpan: 1,
+              tooltip: '当连接的服务为EMQ时,可能需要使用共享的订阅前缀,如:$queue或$share',
+              layout: 'vertical',
+              labelAlign: 'left',
+            },
             'x-decorator': 'FormItem',
             'x-component': 'Input',
           },
@@ -413,30 +457,30 @@ const Save = observer(() => {
           fulfill: {
             state: {
               // visible: '{{$deps[0]==="UDP"}}',
-              visible: '{{["MQTT_SERVER","MQTT_CLIENT"].includes($deps[0])}}',
+              visible: '{{["MQTT_SERVER"].includes($deps[0])}}',
             },
           },
         },
       },
-      topicPrefix: {
-        title: '订阅前缀',
-        'x-decorator': 'FormItem',
-        'x-component': 'Input',
-        'x-decorator-props': {
-          gridSpan: 1,
-          labelAlign: 'left',
-          layout: 'vertical',
-        },
-        'x-reactions': {
-          dependencies: ['type'],
-          fulfill: {
-            state: {
-              // visible: '{{$deps[0]==="UDP"}}',
-              visible: '{{["MQTT_CLIENT"].includes($deps[0])}}',
-            },
-          },
-        },
-      },
+      // topicPrefix: {
+      //   title: '订阅前缀',
+      //   'x-decorator': 'FormItem',
+      //   'x-component': 'Input',
+      //   'x-decorator-props': {
+      //     gridSpan: 1,
+      //     labelAlign: 'left',
+      //     layout: 'vertical',
+      //   },
+      //   'x-reactions': {
+      //     dependencies: ['type'],
+      //     fulfill: {
+      //       state: {
+      //         // visible: '{{$deps[0]==="UDP"}}',
+      //         visible: '{{["MQTT_CLIENT"].includes($deps[0])}}',
+      //       },
+      //     },
+      //   },
+      // },
       parserType: {
         // TCP
         required: true,
@@ -741,11 +785,7 @@ const Save = observer(() => {
           />
           <FormButtonGroup.Sticky>
             <FormButtonGroup.FormItem>
-              {!form.readPretty ? (
-                <Submit onSubmit={handleSave}>保存</Submit>
-              ) : (
-                <Button onClick={() => (form.readPretty = false)}>编辑</Button>
-              )}
+              <Submit onSubmit={handleSave}>保存</Submit>
             </FormButtonGroup.FormItem>
           </FormButtonGroup.Sticky>
         </Form>
