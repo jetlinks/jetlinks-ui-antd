@@ -3,9 +3,8 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { Card } from 'antd';
 import LeftTree from './tree';
 import { ScreenPlayer } from '@/components';
-import { ptzStop, ptzTool } from './service';
+import { ptzStart, ptzStop, ptzTool } from './service';
 import { useRef, useState } from 'react';
-import { ptzStart } from './service';
 import './index.less';
 
 const SplitScreen = () => {
@@ -13,11 +12,14 @@ const SplitScreen = () => {
   const [channelId, setChannelId] = useState('');
   const player = useRef<any>(null);
 
+  const getMediaUrl = (dId: string, cId: string): string => {
+    return ptzStart(dId, cId, 'mp4');
+  };
+
   const mediaStart = async (dId: string, cId: string) => {
     setChannelId(cId);
     setDeviceId(dId);
-    const url = ptzStart(dId, cId, 'mp4');
-    player.current?.replaceVideo(dId, cId, url);
+    player.current?.replaceVideo(dId, cId, getMediaUrl(dId, cId));
   };
 
   return (
@@ -36,6 +38,7 @@ const SplitScreen = () => {
               onMouseDown={(id, cId, type) => {
                 ptzTool(id, cId, type);
               }}
+              historyHandle={(dId, cId) => getMediaUrl(dId, cId)}
             />
           </div>
         </div>

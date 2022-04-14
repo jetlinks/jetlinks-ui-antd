@@ -232,14 +232,19 @@ const Product = observer(() => {
     {
       title: 'ID',
       dataIndex: 'id',
+      width: 300,
+      ellipsis: true,
     },
     {
       title: '名称',
       dataIndex: 'name',
+      width: 200,
+      ellipsis: true,
     },
     {
       title: '接入方式',
       dataIndex: 'transportProtocol',
+      width: 120,
     },
     {
       title: '设备类型',
@@ -259,6 +264,7 @@ const Product = observer(() => {
           status: 'gateway',
         },
       },
+      width: 120,
       render: (_, row) => <>{row.deviceType ? row.deviceType.text : undefined}</>,
     },
     {
@@ -266,6 +272,7 @@ const Product = observer(() => {
       dataIndex: 'state',
       render: (_, row) => <Space size={0}>{status[row.state]}</Space>,
       valueType: 'select',
+      width: '90px',
       valueEnum: {
         // 2: {
         //   text: intl.formatMessage({

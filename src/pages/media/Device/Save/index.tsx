@@ -273,7 +273,7 @@ export default (props: SaveProps) => {
                       buttonStyle="solid"
                       options={[
                         { label: 'UDP', value: 'UDP' },
-                        { label: 'TCP', value: 'TCP' },
+                        { label: 'TCP', value: 'TCP_PASSIVE' },
                       ]}
                     />
                   </Form.Item>

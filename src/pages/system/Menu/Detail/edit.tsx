@@ -22,7 +22,7 @@ import type { MenuItem } from '@/pages/system/Menu/typing';
 import Title from '../components/Title';
 import Icons from '../components/Icons';
 import { QuestionCircleFilled } from '@ant-design/icons';
-import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { getButtonPermission, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 
 type EditProps = {
   data: MenuItem;
@@ -327,6 +327,11 @@ export default (props: EditProps) => {
                 saveData();
               }
             }}
+            disabled={
+              disabled
+                ? getButtonPermission('system/Menu', ['update'])
+                : getButtonPermission('system/Menu', ['add'])
+            }
           >
             {intl.formatMessage({
               id: `pages.data.option.${disabled ? 'edit' : 'save'}`,
