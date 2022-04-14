@@ -65,15 +65,17 @@ export default forwardRef((props: ScreenProps, ref) => {
 
   const replaceVideo = useCallback(
     (id: string, channelId: string, url: string) => {
-      players[playerActive] = {
+      const olPlayers = [...players];
+      olPlayers[playerActive] = {
         id,
         url,
         channelId,
-        key: players[playerActive].key,
+        key: olPlayers[playerActive].key,
         updateTime: new Date().getTime(),
         show: true,
       };
-      setPlayers(players);
+      console.log(olPlayers[playerActive]);
+      setPlayers(olPlayers);
       if (playerActive === screen - 1) {
         // 当前位置为分屏最后一位
         setPlayerActive(0);
