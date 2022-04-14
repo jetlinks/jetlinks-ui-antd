@@ -506,8 +506,8 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                   'x-component': 'Input.TextArea',
                   'x-validator': [
                     {
-                      max: 50,
-                      message: '最多可输入50个字符',
+                      max: 64,
+                      message: '最多可输入64个字符',
                     },
                   ],
                 },
