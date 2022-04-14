@@ -55,8 +55,11 @@ class Service extends BaseService<TemplateItem> {
     getTags: (id: string) => request(`${SystemConst.API_BASE}/notifier/wechat/corp/${id}/tags`),
     getDepartments: (id: string) =>
       request(`${SystemConst.API_BASE}/notifier/wechat/corp/${id}/departments`),
-    getUserByDepartment: (id: string) =>
-      request(`${SystemConst.API_BASE}/notifier/wechat/corp/${id}/users`),
+    getUser: (id: string) => request(`${SystemConst.API_BASE}/notifier/wechat/corp/${id}/users`),
+    getOfficialTags: (configId: string) =>
+      request(`${SystemConst.API_BASE}/notifier/wechat/official/${configId}/tags`),
+    getOfficialTemplates: (configId: string) =>
+      request(`${SystemConst.API_BASE}/notifier/wechat/official/${configId}/templates`),
   };
 
   aliyun = {
