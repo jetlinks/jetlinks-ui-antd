@@ -24,6 +24,8 @@ interface Props {
   onChange: (type: string) => void;
 }
 
+const DatePicker1: any = DatePicker;
+
 const Message = (props: Props) => {
   const [subscribeTopic] = useSendWebsocketMessage();
   const [dialogList, setDialogList] = useState<any[]>([]);
@@ -99,11 +101,10 @@ const Message = (props: Props) => {
           />
         );
       case 'date':
-        // @ts-ignore
         return (
-          <DatePicker
+          <DatePicker1
             style={{ width: '100%' }}
-            onChange={(value) => {
+            onChange={(value: any) => {
               setPropertyValue(value);
             }}
           />
