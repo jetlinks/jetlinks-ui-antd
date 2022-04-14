@@ -179,7 +179,7 @@ const Login: React.FC = () => {
                         loginRef.current.expires = e.target.checked ? -1 : 3600000;
                       }}
                     >
-                      记住密码
+                      记住我
                     </Checkbox>
                   </div>
                   <Submit block size="large">

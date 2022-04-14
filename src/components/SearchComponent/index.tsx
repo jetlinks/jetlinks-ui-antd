@@ -42,6 +42,7 @@ import Service from '@/components/SearchComponent/service';
 import _ from 'lodash';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import classnames from 'classnames';
+import { randomString } from '@/utils/util';
 
 const ui2Server = (source: SearchTermsUI): SearchTermsServer => [
   { terms: source.terms1 },
@@ -362,7 +363,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
     <Menu className={styles.history}>
       {history.length > 0 ? (
         history.map((item: SearchHistory) => (
-          <Menu.Item onClick={() => handleHistory(item)} key={item.id}>
+          <Menu.Item onClick={() => handleHistory(item)} key={item.id || randomString(9)}>
             <div className={styles.list}>
               <Typography.Text ellipsis={{ tooltip: item.name }}>{item.name}</Typography.Text>
               <Popconfirm

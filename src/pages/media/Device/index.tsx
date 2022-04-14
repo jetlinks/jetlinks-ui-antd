@@ -6,13 +6,13 @@ import { Button, message, Popconfirm, Tooltip } from 'antd';
 import {
   DeleteOutlined,
   EditOutlined,
+  EyeOutlined,
+  PartitionOutlined,
   PlusOutlined,
   SyncOutlined,
-  PartitionOutlined,
-  EyeOutlined,
 } from '@ant-design/icons';
 import type { DeviceItem } from '@/pages/media/Device/typings';
-import { useIntl, useHistory } from 'umi';
+import { useHistory, useIntl } from 'umi';
 import { BadgeStatus, ProTableCard } from '@/components';
 import { StatusColorEnum } from '@/components/BadgeStatus';
 import SearchComponent from '@/components/SearchComponent';

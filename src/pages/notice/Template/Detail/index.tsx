@@ -59,31 +59,6 @@ export const docMap = {
 
 const Detail = observer(() => {
   const { id } = useParams<{ id: string }>();
-
-  const getConfig = () =>
-    configService
-      .queryNoPagingPost({
-        terms: [{ column: 'type$IN', value: id }],
-      })
-      .then((resp: any) => {
-        return resp.result?.map((item: any) => ({
-          label: item.name,
-          value: item.id,
-        }));
-      });
-
-  const getDingTalkDept = (configId: string) => service.dingTalk.getDepartments(configId);
-  const getDingTalkDeptTree = (configId: string) => service.dingTalk.getDepartmentsTree(configId);
-  const getDingTalkUser = (configId: string, departmentId: string) =>
-    service.dingTalk.getUserByDepartment(configId, departmentId);
-
-  const getWeixinDept = (configId: string) => service.weixin.getDepartments(configId);
-  const getWeixinTags = (configId: string) => service.weixin.getTags(configId);
-  const getWeixinUser = (configId: string) => service.weixin.getUserByDepartment(configId);
-
-  const getAliyunSigns = (configId: string) => service.aliyun.getSigns(configId);
-  const getAliyunTemplates = (configId: string) => service.aliyun.getTemplates(configId);
-
   const [provider, setProvider] = useState<string>();
   // 正则提取${}里面的值
   const pattern = /(?<=\$\{).*?(?=\})/g;
@@ -98,9 +73,11 @@ const Detail = observer(() => {
               field.setComponent(FBraftEditor);
             }
           });
-          onFieldValueChange('provider', (field) => {
+          onFieldValueChange('provider', (field, form1) => {
             const value = field.value;
             setProvider(value);
+            form1.setValuesIn('configId', null);
+            form1.setValuesIn('template', null);
           });
           onFieldValueChange('template.message', (field, form1) => {
             const value = (field as Field).value;
@@ -156,6 +133,38 @@ const Detail = observer(() => {
       }),
     [id],
   );
+
+  const getConfig = () =>
+    configService
+      .queryNoPagingPost({
+        terms: [
+          { column: 'type$IN', value: id },
+          { column: 'provider', value: form.values?.provider },
+        ],
+      })
+      .then((resp: any) => {
+        return resp.result?.map((item: any) => ({
+          label: item.name,
+          value: item.id,
+        }));
+      });
+
+  const getDingTalkDept = (configId: string) => service.dingTalk.getDepartments(configId);
+  const getDingTalkDeptTree = (configId: string) => service.dingTalk.getDepartmentsTree(configId);
+  const getDingTalkUser = (configId: string, departmentId: string) =>
+    service.dingTalk.getUserByDepartment(configId, departmentId);
+
+  //需要复杂联动才可以完成
+  const getWeixinDept = () => service.weixin.getDepartments(form?.values.configId);
+  const getWeixinTags = () => service.weixin.getTags(form?.values.configId);
+  const getWeixinUser = () => service.weixin.getUser(form?.values.configId);
+
+  const getWeixinOfficialTags = (configId: string) => service.weixin.getOfficialTags(configId);
+  const getWeixinOfficialTemplates = (configId: string) =>
+    service.weixin.getOfficialTemplates(configId);
+
+  const getAliyunSigns = (configId: string) => service.aliyun.getSigns(configId);
+  const getAliyunTemplates = (configId: string) => service.aliyun.getTemplates(configId);
 
   useEffect(() => {
     if (state.current) {
@@ -310,12 +319,7 @@ const Detail = observer(() => {
                       placeholder: '请输入收信人ID',
                       mode: 'tags',
                     },
-                    'x-reactions': {
-                      dependencies: ['configId'],
-                      fulfill: {
-                        run: '{{useAsyncDataSource(getWeixinUser($deps[0]))}}',
-                      },
-                    },
+                    'x-reactions': '{{useAsyncDataSource(getWeixinUser)}}',
                   },
                   toParty: {
                     title: '收信部门ID',
@@ -383,6 +387,12 @@ const Detail = observer(() => {
                     'x-component-props': {
                       placeholder: '请选择用户标签',
                     },
+                    'x-reactions': {
+                      dependencies: ['configId'],
+                      fulfill: {
+                        run: '{{useAsyncDataSource(getWeixinOfficialTags($deps[0]))}}',
+                      },
+                    },
                   },
                   wxTemplateId: {
                     title: '消息模版',
@@ -391,6 +401,12 @@ const Detail = observer(() => {
                     'x-component': 'Select',
                     'x-component-props': {
                       placeholder: '请选择消息模版',
+                    },
+                    'x-reactions': {
+                      dependencies: ['configId'],
+                      fulfill: {
+                        run: '{{useAsyncDataSource(getWeixinOfficialTemplates($deps[0]))}}',
+                      },
                     },
                   },
                   url: {
@@ -924,6 +940,8 @@ const Detail = observer(() => {
                   getAliyunSigns,
                   getAliyunTemplates,
                   useAsyncDataSource,
+                  getWeixinOfficialTags,
+                  getWeixinOfficialTemplates,
                 }}
               />
               <FormButtonGroup.Sticky>

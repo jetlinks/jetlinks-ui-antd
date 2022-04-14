@@ -25,6 +25,7 @@ import { testIP } from '@/utils/util';
 type LocationType = {
   id?: string;
 };
+
 interface Props {
   change: () => void;
   data: any;

@@ -49,7 +49,13 @@ const Log = observer(() => {
   const actionRef = useRef<ActionType>();
   const [param, setParam] = useState<any>();
   return (
-    <Modal onCancel={() => (state.log = false)} title="通知记录" width={'70vw'} visible={state.log}>
+    <Modal
+      footer={null}
+      onCancel={() => (state.log = false)}
+      title="通知记录"
+      width={'70vw'}
+      visible={state.log && !!state.current?.id}
+    >
       <SearchComponent
         defaultParam={[{ column: 'type$IN', value: id }]}
         field={columns}

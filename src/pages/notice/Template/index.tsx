@@ -44,7 +44,7 @@ const Template = () => {
   const columns: ProColumns<TemplateItem>[] = [
     {
       dataIndex: 'name',
-      title: '名称',
+      title: '模版名称',
     },
     {
       dataIndex: 'provider',
@@ -52,9 +52,9 @@ const Template = () => {
       renderText: (text, record) => typeList[record.type][record.provider],
     },
     {
-      dataIndex: 'createTime',
-      title: '时间',
-      valueType: 'dateTime',
+      dataIndex: 'description',
+      title: '说明',
+      // valueType: 'dateTime',
     },
     {
       title: intl.formatMessage({

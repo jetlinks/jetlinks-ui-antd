@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, useImperativeHandle, forwardRef } from 'react';
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import classNames from 'classnames';
 import LivePlayer from './index';
 import { Button, Dropdown, Empty, Menu, message, Popconfirm, Popover, Radio, Tooltip } from 'antd';

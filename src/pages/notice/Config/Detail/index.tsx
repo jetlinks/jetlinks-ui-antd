@@ -188,7 +188,7 @@ const Detail = observer(() => {
                   },
                 },
               },
-              appSecret: {
+              secret: {
                 title: 'AppSecret',
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
@@ -236,7 +236,7 @@ const Detail = observer(() => {
                   },
                 },
               },
-              webhook: {
+              url: {
                 title: 'webHook',
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',

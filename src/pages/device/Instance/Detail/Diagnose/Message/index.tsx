@@ -1,25 +1,26 @@
 import TitleComponent from '@/components/TitleComponent';
 import './index.less';
 import Dialog from './Dialog';
-import { Button, Col, Input, InputNumber, Row, Select, DatePicker, Empty } from 'antd';
+import { Button, Col, DatePicker, Empty, Input, InputNumber, Row, Select } from 'antd';
 import { useEffect, useState } from 'react';
 import { InstanceModel, service } from '@/pages/device/Instance';
 import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
 import { map } from 'rxjs/operators';
 import type { Field } from '@formily/core';
-import { createForm, onFieldValueChange } from '@formily/core';
+import { createForm, onFieldReact } from '@formily/core';
 import { createSchemaField, FormProvider } from '@formily/react';
 import {
   ArrayTable,
+  DatePicker as FDatePicker,
   FormItem,
   Input as FInput,
+  NumberPicker,
   PreviewText,
   Select as FSelect,
-  DatePicker as FDatePicker,
-  Switch,
 } from '@formily/antd';
 import { randomString } from '@/utils/util';
 import Log from './Log';
+
 interface Props {
   onChange: (type: string) => void;
 }
@@ -130,23 +131,28 @@ const Message = (props: Props) => {
       data: [...inputs],
     },
     effects() {
-      onFieldValueChange('data.*.valueType.type', (field) => {
+      onFieldReact('data.*.valueType.type', (field) => {
         const value = (field as Field).value;
         const format = field.query('..value').take() as any;
-        switch (value) {
-          case 'date':
-            format.setComponent(FDatePicker);
-            break;
-          case 'boolean':
-            format.setComponent(Switch);
-            format.setDataSource = [
-              { label: '是', value: true },
-              { label: '否', value: false },
-            ];
-            break;
-          default:
-            format.setComponent(FInput);
-            break;
+        if (format) {
+          switch (value) {
+            case 'date':
+              format.setComponent(FDatePicker);
+              break;
+            case 'boolean':
+              format.setComponent(FSelect);
+              format.setDataSource([
+                { label: '是', value: true },
+                { label: '否', value: false },
+              ]);
+              break;
+            case 'int':
+              format.setComponent(NumberPicker);
+              break;
+            default:
+              format.setComponent(FInput);
+              break;
+          }
         }
       });
     },
@@ -231,7 +237,7 @@ const Message = (props: Props) => {
       PreviewText,
       FSelect,
       FDatePicker,
-      Switch,
+      NumberPicker,
     },
   });
 

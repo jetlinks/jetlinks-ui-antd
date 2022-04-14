@@ -10,6 +10,7 @@ export interface ProductCardProps extends DeviceItem {
   actions?: React.ReactNode[];
   showMask?: boolean;
 }
+
 const defaultImage = require('/public/images/device-media.png');
 
 export default (props: ProductCardProps) => {
