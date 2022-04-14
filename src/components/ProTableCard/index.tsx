@@ -13,7 +13,7 @@ enum ModelEnum {
   CARD = 'CARD',
 }
 
-const Default_Size = 5;
+const Default_Size = 6;
 
 type ModelType = keyof typeof ModelEnum;
 
@@ -80,6 +80,8 @@ const ProTableCard = <
     };
   }, []);
 
+  const pageSizeOptions = [Default_Size * 2, Default_Size * 4, Default_Size * 8, Default_Size * 16];
+
   return (
     <div className={'pro-table-card'}>
       <ProTable<T, U, ValueType>
@@ -118,7 +120,7 @@ const ProTableCard = <
           },
           pageSize: pageSize,
           current: current,
-          pageSizeOptions: [Default_Size * 2, Default_Size * 4, 50, 100],
+          pageSizeOptions: pageSizeOptions,
         }}
         toolBarRender={(action, row) => {
           const oldBar = toolBarRender ? toolBarRender(action, row) : [];
@@ -172,7 +174,7 @@ const ProTableCard = <
             setPageIndex(page - 1);
             setPageSize(size);
           }}
-          pageSizeOptions={[Default_Size * 2, Default_Size * 4, 50, 100]}
+          pageSizeOptions={pageSizeOptions}
           pageSize={pageSize}
           showTotal={(num) => {
             const minSize = pageIndex * pageSize + 1;

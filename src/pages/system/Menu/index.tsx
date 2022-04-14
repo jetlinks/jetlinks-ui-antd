@@ -101,6 +101,7 @@ export default observer(() => {
       }),
       width: 80,
       dataIndex: 'sortIndex',
+      valueType: 'digit',
     },
     {
       title: intl.formatMessage({
@@ -109,6 +110,7 @@ export default observer(() => {
       }),
       width: 200,
       dataIndex: 'describe',
+      hideInSearch: true,
     },
     {
       title: intl.formatMessage({

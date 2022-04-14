@@ -243,6 +243,7 @@ const Instance = () => {
       dataIndex: 'describe',
       width: '15%',
       ellipsis: true,
+      hideInSearch: true,
     },
     {
       title: intl.formatMessage({

@@ -5,6 +5,7 @@ import '@/style/common.less';
 import { Badge, Tooltip } from 'antd';
 import type { AccessItem } from '@/pages/link/AccessConfig/typings';
 import './index.less';
+import classNames from 'classnames';
 
 export interface AccessConfigCardProps extends AccessItem {
   detail?: React.ReactNode;
@@ -29,7 +30,7 @@ export default (props: AccessConfigCardProps) => {
       }}
       showTool={props.showTool}
       contentClassName={props.state.value === 'disabled' ? 'tableCardDisabled' : 'tableCardEnabled'}
-      className={props.activeStyle}
+      className={classNames('access-config-card-item', props.activeStyle)}
     >
       <div className="context-access">
         <div>

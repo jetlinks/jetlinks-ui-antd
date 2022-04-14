@@ -207,7 +207,7 @@ export default () => {
           </div>
         )}
         <div className={'right'}>
-          <SearchComponent field={columns} onSearch={searchFn} />
+          <SearchComponent field={columns} onSearch={searchFn} target={'media-channel'} />
           <ProTable<ChannelItem>
             columns={columns}
             actionRef={actionRef}
@@ -231,26 +231,23 @@ export default () => {
             }
             rowKey="id"
             search={false}
-            headerTitle={
-              type === ProviderValue.FIXED
-                ? [
-                    <Button
-                      onClick={() => {
-                        setCurrent(undefined);
-                        setVisible(true);
-                      }}
-                      key="button"
-                      icon={<PlusOutlined />}
-                      type="primary"
-                    >
-                      {intl.formatMessage({
-                        id: 'pages.data.option.add',
-                        defaultMessage: '新增',
-                      })}
-                    </Button>,
-                  ]
-                : null
-            }
+            headerTitle={[
+              <Button
+                onClick={() => {
+                  setCurrent(undefined);
+                  setVisible(true);
+                }}
+                key="button"
+                disabled={type === ProviderValue.GB281}
+                icon={<PlusOutlined />}
+                type="primary"
+              >
+                {intl.formatMessage({
+                  id: 'pages.data.option.add',
+                  defaultMessage: '新增',
+                })}
+              </Button>,
+            ]}
           />
         </div>
       </div>

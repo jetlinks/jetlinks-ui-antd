@@ -38,9 +38,6 @@ const Bind = observer((props: Props) => {
         id: 'pages.system.name',
         defaultMessage: '标识',
       }),
-      search: {
-        transform: (value) => ({ name$LIKE: value }),
-      },
     },
     {
       dataIndex: 'name',
@@ -48,7 +45,9 @@ const Bind = observer((props: Props) => {
         id: 'pages.system.name',
         defaultMessage: '分类名称',
       }),
-      search: false,
+      search: {
+        transform: (value) => ({ username$LIKE: value }),
+      },
     },
   ];
 

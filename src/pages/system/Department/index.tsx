@@ -76,6 +76,7 @@ export default observer(() => {
       search: false,
       valueType: 'digit',
       dataIndex: 'sortIndex',
+      sorter: true,
     },
     {
       title: intl.formatMessage({
@@ -88,7 +89,7 @@ export default observer(() => {
         <Button
           style={{ padding: 0 }}
           type="link"
-          disabled={getButtonPermission('system/Department', ['add', 'update'])}
+          disabled={getButtonPermission('system/Department', ['update'])}
           key="editable"
           onClick={() => {
             State.current = record;
@@ -129,7 +130,6 @@ export default observer(() => {
           type="link"
           style={{ padding: 0 }}
           key="assets"
-          disabled={getButtonPermission('system/Department', ['add', 'view', 'update'])}
           onClick={() => {
             history.push(
               `${getMenuPathByParams(
@@ -152,7 +152,6 @@ export default observer(() => {
           type="link"
           key="user"
           style={{ padding: 0 }}
-          disabled={getButtonPermission('system/Department', ['add', 'view', 'update'])}
           onClick={() =>
             history.push(
               `${getMenuPathByParams(MENUS_CODE['system/Department/Detail'], record.id)}?type=user`,
@@ -290,11 +289,8 @@ export default observer(() => {
         request={async (params) => {
           const response = await service.queryOrgThree({
             paging: false,
+            sorts: [{ name: 'sortIndex', order: 'asc' }],
             ...params,
-            sorts: [
-              { name: 'createTime', order: 'desc' },
-              { name: 'sortIndex', order: 'asc' },
-            ],
           });
           setTreeData(response.result);
           return {

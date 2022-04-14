@@ -9,6 +9,8 @@ export type PlayerProps = {
   poster?: string;
   timeout?: number;
   className?: string;
+  updateTime?: number;
+  key?: string | number;
   loading?: boolean;
   onDestroy?: () => void;
   onMessage?: (msg: any) => void;
@@ -24,12 +26,24 @@ export type PlayerProps = {
   onClick?: () => void;
 };
 
+const EventsEnum = {
+  fullscreen: 'onFullscreen',
+  message: 'onMessage',
+  error: 'onError',
+  timeupdate: 'onTimeUpdate',
+  pause: 'onPause',
+  play: 'onPlay',
+  snapOutside: 'onSnapOutside',
+  snapInside: 'onSnapInside',
+  customButtons: 'onCustomButtons',
+};
 export default (props: PlayerProps) => {
   const player = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     return () => {
       // 销毁播放器
+      console.log('销毁', props);
       if ('onDestroy' in props && isFunction(props.onDestroy)) {
         props.onDestroy();
       }
@@ -40,60 +54,20 @@ export default (props: PlayerProps) => {
    * 事件初始化
    */
   const EventInit = () => {
-    player.current?.addEventListener('fullscreen', () => {
-      if (props.onFullscreen) {
-        props.onFullscreen();
-      }
-    });
-
-    player.current?.addEventListener('message', (e) => {
-      if (props.onMessage) {
-        props.onMessage(e);
-      }
-    });
-
-    player.current?.addEventListener('error', (e) => {
-      if (props.onError) {
-        props.onError(e);
-      }
-    });
-
-    player.current?.addEventListener('timeupdate', (e) => {
-      if (props.onTimeUpdate) {
-        props.onTimeUpdate(e);
-      }
-    });
-
-    player.current?.addEventListener('pause', () => {
-      if (props.onPause) {
-        props.onPause();
-      }
-    });
-
-    player.current?.addEventListener('play', () => {
-      if (props.onPlay) {
-        props.onPlay();
-      }
-    });
-
-    player.current?.addEventListener('snapOutside', (e) => {
-      if (props.onSnapOutside) {
-        props.onSnapOutside(e);
-      }
-    });
-
-    player.current?.addEventListener('snapInside', (e) => {
-      if (props.onSnapInside) {
-        props.onSnapInside(e);
-      }
-    });
-
-    player.current?.addEventListener('customButtons', (e) => {
-      if (props.onCustomButtons) {
-        props.onCustomButtons(e);
-      }
-    });
+    for (const key in EventsEnum) {
+      player.current?.addEventListener(key, () => {
+        if (EventsEnum[key] in props) {
+          props[EventsEnum[key]]();
+        }
+      });
+    }
   };
+
+  useEffect(() => {
+    if (props.updateTime) {
+      console.log(props.updateTime);
+    }
+  }, [props.updateTime]);
 
   return (
     // @ts-ignore: Unreachable code error
