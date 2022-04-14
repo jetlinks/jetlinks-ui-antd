@@ -18,7 +18,7 @@ import { service } from '@/pages/link/AccessConfig';
 import encodeQuery from '@/utils/encodeQuery';
 import { useHistory } from 'umi';
 import ReactMarkdown from 'react-markdown';
-import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
+import { getButtonPermission, getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 
 interface Props {
@@ -292,6 +292,7 @@ const Access = (props: Props) => {
               />
               <Button
                 type="primary"
+                disabled={getButtonPermission('link/Type', ['add'])}
                 onClick={() => {
                   const url = getMenuPathByCode(MENUS_CODE['link/Type/Detail']);
                   const tab: any = window.open(`${origin}/#${url}`);
@@ -350,7 +351,9 @@ const Access = (props: Props) => {
                 description={
                   <span>
                     暂无数据
-                    <a
+                    <Button
+                      type="link"
+                      disabled={getButtonPermission('link/Type', ['add'])}
                       onClick={() => {
                         const url = getMenuPathByCode(MENUS_CODE['link/Type/Detail']);
                         const tab: any = window.open(`${origin}/#${url}`);
@@ -362,7 +365,7 @@ const Access = (props: Props) => {
                       }}
                     >
                       创建接入方式
-                    </a>
+                    </Button>
                   </span>
                 }
               />
@@ -394,6 +397,7 @@ const Access = (props: Props) => {
               />
               <Button
                 type="primary"
+                disabled={getButtonPermission('link/Protocol', ['add'])}
                 onClick={() => {
                   const url = getMenuPathByCode(MENUS_CODE[`link/Protocol`]);
                   const tab: any = window.open(`${origin}/#${url}?save=true`);
@@ -436,7 +440,9 @@ const Access = (props: Props) => {
                 description={
                   <span>
                     暂无数据
-                    <a
+                    <Button
+                      type="link"
+                      disabled={getButtonPermission('link/Protocol', ['add'])}
                       onClick={() => {
                         const url = getMenuPathByCode(MENUS_CODE[`link/Protocol`]);
                         const tab: any = window.open(`${origin}/#${url}?save=true`);
@@ -448,7 +454,7 @@ const Access = (props: Props) => {
                       }}
                     >
                       去新增
-                    </a>
+                    </Button>
                   </span>
                 }
               />
@@ -479,6 +485,9 @@ const Access = (props: Props) => {
                   </Button>
                   <Button
                     type="primary"
+                    disabled={
+                      !props.data?.id ? getButtonPermission('link/AccessConfig', ['update']) : false
+                    }
                     onClick={async () => {
                       try {
                         const values = await form.validateFields();

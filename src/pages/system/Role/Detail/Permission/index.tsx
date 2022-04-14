@@ -3,8 +3,8 @@ import Allocate from '@/pages/system/Role/Detail/Permission/Allocate';
 import { useEffect, useState } from 'react';
 import { history, useParams } from 'umi';
 import { service } from '@/pages/system/Role';
-import styles from './index.less';
 import { flattenArray } from '@/utils/util';
+import TitleComponent from '@/components/TitleComponent';
 
 const Permission = () => {
   const params = useParams<{ id: string }>();
@@ -68,10 +68,14 @@ const Permission = () => {
             name: values?.name,
             description: values?.description || '',
           });
-          const list = getDataList(flattenArray([...values.permission?.children]) || []) || [];
+          const list = (
+            getDataList(flattenArray([...values.permission?.children]) || []) || []
+          ).filter((item: any) => {
+            return item.granted || (item?.assetAccesses).filter((i: any) => i.granted).length > 0;
+          });
           service
             .saveGrantTree('role', params?.id, {
-              menus: list.filter((item: any) => item.granted) || [],
+              menus: list || [],
             })
             .subscribe((resp) => {
               if (resp.status === 200) {
@@ -82,7 +86,7 @@ const Permission = () => {
         }}
       >
         <Card>
-          <div className={styles.title}>基本信息</div>
+          <TitleComponent data={'基本信息'} />
           <Row>
             <Col span={14}>
               <Form.Item
@@ -101,7 +105,7 @@ const Permission = () => {
           </Row>
         </Card>
         <Card style={{ marginTop: 20 }}>
-          <div className={styles.title}>权限分配</div>
+          <TitleComponent data={'权限分配'} />
           <Form.Item name="permission" rules={[{ required: true }]}>
             <Allocate />
           </Form.Item>
