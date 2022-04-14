@@ -25,6 +25,7 @@ import { testIP } from '@/utils/util';
 type LocationType = {
   id?: string;
 };
+
 interface Props {
   change: () => void;
   data: any;
@@ -49,6 +50,42 @@ const Media = (props: Props) => {
       title: '完成',
     },
   ];
+
+  const initConfig = (tconfiguration: any) => {
+    if (tconfiguration?.shareCluster) {
+      const hostPort = { ...tconfiguration?.hostPort };
+      setConfiguration({
+        ...tconfiguration,
+        hostPort: {
+          sip: {
+            port: hostPort?.port,
+            host: hostPort?.host,
+          },
+          public: {
+            port: hostPort?.publicPort,
+            host: hostPort?.publicHost,
+          },
+        },
+      });
+    } else {
+      const cluster: any[] = [];
+      (tconfiguration?.cluster || []).forEach((item: any) => {
+        cluster.push({
+          clusterNodeId: item?.clusterNodeId || '',
+          enabled: true,
+          sip: {
+            port: item?.port,
+            host: item?.host,
+          },
+          public: {
+            port: item?.publicPort,
+            host: item?.publicHost,
+          },
+        });
+      });
+      setConfiguration({ ...tconfiguration, cluster });
+    }
+  };
 
   const BasicRender = () => {
     const SchemaField = createSchemaField({
@@ -399,6 +436,7 @@ const Media = (props: Props) => {
                 <Button
                   style={{ margin: '0 8px' }}
                   onClick={() => {
+                    initConfig(configuration);
                     setCurrent(0);
                   }}
                 >
@@ -461,39 +499,7 @@ const Media = (props: Props) => {
         description: props.data?.description,
       });
       if (props?.provider?.id !== 'fixed-media') {
-        if (props.data?.configuration?.shareCluster) {
-          const hostPort = { ...props.data?.configuration?.hostPort };
-          setConfiguration({
-            ...props.data?.configuration,
-            hostPort: {
-              sip: {
-                port: hostPort.port,
-                host: hostPort.host,
-              },
-              public: {
-                port: hostPort.publicPort,
-                host: hostPort.publicHost,
-              },
-            },
-          });
-        } else {
-          const cluster: any[] = [];
-          (props.data?.configuration?.cluster || []).forEach((item: any) => {
-            cluster.push({
-              clusterNodeId: item?.clusterNodeId || '',
-              enabled: true,
-              sip: {
-                port: item?.port,
-                host: item?.host,
-              },
-              public: {
-                port: item?.publicPort,
-                host: item?.publicHost,
-              },
-            });
-          });
-          setConfiguration({ ...props.data?.configuration, cluster });
-        }
+        initConfig(props.data?.configuration);
       }
     }
   }, [props.data]);

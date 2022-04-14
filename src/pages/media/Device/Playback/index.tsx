@@ -2,13 +2,13 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import LivePlayer from '@/components/Player';
 import { useCallback, useEffect, useState } from 'react';
-import { Select, Calendar, Empty, List, Tooltip } from 'antd';
+import { Calendar, Empty, List, Select, Tooltip } from 'antd';
 import { useLocation } from 'umi';
 import Service from './service';
 import './index.less';
 import { recordsItemType } from '@/pages/media/Device/Playback/typings';
-import * as moment from 'moment';
 import type { Moment } from 'moment';
+import * as moment from 'moment';
 import classNames from 'classnames';
 import {
   CloudDownloadOutlined,
@@ -65,6 +65,8 @@ export default () => {
         } else {
           setHistoryList(list);
         }
+      } else {
+        setHistoryList([]);
       }
     }
   };

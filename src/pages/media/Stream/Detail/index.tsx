@@ -18,6 +18,7 @@ import { useParams } from 'umi';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import SipComponent from '@/components/SipComponent';
 import { testIP } from '@/utils/util';
+
 interface RTPComponentProps {
   onChange?: (data: any) => void;
   value?: {
@@ -169,6 +170,9 @@ const Detail = () => {
   }, [params.id]);
 
   const checkSIP = (_: any, value: { host: string; port: number }) => {
+    if (!value) {
+      return Promise.resolve();
+    }
     if (!value || !value.host) {
       return Promise.reject(new Error('请输入API HOST'));
     } else if (value?.host && !testIP(value.host)) {
@@ -194,6 +198,9 @@ const Detail = () => {
       dynamicRtpPortRange: number[];
     },
   ) => {
+    if (!value) {
+      return Promise.resolve();
+    }
     if (!value || !value.rtpIp) {
       return Promise.reject(new Error('请输入RTP IP'));
     } else if (value?.rtpIp && !testIP(value.rtpIp)) {

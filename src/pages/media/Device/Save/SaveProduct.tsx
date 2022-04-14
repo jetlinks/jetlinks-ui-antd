@@ -24,7 +24,10 @@ export default (props: SaveProps) => {
   useEffect(() => {
     if (visible) {
       getProviderList({
-        terms: [{ column: 'provider', value: props.type }],
+        terms: [
+          { column: 'provider', value: props.type },
+          { column: 'state', value: 'enabled' },
+        ],
       });
     }
   }, [visible]);
@@ -45,6 +48,7 @@ export default (props: SaveProps) => {
   const onSubmit = async () => {
     const formData = await form.validateFields();
     if (formData) {
+      formData.deviceType = 'device';
       setLoading(true);
       const resp = await service.saveProduct(formData);
       if (resp.status === 200) {

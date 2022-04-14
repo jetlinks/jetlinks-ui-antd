@@ -8,6 +8,7 @@ import { DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined } from '@ant
 import type { MenuButtonInfo, MenuItem } from '@/pages/system/Menu/typing';
 import Permission from '@/pages/system/Menu/components/permission';
 import { useRequest } from '@@/plugin-request/request';
+import { getButtonPermission } from '@/utils/menu';
 
 type ButtonsProps = {
   data: MenuItem;
@@ -168,14 +169,17 @@ export default (props: ButtonsProps) => {
       align: 'center',
       width: 240,
       render: (_, record) => [
-        <a
+        <Button
           key="edit"
+          type={'link'}
+          style={{ padding: 0 }}
           onClick={() => {
             form.setFieldsValue(record);
             setId(record.id);
             setDisabled(false);
             setVisible(true);
           }}
+          disabled={getButtonPermission('system/Menu', 'update')}
         >
           <Tooltip
             title={intl.formatMessage({
@@ -185,9 +189,11 @@ export default (props: ButtonsProps) => {
           >
             <EditOutlined />
           </Tooltip>
-        </a>,
-        <a
+        </Button>,
+        <Button
           key="view"
+          type={'link'}
+          style={{ padding: 0 }}
           onClick={() => {
             form.setFieldsValue(record);
             setId(record.id);
@@ -203,7 +209,7 @@ export default (props: ButtonsProps) => {
           >
             <SearchOutlined />
           </Tooltip>
-        </a>,
+        </Button>,
         <Popconfirm
           key="unBindUser"
           title={intl.formatMessage({
@@ -220,9 +226,13 @@ export default (props: ButtonsProps) => {
               defaultMessage: '删除',
             })}
           >
-            <a key="delete">
+            <Button
+              disabled={getButtonPermission('system/Menu', 'delete')}
+              type={'link'}
+              style={{ padding: 0 }}
+            >
               <DeleteOutlined />
-            </a>
+            </Button>
           </Tooltip>
         </Popconfirm>,
       ],
