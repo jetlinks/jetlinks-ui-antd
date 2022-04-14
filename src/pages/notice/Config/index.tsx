@@ -46,10 +46,7 @@ const Config = observer(() => {
   const columns: ProColumns<ConfigItem>[] = [
     {
       dataIndex: 'name',
-      title: intl.formatMessage({
-        id: 'pages.table.name',
-        defaultMessage: '名称',
-      }),
+      title: '配置名称',
     },
     {
       dataIndex: 'provider',

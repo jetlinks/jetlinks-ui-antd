@@ -65,13 +65,13 @@ const Debug = observer(() => {
           });
         },
       }),
-    [id],
+    [state.debug, state.current],
   );
 
   useEffect(() => {
     const data = state.current;
     form.setValuesIn('variableDefinitions', data?.variableDefinitions);
-  });
+  }, [state.current]);
 
   const SchemaField = createSchemaField({
     components: {
@@ -101,13 +101,15 @@ const Debug = observer(() => {
     type: 'object',
     properties: {
       configId: {
-        title: '配置',
+        title: '通知配置',
         type: 'string',
+        required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Select',
         'x-reactions': '{{useAsyncDataSource(getConfig)}}',
       },
       variableDefinitions: {
+        required: true,
         title: '变量',
         type: 'string',
         'x-decorator': 'FormItem',
@@ -187,6 +189,7 @@ const Debug = observer(() => {
     <Modal
       title="调试"
       width="40vw"
+      destroyOnClose
       visible={state.debug}
       onCancel={() => (state.debug = false)}
       onOk={start}

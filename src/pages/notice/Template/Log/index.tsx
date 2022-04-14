@@ -13,8 +13,8 @@ const Log = observer(() => {
 
   const columns: ProColumns<LogItem>[] = [
     {
-      dataIndex: 'config',
-      title: 'config',
+      dataIndex: 'id',
+      title: 'id',
     },
     {
       dataIndex: 'sendTime',
@@ -49,7 +49,15 @@ const Log = observer(() => {
   const [param, setParam] = useState<any>();
   const actionRef = useRef<ActionType>();
   return (
-    <Modal onCancel={() => (state.log = false)} title="通知记录" width={'70vw'} visible={state.log}>
+    <Modal
+      forceRender
+      footer={null}
+      destroyOnClose
+      onCancel={() => (state.log = false)}
+      title="通知记录"
+      width={'70vw'}
+      visible={state.log}
+    >
       <SearchComponent
         defaultParam={[{ column: 'type$IN', value: id }]}
         field={columns}

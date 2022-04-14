@@ -13,8 +13,8 @@ const DetailCode = 'detail';
 const extraRouteObj = {
   notice: {
     children: [
-      { code: 'Config', name: 'config' },
-      { code: 'Template', name: 'template' },
+      { code: 'Config', name: '通知配置' },
+      { code: 'Template', name: '通知模版' },
     ],
   },
   'media/Cascade': {
