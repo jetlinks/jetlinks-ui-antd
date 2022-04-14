@@ -54,6 +54,7 @@ const Bind = observer((props: Props) => {
         defaultMessage: '注册时间',
       }),
       dataIndex: 'registryTime',
+      valueType: 'dateTime',
     },
     {
       title: intl.formatMessage({
@@ -61,6 +62,38 @@ const Bind = observer((props: Props) => {
         defaultMessage: '状态',
       }),
       dataIndex: 'state',
+      valueType: 'select',
+      valueEnum: {
+        all: {
+          text: intl.formatMessage({
+            id: 'pages.searchTable.titleStatus.all',
+            defaultMessage: '全部',
+          }),
+          status: 'Default',
+        },
+        onLine: {
+          text: intl.formatMessage({
+            id: 'pages.device.instance.status.onLine',
+            defaultMessage: '在线',
+          }),
+          status: 'onLine',
+        },
+        offLine: {
+          text: intl.formatMessage({
+            id: 'pages.device.instance.status.offLine',
+            defaultMessage: '离线',
+          }),
+          status: 'offLine',
+        },
+        notActive: {
+          text: intl.formatMessage({
+            id: 'pages.device.instance.status.notActive',
+            defaultMessage: '未启用',
+          }),
+          status: 'notActive',
+        },
+      },
+      search: false,
       render: (_, row) => <DeviceBadge type={row.state.value} text={row.state.text} />,
     },
   ];

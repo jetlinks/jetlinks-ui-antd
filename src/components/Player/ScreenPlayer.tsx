@@ -16,6 +16,8 @@ type Player = {
   url?: string;
   channelId?: string;
   key: string;
+  updateTime?: number;
+  show: boolean;
 };
 
 interface ScreenProps {
@@ -63,8 +65,17 @@ export default forwardRef((props: ScreenProps, ref) => {
 
   const replaceVideo = useCallback(
     (id: string, channelId: string, url: string) => {
-      players[playerActive] = { id, url, channelId, key: 'time_' + new Date().getTime() };
-      setPlayers(players);
+      const olPlayers = [...players];
+      olPlayers[playerActive] = {
+        id,
+        url,
+        channelId,
+        key: olPlayers[playerActive].key,
+        updateTime: new Date().getTime(),
+        show: true,
+      };
+      console.log(olPlayers[playerActive]);
+      setPlayers(olPlayers);
       if (playerActive === screen - 1) {
         // 当前位置为分屏最后一位
         setPlayerActive(0);
@@ -115,11 +126,34 @@ export default forwardRef((props: ScreenProps, ref) => {
     }
   }, [players, screen, historyForm]);
 
+  const mediaInit = () => {
+    const newArr = [];
+    for (let i = 0; i < 9; i++) {
+      newArr.push({
+        id: '',
+        channelId: '',
+        url: '',
+        updateTime: 0,
+        key: 'time_' + new Date().getTime() + i,
+        show: i === 0,
+      });
+    }
+    setPlayers(newArr);
+  };
+
   const screenChange = (index: number) => {
-    const arr = new Array(index)
-      .fill(1)
-      .map(() => ({ id: '', channelId: '', url: '', key: 'time_' + new Date().getTime() }));
-    setPlayers(arr);
+    setPlayers(
+      players.map((item, i) => {
+        return {
+          id: '',
+          channelId: '',
+          url: '',
+          updateTime: 0,
+          key: item.key,
+          show: i < index,
+        };
+      }),
+    );
     setPlayerActive(0);
     setScreen(index);
   };
@@ -135,7 +169,7 @@ export default forwardRef((props: ScreenProps, ref) => {
     if (props.showScreen !== false) {
       getHistory();
     }
-    screenChange(1);
+    mediaInit();
   }, []);
 
   useImperativeHandle(ref, () => ({
@@ -178,24 +212,7 @@ export default forwardRef((props: ScreenProps, ref) => {
     </Menu>
   );
 
-  const MediaDom = (data: Player[]) => {
-    return data.map((item, index) => {
-      return (
-        <div
-          key={'player-content' + index}
-          className={classNames({
-            active: props.showScreen !== false && playerActive === index && !isFullscreen,
-            'full-screen': isFullscreen,
-          })}
-          onClick={() => {
-            setPlayerActive(index);
-          }}
-        >
-          <LivePlayer key={item.key} url={item.url} />
-        </div>
-      );
-    });
-  };
+  console.log(players);
 
   return (
     <div className={classNames('live-player-warp', props.className)}>
@@ -290,7 +307,23 @@ export default forwardRef((props: ScreenProps, ref) => {
         )}
         <div className={'player-body'}>
           <div className={classNames('player-screen', screenClass)} ref={fullscreenRef}>
-            {MediaDom(players)}
+            {players.map((item, index) => {
+              return (
+                <div
+                  key={item.key}
+                  className={classNames({
+                    active: props.showScreen !== false && playerActive === index && !isFullscreen,
+                    'full-screen': isFullscreen,
+                  })}
+                  style={{ display: item.show ? 'block' : 'none' }}
+                  onClick={() => {
+                    setPlayerActive(index);
+                  }}
+                >
+                  <LivePlayer url={item.url} updateTime={item.updateTime} />
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

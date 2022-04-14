@@ -12,6 +12,7 @@ import Service from '@/pages/system/Department/Assets/service';
 import Models from './model';
 import Bind from './bind';
 import SearchComponent from '@/components/SearchComponent';
+import { getButtonPermission } from '@/utils/menu';
 
 export const service = new Service<ProductItem>('assets');
 
@@ -63,7 +64,7 @@ export default observer(() => {
     {
       dataIndex: 'name',
       title: intl.formatMessage({
-        id: 'pages.system.name',
+        id: 'pages.table.name',
         defaultMessage: '名称',
       }),
       search: {
@@ -72,12 +73,11 @@ export default observer(() => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.system.tenant.memberManagement.administrators',
-        defaultMessage: '管理员',
+        id: 'pages.system.description',
+        defaultMessage: '说明',
       }),
-      dataIndex: 'adminMember',
-      renderText: (text) => (text ? '是' : '否'),
-      search: false,
+      dataIndex: 'describe',
+      hideInSearch: true,
     },
     {
       title: intl.formatMessage({
@@ -97,8 +97,13 @@ export default observer(() => {
           onConfirm={() => {
             singleUnBind(record.id);
           }}
+          disabled={getButtonPermission('system/Department', ['add', 'update'])}
         >
-          <a href="#">
+          <Button
+            type={'link'}
+            style={{ padding: 0 }}
+            disabled={getButtonPermission('system/Department', ['add', 'update'])}
+          >
             <Tooltip
               title={intl.formatMessage({
                 id: 'pages.system.role.option.unBindUser',
@@ -107,7 +112,7 @@ export default observer(() => {
             >
               <DisconnectOutlined />
             </Tooltip>
-          </a>
+          </Button>
         </Popconfirm>,
       ],
     },
@@ -174,6 +179,7 @@ export default observer(() => {
             icon={<PlusOutlined />}
             type="primary"
             key="bind"
+            disabled={getButtonPermission('system/Department', ['add', 'update'])}
           >
             {intl.formatMessage({
               id: 'pages.data.option.assets',
@@ -187,8 +193,12 @@ export default observer(() => {
             })}
             key="unBind"
             onConfirm={handleUnBind}
+            disabled={getButtonPermission('system/Department', ['add', 'update'])}
           >
-            <Button icon={<DisconnectOutlined />} key="bind">
+            <Button
+              icon={<DisconnectOutlined />}
+              disabled={getButtonPermission('system/Department', ['add', 'update'])}
+            >
               {intl.formatMessage({
                 id: 'pages.system.role.option.unBindUser',
                 defaultMessage: '批量解绑',

@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Button, Col, Form, Input, message, Modal, Radio, Row, Select } from 'antd';
+import { Button, Col, Form, Input, message, Modal, Radio, Row, Select, Tooltip } from 'antd';
 import { useIntl } from 'umi';
 import { RadioCard, UploadImage } from '@/components';
 import { PlusOutlined } from '@ant-design/icons';
 import { service } from '../index';
 import SaveProductModal from './SaveProduct';
 import type { DeviceItem } from '../typings';
+import { getButtonPermission } from '@/utils/menu';
 
 interface SaveProps {
   visible: boolean;
@@ -222,15 +223,23 @@ export default (props: SaveProps) => {
                 </Form.Item>
                 {props.model !== 'edit' && (
                   <Form.Item noStyle>
-                    <Button
-                      type={'link'}
-                      style={{ padding: '4px 10px' }}
-                      onClick={() => {
-                        setProductVisible(true);
-                      }}
-                    >
-                      <PlusOutlined />
-                    </Button>
+                    {getButtonPermission('device/Product', 'add') ? (
+                      <Tooltip title={'暂无权限，请联系管理员'}>
+                        <Button type={'link'} style={{ padding: '4px 10px' }} disabled>
+                          <PlusOutlined />
+                        </Button>
+                      </Tooltip>
+                    ) : (
+                      <Button
+                        type={'link'}
+                        style={{ padding: '4px 10px' }}
+                        onClick={() => {
+                          setProductVisible(true);
+                        }}
+                      >
+                        <PlusOutlined />
+                      </Button>
+                    )}
                   </Form.Item>
                 )}
               </Form.Item>

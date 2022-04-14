@@ -263,7 +263,40 @@ const Product = observer(() => {
     },
     {
       title: '状态',
+      dataIndex: 'state',
       render: (_, row) => <Space size={0}>{status[row.state]}</Space>,
+      valueType: 'select',
+      valueEnum: {
+        // 2: {
+        //   text: intl.formatMessage({
+        //     id: 'pages.searchTable.titleStatus.all',
+        //     defaultMessage: '全部',
+        //   }),
+        //   status: 2,
+        // },
+        0: {
+          text: intl.formatMessage({
+            id: 'pages.device.product.status.unpublished',
+            defaultMessage: '未发布',
+          }),
+          status: 0,
+        },
+        1: {
+          text: intl.formatMessage({
+            id: 'pages.device.product.status.published',
+            defaultMessage: '已发布',
+          }),
+          status: 1,
+        },
+      },
+    },
+    {
+      dataIndex: 'describe',
+      title: intl.formatMessage({
+        id: 'pages.system.description',
+        defaultMessage: '说明',
+      }),
+      hideInSearch: true,
     },
     {
       title: intl.formatMessage({
