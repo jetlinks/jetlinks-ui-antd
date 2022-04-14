@@ -9,6 +9,7 @@ import {
   PlusOutlined,
   SyncOutlined,
   PartitionOutlined,
+  EyeOutlined,
 } from '@ant-design/icons';
 import type { DeviceItem } from '@/pages/media/Device/typings';
 import { useIntl, useHistory } from 'umi';
@@ -16,7 +17,12 @@ import { BadgeStatus, ProTableCard } from '@/components';
 import { StatusColorEnum } from '@/components/BadgeStatus';
 import SearchComponent from '@/components/SearchComponent';
 import MediaDevice from '@/components/ProTableCard/CardItems/mediaDevice';
-import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
+import {
+  getButtonPermission,
+  getMenuPathByCode,
+  getMenuPathByParams,
+  MENUS_CODE,
+} from '@/utils/menu';
 import Service from './service';
 import Save from './Save';
 
@@ -68,6 +74,7 @@ const Device = () => {
   const updateChannel = async (id: string) => {
     const resp = await service.updateChannels(id);
     if (resp.status === 200) {
+      actionRef.current?.reload();
       message.success('通道更新成功');
     } else {
       message.error('通道更新失败');
@@ -97,8 +104,9 @@ const Device = () => {
       dataIndex: 'channelNumber',
       title: intl.formatMessage({
         id: 'pages.media.device.channelNumber',
-        defaultMessage: '通道数',
+        defaultMessage: '通道数量',
       }),
+      valueType: 'digit',
     },
     {
       dataIndex: 'manufacturer',
@@ -155,17 +163,22 @@ const Device = () => {
             defaultMessage: '编辑',
           })}
         >
-          <a
+          <Button
+            disabled={getButtonPermission('media/Device', 'update')}
+            style={{ padding: 0 }}
+            type={'link'}
             onClick={() => {
               setCurrent(record);
               setVisible(true);
             }}
           >
             <EditOutlined />
-          </a>
+          </Button>
         </Tooltip>,
         <Tooltip key={'viewChannel'} title="查看通道">
-          <a
+          <Button
+            style={{ padding: 0 }}
+            type={'link'}
             onClick={() => {
               history.push(
                 `${getMenuPathByCode(MENUS_CODE['media/Device/Channel'])}?id=${record.id}&type=${
@@ -175,13 +188,37 @@ const Device = () => {
             }}
           >
             <PartitionOutlined />
-          </a>
+          </Button>
         </Tooltip>,
-        <Tooltip key={'updateChannel'} title="更新通道">
+        <Tooltip key={'deviceDetail'} title={'查看'}>
           <Button
-            style={{ padding: '4px' }}
+            style={{ padding: 0 }}
             type={'link'}
-            disabled={record.state.value === 'offline'}
+            onClick={() => {
+              history.push(
+                `${getMenuPathByParams(MENUS_CODE['device/Instance/Detail'], record.id)}`,
+              );
+            }}
+          >
+            <EyeOutlined />
+          </Button>
+        </Tooltip>,
+        <Tooltip
+          key={'updateChannel'}
+          title={
+            record.provider === providerType['fixed-media']
+              ? '接入方式为固定地址时不支持更新通道'
+              : '更新通道'
+          }
+        >
+          <Button
+            style={{ padding: 0 }}
+            type={'link'}
+            disabled={
+              getButtonPermission('media/Device', 'action') ||
+              record.state.value === 'offline' ||
+              record.provider === providerType['fixed-media']
+            }
             onClick={() => {
               updateChannel(record.id);
             }}
@@ -209,8 +246,10 @@ const Device = () => {
           >
             <Button
               type={'link'}
-              style={{ padding: '4px' }}
-              disabled={record.state.value !== 'offline'}
+              style={{ padding: 0 }}
+              disabled={
+                getButtonPermission('media/Device', 'delete') || record.state.value !== 'offline'
+              }
             >
               <DeleteOutlined />
             </Button>
@@ -222,7 +261,7 @@ const Device = () => {
 
   return (
     <PageContainer>
-      <SearchComponent field={columns} onSearch={searchFn} />
+      <SearchComponent field={columns} onSearch={searchFn} target="media-device" />
       <ProTableCard<DeviceItem>
         columns={columns}
         actionRef={actionRef}
@@ -250,6 +289,7 @@ const Device = () => {
             key="button"
             icon={<PlusOutlined />}
             type="primary"
+            disabled={getButtonPermission('media/Device', 'add')}
           >
             {intl.formatMessage({
               id: 'pages.data.option.add',
@@ -260,9 +300,22 @@ const Device = () => {
         cardRender={(record) => (
           <MediaDevice
             {...record}
+            detail={
+              <div
+                style={{ fontSize: 18, padding: 8 }}
+                onClick={() => {
+                  history.push(
+                    `${getMenuPathByParams(MENUS_CODE['device/Instance/Detail'], record.id)}`,
+                  );
+                }}
+              >
+                <EyeOutlined />
+              </div>
+            }
             actions={[
               <Button
                 key="edit"
+                disabled={getButtonPermission('media/Device', 'update')}
                 onClick={() => {
                   setCurrent(record);
                   setVisible(true);
@@ -291,7 +344,11 @@ const Device = () => {
               </Button>,
               <Button
                 key={'updateChannel'}
-                disabled={record.state.value === 'offline'}
+                disabled={
+                  getButtonPermission('media/Device', 'action') ||
+                  record.state.value === 'offline' ||
+                  record.provider === providerType['fixed-media']
+                }
                 onClick={() => {
                   updateChannel(record.id);
                 }}
@@ -319,7 +376,10 @@ const Device = () => {
                 <Button
                   type={'link'}
                   style={{ padding: 0 }}
-                  disabled={record.state.value !== 'offline'}
+                  disabled={
+                    getButtonPermission('media/Device', 'delete') ||
+                    record.state.value !== 'offline'
+                  }
                 >
                   <DeleteOutlined />
                 </Button>

@@ -137,7 +137,6 @@ export default observer(() => {
           onClick={() => {
             pageJump(record.id, record.parentId || '');
           }}
-          disabled={getButtonPermission('system/Menu', ['view', 'update'])}
         >
           <Tooltip
             title={intl.formatMessage({

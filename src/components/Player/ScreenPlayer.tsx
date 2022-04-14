@@ -1,12 +1,15 @@
 import { useCallback, useEffect, useRef, useState, useImperativeHandle, forwardRef } from 'react';
 import classNames from 'classnames';
 import LivePlayer from './index';
-import { Button, Dropdown, Empty, Input, Menu, Popover, Radio, Tooltip } from 'antd';
+import { Button, Dropdown, Empty, Menu, message, Popconfirm, Popover, Radio, Tooltip } from 'antd';
+import { createSchemaField } from '@formily/react';
+import { Form, FormItem, Input } from '@formily/antd';
 import { useFullscreen } from 'ahooks';
 import './index.less';
 import { DeleteOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import Service from './service';
 import MediaTool from '@/components/Player/mediaTool';
+import { createForm } from '@formily/core';
 
 type Player = {
   id?: string;
@@ -37,18 +40,26 @@ interface ScreenProps {
 
 const service = new Service();
 
-const DEFAULT_SAVE_CODE = 'screen_save';
+const DEFAULT_SAVE_CODE = 'screen-save';
 
 export default forwardRef((props: ScreenProps, ref) => {
   const [screen, setScreen] = useState(1);
   const [players, setPlayers] = useState<Player[]>([]);
   const [playerActive, setPlayerActive] = useState(0);
   const [historyList, setHistoryList] = useState<any>([]);
-  const [historyTitle, setHistoryTitle] = useState('');
   const [visible, setVisible] = useState(false);
 
   const fullscreenRef = useRef(null);
   const [isFullscreen, { setFull }] = useFullscreen(fullscreenRef);
+
+  const SchemaField = createSchemaField({
+    components: {
+      FormItem,
+      Input,
+    },
+  });
+
+  const historyForm = createForm();
 
   const replaceVideo = useCallback(
     (id: string, channelId: string, url: string) => {
@@ -86,8 +97,9 @@ export default forwardRef((props: ScreenProps, ref) => {
   };
 
   const saveHistory = useCallback(async () => {
+    const historyValue = await historyForm.submit<{ alias: string }>();
     const param = {
-      name: historyTitle,
+      name: historyValue.alias,
       content: JSON.stringify({
         screen: screen,
         players: players,
@@ -97,8 +109,11 @@ export default forwardRef((props: ScreenProps, ref) => {
     if (resp.status === 200) {
       setVisible(false);
       getHistory();
+      message.success('保存成功!');
+    } else {
+      message.error('保存失败');
     }
-  }, [players, historyTitle, screen]);
+  }, [players, screen, historyForm]);
 
   const screenChange = (index: number) => {
     const arr = new Array(index)
@@ -141,11 +156,19 @@ export default forwardRef((props: ScreenProps, ref) => {
               }}
             >
               {item.name}
-              <DeleteOutlined
-                onClick={() => {
-                  deleteHistory(item.id);
+              <Popconfirm
+                title={'确认删除'}
+                onConfirm={(e) => {
+                  e?.stopPropagation();
+                  deleteHistory(item.key);
                 }}
-              />
+              >
+                <DeleteOutlined
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                />
+              </Popconfirm>
             </Menu.Item>
           );
         })
@@ -210,11 +233,26 @@ export default forwardRef((props: ScreenProps, ref) => {
               <div className={'screen-tool-save'}>
                 <Popover
                   content={
-                    <div style={{ width: 300 }}>
-                      <Input.TextArea
-                        rows={3}
-                        onChange={(e) => {
-                          setHistoryTitle(e.target.value);
+                    <Form style={{ width: '217px' }} form={historyForm}>
+                      <SchemaField
+                        schema={{
+                          type: 'object',
+                          properties: {
+                            alias: {
+                              'x-decorator': 'FormItem',
+                              'x-component': 'Input.TextArea',
+                              'x-validator': [
+                                {
+                                  max: 64,
+                                  message: '最多可输入64个字符',
+                                },
+                                {
+                                  required: true,
+                                  message: '请输入名称',
+                                },
+                              ],
+                            },
+                          },
                         }}
                       />
                       <Button
@@ -224,7 +262,7 @@ export default forwardRef((props: ScreenProps, ref) => {
                       >
                         保存
                       </Button>
-                    </div>
+                    </Form>
                   }
                   title="分屏名称"
                   trigger="click"
@@ -270,131 +308,6 @@ export default forwardRef((props: ScreenProps, ref) => {
           }
         }}
       />
-      {/*<div className={'live-player-tools'}>*/}
-      {/*  <div className={'direction'}>*/}
-      {/*    <div*/}
-      {/*      className={'direction-item up'}*/}
-      {/*      onMouseDown={() => {*/}
-      {/*        const { id, channelId } = players[playerActive];*/}
-      {/*        if (id && channelId && props.onMouseDown) {*/}
-      {/*          props.onMouseDown(id, channelId, 'UP');*/}
-      {/*        }*/}
-      {/*      }}*/}
-      {/*      onMouseUp={() => {*/}
-      {/*        const { id, channelId } = players[playerActive];*/}
-      {/*        if (props.onMouseUp && id && channelId) {*/}
-      {/*          props.onMouseUp(id, channelId, 'UP');*/}
-      {/*        }*/}
-      {/*      }}*/}
-      {/*    >*/}
-      {/*      <CaretUpOutlined className={'direction-icon'} />*/}
-      {/*    </div>*/}
-      {/*    <div*/}
-      {/*      className={'direction-item right'}*/}
-      {/*      onMouseDown={() => {*/}
-      {/*        const { id, channelId } = players[playerActive];*/}
-      {/*        if (props.onMouseDown && id && channelId) {*/}
-      {/*          props.onMouseDown(id, channelId, 'RIGHT');*/}
-      {/*        }*/}
-      {/*      }}*/}
-      {/*      onMouseUp={() => {*/}
-      {/*        const { id, channelId } = players[playerActive];*/}
-      {/*        if (props.onMouseUp && id && channelId) {*/}
-      {/*          props.onMouseUp(id, channelId, 'RIGHT');*/}
-      {/*        }*/}
-      {/*      }}*/}
-      {/*    >*/}
-      {/*      <CaretRightOutlined className={'direction-icon'} />*/}
-      {/*    </div>*/}
-      {/*    <div*/}
-      {/*      className={'direction-item left'}*/}
-      {/*      onMouseDown={() => {*/}
-      {/*        const { id, channelId } = players[playerActive];*/}
-      {/*        if (props.onMouseDown && id && channelId) {*/}
-      {/*          props.onMouseDown(id, channelId, 'LEFT');*/}
-      {/*        }*/}
-      {/*      }}*/}
-      {/*      onMouseUp={() => {*/}
-      {/*        const { id, channelId } = players[playerActive];*/}
-      {/*        if (props.onMouseUp && id && channelId) {*/}
-      {/*          props.onMouseUp(id, channelId, 'LEFT');*/}
-      {/*        }*/}
-      {/*      }}*/}
-      {/*    >*/}
-      {/*      <CaretLeftOutlined className={'direction-icon'} />*/}
-      {/*    </div>*/}
-      {/*    <div*/}
-      {/*      className={'direction-item down'}*/}
-      {/*      onMouseDown={() => {*/}
-      {/*        const { id, channelId } = players[playerActive];*/}
-      {/*        if (props.onMouseDown && id && channelId) {*/}
-      {/*          props.onMouseDown(id, channelId, 'DOWN');*/}
-      {/*        }*/}
-      {/*      }}*/}
-      {/*      onMouseUp={() => {*/}
-      {/*        const { id, channelId } = players[playerActive];*/}
-      {/*        if (props.onMouseUp && id && channelId) {*/}
-      {/*          props.onMouseUp(id, channelId, 'DOWN');*/}
-      {/*        }*/}
-      {/*      }}*/}
-      {/*    >*/}
-      {/*      <CaretDownOutlined className={'direction-icon'} />*/}
-      {/*    </div>*/}
-      {/*    <div*/}
-      {/*      className={'direction-audio'}*/}
-      {/*      // onMouseDown={() => {*/}
-      {/*      //   const { id, channelId } = players[playerActive];*/}
-      {/*      //   if (props.onMouseDown && id && channelId) {*/}
-      {/*      //     props.onMouseDown(id, channelId, 'AUDIO');*/}
-      {/*      //   }*/}
-      {/*      // }}*/}
-      {/*      // onMouseUp={() => {*/}
-      {/*      //   const { id, channelId } = players[playerActive];*/}
-      {/*      //   if (props.onMouseUp && id && channelId) {*/}
-      {/*      //     props.onMouseUp(id, channelId, 'AUDIO');*/}
-      {/*      //   }*/}
-      {/*      // }}*/}
-      {/*    >*/}
-      {/*      /!*<AudioOutlined />*!/*/}
-      {/*    </div>*/}
-      {/*  </div>*/}
-      {/*  <div className={'zoom'}>*/}
-      {/*    <div*/}
-      {/*      className={'zoom-item zoom-in'}*/}
-      {/*      onMouseDown={() => {*/}
-      {/*        const { id, channelId } = players[playerActive];*/}
-      {/*        if (props.onMouseDown && id && channelId) {*/}
-      {/*          props.onMouseDown(id, channelId, 'ZOOM_IN');*/}
-      {/*        }*/}
-      {/*      }}*/}
-      {/*      onMouseUp={() => {*/}
-      {/*        const { id, channelId } = players[playerActive];*/}
-      {/*        if (props.onMouseUp && id && channelId) {*/}
-      {/*          props.onMouseUp(id, channelId, 'ZOOM_IN');*/}
-      {/*        }*/}
-      {/*      }}*/}
-      {/*    >*/}
-      {/*      <PlusOutlined />*/}
-      {/*    </div>*/}
-      {/*    <div*/}
-      {/*      className={'zoom-item zoom-out'}*/}
-      {/*      onMouseDown={() => {*/}
-      {/*        const { id, channelId } = players[playerActive];*/}
-      {/*        if (props.onMouseDown && id && channelId) {*/}
-      {/*          props.onMouseDown(id, channelId, 'ZOOM_OUT');*/}
-      {/*        }*/}
-      {/*      }}*/}
-      {/*      onMouseUp={() => {*/}
-      {/*        const { id, channelId } = players[playerActive];*/}
-      {/*        if (props.onMouseUp && id && channelId) {*/}
-      {/*          props.onMouseUp(id, channelId, 'ZOOM_OUT');*/}
-      {/*        }*/}
-      {/*      }}*/}
-      {/*    >*/}
-      {/*      <MinusOutlined />*/}
-      {/*    </div>*/}
-      {/*  </div>*/}
-      {/*</div>*/}
     </div>
   );
 });

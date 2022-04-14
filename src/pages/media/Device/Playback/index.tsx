@@ -65,6 +65,8 @@ export default () => {
         } else {
           setHistoryList(list);
         }
+      } else {
+        setHistoryList([]);
       }
     }
   };

@@ -8,13 +8,14 @@ import '../index.less';
 export interface ProductCardProps extends DeviceItem {
   detail?: React.ReactNode;
   actions?: React.ReactNode[];
+  showMask?: boolean;
 }
 const defaultImage = require('/public/images/device-media.png');
 
 export default (props: ProductCardProps) => {
   return (
     <TableCard
-      showMask={false}
+      showMask={props.showMask}
       detail={props.detail}
       actions={props.actions}
       status={props.state.value}
