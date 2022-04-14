@@ -211,6 +211,7 @@ export default observer(() => {
             label: 'name',
             value: 'id',
           },
+          placeholder: '请选择上级部门',
         },
         enum: treeData,
       },
@@ -223,6 +224,9 @@ export default observer(() => {
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input',
+        'x-component-props': {
+          placeholder: '请输入名称',
+        },
         'x-validator': [
           {
             max: 64,
@@ -243,6 +247,9 @@ export default observer(() => {
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'NumberPicker',
+        'x-component-props': {
+          placeholder: '请输入排序',
+        },
         'x-validator': [
           {
             required: true,

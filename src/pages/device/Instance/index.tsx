@@ -172,6 +172,8 @@ const Instance = () => {
     {
       title: 'ID',
       dataIndex: 'id',
+      width: 300,
+      ellipsis: true,
     },
     {
       title: intl.formatMessage({
@@ -180,6 +182,7 @@ const Instance = () => {
       }),
       dataIndex: 'name',
       ellipsis: true,
+      width: 200,
     },
     {
       title: intl.formatMessage({
@@ -187,6 +190,7 @@ const Instance = () => {
         defaultMessage: '产品名称',
       }),
       dataIndex: 'productName',
+      width: 200,
       ellipsis: true,
     },
     {

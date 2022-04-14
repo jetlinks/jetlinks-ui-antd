@@ -219,6 +219,7 @@ export default (props: ButtonsProps) => {
           onConfirm={() => {
             deleteItem(record.id);
           }}
+          disabled={getButtonPermission('system/Menu', 'delete')}
         >
           <Tooltip
             title={intl.formatMessage({
@@ -259,6 +260,7 @@ export default (props: ButtonsProps) => {
             key="button"
             icon={<PlusOutlined />}
             type="primary"
+            disabled={getButtonPermission('system/Menu', ['add'])}
           >
             {intl.formatMessage({
               id: 'pages.data.option.add',
@@ -311,7 +313,7 @@ export default (props: ButtonsProps) => {
               },
             ]}
           >
-            <Input disabled={!!(disabled || id)} />
+            <Input disabled={!!(disabled || id)} placeholder={'请输入编码'} />
           </Form.Item>
           <Form.Item
             name="name"
@@ -325,7 +327,7 @@ export default (props: ButtonsProps) => {
               { max: 64, message: '最多可输入64个字符' },
             ]}
           >
-            <Input disabled={disabled} />
+            <Input disabled={disabled} placeholder={'请输入名称'} />
           </Form.Item>
           <Form.Item
             label={intl.formatMessage({
@@ -352,7 +354,7 @@ export default (props: ButtonsProps) => {
               defaultMessage: '描述',
             })}
           >
-            <Input.TextArea disabled={disabled} />
+            <Input.TextArea disabled={disabled} placeholder={'请输入描述'} />
           </Form.Item>
         </Form>
       </Modal>

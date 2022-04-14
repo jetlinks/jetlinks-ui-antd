@@ -49,7 +49,7 @@ export default (props: ProductCardProps) => {
             </div>
             <div>
               <label>接入方式</label>
-              <div className={'ellipsis'}>{props.transport || '--'}</div>
+              <div className={'ellipsis'}>{props.provider || '--'}</div>
             </div>
           </div>
         </div>

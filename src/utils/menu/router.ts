@@ -114,6 +114,7 @@ export type BUTTON_PERMISSION =
   | 'export'
   | 'update'
   | 'action'
+  | 'push'
   | string;
 
 export const getDetailNameByCode = {
