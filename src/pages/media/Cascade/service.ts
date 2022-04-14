@@ -61,6 +61,17 @@ class Service extends BaseService<CascadeItem> {
       method: 'POST',
       data,
     });
+  // 编辑绑定信息
+  editBindInfo = (id: string, data: any) =>
+    request(`/${SystemConst.API_BASE}/media/gb28181-cascade/binding/${id}`, {
+      method: 'PUT',
+      data,
+    });
+  //
+  queryResources = () =>
+    request(`/${SystemConst.API_BASE}/network/resources/alive/_all`, {
+      method: 'GET',
+    });
 }
 
 export default Service;

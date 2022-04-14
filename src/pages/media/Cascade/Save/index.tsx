@@ -15,6 +15,7 @@ import {
   Tooltip,
 } from 'antd';
 import SipComponent from '@/components/SipComponent';
+import SipSelectComponent from '@/components/SipSelectComponent';
 import { testIP } from '@/utils/util';
 import { useEffect, useState } from 'react';
 import { service } from '../index';
@@ -25,10 +26,14 @@ const Save = () => {
   const [form] = Form.useForm();
   const [clusters, setClusters] = useState<any[]>([]);
   const id = location?.query?.id || '';
+  const [list, setList] = useState<any[]>([]);
+  const [transport, setTransport] = useState<'UDP' | 'TCP'>('UDP');
 
   const checkSIP = (_: any, value: { host: string; port: number }) => {
-    if (!value || !value.host) {
-      return Promise.reject(new Error('请输入API HOST'));
+    if (!value) {
+      return Promise.resolve();
+    } else if (!value.host) {
+      return Promise.reject(new Error('请输入IP 地址'));
     } else if (value?.host && !testIP(value.host)) {
       return Promise.reject(new Error('请输入正确的IP地址'));
     } else if (!value?.port) {
@@ -38,11 +43,25 @@ const Save = () => {
     }
     return Promise.resolve();
   };
-
+  const checkLocalSIP = (_: any, value: { host: string; port: number }) => {
+    if (!value) {
+      return Promise.resolve();
+    } else if (!value.host) {
+      return Promise.reject(new Error('请选择IP地址'));
+    } else if (!value?.port) {
+      return Promise.reject(new Error('请选择端口'));
+    }
+    return Promise.resolve();
+  };
   useEffect(() => {
     service.queryClusters().then((resp) => {
       if (resp.status === 200) {
         setClusters(resp.result);
+      }
+    });
+    service.queryResources().then((resp) => {
+      if (resp.status === 200) {
+        setList(resp.result);
       }
     });
     if (!!id) {
@@ -69,6 +88,13 @@ const Save = () => {
     }
   }, []);
 
+  const keepValidator = (_: any, value: any) => {
+    if ((!value && value !== 0) || (Number(value) >= 1 && Number(value) <= 10000)) {
+      return Promise.resolve();
+    }
+    return Promise.reject(new Error('请输入1~10000之间的数字'));
+  };
+
   return (
     <PageContainer>
       <Card>
@@ -80,6 +106,8 @@ const Save = () => {
             proxyStream: false,
             sipConfigs: {
               transport: 'UDP',
+              keepaliveInterval: 60,
+              registerInterval: 3000,
             },
           }}
           onFinish={async (values: any) => {
@@ -141,9 +169,9 @@ const Save = () => {
                   </span>
                 }
                 name={['sipConfigs', 'clusterNodeId']}
-                rules={[{ required: true, message: '请选择信令服务配置' }]}
+                rules={[{ required: true, message: '请选择集群节点' }]}
               >
-                <Select placeholder="请选择信令服务配置">
+                <Select placeholder="请选择集群节点">
                   {clusters.map((item) => (
                     <Select.Option key={item.id} value={item.id}>
                       {item.name}
@@ -174,9 +202,9 @@ const Save = () => {
               <Form.Item
                 label="上级SIP域"
                 name={['sipConfigs', 'domain']}
-                rules={[{ required: true, message: '请输入上级SIP域' }]}
+                rules={[{ required: true, message: '请输入上级平台SIP域' }]}
               >
-                <Input placeholder="请输入上级SIP域" />
+                <Input placeholder="请输入上级平台SIP域" />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -192,9 +220,9 @@ const Save = () => {
               <Form.Item
                 label="本地SIP ID"
                 name={['sipConfigs', 'localSipId']}
-                rules={[{ required: true, message: '请输入本地SIP ID' }]}
+                rules={[{ required: true, message: '请输入网关侧的SIP ID' }]}
               >
-                <Input placeholder="请输入本地SIP ID" />
+                <Input placeholder="网关侧的SIP ID" />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -203,7 +231,13 @@ const Save = () => {
                 name={['sipConfigs', 'transport']}
                 rules={[{ required: true, message: '请选择传输协议' }]}
               >
-                <Radio.Group optionType="button" buttonStyle="solid">
+                <Radio.Group
+                  optionType="button"
+                  buttonStyle="solid"
+                  onChange={(e) => {
+                    setTransport(e.target.value);
+                  }}
+                >
                   <Radio.Button value="UDP">UDP</Radio.Button>
                   <Radio.Button value="TCP">TCP</Radio.Button>
                 </Radio.Group>
@@ -220,9 +254,12 @@ const Save = () => {
                   </span>
                 }
                 name={['sipConfigs', 'local']}
-                rules={[{ required: true, message: '请输入SIP本地地址' }, { validator: checkSIP }]}
+                rules={[
+                  { required: true, message: '请输入SIP本地地址' },
+                  { validator: checkLocalSIP },
+                ]}
               >
-                <SipComponent />
+                <SipSelectComponent data={list} transport={transport} />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -274,7 +311,10 @@ const Save = () => {
               <Form.Item
                 label="心跳周期（秒）"
                 name={['sipConfigs', 'keepaliveInterval']}
-                rules={[{ required: true, message: '请输入心跳周期' }]}
+                rules={[
+                  { required: true, message: '请输入心跳周期' },
+                  { validator: keepValidator },
+                ]}
               >
                 <InputNumber placeholder="请输入心跳周期" style={{ width: '100%' }} />
               </Form.Item>
@@ -283,7 +323,10 @@ const Save = () => {
               <Form.Item
                 label="注册间隔（秒）"
                 name={['sipConfigs', 'registerInterval']}
-                rules={[{ required: true, message: '请输入注册间隔' }]}
+                rules={[
+                  { required: true, message: '请输入注册间隔' },
+                  { validator: keepValidator },
+                ]}
               >
                 <InputNumber placeholder="请输入注册间隔" style={{ width: '100%' }} />
               </Form.Item>
