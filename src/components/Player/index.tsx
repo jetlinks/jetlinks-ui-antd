@@ -63,12 +63,6 @@ export default (props: PlayerProps) => {
     }
   };
 
-  useEffect(() => {
-    if (props.updateTime) {
-      console.log(props.updateTime);
-    }
-  }, [props.updateTime]);
-
   return (
     // @ts-ignore: Unreachable code error
     <live-player

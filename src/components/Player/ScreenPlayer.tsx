@@ -16,7 +16,6 @@ type Player = {
   url?: string;
   channelId?: string;
   key: string;
-  updateTime?: number;
   show: boolean;
 };
 
@@ -44,9 +43,29 @@ const service = new Service();
 
 const DEFAULT_SAVE_CODE = 'screen-save';
 
+const useCallbackState = <T extends object>(olValue: T): [T, Function] => {
+  const cbRef = useRef<Function>();
+
+  const [players, setData] = useState<T>(olValue);
+
+  useEffect(() => {
+    if (cbRef.current) {
+      cbRef.current(players);
+    }
+  }, [players]);
+
+  return [
+    players,
+    function (value: T, callback?: Function) {
+      cbRef.current = callback;
+      setData(value);
+    },
+  ];
+};
+
 export default forwardRef((props: ScreenProps, ref) => {
   const [screen, setScreen] = useState(1);
-  const [players, setPlayers] = useState<Player[]>([]);
+  const [players, setPlayers] = useCallbackState<Player[]>([]);
   const [playerActive, setPlayerActive] = useState(0);
   const [historyList, setHistoryList] = useState<any>([]);
   const [visible, setVisible] = useState(false);
@@ -63,19 +82,50 @@ export default forwardRef((props: ScreenProps, ref) => {
 
   const historyForm = createForm();
 
+  const reloadPlayer = useCallback(
+    (id: string, channelId: string, url: string, index: number) => {
+      const olPlayers = [...players];
+      olPlayers[index] = {
+        id: '',
+        channelId: '',
+        url: '',
+        key: olPlayers[index].key,
+        show: true,
+      };
+      const newPlayer = {
+        id,
+        url,
+        channelId,
+        key: olPlayers[index].key,
+        show: true,
+      };
+      setPlayers([...olPlayers]);
+      setTimeout(() => {
+        olPlayers[index] = newPlayer;
+        setPlayers(olPlayers);
+      }, 1000);
+    },
+    [players],
+  );
+
   const replaceVideo = useCallback(
     (id: string, channelId: string, url: string) => {
       const olPlayers = [...players];
-      olPlayers[playerActive] = {
+      const newPlayer = {
         id,
         url,
         channelId,
         key: olPlayers[playerActive].key,
-        updateTime: new Date().getTime(),
         show: true,
       };
-      console.log(olPlayers[playerActive]);
-      setPlayers(olPlayers);
+
+      if (olPlayers[playerActive].url === url) {
+        // 刷新视频
+        reloadPlayer(id, channelId, url, playerActive);
+      } else {
+        olPlayers[playerActive] = newPlayer;
+        setPlayers(olPlayers);
+      }
       if (playerActive === screen - 1) {
         // 当前位置为分屏最后一位
         setPlayerActive(0);
@@ -212,8 +262,6 @@ export default forwardRef((props: ScreenProps, ref) => {
     </Menu>
   );
 
-  console.log(players);
-
   return (
     <div className={classNames('live-player-warp', props.className)}>
       <div className={'live-player-content'}>
@@ -311,7 +359,7 @@ export default forwardRef((props: ScreenProps, ref) => {
               return (
                 <div
                   key={item.key}
-                  className={classNames({
+                  className={classNames('player-screen-item', {
                     active: props.showScreen !== false && playerActive === index && !isFullscreen,
                     'full-screen': isFullscreen,
                   })}
@@ -320,7 +368,20 @@ export default forwardRef((props: ScreenProps, ref) => {
                     setPlayerActive(index);
                   }}
                 >
-                  <LivePlayer url={item.url} updateTime={item.updateTime} />
+                  <div
+                    className={'media-btn-refresh'}
+                    style={{ display: item.url ? 'block' : 'none' }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (item.url) {
+                        reloadPlayer(item.id!, item.channelId!, item.url!, index);
+                      }
+                    }}
+                  >
+                    {' '}
+                    刷新{' '}
+                  </div>
+                  <LivePlayer url={item.url} />
                 </div>
               );
             })}
