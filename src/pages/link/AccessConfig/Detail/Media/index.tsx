@@ -21,6 +21,7 @@ import SipComponent from '@/components/SipComponent';
 import TitleComponent from '@/components/TitleComponent';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { testIP } from '@/utils/util';
+import { getButtonPermission } from '@/utils/menu';
 
 type LocationType = {
   id?: string;
@@ -445,6 +446,9 @@ const Media = (props: Props) => {
               )}
               <Button
                 type="primary"
+                disabled={
+                  !!params.get('id') ? getButtonPermission('link/AccessConfig', ['update']) : false
+                }
                 onClick={async () => {
                   const values = await form.validateFields();
                   const param: any = {

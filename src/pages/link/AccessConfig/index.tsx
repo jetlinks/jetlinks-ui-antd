@@ -68,7 +68,8 @@ const AccessConfig = () => {
       <Card>
         <SearchComponent
           field={columns}
-          enableSave={false}
+          // enableSave={false}
+          target={'access-config'}
           onSearch={(data: any) => {
             const dt = {
               pageSize: 10,
@@ -96,7 +97,6 @@ const AccessConfig = () => {
                   {...item}
                   actions={[
                     <Button
-                      disabled={getButtonPermission('link/AccessConfig', ['update'])}
                       key="edit"
                       type="link"
                       onClick={() => {
