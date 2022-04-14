@@ -1,7 +1,7 @@
 import TitleComponent from '@/components/TitleComponent';
 import './index.less';
 import Dialog from './Dialog';
-import { Button, Col, DatePicker, Empty, Input, InputNumber, Row, Select } from 'antd';
+import { Button, Col, Input, InputNumber, Row, Select, DatePicker, Empty } from 'antd';
 import { useEffect, useState } from 'react';
 import { InstanceModel, service } from '@/pages/device/Instance';
 import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
@@ -11,16 +11,15 @@ import { createForm, onFieldValueChange } from '@formily/core';
 import { createSchemaField, FormProvider } from '@formily/react';
 import {
   ArrayTable,
-  DatePicker as FDatePicker,
   FormItem,
   Input as FInput,
   PreviewText,
   Select as FSelect,
+  DatePicker as FDatePicker,
   Switch,
 } from '@formily/antd';
 import { randomString } from '@/utils/util';
 import Log from './Log';
-
 interface Props {
   onChange: (type: string) => void;
 }
