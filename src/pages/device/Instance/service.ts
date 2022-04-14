@@ -96,7 +96,7 @@ class Service extends BaseService<DeviceInstance> {
     });
 
   public setProperty = (deviceId: string, data: Record<string, unknown>) =>
-    request(`/${SystemConst.API_BASE}/device/instance/${deviceId}/property`, {
+    request(`/${SystemConst.API_BASE}/device-instance/${deviceId}/property`, {
       method: 'PUT',
       data,
     });
@@ -108,13 +108,13 @@ class Service extends BaseService<DeviceInstance> {
     });
 
   public getEventCount = (deviceId: string, eventId: string, params: Record<string, unknown>) =>
-    request(`/${SystemConst.API_BASE}/device/instance/${deviceId}/event/${eventId}`, {
+    request(`/${SystemConst.API_BASE}/device-instance/${deviceId}/event/${eventId}`, {
       method: 'POST',
       data: params,
     });
 
   public deleteMetadata = (deviceId: string) =>
-    request(`/${SystemConst.API_BASE}/device/instance/${deviceId}/metadata`, {
+    request(`/${SystemConst.API_BASE}/device-instance/${deviceId}/metadata`, {
       method: 'DELETE',
     });
 
@@ -201,7 +201,7 @@ class Service extends BaseService<DeviceInstance> {
     });
   // 读取属性
   public readProperties = (deviceId: string, data: any) =>
-    request(`/${SystemConst.API_BASE}/device/instance/${deviceId}/properties/_read`, {
+    request(`/${SystemConst.API_BASE}/device-instance/${deviceId}/properties/_read`, {
       method: 'POST',
       data,
     });
