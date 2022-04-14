@@ -7,16 +7,16 @@ import { InstanceModel, service } from '@/pages/device/Instance';
 import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
 import { map } from 'rxjs/operators';
 import type { Field } from '@formily/core';
-import { createForm, onFieldValueChange } from '@formily/core';
+import { createForm, onFieldReact } from '@formily/core';
 import { createSchemaField, FormProvider } from '@formily/react';
 import {
   ArrayTable,
   DatePicker as FDatePicker,
   FormItem,
   Input as FInput,
+  NumberPicker,
   PreviewText,
   Select as FSelect,
-  Switch,
 } from '@formily/antd';
 import { randomString } from '@/utils/util';
 import Log from './Log';
@@ -24,6 +24,8 @@ import Log from './Log';
 interface Props {
   onChange: (type: string) => void;
 }
+
+const DatePicker1: any = DatePicker;
 
 const Message = (props: Props) => {
   const [subscribeTopic] = useSendWebsocketMessage();
@@ -100,11 +102,10 @@ const Message = (props: Props) => {
           />
         );
       case 'date':
-        // @ts-ignore
         return (
-          <DatePicker
+          <DatePicker1
             style={{ width: '100%' }}
-            onChange={(value) => {
+            onChange={(value: any) => {
               setPropertyValue(value);
             }}
           />
@@ -130,23 +131,28 @@ const Message = (props: Props) => {
       data: [...inputs],
     },
     effects() {
-      onFieldValueChange('data.*.valueType.type', (field) => {
+      onFieldReact('data.*.valueType.type', (field) => {
         const value = (field as Field).value;
         const format = field.query('..value').take() as any;
-        switch (value) {
-          case 'date':
-            format.setComponent(FDatePicker);
-            break;
-          case 'boolean':
-            format.setComponent(Switch);
-            format.setDataSource = [
-              { label: '是', value: true },
-              { label: '否', value: false },
-            ];
-            break;
-          default:
-            format.setComponent(FInput);
-            break;
+        if (format) {
+          switch (value) {
+            case 'date':
+              format.setComponent(FDatePicker);
+              break;
+            case 'boolean':
+              format.setComponent(FSelect);
+              format.setDataSource([
+                { label: '是', value: true },
+                { label: '否', value: false },
+              ]);
+              break;
+            case 'int':
+              format.setComponent(NumberPicker);
+              break;
+            default:
+              format.setComponent(FInput);
+              break;
+          }
         }
       });
     },
@@ -231,7 +237,7 @@ const Message = (props: Props) => {
       PreviewText,
       FSelect,
       FDatePicker,
-      Switch,
+      NumberPicker,
     },
   });
 
