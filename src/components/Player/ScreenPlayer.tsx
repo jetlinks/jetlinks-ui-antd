@@ -24,6 +24,7 @@ interface ScreenProps {
   id?: string;
   channelId: string;
   className?: string;
+  historyHandle?: (deviceId: string, channelId: string) => string;
   /**
    *
    * @param id 当前选中播发视频ID
@@ -136,11 +137,33 @@ export default forwardRef((props: ScreenProps, ref) => {
     [players, playerActive, screen, props.showScreen],
   );
 
-  const handleHistory = (item: any) => {
-    const log = JSON.parse(item.content || '{}');
-    setScreen(log.screen);
-    setPlayers(log.players);
-  };
+  const handleHistory = useCallback(
+    (item: any) => {
+      if (props.historyHandle) {
+        const log = JSON.parse(item.content || '{}');
+        setScreen(log.screen);
+        const oldPlayers = [...players];
+
+        setPlayers(
+          oldPlayers.map((oldPlayer, index) => {
+            oldPlayer.show = false;
+            if (index < log.screen) {
+              const { deviceId, channelId } = log.players[index];
+              return {
+                ...oldPlayer,
+                id: deviceId,
+                channelId: deviceId,
+                url: deviceId ? props.historyHandle!(deviceId, channelId) : '',
+                show: true,
+              };
+            }
+            return oldPlayer;
+          }),
+        );
+      }
+    },
+    [players, props.historyHandle],
+  );
 
   const getHistory = async () => {
     const resp = await service.history.query(DEFAULT_SAVE_CODE);
@@ -163,7 +186,7 @@ export default forwardRef((props: ScreenProps, ref) => {
       name: historyValue.alias,
       content: JSON.stringify({
         screen: screen,
-        players: players,
+        players: players.map((item) => ({ deviceId: item.id, channelId: item.channelId })),
       }),
     };
     const resp = await service.history.save(DEFAULT_SAVE_CODE, param);
@@ -183,7 +206,6 @@ export default forwardRef((props: ScreenProps, ref) => {
         id: '',
         channelId: '',
         url: '',
-        updateTime: 0,
         key: 'time_' + new Date().getTime() + i,
         show: i === 0,
       });
@@ -233,13 +255,15 @@ export default forwardRef((props: ScreenProps, ref) => {
       {historyList.length ? (
         historyList.map((item: any) => {
           return (
-            <Menu.Item
-              key={item.id}
-              onClick={() => {
-                handleHistory(item);
-              }}
-            >
-              {item.name}
+            <Menu.Item key={item.id}>
+              <span
+                onClick={() => {
+                  handleHistory(item);
+                }}
+                style={{ padding: '0 4px' }}
+              >
+                {item.name}
+              </span>
               <Popconfirm
                 title={'确认删除'}
                 onConfirm={(e) => {
@@ -378,8 +402,7 @@ export default forwardRef((props: ScreenProps, ref) => {
                       }
                     }}
                   >
-                    {' '}
-                    刷新{' '}
+                    刷新
                   </div>
                   <LivePlayer url={item.url} />
                 </div>

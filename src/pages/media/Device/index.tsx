@@ -63,8 +63,8 @@ const Device = () => {
           defaultMessage: '操作成功!',
         }),
       );
+      actionRef.current?.reload();
     }
-    actionRef.current?.reload();
   };
 
   /**
@@ -99,6 +99,18 @@ const Device = () => {
       render: (_, row) => {
         return providerType[row.provider];
       },
+      valueType: 'select',
+      valueEnum: {
+        [ProviderValue.FIXED]: {
+          text: '固定地址',
+          status: ProviderValue.FIXED,
+        },
+        [ProviderValue.GB281]: {
+          text: 'GB/T28181',
+          status: ProviderValue.GB281,
+        },
+      },
+      filterMultiple: false,
     },
     {
       dataIndex: 'channelNumber',
@@ -135,6 +147,7 @@ const Device = () => {
         id: 'pages.searchTable.titleStatus',
         defaultMessage: '状态',
       }),
+      valueType: 'select',
       render: (_, record) => (
         <BadgeStatus
           status={record.state.value}
@@ -146,6 +159,23 @@ const Device = () => {
           text={record.state.text}
         />
       ),
+      valueEnum: {
+        offline: {
+          text: intl.formatMessage({
+            id: 'pages.device.instance.status.offLine',
+            defaultMessage: '离线',
+          }),
+          status: 'offline',
+        },
+        online: {
+          text: intl.formatMessage({
+            id: 'pages.device.instance.status.onLine',
+            defaultMessage: '在线',
+          }),
+          status: 'online',
+        },
+      },
+      filterMultiple: false,
     },
     {
       title: intl.formatMessage({
