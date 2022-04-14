@@ -42,14 +42,12 @@ const Bind = observer((props: Props) => {
       },
     },
     {
-      dataIndex: 'username',
+      dataIndex: 'describe',
       title: intl.formatMessage({
-        id: 'pages.table.describe',
-        defaultMessage: '用户名',
+        id: 'pages.system.description',
+        defaultMessage: '说明',
       }),
-      search: {
-        transform: (value) => ({ username$LIKE: value }),
-      },
+      hideInSearch: true,
     },
   ];
 

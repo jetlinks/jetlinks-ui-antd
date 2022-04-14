@@ -206,7 +206,7 @@ const Device = () => {
         <Tooltip
           key={'updateChannel'}
           title={
-            record.provider === providerType['fixed-media']
+            record.provider === ProviderValue.FIXED
               ? '接入方式为固定地址时不支持更新通道'
               : '更新通道'
           }
@@ -217,7 +217,7 @@ const Device = () => {
             disabled={
               getButtonPermission('media/Device', 'action') ||
               record.state.value === 'offline' ||
-              record.provider === providerType['fixed-media']
+              record.provider === ProviderValue.FIXED
             }
             onClick={() => {
               updateChannel(record.id);
@@ -360,13 +360,13 @@ const Device = () => {
                 key="delete"
                 title={intl.formatMessage({
                   id:
-                    record.state.value === 'offline'
-                      ? 'pages.device.productDetail.deleteTip'
+                    record.state.value !== 'offline'
+                      ? 'pages.device.instance.deleteTip'
                       : 'page.table.isDelete',
                   defaultMessage: '是否删除?',
                 })}
                 onConfirm={async () => {
-                  if (record.state.value !== 'offline') {
+                  if (record.state.value === 'offline') {
                     await deleteItem(record.id);
                   } else {
                     message.error('在线设备不能进行删除操作');
