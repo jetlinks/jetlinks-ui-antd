@@ -23,9 +23,9 @@ const Protocol = () => {
   const modifyState = async (id: string, type: 'deploy' | 'un-deploy') => {
     const resp = await service.modifyState(id, type);
     if (resp.status === 200) {
-      message.success('插件发布成功!');
+      message.success('操作成功!');
     } else {
-      message.error('插件发布失败!');
+      message.error('操作失败!');
     }
     actionRef.current?.reload();
   };
@@ -141,14 +141,18 @@ const Protocol = () => {
                 defaultMessage: '确认删除？',
               })}
               onConfirm={async () => {
-                await service.remove(record.id);
-                message.success(
-                  intl.formatMessage({
-                    id: 'pages.data.option.success',
-                    defaultMessage: '操作成功!',
-                  }),
-                );
-                actionRef.current?.reload();
+                const resp: any = await service.remove(record.id);
+                if (resp.status === 200) {
+                  message.success(
+                    intl.formatMessage({
+                      id: 'pages.data.option.success',
+                      defaultMessage: '操作成功!',
+                    }),
+                  );
+                  actionRef.current?.reload();
+                } else {
+                  message.error(resp?.message || '操作失败');
+                }
               }}
             >
               <Tooltip

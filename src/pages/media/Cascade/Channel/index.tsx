@@ -1,9 +1,9 @@
 import { service } from '@/pages/media/Cascade';
 import SearchComponent from '@/components/SearchComponent';
-import { DisconnectOutlined } from '@ant-design/icons';
+import { DisconnectOutlined, EditOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-layout';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { Button, message, Popconfirm, Space, Tooltip } from 'antd';
+import { Button, Input, message, Popconfirm, Popover, Space, Tooltip } from 'antd';
 import { useRef, useState } from 'react';
 import ProTable from '@jetlinks/pro-table';
 import { useIntl, useLocation } from 'umi';
@@ -18,13 +18,44 @@ const Channel = () => {
   const [visible, setVisible] = useState<boolean>(false);
   const [selectedRowKey, setSelectedRowKey] = useState<string[]>([]);
   const id = location?.query?.id || '';
+  const [data, setData] = useState<string>('');
 
-  const unbind = async (data: string[]) => {
-    const resp = await service.unbindChannel(id, data);
+  const unbind = async (list: string[]) => {
+    const resp = await service.unbindChannel(id, list);
     if (resp.status === 200) {
       actionRef.current?.reload();
       message.success('操作成功！');
     }
+  };
+
+  const content = (record: any) => {
+    return (
+      <div>
+        <Input
+          value={data}
+          placeholder="请输入国标ID"
+          onChange={(e) => {
+            setData(e.target.value);
+          }}
+        />
+        <Button
+          type="primary"
+          style={{ marginTop: 10, width: '100%' }}
+          onClick={async () => {
+            if (!!data) {
+              const resp: any = service.editBindInfo(record.id, { gbChannelId: data });
+              if (resp.status === 200) {
+                actionRef.current?.reload();
+              }
+            } else {
+              message.error('请输入国标ID');
+            }
+          }}
+        >
+          保存
+        </Button>
+      </div>
+    );
   };
 
   const columns: ProColumns<any>[] = [
@@ -39,6 +70,22 @@ const Channel = () => {
     {
       dataIndex: 'channelId',
       title: '国标ID',
+      tooltip: '国标级联有18位、20位两种格式。在当前页面修改不会修改视频设备-通道页面中的国标ID',
+      render: (text: any, record: any) => (
+        <span>
+          {text}
+          <Popover trigger="click" content={content(record)} title="编辑通道ID">
+            <a
+              style={{ marginLeft: 10 }}
+              onClick={() => {
+                setData('');
+              }}
+            >
+              <EditOutlined />
+            </a>
+          </Popover>
+        </span>
+      ),
     },
     {
       dataIndex: 'address',
@@ -90,11 +137,11 @@ const Channel = () => {
       <SearchComponent<any>
         field={columns}
         target="unbind-channel"
-        onSearch={(data) => {
+        onSearch={(params) => {
           actionRef.current?.reload();
           setParam({
             ...param,
-            terms: data?.terms ? [...data?.terms] : [],
+            terms: params?.terms ? [...params?.terms] : [],
           });
         }}
       />
@@ -148,7 +195,16 @@ const Channel = () => {
           >
             绑定通道
           </Button>,
-          <Button onClick={() => {}} key="unbind">
+          <Button
+            onClick={() => {
+              if (selectedRowKey.length > 0) {
+                unbind(selectedRowKey);
+              } else {
+                message.error('请先选择需要解绑的通道列表');
+              }
+            }}
+            key="unbind"
+          >
             批量解绑
           </Button>,
         ]}

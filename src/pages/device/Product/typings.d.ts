@@ -27,6 +27,7 @@ export type ProductItem = {
   accessId?: string;
   accessName?: string;
   photoUrl?: string;
+  accessProvider?: string;
 };
 
 export type ConfigProperty = {

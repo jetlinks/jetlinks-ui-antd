@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Form, Input, message, Pagination, Select, Table } from 'antd';
 import { service } from '@/pages/device/Instance';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 
 const EditableContext: any = React.createContext(null);
 
@@ -58,7 +59,14 @@ const EditableCell = ({
   if (editable) {
     childNode = (
       <Form.Item style={{ margin: 0 }} name={dataIndex}>
-        <Select onChange={save}>
+        <Select
+          onChange={save}
+          showSearch
+          optionFilterProp="children"
+          filterOption={(input: string, option: any) =>
+            (option?.children || '').toLowerCase()?.indexOf(input.toLowerCase()) >= 0
+          }
+        >
           {list.map((item: any) => (
             <Select.Option key={item?.id} value={item?.id}>
               {item?.id}
@@ -231,19 +239,31 @@ const EditableTable = (props: Props) => {
 
   return (
     <div>
-      <Input.Search
-        placeholder="请输入物模型属性名"
-        allowClear
-        style={{ width: 300, marginBottom: 20 }}
-        onSearch={(e: string) => {
-          setValue(e);
-          handleSearch({
-            name: e,
-            pageIndex: 0,
-            pageSize: 10,
-          });
-        }}
-      />
+      <div style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>
+        <Input.Search
+          placeholder="请输入物模型属性名"
+          allowClear
+          style={{ width: 300, marginRight: 10 }}
+          onSearch={(e: string) => {
+            setValue(e);
+            handleSearch({
+              name: e,
+              pageIndex: 0,
+              pageSize: 10,
+            });
+          }}
+        />
+        <div>
+          <div style={{ color: 'rgba(0, 0, 0, .65)' }}>
+            <QuestionCircleOutlined style={{ margin: 5 }} />
+            该设备已脱离产品物模型映射，修改产品物模型映射对该设备物模型映射无影响
+          </div>
+          <div style={{ color: 'rgba(0, 0, 0, .65)' }}>
+            <QuestionCircleOutlined style={{ margin: 5 }} />
+            设备会默认继承产品的物模型映射，修改设备物模型映射后将脱离产品物模型映射
+          </div>
+        </div>
+      </div>
       <Table
         components={components}
         rowClassName={() => 'editable-row'}

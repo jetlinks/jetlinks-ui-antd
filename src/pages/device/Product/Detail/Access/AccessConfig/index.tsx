@@ -92,6 +92,7 @@ const AccessConfig = (props: Props) => {
               protocolName: currrent.protocolDetail.name,
               accessId: currrent.id,
               accessName: currrent.name,
+              accessProvider: currrent.provider,
               messageProtocol: currrent.protocol,
             })
             .then((resp) => {

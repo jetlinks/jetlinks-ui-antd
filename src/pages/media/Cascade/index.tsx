@@ -35,6 +35,7 @@ const Cascade = () => {
   const tools = (record: CascadeItem) => [
     <Button
       type={'link'}
+      key={'edit'}
       style={{ padding: 0 }}
       disabled={getButtonPermission('media/Cascade', ['update', 'view'])}
       onClick={() => {
@@ -50,10 +51,12 @@ const Cascade = () => {
         key={'edit'}
       >
         <EditOutlined />
+        编辑
       </Tooltip>
     </Button>,
     <Button
       type={'link'}
+      key={'channel'}
       style={{ padding: 0 }}
       onClick={() => {
         const url = getMenuPathByCode(MENUS_CODE[`media/Cascade/Channel`]);
@@ -62,9 +65,10 @@ const Cascade = () => {
     >
       <Tooltip title={'选择通道'} key={'channel'}>
         <LinkOutlined />
+        选择通道
       </Tooltip>
     </Button>,
-    <Button type={'link'}>
+    <Button type={'link'} key={'share'} disabled={record.status.value === 'disabled'}>
       <Popconfirm
         key={'share'}
         title="确认共享！"
@@ -75,11 +79,13 @@ const Cascade = () => {
       >
         <Tooltip title={'共享'}>
           <ShareAltOutlined />
+          共享
         </Tooltip>
       </Popconfirm>
     </Button>,
     <Button
       type={'link'}
+      key={'operate'}
       style={{ padding: 0 }}
       disabled={getButtonPermission('media/Cascade', ['action'])}
     >
@@ -100,13 +106,24 @@ const Cascade = () => {
         }}
       >
         <Tooltip title={record.status.value === 'disabled' ? '启用' : '禁用'}>
-          {record.status.value === 'disabled' ? <CheckCircleOutlined /> : <StopOutlined />}
+          {record.status.value === 'disabled' ? (
+            <span>
+              <CheckCircleOutlined /> 启用
+            </span>
+          ) : (
+            <span>
+              {' '}
+              <StopOutlined />
+              禁用
+            </span>
+          )}
         </Tooltip>
       </Popconfirm>
     </Button>,
     <Button
       type={'link'}
       style={{ padding: 0 }}
+      key={'delete'}
       disabled={getButtonPermission('media/Cascade', ['delete'])}
     >
       <Popconfirm
@@ -143,11 +160,13 @@ const Cascade = () => {
     {
       dataIndex: 'sipConfigs[0].sipId',
       title: '上级SIP ID',
+      hideInSearch: true,
       render: (text: any, record: any) => record.sipConfigs[0].sipId,
     },
     {
       dataIndex: 'sipConfigs[0].publicHost',
       title: '上级SIP 地址',
+      hideInSearch: true,
       render: (text: any, record: any) => record.sipConfigs[0].publicHost,
     },
     {
@@ -207,84 +226,83 @@ const Cascade = () => {
       }),
       valueType: 'option',
       align: 'center',
-      width: 200,
       render: (text, record) => [
-        <Button
-          type="link"
-          style={{ padding: 0 }}
-          disabled={getButtonPermission('media/Cascade', ['view', 'update'])}
+        <Tooltip
           key={'edit'}
-          onClick={() => {
-            const url = getMenuPathByCode(MENUS_CODE[`media/Cascade/Save`]);
-            history.push(url + `?id=${record.id}`);
-          }}
+          title={intl.formatMessage({
+            id: 'pages.data.option.edit',
+            defaultMessage: '编辑',
+          })}
         >
-          <Tooltip
-            title={intl.formatMessage({
-              id: 'pages.data.option.edit',
-              defaultMessage: '编辑',
-            })}
+          <Button
+            type="link"
+            style={{ padding: 0 }}
+            disabled={getButtonPermission('media/Cascade', ['view', 'update'])}
+            onClick={() => {
+              const url = getMenuPathByCode(MENUS_CODE[`media/Cascade/Save`]);
+              history.push(url + `?id=${record.id}`);
+            }}
           >
             <EditOutlined />
-          </Tooltip>
-        </Button>,
-        <Button
-          type="link"
-          style={{ padding: 0 }}
-          key={'channel'}
-          onClick={() => {
-            const url = getMenuPathByCode(MENUS_CODE[`media/Cascade/Channel`]);
-            history.push(url + `?id=${record.id}`);
-          }}
-        >
-          <Tooltip title={'选择通道'}>
+          </Button>
+        </Tooltip>,
+        <Tooltip title={'选择通道'} key={'channel'}>
+          <Button
+            type="link"
+            style={{ padding: 0 }}
+            onClick={() => {
+              const url = getMenuPathByCode(MENUS_CODE[`media/Cascade/Channel`]);
+              history.push(url + `?id=${record.id}`);
+            }}
+          >
             <LinkOutlined />
-          </Tooltip>
-        </Button>,
-        <Button type="link" style={{ padding: 0 }}>
-          <Popconfirm
-            key={'share'}
-            onConfirm={() => {
-              setVisible(true);
-              setCurrent(record);
-            }}
-            title={'确认共享'}
-          >
-            <Tooltip title={'共享'}>
+          </Button>
+        </Tooltip>,
+        <Tooltip title={'共享'} key={'share'}>
+          <Button type="link" style={{ padding: 0 }} disabled={record.status.value === 'disabled'}>
+            <Popconfirm
+              onConfirm={() => {
+                setVisible(true);
+                setCurrent(record);
+              }}
+              title={'确认共享'}
+            >
               <ShareAltOutlined />
-            </Tooltip>
-          </Popconfirm>
-        </Button>,
-        <Button
-          type="link"
-          style={{ padding: 0 }}
-          disabled={getButtonPermission('media/Cascade', ['action'])}
-        >
-          <Popconfirm
-            key={'able'}
-            title={record.status.value === 'disabled' ? '确认启用' : '确认禁用'}
-            onConfirm={async () => {
-              let resp: any = undefined;
-              if (record.status.value === 'disabled') {
-                resp = await service.enabled(record.id);
-              } else {
-                resp = await service.disabled(record.id);
-              }
-              if (resp?.status === 200) {
-                message.success('操作成功！');
-                actionRef.current?.reset?.();
-              }
-            }}
+            </Popconfirm>
+          </Button>
+        </Tooltip>,
+        <Tooltip title={record.status.value === 'disabled' ? '启用' : '禁用'} key={'operate'}>
+          <Button
+            type="link"
+            style={{ padding: 0 }}
+            disabled={getButtonPermission('media/Cascade', ['action'])}
           >
-            <Tooltip title={record.status.value === 'disabled' ? '启用' : '禁用'}>
+            <Popconfirm
+              key={'able'}
+              title={record.status.value === 'disabled' ? '确认启用' : '确认禁用'}
+              onConfirm={async () => {
+                let resp: any = undefined;
+                if (record.status.value === 'disabled') {
+                  resp = await service.enabled(record.id);
+                } else {
+                  resp = await service.disabled(record.id);
+                }
+                if (resp?.status === 200) {
+                  message.success('操作成功！');
+                  actionRef.current?.reset?.();
+                }
+              }}
+            >
               {record.status.value === 'disabled' ? <CheckCircleOutlined /> : <StopOutlined />}
-            </Tooltip>
-          </Popconfirm>
-        </Button>,
-        <Button
-          type="link"
-          style={{ padding: 0 }}
-          disabled={getButtonPermission('media/Cascade', ['delete'])}
+            </Popconfirm>
+          </Button>
+        </Tooltip>,
+        <Tooltip
+          key={'delete'}
+          title={intl.formatMessage({
+            id: 'pages.data.option.remove',
+            defaultMessage: '删除',
+          })}
         >
           <Popconfirm
             title={'确认删除'}
@@ -297,16 +315,15 @@ const Cascade = () => {
               }
             }}
           >
-            <Tooltip
-              title={intl.formatMessage({
-                id: 'pages.data.option.remove',
-                defaultMessage: '删除',
-              })}
+            <Button
+              type="link"
+              style={{ padding: 0 }}
+              disabled={getButtonPermission('media/Cascade', ['delete'])}
             >
               <DeleteOutlined />
-            </Tooltip>
+            </Button>
           </Popconfirm>
-        </Button>,
+        </Tooltip>,
       ],
     },
   ];
