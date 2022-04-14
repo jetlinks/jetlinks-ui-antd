@@ -236,7 +236,7 @@ const Detail = observer(() => {
                   },
                 },
               },
-              webhook: {
+              url: {
                 title: 'webHook',
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
