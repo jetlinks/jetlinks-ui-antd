@@ -53,7 +53,7 @@ export const InstanceModel = model<{
   metadataItem: {},
   params: new Set<string>(['test']),
 });
-export const service = new Service('device/instance');
+export const service = new Service('device-instance');
 const Instance = () => {
   const actionRef = useRef<ActionType>();
   const [visible, setVisible] = useState<boolean>(false);

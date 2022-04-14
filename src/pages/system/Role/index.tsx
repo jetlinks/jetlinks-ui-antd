@@ -85,6 +85,7 @@ const Role: React.FC = observer(() => {
       render: (text, record) => [
         <Button
           type="link"
+          key={'edit'}
           style={{ padding: 0 }}
           disabled={getButtonPermission('system/Role', ['update'])}
           onClick={() =>
@@ -96,7 +97,6 @@ const Role: React.FC = observer(() => {
               id: 'pages.data.option.edit',
               defaultMessage: '编辑',
             })}
-            key={'edit'}
           >
             <EditOutlined />
           </Tooltip>

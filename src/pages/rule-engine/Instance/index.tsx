@@ -49,6 +49,7 @@ const Instance = () => {
         key={'edit'}
       >
         <EditOutlined />
+        编辑
       </Tooltip>
     </Button>,
     // <Button key={'view'}
@@ -78,11 +79,11 @@ const Instance = () => {
       <Popconfirm
         key={'state'}
         title={intl.formatMessage({
-          id: `pages.data.option.${record.state.value !== 'stopped' ? 'disabled' : 'enabled'}.tips`,
+          id: `pages.data.option.${record.state.value !== 'disable' ? 'disabled' : 'enabled'}.tips`,
           defaultMessage: '确认禁用？',
         })}
         onConfirm={async () => {
-          if (record.state.value !== 'stopped') {
+          if (record.state.value !== 'disable') {
             await service.stopRule(record.id);
           } else {
             await service.startRule(record.id);
@@ -98,11 +99,21 @@ const Instance = () => {
       >
         <Tooltip
           title={intl.formatMessage({
-            id: `pages.data.option.${record.state.value !== 'stopped' ? 'disabled' : 'enabled'}`,
-            defaultMessage: record.state.value !== 'stopped' ? '禁用' : '启用',
+            id: `pages.data.option.${record.state.value !== 'disable' ? 'disabled' : 'enabled'}`,
+            defaultMessage: record.state.value !== 'disable' ? '禁用' : '启用',
           })}
         >
-          {record.state.value !== 'stopped' ? <StopOutlined /> : <CheckCircleOutlined />}
+          {record.state.value !== 'disable' ? (
+            <span>
+              <StopOutlined />
+              禁用
+            </span>
+          ) : (
+            <span>
+              <CheckCircleOutlined />
+              启用
+            </span>
+          )}
         </Tooltip>
       </Popconfirm>
     </Button>,
@@ -113,10 +124,10 @@ const Instance = () => {
       disabled={getButtonPermission('rule-engine/Instance', ['delete'])}
     >
       <Popconfirm
-        title={record.state.value === 'stopped' ? '确认删除' : '未停止不能删除'}
+        title={record.state.value === 'disable' ? '确认删除' : '未停止不能删除'}
         key={'delete'}
         onConfirm={async () => {
-          if (record.state.value === 'stopped') {
+          if (record.state.value === 'disable') {
             await service.remove(record.id);
             message.success(
               intl.formatMessage({
@@ -160,24 +171,19 @@ const Instance = () => {
           text={record.state?.text}
           statusNames={{
             started: StatusColorEnum.success,
-            stopped: StatusColorEnum.error,
-            disable: StatusColorEnum.processing,
+            disable: StatusColorEnum.error,
           }}
         />
       ),
       valueType: 'select',
       valueEnum: {
         started: {
-          text: '已启动',
+          text: '正常',
           status: 'started',
         },
         disable: {
-          text: '已禁用',
+          text: '禁用',
           status: 'disable',
-        },
-        stopped: {
-          text: '已停止',
-          status: 'stopped',
         },
       },
     },
@@ -242,12 +248,12 @@ const Instance = () => {
             key={'state'}
             title={intl.formatMessage({
               id: `pages.data.option.${
-                record.state.value !== 'stopped' ? 'disabled' : 'enabled'
+                record.state.value !== 'disable' ? 'disabled' : 'enabled'
               }.tips`,
               defaultMessage: '确认禁用？',
             })}
             onConfirm={async () => {
-              if (record.state.value !== 'stopped') {
+              if (record.state.value !== 'disable') {
                 await service.stopRule(record.id);
               } else {
                 await service.startRule(record.id);
@@ -264,12 +270,12 @@ const Instance = () => {
             <Tooltip
               title={intl.formatMessage({
                 id: `pages.data.option.${
-                  record.state.value !== 'stopped' ? 'disabled' : 'enabled'
+                  record.state.value !== 'disable' ? 'disabled' : 'enabled'
                 }`,
-                defaultMessage: record.state.value !== 'stopped' ? '禁用' : '启用',
+                defaultMessage: record.state.value !== 'disable' ? '禁用' : '正常',
               })}
             >
-              {record.state.value !== 'stopped' ? <StopOutlined /> : <CheckCircleOutlined />}
+              {record.state.value !== 'disable' ? <StopOutlined /> : <CheckCircleOutlined />}
             </Tooltip>
           </Popconfirm>
         </Button>,
@@ -280,10 +286,10 @@ const Instance = () => {
           style={{ padding: 0 }}
         >
           <Popconfirm
-            title={record.state.value === 'stopped' ? '确认删除' : '未停止不能删除'}
+            title={record.state.value === 'disable' ? '确认删除' : '未禁用不能删除'}
             key={'delete'}
             onConfirm={async () => {
-              if (record.state.value === 'stopped') {
+              if (record.state.value === 'disable') {
                 await service.remove(record.id);
                 message.success(
                   intl.formatMessage({
@@ -293,7 +299,7 @@ const Instance = () => {
                 );
                 actionRef.current?.reload();
               } else {
-                message.error('未停止不能删除');
+                message.error('未禁用不能删除');
               }
             }}
           >

@@ -71,15 +71,15 @@ const Cascade = () => {
     <Button type={'link'} key={'share'} disabled={record.status.value === 'disabled'}>
       <Popconfirm
         key={'share'}
-        title="确认共享！"
+        title="确认推送！"
         onConfirm={() => {
           setCurrent(record);
           setVisible(true);
         }}
       >
-        <Tooltip title={'共享'}>
+        <Tooltip title={record.status.value === 'disabled' ? '禁用状态下不可推送' : '推送'}>
           <ShareAltOutlined />
-          共享
+          推送
         </Tooltip>
       </Popconfirm>
     </Button>,
@@ -258,14 +258,17 @@ const Cascade = () => {
             <LinkOutlined />
           </Button>
         </Tooltip>,
-        <Tooltip title={'共享'} key={'share'}>
+        <Tooltip
+          title={record.status.value === 'disabled' ? '禁用状态下不可推送' : '推送'}
+          key={'share'}
+        >
           <Button type="link" style={{ padding: 0 }} disabled={record.status.value === 'disabled'}>
             <Popconfirm
               onConfirm={() => {
                 setVisible(true);
                 setCurrent(record);
               }}
-              title={'确认共享'}
+              title={'确认推送'}
             >
               <ShareAltOutlined />
             </Popconfirm>

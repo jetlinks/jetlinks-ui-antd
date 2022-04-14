@@ -23,7 +23,7 @@ const Allocate = (props: Props) => {
         const children = getDataList(item.children || []) || [];
         let check: number = 3;
         const blen = item.buttons?.length || 0;
-        const bblen = (item?.buttons || []).filter((i: any) => i.enabled).length || 0;
+        const bblen = (item?.buttons || []).filter((i: any) => i.granted).length || 0;
         const clen = children.length || 0;
         const cclen = (children || []).filter((i: any) => i.granted).length || 0;
         const cclen1 = (children || []).filter((i: any) => i.check === 1).length || 0;
@@ -66,6 +66,7 @@ const Allocate = (props: Props) => {
         ) || [];
       setAssetsList(deRepeat(_.flatten(_.map(list, 'assetAccesses') || []) || []) || []);
       if (!props.value?.check) {
+        // // 1: 全选 2: 只选了部分 3: 一个都没选
         const children = getDataList(props.value?.children || []) || [];
         let check: number = 3;
         const clen = children.length || 0;
