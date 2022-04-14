@@ -1,14 +1,14 @@
-import { message, Modal } from 'antd';
-import { createSchemaField } from '@formily/react';
-import type { Field } from '@formily/core';
-import { createForm } from '@formily/core';
-import { Form, FormItem, Input, Select, Space } from '@formily/antd';
-import type { ISchema } from '@formily/json-schema';
+import {message, Modal} from 'antd';
+import {createSchemaField} from '@formily/react';
+import type {Field} from '@formily/core';
+import {createForm} from '@formily/core';
+import {Form, FormItem, Input, Select, Space} from '@formily/antd';
+import type {ISchema} from '@formily/json-schema';
 import FMonacoEditor from '@/components/FMonacoEditor';
 import FUpload from '@/components/Upload';
-import { service } from '@/pages/device/Product';
-import { useParams } from 'umi';
-import { Store } from 'jetlinks-store';
+import {service} from '@/pages/device/Product';
+import {useParams} from 'umi';
+import {Store} from 'jetlinks-store';
 import SystemConst from '@/utils/const';
 
 interface Props {
@@ -35,7 +35,9 @@ const Import = (props: Props) => {
 
   const loadData = () => async (field: Field) => {
     field.loading = true;
-    const product = (await service.queryNoPaging({})) as any;
+    const product = (await service.queryNoPagingPost({
+      terms: [{column: 'id$not', value: param.id}],
+    })) as any;
     field.dataSource = product.result.map((item: any) => ({
       label: item.name,
       value: item.metadata,
@@ -52,8 +54,8 @@ const Import = (props: Props) => {
         'x-decorator': 'FormItem',
         'x-component': 'Select',
         enum: [
-          { label: '拷贝产品', value: 'copy' },
-          { label: '导入物模型', value: 'import' },
+          {label: '拷贝产品', value: 'copy'},
+          {label: '导入物模型', value: 'import'},
         ],
       },
       copy: {
@@ -179,14 +181,14 @@ const Import = (props: Props) => {
     if (data.metadata === 'alink') {
       service.convertMetadata('to', 'alink', data.import).subscribe({
         next: async (meta) => {
-          await service.modify(param.id, { metadata: JSON.stringify(meta) });
+          await service.modify(param.id, {metadata: JSON.stringify(meta)});
         },
         error: () => {
           message.error('发生错误!');
         },
       });
     } else {
-      await service.modify(param.id, { metadata: data[data.type] });
+      await service.modify(param.id, {metadata: data[data.type]});
     }
     Store.set(SystemConst.GET_METADATA, true);
     message.success('导入成功');
@@ -201,11 +203,11 @@ const Import = (props: Props) => {
       onCancel={() => props.close()}
       onOk={handleImport}
     >
-      <div style={{ background: 'rgb(236, 237, 238)' }}>
-        <p style={{ padding: 10 }}>
-          <span style={{ color: '#f5222d' }}>注</span>
+      <div style={{background: 'rgb(236, 237, 238)'}}>
+        <p style={{padding: 10}}>
+          <span style={{color: '#f5222d'}}>注</span>
           ：导入的物模型会覆盖原来的属性、功能、事件、标签，请谨慎操作。
-          <br />
+          <br/>
           物模型格式请参考文档：
           <a
             rel="noopener noreferrer"
@@ -217,7 +219,7 @@ const Import = (props: Props) => {
         </p>
       </div>
       <Form form={form} layout="vertical">
-        <SchemaField scope={{ loadData }} schema={schema} />
+        <SchemaField scope={{loadData}} schema={schema}/>
       </Form>
     </Modal>
   );
