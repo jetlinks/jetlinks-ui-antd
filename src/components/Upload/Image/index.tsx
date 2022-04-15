@@ -69,6 +69,7 @@ export default ({ onChange, value, ...extraProps }: UploadImageProps) => {
           showUploadList={false}
           onChange={handleChange}
           beforeUpload={beforeUpload}
+          accept={imageTypes && imageTypes.length ? imageTypes.toString() : ''}
           {...extraProps}
         >
           <div className={'upload-image-content'} style={extraProps.style}>
