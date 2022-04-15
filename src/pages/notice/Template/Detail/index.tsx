@@ -36,6 +36,7 @@ import DingTalkRebot from '@/pages/notice/Template/Detail/doc/DingTalkRebot';
 import AliyunVoice from '@/pages/notice/Template/Detail/doc/AliyunVoice';
 import AliyunSms from '@/pages/notice/Template/Detail/doc/AliyunSms';
 import Email from '@/pages/notice/Template/Detail/doc/Email';
+import { Store } from 'jetlinks-store';
 
 export const docMap = {
   weixin: {
@@ -63,6 +64,37 @@ const Detail = observer(() => {
   // 正则提取${}里面的值
   const pattern = /(?<=\$\{).*?(?=\})/g;
 
+  const getConfig = (provider1: string) =>
+    configService
+      .queryNoPagingPost({
+        terms: [
+          { column: 'type$IN', value: id },
+          { column: 'provider', value: provider1 },
+        ],
+      })
+      .then((resp: any) => {
+        return resp.result?.map((item: any) => ({
+          label: item.name,
+          value: item.id,
+        }));
+      });
+
+  //需要复杂联动才可以完成
+  const getWeixinDept = (configId: string) => service.weixin.getDepartments(configId);
+  const getWeixinTags = (configId: string) => service.weixin.getTags(configId);
+  const getWeixinUser = (configId: string) => service.weixin.getUser(configId);
+
+  const getDingTalkDept = (configId: string) => service.dingTalk.getDepartments(configId);
+  const getDingTalkDeptTree = (configId: string) => service.dingTalk.getDepartmentsTree(configId);
+  const getDingTalkUser = (configId: string) => service.dingTalk.getUser(configId);
+
+  const getWeixinOfficialTags = (configId: string) => service.weixin.getOfficialTags(configId);
+  const getWeixinOfficialTemplates = (configId: string) =>
+    service.weixin.getOfficialTemplates(configId);
+
+  const getAliyunSigns = (configId: string) => service.aliyun.getSigns(configId);
+  const getAliyunTemplates = (configId: string) => service.aliyun.getTemplates(configId);
+
   const form = useMemo(
     () =>
       createForm({
@@ -76,8 +108,103 @@ const Detail = observer(() => {
           onFieldValueChange('provider', (field, form1) => {
             const value = field.value;
             setProvider(value);
-            form1.setValuesIn('configId', null);
-            form1.setValuesIn('template', null);
+            // form1.setValuesIn('configId', null);
+            // form1.setValuesIn('template', null);
+            // 设置绑定配置的数据
+            form1.setFieldState('configId', async (state1) => {
+              state1.dataSource = await getConfig(value);
+            });
+          });
+          onFieldValueChange('configId', (field, form1) => {
+            const value = field.value;
+            // 判断provider
+            if (!value) return;
+            switch (form1.values.provider) {
+              case 'corpMessage':
+                form1.setFieldState('template.toUser', async (state8) => {
+                  state8.dataSource = await getWeixinUser(value);
+                });
+                form1.setFieldState('template.toParty', async (state9) => {
+                  state9.dataSource = await getWeixinDept(value);
+                });
+                form1.setFieldState('template.toTag', async (state10) => {
+                  state10.dataSource = await getWeixinTags(value);
+                });
+                break;
+              case 'officialMessage':
+                // TODO 通知配置不能为空
+                form1.setFieldState('template.tagid', async (state1) => {
+                  state1.dataSource = await getWeixinOfficialTags(value);
+                });
+                form1.setFieldState('template.wxTemplateId', async (state2) => {
+                  const list = await getWeixinOfficialTemplates(value);
+                  Store.set('wxTemplate', list);
+                  state2.dataSource = list;
+                });
+                break;
+              case 'dingTalkMessage':
+                form1.setFieldState('template.userIdList', async (state3) => {
+                  state3.dataSource = await getDingTalkUser(value);
+                });
+                form1.setFieldState('template.departmentIdList', async (state4) => {
+                  const list = await getDingTalkDept(value);
+                  Store.set('wxTemplate', list);
+                  state4.dataSource = list;
+                });
+                break;
+              case 'aliyun':
+                // 阿里云语音
+                form1.setFieldState('template.ttsCode', async (state5) => {
+                  const list = await getAliyunTemplates(value);
+                  Store.set('AliyunTemplate', list);
+                  state5.dataSource = list;
+                });
+                break;
+              case 'aliyunSms':
+                // 阿里云短信
+                form1.setFieldState('template.code', async (state6) => {
+                  const list = await getAliyunTemplates(value);
+                  Store.set('AliyunTemplate', list);
+                  state6.dataSource = list;
+                });
+
+                form1.setFieldState('template.signName', async (state7) => {
+                  // const list =
+                  // Store.set('AliyunTemplate', list);
+                  state7.dataSource = await getAliyunSigns(value);
+                });
+
+                break;
+              default:
+                break;
+            }
+          });
+          onFieldValueChange('template.wxTemplateId', (field, form1) => {
+            const value = field.value;
+            // 处理消息模版。
+            const template = Store.get('wxTemplate');
+            const data = template?.find((i: { id: any }) => i.id === value);
+            if (data) {
+              form1.setFieldState('template.title', (state1) => {
+                state1.value = data.title;
+                state1.disabled = true;
+              });
+              form1.setFieldState('template.message', (state1) => {
+                state1.value = data.content;
+                state1.disabled = true;
+              });
+            }
+          });
+          onFieldValueChange('template.code', (field, form1) => {
+            const value = field.value;
+            const template = Store.get('AliyunTemplate');
+            const data = template?.find((i: { templateCode: any }) => i.templateCode === value);
+            if (data) {
+              form1.setFieldState('template.message', (state1) => {
+                state1.value = data.templateContent;
+                state1.disabled = true;
+              });
+            }
           });
           onFieldValueChange('template.message', (field, form1) => {
             const value = (field as Field).value;
@@ -134,38 +261,6 @@ const Detail = observer(() => {
     [id],
   );
 
-  const getConfig = () =>
-    configService
-      .queryNoPagingPost({
-        terms: [
-          { column: 'type$IN', value: id },
-          { column: 'provider', value: form.values?.provider },
-        ],
-      })
-      .then((resp: any) => {
-        return resp.result?.map((item: any) => ({
-          label: item.name,
-          value: item.id,
-        }));
-      });
-
-  const getDingTalkDept = (configId: string) => service.dingTalk.getDepartments(configId);
-  const getDingTalkDeptTree = (configId: string) => service.dingTalk.getDepartmentsTree(configId);
-  const getDingTalkUser = (configId: string, departmentId: string) =>
-    service.dingTalk.getUserByDepartment(configId, departmentId);
-
-  //需要复杂联动才可以完成
-  const getWeixinDept = () => service.weixin.getDepartments(form?.values.configId);
-  const getWeixinTags = () => service.weixin.getTags(form?.values.configId);
-  const getWeixinUser = () => service.weixin.getUser(form?.values.configId);
-
-  const getWeixinOfficialTags = (configId: string) => service.weixin.getOfficialTags(configId);
-  const getWeixinOfficialTemplates = (configId: string) =>
-    service.weixin.getOfficialTemplates(configId);
-
-  const getAliyunSigns = (configId: string) => service.aliyun.getSigns(configId);
-  const getAliyunTemplates = (configId: string) => service.aliyun.getTemplates(configId);
-
   useEffect(() => {
     if (state.current) {
       form.setValues(state.current);
@@ -201,6 +296,8 @@ const Detail = observer(() => {
     // r如果是text 的话。template.message=>template.text.content
     // 如果是markdown 的话。 template.message=>template.markdown.text
     // 如果是link的话。 template.message =>template.markdown.text
+
+    // 微信服务号： template.message =>template.content
     if (data.provider === 'dingTalkRobotWebHook') {
       const type = data.template.messageType;
       // emplate.messageType
@@ -284,7 +381,7 @@ const Detail = observer(() => {
         //   {label: '测试配置2', value: 'test2'},
         //   {label: '测试配置3', value: 'test3'},
         // ],
-        'x-reactions': '{{useAsyncDataSource(getConfig)}}',
+        // 'x-reactions': '{{useAsyncDataSource(getConfig)}}',
         'x-visible': id !== 'email',
       },
       template: {
@@ -308,34 +405,37 @@ const Detail = observer(() => {
                       placeholder: '请输入AgentID',
                     },
                   },
-                  toUser: {
-                    title: '收信人ID',
-                    'x-component': 'Select',
-                    'x-decorator': 'FormItem',
+                  layout: {
+                    type: 'void',
+                    'x-decorator': 'FormGrid',
                     'x-decorator-props': {
-                      tooltip: '请输入收信人ID',
+                      maxColumns: 2,
+                      minColumns: 2,
                     },
-                    'x-component-props': {
-                      placeholder: '请输入收信人ID',
-                      mode: 'tags',
-                    },
-                    'x-reactions': '{{useAsyncDataSource(getWeixinUser)}}',
-                  },
-                  toParty: {
-                    title: '收信部门ID',
-                    'x-component': 'Select',
-                    'x-decorator': 'FormItem',
-                    'x-decorator-props': {
-                      tooltip: '请输入收信部门ID',
-                    },
-                    'x-component-props': {
-                      placeholder: '请输入收信部门ID',
-                      mode: 'tags',
-                    },
-                    'x-reactions': {
-                      dependencies: ['configId'],
-                      fulfill: {
-                        run: '{{useAsyncDataSource(getWeixinDept($deps[0]))}}',
+                    properties: {
+                      toUser: {
+                        title: '收信人',
+                        'x-component': 'Select',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          tooltip: '请输入收信人ID',
+                          gridSpan: 1,
+                        },
+                        'x-component-props': {
+                          placeholder: '请输入收信人ID',
+                        },
+                      },
+                      toParty: {
+                        title: '收信部门',
+                        'x-component': 'Select',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          tooltip: '请输入收信部门ID',
+                          gridSpan: 1,
+                        },
+                        'x-component-props': {
+                          placeholder: '请输入收信部门ID',
+                        },
                       },
                     },
                   },
@@ -348,13 +448,6 @@ const Detail = observer(() => {
                     },
                     'x-component-props': {
                       placeholder: '请输入标签推送，多个标签用,号分隔',
-                      mode: 'tags',
-                    },
-                    'x-reactions': {
-                      dependencies: ['configId'],
-                      fulfill: {
-                        run: '{{useAsyncDataSource(getWeixinTags($deps[0]))}}',
-                      },
                     },
                   },
                 },
@@ -387,35 +480,39 @@ const Detail = observer(() => {
                     'x-component-props': {
                       placeholder: '请选择用户标签',
                     },
-                    'x-reactions': {
-                      dependencies: ['configId'],
-                      fulfill: {
-                        run: '{{useAsyncDataSource(getWeixinOfficialTags($deps[0]))}}',
-                      },
-                    },
                   },
-                  wxTemplateId: {
-                    title: '消息模版',
-                    type: 'string',
-                    'x-decorator': 'FormItem',
-                    'x-component': 'Select',
-                    'x-component-props': {
-                      placeholder: '请选择消息模版',
+                  layout: {
+                    type: 'void',
+                    'x-decorator': 'FormGrid',
+                    'x-decorator-props': {
+                      maxColumns: 2,
+                      minColumns: 2,
                     },
-                    'x-reactions': {
-                      dependencies: ['configId'],
-                      fulfill: {
-                        run: '{{useAsyncDataSource(getWeixinOfficialTemplates($deps[0]))}}',
+                    properties: {
+                      wxTemplateId: {
+                        title: '消息模版',
+                        type: 'string',
+                        'x-decorator': 'FormItem',
+                        'x-component': 'Select',
+                        'x-component-props': {
+                          placeholder: '请选择消息模版',
+                        },
+                        'x-decorator-props': {
+                          gridSpan: 1,
+                        },
                       },
-                    },
-                  },
-                  url: {
-                    title: '模版跳转链接',
-                    type: 'string',
-                    'x-decorator': 'FormItem',
-                    'x-component': 'Input',
-                    'x-component-props': {
-                      placeholder: '请输入模版跳转链接',
+                      url: {
+                        title: '模版跳转链接',
+                        type: 'string',
+                        'x-decorator': 'FormItem',
+                        'x-component': 'Input',
+                        'x-component-props': {
+                          placeholder: '请输入模版跳转链接',
+                        },
+                        'x-decorator-props': {
+                          gridSpan: 1,
+                        },
+                      },
                     },
                   },
                   toMiniProgram: {
@@ -435,22 +532,38 @@ const Detail = observer(() => {
                   miniProgram: {
                     type: 'void',
                     properties: {
-                      miniProgramId: {
-                        title: '跳转小程序AppId',
-                        type: 'string',
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Input',
-                        'x-component-props': {
-                          placeholder: '请输入跳转小程序AppId',
+                      layout: {
+                        type: 'void',
+                        'x-decorator': 'FormGrid',
+                        'x-decorator-props': {
+                          maxColumns: 2,
+                          minColumns: 2,
                         },
-                      },
-                      miniProgramPath: {
-                        title: '跳转小程序具体路径',
-                        type: 'string',
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Input',
-                        'x-component-props': {
-                          placeholder: '请输入跳转小程序具体路径',
+                        properties: {
+                          miniProgramId: {
+                            title: '跳转小程序AppId',
+                            type: 'string',
+                            'x-decorator': 'FormItem',
+                            'x-component': 'Input',
+                            'x-component-props': {
+                              placeholder: '请输入跳转小程序AppId',
+                            },
+                            'x-decorator-props': {
+                              gridSpan: 1,
+                            },
+                          },
+                          miniProgramPath: {
+                            title: '跳转小程序具体路径',
+                            type: 'string',
+                            'x-decorator': 'FormItem',
+                            'x-component': 'Input',
+                            'x-component-props': {
+                              placeholder: '请输入跳转小程序具体路径',
+                            },
+                            'x-decorator-props': {
+                              gridSpan: 1,
+                            },
+                          },
                         },
                       },
                     },
@@ -472,12 +585,12 @@ const Detail = observer(() => {
                       placeholder: '这里是回显内容',
                     },
                   },
-                  content: {
-                    title: '模版内容',
-                    type: 'string',
-                    'x-decorator': 'FormItem',
-                    'x-component': 'Input.TextArea',
-                  },
+                  // content: {
+                  //   title: '模版内容',
+                  //   type: 'string',
+                  //   'x-decorator': 'FormItem',
+                  //   'x-component': 'Input.TextArea',
+                  // },
                 },
                 'x-reactions': {
                   dependencies: ['provider'],
@@ -499,6 +612,7 @@ const Detail = observer(() => {
                 properties: {
                   agentId: {
                     title: 'AgentID',
+                    required: true,
                     'x-component': 'Input',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
@@ -508,47 +622,49 @@ const Detail = observer(() => {
                       placeholder: '请输入AgentID',
                     },
                   },
-                  toAllUser: {
-                    title: '通知全部用户',
-                    type: 'boolean',
-                    'x-component': 'Radio.Group',
-                    'x-decorator': 'FormItem',
-                    enum: [
-                      { label: '是', value: true },
-                      { label: '否', value: false },
-                    ],
-                  },
-                  userIdList: {
-                    title: '收信人ID',
-                    'x-component': 'Select',
-                    'x-decorator': 'FormItem',
+                  layout: {
+                    type: 'void',
+                    'x-decorator': 'FormGrid',
                     'x-decorator-props': {
-                      tooltip: '请输入收信人ID',
+                      maxColumns: 2,
+                      minColumns: 2,
                     },
-                    'x-component-props': {
-                      placeholder: '请输入收信人ID',
-                    },
-                    'x-reactions': {
-                      dependencies: ['configId'],
-                      fulfill: {
-                        run: '{{useAsyncDataSource(getDingTalkUser($deps[0]))}}',
+                    properties: {
+                      userIdList: {
+                        title: '收信人',
+                        'x-component': 'Select',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          tooltip: '请输入收信人ID',
+                          gridSpan: 1,
+                        },
+                        'x-component-props': {
+                          placeholder: '请输入收信人ID',
+                        },
+                        'x-reactions': {
+                          dependencies: ['configId'],
+                          fulfill: {
+                            run: '{{useAsyncDataSource(getDingTalkUser($deps[0]))}}',
+                          },
+                        },
                       },
-                    },
-                  },
-                  departmentIdList: {
-                    title: '收信部门ID',
-                    'x-component': 'Select',
-                    'x-decorator': 'FormItem',
-                    'x-decorator-props': {
-                      tooltip: '请输入收信部门ID',
-                    },
-                    'x-component-props': {
-                      placeholder: '请输入AgentID',
-                    },
-                    'x-reactions': {
-                      dependencies: ['configId'],
-                      fulfill: {
-                        run: '{{useAsyncDataSource(getDingTalkDept($deps[0]))}}',
+                      departmentIdList: {
+                        title: '收信部门',
+                        'x-component': 'Select',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          tooltip: '请输入收信部门ID',
+                          gridSpan: 1,
+                        },
+                        'x-component-props': {
+                          placeholder: '请输入AgentID',
+                        },
+                        'x-reactions': {
+                          dependencies: ['configId'],
+                          fulfill: {
+                            run: '{{useAsyncDataSource(getDingTalkDept($deps[0]))}}',
+                          },
+                        },
                       },
                     },
                   },
@@ -569,6 +685,7 @@ const Detail = observer(() => {
                     title: '消息类型',
                     'x-component': 'Select',
                     'x-decorator': 'FormItem',
+                    required: true,
                     enum: [
                       { label: 'markdown', value: 'markdown' },
                       { label: 'text', value: 'text' },
@@ -579,6 +696,7 @@ const Detail = observer(() => {
                     type: 'object',
                     properties: {
                       title: {
+                        required: true,
                         title: '标题',
                         'x-component': 'Input',
                         'x-decorator': 'FormItem',
@@ -597,6 +715,7 @@ const Detail = observer(() => {
                     type: 'object',
                     properties: {
                       title: {
+                        required: true,
                         title: '标题',
                         'x-component': 'Input',
                         'x-decorator': 'FormItem',
@@ -647,30 +766,38 @@ const Detail = observer(() => {
                 'x-visible': id === 'voice',
                 type: 'void',
                 properties: {
-                  // ttsCode	String	语音-模版ID
-                  // calledShowNumbers	String	语音-被叫显号
-                  // CalledNumber	String	语音-被叫号码
-                  // PlayTimes	String	语音-播放次数
-                  ttsCode: {
-                    title: '模版ID',
-                    'x-component': 'Input',
-                    'x-decorator': 'FormItem',
+                  layout: {
+                    type: 'void',
+                    'x-decorator': 'FormGrid',
                     'x-decorator-props': {
-                      tooltip: '请输入模版ID',
+                      maxColumns: 2,
+                      minColumns: 2,
                     },
-                    'x-component-props': {
-                      placeholder: '请输入模版ID',
-                    },
-                  },
-                  calledShowNumbers: {
-                    title: '被叫号码',
-                    'x-component': 'Input',
-                    'x-decorator': 'FormItem',
-                    'x-decorator-props': {
-                      tooltip: '请输入calledShowNumbers',
-                    },
-                    'x-component-props': {
-                      placeholder: '请输入calledShowNumbers',
+                    properties: {
+                      ttsCode: {
+                        title: '模版ID',
+                        'x-component': 'Select',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          tooltip: '请输入模版ID',
+                          gridSpan: 1,
+                        },
+                        'x-component-props': {
+                          placeholder: '请输入模版ID',
+                        },
+                      },
+                      calledShowNumbers: {
+                        title: '被叫号码',
+                        'x-component': 'Input',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          tooltip: '请输入calledShowNumbers',
+                          gridSpan: 1,
+                        },
+                        'x-component-props': {
+                          placeholder: '请输入calledShowNumbers',
+                        },
+                      },
                     },
                   },
                   calledNumber: {
@@ -701,32 +828,44 @@ const Detail = observer(() => {
                 'x-visible': id === 'sms',
                 type: 'void',
                 properties: {
-                  code: {
-                    title: '模版ID',
-                    'x-component': 'Select',
-                    'x-decorator': 'FormItem',
+                  layout: {
+                    type: 'void',
+                    'x-decorator': 'FormGrid',
                     'x-decorator-props': {
-                      tooltip: '请输入模版ID',
+                      maxColumns: 2,
+                      minColumns: 2,
                     },
-                    'x-component-props': {
-                      placeholder: '请输入模版ID',
-                    },
-                    'x-reactions': {
-                      dependencies: ['configId'],
-                      fulfill: {
-                        run: '{{useAsyncDataSource(getAliyunTemplates($deps[0]))}}',
+                    properties: {
+                      code: {
+                        title: '模版ID',
+                        'x-component': 'Select',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          tooltip: '请输入模版ID',
+                          gridSpan: 1,
+                        },
+                        'x-component-props': {
+                          placeholder: '请输入模版ID',
+                        },
+                        'x-reactions': {
+                          dependencies: ['configId'],
+                          fulfill: {
+                            run: '{{useAsyncDataSource(getAliyunTemplates($deps[0]))}}',
+                          },
+                        },
                       },
-                    },
-                  },
-                  phoneNumber: {
-                    title: '收信人',
-                    'x-component': 'Select',
-                    'x-decorator': 'FormItem',
-                    'x-decorator-props': {
-                      tooltip: '请输入收信人',
-                    },
-                    'x-component-props': {
-                      placeholder: '请输入收信人',
+                      phoneNumber: {
+                        title: '收信人',
+                        'x-component': 'Input',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          tooltip: '请输入收信人',
+                          gridSpan: 1,
+                        },
+                        'x-component-props': {
+                          placeholder: '请输入收信人',
+                        },
+                      },
                     },
                   },
                   signName: {
@@ -831,6 +970,15 @@ const Detail = observer(() => {
         'x-decorator': 'FormItem',
         'x-decorator-props': {
           tooltip: '请输入模版内容',
+        },
+        required: true,
+        'x-reactions': {
+          dependencies: ['provider'],
+          fulfill: {
+            state: {
+              hidden: '{{$deps[0]==="aliyun"}}',
+            },
+          },
         },
         'x-component-props': {
           rows: 5,
