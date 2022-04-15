@@ -41,7 +41,7 @@ const AccessConfig = (props: Props) => {
     service
       .queryList({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
       .then((resp) => {
-        setDataSource(resp.result);
+        setDataSource(resp?.result);
       });
   };
 
@@ -140,7 +140,7 @@ const AccessConfig = (props: Props) => {
         </div>
       </div>
       <Row gutter={[16, 16]}>
-        {dataSource.data.map((item: any) => (
+        {(dataSource?.data || []).map((item: any) => (
           <Col
             key={item.name}
             span={12}

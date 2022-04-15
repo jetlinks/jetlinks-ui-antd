@@ -19,6 +19,7 @@ const Channel = () => {
   const [selectedRowKey, setSelectedRowKey] = useState<string[]>([]);
   const id = location?.query?.id || '';
   const [data, setData] = useState<string>('');
+  const [popVisible, setPopvisible] = useState<string>('');
 
   const unbind = async (list: string[]) => {
     const resp = await service.unbindChannel(id, list);
@@ -43,9 +44,11 @@ const Channel = () => {
           style={{ marginTop: 10, width: '100%' }}
           onClick={async () => {
             if (!!data) {
-              const resp: any = service.editBindInfo(record.id, { gbChannelId: data });
+              const resp: any = await service.editBindInfo(record.id, { gbChannelId: data });
               if (resp.status === 200) {
+                message.success('操作成功');
                 actionRef.current?.reload();
+                setPopvisible('');
               }
             } else {
               message.error('请输入国标ID');
@@ -68,17 +71,23 @@ const Channel = () => {
       title: '通道名称',
     },
     {
-      dataIndex: 'channelId',
+      dataIndex: 'gbChannelId',
       title: '国标ID',
       tooltip: '国标级联有18位、20位两种格式。在当前页面修改不会修改视频设备-通道页面中的国标ID',
       render: (text: any, record: any) => (
         <span>
           {text}
-          <Popover trigger="click" content={content(record)} title="编辑通道ID">
+          <Popover
+            visible={popVisible === record.id}
+            trigger="click"
+            content={content(record)}
+            title="编辑国标ID"
+          >
             <a
               style={{ marginLeft: 10 }}
               onClick={() => {
                 setData('');
+                setPopvisible(record.id);
               }}
             >
               <EditOutlined />
@@ -119,7 +128,7 @@ const Channel = () => {
           key={'unbinds'}
           title="确认解绑"
           onConfirm={() => {
-            unbind([record.id]);
+            unbind([record.channelId]);
           }}
         >
           <a>
@@ -136,7 +145,7 @@ const Channel = () => {
     <PageContainer>
       <SearchComponent<any>
         field={columns}
-        target="unbind-channel"
+        target="bind-channel"
         onSearch={(params) => {
           actionRef.current?.reload();
           setParam({
@@ -157,7 +166,7 @@ const Channel = () => {
             sorts: [{ name: 'createTime', order: 'desc' }],
           })
         }
-        rowKey="id"
+        rowKey="channelId"
         rowSelection={{
           selectedRowKeys: selectedRowKey,
           onChange: (selectedRowKeys) => {
@@ -195,18 +204,20 @@ const Channel = () => {
           >
             绑定通道
           </Button>,
-          <Button
-            onClick={() => {
+          <Popconfirm
+            title={'确认解绑'}
+            onConfirm={() => {
               if (selectedRowKey.length > 0) {
                 unbind(selectedRowKey);
+                setSelectedRowKey([]);
               } else {
                 message.error('请先选择需要解绑的通道列表');
               }
             }}
             key="unbind"
           >
-            批量解绑
-          </Button>,
+            <Button>批量解绑</Button>
+          </Popconfirm>,
         ]}
       />
       {visible && (

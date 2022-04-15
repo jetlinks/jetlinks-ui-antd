@@ -35,11 +35,18 @@ export default (props: CascadeCardProps) => {
             <span className={'card-item-header-name ellipsis'}>{props.name}</span>
           </div>
           <div>通道数量： {props?.count || 0}</div>
-          <div>
-            <Badge
-              status={props.onlineStatus?.value === 'offline' ? 'error' : 'success'}
-              text={`sip:${props.sipConfigs[0]?.sipId}@${props.sipConfigs[0]?.hostAndPort}`}
-            />
+          <div style={{ display: 'flex', width: '100%' }}>
+            <Badge status={props.onlineStatus?.value === 'offline' ? 'error' : 'success'} />
+            <div
+              style={{
+                width: '90%',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              sip:{props.sipConfigs[0]?.sipId}@{props.sipConfigs[0]?.hostAndPort}
+            </div>
           </div>
         </div>
       </div>

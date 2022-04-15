@@ -24,12 +24,13 @@
     .card {
       display: flex;
       flex-direction: column;
-      width: 100%;
+      flex-grow: 1;
+      width: 0;
       margin-left: 20px;
 
       .header {
         .title {
-          width: 70%;
+          width: calc(100% - 70px);
           overflow: hidden;
           font-weight: 700;
           font-size: 18px;
@@ -42,7 +43,7 @@
         }
 
         .desc {
-          width: 70%;
+          width: 100%;
           margin-top: 10px;
           overflow: hidden;
           color: #666;
