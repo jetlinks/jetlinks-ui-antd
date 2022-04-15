@@ -144,16 +144,18 @@ const BaseMetadata = observer((props: Props) => {
           },
         }}
         toolBarRender={() => [
-          <Button
-            onClick={() => {
-              MetadataModel.importMetadata = true;
-            }}
-            key="button"
-            icon={<ImportOutlined />}
-            type="ghost"
-          >
-            导入属性
-          </Button>,
+          props.type === 'properties' && (
+            <Button
+              onClick={() => {
+                MetadataModel.importMetadata = true;
+              }}
+              key="button"
+              icon={<ImportOutlined />}
+              type="ghost"
+            >
+              导入属性
+            </Button>
+          ),
           <Button
             onClick={() => {
               MetadataModel.edit = true;

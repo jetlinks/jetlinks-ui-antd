@@ -55,7 +55,7 @@ const BindUser = (props: Props) => {
   return (
     <Modal
       title="添加"
-      width={900}
+      width={990}
       visible={props.visible}
       onCancel={() => {
         props.cancel();

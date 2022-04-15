@@ -582,7 +582,7 @@ const Edit = observer((props: Props) => {
             },
           },
           type: {
-            title: '属性类型',
+            title: MetadataModel.type === 'tags' ? '标签类型' : '属性类型',
             required: true,
             'x-decorator': 'FormItem',
             'x-component': 'Select',

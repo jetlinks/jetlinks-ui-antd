@@ -102,7 +102,10 @@ const Detail = observer(() => {
         effects() {
           onFieldInit('template.message', (field) => {
             if (id === 'email') {
-              field.setComponent(FBraftEditor);
+              field.setComponent(FBraftEditor, {
+                placeholder:
+                  '变量格式:${name};\n 示例:尊敬的${name},${time}有设备触发告警,请注意处理',
+              });
             }
           });
           onFieldValueChange('provider', (field, form1) => {
@@ -132,7 +135,6 @@ const Detail = observer(() => {
                 });
                 break;
               case 'officialMessage':
-                // TODO 通知配置不能为空
                 form1.setFieldState('template.tagid', async (state1) => {
                   state1.dataSource = await getWeixinOfficialTags(value);
                 });
@@ -837,15 +839,15 @@ const Detail = observer(() => {
                     },
                     properties: {
                       code: {
-                        title: '模版ID',
+                        title: '模版',
                         'x-component': 'Select',
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
-                          tooltip: '请输入模版ID',
+                          tooltip: '阿里云短信平台自定义的模版名称',
                           gridSpan: 1,
                         },
                         'x-component-props': {
-                          placeholder: '请输入模版ID',
+                          placeholder: '请选择模版',
                         },
                         'x-reactions': {
                           dependencies: ['configId'],
@@ -898,7 +900,10 @@ const Detail = observer(() => {
                 'x-decorator': 'FormItem',
                 title: '标题',
                 'x-decorator-props': {
-                  tip: '请输入邮件标题',
+                  tip: '邮件标题',
+                },
+                'x-component-props': {
+                  placeholder: '请输入标题',
                 },
               },
               sendTo: {
@@ -906,7 +911,7 @@ const Detail = observer(() => {
                 'x-decorator': 'FormItem',
                 title: '收件人',
                 'x-decorator-props': {
-                  tip: '请输入收件人邮箱,多个收件人用换行分隔',
+                  tip: '多个收件人用换行分隔 \n最大支持1000个号码',
                 },
               },
               attachments: {
@@ -969,7 +974,7 @@ const Detail = observer(() => {
         'x-component': 'Input.TextArea',
         'x-decorator': 'FormItem',
         'x-decorator-props': {
-          tooltip: '请输入模版内容',
+          tooltip: '发送的内容，支持录入变量',
         },
         required: true,
         'x-reactions': {

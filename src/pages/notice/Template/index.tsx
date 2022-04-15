@@ -282,7 +282,9 @@ const Template = () => {
             ]}
           />
         )}
-        request={async (params) => service.query(params)}
+        request={async (params) =>
+          service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
+        }
       />
       <Debug />
       <Log />
