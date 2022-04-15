@@ -59,7 +59,7 @@ const Log = observer(() => {
       visible={state.log}
     >
       <SearchComponent
-        defaultParam={[{ column: 'type$IN', value: id }]}
+        defaultParam={[{ column: 'notifyType$IN', value: id }]}
         field={columns}
         onSearch={(data) => {
           actionRef.current?.reset?.();
