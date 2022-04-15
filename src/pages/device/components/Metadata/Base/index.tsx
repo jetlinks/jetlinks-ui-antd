@@ -51,6 +51,21 @@ const BaseMetadata = observer((props: Props) => {
     }
   };
 
+  const limitsMap = new Map<string, any>();
+  limitsMap.set('events-add', 'eventNotInsertable');
+  limitsMap.set('events-updata', 'eventNotModifiable');
+  limitsMap.set('properties-add', 'propertyNotInsertable');
+  limitsMap.set('properties-updata', 'propertyNotModifiable');
+
+  const operateLimits = (action: 'add' | 'updata', types: MetadataType) => {
+    return (
+      target === 'device' &&
+      (typeMap.get('device')?.features || []).find(
+        (item: { id: string; name: string }) => item.id === limitsMap.get(`${types}-${action}`),
+      )
+    );
+  };
+
   const actions: ProColumns<MetadataItem>[] = [
     {
       title: '操作',
@@ -58,8 +73,10 @@ const BaseMetadata = observer((props: Props) => {
       align: 'center',
       width: 200,
       render: (_: unknown, record: MetadataItem) => [
-        <a
+        <Button
           key="editable"
+          type="link"
+          disabled={operateLimits('updata', type)}
           onClick={() => {
             MetadataModel.edit = true;
             MetadataModel.item = record;
@@ -70,7 +87,7 @@ const BaseMetadata = observer((props: Props) => {
           <Tooltip title="编辑">
             <EditOutlined />
           </Tooltip>
-        </a>,
+        </Button>,
         <a key="delete">
           <Popconfirm
             title="确认删除？"
@@ -161,6 +178,7 @@ const BaseMetadata = observer((props: Props) => {
               MetadataModel.type = type;
               MetadataModel.action = 'add';
             }}
+            disabled={operateLimits('add', type)}
             key="button"
             icon={<PlusOutlined />}
             type="primary"
