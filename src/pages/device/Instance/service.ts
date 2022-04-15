@@ -9,7 +9,7 @@ class Service extends BaseService<DeviceInstance> {
   public detail = (id: string) => request(`${this.uri}/${id}/detail`, { method: 'GET' });
 
   // 查询产品列表
-  public getProductList = (params: any) =>
+  public getProductList = (params?: any) =>
     request(`/${SystemConst.API_BASE}/device/product/_query/no-paging`, { method: 'GET', params });
 
   // 批量删除设备

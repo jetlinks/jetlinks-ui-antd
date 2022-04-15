@@ -157,7 +157,7 @@ const Save = (props: Props) => {
             >
               <Input
                 disabled={props.model === 'edit'}
-                placeholder={intlFormat('pages.form.tip.input', '请输入')}
+                placeholder={`${intlFormat('pages.form.tip.input', '请输入')}ID`}
               />
             </Form.Item>
             <Form.Item
@@ -183,7 +183,12 @@ const Save = (props: Props) => {
               ]}
               required
             >
-              <Input placeholder={intlFormat('pages.form.tip.input', '请输入')} />
+              <Input
+                placeholder={
+                  intlFormat('pages.form.tip.input', '请输入') +
+                  intlFormat('pages.table.name', '名称')
+                }
+              />
             </Form.Item>
           </Col>
         </Row>
@@ -213,6 +218,7 @@ const Save = (props: Props) => {
                     productName: node.label,
                   });
                 }}
+                placeholder={'请选择所属产品'}
                 filterOption={(input, option) => option.label.includes(input)}
               />
             </Form.Item>
@@ -225,7 +231,10 @@ const Save = (props: Props) => {
           <Col span={24}>
             <Form.Item label={intlFormat('pages.table.description', '说明')} name={'describe'}>
               <Input.TextArea
-                placeholder={intlFormat('pages.form.tip.input', '请输入')}
+                placeholder={
+                  intlFormat('pages.form.tip.input', '请输入') +
+                  intlFormat('pages.table.description', '说明')
+                }
                 rows={4}
                 style={{ width: '100%' }}
                 maxLength={200}

@@ -192,6 +192,15 @@ const Instance = () => {
       dataIndex: 'productName',
       width: 200,
       ellipsis: true,
+      valueType: 'select',
+      request: async () => {
+        const res = await service.getProductList();
+        if (res.status === 200) {
+          return res.result.map((pItem: any) => ({ label: pItem.name, value: pItem.id }));
+        }
+        return [];
+      },
+      filterMultiple: true,
     },
     {
       title: intl.formatMessage({

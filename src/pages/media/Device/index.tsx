@@ -63,7 +63,6 @@ const Device = () => {
           defaultMessage: '操作成功!',
         }),
       );
-      actionRef.current?.reload();
     }
   };
 
@@ -99,7 +98,6 @@ const Device = () => {
       render: (_, row) => {
         return providerType[row.provider];
       },
-      valueType: 'select',
       valueEnum: {
         [ProviderValue.FIXED]: {
           text: '固定地址',
@@ -147,7 +145,6 @@ const Device = () => {
         id: 'pages.searchTable.titleStatus',
         defaultMessage: '状态',
       }),
-      valueType: 'select',
       render: (_, record) => (
         <BadgeStatus
           status={record.state.value}
