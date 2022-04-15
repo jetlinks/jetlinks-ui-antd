@@ -59,7 +59,7 @@ const Access = () => {
 
   const queryAccess = (id: string) => {
     service.queryList({ pageSize: 1000 }).then((resp) => {
-      const dt = resp.result.data.find((i: any) => i.id === id);
+      const dt = resp.result?.data.find((i: any) => i.id === id);
       setAccess(dt);
       if (dt) {
         queryNetworkList(dt?.provider);
