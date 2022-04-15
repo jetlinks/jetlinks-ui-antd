@@ -13,6 +13,7 @@ import ReconnectingWebSocket from 'reconnecting-websocket';
 import SystemConst from '@/utils/const';
 import { service as MenuService } from '@/pages/system/Menu';
 import getRoutes, { getMenus, handleRoutes, saveMenusCache } from '@/utils/menu';
+import { AIcon } from '@/components';
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
@@ -194,6 +195,16 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
     },
     menuDataRender: () => {
       return getMenus(extraRoutes);
+    },
+    menuItemRender: (menuItemProps) => {
+      return (
+        <Link to={menuItemProps.path}>
+          <span className={`antd-pro-menu-item`}>
+            {menuItemProps.icon && <AIcon type={menuItemProps.icon as string} />}
+            <span className={`antd-pro-menu-item-title`}>{menuItemProps.name}</span>
+          </span>
+        </Link>
+      );
     },
     links: isDev
       ? [

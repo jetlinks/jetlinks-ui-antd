@@ -1,5 +1,5 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { history, Link, useLocation, useParams } from 'umi';
+import { history, useLocation, useParams } from 'umi';
 import {
   Badge,
   Button,
@@ -203,16 +203,17 @@ const ProductDetail = observer(() => {
         <Spin spinning={loading}>
           <Descriptions size="small" column={2}>
             <Descriptions.Item label={'设备数量'}>
-              <Link
-                to={
-                  getMenuPathByCode(MENUS_CODE['device/Instance']) +
-                  '?productId=' +
-                  productModel.current?.id
-                }
+              <Button
+                type={'link'}
+                style={{ padding: 0, height: 'auto' }}
+                onClick={() => {
+                  history.push(getMenuPathByCode(MENUS_CODE['device/Instance']), {
+                    productId: productModel.current?.id,
+                  });
+                }}
               >
-                {' '}
                 {productModel.current?.count || 0}
-              </Link>
+              </Button>
             </Descriptions.Item>
           </Descriptions>
         </Spin>

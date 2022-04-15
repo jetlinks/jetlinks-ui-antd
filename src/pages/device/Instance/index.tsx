@@ -18,8 +18,8 @@ import {
 } from '@ant-design/icons';
 import {model} from '@formily/reactive';
 import Service from '@/pages/device/Instance/service';
-import type {MetadataItem} from '@/pages/device/Product/typings';
-import {useIntl} from '@@/plugin-locale/localeExports';
+import type { MetadataItem } from '@/pages/device/Product/typings';
+import { useIntl, useLocation } from 'umi';
 import Save from './Save';
 import Export from './Export';
 import Import from './Import';
@@ -29,7 +29,10 @@ import {ProTableCard} from '@/components';
 import SystemConst from '@/utils/const';
 import Token from '@/utils/token';
 import DeviceCard from '@/components/ProTableCard/CardItems/device';
-import {getButtonPermission, getMenuPathByParams, MENUS_CODE} from '@/utils/menu';
+
+import { getButtonPermission, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { withRouter } from 'react-router-dom';
+
 
 export const statusMap = new Map();
 statusMap.set('在线', 'success');
@@ -54,7 +57,7 @@ export const InstanceModel = model<{
   params: new Set<string>(['test']),
 });
 export const service = new Service('device-instance');
-const Instance = () => {
+const Instance = (props: any) => {
   const actionRef = useRef<ActionType>();
   const [visible, setVisible] = useState<boolean>(false);
   const [exportVisible, setExportVisible] = useState<boolean>(false);
@@ -67,6 +70,9 @@ const Instance = () => {
   const [bindKeys, setBindKeys] = useState<any[]>([]);
   const history = useHistory<Record<string, string>>();
   const intl = useIntl();
+  const location = useLocation();
+
+  console.log(location, props.location.query);
 
   const tools = (record: DeviceInstance) => [
     <Button
@@ -593,4 +599,4 @@ const Instance = () => {
     </PageContainer>
   );
 };
-export default Instance;
+export default withRouter(Instance);
