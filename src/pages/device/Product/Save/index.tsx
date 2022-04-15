@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
-import { service } from '@/pages/device/Product';
-import type { ProductItem } from '@/pages/device/Product/typings';
-import { useIntl } from '@@/plugin-locale/localeExports';
-import { RadioCard, UploadImage } from '@/components';
-import { Col, Form, Input, message, Modal, Row, TreeSelect } from 'antd';
-import { useRequest } from 'umi';
-import { debounce } from 'lodash';
+import {useEffect, useState} from 'react';
+import {service} from '@/pages/device/Product';
+import type {ProductItem} from '@/pages/device/Product/typings';
+import {useIntl} from '@@/plugin-locale/localeExports';
+import {RadioCard, UploadImage} from '@/components';
+import {Col, Form, Input, message, Modal, Row, TreeSelect} from 'antd';
+import {useRequest} from 'umi';
+import {debounce} from 'lodash';
 
 interface Props {
   visible: boolean;

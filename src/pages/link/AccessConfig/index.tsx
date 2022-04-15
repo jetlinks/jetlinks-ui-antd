@@ -1,12 +1,12 @@
 import SearchComponent from '@/components/SearchComponent';
-import { getButtonPermission, getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
-import { PageContainer } from '@ant-design/pro-layout';
-import type { ProColumns } from '@jetlinks/pro-table';
-import { Button, Card, Col, Empty, message, Pagination, Popconfirm, Row, Tooltip } from 'antd';
-import { useEffect, useState } from 'react';
-import { useHistory } from 'umi';
+import {getButtonPermission, getMenuPathByCode, MENUS_CODE} from '@/utils/menu';
+import {PageContainer} from '@ant-design/pro-layout';
+import type {ProColumns} from '@jetlinks/pro-table';
+import {Button, Card, Col, Empty, message, Pagination, Popconfirm, Row, Tooltip} from 'antd';
+import {useEffect, useState} from 'react';
+import {useHistory} from 'umi';
 import Service from './service';
-import { CheckCircleOutlined, DeleteOutlined, EditOutlined, StopOutlined } from '@ant-design/icons';
+import {CheckCircleOutlined, DeleteOutlined, EditOutlined, StopOutlined} from '@ant-design/icons';
 import AccessConfigCard from '@/components/ProTableCard/CardItems/AccessConfig';
 
 export const service = new Service('gateway/device');

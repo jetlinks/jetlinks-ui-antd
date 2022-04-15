@@ -1,10 +1,10 @@
 import React from 'react';
-import type { CascadeItem } from '@/pages/media/Cascade/typings';
-import { StatusColorEnum } from '@/components/BadgeStatus';
-import { TableCard } from '@/components';
+import type {CascadeItem} from '@/pages/media/Cascade/typings';
+import {StatusColorEnum} from '@/components/BadgeStatus';
+import {TableCard} from '@/components';
 import '@/style/common.less';
 import '../index.less';
-import { Badge } from 'antd';
+import {Badge} from 'antd';
 
 export interface CascadeCardProps extends CascadeItem {
   detail?: React.ReactNode;

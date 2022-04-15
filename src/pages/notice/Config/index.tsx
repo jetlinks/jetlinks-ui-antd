@@ -310,7 +310,7 @@ const Config = observer(() => {
         )}
       />
       <Debug />
-      <Log />
+      {state.log && <Log />}
     </PageContainer>
   );
 });

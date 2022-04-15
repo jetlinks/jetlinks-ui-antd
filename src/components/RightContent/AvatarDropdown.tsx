@@ -5,9 +5,9 @@ import { history, useModel } from 'umi';
 import { stringify } from 'querystring';
 import HeaderDropdown from '../HeaderDropdown';
 import styles from './index.less';
-import { outLogin } from '@/services/ant-design-pro/api';
 import type { MenuInfo } from 'rc-menu/lib/interface';
 import { useIntl } from '@@/plugin-locale/localeExports';
+import Service from '@/pages/user/Login/service';
 
 export type GlobalHeaderRightProps = {
   menu?: boolean;
@@ -16,8 +16,11 @@ export type GlobalHeaderRightProps = {
 /**
  * 退出登录，并且将当前的 url 保存
  */
+
+const service = Service;
 const loginOut = async () => {
-  await outLogin();
+  // await outLogin();
+  await service.logout();
   const { query = {}, pathname } = history.location;
   const { redirect } = query;
   // Note: There may be security issues, please note

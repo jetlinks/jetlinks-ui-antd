@@ -1,8 +1,8 @@
-import { Button, Drawer, Dropdown, Menu, message } from 'antd';
-import { createSchemaField, observer } from '@formily/react';
+import {Button, Drawer, Dropdown, Menu, message} from 'antd';
+import {createSchemaField, observer} from '@formily/react';
 import MetadataModel from '../model';
-import type { Field, IFieldState } from '@formily/core';
-import { createForm, registerValidateRules } from '@formily/core';
+import type {Field, IFieldState} from '@formily/core';
+import {createForm, registerValidateRules} from '@formily/core';
 import {
   ArrayItems,
   Editable,
@@ -15,34 +15,28 @@ import {
   Select,
   Space,
 } from '@formily/antd';
-import type { ISchema } from '@formily/json-schema';
-import {
-  DataTypeList,
-  DateTypeList,
-  EventLevel,
-  FileTypeList,
-  PropertySource,
-} from '@/pages/device/data';
-import { useMemo } from 'react';
-import { productModel } from '@/pages/device/Product';
-import { service } from '@/pages/device/components/Metadata';
-import { Store } from 'jetlinks-store';
-import type { MetadataItem } from '@/pages/device/Product/typings';
+import type {ISchema} from '@formily/json-schema';
+import {DataTypeList, DateTypeList, EventLevel, FileTypeList, PropertySource,} from '@/pages/device/data';
+import {useMemo} from 'react';
+import {productModel} from '@/pages/device/Product';
+import {service} from '@/pages/device/components/Metadata';
+import {Store} from 'jetlinks-store';
+import type {MetadataItem} from '@/pages/device/Product/typings';
 
 import JsonParam from '@/components/Metadata/JsonParam';
 import ArrayParam from '@/components/Metadata/ArrayParam';
 import EnumParam from '@/components/Metadata/EnumParam';
 import BooleanEnum from '@/components/Metadata/BooleanParam';
 import ConfigParam from '@/components/Metadata/ConfigParam';
-import { useIntl } from '@@/plugin-locale/localeExports';
-import { lastValueFrom } from 'rxjs';
+import {useIntl} from '@@/plugin-locale/localeExports';
+import {lastValueFrom} from 'rxjs';
 import SystemConst from '@/utils/const';
 import DB from '@/db';
 import _ from 'lodash';
-import { InstanceModel } from '@/pages/device/Instance';
+import {InstanceModel} from '@/pages/device/Instance';
 import FRuleEditor from '@/components/FRuleEditor';
-import { action } from '@formily/reactive';
-import { asyncUpdateMedata, updateMetadata } from '../../metadata';
+import {action} from '@formily/reactive';
+import {asyncUpdateMedata, updateMetadata} from '../../metadata';
 
 interface Props {
   type: 'product' | 'device';

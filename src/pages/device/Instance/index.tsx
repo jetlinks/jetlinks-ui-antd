@@ -1,10 +1,10 @@
-import { PageContainer } from '@ant-design/pro-layout';
-import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import type { DeviceInstance } from '@/pages/device/Instance/typings';
+import {PageContainer} from '@ant-design/pro-layout';
+import type {ActionType, ProColumns} from '@jetlinks/pro-table';
+import type {DeviceInstance} from '@/pages/device/Instance/typings';
 import moment from 'moment';
-import { Badge, Button, Dropdown, Menu, message, Popconfirm, Tooltip } from 'antd';
-import { useRef, useState } from 'react';
-import { useHistory } from 'umi';
+import {Badge, Button, Dropdown, Menu, message, Popconfirm, Tooltip} from 'antd';
+import {useRef, useState} from 'react';
+import {useHistory} from 'umi';
 import {
   CheckCircleOutlined,
   DeleteOutlined,
@@ -16,7 +16,7 @@ import {
   StopOutlined,
   SyncOutlined,
 } from '@ant-design/icons';
-import { model } from '@formily/reactive';
+import {model} from '@formily/reactive';
 import Service from '@/pages/device/Instance/service';
 import type { MetadataItem } from '@/pages/device/Product/typings';
 import { useIntl, useLocation } from 'umi';
@@ -25,12 +25,14 @@ import Export from './Export';
 import Import from './Import';
 import Process from './Process';
 import SearchComponent from '@/components/SearchComponent';
-import { ProTableCard } from '@/components';
+import {ProTableCard} from '@/components';
 import SystemConst from '@/utils/const';
 import Token from '@/utils/token';
 import DeviceCard from '@/components/ProTableCard/CardItems/device';
+
 import { getButtonPermission, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { withRouter } from 'react-router-dom';
+
 
 export const statusMap = new Map();
 statusMap.set('在线', 'success');

@@ -1,17 +1,17 @@
-import { Badge, Button, Col, Empty, message, Row, Table, Tooltip } from 'antd';
-import { service } from '@/pages/link/AccessConfig';
-import { productModel, service as productService } from '@/pages/device/Product';
+import {Badge, Button, Col, Empty, message, Row, Table, Tooltip} from 'antd';
+import {service} from '@/pages/link/AccessConfig';
+import {productModel, service as productService} from '@/pages/device/Product';
 import styles from './index.less';
-import type { SetStateAction } from 'react';
-import { useEffect, useState } from 'react';
+import type {SetStateAction} from 'react';
+import {useEffect, useState} from 'react';
 import AccessConfig from './AccessConfig';
 import ReactMarkdown from 'react-markdown';
-import { Form, FormGrid, FormItem, FormLayout, Input, Password, PreviewText } from '@formily/antd';
-import type { ISchema } from '@formily/json-schema';
-import type { ConfigProperty } from '@/pages/device/Product/typings';
-import { createSchemaField } from '@formily/react';
-import { createForm } from '@formily/core';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import {Form, FormGrid, FormItem, FormLayout, Input, Password, PreviewText} from '@formily/antd';
+import type {ISchema} from '@formily/json-schema';
+import type {ConfigProperty} from '@/pages/device/Product/typings';
+import {createSchemaField} from '@formily/react';
+import {createForm} from '@formily/core';
+import {QuestionCircleOutlined} from '@ant-design/icons';
 import TitleComponent from '@/components/TitleComponent';
 
 const componentMap = {

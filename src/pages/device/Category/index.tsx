@@ -1,17 +1,17 @@
-import { PageContainer } from '@ant-design/pro-layout';
+import {PageContainer} from '@ant-design/pro-layout';
 import Service from '@/pages/device/Category/service';
-import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import type {ActionType, ProColumns} from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, message, Popconfirm, Tooltip } from 'antd';
-import { useRef, useState } from 'react';
-import { useIntl } from '@@/plugin-locale/localeExports';
+import {DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
+import {Button, message, Popconfirm, Tooltip} from 'antd';
+import {useRef, useState} from 'react';
+import {useIntl} from '@@/plugin-locale/localeExports';
 import Save from '@/pages/device/Category/Save';
-import { model } from '@formily/reactive';
-import { observer } from '@formily/react';
-import type { Response } from '@/utils/typings';
+import {model} from '@formily/reactive';
+import {observer} from '@formily/react';
+import type {Response} from '@/utils/typings';
 import SearchComponent from '@/components/SearchComponent';
-import { getButtonPermission } from '@/utils/menu';
+import {getButtonPermission} from '@/utils/menu';
 
 export const service = new Service('device/category');
 

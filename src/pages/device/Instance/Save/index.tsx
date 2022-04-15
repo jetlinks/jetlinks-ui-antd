@@ -1,10 +1,10 @@
-import { Col, Form, Input, message, Row, Select } from 'antd';
-import { service } from '@/pages/device/Instance';
-import type { DeviceInstance } from '../typings';
-import { useEffect, useState } from 'react';
-import { useIntl } from '@@/plugin-locale/localeExports';
-import { Modal, UploadImage } from '@/components';
-import { debounce } from 'lodash';
+import {Col, Form, Input, message, Row, Select} from 'antd';
+import {service} from '@/pages/device/Instance';
+import type {DeviceInstance} from '../typings';
+import {useEffect, useState} from 'react';
+import {useIntl} from '@@/plugin-locale/localeExports';
+import {Modal, UploadImage} from '@/components';
+import {debounce} from 'lodash';
 
 interface Props {
   visible: boolean;

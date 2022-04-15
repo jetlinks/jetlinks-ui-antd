@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
-import { Button, Col, message, Modal, Pagination, Row } from 'antd';
-import { service } from '@/pages/link/AccessConfig';
-import { productModel } from '@/pages/device/Product';
+import {useEffect, useState} from 'react';
+import {Button, Col, message, Modal, Pagination, Row} from 'antd';
+import {service} from '@/pages/link/AccessConfig';
+import {productModel} from '@/pages/device/Product';
 import SearchComponent from '@/components/SearchComponent';
-import type { ProColumns } from '@jetlinks/pro-table';
+import type {ProColumns} from '@jetlinks/pro-table';
 import styles from './index.less';
 import Service from '@/pages/device/Product/service';
 
