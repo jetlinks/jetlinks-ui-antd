@@ -103,6 +103,9 @@ const Save = (props: Props) => {
         }),
         'x-decorator': 'FormItem',
         'x-component': 'Input',
+        'x-component-props': {
+          placeholder: '请输入名称',
+        },
         required: true,
         name: 'name',
       },
@@ -113,6 +116,9 @@ const Save = (props: Props) => {
         }),
         'x-decorator': 'FormItem',
         'x-component': 'NumberPicker',
+        'x-component-props': {
+          placeholder: '请输入分类排序',
+        },
         name: 'sortIndex',
       },
       description: {
@@ -125,6 +131,7 @@ const Save = (props: Props) => {
         'x-component': 'Input.TextArea',
         'x-component-props': {
           rows: 3,
+          placeholder: '请输入描述',
         },
         name: 'description',
       },

@@ -6,7 +6,6 @@ import {
   DownloadOutlined,
   EditOutlined,
   EyeOutlined,
-  PlayCircleOutlined,
   PlusOutlined,
   StopOutlined,
 } from '@ant-design/icons';
@@ -23,6 +22,7 @@ import { getButtonPermission, getMenuPathByParams, MENUS_CODE } from '@/utils/me
 import { ProTableCard } from '@/components';
 import ProductCard from '@/components/ProTableCard/CardItems/product';
 import { downloadObject } from '@/utils/util';
+import AIcon from '../../../components/AIcon';
 
 export const service = new Service('device-product');
 export const statusMap = {
@@ -191,7 +191,7 @@ const Product = observer(() => {
             defaultMessage: record.state ? '禁用' : '启用',
           })}
         >
-          {record.state ? <StopOutlined /> : <PlayCircleOutlined />}
+          {record.state ? <StopOutlined /> : <AIcon type={'icon-fabu'} />}
         </Tooltip>
       </Button>
     </Popconfirm>,
@@ -481,7 +481,7 @@ const Product = observer(() => {
                   type={'link'}
                   disabled={getButtonPermission('device/Product', ['action'])}
                 >
-                  {record.state ? <StopOutlined /> : <PlayCircleOutlined />}
+                  {record.state ? <StopOutlined /> : <AIcon type={'icon-fabu'} />}
                   {intl.formatMessage({
                     id: `pages.data.option.${record.state ? 'disabled' : 'enabled'}`,
                     defaultMessage: record.state ? '禁用' : '启用',

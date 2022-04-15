@@ -6,3 +6,4 @@ export { default as BadgeStatus } from './BadgeStatus';
 export { default as Player } from './Player';
 export { default as ScreenPlayer } from './Player/ScreenPlayer';
 export { default as Modal } from './Modal';
+export { default as AIcon } from './AIcon';

@@ -178,7 +178,23 @@ export default (props: SaveProps) => {
                 label={'ID'}
                 name={'id'}
                 required
-                rules={[{ required: true, message: '请输入ID' }, {}]}
+                rules={[
+                  { required: true, message: '请输入ID' },
+                  {
+                    pattern: /^[a-zA-Z0-9_\-]+$/,
+                    message: intl.formatMessage({
+                      id: 'pages.form.tip.id',
+                      defaultMessage: '请输入英文或者数字或者-或者_',
+                    }),
+                  },
+                  {
+                    max: 64,
+                    message: intl.formatMessage({
+                      id: 'pages.form.tip.max64',
+                      defaultMessage: '最多输入64个字符',
+                    }),
+                  },
+                ]}
               >
                 <Input placeholder={'请输入ID'} disabled={props.model === 'edit'} />
               </Form.Item>
@@ -213,11 +229,11 @@ export default (props: SaveProps) => {
                     placeholder={'请选择所属产品'}
                     style={{ width: props.model === 'edit' ? '100%' : 'calc(100% - 36px)' }}
                     onSelect={(_: any, node: any) => {
-                      const pasd = node.configuration ? node.configuration.access_pwd : '';
+                      const pwd = node.configuration ? node.configuration.access_pwd : '';
                       form.setFieldsValue({
-                        password: pasd,
+                        password: pwd,
                       });
-                      setOldPassword(pasd);
+                      setOldPassword(pwd);
                     }}
                   />
                 </Form.Item>
