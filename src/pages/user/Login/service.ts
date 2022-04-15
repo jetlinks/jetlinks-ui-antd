@@ -42,6 +42,11 @@ const Service = {
     request(`/${SystemConst.API_BASE}/authorize/me`, {
       method: 'GET',
     }),
+
+  logout: () =>
+    request(`${SystemConst.API_BASE}/user-token/reset`, {
+      method: 'GET',
+    }),
 };
 
 export default Service;
