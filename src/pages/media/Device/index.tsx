@@ -63,6 +63,7 @@ const Device = () => {
           defaultMessage: '操作成功!',
         }),
       );
+      actionRef.current?.reload();
     }
   };
 
@@ -98,6 +99,7 @@ const Device = () => {
       render: (_, row) => {
         return providerType[row.provider];
       },
+      valueType: 'select',
       valueEnum: {
         [ProviderValue.FIXED]: {
           text: '固定地址',
@@ -125,20 +127,20 @@ const Device = () => {
         defaultMessage: '设备厂家',
       }),
     },
-    {
-      dataIndex: 'model',
-      title: intl.formatMessage({
-        id: 'pages.media.device.model',
-        defaultMessage: '型号',
-      }),
-    },
-    {
-      dataIndex: 'firmware',
-      title: intl.formatMessage({
-        id: 'pages.media.device.firmware',
-        defaultMessage: '固件版本',
-      }),
-    },
+    // {
+    //   dataIndex: 'model',
+    //   title: intl.formatMessage({
+    //     id: 'pages.media.device.model',
+    //     defaultMessage: '型号',
+    //   }),
+    // },
+    // {
+    //   dataIndex: 'firmware',
+    //   title: intl.formatMessage({
+    //     id: 'pages.media.device.firmware',
+    //     defaultMessage: '固件版本',
+    //   }),
+    // },
     {
       dataIndex: 'state',
       title: intl.formatMessage({

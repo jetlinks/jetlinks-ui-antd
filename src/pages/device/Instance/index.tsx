@@ -72,30 +72,29 @@ const Instance = () => {
     <Button
       type={'link'}
       style={{ padding: 0 }}
+      key={'detail'}
       onClick={() => {
         InstanceModel.current = record;
         const url = getMenuPathByParams(MENUS_CODE['device/Instance/Detail'], record.id);
         history.push(url);
       }}
-      disabled={getButtonPermission('device/Instance', ['view'])}
     >
       <Tooltip
         title={intl.formatMessage({
           id: 'pages.data.option.detail',
           defaultMessage: '查看',
         })}
-        key={'detail'}
       >
         <EyeOutlined />
       </Tooltip>
     </Button>,
     <Button
       type={'link'}
+      key={'state'}
       style={{ padding: 0 }}
       disabled={getButtonPermission('device/Product', ['action'])}
     >
       <Popconfirm
-        key={'state'}
         title={intl.formatMessage({
           id: `pages.data.option.${
             record.state.value !== 'notActive' ? 'disabled' : 'enabled'
@@ -130,6 +129,7 @@ const Instance = () => {
 
     <Button
       type={'link'}
+      key={'delete'}
       style={{ padding: 0 }}
       disabled={getButtonPermission('device/Instance', ['delete'])}
     >
@@ -140,7 +140,6 @@ const Instance = () => {
               ? 'pages.data.option.remove.tips'
               : 'pages.device.instance.deleteTip',
         })}
-        key={'delete'}
         onConfirm={async () => {
           if (record.state.value === 'notActive') {
             await service.remove(record.id);
@@ -483,10 +482,10 @@ const Instance = () => {
               <Button
                 disabled={getButtonPermission('device/Instance', ['action'])}
                 type={'link'}
+                key={'state'}
                 style={{ padding: 0 }}
               >
                 <Popconfirm
-                  key={'state'}
                   title={intl.formatMessage({
                     id: `pages.data.option.${
                       record.state.value !== 'notActive' ? 'disabled' : 'enabled'

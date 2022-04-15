@@ -1,6 +1,6 @@
 // Modal 弹窗，用于新增、修改数据
 import React from 'react';
-import { createForm } from '@formily/core';
+import { createForm, onFieldReact } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import {
   ArrayTable,
@@ -18,6 +18,7 @@ import {
   TreeSelect,
   Upload,
 } from '@formily/antd';
+import type { Field } from '@formily/core';
 import { message, Modal } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import type { ISchema } from '@formily/json-schema';
@@ -29,12 +30,14 @@ import type BaseService from '@/utils/BaseService';
 export interface SaveModalProps<T> extends Omit<ModalProps, 'onOk' | 'onCancel'> {
   service: BaseService<T>;
   data?: Partial<T>;
+  reload?: () => void;
   /**
    * Model关闭事件
    * @param type 是否为请求接口后关闭，用于外部table刷新数据
    */
   onCancel?: (type: boolean, id?: React.Key) => void;
   schema: ISchema;
+  parentChange: (value?: string) => number;
 }
 
 const Save = <T extends object>(props: SaveModalProps<T>) => {
@@ -68,6 +71,14 @@ const Save = <T extends object>(props: SaveModalProps<T>) => {
   const form = createForm({
     validateFirst: true,
     initialValues: data || {},
+    effects: () => {
+      onFieldReact('sortIndex', (field) => {
+        if (props.parentChange) {
+          const sortIndex = props.parentChange(field.query('parentId').value());
+          (field as Field).value = !!sortIndex ? sortIndex : sortIndex + 1;
+        }
+      });
+    },
   });
 
   /**
