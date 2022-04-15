@@ -117,40 +117,47 @@ const Instance = () => {
         </Tooltip>
       </Popconfirm>
     </Button>,
-    <Button
-      type={'link'}
+    <Tooltip
       key={'delete'}
-      style={{ padding: 0 }}
-      disabled={getButtonPermission('rule-engine/Instance', ['delete'])}
+      title={
+        record.state.value !== 'disable'
+          ? '已启用不能删除'
+          : intl.formatMessage({
+              id: 'pages.data.option.remove',
+              defaultMessage: '删除',
+            })
+      }
     >
-      <Popconfirm
-        title={record.state.value === 'disable' ? '确认删除' : '未停止不能删除'}
-        key={'delete'}
-        onConfirm={async () => {
-          if (record.state.value === 'disable') {
-            await service.remove(record.id);
-            message.success(
-              intl.formatMessage({
-                id: 'pages.data.option.success',
-                defaultMessage: '操作成功!',
-              }),
-            );
-            actionRef.current?.reload();
-          } else {
-            message.error('未停止不能删除');
-          }
-        }}
+      <Button
+        type={'link'}
+        style={{ padding: 0 }}
+        disabled={
+          getButtonPermission('rule-engine/Instance', ['delete']) ||
+          record.state.value !== 'disable'
+        }
       >
-        <Tooltip
-          title={intl.formatMessage({
-            id: 'pages.data.option.remove',
-            defaultMessage: '删除',
-          })}
+        <Popconfirm
+          title={record.state.value === 'disable' ? '确认删除' : '未停止不能删除'}
+          key={'delete'}
+          onConfirm={async () => {
+            if (record.state.value === 'disable') {
+              await service.remove(record.id);
+              message.success(
+                intl.formatMessage({
+                  id: 'pages.data.option.success',
+                  defaultMessage: '操作成功!',
+                }),
+              );
+              actionRef.current?.reload();
+            } else {
+              message.error('未停止不能删除');
+            }
+          }}
         >
           <DeleteOutlined />
-        </Tooltip>
-      </Popconfirm>
-    </Button>,
+        </Popconfirm>
+      </Button>
+    </Tooltip>,
   ];
 
   const columns: ProColumns<InstanceItem>[] = [
@@ -223,7 +230,6 @@ const Instance = () => {
         <Button
           type="link"
           style={{ padding: 0 }}
-          disabled={getButtonPermission('rule-engine/Instance', ['view'])}
           key={'view'}
           onClick={() => {
             window.open(`/${SystemConst.API_BASE}/rule-editor/index.html#flow/${record.id}`);
@@ -279,40 +285,47 @@ const Instance = () => {
             </Tooltip>
           </Popconfirm>
         </Button>,
-        <Button
-          disabled={getButtonPermission('rule-engine/Instance', ['delete'])}
-          type={'link'}
+        <Tooltip
           key={'delete'}
-          style={{ padding: 0 }}
+          title={
+            record.state.value !== 'disable'
+              ? '已启用不能删除'
+              : intl.formatMessage({
+                  id: 'pages.data.option.remove',
+                  defaultMessage: '删除',
+                })
+          }
         >
-          <Popconfirm
-            title={record.state.value === 'disable' ? '确认删除' : '未禁用不能删除'}
-            key={'delete'}
-            onConfirm={async () => {
-              if (record.state.value === 'disable') {
-                await service.remove(record.id);
-                message.success(
-                  intl.formatMessage({
-                    id: 'pages.data.option.success',
-                    defaultMessage: '操作成功!',
-                  }),
-                );
-                actionRef.current?.reload();
-              } else {
-                message.error('未禁用不能删除');
-              }
-            }}
+          <Button
+            disabled={
+              getButtonPermission('rule-engine/Instance', ['delete']) ||
+              record.state.value !== 'disable'
+            }
+            type={'link'}
+            style={{ padding: 0 }}
           >
-            <Tooltip
-              title={intl.formatMessage({
-                id: 'pages.data.option.remove',
-                defaultMessage: '删除',
-              })}
+            <Popconfirm
+              title={record.state.value === 'disable' ? '确认删除' : '未禁用不能删除'}
+              key={'delete'}
+              onConfirm={async () => {
+                if (record.state.value === 'disable') {
+                  await service.remove(record.id);
+                  message.success(
+                    intl.formatMessage({
+                      id: 'pages.data.option.success',
+                      defaultMessage: '操作成功!',
+                    }),
+                  );
+                  actionRef.current?.reload();
+                } else {
+                  message.error('未禁用不能删除');
+                }
+              }}
             >
               <DeleteOutlined />
-            </Tooltip>
-          </Popconfirm>
-        </Button>,
+            </Popconfirm>
+          </Button>
+        </Tooltip>,
       ],
     },
   ];
@@ -373,11 +386,7 @@ const Instance = () => {
               <div
                 style={{ padding: 8, fontSize: 24 }}
                 onClick={() => {
-                  if (!getButtonPermission('rule-engine/Instance', ['view'])) {
-                    window.open(
-                      `/${SystemConst.API_BASE}/rule-editor/index.html#flow/${record.id}`,
-                    );
-                  }
+                  window.open(`/${SystemConst.API_BASE}/rule-editor/index.html#flow/${record.id}`);
                 }}
               >
                 <EyeOutlined />
