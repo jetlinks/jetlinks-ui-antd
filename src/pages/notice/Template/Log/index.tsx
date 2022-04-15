@@ -56,7 +56,7 @@ const Log = observer(() => {
       onCancel={() => (state.log = false)}
       title="通知记录"
       width={'70vw'}
-      visible={state.log}
+      visible={state.log && !!state.current?.id}
     >
       <SearchComponent
         defaultParam={[{ column: 'notifyType$IN', value: id }]}
