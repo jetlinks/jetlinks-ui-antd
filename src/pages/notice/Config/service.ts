@@ -28,8 +28,8 @@ class Service extends BaseService<ConfigItem> {
       data,
     });
 
-  public debug = (id: string, data: Record<string, any>) =>
-    request(`${SystemConst.API_BASE}/notifier/${id}/_send`, {
+  public debug = (id: string, templateId: string, data: Record<string, any>) =>
+    request(`${SystemConst.API_BASE}/notifier/${id}/${templateId}/_send`, {
       method: 'POST',
       data,
     });

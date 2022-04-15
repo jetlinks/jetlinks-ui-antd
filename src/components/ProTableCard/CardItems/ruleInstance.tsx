@@ -21,8 +21,7 @@ export default (props: RuleInstanceCardProps) => {
       statusText={props.state.text}
       statusNames={{
         started: StatusColorEnum.success,
-        stopped: StatusColorEnum.error,
-        disable: StatusColorEnum.processing,
+        disable: StatusColorEnum.error,
       }}
     >
       <div className={'pro-table-card-item'}>

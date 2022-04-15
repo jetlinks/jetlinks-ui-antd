@@ -2,7 +2,7 @@ import SearchComponent from '@/components/SearchComponent';
 import { getButtonPermission, getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 import { PageContainer } from '@ant-design/pro-layout';
 import type { ProColumns } from '@jetlinks/pro-table';
-import { Button, Card, Col, Empty, message, Pagination, Popconfirm, Row } from 'antd';
+import { Button, Card, Col, Empty, message, Pagination, Popconfirm, Row, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 import { useHistory } from 'umi';
 import Service from './service';
@@ -13,7 +13,7 @@ export const service = new Service('gateway/device');
 
 const AccessConfig = () => {
   const history = useHistory();
-  const [param, setParam] = useState<any>({ pageSize: 10 });
+  const [param, setParam] = useState<any>({ pageSize: 10, terms: [] });
 
   const columns: ProColumns<any>[] = [
     {
@@ -148,28 +148,34 @@ const AccessConfig = () => {
                         )}
                       </Popconfirm>
                     </Button>,
-                    <Button
+                    <Tooltip
                       key="delete"
-                      type="link"
-                      disabled={getButtonPermission('link/AccessConfig', ['delete'])}
+                      title={
+                        getButtonPermission('link/AccessConfig', ['delete']) ? '没有权限' : '删除'
+                      }
                     >
-                      <Popconfirm
-                        title={'确认删除?'}
-                        onConfirm={() => {
-                          service.remove(item.id).then((resp: any) => {
-                            if (resp.status === 200) {
-                              message.success('操作成功！');
-                              handleSearch(param);
-                            } else {
-                              message.error(resp.message);
-                            }
-                          });
-                        }}
+                      <Button
+                        type="link"
+                        disabled={getButtonPermission('link/AccessConfig', ['delete'])}
                       >
-                        <DeleteOutlined />
-                        删除
-                      </Popconfirm>
-                    </Button>,
+                        <Popconfirm
+                          title={'确认删除?'}
+                          onConfirm={() => {
+                            service.remove(item.id).then((resp: any) => {
+                              if (resp.status === 200) {
+                                message.success('操作成功！');
+                                handleSearch(param);
+                              } else {
+                                message.error(resp?.message || '操作失败');
+                              }
+                            });
+                          }}
+                        >
+                          <DeleteOutlined />
+                          删除
+                        </Popconfirm>
+                      </Button>
+                    </Tooltip>,
                   ]}
                 />
               </Col>

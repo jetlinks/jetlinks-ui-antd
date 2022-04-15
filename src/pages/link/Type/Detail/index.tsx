@@ -776,7 +776,7 @@ const Save = observer(() => {
     }
   };
   return (
-    <PageContainer onBack={() => history.back()}>
+    <PageContainer className={'page-title-show'} onBack={() => history.back()}>
       <Card>
         <Form form={form} layout="vertical" style={{ padding: 30 }}>
           <SchemaField

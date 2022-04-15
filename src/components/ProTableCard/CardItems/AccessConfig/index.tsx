@@ -38,9 +38,9 @@ export default (props: AccessConfigCardProps) => {
         </div>
         <div className="card">
           <div className="header">
-            <div className="title">
-              <Tooltip title={props.name}>{props.name || '--'}</Tooltip>
-            </div>
+            <Tooltip title={props.name}>
+              <div className="title ellipsis">{props.name || '--'}</div>
+            </Tooltip>
             <div className="desc">{props.description || '--'}</div>
           </div>
           <div className="container">

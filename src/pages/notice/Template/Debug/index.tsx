@@ -86,7 +86,10 @@ const Debug = observer(() => {
   const getConfig = () =>
     configService
       .queryNoPagingPost({
-        terms: [{ column: 'type$IN', value: id }],
+        terms: [
+          { column: 'type$IN', value: id },
+          { column: 'provider', value: state.current?.provider },
+        ],
       })
       .then((resp: any) => {
         // 缓存通知配置
@@ -166,10 +169,10 @@ const Debug = observer(() => {
   };
 
   const start = async () => {
-    const data: { templateId: string; variableDefinitions: any } = await form.submit();
+    const data: { configId: string; variableDefinitions: any } = await form.submit();
     // 应该取选择的配置信息
     if (!state.current) return;
-    const resp = await service.debug(state?.current.id, {
+    const resp = await service.debug(data.configId, state?.current.id, {
       template: state.current,
       context: data.variableDefinitions?.reduce(
         (previousValue: any, currentValue: { id: any; value: any }) => {

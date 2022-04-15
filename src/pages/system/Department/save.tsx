@@ -1,5 +1,6 @@
 // Modal 弹窗，用于新增、修改数据
 import React from 'react';
+import type { Field } from '@formily/core';
 import { createForm, onFieldReact } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import {
@@ -18,7 +19,6 @@ import {
   TreeSelect,
   Upload,
 } from '@formily/antd';
-import type { Field } from '@formily/core';
 import { message, Modal } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import type { ISchema } from '@formily/json-schema';

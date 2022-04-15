@@ -164,7 +164,7 @@ const Debug = observer(() => {
     const list = Store.get('notice-template-list');
     const _template = list.find((item: any) => item.id === templateId);
 
-    const resp = await service.debug(state?.current.id, {
+    const resp = await service.debug(state?.current.id, templateId, {
       template: _template,
       context: data.variableDefinitions?.reduce(
         (previousValue: any, currentValue: { id: any; value: any }) => {

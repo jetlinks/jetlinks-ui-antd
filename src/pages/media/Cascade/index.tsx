@@ -68,21 +68,29 @@ const Cascade = () => {
         选择通道
       </Tooltip>
     </Button>,
-    <Button type={'link'} key={'share'} disabled={record.status.value === 'disabled'}>
-      <Popconfirm
+    <Tooltip
+      key={'share'}
+      title={record.status.value === 'disabled' ? '禁用状态下不可推送' : '推送'}
+    >
+      <Button
+        type={'link'}
         key={'share'}
-        title="确认推送！"
-        onConfirm={() => {
-          setCurrent(record);
-          setVisible(true);
-        }}
+        disabled={
+          getButtonPermission('media/Cascade', ['push']) || record.status.value === 'disabled'
+        }
       >
-        <Tooltip title={record.status.value === 'disabled' ? '禁用状态下不可推送' : '推送'}>
+        <Popconfirm
+          title="确认推送！"
+          onConfirm={() => {
+            setCurrent(record);
+            setVisible(true);
+          }}
+        >
           <ShareAltOutlined />
           推送
-        </Tooltip>
-      </Popconfirm>
-    </Button>,
+        </Popconfirm>
+      </Button>
+    </Tooltip>,
     <Button
       type={'link'}
       key={'operate'}
@@ -262,7 +270,13 @@ const Cascade = () => {
           title={record.status.value === 'disabled' ? '禁用状态下不可推送' : '推送'}
           key={'share'}
         >
-          <Button type="link" style={{ padding: 0 }} disabled={record.status.value === 'disabled'}>
+          <Button
+            type="link"
+            style={{ padding: 0 }}
+            disabled={
+              getButtonPermission('media/Cascade', ['push']) || record.status.value === 'disabled'
+            }
+          >
             <Popconfirm
               onConfirm={() => {
                 setVisible(true);
