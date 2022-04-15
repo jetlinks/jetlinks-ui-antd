@@ -1,10 +1,10 @@
-import { message, Upload } from 'antd';
-import React, { useEffect, useState } from 'react';
-import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+import {message, Upload} from 'antd';
+import React, {useEffect, useState} from 'react';
+import {LoadingOutlined, PlusOutlined} from '@ant-design/icons';
 import SystemConst from '@/utils/const';
 import Token from '@/utils/token';
-import type { UploadChangeParam } from 'antd/lib/upload/interface';
-import type { RcFile } from 'antd/es/upload';
+import type {UploadChangeParam} from 'antd/lib/upload/interface';
+import type {RcFile} from 'antd/es/upload';
 import './index.less';
 
 interface UploadImageProps {
@@ -69,6 +69,7 @@ export default ({ onChange, value, ...extraProps }: UploadImageProps) => {
           showUploadList={false}
           onChange={handleChange}
           beforeUpload={beforeUpload}
+          accept={imageTypes && imageTypes.length ? imageTypes.toString() : ''}
           {...extraProps}
         >
           <div className={'upload-image-content'} style={extraProps.style}>

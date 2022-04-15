@@ -1,5 +1,5 @@
-import { PageContainer } from '@ant-design/pro-layout';
-import { createSchemaField, observer } from '@formily/react';
+import {PageContainer} from '@ant-design/pro-layout';
+import {createSchemaField, observer} from '@formily/react';
 import {
   ArrayCollapse,
   Form,
@@ -14,17 +14,17 @@ import {
   Select,
   Submit,
 } from '@formily/antd';
-import type { ISchema } from '@formily/json-schema';
-import { useEffect, useMemo, useRef } from 'react';
-import type { Field } from '@formily/core';
-import { createForm, onFieldValueChange } from '@formily/core';
-import { Card, message } from 'antd';
+import type {ISchema} from '@formily/json-schema';
+import {useEffect, useMemo, useRef} from 'react';
+import type {Field} from '@formily/core';
+import {createForm, onFieldValueChange} from '@formily/core';
+import {Card, message} from 'antd';
 import styles from './index.less';
-import { useAsyncDataSource } from '@/utils/util';
-import { service } from '../index';
+import {useAsyncDataSource} from '@/utils/util';
+import {service} from '../index';
 import _ from 'lodash';
 import FAutoComplete from '@/components/FAutoComplete';
-import { Store } from 'jetlinks-store';
+import {Store} from 'jetlinks-store';
 
 /**
  *  根据类型过滤配置信息
@@ -776,7 +776,7 @@ const Save = observer(() => {
     }
   };
   return (
-    <PageContainer onBack={() => history.back()}>
+    <PageContainer className={'page-title-show'} onBack={() => history.back()}>
       <Card>
         <Form form={form} layout="vertical" style={{ padding: 30 }}>
           <SchemaField

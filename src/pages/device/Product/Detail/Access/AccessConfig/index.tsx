@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
-import { Button, Col, message, Modal, Pagination, Row } from 'antd';
-import { service } from '@/pages/link/AccessConfig';
-import { productModel } from '@/pages/device/Product';
+import {useEffect, useState} from 'react';
+import {Button, Col, message, Modal, Pagination, Row} from 'antd';
+import {service} from '@/pages/link/AccessConfig';
+import {productModel} from '@/pages/device/Product';
 import SearchComponent from '@/components/SearchComponent';
-import type { ProColumns } from '@jetlinks/pro-table';
+import type {ProColumns} from '@jetlinks/pro-table';
 import styles from './index.less';
 import Service from '@/pages/device/Product/service';
 
@@ -41,7 +41,7 @@ const AccessConfig = (props: Props) => {
     service
       .queryList({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
       .then((resp) => {
-        setDataSource(resp.result);
+        setDataSource(resp?.result);
       });
   };
 
@@ -140,7 +140,7 @@ const AccessConfig = (props: Props) => {
         </div>
       </div>
       <Row gutter={[16, 16]}>
-        {dataSource.data.map((item: any) => (
+        {(dataSource?.data || []).map((item: any) => (
           <Col
             key={item.name}
             span={12}

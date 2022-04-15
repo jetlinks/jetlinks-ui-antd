@@ -20,7 +20,7 @@ import Save from './Save';
 import Service from './service';
 import { ProviderValue } from '../index';
 import Live from './Live';
-import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
+import { getButtonPermission, getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 import Tree from './Tree';
 
 export const service = new Service('media');
@@ -128,14 +128,15 @@ export default () => {
             defaultMessage: '编辑',
           })}
         >
-          <a
+          <Button
             onClick={() => {
               setCurrent(record);
               setVisible(true);
             }}
+            disabled={getButtonPermission('media/Device', 'update')}
           >
             <EditOutlined />
-          </a>
+          </Button>
         </Tooltip>,
         <Tooltip key={'live'} title={'播发'}>
           <a
@@ -161,22 +162,27 @@ export default () => {
           </a>
         </Tooltip>,
         type === ProviderValue.FIXED ? (
-          <Tooltip key={'updateChannel'} title="删除">
-            <Popconfirm
-              key="delete"
-              title={intl.formatMessage({
-                id: 'page.table.isDelete',
-                defaultMessage: '是否删除?',
-              })}
-              onConfirm={async () => {
-                deleteItem(record.id);
-              }}
-            >
-              <Button type={'link'} style={{ padding: '4px' }}>
+          <Popconfirm
+            key="delete"
+            title={intl.formatMessage({
+              id: 'page.table.isDelete',
+              defaultMessage: '是否删除?',
+            })}
+            onConfirm={async () => {
+              deleteItem(record.id);
+            }}
+            disabled={getButtonPermission('media/Device', 'delete')}
+          >
+            <Tooltip title="删除">
+              <Button
+                type={'link'}
+                style={{ padding: 0 }}
+                disabled={getButtonPermission('media/Device', 'delete')}
+              >
                 <DeleteOutlined />
               </Button>
-            </Popconfirm>
-          </Tooltip>
+            </Tooltip>
+          </Popconfirm>
         ) : null,
       ],
     },
@@ -232,21 +238,32 @@ export default () => {
             rowKey="id"
             search={false}
             headerTitle={[
-              <Button
-                onClick={() => {
-                  setCurrent(undefined);
-                  setVisible(true);
-                }}
-                key="button"
-                disabled={type === ProviderValue.GB281}
-                icon={<PlusOutlined />}
-                type="primary"
-              >
-                {intl.formatMessage({
-                  id: 'pages.data.option.add',
-                  defaultMessage: '新增',
-                })}
-              </Button>,
+              type === ProviderValue.GB281 ? (
+                <Tooltip key="button" title={'接入方式为GB/T28281时，不支持新增'}>
+                  <Button disabled>
+                    {intl.formatMessage({
+                      id: 'pages.data.option.add',
+                      defaultMessage: '新增',
+                    })}
+                  </Button>
+                </Tooltip>
+              ) : (
+                <Button
+                  onClick={() => {
+                    setCurrent(undefined);
+                    setVisible(true);
+                  }}
+                  key="button"
+                  disabled={getButtonPermission('media/Device', 'add')}
+                  icon={<PlusOutlined />}
+                  type="primary"
+                >
+                  {intl.formatMessage({
+                    id: 'pages.data.option.add',
+                    defaultMessage: '新增',
+                  })}
+                </Button>
+              ),
             ]}
           />
         </div>

@@ -1,10 +1,10 @@
 import React from 'react';
-import type { CascadeItem } from '@/pages/media/Cascade/typings';
-import { StatusColorEnum } from '@/components/BadgeStatus';
-import { TableCard } from '@/components';
+import type {CascadeItem} from '@/pages/media/Cascade/typings';
+import {StatusColorEnum} from '@/components/BadgeStatus';
+import {TableCard} from '@/components';
 import '@/style/common.less';
 import '../index.less';
-import { Badge } from 'antd';
+import {Badge} from 'antd';
 
 export interface CascadeCardProps extends CascadeItem {
   detail?: React.ReactNode;
@@ -35,11 +35,18 @@ export default (props: CascadeCardProps) => {
             <span className={'card-item-header-name ellipsis'}>{props.name}</span>
           </div>
           <div>通道数量： {props?.count || 0}</div>
-          <div>
-            <Badge
-              status={props.onlineStatus?.value === 'offline' ? 'error' : 'success'}
-              text={`sip:${props.sipConfigs[0]?.sipId}@${props.sipConfigs[0]?.hostAndPort}`}
-            />
+          <div style={{ display: 'flex', width: '100%' }}>
+            <Badge status={props.onlineStatus?.value === 'offline' ? 'error' : 'success'} />
+            <div
+              style={{
+                width: '90%',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              sip:{props.sipConfigs[0]?.sipId}@{props.sipConfigs[0]?.hostAndPort}
+            </div>
           </div>
         </div>
       </div>

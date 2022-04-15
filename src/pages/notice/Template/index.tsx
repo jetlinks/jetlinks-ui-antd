@@ -23,6 +23,7 @@ import { downloadObject } from '@/utils/util';
 import moment from 'moment';
 import { ProTableCard } from '@/components';
 import NoticeCard, { typeList } from '@/components/ProTableCard/CardItems/noticeTemplate';
+import { observer } from '@formily/react';
 
 export const service = new Service('notifier/template');
 
@@ -35,7 +36,7 @@ export const state = model<{
   debug: false,
   log: false,
 });
-const Template = () => {
+const Template = observer(() => {
   const intl = useIntl();
   const location = useLocation<{ id: string }>();
   const id = (location as any).query?.id;
@@ -262,6 +263,7 @@ const Template = () => {
                 key="log"
                 onClick={() => {
                   state.log = true;
+                  state.current = record;
                 }}
               >
                 <UnorderedListOutlined />
@@ -282,11 +284,13 @@ const Template = () => {
             ]}
           />
         )}
-        request={async (params) => service.query(params)}
+        request={async (params) =>
+          service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
+        }
       />
       <Debug />
-      <Log />
+      {state.log && <Log />}
     </PageContainer>
   );
-};
+});
 export default Template;

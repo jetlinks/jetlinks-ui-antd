@@ -1,10 +1,10 @@
-import { PageContainer } from '@ant-design/pro-layout';
-import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import type { DeviceInstance } from '@/pages/device/Instance/typings';
+import {PageContainer} from '@ant-design/pro-layout';
+import type {ActionType, ProColumns} from '@jetlinks/pro-table';
+import type {DeviceInstance} from '@/pages/device/Instance/typings';
 import moment from 'moment';
-import { Badge, Button, Dropdown, Menu, message, Popconfirm, Tooltip } from 'antd';
-import { useRef, useState } from 'react';
-import { useHistory } from 'umi';
+import {Badge, Button, Dropdown, Menu, message, Popconfirm, Tooltip} from 'antd';
+import {useRef, useState} from 'react';
+import {useHistory} from 'umi';
 import {
   CheckCircleOutlined,
   DeleteOutlined,
@@ -16,20 +16,20 @@ import {
   StopOutlined,
   SyncOutlined,
 } from '@ant-design/icons';
-import { model } from '@formily/reactive';
+import {model} from '@formily/reactive';
 import Service from '@/pages/device/Instance/service';
-import type { MetadataItem } from '@/pages/device/Product/typings';
-import { useIntl } from '@@/plugin-locale/localeExports';
+import type {MetadataItem} from '@/pages/device/Product/typings';
+import {useIntl} from '@@/plugin-locale/localeExports';
 import Save from './Save';
 import Export from './Export';
 import Import from './Import';
 import Process from './Process';
 import SearchComponent from '@/components/SearchComponent';
-import { ProTableCard } from '@/components';
+import {ProTableCard} from '@/components';
 import SystemConst from '@/utils/const';
 import Token from '@/utils/token';
 import DeviceCard from '@/components/ProTableCard/CardItems/device';
-import { getButtonPermission, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import {getButtonPermission, getMenuPathByParams, MENUS_CODE} from '@/utils/menu';
 
 export const statusMap = new Map();
 statusMap.set('在线', 'success');
@@ -72,30 +72,29 @@ const Instance = () => {
     <Button
       type={'link'}
       style={{ padding: 0 }}
+      key={'detail'}
       onClick={() => {
         InstanceModel.current = record;
         const url = getMenuPathByParams(MENUS_CODE['device/Instance/Detail'], record.id);
         history.push(url);
       }}
-      disabled={getButtonPermission('device/Instance', ['view'])}
     >
       <Tooltip
         title={intl.formatMessage({
           id: 'pages.data.option.detail',
           defaultMessage: '查看',
         })}
-        key={'detail'}
       >
         <EyeOutlined />
       </Tooltip>
     </Button>,
     <Button
       type={'link'}
+      key={'state'}
       style={{ padding: 0 }}
       disabled={getButtonPermission('device/Product', ['action'])}
     >
       <Popconfirm
-        key={'state'}
         title={intl.formatMessage({
           id: `pages.data.option.${
             record.state.value !== 'notActive' ? 'disabled' : 'enabled'
@@ -130,6 +129,7 @@ const Instance = () => {
 
     <Button
       type={'link'}
+      key={'delete'}
       style={{ padding: 0 }}
       disabled={getButtonPermission('device/Instance', ['delete'])}
     >
@@ -140,7 +140,6 @@ const Instance = () => {
               ? 'pages.data.option.remove.tips'
               : 'pages.device.instance.deleteTip',
         })}
-        key={'delete'}
         onConfirm={async () => {
           if (record.state.value === 'notActive') {
             await service.remove(record.id);
@@ -192,6 +191,15 @@ const Instance = () => {
       dataIndex: 'productName',
       width: 200,
       ellipsis: true,
+      valueType: 'select',
+      request: async () => {
+        const res = await service.getProductList();
+        if (res.status === 200) {
+          return res.result.map((pItem: any) => ({ label: pItem.name, value: pItem.id }));
+        }
+        return [];
+      },
+      filterMultiple: true,
     },
     {
       title: intl.formatMessage({
@@ -474,10 +482,10 @@ const Instance = () => {
               <Button
                 disabled={getButtonPermission('device/Instance', ['action'])}
                 type={'link'}
+                key={'state'}
                 style={{ padding: 0 }}
               >
                 <Popconfirm
-                  key={'state'}
                   title={intl.formatMessage({
                     id: `pages.data.option.${
                       record.state.value !== 'notActive' ? 'disabled' : 'enabled'

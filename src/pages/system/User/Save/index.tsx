@@ -6,7 +6,16 @@ import { createSchemaField } from '@formily/react';
 import React, { useEffect, useState } from 'react';
 import * as ICONS from '@ant-design/icons';
 import { PlusOutlined } from '@ant-design/icons';
-import { Form, FormItem, Input, Password, Select, Switch, TreeSelect } from '@formily/antd';
+import {
+  Form,
+  FormGrid,
+  FormItem,
+  Input,
+  Password,
+  Select,
+  Switch,
+  TreeSelect,
+} from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
 import { action } from '@formily/reactive';
 import type { Response } from '@/utils/typings';
@@ -75,6 +84,7 @@ const Save = (props: Props) => {
       Switch,
       Select,
       TreeSelect,
+      FormGrid,
     },
     scope: {
       icon(name: any) {
@@ -86,72 +96,93 @@ const Save = (props: Props) => {
   const schema: ISchema = {
     type: 'object',
     properties: {
-      name: {
-        title: intl.formatMessage({
-          id: 'pages.system.name',
-          defaultMessage: '姓名',
-        }),
-        type: 'string',
-        'x-decorator': 'FormItem',
-        'x-component': 'Input',
-        name: 'name',
-        'x-validator': [
-          {
-            max: 64,
-            message: '最多可输入64个字符',
-          },
-          {
-            required: true,
-            message: '请输入姓名',
-          },
-        ],
-        // required: true,
-      },
-      username: {
-        title: intl.formatMessage({
-          id: 'pages.system.username',
-          defaultMessage: '用户名',
-        }),
-        type: 'string',
-        'x-decorator': 'FormItem',
-        'x-component': 'Input',
-        'x-component-props': {
-          disabled: model === 'edit',
+      layout: {
+        type: 'void',
+        'x-decorator': 'FormGrid',
+        'x-decorator-props': {
+          maxColumns: 2,
+          minColumns: 2,
+          columnGap: 24,
         },
-        'x-validator': [
-          {
-            max: 50,
-            message: '最多可输入50个字符',
-          },
-          {
-            required: true,
-            message: '请输入用户名',
-          },
-          {
-            triggerType: 'onBlur',
-            validator: (value: string) => {
-              return new Promise((resolve) => {
-                service
-                  .validateField('username', value)
-                  .then((resp) => {
-                    if (resp.status === 200) {
-                      if (resp.result.passed) {
-                        resolve('');
-                      } else {
-                        resolve(resp.result.reason);
-                      }
-                    }
-                    resolve('');
-                  })
-                  .catch(() => {
-                    return '验证失败!';
-                  });
-              });
+        properties: {
+          name: {
+            title: intl.formatMessage({
+              id: 'pages.system.name',
+              defaultMessage: '姓名',
+            }),
+            type: 'string',
+            'x-decorator': 'FormItem',
+            'x-component': 'Input',
+            'x-decorator-props': {
+              gridSpan: 1,
             },
+            'x-component-props': {
+              placeholder: '请输入姓名',
+            },
+            name: 'name',
+            'x-validator': [
+              {
+                max: 64,
+                message: '最多可输入64个字符',
+              },
+              {
+                required: true,
+                message: '请输入姓名',
+              },
+            ],
+            // required: true,
           },
-        ],
-        name: 'username',
-        required: true,
+          username: {
+            title: intl.formatMessage({
+              id: 'pages.system.username',
+              defaultMessage: '用户名',
+            }),
+            'x-decorator-props': {
+              gridSpan: 1,
+            },
+            type: 'string',
+            'x-decorator': 'FormItem',
+            'x-component': 'Input',
+            'x-component-props': {
+              disabled: model === 'edit',
+              placeholder: '请输入用户名',
+            },
+            'x-validator': [
+              {
+                max: 50,
+                message: '最多可输入50个字符',
+              },
+              {
+                required: true,
+                message: '请输入用户名',
+              },
+              {
+                triggerType: 'onBlur',
+                validator: (value: string) => {
+                  return new Promise((resolve) => {
+                    service
+                      .validateField('username', value)
+                      .then((resp) => {
+                        if (resp.status === 200) {
+                          if (resp.result.passed) {
+                            resolve('');
+                          } else {
+                            resolve(resp.result.reason);
+                          }
+                        }
+                        resolve('');
+                      })
+                      .catch(() => {
+                        return '验证失败!';
+                      });
+                  });
+                },
+              },
+            ],
+            name: 'username',
+            required: true,
+          },
+        },
       },
       password: {
         type: 'string',
@@ -163,7 +194,7 @@ const Save = (props: Props) => {
         'x-component': 'Password',
         'x-component-props': {
           checkStrength: true,
-          placeholder: '********',
+          placeholder: '请输入密码',
         },
         maxLength: 128,
         minLength: 6,
@@ -204,7 +235,7 @@ const Save = (props: Props) => {
         'x-component': 'Password',
         'x-component-props': {
           checkStrength: true,
-          placeholder: '********',
+          placeholder: '请再次输入密码',
         },
         maxLength: 128,
         minLength: 6,
@@ -236,70 +267,92 @@ const Save = (props: Props) => {
         'x-decorator-props': {},
         name: 'confirmPassword',
       },
-      roleIdList: {
-        title: '角色',
-        'x-decorator': 'FormItem',
-        'x-component': 'Select',
-        'x-component-props': {
-          mode: 'multiple',
-          showArrow: true,
-          filterOption: (input: string, option: any) =>
-            option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
-        },
-        'x-reactions': ['{{useAsyncDataSource(getRole)}}'],
+      layout2: {
+        type: 'void',
+        'x-decorator': 'FormGrid',
         'x-decorator-props': {
-          addonAfter: (
-            <a
-              onClick={() => {
-                const tab: any = window.open(`${origin}/#/system/role?save=true`);
-                tab!.onTabSaveSuccess = (value: any) => {
-                  form.setFieldState('roleIdList', (state) => {
-                    state.dataSource = state.dataSource?.concat([
-                      { label: value.name, value: value.id },
-                    ]);
-                  });
-                };
-              }}
-            >
-              <PlusOutlined />
-            </a>
-          ),
+          maxColumns: 2,
+          minColumns: 2,
+          columnGap: 24,
         },
-      },
-      orgIdList: {
-        title: '部门',
-        'x-decorator': 'FormItem',
-        'x-component': 'TreeSelect',
-        'x-component-props': {
-          multiple: true,
-          showArrow: true,
-          showCheckedStrategy: ATreeSelect.SHOW_ALL,
-          filterOption: (input: string, option: any) =>
-            option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
-          fieldNames: {
-            label: 'name',
-            value: 'id',
+        properties: {
+          roleIdList: {
+            title: '角色',
+            'x-decorator': 'FormItem',
+            'x-component': 'Select',
+            'x-component-props': {
+              mode: 'multiple',
+              showArrow: true,
+              placeholder: '请选择角色',
+              filterOption: (input: string, option: any) =>
+                option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
+            },
+            'x-reactions': ['{{useAsyncDataSource(getRole)}}'],
+            'x-decorator-props': {
+              gridSpan: 1,
+              addonAfter: (
+                <a
+                  onClick={() => {
+                    const tab: any = window.open(`${origin}/#/system/role?save=true`);
+                    tab!.onTabSaveSuccess = (value: any) => {
+                      form.setFieldState('roleIdList', (state) => {
+                        state.dataSource = state.dataSource?.concat([
+                          { label: value.name, value: value.id },
+                        ]);
+                        state.value = [...state.value, value.id];
+                      });
+                    };
+                  }}
+                >
+                  <PlusOutlined />
+                </a>
+              ),
+            },
           },
-          treeNodeFilterProp: 'name',
+          orgIdList: {
+            title: '部门',
+            'x-decorator': 'FormItem',
+            'x-component': 'TreeSelect',
+            'x-component-props': {
+              multiple: true,
+              showArrow: true,
+              placeholder: '请选择角色',
+              showCheckedStrategy: ATreeSelect.SHOW_ALL,
+              filterOption: (input: string, option: any) =>
+                option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
+              fieldNames: {
+                label: 'name',
+                value: 'id',
+              },
+              treeNodeFilterProp: 'name',
+            },
+            'x-decorator-props': {
+              gridSpan: 1,
+              addonAfter: (
+                <a
+                  onClick={() => {
+                    const tab: any = window.open(`${origin}/#/system/department?save=true`);
+                    tab!.onTabSaveSuccess = (value: any) => {
+                      form.setFieldState('orgIdList', async (state) => {
+                        state.dataSource = await getOrg().then((resp) =>
+                          resp.result?.map((item: Record<string, unknown>) => ({
+                            ...item,
+                            label: item.name,
+                            value: item.id,
+                          })),
+                        );
+                        state.value = [...state.value, value.id];
+                      });
+                    };
+                  }}
+                >
+                  <PlusOutlined />
+                </a>
+              ),
+            },
+            'x-reactions': ['{{useAsyncDataSource(getOrg)}}'],
+          },
         },
-        'x-decorator-props': {
-          addonAfter: (
-            <a
-              onClick={() => {
-                const tab: any = window.open(`${origin}/#/system/department?save=true`);
-                tab!.onTabSaveSuccess = (value: any) => {
-                  console.log(value, 'value');
-                  form.setFieldState('orgIdList', (state) => {
-                    state.dataSource = state.dataSource?.concat({ name: value.name, id: value.id });
-                  });
-                };
-              }}
-            >
-              <PlusOutlined />
-            </a>
-          ),
-        },
-        'x-reactions': ['{{useAsyncDataSource(getOrg)}}'],
       },
     },
   };

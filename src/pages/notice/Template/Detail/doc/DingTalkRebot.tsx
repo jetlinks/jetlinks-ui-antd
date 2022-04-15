@@ -1,9 +1,4 @@
-import { Image } from 'antd';
-
 const DingTalkRebot = () => {
-  const text = require('/public/images/notice/doc/template/dingTalk-rebot/01-text.jpg');
-  const markdown = require('/public/images/notice/doc/template/dingTalk-rebot/02-markdown.jpg');
-  const link = require('/public/images/notice/doc/template/dingTalk-rebot/03-link.jpg');
   const b = '{name}';
   return (
     <div>
@@ -26,12 +21,7 @@ const DingTalkRebot = () => {
         <div> 1、绑定配置</div>
         <div> 绑定通知配置</div>
         <div> 2、消息类型</div>
-        <div> 目前支持text、markdown、link3种，对应的发送效果示例，如下图：</div>
-        <div>
-          <Image width="100%" src={text} />
-          <Image width="100%" src={markdown} />
-          <Image width="100%" src={link} />
-        </div>
+        <div> 目前支持text、markdown、link3种。</div>
         <div> 3. 模板内容</div>
         <div>
           支持填写带变量的动态模板。变量填写规范示例：${b}

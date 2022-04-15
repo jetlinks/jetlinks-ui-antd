@@ -1,22 +1,17 @@
-import { useRef, useState } from 'react';
-import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import ProTable from '@jetlinks/pro-table';
-import { Badge, Button, message, Popconfirm, Tooltip } from 'antd';
-import {
-  CloseCircleOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  PlayCircleOutlined,
-  PlusOutlined,
-} from '@ant-design/icons';
-import { PageContainer } from '@ant-design/pro-layout';
-import type { NetworkItem } from '@/pages/link/Type/typings';
-import { useIntl } from '@@/plugin-locale/localeExports';
+import {useRef, useState} from 'react';
+import type {ActionType, ProColumns} from '@jetlinks/pro-table';
+import {Badge, Button, message, Popconfirm, Tooltip} from 'antd';
+import {CloseCircleOutlined, DeleteOutlined, EditOutlined, PlayCircleOutlined, PlusOutlined,} from '@ant-design/icons';
+import {PageContainer} from '@ant-design/pro-layout';
+import type {NetworkItem} from '@/pages/link/Type/typings';
+import {useIntl} from '@@/plugin-locale/localeExports';
 import SearchComponent from '@/components/SearchComponent';
-import { getButtonPermission, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
-import { history } from 'umi';
+import {getButtonPermission, getMenuPathByParams, MENUS_CODE} from '@/utils/menu';
+import {history} from 'umi';
 import Service from '@/pages/link/service';
-import { Store } from 'jetlinks-store';
+import {Store} from 'jetlinks-store';
+import {ProTableCard} from '@/components';
+import NetworkCard from '@/components/ProTableCard/CardItems/networkCard';
 
 export const service = new Service('network/config');
 
@@ -27,6 +22,16 @@ export const service = new Service('network/config');
 const pageJump = (id?: string) => {
   // 跳转详情
   history.push(`${getMenuPathByParams(MENUS_CODE['link/Type/Detail'], id)}`);
+};
+
+export const networkMap = {
+  UDP: 'udp://',
+  TCP_SERVER: 'tcp://',
+  WEB_SOCKET_SERVER: 'ws://',
+  MQTT_CLIENT: 'mqtt://',
+  HTTP_SERVER: 'http://',
+  MQTT_SERVER: 'mqtt://',
+  COAP_SERVER: 'coap://',
 };
 
 const Network = () => {
@@ -60,11 +65,12 @@ const Network = () => {
         if (record.shareCluster) {
           const publicHost = record.configuration.publicHost;
           const publicPort = record.configuration.publicPort;
-          return (
+          return publicHost ? (
             <>
-              公网: {publicHost}:{publicPort}
+              {networkMap[record.type]}
+              {publicHost}:{publicPort}
             </>
-          );
+          ) : null;
         } else {
           const log = record.cluster?.map(
             (item) => `${item.configuration.publicHost}:${item.configuration.publicPort}`,
@@ -72,7 +78,9 @@ const Network = () => {
           return (
             <>
               {log.map((item) => (
-                <div key={item}>公网:{item}</div>
+                <div key={item}>
+                  `${networkMap[record.type]}${item}`
+                </div>
               ))}
             </>
           );
@@ -114,7 +122,7 @@ const Network = () => {
             pageJump(record.id);
           }}
         >
-          <Tooltip title="查看">
+          <Tooltip title="编辑">
             <EditOutlined />
           </Tooltip>
         </Button>,
@@ -198,7 +206,7 @@ const Network = () => {
           setParam(data);
         }}
       />
-      <ProTable<NetworkItem>
+      <ProTableCard<NetworkItem>
         actionRef={actionRef}
         params={param}
         columns={columns}
@@ -222,6 +230,77 @@ const Network = () => {
         request={async (params) =>
           service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
         }
+        gridColumn={3}
+        cardRender={(record) => (
+          <NetworkCard
+            {...record}
+            actions={[
+              <Button
+                key="edit"
+                onClick={() => {
+                  Store.set('current-network-data', record);
+                  pageJump(record.id);
+                }}
+              >
+                <EditOutlined />
+                编辑
+              </Button>,
+              <Tooltip title={record.state.value === 'enabled' ? '禁用' : '启用'}>
+                <Popconfirm
+                  disabled={getButtonPermission('link/Type', ['action'])}
+                  title={`确认${record.state.value === 'enabled' ? '禁用' : '启用'}?`}
+                  onConfirm={async () => {
+                    // await service.update({
+                    //   id: record.id,
+                    //   status: record.status ? 0 : 1,
+                    // });
+                    const map = {
+                      disabled: 'start',
+                      enabled: 'shutdown',
+                    };
+                    await service.changeState(record.id, map[record.state.value]);
+                    message.success(
+                      intl.formatMessage({
+                        id: 'pages.data.option.success',
+                        defaultMessage: '操作成功!',
+                      }),
+                    );
+                    actionRef.current?.reload();
+                  }}
+                >
+                  <Button
+                    type="link"
+                    style={{ padding: 0 }}
+                    disabled={getButtonPermission('link/Type', ['action'])}
+                    key="changeState"
+                  >
+                    {record.state.value === 'enabled' ? (
+                      <CloseCircleOutlined />
+                    ) : (
+                      <PlayCircleOutlined />
+                    )}
+                    {record.state.value === 'enabled' ? '禁用' : '启用'}
+                  </Button>
+                </Popconfirm>
+              </Tooltip>,
+              <Popconfirm
+                key="delete"
+                title="确认删除?"
+                onConfirm={async () => {
+                  const response: any = await service.remove(record.id);
+                  if (response.status === 200) {
+                    message.success('删除成功');
+                    actionRef.current?.reload();
+                  }
+                }}
+              >
+                <Button key="delete">
+                  <DeleteOutlined />
+                </Button>
+              </Popconfirm>,
+            ]}
+          />
+        )}
       />
     </PageContainer>
   );

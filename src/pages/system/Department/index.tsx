@@ -36,13 +36,37 @@ export const State = model<ModelType>({
   parentId: undefined,
 });
 
+export const getSortIndex = (data: DepartmentItem[], pId?: string): number => {
+  let sortIndex = 0;
+  if (data.length) {
+    if (!pId) {
+      return data.sort((a, b) => b.sortIndex - a.sortIndex)[0].sortIndex + 1;
+    }
+    data.some((department) => {
+      if (department.id === pId && department.children) {
+        const sortArray = department.children.sort((a, b) => b.sortIndex - a.sortIndex);
+        sortIndex = sortArray[0].sortIndex + 1;
+        return true;
+      } else if (department.children) {
+        sortIndex = getSortIndex(department.children, pId);
+        return !!sortIndex;
+      }
+      return false;
+    });
+  }
+  return sortIndex;
+};
+
 export default observer(() => {
   const actionRef = useRef<ActionType>();
   const intl = useIntl();
   const [param, setParam] = useState({});
   const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>([]);
   const [treeData, setTreeData] = useState<any[]>([]);
+  const [sortParam, setSortParam] = useState<any>({ name: 'sortIndex', order: 'asc' });
+
   const rowKeys = useRef<React.Key[]>([]);
+
   /**
    * 根据部门ID删除数据
    * @param id
@@ -296,7 +320,7 @@ export default observer(() => {
         request={async (params) => {
           const response = await service.queryOrgThree({
             paging: false,
-            sorts: [{ name: 'sortIndex', order: 'asc' }],
+            sorts: [sortParam],
             ...params,
           });
           setTreeData(response.result);
@@ -310,6 +334,13 @@ export default observer(() => {
             },
             status: response.status,
           };
+        }}
+        onChange={(_, f, sorter: any) => {
+          if (sorter.order) {
+            setSortParam({ name: sorter.columnKey, order: sorter.order.replace('end', '') });
+          } else {
+            setSortParam({ name: 'sortIndex', value: 'asc' });
+          }
         }}
         rowKey="id"
         expandable={{
@@ -325,7 +356,9 @@ export default observer(() => {
         headerTitle={
           <Button
             disabled={getButtonPermission('system/Department', ['add'])}
-            onClick={() => (State.visible = true)}
+            onClick={() => {
+              State.visible = true;
+            }}
             key="button"
             icon={<PlusOutlined />}
             type="primary"
@@ -338,6 +371,10 @@ export default observer(() => {
         }
       />
       <Save<DepartmentItem>
+        parentChange={(pId) => {
+          console.log(getSortIndex(treeData, pId));
+          return getSortIndex(treeData, pId);
+        }}
         title={
           State.current.parentId
             ? intl.formatMessage({

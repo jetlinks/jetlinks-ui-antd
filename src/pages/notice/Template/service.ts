@@ -31,8 +31,8 @@ class Service extends BaseService<TemplateItem> {
       data,
     });
 
-  public debug = (id: string, data: Record<string, any>) =>
-    request(`${SystemConst.API_BASE}/notifier/${id}/_send`, {
+  public debug = (id: string, templateId: string, data: Record<string, any>) =>
+    request(`${SystemConst.API_BASE}/notifier/${id}/${templateId}/_send`, {
       method: 'POST',
       data,
     });
@@ -44,28 +44,94 @@ class Service extends BaseService<TemplateItem> {
 
   dingTalk = {
     getDepartments: (id: string) =>
-      request(`${SystemConst.API_BASE}/notifier/dingtalk/corp/${id}/departments`),
+      request(`${SystemConst.API_BASE}/notifier/dingtalk/corp/${id}/departments`).then(
+        (resp: any) => {
+          return resp.result?.map((item: any) => ({
+            label: item.name,
+            value: item.id,
+          }));
+        },
+      ),
     getDepartmentsTree: (id: string) =>
-      request(`${SystemConst.API_BASE}/notifier/dingtalk/corp/${id}/departments/tree`),
-    getUserByDepartment: (id: string, departmentId: string) =>
-      request(`${SystemConst.API_BASE}/notifier/dingtalk/corp/${id}/${departmentId}/users`),
+      request(`${SystemConst.API_BASE}/notifier/dingtalk/corp/${id}/departments/tree`).then(
+        (resp: any) => {
+          return resp.result?.map((item: any) => ({
+            label: item.name,
+            value: item.id,
+          }));
+        },
+      ),
+    getUser: (id: string) =>
+      request(`${SystemConst.API_BASE}/notifier/dingtalk/corp/${id}/users`).then((resp: any) => {
+        return resp.result?.map((item: any) => ({
+          label: item.name,
+          value: item.id,
+        }));
+      }),
   };
 
   weixin = {
-    getTags: (id: string) => request(`${SystemConst.API_BASE}/notifier/wechat/corp/${id}/tags`),
+    getTags: (id: string) =>
+      request(`${SystemConst.API_BASE}/notifier/wechat/corp/${id}/tags`).then((resp: any) => {
+        return resp.result?.map((item: any) => ({
+          label: item.name,
+          value: item.id,
+        }));
+      }),
     getDepartments: (id: string) =>
-      request(`${SystemConst.API_BASE}/notifier/wechat/corp/${id}/departments`),
-    getUser: (id: string) => request(`${SystemConst.API_BASE}/notifier/wechat/corp/${id}/users`),
+      request(`${SystemConst.API_BASE}/notifier/wechat/corp/${id}/departments`).then(
+        (resp: any) => {
+          return resp.result?.map((item: any) => ({
+            label: item.name,
+            value: item.id,
+          }));
+        },
+      ),
+    getUser: (id: string) =>
+      request(`${SystemConst.API_BASE}/notifier/wechat/corp/${id}/users`).then((resp: any) => {
+        return resp.result?.map((item: any) => ({
+          label: item.name,
+          value: item.id,
+        }));
+      }),
     getOfficialTags: (configId: string) =>
-      request(`${SystemConst.API_BASE}/notifier/wechat/official/${configId}/tags`),
+      request(`${SystemConst.API_BASE}/notifier/wechat/official/${configId}/tags`).then(
+        (resp: any) => {
+          return resp.result?.map((item: any) => ({
+            label: item.name,
+            value: item.id,
+          }));
+        },
+      ),
     getOfficialTemplates: (configId: string) =>
-      request(`${SystemConst.API_BASE}/notifier/wechat/official/${configId}/templates`),
+      request(`${SystemConst.API_BASE}/notifier/wechat/official/${configId}/templates`).then(
+        (resp: any) => {
+          return resp.result?.map((item: any) => ({
+            ...item,
+            label: item.title,
+            value: item.id,
+          }));
+        },
+      ),
   };
 
   aliyun = {
-    getSigns: (id: string) => request(`${SystemConst.API_BASE}/notifier/sms/aliyun/${id}/signs`),
+    getSigns: (id: string) =>
+      request(`${SystemConst.API_BASE}/notifier/sms/aliyun/${id}/signs`).then((resp: any) => {
+        return resp.result?.map((item: any) => ({
+          ...item,
+          label: item.signName,
+          value: item.signName,
+        }));
+      }),
     getTemplates: (id: string) =>
-      request(`${SystemConst.API_BASE}/notifier/sms/aliyun/${id}/templates`),
+      request(`${SystemConst.API_BASE}/notifier/sms/aliyun/${id}/templates`).then((resp: any) => {
+        return resp.result?.map((item: any) => ({
+          ...item,
+          label: item.templateName,
+          value: item.templateCode,
+        }));
+      }),
   };
 }
 

@@ -13,21 +13,22 @@ import {
   Upload,
 } from '@formily/antd';
 import React from 'react';
-import { createForm } from '@formily/core';
-import { createSchemaField } from '@formily/react';
+import {createForm} from '@formily/core';
+import {createSchemaField} from '@formily/react';
 import FUpload from '@/components/Upload';
 import * as ICONS from '@ant-design/icons';
-import { message, Modal } from 'antd';
-import { useIntl } from '@@/plugin-locale/localeExports';
-import type { ISchema } from '@formily/json-schema';
-import type { CategoryItem } from '@/pages/visualization/Category/typings';
-import { service, state } from '@/pages/device/Category';
-import type { Response } from '@/utils/typings';
+import {message, Modal} from 'antd';
+import {useIntl} from '@@/plugin-locale/localeExports';
+import type {ISchema} from '@formily/json-schema';
+import type {CategoryItem} from '@/pages/visualization/Category/typings';
+import {service, state} from '@/pages/device/Category';
+import type {Response} from '@/utils/typings';
 
 interface Props {
   visible: boolean;
   close: () => void;
   data: Partial<CategoryItem>;
+  reload?: () => void;
 }
 
 const Save = (props: Props) => {
@@ -70,6 +71,9 @@ const Save = (props: Props) => {
       : ((await service.save(value as any)) as Response<CategoryItem>);
     if (resp.status === 200) {
       message.success('操作成功!');
+      if (props.reload) {
+        props.reload();
+      }
     } else {
       message.error('操作失败');
     }
@@ -103,6 +107,9 @@ const Save = (props: Props) => {
         }),
         'x-decorator': 'FormItem',
         'x-component': 'Input',
+        'x-component-props': {
+          placeholder: '请输入名称',
+        },
         required: true,
         name: 'name',
       },
@@ -113,6 +120,9 @@ const Save = (props: Props) => {
         }),
         'x-decorator': 'FormItem',
         'x-component': 'NumberPicker',
+        'x-component-props': {
+          placeholder: '请输入分类排序',
+        },
         name: 'sortIndex',
       },
       description: {
@@ -125,6 +135,7 @@ const Save = (props: Props) => {
         'x-component': 'Input.TextArea',
         'x-component-props': {
           rows: 3,
+          placeholder: '请输入描述',
         },
         name: 'description',
       },

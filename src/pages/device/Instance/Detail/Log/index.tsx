@@ -1,11 +1,11 @@
-import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import type {ActionType, ProColumns} from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import type { LogItem } from '@/pages/device/Instance/Detail/Log/typings';
-import { Card, Modal, Tooltip } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
-import { useIntl } from '@@/plugin-locale/localeExports';
-import { InstanceModel, service } from '@/pages/device/Instance';
-import { useEffect, useRef, useState } from 'react';
+import type {LogItem} from '@/pages/device/Instance/Detail/Log/typings';
+import {Card, Input, Modal, Tooltip} from 'antd';
+import {SearchOutlined} from '@ant-design/icons';
+import {useIntl} from '@@/plugin-locale/localeExports';
+import {InstanceModel, service} from '@/pages/device/Instance';
+import {useEffect, useRef, useState} from 'react';
 import SearchComponent from '@/components/SearchComponent';
 
 const Log = () => {
@@ -70,7 +70,13 @@ const Log = () => {
         return [
           <a
             key="editable"
-            onClick={() => Modal.info({ title: '详细信息', content: <pre>{content}</pre> })}
+            onClick={() =>
+              Modal.info({
+                title: '详细信息',
+                width: 700,
+                content: <Input.TextArea bordered={false} rows={15} value={content} />,
+              })
+            }
           >
             <Tooltip title="查看">
               <SearchOutlined />

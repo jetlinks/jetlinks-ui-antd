@@ -9,7 +9,7 @@ class Service extends BaseService<DeviceInstance> {
   public detail = (id: string) => request(`${this.uri}/${id}/detail`, { method: 'GET' });
 
   // 查询产品列表
-  public getProductList = (params: any) =>
+  public getProductList = (params?: any) =>
     request(`/${SystemConst.API_BASE}/device/product/_query/no-paging`, { method: 'GET', params });
 
   // 批量删除设备
@@ -195,7 +195,7 @@ class Service extends BaseService<DeviceInstance> {
     });
   // 执行功能
   public executeFunctions = (deviceId: string, functionId: string, data: any) =>
-    request(`/${SystemConst.API_BASE}device/invoked/${deviceId}/function/${functionId}`, {
+    request(`/${SystemConst.API_BASE}/device/invoked/${deviceId}/function/${functionId}`, {
       method: 'POST',
       data,
     });
@@ -207,7 +207,7 @@ class Service extends BaseService<DeviceInstance> {
     });
   // 设置属性
   public settingProperties = (deviceId: string, data: any) =>
-    request(`/${SystemConst.API_BASE}/device/setting/${deviceId}/property`, {
+    request(`/${SystemConst.API_BASE}//device-instance/${deviceId}/property`, {
       method: 'POST',
       data,
     });

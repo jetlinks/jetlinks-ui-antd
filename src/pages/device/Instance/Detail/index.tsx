@@ -1,10 +1,10 @@
-import { PageContainer } from '@ant-design/pro-layout';
-import { InstanceModel, service } from '@/pages/device/Instance';
-import { history, useParams } from 'umi';
-import { Badge, Button, Card, Descriptions, Divider, message, Tooltip } from 'antd';
-import type { ReactNode } from 'react';
-import { useEffect, useState } from 'react';
-import { observer } from '@formily/react';
+import {PageContainer} from '@ant-design/pro-layout';
+import {InstanceModel, service} from '@/pages/device/Instance';
+import {history, useParams} from 'umi';
+import {Badge, Button, Card, Descriptions, Divider, message, Popconfirm, Tooltip} from 'antd';
+import type {ReactNode} from 'react';
+import {useEffect, useState} from 'react';
+import {observer} from '@formily/react';
 import Log from '@/pages/device/Instance/Detail/Log';
 // import Alarm from '@/pages/device/components/Alarm';
 import Info from '@/pages/device/Instance/Detail/Info';
@@ -13,13 +13,13 @@ import Running from '@/pages/device/Instance/Detail/Running';
 import ChildDevice from '@/pages/device/Instance/Detail/ChildDevice';
 import Diagnose from '@/pages/device/Instance/Detail/Diagnose';
 import MetadataMap from '@/pages/device/Instance/Detail/MetadataMap';
-import { useIntl } from '@@/plugin-locale/localeExports';
+import {useIntl} from '@@/plugin-locale/localeExports';
 import Metadata from '../../components/Metadata';
-import type { DeviceMetadata } from '@/pages/device/Product/typings';
+import type {DeviceMetadata} from '@/pages/device/Product/typings';
 import MetadataAction from '@/pages/device/components/Metadata/DataBaseAction';
-import { Store } from 'jetlinks-store';
+import {Store} from 'jetlinks-store';
 import SystemConst from '@/utils/const';
-import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import {getMenuPathByParams, MENUS_CODE} from '@/utils/menu';
 import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
 
 export const deviceStatus = new Map();
@@ -70,9 +70,11 @@ const InstanceDetail = observer(() => {
           <Metadata
             type="device"
             tabAction={
-              <Tooltip title="重置后将使用产品的物模型配置">
-                <Button onClick={resetMetadata}>重置操作</Button>
-              </Tooltip>
+              <Popconfirm title="确认重置？" onConfirm={resetMetadata}>
+                <Tooltip title="重置后将使用产品的物模型配置">
+                  <Button>重置操作</Button>
+                </Tooltip>
+              </Popconfirm>
             }
           />
         </Card>

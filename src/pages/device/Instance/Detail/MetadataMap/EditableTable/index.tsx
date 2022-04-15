@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Form, Input, message, Pagination, Select, Table } from 'antd';
-import { service } from '@/pages/device/Instance';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import React, {useContext, useEffect, useState} from 'react';
+import {Form, Input, message, Pagination, Select, Table} from 'antd';
+import {service} from '@/pages/device/Instance';
+import _ from 'lodash';
 
 const EditableContext: any = React.createContext(null);
 
@@ -42,7 +42,11 @@ const EditableCell = ({
   const save = async () => {
     try {
       const values = await form.validateFields();
-      handleSave({ ...record, ...values });
+      if (values) {
+        handleSave({ ...record, ...values });
+      } else {
+        console.log(values);
+      }
     } catch (errInfo) {
       console.log('Save failed:', errInfo);
     }
@@ -62,6 +66,7 @@ const EditableCell = ({
         <Select
           onChange={save}
           showSearch
+          allowClear
           optionFilterProp="children"
           filterOption={(input: string, option: any) =>
             (option?.children || '').toLowerCase()?.indexOf(input.toLowerCase()) >= 0
@@ -111,6 +116,7 @@ const EditableTable = (props: Props) => {
     total: properties.length,
   });
   const [protocolMetadata, setProtocolMetadata] = useState<any[]>([]);
+  const [pmList, setPmList] = useState<any[]>([]);
 
   const components = {
     body: {
@@ -132,12 +138,19 @@ const EditableTable = (props: Props) => {
       data.map((i: any) => {
         obj[i?.originalId] = i?.metadataId || '';
       });
-      const list = properties.map((item) => {
-        return {
-          ...item,
-          metadataId: obj[item.id] || '',
-        };
-      });
+      if (protocolMetadata.length > 0) {
+        setPmList(protocolMetadata.filter((i) => !_.map(data, 'metadataId').includes(i.id)));
+      } else {
+        setPmList([]);
+      }
+      const list = (JSON.parse(props?.data?.metadata || '{}')?.properties || []).map(
+        (item: any) => {
+          return {
+            ...item,
+            metadataId: obj[item.id] || '',
+          };
+        },
+      );
       setProperties([...list]);
       setDataSource({
         data: list.slice(
@@ -152,18 +165,20 @@ const EditableTable = (props: Props) => {
   };
 
   useEffect(() => {
-    service
-      .queryProtocolMetadata(
-        props.type === 'device' ? props.data?.protocol : props.data?.messageProtocol,
-        props.type === 'device' ? props.data?.transport : props.data?.transportProtocol,
-      )
-      .then((resp) => {
-        if (resp.status === 200) {
-          setProtocolMetadata(JSON.parse(resp.result || '{}')?.properties || []);
-          initData();
-        }
-      });
-  }, []);
+    if (props.data && Object.keys(props.data).length > 0) {
+      service
+        .queryProtocolMetadata(
+          props.type === 'device' ? props.data?.protocol : props.data?.messageProtocol,
+          props.type === 'device' ? props.data?.transport : props.data?.transportProtocol,
+        )
+        .then((resp) => {
+          if (resp.status === 200) {
+            setProtocolMetadata(JSON.parse(resp.result || '{}')?.properties || []);
+            initData();
+          }
+        });
+    }
+  }, [props.data]);
 
   const handleSave = async (row: any) => {
     const newData = [...dataSource.data];
@@ -231,7 +246,7 @@ const EditableTable = (props: Props) => {
         editable: col.editable,
         dataIndex: col.dataIndex,
         title: col.title,
-        list: protocolMetadata,
+        list: pmList,
         handleSave: handleSave,
       }),
     };
@@ -253,16 +268,14 @@ const EditableTable = (props: Props) => {
             });
           }}
         />
-        <div>
-          <div style={{ color: 'rgba(0, 0, 0, .65)' }}>
-            <QuestionCircleOutlined style={{ margin: 5 }} />
-            该设备已脱离产品物模型映射，修改产品物模型映射对该设备物模型映射无影响
-          </div>
-          <div style={{ color: 'rgba(0, 0, 0, .65)' }}>
-            <QuestionCircleOutlined style={{ margin: 5 }} />
-            设备会默认继承产品的物模型映射，修改设备物模型映射后将脱离产品物模型映射
-          </div>
-        </div>
+        {/* <div style={{ color: 'rgba(0, 0, 0, .65)' }}>
+                    <QuestionCircleOutlined style={{ margin: 5 }} />
+                    {
+                        props?.data?.independentMetadata ?
+                            '该设备已脱离产品物模型映射，修改产品物模型映射对该设备物模型映射无影响' :
+                            '设备会默认继承产品的物模型映射，修改设备物模型映射后将脱离产品物模型映射'
+                    }
+                </div> */}
       </div>
       <Table
         components={components}

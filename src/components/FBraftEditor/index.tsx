@@ -1,11 +1,12 @@
-import { connect, mapProps } from '@formily/react';
-import BraftEditor, { BraftEditorProps, EditorState } from 'braft-editor';
+import {connect, mapProps} from '@formily/react';
+import BraftEditor, {BraftEditorProps, EditorState} from 'braft-editor';
 import 'braft-editor/dist/index.css';
-import { useState } from 'react';
+import {useState} from 'react';
 
 interface Props extends BraftEditorProps {
   value: any;
   onChange: (data: any) => void;
+  placeholder?: string;
 }
 
 const FBraftEditor = connect((props: Props) => {
@@ -18,6 +19,7 @@ const FBraftEditor = connect((props: Props) => {
       {
         // @ts-ignore
         <BraftEditor
+          placeholder={props.placeholder}
           value={editorState}
           onChange={(state) => {
             setEditorState(state);

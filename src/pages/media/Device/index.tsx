@@ -127,27 +127,26 @@ const Device = () => {
         defaultMessage: '设备厂家',
       }),
     },
-    {
-      dataIndex: 'model',
-      title: intl.formatMessage({
-        id: 'pages.media.device.model',
-        defaultMessage: '型号',
-      }),
-    },
-    {
-      dataIndex: 'firmware',
-      title: intl.formatMessage({
-        id: 'pages.media.device.firmware',
-        defaultMessage: '固件版本',
-      }),
-    },
+    // {
+    //   dataIndex: 'model',
+    //   title: intl.formatMessage({
+    //     id: 'pages.media.device.model',
+    //     defaultMessage: '型号',
+    //   }),
+    // },
+    // {
+    //   dataIndex: 'firmware',
+    //   title: intl.formatMessage({
+    //     id: 'pages.media.device.firmware',
+    //     defaultMessage: '固件版本',
+    //   }),
+    // },
     {
       dataIndex: 'state',
       title: intl.formatMessage({
         id: 'pages.searchTable.titleStatus',
         defaultMessage: '状态',
       }),
-      valueType: 'select',
       render: (_, record) => (
         <BadgeStatus
           status={record.state.value}

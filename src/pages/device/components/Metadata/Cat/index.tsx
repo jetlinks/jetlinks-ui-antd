@@ -1,14 +1,15 @@
-import { Drawer, Tabs } from 'antd';
-import { useEffect, useState } from 'react';
-import { productModel, service } from '@/pages/device/Product';
+import {Drawer, Tabs} from 'antd';
+import {useEffect, useState} from 'react';
+import {productModel, service} from '@/pages/device/Product';
 import MonacoEditor from 'react-monaco-editor';
+import {observer} from '@formily/react';
 
 interface Props {
   visible: boolean;
   close: () => void;
 }
 
-const Cat = (props: Props) => {
+const Cat = observer((props: Props) => {
   const [codecs, setCodecs] = useState<{ id: string; name: string }[]>();
   const metadata = productModel.current?.metadata as string;
   const [value, setValue] = useState(metadata);
@@ -23,11 +24,13 @@ const Cat = (props: Props) => {
   const convertMetadata = (key: string) => {
     if (key === 'alink') {
       setValue('');
-      service.convertMetadata('to', 'alink', JSON.parse(metadata)).subscribe({
-        next: (data) => {
-          setValue(JSON.stringify(data));
-        },
-      });
+      if (metadata) {
+        service.convertMetadata('to', 'alink', JSON.parse(metadata)).subscribe({
+          next: (data) => {
+            setValue(JSON.stringify(data));
+          },
+        });
+      }
     } else {
       setValue(metadata);
     }
@@ -65,6 +68,6 @@ const Cat = (props: Props) => {
       </Tabs>
     </Drawer>
   );
-};
+});
 
 export default Cat;

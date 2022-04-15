@@ -1,8 +1,8 @@
-import { Button, Descriptions } from 'antd';
-import { useIntl } from '@@/plugin-locale/localeExports';
-import { InstanceModel } from '@/pages/device/Instance';
-import { useEffect, useState } from 'react';
-import { EditOutlined } from '@ant-design/icons';
+import {Button, Descriptions} from 'antd';
+import {useIntl} from '@@/plugin-locale/localeExports';
+import {InstanceModel} from '@/pages/device/Instance';
+import {useEffect, useState} from 'react';
+import {EditOutlined} from '@ant-design/icons';
 import Edit from './Edit';
 
 const Tags = () => {
@@ -23,6 +23,7 @@ const Tags = () => {
       <Descriptions
         style={{ marginBottom: 20 }}
         bordered
+        column={3}
         size="small"
         title={
           <span>
@@ -43,7 +44,7 @@ const Tags = () => {
         }
       >
         {(tags || [])?.map((item: any) => (
-          <Descriptions.Item label={`${item.name}（${item.key})`} key={item.key}>
+          <Descriptions.Item span={1} label={`${item.name}（${item.key})`} key={item.key}>
             {item.value || '--'}
           </Descriptions.Item>
         ))}
