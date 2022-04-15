@@ -24,9 +24,33 @@ export const state = model<{
   current: {},
   parentId: undefined,
 });
+
+export const getSortIndex = (data: CategoryItem[], pId?: string): number => {
+  let sortIndex = 0;
+  if (data.length) {
+    if (!pId) {
+      return data.sort((a, b) => b.sortIndex - a.sortIndex)[0].sortIndex + 1;
+    }
+    data.some((department) => {
+      if (department.id === pId && department.children) {
+        const sortArray = department.children.sort((a, b) => b.sortIndex - a.sortIndex);
+        sortIndex = sortArray[0].sortIndex + 1;
+        return true;
+      } else if (department.children) {
+        sortIndex = getSortIndex(department.children, pId);
+        return !!sortIndex;
+      }
+      return false;
+    });
+  }
+  return sortIndex;
+};
+
 const Category = observer(() => {
   const actionRef = useRef<ActionType>();
   const [param, setParam] = useState({});
+  const [sortParam, setSortParam] = useState<any>({ name: 'sortIndex', order: 'asc' });
+  const [treeData, setTreeData] = useState<any[]>([]);
 
   const intl = useIntl();
 
@@ -41,6 +65,8 @@ const Category = observer(() => {
     {
       title: '分类排序',
       dataIndex: 'sortIndex',
+      valueType: 'digit',
+      sorter: true,
       // render: (text) => (
       //   <Space>{text}<EditOutlined onClick={() => {
 
@@ -89,7 +115,11 @@ const Category = observer(() => {
           key={'add-next'}
           onClick={() => {
             state.visible = true;
+            const sortIndex = getSortIndex(treeData, record.id);
             state.parentId = record.id;
+            state.current = {
+              sortIndex,
+            };
           }}
           disabled={getButtonPermission('device/Category', ['update', 'add'])}
         >
@@ -106,9 +136,9 @@ const Category = observer(() => {
           disabled={getButtonPermission('device/Category', ['delete'])}
           type="link"
           style={{ padding: 0 }}
+          key={'delete'}
         >
           <Popconfirm
-            key={'delete'}
             onConfirm={async () => {
               const resp = (await service.remove(record.id)) as Response<any>;
               if (resp.status === 200) {
@@ -147,7 +177,12 @@ const Category = observer(() => {
         params={param}
         search={false}
         request={async (params) => {
-          const response = await service.queryTree({ paging: false, ...params });
+          const response = await service.queryTree({
+            paging: false,
+            sorts: [sortParam],
+            ...params,
+          });
+          setTreeData(response.result);
           return {
             code: response.message,
             result: {
@@ -161,10 +196,23 @@ const Category = observer(() => {
         }}
         rowKey="id"
         columns={columns}
+        onChange={(_, f, sorter: any) => {
+          if (sorter.order) {
+            setSortParam({ name: sorter.columnKey, order: sorter.order.replace('end', '') });
+          } else {
+            setSortParam({ name: 'sortIndex', value: 'asc' });
+          }
+        }}
         headerTitle={
           <Button
             disabled={getButtonPermission('device/Category', ['add'])}
-            onClick={() => (state.visible = true)}
+            onClick={() => {
+              const sortIndex = getSortIndex(treeData, '');
+              state.current = {
+                sortIndex,
+              };
+              state.visible = true;
+            }}
             key="button"
             icon={<PlusOutlined />}
             type="primary"
@@ -185,6 +233,8 @@ const Category = observer(() => {
           state.visible = false;
           state.current = {};
           state.parentId = undefined;
+        }}
+        reload={() => {
           actionRef.current?.reload();
         }}
       />

@@ -28,6 +28,7 @@ interface Props {
   visible: boolean;
   close: () => void;
   data: Partial<CategoryItem>;
+  reload?: () => void;
 }
 
 const Save = (props: Props) => {
@@ -70,6 +71,9 @@ const Save = (props: Props) => {
       : ((await service.save(value as any)) as Response<CategoryItem>);
     if (resp.status === 200) {
       message.success('操作成功!');
+      if (props.reload) {
+        props.reload();
+      }
     } else {
       message.error('操作失败');
     }
