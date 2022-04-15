@@ -71,7 +71,7 @@ const Bind = observer((props: Props) => {
       visible={props.visible}
       onOk={handleBind}
       onCancel={props.onCancel}
-      width={990}
+      width={1300}
       title="绑定"
     >
       <PermissionModal

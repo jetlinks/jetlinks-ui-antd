@@ -158,6 +158,7 @@ const Device = () => {
           text={record.state.text}
         />
       ),
+      valueType: 'select',
       valueEnum: {
         offline: {
           text: intl.formatMessage({

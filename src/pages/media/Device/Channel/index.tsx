@@ -138,7 +138,7 @@ export default () => {
             <EditOutlined />
           </Button>
         </Tooltip>,
-        <Tooltip key={'live'} title={'播发'}>
+        <Tooltip key={'live'} title={'播放'}>
           <a
             onClick={() => {
               setChannelId(record.channelId);
