@@ -1,3 +1,5 @@
+import { Image } from 'antd';
+
 const DingTalk = () => {
   const appKey = require('/public/images/notice/doc/config/dingTalk-message/01-AppKey.jpg');
   const appSecret = require('/public/images/notice/doc/config/dingTalk-message/02-AppSecret.jpg');
@@ -25,7 +27,7 @@ const DingTalk = () => {
         </div>
         <div>获取路径：“钉钉开放平台”--“应用开发”--“应用信息”</div>
         <div>
-          <img style={{ width: '100%' }} src={appKey} alt="appKey" />
+          <Image width="100%" src={appKey} />
         </div>
       </div>
       <b>2. AppSecret</b>
@@ -33,7 +35,7 @@ const DingTalk = () => {
         <div>钉钉应用对应的调用密钥</div>
         <div>获取路径：“钉钉开放平台”--“应用开发”--“应用信息”</div>
         <div>
-          <img style={{ width: '100%' }} src={appSecret} alt="appSecret" />
+          <Image width="100%" src={appSecret} />
         </div>
       </div>
     </div>

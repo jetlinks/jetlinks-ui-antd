@@ -5,7 +5,7 @@ import { Badge, Button, message, Popconfirm, Tooltip } from 'antd';
 import {
   CloseCircleOutlined,
   DeleteOutlined,
-  EyeOutlined,
+  EditOutlined,
   PlayCircleOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
@@ -107,7 +107,7 @@ const Network = () => {
         <Button
           type="link"
           style={{ padding: 0 }}
-          disabled={getButtonPermission('link/Type', ['view'])}
+          // disabled={getButtonPermission('link/Type', ['view'])}
           key="edit"
           onClick={() => {
             Store.set('current-network-data', record);
@@ -115,7 +115,7 @@ const Network = () => {
           }}
         >
           <Tooltip title="查看">
-            <EyeOutlined />
+            <EditOutlined />
           </Tooltip>
         </Button>,
 

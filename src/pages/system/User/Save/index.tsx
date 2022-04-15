@@ -134,7 +134,13 @@ const Save = (props: Props) => {
                 service
                   .validateField('username', value)
                   .then((resp) => {
-                    console.log(resp);
+                    if (resp.status === 200) {
+                      if (resp.result.passed) {
+                        resolve('');
+                      } else {
+                        resolve(resp.result.reason);
+                      }
+                    }
                     resolve('');
                   })
                   .catch(() => {

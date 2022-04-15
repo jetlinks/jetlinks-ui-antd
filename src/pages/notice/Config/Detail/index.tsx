@@ -120,6 +120,7 @@ const Detail = observer(() => {
     properties: {
       name: {
         title: '名称',
+        required: true,
         'x-component': 'Input',
         'x-decorator': 'FormItem',
       },
@@ -152,6 +153,7 @@ const Detail = observer(() => {
                 title: 'corpId',
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
+                required: true,
                 // 企业消息
                 'x-reactions': {
                   dependencies: ['provider'],
@@ -161,11 +163,18 @@ const Detail = observer(() => {
                     },
                   },
                 },
+                'x-component-props': {
+                  placeholder: '请输入corpId',
+                },
               },
               corpSecret: {
                 title: 'corpSecret',
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
+                required: true,
+                'x-component-props': {
+                  placeholder: '请输入corpSecret',
+                },
                 'x-reactions': {
                   dependencies: ['provider'],
                   fulfill: {
@@ -178,7 +187,11 @@ const Detail = observer(() => {
               appId: {
                 title: 'appID',
                 'x-component': 'Input',
+                required: true,
                 'x-decorator': 'FormItem',
+                'x-component-props': {
+                  placeholder: '请输入appId',
+                },
                 'x-reactions': {
                   dependencies: ['provider'],
                   fulfill: {
@@ -191,7 +204,11 @@ const Detail = observer(() => {
               secret: {
                 title: 'AppSecret',
                 'x-component': 'Input',
+                required: true,
                 'x-decorator': 'FormItem',
+                'x-component-props': {
+                  placeholder: '请输入secret',
+                },
                 'x-reactions': {
                   dependencies: ['provider'],
                   fulfill: {
@@ -212,7 +229,10 @@ const Detail = observer(() => {
                 title: 'AppKey',
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
-                // 钉钉消息通知
+                required: true,
+                'x-component-props': {
+                  placeholder: '请输入AppKey',
+                },
                 'x-reactions': {
                   dependencies: ['provider'],
                   fulfill: {
@@ -226,7 +246,10 @@ const Detail = observer(() => {
                 title: 'AppSecret',
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
-                // 钉钉消息通知
+                required: true,
+                'x-component-props': {
+                  placeholder: '请输入AppSecret',
+                },
                 'x-reactions': {
                   dependencies: ['provider'],
                   fulfill: {
@@ -240,7 +263,10 @@ const Detail = observer(() => {
                 title: 'webHook',
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
-                // 群机器人
+                required: true,
+                'x-component-props': {
+                  placeholder: '请输入webhook',
+                },
                 'x-reactions': {
                   dependencies: ['provider'],
                   fulfill: {
@@ -257,18 +283,30 @@ const Detail = observer(() => {
             type: 'void',
             'x-visible': id === 'voice' || id === 'sms',
             properties: {
-              RegionId: {
+              regionId: {
                 title: 'regionId',
+                required: true,
+                'x-component-props': {
+                  placeholder: '请输入regionId',
+                },
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
               },
-              AccessKeyId: {
+              accessKeyId: {
                 title: 'accessKeyId',
+                required: true,
+                'x-component-props': {
+                  placeholder: '请输入accessKeyId',
+                },
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
               },
-              Secret: {
+              secret: {
                 title: 'secret',
+                required: true,
+                'x-component-props': {
+                  placeholder: '请输入secret',
+                },
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
               },
@@ -290,11 +328,19 @@ const Detail = observer(() => {
                 properties: {
                   host: {
                     // title: '服务器地址',
+                    required: true,
+                    'x-component-props': {
+                      placeholder: '请输入服务器地址',
+                    },
                     'x-component': 'Input',
                     'x-decorator': 'FormItem',
                   },
                   port: {
                     // title: '端口',
+                    required: true,
+                    'x-component-props': {
+                      placeholder: '请输入端口',
+                    },
                     'x-component': 'NumberPicker',
                     'x-decorator': 'FormItem',
                   },
@@ -309,16 +355,28 @@ const Detail = observer(() => {
               },
               sender: {
                 title: '发件人',
+                required: true,
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
+                'x-component-props': {
+                  placeholder: '请输入发件人',
+                },
               },
               username: {
                 title: '用户名',
+                required: true,
                 'x-component': 'Input',
+                'x-component-props': {
+                  placeholder: '请输入用户名',
+                },
                 'x-decorator': 'FormItem',
               },
               password: {
                 title: '密码',
+                required: true,
+                'x-component-props': {
+                  placeholder: '请输入密码',
+                },
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
               },

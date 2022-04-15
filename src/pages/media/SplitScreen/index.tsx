@@ -3,9 +3,8 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { Card } from 'antd';
 import LeftTree from './tree';
 import { ScreenPlayer } from '@/components';
-import { ptzStop, ptzTool } from './service';
+import { ptzStart, ptzStop, ptzTool } from './service';
 import { useRef, useState } from 'react';
-import { ptzStart } from './service';
 import './index.less';
 
 const SplitScreen = () => {

@@ -409,6 +409,7 @@ const Edit = observer((props: Props) => {
               id: 'pages.device.productDetail.metadata.source',
               defaultMessage: '来源',
             }),
+            'x-disabled': MetadataModel.action === 'edit',
             required: true,
             'x-decorator': 'FormItem',
             'x-component': 'Select',

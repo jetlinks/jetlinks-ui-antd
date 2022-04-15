@@ -35,7 +35,9 @@ const Import = (props: Props) => {
 
   const loadData = () => async (field: Field) => {
     field.loading = true;
-    const product = (await service.queryNoPaging({})) as any;
+    const product = (await service.queryNoPagingPost({
+      terms: [{ column: 'id$not', value: param.id }],
+    })) as any;
     field.dataSource = product.result.map((item: any) => ({
       label: item.name,
       value: item.metadata,
