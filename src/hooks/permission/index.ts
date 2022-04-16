@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { BUTTON_PERMISSION_ENUM } from '@/utils/menu/router';
-import type { MENUS_CODE_TYPE } from '@/utils/menu/router';
+import type { MENUS_CODE_TYPE, BUTTON_PERMISSION } from '@/utils/menu/router';
 import { MENUS_BUTTONS_CACHE } from '@/utils/menu';
 
 type permissionKeyType = keyof typeof BUTTON_PERMISSION_ENUM;
@@ -18,7 +18,7 @@ const usePermissions = (
    * @example getOtherPermission(['add', 'delete']) => boolean
    * @return Boolean
    */
-  getOtherPermission: (permission: string | string[]) => boolean;
+  getOtherPermission: (permission: BUTTON_PERMISSION | BUTTON_PERMISSION[]) => boolean;
 } => {
   const [permission, setPermission] = useState<Partial<permissionType>>({});
 
@@ -52,9 +52,8 @@ const usePermissions = (
 
   useEffect(() => {
     Object.keys(BUTTON_PERMISSION_ENUM).forEach((key) => {
-      permissionButton[key] = getOtherPermission[key];
+      permissionButton[key] = getOtherPermission(key);
     });
-
     setPermission(permissionButton);
   }, [code]);
 

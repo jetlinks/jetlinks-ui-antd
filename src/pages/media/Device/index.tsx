@@ -2,7 +2,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { Button, message, Popconfirm, Tooltip } from 'antd';
+import { Button, message, Tooltip } from 'antd';
 import {
   DeleteOutlined,
   EditOutlined,
@@ -13,12 +13,12 @@ import {
 } from '@ant-design/icons';
 import type { DeviceItem } from '@/pages/media/Device/typings';
 import { useHistory, useIntl } from 'umi';
-import { BadgeStatus, ProTableCard } from '@/components';
+import { BadgeStatus, ProTableCard, PermissionButton } from '@/components';
 import { StatusColorEnum } from '@/components/BadgeStatus';
 import SearchComponent from '@/components/SearchComponent';
 import MediaDevice from '@/components/ProTableCard/CardItems/mediaDevice';
 import {
-  getButtonPermission,
+  // getButtonPermission,
   getMenuPathByCode,
   getMenuPathByParams,
   MENUS_CODE,
@@ -45,6 +45,7 @@ const Device = () => {
   const [current, setCurrent] = useState<DeviceItem>();
   const [queryParam, setQueryParam] = useState({});
   const history = useHistory<Record<string, string>>();
+  const { permission } = PermissionButton.usePermission('media/Device');
 
   /**
    * table 查询参数
@@ -186,40 +187,42 @@ const Device = () => {
       align: 'center',
       width: 200,
       render: (text, record) => [
-        <Tooltip
+        <PermissionButton
           key="edit"
-          title={intl.formatMessage({
-            id: 'pages.data.option.edit',
-            defaultMessage: '编辑',
-          })}
+          tooltip={{
+            title: intl.formatMessage({
+              id: 'pages.data.option.edit',
+              defaultMessage: '编辑',
+            }),
+          }}
+          isPermission={permission.update}
+          style={{ padding: 0 }}
+          type={'link'}
+          onClick={() => {
+            setCurrent(record);
+            setVisible(true);
+          }}
         >
-          <Button
-            disabled={getButtonPermission('media/Device', 'update')}
-            style={{ padding: 0 }}
-            type={'link'}
-            onClick={() => {
-              setCurrent(record);
-              setVisible(true);
-            }}
-          >
-            <EditOutlined />
-          </Button>
-        </Tooltip>,
-        <Tooltip key={'viewChannel'} title="查看通道">
-          <Button
-            style={{ padding: 0 }}
-            type={'link'}
-            onClick={() => {
-              history.push(
-                `${getMenuPathByCode(MENUS_CODE['media/Device/Channel'])}?id=${record.id}&type=${
-                  record.provider
-                }`,
-              );
-            }}
-          >
-            <PartitionOutlined />
-          </Button>
-        </Tooltip>,
+          <EditOutlined />
+        </PermissionButton>,
+        <PermissionButton
+          tooltip={{
+            title: '查看设备',
+          }}
+          style={{ padding: 0 }}
+          type={'link'}
+          onClick={() => {
+            history.push(
+              `${getMenuPathByCode(MENUS_CODE['media/Device/Channel'])}?id=${record.id}&type=${
+                record.provider
+              }`,
+            );
+          }}
+          isPermission={true}
+          key={'view'}
+        >
+          <PartitionOutlined />
+        </PermissionButton>,
         <Tooltip key={'deviceDetail'} title={'查看'}>
           <Button
             style={{ padding: 0 }}
@@ -233,58 +236,52 @@ const Device = () => {
             <EyeOutlined />
           </Button>
         </Tooltip>,
-        <Tooltip
-          key={'updateChannel'}
-          title={
-            record.provider === ProviderValue.FIXED
-              ? '接入方式为固定地址时不支持更新通道'
-              : '更新通道'
-          }
-        >
-          <Button
-            style={{ padding: 0 }}
-            type={'link'}
-            disabled={
-              getButtonPermission('media/Device', 'action') ||
-              record.state.value === 'offline' ||
+        <PermissionButton
+          tooltip={{
+            title:
               record.provider === ProviderValue.FIXED
-            }
-            onClick={() => {
-              updateChannel(record.id);
-            }}
-          >
-            <SyncOutlined />
-          </Button>
-        </Tooltip>,
-        <Tooltip key={'updateChannel'} title="删除">
-          <Popconfirm
-            key="delete"
-            title={intl.formatMessage({
+                ? '接入方式为固定地址时不支持更新通道'
+                : '更新通道',
+          }}
+          key={'updateChannel'}
+          isPermission={permission.action}
+          disabled={record.state.value === 'offline' || record.provider === ProviderValue.FIXED}
+          style={{ padding: 0 }}
+          type={'link'}
+          onClick={() => {
+            updateChannel(record.id);
+          }}
+        >
+          <SyncOutlined />
+        </PermissionButton>,
+        <PermissionButton
+          key={'delete'}
+          tooltip={{
+            title: '删除',
+          }}
+          popConfirm={{
+            title: intl.formatMessage({
               id:
                 record.state.value === 'offline'
                   ? 'pages.device.productDetail.deleteTip'
                   : 'page.table.isDelete',
               defaultMessage: '是否删除?',
-            })}
-            onConfirm={async () => {
+            }),
+            onConfirm: async () => {
               if (record.state.value !== 'offline') {
                 await deleteItem(record.id);
               } else {
                 message.error('在线设备不能进行删除操作');
               }
-            }}
-          >
-            <Button
-              type={'link'}
-              style={{ padding: 0 }}
-              disabled={
-                getButtonPermission('media/Device', 'delete') || record.state.value !== 'offline'
-              }
-            >
-              <DeleteOutlined />
-            </Button>
-          </Popconfirm>
-        </Tooltip>,
+            },
+          }}
+          type={'link'}
+          style={{ padding: 0 }}
+          isPermission={permission.delete}
+          disabled={record.state.value !== 'offline'}
+        >
+          <DeleteOutlined />
+        </PermissionButton>,
       ],
     },
   ];
@@ -311,7 +308,7 @@ const Device = () => {
         rowKey="id"
         search={false}
         headerTitle={[
-          <Button
+          <PermissionButton
             onClick={() => {
               setCurrent(undefined);
               setVisible(true);
@@ -319,13 +316,13 @@ const Device = () => {
             key="button"
             icon={<PlusOutlined />}
             type="primary"
-            disabled={getButtonPermission('media/Device', 'add')}
+            isPermission={permission.add}
           >
             {intl.formatMessage({
               id: 'pages.data.option.add',
               defaultMessage: '新增',
             })}
-          </Button>,
+          </PermissionButton>,
         ]}
         cardRender={(record) => (
           <MediaDevice
@@ -343,9 +340,9 @@ const Device = () => {
               </div>
             }
             actions={[
-              <Button
+              <PermissionButton
                 key="edit"
-                disabled={getButtonPermission('media/Device', 'update')}
+                isPermission={permission.update}
                 onClick={() => {
                   setCurrent(record);
                   setVisible(true);
@@ -358,7 +355,7 @@ const Device = () => {
                   id: 'pages.data.option.edit',
                   defaultMessage: '编辑',
                 })}
-              </Button>,
+              </PermissionButton>,
               <Button
                 key={'viewChannel'}
                 onClick={() => {
@@ -372,10 +369,23 @@ const Device = () => {
                 <PartitionOutlined />
                 查看通道
               </Button>,
-              <Button
+              <PermissionButton
                 key={'updateChannel'}
+                isPermission={permission.update}
+                tooltip={
+                  record.state.value === 'offline' ||
+                  record.provider === providerType['fixed-media']
+                    ? {
+                        title:
+                          record.provider === providerType['fixed-media']
+                            ? '固定地址无法更新通道'
+                            : record.state.value === 'offline'
+                            ? '设备已离线'
+                            : '',
+                      }
+                    : undefined
+                }
                 disabled={
-                  getButtonPermission('media/Device', 'action') ||
                   record.state.value === 'offline' ||
                   record.provider === providerType['fixed-media']
                 }
@@ -385,35 +395,32 @@ const Device = () => {
               >
                 <SyncOutlined />
                 更新通道
-              </Button>,
-              <Popconfirm
+              </PermissionButton>,
+              <PermissionButton
                 key="delete"
-                title={intl.formatMessage({
-                  id:
-                    record.state.value !== 'offline'
-                      ? 'pages.device.instance.deleteTip'
-                      : 'page.table.isDelete',
-                  defaultMessage: '是否删除?',
-                })}
-                onConfirm={async () => {
-                  if (record.state.value === 'offline') {
-                    await deleteItem(record.id);
-                  } else {
-                    message.error('在线设备不能进行删除操作');
-                  }
+                popConfirm={{
+                  title: intl.formatMessage({
+                    id:
+                      record.state.value !== 'offline'
+                        ? 'pages.device.instance.deleteTip'
+                        : 'page.table.isDelete',
+                    defaultMessage: '是否删除?',
+                  }),
+                  onConfirm: async () => {
+                    if (record.state.value === 'offline') {
+                      await deleteItem(record.id);
+                    } else {
+                      message.error('在线设备不能进行删除操作');
+                    }
+                  },
                 }}
+                type={'link'}
+                style={{ padding: 0 }}
+                isPermission={permission.delete}
+                disabled={record.state.value !== 'offline'}
               >
-                <Button
-                  type={'link'}
-                  style={{ padding: 0 }}
-                  disabled={
-                    getButtonPermission('media/Device', 'delete') ||
-                    record.state.value !== 'offline'
-                  }
-                >
-                  <DeleteOutlined />
-                </Button>
-              </Popconfirm>,
+                <DeleteOutlined />
+              </PermissionButton>,
             ]}
           />
         )}

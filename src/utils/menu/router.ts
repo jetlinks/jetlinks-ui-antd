@@ -115,6 +115,10 @@ export enum BUTTON_PERMISSION_ENUM {
   'update' = 'update',
   'action' = 'action',
   'push' = 'push',
+  'assert' = 'assert',
+  'bind-user' = 'bind-user',
+  'active' = 'active',
+  'sync' = 'sync',
 }
 
 export type BUTTON_PERMISSION = keyof typeof BUTTON_PERMISSION_ENUM | string;

@@ -5,7 +5,7 @@ import ProTable from '@jetlinks/pro-table';
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { history, useIntl, useLocation } from 'umi';
-import { Button, message, Popconfirm, Tooltip } from 'antd';
+import { message } from 'antd';
 import {
   DeleteOutlined,
   EditOutlined,
@@ -21,8 +21,8 @@ import { observer } from '@formily/react';
 import { model } from '@formily/reactive';
 import Save from './save';
 import SearchComponent from '@/components/SearchComponent';
-import { getButtonPermission, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
-import usePermissions from '@/hooks/permission';
+import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { PermissionButton } from '@/components';
 
 export const service = new Service('organization');
 
@@ -60,13 +60,14 @@ export const getSortIndex = (data: DepartmentItem[], pId?: string): number => {
 
 export default observer(() => {
   const actionRef = useRef<ActionType>();
+  const permissionCode = 'system/Department';
   const intl = useIntl();
   const [param, setParam] = useState({});
   const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>([]);
   const [treeData, setTreeData] = useState<any[]>([]);
   const [sortParam, setSortParam] = useState<any>({ name: 'sortIndex', order: 'asc' });
-  const { permission, getOtherPermission } = usePermissions('system/Department');
   const rowKeys = useRef<React.Key[]>([]);
+  const { permission } = PermissionButton.usePermission(permissionCode);
 
   /**
    * 根据部门ID删除数据
@@ -111,30 +112,35 @@ export default observer(() => {
       valueType: 'option',
       width: 240,
       render: (text, record) => [
-        <Tooltip
-          title={intl.formatMessage({
-            id: permission.update ? 'pages.data.option.edit' : 'pages.data.option.noPermission',
-            defaultMessage: '编辑',
-          })}
-        >
-          <Button
-            style={{ padding: 0 }}
-            type="link"
-            disabled={!permission.update}
-            key="editable"
-            onClick={() => {
-              State.current = record;
-              State.visible = true;
-            }}
-          >
-            <EditOutlined />
-          </Button>
-        </Tooltip>,
-        <Button
+        <PermissionButton
+          key="editable"
+          tooltip={{
+            title: intl.formatMessage({
+              id: 'pages.data.option.edit',
+              defaultMessage: '编辑',
+            }),
+          }}
+          isPermission={permission.update}
           style={{ padding: 0 }}
           type="link"
-          disabled={!getOtherPermission(['add'])}
-          key="editable"
+          onClick={() => {
+            State.current = record;
+            State.visible = true;
+          }}
+        >
+          <EditOutlined />
+        </PermissionButton>,
+        <PermissionButton
+          key={'addChildren'}
+          style={{ padding: 0 }}
+          tooltip={{
+            title: intl.formatMessage({
+              id: 'pages.system.department.option.add',
+              defaultMessage: '新增子部门',
+            }),
+          }}
+          type="link"
+          isPermission={permission.add}
           onClick={() => {
             State.current = {
               parentId: record.id,
@@ -142,19 +148,19 @@ export default observer(() => {
             State.visible = true;
           }}
         >
-          <Tooltip
-            title={intl.formatMessage({
-              id: 'pages.system.department.option.add',
-              defaultMessage: '新增子部门',
-            })}
-          >
-            <PlusCircleOutlined />
-          </Tooltip>
-        </Button>,
-        <Button
-          type="link"
+          <PlusCircleOutlined />
+        </PermissionButton>,
+        <PermissionButton
+          key={'assets'}
           style={{ padding: 0 }}
-          key="assets"
+          tooltip={{
+            title: intl.formatMessage({
+              id: 'pages.data.option.assets',
+              defaultMessage: '资产分配',
+            }),
+          }}
+          type="link"
+          isPermission={permission.assert}
           onClick={() => {
             history.push(
               `${getMenuPathByParams(
@@ -164,61 +170,50 @@ export default observer(() => {
             );
           }}
         >
-          <Tooltip
-            title={intl.formatMessage({
-              id: 'pages.data.option.assets',
-              defaultMessage: '资产分配',
-            })}
-          >
-            <MedicineBoxOutlined />
-          </Tooltip>
-        </Button>,
-        <Button
+          <MedicineBoxOutlined />
+        </PermissionButton>,
+        <PermissionButton
           type="link"
           key="user"
           style={{ padding: 0 }}
+          tooltip={{
+            title: intl.formatMessage({
+              id: 'pages.system.department.user',
+              defaultMessage: '用户',
+            }),
+          }}
+          isPermission={permission['bind-user']}
           onClick={() =>
             history.push(
               `${getMenuPathByParams(MENUS_CODE['system/Department/Detail'], record.id)}?type=user`,
             )
           }
         >
-          <Tooltip
-            title={intl.formatMessage({
-              id: 'pages.system.department.user',
-              defaultMessage: '用户',
-            })}
-          >
-            <TeamOutlined />
-          </Tooltip>
-        </Button>,
-        <Popconfirm
-          key="unBindUser"
-          title={intl.formatMessage({
-            id: 'pages.system.role.option.delete',
-            defaultMessage: '确定要删除吗',
-          })}
-          onConfirm={() => {
-            deleteItem(record.id);
+          <TeamOutlined />
+        </PermissionButton>,
+        <PermissionButton
+          type="link"
+          key="delete"
+          style={{ padding: 0 }}
+          popConfirm={{
+            title: intl.formatMessage({
+              id: 'pages.system.role.option.delete',
+              defaultMessage: '确定要删除吗',
+            }),
+            onConfirm() {
+              deleteItem(record.id);
+            },
           }}
-          disabled={getButtonPermission('system/Department', ['delete'])}
-        >
-          <Tooltip
-            title={intl.formatMessage({
+          tooltip={{
+            title: intl.formatMessage({
               id: 'pages.data.option.delete',
               defaultMessage: '删除',
-            })}
-          >
-            <Button
-              style={{ padding: 0 }}
-              type="link"
-              disabled={getButtonPermission('system/Department', ['delete'])}
-              key="delete"
-            >
-              <DeleteOutlined />
-            </Button>
-          </Tooltip>
-        </Popconfirm>,
+            }),
+          }}
+          isPermission={permission.delete}
+        >
+          <DeleteOutlined />
+        </PermissionButton>,
       ],
     },
   ];
@@ -355,8 +350,8 @@ export default observer(() => {
         search={false}
         params={param}
         headerTitle={
-          <Button
-            disabled={getButtonPermission('system/Department', ['add'])}
+          <PermissionButton
+            isPermission={permission.add}
             onClick={() => {
               State.visible = true;
             }}
@@ -368,7 +363,7 @@ export default observer(() => {
               id: 'pages.data.option.add',
               defaultMessage: '新增',
             })}
-          </Button>
+          </PermissionButton>
         }
       />
       <Save<DepartmentItem>

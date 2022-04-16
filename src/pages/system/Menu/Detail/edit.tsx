@@ -1,5 +1,4 @@
 import {
-  Button,
   Card,
   Col,
   Form,
@@ -22,7 +21,8 @@ import type { MenuItem } from '@/pages/system/Menu/typing';
 import Title from '../components/Title';
 import Icons from '../components/Icons';
 import { QuestionCircleFilled } from '@ant-design/icons';
-import { getButtonPermission, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { PermissionButton } from '@/components';
 
 type EditProps = {
   data: MenuItem;
@@ -36,6 +36,7 @@ export default (props: EditProps) => {
   const [show] = useState(true);
   const [accessSupport, setAccessSupport] = useState('unsupported');
   const history = useHistory();
+  const { permission } = PermissionButton.usePermission('system/Menu');
 
   const [form] = Form.useForm();
 
@@ -318,7 +319,7 @@ export default (props: EditProps) => {
               </Col>
             </Row>
           )}
-          <Button
+          <PermissionButton
             type="primary"
             onClick={() => {
               if (disabled) {
@@ -327,17 +328,13 @@ export default (props: EditProps) => {
                 saveData();
               }
             }}
-            disabled={
-              disabled
-                ? getButtonPermission('system/Menu', ['update'])
-                : getButtonPermission('system/Menu', ['add'])
-            }
+            isPermission={disabled ? permission.update : permission.add}
           >
             {intl.formatMessage({
               id: `pages.data.option.${disabled ? 'edit' : 'save'}`,
               defaultMessage: '编辑',
             })}
-          </Button>
+          </PermissionButton>
         </Card>
         <Form.Item hidden name={'id'}>
           <Input />
