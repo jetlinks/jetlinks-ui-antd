@@ -1,6 +1,6 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {Form, Input, message, Pagination, Select, Table} from 'antd';
-import {service} from '@/pages/device/Instance';
+import React, { useContext, useEffect, useState } from 'react';
+import { Form, Input, message, Pagination, Select, Table } from 'antd';
+import { service } from '@/pages/device/Instance';
 import _ from 'lodash';
 
 const EditableContext: any = React.createContext(null);
@@ -42,7 +42,7 @@ const EditableCell = ({
   const save = async () => {
     try {
       const values = await form.validateFields();
-      if (values) {
+      if (values?.metadataId) {
         handleSave({ ...record, ...values });
       } else {
         console.log(values);
