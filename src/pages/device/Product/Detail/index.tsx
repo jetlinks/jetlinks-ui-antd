@@ -16,9 +16,8 @@ import BaseInfo from '@/pages/device/Product/Detail/BaseInfo';
 import { observer } from '@formily/react';
 import { productModel, service } from '@/pages/device/Product';
 import { useCallback, useEffect, useState } from 'react';
-import { useIntl } from '@@/plugin-locale/localeExports';
+import { useIntl, connect } from 'umi';
 import Metadata from '@/pages/device/components/Metadata';
-// import Alarm from '@/pages/device/components/Alarm';
 import Access from '@/pages/device/Product/Detail/Access';
 import type { DeviceMetadata } from '@/pages/device/Product/typings';
 import { Store } from 'jetlinks-store';
@@ -34,7 +33,7 @@ export const ModelEnum = {
   access: 'access',
 };
 
-const ProductDetail = observer(() => {
+const ProductDetail = observer((props: any) => {
   const intl = useIntl();
   const [mode, setMode] = useState('base');
   const param = useParams<{ id: string }>();
@@ -207,9 +206,15 @@ const ProductDetail = observer(() => {
                 type={'link'}
                 style={{ padding: 0, height: 'auto' }}
                 onClick={() => {
-                  history.push(getMenuPathByCode(MENUS_CODE['device/Instance']), {
+                  const url = getMenuPathByCode(MENUS_CODE['device/Instance']);
+                  const params = {
                     productId: productModel.current?.id,
+                  };
+                  props.push({
+                    locationState: params,
+                    path: url,
                   });
+                  history.push(url, params);
                 }}
               >
                 {productModel.current?.count || 0}
@@ -326,4 +331,16 @@ const ProductDetail = observer(() => {
     </PageContainer>
   );
 });
-export default ProductDetail;
+
+const mapState = (state: any) => ({
+  state: state.state,
+  path: state.path,
+});
+
+const actionCreate = {
+  push: (payload: any) => {
+    return { type: 'location/push', payload };
+  },
+};
+
+export default connect(mapState, actionCreate)(ProductDetail);
