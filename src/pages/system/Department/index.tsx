@@ -22,6 +22,7 @@ import { model } from '@formily/reactive';
 import Save from './save';
 import SearchComponent from '@/components/SearchComponent';
 import { getButtonPermission, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import usePermissions from '@/hooks/permission';
 
 export const service = new Service('organization');
 
@@ -64,7 +65,7 @@ export default observer(() => {
   const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>([]);
   const [treeData, setTreeData] = useState<any[]>([]);
   const [sortParam, setSortParam] = useState<any>({ name: 'sortIndex', order: 'asc' });
-
+  const { permission, getOtherPermission } = usePermissions('system/Department');
   const rowKeys = useRef<React.Key[]>([]);
 
   /**
@@ -110,29 +111,29 @@ export default observer(() => {
       valueType: 'option',
       width: 240,
       render: (text, record) => [
-        <Button
-          style={{ padding: 0 }}
-          type="link"
-          disabled={getButtonPermission('system/Department', ['update'])}
-          key="editable"
-          onClick={() => {
-            State.current = record;
-            State.visible = true;
-          }}
+        <Tooltip
+          title={intl.formatMessage({
+            id: permission.update ? 'pages.data.option.edit' : 'pages.data.option.noPermission',
+            defaultMessage: '编辑',
+          })}
         >
-          <Tooltip
-            title={intl.formatMessage({
-              id: 'pages.data.option.edit',
-              defaultMessage: '编辑',
-            })}
+          <Button
+            style={{ padding: 0 }}
+            type="link"
+            disabled={!permission.update}
+            key="editable"
+            onClick={() => {
+              State.current = record;
+              State.visible = true;
+            }}
           >
             <EditOutlined />
-          </Tooltip>
-        </Button>,
+          </Button>
+        </Tooltip>,
         <Button
           style={{ padding: 0 }}
           type="link"
-          disabled={getButtonPermission('system/Department', ['add'])}
+          disabled={!getOtherPermission(['add'])}
           key="editable"
           onClick={() => {
             State.current = {
