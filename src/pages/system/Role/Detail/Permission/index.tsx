@@ -44,15 +44,23 @@ const Permission = () => {
 
   const getDataList: any = (data1: any[]) => {
     if (Array.isArray(data1) && data1.length > 0) {
-      return data1.map((item) => {
-        const check = item.check;
-        delete item.check;
-        return {
-          ...item,
-          granted: check === 1,
-          children: item?.children,
-        };
-      });
+      return data1
+        .filter(
+          (i) =>
+            i.check === 1 ||
+            (i?.buttons || []).filter((it: any) => it.granted).length > 0 ||
+            (i?.assetAccesses).filter((it: any) => it.granted).length > 0,
+        )
+        .map((item) => {
+          const check = item.check;
+          delete item.check;
+          return {
+            ...item,
+            granted:
+              check === 1 || (item?.buttons || []).filter((it: any) => it.granted).length > 0,
+            children: item?.children,
+          };
+        });
     }
     return [];
   };
@@ -68,11 +76,7 @@ const Permission = () => {
             name: values?.name,
             description: values?.description || '',
           });
-          const list = (
-            getDataList(flattenArray([...values.permission?.children]) || []) || []
-          ).filter((item: any) => {
-            return item.granted || (item?.assetAccesses).filter((i: any) => i.granted).length > 0;
-          });
+          const list = getDataList(flattenArray([...values.permission?.children]) || []) || [];
           service
             .saveGrantTree('role', params?.id, {
               menus: list || [],

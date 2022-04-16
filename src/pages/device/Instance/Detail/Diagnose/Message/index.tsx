@@ -20,6 +20,7 @@ import {
 } from '@formily/antd';
 import { randomString } from '@/utils/util';
 import Log from './Log';
+import { Store } from 'jetlinks-store';
 
 interface Props {
   onChange: (type: string) => void;
@@ -64,6 +65,7 @@ const Message = (props: Props) => {
             ...payload,
           });
           setDialogList([...dialogList]);
+          Store.set('diagnose', dialogList);
         }
         const chatBox = document.getElementById('dialog');
         if (chatBox) {
@@ -124,6 +126,8 @@ const Message = (props: Props) => {
   };
   useEffect(() => {
     subscribeLog();
+    const arr = Store.get('diagnose') || [];
+    setDialogList(arr);
   }, []);
 
   const form = createForm({
@@ -373,15 +377,15 @@ const Message = (props: Props) => {
       <Col span={8}>
         <div
           style={{
-            padding: 24,
-            border: '1px solid rgba(0, 0, 0, .09)',
+            paddingLeft: 20,
+            borderLeft: '1px solid rgba(0, 0, 0, .09)',
             overflow: 'hidden',
             maxHeight: 600,
             overflowY: 'auto',
             minHeight: 400,
           }}
         >
-          <div style={{ color: 'rgba(0, 0, 0, .85)', fontWeight: 700 }}>日志</div>
+          <TitleComponent data={'日志'} />
           <div style={{ marginTop: 10 }}>
             {logList.length > 0 ? (
               logList.map((item) => <Log data={item} key={item.key} />)

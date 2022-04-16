@@ -25,7 +25,7 @@ const Protocol = () => {
     if (resp.status === 200) {
       message.success('操作成功!');
     } else {
-      message.error('操作失败!');
+      message.error(resp?.message || '操作失败');
     }
     actionRef.current?.reload();
   };

@@ -1,10 +1,12 @@
 import { Badge, Card, Col, Row } from 'antd';
 import type { ReactNode } from 'react';
+import { useEffect } from 'react';
 import { useState } from 'react';
 import Message from './Message';
 import Status from './Status';
 import './index.less';
 import classNames from 'classnames';
+import { Store } from 'jetlinks-store';
 
 interface ListProps {
   key: string;
@@ -40,6 +42,7 @@ const Diagnose = () => {
   const [current, setCurrent] = useState<string>('status');
   const [status, setStatus] = useState<string>('waiting');
   const [message, setMessage] = useState<string>('waiting');
+  const [active, setActive] = useState<boolean>(false);
 
   const [up, setUp] = useState<'success' | 'error' | 'waiting'>('waiting');
   const [down, setDown] = useState<'success' | 'error' | 'waiting'>('waiting');
@@ -94,7 +97,7 @@ const Diagnose = () => {
                     color={statusColor.get(up)}
                     text={
                       up === 'waiting'
-                        ? `诊断中`
+                        ? `上行消息通信诊断中`
                         : `上行消息通信${up === 'error' ? '异常' : '正常'}`
                     }
                   />
@@ -104,7 +107,7 @@ const Diagnose = () => {
                     color={statusColor.get(down)}
                     text={
                       down === 'waiting'
-                        ? `诊断中`
+                        ? `下行消息通信诊断中`
                         : `下行消息通信${down === 'error' ? '异常' : '正常'}`
                     }
                   />
@@ -116,30 +119,43 @@ const Diagnose = () => {
       ),
     },
   ];
+  useEffect(() => {
+    return () => {
+      Store.set('diagnose', []);
+      Store.set('diagnose-status', []);
+    };
+  }, []);
   return (
     <Card>
-      <Row gutter={24}>
-        {list.map((item: ListProps) => (
-          <Col
-            span={8}
-            key={item.key}
-            onClick={() => {
-              if (item.key === 'message' && status === 's-success-active') {
-                setCurrent(item.key);
-                setMessage('waiting');
-              }
-              if (item.key === 'status') {
-                setCurrent(item.key);
-              }
-            }}
-          >
-            {item.component}
-          </Col>
-        ))}
-      </Row>
+      <div className={current === 'message' ? 'header-message' : 'header'}>
+        <Row gutter={24} style={{ padding: 10 }}>
+          {list.map((item: ListProps) => (
+            <Col
+              span={8}
+              key={item.key}
+              onClick={() => {
+                if (current === item.key) {
+                  return;
+                }
+                if (item.key === 'message' && status === 's-success-active') {
+                  setCurrent(item.key);
+                  setMessage('waiting');
+                }
+                if (item.key === 'status') {
+                  setActive(true);
+                  setCurrent(item.key);
+                }
+              }}
+            >
+              {item.component}
+            </Col>
+          ))}
+        </Row>
+      </div>
       <div className="container">
         {current === 'status' ? (
           <Status
+            flag={active}
             onChange={(type: string) => {
               if (type === 'success') {
                 setStatus('s-success-active');
