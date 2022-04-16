@@ -4,7 +4,7 @@ import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { Button, message, Popconfirm, Tooltip } from 'antd';
+import { Button, message, Tooltip } from 'antd';
 import {
   DeleteOutlined,
   PlusCircleOutlined,
@@ -18,7 +18,8 @@ import SearchComponent from '@/components/SearchComponent';
 import Service from './service';
 import type { MenuItem } from './typing';
 import moment from 'moment';
-import { getButtonPermission, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { PermissionButton } from '@/components';
 
 export const service = new Service('menu');
 
@@ -39,8 +40,8 @@ export default observer(() => {
   const intl = useIntl();
 
   const [param, setParam] = useState({});
-  // const [form] = Form.useForm();
   const history = useHistory();
+  const { permission } = PermissionButton.usePermission('system/Menu');
 
   const deleteItem = async (id: string) => {
     const response: any = await service.remove(id);
@@ -149,11 +150,17 @@ export default observer(() => {
             <SearchOutlined />
           </Tooltip>
         </Button>,
-        <Button
+        <PermissionButton
           type="link"
           style={{ padding: 0 }}
           key="editable"
-          disabled={getButtonPermission('system/Menu', ['add'])}
+          isPermission={permission.add}
+          tooltip={{
+            title: intl.formatMessage({
+              id: 'page.system.menu.table.addChildren',
+              defaultMessage: '新增子菜单',
+            }),
+          }}
           onClick={() => {
             State.current = {
               parentId: record.id,
@@ -162,41 +169,30 @@ export default observer(() => {
             pageJump('', record.id, record.url);
           }}
         >
-          <Tooltip
-            title={intl.formatMessage({
-              id: 'page.system.menu.table.addChildren',
-              defaultMessage: '新增子菜单',
-            })}
-          >
-            <PlusCircleOutlined />
-          </Tooltip>
-        </Button>,
-        <Popconfirm
-          key="unBindUser"
-          title={intl.formatMessage({
-            id: 'page.system.menu.table.delete',
-            defaultMessage: '是否删除该菜单',
-          })}
-          onConfirm={() => {
-            deleteItem(record.id);
+          <PlusCircleOutlined />
+        </PermissionButton>,
+        <PermissionButton
+          key="delete"
+          type="link"
+          style={{ padding: 0 }}
+          popConfirm={{
+            title: intl.formatMessage({
+              id: 'page.system.menu.table.delete',
+              defaultMessage: '是否删除该菜单',
+            }),
+            onConfirm() {
+              deleteItem(record.id);
+            },
           }}
-        >
-          <Tooltip
-            title={intl.formatMessage({
+          tooltip={{
+            title: intl.formatMessage({
               id: 'pages.data.option.delete',
               defaultMessage: '删除',
-            })}
-          >
-            <Button
-              type="link"
-              style={{ padding: 0 }}
-              disabled={getButtonPermission('system/Menu', ['delete'])}
-              key="delete"
-            >
-              <DeleteOutlined />
-            </Button>
-          </Tooltip>
-        </Popconfirm>,
+            }),
+          }}
+        >
+          <DeleteOutlined />
+        </PermissionButton>,
       ],
     },
   ];
@@ -267,7 +263,7 @@ export default observer(() => {
         }}
         headerTitle={
           <Button
-            disabled={getButtonPermission('system/Menu', ['add'])}
+            disabled={!permission.add}
             onClick={() => {
               pageJump();
             }}
