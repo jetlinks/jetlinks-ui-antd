@@ -1,10 +1,10 @@
-import {PageContainer} from '@ant-design/pro-layout';
-import type {ActionType, ProColumns} from '@jetlinks/pro-table';
-import type {DeviceInstance} from '@/pages/device/Instance/typings';
+import { PageContainer } from '@ant-design/pro-layout';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import type { DeviceInstance } from '@/pages/device/Instance/typings';
 import moment from 'moment';
-import {Badge, Button, Dropdown, Menu, message, Popconfirm, Tooltip} from 'antd';
-import {useRef, useState} from 'react';
-import {useHistory} from 'umi';
+import { Badge, Button, Dropdown, Menu, message, Popconfirm, Tooltip } from 'antd';
+import { useEffect, useRef, useState } from 'react';
+import { useHistory } from 'umi';
 import {
   CheckCircleOutlined,
   DeleteOutlined,
@@ -16,23 +16,21 @@ import {
   StopOutlined,
   SyncOutlined,
 } from '@ant-design/icons';
-import {model} from '@formily/reactive';
+import { model } from '@formily/reactive';
 import Service from '@/pages/device/Instance/service';
 import type { MetadataItem } from '@/pages/device/Product/typings';
-import { useIntl, useLocation } from 'umi';
+import { useIntl, connect } from 'umi';
 import Save from './Save';
 import Export from './Export';
 import Import from './Import';
 import Process from './Process';
 import SearchComponent from '@/components/SearchComponent';
-import {ProTableCard} from '@/components';
+import { ProTableCard } from '@/components';
 import SystemConst from '@/utils/const';
 import Token from '@/utils/token';
 import DeviceCard from '@/components/ProTableCard/CardItems/device';
 
 import { getButtonPermission, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
-import { withRouter } from 'react-router-dom';
-
 
 export const statusMap = new Map();
 statusMap.set('在线', 'success');
@@ -70,9 +68,23 @@ const Instance = (props: any) => {
   const [bindKeys, setBindKeys] = useState<any[]>([]);
   const history = useHistory<Record<string, string>>();
   const intl = useIntl();
-  const location = useLocation();
 
-  console.log(location, props.location.query);
+  useEffect(() => {
+    console.log(searchParams);
+    if (props.path) {
+      const _terms: any[] = [];
+      Object.keys(props.locationState).forEach((key) => {
+        _terms.push({
+          column: key,
+          value: props.locationState[key],
+        });
+      });
+      setSearchParams({
+        terms: _terms,
+      });
+      props.cleanLocationState();
+    }
+  }, [props.path]);
 
   const tools = (record: DeviceInstance) => [
     <Button
@@ -599,4 +611,16 @@ const Instance = (props: any) => {
     </PageContainer>
   );
 };
-export default withRouter(Instance);
+
+const mapState = (state: any) => {
+  return {
+    locationState: state.location.locationState,
+    path: state.location.path,
+  };
+};
+
+const actionCreate = {
+  cleanLocationState: (payload: any) => ({ type: 'location/clean', payload }),
+};
+
+export default connect(mapState, actionCreate)(Instance);

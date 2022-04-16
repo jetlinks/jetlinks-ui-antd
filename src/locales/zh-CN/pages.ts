@@ -18,6 +18,7 @@ export default {
   'pages.data.option.disabled.tips': '确认禁用？',
   'pages.data.option.enabled': '启用',
   'pages.data.option.enabled.tips': '确认启用？',
+  'pages.data.option.noPermission': '暂无权限，请联系管理员',
   'pages.data.option.add': '新增',
   'pages.data.option.edit': '编辑',
   'pages.data.option.preview': '预览',
