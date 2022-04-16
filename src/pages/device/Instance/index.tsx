@@ -2,7 +2,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import type { DeviceInstance } from '@/pages/device/Instance/typings';
 import moment from 'moment';
-import { Badge, Button, Dropdown, Menu, message, Popconfirm, Tooltip } from 'antd';
+import { Badge, Button, Dropdown, Menu, message, Tooltip } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'umi';
 import {
@@ -25,12 +25,11 @@ import Export from './Export';
 import Import from './Import';
 import Process from './Process';
 import SearchComponent from '@/components/SearchComponent';
-import { ProTableCard } from '@/components';
+import { ProTableCard, PermissionButton } from '@/components';
 import SystemConst from '@/utils/const';
 import Token from '@/utils/token';
 import DeviceCard from '@/components/ProTableCard/CardItems/device';
-
-import { getButtonPermission, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 
 export const statusMap = new Map();
 statusMap.set('在线', 'success');
@@ -67,6 +66,7 @@ const Instance = (props: any) => {
   const [searchParams, setSearchParams] = useState<any>({});
   const [bindKeys, setBindKeys] = useState<any[]>([]);
   const history = useHistory<Record<string, string>>();
+  const { permission } = PermissionButton.usePermission('device/Instance');
   const intl = useIntl();
 
   useEffect(() => {
@@ -106,20 +106,18 @@ const Instance = (props: any) => {
         <EyeOutlined />
       </Tooltip>
     </Button>,
-    <Button
+    <PermissionButton
       type={'link'}
       key={'state'}
       style={{ padding: 0 }}
-      disabled={getButtonPermission('device/Product', ['action'])}
-    >
-      <Popconfirm
-        title={intl.formatMessage({
+      popConfirm={{
+        title: intl.formatMessage({
           id: `pages.data.option.${
             record.state.value !== 'notActive' ? 'disabled' : 'enabled'
           }.tips`,
           defaultMessage: '确认禁用？',
-        })}
-        onConfirm={async () => {
+        }),
+        onConfirm: async () => {
           if (record.state.value !== 'notActive') {
             await service.undeployDevice(record.id);
           } else {
@@ -132,33 +130,31 @@ const Instance = (props: any) => {
             }),
           );
           actionRef.current?.reload();
-        }}
-      >
-        <Tooltip
-          title={intl.formatMessage({
-            id: `pages.data.option.${record.state.value !== 'notActive' ? 'disabled' : 'enabled'}`,
-            defaultMessage: record.state.value !== 'notActive' ? '禁用' : '启用',
-          })}
-        >
-          {record.state.value !== 'notActive' ? <StopOutlined /> : <CheckCircleOutlined />}
-        </Tooltip>
-      </Popconfirm>{' '}
-    </Button>,
-
-    <Button
+        },
+      }}
+      isPermission={permission.action}
+      tooltip={{
+        title: intl.formatMessage({
+          id: `pages.data.option.${record.state.value !== 'notActive' ? 'disabled' : 'enabled'}`,
+          defaultMessage: record.state.value !== 'notActive' ? '禁用' : '启用',
+        }),
+      }}
+    >
+      {record.state.value !== 'notActive' ? <StopOutlined /> : <CheckCircleOutlined />}
+    </PermissionButton>,
+    <PermissionButton
       type={'link'}
       key={'delete'}
       style={{ padding: 0 }}
-      disabled={getButtonPermission('device/Instance', ['delete'])}
-    >
-      <Popconfirm
-        title={intl.formatMessage({
+      isPermission={permission.delete}
+      popConfirm={{
+        title: intl.formatMessage({
           id:
             record.state.value === 'notActive'
               ? 'pages.data.option.remove.tips'
               : 'pages.device.instance.deleteTip',
-        })}
-        onConfirm={async () => {
+        }),
+        onConfirm: async () => {
           if (record.state.value === 'notActive') {
             await service.remove(record.id);
             message.success(
@@ -171,18 +167,11 @@ const Instance = (props: any) => {
           } else {
             message.error(intl.formatMessage({ id: 'pages.device.instance.deleteTip' }));
           }
-        }}
-      >
-        <Tooltip
-          title={intl.formatMessage({
-            id: 'pages.data.option.remove',
-            defaultMessage: '删除',
-          })}
-        >
-          <DeleteOutlined />
-        </Tooltip>
-      </Popconfirm>
-    </Button>,
+        },
+      }}
+    >
+      <DeleteOutlined />
+    </PermissionButton>,
   ];
 
   const columns: ProColumns<DeviceInstance>[] = [
@@ -289,8 +278,8 @@ const Instance = (props: any) => {
   const menu = (
     <Menu>
       <Menu.Item key="1">
-        <Button
-          disabled={getButtonPermission('device/Instance', ['export'])}
+        <PermissionButton
+          isPermission={permission.delete}
           icon={<ExportOutlined />}
           type="default"
           onClick={() => {
@@ -298,44 +287,43 @@ const Instance = (props: any) => {
           }}
         >
           批量导出设备
-        </Button>
+        </PermissionButton>
       </Menu.Item>
       <Menu.Item key="2">
-        <Button
-          disabled={getButtonPermission('device/Instance', ['import'])}
+        <PermissionButton
+          isPermission={permission.import}
           icon={<ImportOutlined />}
           onClick={() => {
             setImportVisible(true);
           }}
         >
           批量导入设备
-        </Button>
+        </PermissionButton>
       </Menu.Item>
       <Menu.Item key="4">
-        <Button
-          disabled={getButtonPermission('device/Instance', ['active'])}
+        <PermissionButton
+          isPermission={permission.active}
           icon={<CheckCircleOutlined />}
           type="primary"
           ghost
-        >
-          <Popconfirm
-            title={'确认激活全部设备？'}
-            onConfirm={() => {
+          popConfirm={{
+            title: '确认激活全部设备？',
+            onConfirm: async () => {
               setType('active');
               const activeAPI = `/${
                 SystemConst.API_BASE
               }/device-instance/deploy?:X_Access_Token=${Token.get()}`;
               setApi(activeAPI);
               setOperationVisible(true);
-            }}
-          >
-            激活全部设备
-          </Popconfirm>
-        </Button>
+            },
+          }}
+        >
+          激活全部设备
+        </PermissionButton>
       </Menu.Item>
       <Menu.Item key="5">
-        <Button
-          disabled={getButtonPermission('device/Instance', ['sync'])}
+        <PermissionButton
+          isPermission={permission.sync}
           icon={<SyncOutlined />}
           type="primary"
           onClick={() => {
@@ -348,58 +336,52 @@ const Instance = (props: any) => {
           }}
         >
           同步设备状态
-        </Button>
+        </PermissionButton>
       </Menu.Item>
       {bindKeys.length > 0 && (
         <Menu.Item key="3">
-          <Button
-            disabled={getButtonPermission('device/Instance', ['delete'])}
+          <PermissionButton
+            isPermission={permission.delete}
             icon={<DeleteOutlined />}
             type="primary"
             danger
-          >
-            <Popconfirm
-              title="确认删除选中设备?"
-              onConfirm={() => {
+            popConfirm={{
+              title: '确认删除选中设备?',
+              onConfirm: () => {
                 service.batchDeleteDevice(bindKeys).then((resp) => {
                   if (resp.status === 200) {
                     message.success('操作成功');
                     actionRef.current?.reset?.();
                   }
                 });
-              }}
-              okText="确认"
-              cancelText="取消"
-            >
-              删除选中设备
-            </Popconfirm>
-          </Button>
+              },
+            }}
+          >
+            删除选中设备
+          </PermissionButton>
         </Menu.Item>
       )}
       {bindKeys.length > 0 && (
         <Menu.Item key="6">
-          <Button
-            disabled={getButtonPermission('device/Instance', ['action'])}
+          <PermissionButton
+            isPermission={permission.action}
             icon={<StopOutlined />}
             type="primary"
             danger
-          >
-            <Popconfirm
-              title="确认禁用选中设备?"
-              onConfirm={() => {
+            popConfirm={{
+              title: '确认禁用选中设备?',
+              onConfirm() {
                 service.batchUndeployDevice(bindKeys).then((resp) => {
                   if (resp.status === 200) {
                     message.success('操作成功');
                     actionRef.current?.reset?.();
                   }
                 });
-              }}
-              okText="确认"
-              cancelText="取消"
-            >
-              禁用选中设备
-            </Popconfirm>
-          </Button>
+              },
+            }}
+          >
+            禁用选中设备
+          </PermissionButton>
         </Menu.Item>
       )}
     </Menu>
@@ -446,13 +428,13 @@ const Instance = (props: any) => {
           },
         }}
         headerTitle={[
-          <Button
+          <PermissionButton
             onClick={() => {
               setVisible(true);
               setCurrent({});
             }}
             style={{ marginRight: 12 }}
-            disabled={getButtonPermission('device/Instance', 'add')}
+            isPermission={permission.add}
             key="button"
             icon={<PlusOutlined />}
             type="primary"
@@ -461,7 +443,7 @@ const Instance = (props: any) => {
               id: 'pages.data.option.add',
               defaultMessage: '新增',
             })}
-          </Button>,
+          </PermissionButton>,
           <Dropdown key={'more'} overlay={menu} placement="bottom">
             <Button>批量操作</Button>
           </Dropdown>,
@@ -482,35 +464,34 @@ const Instance = (props: any) => {
               </div>
             }
             actions={[
-              <Button
+              <PermissionButton
                 type={'link'}
                 onClick={() => {
                   setCurrent(record);
                   setVisible(true);
                 }}
                 key={'edit'}
-                disabled={getButtonPermission('device/Instance', ['update', 'add'])}
+                isPermission={permission.update}
               >
                 <EditOutlined />
                 {intl.formatMessage({
                   id: 'pages.data.option.edit',
                   defaultMessage: '编辑',
                 })}
-              </Button>,
-              <Button
-                disabled={getButtonPermission('device/Instance', ['action'])}
+              </PermissionButton>,
+              <PermissionButton
+                isPermission={permission.action}
                 type={'link'}
                 key={'state'}
                 style={{ padding: 0 }}
-              >
-                <Popconfirm
-                  title={intl.formatMessage({
+                popConfirm={{
+                  title: intl.formatMessage({
                     id: `pages.data.option.${
                       record.state.value !== 'notActive' ? 'disabled' : 'enabled'
                     }.tips`,
                     defaultMessage: '确认禁用？',
-                  })}
-                  onConfirm={async () => {
+                  }),
+                  onConfirm: async () => {
                     if (record.state.value !== 'notActive') {
                       await service.undeployDevice(record.id);
                     } else {
@@ -523,33 +504,30 @@ const Instance = (props: any) => {
                       }),
                     );
                     actionRef.current?.reload();
-                  }}
-                >
-                  {record.state.value !== 'notActive' ? <StopOutlined /> : <CheckCircleOutlined />}
-                  {intl.formatMessage({
-                    id: `pages.data.option.${
-                      record.state.value !== 'notActive' ? 'disabled' : 'enabled'
-                    }`,
-                    defaultMessage: record.state.value !== 'notActive' ? '禁用' : '启用',
-                  })}
-                </Popconfirm>
-              </Button>,
-
-              <Button
+                  },
+                }}
+              >
+                {record.state.value !== 'notActive' ? <StopOutlined /> : <CheckCircleOutlined />}
+                {intl.formatMessage({
+                  id: `pages.data.option.${
+                    record.state.value !== 'notActive' ? 'disabled' : 'enabled'
+                  }`,
+                  defaultMessage: record.state.value !== 'notActive' ? '禁用' : '启用',
+                })}
+              </PermissionButton>,
+              <PermissionButton
                 key="delete"
-                disabled={getButtonPermission('device/Instance', ['delete'])}
+                isPermission={permission.delete}
                 type={'link'}
                 style={{ padding: 0 }}
-              >
-                <Popconfirm
-                  title={intl.formatMessage({
+                popConfirm={{
+                  title: intl.formatMessage({
                     id:
                       record.state.value === 'notActive'
                         ? 'pages.data.option.remove.tips'
                         : 'pages.device.instance.deleteTip',
-                  })}
-                  key={'delete'}
-                  onConfirm={async () => {
+                  }),
+                  onConfirm: async () => {
                     if (record.state.value === 'notActive') {
                       await service.remove(record.id);
                       message.success(
@@ -562,11 +540,11 @@ const Instance = (props: any) => {
                     } else {
                       message.error(intl.formatMessage({ id: 'pages.device.instance.deleteTip' }));
                     }
-                  }}
-                >
-                  <DeleteOutlined />
-                </Popconfirm>
-              </Button>,
+                  },
+                }}
+              >
+                <DeleteOutlined />
+              </PermissionButton>,
             ]}
           />
         )}

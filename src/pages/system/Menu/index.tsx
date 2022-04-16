@@ -262,8 +262,8 @@ export default observer(() => {
           };
         }}
         headerTitle={
-          <Button
-            disabled={!permission.add}
+          <PermissionButton
+            isPermission={permission.add}
             onClick={() => {
               pageJump();
             }}
@@ -275,7 +275,7 @@ export default observer(() => {
               id: 'pages.data.option.add',
               defaultMessage: '新增',
             })}
-          </Button>
+          </PermissionButton>
         }
       />
       {/*<Modal*/}

@@ -12,7 +12,6 @@ import Service from '@/pages/system/Department/Assets/service';
 import Models from './model';
 import Bind from './bind';
 import SearchComponent from '@/components/SearchComponent';
-import { getButtonPermission } from '@/utils/menu';
 
 export const service = new Service<ProductItem>('assets');
 
@@ -97,13 +96,8 @@ export default observer(() => {
           onConfirm={() => {
             singleUnBind(record.id);
           }}
-          disabled={getButtonPermission('system/Department', ['add', 'update'])}
         >
-          <Button
-            type={'link'}
-            style={{ padding: 0 }}
-            disabled={getButtonPermission('system/Department', ['add', 'update'])}
-          >
+          <Button type={'link'} style={{ padding: 0 }}>
             <Tooltip
               title={intl.formatMessage({
                 id: 'pages.system.role.option.unBindUser',
@@ -179,7 +173,6 @@ export default observer(() => {
             icon={<PlusOutlined />}
             type="primary"
             key="bind"
-            disabled={getButtonPermission('system/Department', ['add', 'update'])}
           >
             {intl.formatMessage({
               id: 'pages.data.option.assets',
@@ -193,12 +186,8 @@ export default observer(() => {
             })}
             key="unBind"
             onConfirm={handleUnBind}
-            disabled={getButtonPermission('system/Department', ['add', 'update'])}
           >
-            <Button
-              icon={<DisconnectOutlined />}
-              disabled={getButtonPermission('system/Department', ['add', 'update'])}
-            >
+            <Button icon={<DisconnectOutlined />}>
               {intl.formatMessage({
                 id: 'pages.system.role.option.unBindUser',
                 defaultMessage: '批量解绑',

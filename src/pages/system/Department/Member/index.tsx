@@ -12,7 +12,6 @@ import Service from '@/pages/system/Department/Member/service';
 import { DisconnectOutlined, PlusOutlined } from '@ant-design/icons';
 import Bind from './bind';
 import SearchComponent from '@/components/SearchComponent';
-import { getButtonPermission } from '@/utils/menu';
 
 export const service = new Service('tenant');
 
@@ -130,13 +129,8 @@ const Member = observer(() => {
           onConfirm={() => {
             singleUnBind(record.id);
           }}
-          disabled={getButtonPermission('system/Department', ['add', 'update'])}
         >
-          <Button
-            type={'link'}
-            style={{ padding: 0 }}
-            disabled={getButtonPermission('system/Department', ['add', 'update'])}
-          >
+          <Button type={'link'} style={{ padding: 0 }}>
             <Tooltip
               title={intl.formatMessage({
                 id: 'pages.system.role.option.unBindUser',
@@ -198,7 +192,6 @@ const Member = observer(() => {
             icon={<PlusOutlined />}
             type="primary"
             key="bind"
-            disabled={getButtonPermission('system/Department', ['add', 'update'])}
           >
             {intl.formatMessage({
               id: 'pages.system.role.option.bindUser',
@@ -212,12 +205,8 @@ const Member = observer(() => {
             })}
             key="unBind"
             onConfirm={handleUnBind}
-            disabled={getButtonPermission('system/Department', ['add', 'update'])}
           >
-            <Button
-              icon={<DisconnectOutlined />}
-              disabled={getButtonPermission('system/Department', ['add', 'update'])}
-            >
+            <Button icon={<DisconnectOutlined />}>
               {intl.formatMessage({
                 id: 'pages.system.role.option.unBindUser',
                 defaultMessage: '批量解绑',

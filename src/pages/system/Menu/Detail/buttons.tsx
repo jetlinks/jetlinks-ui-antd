@@ -1,4 +1,4 @@
-import { Button, Form, Input, message, Modal, Popconfirm, Tooltip } from 'antd';
+import { Button, Form, Input, message, Modal, Tooltip } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { useCallback, useEffect, useState } from 'react';
 import { service } from '@/pages/system/Menu';
@@ -8,7 +8,7 @@ import { DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined } from '@ant
 import type { MenuButtonInfo, MenuItem } from '@/pages/system/Menu/typing';
 import Permission from '@/pages/system/Menu/components/permission';
 import { useRequest } from '@@/plugin-request/request';
-import { getButtonPermission } from '@/utils/menu';
+import { PermissionButton } from '@/components';
 
 type ButtonsProps = {
   data: MenuItem;
@@ -23,6 +23,7 @@ export default (props: ButtonsProps) => {
   const [visible, setVisible] = useState(false); // Modal显示影藏
   const [id, setId] = useState(''); // 缓存ID
   const [form] = Form.useForm();
+  const { permission } = PermissionButton.usePermission('system/Menu');
 
   const { data: permissions, run: queryPermissions } = useRequest(service.queryPermission, {
     manual: true,
@@ -169,7 +170,7 @@ export default (props: ButtonsProps) => {
       align: 'center',
       width: 240,
       render: (_, record) => [
-        <Button
+        <PermissionButton
           key="edit"
           type={'link'}
           style={{ padding: 0 }}
@@ -179,17 +180,16 @@ export default (props: ButtonsProps) => {
             setDisabled(false);
             setVisible(true);
           }}
-          disabled={getButtonPermission('system/Menu', 'update')}
-        >
-          <Tooltip
-            title={intl.formatMessage({
+          tooltip={{
+            title: intl.formatMessage({
               id: 'pages.data.option.edit',
               defaultMessage: '编辑',
-            })}
-          >
-            <EditOutlined />
-          </Tooltip>
-        </Button>,
+            }),
+          }}
+          isPermission={permission.update}
+        >
+          <EditOutlined />
+        </PermissionButton>,
         <Button
           key="view"
           type={'link'}
@@ -210,32 +210,29 @@ export default (props: ButtonsProps) => {
             <SearchOutlined />
           </Tooltip>
         </Button>,
-        <Popconfirm
+        <PermissionButton
           key="unBindUser"
-          title={intl.formatMessage({
-            id: 'page.system.menu.table.delete',
-            defaultMessage: '是否删除该按钮',
-          })}
-          onConfirm={() => {
-            deleteItem(record.id);
+          type={'link'}
+          style={{ padding: 0 }}
+          popConfirm={{
+            title: intl.formatMessage({
+              id: 'page.system.menu.table.delete',
+              defaultMessage: '是否删除该按钮',
+            }),
+            onConfirm() {
+              deleteItem(record.id);
+            },
           }}
-          disabled={getButtonPermission('system/Menu', 'delete')}
-        >
-          <Tooltip
-            title={intl.formatMessage({
+          tooltip={{
+            title: intl.formatMessage({
               id: 'pages.data.option.delete',
               defaultMessage: '删除',
-            })}
-          >
-            <Button
-              disabled={getButtonPermission('system/Menu', 'delete')}
-              type={'link'}
-              style={{ padding: 0 }}
-            >
-              <DeleteOutlined />
-            </Button>
-          </Tooltip>
-        </Popconfirm>,
+            }),
+          }}
+          isPermission={permission.update}
+        >
+          <DeleteOutlined />
+        </PermissionButton>,
       ],
     },
   ];
@@ -248,7 +245,7 @@ export default (props: ButtonsProps) => {
         search={false}
         pagination={false}
         toolBarRender={() => [
-          <Button
+          <PermissionButton
             onClick={() => {
               if (!props.data) {
                 message.warning('请先新增菜单基本信息');
@@ -260,13 +257,13 @@ export default (props: ButtonsProps) => {
             key="button"
             icon={<PlusOutlined />}
             type="primary"
-            disabled={getButtonPermission('system/Menu', ['add'])}
+            isPermission={permission.update}
           >
             {intl.formatMessage({
               id: 'pages.data.option.add',
               defaultMessage: '新增',
             })}
-          </Button>,
+          </PermissionButton>,
         ]}
       />
       <Modal

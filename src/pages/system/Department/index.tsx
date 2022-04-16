@@ -5,7 +5,7 @@ import ProTable from '@jetlinks/pro-table';
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { history, useIntl, useLocation } from 'umi';
-import { Button, message } from 'antd';
+import { message } from 'antd';
 import {
   DeleteOutlined,
   EditOutlined,
@@ -350,8 +350,8 @@ export default observer(() => {
         search={false}
         params={param}
         headerTitle={
-          <Button
-            disabled={!permission.add}
+          <PermissionButton
+            isPermission={permission.add}
             onClick={() => {
               State.visible = true;
             }}
@@ -363,7 +363,7 @@ export default observer(() => {
               id: 'pages.data.option.add',
               defaultMessage: '新增',
             })}
-          </Button>
+          </PermissionButton>
         }
       />
       <Save<DepartmentItem>

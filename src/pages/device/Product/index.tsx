@@ -1,6 +1,6 @@
-import {PageContainer} from '@ant-design/pro-layout';
-import {Badge, Button, message, Popconfirm, Space, Tooltip, Upload} from 'antd';
-import type {ProductItem} from '@/pages/device/Product/typings';
+import { PageContainer } from '@ant-design/pro-layout';
+import { Badge, Button, message, Space, Tooltip, Upload } from 'antd';
+import type { ProductItem } from '@/pages/device/Product/typings';
 import {
   DeleteOutlined,
   DownloadOutlined,
@@ -10,19 +10,18 @@ import {
   StopOutlined,
 } from '@ant-design/icons';
 import Service from '@/pages/device/Product/service';
-import {observer} from '@formily/react';
-import {model} from '@formily/reactive';
-import {useHistory} from 'umi';
-import {useIntl} from '@@/plugin-locale/localeExports';
-import type {ActionType, ProColumns} from '@jetlinks/pro-table';
-import {useEffect, useRef, useState} from 'react';
+import { observer } from '@formily/react';
+import { model } from '@formily/reactive';
+import { useHistory } from 'umi';
+import { useIntl } from '@@/plugin-locale/localeExports';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import { useEffect, useRef, useState } from 'react';
 import Save from '@/pages/device/Product/Save';
 import SearchComponent from '@/components/SearchComponent';
-import {getButtonPermission, getMenuPathByParams, MENUS_CODE} from '@/utils/menu';
-import {ProTableCard} from '@/components';
+import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { ProTableCard, AIcon, PermissionButton } from '@/components';
 import ProductCard from '@/components/ProTableCard/CardItems/product';
-import {downloadObject} from '@/utils/util';
-import AIcon from '../../../components/AIcon';
+import { downloadObject } from '@/utils/util';
 
 export const service = new Service('device-product');
 export const statusMap = {
@@ -42,6 +41,7 @@ const Product = observer(() => {
   const intl = useIntl();
   const [queryParam, setQueryParam] = useState({});
   const history = useHistory<Record<string, string>>();
+  const { permission } = PermissionButton.usePermission('device/Product');
 
   useEffect(() => {
     if (history) {
@@ -106,7 +106,6 @@ const Product = observer(() => {
 
   const tools = (record: ProductItem) => [
     <Button
-      disabled={getButtonPermission('device/Product', ['view'])}
       type={'link'}
       onClick={() => {
         productModel.current = record;
@@ -124,8 +123,8 @@ const Product = observer(() => {
         <EyeOutlined />
       </Tooltip>
     </Button>,
-    <Button
-      disabled={getButtonPermission('device/Product', ['update'])}
+    <PermissionButton
+      isPermission={permission.update}
       key="warning"
       onClick={() => {
         setCurrent(record);
@@ -133,99 +132,88 @@ const Product = observer(() => {
       }}
       type={'link'}
       style={{ padding: 0 }}
-    >
-      <Tooltip
-        title={intl.formatMessage({
+      tooltip={{
+        title: intl.formatMessage({
           id: 'pages.data.option.edit',
           defaultMessage: '编辑',
-        })}
-        key={'edit'}
-      >
-        <EditOutlined />
-      </Tooltip>
-    </Button>,
-    <Button
-      disabled={getButtonPermission('device/Product', ['export'])}
-      type={'link'}
-      style={{ padding: 0 }}
-    >
-      <Tooltip
-        title={intl.formatMessage({
-          id: 'pages.data.option.download',
-          defaultMessage: '下载',
-        })}
-        key={'download'}
-      >
-        <DownloadOutlined
-          onClick={async () => {
-            downloadObject(
-              record,
-              intl.formatMessage({
-                id: 'pages.device.product',
-                defaultMessage: '产品',
-              }),
-            );
-            message.success('操作成功');
-          }}
-        />
-      </Tooltip>
-    </Button>,
-    <Popconfirm
-      key={'state'}
-      title={intl.formatMessage({
-        id: `pages.data.option.${record.state ? 'disabled' : 'enabled'}.tips`,
-        defaultMessage: '是否启用?',
-      })}
-      onConfirm={() => {
-        changeDeploy(record.id, record.state ? 'undeploy' : 'deploy');
+        }),
       }}
     >
-      <Button
-        disabled={getButtonPermission('device/Product', ['action'])}
-        style={{ padding: 0 }}
-        type={'link'}
-      >
-        <Tooltip
-          title={intl.formatMessage({
-            id: `pages.data.option.${record.state ? 'disabled' : 'enabled'}`,
-            defaultMessage: record.state ? '禁用' : '启用',
-          })}
-        >
-          {record.state ? <StopOutlined /> : <AIcon type={'icon-fabu'} />}
-        </Tooltip>
-      </Button>
-    </Popconfirm>,
-    <Button
-      key="unBindUser"
-      disabled={getButtonPermission('device/Product', ['delete'])}
+      <EditOutlined />
+    </PermissionButton>,
+    <PermissionButton
+      isPermission={permission.export}
       type={'link'}
       style={{ padding: 0 }}
+      tooltip={{
+        title: intl.formatMessage({
+          id: 'pages.data.option.download',
+          defaultMessage: '下载',
+        }),
+      }}
     >
-      <Popconfirm
-        key="unBindUser"
-        title={intl.formatMessage({
+      <DownloadOutlined
+        onClick={async () => {
+          downloadObject(
+            record,
+            intl.formatMessage({
+              id: 'pages.device.product',
+              defaultMessage: '产品',
+            }),
+          );
+          message.success('操作成功');
+        }}
+      />
+    </PermissionButton>,
+    <PermissionButton
+      popConfirm={{
+        title: intl.formatMessage({
+          id: `pages.data.option.${record.state ? 'disabled' : 'enabled'}.tips`,
+          defaultMessage: '是否启用?',
+        }),
+        onConfirm() {
+          changeDeploy(record.id, record.state ? 'undeploy' : 'deploy');
+        },
+      }}
+      tooltip={{
+        title: intl.formatMessage({
+          id: `pages.data.option.${record.state ? 'disabled' : 'enabled'}`,
+          defaultMessage: record.state ? '禁用' : '启用',
+        }),
+      }}
+      style={{ padding: 0 }}
+      type={'link'}
+      isPermission={permission.action}
+    >
+      {record.state ? <StopOutlined /> : <AIcon type={'icon-fabu'} />}
+    </PermissionButton>,
+    <PermissionButton
+      key="unBindUser"
+      type={'link'}
+      style={{ padding: 0 }}
+      isPermission={permission.delete}
+      popConfirm={{
+        title: intl.formatMessage({
           id: record.state === 1 ? 'pages.device.productDetail.deleteTip' : 'page.table.isDelete',
           defaultMessage: '是否删除?',
-        })}
-        onConfirm={async () => {
+        }),
+        onConfirm: async () => {
           if (record.state === 0) {
             await deleteItem(record.id);
           } else {
             message.error('已发布的产品不能进行删除操作');
           }
-        }}
-      >
-        <Tooltip
-          title={intl.formatMessage({
-            id: 'pages.data.option.remove',
-            defaultMessage: '删除',
-          })}
-          key={'remove'}
-        >
-          <DeleteOutlined />
-        </Tooltip>
-      </Popconfirm>
-    </Button>,
+        },
+      }}
+      tooltip={{
+        title: intl.formatMessage({
+          id: 'pages.data.option.remove',
+          defaultMessage: '删除',
+        }),
+      }}
+    >
+      <DeleteOutlined />
+    </PermissionButton>,
   ];
 
   const columns: ProColumns<ProductItem>[] = [
@@ -353,12 +341,12 @@ const Product = observer(() => {
         search={false}
         pagination={{ pageSize: 10 }}
         headerTitle={[
-          <Button
+          <PermissionButton
             onClick={() => {
               setCurrent(undefined);
               setVisible(true);
             }}
-            disabled={getButtonPermission('device/Product', ['add'])}
+            isPermission={permission.add}
             key="button"
             icon={<PlusOutlined />}
             type="primary"
@@ -367,9 +355,9 @@ const Product = observer(() => {
               id: 'pages.data.option.add',
               defaultMessage: '新增',
             })}
-          </Button>,
+          </PermissionButton>,
           <Upload
-            disabled={getButtonPermission('device/Product', ['import'])}
+            disabled={!permission.import}
             key={'import'}
             showUploadList={false}
             beforeUpload={(file) => {
@@ -402,12 +390,9 @@ const Product = observer(() => {
               return false;
             }}
           >
-            <Button
-              disabled={getButtonPermission('device/Product', ['import'])}
-              style={{ marginLeft: 12 }}
-            >
+            <PermissionButton isPermission={permission.import} style={{ marginLeft: 12 }}>
               导入
-            </Button>
+            </PermissionButton>
           </Upload>,
         ]}
         cardRender={(record) => (
@@ -427,13 +412,13 @@ const Product = observer(() => {
               </div>
             }
             actions={[
-              <Button
+              <PermissionButton
                 key="edit"
                 onClick={() => {
                   setCurrent(record);
                   setVisible(true);
                 }}
-                disabled={getButtonPermission('device/Product', ['update', 'add'])}
+                isPermission={permission.update}
                 type={'link'}
                 style={{ padding: 0 }}
               >
@@ -442,9 +427,9 @@ const Product = observer(() => {
                   id: 'pages.data.option.edit',
                   defaultMessage: '编辑',
                 })}
-              </Button>,
-              <Button
-                disabled={getButtonPermission('device/Product', ['export'])}
+              </PermissionButton>,
+              <PermissionButton
+                isPermission={permission.export}
                 type={'link'}
                 key={'download'}
                 style={{ padding: 0 }}
@@ -465,55 +450,52 @@ const Product = observer(() => {
                   id: 'pages.data.option.download',
                   defaultMessage: '下载',
                 })}
-              </Button>,
-              <Popconfirm
+              </PermissionButton>,
+              <PermissionButton
                 key={'state'}
-                title={intl.formatMessage({
-                  id: `pages.data.option.${record.state ? 'disabled' : 'enabled'}.tips`,
-                  defaultMessage: '是否启用?',
-                })}
-                onConfirm={() => {
-                  changeDeploy(record.id, record.state ? 'undeploy' : 'deploy');
+                popConfirm={{
+                  title: intl.formatMessage({
+                    id: `pages.data.option.${record.state ? 'disabled' : 'enabled'}.tips`,
+                    defaultMessage: '是否启用?',
+                  }),
+                  onConfirm() {
+                    changeDeploy(record.id, record.state ? 'undeploy' : 'deploy');
+                  },
                 }}
+                style={{ padding: 0 }}
+                type={'link'}
+                isPermission={permission.action}
               >
-                <Button
-                  style={{ padding: 0 }}
-                  type={'link'}
-                  disabled={getButtonPermission('device/Product', ['action'])}
-                >
-                  {record.state ? <StopOutlined /> : <AIcon type={'icon-fabu'} />}
-                  {intl.formatMessage({
-                    id: `pages.data.option.${record.state ? 'disabled' : 'enabled'}`,
-                    defaultMessage: record.state ? '禁用' : '启用',
-                  })}
-                </Button>
-              </Popconfirm>,
-              <Popconfirm
+                {record.state ? <StopOutlined /> : <AIcon type={'icon-fabu'} />}
+                {intl.formatMessage({
+                  id: `pages.data.option.${record.state ? 'disabled' : 'enabled'}`,
+                  defaultMessage: record.state ? '禁用' : '启用',
+                })}
+              </PermissionButton>,
+              <PermissionButton
                 key="delete"
-                disabled={getButtonPermission('device/Product', ['delete'])}
-                title={intl.formatMessage({
-                  id:
-                    record.state === 1
-                      ? 'pages.device.productDetail.deleteTip'
-                      : 'page.table.isDelete',
-                  defaultMessage: '是否删除?',
-                })}
-                onConfirm={async () => {
-                  if (record.state === 0) {
-                    await deleteItem(record.id);
-                  } else {
-                    message.error('已发布的产品不能进行删除操作');
-                  }
+                type={'link'}
+                style={{ padding: 0 }}
+                isPermission={permission.delete}
+                popConfirm={{
+                  title: intl.formatMessage({
+                    id:
+                      record.state === 1
+                        ? 'pages.device.productDetail.deleteTip'
+                        : 'page.table.isDelete',
+                    defaultMessage: '是否删除?',
+                  }),
+                  onConfirm: async () => {
+                    if (record.state === 0) {
+                      await deleteItem(record.id);
+                    } else {
+                      message.error('已发布的产品不能进行删除操作');
+                    }
+                  },
                 }}
               >
-                <Button
-                  type={'link'}
-                  style={{ padding: 0 }}
-                  disabled={getButtonPermission('device/Product', ['delete'])}
-                >
-                  <DeleteOutlined />
-                </Button>
-              </Popconfirm>,
+                <DeleteOutlined />
+              </PermissionButton>,
             ]}
           />
         )}

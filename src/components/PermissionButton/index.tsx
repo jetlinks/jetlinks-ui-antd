@@ -18,11 +18,16 @@ interface PermissionButtonProps extends ButtonProps {
 const PermissionButton = (props: PermissionButtonProps) => {
   const { tooltip, popConfirm, isPermission, ...buttonProps } = props;
 
-  const _isPermission = 'isPermission' in props ? !isPermission : false;
+  const _isPermission =
+    'isPermission' in props && props.isPermission
+      ? 'disabled' in buttonProps
+        ? buttonProps.disabled
+        : false
+      : true;
 
   const intl = useIntl();
 
-  const defaultButton = <Button disabled={_isPermission} {...buttonProps} />;
+  const defaultButton = <Button {...buttonProps} disabled={_isPermission} />;
 
   const isTooltip = tooltip ? <Tooltip {...tooltip}>{defaultButton}</Tooltip> : null;
 
@@ -41,12 +46,12 @@ const PermissionButton = (props: PermissionButtonProps) => {
     // 如果有权限
     if (isPermission) {
       if (popConfirm) {
-        if (tooltip) {
-          popConfirm.children = isTooltip;
-        }
+        popConfirm.children = tooltip ? isTooltip : defaultButton;
         return <Popconfirm disabled={!isPermission} {...popConfirm} />;
       } else if (tooltip && !popConfirm) {
         return isTooltip;
+      } else {
+        return defaultButton;
       }
     }
     return noPermission;
