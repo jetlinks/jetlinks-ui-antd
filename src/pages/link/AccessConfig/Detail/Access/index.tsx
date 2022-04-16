@@ -20,6 +20,7 @@ import { useHistory } from 'umi';
 import ReactMarkdown from 'react-markdown';
 import { getButtonPermission, getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 import { ExclamationCircleFilled } from '@ant-design/icons';
+import TitleComponent from '@/components/TitleComponent';
 
 interface Props {
   change: () => void;
@@ -466,7 +467,7 @@ const Access = (props: Props) => {
           <Row gutter={24}>
             <Col span={12}>
               <div className={styles.info}>
-                <div className={styles.title}>基本信息</div>
+                <TitleComponent data={'基本信息'} />
                 <Form name="basic" layout="vertical" form={form}>
                   <Form.Item
                     label="名称"
