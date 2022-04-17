@@ -5,7 +5,7 @@ export enum MENUS_CODE {
   'Analysis/DeviceMessage' = 'Analysis/DeviceMessage',
   'Analysis/Jvm' = 'Analysis/Jvm',
   'Analysis/MessageChart' = 'Analysis/MessageChart',
-  Analysis = 'Analysis',
+  'Analysis' = 'Analysis',
   'cloud/Aliyun' = 'cloud/Aliyun',
   'cloud/Ctwing' = 'cloud/Ctwing',
   'cloud/DuerOS' = 'cloud/DuerOS',
@@ -39,7 +39,7 @@ export enum MENUS_CODE {
   'link/Protocol' = 'link/Protocol',
   'link/Type' = 'link/Type',
   'link/AccessConfig' = 'link/AccessConfig',
-  Log = 'Log',
+  'Log' = 'Log',
   'media/Cascade' = 'media/Cascade',
   'media/Cascade/Save' = 'media/Cascade/Save',
   'media/Cascade/Channel' = 'media/Cascade/Channel',
@@ -121,7 +121,10 @@ export enum BUTTON_PERMISSION_ENUM {
   'sync' = 'sync',
 }
 
-export type BUTTON_PERMISSION = keyof typeof BUTTON_PERMISSION_ENUM | string;
+// 调试按钮、通知记录、批量导出、批量导入、选择通道、推送、分配资产、绑定用户对应的ID是啥
+export type CUSTOM_BUTTON = 'debug' | 'log' | 'channel' | 'assert' | 'bind-user';
+
+export type BUTTON_PERMISSION = keyof typeof BUTTON_PERMISSION_ENUM | string | CUSTOM_BUTTON;
 
 export const getDetailNameByCode = {
   'system/Menu/Detail': '菜单详情',

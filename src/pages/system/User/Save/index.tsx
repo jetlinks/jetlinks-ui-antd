@@ -20,7 +20,8 @@ import type { ISchema } from '@formily/json-schema';
 import { action } from '@formily/reactive';
 import type { Response } from '@/utils/typings';
 import { service } from '@/pages/system/User';
-import { Modal } from '@/components';
+import { Modal, PermissionButton } from '@/components';
+import usePermissions from '@/hooks/permission';
 
 interface Props {
   model: 'add' | 'edit' | 'query';
@@ -31,6 +32,9 @@ interface Props {
 const Save = (props: Props) => {
   const { model } = props;
   const intl = useIntl();
+
+  const { permission: deptPermission } = usePermissions('system/Department');
+  const { permission: rolePermission } = usePermissions('system/Role');
 
   const [data, setData] = useState<Partial<UserItem>>(props.data);
 
@@ -291,7 +295,10 @@ const Save = (props: Props) => {
             'x-decorator-props': {
               gridSpan: 1,
               addonAfter: (
-                <a
+                <PermissionButton
+                  type="link"
+                  style={{ padding: 0 }}
+                  isPermission={rolePermission.add}
                   onClick={() => {
                     const tab: any = window.open(`${origin}/#/system/role?save=true`);
                     tab!.onTabSaveSuccess = (value: any) => {
@@ -305,7 +312,7 @@ const Save = (props: Props) => {
                   }}
                 >
                   <PlusOutlined />
-                </a>
+                </PermissionButton>
               ),
             },
           },
@@ -329,7 +336,10 @@ const Save = (props: Props) => {
             'x-decorator-props': {
               gridSpan: 1,
               addonAfter: (
-                <a
+                <PermissionButton
+                  type="link"
+                  style={{ padding: 0 }}
+                  isPermission={deptPermission.add}
                   onClick={() => {
                     const tab: any = window.open(`${origin}/#/system/department?save=true`);
                     tab!.onTabSaveSuccess = (value: any) => {
@@ -347,7 +357,7 @@ const Save = (props: Props) => {
                   }}
                 >
                   <PlusOutlined />
-                </a>
+                </PermissionButton>
               ),
             },
             'x-reactions': ['{{useAsyncDataSource(getOrg)}}'],

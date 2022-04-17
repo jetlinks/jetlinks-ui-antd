@@ -16,6 +16,8 @@ import { useRef, useState } from 'react';
 import Save from './Save';
 import { observer } from '@formily/react';
 import { getButtonPermission } from '@/utils/menu';
+import { PermissionButton } from '@/components';
+import usePermissions from '@/hooks/permission';
 
 export const service = new Service('user');
 
@@ -23,6 +25,7 @@ const User = observer(() => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
 
+  const { permission: userPermission } = usePermissions('system/User');
   const [model, setMode] = useState<'add' | 'edit' | 'query'>('query');
   const [current, setCurrent] = useState<Partial<UserItem>>({});
   const edit = async (record: UserItem) => {
@@ -164,23 +167,24 @@ const User = observer(() => {
             </Tooltip>
           </Popconfirm>
         </Button>,
-        <Button
+        <PermissionButton
           type="link"
+          key="delete"
           style={{ padding: 0 }}
-          disabled={record.status === 1 || getButtonPermission('system/User', 'delete')}
+          isPermission={userPermission.delete}
+          disabled={record.status === 1}
+          tooltip={{ title: record.status === 0 ? '删除' : '请先禁用该用户，再删除。' }}
         >
-          <Tooltip title={record.status === 0 ? '删除' : '请先禁用该用户，再删除。'} key="delete">
-            <Popconfirm
-              onConfirm={async () => {
-                await service.remove(record.id);
-                actionRef.current?.reload();
-              }}
-              title="确认删除?"
-            >
-              <DeleteOutlined />
-            </Popconfirm>
-          </Tooltip>
-        </Button>,
+          <Popconfirm
+            onConfirm={async () => {
+              await service.remove(record.id);
+              actionRef.current?.reload();
+            }}
+            title="确认删除?"
+          >
+            <DeleteOutlined />
+          </Popconfirm>
+        </PermissionButton>,
       ],
     },
   ];
