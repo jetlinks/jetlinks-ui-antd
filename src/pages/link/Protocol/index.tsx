@@ -2,8 +2,8 @@ import { PageContainer } from '@ant-design/pro-layout';
 import type { ProtocolItem } from '@/pages/link/Protocol/typings';
 import { useEffect, useRef } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { Badge, Button, message, Popconfirm, Tooltip } from 'antd';
-import { CheckCircleOutlined, DeleteOutlined, EditOutlined, StopOutlined } from '@ant-design/icons';
+import { Badge, Button, message } from 'antd';
+import { CheckCircleOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import BaseCrud from '@/components/BaseCrud';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import type { ISchema } from '@formily/json-schema';
@@ -14,11 +14,13 @@ import { Store } from 'jetlinks-store';
 import { useLocation } from 'umi';
 import SystemConst from '@/utils/const';
 import { getButtonPermission } from '@/utils/menu';
+import { PermissionButton } from '@/components';
 
 export const service = new Service('protocol');
 const Protocol = () => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
+  const { permission } = PermissionButton.usePermission('link/Protocol');
 
   const modifyState = async (id: string, type: 'deploy' | 'un-deploy') => {
     const resp = await service.modifyState(id, type);
@@ -71,101 +73,84 @@ const Protocol = () => {
       valueType: 'option',
       width: 200,
       render: (text, record) => [
-        <Button
-          type="link"
-          style={{ padding: 0 }}
-          disabled={getButtonPermission('link/Protocol', ['update'])}
+        <PermissionButton
+          isPermission={permission.update}
           key="edit"
           onClick={() => {
             CurdModel.update(record);
             CurdModel.model = 'edit';
           }}
-        >
-          <Tooltip
-            title={intl.formatMessage({
+          type={'link'}
+          style={{ padding: 0 }}
+          tooltip={{
+            title: intl.formatMessage({
               id: 'pages.data.option.edit',
               defaultMessage: '编辑',
-            })}
-          >
-            <EditOutlined />
-          </Tooltip>
-        </Button>,
+            }),
+          }}
+        >
+          <EditOutlined />
+        </PermissionButton>,
         record.state !== 1 && (
-          <Button
-            type="link"
-            style={{ padding: 0 }}
-            disabled={getButtonPermission('link/Protocol', ['action'])}
+          <PermissionButton
+            isPermission={permission.action}
             key="publish"
+            onClick={() => {
+              modifyState(record.id, 'deploy');
+            }}
+            type={'link'}
+            style={{ padding: 0 }}
+            tooltip={{
+              title: '发布',
+            }}
           >
-            <Popconfirm title="确认发布？" onConfirm={() => modifyState(record.id, 'deploy')}>
-              <Tooltip title="发布">
-                <CheckCircleOutlined />
-              </Tooltip>
-            </Popconfirm>
-          </Button>
+            <CheckCircleOutlined />
+          </PermissionButton>
         ),
         record.state === 1 && (
-          <Button
-            type="link"
+          <PermissionButton
+            isPermission={permission.action}
+            key="publish"
+            onClick={() => {
+              modifyState(record.id, 'un-deploy');
+            }}
+            type={'link'}
             style={{ padding: 0 }}
-            disabled={getButtonPermission('link/Protocol', ['action'])}
-            key="reload"
+            tooltip={{
+              title: '撤销',
+            }}
           >
-            <Popconfirm title="确认撤销？" onConfirm={() => modifyState(record.id, 'un-deploy')}>
-              <Tooltip title="撤销">
-                <StopOutlined />
-              </Tooltip>
-            </Popconfirm>
-          </Button>
+            <CheckCircleOutlined />
+          </PermissionButton>
         ),
-        <Tooltip
+        <PermissionButton
+          isPermission={permission.delete}
+          tooltip={{
+            title: record.state !== 1 ? '删除' : '请先禁用该协议，再删除',
+          }}
+          disabled={record.state === 1}
+          popConfirm={{
+            title: '确认删除',
+            onConfirm: async () => {
+              const resp: any = await service.remove(record.id);
+              if (resp.status === 200) {
+                message.success(
+                  intl.formatMessage({
+                    id: 'pages.data.option.success',
+                    defaultMessage: '操作成功!',
+                  }),
+                );
+                actionRef.current?.reload();
+              } else {
+                message.error(resp?.message || '操作失败');
+              }
+            },
+          }}
           key="delete"
-          title={
-            record.state !== 1
-              ? intl.formatMessage({
-                  id: 'pages.data.option.remove',
-                  defaultMessage: '删除',
-                })
-              : '请先禁用该协议，再删除。'
-          }
+          type="link"
         >
-          <Button
-            style={{ padding: 0 }}
-            key="delete"
-            type="link"
-            disabled={record.state === 1 || getButtonPermission('link/Protocol', ['delete'])}
-          >
-            <Popconfirm
-              title={intl.formatMessage({
-                id: 'pages.data.option.remove.tips',
-                defaultMessage: '确认删除？',
-              })}
-              onConfirm={async () => {
-                const resp: any = await service.remove(record.id);
-                if (resp.status === 200) {
-                  message.success(
-                    intl.formatMessage({
-                      id: 'pages.data.option.success',
-                      defaultMessage: '操作成功!',
-                    }),
-                  );
-                  actionRef.current?.reload();
-                } else {
-                  message.error(resp?.message || '操作失败');
-                }
-              }}
-            >
-              <Tooltip
-                title={intl.formatMessage({
-                  id: 'pages.data.option.remove',
-                  defaultMessage: '删除',
-                })}
-              >
-                <DeleteOutlined />
-              </Tooltip>
-            </Popconfirm>
-          </Button>
-        </Tooltip>,
+          <DeleteOutlined />
+        </PermissionButton>,
       ],
     },
   ];
