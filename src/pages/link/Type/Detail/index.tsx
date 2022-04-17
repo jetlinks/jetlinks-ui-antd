@@ -12,7 +12,6 @@ import {
   Password,
   Radio,
   Select,
-  Submit,
 } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
 import { useEffect, useMemo, useRef } from 'react';
@@ -25,6 +24,8 @@ import { service } from '../index';
 import _ from 'lodash';
 import FAutoComplete from '@/components/FAutoComplete';
 import { Store } from 'jetlinks-store';
+import { PermissionButton } from '@/components';
+import usePermissions from '@/hooks/permission';
 
 /**
  *  根据类型过滤配置信息
@@ -775,6 +776,8 @@ const Save = observer(() => {
       }
     }
   };
+
+  const { getOtherPermission } = usePermissions('link/Type');
   return (
     <PageContainer className={'page-title-show'} onBack={() => history.back()}>
       <Card>
@@ -785,7 +788,13 @@ const Save = observer(() => {
           />
           <FormButtonGroup.Sticky>
             <FormButtonGroup.FormItem>
-              <Submit onSubmit={handleSave}>保存</Submit>
+              <PermissionButton
+                type="primary"
+                isPermission={getOtherPermission(['add', 'update'])}
+                onClick={handleSave}
+              >
+                保存
+              </PermissionButton>
             </FormButtonGroup.FormItem>
           </FormButtonGroup.Sticky>
         </Form>

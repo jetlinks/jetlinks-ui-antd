@@ -292,6 +292,7 @@ const Network = () => {
               <Popconfirm
                 key="delete"
                 title="确认删除?"
+                disabled={getButtonPermission('link/Type', ['delete'])}
                 onConfirm={async () => {
                   const response: any = await service.remove(record.id);
                   if (response.status === 200) {
@@ -300,7 +301,7 @@ const Network = () => {
                   }
                 }}
               >
-                <Button key="delete">
+                <Button key="delete" disabled={getButtonPermission('link/Type', ['delete'])}>
                   <DeleteOutlined />
                 </Button>
               </Popconfirm>,
