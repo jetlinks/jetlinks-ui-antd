@@ -104,7 +104,7 @@ export enum MENUS_CODE {
   'link/Type/Detail' = 'link/Type/Detail',
 }
 
-export type MENUS_CODE_TYPE = keyof typeof MENUS_CODE;
+export type MENUS_CODE_TYPE = keyof typeof MENUS_CODE | string;
 
 export enum BUTTON_PERMISSION_ENUM {
   'add' = 'add',
@@ -119,6 +119,8 @@ export enum BUTTON_PERMISSION_ENUM {
   'bind-user' = 'bind-user',
   'active' = 'active',
   'sync' = 'sync',
+  'debug' = 'debug',
+  'log' = 'log',
 }
 
 // 调试按钮、通知记录、批量导出、批量导入、选择通道、推送、分配资产、绑定用户对应的ID是啥

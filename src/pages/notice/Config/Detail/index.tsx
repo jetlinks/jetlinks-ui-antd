@@ -16,7 +16,6 @@ import {
   Radio,
   Select,
   Space,
-  Submit,
   Switch,
 } from '@formily/antd';
 import styles from './index.less';
@@ -32,6 +31,8 @@ import DingTalkRebot from '@/pages/notice/Config/Detail/doc/DingTalkRebot';
 import AliyunSms from '@/pages/notice/Config/Detail/doc/AliyunSms';
 import AliyunVoice from '@/pages/notice/Config/Detail/doc/AliyunVoice';
 import Email from '@/pages/notice/Config/Detail/doc/Email';
+import { PermissionButton } from '@/components';
+import usePermissions from '@/hooks/permission';
 
 export const docMap = {
   weixin: {
@@ -410,6 +411,8 @@ const Detail = observer(() => {
     }
   };
 
+  const { getOtherPermission } = usePermissions('notice');
+
   return (
     <PageContainer>
       <Card>
@@ -419,7 +422,13 @@ const Detail = observer(() => {
               <SchemaField scope={{ useAsyncDataSource, getTypes }} schema={schema} />
               <FormButtonGroup.Sticky>
                 <FormButtonGroup.FormItem>
-                  <Submit onSubmit={handleSave}>保存</Submit>
+                  <PermissionButton
+                    type="primary"
+                    onClick={handleSave}
+                    isPermission={getOtherPermission(['add', 'update'])}
+                  >
+                    保存
+                  </PermissionButton>
                 </FormButtonGroup.FormItem>
               </FormButtonGroup.Sticky>
             </Form>
