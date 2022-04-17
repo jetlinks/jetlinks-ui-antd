@@ -6,10 +6,11 @@ import {
   BugOutlined,
   DeleteOutlined,
   EditOutlined,
+  EyeOutlined,
   PlusOutlined,
   UnorderedListOutlined,
 } from '@ant-design/icons';
-import { Button, message, Popconfirm, Space, Tooltip, Upload } from 'antd';
+import { message, Popconfirm, Space, Tooltip, Upload } from 'antd';
 import { useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { downloadObject } from '@/utils/util';
@@ -20,11 +21,12 @@ import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { history, useLocation } from 'umi';
 import { model } from '@formily/reactive';
 import moment from 'moment';
-import { ProTableCard } from '@/components';
+import { PermissionButton, ProTableCard } from '@/components';
 import NoticeConfig from '@/components/ProTableCard/CardItems/noticeConfig';
 import Debug from '@/pages/notice/Config/Debug';
 import Log from '@/pages/notice/Config/Log';
 import { typeList } from '@/components/ProTableCard/CardItems/noticeTemplate';
+import usePermissions from '@/hooks/permission';
 
 export const service = new Service('notifier/config');
 
@@ -41,6 +43,7 @@ const Config = observer(() => {
   const actionRef = useRef<ActionType>();
   const location = useLocation<{ id: string }>();
 
+  const { permission: configPermission } = usePermissions('notice');
   const id = (location as any).query?.id;
 
   const columns: ProColumns<ConfigItem>[] = [
@@ -179,7 +182,8 @@ const Config = observer(() => {
         columns={columns}
         headerTitle={
           <Space>
-            <Button
+            <PermissionButton
+              isPermission={configPermission.add}
               onClick={() => {
                 state.current = undefined;
                 history.push(getMenuPathByParams(MENUS_CODE['notice/Config/Detail'], id));
@@ -192,8 +196,9 @@ const Config = observer(() => {
                 id: 'pages.data.option.add',
                 defaultMessage: '新增',
               })}
-            </Button>
+            </PermissionButton>
             <Upload
+              disabled={!configPermission.import}
               key={'import'}
               showUploadList={false}
               beforeUpload={(file) => {
@@ -207,10 +212,6 @@ const Config = observer(() => {
                   }
                   try {
                     const data = JSON.parse(text || '{}');
-                    if (Array.isArray(data)) {
-                      message.warning('文件内容格式错误');
-                      return;
-                    }
                     const res: any = await service.savePatch(data);
                     if (res.status === 200) {
                       message.success('操作成功');
@@ -223,22 +224,27 @@ const Config = observer(() => {
                 return false;
               }}
             >
-              <Button style={{ marginLeft: 12 }}>导入</Button>
+              <PermissionButton isPermission={configPermission.import} style={{ marginLeft: 12 }}>
+                导入
+              </PermissionButton>
             </Upload>
-            <Popconfirm
-              title={'确认导出当前页数据？'}
-              onConfirm={async () => {
-                const resp: any = await service.queryNoPagingPost({ ...param, paging: false });
-                if (resp.status === 200) {
-                  downloadObject(resp.result, '通知配置数据');
-                  message.success('导出成功');
-                } else {
-                  message.error('导出错误');
-                }
+            <PermissionButton
+              popConfirm={{
+                title: '确认导出当前页数据？',
+                onConfirm: async () => {
+                  const resp: any = await service.queryNoPagingPost({ ...param, paging: false });
+                  if (resp.status === 200) {
+                    downloadObject(resp.result, '通知配置数据');
+                    message.success('导出成功');
+                  } else {
+                    message.error('导出错误');
+                  }
+                },
               }}
+              isPermission={configPermission.export}
             >
-              <Button>导出</Button>
-            </Popconfirm>
+              导出
+            </PermissionButton>
           </Space>
         }
         gridColumn={3}
@@ -249,20 +255,34 @@ const Config = observer(() => {
           <NoticeConfig
             {...record}
             type={id}
+            detail={
+              <div
+                style={{ fontSize: 18, padding: 8 }}
+                onClick={() => {
+                  state.current = record;
+                  history.push(getMenuPathByParams(MENUS_CODE['notice/Config/Detail'], id));
+                }}
+              >
+                <EyeOutlined />
+              </div>
+            }
             actions={[
-              <Button
+              <PermissionButton
+                isPermission={configPermission.update}
+                type={'link'}
                 key="edit"
                 onClick={async () => {
-                  // setLoading(true);
                   state.current = record;
                   history.push(getMenuPathByParams(MENUS_CODE['notice/Config/Detail'], id));
                 }}
               >
                 <EditOutlined />
                 编辑
-              </Button>,
-              <Button
+              </PermissionButton>,
+              <PermissionButton
+                type={'link'}
                 key="debug"
+                isPermission={configPermission.debug}
                 onClick={() => {
                   state.debug = true;
                   state.current = record;
@@ -270,9 +290,11 @@ const Config = observer(() => {
               >
                 <BugOutlined />
                 调试
-              </Button>,
-              <Button
+              </PermissionButton>,
+              <PermissionButton
+                type={'link'}
                 key="export"
+                isPermission={configPermission.export}
                 onClick={() =>
                   downloadObject(
                     record,
@@ -282,9 +304,11 @@ const Config = observer(() => {
               >
                 <ArrowDownOutlined />
                 导出
-              </Button>,
-              <Button
+              </PermissionButton>,
+              <PermissionButton
+                type={'link'}
                 key="log"
+                isPermission={configPermission.log}
                 onClick={() => {
                   state.log = true;
                   state.current = record;
@@ -292,19 +316,22 @@ const Config = observer(() => {
               >
                 <UnorderedListOutlined />
                 通知记录
-              </Button>,
-              <Popconfirm
+              </PermissionButton>,
+
+              <PermissionButton
                 key="delete"
-                title="确认删除？"
-                onConfirm={async () => {
-                  await service.remove(record.id);
-                  actionRef.current?.reset?.();
+                isPermission={configPermission.delete}
+                popConfirm={{
+                  title: '确认删除？',
+                  onConfirm: async () => {
+                    await service.remove(record.id);
+                    actionRef.current?.reset?.();
+                  },
                 }}
+                type={'link'}
               >
-                <Button key="delete">
-                  <DeleteOutlined />
-                </Button>
-              </Popconfirm>,
+                <DeleteOutlined />
+              </PermissionButton>,
             ]}
           />
         )}

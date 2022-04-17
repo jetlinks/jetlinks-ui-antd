@@ -6,10 +6,11 @@ import {
   BugOutlined,
   DeleteOutlined,
   EditOutlined,
+  EyeOutlined,
   PlusOutlined,
   UnorderedListOutlined,
 } from '@ant-design/icons';
-import { Button, message, Popconfirm, Space, Tooltip, Upload } from 'antd';
+import { message, Space, Upload } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import Service from '@/pages/notice/Template/service';
 import ConfigService from '@/pages/notice/Config/service';
@@ -21,9 +22,10 @@ import Debug from './Debug';
 import Log from '@/pages/notice/Template/Log';
 import { downloadObject } from '@/utils/util';
 import moment from 'moment';
-import { ProTableCard } from '@/components';
+import { PermissionButton, ProTableCard } from '@/components';
 import NoticeCard, { typeList } from '@/components/ProTableCard/CardItems/noticeTemplate';
 import { observer } from '@formily/react';
+import usePermissions from '@/hooks/permission';
 
 export const service = new Service('notifier/template');
 
@@ -41,6 +43,8 @@ const Template = observer(() => {
   const location = useLocation<{ id: string }>();
   const id = (location as any).query?.id;
   const actionRef = useRef<ActionType>();
+
+  const { permission: templatePermission } = usePermissions('notice');
 
   const columns: ProColumns<TemplateItem>[] = [
     {
@@ -66,43 +70,31 @@ const Template = observer(() => {
       align: 'center',
       width: 200,
       render: (text, record) => [
-        <a
+        <PermissionButton
           key="edit"
+          style={{ padding: 0 }}
+          type="link"
+          isPermission={templatePermission.update}
           onClick={() => {
             state.current = record;
             history.push(getMenuPathByParams(MENUS_CODE['notice/Template/Detail'], id));
           }}
-        >
-          <Tooltip
-            title={intl.formatMessage({
+          tooltip={{
+            title: intl.formatMessage({
               id: 'pages.data.option.edit',
               defaultMessage: '编辑',
-            })}
-          >
-            <EditOutlined />
-          </Tooltip>
-        </a>,
-        <Popconfirm
-          key="delete"
-          title="确认删除？"
-          onConfirm={async () => {
-            await service.remove(record.id);
-            actionRef.current?.reload();
+            }),
           }}
         >
-          <a key="delete">
-            <Tooltip
-              title={intl.formatMessage({
-                id: 'pages.data.option.remove',
-                defaultMessage: '删除',
-              })}
-            >
-              <DeleteOutlined />
-            </Tooltip>
-          </a>
-        </Popconfirm>,
-        <a
+          <EditOutlined />
+        </PermissionButton>,
+
+        <PermissionButton
           key="download"
+          style={{ padding: 0 }}
+          type="link"
+          tooltip={{ title: '导出' }}
+          isPermission={templatePermission.export}
           onClick={() => {
             downloadObject(
               record,
@@ -110,36 +102,59 @@ const Template = observer(() => {
             );
           }}
         >
-          <Tooltip title="导出">
-            <ArrowDownOutlined />
-          </Tooltip>
-        </a>,
-        <a
+          <ArrowDownOutlined />
+        </PermissionButton>,
+        <PermissionButton
+          isPermission={templatePermission.debug}
           key="debug"
+          style={{ padding: 0 }}
+          type="link"
           onClick={() => {
             state.debug = true;
             state.current = record;
           }}
-        >
-          <Tooltip
-            title={intl.formatMessage({
+          tooltip={{
+            title: intl.formatMessage({
               id: 'pages.notice.option.debug',
               defaultMessage: '调试',
-            })}
-          >
-            <BugOutlined />
-          </Tooltip>
-        </a>,
-        <a
+            }),
+          }}
+        >
+          <BugOutlined />
+        </PermissionButton>,
+        <PermissionButton
+          isPermission={templatePermission.log}
           key="log"
+          style={{ padding: 0 }}
+          type="link"
           onClick={() => {
             state.log = true;
           }}
+          tooltip={{ title: '通知记录' }}
         >
-          <Tooltip title="通知记录">
-            <UnorderedListOutlined />
-          </Tooltip>
-        </a>,
+          <UnorderedListOutlined />
+        </PermissionButton>,
+        <PermissionButton
+          style={{ padding: 0 }}
+          type="link"
+          popConfirm={{
+            title: '确认删除?',
+            onConfirm: async () => {
+              await service.remove(record.id);
+              actionRef.current?.reload();
+            },
+          }}
+          tooltip={{
+            title: intl.formatMessage({
+              id: 'pages.data.option.remove',
+              defaultMessage: '删除',
+            }),
+          }}
+          isPermission={templatePermission.delete}
+          key="delete"
+        >
+          <DeleteOutlined />
+        </PermissionButton>,
       ],
     },
   ];
@@ -163,7 +178,8 @@ const Template = observer(() => {
         columns={columns}
         headerTitle={
           <Space>
-            <Button
+            <PermissionButton
+              isPermission={templatePermission.add}
               onClick={() => {
                 state.current = undefined;
                 history.push(getMenuPathByParams(MENUS_CODE['notice/Template/Detail'], id));
@@ -176,8 +192,9 @@ const Template = observer(() => {
                 id: 'pages.data.option.add',
                 defaultMessage: '新增',
               })}
-            </Button>
+            </PermissionButton>
             <Upload
+              disabled={!templatePermission.import}
               key={'import'}
               showUploadList={false}
               beforeUpload={(file) => {
@@ -203,22 +220,28 @@ const Template = observer(() => {
                 return false;
               }}
             >
-              <Button style={{ marginLeft: 12 }}>导入</Button>
+              <PermissionButton isPermission={templatePermission.import} style={{ marginLeft: 12 }}>
+                导入
+              </PermissionButton>
             </Upload>
-            <Popconfirm
-              title={'确认导出当前页数据？'}
-              onConfirm={async () => {
-                const resp: any = await service.queryNoPagingPost({ ...param, paging: false });
-                if (resp.status === 200) {
-                  downloadObject(resp.result, '通知模版数据');
-                  message.success('导出成功');
-                } else {
-                  message.error('导出错误');
-                }
+
+            <PermissionButton
+              popConfirm={{
+                title: '确认导出当前页数据？',
+                onConfirm: async () => {
+                  const resp: any = await service.queryNoPagingPost({ ...param, paging: false });
+                  if (resp.status === 200) {
+                    downloadObject(resp.result, '通知模版数据');
+                    message.success('导出成功');
+                  } else {
+                    message.error('导出错误');
+                  }
+                },
               }}
+              isPermission={templatePermission.export}
             >
-              <Button>导出</Button>
-            </Popconfirm>
+              导出
+            </PermissionButton>
           </Space>
         }
         gridColumn={3}
@@ -226,8 +249,20 @@ const Template = observer(() => {
           <NoticeCard
             {...record}
             type={id}
+            detail={
+              <div
+                style={{ fontSize: 18, padding: 8 }}
+                onClick={() => {
+                  state.current = record;
+                  history.push(getMenuPathByParams(MENUS_CODE['notice/Template/Detail'], id));
+                }}
+              >
+                <EyeOutlined />
+              </div>
+            }
             actions={[
-              <Button
+              <PermissionButton
+                isPermission={templatePermission.update}
                 key="edit"
                 onClick={() => {
                   state.current = record;
@@ -236,8 +271,9 @@ const Template = observer(() => {
               >
                 <EditOutlined />
                 编辑
-              </Button>,
-              <Button
+              </PermissionButton>,
+              <PermissionButton
+                isPermission={templatePermission.debug}
                 key="debug"
                 onClick={() => {
                   state.debug = true;
@@ -246,9 +282,10 @@ const Template = observer(() => {
               >
                 <BugOutlined />
                 调试
-              </Button>,
-              <Button
+              </PermissionButton>,
+              <PermissionButton
                 key="export"
+                isPermission={templatePermission.export}
                 onClick={() => {
                   downloadObject(
                     record,
@@ -258,8 +295,9 @@ const Template = observer(() => {
               >
                 <ArrowDownOutlined />
                 导出
-              </Button>,
-              <Button
+              </PermissionButton>,
+              <PermissionButton
+                isPermission={templatePermission.log}
                 key="log"
                 onClick={() => {
                   state.log = true;
@@ -268,19 +306,19 @@ const Template = observer(() => {
               >
                 <UnorderedListOutlined />
                 通知记录
-              </Button>,
-              <Popconfirm
-                key="delete"
-                title="确认删除？"
-                onConfirm={async () => {
-                  await service.remove(record.id);
-                  actionRef.current?.reset?.();
+              </PermissionButton>,
+              <PermissionButton
+                popConfirm={{
+                  title: '确认删除?',
+                  onConfirm: async () => {
+                    await service.remove(record.id);
+                    actionRef.current?.reset?.();
+                  },
                 }}
+                key="delete"
               >
-                <Button key="delete">
-                  <DeleteOutlined />
-                </Button>
-              </Popconfirm>,
+                <DeleteOutlined />
+              </PermissionButton>,
             ]}
           />
         )}
