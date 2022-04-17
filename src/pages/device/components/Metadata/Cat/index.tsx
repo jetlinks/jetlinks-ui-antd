@@ -1,8 +1,8 @@
-import {Drawer, Tabs} from 'antd';
-import {useEffect, useState} from 'react';
-import {productModel, service} from '@/pages/device/Product';
+import { Drawer, Tabs } from 'antd';
+import { useEffect, useState } from 'react';
+import { productModel, service } from '@/pages/device/Product';
 import MonacoEditor from 'react-monaco-editor';
-import {observer} from '@formily/react';
+import { observer } from '@formily/react';
 
 interface Props {
   visible: boolean;

@@ -8,8 +8,9 @@ import Service from '@/pages/media/Stream/service';
 import { getButtonPermission, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { useHistory } from 'umi';
 import styles from './index.less';
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { model } from '@formily/reactive';
+import { PermissionButton } from '@/components';
 
 export const service = new Service('media/server');
 
@@ -22,6 +23,8 @@ export const StreamModel = model<{
 const Stream = () => {
   const history = useHistory<Record<string, string>>();
   const [param, setParam] = useState<any>({ pageSize: 10, terms: [] });
+  const permissionCode = 'media/Stream';
+  const { permission } = PermissionButton.usePermission(permissionCode);
 
   const columns: ProColumns<StreamItem>[] = [
     {
@@ -75,16 +78,18 @@ const Stream = () => {
       <Card>
         {dataSource.data.length > 0 ? (
           <>
-            <Button
-              disabled={getButtonPermission('media/Stream', ['add'])}
-              type="primary"
+            <PermissionButton
+              isPermission={permission.add}
               onClick={() => {
                 history.push(`${getMenuPathByParams(MENUS_CODE['media/Stream/Detail'])}`);
                 StreamModel.current = {};
               }}
+              key="button"
+              icon={<PlusOutlined />}
+              type="primary"
             >
               新增
-            </Button>
+            </PermissionButton>
 
             <Row gutter={[16, 16]} style={{ marginTop: 10 }}>
               {(dataSource?.data || []).map((item: any) => (
@@ -186,14 +191,16 @@ const Stream = () => {
             description={
               <span>
                 暂无数据，请先
-                <a
+                <Button
+                  type="link"
+                  disabled={getButtonPermission('media/Stream', ['add'])}
                   onClick={() => {
                     history.push(`${getMenuPathByParams(MENUS_CODE['media/Stream/Detail'])}`);
                     StreamModel.current = {};
                   }}
                 >
                   新增流媒体服务
-                </a>
+                </Button>
               </span>
             }
           />

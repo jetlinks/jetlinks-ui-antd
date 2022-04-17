@@ -58,6 +58,7 @@ const Cascade = () => {
       type={'link'}
       key={'channel'}
       style={{ padding: 0 }}
+      disabled={getButtonPermission('media/Cascade', ['channel'])}
       onClick={() => {
         const url = getMenuPathByCode(MENUS_CODE[`media/Cascade/Channel`]);
         history.push(url + `?id=${record.id}`);

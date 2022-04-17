@@ -1,11 +1,10 @@
 import { Card, Empty } from 'antd';
 import { useEffect, useState } from 'react';
-import { InstanceModel, service } from '@/pages/device/Instance';
-import { productModel } from '@/pages/device/Product';
+import { service } from '@/pages/device/Instance';
 import EditableTable from './EditableTable';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import type { ProductItem } from '@/pages/device/Product/typings';
-
+import { useParams } from 'umi';
 interface Props {
   type: 'device' | 'product';
 }
@@ -14,20 +13,25 @@ const MetadataMap = (props: Props) => {
   const { type } = props;
   const [product, setProduct] = useState<Partial<ProductItem>>();
   const [data, setData] = useState<any>({});
+  const params = useParams<{ id: string }>();
 
-  const handleSearch = () => {
-    service
-      .queryProductState(InstanceModel.detail?.productId || productModel.current?.id || '')
-      .then((resp) => {
-        if (resp.status === 200) {
-          setProduct(resp.result);
-          if (type === 'product') {
-            setData(resp.result);
-          } else {
-            setData(InstanceModel.detail);
-          }
+  const handleSearch = async () => {
+    if (props.type === 'product') {
+      const resp = await service.queryProductState(params.id || '');
+      if (resp.status === 200) {
+        setProduct(resp.result);
+        setData(resp.result);
+      }
+    } else {
+      const resp = await service.detail(params.id || '');
+      if (resp.status === 200) {
+        setData(resp.result);
+        const response = await service.queryProductState(resp.result?.productId || '');
+        if (response.status === 200) {
+          setProduct(response.result);
         }
-      });
+      }
+    }
   };
 
   const checkUrl = (str: string) => {
@@ -93,7 +97,7 @@ const MetadataMap = (props: Props) => {
 
   useEffect(() => {
     handleSearch();
-  }, []);
+  }, [props.type]);
 
   return <Card bordered={false}>{renderComponent()}</Card>;
 };

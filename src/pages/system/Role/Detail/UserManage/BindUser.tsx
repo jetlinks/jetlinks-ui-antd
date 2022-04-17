@@ -1,9 +1,9 @@
-import type {ProColumns} from '@jetlinks/pro-table';
+import type { ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import {message, Modal} from 'antd';
-import {useRef, useState} from 'react';
-import {useIntl} from '@@/plugin-locale/localeExports';
-import {service} from '@/pages/system/User/index';
+import { message, Modal } from 'antd';
+import { useRef, useState } from 'react';
+import { useIntl } from '@@/plugin-locale/localeExports';
+import { service } from '@/pages/system/User/index';
 import Service from '@/pages/system/Role/service';
 import SearchComponent from '@/components/SearchComponent';
 

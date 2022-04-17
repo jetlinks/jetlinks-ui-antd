@@ -1,17 +1,17 @@
-import {PageContainer} from '@ant-design/pro-layout';
+import { PageContainer } from '@ant-design/pro-layout';
 import Service from '@/pages/device/Category/service';
-import type {ActionType, ProColumns} from '@jetlinks/pro-table';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import {DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
-import {Button, message, Popconfirm, Tooltip} from 'antd';
-import {useRef, useState} from 'react';
-import {useIntl} from '@@/plugin-locale/localeExports';
+import { DeleteOutlined, EditOutlined, PlusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { message } from 'antd';
+import { useRef, useState } from 'react';
+import { useIntl } from '@@/plugin-locale/localeExports';
 import Save from '@/pages/device/Category/Save';
-import {model} from '@formily/reactive';
-import {observer} from '@formily/react';
-import type {Response} from '@/utils/typings';
+import { model } from '@formily/reactive';
+import { observer } from '@formily/react';
+import type { Response } from '@/utils/typings';
 import SearchComponent from '@/components/SearchComponent';
-import {getButtonPermission} from '@/utils/menu';
+import { PermissionButton } from '@/components';
 
 export const service = new Service('device/category');
 
@@ -51,6 +51,8 @@ const Category = observer(() => {
   const [param, setParam] = useState({});
   const [sortParam, setSortParam] = useState<any>({ name: 'sortIndex', order: 'asc' });
   const [treeData, setTreeData] = useState<any[]>([]);
+  const permissionCode = 'device/Category';
+  const { permission } = PermissionButton.usePermission(permissionCode);
 
   const intl = useIntl();
 
@@ -90,29 +92,35 @@ const Category = observer(() => {
       valueType: 'option',
       width: 200,
       render: (text, record) => [
-        <Button
-          key={'edit'}
+        <PermissionButton
+          key="editable"
+          tooltip={{
+            title: intl.formatMessage({
+              id: 'pages.data.option.edit',
+              defaultMessage: '编辑',
+            }),
+          }}
+          isPermission={permission.update}
+          style={{ padding: 0 }}
+          type="link"
           onClick={() => {
             state.visible = true;
             state.current = record;
           }}
-          type="link"
-          style={{ padding: 0 }}
-          disabled={getButtonPermission('device/Category', ['update', 'add'])}
         >
-          <Tooltip
-            title={intl.formatMessage({
-              id: 'pages.data.option.edit',
-              defaultMessage: '编辑',
-            })}
-          >
-            <EditOutlined />
-          </Tooltip>
-        </Button>,
-        <Button
-          type="link"
+          <EditOutlined />
+        </PermissionButton>,
+        <PermissionButton
+          key={'addChildren'}
           style={{ padding: 0 }}
-          key={'add-next'}
+          tooltip={{
+            title: intl.formatMessage({
+              id: 'pages.device.category.addClass',
+              defaultMessage: '添加子分类',
+            }),
+          }}
+          type="link"
+          isPermission={permission.add}
           onClick={() => {
             state.visible = true;
             const sortIndex = getSortIndex(treeData, record.id);
@@ -121,25 +129,19 @@ const Category = observer(() => {
               sortIndex,
             };
           }}
-          disabled={getButtonPermission('device/Category', ['update', 'add'])}
         >
-          <Tooltip
-            title={intl.formatMessage({
-              id: 'pages.device.category.addClass',
-              defaultMessage: '添加子分类',
-            })}
-          >
-            <PlusOutlined />
-          </Tooltip>
-        </Button>,
-        <Button
-          disabled={getButtonPermission('device/Category', ['delete'])}
+          <PlusCircleOutlined />
+        </PermissionButton>,
+        <PermissionButton
           type="link"
+          key="delete"
           style={{ padding: 0 }}
-          key={'delete'}
-        >
-          <Popconfirm
-            onConfirm={async () => {
+          popConfirm={{
+            title: intl.formatMessage({
+              id: 'pages.system.role.option.delete',
+              defaultMessage: '确定要删除吗',
+            }),
+            onConfirm: async () => {
               const resp = (await service.remove(record.id)) as Response<any>;
               if (resp.status === 200) {
                 message.success('操作成功');
@@ -147,19 +149,18 @@ const Category = observer(() => {
                 message.error('操作失败');
               }
               actionRef.current?.reload();
-            }}
-            title={'确认删除吗？'}
-          >
-            <Tooltip
-              title={intl.formatMessage({
-                id: 'pages.data.option.remove',
-                defaultMessage: '删除',
-              })}
-            >
-              <DeleteOutlined />
-            </Tooltip>
-          </Popconfirm>
-        </Button>,
+            },
+          }}
+          tooltip={{
+            title: intl.formatMessage({
+              id: 'pages.data.option.delete',
+              defaultMessage: '删除',
+            }),
+          }}
+          isPermission={permission.delete}
+        >
+          <DeleteOutlined />
+        </PermissionButton>,
       ],
     },
   ];
@@ -204,8 +205,8 @@ const Category = observer(() => {
           }
         }}
         headerTitle={
-          <Button
-            disabled={getButtonPermission('device/Category', ['add'])}
+          <PermissionButton
+            isPermission={permission.add}
             onClick={() => {
               const sortIndex = getSortIndex(treeData, '');
               state.current = {
@@ -221,7 +222,7 @@ const Category = observer(() => {
               id: 'pages.data.option.add',
               defaultMessage: '新增',
             })}
-          </Button>
+          </PermissionButton>
         }
         pagination={false}
         actionRef={actionRef}

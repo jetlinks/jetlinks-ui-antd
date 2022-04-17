@@ -1,16 +1,22 @@
-import {useRef, useState} from 'react';
-import type {ActionType, ProColumns} from '@jetlinks/pro-table';
-import {Badge, Button, message, Popconfirm, Tooltip} from 'antd';
-import {CloseCircleOutlined, DeleteOutlined, EditOutlined, PlayCircleOutlined, PlusOutlined,} from '@ant-design/icons';
-import {PageContainer} from '@ant-design/pro-layout';
-import type {NetworkItem} from '@/pages/link/Type/typings';
-import {useIntl} from '@@/plugin-locale/localeExports';
+import { useRef, useState } from 'react';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import { Badge, Button, message, Popconfirm, Tooltip } from 'antd';
+import {
+  CloseCircleOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  PlayCircleOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
+import { PageContainer } from '@ant-design/pro-layout';
+import type { NetworkItem } from '@/pages/link/Type/typings';
+import { useIntl } from '@@/plugin-locale/localeExports';
 import SearchComponent from '@/components/SearchComponent';
-import {getButtonPermission, getMenuPathByParams, MENUS_CODE} from '@/utils/menu';
-import {history} from 'umi';
+import { getButtonPermission, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { history } from 'umi';
 import Service from '@/pages/link/service';
-import {Store} from 'jetlinks-store';
-import {ProTableCard} from '@/components';
+import { Store } from 'jetlinks-store';
+import { ProTableCard } from '@/components';
 import NetworkCard from '@/components/ProTableCard/CardItems/networkCard';
 
 export const service = new Service('network/config');

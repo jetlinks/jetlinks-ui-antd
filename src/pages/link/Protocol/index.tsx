@@ -118,22 +118,22 @@ const Protocol = () => {
             </Popconfirm>
           </Button>
         ),
-        <Button
-          style={{ padding: 0 }}
+        <Tooltip
           key="delete"
-          type="link"
-          disabled={record.state === 1 || getButtonPermission('link/Protocol', ['delete'])}
+          title={
+            record.state !== 1
+              ? intl.formatMessage({
+                  id: 'pages.data.option.remove',
+                  defaultMessage: '删除',
+                })
+              : '请先禁用该协议，再删除。'
+          }
         >
-          <Tooltip
+          <Button
+            style={{ padding: 0 }}
             key="delete"
-            title={
-              record.state !== 1
-                ? intl.formatMessage({
-                    id: 'pages.data.option.remove',
-                    defaultMessage: '删除',
-                  })
-                : '请先禁用该组件，再删除。'
-            }
+            type="link"
+            disabled={record.state === 1 || getButtonPermission('link/Protocol', ['delete'])}
           >
             <Popconfirm
               title={intl.formatMessage({
@@ -164,8 +164,8 @@ const Protocol = () => {
                 <DeleteOutlined />
               </Tooltip>
             </Popconfirm>
-          </Tooltip>
-        </Button>,
+          </Button>
+        </Tooltip>,
       ],
     },
   ];
