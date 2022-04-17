@@ -11,15 +11,14 @@ import {
   PlusOutlined,
   StopOutlined,
 } from '@ant-design/icons';
-import { Button, message, Popconfirm, Tooltip } from 'antd';
+import { Button, message, Tooltip } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import SearchComponent from '@/components/SearchComponent';
-import { BadgeStatus, ProTableCard } from '@/components';
+import { BadgeStatus, PermissionButton, ProTableCard } from '@/components';
 import RuleInstanceCard from '@/components/ProTableCard/CardItems/ruleInstance';
 import Save from '@/pages/rule-engine/Instance/Save';
 import SystemConst from '@/utils/const';
 import { StatusColorEnum } from '@/components/BadgeStatus';
-import { getButtonPermission } from '@/utils/menu';
 
 export const service = new Service('rule-engine/instance');
 
@@ -29,60 +28,35 @@ const Instance = () => {
   const [visible, setVisible] = useState<boolean>(false);
   const [current, setCurrent] = useState<Partial<InstanceItem>>({});
   const [searchParams, setSearchParams] = useState<any>({});
+  const { permission } = PermissionButton.usePermission('rule-engine/Instance');
 
   const tools = (record: InstanceItem) => [
-    <Button
-      key={'edit'}
-      type={'link'}
-      style={{ padding: 0 }}
+    <PermissionButton
+      isPermission={permission.update}
+      key="warning"
       onClick={() => {
         setCurrent(record);
         setVisible(true);
       }}
-      disabled={getButtonPermission('rule-engine/Instance', ['update'])}
-    >
-      <Tooltip
-        title={intl.formatMessage({
-          id: 'pages.data.option.edit',
-          defaultMessage: '编辑',
-        })}
-        key={'edit'}
-      >
-        <EditOutlined />
-        编辑
-      </Tooltip>
-    </Button>,
-    // <Button key={'view'}
-    //   disabled={getButtonPermission('rule-engine/Instance', ['view'])}
-    //   type={'link'}
-    //   style={{ padding: 0 }}
-    //   onClick={() => {
-    //     window.open(`/${SystemConst.API_BASE}/rule-editor/index.html#flow/${record.id}`);
-    //   }}
-    // >
-    //   <Tooltip
-    //     title={intl.formatMessage({
-    //       id: 'pages.data.option.detail',
-    //       defaultMessage: '查看',
-    //     })}
-    //     key={'detail'}
-    //   >
-    //     <EyeOutlined />
-    //   </Tooltip>
-    // </Button>,
-    <Button
-      key={'operate'}
-      disabled={getButtonPermission('rule-engine/Instance', ['action'])}
       type={'link'}
       style={{ padding: 0 }}
+      tooltip={{
+        title: intl.formatMessage({
+          id: 'pages.data.option.edit',
+          defaultMessage: '编辑',
+        }),
+      }}
     >
-      <Popconfirm
-        key={'state'}
-        title={intl.formatMessage({
-          id: `pages.data.option.${record.state.value !== 'disable' ? 'disabled' : 'enabled'}.tips`,
-          defaultMessage: '确认禁用？',
-        })}
-        onConfirm={async () => {
+      <EditOutlined />
+      编辑
+    </PermissionButton>,
+    <PermissionButton
+      type={'link'}
+      key={'state'}
+      style={{ padding: 0 }}
+      popConfirm={{
+        title: `确认${record.state.value !== 'disable' ? '禁用' : '启用'}`,
+        onConfirm: async () => {
           if (record.state.value !== 'disable') {
             await service.stopRule(record.id);
           } else {
@@ -95,69 +69,50 @@ const Instance = () => {
             }),
           );
           actionRef.current?.reload();
-        }}
-      >
-        <Tooltip
-          title={intl.formatMessage({
-            id: `pages.data.option.${record.state.value !== 'disable' ? 'disabled' : 'enabled'}`,
-            defaultMessage: record.state.value !== 'disable' ? '禁用' : '启用',
-          })}
-        >
-          {record.state.value !== 'disable' ? (
-            <span>
-              <StopOutlined />
-              禁用
-            </span>
-          ) : (
-            <span>
-              <CheckCircleOutlined />
-              启用
-            </span>
-          )}
-        </Tooltip>
-      </Popconfirm>
-    </Button>,
-    <Tooltip
-      key={'delete'}
-      title={
-        record.state.value !== 'disable'
-          ? '已启用不能删除'
-          : intl.formatMessage({
-              id: 'pages.data.option.remove',
-              defaultMessage: '删除',
-            })
-      }
+        },
+      }}
+      isPermission={permission.action}
+      tooltip={{
+        title: record.state.value !== 'disable' ? '禁用' : '启用',
+      }}
     >
-      <Button
-        type={'link'}
-        style={{ padding: 0 }}
-        disabled={
-          getButtonPermission('rule-engine/Instance', ['delete']) ||
-          record.state.value !== 'disable'
-        }
-      >
-        <Popconfirm
-          title={record.state.value === 'disable' ? '确认删除' : '未停止不能删除'}
-          key={'delete'}
-          onConfirm={async () => {
-            if (record.state.value === 'disable') {
-              await service.remove(record.id);
-              message.success(
-                intl.formatMessage({
-                  id: 'pages.data.option.success',
-                  defaultMessage: '操作成功!',
-                }),
-              );
-              actionRef.current?.reload();
-            } else {
-              message.error('未停止不能删除');
-            }
-          }}
-        >
-          <DeleteOutlined />
-        </Popconfirm>
-      </Button>
-    </Tooltip>,
+      {record.state.value !== 'disable' ? (
+        <span>
+          <StopOutlined />
+          禁用
+        </span>
+      ) : (
+        <span>
+          <CheckCircleOutlined />
+          启用
+        </span>
+      )}
+    </PermissionButton>,
+    <PermissionButton
+      isPermission={permission.delete}
+      popConfirm={{
+        title: '确认删除',
+        onConfirm: async () => {
+          if (record.state.value === 'disable') {
+            await service.remove(record.id);
+            message.success(
+              intl.formatMessage({
+                id: 'pages.data.option.success',
+                defaultMessage: '操作成功!',
+              }),
+            );
+            actionRef.current?.reload();
+          } else {
+            message.error('未停止不能删除');
+          }
+        },
+      }}
+      key="delete"
+      type="link"
+    >
+      <DeleteOutlined />
+      删除
+    </PermissionButton>,
   ];
 
   const columns: ProColumns<InstanceItem>[] = [
@@ -208,25 +163,24 @@ const Instance = () => {
       align: 'center',
       width: 200,
       render: (text, record) => [
-        <Button
-          type="link"
-          style={{ padding: 0 }}
-          disabled={getButtonPermission('rule-engine/Instance', ['update'])}
-          key={'edit'}
+        <PermissionButton
+          isPermission={permission.update}
+          key="warning"
           onClick={() => {
             setCurrent(record);
             setVisible(true);
           }}
-        >
-          <Tooltip
-            title={intl.formatMessage({
+          type={'link'}
+          style={{ padding: 0 }}
+          tooltip={{
+            title: intl.formatMessage({
               id: 'pages.data.option.edit',
               defaultMessage: '编辑',
-            })}
-          >
-            <EditOutlined />
-          </Tooltip>
-        </Button>,
+            }),
+          }}
+        >
+          <EditOutlined />
+        </PermissionButton>,
         <Button
           type="link"
           style={{ padding: 0 }}
@@ -244,21 +198,13 @@ const Instance = () => {
             <EyeOutlined />
           </Tooltip>
         </Button>,
-        <Button
+        <PermissionButton
           type={'link'}
+          key={'state'}
           style={{ padding: 0 }}
-          key={'operate'}
-          disabled={getButtonPermission('rule-engine/Instance', ['action'])}
-        >
-          <Popconfirm
-            key={'state'}
-            title={intl.formatMessage({
-              id: `pages.data.option.${
-                record.state.value !== 'disable' ? 'disabled' : 'enabled'
-              }.tips`,
-              defaultMessage: '确认禁用？',
-            })}
-            onConfirm={async () => {
+          popConfirm={{
+            title: `确认${record.state.value !== 'disable' ? '禁用' : '启用'}`,
+            onConfirm: async () => {
               if (record.state.value !== 'disable') {
                 await service.stopRule(record.id);
               } else {
@@ -271,61 +217,40 @@ const Instance = () => {
                 }),
               );
               actionRef.current?.reload();
-            }}
-          >
-            <Tooltip
-              title={intl.formatMessage({
-                id: `pages.data.option.${
-                  record.state.value !== 'disable' ? 'disabled' : 'enabled'
-                }`,
-                defaultMessage: record.state.value !== 'disable' ? '禁用' : '正常',
-              })}
-            >
-              {record.state.value !== 'disable' ? <StopOutlined /> : <CheckCircleOutlined />}
-            </Tooltip>
-          </Popconfirm>
-        </Button>,
-        <Tooltip
-          key={'delete'}
-          title={
-            record.state.value !== 'disable'
-              ? '已启用不能删除'
-              : intl.formatMessage({
-                  id: 'pages.data.option.remove',
-                  defaultMessage: '删除',
-                })
-          }
+            },
+          }}
+          isPermission={permission.action}
+          tooltip={{
+            title: record.state.value !== 'disable' ? '禁用' : '启用',
+          }}
         >
-          <Button
-            disabled={
-              getButtonPermission('rule-engine/Instance', ['delete']) ||
-              record.state.value !== 'disable'
-            }
-            type={'link'}
-            style={{ padding: 0 }}
-          >
-            <Popconfirm
-              title={record.state.value === 'disable' ? '确认删除' : '未禁用不能删除'}
-              key={'delete'}
-              onConfirm={async () => {
-                if (record.state.value === 'disable') {
-                  await service.remove(record.id);
-                  message.success(
-                    intl.formatMessage({
-                      id: 'pages.data.option.success',
-                      defaultMessage: '操作成功!',
-                    }),
-                  );
-                  actionRef.current?.reload();
-                } else {
-                  message.error('未禁用不能删除');
-                }
-              }}
-            >
-              <DeleteOutlined />
-            </Popconfirm>
-          </Button>
-        </Tooltip>,
+          {record.state.value !== 'disable' ? <StopOutlined /> : <CheckCircleOutlined />}
+        </PermissionButton>,
+        <PermissionButton
+          isPermission={permission.delete}
+          style={{ padding: 0 }}
+          popConfirm={{
+            title: '确认删除',
+            onConfirm: async () => {
+              if (record.state.value === 'disable') {
+                await service.remove(record.id);
+                message.success(
+                  intl.formatMessage({
+                    id: 'pages.data.option.success',
+                    defaultMessage: '操作成功!',
+                  }),
+                );
+                actionRef.current?.reload();
+              } else {
+                message.error('未停止不能删除');
+              }
+            },
+          }}
+          key="button"
+          type="link"
+        >
+          <DeleteOutlined />
+        </PermissionButton>,
       ],
     },
   ];
@@ -361,22 +286,24 @@ const Instance = () => {
         search={false}
         pagination={{ pageSize: 10 }}
         headerTitle={[
-          <Button
+          <PermissionButton
+            isPermission={permission.add}
+            key="add"
             onClick={() => {
               setVisible(true);
               setCurrent({});
             }}
-            disabled={getButtonPermission('rule-engine/Instance', ['add'])}
-            style={{ marginRight: 12 }}
-            key="button"
             icon={<PlusOutlined />}
             type="primary"
+            tooltip={{
+              title: intl.formatMessage({
+                id: 'pages.data.option.add',
+                defaultMessage: '新增',
+              }),
+            }}
           >
-            {intl.formatMessage({
-              id: 'pages.data.option.add',
-              defaultMessage: '新增',
-            })}
-          </Button>,
+            新增
+          </PermissionButton>,
         ]}
         cardRender={(record) => (
           <RuleInstanceCard

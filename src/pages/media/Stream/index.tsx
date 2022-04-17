@@ -2,7 +2,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import type { StreamItem } from '@/pages/media/Stream/typings';
 import SearchComponent from '@/components/SearchComponent';
 import type { ProColumns } from '@jetlinks/pro-table';
-import { Button, Card, Col, Empty, message, Pagination, Popconfirm, Row, Space } from 'antd';
+import { Button, Card, Col, Empty, message, Pagination, Row, Space } from 'antd';
 import { useEffect, useState } from 'react';
 import Service from '@/pages/media/Stream/service';
 import { getButtonPermission, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
@@ -100,10 +100,8 @@ const Stream = () => {
                         <div className={styles.title}>{item?.name}</div>
                         <div className={styles.actions}>
                           <Space>
-                            <Button
-                              type="link"
-                              style={{ padding: 0 }}
-                              disabled={getButtonPermission('media/Stream', ['update'])}
+                            <PermissionButton
+                              isPermission={permission.update}
                               className={styles.action}
                               onClick={() => {
                                 history.push(
@@ -114,32 +112,33 @@ const Stream = () => {
                                 );
                                 StreamModel.current = { ...item };
                               }}
+                              key="button"
+                              type="link"
                             >
                               <EditOutlined style={{ color: '#000000' }} />
                               <span>编辑</span>
-                            </Button>
-                            <Button
-                              type="link"
-                              style={{ padding: 0 }}
-                              disabled={getButtonPermission('media/Stream', ['delete'])}
-                            >
-                              <Popconfirm
-                                title={'确认删除？'}
-                                onConfirm={() => {
+                            </PermissionButton>
+                            <PermissionButton
+                              isPermission={permission.delete}
+                              popConfirm={{
+                                title: '确认删除',
+                                onConfirm: () => {
                                   service.remove(item.id).then((resp: any) => {
                                     if (resp.status === 200) {
                                       message.success('操作成功！');
                                       handleSearch({ pageSize: 10, terms: [] });
                                     }
                                   });
-                                }}
-                              >
-                                <span className={styles.action}>
-                                  <DeleteOutlined style={{ color: '#E50012' }} />
-                                  <span>删除</span>
-                                </span>
-                              </Popconfirm>
-                            </Button>
+                                },
+                              }}
+                              key="delete"
+                              type="link"
+                            >
+                              <span className={styles.action}>
+                                <DeleteOutlined style={{ color: '#E50012' }} />
+                                <span>删除</span>
+                              </span>
+                            </PermissionButton>
                           </Space>
                         </div>
                       </div>

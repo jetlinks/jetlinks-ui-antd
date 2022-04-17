@@ -1,19 +1,21 @@
 import SearchComponent from '@/components/SearchComponent';
-import { getButtonPermission, getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
+import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 import { PageContainer } from '@ant-design/pro-layout';
 import type { ProColumns } from '@jetlinks/pro-table';
-import { Button, Card, Col, Empty, message, Pagination, Popconfirm, Row, Tooltip } from 'antd';
+import { Card, Col, Empty, message, Pagination, Row } from 'antd';
 import { useEffect, useState } from 'react';
 import { useHistory } from 'umi';
 import Service from './service';
 import { CheckCircleOutlined, DeleteOutlined, EditOutlined, StopOutlined } from '@ant-design/icons';
 import AccessConfigCard from '@/components/ProTableCard/CardItems/AccessConfig';
+import { PermissionButton } from '@/components';
 
 export const service = new Service('gateway/device');
 
 const AccessConfig = () => {
   const history = useHistory();
   const [param, setParam] = useState<any>({ pageSize: 10, terms: [] });
+  const { permission } = PermissionButton.usePermission('link/AccessConfig');
 
   const columns: ProColumns<any>[] = [
     {
@@ -79,15 +81,16 @@ const AccessConfig = () => {
           }}
         />
         <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-start' }}>
-          <Button
-            type="primary"
-            disabled={getButtonPermission('link/AccessConfig', ['add'])}
+          <PermissionButton
+            isPermission={permission.add}
             onClick={() => {
               history.push(`${getMenuPathByCode(MENUS_CODE['link/AccessConfig/Detail'])}`);
             }}
+            key="button"
+            type="primary"
           >
             新增
-          </Button>
+          </PermissionButton>
         </div>
         {dataSource?.data.length > 0 ? (
           <Row gutter={[16, 16]} style={{ marginTop: 10 }}>
@@ -96,9 +99,8 @@ const AccessConfig = () => {
                 <AccessConfigCard
                   {...item}
                   actions={[
-                    <Button
-                      key="edit"
-                      type="link"
+                    <PermissionButton
+                      isPermission={permission.update}
                       onClick={() => {
                         history.push(
                           `${getMenuPathByCode(MENUS_CODE['link/AccessConfig/Detail'])}?id=${
@@ -106,18 +108,19 @@ const AccessConfig = () => {
                           }`,
                         );
                       }}
+                      key="button"
+                      type="link"
                     >
                       <EditOutlined />
                       编辑
-                    </Button>,
-                    <Button
-                      key="warning"
-                      type="link"
-                      disabled={getButtonPermission('link/AccessConfig', ['action'])}
-                    >
-                      <Popconfirm
-                        title={`确认${item.state.value !== 'disabled' ? '禁用' : '启用'}`}
-                        onConfirm={() => {
+                    </PermissionButton>,
+                    <PermissionButton
+                      type={'link'}
+                      key={'state'}
+                      style={{ padding: 0 }}
+                      popConfirm={{
+                        title: `确认${item.state.value !== 'disabled' ? '禁用' : '启用'}`,
+                        onConfirm: () => {
                           if (item.state.value !== 'disabled') {
                             service.shutDown(item.id).then((resp) => {
                               if (resp.status === 200) {
@@ -133,49 +136,46 @@ const AccessConfig = () => {
                               }
                             });
                           }
-                        }}
-                      >
-                        {item.state.value !== 'disabled' ? (
-                          <span>
-                            <StopOutlined />
-                            禁用
-                          </span>
-                        ) : (
-                          <span>
-                            <CheckCircleOutlined />
-                            启用
-                          </span>
-                        )}
-                      </Popconfirm>
-                    </Button>,
-                    <Tooltip
-                      key="delete"
-                      title={
-                        getButtonPermission('link/AccessConfig', ['delete']) ? '没有权限' : '删除'
-                      }
+                        },
+                      }}
+                      isPermission={permission.action}
+                      tooltip={{
+                        title: item.state.value !== 'disabled' ? '禁用' : '启用',
+                      }}
                     >
-                      <Button
-                        type="link"
-                        disabled={getButtonPermission('link/AccessConfig', ['delete'])}
-                      >
-                        <Popconfirm
-                          title={'确认删除?'}
-                          onConfirm={() => {
-                            service.remove(item.id).then((resp: any) => {
-                              if (resp.status === 200) {
-                                message.success('操作成功！');
-                                handleSearch(param);
-                              } else {
-                                message.error(resp?.message || '操作失败');
-                              }
-                            });
-                          }}
-                        >
-                          <DeleteOutlined />
-                          删除
-                        </Popconfirm>
-                      </Button>
-                    </Tooltip>,
+                      {item.state.value !== 'disabled' ? (
+                        <span>
+                          <StopOutlined />
+                          禁用
+                        </span>
+                      ) : (
+                        <span>
+                          <CheckCircleOutlined />
+                          启用
+                        </span>
+                      )}
+                    </PermissionButton>,
+                    <PermissionButton
+                      isPermission={permission.delete}
+                      popConfirm={{
+                        title: '确认删除',
+                        onConfirm: () => {
+                          service.remove(item.id).then((resp: any) => {
+                            if (resp.status === 200) {
+                              message.success('操作成功！');
+                              handleSearch(param);
+                            } else {
+                              message.error(resp?.message || '操作失败');
+                            }
+                          });
+                        },
+                      }}
+                      key="delete"
+                      type="link"
+                    >
+                      <DeleteOutlined />
+                      删除
+                    </PermissionButton>,
                   ]}
                 />
               </Col>
