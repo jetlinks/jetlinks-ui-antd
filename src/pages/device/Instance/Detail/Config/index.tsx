@@ -1,9 +1,14 @@
-import {Button, Descriptions, message, Popconfirm, Space, Tooltip} from 'antd';
-import {InstanceModel, service} from '@/pages/device/Instance';
-import {useEffect, useState} from 'react';
-import type {ConfigMetadata} from '@/pages/device/Product/typings';
-import {history, useParams} from 'umi';
-import {CheckOutlined, EditOutlined, QuestionCircleOutlined, UndoOutlined,} from '@ant-design/icons';
+import { Button, Descriptions, message, Popconfirm, Space, Tooltip } from 'antd';
+import { InstanceModel, service } from '@/pages/device/Instance';
+import { useEffect, useState } from 'react';
+import type { ConfigMetadata } from '@/pages/device/Product/typings';
+import { history, useParams } from 'umi';
+import {
+  CheckOutlined,
+  EditOutlined,
+  QuestionCircleOutlined,
+  UndoOutlined,
+} from '@ant-design/icons';
 import Edit from './Edit';
 
 const Config = () => {

@@ -131,7 +131,6 @@ const EventLog = (props: Props) => {
         actionRef={actionRef}
         search={false}
         params={searchParams}
-        toolBarRender={false}
         request={async (param) => {
           param.pageIndex = param.current - 1;
           delete param.current;

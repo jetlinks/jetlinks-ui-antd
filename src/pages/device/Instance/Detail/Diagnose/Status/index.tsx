@@ -37,7 +37,7 @@ const Status = observer((props: Props) => {
     });
   };
 
-  const initList = (proItem: ProductItem, configuration: any[], deviceConfigs: any) => {
+  const initList = (proItem: ProductItem, configuration: any, deviceConfigs: any) => {
     const datalist = [
       {
         key: 'product',
@@ -122,7 +122,7 @@ const Status = observer((props: Props) => {
                           );
                           if (resp.status === 200) {
                             message.success('操作成功！');
-                            DiagnoseStatusModel.product = {
+                            DiagnoseStatusModel.status.product = {
                               status: 'success',
                               text: '已发布',
                               info: null,
@@ -242,7 +242,7 @@ const Status = observer((props: Props) => {
                         const resp = await service.deployDevice(InstanceModel.detail?.id || '');
                         if (resp.status === 200) {
                           message.success('操作成功！');
-                          DiagnoseStatusModel.device = {
+                          DiagnoseStatusModel.status.device = {
                             status: 'success',
                             text: '已启用',
                             info: null,
@@ -335,7 +335,7 @@ const Status = observer((props: Props) => {
                           const resp = await service.startGateway(proItem?.accessId || '');
                           if (resp.status === 200) {
                             message.success('操作成功！');
-                            DiagnoseStatusModel.gateway = {
+                            DiagnoseStatusModel.status.gateway = {
                               status: 'success',
                               text: '已启用',
                               info: null,
@@ -381,7 +381,7 @@ const Status = observer((props: Props) => {
                             const resp = await service.startNetwork(deviceConfig.result?.channelId);
                             if (resp.status === 200) {
                               message.success('操作成功！');
-                              DiagnoseStatusModel.gateway = {
+                              DiagnoseStatusModel.status.gateway = {
                                 status: 'success',
                                 text: '已启用',
                                 info: null,
@@ -461,6 +461,7 @@ const Status = observer((props: Props) => {
       network = await service.queryNetworkState(deviceConfig?.channelId);
     }
     initList(proItem.result, configuration.result, deviceConfig.result);
+
     diagnoseProduct(proItem.result)
       .then(() => diagnoseConfig(proItem.result))
       .then(() => diagnoseDevice())

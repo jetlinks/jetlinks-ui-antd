@@ -1,8 +1,8 @@
-import {Button, Descriptions} from 'antd';
-import {useIntl} from '@@/plugin-locale/localeExports';
-import {InstanceModel} from '@/pages/device/Instance';
-import {useEffect, useState} from 'react';
-import {EditOutlined} from '@ant-design/icons';
+import { Button, Descriptions } from 'antd';
+import { useIntl } from '@@/plugin-locale/localeExports';
+import { InstanceModel } from '@/pages/device/Instance';
+import { useEffect, useState } from 'react';
+import { EditOutlined } from '@ant-design/icons';
 import Edit from './Edit';
 
 const Tags = () => {

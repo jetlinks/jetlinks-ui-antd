@@ -1,11 +1,11 @@
-import type {ActionType, ProColumns} from '@jetlinks/pro-table';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import type {LogItem} from '@/pages/device/Instance/Detail/Log/typings';
-import {Card, Input, Modal, Tooltip} from 'antd';
-import {SearchOutlined} from '@ant-design/icons';
-import {useIntl} from '@@/plugin-locale/localeExports';
-import {InstanceModel, service} from '@/pages/device/Instance';
-import {useEffect, useRef, useState} from 'react';
+import type { LogItem } from '@/pages/device/Instance/Detail/Log/typings';
+import { Card, Input, Modal, Tooltip } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
+import { useIntl } from '@@/plugin-locale/localeExports';
+import { InstanceModel, service } from '@/pages/device/Instance';
+import { useEffect, useRef, useState } from 'react';
 import SearchComponent from '@/components/SearchComponent';
 
 const Log = () => {

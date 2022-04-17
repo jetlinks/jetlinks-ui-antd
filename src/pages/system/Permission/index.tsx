@@ -7,7 +7,7 @@ import {
   PlayCircleOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
-import { Badge, Button, Dropdown, Menu, message, Popconfirm, Space, Tooltip, Upload } from 'antd';
+import { Badge, Button, Dropdown, Menu, message, Popconfirm, Space, Upload } from 'antd';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
@@ -20,15 +20,18 @@ import SystemConst from '@/utils/const';
 import { downloadObject } from '@/utils/util';
 import Token from '@/utils/token';
 import { getButtonPermission } from '@/utils/menu';
+import { PermissionButton } from '@/components';
 
 export const service = new Service('permission');
 const Permission: React.FC = observer(() => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
+  const permissionCode = 'system/Permission';
 
   const [param, setParam] = useState({});
   const [model, setMode] = useState<'add' | 'edit' | 'query'>('query');
   const [current, setCurrent] = useState<Partial<PermissionItem>>({});
+  const { permission } = PermissionButton.usePermission(permissionCode);
 
   const edit = async (record: PermissionItem) => {
     setMode('edit');
@@ -144,36 +147,33 @@ const Permission: React.FC = observer(() => {
       valueType: 'option',
       width: 200,
       render: (text, record) => [
-        <Button
-          type="link"
-          disabled={getButtonPermission('system/Permission', ['add'])}
-          style={{ padding: 0 }}
+        <PermissionButton
           key="editable"
+          tooltip={{
+            title: intl.formatMessage({
+              id: 'pages.data.option.edit',
+              defaultMessage: '编辑',
+            }),
+          }}
+          isPermission={permission.update}
+          style={{ padding: 0 }}
+          type="link"
           onClick={() => {
             edit(record);
           }}
         >
-          <Tooltip
-            title={intl.formatMessage({
-              id: 'pages.data.option.edit',
-              defaultMessage: '编辑',
-            })}
-          >
-            <EditOutlined />
-          </Tooltip>
-        </Button>,
-        <Button
+          <EditOutlined />
+        </PermissionButton>,
+        <PermissionButton
+          type={'link'}
+          key={'state'}
           style={{ padding: 0 }}
-          disabled={getButtonPermission('system/Permission', ['action'])}
-          type="link"
-          key="view"
-        >
-          <Popconfirm
-            title={intl.formatMessage({
-              id: 'pages.data.option.disabled.tips',
+          popConfirm={{
+            title: intl.formatMessage({
+              id: `pages.data.option.${record.status ? 'disabled' : 'enabled'}.tips`,
               defaultMessage: '确认禁用？',
-            })}
-            onConfirm={async () => {
+            }),
+            onConfirm: async () => {
               await service.update({
                 ...record,
                 id: record.id,
@@ -186,40 +186,27 @@ const Permission: React.FC = observer(() => {
                 }),
               );
               actionRef.current?.reload();
-            }}
-          >
-            <Tooltip
-              title={intl.formatMessage({
-                id: `pages.data.option.${record.status ? 'disabled' : 'enabled'}`,
-                defaultMessage: record.status ? '禁用' : '启用',
-              })}
-            >
-              {record.status ? <CloseCircleOutlined /> : <PlayCircleOutlined />}
-            </Tooltip>
-          </Popconfirm>
-        </Button>,
-        <Button
-          type="link"
-          style={{ padding: 0 }}
-          disabled={record.status === 1 || getButtonPermission('system/Permission', ['delete'])}
+            },
+          }}
+          isPermission={permission.action}
+          tooltip={{
+            title: intl.formatMessage({
+              id: `pages.data.option.${record.status ? 'disabled' : 'enabled'}`,
+              defaultMessage: record.status ? '禁用' : '启用',
+            }),
+          }}
         >
-          <Tooltip
-            key="delete"
-            title={
-              record.status === 0
-                ? intl.formatMessage({
-                    id: 'pages.data.option.remove',
-                    defaultMessage: '删除',
-                  })
-                : '请先禁用该权限，再删除。'
-            }
-          >
-            <Popconfirm
-              title={intl.formatMessage({
-                id: 'pages.data.option.remove.tips',
-                defaultMessage: '确认删除？',
-              })}
-              onConfirm={async () => {
+          {record.status ? <CloseCircleOutlined /> : <PlayCircleOutlined />}
+        </PermissionButton>,
+        <PermissionButton
+          type={'link'}
+          key={'delete'}
+          style={{ padding: 0 }}
+          isPermission={permission.delete}
+          popConfirm={{
+            title: '确认删除',
+            onConfirm: async () => {
+              if (record.status) {
                 await service.remove(record.id);
                 message.success(
                   intl.formatMessage({
@@ -228,12 +215,12 @@ const Permission: React.FC = observer(() => {
                   }),
                 );
                 actionRef.current?.reload();
-              }}
-            >
-              <DeleteOutlined />
-            </Popconfirm>
-          </Tooltip>
-        </Button>,
+              }
+            },
+          }}
+        >
+          <DeleteOutlined />
+        </PermissionButton>,
       ],
     },
   ];
@@ -256,11 +243,11 @@ const Permission: React.FC = observer(() => {
         search={false}
         headerTitle={
           <Space>
-            <Button
+            <PermissionButton
               onClick={() => {
                 setMode('add');
               }}
-              disabled={getButtonPermission('system/Permission', ['add'])}
+              isPermission={permission.add}
               key="button"
               icon={<PlusOutlined />}
               type="primary"
@@ -269,7 +256,7 @@ const Permission: React.FC = observer(() => {
                 id: 'pages.data.option.add',
                 defaultMessage: '新增',
               })}
-            </Button>
+            </PermissionButton>
             <Dropdown key={'more'} overlay={menu} placement="bottom">
               <Button>批量操作</Button>
             </Dropdown>

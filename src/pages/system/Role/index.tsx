@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import React, { useEffect, useRef } from 'react';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Button, message, Popconfirm, Tooltip } from 'antd';
+import { message } from 'antd';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import BaseCrud from '@/components/BaseCrud';
 import Service from './service';
@@ -12,12 +12,15 @@ import { Store } from 'jetlinks-store';
 import SystemConst from '@/utils/const';
 import { CurdModel } from '@/components/BaseCrud/model';
 import { getButtonPermission, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { PermissionButton } from '@/components';
 
 export const service = new Service('role');
 
 const Role: React.FC = observer(() => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
+  const permissionCode = 'system/Role';
+  const { permission } = PermissionButton.usePermission(permissionCode);
 
   const columns: ProColumns<RoleItem>[] = [
     // {
@@ -83,36 +86,33 @@ const Role: React.FC = observer(() => {
       valueType: 'option',
       width: 200,
       render: (text, record) => [
-        <Button
-          type="link"
-          key={'edit'}
-          style={{ padding: 0 }}
-          disabled={getButtonPermission('system/Role', ['update'])}
-          onClick={() =>
-            history.push(`${getMenuPathByParams(MENUS_CODE['system/Role/Detail'], record.id)}`)
-          }
-        >
-          <Tooltip
-            title={intl.formatMessage({
+        <PermissionButton
+          key="editable"
+          tooltip={{
+            title: intl.formatMessage({
               id: 'pages.data.option.edit',
               defaultMessage: '编辑',
-            })}
-          >
-            <EditOutlined />
-          </Tooltip>
-        </Button>,
-        <Button
-          type="link"
-          disabled={getButtonPermission('system/Role', ['delete'])}
+            }),
+          }}
+          isPermission={permission.update}
           style={{ padding: 0 }}
-          key="delete"
+          type="link"
+          onClick={() => {
+            history.push(`${getMenuPathByParams(MENUS_CODE['system/Role/Detail'], record.id)}`);
+          }}
         >
-          <Popconfirm
-            title={intl.formatMessage({
-              id: 'pages.data.option.remove.tips',
-              defaultMessage: '确认删除？',
-            })}
-            onConfirm={async () => {
+          <EditOutlined />
+        </PermissionButton>,
+        <PermissionButton
+          type="link"
+          key="delete"
+          style={{ padding: 0 }}
+          popConfirm={{
+            title: intl.formatMessage({
+              id: 'pages.system.role.option.delete',
+              defaultMessage: '确定要删除吗',
+            }),
+            onConfirm: async () => {
               await service.remove(record.id);
               message.success(
                 intl.formatMessage({
@@ -121,18 +121,18 @@ const Role: React.FC = observer(() => {
                 }),
               );
               actionRef.current?.reload();
-            }}
-          >
-            <Tooltip
-              title={intl.formatMessage({
-                id: 'pages.data.option.remove',
-                defaultMessage: '删除',
-              })}
-            >
-              <DeleteOutlined />
-            </Tooltip>
-          </Popconfirm>
-        </Button>,
+            },
+          }}
+          tooltip={{
+            title: intl.formatMessage({
+              id: 'pages.data.option.delete',
+              defaultMessage: '删除',
+            }),
+          }}
+          isPermission={permission.delete}
+        >
+          <DeleteOutlined />
+        </PermissionButton>,
       ],
     },
   ];

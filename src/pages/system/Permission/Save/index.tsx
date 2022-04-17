@@ -1,4 +1,4 @@
-import { message, Modal } from 'antd';
+import { message } from 'antd';
 import { useIntl } from 'umi';
 import { createForm, onFormSubmitStart } from '@formily/core';
 import { createSchemaField } from '@formily/react';
@@ -8,7 +8,7 @@ import { ArrayTable, Editable, Form, FormItem, Input } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
 import type { PermissionItem } from '@/pages/system/Permission/typings';
 import { service } from '@/pages/system/Permission';
-
+import { Modal } from '@/components';
 interface Props {
   model: 'add' | 'edit' | 'query';
   data: Partial<PermissionItem>;
@@ -259,6 +259,8 @@ const Save = (props: Props) => {
       onCancel={props.close}
       onOk={save}
       width="1000px"
+      permissionCode={'system/Permission'}
+      permission={['add', 'edit']}
     >
       <Form form={form} layout="vertical">
         <SchemaField schema={schema} />

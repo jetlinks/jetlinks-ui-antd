@@ -1,7 +1,7 @@
-import {connect, mapProps} from '@formily/react';
-import BraftEditor, {BraftEditorProps, EditorState} from 'braft-editor';
+import { connect, mapProps } from '@formily/react';
+import BraftEditor, { BraftEditorProps, EditorState } from 'braft-editor';
 import 'braft-editor/dist/index.css';
-import {useState} from 'react';
+import { useState } from 'react';
 
 interface Props extends BraftEditorProps {
   value: any;
