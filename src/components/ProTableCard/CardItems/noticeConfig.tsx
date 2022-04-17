@@ -12,7 +12,7 @@ export interface NoticeCardProps extends ConfigItem {
 
 export default (props: NoticeCardProps) => {
   return (
-    <TableCard detail={props.detail} actions={props.actions} showStatus={false}>
+    <TableCard detail={props.detail} actions={props.actions} showStatus={false} showMask={false}>
       <div className={'pro-table-card-item'}>
         <div className={'card-item-avatar'}>
           <img width={88} height={88} src={imgMap[props.type]} alt={props.type} />

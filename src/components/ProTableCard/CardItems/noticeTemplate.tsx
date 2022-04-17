@@ -39,7 +39,7 @@ export const typeList = {
 
 export default (props: NoticeCardProps) => {
   return (
-    <TableCard actions={props.actions} showStatus={false} detail={props.detail}>
+    <TableCard actions={props.actions} showStatus={false} detail={props.detail} showMask={false}>
       <div className={'pro-table-card-item'}>
         <div className={'card-item-avatar'}>
           <img width={88} height={88} src={imgMap[props.type]} alt={props.type} />
