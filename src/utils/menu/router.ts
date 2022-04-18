@@ -121,7 +121,7 @@ export enum BUTTON_PERMISSION_ENUM {
   'sync' = 'sync',
   'channel' = 'channel',
   'debug' = 'debug',
-  'log' = 'log'
+  'log' = 'log',
 }
 
 // 调试按钮、通知记录、批量导出、批量导入、选择通道、推送、分配资产、绑定用户对应的ID是啥

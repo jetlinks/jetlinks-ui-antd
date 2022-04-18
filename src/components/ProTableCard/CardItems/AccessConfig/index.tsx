@@ -38,23 +38,34 @@ export default (props: AccessConfigCardProps) => {
         </div>
         <div className="card">
           <div className="header">
-            <Tooltip title={props.name}>
-              <div className="title ellipsis">{props.name || '--'}</div>
-            </Tooltip>
-            <div className="desc">{props.description || '--'}</div>
+            <div className="title ellipsis">
+              <Tooltip title={props.name}>{props.name || '--'}</Tooltip>
+            </div>
+            <div className="desc">
+              <Tooltip title={props.description}>{props.description || '--'}</Tooltip>
+            </div>
           </div>
           <div className="container">
             <div className="server">
               <div className="subTitle">{props?.channelInfo?.name || '--'}</div>
-              {props.channelInfo?.addresses.slice(0, 2).map((i: any, index: number) => (
-                <div className="subItem" key={i.address + `_address${index}`}>
-                  <Badge color={i.health === -1 ? 'red' : 'green'} text={i.address} />
-                </div>
-              ))}
+              <div className="serverItem">
+                {props.channelInfo?.addresses.slice(0, 2).map((i: any, index: number) => (
+                  <div className="subItem" key={i.address + `_address${index}`}>
+                    <Tooltip title={i.address}>
+                      <Badge color={i.health === -1 ? 'red' : 'green'} />
+                      {i.address}
+                    </Tooltip>
+                  </div>
+                ))}
+              </div>
             </div>
             <div className="procotol">
               <div className="subTitle">{props?.protocolDetail?.name || '--'}</div>
-              <div className="desc">{props.protocolDetail?.description || '--'}</div>
+              <div className="desc">
+                <Tooltip title={props.protocolDetail?.description}>
+                  {props.protocolDetail?.description || '--'}
+                </Tooltip>
+              </div>
             </div>
           </div>
         </div>

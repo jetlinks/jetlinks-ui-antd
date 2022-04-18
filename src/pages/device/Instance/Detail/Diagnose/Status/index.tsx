@@ -94,6 +94,7 @@ const Status = observer((props: Props) => {
         datalist.push(network);
       }
       setList([...datalist]);
+      return datalist;
     }
   };
 
@@ -460,7 +461,7 @@ const Status = observer((props: Props) => {
     if (deviceConfig?.result?.channelId && deviceConfig?.channel === 'network') {
       network = await service.queryNetworkState(deviceConfig?.channelId);
     }
-    initList(proItem.result, configuration.result, deviceConfig.result);
+    const list1 = initList(proItem.result, configuration.result, deviceConfig.result);
 
     diagnoseProduct(proItem.result)
       .then(() => diagnoseConfig(proItem.result))
@@ -476,7 +477,10 @@ const Status = observer((props: Props) => {
           }
         });
         if (a) {
-          Store.set('diagnose-status', DiagnoseStatusModel.status);
+          Store.set('diagnose-status', {
+            list: list1,
+            status: DiagnoseStatusModel.status,
+          });
           props.onChange('success');
         } else {
           props.onChange('error');
@@ -489,7 +493,9 @@ const Status = observer((props: Props) => {
       handleSearch();
     } else {
       const dt = Store.get('diagnose-status');
-      DiagnoseStatusModel.status = dt;
+      DiagnoseStatusModel.status = dt?.status;
+      console.log(dt.status);
+      setList(dt?.list || []);
       props.onChange('success');
     }
   }, []);

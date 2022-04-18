@@ -40,6 +40,7 @@ const Config = () => {
   };
 
   useEffect(() => {
+    console.log(id);
     if (id) {
       service.getConfigMetadata(id).then((config) => {
         setMetadata(config?.result);
@@ -80,7 +81,7 @@ const Config = () => {
     }
   };
 
-  return (
+  return metadata.length > 0 ? (
     <div style={{ width: '100%', marginTop: '20px' }} className="config">
       <div style={{ display: 'flex', marginBottom: 20 }}>
         <div style={{ fontSize: 16, fontWeight: 700 }}>配置</div>
@@ -179,7 +180,7 @@ const Config = () => {
         />
       )}
     </div>
-  );
+  ) : null;
 };
 
 export default Config;

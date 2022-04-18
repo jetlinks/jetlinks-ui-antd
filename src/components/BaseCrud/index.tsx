@@ -1,5 +1,5 @@
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { Button } from 'antd';
+import { Button, Tooltip } from 'antd';
 import type { ActionType, ProColumns, RequestData } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 
@@ -121,18 +121,20 @@ const BaseCrud = <T extends Record<string, any>>(props: Props<T>) => {
         }
         dateFormatter="string"
         headerTitle={
-          <Button
-            disabled={props.disableAdd}
-            onClick={CurdModel.add}
-            key="button"
-            icon={<PlusOutlined />}
-            type="primary"
-          >
-            {intl.formatMessage({
-              id: 'pages.data.option.add',
-              defaultMessage: '新增',
-            })}
-          </Button>
+          <Tooltip title={props.disableAdd ? '暂无权限，请联系管理员' : ''}>
+            <Button
+              disabled={props.disableAdd}
+              onClick={CurdModel.add}
+              key="button"
+              icon={<PlusOutlined />}
+              type="primary"
+            >
+              {intl.formatMessage({
+                id: 'pages.data.option.add',
+                defaultMessage: '新增',
+              })}
+            </Button>
+          </Tooltip>
         }
         defaultParams={defaultParams}
         // toolBarRender={() =>
