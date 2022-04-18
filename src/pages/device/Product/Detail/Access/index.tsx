@@ -73,11 +73,7 @@ const Access = () => {
       key: 'group',
       ellipsis: true,
       align: 'center',
-      render: (text: any) => (
-        <Tooltip placement="top" title={text}>
-          {text}
-        </Tooltip>
-      ),
+      width: 100,
       onCell: (record: any, index: number) => {
         const list = (config?.routes || []).sort((a: any, b: any) => a - b) || [];
         const arr = list.filter((res: any) => {
@@ -98,7 +94,7 @@ const Access = () => {
       ellipsis: true,
       align: 'center',
       render: (text: any) => (
-        <Tooltip placement="top" title={text}>
+        <Tooltip placement="topLeft" title={text}>
           {text}
         </Tooltip>
       ),
@@ -109,6 +105,7 @@ const Access = () => {
       key: 'stream',
       ellipsis: true,
       align: 'center',
+      width: 100,
       render: (text: any, record: any) => {
         const list = [];
         if (record?.upstream) {
@@ -127,7 +124,7 @@ const Access = () => {
       ellipsis: true,
       align: 'center',
       render: (text: any) => (
-        <Tooltip placement="top" title={text}>
+        <Tooltip placement="topLeft" title={text}>
           {text}
         </Tooltip>
       ),
@@ -140,12 +137,8 @@ const Access = () => {
       dataIndex: 'group',
       key: 'group',
       ellipsis: true,
+      width: 100,
       align: 'center',
-      render: (text: any) => (
-        <Tooltip placement="top" title={text}>
-          {text}
-        </Tooltip>
-      ),
       onCell: (record: any, index: number) => {
         const list = (config?.routes || []).sort((a: any, b: any) => a - b) || [];
         const arr = list.filter((res: any) => {
@@ -166,7 +159,7 @@ const Access = () => {
       ellipsis: true,
       align: 'center',
       render: (text: any) => (
-        <Tooltip placement="top" title={text}>
+        <Tooltip placement="topLeft" title={text}>
           {text}
         </Tooltip>
       ),
@@ -178,7 +171,7 @@ const Access = () => {
       ellipsis: true,
       align: 'center',
       render: (text: any) => (
-        <Tooltip placement="top" title={text}>
+        <Tooltip placement="topLeft" title={text}>
           {text}
         </Tooltip>
       ),
@@ -190,7 +183,7 @@ const Access = () => {
       ellipsis: true,
       align: 'center',
       render: (text: any) => (
-        <Tooltip placement="top" title={text}>
+        <Tooltip placement="topLeft" title={text}>
           {text}
         </Tooltip>
       ),
@@ -431,9 +424,9 @@ const Access = () => {
               <div className={styles.item}>{renderConfigCard()}</div>
             </div>
           </Col>
-          <Col span={12}>
-            <div className={styles.info}>
-              {config?.routes && config?.routes?.length > 0 ? (
+          {config?.routes && config?.routes?.length > 0 && (
+            <Col span={12}>
+              <div className={styles.info}>
                 <div>
                   <div style={{ fontWeight: '600', marginBottom: 10 }}>
                     {access?.provider === 'mqtt-server-gateway' ||
@@ -449,18 +442,9 @@ const Access = () => {
                     scroll={{ y: 500 }}
                   />
                 </div>
-              ) : (
-                <Empty
-                  description={`暂无${
-                    access?.provider === 'mqtt-server-gateway' ||
-                    access?.provider === 'mqtt-client-gateway'
-                      ? 'topic'
-                      : 'URL信息'
-                  }`}
-                />
-              )}
-            </div>
-          </Col>
+              </div>
+            </Col>
+          )}
         </Row>
       )}
       {configVisible && (

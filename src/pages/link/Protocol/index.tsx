@@ -1,26 +1,31 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import type { ProtocolItem } from '@/pages/link/Protocol/typings';
-import { useEffect, useRef } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { Badge, Button, message } from 'antd';
-import { CheckCircleOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import BaseCrud from '@/components/BaseCrud';
-import { useIntl } from '@@/plugin-locale/localeExports';
-import type { ISchema } from '@formily/json-schema';
-import { CurdModel } from '@/components/BaseCrud/model';
+import type { ProtocolItem } from '@/pages/link/Protocol/typings';
+import { Badge, message } from 'antd';
+import { useRef, useState } from 'react';
+import {
+  CheckCircleOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  PlusOutlined,
+  StopOutlined,
+} from '@ant-design/icons';
 import Service from '@/pages/link/Protocol/service';
-import { onFormValuesChange, registerValidateRules } from '@formily/core';
-import { Store } from 'jetlinks-store';
-import { useLocation } from 'umi';
-import SystemConst from '@/utils/const';
-import { getButtonPermission } from '@/utils/menu';
-import { PermissionButton } from '@/components';
+import { useIntl } from 'umi';
+import SearchComponent from '@/components/SearchComponent';
+import { ProTableCard, PermissionButton } from '@/components';
+import ProcotolCard from '@/components/ProTableCard/CardItems/protocol';
+import Save from './save';
 
 export const service = new Service('protocol');
+
 const Protocol = () => {
-  const intl = useIntl();
   const actionRef = useRef<ActionType>();
+  const [visible, setVisible] = useState<boolean>(false);
+  const [current, setCurrent] = useState<ProtocolItem | undefined>();
+  const [searchParams, setSearchParams] = useState<any>({});
   const { permission } = PermissionButton.usePermission('link/Protocol');
+  const intl = useIntl();
 
   const modifyState = async (id: string, type: 'deploy' | 'un-deploy') => {
     const resp = await service.modifyState(id, type);
@@ -71,14 +76,13 @@ const Protocol = () => {
         defaultMessage: '操作',
       }),
       valueType: 'option',
-      width: 200,
       render: (text, record) => [
         <PermissionButton
           isPermission={permission.update}
           key="edit"
           onClick={() => {
-            CurdModel.update(record);
-            CurdModel.model = 'edit';
+            setCurrent(record);
+            setVisible(true);
           }}
           type={'link'}
           style={{ padding: 0 }}
@@ -91,43 +95,33 @@ const Protocol = () => {
         >
           <EditOutlined />
         </PermissionButton>,
-        record.state !== 1 && (
-          <PermissionButton
-            isPermission={permission.action}
-            key="publish"
-            onClick={() => {
-              modifyState(record.id, 'deploy');
-            }}
-            type={'link'}
-            style={{ padding: 0 }}
-            tooltip={{
-              title: '发布',
-            }}
-          >
-            <CheckCircleOutlined />
-          </PermissionButton>
-        ),
-        record.state === 1 && (
-          <PermissionButton
-            isPermission={permission.action}
-            key="publish"
-            onClick={() => {
-              modifyState(record.id, 'un-deploy');
-            }}
-            type={'link'}
-            style={{ padding: 0 }}
-            tooltip={{
-              title: '撤销',
-            }}
-          >
-            <CheckCircleOutlined />
-          </PermissionButton>
-        ),
+        <PermissionButton
+          isPermission={permission.action}
+          key="action"
+          type={'link'}
+          style={{ padding: 0 }}
+          tooltip={{
+            title: record.state === 1 ? '撤销' : '发布',
+          }}
+          popConfirm={{
+            title: `确认${record.state === 1 ? '撤销' : '发布'}`,
+            onConfirm: () => {
+              if (record.state === 1) {
+                modifyState(record.id, 'un-deploy');
+              } else {
+                modifyState(record.id, 'deploy');
+              }
+            },
+          }}
+        >
+          {record.state === 1 ? <StopOutlined /> : <CheckCircleOutlined />}
+        </PermissionButton>,
         <PermissionButton
           isPermission={permission.delete}
           tooltip={{
             title: record.state !== 1 ? '删除' : '请先禁用该协议，再删除',
           }}
+          style={{ padding: 0 }}
           disabled={record.state === 1}
           popConfirm={{
             title: '确认删除',
@@ -155,223 +149,139 @@ const Protocol = () => {
     },
   ];
 
-  registerValidateRules({
-    validateId(value) {
-      if (!value) return '';
-      const reg = new RegExp('^[0-9a-zA-Z_\\\\-]+$');
-      return reg.exec(value) ? '' : 'ID只能由数字、26个英文字母或者下划线组成';
-    },
-  });
-
-  const schema: ISchema = {
-    type: 'object',
-    properties: {
-      layout: {
-        type: 'void',
-        'x-component': 'FormGrid',
-        'x-component-props': {
-          maxColumns: 1,
-          minColumns: 1,
-        },
-        properties: {
-          id: {
-            title: 'ID',
-            'x-component': 'Input',
-            'x-decorator': 'FormItem',
-            'x-decorator-props': {
-              gridSpan: 1,
-            },
-            'x-validator': [
-              {
-                required: true,
-                message: '请输入ID',
-              },
-              {
-                max: 64,
-                message: '最多可输入64个字符',
-              },
-              {
-                validateId: true,
-                message: 'ID只能由数字、26个英文字母或者下划线组成',
-              },
-              {
-                triggerType: 'onBlur',
-                validator: (value: string) => {
-                  if (!value) return;
-                  return new Promise((resolve) => {
-                    service
-                      .validator(value)
-                      .then((resp) => {
-                        if (!!resp?.result) {
-                          resolve('ID已存在');
-                        } else {
-                          resolve('');
-                        }
-                      })
-                      .catch(() => '验证失败!');
-                  });
-                },
-              },
-            ],
-            'x-component-props': {
-              placeholder: '请输入ID',
-            },
-          },
-          name: {
-            title: '名称',
-            'x-component': 'Input',
-            'x-decorator': 'FormItem',
-            'x-decorator-props': {
-              gridSpan: 1,
-            },
-            'x-component-props': {
-              placeholder: '请输入名称',
-            },
-            'x-validator': [
-              {
-                required: true,
-                message: '请输入名称',
-              },
-              {
-                max: 64,
-                message: '最多可输入64个字符',
-              },
-            ],
-          },
-          type: {
-            title: '类型',
-            'x-component': 'Select',
-            'x-decorator': 'FormItem',
-            'x-decorator-props': {
-              tooltip: <div>jar：上传协议jar包，文件格式支持.jar或.zip</div>,
-            },
-            'x-component-props': {
-              placeholder: '请选择类型',
-            },
-            'x-validator': [
-              {
-                required: true,
-                message: '请选择类型',
-              },
-            ],
-            enum: [
-              { label: 'jar', value: 'jar' },
-              { label: 'local', value: 'local' },
-              // { label: 'script', value: 'script' },
-            ],
-          },
-          configuration: {
-            type: 'object',
-            properties: {
-              location: {
-                title: '文件地址',
-                'x-decorator': 'FormItem',
-                'x-visible': false,
-                'x-decorator-props': {
-                  tooltip: (
-                    <div>
-                      local：填写本地协议编译目录绝对地址，如：d:/workspace/protocol/target/classes
-                    </div>
-                  ),
-                },
-                'x-validator': [
-                  {
-                    required: true,
-                    message: '请输入文件地址',
-                  },
-                ],
-                'x-reactions': {
-                  dependencies: ['..type'],
-                  fulfill: {
-                    state: {
-                      visible: '{{["jar","local"].includes($deps[0])}}',
-                      componentType: '{{$deps[0]==="jar"?"FileUpload":"Input"}}',
-                      componentProps:
-                        '{{$deps[0]==="jar"?{type:"file", accept: ".jar, .zip"}:{placeholder: "请输入文件地址"}}}',
-                    },
-                  },
-                },
-              },
-            },
-          },
-          description: {
-            title: '说明',
-            'x-component': 'Input.TextArea',
-            'x-decorator': 'FormItem',
-            'x-component-props': {
-              rows: 3,
-              showCount: true,
-              maxLength: 200,
-            },
-          },
-        },
-      },
-    },
-  };
-
-  const location = useLocation();
-
-  useEffect(() => {
-    if ((location as any).query?.save === 'true') {
-      CurdModel.add();
-    }
-    const subscription = Store.subscribe(SystemConst.BASE_UPDATE_DATA, (data) => {
-      if ((window as any).onTabSaveSuccess) {
-        (window as any).onTabSaveSuccess(data);
-        setTimeout(() => window.close(), 300);
-      }
-    });
-    return () => subscription.unsubscribe();
-  }, []);
-
   return (
     <PageContainer>
-      <BaseCrud
-        columns={columns}
-        service={service}
-        title={'插件管理'}
-        search={false}
-        modelConfig={{ width: '550px' }}
-        schema={schema}
-        actionRef={actionRef}
-        disableAdd={getButtonPermission('link/Protocol', ['add'])}
-        formEffect={() => {
-          onFormValuesChange((form) => {
-            form.setFieldState('id', (state) => {
-              state.disabled = CurdModel.model === 'edit';
-            });
-            form.setFieldState('type', (state) => {
-              state.disabled = CurdModel.model === 'edit';
-            });
-          });
+      <SearchComponent<ProtocolItem>
+        field={columns}
+        target="Protocol"
+        onSearch={(data) => {
+          actionRef.current?.reset?.();
+          setSearchParams(data);
         }}
-        footer={
-          <>
-            <Button onClick={CurdModel.close}>取消</Button>
-            <Button
-              type="primary"
-              onClick={() => {
-                Store.set('save-data', true);
-              }}
-            >
-              保存
-            </Button>
-            <Button
-              type="primary"
-              onClick={() => {
-                Store.set('save-data', async (data: any) => {
-                  // 获取到的保存的数据
-                  if (data.id) {
-                    await modifyState(data.id, 'deploy');
-                  }
-                });
-              }}
-            >
-              保存并发布
-            </Button>
-          </>
-        }
       />
+      <ProTableCard<ProtocolItem>
+        columns={columns}
+        actionRef={actionRef}
+        params={searchParams}
+        options={{ fullScreen: true }}
+        request={(params) =>
+          service.query({
+            ...params,
+            sorts: [
+              {
+                name: 'createTime',
+                order: 'desc',
+              },
+            ],
+          })
+        }
+        rowKey="id"
+        search={false}
+        pagination={{ pageSize: 10 }}
+        headerTitle={[
+          <PermissionButton
+            onClick={() => {
+              setVisible(true);
+              setCurrent({});
+            }}
+            style={{ marginRight: 12 }}
+            isPermission={permission.add}
+            key="button"
+            icon={<PlusOutlined />}
+            type="primary"
+          >
+            {intl.formatMessage({
+              id: 'pages.data.option.add',
+              defaultMessage: '新增',
+            })}
+          </PermissionButton>,
+        ]}
+        cardRender={(record) => (
+          <ProcotolCard
+            {...record}
+            actions={[
+              <PermissionButton
+                isPermission={permission.update}
+                key="edit"
+                onClick={() => {
+                  setCurrent(record);
+                  setVisible(true);
+                }}
+                type={'link'}
+                style={{ padding: 0 }}
+                tooltip={{
+                  title: intl.formatMessage({
+                    id: 'pages.data.option.edit',
+                    defaultMessage: '编辑',
+                  }),
+                }}
+              >
+                <EditOutlined />
+              </PermissionButton>,
+              <PermissionButton
+                isPermission={permission.action}
+                key="action"
+                type={'link'}
+                style={{ padding: 0 }}
+                tooltip={{
+                  title: record.state === 1 ? '撤销' : '发布',
+                }}
+                popConfirm={{
+                  title: `确认${record.state === 1 ? '撤销' : '发布'}`,
+                  onConfirm: () => {
+                    if (record.state === 1) {
+                      modifyState(record.id, 'un-deploy');
+                    } else {
+                      modifyState(record.id, 'deploy');
+                    }
+                  },
+                }}
+              >
+                {record.state === 1 ? <StopOutlined /> : <CheckCircleOutlined />}
+              </PermissionButton>,
+              <PermissionButton
+                isPermission={permission.delete}
+                tooltip={{
+                  title: record.state !== 1 ? '删除' : '请先禁用该协议，再删除',
+                }}
+                disabled={record.state === 1}
+                popConfirm={{
+                  title: '确认删除',
+                  onConfirm: async () => {
+                    const resp: any = await service.remove(record.id);
+                    if (resp.status === 200) {
+                      message.success(
+                        intl.formatMessage({
+                          id: 'pages.data.option.success',
+                          defaultMessage: '操作成功!',
+                        }),
+                      );
+                      actionRef.current?.reload();
+                    } else {
+                      message.error(resp?.message || '操作失败');
+                    }
+                  },
+                }}
+                key="delete"
+                type="link"
+              >
+                <DeleteOutlined />
+              </PermissionButton>,
+            ]}
+          />
+        )}
+      />
+      {visible && (
+        <Save
+          data={current}
+          close={() => {
+            setVisible(false);
+          }}
+          reload={() => {
+            actionRef.current?.reload();
+          }}
+        />
+      )}
     </PageContainer>
   );
 };

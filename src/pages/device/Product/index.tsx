@@ -359,6 +359,7 @@ const Product = observer(() => {
           <Upload
             disabled={!permission.import}
             key={'import'}
+            accept={'.json'}
             showUploadList={false}
             beforeUpload={(file) => {
               const reader = new FileReader();
@@ -366,25 +367,24 @@ const Product = observer(() => {
               reader.onload = async (result) => {
                 const text = result.target?.result as string;
                 if (!file.type.includes('json')) {
-                  message.warning('文件内容格式错误');
-                  return;
+                  message.error('请上传json格式文件');
+                  return false;
                 }
                 try {
                   const data = JSON.parse(text || '{}');
                   // 设置导入的产品状态为未发布
                   data.state = 0;
                   if (Array.isArray(data)) {
-                    message.warning('文件内容格式错误');
+                    message.error('请上传json格式文件');
                     return;
                   }
-
                   const res = await service.update(data);
                   if (res.status === 200) {
                     message.success('操作成功');
                     actionRef.current?.reload();
                   }
                 } catch {
-                  message.warning('文件内容格式错误');
+                  message.error('请上传json格式文件');
                 }
               };
               return false;

@@ -21,6 +21,7 @@ import ReactMarkdown from 'react-markdown';
 import { getButtonPermission, getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import TitleComponent from '@/components/TitleComponent';
+import { PermissionButton } from '@/components';
 
 interface Props {
   change: () => void;
@@ -39,6 +40,8 @@ const Access = (props: Props) => {
   const [procotolCurrent, setProcotolCurrent] = useState<string>('');
   const [networkCurrent, setNetworkCurrent] = useState<string>('');
   const [config, setConfig] = useState<any>();
+  const networkPermission = PermissionButton.usePermission('link/Type').permission;
+  const protocolPermission = PermissionButton.usePermission('link/Protocol').permission;
 
   const MetworkTypeMapping = new Map();
   MetworkTypeMapping.set('websocket-server', 'WEB_SOCKET_SERVER');
@@ -75,8 +78,10 @@ const Access = (props: Props) => {
   };
 
   useEffect(() => {
-    if (props.provider?.id) {
-      queryNetworkList(props.provider?.id);
+    if (props.provider?.id && !props.data?.id) {
+      queryNetworkList(props.provider?.id, {
+        include: networkCurrent || '',
+      });
       setCurrent(0);
     }
   }, [props.provider]);
@@ -90,7 +95,9 @@ const Access = (props: Props) => {
         description: props.data?.description,
       });
       setCurrent(0);
-      queryNetworkList(props.data?.provider);
+      queryNetworkList(props.data?.provider, {
+        include: props.data?.channelId,
+      });
     }
   }, [props.data]);
 
@@ -142,6 +149,7 @@ const Access = (props: Props) => {
       key: 'group',
       ellipsis: true,
       align: 'center',
+      width: 80,
       render: (text: any) => (
         <Tooltip placement="top" title={text}>
           {text}
@@ -166,6 +174,7 @@ const Access = (props: Props) => {
       key: 'topic',
       ellipsis: true,
       align: 'center',
+      with: '30%',
       render: (text: any) => (
         <Tooltip placement="top" title={text}>
           {text}
@@ -177,6 +186,7 @@ const Access = (props: Props) => {
       dataIndex: 'stream',
       key: 'stream',
       ellipsis: true,
+      width: 80,
       align: 'center',
       render: (text: any, record: any) => {
         const list = [];
@@ -283,6 +293,7 @@ const Access = (props: Props) => {
                   queryNetworkList(
                     props.provider?.id,
                     encodeQuery({
+                      include: networkCurrent || '',
                       terms: {
                         name$LIKE: `%${value}%`,
                       },
@@ -291,26 +302,29 @@ const Access = (props: Props) => {
                 }}
                 style={{ width: 500, margin: '20px 0' }}
               />
-              <Button
-                type="primary"
-                disabled={getButtonPermission('link/Type', ['add'])}
+              <PermissionButton
+                isPermission={networkPermission.add}
                 onClick={() => {
                   const url = getMenuPathByCode(MENUS_CODE['link/Type/Detail']);
                   const tab: any = window.open(`${origin}/#${url}`);
                   tab!.onTabSaveSuccess = (value: any) => {
                     if (value.status === 200) {
-                      queryNetworkList(props.provider?.id);
+                      queryNetworkList(props.provider?.id, {
+                        include: networkCurrent || '',
+                      });
                     }
                   };
                 }}
+                key="button"
+                type="primary"
               >
                 新增
-              </Button>
+              </PermissionButton>
             </div>
             {networkList.length > 0 ? (
               <Row gutter={[16, 16]}>
                 {networkList.map((item) => (
-                  <Col key={item.name} span={8}>
+                  <Col key={item.id} span={8}>
                     <Card
                       className={styles.cardRender}
                       style={{
@@ -352,21 +366,26 @@ const Access = (props: Props) => {
                 description={
                   <span>
                     暂无数据
-                    <Button
-                      type="link"
-                      disabled={getButtonPermission('link/Type', ['add'])}
-                      onClick={() => {
-                        const url = getMenuPathByCode(MENUS_CODE['link/Type/Detail']);
-                        const tab: any = window.open(`${origin}/#${url}`);
-                        tab!.onTabSaveSuccess = (value: any) => {
-                          if (value.status === 200) {
-                            queryNetworkList(props.provider?.id);
-                          }
-                        };
-                      }}
-                    >
-                      创建接入方式
-                    </Button>
+                    {getButtonPermission('link/Type', ['add']) ? (
+                      '请联系管理员进行配置'
+                    ) : (
+                      <Button
+                        type="link"
+                        onClick={() => {
+                          const url = getMenuPathByCode(MENUS_CODE['link/Type/Detail']);
+                          const tab: any = window.open(`${origin}/#${url}`);
+                          tab!.onTabSaveSuccess = (value: any) => {
+                            if (value.status === 200) {
+                              queryNetworkList(props.provider?.id, {
+                                include: networkCurrent || '',
+                              });
+                            }
+                          };
+                        }}
+                      >
+                        创建接入方式
+                      </Button>
+                    )}
                   </span>
                 }
               />
@@ -396,9 +415,8 @@ const Access = (props: Props) => {
                 }}
                 style={{ width: 500, margin: '20px 0' }}
               />
-              <Button
-                type="primary"
-                disabled={getButtonPermission('link/Protocol', ['add'])}
+              <PermissionButton
+                isPermission={protocolPermission.add}
                 onClick={() => {
                   const url = getMenuPathByCode(MENUS_CODE[`link/Protocol`]);
                   const tab: any = window.open(`${origin}/#${url}?save=true`);
@@ -408,14 +426,16 @@ const Access = (props: Props) => {
                     }
                   };
                 }}
+                key="button"
+                type="primary"
               >
                 新增
-              </Button>
+              </PermissionButton>
             </div>
             {procotolList.length > 0 ? (
               <Row gutter={[16, 16]}>
                 {procotolList.map((item) => (
-                  <Col key={item.name} span={8}>
+                  <Col key={item.id} span={8}>
                     <Card
                       className={styles.cardRender}
                       style={{
@@ -441,21 +461,24 @@ const Access = (props: Props) => {
                 description={
                   <span>
                     暂无数据
-                    <Button
-                      type="link"
-                      disabled={getButtonPermission('link/Protocol', ['add'])}
-                      onClick={() => {
-                        const url = getMenuPathByCode(MENUS_CODE[`link/Protocol`]);
-                        const tab: any = window.open(`${origin}/#${url}?save=true`);
-                        tab!.onTabSaveSuccess = (value: any) => {
-                          if (value) {
-                            queryProcotolList(props.provider?.id);
-                          }
-                        };
-                      }}
-                    >
-                      去新增
-                    </Button>
+                    {getButtonPermission('link/Protocol', ['add']) ? (
+                      '请联系管理员进行配置'
+                    ) : (
+                      <Button
+                        type="link"
+                        onClick={() => {
+                          const url = getMenuPathByCode(MENUS_CODE[`link/Protocol`]);
+                          const tab: any = window.open(`${origin}/#${url}?save=true`);
+                          tab!.onTabSaveSuccess = (value: any) => {
+                            if (value) {
+                              queryProcotolList(props.provider?.id);
+                            }
+                          };
+                        }}
+                      >
+                        去新增
+                      </Button>
+                    )}
                   </span>
                 }
               />

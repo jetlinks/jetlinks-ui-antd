@@ -110,8 +110,7 @@ const Info = observer(() => {
             {InstanceModel.detail?.description}
           </Descriptions.Item>
         </Descriptions>
-        {InstanceModel.detail?.configuration &&
-          Object.keys(InstanceModel.detail?.configuration).length > 0 && <Config />}
+        <Config />
         {InstanceModel.detail?.tags && InstanceModel.detail?.tags.length > 0 && <Tags />}
       </Card>
       <Save
