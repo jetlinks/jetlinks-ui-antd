@@ -24,10 +24,9 @@ export default (props: SaveProps) => {
   useEffect(() => {
     if (visible) {
       getProviderList({
-        terms: [
-          { column: 'provider', value: props.type },
-          { column: 'state', value: 'enabled' },
-        ],
+        sorts: [{ name: 'createTime', value: 'desc' }],
+        terms: [{ column: 'provider', value: props.type }],
+        pageSize: 100,
       });
     }
   }, [visible]);
@@ -107,6 +106,7 @@ export default (props: SaveProps) => {
         >
           <ProviderItem
             options={providerList}
+            type={props.type}
             onSelect={(_, rowData) => {
               form.setFieldsValue({
                 accessName: rowData.name,

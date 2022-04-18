@@ -19,7 +19,7 @@ import {
 import { model } from '@formily/reactive';
 import Service from '@/pages/device/Instance/service';
 import type { MetadataItem } from '@/pages/device/Product/typings';
-import { useIntl, connect } from 'umi';
+import { useIntl } from 'umi';
 import Save from './Save';
 import Export from './Export';
 import Import from './Import';
@@ -30,6 +30,7 @@ import SystemConst from '@/utils/const';
 import Token from '@/utils/token';
 import DeviceCard from '@/components/ProTableCard/CardItems/device';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { useLocation } from '@/hooks';
 
 export const statusMap = new Map();
 statusMap.set('在线', 'success');
@@ -54,7 +55,7 @@ export const InstanceModel = model<{
   params: new Set<string>(['test']),
 });
 export const service = new Service('device-instance');
-const Instance = (props: any) => {
+const Instance = () => {
   const actionRef = useRef<ActionType>();
   const [visible, setVisible] = useState<boolean>(false);
   const [exportVisible, setExportVisible] = useState<boolean>(false);
@@ -68,23 +69,22 @@ const Instance = (props: any) => {
   const history = useHistory<Record<string, string>>();
   const { permission } = PermissionButton.usePermission('device/Instance');
   const intl = useIntl();
+  const location = useLocation();
 
   useEffect(() => {
-    console.log(searchParams);
-    if (props.path) {
+    if (location.state) {
       const _terms: any[] = [];
-      Object.keys(props.locationState).forEach((key) => {
+      Object.keys(location.state).forEach((key) => {
         _terms.push({
           column: key,
-          value: props.locationState[key],
+          value: location.state[key],
         });
       });
       setSearchParams({
         terms: _terms,
       });
-      props.cleanLocationState();
     }
-  }, [props.path]);
+  }, [location]);
 
   const tools = (record: DeviceInstance) => [
     <Button
@@ -279,7 +279,7 @@ const Instance = (props: any) => {
     <Menu>
       <Menu.Item key="1">
         <PermissionButton
-          isPermission={permission.delete}
+          isPermission={permission.export}
           icon={<ExportOutlined />}
           type="default"
           onClick={() => {
@@ -302,7 +302,7 @@ const Instance = (props: any) => {
       </Menu.Item>
       <Menu.Item key="4">
         <PermissionButton
-          isPermission={permission.active}
+          isPermission={permission.action}
           icon={<CheckCircleOutlined />}
           type="primary"
           ghost
@@ -323,7 +323,7 @@ const Instance = (props: any) => {
       </Menu.Item>
       <Menu.Item key="5">
         <PermissionButton
-          isPermission={permission.sync}
+          isPermission={true}
           icon={<SyncOutlined />}
           type="primary"
           onClick={() => {
@@ -590,15 +590,4 @@ const Instance = (props: any) => {
   );
 };
 
-const mapState = (state: any) => {
-  return {
-    locationState: state.location.locationState,
-    path: state.location.path,
-  };
-};
-
-const actionCreate = {
-  cleanLocationState: (payload: any) => ({ type: 'location/clean', payload }),
-};
-
-export default connect(mapState, actionCreate)(Instance);
+export default Instance;

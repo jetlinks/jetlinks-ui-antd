@@ -36,7 +36,7 @@ export default (props: EditProps) => {
   const [show] = useState(true);
   const [accessSupport, setAccessSupport] = useState('unsupported');
   const history = useHistory();
-  const { permission } = PermissionButton.usePermission('system/Menu');
+  const { getOtherPermission } = PermissionButton.usePermission('system/Menu');
 
   const [form] = Form.useForm();
 
@@ -328,7 +328,7 @@ export default (props: EditProps) => {
                 saveData();
               }
             }}
-            isPermission={disabled ? permission.update : permission.add}
+            isPermission={getOtherPermission(['add', 'update'])}
           >
             {intl.formatMessage({
               id: `pages.data.option.${disabled ? 'edit' : 'save'}`,

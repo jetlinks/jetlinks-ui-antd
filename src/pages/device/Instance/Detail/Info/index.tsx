@@ -1,4 +1,4 @@
-import { Button, Card, Descriptions } from 'antd';
+import { Card, Descriptions } from 'antd';
 import { InstanceModel } from '@/pages/device/Instance';
 import moment from 'moment';
 import { observer } from '@formily/react';
@@ -9,10 +9,12 @@ import { useState } from 'react';
 import type { DeviceInstance } from '../../typings';
 import { EditOutlined } from '@ant-design/icons';
 import Tags from '@/pages/device/Instance/Detail/Tags';
+import { PermissionButton } from '@/components';
 
 const Info = observer(() => {
   const intl = useIntl();
   const [visible, setVisible] = useState<boolean>(false);
+  const { permission } = PermissionButton.usePermission('device/Instance');
 
   return (
     <>
@@ -23,7 +25,8 @@ const Info = observer(() => {
           bordered
           title={[
             <span key={1}>设备信息</span>,
-            <Button
+            <PermissionButton
+              isPermission={permission.update}
               key={2}
               type={'link'}
               onClick={() => {
@@ -32,7 +35,7 @@ const Info = observer(() => {
             >
               <EditOutlined />
               编辑
-            </Button>,
+            </PermissionButton>,
           ]}
         >
           <Descriptions.Item

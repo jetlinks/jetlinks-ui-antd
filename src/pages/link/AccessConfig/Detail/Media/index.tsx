@@ -473,7 +473,16 @@ const Media = (props: Props) => {
                   }
                   if (resp.status === 200) {
                     message.success('操作成功！');
-                    history.back();
+                    if (params.get('save')) {
+                      if ((window as any).onTabSaveSuccess) {
+                        if (resp.result) {
+                          (window as any).onTabSaveSuccess(resp.result);
+                          setTimeout(() => window.close(), 300);
+                        }
+                      }
+                    } else {
+                      history.back();
+                    }
                   }
                 }}
               >

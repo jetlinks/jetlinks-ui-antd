@@ -28,7 +28,7 @@ import Save from './Save';
 
 export const service = new Service('media/device');
 
-const providerType = {
+export const providerType = {
   'gb28181-2016': 'GB/T28181',
   'fixed-media': '固定地址',
 };

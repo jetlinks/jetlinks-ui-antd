@@ -326,7 +326,12 @@ export default (props: SaveProps) => {
             <Col span={24}>
               <Form.Item label={'说明'} name={'description'}>
                 <Input.TextArea
-                  placeholder={intlFormat('pages.form.tip.input', '请输入')}
+                  placeholder={intlFormat(
+                    'pages.form.tip.input.props',
+                    '请输入',
+                    'pages.table.describe',
+                    '说明',
+                  )}
                   rows={4}
                   style={{ width: '100%' }}
                   maxLength={200}

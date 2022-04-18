@@ -3,8 +3,8 @@ import { BUTTON_PERMISSION_ENUM } from '@/utils/menu/router';
 import type { MENUS_CODE_TYPE, BUTTON_PERMISSION } from '@/utils/menu/router';
 import { MENUS_BUTTONS_CACHE } from '@/utils/menu';
 
-type permissionKeyType = keyof typeof BUTTON_PERMISSION_ENUM;
-type permissionType = Record<permissionKeyType, boolean>;
+export type permissionKeyType = keyof typeof BUTTON_PERMISSION_ENUM;
+export type permissionType = Record<permissionKeyType, boolean>;
 
 const usePermissions = (
   code: MENUS_CODE_TYPE,

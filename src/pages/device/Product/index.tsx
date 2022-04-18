@@ -192,9 +192,10 @@ const Product = observer(() => {
       type={'link'}
       style={{ padding: 0 }}
       isPermission={permission.delete}
+      disabled={record.state === 1}
       popConfirm={{
         title: intl.formatMessage({
-          id: record.state === 1 ? 'pages.device.productDetail.deleteTip' : 'page.table.isDelete',
+          id: 'page.table.isDelete',
           defaultMessage: '是否删除?',
         }),
         onConfirm: async () => {
@@ -207,7 +208,10 @@ const Product = observer(() => {
       }}
       tooltip={{
         title: intl.formatMessage({
-          id: 'pages.data.option.remove',
+          id:
+            record.state === 1
+              ? 'pages.device.productDetail.deleteTip'
+              : 'pages.data.option.remove',
           defaultMessage: '删除',
         }),
       }}
@@ -477,12 +481,20 @@ const Product = observer(() => {
                 type={'link'}
                 style={{ padding: 0 }}
                 isPermission={permission.delete}
+                disabled={record.state === 1}
+                tooltip={
+                  record.state === 1
+                    ? {
+                        title: intl.formatMessage({
+                          id: 'pages.device.productDetail.deleteTip',
+                          defaultMessage: '已发布的产品不能进行删除操作',
+                        }),
+                      }
+                    : undefined
+                }
                 popConfirm={{
                   title: intl.formatMessage({
-                    id:
-                      record.state === 1
-                        ? 'pages.device.productDetail.deleteTip'
-                        : 'page.table.isDelete',
+                    id: 'page.table.isDelete',
                     defaultMessage: '是否删除?',
                   }),
                   onConfirm: async () => {

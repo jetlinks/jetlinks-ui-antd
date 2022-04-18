@@ -135,7 +135,7 @@ const Save = (props: Props) => {
         'x-component': 'Input.TextArea',
         'x-component-props': {
           rows: 3,
-          placeholder: '请输入描述',
+          placeholder: '请输入说明',
         },
         name: 'description',
       },

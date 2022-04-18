@@ -215,7 +215,7 @@ const Tenant = observer(() => {
       },
       description: {
         type: 'string',
-        title: '备注',
+        title: '说明',
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input.TextArea',

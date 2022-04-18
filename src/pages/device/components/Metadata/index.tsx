@@ -1,5 +1,5 @@
 import { observer } from '@formily/react';
-import { Button, Space, Tabs } from 'antd';
+import { Space, Tabs } from 'antd';
 import BaseMetadata from './Base';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import Import from './Import';
@@ -10,6 +10,7 @@ import Service from '@/pages/device/components/Metadata/service';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import styles from './index.less';
 import { InstanceModel } from '@/pages/device/Instance';
+import { PermissionButton } from '@/components';
 
 interface Props {
   tabAction?: ReactNode;
@@ -22,6 +23,9 @@ const Metadata = observer((props: Props) => {
   const intl = useIntl();
   const [visible, setVisible] = useState<boolean>(false);
   const [cat, setCat] = useState<boolean>(false);
+  const { permission } = PermissionButton.usePermission(
+    props.type === 'device' ? 'device/Instance' : 'device/Product',
+  );
   console.log(InstanceModel.detail, 'test');
   return (
     <div style={{ position: 'relative' }}>
@@ -36,19 +40,19 @@ const Metadata = observer((props: Props) => {
         tabBarExtraContent={
           <Space>
             {props?.tabAction}
-            <Button onClick={() => setVisible(true)}>
+            <PermissionButton isPermission={permission.update} onClick={() => setVisible(true)}>
               {intl.formatMessage({
                 id: 'pages.device.productDetail.metadata.quickImport',
                 defaultMessage: '快速导入',
               })}
-            </Button>
-            <Button onClick={() => setCat(true)}>
+            </PermissionButton>
+            <PermissionButton isPermission={permission.update} onClick={() => setCat(true)}>
               {intl.formatMessage({
                 id: 'pages.device.productDetail.metadata',
                 defaultMessage: '物模型',
               })}
               TSL
-            </Button>
+            </PermissionButton>
           </Space>
         }
         destroyInactiveTabPane
@@ -60,7 +64,7 @@ const Metadata = observer((props: Props) => {
           })}
           key="properties"
         >
-          <BaseMetadata target={props.type} type={'properties'} />
+          <BaseMetadata target={props.type} type={'properties'} permission={permission} />
         </Tabs.TabPane>
         <Tabs.TabPane
           tab={intl.formatMessage({
@@ -69,7 +73,7 @@ const Metadata = observer((props: Props) => {
           })}
           key="functions"
         >
-          <BaseMetadata target={props.type} type={'functions'} />
+          <BaseMetadata target={props.type} type={'functions'} permission={permission} />
         </Tabs.TabPane>
         <Tabs.TabPane
           tab={intl.formatMessage({
@@ -78,7 +82,7 @@ const Metadata = observer((props: Props) => {
           })}
           key="events"
         >
-          <BaseMetadata target={props.type} type={'events'} />
+          <BaseMetadata target={props.type} type={'events'} permission={permission} />
         </Tabs.TabPane>
         <Tabs.TabPane
           tab={intl.formatMessage({
@@ -87,7 +91,7 @@ const Metadata = observer((props: Props) => {
           })}
           key="tags"
         >
-          <BaseMetadata target={props.type} type={'tags'} />
+          <BaseMetadata target={props.type} type={'tags'} permission={permission} />
         </Tabs.TabPane>
       </Tabs>
       <Import visible={visible} close={() => setVisible(false)} />

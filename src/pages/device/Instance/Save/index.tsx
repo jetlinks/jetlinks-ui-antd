@@ -1,9 +1,9 @@
-import { Col, Form, Input, message, Row, Select } from 'antd';
+import { Col, Form, Input, message, Row, Select, Modal } from 'antd';
 import { service } from '@/pages/device/Instance';
 import type { DeviceInstance } from '../typings';
 import { useEffect, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { Modal, UploadImage } from '@/components';
+import { UploadImage } from '@/components';
 import { debounce } from 'lodash';
 
 interface Props {
@@ -119,8 +119,6 @@ const Save = (props: Props) => {
       })}
       confirmLoading={loading}
       onOk={handleSave}
-      permissionCode={'device/Instance'}
-      permission={'add'}
     >
       <Form
         form={form}

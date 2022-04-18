@@ -13,6 +13,7 @@ import { createSchemaField } from '@formily/react';
 import { createForm } from '@formily/core';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import TitleComponent from '@/components/TitleComponent';
+import usePermissions from '@/hooks/permission';
 
 const componentMap = {
   string: 'Input',
@@ -25,6 +26,7 @@ const Access = () => {
   const [access, setAccess] = useState<any>();
   const [providers, setProviders] = useState<any[]>([]);
   const [networkList, setNetworkList] = useState<any[]>([]);
+  const { permission } = usePermissions('device/Product');
 
   const MetworkTypeMapping = new Map();
   MetworkTypeMapping.set('websocket-server', 'WEB_SOCKET_SERVER');
@@ -345,17 +347,21 @@ const Access = () => {
         <div style={{ padding: '100px 0' }}>
           <Empty
             description={
-              <span>
-                请先
-                <a
-                  onClick={() => {
-                    setConfigVisible(true);
-                  }}
-                >
-                  选择
-                </a>
-                设备接入网关，用以提供设备接入能力
-              </span>
+              permission.add ? (
+                <span>
+                  请先
+                  <a
+                    onClick={() => {
+                      setConfigVisible(true);
+                    }}
+                  >
+                    选择
+                  </a>
+                  设备接入网关，用以提供设备接入能力
+                </span>
+              ) : (
+                '暂无权限，请联系管理员'
+              )
             }
           />
         </div>

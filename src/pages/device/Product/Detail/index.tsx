@@ -1,22 +1,11 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { history, useLocation, useParams } from 'umi';
-import {
-  Badge,
-  Button,
-  Card,
-  Descriptions,
-  message,
-  Popconfirm,
-  Space,
-  Spin,
-  Switch,
-  Tooltip,
-} from 'antd';
+import { useIntl, useLocation, useParams } from 'umi';
+import { Badge, Card, Descriptions, message, Popconfirm, Space, Spin, Switch, Tooltip } from 'antd';
 import BaseInfo from '@/pages/device/Product/Detail/BaseInfo';
 import { observer } from '@formily/react';
 import { productModel, service } from '@/pages/device/Product';
 import { useCallback, useEffect, useState } from 'react';
-import { useIntl, connect } from 'umi';
+import { useHistory } from '@/hooks';
 import Metadata from '@/pages/device/components/Metadata';
 import Access from '@/pages/device/Product/Detail/Access';
 import type { DeviceMetadata } from '@/pages/device/Product/typings';
@@ -26,6 +15,7 @@ import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 import encodeQuery from '@/utils/encodeQuery';
 import MetadataMap from '@/pages/device/Instance/Detail/MetadataMap';
 import SystemConst from '@/utils/const';
+import { PermissionButton } from '@/components';
 
 export const ModelEnum = {
   base: 'base',
@@ -33,12 +23,15 @@ export const ModelEnum = {
   access: 'access',
 };
 
-const ProductDetail = observer((props: any) => {
+const ProductDetail = observer(() => {
   const intl = useIntl();
   const [mode, setMode] = useState('base');
   const param = useParams<{ id: string }>();
   const [loading, setLoading] = useState<boolean>(false);
   const location = useLocation();
+  const history = useHistory();
+
+  const { permission } = PermissionButton.usePermission('device/Product');
 
   const statusMap = {
     1: {
@@ -194,7 +187,9 @@ const ProductDetail = observer((props: any) => {
       onBack={() => history.goBack()}
       extraContent={<Space size={24} />}
       onTabChange={(key) => {
-        setMode(key);
+        if (permission.update) {
+          setMode(key);
+        }
       }}
       tabList={list}
       tabActiveKey={mode}
@@ -202,63 +197,78 @@ const ProductDetail = observer((props: any) => {
         <Spin spinning={loading}>
           <Descriptions size="small" column={2}>
             <Descriptions.Item label={'设备数量'}>
-              <Button
+              <PermissionButton
                 type={'link'}
+                isPermission={!!getMenuPathByCode(MENUS_CODE['device/Instance'])}
                 style={{ padding: 0, height: 'auto' }}
                 onClick={() => {
                   const url = getMenuPathByCode(MENUS_CODE['device/Instance']);
                   const params = {
                     productId: productModel.current?.id,
                   };
-                  props.push({
-                    locationState: params,
-                    path: url,
-                  });
-                  history.push(url, params);
+                  if (url) {
+                    history.push(url, params);
+                  }
                 }}
               >
                 {productModel.current?.count || 0}
-              </Button>
+              </PermissionButton>
             </Descriptions.Item>
           </Descriptions>
         </Spin>
       }
       title={productModel.current?.name}
       subTitle={
-        <Popconfirm
-          title={productModel.current?.state === 1 ? '确认取消发布' : '确认发布'}
-          onConfirm={() => {
-            changeDeploy(statusMap[productModel.current?.state || 0].action);
-          }}
-        >
-          <Switch
-            key={2}
-            checked={productModel.current?.state === 1}
-            checkedChildren="已发布"
-            unCheckedChildren="未发布"
-          />
-        </Popconfirm>
+        permission.update ? (
+          <Popconfirm
+            title={productModel.current?.state === 1 ? '确认取消发布' : '确认发布'}
+            onConfirm={() => {
+              changeDeploy(statusMap[productModel.current?.state || 0].action);
+            }}
+          >
+            <Switch
+              key={2}
+              checked={productModel.current?.state === 1}
+              checkedChildren="已发布"
+              unCheckedChildren="未发布"
+            />
+          </Popconfirm>
+        ) : (
+          <Tooltip
+            title={intl.formatMessage({
+              id: 'pages.data.option.noPermission',
+              defaultMessage: '没有权限',
+            })}
+          >
+            <Switch
+              key={2}
+              disabled
+              checked={productModel.current?.state === 1}
+              checkedChildren="已发布"
+              unCheckedChildren="未发布"
+            />
+          </Tooltip>
+        )
       }
       extra={[
-        <Popconfirm title={'确定应用配置？'} key="1" onConfirm={() => changeDeploy('deploy')}>
-          {productModel.current?.state === 0 ? (
-            <Tooltip title={'请先发布产品'}>
-              <Button disabled type="primary">
-                {intl.formatMessage({
-                  id: 'pages.device.productDetail.setting',
-                  defaultMessage: '应用配置',
-                })}
-              </Button>
-            </Tooltip>
-          ) : (
-            <Button key="1" type="primary">
-              {intl.formatMessage({
-                id: 'pages.device.productDetail.setting',
-                defaultMessage: '应用配置',
-              })}
-            </Button>
-          )}
-        </Popconfirm>,
+        <PermissionButton
+          key="1"
+          type={'primary'}
+          popConfirm={{
+            title: '确定应用配置？',
+            onConfirm: () => {
+              changeDeploy('deploy');
+            },
+          }}
+          tooltip={productModel.current?.state === 0 ? { title: '请先发布产品' } : undefined}
+          isPermission={permission.update}
+          disabled={productModel.current?.state === 0}
+        >
+          {intl.formatMessage({
+            id: 'pages.device.productDetail.setting',
+            defaultMessage: '应用配置',
+          })}
+        </PermissionButton>,
       ]}
     >
       <Card>
@@ -332,15 +342,4 @@ const ProductDetail = observer((props: any) => {
   );
 });
 
-const mapState = (state: any) => ({
-  state: state.state,
-  path: state.path,
-});
-
-const actionCreate = {
-  push: (payload: any) => {
-    return { type: 'location/push', payload };
-  },
-};
-
-export default connect(mapState, actionCreate)(ProductDetail);
+export default ProductDetail;

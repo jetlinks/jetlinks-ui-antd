@@ -175,7 +175,7 @@ const Role: React.FC = observer(() => {
         'x-component': 'Input.TextArea',
         'x-component-props': {
           checkStrength: true,
-          placeholder: '请输入描述',
+          placeholder: '请输入说明',
         },
         'x-decorator-props': {},
         name: 'password',
