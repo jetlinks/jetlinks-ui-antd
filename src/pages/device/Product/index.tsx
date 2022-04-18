@@ -25,8 +25,8 @@ import {downloadObject} from '@/utils/util';
 
 export const service = new Service('device-product');
 export const statusMap = {
-  1: <Badge status="processing" text="已发布"/>,
-  0: <Badge status="error" text="未发布"/>,
+  1: <Badge status="processing" text="已发布" />,
+  0: <Badge status="error" text="未发布" />,
 };
 export const productModel = model<{
   current: ProductItem | undefined;
@@ -390,6 +390,7 @@ const Product = observer(() => {
                 } catch {
                   message.error('请上传json格式文件');
                 }
+                return true;
               };
               return false;
             }}
@@ -479,17 +480,17 @@ const Product = observer(() => {
               <PermissionButton
                 key="delete"
                 type={'link'}
-                style={{padding: 0}}
+                style={{ padding: 0 }}
                 isPermission={permission.delete}
                 disabled={record.state === 1}
                 tooltip={
                   record.state === 1
                     ? {
-                      title: intl.formatMessage({
-                        id: 'pages.device.productDetail.deleteTip',
-                        defaultMessage: '已发布的产品不能进行删除操作',
-                      }),
-                    }
+                        title: intl.formatMessage({
+                          id: 'pages.device.productDetail.deleteTip',
+                          defaultMessage: '已发布的产品不能进行删除操作',
+                        }),
+                      }
                     : undefined
                 }
                 popConfirm={{

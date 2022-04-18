@@ -26,7 +26,7 @@ const Access = () => {
   const [access, setAccess] = useState<any>();
   const [providers, setProviders] = useState<any[]>([]);
   const [networkList, setNetworkList] = useState<any[]>([]);
-  const {permission} = usePermissions('device/Product');
+  const { permission } = usePermissions('device/Product');
 
   const MetworkTypeMapping = new Map();
   MetworkTypeMapping.set('websocket-server', 'WEB_SOCKET_SERVER');
@@ -83,9 +83,9 @@ const Access = () => {
           return res?.group == record?.group;
         });
         if (index == 0 || list[index - 1]?.group != record?.group) {
-          return {rowSpan: arr.length};
+          return { rowSpan: arr.length };
         } else {
-          return {rowSpan: 0};
+          return { rowSpan: 0 };
         }
       },
     },
@@ -148,7 +148,7 @@ const Access = () => {
           return res?.group == record?.group;
         });
         if (index == 0 || list[index - 1]?.group != record?.group) {
-          return {rowSpan: arr.length};
+          return { rowSpan: arr.length };
         } else {
           return { rowSpan: 0 };
         }
@@ -423,7 +423,7 @@ const Access = () => {
                           />
                         </div>
                       ),
-                  )
+                    )
                   : '暂无连接信息'}
               </div>
 
@@ -434,7 +434,7 @@ const Access = () => {
             <Col span={12}>
               <div className={styles.info}>
                 <div>
-                  <div style={{fontWeight: '600', marginBottom: 10}}>
+                  <div style={{ fontWeight: '600', marginBottom: 10 }}>
                     {access?.provider === 'mqtt-server-gateway' ||
                     access?.provider === 'mqtt-client-gateway'
                       ? 'topic'
@@ -445,7 +445,7 @@ const Access = () => {
                     bordered
                     columns={config.id === 'MQTT' ? columnsMQTT : columnsHTTP}
                     pagination={false}
-                    scroll={{y: 500}}
+                    scroll={{ y: 500 }}
                   />
                 </div>
               </div>

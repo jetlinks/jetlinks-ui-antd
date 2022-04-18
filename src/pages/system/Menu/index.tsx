@@ -169,7 +169,7 @@ export default observer(() => {
         <PermissionButton
           key="delete"
           type="link"
-          style={{padding: 0}}
+          style={{ padding: 0 }}
           isPermission={permission.delete}
           popConfirm={{
             title: intl.formatMessage({

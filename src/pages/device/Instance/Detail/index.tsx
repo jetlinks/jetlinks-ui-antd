@@ -32,7 +32,7 @@ const InstanceDetail = observer(() => {
   const intl = useIntl();
   const [tab, setTab] = useState<string>('detail');
   const params = useParams<{ id: string }>();
-  const {permission} = PermissionButton.usePermission('device/Instance');
+  const { permission } = PermissionButton.usePermission('device/Instance');
 
   const resetMetadata = async () => {
     const resp = await service.deleteMetadata(params.id);

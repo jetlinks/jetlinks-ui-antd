@@ -17,7 +17,7 @@ import {BadgeStatus, PermissionButton, ProTableCard} from '@/components';
 import {StatusColorEnum} from '@/components/BadgeStatus';
 import SearchComponent from '@/components/SearchComponent';
 import MediaDevice from '@/components/ProTableCard/CardItems/mediaDevice';
-import {getMenuPathByCode, getMenuPathByParams, MENUS_CODE,} from '@/utils/menu';
+import {getMenuPathByCode, getMenuPathByParams, MENUS_CODE} from '@/utils/menu';
 import Service from './service';
 import Save from './Save';
 

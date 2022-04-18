@@ -145,8 +145,8 @@ const Save = (props: Props) => {
               },
             ],
             enum: [
-              {label: 'jar', value: 'jar'},
-              {label: 'local', value: 'local'},
+              { label: 'jar', value: 'jar' },
+              { label: 'local', value: 'local' },
               // { label: 'script', value: 'script' },
             ],
           },
@@ -248,7 +248,7 @@ const Save = (props: Props) => {
       }
     >
       <Form form={form} layout="vertical">
-        <SchemaField schema={schema}/>
+        <SchemaField schema={schema} />
       </Form>
     </Modal>
   );

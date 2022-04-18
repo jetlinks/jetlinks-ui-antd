@@ -22,7 +22,7 @@ interface ProviderProps {
 const defaultImage = require('/public/images/device-access.png');
 
 export default (props: ProviderProps) => {
-  const {permission} = usePermissions('link/AccessConfig');
+  const { permission } = usePermissions('link/AccessConfig');
   const [options, setOptions] = useState<any[]>([]);
   const addItemKey = useRef('');
   const intl = useIntl();
@@ -40,7 +40,7 @@ export default (props: ProviderProps) => {
     [props],
   );
 
-  const {run: getProviderList} = useRequest(service.queryProvider, {
+  const { run: getProviderList } = useRequest(service.queryProvider, {
     manual: true,
     formatResult: (res) => res.result,
     onSuccess: (resp) => {
@@ -61,8 +61,8 @@ export default (props: ProviderProps) => {
     tab!.onTabSaveSuccess = (value: any) => {
       addItemKey.current = value.id;
       getProviderList({
-        sorts: [{name: 'createTime', value: 'asc'}],
-        terms: [{column: 'provider', value: props.type}],
+        sorts: [{ name: 'createTime', value: 'asc' }],
+        terms: [{ column: 'provider', value: props.type }],
         pageSize: 100,
       });
     };
@@ -75,7 +75,7 @@ export default (props: ProviderProps) => {
   const emptyDescription = permission.add ? (
     <>
       暂无数据，请先
-      <Button type={'link'} onClick={jumpPage} style={{padding: 0}}>
+      <Button type={'link'} onClick={jumpPage} style={{ padding: 0 }}>
         添加{providerType[props.type]} 接入网关
       </Button>
     </>
@@ -94,10 +94,10 @@ export default (props: ProviderProps) => {
             onClick={() => {
               itemClick(item);
             }}
-            style={{padding: 16}}
+            style={{ padding: 16 }}
           >
             <TableCard
-              className={classNames({active: item.id === props.value})}
+              className={classNames({ active: item.id === props.value })}
               showMask={false}
               showTool={false}
               status={item.state.value}
@@ -109,7 +109,7 @@ export default (props: ProviderProps) => {
             >
               <div className={styles.context}>
                 <div>
-                  <img width={88} height={88} src={defaultImage} alt={''}/>
+                  <img width={88} height={88} src={defaultImage} alt={''} />
                 </div>
                 <div className={styles.card}>
                   <div className={styles.header}>
@@ -119,10 +119,10 @@ export default (props: ProviderProps) => {
                   <div className={styles.container}>
                     <div className={styles.server}>
                       <div className={styles.subTitle}>{item?.channelInfo?.name || '--'}</div>
-                      <div style={{width: '100%'}}>
+                      <div style={{ width: '100%' }}>
                         {item.channelInfo?.addresses.map((i: any, index: number) => (
                           <p key={i.address + `_address${index}`}>
-                            <Badge color={i.health === -1 ? 'red' : 'green'} text={i.address}/>
+                            <Badge color={i.health === -1 ? 'red' : 'green'} text={i.address} />
                           </p>
                         ))}
                       </div>
@@ -138,7 +138,7 @@ export default (props: ProviderProps) => {
           </div>
         ))
       ) : (
-        <Empty description={<span>{emptyDescription}</span>}/>
+        <Empty description={<span>{emptyDescription}</span>} />
       )}
     </div>
   );

@@ -22,7 +22,7 @@ const Config = () => {
 
   const [metadata, setMetadata] = useState<ConfigMetadata[]>([]);
   const [visible, setVisible] = useState<boolean>(false);
-  const {permission} = PermissionButton.usePermission('device/Instance');
+  const { permission } = PermissionButton.usePermission('device/Instance');
 
   const id = InstanceModel.detail?.id || params?.id;
 
@@ -77,9 +77,9 @@ const Config = () => {
   };
 
   return metadata.length > 0 ? (
-    <div style={{width: '100%', marginTop: '20px'}} className="config">
-      <div style={{display: 'flex', marginBottom: 20}}>
-        <div style={{fontSize: 16, fontWeight: 700}}>配置</div>
+    <div style={{ width: '100%', marginTop: '20px' }} className="config">
+      <div style={{ display: 'flex', marginBottom: 20 }}>
+        <div style={{ fontSize: 16, fontWeight: 700 }}>配置</div>
         <Space>
           <PermissionButton
             isPermission={permission.update}
@@ -88,7 +88,7 @@ const Config = () => {
               setVisible(true);
             }}
           >
-            <EditOutlined/>
+            <EditOutlined />
             编辑
           </PermissionButton>
           {InstanceModel.detail.state?.value !== 'notActive' && (
@@ -106,10 +106,10 @@ const Config = () => {
               isPermission={permission.update}
               type="link"
             >
-              <CheckOutlined/>
+              <CheckOutlined />
               应用配置
               <Tooltip title="修改配置后需重新应用后才能生效。">
-                <QuestionCircleOutlined/>
+                <QuestionCircleOutlined />
               </Tooltip>
             </PermissionButton>
           )}
@@ -128,12 +128,12 @@ const Config = () => {
               type="link"
               isPermission={permission.update}
             >
-              <UndoOutlined/>
+              <UndoOutlined />
               恢复默认
               <Tooltip
                 title={`该设备单独编辑过配置信息，点击此将恢复成默认的配置信息，请谨慎操作。`}
               >
-                <QuestionCircleOutlined/>
+                <QuestionCircleOutlined />
               </Tooltip>
             </PermissionButton>
           )}

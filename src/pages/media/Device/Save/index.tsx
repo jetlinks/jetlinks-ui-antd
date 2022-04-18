@@ -333,7 +333,7 @@ export default (props: SaveProps) => {
                     '说明',
                   )}
                   rows={4}
-                  style={{width: '100%'}}
+                  style={{ width: '100%' }}
                   maxLength={200}
                   showCount={true}
                 />

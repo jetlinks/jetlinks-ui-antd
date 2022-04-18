@@ -31,7 +31,7 @@ const ProductDetail = observer(() => {
   const location = useLocation();
   const history = useHistory();
 
-  const {permission} = PermissionButton.usePermission('device/Product');
+  const { permission } = PermissionButton.usePermission('device/Product');
 
   const statusMap = {
     1: {
@@ -200,7 +200,7 @@ const ProductDetail = observer(() => {
               <PermissionButton
                 type={'link'}
                 isPermission={!!getMenuPathByCode(MENUS_CODE['device/Instance'])}
-                style={{padding: 0, height: 'auto'}}
+                style={{ padding: 0, height: 'auto' }}
                 onClick={() => {
                   const url = getMenuPathByCode(MENUS_CODE['device/Instance']);
                   const params = {
@@ -260,7 +260,7 @@ const ProductDetail = observer(() => {
               changeDeploy('deploy');
             },
           }}
-          tooltip={productModel.current?.state === 0 ? {title: '请先发布产品'} : undefined}
+          tooltip={productModel.current?.state === 0 ? { title: '请先发布产品' } : undefined}
           isPermission={permission.update}
           disabled={productModel.current?.state === 0}
         >

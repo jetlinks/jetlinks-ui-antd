@@ -20,7 +20,7 @@ const Role: React.FC = observer(() => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
   const permissionCode = 'system/Role';
-  const {permission} = PermissionButton.usePermission(permissionCode);
+  const { permission } = PermissionButton.usePermission(permissionCode);
 
   const columns: ProColumns<RoleItem>[] = [
     // {

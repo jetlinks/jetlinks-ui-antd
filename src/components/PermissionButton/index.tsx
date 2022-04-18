@@ -33,7 +33,7 @@ const PermissionButton = (props: PermissionButtonProps) => {
   const defaultButton = isButton ? (
     props.children
   ) : (
-    <Button {...buttonProps} disabled={_isPermission}/>
+    <Button {...buttonProps} disabled={_isPermission} />
   );
 
   const isTooltip = tooltip ? <Tooltip {...tooltip}>{defaultButton}</Tooltip> : null;
@@ -45,7 +45,7 @@ const PermissionButton = (props: PermissionButtonProps) => {
         defaultMessage: '没有权限',
       })}
     >
-      {<Button {...buttonProps} disabled={_isPermission}/>}
+      {<Button {...buttonProps} disabled={_isPermission} />}
     </Tooltip>
   );
 

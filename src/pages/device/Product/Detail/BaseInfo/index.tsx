@@ -17,7 +17,7 @@ const BaseInfo = () => {
   // const [metadata, setMetadata] = useState<ConfigMetadata[]>([]);
   // const [state, setState] = useState<boolean>(false);
   const [visible, setVisible] = useState(false);
-  const {permission} = PermissionButton.usePermission('device/Product');
+  const { permission } = PermissionButton.usePermission('device/Product');
 
   // const form = createForm({
   //   validateFirst: true,
@@ -162,7 +162,7 @@ const BaseInfo = () => {
               setVisible(true);
             }}
           >
-            <EditOutlined/>
+            <EditOutlined />
           </PermissionButton>,
         ]}
         bordered

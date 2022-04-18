@@ -279,7 +279,7 @@ const Instance = () => {
       <Menu.Item key="1">
         <PermissionButton
           isPermission={permission.export}
-          icon={<ExportOutlined/>}
+          icon={<ExportOutlined />}
           type="default"
           onClick={() => {
             setExportVisible(true);
@@ -302,7 +302,7 @@ const Instance = () => {
       <Menu.Item key="4">
         <PermissionButton
           isPermission={permission.action}
-          icon={<CheckCircleOutlined/>}
+          icon={<CheckCircleOutlined />}
           type="primary"
           ghost
           popConfirm={{
@@ -323,7 +323,7 @@ const Instance = () => {
       <Menu.Item key="5">
         <PermissionButton
           isPermission={true}
-          icon={<SyncOutlined/>}
+          icon={<SyncOutlined />}
           type="primary"
           onClick={() => {
             setType('sync');

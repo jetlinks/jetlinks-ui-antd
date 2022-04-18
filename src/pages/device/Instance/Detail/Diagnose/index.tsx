@@ -74,21 +74,21 @@ const Diagnose = () => {
                   backgroundSize: '100% 100%',
                 }
               : {
-                backgroundColor: 'rgba(0, 0, 0, .08)',
-                borderLeft: '2px solid rgba(0, 0, 0, .8)',
-                cursor: 'not-allowed',
-              }
+                  backgroundColor: 'rgba(0, 0, 0, .08)',
+                  borderLeft: '2px solid rgba(0, 0, 0, .8)',
+                  cursor: 'not-allowed',
+                }
           }
           className="item-box"
         >
           <div className="item-title">消息通信</div>
           <div
             className={classNames('item-context', message !== 'disabled' ? 'item-message' : '')}
-            style={{fontWeight: 400}}
+            style={{ fontWeight: 400 }}
           >
             {message === 'disabled' ? (
-              <span style={{color: statusColor.get(message)}}>
-                <Badge color={statusColor.get(message)}/> 连接中
+              <span style={{ color: statusColor.get(message) }}>
+                <Badge color={statusColor.get(message)} /> 连接中
               </span>
             ) : (
               <>

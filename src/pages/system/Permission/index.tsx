@@ -78,7 +78,7 @@ const Permission: React.FC = observer(() => {
           disabled={getButtonPermission('system/Permission', ['export'])}
           title={'确认导出？'}
           onConfirm={() => {
-            service.getPermission({...param, paging: false}).subscribe((resp) => {
+            service.getPermission({ ...param, paging: false }).subscribe((resp) => {
               if (resp.status === 200) {
                 downloadObject(resp.result, '权限数据');
                 message.success('导出成功');
@@ -211,7 +211,7 @@ const Permission: React.FC = observer(() => {
         <PermissionButton
           type={'link'}
           key={'delete'}
-          style={{padding: 0}}
+          style={{ padding: 0 }}
           disabled={!!record.status}
           isPermission={permission.delete}
           tooltip={{

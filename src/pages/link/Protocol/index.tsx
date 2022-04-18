@@ -18,7 +18,7 @@ const Protocol = () => {
   const [visible, setVisible] = useState<boolean>(false);
   const [current, setCurrent] = useState<ProtocolItem | undefined>();
   const [searchParams, setSearchParams] = useState<any>({});
-  const {permission} = PermissionButton.usePermission('link/Protocol');
+  const { permission } = PermissionButton.usePermission('link/Protocol');
   const intl = useIntl();
 
   const modifyState = async (id: string, type: 'deploy' | 'un-deploy') => {
@@ -79,7 +79,7 @@ const Protocol = () => {
             setVisible(true);
           }}
           type={'link'}
-          style={{padding: 0}}
+          style={{ padding: 0 }}
           tooltip={{
             title: intl.formatMessage({
               id: 'pages.data.option.edit',
@@ -87,13 +87,13 @@ const Protocol = () => {
             }),
           }}
         >
-          <EditOutlined/>
+          <EditOutlined />
         </PermissionButton>,
         <PermissionButton
           isPermission={permission.action}
           key="action"
           type={'link'}
-          style={{padding: 0}}
+          style={{ padding: 0 }}
           tooltip={{
             title: record.state === 1 ? '撤销' : '发布',
           }}
@@ -108,14 +108,14 @@ const Protocol = () => {
             },
           }}
         >
-          {record.state === 1 ? <StopOutlined/> : <CheckCircleOutlined/>}
+          {record.state === 1 ? <StopOutlined /> : <CheckCircleOutlined />}
         </PermissionButton>,
         <PermissionButton
           isPermission={permission.delete}
           tooltip={{
             title: record.state !== 1 ? '删除' : '请先禁用该协议，再删除',
           }}
-          style={{padding: 0}}
+          style={{ padding: 0 }}
           disabled={record.state === 1}
           popConfirm={{
             title: '确认删除',
@@ -157,7 +157,7 @@ const Protocol = () => {
         columns={columns}
         actionRef={actionRef}
         params={searchParams}
-        options={{fullScreen: true}}
+        options={{ fullScreen: true }}
         request={(params) =>
           service.query({
             ...params,
@@ -171,17 +171,17 @@ const Protocol = () => {
         }
         rowKey="id"
         search={false}
-        pagination={{pageSize: 10}}
+        pagination={{ pageSize: 10 }}
         headerTitle={[
           <PermissionButton
             onClick={() => {
               setVisible(true);
-              setCurrent({});
+              setCurrent(undefined);
             }}
-            style={{marginRight: 12}}
+            style={{ marginRight: 12 }}
             isPermission={permission.add}
             key="button"
-            icon={<PlusOutlined/>}
+            icon={<PlusOutlined />}
             type="primary"
           >
             {intl.formatMessage({
@@ -202,7 +202,7 @@ const Protocol = () => {
                   setVisible(true);
                 }}
                 type={'link'}
-                style={{padding: 0}}
+                style={{ padding: 0 }}
                 tooltip={{
                   title: intl.formatMessage({
                     id: 'pages.data.option.edit',
@@ -210,13 +210,13 @@ const Protocol = () => {
                   }),
                 }}
               >
-                <EditOutlined/>
+                <EditOutlined />
               </PermissionButton>,
               <PermissionButton
                 isPermission={permission.action}
                 key="action"
                 type={'link'}
-                style={{padding: 0}}
+                style={{ padding: 0 }}
                 tooltip={{
                   title: record.state === 1 ? '撤销' : '发布',
                 }}
@@ -231,7 +231,7 @@ const Protocol = () => {
                   },
                 }}
               >
-                {record.state === 1 ? <StopOutlined/> : <CheckCircleOutlined/>}
+                {record.state === 1 ? <StopOutlined /> : <CheckCircleOutlined />}
               </PermissionButton>,
               <PermissionButton
                 isPermission={permission.delete}
@@ -259,7 +259,7 @@ const Protocol = () => {
                 key="delete"
                 type="link"
               >
-                <DeleteOutlined/>
+                <DeleteOutlined />
               </PermissionButton>,
             ]}
           />

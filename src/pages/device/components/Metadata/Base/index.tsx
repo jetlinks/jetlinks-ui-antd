@@ -27,7 +27,7 @@ interface Props {
 }
 
 const BaseMetadata = observer((props: Props) => {
-  const {type, target = 'product'} = props;
+  const { type, target = 'product' } = props;
   const intl = useIntl();
   const param = useParams<{ id: string }>();
 
@@ -80,7 +80,7 @@ const BaseMetadata = observer((props: Props) => {
           isPermission={props.permission.update}
           type="link"
           key={'edit'}
-          style={{padding: 0}}
+          style={{ padding: 0 }}
           disabled={operateLimits('updata', type)}
           onClick={() => {
             MetadataModel.edit = true;
@@ -92,13 +92,13 @@ const BaseMetadata = observer((props: Props) => {
             title: operateLimits('add', type) ? '暂不支持' : '编辑',
           }}
         >
-          <EditOutlined/>
+          <EditOutlined />
         </PermissionButton>,
         <PermissionButton
           isPermission={props.permission.update}
           type="link"
           key={'delete'}
-          style={{padding: 0}}
+          style={{ padding: 0 }}
           popConfirm={{
             title: '确认删除？',
             onConfirm: async () => {
@@ -109,7 +109,7 @@ const BaseMetadata = observer((props: Props) => {
             title: '删除',
           }}
         >
-          <DeleteOutlined/>
+          <DeleteOutlined />
         </PermissionButton>,
       ],
     },
@@ -179,7 +179,7 @@ const BaseMetadata = observer((props: Props) => {
                 MetadataModel.importMetadata = true;
               }}
               key="button"
-              icon={<ImportOutlined/>}
+              icon={<ImportOutlined />}
               type="ghost"
             >
               导入属性
@@ -195,7 +195,7 @@ const BaseMetadata = observer((props: Props) => {
               MetadataModel.action = 'add';
             }}
             disabled={operateLimits('add', type)}
-            icon={<PlusOutlined/>}
+            icon={<PlusOutlined />}
             type="primary"
             tooltip={{
               title: operateLimits('add', type) ? '暂不支持' : '新增',

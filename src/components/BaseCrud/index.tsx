@@ -126,7 +126,7 @@ const BaseCrud = <T extends Record<string, any>>(props: Props<T>) => {
               disabled={props.disableAdd}
               onClick={CurdModel.add}
               key="button"
-              icon={<PlusOutlined/>}
+              icon={<PlusOutlined />}
               type="primary"
             >
               {intl.formatMessage({

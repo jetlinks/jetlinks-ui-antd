@@ -287,7 +287,7 @@ const Access = (props: Props) => {
                     }),
                   );
                 }}
-                style={{width: 500, margin: '20px 0'}}
+                style={{ width: 500, margin: '20px 0' }}
               />
               <PermissionButton
                 isPermission={networkPermission.add}
@@ -400,7 +400,7 @@ const Access = (props: Props) => {
                     }),
                   );
                 }}
-                style={{width: 500, margin: '20px 0'}}
+                style={{ width: 500, margin: '20px 0' }}
               />
               <PermissionButton
                 isPermission={protocolPermission.add}

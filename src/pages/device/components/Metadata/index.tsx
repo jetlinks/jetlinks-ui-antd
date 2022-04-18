@@ -23,14 +23,14 @@ const Metadata = observer((props: Props) => {
   const intl = useIntl();
   const [visible, setVisible] = useState<boolean>(false);
   const [cat, setCat] = useState<boolean>(false);
-  const {permission} = PermissionButton.usePermission(
+  const { permission } = PermissionButton.usePermission(
     props.type === 'device' ? 'device/Instance' : 'device/Product',
   );
   console.log(InstanceModel.detail, 'test');
   return (
-    <div style={{position: 'relative'}}>
+    <div style={{ position: 'relative' }}>
       <div className={styles.tips}>
-        <InfoCircleOutlined style={{marginRight: '3px'}}/>
+        <InfoCircleOutlined style={{ marginRight: '3px' }} />
         {InstanceModel.detail?.independentMetadata
           ? '该设备已脱离产品物模型，修改产品物模型对该设备无影响'
           : '设备会默认继承产品的物模型，修改设备物模型后将脱离产品物模型'}
@@ -64,7 +64,7 @@ const Metadata = observer((props: Props) => {
           })}
           key="properties"
         >
-          <BaseMetadata target={props.type} type={'properties'} permission={permission}/>
+          <BaseMetadata target={props.type} type={'properties'} permission={permission} />
         </Tabs.TabPane>
         <Tabs.TabPane
           tab={intl.formatMessage({
@@ -73,7 +73,7 @@ const Metadata = observer((props: Props) => {
           })}
           key="functions"
         >
-          <BaseMetadata target={props.type} type={'functions'} permission={permission}/>
+          <BaseMetadata target={props.type} type={'functions'} permission={permission} />
         </Tabs.TabPane>
         <Tabs.TabPane
           tab={intl.formatMessage({
@@ -82,7 +82,7 @@ const Metadata = observer((props: Props) => {
           })}
           key="events"
         >
-          <BaseMetadata target={props.type} type={'events'} permission={permission}/>
+          <BaseMetadata target={props.type} type={'events'} permission={permission} />
         </Tabs.TabPane>
         <Tabs.TabPane
           tab={intl.formatMessage({
@@ -91,7 +91,7 @@ const Metadata = observer((props: Props) => {
           })}
           key="tags"
         >
-          <BaseMetadata target={props.type} type={'tags'} permission={permission}/>
+          <BaseMetadata target={props.type} type={'tags'} permission={permission} />
         </Tabs.TabPane>
       </Tabs>
       <Import visible={visible} close={() => setVisible(false)} />

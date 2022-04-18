@@ -24,7 +24,7 @@ export default (props: EditProps) => {
   const [show] = useState(true);
   const [accessSupport, setAccessSupport] = useState('unsupported');
   const history = useHistory();
-  const {getOtherPermission} = PermissionButton.usePermission('system/Menu');
+  const { getOtherPermission } = PermissionButton.usePermission('system/Menu');
 
   const [form] = Form.useForm();
 

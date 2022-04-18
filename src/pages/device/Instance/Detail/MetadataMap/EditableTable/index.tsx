@@ -5,7 +5,7 @@ import _ from 'lodash';
 
 const EditableContext: any = React.createContext(null);
 
-const EditableRow = ({...props}) => {
+const EditableRow = ({ ...props }) => {
   const [form] = Form.useForm();
 
   return (
@@ -42,7 +42,7 @@ const EditableCell = ({
   const save = async () => {
     try {
       const values = await form.validateFields();
-      handleSave({...record, metadataId: values?.metadataId});
+      handleSave({ ...record, metadataId: values?.metadataId });
     } catch (errInfo) {
       console.log('Save failed:', errInfo);
     }
@@ -217,7 +217,7 @@ const EditableTable = (props: Props) => {
     if (item?.metadataId !== row?.metadataId) {
       const resp = await service[
         props.type === 'device' ? 'saveDeviceMetadata' : 'saveProductMetadata'
-        ](props.data?.id, [
+      ](props.data?.id, [
         {
           metadataType: 'property',
           metadataId: row.metadataId === 'use-origin-data' ? row.metadataId : row.id,

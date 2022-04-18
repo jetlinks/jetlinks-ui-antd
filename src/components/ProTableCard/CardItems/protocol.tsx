@@ -28,7 +28,7 @@ export default (props: ProcotolCardProps) => {
     >
       <div className={'pro-table-card-item'}>
         <div className={'card-item-avatar'}>
-          <img width={88} height={88} src={defaultImage} alt={''}/>
+          <img width={88} height={88} src={defaultImage} alt={''} />
         </div>
         <div className={'card-item-body'}>
           <div className={'card-item-header'}>
@@ -37,7 +37,7 @@ export default (props: ProcotolCardProps) => {
           <Row gutter={24}>
             <Col span={12}>
               <div>
-                <div style={{color: 'rgba(0, 0, 0, 0.75)', fontSize: 12}}>ID</div>
+                <div style={{ color: 'rgba(0, 0, 0, 0.75)', fontSize: 12 }}>ID</div>
                 <div
                   style={{
                     width: '100%',
@@ -52,7 +52,7 @@ export default (props: ProcotolCardProps) => {
             </Col>
             <Col span={12}>
               <div>
-                <div style={{color: 'rgba(0, 0, 0, 0.75)', fontSize: 12}}>类型</div>
+                <div style={{ color: 'rgba(0, 0, 0, 0.75)', fontSize: 12 }}>类型</div>
                 <div>{props.type}</div>
               </div>
             </Col>

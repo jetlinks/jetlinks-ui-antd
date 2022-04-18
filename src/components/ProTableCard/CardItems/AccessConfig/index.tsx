@@ -52,7 +52,7 @@ export default (props: AccessConfigCardProps) => {
                 {props.channelInfo?.addresses.slice(0, 2).map((i: any, index: number) => (
                   <div className="subItem" key={i.address + `_address${index}`}>
                     <Tooltip title={i.address}>
-                      <Badge color={i.health === -1 ? 'red' : 'green'}/>
+                      <Badge color={i.health === -1 ? 'red' : 'green'} />
                       {i.address}
                     </Tooltip>
                   </div>

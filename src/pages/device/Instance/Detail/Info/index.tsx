@@ -14,7 +14,7 @@ import {PermissionButton} from '@/components';
 const Info = observer(() => {
   const intl = useIntl();
   const [visible, setVisible] = useState<boolean>(false);
-  const {permission} = PermissionButton.usePermission('device/Instance');
+  const { permission } = PermissionButton.usePermission('device/Instance');
 
   return (
     <>
@@ -33,7 +33,7 @@ const Info = observer(() => {
                 setVisible(true);
               }}
             >
-              <EditOutlined/>
+              <EditOutlined />
               编辑
             </PermissionButton>,
           ]}
@@ -113,7 +113,7 @@ const Info = observer(() => {
             {InstanceModel.detail?.description}
           </Descriptions.Item>
         </Descriptions>
-        <Config/>
+        <Config />
         {InstanceModel.detail?.tags && InstanceModel.detail?.tags.length > 0 && <Tags />}
       </Card>
       <Save

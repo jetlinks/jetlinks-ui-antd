@@ -34,7 +34,7 @@
 - `digit` 数字类型
 - `dateTime` 日期时间
 
-## defaultParams 默认查询参数不展示到UI上
+## defaultParams 默认查询参数不展示到 UI 上
 
 支持两种类型的默认参数
 
@@ -54,7 +54,7 @@ const b = {
 }
 ```
 
-## initParam 默认查询参数，展示到UI上
+## initParam 默认查询参数，展示到 UI 上
 
 ```
 {[
