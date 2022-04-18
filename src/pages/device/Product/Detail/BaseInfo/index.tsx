@@ -1,10 +1,11 @@
 import { productModel, service } from '@/pages/device/Product';
-import { Button, Descriptions } from 'antd';
+import { Descriptions } from 'antd';
 import { useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { EditOutlined } from '@ant-design/icons';
 import { getDateFormat } from '@/utils/util';
 import Save from '@/pages/device/Product/Save';
+import { PermissionButton } from '@/components';
 
 // const componentMap = {
 //   string: 'Input',
@@ -16,6 +17,7 @@ const BaseInfo = () => {
   // const [metadata, setMetadata] = useState<ConfigMetadata[]>([]);
   // const [state, setState] = useState<boolean>(false);
   const [visible, setVisible] = useState(false);
+  const { permission } = PermissionButton.usePermission('device/Product');
 
   // const form = createForm({
   //   validateFirst: true,
@@ -152,7 +154,8 @@ const BaseInfo = () => {
         column={3}
         title={[
           <span key={1}>产品信息</span>,
-          <Button
+          <PermissionButton
+            isPermission={permission.update}
             key={2}
             type={'link'}
             onClick={() => {
@@ -160,7 +163,7 @@ const BaseInfo = () => {
             }}
           >
             <EditOutlined />
-          </Button>,
+          </PermissionButton>,
         ]}
         bordered
       >

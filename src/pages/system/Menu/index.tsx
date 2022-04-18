@@ -107,7 +107,7 @@ export default observer(() => {
     {
       title: intl.formatMessage({
         id: 'page.system.menu.describe',
-        defaultMessage: '备注说明',
+        defaultMessage: '说明',
       }),
       width: 200,
       dataIndex: 'describe',
@@ -175,6 +175,7 @@ export default observer(() => {
           key="delete"
           type="link"
           style={{ padding: 0 }}
+          isPermission={permission.delete}
           popConfirm={{
             title: intl.formatMessage({
               id: 'page.system.menu.table.delete',

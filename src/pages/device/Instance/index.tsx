@@ -30,6 +30,7 @@ import SystemConst from '@/utils/const';
 import Token from '@/utils/token';
 import DeviceCard from '@/components/ProTableCard/CardItems/device';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { useLocation } from '@/hooks';
 
 export const statusMap = new Map();
 statusMap.set('在线', 'success');
@@ -54,7 +55,7 @@ export const InstanceModel = model<{
   params: new Set<string>(['test']),
 });
 export const service = new Service('device-instance');
-const Instance = (props: any) => {
+const Instance = () => {
   const actionRef = useRef<ActionType>();
   const [visible, setVisible] = useState<boolean>(false);
   const [exportVisible, setExportVisible] = useState<boolean>(false);
@@ -68,23 +69,23 @@ const Instance = (props: any) => {
   const history = useHistory<Record<string, string>>();
   const { permission } = PermissionButton.usePermission('device/Instance');
   const intl = useIntl();
+  const location = useLocation();
 
   useEffect(() => {
-    console.log(searchParams);
-    if (props.path) {
+    console.log(location);
+    if (location.state) {
       const _terms: any[] = [];
-      Object.keys(props.locationState).forEach((key) => {
+      Object.keys(location.state).forEach((key) => {
         _terms.push({
           column: key,
-          value: props.locationState[key],
+          value: location.state[key],
         });
       });
       setSearchParams({
         terms: _terms,
       });
-      props.cleanLocationState();
     }
-  }, [props.path]);
+  }, [location]);
 
   const tools = (record: DeviceInstance) => [
     <Button

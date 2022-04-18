@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { InstanceModel, service } from '@/pages/device/Instance';
 import { history, useParams } from 'umi';
-import { Badge, Button, Card, Descriptions, Divider, message, Popconfirm, Tooltip } from 'antd';
+import { Badge, Button, Card, Descriptions, Divider, message } from 'antd';
 import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import { observer } from '@formily/react';
@@ -21,6 +21,7 @@ import { Store } from 'jetlinks-store';
 import SystemConst from '@/utils/const';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
+import { PermissionButton } from '@/components';
 
 export const deviceStatus = new Map();
 deviceStatus.set('online', <Badge status="success" text={'在线'} />);
@@ -31,6 +32,7 @@ const InstanceDetail = observer(() => {
   const intl = useIntl();
   const [tab, setTab] = useState<string>('detail');
   const params = useParams<{ id: string }>();
+  const { permission } = PermissionButton.usePermission('device/Instance');
 
   const resetMetadata = async () => {
     const resp = await service.deleteMetadata(params.id);
@@ -70,11 +72,19 @@ const InstanceDetail = observer(() => {
           <Metadata
             type="device"
             tabAction={
-              <Popconfirm title="确认重置？" onConfirm={resetMetadata}>
-                <Tooltip title="重置后将使用产品的物模型配置">
-                  <Button>重置操作</Button>
-                </Tooltip>
-              </Popconfirm>
+              <PermissionButton
+                isPermission={permission.update}
+                popConfirm={{
+                  title: '确认重置？',
+                  onConfirm: resetMetadata,
+                }}
+                tooltip={{
+                  title: '重置后将使用产品的物模型配置',
+                }}
+                key={'reload'}
+              >
+                重置操作
+              </PermissionButton>
             }
           />
         </Card>

@@ -153,7 +153,7 @@ export default (props: ButtonsProps) => {
     {
       title: intl.formatMessage({
         id: 'page.system.menu.describe',
-        defaultMessage: '备注说明',
+        defaultMessage: '说明',
       }),
       dataIndex: 'description',
       // render: (_, row) => () => {
@@ -348,10 +348,10 @@ export default (props: ButtonsProps) => {
             name="description"
             label={intl.formatMessage({
               id: 'pages.table.describe',
-              defaultMessage: '描述',
+              defaultMessage: '说明',
             })}
           >
-            <Input.TextArea disabled={disabled} placeholder={'请输入描述'} />
+            <Input.TextArea disabled={disabled} placeholder={'请输入说明'} />
           </Form.Item>
         </Form>
       </Modal>

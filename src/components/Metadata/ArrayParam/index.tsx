@@ -178,7 +178,7 @@ const ArrayParam = () => {
           },
 
           description: {
-            title: '描述',
+            title: '说明',
             'x-decorator': 'FormItem',
             'x-component': 'Input.TextArea',
           },

@@ -23,7 +23,10 @@ const Detail = () => {
 
   useEffect(() => {
     setLoading(true);
-    const id = new URLSearchParams(location.search).get('id') || undefined;
+    const _params = new URLSearchParams(location.search);
+    const id = _params.get('id') || undefined;
+    const paramsType = _params.get('type');
+
     service.getProviders().then((resp) => {
       if (resp.status === 200) {
         setDataSource(resp.result);
@@ -42,6 +45,11 @@ const Detail = () => {
               setType('network');
             }
           });
+        } else if (paramsType) {
+          setType('media');
+          setProvider(resp.result.find((item: any) => item.id === paramsType));
+          setData({});
+          setVisible(false);
         } else {
           setVisible(true);
         }

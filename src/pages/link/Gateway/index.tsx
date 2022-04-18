@@ -347,7 +347,7 @@ const Gateway = () => {
         'x-decorator': 'FormItem',
       },
       describe: {
-        title: '描述',
+        title: '说明',
         'x-component': 'Input.TextArea',
         'x-decorator': 'FormItem',
         'x-component-props': {
