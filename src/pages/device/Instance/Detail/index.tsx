@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { InstanceModel, service } from '@/pages/device/Instance';
 import { history, useParams } from 'umi';
-import { Badge, Button, Card, Descriptions, Divider, message } from 'antd';
+import { Badge, Card, Descriptions, Divider, message } from 'antd';
 import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import { observer } from '@formily/react';
@@ -19,7 +19,7 @@ import type { DeviceMetadata } from '@/pages/device/Product/typings';
 import MetadataAction from '@/pages/device/components/Metadata/DataBaseAction';
 import { Store } from 'jetlinks-store';
 import SystemConst from '@/utils/const';
-import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { getMenuPathByParams, getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
 import { PermissionButton } from '@/components';
 
@@ -207,19 +207,22 @@ const InstanceDetail = observer(() => {
         <Descriptions size="small" column={4}>
           <Descriptions.Item label={'ID'}>{InstanceModel.detail?.id}</Descriptions.Item>
           <Descriptions.Item label={'所属产品'}>
-            <Button
+            <PermissionButton
               type={'link'}
               size={'small'}
+              isPermission={!!getMenuPathByCode(MENUS_CODE['device/Product'])}
               onClick={() => {
                 const url = getMenuPathByParams(
                   MENUS_CODE['device/Product/Detail'],
                   InstanceModel.detail?.productId,
                 );
-                history.replace(url);
+                if (url) {
+                  history.replace(url);
+                }
               }}
             >
               {InstanceModel.detail?.productName}
-            </Button>
+            </PermissionButton>
           </Descriptions.Item>
         </Descriptions>
       }

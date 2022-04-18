@@ -19,7 +19,7 @@ import {
 import { model } from '@formily/reactive';
 import Service from '@/pages/device/Instance/service';
 import type { MetadataItem } from '@/pages/device/Product/typings';
-import { useIntl, connect } from 'umi';
+import { useIntl } from 'umi';
 import Save from './Save';
 import Export from './Export';
 import Import from './Import';
@@ -72,7 +72,6 @@ const Instance = () => {
   const location = useLocation();
 
   useEffect(() => {
-    console.log(location);
     if (location.state) {
       const _terms: any[] = [];
       Object.keys(location.state).forEach((key) => {
@@ -280,7 +279,7 @@ const Instance = () => {
     <Menu>
       <Menu.Item key="1">
         <PermissionButton
-          isPermission={permission.delete}
+          isPermission={permission.export}
           icon={<ExportOutlined />}
           type="default"
           onClick={() => {
@@ -303,7 +302,7 @@ const Instance = () => {
       </Menu.Item>
       <Menu.Item key="4">
         <PermissionButton
-          isPermission={permission.active}
+          isPermission={permission.action}
           icon={<CheckCircleOutlined />}
           type="primary"
           ghost
@@ -324,7 +323,7 @@ const Instance = () => {
       </Menu.Item>
       <Menu.Item key="5">
         <PermissionButton
-          isPermission={permission.sync}
+          isPermission={true}
           icon={<SyncOutlined />}
           type="primary"
           onClick={() => {
@@ -591,15 +590,4 @@ const Instance = () => {
   );
 };
 
-const mapState = (state: any) => {
-  return {
-    locationState: state.location.locationState,
-    path: state.location.path,
-  };
-};
-
-const actionCreate = {
-  cleanLocationState: (payload: any) => ({ type: 'location/clean', payload }),
-};
-
-export default connect(mapState, actionCreate)(Instance);
+export default Instance;

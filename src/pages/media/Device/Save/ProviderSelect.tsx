@@ -61,9 +61,9 @@ export default (props: ProviderProps) => {
     tab!.onTabSaveSuccess = (value: any) => {
       addItemKey.current = value.id;
       getProviderList({
-        sorts: [{ column: 'createTime', value: 'desc' }],
+        sorts: [{ name: 'createTime', value: 'asc' }],
         terms: [{ column: 'provider', value: props.type }],
-        paging: false,
+        pageSize: 100,
       });
     };
   }, [props.type]);

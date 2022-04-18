@@ -1,17 +1,6 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { useIntl, useLocation, useParams } from 'umi';
-import {
-  Badge,
-  Button,
-  Card,
-  Descriptions,
-  message,
-  Popconfirm,
-  Space,
-  Spin,
-  Switch,
-  Tooltip,
-} from 'antd';
+import { Badge, Card, Descriptions, message, Popconfirm, Space, Spin, Switch, Tooltip } from 'antd';
 import BaseInfo from '@/pages/device/Product/Detail/BaseInfo';
 import { observer } from '@formily/react';
 import { productModel, service } from '@/pages/device/Product';
@@ -208,23 +197,22 @@ const ProductDetail = observer(() => {
         <Spin spinning={loading}>
           <Descriptions size="small" column={2}>
             <Descriptions.Item label={'设备数量'}>
-              <Button
+              <PermissionButton
                 type={'link'}
+                isPermission={!!getMenuPathByCode(MENUS_CODE['device/Instance'])}
                 style={{ padding: 0, height: 'auto' }}
                 onClick={() => {
                   const url = getMenuPathByCode(MENUS_CODE['device/Instance']);
                   const params = {
                     productId: productModel.current?.id,
                   };
-                  // props.push({
-                  //   locationState: params,
-                  //   path: url,
-                  // });
-                  history.push(url, params);
+                  if (url) {
+                    history.push(url, params);
+                  }
                 }}
               >
                 {productModel.current?.count || 0}
-              </Button>
+              </PermissionButton>
             </Descriptions.Item>
           </Descriptions>
         </Spin>

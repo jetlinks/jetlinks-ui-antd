@@ -24,9 +24,9 @@ export default (props: SaveProps) => {
   useEffect(() => {
     if (visible) {
       getProviderList({
-        sorts: [{ column: 'createTime', value: 'desc' }],
+        sorts: [{ name: 'createTime', value: 'desc' }],
         terms: [{ column: 'provider', value: props.type }],
-        paging: false,
+        pageSize: 100,
       });
     }
   }, [visible]);

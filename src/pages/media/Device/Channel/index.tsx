@@ -239,7 +239,10 @@ export default () => {
             search={false}
             headerTitle={[
               type === ProviderValue.GB281 ? (
-                <Tooltip key="button" title={'接入方式为GB/T28281时，不支持新增'}>
+                <Tooltip
+                  key="button"
+                  title={<div style={{ width: 265 }}>接入方式为GB/T28281时，不支持新增</div>}
+                >
                   <Button disabled>
                     {intl.formatMessage({
                       id: 'pages.data.option.add',
