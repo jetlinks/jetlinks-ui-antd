@@ -1,12 +1,12 @@
-import { useCallback, useEffect, useState } from 'react';
-import { Button, Col, Form, Input, message, Modal, Radio, Row, Select, Tooltip } from 'antd';
-import { useIntl } from 'umi';
-import { RadioCard, UploadImage } from '@/components';
-import { PlusOutlined } from '@ant-design/icons';
-import { service } from '../index';
+import {useCallback, useEffect, useState} from 'react';
+import {Button, Col, Form, Input, message, Modal, Radio, Row, Select, Tooltip} from 'antd';
+import {useIntl} from 'umi';
+import {RadioCard, UploadImage} from '@/components';
+import {PlusOutlined} from '@ant-design/icons';
+import {service} from '../index';
 import SaveProductModal from './SaveProduct';
-import type { DeviceItem } from '../typings';
-import { getButtonPermission } from '@/utils/menu';
+import type {DeviceItem} from '../typings';
+import {getButtonPermission} from '@/utils/menu';
 
 interface SaveProps {
   visible: boolean;
@@ -326,9 +326,14 @@ export default (props: SaveProps) => {
             <Col span={24}>
               <Form.Item label={'说明'} name={'description'}>
                 <Input.TextArea
-                  placeholder={intlFormat('pages.form.tip.input', '请输入')}
+                  placeholder={intlFormat(
+                    'pages.form.tip.input.props',
+                    '请输入',
+                    'pages.table.describe',
+                    '说明',
+                  )}
                   rows={4}
-                  style={{ width: '100%' }}
+                  style={{width: '100%'}}
                   maxLength={200}
                   showCount={true}
                 />

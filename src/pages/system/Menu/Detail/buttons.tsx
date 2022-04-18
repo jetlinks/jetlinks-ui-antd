@@ -1,14 +1,14 @@
-import { Button, Form, Input, message, Modal, Tooltip } from 'antd';
-import { useIntl } from '@@/plugin-locale/localeExports';
-import { useCallback, useEffect, useState } from 'react';
-import { service } from '@/pages/system/Menu';
-import type { ProColumns } from '@jetlinks/pro-table';
+import {Button, Form, Input, message, Modal, Tooltip} from 'antd';
+import {useIntl} from '@@/plugin-locale/localeExports';
+import {useCallback, useEffect, useState} from 'react';
+import {service} from '@/pages/system/Menu';
+import type {ProColumns} from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
-import type { MenuButtonInfo, MenuItem } from '@/pages/system/Menu/typing';
+import {DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined} from '@ant-design/icons';
+import type {MenuButtonInfo, MenuItem} from '@/pages/system/Menu/typing';
 import Permission from '@/pages/system/Menu/components/permission';
-import { useRequest } from '@@/plugin-request/request';
-import { PermissionButton } from '@/components';
+import {useRequest} from '@@/plugin-request/request';
+import {PermissionButton} from '@/components';
 
 type ButtonsProps = {
   data: MenuItem;
@@ -153,7 +153,7 @@ export default (props: ButtonsProps) => {
     {
       title: intl.formatMessage({
         id: 'page.system.menu.describe',
-        defaultMessage: '备注说明',
+        defaultMessage: '说明',
       }),
       dataIndex: 'description',
       // render: (_, row) => () => {
@@ -348,10 +348,10 @@ export default (props: ButtonsProps) => {
             name="description"
             label={intl.formatMessage({
               id: 'pages.table.describe',
-              defaultMessage: '描述',
+              defaultMessage: '说明',
             })}
           >
-            <Input.TextArea disabled={disabled} placeholder={'请输入描述'} />
+            <Input.TextArea disabled={disabled} placeholder={'请输入说明'}/>
           </Form.Item>
         </Form>
       </Modal>

@@ -1,14 +1,14 @@
-import { PageContainer } from '@ant-design/pro-layout';
+import {PageContainer} from '@ant-design/pro-layout';
 import BaseService from '@/utils/BaseService';
-import type { CertificateItem } from '@/pages/link/Certificate/typings';
-import { useRef } from 'react';
-import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { message, Popconfirm, Tooltip } from 'antd';
-import { EditOutlined, MinusOutlined } from '@ant-design/icons';
+import type {CertificateItem} from '@/pages/link/Certificate/typings';
+import {useRef} from 'react';
+import type {ActionType, ProColumns} from '@jetlinks/pro-table';
+import {message, Popconfirm, Tooltip} from 'antd';
+import {EditOutlined, MinusOutlined} from '@ant-design/icons';
 import BaseCrud from '@/components/BaseCrud';
-import { useIntl } from '@@/plugin-locale/localeExports';
-import type { ISchema } from '@formily/json-schema';
-import { CurdModel } from '@/components/BaseCrud/model';
+import {useIntl} from '@@/plugin-locale/localeExports';
+import type {ISchema} from '@formily/json-schema';
+import {CurdModel} from '@/components/BaseCrud/model';
 
 export const service = new BaseService<CertificateItem>('network/certificate');
 const Certificate = () => {
@@ -175,7 +175,7 @@ const Certificate = () => {
         },
       },
       description: {
-        title: '描述',
+        title: '说明',
         'x-component': 'Input.TextArea',
         'x-decorator': 'FormItem',
       },

@@ -1,25 +1,20 @@
 // 菜单管理
-import { PageContainer } from '@ant-design/pro-layout';
-import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import {PageContainer} from '@ant-design/pro-layout';
+import type {ActionType, ProColumns} from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { useRef, useState } from 'react';
-import { useIntl } from '@@/plugin-locale/localeExports';
-import { Button, message, Tooltip } from 'antd';
-import {
-  DeleteOutlined,
-  PlusCircleOutlined,
-  PlusOutlined,
-  SearchOutlined,
-} from '@ant-design/icons';
-import { observer } from '@formily/react';
-import { model } from '@formily/reactive';
-import { useHistory } from 'umi';
+import {useRef, useState} from 'react';
+import {useIntl} from '@@/plugin-locale/localeExports';
+import {Button, message, Tooltip} from 'antd';
+import {DeleteOutlined, PlusCircleOutlined, PlusOutlined, SearchOutlined,} from '@ant-design/icons';
+import {observer} from '@formily/react';
+import {model} from '@formily/reactive';
+import {useHistory} from 'umi';
 import SearchComponent from '@/components/SearchComponent';
 import Service from './service';
-import type { MenuItem } from './typing';
+import type {MenuItem} from './typing';
 import moment from 'moment';
-import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
-import { PermissionButton } from '@/components';
+import {getMenuPathByParams, MENUS_CODE} from '@/utils/menu';
+import {PermissionButton} from '@/components';
 
 export const service = new Service('menu');
 
@@ -107,7 +102,7 @@ export default observer(() => {
     {
       title: intl.formatMessage({
         id: 'page.system.menu.describe',
-        defaultMessage: '备注说明',
+        defaultMessage: '说明',
       }),
       width: 200,
       dataIndex: 'describe',
@@ -174,7 +169,8 @@ export default observer(() => {
         <PermissionButton
           key="delete"
           type="link"
-          style={{ padding: 0 }}
+          style={{padding: 0}}
+          isPermission={permission.delete}
           popConfirm={{
             title: intl.formatMessage({
               id: 'page.system.menu.table.delete',

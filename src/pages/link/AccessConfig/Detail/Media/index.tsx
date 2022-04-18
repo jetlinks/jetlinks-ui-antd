@@ -1,5 +1,5 @@
-import { Button, Card, Col, Form, Input, message, Row, Steps } from 'antd';
-import { useEffect, useState } from 'react';
+import {Button, Card, Col, Form, Input, message, Row, Steps} from 'antd';
+import {useEffect, useState} from 'react';
 import styles from './index.less';
 import {
   ArrayCollapse,
@@ -12,16 +12,16 @@ import {
   Radio,
   Select,
 } from '@formily/antd';
-import { createSchemaField } from '@formily/react';
-import type { ISchema } from '@formily/json-schema';
-import { createForm, registerValidateRules } from '@formily/core';
-import { service } from '@/pages/link/AccessConfig';
-import { useLocation } from 'umi';
+import {createSchemaField} from '@formily/react';
+import type {ISchema} from '@formily/json-schema';
+import {createForm, registerValidateRules} from '@formily/core';
+import {service} from '@/pages/link/AccessConfig';
+import {useLocation} from 'umi';
 import SipComponent from '@/components/SipComponent';
 import TitleComponent from '@/components/TitleComponent';
-import { ExclamationCircleFilled } from '@ant-design/icons';
-import { testIP } from '@/utils/util';
-import { getButtonPermission } from '@/utils/menu';
+import {ExclamationCircleFilled} from '@ant-design/icons';
+import {testIP} from '@/utils/util';
+import {getButtonPermission} from '@/utils/menu';
 
 type LocationType = {
   id?: string;
@@ -473,7 +473,16 @@ const Media = (props: Props) => {
                   }
                   if (resp.status === 200) {
                     message.success('操作成功！');
-                    history.back();
+                    if (params.get('save')) {
+                      if ((window as any).onTabSaveSuccess) {
+                        if (resp.result) {
+                          (window as any).onTabSaveSuccess(resp.result);
+                          setTimeout(() => window.close(), 300);
+                        }
+                      }
+                    } else {
+                      history.back();
+                    }
                   }
                 }}
               >

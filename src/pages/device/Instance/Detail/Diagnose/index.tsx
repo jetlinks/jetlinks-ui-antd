@@ -1,12 +1,11 @@
-import { Badge, Card, Col, Row } from 'antd';
-import type { ReactNode } from 'react';
-import { useEffect } from 'react';
-import { useState } from 'react';
+import {Badge, Card, Col, Row} from 'antd';
+import type {ReactNode} from 'react';
+import {useEffect, useState} from 'react';
 import Message from './Message';
 import Status from './Status';
 import './index.less';
 import classNames from 'classnames';
-import { Store } from 'jetlinks-store';
+import {Store} from 'jetlinks-store';
 
 interface ListProps {
   key: string;
@@ -29,14 +28,14 @@ statusColor.set('s-success-active', '#24B276');
 statusColor.set('s-success', '#24B276');
 statusColor.set('success', '#24B276');
 statusColor.set('waiting', '#FF9000');
-statusColor.set('diaabled', 'rgba(0, 0, 0, .8)');
+statusColor.set('disabled', 'rgba(0, 0, 0, .8)');
 
 const statusText = new Map();
 statusText.set('s-error', '连接失败');
 statusText.set('s-success-active', '连接成功');
 statusText.set('s-success', '连接成功');
 statusText.set('waiting', '诊断中');
-statusText.set('diaabled', '诊断中');
+statusText.set('disabled', '诊断中');
 
 const Diagnose = () => {
   const [current, setCurrent] = useState<string>('status');
@@ -69,26 +68,27 @@ const Diagnose = () => {
       component: (
         <div
           style={
-            message !== 'diaabled'
+            message !== 'disabled'
               ? {
                   backgroundImage: `url(${bImageMap.get(message)})`,
                   backgroundSize: '100% 100%',
                 }
               : {
-                  backgroundColor: 'rgba(0, 0, 0, .08)',
-                  borderLeft: '2px solid rgba(0, 0, 0, .8)',
-                }
+                backgroundColor: 'rgba(0, 0, 0, .08)',
+                borderLeft: '2px solid rgba(0, 0, 0, .8)',
+                cursor: 'not-allowed',
+              }
           }
           className="item-box"
         >
           <div className="item-title">消息通信</div>
           <div
-            className={classNames('item-context', message !== 'diaabled' ? 'item-message' : '')}
-            style={{ fontWeight: 400 }}
+            className={classNames('item-context', message !== 'disabled' ? 'item-message' : '')}
+            style={{fontWeight: 400}}
           >
-            {message === 'diaabled' ? (
-              <span style={{ color: statusColor.get(message) }}>
-                <Badge color={statusColor.get(message)} /> 连接中
+            {message === 'disabled' ? (
+              <span style={{color: statusColor.get(message)}}>
+                <Badge color={statusColor.get(message)}/> 连接中
               </span>
             ) : (
               <>
@@ -159,13 +159,13 @@ const Diagnose = () => {
             onChange={(type: string) => {
               if (type === 'success') {
                 setStatus('s-success-active');
-                setMessage('diaabled');
+                setMessage('waiting');
               } else if (type === 'error') {
                 setStatus('s-error');
-                setMessage('diaabled');
+                setMessage('disabled');
               } else if (type === 'loading') {
                 setStatus('waiting');
-                setMessage('diaabled');
+                setMessage('disabled');
               }
             }}
           />

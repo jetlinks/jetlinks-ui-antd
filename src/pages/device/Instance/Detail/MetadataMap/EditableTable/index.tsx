@@ -1,11 +1,11 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Form, Input, message, Pagination, Select, Table } from 'antd';
-import { service } from '@/pages/device/Instance';
+import React, {useContext, useEffect, useState} from 'react';
+import {Form, Input, message, Pagination, Select, Table} from 'antd';
+import {service} from '@/pages/device/Instance';
 import _ from 'lodash';
 
 const EditableContext: any = React.createContext(null);
 
-const EditableRow = ({ ...props }) => {
+const EditableRow = ({...props}) => {
   const [form] = Form.useForm();
 
   return (
@@ -42,11 +42,7 @@ const EditableCell = ({
   const save = async () => {
     try {
       const values = await form.validateFields();
-      if (values?.metadataId) {
-        handleSave({ ...record, ...values });
-      } else {
-        console.log(values);
-      }
+      handleSave({...record, metadataId: values?.metadataId});
     } catch (errInfo) {
       console.log('Save failed:', errInfo);
     }
@@ -66,12 +62,12 @@ const EditableCell = ({
         <Select
           onChange={save}
           showSearch
-          allowClear
           optionFilterProp="children"
           filterOption={(input: string, option: any) =>
             (option?.children || '').toLowerCase()?.indexOf(input.toLowerCase()) >= 0
           }
         >
+          <Select.Option value={'use-origin-data'}>使用原始属性</Select.Option>
           {list.map((item: any) => (
             <Select.Option key={item?.id} value={item?.id}>
               {item?.id}
@@ -89,21 +85,49 @@ interface Props {
   type: 'device' | 'product';
 }
 
+const statusMap = new Map();
+statusMap.set('write', '写');
+statusMap.set('read', '读');
+statusMap.set('report', '上报');
+
 const EditableTable = (props: Props) => {
   const baseColumns = [
     {
-      title: '物模型中属性名',
+      title: '建模属性',
       dataIndex: 'name',
+      render: (text: any, record: any) => <span>{`${record.name}(${record.id})`}</span>,
     },
     {
-      title: '物模型中属性标识',
-      dataIndex: 'id',
-    },
-    {
-      title: '协议中属性标识',
+      title: '映射属性',
       dataIndex: 'metadataId',
       width: '30%',
+      render: (text: any, record: any) => (
+        <span>{`${record.metadataId}(${record.metadataName})`}</span>
+      ),
       editable: true,
+    },
+    {
+      title: '属性类型',
+      dataIndex: 'valueType',
+      render: (text: any, record: any) => <span>{record.valueType?.type}</span>,
+    },
+    {
+      title: '读写类型',
+      dataIndex: 'expands',
+      render: (text: any, record: any) => (
+        <span>
+          {(record.expands?.type || [])
+            .map((i: string) => {
+              return statusMap.get(i);
+            })
+            .join(',')}
+        </span>
+      ),
+    },
+    {
+      title: '映射状态',
+      dataIndex: 'customMapping',
+      render: (text: any) => <span>{String(text)}</span>,
     },
   ];
   const metadata = JSON.parse(props?.data?.metadata || '{}');
@@ -136,7 +160,7 @@ const EditableTable = (props: Props) => {
       const data = resp.result;
       const obj: any = {};
       data.map((i: any) => {
-        obj[i?.originalId] = i?.metadataId || '';
+        obj[i?.originalId] = i;
       });
       if (protocolMetadata.length > 0) {
         setPmList(protocolMetadata.filter((i) => !_.map(data, 'metadataId').includes(i.id)));
@@ -147,10 +171,11 @@ const EditableTable = (props: Props) => {
         (item: any) => {
           return {
             ...item,
-            metadataId: obj[item.id] || '',
+            ...obj[item.id],
           };
         },
       );
+      console.log(list);
       setProperties([...list]);
       setDataSource({
         data: list.slice(
@@ -184,19 +209,19 @@ const EditableTable = (props: Props) => {
     const newData = [...dataSource.data];
     const index = newData.findIndex((item) => row.id === item.id);
     const item = newData[index];
-    newData.splice(index, 1, { ...item, ...row });
-    setDataSource({
-      ...dataSource,
-      data: [...newData],
-    });
+    // newData.splice(index, 1, { ...item, ...row });
+    // setDataSource({
+    //     ...dataSource,
+    //     data: [...newData],
+    // });
     if (item?.metadataId !== row?.metadataId) {
       const resp = await service[
         props.type === 'device' ? 'saveDeviceMetadata' : 'saveProductMetadata'
-      ](props.data?.id, [
+        ](props.data?.id, [
         {
           metadataType: 'property',
-          metadataId: row.metadataId,
-          originalId: row.id,
+          metadataId: row.metadataId === 'use-origin-data' ? row.metadataId : row.id,
+          originalId: row.metadataId === 'use-origin-data' ? row.id : '',
           others: {},
         },
       ]);
@@ -268,14 +293,6 @@ const EditableTable = (props: Props) => {
             });
           }}
         />
-        {/* <div style={{ color: 'rgba(0, 0, 0, .65)' }}>
-                    <QuestionCircleOutlined style={{ margin: 5 }} />
-                    {
-                        props?.data?.independentMetadata ?
-                            '该设备已脱离产品物模型映射，修改产品物模型映射对该设备物模型映射无影响' :
-                            '设备会默认继承产品的物模型映射，修改设备物模型映射后将脱离产品物模型映射'
-                    }
-                </div> */}
       </div>
       <Table
         components={components}

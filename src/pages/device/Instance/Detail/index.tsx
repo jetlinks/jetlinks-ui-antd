@@ -1,10 +1,10 @@
-import { PageContainer } from '@ant-design/pro-layout';
-import { InstanceModel, service } from '@/pages/device/Instance';
-import { history, useParams } from 'umi';
-import { Badge, Button, Card, Descriptions, Divider, message, Popconfirm, Tooltip } from 'antd';
-import type { ReactNode } from 'react';
-import { useEffect, useState } from 'react';
-import { observer } from '@formily/react';
+import {PageContainer} from '@ant-design/pro-layout';
+import {InstanceModel, service} from '@/pages/device/Instance';
+import {history, useParams} from 'umi';
+import {Badge, Card, Descriptions, Divider, message} from 'antd';
+import type {ReactNode} from 'react';
+import {useEffect, useState} from 'react';
+import {observer} from '@formily/react';
 import Log from '@/pages/device/Instance/Detail/Log';
 // import Alarm from '@/pages/device/components/Alarm';
 import Info from '@/pages/device/Instance/Detail/Info';
@@ -13,14 +13,15 @@ import Running from '@/pages/device/Instance/Detail/Running';
 import ChildDevice from '@/pages/device/Instance/Detail/ChildDevice';
 import Diagnose from '@/pages/device/Instance/Detail/Diagnose';
 import MetadataMap from '@/pages/device/Instance/Detail/MetadataMap';
-import { useIntl } from '@@/plugin-locale/localeExports';
+import {useIntl} from '@@/plugin-locale/localeExports';
 import Metadata from '../../components/Metadata';
-import type { DeviceMetadata } from '@/pages/device/Product/typings';
+import type {DeviceMetadata} from '@/pages/device/Product/typings';
 import MetadataAction from '@/pages/device/components/Metadata/DataBaseAction';
-import { Store } from 'jetlinks-store';
+import {Store} from 'jetlinks-store';
 import SystemConst from '@/utils/const';
-import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import {getMenuPathByCode, getMenuPathByParams, MENUS_CODE} from '@/utils/menu';
 import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
+import {PermissionButton} from '@/components';
 
 export const deviceStatus = new Map();
 deviceStatus.set('online', <Badge status="success" text={'在线'} />);
@@ -31,6 +32,7 @@ const InstanceDetail = observer(() => {
   const intl = useIntl();
   const [tab, setTab] = useState<string>('detail');
   const params = useParams<{ id: string }>();
+  const {permission} = PermissionButton.usePermission('device/Instance');
 
   const resetMetadata = async () => {
     const resp = await service.deleteMetadata(params.id);
@@ -70,11 +72,19 @@ const InstanceDetail = observer(() => {
           <Metadata
             type="device"
             tabAction={
-              <Popconfirm title="确认重置？" onConfirm={resetMetadata}>
-                <Tooltip title="重置后将使用产品的物模型配置">
-                  <Button>重置操作</Button>
-                </Tooltip>
-              </Popconfirm>
+              <PermissionButton
+                isPermission={permission.update}
+                popConfirm={{
+                  title: '确认重置？',
+                  onConfirm: resetMetadata,
+                }}
+                tooltip={{
+                  title: '重置后将使用产品的物模型配置',
+                }}
+                key={'reload'}
+              >
+                重置操作
+              </PermissionButton>
             }
           />
         </Card>
@@ -197,19 +207,22 @@ const InstanceDetail = observer(() => {
         <Descriptions size="small" column={4}>
           <Descriptions.Item label={'ID'}>{InstanceModel.detail?.id}</Descriptions.Item>
           <Descriptions.Item label={'所属产品'}>
-            <Button
+            <PermissionButton
               type={'link'}
               size={'small'}
+              isPermission={!!getMenuPathByCode(MENUS_CODE['device/Product'])}
               onClick={() => {
                 const url = getMenuPathByParams(
                   MENUS_CODE['device/Product/Detail'],
                   InstanceModel.detail?.productId,
                 );
-                history.replace(url);
+                if (url) {
+                  history.replace(url);
+                }
               }}
             >
               {InstanceModel.detail?.productName}
-            </Button>
+            </PermissionButton>
           </Descriptions.Item>
         </Descriptions>
       }

@@ -1,6 +1,6 @@
-import { PageContainer } from '@ant-design/pro-layout';
-import { Badge, Button, message, Space, Tooltip, Upload } from 'antd';
-import type { ProductItem } from '@/pages/device/Product/typings';
+import {PageContainer} from '@ant-design/pro-layout';
+import {Badge, Button, message, Space, Tooltip, Upload} from 'antd';
+import type {ProductItem} from '@/pages/device/Product/typings';
 import {
   DeleteOutlined,
   DownloadOutlined,
@@ -10,23 +10,23 @@ import {
   StopOutlined,
 } from '@ant-design/icons';
 import Service from '@/pages/device/Product/service';
-import { observer } from '@formily/react';
-import { model } from '@formily/reactive';
-import { useHistory } from 'umi';
-import { useIntl } from '@@/plugin-locale/localeExports';
-import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { useEffect, useRef, useState } from 'react';
+import {observer} from '@formily/react';
+import {model} from '@formily/reactive';
+import {useHistory} from 'umi';
+import {useIntl} from '@@/plugin-locale/localeExports';
+import type {ActionType, ProColumns} from '@jetlinks/pro-table';
+import {useEffect, useRef, useState} from 'react';
 import Save from '@/pages/device/Product/Save';
 import SearchComponent from '@/components/SearchComponent';
-import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
-import { ProTableCard, AIcon, PermissionButton } from '@/components';
+import {getMenuPathByParams, MENUS_CODE} from '@/utils/menu';
+import {AIcon, PermissionButton, ProTableCard} from '@/components';
 import ProductCard from '@/components/ProTableCard/CardItems/product';
-import { downloadObject } from '@/utils/util';
+import {downloadObject} from '@/utils/util';
 
 export const service = new Service('device-product');
 export const statusMap = {
-  1: <Badge status="processing" text="已发布" />,
-  0: <Badge status="error" text="未发布" />,
+  1: <Badge status="processing" text="已发布"/>,
+  0: <Badge status="error" text="未发布"/>,
 };
 export const productModel = model<{
   current: ProductItem | undefined;
@@ -192,9 +192,10 @@ const Product = observer(() => {
       type={'link'}
       style={{ padding: 0 }}
       isPermission={permission.delete}
+      disabled={record.state === 1}
       popConfirm={{
         title: intl.formatMessage({
-          id: record.state === 1 ? 'pages.device.productDetail.deleteTip' : 'page.table.isDelete',
+          id: 'page.table.isDelete',
           defaultMessage: '是否删除?',
         }),
         onConfirm: async () => {
@@ -207,7 +208,10 @@ const Product = observer(() => {
       }}
       tooltip={{
         title: intl.formatMessage({
-          id: 'pages.data.option.remove',
+          id:
+            record.state === 1
+              ? 'pages.device.productDetail.deleteTip'
+              : 'pages.data.option.remove',
           defaultMessage: '删除',
         }),
       }}
@@ -359,6 +363,7 @@ const Product = observer(() => {
           <Upload
             disabled={!permission.import}
             key={'import'}
+            accept={'.json'}
             showUploadList={false}
             beforeUpload={(file) => {
               const reader = new FileReader();
@@ -366,25 +371,24 @@ const Product = observer(() => {
               reader.onload = async (result) => {
                 const text = result.target?.result as string;
                 if (!file.type.includes('json')) {
-                  message.warning('文件内容格式错误');
-                  return;
+                  message.error('请上传json格式文件');
+                  return false;
                 }
                 try {
                   const data = JSON.parse(text || '{}');
                   // 设置导入的产品状态为未发布
                   data.state = 0;
                   if (Array.isArray(data)) {
-                    message.warning('文件内容格式错误');
+                    message.error('请上传json格式文件');
                     return;
                   }
-
                   const res = await service.update(data);
                   if (res.status === 200) {
                     message.success('操作成功');
                     actionRef.current?.reload();
                   }
                 } catch {
-                  message.warning('文件内容格式错误');
+                  message.error('请上传json格式文件');
                 }
               };
               return false;
@@ -475,14 +479,22 @@ const Product = observer(() => {
               <PermissionButton
                 key="delete"
                 type={'link'}
-                style={{ padding: 0 }}
+                style={{padding: 0}}
                 isPermission={permission.delete}
+                disabled={record.state === 1}
+                tooltip={
+                  record.state === 1
+                    ? {
+                      title: intl.formatMessage({
+                        id: 'pages.device.productDetail.deleteTip',
+                        defaultMessage: '已发布的产品不能进行删除操作',
+                      }),
+                    }
+                    : undefined
+                }
                 popConfirm={{
                   title: intl.formatMessage({
-                    id:
-                      record.state === 1
-                        ? 'pages.device.productDetail.deleteTip'
-                        : 'page.table.isDelete',
+                    id: 'page.table.isDelete',
                     defaultMessage: '是否删除?',
                   }),
                   onConfirm: async () => {

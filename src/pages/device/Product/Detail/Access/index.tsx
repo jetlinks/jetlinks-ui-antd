@@ -1,18 +1,19 @@
-import { Badge, Button, Col, Empty, message, Row, Table, Tooltip } from 'antd';
-import { service } from '@/pages/link/AccessConfig';
-import { productModel, service as productService } from '@/pages/device/Product';
+import {Badge, Button, Col, Empty, message, Row, Table, Tooltip} from 'antd';
+import {service} from '@/pages/link/AccessConfig';
+import {productModel, service as productService} from '@/pages/device/Product';
 import styles from './index.less';
-import type { SetStateAction } from 'react';
-import { useEffect, useState } from 'react';
+import type {SetStateAction} from 'react';
+import {useEffect, useState} from 'react';
 import AccessConfig from './AccessConfig';
 import ReactMarkdown from 'react-markdown';
-import { Form, FormGrid, FormItem, FormLayout, Input, Password, PreviewText } from '@formily/antd';
-import type { ISchema } from '@formily/json-schema';
-import type { ConfigProperty } from '@/pages/device/Product/typings';
-import { createSchemaField } from '@formily/react';
-import { createForm } from '@formily/core';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import {Form, FormGrid, FormItem, FormLayout, Input, Password, PreviewText} from '@formily/antd';
+import type {ISchema} from '@formily/json-schema';
+import type {ConfigProperty} from '@/pages/device/Product/typings';
+import {createSchemaField} from '@formily/react';
+import {createForm} from '@formily/core';
+import {QuestionCircleOutlined} from '@ant-design/icons';
 import TitleComponent from '@/components/TitleComponent';
+import usePermissions from '@/hooks/permission';
 
 const componentMap = {
   string: 'Input',
@@ -25,6 +26,7 @@ const Access = () => {
   const [access, setAccess] = useState<any>();
   const [providers, setProviders] = useState<any[]>([]);
   const [networkList, setNetworkList] = useState<any[]>([]);
+  const {permission} = usePermissions('device/Product');
 
   const MetworkTypeMapping = new Map();
   MetworkTypeMapping.set('websocket-server', 'WEB_SOCKET_SERVER');
@@ -73,11 +75,7 @@ const Access = () => {
       key: 'group',
       ellipsis: true,
       align: 'center',
-      render: (text: any) => (
-        <Tooltip placement="top" title={text}>
-          {text}
-        </Tooltip>
-      ),
+      width: 100,
       onCell: (record: any, index: number) => {
         const list = (config?.routes || []).sort((a: any, b: any) => a - b) || [];
         const arr = list.filter((res: any) => {
@@ -85,9 +83,9 @@ const Access = () => {
           return res?.group == record?.group;
         });
         if (index == 0 || list[index - 1]?.group != record?.group) {
-          return { rowSpan: arr.length };
+          return {rowSpan: arr.length};
         } else {
-          return { rowSpan: 0 };
+          return {rowSpan: 0};
         }
       },
     },
@@ -98,7 +96,7 @@ const Access = () => {
       ellipsis: true,
       align: 'center',
       render: (text: any) => (
-        <Tooltip placement="top" title={text}>
+        <Tooltip placement="topLeft" title={text}>
           {text}
         </Tooltip>
       ),
@@ -109,6 +107,7 @@ const Access = () => {
       key: 'stream',
       ellipsis: true,
       align: 'center',
+      width: 100,
       render: (text: any, record: any) => {
         const list = [];
         if (record?.upstream) {
@@ -127,7 +126,7 @@ const Access = () => {
       ellipsis: true,
       align: 'center',
       render: (text: any) => (
-        <Tooltip placement="top" title={text}>
+        <Tooltip placement="topLeft" title={text}>
           {text}
         </Tooltip>
       ),
@@ -140,12 +139,8 @@ const Access = () => {
       dataIndex: 'group',
       key: 'group',
       ellipsis: true,
+      width: 100,
       align: 'center',
-      render: (text: any) => (
-        <Tooltip placement="top" title={text}>
-          {text}
-        </Tooltip>
-      ),
       onCell: (record: any, index: number) => {
         const list = (config?.routes || []).sort((a: any, b: any) => a - b) || [];
         const arr = list.filter((res: any) => {
@@ -153,7 +148,7 @@ const Access = () => {
           return res?.group == record?.group;
         });
         if (index == 0 || list[index - 1]?.group != record?.group) {
-          return { rowSpan: arr.length };
+          return {rowSpan: arr.length};
         } else {
           return { rowSpan: 0 };
         }
@@ -166,7 +161,7 @@ const Access = () => {
       ellipsis: true,
       align: 'center',
       render: (text: any) => (
-        <Tooltip placement="top" title={text}>
+        <Tooltip placement="topLeft" title={text}>
           {text}
         </Tooltip>
       ),
@@ -178,7 +173,7 @@ const Access = () => {
       ellipsis: true,
       align: 'center',
       render: (text: any) => (
-        <Tooltip placement="top" title={text}>
+        <Tooltip placement="topLeft" title={text}>
           {text}
         </Tooltip>
       ),
@@ -190,7 +185,7 @@ const Access = () => {
       ellipsis: true,
       align: 'center',
       render: (text: any) => (
-        <Tooltip placement="top" title={text}>
+        <Tooltip placement="topLeft" title={text}>
           {text}
         </Tooltip>
       ),
@@ -352,17 +347,21 @@ const Access = () => {
         <div style={{ padding: '100px 0' }}>
           <Empty
             description={
-              <span>
-                请先
-                <a
-                  onClick={() => {
-                    setConfigVisible(true);
-                  }}
-                >
-                  选择
-                </a>
-                设备接入网关，用以提供设备接入能力
-              </span>
+              permission.add ? (
+                <span>
+                  请先
+                  <a
+                    onClick={() => {
+                      setConfigVisible(true);
+                    }}
+                  >
+                    选择
+                  </a>
+                  设备接入网关，用以提供设备接入能力
+                </span>
+              ) : (
+                '暂无权限，请联系管理员'
+              )
             }
           />
         </div>
@@ -424,18 +423,18 @@ const Access = () => {
                           />
                         </div>
                       ),
-                    )
+                  )
                   : '暂无连接信息'}
               </div>
 
               <div className={styles.item}>{renderConfigCard()}</div>
             </div>
           </Col>
-          <Col span={12}>
-            <div className={styles.info}>
-              {config?.routes && config?.routes?.length > 0 ? (
+          {config?.routes && config?.routes?.length > 0 && (
+            <Col span={12}>
+              <div className={styles.info}>
                 <div>
-                  <div style={{ fontWeight: '600', marginBottom: 10 }}>
+                  <div style={{fontWeight: '600', marginBottom: 10}}>
                     {access?.provider === 'mqtt-server-gateway' ||
                     access?.provider === 'mqtt-client-gateway'
                       ? 'topic'
@@ -446,21 +445,12 @@ const Access = () => {
                     bordered
                     columns={config.id === 'MQTT' ? columnsMQTT : columnsHTTP}
                     pagination={false}
-                    scroll={{ y: 500 }}
+                    scroll={{y: 500}}
                   />
                 </div>
-              ) : (
-                <Empty
-                  description={`暂无${
-                    access?.provider === 'mqtt-server-gateway' ||
-                    access?.provider === 'mqtt-client-gateway'
-                      ? 'topic'
-                      : 'URL信息'
-                  }`}
-                />
-              )}
-            </div>
-          </Col>
+              </div>
+            </Col>
+          )}
         </Row>
       )}
       {configVisible && (

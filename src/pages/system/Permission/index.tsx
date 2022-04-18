@@ -1,26 +1,20 @@
-import { PageContainer } from '@ant-design/pro-layout';
-import React, { useRef, useState } from 'react';
-import {
-  CloseCircleOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  PlayCircleOutlined,
-  PlusOutlined,
-} from '@ant-design/icons';
-import { Badge, Button, Dropdown, Menu, message, Popconfirm, Space, Upload } from 'antd';
-import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import {PageContainer} from '@ant-design/pro-layout';
+import React, {useRef, useState} from 'react';
+import {CloseCircleOutlined, DeleteOutlined, EditOutlined, PlayCircleOutlined, PlusOutlined,} from '@ant-design/icons';
+import {Badge, Button, Dropdown, Menu, message, Popconfirm, Space, Tooltip, Upload} from 'antd';
+import type {ActionType, ProColumns} from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { useIntl } from '@@/plugin-locale/localeExports';
-import type { PermissionItem } from '@/pages/system/Permission/typings';
+import {useIntl} from '@@/plugin-locale/localeExports';
+import type {PermissionItem} from '@/pages/system/Permission/typings';
 import Service from '@/pages/system/Permission/service';
-import { observer } from '@formily/react';
+import {observer} from '@formily/react';
 import SearchComponent from '@/components/SearchComponent';
 import Save from './Save';
 import SystemConst from '@/utils/const';
-import { downloadObject } from '@/utils/util';
+import {downloadObject} from '@/utils/util';
 import Token from '@/utils/token';
-import { getButtonPermission } from '@/utils/menu';
-import { PermissionButton } from '@/components';
+import {getButtonPermission} from '@/utils/menu';
+import {PermissionButton} from '@/components';
 
 export const service = new Service('permission');
 const Permission: React.FC = observer(() => {
@@ -49,24 +43,34 @@ const Permission: React.FC = observer(() => {
           showUploadList={false}
           accept=".json"
           beforeUpload={(file) => {
-            const reader = new FileReader();
-            reader.readAsText(file);
-            reader.onload = (result: any) => {
-              try {
-                const data = JSON.parse(result.target.result);
-                service.batchAdd(data).subscribe((resp) => {
-                  if (resp.status === 200) {
-                    message.success('导入成功');
-                    actionRef.current?.reload();
-                  }
-                });
-              } catch (error) {
-                message.error('导入失败，请重试！');
-              }
-            };
+            if (file.type === 'application/json') {
+              const reader = new FileReader();
+              reader.readAsText(file);
+              reader.onload = (result: any) => {
+                try {
+                  const data = JSON.parse(result.target.result);
+                  service.batchAdd(data).subscribe((resp) => {
+                    if (resp.status === 200) {
+                      message.success('导入成功');
+                      actionRef.current?.reload();
+                    }
+                  });
+                } catch (error) {
+                  message.error('导入失败，请重试！');
+                }
+              };
+            } else {
+              message.error('请上传json格式');
+            }
           }}
         >
-          <Button disabled={getButtonPermission('system/Permission', ['import'])}>导入</Button>
+          <Tooltip
+            title={
+              getButtonPermission('system/Permission', ['import']) ? '暂无权限，请联系管理员' : ''
+            }
+          >
+            <Button disabled={getButtonPermission('system/Permission', ['import'])}>导入</Button>
+          </Tooltip>
         </Upload>
       </Menu.Item>
       <Menu.Item key="export">
@@ -74,7 +78,7 @@ const Permission: React.FC = observer(() => {
           disabled={getButtonPermission('system/Permission', ['export'])}
           title={'确认导出？'}
           onConfirm={() => {
-            service.getPermission({ ...param, paging: false }).subscribe((resp) => {
+            service.getPermission({...param, paging: false}).subscribe((resp) => {
               if (resp.status === 200) {
                 downloadObject(resp.result, '权限数据');
                 message.success('导出成功');
@@ -84,7 +88,13 @@ const Permission: React.FC = observer(() => {
             });
           }}
         >
-          <Button disabled={getButtonPermission('system/Permission', ['export'])}>导出</Button>
+          <Tooltip
+            title={
+              getButtonPermission('system/Permission', ['export']) ? '暂无权限，请联系管理员' : ''
+            }
+          >
+            <Button disabled={getButtonPermission('system/Permission', ['export'])}>导出</Button>
+          </Tooltip>
         </Popconfirm>
       </Menu.Item>
     </Menu>
@@ -201,8 +211,12 @@ const Permission: React.FC = observer(() => {
         <PermissionButton
           type={'link'}
           key={'delete'}
-          style={{ padding: 0 }}
+          style={{padding: 0}}
+          disabled={!!record.status}
           isPermission={permission.delete}
+          tooltip={{
+            title: !!record.status ? '请先禁用，再删除' : '删除',
+          }}
           popConfirm={{
             title: '确认删除',
             onConfirm: async () => {

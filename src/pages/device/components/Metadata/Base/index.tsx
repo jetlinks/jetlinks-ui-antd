@@ -1,30 +1,33 @@
-import type { ProColumns } from '@jetlinks/pro-table';
+import type {ProColumns} from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { useCallback, useEffect, useState } from 'react';
-import { useParams } from 'umi';
+import {useCallback, useEffect, useState} from 'react';
+import {useParams} from 'umi';
 import DB from '@/db';
-import type { MetadataItem, MetadataType } from '@/pages/device/Product/typings';
+import type {MetadataItem, MetadataType} from '@/pages/device/Product/typings';
 import MetadataMapping from './columns';
-import { Button, message, Popconfirm, Tooltip } from 'antd';
-import { DeleteOutlined, EditOutlined, ImportOutlined, PlusOutlined } from '@ant-design/icons';
+import {message} from 'antd';
+import {DeleteOutlined, EditOutlined, ImportOutlined, PlusOutlined} from '@ant-design/icons';
 import Edit from './Edit';
-import { observer } from '@formily/react';
+import {observer} from '@formily/react';
 import MetadataModel from './model';
-import { Store } from 'jetlinks-store';
+import {Store} from 'jetlinks-store';
 import SystemConst from '@/utils/const';
-import { useIntl } from '@@/plugin-locale/localeExports';
+import {useIntl} from '@@/plugin-locale/localeExports';
 import PropertyImport from '@/pages/device/Product/Detail/PropertyImport';
-import { productModel } from '@/pages/device/Product';
-import { InstanceModel } from '@/pages/device/Instance';
-import { asyncUpdateMedata, removeMetadata } from '../metadata';
+import {productModel} from '@/pages/device/Product';
+import {InstanceModel} from '@/pages/device/Instance';
+import {asyncUpdateMedata, removeMetadata} from '../metadata';
+import type {permissionType} from '@/hooks/permission';
+import {PermissionButton} from '@/components';
 
 interface Props {
   type: MetadataType;
   target: 'product' | 'device';
+  permission: Partial<permissionType>;
 }
 
 const BaseMetadata = observer((props: Props) => {
-  const { type, target = 'product' } = props;
+  const {type, target = 'product'} = props;
   const intl = useIntl();
   const param = useParams<{ id: string }>();
 
@@ -73,36 +76,41 @@ const BaseMetadata = observer((props: Props) => {
       align: 'center',
       width: 200,
       render: (_: unknown, record: MetadataItem) => [
-        <Tooltip key={'edit'} title={operateLimits('add', type) ? '暂不支持' : '编辑'}>
-          <Button
-            key="editable"
-            type="link"
-            disabled={operateLimits('updata', type)}
-            onClick={() => {
-              MetadataModel.edit = true;
-              MetadataModel.item = record;
-              MetadataModel.type = type;
-              MetadataModel.action = 'edit';
-            }}
-          >
-            <Tooltip title="编辑">
-              <EditOutlined />
-            </Tooltip>
-          </Button>
-        </Tooltip>,
-        ,
-        <a key="delete">
-          <Popconfirm
-            title="确认删除？"
-            onConfirm={async () => {
+        <PermissionButton
+          isPermission={props.permission.update}
+          type="link"
+          key={'edit'}
+          style={{padding: 0}}
+          disabled={operateLimits('updata', type)}
+          onClick={() => {
+            MetadataModel.edit = true;
+            MetadataModel.item = record;
+            MetadataModel.type = type;
+            MetadataModel.action = 'edit';
+          }}
+          tooltip={{
+            title: operateLimits('add', type) ? '暂不支持' : '编辑',
+          }}
+        >
+          <EditOutlined/>
+        </PermissionButton>,
+        <PermissionButton
+          isPermission={props.permission.update}
+          type="link"
+          key={'delete'}
+          style={{padding: 0}}
+          popConfirm={{
+            title: '确认删除？',
+            onConfirm: async () => {
               await removeItem(record);
-            }}
-          >
-            <Tooltip title="删除">
-              <DeleteOutlined />
-            </Tooltip>
-          </Popconfirm>
-        </a>,
+            },
+          }}
+          tooltip={{
+            title: '删除',
+          }}
+        >
+          <DeleteOutlined/>
+        </PermissionButton>,
       ],
     },
   ];
@@ -165,36 +173,39 @@ const BaseMetadata = observer((props: Props) => {
         }}
         toolBarRender={() => [
           props.type === 'properties' && (
-            <Button
+            <PermissionButton
+              isPermission={props.permission.update}
               onClick={() => {
                 MetadataModel.importMetadata = true;
               }}
               key="button"
-              icon={<ImportOutlined />}
+              icon={<ImportOutlined/>}
               type="ghost"
             >
               导入属性
-            </Button>
+            </PermissionButton>
           ),
-          <Tooltip key={'add'} title={operateLimits('add', type) ? '暂不支持' : '新增'}>
-            <Button
-              onClick={() => {
-                MetadataModel.edit = true;
-                MetadataModel.item = undefined;
-                MetadataModel.type = type;
-                MetadataModel.action = 'add';
-              }}
-              disabled={operateLimits('add', type)}
-              key="button"
-              icon={<PlusOutlined />}
-              type="primary"
-            >
-              {intl.formatMessage({
-                id: 'pages.searchTable.new',
-                defaultMessage: '新建',
-              })}
-            </Button>
-          </Tooltip>,
+          <PermissionButton
+            isPermission={props.permission.update}
+            key={'add'}
+            onClick={() => {
+              MetadataModel.edit = true;
+              MetadataModel.item = undefined;
+              MetadataModel.type = type;
+              MetadataModel.action = 'add';
+            }}
+            disabled={operateLimits('add', type)}
+            icon={<PlusOutlined/>}
+            type="primary"
+            tooltip={{
+              title: operateLimits('add', type) ? '暂不支持' : '新增',
+            }}
+          >
+            {intl.formatMessage({
+              id: 'pages.searchTable.new',
+              defaultMessage: '新建',
+            })}
+          </PermissionButton>,
         ]}
       />
       {MetadataModel.importMetadata && <PropertyImport type={target} />}

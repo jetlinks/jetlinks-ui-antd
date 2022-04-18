@@ -1,19 +1,19 @@
-import { PageContainer } from '@ant-design/pro-layout';
-import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import type { TenantDetail, TenantItem } from '@/pages/system/Tenant/typings';
+import {PageContainer} from '@ant-design/pro-layout';
+import type {ActionType, ProColumns} from '@jetlinks/pro-table';
+import type {TenantDetail, TenantItem} from '@/pages/system/Tenant/typings';
 import BaseCrud from '@/components/BaseCrud';
-import { useRef } from 'react';
-import { Avatar, Drawer, Tooltip } from 'antd';
+import {useRef} from 'react';
+import {Avatar, Drawer, Tooltip} from 'antd';
 import Service from '@/pages/system/Tenant/service';
-import { EyeOutlined, KeyOutlined } from '@ant-design/icons';
-import { useIntl } from '@@/plugin-locale/localeExports';
+import {EyeOutlined, KeyOutlined} from '@ant-design/icons';
+import {useIntl} from '@@/plugin-locale/localeExports';
 import moment from 'moment';
-import { Link } from 'umi';
+import {Link} from 'umi';
 import TenantModel from '@/pages/system/Tenant/model';
-import type { ISchema } from '@formily/json-schema';
+import type {ISchema} from '@formily/json-schema';
 import autzModel from '@/components/Authorization/autz';
 import Authorization from '@/components/Authorization';
-import { observer } from '@formily/react';
+import {observer} from '@formily/react';
 
 export const service = new Service('tenant');
 
@@ -215,7 +215,7 @@ const Tenant = observer(() => {
       },
       description: {
         type: 'string',
-        title: '备注',
+        title: '说明',
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input.TextArea',

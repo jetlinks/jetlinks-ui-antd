@@ -1,14 +1,14 @@
 // 视频设备通道列表
-import { PageContainer } from '@ant-design/pro-layout';
-import ProTable, { ActionType, ProColumns } from '@jetlinks/pro-table';
+import {PageContainer} from '@ant-design/pro-layout';
+import ProTable, {ActionType, ProColumns} from '@jetlinks/pro-table';
 import SearchComponent from '@/components/SearchComponent';
 import './index.less';
-import { useEffect, useRef, useState } from 'react';
-import { ChannelItem } from '@/pages/media/Device/Channel/typings';
-import { useHistory, useIntl, useLocation } from 'umi';
-import { BadgeStatus } from '@/components';
-import { StatusColorEnum } from '@/components/BadgeStatus';
-import { Button, message, Popconfirm, Tooltip } from 'antd';
+import {useEffect, useRef, useState} from 'react';
+import {ChannelItem} from '@/pages/media/Device/Channel/typings';
+import {useHistory, useIntl, useLocation} from 'umi';
+import {BadgeStatus} from '@/components';
+import {StatusColorEnum} from '@/components/BadgeStatus';
+import {Button, message, Popconfirm, Tooltip} from 'antd';
 import {
   DeleteOutlined,
   EditOutlined,
@@ -18,9 +18,9 @@ import {
 } from '@ant-design/icons';
 import Save from './Save';
 import Service from './service';
-import { ProviderValue } from '../index';
+import {ProviderValue} from '../index';
 import Live from './Live';
-import { getButtonPermission, getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
+import {getButtonPermission, getMenuPathByCode, MENUS_CODE} from '@/utils/menu';
 import Tree from './Tree';
 
 export const service = new Service('media');
@@ -239,7 +239,10 @@ export default () => {
             search={false}
             headerTitle={[
               type === ProviderValue.GB281 ? (
-                <Tooltip key="button" title={'接入方式为GB/T28281时，不支持新增'}>
+                <Tooltip
+                  key="button"
+                  title={<div style={{width: 265}}>接入方式为GB/T28281时，不支持新增</div>}
+                >
                   <Button disabled>
                     {intl.formatMessage({
                       id: 'pages.data.option.add',

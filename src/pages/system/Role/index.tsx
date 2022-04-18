@@ -1,18 +1,18 @@
-import { PageContainer } from '@ant-design/pro-layout';
-import React, { useEffect, useRef } from 'react';
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { message } from 'antd';
-import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import {PageContainer} from '@ant-design/pro-layout';
+import React, {useEffect, useRef} from 'react';
+import {DeleteOutlined, EditOutlined} from '@ant-design/icons';
+import {message} from 'antd';
+import type {ActionType, ProColumns} from '@jetlinks/pro-table';
 import BaseCrud from '@/components/BaseCrud';
 import Service from './service';
-import { useIntl } from '@@/plugin-locale/localeExports';
-import { observer } from '@formily/react';
-import { history, useLocation } from 'umi';
-import { Store } from 'jetlinks-store';
+import {useIntl} from '@@/plugin-locale/localeExports';
+import {observer} from '@formily/react';
+import {history, useLocation} from 'umi';
+import {Store} from 'jetlinks-store';
 import SystemConst from '@/utils/const';
-import { CurdModel } from '@/components/BaseCrud/model';
-import { getButtonPermission, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
-import { PermissionButton } from '@/components';
+import {CurdModel} from '@/components/BaseCrud/model';
+import {getButtonPermission, getMenuPathByParams, MENUS_CODE} from '@/utils/menu';
+import {PermissionButton} from '@/components';
 
 export const service = new Service('role');
 
@@ -20,7 +20,7 @@ const Role: React.FC = observer(() => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
   const permissionCode = 'system/Role';
-  const { permission } = PermissionButton.usePermission(permissionCode);
+  const {permission} = PermissionButton.usePermission(permissionCode);
 
   const columns: ProColumns<RoleItem>[] = [
     // {
@@ -175,7 +175,7 @@ const Role: React.FC = observer(() => {
         'x-component': 'Input.TextArea',
         'x-component-props': {
           checkStrength: true,
-          placeholder: '请输入描述',
+          placeholder: '请输入说明',
         },
         'x-decorator-props': {},
         name: 'password',
