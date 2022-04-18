@@ -1,21 +1,15 @@
 import Service from '@/pages/system/User/serivce';
-import { PageContainer } from '@ant-design/pro-layout';
+import {PageContainer} from '@ant-design/pro-layout';
 import SearchComponent from '@/components/SearchComponent';
-import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import type {ActionType, ProColumns} from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { Badge, message, Popconfirm, Tooltip } from 'antd';
-import {
-  CloseCircleOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  PlayCircleOutlined,
-  PlusOutlined,
-} from '@ant-design/icons';
-import { useIntl } from '@@/plugin-locale/localeExports';
-import { useRef, useState } from 'react';
+import {Badge, message, Popconfirm} from 'antd';
+import {CloseCircleOutlined, DeleteOutlined, EditOutlined, PlayCircleOutlined, PlusOutlined,} from '@ant-design/icons';
+import {useIntl} from '@@/plugin-locale/localeExports';
+import {useRef, useState} from 'react';
 import Save from './Save';
-import { observer } from '@formily/react';
-import { PermissionButton } from '@/components';
+import {observer} from '@formily/react';
+import {PermissionButton} from '@/components';
 import usePermissions from '@/hooks/permission';
 
 export const service = new Service('user');
@@ -24,7 +18,7 @@ const User = observer(() => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
 
-  const { permission: userPermission } = usePermissions('system/User');
+  const {permission: userPermission} = usePermissions('system/User');
   const [model, setMode] = useState<'add' | 'edit' | 'query'>('query');
   const [current, setCurrent] = useState<Partial<UserItem>>({});
   const edit = async (record: UserItem) => {
@@ -104,7 +98,7 @@ const User = observer(() => {
         },
       },
       render: (text, record) => (
-        <Badge status={record.status === 1 ? 'success' : 'error'} text={text} />
+        <Badge status={record.status === 1 ? 'success' : 'error'} text={text}/>
       ),
     },
     {
@@ -116,23 +110,22 @@ const User = observer(() => {
       width: 200,
       render: (text, record) => [
         <PermissionButton
-          style={{ padding: 0 }}
+          style={{padding: 0}}
           type="link"
           isPermission={userPermission.update}
           key="editable"
           onClick={() => edit(record)}
-        >
-          <Tooltip
-            title={intl.formatMessage({
+          tooltip={{
+            title: intl.formatMessage({
               id: 'pages.data.option.edit',
               defaultMessage: '编辑',
-            })}
-          >
-            <EditOutlined />
-          </Tooltip>
+            })
+          }}
+        >
+          <EditOutlined/>
         </PermissionButton>,
         <PermissionButton
-          style={{ padding: 0 }}
+          style={{padding: 0}}
           isPermission={userPermission.action}
           type="link"
           key="changeState"
@@ -162,15 +155,15 @@ const User = observer(() => {
             }),
           }}
         >
-          {record.status ? <CloseCircleOutlined /> : <PlayCircleOutlined />}
+          {record.status ? <CloseCircleOutlined/> : <PlayCircleOutlined/>}
         </PermissionButton>,
         <PermissionButton
           type="link"
           key="delete"
-          style={{ padding: 0 }}
+          style={{padding: 0}}
           isPermission={userPermission.delete}
           disabled={record.status === 1}
-          tooltip={{ title: record.status === 0 ? '删除' : '请先禁用该用户，再删除。' }}
+          tooltip={{title: record.status === 0 ? '删除' : '请先禁用该用户，再删除。'}}
         >
           <Popconfirm
             onConfirm={async () => {
@@ -179,7 +172,7 @@ const User = observer(() => {
             }}
             title="确认删除?"
           >
-            <DeleteOutlined />
+            <DeleteOutlined/>
           </Popconfirm>
         </PermissionButton>,
       ],
@@ -211,7 +204,7 @@ const User = observer(() => {
             }}
             isPermission={userPermission.add}
             key="button"
-            icon={<PlusOutlined />}
+            icon={<PlusOutlined/>}
             type="primary"
           >
             {intl.formatMessage({
@@ -221,7 +214,7 @@ const User = observer(() => {
           </PermissionButton>
         }
         request={async (params) =>
-          service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
+          service.query({...params, sorts: [{name: 'createTime', order: 'desc'}]})
         }
       />
       <Save
