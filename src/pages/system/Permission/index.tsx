@@ -7,7 +7,7 @@ import {
   PlayCircleOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
-import { Badge, Button, Dropdown, Menu, message, Popconfirm, Space, Upload } from 'antd';
+import { Badge, Button, Dropdown, Menu, message, Popconfirm, Space, Tooltip, Upload } from 'antd';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
@@ -49,24 +49,34 @@ const Permission: React.FC = observer(() => {
           showUploadList={false}
           accept=".json"
           beforeUpload={(file) => {
-            const reader = new FileReader();
-            reader.readAsText(file);
-            reader.onload = (result: any) => {
-              try {
-                const data = JSON.parse(result.target.result);
-                service.batchAdd(data).subscribe((resp) => {
-                  if (resp.status === 200) {
-                    message.success('导入成功');
-                    actionRef.current?.reload();
-                  }
-                });
-              } catch (error) {
-                message.error('导入失败，请重试！');
-              }
-            };
+            if (file.type === 'application/json') {
+              const reader = new FileReader();
+              reader.readAsText(file);
+              reader.onload = (result: any) => {
+                try {
+                  const data = JSON.parse(result.target.result);
+                  service.batchAdd(data).subscribe((resp) => {
+                    if (resp.status === 200) {
+                      message.success('导入成功');
+                      actionRef.current?.reload();
+                    }
+                  });
+                } catch (error) {
+                  message.error('导入失败，请重试！');
+                }
+              };
+            } else {
+              message.error('请上传json格式');
+            }
           }}
         >
-          <Button disabled={getButtonPermission('system/Permission', ['import'])}>导入</Button>
+          <Tooltip
+            title={
+              getButtonPermission('system/Permission', ['import']) ? '暂无权限，请联系管理员' : ''
+            }
+          >
+            <Button disabled={getButtonPermission('system/Permission', ['import'])}>导入</Button>
+          </Tooltip>
         </Upload>
       </Menu.Item>
       <Menu.Item key="export">
@@ -84,7 +94,13 @@ const Permission: React.FC = observer(() => {
             });
           }}
         >
-          <Button disabled={getButtonPermission('system/Permission', ['export'])}>导出</Button>
+          <Tooltip
+            title={
+              getButtonPermission('system/Permission', ['export']) ? '暂无权限，请联系管理员' : ''
+            }
+          >
+            <Button disabled={getButtonPermission('system/Permission', ['export'])}>导出</Button>
+          </Tooltip>
         </Popconfirm>
       </Menu.Item>
     </Menu>
@@ -202,7 +218,11 @@ const Permission: React.FC = observer(() => {
           type={'link'}
           key={'delete'}
           style={{ padding: 0 }}
+          disabled={!!record.status}
           isPermission={permission.delete}
+          tooltip={{
+            title: !!record.status ? '请先禁用，再删除' : '删除',
+          }}
           popConfirm={{
             title: '确认删除',
             onConfirm: async () => {
