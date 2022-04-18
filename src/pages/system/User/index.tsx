@@ -3,7 +3,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import SearchComponent from '@/components/SearchComponent';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { Badge, Button, message, Popconfirm, Tooltip } from 'antd';
+import { Badge, message, Popconfirm, Tooltip } from 'antd';
 import {
   CloseCircleOutlined,
   DeleteOutlined,
@@ -15,7 +15,6 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import { useRef, useState } from 'react';
 import Save from './Save';
 import { observer } from '@formily/react';
-import { getButtonPermission } from '@/utils/menu';
 import { PermissionButton } from '@/components';
 import usePermissions from '@/hooks/permission';
 
@@ -116,10 +115,10 @@ const User = observer(() => {
       valueType: 'option',
       width: 200,
       render: (text, record) => [
-        <Button
+        <PermissionButton
           style={{ padding: 0 }}
           type="link"
-          disabled={getButtonPermission('system/User', ['update', 'view'])}
+          isPermission={userPermission.update}
           key="editable"
           onClick={() => edit(record)}
         >
@@ -131,19 +130,18 @@ const User = observer(() => {
           >
             <EditOutlined />
           </Tooltip>
-        </Button>,
-        <Button
+        </PermissionButton>,
+        <PermissionButton
           style={{ padding: 0 }}
-          disabled={getButtonPermission('system/User', ['action'])}
+          isPermission={userPermission.action}
           type="link"
           key="changeState"
-        >
-          <Popconfirm
-            title={intl.formatMessage({
+          popConfirm={{
+            title: intl.formatMessage({
               id: `pages.data.option.${record.status ? 'disabled' : 'enabled'}.tips`,
               defaultMessage: `确认${record.status ? '禁用' : '启用'}?`,
-            })}
-            onConfirm={async () => {
+            }),
+            onConfirm: async () => {
               await service.update({
                 id: record.id,
                 status: record.status ? 0 : 1,
@@ -155,18 +153,17 @@ const User = observer(() => {
                 }),
               );
               actionRef.current?.reload();
-            }}
-          >
-            <Tooltip
-              title={intl.formatMessage({
-                id: `pages.data.option.${record.status ? 'disabled' : 'enabled'}`,
-                defaultMessage: record.status ? '禁用' : '启用',
-              })}
-            >
-              {record.status ? <CloseCircleOutlined /> : <PlayCircleOutlined />}
-            </Tooltip>
-          </Popconfirm>
-        </Button>,
+            },
+          }}
+          tooltip={{
+            title: intl.formatMessage({
+              id: `pages.data.option.${record.status ? 'disabled' : 'enabled'}`,
+              defaultMessage: record.status ? '禁用' : '启用',
+            }),
+          }}
+        >
+          {record.status ? <CloseCircleOutlined /> : <PlayCircleOutlined />}
+        </PermissionButton>,
         <PermissionButton
           type="link"
           key="delete"
@@ -208,11 +205,11 @@ const User = observer(() => {
         columns={columns}
         search={false}
         headerTitle={
-          <Button
+          <PermissionButton
             onClick={() => {
               setMode('add');
             }}
-            disabled={getButtonPermission('system/User', ['add'])}
+            isPermission={userPermission.add}
             key="button"
             icon={<PlusOutlined />}
             type="primary"
@@ -221,7 +218,7 @@ const User = observer(() => {
               id: 'pages.data.option.add',
               defaultMessage: '新增',
             })}
-          </Button>
+          </PermissionButton>
         }
         request={async (params) =>
           service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
