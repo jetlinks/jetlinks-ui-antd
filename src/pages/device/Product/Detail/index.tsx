@@ -187,9 +187,7 @@ const ProductDetail = observer(() => {
       onBack={() => history.goBack()}
       extraContent={<Space size={24} />}
       onTabChange={(key) => {
-        if (permission.update) {
-          setMode(key);
-        }
+        setMode(key);
       }}
       tabList={list}
       tabActiveKey={mode}

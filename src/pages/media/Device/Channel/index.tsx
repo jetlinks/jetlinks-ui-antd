@@ -129,6 +129,8 @@ export default () => {
           })}
         >
           <Button
+            type={'link'}
+            style={{ padding: 0 }}
             onClick={() => {
               setCurrent(record);
               setVisible(true);

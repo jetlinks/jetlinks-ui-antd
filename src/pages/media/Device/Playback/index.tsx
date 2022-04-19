@@ -1,7 +1,7 @@
 // 回放
 import { PageContainer } from '@ant-design/pro-layout';
 import LivePlayer from '@/components/Player';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Calendar, Empty, List, Select, Tooltip } from 'antd';
 import { useLocation } from 'umi';
 import Service from './service';
@@ -31,6 +31,7 @@ export default () => {
   const [cloudTime, setCloudTime] = useState<any>();
   const [playing, setPlaying] = useState(false);
   const location = useLocation();
+  const player = useRef<any>();
 
   const param = new URLSearchParams(location.search);
   const deviceId = param.get('id');
@@ -186,6 +187,7 @@ export default () => {
             url={url}
             className={'playback-media'}
             live={type === 'local'}
+            ref={player}
             onPlay={() => {
               setPlaying(true);
             }}
@@ -297,6 +299,10 @@ export default () => {
                                   );
                                 }
                               } else {
+                                console.log(player.current);
+                                if (player.current.pause) {
+                                  player.current.pause();
+                                }
                                 setPlayTime(0);
                               }
                             }}

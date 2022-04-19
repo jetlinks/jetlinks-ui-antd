@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { isFunction } from 'lodash';
 
 export type PlayerProps = {
@@ -37,13 +37,12 @@ const EventsEnum = {
   snapInside: 'onSnapInside',
   customButtons: 'onCustomButtons',
 };
-export default (props: PlayerProps) => {
+const LivePlayer = forwardRef((props: PlayerProps, ref) => {
   const player = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     return () => {
       // 销毁播放器
-      console.log('销毁', props);
       if ('onDestroy' in props && isFunction(props.onDestroy)) {
         props.onDestroy();
       }
@@ -62,6 +61,10 @@ export default (props: PlayerProps) => {
       });
     }
   };
+
+  useImperativeHandle(ref, () => ({
+    ...player.current,
+  }));
 
   return (
     // @ts-ignore: Unreachable code error
@@ -84,4 +87,6 @@ export default (props: PlayerProps) => {
       video-url={props.url || ''}
     />
   );
-};
+});
+
+export default LivePlayer;
