@@ -4,7 +4,7 @@ import type { DeviceInstance } from '@/pages/device/Instance/typings';
 import moment from 'moment';
 import { Badge, Button, Dropdown, Menu, message, Tooltip } from 'antd';
 import { useEffect, useRef, useState } from 'react';
-import { useHistory } from 'umi';
+import { useHistory, useIntl } from 'umi';
 import {
   CheckCircleOutlined,
   DeleteOutlined,
@@ -19,13 +19,12 @@ import {
 import { model } from '@formily/reactive';
 import Service from '@/pages/device/Instance/service';
 import type { MetadataItem } from '@/pages/device/Product/typings';
-import { useIntl } from 'umi';
 import Save from './Save';
 import Export from './Export';
 import Import from './Import';
 import Process from './Process';
 import SearchComponent from '@/components/SearchComponent';
-import { ProTableCard, PermissionButton } from '@/components';
+import { PermissionButton, ProTableCard } from '@/components';
 import SystemConst from '@/utils/const';
 import Token from '@/utils/token';
 import DeviceCard from '@/components/ProTableCard/CardItems/device';

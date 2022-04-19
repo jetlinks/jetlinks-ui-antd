@@ -13,7 +13,7 @@ import {
 import Service from '@/pages/link/Protocol/service';
 import { useIntl } from 'umi';
 import SearchComponent from '@/components/SearchComponent';
-import { ProTableCard, PermissionButton } from '@/components';
+import { PermissionButton, ProTableCard } from '@/components';
 import ProcotolCard from '@/components/ProTableCard/CardItems/protocol';
 import Save from './save';
 
@@ -182,7 +182,7 @@ const Protocol = () => {
           <PermissionButton
             onClick={() => {
               setVisible(true);
-              setCurrent({});
+              setCurrent(undefined);
             }}
             style={{ marginRight: 12 }}
             isPermission={permission.add}

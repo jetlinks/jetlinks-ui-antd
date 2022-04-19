@@ -13,16 +13,11 @@ import {
 } from '@ant-design/icons';
 import type { DeviceItem } from '@/pages/media/Device/typings';
 import { useHistory, useIntl } from 'umi';
-import { BadgeStatus, ProTableCard, PermissionButton } from '@/components';
+import { BadgeStatus, PermissionButton, ProTableCard } from '@/components';
 import { StatusColorEnum } from '@/components/BadgeStatus';
 import SearchComponent from '@/components/SearchComponent';
 import MediaDevice from '@/components/ProTableCard/CardItems/mediaDevice';
-import {
-  // getButtonPermission,
-  getMenuPathByCode,
-  getMenuPathByParams,
-  MENUS_CODE,
-} from '@/utils/menu';
+import { getMenuPathByCode, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import Service from './service';
 import Save from './Save';
 

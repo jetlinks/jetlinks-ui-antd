@@ -17,8 +17,8 @@ import type { ISchema } from '@formily/json-schema';
 import Service from '@/pages/link/Gateway/service';
 import { CurdModel } from '@/components/BaseCrud/model';
 import type { Field, FormPathPattern } from '@formily/core';
-import { action } from '@formily/reactive';
 import { onFieldReact, onFieldValueChange } from '@formily/core';
+import { action } from '@formily/reactive';
 import { useAsyncDataSource } from '@/utils/util';
 
 export const service = new Service('gateway/device');

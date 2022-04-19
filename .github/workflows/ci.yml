@@ -1,14 +1,15 @@
 name: Node CI
 
-on: [push, pull_request]
+on: [ push, pull_request ]
 
 jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node_version: [14.x]
-        os: [ubuntu-latest, windows-latest, macOS-latest]
+        node_version: [ 14.x ]
+        #        os: [ubuntu-latest, windows-latest, macOS-latest]
+        os: [ ubuntu-latest,macOS-latest ]
     steps:
       - uses: actions/checkout@v1
       - name: Use Node.js ${{ matrix.node_version }}

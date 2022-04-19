@@ -19,7 +19,7 @@ import type { DeviceMetadata } from '@/pages/device/Product/typings';
 import MetadataAction from '@/pages/device/components/Metadata/DataBaseAction';
 import { Store } from 'jetlinks-store';
 import SystemConst from '@/utils/const';
-import { getMenuPathByParams, getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
+import { getMenuPathByCode, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
 import { PermissionButton } from '@/components';
 

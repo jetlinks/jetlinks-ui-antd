@@ -171,7 +171,7 @@ const Save = (props: Props) => {
                           if (resp.result.passed) {
                             resolve('');
                           } else {
-                            resolve(resp.result.reason);
+                            resolve(model === 'edit' ? '' : resp.result.reason);
                           }
                         }
                         resolve('');
@@ -200,8 +200,6 @@ const Save = (props: Props) => {
           checkStrength: true,
           placeholder: '请输入密码',
         },
-        maxLength: 128,
-        minLength: 6,
         'x-reactions': [
           {
             dependencies: ['.confirmPassword'],
@@ -220,7 +218,7 @@ const Save = (props: Props) => {
             message: '密码最多可输入128位',
           },
           {
-            min: 6,
+            min: model === 'edit' ? 0 : 6,
             message: '密码不能少于6位',
           },
           {
@@ -249,7 +247,7 @@ const Save = (props: Props) => {
             message: '密码最多可输入128位',
           },
           {
-            min: 6,
+            min: model === 'edit' ? 0 : 6,
             message: '密码不能少于6位',
           },
           {

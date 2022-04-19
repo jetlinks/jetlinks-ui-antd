@@ -14,7 +14,7 @@ import {
   Space,
 } from '@formily/antd';
 import type { Field, FieldDataSource } from '@formily/core';
-import { createForm, onFieldReact, onFormInit } from '@formily/core';
+import { createForm, onFieldReact } from '@formily/core';
 import GroupNameControl from '@/components/SearchComponent/GroupNameControl';
 import {
   DeleteOutlined,
@@ -23,18 +23,8 @@ import {
   SaveOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
-import {
-  Button,
-  Card,
-  Dropdown,
-  Empty,
-  Menu,
-  message,
-  Popconfirm,
-  Popover,
-  Typography,
-} from 'antd';
-import { useEffect, useMemo, useState } from 'react';
+import { Button, Card, Dropdown, Empty, Menu, message, Popover, Typography } from 'antd';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ProColumns } from '@jetlinks/pro-table';
 import type { EnumData } from '@/utils/typings';
 import styles from './index.less';
@@ -75,6 +65,7 @@ interface Props<T> {
   defaultParam?: SearchTermsServer | Term[];
   // pattern?: 'simple' | 'advance';
   enableSave?: boolean;
+  initParam?: SearchTermsServer;
 }
 
 const termType = [
@@ -91,7 +82,6 @@ const termType = [
 ];
 
 const service = new Service();
-const initTerm = { termType: 'like' };
 const SchemaField = createSchemaField({
   components: {
     FormItem,
@@ -133,15 +123,7 @@ const sortField = (field: ProColumns[]) => {
 };
 
 const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
-  const { field, target, onSearch, defaultParam, enableSave = true } = props;
-
-  const intl = useIntl();
-  const [expand, setExpand] = useState<boolean>(true);
-  const initForm = server2Ui([{ terms: [initTerm] }]);
-  const [logVisible, setLogVisible] = useState<boolean>(false);
-  const [aliasVisible, setAliasVisible] = useState<boolean>(false);
-  const [initParams, setInitParams] = useState<SearchTermsUI>(initForm);
-  const [history, setHistory] = useState([]);
+  const { field, target, onSearch, defaultParam, enableSave = true, initParam } = props;
 
   /**
    * 过滤不参与搜索的数据
@@ -151,22 +133,36 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
       .filter((item) => item.dataIndex)
       .filter((item) => !item.hideInSearch)
       .filter((item) => !['index', 'option'].includes(item.dataIndex as string));
+
   // 处理后的搜索条件
   const processedField = sortField(filterSearchTerm());
+  const defaultTerms = (index: number) =>
+    ({
+      termType: 'like',
+      column: (processedField[index]?.dataIndex as string) || null,
+      type: 'or',
+    } as Partial<Term>);
+  const intl = useIntl();
+  const [expand, setExpand] = useState<boolean>(true);
+  const initForm = server2Ui(initParam || [{ terms: [defaultTerms(0)] }]);
+  const [aliasVisible, setAliasVisible] = useState<boolean>(false);
 
+  const [initParams, setInitParams] = useState<SearchTermsUI>(initForm);
+  const [history, setHistory] = useState([]);
+  const [logVisible, setLogVisible] = useState<boolean>(false);
   const form = useMemo(
     () =>
       createForm<SearchTermsUI>({
         validateFirst: true,
         initialValues: initParams,
         effects() {
-          onFormInit((form1) => {
-            if (expand) {
-              form1.setValues({
-                terms1: [{ column: processedField[0]?.dataIndex, termType: 'like' }],
-              });
-            }
-          });
+          // onFormInit((form1) => {
+          //   if (expand && !initParam) {
+          //     form1.setValues({
+          //       terms1: [{column: processedField[0]?.dataIndex, termType: 'like'}],
+          //     });
+          //   }
+          // });
           onFieldReact('*.*.column', async (typeFiled, f) => {
             const _column = (typeFiled as Field).value;
             const _field = field.find((item) => item.dataIndex === _column);
@@ -212,7 +208,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
           });
         },
       }),
-    [expand],
+    [target],
   );
 
   const historyForm = createForm();
@@ -323,30 +319,49 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
     },
   };
 
-  const handleExpand = () => {
-    const value = form.values;
+  const uiParamRef = useRef(initParam);
 
-    if (expand) {
-      value.terms1 = [0, 1, 2].map((i) => ({
-        termType: 'like',
-        column: (processedField[i]?.dataIndex as string) || null,
-        type: 'or',
-      }));
-      value.terms2 = [3, 4, 5].map((i) => ({
-        termType: 'like',
-        column: (processedField[i]?.dataIndex as string) || null,
-        type: 'or',
-      }));
-    } else {
+  const handleForm = (_expand?: boolean) => {
+    const value = form.values;
+    const __expand = _expand || expand;
+    // 第一组条件值
+    const _terms1 = _.cloneDeep(value.terms1?.[0]);
+    const uiParam = uiParamRef.current;
+    // 判断一下条件。。是否展开。
+    if (__expand) {
       value.terms1 = [
-        { termType: 'like', column: (processedField[0].dataIndex as string) || null },
+        uiParam?.[0]?.terms?.[0] || _terms1 || defaultTerms(0),
+        uiParam?.[0]?.terms?.[1] || defaultTerms(1),
+        uiParam?.[0]?.terms?.[2] || defaultTerms(2),
       ];
+      value.terms2 = [
+        uiParam?.[1]?.terms?.[0] || defaultTerms(3),
+        uiParam?.[1]?.terms?.[1] || defaultTerms(4),
+        uiParam?.[1]?.terms?.[2] || defaultTerms(5),
+      ];
+    } else {
+      value.terms1 = _terms1 ? [_terms1] : [defaultTerms(0)];
       value.terms2 = [];
     }
     setInitParams(value);
+  };
+  const handleExpand = () => {
+    handleForm();
     setExpand(!expand);
   };
 
+  useEffect(() => {
+    //  1、一组条件时的表单值
+    //  2、六组条件时的表单值
+    //  3、拥有默认条件时的表单值
+    // 合并初始化的值
+
+    //expand false 6组条件 true 1组条件
+
+    if (initParam && initParam[0].terms && initParam[0].terms.length > 1) {
+      handleExpand();
+    }
+  }, []);
   const simpleSchema: ISchema = {
     type: 'object',
     properties: {
@@ -355,8 +370,14 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
   };
   const handleHistory = (item: SearchHistory) => {
     const log = JSON.parse(item.content) as SearchTermsUI;
-    form.setValues(log);
-    setExpand(!((log.terms1 && log.terms1?.length > 1) || (log.terms2 && log.terms2?.length > 1)));
+    setLogVisible(false);
+    uiParamRef.current = ui2Server(log);
+    const _expand =
+      (log.terms1 && log.terms1?.length > 1) || (log.terms2 && log.terms2?.length > 1);
+    if (_expand) {
+      setExpand(false);
+    }
+    handleForm(_expand);
   };
 
   const historyDom = (
@@ -366,8 +387,8 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
           <Menu.Item onClick={() => handleHistory(item)} key={item.id || randomString(9)}>
             <div className={styles.list}>
               <Typography.Text ellipsis={{ tooltip: item.name }}>{item.name}</Typography.Text>
-              <Popconfirm
-                onConfirm={async (e) => {
+              <DeleteOutlined
+                onClick={async (e) => {
                   e?.stopPropagation();
                   const response = await service.history.remove(`${target}-search`, item.key);
                   if (response.status === 200) {
@@ -376,10 +397,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                     setHistory(temp);
                   }
                 }}
-                title={'确认删除吗？'}
-              >
-                <DeleteOutlined onClick={(e) => e.stopPropagation()} />
-              </Popconfirm>
+              />
             </div>
           </Menu.Item>
         ))
@@ -402,7 +420,6 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
 
   const formatValue = (value: SearchTermsUI): SearchTermsServer => {
     let _value = ui2Server(value);
-
     // 处理默认查询参数
     if (defaultParam && defaultParam?.length > 0) {
       if ('terms' in defaultParam[0]) {
@@ -459,11 +476,15 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
   };
 
   const resetForm = async () => {
-    const temp = initForm;
-    const expandData = Array(expand ? 1 : 3).fill(initTerm);
-    temp.terms1 = expandData;
-    temp.terms2 = expandData;
-    await form.reset();
+    const value = form.values;
+    if (!expand) {
+      value.terms1 = [defaultTerms(0), defaultTerms(1), defaultTerms(2)];
+      value.terms2 = [defaultTerms(3), defaultTerms(4), defaultTerms(5)];
+    } else {
+      value.terms1 = [defaultTerms(0)];
+      value.terms2 = [];
+    }
+    setInitParams(value);
     await handleSearch();
   };
 
@@ -477,7 +498,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
       <Dropdown.Button
         icon={<SearchOutlined />}
         placement={'bottomLeft'}
-        trigger={['click']}
+        destroyPopupOnHide
         onClick={handleSearch}
         visible={logVisible}
         onVisibleChange={async (visible) => {
@@ -509,6 +530,10 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                     {
                       max: 64,
                       message: '最多可输入64个字符',
+                    },
+                    {
+                      required: true,
+                      message: '请输入名称',
                     },
                   ],
                 },

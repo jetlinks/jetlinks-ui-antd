@@ -3,7 +3,7 @@ import { createForm, registerValidateRules } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import React, { useEffect, useState } from 'react';
 import * as ICONS from '@ant-design/icons';
-import { Select, Form, FormItem, Input, FormGrid } from '@formily/antd';
+import { Form, FormGrid, FormItem, Input, Select } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
 import { service } from '@/pages/link/Protocol';
 import { Modal } from '@/components';

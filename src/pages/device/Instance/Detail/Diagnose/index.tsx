@@ -1,7 +1,6 @@
 import { Badge, Card, Col, Row } from 'antd';
 import type { ReactNode } from 'react';
-import { useEffect } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Message from './Message';
 import Status from './Status';
 import './index.less';

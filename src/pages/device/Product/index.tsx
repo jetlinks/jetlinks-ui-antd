@@ -19,7 +19,7 @@ import { useEffect, useRef, useState } from 'react';
 import Save from '@/pages/device/Product/Save';
 import SearchComponent from '@/components/SearchComponent';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
-import { ProTableCard, AIcon, PermissionButton } from '@/components';
+import { AIcon, PermissionButton, ProTableCard } from '@/components';
 import ProductCard from '@/components/ProTableCard/CardItems/product';
 import { downloadObject } from '@/utils/util';
 
@@ -390,6 +390,7 @@ const Product = observer(() => {
                 } catch {
                   message.error('请上传json格式文件');
                 }
+                return true;
               };
               return false;
             }}

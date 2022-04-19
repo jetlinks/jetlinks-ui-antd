@@ -22,8 +22,8 @@ const AliyunSms = () => {
       <div>
         <div> 1、绑定配置</div>
         <div> 绑定通知配置</div>
-        <div> 2、模板ID</div>
-        <div> 阿里云短信对每一条短信模板分配的唯一ID标识</div>
+        <div> 2、模板</div>
+        <div> 阿里云短信平台自定义的模板名称</div>
         <div> 3、收信人</div>
         <div> 当前仅支持国内手机号，此处若不填，则在模板调试和配置告警通知时手动填写</div>
         <div> 4、签名</div>

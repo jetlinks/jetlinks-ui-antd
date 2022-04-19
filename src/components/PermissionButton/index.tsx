@@ -1,5 +1,5 @@
-import { Button, Tooltip, Popconfirm } from 'antd';
-import type { TooltipProps, PopconfirmProps, ButtonProps } from 'antd';
+import type { ButtonProps, PopconfirmProps, TooltipProps } from 'antd';
+import { Button, Popconfirm, Tooltip } from 'antd';
 import usePermissions from '@/hooks/permission';
 import { useCallback } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
