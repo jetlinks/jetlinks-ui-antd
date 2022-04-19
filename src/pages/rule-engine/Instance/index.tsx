@@ -224,14 +224,16 @@ const Instance = () => {
             disabled: record.state.value !== 'disable',
             onConfirm: async () => {
               if (record.state.value === 'disable') {
-                await service.remove(record.id);
-                message.success(
-                  intl.formatMessage({
-                    id: 'pages.data.option.success',
-                    defaultMessage: '操作成功!',
-                  }),
-                );
-                actionRef.current?.reload();
+                const resp: any = await service.remove(record.id);
+                if (resp.status === 200) {
+                  message.success(
+                    intl.formatMessage({
+                      id: 'pages.data.option.success',
+                      defaultMessage: '操作成功!',
+                    }),
+                  );
+                  actionRef.current?.reload();
+                }
               } else {
                 message.error('未停止不能删除');
               }
