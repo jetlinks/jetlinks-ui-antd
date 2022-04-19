@@ -15,6 +15,7 @@ import {
   PlusOutlined,
   StopOutlined,
   SyncOutlined,
+  PlayCircleOutlined,
 } from '@ant-design/icons';
 import { model } from '@formily/reactive';
 import Service from '@/pages/device/Instance/service';
@@ -144,7 +145,7 @@ const Instance = () => {
         }),
       }}
     >
-      {record.state.value !== 'notActive' ? <StopOutlined /> : <CheckCircleOutlined />}
+      {record.state.value !== 'notActive' ? <StopOutlined /> : <PlayCircleOutlined />}
     </PermissionButton>,
     <PermissionButton
       type={'link'}
@@ -515,7 +516,7 @@ const Instance = () => {
                   },
                 }}
               >
-                {record.state.value !== 'notActive' ? <StopOutlined /> : <CheckCircleOutlined />}
+                {record.state.value !== 'notActive' ? <StopOutlined /> : <PlayCircleOutlined />}
                 {intl.formatMessage({
                   id: `pages.data.option.${
                     record.state.value !== 'notActive' ? 'disabled' : 'enabled'

@@ -115,7 +115,12 @@ const Stream = () => {
                               key="button"
                               type="link"
                             >
-                              <EditOutlined style={{ color: '#000000' }} />
+                              <EditOutlined
+                                style={{
+                                  color: permission.update ? '#000000' : 'rgba(0, 0, 0, .65)',
+                                  cursor: permission.update ? 'pointer' : 'not-allowed',
+                                }}
+                              />
                               <span>编辑</span>
                             </PermissionButton>
                             <PermissionButton
@@ -134,8 +139,18 @@ const Stream = () => {
                               key="delete"
                               type="link"
                             >
-                              <span className={styles.action}>
-                                <DeleteOutlined style={{ color: '#E50012' }} />
+                              <span
+                                className={styles.action}
+                                style={{
+                                  color: permission.update ? '#000000' : 'rgba(0, 0, 0, .65)',
+                                  cursor: permission.update ? 'pointer' : 'not-allowed',
+                                }}
+                              >
+                                <DeleteOutlined
+                                  style={{
+                                    color: permission.update ? '#E50012' : 'rgba(0, 0, 0, .65)',
+                                  }}
+                                />
                                 <span>删除</span>
                               </span>
                             </PermissionButton>

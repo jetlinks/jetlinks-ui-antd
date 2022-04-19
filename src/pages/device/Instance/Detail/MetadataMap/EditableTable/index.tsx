@@ -236,7 +236,7 @@ const EditableTable = (props: Props) => {
   const handleSearch = (params: any) => {
     if (params.name) {
       const data = properties.filter((i: any) => {
-        return i?.name.indexOf(params?.nmae) !== -1;
+        return i?.name.includes(params?.name);
       });
       setDataSource({
         data: data.slice(

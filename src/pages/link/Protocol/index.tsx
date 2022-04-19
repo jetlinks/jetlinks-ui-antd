@@ -4,7 +4,7 @@ import type { ProtocolItem } from '@/pages/link/Protocol/typings';
 import { Badge, message } from 'antd';
 import { useRef, useState } from 'react';
 import {
-  CheckCircleOutlined,
+  PlayCircleOutlined,
   DeleteOutlined,
   EditOutlined,
   PlusOutlined,
@@ -125,7 +125,7 @@ const Protocol = () => {
             },
           }}
         >
-          {record.state === 1 ? <StopOutlined /> : <CheckCircleOutlined />}
+          {record.state === 1 ? <StopOutlined /> : <PlayCircleOutlined />}
         </PermissionButton>,
         <PermissionButton
           isPermission={permission.delete}
@@ -228,6 +228,7 @@ const Protocol = () => {
                 }}
               >
                 <EditOutlined />
+                编辑
               </PermissionButton>,
               <PermissionButton
                 isPermission={permission.action}
@@ -248,7 +249,8 @@ const Protocol = () => {
                   },
                 }}
               >
-                {record.state === 1 ? <StopOutlined /> : <CheckCircleOutlined />}
+                {record.state === 1 ? <StopOutlined /> : <PlayCircleOutlined />}
+                {record.state === 1 ? '撤销' : '发布'}
               </PermissionButton>,
               <PermissionButton
                 isPermission={permission.delete}

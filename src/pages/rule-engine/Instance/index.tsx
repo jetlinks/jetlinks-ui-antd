@@ -4,7 +4,7 @@ import type { InstanceItem } from '@/pages/rule-engine/Instance/typings';
 import { useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import {
-  CheckCircleOutlined,
+  PlayCircleOutlined,
   DeleteOutlined,
   EditOutlined,
   EyeOutlined,
@@ -40,12 +40,6 @@ const Instance = () => {
       }}
       type={'link'}
       style={{ padding: 0 }}
-      tooltip={{
-        title: intl.formatMessage({
-          id: 'pages.data.option.edit',
-          defaultMessage: '编辑',
-        }),
-      }}
     >
       <EditOutlined />
       编辑
@@ -72,24 +66,16 @@ const Instance = () => {
         },
       }}
       isPermission={permission.action}
-      tooltip={{
-        title: record.state.value !== 'disable' ? '禁用' : '启用',
-      }}
     >
-      {record.state.value !== 'disable' ? (
-        <span>
-          <StopOutlined />
-          禁用
-        </span>
-      ) : (
-        <span>
-          <CheckCircleOutlined />
-          启用
-        </span>
-      )}
+      {record.state.value !== 'disable' ? <StopOutlined /> : <PlayCircleOutlined />}
+      {record.state.value !== 'disable' ? '禁用' : '启用'}
     </PermissionButton>,
     <PermissionButton
       isPermission={permission.delete}
+      disabled={record.state.value !== 'disable'}
+      tooltip={{
+        title: record.state.value !== 'disable' ? '请先禁用，再删除' : '',
+      }}
       popConfirm={{
         title: '确认删除',
         onConfirm: async () => {
@@ -111,7 +97,6 @@ const Instance = () => {
       type="link"
     >
       <DeleteOutlined />
-      删除
     </PermissionButton>,
   ];
 
@@ -224,11 +209,15 @@ const Instance = () => {
             title: record.state.value !== 'disable' ? '禁用' : '启用',
           }}
         >
-          {record.state.value !== 'disable' ? <StopOutlined /> : <CheckCircleOutlined />}
+          {record.state.value !== 'disable' ? <StopOutlined /> : <PlayCircleOutlined />}
         </PermissionButton>,
         <PermissionButton
           isPermission={permission.delete}
           style={{ padding: 0 }}
+          disabled={record.state.value !== 'disable'}
+          tooltip={{
+            title: record.state.value !== 'disable' ? '请先禁用，再删除' : '',
+          }}
           popConfirm={{
             title: '确认删除',
             onConfirm: async () => {
