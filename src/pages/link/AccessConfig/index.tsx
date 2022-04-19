@@ -154,6 +154,7 @@ const AccessConfig = () => {
                       }}
                       popConfirm={{
                         title: '确认删除',
+                        disabled: item.status.value !== 'disabled',
                         onConfirm: () => {
                           service.remove(item.id).then((resp: any) => {
                             if (resp.status === 200) {

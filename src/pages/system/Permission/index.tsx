@@ -225,6 +225,7 @@ const Permission: React.FC = observer(() => {
           }}
           popConfirm={{
             title: '确认删除',
+            disabled: !!record.status,
             onConfirm: async () => {
               if (record.status) {
                 await service.remove(record.id);

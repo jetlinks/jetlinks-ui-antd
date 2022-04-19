@@ -136,6 +136,7 @@ const Protocol = () => {
           disabled={record.state === 1}
           popConfirm={{
             title: '确认删除',
+            disabled: record.state === 1,
             onConfirm: async () => {
               const resp: any = await service.remove(record.id);
               if (resp.status === 200) {
@@ -260,6 +261,7 @@ const Protocol = () => {
                 disabled={record.state === 1}
                 popConfirm={{
                   title: '确认删除',
+                  disabled: record.state === 1,
                   onConfirm: async () => {
                     const resp: any = await service.remove(record.id);
                     if (resp.status === 200) {
