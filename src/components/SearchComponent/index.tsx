@@ -198,11 +198,16 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                 state.componentProps = { showTime: true };
               });
               f.setFieldState(typeFiled.query('.termType'), async (state) => {
-                state.value = 'gt';
+                state.value = 'gte';
               });
             } else {
               f.setFieldState(typeFiled.query('.value'), async (state) => {
                 state.componentType = 'Input';
+              });
+            }
+            if (_column === 'id') {
+              f.setFieldState(typeFiled.query('.termType'), async (state) => {
+                state.value = 'eq';
               });
             }
           });
@@ -455,10 +460,10 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
   };
 
   useEffect(() => {
-    if (defaultParam) {
+    if (defaultParam || initParam) {
       handleSearch();
     }
-  }, []);
+  }, [defaultParam, initParam]);
 
   const handleSaveLog = async () => {
     const value = await form.submit<SearchTermsUI>();

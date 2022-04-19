@@ -755,7 +755,8 @@ const Save = observer(() => {
     },
   };
 
-  const handleSave = async (data: any) => {
+  const handleSave = async () => {
+    const data: any = await form.submit();
     if (data.shareCluster === false) {
       data.cluster = data.cluster?.map((item: any) => ({
         serverId: item.serverId,
@@ -791,7 +792,7 @@ const Save = observer(() => {
               <PermissionButton
                 type="primary"
                 isPermission={getOtherPermission(['add', 'update'])}
-                onClick={handleSave}
+                onClick={() => handleSave()}
               >
                 保存
               </PermissionButton>

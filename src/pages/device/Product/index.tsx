@@ -291,7 +291,7 @@ const Product = observer(() => {
         id: 'pages.system.description',
         defaultMessage: '说明',
       }),
-      hideInSearch: true,
+      // hideInSearch: true,
     },
     {
       title: intl.formatMessage({

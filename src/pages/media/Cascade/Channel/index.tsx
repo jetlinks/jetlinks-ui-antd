@@ -107,6 +107,17 @@ const Channel = () => {
     {
       dataIndex: 'status',
       title: '在线状态',
+      valueType: 'select',
+      valueEnum: {
+        online: {
+          text: '已连接',
+          status: 'online',
+        },
+        offline: {
+          text: '离线',
+          status: 'offline',
+        },
+      },
       render: (text: any, record: any) => (
         <BadgeStatus
           status={record.status?.value}

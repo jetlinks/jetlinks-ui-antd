@@ -37,17 +37,30 @@ const Access = () => {
       title: '请求方法',
       dataIndex: 'httpMethod',
       ellipsis: true,
-    },
-    {
-      title: intl.formatMessage({
-        id: 'pages.table.description',
-        defaultMessage: '说明',
-      }),
-      dataIndex: 'describe',
-      ellipsis: true,
-      // render: (text, record) => {
-      //   return `${record.action}-${record.describe}`;
-      // },
+      valueType: 'select',
+      width: 80,
+      valueEnum: {
+        POST: {
+          text: 'POST',
+          status: 'POST',
+        },
+        GET: {
+          text: 'GET',
+          status: 'GET',
+        },
+        PATCH: {
+          text: 'PATCH',
+          status: 'PATCH',
+        },
+        DELETE: {
+          text: 'DELETE',
+          status: 'DELETE',
+        },
+        PUT: {
+          text: 'PUT',
+          status: 'PUT',
+        },
+      },
     },
     {
       title: intl.formatMessage({
@@ -67,6 +80,7 @@ const Access = () => {
         id: 'pages.log.access.requestTimeConsuming',
         defaultMessage: '请求耗时',
       }),
+      width: 80,
       renderText: (record: AccessLogItem) => (
         <Tag color="purple">{record.responseTime - record.requestTime}ms</Tag>
       ),
@@ -80,6 +94,17 @@ const Access = () => {
       render: (text, record: any) => (
         <Tag color="geekblue">{record?.context?.username || '--'}</Tag>
       ),
+    },
+    {
+      title: intl.formatMessage({
+        id: 'pages.table.description',
+        defaultMessage: '说明',
+      }),
+      dataIndex: 'describe',
+      ellipsis: true,
+      // render: (text, record) => {
+      //   return `${record.action}-${record.describe}`;
+      // },
     },
     {
       title: intl.formatMessage({

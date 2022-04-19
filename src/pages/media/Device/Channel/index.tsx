@@ -100,6 +100,17 @@ export default () => {
         id: 'pages.searchTable.titleStatus',
         defaultMessage: '状态',
       }),
+      valueType: 'select',
+      valueEnum: {
+        online: {
+          text: '已连接',
+          status: 'online',
+        },
+        offline: {
+          text: '离线',
+          status: 'offline',
+        },
+      },
       render: (_, record) => (
         <BadgeStatus
           status={record.status.value}
@@ -129,8 +140,8 @@ export default () => {
           })}
         >
           <Button
-            type={'link'}
             style={{ padding: 0 }}
+            type="link"
             onClick={() => {
               setCurrent(record);
               setVisible(true);

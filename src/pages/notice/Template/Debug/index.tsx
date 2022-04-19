@@ -36,10 +36,8 @@ const Debug = observer(() => {
             if (target && target.variableDefinitions) {
               form1.setValuesIn('variableDefinitions', target.variableDefinitions);
             }
-            //
-            // 获取 变量列表
-            // 然后set 值
           });
+
           onFieldReact('variableDefinitions.*.type', (field) => {
             const value = (field as Field).value;
             const format = field.query('.value').take() as any;
@@ -70,7 +68,12 @@ const Debug = observer(() => {
 
   useEffect(() => {
     const data = state.current;
-    form.setValuesIn('variableDefinitions', data?.variableDefinitions);
+    if (data?.variableDefinitions?.length > 0) {
+      form.setFieldState('variableDefinitions', (state1) => {
+        state1.visible = true;
+        state1.value = data?.variableDefinitions;
+      });
+    }
   }, [state.current]);
 
   const SchemaField = createSchemaField({
@@ -121,6 +124,7 @@ const Debug = observer(() => {
           pagination: { pageSize: 9999 },
           scroll: { x: '100%' },
         },
+        'x-visible': false,
         items: {
           type: 'object',
           properties: {

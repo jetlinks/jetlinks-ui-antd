@@ -115,6 +115,7 @@ const Device = () => {
         defaultMessage: '通道数量',
       }),
       valueType: 'digit',
+      hideInSearch: true,
     },
     {
       dataIndex: 'manufacturer',

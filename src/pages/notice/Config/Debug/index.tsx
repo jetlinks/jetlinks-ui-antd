@@ -34,7 +34,12 @@ const Debug = observer(() => {
             const list = Store.get('notice-template-list');
 
             const _template = list.find((item: any) => item.id === value);
-            form1.setValuesIn('variableDefinitions', _template.variableDefinitions);
+            if (_template?.variableDefinitions?.length > 0) {
+              form1.setFieldState('variableDefinitions', (_state) => {
+                _state.visible = true;
+                _state.value = _template.variableDefinitions;
+              });
+            }
           });
           onFieldReact('variableDefinitions.*.type', (field) => {
             const value = (field as Field).value;
@@ -109,6 +114,7 @@ const Debug = observer(() => {
           pagination: { pageSize: 9999 },
           scroll: { x: '100%' },
         },
+        'x-visible': false,
         items: {
           type: 'object',
           properties: {

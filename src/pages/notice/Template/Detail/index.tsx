@@ -216,6 +216,11 @@ const Detail = observer(() => {
                 ?.match(pattern)
                 ?.filter((i: string) => i)
                 .map((item: string) => ({ id: item, type: 'string', format: '--' }));
+            if (idList && idList.length > 0) {
+              form1.setFieldState('variableDefinitions', (state1) => {
+                state1.visible = true;
+              });
+            }
             if (form1.modified) {
               form1.setValuesIn('variableDefinitions', idList);
             }
@@ -343,6 +348,9 @@ const Detail = observer(() => {
         type: 'string',
         'x-decorator': 'FormItem',
         'x-component': 'Input',
+        'x-component-props': {
+          placeholder: '请输入名称',
+        },
         name: 'name',
         'x-validator': [
           {
@@ -913,6 +921,9 @@ const Detail = observer(() => {
                 'x-decorator-props': {
                   tip: '多个收件人用换行分隔 \n最大支持1000个号码',
                 },
+                'x-component-props': {
+                  placeholder: '请输入收件人邮箱,多个收件人用换行分隔',
+                },
               },
               attachments: {
                 type: 'array',
@@ -944,7 +955,7 @@ const Detail = observer(() => {
                       'x-component-props': {
                         type: 'file',
                         display: 'name',
-                        placeholder: '请上传文件',
+                        placeholder: '请上传文件或输入文件名称',
                       },
                     },
                     remove: {
@@ -999,6 +1010,7 @@ const Detail = observer(() => {
           pagination: { pageSize: 9999 },
           scroll: { x: '100%' },
         },
+        'x-visible': false,
         items: {
           type: 'object',
           properties: {
