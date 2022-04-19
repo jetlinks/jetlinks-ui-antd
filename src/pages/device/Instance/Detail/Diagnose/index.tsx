@@ -1,11 +1,11 @@
-import {Badge, Card, Col, Row} from 'antd';
-import type {ReactNode} from 'react';
-import {useEffect, useState} from 'react';
+import { Badge, Card, Col, Row } from 'antd';
+import type { ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 import Message from './Message';
 import Status from './Status';
 import './index.less';
 import classNames from 'classnames';
-import {Store} from 'jetlinks-store';
+import { Store } from 'jetlinks-store';
 
 interface ListProps {
   key: string;

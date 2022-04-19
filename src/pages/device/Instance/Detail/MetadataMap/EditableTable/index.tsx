@@ -1,6 +1,6 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {Form, Input, message, Pagination, Select, Table} from 'antd';
-import {service} from '@/pages/device/Instance';
+import React, { useContext, useEffect, useState } from 'react';
+import { Form, Input, message, Pagination, Select, Table } from 'antd';
+import { service } from '@/pages/device/Instance';
 import _ from 'lodash';
 
 const EditableContext: any = React.createContext(null);

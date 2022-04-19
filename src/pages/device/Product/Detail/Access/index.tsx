@@ -26,7 +26,7 @@ const Access = () => {
   const [access, setAccess] = useState<any>();
   const [providers, setProviders] = useState<any[]>([]);
   const [networkList, setNetworkList] = useState<any[]>([]);
-  const { permission } = usePermissions('device/Product');
+  const { permission } = usePermissions('link/AccessConfig');
 
   const MetworkTypeMapping = new Map();
   MetworkTypeMapping.set('websocket-server', 'WEB_SOCKET_SERVER');
