@@ -198,12 +198,9 @@ const Product = observer(() => {
           defaultMessage: '是否删除?',
         }),
         onConfirm: async () => {
-          if (record.state === 0) {
-            await deleteItem(record.id);
-          } else {
-            message.error('已发布的产品不能进行删除操作');
-          }
+          await deleteItem(record.id);
         },
+        disabled: record.state === 1,
       }}
       tooltip={{
         title: intl.formatMessage({
@@ -498,12 +495,9 @@ const Product = observer(() => {
                     defaultMessage: '是否删除?',
                   }),
                   onConfirm: async () => {
-                    if (record.state === 0) {
-                      await deleteItem(record.id);
-                    } else {
-                      message.error('已发布的产品不能进行删除操作');
-                    }
+                    await deleteItem(record.id);
                   },
+                  disabled: record.state === 1,
                 }}
               >
                 <DeleteOutlined />

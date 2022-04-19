@@ -67,6 +67,8 @@ const Instance = () => {
   const [bindKeys, setBindKeys] = useState<any[]>([]);
   const history = useHistory<Record<string, string>>();
   const { permission } = PermissionButton.usePermission('device/Instance');
+  const [jumpParams, setJumpParams] = useState<SearchTermsServer | undefined>(undefined);
+
   const intl = useIntl();
   const location = useLocation();
 
@@ -79,9 +81,12 @@ const Instance = () => {
           value: location.state[key],
         });
       });
-      setSearchParams({
-        terms: _terms,
-      });
+      setJumpParams([
+        {
+          terms: _terms,
+          type: 'or',
+        },
+      ]);
     }
   }, [location]);
 
@@ -194,7 +199,7 @@ const Instance = () => {
         id: 'pages.table.productName',
         defaultMessage: '产品名称',
       }),
-      dataIndex: 'productName',
+      dataIndex: 'productId',
       width: 200,
       ellipsis: true,
       valueType: 'select',
@@ -205,6 +210,7 @@ const Instance = () => {
         }
         return [];
       },
+      render: (_, row) => row.productName,
       filterMultiple: true,
     },
     {
@@ -273,6 +279,8 @@ const Instance = () => {
       render: (text, record) => tools(record),
     },
   ];
+
+  console.log(jumpParams);
 
   const menu = (
     <Menu>
@@ -391,6 +399,7 @@ const Instance = () => {
       <SearchComponent<DeviceInstance>
         field={columns}
         target="device-instance"
+        initParam={jumpParams}
         onSearch={(data) => {
           actionRef.current?.reset?.();
           setSearchParams(data);
