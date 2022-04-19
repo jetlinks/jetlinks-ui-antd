@@ -1,12 +1,12 @@
-import {useCallback, useEffect, useState} from 'react';
-import {Button, Col, Form, Input, message, Modal, Radio, Row, Select, Tooltip} from 'antd';
-import {useIntl} from 'umi';
-import {RadioCard, UploadImage} from '@/components';
-import {PlusOutlined} from '@ant-design/icons';
-import {service} from '../index';
+import { useCallback, useEffect, useState } from 'react';
+import { Button, Col, Form, Input, message, Modal, Radio, Row, Select, Tooltip } from 'antd';
+import { useIntl } from 'umi';
+import { RadioCard, UploadImage } from '@/components';
+import { PlusOutlined } from '@ant-design/icons';
+import { service } from '../index';
 import SaveProductModal from './SaveProduct';
-import type {DeviceItem} from '../typings';
-import {getButtonPermission} from '@/utils/menu';
+import type { DeviceItem } from '../typings';
+import { getButtonPermission } from '@/utils/menu';
 
 interface SaveProps {
   visible: boolean;

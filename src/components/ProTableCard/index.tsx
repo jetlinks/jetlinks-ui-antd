@@ -1,10 +1,10 @@
-import type {ProTableProps} from '@jetlinks/pro-table';
+import type { ProTableProps } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import type {ParamsType} from '@ant-design/pro-provider';
-import React, {useEffect, useState} from 'react';
-import {isFunction} from 'lodash';
-import {Empty, Pagination, Space} from 'antd';
-import {AppstoreOutlined, BarsOutlined} from '@ant-design/icons';
+import type { ParamsType } from '@ant-design/pro-provider';
+import React, { useEffect, useState } from 'react';
+import { isFunction } from 'lodash';
+import { Empty, Pagination, Space } from 'antd';
+import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 import './index.less';
 

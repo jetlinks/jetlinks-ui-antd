@@ -1,21 +1,21 @@
-import {PageContainer} from '@ant-design/pro-layout';
-import {useIntl, useLocation, useParams} from 'umi';
-import {Badge, Card, Descriptions, message, Popconfirm, Space, Spin, Switch, Tooltip} from 'antd';
+import { PageContainer } from '@ant-design/pro-layout';
+import { useIntl, useLocation, useParams } from 'umi';
+import { Badge, Card, Descriptions, message, Popconfirm, Space, Spin, Switch, Tooltip } from 'antd';
 import BaseInfo from '@/pages/device/Product/Detail/BaseInfo';
-import {observer} from '@formily/react';
-import {productModel, service} from '@/pages/device/Product';
-import {useCallback, useEffect, useState} from 'react';
-import {useHistory} from '@/hooks';
+import { observer } from '@formily/react';
+import { productModel, service } from '@/pages/device/Product';
+import { useCallback, useEffect, useState } from 'react';
+import { useHistory } from '@/hooks';
 import Metadata from '@/pages/device/components/Metadata';
 import Access from '@/pages/device/Product/Detail/Access';
-import type {DeviceMetadata} from '@/pages/device/Product/typings';
-import {Store} from 'jetlinks-store';
+import type { DeviceMetadata } from '@/pages/device/Product/typings';
+import { Store } from 'jetlinks-store';
 import MetadataAction from '@/pages/device/components/Metadata/DataBaseAction';
-import {getMenuPathByCode, MENUS_CODE} from '@/utils/menu';
+import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 import encodeQuery from '@/utils/encodeQuery';
 import MetadataMap from '@/pages/device/Instance/Detail/MetadataMap';
 import SystemConst from '@/utils/const';
-import {PermissionButton} from '@/components';
+import { PermissionButton } from '@/components';
 
 export const ModelEnum = {
   base: 'base',
@@ -187,9 +187,7 @@ const ProductDetail = observer(() => {
       onBack={() => history.goBack()}
       extraContent={<Space size={24} />}
       onTabChange={(key) => {
-        if (permission.update) {
-          setMode(key);
-        }
+        setMode(key);
       }}
       tabList={list}
       tabActiveKey={mode}

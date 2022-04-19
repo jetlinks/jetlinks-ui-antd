@@ -1,11 +1,16 @@
-import {Descriptions, message, Space, Tooltip} from 'antd';
-import {InstanceModel, service} from '@/pages/device/Instance';
-import {useEffect, useState} from 'react';
-import type {ConfigMetadata} from '@/pages/device/Product/typings';
-import {history, useParams} from 'umi';
-import {CheckOutlined, EditOutlined, QuestionCircleOutlined, UndoOutlined,} from '@ant-design/icons';
+import { Descriptions, message, Space, Tooltip } from 'antd';
+import { InstanceModel, service } from '@/pages/device/Instance';
+import { useEffect, useState } from 'react';
+import type { ConfigMetadata } from '@/pages/device/Product/typings';
+import { history, useParams } from 'umi';
+import {
+  CheckOutlined,
+  EditOutlined,
+  QuestionCircleOutlined,
+  UndoOutlined,
+} from '@ant-design/icons';
 import Edit from './Edit';
-import {PermissionButton} from '@/components';
+import { PermissionButton } from '@/components';
 
 const Config = () => {
   const params = useParams<{ id: string }>();

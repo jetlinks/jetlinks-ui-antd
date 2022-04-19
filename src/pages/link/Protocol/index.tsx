@@ -57,6 +57,17 @@ const Protocol = () => {
       dataIndex: 'type',
       title: '类型',
       ellipsis: true,
+      valueType: 'select',
+      valueEnum: {
+        jar: {
+          text: 'jar',
+          status: 'jar',
+        },
+        local: {
+          text: 'local',
+          status: 'local',
+        },
+      },
     },
     {
       dataIndex: 'state',

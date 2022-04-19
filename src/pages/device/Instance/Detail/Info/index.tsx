@@ -1,15 +1,15 @@
-import {Card, Descriptions} from 'antd';
-import {InstanceModel} from '@/pages/device/Instance';
+import { Card, Descriptions } from 'antd';
+import { InstanceModel } from '@/pages/device/Instance';
 import moment from 'moment';
-import {observer} from '@formily/react';
-import {useIntl} from '@@/plugin-locale/localeExports';
+import { observer } from '@formily/react';
+import { useIntl } from '@@/plugin-locale/localeExports';
 import Config from '@/pages/device/Instance/Detail/Config';
 import Save from '../../Save';
-import {useState} from 'react';
-import type {DeviceInstance} from '../../typings';
-import {EditOutlined} from '@ant-design/icons';
+import { useState } from 'react';
+import type { DeviceInstance } from '../../typings';
+import { EditOutlined } from '@ant-design/icons';
 import Tags from '@/pages/device/Instance/Detail/Tags';
-import {PermissionButton} from '@/components';
+import { PermissionButton } from '@/components';
 
 const Info = observer(() => {
   const intl = useIntl();

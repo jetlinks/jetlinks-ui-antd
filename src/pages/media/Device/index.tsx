@@ -1,8 +1,8 @@
 // 视频设备列表
-import {PageContainer} from '@ant-design/pro-layout';
-import {useRef, useState} from 'react';
-import type {ActionType, ProColumns} from '@jetlinks/pro-table';
-import {Button, message, Tooltip} from 'antd';
+import { PageContainer } from '@ant-design/pro-layout';
+import { useRef, useState } from 'react';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import { Button, message, Tooltip } from 'antd';
 import {
   DeleteOutlined,
   EditOutlined,
@@ -11,13 +11,13 @@ import {
   PlusOutlined,
   SyncOutlined,
 } from '@ant-design/icons';
-import type {DeviceItem} from '@/pages/media/Device/typings';
-import {useHistory, useIntl} from 'umi';
-import {BadgeStatus, PermissionButton, ProTableCard} from '@/components';
-import {StatusColorEnum} from '@/components/BadgeStatus';
+import type { DeviceItem } from '@/pages/media/Device/typings';
+import { useHistory, useIntl } from 'umi';
+import { BadgeStatus, PermissionButton, ProTableCard } from '@/components';
+import { StatusColorEnum } from '@/components/BadgeStatus';
 import SearchComponent from '@/components/SearchComponent';
 import MediaDevice from '@/components/ProTableCard/CardItems/mediaDevice';
-import {getMenuPathByCode, getMenuPathByParams, MENUS_CODE} from '@/utils/menu';
+import { getMenuPathByCode, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import Service from './service';
 import Save from './Save';
 
@@ -115,6 +115,7 @@ const Device = () => {
         defaultMessage: '通道数量',
       }),
       valueType: 'digit',
+      hideInSearch: true,
     },
     {
       dataIndex: 'manufacturer',

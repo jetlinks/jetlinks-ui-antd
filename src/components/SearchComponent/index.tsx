@@ -1,5 +1,5 @@
-import type {ISchema} from '@formily/json-schema';
-import {createSchemaField} from '@formily/react';
+import type { ISchema } from '@formily/json-schema';
+import { createSchemaField } from '@formily/react';
 import {
   ArrayItems,
   DatePicker,
@@ -13,20 +13,26 @@ import {
   Select,
   Space,
 } from '@formily/antd';
-import type {Field, FieldDataSource} from '@formily/core';
-import {createForm, onFieldReact} from '@formily/core';
+import type { Field, FieldDataSource } from '@formily/core';
+import { createForm, onFieldReact } from '@formily/core';
 import GroupNameControl from '@/components/SearchComponent/GroupNameControl';
-import {DeleteOutlined, DoubleRightOutlined, ReloadOutlined, SaveOutlined, SearchOutlined,} from '@ant-design/icons';
-import {Button, Card, Dropdown, Empty, Menu, message, Popover, Typography} from 'antd';
-import {useEffect, useMemo, useRef, useState} from 'react';
-import type {ProColumns} from '@jetlinks/pro-table';
-import type {EnumData} from '@/utils/typings';
+import {
+  DeleteOutlined,
+  DoubleRightOutlined,
+  ReloadOutlined,
+  SaveOutlined,
+  SearchOutlined,
+} from '@ant-design/icons';
+import { Button, Card, Dropdown, Empty, Menu, message, Popover, Typography } from 'antd';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import type { ProColumns } from '@jetlinks/pro-table';
+import type { EnumData } from '@/utils/typings';
 import styles from './index.less';
 import Service from '@/components/SearchComponent/service';
 import _ from 'lodash';
-import {useIntl} from '@@/plugin-locale/localeExports';
+import { useIntl } from '@@/plugin-locale/localeExports';
 import classnames from 'classnames';
-import {randomString} from '@/utils/util';
+import { randomString } from '@/utils/util';
 
 const ui2Server = (source: SearchTermsUI): SearchTermsServer => [
   { terms: source.terms1 },
@@ -192,11 +198,16 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                 state.componentProps = { showTime: true };
               });
               f.setFieldState(typeFiled.query('.termType'), async (state) => {
-                state.value = 'gt';
+                state.value = 'gte';
               });
             } else {
               f.setFieldState(typeFiled.query('.value'), async (state) => {
                 state.componentType = 'Input';
+              });
+            }
+            if (_column === 'id') {
+              f.setFieldState(typeFiled.query('.termType'), async (state) => {
+                state.value = 'eq';
               });
             }
           });
@@ -449,10 +460,10 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
   };
 
   useEffect(() => {
-    if (defaultParam) {
+    if (defaultParam || initParam) {
       handleSearch();
     }
-  }, []);
+  }, [defaultParam, initParam]);
 
   const handleSaveLog = async () => {
     const value = await form.submit<SearchTermsUI>();

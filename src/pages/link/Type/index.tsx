@@ -61,11 +61,30 @@ const Network = () => {
         id: 'pages.link.type',
         defaultMessage: '类型',
       }),
+      valueType: 'select',
+      request: () =>
+        service.getSupports().then((resp) =>
+          resp.result.map((item: any) => ({
+            label: item.name,
+            value: item.id,
+          })),
+        ),
     },
     {
       dataIndex: 'shareCluster',
       title: '集群',
       renderText: (text) => (text ? '共享配置' : '独立配置'),
+      valueType: 'select',
+      valueEnum: {
+        true: {
+          text: '共享配置',
+          status: true,
+        },
+        false: {
+          text: '独立配置',
+          status: false,
+        },
+      },
     },
     {
       dataIndex: 'configuration',
@@ -102,6 +121,17 @@ const Network = () => {
         id: 'pages.searchTable.titleStatus',
         defaultMessage: '状态',
       }),
+      valueType: 'select',
+      valueEnum: {
+        disabled: {
+          text: '已停止',
+          status: 'disabled',
+        },
+        enabled: {
+          text: '已启动',
+          status: 'enabled',
+        },
+      },
       render: (text, record) => {
         if (record.state.value === 'enabled') {
           return <Badge color="lime" text="正常" />;
