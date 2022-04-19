@@ -1,7 +1,7 @@
-import {useHistory} from 'umi';
-import {useEffect, useState} from 'react';
-import type {LocationDescriptor, LocationState, Path} from 'history';
-import {model} from '@formily/reactive';
+import { useHistory } from 'umi';
+import { useEffect, useState } from 'react';
+import type { LocationDescriptor, LocationState, Path } from 'history';
+import { model } from '@formily/reactive';
 
 export const historyStateModel = model<{ state: any }>({ state: {} });
 

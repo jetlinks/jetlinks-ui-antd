@@ -1,10 +1,10 @@
 import React from 'react';
-import type {ProtocolItem} from '@/pages/link/Protocol/typings';
-import {StatusColorEnum} from '@/components/BadgeStatus';
-import {TableCard} from '@/components';
+import type { ProtocolItem } from '@/pages/link/Protocol/typings';
+import { StatusColorEnum } from '@/components/BadgeStatus';
+import { TableCard } from '@/components';
 import '@/style/common.less';
 import '../index.less';
-import {Col, Row, Tooltip} from 'antd';
+import { Col, Row, Tooltip } from 'antd';
 
 export interface ProcotolCardProps extends ProtocolItem {
   detail?: React.ReactNode;

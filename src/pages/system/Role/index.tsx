@@ -1,18 +1,18 @@
-import {PageContainer} from '@ant-design/pro-layout';
-import React, {useEffect, useRef} from 'react';
-import {DeleteOutlined, EditOutlined} from '@ant-design/icons';
-import {message} from 'antd';
-import type {ActionType, ProColumns} from '@jetlinks/pro-table';
+import { PageContainer } from '@ant-design/pro-layout';
+import React, { useEffect, useRef } from 'react';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { message } from 'antd';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import BaseCrud from '@/components/BaseCrud';
 import Service from './service';
-import {useIntl} from '@@/plugin-locale/localeExports';
-import {observer} from '@formily/react';
-import {history, useLocation} from 'umi';
-import {Store} from 'jetlinks-store';
+import { useIntl } from '@@/plugin-locale/localeExports';
+import { observer } from '@formily/react';
+import { history, useLocation } from 'umi';
+import { Store } from 'jetlinks-store';
 import SystemConst from '@/utils/const';
-import {CurdModel} from '@/components/BaseCrud/model';
-import {getButtonPermission, getMenuPathByParams, MENUS_CODE} from '@/utils/menu';
-import {PermissionButton} from '@/components';
+import { CurdModel } from '@/components/BaseCrud/model';
+import { getButtonPermission, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { PermissionButton } from '@/components';
 
 export const service = new Service('role');
 

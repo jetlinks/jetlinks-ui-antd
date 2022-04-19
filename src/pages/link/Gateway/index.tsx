@@ -1,8 +1,8 @@
-import {PageContainer} from '@ant-design/pro-layout';
-import type {GatewayItem} from '@/pages/link/Gateway/typings';
-import {useRef} from 'react';
-import type {ActionType, ProColumns} from '@jetlinks/pro-table';
-import {message, Popconfirm, Tooltip} from 'antd';
+import { PageContainer } from '@ant-design/pro-layout';
+import type { GatewayItem } from '@/pages/link/Gateway/typings';
+import { useRef } from 'react';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import { message, Popconfirm, Tooltip } from 'antd';
 import {
   EditOutlined,
   MinusOutlined,
@@ -12,14 +12,14 @@ import {
   StopOutlined,
 } from '@ant-design/icons';
 import BaseCrud from '@/components/BaseCrud';
-import {useIntl} from '@@/plugin-locale/localeExports';
-import type {ISchema} from '@formily/json-schema';
+import { useIntl } from '@@/plugin-locale/localeExports';
+import type { ISchema } from '@formily/json-schema';
 import Service from '@/pages/link/Gateway/service';
-import {CurdModel} from '@/components/BaseCrud/model';
-import type {Field, FormPathPattern} from '@formily/core';
-import {onFieldReact, onFieldValueChange} from '@formily/core';
-import {action} from '@formily/reactive';
-import {useAsyncDataSource} from '@/utils/util';
+import { CurdModel } from '@/components/BaseCrud/model';
+import type { Field, FormPathPattern } from '@formily/core';
+import { onFieldReact, onFieldValueChange } from '@formily/core';
+import { action } from '@formily/reactive';
+import { useAsyncDataSource } from '@/utils/util';
 
 export const service = new Service('gateway/device');
 

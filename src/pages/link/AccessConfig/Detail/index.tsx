@@ -1,11 +1,11 @@
-import {PageContainer} from '@ant-design/pro-layout';
-import {useEffect, useState} from 'react';
-import {useLocation} from 'umi';
+import { PageContainer } from '@ant-design/pro-layout';
+import { useEffect, useState } from 'react';
+import { useLocation } from 'umi';
 import Access from './Access';
 import Provider from './Provider';
 import Media from './Media';
-import {service} from '@/pages/link/AccessConfig';
-import {Spin} from 'antd';
+import { service } from '@/pages/link/AccessConfig';
+import { Spin } from 'antd';
 
 type LocationType = {
   id?: string;

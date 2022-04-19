@@ -1,6 +1,6 @@
-import {useLocation} from 'umi';
-import {useEffect, useState} from 'react';
-import {historyStateModel} from '@/hooks/route/useHistory';
+import { useLocation } from 'umi';
+import { useEffect, useState } from 'react';
+import { historyStateModel } from '@/hooks/route/useHistory';
 
 const useLocations = () => {
   const umiLocation = useLocation();

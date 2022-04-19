@@ -1,14 +1,27 @@
-import {Badge, Button, Card, Col, Empty, Form, Input, message, Row, Steps, Table, Tooltip,} from 'antd';
-import {useEffect, useState} from 'react';
+import {
+  Badge,
+  Button,
+  Card,
+  Col,
+  Empty,
+  Form,
+  Input,
+  message,
+  Row,
+  Steps,
+  Table,
+  Tooltip,
+} from 'antd';
+import { useEffect, useState } from 'react';
 import styles from './index.less';
-import {service} from '@/pages/link/AccessConfig';
+import { service } from '@/pages/link/AccessConfig';
 import encodeQuery from '@/utils/encodeQuery';
-import {useHistory} from 'umi';
+import { useHistory } from 'umi';
 import ReactMarkdown from 'react-markdown';
-import {getButtonPermission, getMenuPathByCode, MENUS_CODE} from '@/utils/menu';
-import {ExclamationCircleFilled} from '@ant-design/icons';
+import { getButtonPermission, getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
+import { ExclamationCircleFilled } from '@ant-design/icons';
 import TitleComponent from '@/components/TitleComponent';
-import {PermissionButton} from '@/components';
+import { PermissionButton } from '@/components';
 
 interface Props {
   change: () => void;

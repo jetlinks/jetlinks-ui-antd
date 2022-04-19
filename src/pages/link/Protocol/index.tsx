@@ -1,13 +1,19 @@
-import {PageContainer} from '@ant-design/pro-layout';
-import type {ActionType, ProColumns} from '@jetlinks/pro-table';
-import type {ProtocolItem} from '@/pages/link/Protocol/typings';
-import {Badge, message} from 'antd';
-import {useRef, useState} from 'react';
-import {CheckCircleOutlined, DeleteOutlined, EditOutlined, PlusOutlined, StopOutlined,} from '@ant-design/icons';
+import { PageContainer } from '@ant-design/pro-layout';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import type { ProtocolItem } from '@/pages/link/Protocol/typings';
+import { Badge, message } from 'antd';
+import { useRef, useState } from 'react';
+import {
+  CheckCircleOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  PlusOutlined,
+  StopOutlined,
+} from '@ant-design/icons';
 import Service from '@/pages/link/Protocol/service';
-import {useIntl} from 'umi';
+import { useIntl } from 'umi';
 import SearchComponent from '@/components/SearchComponent';
-import {PermissionButton, ProTableCard} from '@/components';
+import { PermissionButton, ProTableCard } from '@/components';
 import ProcotolCard from '@/components/ProTableCard/CardItems/protocol';
 import Save from './save';
 
@@ -51,6 +57,17 @@ const Protocol = () => {
       dataIndex: 'type',
       title: '类型',
       ellipsis: true,
+      valueType: 'select',
+      valueEnum: {
+        jar: {
+          text: 'jar',
+          status: 'jar',
+        },
+        local: {
+          text: 'local',
+          status: 'local',
+        },
+      },
     },
     {
       dataIndex: 'state',

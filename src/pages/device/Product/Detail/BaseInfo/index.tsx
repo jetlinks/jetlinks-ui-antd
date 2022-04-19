@@ -1,11 +1,11 @@
-import {productModel, service} from '@/pages/device/Product';
-import {Descriptions} from 'antd';
-import {useState} from 'react';
-import {useIntl} from '@@/plugin-locale/localeExports';
-import {EditOutlined} from '@ant-design/icons';
-import {getDateFormat} from '@/utils/util';
+import { productModel, service } from '@/pages/device/Product';
+import { Descriptions } from 'antd';
+import { useState } from 'react';
+import { useIntl } from '@@/plugin-locale/localeExports';
+import { EditOutlined } from '@ant-design/icons';
+import { getDateFormat } from '@/utils/util';
 import Save from '@/pages/device/Product/Save';
-import {PermissionButton} from '@/components';
+import { PermissionButton } from '@/components';
 
 // const componentMap = {
 //   string: 'Input',

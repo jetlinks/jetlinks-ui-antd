@@ -1,7 +1,7 @@
-import {useEffect, useState} from 'react';
-import {service} from '../index';
-import {useRequest} from 'umi';
-import {Form, Input, message, Modal} from 'antd';
+import { useEffect, useState } from 'react';
+import { service } from '../index';
+import { useRequest } from 'umi';
+import { Form, Input, message, Modal } from 'antd';
 import ProviderItem from './ProviderSelect';
 
 interface SaveProps {

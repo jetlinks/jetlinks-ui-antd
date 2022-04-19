@@ -1,6 +1,6 @@
-import {PageContainer} from '@ant-design/pro-layout';
-import {Badge, Button, message, Space, Tooltip, Upload} from 'antd';
-import type {ProductItem} from '@/pages/device/Product/typings';
+import { PageContainer } from '@ant-design/pro-layout';
+import { Badge, Button, message, Space, Tooltip, Upload } from 'antd';
+import type { ProductItem } from '@/pages/device/Product/typings';
 import {
   DeleteOutlined,
   DownloadOutlined,
@@ -10,18 +10,18 @@ import {
   StopOutlined,
 } from '@ant-design/icons';
 import Service from '@/pages/device/Product/service';
-import {observer} from '@formily/react';
-import {model} from '@formily/reactive';
-import {useHistory} from 'umi';
-import {useIntl} from '@@/plugin-locale/localeExports';
-import type {ActionType, ProColumns} from '@jetlinks/pro-table';
-import {useEffect, useRef, useState} from 'react';
+import { observer } from '@formily/react';
+import { model } from '@formily/reactive';
+import { useHistory } from 'umi';
+import { useIntl } from '@@/plugin-locale/localeExports';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import { useEffect, useRef, useState } from 'react';
 import Save from '@/pages/device/Product/Save';
 import SearchComponent from '@/components/SearchComponent';
-import {getMenuPathByParams, MENUS_CODE} from '@/utils/menu';
-import {AIcon, PermissionButton, ProTableCard} from '@/components';
+import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { AIcon, PermissionButton, ProTableCard } from '@/components';
 import ProductCard from '@/components/ProTableCard/CardItems/product';
-import {downloadObject} from '@/utils/util';
+import { downloadObject } from '@/utils/util';
 
 export const service = new Service('device-product');
 export const statusMap = {
@@ -295,7 +295,7 @@ const Product = observer(() => {
         id: 'pages.system.description',
         defaultMessage: '说明',
       }),
-      hideInSearch: true,
+      // hideInSearch: true,
     },
     {
       title: intl.formatMessage({

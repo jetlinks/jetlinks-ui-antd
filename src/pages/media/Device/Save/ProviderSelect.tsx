@@ -1,15 +1,15 @@
 import classNames from 'classnames';
-import {Badge, Button, Empty} from 'antd';
-import {StatusColorEnum} from '@/components/BadgeStatus';
+import { Badge, Button, Empty } from 'antd';
+import { StatusColorEnum } from '@/components/BadgeStatus';
 import styles from '@/pages/link/AccessConfig/index.less';
-import {TableCard} from '@/components';
+import { TableCard } from '@/components';
 import './providerSelect.less';
 import usePermissions from '@/hooks/permission';
-import {useIntl} from 'umi';
-import {providerType, service} from '@/pages/media/Device';
-import {useCallback, useEffect, useRef, useState} from 'react';
-import {getMenuPathByCode, MENUS_CODE} from '@/utils/menu';
-import {useRequest} from '@@/plugin-request/request';
+import { useIntl } from 'umi';
+import { providerType, service } from '@/pages/media/Device';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
+import { useRequest } from '@@/plugin-request/request';
 
 interface ProviderProps {
   value?: string;

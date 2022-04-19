@@ -1,20 +1,26 @@
-import {PageContainer} from '@ant-design/pro-layout';
-import React, {useRef, useState} from 'react';
-import {CloseCircleOutlined, DeleteOutlined, EditOutlined, PlayCircleOutlined, PlusOutlined,} from '@ant-design/icons';
-import {Badge, Button, Dropdown, Menu, message, Popconfirm, Space, Tooltip, Upload} from 'antd';
-import type {ActionType, ProColumns} from '@jetlinks/pro-table';
+import { PageContainer } from '@ant-design/pro-layout';
+import React, { useRef, useState } from 'react';
+import {
+  CloseCircleOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  PlayCircleOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
+import { Badge, Button, Dropdown, Menu, message, Popconfirm, Space, Tooltip, Upload } from 'antd';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import {useIntl} from '@@/plugin-locale/localeExports';
-import type {PermissionItem} from '@/pages/system/Permission/typings';
+import { useIntl } from '@@/plugin-locale/localeExports';
+import type { PermissionItem } from '@/pages/system/Permission/typings';
 import Service from '@/pages/system/Permission/service';
-import {observer} from '@formily/react';
+import { observer } from '@formily/react';
 import SearchComponent from '@/components/SearchComponent';
 import Save from './Save';
 import SystemConst from '@/utils/const';
-import {downloadObject} from '@/utils/util';
+import { downloadObject } from '@/utils/util';
 import Token from '@/utils/token';
-import {getButtonPermission} from '@/utils/menu';
-import {PermissionButton} from '@/components';
+import { getButtonPermission } from '@/utils/menu';
+import { PermissionButton } from '@/components';
 
 export const service = new Service('permission');
 const Permission: React.FC = observer(() => {
