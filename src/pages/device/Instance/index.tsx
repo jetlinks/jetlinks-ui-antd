@@ -1,10 +1,10 @@
-import {PageContainer} from '@ant-design/pro-layout';
-import type {ActionType, ProColumns} from '@jetlinks/pro-table';
-import type {DeviceInstance} from '@/pages/device/Instance/typings';
+import { PageContainer } from '@ant-design/pro-layout';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import type { DeviceInstance } from '@/pages/device/Instance/typings';
 import moment from 'moment';
-import {Badge, Button, Dropdown, Menu, message, Tooltip} from 'antd';
-import {useEffect, useRef, useState} from 'react';
-import {useHistory, useIntl} from 'umi';
+import { Badge, Button, Dropdown, Menu, message, Tooltip } from 'antd';
+import { useEffect, useRef, useState } from 'react';
+import { useHistory, useIntl } from 'umi';
 import {
   CheckCircleOutlined,
   DeleteOutlined,
@@ -15,21 +15,22 @@ import {
   PlusOutlined,
   StopOutlined,
   SyncOutlined,
+  PlayCircleOutlined,
 } from '@ant-design/icons';
-import {model} from '@formily/reactive';
+import { model } from '@formily/reactive';
 import Service from '@/pages/device/Instance/service';
-import type {MetadataItem} from '@/pages/device/Product/typings';
+import type { MetadataItem } from '@/pages/device/Product/typings';
 import Save from './Save';
 import Export from './Export';
 import Import from './Import';
 import Process from './Process';
 import SearchComponent from '@/components/SearchComponent';
-import {PermissionButton, ProTableCard} from '@/components';
+import { PermissionButton, ProTableCard } from '@/components';
 import SystemConst from '@/utils/const';
 import Token from '@/utils/token';
 import DeviceCard from '@/components/ProTableCard/CardItems/device';
-import {getMenuPathByParams, MENUS_CODE} from '@/utils/menu';
-import {useLocation} from '@/hooks';
+import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { useLocation } from '@/hooks';
 
 export const statusMap = new Map();
 statusMap.set('在线', 'success');
@@ -139,7 +140,7 @@ const Instance = () => {
         }),
       }}
     >
-      {record.state.value !== 'notActive' ? <StopOutlined /> : <CheckCircleOutlined />}
+      {record.state.value !== 'notActive' ? <StopOutlined /> : <PlayCircleOutlined />}
     </PermissionButton>,
     <PermissionButton
       type={'link'}
@@ -506,7 +507,7 @@ const Instance = () => {
                   },
                 }}
               >
-                {record.state.value !== 'notActive' ? <StopOutlined /> : <CheckCircleOutlined />}
+                {record.state.value !== 'notActive' ? <StopOutlined /> : <PlayCircleOutlined />}
                 {intl.formatMessage({
                   id: `pages.data.option.${
                     record.state.value !== 'notActive' ? 'disabled' : 'enabled'

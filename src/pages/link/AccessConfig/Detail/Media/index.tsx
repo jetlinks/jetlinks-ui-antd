@@ -1,5 +1,5 @@
-import {Button, Card, Col, Form, Input, message, Row, Steps} from 'antd';
-import {useEffect, useState} from 'react';
+import { Button, Card, Col, Form, Input, message, Row, Steps } from 'antd';
+import { useEffect, useState } from 'react';
 import styles from './index.less';
 import {
   ArrayCollapse,
@@ -12,16 +12,16 @@ import {
   Radio,
   Select,
 } from '@formily/antd';
-import {createSchemaField} from '@formily/react';
-import type {ISchema} from '@formily/json-schema';
-import {createForm, registerValidateRules} from '@formily/core';
-import {service} from '@/pages/link/AccessConfig';
-import {useLocation} from 'umi';
+import { createSchemaField } from '@formily/react';
+import type { ISchema } from '@formily/json-schema';
+import { createForm, registerValidateRules } from '@formily/core';
+import { service } from '@/pages/link/AccessConfig';
+import { useLocation } from 'umi';
 import SipComponent from '@/components/SipComponent';
 import TitleComponent from '@/components/TitleComponent';
-import {ExclamationCircleFilled} from '@ant-design/icons';
-import {testIP} from '@/utils/util';
-import {getButtonPermission} from '@/utils/menu';
+import { ExclamationCircleFilled } from '@ant-design/icons';
+import { testIP } from '@/utils/util';
+import { getButtonPermission } from '@/utils/menu';
 
 type LocationType = {
   id?: string;
@@ -111,15 +111,25 @@ const Media = (props: Props) => {
 
     registerValidateRules({
       checkSIP(value: { host: string; port: number }) {
-        if (Number(value.port) < 1 || Number(value.port) > 65535) {
+        if (!value.host) {
           return {
             type: 'error',
-            message: '端口请输入1~65535之间的正整数',
+            message: '请输入IP地址',
           };
         } else if (!testIP(value.host)) {
           return {
             type: 'error',
             message: '请输入正确的IP地址',
+          };
+        } else if (!value.port) {
+          return {
+            type: 'error',
+            message: '请输入端口',
+          };
+        } else if (Number(value.port) < 1 || Number(value.port) > 65535) {
+          return {
+            type: 'error',
+            message: '端口请输入1~65535之间的正整数',
           };
         }
         return true;
@@ -156,10 +166,15 @@ const Media = (props: Props) => {
             layout: 'vertical',
             tooltip: '绑定到服务器上的网卡地址,绑定到所有网卡:0.0.0.0',
           },
-          required: true,
-          'x-validator': {
-            checkSIP: true,
-          },
+          'x-validator': [
+            {
+              required: true,
+              message: '请输入SIP 地址',
+            },
+            {
+              checkSIP: true,
+            },
+          ],
         },
         public: {
           title: '公网 Host',
@@ -173,9 +188,15 @@ const Media = (props: Props) => {
           type: 'number',
           'x-decorator': 'FormItem',
           'x-component': 'SipComponent',
-          'x-validator': {
-            checkSIP: true,
-          },
+          'x-validator': [
+            {
+              required: true,
+              message: '请输入公网 Host',
+            },
+            {
+              checkSIP: true,
+            },
+          ],
         },
       },
     };
@@ -224,7 +245,7 @@ const Media = (props: Props) => {
               'x-validator': [
                 {
                   required: true,
-                  message: 'SIP ID',
+                  message: '请输入SIP ID',
                 },
               ],
             },
@@ -284,9 +305,15 @@ const Media = (props: Props) => {
                         labelAlign: 'left',
                         layout: 'vertical',
                       },
-                      'x-validator': {
-                        checkSIP: true,
-                      },
+                      'x-validator': [
+                        {
+                          required: true,
+                          message: '请输入SIP 地址',
+                        },
+                        {
+                          checkSIP: true,
+                        },
+                      ],
                     },
                     public: {
                       title: '公网 Host',
@@ -298,9 +325,15 @@ const Media = (props: Props) => {
                         labelAlign: 'left',
                         layout: 'vertical',
                       },
-                      'x-validator': {
-                        checkSIP: true,
-                      },
+                      'x-validator': [
+                        {
+                          required: true,
+                          message: '请输入公网 Host',
+                        },
+                        {
+                          checkSIP: true,
+                        },
+                      ],
                     },
                   },
                 },

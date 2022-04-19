@@ -1,17 +1,17 @@
-import {Badge, Button, Col, Empty, message, Row, Table, Tooltip} from 'antd';
-import {service} from '@/pages/link/AccessConfig';
-import {productModel, service as productService} from '@/pages/device/Product';
+import { Badge, Button, Col, Empty, message, Row, Table, Tooltip } from 'antd';
+import { service } from '@/pages/link/AccessConfig';
+import { productModel, service as productService } from '@/pages/device/Product';
 import styles from './index.less';
-import type {SetStateAction} from 'react';
-import {useEffect, useState} from 'react';
+import type { SetStateAction } from 'react';
+import { useEffect, useState } from 'react';
 import AccessConfig from './AccessConfig';
 import ReactMarkdown from 'react-markdown';
-import {Form, FormGrid, FormItem, FormLayout, Input, Password, PreviewText} from '@formily/antd';
-import type {ISchema} from '@formily/json-schema';
-import type {ConfigProperty} from '@/pages/device/Product/typings';
-import {createSchemaField} from '@formily/react';
-import {createForm} from '@formily/core';
-import {QuestionCircleOutlined} from '@ant-design/icons';
+import { Form, FormGrid, FormItem, FormLayout, Input, Password, PreviewText } from '@formily/antd';
+import type { ISchema } from '@formily/json-schema';
+import type { ConfigProperty } from '@/pages/device/Product/typings';
+import { createSchemaField } from '@formily/react';
+import { createForm } from '@formily/core';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import TitleComponent from '@/components/TitleComponent';
 import usePermissions from '@/hooks/permission';
 
@@ -350,13 +350,15 @@ const Access = () => {
               permission.add ? (
                 <span>
                   请先
-                  <a
+                  <Button
+                    type="link"
+                    disabled={!!(productModel.current?.count && productModel.current?.count > 0)}
                     onClick={() => {
                       setConfigVisible(true);
                     }}
                   >
                     选择
-                  </a>
+                  </Button>
                   设备接入网关，用以提供设备接入能力
                 </span>
               ) : (
@@ -379,6 +381,9 @@ const Access = () => {
                         type="primary"
                         ghost
                         style={{ marginLeft: 20 }}
+                        disabled={
+                          !!(productModel.current?.count && productModel.current?.count > 0)
+                        }
                         onClick={() => {
                           setConfigVisible(true);
                         }}

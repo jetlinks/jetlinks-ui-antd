@@ -1,14 +1,15 @@
 import { service } from '@/pages/media/Cascade';
 import SearchComponent from '@/components/SearchComponent';
-import { DisconnectOutlined, EditOutlined } from '@ant-design/icons';
+import { CloseOutlined, DisconnectOutlined, EditOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-layout';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { Button, Input, message, Popconfirm, Popover, Space, Tooltip } from 'antd';
+import { Button, Input, message, Popover, Space } from 'antd';
 import { useRef, useState } from 'react';
 import { useIntl, useLocation } from 'umi';
 import BindChannel from './BindChannel';
 import BadgeStatus, { StatusColorEnum } from '@/components/BadgeStatus';
+import { PermissionButton } from '@/components';
 
 const Channel = () => {
   const location: any = useLocation();
@@ -20,6 +21,7 @@ const Channel = () => {
   const id = location?.query?.id || '';
   const [data, setData] = useState<string>('');
   const [popVisible, setPopvisible] = useState<string>('');
+  const { permission } = PermissionButton.usePermission('media/Cascade');
 
   const unbind = async (list: string[]) => {
     const resp = await service.unbindChannel(id, list);
@@ -44,7 +46,9 @@ const Channel = () => {
           style={{ marginTop: 10, width: '100%' }}
           onClick={async () => {
             if (!!data) {
-              const resp: any = await service.editBindInfo(record.id, { gbChannelId: data });
+              const resp: any = await service.editBindInfo(record.gbChannelId, {
+                gbChannelId: data,
+              });
               if (resp.status === 200) {
                 message.success('操作成功');
                 actionRef.current?.reload();
@@ -78,16 +82,33 @@ const Channel = () => {
         <span>
           {text}
           <Popover
-            visible={popVisible === record.id}
+            visible={popVisible === record.gbChannelId}
             trigger="click"
             content={content(record)}
-            title="编辑国标ID"
+            title={
+              <div
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
+                <div>编辑国标ID</div>
+                <CloseOutlined
+                  onClick={() => {
+                    setPopvisible('');
+                    setData('');
+                  }}
+                />
+              </div>
+            }
           >
             <a
               style={{ marginLeft: 10 }}
               onClick={() => {
                 setData('');
-                setPopvisible(record.id);
+                setPopvisible(record.gbChannelId);
               }}
             >
               <EditOutlined />
@@ -124,19 +145,19 @@ const Channel = () => {
       align: 'center',
       width: 200,
       render: (text: any, record: any) => [
-        <Popconfirm
-          key={'unbinds'}
-          title="确认解绑"
-          onConfirm={() => {
-            unbind([record.channelId]);
+        <PermissionButton
+          isPermission={permission.channel}
+          key={'unbind'}
+          type={'link'}
+          popConfirm={{
+            title: `确认解绑`,
+            onConfirm: () => {
+              unbind([record.channelId]);
+            },
           }}
         >
-          <a>
-            <Tooltip title={'解绑'}>
-              <DisconnectOutlined />
-            </Tooltip>
-          </a>
-        </Popconfirm>,
+          <DisconnectOutlined />
+        </PermissionButton>,
       ],
     },
   ];
@@ -195,29 +216,33 @@ const Channel = () => {
           </Space>
         )}
         toolBarRender={() => [
-          <Button
+          <PermissionButton
+            isPermission={permission.channel}
+            key={'bind'}
             onClick={() => {
               setVisible(true);
             }}
-            key="bind"
-            type="primary"
+            type={'primary'}
           >
             绑定通道
-          </Button>,
-          <Popconfirm
-            title={'确认解绑'}
-            onConfirm={() => {
-              if (selectedRowKey.length > 0) {
-                unbind(selectedRowKey);
-                setSelectedRowKey([]);
-              } else {
-                message.error('请先选择需要解绑的通道列表');
-              }
+          </PermissionButton>,
+          <PermissionButton
+            isPermission={permission.channel}
+            key={'unbind'}
+            popConfirm={{
+              title: `确认解绑`,
+              onConfirm: () => {
+                if (selectedRowKey.length > 0) {
+                  unbind(selectedRowKey);
+                  setSelectedRowKey([]);
+                } else {
+                  message.error('请先选择需要解绑的通道列表');
+                }
+              },
             }}
-            key="unbind"
           >
-            <Button>批量解绑</Button>
-          </Popconfirm>,
+            批量解绑
+          </PermissionButton>,
         ]}
       />
       {visible && (

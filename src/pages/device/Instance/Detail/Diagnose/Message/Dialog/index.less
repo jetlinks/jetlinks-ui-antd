@@ -12,42 +12,46 @@
 
   .dialog-card {
     display: flex;
+    flex-direction: column;
     width: 60%;
     padding: 24px;
     background-color: #fff;
 
-    .dialog-icon {
-      margin-right: 10px;
-      color: rgba(0, 0, 0, 0.75);
-      font-weight: 500;
-      font-size: 12px;
-    }
-
-    .dialog-box {
+    .dialog-list {
       display: flex;
-      flex-direction: column;
-      width: 100%;
-
-      .dialog-header {
-        .dialog-title {
-          color: rgba(0, 0, 0, 0.75);
-          font-weight: 700;
-          font-size: 14px;
-        }
-
-        .dialog-time {
-          color: rgba(0, 0, 0, 0.65);
-          font-size: 12px;
-        }
+      .dialog-icon {
+        margin-right: 10px;
+        color: rgba(0, 0, 0, 0.75);
+        font-weight: 500;
+        font-size: 12px;
       }
 
-      .dialog-editor {
+      .dialog-box {
+        display: flex;
+        flex-direction: column;
         width: 100%;
-        margin-top: 10px;
-        color: rgba(0, 0, 0, 0.75);
 
-        textarea::-webkit-scrollbar {
-          width: 5px !important;
+        .dialog-header {
+          .dialog-title {
+            color: rgba(0, 0, 0, 0.75);
+            font-weight: 700;
+            font-size: 14px;
+          }
+
+          .dialog-time {
+            color: rgba(0, 0, 0, 0.65);
+            font-size: 12px;
+          }
+        }
+
+        .dialog-editor {
+          width: 100%;
+          margin-top: 10px;
+          color: rgba(0, 0, 0, 0.75);
+
+          textarea::-webkit-scrollbar {
+            width: 5px !important;
+          }
         }
       }
     }
@@ -57,26 +61,27 @@
 .dialog-active {
   display: flex;
   justify-content: flex-end;
-
   .dialog-card {
     background-color: @primary-color;
 
-    .dialog-icon {
-      color: #fff;
-    }
-
-    .dialog-box {
-      .dialog-header {
-        .dialog-title,
-        .dialog-time {
-          color: #fff;
-        }
+    .dialog-list {
+      .dialog-icon {
+        color: #fff;
       }
 
-      .dialog-editor {
-        textarea {
-          color: #fff !important;
-          background-color: @primary-color !important;
+      .dialog-box {
+        .dialog-header {
+          .dialog-title,
+          .dialog-time {
+            color: #fff;
+          }
+        }
+
+        .dialog-editor {
+          textarea {
+            color: #fff !important;
+            background-color: @primary-color !important;
+          }
         }
       }
     }

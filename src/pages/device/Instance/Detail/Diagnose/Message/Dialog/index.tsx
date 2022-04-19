@@ -26,33 +26,45 @@ const Dialog = (props: Props) => {
   statusColor.set('error', '#E50012');
   statusColor.set('success', '#24B276');
 
-  const [visible, setVisible] = useState<boolean>(false);
+  const [visible, setVisible] = useState<string[]>([]);
 
   return (
-    <div className={classNames('dialog-item', { 'dialog-active': !data.upstream })} key={data.key}>
+    <div className={classNames('dialog-item', { 'dialog-active': !data?.upstream })} key={data.key}>
       <div className="dialog-card">
-        <div
-          className="dialog-icon"
-          onClick={() => {
-            setVisible(!visible);
-          }}
-        >
-          {visible ? <DownOutlined /> : <RightOutlined />}
-        </div>
-        <div className="dialog-box">
-          <div className="dialog-header">
-            <div className="dialog-title">
-              <Badge color={statusColor.get(data.error ? 'error' : 'success')} />
-              {operationMap.get(data.operation) || data?.operation}
+        {data.list.map((item: any) => (
+          <div key={item.key} className="dialog-list">
+            <div
+              className="dialog-icon"
+              onClick={() => {
+                const index = visible.indexOf(item.key);
+                if (index === -1) {
+                  visible.push(item.key);
+                } else {
+                  visible.splice(index, 1);
+                }
+                setVisible([...visible]);
+              }}
+            >
+              {visible.includes(item.key) ? <DownOutlined /> : <RightOutlined />}
             </div>
-            <div className="dialog-time">{moment(data.endTime).format('YYYY-MM-DD HH:mm:ss')}</div>
+            <div className="dialog-box">
+              <div className="dialog-header">
+                <div className="dialog-title">
+                  <Badge color={statusColor.get(item.error ? 'error' : 'success')} />
+                  {operationMap.get(item.operation) || item?.operation}
+                </div>
+                <div className="dialog-time">
+                  {moment(item.endTime).format('YYYY-MM-DD HH:mm:ss')}
+                </div>
+              </div>
+              {visible.includes(item.key) && (
+                <div className="dialog-editor">
+                  <Input.TextArea autoSize bordered={false} value={item?.detail} />
+                </div>
+              )}
+            </div>
           </div>
-          {visible && (
-            <div className="dialog-editor">
-              <Input.TextArea autoSize bordered={false} value={data?.detail} />
-            </div>
-          )}
-        </div>
+        ))}
       </div>
     </div>
   );

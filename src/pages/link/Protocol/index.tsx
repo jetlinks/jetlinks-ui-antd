@@ -1,13 +1,19 @@
-import {PageContainer} from '@ant-design/pro-layout';
-import type {ActionType, ProColumns} from '@jetlinks/pro-table';
-import type {ProtocolItem} from '@/pages/link/Protocol/typings';
-import {Badge, message} from 'antd';
-import {useRef, useState} from 'react';
-import {CheckCircleOutlined, DeleteOutlined, EditOutlined, PlusOutlined, StopOutlined,} from '@ant-design/icons';
+import { PageContainer } from '@ant-design/pro-layout';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import type { ProtocolItem } from '@/pages/link/Protocol/typings';
+import { Badge, message } from 'antd';
+import { useRef, useState } from 'react';
+import {
+  PlayCircleOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  PlusOutlined,
+  StopOutlined,
+} from '@ant-design/icons';
 import Service from '@/pages/link/Protocol/service';
-import {useIntl} from 'umi';
+import { useIntl } from 'umi';
 import SearchComponent from '@/components/SearchComponent';
-import {PermissionButton, ProTableCard} from '@/components';
+import { PermissionButton, ProTableCard } from '@/components';
 import ProcotolCard from '@/components/ProTableCard/CardItems/protocol';
 import Save from './save';
 
@@ -108,7 +114,7 @@ const Protocol = () => {
             },
           }}
         >
-          {record.state === 1 ? <StopOutlined /> : <CheckCircleOutlined />}
+          {record.state === 1 ? <StopOutlined /> : <PlayCircleOutlined />}
         </PermissionButton>,
         <PermissionButton
           isPermission={permission.delete}
@@ -211,6 +217,7 @@ const Protocol = () => {
                 }}
               >
                 <EditOutlined />
+                编辑
               </PermissionButton>,
               <PermissionButton
                 isPermission={permission.action}
@@ -231,7 +238,8 @@ const Protocol = () => {
                   },
                 }}
               >
-                {record.state === 1 ? <StopOutlined /> : <CheckCircleOutlined />}
+                {record.state === 1 ? <StopOutlined /> : <PlayCircleOutlined />}
+                {record.state === 1 ? '撤销' : '发布'}
               </PermissionButton>,
               <PermissionButton
                 isPermission={permission.delete}
