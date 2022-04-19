@@ -78,6 +78,7 @@ const Instance = () => {
       }}
       popConfirm={{
         title: '确认删除',
+        disabled: record.state.value !== 'disable',
         onConfirm: async () => {
           if (record.state.value === 'disable') {
             await service.remove(record.id);
@@ -220,6 +221,7 @@ const Instance = () => {
           }}
           popConfirm={{
             title: '确认删除',
+            disabled: record.state.value !== 'disable',
             onConfirm: async () => {
               if (record.state.value === 'disable') {
                 await service.remove(record.id);
