@@ -27,7 +27,7 @@ class BaseService<T> implements IBaseService<T> {
     return request(`${this.uri}/_query/no-paging?paging=false`, { data, method: 'POST' });
   }
 
-  queryNoPaging(params: any): Promise<unknown> {
+  queryNoPaging(params?: any): Promise<unknown> {
     return request(`${this.uri}/_query/no-paging?paging=false`, { params, method: 'GET' });
   }
 

@@ -12,9 +12,10 @@ import {
   PreviewText,
   Select,
   Space,
+  TreeSelect,
 } from '@formily/antd';
 import type { Field, FieldDataSource } from '@formily/core';
-import { createForm, onFieldReact } from '@formily/core';
+import { createForm, onFieldReact, onFieldValueChange } from '@formily/core';
 import GroupNameControl from '@/components/SearchComponent/GroupNameControl';
 import {
   DeleteOutlined,
@@ -95,6 +96,7 @@ const SchemaField = createSchemaField({
     PreviewText,
     GroupNameControl,
     Space,
+    TreeSelect,
   },
 });
 
@@ -181,9 +183,33 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
               });
               f.setFieldState(typeFiled.query('.value'), async (state) => {
                 state.componentType = 'Select';
-                state.loading = true;
+                // state.loading = true;
                 state.dataSource = option;
-                state.loading = false;
+                // state.loading = false;
+              });
+            } else if (_field?.valueType === 'treeSelect') {
+              let option: { label: any; value: any }[] | FieldDataSource | undefined = [];
+              if (_field?.valueEnum) {
+                option = Object.values(_field?.valueEnum || {}).map((item) => ({
+                  label: item.text,
+                  value: item.status,
+                }));
+              } else if (_field?.request) {
+                option = await _field.request();
+              }
+              f.setFieldState(typeFiled.query('.termType'), (_state) => {
+                _state.value = 'eq';
+              });
+              f.setFieldState(typeFiled.query('.value'), (state) => {
+                state.componentType = 'TreeSelect';
+                state.dataSource = option;
+                console.log(option, 'optin');
+                state.componentProps = {
+                  ..._field.fieldProps,
+                  treeNodeFilterProp: 'name',
+                  // filterOption: (input: string, option: any) =>
+                  //   option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
+                };
               });
             } else if (_field?.valueType === 'digit') {
               f.setFieldState(typeFiled.query('.value'), async (state) => {
@@ -210,6 +236,11 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                 state.value = 'eq';
               });
             }
+          });
+          onFieldValueChange('*.*.column', (field1, form1) => {
+            form1.setFieldState(field1.query('.value'), (state1) => {
+              state1.value = null;
+            });
           });
         },
       }),
