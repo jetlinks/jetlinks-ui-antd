@@ -298,23 +298,16 @@ export default () => {
                           <a
                             onClick={() => {
                               if (playStatus === 0 || _startTime !== playNowTime.current) {
-                                playNowTime.current = _startTime;
-                                if (type === 'local' && deviceId && channelId) {
-                                  setUrl(
-                                    service.playbackLocal(
-                                      deviceId,
-                                      channelId,
-                                      'mp4',
-                                      moment(item.startTime).format('YYYY-MM-DD HH:mm:ss'),
-                                      moment(item.endTime).format('YYYY-MM-DD HH:mm:ss'),
-                                    ),
-                                  );
-                                } else {
-                                  setUrl(service.playbackStart(item.id));
+                                if (playTimeNode.current) {
+                                  playTimeNode.current.playByStartTime(_startTime);
                                 }
                               } else if (playStatus == 1 && _startTime === playNowTime.current) {
                                 if (player.current.getVueInstance) {
                                   player.current.getVueInstance().pause();
+                                }
+                              } else if (playStatus == 2 && _startTime === playNowTime.current) {
+                                if (player.current.getVueInstance) {
+                                  player.current.getVueInstance().play();
                                 }
                               }
                             }}

@@ -71,6 +71,23 @@ const Progress = forwardRef((props: Props, ref) => {
     });
   };
 
+  const playByStartTime = useCallback(
+    (time) => {
+      const playNow = props.data.find((item) => {
+        const startTime = item.startTime || item.mediaStartTime;
+        return startTime === time;
+      });
+
+      if (playNow) {
+        const startTime = playNow.startTime || playNow.mediaStartTime;
+        const endTime = playNow.endTime || playNow.mediaEndTime;
+        const deviceId = props.type === 'local' ? playNow.deviceId : playNow.id;
+        onChange(startTime, endTime, deviceId, playNow.channelId);
+      }
+    },
+    [props.type, props.data],
+  );
+
   const onNextPlay = useCallback(() => {
     if (playTime) {
       // 查找下一个视频
@@ -87,7 +104,7 @@ const Progress = forwardRef((props: Props, ref) => {
         onChange(startTime, endTime, deviceId, nextPlay.channelId);
       }
     }
-  }, [props.type, playTime]);
+  }, [props.type, playTime, props.data]);
 
   useEffect(() => {
     const { data, localToServer, type } = props;
@@ -161,6 +178,7 @@ const Progress = forwardRef((props: Props, ref) => {
 
   useImperativeHandle(ref, () => ({
     onNextPlay,
+    playByStartTime,
   }));
 
   return (
