@@ -26,7 +26,7 @@ const Access = () => {
   const [access, setAccess] = useState<any>();
   const [providers, setProviders] = useState<any[]>([]);
   const [networkList, setNetworkList] = useState<any[]>([]);
-  const { permission } = usePermissions('device/Product');
+  const { permission } = usePermissions('link/AccessConfig');
 
   const MetworkTypeMapping = new Map();
   MetworkTypeMapping.set('websocket-server', 'WEB_SOCKET_SERVER');
@@ -350,13 +350,15 @@ const Access = () => {
               permission.add ? (
                 <span>
                   请先
-                  <a
+                  <Button
+                    type="link"
+                    disabled={!!(productModel.current?.count && productModel.current?.count > 0)}
                     onClick={() => {
                       setConfigVisible(true);
                     }}
                   >
                     选择
-                  </a>
+                  </Button>
                   设备接入网关，用以提供设备接入能力
                 </span>
               ) : (
@@ -379,6 +381,9 @@ const Access = () => {
                         type="primary"
                         ghost
                         style={{ marginLeft: 20 }}
+                        disabled={
+                          !!(productModel.current?.count && productModel.current?.count > 0)
+                        }
                         onClick={() => {
                           setConfigVisible(true);
                         }}

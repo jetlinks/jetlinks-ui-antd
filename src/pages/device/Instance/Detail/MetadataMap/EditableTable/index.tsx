@@ -1,6 +1,6 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {Form, Input, message, Pagination, Select, Table} from 'antd';
-import {service} from '@/pages/device/Instance';
+import React, { useContext, useEffect, useState } from 'react';
+import { Form, Input, message, Pagination, Select, Table } from 'antd';
+import { service } from '@/pages/device/Instance';
 import _ from 'lodash';
 
 const EditableContext: any = React.createContext(null);
@@ -236,7 +236,7 @@ const EditableTable = (props: Props) => {
   const handleSearch = (params: any) => {
     if (params.name) {
       const data = properties.filter((i: any) => {
-        return i?.name.indexOf(params?.nmae) !== -1;
+        return i?.name.includes(params?.name);
       });
       setDataSource({
         data: data.slice(

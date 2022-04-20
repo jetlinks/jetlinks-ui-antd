@@ -3,10 +3,10 @@ import { useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { Badge, message } from 'antd';
 import {
-  CheckCircleOutlined,
   DeleteOutlined,
   EditOutlined,
   LinkOutlined,
+  PlayCircleOutlined,
   PlusOutlined,
   ShareAltOutlined,
   StopOutlined,
@@ -43,12 +43,6 @@ const Cascade = () => {
       }}
       type={'link'}
       style={{ padding: 0 }}
-      tooltip={{
-        title: intl.formatMessage({
-          id: 'pages.data.option.edit',
-          defaultMessage: '编辑',
-        }),
-      }}
     >
       <EditOutlined />
       编辑
@@ -62,9 +56,6 @@ const Cascade = () => {
       }}
       type={'link'}
       style={{ padding: 0 }}
-      tooltip={{
-        title: '选择通道',
-      }}
     >
       <LinkOutlined />
       选择通道
@@ -80,7 +71,7 @@ const Cascade = () => {
       style={{ padding: 0 }}
       disabled={record.status.value === 'disabled'}
       tooltip={{
-        title: record.status.value === 'disabled' ? '禁用状态下不可推送' : '推送',
+        title: record.status.value === 'disabled' ? '禁用状态下不可推送' : '',
       }}
     >
       <ShareAltOutlined />
@@ -91,7 +82,7 @@ const Cascade = () => {
       key={'action'}
       style={{ padding: 0 }}
       popConfirm={{
-        title: `确认${record.status.value === 'disabled' ? '禁用' : '启用'}`,
+        title: `确认${record.status.value !== 'disabled' ? '禁用' : '启用'}`,
         onConfirm: async () => {
           let resp: any = undefined;
           if (record.status.value === 'disabled') {
@@ -106,26 +97,19 @@ const Cascade = () => {
         },
       }}
       isPermission={permission.action}
-      tooltip={{
-        title: record.status.value === 'disabled' ? '禁用' : '启用',
-      }}
     >
-      {record.status.value === 'disabled' ? (
-        <span>
-          <StopOutlined />
-          禁用
-        </span>
-      ) : (
-        <span>
-          <CheckCircleOutlined />
-          启用
-        </span>
-      )}
+      {record.status.value !== 'disabled' ? <StopOutlined /> : <PlayCircleOutlined />}
+      {record.status.value !== 'disabled' ? '禁用' : '启用'}
     </PermissionButton>,
     <PermissionButton
       isPermission={permission.delete}
+      disabled={record.status.value !== 'disabled'}
+      tooltip={{
+        title: record.status.value !== 'disabled' ? '请先禁用，再删除' : '',
+      }}
       popConfirm={{
         title: '确认删除',
+        disabled: record.status.value !== 'disabled',
         onConfirm: async () => {
           const resp: any = await service.remove(record.id);
           if (resp.status === 200) {
@@ -138,7 +122,6 @@ const Cascade = () => {
       type="link"
     >
       <DeleteOutlined />
-      删除
     </PermissionButton>,
   ];
 
@@ -293,12 +276,17 @@ const Cascade = () => {
             title: record.status.value !== 'disabled' ? '禁用' : '启用',
           }}
         >
-          {record.status.value !== 'disabled' ? <StopOutlined /> : <CheckCircleOutlined />}
+          {record.status.value !== 'disabled' ? <StopOutlined /> : <PlayCircleOutlined />}
         </PermissionButton>,
         <PermissionButton
           isPermission={permission.delete}
+          disabled={record.status.value !== 'disabled'}
+          tooltip={{
+            title: record.status.value !== 'disabled' ? '请先禁用，再删除' : '',
+          }}
           popConfirm={{
             title: '确认删除',
+            disabled: record.status.value !== 'disabled',
             onConfirm: async () => {
               const resp: any = await service.remove(record.id);
               if (resp.status === 200) {

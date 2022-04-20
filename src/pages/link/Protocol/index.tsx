@@ -4,9 +4,9 @@ import type { ProtocolItem } from '@/pages/link/Protocol/typings';
 import { Badge, message } from 'antd';
 import { useRef, useState } from 'react';
 import {
-  CheckCircleOutlined,
   DeleteOutlined,
   EditOutlined,
+  PlayCircleOutlined,
   PlusOutlined,
   StopOutlined,
 } from '@ant-design/icons';
@@ -125,7 +125,7 @@ const Protocol = () => {
             },
           }}
         >
-          {record.state === 1 ? <StopOutlined /> : <CheckCircleOutlined />}
+          {record.state === 1 ? <StopOutlined /> : <PlayCircleOutlined />}
         </PermissionButton>,
         <PermissionButton
           isPermission={permission.delete}
@@ -136,6 +136,7 @@ const Protocol = () => {
           disabled={record.state === 1}
           popConfirm={{
             title: '确认删除',
+            disabled: record.state === 1,
             onConfirm: async () => {
               const resp: any = await service.remove(record.id);
               if (resp.status === 200) {
@@ -228,6 +229,7 @@ const Protocol = () => {
                 }}
               >
                 <EditOutlined />
+                编辑
               </PermissionButton>,
               <PermissionButton
                 isPermission={permission.action}
@@ -248,7 +250,8 @@ const Protocol = () => {
                   },
                 }}
               >
-                {record.state === 1 ? <StopOutlined /> : <CheckCircleOutlined />}
+                {record.state === 1 ? <StopOutlined /> : <PlayCircleOutlined />}
+                {record.state === 1 ? '撤销' : '发布'}
               </PermissionButton>,
               <PermissionButton
                 isPermission={permission.delete}
@@ -258,6 +261,7 @@ const Protocol = () => {
                 disabled={record.state === 1}
                 popConfirm={{
                   title: '确认删除',
+                  disabled: record.state === 1,
                   onConfirm: async () => {
                     const resp: any = await service.remove(record.id);
                     if (resp.status === 200) {

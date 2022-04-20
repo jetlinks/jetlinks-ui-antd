@@ -60,10 +60,35 @@ const Message = (props: Props) => {
           });
           setLogList([...logList]);
         } else {
-          dialogList.push({
-            key: randomString(),
-            ...payload,
-          });
+          const t = dialogList.find(
+            (item) =>
+              item.traceId === payload.traceId &&
+              payload.downstream === item.downstream &&
+              payload.upstream === item.upstream,
+          );
+          if (t) {
+            dialogList.map((item) => {
+              if (item.key === payload.traceId) {
+                item.list.push({
+                  key: randomString(),
+                  ...payload,
+                });
+              }
+            });
+          } else {
+            dialogList.push({
+              key: randomString(),
+              traceId: payload.traceId,
+              downstream: payload.downstream,
+              upstream: payload.upstream,
+              list: [
+                {
+                  key: randomString(),
+                  ...payload,
+                },
+              ],
+            });
+          }
           setDialogList([...dialogList]);
           Store.set('diagnose', dialogList);
         }

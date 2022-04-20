@@ -153,19 +153,18 @@ const Product = observer(() => {
           defaultMessage: '下载',
         }),
       }}
+      onClick={async () => {
+        downloadObject(
+          record,
+          intl.formatMessage({
+            id: 'pages.device.product',
+            defaultMessage: '产品',
+          }),
+        );
+        message.success('操作成功');
+      }}
     >
-      <DownloadOutlined
-        onClick={async () => {
-          downloadObject(
-            record,
-            intl.formatMessage({
-              id: 'pages.device.product',
-              defaultMessage: '产品',
-            }),
-          );
-          message.success('操作成功');
-        }}
-      />
+      <DownloadOutlined />
     </PermissionButton>,
     <PermissionButton
       popConfirm={{
@@ -201,12 +200,9 @@ const Product = observer(() => {
           defaultMessage: '是否删除?',
         }),
         onConfirm: async () => {
-          if (record.state === 0) {
-            await deleteItem(record.id);
-          } else {
-            message.error('已发布的产品不能进行删除操作');
-          }
+          await deleteItem(record.id);
         },
+        disabled: record.state === 1,
       }}
       tooltip={{
         title: intl.formatMessage({
@@ -441,13 +437,14 @@ const Product = observer(() => {
                   data.state = 0;
                   if (Array.isArray(data)) {
                     message.error('请上传json格式文件');
-                    return;
+                    return false;
                   }
                   const res = await service.update(data);
                   if (res.status === 200) {
                     message.success('操作成功');
                     actionRef.current?.reload();
                   }
+                  return true;
                 } catch {
                   message.error('请上传json格式文件');
                 }
@@ -499,19 +496,18 @@ const Product = observer(() => {
                 type={'link'}
                 key={'download'}
                 style={{ padding: 0 }}
+                onClick={async () => {
+                  downloadObject(
+                    record,
+                    intl.formatMessage({
+                      id: 'pages.device.product',
+                      defaultMessage: '产品',
+                    }),
+                  );
+                  message.success('操作成功');
+                }}
               >
-                <DownloadOutlined
-                  onClick={async () => {
-                    downloadObject(
-                      record,
-                      intl.formatMessage({
-                        id: 'pages.device.product',
-                        defaultMessage: '产品',
-                      }),
-                    );
-                    message.success('操作成功');
-                  }}
-                />
+                <DownloadOutlined />
                 {intl.formatMessage({
                   id: 'pages.data.option.download',
                   defaultMessage: '下载',
@@ -560,12 +556,9 @@ const Product = observer(() => {
                     defaultMessage: '是否删除?',
                   }),
                   onConfirm: async () => {
-                    if (record.state === 0) {
-                      await deleteItem(record.id);
-                    } else {
-                      message.error('已发布的产品不能进行删除操作');
-                    }
+                    await deleteItem(record.id);
                   },
+                  disabled: record.state === 1,
                 }}
               >
                 <DeleteOutlined />
