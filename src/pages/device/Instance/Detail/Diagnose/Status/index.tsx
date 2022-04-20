@@ -1,13 +1,13 @@
 import TitleComponent from '@/components/TitleComponent';
-import {Badge, Button, Col, message, Popconfirm, Row} from 'antd';
-import {useEffect, useState} from 'react';
+import { Badge, Button, Col, message, Popconfirm, Row } from 'antd';
+import { useEffect, useState } from 'react';
 import styles from './index.less';
-import {InstanceModel, service} from '@/pages/device/Instance';
-import {getMenuPathByParams, MENUS_CODE} from '@/utils/menu';
-import type {ProductItem} from '@/pages/device/Product/typings';
-import {Store} from 'jetlinks-store';
-import {observer} from '@formily/reactive-react';
-import {DiagnoseStatusModel} from './model';
+import { InstanceModel, service } from '@/pages/device/Instance';
+import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import type { ProductItem } from '@/pages/device/Product/typings';
+import { Store } from 'jetlinks-store';
+import { observer } from '@formily/reactive-react';
+import { DiagnoseStatusModel } from './model';
 
 interface Props {
   onChange: (type: string) => void;

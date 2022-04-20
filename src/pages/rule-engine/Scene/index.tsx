@@ -1,31 +1,124 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import BaseService from '@/utils/BaseService';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import type { SceneItem } from '@/pages/rule-engine/Scene/typings';
-import { Tooltip } from 'antd';
-import {
-  CaretRightOutlined,
-  EditOutlined,
-  EyeOutlined,
-  MinusOutlined,
-  ReloadOutlined,
-  StopOutlined,
-} from '@ant-design/icons';
-import BaseCrud from '@/components/BaseCrud';
+import { Badge, message } from 'antd';
+import { EditOutlined, PlayCircleOutlined, PlusOutlined, StopOutlined } from '@ant-design/icons';
 import { useIntl } from '@@/plugin-locale/localeExports';
+import { PermissionButton, ProTableCard } from '@/components';
+import { statusMap } from '@/pages/device/Instance';
+import SearchComponent from '@/components/SearchComponent';
+import Service from './service';
 
-export const service = new BaseService<SceneItem>('rule-engine/scene');
+export const service = new Service('rule-engine/scene');
+
 const Scene = () => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
+  const { permission } = PermissionButton.usePermission('rule-engine/Scene');
+  const [searchParams, setSearchParams] = useState<any>({});
+
+  const Tools = (record: any, type: 'card' | 'table') => {
+    return [
+      <PermissionButton
+        key={'update'}
+        type={'link'}
+        style={{ padding: 0 }}
+        isPermission={permission.update}
+        tooltip={
+          type === 'table'
+            ? {
+                title: intl.formatMessage({
+                  id: 'pages.data.option.edit',
+                  defaultMessage: '编辑',
+                }),
+              }
+            : undefined
+        }
+      >
+        <EditOutlined />
+        {type === 'table' &&
+          intl.formatMessage({
+            id: 'pages.data.option.edit',
+            defaultMessage: '编辑',
+          })}
+      </PermissionButton>,
+      <PermissionButton
+        key={'update'}
+        type={'link'}
+        style={{ padding: 0 }}
+        isPermission={permission.action}
+        popConfirm={{
+          title: intl.formatMessage({
+            id: `pages.data.option.${
+              record.state.value !== 'notActive' ? 'disabled' : 'enabled'
+            }.tips`,
+            defaultMessage: '确认禁用？',
+          }),
+          onConfirm: async () => {
+            message.success(
+              intl.formatMessage({
+                id: 'pages.data.option.success',
+                defaultMessage: '操作成功!',
+              }),
+            );
+            actionRef.current?.reload();
+          },
+        }}
+        tooltip={
+          type === 'table'
+            ? {
+                title: intl.formatMessage({
+                  id: 'pages.data.option.edit',
+                  defaultMessage: '编辑',
+                }),
+              }
+            : undefined
+        }
+      >
+        {record.state.value !== 'notActive' ? <StopOutlined /> : <PlayCircleOutlined />}
+        {type === 'table' &&
+          intl.formatMessage({
+            id: `pages.data.option.${record.state.value !== 'notActive' ? 'disabled' : 'enabled'}`,
+            defaultMessage: record.state.value !== 'notActive' ? '禁用' : '启用',
+          })}
+      </PermissionButton>,
+      <PermissionButton
+        key={'delete'}
+        type={'link'}
+        style={{ padding: 0 }}
+        isPermission={permission.delete}
+        popConfirm={{
+          title: intl.formatMessage({
+            id:
+              record.state.value === 'notActive'
+                ? 'pages.data.option.remove.tips'
+                : 'pages.device.instance.deleteTip',
+          }),
+          onConfirm: async () => {},
+        }}
+        tooltip={
+          type === 'table'
+            ? {
+                title: intl.formatMessage({
+                  id: 'pages.data.option.edit',
+                  defaultMessage: '编辑',
+                }),
+              }
+            : undefined
+        }
+      >
+        <EditOutlined />
+        {type === 'table' &&
+          intl.formatMessage({
+            id: 'pages.data.option.edit',
+            defaultMessage: '编辑',
+          })}
+      </PermissionButton>,
+    ];
+  };
 
   const columns: ProColumns<SceneItem>[] = [
-    {
-      dataIndex: 'index',
-      valueType: 'indexBorder',
-      width: 48,
-    },
     {
       dataIndex: 'name',
       title: intl.formatMessage({
@@ -39,7 +132,13 @@ const Scene = () => {
         id: 'pages.ruleEngine.scene.triggers',
         defaultMessage: '触发方式',
       }),
-      render: () => 'todo',
+    },
+    {
+      dataIndex: 'describe',
+      title: intl.formatMessage({
+        id: 'pages.system.description',
+        defaultMessage: '说明',
+      }),
     },
     {
       dataIndex: 'state',
@@ -47,7 +146,26 @@ const Scene = () => {
         id: 'pages.searchTable.titleStatus',
         defaultMessage: '状态',
       }),
-      render: (text, record) => record.state.value,
+      width: '90px',
+      valueType: 'select',
+      renderText: (record) =>
+        record ? <Badge status={statusMap.get(record.value)} text={record.text} /> : '',
+      valueEnum: {
+        offline: {
+          text: intl.formatMessage({
+            id: 'pages.device.instance.status.offLine',
+            defaultMessage: '离线',
+          }),
+          status: 'offline',
+        },
+        online: {
+          text: intl.formatMessage({
+            id: 'pages.device.instance.status.onLine',
+            defaultMessage: '在线',
+          }),
+          status: 'online',
+        },
+      },
     },
     {
       title: intl.formatMessage({
@@ -57,85 +175,52 @@ const Scene = () => {
       valueType: 'option',
       align: 'center',
       width: 200,
-      render: (text, record) => [
-        <a>
-          <Tooltip
-            title={intl.formatMessage({
-              id: 'pages.ruleEngine.option.detail',
-              defaultMessage: '查看',
-            })}
-          >
-            <EyeOutlined />
-          </Tooltip>
-        </a>,
-        <a onClick={() => console.log(record)}>
-          <Tooltip
-            title={intl.formatMessage({
-              id: 'pages.data.option.edit',
-              defaultMessage: '编辑',
-            })}
-          >
-            <EditOutlined />
-          </Tooltip>
-        </a>,
-        <a onClick={() => console.log(record)}>
-          <Tooltip
-            title={intl.formatMessage({
-              id: 'pages.ruleEngine.option.start',
-              defaultMessage: '启动',
-            })}
-          >
-            <CaretRightOutlined />
-          </Tooltip>
-        </a>,
-        <a onClick={() => console.log(record)}>
-          <Tooltip
-            title={intl.formatMessage({
-              id: 'pages.ruleEngine.option.stop',
-              defaultMessage: '停止',
-            })}
-          >
-            <StopOutlined />
-          </Tooltip>
-        </a>,
-        <a onClick={() => console.log(record)}>
-          <Tooltip
-            title={intl.formatMessage({
-              id: 'pages.ruleEngine.option.restart',
-              defaultMessage: '重启',
-            })}
-          >
-            <ReloadOutlined />
-          </Tooltip>
-        </a>,
-
-        <a>
-          <Tooltip
-            title={intl.formatMessage({
-              id: 'pages.data.option.remove',
-              defaultMessage: '删除',
-            })}
-          >
-            <MinusOutlined />
-          </Tooltip>
-        </a>,
-      ],
+      render: (text, record) => Tools(record, 'table'),
     },
   ];
 
-  const schema = {};
-
   return (
     <PageContainer>
-      <BaseCrud
+      <SearchComponent
+        field={columns}
+        target={'rule-engine-scene'}
+        onSearch={(data) => {
+          actionRef.current?.reset?.();
+          setSearchParams(data);
+        }}
+      />
+      <ProTableCard
         columns={columns}
-        service={service}
-        title={intl.formatMessage({
-          id: 'pages.ruleEngine.scene',
-          defaultMessage: '场景联动',
-        })}
-        schema={schema}
         actionRef={actionRef}
+        params={searchParams}
+        options={{ fullScreen: true }}
+        request={(params) =>
+          service.query({
+            ...params,
+            sorts: [
+              {
+                name: 'createTime',
+                order: 'desc',
+              },
+            ],
+          })
+        }
+        rowKey="id"
+        search={false}
+        headerTitle={[
+          <PermissionButton
+            key="button"
+            icon={<PlusOutlined />}
+            type="primary"
+            isPermission={permission.add}
+            onClick={() => {}}
+          >
+            {intl.formatMessage({
+              id: 'pages.data.option.add',
+              defaultMessage: '新增',
+            })}
+          </PermissionButton>,
+        ]}
       />
     </PageContainer>
   );

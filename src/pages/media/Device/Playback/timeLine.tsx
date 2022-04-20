@@ -1,7 +1,7 @@
 import { message } from 'antd';
 import moment from 'moment';
 import type { Moment } from 'moment';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback, forwardRef, useImperativeHandle } from 'react';
 import './index.less';
 import { recordsItemType } from '@/pages/media/Device/Playback/typings';
 import { useSize } from 'ahooks';
@@ -19,7 +19,8 @@ interface Props {
   data: recordsItemType[];
   dateTime?: Moment;
   type: string;
-  playing: boolean;
+  playStatus: number;
+  playTime: number;
   server?: any;
   localToServer?: {
     endTime: number;
@@ -28,7 +29,7 @@ interface Props {
   getPlayList?: (data: any) => void;
 }
 
-const Progress = (props: Props) => {
+const Progress = forwardRef((props: Props, ref) => {
   const [startT, setStartT] = useState<number>(
     new Date(moment(props.dateTime).startOf('day').format('YYYY-MM-DD HH:mm:ss')).getTime(),
   ); // 获取选中当天开始时间戳
@@ -37,7 +38,7 @@ const Progress = (props: Props) => {
   ).getTime(); // 获取选中当天结束时间戳
 
   const [list, setList] = useState<any[]>([]);
-  const [time, setTime] = useState<number>(startT);
+  const [playTime, setPlayTime] = useState<number>(0);
 
   const LineContent = useRef<HTMLDivElement>(null);
   const LineContentSize = useSize(LineContent);
@@ -61,6 +62,7 @@ const Progress = (props: Props) => {
   }, [props.dateTime]);
 
   const onChange = (startTime: number, endTime: number, deviceId: string, channelId: string) => {
+    setPlayTime(startTime);
     props.onChange({
       startTime: moment(startTime),
       endTime: moment(endTime),
@@ -69,6 +71,41 @@ const Progress = (props: Props) => {
     });
   };
 
+  const playByStartTime = useCallback(
+    (time) => {
+      const playNow = props.data.find((item) => {
+        const startTime = item.startTime || item.mediaStartTime;
+        return startTime === time;
+      });
+
+      if (playNow) {
+        const startTime = playNow.startTime || playNow.mediaStartTime;
+        const endTime = playNow.endTime || playNow.mediaEndTime;
+        const deviceId = props.type === 'local' ? playNow.deviceId : playNow.id;
+        onChange(startTime, endTime, deviceId, playNow.channelId);
+      }
+    },
+    [props.type, props.data],
+  );
+
+  const onNextPlay = useCallback(() => {
+    if (playTime) {
+      // 查找下一个视频
+      const nowIndex = props.data.findIndex((item) => {
+        const startTime = item.startTime || item.mediaStartTime;
+        return startTime === playTime;
+      });
+      // 是否为最后一个
+      if (nowIndex !== props.data.length - 1) {
+        const nextPlay = props.data[nowIndex + 1];
+        const startTime = nextPlay.startTime || nextPlay.mediaStartTime;
+        const endTime = nextPlay.endTime || nextPlay.mediaEndTime;
+        const deviceId = props.type === 'local' ? nextPlay.deviceId : nextPlay.id;
+        onChange(startTime, endTime, deviceId, nextPlay.channelId);
+      }
+    }
+  }, [props.type, playTime, props.data]);
+
   useEffect(() => {
     const { data, localToServer, type } = props;
     if (data && Array.isArray(data) && data.length > 0) {
@@ -76,7 +113,6 @@ const Progress = (props: Props) => {
       if (type === 'local') {
         // 播放第一个
         onChange(data[0].startTime, data[0].endTime, data[0].deviceId, data[0].channelId);
-        setTime(startT);
       } else if (type === 'cloud') {
         // 是否从本地跳转到云端播放
         if (localToServer && Object.keys(localToServer).length > 0) {
@@ -95,14 +131,11 @@ const Progress = (props: Props) => {
               playItem.id,
               playItem.channelId,
             );
-            setTime(playItem.mediaStartTime);
           } else {
             props.onChange(undefined);
-            setTime(localToServer.startTime);
             message.error('没有可播放的视频资源');
           }
         } else {
-          setTime(data[0].mediaStartTime);
           onChange(data[0].mediaStartTime, data[0].mediaEndTime, data[0].id, data[0].channelId);
         }
       }
@@ -110,27 +143,13 @@ const Progress = (props: Props) => {
       // 本地跳转云端但是无资源
       props.onChange(undefined);
       message.error('没有可播放的视频资源');
-      setTime(startT);
       setList([]);
     } else {
       // 啥都没有
-      setTime(startT);
       setList([]);
       props.onChange(undefined);
     }
   }, [props.data]);
-
-  useEffect(() => {
-    // if(props.server && Object.keys(props.server).length > 0){
-    //   if(props.type === 'local'){
-    //     setTime(props.server.startTime)
-    //     props.play({ start: props.server.startTime, end: props.server.endTime })
-    //   } else {
-    //     setTime(props.server.mediaStartTime)
-    //     props.play(props.server)
-    //   }
-    // }
-  }, [props.server]);
 
   const getLineItemStyle = (
     startTime: number,
@@ -146,21 +165,21 @@ const Progress = (props: Props) => {
   };
 
   useEffect(() => {
-    let timerId: any = null;
-    if (props.playing) {
-      timerId = setInterval(() => {
-        // eslint-disable-next-line @typescript-eslint/no-shadow
-        setTime((time) => time + 1000);
-      }, 1000);
+    if (
+      props.playTime &&
+      props.playTime >= startT &&
+      props.playTime <= endT &&
+      props.data &&
+      props.data.length
+    ) {
+      setTimeAndPosition((props.playTime - startT) / 3600000 / 24);
     }
-    return () => timerId && clearInterval(timerId);
-  }, [props.playing]);
+  }, [props.playTime, startT]);
 
-  useEffect(() => {
-    if (time >= startT && time <= endT && props.data && props.data.length) {
-      setTimeAndPosition((time - startT) / 3600000 / 24);
-    }
-  }, [time]);
+  useImperativeHandle(ref, () => ({
+    onNextPlay,
+    playByStartTime,
+  }));
 
   return (
     <div className={'time-line-warp'}>
@@ -196,10 +215,10 @@ const Progress = (props: Props) => {
         </div>
         <div id="btn" className={classNames('time-line-btn')}></div>
         <div id="time" className={classNames('time-line')}>
-          {moment(time).format('HH:mm:ss')}
+          {moment(props.playTime || 0).format('HH:mm:ss')}
         </div>
       </div>
     </div>
   );
-};
+});
 export default Progress;

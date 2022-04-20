@@ -26,19 +26,22 @@ export default () => {
   const [type, setType] = useState('local');
   const [historyList, setHistoryList] = useState<recordsItemType[]>([]);
   const [time, setTime] = useState<Moment | undefined>(undefined);
-  const [playTime, setPlayTime] = useState(0);
   // const [loading, setLoading] = useState(false)
   const [cloudTime, setCloudTime] = useState<any>();
-  const [playing, setPlaying] = useState(false);
   const location = useLocation();
   const player = useRef<any>();
+  const [playStatus, setPlayStatus] = useState(0); // 播放状态, 0 停止， 1 播放， 2 暂停, 3 播放完成
+  const [playTime, setPlayTime] = useState(0);
 
+  const playNowTime = useRef<number>(0); // 当前播放视频标识
+  const playTimeNode = useRef<any>(null);
+  const isEnded = useRef(false); // 是否结束播放
   const param = new URLSearchParams(location.search);
   const deviceId = param.get('id');
   const channelId = param.get('channelId');
 
   const queryLocalRecords = async (date: Moment) => {
-    setPlaying(false);
+    setPlayStatus(0);
     setUrl('');
     if (deviceId && channelId && date) {
       const params = {
@@ -73,7 +76,7 @@ export default () => {
   };
 
   const queryServiceRecords = async (date: Moment) => {
-    setPlaying(false);
+    setPlayStatus(0);
     setUrl('');
     if (deviceId && channelId && date) {
       const params = {
@@ -189,25 +192,35 @@ export default () => {
             live={type === 'local'}
             ref={player}
             onPlay={() => {
-              setPlaying(true);
+              isEnded.current = false;
+              setPlayStatus(1);
             }}
             onPause={() => {
-              setPlaying(false);
+              setPlayStatus(2);
             }}
-            onDestroy={() => {
-              setPlaying(false);
+            onEnded={() => {
+              setPlayStatus(0);
+              if (playTimeNode.current && !isEnded.current) {
+                isEnded.current = true;
+                playTimeNode.current.onNextPlay();
+              }
             }}
             onError={() => {
-              setPlaying(false);
+              setPlayStatus(0);
+            }}
+            onTimeUpdate={(e) => {
+              setPlayTime(parseInt(e.detail[0]));
             }}
           />
           <TimeLine
+            ref={playTimeNode}
             type={type}
             data={historyList}
             dateTime={time}
             onChange={(times) => {
               if (times) {
-                setPlayTime(Number(times.endTime.valueOf()));
+                playNowTime.current = Number(times.startTime.valueOf());
+                setPlayTime(0);
                 setUrl(
                   type === 'local'
                     ? service.playbackLocal(
@@ -223,7 +236,8 @@ export default () => {
                 setUrl('');
               }
             }}
-            playing={playing}
+            playStatus={playStatus}
+            playTime={playNowTime.current + playTime * 1000}
             localToServer={cloudTime}
           />
         </div>
@@ -266,48 +280,43 @@ export default () => {
                 itemLayout="horizontal"
                 dataSource={historyList}
                 renderItem={(item) => {
+                  const _startTime = item.startTime || item.mediaStartTime;
                   const startTime = moment(item.startTime || item.mediaStartTime).format(
                     'HH:mm:ss',
                   );
                   const endTime = moment(item.endTime || item.mediaEndTime).format('HH:mm:ss');
                   const downloadObj = DownloadIcon(item);
-                  const timeId = item.endTime || item.mediaEndTime;
-
-                  console.log(timeId, playTime);
                   return (
                     <List.Item
                       actions={[
                         <Tooltip
                           key="play-btn"
-                          title={item.startTime === playTime ? '暂停' : '播放'}
+                          title={
+                            _startTime === playNowTime.current && playStatus === 1 ? '暂停' : '播放'
+                          }
                         >
                           <a
                             onClick={() => {
-                              if (!playTime) {
-                                setPlayTime(item.startTime);
-                                if (item.filePath) {
-                                  service.playbackStart(item.id);
-                                } else if (deviceId && channelId) {
-                                  setUrl(
-                                    service.playbackLocal(
-                                      deviceId,
-                                      channelId,
-                                      'mp4',
-                                      moment(item.startTime).format('YYYY-MM-DD HH:mm:ss'),
-                                      moment(item.endTime).format('YYYY-MM-DD HH:mm:ss'),
-                                    ),
-                                  );
+                              if (playStatus === 0 || _startTime !== playNowTime.current) {
+                                if (playTimeNode.current) {
+                                  playTimeNode.current.playByStartTime(_startTime);
                                 }
-                              } else {
-                                console.log(player.current);
-                                if (player.current.pause) {
-                                  player.current.pause();
+                              } else if (playStatus == 1 && _startTime === playNowTime.current) {
+                                if (player.current.getVueInstance) {
+                                  player.current.getVueInstance().pause();
                                 }
-                                setPlayTime(0);
+                              } else if (playStatus == 2 && _startTime === playNowTime.current) {
+                                if (player.current.getVueInstance) {
+                                  player.current.getVueInstance().play();
+                                }
                               }
                             }}
                           >
-                            {timeId === playTime ? <PauseCircleOutlined /> : <PlayCircleOutlined />}
+                            {_startTime === playNowTime.current && playStatus === 1 ? (
+                              <PauseCircleOutlined />
+                            ) : (
+                              <PlayCircleOutlined />
+                            )}
                           </a>
                         </Tooltip>,
                         <Tooltip key={'download'} title={downloadObj.title}>

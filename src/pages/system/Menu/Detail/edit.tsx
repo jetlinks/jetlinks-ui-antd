@@ -1,16 +1,28 @@
-import {Card, Col, Form, Input, InputNumber, message, Radio, Row, Select, Tooltip, TreeSelect,} from 'antd';
+import {
+  Card,
+  Col,
+  Form,
+  Input,
+  InputNumber,
+  message,
+  Radio,
+  Row,
+  Select,
+  Tooltip,
+  TreeSelect,
+} from 'antd';
 import Permission from '@/pages/system/Menu/components/permission';
-import {useIntl} from '@@/plugin-locale/localeExports';
-import {useEffect, useState} from 'react';
-import {service} from '@/pages/system/Menu';
-import {useHistory, useRequest} from 'umi';
-import type {MenuItem} from '@/pages/system/Menu/typing';
+import { useIntl } from '@@/plugin-locale/localeExports';
+import { useEffect, useState } from 'react';
+import { service } from '@/pages/system/Menu';
+import { useHistory, useRequest } from 'umi';
+import type { MenuItem } from '@/pages/system/Menu/typing';
 // import { debounce } from 'lodash';
 import Title from '../components/Title';
 import Icons from '../components/Icons';
-import {QuestionCircleFilled} from '@ant-design/icons';
-import {getMenuPathByParams, MENUS_CODE} from '@/utils/menu';
-import {PermissionButton} from '@/components';
+import { QuestionCircleFilled } from '@ant-design/icons';
+import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { PermissionButton } from '@/components';
 
 type EditProps = {
   data: MenuItem;
@@ -22,6 +34,7 @@ export default (props: EditProps) => {
   const intl = useIntl();
   const [disabled, setDisabled] = useState(true);
   const [show] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [accessSupport, setAccessSupport] = useState('unsupported');
   const history = useHistory();
   const { getOtherPermission } = PermissionButton.usePermission('system/Menu');
@@ -59,9 +72,11 @@ export default (props: EditProps) => {
       //   switch: show,
       // };
 
+      setLoading(true);
       const response: any = !formData.id
         ? await service.save(formData)
         : await service.update(formData);
+      setLoading(false);
       if (response.status === 200) {
         message.success('操作成功！');
         setDisabled(true);
@@ -205,7 +220,13 @@ export default (props: EditProps) => {
             </Col>
             <Col span={24}>
               <Form.Item name={'describe'} label={'说明'}>
-                <Input.TextArea rows={4} maxLength={200} showCount placeholder={'请输入说明'} />
+                <Input.TextArea
+                  disabled={disabled}
+                  rows={4}
+                  maxLength={200}
+                  showCount
+                  placeholder={'请输入说明'}
+                />
               </Form.Item>
             </Col>
           </Row>
@@ -316,6 +337,7 @@ export default (props: EditProps) => {
                 saveData();
               }
             }}
+            loading={loading}
             isPermission={getOtherPermission(['add', 'update'])}
           >
             {intl.formatMessage({

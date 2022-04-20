@@ -9,6 +9,7 @@ type Trigger = {
   trigger: string;
   device: Record<string, unknown>;
 };
+
 type SceneItem = {
   parallel: boolean;
   state: State;

@@ -154,13 +154,17 @@ const Instance = () => {
       key={'delete'}
       style={{ padding: 0 }}
       isPermission={permission.delete}
+      tooltip={
+        record.state.value !== 'notActive'
+          ? { title: intl.formatMessage({ id: 'pages.device.instance.deleteTip' }) }
+          : undefined
+      }
+      disabled={record.state.value !== 'notActive'}
       popConfirm={{
         title: intl.formatMessage({
-          id:
-            record.state.value === 'notActive'
-              ? 'pages.data.option.remove.tips'
-              : 'pages.device.instance.deleteTip',
+          id: 'pages.data.option.remove.tips',
         }),
+        disabled: record.state.value !== 'notActive',
         onConfirm: async () => {
           if (record.state.value === 'notActive') {
             await service.remove(record.id);
@@ -621,13 +625,17 @@ const Instance = () => {
                 isPermission={permission.delete}
                 type={'link'}
                 style={{ padding: 0 }}
+                tooltip={
+                  record.state.value !== 'notActive'
+                    ? { title: intl.formatMessage({ id: 'pages.device.instance.deleteTip' }) }
+                    : undefined
+                }
+                disabled={record.state.value !== 'notActive'}
                 popConfirm={{
                   title: intl.formatMessage({
-                    id:
-                      record.state.value === 'notActive'
-                        ? 'pages.data.option.remove.tips'
-                        : 'pages.device.instance.deleteTip',
+                    id: 'pages.data.option.remove.tips',
                   }),
+                  disabled: record.state.value !== 'notActive',
                   onConfirm: async () => {
                     if (record.state.value === 'notActive') {
                       await service.remove(record.id);

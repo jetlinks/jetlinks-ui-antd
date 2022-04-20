@@ -146,7 +146,15 @@ const ProductDetail = observer(() => {
         id: 'pages.device.productDetail.base',
         defaultMessage: '配置信息',
       }),
-      component: <BaseInfo />,
+      component: (
+        <BaseInfo
+          onJump={(type) => {
+            if (type) {
+              setMode(type);
+            }
+          }}
+        />
+      ),
     },
     {
       key: 'metadata',
@@ -254,6 +262,7 @@ const ProductDetail = observer(() => {
           type={'primary'}
           popConfirm={{
             title: '确定应用配置？',
+            disabled: productModel.current?.state === 0,
             onConfirm: () => {
               changeDeploy('deploy');
             },
