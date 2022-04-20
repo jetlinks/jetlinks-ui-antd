@@ -205,12 +205,6 @@ export default () => {
                 playTimeNode.current.onNextPlay();
               }
             }}
-            onDestroy={() => {
-              setPlayStatus(0);
-              if (player.current.getVueInstance) {
-                player.current.getVueInstance().pause();
-              }
-            }}
             onError={() => {
               setPlayStatus(0);
             }}

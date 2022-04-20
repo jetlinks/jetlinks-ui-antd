@@ -62,7 +62,6 @@ const Progress = forwardRef((props: Props, ref) => {
   }, [props.dateTime]);
 
   const onChange = (startTime: number, endTime: number, deviceId: string, channelId: string) => {
-    console.log(startTime, endTime, deviceId, channelId);
     setPlayTime(startTime);
     props.onChange({
       startTime: moment(startTime),
