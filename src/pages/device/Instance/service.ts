@@ -238,6 +238,9 @@ class Service extends BaseService<DeviceInstance> {
     request(`/${SystemConst.API_BASE}/device/metadata/mapping/product/${productId}`, {
       method: 'GET',
     });
+
+  //接入方式
+  public queryGatewayList = () => request(`/${SystemConst.API_BASE}/gateway/device/providers`);
 }
 
 export default Service;

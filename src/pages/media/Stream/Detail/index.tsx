@@ -145,17 +145,17 @@ const Detail = () => {
         setProviders(resp.result);
       }
     });
-    if (params.id && params.id !== ':id') {
+    if (params.id) {
       service.detail(params.id).then((resp) => {
         if (resp.status === 200) {
           StreamModel.current = resp.result;
-          form.setFieldsValue({
+          const data = {
             name: StreamModel.current?.name,
             provider: StreamModel.current?.provider,
             secret: StreamModel.current?.configuration?.secret,
             api: {
-              apiHost: StreamModel.current.configuration?.apiHost,
-              apiPort: StreamModel.current.configuration?.apiPort,
+              host: StreamModel.current.configuration?.apiHost,
+              port: StreamModel.current.configuration?.apiPort,
             },
             rtp: {
               rtpIp: StreamModel.current.configuration?.rtpIp,
@@ -163,7 +163,8 @@ const Detail = () => {
               dynamicRtpPort: StreamModel.current.configuration?.dynamicRtpPort || false,
               dynamicRtpPortRange: StreamModel.current.configuration?.dynamicRtpPortRange || [],
             },
-          });
+          };
+          form.setFieldsValue(data);
         }
       });
     }
@@ -253,8 +254,8 @@ const Detail = () => {
               provider: values.provider,
               configuration: {
                 secret: values?.secret,
-                apiHost: values.api?.apiHost,
-                apiPort: values.api?.apiPort,
+                apiHost: values.api?.host,
+                apiPort: values.api?.port,
                 rtpIp: values.rtp?.rtpIp,
                 rtpPort: values.rtp?.rtpPort,
                 dynamicRtpPort: values.rtp?.dynamicRtpPort,

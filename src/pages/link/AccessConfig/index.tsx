@@ -6,7 +6,7 @@ import { Card, Col, Empty, message, Pagination, Row } from 'antd';
 import { useEffect, useState } from 'react';
 import { useHistory } from 'umi';
 import Service from './service';
-import { CheckCircleOutlined, DeleteOutlined, EditOutlined, StopOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, PlayCircleOutlined, StopOutlined } from '@ant-design/icons';
 import AccessConfigCard from '@/components/ProTableCard/CardItems/AccessConfig';
 import { PermissionButton } from '@/components';
 
@@ -143,22 +143,18 @@ const AccessConfig = () => {
                         title: item.state.value !== 'disabled' ? '禁用' : '启用',
                       }}
                     >
-                      {item.state.value !== 'disabled' ? (
-                        <span>
-                          <StopOutlined />
-                          禁用
-                        </span>
-                      ) : (
-                        <span>
-                          <CheckCircleOutlined />
-                          启用
-                        </span>
-                      )}
+                      {item.state.value !== 'disabled' ? <StopOutlined /> : <PlayCircleOutlined />}
+                      {item.state.value !== 'disabled' ? '禁用' : '启用'}
                     </PermissionButton>,
                     <PermissionButton
                       isPermission={permission.delete}
+                      disabled={item.state.value !== 'disabled'}
+                      tooltip={{
+                        title: item.state.value !== 'disabled' ? '请先禁用，再删除' : '',
+                      }}
                       popConfirm={{
                         title: '确认删除',
+                        disabled: item.state.value !== 'disabled',
                         onConfirm: () => {
                           service.remove(item.id).then((resp: any) => {
                             if (resp.status === 200) {
@@ -174,7 +170,6 @@ const AccessConfig = () => {
                       type="link"
                     >
                       <DeleteOutlined />
-                      删除
                     </PermissionButton>,
                   ]}
                 />

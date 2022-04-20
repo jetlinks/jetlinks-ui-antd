@@ -12,6 +12,7 @@ import {
   ExportOutlined,
   EyeOutlined,
   ImportOutlined,
+  PlayCircleOutlined,
   PlusOutlined,
   StopOutlined,
   SyncOutlined,
@@ -30,6 +31,8 @@ import Token from '@/utils/token';
 import DeviceCard from '@/components/ProTableCard/CardItems/device';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { useLocation } from '@/hooks';
+import { service as deptService } from '@/pages/system/Department';
+import { service as categoryService } from '@/pages/device/Category';
 
 export const statusMap = new Map();
 statusMap.set('在线', 'success');
@@ -144,7 +147,7 @@ const Instance = () => {
         }),
       }}
     >
-      {record.state.value !== 'notActive' ? <StopOutlined /> : <CheckCircleOutlined />}
+      {record.state.value !== 'notActive' ? <StopOutlined /> : <PlayCircleOutlined />}
     </PermissionButton>,
     <PermissionButton
       type={'link'}
@@ -260,6 +263,98 @@ const Instance = () => {
       filterMultiple: false,
     },
     {
+      dataIndex: 'categoryId',
+      title: '产品分类',
+      valueType: 'treeSelect',
+      hideInTable: true,
+      fieldProps: {
+        fieldNames: {
+          label: 'name',
+          value: 'id',
+        },
+      },
+      request: () =>
+        categoryService
+          .queryTree({
+            paging: false,
+          })
+          .then((resp: any) => resp.result),
+    },
+    {
+      dataIndex: 'productId$product-info',
+      title: '接入方式',
+      valueType: 'select',
+      hideInTable: true,
+      request: () =>
+        service.queryGatewayList().then((resp) =>
+          resp.result.map((item: any) => ({
+            label: item.name,
+            value: `accessId is ${item.id}`,
+          })),
+        ),
+    },
+    {
+      dataIndex: 'deviceType',
+      title: '设备类型',
+      valueType: 'select',
+      hideInTable: true,
+      valueEnum: {
+        device: {
+          text: '直连设备',
+          status: 'device',
+        },
+        childrenDevice: {
+          text: '网关子设备',
+          status: 'childrenDevice',
+        },
+        gateway: {
+          text: '网关设备',
+          status: 'gateway',
+        },
+      },
+    },
+    {
+      dataIndex: 'id$dim-assets',
+      title: '所属部门',
+      valueType: 'treeSelect',
+      hideInTable: true,
+      fieldProps: {
+        fieldNames: {
+          label: 'name',
+          value: 'value',
+        },
+      },
+      request: () =>
+        deptService
+          .queryOrgThree({
+            paging: false,
+          })
+          .then((resp) => {
+            const formatValue = (list: any[]) => {
+              const _list: any[] = [];
+              list.forEach((item) => {
+                if (item.children) {
+                  item.children = formatValue(item.children);
+                }
+                _list.push({
+                  ...item,
+                  value: JSON.stringify({
+                    assetType: 'device',
+                    targets: [
+                      {
+                        type: 'org',
+                        id: item.id,
+                      },
+                    ],
+                  }),
+                });
+              });
+              return _list;
+            };
+            return formatValue(resp.result);
+          }),
+    },
+    {
       title: intl.formatMessage({
         id: 'pages.table.description',
         defaultMessage: '说明',
@@ -279,8 +374,6 @@ const Instance = () => {
       render: (text, record) => tools(record),
     },
   ];
-
-  console.log(jumpParams);
 
   const menu = (
     <Menu>
@@ -515,7 +608,7 @@ const Instance = () => {
                   },
                 }}
               >
-                {record.state.value !== 'notActive' ? <StopOutlined /> : <CheckCircleOutlined />}
+                {record.state.value !== 'notActive' ? <StopOutlined /> : <PlayCircleOutlined />}
                 {intl.formatMessage({
                   id: `pages.data.option.${
                     record.state.value !== 'notActive' ? 'disabled' : 'enabled'
