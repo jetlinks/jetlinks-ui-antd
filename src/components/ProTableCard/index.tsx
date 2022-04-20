@@ -38,12 +38,14 @@ const ProTableCard = <
   const [pageSize, setPageSize] = useState(Default_Size * 2); // 每页条数
   const [column, setColumn] = useState(props.gridColumn || 4);
   const [loading, setLoading] = useState(false);
+  const [dataLength, setDataLength] = useState<number>(0);
 
   /**
    * 处理 Card
    * @param dataSource
    */
   const handleCard = (dataSource: readonly T[] | undefined): JSX.Element => {
+    setDataLength(dataSource ? dataSource.length : 0);
     return (
       <>
         {dataSource && dataSource.length ? (
@@ -178,25 +180,27 @@ const ProTableCard = <
           <div className={classNames('mask-loading', { show: loading })}>
             <LoadingComponent />
           </div>
-          <Pagination
-            showSizeChanger
-            size="small"
-            className={'pro-table-card-pagination'}
-            total={total}
-            current={current}
-            onChange={(page, size) => {
-              setCurrent(page);
-              setPageIndex(page - 1);
-              setPageSize(size);
-            }}
-            pageSizeOptions={pageSizeOptions}
-            pageSize={pageSize}
-            showTotal={(num) => {
-              const minSize = pageIndex * pageSize + 1;
-              const MaxSize = (pageIndex + 1) * pageSize;
-              return `第 ${minSize} - ${MaxSize > num ? num : MaxSize} 条/总共 ${num} 条`;
-            }}
-          />
+          {!!dataLength && (
+            <Pagination
+              showSizeChanger
+              size="small"
+              className={'pro-table-card-pagination'}
+              total={total}
+              current={current}
+              onChange={(page, size) => {
+                setCurrent(page);
+                setPageIndex(page - 1);
+                setPageSize(size);
+              }}
+              pageSizeOptions={pageSizeOptions}
+              pageSize={pageSize}
+              showTotal={(num) => {
+                const minSize = pageIndex * pageSize + 1;
+                const MaxSize = (pageIndex + 1) * pageSize;
+                return `第 ${minSize} - ${MaxSize > num ? num : MaxSize} 条/总共 ${num} 条`;
+              }}
+            />
+          )}
         </>
       )}
     </div>

@@ -23,6 +23,7 @@ export default (props: ButtonsProps) => {
   const [visible, setVisible] = useState(false); // Modal显示影藏
   const [id, setId] = useState(''); // 缓存ID
   const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
   const { permission } = PermissionButton.usePermission('system/Menu');
 
   const { data: permissions, run: queryPermissions } = useRequest(service.queryPermission, {
@@ -67,10 +68,12 @@ export default (props: ButtonsProps) => {
   const updateMenuInfo = useCallback(
     async (data: MenuButtonInfo[]) => {
       if (props.data.id) {
+        setLoading(true);
         const response = await service.update({
           ...props.data,
           buttons: data,
         });
+        setLoading(false);
         if (response.status === 200) {
           message.success('操作成功!');
           props.onLoad();
@@ -283,6 +286,7 @@ export default (props: ButtonsProps) => {
           resetForm();
           setVisible(false);
         }}
+        confirmLoading={loading}
       >
         <Form form={form} layout={'vertical'}>
           <Form.Item
