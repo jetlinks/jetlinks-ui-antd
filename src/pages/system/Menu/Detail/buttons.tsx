@@ -1,14 +1,14 @@
-import {Button, Form, Input, message, Modal, Tooltip} from 'antd';
-import {useIntl} from '@@/plugin-locale/localeExports';
-import {useCallback, useEffect, useState} from 'react';
-import {service} from '@/pages/system/Menu';
-import type {ProColumns} from '@jetlinks/pro-table';
+import { Button, Form, Input, message, Modal, Tooltip } from 'antd';
+import { useIntl } from '@@/plugin-locale/localeExports';
+import { useCallback, useEffect, useState } from 'react';
+import { service } from '@/pages/system/Menu';
+import type { ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import {DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined} from '@ant-design/icons';
-import type {MenuButtonInfo, MenuItem} from '@/pages/system/Menu/typing';
+import { DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
+import type { MenuButtonInfo, MenuItem } from '@/pages/system/Menu/typing';
 import Permission from '@/pages/system/Menu/components/permission';
-import {useRequest} from '@@/plugin-request/request';
-import {PermissionButton} from '@/components';
+import { useRequest } from '@@/plugin-request/request';
+import { PermissionButton } from '@/components';
 
 type ButtonsProps = {
   data: MenuItem;
@@ -23,6 +23,7 @@ export default (props: ButtonsProps) => {
   const [visible, setVisible] = useState(false); // Modal显示影藏
   const [id, setId] = useState(''); // 缓存ID
   const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
   const { permission } = PermissionButton.usePermission('system/Menu');
 
   const { data: permissions, run: queryPermissions } = useRequest(service.queryPermission, {
@@ -67,10 +68,12 @@ export default (props: ButtonsProps) => {
   const updateMenuInfo = useCallback(
     async (data: MenuButtonInfo[]) => {
       if (props.data.id) {
+        setLoading(true);
         const response = await service.update({
           ...props.data,
           buttons: data,
         });
+        setLoading(false);
         if (response.status === 200) {
           message.success('操作成功!');
           props.onLoad();
@@ -283,6 +286,7 @@ export default (props: ButtonsProps) => {
           resetForm();
           setVisible(false);
         }}
+        confirmLoading={loading}
       >
         <Form form={form} layout={'vertical'}>
           <Form.Item

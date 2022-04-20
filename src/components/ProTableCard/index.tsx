@@ -1,11 +1,12 @@
-import type {ProTableProps} from '@jetlinks/pro-table';
+import type { ProTableProps } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import type {ParamsType} from '@ant-design/pro-provider';
-import React, {useEffect, useState} from 'react';
-import {isFunction} from 'lodash';
-import {Empty, Pagination, Space} from 'antd';
-import {AppstoreOutlined, BarsOutlined} from '@ant-design/icons';
+import type { ParamsType } from '@ant-design/pro-provider';
+import React, { useEffect, useState } from 'react';
+import { isFunction } from 'lodash';
+import { Empty, Pagination, Space } from 'antd';
+import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
+import LoadingComponent from '@ant-design/pro-layout/es/PageLoading';
 import './index.less';
 
 enum ModelEnum {
@@ -36,12 +37,15 @@ const ProTableCard = <
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(Default_Size * 2); // 每页条数
   const [column, setColumn] = useState(props.gridColumn || 4);
+  const [loading, setLoading] = useState(false);
+  const [dataLength, setDataLength] = useState<number>(0);
 
   /**
    * 处理 Card
    * @param dataSource
    */
   const handleCard = (dataSource: readonly T[] | undefined): JSX.Element => {
+    setDataLength(dataSource ? dataSource.length : 0);
     return (
       <>
         {dataSource && dataSource.length ? (
@@ -82,6 +86,11 @@ const ProTableCard = <
 
   const pageSizeOptions = [Default_Size * 2, Default_Size * 4, Default_Size * 8, Default_Size * 16];
 
+  useEffect(() => {
+    setCurrent(1);
+    setPageIndex(0);
+  }, [props.params]);
+
   return (
     <div className={'pro-table-card'}>
       <ProTable<T, U, ValueType>
@@ -111,6 +120,10 @@ const ProTableCard = <
             };
           }
           return {};
+        }}
+        onLoadingChange={(l) => {
+          console.log(l);
+          setLoading(!!l);
         }}
         pagination={{
           onChange: (page, size) => {
@@ -163,25 +176,32 @@ const ProTableCard = <
         }
       />
       {model === ModelEnum.CARD && (
-        <Pagination
-          showSizeChanger
-          size="small"
-          className={'pro-table-card-pagination'}
-          total={total}
-          current={current}
-          onChange={(page, size) => {
-            setCurrent(page);
-            setPageIndex(page - 1);
-            setPageSize(size);
-          }}
-          pageSizeOptions={pageSizeOptions}
-          pageSize={pageSize}
-          showTotal={(num) => {
-            const minSize = pageIndex * pageSize + 1;
-            const MaxSize = (pageIndex + 1) * pageSize;
-            return `第 ${minSize} - ${MaxSize > num ? num : MaxSize} 条/总共 ${num} 条`;
-          }}
-        />
+        <>
+          <div className={classNames('mask-loading', { show: loading })}>
+            <LoadingComponent />
+          </div>
+          {!!dataLength && (
+            <Pagination
+              showSizeChanger
+              size="small"
+              className={'pro-table-card-pagination'}
+              total={total}
+              current={current}
+              onChange={(page, size) => {
+                setCurrent(page);
+                setPageIndex(page - 1);
+                setPageSize(size);
+              }}
+              pageSizeOptions={pageSizeOptions}
+              pageSize={pageSize}
+              showTotal={(num) => {
+                const minSize = pageIndex * pageSize + 1;
+                const MaxSize = (pageIndex + 1) * pageSize;
+                return `第 ${minSize} - ${MaxSize > num ? num : MaxSize} 条/总共 ${num} 条`;
+              }}
+            />
+          )}
+        </>
       )}
     </div>
   );

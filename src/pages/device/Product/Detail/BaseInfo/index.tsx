@@ -1,5 +1,5 @@
 import { productModel, service } from '@/pages/device/Product';
-import { Descriptions } from 'antd';
+import { Button, Descriptions } from 'antd';
 import { useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { EditOutlined } from '@ant-design/icons';
@@ -12,7 +12,11 @@ import { PermissionButton } from '@/components';
 //   password: 'Password',
 // };
 
-const BaseInfo = () => {
+interface BaseInfoProps {
+  onJump?: (type?: string) => void;
+}
+
+const BaseInfo = (props: BaseInfoProps) => {
   const intl = useIntl();
   // const [metadata, setMetadata] = useState<ConfigMetadata[]>([]);
   // const [state, setState] = useState<boolean>(false);
@@ -190,7 +194,35 @@ const BaseInfo = () => {
             defaultMessage: '接入方式',
           })}
         >
-          {productModel.current?.transportProtocol}
+          {permission.update ? (
+            productModel.current?.transportProtocol ? (
+              <Button
+                type={'link'}
+                style={{ padding: 0 }}
+                onClick={() => {
+                  if (props.onJump) {
+                    props.onJump('access');
+                  }
+                }}
+              >
+                {productModel.current?.transportProtocol}
+              </Button>
+            ) : (
+              <Button
+                type={'link'}
+                style={{ padding: 0 }}
+                onClick={() => {
+                  if (props.onJump) {
+                    props.onJump('access');
+                  }
+                }}
+              >
+                配置接入方式
+              </Button>
+            )
+          ) : (
+            productModel.current?.transportProtocol
+          )}
         </Descriptions.Item>
 
         <Descriptions.Item

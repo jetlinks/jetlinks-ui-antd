@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { isFunction } from 'lodash';
 
 export type PlayerProps = {
@@ -12,17 +12,18 @@ export type PlayerProps = {
   updateTime?: number;
   key?: string | number;
   loading?: boolean;
-  onDestroy?: () => void;
+  onDestroy?: (e?: any) => void;
   onMessage?: (msg: any) => void;
   onError?: (err: any) => void;
   onTimeUpdate?: (time: any) => void;
-  onPause?: () => void;
-  onPlay?: () => void;
+  onPause?: (e?: any) => void;
+  onPlay?: (e?: any) => void;
   protocol?: 'mp4' | 'flv' | 'hls';
   onFullscreen?: () => void;
   onSnapOutside?: (base64: any) => void;
   onSnapInside?: (base64: any) => void;
   onCustomButtons?: (name: any) => void;
+  onEnded?: (e?: any) => void;
   onClick?: () => void;
 };
 
@@ -36,9 +37,11 @@ const EventsEnum = {
   snapOutside: 'onSnapOutside',
   snapInside: 'onSnapInside',
   customButtons: 'onCustomButtons',
+  ended: 'onEnded',
 };
 const LivePlayer = forwardRef((props: PlayerProps, ref) => {
   const player = useRef<HTMLVideoElement>(null);
+  const [url, setUrl] = useState(props.url);
 
   useEffect(() => {
     return () => {
@@ -49,14 +52,18 @@ const LivePlayer = forwardRef((props: PlayerProps, ref) => {
     };
   }, []);
 
+  useEffect(() => {
+    setUrl(props.url);
+  }, [props.url]);
+
   /**
    * 事件初始化
    */
   const EventInit = () => {
     for (const key in EventsEnum) {
-      player.current?.addEventListener(key, () => {
+      player.current?.addEventListener(key, (e) => {
         if (EventsEnum[key] in props) {
-          props[EventsEnum[key]]();
+          props[EventsEnum[key]](e);
         }
       });
     }
@@ -84,7 +91,7 @@ const LivePlayer = forwardRef((props: PlayerProps, ref) => {
       hide-big-play-button={true}
       poster={props.poster || ''}
       timeout={props.timeout || 20}
-      video-url={props.url || ''}
+      video-url={url || ''}
     />
   );
 });
