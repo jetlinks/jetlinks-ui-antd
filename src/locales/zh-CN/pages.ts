@@ -208,7 +208,7 @@ export default {
   'pages.device.productDetail.metadata.eventLevel': '事件级别',
   'pages.device.productDetail.metadata.level': '级别',
   'pages.device.productDetail.metadata.whetherAsync': '是否异步',
-  'pages.device.productDetail.metadata.whetherReadOnly': '是否只读',
+  'pages.device.productDetail.metadata.whetherReadOnly': '读写类型',
   'pages.device.productDetail.metadata.true': '是',
   'pages.device.productDetail.metadata.false': '否',
   'pages.device.productDetail.metadata.dataType': '数据类型',

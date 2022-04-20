@@ -397,7 +397,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
     if (initParam && initParam[0].terms && initParam[0].terms.length > 1) {
       handleExpand();
     }
-  }, []);
+  }, [initParam]);
   const simpleSchema: ISchema = {
     type: 'object',
     properties: {
@@ -491,10 +491,10 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
   };
 
   useEffect(() => {
-    if (defaultParam || initParam) {
+    if (defaultParam) {
       handleSearch();
     }
-  }, [defaultParam, initParam]);
+  }, []);
 
   const handleSaveLog = async () => {
     const value = await form.submit<SearchTermsUI>();

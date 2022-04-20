@@ -197,6 +197,8 @@ const Role: React.FC = observer(() => {
       CurdModel.add();
     }
     const subscription = Store.subscribe(SystemConst.BASE_UPDATE_DATA, (data) => {
+      debugger;
+      console.log('订阅数据');
       if ((window as any).onTabSaveSuccess) {
         (window as any).onTabSaveSuccess(data);
         setTimeout(() => window.close(), 300);

@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { Badge, Button, message, Popconfirm, Tooltip } from 'antd';
+import { Badge, message, Popconfirm, Tooltip } from 'antd';
 import {
   CloseCircleOutlined,
   DeleteOutlined,
@@ -13,7 +13,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import type { NetworkItem } from '@/pages/link/Type/typings';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import SearchComponent from '@/components/SearchComponent';
-import { getButtonPermission, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { history } from 'umi';
 import Service from '@/pages/link/service';
 import { Store } from 'jetlinks-store';
@@ -244,8 +244,8 @@ const Network = () => {
         columns={columns}
         search={false}
         headerTitle={
-          <Button
-            disabled={getButtonPermission('link/Type', ['add'])}
+          <PermissionButton
+            isPermission={networkPermission.add}
             onClick={() => {
               pageJump();
             }}
@@ -257,7 +257,7 @@ const Network = () => {
               id: 'pages.data.option.add',
               defaultMessage: '新增',
             })}
-          </Button>
+          </PermissionButton>
         }
         request={async (params) =>
           service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })

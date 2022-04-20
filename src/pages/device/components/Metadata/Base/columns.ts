@@ -44,7 +44,7 @@ const FunctionColumns: ProColumns<MetadataItem>[] = BaseColumns.concat([
     render: (text) => (text ? '是' : '否'),
   },
   {
-    title: '是否只读',
+    title: '读写类型',
     dataIndex: 'expands.readOnly',
     render: (text) => (text ? '是' : '否'),
   },
@@ -57,7 +57,7 @@ const PropertyColumns: ProColumns<MetadataItem>[] = BaseColumns.concat([
     render: (text: any) => text?.type,
   },
   {
-    title: '是否只读',
+    title: '读写类型',
     dataIndex: 'expands.readOnly',
     render: (text) => (text === 'true' || text === true ? '是' : '否'),
   },
@@ -70,7 +70,7 @@ const TagColumns: ProColumns<MetadataItem>[] = BaseColumns.concat([
     render: (text: any) => text?.type,
   },
   {
-    title: '是否只读',
+    title: '读写类型',
     dataIndex: 'expands.readOnly',
     render: (text) => (text === 'true' || text === true ? '是' : '否'),
   },
