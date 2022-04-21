@@ -8,9 +8,10 @@ import {
   EditOutlined,
   EyeOutlined,
   PlusOutlined,
+  TeamOutlined,
   UnorderedListOutlined,
 } from '@ant-design/icons';
-import { message, Popconfirm, Space, Tooltip, Upload } from 'antd';
+import { message, Space, Tooltip, Upload } from 'antd';
 import { useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { downloadObject } from '@/utils/util';
@@ -27,6 +28,7 @@ import Debug from '@/pages/notice/Config/Debug';
 import Log from '@/pages/notice/Config/Log';
 import { typeList } from '@/components/ProTableCard/CardItems/noticeTemplate';
 import usePermissions from '@/hooks/permission';
+import SyncUser from '@/pages/notice/Config/SyncUser';
 
 export const service = new Service('notifier/config');
 
@@ -34,9 +36,11 @@ export const state = model<{
   current?: ConfigItem;
   debug?: boolean;
   log?: boolean;
+  syncUser: boolean;
 }>({
   debug: false,
   log: false,
+  syncUser: false,
 });
 const Config = observer(() => {
   const intl = useIntl();
@@ -69,24 +73,39 @@ const Config = observer(() => {
       align: 'center',
       width: 200,
       render: (text, record) => [
-        <a
+        <PermissionButton
+          tooltip={{
+            title: '同步用户',
+          }}
+          type="link"
+          onClick={() => {
+            state.syncUser = true;
+            state.current = record;
+          }}
+        >
+          <TeamOutlined />
+        </PermissionButton>,
+        <PermissionButton
           key="edit"
+          type="link"
+          isPermission={configPermission.update}
           onClick={async () => {
             // setLoading(true);
             state.current = record;
             history.push(getMenuPathByParams(MENUS_CODE['notice/Config/Detail'], id));
           }}
-        >
-          <Tooltip
-            title={intl.formatMessage({
+          tooltip={{
+            title: intl.formatMessage({
               id: 'pages.data.option.edit',
               defaultMessage: '编辑',
-            })}
-          >
-            <EditOutlined />
-          </Tooltip>
-        </a>,
-        <a
+            }),
+          }}
+        >
+          <EditOutlined />
+        </PermissionButton>,
+        <PermissionButton
+          type="link"
+          isPermission={configPermission.export}
           onClick={() =>
             downloadObject(
               record,
@@ -94,17 +113,18 @@ const Config = observer(() => {
             )
           }
           key="download"
-        >
-          <Tooltip
-            title={intl.formatMessage({
+          tooltip={{
+            title: intl.formatMessage({
               id: 'pages.data.option.download',
               defaultMessage: '下载配置',
-            })}
-          >
-            <ArrowDownOutlined />
-          </Tooltip>
-        </a>,
-        <a
+            }),
+          }}
+        >
+          <ArrowDownOutlined />
+        </PermissionButton>,
+        <PermissionButton
+          type="link"
+          isPermission={configPermission.debug}
           key="debug"
           onClick={() => {
             state.debug = true;
@@ -119,25 +139,27 @@ const Config = observer(() => {
           >
             <BugOutlined />
           </Tooltip>
-        </a>,
-        <a
+        </PermissionButton>,
+        <PermissionButton
+          type="link"
+          isPermission={configPermission.log}
           key="record"
           onClick={() => {
             state.log = true;
           }}
-        >
-          <Tooltip
-            title={intl.formatMessage({
+          tooltip={{
+            title: intl.formatMessage({
               id: 'pages.data.option.record',
               defaultMessage: '通知记录',
-            })}
-          >
-            <BarsOutlined />
-          </Tooltip>
-        </a>,
-        <a key="remove">
-          <Popconfirm
-            onConfirm={async () => {
+            }),
+          }}
+        >
+          <BarsOutlined />
+        </PermissionButton>,
+        <PermissionButton
+          type="link"
+          popConfirm={{
+            onConfirm: async () => {
               await service.remove(record.id);
               message.success(
                 intl.formatMessage({
@@ -146,19 +168,19 @@ const Config = observer(() => {
                 }),
               );
               actionRef.current?.reload();
-            }}
-            title="确认删除?"
-          >
-            <Tooltip
-              title={intl.formatMessage({
-                id: 'pages.data.option.remove',
-                defaultMessage: '删除',
-              })}
-            >
-              <DeleteOutlined />
-            </Tooltip>
-          </Popconfirm>
-        </a>,
+            },
+            title: '确认删除',
+          }}
+          tooltip={{
+            title: intl.formatMessage({
+              id: 'pages.data.option.remove',
+              defaultMessage: '删除',
+            }),
+          }}
+          key="remove"
+        >
+          <DeleteOutlined />
+        </PermissionButton>,
       ],
     },
   ];
@@ -268,6 +290,17 @@ const Config = observer(() => {
             }
             actions={[
               <PermissionButton
+                key="syncUser"
+                isPermission={true}
+                onClick={() => {
+                  state.syncUser = true;
+                  state.current = record;
+                }}
+              >
+                <TeamOutlined />
+                同步用户
+              </PermissionButton>,
+              <PermissionButton
                 isPermission={configPermission.update}
                 type={'link'}
                 key="edit"
@@ -338,6 +371,7 @@ const Config = observer(() => {
       />
       <Debug />
       {state.log && <Log />}
+      {state.syncUser && <SyncUser />}
     </PageContainer>
   );
 });
