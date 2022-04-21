@@ -21,6 +21,7 @@ import {
 import { randomString } from '@/utils/util';
 import Log from './Log';
 import { Store } from 'jetlinks-store';
+
 interface Props {
   onChange: (type: string) => void;
 }

@@ -70,6 +70,7 @@ export default forwardRef((props: ScreenProps, ref) => {
   const [playerActive, setPlayerActive] = useState(0);
   const [historyList, setHistoryList] = useState<any>([]);
   const [visible, setVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const fullscreenRef = useRef(null);
   const [isFullscreen, { setFull }] = useFullscreen(fullscreenRef);
@@ -189,7 +190,9 @@ export default forwardRef((props: ScreenProps, ref) => {
         players: players.map((item) => ({ deviceId: item.id, channelId: item.channelId })),
       }),
     };
+    setLoading(true);
     const resp = await service.history.save(DEFAULT_SAVE_CODE, param);
+    setLoading(false);
     if (resp.status === 200) {
       setVisible(false);
       getHistory();
@@ -347,6 +350,7 @@ export default forwardRef((props: ScreenProps, ref) => {
                       <Button
                         type={'primary'}
                         onClick={saveHistory}
+                        loading={loading}
                         style={{ width: '100%', marginTop: 16 }}
                       >
                         保存

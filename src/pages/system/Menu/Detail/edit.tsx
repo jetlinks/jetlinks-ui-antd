@@ -34,6 +34,7 @@ export default (props: EditProps) => {
   const intl = useIntl();
   const [disabled, setDisabled] = useState(true);
   const [show] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [accessSupport, setAccessSupport] = useState('unsupported');
   const history = useHistory();
   const { getOtherPermission } = PermissionButton.usePermission('system/Menu');
@@ -71,9 +72,11 @@ export default (props: EditProps) => {
       //   switch: show,
       // };
 
+      setLoading(true);
       const response: any = !formData.id
         ? await service.save(formData)
         : await service.update(formData);
+      setLoading(false);
       if (response.status === 200) {
         message.success('操作成功！');
         setDisabled(true);
@@ -217,7 +220,13 @@ export default (props: EditProps) => {
             </Col>
             <Col span={24}>
               <Form.Item name={'describe'} label={'说明'}>
-                <Input.TextArea rows={4} maxLength={200} showCount placeholder={'请输入说明'} />
+                <Input.TextArea
+                  disabled={disabled}
+                  rows={4}
+                  maxLength={200}
+                  showCount
+                  placeholder={'请输入说明'}
+                />
               </Form.Item>
             </Col>
           </Row>
@@ -328,6 +337,7 @@ export default (props: EditProps) => {
                 saveData();
               }
             }}
+            loading={loading}
             isPermission={getOtherPermission(['add', 'update'])}
           >
             {intl.formatMessage({

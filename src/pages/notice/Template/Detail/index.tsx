@@ -111,8 +111,10 @@ const Detail = observer(() => {
           onFieldValueChange('provider', (field, form1) => {
             const value = field.value;
             setProvider(value);
-            // form1.setValuesIn('configId', null);
-            // form1.setValuesIn('template', null);
+            if (field.modified) {
+              form1.setValuesIn('configId', null);
+              form1.setValuesIn('template', null);
+            }
             // 设置绑定配置的数据
             form1.setFieldState('configId', async (state1) => {
               state1.dataSource = await getConfig(value);

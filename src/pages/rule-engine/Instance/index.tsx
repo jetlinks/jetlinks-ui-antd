@@ -4,10 +4,10 @@ import type { InstanceItem } from '@/pages/rule-engine/Instance/typings';
 import { useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import {
-  PlayCircleOutlined,
   DeleteOutlined,
   EditOutlined,
   EyeOutlined,
+  PlayCircleOutlined,
   PlusOutlined,
   StopOutlined,
 } from '@ant-design/icons';

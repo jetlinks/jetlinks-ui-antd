@@ -4,9 +4,9 @@ import type { ProtocolItem } from '@/pages/link/Protocol/typings';
 import { Badge, message } from 'antd';
 import { useRef, useState } from 'react';
 import {
-  PlayCircleOutlined,
   DeleteOutlined,
   EditOutlined,
+  PlayCircleOutlined,
   PlusOutlined,
   StopOutlined,
 } from '@ant-design/icons';

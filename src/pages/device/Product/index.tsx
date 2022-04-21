@@ -22,6 +22,8 @@ import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { AIcon, PermissionButton, ProTableCard } from '@/components';
 import ProductCard from '@/components/ProTableCard/CardItems/product';
 import { downloadObject } from '@/utils/util';
+import { service as categoryService } from '@/pages/device/Category';
+import { service as deptService } from '@/pages/system/Department';
 
 export const service = new Service('device-product');
 export const statusMap = {
@@ -292,6 +294,65 @@ const Product = observer(() => {
         defaultMessage: '说明',
       }),
       // hideInSearch: true,
+    },
+    {
+      dataIndex: 'categoryId',
+      title: '分类',
+      valueType: 'treeSelect',
+      hideInTable: true,
+      fieldProps: {
+        fieldNames: {
+          label: 'name',
+          value: 'id',
+        },
+      },
+      request: () =>
+        categoryService
+          .queryTree({
+            paging: false,
+          })
+          .then((resp: any) => resp.result),
+    },
+    {
+      dataIndex: 'id$dim-assets',
+      title: '所属部门',
+      valueType: 'treeSelect',
+      hideInTable: true,
+      fieldProps: {
+        fieldNames: {
+          label: 'name',
+          value: 'value',
+        },
+      },
+      request: () =>
+        deptService
+          .queryOrgThree({
+            paging: false,
+          })
+          .then((resp) => {
+            const formatValue = (list: any[]) => {
+              const _list: any[] = [];
+              list.forEach((item) => {
+                if (item.children) {
+                  item.children = formatValue(item.children);
+                }
+                _list.push({
+                  ...item,
+                  value: JSON.stringify({
+                    assetType: 'product',
+                    targets: [
+                      {
+                        type: 'org',
+                        id: item.id,
+                      },
+                    ],
+                  }),
+                });
+              });
+              return _list;
+            };
+            return formatValue(resp.result);
+          }),
     },
     {
       title: intl.formatMessage({
