@@ -14,8 +14,6 @@ interface Props {
 
 const BindChannel = (props: Props) => {
   const [param, setParam] = useState<any>({
-    pageIndex: 0,
-    pageSize: 10,
     terms: [
       {
         column: 'id',
@@ -124,9 +122,9 @@ const BindChannel = (props: Props) => {
         columns={columns}
         search={false}
         headerTitle={'通道列表'}
-        request={async (params) =>
-          service.queryChannel({ ...params, sorts: [{ name: 'name', order: 'desc' }] })
-        }
+        request={async (params) => {
+          return service.queryChannel({ ...params, sorts: [{ name: 'name', order: 'desc' }] });
+        }}
         rowKey="id"
         rowSelection={{
           selectedRowKeys: selectedRowKey,

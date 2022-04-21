@@ -192,12 +192,12 @@ const Channel = () => {
         columns={columns}
         search={false}
         headerTitle={'通道列表'}
-        request={async (params) =>
-          service.queryBindChannel(id, {
+        request={async (params) => {
+          return service.queryBindChannel(id, {
             ...params,
             sorts: [{ name: 'createTime', order: 'desc' }],
-          })
-        }
+          });
+        }}
         rowKey="channelId"
         rowSelection={{
           selectedRowKeys: selectedRowKey,
