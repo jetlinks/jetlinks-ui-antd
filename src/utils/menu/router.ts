@@ -60,6 +60,7 @@ export enum MENUS_CODE {
   'rule-engine/Instance' = 'rule-engine/Instance',
   'rule-engine/SQLRule' = 'rule-engine/SQLRule',
   'rule-engine/Scene' = 'rule-engine/Scene',
+  'rule-engine/Alarm/Config' = 'rule-engine/Alarm/Config',
   'simulator/Device' = 'simulator/Device',
   'system/DataSource' = 'system/DataSource',
   'system/Department/Assets' = 'system/Department/Assets',
