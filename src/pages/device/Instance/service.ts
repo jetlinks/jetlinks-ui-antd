@@ -244,8 +244,8 @@ class Service extends BaseService<DeviceInstance> {
       method: 'GET',
     });
   //
-  public queryProcotolDetail = (type: string) =>
-    request(`/${SystemConst.API_BASE}/protocol/${type}/transport/MQTT`, {
+  public queryProcotolDetail = (type: string, transport: string) =>
+    request(`/${SystemConst.API_BASE}/protocol/${type}/transport/${transport}`, {
       method: 'GET',
     });
 

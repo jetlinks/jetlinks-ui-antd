@@ -61,7 +61,6 @@ const Status = observer((props: Props) => {
       desc: '诊断设备接入网关状态是否已启用，未启用的状态将导致连接失败',
     },
   ];
-  const [list, setList] = useState<any[]>([...initlist]);
   const gatewayList = [
     'websocket-server',
     'http-server-gateway',
@@ -129,8 +128,10 @@ const Status = observer((props: Props) => {
           ),
         };
       }
-      DiagnoseStatusModel.status.config = data;
-      setTimeout(() => resolve(data), time);
+      setTimeout(() => {
+        DiagnoseStatusModel.status.config = data;
+        resolve(data);
+      }, time);
     });
   //网络信息
   const diagnoseNetwork = () =>
@@ -155,7 +156,7 @@ const Status = observer((props: Props) => {
               service.queryGatewayState(resp.result.accessId).then((response: any) => {
                 if (response.status === 200) {
                   const product: any = resp.result;
-                  const address = response.result?.channelInfo?.addresses[0];
+                  const address = response.result?.channelInfo?.addresses || [];
                   const _label = address.some((i: any) => i.health === -1);
                   const __label = address.every((i: any) => i.health === 1);
                   const health = _label ? -1 : __label ? 1 : 0;
@@ -414,6 +415,7 @@ const Status = observer((props: Props) => {
             if (resp.result.length > 0) {
               resp.result.map((item: any, index: number) => {
                 let data: any = {};
+                const list = [...DiagnoseStatusModel.list];
                 if (!list.find((i) => i.key === `product-auth${index}`)) {
                   list.splice(list.length - 1, 0, {
                     key: `product-auth${index}`,
@@ -421,7 +423,7 @@ const Status = observer((props: Props) => {
                     data: `productAuth${index}`,
                     desc: `诊断产品${item?.name}是否正确，错误的配置将导致连接失败`,
                   });
-                  setList([...list]);
+                  DiagnoseStatusModel.list = [...list];
                 }
                 data = {
                   status: 'error',
@@ -435,7 +437,6 @@ const Status = observer((props: Props) => {
                             进行
                             <a
                               onClick={() => {
-                                console.log(proItem);
                                 setArtificialVisible(true);
                                 setArtificiaData({
                                   data: item,
@@ -474,6 +475,7 @@ const Status = observer((props: Props) => {
             if (resp.result.length > 0) {
               resp.result.map((item: any, index: number) => {
                 let data: any = {};
+                const list = [...DiagnoseStatusModel.list];
                 if (!list.find((i) => i.key === `device-auth${index}`)) {
                   list.splice(list.length - 1, 0, {
                     key: `device-auth${index}`,
@@ -481,7 +483,7 @@ const Status = observer((props: Props) => {
                     data: `deviceAuth${index}`,
                     desc: `诊断设备${item?.name}是否正确，错误的配置将导致连接失败`,
                   });
-                  setList([...list]);
+                  DiagnoseStatusModel.list = [...list];
                 }
                 data = {
                   status: 'error',
@@ -570,7 +572,7 @@ const Status = observer((props: Props) => {
 
   const handleSearch = () => {
     props.onChange('loading');
-    setList([...initlist]);
+    DiagnoseStatusModel.list = [...initlist];
     DiagnoseStatusModel.status = {
       config: {
         status: 'loading',
@@ -622,7 +624,7 @@ const Status = observer((props: Props) => {
                   });
                   if (!!a) {
                     Store.set('diagnose-status', {
-                      list,
+                      list: DiagnoseStatusModel.list,
                       status: DiagnoseStatusModel.status,
                     });
                     props.onChange('success');
@@ -640,16 +642,18 @@ const Status = observer((props: Props) => {
                       gateway.provider !== 'mqtt-server-gateway' &&
                       gatewayList.includes(gateway.provider)
                     ) {
-                      service.queryProcotolDetail(gateway.provider).then((resp1) => {
-                        setDiagnoseData({
-                          product: productauth,
-                          device: deviceauth,
-                          id: product.id,
-                          provider: gateway.provider,
-                          routes: resp1.result?.routes || [],
+                      service
+                        .queryProcotolDetail(gateway.provider, gateway.transport)
+                        .then((resp1) => {
+                          setDiagnoseData({
+                            product: productauth,
+                            device: deviceauth,
+                            id: product.id,
+                            provider: gateway.provider,
+                            routes: resp1.result?.routes || [],
+                          });
+                          setDiagnoseVisible(true);
                         });
-                        setDiagnoseVisible(true);
-                      });
                     } else {
                       setDiagnoseData({
                         product: productauth,
@@ -674,7 +678,7 @@ const Status = observer((props: Props) => {
     } else {
       const dt = Store.get('diagnose-status');
       DiagnoseStatusModel.status = dt?.status;
-      setList(dt?.list || []);
+      DiagnoseStatusModel.list = dt?.list || [];
       props.onChange('success');
     }
   }, []);
@@ -694,7 +698,7 @@ const Status = observer((props: Props) => {
             </Button>
           </div>
           <div className={styles.statusContent}>
-            {list.map((item) => (
+            {DiagnoseStatusModel.list.map((item) => (
               <div key={item.key} className={styles.statusItem}>
                 <div className={styles.statusLeft}>
                   <div className={styles.statusImg}>

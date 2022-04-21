@@ -1,6 +1,5 @@
 import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
-import { InstanceModel } from '@/pages/device/Instance';
 import type { ISchema } from '@formily/json-schema';
 import { Form, FormGrid, FormItem, Input, Password, PreviewText } from '@formily/antd';
 import { Modal } from 'antd';
@@ -21,7 +20,7 @@ const ManualInspection = (props: Props) => {
 
   const form = createForm({
     validateFirst: true,
-    initialValues: InstanceModel.detail?.configuration,
+    initialValues: {},
   });
 
   const SchemaField = createSchemaField({
@@ -88,22 +87,29 @@ const ManualInspection = (props: Props) => {
       }}
       onOk={async () => {
         const values = (await form.submit()) as any;
-        let flag = true;
-        Object.keys(values).forEach((key) => {
-          if (values[key] !== metadata?.check[key]) {
-            flag = false;
-          }
-        });
-        if (flag) {
-          props.ok({
-            status: 'success',
-            data: metadata,
-          });
-        } else {
+        if (metadata?.check) {
           props.ok({
             status: 'error',
             data: metadata,
           });
+        } else {
+          let flag = true;
+          Object.keys(values).forEach((key) => {
+            if (values[key] !== metadata?.check[key]) {
+              flag = false;
+            }
+          });
+          if (flag) {
+            props.ok({
+              status: 'success',
+              data: metadata,
+            });
+          } else {
+            props.ok({
+              status: 'error',
+              data: metadata,
+            });
+          }
         }
       }}
       visible

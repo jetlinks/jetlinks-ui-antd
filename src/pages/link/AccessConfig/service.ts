@@ -9,6 +9,11 @@ class Service extends BaseService<AccessItem> {
       method: 'POST',
       data,
     });
+  public queryList = (data: any) =>
+    request(`/${SystemConst.API_BASE}/gateway/device/detail/_query`, {
+      method: 'POST',
+      data,
+    });
   public startUp = (id: string) =>
     request(`/${SystemConst.API_BASE}/gateway/device/${id}/_startup`, {
       method: 'POST',
