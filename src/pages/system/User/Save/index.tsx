@@ -300,11 +300,15 @@ const Save = (props: Props) => {
                   onClick={() => {
                     const tab: any = window.open(`${origin}/#/system/role?save=true`);
                     tab!.onTabSaveSuccess = (value: any) => {
-                      form.setFieldState('roleIdList', (state) => {
-                        state.dataSource = state.dataSource?.concat([
-                          { label: value.name, value: value.id },
-                        ]);
-                        state.value = [...state.value, value.id];
+                      form.setFieldState('roleIdList', async (state) => {
+                        state.dataSource = await getRole().then((resp) =>
+                          resp.result?.map((item: Record<string, unknown>) => ({
+                            ...item,
+                            label: item.name,
+                            value: item.id,
+                          })),
+                        );
+                        state.value = [...(state.value || []), value.id];
                       });
                     };
                   }}
@@ -349,7 +353,7 @@ const Save = (props: Props) => {
                             value: item.id,
                           })),
                         );
-                        state.value = [...state.value, value.id];
+                        state.value = [...(state.value || []), value.id];
                       });
                     };
                   }}

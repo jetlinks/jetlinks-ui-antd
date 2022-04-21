@@ -227,6 +227,9 @@ const Save = observer(() => {
           labelAlign: 'left',
           layout: 'vertical',
         },
+        'x-component-props': {
+          placeholder: '请输入节点名称',
+        },
         'x-reactions': [
           {
             dependencies: ['shareCluster'],
@@ -243,6 +246,9 @@ const Save = observer(() => {
         title: '本地地址',
         'x-decorator': 'FormItem',
         'x-component': 'Select',
+        'x-component-props': {
+          placeholder: '请选择本地地址',
+        },
         'x-decorator-props': {
           gridSpan: 1,
           labelAlign: 'left',
@@ -274,6 +280,9 @@ const Save = observer(() => {
         type: 'number',
         'x-decorator': 'FormItem',
         'x-component': 'Select',
+        'x-component-props': {
+          placeholder: '请输入本地端口',
+        },
         'x-reactions': {
           dependencies: ['type'],
           fulfill: {
@@ -307,6 +316,9 @@ const Save = observer(() => {
         'x-decorator': 'FormItem',
         'x-component': 'Input',
         'x-validator': ['ipv4'],
+        'x-component-props': {
+          placeholder: '请输入公网地址',
+        },
         'x-reactions': {
           dependencies: ['type'],
           fulfill: {
@@ -325,6 +337,9 @@ const Save = observer(() => {
           tooltip: '对外提供访问的端口',
           layout: 'vertical',
           labelAlign: 'left',
+        },
+        'x-component-props': {
+          placeholder: '请输入公网端口',
         },
         required: true,
         'x-decorator': 'FormItem',
@@ -369,6 +384,9 @@ const Save = observer(() => {
               layout: 'vertical',
               labelAlign: 'left',
             },
+            'x-component-props': {
+              placeholder: '请输入远程地址',
+            },
             required: true,
             'x-validator': ['ipv4'],
             'x-decorator': 'FormItem',
@@ -381,6 +399,9 @@ const Save = observer(() => {
               layout: 'vertical',
               labelAlign: 'left',
             },
+            'x-component-props': {
+              placeholder: '请输入远程端口',
+            },
             required: true,
             'x-decorator': 'FormItem',
             'x-component': 'NumberPicker',
@@ -391,6 +412,9 @@ const Save = observer(() => {
               gridSpan: 1,
               layout: 'vertical',
               labelAlign: 'left',
+            },
+            'x-component-props': {
+              placeholder: '请输入ClientId',
             },
             required: true,
             'x-decorator': 'FormItem',
@@ -403,12 +427,18 @@ const Save = observer(() => {
               layout: 'vertical',
               labelAlign: 'left',
             },
+            'x-component-props': {
+              placeholder: '请输入用户名',
+            },
             required: true,
             'x-decorator': 'FormItem',
             'x-component': 'Input',
           },
           password: {
             title: '密码',
+            'x-component-props': {
+              placeholder: '请输入密码',
+            },
             'x-decorator-props': {
               gridSpan: 1,
               layout: 'vertical',
@@ -426,12 +456,18 @@ const Save = observer(() => {
               layout: 'vertical',
               labelAlign: 'left',
             },
+            'x-component-props': {
+              placeholder: '请输入最大消息长度',
+            },
             required: true,
             'x-decorator': 'FormItem',
             'x-component': 'Input',
           },
           topicPrefix: {
             title: '订阅前缀',
+            'x-component-props': {
+              placeholder: '请输入订阅前缀',
+            },
             'x-decorator-props': {
               gridSpan: 1,
               tooltip: '当连接的服务为EMQ时,可能需要使用共享的订阅前缀,如:$queue或$share',
@@ -453,6 +489,9 @@ const Save = observer(() => {
           tooltip: '对外提供访问的地址,内网环境是填写服务器的内网IP地址',
           layout: 'vertical',
         },
+        'x-component-props': {
+          placeholder: '请输入最大消息长度',
+        },
         'x-reactions': {
           dependencies: ['type'],
           fulfill: {
@@ -463,25 +502,6 @@ const Save = observer(() => {
           },
         },
       },
-      // topicPrefix: {
-      //   title: '订阅前缀',
-      //   'x-decorator': 'FormItem',
-      //   'x-component': 'Input',
-      //   'x-decorator-props': {
-      //     gridSpan: 1,
-      //     labelAlign: 'left',
-      //     layout: 'vertical',
-      //   },
-      //   'x-reactions': {
-      //     dependencies: ['type'],
-      //     fulfill: {
-      //       state: {
-      //         // visible: '{{$deps[0]==="UDP"}}',
-      //         visible: '{{["MQTT_CLIENT"].includes($deps[0])}}',
-      //       },
-      //     },
-      //   },
-      // },
       parserType: {
         // TCP
         required: true,
@@ -495,6 +515,9 @@ const Save = observer(() => {
         'x-visible': false,
         'x-decorator': 'FormItem',
         'x-component': 'Select',
+        'x-component-props': {
+          placeholder: '请选择粘拆包规则',
+        },
         enum: [
           { value: 'DIRECT', label: '不处理' },
           { value: 'delimited', label: '分隔符' },
@@ -533,6 +556,9 @@ const Save = observer(() => {
             'x-decorator-props': {
               gridSpan: 1,
             },
+            'x-component-props': {
+              placeholder: '请输入名称',
+            },
             'x-validator': [
               {
                 max: 64,
@@ -550,6 +576,9 @@ const Save = observer(() => {
             'x-component': 'Select',
             'x-decorator-props': {
               gridSpan: 1,
+            },
+            'x-component-props': {
+              placeholder: '请选择类型',
             },
             'x-validator': [
               {
@@ -655,88 +684,6 @@ const Save = observer(() => {
               },
             },
           },
-
-          // parserType: {
-          //   // TCP
-          //   title: '粘拆包规则',
-          //   'x-decorator-props': {
-          //     gridSpan: 3,
-          //     tooltip: '',
-          //   },
-          //   'x-decorator': 'FormItem',
-          //   'x-component': 'Select',
-          //   enum: [
-          //     { label: 'DIRECT', value: '不处理' },
-          //     { label: 'delimited', value: '分隔符' },
-          //     { label: 'script', value: '自定义脚本' },
-          //     { label: 'fixed_length', value: '固定长度' },
-          //   ],
-          // },
-          // // MQTT_C
-          // remoteAddress: {
-          //   title: '远程地址',
-          //   'x-validator': ['ipv4'],
-          //   'x-decorator': 'FormItem',
-          //   'x-component': 'Input',
-          // },
-          // remotePort: {
-          //   title: '远程端口',
-          //   type: 'number',
-          //   'x-decorator': 'FormItem',
-          //   'x-component': 'NumberPicker',
-          //   'x-validator': [
-          //     {
-          //       max: 65535,
-          //       message: '请输入1-65535之间的整整数',
-          //     },
-          //     {
-          //       min: 1,
-          //       message: '请输入1-65535之间的整整数',
-          //     },
-          //
-          //   ],
-          // },
-          // client: {
-          //   title: 'client',
-          //   'x-decorator': 'FormItem',
-          //   'x-component': 'Input',
-          // },
-          // username: {
-          //   title: '用户名',
-          //   'x-decorator': 'FormItem',
-          //   'x-component': 'Input',
-          // },
-          // password: {
-          //   title: '密码',
-          //   'x-decorator': 'FormItem',
-          //   'x-component': 'Password',
-          // },
-          // // MQTT-S
-          // maxMessageSize: {
-          //   title: '最大消息长度',
-          //   'x-decorator': 'FormItem',
-          //   'x-component': 'NumberPicker',
-          //   'x-decorator-props': {
-          //     tooltip: '单次收发消息的最大长度,单位:字节。设置过大可能会影响性能',
-          //   },
-          // },
-          // topicPrefix: {
-          //   title: '订阅前缀',
-          //   'x-decorator': 'FormItem',
-          //   'x-component': 'Input',
-          // },
-          // // MQTT_C end
-          // enableDtls: {
-          //   title: '开启DTLS',
-          //   'x-decorator': 'FormItem',
-          //   'x-component': 'Radio.Group',
-          //   required: true,
-          //   default: false,
-          //   enum: [
-          //     { label: '是', value: true },
-          //     { label: '否', value: false },
-          //   ],
-          // },
           description: {
             title: '说明',
             'x-component': 'Input.TextArea',
@@ -745,6 +692,7 @@ const Save = observer(() => {
               gridSpan: 3,
             },
             'x-component-props': {
+              placeholder: '请输入说明',
               showCount: true,
               maxLength: 200,
               rows: 5,
