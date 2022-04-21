@@ -1,16 +1,16 @@
-import {observer} from '@formily/react';
-import {Space, Tabs} from 'antd';
+import { observer } from '@formily/react';
+import { Space, Tabs } from 'antd';
 import BaseMetadata from './Base';
-import {useIntl} from '@@/plugin-locale/localeExports';
+import { useIntl } from '@@/plugin-locale/localeExports';
 import Import from './Import';
-import type {ReactNode} from 'react';
-import {useState} from 'react';
+import type { ReactNode } from 'react';
+import { useState } from 'react';
 import Cat from './Cat';
 import Service from '@/pages/device/components/Metadata/service';
-import {InfoCircleOutlined} from '@ant-design/icons';
+import { InfoCircleOutlined } from '@ant-design/icons';
 import styles from './index.less';
-import {InstanceModel} from '@/pages/device/Instance';
-import {PermissionButton} from '@/components';
+import { InstanceModel } from '@/pages/device/Instance';
+import { PermissionButton } from '@/components';
 
 interface Props {
   tabAction?: ReactNode;
@@ -26,7 +26,6 @@ const Metadata = observer((props: Props) => {
   const { permission } = PermissionButton.usePermission(
     props.type === 'device' ? 'device/Instance' : 'device/Product',
   );
-  console.log(InstanceModel.detail, 'test');
   return (
     <div style={{ position: 'relative' }}>
       <div className={styles.tips}>

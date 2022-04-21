@@ -16,6 +16,7 @@ import encodeQuery from '@/utils/encodeQuery';
 import MetadataMap from '@/pages/device/Instance/Detail/MetadataMap';
 import SystemConst from '@/utils/const';
 import { PermissionButton } from '@/components';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 
 export const ModelEnum = {
   base: 'base',
@@ -158,10 +159,37 @@ const ProductDetail = observer(() => {
     },
     {
       key: 'metadata',
-      tab: intl.formatMessage({
-        id: 'pages.device.productDetail.metadata',
-        defaultMessage: '物模型',
-      }),
+      tab: (
+        <>
+          {intl.formatMessage({
+            id: 'pages.device.instanceDetail.metadata',
+            defaultMessage: '物模型',
+          })}
+          <Tooltip
+            title={
+              <>
+                属性：
+                <br />
+                用于描述设备运行时具体信息和状态。
+                <br />
+                功能：
+                <br />
+                指设备可供外部调用的指令或方法。
+                <br />
+                事件：
+                <br />
+                设备运行时，主动上报给云端的信息。
+                <br />
+                标签：
+                <br />
+                统一为设备添加拓展字段，添加后将在设备信息页显示。
+              </>
+            }
+          >
+            <QuestionCircleOutlined style={{ marginLeft: 5 }} />
+          </Tooltip>
+        </>
+      ),
       component: <Metadata type="product" />,
     },
     {

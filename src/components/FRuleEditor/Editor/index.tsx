@@ -94,7 +94,6 @@ const Editor = (props: Props) => {
   };
 
   const handleInsertCode = (value: string) => {
-    console.log(value, 'values');
     const editor = editorRef.current;
     if (!editor || !value) return;
     const position = editor.getPosition()!;
