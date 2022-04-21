@@ -480,7 +480,9 @@ const Media = (props: Props) => {
               <Button
                 type="primary"
                 disabled={
-                  !!params.get('id') ? getButtonPermission('link/AccessConfig', ['update']) : false
+                  !!params.get('id')
+                    ? getButtonPermission('link/AccessConfig', ['update'])
+                    : getButtonPermission('link/AccessConfig', ['add'])
                 }
                 onClick={async () => {
                   const values = await form.validateFields();

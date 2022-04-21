@@ -4,6 +4,11 @@ import SystemConst from '@/utils/const';
 import type { AccessItem } from './typings';
 
 class Service extends BaseService<AccessItem> {
+  public queryGatewayDetail = (data: any) =>
+    request(`/${SystemConst.API_BASE}/gateway/device/detail/_query`, {
+      method: 'POST',
+      data,
+    });
   public queryList = (data: any) =>
     request(`/${SystemConst.API_BASE}/gateway/device/detail/_query`, {
       method: 'POST',
