@@ -53,7 +53,7 @@ const AccessConfig = () => {
   const handleSearch = (params: any) => {
     setParam(params);
     service
-      .queryList({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
+      .queryGatewayDetail({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
       .then((resp) => {
         if (resp.status === 200) {
           setDataSource(resp.result);

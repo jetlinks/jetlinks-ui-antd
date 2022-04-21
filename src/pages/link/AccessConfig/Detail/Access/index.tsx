@@ -510,7 +510,9 @@ const Access = (props: Props) => {
                   <Button
                     type="primary"
                     disabled={
-                      !props.data?.id ? getButtonPermission('link/AccessConfig', ['update']) : false
+                      !!props.data.id
+                        ? getButtonPermission('link/AccessConfig', ['update'])
+                        : getButtonPermission('link/AccessConfig', ['add'])
                     }
                     onClick={async () => {
                       try {
