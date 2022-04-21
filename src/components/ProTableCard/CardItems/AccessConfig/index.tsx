@@ -1,9 +1,9 @@
 import React from 'react';
-import {StatusColorEnum} from '@/components/BadgeStatus';
-import {TableCard} from '@/components';
+import { StatusColorEnum } from '@/components/BadgeStatus';
+import { TableCard } from '@/components';
 import '@/style/common.less';
-import {Badge, Tooltip} from 'antd';
-import type {AccessItem} from '@/pages/link/AccessConfig/typings';
+import { Badge, Tooltip } from 'antd';
+import type { AccessItem } from '@/pages/link/AccessConfig/typings';
 import './index.less';
 import classNames from 'classnames';
 

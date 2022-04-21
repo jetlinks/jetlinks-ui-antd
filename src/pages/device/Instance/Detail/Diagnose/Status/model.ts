@@ -7,56 +7,30 @@ type StatusProps = {
   info: null | ReactNode;
 };
 
-// export const initStatus = {
-//   product: {
-//     status: 'loading',
-//     text: '正在诊断中...',
-//     info: null,
-//   },
-//   config: {
-//     status: 'loading',
-//     text: '正在诊断中...',
-//     info: null,
-//   },
-//   device: {
-//     status: 'loading',
-//     text: '正在诊断中...',
-//     info: null,
-//   },
-//   deviceConfig: {
-//     status: 'loading',
-//     text: '正在诊断中...',
-//     info: null,
-//   },
-//   gateway: {
-//     status: 'loading',
-//     text: '正在诊断中...',
-//     info: null,
-//   },
-//   network: {
-//     status: 'loading',
-//     text: '正在诊断中...',
-//     info: null,
-//   },
-// };
-
 export const DiagnoseStatusModel = model<{
   status: {
-    product: StatusProps;
-    config: StatusProps;
-    device: StatusProps;
-    deviceConfig: StatusProps;
-    gateway: StatusProps;
-    network: StatusProps;
+    config?: StatusProps;
+    network?: StatusProps;
+    product?: StatusProps;
+    device?: StatusProps;
+    productAuth?: StatusProps;
+    deviceAuth?: StatusProps;
+    deviceAccess?: StatusProps;
+    other?: StatusProps;
   };
 }>({
   status: {
-    product: {
+    config: {
       status: 'loading',
       text: '正在诊断中...',
       info: null,
     },
-    config: {
+    network: {
+      status: 'loading',
+      text: '正在诊断中...',
+      info: null,
+    },
+    product: {
       status: 'loading',
       text: '正在诊断中...',
       info: null,
@@ -66,17 +40,12 @@ export const DiagnoseStatusModel = model<{
       text: '正在诊断中...',
       info: null,
     },
-    deviceConfig: {
+    deviceAccess: {
       status: 'loading',
       text: '正在诊断中...',
       info: null,
     },
-    gateway: {
-      status: 'loading',
-      text: '正在诊断中...',
-      info: null,
-    },
-    network: {
+    other: {
       status: 'loading',
       text: '正在诊断中...',
       info: null,

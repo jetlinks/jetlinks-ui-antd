@@ -1,7 +1,7 @@
-import {useEffect, useState} from 'react';
-import type {BUTTON_PERMISSION, MENUS_CODE_TYPE} from '@/utils/menu/router';
-import {BUTTON_PERMISSION_ENUM} from '@/utils/menu/router';
-import {MENUS_BUTTONS_CACHE} from '@/utils/menu';
+import { useEffect, useState } from 'react';
+import type { BUTTON_PERMISSION, MENUS_CODE_TYPE } from '@/utils/menu/router';
+import { BUTTON_PERMISSION_ENUM } from '@/utils/menu/router';
+import { MENUS_BUTTONS_CACHE } from '@/utils/menu';
 
 export type permissionKeyType = keyof typeof BUTTON_PERMISSION_ENUM;
 export type permissionType = Record<permissionKeyType, boolean>;
