@@ -2,7 +2,7 @@ import { Button, Col, Input, Modal, Row, Tree } from 'antd';
 import { observer } from '@formily/react';
 import { service, state } from '..';
 import ProTable, { ActionType, ProColumns } from '@jetlinks/pro-table';
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { history, useLocation } from 'umi';
 import { PermissionButton } from '@/components';
 import { DisconnectOutlined, EditOutlined } from '@ant-design/icons';
