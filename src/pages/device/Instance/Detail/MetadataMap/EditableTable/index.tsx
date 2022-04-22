@@ -27,6 +27,7 @@ interface EditableCellProps {
   dataIndex: string;
   record: any;
   list: any[];
+  properties: any[];
   handleSave: (record: any) => void;
 }
 
@@ -37,10 +38,12 @@ const EditableCell = ({
   dataIndex,
   record,
   list,
+  properties,
   handleSave,
   ...restProps
 }: EditableCellProps) => {
   const form: any = useContext(EditableContext);
+  const [temp, setTemp] = useState<any>({});
 
   const save = async () => {
     try {
@@ -54,6 +57,7 @@ const EditableCell = ({
   useEffect(() => {
     if (record) {
       form.setFieldsValue({ [dataIndex]: record[dataIndex] });
+      setTemp(properties.find((i) => i.id === record.originalId));
     }
   }, [record]);
 
@@ -71,6 +75,11 @@ const EditableCell = ({
           }
         >
           <Select.Option value={record.metadataId}>使用原始属性</Select.Option>
+          {record.originalId !== record.metadataId && (
+            <Select.Option value={record.originalId}>
+              {temp?.name}({temp?.id})
+            </Select.Option>
+          )}
           {list.length > 0 &&
             list.map((item: any) => (
               <Select.Option key={item?.id} value={item?.id}>
@@ -98,7 +107,7 @@ const EditableTable = (props: Props) => {
     },
     {
       title: '设备上报属性',
-      dataIndex: 'metadataId',
+      dataIndex: 'originalId',
       width: '30%',
       editable: true,
     },
@@ -136,7 +145,7 @@ const EditableTable = (props: Props) => {
     },
   };
 
-  const initData = async () => {
+  const initData = async (lists: any[]) => {
     let resp = null;
     if (props.type === 'device') {
       resp = await service.queryDeviceMetadata(props.data.id);
@@ -147,10 +156,10 @@ const EditableTable = (props: Props) => {
       const data = resp.result;
       const obj: any = {};
       data.map((i: any) => {
-        obj[i?.originalId] = i;
+        obj[i?.metadataId] = i;
       });
-      if (protocolMetadata.length > 0) {
-        setPmList(protocolMetadata.filter((i) => !_.map(data, 'metadataId').includes(i.id)));
+      if (lists.length > 0) {
+        setPmList(lists.filter((i) => !_.map(data, 'originalId').includes(i.id)));
       } else {
         setPmList([]);
       }
@@ -184,8 +193,9 @@ const EditableTable = (props: Props) => {
         )
         .then((resp) => {
           if (resp.status === 200) {
-            setProtocolMetadata(JSON.parse(resp.result || '{}')?.properties || []);
-            initData();
+            const list = JSON.parse(resp.result || '{}')?.properties || [];
+            setProtocolMetadata(list);
+            initData(list);
           }
         });
     }
@@ -201,15 +211,15 @@ const EditableTable = (props: Props) => {
       ](props.data?.id, [
         {
           metadataType: 'property',
-          metadataId: row.metadataId === row.id ? row.metadataId : row.id,
-          originalId: row.metadataId === row.id ? row.id : '',
+          metadataId: row.id,
+          originalId: row.metadataId !== row.id ? row.metadataId : '',
           others: {},
         },
       ]);
       if (resp.status === 200) {
         message.success('操作成功！');
         // 刷新
-        initData();
+        initData(protocolMetadata);
       }
     }
   };
@@ -253,6 +263,7 @@ const EditableTable = (props: Props) => {
         dataIndex: col.dataIndex,
         title: col.title,
         list: pmList,
+        properties: protocolMetadata,
         handleSave: handleSave,
       }),
     };

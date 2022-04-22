@@ -1,6 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { observer } from '@formily/reactive-react';
 import { AlarmLogModel } from './model';
+import TabComponent from './TabComponent';
 
 const Log = observer(() => {
   const list = [
@@ -13,7 +14,7 @@ const Log = observer(() => {
       tab: '设备',
     },
     {
-      key: 'department',
+      key: 'org',
       tab: '部门',
     },
     {
@@ -23,13 +24,13 @@ const Log = observer(() => {
   ];
   return (
     <PageContainer
-      // onTabChange={(key: 'product' | 'device' | 'department' | 'other') => {
-      //     AlarmLogModel.tab = key
-      // }}
+      onTabChange={(key: string) => {
+        AlarmLogModel.tab = key;
+      }}
       tabList={list}
       tabActiveKey={AlarmLogModel.tab}
     >
-      test
+      <TabComponent type={AlarmLogModel.tab} />
     </PageContainer>
   );
 });

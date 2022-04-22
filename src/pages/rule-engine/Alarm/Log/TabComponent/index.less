@@ -1,0 +1,135 @@
+@import '~antd/es/style/themes/default.less';
+
+.ellipsis {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.alarm-log-card {
+  .alarm-log-item {
+    display: flex;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.1);
+
+    .alarm-log-title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 13%;
+      padding: 10px;
+      color: @primary-color;
+      background-color: #f0f2f3;
+      div {
+        .ellipsis();
+      }
+    }
+    .alarm-log-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 87%;
+      padding: 20px;
+      background: url('/images/alarm/background.png') no-repeat;
+      background-size: 100% 100%;
+
+      .alarm-log-image {
+        display: flex;
+        align-items: center;
+
+        .alarm-type {
+          max-width: 120px;
+          .name {
+            color: #000;
+            font-size: 18px;
+          }
+
+          .text {
+            margin-top: 8px;
+            color: #666;
+            font-size: 14px;
+            .ellipsis();
+          }
+        }
+      }
+      .alarm-log-time,
+      .alarm-log-level {
+        max-width: 165px;
+        margin: 0 10px;
+        .log-title {
+          margin-top: 8px;
+          color: #666;
+          font-size: 12px;
+        }
+
+        .context {
+          margin-top: 8px;
+          color: rgba(#000, 0.85);
+          font-size: 14px;
+          .ellipsis();
+        }
+      }
+
+      .alarm-log-status {
+        width: 134px;
+        height: 44px;
+        color: #666;
+        font-size: 16px;
+        line-height: 44px;
+        text-align: center;
+        background-color: #f7f7f7;
+        .icon {
+          margin-right: 10px;
+          color: #666;
+          font-size: 20px;
+        }
+      }
+
+      .status-active {
+        color: #f53434;
+        background-color: rgba(245, 52, 52, 0.08);
+        .icon {
+          color: #f53434;
+        }
+      }
+
+      .alarm-log-actions {
+        .alarm-log-action {
+          display: flex;
+          justify-content: center;
+          width: 72px;
+          height: 72px;
+          background-color: #fff;
+          border: 1px solid @primary-color;
+
+          .btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 72px;
+            height: 72px;
+            .icon {
+              margin-bottom: 5px;
+              color: @primary-color;
+              font-size: 25px;
+            }
+
+            div {
+              color: @primary-color;
+              font-size: 12px;
+            }
+          }
+        }
+        .alarm-log-action:hover {
+          background-color: @primary-color;
+          .icon,
+          div {
+            color: #fff;
+          }
+        }
+      }
+    }
+  }
+}
