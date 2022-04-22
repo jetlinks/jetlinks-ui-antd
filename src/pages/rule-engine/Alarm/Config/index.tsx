@@ -6,6 +6,7 @@ import { ArrayItems, Form, FormButtonGroup, FormGrid, FormItem, Input } from '@f
 import { ISchema } from '@formily/json-schema';
 import { useMemo, useState } from 'react';
 import { createForm } from '@formily/core';
+import FLevelInput from '@/components/FLevelInput';
 
 const Config = () => {
   const [tab, setTab] = useState<'io' | 'config' | string>('config');
@@ -15,10 +16,17 @@ const Config = () => {
       Input,
       ArrayItems,
       FormGrid,
+      FLevelInput,
     },
   });
 
-  const form = useMemo(() => createForm({}), []);
+  const form = useMemo(
+    () =>
+      createForm({
+        effects() {},
+      }),
+    [],
+  );
   const schema1: ISchema = {
     type: 'object',
     properties: {
@@ -26,6 +34,7 @@ const Config = () => {
         type: 'array',
         'x-component': 'ArrayItems',
         'x-decorator': 'FormItem',
+        maxItems: 3,
         items: {
           type: 'void',
           'x-decorator': 'FormGrid',
@@ -35,21 +44,12 @@ const Config = () => {
             columnGap: 2,
           },
           properties: {
-            index: {
-              type: 'void',
-              'x-decorator': 'FormItem',
-              'x-component': 'ArrayItems.Index',
-              title: '级别',
-              'x-decorator-props': {
-                gridSpan: 24,
-              },
-            },
             input: {
               type: 'string',
               'x-decorator': 'FormItem',
-              'x-component': 'Input',
+              'x-component': 'FLevelInput',
               'x-decorator-props': {
-                gridSpan: 22,
+                gridSpan: 23,
               },
             },
             remove: {

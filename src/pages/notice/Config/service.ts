@@ -33,6 +33,44 @@ class Service extends BaseService<ConfigItem> {
       method: 'POST',
       data,
     });
+
+  syncUser = {
+    dingTalkDept: (configId: string) =>
+      request(`${SystemConst.API_BASE}/notifier/dingtalk/corp/${configId}/departments/tree`),
+    dingTalkUser: (configId: string, departmentId: string) =>
+      request(`${SystemConst.API_BASE}/notifier/dingtalk/corp/${configId}/${departmentId}/users`),
+    wechatDept: (configId: string) =>
+      request(`${SystemConst.API_BASE}/notifier/wechat/corp/${configId}/departments`),
+    getDeptUser: (type: 'wechat' | 'dingTalk', configId: string, departmentId: string) =>
+      request(`${SystemConst.API_BASE}/notifier/${type}/corp/${configId}/${departmentId}/users`, {
+        method: 'GET',
+      }),
+    wechatUser: (configId: string, departmentId: string) =>
+      request(`${SystemConst.API_BASE}/notifier/wechat/corp/${configId}/${departmentId}/users`),
+    bindInfo: (type: string, provider: string, configId: string) =>
+      request(`${SystemConst.API_BASE}/user/third-party/${type}_${provider}/${configId}`),
+    noBindUser: (data: any) =>
+      request(`${SystemConst.API_BASE}/user/_query/no-paging`, {
+        method: 'POST',
+        data,
+      }),
+    bindUser: (
+      type: string,
+      provider: string,
+      configId: string,
+      data: { userId: string; providerName: string; thirdPartyUserId: string }[],
+    ) =>
+      request(`${SystemConst.API_BASE}/user/third-party/${type}_${provider}/${configId}`, {
+        method: 'PATCH',
+        data,
+      }),
+    getUserBindInfo: () =>
+      request(`${SystemConst.API_BASE}/user/third-party/me`, { method: 'GET' }),
+    unBindUser: (bindId: string) =>
+      request(`${SystemConst.API_BASE}/user/third-party/me/${bindId}`, {
+        method: 'DELETE',
+      }),
+  };
 }
 
 export default Service;

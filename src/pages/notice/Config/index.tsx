@@ -11,7 +11,7 @@ import {
   TeamOutlined,
   UnorderedListOutlined,
 } from '@ant-design/icons';
-import { message, Space, Tooltip, Upload } from 'antd';
+import { message, Space, Upload } from 'antd';
 import { useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { downloadObject } from '@/utils/util';
@@ -73,21 +73,25 @@ const Config = observer(() => {
       align: 'center',
       width: 200,
       render: (text, record) => [
-        <PermissionButton
-          tooltip={{
-            title: '同步用户',
-          }}
-          type="link"
-          onClick={() => {
-            state.syncUser = true;
-            state.current = record;
-          }}
-        >
-          <TeamOutlined />
-        </PermissionButton>,
+        (id === 'dingTalk' || id === 'weixin') && (
+          <PermissionButton
+            tooltip={{
+              title: '同步用户',
+            }}
+            style={{ padding: 0 }}
+            type="link"
+            onClick={() => {
+              state.syncUser = true;
+              state.current = record;
+            }}
+          >
+            <TeamOutlined />
+          </PermissionButton>
+        ),
         <PermissionButton
           key="edit"
           type="link"
+          style={{ padding: 0 }}
           isPermission={configPermission.update}
           onClick={async () => {
             // setLoading(true);
@@ -105,6 +109,7 @@ const Config = observer(() => {
         </PermissionButton>,
         <PermissionButton
           type="link"
+          style={{ padding: 0 }}
           isPermission={configPermission.export}
           onClick={() =>
             downloadObject(
@@ -124,24 +129,25 @@ const Config = observer(() => {
         </PermissionButton>,
         <PermissionButton
           type="link"
+          style={{ padding: 0 }}
           isPermission={configPermission.debug}
           key="debug"
           onClick={() => {
             state.debug = true;
             state.current = record;
           }}
-        >
-          <Tooltip
-            title={intl.formatMessage({
+          tooltip={{
+            title: intl.formatMessage({
               id: 'pages.notice.option.debug',
               defaultMessage: '调试',
-            })}
-          >
-            <BugOutlined />
-          </Tooltip>
+            }),
+          }}
+        >
+          <BugOutlined />
         </PermissionButton>,
         <PermissionButton
           type="link"
+          style={{ padding: 0 }}
           isPermission={configPermission.log}
           key="record"
           onClick={() => {
@@ -157,6 +163,7 @@ const Config = observer(() => {
           <BarsOutlined />
         </PermissionButton>,
         <PermissionButton
+          style={{ padding: 0 }}
           type="link"
           popConfirm={{
             onConfirm: async () => {
@@ -289,17 +296,19 @@ const Config = observer(() => {
               </div>
             }
             actions={[
-              <PermissionButton
-                key="syncUser"
-                isPermission={true}
-                onClick={() => {
-                  state.syncUser = true;
-                  state.current = record;
-                }}
-              >
-                <TeamOutlined />
-                同步用户
-              </PermissionButton>,
+              (id === 'dingTalk' || id === 'weixin') && (
+                <PermissionButton
+                  key="syncUser"
+                  isPermission={true}
+                  onClick={() => {
+                    state.syncUser = true;
+                    state.current = record;
+                  }}
+                >
+                  <TeamOutlined />
+                  同步用户
+                </PermissionButton>
+              ),
               <PermissionButton
                 isPermission={configPermission.update}
                 type={'link'}
