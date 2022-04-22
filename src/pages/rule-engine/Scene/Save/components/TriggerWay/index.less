@@ -1,0 +1,24 @@
+@import '~antd/es/style/themes/default.less';
+
+.trigger-way-warp {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+
+  .trigger-way-item {
+    padding: 20px 16px;
+    border: 1px solid #e0e4e8;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.3s;
+
+    &:hover {
+      color: @primary-color-hover;
+    }
+
+    &.active {
+      color: @primary-color-active;
+      border-color: @primary-color-active;
+    }
+  }
+}

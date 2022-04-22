@@ -1,7 +1,8 @@
 // 路由components映射
 import type { IRouteProps } from 'umi';
 import type { MenuItem } from '@/pages/system/Menu/typing';
-import { BUTTON_PERMISSION, getDetailNameByCode, MENUS_CODE, MENUS_CODE_TYPE } from './router';
+import { getDetailNameByCode, MENUS_CODE } from './router';
+import type { BUTTON_PERMISSION, MENUS_CODE_TYPE } from './router';
 
 /** localStorage key */
 export const MENUS_DATA_CACHE = 'MENUS_DATA_CACHE';
@@ -28,6 +29,9 @@ const extraRouteObj = {
       { code: 'Channel', name: '通道列表' },
       { code: 'Playback', name: '回放' },
     ],
+  },
+  'rule-engine/Scene': {
+    children: [{ code: 'Save', name: '详情' }],
   },
 };
 
@@ -257,7 +261,7 @@ export const getButtonPermission = (
  * 通过缓存的数据取出相应的路由url
  * @param code
  */
-export const getMenuPathByCode = (code: string): string => {
+export const getMenuPathByCode = (code: MENUS_CODE_TYPE): string => {
   const menusStr = localStorage.getItem(MENUS_DATA_CACHE) || '{}';
   const menusData = JSON.parse(menusStr);
   return menusData[code];
