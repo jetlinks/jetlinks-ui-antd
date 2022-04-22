@@ -31,11 +31,12 @@ class Service extends BaseService<AccessItem> {
       method: 'GET',
       params,
     });
-  public getProtocolList = (transport: string, params?: any) =>
-    request(`/${SystemConst.API_BASE}/protocol/supports/${transport}`, {
+  public getProtocolList = (transport?: string, params?: any) => {
+    return request(`/${SystemConst.API_BASE}/protocol/supports/${transport ? transport : ''}`, {
       method: 'GET',
       params,
     });
+  };
   public getConfigView = (id: string, transport: string) =>
     request(`/${SystemConst.API_BASE}/protocol/${id}/transport/${transport}`, {
       method: 'GET',
