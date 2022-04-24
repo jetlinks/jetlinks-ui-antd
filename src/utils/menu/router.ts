@@ -61,6 +61,7 @@ export enum MENUS_CODE {
   'rule-engine/SQLRule' = 'rule-engine/SQLRule',
   'rule-engine/Scene' = 'rule-engine/Scene',
   'rule-engine/Alarm/Config' = 'rule-engine/Alarm/Config',
+  'rule-engine/Alarm/Configuration' = 'rule-engine/Alarm/Configuration',
   'simulator/Device' = 'simulator/Device',
   'system/DataSource' = 'system/DataSource',
   'system/Department/Assets' = 'system/Department/Assets',

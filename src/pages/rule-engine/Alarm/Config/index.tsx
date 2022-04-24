@@ -10,7 +10,7 @@ import FLevelInput from '@/components/FLevelInput';
 import { IOConfigItem } from '@/pages/rule-engine/Alarm/Config/typing';
 import Service from '@/pages/rule-engine/Alarm/Config/service';
 
-const service = new Service('alarm/config');
+export const service = new Service('alarm/config');
 const Config = () => {
   const [tab, setTab] = useState<'io' | 'config' | string>('config');
   const SchemaField = createSchemaField({
