@@ -2,7 +2,7 @@ import { Button, Drawer, Dropdown, Menu, message } from 'antd';
 import { createSchemaField, observer } from '@formily/react';
 import MetadataModel from '../model';
 import type { Field, IFieldState } from '@formily/core';
-import { createForm, registerValidateRules } from '@formily/core';
+import { createForm, onFieldReact, registerValidateRules } from '@formily/core';
 import {
   ArrayItems,
   Checkbox,
@@ -57,6 +57,44 @@ const Edit = observer((props: Props) => {
     () =>
       createForm({
         initialValues: MetadataModel.item as Record<string, unknown>,
+        effects: () => {
+          onFieldReact('expands.metrics.*.*', (field, form1) => {
+            console.log('指标配置');
+            const type = field.query('valueType.type').take() as Field;
+            console.log(type.value, 'value');
+
+            const componentMap = {
+              int: 'NumberPicker',
+              long: 'NumberPicker',
+              float: 'NumberPicker',
+              double: 'NumberPicker',
+              number: 'NumberPicker',
+              date: 'DatePicker',
+              boolean: 'Select',
+            };
+
+            form1.setFieldState('expands.metrics.*.edit.space.value.*', (state) => {
+              state.componentType = componentMap[type.value] || 'Input';
+              if (type.value === 'date') {
+                state.componentProps = {
+                  showTime: true,
+                };
+              } else if (type.value === 'boolean') {
+                state.componentType = 'Select';
+                // 获取 boolean配置的值
+                const values = form1.getValuesIn('valueType');
+                state.dataSource = [
+                  { label: values.trueText, value: values.trueValue },
+                  { label: values.falseText, value: values.falseValue },
+                ];
+              }
+            });
+          });
+          /// 处理Boolean 类型
+          // expands.metrics.0.edit.space.value.0 路径
+          // const metricsPath = field.query('expands.metrics.value.0');
+          // form.setValuesIn('expands.metrics.value.0', 'testtttt')
+        },
       }),
     [],
   );
@@ -698,13 +736,10 @@ const Edit = observer((props: Props) => {
                             fulfill: {
                               state: {
                                 decoratorProps: {
-                                  gridSpan: '{{!!$deps[0]?5:10}}',
+                                  gridSpan: '{{!!$deps[0]?5:$deps[1]==="boolean"?12:10}}',
                                 },
                                 componentType:
                                   '{{["int","long","double","float"].includes($deps[1])?"NumberPicker":["date"].includes($deps[1])?"DatePicker":"Input"}}',
-                                componentProps: {
-                                  showTime: true,
-                                },
                               },
                             },
                           },
@@ -717,21 +752,28 @@ const Edit = observer((props: Props) => {
                           'x-decorator-props': {
                             gridSpan: 5,
                           },
-                          'x-reactions': {
-                            dependencies: ['..range', 'valueType.type'],
-                            fulfill: {
-                              state: {
-                                visible: '{{!!$deps[0]}}',
-                                componentType:
-                                  '{{["int","long","double","float"].includes($deps[1])?"NumberPicker":["date"].includes($deps[1])?"DatePicker":"Input"}}',
-                                componentProps: {
-                                  showTime: true,
+                          'x-reactions': [
+                            {
+                              dependencies: ['..range', 'valueType.type'],
+                              fulfill: {
+                                state: {
+                                  visible: '{{!!$deps[0]}}',
+                                  componentType:
+                                    '{{["int","long","double","float"].includes($deps[1])?"NumberPicker":["date"].includes($deps[1])?"DatePicker":"Input"}}',
                                 },
                               },
                             },
-                          },
-                          // 根据数据类型来渲染不同的组件
+                            {
+                              dependencies: ['valueType.type'],
+                              fulfill: {
+                                state: {
+                                  visible: '{{!$deps[0]==="boolean"}}',
+                                },
+                              },
+                            },
+                          ],
                         },
+                        // 根据数据类型来渲染不同的组件
                         range: {
                           type: 'boolean',
                           default: false,
@@ -742,6 +784,26 @@ const Edit = observer((props: Props) => {
                           },
                           'x-decorator-props': {
                             gridSpan: 2,
+                          },
+                          'x-reactions': {
+                            dependencies: ['valueType.type'],
+                            when: '{{$deps[0]==="boolean"}}',
+                            fulfill: {
+                              state: {
+                                visible: false,
+                                decoratorProps: {
+                                  gridSpan: 0,
+                                },
+                              },
+                            },
+                            otherwise: {
+                              state: {
+                                visible: true,
+                                decoratorProps: {
+                                  gridSpan: 2,
+                                },
+                              },
+                            },
                           },
                         },
                       },
@@ -771,7 +833,8 @@ const Edit = observer((props: Props) => {
               dependencies: ['valueType.type'],
               fulfill: {
                 state: {
-                  visible: "{{['int','float','double','long','date','string'].includes($deps[0])}}",
+                  visible:
+                    "{{['int','float','double','long','date','string','boolean'].includes($deps[0])}}",
                 },
               },
             },
