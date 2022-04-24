@@ -5,8 +5,11 @@ import type { Field, IFieldState } from '@formily/core';
 import { createForm, registerValidateRules } from '@formily/core';
 import {
   ArrayItems,
+  Checkbox,
+  DatePicker,
   Editable,
   Form,
+  FormGrid,
   FormItem,
   FormLayout,
   Input,
@@ -102,6 +105,9 @@ const Edit = observer((props: Props) => {
       BooleanEnum,
       ConfigParam,
       FRuleEditor,
+      Checkbox,
+      FormGrid,
+      DatePicker,
     },
     scope: {
       async asyncOtherConfig(field: Field) {
@@ -615,6 +621,160 @@ const Edit = observer((props: Props) => {
             'x-decorator': 'FormItem',
             'x-component': 'ConfigParam',
             'x-reactions': '{{asyncOtherConfig}}',
+          },
+          // 指标
+          metrics: {
+            type: 'array',
+            'x-component': 'ArrayItems',
+            'x-decorator': 'FormItem',
+            title: '指标配置',
+            items: {
+              type: 'object',
+              'x-decorator': 'ArrayItems.Item',
+              properties: {
+                left: {
+                  type: 'void',
+                  'x-component': 'Space',
+                  properties: {
+                    sort: {
+                      type: 'void',
+                      'x-decorator': 'FormItem',
+                      'x-component': 'ArrayItems.SortHandle',
+                    },
+                    index: {
+                      type: 'void',
+                      'x-decorator': 'FormItem',
+                      'x-component': 'ArrayItems.Index',
+                    },
+                  },
+                },
+                edit: {
+                  type: 'void',
+                  'x-component': 'Editable.Popover',
+                  title: '指标数据',
+                  properties: {
+                    id: {
+                      // 标识
+                      title: '标识',
+                      'x-decorator': 'FormItem',
+                      'x-component': 'Input',
+                      'x-decorator-props': {
+                        labelAlign: 'left',
+                        layout: 'vertical',
+                      },
+                    },
+                    name: {
+                      // 名称
+                      title: '名称',
+                      'x-decorator': 'FormItem',
+                      'x-component': 'Input',
+                      'x-decorator-props': {
+                        labelAlign: 'left',
+                        layout: 'vertical',
+                      },
+                    },
+                    space: {
+                      type: 'void',
+                      title: '指标值',
+                      'x-decorator': 'FormItem',
+                      'x-component': 'FormGrid',
+                      'x-decorator-props': {
+                        labelAlign: 'left',
+                        layout: 'vertical',
+                      },
+                      'x-component-props': {
+                        maxColumns: 12,
+                        minColumns: 12,
+                      },
+                      properties: {
+                        'value[0]': {
+                          'x-decorator': 'FormItem',
+                          'x-component': 'Input',
+                          'x-decorator-props': {
+                            gridSpan: 5,
+                          },
+                          'x-reactions': {
+                            dependencies: ['..range', 'valueType.type'],
+                            fulfill: {
+                              state: {
+                                decoratorProps: {
+                                  gridSpan: '{{!!$deps[0]?5:10}}',
+                                },
+                                componentType:
+                                  '{{["int","long","double","float"].includes($deps[1])?"NumberPicker":["date"].includes($deps[1])?"DatePicker":"Input"}}',
+                                componentProps: {
+                                  showTime: true,
+                                },
+                              },
+                            },
+                          },
+                          // 根据数据类型来渲染不同的组件
+                        },
+                        'value[1]': {
+                          title: '~',
+                          'x-decorator': 'FormItem',
+                          'x-component': 'Input',
+                          'x-decorator-props': {
+                            gridSpan: 5,
+                          },
+                          'x-reactions': {
+                            dependencies: ['..range', 'valueType.type'],
+                            fulfill: {
+                              state: {
+                                visible: '{{!!$deps[0]}}',
+                                componentType:
+                                  '{{["int","long","double","float"].includes($deps[1])?"NumberPicker":["date"].includes($deps[1])?"DatePicker":"Input"}}',
+                                componentProps: {
+                                  showTime: true,
+                                },
+                              },
+                            },
+                          },
+                          // 根据数据类型来渲染不同的组件
+                        },
+                        range: {
+                          type: 'boolean',
+                          default: false,
+                          'x-decorator': 'FormItem',
+                          'x-component': 'Checkbox',
+                          'x-component-props': {
+                            children: '范围',
+                          },
+                          'x-decorator-props': {
+                            gridSpan: 2,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+                right: {
+                  type: 'void',
+                  'x-component': 'Space',
+                  properties: {
+                    remove: {
+                      type: 'void',
+                      'x-component': 'ArrayItems.Remove',
+                    },
+                  },
+                },
+              },
+            },
+            properties: {
+              addition: {
+                type: 'void',
+                title: '添加指标',
+                'x-component': 'ArrayItems.Addition',
+              },
+            },
+            'x-reactions': {
+              dependencies: ['valueType.type'],
+              fulfill: {
+                state: {
+                  visible: "{{['int','float','double','long','date','string'].includes($deps[0])}}",
+                },
+              },
+            },
           },
         },
       },
