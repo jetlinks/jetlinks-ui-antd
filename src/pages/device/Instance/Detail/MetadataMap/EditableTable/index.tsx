@@ -48,7 +48,7 @@ const EditableCell = ({
   const save = async () => {
     try {
       const values = await form.validateFields();
-      handleSave({ ...record, metadataId: values?.metadataId });
+      handleSave({ ...record, originalId: values?.originalId });
     } catch (errInfo) {
       console.log('Save failed:', errInfo);
     }
@@ -205,14 +205,14 @@ const EditableTable = (props: Props) => {
     const newData = [...dataSource.data];
     const index = newData.findIndex((item) => row.id === item.id);
     const item = newData[index];
-    if (item?.metadataId !== row?.metadataId) {
+    if (item?.originalId !== row?.originalId) {
       const resp = await service[
         props.type === 'device' ? 'saveDeviceMetadata' : 'saveProductMetadata'
       ](props.data?.id, [
         {
           metadataType: 'property',
-          metadataId: row.id,
-          originalId: row.metadataId !== row.id ? row.metadataId : '',
+          metadataId: row.metadataId,
+          originalId: row.metadataId !== row.originalId ? row.originalId : '',
           others: {},
         },
       ]);

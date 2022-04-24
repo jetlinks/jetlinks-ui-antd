@@ -3,60 +3,59 @@ import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { Modal } from 'antd';
 import { useRef, useState } from 'react';
-import { service } from '@/pages/media/Cascade';
+import { service } from '@/pages/rule-engine/Alarm/Log';
 
 interface Props {
-  data: string;
+  data: Partial<AlarmLogItem>;
   close: () => void;
 }
+
+const typeMap = new Map();
+typeMap.set('system', '系统');
+typeMap.set('user', '人工');
 
 const SolveLog = (props: Props) => {
   const [param, setParam] = useState<any>({
     terms: [
       {
-        column: 'id',
-        termType: 'cascade_channel$not',
-        value: props.data,
-        type: 'and',
-      },
-      {
-        column: 'catalogType',
+        column: 'alarmRecordId',
         termType: 'eq',
-        value: 'device',
+        value: props.data.id,
         type: 'and',
       },
     ],
     sorts: [
       {
-        name: 'name',
-        order: 'asc',
+        name: 'createTime',
+        order: 'desc',
       },
     ],
   });
   const actionRef = useRef<ActionType>();
 
-  const columns: ProColumns<any>[] = [
+  const columns: ProColumns<AlarmLogSolveHistoryItem>[] = [
     {
-      dataIndex: 'deviceName',
+      dataIndex: 'createTime',
       title: '处理时间',
     },
     {
-      dataIndex: 'name',
+      dataIndex: 'handleType',
       title: '处理类型',
+      render: (text: any) => <span>{typeMap.get(text) || ''}</span>,
     },
     {
       dataIndex: 'address',
       title: '告警时间',
     },
     {
-      dataIndex: 'manufacturer',
+      dataIndex: 'description',
       title: '告警处理',
     },
   ];
 
   return (
     <Modal title={'处理记录'} visible onCancel={props.close} onOk={() => {}} width={1200}>
-      <SearchComponent<any>
+      <SearchComponent<AlarmLogSolveHistoryItem>
         field={columns}
         target="bind-channel"
         enableSave={false}
@@ -64,15 +63,9 @@ const SolveLog = (props: Props) => {
           actionRef.current?.reload();
           const terms = [
             {
-              column: 'id',
-              termType: 'cascade_channel$not',
-              value: props.data,
-              type: 'and',
-            },
-            {
-              column: 'catalogType',
+              column: 'alarmRecordId',
               termType: 'eq',
-              value: 'device',
+              value: props.data.id,
               type: 'and',
             },
           ];
@@ -82,14 +75,17 @@ const SolveLog = (props: Props) => {
           });
         }}
       />
-      <ProTable<any>
+      <ProTable<AlarmLogSolveHistoryItem>
         actionRef={actionRef}
         params={param}
         columns={columns}
         search={false}
         headerTitle={'记录列表'}
         request={async (params) => {
-          return service.queryChannel({ ...params, sorts: [{ name: 'name', order: 'desc' }] });
+          return service.queryHandleHistory({
+            ...params,
+            sorts: [{ name: 'createTime', order: 'desc' }],
+          });
         }}
         rowKey="id"
       />

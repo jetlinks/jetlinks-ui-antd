@@ -14,14 +14,32 @@
     box-shadow: 0 2px 16px rgba(0, 0, 0, 0.1);
 
     .alarm-log-title {
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 13%;
+      width: 15%;
       padding: 10px;
+      overflow: hidden;
       color: @primary-color;
       background-color: #f0f2f3;
-      div {
+      .alarm-log-level {
+        position: absolute;
+        top: 10px;
+        right: -12px;
+        display: flex;
+        justify-content: center;
+        width: 100px;
+        padding: 2px 0;
+        color: white;
+        background-color: red;
+        transform: skewX(45deg);
+        .alarm-log-text {
+          transform: skewX(-45deg);
+        }
+      }
+      .alarm-log-title-text {
+        margin: 0 10px;
         .ellipsis();
       }
     }
@@ -40,6 +58,8 @@
 
         .alarm-type {
           max-width: 120px;
+          padding-right: 50px;
+          border-right: 1px solid rgba(0, 0, 0, 0.09);
           .name {
             color: #000;
             font-size: 18px;
@@ -52,45 +72,25 @@
             .ellipsis();
           }
         }
-      }
-      .alarm-log-time,
-      .alarm-log-level {
-        max-width: 165px;
-        margin: 0 10px;
-        .log-title {
-          margin-top: 8px;
-          color: #666;
-          font-size: 12px;
-        }
+        .alarm-log-right {
+          display: flex;
+          padding-left: 40px;
+          .alarm-log-time {
+            max-width: 165px;
+            margin: 0 10px;
+            .log-title {
+              margin-top: 8px;
+              color: #666;
+              font-size: 12px;
+            }
 
-        .context {
-          margin-top: 8px;
-          color: rgba(#000, 0.85);
-          font-size: 14px;
-          .ellipsis();
-        }
-      }
-
-      .alarm-log-status {
-        width: 134px;
-        height: 44px;
-        color: #666;
-        font-size: 16px;
-        line-height: 44px;
-        text-align: center;
-        background-color: #f7f7f7;
-        .icon {
-          margin-right: 10px;
-          color: #666;
-          font-size: 20px;
-        }
-      }
-
-      .status-active {
-        color: #f53434;
-        background-color: rgba(245, 52, 52, 0.08);
-        .icon {
-          color: #f53434;
+            .context {
+              margin-top: 8px;
+              color: rgba(#000, 0.85);
+              font-size: 14px;
+              .ellipsis();
+            }
+          }
         }
       }
 

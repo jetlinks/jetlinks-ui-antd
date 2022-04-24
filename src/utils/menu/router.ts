@@ -60,6 +60,8 @@ export enum MENUS_CODE {
   'rule-engine/Instance' = 'rule-engine/Instance',
   'rule-engine/SQLRule' = 'rule-engine/SQLRule',
   'rule-engine/Scene' = 'rule-engine/Scene',
+  'rule-engine/Alarm/Log' = 'rule-engine/Alarm/Log',
+  'rule-engine/Alarm/Log/Detail' = 'rule-engine/Alarm/Log/Detail',
   'simulator/Device' = 'simulator/Device',
   'system/DataSource' = 'system/DataSource',
   'system/Department/Assets' = 'system/Department/Assets',
@@ -140,4 +142,5 @@ export const getDetailNameByCode = {
   'link/Type/Detail': '网络组件详情',
   'link/AccessConfig/Detail': '配置详情',
   'media/Stream/Detail': '流媒体详情',
+  'rule-engine/Alarm/Log/Detail': '告警日志',
 };
