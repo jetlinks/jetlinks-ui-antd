@@ -124,6 +124,9 @@ const Detail = observer(() => {
         required: true,
         'x-component': 'Input',
         'x-decorator': 'FormItem',
+        'x-component-props': {
+          placeholder: '请输入名称',
+        },
       },
       type: {
         title: '分类',

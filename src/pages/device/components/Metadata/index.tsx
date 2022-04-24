@@ -26,7 +26,6 @@ const Metadata = observer((props: Props) => {
   const { permission } = PermissionButton.usePermission(
     props.type === 'device' ? 'device/Instance' : 'device/Product',
   );
-  console.log(InstanceModel.detail, 'test');
   return (
     <div style={{ position: 'relative' }}>
       <div className={styles.tips}>

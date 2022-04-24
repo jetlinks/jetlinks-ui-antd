@@ -74,7 +74,6 @@ const FSelectDevice = connect((props: Props) => {
     },
     selectedRowKeys: [data?.id] as Key[],
   };
-  console.log(props?.value, 'de-name');
   return (
     <>
       <Input
@@ -92,7 +91,6 @@ const FSelectDevice = connect((props: Props) => {
           onCancel={() => setVisible(false)}
           onOk={() => {
             setVisible(false);
-            console.log(data, 'dd');
             props.onChange(data);
           }}
         >

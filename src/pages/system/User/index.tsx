@@ -10,6 +10,7 @@ import {
   EditOutlined,
   PlayCircleOutlined,
   PlusOutlined,
+  SafetyOutlined,
 } from '@ant-design/icons';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { useRef, useState } from 'react';
@@ -17,6 +18,7 @@ import Save from './Save';
 import { observer } from '@formily/react';
 import { PermissionButton } from '@/components';
 import usePermissions from '@/hooks/permission';
+import ResetPassword from '@/pages/system/User/ResetPassword';
 
 export const service = new Service('user');
 
@@ -32,6 +34,7 @@ const User = observer(() => {
     setCurrent(record);
   };
 
+  const [reset, setReset] = useState<boolean>(false);
   const columns: ProColumns<UserItem>[] = [
     {
       title: intl.formatMessage({
@@ -108,6 +111,14 @@ const User = observer(() => {
       ),
     },
     {
+      dataIndex: 'telephone',
+      title: '手机号',
+    },
+    {
+      dataIndex: 'email',
+      title: '邮箱',
+    },
+    {
       title: intl.formatMessage({
         id: 'pages.data.option',
         defaultMessage: '操作',
@@ -162,6 +173,21 @@ const User = observer(() => {
           }}
         >
           {record.status ? <CloseCircleOutlined /> : <PlayCircleOutlined />}
+        </PermissionButton>,
+        <PermissionButton
+          type="link"
+          key="password"
+          style={{ padding: 0 }}
+          tooltip={{
+            title: '重置密码',
+          }}
+          onClick={() => {
+            setReset(true);
+            setCurrent(record);
+          }}
+          isPermission={userPermission.update}
+        >
+          <SafetyOutlined />
         </PermissionButton>,
         <PermissionButton
           type="link"
@@ -231,6 +257,7 @@ const User = observer(() => {
         }}
         data={current}
       />
+      <ResetPassword data={current} visible={reset} close={() => setReset(false)} />
     </PageContainer>
   );
 });

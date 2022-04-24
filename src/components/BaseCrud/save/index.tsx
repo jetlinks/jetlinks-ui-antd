@@ -107,15 +107,7 @@ const Save = <T extends Record<string, any>>(props: Props<T>) => {
 
   const save = async () => {
     const values: T = await (customForm || form).submit();
-    // 特殊处理通知模版
-
-    if (service?.getUri().includes('/notifier/template')) {
-      (values as T & { template: Record<string, any> | string }).template = JSON.stringify(
-        values.template,
-      );
-    }
     const response = await service.update(values);
-
     if (response.status === 200) {
       Store.set(SystemConst.BASE_UPDATE_DATA, response.result);
     }

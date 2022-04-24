@@ -34,7 +34,6 @@ const NormalUpload = (props: any) => {
     const _data = updateMetadata('properties', _metadata.properties, target) as ProductItem;
     // const resp = await service.update(_product);
     const resp = await asyncUpdateMedata(props.type, _data);
-    console.log(resp);
     if (resp.status === 200) {
       message.success('操作成功');
       // 刷新物模型

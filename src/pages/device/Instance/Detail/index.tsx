@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { InstanceModel, service } from '@/pages/device/Instance';
 import { history, useParams } from 'umi';
-import { Badge, Card, Descriptions, Divider, message } from 'antd';
+import { Badge, Card, Descriptions, Divider, message, Tooltip } from 'antd';
 import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import { observer } from '@formily/react';
@@ -22,6 +22,7 @@ import SystemConst from '@/utils/const';
 import { getMenuPathByCode, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
 import { PermissionButton } from '@/components';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 
 export const deviceStatus = new Map();
 deviceStatus.set('online', <Badge status="success" text={'在线'} />);
@@ -63,10 +64,37 @@ const InstanceDetail = observer(() => {
     },
     {
       key: 'metadata',
-      tab: intl.formatMessage({
-        id: 'pages.device.instanceDetail.metadata',
-        defaultMessage: '物模型',
-      }),
+      tab: (
+        <>
+          {intl.formatMessage({
+            id: 'pages.device.instanceDetail.metadata',
+            defaultMessage: '物模型',
+          })}
+          <Tooltip
+            title={
+              <>
+                属性：
+                <br />
+                用于描述设备运行时具体信息和状态。
+                <br />
+                功能：
+                <br />
+                指设备可供外部调用的指令或方法。
+                <br />
+                事件：
+                <br />
+                设备运行时，主动上报给云端的信息。
+                <br />
+                标签：
+                <br />
+                统一为设备添加拓展字段，添加后将在设备信息页显示。
+              </>
+            }
+          >
+            <QuestionCircleOutlined style={{ marginLeft: 5 }} />
+          </Tooltip>
+        </>
+      ),
       component: (
         <Card>
           <Metadata
@@ -118,7 +146,8 @@ const InstanceDetail = observer(() => {
       component: <MetadataMap type="device" />,
     },
   ];
-  const [list, setList] = useState<{ key: string; tab: string; component: ReactNode }[]>(baseList);
+  const [list, setList] =
+    useState<{ key: string; tab: string | ReactNode; component: ReactNode }[]>(baseList);
 
   const getDetail = (id: string) => {
     service.detail(id).then((response) => {

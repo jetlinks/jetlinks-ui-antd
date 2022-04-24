@@ -1,5 +1,6 @@
 import type { ProColumns } from '@jetlinks/pro-table';
 import type { MetadataItem } from '@/pages/device/Product/typings';
+import { Tag } from 'antd';
 
 const BaseColumns: ProColumns<MetadataItem>[] = [
   // {
@@ -22,6 +23,12 @@ const BaseColumns: ProColumns<MetadataItem>[] = [
   },
 ];
 
+const type = {
+  read: '读',
+  write: '写',
+  report: '上报',
+};
+
 const EventColumns: ProColumns<MetadataItem>[] = BaseColumns.concat([
   {
     title: '事件级别',
@@ -43,11 +50,11 @@ const FunctionColumns: ProColumns<MetadataItem>[] = BaseColumns.concat([
     dataIndex: 'async',
     render: (text) => (text ? '是' : '否'),
   },
-  {
-    title: '读写类型',
-    dataIndex: 'expands.readOnly',
-    render: (text) => (text ? '是' : '否'),
-  },
+  // {
+  //   title: '读写类型',
+  //   dataIndex: 'expands',
+  //   render: (text: any) => (text?.type || []).map((item: string | number) => <Tag>{type[item]}</Tag>),
+  // },
 ]);
 
 const PropertyColumns: ProColumns<MetadataItem>[] = BaseColumns.concat([
@@ -58,8 +65,9 @@ const PropertyColumns: ProColumns<MetadataItem>[] = BaseColumns.concat([
   },
   {
     title: '读写类型',
-    dataIndex: 'expands.readOnly',
-    render: (text) => (text === 'true' || text === true ? '是' : '否'),
+    dataIndex: 'expands',
+    render: (text: any) =>
+      (text?.type || []).map((item: string | number) => <Tag>{type[item]}</Tag>),
   },
 ]);
 
@@ -71,8 +79,9 @@ const TagColumns: ProColumns<MetadataItem>[] = BaseColumns.concat([
   },
   {
     title: '读写类型',
-    dataIndex: 'expands.readOnly',
-    render: (text) => (text === 'true' || text === true ? '是' : '否'),
+    dataIndex: 'expands',
+    render: (text: any) =>
+      (text?.type || []).map((item: string | number) => <Tag>{type[item]}</Tag>),
   },
 ]);
 

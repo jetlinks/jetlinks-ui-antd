@@ -10,6 +10,7 @@ import { DiagnoseStatusModel } from './model';
 import { PermissionButton } from '@/components';
 import DiagnosticAdvice from './DiagnosticAdvice';
 import ManualInspection from './ManualInspection';
+
 interface Props {
   onChange: (type: string) => void;
   flag: boolean;

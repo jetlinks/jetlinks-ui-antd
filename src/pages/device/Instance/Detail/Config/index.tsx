@@ -40,7 +40,6 @@ const Config = () => {
   };
 
   useEffect(() => {
-    console.log(id);
     if (id) {
       service.getConfigMetadata(id).then((config) => {
         setMetadata(config?.result);
