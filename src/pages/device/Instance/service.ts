@@ -174,6 +174,11 @@ class Service extends BaseService<DeviceInstance> {
     request(`/${SystemConst.API_BASE}/device/product/${id}/config-metadata`, {
       method: 'GET',
     });
+  // 设备配置
+  public queryDeviceConfig = (id: string) =>
+    request(`/${SystemConst.API_BASE}/device-instance/${id}/config-metadata`, {
+      method: 'GET',
+    });
   // 设备接入网关状态
   public queryGatewayState = (id: string) =>
     request(`/${SystemConst.API_BASE}/gateway/device/${id}/detail`, {
@@ -236,6 +241,11 @@ class Service extends BaseService<DeviceInstance> {
   //查询产品物模型映射
   public queryProductMetadata = (productId: string) =>
     request(`/${SystemConst.API_BASE}/device/metadata/mapping/product/${productId}`, {
+      method: 'GET',
+    });
+  //
+  public queryProcotolDetail = (type: string, transport: string) =>
+    request(`/${SystemConst.API_BASE}/protocol/${type}/transport/${transport}`, {
       method: 'GET',
     });
 

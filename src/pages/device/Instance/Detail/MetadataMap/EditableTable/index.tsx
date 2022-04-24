@@ -1,7 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Form, Input, message, Pagination, Select, Table } from 'antd';
+import { Badge, Col, Form, Input, message, Pagination, Row, Select, Table } from 'antd';
 import { service } from '@/pages/device/Instance';
 import _ from 'lodash';
+import './index.less';
+
+const defaultImage = require('/public/images/metadata-map.png');
 
 const EditableContext: any = React.createContext(null);
 
@@ -67,12 +70,13 @@ const EditableCell = ({
             (option?.children || '').toLowerCase()?.indexOf(input.toLowerCase()) >= 0
           }
         >
-          <Select.Option value={'use-origin-data'}>使用原始属性</Select.Option>
-          {list.map((item: any) => (
-            <Select.Option key={item?.id} value={item?.id}>
-              {item?.id}
-            </Select.Option>
-          ))}
+          <Select.Option value={record.metadataId}>使用原始属性</Select.Option>
+          {list.length > 0 &&
+            list.map((item: any) => (
+              <Select.Option key={item?.id} value={item?.id}>
+                {item?.name}({item?.id})
+              </Select.Option>
+            ))}
         </Select>
       </Form.Item>
     );
@@ -85,25 +89,17 @@ interface Props {
   type: 'device' | 'product';
 }
 
-const statusMap = new Map();
-statusMap.set('write', '写');
-statusMap.set('read', '读');
-statusMap.set('report', '上报');
-
 const EditableTable = (props: Props) => {
   const baseColumns = [
     {
-      title: '建模属性',
+      title: '物模型属性',
       dataIndex: 'name',
       render: (text: any, record: any) => <span>{`${record.name}(${record.id})`}</span>,
     },
     {
-      title: '映射属性',
+      title: '设备上报属性',
       dataIndex: 'metadataId',
       width: '30%',
-      render: (text: any, record: any) => (
-        <span>{`${record.metadataId}(${record.metadataName})`}</span>
-      ),
       editable: true,
     },
     {
@@ -112,22 +108,13 @@ const EditableTable = (props: Props) => {
       render: (text: any, record: any) => <span>{record.valueType?.type}</span>,
     },
     {
-      title: '读写类型',
-      dataIndex: 'expands',
-      render: (text: any, record: any) => (
-        <span>
-          {(record.expands?.type || [])
-            .map((i: string) => {
-              return statusMap.get(i);
-            })
-            .join(',')}
-        </span>
-      ),
-    },
-    {
       title: '映射状态',
       dataIndex: 'customMapping',
-      render: (text: any) => <span>{String(text)}</span>,
+      render: (text: any) => (
+        <span>
+          <Badge status={text ? 'success' : 'error'} text={text ? '已映射' : '未映射'} />
+        </span>
+      ),
     },
   ];
   const metadata = JSON.parse(props?.data?.metadata || '{}');
@@ -175,7 +162,6 @@ const EditableTable = (props: Props) => {
           };
         },
       );
-      console.log(list);
       setProperties([...list]);
       setDataSource({
         data: list.slice(
@@ -209,19 +195,14 @@ const EditableTable = (props: Props) => {
     const newData = [...dataSource.data];
     const index = newData.findIndex((item) => row.id === item.id);
     const item = newData[index];
-    // newData.splice(index, 1, { ...item, ...row });
-    // setDataSource({
-    //     ...dataSource,
-    //     data: [...newData],
-    // });
     if (item?.metadataId !== row?.metadataId) {
       const resp = await service[
         props.type === 'device' ? 'saveDeviceMetadata' : 'saveProductMetadata'
       ](props.data?.id, [
         {
           metadataType: 'property',
-          metadataId: row.metadataId === 'use-origin-data' ? row.metadataId : row.id,
-          originalId: row.metadataId === 'use-origin-data' ? row.id : '',
+          metadataId: row.metadataId === row.id ? row.metadataId : row.id,
+          originalId: row.metadataId === row.id ? row.id : '',
           others: {},
         },
       ]);
@@ -294,40 +275,57 @@ const EditableTable = (props: Props) => {
           }}
         />
       </div>
-      <Table
-        components={components}
-        rowClassName={() => 'editable-row'}
-        bordered
-        rowKey="id"
-        pagination={false}
-        dataSource={dataSource?.data || []}
-        columns={columns}
-      />
-      {dataSource.data.length > 0 && (
-        <div style={{ display: 'flex', marginTop: 20, justifyContent: 'flex-end' }}>
-          <Pagination
-            showSizeChanger
-            size="small"
-            className={'pro-table-card-pagination'}
-            total={dataSource?.total || 0}
-            current={dataSource?.pageIndex + 1}
-            onChange={(page, size) => {
-              handleSearch({
-                name: value,
-                pageIndex: page - 1,
-                pageSize: size,
-              });
-            }}
-            pageSizeOptions={[10, 20, 50, 100]}
-            pageSize={dataSource?.pageSize}
-            showTotal={(num) => {
-              const minSize = dataSource?.pageIndex * dataSource?.pageSize + 1;
-              const MaxSize = (dataSource?.pageIndex + 1) * dataSource?.pageSize;
-              return `第 ${minSize} - ${MaxSize > num ? num : MaxSize} 条/总共 ${num} 条`;
-            }}
+      <Row gutter={24}>
+        <Col span={16}>
+          <Table
+            components={components}
+            rowClassName={() => 'editable-row'}
+            bordered
+            rowKey="id"
+            pagination={false}
+            dataSource={dataSource?.data || []}
+            columns={columns}
           />
-        </div>
-      )}
+          {dataSource.data.length > 0 && (
+            <div style={{ display: 'flex', marginTop: 20, justifyContent: 'flex-end' }}>
+              <Pagination
+                showSizeChanger
+                size="small"
+                className={'pro-table-card-pagination'}
+                total={dataSource?.total || 0}
+                current={dataSource?.pageIndex + 1}
+                onChange={(page, size) => {
+                  handleSearch({
+                    name: value,
+                    pageIndex: page - 1,
+                    pageSize: size,
+                  });
+                }}
+                pageSizeOptions={[10, 20, 50, 100]}
+                pageSize={dataSource?.pageSize}
+                showTotal={(num) => {
+                  const minSize = dataSource?.pageIndex * dataSource?.pageSize + 1;
+                  const MaxSize = (dataSource?.pageIndex + 1) * dataSource?.pageSize;
+                  return `第 ${minSize} - ${MaxSize > num ? num : MaxSize} 条/总共 ${num} 条`;
+                }}
+              />
+            </div>
+          )}
+        </Col>
+        <Col span={8}>
+          <div className="map-desc">
+            <h1>功能说明</h1>
+            <div className="text">
+              该功能用于将<b>物模型属性</b>与<b>设备上报属性</b>
+              进行映射，当物模型属性与设备上报属性不一致时，可在当前页面直接修改映射关系，系统将以
+              <b>映射后</b>的<b>物模型属性</b>进行数据处理
+            </div>
+            <div className="image">
+              <img src={defaultImage} style={{ width: '100%' }} />
+            </div>
+          </div>
+        </Col>
+      </Row>
     </div>
   );
 };

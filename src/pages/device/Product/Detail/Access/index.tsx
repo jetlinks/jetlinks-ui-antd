@@ -24,8 +24,6 @@ const Access = () => {
   const [visible, setVisible] = useState<boolean>(true);
   const [config, setConfig] = useState<any>();
   const [access, setAccess] = useState<any>();
-  const [providers, setProviders] = useState<any[]>([]);
-  const [networkList, setNetworkList] = useState<any[]>([]);
   const { permission } = usePermissions('link/AccessConfig');
 
   const MetworkTypeMapping = new Map();
@@ -43,31 +41,29 @@ const Access = () => {
 
   const [metadata, setMetadata] = useState<ConfigMetadata[]>([]);
 
-  const queryNetworkList = (id: string) => {
-    service.getNetworkList(MetworkTypeMapping.get(id)).then((resp) => {
+  const queryAccessDetail = (id: string) => {
+    service
+      .queryGatewayDetail({
+        terms: [
+          {
+            column: 'id',
+            value: id,
+          },
+        ],
+      })
+      .then((resp) => {
+        setAccess(resp.result.data[0]);
+      });
+  };
+
+  const getConfigDetail = (messageProtocol: string, transportProtocol: string) => {
+    service.getConfigView(messageProtocol, transportProtocol).then((resp) => {
       if (resp.status === 200) {
-        setNetworkList(resp.result);
+        setConfig(resp.result);
       }
     });
   };
 
-  const queryProviders = () => {
-    service.getProviders().then((resp) => {
-      if (resp.status === 200) {
-        setProviders(resp.result);
-      }
-    });
-  };
-
-  const queryAccess = (id: string) => {
-    service.queryList({ pageSize: 1000 }).then((resp) => {
-      const dt = resp.result?.data.find((i: any) => i.id === id);
-      setAccess(dt);
-      if (dt) {
-        queryNetworkList(dt?.provider);
-      }
-    });
-  };
   const columnsMQTT: any[] = [
     {
       title: '分组',
@@ -192,14 +188,6 @@ const Access = () => {
     },
   ];
 
-  const getDetail = (messageProtocol: string, transportProtocol: string) => {
-    service.getConfigView(messageProtocol, transportProtocol).then((resp) => {
-      if (resp.status === 200) {
-        setConfig(resp.result);
-      }
-    });
-  };
-
   const id = productModel.current?.id;
 
   useEffect(() => {
@@ -210,14 +198,13 @@ const Access = () => {
           setMetadata(resp.result);
         });
     }
-    queryProviders();
     setVisible(!!productModel.current?.accessId);
     if (productModel.current?.accessId) {
-      getDetail(
+      queryAccessDetail(productModel.current?.accessId);
+      getConfigDetail(
         productModel.current?.messageProtocol || '',
         productModel.current?.transportProtocol || '',
       );
-      queryAccess(productModel.current?.accessId);
     }
   }, [productModel.current]);
 
@@ -393,16 +380,8 @@ const Access = () => {
                     </span>
                   }
                 />
-                <div className={styles.context}>
-                  {providers.find((i) => i.id === access?.provider)?.name || '--'}
-                </div>
-                <div className={styles.context}>
-                  {providers.find((i) => i.id === access?.provider)?.description && (
-                    <span>
-                      {providers.find((i) => i.id === access?.provider)?.description || '--'}
-                    </span>
-                  )}
-                </div>
+                <div className={styles.context}>{access?.name || '--'}</div>
+                <div className={styles.context}>{access?.description || '--'}</div>
               </div>
 
               <div className={styles.item}>
@@ -414,21 +393,18 @@ const Access = () => {
                   </div>
                 )}
               </div>
-
               <div className={styles.item}>
                 <TitleComponent data={'连接信息'} />
-                {(networkList.find((i) => i.id === access?.channelId)?.addresses || []).length > 0
-                  ? (networkList.find((i) => i.id === access?.channelId)?.addresses || []).map(
-                      (item: any) => (
-                        <div key={item.address}>
-                          <Badge
-                            color={item.health === -1 ? 'red' : 'green'}
-                            text={item.address}
-                            style={{ marginLeft: '20px' }}
-                          />
-                        </div>
-                      ),
-                    )
+                {(access?.channelInfo?.addresses || []).length > 0
+                  ? (access?.channelInfo?.addresses || []).map((item: any) => (
+                      <div key={item.address}>
+                        <Badge
+                          color={item.health === -1 ? 'red' : 'green'}
+                          text={item.address}
+                          style={{ marginLeft: '20px' }}
+                        />
+                      </div>
+                    ))
                   : '暂无连接信息'}
               </div>
 

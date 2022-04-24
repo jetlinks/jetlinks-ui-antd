@@ -1,24 +1,24 @@
-import type {ProColumns} from '@jetlinks/pro-table';
+import type { ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import {useCallback, useEffect, useState} from 'react';
-import {useParams} from 'umi';
+import { useCallback, useEffect, useState } from 'react';
+import { useParams } from 'umi';
 import DB from '@/db';
-import type {MetadataItem, MetadataType} from '@/pages/device/Product/typings';
+import type { MetadataItem, MetadataType } from '@/pages/device/Product/typings';
 import MetadataMapping from './columns';
-import {message} from 'antd';
-import {DeleteOutlined, EditOutlined, ImportOutlined, PlusOutlined} from '@ant-design/icons';
+import { message } from 'antd';
+import { DeleteOutlined, EditOutlined, ImportOutlined, PlusOutlined } from '@ant-design/icons';
 import Edit from './Edit';
-import {observer} from '@formily/react';
+import { observer } from '@formily/react';
 import MetadataModel from './model';
-import {Store} from 'jetlinks-store';
+import { Store } from 'jetlinks-store';
 import SystemConst from '@/utils/const';
-import {useIntl} from '@@/plugin-locale/localeExports';
+import { useIntl } from '@@/plugin-locale/localeExports';
 import PropertyImport from '@/pages/device/Product/Detail/PropertyImport';
-import {productModel} from '@/pages/device/Product';
-import {InstanceModel} from '@/pages/device/Instance';
-import {asyncUpdateMedata, removeMetadata} from '../metadata';
-import type {permissionType} from '@/hooks/permission';
-import {PermissionButton} from '@/components';
+import { productModel } from '@/pages/device/Product';
+import { InstanceModel } from '@/pages/device/Instance';
+import { asyncUpdateMedata, removeMetadata } from '../metadata';
+import type { permissionType } from '@/hooks/permission';
+import { PermissionButton } from '@/components';
 
 interface Props {
   type: MetadataType;

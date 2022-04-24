@@ -377,6 +377,7 @@ const Detail = observer(() => {
         'x-component': 'Radio.Group',
         'x-component-props': {
           optionType: 'button',
+          placeholder: '请选择类型',
         },
         required: true,
         'x-visible': typeList[id]?.length > 0,
@@ -388,12 +389,9 @@ const Detail = observer(() => {
         type: 'string',
         'x-decorator': 'FormItem',
         'x-component': 'Select',
-        // enum: [
-        //   {label: '测试配置1', value: 'test1'},
-        //   {label: '测试配置2', value: 'test2'},
-        //   {label: '测试配置3', value: 'test3'},
-        // ],
-        // 'x-reactions': '{{useAsyncDataSource(getConfig)}}',
+        'x-component-props': {
+          placeholder: '请选择绑定配置',
+        },
         'x-visible': id !== 'email',
       },
       template: {
@@ -597,12 +595,6 @@ const Detail = observer(() => {
                       placeholder: '这里是回显内容',
                     },
                   },
-                  // content: {
-                  //   title: '模版内容',
-                  //   type: 'string',
-                  //   'x-decorator': 'FormItem',
-                  //   'x-component': 'Input.TextArea',
-                  // },
                 },
                 'x-reactions': {
                   dependencies: ['provider'],
@@ -698,6 +690,9 @@ const Detail = observer(() => {
                     'x-component': 'Select',
                     'x-decorator': 'FormItem',
                     required: true,
+                    'x-component-props': {
+                      placeholder: '请选择消息类型',
+                    },
                     enum: [
                       { label: 'markdown', value: 'markdown' },
                       { label: 'text', value: 'text' },
@@ -712,6 +707,9 @@ const Detail = observer(() => {
                         title: '标题',
                         'x-component': 'Input',
                         'x-decorator': 'FormItem',
+                        'x-component-props': {
+                          placeholder: '请输入标题',
+                        },
                       },
                     },
                     'x-reactions': {
@@ -731,6 +729,9 @@ const Detail = observer(() => {
                         title: '标题',
                         'x-component': 'Input',
                         'x-decorator': 'FormItem',
+                        'x-component-props': {
+                          placeholder: '请输入标题',
+                        },
                       },
                       '{url:picUrl}': {
                         title: '图片链接',
@@ -738,12 +739,16 @@ const Detail = observer(() => {
                         'x-decorator': 'FormItem',
                         'x-component-props': {
                           type: 'file',
+                          placeholder: '请输入图片链接',
                         },
                       },
                       messageUrl: {
                         title: '内容链接',
                         'x-component': 'Input',
                         'x-decorator': 'FormItem',
+                        'x-component-props': {
+                          placeholder: '请输入内容链接',
+                        },
                       },
                     },
                     'x-reactions': {
@@ -803,11 +808,11 @@ const Detail = observer(() => {
                         'x-component': 'Input',
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
-                          tooltip: '请输入calledShowNumbers',
+                          tooltip: '请输入被叫号码',
                           gridSpan: 1,
                         },
                         'x-component-props': {
-                          placeholder: '请输入calledShowNumbers',
+                          placeholder: '请输入被叫号码',
                         },
                       },
                     },
@@ -817,10 +822,10 @@ const Detail = observer(() => {
                     'x-component': 'Input',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      tooltip: '请输入CalledNumber',
+                      tooltip: '请输入被叫显号',
                     },
                     'x-component-props': {
-                      placeholder: '请输入CalledNumber',
+                      placeholder: '请输入被叫显号',
                     },
                   },
                   PlayTimes: {
@@ -828,10 +833,10 @@ const Detail = observer(() => {
                     'x-component': 'Input',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      tooltip: '请输入PlayTimes',
+                      tooltip: '请输入播放次数',
                     },
                     'x-component-props': {
-                      placeholder: '请输入PlayTimes',
+                      placeholder: '请输入播放次数',
                     },
                   },
                 },

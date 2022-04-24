@@ -153,8 +153,8 @@ const Save = (props: Props) => {
             },
             'x-validator': [
               {
-                max: 50,
-                message: '最多可输入50个字符',
+                max: 64,
+                message: '最多可输入64个字符',
               },
               {
                 required: true,
@@ -200,6 +200,7 @@ const Save = (props: Props) => {
           checkStrength: true,
           placeholder: '请输入密码',
         },
+        'x-visible': model === 'add',
         'x-reactions': [
           {
             dependencies: ['.confirmPassword'],
@@ -218,7 +219,7 @@ const Save = (props: Props) => {
             message: '密码最多可输入128位',
           },
           {
-            min: model === 'edit' ? 0 : 6,
+            min: 8,
             message: '密码不能少于6位',
           },
           {
@@ -239,15 +240,14 @@ const Save = (props: Props) => {
           checkStrength: true,
           placeholder: '请再次输入密码',
         },
-        maxLength: 128,
-        minLength: 6,
+        'x-visible': model === 'add',
         'x-validator': [
           {
             max: 128,
             message: '密码最多可输入128位',
           },
           {
-            min: model === 'edit' ? 0 : 6,
+            min: 8,
             message: '密码不能少于6位',
           },
           {
@@ -300,11 +300,15 @@ const Save = (props: Props) => {
                   onClick={() => {
                     const tab: any = window.open(`${origin}/#/system/role?save=true`);
                     tab!.onTabSaveSuccess = (value: any) => {
-                      form.setFieldState('roleIdList', (state) => {
-                        state.dataSource = state.dataSource?.concat([
-                          { label: value.name, value: value.id },
-                        ]);
-                        state.value = [...state.value, value.id];
+                      form.setFieldState('roleIdList', async (state) => {
+                        state.dataSource = await getRole().then((resp) =>
+                          resp.result?.map((item: Record<string, unknown>) => ({
+                            ...item,
+                            label: item.name,
+                            value: item.id,
+                          })),
+                        );
+                        state.value = [...(state.value || []), value.id];
                       });
                     };
                   }}
@@ -349,7 +353,7 @@ const Save = (props: Props) => {
                             value: item.id,
                           })),
                         );
-                        state.value = [...state.value, value.id];
+                        state.value = [...(state.value || []), value.id];
                       });
                     };
                   }}
@@ -359,6 +363,22 @@ const Save = (props: Props) => {
               ),
             },
             'x-reactions': ['{{useAsyncDataSource(getOrg)}}'],
+          },
+          telephone: {
+            title: '手机号',
+            'x-decorator': 'FormItem',
+            'x-component': 'Input',
+            'x-decorator-props': {
+              gridSpan: 1,
+            },
+          },
+          email: {
+            title: '邮箱',
+            'x-decorator': 'FormItem',
+            'x-component': 'Input',
+            'x-decorator-props': {
+              gridSpan: 1,
+            },
           },
         },
       },
