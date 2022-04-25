@@ -50,7 +50,7 @@ const Provider = (props: Props) => {
                     <div className={styles.images}>{item.name}</div>
                     <div style={{ margin: '10px', width: 'calc(100% - 84px)' }}>
                       <div style={{ fontWeight: 600 }}>{item.name}</div>
-                      <div className={styles.desc}>{item.description}</div>
+                      <div className={styles.desc}>{item.description || '--'}</div>
                     </div>
                   </div>
                   <div style={{ width: '70px' }}>

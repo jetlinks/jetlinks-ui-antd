@@ -16,4 +16,5 @@ type LogItem = {
   sendTime: number;
   state: string;
   errorStack?: string;
+  message?: string;
 };

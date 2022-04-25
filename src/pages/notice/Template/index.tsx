@@ -315,6 +315,7 @@ const Template = observer(() => {
                     actionRef.current?.reset?.();
                   },
                 }}
+                isPermission={templatePermission.delete}
                 key="delete"
               >
                 <DeleteOutlined />
