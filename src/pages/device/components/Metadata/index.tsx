@@ -1,16 +1,19 @@
 import { observer } from '@formily/react';
-import { Space, Tabs } from 'antd';
+import { message, Space, Tabs } from 'antd';
 import BaseMetadata from './Base';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import Import from './Import';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 import Cat from './Cat';
-import Service from '@/pages/device/components/Metadata/service';
+// import Service from '@/pages/device/components/Metadata/service';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import styles from './index.less';
-import { InstanceModel } from '@/pages/device/Instance';
+import { InstanceModel, service } from '@/pages/device/Instance';
 import { PermissionButton } from '@/components';
+import { Store } from 'jetlinks-store';
+import SystemConst from '@/utils/const';
+import { useParams } from 'umi';
 
 interface Props {
   tabAction?: ReactNode;
@@ -18,7 +21,7 @@ interface Props {
   independentMetadata?: boolean;
 }
 
-export const service = new Service();
+// export const service = new Service();
 const Metadata = observer((props: Props) => {
   const intl = useIntl();
   const [visible, setVisible] = useState<boolean>(false);
@@ -26,6 +29,20 @@ const Metadata = observer((props: Props) => {
   const { permission } = PermissionButton.usePermission(
     props.type === 'device' ? 'device/Instance' : 'device/Product',
   );
+
+  const params = useParams<{ id: string }>();
+
+  const resetMetadata = async () => {
+    const resp = await service.deleteMetadata(params.id);
+    if (resp.status === 200) {
+      message.success('操作成功');
+      Store.set(SystemConst.REFRESH_DEVICE, true);
+      setTimeout(() => {
+        Store.set(SystemConst.REFRESH_METADATA_TABLE, true);
+      }, 400);
+    }
+  };
+
   return (
     <div style={{ position: 'relative' }}>
       <div className={styles.tips}>
@@ -38,7 +55,21 @@ const Metadata = observer((props: Props) => {
         className={styles.metadataNav}
         tabBarExtraContent={
           <Space>
-            {props?.tabAction}
+            {props.type === 'device' && (
+              <PermissionButton
+                isPermission={permission.update}
+                popConfirm={{
+                  title: '确认重置？',
+                  onConfirm: resetMetadata,
+                }}
+                tooltip={{
+                  title: '重置后将使用产品的物模型配置',
+                }}
+                key={'reload'}
+              >
+                重置操作
+              </PermissionButton>
+            )}
             <PermissionButton isPermission={permission.update} onClick={() => setVisible(true)}>
               {intl.formatMessage({
                 id: 'pages.device.productDetail.metadata.quickImport',
@@ -94,7 +125,7 @@ const Metadata = observer((props: Props) => {
         </Tabs.TabPane>
       </Tabs>
       <Import visible={visible} close={() => setVisible(false)} />
-      <Cat visible={cat} close={() => setCat(false)} />
+      <Cat visible={cat} close={() => setCat(false)} type={props.type} />
     </div>
   );
 });

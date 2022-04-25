@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { InstanceModel, service } from '@/pages/device/Instance';
+import { InstanceModel } from '@/pages/device/Instance';
 import { history, useParams } from 'umi';
-import { Badge, Card, Descriptions, Divider, message, Tooltip } from 'antd';
+import { Badge, Card, Descriptions, Divider, Tooltip } from 'antd';
 import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import { observer } from '@formily/react';
@@ -23,6 +23,7 @@ import { getMenuPathByCode, getMenuPathByParams, MENUS_CODE } from '@/utils/menu
 import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
 import { PermissionButton } from '@/components';
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import Service from '@/pages/device/Instance/service';
 
 export const deviceStatus = new Map();
 deviceStatus.set('online', <Badge status="success" text={'在线'} />);
@@ -33,18 +34,18 @@ const InstanceDetail = observer(() => {
   const intl = useIntl();
   const [tab, setTab] = useState<string>('detail');
   const params = useParams<{ id: string }>();
-  const { permission } = PermissionButton.usePermission('device/Instance');
+  const service = new Service('device-instance');
 
-  const resetMetadata = async () => {
-    const resp = await service.deleteMetadata(params.id);
-    if (resp.status === 200) {
-      message.success('操作成功');
-      Store.set(SystemConst.REFRESH_DEVICE, true);
-      setTimeout(() => {
-        Store.set(SystemConst.REFRESH_METADATA_TABLE, true);
-      }, 400);
-    }
-  };
+  // const resetMetadata = async () => {
+  //   const resp = await service.deleteMetadata(params.id);
+  //   if (resp.status === 200) {
+  //     message.success('操作成功');
+  //     Store.set(SystemConst.REFRESH_DEVICE, true);
+  //     setTimeout(() => {
+  //       Store.set(SystemConst.REFRESH_METADATA_TABLE, true);
+  //     }, 400);
+  //   }
+  // };
   const baseList = [
     {
       key: 'detail',
@@ -99,21 +100,21 @@ const InstanceDetail = observer(() => {
         <Card>
           <Metadata
             type="device"
-            tabAction={
-              <PermissionButton
-                isPermission={permission.update}
-                popConfirm={{
-                  title: '确认重置？',
-                  onConfirm: resetMetadata,
-                }}
-                tooltip={{
-                  title: '重置后将使用产品的物模型配置',
-                }}
-                key={'reload'}
-              >
-                重置操作
-              </PermissionButton>
-            }
+            // tabAction={
+            //   <PermissionButton
+            //     isPermission={permission.update}
+            //     popConfirm={{
+            //       title: '确认重置？',
+            //       onConfirm: resetMetadata,
+            //     }}
+            //     tooltip={{
+            //       title: '重置后将使用产品的物模型配置',
+            //     }}
+            //     key={'reload'}
+            //   >
+            //     重置操作1
+            //   </PermissionButton>
+            // }
           />
         </Card>
       ),
