@@ -74,7 +74,7 @@ const EditableCell = ({
             (option?.children || '').toLowerCase()?.indexOf(input.toLowerCase()) >= 0
           }
         >
-          <Select.Option value={record.metadataId}>使用原始属性</Select.Option>
+          <Select.Option value={record.metadataId}>使用物模型属性</Select.Option>
           {record.originalId !== record.metadataId && (
             <Select.Option value={record.originalId}>
               {temp?.name}({temp?.id})

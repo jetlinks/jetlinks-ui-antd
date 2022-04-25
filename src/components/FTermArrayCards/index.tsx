@@ -123,7 +123,7 @@ export const FTermArrayCards: ComposedArrayCards = observer((props) => {
   };
 
   const renderAddition = () => {
-    return schema.reduceProperties((addition, schema3, key) => {
+    return schema.reduceProperties((addition: any, schema3: any, key: any) => {
       if (isAdditionComponent(schema3)) {
         return <RecursionField schema={schema3} name={key} />;
       }

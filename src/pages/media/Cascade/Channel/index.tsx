@@ -28,6 +28,12 @@ const Channel = () => {
     if (resp.status === 200) {
       actionRef.current?.reload();
       message.success('操作成功！');
+      if (list.length === 1) {
+        const index = selectedRowKey.indexOf(list[0]);
+        const dt = [...selectedRowKey];
+        dt.splice(index, 1);
+        setSelectedRowKey([...dt]);
+      }
     }
   };
 
@@ -195,7 +201,7 @@ const Channel = () => {
         request={async (params) => {
           return service.queryBindChannel(id, {
             ...params,
-            sorts: [{ name: 'createTime', order: 'desc' }],
+            sorts: [{ name: 'name', order: 'desc' }],
           });
         }}
         rowKey="channelId"

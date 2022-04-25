@@ -4,6 +4,7 @@ import ProTable from '@jetlinks/pro-table';
 import { Modal } from 'antd';
 import { useRef, useState } from 'react';
 import { service } from '@/pages/rule-engine/Alarm/Log';
+import moment from 'moment';
 
 interface Props {
   data: Partial<AlarmLogItem>;
@@ -35,8 +36,9 @@ const SolveLog = (props: Props) => {
 
   const columns: ProColumns<AlarmLogSolveHistoryItem>[] = [
     {
-      dataIndex: 'createTime',
+      dataIndex: 'handleTIme',
       title: '处理时间',
+      render: (text: any) => <span>{moment(text).format('YYYY-MM-DD HH:mm:ss')}</span>,
     },
     {
       dataIndex: 'handleType',
@@ -44,8 +46,9 @@ const SolveLog = (props: Props) => {
       render: (text: any) => <span>{typeMap.get(text) || ''}</span>,
     },
     {
-      dataIndex: 'address',
+      dataIndex: 'createTime',
       title: '告警时间',
+      render: (text: any) => <span>{moment(text).format('YYYY-MM-DD HH:mm:ss')}</span>,
     },
     {
       dataIndex: 'description',
