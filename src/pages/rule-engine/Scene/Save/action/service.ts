@@ -18,6 +18,9 @@ export const queryMessageTemplate = (data: any) =>
     data,
   });
 
+export const queryMessageTemplateDetail = (id: string) =>
+  request(`${SystemConst.API_BASE}/notifier/template/${id}/detail`);
+
 export const queryProductList = (data?: any) =>
   request(`${SystemConst.API_BASE}/device-product/_query/no-paging?paging=false`, {
     method: 'POST',
