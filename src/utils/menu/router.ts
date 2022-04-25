@@ -62,6 +62,7 @@ export enum MENUS_CODE {
   'rule-engine/Scene' = 'rule-engine/Scene',
   'rule-engine/Alarm/Config' = 'rule-engine/Alarm/Config',
   'rule-engine/Scene/Save' = 'rule-engine/Scene/Save',
+  'rule-engine/Scene/Save2' = 'rule-engine/Scene/Save2',
   'simulator/Device' = 'simulator/Device',
   'system/DataSource' = 'system/DataSource',
   'system/Department/Assets' = 'system/Department/Assets',

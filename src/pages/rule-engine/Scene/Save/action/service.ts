@@ -17,3 +17,12 @@ export const queryMessageTemplate = (data: any) =>
     method: 'POST',
     data,
   });
+
+export const queryProductList = (data?: any) =>
+  request(`${SystemConst.API_BASE}/device-product/_query/no-paging?paging=false`, {
+    method: 'POST',
+    data,
+  });
+
+export const queryDeviceSelector = () =>
+  request(`${SystemConst.API_BASE}/scene/device-selectors`, { method: 'GET' });

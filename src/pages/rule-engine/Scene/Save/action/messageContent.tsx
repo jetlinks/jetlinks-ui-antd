@@ -1,9 +1,8 @@
-import { Col, Form, Row, Select } from 'antd';
+import { Col, Form, Row, Select, TimePicker, Input } from 'antd';
 import { ItemGroup } from '@/pages/rule-engine/Scene/Save/components';
-import { ProFormText, ProFormSelect, ProFormDatePicker } from '@ant-design/pro-form';
 
 interface MessageContentProps {
-  type?: string;
+  name: number;
   template?: any;
 }
 
@@ -13,31 +12,13 @@ export default (props: MessageContentProps) => {
   const inputNodeByType = (data: any) => {
     switch (data.type) {
       case 'enum':
-        return (
-          <ProFormSelect
-            name={['variables', data.id]}
-            placeholder={`请选择${name}`}
-            style={{ width: '100%' }}
-          />
-        );
+        return <Select placeholder={`请选择${data.name}`} style={{ width: '100%' }} />;
       case 'timmer':
-        return (
-          <ProFormDatePicker
-            name={['variables', data.id]}
-            placeholder={'请选择时间'}
-            style={{ width: '100%' }}
-          />
-        );
+        return <TimePicker style={{ width: '100%' }} />;
       case 'number':
-        return (
-          <ProFormText
-            name={['variables', data.id]}
-            placeholder={`请输入${name}`}
-            style={{ width: '100%' }}
-          />
-        );
+        return <Input placeholder={`请输入${data.name}`} style={{ width: '100%' }} />;
       default:
-        return <ProFormText name={['variables', data.id]} placeholder={`请输入${name}`} />;
+        return <Input placeholder={`请输入${data.name}`} />;
     }
   };
 
@@ -51,7 +32,10 @@ export default (props: MessageContentProps) => {
                 // const rules = !item.required ? [{ required: true, message: '请输入'+ item.name }] : undefined
                 return (
                   <Col span={12} key={item.id}>
-                    <Form.Item label={item.name} required={!item.required}>
+                    <Form.Item
+                      name={[props.name, 'notify', 'variables', item.id]}
+                      label={item.name}
+                    >
                       <ItemGroup>
                         <Select
                           defaultValue={'1'}

@@ -1,18 +1,19 @@
-import { Button, InputNumber, Select } from 'antd';
+import { Button, InputNumber, Select, Form } from 'antd';
 import { useEffect, useState } from 'react';
 import { useRequest } from 'umi';
 import { queryMessageType, queryMessageConfig, queryMessageTemplate } from './service';
 import MessageContent from './messageContent';
 
 interface ActionProps {
+  restField: any;
+  name: number;
   title?: string;
   onRemove: () => void;
 }
 
-export default (props: ActionProps) => {
-  const [type1, setType1] = useState('message');
-  const [configValue, setConfigValue] = useState<string | undefined>(undefined);
-  const [templateValue, setTemplateValue] = useState<string | undefined>(undefined);
+const ActionItem = (props: ActionProps) => {
+  const { name } = props;
+  const [type1, setType1] = useState('');
   const [templateData, setTemplateData] = useState<any>(undefined);
 
   const { data: messageType, run: queryMessageTypes } = useRequest(queryMessageType, {
@@ -40,48 +41,47 @@ export default (props: ActionProps) => {
 
   const MessageNodes = (
     <>
-      <Select
-        options={messageType}
-        fieldNames={{ value: 'id', label: 'name' }}
-        placeholder={'请选择通知方式'}
-        style={{ width: 140 }}
-        onSelect={async (key: string) => {
-          setConfigValue(undefined);
-          setTemplateValue(undefined);
-          setTemplateData(undefined);
-          await queryMessageConfigs({
-            terms: [{ column: 'type$IN', value: key }],
-          });
-        }}
-      />
-      <Select
-        value={configValue}
-        options={messageConfig}
-        loading={messageConfigLoading}
-        fieldNames={{ value: 'id', label: 'name' }}
-        onSelect={async (key: string) => {
-          setConfigValue(key);
-          setTemplateValue(undefined);
-          setTemplateData(undefined);
-          await queryMessageTemplates({
-            terms: [{ column: 'configId', value: key }],
-          });
-        }}
-        style={{ width: 160 }}
-        placeholder={'请选择通知配置'}
-      />
-      <Select
-        value={templateValue}
-        options={messageTemplate}
-        loading={messageTemplateLoading}
-        fieldNames={{ value: 'id', label: 'name' }}
-        style={{ width: 160 }}
-        placeholder={'请选择通知模板'}
-        onSelect={async (key: string, nodeData: any) => {
-          setTemplateData(nodeData);
-          setTemplateValue(key);
-        }}
-      />
+      <Form.Item {...props.restField} name={[name, 'notify', 'type']}>
+        <Select
+          options={messageType}
+          fieldNames={{ value: 'id', label: 'name' }}
+          placeholder={'请选择通知方式'}
+          style={{ width: 140 }}
+          onChange={async (key: string) => {
+            setTemplateData(undefined);
+            await queryMessageConfigs({
+              terms: [{ column: 'type$IN', value: key }],
+            });
+          }}
+        />
+      </Form.Item>
+      <Form.Item {...props.restField} name={[name, 'notify', 'notifierId']}>
+        <Select
+          options={messageConfig}
+          loading={messageConfigLoading}
+          fieldNames={{ value: 'id', label: 'name' }}
+          onChange={async (key: string) => {
+            setTemplateData(undefined);
+            await queryMessageTemplates({
+              terms: [{ column: 'configId', value: key }],
+            });
+          }}
+          style={{ width: 160 }}
+          placeholder={'请选择通知配置'}
+        />
+      </Form.Item>
+      <Form.Item {...props.restField} name={[name, 'notify', 'templateId']}>
+        <Select
+          options={messageTemplate}
+          loading={messageTemplateLoading}
+          fieldNames={{ value: 'id', label: 'name' }}
+          style={{ width: 160 }}
+          placeholder={'请选择通知模板'}
+          onChange={async (key: string, nodeData: any) => {
+            setTemplateData(nodeData);
+          }}
+        />
+      </Form.Item>
     </>
   );
 
@@ -133,25 +133,30 @@ export default (props: ActionProps) => {
         执行动作 {props.title} <Button onClick={props.onRemove}>删除</Button>
       </div>
       <div style={{ display: 'flex', gap: 12 }}>
-        <Select
-          options={[
-            { label: '消息通知', value: 'message' },
-            { label: '设备输出', value: 'device' },
-            { label: '延迟执行', value: 'delay' },
-          ]}
-          value={type1}
-          onSelect={(key: string) => {
-            setType1(key);
-          }}
-          style={{ width: 100 }}
-        />
+        <Form.Item {...props.restField} name={[name, 'executor']}>
+          <Select
+            options={[
+              { label: '消息通知', value: 'message' },
+              { label: '设备输出', value: 'device' },
+              { label: '延迟执行', value: 'delay' },
+            ]}
+            style={{ width: 100 }}
+            onSelect={(key: string) => {
+              setType1(key);
+            }}
+          />
+        </Form.Item>
         {type1 === 'message' && MessageNodes}
         {type1 === 'device' && DeviceNodes}
         {type1 === 'delay' && (
           <InputNumber addonAfter={TimeTypeAfter} style={{ width: 150 }} min={0} max={9999} />
         )}
+        {type1 === 'message' && templateData ? (
+          <MessageContent template={templateData} name={props.name} />
+        ) : null}
       </div>
-      {type1 === 'message' && <MessageContent {...props} template={templateData} />}
     </div>
   );
 };
+
+export default ActionItem;

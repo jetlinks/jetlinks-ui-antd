@@ -31,7 +31,10 @@ const extraRouteObj = {
     ],
   },
   'rule-engine/Scene': {
-    children: [{ code: 'Save', name: '详情' }],
+    children: [
+      { code: 'Save', name: '详情' },
+      { code: 'Save2', name: '测试详情' },
+    ],
   },
 };
 
