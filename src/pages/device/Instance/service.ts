@@ -265,6 +265,17 @@ class Service extends BaseService<DeviceInstance> {
         paging: false,
       },
     });
+  // 保存设备的物模型指标
+  public saveMetric = (deviceId: string, propertyId: string, data: any) =>
+    request(`/${SystemConst.API_BASE}/device-instance/${deviceId}/metric/property/${propertyId}`, {
+      method: 'PATCH',
+      data,
+    });
+  // 查询设备的物模型指标
+  public queryMetric = (deviceId: string, propertyId: string) =>
+    request(`/${SystemConst.API_BASE}/device-instance/${deviceId}/metric/property/${propertyId}`, {
+      method: 'GET',
+    });
 }
 
 export default Service;
