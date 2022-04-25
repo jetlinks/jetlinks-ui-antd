@@ -108,7 +108,7 @@ const ResetPassword = (props: Props) => {
     },
   };
 
-  const form = useMemo(() => createForm({}), []);
+  const form = useMemo(() => createForm({}), [props.visible]);
   return (
     <Modal
       title="重置密码"
@@ -122,9 +122,8 @@ const ResetPassword = (props: Props) => {
             message.success('操作成功');
             props.close();
           }
-        } else {
-          props.close();
         }
+        props.close();
       }}
     >
       <Form form={form} layout="vertical">

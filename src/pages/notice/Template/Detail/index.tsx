@@ -247,6 +247,7 @@ const Detail = observer(() => {
                 format.setValue('string');
                 break;
               case 'string':
+                console.log('string');
                 format.setComponent(PreviewText.Input);
                 format.setValue('%s');
                 break;

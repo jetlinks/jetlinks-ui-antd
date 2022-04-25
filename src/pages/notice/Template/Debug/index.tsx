@@ -38,27 +38,32 @@ const Debug = observer(() => {
             }
           });
 
-          onFieldReact('variableDefinitions.*.type', (field) => {
+          onFieldReact('variableDefinitions.*.id', (field) => {
             const value = (field as Field).value;
-            const format = field.query('.value').take() as any;
-            switch (value) {
-              case 'date':
-                format.setComponent(DatePicker);
-                break;
-              case 'string':
-                format.setComponent(Input);
-                break;
-              case 'number':
-                format.setComponent(NumberPicker);
-                break;
-              case 'file':
-                format.setComponent(FUpload, {
-                  type: 'file',
-                });
-                break;
-              case 'other':
-                format.setComponent(Input);
-                break;
+            const format = field.query('.value').take() as Field;
+
+            if (format) {
+              switch (value) {
+                case 'date':
+                  format.setComponent(DatePicker, {
+                    showTime: true,
+                  });
+                  break;
+                case 'string':
+                  format.setComponent(Input);
+                  break;
+                case 'number':
+                  format.setComponent(NumberPicker, {});
+                  break;
+                case 'file':
+                  format.setComponent(FUpload, {
+                    type: 'file',
+                  });
+                  break;
+                case 'other':
+                  format.setComponent(Input);
+                  break;
+              }
             }
           });
         },
@@ -83,6 +88,9 @@ const Debug = observer(() => {
       Select,
       ArrayTable,
       PreviewText,
+      NumberPicker,
+      DatePicker,
+      FUpload,
     },
   });
 
@@ -160,6 +168,12 @@ const Debug = observer(() => {
               'x-component-props': { title: '值', width: '120px' },
               properties: {
                 value: {
+                  type: 'string',
+                  'x-decorator': 'FormItem',
+                  'x-component': 'Input',
+                },
+                type: {
+                  'x-hidden': true,
                   type: 'string',
                   'x-decorator': 'FormItem',
                   'x-component': 'Input',
