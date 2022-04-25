@@ -1,4 +1,4 @@
-import { Select, Input, TimePicker, InputNumber } from 'antd';
+import { Input, InputNumber, Select, TimePicker } from 'antd';
 import { TimeSelect } from '@/pages/rule-engine/Scene/Save/components';
 import { useState } from 'react';
 

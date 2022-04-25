@@ -1,4 +1,4 @@
-import { message, Modal } from 'antd';
+import { message, Modal, Typography } from 'antd';
 import { useMemo } from 'react';
 import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
@@ -26,9 +26,11 @@ const service = new Service('alarm/config');
 
 const createImageLabel = (image: string, text: string) => {
   return (
-    <div style={{ textAlign: 'center', marginTop: 10, fontSize: '25px' }}>
+    <div style={{ textAlign: 'center', marginTop: 10, fontSize: '15px', width: '90px' }}>
       <img alt="" height="40px" src={image} />
-      {text}
+      <Typography.Text style={{ maxWidth: '50px', marginBottom: 10 }} ellipsis={{ tooltip: text }}>
+        {text}
+      </Typography.Text>
     </div>
   );
 };
