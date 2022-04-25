@@ -1,6 +1,10 @@
-import { EditOutlined, SyncOutlined, UnorderedListOutlined } from '@ant-design/icons';
-import { Divider, message, Spin, Tooltip } from 'antd';
-import ProCard from '@ant-design/pro-card';
+import {
+  ClockCircleOutlined,
+  EditOutlined,
+  SyncOutlined,
+  UnorderedListOutlined,
+} from '@ant-design/icons';
+import { message, Space, Spin, Tooltip, Card } from 'antd';
 import type { PropertyMetadata } from '@/pages/device/Product/typings';
 import { useState } from 'react';
 import { service } from '@/pages/device/Instance';
@@ -8,6 +12,7 @@ import { useParams } from 'umi';
 import PropertyLog from '@/pages/device/Instance/Detail/MetadataLog/Property';
 import EditProperty from '@/pages/device/Instance/Detail/Running/Property/EditProperty';
 import moment from 'moment';
+import Indicators from './Indicators';
 import './PropertyCard.less';
 
 interface Props {
@@ -33,36 +38,39 @@ const Property = (props: Props) => {
 
   const [visible, setVisible] = useState<boolean>(false);
   const [editVisible, setEditVisible] = useState<boolean>(false);
+  const [indicatorVisible, setIndicatorVisible] = useState<boolean>(false);
 
   const renderTitle = (title: string) => {
     return (
-      <div className="value" style={{ color: 'rgba(0, 0, 0, .65)', fontSize: 14 }}>
-        {title}
-      </div>
-    );
-  };
-
-  return (
-    <ProCard
-      title={renderTitle(data?.name || '')}
-      extra={
-        <>
+      <div className="card-title-box">
+        <div className="card-title">
+          <Tooltip title={title}>{title}</Tooltip>
+        </div>
+        <Space style={{ fontSize: 12 }}>
           {(data.expands?.readOnly === false || data.expands?.readOnly === 'false') && (
-            <>
-              <Tooltip placement="top" title="设置属性至设备">
-                <EditOutlined
+            <Tooltip placement="top" title="设置属性至设备">
+              <EditOutlined
+                onClick={() => {
+                  setEditVisible(true);
+                }}
+              />
+            </Tooltip>
+          )}
+          {(data.expands?.metrics || []).length > 0 &&
+            ['int', 'long', 'float', 'double', 'string', 'boolean', 'date'].includes(
+              data.valueType?.type || '',
+            ) && (
+              <Tooltip placement="top" title="指标">
+                <ClockCircleOutlined
                   onClick={() => {
-                    setEditVisible(true);
+                    setIndicatorVisible(true);
                   }}
                 />
               </Tooltip>
-              <Divider type="vertical" />
-            </>
-          )}
+            )}
           <Tooltip placement="top" title="获取最新属性值">
             <SyncOutlined onClick={refreshProperty} />
           </Tooltip>
-          <Divider type="vertical" />
           <Tooltip placement="top" title="详情">
             <UnorderedListOutlined
               onClick={() => {
@@ -70,15 +78,16 @@ const Property = (props: Props) => {
               }}
             />
           </Tooltip>
-        </>
-      }
-      bordered
-      hoverable
-      colSpan={{ xs: 12, sm: 8, md: 6, lg: 6, xl: 6 }}
-      style={{ backgroundColor: 'rgba(0, 0, 0, .02)' }}
-    >
+        </Space>
+      </div>
+    );
+  };
+
+  return (
+    <Card bordered hoverable style={{ backgroundColor: 'rgba(0, 0, 0, .02)' }}>
       <Spin spinning={loading}>
         <div>
+          <div>{renderTitle(data?.name || '')}</div>
           <div className="value" style={{ fontWeight: 700, fontSize: '24px', color: '#323130' }}>
             {value?.formatValue || '--'}
           </div>
@@ -98,7 +107,15 @@ const Property = (props: Props) => {
         data={data}
       />
       <PropertyLog data={data} visible={visible} close={() => setVisible(false)} />
-    </ProCard>
+      {indicatorVisible && (
+        <Indicators
+          data={data}
+          onCancel={() => {
+            setIndicatorVisible(false);
+          }}
+        />
+      )}
+    </Card>
   );
 };
 export default Property;
