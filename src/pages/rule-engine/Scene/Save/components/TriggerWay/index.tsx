@@ -7,7 +7,7 @@ interface TriggerWayProps {
   onChange?: (type: string) => void;
 }
 
-enum TriggerWayType {
+export enum TriggerWayType {
   manual = 'manual',
   timing = 'timer',
   device = 'device',

@@ -1,12 +1,19 @@
-import { Button, Form, InputNumber, Select } from 'antd';
+import { Button, InputNumber, Select, Form } from 'antd';
+import type { FormInstance } from 'antd';
 import { useEffect, useState } from 'react';
 import { useRequest } from 'umi';
-import { queryMessageConfig, queryMessageTemplate, queryMessageType } from './service';
+import {
+  queryMessageType,
+  queryMessageConfig,
+  queryMessageTemplate,
+  queryMessageTemplateDetail,
+} from './service';
 import MessageContent from './messageContent';
 
 interface ActionProps {
   restField: any;
   name: number;
+  form: FormInstance;
   title?: string;
   onRemove: () => void;
 }
@@ -49,6 +56,8 @@ const ActionItem = (props: ActionProps) => {
           style={{ width: 140 }}
           onChange={async (key: string) => {
             setTemplateData(undefined);
+            props.form.resetFields([['actions', name, 'notify', 'notifierId']]);
+            props.form.resetFields([['actions', name, 'notify', 'templateId']]);
             await queryMessageConfigs({
               terms: [{ column: 'type$IN', value: key }],
             });
@@ -62,6 +71,7 @@ const ActionItem = (props: ActionProps) => {
           fieldNames={{ value: 'id', label: 'name' }}
           onChange={async (key: string) => {
             setTemplateData(undefined);
+            props.form.resetFields([['actions', name, 'notify', 'templateId']]);
             await queryMessageTemplates({
               terms: [{ column: 'configId', value: key }],
             });
@@ -77,8 +87,11 @@ const ActionItem = (props: ActionProps) => {
           fieldNames={{ value: 'id', label: 'name' }}
           style={{ width: 160 }}
           placeholder={'请选择通知模板'}
-          onChange={async (key: string, nodeData: any) => {
-            setTemplateData(nodeData);
+          onChange={async (key: string) => {
+            const resp = await queryMessageTemplateDetail(key);
+            if (resp.status === 200) {
+              setTemplateData(resp.result);
+            }
           }}
         />
       </Form.Item>
@@ -130,7 +143,10 @@ const ActionItem = (props: ActionProps) => {
   return (
     <div className={'actions-item'}>
       <div className={'actions-item-title'}>
-        执行动作 {props.title} <Button onClick={props.onRemove}>删除</Button>
+        执行动作 {props.name + 1}
+        <Button type={'link'} onClick={props.onRemove}>
+          删除
+        </Button>
       </div>
       <div style={{ display: 'flex', gap: 12 }}>
         <Form.Item {...props.restField} name={[name, 'executor']}>
@@ -140,7 +156,8 @@ const ActionItem = (props: ActionProps) => {
               { label: '设备输出', value: 'device' },
               { label: '延迟执行', value: 'delay' },
             ]}
-            style={{ width: 100 }}
+            placeholder={'请选择动作方式'}
+            style={{ width: 140 }}
             onSelect={(key: string) => {
               setType1(key);
             }}
@@ -151,10 +168,10 @@ const ActionItem = (props: ActionProps) => {
         {type1 === 'delay' && (
           <InputNumber addonAfter={TimeTypeAfter} style={{ width: 150 }} min={0} max={9999} />
         )}
-        {type1 === 'message' && templateData ? (
-          <MessageContent template={templateData} name={props.name} />
-        ) : null}
       </div>
+      {type1 === 'message' && templateData ? (
+        <MessageContent form={props.form} template={templateData} name={props.name} />
+      ) : null}
     </div>
   );
 };

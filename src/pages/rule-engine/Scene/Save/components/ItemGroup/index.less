@@ -1,7 +1,10 @@
 .group-item-compact {
   display: flex;
+  gap: 12px;
 
-  &:nth-last-child(1) {
-    flex: 1;
+  > div {
+    &:last-child {
+      flex: 1;
+    }
   }
 }
