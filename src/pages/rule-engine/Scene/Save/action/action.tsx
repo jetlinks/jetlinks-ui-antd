@@ -21,6 +21,7 @@ interface ActionProps {
 const ActionItem = (props: ActionProps) => {
   const { name } = props;
   const [type1, setType1] = useState('');
+  const [notifyType, setNotifyType] = useState('');
   const [templateData, setTemplateData] = useState<any>(undefined);
 
   const { data: messageType, run: queryMessageTypes } = useRequest(queryMessageType, {
@@ -56,6 +57,7 @@ const ActionItem = (props: ActionProps) => {
           style={{ width: 140 }}
           onChange={async (key: string) => {
             setTemplateData(undefined);
+            setNotifyType(key);
             props.form.resetFields([['actions', name, 'notify', 'notifierId']]);
             props.form.resetFields([['actions', name, 'notify', 'templateId']]);
             await queryMessageConfigs({
@@ -170,7 +172,12 @@ const ActionItem = (props: ActionProps) => {
         )}
       </div>
       {type1 === 'message' && templateData ? (
-        <MessageContent form={props.form} template={templateData} name={props.name} />
+        <MessageContent
+          form={props.form}
+          template={templateData}
+          name={props.name}
+          notifyType={notifyType}
+        />
       ) : null}
     </div>
   );
