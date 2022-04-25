@@ -6,10 +6,10 @@ import Import from './Import';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 import Cat from './Cat';
-// import Service from '@/pages/device/components/Metadata/service';
+import Service from '@/pages/device/components/Metadata/service';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import styles from './index.less';
-import { InstanceModel, service } from '@/pages/device/Instance';
+import { InstanceModel, service as instanceService } from '@/pages/device/Instance';
 import { PermissionButton } from '@/components';
 import { Store } from 'jetlinks-store';
 import SystemConst from '@/utils/const';
@@ -21,7 +21,7 @@ interface Props {
   independentMetadata?: boolean;
 }
 
-// export const service = new Service();
+export const service = new Service();
 const Metadata = observer((props: Props) => {
   const intl = useIntl();
   const [visible, setVisible] = useState<boolean>(false);
@@ -33,7 +33,7 @@ const Metadata = observer((props: Props) => {
   const params = useParams<{ id: string }>();
 
   const resetMetadata = async () => {
-    const resp = await service.deleteMetadata(params.id);
+    const resp = await instanceService.deleteMetadata(params.id);
     if (resp.status === 200) {
       message.success('操作成功');
       Store.set(SystemConst.REFRESH_DEVICE, true);

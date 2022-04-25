@@ -51,17 +51,39 @@ const ResetPassword = (props: Props) => {
         ],
         name: 'password',
         'x-validator': [
-          {
-            max: 128,
-            message: '密码最多可输入128位',
-          },
-          {
-            min: 8,
-            message: '密码不能少于6位',
-          },
+          // {
+          //   max: 128,
+          //   message: '密码最多可输入128位',
+          // },
+          // {
+          //   min: 8,
+          //   message: '密码不能少于8位',
+          // },
           {
             required: true,
             message: '请输入密码',
+          },
+          {
+            triggerType: 'onBlur',
+            validator: (value: string) => {
+              return new Promise((resolve) => {
+                service
+                  .validateField('password', value)
+                  .then((resp) => {
+                    if (resp.status === 200) {
+                      if (resp.result.passed) {
+                        resolve('');
+                      } else {
+                        resolve(resp.result.reason);
+                      }
+                    }
+                    resolve('');
+                  })
+                  .catch(() => {
+                    return '验证失败!';
+                  });
+              });
+            },
           },
         ],
       },
@@ -78,17 +100,39 @@ const ResetPassword = (props: Props) => {
           placeholder: '请再次输入密码',
         },
         'x-validator': [
-          {
-            max: 128,
-            message: '密码最多可输入128位',
-          },
-          {
-            min: 8,
-            message: '密码不能少于8位',
-          },
+          // {
+          //   max: 128,
+          //   message: '密码最多可输入128位',
+          // },
+          // {
+          //   min: 8,
+          //   message: '密码不能少于8位',
+          // },
           {
             required: true,
             message: '请输入确认密码',
+          },
+          {
+            triggerType: 'onBlur',
+            validator: (value: string) => {
+              return new Promise((resolve) => {
+                service
+                  .validateField('password', value)
+                  .then((resp) => {
+                    if (resp.status === 200) {
+                      if (resp.result.passed) {
+                        resolve('');
+                      } else {
+                        resolve(resp.result.reason);
+                      }
+                    }
+                    resolve('');
+                  })
+                  .catch(() => {
+                    return '验证失败!';
+                  });
+              });
+            },
           },
         ],
         'x-reactions': [
