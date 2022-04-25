@@ -1,4 +1,4 @@
-import type { BaseItem, State } from '@/utils/typings';
+import type { State } from '@/utils/typings';
 
 type Action = {
   executor: string;
@@ -10,9 +10,12 @@ type Trigger = {
   device: Record<string, unknown>;
 };
 
-type SceneItem = {
+interface SceneItem {
   parallel: boolean;
   state: State;
   actions: Action[];
   triggers: Trigger[];
-} & BaseItem;
+  id: string;
+  name: string;
+  describe: string;
+}

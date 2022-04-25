@@ -42,7 +42,6 @@ const Access = (props: Props) => {
   const [config, setConfig] = useState<any>();
   const networkPermission = PermissionButton.usePermission('link/Type').permission;
   const protocolPermission = PermissionButton.usePermission('link/Protocol').permission;
-  const [steps, setSteps] = useState<string[]>(['网络组件', '消息协议', '完成']);
 
   const MetworkTypeMapping = new Map();
   MetworkTypeMapping.set('websocket-server', 'WEB_SOCKET_SERVER');
@@ -70,7 +69,7 @@ const Access = (props: Props) => {
     });
   };
 
-  const queryProcotolList = (id?: string, params?: any) => {
+  const queryProcotolList = (id: string, params?: any) => {
     service.getProtocolList(ProcotoleMapping.get(id), params).then((resp) => {
       if (resp.status === 200) {
         setProcotolList(resp.result);
@@ -80,39 +79,25 @@ const Access = (props: Props) => {
 
   useEffect(() => {
     if (props.provider?.id && !props.data?.id) {
-      if (props.provider?.id !== 'child-device') {
-        setSteps(['网络组件', '消息协议', '完成']);
-        queryNetworkList(props.provider?.id, {
-          include: networkCurrent || '',
-        });
-        setCurrent(0);
-      } else {
-        setSteps(['消息协议', '完成']);
-        setCurrent(1);
-        queryProcotolList(props.provider?.id);
-      }
+      queryNetworkList(props.provider?.id, {
+        include: networkCurrent || '',
+      });
+      setCurrent(0);
     }
   }, [props.provider]);
 
   useEffect(() => {
     if (props.data?.id) {
       setProcotolCurrent(props.data?.protocol);
+      setNetworkCurrent(props.data?.channelId);
       form.setFieldsValue({
         name: props.data?.name,
         description: props.data?.description,
       });
-      if (props.data?.provider !== 'child-device') {
-        setCurrent(0);
-        setSteps(['网络组件', '消息协议', '完成']);
-        setNetworkCurrent(props.data?.channelId);
-        queryNetworkList(props.data?.provider, {
-          include: props.data?.channelId,
-        });
-      } else {
-        setSteps(['消息协议', '完成']);
-        setCurrent(1);
-        queryProcotolList(props.data?.provider);
-      }
+      setCurrent(0);
+      queryNetworkList(props.data?.provider, {
+        include: props.data?.channelId,
+      });
     }
   }, [props.data]);
 
@@ -144,6 +129,18 @@ const Access = (props: Props) => {
   const prev = () => {
     setCurrent(current - 1);
   };
+
+  const steps = [
+    {
+      title: '网络组件',
+    },
+    {
+      title: '消息协议',
+    },
+    {
+      title: '完成',
+    },
+  ];
 
   const columnsMQTT: any[] = [
     {
@@ -528,10 +525,7 @@ const Access = (props: Props) => {
                               description: values.description,
                               provider: props.provider.id,
                               protocol: procotolCurrent,
-                              transport:
-                                props.provider?.id === 'child-device'
-                                  ? 'Gateway'
-                                  : ProcotoleMapping.get(props.provider.id),
+                              transport: ProcotoleMapping.get(props.provider.id),
                               channel: 'network', // 网络组件
                               channelId: networkCurrent,
                             })
@@ -654,13 +648,13 @@ const Access = (props: Props) => {
         <div className={styles.steps}>
           <Steps size="small" current={current}>
             {steps.map((item) => (
-              <Steps.Step key={item} title={item} />
+              <Steps.Step key={item.title} title={item.title} />
             ))}
           </Steps>
         </div>
         <div className={styles.content}>{renderSteps(current)}</div>
         <div className={styles.action}>
-          {current === 1 && props.provider.id !== 'child-device' && (
+          {current === 1 && (
             <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
               上一步
             </Button>

@@ -1,8 +1,8 @@
-import type { ButtonProps, PopconfirmProps, TooltipProps } from 'antd';
-import { Button, Popconfirm, Tooltip } from 'antd';
+import type {ButtonProps, PopconfirmProps, TooltipProps} from 'antd';
+import {Button, Popconfirm, Tooltip} from 'antd';
 import usePermissions from '@/hooks/permission';
-import { useCallback } from 'react';
-import { useIntl } from '@@/plugin-locale/localeExports';
+import {useCallback} from 'react';
+import {useIntl} from '@@/plugin-locale/localeExports';
 
 interface PermissionButtonProps extends ButtonProps {
   tooltip?: TooltipProps;

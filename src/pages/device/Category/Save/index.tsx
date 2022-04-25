@@ -13,16 +13,16 @@ import {
   Upload,
 } from '@formily/antd';
 import React from 'react';
-import { createForm } from '@formily/core';
-import { createSchemaField } from '@formily/react';
+import {createForm} from '@formily/core';
+import {createSchemaField} from '@formily/react';
 import FUpload from '@/components/Upload';
 import * as ICONS from '@ant-design/icons';
-import { message, Modal } from 'antd';
-import { useIntl } from '@@/plugin-locale/localeExports';
-import type { ISchema } from '@formily/json-schema';
-import type { CategoryItem } from '@/pages/visualization/Category/typings';
-import { service, state } from '@/pages/device/Category';
-import type { Response } from '@/utils/typings';
+import {message, Modal} from 'antd';
+import {useIntl} from '@@/plugin-locale/localeExports';
+import type {ISchema} from '@formily/json-schema';
+import type {CategoryItem} from '@/pages/visualization/Category/typings';
+import {service, state} from '@/pages/device/Category';
+import type {Response} from '@/utils/typings';
 
 interface Props {
   visible: boolean;

@@ -29,7 +29,6 @@ export type DeviceInstance = {
   orgId: string;
   orgName: string;
   configuration: Record<string, any>;
-  relations?: any[];
   cachedConfiguration: any;
   transport: string;
   protocol: string;

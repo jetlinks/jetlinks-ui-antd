@@ -16,7 +16,7 @@ import {
   Switch,
 } from '@formily/antd';
 import type { Field } from '@formily/core';
-import { createForm, FormPath, onFieldInit, onFieldReact, onFieldValueChange } from '@formily/core';
+import { createForm, onFieldInit, onFieldValueChange } from '@formily/core';
 import { createSchemaField, observer } from '@formily/react';
 import type { ISchema } from '@formily/json-schema';
 import styles from './index.less';
@@ -60,7 +60,7 @@ export const docMap = {
 
 const Detail = observer(() => {
   const { id } = useParams<{ id: string }>();
-  const [provider, setProvider] = useState<string>('embedded');
+  const [provider, setProvider] = useState<string>();
   // 正则提取${}里面的值
   const pattern = /(?<=\$\{).*?(?=\})/g;
 
@@ -227,17 +227,9 @@ const Detail = observer(() => {
               form1.setValuesIn('variableDefinitions', idList);
             }
           });
-          onFieldReact('variableDefinitions.*.type', (field) => {
+          onFieldValueChange('variableDefinitions.*.type', (field) => {
             const value = (field as Field).value;
-            const formatPath = FormPath.transform(
-              field.path,
-              /\d+/,
-              (index) => `variableDefinitions.${parseInt(index)}.format`,
-            );
-            const format = field.query(formatPath).take() as any;
-
-            console.log(format, 'format', value);
-            if (!format) return;
+            const format = field.query('.format').take() as any;
             switch (value) {
               case 'date':
                 format.setComponent(Select);
@@ -251,9 +243,8 @@ const Detail = observer(() => {
                 format.setValue('string');
                 break;
               case 'string':
-                console.log('string');
                 format.setComponent(PreviewText.Input);
-                format.setValue('%s');
+                format.setValue('--');
                 break;
               case 'number':
                 format.setComponent(Input);
@@ -482,6 +473,15 @@ const Detail = observer(() => {
               officialMessage: {
                 type: 'void',
                 properties: {
+                  agentId: {
+                    title: 'AgentId',
+                    type: 'string',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Input',
+                    'x-component-props': {
+                      placeholder: '请输入AgentId',
+                    },
+                  },
                   tagid: {
                     title: '用户标签',
                     type: 'string',
@@ -1000,11 +1000,9 @@ const Detail = observer(() => {
           fulfill: {
             state: {
               hidden: '{{$deps[0]==="aliyun"}}',
-              disabled: '{{["aliyunSms","aliyun"].includes($deps[0])}}',
             },
           },
         },
-
         'x-component-props': {
           rows: 5,
           placeholder: '变量格式:${name};\n 示例:尊敬的${name},${time}有设备触发告警,请注意处理',
@@ -1072,7 +1070,7 @@ const Detail = observer(() => {
             column4: {
               type: 'void',
               'x-component': 'ArrayTable.Column',
-              'x-component-props': { title: '格式', width: '300px' },
+              'x-component-props': { title: '格式', width: '150px' },
               required: true,
               properties: {
                 format: {

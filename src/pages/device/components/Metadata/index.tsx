@@ -94,7 +94,7 @@ const Metadata = observer((props: Props) => {
         </Tabs.TabPane>
       </Tabs>
       <Import visible={visible} close={() => setVisible(false)} />
-      <Cat visible={cat} close={() => setCat(false)} type={props.type} />
+      <Cat visible={cat} close={() => setCat(false)} />
     </div>
   );
 });

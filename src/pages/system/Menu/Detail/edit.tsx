@@ -159,7 +159,10 @@ export default (props: EditProps) => {
                       defaultMessage: '名称',
                     })}
                     required={true}
-                    rules={[{ required: true, message: '请输入名称' }]}
+                    rules={[
+                      { required: true, message: '请输入名称' },
+                      { max: 64, message: '最多可输入64个字符' },
+                    ]}
                   >
                     <Input disabled={disabled} placeholder={'请输入名称'} />
                   </Form.Item>

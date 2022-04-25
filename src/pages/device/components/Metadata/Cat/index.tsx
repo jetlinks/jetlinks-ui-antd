@@ -3,45 +3,23 @@ import { useEffect, useState } from 'react';
 import { productModel, service } from '@/pages/device/Product';
 import MonacoEditor from 'react-monaco-editor';
 import { observer } from '@formily/react';
-import { InstanceModel } from '@/pages/device/Instance';
-import { useLocation } from 'umi';
-import InstanceService from '@/pages/device/Instance/service';
 
 interface Props {
   visible: boolean;
   close: () => void;
-  type: 'product' | 'device';
 }
 
-const instanceService = new InstanceService('device-instance');
 const Cat = observer((props: Props) => {
-  const location = useLocation<{ id: string }>();
   const [codecs, setCodecs] = useState<{ id: string; name: string }[]>();
-  const metadataMap = {
-    product: productModel.current?.metadata as string,
-    device: InstanceModel.current?.metadata as string, // 有问题
-  };
-  const metadata = metadataMap[props.type];
+  const metadata = productModel.current?.metadata as string;
   const [value, setValue] = useState(metadata);
-  const _path = location.pathname.split('/');
-  const id = _path[_path.length - 1];
   useEffect(() => {
     service.codecs().subscribe({
       next: (data) => {
         setCodecs([{ id: 'jetlinks', name: 'jetlinks' }].concat(data));
       },
     });
-
-    if (props.type === 'device' && id) {
-      instanceService.detail(id).then((resp) => {
-        if (resp.status === 200) {
-          InstanceModel.current = resp.result;
-          const _metadata = resp.result?.metadata;
-          setValue(_metadata);
-        }
-      });
-    }
-  }, [id]);
+  }, []);
 
   const convertMetadata = (key: string) => {
     if (key === 'alink') {
