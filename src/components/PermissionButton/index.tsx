@@ -18,7 +18,6 @@ interface PermissionButtonProps extends ButtonProps {
  */
 const PermissionButton = (props: PermissionButtonProps) => {
   const { tooltip, popConfirm, isPermission, ...buttonProps } = props;
-
   const _isPermission =
     'isPermission' in props && props.isPermission
       ? 'disabled' in buttonProps
