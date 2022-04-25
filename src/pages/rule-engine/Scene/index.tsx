@@ -1,5 +1,5 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import type { SceneItem } from '@/pages/rule-engine/Scene/typings';
 import { Badge, message } from 'antd';
@@ -8,7 +8,10 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import { PermissionButton, ProTableCard } from '@/components';
 import { statusMap } from '@/pages/device/Instance';
 import SearchComponent from '@/components/SearchComponent';
+import SceneCard from '@/components/ProTableCard/CardItems/scene';
 import Service from './service';
+import { useHistory } from 'umi';
+import { getMenuPathByCode } from '@/utils/menu';
 
 export const service = new Service('rule-engine/scene');
 
@@ -17,8 +20,9 @@ const Scene = () => {
   const actionRef = useRef<ActionType>();
   const { permission } = PermissionButton.usePermission('rule-engine/Scene');
   const [searchParams, setSearchParams] = useState<any>({});
+  const history = useHistory();
 
-  const Tools = (record: any, type: 'card' | 'table') => {
+  const Tools = (record: any, type: 'card' | 'table'): React.ReactNode[] => {
     return [
       <PermissionButton
         key={'update'}
@@ -189,7 +193,7 @@ const Scene = () => {
           setSearchParams(data);
         }}
       />
-      <ProTableCard
+      <ProTableCard<SceneItem>
         columns={columns}
         actionRef={actionRef}
         params={searchParams}
@@ -213,7 +217,10 @@ const Scene = () => {
             icon={<PlusOutlined />}
             type="primary"
             isPermission={permission.add}
-            onClick={() => {}}
+            onClick={() => {
+              const url = getMenuPathByCode('rule-engine/Scene/Save');
+              history.push(url);
+            }}
           >
             {intl.formatMessage({
               id: 'pages.data.option.add',
@@ -221,6 +228,7 @@ const Scene = () => {
             })}
           </PermissionButton>,
         ]}
+        cardRender={(record) => <SceneCard {...record} tools={Tools(record, 'card')} />}
       />
     </PageContainer>
   );

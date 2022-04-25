@@ -4,7 +4,6 @@ import moment from 'moment';
 import { observer } from '@formily/react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import Config from '@/pages/device/Instance/Detail/Config';
-import Reation from '@/pages/device/Instance/Detail/Reation';
 import Save from '../../Save';
 import { useState } from 'react';
 import type { DeviceInstance } from '../../typings';
@@ -116,9 +115,6 @@ const Info = observer(() => {
         </Descriptions>
         <Config />
         {InstanceModel.detail?.tags && InstanceModel.detail?.tags.length > 0 && <Tags />}
-        {InstanceModel.detail?.relations && InstanceModel.detail?.relations.length > 0 && (
-          <Reation />
-        )}
       </Card>
       <Save
         model={'edit'}
