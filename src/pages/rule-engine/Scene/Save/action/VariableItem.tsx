@@ -81,8 +81,8 @@ export default (props: VariableItemProps) => {
             />
           );
         case 'date':
-          // @ts-ignore
           return (
+            // @ts-ignore
             <DatePicker
               style={{ width: '100%' }}
               format={data.format || 'YYYY-MM-DD HH:mm:ss'}
