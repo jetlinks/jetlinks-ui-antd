@@ -4,7 +4,7 @@ import {
   SyncOutlined,
   UnorderedListOutlined,
 } from '@ant-design/icons';
-import { message, Space, Spin, Tooltip, Card } from 'antd';
+import { Card, message, Space, Spin, Tooltip } from 'antd';
 import type { PropertyMetadata } from '@/pages/device/Product/typings';
 import { useState } from 'react';
 import { service } from '@/pages/device/Instance';

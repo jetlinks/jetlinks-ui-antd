@@ -214,14 +214,14 @@ const Save = (props: Props) => {
         ],
         name: 'password',
         'x-validator': [
-          {
-            max: 128,
-            message: '密码最多可输入128位',
-          },
-          {
-            min: 8,
-            message: '密码不能少于6位',
-          },
+          // {
+          //   max: 128,
+          //   message: '密码最多可输入128位',
+          // },
+          // {
+          //   min: 8,
+          //   message: '密码不能少于8位',
+          // },
           {
             required: model === 'add',
             message: '请输入密码',
@@ -242,19 +242,42 @@ const Save = (props: Props) => {
         },
         'x-visible': model === 'add',
         'x-validator': [
-          {
-            max: 128,
-            message: '密码最多可输入128位',
-          },
-          {
-            min: 8,
-            message: '密码不能少于6位',
-          },
+          // {
+          //   max: 128,
+          //   message: '密码最多可输入128位',
+          // },
+          // {
+          //   min: 8,
+          //   message: '密码不能少于6位',
+          // },
           {
             required: model === 'add',
             message: '请输入确认密码',
           },
+          {
+            triggerType: 'onBlur',
+            validator: (value: string) => {
+              return new Promise((resolve) => {
+                service
+                  .validateField('password', value)
+                  .then((resp) => {
+                    if (resp.status === 200) {
+                      if (resp.result.passed) {
+                        resolve('');
+                      } else {
+                        resolve(model === 'edit' ? '' : resp.result.reason);
+                      }
+                    }
+                    resolve('');
+                  })
+                  .catch(() => {
+                    return '验证失败!';
+                  });
+              });
+            },
+          },
         ],
+
         'x-reactions': [
           {
             dependencies: ['.password'],
@@ -368,6 +391,7 @@ const Save = (props: Props) => {
             title: '手机号',
             'x-decorator': 'FormItem',
             'x-component': 'Input',
+            'x-validator': 'phone',
             'x-decorator-props': {
               gridSpan: 1,
             },
@@ -376,6 +400,7 @@ const Save = (props: Props) => {
             title: '邮箱',
             'x-decorator': 'FormItem',
             'x-component': 'Input',
+            'x-validator': 'email',
             'x-decorator-props': {
               gridSpan: 1,
             },
