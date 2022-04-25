@@ -1,4 +1,4 @@
-import { Col, Form, Row, Select, TimePicker, Input } from 'antd';
+import { Col, Form, Input, Row, Select, TimePicker } from 'antd';
 import { ItemGroup } from '@/pages/rule-engine/Scene/Save/components';
 
 interface MessageContentProps {

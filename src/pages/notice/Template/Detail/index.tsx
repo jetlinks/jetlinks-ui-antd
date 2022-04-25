@@ -218,11 +218,9 @@ const Detail = observer(() => {
                 ?.match(pattern)
                 ?.filter((i: string) => i)
                 .map((item: string) => ({ id: item, type: 'string', format: '--' }));
-            if (idList && idList.length > 0) {
-              form1.setFieldState('variableDefinitions', (state1) => {
-                state1.visible = true;
-              });
-            }
+            form1.setFieldState('variableDefinitions', (state1) => {
+              state1.visible = !!idList && idList.length > 0;
+            });
             if (form1.modified) {
               form1.setValuesIn('variableDefinitions', idList);
             }
@@ -235,8 +233,6 @@ const Detail = observer(() => {
               (index) => `variableDefinitions.${parseInt(index)}.format`,
             );
             const format = field.query(formatPath).take() as any;
-
-            console.log(format, 'format', value);
             if (!format) return;
             switch (value) {
               case 'date':

@@ -1,7 +1,7 @@
-import { Button, InputNumber, Select, Form } from 'antd';
+import { Button, Form, InputNumber, Select } from 'antd';
 import { useEffect, useState } from 'react';
 import { useRequest } from 'umi';
-import { queryMessageType, queryMessageConfig, queryMessageTemplate } from './service';
+import { queryMessageConfig, queryMessageTemplate, queryMessageType } from './service';
 import MessageContent from './messageContent';
 
 interface ActionProps {

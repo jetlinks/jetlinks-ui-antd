@@ -56,6 +56,7 @@ const ResetPassword = (props: Props) => {
             message: '密码最多可输入128位',
           },
           {
+            min: 8,
             message: '密码不能少于6位',
           },
           {
@@ -82,8 +83,8 @@ const ResetPassword = (props: Props) => {
             message: '密码最多可输入128位',
           },
           {
-            min: 6,
-            message: '密码不能少于6位',
+            min: 8,
+            message: '密码不能少于8位',
           },
           {
             required: true,
@@ -119,6 +120,7 @@ const ResetPassword = (props: Props) => {
           const resp = await service.resetPassword(props.data.id, value.confirmPassword);
           if (resp.status === 200) {
             message.success('操作成功');
+            props.close();
           }
         }
         props.close();
