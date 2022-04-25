@@ -56,7 +56,7 @@ export const typeList = {
   ],
   email: [
     {
-      value: 'email',
+      value: 'embedded',
       label: '默认',
     },
   ],

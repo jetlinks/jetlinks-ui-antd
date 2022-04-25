@@ -347,6 +347,7 @@ const Detail = observer(() => {
     }
   };
 
+  console.log(typeList[id][0]);
   const schema: ISchema = {
     type: 'object',
     properties: {
@@ -387,6 +388,7 @@ const Detail = observer(() => {
         required: true,
         'x-visible': typeList[id]?.length > 0,
         'x-hidden': id === 'email',
+        'x-value': typeList[id][0]?.value,
         enum: typeList[id] || [],
       },
       configId: {
@@ -653,11 +655,11 @@ const Detail = observer(() => {
                         'x-component': 'Select',
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
-                          tooltip: '请输入收信部门ID',
+                          tooltip: '收信部门ID',
                           gridSpan: 1,
                         },
                         'x-component-props': {
-                          placeholder: '请输入AgentID',
+                          placeholder: '请选择收信部门',
                         },
                         'x-reactions': {
                           dependencies: ['configId'],

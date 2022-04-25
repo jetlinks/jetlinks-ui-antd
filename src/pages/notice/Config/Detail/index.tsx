@@ -63,15 +63,15 @@ const Detail = observer(() => {
       createForm({
         validateFirst: true,
         effects() {
-          onFieldValueChange('type', async (field, f) => {
+          onFieldValueChange('type', async (field) => {
             const type = field.value;
             if (!type) return;
-            f.setFieldState('provider', (state1) => {
-              state1.value = undefined;
-              // state.dataSource = providerRef.current
-              //   .find((item) => type === item.id)
-              //   ?.providerInfos.map((i) => ({ label: i.name, value: i.id }));
-            });
+            // f.setFieldState('provider', (state1) => {
+            // state1.value = undefined;
+            // state.dataSource = providerRef.current
+            //   .find((item) => type === item.id)
+            //   ?.providerInfos.map((i) => ({ label: i.name, value: i.id }));
+            // });
           });
           onFieldValueChange('provider', async (field) => {
             if (id === 'email') {
@@ -145,6 +145,7 @@ const Detail = observer(() => {
         required: true,
         'x-visible': typeList[id]?.length > 0,
         'x-hidden': id === 'email',
+        'x-value': typeList[id][0]?.value,
         enum: typeList[id] || [],
       },
       configuration: {

@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { PermissionButton } from '@/components';
 import ActionItems from './action/action';
 import { PlusOutlined } from '@ant-design/icons';
+import TriggerTerm from '@/pages/rule-engine/Scene/TriggerTerm';
 
 export default () => {
   const location = useLocation();
@@ -61,6 +62,9 @@ export default () => {
         <PermissionButton isPermission={getOtherPermission(['add', 'update'])} onClick={saveData}>
           保存
         </PermissionButton>
+      </Card>
+      <Card>
+        <TriggerTerm />
       </Card>
     </PageContainer>
   );
