@@ -83,29 +83,32 @@ const AccessConfig = (props: Props) => {
       visible
       width={1200}
       title={'设备接入配置'}
-      onOk={() => {
+      onOk={async () => {
         if (!!currrent) {
-          service1
-            .update({
-              ...productModel.current,
-              transportProtocol: currrent.transport,
-              protocolName: currrent.protocolDetail.name,
-              accessId: currrent.id,
-              accessName: currrent.name,
-              accessProvider: currrent.provider,
-              messageProtocol: currrent.protocol,
-            })
-            .then((resp) => {
-              if (resp.status === 200) {
-                service1.detail(productModel.current?.id || '').then((res) => {
-                  if (res.status === 200) {
-                    productModel.current = { ...res.result };
-                    message.success('操作成功！');
+          const resp: any = await service1.update({
+            ...productModel.current,
+            transportProtocol: currrent.transport,
+            protocolName: currrent.protocolDetail.name,
+            accessId: currrent.id,
+            accessName: currrent.name,
+            accessProvider: currrent.provider,
+            messageProtocol: currrent.protocol,
+          });
+          if (resp.status === 200) {
+            service1
+              .changeDeploy(productModel.current?.id || '', 'deploy')
+              .subscribe((response) => {
+                if (response) {
+                  service1.detail(productModel.current?.id || '').then((res) => {
+                    if (res.status === 200) {
+                      productModel.current = { ...res.result };
+                      message.success('操作成功！');
+                    }
                     close();
-                  }
-                });
-              }
-            });
+                  });
+                }
+              });
+          }
         } else {
           message.success('请选择接入方式');
         }

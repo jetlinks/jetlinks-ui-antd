@@ -152,12 +152,7 @@ const Access = (props: Props) => {
       key: 'group',
       ellipsis: true,
       align: 'center',
-      width: 80,
-      render: (text: any) => (
-        <Tooltip placement="top" title={text}>
-          {text}
-        </Tooltip>
-      ),
+      width: 100,
       onCell: (record: any, index: number) => {
         const list = (config?.routes || []).sort((a: any, b: any) => a - b) || [];
         const arr = list.filter((res: any) => {
@@ -175,12 +170,11 @@ const Access = (props: Props) => {
       title: 'topic',
       dataIndex: 'topic',
       key: 'topic',
-      ellipsis: true,
-      align: 'center',
-      with: '30%',
       render: (text: any) => (
-        <Tooltip placement="top" title={text}>
-          {text}
+        <Tooltip placement="topLeft" title={text}>
+          <div style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+            {text}
+          </div>
         </Tooltip>
       ),
     },
@@ -189,8 +183,8 @@ const Access = (props: Props) => {
       dataIndex: 'stream',
       key: 'stream',
       ellipsis: true,
-      width: 80,
       align: 'center',
+      width: 100,
       render: (text: any, record: any) => {
         const list = [];
         if (record?.upstream) {
@@ -206,11 +200,11 @@ const Access = (props: Props) => {
       title: '说明',
       dataIndex: 'description',
       key: 'description',
-      ellipsis: true,
-      align: 'center',
       render: (text: any) => (
-        <Tooltip placement="top" title={text}>
-          {text}
+        <Tooltip placement="topLeft" title={text}>
+          <div style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+            {text}
+          </div>
         </Tooltip>
       ),
     },
@@ -218,16 +212,11 @@ const Access = (props: Props) => {
 
   const columnsHTTP: any[] = [
     {
-      title: '地址',
-      dataIndex: 'address',
-      key: 'address',
+      title: '分组',
+      dataIndex: 'group',
+      key: 'group',
       ellipsis: true,
-      align: 'center',
-      render: (text: any) => (
-        <Tooltip placement="top" title={text}>
-          {text}
-        </Tooltip>
-      ),
+      width: 100,
       onCell: (record: any, index: number) => {
         const list = (config?.routes || []).sort((a: any, b: any) => a - b) || [];
         const arr = list.filter((res: any) => {
@@ -242,14 +231,14 @@ const Access = (props: Props) => {
       },
     },
     {
-      title: '分组',
-      dataIndex: 'group',
-      key: 'group',
-      ellipsis: true,
-      align: 'center',
+      title: '地址',
+      dataIndex: 'address',
+      key: 'address',
       render: (text: any) => (
-        <Tooltip placement="top" title={text}>
-          {text}
+        <Tooltip placement="topLeft" title={text}>
+          <div style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+            {text}
+          </div>
         </Tooltip>
       ),
     },
@@ -257,11 +246,11 @@ const Access = (props: Props) => {
       title: '示例',
       dataIndex: 'example',
       key: 'example',
-      ellipsis: true,
-      align: 'center',
       render: (text: any) => (
-        <Tooltip placement="top" title={text}>
-          {text}
+        <Tooltip placement="topLeft" title={text}>
+          <div style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+            {text}
+          </div>
         </Tooltip>
       ),
     },
@@ -269,11 +258,11 @@ const Access = (props: Props) => {
       title: '说明',
       dataIndex: 'description',
       key: 'description',
-      ellipsis: true,
-      align: 'center',
       render: (text: any) => (
-        <Tooltip placement="top" title={text}>
-          {text}
+        <Tooltip placement="topLeft" title={text}>
+          <div style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+            {text}
+          </div>
         </Tooltip>
       ),
     },

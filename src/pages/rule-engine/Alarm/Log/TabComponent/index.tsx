@@ -152,7 +152,7 @@ const TabComponent = observer((props: Props) => {
                           item.level}
                       </div>
                     </div>
-                    <div className="alarm-log-title-text">{item.name}</div>
+                    <div className="alarm-log-title-text">{item.alarmName}</div>
                   </div>
                   <div className="alarm-log-content">
                     <div className="alarm-log-image">

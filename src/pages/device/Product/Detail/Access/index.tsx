@@ -89,11 +89,11 @@ const Access = () => {
       title: 'topic',
       dataIndex: 'topic',
       key: 'topic',
-      ellipsis: true,
-      align: 'center',
       render: (text: any) => (
         <Tooltip placement="topLeft" title={text}>
-          {text}
+          <div style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+            {text}
+          </div>
         </Tooltip>
       ),
     },
@@ -119,11 +119,11 @@ const Access = () => {
       title: '说明',
       dataIndex: 'description',
       key: 'description',
-      ellipsis: true,
-      align: 'center',
       render: (text: any) => (
         <Tooltip placement="topLeft" title={text}>
-          {text}
+          <div style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+            {text}
+          </div>
         </Tooltip>
       ),
     },
@@ -136,7 +136,6 @@ const Access = () => {
       key: 'group',
       ellipsis: true,
       width: 100,
-      align: 'center',
       onCell: (record: any, index: number) => {
         const list = (config?.routes || []).sort((a: any, b: any) => a - b) || [];
         const arr = list.filter((res: any) => {
@@ -154,11 +153,11 @@ const Access = () => {
       title: '地址',
       dataIndex: 'address',
       key: 'address',
-      ellipsis: true,
-      align: 'center',
       render: (text: any) => (
         <Tooltip placement="topLeft" title={text}>
-          {text}
+          <div style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+            {text}
+          </div>
         </Tooltip>
       ),
     },
@@ -166,11 +165,11 @@ const Access = () => {
       title: '示例',
       dataIndex: 'example',
       key: 'example',
-      ellipsis: true,
-      align: 'center',
       render: (text: any) => (
         <Tooltip placement="topLeft" title={text}>
-          {text}
+          <div style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+            {text}
+          </div>
         </Tooltip>
       ),
     },
@@ -178,11 +177,11 @@ const Access = () => {
       title: '说明',
       dataIndex: 'description',
       key: 'description',
-      ellipsis: true,
-      align: 'center',
       render: (text: any) => (
         <Tooltip placement="topLeft" title={text}>
-          {text}
+          <div style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+            {text}
+          </div>
         </Tooltip>
       ),
     },
