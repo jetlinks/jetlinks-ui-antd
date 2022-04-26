@@ -74,6 +74,7 @@ const Status = observer((props: Props) => {
   const productPermission = PermissionButton.usePermission('device/Product').permission;
   const networkPermission = PermissionButton.usePermission('link/Type').permission;
   const devicePermission = PermissionButton.usePermission('device/Instance').permission;
+
   const [diagnoseVisible, setDiagnoseVisible] = useState<boolean>(false);
   const [artificialVisible, setArtificialVisible] = useState<boolean>(false);
   const [diagnoseData, setDiagnoseData] = useState<any>({});
@@ -676,15 +677,17 @@ const Status = observer((props: Props) => {
   };
 
   useEffect(() => {
-    if (!props.flag) {
-      handleSearch();
-    } else {
-      const dt = Store.get('diagnose-status');
-      DiagnoseStatusModel.status = dt?.status;
-      DiagnoseStatusModel.list = dt?.list || [];
-      props.onChange('success');
+    if (devicePermission.view) {
+      if (!props.flag) {
+        handleSearch();
+      } else {
+        const dt = Store.get('diagnose-status');
+        DiagnoseStatusModel.status = dt?.status;
+        DiagnoseStatusModel.list = dt?.list || [];
+        props.onChange('success');
+      }
     }
-  }, []);
+  }, [devicePermission]);
 
   return (
     <Row gutter={24}>

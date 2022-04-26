@@ -1,6 +1,7 @@
 import BaseService from '@/utils/BaseService';
 import { request } from 'umi';
 import SystemConst from '@/utils/const';
+import { from, map, zip } from 'rxjs';
 
 class Service extends BaseService<ConfigItem> {
   public getTypes = () =>
@@ -64,6 +65,10 @@ class Service extends BaseService<ConfigItem> {
         method: 'PATCH',
         data,
       }),
+    bindUserThirdParty: (type: string, provider: string, configId: string) =>
+      request(`${SystemConst.API_BASE}/user/third-party/${type}_${provider}/${configId}`, {
+        method: 'GET',
+      }),
     getUserBindInfo: () =>
       request(`${SystemConst.API_BASE}/user/third-party/me`, { method: 'GET' }),
     unBindUser: (bindId: string) =>
@@ -71,6 +76,49 @@ class Service extends BaseService<ConfigItem> {
         method: 'DELETE',
       }),
   };
+
+  public queryZipSyncUser = (
+    type: 'wechat' | 'dingTalk',
+    _type: string,
+    provider: string,
+    configId: string,
+    departmentId: string,
+  ) =>
+    new Promise((resolve) => {
+      zip(
+        from(this.syncUser.getDeptUser(type, configId, departmentId)),
+        from(this.syncUser.bindUserThirdParty(_type, provider, configId)),
+        from(this.syncUser.noBindUser({ paging: false })),
+      )
+        .pipe(map((resp) => resp.map((item) => item.result)))
+        .subscribe((resp) => {
+          const [resp1, resp2, resp3] = resp;
+          const list = resp1.map((item: { id: string; name: string }) => {
+            const data =
+              resp2.find(
+                (i: { userId: string; providerName: string; thirdPartyUserId: string }) =>
+                  i.thirdPartyUserId === item.id,
+              ) || {};
+            let _user: Partial<UserItem> = {};
+            if (data) {
+              _user = resp3.find((i: UserItem) => i.id === data.userId);
+            }
+            return {
+              ..._user,
+              ...data,
+              ...item,
+              bindingId: data?.id,
+              userId: _user?.id,
+              userName: _user?.name,
+            };
+          });
+          resolve({
+            message: 'success',
+            result: list,
+            status: 200,
+          });
+        });
+    });
 }
 
 export default Service;

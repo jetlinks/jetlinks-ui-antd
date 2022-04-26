@@ -203,6 +203,7 @@ const TabComponent = observer((props: Props) => {
                               <div className="btn">
                                 <ToolFilled className="icon" />
                                 <div>告警处理</div>
+                                {/* action */}
                               </div>
                             </Button>
                           </div>
