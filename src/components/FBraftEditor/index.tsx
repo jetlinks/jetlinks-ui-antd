@@ -23,7 +23,7 @@ const FBraftEditor = connect((props: Props) => {
           value={editorState}
           onChange={(state) => {
             setEditorState(state);
-            props.onChange(state.toHTML());
+            props.onChange(state.toHTML() === '<p></p>' ? undefined : state.toHTML());
           }}
         />
       }

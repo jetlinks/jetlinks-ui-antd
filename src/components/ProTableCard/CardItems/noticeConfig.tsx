@@ -15,7 +15,7 @@ export default (props: NoticeCardProps) => {
     <TableCard detail={props.detail} actions={props.actions} showStatus={false} showMask={false}>
       <div className={'pro-table-card-item'}>
         <div className={'card-item-avatar'}>
-          <img width={88} height={88} src={imgMap[props.type]} alt={props.type} />
+          <img width={88} height={88} src={imgMap[props.type][props.provider]} alt={props.type} />
         </div>
         <div className={'card-item-body'}>
           <div className={'card-item-header'}>

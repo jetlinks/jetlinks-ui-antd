@@ -59,10 +59,7 @@ const Edit = observer((props: Props) => {
         initialValues: MetadataModel.item as Record<string, unknown>,
         effects: () => {
           onFieldReact('expands.metrics.*.*', (field, form1) => {
-            console.log('指标配置');
             const type = field.query('valueType.type').take() as Field;
-            console.log(type.value, 'value');
-
             const componentMap = {
               int: 'NumberPicker',
               long: 'NumberPicker',
@@ -458,6 +455,7 @@ const Edit = observer((props: Props) => {
             'x-decorator': 'FormItem',
             'x-component': 'Select',
             enum: PropertySource,
+            'x-visible': props.type === 'product',
           },
           'virtualRule.type': {
             type: 'string',

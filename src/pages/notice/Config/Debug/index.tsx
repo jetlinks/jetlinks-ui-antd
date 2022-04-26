@@ -34,12 +34,10 @@ const Debug = observer(() => {
             const list = Store.get('notice-template-list');
 
             const _template = list.find((item: any) => item.id === value);
-            if (_template?.variableDefinitions?.length > 0) {
-              form1.setFieldState('variableDefinitions', (_state) => {
-                _state.visible = true;
-                _state.value = _template.variableDefinitions;
-              });
-            }
+            form1.setFieldState('variableDefinitions', (_state) => {
+              _state.visible = _template?.variableDefinitions?.length > 0;
+              _state.value = _template.variableDefinitions;
+            });
           });
           onFieldReact('variableDefinitions.*.type', (field) => {
             const value = (field as Field).value;
