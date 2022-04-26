@@ -74,6 +74,7 @@ const DeviceGateway: React.FC<Props> = () => {
   statusMap.set('在线', 'success');
   statusMap.set('离线', 'error');
   statusMap.set('未激活', 'processing');
+  statusMap.set('未启用', 'default');
 
   const unBindGateway = (id: string, deviceId: string) => {
     setSpinning(true);

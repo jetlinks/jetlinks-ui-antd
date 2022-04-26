@@ -483,7 +483,7 @@ export const routes = [
             tenant: ['admin'],
             iconfont: 'icon-icon-',
             version: 'pro',
-            // authority: ['big-screen'],
+            authority: ['visualization','admin'],
             // authority: ['big-screen', 'vis-configuration'],
             routes: [
               // {

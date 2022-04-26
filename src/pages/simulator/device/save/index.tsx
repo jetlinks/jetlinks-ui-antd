@@ -110,7 +110,8 @@ const Save: React.FC<Props> = props => {
                 "title": "{{ text('接入方式',help('这是接入方式的提示'))}}",
                 "x-component": "select",
                 "x-component-props":{
-                    showSearch:true
+                    showSearch:true,
+                    optionFilterProp:'children'
                 },               
                 "required": true,
                 "type": "string",
@@ -301,6 +302,10 @@ const Save: React.FC<Props> = props => {
             "listeners": {
                 "title": "{{ text('其他功能',help('这是其他功能的提示'))}}",
                 "x-component": "arraypanels",
+                "x-component-props":{
+                    renderMoveDown: () => null,
+                    renderMoveUp: () => null,
+                },
                 "type": "array",
                 "x-mega-props": { "span": 2, "labelCol": 3 },
                 "items": {

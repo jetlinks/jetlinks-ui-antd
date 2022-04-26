@@ -266,7 +266,8 @@ const DeviceModel: React.FC<Props> = props => {
                     props: {
                       data: categoryList,
                       dropdownStyle: { maxHeight: 500 },
-                      showSearch:true
+                      showSearch:true,
+                      optionFilterProp:'children'
                     },
                   },
                   {
