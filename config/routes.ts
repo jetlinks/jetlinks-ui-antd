@@ -380,7 +380,7 @@ export const routes = [
               },
               {
                 path: '/network/modbus/:id',
-                name: '设备接入',
+                name: 'modbus设备接入',
                 icon: 'file-markdown',
                 iconfont: 'file-markdown',
                 hideInMenu: true,
