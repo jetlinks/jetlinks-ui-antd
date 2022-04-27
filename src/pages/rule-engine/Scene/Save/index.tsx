@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { Button, Card, Form, Input } from 'antd';
 import { useLocation } from 'umi';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { PermissionButton } from '@/components';
 import ActionItems from './action/action';
 import { PlusOutlined } from '@ant-design/icons';
@@ -13,6 +13,7 @@ export default () => {
   const [form] = Form.useForm();
 
   const { getOtherPermission } = PermissionButton.usePermission('rule-engine/Scene');
+  const [triggerType, setTriggerType] = useState('');
 
   const getDetail = async () => {
     // TODO 回显数据
@@ -34,13 +35,19 @@ export default () => {
   return (
     <PageContainer>
       <Card>
-        <Form form={form} colon={false} layout={'vertical'} preserve={false}>
+        <Form
+          form={form}
+          colon={false}
+          layout={'vertical'}
+          preserve={false}
+          onValuesChange={() => {}}
+        >
           <Form.Item name={'name'} label={'名称'}>
             <Input placeholder={'请输入名称'} />
           </Form.Item>
           <Form.Item label={'触发方式'}>
             <Form.Item name={['trigger', 'type']}>
-              <TriggerWay />
+              <TriggerWay onSelect={setTriggerType} />
             </Form.Item>
           </Form.Item>
           <Form.Item label={'执行动作'}>
@@ -52,8 +59,9 @@ export default () => {
                       key={key}
                       form={form}
                       restField={restField}
-                      onRemove={() => remove(name)}
                       name={name}
+                      triggerType={triggerType}
+                      onRemove={() => remove(name)}
                     />
                   ))}
                   <Form.Item>

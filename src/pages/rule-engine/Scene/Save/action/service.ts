@@ -29,3 +29,39 @@ export const queryProductList = (data?: any) =>
 
 export const queryDeviceSelector = () =>
   request(`${SystemConst.API_BASE}/scene/device-selectors`, { method: 'GET' });
+
+// 内置参数
+export const queryBuiltInParams = (data: any) =>
+  request(`${SystemConst.API_BASE}/scene/parse-variables`, { method: 'POST', data });
+
+// 平台用户
+export const queryPlatformUsers = () =>
+  request(`${SystemConst.API_BASE}/user/_query/no-paging`, {
+    method: 'POST',
+    data: { paging: false, sorts: [{ name: 'name', order: 'asc' }] },
+  });
+
+// 关系用户
+export const queryRelationUsers = () =>
+  request(`${SystemConst.API_BASE}/relation/_query/no-paging`, {
+    method: 'POST',
+    data: { paging: false, sorts: [{ name: 'name', order: 'asc' }] },
+  });
+
+// 钉钉用户
+export const queryDingTalkUsers = (id: string) =>
+  request(`${SystemConst.API_BASE}/notifier/dingtalk/corp/${id}/users`, { method: 'GET' });
+
+// 钉钉部门
+export const queryDingTalkDepartments = (id: string) =>
+  request(`${SystemConst.API_BASE}/notifier/dingtalk/corp/${id}/departments/tree`, {
+    method: 'GET',
+  });
+
+// 微信用户
+export const queryWechatUsers = (id: string) =>
+  request(`${SystemConst.API_BASE}/notifier/wechat/corp/${id}/users`, { method: 'GET' });
+
+// 微信部门
+export const queryWechatDepartments = (id: string) =>
+  request(`${SystemConst.API_BASE}/notifier/wechat/corp/${id}/departments`, { method: 'GET' });

@@ -13,7 +13,7 @@ interface InputUploadProps {
 export default (props: InputUploadProps) => {
   const { onChange } = props;
 
-  const [url, setUrl] = useState('');
+  const [url, setUrl] = useState(props.value);
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
