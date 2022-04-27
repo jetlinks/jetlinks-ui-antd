@@ -1,7 +1,7 @@
 import BaseService from '@/utils/BaseService';
 import { request } from 'umi';
 import SystemConst from '@/utils/const';
-import { from, map, zip } from 'rxjs';
+import { from, lastValueFrom, map, mergeMap, toArray, zip } from 'rxjs';
 
 class Service extends BaseService<ConfigItem> {
   public getTypes = () =>
@@ -84,15 +84,15 @@ class Service extends BaseService<ConfigItem> {
     configId: string,
     departmentId: string,
   ) =>
-    new Promise((resolve) => {
+    lastValueFrom(
       zip(
         from(this.syncUser.getDeptUser(type, configId, departmentId)),
         from(this.syncUser.bindUserThirdParty(_type, provider, configId)),
         from(this.syncUser.noBindUser({ paging: false })),
-      )
-        .pipe(map((resp) => resp.map((item) => item.result)))
-        .subscribe((resp) => {
-          const [resp1, resp2, resp3] = resp;
+      ).pipe(
+        map((resp) => resp.map((i) => i.result)),
+        mergeMap((res) => {
+          const [resp1, resp2, resp3] = res;
           const list = resp1.map((item: { id: string; name: string }) => {
             const data =
               resp2.find(
@@ -112,13 +112,11 @@ class Service extends BaseService<ConfigItem> {
               userName: _user?.name,
             };
           });
-          resolve({
-            message: 'success',
-            result: list,
-            status: 200,
-          });
-        });
-    });
+          return list;
+        }),
+        toArray(),
+      ),
+    );
 }
 
 export default Service;

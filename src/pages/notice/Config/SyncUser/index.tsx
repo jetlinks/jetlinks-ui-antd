@@ -166,14 +166,14 @@ const SyncUser = observer(() => {
                   )
                   .then((resp: any) => {
                     return {
-                      code: resp?.message,
+                      code: '',
                       result: {
-                        data: resp?.result || [],
+                        data: resp || [],
                         pageIndex: 0,
                         pageSize: 0,
                         total: 0,
                       },
-                      status: resp?.status,
+                      status: 200,
                     };
                   })
               }

@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { InstanceModel } from '@/pages/device/Instance';
 import { history, useParams } from 'umi';
-import { Badge, Card, Descriptions, Divider, Tooltip } from 'antd';
+import { Badge, Card, Descriptions, Divider, message, Space, Tooltip } from 'antd';
 import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import { observer } from '@formily/react';
@@ -35,6 +35,7 @@ const InstanceDetail = observer(() => {
   const [tab, setTab] = useState<string>('detail');
   const params = useParams<{ id: string }>();
   const service = new Service('device-instance');
+  const { permission } = PermissionButton.usePermission('device/Instance');
 
   // const resetMetadata = async () => {
   //   const resp = await service.deleteMetadata(params.id);
@@ -260,7 +261,39 @@ const InstanceDetail = observer(() => {
         <>
           {InstanceModel.detail?.name}
           <Divider type="vertical" />
-          {deviceStatus.get(InstanceModel.detail?.state?.value)}
+          <Space>
+            {deviceStatus.get(InstanceModel.detail?.state?.value)}
+            <PermissionButton
+              type={'link'}
+              key={'state'}
+              popConfirm={{
+                title:
+                  InstanceModel.detail?.state?.value !== 'notActive'
+                    ? '确认断开连接'
+                    : '确认启用设备',
+                onConfirm: async () => {
+                  if (InstanceModel.detail?.state?.value !== 'notActive') {
+                    await service.undeployDevice(params.id);
+                  } else {
+                    await service.deployDevice(params.id);
+                  }
+                  message.success(
+                    intl.formatMessage({
+                      id: 'pages.data.option.success',
+                      defaultMessage: '操作成功!',
+                    }),
+                  );
+                  getDetail(params.id);
+                },
+              }}
+              isPermission={permission.action}
+              tooltip={{
+                title: InstanceModel.detail?.state?.value !== 'notActive' ? '断开连接' : '启用设备',
+              }}
+            >
+              {InstanceModel.detail?.state?.value !== 'notActive' ? '断开连接' : '启用设备'}
+            </PermissionButton>
+          </Space>
         </>
       }
       // extra={[
