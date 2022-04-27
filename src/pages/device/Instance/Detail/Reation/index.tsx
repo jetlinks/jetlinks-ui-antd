@@ -1,7 +1,7 @@
 import { Descriptions, Tooltip } from 'antd';
 import { InstanceModel, service } from '@/pages/device/Instance';
 import { useEffect, useState } from 'react';
-import { history, useParams } from 'umi';
+import { useParams } from 'umi';
 import { EditOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import Edit from './Edit';
 import { PermissionButton } from '@/components';
@@ -9,17 +9,6 @@ import _ from 'lodash';
 
 const Reation = () => {
   const params = useParams<{ id: string }>();
-  useEffect(() => {
-    const id = InstanceModel.current?.id || params.id;
-    if (id) {
-      service.getConfigMetadata(id).then((response) => {
-        InstanceModel.config = response?.result;
-      });
-    } else {
-      history.goBack();
-    }
-  }, []);
-
   const [data, setData] = useState<any[]>([]);
   const [visible, setVisible] = useState<boolean>(false);
   const { permission } = PermissionButton.usePermission('device/Instance');
@@ -38,7 +27,7 @@ const Reation = () => {
     if (id) {
       setData(InstanceModel.detail?.relations || []);
     }
-  }, [id]);
+  }, [InstanceModel.detail?.relations]);
 
   return (
     <div style={{ width: '100%', marginTop: '20px' }}>
@@ -68,7 +57,7 @@ const Reation = () => {
       >
         {(data || [])?.map((item: any) => (
           <Descriptions.Item span={1} label={item.relationName} key={item.objectId}>
-            {_.map(item?.related || [], 'name').join(',')}
+            {item?.related ? _.map(item?.related || [], 'name').join(',') : '--'}
           </Descriptions.Item>
         ))}
       </Descriptions>
