@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { Button, Card, Form, Input } from 'antd';
 import { useLocation } from 'umi';
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { PermissionButton } from '@/components';
 import ActionItems from './action/action';
 import { PlusOutlined } from '@ant-design/icons';
@@ -11,6 +11,7 @@ import TriggerTerm from '@/pages/rule-engine/Scene/TriggerTerm';
 export default () => {
   const location = useLocation();
   const [form] = Form.useForm();
+  const triggerRef = useRef<any>();
 
   const { getOtherPermission } = PermissionButton.usePermission('rule-engine/Scene');
 
@@ -28,7 +29,58 @@ export default () => {
 
   const saveData = async () => {
     const formData = await form.validateFields();
+    // 获取触发条件数据
+    const triggerData = await triggerRef.current.getTriggerForm();
+    console.log(JSON.stringify(triggerData), 'trigger');
     console.log(formData);
+  };
+
+  const [triggerValue, setTriggerValue] = useState<any>();
+  const requestParams = {
+    trigger: {
+      type: 'device',
+      device: {
+        productId: '0412-zj',
+        selector: 'device',
+        selectorValue: [
+          {
+            id: '0412-zj',
+            name: '0412-zj',
+          },
+        ],
+        operation: {
+          operator: 'reportProperty',
+          timer: {
+            trigger: 'week',
+            cron: '',
+            when: [1, 3, 5],
+            mod: 'period',
+            period: {
+              from: '09:30',
+              to: '14:30',
+              every: 1,
+              unit: 'hours',
+            },
+            once: {
+              time: '',
+            },
+          },
+          eventId: '',
+          readProperties: ['temparature', 'temperature-k', 'test-zhibioa'],
+          writeProperties: {},
+          functionId: '',
+          functionParameters: [
+            {
+              name: '',
+              value: {},
+            },
+          ],
+        },
+        defaultVariable: [],
+      },
+      timer: {},
+      defaultVariable: [],
+    },
   };
 
   return (
@@ -69,9 +121,44 @@ export default () => {
         <PermissionButton isPermission={getOtherPermission(['add', 'update'])} onClick={saveData}>
           保存
         </PermissionButton>
+        <Button
+          onClick={() => {
+            setTriggerValue({
+              trigger: [
+                {
+                  terms: [
+                    {
+                      column: '_now',
+                      termType: 'eq',
+                      source: 'manual',
+                      value: '2022-04-21 14:26:04',
+                    },
+                  ],
+                },
+                {
+                  terms: [
+                    {
+                      column: 'properties.test-zhibioa.recent',
+                      termType: 'lte',
+                      source: 'metrics',
+                      value: '123',
+                    },
+                  ],
+                },
+              ],
+            });
+          }}
+        >
+          设置
+        </Button>
       </Card>
       <Card>
-        <TriggerTerm />
+        <TriggerTerm
+          ref={triggerRef}
+          params={requestParams}
+          value={triggerValue}
+          onChange={console.log}
+        />
       </Card>
     </PageContainer>
   );
