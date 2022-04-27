@@ -7,7 +7,7 @@ import {
   CheckOutlined,
   EditOutlined,
   QuestionCircleOutlined,
-  UndoOutlined,
+  SyncOutlined,
 } from '@ant-design/icons';
 import Edit from './Edit';
 import { PermissionButton } from '@/components';
@@ -66,14 +66,14 @@ const Config = () => {
       if (isExit(item.property)) {
         return (
           <div>
-            <span style={{ marginRight: '10px' }}>{config[item.property]}</span>
+            <span style={{ marginRight: '10px' }}>{config[item.property] || '--'}</span>
             <Tooltip title={`有效值:${config[item.property]}`}>
               <QuestionCircleOutlined />
             </Tooltip>
           </div>
         );
       } else {
-        return <div>{config[item.property]}</div>;
+        return <div>{config[item.property] || '--'}</div>;
       }
     } else {
       return '--';
@@ -132,7 +132,7 @@ const Config = () => {
               type="link"
               isPermission={permission.update}
             >
-              <UndoOutlined />
+              <SyncOutlined />
               恢复默认
               <Tooltip
                 title={`该设备单独编辑过配置信息，点击此将恢复成默认的配置信息，请谨慎操作。`}

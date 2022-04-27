@@ -1,52 +1,90 @@
-import { Button, Col, Input, Modal, Row, Tree } from 'antd';
+import { Badge, Button, Col, Input, message, Modal, Popconfirm, Row, Tooltip, Tree } from 'antd';
 import { observer } from '@formily/react';
 import { service, state } from '..';
-import ProTable, { ActionType, ProColumns } from '@jetlinks/pro-table';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import ProTable from '@jetlinks/pro-table';
 import { useEffect, useRef, useState } from 'react';
 import { history, useLocation } from 'umi';
-import { PermissionButton } from '@/components';
 import { DisconnectOutlined, EditOutlined } from '@ant-design/icons';
+import BindUser from '../BindUser';
 
 const SyncUser = observer(() => {
   const [dept, setDept] = useState<string>();
   const location = useLocation<{ id: string }>();
   const id = (location as any).query?.id;
+  const [visible, setVisible] = useState<boolean>(false);
+  const [current, setCurrent] = useState<any>({});
 
   const idMap = {
     dingTalk: '钉钉',
     weixin: '微信',
   };
+
+  const actionRef = useRef<ActionType>();
+
   const columns: ProColumns<any>[] = [
     {
       dataIndex: 'id',
-      title: `${idMap[id]}ID`,
+      title: `${idMap[id]}用户名`,
+      render: (text: any, record: any) => (
+        <span>
+          {text}({record?.name})
+        </span>
+      ),
     },
     {
-      dataIndex: 'name',
-      title: `${idMap[id]}用户名`,
+      dataIndex: 'userId',
+      title: `用户`,
+      render: (text: any, record: any) => (
+        <span>{record?.userId ? `${record?.username}(${record?.userName})` : '--'}</span>
+      ),
+    },
+    {
+      dataIndex: 'status',
+      title: '绑定状态',
+      render: (text: any, record: any) => (
+        <Badge
+          status={record?.userId ? 'success' : 'error'}
+          text={record?.userId ? '已绑定' : '未绑定'}
+        />
+      ),
     },
     {
       dataIndex: 'action',
-      title: '绑定状态',
-      render: () => [
-        <PermissionButton
-          tooltip={{
-            title: '绑定用户',
-          }}
-        >
-          <EditOutlined />
-        </PermissionButton>,
-        <PermissionButton
-          tooltip={{
-            title: '解绑用户',
-          }}
-        >
-          <DisconnectOutlined />
-        </PermissionButton>,
+      title: '操作',
+      render: (text: any, record: any) => [
+        <Tooltip title={'绑定用户'} key="bind">
+          <Button
+            type="link"
+            onClick={() => {
+              setCurrent(record);
+              setVisible(true);
+            }}
+          >
+            <EditOutlined />
+          </Button>
+        </Tooltip>,
+        <Tooltip title={'解绑用户'} key="unbind">
+          <Button type="link">
+            <Popconfirm
+              title={'确认解绑'}
+              onConfirm={async () => {
+                if (record?.bindingId) {
+                  const resp = await service.syncUser.unBindUser(record.bindingId);
+                  if (resp.status === 200) {
+                    message.success('操作成功！');
+                    actionRef.current?.reload();
+                  }
+                }
+              }}
+            >
+              <DisconnectOutlined />
+            </Popconfirm>
+          </Button>
+        </Tooltip>,
       ],
     },
   ];
-  const actionRef = useRef<ActionType>();
 
   const [treeData, setTreeData] = useState([]);
 
@@ -60,7 +98,7 @@ const SyncUser = observer(() => {
           if (resp.status === 200) {
             setTreeData(resp.result);
             setDept(resp.result[0].id);
-            console.log(resp.result[0].id, 'id');
+            // console.log(resp.result[0].id, 'id');
           }
         });
       } else if (id === 'weixin') {
@@ -68,7 +106,7 @@ const SyncUser = observer(() => {
           if (resp.status === 200) {
             setTreeData(resp.result);
             setDept(resp.result[0].id);
-            console.log(resp.result[0].id, 'id~~');
+            // console.log(resp.result[0].id, 'id~~');
           }
         });
       }
@@ -81,40 +119,6 @@ const SyncUser = observer(() => {
     }
     getDepartment();
   }, [id]);
-
-  // const updateTreeData = (list: any[], key: React.Key, children: any[]): any[] => {
-  //   return list.map((node) => {
-  //     if (node.id === key) {
-  //       return {
-  //         ...node,
-  //         children: node.children ? [...node.children, ...children] : children,
-  //       };
-  //     }
-  //
-  //     if (node.children) {
-  //       return {
-  //         ...node,
-  //         children: updateTreeData(node.children, key, children),
-  //       };
-  //     }
-  //     return node;
-  //   });
-  // };
-
-  // const getParentKey = (key: any, tree: string | any[]): any => {
-  //   let parentKey;
-  //   for (let i = 0; i < tree.length; i++) {
-  //     const node = tree[i];
-  //     if (node.children) {
-  //       if (node.children.some((item: { key: any; }) => item.key === key)) {
-  //         parentKey = node.key;
-  //       } else if (getParentKey(key, node.children)) {
-  //         parentKey = getParentKey(key, node.children);
-  //       }
-  //     }
-  //   }
-  //   return parentKey;
-  // };
 
   return (
     <Modal
@@ -137,7 +141,6 @@ const SyncUser = observer(() => {
                 setDept(key[0] as string);
               }}
               treeData={treeData}
-              // loadData={onLoadData}
             />
           </div>
         </Col>
@@ -149,26 +152,28 @@ const SyncUser = observer(() => {
               search={false}
               columns={columns}
               params={{ dept: dept }}
-              request={async (params) =>
-                service.syncUser
-                  .getDeptUser(
+              request={(params) =>
+                service
+                  .queryZipSyncUser(
                     {
                       dingTalk: 'dingtalk',
                       weixin: 'wechat',
                     }[id],
+                    id,
+                    state.current?.provider || '',
                     state.current?.id || '',
                     params.dept || '',
                   )
-                  .then((resp) => {
+                  .then((resp: any) => {
                     return {
-                      code: resp.message,
+                      code: '',
                       result: {
-                        data: resp.result || [],
+                        data: resp || [],
                         pageIndex: 0,
                         pageSize: 0,
                         total: 0,
                       },
-                      status: resp.status,
+                      status: 200,
                     };
                   })
               }
@@ -177,6 +182,21 @@ const SyncUser = observer(() => {
           )}
         </Col>
       </Row>
+      {visible && (
+        <BindUser
+          id={id}
+          close={() => {
+            setCurrent({});
+            setVisible(false);
+          }}
+          data={current}
+          reload={() => {
+            setCurrent({});
+            setVisible(false);
+            actionRef.current?.reload();
+          }}
+        />
+      )}
     </Modal>
   );
 });

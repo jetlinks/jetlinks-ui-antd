@@ -5,6 +5,8 @@ import EditableTable from './EditableTable';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import type { ProductItem } from '@/pages/device/Product/typings';
 import { useParams } from 'umi';
+import { PermissionButton } from '@/components';
+
 interface Props {
   type: 'device' | 'product';
 }
@@ -14,6 +16,7 @@ const MetadataMap = (props: Props) => {
   const [product, setProduct] = useState<Partial<ProductItem>>();
   const [data, setData] = useState<any>({});
   const params = useParams<{ id: string }>();
+  const { permission } = PermissionButton.usePermission('device/Product');
 
   const handleSearch = async () => {
     if (props.type === 'product') {
@@ -45,33 +48,22 @@ const MetadataMap = (props: Props) => {
   };
 
   const renderComponent = () => {
+    const metadata = JSON.parse(product?.metadata || '{}');
+    const dmetadata = JSON.parse(data?.metadata || '{}');
     if (product) {
-      if (!product.accessId) {
-        return (
-          <Empty
-            description={
-              <span>
-                请配置对应产品的
-                <a
-                  onClick={() => {
-                    checkUrl('access');
-                  }}
-                >
-                  设备接入方式
-                </a>
-              </span>
-            }
-          />
-        );
-      } else {
-        const metadata = JSON.parse(product?.metadata || '{}');
-        const dmetadata = JSON.parse(data?.metadata || '{}');
-        if (
-          (type === 'device' &&
-            (metadata?.properties || []).length === 0 &&
-            (dmetadata?.properties || []).length === 0) ||
-          (type === 'product' && (dmetadata?.properties || []).length === 0)
-        ) {
+      const flag =
+        (type === 'device' &&
+          (metadata?.properties || []).length === 0 &&
+          (dmetadata?.properties || []).length === 0) ||
+        (type === 'product' && (dmetadata?.properties || []).length === 0);
+      if (!product.accessId && flag) {
+        if (!permission.update) {
+          return (
+            <Empty
+              description={<span>请联系管理员配置物模型属性，并选择对应产品的设备接入方式</span>}
+            />
+          );
+        } else {
           return (
             <Empty
               description={
@@ -84,11 +76,58 @@ const MetadataMap = (props: Props) => {
                   >
                     物模型属性
                   </a>
+                  ,并选择对应产品的
+                  <a
+                    onClick={() => {
+                      checkUrl('access');
+                    }}
+                  >
+                    设备接入方式
+                  </a>
                 </span>
               }
             />
           );
         }
+      } else if (flag && product.accessId) {
+        return (
+          <Empty
+            description={
+              !permission.update ? (
+                <span>请联系管理员配置物模型属性</span>
+              ) : (
+                <span>
+                  请配置对应产品的
+                  <a
+                    onClick={() => {
+                      checkUrl('metadata');
+                    }}
+                  >
+                    物模型属性
+                  </a>
+                </span>
+              )
+            }
+          />
+        );
+      } else if (!flag && !product.accessId) {
+        return (
+          <Empty
+            description={
+              <span>
+                请选择对应产品的
+                <a
+                  onClick={() => {
+                    checkUrl('access');
+                  }}
+                >
+                  设备接入方式
+                </a>
+              </span>
+            }
+          />
+        );
+      } else {
         return <EditableTable data={data} type={type} />;
       }
     }

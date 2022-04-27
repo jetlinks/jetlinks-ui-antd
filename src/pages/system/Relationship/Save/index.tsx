@@ -41,7 +41,21 @@ const Save = (props: Props) => {
 
   const form = createForm({
     validateFirst: true,
-    initialValues: props.data,
+    initialValues: {
+      ...props.data,
+      object: props.data?.objectType
+        ? JSON.stringify({
+            objectType: props.data.objectType,
+            objectTypeName: props.data.objectTypeName,
+          })
+        : undefined,
+      target: props.data?.targetType
+        ? JSON.stringify({
+            targetType: props.data.targetType,
+            targetTypeName: props.data.targetTypeName,
+          })
+        : undefined,
+    },
   });
 
   const SchemaField = createSchemaField({
@@ -114,28 +128,6 @@ const Save = (props: Props) => {
                 required: true,
                 message: '请输入标识',
               },
-              // {
-              //   triggerType: 'onBlur',
-              //   // validator: (value: string) => {
-              //   //   return new Promise((resolve) => {
-              //   //     service
-              //   //       .validateField('username', value)
-              //   //       .then((resp) => {
-              //   //         if (resp.status === 200) {
-              //   //           if (resp.result.passed) {
-              //   //             resolve('');
-              //   //           } else {
-              //   //             resolve(model === 'edit' ? '' : resp.result.reason);
-              //   //           }
-              //   //         }
-              //   //         resolve('');
-              //   //       })
-              //   //       .catch(() => {
-              //   //         return '验证失败!';
-              //   //       });
-              //   //   });
-              //   // },
-              // },
             ],
             name: 'relation',
             required: true,
@@ -156,6 +148,12 @@ const Save = (props: Props) => {
                 option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
             },
             required: true,
+            'x-validator': [
+              {
+                required: true,
+                message: '请选择关联方',
+              },
+            ],
             'x-reactions': ['{{useAsyncDataSource(getTypes)}}'],
           },
           target: {
@@ -179,6 +177,12 @@ const Save = (props: Props) => {
                 },
               },
             },
+            'x-validator': [
+              {
+                required: true,
+                message: '请选择被关联方',
+              },
+            ],
             required: true,
           },
           description: {
