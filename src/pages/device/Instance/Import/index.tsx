@@ -88,7 +88,7 @@ const NormalUpload = (props: any) => {
           dt += temp;
           setCount(dt);
         } else {
-          setErrMessage(res.message);
+          setErrMessage(res.message || '失败');
         }
       };
       source.onerror = () => {
@@ -221,9 +221,10 @@ const Import = (props: Props) => {
         type: 'void',
         'x-component': 'FormLayout',
         'x-component-props': {
-          labelCol: 4,
-          wrapperCol: 18,
-          labelAlign: 'right',
+          // labelCol: 6,
+          // wrapperCol: 18,
+          // labelAlign: 'right',
+          layout: 'vertical',
         },
         properties: {
           product: {
@@ -264,7 +265,7 @@ const Import = (props: Props) => {
       visible={visible}
       onCancel={() => close()}
       width="35vw"
-      title="导出"
+      title="导入"
       onOk={() => close()}
       footer={[
         <Button key="cancel" onClick={() => close()}>

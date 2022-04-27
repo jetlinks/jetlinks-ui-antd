@@ -26,7 +26,7 @@ import {
   FileTypeList,
   PropertySource,
 } from '@/pages/device/data';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { productModel } from '@/pages/device/Product';
 import { service } from '@/pages/device/components/Metadata';
 import { Store } from 'jetlinks-store';
@@ -53,6 +53,7 @@ interface Props {
 
 const Edit = observer((props: Props) => {
   const intl = useIntl();
+  const [loading, setLoading] = useState<boolean>(false);
   const form = useMemo(
     () =>
       createForm({
@@ -973,6 +974,7 @@ const Edit = observer((props: Props) => {
   const { type } = MetadataModel;
 
   const saveMetadata = async (deploy?: boolean) => {
+    setLoading(true);
     const params = (await form.submit()) as MetadataItem;
 
     if (!typeMap.get(props.type)) return;
@@ -1014,7 +1016,6 @@ const Edit = observer((props: Props) => {
     // const result = await saveMap.get(props.type);
     const result = await asyncUpdateMedata(props.type, _data);
     if (result.status === 200) {
-      message.success('操作成功！');
       if ((window as any).onTabSaveSuccess) {
         if (result) {
           (window as any).onTabSaveSuccess(result);
@@ -1024,6 +1025,8 @@ const Edit = observer((props: Props) => {
         Store.set(SystemConst.REFRESH_METADATA_TABLE, true);
         if (deploy) {
           Store.set('product-deploy', deploy);
+        } else {
+          message.success('操作成功！');
         }
         MetadataModel.edit = false;
         MetadataModel.item = {};
@@ -1031,6 +1034,7 @@ const Edit = observer((props: Props) => {
     } else {
       message.error('操作失败！');
     }
+    setLoading(false);
   };
 
   const menu = (
@@ -1062,11 +1066,16 @@ const Edit = observer((props: Props) => {
         placement={'right'}
         extra={
           props.type === 'product' ? (
-            <Dropdown.Button type="primary" onClick={() => saveMetadata()} overlay={menu}>
+            <Dropdown.Button
+              loading={loading}
+              type="primary"
+              onClick={() => saveMetadata()}
+              overlay={menu}
+            >
               保存数据
             </Dropdown.Button>
           ) : (
-            <Button type="primary" onClick={() => saveMetadata()}>
+            <Button loading={loading} type="primary" onClick={() => saveMetadata()}>
               保存数据
             </Button>
           )

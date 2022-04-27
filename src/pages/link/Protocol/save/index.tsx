@@ -1,4 +1,4 @@
-import { Button, message } from 'antd';
+import { Button, message, Modal } from 'antd';
 import { createForm, registerValidateRules } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import React, { useEffect, useState } from 'react';
@@ -6,9 +6,9 @@ import * as ICONS from '@ant-design/icons';
 import { Form, FormGrid, FormItem, Input, Select } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
 import { service } from '@/pages/link/Protocol';
-import { Modal } from '@/components';
 import FileUpload from '../FileUpload';
 import type { ProtocolItem } from '@/pages/link/Protocol/typings';
+import { PermissionButton } from '@/components';
 
 interface Props {
   data: ProtocolItem | undefined;
@@ -18,6 +18,7 @@ interface Props {
 
 const Save = (props: Props) => {
   const [data, setData] = useState<ProtocolItem | undefined>(props.data);
+  const { permission } = PermissionButton.usePermission('link/Protocol');
 
   useEffect(() => {
     setData(props.data);
@@ -223,29 +224,35 @@ const Save = (props: Props) => {
       visible
       onCancel={props.close}
       width={700}
-      permissionCode={'link/Protocol'}
-      permission={['add', 'edit']}
-      footer={
-        <>
-          <Button onClick={props.close}>取消</Button>
-          <Button
-            type="primary"
-            onClick={() => {
-              save(false);
-            }}
-          >
-            保存
-          </Button>
-          <Button
-            type="primary"
-            onClick={() => {
-              save(true);
-            }}
-          >
-            保存并发布
-          </Button>
-        </>
-      }
+      footer={[
+        <Button key={1} onClick={props.close}>
+          取消
+        </Button>,
+        <Button
+          type="primary"
+          key={2}
+          onClick={() => {
+            save(false);
+          }}
+          disabled={props.data?.id ? !permission.update : !permission.add}
+        >
+          保存
+        </Button>,
+        <Button
+          key={3}
+          type="primary"
+          onClick={() => {
+            save(true);
+          }}
+          disabled={
+            props.data?.id
+              ? !permission.update && !permission.action
+              : !permission.add && !permission.action
+          }
+        >
+          保存并发布
+        </Button>,
+      ]}
     >
       <Form form={form} layout="vertical">
         <SchemaField schema={schema} />
