@@ -294,6 +294,7 @@ const Protocol = () => {
           }}
           reload={() => {
             actionRef.current?.reload();
+            setVisible(false);
           }}
         />
       )}

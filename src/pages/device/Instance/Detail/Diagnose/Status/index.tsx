@@ -80,6 +80,9 @@ const Status = observer((props: Props) => {
   const [diagnoseData, setDiagnoseData] = useState<any>({});
   const [artificiaData, setArtificiaData] = useState<any>({});
 
+  const [productTemp, setProductTemp] = useState<any>({});
+  const [gatewayTemp, setGatewayTemp] = useState<any>({});
+
   const getDetail = (id: string) => {
     service.detail(id).then((response) => {
       InstanceModel.detail = response?.result;
@@ -91,6 +94,7 @@ const Status = observer((props: Props) => {
       let data: any = {};
       if (InstanceModel.detail.state?.value === 'online' || !!InstanceModel.detail?.protocol) {
         data = { status: 'success', text: '正常', info: null };
+        DiagnoseStatusModel.status = { ...DiagnoseStatusModel.status };
       } else {
         data = {
           status: 'warning',
@@ -142,6 +146,7 @@ const Status = observer((props: Props) => {
       if (InstanceModel.detail.state?.value === 'online') {
         data = { status: 'success', text: '正常', info: null };
         DiagnoseStatusModel.status.network = data;
+        DiagnoseStatusModel.status = { ...DiagnoseStatusModel.status };
         setTimeout(
           () =>
             resolve({
@@ -242,6 +247,7 @@ const Status = observer((props: Props) => {
                     };
                   }
                   DiagnoseStatusModel.status.network = data;
+                  DiagnoseStatusModel.status = { ...DiagnoseStatusModel.status };
                   setTimeout(
                     () =>
                       resolve({
@@ -330,6 +336,7 @@ const Status = observer((props: Props) => {
                                 text: '正常',
                                 info: null,
                               };
+                              DiagnoseStatusModel.status = { ...DiagnoseStatusModel.status };
                             }
                           }}
                         >
@@ -384,6 +391,7 @@ const Status = observer((props: Props) => {
                               info: null,
                             };
                             getDetail(InstanceModel.detail?.id || '');
+                            DiagnoseStatusModel.status = { ...DiagnoseStatusModel.status };
                           }
                         }}
                       >
@@ -557,6 +565,7 @@ const Status = observer((props: Props) => {
                               text: '正常',
                               info: null,
                             };
+                            DiagnoseStatusModel.status = { ...DiagnoseStatusModel.status };
                           }
                         }}
                       >
@@ -607,20 +616,18 @@ const Status = observer((props: Props) => {
 
     let product: any = null;
     let gateway: any = null;
-    let productauth: any = null;
-    let deviceauth: any = null;
     diagnoseConfig()
       .then(() => diagnoseNetwork())
       .then((resp: any) => {
         product = resp?.product;
+        setProductTemp(resp?.product);
         gateway = resp?.gatewayDetail;
+        setGatewayTemp(resp?.gatewayDetail);
         diagnoseProduct(product)
           .then(() => diagnoseDevice())
           .then(() => diagnoseProductAuthConfig(product))
-          .then((res) => {
-            productauth = res;
-            diagnoseDeviceAuthConfig().then((dt) => {
-              deviceauth = dt;
+          .then(() => {
+            diagnoseDeviceAuthConfig().then(() => {
               diagnoseDeviceAccess(gateway).then(() => {
                 if (InstanceModel.detail.state?.value === 'online') {
                   const a = Object.keys(DiagnoseStatusModel.status).find((item: any) => {
@@ -636,39 +643,6 @@ const Status = observer((props: Props) => {
                     props.onChange('error');
                   }
                 } else {
-                  const data = { ...DiagnoseStatusModel.status };
-                  const flag = Object.keys(data).find((item: any) => {
-                    return item.status !== 'success';
-                  });
-                  if (!flag) {
-                    // 展示诊断建议
-                    if (
-                      gateway.provider !== 'mqtt-server-gateway' &&
-                      gatewayList.includes(gateway.provider)
-                    ) {
-                      service
-                        .queryProcotolDetail(gateway.provider, gateway.transport)
-                        .then((resp1) => {
-                          setDiagnoseData({
-                            product: productauth,
-                            device: deviceauth,
-                            id: product.id,
-                            provider: gateway.provider,
-                            routes: resp1.result?.routes || [],
-                          });
-                          setDiagnoseVisible(true);
-                        });
-                    } else {
-                      setDiagnoseData({
-                        product: productauth,
-                        device: deviceauth,
-                        id: product.id,
-                        provider: '',
-                        routes: [],
-                      });
-                      setDiagnoseVisible(true);
-                    }
-                  }
                 }
               });
             });
@@ -688,6 +662,32 @@ const Status = observer((props: Props) => {
       }
     }
   }, [devicePermission]);
+
+  useEffect(() => {
+    const data = { ...DiagnoseStatusModel.status };
+    const flag = Object.keys(data).every((item: any) => {
+      return data[item]?.status === 'success';
+    });
+    if (flag) {
+      // 展示诊断建议
+      if (
+        InstanceModel.detail.state?.value !== 'online' &&
+        gatewayTemp.provider !== 'mqtt-server-gateway' &&
+        gatewayList.includes(gatewayTemp.provider)
+      ) {
+        service.queryProcotolDetail(gatewayTemp.provider, gatewayTemp.transport).then((resp1) => {
+          setDiagnoseData({
+            product: productTemp,
+            device: InstanceModel.detail,
+            id: productTemp.id,
+            provider: gatewayTemp.provider,
+            routes: resp1.result?.routes || [],
+          });
+          setDiagnoseVisible(true);
+        });
+      }
+    }
+  }, [DiagnoseStatusModel.status]);
 
   return (
     <Row gutter={24}>
@@ -762,6 +762,7 @@ const Status = observer((props: Props) => {
                 text: '正常',
                 info: null,
               };
+              DiagnoseStatusModel.status = { ...DiagnoseStatusModel.status };
             } else {
               DiagnoseStatusModel.status[params.data.key] = {
                 status: 'error',
@@ -783,7 +784,8 @@ const Status = observer((props: Props) => {
                               const tab: any = window.open(`${origin}/#${url}?key=access`);
                               tab!.onTabSaveSuccess = (value: any) => {
                                 if (value) {
-                                  diagnoseConfig();
+                                  getDetail(InstanceModel.detail?.id || '');
+                                  handleSearch();
                                 }
                               };
                             }}

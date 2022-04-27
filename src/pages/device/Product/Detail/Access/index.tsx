@@ -338,7 +338,7 @@ const Access = () => {
                   请先
                   <Button
                     type="link"
-                    disabled={!!(productModel.current?.count && productModel.current?.count > 0)}
+                    // disabled={!!(productModel.current?.count && productModel.current?.count > 0)}
                     onClick={() => {
                       setConfigVisible(true);
                     }}
