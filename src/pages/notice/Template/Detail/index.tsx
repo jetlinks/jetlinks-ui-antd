@@ -72,6 +72,9 @@ const Detail = observer(() => {
   // 正则提取${}里面的值
   const pattern = /(?<=\$\{).*?(?=\})/g;
 
+  // 提取微信服务号里面的值 {{}}
+  const weixinPattern = /(?<=\{\{).*?(?=\.DATA}})/g;
+
   const getConfig = (provider1: string) =>
     configService
       .queryNoPagingPost({
@@ -117,6 +120,15 @@ const Detail = observer(() => {
                   '变量格式:${name};\n 示例:尊敬的${name},${time}有设备触发告警,请注意处理',
                 height: '100px',
               });
+            }
+            const _provider = field.query('provider').value();
+            if (_provider === 'corpMessage') {
+              field.componentProps = {
+                disabled: true,
+                rows: 5,
+                placeholder:
+                  '变量格式:${name};\n 示例:尊敬的${name},${time}有设备触发告警,请注意处理',
+              };
             }
           });
           onFieldValueChange('provider', (field, form1) => {
@@ -259,9 +271,15 @@ const Detail = observer(() => {
             }
           });
           onFieldValueChange('template.message', (field, form1) => {
+            const _provider = field.query('provider').value();
+
             const value = (field as Field).value;
             const idList =
-              (typeof value === 'string' && value?.match(pattern)?.filter((i: string) => i)) || [];
+              (typeof value === 'string' &&
+                value
+                  ?.match(_provider === 'officialMessage' ? weixinPattern : pattern)
+                  ?.filter((i: string) => i)) ||
+              [];
 
             if (id === 'email') {
               const subject = field.query('template.subject');
@@ -272,7 +290,6 @@ const Detail = observer(() => {
                 idList.unshift(...titleList);
               }
             }
-            const _provider = field.query('provider').value();
             if (_provider === 'dingTalkRobotWebHook') {
               const title = field.query('template.markdown.title').value();
               const titleList = title?.match(pattern)?.filter((i: string) => i);
@@ -715,6 +732,7 @@ const Detail = observer(() => {
                     'x-decorator-props': {
                       tooltip: '服务号消息模版标题',
                     },
+                    'x-disabled': true,
                   },
                 },
                 'x-reactions': {
