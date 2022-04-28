@@ -1,6 +1,6 @@
 import { useIntl } from 'umi';
+import { onFieldValueChange, onFieldInputValueChange, createForm } from '@formily/core';
 import type { Field } from '@formily/core';
-import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import React from 'react';
 import * as ICONS from '@ant-design/icons';
@@ -39,6 +39,16 @@ const Save = (props: Props) => {
     );
   };
 
+  const _validator = async (object: string, target: string, relation: string) => {
+    if (!relation || !target || !object) return;
+    const resp = await service.validator({
+      relation,
+      objectType: JSON.parse(object).objectType,
+      targetType: JSON.parse(target).targetType,
+    });
+    return resp?.result.passed;
+  };
+
   const form = createForm({
     validateFirst: true,
     initialValues: {
@@ -55,6 +65,38 @@ const Save = (props: Props) => {
             targetTypeName: props.data.targetTypeName,
           })
         : undefined,
+    },
+    effects() {
+      onFieldInputValueChange('relation', async (field, f1) => {
+        const relation = field.value;
+        const target = (field.query('target').take() as Field).value;
+        const object = (field.query('object').take() as Field).value;
+        if (!relation || !target || !object) return;
+        const temp = await _validator(object, target, relation);
+        f1.setFieldState('relation', (state) => {
+          state.selfErrors = !temp ? ['关系标识已存在'] : undefined;
+        });
+      });
+      onFieldValueChange('target', async (field, f1) => {
+        const target = field.value;
+        const relation = (field.query('relation').take() as Field).value;
+        const object = (field.query('object').take() as Field).value;
+        if (!relation || !target || !object) return;
+        const temp = await _validator(object, target, relation);
+        f1.setFieldState('relation', (state) => {
+          state.selfErrors = !temp ? ['关系标识已存在'] : undefined;
+        });
+      });
+      onFieldValueChange('object', async (field, f1) => {
+        const object = field.value;
+        const target = (field.query('target').take() as Field).value;
+        const relation = (field.query('relation').take() as Field).value;
+        if (!relation || !target || !object) return;
+        const temp = await _validator(object, target, relation);
+        f1.setFieldState('relation', (state) => {
+          state.selfErrors = !temp ? ['关系标识已存在'] : undefined;
+        });
+      });
     },
   });
 

@@ -338,7 +338,6 @@ const Access = () => {
                   请先
                   <Button
                     type="link"
-                    disabled={!!(productModel.current?.count && productModel.current?.count > 0)}
                     onClick={() => {
                       setConfigVisible(true);
                     }}
@@ -362,20 +361,28 @@ const Access = () => {
                   data={
                     <span>
                       接入方式
-                      <Button
-                        size="small"
-                        type="primary"
-                        ghost
-                        style={{ marginLeft: 20 }}
-                        disabled={
+                      <Tooltip
+                        title={
                           !!(productModel.current?.count && productModel.current?.count > 0)
+                            ? '产品下有设备实例时不能更换接入方式'
+                            : ''
                         }
-                        onClick={() => {
-                          setConfigVisible(true);
-                        }}
                       >
-                        更换
-                      </Button>
+                        <Button
+                          size="small"
+                          type="primary"
+                          ghost
+                          style={{ marginLeft: 20 }}
+                          disabled={
+                            !!(productModel.current?.count && productModel.current?.count > 0)
+                          }
+                          onClick={() => {
+                            setConfigVisible(true);
+                          }}
+                        >
+                          更换
+                        </Button>
+                      </Tooltip>
                     </span>
                   }
                 />

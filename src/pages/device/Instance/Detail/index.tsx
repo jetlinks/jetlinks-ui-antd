@@ -263,36 +263,60 @@ const InstanceDetail = observer(() => {
           <Divider type="vertical" />
           <Space>
             {deviceStatus.get(InstanceModel.detail?.state?.value)}
-            <PermissionButton
-              type={'link'}
-              key={'state'}
-              popConfirm={{
-                title:
-                  InstanceModel.detail?.state?.value !== 'notActive'
-                    ? '确认断开连接'
-                    : '确认启用设备',
-                onConfirm: async () => {
-                  if (InstanceModel.detail?.state?.value !== 'notActive') {
-                    await service.undeployDevice(params.id);
-                  } else {
-                    await service.deployDevice(params.id);
-                  }
-                  message.success(
-                    intl.formatMessage({
-                      id: 'pages.data.option.success',
-                      defaultMessage: '操作成功!',
-                    }),
-                  );
-                  getDetail(params.id);
-                },
-              }}
-              isPermission={permission.action}
-              tooltip={{
-                title: InstanceModel.detail?.state?.value !== 'notActive' ? '断开连接' : '启用设备',
-              }}
-            >
-              {InstanceModel.detail?.state?.value !== 'notActive' ? '断开连接' : '启用设备'}
-            </PermissionButton>
+            {InstanceModel.detail?.state?.value === 'notActive' && (
+              <PermissionButton
+                type={'link'}
+                key={'state'}
+                popConfirm={{
+                  title: '确认启用设备',
+                  onConfirm: async () => {
+                    const resp = await service.deployDevice(params.id);
+                    if (resp.status === 200) {
+                      message.success(
+                        intl.formatMessage({
+                          id: 'pages.data.option.success',
+                          defaultMessage: '操作成功!',
+                        }),
+                      );
+                      getDetail(params.id);
+                    }
+                  },
+                }}
+                isPermission={permission.action}
+                tooltip={{
+                  title: '启用设备',
+                }}
+              >
+                启用设备
+              </PermissionButton>
+            )}
+            {InstanceModel.detail?.state?.value === 'online' && (
+              <PermissionButton
+                type={'link'}
+                key={'state'}
+                popConfirm={{
+                  title: '确认断开连接',
+                  onConfirm: async () => {
+                    const resp = await service.disconnectDevice(params.id);
+                    if (resp.status === 200) {
+                      message.success(
+                        intl.formatMessage({
+                          id: 'pages.data.option.success',
+                          defaultMessage: '操作成功!',
+                        }),
+                      );
+                      getDetail(params.id);
+                    }
+                  },
+                }}
+                isPermission={permission.action}
+                tooltip={{
+                  title: '断开连接',
+                }}
+              >
+                断开连接
+              </PermissionButton>
+            )}
           </Space>
         </>
       }

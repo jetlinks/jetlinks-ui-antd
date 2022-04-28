@@ -1,4 +1,4 @@
-import { Badge, Card, Col, Row } from 'antd';
+import { Badge, Card, Col, Row, Tooltip } from 'antd';
 import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import Message from './Message';
@@ -87,9 +87,12 @@ const Diagnose = () => {
             style={{ fontWeight: 400 }}
           >
             {message === 'disabled' ? (
-              <span style={{ color: statusColor.get(message) }}>
-                <Badge color={statusColor.get(message)} /> 连接中
-              </span>
+              <Tooltip title={'设备未上线时消息通信功不能使用'}>
+                <span style={{ color: statusColor.get(message) }}>
+                  <Badge color={statusColor.get(message)} />
+                  {status === 's-error' || status === 'waiting' ? '等待设备连接' : '连接中'}
+                </span>
+              </Tooltip>
             ) : (
               <>
                 <div>

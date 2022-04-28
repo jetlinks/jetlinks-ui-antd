@@ -63,7 +63,7 @@ const Edit = (props: Props) => {
         'x-decorator': 'FormItem',
         'x-component': 'Select',
         'x-component-props': {
-          placeholder: '请选择关联方',
+          placeholder: `请选择${item.relationName}`,
           showSearch: true,
           showArrow: true,
           mode: 'multiple',

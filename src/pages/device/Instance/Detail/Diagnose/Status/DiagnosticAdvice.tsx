@@ -23,8 +23,7 @@ const DiagnosticAdvice = (props: Props) => {
     const tab: any = window.open(`${origin}/#${url}?key=access`);
     tab!.onTabSaveSuccess = (value: any) => {
       if (value) {
-        // diagnoseConfig();
-        // 没有权限怎么展示
+        props.close();
       }
     };
   };
@@ -33,6 +32,9 @@ const DiagnosticAdvice = (props: Props) => {
     <Modal
       title="诊断建议"
       onCancel={() => {
+        props.close();
+      }}
+      onOk={() => {
         props.close();
       }}
       width={700}
@@ -49,7 +51,7 @@ const DiagnosticAdvice = (props: Props) => {
               status="default"
               text={
                 <span>
-                  产品-${item.name}规则可能有加密处理，请认真查看
+                  产品-{item.name}规则可能有加密处理，请认真查看
                   <a
                     onClick={() => {
                       jumpUrl();
@@ -69,7 +71,7 @@ const DiagnosticAdvice = (props: Props) => {
               status="default"
               text={
                 <span>
-                  设备-${item.name}规则可能有加密处理，请认真查看
+                  设备-{item.name}规则可能有加密处理，请认真查看
                   <a
                     onClick={() => {
                       jumpUrl();
@@ -83,7 +85,7 @@ const DiagnosticAdvice = (props: Props) => {
             />
           </div>
         ))}
-        {!!data.provider && (
+        {!!data?.provider && (
           <div>
             {data.routes.length > 0 ? (
               <div className={styles.infoItem}>
@@ -99,9 +101,9 @@ const DiagnosticAdvice = (props: Props) => {
                       >
                         设备接入配置
                       </a>
-                      中${nameMap.get(data.provider)}
-                      信息，任意上报一条数据（无设备接入配置查看权限时：请联系管理员根据设备接入配置中$
-                      {URL}信息，任意上报一条数据）。 变量说明：${nameMap.get(data.provider)}
+                      中{nameMap.get(data.provider)}
+                      信息，任意上报一条数据（无设备接入配置查看权限时：请联系管理员根据设备接入配置中
+                      {URL}信息，任意上报一条数据）。 变量说明：{nameMap.get(data.provider)}
                       变量根据网关详情中provider类型判断。
                     </span>
                   }
@@ -113,8 +115,8 @@ const DiagnosticAdvice = (props: Props) => {
                   status="default"
                   text={
                     <span>
-                      请联系管理员提供${nameMap.get(data.provider)}
-                      信息，并根据URL信息任意上报一条数据 变量说明：${nameMap.get(data.provider)}
+                      请联系管理员提供{nameMap.get(data.provider)}
+                      信息，并根据URL信息任意上报一条数据 变量说明：{nameMap.get(data.provider)}
                       变量根据网关详情中provider类型判断。
                     </span>
                   }
@@ -123,6 +125,9 @@ const DiagnosticAdvice = (props: Props) => {
             )}
           </div>
         )}
+        <div className={styles.infoItem}>
+          <Badge status="default" text={'请检查设备是否已开机'} />
+        </div>
       </div>
     </Modal>
   );

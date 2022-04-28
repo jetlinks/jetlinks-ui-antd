@@ -33,6 +33,13 @@ class Service extends BaseService<DeviceInstance> {
       data: params,
     });
 
+  // 断开连接
+  public disconnectDevice = (deviceId: string, params?: any) =>
+    request(`/${SystemConst.API_BASE}/device-instance/${deviceId}/disconnect`, {
+      method: 'POST',
+      data: params,
+    });
+
   // 批量激活设备
   public batchDeployDevice = (params: any) =>
     request(`/${SystemConst.API_BASE}/device-instance/batch/_deploy`, {
@@ -206,14 +213,14 @@ class Service extends BaseService<DeviceInstance> {
     });
   // 读取属性
   public readProperties = (deviceId: string, data: any) =>
-    request(`/${SystemConst.API_BASE}/device-instance/${deviceId}/properties/_read`, {
+    request(`/${SystemConst.API_BASE}/device/instance/${deviceId}/properties/_read`, {
       method: 'POST',
       data,
     });
   // 设置属性
   public settingProperties = (deviceId: string, data: any) =>
-    request(`/${SystemConst.API_BASE}//device-instance/${deviceId}/property`, {
-      method: 'POST',
+    request(`/${SystemConst.API_BASE}/device/instance/${deviceId}/property`, {
+      method: 'PUT',
       data,
     });
   //获取协议设置的默认物模型
