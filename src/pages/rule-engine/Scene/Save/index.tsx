@@ -43,6 +43,7 @@ export default () => {
     enabled: false,
     alarmFirst: true,
   });
+  const [requestParams, setRequestParams] = useState<any>(undefined);
 
   const getDetail = async () => {
     // TODO 回显数据
@@ -77,53 +78,6 @@ export default () => {
         message.error(resp.message);
       }
     }
-  };
-
-  const requestParams = {
-    trigger: {
-      type: 'device',
-      device: {
-        productId: '0412-zj',
-        selector: 'device',
-        selectorValue: [
-          {
-            id: '0412-zj',
-            name: '0412-zj',
-          },
-        ],
-        operation: {
-          operator: 'reportProperty',
-          timer: {
-            trigger: 'week',
-            cron: '',
-            when: [1, 3, 5],
-            mod: 'period',
-            period: {
-              from: '09:30',
-              to: '14:30',
-              every: 1,
-              unit: 'hours',
-            },
-            once: {
-              time: '',
-            },
-          },
-          eventId: '',
-          readProperties: ['temparature', 'temperature-k', 'test-zhibioa'],
-          writeProperties: {},
-          functionId: '',
-          functionParameters: [
-            {
-              name: '',
-              value: {},
-            },
-          ],
-        },
-        defaultVariable: [],
-      },
-      timer: {},
-      defaultVariable: [],
-    },
   };
 
   const AntiShake = (
@@ -186,11 +140,22 @@ export default () => {
     </Space>
   );
 
-  console.log(shakeLimit);
   return (
     <PageContainer>
       <Card>
-        <Form form={form} colon={false} layout={'vertical'} preserve={false}>
+        <Form
+          form={form}
+          colon={false}
+          layout={'vertical'}
+          preserve={false}
+          onValuesChange={(changeValue, allValues) => {
+            if (allValues.trigger?.device?.selectorValues) {
+              setRequestParams({ trigger: allValues.trigger });
+            } else {
+              setRequestParams(undefined);
+            }
+          }}
+        >
           <Form.Item name={'name'} label={'名称'}>
             <Input placeholder={'请输入名称'} />
           </Form.Item>
@@ -205,7 +170,9 @@ export default () => {
             )}
             {triggerType === TriggerWayType.device && <TriggerDevice form={form} />}
           </Form.Item>
-          {triggerType === TriggerWayType.device && (
+          {triggerType === TriggerWayType.device &&
+          requestParams &&
+          requestParams.trigger?.device?.productId ? (
             <Form.Item label={AntiShake}>
               <TriggerTerm
                 ref={triggerRef}
@@ -213,7 +180,7 @@ export default () => {
                 // value={triggerValue}
               />
             </Form.Item>
-          )}
+          ) : null}
           <Form.Item hidden name={'parallel'} initialValue={false}>
             <Input />
           </Form.Item>
