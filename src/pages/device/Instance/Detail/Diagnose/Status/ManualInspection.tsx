@@ -85,8 +85,11 @@ const ManualInspection = (props: Props) => {
   const renderComponent = () => (
     <div style={{ backgroundColor: '#f6f6f6', padding: 10 }}>
       {(data?.data?.properties || []).map((item: any) => (
-        <div key={item.property}>
-          <span>{item.name}</span>: <span>{data?.check[item.property]}</span>
+        <div key={item?.property}>
+          <span>{item?.name}</span>:{' '}
+          <span>
+            {data?.check && data?.check[item?.property] ? data?.check[item?.property] : '--'}
+          </span>
         </div>
       ))}
     </div>
