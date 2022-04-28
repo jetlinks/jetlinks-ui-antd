@@ -14,7 +14,7 @@ import {
   TreeSelect,
 } from '@formily/antd';
 import { ISchema } from '@formily/json-schema';
-import { createForm, onFieldValueChange } from '@formily/core';
+import { createForm, onFieldValueChange, onFormValuesChange } from '@formily/core';
 import { forwardRef, useImperativeHandle, useMemo } from 'react';
 import FTermArrayCards from '@/components/FTermArrayCards';
 import FTermTypeSelect from '@/components/FTermTypeSelect';
@@ -40,6 +40,11 @@ const TriggerTerm = (props: Props, ref: any) => {
         validateFirst: true,
         initialValues: props.value,
         effects() {
+          onFormValuesChange(async (f) => {
+            if (props.onChange) {
+              props.onChange(await f.submit());
+            }
+          });
           onFieldValueChange('trigger.*.terms.*.column', (field, form1) => {
             const operator = field.query('.termType');
             // 找到选中的
