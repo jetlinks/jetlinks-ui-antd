@@ -10,7 +10,10 @@ class Service extends BaseService<DeviceInstance> {
 
   // 查询产品列表
   public getProductList = (params?: any) =>
-    request(`/${SystemConst.API_BASE}/device/product/_query/no-paging`, { method: 'GET', params });
+    request(`/${SystemConst.API_BASE}/device/product/_query/no-paging?paging=false`, {
+      method: 'GET',
+      params,
+    });
 
   // 批量删除设备
   public batchDeleteDevice = (params: any) =>

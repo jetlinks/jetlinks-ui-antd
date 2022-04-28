@@ -82,7 +82,7 @@ const TriggerTerm = (props: Props, ref: any) => {
             const treeValue = treeFilter(_data, params, 'column');
             // 找到
             const target =
-              treeValue && treeValue[0].children
+              treeValue && treeValue[0] && treeValue[0].children
                 ? treeValue[0]?.children.find((item) => item.column === params)
                 : treeValue[0];
 

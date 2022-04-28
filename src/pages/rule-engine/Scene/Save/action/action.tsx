@@ -1,4 +1,4 @@
-import { Button, InputNumber, Select, Form } from 'antd';
+import { Button, Select, Form } from 'antd';
 import type { FormInstance } from 'antd';
 import { useEffect, useState } from 'react';
 import { useRequest } from 'umi';
@@ -9,19 +9,32 @@ import {
   queryMessageTemplateDetail,
 } from './service';
 import MessageContent from './messageContent';
+import DeviceSelect, { MessageTypeEnum } from './device';
+import WriteProperty from './device/WriteProperty';
+import ReadProperty from './device/readProperty';
+import FunctionCall from './device/functionCall';
+import { InputNumber } from '../components';
 
 interface ActionProps {
   restField: any;
   name: number;
   form: FormInstance;
   title?: string;
+  triggerType: string;
   onRemove: () => void;
 }
 
 const ActionItem = (props: ActionProps) => {
   const { name } = props;
   const [type1, setType1] = useState('');
+  // 消息通知
+  const [notifyType, setNotifyType] = useState('');
+  const [configId, setConfigId] = useState('');
   const [templateData, setTemplateData] = useState<any>(undefined);
+  // 设备输出
+  const [deviceMessageType, setDeviceMessageType] = useState('WRITE_PROPERTY');
+  const [properties, setProperties] = useState([]); // 物模型-属性
+  const [functionList, setFunctionList] = useState([]); // 物模型-功能
 
   const { data: messageType, run: queryMessageTypes } = useRequest(queryMessageType, {
     manual: true,
@@ -56,6 +69,7 @@ const ActionItem = (props: ActionProps) => {
           style={{ width: 140 }}
           onChange={async (key: string) => {
             setTemplateData(undefined);
+            setNotifyType(key);
             props.form.resetFields([['actions', name, 'notify', 'notifierId']]);
             props.form.resetFields([['actions', name, 'notify', 'templateId']]);
             await queryMessageConfigs({
@@ -69,11 +83,16 @@ const ActionItem = (props: ActionProps) => {
           options={messageConfig}
           loading={messageConfigLoading}
           fieldNames={{ value: 'id', label: 'name' }}
-          onChange={async (key: string) => {
+          onChange={async (key: string, node: any) => {
+            setConfigId(key);
             setTemplateData(undefined);
             props.form.resetFields([['actions', name, 'notify', 'templateId']]);
+
             await queryMessageTemplates({
-              terms: [{ column: 'configId', value: key }],
+              terms: [
+                { column: 'type', value: notifyType },
+                { column: 'provider', value: node.provider },
+              ],
             });
           }}
           style={{ width: 160 }}
@@ -98,47 +117,11 @@ const ActionItem = (props: ActionProps) => {
     </>
   );
 
-  const DeviceNodes = (
-    <>
-      <Select options={[]} placeholder={'请选择产品'} style={{ width: 220 }} />
-      <Select
-        defaultValue={'1'}
-        options={[
-          { label: '固定设备', value: '1' },
-          { label: '按标签', value: '2' },
-          { label: '按关系', value: '3' },
-        ]}
-        style={{ width: 120 }}
-      />
-      <Select options={[]} placeholder={'请选择'} style={{ width: 180 }} />
-      <Select
-        defaultValue={'1'}
-        options={[
-          { label: '设置属性', value: '1' },
-          { label: '功能调用', value: '2' },
-          { label: '读取属性', value: '3' },
-        ]}
-        style={{ width: 120 }}
-      />
-    </>
-  );
-
   useEffect(() => {
-    if (type1 === 'message') {
+    if (type1 === 'notify') {
       queryMessageTypes();
     }
   }, [type1]);
-
-  const TimeTypeAfter = (
-    <Select
-      defaultValue={'second'}
-      options={[
-        { label: '秒', value: 'second' },
-        { label: '分', value: 'minute' },
-        { label: '小时', value: 'hour' },
-      ]}
-    />
-  );
 
   return (
     <div className={'actions-item'}>
@@ -152,7 +135,7 @@ const ActionItem = (props: ActionProps) => {
         <Form.Item {...props.restField} name={[name, 'executor']}>
           <Select
             options={[
-              { label: '消息通知', value: 'message' },
+              { label: '消息通知', value: 'notify' },
               { label: '设备输出', value: 'device' },
               { label: '延迟执行', value: 'delay' },
             ]}
@@ -163,14 +146,54 @@ const ActionItem = (props: ActionProps) => {
             }}
           />
         </Form.Item>
-        {type1 === 'message' && MessageNodes}
-        {type1 === 'device' && DeviceNodes}
+        {type1 === 'notify' && MessageNodes}
+        {type1 === 'device' && (
+          <DeviceSelect
+            name={props.name}
+            form={props.form}
+            triggerType={props.triggerType}
+            onProperties={setProperties}
+            onMessageTypeChange={setDeviceMessageType}
+            onFunctionChange={setFunctionList}
+            restField={props.restField}
+          />
+        )}
         {type1 === 'delay' && (
-          <InputNumber addonAfter={TimeTypeAfter} style={{ width: 150 }} min={0} max={9999} />
+          <Form.Item name={[name, 'delay']}>
+            <InputNumber />
+          </Form.Item>
         )}
       </div>
-      {type1 === 'message' && templateData ? (
-        <MessageContent form={props.form} template={templateData} name={props.name} />
+      {type1 === 'notify' && templateData ? (
+        <MessageContent
+          form={props.form}
+          template={templateData}
+          name={props.name}
+          notifyType={notifyType}
+          triggerType={props.triggerType}
+          configId={configId}
+        />
+      ) : null}
+      {type1 === 'device' &&
+      deviceMessageType === MessageTypeEnum.WRITE_PROPERTY &&
+      properties.length ? (
+        <Form.Item name={[name, 'device', 'message', 'properties']}>
+          <WriteProperty properties={properties} type={props.triggerType} form={props.form} />
+        </Form.Item>
+      ) : null}
+      {type1 === 'device' &&
+      deviceMessageType === MessageTypeEnum.READ_PROPERTY &&
+      properties.length ? (
+        <Form.Item name={[name, 'device', 'message', 'properties']}>
+          <ReadProperty properties={properties} />
+        </Form.Item>
+      ) : null}
+      {type1 === 'device' &&
+      deviceMessageType === MessageTypeEnum.INVOKE_FUNCTION &&
+      functionList.length ? (
+        <Form.Item name={[name, 'device', 'message', 'inputs']}>
+          <FunctionCall functionData={functionList} />
+        </Form.Item>
       ) : null}
     </div>
   );
