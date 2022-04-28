@@ -18,8 +18,9 @@ const Log = observer(() => {
       width: 200,
     },
     {
-      dataIndex: 'sendTime',
+      dataIndex: 'notifyTime',
       title: '发送时间',
+      valueType: 'dateTime',
     },
     {
       dataIndex: 'state',
@@ -30,6 +31,7 @@ const Log = observer(() => {
             <Badge status={text.value === 'success' ? 'success' : 'error'} text={text.text} />
             {text.value !== 'success' && (
               <a
+                style={{ marginLeft: 5 }}
                 key="info"
                 onClick={() => {
                   Modal.info({
@@ -59,7 +61,11 @@ const Log = observer(() => {
             Modal.info({
               title: '详情信息',
               width: '30vw',
-              content: <div style={{ height: '300px', overflowY: 'auto' }}>{record.message}</div>,
+              content: (
+                <div style={{ height: '300px', overflowY: 'auto' }}>
+                  {JSON.stringify(record.context)}
+                </div>
+              ),
               onOk() {},
             });
           }}

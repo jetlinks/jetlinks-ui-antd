@@ -27,7 +27,7 @@ import {
 import { createSchemaField, observer } from '@formily/react';
 import type { ISchema } from '@formily/json-schema';
 import styles from './index.less';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import FUpload from '@/components/Upload';
 import { useParams } from 'umi';
 import { PageContainer } from '@ant-design/pro-layout';
@@ -44,6 +44,7 @@ import AliyunVoice from '@/pages/notice/Template/Detail/doc/AliyunVoice';
 import AliyunSms from '@/pages/notice/Template/Detail/doc/AliyunSms';
 import Email from '@/pages/notice/Template/Detail/doc/Email';
 import { Store } from 'jetlinks-store';
+import FAutoComplete from '@/components/FAutoComplete';
 
 export const docMap = {
   weixin: {
@@ -102,6 +103,8 @@ const Detail = observer(() => {
   const getAliyunSigns = (configId: string) => service.aliyun.getSigns(configId);
   const getAliyunTemplates = (configId: string) => service.aliyun.getTemplates(configId);
 
+  const variableDefinitionsRef =
+    useRef<{ id: string; name: string; type: string; format: string }[]>();
   const form = useMemo(
     () =>
       createForm({
@@ -112,6 +115,7 @@ const Detail = observer(() => {
               field.setComponent(FBraftEditor, {
                 placeholder:
                   '变量格式:${name};\n 示例:尊敬的${name},${time}有设备触发告警,请注意处理',
+                height: '100px',
               });
             }
           });
@@ -225,55 +229,45 @@ const Detail = observer(() => {
               });
             }
           });
-          onFieldValueChange('template.subject', (field, form1) => {
+          onFieldValueChange('template.*(subject,markdown.title)', (field, form1) => {
             const value = (field as Field).value;
+            const _message = field.query('template.message').value();
+
             const titleList =
               (typeof value === 'string' &&
-                value
-                  ?.match(pattern)
-                  ?.filter((i: string) => i)
-                  .map((item: string) => ({ id: item, type: 'string', format: '--' }))) ||
+                (value + _message)?.match(pattern)?.filter((i: string) => i)) ||
+              // .map((item: string) => ({id: item, type: 'string', format: '--'}))) ||
               [];
+            // 拼接message的内容
+
             form1.setFieldState('variableDefinitions', (state1) => {
               state1.visible = !!titleList && titleList.length > 0;
             });
             if (form1.modified) {
-              form1.setValuesIn('variableDefinitions', titleList);
-            }
-          });
-          onFieldValueChange('template.markdown.title', (field, form1) => {
-            const value = (field as Field).value;
-            const titleList =
-              (typeof value === 'string' &&
-                value
-                  ?.match(pattern)
-                  ?.filter((i: string) => i)
-                  .map((item: string) => ({ id: item, type: 'string', format: '--' }))) ||
-              [];
-            form1.setFieldState('variableDefinitions', (state1) => {
-              state1.visible = !!titleList && titleList.length > 0;
-            });
-            if (form1.modified) {
-              form1.setValuesIn('variableDefinitions', titleList);
+              const oldKey = variableDefinitionsRef.current?.map((i) => i.id);
+              const newKey = [...new Set(titleList)];
+              const _result = newKey.map((item) =>
+                oldKey?.includes(item)
+                  ? variableDefinitionsRef.current?.find((i) => i.id === item)
+                  : {
+                      id: item,
+                      type: 'string',
+                      format: '--',
+                    },
+              );
+              form1.setValuesIn('variableDefinitions', _result);
             }
           });
           onFieldValueChange('template.message', (field, form1) => {
             const value = (field as Field).value;
             const idList =
-              (typeof value === 'string' &&
-                value
-                  ?.match(pattern)
-                  ?.filter((i: string) => i)
-                  .map((item: string) => ({ id: item, type: 'string', format: '--' }))) ||
-              [];
+              (typeof value === 'string' && value?.match(pattern)?.filter((i: string) => i)) || [];
 
             if (id === 'email') {
               const subject = field.query('template.subject');
               const title = subject.value();
-              const titleList = title
-                ?.match(pattern)
-                ?.filter((i: string) => i)
-                .map((item: string) => ({ id: item, type: 'string', format: '--' }));
+              const titleList = title?.match(pattern)?.filter((i: string) => i);
+              // .map((item: string) => ({id: item, type: 'string', format: '--'}));
               if (idList && titleList?.length > 0) {
                 idList.unshift(...titleList);
               }
@@ -281,10 +275,8 @@ const Detail = observer(() => {
             const _provider = field.query('provider').value();
             if (_provider === 'dingTalkRobotWebHook') {
               const title = field.query('template.markdown.title').value();
-              const titleList = title
-                ?.match(pattern)
-                ?.filter((i: string) => i)
-                .map((item: string) => ({ id: item, type: 'string', format: '--' }));
+              const titleList = title?.match(pattern)?.filter((i: string) => i);
+              // .map((item: string) => ({id: item, type: 'string', format: '--'}));
               if (idList && titleList?.length > 0) {
                 idList.unshift(...titleList);
               }
@@ -292,9 +284,26 @@ const Detail = observer(() => {
             form1.setFieldState('variableDefinitions', (state1) => {
               state1.visible = !!idList && idList.length > 0;
             });
+
             if (form1.modified) {
-              form1.setValuesIn('variableDefinitions', idList);
+              // 获取缓存的KEY；
+              const oldKey = variableDefinitionsRef.current?.map((i) => i.id);
+              const newKey = [...new Set(idList)];
+              const _result = newKey.map((item) =>
+                oldKey?.includes(item)
+                  ? variableDefinitionsRef.current?.find((i) => i.id === item)
+                  : {
+                      id: item,
+                      type: 'string',
+                      format: '--',
+                    },
+              );
+              form1.setValuesIn('variableDefinitions', _result);
             }
+          });
+          onFieldValueChange('variableDefinitions.*.*', (field) => {
+            // 缓存编辑后的数据
+            variableDefinitionsRef.current = field.query('variableDefinitions').value();
           });
           onFieldReact('variableDefinitions.*.type', (field) => {
             const value = (field as Field).value;
@@ -304,26 +313,37 @@ const Detail = observer(() => {
               (index) => `variableDefinitions.${parseInt(index)}.format`,
             );
             const format = field.query(formatPath).take() as any;
+
+            const fieldModified = field && (field as Field).modified;
             if (!format) return;
+            if (fieldModified) {
+              format.setValue(undefined);
+            }
             switch (value) {
               case 'date':
-                format.setComponent(Select);
+                format.setComponent(FAutoComplete);
                 format.setDataSource([
-                  { label: 'String类型的UTC时间戳 (毫秒)', value: 'string' },
+                  { label: 'timestamp', value: 'timestamp' },
                   { label: 'yyyy-MM-dd', value: 'yyyy-MM-dd' },
                   { label: 'yyyy-MM-dd HH:mm:ss', value: 'yyyy-MM-dd HH:mm:ss' },
                   { label: 'yyyy-MM-dd HH:mm:ss EE', value: 'yyyy-MM-dd HH:mm:ss EE' },
                   { label: 'yyyy-MM-dd HH:mm:ss zzz', value: 'yyyy-MM-dd HH:mm:ss zzz' },
                 ]);
-                // format.setValue('string');
+                if (fieldModified) {
+                  format.setValue('timestamp');
+                }
                 break;
               case 'string':
                 format.setComponent(PreviewText.Input);
-                format.setValue('s%');
+                if (fieldModified) {
+                  format.setValue('s%');
+                }
                 break;
               case 'number':
                 format.setComponent(Input);
-                format.setValue('%.xf');
+                if (fieldModified) {
+                  format.setValue('%.xf');
+                }
                 break;
               // case 'file':
               //   format.setComponent(Select);
@@ -367,6 +387,7 @@ const Detail = observer(() => {
       ArrayItems,
       FormGrid,
       ArrayTable,
+      FAutoComplete,
     },
   });
 
@@ -985,7 +1006,7 @@ const Detail = observer(() => {
                         'x-component': 'Input',
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
-                          tooltip: '请输入收信人',
+                          tooltip: '仅支持中国大陆号码',
                           gridSpan: 1,
                         },
                         'x-validator': ['phone'],
@@ -1000,7 +1021,7 @@ const Detail = observer(() => {
                     'x-component': 'Select',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      tooltip: '请输入签名',
+                      tooltip: '用于短信内容签名信息显示',
                     },
                     'x-component-props': {
                       placeholder: '请输入签名',
@@ -1120,7 +1141,6 @@ const Detail = observer(() => {
             },
           },
         },
-
         'x-component-props': {
           rows: 5,
           placeholder: '变量格式:${name};\n 示例:尊敬的${name},${time}有设备触发告警,请注意处理',
@@ -1134,6 +1154,11 @@ const Detail = observer(() => {
         'x-component-props': {
           pagination: { pageSize: 9999 },
           scroll: { x: '100%' },
+        },
+        'x-decorator-props': {
+          style: {
+            zIndex: 999,
+          },
         },
         'x-visible': false,
         items: {
