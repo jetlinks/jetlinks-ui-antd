@@ -118,7 +118,7 @@ const ActionItem = (props: ActionProps) => {
   );
 
   useEffect(() => {
-    if (type1 === 'message') {
+    if (type1 === 'notify') {
       queryMessageTypes();
     }
   }, [type1]);
@@ -135,7 +135,7 @@ const ActionItem = (props: ActionProps) => {
         <Form.Item {...props.restField} name={[name, 'executor']}>
           <Select
             options={[
-              { label: '消息通知', value: 'message' },
+              { label: '消息通知', value: 'notify' },
               { label: '设备输出', value: 'device' },
               { label: '延迟执行', value: 'delay' },
             ]}
@@ -146,7 +146,7 @@ const ActionItem = (props: ActionProps) => {
             }}
           />
         </Form.Item>
-        {type1 === 'message' && MessageNodes}
+        {type1 === 'notify' && MessageNodes}
         {type1 === 'device' && (
           <DeviceSelect
             name={props.name}
@@ -164,7 +164,7 @@ const ActionItem = (props: ActionProps) => {
           </Form.Item>
         )}
       </div>
-      {type1 === 'message' && templateData ? (
+      {type1 === 'notify' && templateData ? (
         <MessageContent
           form={props.form}
           template={templateData}

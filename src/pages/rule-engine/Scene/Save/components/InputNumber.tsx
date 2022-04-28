@@ -8,20 +8,20 @@ interface InputNumberProps {
 
 export default (props: InputNumberProps) => {
   const [time, setTime] = useState(props.value?.time || 0);
-  const [unit, setUnit] = useState(props.value?.unit || 'second');
+  const [unit, setUnit] = useState(props.value?.unit || 'seconds');
 
   useEffect(() => {
     setTime(props.value?.time || 0);
-    setUnit(props.value?.unit || 'second');
+    setUnit(props.value?.unit || 'seconds');
   }, [props.value]);
 
   const TimeTypeAfter = (
     <Select
       value={unit}
       options={[
-        { label: '秒', value: 'second' },
-        { label: '分', value: 'minute' },
-        { label: '小时', value: 'hour' },
+        { label: '秒', value: 'seconds' },
+        { label: '分', value: 'minutes' },
+        { label: '小时', value: 'hours' },
       ]}
       onChange={(key) => {
         if (props.onChange) {

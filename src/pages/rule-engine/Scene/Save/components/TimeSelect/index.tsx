@@ -8,8 +8,8 @@ type OptionsItemType = {
 
 interface TimeSelectProps {
   options?: OptionsItemType[];
-  value?: string;
-  onChange?: (value: string[]) => void;
+  value?: number[];
+  onChange?: (value: number[]) => void;
   style?: React.CSSProperties;
 }
 
@@ -39,6 +39,11 @@ export default (props: TimeSelectProps) => {
       value={checkedKeys}
       onChange={onChange}
       style={props.style}
+      maxTagCount={0}
+      placeholder={'请选择时间'}
+      maxTagPlaceholder={(values) => {
+        return <span className={''}>{values.map((item) => item.label).toString()}</span>;
+      }}
       treeData={
         props.options && props.options.length
           ? [{ label: '全部', value: 'all' }, ...props.options]
