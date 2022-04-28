@@ -17,7 +17,6 @@ export default (props: DatePickerFormat) => {
           {...extraProps}
           value={typeof value === 'string' ? moment(value) : value}
           onChange={(date, dateString) => {
-            console.log(dateString);
             if (onChange) {
               onChange(dateString, date);
             }

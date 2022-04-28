@@ -137,17 +137,21 @@ export default (props: TriggerProps) => {
                 style={{ width: 120 }}
               />
             </Form.Item>
-            <Form.Item name={['trigger', 'device', 'selectorValues']}>
-              {selector === 'fixed' && <Device productId={productId} />}
-              {selector === 'org' && (
+            {selector === 'fixed' && (
+              <Form.Item name={['trigger', 'device', 'selectorValues']}>
+                <Device productId={productId} />
+              </Form.Item>
+            )}
+            {selector === 'org' && (
+              <Form.Item name={['trigger', 'device', 'selectorValues']}>
                 <TreeSelect
                   treeData={orgTree}
                   fieldNames={{ label: 'name', value: 'id' }}
                   placeholder={'请选择部门'}
                   style={{ width: 300 }}
                 />
-              )}
-            </Form.Item>
+              </Form.Item>
+            )}
             {functions.length || events.length || properties.length ? (
               <Form.Item name={['trigger', 'device', 'operation', 'operator']}>
                 <Select

@@ -58,9 +58,16 @@ export default (props: FunctionProps) => {
       case 'double':
         return <InputNumber style={{ width: '100%' }} placeholder={'请输入' + name} />;
       case 'date':
-        // @ts-ignore
         return (
-          <DatePicker format={record.format || 'YYYY-MM-DD HH:mm:ss'} style={{ width: '100%' }} />
+          <>
+            {
+              // @ts-ignore
+              <DatePicker
+                format={record.format || 'YYYY-MM-DD HH:mm:ss'}
+                style={{ width: '100%' }}
+              />
+            }
+          </>
         );
       default:
         return <Input placeholder={'请输入' + name} />;
