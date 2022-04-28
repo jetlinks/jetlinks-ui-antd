@@ -203,7 +203,7 @@ const Save = (props: Props) => {
   const save = async (deploy: boolean) => {
     const value = await form.submit<ProtocolItem>();
     let response = undefined;
-    if (props.data?.id) {
+    if (!props.data?.id) {
       response = await service.save(value);
     } else {
       response = await service.update(value);

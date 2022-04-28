@@ -143,7 +143,7 @@ const Config = () => {
           )}
         </Space>
       </div>
-      <div style={{ paddingLeft: 10 }}>
+      <div>
         {(metadata || []).map((i) => (
           <Descriptions size="small" column={3} key={i.name} bordered title={<h4>{i.name}</h4>}>
             {(i?.properties || []).map((item: any) => (

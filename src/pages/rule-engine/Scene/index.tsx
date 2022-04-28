@@ -3,7 +3,13 @@ import React, { useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import type { SceneItem } from '@/pages/rule-engine/Scene/typings';
 import { Badge, message } from 'antd';
-import { EditOutlined, PlayCircleOutlined, PlusOutlined, StopOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  PlayCircleOutlined,
+  PlusOutlined,
+  StopOutlined,
+} from '@ant-design/icons';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { PermissionButton, ProTableCard } from '@/components';
 import { statusMap } from '@/pages/device/Instance';
@@ -13,7 +19,7 @@ import Service from './service';
 import { useHistory } from 'umi';
 import { getMenuPathByCode } from '@/utils/menu';
 
-export const service = new Service('rule-engine/scene');
+export const service = new Service('scene');
 
 const Scene = () => {
   const intl = useIntl();
@@ -30,7 +36,7 @@ const Scene = () => {
         style={{ padding: 0 }}
         isPermission={permission.update}
         tooltip={
-          type === 'table'
+          type !== 'table'
             ? {
                 title: intl.formatMessage({
                   id: 'pages.data.option.edit',
@@ -41,7 +47,7 @@ const Scene = () => {
         }
       >
         <EditOutlined />
-        {type === 'table' &&
+        {type !== 'table' &&
           intl.formatMessage({
             id: 'pages.data.option.edit',
             defaultMessage: '编辑',
@@ -55,36 +61,54 @@ const Scene = () => {
         popConfirm={{
           title: intl.formatMessage({
             id: `pages.data.option.${
-              record.state.value !== 'notActive' ? 'disabled' : 'enabled'
+              record.state.value === 'started' ? 'disabled' : 'enabled'
             }.tips`,
             defaultMessage: '确认禁用？',
           }),
           onConfirm: async () => {
-            message.success(
-              intl.formatMessage({
-                id: 'pages.data.option.success',
-                defaultMessage: '操作成功!',
-              }),
-            );
-            actionRef.current?.reload();
+            if (record.state.value !== 'started') {
+              const resp = await service.startScene(record.id);
+              if (resp.status === 200) {
+                message.success(
+                  intl.formatMessage({
+                    id: 'pages.data.option.success',
+                    defaultMessage: '操作成功!',
+                  }),
+                );
+                actionRef.current?.reload();
+              }
+            } else {
+              const resp = await service.stopScene(record.id);
+              if (resp.status === 200) {
+                message.success(
+                  intl.formatMessage({
+                    id: 'pages.data.option.success',
+                    defaultMessage: '操作成功!',
+                  }),
+                );
+                actionRef.current?.reload();
+              }
+            }
           },
         }}
         tooltip={
-          type === 'table'
+          type !== 'table'
             ? {
                 title: intl.formatMessage({
-                  id: 'pages.data.option.edit',
-                  defaultMessage: '编辑',
+                  id: `pages.data.option.${
+                    record.state.value === 'started' ? 'disabled' : 'enabled'
+                  }`,
+                  defaultMessage: '启用',
                 }),
               }
             : undefined
         }
       >
-        {record.state.value !== 'notActive' ? <StopOutlined /> : <PlayCircleOutlined />}
-        {type === 'table' &&
+        {record.state.value === 'started' ? <StopOutlined /> : <PlayCircleOutlined />}
+        {type !== 'table' &&
           intl.formatMessage({
-            id: `pages.data.option.${record.state.value !== 'notActive' ? 'disabled' : 'enabled'}`,
-            defaultMessage: record.state.value !== 'notActive' ? '禁用' : '启用',
+            id: `pages.data.option.${record.state.value === 'started' ? 'disabled' : 'enabled'}`,
+            defaultMessage: record.state.value === 'started' ? '禁用' : '启用',
           })}
       </PermissionButton>,
       <PermissionButton
@@ -95,24 +119,25 @@ const Scene = () => {
         popConfirm={{
           title: intl.formatMessage({
             id:
-              record.state.value === 'notActive'
+              record.state.value === 'started'
                 ? 'pages.data.option.remove.tips'
                 : 'pages.device.instance.deleteTip',
           }),
+          disabled: record.state.value === 'started',
           onConfirm: async () => {},
         }}
         tooltip={
-          type === 'table'
+          type !== 'table'
             ? {
                 title: intl.formatMessage({
-                  id: 'pages.data.option.edit',
-                  defaultMessage: '编辑',
+                  id: 'pages.device.instance.deleteTip',
+                  defaultMessage: '删除',
                 }),
               }
             : undefined
         }
       >
-        <EditOutlined />
+        <DeleteOutlined />
         {type === 'table' &&
           intl.formatMessage({
             id: 'pages.data.option.edit',

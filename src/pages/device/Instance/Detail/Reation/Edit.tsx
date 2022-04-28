@@ -3,7 +3,7 @@ import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import { InstanceModel, service } from '@/pages/device/Instance';
 import type { ISchema } from '@formily/json-schema';
-import { Form, FormGrid, FormItem, Select, PreviewText } from '@formily/antd';
+import { Form, FormGrid, FormItem, PreviewText, Select } from '@formily/antd';
 import { useParams } from 'umi';
 import { Button, Drawer, message, Space } from 'antd';
 import { action } from '@formily/reactive';
@@ -63,7 +63,7 @@ const Edit = (props: Props) => {
         'x-decorator': 'FormItem',
         'x-component': 'Select',
         'x-component-props': {
-          placeholder: '请选择关联方',
+          placeholder: `请选择${item.relationName}`,
           showSearch: true,
           showArrow: true,
           mode: 'multiple',

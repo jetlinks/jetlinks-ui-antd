@@ -10,9 +10,8 @@ import {
   NumberPicker,
   Select,
 } from '@formily/antd';
-import { createForm } from '@formily/core';
+import { createForm, onFieldReact } from '@formily/core';
 import { createSchemaField } from '@formily/react';
-
 import type { PropertyMetadata } from '@/pages/device/Product/typings';
 import { useEffect, useState } from 'react';
 import { InstanceModel, service } from '@/pages/device/Instance';
@@ -41,6 +40,31 @@ const Indicators = (props: Props) => {
     validateFirst: true,
     initialValues: {
       metrics: metrics,
+    },
+    effects: () => {
+      onFieldReact('metrics.*.*', (field, form1) => {
+        const type = data.valueType?.type;
+        form1.setFieldState('metrics.*.space.value.*', (state) => {
+          state.componentType = componentMap[type || ''] || 'Input';
+          if (type === 'date') {
+            state.componentProps = {
+              showTime: true,
+            };
+          } else if (type === 'boolean') {
+            state.componentType = 'Select';
+            state.dataSource = [
+              {
+                label: data.valueType?.trueText,
+                value: String(data.valueType?.trueValue),
+              },
+              {
+                label: data.valueType?.falseText,
+                value: String(data.valueType?.falseValue),
+              },
+            ];
+          }
+        });
+      });
     },
   });
 
@@ -106,19 +130,6 @@ const Indicators = (props: Props) => {
                       dependencies: ['..range', data.valueType?.type],
                       fulfill: {
                         state: {
-                          dataSource:
-                            data.valueType?.type === 'boolean'
-                              ? [
-                                  {
-                                    label: data.valueType?.trueText,
-                                    value: data.valueType?.trueValue,
-                                  },
-                                  {
-                                    label: data.valueType?.falseText,
-                                    value: data.valueType?.falseValue,
-                                  },
-                                ]
-                              : [],
                           decoratorProps: {
                             gridSpan: '{{!!$deps[0]?5:$deps[1]==="boolean"?12:10}}',
                           },
@@ -163,17 +174,32 @@ const Indicators = (props: Props) => {
     },
   };
 
-  console.log(data);
-  console.log(InstanceModel.detail);
-
   useEffect(() => {
     if (InstanceModel.detail.id && data.id) {
       service.queryMetric(InstanceModel.detail.id || '', data.id || '').then((resp) => {
         if (resp.status === 200) {
           if ((resp?.result || []).length > 0) {
-            setMetrics(resp.result);
+            const list = resp.result.map((item: any) => {
+              return {
+                ...item,
+                value: item.value.split(','),
+              };
+            });
+            setMetrics(list);
           } else {
-            setMetrics(data.expands?.metrics || []);
+            const type = data.valueType?.type;
+            if (type === 'boolean') {
+              const list = data.expands?.metrics.map((item: any) => {
+                const value = (item?.value || {}).map((i: any) => String(i)) || {};
+                return {
+                  ...item,
+                  value,
+                };
+              });
+              setMetrics(list || []);
+            } else {
+              setMetrics(data.expands?.metrics || []);
+            }
           }
         }
       });
@@ -188,11 +214,13 @@ const Indicators = (props: Props) => {
       width={600}
       onOk={async () => {
         const params = (await form.submit()) as any;
-        const resp = await service.saveMetric(
-          InstanceModel.detail.id || '',
-          data.id || '',
-          params.metrics,
-        );
+        const list = (params?.metrics || []).map((item: any) => {
+          return {
+            ...item,
+            value: item.value.join(','),
+          };
+        });
+        const resp = await service.saveMetric(InstanceModel.detail.id || '', data.id || '', list);
         if (resp.status === 200) {
           message.success('操作成功！');
           props.onCancel();

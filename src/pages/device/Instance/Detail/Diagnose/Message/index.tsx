@@ -31,6 +31,7 @@ const DatePicker1: any = DatePicker;
 const Message = (props: Props) => {
   const [subscribeTopic] = useSendWebsocketMessage();
   const [dialogList, setDialogList] = useState<any[]>([]);
+  const [tempList, setTempList] = useState<any[]>([]);
   const [logList, setLogList] = useState<any[]>([]);
   const [type, setType] = useState<'property' | 'function'>('function');
   const [input, setInput] = useState<any>({});
@@ -48,11 +49,6 @@ const Message = (props: Props) => {
     subscribeTopic!(id, topic, {})
       ?.pipe(map((res) => res.payload))
       .subscribe((payload: any) => {
-        if (payload.error) {
-          props.onChange(!payload.upstream ? 'down-error' : 'up-error');
-        } else {
-          props.onChange(!payload.upstream ? 'down-success' : 'up-success');
-        }
         if (payload.type === 'log') {
           logList.push({
             key: randomString(),
@@ -60,6 +56,26 @@ const Message = (props: Props) => {
           });
           setLogList([...logList]);
         } else {
+          tempList.push({
+            key: randomString(),
+            ...payload,
+          });
+          const flag = [...tempList]
+            .filter(
+              (i) =>
+                i.traceId === payload.traceId &&
+                (payload.downstream === i.downstream || payload.upstream === i.upstream),
+            )
+            .every((item) => {
+              return !item.error;
+            });
+          if (!flag) {
+            props.onChange(!payload.upstream ? 'down-error' : 'up-error');
+          } else {
+            props.onChange(!payload.upstream ? 'down-success' : 'up-success');
+          }
+          setTempList([...tempList]);
+          Store.set('temp', tempList);
           const t = dialogList.find(
             (item) =>
               item.traceId === payload.traceId &&
@@ -153,6 +169,8 @@ const Message = (props: Props) => {
     subscribeLog();
     const arr = Store.get('diagnose') || [];
     setDialogList(arr);
+    const temp = Store.get('temp') || [];
+    setTempList(temp);
   }, []);
 
   const form = createForm({

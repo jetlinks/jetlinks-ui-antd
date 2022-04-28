@@ -35,25 +35,25 @@ const Status = observer((props: Props) => {
       key: 'config',
       name: '设备接入配置',
       data: 'config',
-      desc: '诊断设备接入配置是否正确，配置错误将导致连接失败。',
+      desc: '诊断设备接入配置是否正确，配置错误将导致连接失败',
     },
     {
       key: 'network',
       name: '网络信息',
       data: 'network',
-      desc: '诊断网络组件配置是否正确，配置错误将导致连接失败。',
+      desc: '诊断网络组件配置是否正确，配置错误将导致连接失败',
     },
     {
       key: 'product',
       name: '产品状态',
       data: 'product',
-      desc: '诊断产品状态是否已发布，未发布的状态将导致连接失败。',
+      desc: '诊断产品状态是否已发布，未发布的状态将导致连接失败',
     },
     {
       key: 'device',
       name: '设备状态',
       data: 'device',
-      desc: '诊断设备状态是否已启用，未启用的状态将导致连接失败。',
+      desc: '诊断设备状态是否已启用，未启用的状态将导致连接失败',
     },
     {
       key: 'device-access',
@@ -74,11 +74,17 @@ const Status = observer((props: Props) => {
   const productPermission = PermissionButton.usePermission('device/Product').permission;
   const networkPermission = PermissionButton.usePermission('link/Type').permission;
   const devicePermission = PermissionButton.usePermission('device/Instance').permission;
+  const accessPermission = PermissionButton.usePermission('link/AccessConfig').permission;
 
   const [diagnoseVisible, setDiagnoseVisible] = useState<boolean>(false);
   const [artificialVisible, setArtificialVisible] = useState<boolean>(false);
   const [diagnoseData, setDiagnoseData] = useState<any>({});
   const [artificiaData, setArtificiaData] = useState<any>({});
+
+  const [productTemp, setProductTemp] = useState<any[]>([]);
+  const [deviceTemp, setDeviceTemp] = useState<any[]>([]);
+  const [gatewayTemp, setGatewayTemp] = useState<any>({});
+  const [productItem, setProductItem] = useState<any>({});
 
   const getDetail = (id: string) => {
     service.detail(id).then((response) => {
@@ -91,6 +97,7 @@ const Status = observer((props: Props) => {
       let data: any = {};
       if (InstanceModel.detail.state?.value === 'online' || !!InstanceModel.detail?.protocol) {
         data = { status: 'success', text: '正常', info: null };
+        DiagnoseStatusModel.status = { ...DiagnoseStatusModel.status };
       } else {
         data = {
           status: 'warning',
@@ -142,6 +149,7 @@ const Status = observer((props: Props) => {
       if (InstanceModel.detail.state?.value === 'online') {
         data = { status: 'success', text: '正常', info: null };
         DiagnoseStatusModel.status.network = data;
+        DiagnoseStatusModel.status = { ...DiagnoseStatusModel.status };
         setTimeout(
           () =>
             resolve({
@@ -154,6 +162,7 @@ const Status = observer((props: Props) => {
       } else {
         service.queryProductState(InstanceModel.detail?.productId || '').then((resp) => {
           if (resp.status === 200) {
+            setProductItem(resp.result);
             if (resp.result.accessId) {
               service.queryGatewayState(resp.result.accessId).then((response: any) => {
                 if (response.status === 200) {
@@ -186,62 +195,65 @@ const Status = observer((props: Props) => {
                         </div>
                       ),
                     };
-                  } else if (gatewayList.includes(provider) && health === -1) {
-                    data = {
-                      status: 'error',
-                      text: '网络异常',
-                      info: (
-                        <div>
-                          <div className={styles.infoItem}>
-                            <Badge status="default" text={<span>请联系开发人员排查问题</span>} />
+                  } else if (health === -1) {
+                    if (gatewayList.includes(provider)) {
+                      data = {
+                        status: 'error',
+                        text: '网络异常',
+                        info: (
+                          <div>
+                            <div className={styles.infoItem}>
+                              <Badge
+                                status="default"
+                                text={
+                                  networkPermission.action ? (
+                                    <span>
+                                      网络组件未启用， 请
+                                      <Popconfirm
+                                        title="确认启用"
+                                        onConfirm={async () => {
+                                          const res = await service.startNetwork(
+                                            resp.result?.channelId,
+                                          );
+                                          if (res.status === 200) {
+                                            message.success('操作成功！');
+                                            DiagnoseStatusModel.status.network = {
+                                              status: 'success',
+                                              text: '正常',
+                                              info: null,
+                                            };
+                                          }
+                                        }}
+                                      >
+                                        <a>启用</a>
+                                      </Popconfirm>
+                                      网络组件
+                                    </span>
+                                  ) : (
+                                    '网络组件未启用，请联系管理员'
+                                  )
+                                }
+                              />
+                            </div>
                           </div>
-                        </div>
-                      ),
-                    };
-                  } else {
-                    data = {
-                      status: 'error',
-                      text: '网络异常',
-                      info: (
-                        <div>
-                          <div className={styles.infoItem}>
-                            <Badge
-                              status="default"
-                              text={
-                                networkPermission.action ? (
-                                  <span>
-                                    网络组件未启用， 请
-                                    <Popconfirm
-                                      title="确认启用"
-                                      onConfirm={async () => {
-                                        const res = await service.startNetwork(
-                                          resp.result?.channelId,
-                                        );
-                                        if (res.status === 200) {
-                                          message.success('操作成功！');
-                                          DiagnoseStatusModel.status.network = {
-                                            status: 'success',
-                                            text: '正常',
-                                            info: null,
-                                          };
-                                        }
-                                      }}
-                                    >
-                                      <a>启用</a>
-                                    </Popconfirm>
-                                    网络组件
-                                  </span>
-                                ) : (
-                                  '网络组件未启用，请联系管理员'
-                                )
-                              }
-                            />
+                        ),
+                      };
+                    } else {
+                      data = {
+                        status: 'error',
+                        text: '网络异常',
+                        info: (
+                          <div>
+                            <div className={styles.infoItem}>
+                              <Badge status="default" text={<span>请联系开发人员排查问题</span>} />
+                            </div>
                           </div>
-                        </div>
-                      ),
-                    };
+                        ),
+                      };
+                    }
                   }
                   DiagnoseStatusModel.status.network = data;
+                  DiagnoseStatusModel.status = { ...DiagnoseStatusModel.status };
                   setTimeout(
                     () =>
                       resolve({
@@ -330,6 +342,7 @@ const Status = observer((props: Props) => {
                                 text: '正常',
                                 info: null,
                               };
+                              DiagnoseStatusModel.status = { ...DiagnoseStatusModel.status };
                             }
                           }}
                         >
@@ -338,7 +351,7 @@ const Status = observer((props: Props) => {
                         产品
                       </span>
                     ) : (
-                      '无产品发布权限时：产品未发布。请联系管理员处理。'
+                      '无产品发布权限时：产品未发布，请联系管理员处理'
                     )
                   }
                 />
@@ -384,6 +397,7 @@ const Status = observer((props: Props) => {
                               info: null,
                             };
                             getDetail(InstanceModel.detail?.id || '');
+                            DiagnoseStatusModel.status = { ...DiagnoseStatusModel.status };
                           }
                         }}
                       >
@@ -392,7 +406,7 @@ const Status = observer((props: Props) => {
                       设备
                     </span>
                   ) : (
-                    '设备未启用。请联系管理员处理。'
+                    '设备未启用，请联系管理员处理'
                   )
                 }
               />
@@ -414,6 +428,7 @@ const Status = observer((props: Props) => {
       } else {
         service.queryProductConfig(proItem.id).then((resp) => {
           if (resp.status === 200) {
+            setProductTemp(resp?.result);
             if (resp.result.length > 0) {
               resp.result.map((item: any, index: number) => {
                 let data: any = {};
@@ -475,6 +490,7 @@ const Status = observer((props: Props) => {
       } else {
         service.queryDeviceConfig(InstanceModel.detail?.id || '').then((resp) => {
           if (resp.status === 200) {
+            setDeviceTemp(resp.result);
             if (resp.result.length > 0) {
               resp.result.map((item: any, index: number) => {
                 let data: any = {};
@@ -544,26 +560,31 @@ const Status = observer((props: Props) => {
                 <Badge
                   status="default"
                   text={
-                    <span>
-                      设备接入网关未启用，请
-                      <Popconfirm
-                        title="确认启用"
-                        onConfirm={async () => {
-                          const resp = await service.startGateway(gateway?.id || '');
-                          if (resp.status === 200) {
-                            message.success('操作成功！');
-                            DiagnoseStatusModel.status.deviceAccess = {
-                              status: 'success',
-                              text: '正常',
-                              info: null,
-                            };
-                          }
-                        }}
-                      >
-                        <a>启用</a>
-                      </Popconfirm>
-                      设备接入网关
-                    </span>
+                    accessPermission.action ? (
+                      <span>
+                        设备接入网关未启用，请
+                        <Popconfirm
+                          title="确认启用"
+                          onConfirm={async () => {
+                            const resp = await service.startGateway(gateway?.id || '');
+                            if (resp.status === 200) {
+                              message.success('操作成功！');
+                              DiagnoseStatusModel.status.deviceAccess = {
+                                status: 'success',
+                                text: '正常',
+                                info: null,
+                              };
+                              DiagnoseStatusModel.status = { ...DiagnoseStatusModel.status };
+                            }
+                          }}
+                        >
+                          <a>启用</a>
+                        </Popconfirm>
+                        设备接入网关
+                      </span>
+                    ) : (
+                      '设备接入网关未启用。请联系管理员处理'
+                    )
                   }
                 />
               </div>
@@ -607,68 +628,26 @@ const Status = observer((props: Props) => {
 
     let product: any = null;
     let gateway: any = null;
-    let productauth: any = null;
-    let deviceauth: any = null;
     diagnoseConfig()
       .then(() => diagnoseNetwork())
       .then((resp: any) => {
         product = resp?.product;
         gateway = resp?.gatewayDetail;
+        setGatewayTemp(resp?.gatewayDetail);
         diagnoseProduct(product)
           .then(() => diagnoseDevice())
           .then(() => diagnoseProductAuthConfig(product))
-          .then((res) => {
-            productauth = res;
-            diagnoseDeviceAuthConfig().then((dt) => {
-              deviceauth = dt;
+          .then(() => {
+            diagnoseDeviceAuthConfig().then(() => {
               diagnoseDeviceAccess(gateway).then(() => {
-                if (InstanceModel.detail.state?.value === 'online') {
-                  const a = Object.keys(DiagnoseStatusModel.status).find((item: any) => {
-                    return item.status !== 'success';
-                  });
-                  if (!!a) {
-                    Store.set('diagnose-status', {
-                      list: DiagnoseStatusModel.list,
-                      status: DiagnoseStatusModel.status,
-                    });
-                    props.onChange('success');
-                  } else {
-                    props.onChange('error');
-                  }
+                if (InstanceModel.detail.state?.value !== 'online') {
+                  props.onChange('error');
                 } else {
-                  const data = { ...DiagnoseStatusModel.status };
-                  const flag = Object.keys(data).find((item: any) => {
-                    return item.status !== 'success';
+                  Store.set('diagnose-status', {
+                    list: DiagnoseStatusModel.list,
+                    status: DiagnoseStatusModel.status,
                   });
-                  if (!flag) {
-                    // 展示诊断建议
-                    if (
-                      gateway.provider !== 'mqtt-server-gateway' &&
-                      gatewayList.includes(gateway.provider)
-                    ) {
-                      service
-                        .queryProcotolDetail(gateway.provider, gateway.transport)
-                        .then((resp1) => {
-                          setDiagnoseData({
-                            product: productauth,
-                            device: deviceauth,
-                            id: product.id,
-                            provider: gateway.provider,
-                            routes: resp1.result?.routes || [],
-                          });
-                          setDiagnoseVisible(true);
-                        });
-                    } else {
-                      setDiagnoseData({
-                        product: productauth,
-                        device: deviceauth,
-                        id: product.id,
-                        provider: '',
-                        routes: [],
-                      });
-                      setDiagnoseVisible(true);
-                    }
-                  }
+                  props.onChange('success');
                 }
               });
             });
@@ -688,6 +667,40 @@ const Status = observer((props: Props) => {
       }
     }
   }, [devicePermission]);
+
+  useEffect(() => {
+    const data = { ...DiagnoseStatusModel.status };
+    const flag = Object.keys(data).every((item: any) => {
+      return data[item]?.status === 'success';
+    });
+    if (flag && InstanceModel.detail.state?.value !== 'online') {
+      // 展示诊断建议
+      if (
+        gatewayTemp.provider !== 'mqtt-server-gateway' &&
+        gatewayList.includes(gatewayTemp.provider)
+      ) {
+        service.queryProcotolDetail(gatewayTemp.provider, gatewayTemp.transport).then((resp1) => {
+          setDiagnoseData({
+            product: productTemp,
+            device: deviceTemp,
+            id: productItem.id,
+            provider: gatewayTemp.provider,
+            routes: resp1.result?.routes || [],
+          });
+          setDiagnoseVisible(true);
+        });
+      } else {
+        setDiagnoseData({
+          product: productTemp,
+          device: deviceTemp,
+          id: productItem.i,
+          provider: gatewayTemp?.provider,
+          routes: [],
+        });
+        setDiagnoseVisible(true);
+      }
+    }
+  }, [DiagnoseStatusModel.status]);
 
   return (
     <Row gutter={24}>
@@ -762,6 +775,7 @@ const Status = observer((props: Props) => {
                 text: '正常',
                 info: null,
               };
+              DiagnoseStatusModel.status = { ...DiagnoseStatusModel.status };
             } else {
               DiagnoseStatusModel.status[params.data.key] = {
                 status: 'error',
@@ -783,7 +797,8 @@ const Status = observer((props: Props) => {
                               const tab: any = window.open(`${origin}/#${url}?key=access`);
                               tab!.onTabSaveSuccess = (value: any) => {
                                 if (value) {
-                                  diagnoseConfig();
+                                  getDetail(InstanceModel.detail?.id || '');
+                                  handleSearch();
                                 }
                               };
                             }}
@@ -799,7 +814,6 @@ const Status = observer((props: Props) => {
                           >
                             重新比对
                           </a>
-                          。
                         </span>
                       }
                     />

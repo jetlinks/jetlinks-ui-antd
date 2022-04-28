@@ -10,7 +10,10 @@ class Service extends BaseService<DeviceInstance> {
 
   // 查询产品列表
   public getProductList = (params?: any) =>
-    request(`/${SystemConst.API_BASE}/device/product/_query/no-paging`, { method: 'GET', params });
+    request(`/${SystemConst.API_BASE}/device/product/_query/no-paging?paging=false`, {
+      method: 'GET',
+      params,
+    });
 
   // 批量删除设备
   public batchDeleteDevice = (params: any) =>
@@ -29,6 +32,13 @@ class Service extends BaseService<DeviceInstance> {
   // 禁用设备
   public undeployDevice = (deviceId: string, params?: any) =>
     request(`/${SystemConst.API_BASE}/device-instance/${deviceId}/undeploy`, {
+      method: 'POST',
+      data: params,
+    });
+
+  // 断开连接
+  public disconnectDevice = (deviceId: string, params?: any) =>
+    request(`/${SystemConst.API_BASE}/device-instance/${deviceId}/disconnect`, {
       method: 'POST',
       data: params,
     });
@@ -206,14 +216,14 @@ class Service extends BaseService<DeviceInstance> {
     });
   // 读取属性
   public readProperties = (deviceId: string, data: any) =>
-    request(`/${SystemConst.API_BASE}/device-instance/${deviceId}/properties/_read`, {
+    request(`/${SystemConst.API_BASE}/device/instance/${deviceId}/properties/_read`, {
       method: 'POST',
       data,
     });
   // 设置属性
   public settingProperties = (deviceId: string, data: any) =>
-    request(`/${SystemConst.API_BASE}//device-instance/${deviceId}/property`, {
-      method: 'POST',
+    request(`/${SystemConst.API_BASE}/device/instance/${deviceId}/property`, {
+      method: 'PUT',
       data,
     });
   //获取协议设置的默认物模型

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Upload, Input, Button } from 'antd';
+import { Button, Input, Upload } from 'antd';
 import { UploadChangeParam } from 'antd/lib/upload/interface';
 import SystemConst from '@/utils/const';
 import Token from '@/utils/token';
@@ -13,7 +13,7 @@ interface InputUploadProps {
 export default (props: InputUploadProps) => {
   const { onChange } = props;
 
-  const [url, setUrl] = useState('');
+  const [url, setUrl] = useState(props.value);
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {

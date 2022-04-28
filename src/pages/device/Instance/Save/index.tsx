@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { UploadImage } from '@/components';
 import { debounce } from 'lodash';
+import encodeQuery from '@/utils/encodeQuery';
 
 interface Props {
   visible: boolean;
@@ -31,15 +32,24 @@ const Save = (props: Props) => {
   const intl = useIntl();
 
   useEffect(() => {
-    service.getProductList({ paging: false }).then((resp: any) => {
-      if (resp.status === 200) {
-        const list = resp.result.map((item: { name: any; id: any }) => ({
-          label: item.name,
-          value: item.id,
-        }));
-        setProductList(list);
-      }
-    });
+    service
+      .getProductList(
+        encodeQuery({
+          paging: false,
+          terms: {
+            state: 1,
+          },
+        }),
+      )
+      .then((resp: any) => {
+        if (resp.status === 200) {
+          const list = resp.result.map((item: { name: any; id: any }) => ({
+            label: item.name,
+            value: item.id,
+          }));
+          setProductList(list);
+        }
+      });
   }, []);
 
   const intlFormat = (

@@ -5,6 +5,7 @@ import './index.less';
 interface TriggerWayProps {
   value?: string;
   onChange?: (type: string) => void;
+  onSelect?: (type: string) => void;
 }
 
 export enum TriggerWayType {
@@ -22,6 +23,10 @@ export default (props: TriggerWayProps) => {
 
   const onSelect = (_type: string) => {
     setType(_type);
+
+    if (props.onSelect) {
+      props.onSelect(_type);
+    }
 
     if (props.onChange) {
       props.onChange(_type);

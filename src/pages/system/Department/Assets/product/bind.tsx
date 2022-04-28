@@ -35,7 +35,7 @@ const Bind = observer((props: Props) => {
       dataIndex: 'name',
       title: intl.formatMessage({
         id: 'pages.table.name',
-        defaultMessage: '姓名',
+        defaultMessage: '名称',
       }),
       search: {
         transform: (value) => ({ name$LIKE: value }),

@@ -32,7 +32,9 @@ export default (props: ProcotolCardProps) => {
         </div>
         <div className={'card-item-body'}>
           <div className={'card-item-header'}>
-            <span className={'card-item-header-name ellipsis'}>{props.name}</span>
+            <Tooltip title={props.name}>
+              <span className={'card-item-header-name ellipsis'}>{props.name}</span>
+            </Tooltip>
           </div>
           <Row gutter={24}>
             <Col span={12}>
