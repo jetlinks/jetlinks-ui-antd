@@ -45,7 +45,7 @@ export default (props: DeviceProps) => {
 
   const getProducts = async () => {
     const resp = await getProductList({ paging: false });
-    if (resp.status === 200) {
+    if (resp && resp.status === 200) {
       setProductList(resp.result);
     }
   };
@@ -120,6 +120,11 @@ export default (props: DeviceProps) => {
       {selector === SourceEnum.tag && (
         <Form.Item name={[name, 'device', 'selectorValues']} {...props.restField}>
           <TagModal tagData={tagList} />
+        </Form.Item>
+      )}
+      {selector === SourceEnum.relation && (
+        <Form.Item name={[name, 'device', 'selectorValues']} {...props.restField}>
+          <Select style={{ width: 300 }} />
         </Form.Item>
       )}
       <Form.Item

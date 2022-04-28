@@ -41,7 +41,6 @@ export default (props: DeviceModelProps) => {
   const [value, setValue] = useState<ChangeValueType[]>(props.value || []);
 
   useEffect(() => {
-    console.log('deviceModal', props.value);
     setValue(props.value || []);
     setSelectKeys(props.value || []);
   }, [props.value]);
@@ -109,8 +108,6 @@ export default (props: DeviceModelProps) => {
     },
   ];
 
-  console.log(selectKeys.map((item) => item.value));
-
   return (
     <>
       {visible && (
@@ -149,12 +146,14 @@ export default (props: DeviceModelProps) => {
             search={false}
             rowSelection={{
               selectedRowKeys: selectKeys.map((item) => item.value),
-              onSelect: (a: any, b: any, selectedRowKeys) => {
-                console.log(selectedRowKeys);
-              },
-              onChange: (selectedRowKeys, selectedRows) => {
-                console.log(selectedRows);
-                setSelectKeys(selectedRows.map((item) => ({ name: item.name, value: item.id })));
+              onSelect: (selectedRow: any, selected: any) => {
+                let newSelectKeys = [...selectKeys];
+                if (selected) {
+                  newSelectKeys.push({ name: selectedRow.name, value: selectedRow.id });
+                } else {
+                  newSelectKeys = newSelectKeys.filter((item) => item.value !== selectedRow.id);
+                }
+                setSelectKeys(newSelectKeys);
               },
             }}
             request={(params) => queryDevice(params)}

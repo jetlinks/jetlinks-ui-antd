@@ -65,3 +65,7 @@ export const queryWechatUsers = (id: string) =>
 // 微信部门
 export const queryWechatDepartments = (id: string) =>
   request(`${SystemConst.API_BASE}/notifier/wechat/corp/${id}/departments`, { method: 'GET' });
+
+// 根据配置ID获取标签推送
+export const queryTag = (id: string) =>
+  request(`${SystemConst.API_BASE}/notifier/wechat/corp/${id}/tags`, { method: 'GET' });

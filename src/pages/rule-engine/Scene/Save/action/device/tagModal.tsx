@@ -63,7 +63,6 @@ export default (props: TagModalProps) => {
           }
           return valueItem;
         });
-      console.log(names);
       setNameList(names);
       setTagList(newTagList);
     } else {
@@ -119,16 +118,20 @@ export default (props: TagModalProps) => {
           />
         );
       case 'date':
-        // @ts-ignore
         return (
-          <DatePicker
-            value={record.value && moment(record.value)}
-            format={record.format || 'YYYY-MM-DD HH:mm:ss'}
-            style={{ width: '100%' }}
-            onChange={(_, date) => {
-              record.value = date;
-            }}
-          />
+          <>
+            {
+              // @ts-ignore
+              <DatePicker
+                value={record.value && moment(record.value)}
+                format={record.format || 'YYYY-MM-DD HH:mm:ss'}
+                style={{ width: '100%' }}
+                onChange={(_, date) => {
+                  record.value = date;
+                }}
+              />
+            }
+          </>
         );
       default:
         return (
@@ -154,15 +157,14 @@ export default (props: TagModalProps) => {
             .filter((item) => !!item.value)
             .map((item: any) => {
               return {
-                column: item.value,
+                column: item.id,
                 type: item.type,
-                name: item.id,
+                value: item.value,
               };
             });
           if (props.onChange) {
             props.onChange(newValue);
           }
-          console.log(newValue);
           setVisible(false);
           setTagList([{}]);
         }}
