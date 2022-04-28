@@ -86,8 +86,7 @@ const ManualInspection = (props: Props) => {
     <div style={{ backgroundColor: '#f6f6f6', padding: 10 }}>
       {(data?.data?.properties || []).map((item: any) => (
         <div key={item.property}>
-          <span>{item.name}</span>:{' '}
-          <span>{item.type.type !== 'password' ? data?.check[item.property] : '******'}</span>
+          <span>{item.name}</span>: <span>{data?.check[item.property]}</span>
         </div>
       ))}
     </div>
