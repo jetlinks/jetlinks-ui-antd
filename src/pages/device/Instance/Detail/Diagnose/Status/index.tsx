@@ -35,25 +35,25 @@ const Status = observer((props: Props) => {
       key: 'config',
       name: '设备接入配置',
       data: 'config',
-      desc: '诊断设备接入配置是否正确，配置错误将导致连接失败。',
+      desc: '诊断设备接入配置是否正确，配置错误将导致连接失败',
     },
     {
       key: 'network',
       name: '网络信息',
       data: 'network',
-      desc: '诊断网络组件配置是否正确，配置错误将导致连接失败。',
+      desc: '诊断网络组件配置是否正确，配置错误将导致连接失败',
     },
     {
       key: 'product',
       name: '产品状态',
       data: 'product',
-      desc: '诊断产品状态是否已发布，未发布的状态将导致连接失败。',
+      desc: '诊断产品状态是否已发布，未发布的状态将导致连接失败',
     },
     {
       key: 'device',
       name: '设备状态',
       data: 'device',
-      desc: '诊断设备状态是否已启用，未启用的状态将导致连接失败。',
+      desc: '诊断设备状态是否已启用，未启用的状态将导致连接失败',
     },
     {
       key: 'device-access',
@@ -74,6 +74,7 @@ const Status = observer((props: Props) => {
   const productPermission = PermissionButton.usePermission('device/Product').permission;
   const networkPermission = PermissionButton.usePermission('link/Type').permission;
   const devicePermission = PermissionButton.usePermission('device/Instance').permission;
+  const accessPermission = PermissionButton.usePermission('link/AccessConfig').permission;
 
   const [diagnoseVisible, setDiagnoseVisible] = useState<boolean>(false);
   const [artificialVisible, setArtificialVisible] = useState<boolean>(false);
@@ -194,60 +195,62 @@ const Status = observer((props: Props) => {
                         </div>
                       ),
                     };
-                  } else if (gatewayList.includes(provider) && health === -1) {
-                    data = {
-                      status: 'error',
-                      text: '网络异常',
-                      info: (
-                        <div>
-                          <div className={styles.infoItem}>
-                            <Badge status="default" text={<span>请联系开发人员排查问题</span>} />
+                  } else if (health === -1) {
+                    if (gatewayList.includes(provider)) {
+                      data = {
+                        status: 'error',
+                        text: '网络异常',
+                        info: (
+                          <div>
+                            <div className={styles.infoItem}>
+                              <Badge
+                                status="default"
+                                text={
+                                  networkPermission.action ? (
+                                    <span>
+                                      网络组件未启用， 请
+                                      <Popconfirm
+                                        title="确认启用"
+                                        onConfirm={async () => {
+                                          const res = await service.startNetwork(
+                                            resp.result?.channelId,
+                                          );
+                                          if (res.status === 200) {
+                                            message.success('操作成功！');
+                                            DiagnoseStatusModel.status.network = {
+                                              status: 'success',
+                                              text: '正常',
+                                              info: null,
+                                            };
+                                          }
+                                        }}
+                                      >
+                                        <a>启用</a>
+                                      </Popconfirm>
+                                      网络组件
+                                    </span>
+                                  ) : (
+                                    '网络组件未启用，请联系管理员'
+                                  )
+                                }
+                              />
+                            </div>
                           </div>
-                        </div>
-                      ),
-                    };
-                  } else {
-                    data = {
-                      status: 'error',
-                      text: '网络异常',
-                      info: (
-                        <div>
-                          <div className={styles.infoItem}>
-                            <Badge
-                              status="default"
-                              text={
-                                networkPermission.action ? (
-                                  <span>
-                                    网络组件未启用， 请
-                                    <Popconfirm
-                                      title="确认启用"
-                                      onConfirm={async () => {
-                                        const res = await service.startNetwork(
-                                          resp.result?.channelId,
-                                        );
-                                        if (res.status === 200) {
-                                          message.success('操作成功！');
-                                          DiagnoseStatusModel.status.network = {
-                                            status: 'success',
-                                            text: '正常',
-                                            info: null,
-                                          };
-                                        }
-                                      }}
-                                    >
-                                      <a>启用</a>
-                                    </Popconfirm>
-                                    网络组件
-                                  </span>
-                                ) : (
-                                  '网络组件未启用，请联系管理员'
-                                )
-                              }
-                            />
+                        ),
+                      };
+                    } else {
+                      data = {
+                        status: 'error',
+                        text: '网络异常',
+                        info: (
+                          <div>
+                            <div className={styles.infoItem}>
+                              <Badge status="default" text={<span>请联系开发人员排查问题</span>} />
+                            </div>
                           </div>
-                        </div>
-                      ),
-                    };
+                        ),
+                      };
+                    }
                   }
                   DiagnoseStatusModel.status.network = data;
                   DiagnoseStatusModel.status = { ...DiagnoseStatusModel.status };
@@ -348,7 +351,7 @@ const Status = observer((props: Props) => {
                         产品
                       </span>
                     ) : (
-                      '无产品发布权限时：产品未发布。请联系管理员处理。'
+                      '无产品发布权限时：产品未发布，请联系管理员处理'
                     )
                   }
                 />
@@ -403,7 +406,7 @@ const Status = observer((props: Props) => {
                       设备
                     </span>
                   ) : (
-                    '设备未启用。请联系管理员处理。'
+                    '设备未启用，请联系管理员处理'
                   )
                 }
               />
@@ -557,27 +560,31 @@ const Status = observer((props: Props) => {
                 <Badge
                   status="default"
                   text={
-                    <span>
-                      设备接入网关未启用，请
-                      <Popconfirm
-                        title="确认启用"
-                        onConfirm={async () => {
-                          const resp = await service.startGateway(gateway?.id || '');
-                          if (resp.status === 200) {
-                            message.success('操作成功！');
-                            DiagnoseStatusModel.status.deviceAccess = {
-                              status: 'success',
-                              text: '正常',
-                              info: null,
-                            };
-                            DiagnoseStatusModel.status = { ...DiagnoseStatusModel.status };
-                          }
-                        }}
-                      >
-                        <a>启用</a>
-                      </Popconfirm>
-                      设备接入网关
-                    </span>
+                    accessPermission.action ? (
+                      <span>
+                        设备接入网关未启用，请
+                        <Popconfirm
+                          title="确认启用"
+                          onConfirm={async () => {
+                            const resp = await service.startGateway(gateway?.id || '');
+                            if (resp.status === 200) {
+                              message.success('操作成功！');
+                              DiagnoseStatusModel.status.deviceAccess = {
+                                status: 'success',
+                                text: '正常',
+                                info: null,
+                              };
+                              DiagnoseStatusModel.status = { ...DiagnoseStatusModel.status };
+                            }
+                          }}
+                        >
+                          <a>启用</a>
+                        </Popconfirm>
+                        设备接入网关
+                      </span>
+                    ) : (
+                      '设备接入网关未启用。请联系管理员处理'
+                    )
                   }
                 />
               </div>
@@ -807,7 +814,6 @@ const Status = observer((props: Props) => {
                           >
                             重新比对
                           </a>
-                          。
                         </span>
                       }
                     />
