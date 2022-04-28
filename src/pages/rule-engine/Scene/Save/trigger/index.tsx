@@ -49,7 +49,7 @@ export default (props: TriggerProps) => {
 
   const getSelector = () => {
     querySelector().then((resp) => {
-      if (resp.status === 200) {
+      if (resp && resp.status === 200) {
         setSelectorOptions(resp.result);
       }
     });
@@ -57,7 +57,7 @@ export default (props: TriggerProps) => {
 
   const getOrgTree = useCallback(() => {
     queryOrgTree(productId).then((resp) => {
-      if (resp.status === 200) {
+      if (resp && resp.status === 200) {
         setOrgTree(resp.result);
       }
     });
