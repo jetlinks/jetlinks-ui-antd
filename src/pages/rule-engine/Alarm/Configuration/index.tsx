@@ -8,10 +8,16 @@ import { useRef, useState } from 'react';
 import { Space } from 'antd';
 import ProTableCard from '@/components/ProTableCard';
 import Save from './Save';
+import Service from '@/pages/rule-engine/Alarm/Configuration/service';
+import AlarmConfig from '@/components/ProTableCard/CardItems/AlarmConfig';
+
+const service = new Service('alarm/config');
 
 const Configuration = () => {
   const intl = useIntl();
+  const [visible, setVisible] = useState<boolean>(false);
 
+  const [current, setCurrent] = useState<any>();
   const columns: ProColumns<ConfigItem>[] = [
     {
       dataIndex: 'name',
@@ -32,6 +38,7 @@ const Configuration = () => {
     {
       title: '状态',
       dataIndex: 'state',
+      renderText: (state) => state.text,
     },
     {
       title: '说明',
@@ -44,20 +51,29 @@ const Configuration = () => {
       render: (_, record) => [
         <PermissionButton
           isPermission={true}
+          style={{ padding: 0 }}
           tooltip={{
             title: intl.formatMessage({
               id: 'pages.data.option.edit',
               defaultMessage: '编辑',
             }),
           }}
+          type="link"
           onClick={() => {
-            console.log(record);
+            setVisible(true);
+            setCurrent(record);
           }}
         >
           <EditOutlined />
         </PermissionButton>,
         <PermissionButton
+          type="link"
           isPermission={true}
+          style={{ padding: 0 }}
+          popConfirm={{
+            title: '确认删除?',
+            onConfirm: () => service.remove(record.id),
+          }}
           tooltip={{
             title: intl.formatMessage({
               id: 'pages.data.option.remove',
@@ -75,7 +91,6 @@ const Configuration = () => {
 
   const [param, setParam] = useState({});
 
-  const [visible, setVisible] = useState<boolean>(false);
   return (
     <PageContainer>
       <SearchComponent
@@ -85,17 +100,51 @@ const Configuration = () => {
           setParam(data);
         }}
       />
-      <ProTableCard<ConfigItem>
+      <ProTableCard<any>
         actionRef={actionRef}
         rowKey="id"
         search={false}
         params={param}
         columns={columns}
+        request={(params) => service.query(params)}
+        gridColumn={3}
+        cardRender={(record) => (
+          <AlarmConfig
+            {...record}
+            actions={[
+              <PermissionButton
+                isPermission={true}
+                key="edit"
+                onClick={() => {
+                  setCurrent(record);
+                  setVisible(true);
+                }}
+              >
+                <EditOutlined />
+                编辑
+              </PermissionButton>,
+              <PermissionButton
+                popConfirm={{
+                  title: '确认删除?',
+                  onConfirm: async () => {
+                    await service.remove(record.id);
+                    actionRef.current?.reset?.();
+                  },
+                }}
+                isPermission={true}
+                key="delete"
+              >
+                <DeleteOutlined />
+              </PermissionButton>,
+            ]}
+          />
+        )}
         headerTitle={
           <Space>
             <PermissionButton
               isPermission={true}
               onClick={() => {
+                setCurrent(undefined);
                 setVisible(true);
               }}
               key="button"
@@ -110,7 +159,7 @@ const Configuration = () => {
           </Space>
         }
       />
-      <Save visible={visible} close={() => setVisible(false)} />
+      <Save data={current} visible={visible} close={() => setVisible(false)} />
     </PageContainer>
   );
 };

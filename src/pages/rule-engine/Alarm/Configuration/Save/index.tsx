@@ -10,10 +10,12 @@ import Service from '@/pages/rule-engine/Alarm/Configuration/service';
 import { useAsyncDataSource } from '@/utils/util';
 import styles from './index.less';
 import { service as ConfigService } from '../../Config';
+import { Store } from 'jetlinks-store';
 
 interface Props {
   visible: boolean;
   close: () => void;
+  data: any;
 }
 
 const alarm1 = require('/public/images/alarm/alarm1.png');
@@ -48,7 +50,6 @@ const Save = (props: Props) => {
   const getLevel = () => {
     return ConfigService.queryLevel().then((resp) => {
       if (resp.status === 200) {
-        console.log(resp, 'resp');
         return resp.result?.levels?.map((item: { level: number; title: string }) => ({
           label: createImageLabel(LevelMap[item.level], item.title),
           value: item.level,
@@ -56,13 +57,21 @@ const Save = (props: Props) => {
       }
     });
   };
+
+  const getScene = () => {
+    return service.getScene().then((resp) => {
+      Store.set('scene-data', resp);
+      return resp;
+    });
+  };
   const form = useMemo(
     () =>
       createForm({
+        initialValues: props.data,
         validateFirst: true,
         effects() {},
       }),
-    [],
+    [props.data],
   );
 
   const getSupports = () => service.getTargetTypes();
@@ -78,11 +87,13 @@ const Save = (props: Props) => {
   });
 
   const handleSave = async () => {
-    const data: ConfigItem = await form.submit();
-    console.log(data, 'dat');
-    const resp: any = await service.update(data);
+    const data: any = await form.submit();
+    const list = Store.get('scene-data');
+    const scene = list.find((item: any) => item.value === data.sceneId);
+    const resp: any = await service.update({ ...data, sceneName: scene.label, state: 'disable' });
     if (resp.status === 200) {
       message.success('操作成功');
+      props.close();
     }
   };
 
@@ -109,7 +120,7 @@ const Save = (props: Props) => {
               placeholder: '请输入名称',
             },
           },
-          type: {
+          targetType: {
             title: '类型',
             'x-decorator': 'FormItem',
             'x-component': 'Select',
@@ -140,6 +151,7 @@ const Save = (props: Props) => {
         title: '关联触发场景',
         'x-decorator': 'FormItem',
         'x-component': 'Select',
+        'x-reactions': '{{useAsyncDataSource(getScene)}}',
         'x-decorator-props': {
           gridSpan: 1,
           addonAfter: (
@@ -194,7 +206,10 @@ const Save = (props: Props) => {
       title="新增告警"
     >
       <Form className={styles.form} form={form} layout="vertical">
-        <SchemaField schema={schema} scope={{ useAsyncDataSource, getSupports, getLevel }} />
+        <SchemaField
+          schema={schema}
+          scope={{ useAsyncDataSource, getSupports, getLevel, getScene }}
+        />
       </Form>
     </Modal>
   );

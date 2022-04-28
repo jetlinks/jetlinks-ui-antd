@@ -94,10 +94,6 @@ const Edit = observer((props: Props) => {
               }
             });
           });
-          /// 处理Boolean 类型
-          // expands.metrics.0.edit.space.value.0 路径
-          // const metricsPath = field.query('expands.metrics.value.0');
-          // form.setValuesIn('expands.metrics.value.0', 'testtttt')
         },
       }),
     [],
