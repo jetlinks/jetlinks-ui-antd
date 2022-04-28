@@ -15,10 +15,11 @@ const FBraftEditor = connect((props: Props) => {
   );
 
   return (
-    <>
+    <div>
       {
         // @ts-ignore
         <BraftEditor
+          style={{ height: 350 }}
           placeholder={props.placeholder}
           value={editorState}
           onChange={(state) => {
@@ -27,7 +28,7 @@ const FBraftEditor = connect((props: Props) => {
           }}
         />
       }
-    </>
+    </div>
   );
 }, mapProps());
 export default FBraftEditor;
