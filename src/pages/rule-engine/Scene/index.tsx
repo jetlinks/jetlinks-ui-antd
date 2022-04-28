@@ -61,18 +61,34 @@ const Scene = () => {
         popConfirm={{
           title: intl.formatMessage({
             id: `pages.data.option.${
-              record.state.value !== 'started' ? 'disabled' : 'enabled'
+              record.state.value === 'started' ? 'disabled' : 'enabled'
             }.tips`,
             defaultMessage: '确认禁用？',
           }),
           onConfirm: async () => {
-            message.success(
-              intl.formatMessage({
-                id: 'pages.data.option.success',
-                defaultMessage: '操作成功!',
-              }),
-            );
-            actionRef.current?.reload();
+            if (record.state.value !== 'started') {
+              const resp = await service.startScene(record.id);
+              if (resp.status === 200) {
+                message.success(
+                  intl.formatMessage({
+                    id: 'pages.data.option.success',
+                    defaultMessage: '操作成功!',
+                  }),
+                );
+                actionRef.current?.reload();
+              }
+            } else {
+              const resp = await service.stopScene(record.id);
+              if (resp.status === 200) {
+                message.success(
+                  intl.formatMessage({
+                    id: 'pages.data.option.success',
+                    defaultMessage: '操作成功!',
+                  }),
+                );
+                actionRef.current?.reload();
+              }
+            }
           },
         }}
         tooltip={
@@ -80,7 +96,7 @@ const Scene = () => {
             ? {
                 title: intl.formatMessage({
                   id: `pages.data.option.${
-                    record.state.value !== 'started' ? 'disabled' : 'enabled'
+                    record.state.value === 'started' ? 'disabled' : 'enabled'
                   }`,
                   defaultMessage: '启用',
                 }),
@@ -88,11 +104,11 @@ const Scene = () => {
             : undefined
         }
       >
-        {record.state.value !== 'started' ? <StopOutlined /> : <PlayCircleOutlined />}
+        {record.state.value === 'started' ? <StopOutlined /> : <PlayCircleOutlined />}
         {type !== 'table' &&
           intl.formatMessage({
-            id: `pages.data.option.${record.state.value !== 'started' ? 'disabled' : 'enabled'}`,
-            defaultMessage: record.state.value !== 'started' ? '禁用' : '启用',
+            id: `pages.data.option.${record.state.value === 'started' ? 'disabled' : 'enabled'}`,
+            defaultMessage: record.state.value === 'started' ? '禁用' : '启用',
           })}
       </PermissionButton>,
       <PermissionButton
