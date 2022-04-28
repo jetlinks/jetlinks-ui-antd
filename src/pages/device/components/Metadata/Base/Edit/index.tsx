@@ -2,7 +2,7 @@ import { Button, Drawer, Dropdown, Menu, message } from 'antd';
 import { createSchemaField, observer } from '@formily/react';
 import MetadataModel from '../model';
 import type { Field, IFieldState } from '@formily/core';
-import { createForm, onFieldReact, registerValidateRules } from '@formily/core';
+import { createForm, onFieldInit, onFieldReact, registerValidateRules } from '@formily/core';
 import {
   ArrayItems,
   Checkbox,
@@ -59,6 +59,12 @@ const Edit = observer((props: Props) => {
       createForm({
         initialValues: MetadataModel.item as Record<string, unknown>,
         effects: () => {
+          onFieldInit('expands.metrics.*.id', (field) => {
+            const id = field as Field;
+            if (id.value && !id.modified) {
+              (field as any).disabled = true;
+            }
+          });
           onFieldReact('expands.metrics.*.*', (field, form1) => {
             const type = field.query('valueType.type').take() as Field;
             const componentMap = {
@@ -437,6 +443,7 @@ const Edit = observer((props: Props) => {
       ],
     },
   } as any;
+  console.log(props.type, 'type');
   const propertySchema: ISchema = {
     type: 'object',
     properties: {
@@ -665,6 +672,7 @@ const Edit = observer((props: Props) => {
             'x-component': 'ArrayItems',
             'x-decorator': 'FormItem',
             title: '指标配置',
+            'x-visible': props.type === 'product',
             items: {
               type: 'object',
               'x-decorator': 'ArrayItems.Item',
@@ -833,6 +841,7 @@ const Edit = observer((props: Props) => {
               fulfill: {
                 state: {
                   visible:
+                    props.type === 'product' &&
                     "{{['int','float','double','long','date','string','boolean'].includes($deps[0])}}",
                 },
               },

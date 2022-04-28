@@ -12,7 +12,6 @@ import {
   Radio,
   Select,
   Space,
-  Submit,
   Switch,
 } from '@formily/antd';
 import type { Field } from '@formily/core';
@@ -45,6 +44,8 @@ import AliyunSms from '@/pages/notice/Template/Detail/doc/AliyunSms';
 import Email from '@/pages/notice/Template/Detail/doc/Email';
 import { Store } from 'jetlinks-store';
 import FAutoComplete from '@/components/FAutoComplete';
+import { PermissionButton } from '@/components';
+import usePermissions from '@/hooks/permission';
 
 export const docMap = {
   weixin: {
@@ -1253,6 +1254,7 @@ const Detail = observer(() => {
       },
     },
   };
+  const { permission } = usePermissions('notice');
   return (
     <PageContainer>
       <Card>
@@ -1278,7 +1280,13 @@ const Detail = observer(() => {
               />
               <FormButtonGroup.Sticky>
                 <FormButtonGroup.FormItem>
-                  <Submit onSubmit={handleSave}>保存</Submit>
+                  <PermissionButton
+                    type="primary"
+                    isPermission={permission.add || permission.update}
+                    onClick={handleSave}
+                  >
+                    保存
+                  </PermissionButton>
                 </FormButtonGroup.FormItem>
               </FormButtonGroup.Sticky>
             </Form>
