@@ -49,9 +49,10 @@ const Export = (props: Props) => {
         type: 'void',
         'x-component': 'FormLayout',
         'x-component-props': {
-          labelCol: 4,
-          wrapperCol: 18,
-          labelAlign: 'right',
+          // labelCol: 4,
+          // wrapperCol: 18,
+          // labelAlign: 'right',
+          layout: 'vertical',
         },
         properties: {
           product: {
@@ -103,6 +104,7 @@ const Export = (props: Props) => {
     } else {
       downloadFile(`/${SystemConst.API_BASE}/device/instance/export.${values.fileType}`, params);
     }
+    close();
   };
   return (
     <Modal

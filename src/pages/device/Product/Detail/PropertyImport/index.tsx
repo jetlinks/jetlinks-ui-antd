@@ -138,9 +138,10 @@ const PropertyImport = (props: Props) => {
         type: 'void',
         'x-component': 'FormLayout',
         'x-component-props': {
-          labelCol: 4,
-          wrapperCol: 18,
-          labelAlign: 'right',
+          // labelCol: 4,
+          // wrapperCol: 18,
+          // labelAlign: 'right',
+          layout: 'vertical',
         },
         properties: {
           fileType: {

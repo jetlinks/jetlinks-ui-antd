@@ -1,4 +1,4 @@
-import { Modal } from 'antd';
+import { Badge, Modal } from 'antd';
 import { observer } from '@formily/react';
 import { service, state } from '..';
 import ProTable, { ActionType, ProColumns } from '@jetlinks/pro-table';
@@ -17,13 +17,37 @@ const Log = observer(() => {
       title: 'ID',
     },
     {
-      dataIndex: 'sendTime',
+      dataIndex: 'notifyTime',
       title: '发送时间',
     },
     {
       dataIndex: 'state',
       title: '状态',
-      renderText: (text) => text.text,
+      renderText: (text: { value: string; text: string }, record) => {
+        return (
+          <>
+            <Badge status={text.value === 'success' ? 'success' : 'error'} text={text.text} />
+            {text.value !== 'success' && (
+              <a
+                style={{ marginLeft: 5 }}
+                key="info"
+                onClick={() => {
+                  Modal.info({
+                    title: '错误信息',
+                    width: '30vw',
+                    content: (
+                      <div style={{ height: '300px', overflowY: 'auto' }}>{record.errorStack}</div>
+                    ),
+                    onOk() {},
+                  });
+                }}
+              >
+                <InfoCircleOutlined />
+              </a>
+            )}
+          </>
+        );
+      },
     },
     {
       dataIndex: 'action',
@@ -35,7 +59,9 @@ const Log = observer(() => {
               title: '详情信息',
               width: '30vw',
               content: (
-                <div style={{ height: '300px', overflowY: 'auto' }}>{JSON.stringify(record)}</div>
+                <div style={{ height: '300px', overflowY: 'auto' }}>
+                  {JSON.stringify(record.context)}
+                </div>
               ),
               onOk() {},
             });

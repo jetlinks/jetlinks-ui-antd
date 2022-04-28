@@ -33,6 +33,7 @@ import AliyunVoice from '@/pages/notice/Config/Detail/doc/AliyunVoice';
 import Email from '@/pages/notice/Config/Detail/doc/Email';
 import { PermissionButton } from '@/components';
 import usePermissions from '@/hooks/permission';
+import FAutoComplete from '@/components/FAutoComplete';
 
 export const docMap = {
   weixin: {
@@ -105,6 +106,7 @@ const Detail = observer(() => {
       FUpload,
       Checkbox,
       NumberPicker,
+      FAutoComplete,
     },
   });
 
@@ -127,6 +129,12 @@ const Detail = observer(() => {
         'x-component-props': {
           placeholder: '请输入名称',
         },
+        'x-validator': [
+          {
+            max: 64,
+            message: '最多可输入64个字符',
+          },
+        ],
       },
       type: {
         title: '分类',
@@ -336,9 +344,23 @@ const Detail = observer(() => {
                     required: true,
                     'x-component-props': {
                       placeholder: '请输入服务器地址',
+                      style: {
+                        width: '200px',
+                      },
                     },
-                    'x-component': 'Input',
+                    'x-component': 'FAutoComplete',
                     'x-decorator': 'FormItem',
+                    enum: [
+                      { label: 'smtp.163.com', value: 'smtp.163.com' },
+                      { label: 'pop.163.com', value: 'pop.163.com' },
+                      { label: 'smtp.exmail.qq.com', value: 'smtp.exmail.qq.com' },
+                      { label: 'pop.exmail.qq.com', value: 'pop.exmail.qq.com' },
+                      { label: 'smtp.qq.com', value: 'smtp.qq.com' },
+                      { label: 'pop.qq.com', value: 'pop.qq.com' },
+                      { label: 'smtpdm.aliyun.com', value: 'smtpdm.aliyun.com' },
+                      { label: 'smtp.126.com', value: 'smtp.126.com' },
+                      { label: 'pop.126.com', value: 'pop.126.com' },
+                    ],
                   },
                   port: {
                     // title: '端口',
@@ -346,15 +368,40 @@ const Detail = observer(() => {
                     'x-component-props': {
                       placeholder: '请输入端口',
                     },
+                    default: 25,
+                    'x-validator': [
+                      {
+                        min: 1,
+                        max: 65535,
+                        message: '请输入1～65535之间的正整数',
+                      },
+                    ],
                     'x-component': 'NumberPicker',
                     'x-decorator': 'FormItem',
+                    'x-reactions': {
+                      dependencies: ['.enableSSL'],
+                      when: '{{$deps[0]}}',
+                      fulfill: {
+                        state: {
+                          value: 465,
+                        },
+                      },
+                      otherwise: {
+                        state: {
+                          value: 25,
+                        },
+                      },
+                    },
                   },
                   enableSSL: {
                     // title: '开启SSL',
                     type: 'boolean',
-                    'x-component': 'Checkbox.Group',
+                    'x-component': 'Checkbox',
                     'x-decorator': 'FormItem',
-                    enum: [{ label: '开启SSL', value: true }],
+                    'x-component-props': {
+                      children: '开启SSL',
+                    },
+                    // enum: [{label: '开启SSL', value: true}],
                   },
                 },
               },
@@ -366,6 +413,12 @@ const Detail = observer(() => {
                 'x-component-props': {
                   placeholder: '请输入发件人',
                 },
+                'x-validator': [
+                  {
+                    max: 64,
+                    message: '最多可输入64个字符',
+                  },
+                ],
               },
               username: {
                 title: '用户名',
@@ -375,6 +428,12 @@ const Detail = observer(() => {
                   placeholder: '请输入用户名',
                 },
                 'x-decorator': 'FormItem',
+                'x-validator': [
+                  {
+                    max: 64,
+                    message: '最多可输入64个字符',
+                  },
+                ],
               },
               password: {
                 title: '密码',
@@ -384,6 +443,12 @@ const Detail = observer(() => {
                 },
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
+                'x-validator': [
+                  {
+                    max: 64,
+                    message: '最多可输入64个字符',
+                  },
+                ],
               },
             },
           },
@@ -396,6 +461,12 @@ const Detail = observer(() => {
         'x-component-props': {
           rows: 4,
         },
+        'x-validator': [
+          {
+            max: 200,
+            message: '最多可输入200个字符',
+          },
+        ],
       },
     },
   };

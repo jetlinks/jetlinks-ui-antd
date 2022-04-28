@@ -74,6 +74,7 @@ const Status = observer((props: Props) => {
   const productPermission = PermissionButton.usePermission('device/Product').permission;
   const networkPermission = PermissionButton.usePermission('link/Type').permission;
   const devicePermission = PermissionButton.usePermission('device/Instance').permission;
+
   const [diagnoseVisible, setDiagnoseVisible] = useState<boolean>(false);
   const [artificialVisible, setArtificialVisible] = useState<boolean>(false);
   const [diagnoseData, setDiagnoseData] = useState<any>({});
@@ -306,7 +307,7 @@ const Status = observer((props: Props) => {
       } else {
         data = {
           status: proItem?.state === 1 ? 'success' : 'error',
-          text: proItem?.state === 1 ? '异常' : '正常',
+          text: proItem?.state === 1 ? '正常' : '异常',
           info:
             proItem?.state === 1 ? null : (
               <div className={styles.infoItem}>
@@ -440,8 +441,9 @@ const Status = observer((props: Props) => {
                               onClick={() => {
                                 setArtificialVisible(true);
                                 setArtificiaData({
+                                  type: 'product',
                                   data: item,
-                                  name: `productAuth${index}`,
+                                  key: `productAuth${index}`,
                                   check: proItem.configuration,
                                 });
                               }}
@@ -500,8 +502,9 @@ const Status = observer((props: Props) => {
                               onClick={() => {
                                 setArtificialVisible(true);
                                 setArtificiaData({
+                                  type: 'device',
                                   data: item,
-                                  name: `deviceAuth${index}`,
+                                  key: `deviceAuth${index}`,
                                   check: InstanceModel.detail?.configuration,
                                 });
                               }}
@@ -674,15 +677,17 @@ const Status = observer((props: Props) => {
   };
 
   useEffect(() => {
-    if (!props.flag) {
-      handleSearch();
-    } else {
-      const dt = Store.get('diagnose-status');
-      DiagnoseStatusModel.status = dt?.status;
-      DiagnoseStatusModel.list = dt?.list || [];
-      props.onChange('success');
+    if (devicePermission.view) {
+      if (!props.flag) {
+        handleSearch();
+      } else {
+        const dt = Store.get('diagnose-status');
+        DiagnoseStatusModel.status = dt?.status;
+        DiagnoseStatusModel.list = dt?.list || [];
+        props.onChange('success');
+      }
     }
-  }, []);
+  }, [devicePermission]);
 
   return (
     <Row gutter={24}>
@@ -745,107 +750,62 @@ const Status = observer((props: Props) => {
       )}
       {artificialVisible && (
         <ManualInspection
-          metadata={artificiaData}
+          data={artificiaData}
           close={() => {
             setArtificialVisible(false);
           }}
           ok={(params: any) => {
             setArtificialVisible(false);
-            console.log(params);
             if (params.status === 'success') {
-              DiagnoseStatusModel.status[params.data.name] = {
+              DiagnoseStatusModel.status[params.data.key] = {
                 status: 'success',
                 text: '正常',
                 info: null,
               };
             } else {
-              if (!params.data.name.includes('device')) {
-                DiagnoseStatusModel.status[params.data.name] = {
-                  status: 'error',
-                  text: '异常',
-                  info: (
-                    <div className={styles.infoItem}>
-                      <Badge
-                        status="default"
-                        text={
-                          <span>
-                            产品-{params.data.name}配置错误，请
-                            <a
-                              onClick={() => {
-                                const url = getMenuPathByParams(
-                                  MENUS_CODE['device/Product/Detail'],
-                                  InstanceModel.detail?.productId,
-                                );
-                                const tab: any = window.open(`${origin}/#${url}?key=access`);
-                                tab!.onTabSaveSuccess = (value: any) => {
-                                  if (value) {
-                                    diagnoseConfig();
-                                  }
-                                };
-                              }}
-                            >
-                              重新配置
-                            </a>
-                            或
-                            <a
-                              onClick={() => {
-                                setArtificialVisible(true);
-                                setArtificiaData(params.data);
-                              }}
-                            >
-                              重新比对
-                            </a>
-                            。
-                          </span>
-                        }
-                      />
-                    </div>
-                  ),
-                };
-              } else {
-                DiagnoseStatusModel.status[params.data.name] = {
-                  status: 'error',
-                  text: '异常',
-                  info: (
-                    <div className={styles.infoItem}>
-                      <Badge
-                        status="default"
-                        text={
-                          <span>
-                            设备-{params.data.name}配置错误，请
-                            <a
-                              onClick={() => {
-                                const url = getMenuPathByParams(
-                                  MENUS_CODE['device/Product/Detail'],
-                                  InstanceModel.detail?.productId,
-                                );
-                                const tab: any = window.open(`${origin}/#${url}?key=access`);
-                                tab!.onTabSaveSuccess = (value: any) => {
-                                  if (value) {
-                                    diagnoseConfig();
-                                  }
-                                };
-                              }}
-                            >
-                              重新配置
-                            </a>
-                            或
-                            <a
-                              onClick={() => {
-                                setArtificialVisible(true);
-                                setArtificiaData(params.data);
-                              }}
-                            >
-                              重新比对
-                            </a>
-                            。
-                          </span>
-                        }
-                      />
-                    </div>
-                  ),
-                };
-              }
+              DiagnoseStatusModel.status[params.data.key] = {
+                status: 'error',
+                text: '异常',
+                info: (
+                  <div className={styles.infoItem}>
+                    <Badge
+                      status="default"
+                      text={
+                        <span>
+                          {params.data.type === 'device' ? '设备' : '产品'}-{params.data.data.name}
+                          配置错误，请
+                          <a
+                            onClick={() => {
+                              const url = getMenuPathByParams(
+                                MENUS_CODE['device/Product/Detail'],
+                                InstanceModel.detail?.productId,
+                              );
+                              const tab: any = window.open(`${origin}/#${url}?key=access`);
+                              tab!.onTabSaveSuccess = (value: any) => {
+                                if (value) {
+                                  diagnoseConfig();
+                                }
+                              };
+                            }}
+                          >
+                            重新配置
+                          </a>
+                          或
+                          <a
+                            onClick={() => {
+                              setArtificialVisible(true);
+                              setArtificiaData(params.data);
+                            }}
+                          >
+                            重新比对
+                          </a>
+                          。
+                        </span>
+                      }
+                    />
+                  </div>
+                ),
+              };
             }
           }}
         />

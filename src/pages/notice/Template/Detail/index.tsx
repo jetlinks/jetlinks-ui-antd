@@ -16,11 +16,18 @@ import {
   Switch,
 } from '@formily/antd';
 import type { Field } from '@formily/core';
-import { createForm, FormPath, onFieldInit, onFieldReact, onFieldValueChange } from '@formily/core';
+import {
+  createForm,
+  FormPath,
+  onFieldInit,
+  onFieldReact,
+  onFieldValueChange,
+  registerValidateRules,
+} from '@formily/core';
 import { createSchemaField, observer } from '@formily/react';
 import type { ISchema } from '@formily/json-schema';
 import styles from './index.less';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import FUpload from '@/components/Upload';
 import { useParams } from 'umi';
 import { PageContainer } from '@ant-design/pro-layout';
@@ -37,6 +44,7 @@ import AliyunVoice from '@/pages/notice/Template/Detail/doc/AliyunVoice';
 import AliyunSms from '@/pages/notice/Template/Detail/doc/AliyunSms';
 import Email from '@/pages/notice/Template/Detail/doc/Email';
 import { Store } from 'jetlinks-store';
+import FAutoComplete from '@/components/FAutoComplete';
 
 export const docMap = {
   weixin: {
@@ -95,6 +103,8 @@ const Detail = observer(() => {
   const getAliyunSigns = (configId: string) => service.aliyun.getSigns(configId);
   const getAliyunTemplates = (configId: string) => service.aliyun.getTemplates(configId);
 
+  const variableDefinitionsRef =
+    useRef<{ id: string; name: string; type: string; format: string }[]>();
   const form = useMemo(
     () =>
       createForm({
@@ -105,6 +115,7 @@ const Detail = observer(() => {
               field.setComponent(FBraftEditor, {
                 placeholder:
                   '变量格式:${name};\n 示例:尊敬的${name},${time}有设备触发告警,请注意处理',
+                height: '100px',
               });
             }
           });
@@ -119,6 +130,14 @@ const Detail = observer(() => {
             form1.setFieldState('configId', async (state1) => {
               state1.dataSource = await getConfig(value);
             });
+
+            if (value === 'officialMessage') {
+              form1.setFieldState('template.message', (state5) => {
+                state5.decoratorProps = {
+                  tooltip: '服务号模版消息内容',
+                };
+              });
+            }
           });
           onFieldValueChange('configId', (field, form1) => {
             const value = field.value;
@@ -210,20 +229,81 @@ const Detail = observer(() => {
               });
             }
           });
+          onFieldValueChange('template.*(subject,markdown.title)', (field, form1) => {
+            const value = (field as Field).value;
+            const _message = field.query('template.message').value();
+
+            const titleList =
+              (typeof value === 'string' &&
+                (value + _message)?.match(pattern)?.filter((i: string) => i)) ||
+              // .map((item: string) => ({id: item, type: 'string', format: '--'}))) ||
+              [];
+            // 拼接message的内容
+
+            form1.setFieldState('variableDefinitions', (state1) => {
+              state1.visible = !!titleList && titleList.length > 0;
+            });
+            if (form1.modified) {
+              const oldKey = variableDefinitionsRef.current?.map((i) => i.id);
+              const newKey = [...new Set(titleList)];
+              const _result = newKey.map((item) =>
+                oldKey?.includes(item)
+                  ? variableDefinitionsRef.current?.find((i) => i.id === item)
+                  : {
+                      id: item,
+                      type: 'string',
+                      format: '--',
+                    },
+              );
+              form1.setValuesIn('variableDefinitions', _result);
+            }
+          });
           onFieldValueChange('template.message', (field, form1) => {
             const value = (field as Field).value;
             const idList =
-              typeof value === 'string' &&
-              value
-                ?.match(pattern)
-                ?.filter((i: string) => i)
-                .map((item: string) => ({ id: item, type: 'string', format: '--' }));
+              (typeof value === 'string' && value?.match(pattern)?.filter((i: string) => i)) || [];
+
+            if (id === 'email') {
+              const subject = field.query('template.subject');
+              const title = subject.value();
+              const titleList = title?.match(pattern)?.filter((i: string) => i);
+              // .map((item: string) => ({id: item, type: 'string', format: '--'}));
+              if (idList && titleList?.length > 0) {
+                idList.unshift(...titleList);
+              }
+            }
+            const _provider = field.query('provider').value();
+            if (_provider === 'dingTalkRobotWebHook') {
+              const title = field.query('template.markdown.title').value();
+              const titleList = title?.match(pattern)?.filter((i: string) => i);
+              // .map((item: string) => ({id: item, type: 'string', format: '--'}));
+              if (idList && titleList?.length > 0) {
+                idList.unshift(...titleList);
+              }
+            }
             form1.setFieldState('variableDefinitions', (state1) => {
               state1.visible = !!idList && idList.length > 0;
             });
+
             if (form1.modified) {
-              form1.setValuesIn('variableDefinitions', idList);
+              // 获取缓存的KEY；
+              const oldKey = variableDefinitionsRef.current?.map((i) => i.id);
+              const newKey = [...new Set(idList)];
+              const _result = newKey.map((item) =>
+                oldKey?.includes(item)
+                  ? variableDefinitionsRef.current?.find((i) => i.id === item)
+                  : {
+                      id: item,
+                      type: 'string',
+                      format: '--',
+                    },
+              );
+              form1.setValuesIn('variableDefinitions', _result);
             }
+          });
+          onFieldValueChange('variableDefinitions.*.*', (field) => {
+            // 缓存编辑后的数据
+            variableDefinitionsRef.current = field.query('variableDefinitions').value();
           });
           onFieldReact('variableDefinitions.*.type', (field) => {
             const value = (field as Field).value;
@@ -233,41 +313,51 @@ const Detail = observer(() => {
               (index) => `variableDefinitions.${parseInt(index)}.format`,
             );
             const format = field.query(formatPath).take() as any;
+
+            const fieldModified = field && (field as Field).modified;
             if (!format) return;
+            if (fieldModified) {
+              format.setValue(undefined);
+            }
             switch (value) {
               case 'date':
-                format.setComponent(Select);
+                format.setComponent(FAutoComplete);
                 format.setDataSource([
-                  { label: 'String类型的UTC时间戳 (毫秒)', value: 'string' },
+                  { label: 'timestamp', value: 'timestamp' },
                   { label: 'yyyy-MM-dd', value: 'yyyy-MM-dd' },
                   { label: 'yyyy-MM-dd HH:mm:ss', value: 'yyyy-MM-dd HH:mm:ss' },
                   { label: 'yyyy-MM-dd HH:mm:ss EE', value: 'yyyy-MM-dd HH:mm:ss EE' },
                   { label: 'yyyy-MM-dd HH:mm:ss zzz', value: 'yyyy-MM-dd HH:mm:ss zzz' },
                 ]);
-                format.setValue('string');
+                if (fieldModified) {
+                  format.setValue('timestamp');
+                }
                 break;
               case 'string':
-                console.log('string');
                 format.setComponent(PreviewText.Input);
-                format.setValue('%s');
+                if (fieldModified) {
+                  format.setValue('s%');
+                }
                 break;
               case 'number':
                 format.setComponent(Input);
-                format.setValue('%.xf');
+                if (fieldModified) {
+                  format.setValue('%.xf');
+                }
                 break;
-              case 'file':
-                format.setComponent(Select);
-                format.setDataSource([
-                  { label: '视频', value: 'video' },
-                  { label: '图片', value: 'img' },
-                  { label: '全部', value: 'any' },
-                ]);
-                format.setValue('any');
-                break;
-              case 'other':
-                format.setComponent(PreviewText.Input);
-                format.setValue('--');
-                break;
+              // case 'file':
+              //   format.setComponent(Select);
+              //   format.setDataSource([
+              //     {label: '视频', value: 'video'},
+              //     {label: '图片', value: 'img'},
+              //     {label: '全部', value: 'any'},
+              //   ]);
+              //   format.setValue('any');
+              //   break;
+              // case 'other':
+              //   format.setComponent(PreviewText.Input);
+              //   format.setValue('--');
+              //   break;
             }
           });
         },
@@ -297,6 +387,7 @@ const Detail = observer(() => {
       ArrayItems,
       FormGrid,
       ArrayTable,
+      FAutoComplete,
     },
   });
 
@@ -347,7 +438,20 @@ const Detail = observer(() => {
     }
   };
 
-  console.log(typeList[id][0]);
+  registerValidateRules({
+    batchCheckEmail(value) {
+      const regEmail = /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
+      let error;
+      value.some((item: string) => {
+        if (!regEmail.test(item)) {
+          error = item;
+          return true;
+        }
+        return false;
+      });
+      return error ? `${error}邮件格式错误` : '';
+    },
+  });
   const schema: ISchema = {
     type: 'object',
     properties: {
@@ -399,6 +503,10 @@ const Detail = observer(() => {
         'x-component-props': {
           placeholder: '请选择绑定配置',
         },
+        required: true,
+        'x-decorator-props': {
+          tooltip: '使用固定的通知配置来发送此通知模版',
+        },
         'x-visible': id !== 'email',
       },
       template: {
@@ -416,8 +524,9 @@ const Detail = observer(() => {
                     'x-component': 'Input',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      tooltip: '请输入AgentID',
+                      tooltip: '应用唯一标识',
                     },
+                    required: true,
                     'x-component-props': {
                       placeholder: '请输入AgentID',
                     },
@@ -435,11 +544,11 @@ const Detail = observer(() => {
                         'x-component': 'Select',
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
-                          tooltip: '请输入收信人ID',
+                          tooltip: '如果不填写该字段,将在使用此模版发送通知时进行指定。',
                           gridSpan: 1,
                         },
                         'x-component-props': {
-                          placeholder: '请输入收信人ID',
+                          placeholder: '请选择收信人',
                         },
                       },
                       toParty: {
@@ -447,11 +556,11 @@ const Detail = observer(() => {
                         'x-component': 'Select',
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
-                          tooltip: '请输入收信部门ID',
+                          tooltip: '如果不填写该字段,将在使用此模版发送通知时进行指定。',
                           gridSpan: 1,
                         },
                         'x-component-props': {
-                          placeholder: '请输入收信部门ID',
+                          placeholder: '请选择收信部门',
                         },
                       },
                     },
@@ -461,7 +570,8 @@ const Detail = observer(() => {
                     'x-component': 'Select',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      tooltip: '标签推送',
+                      tooltip:
+                        '本企业微信的标签ID列表,最多支持100个,如果不填写该字段,将在使用此模版发送通知时进行指定',
                     },
                     'x-component-props': {
                       placeholder: '请输入标签推送，多个标签用,号分隔',
@@ -488,6 +598,9 @@ const Detail = observer(() => {
                     'x-component-props': {
                       placeholder: '请选择用户标签',
                     },
+                    'x-decorator-props': {
+                      tooltip: '如果不填写该字段，将在使用此模板发送通知时进行指定',
+                    },
                   },
                   layout: {
                     type: 'void',
@@ -507,6 +620,7 @@ const Detail = observer(() => {
                         },
                         'x-decorator-props': {
                           gridSpan: 1,
+                          tooltip: '微信公众号中配置的消息模版',
                         },
                       },
                       url: {
@@ -519,6 +633,7 @@ const Detail = observer(() => {
                         },
                         'x-decorator-props': {
                           gridSpan: 1,
+                          tooltip: '用于点击消息后进行页面跳转',
                         },
                       },
                     },
@@ -530,6 +645,9 @@ const Detail = observer(() => {
                     'x-component': 'Radio.Group',
                     'x-component-props': {
                       // optionType: 'button'
+                    },
+                    'x-decorator-props': {
+                      tooltip: '配置后点击通知消息将跳转到对应小程序',
                     },
                     default: false,
                     enum: [
@@ -558,6 +676,7 @@ const Detail = observer(() => {
                             },
                             'x-decorator-props': {
                               gridSpan: 1,
+                              tooltip: '小程序唯一性id',
                             },
                           },
                           miniProgramPath: {
@@ -570,6 +689,7 @@ const Detail = observer(() => {
                             },
                             'x-decorator-props': {
                               gridSpan: 1,
+                              tooltip: '用于点击消息之后跳转到小程序的具体页面',
                             },
                           },
                         },
@@ -591,6 +711,9 @@ const Detail = observer(() => {
                     'x-component': 'Input',
                     'x-component-props': {
                       placeholder: '这里是回显内容',
+                    },
+                    'x-decorator-props': {
+                      tooltip: '服务号消息模版标题',
                     },
                   },
                 },
@@ -618,7 +741,7 @@ const Detail = observer(() => {
                     'x-component': 'Input',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      tooltip: '请输入AgentID',
+                      tooltip: '应用唯一标识',
                     },
                     'x-component-props': {
                       placeholder: '请输入AgentID',
@@ -637,11 +760,11 @@ const Detail = observer(() => {
                         'x-component': 'Select',
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
-                          tooltip: '请输入收信人ID',
+                          tooltip: '如果不填写该字段，将在使用此模板发送通知时进行指定',
                           gridSpan: 1,
                         },
                         'x-component-props': {
-                          placeholder: '请输入收信人ID',
+                          placeholder: '请选择收信人',
                         },
                         'x-reactions': {
                           dependencies: ['configId'],
@@ -655,7 +778,7 @@ const Detail = observer(() => {
                         'x-component': 'Select',
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
-                          tooltip: '收信部门ID',
+                          tooltip: '如果不填写该字段，将在使用此模板发送通知时进行指定',
                           gridSpan: 1,
                         },
                         'x-component-props': {
@@ -794,9 +917,10 @@ const Detail = observer(() => {
                         'x-component': 'Select',
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
-                          tooltip: '请输入模版ID',
+                          tooltip: '阿里云内部分配的唯一ID标识',
                           gridSpan: 1,
                         },
+                        required: true,
                         'x-component-props': {
                           placeholder: '请输入模版ID',
                         },
@@ -806,7 +930,7 @@ const Detail = observer(() => {
                         'x-component': 'Input',
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
-                          tooltip: '请输入被叫号码',
+                          tooltip: '仅支持中国大陆号码',
                           gridSpan: 1,
                         },
                         'x-component-props': {
@@ -820,7 +944,7 @@ const Detail = observer(() => {
                     'x-component': 'Input',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      tooltip: '请输入被叫显号',
+                      tooltip: '必须是已购买的号码,用于呼叫号码显示',
                     },
                     'x-component-props': {
                       placeholder: '请输入被叫显号',
@@ -828,11 +952,19 @@ const Detail = observer(() => {
                   },
                   PlayTimes: {
                     title: '播放次数',
-                    'x-component': 'Input',
+                    'x-component': 'NumberPicker',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      tooltip: '请输入播放次数',
+                      tooltip: '语音文件的播放次数',
                     },
+                    default: 1,
+                    'x-validator': [
+                      {
+                        min: 1,
+                        max: 3,
+                        message: '仅支持1～3次',
+                      },
+                    ],
                     'x-component-props': {
                       placeholder: '请输入播放次数',
                     },
@@ -874,9 +1006,10 @@ const Detail = observer(() => {
                         'x-component': 'Input',
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
-                          tooltip: '请输入收信人',
+                          tooltip: '仅支持中国大陆号码',
                           gridSpan: 1,
                         },
+                        'x-validator': ['phone'],
                         'x-component-props': {
                           placeholder: '请输入收信人',
                         },
@@ -888,7 +1021,7 @@ const Detail = observer(() => {
                     'x-component': 'Select',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      tooltip: '请输入签名',
+                      tooltip: '用于短信内容签名信息显示',
                     },
                     'x-component-props': {
                       placeholder: '请输入签名',
@@ -913,21 +1046,26 @@ const Detail = observer(() => {
                 'x-decorator': 'FormItem',
                 title: '标题',
                 'x-decorator-props': {
-                  tip: '邮件标题',
+                  tooltip: '邮件标题',
                 },
+                required: true,
                 'x-component-props': {
                   placeholder: '请输入标题',
                 },
               },
               sendTo: {
-                'x-component': 'Input.TextArea',
+                'x-component': 'Select',
                 'x-decorator': 'FormItem',
                 title: '收件人',
                 'x-decorator-props': {
-                  tip: '多个收件人用换行分隔 \n最大支持1000个号码',
+                  tooltip: '多个收件人用换行分隔 \n最大支持1000个号码',
                 },
                 'x-component-props': {
+                  mode: 'tags',
                   placeholder: '请输入收件人邮箱,多个收件人用换行分隔',
+                },
+                'x-validator': {
+                  batchCheckEmail: true,
                 },
               },
               attachments: {
@@ -939,6 +1077,7 @@ const Detail = observer(() => {
                   style: {
                     width: '100%',
                   },
+                  tooltip: '附件只输入文件名称将在发送邮件时进行文件上传',
                 },
                 items: {
                   type: 'object',
@@ -1002,7 +1141,6 @@ const Detail = observer(() => {
             },
           },
         },
-
         'x-component-props': {
           rows: 5,
           placeholder: '变量格式:${name};\n 示例:尊敬的${name},${time}有设备触发告警,请注意处理',
@@ -1016,6 +1154,11 @@ const Detail = observer(() => {
         'x-component-props': {
           pagination: { pageSize: 9999 },
           scroll: { x: '100%' },
+        },
+        'x-decorator-props': {
+          style: {
+            zIndex: 999,
+          },
         },
         'x-visible': false,
         items: {
@@ -1061,8 +1204,6 @@ const Detail = observer(() => {
                     { label: '字符串', value: 'string' },
                     { label: '时间', value: 'date' },
                     { label: '数字', value: 'number' },
-                    { label: '文件', value: 'file' },
-                    { label: '其他', value: 'other' },
                   ],
                 },
               },

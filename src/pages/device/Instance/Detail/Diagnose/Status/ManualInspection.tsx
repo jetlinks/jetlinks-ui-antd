@@ -3,6 +3,8 @@ import { createSchemaField } from '@formily/react';
 import type { ISchema } from '@formily/json-schema';
 import { Form, FormGrid, FormItem, Input, Password, PreviewText } from '@formily/antd';
 import { Modal } from 'antd';
+import styles from './index.less';
+import { ExclamationCircleFilled } from '@ant-design/icons';
 
 const componentMap = {
   string: 'Input',
@@ -11,12 +13,12 @@ const componentMap = {
 
 interface Props {
   close: () => void;
-  metadata: any;
+  data: any;
   ok: (data: any) => void;
 }
 
 const ManualInspection = (props: Props) => {
-  const { metadata } = props;
+  const { data } = props;
 
   const form = createForm({
     validateFirst: true,
@@ -33,9 +35,9 @@ const ManualInspection = (props: Props) => {
     },
   });
 
-  const configToSchema = (data: any[]) => {
+  const configToSchema = (list: any[]) => {
     const config = {};
-    data.forEach((item) => {
+    list.forEach((item) => {
       config[item.property] = {
         type: 'string',
         title: item.name,
@@ -47,6 +49,7 @@ const ManualInspection = (props: Props) => {
         },
         'x-component-props': {
           value: '',
+          placeholder: `请输入${item.name}`,
         },
       };
     });
@@ -64,7 +67,7 @@ const ManualInspection = (props: Props) => {
             minColumns: [1],
             maxColumns: [1],
           },
-          properties: configToSchema(metadata?.data?.properties),
+          properties: configToSchema(data?.data?.properties),
         },
       },
     };
@@ -79,42 +82,64 @@ const ManualInspection = (props: Props) => {
       </>
     );
   };
+  const renderComponent = () => (
+    <div style={{ backgroundColor: '#f6f6f6', padding: 10 }}>
+      {(data?.data?.properties || []).map((item: any) => (
+        <div key={item.property}>
+          <span>{item.name}</span>:{' '}
+          <span>{item.type.type !== 'password' ? data?.check[item.property] : '******'}</span>
+        </div>
+      ))}
+    </div>
+  );
+
   return (
     <Modal
       title="人工检查"
       onCancel={() => {
         props.close();
       }}
+      width={600}
       onOk={async () => {
         const values = (await form.submit()) as any;
-        if (metadata?.check) {
+        if (!data?.check) {
           props.ok({
             status: 'error',
-            data: metadata,
+            data: data,
           });
         } else {
           let flag = true;
           Object.keys(values).forEach((key) => {
-            if (values[key] !== metadata?.check[key]) {
+            if (values[key] !== data?.check[key]) {
               flag = false;
             }
           });
           if (flag) {
             props.ok({
               status: 'success',
-              data: metadata,
+              data: data,
             });
           } else {
             props.ok({
               status: 'error',
-              data: metadata,
+              data: data,
             });
           }
         }
       }}
       visible
     >
-      {renderConfigCard()}
+      <div className={styles.alert}>
+        <ExclamationCircleFilled style={{ marginRight: 10 }} />
+        {data.type === 'product'
+          ? `当前填写的数据将与产品-设备接入配置中的${data.data.name}数据进行比对`
+          : `当前填写的数据将与设备-实例信息配置中的${data.data.name}数据进行比对`}
+      </div>
+      <div style={{ marginTop: 10 }}>
+        已配置参数
+        {renderComponent()}
+      </div>
+      <div style={{ marginTop: 10 }}>{renderConfigCard()}</div>
     </Modal>
   );
 };
