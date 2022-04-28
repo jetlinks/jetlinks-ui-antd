@@ -327,7 +327,7 @@ export const routes = [
               'device-gateway',
               'protocol-supports',
               'opc-client',
-              'modbus-client'
+              'modbus-master'
             ],
             routes: [
               {
@@ -375,7 +375,7 @@ export const routes = [
                 name: 'Modbus',
                 icon: 'file-markdown',
                 iconfont: 'file-markdown',
-                authority: ['modbus-client'],
+                authority: ['modbus-master'],
                 component: './network/modbus',
               },
               {
@@ -384,7 +384,7 @@ export const routes = [
                 icon: 'file-markdown',
                 iconfont: 'file-markdown',
                 hideInMenu: true,
-                authority: ['modbus-client'],
+                authority: ['modbus-master'],
                 component: './network/modbus/access',
               }
             ],
