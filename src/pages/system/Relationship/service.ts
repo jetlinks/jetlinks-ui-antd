@@ -7,6 +7,12 @@ class Service extends BaseService<ReationItem> {
     request(`/${SystemConst.API_BASE}/relation/types`, {
       method: 'GET',
     });
+
+  validator = (params: any) =>
+    request(`/${SystemConst.API_BASE}/relation/_validate?`, {
+      method: 'GET',
+      params,
+    });
 }
 
 export default Service;

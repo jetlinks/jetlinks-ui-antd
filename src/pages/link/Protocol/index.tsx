@@ -2,7 +2,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import type { ProtocolItem } from '@/pages/link/Protocol/typings';
 import { Badge, message } from 'antd';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   DeleteOutlined,
   EditOutlined,
@@ -11,7 +11,7 @@ import {
   StopOutlined,
 } from '@ant-design/icons';
 import Service from '@/pages/link/Protocol/service';
-import { useIntl } from 'umi';
+import { useIntl, useLocation } from 'umi';
 import SearchComponent from '@/components/SearchComponent';
 import { PermissionButton, ProTableCard } from '@/components';
 import ProcotolCard from '@/components/ProTableCard/CardItems/protocol';
@@ -161,6 +161,15 @@ const Protocol = () => {
     },
   ];
 
+  const location = useLocation();
+
+  useEffect(() => {
+    if ((location as any).query?.save === 'true') {
+      setCurrent(undefined);
+      setVisible(true);
+    }
+  }, []);
+
   return (
     <PageContainer>
       <SearchComponent<ProtocolItem>
@@ -294,6 +303,7 @@ const Protocol = () => {
           }}
           reload={() => {
             actionRef.current?.reload();
+            setVisible(false);
           }}
         />
       )}

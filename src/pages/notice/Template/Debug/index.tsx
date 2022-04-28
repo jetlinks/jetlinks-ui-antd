@@ -38,11 +38,10 @@ const Debug = observer(() => {
             }
           });
 
-          onFieldReact('variableDefinitions.*.id', (field) => {
+          onFieldReact('variableDefinitions.*.type', (field) => {
             const value = (field as Field).value;
             const format = field.query('.value').take() as Field;
-
-            if (format) {
+            if (format && value) {
               switch (value) {
                 case 'date':
                   format.setComponent(DatePicker, {
@@ -136,6 +135,20 @@ const Debug = observer(() => {
         items: {
           type: 'object',
           properties: {
+            column0: {
+              type: 'void',
+              'x-component': 'ArrayTable.Column',
+              'x-component-props': { title: '类型', width: '120px' },
+              'x-hidden': true,
+              properties: {
+                type: {
+                  type: 'string',
+                  'x-decorator': 'FormItem',
+                  'x-component': 'PreviewText.Input',
+                  'x-disabled': true,
+                },
+              },
+            },
             column1: {
               type: 'void',
               'x-component': 'ArrayTable.Column',

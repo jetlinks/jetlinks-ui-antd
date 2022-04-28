@@ -324,6 +324,7 @@ const Detail = observer(() => {
           });
           onFieldReact('variableDefinitions.*.type', (field) => {
             const value = (field as Field).value;
+            console.log(value, 'value');
             const formatPath = FormPath.transform(
               field.path,
               /\d+/,

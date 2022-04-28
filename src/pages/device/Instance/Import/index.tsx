@@ -12,6 +12,7 @@ import SystemConst from '@/utils/const';
 import Token from '@/utils/token';
 import { EventSourcePolyfill } from 'event-source-polyfill';
 import { downloadFile } from '@/utils/util';
+import encodeQuery from '@/utils/encodeQuery';
 
 interface Props {
   visible: boolean;
@@ -176,7 +177,7 @@ const Import = (props: Props) => {
   });
 
   useEffect(() => {
-    service.getProductList({ paging: false }).then((resp) => {
+    service.getProductList(encodeQuery({ paging: false, terms: { state: 1 } })).then((resp) => {
       if (resp.status === 200) {
         const list = resp.result.map((item: { name: any; id: any }) => ({
           label: item.name,
