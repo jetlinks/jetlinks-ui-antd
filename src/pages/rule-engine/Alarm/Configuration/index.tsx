@@ -2,10 +2,16 @@ import { PageContainer } from '@ant-design/pro-layout';
 import SearchComponent from '@/components/SearchComponent';
 import { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { PermissionButton } from '@/components';
-import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import {
+  CloseCircleOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  PlayCircleOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { useRef, useState } from 'react';
-import { Space } from 'antd';
+import { message, Space } from 'antd';
 import ProTableCard from '@/components/ProTableCard';
 import Save from './Save';
 import Service from '@/pages/rule-engine/Alarm/Configuration/service';
@@ -18,7 +24,7 @@ const Configuration = () => {
   const [visible, setVisible] = useState<boolean>(false);
 
   const [current, setCurrent] = useState<any>();
-  const columns: ProColumns<ConfigItem>[] = [
+  const columns: ProColumns<ConfigurationItem>[] = [
     {
       dataIndex: 'name',
       title: '名称',
@@ -65,6 +71,42 @@ const Configuration = () => {
           }}
         >
           <EditOutlined />
+        </PermissionButton>,
+        <PermissionButton
+          isPermission={true}
+          style={{ padding: 0 }}
+          popConfirm={{
+            title: intl.formatMessage({
+              id: `pages.data.option.${
+                record.state?.value === 'disable' ? 'disabled' : 'enabled'
+              }.tips`,
+              defaultMessage: `确认${record.state.value === 'disable' ? '禁用' : '启用'}?`,
+            }),
+            onConfirm: async () => {
+              // await service.update({
+              //   id: record.id,
+              //   status: record.status ? 0 : 1,
+              // });
+              setVisible(true);
+              setCurrent(record);
+              message.success(
+                intl.formatMessage({
+                  id: 'pages.data.option.success',
+                  defaultMessage: '操作成功!',
+                }),
+              );
+              // actionRef.current?.reload();
+            },
+          }}
+          tooltip={{
+            title: intl.formatMessage({
+              id: `pages.data.option.${record.state.value === 'disable' ? 'disabled' : 'enabled'}`,
+              defaultMessage: record.state.value === 'disable' ? '禁用' : '启用',
+            }),
+          }}
+          type="link"
+        >
+          {record.state.value === 'disable' ? <CloseCircleOutlined /> : <PlayCircleOutlined />}
         </PermissionButton>,
         <PermissionButton
           type="link"
@@ -122,6 +164,49 @@ const Configuration = () => {
               >
                 <EditOutlined />
                 编辑
+              </PermissionButton>,
+              <PermissionButton
+                isPermission={true}
+                style={{ padding: 0 }}
+                popConfirm={{
+                  title: intl.formatMessage({
+                    id: `pages.data.option.${
+                      record.state?.value === 'disable' ? 'disabled' : 'enabled'
+                    }.tips`,
+                    defaultMessage: `确认${record.state.value === 'disable' ? '禁用' : '启用'}?`,
+                  }),
+                  onConfirm: async () => {
+                    // await service.update({
+                    //   id: record.id,
+                    //   status: record.status ? 0 : 1,
+                    // });
+                    setVisible(true);
+                    setCurrent(record);
+                    message.success(
+                      intl.formatMessage({
+                        id: 'pages.data.option.success',
+                        defaultMessage: '操作成功!',
+                      }),
+                    );
+                    actionRef.current?.reload();
+                  },
+                }}
+                tooltip={{
+                  title: intl.formatMessage({
+                    id: `pages.data.option.${
+                      record.state.value === 'disable' ? 'disabled' : 'enabled'
+                    }`,
+                    defaultMessage: record.state.value === 'disable' ? '禁用' : '启用',
+                  }),
+                }}
+                type="link"
+              >
+                {record.state.value === 'disable' ? (
+                  <CloseCircleOutlined />
+                ) : (
+                  <PlayCircleOutlined />
+                )}
+                {record.state.value === 'disable' ? '禁用' : '启用'}
               </PermissionButton>,
               <PermissionButton
                 popConfirm={{
