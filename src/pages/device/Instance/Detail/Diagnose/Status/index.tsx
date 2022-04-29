@@ -84,7 +84,6 @@ const Status = observer((props: Props) => {
   const [productTemp, setProductTemp] = useState<any[]>([]);
   const [deviceTemp, setDeviceTemp] = useState<any[]>([]);
   const [gatewayTemp, setGatewayTemp] = useState<any>({});
-  const [productItem, setProductItem] = useState<any>({});
 
   const getDetail = (id: string) => {
     service.detail(id).then((response) => {
@@ -162,7 +161,6 @@ const Status = observer((props: Props) => {
       } else {
         service.queryProductState(InstanceModel.detail?.productId || '').then((resp) => {
           if (resp.status === 200) {
-            setProductItem(resp.result);
             if (resp.result.accessId) {
               service.queryGatewayState(resp.result.accessId).then((response: any) => {
                 if (response.status === 200) {
@@ -596,6 +594,7 @@ const Status = observer((props: Props) => {
     });
 
   const handleSearch = () => {
+    DiagnoseStatusModel.model = true;
     props.onChange('loading');
     DiagnoseStatusModel.list = [...initlist];
     DiagnoseStatusModel.status = {
@@ -640,6 +639,8 @@ const Status = observer((props: Props) => {
           .then(() => {
             diagnoseDeviceAuthConfig().then(() => {
               diagnoseDeviceAccess(gateway).then(() => {
+                DiagnoseStatusModel.model = false;
+                DiagnoseStatusModel.status = { ...DiagnoseStatusModel.status };
                 if (InstanceModel.detail.state?.value !== 'online') {
                   props.onChange('error');
                 } else {
@@ -669,35 +670,37 @@ const Status = observer((props: Props) => {
   }, [devicePermission]);
 
   useEffect(() => {
-    const data = { ...DiagnoseStatusModel.status };
-    const flag = Object.keys(data).every((item: any) => {
-      return data[item]?.status === 'success';
-    });
-    if (flag && InstanceModel.detail.state?.value !== 'online') {
-      // 展示诊断建议
-      if (
-        gatewayTemp.provider !== 'mqtt-server-gateway' &&
-        gatewayList.includes(gatewayTemp.provider)
-      ) {
-        service.queryProcotolDetail(gatewayTemp.provider, gatewayTemp.transport).then((resp1) => {
+    if (!DiagnoseStatusModel.model) {
+      const data = { ...DiagnoseStatusModel.status };
+      const flag = Object.keys(data).every((item: any) => {
+        return data[item]?.status === 'success';
+      });
+      if (flag && InstanceModel.detail.state?.value !== 'online') {
+        // 展示诊断建议
+        if (
+          gatewayTemp.provider !== 'mqtt-server-gateway' &&
+          gatewayList.includes(gatewayTemp.provider)
+        ) {
+          service.queryProcotolDetail(gatewayTemp.provider, gatewayTemp.transport).then((resp1) => {
+            setDiagnoseData({
+              product: productTemp,
+              device: deviceTemp,
+              id: InstanceModel.detail?.productId,
+              provider: gatewayTemp.provider,
+              routes: resp1.result?.routes || [],
+            });
+            setDiagnoseVisible(true);
+          });
+        } else {
           setDiagnoseData({
             product: productTemp,
             device: deviceTemp,
-            id: productItem.id,
-            provider: gatewayTemp.provider,
-            routes: resp1.result?.routes || [],
+            id: InstanceModel.detail?.productId,
+            provider: gatewayTemp?.provider,
+            routes: [],
           });
           setDiagnoseVisible(true);
-        });
-      } else {
-        setDiagnoseData({
-          product: productTemp,
-          device: deviceTemp,
-          id: productItem.i,
-          provider: gatewayTemp?.provider,
-          routes: [],
-        });
-        setDiagnoseVisible(true);
+        }
       }
     }
   }, [DiagnoseStatusModel.status]);

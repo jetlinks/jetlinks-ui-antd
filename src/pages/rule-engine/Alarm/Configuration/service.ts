@@ -22,6 +22,20 @@ class Service extends BaseService<ConfigItem> {
         value: item.id,
       }));
     });
+
+  public _enable = (id: string) =>
+    request(`/${SystemConst.API_BASE}/alarm/config/${id}/_enable`, {
+      method: 'POST',
+    });
+
+  public _disable = (id: string) =>
+    request(`/${SystemConst.API_BASE}/alarm/config/${id}/_disable`, {
+      method: 'POST',
+    });
+  public _execute = (id: string) =>
+    request(`/${SystemConst.API_BASE}/scene/${id}/_execute`, {
+      method: 'POST',
+    });
 }
 
 export default Service;

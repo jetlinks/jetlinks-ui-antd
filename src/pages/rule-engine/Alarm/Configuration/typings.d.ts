@@ -7,4 +7,5 @@ type ConfigurationItem = {
   state: { text: string; value: string };
   description: string;
   id: string;
+  sceneTriggerType: string;
 };

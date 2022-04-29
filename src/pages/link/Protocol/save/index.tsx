@@ -214,6 +214,10 @@ const Save = (props: Props) => {
         await service.modifyState(value.id, 'deploy');
       }
       props.reload();
+      if ((window as any).onTabSaveSuccess) {
+        (window as any).onTabSaveSuccess(response);
+        setTimeout(() => window.close(), 300);
+      }
     }
   };
 
