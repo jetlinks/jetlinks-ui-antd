@@ -10,10 +10,12 @@ import Operation from './operation';
 import classNames from 'classnames';
 import { observer } from '@formily/reactive-react';
 import { FormModel } from '../index';
+import AllDevice from '@/pages/rule-engine/Scene/Save/action/device/AllDevice';
 
 interface TriggerProps {
   value?: string;
   onChange?: (type: string) => void;
+  triggerData?: any;
   form?: FormInstance;
   className?: string;
 }
@@ -123,8 +125,10 @@ export default observer((props: TriggerProps) => {
   }, []);
 
   useEffect(() => {
-    if (FormModel.trigger && FormModel.trigger.device) {
-      const _device = FormModel.trigger.device;
+    const triggerData = props.triggerData;
+    console.log('trigger', triggerData);
+    if (triggerData && triggerData.device) {
+      const _device = triggerData.device;
 
       if (_device.selector) {
         if (_device.selector === 'org') {
@@ -133,12 +137,11 @@ export default observer((props: TriggerProps) => {
         setSelector(_device.selector);
       }
 
-      console.log(_device.operation && _device.operation.operator);
       if (_device.operation && _device.operation.operator) {
         setOperation(_device.operation.operator);
       }
     }
-  }, [FormModel.trigger]);
+  }, [props.triggerData]);
 
   return (
     <div className={classNames(props.className)}>
@@ -162,13 +165,25 @@ export default observer((props: TriggerProps) => {
                 fieldNames={{ label: 'name', value: 'id' }}
               />
             </Form.Item>
-            <Form.Item name={['trigger', 'device', 'selector']} initialValue={'fixed'}>
+            <Form.Item
+              name={['trigger', 'device', 'selector']}
+              initialValue={
+                props.triggerData && props.triggerData.device && props.triggerData.device.selector
+                  ? props.triggerData.device.selector
+                  : 'fixed'
+              }
+            >
               <Select
                 options={selectorOptions}
                 fieldNames={{ label: 'name', value: 'id' }}
                 style={{ width: 120 }}
               />
             </Form.Item>
+            {selector === 'all' && (
+              <Form.Item name={['trigger', 'device', 'selectorValues']}>
+                <AllDevice productId={productId} />
+              </Form.Item>
+            )}
             {selector === 'fixed' && (
               <Form.Item name={['trigger', 'device', 'selectorValues']}>
                 <Device productId={productId} />

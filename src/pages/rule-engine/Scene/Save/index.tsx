@@ -209,7 +209,11 @@ export default () => {
               </Form.Item>
             )}
             {triggerType === TriggerWayType.device && (
-              <TriggerDevice className={'trigger-type-content'} form={form} />
+              <TriggerDevice
+                className={'trigger-type-content'}
+                form={form}
+                triggerData={FormModel.trigger}
+              />
             )}
           </Form.Item>
           {triggerType === TriggerWayType.device &&
