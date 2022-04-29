@@ -61,6 +61,7 @@ const Access = (props: Props) => {
   ProcotoleMapping.set('mqtt-client-gateway', 'MQTT');
   ProcotoleMapping.set('mqtt-server-gateway', 'MQTT');
   ProcotoleMapping.set('tcp-server-gateway', 'TCP');
+  ProcotoleMapping.set('child-device', 'Gateway');
 
   const queryNetworkList = (id: string, params?: any) => {
     service.getNetworkList(MetworkTypeMapping.get(id), params).then((resp) => {
@@ -412,8 +413,8 @@ const Access = (props: Props) => {
                 onClick={() => {
                   const url = getMenuPathByCode(MENUS_CODE[`link/Protocol`]);
                   const tab: any = window.open(`${origin}/#${url}?save=true`);
-                  tab!.onTabSaveSuccess = (value: any) => {
-                    if (value) {
+                  tab!.onTabSaveSuccess = (resp: any) => {
+                    if (resp.status === 200) {
                       queryProcotolList(props.provider?.id);
                     }
                   };
@@ -461,8 +462,9 @@ const Access = (props: Props) => {
                         onClick={() => {
                           const url = getMenuPathByCode(MENUS_CODE[`link/Protocol`]);
                           const tab: any = window.open(`${origin}/#${url}?save=true`);
-                          tab!.onTabSaveSuccess = (value: any) => {
-                            if (value) {
+                          tab!.onTabSaveSuccess = (resp: any) => {
+                            if (resp.status === 200) {
+                              console.log(props.provider);
                               queryProcotolList(props.provider?.id);
                             }
                           };

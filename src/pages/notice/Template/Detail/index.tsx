@@ -12,7 +12,6 @@ import {
   Radio,
   Select,
   Space,
-  Submit,
   Switch,
 } from '@formily/antd';
 import type { Field } from '@formily/core';
@@ -45,6 +44,8 @@ import AliyunSms from '@/pages/notice/Template/Detail/doc/AliyunSms';
 import Email from '@/pages/notice/Template/Detail/doc/Email';
 import { Store } from 'jetlinks-store';
 import FAutoComplete from '@/components/FAutoComplete';
+import { PermissionButton } from '@/components';
+import usePermissions from '@/hooks/permission';
 
 export const docMap = {
   weixin: {
@@ -264,7 +265,7 @@ const Detail = observer(() => {
                   : {
                       id: item,
                       type: 'string',
-                      format: '--',
+                      format: 's%',
                     },
               );
               form1.setValuesIn('variableDefinitions', _result);
@@ -312,7 +313,7 @@ const Detail = observer(() => {
                   : {
                       id: item,
                       type: 'string',
-                      format: '--',
+                      format: 's%',
                     },
               );
               form1.setValuesIn('variableDefinitions', _result);
@@ -324,7 +325,6 @@ const Detail = observer(() => {
           });
           onFieldReact('variableDefinitions.*.type', (field) => {
             const value = (field as Field).value;
-            console.log(value, 'value');
             const formatPath = FormPath.transform(
               field.path,
               /\d+/,
@@ -636,6 +636,7 @@ const Detail = observer(() => {
                         'x-component-props': {
                           placeholder: '请选择消息模版',
                         },
+                        required: true,
                         'x-decorator-props': {
                           gridSpan: 1,
                           tooltip: '微信公众号中配置的消息模版',
@@ -785,12 +786,12 @@ const Detail = observer(() => {
                         'x-component-props': {
                           placeholder: '请选择收信人',
                         },
-                        'x-reactions': {
-                          dependencies: ['configId'],
-                          fulfill: {
-                            run: '{{useAsyncDataSource(getDingTalkUser($deps[0]))}}',
-                          },
-                        },
+                        // 'x-reactions': {
+                        //   dependencies: ['configId'],
+                        //   fulfill: {
+                        //     run: '{{useAsyncDataSource(getDingTalkUser($deps[0]))}}',
+                        //   },
+                        // },
                       },
                       departmentIdList: {
                         title: '收信部门',
@@ -803,12 +804,12 @@ const Detail = observer(() => {
                         'x-component-props': {
                           placeholder: '请选择收信部门',
                         },
-                        'x-reactions': {
-                          dependencies: ['configId'],
-                          fulfill: {
-                            run: '{{useAsyncDataSource(getDingTalkDept($deps[0]))}}',
-                          },
-                        },
+                        // 'x-reactions': {
+                        //   dependencies: ['configId'],
+                        //   fulfill: {
+                        //     run: '{{useAsyncDataSource(getDingTalkDept($deps[0]))}}',
+                        //   },
+                        // },
                       },
                     },
                   },
@@ -1253,6 +1254,7 @@ const Detail = observer(() => {
       },
     },
   };
+  const { permission } = usePermissions('notice');
   return (
     <PageContainer>
       <Card>
@@ -1278,7 +1280,13 @@ const Detail = observer(() => {
               />
               <FormButtonGroup.Sticky>
                 <FormButtonGroup.FormItem>
-                  <Submit onSubmit={handleSave}>保存</Submit>
+                  <PermissionButton
+                    type="primary"
+                    isPermission={permission.add || permission.update}
+                    onClick={handleSave}
+                  >
+                    保存
+                  </PermissionButton>
                 </FormButtonGroup.FormItem>
               </FormButtonGroup.Sticky>
             </Form>

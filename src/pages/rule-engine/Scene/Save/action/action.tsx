@@ -3,10 +3,10 @@ import type { FormInstance } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
 import { useRequest } from 'umi';
 import {
-  queryMessageType,
   queryMessageConfig,
   queryMessageTemplate,
   queryMessageTemplateDetail,
+  queryMessageType,
 } from './service';
 import MessageContent from './messageContent';
 import DeviceSelect, { MessageTypeEnum } from './device';

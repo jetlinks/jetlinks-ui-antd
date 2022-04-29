@@ -2,9 +2,9 @@ import type { ProColumns } from '@jetlinks/pro-table';
 import { EditableProTable } from '@jetlinks/pro-table';
 import { Input, InputNumber, Select } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
-import ProForm from '@ant-design/pro-form';
 import type { ProFormInstance } from '@ant-design/pro-form';
 import { DatePickerFormat } from '@/pages/rule-engine/Scene/Save/components';
+import ProForm from '@ant-design/pro-form';
 
 type FunctionTableDataType = {
   id: string;

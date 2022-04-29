@@ -1,5 +1,5 @@
-import { Form, Input, Select } from 'antd';
 import type { FormInstance } from 'antd';
+import { Form, Input, Select } from 'antd';
 import { useEffect, useState } from 'react';
 import { getProductList } from '@/pages/rule-engine/Scene/Save/action/device/service';
 import Device from './deviceModal';

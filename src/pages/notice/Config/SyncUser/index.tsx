@@ -65,22 +65,24 @@ const SyncUser = observer(() => {
           </Button>
         </Tooltip>,
         <Tooltip title={'解绑用户'} key="unbind">
-          <Button type="link">
-            <Popconfirm
-              title={'确认解绑'}
-              onConfirm={async () => {
-                if (record?.bindingId) {
-                  const resp = await service.syncUser.unBindUser(record.bindingId);
-                  if (resp.status === 200) {
-                    message.success('操作成功！');
-                    actionRef.current?.reload();
+          {record?.userId && (
+            <Button type="link">
+              <Popconfirm
+                title={'确认解绑'}
+                onConfirm={async () => {
+                  if (record?.bindingId) {
+                    const resp = await service.syncUser.unBindUser(record.bindingId);
+                    if (resp.status === 200) {
+                      message.success('操作成功！');
+                      actionRef.current?.reload();
+                    }
                   }
-                }
-              }}
-            >
-              <DisconnectOutlined />
-            </Popconfirm>
-          </Button>
+                }}
+              >
+                <DisconnectOutlined />
+              </Popconfirm>
+            </Button>
+          )}
         </Tooltip>,
       ],
     },

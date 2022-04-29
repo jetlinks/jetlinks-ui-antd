@@ -1,5 +1,5 @@
-import { DatePicker } from 'antd';
 import type { DatePickerProps } from 'antd';
+import { DatePicker } from 'antd';
 import moment from 'moment';
 
 interface DatePickerFormat extends Omit<DatePickerProps, 'onChange'> {

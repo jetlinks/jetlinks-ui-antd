@@ -1,6 +1,6 @@
 import { useIntl } from 'umi';
-import { onFieldValueChange, onFieldInputValueChange, createForm } from '@formily/core';
 import type { Field } from '@formily/core';
+import { createForm, onFieldInputValueChange, onFieldValueChange } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import React from 'react';
 import * as ICONS from '@ant-design/icons';

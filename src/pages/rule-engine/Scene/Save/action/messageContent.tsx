@@ -1,10 +1,10 @@
-import { Col, Form, Row } from 'antd';
 import type { FormInstance } from 'antd';
+import { Col, Form, Row } from 'antd';
 import {
   BuiltIn,
   OrgList,
-  UserList,
   TagSelect,
+  UserList,
 } from '@/pages/rule-engine/Scene/Save/action/VariableItems';
 import { InputFile } from '@/pages/rule-engine/Scene/Save/components';
 

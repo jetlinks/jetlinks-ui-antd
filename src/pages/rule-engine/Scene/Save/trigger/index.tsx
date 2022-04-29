@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Col, Form, Row, Select, Space, TreeSelect } from 'antd';
 import type { FormInstance } from 'antd';
+import { Col, Form, Row, Select, Space, TreeSelect } from 'antd';
 import { TimingTrigger } from '@/pages/rule-engine/Scene/Save/components';
 import { getProductList } from '@/pages/rule-engine/Scene/Save/action/device/service';
 import { queryOrgTree, querySelector } from '@/pages/rule-engine/Scene/Save/trigger/service';

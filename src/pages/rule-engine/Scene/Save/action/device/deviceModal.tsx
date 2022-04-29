@@ -1,10 +1,9 @@
 import { Badge, Input, message, Modal } from 'antd';
 import { useEffect, useRef, useState } from 'react';
-import { ActionType, ProColumns } from '@jetlinks/pro-table';
+import ProTable, { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { DeviceItem } from '@/pages/system/Department/typings';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import SearchComponent from '@/components/SearchComponent';
-import ProTable from '@jetlinks/pro-table';
 import { queryDevice } from '@/pages/rule-engine/Scene/Save/action/device/service';
 
 interface DeviceModelProps {

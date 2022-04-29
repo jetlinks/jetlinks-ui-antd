@@ -15,6 +15,7 @@ import { createSchemaField } from '@formily/react';
 import type { PropertyMetadata } from '@/pages/device/Product/typings';
 import { useEffect, useState } from 'react';
 import { InstanceModel, service } from '@/pages/device/Instance';
+
 interface Props {
   data: Partial<PropertyMetadata>;
   onCancel: () => void;

@@ -3,7 +3,7 @@ import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import { InstanceModel, service } from '@/pages/device/Instance';
 import type { ISchema } from '@formily/json-schema';
-import { Form, FormGrid, FormItem, Select, PreviewText } from '@formily/antd';
+import { Form, FormGrid, FormItem, PreviewText, Select } from '@formily/antd';
 import { useParams } from 'umi';
 import { Button, Drawer, message, Space } from 'antd';
 import { action } from '@formily/reactive';
