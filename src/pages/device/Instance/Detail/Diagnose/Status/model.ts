@@ -26,6 +26,7 @@ export const DiagnoseStatusModel = model<{
     other?: StatusProps;
   };
   list: ListProps[];
+  model: boolean;
 }>({
   status: {
     config: {
@@ -85,4 +86,5 @@ export const DiagnoseStatusModel = model<{
       desc: '诊断设备状态是否已启用，未启用的状态将导致连接失败',
     },
   ],
+  model: true,
 });

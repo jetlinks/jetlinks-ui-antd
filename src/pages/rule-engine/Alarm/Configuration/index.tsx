@@ -1,11 +1,12 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import SearchComponent from '@/components/SearchComponent';
-import { ActionType, ProColumns } from '@jetlinks/pro-table';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { PermissionButton } from '@/components';
 import {
   CloseCircleOutlined,
   DeleteOutlined,
   EditOutlined,
+  LikeOutlined,
   PlayCircleOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
@@ -22,6 +23,7 @@ const service = new Service('alarm/config');
 const Configuration = () => {
   const intl = useIntl();
   const [visible, setVisible] = useState<boolean>(false);
+  const actionRef = useRef<ActionType>();
 
   const [current, setCurrent] = useState<any>();
   const columns: ProColumns<ConfigurationItem>[] = [
@@ -55,8 +57,30 @@ const Configuration = () => {
       valueType: 'option',
       align: 'center',
       render: (_, record) => [
+        record.sceneTriggerType === 'manual' && (
+          <PermissionButton
+            key="trigger"
+            isPermission={true}
+            popConfirm={{
+              title: '确认手动触发?',
+              onConfirm: async () => {
+                await service._execute(record.sceneId);
+                message.success(
+                  intl.formatMessage({
+                    id: 'pages.data.option.success',
+                    defaultMessage: '操作成功!',
+                  }),
+                );
+                actionRef.current?.reload();
+              },
+            }}
+          >
+            <LikeOutlined />
+          </PermissionButton>
+        ),
         <PermissionButton
           isPermission={true}
+          key="edit"
           style={{ padding: 0 }}
           tooltip={{
             title: intl.formatMessage({
@@ -74,6 +98,7 @@ const Configuration = () => {
         </PermissionButton>,
         <PermissionButton
           isPermission={true}
+          key="action"
           style={{ padding: 0 }}
           popConfirm={{
             title: intl.formatMessage({
@@ -83,10 +108,11 @@ const Configuration = () => {
               defaultMessage: `确认${record.state.value === 'disable' ? '禁用' : '启用'}?`,
             }),
             onConfirm: async () => {
-              // await service.update({
-              //   id: record.id,
-              //   status: record.status ? 0 : 1,
-              // });
+              if (record.state?.value === 'disable') {
+                await service._enable(record.id);
+              } else {
+                await service._disable(record.id);
+              }
               setVisible(true);
               setCurrent(record);
               message.success(
@@ -95,7 +121,7 @@ const Configuration = () => {
                   defaultMessage: '操作成功!',
                 }),
               );
-              // actionRef.current?.reload();
+              actionRef.current?.reload();
             },
           }}
           tooltip={{
@@ -111,6 +137,7 @@ const Configuration = () => {
         <PermissionButton
           type="link"
           isPermission={true}
+          key="delete"
           style={{ padding: 0 }}
           popConfirm={{
             title: '确认删除?',
@@ -128,8 +155,6 @@ const Configuration = () => {
       ],
     },
   ];
-
-  const actionRef = useRef<ActionType>();
 
   const [param, setParam] = useState({});
 
@@ -154,6 +179,28 @@ const Configuration = () => {
           <AlarmConfig
             {...record}
             actions={[
+              record.sceneTriggerType === 'manual' && (
+                <PermissionButton
+                  key="trigger"
+                  isPermission={true}
+                  popConfirm={{
+                    title: '确认手动触发?',
+                    onConfirm: async () => {
+                      await service._execute(record.sceneId);
+                      message.success(
+                        intl.formatMessage({
+                          id: 'pages.data.option.success',
+                          defaultMessage: '操作成功!',
+                        }),
+                      );
+                      actionRef.current?.reload();
+                    },
+                  }}
+                >
+                  <LikeOutlined />
+                  手动触发
+                </PermissionButton>
+              ),
               <PermissionButton
                 isPermission={true}
                 key="edit"
@@ -176,10 +223,11 @@ const Configuration = () => {
                     defaultMessage: `确认${record.state.value === 'disable' ? '禁用' : '启用'}?`,
                   }),
                   onConfirm: async () => {
-                    // await service.update({
-                    //   id: record.id,
-                    //   status: record.status ? 0 : 1,
-                    // });
+                    if (record.state?.value === 'disable') {
+                      await service._enable(record.id);
+                    } else {
+                      await service._disable(record.id);
+                    }
                     setVisible(true);
                     setCurrent(record);
                     message.success(
@@ -199,6 +247,7 @@ const Configuration = () => {
                     defaultMessage: record.state.value === 'disable' ? '禁用' : '启用',
                   }),
                 }}
+                key="action"
                 type="link"
               >
                 {record.state.value === 'disable' ? (
