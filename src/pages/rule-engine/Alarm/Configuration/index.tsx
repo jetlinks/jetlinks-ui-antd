@@ -103,12 +103,12 @@ const Configuration = () => {
           popConfirm={{
             title: intl.formatMessage({
               id: `pages.data.option.${
-                record.state?.value === 'disable' ? 'disabled' : 'enabled'
+                record?.state?.value === 'disable' ? 'disabled' : 'enabled'
               }.tips`,
-              defaultMessage: `确认${record.state.value === 'disable' ? '禁用' : '启用'}?`,
+              defaultMessage: `确认${record?.state?.value === 'disable' ? '禁用' : '启用'}?`,
             }),
             onConfirm: async () => {
-              if (record.state?.value === 'disable') {
+              if (record?.state?.value === 'disable') {
                 await service._enable(record.id);
               } else {
                 await service._disable(record.id);
@@ -126,8 +126,10 @@ const Configuration = () => {
           }}
           tooltip={{
             title: intl.formatMessage({
-              id: `pages.data.option.${record.state.value === 'disable' ? 'disabled' : 'enabled'}`,
-              defaultMessage: record.state.value === 'disable' ? '禁用' : '启用',
+              id: `pages.data.option.${
+                record?.state?.value === 'disable' ? 'disabled' : 'enabled'
+              }`,
+              defaultMessage: record?.state?.value === 'disable' ? '禁用' : '启用',
             }),
           }}
           type="link"
