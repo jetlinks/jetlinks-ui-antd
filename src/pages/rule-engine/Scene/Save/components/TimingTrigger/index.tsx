@@ -67,7 +67,7 @@ export default (props: TimingTrigger) => {
         mod: PeriodModEnum.period,
         when: [],
         period: {
-          unit: 'second',
+          unit: 'seconds',
         },
       });
     } else {
@@ -87,7 +87,7 @@ export default (props: TimingTrigger) => {
           period: {
             from: undefined,
             to: undefined,
-            unit: 'second',
+            unit: 'seconds',
           },
         });
       } else {
@@ -105,11 +105,11 @@ export default (props: TimingTrigger) => {
 
   const TimeTypeAfter = (
     <Select
-      value={data.period?.unit || 'second'}
+      value={data.period?.unit || 'seconds'}
       options={[
-        { label: '秒', value: 'second' },
-        { label: '分', value: 'minute' },
-        { label: '小时', value: 'hour' },
+        { label: '秒', value: 'seconds' },
+        { label: '分', value: 'minutes' },
+        { label: '小时', value: 'hours' },
       ]}
       onSelect={(key: string) => {
         onChange({

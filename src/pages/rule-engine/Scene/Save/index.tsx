@@ -95,6 +95,7 @@ export default () => {
       setLoading(false);
       if (resp.status === 200) {
         message.success('操作成功');
+        form.setFieldsValue({ id: resp.result.id });
       } else {
         message.error(resp.message);
       }
