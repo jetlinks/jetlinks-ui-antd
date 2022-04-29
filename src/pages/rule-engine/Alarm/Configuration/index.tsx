@@ -132,7 +132,6 @@ const Configuration = () => {
                 record.state?.value === 'disabled' ? 'disabled' : 'enabled'
               }`,
               defaultMessage: record.state?.value === 'disabled' ? '禁用' : '启用',
-
             }),
           }}
           type="link"
@@ -185,7 +184,7 @@ const Configuration = () => {
           <AlarmConfig
             {...record}
             actions={[
-              record.sceneTriggerType === 'manual' && (
+              record.sceneTriggerType === 'manual' ? (
                 <PermissionButton
                   key="trigger"
                   type="link"
@@ -207,7 +206,7 @@ const Configuration = () => {
                   <LikeOutlined />
                   手动触发
                 </PermissionButton>
-              ),
+              ) : null,
               <PermissionButton
                 isPermission={true}
                 key="edit"

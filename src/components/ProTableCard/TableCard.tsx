@@ -20,19 +20,21 @@ export interface TableCardProps {
 }
 
 function getAction(actions: React.ReactNode[]) {
-  return actions.map((item: any) => {
-    return (
-      <div
-        className={classNames('card-button', {
-          delete: item.key === 'delete',
-          disabled: item.disabled,
-        })}
-        key={item.key}
-      >
-        {item}
-      </div>
-    );
-  });
+  return actions
+    .filter((item) => item)
+    .map((item: any) => {
+      return (
+        <div
+          className={classNames('card-button', {
+            delete: item.key === 'delete',
+            disabled: item.disabled,
+          })}
+          key={item.key}
+        >
+          {item}
+        </div>
+      );
+    });
 }
 
 export default (props: TableCardProps) => {
