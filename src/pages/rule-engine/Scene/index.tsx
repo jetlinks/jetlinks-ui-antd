@@ -45,6 +45,10 @@ const Scene = () => {
               }
             : undefined
         }
+        onClick={() => {
+          const url = getMenuPathByCode('rule-engine/Scene/Save');
+          history.push(`${url}?id=${record.id}`);
+        }}
       >
         <EditOutlined />
         {type !== 'table' &&

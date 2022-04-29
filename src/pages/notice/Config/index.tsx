@@ -300,6 +300,7 @@ const Config = observer(() => {
                 <PermissionButton
                   key="syncUser"
                   isPermission={true}
+                  type="link"
                   onClick={() => {
                     state.syncUser = true;
                     state.current = record;

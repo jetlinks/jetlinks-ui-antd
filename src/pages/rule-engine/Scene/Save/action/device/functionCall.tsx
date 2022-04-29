@@ -1,10 +1,10 @@
 import type { ProColumns } from '@jetlinks/pro-table';
 import { EditableProTable } from '@jetlinks/pro-table';
-import { DatePicker, Input, InputNumber, Select } from 'antd';
+import { Input, InputNumber, Select } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import type { ProFormInstance } from '@ant-design/pro-form';
 import ProForm from '@ant-design/pro-form';
-import moment from 'moment';
+import { DatePickerFormat } from '@/pages/rule-engine/Scene/Save/components';
 
 type FunctionTableDataType = {
   id: string;
@@ -44,7 +44,6 @@ export default (props: FunctionCallProps) => {
         }),
       });
     }
-    console.log(props.value);
   }, []);
 
   const getItemNode = (record: any) => {
@@ -55,6 +54,7 @@ export default (props: FunctionCallProps) => {
       case 'enum':
         return (
           <Select
+            value={record.value}
             style={{ width: '100%', textAlign: 'left' }}
             options={record.options}
             fieldNames={{ label: 'text', value: 'value' }}
@@ -64,6 +64,7 @@ export default (props: FunctionCallProps) => {
       case 'boolean':
         return (
           <Select
+            value={record.value}
             style={{ width: '100%', textAlign: 'left' }}
             options={[
               { label: 'true', value: true },
@@ -76,13 +77,20 @@ export default (props: FunctionCallProps) => {
       case 'long':
       case 'float':
       case 'double':
-        return <InputNumber style={{ width: '100%' }} placeholder={'请输入' + name} />;
+        return (
+          <InputNumber
+            value={record.value}
+            style={{ width: '100%' }}
+            placeholder={'请输入' + name}
+          />
+        );
       case 'date':
         return (
           <>
             {
               // @ts-ignore
-              <DatePicker
+              <DatePickerFormat
+                value={record.value}
                 format={record.format || 'YYYY-MM-DD HH:mm:ss'}
                 style={{ width: '100%' }}
               />
@@ -90,7 +98,7 @@ export default (props: FunctionCallProps) => {
           </>
         );
       default:
-        return <Input placeholder={'请输入' + name} />;
+        return <Input value={record.value} placeholder={'请输入' + name} />;
     }
   };
 
@@ -113,6 +121,7 @@ export default (props: FunctionCallProps) => {
       align: 'center',
       width: 260,
       renderFormItem: (_, row: any) => {
+        console.log('functionCall', row.record);
         return getItemNode(row.record);
       },
     },
@@ -128,7 +137,7 @@ export default (props: FunctionCallProps) => {
           props.onChange(
             values.table.map((item: any) => ({
               name: item.id,
-              value: item.type === 'date' ? moment(item.value).format(item.format) : item.value,
+              value: item.value,
             })),
           );
         }

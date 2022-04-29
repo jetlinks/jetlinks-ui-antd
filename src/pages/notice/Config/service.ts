@@ -71,9 +71,10 @@ class Service extends BaseService<ConfigItem> {
       }),
     getUserBindInfo: () =>
       request(`${SystemConst.API_BASE}/user/third-party/me`, { method: 'GET' }),
-    unBindUser: (bindId: string) =>
-      request(`${SystemConst.API_BASE}/user/third-party/me/${bindId}`, {
-        method: 'DELETE',
+    unBindUser: (bindingId: string, data: any) =>
+      request(`${SystemConst.API_BASE}/user/third-party/${bindingId}/_unbind`, {
+        method: 'POST',
+        data,
       }),
   };
 
@@ -93,26 +94,30 @@ class Service extends BaseService<ConfigItem> {
         map((resp) => resp.map((i) => i.result)),
         mergeMap((res) => {
           const [resp1, resp2, resp3] = res;
-          const list = resp1.map((item: { id: string; name: string }) => {
-            const data =
-              resp2.find(
-                (i: { userId: string; providerName: string; thirdPartyUserId: string }) =>
-                  i.thirdPartyUserId === item.id,
-              ) || {};
-            let _user: Partial<UserItem> = {};
-            if (data) {
-              _user = resp3.find((i: UserItem) => i.id === data.userId);
+          // 1.自动匹配
+          // 2.已匹配
+          // status: 1: 已匹配 0: 自动匹配，但是没有保存 -1: 未匹配
+          const arr = resp1.map((item: { id: string; name: string }) => {
+            let user = resp3.find((i: UserItem) => i?.name === item?.name);
+            const thirdPartyUser = resp2.find(
+              (i: { userId: string; providerName: string; thirdPartyUserId: string }) =>
+                i?.thirdPartyUserId === item?.id,
+            );
+            if (thirdPartyUser) {
+              user = resp3.find((i: UserItem) => i?.id === thirdPartyUser?.userId);
             }
+            const status = thirdPartyUser ? 1 : user ? 0 : -1;
             return {
-              ..._user,
-              ...data,
-              ...item,
-              bindingId: data?.id,
-              userId: _user?.id,
-              userName: _user?.name,
+              thirdPartyUserId: item?.id,
+              thirdPartyUserName: item?.name,
+              bindingId: thirdPartyUser?.id,
+              userId: user?.id,
+              userName: user?.name,
+              username: user?.username,
+              status,
             };
           });
-          return list;
+          return arr;
         }),
         toArray(),
       ),

@@ -13,7 +13,6 @@ interface WritePropertyProps {
 }
 
 export default (props: WritePropertyProps) => {
-  console.log(props.properties);
   const [source, setSource] = useState('fixed');
   const [builtInList, setBuiltInList] = useState([]);
   const [propertiesKey, setPropertiesKey] = useState<string | undefined>(undefined);
@@ -37,17 +36,22 @@ export default (props: WritePropertyProps) => {
   }, [source, props.type]);
 
   useEffect(() => {
-    if (props.value) {
+    console.log('writeProperty', props.value);
+    if (props.value && props.properties && props.properties.length) {
       if (0 in props.value) {
         setPropertiesValue(props.value[0]);
       } else {
         Object.keys(props.value).forEach((key: string) => {
           setPropertiesKey(key);
           setPropertiesValue(props.value[key]);
+          const propertiesItem = props.properties.find((item: any) => item.id === key);
+          if (propertiesItem) {
+            setPropertiesType(propertiesItem.valueType.type);
+          }
         });
       }
     }
-  }, [props.value]);
+  }, [props.value, props.properties]);
 
   const onChange = (key?: string, value?: any) => {
     if (props.onChange) {
@@ -94,7 +98,7 @@ export default (props: WritePropertyProps) => {
             // @ts-ignore
             <DatePicker
               style={{ width: 300 }}
-              value={propertiesValue ? moment(propertiesValue) : undefined}
+              value={propertiesValue ? moment(propertiesValue, 'YYYY-MM-DD HH:mm:ss') : undefined}
               onChange={(date) => {
                 onChange(propertiesKey, date ? date.format('YYYY-MM-DD HH:mm:ss') : undefined);
               }}
@@ -121,9 +125,8 @@ export default (props: WritePropertyProps) => {
         options={props.properties}
         fieldNames={{ label: 'name', value: 'id' }}
         style={{ width: 120 }}
-        onSelect={(key: any, node: any) => {
+        onSelect={(key: any) => {
           onChange(key, undefined);
-          setPropertiesType(node.valueType.type);
         }}
         placeholder={'请选择属性'}
       ></Select>

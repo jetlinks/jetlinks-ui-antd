@@ -1,6 +1,6 @@
 import type { FormInstance } from 'antd';
 import { Button, Form, Select } from 'antd';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRequest } from 'umi';
 import {
   queryMessageConfig,
@@ -14,6 +14,8 @@ import WriteProperty from './device/WriteProperty';
 import ReadProperty from './device/readProperty';
 import FunctionCall from './device/functionCall';
 import { InputNumber } from '../components';
+import { DeleteOutlined } from '@ant-design/icons';
+import { observer } from '@formily/reactive-react';
 
 interface ActionProps {
   restField: any;
@@ -22,14 +24,16 @@ interface ActionProps {
   title?: string;
   triggerType: string;
   onRemove: () => void;
+  actionItemData?: any;
 }
 
-const ActionItem = (props: ActionProps) => {
+export default observer((props: ActionProps) => {
   const { name } = props;
   const [type1, setType1] = useState('');
   // 消息通知
   const [notifyType, setNotifyType] = useState('');
   const [configId, setConfigId] = useState('');
+  const [templateId, setTemplateId] = useState('');
   const [templateData, setTemplateData] = useState<any>(undefined);
   // 设备输出
   const [deviceMessageType, setDeviceMessageType] = useState('WRITE_PROPERTY');
@@ -59,22 +63,95 @@ const ActionItem = (props: ActionProps) => {
     formatResult: (res) => res.result,
   });
 
+  const handleNotifier = async (list: any[], data: any) => {
+    if (data.notify.notifierId) {
+      // 通知配置
+      setConfigId(data.notify.notifierId);
+      const notifierItem = list.find((item: any) => item.id === data.notify.notifierId);
+      if (notifierItem) {
+        await queryMessageTemplates({
+          terms: [
+            { column: 'type', value: data.notify.notifyType },
+            { column: 'provider', value: notifierItem.provider },
+          ],
+        });
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (props.actionItemData && messageConfig) {
+      handleNotifier(messageConfig, props.actionItemData);
+    }
+  }, [configId, messageConfig]);
+
+  useEffect(() => {
+    if (
+      props.actionItemData &&
+      props.actionItemData.notify &&
+      props.actionItemData.notify.notifyType
+    ) {
+      queryMessageConfigs({
+        terms: [{ column: 'type$IN', value: props.actionItemData.notify.notifyType }],
+      }).then(async (resp) => {
+        if (props.actionItemData.notify.notifierId) {
+          await handleNotifier(resp, props.actionItemData);
+        }
+      });
+    }
+  }, [notifyType]);
+
+  useEffect(() => {
+    const data = props.actionItemData;
+    if (data && data.notify && data.notify.templateId) {
+      queryMessageTemplateDetail(data.notify.templateId).then((resp) => {
+        if (resp.status === 200) {
+          setTemplateData(resp.result);
+        }
+      });
+    }
+  }, [templateId]);
+
+  const handleInit = useCallback(async (data: any) => {
+    if (data) {
+      if (data.executor) {
+        setType1(data.executor);
+      }
+
+      if (data.notify) {
+        // 消息通知
+        if (data.notify.notifyType) {
+          setNotifyType(data.notify.notifyType);
+        }
+
+        if (data.notify.notifierId) {
+          setConfigId(data.notify.notifierId);
+        }
+
+        if (data.notify.templateId) {
+          // 通知模板
+          setTemplateId(data.notify.templateId);
+        }
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    handleInit(props.actionItemData);
+  }, [props.actionItemData]);
+
   const MessageNodes = (
     <>
-      <Form.Item {...props.restField} name={[name, 'notify', 'type']}>
+      <Form.Item {...props.restField} name={[name, 'notify', 'notifyType']}>
         <Select
           options={messageType}
           fieldNames={{ value: 'id', label: 'name' }}
           placeholder={'请选择通知方式'}
           style={{ width: 140 }}
-          onChange={async (key: string) => {
+          onChange={async () => {
             setTemplateData(undefined);
-            setNotifyType(key);
             props.form.resetFields([['actions', name, 'notify', 'notifierId']]);
             props.form.resetFields([['actions', name, 'notify', 'templateId']]);
-            await queryMessageConfigs({
-              terms: [{ column: 'type$IN', value: key }],
-            });
           }}
         />
       </Form.Item>
@@ -83,17 +160,9 @@ const ActionItem = (props: ActionProps) => {
           options={messageConfig}
           loading={messageConfigLoading}
           fieldNames={{ value: 'id', label: 'name' }}
-          onChange={async (key: string, node: any) => {
-            setConfigId(key);
+          onChange={() => {
             setTemplateData(undefined);
             props.form.resetFields([['actions', name, 'notify', 'templateId']]);
-
-            await queryMessageTemplates({
-              terms: [
-                { column: 'type', value: notifyType },
-                { column: 'provider', value: node.provider },
-              ],
-            });
           }}
           style={{ width: 160 }}
           placeholder={'请选择通知配置'}
@@ -106,12 +175,6 @@ const ActionItem = (props: ActionProps) => {
           fieldNames={{ value: 'id', label: 'name' }}
           style={{ width: 160 }}
           placeholder={'请选择通知模板'}
-          onChange={async (key: string) => {
-            const resp = await queryMessageTemplateDetail(key);
-            if (resp.status === 200) {
-              setTemplateData(resp.result);
-            }
-          }}
         />
       </Form.Item>
     </>
@@ -127,8 +190,15 @@ const ActionItem = (props: ActionProps) => {
     <div className={'actions-item'}>
       <div className={'actions-item-title'}>
         执行动作 {props.name + 1}
-        <Button type={'link'} onClick={props.onRemove}>
-          删除
+        <Button
+          onClick={props.onRemove}
+          danger
+          style={{
+            padding: '0 8px',
+            margin: '0 0 12px 12px',
+          }}
+        >
+          <DeleteOutlined />
         </Button>
       </div>
       <div style={{ display: 'flex', gap: 12 }}>
@@ -141,14 +211,12 @@ const ActionItem = (props: ActionProps) => {
             ]}
             placeholder={'请选择动作方式'}
             style={{ width: 140 }}
-            onSelect={(key: string) => {
-              setType1(key);
-            }}
           />
         </Form.Item>
         {type1 === 'notify' && MessageNodes}
         {type1 === 'device' && (
           <DeviceSelect
+            value={props.actionItemData ? props.actionItemData.device : undefined}
             name={props.name}
             form={props.form}
             triggerType={props.triggerType}
@@ -197,6 +265,4 @@ const ActionItem = (props: ActionProps) => {
       ) : null}
     </div>
   );
-};
-
-export default ActionItem;
+});
