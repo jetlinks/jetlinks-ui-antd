@@ -1,37 +1,46 @@
 import { TreeSelect } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 
-type OptionsItemType = {
-  label: string;
-  value: string | number;
-};
-
 interface TimeSelectProps {
-  options?: OptionsItemType[];
-  value?: number[];
-  onChange?: (value: number[]) => void;
+  options?: any[];
+  value?: any[];
+  onChange?: (value: any[]) => void;
   style?: React.CSSProperties;
 }
 
 export default (props: TimeSelectProps) => {
   const [checkedKeys, setCheckedKeys] = useState<any[]>([]);
 
+  const propsChange = (keys: number[]) => {
+    if (props.onChange) {
+      props.onChange(keys);
+    }
+  };
+
   const onChange = useCallback(
-    (keys: string[], _, extra) => {
+    (keys: any[], _, extra) => {
       if (extra.triggerValue === 'all') {
-        const newKeys = extra.checked ? ['all', ...props.options!.map((item) => item.value)] : [];
-        setCheckedKeys(newKeys);
+        propsChange(extra.checked ? props.options!.map((item: any) => item.value) : []);
       } else {
         const noAllKeys = keys.filter((key) => key !== 'all');
-        const newKeys = noAllKeys.length === props.options!.length ? ['all', ...keys] : noAllKeys;
-
-        setCheckedKeys(newKeys);
+        propsChange(noAllKeys);
       }
     },
     [checkedKeys, props.options],
   );
 
-  useEffect(() => {}, [checkedKeys]);
+  useEffect(() => {
+    setCheckedKeys(props.value || []);
+    if (props.value && props.options) {
+      if (props.value.length >= props.options.length) {
+        setCheckedKeys([...props.value, 'all']);
+      } else {
+        setCheckedKeys(props.value);
+      }
+    } else {
+      setCheckedKeys([]);
+    }
+  }, [props.value, props.options]);
 
   return (
     <TreeSelect

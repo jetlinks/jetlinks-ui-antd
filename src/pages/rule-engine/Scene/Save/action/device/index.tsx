@@ -17,6 +17,7 @@ interface DeviceProps {
 }
 
 enum SourceEnum {
+  'all' = 'all',
   'fixed' = 'fixed',
   'tag' = 'tag',
   'relation' = '',

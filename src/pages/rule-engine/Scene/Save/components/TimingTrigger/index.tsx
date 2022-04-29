@@ -48,6 +48,7 @@ export default (props: TimingTrigger) => {
   const [data, setData] = useState<TimerType>(DefaultValue);
 
   useEffect(() => {
+    console.log('timing-trigger', props.value);
     setData(props.value || DefaultValue);
   }, [props.value]);
 
@@ -56,6 +57,8 @@ export default (props: TimingTrigger) => {
       props.onChange(newData);
     }
   };
+
+  console.log('timing-trigger-data', data);
 
   const type1Select = async (key: string) => {
     if (key !== TriggerEnum.cron) {
@@ -144,8 +147,9 @@ export default (props: TimingTrigger) => {
         <span> 每 </span>
         <InputNumber
           value={data.period?.every}
+          placeholder={'请输入时间'}
           addonAfter={TimeTypeAfter}
-          style={{ width: 150 }}
+          style={{ width: 180 }}
           min={0}
           max={9999}
           onChange={(e) => {
@@ -191,7 +195,7 @@ export default (props: TimingTrigger) => {
         ]}
         value={data.trigger}
         onSelect={type1Select}
-        style={{ width: 120 }}
+        style={{ width: 100 }}
       />
       {data.trigger !== TriggerEnum.cron ? (
         <>
@@ -226,7 +230,7 @@ export default (props: TimingTrigger) => {
               { label: '执行一次', value: PeriodModEnum.once },
             ]}
             value={data.mod}
-            style={{ width: 150 }}
+            style={{ width: 120 }}
             onSelect={type2Select}
           />
           {implementNode}
