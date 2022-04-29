@@ -107,9 +107,9 @@ const Configuration = () => {
           popConfirm={{
             title: intl.formatMessage({
               id: `pages.data.option.${
-                record.state?.value === 'disabled' ? 'disabled' : 'disabled'
+                record.state?.value !== 'disabled' ? 'disabled' : 'disabled'
               }.tips`,
-              defaultMessage: `确认${record.state?.value === 'disabled' ? '禁用' : '启用'}?`,
+              defaultMessage: `确认${record.state?.value !== 'disabled' ? '禁用' : '启用'}?`,
             }),
             onConfirm: async () => {
               if (record.state?.value === 'disabled') {
@@ -129,9 +129,9 @@ const Configuration = () => {
           tooltip={{
             title: intl.formatMessage({
               id: `pages.data.option.${
-                record.state?.value === 'disabled' ? 'disabled' : 'enabled'
+                record.state?.value !== 'disabled' ? 'disabled' : 'enabled'
               }`,
-              defaultMessage: record.state?.value === 'disabled' ? '禁用' : '启用',
+              defaultMessage: record.state?.value !== 'disabled' ? '禁用' : '启用',
             }),
           }}
           type="link"
@@ -225,9 +225,9 @@ const Configuration = () => {
                 popConfirm={{
                   title: intl.formatMessage({
                     id: `pages.data.option.${
-                      record.state?.value === 'disabled' ? 'disabled' : 'enabled'
+                      record.state?.value !== 'disabled' ? 'disabled' : 'enabled'
                     }.tips`,
-                    defaultMessage: `确认${record.state?.value === 'disabled' ? '禁用' : '启用'}?`,
+                    defaultMessage: `确认${record.state?.value !== 'disabled' ? '禁用' : '启用'}?`,
                   }),
                   onConfirm: async () => {
                     if (record.state?.value === 'disabled') {
@@ -247,20 +247,20 @@ const Configuration = () => {
                 tooltip={{
                   title: intl.formatMessage({
                     id: `pages.data.option.${
-                      record.state?.value === 'disabled' ? 'disabled' : 'enabled'
+                      record.state?.value !== 'disabled' ? 'disabled' : 'enabled'
                     }`,
-                    defaultMessage: record.state?.value === 'disabled' ? '禁用' : '启用',
+                    defaultMessage: record.state?.value !== 'disabled' ? '禁用' : '启用',
                   }),
                 }}
                 key="action"
                 type="link"
               >
-                {record.state?.value === 'disabled' ? (
+                {record.state?.value !== 'disabled' ? (
                   <CloseCircleOutlined />
                 ) : (
                   <PlayCircleOutlined />
                 )}
-                {record.state?.value === 'disabled' ? '禁用' : '启用'}
+                {record.state?.value !== 'disabled' ? '禁用' : '启用'}
               </PermissionButton>,
               <PermissionButton
                 type="link"
