@@ -16,11 +16,6 @@ class Service extends BaseService<ConfigItem> {
   public getScene = () =>
     request(`/${SystemConst.API_BASE}/scene/_query/no-paging?paging=false`, {
       method: 'GET',
-    }).then((resp) => {
-      return resp.result.map((item: { id: string; name: string }) => ({
-        label: item.name,
-        value: item.id,
-      }));
     });
 
   public _enable = (id: string) =>
