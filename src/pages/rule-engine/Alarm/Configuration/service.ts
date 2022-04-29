@@ -30,6 +30,7 @@ class Service extends BaseService<ConfigItem> {
   public _execute = (id: string) =>
     request(`/${SystemConst.API_BASE}/scene/${id}/_execute`, {
       method: 'POST',
+      data: {},
     });
 }
 
