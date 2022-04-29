@@ -7,11 +7,15 @@ import { queryOrgTree, querySelector } from '@/pages/rule-engine/Scene/Save/trig
 import Device from '@/pages/rule-engine/Scene/Save/action/device/deviceModal';
 import FunctionCall from '@/pages/rule-engine/Scene/Save/action/device/functionCall';
 import Operation from './operation';
+import classNames from 'classnames';
+import { observer } from '@formily/reactive-react';
+import { FormModel } from '../index';
 
 interface TriggerProps {
   value?: string;
   onChange?: (type: string) => void;
   form?: FormInstance;
+  className?: string;
 }
 
 enum OperatorEnum {
@@ -24,7 +28,7 @@ enum OperatorEnum {
   'invokeFunction' = 'invokeFunction',
 }
 
-export default (props: TriggerProps) => {
+export default observer((props: TriggerProps) => {
   const [productList, setProductList] = useState<any[]>([]);
   const [productId, setProductId] = useState('');
   const [selector, setSelector] = useState('fixed');
@@ -39,13 +43,6 @@ export default (props: TriggerProps) => {
 
   const [functionItem, setFunctionItem] = useState<any[]>([]); // 单个功能-属性列表
   const [orgTree, setOrgTree] = useState<any>([]);
-
-  const getProducts = async () => {
-    const resp = await getProductList({ paging: false });
-    if (resp && resp.status === 200) {
-      setProductList(resp.result);
-    }
-  };
 
   const getSelector = () => {
     querySelector().then((resp) => {
@@ -93,13 +90,58 @@ export default (props: TriggerProps) => {
     }
   };
 
+  const productIdChange = useCallback(
+    (id: string, metadata: any) => {
+      setProductId(id);
+      handleMetadata(metadata);
+      if (selector === 'org') {
+        getOrgTree();
+      }
+    },
+    [selector],
+  );
+
+  const getProducts = async () => {
+    const resp = await getProductList({ paging: false });
+    if (resp && resp.status === 200) {
+      setProductList(resp.result);
+      if (FormModel.trigger && FormModel.trigger.device) {
+        const productItem = resp.result.find(
+          (item: any) => item.id === FormModel.trigger!.device.productId,
+        );
+
+        if (productItem) {
+          productIdChange(FormModel.trigger!.device.productId, productItem.metadata);
+        }
+      }
+    }
+  };
+
   useEffect(() => {
     getProducts();
     getSelector();
   }, []);
 
+  useEffect(() => {
+    if (FormModel.trigger && FormModel.trigger.device) {
+      const _device = FormModel.trigger.device;
+
+      if (_device.selector) {
+        if (_device.selector === 'org') {
+          getOrgTree();
+        }
+        setSelector(_device.selector);
+      }
+
+      console.log(_device.operation && _device.operation.operator);
+      if (_device.operation && _device.operation.operator) {
+        setOperation(_device.operation.operator);
+      }
+    }
+  }, [FormModel.trigger]);
+
   return (
-    <div>
+    <div className={classNames(props.className)}>
       <Row>
         <Col span={24}>
           <Space>
@@ -115,11 +157,7 @@ export default (props: TriggerProps) => {
                   props.form?.resetFields([['trigger', 'device', 'operation', 'operator']]);
                   props.form?.resetFields([['trigger', 'device', 'operation', 'operator']]);
                   setOperation(undefined);
-                  setProductId(key);
-                  handleMetadata(node.metadata);
-                  if (selector === 'org') {
-                    getOrgTree();
-                  }
+                  productIdChange(key, node.metadata);
                 }}
                 fieldNames={{ label: 'name', value: 'id' }}
               />
@@ -128,12 +166,6 @@ export default (props: TriggerProps) => {
               <Select
                 options={selectorOptions}
                 fieldNames={{ label: 'name', value: 'id' }}
-                onSelect={(key: string) => {
-                  if (key === 'org') {
-                    getOrgTree();
-                  }
-                  setSelector(key);
-                }}
                 style={{ width: 120 }}
               />
             </Form.Item>
@@ -158,7 +190,6 @@ export default (props: TriggerProps) => {
                   placeholder={'请选择触发类型'}
                   options={operatorOptions}
                   style={{ width: 140 }}
-                  onSelect={setOperation}
                 />
               </Form.Item>
             ) : null}
@@ -263,4 +294,4 @@ export default (props: TriggerProps) => {
       )}
     </div>
   );
-};
+});

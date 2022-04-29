@@ -19,3 +19,39 @@ interface SceneItem {
   name: string;
   describe: string;
 }
+
+type TriggerType = {
+  type?: string;
+  shakeLimit?: any;
+  device?: any;
+  timer?: any;
+};
+
+type TermsType = {
+  column?: string;
+  value?: any;
+  type?: string;
+  termType?: string;
+  options?: any[];
+  terms?: any[];
+};
+
+type ActionsType = {
+  executor?: string;
+  notify?: any;
+  delay?: {
+    time?: number;
+    unit?: string;
+  };
+  device?: any;
+};
+
+type FormModelType = {
+  id?: string;
+  name?: string;
+  trigger?: TriggerType;
+  terms?: TermsType;
+  parallel?: boolean;
+  actions?: ActionsType[];
+  description?: string;
+};

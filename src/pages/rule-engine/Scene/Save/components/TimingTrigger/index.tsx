@@ -3,6 +3,7 @@ import { TimeSelect } from '@/pages/rule-engine/Scene/Save/components';
 import { useCallback, useEffect, useState } from 'react';
 import { omit } from 'lodash';
 import moment from 'moment';
+import classNames from 'classnames';
 
 type TimerType = {
   trigger: string;
@@ -21,6 +22,7 @@ type TimerType = {
 };
 
 interface TimingTrigger {
+  className?: string;
   value?: TimerType;
   onChange?: (value: TimerType) => void;
 }
@@ -177,7 +179,10 @@ export default (props: TimingTrigger) => {
     );
 
   return (
-    <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+    <div
+      style={{ display: 'flex', gap: 12, alignItems: 'center' }}
+      className={classNames(props.className)}
+    >
       <Select
         options={[
           { label: '按周', value: TriggerEnum.week },

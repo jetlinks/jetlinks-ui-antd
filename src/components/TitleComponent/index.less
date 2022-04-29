@@ -1,15 +1,20 @@
 @import '~antd/es/style/themes/default.less';
 
 .title {
+  position: relative;
   width: 100%;
   margin-bottom: 10px;
+  padding-left: 10px;
   color: rgba(0, 0, 0, 0.8);
   font-weight: 600;
-}
 
-.title::before {
-  margin-right: 10px;
-  color: @primary-color;
-  background-color: @primary-color;
-  content: '|';
+  .title-before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: calc(100% - 2px);
+    background-color: @primary-color;
+    border-radius: 0 3px 3px 0;
+  }
 }

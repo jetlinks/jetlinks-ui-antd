@@ -4,6 +4,7 @@ import './index.less';
 
 interface TriggerWayProps {
   value?: string;
+  className?: string;
   onChange?: (type: string) => void;
   onSelect?: (type: string) => void;
 }
@@ -19,14 +20,13 @@ export default (props: TriggerWayProps) => {
 
   useEffect(() => {
     setType(props.value || '');
+    if (props.onSelect) {
+      props.onSelect(props.value || '');
+    }
   }, [props.value]);
 
   const onSelect = (_type: string) => {
     setType(_type);
-
-    if (props.onSelect) {
-      props.onSelect(_type);
-    }
 
     if (props.onChange) {
       props.onChange(_type);
@@ -34,7 +34,7 @@ export default (props: TriggerWayProps) => {
   };
 
   return (
-    <div className={'trigger-way-warp'}>
+    <div className={classNames('trigger-way-warp', props.className)}>
       <div
         className={classNames('trigger-way-item', {
           active: type === TriggerWayType.manual,
@@ -43,7 +43,11 @@ export default (props: TriggerWayProps) => {
           onSelect(TriggerWayType.manual);
         }}
       >
-        手动触发
+        <div className={'way-item-title'}>
+          <p>手动触发</p>
+          <span>MANUAL TRIGGER</span>
+        </div>
+        <img className={'way-item-image'} src={'/images/manual-trigger.png'} />
       </div>
       <div
         className={classNames('trigger-way-item', {
@@ -53,7 +57,11 @@ export default (props: TriggerWayProps) => {
           onSelect(TriggerWayType.timing);
         }}
       >
-        定时触发
+        <div className={'way-item-title'}>
+          <p>定时触发</p>
+          <span>TIMING TRIGGER</span>
+        </div>
+        <img className={'way-item-image'} src={'/images/timing-trigger.png'} />
       </div>
       <div
         className={classNames('trigger-way-item', {
@@ -63,7 +71,11 @@ export default (props: TriggerWayProps) => {
           onSelect(TriggerWayType.device);
         }}
       >
-        设备触发
+        <div className={'way-item-title'}>
+          <p>设备触发</p>
+          <span>DEVICE TRIGGER</span>
+        </div>
+        <img className={'way-item-image'} src={'/images/device-trigger.png'} />
       </div>
     </div>
   );

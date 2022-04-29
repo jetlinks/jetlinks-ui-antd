@@ -11,6 +11,7 @@ export default (props: InputNumberProps) => {
   const [unit, setUnit] = useState(props.value?.unit || 'seconds');
 
   useEffect(() => {
+    console.log('timer', props.value);
     setTime(props.value?.time || 0);
     setUnit(props.value?.unit || 'seconds');
   }, [props.value]);
@@ -36,6 +37,7 @@ export default (props: InputNumberProps) => {
 
   return (
     <InputNumber
+      value={time}
       addonAfter={TimeTypeAfter}
       style={{ width: 150 }}
       min={0}
