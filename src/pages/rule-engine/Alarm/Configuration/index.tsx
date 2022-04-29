@@ -12,7 +12,7 @@ import {
 } from '@ant-design/icons';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { useRef, useState } from 'react';
-import { message, Space } from 'antd';
+import { Badge, message, Space } from 'antd';
 import ProTableCard from '@/components/ProTableCard';
 import Save from './Save';
 import Service from '@/pages/rule-engine/Alarm/Configuration/service';
@@ -46,7 +46,9 @@ const Configuration = () => {
     {
       title: '状态',
       dataIndex: 'state',
-      renderText: (state) => state.text,
+      renderText: (state) => (
+        <Badge text={state?.text} status={state?.value === 'disabled' ? 'error' : 'success'} />
+      ),
     },
     {
       title: '说明',
@@ -60,6 +62,8 @@ const Configuration = () => {
         record.sceneTriggerType === 'manual' && (
           <PermissionButton
             key="trigger"
+            type="link"
+            style={{ padding: 0 }}
             isPermission={true}
             popConfirm={{
               title: '确认手动触发?',
@@ -103,18 +107,16 @@ const Configuration = () => {
           popConfirm={{
             title: intl.formatMessage({
               id: `pages.data.option.${
-                record?.state?.value === 'disable' ? 'disabled' : 'enabled'
+                record.state?.value === 'disabled' ? 'disabled' : 'disabled'
               }.tips`,
-              defaultMessage: `确认${record?.state?.value === 'disable' ? '禁用' : '启用'}?`,
+              defaultMessage: `确认${record.state?.value === 'disabled' ? '禁用' : '启用'}?`,
             }),
             onConfirm: async () => {
-              if (record?.state?.value === 'disable') {
+              if (record.state?.value === 'disabled') {
                 await service._enable(record.id);
               } else {
                 await service._disable(record.id);
               }
-              setVisible(true);
-              setCurrent(record);
               message.success(
                 intl.formatMessage({
                   id: 'pages.data.option.success',
@@ -127,19 +129,21 @@ const Configuration = () => {
           tooltip={{
             title: intl.formatMessage({
               id: `pages.data.option.${
-                record?.state?.value === 'disable' ? 'disabled' : 'enabled'
+                record.state?.value === 'disabled' ? 'disabled' : 'enabled'
               }`,
-              defaultMessage: record?.state?.value === 'disable' ? '禁用' : '启用',
+              defaultMessage: record.state?.value === 'disabled' ? '禁用' : '启用',
+
             }),
           }}
           type="link"
         >
-          {record.state.value === 'disable' ? <CloseCircleOutlined /> : <PlayCircleOutlined />}
+          {record.state?.value === 'disabled' ? <CloseCircleOutlined /> : <PlayCircleOutlined />}
         </PermissionButton>,
         <PermissionButton
           type="link"
           isPermission={true}
           key="delete"
+          disabled={record.state?.value !== 'disabled'}
           style={{ padding: 0 }}
           popConfirm={{
             title: '确认删除?',
@@ -184,6 +188,7 @@ const Configuration = () => {
               record.sceneTriggerType === 'manual' && (
                 <PermissionButton
                   key="trigger"
+                  type="link"
                   isPermission={true}
                   popConfirm={{
                     title: '确认手动触发?',
@@ -206,6 +211,7 @@ const Configuration = () => {
               <PermissionButton
                 isPermission={true}
                 key="edit"
+                type="link"
                 onClick={() => {
                   setCurrent(record);
                   setVisible(true);
@@ -220,18 +226,16 @@ const Configuration = () => {
                 popConfirm={{
                   title: intl.formatMessage({
                     id: `pages.data.option.${
-                      record.state?.value === 'disable' ? 'disabled' : 'enabled'
+                      record.state?.value === 'disabled' ? 'disabled' : 'enabled'
                     }.tips`,
-                    defaultMessage: `确认${record.state.value === 'disable' ? '禁用' : '启用'}?`,
+                    defaultMessage: `确认${record.state?.value === 'disabled' ? '禁用' : '启用'}?`,
                   }),
                   onConfirm: async () => {
-                    if (record.state?.value === 'disable') {
+                    if (record.state?.value === 'disabled') {
                       await service._enable(record.id);
                     } else {
                       await service._disable(record.id);
                     }
-                    setVisible(true);
-                    setCurrent(record);
                     message.success(
                       intl.formatMessage({
                         id: 'pages.data.option.success',
@@ -244,22 +248,27 @@ const Configuration = () => {
                 tooltip={{
                   title: intl.formatMessage({
                     id: `pages.data.option.${
-                      record.state.value === 'disable' ? 'disabled' : 'enabled'
+                      record.state?.value === 'disabled' ? 'disabled' : 'enabled'
                     }`,
-                    defaultMessage: record.state.value === 'disable' ? '禁用' : '启用',
+                    defaultMessage: record.state?.value === 'disabled' ? '禁用' : '启用',
                   }),
                 }}
                 key="action"
                 type="link"
               >
-                {record.state.value === 'disable' ? (
+                {record.state?.value === 'disabled' ? (
                   <CloseCircleOutlined />
                 ) : (
                   <PlayCircleOutlined />
                 )}
-                {record.state.value === 'disable' ? '禁用' : '启用'}
+                {record.state?.value === 'disabled' ? '禁用' : '启用'}
               </PermissionButton>,
               <PermissionButton
+                type="link"
+                tooltip={{
+                  title: '删除',
+                }}
+                disabled={record.state?.value !== 'disabled'}
                 popConfirm={{
                   title: '确认删除?',
                   onConfirm: async () => {
@@ -295,7 +304,14 @@ const Configuration = () => {
           </Space>
         }
       />
-      <Save data={current} visible={visible} close={() => setVisible(false)} />
+      <Save
+        data={current}
+        visible={visible}
+        close={() => {
+          setVisible(false);
+          actionRef.current?.reset?.();
+        }}
+      />
     </PageContainer>
   );
 };

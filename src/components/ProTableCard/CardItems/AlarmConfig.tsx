@@ -2,8 +2,9 @@ import React from 'react';
 import { TableCard } from '@/components';
 import '@/style/common.less';
 import '../index.less';
+import { StatusColorEnum } from '@/components/BadgeStatus';
 
-export interface AlarmConfigProps extends TemplateItem {
+export interface AlarmConfigProps extends ConfigurationItem {
   detail?: React.ReactNode;
   actions?: React.ReactNode[];
   avatarSize?: number;
@@ -13,10 +14,20 @@ export const aliyunSms = require('/public/images/notice/sms.png');
 
 export default (props: AlarmConfigProps) => {
   return (
-    <TableCard actions={props.actions} showStatus={false} detail={props.detail} showMask={false}>
+    <TableCard
+      actions={props.actions}
+      detail={props.detail}
+      status={props.state.value}
+      statusText={props.state.text}
+      statusNames={{
+        enabled: StatusColorEnum.success,
+        disabled: StatusColorEnum.error,
+      }}
+      showMask={false}
+    >
       <div className={'pro-table-card-item'}>
         <div className={'card-item-avatar'}>
-          <img width={88} height={88} src={aliyunSms} alt={props.type} />
+          <img width={88} height={88} src={aliyunSms} alt={''} />
         </div>
         <div className={'card-item-body'}>
           <div className={'card-item-header'}>
