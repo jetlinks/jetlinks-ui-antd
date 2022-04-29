@@ -21,6 +21,9 @@ class Service extends BaseService<IOConfigItem> {
       method: 'PATCH',
       data,
     });
+
+  getDataExchange = (type: 'consume' | 'producer') =>
+    request(`/${SystemConst.API_BASE}/alarm/config/${type}/data-exchange`, { method: 'GET' });
 }
 
 export default Service;

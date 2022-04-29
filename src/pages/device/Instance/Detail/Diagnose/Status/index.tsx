@@ -161,6 +161,7 @@ const Status = observer((props: Props) => {
       } else {
         service.queryProductState(InstanceModel.detail?.productId || '').then((resp) => {
           if (resp.status === 200) {
+            DiagnoseStatusModel.product = resp.result;
             if (resp.result.accessId) {
               service.queryGatewayState(resp.result.accessId).then((response: any) => {
                 if (response.status === 200) {
@@ -211,7 +212,7 @@ const Status = observer((props: Props) => {
                                         title="确认启用"
                                         onConfirm={async () => {
                                           const res = await service.startNetwork(
-                                            resp.result?.channelId,
+                                            DiagnoseStatusModel.product?.channelId,
                                           );
                                           if (res.status === 200) {
                                             message.success('操作成功！');

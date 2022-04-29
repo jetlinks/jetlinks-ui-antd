@@ -1,5 +1,5 @@
-import { Button, Select, Form } from 'antd';
 import type { FormInstance } from 'antd';
+import { Button, Form, Select } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
 import { useRequest } from 'umi';
 import {
